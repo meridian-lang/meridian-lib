@@ -1,0 +1,41 @@
+---
+name: babysit
+description: Keep a PR merge-ready by triaging comments, merge conflicts, and CI in a loop.
+when-to-use: When a PR is open and needs to be driven to merge.
+goal: Keep the pull request continuously merge-ready while escalating only the work that needs judgment.
+tools-required: gh, git
+parameters: pull request
+vocabulary: github.merconfig
+---
+## Comments
+
+- bind comments = invoke list pull request comments with pr = the pull request's number.
+- review every comment.
+
+## Merge conflicts
+
+1. invoke get conflicts with pr = the pull request's number.
+2. invoke sync branch with branch = the pull request's head branch.
+
+## CI
+
+- bind ci status = invoke get ci status with pr = the pull request's number.
+- if the ci status is not passed,
+    bind prompt = decide using:
+      ```
+      The CI is failing on this pull request. What fix message should be used for the commit?
+      ```
+    invoke commit fix with message = prompt.
+    invoke push branch with branch = the pull request's head branch.
+    until the ci status is passed,
+      bind ci status = invoke get ci status with pr = the pull request's number.
+
+To review a comment:
+  if you decide that you agree with the comment,
+    invoke resolve comment with commentId = the comment's id.
+
+To plan the risky cleanup for a pull request, with discretion:
+  Read the current diff, focus on changes that are most likely to block review, and propose the smallest safe cleanup actions.
+
+To autonomously stabilize a pull request, with autonomy until the ci status is passed re-plan after 2 failures:
+  Keep inspecting the latest CI and apply the next smallest safe repair until the pull request is stable.

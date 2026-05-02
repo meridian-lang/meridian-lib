@@ -1,0 +1,18 @@
+---
+name: customer support
+description: Triage customer support work with plan-mode prose.
+goal: Draft a safe support response and escalate risky cases.
+parameters: pull request
+vocabulary: ../github.merconfig
+---
+## Gather context
+
+- bind comments = invoke list pull request comments with pr = the pull request's number.
+- review every comment.
+
+To review a comment:
+  if you decide that the comment requires a public reply,
+    invoke resolve comment with commentId = the comment's id.
+
+To draft support response for a pull request, with discretion:
+  Summarize the customer impact, identify the safest response, and propose only auditable follow-up actions.

@@ -1,0 +1,26 @@
+name: inline self-contained spec
+description: Demonstrates that source and vocabulary can be specified entirely inline (heredoc) with no external files.
+tags: inline, smoke
+
+# Inline vocabulary — replaces an external .merconfig file.
+vocab_inline mini: ```
+Kind: order is a thing.
+Property: id of order is a string.
+Property: total of order is a number.
+```
+
+# Inline Meridian source — replaces an external .meridian file.
+source_inline: ```
+---
+vocabulary: mini.merconfig
+---
+
+To process an order:
+  complete.
+```
+
+expect_compile: pass
+expect_no_unresolved:
+expect_workflow_count: 1
+expect_workflow_named: ProcessOrder
+expect_swift_contains: struct ProcessOrder: MeridianWorkflow

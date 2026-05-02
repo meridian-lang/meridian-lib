@@ -1,0 +1,78 @@
+# github.merconfig — GitHub + git workflow vocabulary for Meridian babysit
+
+=== vocabulary ===
+
+A pull request is a kind of thing.
+A comment is a kind of thing.
+A ci run is a kind of thing.
+A check is a kind of thing.
+
+pull request has:
+  number which is a string.
+  title which is a string.
+  status which is one of (open, closed, merged, draft).
+  merge status which is one of (unknown, behind, ahead, conflicting, mergeable).
+  head branch which is a string.
+  base branch which is a string.
+
+comment has:
+  id which is a string.
+  author which is a string.
+  body which is a string.
+  status which is one of (open, resolved, outdated).
+
+ci run has:
+  status which is one of (pending, running, passed, failed, cancelled).
+  conclusion which is a string.
+
+=== tools ===
+
+List Pull Request Comments
+==========================
+-- Retrieve all comments on a pull request.
+~ listPRComments(pr: String) : List
+
+Approve Pull Request
+====================
+-- Approve a pull request for merge.
+~ approvePR(pr: String) : Boolean
+
+Get Conflicts
+=============
+-- Get the list of conflicting files in a pull request.
+~ getConflicts(pr: String) : List
+
+Sync Branch
+===========
+-- Sync a branch with its base branch to resolve merge conflicts.
+~ syncBranch(branch: String) : Boolean
+
+Get CI Status
+=============
+-- Get the latest CI run status for a pull request.
+~ getCIStatus(pr: String) : String
+
+Commit Fix
+==========
+-- Create a commit with the given fix message.
+~ commitFix(message: String) : Boolean
+
+Push Branch
+===========
+-- Push a branch to the remote origin.
+~ pushBranch(branch: String) : Boolean
+
+Request Changes
+===============
+-- Request changes on a pull request with a reason.
+~ requestChanges(pr: String, reason: String) : Boolean
+
+Resolve Comment
+===============
+-- Mark a review comment as resolved.
+~ resolveComment(commentId: String) : Boolean
+
+Merge Pull Request
+==================
+-- Merge an approved pull request.
+~ mergePR(pr: String) : Boolean

@@ -1,0 +1,16 @@
+---
+name: code review
+description: Review a pull request with deterministic comment triage and prose planning.
+goal: Leave useful comments and resolve stale ones.
+parameters: pull request
+vocabulary: ../github.merconfig
+---
+Comments: bind comments = invoke list pull request comments with pr = the pull request's number.
+Review: review every comment.
+
+To review a comment:
+  if you decide that the comment still applies,
+    invoke resolve comment with commentId = the comment's id.
+
+To plan review coverage for a pull request, with discretion:
+  Compare changed files against existing comments and propose only missing high-value review comments.

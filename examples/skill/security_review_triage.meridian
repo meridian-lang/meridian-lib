@@ -1,0 +1,37 @@
+---
+name: security review triage
+description: Triage a pull request from the security team's perspective with strict deterministic checks and discretion-mode planning for risky remediation.
+goal: Triage security findings without taking destructive automated actions.
+parameters: pull request
+vocabulary: comprehensive_workflows.merconfig
+---
+## Open the audit trail
+
+- open the audit log for the pull request.
+- bind ci status = invoke get ci status with pr = the pull request's number.
+- bind merge status = invoke get merge status with pr = the pull request's number.
+
+## Inspect comments
+
+Comments: bind comments = invoke list pull request comments with pr = the pull request's number.
+
+## Resolve already-addressed comments
+
+triage every comment.
+
+To triage a comment:
+  if you decide that the comment still applies,
+    invoke resolve comment with commentId = the comment's id.
+  otherwise,
+    record an audit note about the pull request because of "comment auto-resolved by triage".
+
+## Plan risky remediation under discretion
+
+To plan security remediation for a pull request, with discretion:
+  Inspect the merge status, vulnerability scan results, and risk score.
+  Propose only auditable remediation steps using request reviewer approval, open remediation task, and notify channel.
+  Never propose automatic merging, branch deletion, or rollbacks.
+
+## Close audit trail
+
+- close the audit log for the pull request.

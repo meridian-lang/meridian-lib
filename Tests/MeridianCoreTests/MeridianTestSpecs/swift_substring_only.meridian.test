@@ -1,0 +1,15 @@
+name: swift substring assertions — order processing
+description: Checks key structural substrings in the emitted Swift without doing a full golden diff.
+tags: codegen, swift
+
+source: order_processing.meridian
+vocab: ecommerce.merconfig
+no_line_comments: true
+
+expect_swift_contains: struct ProcessOrder: MeridianWorkflow
+expect_swift_contains: public func run() async throws -> WorkflowResult
+expect_swift_contains: public struct Constants: Sendable
+expect_swift_contains: public struct Instances: Sendable
+expect_swift_not_contains: _unresolved
+expect_swift_matches: struct \w+Order.*MeridianWorkflow
+expect_swift_line_count_min: 100

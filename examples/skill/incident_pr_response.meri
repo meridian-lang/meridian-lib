@@ -1,0 +1,46 @@
+---
+name: incident pr response
+description: Coordinate the response to an incident-raising pull request — page on-call, capture a service health snapshot, plan mitigation, and clean up regardless of mid-flight failures.
+goal: Drive an incident PR to a known state with paged humans, captured snapshots, and an audit-friendly recover-on-failure path.
+parameters: pull request
+vocabulary: comprehensive_workflows.merconfig
+---
+## Open and capture initial signals
+
+- open the audit log for the pull request.
+- emit incident.received with pr = the pull request's number.
+- bind ci status = invoke get ci status with pr = the pull request's number.
+
+## Page the on-call
+
+- bind page result = invoke page oncall with service = "checkout", severity = "high".
+- wait for signal "oncall.acknowledged".
+
+## Capture service health snapshot
+
+- bind health = invoke snapshot service health with service = "checkout".
+
+## Plan mitigation under discretion
+
+- plan incident mitigation for the pull request.
+
+## Run mitigation under autonomy
+
+- autonomously mitigate the incident for the pull request.
+
+recover from any:
+  emit incident.recovered with pr = the pull request's number, reason = "mitigation pipeline failed".
+  record an audit note about the pull request because of "mitigation pipeline failed; see incident timeline".
+
+## Audit close
+
+- emit incident.closed with pr = the pull request's number.
+- close the audit log for the pull request.
+
+## Sub-workflows
+
+To plan incident mitigation for a pull request, with discretion:
+  Inspect health, ci status, and any open remediation tasks. Propose only mitigate service, open remediation task, and notify channel actions. Never modify code or rollback deployments from this plan.
+
+To autonomously mitigate the incident for a pull request, with autonomy until the health is healthy unless the health is unhealthy re-plan after 1 failures max 4:
+  Take one mitigation action per step. Stop once the service health is healthy and abort if the service health deteriorates further.

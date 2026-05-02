@@ -1,0 +1,14 @@
+---
+name: release orchestrator
+description: Demonstrates cross-tier nesting from Tier 1 into an autonomous sub-workflow.
+goal: Keep release work deterministic while delegating bounded repairs.
+parameters: pull request
+vocabulary: ../github.merconfig
+---
+## Release gate
+
+- bind ci status = invoke get ci status with pr = the pull request's number.
+- autonomously stabilize the pull request.
+
+To autonomously stabilize a pull request, with autonomy until the ci status is passed re-plan after 2 failures:
+  Inspect CI and repair the smallest blocker before the release proceeds.

@@ -1,0 +1,43 @@
+---
+name: hotfix commander
+description: Coordinate a hotfix landing with explicit approvals, deterministic recovery, and a tightly bounded autonomy loop guarded by an abort predicate.
+goal: Land the hotfix safely with approvals captured and no destructive automatic actions.
+parameters: pull request
+vocabulary: comprehensive_workflows.merconfig
+---
+## Capture intent
+
+- open the audit log for the pull request.
+- emit hotfix.started with pr = the pull request's number.
+
+## Block on incident commander approval
+
+- wait for approval from incident commander.
+
+## Block on a release engineer signal
+
+- wait for signal "hotfix.green-light".
+
+## Inspect rollout health
+
+- bind health = invoke get deployment health with deploymentId = the pull request's number.
+- if the health is unhealthy,
+    record an audit note about the pull request because of "hotfix blocked: unhealthy deployment".
+    complete with reason "deployment_unhealthy".
+
+## Hand off to a guarded autonomy loop
+
+- autonomously land the hotfix for the pull request.
+
+recover from any:
+  record an audit note about the pull request because of "hotfix recovery: autonomous landing failed".
+
+## Audit close
+
+- emit hotfix.completed with pr = the pull request's number.
+- close the audit log for the pull request.
+
+## Sub-workflow
+
+To autonomously land the hotfix for a pull request, with autonomy until the ci status is passed unless the health is unhealthy re-plan after 1 failures max 3:
+  Take the smallest deterministic landing step. Never call halt release. Stop once CI passes or abort immediately if the deployment is unhealthy.

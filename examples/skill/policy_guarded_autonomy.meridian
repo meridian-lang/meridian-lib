@@ -1,0 +1,32 @@
+---
+name: policy guarded autonomy
+description: Demonstrates how a host policy intercepts proposed actions and how the workflow recovers from `planning.host_policy_denied` and `planning.tool_out_of_scope` failures.
+goal: Show that policy-guarded planning never executes denied actions and always leaves a structured audit trail.
+parameters: pull request
+vocabulary: comprehensive_workflows.merconfig
+---
+## Capture the entry state
+
+- open the audit log for the pull request.
+- inspect the ci status of the pull request.
+
+## Hand to the planner
+
+- guarded plan repair for the pull request.
+
+  recover from "planning.host_policy_denied":
+    record an audit note about the pull request because of "planner action denied by host policy".
+    emit policy.denied with pr = the pull request's number, reason = "host_policy".
+
+  recover from "planning.tool_out_of_scope":
+    record an audit note about the pull request because of "planner proposed an out-of-scope tool".
+    emit policy.scoped_out with pr = the pull request's number.
+
+## Audit close
+
+- close the audit log for the pull request.
+
+## Sub-workflow
+
+To guarded plan repair for a pull request, with discretion:
+  Inspect the failing job and merge status. Propose only apply smallest repair and notify channel. Never propose halt release, rollback deployment, or upgrade dependency from this plan.

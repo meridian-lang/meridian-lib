@@ -1,0 +1,25 @@
+---
+name: flaky ci stabilizer
+description: Bounded autonomous loop that takes one safe repair action per iteration to stabilise a flaky CI pipeline.
+goal: Stop once CI passes, never exceed the failure budget, and abort if the pipeline is cancelled.
+parameters: pull request
+vocabulary: comprehensive_workflows.merconfig
+---
+## Initial snapshot
+
+- open the audit log for the pull request.
+- inspect the ci status of the pull request.
+- bind failing jobs = invoke get failing jobs with pr = the pull request's number.
+
+## Hand the repair loop to the autonomy planner
+
+- autonomously stabilize ci for the pull request.
+
+## Close out
+
+- close the audit log for the pull request.
+
+## Inner workflows
+
+To autonomously stabilize ci for a pull request, with autonomy until the ci status is passed unless the ci status is cancelled re-plan after 2 failures max 6:
+  Inspect the latest failing job, apply one safe repair using apply smallest repair, push the branch, and stop once CI passes. Never roll back deployments and never call halt release from this loop.

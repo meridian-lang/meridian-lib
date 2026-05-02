@@ -1,0 +1,37 @@
+---
+name: babysit
+description: Keep a PR merge-ready by triaging comments, merge conflicts, and CI in a loop.
+when-to-use: When a PR is open and needs to be driven to merge.
+tools-required: gh, git
+vocabulary: github.merconfig
+---
+# Workflows
+
+To babysit a pull request, with discretion:
+  triage comments for the pull request.
+  resolve merge conflicts for the pull request.
+  fix ci failures for the pull request.
+
+To triage comments for a pull request:
+  bind comments = invoke list pull request comments with pr = the pull request's number.
+  bind should act = decide whether the comments need action.
+  until the pull request's merge status is mergeable,
+    if should act is true,
+      invoke approve pull request with pr = the pull request's number.
+    complete.
+
+To resolve merge conflicts for a pull request:
+  bind conflicts = invoke get conflicts with pr = the pull request's number.
+  invoke sync branch with branch = the pull request's head branch.
+
+To fix ci failures for a pull request:
+  bind ci status = invoke get ci status with pr = the pull request's number.
+  if the ci status is not passed,
+    bind prompt = decide using:
+      ```
+      The CI is failing on this pull request. What fix message should be used for the commit?
+      ```
+    invoke commit fix with message = prompt.
+    invoke push branch with branch = the pull request's head branch.
+    until the ci status is passed,
+      bind ci status = invoke get ci status with pr = the pull request's number.

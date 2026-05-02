@@ -1,0 +1,251 @@
+# ecommerce.merconfig
+# Vocabulary, configuration, and tools for the order processing system.
+
+=== vocabulary ===
+
+# People
+
+A person is a kind of thing.
+A person has a name, an email, and a phone number.
+
+A customer is a kind of person.
+A customer has a status, which is one of (active, suspended, closed).
+A customer has a credit limit, which is Money.
+A customer has a tier, which is one of (standard, premium, enterprise).
+A customer has a signup date, which is a Date.
+
+An account manager is a kind of person.
+
+# Email parts (semantic wrappers around String)
+
+An email address is a kind of String.
+A subject line is a kind of String.
+A message body is a kind of String.
+
+# Orders and items
+
+An order is a kind of thing.
+An order has a status, which is one of (draft, submitted, under review, approved, on hold, fulfilled, cancelled, rejected).
+An order has a total amount, which is Money.
+An order has a placement date, which is a Date.
+
+A line item is a kind of thing.
+A line item has a quantity, which is a Number.
+A line item has a unit price, which is Money.
+
+# Invoices
+
+An invoice is a kind of thing.
+An invoice has a status, which is one of (paid, pending, overdue, disputed).
+An invoice has an amount, which is Money.
+An invoice has a due date, which is a Date.
+
+# Tool result kinds
+
+A validation result is a kind of thing.
+A validation result has a verdict, which is one of (valid, invalid).
+A validation result has issues, which is a List.
+
+A payment result is a kind of thing.
+A payment result has a status, which is one of (succeeded, failed).
+A payment result has an error message, which is a String.
+
+An approval is a kind of thing.
+An approval has a verdict, which is one of (approved, denied, deferred).
+An approval has a note, which is a String.
+
+# System components
+
+A mailer server is a kind of system.
+A mailer server has a host, a port, and an auth type.
+
+A payment processor is a kind of service.
+A payment processor has an api endpoint and an api key.
+
+# Relations
+
+places relates one customer to many orders.
+The inverse of placing is being placed by.
+
+contains relates one order to many line items.
+
+is sent to relates one invoice to one customer.
+
+manages relates one account manager to many customers.
+The inverse of managing is being managed by.
+
+# Phrase definitions
+
+To validate an order:
+  bind result = invoke validate order with id = the order's id.
+  if the result's verdict is invalid,
+    reject the order with reason "validation_failed".
+
+To check the credit of a customer for an amount:
+  bind available = invoke get available credit with customer = the customer's id.
+  if available is less than the amount,
+    reject the order with reason "insufficient_credit".
+
+To put an order on hold with a reason:
+  invoke update order with id = the order's id, status = "on hold".
+  emit order.held with order = the order, reason = the reason.
+
+To approve an order:
+  invoke update order with id = the order's id, status = "approved".
+  emit order.approved with order = the order.
+
+To reject an order with a reason:
+  invoke update order with id = the order's id, status = "rejected".
+  emit order.rejected with order = the order, reason = the reason.
+
+To send an email via a mailer server,
+              to an email address,
+              with a subject line,
+              and a message body:
+  invoke send email with
+    via = the mailer server,
+    to = the email address,
+    subject = the subject line,
+    body = the message body.
+
+To notify a person that their order was approved:
+  send an email via the primary mailer,
+    to the person's email,
+    with subject line "Your order is approved",
+    and message body "Your order has been approved and is being prepared for fulfillment.".
+
+To notify a person that their order is on hold because of a reason:
+  send an email via the primary mailer,
+    to the person's email,
+    with subject line "Your order is on hold",
+    and message body the reason.
+
+To notify a person that their order was rejected because of a reason:
+  send an email via the primary mailer,
+    to the person's email,
+    with subject line "We could not process your order",
+    and message body the reason.
+
+To screen an order for fraud for a customer:
+  if the customer's signup date is within the new customer threshold,
+    bind risk = invoke run fraud check with order = the order's id.
+    if risk is more than the fraud risk threshold,
+      put the order on hold with reason "fraud_review_required".
+      notify the customer that their order is on hold because of "We are reviewing your order for security purposes. This typically takes 1 to 2 business days.".
+      complete with reason "fraud_review_required".
+
+To obtain account manager approval for an order for a customer:
+  if the order's total amount is more than the high value threshold,
+    bind approval = invoke request approval with
+      approver = the customer's account manager's id,
+      order = the order's id.
+    if the approval's verdict is denied,
+      reject the order with reason "approval_denied".
+      notify the customer that their order was rejected because of the approval's note.
+      complete with reason "approval_denied".
+
+To finalize payment for an order placed by a customer:
+  bind payment = invoke charge payment with
+    via = the stripe,
+    customer = the customer's id,
+    amount = the order's total amount,
+    order_id = the order's id.
+  if the payment's status is succeeded,
+    approve the order.
+    notify the customer that their order was approved.
+    complete.
+  put the order on hold with reason "payment_failed".
+  bind retry count = invoke get retry count with order = the order's id.
+  if retry count is less than the maximum retry count,
+    wait 1 hour.
+    process the order placed by the customer.
+    complete.
+  reject the order with reason "max_retries_exceeded".
+  notify the customer that their order was rejected because of "We could not process your payment after several attempts. Please contact support.".
+  complete with reason "max_retries_exceeded".
+
+To record analytics for an order placed by a customer:
+  in lenient mode.
+  emit analytics.order_processed with
+    order_id = the order's id,
+    customer_id = the customer's id,
+    amount = the order's total amount,
+    timestamp = now.
+
+=== constants ===
+
+The default currency is "USD".
+The high value threshold is $5000.
+The maximum retry count is 3.
+The new customer threshold is 30 days.
+The fraud risk threshold is 0.5.
+
+=== instances ===
+
+There is a mailer server called primary mailer:
+  host = $SMTP_HOST
+  port = 587
+  auth type = "tls"
+
+There is a payment processor called stripe:
+  api endpoint = "https://api.stripe.com/v1"
+  api key = $STRIPE_API_KEY
+
+=== tools ===
+
+Get Customer
+============
+-- Retrieve a customer by ID. Returns full customer record
+-- including status, credit limit, tier, and account manager.
+~ getCustomer(id: String) : Customer
+
+Validate Order
+==============
+-- Run business validation rules against an order. Returns
+-- a validation result with a verdict and any issues found.
+~ validateOrder(id: String) : ValidationResult
+
+Get Available Credit
+====================
+-- Compute available credit for a customer based on credit
+-- limit minus outstanding orders and overdue invoices.
+~ getAvailableCredit(customer: String) : Money
+
+Get Overdue Invoices
+====================
+-- Return invoices for a customer that are past their due date.
+~ getOverdueInvoices(customer: String) : List
+
+Update Order
+============
+-- Update an order's status. Allowed transitions are governed
+-- by the order lifecycle rules.
+~ updateOrder(id: String, status: String) : Order
+
+Send Email
+==========
+-- Send an email through a configured mailer server.
+~ sendEmail(via: MailerServer, to: String, subject: String, body: String) : Boolean
+
+Charge Payment
+==============
+-- Charge a customer's payment method through the configured
+-- payment processor. Idempotent on order ID.
+~ chargePayment(via: PaymentProcessor, customer: String, amount: Money, order_id: String) : PaymentResult
+
+Run Fraud Check
+===============
+-- Score an order for fraud risk. Returns a number between
+-- 0.0 (safe) and 1.0 (high risk).
+~ runFraudCheck(order: String) : Number
+
+Request Approval
+================
+-- Submit an order for human approval by an account manager.
+-- Blocks until a verdict is recorded or the request times out.
+~ requestApproval(approver: String, order: String) : Approval
+
+Get Retry Count
+===============
+-- Return the number of times this order has been retried for payment.
+~ getRetryCount(order: String) : Number

@@ -1,0 +1,1098 @@
+import Foundation
+import MeridianRuntime
+import ModelHike
+
+// MARK: - SwiftEmitter
+//
+// Lowers an IRWorkflow to Swift source using StringTemplate from ModelHike.
+// Each emit* function returns a StringTemplate whose builder body mirrors
+// the structure of the Swift code it produces — easy to read and diff.
+//
+// Calling .toString(separator: "\n") on the top-level template (done in
+// emitFile) flattens all nested StringTemplates recursively and joins every
+// leaf string with a newline, producing properly formatted Swift source.
+// Empty strings "" inside any template act as blank-line sentinels.
+
+public struct SwiftEmitter {
+
+    public struct Options {
+        public var includeTimestamp: Bool
+        public var sourceFileName: String
+        public var indentUnit: String
+        public var emitSourceLineComments: Bool
+
+        public init(
+            includeTimestamp: Bool = false,
+            sourceFileName: String = "workflow.meridian",
+            indentUnit: String = "    ",
+            emitSourceLineComments: Bool = true
+        ) {
+            self.includeTimestamp = includeTimestamp
+            self.sourceFileName = sourceFileName
+            self.indentUnit = indentUnit
+            self.emitSourceLineComments = emitSourceLineComments
+        }
+    }
+
+    public let options: Options
+
+    public init(options: Options = Options()) {
+        self.options = options
+    }
+
+    // MARK: - Public entry point
+
+    /// Emit a complete Swift source file for the given workflows.
+    /// Uses `toString(separator: "\n")` so nested StringTemplates are
+    /// flattened and every leaf string becomes its own line.
+    public func emitFile(
+        workflows: [IRWorkflow],
+        constantsDecl: ConstantsDecl? = nil,
+        instancesDecl: InstancesDecl? = nil,
+        domainDecl: DomainDecl? = nil,
+        fileMetadata: FileMetadataAST? = nil
+    ) -> String {
+        let hasConstants = constantsDecl != nil
+        let hasInstances = instancesDecl != nil
+        // Set of Swift type names produced by the Domain section. The grammar
+        // permits workflow headers like `to plan a ci repair for a pull request`
+        // where `ci repair` is parsed as a parameter kind even though the
+        // vocabulary doesn't declare it as a kind. Without a generated struct
+        // the call site `cirepair: CiRepair` references a missing type, so we
+        // fall back to `Value` for any param kind that isn't in this set.
+        let declaredKinds: Set<String> = Set(
+            (domainDecl?.kinds ?? []).map { naturalToPascal($0.name) }
+        )
+
+        // Build a lookup of struct-name → typed parameter kinds so any nested
+        // emit can coerce a call-site arg to the receiving workflow's typed
+        // init param. Unknown kinds are normalised to `Value` here too so the
+        // call-site coercion mirrors the param decl exactly.
+        var paramTypes: [String: [(name: String, kind: String)]] = [:]
+        for wf in workflows {
+            paramTypes[wf.structName] = wf.parameters.map { p in
+                let resolved = declaredKinds.contains(p.kind.name) ? p.kind.name : "Value"
+                return (p.name, resolved)
+            }
+        }
+        return StringTemplate {
+            fileHeader()
+            ""
+            if let d = domainDecl {
+                emitDomain(d)
+                ""
+            }
+            if let c = constantsDecl {
+                emitConstants(c)
+                ""
+            }
+            if let i = instancesDecl {
+                emitInstances(i)
+                ""
+            }
+            for (idx, workflow) in workflows.enumerated() {
+                // B1: Emit skillMetadata on the first workflow struct only.
+                let skillEntries: [(String, String)]? = (idx == 0 ? fileMetadata?.entries : nil)
+                emitWorkflow(workflow,
+                             hasConstants: hasConstants,
+                             hasInstances: hasInstances,
+                             skillMetadata: skillEntries,
+                             workflowParamTypes: paramTypes,
+                             declaredKinds: declaredKinds)
+                ""
+            }
+        }.toString(separator: "\n")
+    }
+
+    // MARK: - Workflow struct
+
+    /// `hasConstants` controls whether `let constants = Constants()` is
+    /// emitted inside `run()`. Only set when a `ConstantsDecl` was provided
+    /// to `emitFile`, otherwise the reference would be unresolved.
+    /// `skillMetadata` — when non-nil, emits a `skillMetadata: [String: String]`
+    /// static property on this struct (B1, first workflow only).
+    public func emitWorkflow(_ workflow: IRWorkflow,
+                              hasConstants: Bool = false,
+                              hasInstances: Bool = false,
+                              skillMetadata: [(String, String)]? = nil,
+                              workflowParamTypes: [String: [(name: String, kind: String)]] = [:],
+                              declaredKinds: Set<String> = []) -> StringTemplate {
+        // Seed the typed-identifier scope with this workflow's parameters —
+        // params backed by a real domain kind are typed Swift values, so
+        // identifier references to them don't need coercion at workflow-call
+        // sites. Params whose kind wasn't declared in the vocabulary fall
+        // back to `Value` and aren't considered typed.
+        let typedParams = Set(
+            workflow.parameters
+                .filter { declaredKinds.isEmpty || declaredKinds.contains($0.kind.name) }
+                .map { $0.name }
+        )
+        let ctx = Ctx(
+            depth: 0,
+            options: options,
+            workflowParamTypes: workflowParamTypes,
+            typedIdentifiers: typedParams
+        )
+        func resolveKind(_ k: String) -> String {
+            declaredKinds.isEmpty || declaredKinds.contains(k) ? k : "Value"
+        }
+        let paramDecls  = workflow.parameters.map { "    public let \($0.name): \(resolveKind($0.kind.name))" }
+        let initParams  = (["runtime: Runtime"] + workflow.parameters.map { "\($0.name): \(resolveKind($0.kind.name))" }).joined(separator: ", ")
+        let initAssigns = workflow.parameters.map { "        self.\($0.name) = \($0.name)" }
+        let stateBinds  = workflow.parameters.map { "        state.bind(\"\($0.name)\", \($0.name))" }
+
+        return StringTemplate {
+            "public struct \(workflow.structName): MeridianWorkflow {"
+            "    public let runtime: Runtime"
+            for decl in paramDecls { decl }
+            // B1: Skill-discovery metadata as a static dictionary.
+            if let entries = skillMetadata, !entries.isEmpty {
+                ""
+                "    public static let skillMetadata: [String: String] = ["
+                for (k, v) in entries {
+                    let escaped = v.replacingOccurrences(of: "\"", with: "\\\"")
+                    "        \"\(k)\": \"\(escaped)\","
+                }
+                "    ]"
+            }
+            ""
+            "    public init(\(initParams)) {"
+            "        self.runtime = runtime"
+            for assign in initAssigns { assign }
+            "    }"
+            ""
+            "    public func run() async throws -> WorkflowResult {"
+            "        var state = State()"
+            for bind in stateBinds { bind }
+            "        let __meridianResumeContext = await runtime.consumeResumeContext()"
+            "        if let __meridianResumeContext {"
+            "            state.restore(from: __meridianResumeContext.restoredState)"
+            "        }"
+            "        var __meridianResumeTarget = __meridianResumeContext?.lastCheckpointLabel"
+            "        func __meridianShouldRun(_ label: String) -> Bool {"
+            "            guard let target = __meridianResumeTarget else { return true }"
+            "            if target == label { __meridianResumeTarget = nil }"
+            "            return false"
+            "        }"
+            if hasConstants {
+                "        let constants = Constants()"
+            }
+            if hasInstances {
+                "        let instances = Instances()"
+            }
+            "        await runtime.workflowStarted(workflowName: \"\(workflow.structName)\", parameters: [:])"
+            ""
+            emitBlock(workflow.body, ctx: ctx.in(2), workflow: workflow, path: "0")
+            if !blockEndsWithComplete(workflow.body) {
+                ""
+                "        await runtime.complete(reason: nil)"
+                "        return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)"
+            }
+            "    }"
+            "}"
+        }
+    }
+
+    // MARK: - Block
+
+    func emitBlock(_ block: IRBlock, ctx: Ctx, workflow: IRWorkflow, path: String) -> StringTemplate {
+        StringTemplate {
+            for (idx, stmt) in block.statements.enumerated() {
+                let childPath = "\(path).\(idx)"
+                if shouldCheckpointAfter(stmt) {
+                    emitReplayGuardedPrimitive(stmt, ctx: ctx, workflow: workflow, path: childPath)
+                } else {
+                    emitPrimitive(stmt, ctx: ctx, workflow: workflow, path: childPath)
+                }
+            }
+        }
+    }
+
+    // MARK: - Primitive dispatch
+
+    func emitPrimitive(_ p: IRPrimitive, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
+        switch p {
+        case .invoke(let ir):   return emitInvoke(ir, ctx: ctx)
+        case .bind(let ir):     return emitBind(ir, ctx: ctx)
+        case .emit(let ir):     return emitEmit(ir, ctx: ctx, mode: workflow.mode)
+        case .branch(let ir):   return emitBranch(ir, ctx: ctx, workflow: workflow, path: path)
+        case .complete(let ir): return emitComplete(ir, ctx: ctx)
+        case .commit(let ir):   return emitCommit(ir, ctx: ctx)
+        case .iterate(let ir):  return emitIterate(ir, ctx: ctx, workflow: workflow, path: path)
+        case .assert(let ir):   return emitAssert(ir, ctx: ctx, workflow: workflow, path: path)
+        case .recover(let ir):  return emitRecover(ir, ctx: ctx, workflow: workflow, path: path)
+        case .wait(let ir):     return emitWait(ir, ctx: ctx)
+        case .simultaneously(let ir):
+            return emitSimultaneously(ir, ctx: ctx, workflow: workflow, path: path)
+        case .proseStep(let ir):
+            return emitProseStep(ir, ctx: ctx)
+        }
+    }
+
+    func emitReplayGuardedPrimitive(_ p: IRPrimitive, ctx: Ctx, workflow: IRWorkflow, path: String) -> StringTemplate {
+        let label = checkpointLabel(for: p, path: path)
+        return StringTemplate {
+            "\(ctx.s)if __meridianShouldRun(\"\(label)\") {"
+            emitPrimitive(p, ctx: ctx.in(1), workflow: workflow, path: path)
+            if !isCommit(p) {
+                "\(ctx.in(1).s)try await runtime.checkpoint(label: \"\(label)\", state: state.snapshot())"
+            }
+            "\(ctx.s)}"
+        }
+    }
+
+    func shouldCheckpointAfter(_ p: IRPrimitive) -> Bool {
+        switch p {
+        case .invoke, .emit, .wait, .assert:
+            return true
+        case .commit:
+            return true
+        default:
+            return false
+        }
+    }
+
+    func checkpointLabel(for p: IRPrimitive, path: String) -> String {
+        if case .commit(let ir) = p, let label = ir.label {
+            return label
+        }
+        return progressLabel(for: p, path: path)
+    }
+
+    func isCommit(_ p: IRPrimitive) -> Bool {
+        if case .commit = p { return true }
+        return false
+    }
+
+    func progressLabel(for p: IRPrimitive, path: String) -> String {
+        let range = sourceRange(of: p)
+        return "progress:\(path):L\(range.startLine):C\(range.startColumn)"
+    }
+
+    func sourceRange(of p: IRPrimitive) -> SourceRange {
+        switch p {
+        case .invoke(let ir): return ir.sourceRange
+        case .bind(let ir): return ir.sourceRange
+        case .branch(let ir): return ir.sourceRange
+        case .iterate(let ir): return ir.sourceRange
+        case .assert(let ir): return ir.sourceRange
+        case .emit(let ir): return ir.sourceRange
+        case .wait(let ir): return ir.sourceRange
+        case .commit(let ir): return ir.sourceRange
+        case .recover(let ir): return ir.sourceRange
+        case .simultaneously(let ir): return ir.sourceRange
+        case .proseStep(let ir): return ir.sourceRange
+        case .complete(let ir): return ir.sourceRange
+        }
+    }
+
+    func swiftIdentifierSuffix(_ raw: String) -> String {
+        raw.map { ch in
+            ch.isLetter || ch.isNumber ? String(ch) : "_"
+        }.joined()
+    }
+
+    // MARK: - 1. invoke
+
+    func emitInvoke(_ ir: InvokeIR, ctx: Ctx) -> StringTemplate {
+        // Workflow recursion / cross-workflow calls land here with toolID
+        // `workflow:StructName` (set by ASTToIR.lowerPhraseInvocation).
+        if ir.toolID.hasPrefix("workflow:") {
+            return emitWorkflowCall(ir, ctx: ctx)
+        }
+        let binding = ir.resultBinding.map { "let \($0) = " } ?? "_ = "
+        let argLines = ir.arguments.map { a in
+            "\(ctx.in(1).s)    \"\(a.key)\": \(emitValueExpr(a.value)),"
+        }
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            if ir.arguments.isEmpty {
+                "\(ctx.s)\(binding)try await runtime.invoke(tool: \"\(ir.toolID)\", args: [:])"
+            } else {
+                "\(ctx.s)\(binding)try await runtime.invoke("
+                "\(ctx.s)    tool: \"\(ir.toolID)\","
+                "\(ctx.s)    args: ["
+                for line in argLines { line }
+                "\(ctx.s)    ]"
+                "\(ctx.s))"
+            }
+            if let b = ir.resultBinding {
+                "\(ctx.s)state.bind(\"\(b)\", \(b))"
+            }
+            ""
+        }
+    }
+
+    /// Emit `_ = try await StructName(runtime: runtime, arg1: …, arg2: …).run()`
+    /// for a workflow-call invoke (toolID "workflow:StructName"). Argument keys
+    /// are camelCase'd so they line up with the generated init signature.
+    /// When `ir.arguments` is empty we drop the trailing comma so the call site
+    /// is `StructName(runtime: runtime).run()` — Swift rejects the half-formed
+    /// `runtime, ` form even when the init has no other parameters.
+    func emitWorkflowCall(_ ir: InvokeIR, ctx: Ctx) -> StringTemplate {
+        let structName = String(ir.toolID.dropFirst("workflow:".count))
+        let binding = ir.resultBinding.map { "let \($0) = " } ?? "_ = "
+        let targetParams = ctx.workflowParamTypes[structName] ?? []
+        let argParts = ir.arguments.map { a in
+            let key = snakeToCamel(a.key)
+            // Find the receiving init's typed kind name (if known) so we can
+            // wrap a Value-typed call site in `Value.from(arg).coerce(to: …)`.
+            let targetKind = targetParams.first { $0.name == key || $0.name == a.key }?.kind
+            return "\(key): \(emitWorkflowCallArg(a.value, targetKind: targetKind, ctx: ctx))"
+        }
+        let argList = argParts.isEmpty ? "" : ", " + argParts.joined(separator: ", ")
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            "\(ctx.s)\(binding)try await \(structName)(runtime: runtime\(argList)).run()"
+        }
+    }
+
+    /// Workflow inits expect typed kind structs (Order, Customer, …), not Value.
+    /// We have to bridge two cases at call sites:
+    ///
+    ///   1. The argument is already a typed Swift value in scope — most
+    ///      commonly the current workflow's own parameter (`pullrequest`,
+    ///      tracked via `ctx.typedIdentifiers`). Pass it through as-is.
+    ///
+    ///   2. The argument is a `Value` (loop variable from `iterate`, or a
+    ///      `state.get(...)` lookup). Wrap in
+    ///      `try Value.from(arg).coerce(to: KindName.self)`. `Value.from(Value)`
+    ///      is the identity overload, so this also works when the arg is
+    ///      already `Value`-typed; the typed-arg path stays direct because we
+    ///      bail out before constructing the coerce call.
+    private func emitWorkflowCallArg(
+        _ expr: IRExpression,
+        targetKind: String?,
+        ctx: Ctx
+    ) -> String {
+        switch expr {
+        case .identifierRef(let name):
+            if ctx.typedIdentifiers.contains(name) || targetKind == nil {
+                return name
+            }
+            return "(try Value.from(\(name)).coerce(to: \(targetKind!).self))"
+        case .propertyAccess:
+            let inner = emitExpr(expr) + " ?? .null"
+            guard let kind = targetKind else { return inner }
+            return "(try (\(inner)).coerce(to: \(kind).self))"
+        default:
+            return emitExpr(expr)
+        }
+    }
+
+    // MARK: - 2. bind
+
+    func emitBind(_ ir: BindIR, ctx: Ctx) -> StringTemplate {
+        let method = ir.isRebind ? "rebind" : "bind"
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            "\(ctx.s)state.\(method)(\"\(ir.name)\", \(emitExpr(ir.expression)))"
+        }
+    }
+
+    func emitProseStep(_ ir: ProseStepIR, ctx: Ctx) -> StringTemplate {
+        let resultName = "__meridianProseResults_L\(max(ir.sourceRange.startLine, 0))"
+        let tools = ir.scopedTools.map { "\"\(escapeSwiftString($0))\"" }.joined(separator: ", ")
+        let call = ir.dispatchMode == .autonomousLoop ? "executeAutonomousLoop" : "executeProsePlan"
+        let config = ir.autonomy ?? AutonomyConfigIR()
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            "\(ctx.s)let \(resultName) = try await runtime.\(call)("
+            "\(ctx.s)    prose: \"\(escapeSwiftString(ir.text))\","
+            "\(ctx.s)    snapshot: state.snapshot(),"
+            if ir.dispatchMode == .planThenExecute {
+                "\(ctx.s)    scopedTools: [\(tools)]"
+            } else {
+                "\(ctx.s)    scopedTools: [\(tools)],"
+                "\(ctx.s)    maxSteps: \(config.maxSteps),"
+                if config.until == nil && config.unless == nil {
+                    "\(ctx.s)    replanAfterFailures: \(config.replanAfterFailures)"
+                } else {
+                    "\(ctx.s)    replanAfterFailures: \(config.replanAfterFailures),"
+                }
+                if let until = config.until {
+                    for line in emitAutonomyPredicate(name: "until", expr: until, ctx: ctx, includeComma: config.unless != nil) {
+                        line
+                    }
+                }
+                if let unless = config.unless {
+                    for line in emitAutonomyPredicate(name: "unless", expr: unless, ctx: ctx, includeComma: false) {
+                        line
+                    }
+                }
+            }
+            "\(ctx.s))"
+            "\(ctx.s)for (__key, __value) in \(resultName) {"
+            "\(ctx.in(1).s)state.bind(__key, __value)"
+            "\(ctx.s)}"
+        }
+    }
+
+    private func emitAutonomyPredicate(name: String, expr: IRExpression, ctx: Ctx, includeComma: Bool) -> [String] {
+        let close = includeComma ? "    }," : "    }"
+        return [
+            "\(ctx.s)    \(name): { __meridianAutonomySnapshot in",
+            "\(ctx.s)        var state = State()",
+            "\(ctx.s)        state.restore(from: __meridianAutonomySnapshot)",
+            "\(ctx.s)        return \(emitExpr(expr))",
+            "\(ctx.s)\(close)"
+        ]
+    }
+
+    // MARK: - 6. emit
+
+    func emitEmit(_ ir: EmitIR, ctx: Ctx, mode: ExecutionMode) -> StringTemplate {
+        let isStrict = ir.strict && mode == .strict
+        let call = isStrict ? "try await runtime.emit" : "await runtime.emitLenient"
+        let payloadLines = ir.payload.map { f in
+            "\(ctx.in(1).s)    \"\(f.key)\": \(emitValueExpr(f.value)),"
+        }
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            if ir.payload.isEmpty {
+                "\(ctx.s)\(call)(event: \"\(ir.eventID)\", payload: [:])"
+            } else {
+                "\(ctx.s)\(call)("
+                "\(ctx.s)    event: \"\(ir.eventID)\","
+                "\(ctx.s)    payload: ["
+                for line in payloadLines { line }
+                "\(ctx.s)    ]"
+                "\(ctx.s))"
+            }
+        }
+    }
+
+    // MARK: - 3. branch
+
+    func emitBranch(_ ir: BranchIR, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
+        let inner = ctx.in(1)
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            switch ir.condition {
+            case .predicate(let expr):
+                "\(ctx.s)if \(emitExpr(expr)) {"
+                emitBlock(ir.thenBlock, ctx: inner, workflow: workflow, path: "\(path).then")
+                if let elseBlock = ir.elseBlock {
+                    "\(ctx.s)} else {"
+                    emitBlock(elseBlock, ctx: inner, workflow: workflow, path: "\(path).else")
+                }
+                "\(ctx.s)}"
+            case .match(let expr, let cases):
+                "\(ctx.s)switch \(emitExpr(expr)) {"
+                for (idx, c) in cases.enumerated() {
+                    "\(ctx.s)case \(emitPattern(c.pattern)):"
+                    emitBlock(c.block, ctx: inner, workflow: workflow, path: "\(path).case\(idx)")
+                }
+                "\(ctx.s)}"
+            }
+            ""
+        }
+    }
+
+    // MARK: - 10. complete
+
+    func emitComplete(_ ir: CompleteIR, ctx: Ctx) -> StringTemplate {
+        let reasonStr = ir.reason.map { "\"\($0)\"" } ?? "nil"
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            "\(ctx.s)await runtime.complete(reason: \(reasonStr))"
+            "\(ctx.s)return WorkflowResult(reason: \(reasonStr), durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)"
+        }
+    }
+
+    // MARK: - 8. commit
+
+    func emitCommit(_ ir: CommitIR, ctx: Ctx) -> StringTemplate {
+        let labelStr = ir.label.map { "label: \"\($0)\"" } ?? "label: nil"
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            "\(ctx.s)try await runtime.checkpoint(\(labelStr), state: state.snapshot())"
+        }
+    }
+
+    // MARK: - 4. iterate
+
+    func emitIterate(_ ir: IterateIR, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
+        let inner = ctx.in(1)
+        let loopIndex = "__meridianLoopIndex_\(swiftIdentifierSuffix(path))"
+        let loopLabel = "__meridianLoopLabel_\(swiftIdentifierSuffix(path))"
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            switch ir.mode {
+            case .overCollection(let param, _, let collection):
+                // Iterate over a `Value.list` binding. `MeridianRuntime` ships
+                // a `Value.asList` accessor that returns `[Value]?` so the
+                // generated code stays free of force-casts.
+                let var_ = snakeToCamel(param)
+                "\(ctx.s)for (\(loopIndex), \(var_)) in (\(emitExpr(collection))?.asList ?? []).enumerated() {"
+                "\(inner.s)let \(loopLabel) = \"progress:\(path):iteration:\\(\(loopIndex))\""
+                "\(inner.s)if __meridianShouldRun(\(loopLabel)) {"
+                "\(inner.s)state.bind(\"\(var_)\", \(var_))"
+                emitBlock(ir.body, ctx: inner.in(1), workflow: workflow, path: "\(path).body")
+                "\(inner.in(1).s)try await runtime.checkpoint(label: \(loopLabel), state: state.snapshot())"
+                "\(inner.s)}"
+                "\(ctx.s)}"
+            case .whileCondition(let cond):
+                "\(ctx.s)var \(loopIndex) = 0"
+                "\(ctx.s)while \(emitExpr(cond)) {"
+                "\(inner.s)let \(loopLabel) = \"progress:\(path):iteration:\\(\(loopIndex))\""
+                "\(inner.s)\(loopIndex) += 1"
+                "\(inner.s)if __meridianShouldRun(\(loopLabel)) {"
+                emitBlock(ir.body, ctx: inner.in(1), workflow: workflow, path: "\(path).body")
+                "\(inner.in(1).s)try await runtime.checkpoint(label: \(loopLabel), state: state.snapshot())"
+                "\(inner.s)}"
+                "\(ctx.s)}"
+            case .untilCondition(let cond):
+                "\(ctx.s)var \(loopIndex) = 0"
+                "\(ctx.s)while !(\(emitExpr(cond))) {"
+                "\(inner.s)let \(loopLabel) = \"progress:\(path):iteration:\\(\(loopIndex))\""
+                "\(inner.s)\(loopIndex) += 1"
+                "\(inner.s)if __meridianShouldRun(\(loopLabel)) {"
+                emitBlock(ir.body, ctx: inner.in(1), workflow: workflow, path: "\(path).body")
+                "\(inner.in(1).s)try await runtime.checkpoint(label: \(loopLabel), state: state.snapshot())"
+                "\(inner.s)}"
+                "\(ctx.s)}"
+            }
+            ""
+        }
+    }
+
+    // MARK: - 4b. simultaneously
+
+    func emitSimultaneously(_ ir: SimultaneouslyIR, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
+        let groupCtx = ctx.in(1)
+        let branchCtx = ctx.in(3)
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            "\(ctx.s)try await withThrowingTaskGroup(of: Void.self) { group in"
+            for (idx, branch) in ir.branches.enumerated() {
+                "\(groupCtx.s)group.addTask {"
+                "\(groupCtx.in(1).s)var state = state"
+                emitBlock(branch, ctx: branchCtx, workflow: workflow, path: "\(path).branch\(idx)")
+                "\(groupCtx.s)}"
+            }
+            "\(groupCtx.s)try await group.waitForAll()"
+            "\(ctx.s)}"
+            ""
+        }
+    }
+
+    // MARK: - 5. assert
+
+    func emitAssert(_ ir: AssertIR, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
+        let msg = ir.message ?? "assertion failed"
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            if let action = ir.otherwiseAction {
+                // `assert X otherwise: …` form — run the otherwise block but
+                // still surface the failure as an `assert.failed` event so
+                // observers see it. The block decides whether to throw.
+                "\(ctx.s)if !(\(emitExpr(ir.condition))) {"
+                "\(ctx.in(1).s)try await runtime.assert(false, message: \"\(msg)\")"
+                emitBlock(action, ctx: ctx.in(1), workflow: workflow, path: "\(path).otherwise")
+                "\(ctx.s)} else {"
+                "\(ctx.in(1).s)try await runtime.assert(true, message: \"\(msg)\")"
+                "\(ctx.s)}"
+            } else {
+                // Bare `assert X.` — let the runtime emit the event and
+                // throw `MeridianRuntimeError.assertion` on failure.
+                "\(ctx.s)try await runtime.assert(\(emitExpr(ir.condition)), message: \"\(msg)\")"
+            }
+        }
+    }
+
+    // MARK: - 9. recover
+
+    func emitRecover(_ ir: RecoverIR, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
+        let (catchClause, _) = errorPatternClause(ir.pattern)
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            "\(ctx.s)do {"
+            emitBlock(ir.attachedTo, ctx: ctx.in(1), workflow: workflow, path: "\(path).do")
+            "\(ctx.s)} catch \(catchClause){"
+            emitBlock(ir.handler, ctx: ctx.in(1), workflow: workflow, path: "\(path).catch")
+            "\(ctx.s)}"
+        }
+    }
+
+    /// Returns the catch clause string and whether a trailing space is already included.
+    ///
+    /// For `.named`, the generated clause uses `meridianMatches(_:named:)` from
+    /// `MeridianRuntimeError.swift` so no non-existent `.isNamed` member is called.
+    /// For `.predicate`, a synthetic `_recoveredError` binding is always produced;
+    /// the predicate expression is emitted as a `where` guard.
+    private func errorPatternClause(_ p: ErrorPattern) -> (clause: String, hasSpace: Bool) {
+        switch p {
+        case .anyError:
+            return ("let _recoveredError ", true)
+        case .named(let n):
+            return ("let _recoveredError where meridianMatches(_recoveredError, named: \"\(n)\") ", true)
+        case .typed(let k):
+            return ("let _recoveredError as \(k.name) ", true)
+        case .predicate(let expr):
+            return ("let _recoveredError where \(emitExpr(expr)) ", true)
+        }
+    }
+
+    // MARK: - 7. wait
+
+    func emitWait(_ ir: WaitIR, ctx: Ctx) -> StringTemplate {
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            switch ir.condition {
+            case .duration(let d):
+                "\(ctx.s)try await runtime.wait(.duration(.seconds(\(d.components.seconds))))"
+            case .signal(let id):
+                "\(ctx.s)try await runtime.wait(.signal(\"\(id)\"))"
+            case .approval(let subj, let role):
+                // `by:` takes `RoleRef` — convert the role string to a RoleRef initialiser.
+                // `of:` is the subject (Value); empty-string literal signals implicit subject.
+                let subjExpr = emitValueExpr(subj)
+                "\(ctx.s)try await runtime.wait(.approval(of: \(subjExpr), by: RoleRef(identifier: \"\(role)\")))"
+            case .event(let id, let matching):
+                if let m = matching {
+                    // Emit a closure `{ event in … }` so the predicate gets access to the event.
+                    "\(ctx.s)try await runtime.wait(.event(\"\(id)\", matching: { _event in \(emitExpr(m)) }))"
+                } else {
+                    "\(ctx.s)try await runtime.wait(.event(\"\(id)\", matching: nil))"
+                }
+            }
+        }
+    }
+
+    // MARK: - Expression emission
+
+    func emitExpr(_ expr: IRExpression) -> String {
+        switch expr {
+        case .literal(let lit):
+            return emitLiteral(lit)
+        case .constantRef(let name):
+            return "constants.\(snakeToCamel(name))"
+        case .instanceRef(let name):
+            return "instances.\(snakeToCamel(name))"
+        case .identifierRef(let name):
+            return "state.get(\"\(name)\")"
+        case .propertyAccess(let base, let prop):
+            // Property paths use camelCase end-to-end so they line up with
+            // generated Swift property names *and* with the keys produced by
+            // Codable's default encoding when an opaque domain value is
+            // traversed by `State.get`.
+            let path = propertyPath(base) + "." + snakeToCamel(prop)
+            return "state.get(\"\(path)\")"
+        case .comparison(let lhs, let op, let rhs):
+            switch op {
+            case .withinDuration:
+                return "MeridianComparison.isWithin(\(emitExpr(lhs)), \(emitExpr(rhs)))"
+            case .contains:
+                return "(\(emitExpr(lhs))).contains(\(emitExpr(rhs)))"
+            case .startsWith:
+                return "(\(emitExpr(lhs))).hasPrefix(\(emitExpr(rhs)))"
+            case .endsWith:
+                return "(\(emitExpr(lhs))).hasSuffix(\(emitExpr(rhs)))"
+            case .oneOf:
+                return "(\(emitExpr(rhs))).contains(\(emitExpr(lhs)))"
+            case .equal, .notEqual, .lessThan, .lessOrEqual, .greaterThan, .greaterOrEqual:
+                // Use Value-aware helpers when either side reads from state
+                // (returns Value?) — Swift can't compare Optional<Value> with `<`.
+                if needsValueComparison(lhs) || needsValueComparison(rhs) {
+                    let helper = compHelper(op)
+                    return "MeridianComparison.\(helper)(\(emitComparisonOperand(lhs)), \(emitComparisonOperand(rhs)))"
+                }
+                return "(\(emitExpr(lhs))) \(compOp(op)) (\(emitExpr(rhs)))"
+            }
+        case .logical(let op, let operands):
+            switch op {
+            case .and: return operands.map { "(\(emitExpr($0)))" }.joined(separator: " && ")
+            case .or:  return operands.map { "(\(emitExpr($0)))" }.joined(separator: " || ")
+            case .not: return "!(\(operands.first.map { emitExpr($0) } ?? "true"))"
+            }
+        case .envVar(let name):
+            return "ProcessInfo.processInfo.environment[\"\(name)\"] ?? \"\""
+        case .nowExpression:
+            return "Date()"
+        case .invocation(let ir):
+            if ir.toolID == "runtime.discretion.decide" {
+                return "try await runtime.discretion.decide(DiscretionContext(question: \(discretionQuestionExpr(ir)), snapshot: state.snapshot()))"
+            }
+            return "/* inline invoke: \(ir.toolID) */"
+        case .relationTraversal(let base, let rel, _):
+            return "\(emitExpr(base)).\(snakeToCamel(rel))"
+        case .interpolatedString(let segs):
+            // B7: Build a Swift string by concatenating literal parts and
+            // stringified expression parts via `meridianStringify`.
+            if segs.isEmpty { return "\"\"" }
+            let parts = segs.map { seg -> String in
+                switch seg {
+                case .literal(let s):
+                    return "\"\(escapeSwiftString(s))\""
+                case .expression(let e):
+                    return "meridianStringify(\(emitValueExpr(e)))"
+                }
+            }.joined(separator: " + ")
+            return "(\(parts))"
+        }
+    }
+
+    /// Render a comparison operand for `MeridianComparison.{eq,neq,lt,le,gt,ge}`,
+    /// which all take `Value?`. State reads (`identifierRef` / `propertyAccess`)
+    /// already return `Value?` and are passed through unchanged. Literals and
+    /// constants/instances are wrapped via the same `Value`-bridging helpers
+    /// used for invoke args and emit payloads, so the surrounding helper call
+    /// type-checks regardless of which side the literal sits on.
+    func emitComparisonOperand(_ expr: IRExpression) -> String {
+        switch expr {
+        case .identifierRef, .propertyAccess:
+            return emitExpr(expr)
+        default:
+            return emitValueExpr(expr)
+        }
+    }
+
+    /// Like `emitExpr` but wraps the result so it satisfies `Value` in places
+    /// the runtime expects a `[String: Value]` dictionary (invoke args, emit
+    /// payloads). Strings, numbers, etc. become `.string(...)`/`.number(...)`;
+    /// `state.get(...)` (which returns `Value?`) becomes `... ?? .null`.
+    func emitValueExpr(_ expr: IRExpression) -> String {
+        switch expr {
+        case .literal(let lit):
+            return emitValueLiteral(lit)
+        case .nowExpression:
+            return ".date(Date())"
+        case .identifierRef, .propertyAccess:
+            return "\(emitExpr(expr)) ?? .null"
+        case .constantRef, .instanceRef:
+            // Typed constants & instances bridge into Value via Value.from(_:).
+            return "Value.from(\(emitExpr(expr)))"
+        case .envVar(let name):
+            return ".string(ProcessInfo.processInfo.environment[\"\(name)\"] ?? \"\")"
+        case .interpolatedString(let segs):
+            // B7: Produce a Value.string(...) built from concatenated segments.
+            if segs.isEmpty { return ".string(\"\")" }
+            let parts = segs.map { seg -> String in
+                switch seg {
+                case .literal(let s):
+                    return "\"\(escapeSwiftString(s))\""
+                case .expression(let e):
+                    return "meridianStringify(\(emitValueExpr(e)))"
+                }
+            }.joined(separator: " + ")
+            return ".string(\(parts))"
+        default:
+            // For derived expressions we rely on the runtime `Value(...)` init,
+            // wrapping the bare emission so it survives Swift type-checking.
+            return ".init(\(emitExpr(expr)))"
+        }
+    }
+
+    /// Wrap an IRLiteral for use in `[String: Value]`.
+    func emitValueLiteral(_ lit: IRLiteral) -> String {
+        switch lit {
+        case .string(let s):              return ".string(\"\(escapeSwiftString(s))\")"
+        case .number(let n):              return ".number(Decimal(\(n)))"
+        case .boolean(let b):             return ".boolean(\(b))"
+        case .money(let a, let c):        return ".money(Money(amount: Decimal(\(a)), currency: \"\(c)\"))"
+        case .duration(let d):            return ".duration(Duration.seconds(\(d.components.seconds)))"
+        case .date(let d):                return ".date(Date(timeIntervalSince1970: \(d.timeIntervalSince1970)))"
+        case .dateTime(let d):            return ".date(Date(timeIntervalSince1970: \(d.timeIntervalSince1970)))"
+        case .enumValue(let v, _):        return ".string(\"\(v)\")"
+        }
+    }
+
+    private func discretionQuestionExpr(_ ir: InvokeIR) -> String {
+        guard let question = ir.arguments.first(where: { $0.key == "question" })?.value else {
+            return "\"\""
+        }
+        switch question {
+        case .literal(.string(let s)):
+            return "\"\(escapeSwiftString(s))\""
+        case .interpolatedString:
+            return emitExpr(question)
+        default:
+            return "meridianStringify(\(emitValueExpr(question)))"
+        }
+    }
+
+    func emitLiteral(_ lit: IRLiteral) -> String {
+        switch lit {
+        case .string(let s):              return "\"\(escapeSwiftString(s))\""
+        case .number(let n):              return "Decimal(\(n))"
+        case .boolean(let b):             return b ? "true" : "false"
+        case .money(let a, let c):        return "Money(amount: Decimal(\(a)), currency: \"\(c)\")"
+        case .duration(let d):            return "Duration.seconds(\(d.components.seconds))"
+        case .date(let d):                return "Date(timeIntervalSince1970: \(d.timeIntervalSince1970))"
+        case .dateTime(let d):            return "Date(timeIntervalSince1970: \(d.timeIntervalSince1970))"
+        case .enumValue(let v, let kind): return "\(kind).\(v)"
+        }
+    }
+
+    /// Escape a String for use inside a Swift double-quoted string literal.
+    private func escapeSwiftString(_ s: String) -> String {
+        s.replacingOccurrences(of: "\\", with: "\\\\")
+         .replacingOccurrences(of: "\"", with: "\\\"")
+         .replacingOccurrences(of: "\n", with: "\\n")
+         .replacingOccurrences(of: "\r", with: "\\r")
+         .replacingOccurrences(of: "\t", with: "\\t")
+    }
+
+    private func propertyPath(_ expr: IRExpression) -> String {
+        switch expr {
+        case .identifierRef(let name):      return name
+        case .propertyAccess(let b, let p): return propertyPath(b) + "." + snakeToCamel(p)
+        default:                            return emitExpr(expr)
+        }
+    }
+
+    private func compOp(_ op: ComparisonOp) -> String {
+        switch op {
+        case .equal:          return "=="
+        case .notEqual:       return "!="
+        case .lessThan:       return "<"
+        case .lessOrEqual:    return "<="
+        case .greaterThan:    return ">"
+        case .greaterOrEqual: return ">="
+        default:              return "/* \(op) */"
+        }
+    }
+
+    /// Map a comparison op to the corresponding `MeridianComparison.X` helper name.
+    private func compHelper(_ op: ComparisonOp) -> String {
+        switch op {
+        case .equal:          return "eq"
+        case .notEqual:       return "neq"
+        case .lessThan:       return "lt"
+        case .lessOrEqual:    return "le"
+        case .greaterThan:    return "gt"
+        case .greaterOrEqual: return "ge"
+        default:              return "eq"
+        }
+    }
+
+    /// True when an expression resolves to `state.get(...)` (Value?), which
+    /// Swift can't compare with `<` / `>` / `==` directly.
+    private func needsValueComparison(_ expr: IRExpression) -> Bool {
+        switch expr {
+        case .identifierRef, .propertyAccess: return true
+        default:                              return false
+        }
+    }
+
+    private func emitPattern(_ p: IRPattern) -> String {
+        switch p {
+        case .literal(let lit):         return emitLiteral(lit)
+        case .enumValue(let v, _):      return ".\(v)"
+        case .wildcard:                 return "default"
+        }
+    }
+
+    // MARK: - Constants struct
+
+    public struct ConstantsDecl {
+        public struct Entry {
+            public let name: String
+            public let value: IRLiteral
+            public init(_ name: String, _ value: IRLiteral) { self.name = name; self.value = value }
+        }
+        public let entries: [Entry]
+        public init(entries: [Entry]) { self.entries = entries }
+    }
+
+    func emitConstants(_ decl: ConstantsDecl) -> StringTemplate {
+        StringTemplate {
+            "public struct Constants: Sendable {"
+            for e in decl.entries {
+                "    public let \(snakeToCamel(e.name)): \(typeOfLiteral(e.value)) = \(emitLiteral(e.value))"
+            }
+            "}"
+            ""
+            "private let constants = Constants()"
+        }
+    }
+
+    // MARK: - Instances struct
+
+    public struct InstancesDecl {
+        public struct Field {
+            public let key: String
+            public let value: PropertyValue
+            public init(_ key: String, _ value: PropertyValue) { self.key = key; self.value = value }
+        }
+        public enum PropertyValue {
+            case literal(IRLiteral)
+            case envVar(String)
+        }
+        public struct Entry {
+            public let name: String          // "primary mailer"
+            public let kind: String          // "mailer server"
+            public let fields: [Field]
+            public init(_ name: String, _ kind: String, _ fields: [Field]) {
+                self.name = name; self.kind = kind; self.fields = fields
+            }
+        }
+        public let entries: [Entry]
+        public init(entries: [Entry]) { self.entries = entries }
+    }
+
+    /// Emit a generated Instances struct that bundles each declared instance
+    /// as a `Value` (`.record(...)`). Codegen lowers `instanceRef("primary mailer")`
+    /// to `instances.primaryMailer`, so this struct is the resolution target.
+    func emitInstances(_ decl: InstancesDecl) -> StringTemplate {
+        StringTemplate {
+            "public struct Instances: Sendable {"
+            for e in decl.entries {
+                let recordLines = e.fields.map { f in
+                    // Record keys use the same camelCase convention as
+                    // generated property paths so `state.get("foo.authType")`
+                    // resolves through any matching `.record(["authType": …])`.
+                    "        \"\(snakeToCamel(f.key))\": \(emitInstanceValue(f.value)),"
+                }
+                "    public let \(snakeToCamel(e.name)): Value = .record(["
+                for line in recordLines { line }
+                "    ])"
+            }
+            "}"
+            ""
+            "private let instances = Instances()"
+        }
+    }
+
+    private func emitInstanceValue(_ v: InstancesDecl.PropertyValue) -> String {
+        switch v {
+        case .literal(let lit):
+            return emitValueLiteral(lit)
+        case .envVar(let name):
+            return ".string(ProcessInfo.processInfo.environment[\"\(name)\"] ?? \"\")"
+        }
+    }
+
+    private func typeOfLiteral(_ lit: IRLiteral) -> String {
+        switch lit {
+        case .string:                   return "String"
+        case .number:                   return "Decimal"
+        case .boolean:                  return "Bool"
+        case .money:                    return "Money"
+        case .duration:                 return "Duration"
+        case .date, .dateTime:          return "Date"
+        case .enumValue(_, let kind):   return kind
+        }
+    }
+
+    // MARK: - File header
+
+    func fileHeader() -> StringTemplate {
+        StringTemplate {
+            "// THIS FILE IS GENERATED BY MERIDIAN. DO NOT EDIT."
+            "// Source: \(options.sourceFileName)"
+            if options.includeTimestamp {
+                "// Generated at: \(ISO8601DateFormatter().string(from: Date()))"
+            }
+            "// Meridian IR version: \(MERIDIAN_IR_VERSION)"
+            ""
+            "import Foundation"
+            "import MeridianRuntime"
+            ""
+            "// B7: Runtime helper for {{ expr }} interpolation in fenced code blocks."
+            "private func meridianStringify(_ v: Value) -> String {"
+            "    switch v {"
+            "    case .string(let s): return s"
+            "    case .number(let n): return \"\\(n)\""
+            "    case .boolean(let b): return b ? \"true\" : \"false\""
+            "    case .null: return \"\""
+            "    default: return v.description"
+            "    }"
+            "}"
+        }
+    }
+
+    // MARK: - Helpers
+
+    /// Returns a source-line comment template for the given range.
+    /// Contributes nothing to the flattened output when comments are disabled
+    /// or the range has no valid line number, avoiding spurious blank lines.
+    private func sourceLineComment(_ range: SourceRange, ctx: Ctx) -> StringTemplate {
+        StringTemplate {
+            if options.emitSourceLineComments && range.startLine > 0 {
+                "\(ctx.s)// L\(range.startLine)"
+            }
+        }
+    }
+
+    private func blockEndsWithComplete(_ block: IRBlock) -> Bool {
+        guard let last = block.statements.last else { return false }
+        if case .complete = last { return true }
+        if case .branch(let b) = last {
+            return blockEndsWithComplete(b.thenBlock) &&
+                   (b.elseBlock.map(blockEndsWithComplete) ?? false)
+        }
+        return false
+    }
+
+    func snakeToCamel(_ s: String) -> String {
+        let parts = s.split(whereSeparator: { $0 == "_" || $0 == " " }).map(String.init)
+        guard let first = parts.first else { return s }
+        return first + parts.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined()
+    }
+
+    /// PascalCase a natural-language phrase the same way `ASTToIR.kindName`
+    /// does (`"pull request"` → `"PullRequest"`). Used to compare param kinds
+    /// against the declared domain kinds when deciding whether to emit a typed
+    /// init param or fall back to `Value`.
+    func naturalToPascal(_ s: String) -> String {
+        s.split(separator: " ").map { word in
+            word.prefix(1).uppercased() + word.dropFirst().lowercased()
+        }.joined()
+    }
+
+}
+
+// MARK: - Ctx (emit context / indentation)
+
+struct Ctx {
+    let depth: Int
+    let options: SwiftEmitter.Options
+
+    /// `structName → [(paramName, kindTypeName)]` lookup populated at the top
+    /// of `emitFile`. Empty when an emitter call doesn't have access to the
+    /// full workflow set (e.g. tests that call `emitWorkflow` directly). Used
+    /// by `emitWorkflowCall` to wrap `Value`-typed call-site arguments (loop
+    /// vars, state-bound bindings) so they coerce into the typed kind structs
+    /// the receiving workflow init expects.
+    let workflowParamTypes: [String: [(name: String, kind: String)]]
+
+    /// Identifier names that resolve to a typed kind struct in the current
+    /// emit scope (workflow parameters, `bind X = invoke …` results when the
+    /// tool returns a known kind). Anything not in this set is treated as a
+    /// `Value` for the purpose of workflow call-site coercion.
+    let typedIdentifiers: Set<String>
+
+    var s: String { String(repeating: options.indentUnit, count: depth) }
+
+    init(
+        depth: Int,
+        options: SwiftEmitter.Options,
+        workflowParamTypes: [String: [(name: String, kind: String)]] = [:],
+        typedIdentifiers: Set<String> = []
+    ) {
+        self.depth = depth
+        self.options = options
+        self.workflowParamTypes = workflowParamTypes
+        self.typedIdentifiers = typedIdentifiers
+    }
+
+    func `in`(_ levels: Int) -> Ctx {
+        Ctx(
+            depth: depth + levels,
+            options: options,
+            workflowParamTypes: workflowParamTypes,
+            typedIdentifiers: typedIdentifiers
+        )
+    }
+
+    func withTyped(_ extra: [String]) -> Ctx {
+        Ctx(
+            depth: depth,
+            options: options,
+            workflowParamTypes: workflowParamTypes,
+            typedIdentifiers: typedIdentifiers.union(extra)
+        )
+    }
+}

@@ -1,0 +1,12 @@
+name: compile only — order processing
+description: Verifies that order_processing.meridian compiles cleanly against ecommerce.merconfig with no _unresolved placeholders.
+tags: smoke, compile
+
+source: order_processing.meridian
+vocab: ecommerce.merconfig
+no_line_comments: true
+
+expect_compile: pass
+expect_no_unresolved:
+expect_workflow_count: 2
+expect_workflow_named: ProcessOrder

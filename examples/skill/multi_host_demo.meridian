@@ -1,0 +1,12 @@
+---
+name: multi host demo
+description: Shows the same prose workflow running against host-provided planners.
+goal: Prove hosts can swap Planner, ActPlanner, Discretion, and LLMProvider independently.
+parameters: pull request
+vocabulary: ../github.merconfig
+---
+To choose next action for a pull request, with discretion:
+  Use host policy to decide whether review, CI, or merge-conflict repair should happen next.
+
+To continue across hosts for a pull request, with autonomy re-plan after 3 failures:
+  Execute the next host-approved action and report observations back to the runtime.

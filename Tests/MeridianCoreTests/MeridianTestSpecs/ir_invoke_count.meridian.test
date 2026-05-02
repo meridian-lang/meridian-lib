@@ -1,0 +1,15 @@
+name: IR assertions — order processing invoke and emit counts
+description: Exercises IRWalker assertions against the compiled IR for order_processing.meridian.
+tags: ir
+
+source: order_processing.meridian
+vocab: ecommerce.merconfig
+no_line_comments: true
+
+expect_workflow_count: 2
+expect_workflow_named: ProcessOrder
+expect_no_unresolved:
+expect_invoke_tool: validateOrder
+expect_invoke_tool: chargePayment
+expect_emit_event: analytics.order_processed
+expect_workflow_mode: ProcessOrder strict

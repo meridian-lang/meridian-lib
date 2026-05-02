@@ -1,0 +1,15 @@
+---
+name: incident response
+description: Coordinate incident checks with strict tool execution.
+goal: Triage the incident and produce bounded, auditable actions.
+parameters: pull request
+vocabulary: ../github.merconfig
+---
+## First response
+
+- bind ci status = invoke get ci status with pr = the pull request's number.
+- if you decide that the incident is severe,
+    invoke commit fix with message = "start incident mitigation".
+
+To coordinate incident response for a pull request, with autonomy re-plan after 1 failures:
+  Inspect the available signals, take one safe mitigation step, and stop once the active blocker is handled.

@@ -1,0 +1,44 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:meridian}",
+            "name": "Debug meridian",
+            "target": "meridian",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug meridian"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:meridian}",
+            "name": "Release meridian",
+            "target": "meridian",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release meridian"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:meridian}",
+            "name": "Debug order-processing-handwritten",
+            "target": "order-processing-handwritten",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug order-processing-handwritten"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:meridian}",
+            "name": "Release order-processing-handwritten",
+            "target": "order-processing-handwritten",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release order-processing-handwritten"
+        }
+    ]
+}

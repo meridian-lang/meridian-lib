@@ -1,0 +1,30 @@
+---
+name: review comment refactor
+description: Walk a pull request's review comments and apply small refactor suggestions, demonstrating topic labels, implicit single-parameter phrase fill, and English idiom phrasing.
+goal: Resolve obviously addressed comments while preserving an audit trail for the rest.
+parameters: pull request
+vocabulary: comprehensive_workflows.merconfig
+---
+Setup: open the audit log for the pull request.
+Comments: bind comments = invoke list pull request comments with pr = the pull request's number.
+Health: inspect the ci status of the pull request.
+
+## Make sure CI is green before touching comments
+
+- make sure the ci status is passed.
+
+## Resolve every addressed comment
+
+resolve every comment.
+
+## Audit close
+
+Audit: close the audit log for the pull request.
+
+## Sub-workflows
+
+To resolve a comment:
+  if you decide that the comment was already addressed,
+    invoke resolve comment with commentId = the comment's id.
+  otherwise,
+    record an audit note about the pull request because of "comment kept open after refactor pass".

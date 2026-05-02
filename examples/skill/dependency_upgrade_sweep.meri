@@ -1,0 +1,34 @@
+---
+name: dependency upgrade sweep
+description: Sweep a repository's outdated dependencies, upgrade one at a time, and recover from individual upgrade failures without aborting the whole sweep.
+goal: Land safe dependency upgrades while leaving a clean audit trail for any blocked upgrade.
+parameters: pull request
+vocabulary: comprehensive_workflows.merconfig
+---
+## Plan the sweep
+
+- do open the audit log for the pull request, and inspect the ci status of the pull request.
+- bind outdated = invoke list outdated dependencies with repo = the pull request's number.
+
+## Apply upgrades one by one
+
+upgrade every dependency.
+
+## Run regression tests after the sweep
+
+- do bind test result = invoke run test suite with repo = the pull request's number, target = "all", and inspect the ci status of the pull request.
+
+recover from any:
+  record an audit note about the pull request because of "regression suite failed during dependency sweep".
+
+## Close out
+
+- close the audit log for the pull request.
+
+## Per-dependency workflow
+
+To upgrade a dependency:
+  invoke upgrade dependency with name = the dependency's name, target = the dependency's available version.
+
+  recover from any:
+    record an audit note about the pull request because of "single dependency upgrade failed".

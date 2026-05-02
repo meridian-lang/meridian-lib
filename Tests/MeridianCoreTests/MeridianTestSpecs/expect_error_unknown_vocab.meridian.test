@@ -1,0 +1,22 @@
+name: expect error — unknown vocabulary import
+description: Verifies that importing a vocabulary that was not supplied produces a semantic error.
+tags: compile, error
+
+# Provide one vocab but import a different (nonexistent) one.
+# The compiler must throw and the error message must mention the missing name.
+vocab_inline ecommerce: ```
+Kind: order is a thing.
+Property: id of order is a string.
+```
+
+source_inline: ```
+---
+vocabulary: mystery.merconfig
+---
+To run:
+  complete.
+```
+
+expect_compile: fail
+expect_error_kind: semantic
+expect_error_contains: mystery

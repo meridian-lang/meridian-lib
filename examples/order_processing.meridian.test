@@ -1,0 +1,8 @@
+# Compile-pass + golden-diff test for the canonical order-processing example.
+# Run with: swift run meridian test examples/
+
+name: order processing — compile + golden
+source: order_processing.meridian
+vocab: ecommerce.merconfig
+golden_swift: golden/order_processing_expected.swift
+no_line_comments: true

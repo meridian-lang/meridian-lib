@@ -1,0 +1,8 @@
+name: formatter idempotence — order processing source
+description: Verifies that order_processing.meridian is already well-formatted and that running the formatter produces no changes.
+tags: formatter
+
+source: order_processing.meridian
+vocab: ecommerce.merconfig
+
+expect_formatter_idempotent: true

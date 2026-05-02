@@ -1,0 +1,28 @@
+---
+vocabulary: ecommerce.merconfig
+---
+
+# order_processing.meridian
+# Rules and workflows for processing customer orders.
+
+# Rules
+
+A customer with status suspended must not place orders.
+
+A customer must not place an order whose total amount is more than their credit limit.
+
+An order with total amount more than the high value threshold must be approved by an account manager before fulfillment.
+
+When an order has been on hold for more than 7 days, escalate the order to the account manager of the customer who placed the order.
+
+# Workflows
+
+To process an order placed by a customer:
+  validate the order.
+  check the credit of the customer for the order's total amount.
+  screen the order for fraud for the customer.
+  obtain account manager approval for the order for the customer.
+  finalize payment for the order placed by the customer.
+
+To leniently sync analytics for an order placed by a customer:
+  record analytics for the order placed by the customer.

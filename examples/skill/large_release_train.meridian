@@ -1,0 +1,38 @@
+---
+name: large release train
+description: Coordinate a multi-stage release with a deterministic outer gate that delegates planning to discretion mode and risky stabilisation to a bounded autonomy loop.
+goal: Promote a release through staged rollout while keeping all risky decisions auditable.
+parameters: pull request
+vocabulary: comprehensive_workflows.merconfig
+---
+## Outer deterministic gate
+
+- open the audit log for the pull request.
+- inspect the ci status of the pull request.
+- bind merge status = invoke get merge status with pr = the pull request's number.
+- if the ci status is failed,
+    record an audit note about the pull request because of "ci failed before release".
+    complete with reason "ci_blocked".
+- if the merge status is conflicting,
+    record an audit note about the pull request because of "merge conflicts before release".
+    complete with reason "merge_conflicts".
+
+## Plan rollout under discretion
+
+- plan release rollout for the pull request.
+
+## Hand stabilisation to autonomy
+
+- autonomously stabilize the release for the pull request.
+
+## Audit close
+
+- close the audit log for the pull request.
+
+## Sub-workflows
+
+To plan release rollout for a pull request, with discretion:
+  Read the failing jobs, deployment health, and merge status. Propose only promote deployment, rollback deployment, halt release, and notify channel actions. Never modify code or push branches from this plan.
+
+To autonomously stabilize the release for a pull request, with autonomy until the ci status is passed unless the merge status is conflicting re-plan after 1 failures max 4:
+  Watch the rolling deployment and CI signals. Take the single safest action (promote, rollback, or halt) and stop once the rollout is healthy.

@@ -1,0 +1,32 @@
+---
+name: merge conflict playbook
+description: A two-tier playbook for resolving merge conflicts on a pull request — strict deterministic mechanical sync, then a discretion-mode plan for non-trivial conflicts.
+goal: Resolve mechanical conflicts automatically and route hard conflicts to a planner under host policy.
+parameters: pull request
+vocabulary: comprehensive_workflows.merconfig
+---
+## Snapshot
+
+- open the audit log for the pull request.
+- bind merge status = invoke get merge status with pr = the pull request's number.
+
+## Mechanical sync if behind
+
+- if the merge status is behind,
+    invoke sync branch with branch = the pull request's branch.
+    invoke push branch with branch = the pull request's branch.
+    inspect the ci status of the pull request.
+    complete with reason "mechanical_sync_done".
+
+## Plan non-trivial conflicts under discretion
+
+- plan conflict resolution for the pull request.
+
+## Audit close
+
+- close the audit log for the pull request.
+
+## Sub-workflow
+
+To plan conflict resolution for a pull request, with discretion:
+  Inspect the conflicting files and propose only sync branch, push branch, request reviewer approval, and notify channel actions. Never modify files yourself; only ask for human review when conflicts are non-trivial.

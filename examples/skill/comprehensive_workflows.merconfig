@@ -1,0 +1,372 @@
+# comprehensive_workflows.merconfig
+# A multi-domain vocabulary for the Meridian complex sample corpus.
+# Covers software delivery, incident response, customer support,
+# security, deployment, audit, and policy domains.
+
+=== vocabulary ===
+
+# Code and review domain
+
+A repository is a kind of thing.
+A pull request is a kind of thing.
+A review comment is a kind of message.
+A reviewer is a kind of role.
+A commit is a kind of thing.
+
+repository has:
+  name which is a string.
+  default branch which is a string.
+  visibility which is one of (public, private, internal).
+  risk tier which is one of (sandbox, standard, regulated, restricted).
+
+pull request has:
+  number which is a string.
+  title which is a string.
+  author which is a string.
+  branch which is a string.
+  base branch which is a string.
+  status which is one of (open, draft, closed, merged).
+  merge status which is one of (unknown, behind, ahead, conflicting, mergeable).
+  diff size which is a Number.
+  risk score which is a Number.
+
+review comment has:
+  id which is a string.
+  author which is a string.
+  body which is a string.
+  status which is one of (open, resolved, outdated).
+  severity which is one of (info, low, medium, high, critical).
+
+reviewer has:
+  id which is a string.
+  name which is a string.
+  role which is one of (engineer, lead, security, sre, manager).
+
+commit has:
+  sha which is a string.
+  author which is a string.
+  message which is a string.
+
+# CI and deployment domain
+
+A ci run is a kind of thing.
+A check is a kind of thing.
+A deployment is a kind of thing.
+A release is a kind of thing.
+A rollout stage is a kind of thing.
+
+ci run has:
+  status which is one of (pending, running, passed, failed, cancelled).
+  conclusion which is a string.
+  failed jobs which is a List.
+  attempt which is a Number.
+
+check has:
+  name which is a string.
+  status which is one of (queued, in_progress, success, failure, neutral).
+  required which is a Boolean.
+
+deployment has:
+  environment which is one of (dev, staging, canary, prod).
+  status which is one of (pending, in_progress, succeeded, failed, rolled_back).
+  rollout which is a Number.
+  health which is one of (healthy, degraded, unhealthy, unknown).
+
+release has:
+  version which is a string.
+  status which is one of (drafted, gated, rolling, released, halted).
+  audience which is one of (internal, beta, ga).
+  cutoff date which is a Date.
+
+rollout stage has:
+  name which is a string.
+  status which is one of (waiting, active, completed, aborted).
+  audience percent which is a Number.
+
+# Incident, security, and policy domain
+
+An incident is a kind of process.
+A vulnerability is a kind of fact.
+A dependency is a kind of thing.
+A policy decision is a kind of verdict.
+A remediation task is a kind of action.
+An audit note is a kind of event.
+
+incident has:
+  ticket which is a string.
+  severity which is one of (low, medium, high, critical).
+  status which is one of (open, investigating, mitigated, closed).
+  service which is a string.
+  detected at which is a DateTime.
+  blocked which is a Boolean.
+
+vulnerability has:
+  id which is a string.
+  severity which is one of (informational, low, medium, high, critical).
+  package which is a string.
+  fixed in which is a string.
+  exploit known which is a Boolean.
+
+dependency has:
+  name which is a string.
+  current version which is a string.
+  available version which is a string.
+  ecosystem which is one of (swift, npm, pypi, gem, cargo, gomod).
+  pinned which is a Boolean.
+
+policy decision has:
+  identifier which is a string.
+  outcome which is one of (allow, deny, warn, defer).
+  rationale which is a string.
+  policy name which is a string.
+
+remediation task has:
+  id which is a string.
+  description which is a string.
+  status which is one of (queued, running, blocked, completed, abandoned).
+  owner which is a string.
+
+audit note has:
+  id which is a string.
+  actor which is a string.
+  message which is a string.
+  recorded at which is a DateTime.
+
+# Customer support and tickets
+
+A customer ticket is a kind of thing.
+A customer profile is a kind of thing.
+An sla policy is a kind of thing.
+
+customer ticket has:
+  id which is a string.
+  subject which is a string.
+  priority which is one of (low, normal, high, urgent).
+  status which is one of (new, triaged, waiting, resolved, escalated).
+  customer id which is a string.
+
+customer profile has:
+  id which is a string.
+  tier which is one of (free, standard, enterprise, vip).
+  contact email which is a string.
+  account manager which is a string.
+
+sla policy has:
+  name which is a string.
+  response minutes which is a Number.
+  resolution hours which is a Number.
+
+# Phrase definitions for shared deterministic English
+
+To inspect the ci status of a pull request:
+  bind ci status = invoke get ci status with pr = the pull request's number.
+
+To inspect the merge readiness of a pull request:
+  bind merge status = invoke get merge status with pr = the pull request's number.
+
+To open the audit log for a pull request:
+  emit audit.opened with pr = the pull request's number.
+
+To close the audit log for a pull request:
+  emit audit.closed with pr = the pull request's number.
+
+To record an audit note about a pull request because of a reason:
+  emit audit.note with pr = the pull request's number, reason = the reason.
+
+To request approval for a pull request from a reviewer:
+  bind approval = invoke request reviewer approval with
+    pr = the pull request's number,
+    reviewer = the reviewer's id.
+
+To pause for cool down for a pull request:
+  wait 5 minutes.
+
+=== constants ===
+
+The default review timeout is 30 minutes.
+The default canary percent is 5.
+The default rollout percent is 100.
+The high risk threshold is 0.7.
+The blocker severity threshold is "high".
+The maximum replan attempts is 3.
+The maximum loop steps is 12.
+The vip tier label is "vip".
+
+=== instances ===
+
+There is an sla policy called enterprise sla:
+  name = "Enterprise"
+  response minutes = 15
+  resolution hours = 4
+
+There is an sla policy called standard sla:
+  name = "Standard"
+  response minutes = 60
+  resolution hours = 24
+
+=== tools ===
+
+Get Pull Request
+================
+-- Fetch the latest snapshot of a pull request.
+~ getPullRequest(pr: String) : PullRequest
+
+Get Merge Status
+================
+-- Read the merge readiness of a pull request.
+~ getMergeStatus(pr: String) : String
+
+Get CI Status
+=============
+-- Get the latest CI run status for a pull request.
+~ getCIStatus(pr: String) : String
+
+Get Failing Jobs
+================
+-- Return the list of failing CI jobs for a pull request.
+~ getFailingJobs(pr: String) : List
+
+List Pull Request Comments
+==========================
+-- Retrieve all comments on a pull request.
+~ listPullRequestComments(pr: String) : List
+
+Resolve Comment
+===============
+-- Mark a review comment as resolved.
+~ resolveComment(commentId: String) : Boolean
+
+Request Reviewer Approval
+=========================
+-- Submit a pull request for review.
+~ requestReviewerApproval(pr: String, reviewer: String) : String
+
+Apply Smallest Repair
+=====================
+-- Apply the smallest safe repair for a failing job.
+~ applySmallestRepair(pr: String, job: String) : Boolean
+
+Sync Branch
+===========
+-- Sync a branch with its base branch to resolve merge conflicts.
+~ syncBranch(branch: String) : Boolean
+
+Push Branch
+===========
+-- Push a branch to the remote origin.
+~ pushBranch(branch: String) : Boolean
+
+Open Incident
+=============
+-- Open a new incident for a service.
+~ openIncident(service: String, severity: String) : String
+
+Update Incident
+===============
+-- Update the status of an incident.
+~ updateIncident(ticket: String, status: String) : Boolean
+
+Page Oncall
+===========
+-- Page the on-call engineer for a service.
+~ pageOncall(service: String, severity: String) : Boolean
+
+Mitigate Service
+================
+-- Apply a known mitigation for a service.
+~ mitigateService(service: String, action: String) : Boolean
+
+Snapshot Service Health
+=======================
+-- Capture the current health snapshot for a service.
+~ snapshotServiceHealth(service: String) : String
+
+Promote Deployment
+==================
+-- Promote a deployment to the next stage.
+~ promoteDeployment(deploymentId: String, target: String) : Boolean
+
+Rollback Deployment
+===================
+-- Roll back a deployment to the previous good revision.
+~ rollbackDeployment(deploymentId: String, reason: String) : Boolean
+
+Halt Release
+============
+-- Halt a release across all stages.
+~ haltRelease(releaseId: String, reason: String) : Boolean
+
+Get Deployment Health
+=====================
+-- Read the health summary of a deployment.
+~ getDeploymentHealth(deploymentId: String) : String
+
+Scan Vulnerabilities
+====================
+-- Run the vulnerability scanner against a repository.
+~ scanVulnerabilities(repo: String) : List
+
+Open Remediation Task
+=====================
+-- Open a remediation task and assign an owner.
+~ openRemediationTask(description: String, owner: String) : String
+
+Update Remediation Task
+=======================
+-- Update the status of a remediation task.
+~ updateRemediationTask(id: String, status: String) : Boolean
+
+List Outdated Dependencies
+==========================
+-- List dependencies with available upgrades.
+~ listOutdatedDependencies(repo: String) : List
+
+Upgrade Dependency
+==================
+-- Upgrade a single dependency to the supplied version.
+~ upgradeDependency(name: String, target: String) : Boolean
+
+Run Test Suite
+==============
+-- Run the repository's test suite for a target.
+~ runTestSuite(repo: String, target: String) : String
+
+Read Customer Ticket
+====================
+-- Fetch a customer support ticket by id.
+~ readCustomerTicket(ticketId: String) : CustomerTicket
+
+Draft Support Reply
+===================
+-- Draft a support reply for a ticket.
+~ draftSupportReply(ticketId: String, intent: String) : String
+
+Send Support Reply
+==================
+-- Send a drafted support reply to the customer.
+~ sendSupportReply(ticketId: String, body: String) : Boolean
+
+Escalate Customer Ticket
+========================
+-- Escalate a ticket to the account manager.
+~ escalateCustomerTicket(ticketId: String, reason: String) : Boolean
+
+Read Customer Profile
+=====================
+-- Fetch the customer profile for a ticket.
+~ readCustomerProfile(customerId: String) : CustomerProfile
+
+Evaluate Policy
+===============
+-- Evaluate a host policy decision for an action.
+~ evaluatePolicy(policy: String, action: String) : String
+
+Record Audit Note
+=================
+-- Record an audit note for traceability.
+~ recordAuditNote(actor: String, message: String) : Boolean
+
+Notify Channel
+==============
+-- Notify a chat channel about an event.
+~ notifyChannel(channel: String, message: String) : Boolean

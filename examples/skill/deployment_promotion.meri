@@ -1,0 +1,41 @@
+---
+name: deployment promotion
+description: Promote a deployment through canary and prod stages, run health and audit checks in parallel, and recover deterministically from any failure.
+goal: Promote when healthy, roll back when not, and capture every transition in the audit log.
+parameters: pull request
+vocabulary: comprehensive_workflows.merconfig
+---
+## Open audit and read entry state
+
+- open the audit log for the pull request.
+- bind health = invoke get deployment health with deploymentId = the pull request's number.
+
+## Block on a release captain signal
+
+- wait for signal "release.captain.green-light".
+
+## Run audit + canary promote in parallel
+
+simultaneously:
+  - record an audit note about the pull request because of "starting canary promote".
+  - bind canary = invoke promote deployment with deploymentId = the pull request's number, target = "canary".
+
+## Block on a 2-minute soak
+
+- wait 2 minutes.
+
+## Promote to prod or roll back
+
+if you decide that the canary is healthy,
+  bind prod = invoke promote deployment with deploymentId = the pull request's number, target = "prod".
+otherwise,
+  bind rollback = invoke rollback deployment with deploymentId = the pull request's number, reason = "canary unhealthy".
+
+recover from any:
+  invoke rollback deployment with deploymentId = the pull request's number, reason = "deployment promotion failed".
+  record an audit note about the pull request because of "deployment promotion recovered via rollback".
+
+## Audit close
+
+- emit deployment.promotion_done with pr = the pull request's number.
+- close the audit log for the pull request.

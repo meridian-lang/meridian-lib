@@ -1,0 +1,20 @@
+name: runtime — simple workflow smoke test
+description: ```
+Builds and runs a self-contained workflow in a subprocess to verify the
+end-to-end compile → build → run pipeline.
+```
+tags: runtime, slow
+
+source_inline: ```
+To run:
+  complete.
+```
+
+expect_compile: pass
+expect_no_unresolved:
+
+expect_run: true
+workflow: Run
+expect_event_kinds_prefix: workflow.started
+expect_final_event_kind: workflow.completed
+expect_run_succeeded: true

@@ -1,0 +1,37 @@
+---
+name: customer support router
+description: Route a customer support ticket through SLA-aware triage, draft a response under discretion, and escalate VIP cases deterministically.
+goal: Send a safe response within the SLA and escalate any VIP case to the account manager.
+parameters: pull request
+vocabulary: comprehensive_workflows.merconfig
+---
+## Read context
+
+- open the audit log for the pull request.
+- bind ticket = invoke read customer ticket with ticketId = the pull request's number.
+- bind profile = invoke read customer profile with customerId = the ticket's customer id.
+
+## VIP escalation path is deterministic
+
+- if the profile's tier is vip,
+    invoke escalate customer ticket with ticketId = the ticket's id, reason = "vip-tier auto-escalation".
+    record an audit note about the pull request because of "vip ticket escalated".
+    complete with reason "vip_escalated".
+
+## Plan a draft response under discretion
+
+- draft response for the pull request.
+
+## Send the drafted reply once approved
+
+- wait for approval from support lead.
+- bind sent = invoke send support reply with ticketId = the ticket's id, body = "approved draft".
+
+## Audit close
+
+- close the audit log for the pull request.
+
+## Sub-workflow
+
+To draft response for a pull request, with discretion:
+  Read the ticket and the customer's tier and propose only draft support reply and notify channel actions. Never escalate from inside this plan; escalation is reserved for the deterministic outer path.

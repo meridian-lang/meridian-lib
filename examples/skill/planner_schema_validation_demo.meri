@@ -1,0 +1,45 @@
+---
+name: planner schema validation demo
+description: Exercises planner argument-schema validation by attaching `recover` blocks for every PlanningFailureCode the planner is allowed to raise.
+goal: Prove the planner never executes ill-formed proposals and that each rejection lands in a typed audit note.
+parameters: pull request
+vocabulary: comprehensive_workflows.merconfig
+---
+## Snapshot
+
+- open the audit log for the pull request.
+- inspect the ci status of the pull request.
+
+## Plan with strict argument validation
+
+- plan careful repair for the pull request.
+
+  recover from "planning.missing_tool_argument":
+    record an audit note about the pull request because of "planner forgot a required argument".
+  recover from "planning.unexpected_tool_argument":
+    record an audit note about the pull request because of "planner sent an unexpected argument".
+  recover from "planning.invalid_tool_argument_type":
+    record an audit note about the pull request because of "planner sent the wrong type for an argument".
+  recover from "planning.tool_not_registered":
+    record an audit note about the pull request because of "planner asked for an unknown tool".
+  recover from "planning.too_many_actions":
+    record an audit note about the pull request because of "planner proposed too many actions in one step".
+
+## Run the bounded autonomy loop with the same scoped toolset
+
+- autonomously execute careful repair for the pull request.
+
+  recover from "planning.max_steps_exceeded":
+    record an audit note about the pull request because of "autonomy loop exhausted the step budget".
+
+## Audit close
+
+- close the audit log for the pull request.
+
+## Sub-workflows
+
+To plan careful repair for a pull request, with discretion:
+  Inspect the ci status and failing jobs. Propose only apply smallest repair and notify channel actions, with all required arguments and the correct types. Never propose unrelated tools.
+
+To autonomously execute careful repair for a pull request, with autonomy until the ci status is passed re-plan after 2 failures max 5:
+  Apply at most one bounded repair per step. Pass exactly the arguments declared by the tool's signature.
