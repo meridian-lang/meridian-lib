@@ -25,7 +25,7 @@ struct SkillExampleCorpusTests {
         for name in names {
             let url = root.appendingPathComponent("examples/skill/\(name).meridian")
             let source = try String(contentsOf: url, encoding: .utf8)
-            let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse(source, file: url.path)
+            let ast = try Self.parse(source: source, file: url.path, symbols: symbols)
             let workflows = try ASTToIR(symbols: symbols, sourceFile: url.path, trace: .silent()).lower(ast)
             #expect(!workflows.isEmpty, Comment(rawValue: "Expected workflows in \(name)"))
         }
@@ -42,9 +42,10 @@ struct SkillExampleCorpusTests {
             encoding: .utf8
         )
 
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse(
-            source,
-            file: "examples/skill/release_orchestrator.meridian"
+        let ast = try Self.parse(
+            source: source,
+            file: "examples/skill/release_orchestrator.meridian",
+            symbols: symbols
         )
         let workflows = try ASTToIR(
             symbols: symbols,
@@ -108,13 +109,41 @@ struct SkillExampleCorpusTests {
         )
     }
 
+    /// The `examples/skill/skill.merrules` rewrite engine — supplies the
+    /// `=== sections ===` aliases that map the corpus's organizational step
+    /// headings to the `procedure` role under the universal-section model.
+    static func exampleRewriteEngine() throws -> RewriteEngine {
+        let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+        let src = try String(
+            contentsOf: root.appendingPathComponent("examples/skill/skill.merrules"),
+            encoding: .utf8
+        )
+        let rb = try RulebookParser(trace: .silent()).parse(src, file: "skill.merrules")
+        return RewriteEngine(rulebook: rb, trace: .silent())
+    }
+
+    /// The same rulebook as a `RulebookInput` for the full-`Compiler` path.
+    static func exampleRulebookInput() throws -> RulebookInput {
+        let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+        let src = try String(
+            contentsOf: root.appendingPathComponent("examples/skill/skill.merrules"),
+            encoding: .utf8
+        )
+        return RulebookInput(name: "skill", file: "skill.merrules", source: src)
+    }
+
+    private static func parse(source: String, file: String, symbols: SymbolTable) throws -> MeridianFile {
+        try MeridianParser(symbols: symbols, trace: .silent(),
+                           rewriteEngine: try exampleRewriteEngine()).parse(source, file: file)
+    }
+
     /// Lower a single sample to `[IRWorkflow]`.
     private static func lower(name: String, ext: String, symbols: SymbolTable) throws -> [IRWorkflow] {
         let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
         let url = root.appendingPathComponent("examples/skill/\(name).\(ext)")
         let source = try String(contentsOf: url, encoding: .utf8)
         let file = "examples/skill/\(name).\(ext)"
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse(source, file: file)
+        let ast = try parse(source: source, file: file, symbols: symbols)
         return try ASTToIR(symbols: symbols, sourceFile: file, trace: .silent()).lower(ast)
     }
 
@@ -335,7 +364,7 @@ struct SkillExampleCorpusTests {
         let symbols = try Self.comprehensiveSymbols()
         let url = root.appendingPathComponent("examples/skill/incident_pr_response.meri")
         let source = try String(contentsOf: url, encoding: .utf8)
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse(source, file: url.path)
+        let ast = try Self.parse(source: source, file: url.path, symbols: symbols)
         let goal = ast.metadata?["goal"]
         #expect(goal != nil, Comment(rawValue: "Expected frontmatter goal to be parsed"))
         #expect(goal?.contains("paged humans") == true,
@@ -348,7 +377,7 @@ struct SkillExampleCorpusTests {
         let symbols = try Self.comprehensiveSymbols()
         let url = root.appendingPathComponent("examples/skill/security_review_triage.meridian")
         let source = try String(contentsOf: url, encoding: .utf8)
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse(source, file: url.path)
+        let ast = try Self.parse(source: source, file: url.path, symbols: symbols)
 
         let titles = ast.outline.map(\.text)
         #expect(titles.contains("Open the audit trail"))
@@ -373,8 +402,10 @@ struct SkillExampleCorpusTests {
         let swift = try Compiler(options: opts).compile(
             meridianSource: merSource,
             meridianFile: "large_release_train.meridian",
-            merconfigSource: cfgSource,
-            merconfigFile: "comprehensive_workflows.merconfig"
+            vocabularies: [.init(name: "comprehensive_workflows",
+                                 file: "comprehensive_workflows.merconfig",
+                                 source: cfgSource)],
+            rulebooks: [try Self.exampleRulebookInput()]
         )
         #expect(!swift.isEmpty)
         #expect(swift.contains("public struct"),

@@ -6,6 +6,10 @@ public enum WaitCondition: Sendable {
     case approval(of: Value, by: RoleRef)
     /// `matching` is `nil` when any event with the given id should wake the workflow.
     case event(String, matching: (@Sendable (Event) -> Bool)?)
+    /// Choice-gate: block until the host calls `deliverChoice(_:)` with the
+    /// user's selection. `options` are the offered choices; `prompt` is the
+    /// question. Reuses the signal continuation plumbing (FIFO, at-most-once).
+    case choice(prompt: String, options: [String])
 }
 
 // MARK: - RoleRef

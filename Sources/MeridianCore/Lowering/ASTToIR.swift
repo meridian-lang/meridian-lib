@@ -15,33 +15,56 @@ public struct ASTToIR {
     public let trace: ParserTrace
     public let lexicon: EnglishLexicon
     public let fallbackPolicy: FallbackPolicy
+    /// Rulebook supplying section-role mappings and Inform-style conventions.
+    /// Empty for plain `.meridian` files.
+    public let rulebook: Rulebook
+    /// Allow-list of tool method names available to prose/autonomy plan steps.
+    /// `nil` means "every registered tool" (the historical default). When a
+    /// skill declares frontmatter `tools:`, the Compiler resolves it to method
+    /// names and passes the narrowed set here so the planner cannot reach
+    /// outside the skill's declared capability surface.
+    public let scopedTools: [String]?
     private let maxInlineDepth = 8
 
     public init(symbols: SymbolTable, sourceFile: String = "", trace: ParserTrace = .shared,
                 lexicon: EnglishLexicon = .default,
-                fallbackPolicy: FallbackPolicy = .strict) {
+                fallbackPolicy: FallbackPolicy = .strict,
+                rulebook: Rulebook = .empty,
+                scopedTools: [String]? = nil) {
         self.symbols = symbols
         self.sourceFile = sourceFile
         self.trace = trace
         self.lexicon = lexicon
         self.fallbackPolicy = fallbackPolicy
+        self.rulebook = rulebook
+        self.scopedTools = scopedTools
+    }
+
+    /// Effective tool allow-list for a prose/autonomy plan step.
+    private var effectiveScopedTools: [String] {
+        scopedTools ?? Array(symbols.tools.keys).sorted()
     }
 
     // MARK: - Entry points
 
-    public func lower(_ file: MeridianFile) throws -> [IRWorkflow] {
+    public func lower(_ file: MeridianFile, preRegistered: Bool = false) throws -> [IRWorkflow] {
         // Register every workflow as a phrase stub before lowering, so that
         // mid-body recursive calls like "process the order placed by the
         // customer" resolve and lower to a workflow invocation instead of
-        // emitting an `_unresolved` placeholder.
-        for wf in file.workflows {
-            let structName = IRWorkflow.structName(from: wf.pattern.displayText, lexicon: lexicon)
-            symbols.registerWorkflowPhrase(
-                pattern: wf.pattern,
-                structName: structName,
-                sourceLine: wf.sourceLine,
-                sourceFile: wf.sourceFile.isEmpty ? sourceFile : wf.sourceFile
-            )
+        // emitting an `_unresolved` placeholder. In a skillpack compile the
+        // caller pre-registers every file's workflows into the shared symbol
+        // table first (for cross-file resolution), so this self-registration is
+        // skipped to avoid duplicate stubs.
+        if !preRegistered {
+            for wf in file.workflows {
+                let structName = IRWorkflow.structName(from: wf.pattern.displayText, lexicon: lexicon)
+                symbols.registerWorkflowPhrase(
+                    pattern: wf.pattern,
+                    structName: structName,
+                    sourceLine: wf.sourceLine,
+                    sourceFile: wf.sourceFile.isEmpty ? sourceFile : wf.sourceFile
+                )
+            }
         }
         var workflows = try file.workflows.map { try lowerWorkflow($0) }
 
@@ -98,7 +121,35 @@ public struct ASTToIR {
             workflows += triggers
         }
 
+        // J: Inject the rulebook's Inform-style conventions (before/check →
+        // prepend guard, after/report/carry-out → append step, instead-of →
+        // replace) into every matching workflow. The body is parsed + lowered
+        // through the same strict pipeline, so an unresolved convention body is
+        // a hard error just like inline source.
+        if !rulebook.conventions.isEmpty {
+            let conventionInjector = ConventionInjector(
+                lexicon: lexicon, trace: trace,
+                lowerBody: { [self] text, line in try lowerConventionBody(text, sourceLine: line) }
+            )
+            workflows = try conventionInjector.inject(
+                conventions: rulebook.conventions, into: workflows
+            )
+        }
+
         return workflows
+    }
+
+    /// Parse a convention body statement and lower it to IR through the strict
+    /// pipeline. Used by `ConventionInjector` to turn `before/after/…` rule
+    /// bodies into prepended/appended primitives.
+    private func lowerConventionBody(_ text: String, sourceLine: Int) throws -> [IRPrimitive] {
+        let sp = StatementParser(symbols: symbols, trace: trace, lexicon: lexicon)
+        let bodyText = text.hasSuffix(".") ? text : text + "."
+        let line = SourceLine(indent: 0, text: bodyText, raw: text, number: sourceLine)
+        let block = try sp.parseBlock([line], file: sourceFile)
+        return try block.statements.flatMap {
+            try lowerStatement($0, mode: .strict, depth: 0)
+        }
     }
 
     private func describeRule(_ r: ParsedRule) -> String {
@@ -252,6 +303,21 @@ public struct ASTToIR {
 
         case .wait(let s):
             let cond = lowerWaitCondition(s.condition)
+            // Choice-gate lowers to a fan-out `ask.choice` emit (so the host
+            // sees the prompt + options) followed by the blocking choice wait.
+            if case .choice(let prompt, let options) = cond {
+                let sr = sourceRange(s.sourceLine)
+                let emit = EmitIR(
+                    eventID: "ask.choice",
+                    payload: [
+                        EmitField("prompt", .literal(.string(prompt))),
+                        EmitField("options", .literal(.string(options.joined(separator: ", "))))
+                    ],
+                    strict: true,
+                    sourceRange: sr
+                )
+                return [.emit(emit), .wait(WaitIR(condition: cond, sourceRange: sr))]
+            }
             return [.wait(WaitIR(condition: cond, sourceRange: sourceRange(s.sourceLine)))]
 
         case .assertStmt(let s):
@@ -301,6 +367,7 @@ public struct ASTToIR {
             let branches = try s.branches.map { try lowerBlock($0, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig) }
             return [.simultaneously(SimultaneouslyIR(
                 branches: branches,
+                detached: s.detached,
                 sourceRange: sourceRange(s.sourceLine)
             ))]
 
@@ -314,17 +381,36 @@ public struct ASTToIR {
             return try lowerStatement(s.statement, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig)
 
         case .proseStep(let s):
-            guard let proseDispatchMode else {
+            // An explicit local marker (`use judgment to …:` / `with discretion:`
+            // / `with autonomy …:`) sets the dispatch mode directly and is valid
+            // in any workflow. Without an explicit marker, the prose step inherits
+            // the enclosing workflow's mode — and is a hard error if the workflow
+            // is not itself discretion/autonomy (no unmarked prose ever promotes).
+            let effectiveMode: ProseDispatchMode?
+            let effectiveAutonomy: AutonomyConfigIR?
+            switch s.dispatch {
+            case .discretion:
+                effectiveMode = .planThenExecute
+                effectiveAutonomy = autonomyConfig
+            case .autonomy:
+                effectiveMode = .autonomousLoop
+                effectiveAutonomy = s.autonomy.map(lowerAutonomyConfig)
+                    ?? autonomyConfig ?? AutonomyConfigIR()
+            case .none:
+                effectiveMode = proseDispatchMode
+                effectiveAutonomy = autonomyConfig
+            }
+            guard let mode = effectiveMode else {
                 throw CompilerError.semanticError(
-                    message: "free-form prose is only allowed in workflows marked `with discretion` or `with autonomy`",
+                    message: "free-form prose is only allowed in workflows marked `with discretion` or `with autonomy`, or inside an explicit `use judgment to …:` marker",
                     range: sourceRange(s.sourceLine)
                 )
             }
             return [.proseStep(ProseStepIR(
                 text: s.text,
-                scopedTools: Array(symbols.tools.keys).sorted(),
-                dispatchMode: proseDispatchMode,
-                autonomy: autonomyConfig,
+                scopedTools: effectiveScopedTools,
+                dispatchMode: mode,
+                autonomy: effectiveAutonomy,
                 sourceRange: sourceRange(s.sourceLine)
             ))]
 
@@ -432,6 +518,20 @@ public struct ASTToIR {
             return []
         }
 
+        // Command surface: a verbatim shell command (from a fenced ```bash
+        // block or an inline backticked command) lowers to a deterministic
+        // `shell.run` invoke. This sits before the prose gate so literal
+        // commands stay deterministic even inside a discretion/autonomy
+        // workflow — exactly like an explicit `invoke …`.
+        if let command = decodeShellCommand(s.words) {
+            trace.log(.phraseInline, "  shell command → shell.run")
+            return [.invoke(InvokeIR(
+                toolID: "shell.run",
+                arguments: [InvokeArg("command", .literal(.string(command)))],
+                sourceRange: sourceRange(s.sourceLine)
+            ))]
+        }
+
         if s.words.lowercased().hasPrefix("invoke ") {
             let sp = StatementParser(symbols: symbols, trace: trace, lexicon: lexicon)
             let expr = sp.buildInvokeExpr(s.words)
@@ -456,7 +556,7 @@ public struct ASTToIR {
         if let proseDispatchMode {
             return [.proseStep(ProseStepIR(
                 text: s.words,
-                scopedTools: Array(symbols.tools.keys).sorted(),
+                scopedTools: effectiveScopedTools,
                 dispatchMode: proseDispatchMode,
                 autonomy: autonomyConfig,
                 sourceRange: sourceRange(s.sourceLine)
@@ -831,6 +931,8 @@ public struct ASTToIR {
             return .approval(of: lowerExpr(subj), by: role)
         case .event(let id, let matching):
             return .event(id, matching: matching.map { lowerExpr($0) })
+        case .choice(let prompt, let options):
+            return .choice(prompt: prompt, options: options)
         }
     }
 

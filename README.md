@@ -4,7 +4,7 @@ A **controlled natural language compiler** for agent workflows and business rule
 Meridian reads English-shaped specifications and compiles them to readable,
 type-checked, async/await Swift plus a small deterministic runtime.
 
-**Current status: All phases (0–6) complete. 319+ tests passing. Generated Swift compiles, links, and runs.**
+**Current status: All phases (0–6, 6.5, 8, G) complete. 530+ tests passing. Generated Swift compiles, links, and runs.**
 
 ---
 
@@ -62,6 +62,13 @@ swift run meridian run examples/order_processing.meridian \
 
 # Run all test specs
 swift run meridian test Tests/MeridianCoreTests/MeridianTestSpecs
+
+# Port a gbrain SKILL.md to a strict-compiling .meri (deterministic marking)
+swift run meridian migrate-skill path/to/SKILL.md --out skill.meri
+
+# Audit how a port deviates from its original (single pair, or --batch a corpus)
+swift run meridian skill-deviation original-skills/ . \
+    --batch --out migration-deviations/ --index
 ```
 
 ---
@@ -80,6 +87,8 @@ swift run meridian test Tests/MeridianCoreTests/MeridianTestSpecs
 | [docs/08_TRACING.md](docs/08_TRACING.md) | `ParserTrace` categories, capturing API, `--trace` |
 | [docs/09_MERIDIAN_TESTS.md](docs/09_MERIDIAN_TESTS.md) | `.meridian.test` spec format and `meridian test` runner |
 | [docs/10_BUILTIN_TOOLS.md](docs/10_BUILTIN_TOOLS.md) | Blueprint built-in tool catalog, arguments, registration |
+| [docs/11_RULEBOOKS.md](docs/11_RULEBOOKS.md) | `.merrules` desugars, section roles, conventions |
+| [docs/13_SKILL_MD_PORTING.md](docs/13_SKILL_MD_PORTING.md) | Porting gbrain `SKILL.md` → `.meri` (playbook, tiers, migrator) |
 | [Tests/README.md](Tests/README.md) | Test suites, forcing functions, adding new tests |
 | [docs/status.md](docs/status.md) | Phase progress, what's done, decision references |
 
@@ -93,7 +102,7 @@ Original spec docs (read-only reference): [`meridian-handoff/docs/`](meridian-ha
 Sources/
 ├── MeridianRuntime/          # Runtime library (generated code imports this)
 ├── MeridianCore/             # Compiler: parser, AST, IR, codegen, formatter, docs, testing
-├── MeridianCLI/              # meridian executable (compile, run, check, test, format, docs, trace…)
+├── MeridianCLI/              # meridian executable (compile, run, check, test, format, docs, trace, migrate-skill, skill-deviation…)
 ├── MeridianTools/            # Blueprint built-in tool implementations
 ├── MeridianTestKit/          # Test helpers: WorkflowTestHarness, MockRuntime, etc.
 └── SampleDemoFlows/          # Hand-written reference workflows (Phase 1)
@@ -109,6 +118,17 @@ examples/
 ├── ecommerce.merconfig       # Vocabulary, constants, instances, tools
 ├── order_processing.meridian # Workflows
 └── golden/                   # Expected compiler output (Phase 4 golden diff)
+
+sample-gbrain/                # Ported gbrain corpus (Phase G) — see its README
+├── README.md                 # Corpus guide: layout, artifacts, building, tests
+├── brain.merconfig           # Shared brain-domain vocabulary
+├── brain.merrules            # Desugars + section aliases + conventions
+├── RESOLVER.meri             # Trigger → skill dispatcher
+├── skills/*.meri             # 52 ported gbrain skills
+├── original-skills/          # Verbatim upstream gbrain tree (reference)
+├── migration-deviations/     # Per-skill diff vs. original SKILL.md (+ index)
+├── compile-outputs/          # Generated Swift for every skill (namespaced)
+└── Tests/                    # SampleGbrainTests SPM target (lives with the corpus)
 
 docs/                         # This documentation set
 AGENTS.md                     # AI contributor handbook (self-updating)
@@ -138,6 +158,39 @@ IMPLEMENTATION_LOG.md         # Append-only decision log
 - **`ParserTrace`** — opt-in category-scoped diagnostic tracing for debugging the compiler.
 - **`MeridianTestKit`** — `WorkflowTestHarness`, `MockRuntime`, `RecordingTool`, `GoldenFile` for integration tests.
 - **`.meridian.test` specs** — declarative compile/run test files; `meridian test` runs them.
+- **Rulebooks (`.merrules`)** — extend the deterministic English surface with
+  external, declarative desugar idioms, section-role aliases, and Inform-style
+  conventions — no compiler edit. See [docs/11_RULEBOOKS.md](docs/11_RULEBOOKS.md).
+- **gbrain SKILL.md surface** — any file with `##`/`###` headings maps Markdown
+  sections to deterministic roles (Contract→assert, Phases→procedure,
+  When-To-Use→applicability) — no `skill: true` flag. A trailing
+  `(( inert ))` / `(( inert, role: R ))` / `(( role: R ))` marker is
+  authoritative for documentation. Fenced `bash` blocks → `shell.run`,
+  `use judgment to …:` markers → prose steps, `triggers:` → dispatch,
+  choice-gates, and background spawn. Every section is recorded into
+  `meridian_skill.sections`; fuzzy conditions, unmarked narrative headings, and
+  pre-heading content are hard errors (no silent drops).
+- **`meridian migrate-skill`** — convert a `SKILL.md` to a strict-compiling
+  `.meri`. Runs a deterministic marking pass (blockquote pre-heading preamble;
+  append `(( inert, role: invariants/prohibitions ))` to prose
+  Contract/Anti-Patterns, `(( role: procedure ))` to pure-shell unknown
+  headings, `(( inert ))` to other unknowns; recognized roles left unmarked),
+  then strict-compiles; optional bounded LLM-assisted repair, always
+  compiler-gated. See [docs/13_SKILL_MD_PORTING.md](docs/13_SKILL_MD_PORTING.md).
+- **`meridian skill-deviation`** — audit how a ported `.meri` deviates from its
+  original `SKILL.md`: frontmatter delta, tier, similarity, structural
+  categories, and a unified diff. The diff engine is a faithful Swift port of
+  Python's `difflib`, so reports are byte-for-byte reproducible. `--batch
+  --index` regenerates the whole `sample-gbrain/migration-deviations/` audit.
+- **gbrain corpus** — `sample-gbrain/` ships a shared brain vocabulary, a
+  rulebook, and 52 ported skills + a resolver, all compiling strict. It also
+  carries the verbatim upstream skills, a per-skill migration-deviation audit,
+  and the generated Swift for every skill. All 53 emitted files type-check
+  against `MeridianRuntime`. See [sample-gbrain/README.md](sample-gbrain/README.md).
+- **Namespaced codegen** — `meridian compile` defaults to wrapping each file's
+  output in `public enum <SkillName> { … }` (`--namespace auto`) so many
+  generated files share one Swift module without colliding; `--namespace none`
+  restores flat output. `compile` also takes repeatable `--rulebook`.
 
 ---
 
@@ -152,6 +205,9 @@ IMPLEMENTATION_LOG.md         # Append-only decision log
 | 4 | Typed domain codegen + golden diffs | ✅ Done |
 | 5 | Hard IR primitives + checkpointing | ✅ Done |
 | 6 | Built-in tools + full CLI + TestKit + DocC | ✅ Done |
+| 6.5 | EnglishLexicon + SKILL-shaped extensions | ✅ Done |
+| 8 | Executable rules | ✅ Done |
+| G | Expressive SKILL.md surface + gbrain corpus | ✅ Done |
 
 Full detail: [`docs/status.md`](docs/status.md)
 Implementation decisions: [`IMPLEMENTATION_LOG.md`](IMPLEMENTATION_LOG.md)

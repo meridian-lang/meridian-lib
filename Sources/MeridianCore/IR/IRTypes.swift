@@ -205,10 +205,15 @@ public struct IterateIR: Sendable {
 
 public struct SimultaneouslyIR: Sendable {
     public let branches: [IRBlock]
+    /// When true, the branches are spawned fire-and-forget (a detached `Task`)
+    /// and the workflow does NOT wait for them (no `group.waitForAll()`). Set by
+    /// the `in the background, <stmt>.` surface. Defaults to false (join semantics).
+    public let detached: Bool
     public let sourceRange: SourceRange
 
-    public init(branches: [IRBlock], sourceRange: SourceRange = .unknown) {
+    public init(branches: [IRBlock], detached: Bool = false, sourceRange: SourceRange = .unknown) {
         self.branches = branches
+        self.detached = detached
         self.sourceRange = sourceRange
     }
 }
@@ -280,6 +285,10 @@ public enum WaitConditionIR: Sendable {
     case signal(String)
     case approval(of: IRExpression, by: String)
     case event(String, matching: IRExpression?)
+    /// Choice-gate: present `options` to the user and block until the host
+    /// delivers a selection (reuses the signal continuation plumbing). The
+    /// chosen option is bound to `choice` in state by codegen.
+    case choice(prompt: String, options: [String])
 }
 
 // MARK: - 8. commit

@@ -36,6 +36,8 @@ public final class ParserTrace: @unchecked Sendable {
         case lowering           = "lowering"
         case symbols            = "symbols"
         case merconfig          = "merconfig"
+        case rulebook           = "rulebook"
+        case skill              = "skill"
 
         /// Group prefixes — enabling `phrase` enables every `phrase.*` category.
         public var groups: [String] {

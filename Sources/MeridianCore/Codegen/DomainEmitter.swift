@@ -229,7 +229,10 @@ public extension SwiftEmitter {
         // already give us — but we **must** keep it when descendants exist,
         // because `<DescendantKind>Kind: <KindName>Kind` needs a protocol to
         // chain through (structs can't be the inheritance anchor).
-        let needsProtocol = !k.ownProperties.isEmpty
+        // `id` is synthesised on the struct unconditionally, so an explicit
+        // `id` own property is not a reason to emit a `<KindName>Kind` protocol.
+        let hasOwnNonIdProps = k.ownProperties.contains { snakeToCamel($0.name).lowercased() != "id" }
+        let needsProtocol = hasOwnNonIdProps
             || kindsWithDescendants.contains(k.name.lowercased())
         return emitProtocolAndStruct(
             k,
@@ -275,13 +278,21 @@ public extension SwiftEmitter {
         // struct conforms directly to the resolved parent — `Meridian<Base>`
         // for semantic-base parents, `<Parent>Kind` for chained kinds.
         let structConforms = emitProtocolDecl ? protocolName : parentProto
-        let allProps       = k.inheritedProperties + k.ownProperties
+        // `id` is synthesised unconditionally (it's the `MeridianKind`
+        // identity requirement, emitted as a stored `public var id` below). A
+        // merconfig kind may *also* declare its own `id` property
+        // (`A job has an id and a status.`); drop those so we don't emit a
+        // duplicate stored property / init parameter / protocol requirement.
+        func isIdProperty(_ p: DomainDecl.Property) -> Bool {
+            snakeToCamel(p.name).lowercased() == "id"
+        }
+        let allProps       = (k.inheritedProperties + k.ownProperties).filter { !isIdProperty($0) }
 
         // Protocol requirements list **own** properties only — inherited
         // requirements come transitively through `parentProto`. This keeps the
         // generated protocol declarations a one-line-per-own-property summary
         // of the kind, which matches how the merconfig is written.
-        let protoLines = k.ownProperties.map { p in
+        let protoLines = k.ownProperties.filter { !isIdProperty($0) }.map { p in
             "    var \(snakeToCamel(p.name)): \(swiftType(p.type)) { get }"
         }
 

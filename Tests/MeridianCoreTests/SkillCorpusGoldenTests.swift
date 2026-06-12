@@ -26,7 +26,7 @@ struct SkillCorpusGoldenTests {
 
     private func packageRoot() -> URL {
         var url = URL(fileURLWithPath: #file)
-        while url.lastPathComponent != "meridian" {
+        while !FileManager.default.fileExists(atPath: url.appendingPathComponent("Package.swift").path) {
             let parent = url.deletingLastPathComponent()
             if parent.path == url.path { break }
             url = parent
@@ -115,6 +115,11 @@ struct SkillCorpusGoldenTests {
         }
         let vocab = try loadVocab(path, relativeTo: sampleURL)
 
+        // Autodiscover every sibling `.merrules` beside the sample so the
+        // universal-section model can resolve organizational step headings via
+        // `=== sections ===` aliases (the CLI does the same autodiscovery).
+        let rulebooks = try siblingRulebooks(of: sampleURL)
+
         let opts = Compiler.Options(
             emitterOptions: SwiftEmitter.Options(
                 includeTimestamp: false,
@@ -123,11 +128,27 @@ struct SkillCorpusGoldenTests {
             )
         )
         return try Compiler(options: opts).compile(
-            meridianSource:   merSource,
-            meridianFile:     sampleBasename,
-            merconfigSource:  vocab.source,
-            merconfigFile:    vocab.file
+            meridianSource: merSource,
+            meridianFile:   sampleBasename,
+            vocabularies:   [.init(name: vocab.name, file: vocab.file, source: vocab.source)],
+            rulebooks:      rulebooks
         )
+    }
+
+    /// Load every `.merrules` in the sample's directory (sorted for determinism).
+    private func siblingRulebooks(of sample: URL) throws -> [RulebookInput] {
+        let dir = sample.deletingLastPathComponent()
+        let files = (try? FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)) ?? []
+        return files
+            .filter { $0.pathExtension == "merrules" }
+            .sorted { $0.lastPathComponent < $1.lastPathComponent }
+            .map { url in
+                RulebookInput(
+                    name: url.deletingPathExtension().lastPathComponent,
+                    file: url.lastPathComponent,
+                    source: (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+                )
+            }
     }
 
     private func goldenURL(for sampleBasename: String) -> URL {

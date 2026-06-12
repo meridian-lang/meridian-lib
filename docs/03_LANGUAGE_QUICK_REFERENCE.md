@@ -667,3 +667,187 @@ your problem and adapt:
 
 Structural assertions per sample live in
 [`Tests/MeridianCoreTests/SkillExampleCorpusTests.swift`](../Tests/MeridianCoreTests/SkillExampleCorpusTests.swift).
+
+---
+
+## gbrain SKILL surface — section semantics, command surface, dispatch
+
+This surface lets a gbrain-style `SKILL.md` be renamed to `.meri` and compiled
+with minimal edits. The section model activates **structurally**: any file whose
+implicit-workflow body contains a `##`/`###` heading is a *sectioned document*
+and gets section-role lowering. A file with no headings keeps the flat-procedure
+behaviour byte-for-byte. There is **no `skill: true` flag** — it was removed.
+Section roles are driven by a rulebook (see [11_RULEBOOKS.md](11_RULEBOOKS.md));
+normal heading-less `.meridian` files are unaffected. The porting playbook is
+[13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md).
+
+### Section markers (`(( … ))`)
+
+A heading may carry a single trailing `(( … )))` marker (comma-separated terms)
+that is **authoritative** — when present, the heading text is never used to
+derive a role:
+
+| Marker | Meaning |
+|---|---|
+| `(( inert ))` | non-executable documentation; manifest records `role: "inert"` (no role derived from the heading) |
+| `(( inert, role: <R> ))` | non-executable, with the author-specified role label `<R>` recorded (e.g. `(( inert, role: invariants ))`) |
+| `(( role: <R> ))` | forces role `<R>`, overriding heading derivation; executable iff `<R>` is an executable role |
+
+A non-executable section runs nothing — the marker overrides even shell-block
+routing — but its verbatim text is **always** preserved in the manifest under
+`meridian_skill.sections` (see [05_CODEGEN.md](05_CODEGEN.md)).
+
+### gbrain frontmatter keys
+
+```
+---
+name: capture
+description: Save any thought or content into the brain via one CLI command.
+vocabulary: brain.merconfig
+rulebook: brain.merrules
+tools:
+  - capture
+  - search
+triggers:
+  - "capture this"
+  - "save this thought"
+  - every inbound message
+writes_pages:
+  - "inbox/*"
+---
+```
+
+- YAML **sequences** (`- item`) and **block scalars** (`description: |`) are
+  parsed in addition to scalar `key: value` lines.
+- `tools:` is the per-skill scoped tool allow-list (replaces the hardcoded
+  all-tools default in `ProseStepIR.scopedTools`).
+- `triggers:` are classified into typed kinds and synthesised into trigger
+  workflows (below). All other keys are projected through the typed
+  `SkillFrontmatter` and emitted under `meridian_skill` in the manifest.
+- In sectioned documents, narrative sentences that begin with "When …" /
+  "A …" / "An …" are **prose**, not Meridian `When X, do Y` rules. Skill triggers
+  come from frontmatter `triggers:`; cross-cutting behaviour comes from rulebook
+  conventions.
+
+### Section roles (rulebook-driven)
+
+An **unmarked** `##` / `###` heading resolves to a closed `SkillSectionRole` via
+the rulebook's `=== sections ===` aliases, then the built-in aliases. Role
+derivation from the heading text happens **only for unmarked executable
+sections** — it is never applied to inert sections (for documentation we do not
+guess; the author writes `role:` if they want a label). The role decides how the
+section body lowers:
+
+| Role (default headings) | Lowers to |
+|---|---|
+| `invariants` (Contract, Guarantees) | `assert` (checkable items only) |
+| `procedure` (Phases, Workflow, Protocol, Steps, `Phase N: …`) | executable statements |
+| `applicability` (When To Use, When to invoke/run) | preconditions / dispatch predicates |
+| `negative-applicability` (When NOT To Use, Do NOT Use) | soft-skip guards / negative dispatch predicates |
+| `prohibitions` (Anti-Patterns) | `must not` where checkable |
+| `template` (Output Format, Output Structure) | result template (non-executable) |
+| `inert` (explicit `(( inert ))` marker) | manifest/outline metadata, runs nothing |
+
+**No silent drops — three hard errors.** The strict builder never discards
+content:
+
+1. **Content before the first heading** in a sectioned document is a
+   `semanticError`. Move it under a heading, or make it a comment (`#`/`>`).
+   Markdown blockquote (`>`) lines are treated as comments, so SKILL.md
+   `> **Convention:** …` asides may sit above the first heading.
+2. **An unrecognized heading with content** (no marker, no alias) is a
+   `semanticError`: rename it to a recognized role, add a `=== sections ===`
+   alias, force a role with `(( role: <R> ))`, or mark it `(( inert ))`.
+3. **A non-checkable `Contract`/`Anti-Patterns` item** (prose, not a structural
+   comparison) is a `semanticError`. Rephrase it as a comparison, or mark the
+   section `(( inert, role: invariants ))` / `(( inert, role: prohibitions ))`
+   to keep it as labelled documentation.
+
+**Fuzzy applicability = hard error.** An applicability condition that is neither
+a literal dispatch phrase nor structurally checkable (e.g. "the request is
+ambiguous") is a compile-time `semanticError`. Rephrase to a checkable
+predicate, move it to `triggers:`, or wrap it in `use judgment to …:`.
+
+### Procedure idioms (rulebook desugars)
+
+Inside a `procedure`-role section, the shipped `brain.merrules` adds:
+
+```
+If the note is "urgent" -> capture the note.      # arrow conditional → only-when branch
+Report: "done".                                    # → emit skill.report
+for each page:                                     # bare for-each header (singular bound)
+  publish the page at the slug.
+- [ ] the citations are valid                      # checklist → make sure … assert
+```
+
+### Command surface — shell commands
+
+Fenced ` ```bash `/` ```sh `/` ```shell ` blocks and inline backticked commands
+in a `procedure` section lower to `invoke shell.run with command = "…"` against
+the built-in `shell.run` subprocess tool. A multi-line block lowers to one
+invoke per command line.
+
+````
+## Phases
+```bash
+gbrain search "acme corp"
+gbrain publish
+```
+`gbrain doctor`
+````
+
+Natural-language imperative phrases (no literal `gbrain` prefix, e.g. "search
+the brain for the attendee") still resolve **strictly** against declared tool
+phrases; an unresolved NL phrase is a hard `semanticError`.
+
+### Explicit judgment markers
+
+```
+use judgment to decide if the entity is notable:
+  Weigh prominence, recency, and reliability of sources.
+```
+
+`use judgment to <goal>:` (and `with discretion` / `with autonomy` on the
+workflow header) lower to `ProseStepIR`. This is the ONLY path prose reaches the
+planner; unmarked freeform prose is a hard error.
+
+### Choice-gate
+
+```
+ask the user to choose between "proceed", "cancel".
+if the choice is "proceed",
+  publish the page at the slug.
+```
+
+Lowers to `emit ask.choice` + `wait` (`WaitConditionIR.choice`) + a `branch` on
+the selection (read at runtime via `runtime.consumeChoiceSelection()`).
+
+### Background spawn
+
+```
+in the background, publish the page at the slug.
+```
+
+Lowers to `SimultaneouslyIR(detached: true)`; codegen emits a detached `Task {}`
+with no `waitForAll` join.
+
+### Triggers and the resolver
+
+Frontmatter `triggers:` are classified into four typed kinds and synthesised
+into one trigger workflow each, emitting a `trigger.<name>.fired` fan-out event:
+
+| `TriggerKind` | Example spec |
+|---|---|
+| `schedule` | `nightly`, `0 9 * * *` |
+| `ambient` | `every inbound message` |
+| `event` | `meeting transcript received` |
+| `keyword` | `summarize my day` |
+
+`sample-gbrain/RESOLVER.meri` is the trigger → skill dispatcher.
+
+### Skillpack compilation
+
+`Compiler.compileSkillpack([SkillpackInput], vocabularies:rulebooks:)` compiles a
+set of `.meri` files against shared vocabularies + rulebooks, pre-registering
+every file's workflows as phrase stubs first so cross-skill invocations and the
+resolver resolve across files. Single-file `compile(…)` remains the default.

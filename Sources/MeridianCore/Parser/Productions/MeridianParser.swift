@@ -11,11 +11,21 @@ public struct MeridianParser {
     public let symbols: SymbolTable
     public let trace: ParserTrace
     public let lexicon: EnglishLexicon
+    /// Optional desugar engine threaded into every StatementParser this parser
+    /// constructs. Nil for plain `.meridian` files (no rulebook loaded).
+    public let rewriteEngine: RewriteEngine?
 
-    public init(symbols: SymbolTable, trace: ParserTrace = .shared, lexicon: EnglishLexicon = .default) {
+    public init(symbols: SymbolTable, trace: ParserTrace = .shared,
+                lexicon: EnglishLexicon = .default,
+                rewriteEngine: RewriteEngine? = nil) {
         self.symbols = symbols
         self.trace = trace
         self.lexicon = lexicon
+        self.rewriteEngine = rewriteEngine
+    }
+
+    private func makeStatementParser() -> StatementParser {
+        StatementParser(symbols: symbols, trace: trace, lexicon: lexicon, rewriteEngine: rewriteEngine)
     }
 
     public func parse(_ source: String, file: String = "") throws -> MeridianFile {
@@ -24,7 +34,10 @@ public struct MeridianParser {
         let lines = IndentTokenizer().tokenize(source, file: file)
         let outline = lines.compactMap { line -> HeadingEntry? in
             guard let level = line.headingLevel else { return nil }
-            return HeadingEntry(level: level, text: line.text, line: line.number)
+            // Strip any trailing `(( … ))` marker so the outline carries the
+            // clean heading text; the resolved role surfaces as `kind`.
+            let clean = SkillSectionRole.parseMarker(from: line.text).cleanHeading
+            return HeadingEntry(level: level, text: clean, line: line.number)
         } + lines.compactMap { line -> HeadingEntry? in
             guard line.headingLevel == nil,
                   !line.statement.lowercased().hasPrefix("to "),
@@ -36,6 +49,11 @@ public struct MeridianParser {
         var rules:     [RuleAST]            = []
         var workflows: [WorkflowAST]        = []
         var implicitBodyLines: [SourceLine] = []
+        // Heading-aware view of the implicit region, used only when the file
+        // opts into SKILL.md section semantics (`skill: true`). Captures the
+        // `##`/`###` heading lines interleaved with the top-level statements so
+        // `SkillSectionBuilder` can group statements by their section role.
+        var implicitRegionLines: [SourceLine] = []
 
         // B1: Detect optional `---`-delimited frontmatter at the top of the file.
         //
@@ -66,27 +84,74 @@ public struct MeridianParser {
             let fmStartLine = lines[i].number
             i += 1
             var entries: [(key: String, value: String)] = []
+            // Multi-valued frontmatter keys (YAML block sequences and block
+            // scalars) preserve their elements/lines as a single value joined
+            // by `frontmatterListSeparator` ("\n"). `SkillFrontmatter` splits
+            // these back into typed arrays; scalar keys never contain "\n".
             while i < lines.count {
                 let l = lines[i]
                 if l.text == "---" { i += 1; break }
-                if l.isContent, let colonIdx = l.text.firstIndex(of: ":") {
-                    let key   = String(l.text[l.text.startIndex ..< colonIdx]).trimmingCharacters(in: .whitespaces)
-                    var value = String(l.text[l.text.index(after: colonIdx)...]).trimmingCharacters(in: .whitespaces)
-                    // Collect continuation lines indented deeper than this entry.
-                    var j = i + 1
+                guard l.isContent, let colonIdx = l.text.firstIndex(of: ":") else {
+                    i += 1
+                    continue
+                }
+                let key   = String(l.text[l.text.startIndex ..< colonIdx]).trimmingCharacters(in: .whitespaces)
+                let inline = String(l.text[l.text.index(after: colonIdx)...]).trimmingCharacters(in: .whitespaces)
+                var value = inline
+                var j = i + 1
+
+                if isBlockScalarMarker(inline) {
+                    // `key: |` / `key: >` — collect deeper-indented lines verbatim.
+                    var body: [String] = []
                     while j < lines.count {
                         let next = lines[j]
-                        if next.isEmpty || next.isComment { j += 1; continue }
+                        if next.isEmpty { body.append(""); j += 1; continue }
                         if next.indent > l.indent {
-                            value += " " + next.text.trimmingCharacters(in: .whitespaces)
+                            body.append(next.text)
                             j += 1
                         } else { break }
                     }
-                    i = j
-                    if !key.isEmpty { entries.append((key: key, value: value)) }
+                    while body.last == "" { body.removeLast() }
+                    value = body.joined(separator: frontmatterListSeparator)
+                } else if inline.hasPrefix("[") && inline.hasSuffix("]") {
+                    // Inline flow sequence: `key: [a, b, c]`.
+                    let inner = String(inline.dropFirst().dropLast())
+                    value = inner.split(separator: ",")
+                        .map { $0.trimmingCharacters(in: .whitespaces).trimmingCharacters(in: .init(charactersIn: "\"'")) }
+                        .filter { !$0.isEmpty }
+                        .joined(separator: frontmatterListSeparator)
                 } else {
-                    i += 1
+                    // Peek for a YAML block sequence (`- item` lines) when the
+                    // value is empty; otherwise fold plain continuation lines.
+                    let peek = skipBlanksIndex(from: j, in: lines)
+                    if inline.isEmpty, peek < lines.count,
+                       lines[peek].listMarker != nil, lines[peek].indent >= l.indent {
+                        var items: [String] = []
+                        var k = peek
+                        while k < lines.count {
+                            let next = lines[k]
+                            if next.isEmpty || next.isComment { k += 1; continue }
+                            if next.listMarker != nil, next.indent >= l.indent {
+                                items.append(next.text.trimmingCharacters(in: .whitespaces))
+                                k += 1
+                            } else { break }
+                        }
+                        value = items.joined(separator: frontmatterListSeparator)
+                        j = k
+                    } else {
+                        while j < lines.count {
+                            let next = lines[j]
+                            if next.isEmpty || next.isComment { j += 1; continue }
+                            if next.indent > l.indent, next.listMarker == nil {
+                                value += " " + next.text.trimmingCharacters(in: .whitespaces)
+                                j += 1
+                            } else { break }
+                        }
+                    }
                 }
+
+                i = j
+                if !key.isEmpty { entries.append((key: key, value: value)) }
             }
             if !entries.isEmpty {
                 metadata = FileMetadataAST(entries: entries, sourceLine: fmStartLine)
@@ -105,7 +170,7 @@ public struct MeridianParser {
         // the fold.
         if let raw = metadata?["vocabulary"] {
             let line = metadata?.sourceLine ?? 1
-            for part in raw.split(separator: ",") {
+            for part in raw.split(whereSeparator: { $0 == "," || $0 == "\n" }) {
                 let token = String(part)
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                     .trimmingCharacters(in: .init(charactersIn: "\"'"))
@@ -114,16 +179,28 @@ public struct MeridianParser {
             }
         }
 
+        // A "sectioned document" is any file whose body carries `##`/`###`
+        // headings. In such documents narrative sentences routinely begin with
+        // "When …" / "A …" / "An …" ("When the user wants to save a thought,
+        // …"). Those are prose, not Meridian `When X, do Y` rules — so we never
+        // extract in-body rules from a sectioned doc. Triggers come from
+        // frontmatter `triggers:`; cross-cutting behaviour from rulebook
+        // conventions. A heading-less `.meridian`/`.meri` file is unaffected
+        // (byte-for-byte flat-procedure behaviour).
+        let hasHeadings = lines.contains { ($0.headingLevel ?? 0) > 0 }
+
         while i < lines.count {
             let line = lines[i]
             guard line.isContent else { i += 1; continue }
-            if line.headingLevel != nil { i += 1; continue }
+            if line.headingLevel != nil { implicitRegionLines.append(line); i += 1; continue }
             let t = line.statement
             let lower = t.lowercased()
 
             // Reject the old body-level `import …` forms with a structured
-            // diagnostic so existing files migrate cleanly.
-            if lower.hasPrefix("import vocabulary from ") || lower.hasPrefix("import ") {
+            // diagnostic so existing files migrate cleanly. Skill docs are exempt:
+            // a SKILL.md procedure line may legitimately begin with the English
+            // verb "Import" ("Import the vault directory into gbrain").
+            if !hasHeadings, lower.hasPrefix("import vocabulary from ") || lower.hasPrefix("import ") {
                 throw CompilerError.semanticError(
                     message: "body-level `import` is no longer supported. Move the merconfig path(s) to frontmatter `vocabulary:` (comma-separated).",
                     range: SourceRange(file: file, line: line.number, column: 1)
@@ -131,9 +208,11 @@ public struct MeridianParser {
             }
 
             // Rules: starts with "A customer …", "An order …", "When …"
-            let isRule = t.lowercased().hasPrefix("a ") ||
+            // (suppressed for skill docs, where these are narrative prose).
+            let isRule = !hasHeadings &&
+                        (t.lowercased().hasPrefix("a ") ||
                          t.lowercased().hasPrefix("an ") ||
-                         t.lowercased().hasPrefix("when ")
+                         t.lowercased().hasPrefix("when "))
             let isWorkflow = t.lowercased().hasPrefix("to ")
 
             if isWorkflow {
@@ -181,7 +260,7 @@ public struct MeridianParser {
                     if l.indent > line.indent { bodyLines.append(l); j += 1 }
                     else { break }
                 }
-                let body = try StatementParser(symbols: symbols, trace: trace, lexicon: lexicon).parseBlock(bodyLines, file: file)
+                let body = try makeStatementParser().parseBlock(bodyLines, file: file)
                 trace.log(.merconfig, "workflow @L\(line.number): \(pattern.segments.count) segs, \(body.statements.count) stmts")
                 workflows.append(WorkflowAST(
                     pattern: pattern, body: body,
@@ -202,11 +281,13 @@ public struct MeridianParser {
             if line.indent == 0 {
                 var j = i + 1
                 implicitBodyLines.append(line)
+                implicitRegionLines.append(line)
                 while j < lines.count {
                     let l = lines[j]
                     if l.isEmpty || l.isComment { j += 1; continue }
                     if l.indent > line.indent {
                         implicitBodyLines.append(l)
+                        implicitRegionLines.append(l)
                         j += 1
                     } else {
                         break
@@ -219,8 +300,18 @@ public struct MeridianParser {
             i += 1
         }
 
+        var skillSections: [SkillSectionRecord] = []
+        var dispatchPhrases: [String] = []
+        var negativeDispatchPhrases: [String] = []
+
         if !implicitBodyLines.isEmpty {
-            let implicit = try buildImplicitWorkflow(from: implicitBodyLines, metadata: metadata, file: file)
+            let built = try buildImplicitWorkflow(
+                from: implicitBodyLines, regionLines: implicitRegionLines,
+                metadata: metadata, hasHeadings: hasHeadings, file: file)
+            let implicit = built.workflow
+            skillSections = built.sections
+            dispatchPhrases = built.dispatchPhrases
+            negativeDispatchPhrases = built.negativeDispatchPhrases
             let implicitName = implicit.pattern.displayText.lowercased()
             if workflows.contains(where: { $0.pattern.displayText.lowercased() == implicitName }) {
                 throw CompilerError.semanticError(
@@ -231,37 +322,87 @@ public struct MeridianParser {
             workflows.insert(implicit, at: 0)
         }
 
-        return MeridianFile(imports: imports, rules: rules, workflows: workflows, metadata: metadata, outline: outline)
+        return MeridianFile(imports: imports, rules: rules, workflows: workflows,
+                            metadata: metadata, outline: outline,
+                            skillSections: skillSections,
+                            dispatchPhrases: dispatchPhrases,
+                            negativeDispatchPhrases: negativeDispatchPhrases)
+    }
+
+    /// The implicit entry workflow plus the section metadata mined while
+    /// building it (recorded sections + applicability dispatch phrases).
+    private struct BuiltImplicit {
+        let workflow: WorkflowAST
+        let sections: [SkillSectionRecord]
+        let dispatchPhrases: [String]
+        let negativeDispatchPhrases: [String]
     }
 
     private func buildImplicitWorkflow(
         from bodyLines: [SourceLine],
+        regionLines: [SourceLine],
         metadata: FileMetadataAST?,
+        hasHeadings: Bool,
         file: String
-    ) throws -> WorkflowAST {
+    ) throws -> BuiltImplicit {
         let name = metadata?["name"]?.trimmingCharacters(in: .whitespacesAndNewlines)
             .nilIfEmpty ?? "entry"
-        let parameters = try frontmatterParameters(
+        var parameters = try frontmatterParameters(
             metadata?["parameters"],
             sourceLine: metadata?.sourceLine ?? bodyLines.first?.number ?? 1,
             file: file
         )
+        // SKILL.md skills operate on freeform input. When no `parameters:` key
+        // is declared, default to a single generic `input` parameter — but only
+        // when the imported vocabulary actually declares an `input` kind, so we
+        // never synthesize an unresolvable parameter type.
+        if parameters.isEmpty, let resolved = symbols.resolveKindName("input") {
+            parameters = [PhraseParameterAST(name: camelize(resolved), kind: resolved)]
+        }
         var segments: [PatternSegment] = [.literal(name)]
         segments.append(contentsOf: parameters.map(PatternSegment.parameter))
-        let body = try StatementParser(symbols: symbols, trace: trace, lexicon: lexicon)
-            .parseBlock(bodyLines, file: file)
-        return WorkflowAST(
+
+        // Section semantics activate structurally: when the body carries
+        // `##`/`###` headings, rewrite it through section-role lowering before
+        // parsing (and record every section for the manifest). A heading-less
+        // body is parsed verbatim so plain `.meridian`/`.meri` files are
+        // byte-for-byte unaffected.
+        let effectiveBody: [SourceLine]
+        var sections: [SkillSectionRecord] = []
+        var dispatchPhrases: [String] = []
+        var negativeDispatchPhrases: [String] = []
+        if hasHeadings {
+            let builder = SkillSectionBuilder(
+                symbols: symbols, lexicon: lexicon, trace: trace,
+                rulebook: rewriteEngine?.rulebook ?? .empty, file: file)
+            let result = try builder.build(regionLines: regionLines)
+            effectiveBody = result.bodyLines
+            sections = result.sections
+            dispatchPhrases = result.dispatchPhrases
+            negativeDispatchPhrases = result.negativeDispatchPhrases
+        } else {
+            effectiveBody = bodyLines
+        }
+
+        let body = try makeStatementParser().parseBlock(effectiveBody, file: file)
+        let workflow = WorkflowAST(
             pattern: PhrasePattern(segments: segments),
             body: body,
             sourceLine: bodyLines.first?.number ?? metadata?.sourceLine ?? 1,
             sourceFile: file
         )
+        return BuiltImplicit(workflow: workflow, sections: sections,
+                             dispatchPhrases: dispatchPhrases,
+                             negativeDispatchPhrases: negativeDispatchPhrases)
     }
 
     private func frontmatterParameters(_ raw: String?, sourceLine: Int, file: String) throws -> [PhraseParameterAST] {
         guard let raw, !raw.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return [] }
-        return try raw.split(separator: ",").map { chunk in
-            let kind = String(chunk).trimmingCharacters(in: .whitespacesAndNewlines)
+        let tokens = raw
+            .split(whereSeparator: { $0 == "," || $0 == "\n" })
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        return try tokens.map { kind in
             guard let resolved = symbols.resolveKindName(kind) else {
                 throw CompilerError.semanticError(
                     message: "frontmatter parameter `\(kind)` does not resolve to an imported vocabulary kind",
@@ -273,41 +414,21 @@ public struct MeridianParser {
     }
 
     private func parseAutonomyOptions(_ raw: String) -> AutonomyConfigAST {
-        let lower = raw.lowercased()
         let exprParser = ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon)
-        let until = extractClause(named: "until", from: raw, lower: lower).map(exprParser.parse)
-        let unless = extractClause(named: "unless", from: raw, lower: lower).map(exprParser.parse)
-        let replan = extractIntAfter("re-plan after", from: lower)
-            ?? extractIntAfter("replan after", from: lower)
-            ?? 3
-        let maxSteps = extractIntAfter("max", from: lower)
-            ?? extractIntAfter("up to", from: lower)
-            ?? 32
-        return AutonomyConfigAST(
-            until: until,
-            unless: unless,
-            replanAfterFailures: replan,
-            maxSteps: maxSteps
-        )
+        return AutonomyConfigAST.parse(raw, parseExpression: exprParser.parse)
     }
 
-    private func extractClause(named marker: String, from raw: String, lower: String) -> String? {
-        guard let range = lower.range(of: "\(marker) ") else { return nil }
-        let start = range.upperBound
-        var end = raw.endIndex
-        for next in [" until ", " unless ", " re-plan after ", " replan after ", " max ", " up to "] {
-            guard let nextRange = lower[start...].range(of: next) else { continue }
-            if nextRange.lowerBound < end { end = nextRange.lowerBound }
-        }
-        let text = String(raw[start..<end]).trimmingCharacters(in: .whitespacesAndNewlines)
-        return text.isEmpty ? nil : text
+    /// True for YAML block-scalar introducers (`|`, `|-`, `>`, `>-`, `>+`).
+    private func isBlockScalarMarker(_ s: String) -> Bool {
+        let t = s.trimmingCharacters(in: .whitespaces)
+        return t == "|" || t == "|-" || t == "|+" || t == ">" || t == ">-" || t == ">+"
     }
 
-    private func extractIntAfter(_ marker: String, from lower: String) -> Int? {
-        guard let range = lower.range(of: marker) else { return nil }
-        let suffix = lower[range.upperBound...]
-        let digits = suffix.drop(while: { !$0.isNumber }).prefix(while: { $0.isNumber })
-        return Int(String(digits))
+    /// First non-blank, non-comment line index at or after `from`.
+    private func skipBlanksIndex(from: Int, in lines: [SourceLine]) -> Int {
+        var k = from
+        while k < lines.count, lines[k].isEmpty || lines[k].isComment { k += 1 }
+        return k
     }
 
     private func camelize(_ raw: String) -> String {
@@ -319,6 +440,12 @@ public struct MeridianParser {
         return ([head] + tail).joined()
     }
 }
+
+/// Separator used to pack multi-valued frontmatter (YAML sequences and block
+/// scalars) into a single `FileMetadataAST` value string. `SkillFrontmatter`
+/// splits on this to recover typed arrays. Newlines never appear in scalar
+/// frontmatter values, so this is an unambiguous delimiter.
+let frontmatterListSeparator = "\n"
 
 private extension String {
     var nilIfEmpty: String? { isEmpty ? nil : self }

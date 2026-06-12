@@ -430,6 +430,41 @@ The manifest includes:
 - Event IDs emitted by each workflow
 - Tool IDs invoked by each workflow
 - Source-map entries: `{ "primitive": "invoke", "line": 80, "tool": "validateOrder" }`
+- `meridian_skill` — frontmatter metadata, the heading `outline`, and (for
+  sectioned documents) the `sections` array (below).
+
+### `meridian_skill.sections` (mandatory)
+
+For a sectioned document, **every** markdown section — executable and
+non-executable alike — is recorded under `meridian_skill.sections`. This is a
+hard guarantee, not best-effort: non-executable content is never silently
+dropped, it is always preserved here verbatim. Each entry is:
+
+```json
+{ "heading": "Contract", "role": "invariants", "executes": false,
+  "line": 23, "lines": ["This skill guarantees:", "- …"] }
+```
+
+- `role` — the executable role derived/forced for executable sections; the
+  explicit `role:` for marked-inert sections; `"inert"` for `(( inert ))` with
+  no role (never derived from the heading).
+- `executes` — whether the section lowered to runnable IR.
+- `lines` — the section's verbatim content lines.
+- `outline[].kind` follows the same resolved-role rule.
+
+`meridian_skill` is emitted whenever `metadata != nil || !outline.isEmpty ||
+!skillSections.isEmpty`. `JSONSerialization` uses `.sortedKeys` and section
+order follows source order, so two compiles of the same input are byte-identical.
+
+### Complete manifest input
+
+`Compiler.compileWithManifest(…) -> (swift: String, manifest: ManifestEmitter.Input)`
+assembles a COMPLETE `ManifestEmitter.Input` (workflows, constants, tools, kinds,
+instances, metadata, outline, rules, and `skillSections`) as part of every
+compile — there is no longer a silent-loss point where rich data computed during
+compilation is discarded. `Compiler.compile(…)` returns just the Swift string by
+calling `compileWithManifest` internally. The CLI writes the full Input (merging
+in the source map) on every `meridian compile`.
 
 ---
 
@@ -476,3 +511,55 @@ tool / constant / instance names in the merged config.
 The CLI's `--merconfig` flag is repeatable; if it's omitted, every
 `.merconfig` next to the input is auto-discovered (sorted by name for
 deterministic ordering).
+
+---
+
+## gbrain SKILL surface emission
+
+Three additive codegen forms support the gbrain SKILL surface. They reuse
+existing emitters; no new IR primitives are involved.
+
+### Shell command invokes
+
+A fenced ` ```bash ` block or inline backticked `gbrain …` command in a
+`procedure` section lowers to `InvokeIR(toolID: "shell.run", arguments:
+[("command", .literal(.string(cmd)))])`. This is plain invoke codegen — one
+`runtime.invoke(tool: "shell.run", …)` call per command line — so no codegen
+change was needed beyond routing the command text through the existing path.
+The command string is base64-carried through a sentinel
+(`shellCommandSentinelPrefix`) during parsing to avoid escaping issues, then
+decoded in `ASTToIR.lowerPhraseInvocation` before emission.
+
+### Detached `Task {}` (background spawn)
+
+`SimultaneouslyIR` gained a `detached: Bool` flag. `emitSimultaneously` branches
+on it:
+
+```swift
+// detached: false (default) — joins all branches
+try await withThrowingTaskGroup(of: Void.self) { group in
+    group.addTask { … }
+    try await group.waitForAll()
+}
+
+// detached: true — fire-and-forget, no join
+Task {
+    …
+}
+```
+
+`in the background, <stmt>.` lowers to a single-branch
+`SimultaneouslyIR(detached: true)`, so the spawned work never blocks the caller.
+
+### Choice-gate
+
+`ask the user to choose between "A", "B".` lowers to three pieces:
+
+1. `emit ask.choice` with the prompt + options payload,
+2. `wait` on `WaitConditionIR.choice(prompt:options:)` — `emitWait` emits
+   `try await runtime.wait(.choice(prompt: "…", options: ["A", "B"]))`,
+3. the subsequent `if the choice is "A",` branch reads the delivered selection
+   via `runtime.consumeChoiceSelection()`.
+
+The host delivers the user's pick with `runtime.deliverChoice(_:)`. See
+[06_RUNTIME.md](06_RUNTIME.md) §"Choice-gate".

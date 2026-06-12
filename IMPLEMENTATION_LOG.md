@@ -2202,3 +2202,381 @@ Updated `Thing.swift`, `DomainEmitter.semanticBases`, the parameterized
 `DomainSemanticBasesTests`, and the language/codegen/runtime docs. The
 ecommerce examples now declare `mailer server` as `kind of system` and
 `payment processor` as `kind of service`.
+
+---
+
+## 2026-06-11T06:03:07Z — Phase G: expressive SKILL.md surface, rulebooks, gbrain corpus
+
+Implemented the full "Expressive `.meri` SKILL.md surface" plan. The
+deterministic English grammar is now both **richer** (so a gbrain `SKILL.md`
+ports with minimal edits) and **externally extensible** (via rulebooks).
+Constraints held: zero new IR primitives (only a `detached: Bool` on
+`SimultaneouslyIR` and a `.choice(prompt:options:)` case on `WaitConditionIR`,
+threaded through AST/IR/runtime/codegen), and the no-LLM-unless-marked contract
+is unchanged.
+
+**Rulebook engine** — `Sources/MeridianCore/Rulebook/{Rulebook,RulebookParser,
+RewriteEngine}.swift` + `Lowering/ConventionInjector.swift`. `.merrules` files
+declare three families: `=== desugar ===` (match/rewrite or `lowers to:`),
+`=== sections ===` (heading alias → closed `SkillSectionRole`), and
+`=== conventions ===` (Inform `before`/`after` rules). Loaded as `[RulebookInput]`,
+referenced from the `rulebook:` frontmatter key, applied before the existing
+parse path. New `ParserTrace.Category.rulebook`. `RulebookParser` needed
+`import MeridianRuntime` for `SourceRange`. The core default rulebook is empty so
+existing files are byte-for-byte unaffected.
+
+**Section semantics** — `Skill/SkillFrontmatter.swift` (typed projection of
+`FileMetadataAST`, `isSkill` from `skill: true`); `Parser/Skill/SkillSectionBuilder.swift`
+groups Markdown sections by role and emits canonical statements. Decisions that
+took several iterations:
+- Pre-heading preamble is `.inert` when the file has any heading (gbrain skills
+  open with narrative).
+- Shell code blocks route to `procedure` output regardless of the enclosing
+  section's role (`isShellCodeBlock` checks the sentinel lang against
+  `shellFenceLanguages`), so a bash fence under an inert heading still executes.
+- `MeridianParser` gates in-body rule extraction AND body-level `import`
+  rejection on `!isSkillDoc`: narrative `When …`/`A …`/`An …` sentences are prose
+  in a skill doc, and a procedure line may begin with the verb "Import".
+- Fuzzy applicability conditions (neither a literal dispatch phrase nor
+  structurally checkable) are a hard `semanticError`.
+
+**Frontmatter compat** — YAML sequences + block scalars parsed; `tools:` →
+`scopedTools` threaded into `ASTToIR` (replacing the hardcoded
+`Array(symbols.tools.keys)`); parameter-less skills default to a single `input`
+param (`brain.merconfig` declares `An input is a kind of thing.`).
+
+**Command surface** — `IndentTokenizer` gained `shellCommandSentinelPrefix`
+(`\u{E000}shell:`) + `encodeShellCommand`/`decodeShellCommand`. Stand-alone
+fenced bash/sh/shell blocks and inline backticked commands lower to
+`InvokeIR(toolID: "shell.run", arguments: [("command", .literal(.string(cmd)))])`
+in `ASTToIR.lowerPhraseInvocation`. One invoke per command line; reuses existing
+invoke codegen, no merconfig declaration.
+
+**Explicit judgment** — `use judgment to <goal>:` + `with discretion`/`with
+autonomy` parse to `ProseStepAST` (carrying `dispatch`/`autonomy`) and lower to
+`ProseStepIR` with the per-skill `scopedTools`. Unmarked freeform prose still
+errors.
+
+**Choice-gate** — across AST (`WaitConditionAST.choice`), IR
+(`WaitConditionIR.choice`), runtime (`WaitCondition.choice`, `_choiceWaiters`,
+`_lastChoiceSelection`, `deliverChoice`, `consumeChoiceSelection`,
+`waitStartPayload`), and codegen (`emitWait`). `ask the user to choose between
+"A", "B".` emits `ask.choice` + waits + the following `if the choice is "A",`
+branch reads `consumeChoiceSelection()`.
+
+**Background spawn** — `SimultaneouslyStatementAST.detached` /
+`SimultaneouslyIR.detached`; `emitSimultaneously` branches to a detached
+`Task {}` with no `waitForAll`. `in the background, <stmt>.` lowers to a
+single-branch detached group.
+
+**Triggers** — `Lowering/SkillTriggers.swift`: `TriggerKind`
+(keyword/ambient/event/schedule), `SkillTrigger`, `TriggerClassifier`,
+`TriggerSynthesizer`. `Compiler` classifies `triggers:` and appends one synthetic
+`trigger.<name>.fired` workflow per trigger. `RESOLVER.meri` is the dispatcher.
+
+**Skillpack compile** — `Compiler.compileSkillpack([SkillpackInput], …)` +
+`lowerAndEmit(…)` refactor. Pre-registers every file's workflows as phrase stubs
+(`SymbolTable.registerWorkflowPhrase` appends to the shared reference-type
+`phrases`) so cross-file invocations resolve.
+
+**SkillMigrator** — `Sources/MeridianCore/Migration/SkillMigrator.swift` (NOT
+`Sendable`; holds a `Compiler`). Deterministic frontmatter injection
+(`vocabulary`/`skill`/`rulebook`) → strict compile → bounded repair loop driven
+by a Core-local `(RepairRequest) async throws -> String` closure (no
+Core→Runtime dependency; CLI adapts a provider, tests pass an inline closure).
+`describe(_:)` uses `SourceRange.startLine`. CLI command
+`MigrateSkillCommand` registered in `CLI.swift` with
+`--out/--vocab/--rulebook/--llm/--max-repair/--report/--batch/--force`.
+
+**Corpus** — cloned `garrytan/gbrain`, batch-migrated all 52 skills. First pass:
+0/52. After the parser/section-builder fixes above: 34/52. The remaining 18 were
+hand-edited within the per-tier budget (prose `## Phases` → `use judgment to …:`
+or `gbrain` bash fences; fuzzy conditions rephrased; anaphora spelled out;
+deprecated stub got `## Overview`). Final: 52/52 + `RESOLVER.meri` compile strict
+with zero `_unresolved`.
+
+**Tests** — `SampleGbrainSmokeTests` (per-feature lowering) +
+`SampleGbrainConformanceTests` (full-corpus compile gate; a new desugar idiom +
+section alias added as pure rulebook data with no dispatcher edit; migrator
+deterministic-only, deterministic-fails-on-prose, and mock-LLM-repair). Wait/
+simultaneously tests updated for the new cases. **530 tests / 85 suites green.**
+
+**Docs** — new `docs/11_RULEBOOKS.md` (authoring guide) and
+`docs/13_SKILL_MD_PORTING.md` (playbook + three-tier budget + coverage matrix +
+migrator). Updated `03_LANGUAGE_QUICK_REFERENCE` (gbrain surface), `05_CODEGEN`
+(shell invoke, detached Task, choice-gate), `06_RUNTIME` (`WaitConditionIR.choice`,
+`shell.run`), `07_CLI` (`migrate-skill`), `10_BUILTIN_TOOLS` (command-surface
+mapping), `docs/README`, `docs/status.md`, root `README.md`, and `AGENTS.md`
+Recent decisions.
+
+---
+
+## 2026-06-11T09:00:00Z — Skill deviation tooling + `compile --rulebook`
+
+Made the gbrain corpus migration auditable and reproducible, and turned the
+one-off "deviations" work into a permanent capability.
+
+**Helper** — `Sources/MeridianCore/Migration/SkillDeviation.swift`:
+dependency-free `analyze(originalMarkdown:portedMeri:…) -> DeviationReport` +
+`renderMarkdown`. Computes frontmatter delta (`Added`/`Removed` from the two
+`---`/`---` key sets, authoritative; `Changed` best-effort with value
+normalization — trim, collapse whitespace, sort comma/newline list items — so
+YAML-vs-inline list reformatting is not flagged), an LCS-based unified diff with
+3-line context compression (`@@ … @@` elisions), added/removed/unchanged counts,
+similarity = `unchanged / max(1, origLines, portLines)`, a deterministic tier
+(`>=0.85`→1, `0.5..<0.85`→2, `<0.5`→3), and categories (`frontmatter-injected`,
+`shell-block-introduced`, `judgment-marker-introduced`, `section-restructured`).
+Now the single home of `slug(_:)` / `meriStem(forSkillAt:)`; `MigrateSkillCommand`
+delegates to them (no behavior change).
+
+**CLI** — `meridian skill-deviation <original> <ported>` with
+`--out`/`--batch`/`--index`/`--no-diff`. Batch pairs `<name>/SKILL.md` and
+top-level `*.md` (`RESOLVER.md`) with ported `.meri` discovered recursively.
+Pitfall fixed during impl: ported `.meri` must be indexed by **lowercased
+filename stem**, NOT by `slug()` — `slug()` drops underscores, which mangled
+`academic_verify` → `academicverify` and collapsed 52 pairs to 15. Lowercasing
+alone reconciles the only real difference (`RESOLVER.meri` vs `RESOLVER.md`).
+
+**`compile --rulebook`** — added to `CompileCommand` (repeatable; autodiscovers
+`.merrules` beside the source with parent fallback, mirroring `--merconfig`).
+Threads `[RulebookInput]` into `compiler.compile(…, rulebooks:)`. Required for
+skill files referencing `rulebook:` in frontmatter; without it the gbrain skills
+could not be compiled by the CLI.
+
+**`sample-gbrain/` artifacts** — added `original-skills/` (upstream `SKILL.md`
+snapshot, copied from the gbrain clone), `compile-outputs/` (generated Swift for
+all 52 skills + `RESOLVER`, via `compile … --no-format` because `swift-format`
+asserts on some large generated files), and `migration-deviations/` (53 reports +
+`README.md` index). Index summary: tier 1 = 43, tier 2 = 9, tier 3 = 1
+(`RESOLVER`, a dispatcher doc rewritten as a workflow), avg similarity 92%.
+
+**Tests** — `Tests/MeridianCoreTests/SkillDeviationTests.swift` (9 tests:
+frontmatter Added/Removed, normalized Changed, identical→empty-diff, differing
+bodies, tier thresholds, rewrite→tier 3, category detection, slug/meriStem
+pairing, render). **539 tests / 86 suites green.**
+
+**Docs** — `07_CLI.md` (`compile --rulebook`, new `skill-deviation` section) and
+`13_SKILL_MD_PORTING.md` (auditing-deviations subsection + corpus folder map).
+
+### 2026-06-11 — Emitter string-escaping hardening, name sanitization, enum namespacing
+
+A `swiftc -typecheck` gate over the ported gbrain corpus (new
+`SampleGbrainTests` target, `MERIDIAN_GBRAIN_TYPECHECK=1`) surfaced that
+"compiles" had only ever meant "Meridian emitted Swift *source* without
+throwing" — the emitted Swift was never fed to a Swift parser, so several
+classes of invalid Swift shipped silently. Root causes found and fixed:
+
+- **Unescaped strings.** `skillMetadata` values (esp. the YAML block-scalar
+  `triggers:`, which carries embedded newlines) were emitted into single-line
+  `"…"` literals with raw newlines — invalid Swift that also aborted
+  swift-format (`PrettyPrint.swift:706` assertion, uncatchable by `try?`, so it
+  killed the whole `compile`). Now every source-derived string runs through
+  `escapeSwiftString`: `skillMetadata` keys/values, `state.get("…")` keys
+  (`emitExpr` identifier/property), `assert` messages, `complete(reason:)`,
+  emit event IDs, and env-var names.
+- **Hyphenated names.** `EnglishLexicon.structName(from:)` now splits on any
+  non-identifier character (and prefixes `_` if the result starts with a
+  digit), so `webhook-transforms` → `WebhookTransforms`. Previously
+  `Webhook-transformsInput` / `Idea-lineageInput` parsed as `struct Webhook`
+  / `struct Idea` (a phantom redeclaration of the `Brain`/`Idea`/… domain
+  kind) plus `expected '{'`.
+- **Duplicate trigger workflows.** `TriggerSynthesizer` now disambiguates
+  struct names with a numeric suffix when distinct trigger phrases collapse to
+  one name (`"perplexity research"` + `"perplexity-research"` →
+  `WhenPerplexityResearchFires` / `…Fires2`), via `IRWorkflow.explicitStructName`.
+- **Duplicate `id`.** `DomainEmitter` synthesises the `MeridianKind` identity
+  `id` unconditionally; an explicit merconfig `id` property
+  (`A job has an id…`) is now filtered out of struct props, init params, and
+  protocol requirements, and is no longer a reason to emit a `<Kind>Kind`
+  protocol.
+
+**Enum namespacing (default).** `SwiftEmitter.Options.namespaceEnum: String?`
+wraps all generated declarations (domain types, `Constants`, `Instances`,
+workflow + trigger structs) in `public enum <name> { … }`; the file header
+(imports + private `meridianStringify`) stays at file scope, and module-level
+`constants`/`instances` bindings become `private static let` inside the enum
+(each `run()` still emits its own local `let`, so bare references resolve
+there). The `Compiler`/library default stays `nil` (flat) so the 20+ existing
+goldens are untouched; the **`meridian compile` CLI defaults to
+`--namespace auto`** (PascalCase of the file stem, `none` to disable). This
+lets independently-generated skill files share one Swift module without the
+per-file domain types colliding. Indentation inside the enum is left to
+swift-format (the CLI formats by default).
+
+**CLI** — `compile` gains `--rulebook` (repeatable; autodiscovers `.merrules`
+beside the source, mirroring `--merconfig`) and `--namespace`.
+
+**Tests** — new `SampleGbrainTests` target rooted at `sample-gbrain/Tests/`
+(relocated smoke + conformance suites; new `SampleGbrainCodegenTests` with an
+always-on in-process string-literal lexer that flags raw newlines inside
+single-line `"…"` literals, plus the opt-in `swiftc -typecheck` gate which
+validates the namespaced shipped form). `sample-gbrain/compile-outputs/`
+regenerated as namespaced + formatted (53 files). **541 tests / 87 suites
+green; all 53 emitted files type-check against MeridianRuntime.**
+
+---
+
+## 2026-06-11 — DECISION — Universal deterministic sections (drop `skill: true`, no silent no-ops)
+
+**Context.** Implemented the "Universal deterministic sections" plan in one
+full-bore pass (engine → examples → gbrain corpus → docs).
+
+**Engine (Stage 1).**
+- `IndentTokenizer.isComment` now treats markdown blockquote (`>`) lines as
+  comments alongside `#`, so SKILL.md `> **Convention:** …` asides can precede
+  the first heading without tripping the new pre-heading-content error.
+- `SkillSectionRole.parseMarker(from:)` parses a trailing `(( … ))` marker
+  (`inert` keyword + `role: <name>` terms; unknown terms surface a located
+  error). `SkillSectionRole.isExecutable` added. `builtinRole` widened:
+  `Phase N: …` prefix → procedure; `when to invoke/run/use this`,
+  `output structure`, `brain page format`.
+- `SkillSectionBuilder` rewritten strict + marker-first + no-silent-drop. Marker
+  is authoritative (no heading derivation when present) and overrides shell-block
+  routing. Hard errors: pre-heading content, unrecognized-heading-with-content,
+  non-checkable invariant/prohibition items, multi-line invariant items, unknown
+  marker term. `Result` gains `sections: [SkillSectionRecord]` recording every
+  section. `MeridianParser` uses a structural `hasHeadings` discriminator
+  everywhere `isSkill` was used; strips marker text from the outline; consumes
+  the full builder `Result`. `SkillFrontmatter.isSkill` removed.
+- Mandatory manifest plumbing: `MeridianFile.skillSections` →
+  `ManifestEmitter.Input.skillSections` → `meridian_skill.sections`.
+  `Compiler.compileWithManifest(…) -> (swift, manifest)` builds the COMPLETE
+  Input; `compile(…)` delegates. `CompileCommand` writes the full Input.
+  `SkillMigrator.deterministicTransform` is now a no-op passthrough.
+
+**Examples (Stage 2).** `examples/skill/skill.merrules` (organizational aliases);
+`SkillCorpusGoldenTests` autodiscovers sibling `.merrules`; `babysit.meridian`
+and topic-label preambles migrated; 18 goldens regenerated + type-checked.
+
+**gbrain corpus (Stage 3).** All 53 `sample-gbrain` skills migrated: `skill:
+true` stripped; prose `Contract`/`Anti-Patterns` → `(( inert, role: invariants /
+prohibitions ))`; pure-shell unrecognized sections → `(( role: procedure ))`;
+other narrative → `(( inert ))`; preambles blockquoted. The precise inert set was
+computed by a throwaway compiler-driven loop that inerted only the enclosing
+heading at each located compile error, preserving executable shell/resolvable
+sections (738 inert markers, 13 forced procedure). `compile-outputs/*` (53 swift
++ 53 manifests, via `meridian compile`) and `migration-deviations/*` (recomputed
+with `difflib` against `original-skills/`) regenerated. Zero `_unresolved`.
+
+**DECISION.** gbrain "Phases"/narrative prose that cannot lower deterministically
+is recorded **inert** (preserved verbatim in `meridian_skill.sections`) rather
+than hard-failing the corpus — the marker family is exactly the sanctioned
+escape for documentation, and the executable surface (shell commands + resolvable
+phrases) stays live. This honors "deterministic IR or explicit inert; no silent
+drops."
+
+**Docs.** Updated `03`, `04`, `05`, `07`, `11`, `13`, `status.md`,
+`sample-gbrain/README.md`, root `README.md`, `AGENTS.md`.
+
+**Validation.** `swift test` → **553 tests / 90 suites green**; corpus compiles
+with zero `_unresolved`.
+
+---
+
+## 2026-06-11 — DECISION: marking pass moved from throwaway script into the CLI
+
+Supersedes the line above noting `SkillMigrator.deterministicTransform` "is now
+a no-op passthrough." Per user direction ("just automate what was in the python
+script to include in the cli instead… stripping skill:true is one time job,
+don't include it in cli… stick to matching python script for now"), the one-off
+corpus-marking script (`sample-gbrain/.migrate.py`, since deleted) was ported
+faithfully into `SkillMigrator.deterministicTransform` → new `markSections(_:)`,
+so `meridian migrate-skill` now performs the marking itself.
+
+Ported behavior (matching the script, builtin-role only — the rulebook is not
+consulted, exactly as the script did):
+- Blockquote (`> …`) any non-comment line before the first heading
+  (frontmatter delimiters are preserved, not quoted).
+- Per heading (`##`…`######`): `SkillSectionRole.builtinRole` →
+  `.invariants` ⇒ `(( inert, role: invariants ))`; `.prohibitions` ⇒
+  `(( inert, role: prohibitions ))`; any other recognized role ⇒ left unmarked;
+  unrecognized ⇒ `(( role: procedure ))` when the body is pure shell fences
+  (`sectionIsPureShell` over `shellFenceLanguages`), else `(( inert ))`.
+- Idempotent (headings already ending `))` are skipped).
+- Does **not** strip `skill: true` (one-time corpus edit) and injects no
+  frontmatter (`addedKeys` stays empty), so the existing
+  `migratorDeterministicOnly` verbatim-passthrough test still holds for a clean
+  recognized-procedure SKILL.md.
+
+Tests: `Tests/MeridianCoreTests/SkillMigratorMarkingTests.swift` (10 cases).
+CLI smoke: `meridian migrate-skill sample-gbrain/original-skills/capture/SKILL.md`
+reproduces the script's marker placement (Contract→inert invariants, Anti-Patterns→inert
+prohibitions, How to use→role procedure, narrative→inert, preamble blockquoted).
+Per user direction the migrated `.meri` corpus was NOT regenerated this round —
+only the engine + sample tests. `swift test --filter SkillMigrator` and
+`--filter migrator` green.
+
+---
+
+## 2026-06-11 — DECISION: deviation generation matches the committed format; folder regenerated by the CLI
+
+Per user direction ("same for generation deviations; instead of temp py scripts,
+add to cli… i want a similar output to files in this folder; as long as diffs
+are shown with lines added and removed, even if there is deviation is format, i
+am ok"), the deviation reports under `sample-gbrain/migration-deviations/` are
+now produced by `meridian skill-deviation --batch --index` (the throwaway
+`.regen_deviations.py` difflib script is retired). The existing `SkillDeviation`
+helper was aligned to the committed format:
+
+- **Unified diff** now emits proper `--- <original>` / `+++ <ported>` file
+  headers and numbered `@@ -aStart,aCount +bStart,bCount @@` hunk headers
+  (3-line context, git-style hunk merging) instead of the old `@@ … @@` elision
+  markers. New private `renderHunks(_:context:)`; `unifiedDiff` builds a
+  line-numbered LCS edit script.
+- **Categories** rewritten to name what the migrator's marking pass did:
+  `frontmatter-injected`, `section-marker-added`, `shell-block-routed`
+  (`(( role: procedure ))`), `preamble-blockquoted` (more pre-`##` `>` lines than
+  the original). Dropped the old `shell-block-introduced` /
+  `judgment-marker-introduced` / `section-restructured` vocabulary.
+- **Per-file report**: tier labels are now `near-verbatim` / `light edits` /
+  `structural rewrite`; the `Lines:` bullet drops the `N unchanged` suffix and
+  the `Changed:` frontmatter line is no longer rendered (matching the committed
+  files). The index column for empty frontmatter/categories now prints `(none)`.
+
+Regenerated all 53 reports + `README.md` (52 skills + `RESOLVER`; 2 non-skill
+dirs skipped). Output matches the previously committed files line-for-line in the
+diff bodies; the only intentional deltas are (a) the diff file-header path prefix
+(`daily-task-manager/SKILL.md` vs the script's `original-skills/…`) and (b) the
+similarity percentage (this tool uses `unchanged / max(lines)`, not difflib's
+`SequenceMatcher.ratio`), which shifts a couple of skills across the tier-1/2
+boundary (41/11/1 vs the script's 42/10/1). Both are within the user-granted
+latitude.
+
+Tests: `Tests/MeridianCoreTests/SkillDeviationTests.swift` updated for the new
+hunk headers and category vocabulary (12 cases). Full `swift test` green.
+
+> **Superseded in part by the next entry.** The interim diff used a line-numbered
+> LCS (`renderHunks`); that was replaced with a faithful `difflib` port to reach
+> exact parity, and the path/similarity "intentional deltas" above were closed.
+
+---
+
+## 2026-06-11 — DECISION: faithful difflib port for exact deviation parity (100%)
+
+Per user direction ("fix to get to 100%"), the deviation diff was switched from a
+plain LCS to a faithful Swift port of CPython's `difflib`
+(`Sources/MeridianCore/Migration/Difflib.swift` — `DiffMatcher`): `chainB` with
+`autojunk`, `findLongestMatch`, `matchingBlocks` (with adjacent-block collapse),
+`opcodes`, `groupedOpcodes(n=3)`, `ratio`, and `_format_range_unified`. This was
+necessary because LCS maximizes total matches whereas difflib uses a greedy
+longest-matching-block recursion; the two disagree on heavily-rewritten files
+(RESOLVER differed by one matched line → 17 vs 18, 13% vs 18%).
+
+`SkillDeviation.analyze` now computes `similarity = 2*M/(origLines+portLines)`,
+`added = portLines − M`, `removed = origLines − M`, `unchanged = M` (M = matched
+lines). Added `originalDiffPath`/`portedDiffPath` to `DeviationReport`; the batch
+command sets them to corpus-root-relative paths
+(`original-skills/<x>/SKILL.md`, `skills/<x>.meri` / `RESOLVER.meri`), so the
+`--- `/`+++ ` headers match the original script. The dead LCS `unifiedDiff` /
+`renderHunks` were removed.
+
+Verified the regenerated reports reproduce the original Python-difflib corpus
+exactly: daily_task_manager 76% (+21/-15), academic_verify 93% (+15/-15),
+ask_user 89% (+29/-25), RESOLVER 18% (+41/-118); RESOLVER diff body byte-matches
+(frontmatter additions first, `# GBrain Skill Resolver` as context); README
+summary back to **42 / 10 / 1**, avg 87%.
+
+Tests: two new parity cases in `SkillDeviationTests` (`difflibMatcherParity`,
+`difflibRatioAndRangeFormat`) plus the existing 12; full `swift test` green.
+The three previously "user-sanctioned deviations" are now closed — output is
+byte-for-byte equivalent to the original.

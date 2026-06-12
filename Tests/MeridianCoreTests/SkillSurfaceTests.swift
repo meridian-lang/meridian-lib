@@ -107,7 +107,7 @@ struct SkillSurfaceImplicitEntryTests {
         parameters: pull request
         ---
 
-        ## Comments
+        ## Comments (( role: procedure ))
         - complete.
         """, file: "babysit.meridian")
 
@@ -116,6 +116,8 @@ struct SkillSurfaceImplicitEntryTests {
         #expect(ast.workflows[0].pattern.parameters.first?.kind == "pull request")
         #expect(ast.workflows[0].body.statements.count == 1)
         #expect(ast.outline.map(\.text) == ["Comments"])
+        // The forced role surfaces in the recorded section table.
+        #expect(ast.skillSections.contains { $0.heading == "Comments" && $0.role == "procedure" && $0.executes })
     }
 
     @Test("frontmatter parameters must resolve to vocabulary kinds")

@@ -1,0 +1,61 @@
+# skill.merrules — section-role aliases for the examples/skill corpus.
+#
+# The example skills organise their procedure under descriptive, per-skill step
+# headings ("Capture intent", "Plan the sweep", …). These are all executable
+# procedure sections; this rulebook maps each heading to the `procedure` role as
+# pure data, so the universal-section model lowers their bodies in source order
+# without any per-file frontmatter or marker edits.
+
+=== sections ===
+
+section "Apply upgrades one by one" -> procedure
+section "Audit close" -> procedure
+section "Block on a 2-minute soak" -> procedure
+section "Block on a release captain signal" -> procedure
+section "Block on a release engineer signal" -> procedure
+section "Block on incident commander approval" -> procedure
+section "Capture intent" -> procedure
+section "Capture service health snapshot" -> procedure
+section "Capture the entry state" -> procedure
+section "Close audit trail" -> procedure
+section "Close out" -> procedure
+section "First response" -> procedure
+section "Gather context" -> procedure
+section "Hand off to a guarded autonomy loop" -> procedure
+section "Hand stabilisation to autonomy" -> procedure
+section "Hand the repair loop to the autonomy planner" -> procedure
+section "Hand to the planner" -> procedure
+section "Initial snapshot" -> procedure
+section "Inner workflows" -> procedure
+section "Inspect" -> procedure
+section "Inspect comments" -> procedure
+section "Inspect rollout health" -> procedure
+section "Make sure CI is green before touching comments" -> procedure
+section "Mechanical sync if behind" -> procedure
+section "Open and capture initial signals" -> procedure
+section "Open audit and read entry state" -> procedure
+section "Open the audit trail" -> procedure
+section "Outer deterministic gate" -> procedure
+section "Page the on-call" -> procedure
+section "Per-dependency workflow" -> procedure
+section "Plan a draft response under discretion" -> procedure
+section "Plan mitigation under discretion" -> procedure
+section "Plan non-trivial conflicts under discretion" -> procedure
+section "Plan risky remediation under discretion" -> procedure
+section "Plan rollout under discretion" -> procedure
+section "Plan the sweep" -> procedure
+section "Plan with strict argument validation" -> procedure
+section "Promote to prod or roll back" -> procedure
+section "Read context" -> procedure
+section "Release gate" -> procedure
+section "Resolve already-addressed comments" -> procedure
+section "Resolve every addressed comment" -> procedure
+section "Run audit + canary promote in parallel" -> procedure
+section "Run mitigation under autonomy" -> procedure
+section "Run regression tests after the sweep" -> procedure
+section "Run the bounded autonomy loop with the same scoped toolset" -> procedure
+section "Send the drafted reply once approved" -> procedure
+section "Snapshot" -> procedure
+section "Sub-workflow" -> procedure
+section "Sub-workflows" -> procedure
+section "VIP escalation path is deterministic" -> procedure

@@ -7,17 +7,17 @@ tools-required: gh, git
 parameters: pull request
 vocabulary: github.merconfig
 ---
-## Comments
+## Comments (( role: procedure ))
 
 - bind comments = invoke list pull request comments with pr = the pull request's number.
 - review every comment.
 
-## Merge conflicts
+## Merge conflicts (( role: procedure ))
 
 1. invoke get conflicts with pr = the pull request's number.
 2. invoke sync branch with branch = the pull request's head branch.
 
-## CI
+## CI (( role: procedure ))
 
 - bind ci status = invoke get ci status with pr = the pull request's number.
 - if the ci status is not passed,

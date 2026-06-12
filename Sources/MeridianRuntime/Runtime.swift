@@ -43,6 +43,12 @@ public actor Runtime {
     /// Signal waiters: signal name → FIFO queue of continuations.
     private var _signalWaiters: [String: [CheckedContinuation<Void, any Error>]] = [:]
 
+    /// Choice-gate waiters: FIFO queue of continuations parked on `.choice`.
+    private var _choiceWaiters: [CheckedContinuation<Void, any Error>] = []
+    /// The most recent selection delivered via `deliverChoice(_:)`. Read by
+    /// generated code immediately after a `.choice` wait resumes.
+    private var _lastChoiceSelection: String?
+
     /// Key used to index approval waiters. Subject `Value` identity plus role string.
     private struct ApprovalKey: Hashable, Sendable {
         let subject: Value
@@ -693,6 +699,11 @@ public actor Runtime {
             try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, any Error>) in
                 _eventWaiters.append(EventWaiterEntry(eventID: eventID, predicate: matching, continuation: cont))
             }
+
+        case .choice:
+            try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, any Error>) in
+                _choiceWaiters.append(cont)
+            }
         }
 
         await emit(event: Event(
@@ -715,6 +726,24 @@ public actor Runtime {
         let cont = waiters.removeFirst()
         _signalWaiters[name] = waiters.isEmpty ? nil : waiters
         cont.resume()
+    }
+
+    /// Deliver a user's choice to the first waiting `wait(.choice(...))`.
+    /// FIFO; records the selection so the resumed workflow can read it via
+    /// `consumeChoiceSelection()`. If no one is waiting, the choice is dropped.
+    public func deliverChoice(_ selection: String) async {
+        _lastChoiceSelection = selection
+        guard !_choiceWaiters.isEmpty else { return }
+        let cont = _choiceWaiters.removeFirst()
+        cont.resume()
+    }
+
+    /// Read and clear the most recent choice selection. Generated code calls
+    /// this immediately after a `.choice` wait resumes to bind `choice`.
+    public func consumeChoiceSelection() -> String {
+        let value = _lastChoiceSelection ?? ""
+        _lastChoiceSelection = nil
+        return value
     }
 
     /// Deliver an approval verdict to the first waiting `wait(.approval(of:by:))`.
@@ -765,6 +794,9 @@ public actor Runtime {
         case .signal(let n):    return ["kind": .string("signal"), "name": .string(n)]
         case .approval(_, let r): return ["kind": .string("approval"), "role": .string(r.identifier)]
         case .event(let id, _): return ["kind": .string("event"), "event_id": .string(id)]
+        case .choice(let prompt, let options):
+            return ["kind": .string("choice"), "prompt": .string(prompt),
+                    "options": .list(options.map { .string($0) })]
         }
     }
 

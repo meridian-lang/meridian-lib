@@ -1,0 +1,264 @@
+import Foundation
+
+// MARK: - Rulebook model
+//
+// A rulebook is an externally-authored, declarative `.merrules` file that
+// extends Meridian's deterministic English surface without touching the
+// compiler core. Three families of rule live here:
+//
+//   1. Desugar rules     — rewrite a surface English form into a canonical
+//                          Meridian statement (the `RewriteEngine` applies
+//                          these before the StatementParser's own fallback).
+//   2. Section-role rules — map a markdown heading alias to one of the closed
+//                          `SkillSectionRole` values used by skill lowering.
+//   3. Conventions        — Inform-style behavioral rules (`before/after/check/
+//                          instead of/carry out/report`) injected into matching
+//                          workflows (see `InformRulebookParser`).
+//
+// Every rule is a *compile-time equivalence*: its output is re-parsed and
+// lowered through the same strict path as hand-authored source, so a rulebook
+// can never widen tool scope, bypass strict mode, or introduce an LLM call.
+
+/// The closed set of roles a markdown section can play in a skill document.
+/// New roles are a compile-time TODO list (exhaustive switches, no `default:`).
+public enum SkillSectionRole: String, Sendable, CaseIterable, Equatable {
+    /// `## Contract` / `## Guarantees` → invariants lowered to `assert`.
+    case invariants
+    /// `## Phases` / `## Workflow` → the executable procedure.
+    case procedure
+    /// `## When To Use` → deterministic applicability (dispatch + preconditions).
+    case applicability
+    /// `## When NOT To Use` → negative applicability (soft-skip + negative dispatch).
+    case negativeApplicability = "negative-applicability"
+    /// `## Anti-Patterns` → `must not` guards where structurally checkable.
+    case prohibitions
+    /// `## Output Format` → a declared result template.
+    case template
+    /// Anything else (Philosophy, examples, prose rationale) → inert metadata.
+    case inert
+
+    /// True for roles whose lowered body runs (asserts, preconditions,
+    /// procedure). False for documentation roles (`template`/`inert`) whose
+    /// content is recorded in the manifest but never executed.
+    public var isExecutable: Bool {
+        switch self {
+        case .invariants, .procedure, .applicability, .negativeApplicability, .prohibitions:
+            return true
+        case .template, .inert:
+            return false
+        }
+    }
+
+    /// Built-in heading aliases applied when no rulebook rule matches. These
+    /// mirror the canonical SKILL.md section names so a skill compiles even
+    /// without a `=== sections ===` rulebook block. A rulebook may extend or
+    /// override these. Returns nil for unmapped headings (which, absent a
+    /// marker, are `unresolved` — a hard error if the section has content).
+    public static func builtinRole(forHeading heading: String) -> SkillSectionRole? {
+        let normalized = Rulebook.normalizeHeading(heading)
+        switch normalized {
+        case "contract", "guarantees", "contract & guarantees", "invariants":
+            return .invariants
+        case "phases", "workflow", "pipeline", "protocol", "steps", "process", "procedure":
+            return .procedure
+        case "when to use", "use when", "primary triggers", "when this applies",
+             "when to invoke", "when to run", "when to use this":
+            return .applicability
+        case "when not to use", "do not use", "skip when":
+            return .negativeApplicability
+        case "anti-patterns", "anti patterns", "avoid", "pitfalls":
+            return .prohibitions
+        case "output format", "output", "report format", "result format",
+             "output structure", "brain page format":
+            return .template
+        default:
+            // A numbered phase heading (`Phase 1: Inventory`, `Phase A.5: …`)
+            // is an executable procedure section. Exact-match aliases can't
+            // generalize across the open-ended N/A suffixes, so recognize the
+            // `phase` prefix here.
+            if normalized.hasPrefix("phase ") { return .procedure }
+            return nil
+        }
+    }
+
+    /// A non-executable / role marker mined from a heading's trailing
+    /// `(( … ))` suffix. `inert` is set by the `inert` keyword; `role` by a
+    /// `role: <name>` term. The marker is authoritative: when present, the
+    /// heading text is NOT used to derive a role.
+    public struct SectionMarker: Sendable, Equatable {
+        public let inert: Bool
+        public let role: SkillSectionRole?
+        public init(inert: Bool, role: SkillSectionRole?) {
+            self.inert = inert
+            self.role = role
+        }
+    }
+
+    /// Result of stripping a heading's trailing `(( … ))` marker.
+    /// `unknownRole` carries an unrecognized `role: <name>` token so the caller
+    /// can raise a located hard error.
+    public struct MarkerParse: Sendable, Equatable {
+        public let cleanHeading: String
+        public let marker: SectionMarker?
+        public let unknownRole: String?
+    }
+
+    /// Parse a single trailing `(( … ))` marker from a heading line. The inner
+    /// text is split on commas; each term is either the `inert` keyword or a
+    /// `role: <name>` assignment (`<name>` via `SkillSectionRole(rawValue:)`).
+    /// Whitespace/case tolerant. Returns the heading with the marker removed,
+    /// the parsed marker (nil when absent), and any unrecognized role token.
+    public static func parseMarker(from heading: String) -> MarkerParse {
+        let trimmed = heading.trimmingCharacters(in: .whitespaces)
+        guard trimmed.hasSuffix("))"), let open = trimmed.range(of: "((", options: .backwards) else {
+            return MarkerParse(cleanHeading: trimmed, marker: nil, unknownRole: nil)
+        }
+        let inner = String(trimmed[open.upperBound...].dropLast(2))
+        let clean = String(trimmed[..<open.lowerBound]).trimmingCharacters(in: .whitespaces)
+        var inert = false
+        var role: SkillSectionRole? = nil
+        var unknownRole: String? = nil
+        for rawTerm in inner.split(separator: ",") {
+            let term = rawTerm.trimmingCharacters(in: .whitespaces)
+            if term.isEmpty { continue }
+            let lower = term.lowercased()
+            if lower == "inert" {
+                inert = true
+            } else if lower.hasPrefix("role:") {
+                let name = String(term[term.index(term.startIndex, offsetBy: 5)...])
+                    .trimmingCharacters(in: .whitespaces)
+                    .lowercased()
+                if let parsed = SkillSectionRole(rawValue: name) {
+                    role = parsed
+                } else {
+                    unknownRole = name
+                }
+            } else {
+                // An unrecognized bare term — surface as an unknown role token
+                // so the author gets a precise error instead of a silent drop.
+                unknownRole = lower
+            }
+        }
+        return MarkerParse(cleanHeading: clean,
+                           marker: SectionMarker(inert: inert, role: role),
+                           unknownRole: unknownRole)
+    }
+}
+
+/// One segment of a desugar rule's `match:` template.
+public enum RuleToken: Sendable, Equatable {
+    /// Literal text that must appear verbatim (case-insensitive) in the input.
+    case literal(String)
+    /// A `{name}` capture hole; its text is bound and substituted into `rewrite:`.
+    case hole(String)
+}
+
+/// A desugar rule: `If {c} -> {a}.` ⇒ `if {c}, {a}.`
+public struct DesugarRule: Sendable {
+    public let name: String
+    public let priority: Int
+    public let match: [RuleToken]
+    public let rewrite: String
+    /// True when the rule used the `lowers to:` escape hatch (its `rewrite`
+    /// text targets a primitive statement directly). Purely informational —
+    /// both paths re-parse + lower through the identical strict pipeline.
+    public let targetsPrimitive: Bool
+    public let sourceLine: Int
+
+    public init(name: String, priority: Int = 0, match: [RuleToken],
+                rewrite: String, targetsPrimitive: Bool = false, sourceLine: Int = 0) {
+        self.name = name
+        self.priority = priority
+        self.match = match
+        self.rewrite = rewrite
+        self.targetsPrimitive = targetsPrimitive
+        self.sourceLine = sourceLine
+    }
+
+    /// The capture hole names this rule binds, in declaration order.
+    public var holeNames: [String] {
+        match.compactMap { if case .hole(let n) = $0 { return n } else { return nil } }
+    }
+}
+
+/// A section-role rule: `section "Contract" -> invariants`.
+public struct SectionRoleRule: Sendable, Equatable {
+    /// Lower-cased heading alias (e.g. `"contract"`, `"when to use"`).
+    public let alias: String
+    public let role: SkillSectionRole
+    public let sourceLine: Int
+
+    public init(alias: String, role: SkillSectionRole, sourceLine: Int = 0) {
+        self.alias = alias
+        self.role = role
+        self.sourceLine = sourceLine
+    }
+}
+
+/// A parsed rulebook. Empty by default, so existing `.meridian`/`.meri` files
+/// (which reference no rulebook) are byte-for-byte unaffected.
+public struct Rulebook: Sendable {
+    public let desugars: [DesugarRule]
+    public let sectionRoles: [SectionRoleRule]
+    /// Inform-style behavioral conventions, already classified into phases.
+    public let conventions: [RulebookRule]
+
+    public init(desugars: [DesugarRule] = [],
+                sectionRoles: [SectionRoleRule] = [],
+                conventions: [RulebookRule] = []) {
+        self.desugars = desugars
+        self.sectionRoles = sectionRoles
+        self.conventions = conventions
+    }
+
+    public static let empty = Rulebook()
+
+    public var isEmpty: Bool {
+        desugars.isEmpty && sectionRoles.isEmpty && conventions.isEmpty
+    }
+
+    /// Concatenate two rulebooks (left-hand entries take priority on ties:
+    /// desugars are applied highest-priority-then-source-order, and the first
+    /// matching section-role alias wins).
+    public func merging(_ other: Rulebook) -> Rulebook {
+        Rulebook(
+            desugars: desugars + other.desugars,
+            sectionRoles: sectionRoles + other.sectionRoles,
+            conventions: conventions + other.conventions
+        )
+    }
+
+    /// Resolve a markdown heading to its section role, if a rule maps it.
+    /// Matching is case-insensitive and whitespace-normalised.
+    public func role(forHeading heading: String) -> SkillSectionRole? {
+        let key = Rulebook.normalizeHeading(heading)
+        return sectionRoles.first { $0.alias == key }?.role
+    }
+
+    /// Normalise a heading for alias comparison: lower-cased, trimmed, internal
+    /// whitespace collapsed, trailing punctuation removed.
+    public static func normalizeHeading(_ heading: String) -> String {
+        let collapsed = heading
+            .lowercased()
+            .components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+        return collapsed.trimmingCharacters(in: CharacterSet(charactersIn: ":.,;!?"))
+    }
+}
+
+// MARK: - RulebookInput
+
+/// One rulebook input (a parsed `.merrules` source). The `name` is the logical
+/// label referenced by the frontmatter `rulebook:` key — the `.merrules`
+/// filename without the extension by convention.
+public struct RulebookInput: Sendable {
+    public let name: String
+    public let file: String
+    public let source: String
+    public init(name: String, file: String, source: String) {
+        self.name = name
+        self.file = file
+        self.source = source
+    }
+}

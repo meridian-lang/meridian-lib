@@ -247,6 +247,28 @@ public struct HeadingEntry: Sendable {
     }
 }
 
+/// A single markdown section from a sectioned (heading-bearing) document,
+/// recorded for the manifest. Every section — executable and non-executable —
+/// is captured, so nothing in the source is silently dropped.
+public struct SkillSectionRecord: Sendable {
+    public let heading: String
+    /// Resolved/forced role string (`invariants`, `procedure`, `template`, …)
+    /// or `"inert"` for an `(( inert ))` heading with no role. Never derived
+    /// from the heading text for non-executable sections.
+    public let role: String
+    public let executes: Bool
+    /// Verbatim statement text of the section's content lines.
+    public let lines: [String]
+    public let line: Int
+    public init(heading: String, role: String, executes: Bool, lines: [String], line: Int) {
+        self.heading = heading
+        self.role = role
+        self.executes = executes
+        self.lines = lines
+        self.line = line
+    }
+}
+
 public struct MeridianFile: Sendable {
     public let imports: [ImportStatementAST]
     public let rules: [RuleAST]
@@ -255,14 +277,27 @@ public struct MeridianFile: Sendable {
     /// of the file. Nil when no frontmatter is present.
     public let metadata: FileMetadataAST?
     public let outline: [HeadingEntry]
+    /// Every markdown section recorded by `SkillSectionBuilder` (empty for
+    /// non-sectioned files). Mandatory carrier for the manifest — never `nil`.
+    public let skillSections: [SkillSectionRecord]
+    /// Literal applicability dispatch phrases mined from `When To Use`
+    /// sections (for the resolver). Empty for non-sectioned files.
+    public let dispatchPhrases: [String]
+    public let negativeDispatchPhrases: [String]
     public init(imports: [ImportStatementAST] = [],
                 rules: [RuleAST] = [],
                 workflows: [WorkflowAST] = [],
                 metadata: FileMetadataAST? = nil,
-                outline: [HeadingEntry] = []) {
+                outline: [HeadingEntry] = [],
+                skillSections: [SkillSectionRecord] = [],
+                dispatchPhrases: [String] = [],
+                negativeDispatchPhrases: [String] = []) {
         self.imports = imports; self.rules = rules; self.workflows = workflows
         self.metadata = metadata
         self.outline = outline
+        self.skillSections = skillSections
+        self.dispatchPhrases = dispatchPhrases
+        self.negativeDispatchPhrases = negativeDispatchPhrases
     }
 }
 
@@ -312,6 +347,39 @@ public struct AutonomyConfigAST: Sendable {
         self.unless = unless
         self.replanAfterFailures = replanAfterFailures
         self.maxSteps = maxSteps
+    }
+
+    /// Parse autonomy-loop options from a `with autonomy …` clause:
+    /// `until <expr>`, `unless <expr>`, `re-plan after N`, `up to N steps`.
+    /// `parseExpression` turns a captured clause into an `ExpressionAST` (the
+    /// caller supplies its own `ExpressionParser` so this stays parser-agnostic).
+    public static func parse(
+        _ raw: String,
+        parseExpression: (String) -> ExpressionAST
+    ) -> AutonomyConfigAST {
+        let lower = raw.lowercased()
+        let boundaries = [" until ", " unless ", " re-plan after ", " replan after ", " max ", " up to "]
+        func clause(_ marker: String) -> String? {
+            guard let range = lower.range(of: "\(marker) ") else { return nil }
+            let start = range.upperBound
+            var end = raw.endIndex
+            for next in boundaries {
+                if let r = lower[start...].range(of: next), r.lowerBound < end { end = r.lowerBound }
+            }
+            let text = String(raw[start..<end]).trimmingCharacters(in: .whitespacesAndNewlines)
+            return text.isEmpty ? nil : text
+        }
+        func intAfter(_ marker: String) -> Int? {
+            guard let range = lower.range(of: marker) else { return nil }
+            let digits = lower[range.upperBound...].drop(while: { !$0.isNumber }).prefix(while: { $0.isNumber })
+            return Int(String(digits))
+        }
+        return AutonomyConfigAST(
+            until: clause("until").map(parseExpression),
+            unless: clause("unless").map(parseExpression),
+            replanAfterFailures: intAfter("re-plan after") ?? intAfter("replan after") ?? 3,
+            maxSteps: intAfter("max") ?? intAfter("up to") ?? 32
+        )
     }
 }
 
@@ -419,6 +487,10 @@ public enum WaitConditionAST: Sendable {
     /// `wait for event {eventID} matching {predicate}.`
     /// `predicate` is nil when no `matching` clause is present.
     case event(String, matching: ExpressionAST?)
+    /// `ask the user to choose between "A", "B", or "C":` — emits `ask.choice`,
+    /// waits for the host to deliver a selection, and binds it to `choice` so a
+    /// following `branch` can route on it. Deterministic: no LLM involved.
+    case choice(prompt: String, options: [String])
 }
 
 public enum TimeUnitAST: Sendable, Equatable {
@@ -492,9 +564,12 @@ public struct IterationStatementAST: Sendable {
 
 public struct SimultaneouslyStatementAST: Sendable {
     public let branches: [ASTBlock]
+    /// Fire-and-forget spawn (`in the background, <stmt>.`) — no join.
+    public let detached: Bool
     public let sourceLine: Int
-    public init(branches: [ASTBlock], sourceLine: Int = 0) {
+    public init(branches: [ASTBlock], detached: Bool = false, sourceLine: Int = 0) {
         self.branches = branches
+        self.detached = detached
         self.sourceLine = sourceLine
     }
 }
@@ -519,13 +594,32 @@ public struct LabelledStatementAST: Sendable {
     }
 }
 
+/// An explicit, author-written prose-dispatch marker on a single statement.
+/// This is the ONLY way prose reaches the planner inside an otherwise
+/// deterministic workflow: `use judgment to …:` / `with discretion:` →
+/// `.discretion`; `with autonomy …:` → `.autonomy`. When `dispatch` is `nil`
+/// the prose step inherits the enclosing workflow's mode (legacy behavior:
+/// only valid inside a `with discretion`/`with autonomy` workflow).
+public enum ProseDispatchAST: Sendable {
+    case discretion
+    case autonomy
+}
+
 public struct ProseStepAST: Sendable {
     public let text: String
     public let sourceLine: Int
+    /// Explicit local dispatch marker (nil = inherit the workflow's mode).
+    public let dispatch: ProseDispatchAST?
+    /// Autonomy configuration when `dispatch == .autonomy`.
+    public let autonomy: AutonomyConfigAST?
 
-    public init(text: String, sourceLine: Int = 0) {
+    public init(text: String, sourceLine: Int = 0,
+                dispatch: ProseDispatchAST? = nil,
+                autonomy: AutonomyConfigAST? = nil) {
         self.text = text
         self.sourceLine = sourceLine
+        self.dispatch = dispatch
+        self.autonomy = autonomy
     }
 }
 

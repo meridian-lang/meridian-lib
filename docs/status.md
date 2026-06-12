@@ -15,6 +15,9 @@ Tracks the six-phase build plan from `meridian-handoff/docs/10_BUILD_PLAN.md`.
 | 4 | Typed domain codegen + golden diffs | ✅ Done | 100% |
 | 5 | assert / wait / iterate / recover / checkpointing | ✅ Done | 100% |
 | 6 | Built-in tools + full CLI + TestKit + DocC | ✅ Done | 100% |
+| 6.5 | EnglishLexicon + SKILL-shaped extensions | ✅ Done | 100% |
+| 8 | Executable rules (Phase C) | ✅ Done | 100% |
+| G | Expressive SKILL.md surface + gbrain corpus | ✅ Done | 100% |
 
 ---
 
@@ -343,3 +346,52 @@ in `IMPLEMENTATION_LOG.md` for the Phase 5/6 100% completion pass.
 
 7. **`RuleLoweringTests`** — 10 tests covering all rule shapes, permission
    softening, bounded gates, trigger synthesis, and unrecognised-rule fallback.
+
+---
+
+## Phase G — Expressive SKILL.md surface + gbrain corpus
+
+**Done.** 530 tests / 85 suites green. Zero new IR primitives — only a
+`detached` flag on `SimultaneouslyIR` and a `.choice` case on `WaitConditionIR`.
+
+### Delivered
+
+1. **Rulebook engine** — `RulebookParser` + `RewriteEngine` + `ConventionInjector`
+   under `Sources/MeridianCore/Rulebook/` and `…/Lowering/`. Three external rule
+   families in `.merrules`: desugars, section-role aliases, Inform-style
+   conventions. New `rulebook` trace category. Referenced via the `rulebook:`
+   frontmatter key. See [11_RULEBOOKS.md](11_RULEBOOKS.md).
+2. **Universal section semantics (structural, no `skill: true`)** —
+   `SkillSectionBuilder` activates on any `##`/`###` heading and maps headings to
+   a closed `SkillSectionRole` set: Contract→`assert`, Phases→procedure,
+   When-To-Use→applicability, When-NOT→negative applicability,
+   Anti-Patterns→prohibitions, Output→template. A trailing `(( inert ))` /
+   `(( inert, role: R ))` / `(( role: R ))` marker is authoritative. No silent
+   drops: every section is recorded into `meridian_skill.sections`, and
+   pre-heading content, unrecognized-heading-with-content, non-checkable
+   invariants, and fuzzy applicability conditions are hard `semanticError`s.
+3. **Frontmatter compatibility** — YAML sequences + block scalars; `tools:`→
+   `scopedTools`; default `input` param; gbrain keys projected to the manifest.
+4. **Command surface** — fenced ` ```bash ` blocks + inline backticked commands
+   → `invoke shell.run` (sentinel-carried verbatim).
+5. **Explicit judgment** — `use judgment to <goal>:` + `with discretion` /
+   `with autonomy` → `ProseStepIR`; unmarked prose errors.
+6. **Triggers + dispatch** — typed `TriggerKind` (keyword/ambient/event/schedule),
+   `TriggerClassifier` + `TriggerSynthesizer`, `RESOLVER.meri`.
+7. **Choice-gate** — `ask the user to choose between …` → emit + `WaitConditionIR.choice`
+   + branch; runtime `deliverChoice`/`consumeChoiceSelection`.
+8. **Background spawn** — `in the background, <stmt>.` → `SimultaneouslyIR(detached:true)`
+   → detached `Task {}`.
+9. **Skillpack compilation** — `Compiler.compileSkillpack(…)` pre-registers every
+   file's workflows for cross-file resolution.
+10. **`SkillMigrator` + `meridian migrate-skill`** — deterministic transform →
+   strict compile → bounded LLM-assisted repair → `.meri` + report.
+11. **gbrain corpus** — `sample-gbrain/` ships `brain.merconfig`, `brain.merrules`,
+   52 ported skills + `RESOLVER.meri`, all compiling strict with zero `_unresolved`.
+
+### Tests
+- `SampleGbrainSmokeTests` — per-feature lowering assertions.
+- `SampleGbrainConformanceTests` — full-corpus compile gate, rulebook
+  data-only extensibility, and `SkillMigrator` (deterministic + mock-LLM repair).
+
+See [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) for the porting playbook.

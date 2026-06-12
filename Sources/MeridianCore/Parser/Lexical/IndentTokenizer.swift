@@ -10,6 +10,33 @@ import Foundation
 /// struct changes are needed.
 let codeBlockSentinelPrefix = "\u{E000}codeblock:"
 
+// MARK: - Shell command sentinel
+
+/// Private-use-area prefix that marks a `PhraseInvocationAST.words` value as a
+/// verbatim shell command (lowered to `invoke shell.run with command = "…"`).
+/// The command body is base64-encoded after the prefix so arbitrary shell text
+/// — including double quotes and backslashes — survives without any escaping
+/// round-trip through the expression parser. Decoded in
+/// `ASTToIR.lowerPhraseInvocation`.
+let shellCommandSentinelPrefix = "\u{E000}shell:"
+
+/// Language tags (lower-cased fence info strings) treated as literal shell
+/// command blocks. A fenced block with one of these tags lowers each command
+/// line to a deterministic `shell.run` invoke.
+let shellFenceLanguages: Set<String> = ["bash", "sh", "shell", "console", "zsh"]
+
+func encodeShellCommand(_ command: String) -> String {
+    shellCommandSentinelPrefix + Data(command.utf8).base64EncodedString()
+}
+
+func decodeShellCommand(_ words: String) -> String? {
+    guard words.hasPrefix(shellCommandSentinelPrefix) else { return nil }
+    let b64 = String(words.dropFirst(shellCommandSentinelPrefix.count))
+    guard let data = Data(base64Encoded: b64),
+          let str  = String(data: data, encoding: .utf8) else { return nil }
+    return str
+}
+
 // MARK: - SourceLine
 
 /// A single line from a Meridian source file, with indent metadata.
@@ -22,7 +49,12 @@ public struct SourceLine: Sendable {
     public let headingLevel: Int?
 
     public var isEmpty: Bool   { text.isEmpty }
-    public var isComment: Bool { headingLevel == nil && text.hasPrefix("#") }
+    /// A line is a comment when it is a markdown `#` line (that is not a parsed
+    /// `##`/`###` heading) or a markdown blockquote (`>`). Blockquotes carry
+    /// SKILL.md asides (`> **Convention:** …`) that are documentation, not
+    /// executable statements — treating them as comments lets them sit above the
+    /// first heading without tripping the "content before first heading" error.
+    public var isComment: Bool { headingLevel == nil && (text.hasPrefix("#") || text.hasPrefix(">")) }
     public var isContent: Bool { !isEmpty && !isComment }
 
     /// Text with trailing "." stripped (most statements end with ".").

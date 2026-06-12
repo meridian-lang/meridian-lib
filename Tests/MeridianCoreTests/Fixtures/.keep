@@ -1,0 +1,2 @@
+Placeholder so SwiftPM's `.copy("Fixtures")` resource rule resolves.
+Test fixtures that need on-disk files live here.

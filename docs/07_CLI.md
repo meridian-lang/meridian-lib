@@ -34,6 +34,7 @@ meridian compile <source> [options]
 | Flag | Default | Description |
 |---|---|---|
 | `--merconfig <path>` | auto-detected | Path to a `.merconfig` file. **Repeatable** — pass once per vocabulary. If omitted, all `.merconfig` files in the same directory as `<source>` are loaded (sorted alphabetically). Falls back to the parent directory if none are found there. |
+| `--rulebook <path>` | auto-detected | Path to a `.merrules` rulebook. **Repeatable**. If omitted, all `.merrules` files in the same directory as `<source>` are loaded (sorted alphabetically), falling back to the parent directory. Required for skill files that reference `rulebook:` in frontmatter. |
 | `-o, --output <dir>` | `build` | Directory to write the generated `.swift` and `.meridian.manifest.json`. Created with intermediate directories if needed. |
 | `--timestamp` | false | Include a generation timestamp in the generated file header. |
 | `--no-line-comments` | false | Suppress `// L{n}` source-line comments in generated code. |
@@ -45,7 +46,12 @@ meridian compile <source> [options]
 
 Two files are written to the output directory:
 - `{stem}.swift` — the generated Swift source (domain types, constants, instances, workflow structs)
-- `{stem}.meridian.manifest.json` — companion manifest with parameters, event IDs, tool IDs, and source-map entries
+- `{stem}.meridian.manifest.json` — the **complete** companion manifest:
+  parameters, event IDs, tool IDs, source-map entries, frontmatter metadata,
+  the heading `outline`, and (for sectioned documents) `meridian_skill.sections`
+  recording every section verbatim with its resolved role and `executes` flag.
+  The CLI writes the full `ManifestEmitter.Input` assembled by
+  `Compiler.compileWithManifest`, not a thin stub.
 
 ### Successful output
 
@@ -415,4 +421,151 @@ meridian run examples/order_processing.meridian \
 
 # Or use meridian test to verify against spec fixtures
 meridian test Tests/MeridianCoreTests/MeridianTestSpecs
+```
+
+---
+
+## `meridian migrate-skill`
+
+Convert a gbrain-style `SKILL.md` into a strict-compiling `.meri`. The
+migrator (`Sources/MeridianCore/Migration/SkillMigrator.swift`) **injects no
+frontmatter** — section semantics activate structurally on the `##`/`###`
+headings (there is no `skill: true` flag), and `vocabulary:`/`rulebook:` are
+autodiscovered beside the input by the CLI. It runs one deterministic marking
+pass: pre-heading preamble is blockquoted (`> …`), and an authoritative
+`(( … ))` marker is appended to every heading that would not otherwise resolve
+to an executable role — prose Contract/Guarantees/Invariants →
+`(( inert, role: invariants ))`, Anti-Patterns/Avoid →
+`(( inert, role: prohibitions ))`, an unrecognized heading whose body is only
+shell fences → `(( role: procedure ))`, every other unrecognized heading →
+`(( inert ))`. Recognized procedure/applicability/negative/template headings are
+left unmarked. The pass is idempotent and does **not** strip `skill: true` (a
+one-time corpus edit, not a reusable transform). It then strict-compiles the
+candidate. **LLM proposes, compiler disposes:** a migration is only "successful"
+when the emitted `.meri` passes the same strict compile as a hand-authored file,
+so a migrated skill can never silently call an LLM at runtime. Anything the
+marking pass cannot classify deterministically (e.g. a heading with mixed prose
+and steps, or a non-checkable invariant left under a procedure heading) is
+surfaced as a located compile error for the author — or the LLM-repair seam — to
+restructure.
+
+```
+meridian migrate-skill <input> [options]
+```
+
+### Positional arguments
+
+| Argument | Description |
+|---|---|
+| `<input>` | Path to the source `SKILL.md` (or a directory, with `--batch`). |
+
+### Options
+
+| Flag | Default | Description |
+|---|---|---|
+| `--out <file.meri>` | stdout / alongside input | Output path for the migrated `.meri`. |
+| `--vocab <path>` | `brain.merconfig` | Frontmatter `vocabulary:` value to inject when absent. **Repeatable.** |
+| `--rulebook <path>` | `brain.merrules` | Frontmatter `rulebook:` value to inject when absent. **Repeatable.** |
+| `--llm <provider>` | none | Enable bounded LLM-assisted repair (no provider is wired in the default build; the flag reserves the seam). |
+| `--max-repair <N>` | `0` | Maximum repair rounds. `0` = deterministic-only. |
+| `--report <path>` | none | Write a per-skill migration report (`compiles`, added keys, repair attempts, edit count, line delta). |
+| `--batch` | false | Treat `<input>` as a directory; migrate every `SKILL.md` and emit a coverage matrix. |
+| `--force` | false | Overwrite an existing output file. |
+
+### Deterministic-only example
+
+```bash
+meridian migrate-skill skills/capture/SKILL.md \
+    --out sample-gbrain/skills/capture.meri \
+    --vocab sample-gbrain/brain.merconfig \
+    --rulebook sample-gbrain/brain.merrules \
+    --report /tmp/capture.report.txt
+```
+
+The report records exactly what (if anything) a human must resolve. When the
+body contains unmarked freeform prose, deterministic-only migration fails with
+a sourced diagnostic — the author must either rephrase the line into a
+resolvable phrase, wrap it in `use judgment to …:`, or supply a repair closure.
+
+### Batch coverage matrix
+
+```bash
+meridian migrate-skill skills/ --batch \
+    --vocab sample-gbrain/brain.merconfig \
+    --rulebook sample-gbrain/brain.merrules \
+    --report /tmp/coverage.txt
+```
+
+See [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) for the full porting
+playbook and the per-tier edit budget.
+
+---
+
+## `meridian skill-deviation`
+
+Report how a ported `.meri` deviates from the original `SKILL.md` it was derived
+from. Read-only audit companion to `migrate-skill`: it diffs the two files,
+classifies the migration effort into a tier, and renders a Markdown report. Backed
+by the reusable `SkillDeviation` helper in `MeridianCore`.
+
+```
+meridian skill-deviation <original> <ported> [options]
+```
+
+### Positional arguments
+
+| Argument | Description |
+|---|---|
+| `<original>` | Original `SKILL.md` (or a directory of skills with `--batch`) |
+| `<ported>` | Ported `.meri` (or a directory containing the `.meri` ports with `--batch`) |
+
+### Options
+
+| Flag | Default | Description |
+|---|---|---|
+| `-o, --out <dir>` | stdout | Directory for per-skill `<stem>.md` reports. Printed to stdout in single mode when omitted. |
+| `--batch` | false | Treat both inputs as directories. Pairs every `<name>/SKILL.md` (and top-level `*.md` like `RESOLVER.md`) with `<ported>/<slug>.meri` (recursive). |
+| `--index` | false | With `--batch`, also write a `README.md` index summarizing tiers, similarity, and any unpaired files. |
+| `--no-diff` | false | Omit the raw unified diff; emit summary-only reports. |
+
+### Report contents
+
+Each report records the frontmatter delta (`Added`/`Removed` keys), line counts
+with added/removed totals, a similarity ratio, a deterministic tier (`>=0.85` ->
+1 near-verbatim, `0.5..<0.85` -> 2 light edits, `<0.5` -> 3 structural rewrite),
+the structural transforms the migration applied, and a unified diff.
+
+The diff engine (`Difflib.swift`) is a faithful Swift port of Python's
+`difflib.SequenceMatcher` / `unified_diff` (matching blocks, `autojunk`,
+`get_grouped_opcodes`, `_format_range_unified`), so the reports are byte-for-byte
+equivalent to the original Python-generated corpus. Similarity is difflib's
+ratio `2*M / (origLines + portLines)` where `M` is the matched-line count;
+`added = portLines − M`, `removed = origLines − M`.
+
+Categories name exactly what `migrate-skill`'s marking pass did:
+
+| Category | Meaning |
+|---|---|
+| `frontmatter-injected` | the port added frontmatter keys |
+| `section-marker-added` | the port introduced `(( … ))` heading markers |
+| `shell-block-routed` | a pure-shell heading became `(( role: procedure ))` |
+| `preamble-blockquoted` | the port blockquoted pre-heading prose |
+
+The unified diff is fenced as ` ```diff ` with `--- <original>` / `+++ <ported>`
+file headers and standard `@@ -aStart,aCount +bStart,bCount @@` hunk headers
+(3 lines of context), so each report shows precisely which lines were added and
+removed.
+
+Batch pairing skips reference directories with no `SKILL.md` (e.g.
+`conventions/`, `migrations/`) and reports them as skipped. `meridian
+skill-deviation --batch --index` is the supported way to regenerate
+`sample-gbrain/migration-deviations/` (no external scripts).
+
+### Example
+
+```bash
+# Audit the whole gbrain corpus into sample-gbrain/migration-deviations/
+meridian skill-deviation \
+    sample-gbrain/original-skills sample-gbrain \
+    --batch --index --out sample-gbrain/migration-deviations
 ```

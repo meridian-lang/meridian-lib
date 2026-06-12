@@ -248,6 +248,14 @@ throws:
 **Security note:** `shell.run` executes arbitrary shell commands. Only use
 with trusted inputs in production workflows.
 
+**Command surface mapping:** the gbrain SKILL surface lowers fenced
+` ```bash `/` ```sh `/` ```shell ` blocks and inline backticked `gbrain …`
+commands (inside a `procedure`-role section) to `invoke shell.run with command =
+"<verbatim>"`. A multi-line block lowers to one invoke per command line. This
+reuses the existing `.subprocess` dispatcher — no new tool, no merconfig
+declaration — and is a fully deterministic `invoke` (never an LLM). See
+[13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) §"Command surface".
+
 ---
 
 ## MCP tool

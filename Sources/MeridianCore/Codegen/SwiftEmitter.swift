@@ -20,17 +20,27 @@ public struct SwiftEmitter {
         public var sourceFileName: String
         public var indentUnit: String
         public var emitSourceLineComments: Bool
+        /// When non-nil, every generated declaration (domain types, Constants,
+        /// Instances, workflow & trigger structs) is wrapped in
+        /// `public enum <namespaceEnum> { … }`. This lets many independently
+        /// generated skill files coexist in a single Swift module without the
+        /// per-file domain types (`Job`, `Brain`, `Constants`, …) colliding.
+        /// The file header (imports + the private `meridianStringify` helper)
+        /// stays at file scope. Default `nil` preserves top-level emission.
+        public var namespaceEnum: String?
 
         public init(
             includeTimestamp: Bool = false,
             sourceFileName: String = "workflow.meridian",
             indentUnit: String = "    ",
-            emitSourceLineComments: Bool = true
+            emitSourceLineComments: Bool = true,
+            namespaceEnum: String? = nil
         ) {
             self.includeTimestamp = includeTimestamp
             self.sourceFileName = sourceFileName
             self.indentUnit = indentUnit
             self.emitSourceLineComments = emitSourceLineComments
+            self.namespaceEnum = namespaceEnum
         }
     }
 
@@ -75,9 +85,14 @@ public struct SwiftEmitter {
                 return (p.name, resolved)
             }
         }
+        let namespace = options.namespaceEnum
         return StringTemplate {
             fileHeader()
             ""
+            if let namespace {
+                "public enum \(namespace) {"
+                ""
+            }
             if let d = domainDecl {
                 emitDomain(d)
                 ""
@@ -100,6 +115,9 @@ public struct SwiftEmitter {
                              workflowParamTypes: paramTypes,
                              declaredKinds: declaredKinds)
                 ""
+            }
+            if namespace != nil {
+                "}"
             }
         }.toString(separator: "\n")
     }
@@ -150,8 +168,7 @@ public struct SwiftEmitter {
                 ""
                 "    public static let skillMetadata: [String: String] = ["
                 for (k, v) in entries {
-                    let escaped = v.replacingOccurrences(of: "\"", with: "\\\"")
-                    "        \"\(k)\": \"\(escaped)\","
+                    "        \"\(escapeSwiftString(k))\": \"\(escapeSwiftString(v))\","
                 }
                 "    ]"
             }
@@ -450,10 +467,10 @@ public struct SwiftEmitter {
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
             if ir.payload.isEmpty {
-                "\(ctx.s)\(call)(event: \"\(ir.eventID)\", payload: [:])"
+                "\(ctx.s)\(call)(event: \"\(escapeSwiftString(ir.eventID))\", payload: [:])"
             } else {
                 "\(ctx.s)\(call)("
-                "\(ctx.s)    event: \"\(ir.eventID)\","
+                "\(ctx.s)    event: \"\(escapeSwiftString(ir.eventID))\","
                 "\(ctx.s)    payload: ["
                 for line in payloadLines { line }
                 "\(ctx.s)    ]"
@@ -492,7 +509,7 @@ public struct SwiftEmitter {
     // MARK: - 10. complete
 
     func emitComplete(_ ir: CompleteIR, ctx: Ctx) -> StringTemplate {
-        let reasonStr = ir.reason.map { "\"\($0)\"" } ?? "nil"
+        let reasonStr = ir.reason.map { "\"\(escapeSwiftString($0))\"" } ?? "nil"
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
             "\(ctx.s)await runtime.complete(reason: \(reasonStr))"
@@ -560,6 +577,22 @@ public struct SwiftEmitter {
     // MARK: - 4b. simultaneously
 
     func emitSimultaneously(_ ir: SimultaneouslyIR, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
+        // Detached / background spawn (`in the background, <stmt>.`): each branch
+        // runs in a fire-and-forget `Task`; the workflow does NOT join. State is
+        // captured by value so the detached work sees a snapshot.
+        if ir.detached {
+            let taskCtx = ctx.in(1)
+            return StringTemplate {
+                sourceLineComment(ir.sourceRange, ctx: ctx)
+                for (idx, branch) in ir.branches.enumerated() {
+                    "\(ctx.s)Task {"
+                    "\(taskCtx.s)var state = state"
+                    emitBlock(branch, ctx: taskCtx, workflow: workflow, path: "\(path).detached\(idx)")
+                    "\(ctx.s)}"
+                }
+                ""
+            }
+        }
         let groupCtx = ctx.in(1)
         let branchCtx = ctx.in(3)
         return StringTemplate {
@@ -580,7 +613,7 @@ public struct SwiftEmitter {
     // MARK: - 5. assert
 
     func emitAssert(_ ir: AssertIR, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
-        let msg = ir.message ?? "assertion failed"
+        let msg = escapeSwiftString(ir.message ?? "assertion failed")
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
             if let action = ir.otherwiseAction {
@@ -656,6 +689,12 @@ public struct SwiftEmitter {
                 } else {
                     "\(ctx.s)try await runtime.wait(.event(\"\(id)\", matching: nil))"
                 }
+            case .choice(let prompt, let options):
+                // Choice-gate: block on the selection, then bind it to `choice`
+                // in state so a following `branch`/`if the choice is "…"` routes.
+                let optsList = options.map { "\"\(escapeSwiftString($0))\"" }.joined(separator: ", ")
+                "\(ctx.s)try await runtime.wait(.choice(prompt: \"\(escapeSwiftString(prompt))\", options: [\(optsList)]))"
+                "\(ctx.s)state.bind(\"choice\", .string(await runtime.consumeChoiceSelection()))"
             }
         }
     }
@@ -671,14 +710,14 @@ public struct SwiftEmitter {
         case .instanceRef(let name):
             return "instances.\(snakeToCamel(name))"
         case .identifierRef(let name):
-            return "state.get(\"\(name)\")"
+            return "state.get(\"\(escapeSwiftString(name))\")"
         case .propertyAccess(let base, let prop):
             // Property paths use camelCase end-to-end so they line up with
             // generated Swift property names *and* with the keys produced by
             // Codable's default encoding when an opaque domain value is
             // traversed by `State.get`.
             let path = propertyPath(base) + "." + snakeToCamel(prop)
-            return "state.get(\"\(path)\")"
+            return "state.get(\"\(escapeSwiftString(path))\")"
         case .comparison(let lhs, let op, let rhs):
             switch op {
             case .withinDuration:
@@ -764,7 +803,7 @@ public struct SwiftEmitter {
             // Typed constants & instances bridge into Value via Value.from(_:).
             return "Value.from(\(emitExpr(expr)))"
         case .envVar(let name):
-            return ".string(ProcessInfo.processInfo.environment[\"\(name)\"] ?? \"\")"
+            return ".string(ProcessInfo.processInfo.environment[\"\(escapeSwiftString(name))\"] ?? \"\")"
         case .interpolatedString(let segs):
             // B7: Produce a Value.string(...) built from concatenated segments.
             if segs.isEmpty { return ".string(\"\")" }
@@ -904,7 +943,13 @@ public struct SwiftEmitter {
             }
             "}"
             ""
-            "private let constants = Constants()"
+            // Inside a namespace enum a module-level binding must be `static`
+            // (enums cannot hold stored instance properties). Each `run()` also
+            // emits its own local `let constants`, so bare references resolve
+            // there regardless; this binding is for parity/top-level use.
+            options.namespaceEnum == nil
+                ? "private let constants = Constants()"
+                : "private static let constants = Constants()"
         }
     }
 
@@ -951,7 +996,9 @@ public struct SwiftEmitter {
             }
             "}"
             ""
-            "private let instances = Instances()"
+            options.namespaceEnum == nil
+                ? "private let instances = Instances()"
+                : "private static let instances = Instances()"
         }
     }
 
@@ -960,7 +1007,7 @@ public struct SwiftEmitter {
         case .literal(let lit):
             return emitValueLiteral(lit)
         case .envVar(let name):
-            return ".string(ProcessInfo.processInfo.environment[\"\(name)\"] ?? \"\")"
+            return ".string(ProcessInfo.processInfo.environment[\"\(escapeSwiftString(name))\"] ?? \"\")"
         }
     }
 

@@ -280,7 +280,7 @@ public struct ReviewCommentRefactorPullRequest: MeridianWorkflow {
             )
             try await runtime.checkpoint(label: "progress:0.0:L168:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.1:L9:C0") {
+        if __meridianShouldRun("progress:0.1:L11:C0") {
             let comments = try await runtime.invoke(
                 tool: "listPullRequestComments",
                 args: [
@@ -289,7 +289,7 @@ public struct ReviewCommentRefactorPullRequest: MeridianWorkflow {
             )
             state.bind("comments", comments)
 
-            try await runtime.checkpoint(label: "progress:0.1:L9:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.1:L11:C0", state: state.snapshot())
         }
         if __meridianShouldRun("progress:0.2:L162:C0") {
             let ciStatus = try await runtime.invoke(
@@ -302,17 +302,17 @@ public struct ReviewCommentRefactorPullRequest: MeridianWorkflow {
 
             try await runtime.checkpoint(label: "progress:0.2:L162:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.3:L14:C0") {
+        if __meridianShouldRun("progress:0.3:L16:C0") {
             try await runtime.assert(MeridianComparison.eq(state.get("ciStatus"), state.get("passed")), message: "Expected the ci status is passed")
-            try await runtime.checkpoint(label: "progress:0.3:L14:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.3:L16:C0", state: state.snapshot())
         }
         for (__meridianLoopIndex_0_4, comment) in (state.get("comments")?.asList ?? []).enumerated() {
             let __meridianLoopLabel_0_4 = "progress:0.4:iteration:\(__meridianLoopIndex_0_4)"
             if __meridianShouldRun(__meridianLoopLabel_0_4) {
             state.bind("comment", comment)
-                if __meridianShouldRun("progress:0.4.body.0:L18:C0") {
+                if __meridianShouldRun("progress:0.4.body.0:L20:C0") {
                     _ = try await ResolveComment(runtime: runtime, comment: (try Value.from(comment).coerce(to: Value.self))).run()
-                    try await runtime.checkpoint(label: "progress:0.4.body.0:L18:C0", state: state.snapshot())
+                    try await runtime.checkpoint(label: "progress:0.4.body.0:L20:C0", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_4, state: state.snapshot())
             }
@@ -360,7 +360,7 @@ public struct ResolveComment: MeridianWorkflow {
         await runtime.workflowStarted(workflowName: "ResolveComment", parameters: [:])
 
         if try await runtime.discretion.decide(DiscretionContext(question: "the comment was already addressed", snapshot: state.snapshot())) {
-            if __meridianShouldRun("progress:0.0.then.0:L28:C0") {
+            if __meridianShouldRun("progress:0.0.then.0:L30:C0") {
                 let comment = try await runtime.invoke(
                     tool: "resolveComment",
                     args: [
@@ -369,7 +369,7 @@ public struct ResolveComment: MeridianWorkflow {
                 )
                 state.bind("comment", comment)
 
-                try await runtime.checkpoint(label: "progress:0.0.then.0:L28:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.0.then.0:L30:C0", state: state.snapshot())
             }
         } else {
             if __meridianShouldRun("progress:0.0.else.0:L174:C0") {

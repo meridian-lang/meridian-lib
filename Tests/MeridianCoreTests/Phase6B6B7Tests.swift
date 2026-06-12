@@ -352,7 +352,7 @@ struct B6EndToEndTests {
 
     private func examplesURL() -> URL {
         var url = URL(fileURLWithPath: #file)
-        while url.lastPathComponent != "meridian" {
+        while !FileManager.default.fileExists(atPath: url.appendingPathComponent("Package.swift").path) {
             let parent = url.deletingLastPathComponent()
             if parent.path == url.path { break }
             url = parent

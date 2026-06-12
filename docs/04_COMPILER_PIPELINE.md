@@ -262,19 +262,37 @@ unformatted string is written).
 
 ---
 
-## Stage 8 — Manifest emission
+## Section lowering (sectioned documents)
 
-`ManifestEmitter.emit(_:)` runs in parallel to Stage 6 and writes a
-`{stem}.meridian.manifest.json` companion file containing workflow names,
-parameters, event IDs, tool IDs, and source-map entries derived from the
-`// L{line}` comments in generated Swift.
+When the implicit-workflow body contains a `##`/`###` heading, the parser routes
+it through `SkillSectionBuilder` (no `skill: true` flag — the discriminator is
+structural). The builder splits the body into sections, resolves each heading
+marker-first (`(( … ))` is authoritative) then by rulebook/built-in alias,
+lowers executable sections per role, and **records every section** (executable
+and non-executable alike) into `MeridianFile.skillSections`. There are no silent
+drops: pre-heading content, unrecognized-heading-with-content, and non-checkable
+invariant items are hard `semanticError`s.
+
+## Stage 8 — Manifest emission (mandatory plumbing)
+
+The manifest is a first-class, always-produced output. `Compiler.compileWithManifest`
+assembles a COMPLETE `ManifestEmitter.Input` — workflows, constants, tools,
+kinds, instances, metadata, heading `outline`, rules, and the recorded
+`skillSections` — during the same compile that emits Swift. `ManifestEmitter.emit(_:)`
+writes a `{stem}.meridian.manifest.json` companion: workflow names, parameters,
+event IDs, tool IDs, source-map entries (from the `// L{line}` comments), and
+`meridian_skill.sections` for sectioned documents. Non-executable section content
+is guaranteed to reach the manifest, never best-effort.
 
 ---
 
 ## `Compiler.compile` return type
 
-`compile(…)` returns a plain `String` — the Swift source. There is no wrapper
-struct. The manifest is emitted separately via `Compiler.emitManifest(_:)`.
+`compile(…)` returns a plain `String` — the Swift source — by calling
+`compileWithManifest(…) -> (swift: String, manifest: ManifestEmitter.Input)`
+internally and discarding the manifest. Callers that need the manifest (the CLI)
+use `compileWithManifest` so the rich data computed during compilation is never
+silently discarded.
 
 ## `Compiler` also exposes
 

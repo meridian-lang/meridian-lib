@@ -31,7 +31,7 @@ struct Phase3ForcingFunction {
         // Tests run with Package.swift's Tests folder as cwd; walk up to the
         // package root and into `examples/`.
         var url = URL(fileURLWithPath: #file)
-        while url.lastPathComponent != "meridian" {
+        while !FileManager.default.fileExists(atPath: url.appendingPathComponent("Package.swift").path) {
             let parent = url.deletingLastPathComponent()
             if parent.path == url.path { break }
             url = parent

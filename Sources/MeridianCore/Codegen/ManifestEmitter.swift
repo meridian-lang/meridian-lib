@@ -22,6 +22,10 @@ public struct ManifestEmitter {
         public let outline: [HeadingEntry]
         /// C5: Rule manifest entries derived from parsed rules.
         public let rules: [RuleManifestEntry]
+        /// Universal sections: every markdown section of a sectioned document,
+        /// executable and non-executable alike. Mandatory carrier — guaranteed
+        /// to reach `meridian_skill.sections` so nothing is silently dropped.
+        public let skillSections: [SkillSectionEntry]
 
         public init(
             sourceFiles: [String] = [],
@@ -33,7 +37,8 @@ public struct ManifestEmitter {
             sourceMap: [SourceMapEntry] = [],
             metadata: FileMetadataAST? = nil,
             outline: [HeadingEntry] = [],
-            rules: [RuleManifestEntry] = []
+            rules: [RuleManifestEntry] = [],
+            skillSections: [SkillSectionEntry] = []
         ) {
             self.sourceFiles = sourceFiles
             self.workflows = workflows
@@ -45,6 +50,23 @@ public struct ManifestEmitter {
             self.metadata = metadata
             self.outline = outline
             self.rules = rules
+            self.skillSections = skillSections
+        }
+    }
+
+    /// One markdown section recorded for the manifest. `role` is the resolved
+    /// executable role, the explicit `role:` of a marked-inert section, or
+    /// `"inert"` for a bare `(( inert ))` heading. `executes` is false for any
+    /// non-executable (documentation) section.
+    public struct SkillSectionEntry: Encodable {
+        public let heading: String
+        public let role: String
+        public let executes: Bool
+        public let lines: [String]
+        public let line: Int
+        public init(heading: String, role: String, executes: Bool, lines: [String], line: Int) {
+            self.heading = heading; self.role = role; self.executes = executes
+            self.lines = lines; self.line = line
         }
     }
 
@@ -111,16 +133,27 @@ public struct ManifestEmitter {
         var dict: [String: Any] = [:]
         dict["meridian_ir_version"] = MERIDIAN_IR_VERSION
         dict["source_files"] = input.sourceFiles
-        // B1: Embed frontmatter as skill-discovery metadata.
-        if input.metadata != nil || !input.outline.isEmpty {
+        // B1: Embed frontmatter as skill-discovery metadata. The gate widens to
+        // include recorded sections so a sectioned document's section table is
+        // always emitted (mandatory, not best-effort).
+        if input.metadata != nil || !input.outline.isEmpty || !input.skillSections.isEmpty {
             var skillDict: [String: Any] = [:]
             if let md = input.metadata {
                 for (k, v) in md.entries {
                     skillDict[k.replacingOccurrences(of: "-", with: "_")] = v
                 }
             }
+            // `outline[].kind` follows the resolved role of the section it heads.
+            let roleByLine = Dictionary(input.skillSections.map { ($0.line, $0.role) },
+                                        uniquingKeysWith: { first, _ in first })
             if !input.outline.isEmpty {
-                skillDict["outline"] = input.outline.map(outlineEntry)
+                skillDict["outline"] = input.outline.map { outlineEntry($0, roleByLine: roleByLine) }
+            }
+            if !input.skillSections.isEmpty {
+                skillDict["sections"] = input.skillSections.map { sec -> [String: Any] in
+                    ["heading": sec.heading, "role": sec.role, "executes": sec.executes,
+                     "lines": sec.lines, "line": sec.line]
+                }
             }
             dict["meridian_skill"] = skillDict
         }
@@ -163,8 +196,9 @@ public struct ManifestEmitter {
         return dict
     }
 
-    private func outlineEntry(_ entry: HeadingEntry) -> [String: Any] {
-        ["level": entry.level, "text": entry.text, "line": entry.line, "kind": entry.kind]
+    private func outlineEntry(_ entry: HeadingEntry, roleByLine: [Int: String]) -> [String: Any] {
+        ["level": entry.level, "text": entry.text, "line": entry.line,
+         "kind": roleByLine[entry.line] ?? entry.kind]
     }
 
     private func constantValue(_ lit: IRLiteral) -> Any {

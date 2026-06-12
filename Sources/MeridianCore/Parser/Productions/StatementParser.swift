@@ -10,12 +10,21 @@ public struct StatementParser {
     public let symbols: SymbolTable?
     public let trace: ParserTrace
     private let lexicon: EnglishLexicon
+    /// Optional rulebook-driven desugar engine. When present, surface idioms are
+    /// rewritten to canonical statements before the parser's own fallback runs.
+    /// Nil for plain `.meridian`/`.merconfig` parsing (engine is a no-op anyway
+    /// when the rulebook is empty).
+    private let rewriteEngine: RewriteEngine?
+
     private var exprParser: ExpressionParser { ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon) }
 
-    public init(symbols: SymbolTable?, trace: ParserTrace = .shared, lexicon: EnglishLexicon = .default) {
+    public init(symbols: SymbolTable?, trace: ParserTrace = .shared,
+                lexicon: EnglishLexicon = .default,
+                rewriteEngine: RewriteEngine? = nil) {
         self.symbols = symbols
         self.trace = trace
         self.lexicon = lexicon
+        self.rewriteEngine = rewriteEngine
     }
 
     public func parseBlock(_ lines: [SourceLine], file: String = "") throws -> ASTBlock {
@@ -112,6 +121,39 @@ public struct StatementParser {
         // bind/decide statement.  If one reaches here it is orphaned — skip it.
         if t.hasPrefix(codeBlockSentinelPrefix) { return (nil, 1) }
 
+        // Rulebook desugar hook: rewrite a surface idiom (e.g. `If X -> Y`)
+        // into a canonical statement, then re-parse. The engine reaches a
+        // fixpoint, so the re-parse never re-triggers a rewrite (no recursion
+        // loop). No-op when no rulebook is loaded.
+        if let engine = rewriteEngine, !engine.isEmpty {
+            let result = engine.rewrite(t)
+            if result.changed, result.text != t {
+                let rewritten = SourceLine(indent: line.indent, text: result.text,
+                                           raw: line.raw, number: line.number)
+                var newLines = lines
+                newLines[i] = rewritten
+                return try parseStatementWithoutRewrite(newLines, at: i, file: file)
+            }
+        }
+
+        return try parseStatementWithoutRewrite(lines, at: i, file: file)
+    }
+
+    /// The body of statement parsing, run after the rulebook desugar hook.
+    /// Separated so the hook can re-enter parsing exactly once on the rewritten
+    /// line without risking an infinite loop.
+    func parseStatementWithoutRewrite(_ lines: [SourceLine], at i: Int, file: String) throws -> (StatementAST?, Int) {
+        let line = lines[i]
+        let t = line.statement
+
+        // Explicit judgment markers — the ONLY local path prose reaches the
+        // planner: `use judgment to <goal>:` / `with discretion:` /
+        // `with autonomy …:`. Checked before topic-label / idiom parsing so a
+        // trailing-colon header isn't misread as a label.
+        if let (stmt, consumed) = try parseJudgmentMarker(lines, at: i) {
+            return (stmt, consumed)
+        }
+
         if let (label, rest) = StatementParser.topicLabel(in: t) {
             guard !rest.isEmpty else { return (nil, 1) }
             let labelledLine = SourceLine(indent: line.indent, text: rest, raw: line.raw, number: line.number)
@@ -161,6 +203,11 @@ public struct StatementParser {
             if let cond = parseWaitCondition(rest) {
                 return (.wait(WaitStatementAST(condition: cond, sourceLine: line.number)), 1)
             }
+        }
+
+        // Choice-gate: `ask the user to choose between "A", "B", or "C":`
+        if let choice = parseChoiceGate(line) {
+            return (.wait(choice), 1)
         }
 
         // "emit {eventID} with ..." (possibly multi-line payload)
@@ -280,6 +327,20 @@ public struct StatementParser {
 
     private func parseInlineChain(_ line: SourceLine, file: String) throws -> [StatementAST]? {
         let statement = line.statement
+
+        // Command surface: a fenced ```bash/```sh/```shell block (collapsed by
+        // the tokenizer into a code-block sentinel) lowers each command line to
+        // a deterministic `shell.run` invoke. One invoke per command line;
+        // backslash line-continuations are joined. Never calls an LLM.
+        if let shellStatements = shellBlockStatements(line) {
+            return shellStatements
+        }
+
+        // Inline backticked literal command on its own line, e.g. `gbrain publish`.
+        if let inlineShell = inlineBacktickedCommand(line) {
+            return [inlineShell]
+        }
+
         guard statement.lowercased().hasPrefix("do ") else { return nil }
         let rest = String(statement.dropFirst(3)).trimmingCharacters(in: .whitespaces)
         let chunks = splitStatementChain(rest)
@@ -290,9 +351,193 @@ public struct StatementParser {
         }
     }
 
+    /// Parse an explicit judgment marker into a `.proseStep` carrying its own
+    /// dispatch mode (so it is valid in any workflow, deterministic-by-default):
+    ///
+    ///   • `use judgment to <goal>:`  + indented instructions → discretion
+    ///   • `use judgment to <goal>.`  (single line)            → discretion
+    ///   • `with discretion:`         + indented instructions  → discretion
+    ///   • `with autonomy <opts>:`    + indented instructions  → autonomy
+    ///
+    /// Returns `nil` when the line is not a judgment marker.
+    private func parseJudgmentMarker(_ lines: [SourceLine], at i: Int) throws -> (StatementAST, Int)? {
+        let line = lines[i]
+        let t = line.statement
+        let lower = t.lowercased()
+
+        func collectBody() -> (text: [String], consumed: Int) {
+            var bodyLines: [String] = []
+            var j = i + 1
+            while j < lines.count {
+                let l = lines[j]
+                if l.isEmpty || l.isComment { j += 1; continue }
+                if l.indent > line.indent { bodyLines.append(l.statement); j += 1 } else { break }
+            }
+            return (bodyLines, j - i)
+        }
+
+        // `use judgment to <goal>` — block (ends with ":") or single line.
+        for prefix in ["use judgment to ", "use judgement to ", "use your judgment to "] {
+            guard lower.hasPrefix(prefix) else { continue }
+            var goal = String(t.dropFirst(prefix.count)).trimmingCharacters(in: .whitespaces)
+            let isBlock = goal.hasSuffix(":")
+            if isBlock { goal = String(goal.dropLast()).trimmingCharacters(in: .whitespaces) }
+            var consumed = 1
+            var proseText = goal
+            if isBlock {
+                let body = collectBody()
+                consumed += body.consumed - 1
+                if !body.text.isEmpty {
+                    proseText = ([goal] + body.text).filter { !$0.isEmpty }.joined(separator: "\n")
+                }
+            }
+            return (.proseStep(ProseStepAST(text: proseText, sourceLine: line.number, dispatch: .discretion)), consumed)
+        }
+
+        // `with discretion:` block.
+        if lower == "with discretion:" || lower == "with discretion" {
+            let body = collectBody()
+            let proseText = body.text.joined(separator: "\n")
+            return (.proseStep(ProseStepAST(text: proseText, sourceLine: line.number, dispatch: .discretion)), body.consumed)
+        }
+
+        // `with autonomy <options>:` block.
+        if lower.hasPrefix("with autonomy") {
+            let afterMarker = String(t.dropFirst("with autonomy".count))
+            let opts = afterMarker.hasSuffix(":")
+                ? String(afterMarker.dropLast()).trimmingCharacters(in: .whitespaces)
+                : afterMarker.trimmingCharacters(in: .whitespaces)
+            let body = collectBody()
+            let proseText = body.text.joined(separator: "\n")
+            return (.proseStep(ProseStepAST(
+                text: proseText,
+                sourceLine: line.number,
+                dispatch: .autonomy,
+                autonomy: parseAutonomyOptions(opts)
+            )), body.consumed)
+        }
+
+        return nil
+    }
+
+    /// Parse a choice-gate statement:
+    /// `ask the user to choose between "A", "B", or "C":` (trailing `:` optional).
+    /// Options are the double-quoted spans. Returns nil when the line is not a
+    /// choice gate or declares no options.
+    private func parseChoiceGate(_ line: SourceLine) -> WaitStatementAST? {
+        let t = line.statement
+        let lower = t.lowercased()
+        let markers = ["ask the user to choose between ", "ask the user to choose from ",
+                       "choose between ", "ask to choose between "]
+        guard let marker = markers.first(where: { lower.hasPrefix($0) }) else { return nil }
+        let rest = String(t.dropFirst(marker.count))
+        let options = doubleQuotedSpans(in: rest)
+        guard !options.isEmpty else { return nil }
+        return WaitStatementAST(
+            condition: .choice(prompt: t, options: options),
+            sourceLine: line.number
+        )
+    }
+
+    /// Extract the contents of each double-quoted span in `s`, in order.
+    private func doubleQuotedSpans(in s: String) -> [String] {
+        var spans: [String] = []
+        var current = ""
+        var inQuote = false
+        for c in s {
+            if c == "\"" {
+                if inQuote { spans.append(current); current = "" }
+                inQuote.toggle()
+                continue
+            }
+            if inQuote { current.append(c) }
+        }
+        return spans
+    }
+
+    /// Parse autonomy-loop options from a `with autonomy …` clause via the
+    /// shared `AutonomyConfigAST.parse` factory.
+    private func parseAutonomyOptions(_ raw: String) -> AutonomyConfigAST {
+        AutonomyConfigAST.parse(raw, parseExpression: exprParser.parse)
+    }
+
+    /// Expand a fenced shell code block into one `shell.run` invoke per command
+    /// line. Returns `nil` when the line is not a shell-tagged code-block
+    /// sentinel (so other code-block languages flow through unchanged).
+    private func shellBlockStatements(_ line: SourceLine) -> [StatementAST]? {
+        let t = line.text
+        guard t.hasPrefix(codeBlockSentinelPrefix) else { return nil }
+        let rest = String(t.dropFirst(codeBlockSentinelPrefix.count))
+        guard let colon = rest.firstIndex(of: ":") else { return nil }
+        let lang = String(rest[rest.startIndex ..< colon]).lowercased()
+        guard shellFenceLanguages.contains(lang) else { return nil }
+        guard let body = decodeCodeBlockBody(t) else { return [] }
+
+        let commands = splitShellCommands(body)
+        return commands.map { cmd in
+            .phraseInvocation(PhraseInvocationAST(
+                words: encodeShellCommand(cmd),
+                sourceLine: line.number
+            ))
+        }
+    }
+
+    /// Split a shell-block body into individual commands, dropping blank lines
+    /// and `#` comments and joining trailing-backslash line continuations.
+    private func splitShellCommands(_ body: String) -> [String] {
+        var commands: [String] = []
+        var pending = ""
+        for rawLine in body.components(separatedBy: "\n") {
+            let trimmed = rawLine.trimmingCharacters(in: .whitespaces)
+            if trimmed.isEmpty || trimmed.hasPrefix("#") {
+                if pending.isEmpty { continue }
+            }
+            if trimmed.hasSuffix("\\") {
+                pending += String(trimmed.dropLast()).trimmingCharacters(in: .whitespaces) + " "
+                continue
+            }
+            let full = (pending + trimmed).trimmingCharacters(in: .whitespaces)
+            pending = ""
+            if !full.isEmpty && !full.hasPrefix("#") { commands.append(full) }
+        }
+        if !pending.trimmingCharacters(in: .whitespaces).isEmpty {
+            commands.append(pending.trimmingCharacters(in: .whitespaces))
+        }
+        return commands
+    }
+
+    /// A line whose entire statement is a single backtick-quoted command, e.g.
+    /// `` `gbrain publish "title"` `` — lowers to one `shell.run` invoke.
+    private func inlineBacktickedCommand(_ line: SourceLine) -> StatementAST? {
+        let t = line.statement.trimmingCharacters(in: .whitespaces)
+        guard t.count >= 2, t.hasPrefix("`"), t.hasSuffix("`") else { return nil }
+        let inner = String(t.dropFirst().dropLast()).trimmingCharacters(in: .whitespaces)
+        // Reject if the inner text still contains a backtick (not a single span)
+        // or is empty.
+        guard !inner.isEmpty, !inner.contains("`") else { return nil }
+        return .phraseInvocation(PhraseInvocationAST(
+            words: encodeShellCommand(inner),
+            sourceLine: line.number
+        ))
+    }
+
     private func parseEnglishIdiom(_ line: SourceLine, file: String) throws -> StatementAST? {
         let t = line.statement
         let lower = t.lowercased()
+
+        // Background spawn: `in the background, <stmt>.` → detached simultaneously.
+        for prefix in ["in the background, ", "in the background ", "spawn in the background, "] {
+            guard lower.hasPrefix(prefix) else { continue }
+            let actionText = String(t.dropFirst(prefix.count)).trimmingCharacters(in: .whitespaces)
+            guard !actionText.isEmpty else { return nil }
+            let actionLine = SourceLine(indent: line.indent, text: actionText, raw: line.raw, number: line.number)
+            guard let stmt = try parseStatement([actionLine], at: 0, file: file).0 else { return nil }
+            return .simultaneously(SimultaneouslyStatementAST(
+                branches: [ASTBlock(statements: [stmt], sourceLine: line.number)],
+                detached: true,
+                sourceLine: line.number
+            ))
+        }
 
         if lower.hasPrefix("make sure ") || lower.hasPrefix("ensure ") {
             let prefix = lower.hasPrefix("make sure ") ? "make sure " : "ensure "
@@ -833,15 +1078,27 @@ public struct StatementParser {
         var rest = t.lowercased().hasPrefix("for each ") ? String(t.dropFirst(9))
                  : String(t.dropFirst("for every ".count))
         if rest.hasSuffix(",") { rest = String(rest.dropLast()) }
-        guard let inRange = rest.lowercased().range(of: " in ") else {
-            return (IterationStatementAST(
-                mode: .forEach(variable: rest, collection: .literal(.string(""))),
-                body: ASTBlock(statements: []),
-                sourceLine: line.number), 1)
+        if rest.hasSuffix(":") { rest = String(rest.dropLast()) }
+        rest = rest.trimmingCharacters(in: .whitespaces)
+
+        let variable: String
+        let collection: ExpressionAST
+        if let inRange = rest.lowercased().range(of: " in ") {
+            // Explicit collection: `for each {var} in {collection}`.
+            variable   = String(rest[rest.startIndex ..< inRange.lowerBound]).trimmingCharacters(in: .whitespaces)
+            collection = exprParser.parse(String(rest[inRange.upperBound...]))
+        } else {
+            // Bare block header: `for each {kind}:` binds the singular kind and
+            // iterates over its plural collection (`for each page:` → iterate
+            // `pages` binding `page`). Strips a leading article if present.
+            var noun = rest
+            for article in lexicon.articles where noun.lowercased().hasPrefix(article + " ") {
+                noun = String(noun.dropFirst(article.count + 1)); break
+            }
+            let singular = lexicon.singularize(noun.trimmingCharacters(in: .whitespaces))
+            variable   = camelize(singular)
+            collection = .identifierRef(camelize(pluralize(singular)))
         }
-        let variable   = String(rest[rest.startIndex ..< inRange.lowerBound])
-        let collStr    = String(rest[inRange.upperBound...])
-        let collection = exprParser.parse(collStr)
 
         let parentIndent = line.indent
         var bodyLines: [SourceLine] = []

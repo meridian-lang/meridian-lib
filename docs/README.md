@@ -24,9 +24,11 @@ runs against a small deterministic runtime.
 | 8 | [08_TRACING.md](08_TRACING.md) | Debuggers — `ParserTrace` categories, capturing, `--trace` CLI flag |
 | 9 | [09_MERIDIAN_TESTS.md](09_MERIDIAN_TESTS.md) | Contributors — `.meridian.test` spec format and `meridian test` runner |
 | 10 | [10_BUILTIN_TOOLS.md](10_BUILTIN_TOOLS.md) | Tool authors — Blueprint built-in catalog, registration, arguments |
-| 11 | [../Tests/README.md](../Tests/README.md) | All contributors — test suites, forcing functions, adding new tests |
+| 11 | [11_RULEBOOKS.md](11_RULEBOOKS.md) | Authors extending the surface — `.merrules` desugars, section roles, conventions |
 | 12 | [12_PROSE_AND_AUTONOMY.md](12_PROSE_AND_AUTONOMY.md) | Authors using plan/autonomy prose modes |
-| 13 | [status.md](status.md) | Implementers — what's done, what's next, decision references |
+| 13 | [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) | Authors porting gbrain `SKILL.md` → `.meri` (playbook + tiers + migrator) |
+| — | [../Tests/README.md](../Tests/README.md) | All contributors — test suites, forcing functions, adding new tests |
+| — | [status.md](status.md) | Implementers — what's done, what's next, decision references |
 
 ---
 

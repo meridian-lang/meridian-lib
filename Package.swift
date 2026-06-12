@@ -171,6 +171,19 @@ let package = Package(
             ],
             path: "Tests/MeridianIntegrationTests",
             resources: [.copy("Fixtures")]
+        ),
+
+        // MARK: - SampleGbrainTests — the ported gbrain corpus lives under
+        // sample-gbrain/, and its tests live alongside it (not in
+        // MeridianCoreTests) so the whole skillpack is self-contained: vocab,
+        // rulebook, skills, original SKILL.md sources, deviation notes,
+        // compiled outputs, and the tests that gate them. The codegen test
+        // additionally validates that every emitted Swift file is syntactically
+        // well-formed and (opt-in) type-checks against MeridianRuntime.
+        .testTarget(
+            name: "SampleGbrainTests",
+            dependencies: ["MeridianCore", "MeridianRuntime"],
+            path: "sample-gbrain/Tests"
         )
     ],
     swiftLanguageModes: [.v6]

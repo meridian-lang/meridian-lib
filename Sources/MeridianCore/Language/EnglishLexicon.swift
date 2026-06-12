@@ -143,10 +143,17 @@ public struct EnglishLexicon: Sendable {
     /// e.g. "process an order placed by a customer" → "ProcessOrder"
     /// e.g. "sync analytics for an order placed by a customer" → "SyncAnalytics"
     public func structName(from name: String) -> String {
-        let words = name.split(separator: " ").map(String.init)
+        // Split on whitespace AND any non-identifier character (hyphens,
+        // underscores, dots, slashes, apostrophes, …). A hyphenated skill name
+        // like "webhook-transforms" must yield valid CamelCase
+        // ("WebhookTransforms"), never an identifier containing '-' which is a
+        // hard Swift syntax error (`struct Webhook-transforms { … }`).
+        let words = name
+            .split(whereSeparator: { !($0.isLetter || $0.isNumber) })
+            .map(String.init)
         var result: [String] = []
         for word in words {
-            let lower = word.lowercased().trimmingCharacters(in: .punctuationCharacters)
+            let lower = word.lowercased()
             // Stop at any preposition once we have at least one significant word
             if !result.isEmpty && (prepositions.contains(lower) || participles.contains(lower)) {
                 break
@@ -155,7 +162,10 @@ public struct EnglishLexicon: Sendable {
             if articles.contains(lower) { continue }
             result.append(word.prefix(1).uppercased() + word.dropFirst().lowercased())
         }
-        return result.isEmpty ? "Workflow" : result.joined()
+        let joined = result.joined()
+        guard let first = joined.first else { return "Workflow" }
+        // Swift identifiers may not begin with a digit.
+        return first.isNumber ? "_" + joined : joined
     }
 
     // MARK: - Lexicon merging (for synonym support)

@@ -5,6 +5,8 @@ goal: Resolve obviously addressed comments while preserving an audit trail for t
 parameters: pull request
 vocabulary: comprehensive_workflows.merconfig
 ---
+## Read context
+
 Setup: open the audit log for the pull request.
 Comments: bind comments = invoke list pull request comments with pr = the pull request's number.
 Health: inspect the ci status of the pull request.

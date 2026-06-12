@@ -112,10 +112,44 @@ public struct Compiler {
     public func compile(
         meridianSource: String,
         meridianFile: String = "workflow.meridian",
-        vocabularies: [VocabularyInput]
+        vocabularies: [VocabularyInput],
+        rulebooks: [RulebookInput] = []
     ) throws -> String {
+        try compileWithManifest(
+            meridianSource: meridianSource, meridianFile: meridianFile,
+            vocabularies: vocabularies, rulebooks: rulebooks
+        ).swift
+    }
+
+    /// Like `compile`, but returns BOTH the Swift source and the complete
+    /// `ManifestEmitter.Input` assembled during compilation (workflows,
+    /// metadata, outline, recorded sections, …). This removes the silent-loss
+    /// point where rich data computed during compilation was discarded; hosts
+    /// (the CLI) emit the manifest from this Input rather than a thin stub.
+    public func compileWithManifest(
+        meridianSource: String,
+        meridianFile: String = "workflow.meridian",
+        vocabularies: [VocabularyInput],
+        rulebooks: [RulebookInput] = []
+    ) throws -> (swift: String, manifest: ManifestEmitter.Input) {
         let trace = options.trace
         var lexicon = options.lexicon
+
+        // Parse + merge every supplied rulebook into one effective Rulebook,
+        // and build the desugar engine that the StatementParser consults.
+        var rulebook = Rulebook.empty
+        var seenRulebooks: Set<String> = []
+        for input in rulebooks {
+            if !seenRulebooks.insert(input.name).inserted {
+                throw CompilerError.semanticError(
+                    message: "duplicate rulebook name: \(input.name)",
+                    range: SourceRange(file: input.file, line: 1, column: 1)
+                )
+            }
+            let parsed = try RulebookParser(trace: trace).parse(input.source, file: input.file)
+            rulebook = rulebook.merging(parsed)
+        }
+        let rewriteEngine = rulebook.isEmpty ? nil : RewriteEngine(rulebook: rulebook, trace: trace)
 
         // Parse + merge every supplied .merconfig.
         var config = MerConfigFile()
@@ -144,8 +178,125 @@ public struct Compiler {
         let symbolsFile = vocabularies.first?.file ?? "config.merconfig"
         let symbols = SymbolTable.build(from: config, sourceFile: symbolsFile, trace: trace, lexicon: lexicon)
 
-        let ast = try MeridianParser(symbols: symbols, trace: trace, lexicon: lexicon).parse(meridianSource, file: meridianFile)
+        let ast = try MeridianParser(symbols: symbols, trace: trace, lexicon: lexicon,
+                                     rewriteEngine: rewriteEngine).parse(meridianSource, file: meridianFile)
+        return try lowerAndEmit(
+            ast: ast, meridianFile: meridianFile,
+            symbols: symbols, config: config, lexicon: lexicon, trace: trace,
+            rulebook: rulebook, vocabularies: vocabularies, rulebooks: rulebooks,
+            preRegistered: false
+        )
+    }
+
+    /// One `.meri` skill source within a skillpack.
+    public struct SkillpackInput: Sendable {
+        public let source: String
+        public let file: String
+        public init(source: String, file: String) {
+            self.source = source
+            self.file = file
+        }
+    }
+
+    /// Skillpack entry point: compile a *set* of `.meri` files against shared
+    /// `.merconfig`(s) + `.merrules`. Every file's workflows are registered as
+    /// phrase stubs in one shared `SymbolTable` **before** any file is lowered,
+    /// so cross-skill invocation ("delegate to enrich", "route through X") and
+    /// the resolver table resolve across files. Single-file `compile` remains
+    /// the default; this returns a `file → Swift source` map.
+    public func compileSkillpack(
+        _ skills: [SkillpackInput],
+        vocabularies: [VocabularyInput],
+        rulebooks: [RulebookInput] = []
+    ) throws -> [String: String] {
+        let trace = options.trace
+        var lexicon = options.lexicon
+
+        var rulebook = Rulebook.empty
+        var seenRulebooks: Set<String> = []
+        for input in rulebooks {
+            if !seenRulebooks.insert(input.name).inserted {
+                throw CompilerError.semanticError(
+                    message: "duplicate rulebook name: \(input.name)",
+                    range: SourceRange(file: input.file, line: 1, column: 1)
+                )
+            }
+            let parsed = try RulebookParser(trace: trace).parse(input.source, file: input.file)
+            rulebook = rulebook.merging(parsed)
+        }
+        let rewriteEngine = rulebook.isEmpty ? nil : RewriteEngine(rulebook: rulebook, trace: trace)
+
+        var config = MerConfigFile()
+        var seenNames: Set<String> = []
+        for input in vocabularies {
+            if !seenNames.insert(input.name).inserted {
+                throw CompilerError.semanticError(
+                    message: "duplicate vocabulary name: \(input.name)",
+                    range: SourceRange(file: input.file, line: 1, column: 1)
+                )
+            }
+            let parsed = try MerConfigParser(trace: trace, lexicon: lexicon).parse(input.source, file: input.file)
+            config = config.merging(parsed)
+        }
+        try requireUniqueDeclarations(in: config)
+        lexicon = lexicon.merging(
+            comparisonSynonyms: config.languageSynonyms.comparisonSynonyms,
+            durationSynonyms: config.languageSynonyms.durationSynonyms
+        )
+
+        let symbolsFile = vocabularies.first?.file ?? "config.merconfig"
+        let symbols = SymbolTable.build(from: config, sourceFile: symbolsFile, trace: trace, lexicon: lexicon)
+
+        // Parse every skill against the SHARED symbol table.
+        var parsed: [(ast: MeridianFile, file: String)] = []
+        for skill in skills {
+            let ast = try MeridianParser(symbols: symbols, trace: trace, lexicon: lexicon,
+                                         rewriteEngine: rewriteEngine).parse(skill.source, file: skill.file)
+            parsed.append((ast, skill.file))
+        }
+
+        // Pre-register EVERY file's workflows as phrase stubs first, so a body
+        // in one skill can invoke a workflow declared in another.
+        for entry in parsed {
+            for wf in entry.ast.workflows {
+                let structName = IRWorkflow.structName(from: wf.pattern.displayText, lexicon: lexicon)
+                symbols.registerWorkflowPhrase(
+                    pattern: wf.pattern,
+                    structName: structName,
+                    sourceLine: wf.sourceLine,
+                    sourceFile: wf.sourceFile.isEmpty ? entry.file : wf.sourceFile
+                )
+            }
+        }
+
+        var outputs: [String: String] = [:]
+        for entry in parsed {
+            outputs[entry.file] = try lowerAndEmit(
+                ast: entry.ast, meridianFile: entry.file,
+                symbols: symbols, config: config, lexicon: lexicon, trace: trace,
+                rulebook: rulebook, vocabularies: vocabularies, rulebooks: rulebooks,
+                preRegistered: true
+            ).swift
+        }
+        return outputs
+    }
+
+    /// Lower a parsed `.meri` AST against a (possibly shared) symbol table and
+    /// emit Swift. Shared by single-file `compile` and `compileSkillpack`.
+    private func lowerAndEmit(
+        ast: MeridianFile,
+        meridianFile: String,
+        symbols: SymbolTable,
+        config: MerConfigFile,
+        lexicon: EnglishLexicon,
+        trace: ParserTrace,
+        rulebook: Rulebook,
+        vocabularies: [VocabularyInput],
+        rulebooks: [RulebookInput],
+        preRegistered: Bool
+    ) throws -> (swift: String, manifest: ManifestEmitter.Input) {
         try validateImports(ast.imports, against: vocabularies, file: meridianFile)
+        try validateRulebookReferences(ast.metadata, against: rulebooks, file: meridianFile)
 
         // Merge the frontmatter `allow-fallbacks:` policy (if any) with the
         // option-level escape hatch. The resulting policy is the union.
@@ -176,23 +327,102 @@ public struct Compiler {
 
         let domainDecl = buildDomainDecl(from: config)
 
+        // Narrow the plan-step tool allow-list to the skill's declared `tools:`
+        // frontmatter (if any). Unresolved tokens fall back to the full set so a
+        // typo can never silently empty the planner's capability surface.
+        let frontmatter = SkillFrontmatter(ast.metadata)
+        let scopedTools = resolveScopedTools(frontmatter.tools, symbols: symbols, trace: trace)
+
         let lowerer = ASTToIR(symbols: symbols, sourceFile: meridianFile, trace: trace,
-                              lexicon: lexicon, fallbackPolicy: effectivePolicy)
-        let workflows = try lowerer.lower(ast)
+                              lexicon: lexicon, fallbackPolicy: effectivePolicy,
+                              rulebook: rulebook, scopedTools: scopedTools)
+        var workflows = try lowerer.lower(ast, preRegistered: preRegistered)
+
+        // E: Frontmatter `triggers:` → typed triggers → one synthetic trigger
+        // workflow each (wait for the trigger + fan out `trigger.<name>.fired`).
+        // The host owns actual firing; routing is the resolver's job.
+        if !frontmatter.triggers.isEmpty {
+            let classifier = TriggerClassifier(lexicon: lexicon)
+            let triggers = frontmatter.triggers.map {
+                classifier.classify($0, sourceLine: ast.metadata?.sourceLine ?? 0)
+            }
+            workflows += TriggerSynthesizer(lexicon: lexicon, trace: trace)
+                .synthesize(triggers, sourceFile: meridianFile)
+        }
 
         // Emit Swift
         let emitterOpts = SwiftEmitter.Options(
             includeTimestamp: options.emitterOptions.includeTimestamp,
             sourceFileName: meridianFile,
             indentUnit: options.emitterOptions.indentUnit,
-            emitSourceLineComments: options.emitterOptions.emitSourceLineComments
+            emitSourceLineComments: options.emitterOptions.emitSourceLineComments,
+            namespaceEnum: options.emitterOptions.namespaceEnum
         )
-        return SwiftEmitter(options: emitterOpts)
+        let swift = SwiftEmitter(options: emitterOpts)
             .emitFile(workflows: workflows,
                       constantsDecl: constantsDecl,
                       instancesDecl: instancesDecl,
                       domainDecl: domainDecl,
                       fileMetadata: ast.metadata)
+
+        // Assemble the COMPLETE manifest Input as part of every compile. The
+        // rich data computed here (workflows, outline, recorded sections) is no
+        // longer discarded — the host emits the manifest from this Input.
+        let manifestInput = ManifestEmitter.Input(
+            sourceFiles: [meridianFile] + vocabularies.map(\.file),
+            workflows: workflows,
+            constantsDecl: constantsDecl,
+            instancesRequired: instancesDecl.map { decl in
+                decl.entries.map { e in
+                    ManifestEmitter.InstanceManifestEntry(name: e.name, kind: e.kind)
+                }
+            } ?? [],
+            metadata: ast.metadata,
+            outline: ast.outline,
+            skillSections: ast.skillSections.map {
+                ManifestEmitter.SkillSectionEntry(
+                    heading: $0.heading, role: $0.role, executes: $0.executes,
+                    lines: $0.lines, line: $0.line)
+            }
+        )
+        return (swift, manifestInput)
+    }
+
+    /// Resolve frontmatter `tools:` tokens to registered tool method names for
+    /// the prose/autonomy plan-step allow-list. Returns `nil` when no tools are
+    /// declared (meaning "every registered tool", the historical default).
+    ///
+    /// Each token is matched against: an exact method name, the dotted form of a
+    /// space-separated phrase (`page search` → `page.search`), a display-name
+    /// lookup, and finally fuzzy word-overlap. `shell.run` is always included so
+    /// literal shell commands keep working. If nothing resolves we fall back to
+    /// the full set rather than risk an over-narrow scope.
+    private func resolveScopedTools(_ tokens: [String], symbols: SymbolTable, trace: ParserTrace) -> [String]? {
+        guard !tokens.isEmpty else { return nil }
+        let methodNames = Set(symbols.tools.keys)
+        var resolved: Set<String> = []
+        for raw in tokens {
+            let token = raw.trimmingCharacters(in: .whitespaces)
+            guard !token.isEmpty else { continue }
+            let dotted = token.lowercased().split(whereSeparator: { $0 == " " }).joined(separator: ".")
+            if methodNames.contains(token) {
+                resolved.insert(token)
+            } else if let hit = methodNames.first(where: { $0.lowercased() == token.lowercased() || $0.lowercased() == dotted }) {
+                resolved.insert(hit)
+            } else if let decl = symbols.tool(named: token) ?? symbols.tool(fromWords: token) {
+                resolved.insert(decl.methodName)
+            } else {
+                trace.log(.skill, "scoped tool `\(token)` did not resolve to a declared tool; relying on shell/fallback")
+            }
+        }
+        // Always allow the shell built-in for literal command surfaces.
+        resolved.insert("shell.run")
+        // If only the shell fallback resolved, treat the declaration as
+        // unhelpful and keep the full surface available.
+        if resolved.subtracting(["shell.run"]).isEmpty {
+            return nil
+        }
+        return resolved.sorted()
     }
 
     /// Reject duplicate kind / phrase / tool / constant / instance names in
@@ -274,6 +504,37 @@ public struct Compiler {
                 throw CompilerError.semanticError(
                     message: "no vocabulary named `\(token)` was supplied (saw: \(names.sorted().joined(separator: ", ")))",
                     range: SourceRange(file: file, line: imp.sourceLine, column: 1)
+                )
+            }
+        }
+    }
+
+    /// Validate each `rulebook:` frontmatter entry resolves to a supplied
+    /// `RulebookInput`. Like `vocabulary:`, the host owns the actual rulebook
+    /// sources; the frontmatter key is a declarative reference. A no-rulebook
+    /// file is unaffected.
+    private func validateRulebookReferences(_ metadata: FileMetadataAST?,
+                                            against rulebooks: [RulebookInput],
+                                            file: String) throws {
+        guard let raw = metadata?["rulebook"] else { return }
+        let line = metadata?.sourceLine ?? 1
+        let names = Set(rulebooks.map(\.name))
+        let files = Set(rulebooks.map(\.file))
+        for part in raw.split(separator: ",") {
+            let token = String(part)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .trimmingCharacters(in: .init(charactersIn: "\"'"))
+            guard !token.isEmpty else { continue }
+            let basename = (token as NSString).lastPathComponent
+            let stem = (basename as NSString).deletingPathExtension
+            let ok = names.contains { $0.caseInsensitiveCompare(stem) == .orderedSame }
+                || names.contains { $0.caseInsensitiveCompare(token) == .orderedSame }
+                || files.contains { $0.caseInsensitiveCompare(token) == .orderedSame }
+                || files.contains { $0.caseInsensitiveCompare(basename) == .orderedSame }
+            if !ok {
+                throw CompilerError.semanticError(
+                    message: "no rulebook named `\(token)` was supplied (saw: \(names.sorted().joined(separator: ", ")))",
+                    range: SourceRange(file: file, line: line, column: 1)
                 )
             }
         }

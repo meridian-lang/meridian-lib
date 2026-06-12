@@ -876,3 +876,38 @@ Runtime(
 
 This design is intentional: Meridian's runtime has no built-in user identity
 model. Permission logic that requires identity is a host concern.
+
+---
+
+## Choice-gate (`WaitConditionIR.choice`)
+
+The gbrain SKILL surface adds a fifth `WaitCondition` case for the ask-user
+pattern (`ask the user to choose between "A", "B".`):
+
+```swift
+case choice(prompt: String, options: [String])
+```
+
+It reuses the same continuation plumbing as `.signal`:
+
+- `wait(.choice(prompt:options:))` registers a continuation in
+  `_choiceWaiters` and suspends. The `wait.start` payload carries
+  `kind = "choice"`, the prompt, and the options list, so a host UI can render
+  the gate.
+- `deliverChoice(_ selection: String)` stores the selection in
+  `_lastChoiceSelection` and resumes the waiter.
+- `consumeChoiceSelection()` returns (and clears) the last delivered selection.
+  Generated `if the choice is "A",` branches call it to read the user's pick.
+
+Timeout is not honoured for `.choice` (same as `.signal`/`.approval`/`.event`);
+only `.duration` honours the clock.
+
+---
+
+## `shell.run` for the command surface
+
+Fenced ` ```bash ` blocks and inline backticked `gbrain …` commands lower to
+`invoke shell.run with command = "…"`. `shell.run` is the existing
+`.subprocess` built-in (`/bin/sh -c {command}`), returning
+`{ stdout, stderr, exitCode }`. No new tool or merconfig declaration is needed.
+See [10_BUILTIN_TOOLS.md](10_BUILTIN_TOOLS.md) for its argument/return shape.
