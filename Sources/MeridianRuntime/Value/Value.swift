@@ -59,6 +59,22 @@ extension Value {
         if case .list(let arr) = self { return arr }
         return nil
     }
+
+    /// Dot-path record traversal for generated iteration filter/sort closures,
+    /// which read element properties without a surrounding `State`. `"a.b.c"`
+    /// walks nested `.record` values; an empty path returns `self`. Returns
+    /// `nil` when any segment is missing or a non-record is traversed into.
+    public func member(_ path: String) -> Value? {
+        let segments = path.split(separator: ".").map(String.init)
+        var current: Value = self
+        for segment in segments {
+            guard case .record(let fields) = current, let next = fields[segment] else {
+                return nil
+            }
+            current = next
+        }
+        return current
+    }
 }
 
 // MARK: - AnyHashableSendable box

@@ -50,6 +50,15 @@ This skill guarantees:
 
 ## Phases
 
+### Stale-page guard (( role: procedure ))
+
+> Surface pages that have no body so the audit never reports a brain as healthy
+> while empty pages sit in it.
+
+bind pages = invoke list pages with filter = "all".
+if any pages are unwritten,
+  emit maintain.stale_pages with action = "review".
+
 ### Autonomous path (v0.36.4.0) — when you want to reach a target score (( inert ))
 
 If the user asks "get my brain to 90/100" or "fix what's broken", prefer the

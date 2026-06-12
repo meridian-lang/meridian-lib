@@ -36,6 +36,11 @@ public struct EnglishLexicon: Sendable {
     /// Stop-words stripped before token-overlap tool-resolution scoring.
     public let toolStopwords: Set<String>
 
+    /// The element property a temporal iteration clause (`within the last`/`in
+    /// the next`) resolves `updated`/`created`-style references to. Default
+    /// `updatedAt`; override via a `=== language ===` `timestamp:` entry.
+    public let timestampProperty: String
+
     public init(
         articles: Set<String>,
         prepositions: Set<String>,
@@ -44,7 +49,8 @@ public struct EnglishLexicon: Sendable {
         participleSuffixes: [String],
         comparisonMarkers: [(String, ComparisonOpAST)],
         durationUnits: [String: TimeUnitAST],
-        toolStopwords: Set<String>
+        toolStopwords: Set<String>,
+        timestampProperty: String = "updatedAt"
     ) {
         self.articles = articles
         self.prepositions = prepositions
@@ -54,6 +60,7 @@ public struct EnglishLexicon: Sendable {
         self.comparisonMarkers = comparisonMarkers
         self.durationUnits = durationUnits
         self.toolStopwords = toolStopwords
+        self.timestampProperty = timestampProperty
     }
 
     /// Default English surface used when no custom lexicon is supplied.
@@ -86,6 +93,9 @@ public struct EnglishLexicon: Sendable {
             ("is fewer than",            .lessThan),
             ("is less than",             .lessThan),
             ("is within",                .within),
+            ("matches pattern",          .matchesPattern),
+            ("is one of",                .oneOf),
+            ("contains",                 .contains),
             ("exceeds",                  .greaterThan),
             ("is not",                   .notEqual),
             ("is",                       .equal),
@@ -175,7 +185,8 @@ public struct EnglishLexicon: Sendable {
     /// duration unit aliases merged in.
     public func merging(
         comparisonSynonyms: [(String, ComparisonOpAST)],
-        durationSynonyms: [String: TimeUnitAST]
+        durationSynonyms: [String: TimeUnitAST],
+        timestampProperty: String? = nil
     ) -> EnglishLexicon {
         let mergedComparisons = comparisonSynonyms + comparisonMarkers
         var mergedDuration = durationUnits
@@ -188,7 +199,8 @@ public struct EnglishLexicon: Sendable {
             participleSuffixes: participleSuffixes,
             comparisonMarkers: mergedComparisons,
             durationUnits: mergedDuration,
-            toolStopwords: toolStopwords
+            toolStopwords: toolStopwords,
+            timestampProperty: timestampProperty ?? self.timestampProperty
         )
     }
 }

@@ -503,17 +503,17 @@ struct B6EndToEndTests {
 @Suite("B7 — ASTToIR lowerExpr interpolatedString")
 struct ASTToIRInterpolationTests {
 
-    private func lower(_ expr: ExpressionAST) -> IRExpression {
+    private func lower(_ expr: ExpressionAST) throws -> IRExpression {
         let symbols = SymbolTable()
-        return ASTToIR(symbols: symbols).lowerExpr(expr)
+        return try ASTToIR(symbols: symbols).lowerExpr(expr)
     }
 
     @Test("literal-only interpolatedString lowers to interpolatedString IR")
-    func literalOnlySegments() {
+    func literalOnlySegments() throws {
         let expr = ExpressionAST.interpolatedString([
             .literal("Hello world.")
         ])
-        let ir = lower(expr)
+        let ir = try lower(expr)
         if case .interpolatedString(let segs) = ir {
             #expect(segs.count == 1)
             if case .literal(let t) = segs[0] { #expect(t == "Hello world.") }
@@ -524,12 +524,12 @@ struct ASTToIRInterpolationTests {
     }
 
     @Test("expression segment lowers its nested expression")
-    func expressionSegmentLowered() {
+    func expressionSegmentLowered() throws {
         let expr = ExpressionAST.interpolatedString([
             .literal("Order "),
             .expression(.propertyAccess(.identifierRef("order"), "id"))
         ])
-        let ir = lower(expr)
+        let ir = try lower(expr)
         if case .interpolatedString(let segs) = ir {
             #expect(segs.count == 2)
             if case .expression(let irExpr) = segs[1] {

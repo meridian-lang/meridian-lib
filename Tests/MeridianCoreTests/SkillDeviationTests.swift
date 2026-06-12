@@ -263,4 +263,131 @@ struct SkillDeviationTests {
         #expect(r.unifiedDiff.contains("-old tail"))
         #expect(r.unifiedDiff.contains("+new tail"))
     }
+
+    @Test("analyze populates Wave 0 metrics and renders a Metrics section")
+    func deviationCarriesMetrics() {
+        let ported = """
+        ---
+        name: demo
+        ---
+        # Title
+
+        ## Phases
+
+        do the thing.
+
+        ## Philosophy (( inert ))
+
+        Prose rationale.
+        """
+        let r = SkillDeviation.analyze(
+            originalMarkdown: "# Title\n\nbody",
+            portedMeri: ported,
+            originalName: "demo/SKILL.md", portedName: "demo.meri"
+        )
+        #expect(r.metrics.totalSections == 2)
+        #expect(r.metrics.inertSections == 1)
+        let md = SkillDeviation.renderMarkdown(r, includeDiff: false)
+        #expect(md.contains("## Metrics"))
+        #expect(md.contains("1/2 inert"))
+    }
+}
+
+// Counter unit tests on synthetic skills with known section/judgment counts.
+@Suite("SkillMetrics")
+struct SkillMetricsTests {
+
+    @Test("counts ## and ### sections; marks non-executable ones inert")
+    func sectionCounts() {
+        let src = """
+        ---
+        name: demo
+        ---
+        # Title (not a section)
+
+        ## Contract (( inert, role: invariants ))
+
+        - every fact is cited.
+
+        ## Phases
+
+        do the work.
+
+        ### Protocol
+
+        do a sub-step.
+
+        ## Philosophy (( inert ))
+
+        Prose.
+
+        ## Output Format
+
+        a template.
+        """
+        let m = SkillMetrics.analyze(src)
+        // Sections: Contract, Phases, Protocol, Philosophy, Output Format = 5.
+        #expect(m.totalSections == 5)
+        // Inert: Contract (forced inert), Philosophy (inert), Output Format
+        // (template, non-executable) = 3. Phases + Protocol (procedure) execute.
+        #expect(m.inertSections == 3)
+        #expect(Int((m.inertRatio * 100).rounded()) == 60)
+    }
+
+    @Test("judgment blocks and indentation-scoped lines are counted")
+    func judgmentCounts() {
+        let src = """
+        ---
+        name: demo
+        ---
+        ## Phases
+
+        use judgment to compose the report:
+          Summarize the meetings.
+          List the deals.
+          Surface the alerts.
+
+        do a deterministic step.
+
+        with discretion:
+          Decide what matters.
+          Explain the call.
+        """
+        let m = SkillMetrics.analyze(src)
+        #expect(m.judgmentBlocks == 2)
+        // 3 lines under the first block + 2 under the second = 5.
+        #expect(m.judgmentLines == 5)
+    }
+
+    @Test("a heading-less flat procedure has no sections and a 0 inert ratio")
+    func flatProcedure() {
+        let src = """
+        ---
+        name: flat
+        ---
+        do the first thing.
+        do the second thing.
+        """
+        let m = SkillMetrics.analyze(src)
+        #expect(m.totalSections == 0)
+        #expect(m.inertSections == 0)
+        #expect(m.inertRatio == 0)
+        #expect(m.judgmentBlocks == 0)
+    }
+
+    @Test("a ## inside a fenced code block is not miscounted as a section")
+    func fencedHeadingIgnored() {
+        let src = """
+        ---
+        name: demo
+        ---
+        ## Output Format
+
+        ```
+        ## This is sample output, not a section
+        ```
+        """
+        let m = SkillMetrics.analyze(src)
+        #expect(m.totalSections == 1)
+    }
 }

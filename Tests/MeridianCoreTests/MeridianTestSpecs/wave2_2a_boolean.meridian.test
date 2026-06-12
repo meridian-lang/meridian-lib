@@ -1,0 +1,32 @@
+name: Wave 2A — boolean composition
+description: ```
+A branch condition that composes `and` with an explicit `either … or …`
+group lowers to a deterministic `&&` / `||` expression tree on BranchIR.
+```
+tags: inform7, wave2, codegen
+
+vocab_inline ecom: ```
+=== vocabulary ===
+An order is a kind of thing.
+An order has a total, which is a number.
+An order has a status, which is text.
+```
+
+source_inline: ```
+---
+name: screen
+parameters: order
+vocabulary: ecom.merconfig
+---
+
+To screen an order:
+  if the order's total is more than 100 and either the order's status is "new" or the order's status is "pending",
+    complete with reason "flagged".
+```
+
+expect_compile: pass
+expect_no_unresolved:
+expect_workflow_count: 1
+expect_workflow_named: ScreenOrder
+expect_swift_contains: &&
+expect_swift_contains: ||

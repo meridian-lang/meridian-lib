@@ -20,87 +20,93 @@
       {
         "kind" : "invariants",
         "level" : 2,
-        "line" : 24,
+        "line" : 18,
         "text" : "Contract"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 32,
+        "line" : 26,
         "text" : "Phases"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 44,
+        "line" : 36,
         "text" : "GBrain-Native Context Loading"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 48,
+        "line" : 40,
         "text" : "Before a meeting"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 55,
-        "text" : "Before an email reply"
+        "line" : 47,
+        "text" : "Daily briefing queries"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 62,
-        "text" : "Daily briefing queries"
+        "line" : 54,
+        "text" : "Before an email reply"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 59,
+        "text" : "Freshness guard"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 70,
+        "line" : 68,
         "text" : "Output Format"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 94,
+        "line" : 92,
         "text" : "Back-Linking During Briefing"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 100,
+        "line" : 98,
         "text" : "Citation in Briefings"
       },
       {
         "kind" : "prohibitions",
         "level" : 2,
-        "line" : 106,
+        "line" : 104,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "inert",
+        "kind" : "tools",
         "level" : 2,
-        "line" : 114,
+        "line" : 112,
         "text" : "Tools Used"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 29,
+        "line" : 23,
         "text" : "The briefing is read-only"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 57,
-        "text" : "Before drafting or triaging any email"
+        "line" : 42,
+        "text" : "For every attendee"
       }
     ],
     "sections" : [
       {
         "executes" : false,
         "heading" : "Contract",
-        "line" : 24,
+        "line" : 18,
         "lines" : [
           "Every fact in the briefing includes an inline `[Source: slug, updated DATE]` citation",
           "Meeting participants are resolved against the brain; gaps are explicitly flagged",
@@ -113,67 +119,72 @@
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 32,
+        "line" : 26,
         "lines" : [
           "codeblock:bash:Z2JyYWluIHJlY2FsbCAtLXNpbmNlLWxhc3QtcnVuIC0tc3VwZXJzZXNzaW9ucyAtLXBlbmRpbmcgLS1yb2xsdXAgLS1qc29u",
           "use judgment to compose the daily briefing:",
           "Fold the recall pulse into a \"Brain pulse\" section: contradictions resolved overnight, top mentions, new facts since the last briefing, and a pending-consolidation footer",
-          "Summarize today's meetings with participant context loaded from the brain",
-          "List active deals with deadlines approaching in the next seven days and recent timeline entries",
-          "Surface time-sensitive threads, recent changes, people in play, and stale alerts relevant to today"
+          "Summarize today's meetings with the participant context loaded below"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "GBrain-Native Context Loading",
-        "line" : 44,
+        "line" : 36,
         "lines" : [
           "Before generating any briefing, load context from gbrain systematically"
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Before a meeting",
-        "line" : 48,
+        "line" : 40,
         "lines" : [
-          "For every attendee on the calendar invite:",
-          "`gbrain search \"<attendee name>\"` -- find their brain page",
-          "`gbrain get <slug>` -- load compiled truth, recent timeline, relationship context",
-          "If no page exists, note the gap (\"No brain page for Sarah Chen -- consider enrichment\")"
+          "For every attendee:",
+          "`gbrain search \"{the attendee's name}\"` -- find their brain page",
+          "`gbrain get {the attendee's slug}` -- load compiled truth, recent timeline, relationship context"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
-        "heading" : "Before an email reply",
-        "line" : 55,
-        "lines" : [
-          "Before drafting or triaging any email:",
-          "`gbrain search \"<sender name>\"` -- load sender context",
-          "Read their compiled truth to understand who they are, what they care about, and",
-          "your relationship history. This turns a cold reply into an informed one"
-        ],
-        "role" : "inert"
-      },
-      {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Daily briefing queries",
-        "line" : 62,
+        "line" : 47,
         "lines" : [
-          "Run these queries to populate the briefing sections:",
           "`gbrain query \"active deals status\"` -- deal pipeline snapshot",
           "`gbrain query \"meetings this week\"` -- recent meeting pages with insights",
           "`gbrain query \"pending commitments follow-ups\"` -- open threads and action items",
           "`gbrain search --type person --sort updated --limit 10` -- people in play"
         ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Before an email reply",
+        "line" : 54,
+        "lines" : [
+          "Before drafting or triaging any email, load sender context from the brain and",
+          "read their compiled truth. This turns a cold reply into an informed one"
+        ],
         "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Freshness guard",
+        "line" : 59,
+        "lines" : [
+          "bind pages = invoke list pages with filter = \"today\"",
+          "if any urgent pages or any unwritten pages,",
+          "emit briefing.attention with status = \"needs review\""
+        ],
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 70,
+        "line" : 68,
         "lines" : [
           "codeblock:plain:REFJTFkgQlJJRUZJTkcgLS0gW2RhdGVdCj09PT09PT09PT09PT09PT09PT09PT09PQoKTUVFVElOR1MgVE9EQVkKLSBbdGltZV0gW21lZXRpbmcgbmFtZV0KICBQYXJ0aWNpcGFudHM6IFtuYW1lXSAoc2x1ZzogcGVvcGxlL25hbWUsIFtrZXkgY29udGV4dF0pCgpBQ1RJVkUgREVBTFMKLSBbZGVhbCBuYW1lXSAtLSBbc3RhdHVzXSwgZGVhZGxpbmU6IFtkYXRlXQogIFJlY2VudDogW2xhdGVzdCB0aW1lbGluZSBlbnRyeV0KCkFDVElPTiBJVEVNUwotIFtpdGVtXSAtLSBkdWUgW2RhdGVdLCByZWxhdGVkIHRvIFtzbHVnXQoKUkVDRU5UIENIQU5HRVMgKDI0aCkKLSBbc2x1Z10gLS0gW3doYXQgY2hhbmdlZF0KClBFT1BMRSBJTiBQTEFZCi0gW25hbWVdIC0tIFt3aHkgdGhleSdyZSBhY3RpdmVd"
         ],
@@ -182,7 +193,7 @@
       {
         "executes" : false,
         "heading" : "Back-Linking During Briefing",
-        "line" : 94,
+        "line" : 92,
         "lines" : [
           "If the briefing creates or updates any brain pages (e.g., new meeting prep",
           "pages, updated entity pages), the back-linking iron law applies: every entity",
@@ -193,7 +204,7 @@
       {
         "executes" : false,
         "heading" : "Citation in Briefings",
-        "line" : 100,
+        "line" : 98,
         "lines" : [
           "When presenting facts from brain pages, include inline citations:",
           "\"Jane is CTO of Acme [Source: people\/jane-doe, updated 2026-04-01]\"",
@@ -204,7 +215,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 106,
+        "line" : 104,
         "lines" : [
           "**Briefing without brain queries.** Never generate a briefing from memory alone; always query gbrain for current data",
           "**Uncited facts.** Every claim must include `[Source: slug, updated DATE]`. A fact without a citation is unverifiable",
@@ -217,7 +228,7 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 114,
+        "line" : 112,
         "lines" : [
           "Search gbrain by name (query)",
           "Read a page from gbrain (get_page)",
@@ -225,10 +236,9 @@
           "Check gbrain health (get_health)",
           "View timeline entries in gbrain (get_timeline)"
         ],
-        "role" : "inert"
+        "role" : "tools"
       }
     ],
-    "tools" : "search\nquery\nget_page\nlist_pages\nget_timeline",
     "triggers" : "\"daily briefing\"\n\"morning briefing\"\n\"what's happening today\""
   },
   "source_files" : [
@@ -237,40 +247,84 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 34,
-      "swift_line" : 501
+      "meridian_line" : 28,
+      "swift_line" : 540
     },
     {
-      "meridian_line" : 38,
-      "swift_line" : 511
+      "meridian_line" : 32,
+      "swift_line" : 550
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 559
+    },
+    {
+      "meridian_line" : 43,
+      "swift_line" : 565
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 577
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 593
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 605
+    },
+    {
+      "meridian_line" : 51,
+      "swift_line" : 617
+    },
+    {
+      "meridian_line" : 52,
+      "swift_line" : 629
+    },
+    {
+      "meridian_line" : 64,
+      "swift_line" : 641
+    },
+    {
+      "meridian_line" : 65,
+      "swift_line" : 652
+    },
+    {
+      "meridian_line" : 66,
+      "swift_line" : 655
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 552
+      "swift_line" : 695
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 557
+      "swift_line" : 700
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 598
+      "swift_line" : 739
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 603
+      "swift_line" : 744
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 644
+      "swift_line" : 783
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 649
+      "swift_line" : 788
     }
   ],
   "tools_used" : [
-
+    "query",
+    "get_page",
+    "list_pages",
+    "get_health",
+    "get_timeline"
   ],
   "workflows" : [
     {

@@ -108,8 +108,37 @@ depth-8 inline limit); conflicts are first-match-wins. Every rewrite step is
 logged under the `rulebook` trace category.
 
 Idioms the shipped `brain.merrules` covers: `If … -> …` / `If … then …` arrow
-conditionals, `Report:` / `Output:` → `emit skill.report`, and Markdown
-checklists (`- [ ] item`, `[x] item`, `□ item`) → `make sure …` asserts.
+conditionals, `Report:` / `Output:` → `emit skill.report`, Markdown checklists
+(`- [ ] item`, `[x] item`, `□ item`) → `make sure …` asserts, and the
+command-with-annotation idiom below.
+
+### Worked example — a desugar rule that reaches the command surface
+
+The deterministic command surface (a fenced ` ```bash ` block or an inline
+backticked command on its own line → one `shell.run` invoke) is detected by
+`parseInlineChain` / `inlineBacktickedCommand` **before** the per-statement
+desugar hook runs. So that a desugar rule's *output* can also become a command,
+the engine applies the desugar **at the top of `parseBlock`'s loop** (before the
+command/chain detectors), replacing the source line with its rewrite. A rule can
+therefore normalize a surface variant into the canonical
+backticked-command-with-annotation form and have it routed to the shell path:
+
+```
+rule "annotated-command":
+  match: Run `{command}` to {purpose}
+  rewrite: `{command}` -- {purpose}.
+```
+
+`` Run `gbrain doctor --json` to check index health. `` rewrites to
+`` `gbrain doctor --json` -- check index health ``, which lowers to a single
+`shell.run` invoke whose `command` is `gbrain doctor --json` and whose
+`-- check index health` note is emitted as a `//` source comment above the call.
+
+The annotation (a trailing ` -- <note>` recognized **outside** backticks — so a
+`--flag` or an in-backtick ` -- ` is never split) is a parser feature of the
+command surface itself; the rule above merely produces the canonical form. The
+rewrite is fixpoint-stable, so the downstream per-statement desugar hook is a
+no-op second pass, and the whole path is inert without a `rulebook:`.
 
 ---
 

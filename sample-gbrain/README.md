@@ -8,8 +8,16 @@ shared vocabulary and one shared rulebook.
 
 This folder is the canonical demonstration that an entire real-world skill
 library can be expressed in Meridian with near-verbatim edits (average source
-similarity **92%**), while gaining a compiler that rejects ambiguity instead of
+similarity **87%**), while gaining a compiler that rejects ambiguity instead of
 guessing.
+
+`brain.merconfig` also ships **checkable adjective definitions** (Wave 2) — e.g.
+*"a page is unwritten if it has no body"*, *"a job is broken if its state is
+failed"* — that skill bodies use in subject position (`if the page is
+unwritten`), in quantified descriptions (`if any unwritten pages`), and in
+boolean compositions (`if any urgent pages or any unwritten pages`). Five skills
+(`maintain`, `briefing`, `publish`, `reports`, `query`) carry executable guards
+built from these surfaces, each lowering to deterministic Swift with no LLM call.
 
 ---
 

@@ -12,6 +12,11 @@
 
 ## Categories
 - section-marker-added
+- command-hole-rewritten
+
+## Metrics
+- Sections: 7/8 inert (88% inert ratio)
+- Judgment: 0 blocks, 0 lines
 
 ## Unified diff
 

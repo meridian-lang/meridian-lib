@@ -34,17 +34,23 @@ public enum SkillSectionRole: String, Sendable, CaseIterable, Equatable {
     case prohibitions
     /// `## Output Format` → a declared result template.
     case template
+    /// `## Tools Used` → metadata-extracting: bullets name the tools the skill
+    /// is scoped to. Non-executable, but mined into `scopedTools` + manifest.
+    case tools
+    /// A section whose body restates an external rulebook convention verbatim
+    /// (`(( inert, role: convention-ref ))`). Non-executable metadata.
+    case conventionRef = "convention-ref"
     /// Anything else (Philosophy, examples, prose rationale) → inert metadata.
     case inert
 
     /// True for roles whose lowered body runs (asserts, preconditions,
-    /// procedure). False for documentation roles (`template`/`inert`) whose
-    /// content is recorded in the manifest but never executed.
+    /// procedure). False for documentation/metadata roles (`template`/`tools`/
+    /// `convention-ref`/`inert`) whose content is recorded but never executed.
     public var isExecutable: Bool {
         switch self {
         case .invariants, .procedure, .applicability, .negativeApplicability, .prohibitions:
             return true
-        case .template, .inert:
+        case .template, .tools, .conventionRef, .inert:
             return false
         }
     }
@@ -71,6 +77,8 @@ public enum SkillSectionRole: String, Sendable, CaseIterable, Equatable {
         case "output format", "output", "report format", "result format",
              "output structure", "brain page format":
             return .template
+        case "tools used", "tools", "tools required", "required tools":
+            return .tools
         default:
             // A numbered phase heading (`Phase 1: Inventory`, `Phase A.5: …`)
             // is an executable procedure section. Exact-match aliases can't

@@ -30,57 +30,63 @@
         "text" : "Phases"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 54,
+        "text" : "Coverage guard"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 63,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 62,
+        "line" : 71,
         "text" : "Output Format"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 70,
+        "line" : 79,
         "text" : "Quality Rules"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 79,
+        "line" : 88,
         "text" : "Token-Budget Awareness"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 91,
+        "line" : 100,
         "text" : "Source precedence"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 103,
+        "line" : 112,
         "text" : "Citation in Answers"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 111,
+        "line" : 120,
         "text" : "Graph Traversal (v0.10.1+)"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 133,
+        "line" : 142,
         "text" : "Search Quality Awareness"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 142,
+        "line" : 151,
         "text" : "Tools Used"
       },
       {
@@ -92,49 +98,49 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 64,
+        "line" : 73,
         "text" : "Answers should include"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 66,
+        "line" : 75,
         "text" : "Citations"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 67,
+        "line" : 76,
         "text" : "Gap flags"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 73,
+        "line" : 82,
         "text" : "Cite sources"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 74,
+        "line" : 83,
         "text" : "Flag stale results"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 106,
+        "line" : 115,
         "text" : "Cite the page"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 118,
+        "line" : 127,
         "text" : "Available link types"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 123,
+        "line" : 132,
         "text" : "Examples"
       }
     ],
@@ -168,9 +174,20 @@
         "role" : "procedure"
       },
       {
+        "executes" : true,
+        "heading" : "Coverage guard",
+        "line" : 54,
+        "lines" : [
+          "bind page = invoke get page with slug = \"index\"",
+          "if the page is unwritten,",
+          "emit query.gap with status \"no coverage\""
+        ],
+        "role" : "procedure"
+      },
+      {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 54,
+        "line" : 63,
         "lines" : [
           "Answering from general knowledge when the brain has relevant content",
           "Hallucinating facts not in the brain",
@@ -183,7 +200,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 62,
+        "line" : 71,
         "lines" : [
           "Answers should include:",
           "Direct response to the question",
@@ -196,7 +213,7 @@
       {
         "executes" : false,
         "heading" : "Quality Rules",
-        "line" : 70,
+        "line" : 79,
         "lines" : [
           "Never hallucinate. Only answer from brain content",
           "Cite sources: \"According to concepts\/do-things-that-dont-scale...\"",
@@ -210,7 +227,7 @@
       {
         "executes" : false,
         "heading" : "Token-Budget Awareness",
-        "line" : 79,
+        "line" : 88,
         "lines" : [
           "Search returns **chunks**, not full pages. Read the excerpts first before deciding",
           "whether to load a full page",
@@ -226,7 +243,7 @@
       {
         "executes" : false,
         "heading" : "Source precedence",
-        "line" : 91,
+        "line" : 100,
         "lines" : [
           "When multiple sources provide conflicting information, follow this precedence:",
           "**User's direct statements** (highest authority -- what the user told you directly)",
@@ -241,7 +258,7 @@
       {
         "executes" : false,
         "heading" : "Citation in Answers",
-        "line" : 103,
+        "line" : 112,
         "lines" : [
           "When referencing brain pages in your answer, propagate inline citations:",
           "Cite the page: \"According to [Source: people\/jane-doe, compiled truth]...\"",
@@ -254,7 +271,7 @@
       {
         "executes" : false,
         "heading" : "Graph Traversal (v0.10.1+)",
-        "line" : 111,
+        "line" : 120,
         "lines" : [
           "For relationship questions (\"who knows who at X?\", \"connections between A and B\",",
           "\"who works at Acme?\", \"who attended the standup?\"), use the graph layer instead",
@@ -278,7 +295,7 @@
       {
         "executes" : false,
         "heading" : "Search Quality Awareness",
-        "line" : 133,
+        "line" : 142,
         "lines" : [
           "If search results seem off (wrong results, missing known pages, irrelevant hits):",
           "Run `gbrain doctor --json` to check index health",
@@ -292,7 +309,7 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 142,
+        "line" : 151,
         "lines" : [
           "Keyword search gbrain (search)",
           "Hybrid search gbrain (query)",
@@ -316,55 +333,59 @@
   "source_map" : [
     {
       "meridian_line" : 47,
-      "swift_line" : 503
+      "swift_line" : 541
+    },
+    {
+      "meridian_line" : 59,
+      "swift_line" : 551
+    },
+    {
+      "meridian_line" : 60,
+      "swift_line" : 562
+    },
+    {
+      "meridian_line" : 61,
+      "swift_line" : 565
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 544
+      "swift_line" : 600
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 549
+      "swift_line" : 605
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 590
+      "swift_line" : 644
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 595
+      "swift_line" : 649
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 688
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 641
+      "swift_line" : 693
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 682
+      "swift_line" : 732
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 687
+      "swift_line" : 737
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 728
+      "swift_line" : 776
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 733
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 774
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 779
+      "swift_line" : 781
     },
     {
       "meridian_line" : 1,
@@ -376,43 +397,51 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 866
+      "swift_line" : 864
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 871
+      "swift_line" : 869
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 912
+      "swift_line" : 908
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 917
+      "swift_line" : 913
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 958
+      "swift_line" : 952
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 963
+      "swift_line" : 957
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1004
+      "swift_line" : 996
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1009
+      "swift_line" : 1001
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1050
+      "swift_line" : 1040
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1055
+      "swift_line" : 1045
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1084
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1089
     }
   ],
   "tools_used" : [

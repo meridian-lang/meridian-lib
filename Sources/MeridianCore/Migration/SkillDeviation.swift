@@ -46,6 +46,9 @@ public struct SkillDeviation {
         public var similarity: Double
         public var categories: [String]
         public var unifiedDiff: String
+        /// Wave 0 expressiveness counters over the ported `.meri` (see
+        /// `SkillMetrics`): section inert ratio and judgment block/line counts.
+        public var metrics: SkillMetrics
     }
 
     // MARK: - Analysis
@@ -102,7 +105,8 @@ public struct SkillDeviation {
             unchanged: unchanged,
             similarity: similarity,
             categories: categories,
-            unifiedDiff: diff
+            unifiedDiff: diff,
+            metrics: SkillMetrics.analyze(portedMeri)
         )
     }
 
@@ -139,6 +143,11 @@ public struct SkillDeviation {
         } else {
             for c in r.categories { out.append("- \(c)") }
         }
+        out.append("")
+        out.append("## Metrics")
+        let m = r.metrics
+        out.append("- Sections: \(m.inertSections)/\(m.totalSections) inert (\(percent(m.inertRatio)) inert ratio)")
+        out.append("- Judgment: \(m.judgmentBlocks) blocks, \(m.judgmentLines) lines")
         if includeDiff {
             out.append("")
             out.append("## Unified diff")
@@ -238,7 +247,64 @@ public struct SkillDeviation {
         if preambleBlockquoteCount(portedMeri) > preambleBlockquoteCount(originalMarkdown) {
             out.append("preamble-blockquoted")
         }
+        if commandHolesRewritten(originalMarkdown: originalMarkdown, portedMeri: portedMeri) {
+            out.append("command-hole-rewritten")
+        }
         return out
+    }
+
+    /// True when the port turned an angle-bracket placeholder (`<name>`) inside a
+    /// command span into a typed command hole (`{name}`) — i.e. the ported text
+    /// gained a word-shaped `{…}` hole inside backticks whose name appeared as a
+    /// `<…>` placeholder in the original.
+    static func commandHolesRewritten(originalMarkdown: String, portedMeri: String) -> Bool {
+        let originalAngles = backtickPlaceholders(originalMarkdown, open: "<", close: ">")
+        guard !originalAngles.isEmpty else { return false }
+        let portedHoles = backtickPlaceholders(portedMeri, open: "{", close: "}")
+        return !portedHoles.isDisjoint(with: originalAngles)
+    }
+
+    /// Names enclosed by `open`/`close` markers that occur inside a backtick span,
+    /// normalized (lowercased, alphanumerics only) and word-shaped.
+    private static func backtickPlaceholders(_ source: String, open: Character, close: Character) -> Set<String> {
+        var names: Set<String> = []
+        for line in source.components(separatedBy: "\n") {
+            guard line.contains("`") else { continue }
+            var inSpan = false
+            var span = ""
+            for ch in line {
+                if ch == "`" {
+                    if inSpan { collectPlaceholders(span, open: open, close: close, into: &names) }
+                    inSpan.toggle(); span = ""
+                    continue
+                }
+                if inSpan { span.append(ch) }
+            }
+        }
+        return names
+    }
+
+    private static func collectPlaceholders(_ span: String, open: Character, close: Character, into names: inout Set<String>) {
+        let chars = Array(span)
+        var i = 0
+        while i < chars.count {
+            if chars[i] == open {
+                var j = i + 1
+                var inner = ""
+                var closed = false
+                while j < chars.count {
+                    if chars[j] == close { closed = true; break }
+                    if chars[j] == open { break }
+                    inner.append(chars[j]); j += 1
+                }
+                let trimmed = inner.trimmingCharacters(in: .whitespaces)
+                if closed, SkillMigrator.isWordShaped(trimmed) {
+                    names.insert(SkillMigrator.scopeKey(trimmed))
+                    i = j + 1; continue
+                }
+            }
+            i += 1
+        }
     }
 
     /// Number of blockquote (`>`) lines before the first `##` section heading —

@@ -526,6 +526,11 @@ struct RuleInjector {
                 toolID: "runtime.discretion.decide",
                 arguments: [InvokeArg("question", .literal(.string(q)))]
             ))
+        case .quantified, .malformed:
+            // Quantifiers and parse-error carriers are not produced in rule
+            // bodies (which are constrained to the supported rule shapes); a
+            // benign placeholder keeps this lowerer total.
+            return .literal(.boolean(false))
         }
     }
 
@@ -550,6 +555,13 @@ struct RuleInjector {
         case .greaterThan:    return .greaterThan
         case .greaterOrEqual: return .greaterOrEqual
         case .within:         return .withinDuration
+        case .contains:       return .contains
+        case .oneOf:          return .oneOf
+        case .matchesPattern: return .matchesPattern
+        case .withinPast:     return .withinPast
+        case .withinFuture:   return .withinFuture
+        case .isEmpty:        return .isEmpty
+        case .isNotEmpty:     return .isNotEmpty
         }
     }
 

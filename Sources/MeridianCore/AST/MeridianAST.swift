@@ -7,10 +7,15 @@ import Foundation
 public struct LanguageSynonyms: Sendable {
     public let comparisonSynonyms: [(String, ComparisonOpAST)]
     public let durationSynonyms: [String: TimeUnitAST]
+    /// Optional override for the temporal-iteration timestamp property
+    /// (`=== language ===` `timestamp:` entry). `nil` keeps the lexicon default.
+    public let timestampProperty: String?
     public init(comparisonSynonyms: [(String, ComparisonOpAST)] = [],
-                durationSynonyms: [String: TimeUnitAST] = [:]) {
+                durationSynonyms: [String: TimeUnitAST] = [:],
+                timestampProperty: String? = nil) {
         self.comparisonSynonyms = comparisonSynonyms
         self.durationSynonyms = durationSynonyms
+        self.timestampProperty = timestampProperty
     }
 }
 
@@ -42,7 +47,8 @@ public struct MerConfigFile: Sendable {
     public func merging(_ other: MerConfigFile) -> MerConfigFile {
         let mergedSynonyms = LanguageSynonyms(
             comparisonSynonyms: languageSynonyms.comparisonSynonyms + other.languageSynonyms.comparisonSynonyms,
-            durationSynonyms: languageSynonyms.durationSynonyms.merging(other.languageSynonyms.durationSynonyms) { _, new in new }
+            durationSynonyms: languageSynonyms.durationSynonyms.merging(other.languageSynonyms.durationSynonyms) { _, new in new },
+            timestampProperty: other.languageSynonyms.timestampProperty ?? languageSynonyms.timestampProperty
         )
         return MerConfigFile(
             vocabulary: vocabulary + other.vocabulary,
@@ -60,6 +66,32 @@ public enum VocabularyStatement: Sendable {
     case relation(RelationDeclaration)
     case inverse(InverseDeclaration)
     case phrase(PhraseDefinition)
+    /// 2B: `Definition: a page is stale if <condition>.` — a checkable
+    /// adjective declared in the merconfig vocabulary.
+    case definition(DefinitionDeclaration)
+}
+
+/// 2B: A checkable adjective definition (`Definition: a <kind> is <adjective>
+/// if <condition>.`). The `body` condition is parsed with `it`/`its`
+/// preprocessed to the subject, so it reads as a predicate over `subjectVar`
+/// (the singular kind name). Lowered to a file-scope `private func
+/// meridianDef_<Kind>_<adjCamel>(_ subject: Value?) -> Bool` helper.
+public struct DefinitionDeclaration: Sendable {
+    /// Normalised surface adjective (lowercased, hyphens→spaces). Globally
+    /// unique across all definitions — a collision is a hard error.
+    public let adjective: String
+    /// The kind this adjective applies to (singular, e.g. "page").
+    public let kind: String
+    /// The subject variable the body is expressed over (the singular kind name).
+    public let subjectVar: String
+    public let body: ExpressionAST
+    public let sourceLine: Int
+    public init(adjective: String, kind: String, subjectVar: String,
+                body: ExpressionAST, sourceLine: Int = 0) {
+        self.adjective = adjective; self.kind = kind
+        self.subjectVar = subjectVar; self.body = body
+        self.sourceLine = sourceLine
+    }
 }
 
 public struct KindDeclaration: Sendable {
@@ -284,6 +316,13 @@ public struct MeridianFile: Sendable {
     /// sections (for the resolver). Empty for non-sectioned files.
     public let dispatchPhrases: [String]
     public let negativeDispatchPhrases: [String]
+    /// Tool IDs mined from a `## Tools Used` section (1D). Merged into the
+    /// workflow's `scopedTools` and the manifest `tools_used`. Empty otherwise.
+    public let toolsUsed: [String]
+    /// 2B: Top-level `Definition:` lines pulled out of the implicit body. These
+    /// are registered into the symbol table before workflow lowering so an
+    /// adjective resolves regardless of source order.
+    public let definitions: [DefinitionDeclaration]
     public init(imports: [ImportStatementAST] = [],
                 rules: [RuleAST] = [],
                 workflows: [WorkflowAST] = [],
@@ -291,13 +330,17 @@ public struct MeridianFile: Sendable {
                 outline: [HeadingEntry] = [],
                 skillSections: [SkillSectionRecord] = [],
                 dispatchPhrases: [String] = [],
-                negativeDispatchPhrases: [String] = []) {
+                negativeDispatchPhrases: [String] = [],
+                toolsUsed: [String] = [],
+                definitions: [DefinitionDeclaration] = []) {
         self.imports = imports; self.rules = rules; self.workflows = workflows
         self.metadata = metadata
         self.outline = outline
         self.skillSections = skillSections
         self.dispatchPhrases = dispatchPhrases
         self.negativeDispatchPhrases = negativeDispatchPhrases
+        self.toolsUsed = toolsUsed
+        self.definitions = definitions
     }
 }
 
@@ -543,12 +586,48 @@ public enum IterationModeAST: Sendable {
     case untilCondition(ExpressionAST)
 }
 
+/// A single-clause refinement on a `for each` loop source (1C): `whose`/temporal
+/// filters, a `sorted by` order, and a `the first N` prefix. Expressed relative
+/// to the loop variable; `nil` everywhere = plain iteration.
+public struct IterationRefinementAST: Sendable {
+    public enum TemporalWindow: Sendable { case past, future }
+    /// A `whose <prop> <comp> <value>` predicate, parsed as a comparison whose
+    /// LHS is a bare property identifier (qualified to the loop var at lowering).
+    public var predicate: ExpressionAST?
+    /// A temporal window: `(property, .past|.future, duration-in-seconds)`.
+    public var temporal: (property: String, window: TemporalWindow, seconds: Double)?
+    public var sort: (property: String, ascending: Bool)?
+    public var take: Int?
+    /// 2B: Leading adjective modifiers (`for each stale page`) split off the
+    /// kind noun. Resolved to `.definitionPredicate` filters at lowering.
+    public var adjectives: [String]
+
+    public init(predicate: ExpressionAST? = nil,
+                temporal: (property: String, window: TemporalWindow, seconds: Double)? = nil,
+                sort: (property: String, ascending: Bool)? = nil,
+                take: Int? = nil,
+                adjectives: [String] = []) {
+        self.predicate = predicate
+        self.temporal = temporal
+        self.sort = sort
+        self.take = take
+        self.adjectives = adjectives
+    }
+
+    public var isEmpty: Bool {
+        predicate == nil && temporal == nil && sort == nil && take == nil && adjectives.isEmpty
+    }
+}
+
 public struct IterationStatementAST: Sendable {
     public let mode: IterationModeAST
     public let body: ASTBlock
     public let sourceLine: Int
-    public init(mode: IterationModeAST, body: ASTBlock, sourceLine: Int = 0) {
+    public let refinement: IterationRefinementAST?
+    public init(mode: IterationModeAST, body: ASTBlock, sourceLine: Int = 0,
+                refinement: IterationRefinementAST? = nil) {
         self.mode = mode; self.body = body; self.sourceLine = sourceLine
+        self.refinement = refinement
     }
     /// Backward-compatible accessor — non-nil only for `.forEach` loops.
     public var variable: String? {
@@ -576,9 +655,12 @@ public struct SimultaneouslyStatementAST: Sendable {
 
 public struct PhraseInvocationAST: Sendable {
     public let words: String
+    /// A trailing ` -- <note>` explanation on a command bullet (1A). Carried
+    /// through lowering onto `InvokeIR.comment` and emitted as a source comment.
+    public let annotation: String?
     public let sourceLine: Int
-    public init(words: String, sourceLine: Int = 0) {
-        self.words = words; self.sourceLine = sourceLine
+    public init(words: String, annotation: String? = nil, sourceLine: Int = 0) {
+        self.words = words; self.annotation = annotation; self.sourceLine = sourceLine
     }
 }
 
@@ -681,6 +763,51 @@ public indirect enum ExpressionAST: Sendable {
     case decideWhether(question: String)
     /// B6/B7: Fenced code block that contains `{{ expr }}` interpolation markers.
     case interpolatedString([InterpolationSegment])
+    /// 2C: A quantified description (`all/any/no/at least N … <description>`).
+    case quantified(QuantifierAST)
+    /// 2A/2B/2C carrier: a surface-level violation (mixed bare and/or, an
+    /// invalid quantifier/description shape, an unidentifiable kind) recorded
+    /// at parse time with a fully-formed diagnostic. `ExpressionParser.parse`
+    /// stays non-throwing; `ASTToIR.assertNoMalformed` raises the sourced error.
+    case malformed(String)
+}
+
+// MARK: - 2C. Quantifiers over descriptions
+
+/// The quantifier determiner of a quantified description.
+public enum QuantifierKindAST: Sendable, Equatable {
+    case all          // all / every — requires a body
+    case any          // any / some / at least one
+    case none         // no / none of
+    case atLeast(Int)
+    case atMost(Int)
+    case exactly(Int)
+}
+
+/// A description = `[adjectives] <kind plural> ( whose <predicate> )?`. The
+/// adjectives are kept as raw surface strings and resolved to definition
+/// predicates at lowering. `wherePredicate`, when present, terminates the
+/// description.
+public struct DescriptionAST: Sendable {
+    /// The collection noun as written (typically plural, e.g. "pages").
+    public let noun: String
+    public let adjectives: [String]
+    public let wherePredicate: ExpressionAST?
+    public init(noun: String, adjectives: [String] = [], wherePredicate: ExpressionAST? = nil) {
+        self.noun = noun; self.adjectives = adjectives; self.wherePredicate = wherePredicate
+    }
+}
+
+/// A quantified description. `body` (`have <noun>` / `are <adjective>`) is a
+/// per-element predicate; `all`/`every` require it, and it is only recognised
+/// when the description has no `whose` clause.
+public struct QuantifierAST: Sendable {
+    public let kind: QuantifierKindAST
+    public let description: DescriptionAST
+    public let body: ExpressionAST?
+    public init(kind: QuantifierKindAST, description: DescriptionAST, body: ExpressionAST? = nil) {
+        self.kind = kind; self.description = description; self.body = body
+    }
 }
 
 public enum LiteralAST: Sendable {
@@ -697,6 +824,13 @@ public enum ComparisonOpAST: Sendable {
     case lessThan, lessOrEqual
     case greaterThan, greaterOrEqual
     case within
+    case contains, oneOf
+    case matchesPattern
+    /// Shared condition grammar: one-sided temporal windows (`within the last`
+    /// / `in the next`) and property-backed emptiness (`has no` / `has a` /
+    /// `is empty` / `is not empty`).
+    case withinPast, withinFuture
+    case isEmpty, isNotEmpty
 }
 
 public enum LogicalOpAST: Sendable { case and, or, not }

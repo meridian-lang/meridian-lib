@@ -30,15 +30,21 @@
         "text" : "Phases"
       },
       {
-        "kind" : "template",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 36,
+        "text" : "Escalation guard"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 45,
         "text" : "Output Format"
       },
       {
         "kind" : "prohibitions",
         "level" : 2,
-        "line" : 41,
+        "line" : 50,
         "text" : "Anti-Patterns"
       },
       {
@@ -56,13 +62,13 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 38,
+        "line" : 47,
         "text" : "Saved"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 39,
+        "line" : 48,
         "text" : "Loaded"
       }
     ],
@@ -93,9 +99,20 @@
         "role" : "procedure"
       },
       {
+        "executes" : true,
+        "heading" : "Escalation guard",
+        "line" : 36,
+        "lines" : [
+          "bind pages = invoke list pages with filter = \"report\"",
+          "if at least 2 urgent pages,",
+          "emit reports.escalate with severity \"high\""
+        ],
+        "role" : "procedure"
+      },
+      {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 36,
+        "line" : 45,
         "lines" : [
           "Saved: `reports\/{category}\/{YYYY-MM-DD-HHMM}.md`",
           "Loaded: full report content with metadata"
@@ -105,7 +122,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 41,
+        "line" : 50,
         "lines" : [
           "Saving reports without frontmatter (makes them unsearchable)",
           "Using inconsistent category names across runs",
@@ -126,39 +143,51 @@
   "source_map" : [
     {
       "meridian_line" : 31,
-      "swift_line" : 503
+      "swift_line" : 541
+    },
+    {
+      "meridian_line" : 41,
+      "swift_line" : 551
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 562
+    },
+    {
+      "meridian_line" : 43,
+      "swift_line" : 565
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 544
+      "swift_line" : 600
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 549
+      "swift_line" : 605
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 590
+      "swift_line" : 644
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 595
+      "swift_line" : 649
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 688
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 641
+      "swift_line" : 693
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 682
+      "swift_line" : 732
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 687
+      "swift_line" : 737
     }
   ],
   "tools_used" : [

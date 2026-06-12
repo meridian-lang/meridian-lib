@@ -772,6 +772,92 @@ unconditionally (otherwise: duplicate `id`).
 > may still use the bare form (e.g. `D17`); treat any bare `D<N>` outside
 > `meridian-handoff/docs/11_DECISIONS.md` as `SkillMD-D<N>`.
 
+### 2026-06-12 — Wave 2: semantic core (booleans, definitions, quantifiers)
+
+Three closed-grammar surfaces + a shared condition grammar, **no new IR
+primitive** (only new `IRExpression`/`ComparisonOp` cases + payload structs).
+**2A boolean composition**: precedence `not`>`and`>`or`; Oxford-comma tolerance
+(`, and`/`, or` normalized); `it is not the case that X` → `not`; mixed bare
+`and`/`or` at one level is a hard error printing both readings — the only
+combiner is `either … or`, which `ExpressionParser` protects as an opaque
+sentinel (`eitherSentinelPrefix`) before splitting top-level connectives.
+**2B definitions**: `Definition: a <kind> is <adj> if <cond>.` (merconfig
+vocabulary + `.meri` body; `it`/`its`→subject rewrite in the shared
+`DefinitionParser`). Surface adjective names are globally unique (collision =
+error); generated helpers are kind-namespaced `meridianDef_<Kind>_<adjCamel>`,
+emitted as file-scope `private func`s. `registerDefinitions` runs FIRST (before
+any workflow lowers), type-checks bodies (read properties must exist on the
+kind), and rejects recursion (DFS over the adjective graph). `X is/is not <adj>`
+→ `IRExpression.definitionPredicate` **only when the LHS lowers to
+`.identifierRef`** (subject position) — never `.propertyAccess`. **2C
+quantifiers** over a description `[quantifier] [adjectives] <kind plural> (whose
+<pred> | <have/are body>)?`: `all`/`every` (body required, `allSatisfy`),
+`any`/`some`, `no`/`none of`, `at least/at most/exactly N` (`.count <op> N`).
+A `whose` clause terminates the description; the collection must be a fetch-once
+source (a direct tool invocation is a sourced error). **Shared condition
+grammar**: temporal windows (`within the last`/`in the next` →
+`ComparisonOp.withinPast/.withinFuture`) and property-backed emptiness
+(`has no`/`has a`/`has some`, `is empty`/`is not empty` →
+`ComparisonOp.isEmpty/.isNotEmpty` → `MeridianComparison.isEmpty/isNotEmpty`,
+the only new runtime helpers). Errors surface via `ExpressionAST.malformed(msg)`
+(parser stays non-throwing); `ASTToIR.assertNoMalformed` runs at the top of
+`lowerStatement` and walks every expression the statement holds (DFS via
+`firstMalformed`), raising the carrier with the statement's line — the
+now-`throws` `lowerExpr` also raises on `.malformed` as defense in depth for
+non-statement positions (definition bodies, quantifier sub-expressions).
+Definitions are recorded in the manifest under **`meridian_definitions`**
+(`adjective`/`kind`/`function`/`line`, sorted by `function`, omitted when none).
+Tests: `Inform7Wave2Tests` (incl. `at most`/`exactly` parse+emit, manifest,
+malformed-condition abort) + `Wave2SpecTests` (3 `.meridian.test` specs run via
+`MeridianTestRunner`) + 5 runtime `EmptinessTests`; full `swift test` (679) +
+both typecheck gates green.
+
+**New pitfalls — Wave 2.** (1) `lowerExpr` is now `throws`; every caller
+(`lowerAutonomyConfig`, `lowerRecoverPattern`, `lowerIterationRefinement`,
+`lowerWaitCondition`, test `lower` helpers) must `try`. (2) `qualifyToLoopVar`
+must qualify only the **LHS** of a comparison (qualifying both sides was a bug)
+and must recurse over `.logical`/`.definitionPredicate` trees. (3) The single-
+line `if <cond>, <stmt>.` form is NOT parsed as a branch — `if` requires a
+comma-terminated header with an indented body (use the multi-line form in
+tests/examples). (4) merconfig property decls need `, which is <type>` (with the
+comma) or the bare comma-and list form; `a summary which is text` without the
+comma folds the whole phrase into the property name. (5) Adjective resolution
+happens at lowering (`symbols` fully populated), not parsing — the parser keeps
+modifiers/adjectives as raw `[String]`.
+
+### 2026-06-12 — Wave 1: Inform-7-tier deterministic surface
+
+Four new closed-grammar forms, no new IR primitive (payload/data extensions):
+**1A** command annotation (` -- <note>` outside backticks → `InvokeIR.comment` →
+`// note` above `shell.run`); **1B** typed command holes (`{ expr }` in a
+backticked command, validated against a lightweight scope tracker threaded
+through `ASTToIR.lowerBlock`; in-quote holes shell-escaped via
+`meridianShellQuote`; `{{`/`}}` literal; unresolved hole = sourced error); **1C**
+single-clause iteration refinements (`IterateIR.source`; `[the first N] <plural>
+[whose … | within the last N <unit> | in the next N <unit>] [sorted by …]`;
+pre-loop filter→sort→prefix via `emitRefinedIterate`/`emitElementExpr`; runtime
+helpers `Value.member`, `MeridianComparison.orderedBefore`/`isWithinPast`/
+`isWithinFuture`; `LanguageSynonyms.timestampProperty` default `updatedAt`);
+**1D** metadata sections (`## Tools Used` bullets `<desc> (<tool_id>)` →
+`MeridianFile.toolsUsed` → `scopedTools` + manifest `tools_used`; output
+invariant `every emitted <noun> matches pattern "<regex>"` → `AssertIR` over
+`meridianRegexMatches`). Surface in `docs/03`, pipeline in `docs/04`, 1A in
+`docs/11`. `briefing.meri` re-ported (context-loading procedures + holes, trimmed
+judgment block, real Tools Used); corpus inert 692/755→683/747, judgment
+17/73→16/67. All 598 tests + `MERIDIAN_GBRAIN_TYPECHECK=1` green.
+
+**New pitfall — block-header vs topic-label precedence.** A capitalized loop
+header ending in `:` (`For every attendee:`) matches `StatementParser.topicLabel`
+(uppercase, ≤40 chars, letters/spaces). The `for each`/`for every` block-header
+check in `parseStatementWithoutRewrite` therefore MUST run before the topic-label
+rule (it does, right after the judgment-marker check) — otherwise the header is
+read as an empty label and dropped, orphaning the loop body at the top level so
+`{loop var}` holes cannot resolve. Do not reorder these. Relatedly,
+`parseIteration` must run `extractIterationRefinement` to strip the 1C
+refinement clause BEFORE the explicit-collection ` in ` split; otherwise a
+temporal `in the next N <unit>` is mis-parsed as an explicit `in {collection}`
+and the future window is silently lost.
+
 ### 2026-06-11 — Universal deterministic sections (drop `skill: true`, no silent no-ops)
 
 The markdown section-role model is now **universal and structural**. The

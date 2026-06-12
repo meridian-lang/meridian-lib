@@ -3,23 +3,39 @@
 - Original: `briefing/SKILL.md`
 - Ported: `briefing.meri`
 - Tier: 2 (light edits)
-- Similarity: 75%
-- Lines: 153 -> 121 (+18 / -50)
+- Similarity: 64%
+- Lines: 153 -> 119 (+32 / -66)
 
 ## Frontmatter
 - Added: (none)
-- Removed: (none)
+- Removed: `tools`
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - preamble-blockquoted
+
+## Metrics
+- Sections: 8/12 inert (67% inert ratio)
+- Judgment: 1 blocks, 2 lines
 
 ## Unified diff
 
 ```diff
 --- original-skills/briefing/SKILL.md
 +++ skills/briefing.meri
-@@ -16,12 +16,12 @@
+@@ -5,23 +5,17 @@
+   - "daily briefing"
+   - "morning briefing"
+   - "what's happening today"
+-tools:
+-  - search
+-  - query
+-  - get_page
+-  - list_pages
+-  - get_timeline
+ mutating: false
+ ---
  
  # Briefing Skill
  
@@ -34,7 +50,7 @@
  
  - Every fact in the briefing includes an inline `[Source: slug, updated DATE]` citation.
  - Meeting participants are resolved against the brain; gaps are explicitly flagged.
-@@ -31,67 +31,35 @@
+@@ -31,73 +25,45 @@
  
  ## Phases
  
@@ -48,9 +64,7 @@
 -   ```
 +use judgment to compose the daily briefing:
 +  Fold the recall pulse into a "Brain pulse" section: contradictions resolved overnight, top mentions, new facts since the last briefing, and a pending-consolidation footer.
-+  Summarize today's meetings with participant context loaded from the brain.
-+  List active deals with deadlines approaching in the next seven days and recent timeline entries.
-+  Surface time-sensitive threads, recent changes, people in play, and stale alerts relevant to today.
++  Summarize today's meetings with the participant context loaded below.
  
 -   Fold the result into the briefing under a "Brain pulse" section at the top:
 -   1. **Contradictions resolved overnight** — the `--supersessions` output. Lead
@@ -94,27 +108,50 @@
  Before generating any briefing, load context from gbrain systematically.
  
 -### Before a meeting
-+### Before a meeting (( inert ))
++### Before a meeting (( role: procedure ))
  
- For every attendee on the calendar invite:
- - `gbrain search "<attendee name>"` -- find their brain page
- - `gbrain get <slug>` -- load compiled truth, recent timeline, relationship context
- - If no page exists, note the gap ("No brain page for Sarah Chen -- consider enrichment")
+-For every attendee on the calendar invite:
+-- `gbrain search "<attendee name>"` -- find their brain page
+-- `gbrain get <slug>` -- load compiled truth, recent timeline, relationship context
+-- If no page exists, note the gap ("No brain page for Sarah Chen -- consider enrichment")
++For every attendee:
++  - `gbrain search "{the attendee's name}"` -- find their brain page
++  - `gbrain get {the attendee's slug}` -- load compiled truth, recent timeline, relationship context
++  > If no page exists, note the gap and consider enrichment.
  
 -### Before an email reply
-+### Before an email reply (( inert ))
++### Daily briefing queries (( role: procedure ))
  
- Before drafting or triaging any email:
- - `gbrain search "<sender name>"` -- load sender context
- - Read their compiled truth to understand who they are, what they care about, and
-   your relationship history. This turns a cold reply into an informed one.
- 
+-Before drafting or triaging any email:
+-- `gbrain search "<sender name>"` -- load sender context
+-- Read their compiled truth to understand who they are, what they care about, and
+-  your relationship history. This turns a cold reply into an informed one.
+-
 -### Daily briefing queries
-+### Daily briefing queries (( inert ))
- 
- Run these queries to populate the briefing sections:
+-
+-Run these queries to populate the briefing sections:
  - `gbrain query "active deals status"` -- deal pipeline snapshot
-@@ -123,19 +91,19 @@
+ - `gbrain query "meetings this week"` -- recent meeting pages with insights
+ - `gbrain query "pending commitments follow-ups"` -- open threads and action items
+ - `gbrain search --type person --sort updated --limit 10` -- people in play
++
++### Before an email reply (( inert ))
++
++Before drafting or triaging any email, load sender context from the brain and
++read their compiled truth. This turns a cold reply into an informed one.
++
++## Freshness guard (( role: procedure ))
++
++> Surface today's high-priority and empty pages so the briefing flags them
++> instead of presenting stale context as current.
++
++bind pages = invoke list pages with filter = "today".
++if any urgent pages or any unwritten pages,
++  emit briefing.attention with status = "needs review".
+ 
+ ## Output Format
+ 
+@@ -123,19 +89,19 @@
  - [name] -- [why they're active]
  ```
  
@@ -137,13 +174,4 @@
  
  - **Briefing without brain queries.** Never generate a briefing from memory alone; always query gbrain for current data.
  - **Uncited facts.** Every claim must include `[Source: slug, updated DATE]`. A fact without a citation is unverifiable.
-@@ -143,7 +111,7 @@
- - **Modifying brain pages unprompted.** The briefing is read-only by default. Do not create or update pages unless the user explicitly requests it.
- - **Ignoring coverage gaps.** When a meeting participant has no brain page, say so. Silence about gaps hides ignorance.
- 
--## Tools Used
-+## Tools Used (( inert ))
- 
- - Search gbrain by name (query)
- - Read a page from gbrain (get_page)
 ```

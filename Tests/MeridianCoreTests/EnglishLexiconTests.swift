@@ -199,19 +199,29 @@ struct LogicalConnectorTests {
         }
     }
 
-    @Test("or has lower precedence than and")
-    func precedence() {
+    @Test("mixing and/or without grouping is a malformed error (Wave 2A)")
+    func mixedBooleanIsMalformed() {
+        // The Wave 2A strict rule: a bare `and`/`or` mix has no implicit
+        // precedence — it must be grouped with `either … or …`.
         let e = parse("a is 1 and b is 2 or c is 3")
-        // Should parse as (a==1 && b==2) || c==3
-        if case .logical(.or, let orOps) = e {
-            #expect(orOps.count == 2)
-            if case .logical(.and, let andOps) = orOps[0] {
-                #expect(andOps.count == 2)
-            } else {
-                Issue.record("left of or should be and, got: \(orOps[0])")
-            }
+        if case .malformed = e {
+            // expected
         } else {
-            Issue.record("expected logical(.or, ...), got: \(e)")
+            Issue.record("expected .malformed for ungrouped and/or mix, got: \(e)")
+        }
+    }
+
+    @Test("either … or … groups a disjunction inside an and-chain (Wave 2A)")
+    func eitherGrouping() {
+        // `a is 1 and either b is 2 or c is 3` → a ∧ (b ∨ c)
+        let e = parse("a is 1 and either b is 2 or c is 3")
+        guard case .logical(.and, let andOps) = e, andOps.count == 2 else {
+            Issue.record("expected top-level and, got: \(e)"); return
+        }
+        if case .logical(.or, let orOps) = andOps[1] {
+            #expect(orOps.count == 2)
+        } else {
+            Issue.record("right operand should be an or-group, got: \(andOps[1])")
         }
     }
 }

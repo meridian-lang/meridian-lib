@@ -60,7 +60,8 @@ public struct SwiftEmitter {
         constantsDecl: ConstantsDecl? = nil,
         instancesDecl: InstancesDecl? = nil,
         domainDecl: DomainDecl? = nil,
-        fileMetadata: FileMetadataAST? = nil
+        fileMetadata: FileMetadataAST? = nil,
+        definitions: [LoweredDefinition] = []
     ) -> String {
         let hasConstants = constantsDecl != nil
         let hasInstances = instancesDecl != nil
@@ -89,6 +90,12 @@ public struct SwiftEmitter {
         return StringTemplate {
             fileHeader()
             ""
+            // 2B: checkable-adjective helpers live at file scope (private), so
+            // they resolve from every workflow `run()` regardless of namespacing.
+            for def in definitions {
+                emitDefinitionFunction(def)
+                ""
+            }
             if let namespace {
                 "public enum \(namespace) {"
                 ""
@@ -323,6 +330,9 @@ public struct SwiftEmitter {
         }
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
+            if let note = ir.comment, !note.isEmpty {
+                "\(ctx.s)// \(note.replacingOccurrences(of: "\n", with: " "))"
+            }
             if ir.arguments.isEmpty {
                 "\(ctx.s)\(binding)try await runtime.invoke(tool: \"\(ir.toolID)\", args: [:])"
             } else {
@@ -533,6 +543,14 @@ public struct SwiftEmitter {
         let inner = ctx.in(1)
         let loopIndex = "__meridianLoopIndex_\(swiftIdentifierSuffix(path))"
         let loopLabel = "__meridianLoopLabel_\(swiftIdentifierSuffix(path))"
+        // 1C: a refined `overCollection` builds the iteration source pre-loop so
+        // `first N` counts post-filter.
+        if case .overCollection(let param, _, let collection) = ir.mode, let refinement = ir.source {
+            return emitRefinedIterate(ir, refinement: refinement, param: param,
+                                      collection: collection, ctx: ctx,
+                                      workflow: workflow, path: path,
+                                      loopIndex: loopIndex, loopLabel: loopLabel)
+        }
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
             switch ir.mode {
@@ -571,6 +589,111 @@ public struct SwiftEmitter {
                 "\(ctx.s)}"
             }
             ""
+        }
+    }
+
+    /// Emit a refined `for each … whose/within/sorted by/first N` loop. The
+    /// source list is filtered, sorted, then prefixed *before* iterating, so the
+    /// `first N` prefix counts post-filter. Filter/sort closures read element
+    /// properties via `Value.member(...)` (no surrounding `State`).
+    private func emitRefinedIterate(_ ir: IterateIR, refinement: IRIterationRefinement,
+                                    param: String, collection: IRExpression,
+                                    ctx: Ctx, workflow: IRWorkflow, path: String,
+                                    loopIndex: String, loopLabel: String) -> StringTemplate {
+        let inner = ctx.in(1)
+        let var_ = snakeToCamel(param)
+        let suffix = swiftIdentifierSuffix(path)
+        let srcVar = "__meridianSrc_\(suffix)"
+
+        var pipeline = "(\(emitExpr(collection))?.asList ?? [])"
+        if !refinement.filters.isEmpty {
+            let cond = refinement.filters
+                .map { "(\(emitElementExpr($0, loopVar: param, closureParam: "__e")))" }
+                .joined(separator: " && ")
+            pipeline += ".filter { __e in \(cond) }"
+        }
+        if let sort = refinement.sort {
+            let key = escapeSwiftString(sort.path)
+            pipeline += ".sorted { __a, __b in MeridianComparison.orderedBefore(__a.member(\"\(key)\"), __b.member(\"\(key)\"), ascending: \(sort.ascending)) }"
+        }
+
+        let iterSource: String = refinement.take != nil ? "\(srcVar)Refined" : srcVar
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            "\(ctx.s)let \(srcVar) = \(pipeline)"
+            if let take = refinement.take {
+                "\(ctx.s)let \(srcVar)Refined = Array(\(srcVar).prefix(\(take)))"
+            }
+            "\(ctx.s)for (\(loopIndex), \(var_)) in \(iterSource).enumerated() {"
+            "\(inner.s)let \(loopLabel) = \"progress:\(path):iteration:\\(\(loopIndex))\""
+            "\(inner.s)if __meridianShouldRun(\(loopLabel)) {"
+            "\(inner.s)state.bind(\"\(var_)\", \(var_))"
+            emitBlock(ir.body, ctx: inner.in(1), workflow: workflow, path: "\(path).body")
+            "\(inner.in(1).s)try await runtime.checkpoint(label: \(loopLabel), state: state.snapshot())"
+            "\(inner.s)}"
+            "\(ctx.s)}"
+            ""
+        }
+    }
+
+    /// Emit a filter/sort predicate in *element context*: references to the loop
+    /// variable resolve to the closure parameter (`__e`), property accesses to
+    /// `__e.member("prop")`. Used only inside `emitRefinedIterate` closures.
+    private func emitElementExpr(_ e: IRExpression, loopVar: String, closureParam: String) -> String {
+        switch e {
+        case .comparison(let lhs, let op, let rhs):
+            let l = emitElementOperand(lhs, loopVar: loopVar, closureParam: closureParam)
+            switch op {
+            case .withinPast:     return "MeridianComparison.isWithinPast(\(l), \(emitExpr(rhs)))"
+            case .withinFuture:   return "MeridianComparison.isWithinFuture(\(l), \(emitExpr(rhs)))"
+            case .withinDuration: return "MeridianComparison.isWithin(\(l), \(emitExpr(rhs)))"
+            case .matchesPattern: return "meridianRegexMatches(\(l), \(emitExpr(rhs)))"
+            case .isEmpty:        return "MeridianComparison.isEmpty(\(l))"
+            case .isNotEmpty:     return "MeridianComparison.isNotEmpty(\(l))"
+            case .equal:          return "MeridianComparison.eq(\(l), \(emitValueExpr(rhs)))"
+            case .notEqual:       return "MeridianComparison.neq(\(l), \(emitValueExpr(rhs)))"
+            case .lessThan:       return "MeridianComparison.lt(\(l), \(emitValueExpr(rhs)))"
+            case .lessOrEqual:    return "MeridianComparison.le(\(l), \(emitValueExpr(rhs)))"
+            case .greaterThan:    return "MeridianComparison.gt(\(l), \(emitValueExpr(rhs)))"
+            case .greaterOrEqual: return "MeridianComparison.ge(\(l), \(emitValueExpr(rhs)))"
+            case .contains:       return "((\(l))?.description ?? \"\").contains(\(emitExpr(rhs)))"
+            case .startsWith:     return "((\(l))?.description ?? \"\").hasPrefix(\(emitExpr(rhs)))"
+            case .endsWith:       return "((\(l))?.description ?? \"\").hasSuffix(\(emitExpr(rhs)))"
+            case .oneOf:          return "(\(emitExpr(rhs))).contains(\(l) ?? .null)"
+            }
+        case .logical(let op, let parts):
+            let ps = parts.map { "(\(emitElementExpr($0, loopVar: loopVar, closureParam: closureParam)))" }
+            switch op {
+            case .and: return ps.isEmpty ? "true" : ps.joined(separator: " && ")
+            case .or:  return ps.isEmpty ? "false" : ps.joined(separator: " || ")
+            case .not: return "!(\(ps.first ?? "true"))"
+            }
+        case .definitionPredicate(let fn, let subject):
+            return "\(fn)(\(emitElementOperand(subject, loopVar: loopVar, closureParam: closureParam)))"
+        case .quantified(let q):
+            // A nested quantifier evaluates against its own source; references to
+            // the enclosing element are resolved through the element operand.
+            return emitQuantifier(q,
+                operand: { self.emitElementOperand($0, loopVar: loopVar, closureParam: closureParam) },
+                element: { ee, ev in self.emitElementExpr(ee, loopVar: ev, closureParam: "__e") })
+        default:
+            return "(\(emitElementOperand(e, loopVar: loopVar, closureParam: closureParam)) != nil)"
+        }
+    }
+
+    /// Emit an operand in element context, producing a `Value?` expression.
+    private func emitElementOperand(_ e: IRExpression, loopVar: String, closureParam: String) -> String {
+        switch e {
+        case .identifierRef(let name) where name == loopVar:
+            return closureParam
+        case .propertyAccess(let base, let prop):
+            let key = escapeSwiftString(snakeToCamel(prop))
+            if case .identifierRef(let n) = base, n == loopVar {
+                return "\(closureParam).member(\"\(key)\")"
+            }
+            return "\(emitElementOperand(base, loopVar: loopVar, closureParam: closureParam))?.member(\"\(key)\")"
+        default:
+            return emitExpr(e)
         }
     }
 
@@ -722,6 +845,16 @@ public struct SwiftEmitter {
             switch op {
             case .withinDuration:
                 return "MeridianComparison.isWithin(\(emitExpr(lhs)), \(emitExpr(rhs)))"
+            case .withinPast:
+                return "MeridianComparison.isWithinPast(\(emitExpr(lhs)), \(emitExpr(rhs)))"
+            case .withinFuture:
+                return "MeridianComparison.isWithinFuture(\(emitExpr(lhs)), \(emitExpr(rhs)))"
+            case .matchesPattern:
+                return "meridianRegexMatches(\(emitExpr(lhs)), \(emitExpr(rhs)))"
+            case .isEmpty:
+                return "MeridianComparison.isEmpty(\(emitComparisonOperand(lhs)))"
+            case .isNotEmpty:
+                return "MeridianComparison.isNotEmpty(\(emitComparisonOperand(lhs)))"
             case .contains:
                 return "(\(emitExpr(lhs))).contains(\(emitExpr(rhs)))"
             case .startsWith:
@@ -766,9 +899,61 @@ public struct SwiftEmitter {
                     return "\"\(escapeSwiftString(s))\""
                 case .expression(let e):
                     return "meridianStringify(\(emitValueExpr(e)))"
+                case .shellEscapedExpression(let e):
+                    return "meridianShellQuote(\(emitValueExpr(e)))"
                 }
             }.joined(separator: " + ")
             return "(\(parts))"
+        case .definitionPredicate(let fn, let subject):
+            return "\(fn)(\(emitComparisonOperand(subject)))"
+        case .quantified(let q):
+            return emitQuantifier(q, operand: { self.emitComparisonOperand($0) },
+                                  element: { e, ev in self.emitElementExpr(e, loopVar: ev, closureParam: "__e") })
+        }
+    }
+
+    /// Emit a checkable-adjective helper. The body is rendered in element
+    /// context with the subject variable bound to the `__subject` parameter, so
+    /// `it`/`its <prop>` (preprocessed to `<subject>.<prop>`) becomes
+    /// `__subject.member("prop")` and bare emptiness/comparisons resolve too.
+    func emitDefinitionFunction(_ def: LoweredDefinition) -> StringTemplate {
+        let cond = emitElementExpr(def.body, loopVar: def.subjectVar, closureParam: "__subject")
+        return StringTemplate {
+            "private func \(def.functionName)(_ __subjectValue: Value?) -> Bool {"
+            "    let __subject = __subjectValue ?? .null"
+            "    return \(cond)"
+            "}"
+        }
+    }
+
+    /// Emit a quantified description as a self-contained `Bool` IIFE.
+    /// `operand` renders the source collection expression in the current
+    /// context (plain → `state.get`, element → closure member access).
+    func emitQuantifier(_ q: QuantifierIR,
+                        operand: (IRExpression) -> String,
+                        element: (IRExpression, String) -> String) -> String {
+        let ev = q.description.elementVar
+        let coll = operand(q.description.collection)
+        let filterParts = q.description.filters.map { "(\(element($0, ev)))" }
+        let filterClause = filterParts.isEmpty ? "" : ".filter { __e in \(filterParts.joined(separator: " && ")) }"
+        let bodyClause = q.body.map { ".filter { __e in \(element($0, ev)) }" } ?? ""
+        let base = "((\(coll))?.asList ?? [])\(filterClause)"
+        switch q.kind {
+        case .all:
+            if let body = q.body {
+                return "(\(base).allSatisfy { __e in \(element(body, ev)) })"
+            }
+            return "(!\(base).isEmpty)"
+        case .any:
+            return "(!(\(base)\(bodyClause)).isEmpty)"
+        case .none:
+            return "((\(base)\(bodyClause)).isEmpty)"
+        case .atLeast(let n):
+            return "((\(base)\(bodyClause)).count >= \(n))"
+        case .atMost(let n):
+            return "((\(base)\(bodyClause)).count <= \(n))"
+        case .exactly(let n):
+            return "((\(base)\(bodyClause)).count == \(n))"
         }
     }
 
@@ -813,6 +998,8 @@ public struct SwiftEmitter {
                     return "\"\(escapeSwiftString(s))\""
                 case .expression(let e):
                     return "meridianStringify(\(emitValueExpr(e)))"
+                case .shellEscapedExpression(let e):
+                    return "meridianShellQuote(\(emitValueExpr(e)))"
                 }
             }.joined(separator: " + ")
             return ".string(\(parts))"
@@ -1046,6 +1233,25 @@ public struct SwiftEmitter {
             "    case .null: return \"\""
             "    default: return v.description"
             "    }"
+            "}"
+            ""
+            "// 1B: Shell-escape a value for safe interpolation inside a double-"
+            "// quoted span of a shell command (escapes \\\\, \", $, and backtick)."
+            "private func meridianShellQuote(_ v: Value) -> String {"
+            "    var out = \"\""
+            "    for ch in meridianStringify(v) {"
+            "        if ch == \"\\\\\" || ch == \"\\\"\" || ch == \"$\" || ch == \"`\" { out.append(\"\\\\\") }"
+            "        out.append(ch)"
+            "    }"
+            "    return out"
+            "}"
+            ""
+            "// 1D: Output invariant — true iff the value's string form matches the"
+            "// regex pattern (anchored anywhere). An invalid pattern fails closed."
+            "private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {"
+            "    let s = v.map(meridianStringify) ?? \"\""
+            "    guard let re = try? NSRegularExpression(pattern: pattern) else { return false }"
+            "    return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil"
             "}"
         }
     }

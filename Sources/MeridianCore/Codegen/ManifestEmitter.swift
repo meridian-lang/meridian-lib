@@ -26,6 +26,9 @@ public struct ManifestEmitter {
         /// executable and non-executable alike. Mandatory carrier — guaranteed
         /// to reach `meridian_skill.sections` so nothing is silently dropped.
         public let skillSections: [SkillSectionEntry]
+        /// 2B: Checkable adjective definitions (`Definition: a <kind> is <adj>
+        /// if …`). Emitted as `meridian_definitions` when non-empty.
+        public let definitions: [DefinitionManifestEntry]
 
         public init(
             sourceFiles: [String] = [],
@@ -38,7 +41,8 @@ public struct ManifestEmitter {
             metadata: FileMetadataAST? = nil,
             outline: [HeadingEntry] = [],
             rules: [RuleManifestEntry] = [],
-            skillSections: [SkillSectionEntry] = []
+            skillSections: [SkillSectionEntry] = [],
+            definitions: [DefinitionManifestEntry] = []
         ) {
             self.sourceFiles = sourceFiles
             self.workflows = workflows
@@ -51,6 +55,19 @@ public struct ManifestEmitter {
             self.outline = outline
             self.rules = rules
             self.skillSections = skillSections
+            self.definitions = definitions
+        }
+    }
+
+    /// 2B: One checkable adjective definition recorded for the manifest.
+    public struct DefinitionManifestEntry: Encodable {
+        public let adjective: String
+        public let kind: String
+        public let function: String
+        public let line: Int
+        public init(adjective: String, kind: String, function: String, line: Int) {
+            self.adjective = adjective; self.kind = kind
+            self.function = function; self.line = line
         }
     }
 
@@ -174,6 +191,11 @@ public struct ManifestEmitter {
             dict["constants"] = consts
         }
         dict["source_map"] = input.sourceMap.map { ["meridian_line": $0.meridianLine, "swift_line": $0.swiftLine] }
+        if !input.definitions.isEmpty {
+            dict["meridian_definitions"] = input.definitions.map { d -> [String: Any] in
+                ["adjective": d.adjective, "kind": d.kind, "function": d.function, "line": d.line]
+            }
+        }
         if !input.rules.isEmpty {
             dict["meridian_rules"] = input.rules.map { r -> [String: Any] in
                 [

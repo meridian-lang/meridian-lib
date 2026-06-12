@@ -3,8 +3,8 @@
 - Original: `maintain/SKILL.md`
 - Ported: `maintain.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 91%
-- Lines: 431 -> 431 (+38 / -38)
+- Similarity: 90%
+- Lines: 431 -> 440 (+47 / -38)
 
 ## Frontmatter
 - Added: (none)
@@ -12,7 +12,12 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - preamble-blockquoted
+
+## Metrics
+- Sections: 33/35 inert (94% inert ratio)
+- Judgment: 0 blocks, 0 lines
 
 ## Unified diff
 
@@ -32,16 +37,25 @@
  
  This skill guarantees:
  - All health dimensions are checked (stale, orphan, dead links, cross-refs, backlinks, citations, filing, tags)
-@@ -50,7 +50,7 @@
+@@ -50,7 +50,16 @@
  
  ## Phases
  
 -### Autonomous path (v0.36.4.0) — when you want to reach a target score
++### Stale-page guard (( role: procedure ))
++
++> Surface pages that have no body so the audit never reports a brain as healthy
++> while empty pages sit in it.
++
++bind pages = invoke list pages with filter = "all".
++if any pages are unwritten,
++  emit maintain.stale_pages with action = "review".
++
 +### Autonomous path (v0.36.4.0) — when you want to reach a target score (( inert ))
  
  If the user asks "get my brain to 90/100" or "fix what's broken", prefer the
  one-command loop over walking each dimension by hand:
-@@ -76,30 +76,30 @@
+@@ -76,30 +85,30 @@
  - You're investigating why score is stuck below `--remediate`'s ceiling
  - A specific dimension needs manual judgment that the auto path skips
  
@@ -78,7 +92,7 @@
  If link_count is 0 or low relative to page_count, run batch extraction:
  ```bash
  gbrain extract links --dir ~/brain
-@@ -107,13 +107,13 @@
+@@ -107,13 +116,13 @@
  This scans all markdown files for entity references, See Also sections, and
  frontmatter fields, then creates typed links in the database.
  
@@ -94,7 +108,7 @@
  
  `gbrain dream` runs the full 8-phase maintenance cycle:
  
-@@ -190,7 +190,7 @@
+@@ -190,7 +199,7 @@
  Parses `- **YYYY-MM-DD** | Source — Summary` and `### YYYY-MM-DD — Title` formats.
  Note: extracted entries improve structured queries (`gbrain timeline`), not vector search.
  
@@ -103,7 +117,7 @@
  Verify autopilot is running:
  ```bash
  gbrain autopilot --status
-@@ -204,7 +204,7 @@
+@@ -204,7 +213,7 @@
  Minion job and supervises the worker child — one install step gives you
  sync + extract + embed + backlinks + durable job processing.
  
@@ -112,7 +126,7 @@
  A v0.11.0 install where the migration skill never fired leaves Minions
  partially set up: schema is applied, but `~/.gbrain/preferences.json`
  doesn't exist, autopilot runs inline, host manifests still reference
-@@ -224,7 +224,7 @@
+@@ -224,7 +233,7 @@
  
  Full troubleshooting guide: `docs/guides/minions-fix.md`.
  
@@ -121,7 +135,7 @@
  Check that the back-linking iron law is being followed:
  - For each recently updated page, check if entities mentioned in it have
    corresponding back-links FROM those entity pages
-@@ -232,7 +232,7 @@
+@@ -232,7 +241,7 @@
  - Fix: add the missing back-link to the entity's Timeline or See Also section
  - Format: `- **YYYY-MM-DD** | Referenced in [page title](path) -- brief context`
  
@@ -130,7 +144,7 @@
  Check for common misfiling patterns (see `skills/_brain-filing-rules.md`):
  - Content with clear primary subjects filed in `sources/` instead of the
    appropriate directory (people/, companies/, concepts/, etc.)
-@@ -240,18 +240,18 @@
+@@ -240,18 +249,18 @@
    people, companies, or concepts -- these may be misfiled
  - Flag misfiled pages for review or re-filing
  
@@ -152,7 +166,7 @@
  
  The `links` and `timeline_entries` tables are the structured graph layer.
  Populate them periodically or after major imports:
-@@ -279,22 +279,22 @@
+@@ -279,22 +288,22 @@
  So link-extract is mostly a one-time backfill. timeline-extract should be re-run
  after bulk imports or content edits that add new dated entries.
  
@@ -179,7 +193,7 @@
  Check the integrity of stored files and redirect pointers:
  - Run `gbrain files verify` to check all DB records have valid data
  - Run `gbrain files status` to see migration state (local, mirrored, redirected)
-@@ -302,11 +302,11 @@
+@@ -302,11 +311,11 @@
  - Check for large binary files (>= 100 MB) still in git that should be in cloud storage
  - If storage backend is configured: verify redirect pointers resolve (download test)
  
@@ -193,7 +207,7 @@
  
  Periodically verify search quality hasn't regressed. Run a battery of test
  queries across difficulty tiers:
-@@ -325,18 +325,18 @@
+@@ -325,18 +334,18 @@
  - After embedding regeneration
  - Monthly to track quality drift
  
@@ -215,7 +229,7 @@
  
  Run `gbrain embed --stale` to refresh embeddings for pages that have changed since
  their last embedding. For large brains (>5000 pages), run this with nohup:
-@@ -344,18 +344,18 @@
+@@ -344,18 +353,18 @@
  nohup gbrain embed --stale > /tmp/gbrain-embed.log 2>&1 &
  ```
  
@@ -237,7 +251,7 @@
  
  After maintenance runs, save a report:
  - Health check results (before/after scores for each dimension)
-@@ -367,13 +367,13 @@
+@@ -367,13 +376,13 @@
  
  This creates an audit trail for brain health over time.
  
@@ -253,7 +267,7 @@
  
  - Fixing pages without reading them first -- you must understand context before editing
  - Silently skipping dimensions -- every dimension must be checked and reported, even if clean
-@@ -389,7 +389,7 @@
+@@ -389,7 +398,7 @@
  The maintenance report follows this structure:
  
  ```
@@ -262,7 +276,7 @@
  
  | Dimension           | Issues Found | Fixed | Remaining |
  |----------------------|-------------|-------|-----------|
-@@ -407,17 +407,17 @@
+@@ -407,17 +416,17 @@
  | File storage         | N           | N     | N         |
  | Open threads         | N           | N     | N         |
  

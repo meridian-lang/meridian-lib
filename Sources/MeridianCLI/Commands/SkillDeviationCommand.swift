@@ -202,6 +202,11 @@ struct SkillDeviationCommand: AsyncParsableCommand {
         let tier2 = rows.filter { $0.tier == 2 }.count
         let tier3 = rows.filter { $0.tier == 3 }.count
         let avg = rows.isEmpty ? 0 : rows.map(\.similarity).reduce(0, +) / Double(rows.count)
+        let totalSections = rows.reduce(0) { $0 + $1.metrics.totalSections }
+        let inertSections = rows.reduce(0) { $0 + $1.metrics.inertSections }
+        let totalJudgmentBlocks = rows.reduce(0) { $0 + $1.metrics.judgmentBlocks }
+        let totalJudgmentLines = rows.reduce(0) { $0 + $1.metrics.judgmentLines }
+        let avgInertRatio = rows.isEmpty ? 0 : rows.map(\.metrics.inertRatio).reduce(0, +) / Double(rows.count)
         out.append("## Summary")
         out.append("")
         out.append("- Pairs analyzed: \(rows.count)")
@@ -209,17 +214,20 @@ struct SkillDeviationCommand: AsyncParsableCommand {
         out.append("- Tier 2 (light edits): \(tier2)")
         out.append("- Tier 3 (structural rewrite): \(tier3)")
         out.append("- Average similarity: \(percent(avg))")
+        out.append("- Sections: \(inertSections)/\(totalSections) inert (avg inert ratio \(percent(avgInertRatio)))")
+        out.append("- Judgment: \(totalJudgmentBlocks) blocks, \(totalJudgmentLines) lines")
         out.append("- Non-skill directories skipped (no SKILL.md, e.g. `conventions/`, `migrations/`): \(skippedNonSkillDirs)")
         out.append("")
         out.append("## Per-skill")
         out.append("")
-        out.append("| skill | tier | similarity | lines | frontmatter added | categories |")
-        out.append("|---|---|---|---|---|---|")
+        out.append("| skill | tier | similarity | lines | inert | judgment | frontmatter added | categories |")
+        out.append("|---|---|---|---|---|---|---|---|")
         for r in rows {
             let stem = (r.portedName as NSString).deletingPathExtension
             let fmAdded = r.frontmatterAdded.isEmpty ? "(none)" : r.frontmatterAdded.joined(separator: " ")
             let cats = r.categories.isEmpty ? "(none)" : r.categories.joined(separator: " ")
-            out.append("| [\(stem)](\(stem).md) | \(r.tier) | \(percent(r.similarity)) | \(r.originalLineCount)→\(r.portedLineCount) | \(fmAdded) | \(cats) |")
+            let m = r.metrics
+            out.append("| [\(stem)](\(stem).md) | \(r.tier) | \(percent(r.similarity)) | \(r.originalLineCount)→\(r.portedLineCount) | \(m.inertSections)/\(m.totalSections) | \(m.judgmentBlocks)/\(m.judgmentLines) | \(fmAdded) | \(cats) |")
         }
         if !unpairedOriginals.isEmpty {
             out.append("")

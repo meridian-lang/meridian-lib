@@ -13,6 +13,10 @@
 ## Categories
 - section-marker-added
 
+## Metrics
+- Sections: 7/8 inert (88% inert ratio)
+- Judgment: 1 blocks, 4 lines
+
 ## Unified diff
 
 ```diff

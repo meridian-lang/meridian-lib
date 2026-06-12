@@ -14,6 +14,10 @@
 - section-marker-added
 - preamble-blockquoted
 
+## Metrics
+- Sections: 9/9 inert (100% inert ratio)
+- Judgment: 0 blocks, 0 lines
+
 ## Unified diff
 
 ```diff

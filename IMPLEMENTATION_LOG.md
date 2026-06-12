@@ -2580,3 +2580,290 @@ Tests: two new parity cases in `SkillDeviationTests` (`difflibMatcherParity`,
 `difflibRatioAndRangeFormat`) plus the existing 12; full `swift test` green.
 The three previously "user-sanctioned deviations" are now closed — output is
 byte-for-byte equivalent to the original.
+
+---
+
+## 2026-06-12 — Wave 0 baseline: expressiveness metrics + corpus scaffolding
+
+Start of the Inform-7-tier expressiveness program (`meridian-inform7-cursor-prompt.md`,
+`INFORM7_DESIGN_NOTES.md`). Wave 0 installs the measurement that every later wave
+reports deltas against.
+
+- **`SkillMetrics`** (`Sources/MeridianCore/Migration/SkillMetrics.swift`) — a
+  dependency-free, deterministic text scan of a ported `.meri`:
+  `totalSections`, `inertSections`, `inertRatio` (non-executable / total
+  sections), `judgmentBlocks`, `judgmentLines`. Section executability reuses the
+  same pure role functions as `SkillSectionBuilder` (`SkillSectionRole.parseMarker`
+  → `.builtinRole` → `.isExecutable`), so the counts track real lowering. Fenced
+  code blocks are skipped (a `##` in an Output Format sample is not a section);
+  frontmatter is stripped (a `description:` mentioning "use judgment" is not a
+  judgment block). "Inert" = `!executes`, covering `(( inert ))`,
+  `(( inert, role: R ))`, `template`, and unresolved-empty headings.
+- **Wired onto `DeviationReport.metrics`**, computed in `SkillDeviation.analyze`
+  from `portedMeri`, rendered as a `## Metrics` section in each per-skill report,
+  and summarized in the CLI index (`buildIndex`): totals + average inert ratio in
+  the Summary, plus `inert` and `judgment` columns in the per-skill table. All
+  formatting stays sorted/fixed so reports remain byte-for-byte reproducible.
+- **`corpora/README.md`** records the 3-corpus target (gbrain online; two
+  external corpora maintainer-supplied by Wave 6) and the per-wave metric-delta
+  rule. The thesis: each wave's new deterministic surface should pull
+  `inert_ratio` and `judgment_lines` down without regressing similarity/tier mix.
+- **Tests:** new `SkillMetricsTests` suite (section counts incl. `###` and forced
+  markers, judgment block/line indentation scoping, flat heading-less procedure,
+  fenced-heading exclusion) + a `deviationCarriesMetrics` case in
+  `SkillDeviationTests`. Full `swift test` green.
+
+### Wave 0 baseline (gbrain corpus, 53 pairs)
+
+Regenerated `sample-gbrain/migration-deviations/ --index`:
+
+- Tiers: 42 / 10 / 1; average similarity 87% (unchanged — metrics are additive).
+- Sections: **692 / 755 inert**, average inert ratio **90%**.
+- Judgment: **17 blocks, 73 lines**.
+
+These are the numbers Waves 1+ must move (inert ratio and judgment lines down).
+gbrain is the sole corpus online, so all current metric claims are scoped to it.
+
+## 2026-06-12 — Wave 1: deterministic surface (command annotations, holes, iteration refinements, metadata sections)
+
+Wave 1 of the Inform-7-tier program. Four deterministic forms, no new IR
+primitive (payload/data extensions only). Each is a closed grammar; an
+unresolved/ambiguous case is a sourced `semanticError`.
+
+- **1A — command annotation.** `inlineBacktickedCommand` / `splitShellCommands`
+  strip a trailing ` -- <note>` *outside* backticks and carry it on
+  `PhraseInvocationAST.annotation`; `ASTToIR` threads it to `InvokeIR.comment`;
+  `SwiftEmitter.emitInvoke` emits `// <note>` above the `shell.run`. The rewrite
+  engine is hoisted to the top of the `parseBlock` loop so a `=== desugar ===`
+  rule can normalize a surface variant into the backticked-command form before
+  the command detectors run. Documented in `docs/11_RULEBOOKS.md`.
+- **1B — typed holes.** A lightweight scope tracker is threaded through
+  `ASTToIR.lowerBlock`/`lowerStatement` (seeded with workflow parameters,
+  extended by `BindIR`/`InvokeIR.resultBinding` names and `for each`/`for every`
+  loop variables; names canonicalized via `scopeKey`). `lowerShellCommand` scans
+  the decoded command for `{…}` holes, parses each with `ExpressionParser`, and
+  validates the head identifier against the scope set — an unresolved hole is a
+  hard sourced error listing the in-scope names. A hole inside a double-quoted
+  span lowers to `IRInterpolationSegment.shellEscapedExpression` (emitted via the
+  `meridianShellQuote` file-header helper); outside quotes it interpolates
+  verbatim. `{{`/`}}` are literal braces. `migrate-skill` rewrites
+  `<placeholder>` → `{placeholder}` inside command spans gated on the frontmatter
+  parameter scope; `SkillDeviation` gained a `command-hole-rewritten` category.
+- **1C — iteration refinements.** `IterateIR.source: IRIterationRefinement?`
+  (struct field, default nil) carries `filters`/`sort`/`take`.
+  `extractIterationRefinement` parses `[the first N] <kind plural> [whose … |
+  within the last N <unit> | in the next N <unit>] [sorted by <prop>[, dir]]`.
+  `ComparisonOp` gained `withinPast`/`withinFuture`/`matchesPattern`;
+  `ComparisonOpAST` gained `contains`/`oneOf`/`matchesPattern`. New runtime
+  helpers: `Value.member(path)`, `MeridianComparison.orderedBefore`,
+  `isWithinPast`/`isWithinFuture`. `emitRefinedIterate` builds the
+  filter→sort→prefix pipeline **pre-loop** (so `the first N` counts post-filter)
+  using `emitElementExpr` to rewrite loop-var references into the closure param.
+  `LanguageSynonyms.timestampProperty` (default `updatedAt`, settable via a
+  `=== language ===` `timestamp =` entry) backs the temporal clauses. Documented
+  in `docs/04_COMPILER_PIPELINE.md`.
+- **1D — metadata sections.** New non-executable `SkillSectionRole.tools` and
+  `.conventionRef`. `## Tools Used` bullets `<desc> (<tool_id>)` are mined by
+  `SkillSectionBuilder.extractToolID` (malformed = hard error), threaded through
+  `MeridianFile.toolsUsed` → merged into `scopedTools` and
+  `ManifestEmitter.Input.toolsUsed` (manifest `tools_used`). Output invariants
+  `every emitted <noun> matches pattern "<regex>"` are rewritten in `assertLine`
+  to a checkable form lowering to `AssertIR` over the `meridianRegexMatches`
+  file-header helper. `SkillMigrator` detects convention restatement against
+  parsed rulebook conventions.
+
+### Parser fix — capitalized `For every X:` block header vs topic label
+
+A capitalized loop header ending in `:` (`For every attendee:`) matched the
+topic-label rule in `parseStatementWithoutRewrite` (uppercase, ≤40 chars,
+letters/spaces) *before* the iteration check, so it was read as a label with an
+empty body and dropped — orphaning the loop-body bullets at the top level, where
+a `{loop var}` hole could not resolve. The `for each`/`for every` block-header
+detection now runs immediately after the judgment-marker check and before the
+topic-label rule. Regression test: `IterationRefinementTests
+.capitalizedBlockHeaderIsLoop`.
+
+### Re-port: `sample-gbrain/skills/briefing.meri`
+
+`## GBrain-Native Context Loading` un-inerted: `### Before a meeting` and `###
+Daily briefing queries` are now `(( role: procedure ))` whose backticked bullets
+lower to `shell.run`; `<attendee name>`/`<slug>` rewritten to `{the attendee's
+name}` / `{the attendee's slug}` holes resolving against the `For every
+attendee:` loop variable. The `## Phases` judgment block was trimmed to two
+genuinely-discretionary lines, and `## Tools Used` is now the real `.tools` role
+(`tools_used: [query, get_page, list_pages, get_health, get_timeline]`).
+
+### Wave 1 corpus deltas (gbrain, 52 pairs)
+
+Regenerated `compile-outputs/` (briefing) + `migration-deviations/ --index`:
+
+- Sections: **683 / 747 inert** (was 692/755) — inert and total both down via
+  the briefing procedures.
+- Judgment: **16 blocks, 67 lines** (was 17 blocks / 73 lines).
+- `briefing` specifically: 8/11 inert (73%), 1 judgment block / 2 lines, 153→110
+  source lines, tier 2 @ 66% similarity (the intended structural re-port).
+- Tiers 42 / 10 / 0; average similarity 88%.
+
+Verification: full `swift test` green; SampleGbrain conformance (zero
+`_unresolved`) green; `MERIDIAN_GBRAIN_TYPECHECK=1` green (all 53 emitted files,
+incl. the regenerated `briefing.swift`, type-check against MeridianRuntime).
+
+### Detailed-test pass + a second `parseIteration` fix (`in the next`)
+
+Adding detailed coverage surfaced a second parser bug. `parseIteration` split on
+the explicit-collection ` in ` marker *before* stripping the 1C refinement
+clause, so a temporal `for each order in the next 3 days:` was misread as an
+explicit collection (`order` over `the next 3 days`) and the future window was
+silently dropped — `in the next N <unit>` never produced a `withinFuture`
+filter. Fixed by running `extractIterationRefinement` on the header first, then
+deciding bare-kind vs explicit `in {collection}` on the remaining noun phrase
+(this also lets refinements attach to explicit-collection loops). Regression:
+`IterationRefinementTests.temporalFuture`.
+
+Detailed tests added (38 total, suite now 638):
+- **Runtime helpers** (`Tests/MeridianRuntimeTests/Inform7RuntimeHelpersTests.swift`,
+  22 cases) — `Value.member` (single/nested/empty/missing/non-record/scalar
+  receiver), `MeridianComparison.orderedBefore` (numbers/dates/strings asc+desc,
+  ties, nil-and-unorderable-sort-last, mixed-kind no-cross-order, money/duration,
+  drives a real `sorted`), and `isWithinPast`/`isWithinFuture` (inside/outside,
+  cross-direction rejection, inclusive boundary, non-date/nil).
+- **1B holes** — multiple holes per command, resolution against an earlier bind
+  and against the enclosing loop variable, and the unresolved-hole error message
+  content (names the bad ref + lists in-scope names).
+- **1C** — `in the next` future window, `sorted by` default-ascending,
+  `oldest first`/`newest first` directions, `the first N` take-only,
+  explicit-collection-with-refinement, no-take-omits-`.prefix`, and the
+  `contains`/`is one of` comparators.
+- **1D** — multiple/dotted/hyphenated tool ids merged, `conventionRef`
+  non-executability, and convention-restatement marking
+  (`ConventionRestatementTests`: restated→`convention-ref`, unrelated→`inert`,
+  no-rulebook→unmarked).
+
+---
+
+## 2026-06-12 18:30 — DECISION: Wave 2 semantic core (booleans, definitions, quantifiers)
+
+CONTEXT: Implementing Wave 2 of the Inform-7-tier program — strict boolean
+composition (2A), checkable adjective `Definition`s (2B), and quantifiers over
+descriptions (2C), plus the shared condition grammar (temporal + emptiness) that
+all three reuse.
+
+DETAIL: All three surfaces lower to existing IR primitives with richer
+expression payloads — **no new IR primitive**. New expression/payload extensions
+only:
+- AST: `ExpressionAST.malformed(String)` (error carrier), `ExpressionAST.quantified`
+  + `QuantifierAST`/`DescriptionAST`/`QuantifierKindAST`, `DefinitionDeclaration`
+  + `VocabularyStatement.definition` + `MeridianFile.definitions`,
+  `ComparisonOpAST.withinPast/.withinFuture/.isEmpty/.isNotEmpty`,
+  `IterationRefinementAST.adjectives`.
+- IR: `IRExpression.definitionPredicate(functionName:subject:)`,
+  `IRExpression.quantified` + `QuantifierIR`/`DescriptionIR`/`QuantifierKind`,
+  `LoweredDefinition`, `ComparisonOp.isEmpty/.isNotEmpty` (withinPast/withinFuture
+  already existed from 1C).
+- Runtime: `MeridianComparison.isEmpty(_:)` / `isNotEmpty(_:)` (the only new
+  runtime helpers — `Value.asList`/`Value.member`/`isWithinPast`/`isWithinFuture`/
+  `orderedBefore` already shipped in 1C).
+
+Key decisions (baked in):
+1. **Non-throwing parser, throwing lowerer.** `ExpressionParser.parse` stays
+   non-throwing; surface violations (mixed `and`/`or`, malformed quantifier,
+   unidentifiable head kind, direct-invocation quantifier source) are recorded as
+   `ExpressionAST.malformed(msg)` carrying a fully-formed diagnostic. `lowerExpr`
+   is now `throws` and surfaces `.malformed` as a sourced
+   `CompilerError.semanticError`. This rippled `throws`/`try` through
+   `lowerAutonomyConfig`, `lowerRecoverPattern`, `lowerIterationRefinement`,
+   `lowerWaitCondition`, and the `Phase6B6B7Tests` `lower` helper.
+2. **Strict `and`/`or` mixing.** Bare `and` mixed with bare `or` at one level is
+   a hard error printing both readings; the only way to combine is `either … or`,
+   which `ExpressionParser` protects as an opaque sentinel
+   (`eitherSentinelPrefix`) before splitting top-level connectives. Oxford commas
+   (`, and`/`, or`) are normalized away. This **changed** the prior
+   `EnglishLexiconTests` "or has lower precedence than and" test, which asserted
+   a parse of a mixed expression — renamed to `mixedBooleanIsMalformed` (now
+   expects `.malformed`) + new `eitherGrouping` test.
+3. **Definitions resolve at lowering, not parsing.** `registerDefinitions`
+   ingests merconfig + `.meri` definitions FIRST (before any workflow lowers), so
+   adjectives resolve regardless of source order/file. Surface adjective names
+   are globally unique (collision = error); generated helpers are kind-namespaced
+   `meridianDef_<Kind>_<adjCamel>` and emitted as file-scope `private func`s.
+   Bodies are type-checked (every read property must exist on the kind) and
+   recursion (direct/mutual, via DFS over the adjective graph) is a hard error.
+4. **Adjectives fire only in subject position.** `lowerComparison` rewrites
+   `X is/is not <adj>` to a `.definitionPredicate` only when the LHS lowers to
+   `.identifierRef` — never `.propertyAccess` — so `the deal is urgent`
+   (adjective) stays distinct from `whose status is urgent` (enum value).
+5. **`qualifyToLoopVar` generalized + corrected.** It now recurses over
+   `.logical` and `.definitionPredicate` trees (so boolean filters work inside
+   `whose`/element contexts) and qualifies only the **LHS** of a comparison (the
+   prior code qualified both sides).
+6. **Quantifier source is fetch-once.** A description's collection must lower to
+   `.identifierRef`/`.propertyAccess`/`.constantRef`/`.instanceRef`; a direct
+   tool `.invocation` source is a sourced error ("bind the result first").
+
+Codegen: definition predicates emit `private func meridianDef_*(_ __subject:
+Value?) -> Bool { return <body in element ctx> }`; quantifiers emit an inline
+expression `((coll)?.asList ?? []).filter{__e in <filters>}` + a reducer
+(`all`→`allSatisfy`; `any`/`none`→`.filter(body).isEmpty`; counting→`.count <op>
+N`). `it`/`its` in a definition body are rewritten to the subject variable in
+`DefinitionParser` before the body parses.
+
+`DefinitionParser` (new, `Sources/MeridianCore/Parser/Productions/`) is the
+single shared parser for `Definition:` lines, used by both `MerConfigParser`
+(vocabulary section) and `MeridianParser` (top-level body region).
+
+IMPACT: Booleans/definitions/quantifiers are now usable in any condition (`if`,
+`assert`, `whose`, definition bodies). Wave 3 will add relation-backed emptiness
+and `all X whose P have Q`.
+
+VALIDATION:
+- 28 new `Tests/MeridianCoreTests/Inform7/Inform7Wave2Tests.swift` cases (2A
+  boolean composition, 2B definitions, shared condition grammar, 2C quantifiers).
+- 5 new runtime `EmptinessTests` cases in `Inform7RuntimeHelpersTests.swift`.
+- Full `swift test` green (672 tests); `MERIDIAN_GBRAIN_TYPECHECK=1` and
+  `MERIDIAN_GOLDEN_TYPECHECK=1` both green (emitter changes type-check).
+
+STATUS: RESOLVED
+
+---
+
+## 2026-06-12 18:55 — DECISION: Wave 2 acceptance closeout (manifest, assertNoMalformed, specs)
+
+CONTEXT: Post-Wave-2 self-audit flagged three open items against the plan's
+acceptance checklist (prompt lines 106–111).
+
+DETAIL:
+- **`meridian_definitions` manifest key.** `ManifestEmitter.Input` gained
+  `definitions: [DefinitionManifestEntry]` (`adjective`, `kind`, `function`,
+  `line`); `buildDict` emits `meridian_definitions` when non-empty, sorted by
+  `function`. `Compiler.compileWithManifest` builds the entries from the shared
+  `SymbolTable.definitions` (a `final class`, so the lowerer's registrations are
+  visible). Omitted entirely when there are no definitions (byte-unchanged for
+  non-definition files). Documented in `docs/05_CODEGEN.md`.
+- **`ASTToIR.assertNoMalformed`.** The plan specified a discrete guard; the
+  earlier implementation only relied on a throwing `lowerExpr`. Added
+  `assertNoMalformed(_:)` called at the top of `lowerStatement`, walking every
+  expression a statement directly holds (`firstMalformed` DFS over logical /
+  comparison / invoke / interpolatedString / quantified / propertyAccess) and
+  raising the carrier's diagnostic with the statement's source line. `lowerExpr`
+  keeps throwing on `.malformed` as defense in depth for non-statement positions
+  (definition bodies, quantifier sub-expressions). This makes the
+  `MeridianAST.swift` `.malformed` doc comment accurate.
+- **`.meridian.test` end-to-end specs.** Added
+  `Tests/MeridianCoreTests/MeridianTestSpecs/wave2_2{a,b,c}_*.meridian.test`
+  (boolean `&&`/`||` tree, definition predicate + `isEmpty`, `at least N`
+  reducer) plus a `Wave2SpecTests` driver that loads + runs each through
+  `MeridianTestRunner` so `swift test` exercises them (the bundled specs are
+  otherwise only run by the `meridian test` CLI). Struct names follow the
+  workflow header (`ScreenOrder`/`ReviewPage`/`AuditPages`), not frontmatter
+  `name:`.
+
+IMPACT: Wave 2 acceptance fully met. The `examples/skill` round-trip showcase is
+a Wave 3 deliverable (prompt line 149), tracked there, not here.
+
+VALIDATION:
+- New tests: `at most N` / `exactly N` parse + emit, manifest `meridian_definitions`,
+  a malformed-condition compile-abort, and the 3-case `Wave2SpecTests` driver.
+- Full `swift test` green (679 tests); `MERIDIAN_GBRAIN_TYPECHECK=1` and
+  `MERIDIAN_GOLDEN_TYPECHECK=1` both green.
+
+STATUS: RESOLVED

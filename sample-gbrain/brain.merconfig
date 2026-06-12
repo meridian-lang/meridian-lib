@@ -65,6 +65,15 @@ A job has a state, which is one of (queued, running, succeeded, failed, cancelle
 A brain has an upgrade mode, which is one of (off, auto, notify).
 A query has a mode, which is one of (fast, deep, exhaustive).
 
+# --- Checkable adjective definitions (Wave 2) ---
+# Shared brain adjectives skill bodies can use in subject position
+# (`if the page is unwritten`, `for each urgent page`, `no jobs are broken`).
+
+Definition: a page is unwritten if it has no body.
+Definition: a page is urgent if its priority is "p0".
+Definition: a job is finished if its state is "succeeded".
+Definition: a job is broken if its state is "failed".
+
 # --- Phrase library: natural-language steps that wrap the tool families ---
 # Skill bodies say these in plain English; each lowers to a deterministic
 # invoke against the declared tools above.

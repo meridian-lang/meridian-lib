@@ -109,17 +109,22 @@ public struct InvokeIR: Sendable {
     public let toolID: String
     public let arguments: [InvokeArg]
     public let resultBinding: String?
+    /// A human-readable note (1A command annotation) emitted as a `//` comment
+    /// above the call. Payload extension only — does not affect execution.
+    public let comment: String?
     public let sourceRange: SourceRange
 
     public init(
         toolID: String,
         arguments: [InvokeArg] = [],
         resultBinding: String? = nil,
+        comment: String? = nil,
         sourceRange: SourceRange = .unknown
     ) {
         self.toolID = toolID
         self.arguments = arguments
         self.resultBinding = resultBinding
+        self.comment = comment
         self.sourceRange = sourceRange
     }
 }
@@ -192,12 +197,36 @@ public enum IRPattern: Sendable {
 public struct IterateIR: Sendable {
     public let mode: IterateMode
     public let body: IRBlock
+    /// Optional single-clause refinement applied to an `overCollection` source
+    /// before iterating: `whose`/temporal filters, a `sorted by` order, and a
+    /// `first N` prefix. `nil` preserves today's plain-iteration behavior.
+    public let source: IRIterationRefinement?
     public let sourceRange: SourceRange
 
-    public init(mode: IterateMode, body: IRBlock, sourceRange: SourceRange = .unknown) {
+    public init(mode: IterateMode, body: IRBlock,
+                source: IRIterationRefinement? = nil,
+                sourceRange: SourceRange = .unknown) {
         self.mode = mode
         self.body = body
+        self.source = source
         self.sourceRange = sourceRange
+    }
+}
+
+/// A refinement over an `overCollection` iteration source. Filters are applied
+/// (conjunctively) first, then sorting, then the `take` prefix — so `first N`
+/// counts post-filter. All fields are expressed relative to the loop variable.
+public struct IRIterationRefinement: Sendable {
+    public let filters: [IRExpression]
+    public let sort: (path: String, ascending: Bool)?
+    public let take: Int?
+
+    public init(filters: [IRExpression] = [],
+                sort: (path: String, ascending: Bool)? = nil,
+                take: Int? = nil) {
+        self.filters = filters
+        self.sort = sort
+        self.take = take
     }
 }
 
@@ -395,6 +424,10 @@ public struct AutonomyConfigIR: Sendable {
 public enum IRInterpolationSegment: Sendable {
     case literal(String)
     case expression(IRExpression)
+    /// A command hole (1B) that sits inside a double-quoted span of a shell
+    /// command: its value is shell-escaped (for use within `"…"`) by the
+    /// emitted `meridianShellQuote` helper rather than interpolated verbatim.
+    case shellEscapedExpression(IRExpression)
 }
 
 public indirect enum IRExpression: Sendable {
@@ -414,6 +447,58 @@ public indirect enum IRExpression: Sendable {
     case invocation(InvokeIR)
     /// B6/B7: Fenced code-block body with `{{ expr }}` interpolation.
     case interpolatedString([IRInterpolationSegment])
+    /// 2B: A checkable adjective predicate (`X is stale`). `functionName` is the
+    /// precomputed `meridianDef_<Kind>_<adjCamel>` helper; `subject` is the
+    /// value the predicate runs over. The emitter needs no definition registry.
+    case definitionPredicate(functionName: String, subject: IRExpression)
+    /// 2C: A quantified description, emitted as a single-expression IIFE so it
+    /// slots into any condition position (`if`, `assert`, `whose`, …).
+    case quantified(QuantifierIR)
+}
+
+// MARK: - 2C. Quantifiers (IR)
+
+public enum QuantifierKind: Sendable, Equatable {
+    case all
+    case any
+    case none
+    case atLeast(Int)
+    case atMost(Int)
+    case exactly(Int)
+}
+
+/// A lowered description: a fetched-once `collection` source, an `elementVar`
+/// binding, and a conjunction of element-context `filters` (adjectives →
+/// `.definitionPredicate`, `whose` → qualified comparison/logical).
+public struct DescriptionIR: Sendable {
+    public let collection: IRExpression
+    public let elementVar: String
+    public let filters: [IRExpression]
+    public init(collection: IRExpression, elementVar: String, filters: [IRExpression] = []) {
+        self.collection = collection; self.elementVar = elementVar; self.filters = filters
+    }
+}
+
+public struct QuantifierIR: Sendable {
+    public let kind: QuantifierKind
+    public let description: DescriptionIR
+    /// Per-element body predicate (element context). Optional for `any`/`none`.
+    public let body: IRExpression?
+    public init(kind: QuantifierKind, description: DescriptionIR, body: IRExpression? = nil) {
+        self.kind = kind; self.description = description; self.body = body
+    }
+}
+
+/// 2B: A lowered checkable-adjective definition, ready for codegen. The emitter
+/// produces `private func <functionName>(_ __subject: Value?) -> Bool { return
+/// <body in element context over subjectVar> }`.
+public struct LoweredDefinition: Sendable {
+    public let functionName: String
+    public let subjectVar: String
+    public let body: IRExpression
+    public init(functionName: String, subjectVar: String, body: IRExpression) {
+        self.functionName = functionName; self.subjectVar = subjectVar; self.body = body
+    }
 }
 
 public enum ComparisonOp: Sendable {
@@ -423,6 +508,13 @@ public enum ComparisonOp: Sendable {
     case oneOf
     case contains, startsWith, endsWith
     case withinDuration
+    /// One-sided temporal windows (1C `within the last` / `in the next`).
+    case withinPast, withinFuture
+    /// Regex match (1D output invariant `matches pattern "<regex>"`).
+    case matchesPattern
+    /// 2 (shared condition grammar): property-backed emptiness checks. The RHS
+    /// operand is unused (a `.literal(.boolean(true))` placeholder).
+    case isEmpty, isNotEmpty
 }
 
 public enum LogicalOp: Sendable {

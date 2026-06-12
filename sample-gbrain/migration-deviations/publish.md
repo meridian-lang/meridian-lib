@@ -3,8 +3,8 @@
 - Original: `publish/SKILL.md`
 - Ported: `publish.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 88%
-- Lines: 173 -> 173 (+21 / -21)
+- Similarity: 86%
+- Lines: 173 -> 182 (+30 / -21)
 
 ## Frontmatter
 - Added: (none)
@@ -14,6 +14,10 @@
 - section-marker-added
 - shell-block-routed
 - preamble-blockquoted
+
+## Metrics
+- Sections: 14/17 inert (82% inert ratio)
+- Judgment: 0 blocks, 0 lines
 
 ## Unified diff
 
@@ -60,16 +64,25 @@
  
  Brain content is private. Default to password-protected unless the user explicitly
  says "open", "no password", or "public".
-@@ -44,7 +44,7 @@
+@@ -44,7 +44,16 @@
  If no password is specified, auto-generate one. Share the password via a different
  channel than the URL.
  
 -## Quick Reference
++## Pre-publish guard (( role: procedure ))
++
++> Never publish an empty page: if any candidate page has no body, block the
++> publish and ask the author to finish it first.
++
++bind pages = invoke list pages with filter = "selected".
++if any unwritten pages,
++  emit publish.blocked with reason "page body is empty".
++
 +## Quick Reference (( role: procedure ))
  
  ```bash
  # Basic publish (outputs local HTML file)
-@@ -63,7 +63,7 @@
+@@ -63,7 +72,7 @@
  gbrain publish brain/companies/acme.md --out /tmp/acme-share.html
  ```
  
@@ -78,7 +91,7 @@
  
  The publish command automatically removes all private/internal data:
  
-@@ -78,9 +78,9 @@
+@@ -78,9 +87,9 @@
  
  **Preserved:** external URLs (`https://...`), all other content.
  
@@ -90,7 +103,7 @@
  
  ```bash
  gbrain publish brain/people/jane-doe.md --password --out ~/Desktop/jane-briefing.html
-@@ -88,7 +88,7 @@
+@@ -88,7 +97,7 @@
  
  Share the HTML file via email, Slack, Airdrop. Share the password separately.
  
@@ -99,7 +112,7 @@
  
  ```bash
  # Publish locally first
-@@ -103,20 +103,20 @@
+@@ -103,20 +112,20 @@
  
  Share the signed URL + password. URL expires in 1 hour. Re-generate as needed.
  
@@ -123,7 +136,7 @@
  
  - **Algorithm:** AES-256-GCM
  - **Key derivation:** PBKDF2 with 100K iterations, SHA-256
-@@ -129,7 +129,7 @@
+@@ -129,7 +138,7 @@
  When encrypted, the published HTML contains ONLY ciphertext. The plaintext is
  not present anywhere in the file.
  
@@ -132,7 +145,7 @@
  
  Re-run the publish command with the same output path:
  ```bash
-@@ -138,12 +138,12 @@
+@@ -138,12 +147,12 @@
  
  Same file, same URL (if hosted), updated content.
  
@@ -147,7 +160,7 @@
  
  - **Publishing without encryption.** Brain content is private. Default to password-protected unless the user explicitly says "open", "no password", or "public".
  - **Sharing password and URL in the same channel.** Always share the password via a different channel than the URL for security.
-@@ -165,7 +165,7 @@
+@@ -165,7 +174,7 @@
  Share the password via: [a different channel]
  ```
  

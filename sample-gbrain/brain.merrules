@@ -32,6 +32,16 @@ rule "output-emit":
   match: Output: {message}
   lowers to: emit skill.report with message = {message}.
 
+# Annotated command (1A): `Run `cmd` to <purpose>` normalizes to the canonical
+# backticked-command-with-annotation form. The engine's parseBlock hoist then
+# routes the rewritten ``cmd`` to the deterministic shell.run path, carrying
+# <purpose> as a source comment. Anchored on the backticks (literal "Run `" …
+# "` to ") so it only fires on a genuine backticked command, never on prose
+# "Run the …" lines or a command that merely contains the substring "to".
+rule "annotated-command":
+  match: Run `{command}` to {purpose}
+  rewrite: `{command}` -- {purpose}.
+
 # Markdown checklists (`- [ ] item`, `□ item`) are verification asserts.
 rule "checklist-open":
   match: [ ] {item}

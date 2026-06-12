@@ -51,6 +51,25 @@ public struct StatementParser {
                     )
                 }
             }
+            // Rulebook desugar hoist: rewrite a surface idiom into its canonical
+            // form *before* the command/chain detectors run, so a desugar rule
+            // can normalize a surface variant into a backticked command and have
+            // `parseInlineChain`/`inlineBacktickedCommand` route it to the shell
+            // path. The engine is fixpoint-stable, so the per-statement desugar
+            // hook downstream is a no-op second pass. No-op without a rulebook.
+            if let engine = rewriteEngine, !engine.isEmpty {
+                let result = engine.rewrite(content[i].statement)
+                if result.changed, result.text != content[i].statement {
+                    content[i] = SourceLine(
+                        indent: content[i].indent,
+                        text: result.text,
+                        raw: content[i].raw,
+                        number: content[i].number,
+                        listMarker: content[i].listMarker,
+                        headingLevel: content[i].headingLevel
+                    )
+                }
+            }
             if let expanded = try parseInlineChain(content[i], file: file), !expanded.isEmpty {
                 for s in expanded {
                     appendStatement(s, to: &stmts)
@@ -154,6 +173,16 @@ public struct StatementParser {
             return (stmt, consumed)
         }
 
+        // A `for each …` / `for every …:` block header must be recognized before
+        // the topic-label rule: a capitalized header like `For every attendee:`
+        // otherwise matches `topicLabel` (uppercase, ≤40 chars, letters/spaces)
+        // with an empty body and is dropped, orphaning the loop body bullets.
+        if t.lowercased().hasPrefix("for each ") || t.lowercased().hasPrefix("for every ") {
+            if let (iter, consumed) = try? parseIteration(lines, at: i, file: file) {
+                return (.iteration(iter), consumed)
+            }
+        }
+
         if let (label, rest) = StatementParser.topicLabel(in: t) {
             guard !rest.isEmpty else { return (nil, 1) }
             let labelledLine = SourceLine(indent: line.indent, text: rest, raw: line.raw, number: line.number)
@@ -240,13 +269,6 @@ public struct StatementParser {
                     ? StatementAST.rebind(RebindStatementAST(name: name, value: expr, sourceLine: line.number))
                     : StatementAST.bind(BindStatementAST(name: name, value: expr, sourceLine: line.number))
                 return (stmt, 1 + extra)
-            }
-        }
-
-        // "for each {variable} in {collection},"
-        if t.lowercased().hasPrefix("for each ") || t.lowercased().hasPrefix("for every ") {
-            if let (iter, consumed) = try? parseIteration(lines, at: i, file: file) {
-                return (.iteration(iter), consumed)
             }
         }
 
@@ -506,10 +528,14 @@ public struct StatementParser {
         return commands
     }
 
-    /// A line whose entire statement is a single backtick-quoted command, e.g.
-    /// `` `gbrain publish "title"` `` — lowers to one `shell.run` invoke.
+    /// A line whose entire statement is a single backtick-quoted command,
+    /// optionally followed by a ` -- <note>` annotation (1A), e.g.
+    /// `` `gbrain publish "title"` -- announce the page `` — lowers to one
+    /// `shell.run` invoke carrying the note as a source comment.
     private func inlineBacktickedCommand(_ line: SourceLine) -> StatementAST? {
-        let t = line.statement.trimmingCharacters(in: .whitespaces)
+        let raw = line.statement.trimmingCharacters(in: .whitespaces)
+        let (commandSpan, annotation) = Self.splitCommandAnnotation(raw)
+        let t = commandSpan.trimmingCharacters(in: .whitespaces)
         guard t.count >= 2, t.hasPrefix("`"), t.hasSuffix("`") else { return nil }
         let inner = String(t.dropFirst().dropLast()).trimmingCharacters(in: .whitespaces)
         // Reject if the inner text still contains a backtick (not a single span)
@@ -517,8 +543,32 @@ public struct StatementParser {
         guard !inner.isEmpty, !inner.contains("`") else { return nil }
         return .phraseInvocation(PhraseInvocationAST(
             words: encodeShellCommand(inner),
+            annotation: annotation,
             sourceLine: line.number
         ))
+    }
+
+    /// Split a command bullet into the command span and an optional trailing
+    /// ` -- <note>` explanation. The separator (space `--` space) is recognized
+    /// only at backtick-depth 0, so a command containing `--flag` or an
+    /// in-backtick ` -- ` is never split. A bare trailing ` --` (no note) is
+    /// left attached.
+    static func splitCommandAnnotation(_ s: String) -> (command: String, annotation: String?) {
+        let chars = Array(s)
+        var depth = 0
+        var i = 0
+        while i < chars.count {
+            if chars[i] == "`" { depth ^= 1 }
+            if depth == 0, chars[i] == "-", i > 0, chars[i - 1] == " ",
+               i + 1 < chars.count, chars[i + 1] == "-",
+               i + 2 < chars.count, chars[i + 2] == " " {
+                let command = String(chars[0..<i]).trimmingCharacters(in: .whitespaces)
+                let note = String(chars[(i + 2)...]).trimmingCharacters(in: .whitespaces)
+                return (command, note.isEmpty ? nil : note)
+            }
+            i += 1
+        }
+        return (s, nil)
     }
 
     private func parseEnglishIdiom(_ line: SourceLine, file: String) throws -> StatementAST? {
@@ -682,8 +732,11 @@ public struct StatementParser {
         for marker in [" every ", " each "] {
             guard let range = rangeOfMarkerOutsideQuotes(marker, in: t) else { continue }
             let action = String(t[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
-            let rawNoun = String(t[range.upperBound...]).trimmingCharacters(in: .whitespaces)
-            guard !action.isEmpty, !rawNoun.isEmpty else { return nil }
+            let rawNounPhrase = String(t[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+            guard !action.isEmpty, !rawNounPhrase.isEmpty else { return nil }
+
+            let (rawNoun, refinement) = extractIterationRefinement(rawNounPhrase)
+            guard !rawNoun.isEmpty else { return nil }
 
             let singular = lexicon.singularize(rawNoun)
             let variable = camelize(singular)
@@ -696,10 +749,81 @@ public struct StatementParser {
             return IterationStatementAST(
                 mode: .forEach(variable: variable, collection: collection),
                 body: body,
-                sourceLine: line.number
+                sourceLine: line.number,
+                refinement: refinement
             )
         }
         return nil
+    }
+
+    /// Strip a single-clause iteration refinement (1C) off a noun phrase,
+    /// returning the bare kind noun plus the parsed refinement (or nil). Grammar,
+    /// in order: `[the first N] <kind plural> [whose <pred> | within the last N
+    /// <unit> | in the next N <unit>] [sorted by <prop>[, <dir>]]`. Sorting is
+    /// recognized as a trailing clause; the filter clause is single (the first
+    /// of `whose`/temporal that appears); `the first N` is a leading prefix.
+    private func extractIterationRefinement(_ phrase: String) -> (noun: String, refinement: IterationRefinementAST?) {
+        var work = phrase.trimmingCharacters(in: .whitespaces)
+        var ref = IterationRefinementAST()
+
+        // 1. Trailing `sorted by <prop>[, <dir>]`.
+        if let r = rangeOfMarkerOutsideQuotes(" sorted by ", in: work) {
+            let head = String(work[..<r.lowerBound])
+            var tail = String(work[r.upperBound...]).trimmingCharacters(in: .whitespaces)
+            var ascending = true
+            if let comma = tail.range(of: ",") {
+                let dir = String(tail[comma.upperBound...]).trimmingCharacters(in: .whitespaces).lowercased()
+                tail = String(tail[..<comma.lowerBound]).trimmingCharacters(in: .whitespaces)
+                if dir.contains("newest") || dir.contains("descend") { ascending = false }
+                else if dir.contains("oldest") || dir.contains("ascend") { ascending = true }
+            }
+            if !tail.isEmpty { ref.sort = (camelize(tail), ascending) }
+            work = head.trimmingCharacters(in: .whitespaces)
+        }
+
+        // 2. Single filter clause: whose / within the last / in the next.
+        if let r = rangeOfMarkerOutsideQuotes(" whose ", in: work) {
+            let head = String(work[..<r.lowerBound])
+            let clause = String(work[r.upperBound...]).trimmingCharacters(in: .whitespaces)
+            if !clause.isEmpty { ref.predicate = exprParser.parse(clause) }
+            work = head.trimmingCharacters(in: .whitespaces)
+        } else if let r = rangeOfMarkerOutsideQuotes(" within the last ", in: work) {
+            let head = String(work[..<r.lowerBound])
+            let clause = String(work[r.upperBound...]).trimmingCharacters(in: .whitespaces)
+            if let secs = durationSeconds(clause) {
+                ref.temporal = (lexicon.timestampProperty, .past, secs)
+            }
+            work = head.trimmingCharacters(in: .whitespaces)
+        } else if let r = rangeOfMarkerOutsideQuotes(" in the next ", in: work) {
+            let head = String(work[..<r.lowerBound])
+            let clause = String(work[r.upperBound...]).trimmingCharacters(in: .whitespaces)
+            if let secs = durationSeconds(clause) {
+                ref.temporal = (lexicon.timestampProperty, .future, secs)
+            }
+            work = head.trimmingCharacters(in: .whitespaces)
+        }
+
+        // 3. Leading `[the ]first N`.
+        var firstScan = work
+        for article in lexicon.articles where firstScan.lowercased().hasPrefix(article + " ") {
+            firstScan = String(firstScan.dropFirst(article.count + 1)); break
+        }
+        if firstScan.lowercased().hasPrefix("first ") {
+            let after = String(firstScan.dropFirst("first ".count)).trimmingCharacters(in: .whitespaces)
+            let comps = after.split(separator: " ", maxSplits: 1).map(String.init)
+            if let n = Int(comps.first ?? "") {
+                ref.take = n
+                work = comps.count > 1 ? comps[1].trimmingCharacters(in: .whitespaces) : ""
+            }
+        }
+
+        return (work.trimmingCharacters(in: .whitespaces), ref.isEmpty ? nil : ref)
+    }
+
+    /// Parse "N <unit>" into total seconds using the lexicon's duration table.
+    private func durationSeconds(_ s: String) -> Double? {
+        guard let (amount, unit) = lexicon.parseDuration(s) else { return nil }
+        return amount * Double(unit.inSeconds)
     }
 
     private func pluralize(_ raw: String) -> String {
@@ -1083,15 +1207,21 @@ public struct StatementParser {
 
         let variable: String
         let collection: ExpressionAST
-        if let inRange = rest.lowercased().range(of: " in ") {
+        // Strip any 1C refinement clause (`sorted by` / `whose` / `within the
+        // last` / `in the next` / `the first N`) BEFORE deciding bare-kind vs
+        // explicit `in {collection}`. Otherwise a temporal `in the next N
+        // <unit>` clause is swallowed by the naive ` in ` collection split and
+        // the future window is silently lost.
+        let (headPhrase, refinement) = extractIterationRefinement(rest)
+        if let inRange = headPhrase.lowercased().range(of: " in ") {
             // Explicit collection: `for each {var} in {collection}`.
-            variable   = String(rest[rest.startIndex ..< inRange.lowerBound]).trimmingCharacters(in: .whitespaces)
-            collection = exprParser.parse(String(rest[inRange.upperBound...]))
+            variable   = String(headPhrase[headPhrase.startIndex ..< inRange.lowerBound]).trimmingCharacters(in: .whitespaces)
+            collection = exprParser.parse(String(headPhrase[inRange.upperBound...]))
         } else {
             // Bare block header: `for each {kind}:` binds the singular kind and
             // iterates over its plural collection (`for each page:` → iterate
-            // `pages` binding `page`). Strips a leading article if present.
-            var noun = rest
+            // `pages` binding `page`).
+            var noun = headPhrase
             for article in lexicon.articles where noun.lowercased().hasPrefix(article + " ") {
                 noun = String(noun.dropFirst(article.count + 1)); break
             }
@@ -1113,7 +1243,8 @@ public struct StatementParser {
         return (IterationStatementAST(
             mode: .forEach(variable: variable, collection: collection),
             body: body,
-            sourceLine: line.number), j - i)
+            sourceLine: line.number,
+            refinement: refinement), j - i)
     }
 
     // MARK: - Simultaneously

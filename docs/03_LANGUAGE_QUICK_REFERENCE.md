@@ -800,6 +800,139 @@ Natural-language imperative phrases (no literal `gbrain` prefix, e.g. "search
 the brain for the attendee") still resolve **strictly** against declared tool
 phrases; an unresolved NL phrase is a hard `semanticError`.
 
+### Inform 7-tier surface (Wave 1)
+
+Four deterministic forms that let a gbrain `SKILL.md` port with fewer inert
+sections and shorter judgment blocks. All are closed grammars — an ambiguity is
+a sourced error, never a guess — and none add an IR primitive.
+
+**Command annotation (1A).** A trailing ` -- <note>` *outside* backticks is
+stripped and carried as a source comment above the emitted `shell.run`:
+
+```
+`gbrain get acme-corp` -- load compiled truth and recent timeline
+```
+
+**Typed holes in commands (1B).** A `{ … }` span inside a backticked command
+interpolates an in-scope expression. The hole's head name is validated against
+the lexical scope (workflow parameters, earlier binds, and the enclosing
+`for each`/`for every` loop variable); an unresolved name is a hard
+`semanticError`. Holes inside a double-quoted span are shell-escaped
+(`meridianShellQuote`); holes outside quotes interpolate verbatim. Write `{{` /
+`}}` for a literal brace.
+
+```
+For every attendee:
+  - `gbrain search "{the attendee's name}"` -- find their brain page
+  - `gbrain get {the attendee's slug}`
+```
+
+**Iteration refinements (1C).** A single-clause filter / temporal window /
+ordering / count, in this order: `for each [the first N] <kind plural> [whose
+<prop> <comp> <value> | within the last N <unit> | in the next N <unit>] [sorted
+by <prop>[, newest first|oldest first]]`. The list is filtered, sorted, and
+truncated **pre-loop** (so `the first N` counts post-filter). `whose` lowers to
+a comparison on the loop element; `within the last`/`in the next` lower to a
+one-sided temporal window on a configurable timestamp property
+(`LanguageSynonyms.timestampProperty`, default `updatedAt`). New comparators:
+`contains`, `is one of`. See [04_COMPILER_PIPELINE.md](04_COMPILER_PIPELINE.md).
+
+**Metadata sections (1D).** A `## Tools Used` section is non-executable but
+metadata-extracting: each bullet `<description> (<tool_id>)` mines `<tool_id>`
+into the workflow's scoped-tool set and the manifest `tools_used`. A malformed
+bullet is a hard error. An invariant of the form `every emitted <noun> matches
+pattern "<regex>"` lowers to an `AssertIR` over `meridianRegexMatches`.
+
+```
+## Tools Used
+
+- Search gbrain by name (query)
+- Read a page from gbrain (get_page)
+```
+
+### Inform 7-tier semantic core (Wave 2)
+
+Three closed-grammar surfaces — boolean composition, checkable adjective
+**Definitions**, and **quantifiers** over descriptions — plus a shared condition
+grammar (temporal windows + emptiness). All lower to existing IR primitives with
+richer expression payloads (no new IR primitive); every ambiguity is a sourced
+`semanticError`, never a guess.
+
+**Boolean composition (2A).** Precedence is `not` > `and` > `or`. A trailing
+Oxford comma before a connective (`, and` / `, or`) is tolerated. Mixing bare
+`and` and `or` at one level is a **hard error** that prints both readings — group
+explicitly with `either … or …`:
+
+```
+if the page is risky and either the merge status is "behind" or the merge status is "conflicting",
+  ...
+```
+
+`not <cond>` and `it is not the case that <cond>` both negate. `and`/`or` inside
+double-quoted strings are never split.
+
+**Definitions (2B).** `Definition: a <kind> is <adjective> if <condition>.` —
+valid in a `.merconfig` vocabulary section and at the top of a `.meri` body.
+Inside the body, `it` / `its` bind to the subject:
+
+```
+Definition: a page is stale if it has no summary.
+Definition: a page is risky if its risk score is more than 0.7.
+Definition: a page is neglected if it is stale and it is risky.
+```
+
+A definition is used as a checkable adjective in **subject position**:
+
+```
+if the page is stale, ...          # → meridianDef_Page_stale(state.get("page"))
+if the page is not risky, ...      # → !(meridianDef_Page_risky(...))
+for each stale page: ...           # adjective filters the iterated set
+no pages that are neglected        # adjective filters a quantified description
+```
+
+Adjective surface names are **globally unique** (a collision is an error naming
+both sites); generated helpers are **kind-namespaced** as
+`meridianDef_<Kind>_<adjCamel>`. Definitions may compose other definitions but
+**recursion (direct or mutual) is a hard error**, and every property a body
+reads must exist on the kind. An adjective fires only in subject position, so
+`the deal is urgent` (adjective) stays distinct from `whose status is urgent`
+(enum value).
+
+**Quantifiers (2C).** Over a *description* —
+`[quantifier] [adjectives] <kind plural> ( whose <pred> | <have/are body> )?`:
+
+| Form | Meaning |
+|---|---|
+| `all X` / `every X` | every element satisfies the body (vacuously true on empty) — body **required** |
+| `any X` / `some X` | at least one element satisfies the body |
+| `no X` / `none of X` | no element satisfies the body |
+| `at least N X` | the matching set has `count >= N` |
+| `at most N X` | the matching set has `count <= N` |
+| `exactly N X` | the matching set has `count == N` |
+
+```
+if all pages have a summary, ...
+if at least 2 pages whose status is "published" have a summary, ...
+if no pages whose status is "draft", ...
+```
+
+A `whose`/`that` clause **terminates** the description (the quantifier asserts
+the cardinality of the filtered set); a `have/are` body is recognized only when
+there is no `whose`. The collection must be a fetch-once source (a bound name,
+identifier, or property) — quantifying directly over a tool invocation is a
+sourced error ("bind the result first, then quantify over it").
+
+**Shared condition grammar (2A/2B/2C).** Available in any condition:
+
+- **Temporal windows:** `<property> within the last N <unit>` / `<property> in
+  the next N <unit>` (one-sided windows on a date property). A participle form
+  (`was updated within the last 7 days`) targets the configurable timestamp
+  property (`LanguageSynonyms.timestampProperty`, default `updatedAt`).
+- **Property-backed emptiness:** `X has no <property>` → empty; `X has a/an/some
+  <property>` → non-empty; `X is empty` / `X is not empty` over the subject
+  itself. These lower through `MeridianComparison.isEmpty` / `isNotEmpty`.
+  Relation-backed emptiness is deferred to Wave 3.
+
 ### Explicit judgment markers
 
 ```

@@ -3,8 +3,8 @@
 - Original: `query/SKILL.md`
 - Ported: `query.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 88%
-- Lines: 156 -> 151 (+16 / -21)
+- Similarity: 85%
+- Lines: 156 -> 160 (+25 / -21)
 
 ## Frontmatter
 - Added: (none)
@@ -12,7 +12,12 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - preamble-blockquoted
+
+## Metrics
+- Sections: 10/12 inert (83% inert ratio)
+- Judgment: 1 blocks, 5 lines
 
 ## Unified diff
 
@@ -31,7 +36,7 @@
  
  This skill guarantees:
  - Every answer is grounded in brain content (no hallucination)
-@@ -44,19 +44,14 @@
+@@ -44,19 +44,23 @@
  
  ## Phases
  
@@ -54,11 +59,20 @@
 +  Flag gaps explicitly when the brain lacks the information.
  
 -## Anti-Patterns
++## Coverage guard (( role: procedure ))
++
++> If the indexed landing page is empty, the brain has a coverage gap; flag it
++> rather than answering from general knowledge.
++
++bind page = invoke get page with slug = "index".
++if the page is unwritten,
++  emit query.gap with status "no coverage".
++
 +## Anti-Patterns (( inert, role: prohibitions ))
  
  - Answering from general knowledge when the brain has relevant content
  - Hallucinating facts not in the brain
-@@ -72,7 +67,7 @@
+@@ -72,7 +76,7 @@
  - Gap flags: "The brain doesn't have information on X"
  - Conflict notes when sources disagree
  
@@ -67,7 +81,7 @@
  
  - Never hallucinate. Only answer from brain content.
  - Cite sources: "According to concepts/do-things-that-dont-scale..."
-@@ -81,7 +76,7 @@
+@@ -81,7 +85,7 @@
  - For "what happened" questions, use timeline entries
  - For "what do we know" questions, read compiled_truth directly
  
@@ -76,7 +90,7 @@
  
  Search returns **chunks**, not full pages. Read the excerpts first before deciding
  whether to load a full page.
-@@ -93,7 +88,7 @@
+@@ -93,7 +97,7 @@
  - **"Tell me about X"** -- get the full page (the user wants the complete picture).
  - **"Did anyone mention Y?"** -- search results are enough (the user wants a yes/no with evidence).
  
@@ -85,7 +99,7 @@
  
  When multiple sources provide conflicting information, follow this precedence:
  
-@@ -105,7 +100,7 @@
+@@ -105,7 +109,7 @@
  When sources conflict, note the contradiction with both citations. Don't silently
  pick one.
  
@@ -94,7 +108,7 @@
  
  When referencing brain pages in your answer, propagate inline citations:
  - Cite the page: "According to [Source: people/jane-doe, compiled truth]..."
-@@ -113,7 +108,7 @@
+@@ -113,7 +117,7 @@
    the user can trace facts to their origin
  - When you synthesize across multiple pages, cite all sources
  
@@ -103,7 +117,7 @@
  
  For relationship questions ("who knows who at X?", "connections between A and B",
  "who works at Acme?", "who attended the standup?"), use the graph layer instead
-@@ -135,7 +130,7 @@
+@@ -135,7 +139,7 @@
  graph structure. Search results are ranked with a small backlink boost so well-
  connected entities surface higher.
  
@@ -112,7 +126,7 @@
  
  If search results seem off (wrong results, missing known pages, irrelevant hits):
  - Run `gbrain doctor --json` to check index health
-@@ -144,7 +139,7 @@
+@@ -144,7 +148,7 @@
    for the same query to isolate whether the issue is embedding-related
  - Report search quality issues in the maintain workflow (see maintain skill)
  

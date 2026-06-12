@@ -69,6 +69,8 @@ struct SkillSectionBuilder {
         var dispatchPhrases: [String]
         var negativeDispatchPhrases: [String]
         var sections: [SkillSectionRecord]
+        /// Tool IDs mined from a `## Tools Used` section (1D), in source order.
+        var toolsUsed: [String]
     }
 
     /// Build the canonical implicit-workflow body from the raw region lines
@@ -80,6 +82,7 @@ struct SkillSectionBuilder {
         var dispatch: [String] = []
         var negativeDispatch: [String] = []
         var records: [SkillSectionRecord] = []
+        var toolsUsed: [String] = []
 
         for sec in sections {
             // Content before the first heading is never executable and must not
@@ -103,6 +106,16 @@ struct SkillSectionBuilder {
                 lines: sec.rawLines.map(\.statement),
                 line: sec.headingLine
             ))
+
+            // `## Tools Used` is non-executable but metadata-extracting: mine
+            // each bullet's `(<tool_id>)` into the scoped-tool set. Malformed
+            // bullets are a hard error (no silent drops).
+            if sec.role == .tools {
+                for group in sec.groups {
+                    toolsUsed.append(try extractToolID(from: group))
+                }
+                continue
+            }
 
             guard sec.executes, let role = sec.role else {
                 trace.log(.skill, "section '\(sec.heading)' role \(sec.recordedRole) non-executable @L\(sec.headingLine)")
@@ -129,7 +142,7 @@ struct SkillSectionBuilder {
                     try applyApplicability(group, negated: false, prelude: &prelude, dispatch: &dispatch)
                 case .negativeApplicability:
                     try applyApplicability(group, negated: true, prelude: &prelude, dispatch: &negativeDispatch)
-                case .template, .inert:
+                case .template, .tools, .conventionRef, .inert:
                     // Non-executable roles never have executes == true.
                     break
                 }
@@ -138,7 +151,33 @@ struct SkillSectionBuilder {
         return Result(bodyLines: prelude + procedure,
                       dispatchPhrases: dispatch,
                       negativeDispatchPhrases: negativeDispatch,
-                      sections: records)
+                      sections: records,
+                      toolsUsed: toolsUsed)
+    }
+
+    /// Extract a tool id from a `## Tools Used` bullet of the form
+    /// `<verb phrase> (<tool_id>)`. The id is the parenthesized token; malformed
+    /// bullets (no parens, empty id, or non-identifier id) are a hard error.
+    private func extractToolID(from group: StatementGroup) throws -> String {
+        let text = group.head.statement.trimmingCharacters(in: .whitespaces)
+        let line = group.head.number
+        guard let open = text.range(of: "(", options: .backwards),
+              let close = text.range(of: ")", options: .backwards),
+              open.upperBound < close.lowerBound else {
+            throw CompilerError.semanticError(
+                message: "malformed `Tools Used` bullet \"\(text)\": expected `<description> (<tool_id>)`. Put the tool id in parentheses, e.g. `Search the brain (gbrain_search)`.",
+                range: SourceRange(file: file, line: line, column: 1)
+            )
+        }
+        let id = String(text[open.upperBound..<close.lowerBound]).trimmingCharacters(in: .whitespaces)
+        let valid = !id.isEmpty && id.allSatisfy { $0.isLetter || $0.isNumber || $0 == "." || $0 == "_" || $0 == "-" }
+        guard valid else {
+            throw CompilerError.semanticError(
+                message: "invalid tool id `\(id)` in `Tools Used` bullet \"\(text)\". A tool id is letters, digits, `.`, `_`, or `-` (e.g. `gbrain_search`, `http.get`).",
+                range: SourceRange(file: file, line: line, column: 1)
+            )
+        }
+        return id
     }
 
     // MARK: Section splitting
@@ -231,9 +270,12 @@ struct SkillSectionBuilder {
             return (parsed.cleanHeading, executes ? role : nil, executes, recorded)
         }
         // No marker: derive an executable role from the clean heading text.
+        // `.tools` is non-executable but metadata-extracting, so it is preserved
+        // (build() mines its bullets); other non-executable roles are nil'd.
         let clean = parsed.cleanHeading
         if let role = rulebook.role(forHeading: clean) ?? SkillSectionRole.builtinRole(forHeading: clean) {
-            return (clean, role.isExecutable ? role : nil, role.isExecutable, role.rawValue)
+            let keep = role.isExecutable || role == .tools
+            return (clean, keep ? role : nil, role.isExecutable, role.rawValue)
         }
         // Unresolved. Empty sections are harmless (recorded as inert); a section
         // with content is a hard error — no silent drops.
@@ -267,7 +309,14 @@ struct SkillSectionBuilder {
                 range: SourceRange(file: file, line: group.head.number, column: 1)
             )
         }
-        let text = group.head.statement
+        var text = group.head.statement
+        // 1D output invariant: `every emitted <noun> matches pattern "<regex>"`
+        // is sugar for an assert on the bound result `<noun>`. Normalize the
+        // leading quantifier to a definite reference so the comparison's LHS
+        // resolves to that binding (`the <noun> matches pattern "<regex>"`).
+        if text.lowercased().hasPrefix("every emitted ") {
+            text = "the " + text.dropFirst("every emitted ".count)
+        }
         switch classify(text) {
         case .checkable:
             let cond = negated ? "not (\(text))" : text
@@ -340,7 +389,8 @@ struct SkillSectionBuilder {
         switch expr {
         case .comparison(let lhs, let op, let rhs):
             switch op {
-            case .lessThan, .lessOrEqual, .greaterThan, .greaterOrEqual, .within:
+            case .lessThan, .lessOrEqual, .greaterThan, .greaterOrEqual, .within, .contains,
+                 .oneOf, .matchesPattern, .withinPast, .withinFuture, .isEmpty, .isNotEmpty:
                 return true
             case .equal, .notEqual:
                 return isConcrete(rhs) || isConcrete(lhs)

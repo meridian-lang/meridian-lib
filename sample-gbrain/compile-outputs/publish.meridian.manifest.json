@@ -39,78 +39,84 @@
         "kind" : "procedure",
         "level" : 2,
         "line" : 47,
+        "text" : "Pre-publish guard"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 56,
         "text" : "Quick Reference"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 66,
+        "line" : 75,
         "text" : "What Gets Stripped"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 81,
+        "line" : 90,
         "text" : "Sharing Workflows"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 83,
+        "line" : 92,
         "text" : "Option A: Local file (simplest)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 91,
+        "line" : 100,
         "text" : "Option B: Upload to cloud storage"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 106,
+        "line" : 115,
         "text" : "Option C: Static hosting (Render, Netlify, S3)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 112,
+        "line" : 121,
         "text" : "Option D: GitHub Pages \/ Gist"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 119,
+        "line" : 128,
         "text" : "Password Protection Details"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 132,
+        "line" : 141,
         "text" : "Updating a Published Page"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 141,
+        "line" : 150,
         "text" : "Revoking Access"
       },
       {
         "kind" : "prohibitions",
         "level" : 2,
-        "line" : 146,
+        "line" : 155,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 153,
+        "line" : 162,
         "text" : "Output Format"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 168,
+        "line" : 177,
         "text" : "Tools Used"
       },
       {
@@ -160,8 +166,19 @@
       },
       {
         "executes" : true,
-        "heading" : "Quick Reference",
+        "heading" : "Pre-publish guard",
         "line" : 47,
+        "lines" : [
+          "bind pages = invoke list pages with filter = \"selected\"",
+          "if any unwritten pages,",
+          "emit publish.blocked with reason \"page body is empty\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Quick Reference",
+        "line" : 56,
         "lines" : [
           "codeblock:bash:IyBCYXNpYyBwdWJsaXNoIChvdXRwdXRzIGxvY2FsIEhUTUwgZmlsZSkKZ2JyYWluIHB1Ymxpc2ggYnJhaW4vY29tcGFuaWVzL2FjbWUubWQKCiMgUGFzc3dvcmQgcHJvdGVjdGVkIChhdXRvLWdlbmVyYXRlIHBhc3N3b3JkKQpnYnJhaW4gcHVibGlzaCBicmFpbi9jb21wYW5pZXMvYWNtZS5tZCAtLXBhc3N3b3JkCgojIFBhc3N3b3JkIHByb3RlY3RlZCAoc3BlY2lmaWMgcGFzc3dvcmQpCmdicmFpbiBwdWJsaXNoIGJyYWluL2NvbXBhbmllcy9hY21lLm1kIC0tcGFzc3dvcmQgInNlY3JldDEyMyIKCiMgQ3VzdG9tIHRpdGxlCmdicmFpbiBwdWJsaXNoIGJyYWluL2NvbXBhbmllcy9hY21lLm1kIC0tcGFzc3dvcmQgLS10aXRsZSAiQWNtZSAtLSBEZWFsIEFuYWx5c2lzIgoKIyBDdXN0b20gb3V0cHV0IHBhdGgKZ2JyYWluIHB1Ymxpc2ggYnJhaW4vY29tcGFuaWVzL2FjbWUubWQgLS1vdXQgL3RtcC9hY21lLXNoYXJlLmh0bWw="
         ],
@@ -170,7 +187,7 @@
       {
         "executes" : false,
         "heading" : "What Gets Stripped",
-        "line" : 66,
+        "line" : 75,
         "lines" : [
           "The publish command automatically removes all private\/internal data:",
           "| Stripped | Example | Why |",
@@ -188,7 +205,7 @@
       {
         "executes" : false,
         "heading" : "Sharing Workflows",
-        "line" : 81,
+        "line" : 90,
         "lines" : [
 
         ],
@@ -197,7 +214,7 @@
       {
         "executes" : false,
         "heading" : "Option A: Local file (simplest)",
-        "line" : 83,
+        "line" : 92,
         "lines" : [
           "codeblock:bash:Z2JyYWluIHB1Ymxpc2ggYnJhaW4vcGVvcGxlL2phbmUtZG9lLm1kIC0tcGFzc3dvcmQgLS1vdXQgfi9EZXNrdG9wL2phbmUtYnJpZWZpbmcuaHRtbA==",
           "Share the HTML file via email, Slack, Airdrop. Share the password separately"
@@ -207,7 +224,7 @@
       {
         "executes" : false,
         "heading" : "Option B: Upload to cloud storage",
-        "line" : 91,
+        "line" : 100,
         "lines" : [
           "codeblock:bash:IyBQdWJsaXNoIGxvY2FsbHkgZmlyc3QKZ2JyYWluIHB1Ymxpc2ggYnJhaW4vY29tcGFuaWVzL2FjbWUubWQgLS1wYXNzd29yZCAic2VjcmV0IiAtLW91dCAvdG1wL2FjbWUuaHRtbAoKIyBVcGxvYWQgdG8gU3VwYWJhc2UgU3RvcmFnZQpnYnJhaW4gZmlsZXMgdXBsb2FkIC90bXAvYWNtZS5odG1sIC0tcGFnZSBzaGFyZXMvYWNtZQoKIyBHZXQgYSBzaWduZWQgVVJMICgxLWhvdXIgZXhwaXJ5KQpnYnJhaW4gZmlsZXMgc2lnbmVkLXVybCBzaGFyZXMvYWNtZS9hY21lLmh0bWw=",
           "Share the signed URL + password. URL expires in 1 hour. Re-generate as needed"
@@ -217,7 +234,7 @@
       {
         "executes" : false,
         "heading" : "Option C: Static hosting (Render, Netlify, S3)",
-        "line" : 106,
+        "line" : 115,
         "lines" : [
           "Upload the HTML file to any static hosting service. The file is self-contained,",
           "no server logic needed. Password-protected files work entirely client-side via",
@@ -228,7 +245,7 @@
       {
         "executes" : true,
         "heading" : "Option D: GitHub Pages \/ Gist",
-        "line" : 112,
+        "line" : 121,
         "lines" : [
           "codeblock:bash:Z2JyYWluIHB1Ymxpc2ggYnJhaW4vdHJpcHMvamFwYW4tMjAyNi5tZCAtLW91dCB0cmlwLmh0bWwKIyBVcGxvYWQgdG8gYSBHaXRIdWIgR2lzdCBvciBQYWdlcyByZXBv"
         ],
@@ -237,7 +254,7 @@
       {
         "executes" : false,
         "heading" : "Password Protection Details",
-        "line" : 119,
+        "line" : 128,
         "lines" : [
           "**Algorithm:** AES-256-GCM",
           "**Key derivation:** PBKDF2 with 100K iterations, SHA-256",
@@ -254,7 +271,7 @@
       {
         "executes" : false,
         "heading" : "Updating a Published Page",
-        "line" : 132,
+        "line" : 141,
         "lines" : [
           "Re-run the publish command with the same output path:",
           "codeblock:bash:Z2JyYWluIHB1Ymxpc2ggYnJhaW4vY29tcGFuaWVzL2FjbWUubWQgLS1wYXNzd29yZCAic2FtZS1wYXNzd29yZCIgLS1vdXQgc2hhcmVzL2FjbWUuaHRtbA==",
@@ -265,7 +282,7 @@
       {
         "executes" : false,
         "heading" : "Revoking Access",
-        "line" : 141,
+        "line" : 150,
         "lines" : [
           "Delete the file. If using signed URLs, the URL expires automatically (1 hour)",
           "If using static hosting, remove the file from the host"
@@ -275,7 +292,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 146,
+        "line" : 155,
         "lines" : [
           "**Publishing without encryption.** Brain content is private. Default to password-protected unless the user explicitly says \"open\", \"no password\", or \"public\"",
           "**Sharing password and URL in the same channel.** Always share the password via a different channel than the URL for security",
@@ -287,7 +304,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 153,
+        "line" : 162,
         "lines" : [
           "codeblock:plain:UFVCTElTSEVEOiBbcGFnZSB0aXRsZV0KPT09PT09PT09PT09PT09PT09PT09PT09CgpGaWxlOiBbb3V0cHV0IHBhdGhdCkVuY3J5cHRlZDogW3llcyAoQUVTLTI1Ni1HQ00pIC8gbm9dClBhc3N3b3JkOiBbYXV0by1nZW5lcmF0ZWQgcGFzc3dvcmQgLyB1c2VyLXByb3ZpZGVkIC8gbm9uZV0KU2l6ZTogW2ZpbGUgc2l6ZV0KClNoYXJlIHRoZSBmaWxlIHZpYTogW2VtYWlsIC8gU2xhY2sgLyBBaXJkcm9wIC8gY2xvdWQgdXBsb2FkXQpTaGFyZSB0aGUgcGFzc3dvcmQgdmlhOiBbYSBkaWZmZXJlbnQgY2hhbm5lbF0="
         ],
@@ -296,7 +313,7 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 168,
+        "line" : 177,
         "lines" : [
           "`gbrain publish` -- deterministic HTML generation (no LLM calls)",
           "`gbrain files upload` -- upload to cloud storage (optional)",
@@ -314,52 +331,64 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 49,
-      "swift_line" : 501
+      "meridian_line" : 52,
+      "swift_line" : 541
     },
     {
-      "meridian_line" : 49,
-      "swift_line" : 512
+      "meridian_line" : 53,
+      "swift_line" : 552
     },
     {
-      "meridian_line" : 49,
-      "swift_line" : 523
+      "meridian_line" : 54,
+      "swift_line" : 555
     },
     {
-      "meridian_line" : 49,
-      "swift_line" : 534
+      "meridian_line" : 58,
+      "swift_line" : 562
     },
     {
-      "meridian_line" : 49,
-      "swift_line" : 546
+      "meridian_line" : 58,
+      "swift_line" : 573
     },
     {
-      "meridian_line" : 114,
-      "swift_line" : 557
+      "meridian_line" : 58,
+      "swift_line" : 584
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 598
+      "meridian_line" : 58,
+      "swift_line" : 595
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 603
+      "meridian_line" : 58,
+      "swift_line" : 606
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 644
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 649
+      "meridian_line" : 123,
+      "swift_line" : 617
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 656
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 695
+      "swift_line" : 661
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 700
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 705
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 744
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 749
     }
   ],
   "tools_used" : [

@@ -1,0 +1,34 @@
+name: Wave 2C — quantifier over a described collection
+description: ```
+A counting quantifier (`at least N <description>`) restricted by a
+whose-clause and a per-element body lowers to a deterministic reducer over
+the bound collection: filter the source once, then test the count. The
+collection is fetched once (`?.asList ?? []`), never re-invoked per element.
+```
+tags: inform7, wave2, codegen
+
+vocab_inline cat: ```
+=== vocabulary ===
+A page is a kind of thing.
+A page has a summary, which is text.
+A page has a status, which is text.
+```
+
+source_inline: ```
+---
+name: audit
+parameters: pages
+vocabulary: cat.merconfig
+---
+
+To audit the pages:
+  if at least 2 pages whose status is "published" have a summary,
+    complete with reason "ok".
+```
+
+expect_compile: pass
+expect_no_unresolved:
+expect_workflow_count: 1
+expect_workflow_named: AuditPages
+expect_swift_contains: .count >= 2
+expect_swift_contains: ?.asList ?? []

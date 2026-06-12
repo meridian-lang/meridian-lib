@@ -48,6 +48,7 @@ public struct MeridianParser {
         var imports:   [ImportStatementAST] = []
         var rules:     [RuleAST]            = []
         var workflows: [WorkflowAST]        = []
+        var definitions: [DefinitionDeclaration] = []
         var implicitBodyLines: [SourceLine] = []
         // Heading-aware view of the implicit region, used only when the file
         // opts into SKILL.md section semantics (`skill: true`). Captures the
@@ -196,6 +197,16 @@ public struct MeridianParser {
             let t = line.statement
             let lower = t.lowercased()
 
+            // 2B: top-level `Definition:` lines are pulled out of the implicit
+            // body so they register as checkable adjectives, not procedure steps.
+            if DefinitionParser.isDefinitionLine(t) {
+                if let def = DefinitionParser(lexicon: lexicon, symbols: symbols, trace: trace)
+                    .parse(t, line: line.number) {
+                    definitions.append(def)
+                }
+                i += 1; continue
+            }
+
             // Reject the old body-level `import …` forms with a structured
             // diagnostic so existing files migrate cleanly. Skill docs are exempt:
             // a SKILL.md procedure line may legitimately begin with the English
@@ -303,6 +314,7 @@ public struct MeridianParser {
         var skillSections: [SkillSectionRecord] = []
         var dispatchPhrases: [String] = []
         var negativeDispatchPhrases: [String] = []
+        var toolsUsed: [String] = []
 
         if !implicitBodyLines.isEmpty {
             let built = try buildImplicitWorkflow(
@@ -312,6 +324,7 @@ public struct MeridianParser {
             skillSections = built.sections
             dispatchPhrases = built.dispatchPhrases
             negativeDispatchPhrases = built.negativeDispatchPhrases
+            toolsUsed = built.toolsUsed
             let implicitName = implicit.pattern.displayText.lowercased()
             if workflows.contains(where: { $0.pattern.displayText.lowercased() == implicitName }) {
                 throw CompilerError.semanticError(
@@ -326,7 +339,9 @@ public struct MeridianParser {
                             metadata: metadata, outline: outline,
                             skillSections: skillSections,
                             dispatchPhrases: dispatchPhrases,
-                            negativeDispatchPhrases: negativeDispatchPhrases)
+                            negativeDispatchPhrases: negativeDispatchPhrases,
+                            toolsUsed: toolsUsed,
+                            definitions: definitions)
     }
 
     /// The implicit entry workflow plus the section metadata mined while
@@ -336,6 +351,7 @@ public struct MeridianParser {
         let sections: [SkillSectionRecord]
         let dispatchPhrases: [String]
         let negativeDispatchPhrases: [String]
+        let toolsUsed: [String]
     }
 
     private func buildImplicitWorkflow(
@@ -371,6 +387,7 @@ public struct MeridianParser {
         var sections: [SkillSectionRecord] = []
         var dispatchPhrases: [String] = []
         var negativeDispatchPhrases: [String] = []
+        var toolsUsed: [String] = []
         if hasHeadings {
             let builder = SkillSectionBuilder(
                 symbols: symbols, lexicon: lexicon, trace: trace,
@@ -380,6 +397,7 @@ public struct MeridianParser {
             sections = result.sections
             dispatchPhrases = result.dispatchPhrases
             negativeDispatchPhrases = result.negativeDispatchPhrases
+            toolsUsed = result.toolsUsed
         } else {
             effectiveBody = bodyLines
         }
@@ -393,7 +411,8 @@ public struct MeridianParser {
         )
         return BuiltImplicit(workflow: workflow, sections: sections,
                              dispatchPhrases: dispatchPhrases,
-                             negativeDispatchPhrases: negativeDispatchPhrases)
+                             negativeDispatchPhrases: negativeDispatchPhrases,
+                             toolsUsed: toolsUsed)
     }
 
     private func frontmatterParameters(_ raw: String?, sourceLine: Int, file: String) throws -> [PhraseParameterAST] {

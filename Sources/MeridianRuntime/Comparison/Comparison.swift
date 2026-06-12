@@ -23,8 +23,71 @@ public enum MeridianComparison {
 
     /// Optional form for callers that store a `Value` instead of a typed Date.
     public static func isWithin(_ subject: Value?, _ window: Duration, of reference: Date = Date()) -> Bool {
-        guard let s = subject, case .date(let d) = s else { return false }
+        guard let d = dateValue(subject) else { return false }
         return isWithin(d, window, of: reference)
+    }
+
+    /// One-sided window: `subject` is in the past, no more than `window` ago.
+    /// Lowers `within the last N <unit>`. `subject` in the future fails.
+    public static func isWithinPast(_ subject: Value?, _ window: Duration, of reference: Date = Date()) -> Bool {
+        guard let d = dateValue(subject) else { return false }
+        let delta = reference.timeIntervalSince(d)   // positive when subject is past
+        return delta >= 0 && delta <= seconds(window)
+    }
+
+    /// One-sided window: `subject` is in the future, no more than `window` ahead.
+    /// Lowers `in the next N <unit>`. `subject` in the past fails.
+    public static func isWithinFuture(_ subject: Value?, _ window: Duration, of reference: Date = Date()) -> Bool {
+        guard let d = dateValue(subject) else { return false }
+        let delta = d.timeIntervalSince(reference)   // positive when subject is future
+        return delta >= 0 && delta <= seconds(window)
+    }
+
+    private static func seconds(_ window: Duration) -> Double {
+        Double(window.components.seconds) + Double(window.components.attoseconds) / 1.0e18
+    }
+
+    private static func dateValue(_ v: Value?) -> Date? {
+        switch v {
+        case .date(let d)?, .dateTime(let d)?: return d
+        default: return nil
+        }
+    }
+
+    // MARK: total order (for `sorted by`)
+
+    /// A deterministic total order across the orderable Value kinds, used by
+    /// generated `sorted by` closures. `date`/`dateTime` order by instant,
+    /// `number`/`money`/`duration` numerically, `string` lexicographically.
+    /// `nil`, mixed, and unorderable values sort last (stable: equal-rank items
+    /// keep their relative order because `false` is returned for ties).
+    public static func orderedBefore(_ a: Value?, _ b: Value?, ascending: Bool = true) -> Bool {
+        let ra = orderRank(a)
+        let rb = orderRank(b)
+        if ra == nil && rb == nil { return false }
+        if ra == nil { return false }            // a sorts last
+        if rb == nil { return true }
+        if let da = dateValue(a), let db = dateValue(b) {
+            if da == db { return false }
+            return ascending ? da < db : da > db
+        }
+        if let na = numeric(a), let nb = numeric(b) {
+            if na == nb { return false }
+            return ascending ? na < nb : na > nb
+        }
+        if case .string(let sa)? = a, case .string(let sb)? = b {
+            if sa == sb { return false }
+            return ascending ? sa < sb : sa > sb
+        }
+        return false
+    }
+
+    /// Sortability rank: 0 = date-like, 1 = numeric, 2 = string, nil = unorderable.
+    private static func orderRank(_ v: Value?) -> Int? {
+        if dateValue(v) != nil { return 0 }
+        if numeric(v) != nil { return 1 }
+        if case .string? = v { return 2 }
+        return nil
     }
 
     /// Value-to-Value comparison helpers used by codegen so generated Swift
@@ -36,6 +99,23 @@ public enum MeridianComparison {
 
     public static func eq(_ a: Value?, _ b: Value?) -> Bool { (a ?? .null) == (b ?? .null) }
     public static func neq(_ a: Value?, _ b: Value?) -> Bool { !eq(a, b) }
+
+    // MARK: emptiness (2: `has no <prop>` / `is empty`)
+
+    /// `true` when a property-backed value is "empty": `nil`/`.null`, an empty
+    /// string (after trimming whitespace), an empty list, or an empty record.
+    /// Numbers/booleans/dates are never empty (a present scalar is content).
+    public static func isEmpty(_ v: Value?) -> Bool {
+        switch v {
+        case nil, .null?:               return true
+        case .string(let s)?:           return s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        case .list(let xs)?:            return xs.isEmpty
+        case .record(let d)?:           return d.isEmpty
+        default:                        return false
+        }
+    }
+
+    public static func isNotEmpty(_ v: Value?) -> Bool { !isEmpty(v) }
 
     // MARK: ordering — Value <-> Value
 

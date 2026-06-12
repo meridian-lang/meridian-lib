@@ -14,6 +14,10 @@
 - section-marker-added
 - shell-block-routed
 
+## Metrics
+- Sections: 11/13 inert (85% inert ratio)
+- Judgment: 0 blocks, 0 lines
+
 ## Unified diff
 
 ```diff

@@ -51,6 +51,15 @@ use judgment to answer the question from the brain with citations:
   Synthesize an answer where every claim cites a specific page slug.
   Flag gaps explicitly when the brain lacks the information.
 
+## Coverage guard (( role: procedure ))
+
+> If the indexed landing page is empty, the brain has a coverage gap; flag it
+> rather than answering from general knowledge.
+
+bind page = invoke get page with slug = "index".
+if the page is unwritten,
+  emit query.gap with status "no coverage".
+
 ## Anti-Patterns (( inert, role: prohibitions ))
 
 - Answering from general knowledge when the brain has relevant content

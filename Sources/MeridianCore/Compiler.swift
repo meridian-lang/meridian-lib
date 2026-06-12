@@ -169,7 +169,8 @@ public struct Compiler {
         // Apply language synonyms from merged config into the effective lexicon.
         lexicon = lexicon.merging(
             comparisonSynonyms: config.languageSynonyms.comparisonSynonyms,
-            durationSynonyms: config.languageSynonyms.durationSynonyms
+            durationSynonyms: config.languageSynonyms.durationSynonyms,
+            timestampProperty: config.languageSynonyms.timestampProperty
         )
 
         // Use the first vocabulary file (if any) for symbol-table source
@@ -241,7 +242,8 @@ public struct Compiler {
         try requireUniqueDeclarations(in: config)
         lexicon = lexicon.merging(
             comparisonSynonyms: config.languageSynonyms.comparisonSynonyms,
-            durationSynonyms: config.languageSynonyms.durationSynonyms
+            durationSynonyms: config.languageSynonyms.durationSynonyms,
+            timestampProperty: config.languageSynonyms.timestampProperty
         )
 
         let symbolsFile = vocabularies.first?.file ?? "config.merconfig"
@@ -331,12 +333,24 @@ public struct Compiler {
         // frontmatter (if any). Unresolved tokens fall back to the full set so a
         // typo can never silently empty the planner's capability surface.
         let frontmatter = SkillFrontmatter(ast.metadata)
-        let scopedTools = resolveScopedTools(frontmatter.tools, symbols: symbols, trace: trace)
+        var scopedTools = resolveScopedTools(frontmatter.tools, symbols: symbols, trace: trace)
+        // A `## Tools Used` section (1D) declares the skill's tool surface with
+        // authoritative tool ids — merge them into the scope. When no
+        // frontmatter `tools:` were declared, the section narrows scope to its
+        // ids (plus the shell fallback); otherwise it unions in.
+        if !ast.toolsUsed.isEmpty {
+            var set = Set(scopedTools ?? [])
+            set.formUnion(ast.toolsUsed)
+            set.insert("shell.run")
+            scopedTools = set.sorted()
+        }
 
         let lowerer = ASTToIR(symbols: symbols, sourceFile: meridianFile, trace: trace,
                               lexicon: lexicon, fallbackPolicy: effectivePolicy,
                               rulebook: rulebook, scopedTools: scopedTools)
         var workflows = try lowerer.lower(ast, preRegistered: preRegistered)
+        // 2B: lower the registered checkable adjectives to file-scope helpers.
+        let loweredDefinitions = try lowerer.lowerRegisteredDefinitions()
 
         // E: Frontmatter `triggers:` → typed triggers → one synthetic trigger
         // workflow each (wait for the trigger + fan out `trigger.<name>.fired`).
@@ -363,7 +377,8 @@ public struct Compiler {
                       constantsDecl: constantsDecl,
                       instancesDecl: instancesDecl,
                       domainDecl: domainDecl,
-                      fileMetadata: ast.metadata)
+                      fileMetadata: ast.metadata,
+                      definitions: loweredDefinitions)
 
         // Assemble the COMPLETE manifest Input as part of every compile. The
         // rich data computed here (workflows, outline, recorded sections) is no
@@ -372,6 +387,7 @@ public struct Compiler {
             sourceFiles: [meridianFile] + vocabularies.map(\.file),
             workflows: workflows,
             constantsDecl: constantsDecl,
+            toolsUsed: ast.toolsUsed,
             instancesRequired: instancesDecl.map { decl in
                 decl.entries.map { e in
                     ManifestEmitter.InstanceManifestEntry(name: e.name, kind: e.kind)
@@ -383,7 +399,14 @@ public struct Compiler {
                 ManifestEmitter.SkillSectionEntry(
                     heading: $0.heading, role: $0.role, executes: $0.executes,
                     lines: $0.lines, line: $0.line)
-            }
+            },
+            definitions: symbols.definitions.values
+                .sorted { $0.functionName < $1.functionName }
+                .map {
+                    ManifestEmitter.DefinitionManifestEntry(
+                        adjective: $0.adjective, kind: $0.kind,
+                        function: $0.functionName, line: $0.sourceLine)
+                }
         )
         return (swift, manifestInput)
     }

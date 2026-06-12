@@ -1,0 +1,35 @@
+name: Wave 2B — checkable adjective definition
+description: ```
+A `Definition:` line in the vocabulary defines a checkable adjective. A
+subject-position use (`if the page is stale`) lowers to a call of the
+generated `meridianDef_<Kind>_<adj>` predicate, whose body emits the
+`has no` emptiness check.
+```
+tags: inform7, wave2, codegen
+
+vocab_inline doc: ```
+=== vocabulary ===
+A page is a kind of thing.
+A page has a summary, which is text.
+Definition: a page is stale if it has no summary.
+```
+
+source_inline: ```
+---
+name: review
+parameters: page
+vocabulary: doc.merconfig
+---
+
+To review a page:
+  if the page is stale,
+    complete with reason "needs work".
+```
+
+expect_compile: pass
+expect_no_unresolved:
+expect_workflow_count: 1
+expect_workflow_named: ReviewPage
+expect_swift_contains: private func meridianDef_Page_stale(
+expect_swift_contains: MeridianComparison.isEmpty(
+expect_swift_contains: meridianDef_Page_stale(state.get("page")

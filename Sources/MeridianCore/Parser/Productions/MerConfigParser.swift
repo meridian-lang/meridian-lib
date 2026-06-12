@@ -136,6 +136,15 @@ public struct MerConfigParser {
                 }
             }
 
+            // 2B: "Definition: a {kind} is {adjective} if {condition}."
+            if DefinitionParser.isDefinitionLine(t) {
+                if let def = DefinitionParser(lexicon: lexicon, symbols: nil, trace: trace)
+                    .parse(t, line: line.number) {
+                    results.append(.definition(def))
+                }
+                i += 1; continue
+            }
+
             // "A {name} is a kind of {parent}."
             if let kind = parseKindDecl(t, line: line.number) {
                 results.append(.kind(kind)); i += 1; continue
@@ -513,6 +522,7 @@ public struct MerConfigParser {
         let content = lines.filter(\.isContent)
         var comparisonSynonyms: [(String, ComparisonOpAST)] = []
         var durationSynonyms: [String: TimeUnitAST] = [:]
+        var timestampProperty: String? = nil
 
         enum Mode { case none, comparison, duration }
         var mode: Mode = .none
@@ -527,6 +537,13 @@ public struct MerConfigParser {
             }
             if lower.hasPrefix("duration synonym") {
                 mode = .duration
+                continue
+            }
+            // `timestamp = <propertyName>` — the property a temporal iteration
+            // clause resolves against (default `updatedAt`). Standalone entry.
+            if lower.hasPrefix("timestamp"), let eq = t.range(of: " = ") {
+                let value = String(t[eq.upperBound...]).trimmingCharacters(in: .whitespaces)
+                if !value.isEmpty { timestampProperty = value }
                 continue
             }
 
@@ -552,7 +569,8 @@ public struct MerConfigParser {
         }
 
         return LanguageSynonyms(comparisonSynonyms: comparisonSynonyms,
-                                durationSynonyms: durationSynonyms)
+                                durationSynonyms: durationSynonyms,
+                                timestampProperty: timestampProperty)
     }
 
     /// Resolve a human-readable operator description to a `ComparisonOpAST`.

@@ -210,6 +210,99 @@ lowerPhraseInvocation
 `simultaneously` lowers to `SimultaneouslyIR` whose `branches` is a list of
 `IRBlock`s (one per parallel step).
 
+#### Iteration refinements (1C)
+
+A `for each` / `for every` / `every`/`each` loop may carry a single-clause
+refinement that `StatementParser.extractIterationRefinement` strips off the noun
+phrase, in this order:
+
+```
+for each [the first N] <kind plural>
+        [whose <prop> <comp> <value> | within the last N <unit> | in the next N <unit>]
+        [sorted by <prop>[, newest first|oldest first|ascending|descending]]
+```
+
+It parses into `IterationRefinementAST` (predicate / temporal / sort / take).
+`ASTToIR.lowerIterationRefinement` lowers it to `IterateIR.source:
+IRIterationRefinement?` (a struct payload — no new IR primitive; `nil` =
+plain iteration):
+
+- `whose` → the predicate's bare LHS is qualified to a property access on the
+  loop variable (`whose total is at least 100` → `order.total >= 100`).
+- temporal → a one-sided window comparison on the loop element's timestamp
+  property (`ComparisonOp.withinPast` / `.withinFuture`). The property defaults
+  to `updatedAt` and is configurable via a `=== language ===` `timestamp = …`
+  entry (`LanguageSynonyms.timestampProperty` → `EnglishLexicon`).
+- `sorted by` → `(camelCase(prop), ascending)`; `newest first`/`descending` =
+  descending.
+- `the first N` → `take = N` (applied **post-filter**).
+
+`comparison` markers gained `is one of` (`.oneOf`) and `contains`
+(`.contains`).
+
+`SwiftEmitter.emitRefinedIterate` builds the refined source **pre-loop** so
+`first N` counts after filtering:
+
+```swift
+let __src = (<collection>?.asList ?? [])
+  .filter { __e in <predicate via emitElementExpr> }
+  .sorted { __a, __b in MeridianComparison.orderedBefore(__a.member("p"), __b.member("p"), ascending: <bool>) }
+let __srcRefined = Array(__src.prefix(<N>))   // omitted when take == nil
+for (i, e) in __srcRefined.enumerated() { … }
+```
+
+`emitElementExpr` rewrites loop-var references into the closure parameter
+(`__e`) and property accesses into `__e.member("p")`. The runtime helpers
+`Value.member(_:)`, `MeridianComparison.orderedBefore(_:_:ascending:)`, and
+`MeridianComparison.isWithinPast/isWithinFuture` back the generated closures.
+
+#### Semantic core (Wave 2)
+
+**Definition registration (runs first).** At the very top of `lower(_ file:)`,
+`registerDefinitions(...)` ingests definitions from **both** the merconfig
+vocabulary (`VocabularyStatement.definition`) and the `.meri` body
+(`MeridianFile.definitions`) — before any workflow lowers — so an adjective
+resolves regardless of source order or file. Registration:
+
+1. Synthesizes a kind-namespaced function name `meridianDef_<Kind>_<adjCamel>`
+   and rejects duplicate surface adjectives (collision error naming both sites).
+2. Type-checks each body: every property the body reads must exist on the
+   subject kind (own + ancestor chain), else a sourced error listing the known
+   properties.
+3. Detects recursion (direct or mutual) by DFS over the adjective-reference
+   graph — a cycle is a hard error.
+
+`lowerRegisteredDefinitions()` then lowers each body once (subject = the
+definition's singular variable) into a `LoweredDefinition` carrying the
+precomputed function name, which `Compiler.lowerAndEmit` threads into
+`SwiftEmitter.emitFile`.
+
+**Adjective predicates.** In `lowerComparison`, `X is/is not <adj>` where `adj`
+is a registered definition **and** the LHS lowers to `.identifierRef` (subject
+position) becomes `IRExpression.definitionPredicate(functionName:subject:)`
+(`is not` wraps it in `.logical(.not, …)`). A `.propertyAccess` LHS is never
+rewritten, keeping adjectives distinct from enum-value comparisons.
+
+**Boolean trees in filters.** `qualifyToLoopVar` recurses over `.logical` and
+`.definitionPredicate` trees (and qualifies only the **LHS** of a comparison),
+so boolean conditions work inside `whose`/element filters and definition bodies.
+
+**Quantifiers.** `lowerQuantifier` builds `IRExpression.quantified(QuantifierIR)`
+with a `DescriptionIR { collection, elementVar, filters }`. The collection must
+lower to a fetch-once source (`.identifierRef` / `.propertyAccess` /
+`.constantRef` / `.instanceRef`); a direct `.invocation` source is a sourced
+error. Leading adjectives and `whose` clauses lower to element-context filters
+(adjectives → `.definitionPredicate`, `whose` → qualified comparison/logical).
+
+**Shared condition grammar.** `lowerComparison` maps the new AST comparison
+operators `withinPast` / `withinFuture` (temporal windows) and `isEmpty` /
+`isNotEmpty` (property-backed emptiness) to their IR counterparts.
+
+**Error carrier.** `ExpressionParser` stays non-throwing; surface violations
+(mixed `and`/`or`, malformed quantifier/description, unidentifiable kind) become
+an `ExpressionAST.malformed(String)` carrying a fully-formed diagnostic. The
+throwing `lowerExpr` surfaces it as a sourced `CompilerError.semanticError`.
+
 `recover` lowers to `RecoverIR(attachedTo: IRBlock, pattern: ErrorPattern, handler: IRBlock)`.
 The `attachedTo` block is the protected statement(s); `handler` is the catch block.
 
@@ -226,6 +319,8 @@ Maps `ExpressionAST` to `IRExpression`:
 - Multi-word identifiers (bind variable names) are camelCased via `camelCase(_:)`
 - `.propertyAccess` traverses possessive chains
 - `.comparison(lhs, op, rhs)` → `IRExpression.comparison`
+- `.quantified(q)` → `IRExpression.quantified` (see "Semantic core" above)
+- `.malformed(msg)` → throws a sourced `CompilerError.semanticError`
 
 ---
 

@@ -384,6 +384,64 @@ Special comparisons:
 | `.startsWith` | `(lhs).hasPrefix(rhs)` |
 | `.endsWith` | `(lhs).hasSuffix(rhs)` |
 | `.oneOf` | `(rhs).contains(lhs)` |
+| `.withinPast` | `MeridianComparison.isWithinPast(lhs, rhs)` (`of:` defaults to `Date()`) |
+| `.withinFuture` | `MeridianComparison.isWithinFuture(lhs, rhs)` (`of:` defaults to `Date()`) |
+| `.isEmpty` | `MeridianComparison.isEmpty(lhs)` |
+| `.isNotEmpty` | `MeridianComparison.isNotEmpty(lhs)` |
+
+---
+
+## Semantic core emission (Wave 2)
+
+### Definition predicates
+
+Each lowered `Definition` emits a file-scope `private func` right after the file
+header (alongside `meridianStringify`), so enum namespacing is unaffected. The
+body is emitted in **element context** (subject = the closure parameter):
+
+```swift
+// Definition: a page is stale if it has no summary.
+private func meridianDef_Page_stale(_ __subject: Value?) -> Bool {
+  return MeridianComparison.isEmpty(__subject.member("summary"))
+}
+```
+
+`IRExpression.definitionPredicate(functionName:subject:)` emits a call to that
+helper. In statement context the subject reads from state
+(`meridianDef_Page_stale(state.get("page"))`); in element context it passes the
+loop/closure element (`meridianDef_Page_stale(__e)`). `is not <adj>` wraps the
+call: `!(meridianDef_Page_stale(...))`.
+
+### Quantifier expressions
+
+`IRExpression.quantified` emits a single self-contained Swift expression so it
+slots into any condition position (`if`, `assert`, …). The collection is fetched
+once (`?.asList ?? []`), the description's `whose`/adjective filters apply first,
+then the optional `have/are` body and the cardinality reducer:
+
+```swift
+// if at least 2 pages whose status is "published" have a summary
+((((state.get("pages"))?.asList ?? []).filter { __e in
+  (MeridianComparison.eq(__e.member("status"), .string("published")))
+}).filter { __e in MeridianComparison.isNotEmpty(__e.member("summary")) }.count >= 2)
+```
+
+Let `base = ((coll)?.asList ?? []).filter { __e in <filters> }` and
+`bodyClause = .filter { __e in <body> }` (empty when there is no body). Reducers
+by quantifier kind:
+
+| Kind | Reducer |
+|---|---|
+| `all` / `every` | `base.allSatisfy { __e in <body> }` (body required; vacuously true on empty) |
+| `any` / `some` | `!(base bodyClause).isEmpty` |
+| `none` | `(base bodyClause).isEmpty` |
+| `at least N` | `(base bodyClause).count >= N` |
+| `at most N` | `(base bodyClause).count <= N` |
+| `exactly N` | `(base bodyClause).count == N` |
+
+The closure parameter is always `__e`. The runtime helpers `Value.asList`,
+`Value.member`, `MeridianComparison.isEmpty` / `isNotEmpty`, and the Wave 1
+temporal/order helpers back the generated closures.
 
 ---
 
@@ -455,6 +513,21 @@ dropped, it is always preserved here verbatim. Each entry is:
 `meridian_skill` is emitted whenever `metadata != nil || !outline.isEmpty ||
 !skillSections.isEmpty`. `JSONSerialization` uses `.sortedKeys` and section
 order follows source order, so two compiles of the same input are byte-identical.
+
+### `meridian_definitions` (Wave 2B)
+
+Every checkable adjective `Definition:` (from either the `.meri` body or a
+`.merconfig` vocabulary) is recorded under `meridian_definitions` when present.
+Each entry pairs the surface adjective with its generated predicate function so
+a host can map an adjective back to the emitted Swift:
+
+```json
+{ "adjective": "stale", "kind": "page",
+  "function": "meridianDef_Page_stale", "line": 6 }
+```
+
+Entries are sorted by `function` (deterministic). The key is omitted entirely
+when no definitions are present, so non-definition files are byte-unchanged.
 
 ### Complete manifest input
 

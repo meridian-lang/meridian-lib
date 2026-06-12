@@ -44,6 +44,15 @@ says "open", "no password", or "public".
 If no password is specified, auto-generate one. Share the password via a different
 channel than the URL.
 
+## Pre-publish guard (( role: procedure ))
+
+> Never publish an empty page: if any candidate page has no body, block the
+> publish and ask the author to finish it first.
+
+bind pages = invoke list pages with filter = "selected".
+if any unwritten pages,
+  emit publish.blocked with reason "page body is empty".
+
 ## Quick Reference (( role: procedure ))
 
 ```bash

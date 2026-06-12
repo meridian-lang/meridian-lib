@@ -66,6 +66,11 @@ public struct ASTToIR {
                 )
             }
         }
+        // 2B: Register checkable adjectives (merconfig + file-level) before any
+        // workflow lowers, so `X is <adj>` and `for each <adj> <kind>` resolve
+        // regardless of source order. Idempotent across repeated `lower` calls.
+        try registerDefinitions(file.definitions)
+
         var workflows = try file.workflows.map { try lowerWorkflow($0) }
 
         // C1-C4: Classify and inject rules into lowered workflows.
@@ -179,17 +184,24 @@ public struct ASTToIR {
         let parameters = phraseParameters(ast.pattern)
         let mode: ExecutionMode = modeFromBlock(ast.body)
         let defaultParam = ast.pattern.parameters.count == 1 ? ast.pattern.parameters[0] : nil
-        let autonomyConfig = ast.autonomy.map(lowerAutonomyConfig)
+        let autonomyConfig = try ast.autonomy.map(lowerAutonomyConfig)
         let proseDispatchMode: ProseDispatchMode? = ast.autonomy != nil
             ? .autonomousLoop
             : (ast.allowsDiscretion ? .planThenExecute : nil)
+        // Seed the scope tracker (1B) with the workflow's parameter names. It
+        // grows as binds / invoke result-bindings / loop variables are lowered,
+        // and is consulted to validate command holes ({…}) against in-scope
+        // names. Names are normalized via `scopeKey` so camelCase / spacing
+        // differences between params, binds, and lowered hole identifiers match.
+        let initialScope = Set(parameters.map { scopeKey($0.name) })
         let body = try lowerBlock(
             ast.body,
             mode: mode,
             depth: 0,
             defaultParam: defaultParam,
             proseDispatchMode: proseDispatchMode,
-            autonomyConfig: autonomyConfig
+            autonomyConfig: autonomyConfig,
+            scope: initialScope
         )
         let derivedStructName = IRWorkflow.structName(from: ast.pattern.displayText, lexicon: lexicon)
         return IRWorkflow(
@@ -234,9 +246,11 @@ public struct ASTToIR {
         depth: Int,
         defaultParam: PhraseParameterAST? = nil,
         proseDispatchMode: ProseDispatchMode? = nil,
-        autonomyConfig: AutonomyConfigIR? = nil
+        autonomyConfig: AutonomyConfigIR? = nil,
+        scope: Set<String> = []
     ) throws -> IRBlock {
         var stmts: [IRPrimitive] = []
+        var scope = scope
         for stmt in block.statements {
             if case .modal = stmt { continue }  // already consumed as mode
             let lowered = try lowerStatement(
@@ -245,11 +259,36 @@ public struct ASTToIR {
                 depth: depth,
                 defaultParam: defaultParam,
                 proseDispatchMode: proseDispatchMode,
-                autonomyConfig: autonomyConfig
+                autonomyConfig: autonomyConfig,
+                scope: scope
             )
             stmts += lowered
+            // A bind / invoke result-binding is in scope for later statements.
+            scope.formUnion(boundNames(in: lowered))
         }
         return IRBlock(statements: stmts, sourceRange: sourceRange(block.sourceLine))
+    }
+
+    /// Names introduced by a lowered statement's top-level primitives (binds and
+    /// invoke result-bindings), normalized for scope membership.
+    private func boundNames(in primitives: [IRPrimitive]) -> Set<String> {
+        var names: Set<String> = []
+        for p in primitives {
+            switch p {
+            case .bind(let b):           names.insert(scopeKey(b.name))
+            case .invoke(let i):         if let r = i.resultBinding { names.insert(scopeKey(r)) }
+            default:                     break
+            }
+        }
+        return names
+    }
+
+    /// Canonical key for scope membership: lowercased, alphanumerics only. This
+    /// folds camelCase parameter names (`pullRequest`), spaced bind names
+    /// (`validation result` → `validationResult`), and lowered hole identifiers
+    /// to a single comparable form.
+    private func scopeKey(_ s: String) -> String {
+        String(s.lowercased().unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) }.map(Character.init))
     }
 
     private func modeFromBlock(_ block: ASTBlock) -> ExecutionMode {
@@ -259,10 +298,10 @@ public struct ASTToIR {
         return .strict
     }
 
-    private func lowerAutonomyConfig(_ config: AutonomyConfigAST) -> AutonomyConfigIR {
+    private func lowerAutonomyConfig(_ config: AutonomyConfigAST) throws -> AutonomyConfigIR {
         AutonomyConfigIR(
-            until: config.until.map(lowerExpr),
-            unless: config.unless.map(lowerExpr),
+            until: try config.until.map(lowerExpr),
+            unless: try config.unless.map(lowerExpr),
             replanAfterFailures: config.replanAfterFailures,
             maxSteps: config.maxSteps
         )
@@ -270,14 +309,87 @@ public struct ASTToIR {
 
     // MARK: - Statement lowering
 
+    /// 2A/2B/2C carrier: surface a parse-time `.malformed` expression (mixed
+    /// bare `and`/`or`, an invalid quantifier shape, an unidentifiable kind) as a
+    /// sourced `semanticError` before lowering proceeds. `ExpressionParser.parse`
+    /// stays non-throwing and records the diagnostic in the AST; this guard
+    /// raises it with the owning statement's line. `lowerExpr` also throws on
+    /// `.malformed` (defense in depth, covering non-statement positions such as
+    /// definition bodies and quantifier sub-expressions).
+    private func assertNoMalformed(_ stmt: StatementAST) throws {
+        func check(_ e: ExpressionAST?) throws {
+            guard let e, let msg = firstMalformed(e) else { return }
+            throw CompilerError.semanticError(message: msg, range: sourceRange(stmt.sourceLine))
+        }
+        switch stmt {
+        case .bind(let s):        try check(s.value)
+        case .rebind(let s):      try check(s.value)
+        case .emit(let s):        for (_, v) in s.payload { try check(v) }
+        case .assertStmt(let s):  try check(s.condition)
+        case .conditional(let s): try check(s.condition)
+        case .wait(let s):
+            switch s.condition {
+            case .approval(let subject, _): try check(subject)
+            case .event(_, let matching):   try check(matching)
+            default: break
+            }
+        case .iteration(let s):
+            switch s.mode {
+            case .whileCondition(let c): try check(c)
+            case .untilCondition(let c): try check(c)
+            case .forEach(_, let c):     try check(c)
+            }
+            try check(s.refinement?.predicate)
+        case .recover(let s):
+            if case .predicate(let p) = s.pattern { try check(p) }
+            try assertNoMalformed(s.attached)
+        case .labelled(let s):
+            try assertNoMalformed(s.statement)
+        default:
+            break
+        }
+    }
+
+    /// Depth-first search for the first `.malformed` carrier anywhere inside an
+    /// expression tree. Returns its diagnostic message, or `nil` when clean.
+    private func firstMalformed(_ e: ExpressionAST) -> String? {
+        switch e {
+        case .malformed(let m):
+            return m
+        case .propertyAccess(let base, _):
+            return firstMalformed(base)
+        case .comparison(let l, _, let r):
+            return firstMalformed(l) ?? firstMalformed(r)
+        case .logical(_, let xs):
+            for x in xs { if let m = firstMalformed(x) { return m } }
+            return nil
+        case .invoke(_, let args):
+            for (_, v) in args { if let m = firstMalformed(v) { return m } }
+            return nil
+        case .interpolatedString(let segs):
+            for s in segs {
+                if case .expression(let x) = s, let m = firstMalformed(x) { return m }
+            }
+            return nil
+        case .quantified(let q):
+            if let wp = q.description.wherePredicate, let m = firstMalformed(wp) { return m }
+            if let b = q.body, let m = firstMalformed(b) { return m }
+            return nil
+        default:
+            return nil
+        }
+    }
+
     func lowerStatement(
         _ stmt: StatementAST,
         mode: ExecutionMode,
         depth: Int,
         defaultParam: PhraseParameterAST? = nil,
         proseDispatchMode: ProseDispatchMode? = nil,
-        autonomyConfig: AutonomyConfigIR? = nil
+        autonomyConfig: AutonomyConfigIR? = nil,
+        scope: Set<String> = []
     ) throws -> [IRPrimitive] {
+        try assertNoMalformed(stmt)
         switch stmt {
 
         case .bind(let s):
@@ -289,7 +401,7 @@ public struct ASTToIR {
         case .emit(let s):
             let ir = EmitIR(
                 eventID: s.eventID,
-                payload: s.payload.map { EmitField($0.0, lowerExpr($0.1)) },
+                payload: try s.payload.map { EmitField($0.0, try lowerExpr($0.1)) },
                 strict: mode == .strict,
                 sourceRange: sourceRange(s.sourceLine)
             )
@@ -302,7 +414,7 @@ public struct ASTToIR {
             return [.commit(CommitIR(label: s.label, sourceRange: sourceRange(s.sourceLine)))]
 
         case .wait(let s):
-            let cond = lowerWaitCondition(s.condition)
+            let cond = try lowerWaitCondition(s.condition)
             // Choice-gate lowers to a fan-out `ask.choice` emit (so the host
             // sees the prompt + options) followed by the blocking choice wait.
             if case .choice(let prompt, let options) = cond {
@@ -323,16 +435,16 @@ public struct ASTToIR {
         case .assertStmt(let s):
             let otherwise = try s.otherwise.map { try lowerBlock($0, mode: mode, depth: depth) }
             return [.assert(AssertIR(
-                condition: lowerExpr(s.condition),
+                condition: try lowerExpr(s.condition),
                 message: s.message,
                 otherwiseAction: otherwise,
                 sourceRange: sourceRange(s.sourceLine)
             ))]
 
         case .conditional(let s):
-            let thenBlock = try lowerBlock(s.thenBlock, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig)
-            let elseBlock = try s.elseBlock.map { try lowerBlock($0, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig) }
-            let condExpr  = lowerExpr(s.condition)
+            let thenBlock = try lowerBlock(s.thenBlock, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: scope)
+            let elseBlock = try s.elseBlock.map { try lowerBlock($0, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: scope) }
+            let condExpr  = try lowerExpr(s.condition)
             return [.branch(BranchIR(
                 condition: .predicate(condExpr),
                 thenBlock: thenBlock,
@@ -341,30 +453,38 @@ public struct ASTToIR {
             ))]
 
         case .iteration(let s):
-            let body = try lowerBlock(s.body, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig)
+            // A for-each loop variable is in scope inside the body (so a command
+            // hole like `{the attendee's name}` resolves under `for every
+            // attendee`).
+            var bodyScope = scope
+            if case .forEach(let variable, _) = s.mode {
+                bodyScope.insert(scopeKey(variable.trimmingCharacters(in: .whitespaces)))
+            }
+            let body = try lowerBlock(s.body, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: bodyScope)
             let range = sourceRange(s.sourceLine)
             switch s.mode {
             case .forEach(let variable, let collection):
                 let param = variable.trimmingCharacters(in: .whitespaces)
-                let coll  = lowerExpr(collection)
+                let coll  = try lowerExpr(collection)
+                let refinement = try s.refinement.map { try lowerIterationRefinement($0, loopVar: param) }
                 return [.iterate(IterateIR(
                     mode: .overCollection(parameter: param, kind: KindRef("Any"), collection: coll),
-                    body: body, sourceRange: range
+                    body: body, source: refinement, sourceRange: range
                 ))]
             case .whileCondition(let cond):
                 return [.iterate(IterateIR(
-                    mode: .whileCondition(lowerExpr(cond)),
+                    mode: .whileCondition(try lowerExpr(cond)),
                     body: body, sourceRange: range
                 ))]
             case .untilCondition(let cond):
                 return [.iterate(IterateIR(
-                    mode: .untilCondition(lowerExpr(cond)),
+                    mode: .untilCondition(try lowerExpr(cond)),
                     body: body, sourceRange: range
                 ))]
             }
 
         case .simultaneously(let s):
-            let branches = try s.branches.map { try lowerBlock($0, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig) }
+            let branches = try s.branches.map { try lowerBlock($0, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: scope) }
             return [.simultaneously(SimultaneouslyIR(
                 branches: branches,
                 detached: s.detached,
@@ -372,13 +492,13 @@ public struct ASTToIR {
             ))]
 
         case .phraseInvocation(let s):
-            return try lowerPhraseInvocation(s, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig)
+            return try lowerPhraseInvocation(s, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: scope)
 
         case .recover(let s):
-            return try lowerRecover(s, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig)
+            return try lowerRecover(s, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: scope)
 
         case .labelled(let s):
-            return try lowerStatement(s.statement, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig)
+            return try lowerStatement(s.statement, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: scope)
 
         case .proseStep(let s):
             // An explicit local marker (`use judgment to …:` / `with discretion:`
@@ -394,7 +514,7 @@ public struct ASTToIR {
                 effectiveAutonomy = autonomyConfig
             case .autonomy:
                 effectiveMode = .autonomousLoop
-                effectiveAutonomy = s.autonomy.map(lowerAutonomyConfig)
+                effectiveAutonomy = try s.autonomy.map(lowerAutonomyConfig)
                     ?? autonomyConfig ?? AutonomyConfigIR()
             case .none:
                 effectiveMode = proseDispatchMode
@@ -427,13 +547,14 @@ public struct ASTToIR {
         depth: Int,
         defaultParam: PhraseParameterAST? = nil,
         proseDispatchMode: ProseDispatchMode? = nil,
-        autonomyConfig: AutonomyConfigIR? = nil
+        autonomyConfig: AutonomyConfigIR? = nil,
+        scope: Set<String> = []
     ) throws -> [IRPrimitive] {
-        let pattern = lowerRecoverPattern(s.pattern)
-        let handlerBlock = try lowerBlock(s.handler, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig)
+        let pattern = try lowerRecoverPattern(s.pattern)
+        let handlerBlock = try lowerBlock(s.handler, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: scope)
         // Lower the attached statement into an IRBlock so the recover wraps
         // the full set of IR primitives, even when a phrase inlines to several.
-        let attachedPrimitives = try lowerStatement(s.attached, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig)
+        let attachedPrimitives = try lowerStatement(s.attached, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: scope)
         let attachedBlock = IRBlock(statements: attachedPrimitives, sourceRange: sourceRange(s.attached.sourceLine))
         return [.recover(RecoverIR(
             pattern: pattern,
@@ -443,12 +564,12 @@ public struct ASTToIR {
         ))]
     }
 
-    private func lowerRecoverPattern(_ p: RecoverPatternAST) -> ErrorPattern {
+    private func lowerRecoverPattern(_ p: RecoverPatternAST) throws -> ErrorPattern {
         switch p {
         case .any:              return .anyError
         case .named(let n):     return .named(n)
         case .typed(let t):     return .typed(KindRef(t))
-        case .predicate(let e): return .predicate(lowerExpr(e))
+        case .predicate(let e): return .predicate(try lowerExpr(e))
         }
     }
 
@@ -459,13 +580,13 @@ public struct ASTToIR {
         if case .invoke(let toolID, let args) = s.value {
             let invokeIR = InvokeIR(
                 toolID: toolID,
-                arguments: args.map { InvokeArg($0.0, lowerExpr($0.1)) },
+                arguments: try args.map { InvokeArg($0.0, try lowerExpr($0.1)) },
                 resultBinding: bindName,
                 sourceRange: sourceRange(s.sourceLine)
             )
             return [.invoke(invokeIR)]
         }
-        return [.bind(BindIR(name: bindName, expression: lowerExpr(s.value), sourceRange: sourceRange(s.sourceLine)))]
+        return [.bind(BindIR(name: bindName, expression: try lowerExpr(s.value), sourceRange: sourceRange(s.sourceLine)))]
     }
 
     private func lowerRebind(_ s: RebindStatementAST, mode: ExecutionMode, depth: Int) throws -> [IRPrimitive] {
@@ -473,19 +594,25 @@ public struct ASTToIR {
         if case .invoke(let toolID, let args) = s.value {
             let invokeIR = InvokeIR(
                 toolID: toolID,
-                arguments: args.map { InvokeArg($0.0, lowerExpr($0.1)) },
+                arguments: try args.map { InvokeArg($0.0, try lowerExpr($0.1)) },
                 resultBinding: bindName,
                 sourceRange: sourceRange(s.sourceLine)
             )
             return [.invoke(invokeIR)]
         }
-        return [.bind(BindIR(name: bindName, expression: lowerExpr(s.value), isRebind: true, sourceRange: sourceRange(s.sourceLine)))]
+        return [.bind(BindIR(name: bindName, expression: try lowerExpr(s.value), isRebind: true, sourceRange: sourceRange(s.sourceLine)))]
     }
 
     private func camelCase(_ s: String) -> String {
         let words = s.split(whereSeparator: { $0 == " " || $0 == "_" }).map(String.init)
         guard let first = words.first else { return s }
         return first + words.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined()
+    }
+
+    private func pascalCase(_ s: String) -> String {
+        s.split(whereSeparator: { $0 == " " || $0 == "_" || $0 == "-" })
+            .map { $0.prefix(1).uppercased() + $0.dropFirst() }
+            .joined()
     }
 
     /// Inverse of `camelCase`: `"mailerServer"` → `"mailer server"`. Used by
@@ -500,6 +627,126 @@ public struct ASTToIR {
         return out
     }
 
+    // MARK: - Command holes (1B)
+
+    /// Lower a decoded shell command into a string literal (no holes) or an
+    /// interpolated string with `{…}` holes resolved. A `{…}` span is a typed
+    /// hole: its content is parsed as an expression and its identifier roots are
+    /// validated against `scope`. `{{`/`}}` are literal braces. A hole inside a
+    /// double-quoted span is shell-escaped at runtime (`meridianShellQuote`); a
+    /// hole outside quotes interpolates verbatim. An unresolved hole is a hard
+    /// sourced error (it cannot silently become a literal).
+    private func lowerShellCommand(_ command: String, scope: Set<String>, sourceLine: Int) throws -> IRExpression {
+        var segments: [IRInterpolationSegment] = []
+        var literal = ""
+        var inQuote = false
+        let chars = Array(command)
+        var i = 0
+        while i < chars.count {
+            let c = chars[i]
+            if c == "{", i + 1 < chars.count, chars[i + 1] == "{" {
+                literal.append("{"); i += 2; continue
+            }
+            if c == "}", i + 1 < chars.count, chars[i + 1] == "}" {
+                literal.append("}"); i += 2; continue
+            }
+            if c == "{" {
+                // `${…}` is shell parameter expansion, never a hole.
+                let precededByDollar = i > 0 && chars[i - 1] == "$"
+                var j = i + 1
+                var holeText = ""
+                var closed = false
+                while j < chars.count {
+                    if chars[j] == "}" { closed = true; break }
+                    holeText.append(chars[j]); j += 1
+                }
+                guard closed else { literal.append(c); i += 1; continue }
+                let exprText = holeText.trimmingCharacters(in: .whitespaces)
+                // A `{…}` is a typed hole only when its content is reference-
+                // shaped English (words/possessives) and it is not `${…}`. Code-
+                // shaped braces (XML namespaces, awk `{print …}`, brace
+                // expansion `{a,b}`, JSON) carry non-word characters and stay
+                // literal — shell commands routinely contain them. A literal
+                // brace whose content *is* word-shaped is written `{{…}}`.
+                if !precededByDollar, isReferenceLikeHole(exprText) {
+                    if !literal.isEmpty { segments.append(.literal(literal)); literal = "" }
+                    let parsed = ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon).parse(exprText)
+                    let lowered = try lowerExpr(parsed)
+                    let unresolved = freeIdentifierRoots(lowered).filter { !scope.contains(scopeKey($0)) }
+                    if let bad = unresolved.first {
+                        let known = scope.sorted().joined(separator: ", ")
+                        throw CompilerError.semanticError(
+                            message: "command hole \"{\(exprText)}\" references \"\(bad)\", which is not in scope. In-scope names: [\(known)]. Reference a workflow parameter, an earlier bind, or the enclosing loop variable; write `{{`/`}}` for a literal brace.",
+                            range: sourceRange(sourceLine)
+                        )
+                    }
+                    segments.append(inQuote ? .shellEscapedExpression(lowered) : .expression(lowered))
+                } else {
+                    literal.append("{")
+                    literal.append(contentsOf: holeText)
+                    literal.append("}")
+                }
+                i = j + 1
+                continue
+            }
+            if c == "\"" { inQuote.toggle() }
+            literal.append(c)
+            i += 1
+        }
+        if !literal.isEmpty { segments.append(.literal(literal)) }
+        let hasExpr = segments.contains { if case .literal = $0 { return false } else { return true } }
+        guard hasExpr else { return .literal(.string(command)) }
+        return .interpolatedString(segments)
+    }
+
+    /// A `{…}` span is a typed hole only when its content is "reference-shaped":
+    /// English words, possessives, articles — letters/digits/spaces plus
+    /// apostrophes, hyphens, and underscores, with at least one letter. Any
+    /// other character (`/ : . , $ ( ) ; | …`) marks it as code-shaped shell
+    /// syntax that stays literal. This is what lets holes and ordinary shell
+    /// braces (XML namespaces, awk, brace expansion, JSON) coexist.
+    private func isReferenceLikeHole(_ s: String) -> Bool {
+        guard !s.isEmpty else { return false }
+        var sawLetter = false
+        for ch in s {
+            if ch.isLetter { sawLetter = true; continue }
+            if ch.isNumber || ch == " " || ch == "'" || ch == "\u{2019}" || ch == "-" || ch == "_" { continue }
+            return false
+        }
+        return sawLetter
+    }
+
+    /// Free identifier roots referenced by a lowered expression (the base name
+    /// of each property-access chain / bare reference). Constants, instances,
+    /// literals, env vars, and `now` contribute nothing — they are always
+    /// resolvable. Used to validate command holes against the scope set.
+    private func freeIdentifierRoots(_ e: IRExpression) -> [String] {
+        switch e {
+        case .identifierRef(let n):
+            return [n]
+        case .propertyAccess(let base, _):
+            return freeIdentifierRoots(base)
+        case .comparison(let a, _, let b):
+            return freeIdentifierRoots(a) + freeIdentifierRoots(b)
+        case .logical(_, let xs):
+            return xs.flatMap(freeIdentifierRoots)
+        case .relationTraversal(let base, _, let target):
+            return freeIdentifierRoots(base) + (target.map(freeIdentifierRoots) ?? [])
+        case .invocation(let ir):
+            return ir.arguments.flatMap { freeIdentifierRoots($0.value) }
+        case .interpolatedString(let segs):
+            return segs.flatMap { seg -> [String] in
+                switch seg {
+                case .literal:                       return []
+                case .expression(let x):             return freeIdentifierRoots(x)
+                case .shellEscapedExpression(let x):  return freeIdentifierRoots(x)
+                }
+            }
+        default:
+            return []
+        }
+    }
+
     // MARK: - Phrase invocation
 
     func lowerPhraseInvocation(
@@ -508,7 +755,8 @@ public struct ASTToIR {
         depth: Int,
         defaultParam: PhraseParameterAST? = nil,
         proseDispatchMode: ProseDispatchMode? = nil,
-        autonomyConfig: AutonomyConfigIR? = nil
+        autonomyConfig: AutonomyConfigIR? = nil,
+        scope: Set<String> = []
     ) throws -> [IRPrimitive] {
         let token = trace.push(.phraseInline, "phrase invocation @L\(s.sourceLine) depth=\(depth): \"\(s.words)\"")
         defer { trace.pop(token) }
@@ -525,9 +773,11 @@ public struct ASTToIR {
         // workflow — exactly like an explicit `invoke …`.
         if let command = decodeShellCommand(s.words) {
             trace.log(.phraseInline, "  shell command → shell.run")
+            let commandValue = try lowerShellCommand(command, scope: scope, sourceLine: s.sourceLine)
             return [.invoke(InvokeIR(
                 toolID: "shell.run",
-                arguments: [InvokeArg("command", .literal(.string(command)))],
+                arguments: [InvokeArg("command", commandValue)],
+                comment: s.annotation,
                 sourceRange: sourceRange(s.sourceLine)
             ))]
         }
@@ -539,7 +789,7 @@ public struct ASTToIR {
                 trace.log(.phraseInline, "  bare invoke: tool=\(toolID) args=\(args.count)")
                 return autoBindIfNeeded([.invoke(InvokeIR(
                     toolID: toolID,
-                    arguments: args.map { InvokeArg($0.0, lowerExpr($0.1)) },
+                    arguments: try args.map { InvokeArg($0.0, try lowerExpr($0.1)) },
                     sourceRange: sourceRange(s.sourceLine)
                 ))], invocationWords: s.words)
             }
@@ -589,7 +839,7 @@ public struct ASTToIR {
             // already camelCased). Try the verbatim form first and fall back to
             // a few common case/spacing variants so a body written with snake
             // or space-separated parameter names still resolves.
-            let ordered: [InvokeArg] = phrase.pattern.parameters.compactMap { p in
+            let ordered: [InvokeArg] = try phrase.pattern.parameters.compactMap { p in
                 let candidates = [
                     p.name,
                     p.name.lowercased(),
@@ -598,7 +848,7 @@ public struct ASTToIR {
                 ]
                 for candidate in candidates {
                     if let val = args[candidate] {
-                        return InvokeArg(p.name, lowerExpr(val))
+                        return InvokeArg(p.name, try lowerExpr(val))
                     }
                 }
                 return nil
@@ -783,8 +1033,19 @@ public struct ASTToIR {
             return .comparison(subExpr(lhs, args: args), op, subExpr(rhs, args: args))
         case .logical(let op, let exprs):
             return .logical(op, exprs.map { subExpr($0, args: args) })
-        case .instanceRef, .constantRef, .literal, .envVar, .now, .decideWhether:
+        case .instanceRef, .constantRef, .literal, .envVar, .now, .decideWhether, .malformed:
             return expr
+        case .quantified(let q):
+            let desc = DescriptionAST(
+                noun: q.description.noun,
+                adjectives: q.description.adjectives,
+                wherePredicate: q.description.wherePredicate.map { subExpr($0, args: args) }
+            )
+            return .quantified(QuantifierAST(
+                kind: q.kind,
+                description: desc,
+                body: q.body.map { subExpr($0, args: args) }
+            ))
         case .interpolatedString(let segs):
             return .interpolatedString(segs.map { seg in
                 switch seg {
@@ -831,8 +1092,12 @@ public struct ASTToIR {
 
     // MARK: - Expression lowering
 
-    func lowerExpr(_ expr: ExpressionAST) -> IRExpression {
+    func lowerExpr(_ expr: ExpressionAST) throws -> IRExpression {
         switch expr {
+        case .malformed(let message):
+            throw CompilerError.semanticError(message: message, range: sourceRange(0))
+        case .quantified(let q):
+            return try lowerQuantifier(q)
         case .literal(let lit):
             return .literal(lowerLiteral(lit))
         case .identifierRef(let name):
@@ -856,11 +1121,11 @@ public struct ASTToIR {
         case .instanceRef(let name):
             return .instanceRef(name: name.lowercased())
         case .propertyAccess(let base, let prop):
-            return .propertyAccess(lowerExpr(base), propertyName: prop)
+            return .propertyAccess(try lowerExpr(base), propertyName: prop)
         case .comparison(let lhs, let op, let rhs):
-            return .comparison(lowerExpr(lhs), lowerCompOp(op), lowerExpr(rhs))
+            return try lowerComparison(lhs, op, rhs)
         case .logical(let op, let exprs):
-            return .logical(lowerLogicalOp(op), exprs.map(lowerExpr))
+            return .logical(lowerLogicalOp(op), try exprs.map(lowerExpr))
         case .envVar(let name):
             return .envVar(name: name)
         case .now:
@@ -868,7 +1133,7 @@ public struct ASTToIR {
         case .invoke(let toolID, let args):
             return .invocation(InvokeIR(
                 toolID: toolID,
-                arguments: args.map { InvokeArg($0.0, lowerExpr($0.1)) }
+                arguments: try args.map { InvokeArg($0.0, try lowerExpr($0.1)) }
             ))
         case .decideWhether(let question):
             // SkillMD-D11a: Delegate to the runtime's Discretion protocol, not
@@ -880,13 +1145,225 @@ public struct ASTToIR {
             ))
         case .interpolatedString(let segs):
             // B7: Lower each segment; expressions are recursively lowered.
-            let irSegs = segs.map { seg -> IRInterpolationSegment in
+            let irSegs = try segs.map { seg -> IRInterpolationSegment in
                 switch seg {
                 case .literal(let s):    return .literal(s)
-                case .expression(let e): return .expression(lowerExpr(e))
+                case .expression(let e): return .expression(try lowerExpr(e))
                 }
             }
             return .interpolatedString(irSegs)
+        }
+    }
+
+    /// Lower a comparison. Handles three special shapes before the generic
+    /// path: checkable-adjective predicates (`X is/is not <adj>`), the emptiness
+    /// operators (RHS is an ignored placeholder), and ordinary comparisons.
+    private func lowerComparison(_ lhs: ExpressionAST, _ op: ComparisonOpAST, _ rhs: ExpressionAST) throws -> IRExpression {
+        // 2B: `X is <adj>` / `X is not <adj>` — a checkable-adjective predicate,
+        // recognised ONLY when the LHS is in subject position (lowers to a bare
+        // identifier reference) and the RHS names a registered adjective.
+        if op == .equal || op == .notEqual,
+           case .identifierRef(let adjName) = rhs,
+           let record = symbols.definition(forAdjective: adjName) {
+            let loweredLhs = try lowerExpr(lhs)
+            if case .identifierRef = loweredLhs {
+                let pred = IRExpression.definitionPredicate(functionName: record.functionName, subject: loweredLhs)
+                return op == .equal ? pred : .logical(.not, [pred])
+            }
+            // Not subject position — fall through to a normal comparison.
+        }
+        switch op {
+        case .isEmpty, .isNotEmpty:
+            return .comparison(try lowerExpr(lhs), lowerCompOp(op), .literal(.boolean(true)))
+        default:
+            return .comparison(try lowerExpr(lhs), lowerCompOp(op), try lowerExpr(rhs))
+        }
+    }
+
+    // MARK: - 2B. Definition registration & lowering
+
+    /// Register every checkable adjective (merconfig pending + file-level) into
+    /// the symbol table, detecting surface-key collisions, then type-check each
+    /// body (unknown property references, recursion cycles). Idempotent: a
+    /// definition whose `functionName` already matches an identical record is
+    /// skipped, so repeated `lower` calls (skillpack) don't false-collide.
+    func registerDefinitions(_ fileDefinitions: [DefinitionDeclaration]) throws {
+        let all = symbols.pendingDefinitions + fileDefinitions
+        guard !all.isEmpty else { return }
+        for d in all {
+            let key = d.adjective.lowercased().trimmingCharacters(in: .whitespaces)
+            let fn = definitionFunctionName(kind: d.kind, adjective: key)
+            if let existing = symbols.definition(forAdjective: key) {
+                if existing.functionName == fn { continue }   // benign re-register
+                throw CompilerError.semanticError(
+                    message: "duplicate definition for adjective \"\(d.adjective)\": already defined for kind \"\(existing.kind)\". Adjective names must be globally unique.",
+                    range: sourceRange(d.sourceLine)
+                )
+            }
+            symbols.registerDefinition(.init(
+                adjective: key, kind: d.kind, subjectVar: d.subjectVar,
+                body: d.body, functionName: fn, sourceLine: d.sourceLine
+            ))
+        }
+        // Validate bodies after all are registered (so cross-references resolve).
+        for d in all {
+            let key = d.adjective.lowercased().trimmingCharacters(in: .whitespaces)
+            guard let record = symbols.definition(forAdjective: key) else { continue }
+            try typeCheckDefinitionBody(record)
+            try detectDefinitionRecursion(start: key)
+        }
+    }
+
+    private func definitionFunctionName(kind: String, adjective: String) -> String {
+        "meridianDef_\(pascalCase(kind))_\(camelCase(adjective))"
+    }
+
+    /// Lower every registered adjective definition to a `LoweredDefinition`,
+    /// sorted by function name for deterministic emission.
+    func lowerRegisteredDefinitions() throws -> [LoweredDefinition] {
+        try symbols.definitions.values
+            .sorted { $0.functionName < $1.functionName }
+            .map { rec in
+                let qualified = qualifyDefinitionBody(try lowerExpr(rec.body), subjectVar: camelCase(rec.subjectVar))
+                return LoweredDefinition(functionName: rec.functionName,
+                                         subjectVar: camelCase(rec.subjectVar),
+                                         body: qualified)
+            }
+    }
+
+    /// Rewrite a definition body so bare property references resolve against the
+    /// subject (the function parameter), mirroring loop-var qualification.
+    private func qualifyDefinitionBody(_ e: IRExpression, subjectVar: String) -> IRExpression {
+        qualifyToLoopVar(e, loopVar: subjectVar)
+    }
+
+    /// Type-check a definition body: any property access on the subject must name
+    /// a declared property of the kind (only enforced when the kind declares
+    /// properties — `.meri`-local kinds without a merconfig are left lenient).
+    private func typeCheckDefinitionBody(_ record: SymbolTable.DefinitionRecord) throws {
+        let declared = symbols.propertyNames(of: record.kind)
+        guard !declared.isEmpty else { return }
+        let subject = record.subjectVar.lowercased()
+        try walkProperties(record.body) { base, prop in
+            guard case .identifierRef(let n) = base, n.lowercased() == subject else { return }
+            if !declared.contains(prop.lowercased()) {
+                throw CompilerError.semanticError(
+                    message: "definition \"\(record.adjective)\" references unknown property \"\(prop)\" on \(record.kind). Declared properties: [\(declared.sorted().joined(separator: ", "))].",
+                    range: sourceRange(record.sourceLine)
+                )
+            }
+        }
+    }
+
+    private func walkProperties(_ e: ExpressionAST, _ visit: (ExpressionAST, String) throws -> Void) rethrows {
+        switch e {
+        case .propertyAccess(let base, let prop):
+            try visit(base, prop)
+            try walkProperties(base, visit)
+        case .comparison(let l, _, let r):
+            try walkProperties(l, visit); try walkProperties(r, visit)
+        case .logical(_, let xs):
+            for x in xs { try walkProperties(x, visit) }
+        default:
+            break
+        }
+    }
+
+    /// Detect a recursion cycle reachable from `start` through other adjectives
+    /// referenced in definition bodies (`X is <other-adj>`).
+    private func detectDefinitionRecursion(start: String) throws {
+        var visiting: Set<String> = []
+        func dfs(_ adj: String, path: [String]) throws {
+            if visiting.contains(adj) {
+                throw CompilerError.semanticError(
+                    message: "recursive definition detected: \(path.joined(separator: " → ")) → \(adj). Definitions must not reference themselves (directly or transitively).",
+                    range: sourceRange(symbols.definition(forAdjective: adj)?.sourceLine ?? 0)
+                )
+            }
+            guard let record = symbols.definition(forAdjective: adj) else { return }
+            visiting.insert(adj)
+            for ref in referencedAdjectives(record.body) {
+                try dfs(ref, path: path + [adj])
+            }
+            visiting.remove(adj)
+        }
+        try dfs(start, path: [])
+    }
+
+    /// Adjective surface forms referenced as `X is/is not <adj>` in a body.
+    private func referencedAdjectives(_ e: ExpressionAST) -> [String] {
+        switch e {
+        case .comparison(_, let op, let rhs) where op == .equal || op == .notEqual:
+            if case .identifierRef(let name) = rhs,
+               symbols.definition(forAdjective: name) != nil {
+                return [name.lowercased().trimmingCharacters(in: .whitespaces)]
+            }
+            return []
+        case .logical(_, let xs):
+            return xs.flatMap { referencedAdjectives($0) }
+        default:
+            return []
+        }
+    }
+
+    /// Resolve a surface adjective to a definition-predicate filter over `subject`.
+    private func resolveAdjectiveFilter(adjective: String, subject: IRExpression, sourceLine: Int) throws -> IRExpression {
+        guard let record = symbols.definition(forAdjective: adjective) else {
+            throw CompilerError.semanticError(
+                message: "unknown adjective \"\(adjective)\". Declare it with `Definition: a <kind> is \(adjective) if <condition>.`",
+                range: sourceRange(sourceLine)
+            )
+        }
+        return .definitionPredicate(functionName: record.functionName, subject: subject)
+    }
+
+    // MARK: - 2C. Quantifier lowering
+
+    private func lowerQuantifier(_ q: QuantifierAST) throws -> IRExpression {
+        let noun = q.description.noun.trimmingCharacters(in: .whitespaces)
+        guard !noun.isEmpty else {
+            throw CompilerError.semanticError(
+                message: "quantifier is missing a collection noun.", range: sourceRange(0))
+        }
+        let elementVar = lexicon.singularize(noun.lowercased())
+
+        // Source: a bound collection identifier, fetched once. Invocations are
+        // rejected so the collection isn't re-evaluated per reducer.
+        let collection = try lowerExpr(.identifierRef(noun))
+        if case .invocation = collection {
+            throw CompilerError.semanticError(
+                message: "quantifier source must be a bound collection name (a parameter or earlier bind), not a tool call.",
+                range: sourceRange(0))
+        }
+
+        var filters: [IRExpression] = []
+        for adj in q.description.adjectives {
+            filters.append(try resolveAdjectiveFilter(
+                adjective: adj, subject: .identifierRef(name: elementVar), sourceLine: 0))
+        }
+        if let wherePred = q.description.wherePredicate {
+            filters.append(qualifyToLoopVar(try lowerExpr(wherePred), loopVar: elementVar))
+        }
+
+        let body = try q.body.map { qualifyToLoopVar(try lowerExpr($0), loopVar: elementVar) }
+        if case .all = q.kind, body == nil, filters.isEmpty {
+            throw CompilerError.semanticError(
+                message: "`all <description>` needs a body (e.g. `all pages have a summary`) or a `whose`/adjective restriction.",
+                range: sourceRange(0))
+        }
+
+        let desc = DescriptionIR(collection: collection, elementVar: elementVar, filters: filters)
+        return .quantified(QuantifierIR(kind: lowerQuantKind(q.kind), description: desc, body: body))
+    }
+
+    private func lowerQuantKind(_ k: QuantifierKindAST) -> QuantifierKind {
+        switch k {
+        case .all:           return .all
+        case .any:           return .any
+        case .none:          return .none
+        case .atLeast(let n): return .atLeast(n)
+        case .atMost(let n):  return .atMost(n)
+        case .exactly(let n): return .exactly(n)
         }
     }
 
@@ -901,6 +1378,64 @@ public struct ASTToIR {
         }
     }
 
+    /// Lower a 1C iteration refinement, qualifying the `whose` predicate's bare
+    /// property LHS to a property access on the loop variable and turning the
+    /// temporal clause into a one-sided window comparison.
+    private func lowerIterationRefinement(_ r: IterationRefinementAST, loopVar: String) throws -> IRIterationRefinement {
+        var filters: [IRExpression] = []
+        // 2B: leading adjective modifiers (`for each stale page`) resolve to
+        // definition predicates over the loop variable.
+        for adj in r.adjectives {
+            filters.append(try resolveAdjectiveFilter(adjective: adj,
+                                                      subject: .identifierRef(name: loopVar),
+                                                      sourceLine: 0))
+        }
+        if let pred = r.predicate {
+            filters.append(qualifyToLoopVar(try lowerExpr(pred), loopVar: loopVar))
+        }
+        if let temporal = r.temporal {
+            let op: ComparisonOp = temporal.window == .past ? .withinPast : .withinFuture
+            filters.append(.comparison(
+                .propertyAccess(.identifierRef(name: loopVar), propertyName: temporal.property),
+                op,
+                .literal(.duration(.seconds(Int64(temporal.seconds))))
+            ))
+        }
+        let sort = r.sort.map { (path: $0.property, ascending: $0.ascending) }
+        return IRIterationRefinement(filters: filters, sort: sort, take: r.take)
+    }
+
+    /// Rewrite a comparison's LHS (a bare property name) into a property access
+    /// on the loop variable, so `whose status is "open"` becomes
+    /// `<loopVar>.status == "open"`.
+    private func qualifyToLoopVar(_ e: IRExpression, loopVar: String) -> IRExpression {
+        switch e {
+        case .comparison(let lhs, let op, let rhs):
+            // Only the LHS is the subject property; the RHS is a comparison value.
+            return .comparison(qualifyOperand(lhs, loopVar: loopVar), op, rhs)
+        case .logical(let op, let xs):
+            return .logical(op, xs.map { qualifyToLoopVar($0, loopVar: loopVar) })
+        case .definitionPredicate(let fn, let subj):
+            return .definitionPredicate(functionName: fn, subject: qualifyOperand(subj, loopVar: loopVar))
+        case .identifierRef:
+            // A bare boolean property (`whose archived`) → `<loopVar>.archived`.
+            return qualifyOperand(e, loopVar: loopVar)
+        default:
+            return e
+        }
+    }
+
+    private func qualifyOperand(_ e: IRExpression, loopVar: String) -> IRExpression {
+        switch e {
+        case .identifierRef(let name):
+            // The loop variable itself is the element, not a property of it.
+            if name == loopVar { return e }
+            return .propertyAccess(.identifierRef(name: loopVar), propertyName: name)
+        default:
+            return e
+        }
+    }
+
     private func lowerCompOp(_ op: ComparisonOpAST) -> ComparisonOp {
         switch op {
         case .equal:          return .equal
@@ -910,6 +1445,13 @@ public struct ASTToIR {
         case .greaterThan:    return .greaterThan
         case .greaterOrEqual: return .greaterOrEqual
         case .within:         return .withinDuration
+        case .contains:       return .contains
+        case .oneOf:          return .oneOf
+        case .matchesPattern: return .matchesPattern
+        case .withinPast:     return .withinPast
+        case .withinFuture:   return .withinFuture
+        case .isEmpty:        return .isEmpty
+        case .isNotEmpty:     return .isNotEmpty
         }
     }
 
@@ -921,16 +1463,16 @@ public struct ASTToIR {
         }
     }
 
-    private func lowerWaitCondition(_ cond: WaitConditionAST) -> WaitConditionIR {
+    private func lowerWaitCondition(_ cond: WaitConditionAST) throws -> WaitConditionIR {
         switch cond {
         case .duration(let v, let unit):
             return .duration(Duration.seconds(Int64(v * Double(unit.inSeconds))))
         case .signal(let id):
             return .signal(id)
         case .approval(let subj, let role):
-            return .approval(of: lowerExpr(subj), by: role)
+            return .approval(of: try lowerExpr(subj), by: role)
         case .event(let id, let matching):
-            return .event(id, matching: matching.map { lowerExpr($0) })
+            return .event(id, matching: try matching.map { try lowerExpr($0) })
         case .choice(let prompt, let options):
             return .choice(prompt: prompt, options: options)
         }

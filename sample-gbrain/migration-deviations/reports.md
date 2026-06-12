@@ -3,8 +3,8 @@
 - Original: `reports/SKILL.md`
 - Ported: `reports.meri`
 - Tier: 2 (light edits)
-- Similarity: 77%
-- Lines: 60 -> 47 (+6 / -19)
+- Similarity: 71%
+- Lines: 60 -> 56 (+15 / -19)
 
 ## Frontmatter
 - Added: (none)
@@ -12,6 +12,11 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
+
+## Metrics
+- Sections: 3/5 inert (60% inert ratio)
+- Judgment: 1 blocks, 3 lines
 
 ## Unified diff
 
@@ -27,7 +32,7 @@
  
  This skill guarantees:
  - Reports saved with timestamped filenames and frontmatter
-@@ -28,30 +28,17 @@
+@@ -28,30 +28,26 @@
  
  ## Phases
  
@@ -52,6 +57,15 @@
 +  Save a report to reports/{category}/{date}.md with title, type, category, date, and time frontmatter.
 +  Load the most recent report file for a given category.
 +  Route common queries to report categories (for example "inbox" to ea-inbox-sweep, "morning" to morning-briefing).
++
++## Escalation guard (( role: procedure ))
++
++> When a report run finds two or more high-priority pages, escalate so the
++> pulse never buries multiple p0s in a routine digest.
++
++bind pages = invoke list pages with filter = "report".
++if at least 2 urgent pages,
++  emit reports.escalate with severity "high".
  
  ## Output Format
  

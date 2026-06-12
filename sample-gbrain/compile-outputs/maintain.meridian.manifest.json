@@ -30,195 +30,201 @@
         "text" : "Phases"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
         "line" : 53,
+        "text" : "Stale-page guard"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 62,
         "text" : "Autonomous path (v0.36.4.0) — when you want to reach a target score"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 79,
+        "line" : 88,
         "text" : "Manual path"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 84,
+        "line" : 93,
         "text" : "Stale pages"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 89,
+        "line" : 98,
         "text" : "Orphan pages"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 94,
+        "line" : 103,
         "text" : "Dead links"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 98,
+        "line" : 107,
         "text" : "Missing cross-references"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 102,
+        "line" : 111,
         "text" : "Link graph extraction"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 110,
+        "line" : 119,
         "text" : "Timeline extraction"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 116,
+        "line" : 125,
         "text" : "Dream cycle (v0.23): synthesize + patterns"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 193,
+        "line" : 202,
         "text" : "Autopilot check"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 207,
+        "line" : 216,
         "text" : "Fix a half-migrated install"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 227,
+        "line" : 236,
         "text" : "Back-link enforcement"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 235,
+        "line" : 244,
         "text" : "Filing rule violations"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 243,
+        "line" : 252,
         "text" : "Citation audit"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 250,
+        "line" : 259,
         "text" : "Tag consistency"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 254,
+        "line" : 263,
         "text" : "Graph population (v0.10.3+)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 282,
+        "line" : 291,
         "text" : "Embedding freshness"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 288,
+        "line" : 297,
         "text" : "Security (RLS verification)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 292,
+        "line" : 301,
         "text" : "Schema health"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 297,
+        "line" : 306,
         "text" : "File storage health"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 305,
+        "line" : 314,
         "text" : "Open threads"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 309,
+        "line" : 318,
         "text" : "Benchmark Testing"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 328,
+        "line" : 337,
         "text" : "Heartbeat Integration"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 333,
+        "line" : 342,
         "text" : "On every heartbeat (hourly or per-session)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 339,
+        "line" : 348,
         "text" : "Weekly maintenance"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 347,
+        "line" : 356,
         "text" : "Daily verification"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 352,
+        "line" : 361,
         "text" : "Stale compiled truth detection"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 358,
+        "line" : 367,
         "text" : "Report Storage"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 370,
+        "line" : 379,
         "text" : "Quality Rules"
       },
       {
         "kind" : "prohibitions",
         "level" : 2,
-        "line" : 376,
+        "line" : 385,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 387,
+        "line" : 396,
         "text" : "Output Format"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 420,
+        "line" : 429,
         "text" : "Tools Used"
       },
       {
@@ -236,79 +242,79 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 87,
+        "line" : 96,
         "text" : "For each stale page"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 91,
+        "line" : 100,
         "text" : "Review orphans"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 143,
+        "line" : 152,
         "text" : "Cross-reference compulsively"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 144,
+        "line" : 153,
         "text" : "Slug discipline"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 191,
+        "line" : 200,
         "text" : "Note"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 194,
+        "line" : 203,
         "text" : "Verify autopilot is running"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 225,
+        "line" : 234,
         "text" : "Full troubleshooting guide"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 232,
+        "line" : 241,
         "text" : "Fix"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 233,
+        "line" : 242,
         "text" : "Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 286,
+        "line" : 295,
         "text" : "Then check progress"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 303,
+        "line" : 312,
         "text" : "If storage backend is configured"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 322,
+        "line" : 331,
         "text" : "When to run benchmarks"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 349,
+        "line" : 358,
         "text" : "Verify sync is running"
       }
     ],
@@ -337,9 +343,20 @@
         "role" : "procedure"
       },
       {
+        "executes" : true,
+        "heading" : "Stale-page guard",
+        "line" : 53,
+        "lines" : [
+          "bind pages = invoke list pages with filter = \"all\"",
+          "if any pages are unwritten,",
+          "emit maintain.stale_pages with action = \"review\""
+        ],
+        "role" : "procedure"
+      },
+      {
         "executes" : false,
         "heading" : "Autonomous path (v0.36.4.0) — when you want to reach a target score",
-        "line" : 53,
+        "line" : 62,
         "lines" : [
           "If the user asks \"get my brain to 90\/100\" or \"fix what's broken\", prefer the",
           "one-command loop over walking each dimension by hand:",
@@ -363,7 +380,7 @@
       {
         "executes" : false,
         "heading" : "Manual path",
-        "line" : 79,
+        "line" : 88,
         "lines" : [
           "**Run health check.** Check gbrain health to get the dashboard",
           "**Check each dimension:**"
@@ -373,7 +390,7 @@
       {
         "executes" : false,
         "heading" : "Stale pages",
-        "line" : 84,
+        "line" : 93,
         "lines" : [
           "Pages where compiled_truth is older than the latest timeline entry. The assessment hasn't been updated to reflect recent evidence",
           "Check the health output for stale page count",
@@ -384,7 +401,7 @@
       {
         "executes" : false,
         "heading" : "Orphan pages",
-        "line" : 89,
+        "line" : 98,
         "lines" : [
           "Pages with zero inbound links. Nobody references them",
           "Review orphans: are they genuinely isolated or just missing links?",
@@ -395,7 +412,7 @@
       {
         "executes" : false,
         "heading" : "Dead links",
-        "line" : 94,
+        "line" : 103,
         "lines" : [
           "Links pointing to pages that don't exist",
           "Remove dead links in gbrain"
@@ -405,7 +422,7 @@
       {
         "executes" : false,
         "heading" : "Missing cross-references",
-        "line" : 98,
+        "line" : 107,
         "lines" : [
           "Pages that mention entity names but don't have formal links",
           "Read compiled_truth from gbrain, extract entity mentions, create links in gbrain"
@@ -415,7 +432,7 @@
       {
         "executes" : false,
         "heading" : "Link graph extraction",
-        "line" : 102,
+        "line" : 111,
         "lines" : [
           "If link_count is 0 or low relative to page_count, run batch extraction:",
           "codeblock:bash:Z2JyYWluIGV4dHJhY3QgbGlua3MgLS1kaXIgfi9icmFpbg==",
@@ -427,7 +444,7 @@
       {
         "executes" : false,
         "heading" : "Timeline extraction",
-        "line" : 110,
+        "line" : 119,
         "lines" : [
           "If timeline_entry_count is 0, extract structured timeline from markdown:",
           "codeblock:bash:Z2JyYWluIGV4dHJhY3QgdGltZWxpbmUgLS1kaXIgfi9icmFpbg=="
@@ -437,7 +454,7 @@
       {
         "executes" : false,
         "heading" : "Dream cycle (v0.23): synthesize + patterns",
-        "line" : 116,
+        "line" : 125,
         "lines" : [
           "`gbrain dream` runs the full 8-phase maintenance cycle:",
           "codeblock:plain:bGludCAtPiBiYWNrbGlua3MgLT4gc3luYyAtPiBzeW50aGVzaXplIC0+IGV4dHJhY3QgLT4gcGF0dGVybnMgLT4gZW1iZWQgLT4gb3JwaGFucw==",
@@ -493,7 +510,7 @@
       {
         "executes" : false,
         "heading" : "Autopilot check",
-        "line" : 193,
+        "line" : 202,
         "lines" : [
           "Verify autopilot is running:",
           "codeblock:bash:Z2JyYWluIGF1dG9waWxvdCAtLXN0YXR1cw==",
@@ -509,7 +526,7 @@
       {
         "executes" : false,
         "heading" : "Fix a half-migrated install",
-        "line" : 207,
+        "line" : 216,
         "lines" : [
           "A v0.11.0 install where the migration skill never fired leaves Minions",
           "partially set up: schema is applied, but `~\/.gbrain\/preferences.json`",
@@ -523,7 +540,7 @@
       {
         "executes" : false,
         "heading" : "Back-link enforcement",
-        "line" : 227,
+        "line" : 236,
         "lines" : [
           "Check that the back-linking iron law is being followed:",
           "For each recently updated page, check if entities mentioned in it have",
@@ -537,7 +554,7 @@
       {
         "executes" : false,
         "heading" : "Filing rule violations",
-        "line" : 235,
+        "line" : 244,
         "lines" : [
           "Check for common misfiling patterns (see `skills\/_brain-filing-rules.md`):",
           "Content with clear primary subjects filed in `sources\/` instead of the",
@@ -551,7 +568,7 @@
       {
         "executes" : false,
         "heading" : "Citation audit",
-        "line" : 243,
+        "line" : 252,
         "lines" : [
           "Spot-check pages for missing `[Source: ...]` citations:",
           "Read 5-10 recently updated pages",
@@ -564,7 +581,7 @@
       {
         "executes" : false,
         "heading" : "Tag consistency",
-        "line" : 250,
+        "line" : 259,
         "lines" : [
           "Inconsistent tagging (e.g., \"vc\" vs \"venture-capital\", \"ai\" vs \"artificial-intelligence\")",
           "Standardize to the most common variant using gbrain tag operations"
@@ -574,7 +591,7 @@
       {
         "executes" : false,
         "heading" : "Graph population (v0.10.3+)",
-        "line" : 254,
+        "line" : 263,
         "lines" : [
           "The `links` and `timeline_entries` tables are the structured graph layer",
           "Populate them periodically or after major imports:",
@@ -604,7 +621,7 @@
       {
         "executes" : false,
         "heading" : "Embedding freshness",
-        "line" : 282,
+        "line" : 291,
         "lines" : [
           "Chunks without embeddings, or chunks embedded with an old model",
           "For large embedding refreshes (>1000 chunks), use nohup:",
@@ -616,7 +633,7 @@
       {
         "executes" : false,
         "heading" : "Security (RLS verification)",
-        "line" : 288,
+        "line" : 297,
         "lines" : [
           "Run `gbrain doctor --json` and check the RLS status",
           "All tables should show RLS enabled. If not, run `gbrain init` again"
@@ -626,7 +643,7 @@
       {
         "executes" : false,
         "heading" : "Schema health",
-        "line" : 292,
+        "line" : 301,
         "lines" : [
           "Check that the schema version is up to date. `gbrain doctor --json` reports",
           "the current version vs expected. If behind, `gbrain init` runs migrations",
@@ -637,7 +654,7 @@
       {
         "executes" : false,
         "heading" : "File storage health",
-        "line" : 297,
+        "line" : 306,
         "lines" : [
           "Check the integrity of stored files and redirect pointers:",
           "Run `gbrain files verify` to check all DB records have valid data",
@@ -651,7 +668,7 @@
       {
         "executes" : false,
         "heading" : "Open threads",
-        "line" : 305,
+        "line" : 314,
         "lines" : [
           "Timeline items older than 30 days with unresolved action items",
           "Flag for review"
@@ -661,7 +678,7 @@
       {
         "executes" : false,
         "heading" : "Benchmark Testing",
-        "line" : 309,
+        "line" : 318,
         "lines" : [
           "Periodically verify search quality hasn't regressed. Run a battery of test",
           "queries across difficulty tiers:",
@@ -682,7 +699,7 @@
       {
         "executes" : false,
         "heading" : "Heartbeat Integration",
-        "line" : 328,
+        "line" : 337,
         "lines" : [
           "For production agents running on a schedule, integrate gbrain health checks into",
           "your operational heartbeat"
@@ -692,7 +709,7 @@
       {
         "executes" : false,
         "heading" : "On every heartbeat (hourly or per-session)",
-        "line" : 333,
+        "line" : 342,
         "lines" : [
           "Run `gbrain doctor --json` and check for degradation. Report any failing checks",
           "staleness"
@@ -702,7 +719,7 @@
       {
         "executes" : false,
         "heading" : "Weekly maintenance",
-        "line" : 339,
+        "line" : 348,
         "lines" : [
           "Run `gbrain embed --stale` to refresh embeddings for pages that have changed since",
           "their last embedding. For large brains (>5000 pages), run this with nohup:",
@@ -713,7 +730,7 @@
       {
         "executes" : false,
         "heading" : "Daily verification",
-        "line" : 347,
+        "line" : 356,
         "lines" : [
           "Verify sync is running: check `gbrain stats` and confirm `last_sync` is within",
           "the last 24 hours. If sync has stopped, the brain is drifting from the repo"
@@ -723,7 +740,7 @@
       {
         "executes" : false,
         "heading" : "Stale compiled truth detection",
-        "line" : 352,
+        "line" : 361,
         "lines" : [
           "Flag pages where compiled truth is >30 days old but the timeline has recent entries",
           "This means new evidence exists that hasn't been synthesized. These pages need a",
@@ -734,7 +751,7 @@
       {
         "executes" : false,
         "heading" : "Report Storage",
-        "line" : 358,
+        "line" : 367,
         "lines" : [
           "After maintenance runs, save a report:",
           "Health check results (before\/after scores for each dimension)",
@@ -750,7 +767,7 @@
       {
         "executes" : false,
         "heading" : "Quality Rules",
-        "line" : 370,
+        "line" : 379,
         "lines" : [
           "Never delete pages without confirmation",
           "Log all changes via timeline entries",
@@ -761,7 +778,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 376,
+        "line" : 385,
         "lines" : [
           "Fixing pages without reading them first -- you must understand context before editing",
           "Silently skipping dimensions -- every dimension must be checked and reported, even if clean",
@@ -777,7 +794,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 387,
+        "line" : 396,
         "lines" : [
           "The maintenance report follows this structure:",
           "codeblock:plain:IyMgQnJhaW4gSGVhbHRoIFJlcG9ydCDigJQgWVlZWS1NTS1ERCAoKCBpbmVydCApKQoKfCBEaW1lbnNpb24gICAgICAgICAgIHwgSXNzdWVzIEZvdW5kIHwgRml4ZWQgfCBSZW1haW5pbmcgfAp8LS0tLS0tLS0tLS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tfC0tLS0tLS18LS0tLS0tLS0tLS18CnwgU3RhbGUgcGFnZXMgICAgICAgICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKfCBPcnBoYW4gcGFnZXMgICAgICAgICB8IE4gICAgICAgICAgIHwgTiAgICAgfCBOICAgICAgICAgfAp8IERlYWQgbGlua3MgICAgICAgICAgIHwgTiAgICAgICAgICAgfCBOICAgICB8IE4gICAgICAgICB8CnwgTWlzc2luZyBjcm9zcy1yZWZzICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKfCBCYWNrLWxpbmsgdmlvbGF0aW9ucyB8IE4gICAgICAgICAgIHwgTiAgICAgfCBOICAgICAgICAgfAp8IENpdGF0aW9uIGdhcHMgICAgICAgIHwgTiAgICAgICAgICAgfCBOICAgICB8IE4gICAgICAgICB8CnwgRmlsaW5nIHZpb2xhdGlvbnMgICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKfCBUYWcgaW5jb25zaXN0ZW5jaWVzICB8IE4gICAgICAgICAgIHwgTiAgICAgfCBOICAgICAgICAgfAp8IEVtYmVkZGluZyBzdGFsZW5lc3MgIHwgTiAgICAgICAgICAgfCBOICAgICB8IE4gICAgICAgICB8CnwgU2VjdXJpdHkgKFJMUykgICAgICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKfCBTY2hlbWEgaGVhbHRoICAgICAgICB8IE4gICAgICAgICAgIHwgTiAgICAgfCBOICAgICAgICAgfAp8IEZpbGUgc3RvcmFnZSAgICAgICAgIHwgTiAgICAgICAgICAgfCBOICAgICB8IE4gICAgICAgICB8CnwgT3BlbiB0aHJlYWRzICAgICAgICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKCiMjIyBEZXRhaWxzICgoIGluZXJ0ICkpCltQZXItZGltZW5zaW9uIGJyZWFrZG93biB3aXRoIHNwZWNpZmljIHBhZ2VzIGFuZCBhY3Rpb25zIHRha2VuXQoKIyMjIEJlbmNobWFyayBSZXN1bHRzIChpZiBydW4pICgoIGluZXJ0ICkpCltUaWVyIDEtNCBxdWVyeSByZXN1bHRzIHdpdGggcGFzcy9mYWlsXQoKIyMjIE91dHN0YW5kaW5nIElzc3VlcyAoKCBpbmVydCApKQpbSXRlbXMgcmVxdWlyaW5nIHVzZXIgYXR0ZW50aW9uIG9yIGNvbmZpcm1hdGlvbl0="
@@ -787,7 +804,7 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 420,
+        "line" : 429,
         "lines" : [
           "Check gbrain health (get_health)",
           "List pages in gbrain with filters (list_pages)",
@@ -812,64 +829,64 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 533
+      "meridian_line" : 58,
+      "swift_line" : 542
+    },
+    {
+      "meridian_line" : 59,
+      "swift_line" : 553
+    },
+    {
+      "meridian_line" : 60,
+      "swift_line" : 556
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 538
+      "swift_line" : 596
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 579
+      "swift_line" : 601
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 584
+      "swift_line" : 640
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 625
+      "swift_line" : 645
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 630
+      "swift_line" : 684
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 671
+      "swift_line" : 689
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 676
+      "swift_line" : 728
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 717
+      "swift_line" : 733
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 722
+      "swift_line" : 772
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 777
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 816
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 809
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 814
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 855
+      "swift_line" : 821
     },
     {
       "meridian_line" : 1,
@@ -877,35 +894,43 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 901
+      "swift_line" : 865
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 906
+      "swift_line" : 904
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 947
+      "swift_line" : 909
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 952
+      "swift_line" : 948
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 993
+      "swift_line" : 953
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 998
+      "swift_line" : 992
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1039
+      "swift_line" : 997
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1044
+      "swift_line" : 1036
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1041
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1080
     },
     {
       "meridian_line" : 1,
@@ -913,47 +938,51 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1090
+      "swift_line" : 1124
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1131
+      "swift_line" : 1129
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1136
+      "swift_line" : 1168
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1177
+      "swift_line" : 1173
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1182
+      "swift_line" : 1212
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1223
+      "swift_line" : 1217
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1228
+      "swift_line" : 1256
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1269
+      "swift_line" : 1261
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1274
+      "swift_line" : 1300
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1315
+      "swift_line" : 1305
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1320
+      "swift_line" : 1344
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1349
     }
   ],
   "tools_used" : [

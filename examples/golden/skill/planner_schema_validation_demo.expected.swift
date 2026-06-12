@@ -16,6 +16,25 @@ private func meridianStringify(_ v: Value) -> String {
     }
 }
 
+// 1B: Shell-escape a value for safe interpolation inside a double-
+// quoted span of a shell command (escapes \\, ", $, and backtick).
+private func meridianShellQuote(_ v: Value) -> String {
+    var out = ""
+    for ch in meridianStringify(v) {
+        if ch == "\\" || ch == "\"" || ch == "$" || ch == "`" { out.append("\\") }
+        out.append(ch)
+    }
+    return out
+}
+
+// 1D: Output invariant — true iff the value's string form matches the
+// regex pattern (anchored anywhere). An invalid pattern fails closed.
+private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
+    let s = v.map(meridianStringify) ?? ""
+    guard let re = try? NSRegularExpression(pattern: pattern) else { return false }
+    return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
+}
+
 // MARK: - Domain types
 
 public struct Repository: MeridianThing {

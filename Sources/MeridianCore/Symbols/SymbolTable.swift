@@ -18,6 +18,50 @@ public final class SymbolTable: @unchecked Sendable {
     public private(set) var tools:     [String: ToolDeclaration]     = [:]   // keyed by methodName
     public private(set) var phrases:   [PhraseDefinition]            = []
 
+    // MARK: - 2B. Checkable adjective definitions
+
+    /// A registered checkable adjective (`Definition: a page is stale if …`).
+    public struct DefinitionRecord: Sendable {
+        public let adjective: String       // normalised surface form (lowercased)
+        public let kind: String            // singular kind the adjective applies to
+        public let subjectVar: String      // body subject variable
+        public let body: ExpressionAST
+        public let functionName: String    // meridianDef_<Kind>_<adjCamel>
+        public let sourceLine: Int
+        public init(adjective: String, kind: String, subjectVar: String,
+                    body: ExpressionAST, functionName: String, sourceLine: Int) {
+            self.adjective = adjective; self.kind = kind; self.subjectVar = subjectVar
+            self.body = body; self.functionName = functionName; self.sourceLine = sourceLine
+        }
+    }
+
+    /// Checkable adjectives keyed by their normalised surface form. The surface
+    /// form is globally unique (a collision is a hard error caught at
+    /// registration in `ASTToIR.lower`).
+    public private(set) var definitions: [String: DefinitionRecord] = [:]
+
+    /// Raw `Definition:` declarations harvested from the merconfig vocabulary,
+    /// pending full registration (functionName synthesis, collision + body
+    /// type-checking) by `ASTToIR.lower`.
+    public private(set) var pendingDefinitions: [DefinitionDeclaration] = []
+
+    /// Register a checkable adjective. Returns the already-registered record on
+    /// a benign exact re-registration; the caller (`ASTToIR.lower`) detects and
+    /// reports genuine collisions before calling this.
+    public func registerDefinition(_ record: DefinitionRecord) {
+        definitions[record.adjective] = record
+    }
+
+    /// The definition record for a surface adjective, if any.
+    public func definition(forAdjective adjective: String) -> DefinitionRecord? {
+        definitions[adjective.lowercased().trimmingCharacters(in: .whitespaces)]
+    }
+
+    /// Declared property names for a kind (lowercased lookup).
+    public func propertyNames(of kind: String) -> Set<String> {
+        Set((properties[kind.lowercased()] ?? []).map { $0.name.lowercased() })
+    }
+
     /// Lower-cased enum cases discovered across all `which is one of (…)`
     /// property declarations. Used during lowering so that bare identifiers
     /// like `invalid`, `denied`, `succeeded` resolve to a string literal
@@ -46,7 +90,7 @@ public final class SymbolTable: @unchecked Sendable {
             case .kind(let k):
                 table.kinds[k.name.lowercased()] = k
             case .property(let p):
-                table.properties[p.kind.lowercased()] = p.properties
+                table.properties[p.kind.lowercased(), default: []].append(contentsOf: p.properties)
                 for entry in p.properties {
                     if case .enumeration(let cases) = entry.type {
                         for c in cases {
@@ -65,6 +109,8 @@ public final class SymbolTable: @unchecked Sendable {
                                         sourceLine: p.sourceLine, sourceFile: sourceFile)
                 }
                 table.phrases.append(p)
+            case .definition(let d):
+                table.pendingDefinitions.append(d)
             }
         }
         for c in config.constants {
@@ -179,6 +225,8 @@ public final class SymbolTable: @unchecked Sendable {
         case .now:                         return "now"
         case .decideWhether(let q):        return "decide(\(q))"
         case .interpolatedString(let segs): return "interp(\(segs.count) segs)"
+        case .quantified(let q):           return "quant(\(q.kind))"
+        case .malformed(let m):            return "malformed(\(m))"
         }
     }
 

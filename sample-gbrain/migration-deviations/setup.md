@@ -15,6 +15,10 @@
 - shell-block-routed
 - preamble-blockquoted
 
+## Metrics
+- Sections: 30/31 inert (97% inert ratio)
+- Judgment: 0 blocks, 0 lines
+
 ## Unified diff
 
 ```diff
