@@ -1,0 +1,316 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Ingest meeting transcripts into brain pages with attendee enrichment, entity\npropagation, and timeline merge. A meeting is NOT fully ingested until the\nenrich skill has processed every entity.",
+    "mutating" : "true",
+    "name" : "meeting-ingestion",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 32,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 47,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 49,
+        "text" : "Phase 1: Parse the transcript"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 59,
+        "text" : "Phase 2: Create meeting page"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 81,
+        "text" : "Phase 3: Attendee enrichment (MANDATORY)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 96,
+        "text" : "Phase 4: Entity propagation (MANDATORY)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 104,
+        "text" : "Phase 5: Timeline merge"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 109,
+        "text" : "Phase 6: Sync"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 113,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 118,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 34,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 51,
+        "text" : "Extract from the transcript"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 83,
+        "text" : "For EACH attendee"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 32,
+        "lines" : [
+          "This skill guarantees:",
+          "Meeting page created with attendees, summary, key decisions, action items",
+          "EVERY attendee gets a people page (created or updated)",
+          "EVERY company discussed gets entity propagation",
+          "Timeline entries on ALL mentioned entities (timeline merge)",
+          "Meeting is NOT fully ingested until enrich runs for every entity",
+          "Back-links created bidirectionally",
+          "Every attendee and company mentioned MUST get a back-link from their page to",
+          "the meeting page. An unlinked mention is a broken brain"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 47,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 1: Parse the transcript",
+        "line" : 49,
+        "lines" : [
+          "Extract from the transcript:",
+          "Attendees (names, roles if available)",
+          "Date, time, duration",
+          "Key topics discussed",
+          "Decisions made",
+          "Action items with owners",
+          "Companies and projects mentioned"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 2: Create meeting page",
+        "line" : 59,
+        "lines" : [
+          "codeblock:markdown:IyB7TWVldGluZyBUaXRsZX0g4oCUIHtEYXRlfQoKKipBdHRlbmRlZXM6Kioge2xpc3Qgd2l0aCBsaW5rcyB0byBwZW9wbGUgcGFnZXN9CioqRGF0ZToqKiB7WVlZWS1NTS1ERH0KKipEdXJhdGlvbjoqKiB7aWYgYXZhaWxhYmxlfQoKIyMgU3VtbWFyeSAoKCBpbmVydCApKQp7My01IGJ1bGxldCBrZXkgb3V0Y29tZXN9CgojIyBLZXkgRGVjaXNpb25zICgoIGluZXJ0ICkpCntEZWNpc2lvbnMgd2l0aCBjb250ZXh0fQoKIyMgQWN0aW9uIEl0ZW1zICgoIGluZXJ0ICkpCntUYXNrcyB3aXRoIG93bmVycyBhbmQgZGVhZGxpbmVzfQoKIyMgRGlzY3Vzc2lvbiBOb3RlcyAoKCBpbmVydCApKQp7U3RydWN0dXJlZCBub3RlcyBieSB0b3BpY30="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 3: Attendee enrichment (MANDATORY)",
+        "line" : 81,
+        "lines" : [
+          "For EACH attendee:",
+          "`gbrain search \"{name}\"` — does a people page exist?",
+          "If NO → create via enrich skill (this is mandatory, not optional)",
+          "If YES → update compiled truth with meeting context",
+          "Add timeline entry on the person's page:",
+          "`gbrain timeline-add <person-slug> <date> \"Attended <meeting-title>\"`",
+          "**Note (v0.10.1):** Once the meeting page is written via `gbrain put`, the",
+          "auto-link post-hook automatically creates `attended` links from the meeting",
+          "need to call `gbrain link` for attendees. You DO still need `gbrain timeline-add`",
+          "for dated events (auto-link only handles links, not timeline entries)"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 4: Entity propagation (MANDATORY)",
+        "line" : 96,
+        "lines" : [
+          "For each company, project, or concept discussed:",
+          "Check brain for existing page",
+          "Create\/update as needed",
+          "Add timeline entry referencing the meeting",
+          "Back-link from entity page to meeting page"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 5: Timeline merge",
+        "line" : 104,
+        "lines" : [
+          "The same event appears on ALL mentioned entities' timelines. If Alice met Bob at",
+          "Acme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 6: Sync",
+        "line" : 109,
+        "lines" : [
+          "`gbrain sync` to update the index"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 113,
+        "lines" : [
+          "Meeting page created. Report: \"Meeting ingested: {N} attendees enriched, {N} entities",
+          "updated, {N} action items captured.\""
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 118,
+        "lines" : [
+          "Creating the meeting page without enriching attendees",
+          "Skipping entity propagation (\"I'll do that later\")",
+          "Not merging timelines across all mentioned entities",
+          "Creating attendee stubs without meaningful content",
+          "Filing meeting pages without cross-linking to all participants"
+        ],
+        "role" : "prohibitions"
+      }
+    ],
+    "tools" : "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry",
+    "triggers" : "\"meeting transcript\"\n\"process this meeting\"\n\"meeting notes\"\nmeeting transcript received",
+    "version" : "1.0.0",
+    "writes_pages" : "true",
+    "writes_to" : "meetings\/\npeople\/\ncompanies\/"
+  },
+  "source_files" : [
+    "meeting_ingestion.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 1,
+      "swift_line" : 535
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 540
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 581
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 586
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 627
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 632
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 673
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 678
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "meeting-ingestion a input",
+      "swift_struct" : "MeetingIngestionInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when meetingTranscript fires",
+      "swift_struct" : "WhenMeetingtranscriptFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when processThisMeeting fires",
+      "swift_struct" : "WhenProcessthismeetingFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when meetingNotes fires",
+      "swift_struct" : "WhenMeetingnotesFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when meetingTranscriptReceived fires",
+      "swift_struct" : "WhenMeetingtranscriptreceivedFires"
+    }
+  ]
+}

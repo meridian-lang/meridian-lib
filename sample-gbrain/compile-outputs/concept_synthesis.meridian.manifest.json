@@ -1,0 +1,435 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Deduplicate and synthesize raw concept stubs into a tiered intellectual map (T1 Canon to T4 Riff), tracing idea evolution across sources over time. Transforms thousands of raw concept pages into a curated intellectual fingerprint.",
+    "mutating" : "true",
+    "name" : "concept-synthesis",
+    "outline" : [
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 26,
+        "text" : "What this solves"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 39,
+        "text" : "Architecture"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 73,
+        "text" : "Invocation"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 96,
+        "text" : "Output: concept page format (post-synthesis)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 98,
+        "text" : "T1 Canon — full synthesis"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 145,
+        "text" : "T3 \/ T4 — stub only (no LLM synthesis)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 163,
+        "text" : "Output: cluster map at concepts\/README.md"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 194,
+        "text" : "Quality gates"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 196,
+        "text" : "Dedup quality"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 201,
+        "text" : "Tier quality"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 208,
+        "text" : "Synthesis quality"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 214,
+        "text" : "Cron integration"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 224,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 235,
+        "text" : "Related skills"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 242,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 253,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 244,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 249,
+        "text" : "Privacy contract preserved"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "What this solves",
+        "line" : 26,
+        "lines" : [
+          "Many ingestion pipelines (signal-detector, idea-ingest, voice-note-ingest)",
+          "create a concept page for every idea mentioned. Over months this produces:",
+          "Thousands of stub pages, many duplicates or near-duplicates",
+          "Timeline entries that repeat the same source across multiple concept pages",
+          "No synthesis — just \"the user mentioned X on this date\"",
+          "No tier assignments — everything flat",
+          "No clustering — related ideas aren't linked",
+          "This skill transforms that raw material into a curated intellectual map"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Architecture",
+        "line" : 39,
+        "lines" : [
+          "codeblock:plain:UGhhc2UgMTogRGVkdXAgKyBtZXJnZSAoZGV0ZXJtaW5pc3RpYykKICBOIHN0dWJzIOKGkiB+Ti80IGNhbm9uaWNhbCBjb25jZXB0cwogICAg4pSc4pSA4pSAIEphY2NhcmQgZGVkdXAgKHdvcmQtb3ZlcmxhcCBvbiB0aXRsZXMgKyBmaXJzdC1wYXJhZ3JhcGgpCiAgICDilJzilIDilIAgU3Vic3RyaW5nIGRlZHVwICgiZm91bmRlciBtb2RlIiB2cyAiZm91bmRlciBtb2RlIHZzIG1hbmFnZXIgbW9kZSIpCiAgICDilJzilIDilIAgU2VtYW50aWMgZGVkdXAgKExMTTogImFyZSB0aGVzZSB0aGUgc2FtZSBpZGVhPyIpCiAgICDilJTilIDilIAgTWVyZ2UgdGltZWxpbmVzICsgYWxpYXNlcyBmcm9tIGR1cGxpY2F0ZXMgaW50byB0aGUgY2Fub25pY2FsIHBhZ2UKClBoYXNlIDI6IFNjb3JlICsgdGllciAoZGV0ZXJtaW5pc3RpYyArIGhldXJpc3RpYykKICBFYWNoIGNhbm9uaWNhbCBjb25jZXB0IOKGkiBzY29yZWQgYW5kIHRpZXJlZAogICAg4pSc4pSA4pSAIEZyZXF1ZW5jeTogZGlzdGluY3Qgc291cmNlcyByZWZlcmVuY2luZyB0aGlzIGNvbmNlcHQKICAgIOKUnOKUgOKUgCBUaW1lc3BhbjogZmlyc3QgbWVudGlvbiDihpIgbGFzdCBtZW50aW9uIGluIGRheXMKICAgIOKUnOKUgOKUgCBCcmVhZHRoOiBkaXN0aW5jdCBtb250aHMgaXQgYXBwZWFycyBpbgogICAg4pSc4pSA4pSAIEVuZ2FnZW1lbnQ6IGF2ZyBlbmdhZ2VtZW50IG9uIGNvbmNlcHQtYmVhcmluZyBzb3VyY2VzIChpZiBhdmFpbGFibGUpCiAgICDilJTilIDilIAgVGllcjogVDEgQ2Fub24gfCBUMiBEZXZlbG9waW5nIHwgVDMgU3BlY3VsYXRpdmUgfCBUNCBSaWZmCgpQaGFzZSAzOiBTeW50aGVzaXplIChMTE0sIFQxK1QyIG9ubHkpCiAgVDEgKyBUMiBjb25jZXB0cyDihpIgcmljaCBzeW50aGVzaXMKICAgIOKUnOKUgOKUgCBFdm9sdXRpb24gbmFycmF0aXZlOiBob3cgdGhlIGlkZWEgc2hhcnBlbmVkIG92ZXIgdGltZQogICAg4pSc4pSA4pSAIEJlc3QgYXJ0aWN1bGF0aW9uOiBoaWdoZXN0LWVuZ2FnZW1lbnQgb3IgbW9zdCBwcmVjaXNlIHF1b3RlCiAgICDilJzilIDilIAgUmVsYXRlZCBjb25jZXB0czogY3Jvc3MtbGlua3MgdG8gb3RoZXIgY29uY2VwdHMKICAgIOKUnOKUgOKUgCBDb250ZXh0OiB3aGF0IHdhcyBoYXBwZW5pbmcgd2hlbiB0aGlzIGlkZWEgZW1lcmdlZCAvIGV2b2x2ZWQKICAgIOKUlOKUgOKUgCBDb3VudGVyLXBvc2l0aW9uczogd2hhdCB0aGlzIGlkZWEgYXJndWVzIGFnYWluc3QKClBoYXNlIDQ6IENsdXN0ZXIgKyBtYXAgKExMTSkKICBBbGwgdGllcmVkIGNvbmNlcHRzIOKGkiBpbnRlbGxlY3R1YWwgY2x1c3RlcnMKICAgIOKUnOKUgOKUgCBHcm91cCByZWxhdGVkIGNvbmNlcHRzIGludG8gZG9tYWlucyAoYXV0by1uYW1lZCB2aWEgTExNKQogICAg4pSc4pSA4pSAIEdlbmVyYXRlIGNsdXN0ZXIgc3VtbWFyeSBwYWdlcwogICAg4pSc4pSA4pSAIEJ1aWxkIGEgbWFzdGVyIGNvbmNlcHRzL1JFQURNRS5tZCB3aXRoIHRoZSBmdWxsIG1hcAogICAg4pSU4pSA4pSAIElkZW50aWZ5IGlkZWEgZ2VuZWFsb2dpZXMgKGNvbmNlcHQgQSDihpIgZXZvbHZlZCBpbnRvIGNvbmNlcHQgQik="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Invocation",
+        "line" : 73,
+        "lines" : [
+          "The skill is markdown agent instructions. The agent uses gbrain's",
+          "existing operations + LLM passes:",
+          "codeblock:bash:IyAxLiBMaXN0IGFsbCBjb25jZXB0IHBhZ2VzCmdicmFpbiBxdWVyeSAidHlwZTpjb25jZXB0IiAtLWxpbWl0IDEwMDAwIC0tanNvbgoKIyAyLiBQaGFzZSAxIGRlZHVwIOKAlCBhZ2VudCBhcHBsaWVzIEphY2NhcmQgKyBzdWJzdHJpbmcgbG9jYWxseSwKIyAgICB0aGVuIExMTSBwYXNzZXMgdG8gaWRlbnRpZnkgc2VtYW50aWMgZHVwbGljYXRlcy4KCiMgMy4gUGhhc2UgMiB0aWVyIOKAlCBhZ2VudCBzY29yZXMgZWFjaCBjYW5vbmljYWwgY29uY2VwdCBiYXNlZCBvbgojICAgIGZyZXF1ZW5jeSAvIHRpbWVzcGFuIC8gYnJlYWR0aCBhbmQgd3JpdGVzIHRpZXIgaW50byBmcm9udG1hdHRlci4KCiMgNC4gUGhhc2UgMyBzeW50aGVzaXMg4oCUIGZvciBlYWNoIFQxL1QyLCBhZ2VudCByZWFkcyB0aGUgdGltZWxpbmUKIyAgICArIGFzc29jaWF0ZWQgc291cmNlIHBhZ2VzIGFuZCB3cml0ZXMgYSBzeW50aGVzaXMgc2VjdGlvbgojICAgIG9udG8gdGhlIGNvbmNlcHQgcGFnZSB2aWEgcHV0X3BhZ2UuCgojIDUuIFBoYXNlIDQgY2x1c3RlcmluZyDigJQgYWdlbnQgcmVhZHMgdGhlIHRpZXJlZCBjb25jZXB0IGxpc3QKIyAgICBhbmQgd3JpdGVzIGNvbmNlcHRzL1JFQURNRS5tZCB3aXRoIHRoZSBmdWxsIGludGVsbGVjdHVhbCBtYXAu"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output: concept page format (post-synthesis)",
+        "line" : 96,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "T1 Canon — full synthesis",
+        "line" : 98,
+        "lines" : [
+          "codeblock:markdown:LS0tCnRpdGxlOiAiY29uY2VwdCBuYW1lIgp0eXBlOiBjb25jZXB0CnRpZXI6IDEKdGllcl9sYWJlbDogIkNhbm9uIgptZW50aW9uX2NvdW50OiAxOApkaXN0aW5jdF9tb250aHM6IDgKZmlyc3RfbWVudGlvbjogIllZWVktTU0tREQiCmxhc3RfbWVudGlvbjogIllZWVktTU0tREQiCmNvbXBvc2l0ZV9zY29yZTogNzguNAphbGlhc2VzOiBbImFsdGVybmF0ZSBwaHJhc2luZyAxIiwgImFsdGVybmF0ZSBwaHJhc2luZyAyIl0KcmVsYXRlZDogWyJzaWJsaW5nLWNvbmNlcHQtMSIsICJzaWJsaW5nLWNvbmNlcHQtMiJdCi0tLQoKIyBjb25jZXB0IG5hbWUKCioqVGllciAxIOKAlCBDYW5vbioqIHwgMTggbWVudGlvbnMgYWNyb3NzIDggbW9udGhzCgojIyBTeW50aGVzaXMgKCggaW5lcnQgKSkKClsyLTQgcGFyYWdyYXBoIG5hcnJhdGl2ZSB0cmFjaW5nIGhvdyB0aGUgaWRlYSBldm9sdmVkLCB3aGF0IGl0IG1lYW5zIGluCnRoZSB1c2VyJ3Mgd29ybGR2aWV3LCB3aHkgaXQgbWF0dGVycy4gVGhpcmQtcGVyc29uIGFuYWx5dGljYWwgdm9pY2UuXQoKIyMgQmVzdCBBcnRpY3VsYXRpb24gKCggaW5lcnQgKSkKCj4gIlZlcmJhdGltIHF1b3RlIGZyb20gYSBzb3VyY2Ug4oCUIHRoZSBtb3N0IHByZWNpc2Ugb3IgaGlnaGVzdC1lbmdhZ2VtZW50Cj4gZXhwcmVzc2lvbiBvZiB0aGlzIGlkZWEuIiDigJQgW0RhdGVdKHNvdXJjZS11cmwpCgojIyBFdm9sdXRpb24gKCggaW5lcnQgKSkKCnwgUGVyaW9kIHwgRXhwcmVzc2lvbiB8IFNpZ25hbCB8CnwtLS0tLS0tLXwtLS0tLS0tLS0tLXwtLS0tLS0tLXwKfCBZWVlZLU1NIHwgIkZpcnN0IGFydGljdWxhdGlvbiIgfCBGaXJzdCB1c2Ug4oCUIGFzcGlyYXRpb24gZnJhbWUgfAp8IFlZWVktTU0gfCAiU2hhcnBlbmluZyIgfCBBbnRpLXBhdHRlcm4gZW1lcmdlcyB8CnwgWVlZWS1NTSB8ICJQZWFrIGZvcm0iIHwgQ2xlYW5lc3QgZXhwcmVzc2lvbiB8CgojIyBSZWxhdGVkIENvbmNlcHRzICgoIGluZXJ0ICkpCi0gW3NpYmxpbmcgY29uY2VwdF0oc2libGluZy1jb25jZXB0Lm1kKSDigJQgcmVsYXRpb25zaGlwIGRlc2NyaXB0aW9uCi0gW3NpYmxpbmcgY29uY2VwdF0oc2libGluZy1jb25jZXB0Lm1kKSDigJQgcmVsYXRpb25zaGlwIGRlc2NyaXB0aW9uCgojIyBUaW1lbGluZSAoKCBpbmVydCApKQpbRnVsbCB0aW1lbGluZSB3aXRoIGRlZHVwZWQgZW50cmllcywgcXVvdGVzLCBzb3VyY2UgbGlua3Nd"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "T3 \/ T4 — stub only (no LLM synthesis)",
+        "line" : 145,
+        "lines" : [
+          "codeblock:markdown:LS0tCnRpdGxlOiAiY29uY2VwdCBuYW1lIgp0eXBlOiBjb25jZXB0CnRpZXI6IDQKdGllcl9sYWJlbDogIlJpZmYiCm1lbnRpb25fY291bnQ6IDEKLS0tCgojIGNvbmNlcHQgbmFtZQoKKipUaWVyIDQg4oCUIFJpZmYqKiB8IDEgbWVudGlvbgoKPiAiUXVvdGUgZnJvbSB0aGUgc291cmNlIiDigJQgW0RhdGVdKFVSTCk="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output: cluster map at concepts\/README.md",
+        "line" : 163,
+        "lines" : [
+          "codeblock:markdown:IyBJbnRlbGxlY3R1YWwgVW5pdmVyc2UKCiMjIENhbm9uIChUMSkg4oCUIE4gY29uY2VwdHMgKCggaW5lcnQgKSkKVGhlIHBlcm1hbmVudCBpbnRlbGxlY3R1YWwgZmluZ2VycHJpbnQuIElkZWFzIHRoYXQgcmVjdXIgYWNyb3NzIHllYXJzLgoKIyMjIFtDbHVzdGVyIE5hbWVdICgoIGluZXJ0ICkpCi0gW2NvbmNlcHQtc2x1Z10oY29uY2VwdC1zbHVnLm1kKSDigJQgb25lLWxpbmUgY2hhcmFjdGVyaXphdGlvbgotIC4uLgoKIyMjIFtPdGhlciBDbHVzdGVyXSAoKCBpbmVydCApKQotIC4uLgoKIyMgRGV2ZWxvcGluZyAoVDIpIOKAlCBOIGNvbmNlcHRzICgoIGluZXJ0ICkpClNoYXJwZW5pbmcuIE1pZ2h0IGJlY29tZSBjYW5vbi4KCiMjIFNwZWN1bGF0aXZlIChUMykg4oCUIE4gY29uY2VwdHMgKCggaW5lcnQgKSkKVGVzdGluZyBpbiBwdWJsaWMuCgojIyBTdGF0cyAoKCBpbmVydCApKQotIFRvdGFsIGNvbmNlcHRzOiBOCi0gVDEgQ2Fub246IE4KLSBUMiBEZXZlbG9waW5nOiBOCi0gVDMgU3BlY3VsYXRpdmU6IE4KLSBUNCBSaWZmOiBOCi0gRWFybGllc3Qgc291cmNlOiBZWVlZLU1NLURECi0gTGF0ZXN0IHNvdXJjZTogWVlZWS1NTS1ERA=="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Quality gates",
+        "line" : 194,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Dedup quality",
+        "line" : 196,
+        "lines" : [
+          "No two concept pages should be \"the same idea in different words.\"",
+          "Aliases preserved in frontmatter for search",
+          "Run `gbrain query \"type:concept\"` and spot-check the count reduction"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Tier quality",
+        "line" : 201,
+        "lines" : [
+          "T1 should feel like \"yes, that IS one of my recurring frameworks\" —",
+          "recognizable, recurring, sharp",
+          "T2 should feel like \"I'm working on this; it's getting clearer.\"",
+          "No concept should be T1 with < 4 months span or < 6 mentions",
+          "No concept should be T4 with > 3 months span"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Synthesis quality",
+        "line" : 208,
+        "lines" : [
+          "Captures evolution, not just repetition",
+          "Uses verbatim quotes, not paraphrase",
+          "Links to related concepts (markdown links, not wiki-links)",
+          "Does NOT hallucinate sources or dates"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Cron integration",
+        "line" : 214,
+        "lines" : [
+          "This is heavy work. Run on a cadence, not on every signal:",
+          "After a major ingestion batch completes (signal-detector burst, archive",
+          "crawler run, etc.)",
+          "Weekly cron for incremental synthesis of newly-promoted T1\/T2 concepts",
+          "Manual trigger for a full re-synthesis when the corpus shifts",
+          "significantly"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 224,
+        "lines" : [
+          "❌ Running synthesis on T3\/T4 — wastes API budget on ideas that may",
+          "never sharpen",
+          "❌ Hallucinating quotes or dates. The timeline must be verifiable",
+          "against existing brain pages",
+          "❌ Generic cluster names (\"Various Topics\"). If you can't name the",
+          "cluster, the cluster isn't real",
+          "❌ Re-synthesizing already-synthesized T1s without new source material",
+          "Idempotency-respect"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Related skills",
+        "line" : 235,
+        "lines" : [
+          "`skills\/signal-detector\/SKILL.md` — creates raw concept stubs from text channels",
+          "`skills\/voice-note-ingest\/SKILL.md` — same for audio channels",
+          "`skills\/idea-ingest\/SKILL.md` — same for links \/ articles"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 242,
+        "lines" : [
+          "This skill guarantees:",
+          "Routing matches the canonical triggers in the frontmatter",
+          "Output written under the directories listed in `writes_to:` (when applicable)",
+          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
+          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
+          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 253,
+        "lines" : [
+          "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"concept synthesis\"\n\"synthesize my concepts\"\n\"find patterns across my notes\"\n\"build my intellectual map\"\n\"trace idea evolution\"\n\"canon vs riff\"",
+    "version" : "0.1.0",
+    "writes_pages" : "true",
+    "writes_to" : "concepts\/"
+  },
+  "source_files" : [
+    "concept_synthesis.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 1,
+      "swift_line" : 534
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 539
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 580
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 585
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 626
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 631
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 672
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 677
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 718
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 723
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 764
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 769
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "concept-synthesis a input",
+      "swift_struct" : "ConceptSynthesisInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when conceptSynthesis fires",
+      "swift_struct" : "WhenConceptsynthesisFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when synthesizeMyConcepts fires",
+      "swift_struct" : "WhenSynthesizemyconceptsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when findPatternsAcrossMyNotes fires",
+      "swift_struct" : "WhenFindpatternsacrossmynotesFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when buildMyIntellectualMap fires",
+      "swift_struct" : "WhenBuildmyintellectualmapFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when traceIdeaEvolution fires",
+      "swift_struct" : "WhenTraceideaevolutionFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when canonVsRiff fires",
+      "swift_struct" : "WhenCanonvsriffFires"
+    }
+  ]
+}

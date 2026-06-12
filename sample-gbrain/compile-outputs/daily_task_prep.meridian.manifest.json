@@ -1,0 +1,198 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Morning preparation. Calendar lookahead, meeting context loading, open threads\nfrom yesterday, active task review. Extends briefing with actionable prep.",
+    "mutating" : "false",
+    "name" : "daily-task-prep",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 23,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 31,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 43,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 62,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 25,
+        "text" : "This skill guarantees"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 23,
+        "lines" : [
+          "This skill guarantees:",
+          "Calendar\/meetings for today are loaded with brain context per attendee",
+          "Open threads from yesterday are surfaced",
+          "Active tasks reviewed with priority ordering",
+          "Prep briefing is actionable (not just informational)"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 31,
+        "lines" : [
+          "codeblock:bash:Z2JyYWluIGdldCBvcHMvdGFza3M=",
+          "use judgment to compile the morning prep briefing:",
+          "Load today's calendar and, for each meeting, load attendee brain pages, recent timeline, and open threads",
+          "Search the brain for yesterday's timeline entries and flag anything unresolved",
+          "Surface P0 and P1 tasks from the task list",
+          "Compile per-meeting context cards plus open threads and task priorities"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 43,
+        "lines" : [
+          "codeblock:plain:TW9ybmluZyBQcmVwIOKAlCB7ZGF0ZX0KPT09PT09PT09PT09PT09PT09PT09PQpNZWV0aW5ncyB0b2RheToge059CgojIyB7TWVldGluZyAxIHRpdGxlfSBhdCB7dGltZX0gKCggaW5lcnQgKSkKQXR0ZW5kZWVzOiB7bmFtZXMgd2l0aCBicmFpbiBjb250ZXh0fQpDb250ZXh0OiB7cmVjZW50IGludGVyYWN0aW9ucywgb3BlbiB0aHJlYWRzfQpQcmVwOiB7d2hhdCB0byBrbm93IGJlZm9yZSB0aGlzIG1lZXRpbmd9CgojIyBPcGVuIFRocmVhZHMgKCggaW5lcnQgKSkKLSB7dGhyZWFkIGZyb20geWVzdGVyZGF5LCB3aXRoIGNvbnRleHR9CgojIyBUYXNrcyAoUDAtUDEpICgoIGluZXJ0ICkpCi0ge3Rhc2sgd2l0aCBwcmlvcml0eX0="
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 62,
+        "lines" : [
+          "Listing meetings without loading attendee context from brain",
+          "Ignoring yesterday's unresolved threads",
+          "Presenting tasks without priority ordering"
+        ],
+        "role" : "prohibitions"
+      }
+    ],
+    "tools" : "search\nquery\nget_page\nlist_pages\nget_timeline",
+    "triggers" : "\"morning prep\"\n\"prepare for today\"\n\"what's on my plate\"\n\"day prep\"",
+    "version" : "1.0.0"
+  },
+  "source_files" : [
+    "daily_task_prep.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 33,
+      "swift_line" : 503
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 513
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 554
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 559
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 600
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 605
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 646
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 651
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 692
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 697
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "daily-task-prep a input",
+      "swift_struct" : "DailyTaskPrepInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when morningPrep fires",
+      "swift_struct" : "WhenMorningprepFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when prepareToday fires",
+      "swift_struct" : "WhenPreparetodayFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when whatSMyPlate fires",
+      "swift_struct" : "WhenWhatsmyplateFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when dayPrep fires",
+      "swift_struct" : "WhenDayprepFires"
+    }
+  ]
+}

@@ -1,0 +1,594 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Reusable pattern for presenting the user with explicit choices and gating\nexecution until they respond. Used by other skills when a decision point\nrequires human input before proceeding. Platform-agnostic — works on\nTelegram (inline buttons), Discord, CLI, or any agent with a message tool.",
+    "name" : "ask-user",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 19,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 29,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 33,
+        "text" : "What This Is"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 45,
+        "text" : "When To Use"
+      },
+      {
+        "kind" : "negative-applicability",
+        "level" : 2,
+        "line" : 54,
+        "text" : "When NOT To Use"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 61,
+        "text" : "How To Present Choices"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 63,
+        "text" : "Platform-agnostic format (works everywhere)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 78,
+        "text" : "With inline buttons (Telegram, Discord, Slack)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 93,
+        "text" : "With the `clarify` tool (OpenClaw agents)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 109,
+        "text" : "Constraints"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 116,
+        "text" : "How To Gate (CRITICAL)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 128,
+        "text" : "How To Handle The Response"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 137,
+        "text" : "Handling text responses"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 145,
+        "text" : "Formatting Guidelines"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 147,
+        "text" : "Question line emoji prefix"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 157,
+        "text" : "Context block"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 161,
+        "text" : "Button\/option labels"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 169,
+        "text" : "Examples"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 171,
+        "text" : "Cold-start phase gate"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 184,
+        "text" : "Filing decision"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 197,
+        "text" : "Destructive operation"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 210,
+        "text" : "Integration With Other Skills"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 223,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 240,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 27,
+        "text" : "Self-explanatory option labels"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 124,
+        "text" : "Instead"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 130,
+        "text" : "When the user responds"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 149,
+        "text" : "Signal the decision type"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 163,
+        "text" : "Format"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 212,
+        "text" : "This pattern is used by"
+      }
+    ],
+    "priority" : "50",
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 19,
+        "lines" : [
+          "Present 2-4 options (no more — decision paralysis kicks in past 4)",
+          "Always include an escape hatch (Skip, Cancel, or \"none of these\")",
+          "Stop the turn immediately after presenting choices. No follow-up tool calls,",
+          "no preemptive action, no default-and-proceed",
+          "The user's response triggers the next turn. Acknowledge briefly, then branch",
+          "One question per message — never stack multiple choice gates",
+          "Self-explanatory option labels: action verb plus brief qualifier, not \"Option 1\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 29,
+        "lines" : [
+          "ask the user to choose between \"Proceed\", \"Adjust\", or \"Skip\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "What This Is",
+        "line" : 33,
+        "lines" : [
+          "A **formalized pattern** for presenting users with 2-4 options and **stopping",
+          "execution** until they respond. This is the canonical way to gate on user input",
+          "in any GBrain-powered agent",
+          "This is NOT a traditional async\/await. In an LLM agent, \"gating\" means:",
+          "Present the choices (buttons or numbered options)",
+          "Explicitly stop the current turn (do not proceed)",
+          "The user's response triggers the next turn",
+          "Read the response and branch accordingly"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "When To Use",
+        "line" : 45,
+        "lines" : [
+          "Ambiguous requests with multiple valid interpretations",
+          "Destructive operations (bulk deletes, overwrites)",
+          "Filing\/routing decisions (\"where should this go?\")",
+          "Priority triage (\"which should I do first?\")",
+          "Cold-start phase gates (\"ready for the next import source?\")",
+          "Any fork where the wrong default wastes significant work"
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "When NOT To Use",
+        "line" : 54,
+        "lines" : [
+          "Clear, unambiguous instructions → just do it",
+          "Low-stakes decisions → pick the best option and mention it",
+          "Time-critical operations where delay costs more than a wrong choice",
+          "the user already stated a preference"
+        ],
+        "role" : "negative-applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "How To Present Choices",
+        "line" : 61,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Platform-agnostic format (works everywhere)",
+        "line" : 63,
+        "lines" : [
+          "Present choices as a clear question with numbered or labeled options:",
+          "codeblock:plain:8J+UgCAqKkhvdyBzaG91bGQgSSBoYW5kbGUgdGhpcz8qKgoKW2NvbnRleHQgYWJvdXQgdGhlIGRlY2lzaW9uIOKAlCAxLTMgbGluZXMgbWF4XQoKMS4gKipPcHRpb24gQSoqIOKAlCBzaG9ydCBkZXNjcmlwdGlvbgoyLiAqKk9wdGlvbiBCKiog4oCUIHNob3J0IGRlc2NyaXB0aW9uCjMuICoqT3B0aW9uIEMqKiDigJQgc2hvcnQgZGVzY3JpcHRpb24KNC4gKipTa2lwKiog4oCUIGRvIG5vdGhpbmcgZm9yIG5vdw=="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "With inline buttons (Telegram, Discord, Slack)",
+        "line" : 78,
+        "lines" : [
+          "If the platform supports interactive buttons, use them:",
+          "codeblock:json:ewogICJtZXNzYWdlIjogIvCflIAgKipIb3cgc2hvdWxkIEkgaGFuZGxlIHRoaXM\/KipcblxuPGNvbnRleHQ+IiwKICAiYnV0dG9ucyI6IFsKICAgIHsgImxhYmVsIjogIk9wdGlvbiBBIOKAlCBkZXNjcmlwdGlvbiIsICJ2YWx1ZSI6ICJvcHRpb25fYSIgfSwKICAgIHsgImxhYmVsIjogIk9wdGlvbiBCIOKAlCBkZXNjcmlwdGlvbiIsICJ2YWx1ZSI6ICJvcHRpb25fYiIgfSwKICAgIHsgImxhYmVsIjogIlNraXAiLCAidmFsdWUiOiAic2tpcCIgfQogIF0KfQ=="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "With the `clarify` tool (OpenClaw agents)",
+        "line" : 93,
+        "lines" : [
+          "Some OpenClaw agents have a built-in `clarify` tool that presents choices natively:",
+          "codeblock:plain:Y2xhcmlmeSgKICBxdWVzdGlvbjogIkhvdyBzaG91bGQgSSBoYW5kbGUgdGhpcz8iLAogIGNob2ljZXM6IFsKICAgICJPcHRpb24gQSDigJQgZGVzY3JpcHRpb24iLAogICAgIk9wdGlvbiBCIOKAlCBkZXNjcmlwdGlvbiIsCiAgICAiT3B0aW9uIEMg4oCUIGRlc2NyaXB0aW9uIiwKICAgICJTa2lwIGZvciBub3ciCiAgXQop"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Constraints",
+        "line" : 109,
+        "lines" : [
+          "**2-4 options max.** More than 4 creates decision paralysis",
+          "**Labels must be self-explanatory.** The user shouldn't need to re-read context",
+          "**Always include an escape hatch.** At minimum: \"Skip\" or \"Cancel\" as the last option",
+          "**One question per message.** Never stack multiple choice gates"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "How To Gate (CRITICAL)",
+        "line" : 116,
+        "lines" : [
+          "After presenting choices, **you MUST stop your turn.** Do not:",
+          "❌ Continue with \"while you decide, I'll start on...\"",
+          "❌ Pick a default and proceed",
+          "❌ Send follow-up messages before the user responds",
+          "❌ Make assumptions about which option they'll pick",
+          "Instead:",
+          "✅ End your message with a brief note that you're waiting",
+          "✅ Stop. Full stop. No more tool calls"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "How To Handle The Response",
+        "line" : 128,
+        "lines" : [
+          "When the user responds:",
+          "**Read the response** — button click, number, or text",
+          "**Acknowledge briefly** — \"Got it, going with Option A.\"",
+          "**Branch and execute** the chosen path",
+          "If unclear, ask again"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Handling text responses",
+        "line" : 137,
+        "lines" : [
+          "Users sometimes type instead of clicking. Handle gracefully:",
+          "\"the first one\" \/ \"A\" \/ \"1\" → map to first option",
+          "\"merge\" → fuzzy match against option labels\/values",
+          "\"actually, none of those\" → present alternatives or ask what they want",
+          "Unrelated message → the user moved on; drop the gate"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Formatting Guidelines",
+        "line" : 145,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Question line emoji prefix",
+        "line" : 147,
+        "lines" : [
+          "Signal the decision type:",
+          "🔀 Routing\/filing decisions",
+          "⚠️ Destructive\/risky operations",
+          "🎯 Priority\/triage decisions",
+          "💡 Creative\/strategic forks",
+          "📋 Workflow\/process choices",
+          "🔐 Credential\/security decisions"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Context block",
+        "line" : 157,
+        "lines" : [
+          "1-3 lines maximum. The user should understand the decision in under 5 seconds"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Button\/option labels",
+        "line" : 161,
+        "lines" : [
+          "Format: `Action verb — brief qualifier`",
+          "✅ \"Merge — combine with existing page\"",
+          "✅ \"Create new — separate meeting page\"",
+          "❌ \"Option 1\"",
+          "❌ \"Click here to merge the content into the existing brain page\""
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Examples",
+        "line" : 169,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Cold-start phase gate",
+        "line" : 171,
+        "lines" : [
+          "codeblock:plain:8J+TiyAqKlBoYXNlIDI6IEdvb2dsZSBDb250YWN0cyoqCgpJIGNhbiBpbXBvcnQgeW91ciBHb29nbGUgQ29udGFjdHMgdG8gc2VlZCB0aGUgcGVvcGxlLyBkaXJlY3RvcnkuClRoaXMgY3JlYXRlcyBhIGJyYWluIHBhZ2UgZm9yIGVhY2ggcmVhbCBjb250YWN0ICh+MjAwIHBhZ2VzKS4KCjEuICoqSW1wb3J0IHZpYSBDbGF3Vmlzb3IqKiDigJQgc2VjdXJlIGNyZWRlbnRpYWwgZ2F0ZXdheQoyLiAqKkltcG9ydCB2aWEgZGlyZWN0IE9BdXRoKiog4oCUIHNpbXBsZXIsIGFnZW50IGhvbGRzIHRva2VucwozLiAqKkltcG9ydCBmcm9tIEdvb2dsZSBUYWtlb3V0IGV4cG9ydCoqIOKAlCBvZmZsaW5lLCBmcm9tIGZpbGUKNC4gKipTa2lwKiog4oCUIG1vdmUgdG8gdGhlIG5leHQgcGhhc2U="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Filing decision",
+        "line" : 184,
+        "lines" : [
+          "codeblock:plain:8J+UgCAqKldoZXJlIHNob3VsZCB0aGlzIGdvPyoqCgpNZWV0aW5nIG5vdGVzIGZyb20gY2FsbCB3aXRoIEphbmUgU21pdGguIFNoZSBhbHJlYWR5IGhhcyBhIHBhZ2UgYXQKcGVvcGxlL2phbmUtc21pdGgubWQgYW5kIHRoZXJlJ3MgYSBkZWFsIHBhZ2UgYXQgZGVhbHMvYWNtZS1jb3JwLm1kLgoKMS4gKipNZXJnZSBpbnRvIEphbmUncyBwYWdlKiog4oCUIGFkZCB0byBoZXIgdGltZWxpbmUKMi4gKipBZGQgdG8gQWNtZSBkZWFsIHBhZ2UqKiDigJQgdGhpcyB3YXMgcHJpbWFyaWx5IGEgZGVhbCBkaXNjdXNzaW9uCjMuICoqTmV3IG1lZXRpbmcgcGFnZSoqIOKAlCBzdGFuZGFsb25lIGF0IG1lZXRpbmdzLzIwMjYtMDEtMTUtamFuZS1hY21lLm1kCjQuICoqU2tpcCoqIOKAlCBkb24ndCBmaWxlIHRoaXM="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Destructive operation",
+        "line" : 197,
+        "lines" : [
+          "codeblock:plain:4pqg77iPICoqQWJvdXQgdG8gZGVsZXRlIDg0NyBzdGFsZSBjYWNoZSBmaWxlcyAoMi4zIEdCKSoqCgpUaGVzZSBoYXZlbid0IGJlZW4gYWNjZXNzZWQgaW4gOTArIGRheXMuIFRoZXkgY2FuIGJlIHJlLWZldGNoZWQKYnV0IHRoYXQgdGFrZXMgfjQgaG91cnMuCgoxLiAqKkRlbGV0ZSB0aGVtKiog4oCUIGZyZWUgdXAgc3BhY2Ugbm93CjIuICoqQXJjaGl2ZSBmaXJzdCoqIOKAlCB1cGxvYWQgdG8gY2xvdWQgc3RvcmFnZSwgdGhlbiBkZWxldGUKMy4gKipLZWVwIHRoZW0qKiDigJQgbm8gY2hhbmdlcwo0LiAqKlNob3cgbWUgdGhlIGxpc3QqKiDigJQgbGV0IG1lIHJldmlldyBiZWZvcmUgZGVjaWRpbmc="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Integration With Other Skills",
+        "line" : 210,
+        "lines" : [
+          "This pattern is used by:",
+          "**cold-start** — phase gates for each import source",
+          "**ingest** — routing decisions for ambiguous content",
+          "**enrich** — merge vs create decisions for entity pages",
+          "**brain-ops** — filing location decisions",
+          "**meeting-ingestion** — where to file meeting notes",
+          "**archive-crawler** — scan vs full ingestion gate",
+          "When building a new skill that needs user input at a decision point,",
+          "reference this pattern rather than inventing a new one"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 223,
+        "lines" : [
+          "**Continuing the turn after presenting choices.** \"While you decide, I'll start on...\"",
+          "defeats the gate. Stop. Wait. The whole point is that the user controls what happens next",
+          "**Picking a default and proceeding silently.** If the question matters enough to ask,",
+          "it matters enough to wait. Silent defaults erode trust the next time you do ask",
+          "**More than 4 options.** Decision paralysis is real. Group, summarize, or split into",
+          "staged questions instead",
+          "**No escape hatch.** Every choice gate must let the user decline. \"None of these\"",
+          "\/ \"Skip\" \/ \"Cancel\" is mandatory",
+          "**Stacking multiple choice gates in one message.** The user can only answer one",
+          "question per turn. Multi-question gates either get half-answered or dropped entirely",
+          "**Cryptic option labels.** \"Option 1\" forces re-reading the context. \"Merge into",
+          "existing page\" is self-explanatory",
+          "**Asking about low-stakes decisions.** If the wrong answer costs nothing, just pick",
+          "the best option and mention it. Reserve gates for forks where rework is expensive"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 240,
+        "lines" : [
+          "The skill's \"output\" is the choice-gate message itself, structured as:",
+          "codeblock:plain:e2Vtb2ppLXByZWZpeH0gKip7cXVlc3Rpb259KioKCnsxLTMgbGluZXMgb2YgY29udGV4dH0KCjEuICoqe09wdGlvbiBBIGxhYmVsfSoqIOKAlCB7c2hvcnQgcXVhbGlmaWVyfQoyLiAqKntPcHRpb24gQiBsYWJlbH0qKiDigJQge3Nob3J0IHF1YWxpZmllcn0KMy4gKip7U2tpcCAvIENhbmNlbH0qKiDigJQge3doYXQgc2tpcHBpbmcgbWVhbnN9",
+          "After emitting this, the skill stops the turn. No further tool calls, no",
+          "preemptive action, no follow-up message until the user responds. The",
+          "user's response triggers the next turn, where the calling skill branches",
+          "on the chosen option"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"present options\"\n\"ask before proceeding\"\n\"choice gate\"\n\"user decision\"",
+    "version" : "1.0.0"
+  },
+  "source_files" : [
+    "ask_user.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 31,
+      "swift_line" : 502
+    },
+    {
+      "meridian_line" : 31,
+      "swift_line" : 513
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 552
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 557
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 598
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 603
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 644
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 649
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 690
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 695
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "ask-user a input",
+      "swift_struct" : "AskUserInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when presentOptions fires",
+      "swift_struct" : "WhenPresentoptionsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when askProceeding fires",
+      "swift_struct" : "WhenAskproceedingFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when choiceGate fires",
+      "swift_struct" : "WhenChoicegateFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when userDecision fires",
+      "swift_struct" : "WhenUserdecisionFires"
+    }
+  ]
+}

@@ -1,0 +1,221 @@
+# brain.merconfig — shared vocabulary for the gbrain skill corpus.
+#
+# This is the single always-required artifact a gbrain SKILL.md needs when it
+# is renamed to `.meri`: it declares the brain domain (kinds + enums), the
+# recurring constants, the tool families the natural-language phrases resolve
+# against, and a library of `To …:` phrases that wrap those tools so skill
+# bodies read as plain English while lowering to deterministic invokes.
+#
+# Literal shell commands inside skills (fenced ```bash blocks and inline
+# backticked `gbrain …` commands) lower to the built-in `shell.run` subprocess
+# tool and need NO declaration here. Only the natural-language phrases below
+# need vocabulary support.
+
+=== vocabulary ===
+
+# --- Core knowledge-graph kinds ---
+
+A page is a kind of thing.
+A person is a kind of thing.
+A company is a kind of thing.
+A meeting is a kind of event.
+A concept is a kind of thing.
+An idea is a kind of thing.
+An original is a kind of artifact.
+A deal is a kind of thing.
+A link is a kind of thing.
+A source is a kind of thing.
+A timeline entry is a kind of event.
+
+# --- Operational kinds ---
+
+A report is a kind of artifact.
+A job is a kind of process.
+A task is a kind of process.
+A signal is a kind of signal.
+A transcript is a kind of artifact.
+A webhook event is a kind of event.
+A schema pack is a kind of thing.
+A recipe is a kind of thing.
+A verdict is a kind of verdict.
+A query is a kind of thing.
+A brain is a kind of system.
+An entity is a kind of thing.
+An attendee is a kind of person.
+An input is a kind of thing.
+
+# --- Properties (plain) ---
+
+A page has a title, a slug, a body, and an author.
+A person has a name, a headline, an email, and a company.
+A company has a name, a domain, and a description.
+A meeting has a title, a date, and a transcript.
+An entity has a name and a type.
+A signal has a name and a phrasing.
+A job has an id and a status.
+A report has a title and a body.
+
+# --- Properties (enumerations) ---
+
+A page has a priority, which is one of (p0, p1, p2, p3).
+A page has an enrichment tier, which is one of (tier1, tier2, tier3).
+A signal has a tier, which is one of (tier1, tier2, tier3).
+A verdict has a status, which is one of (verified, partial, unverifiable, misattributed, retracted).
+A job has a state, which is one of (queued, running, succeeded, failed, cancelled, paused).
+A brain has an upgrade mode, which is one of (off, auto, notify).
+A query has a mode, which is one of (fast, deep, exhaustive).
+
+# --- Phrase library: natural-language steps that wrap the tool families ---
+# Skill bodies say these in plain English; each lowers to a deterministic
+# invoke against the declared tools above.
+
+To search the brain for a query:
+  bind results = invoke search brain with query = the query.
+
+To get a page by a slug:
+  bind page = invoke get page with slug = the slug.
+
+To create a page titled a title:
+  bind page = invoke create page with title = the title.
+
+To update a page at a slug:
+  bind page = invoke update page with slug = the slug.
+
+To enrich an entity:
+  bind enriched = invoke enrich entity with entity = the entity.
+
+To add a back-link from a source to a target:
+  invoke add link with source = the source, target = the target.
+
+To capture a note:
+  bind captured = invoke capture note with note = the note.
+
+To recall memories for a query:
+  bind memories = invoke recall memory with query = the query.
+
+To submit a job of a kind:
+  bind job = invoke submit job with kind = the kind.
+
+To research a topic:
+  bind report = invoke research topic with topic = the topic.
+
+To verify a claim:
+  bind verdict = invoke verify claim with claim = the claim.
+
+To publish a page at a slug:
+  invoke publish page with slug = the slug.
+
+=== constants ===
+
+The default enrichment tier is "tier2".
+The default priority is "p2".
+The notability threshold is 20.
+The enrichment window in days is 7.
+
+=== tools ===
+
+# Page / knowledge-graph family ------------------------------------------------
+
+Search Brain
+============
+-- Search the brain knowledge graph for pages matching a query.
+~ page.search(query: String) : List
+
+Get Page
+========
+-- Fetch a single page by slug or id.
+~ page.get(slug: String) : Page
+
+Create Page
+===========
+-- Create a new page in the brain.
+~ page.create(title: String) : Page
+
+Update Page
+===========
+-- Update an existing page's body.
+~ page.update(slug: String) : Page
+
+List Pages
+==========
+-- List pages, optionally filtered.
+~ page.list(filter: String) : List
+
+# Link family ------------------------------------------------------------------
+
+Add Link
+========
+-- Create a typed link between two pages.
+~ link.add(source: String, target: String) : Boolean
+
+Get Backlinks
+=============
+-- Return the back-links pointing at a page.
+~ link.backlinks(slug: String) : List
+
+# Timeline family --------------------------------------------------------------
+
+Add Timeline Entry
+==================
+-- Append an entry to an entity's timeline.
+~ timeline.add(entity: String, entry: String) : Boolean
+
+# Capture / recall -------------------------------------------------------------
+
+Capture Note
+============
+-- Capture a raw note into the brain inbox.
+~ capture(note: String) : Page
+
+Recall Memory
+=============
+-- Recall relevant memories for a query.
+~ recall(query: String) : List
+
+# Enrichment -------------------------------------------------------------------
+
+Enrich Entity
+=============
+-- Enrich a person or company page from external sources.
+~ enrich(entity: String) : Page
+
+Assess Notability
+=================
+-- Score how notable an entity is (deterministic heuristic).
+~ assess.notability(entity: String) : String
+
+# Jobs family ------------------------------------------------------------------
+
+Submit Job
+==========
+-- Submit a background job and return its id.
+~ jobs.submit(kind: String) : String
+
+Get Job Status
+==============
+-- Get the current status of a job.
+~ jobs.status(id: String) : String
+
+# Research ---------------------------------------------------------------------
+
+Research Topic
+==============
+-- Run a deterministic research pass over a topic.
+~ research(topic: String) : Report
+
+Verify Claim
+============
+-- Verify a factual claim and return a verdict.
+~ verify(claim: String) : String
+
+# Publishing -------------------------------------------------------------------
+
+Publish Page
+============
+-- Publish a page to its destination.
+~ publish(slug: String) : Boolean
+
+Make PDF
+========
+-- Render a page to a PDF artifact.
+~ makePDF(slug: String) : String

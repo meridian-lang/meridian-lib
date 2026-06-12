@@ -1,0 +1,625 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Route content to specialized ingestion skills. Detects input type and delegates.",
+    "mutating" : "true",
+    "name" : "ingest",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 31,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 41,
+        "text" : "Citation Requirements (MANDATORY)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 52,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 61,
+        "text" : "Entity Detection on Every Message"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 66,
+        "text" : "Protocol"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 77,
+        "text" : "What counts as notable"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 85,
+        "text" : "What to capture from the user's own thinking"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 96,
+        "text" : "Media Workflows"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 101,
+        "text" : "Articles & Web Content"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 117,
+        "text" : "Videos & Podcasts"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 140,
+        "text" : "PDFs & Documents"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 153,
+        "text" : "Screenshots & Images"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 165,
+        "text" : "Meeting Transcripts"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 188,
+        "text" : "Social Media Content"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 202,
+        "text" : "Raw Source Preservation"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 234,
+        "text" : "Test Before Bulk"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 248,
+        "text" : "Quality Rules"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 259,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 267,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 285,
+        "text" : "Tools Used"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 107,
+        "text" : "Extract"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 108,
+        "text" : "Summarize"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 109,
+        "text" : "Extract entities"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 111,
+        "text" : "Analyze for the user"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 125,
+        "text" : "Analyze"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 147,
+        "text" : "Summarize"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 159,
+        "text" : "If tweet screenshot"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 160,
+        "text" : "If article screenshot"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 194,
+        "text" : "If images present"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 195,
+        "text" : "Summarize"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 254,
+        "text" : "Link types"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 255,
+        "text" : "Source attribution"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 256,
+        "text" : "Back-links"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 257,
+        "text" : "Filing"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 31,
+        "lines" : [
+          "Every fact written to a brain page carries an inline `[Source: ...]` citation with date and provenance",
+          "Every entity mention creates a back-link from the entity's page to the page mentioning them (Iron Law)",
+          "Raw sources are preserved for provenance via `gbrain files upload-raw` with automatic size routing",
+          "State sections are rewritten with current best understanding, never appended to",
+          "Entity detection fires on every inbound message; notable entities get pages or updates"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Citation Requirements (MANDATORY)",
+        "line" : 41,
+        "lines" : [
+          "Every fact written to a brain page must carry an inline `[Source: ...]` citation",
+          "**User's statements:** `[Source: User, {context}, YYYY-MM-DD]`",
+          "**Meeting data:** `[Source: Meeting \"{title}\", YYYY-MM-DD]`",
+          "**Email\/message:** `[Source: email from {name} re: {subject}, YYYY-MM-DD]`",
+          "**Web content:** `[Source: {publication}, {URL}, YYYY-MM-DD]`",
+          "**Social media:** `[Source: X\/@handle, YYYY-MM-DD](URL)` (include link)",
+          "**Synthesis:** `[Source: compiled from {sources}]`"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 52,
+        "lines" : [
+          "use judgment to ingest the source and update the brain:",
+          "Parse the source to extract people, companies, dates, and events",
+          "For each entity mentioned, read its page and update compiled truth, or create a new page after the notability gate",
+          "Append a timeline entry for each event with date, summary, and source citation",
+          "Create cross-reference links for every entity pair mentioned together",
+          "Back-link every mentioned entity's page to this page, and merge the event onto each entity's timeline"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Entity Detection on Every Message",
+        "line" : 61,
+        "lines" : [
+          "Production agents should detect entity mentions on EVERY inbound message. This is",
+          "the signal detection loop that makes the brain compound over time"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Protocol",
+        "line" : 66,
+        "lines" : [
+          "use judgment to detect and file entities on every message:",
+          "Scan the message for mentions of people, companies, concepts, and original thinking",
+          "For each entity, search the brain; load and update an existing page, or create a new page after the notability gate",
+          "Detect and enrich alongside the response so the conversation is never blocked",
+          "codeblock:bash:Z2JyYWluIHN5bmMgLS1uby1wdWxsIC0tbm8tZW1iZWQ="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "What counts as notable",
+        "line" : 77,
+        "lines" : [
+          "People the user interacts with or discusses (not random mentions)",
+          "Companies relevant to the user's work or interests",
+          "Concepts or frameworks the user references or creates",
+          "The user's own original thinking (ideas, theses, observations) -- highest value",
+          "See `skills\/_brain-filing-rules.md` for the full notability gate"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "What to capture from the user's own thinking",
+        "line" : 85,
+        "lines" : [
+          "Original thinking is the most valuable signal. Capture exact phrasing -- the user's",
+          "language IS the insight. Don't paraphrase",
+          "Novel observations or theses",
+          "Frameworks, mental models, heuristics",
+          "Connections between ideas that others miss",
+          "Contrarian positions with reasoning",
+          "Strong reactions to external stimuli (what triggered it and why)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Media Workflows",
+        "line" : 96,
+        "lines" : [
+          "Content the user encounters should be captured in the brain. File by PRIMARY",
+          "SUBJECT, not by format (see `skills\/_brain-filing-rules.md`)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Articles & Web Content",
+        "line" : 101,
+        "lines" : [
+          "**Input:** URL shared by user, or article mentioned in conversation",
+          "**Process:**",
+          "Fetch content (`web_fetch` or equivalent)",
+          "Extract: title, author, publication, date, full text",
+          "Summarize: executive summary + key arguments (not a rehash)",
+          "Extract entities: people, companies, concepts mentioned",
+          "**Save raw source** for provenance (see Raw Source Preservation below)",
+          "Analyze for the user: don't just summarize. What's interesting given what you",
+          "know about them? Flag connections, contradictions, content opportunities",
+          "**Write to:** appropriate directory per filing rules (about a person -> `people\/`,",
+          "about a company -> `companies\/`, reusable framework -> `concepts\/`, raw data -> `sources\/`)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Videos & Podcasts",
+        "line" : 117,
+        "lines" : [
+          "**Input:** URL (YouTube, podcast, etc.) or local audio\/video file",
+          "**Process:**",
+          "Get transcript -- speaker-diarized if possible (services like Diarize.io provide",
+          "speaker-labeled, word-level timing)",
+          "**Save raw transcript** (both JSON and human-readable TXT)",
+          "Analyze: executive summary, key ideas, key quotes with speaker attribution,",
+          "notable stories\/anecdotes, people and companies mentioned",
+          "Extract and cross-reference all entities mentioned",
+          "**HARD RULE:** every video\/podcast brain page MUST link to the raw diarized",
+          "transcript. A page without transcript links is incomplete",
+          "**Write to:** `media\/videos\/` or `media\/podcasts\/` with back-links to all entities",
+          "**Quality bar:**",
+          "Compelling headline (not \"This video discusses...\")",
+          "Executive summary that makes you want to watch\/listen",
+          "Key Ideas as actual insights, not topic labels",
+          "Verbatim quotes with real speaker names (not \"speaker_0\")",
+          "All entities extracted with context and back-linked"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "PDFs & Documents",
+        "line" : 140,
+        "lines" : [
+          "**Input:** File path or URL",
+          "**Process:**",
+          "Extract text (OCR if scanned\/image PDF)",
+          "**Save raw source** for provenance",
+          "Summarize: executive summary + key sections + notable data",
+          "Extract entities",
+          "Cross-reference from entity pages",
+          "**Write to:** per filing rules (file by primary subject, not format)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Screenshots & Images",
+        "line" : 153,
+        "lines" : [
+          "**Input:** Image file",
+          "**Process:**",
+          "Analyze content (OCR for text-heavy images, description for photos)",
+          "If tweet screenshot: extract text, author, date, route to social media workflow",
+          "If article screenshot: extract text, route to article workflow",
+          "If data\/chart: extract data points, describe findings",
+          "**Write to:** depends on content -- route to the appropriate workflow above"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Meeting Transcripts",
+        "line" : 165,
+        "lines" : [
+          "**Input:** Transcript from meeting recording service, or manual notes",
+          "**Process:**",
+          "Pull full transcript (source of truth -- AI summaries are medium-low trust)",
+          "**Save raw transcript** for provenance",
+          "Write meeting page with YOUR analysis above the line, raw transcript below",
+          "**Entity propagation (MANDATORY):** for each attendee and company discussed:",
+          "Update their brain page State section if new info surfaced",
+          "Append to their Timeline with link to the meeting page",
+          "Create page if person\/company is notable and has no page yet",
+          "A meeting is NOT fully ingested until all entity pages are updated",
+          "**Write to:** `meetings\/YYYY-MM-DD-short-description.md`",
+          "**What makes a good meeting page:**",
+          "Reveals the real crux, not a bullet dump",
+          "Connects to existing brain pages (people, companies, deals)",
+          "Flags what changed (status, decisions, new info)",
+          "Names tension or what was left unsaid",
+          "Captures actual dynamic, not performative summary"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Social Media Content",
+        "line" : 188,
+        "lines" : [
+          "**Input:** Tweet, thread, or social media post",
+          "**Process:**",
+          "Fetch full content (thread, quote tweets, context)",
+          "If images present: OCR via vision model for full text extraction",
+          "Summarize: what's being said, why it matters, who's involved",
+          "Extract entities and update brain pages",
+          "Include direct link to the original post (MANDATORY for citations)",
+          "**Write to:** `media\/x\/` for daily aggregation, or entity-specific directories",
+          "if the post is primarily about a person\/company"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Raw Source Preservation",
+        "line" : 202,
+        "lines" : [
+          "Every ingested item must have its raw source preserved for provenance",
+          "**Use `gbrain files upload-raw` for automatic size routing:**",
+          "codeblock:bash:Z2JyYWluIGZpbGVzIHVwbG9hZC1yYXcgPGZpbGU+IC0tcGFnZSA8cGFnZS1zbHVnPiAtLXR5cGUgPHR5cGU+",
+          "**< 100 MB text\/PDF**: stays in git (brain repo `.raw\/` sidecar directories)",
+          "**>= 100 MB OR media** (video, audio, images): uploaded to cloud storage",
+          "via TUS resumable upload, `.redirect.yaml` pointer left in the brain repo",
+          "The `.redirect.yaml` pointer format:",
+          "codeblock:yaml:dGFyZ2V0OiBzdXBhYmFzZTovL2JyYWluLWZpbGVzL3BhZ2Utc2x1Zy9maWxlbmFtZS5tcDQKYnVja2V0OiBicmFpbi1maWxlcwpzdG9yYWdlX3BhdGg6IHBhZ2Utc2x1Zy9maWxlbmFtZS5tcDQKc2l6ZTogNTI0Mjg4MDAwCnNpemVfaHVtYW46IDUwMCBNQgpoYXNoOiBzaGEyNTY6YWJjMTIzLi4uCm1pbWU6IHZpZGVvL21wNAp1cGxvYWRlZDogMjAyNi0wNC0xMVQuLi4KdHlwZTogdHJhbnNjcmlwdA==",
+          "**Accessing stored files:**",
+          "`gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing\/sharing",
+          "`gbrain files restore <dir>` -- download back to local from cloud storage",
+          "Use `put_raw_data` in gbrain to store raw API responses and metadata (JSON, not binary)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Test Before Bulk",
+        "line" : 234,
+        "lines" : [
+          "When processing multiple items (batch video ingestion, bulk meeting processing, etc.):",
+          "**Test on 3-5 items first.** Run in test mode if available",
+          "**Read the actual output.** Is the quality good? Are titles compelling (not",
+          "\"This video discusses...\")? Are entities extracted and back-linked? Is the",
+          "format clean?",
+          "**Fix what's wrong** in the approach\/skill, not via one-off patches",
+          "**Only then: bulk execute** with throttling, commits every 5-10 items",
+          "The marginal cost of testing 3 items first is near zero. The cost of cleaning",
+          "up 100 bad pages is enormous"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Quality Rules",
+        "line" : 248,
+        "lines" : [
+          "Executive summary in compiled_truth must be updated, not just timeline appended",
+          "State section is REWRITTEN, not appended to. Current best understanding only",
+          "Timeline entries are reverse-chronological (newest first)",
+          "Every person\/company mentioned gets a page if notable (see filing rules)",
+          "Link types: knows, works_at, invested_in, founded, met_at, discussed",
+          "Source attribution: every timeline entry includes [Source: ...] citation",
+          "Back-links: every entity mention creates a back-link (Iron Law)",
+          "Filing: file by primary subject, not format or source (see filing rules)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 259,
+        "lines" : [
+          "**Appending to State sections.** State is rewritten with the current best understanding on every update. Append-only State sections grow stale and contradictory",
+          "**Ingesting without back-links.** An unlinked mention is a broken brain. Every entity mentioned must have a back-link from their page to the page mentioning them",
+          "**Skipping raw source preservation.** Every ingested item must have its raw source preserved. A brain page without provenance is unverifiable",
+          "**Bulk processing without sample test.** Test on 3-5 items first. Fix quality issues in the approach, not via one-off patches",
+          "**Paraphrasing the user's original thinking.** The user's exact language IS the insight. Capture verbatim phrasing for ideas, theses, and frameworks"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 267,
+        "lines" : [
+          "codeblock:plain:SU5HRVNURUQ6IFt0aXRsZV0KPT09PT09PT09PT09PT09PT09CgpQYWdlOiBbc2x1Z10KVHlwZTogW3BlcnNvbiAvIGNvbXBhbnkgLyBtZWV0aW5nIC8gbWVkaWEgLyBjb25jZXB0XQpTb3VyY2U6IFtzb3VyY2UgZGVzY3JpcHRpb25dCgpFbnRpdGllcyBkZXRlY3RlZDogTgotIFtlbnRpdHldIC0+IFtjcmVhdGVkIC8gdXBkYXRlZF0gKFtzbHVnXSkKCkJhY2stbGlua3MgY3JlYXRlZDogTgpUaW1lbGluZSBlbnRyaWVzOiBOClJhdyBzb3VyY2U6IFtwcmVzZXJ2ZWQgYXQgcGF0aCAvIHVwbG9hZGVkIHRvIGNsb3VkXQ=="
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Tools Used",
+        "line" : 285,
+        "lines" : [
+          "Read a page from gbrain (get_page)",
+          "Store\/update a page in gbrain (put_page)",
+          "Add a timeline entry in gbrain (add_timeline_entry)",
+          "Link entities in gbrain (add_link)",
+          "List tags for a page (get_tags)",
+          "Tag a page in gbrain (add_tag)",
+          "Store raw data in gbrain (put_raw_data)",
+          "Check backlinks in gbrain (get_backlinks)"
+        ],
+        "role" : "inert"
+      }
+    ],
+    "tools" : "search\nget_page\nput_page\nadd_link\nadd_timeline_entry\nsync_brain",
+    "triggers" : "\"ingest this\"\n\"save this to brain\"\n\"process this meeting\"",
+    "writes_pages" : "true",
+    "writes_to" : "people\/\ncompanies\/\nconcepts\/\nmeetings\/\nsources\/"
+  },
+  "source_files" : [
+    "ingest.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 54,
+      "swift_line" : 502
+    },
+    {
+      "meridian_line" : 68,
+      "swift_line" : 512
+    },
+    {
+      "meridian_line" : 73,
+      "swift_line" : 523
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 564
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 569
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 610
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 615
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 656
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 661
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "ingest a input",
+      "swift_struct" : "IngestInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when ingestThis fires",
+      "swift_struct" : "WhenIngestthisFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when saveThisBrain fires",
+      "swift_struct" : "WhenSavethisbrainFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when processThisMeeting fires",
+      "swift_struct" : "WhenProcessthismeetingFires"
+    }
+  ]
+}

@@ -1,0 +1,323 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Universal migration from Obsidian, Notion, Logseq, markdown, CSV, JSON, Roam",
+    "mutating" : "true",
+    "name" : "migrate",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 21,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 29,
+        "text" : "Supported Sources"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 41,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 50,
+        "text" : "Obsidian Migration"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 70,
+        "text" : "Notion Migration"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 78,
+        "text" : "CSV Migration"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 86,
+        "text" : "Verification"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 95,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 102,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 128,
+        "text" : "Tools Used"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 65,
+        "text" : "Obsidian-specific"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 72,
+        "text" : "Export from Notion"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 88,
+        "text" : "After any migration"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 93,
+        "text" : "Test search"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 21,
+        "lines" : [
+          "Source data is never modified or deleted; migration is additive only",
+          "Every migrated page is verified round-trip: written to gbrain, read back, spot-checked",
+          "Cross-references from the source system (wikilinks, block refs, tags) are converted to gbrain equivalents",
+          "Migration is tested on a sample (5-10 files) before bulk execution",
+          "Post-migration health check confirms page count, link integrity, and embedding coverage"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Supported Sources",
+        "line" : 29,
+        "lines" : [
+          "| Source | Format | Strategy |",
+          "|--------|--------|----------|",
+          "| Obsidian | Markdown + `[[wikilinks]]` | Direct import, convert wikilinks to gbrain links |",
+          "| Notion | Exported markdown or CSV | Parse Notion's export structure |",
+          "| Logseq | Markdown with `((block refs))` | Convert block refs to page links |",
+          "| Plain markdown | Any .md directory | Import directory into gbrain directly |",
+          "| CSV | Tabular data | Map columns to frontmatter fields |",
+          "| JSON | Structured data | Map keys to page fields |",
+          "| Roam | JSON export | Convert block structure to pages |"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 41,
+        "lines" : [
+          "use judgment to migrate an external source into the brain:",
+          "Assess the source format, file count, and structure",
+          "Plan how source fields map to gbrain fields (type, title, tags, compiled truth, timeline)",
+          "Test with a sample of five to ten files and verify by reading them back",
+          "Bulk import the full directory, then verify health and spot-check pages",
+          "Extract cross-references and create typed links"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Obsidian Migration",
+        "line" : 50,
+        "lines" : [
+          "Import the vault directory into gbrain (Obsidian vaults are markdown directories)",
+          "Wire the graph with native wikilink support (v0.12.1+):",
+          "codeblock:bash:Z2JyYWluIGV4dHJhY3QgbGlua3MgLS1zb3VyY2UgZGIgLS1kcnktcnVuIHwgaGVhZCAtMjAgICAgIyBwcmV2aWV3CmdicmFpbiBleHRyYWN0IGxpbmtzIC0tc291cmNlIGRiICAgICAgICAgICAgICAgICAgICAgICAgICMgY29tbWl0",
+          "`extract links` natively parses `[[relative\/path]]` and `[[relative\/path|Display Text]]`",
+          "alongside standard `[text](page.md)` markdown syntax. Ancestor-search resolution handles",
+          "wiki KBs where authors omit one or more leading `..\/` prefixes. The `.md` suffix is",
+          "inferred automatically for wikilinks",
+          "Obsidian-specific:",
+          "Tags (`#tag`) become gbrain tags",
+          "Frontmatter properties map to gbrain frontmatter",
+          "Attachments (images, PDFs) are noted but handled separately via file storage"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Notion Migration",
+        "line" : 70,
+        "lines" : [
+          "Export from Notion: Settings > Export > Markdown & CSV",
+          "Notion exports nested directories with UUIDs in filenames",
+          "Strip UUIDs from filenames for clean slugs",
+          "Map Notion's database properties to frontmatter",
+          "Import the cleaned directory into gbrain"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "CSV Migration",
+        "line" : 78,
+        "lines" : [
+          "For tabular data (e.g., CRM exports, contact lists):",
+          "For each row in the CSV, create a page with column values as frontmatter",
+          "Use a designated column as the slug (e.g., name)",
+          "Use another column as compiled_truth (e.g., notes)",
+          "Store each page in gbrain"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Verification",
+        "line" : 86,
+        "lines" : [
+          "After any migration:",
+          "Check gbrain statistics to verify page count matches source",
+          "Check gbrain health for orphans and missing embeddings",
+          "Export pages from gbrain for round-trip verification",
+          "Spot-check 5-10 pages by reading them from gbrain",
+          "Test search: search gbrain for \"someone you know is in the data\""
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 95,
+        "lines" : [
+          "**Bulk import without sample test.** Never import the full dataset before verifying with 5-10 files. The cost of cleaning up hundreds of bad pages is enormous",
+          "**Destroying source data.** Migration is additive. Never modify, move, or delete the source files",
+          "**Ignoring cross-references.** Wikilinks, block refs, and tags from the source system must be converted to gbrain equivalents. Dropping them loses the knowledge graph",
+          "**Skipping verification.** A migration without post-import health check, page count comparison, and spot-check reads is incomplete"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 102,
+        "lines" : [
+          "codeblock:plain:TUlHUkFUSU9OIFJFUE9SVCAtLSBbc291cmNlXSAtPiBHQnJhaW4KPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CgpTb3VyY2U6IFtmb3JtYXRdIChbZmlsZSBjb3VudF0gZmlsZXMsIFtzaXplXSkKTWFwcGluZzogW2ZpZWxkIG1hcHBpbmcgc3VtbWFyeV0KClNhbXBsZSBUZXN0IChOIGZpbGVzKToKLSBJbXBvcnRlZDogTi9OCi0gUm91bmQtdHJpcCB2ZXJpZmllZDogTi9OCi0gQ3Jvc3MtcmVmcyBjb252ZXJ0ZWQ6IE4KCkJ1bGsgSW1wb3J0OgotIFRvdGFsIGltcG9ydGVkOiBOCi0gU2tpcHBlZCAoZHVwbGljYXRlcy9lcnJvcnMpOiBOCi0gTGlua3MgY3JlYXRlZDogTgotIFRhZ3MgbWlncmF0ZWQ6IE4KClZlcmlmaWNhdGlvbjoKLSBQYWdlIGNvdW50IG1hdGNoOiBbeWVzL25vXQotIEhlYWx0aCBjaGVjazogW3Bhc3MvZmFpbF0KLSBTZWFyY2ggdGVzdDogW3F1ZXJ5XSAtPiBbcmVzdWx0IGNvdW50XSBoaXRz"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Tools Used",
+        "line" : 128,
+        "lines" : [
+          "Store\/update pages in gbrain (put_page)",
+          "Read pages from gbrain (get_page)",
+          "Link entities in gbrain (add_link)",
+          "Tag pages in gbrain (add_tag)",
+          "Get gbrain statistics (get_stats)",
+          "Check gbrain health (get_health)",
+          "Search gbrain (query)"
+        ],
+        "role" : "inert"
+      }
+    ],
+    "tools" : "put_page\nsearch\nadd_link\nadd_tag\nsync_brain",
+    "triggers" : "\"migrate from\"\n\"import from obsidian\"\n\"import from notion\""
+  },
+  "source_files" : [
+    "migrate.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 43,
+      "swift_line" : 500
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 541
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 546
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 587
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 592
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 633
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 638
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "migrate a input",
+      "swift_struct" : "MigrateInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when migrate fires",
+      "swift_struct" : "WhenMigrateFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when importObsidian fires",
+      "swift_struct" : "WhenImportobsidianFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when importNotion fires",
+      "swift_struct" : "WhenImportnotionFires"
+    }
+  ]
+}

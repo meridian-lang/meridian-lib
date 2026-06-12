@@ -1,0 +1,191 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Create new skills following the GBrain conformance standard. Generates SKILL.md\nwith frontmatter, Contract, Phases, Output Format, and Anti-Patterns. Checks\nMECE against existing skills. Updates manifest and resolver.",
+    "mutating" : "true",
+    "name" : "skill-creator",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 20,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 29,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 41,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 45,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 22,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 24,
+        "text" : "MECE check"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 20,
+        "lines" : [
+          "This skill guarantees:",
+          "New skill follows conformance standard (frontmatter + required sections)",
+          "MECE check: no overlap with existing skills' triggers",
+          "Manifest.json updated",
+          "RESOLVER.md updated with routing entry",
+          "Skill passes conformance tests (`bun test test\/skills-conformance.test.ts`)"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 29,
+        "lines" : [
+          "use judgment to create a new skill:",
+          "Identify the missing capability or user intent that has no skill",
+          "Run a MECE check against the manifest and resolver, extending an existing skill rather than duplicating coverage",
+          "Create the SKILL.md from the standard template with frontmatter, Contract, Phases, Output Format, and Anti-Patterns",
+          "Add the skill to the manifest and to the resolver routing table",
+          "codeblock:bash:YnVuIHRlc3QgdGVzdC9za2lsbHMtY29uZm9ybWFuY2UudGVzdC50cw=="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 41,
+        "lines" : [
+          "New `skills\/{name}\/SKILL.md` file + updated manifest + updated resolver"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 45,
+        "lines" : [
+          "Creating a skill that overlaps with an existing one (violates MECE)",
+          "Skipping the MECE check against existing skills",
+          "Creating a skill without triggers in frontmatter",
+          "Not updating manifest.json and RESOLVER.md",
+          "Creating a skill without an Anti-Patterns section"
+        ],
+        "role" : "prohibitions"
+      }
+    ],
+    "tools" : "search\nlist_pages",
+    "triggers" : "\"create a skill\"\n\"new skill\"\n\"improve this skill\"",
+    "version" : "1.0.0"
+  },
+  "source_files" : [
+    "skill_creator.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 31,
+      "swift_line" : 502
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 513
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 554
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 559
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 600
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 605
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 646
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 651
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "skill-creator a input",
+      "swift_struct" : "SkillCreatorInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when createSkill fires",
+      "swift_struct" : "WhenCreateskillFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when newSkill fires",
+      "swift_struct" : "WhenNewskillFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when improveThisSkill fires",
+      "swift_struct" : "WhenImprovethisskillFires"
+    }
+  ]
+}

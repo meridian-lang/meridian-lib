@@ -1,0 +1,441 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Structured data research: search sources, extract structured data,\narchive raw sources, maintain canonical tracker pages, deduplicate.\nParameterized via YAML recipes for investor updates, donations,\ncompany updates, or any email-to-structured-data pipeline.",
+    "mutating" : "true",
+    "name" : "data-research",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 34,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 41,
+        "text" : "When to Use"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 48,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 50,
+        "text" : "Phase 1: Define Research Recipe"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 60,
+        "text" : "Phase 2: Search Sources"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 68,
+        "text" : "Phase 3: Classify"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 74,
+        "text" : "Phase 4: Extract Structured Data"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 85,
+        "text" : "Phase 5: Archive Raw Sources"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 92,
+        "text" : "Phase 6: Deduplicate"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 99,
+        "text" : "Phase 7: Update Canonical Tracker + Backlink"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 107,
+        "text" : "Built-In Recipes"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 115,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 122,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 136,
+        "text" : "Conventions"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 5,
+        "text" : "Structured data research"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 53,
+        "text" : "Pick a built-in recipe"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 54,
+        "text" : "Define a custom recipe with"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 79,
+        "text" : "When summarizing batch results"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 94,
+        "text" : "Before adding to tracker"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 34,
+        "lines" : [
+          "One skill for any email-to-structured-data pipeline. The only differences",
+          "between tracking investor updates, expenses, and company metrics",
+          "are the **search queries**, **extraction schemas**, and **tracker page format**",
+          "All three use the same 7-phase pipeline with parameterized recipes"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to Use",
+        "line" : 41,
+        "lines" : [
+          "User wants to track structured data from email, web, or API sources",
+          "User says \"research\", \"track\", \"extract from email\", \"build a tracker\"",
+          "User mentions investor updates, donations, company metrics, filings",
+          "User wants to set up recurring data collection (with cron recipe)"
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 48,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 1: Define Research Recipe",
+        "line" : 50,
+        "lines" : [
+          "Ask the user what they want to track. Either:",
+          "Pick a built-in recipe: investor-updates, expense-tracker, company-updates",
+          "Define a custom recipe with: source queries, classification rules, extraction schema,",
+          "tracker page path, tracker format",
+          "Recipes are YAML files at `~\/.gbrain\/recipes\/{name}.yaml`. Use `gbrain research init`"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 2: Search Sources",
+        "line" : 60,
+        "lines" : [
+          "Brain first (maybe we already have this data). Then:",
+          "**Email** via credential gateway: windowed queries (quarterly, monthly if truncated)",
+          "**Web** via search: public filings, press releases, regulatory data",
+          "**APIs**: any structured data source the recipe defines",
+          "**Attachments**: PDF extraction, HTML stripping"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 3: Classify",
+        "line" : 68,
+        "lines" : [
+          "Deterministic first (regex patterns from recipe), LLM fallback",
+          "Log every LLM fallback for future regex improvement (fail-improve loop)",
+          "Skip marketing, newsletters, noise based on recipe's classification rules"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 4: Extract Structured Data",
+        "line" : 74,
+        "lines" : [
+          "**EXTRACTION INTEGRITY RULE:**",
+          "Save raw source immediately (before any extraction)",
+          "Extract fields using deterministic regex first, LLM fallback",
+          "When summarizing batch results: **re-read from saved files**",
+          "Never trust LLM working memory after batch processing",
+          "This prevents a known hallucination bug where batch-processed amounts were",
+          "13\/13 wrong from LLM working memory while saved files were correct"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 5: Archive Raw Sources",
+        "line" : 85,
+        "lines" : [
+          "`put_raw_data` for email bodies, API responses",
+          "`file_upload` for PDF attachments, documents",
+          "Create `.redirect.yaml` pointers for large files in storage",
+          "Every tracker entry must link back to its raw source"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 6: Deduplicate",
+        "line" : 92,
+        "lines" : [
+          "Before adding to tracker:",
+          "Exact match (same key fields) → skip",
+          "Fuzzy match (same entity + date + similar amount within tolerance) → flag for review",
+          "Different amount for same entity+date → add with note (could be correction)"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 7: Update Canonical Tracker + Backlink",
+        "line" : 99,
+        "lines" : [
+          "Parse existing tracker page (markdown table)",
+          "Append new entries in correct section (grouped by year\/quarter\/entity)",
+          "Compute running totals",
+          "Backlink every mentioned entity (person → people\/ page, company → companies\/ page)",
+          "Uses enrichment service for entity pages"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Built-In Recipes",
+        "line" : 107,
+        "lines" : [
+          "Three example recipes ship with GBrain (see `~\/.gbrain\/recipes\/`):",
+          "**investor-updates** — extract MRR, ARR, growth, burn, runway, headcount from investor update emails",
+          "**expense-tracker** — extract amounts, recipients, platforms from receipt emails (subscriptions, services, recurring charges)",
+          "**company-updates** — extract revenue, users, key metrics from portfolio company update emails"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 115,
+        "lines" : [
+          "Trusting LLM working memory for amounts after batch processing (use extraction integrity rule)",
+          "Creating tracker entries without raw source links",
+          "Running without deduplication (leads to double-counted entries)",
+          "Hardcoding source-specific patterns in the pipeline code (use recipes)"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 122,
+        "lines" : [
+          "Brain page at the recipe's `tracker_page` path with markdown tables:",
+          "codeblock:markdown:IyMjIDIwMjYgKCggaW5lcnQgKSkKCnwgRGF0ZSB8IENvbXBhbnkgfCBNUlIgfCBBUlIgfCBHcm93dGggfCBTdGF0dXMgfAp8LS0tLS0tfC0tLS0tLS0tLXwtLS0tLXwtLS0tLXwtLS0tLS0tLXwtLS0tLS0tLXwKfCAyMDI2LTA0LTAxIHwgRXhhbXBsZSBDbyB8ICQxODhLIHwgJDIuM00gfCArMTQuNyUgTW9NIHwgW1NvdXJjZV0obGluaykgfA==",
+          "Each entry links to its raw source. Running totals at the bottom of each section"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Conventions",
+        "line" : 136,
+        "lines" : [
+          "References `skills\/conventions\/quality.md` for citation and back-linking rules"
+        ],
+        "role" : "inert"
+      }
+    ],
+    "tools" : "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry\nput_raw_data\nfile_upload",
+    "triggers" : "\"research\"\n\"track\"\n\"extract from email\"\n\"investor updates\"\n\"donations\"\n\"build a tracker\"\n\"data dig\"",
+    "version" : "1.0.0"
+  },
+  "source_files" : [
+    "data_research.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 1,
+      "swift_line" : 533
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 538
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 579
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 584
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 625
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 630
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 671
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 676
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 717
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 722
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 763
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 768
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 809
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 814
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "data-research a input",
+      "swift_struct" : "DataResearchInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when research fires",
+      "swift_struct" : "WhenResearchFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when track fires",
+      "swift_struct" : "WhenTrackFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when extractEmail fires",
+      "swift_struct" : "WhenExtractemailFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when investorUpdates fires",
+      "swift_struct" : "WhenInvestorupdatesFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when donations fires",
+      "swift_struct" : "WhenDonationsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when buildTracker fires",
+      "swift_struct" : "WhenBuildtrackerFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when dataDig fires",
+      "swift_struct" : "WhenDatadigFires"
+    }
+  ]
+}

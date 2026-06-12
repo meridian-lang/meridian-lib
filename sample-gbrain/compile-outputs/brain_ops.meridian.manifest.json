@@ -1,0 +1,342 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Brain knowledge base operations. The core read\/write cycle: brain-first lookup,\nread-enrich-write loop, source attribution, ambient enrichment, back-linking.\nRead this before any brain interaction.",
+    "mutating" : "true",
+    "name" : "brain-ops",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 37,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 47,
+        "text" : "Iron Law: Back-Linking (MANDATORY)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 53,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 55,
+        "text" : "Phase 1: Brain-First Lookup (MANDATORY)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 67,
+        "text" : "Phase 2: On Every Inbound Signal (READ → ENRICH → WRITE)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 80,
+        "text" : "Phase 2.5: Structured Graph Updates (automatic)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 96,
+        "text" : "Phase 3: On Every Outbound Response (READ → PULL → RESPOND)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 106,
+        "text" : "Phase 4: Ambient Enrichment"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 121,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 126,
+        "text" : "Cross-source citation format (v0.18.0+)"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 145,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 154,
+        "text" : "Tools Used"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 39,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 62,
+        "text" : "Check backlinks"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 63,
+        "text" : "Check timeline"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 88,
+        "text" : "Inferred link types"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 135,
+        "text" : "Rules"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 37,
+        "lines" : [
+          "This skill guarantees:",
+          "Brain is checked BEFORE any external API call (brain-first lookup)",
+          "Every inbound signal triggers the READ → ENRICH → WRITE loop",
+          "Every outbound response checks brain for relevant context",
+          "Source attribution on every fact written (inline `[Source: ...]` citations)",
+          "User's direct statements are highest-authority data",
+          "Back-links maintained on every brain write (Iron Law)"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Iron Law: Back-Linking (MANDATORY)",
+        "line" : 47,
+        "lines" : [
+          "Every mention of a person or company with a brain page MUST create a back-link",
+          "FROM that entity's page TO the page mentioning them. An unlinked mention is a",
+          "broken brain. See `skills\/conventions\/quality.md` for format"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 53,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 1: Brain-First Lookup (MANDATORY)",
+        "line" : 55,
+        "lines" : [
+          "Before using ANY external API to research a person, company, or topic:",
+          "`gbrain search \"name\"` — keyword search for existing pages",
+          "`gbrain query \"natural question about name\"` — hybrid search for context",
+          "`gbrain get <slug>` — if you know the slug, read the full page",
+          "Check backlinks: who references this entity?",
+          "Check timeline: recent events involving this entity",
+          "The brain almost always has something. External APIs fill gaps, not start from scratch"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 2: On Every Inbound Signal (READ → ENRICH → WRITE)",
+        "line" : 67,
+        "lines" : [
+          "Every message, meeting, email, or conversation that references a person or company:",
+          "**Detect entities** — people, companies, deals mentioned",
+          "**Load brain pages** — read existing pages for context before responding",
+          "**Identify new information** — what does this signal tell us that the page doesn't know?",
+          "**Write it back** — update the brain page with new info + timeline entry + source citation",
+          "**Create if missing** — if notable and no page exists, create via enrich skill",
+          "**User's direct statements are the highest-value data source.** Write them to brain",
+          "pages immediately with attribution `[Source: User, YYYY-MM-DD]`"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 2.5: Structured Graph Updates (automatic)",
+        "line" : 80,
+        "lines" : [
+          "Every `put_page` call automatically extracts entity references and writes them",
+          "(refs no longer in the page text) are removed in the same call. This is",
+          "\"auto-link\" reconciliation",
+          "No manual `add_link` calls needed for ordinary page writes",
+          "Inferred link types: `attended` (meeting -> person), `works_at`, `invested_in`,",
+          "`founded`, `advises`, `source` (frontmatter), `mentions` (default)",
+          "The `put_page` MCP response includes `auto_links: { created, removed, errors }`",
+          "so the agent can verify outcomes",
+          "Timeline entries with specific dates still need explicit `gbrain timeline-add`",
+          "(or batch via `gbrain extract timeline --source db`)"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 3: On Every Outbound Response (READ → PULL → RESPOND)",
+        "line" : 96,
+        "lines" : [
+          "Before answering any question about a person, company, or topic:",
+          "**Check the brain** — read relevant pages",
+          "**Pull context** — use compiled truth + recent timeline",
+          "**Respond with context** — the brain makes every answer better",
+          "Don't answer from general knowledge when a brain page exists"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 4: Ambient Enrichment",
+        "line" : 106,
+        "lines" : [
+          "This is not a special mode. This is the default. Everything the user says is an",
+          "ingest event",
+          "Person mentioned → check brain, create\/enrich if needed (spawn background)",
+          "Company mentioned → same",
+          "Link shared → ingest it (delegate to idea-ingest)",
+          "Data shared → delegate to appropriate skill",
+          "**Rules:**",
+          "Never interrupt the conversation to do enrichment",
+          "Spawn sub-agents for anything that would slow down the response",
+          "Never announce \"I'm enriching the brain\" — just do it silently"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 121,
+        "lines" : [
+          "No separate output. Brain-ops is an always-on behavior layer, not a report generator",
+          "The output is updated brain pages and enriched responses"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Cross-source citation format (v0.18.0+)",
+        "line" : 126,
+        "lines" : [
+          "When a brain has multiple sources (wiki, gstack, yc-media, etc.), every",
+          "citation MUST include the source id: `[source-id:slug]`. Example:",
+          "Rules:",
+          "The key is `sources.id` (immutable), never `sources.name` (mutable display)",
+          "Single-source brains still write `[default:slug]` OR may omit the prefix",
+          "for backward compat",
+          "Every page payload returned by `search`, `query`, `get_page`, `list_pages`",
+          "carries `source_id` — always use it when citing, never guess",
+          "If a search result has `source_id: \"gstack\"` and `slug: \"plans\/foo\"`,",
+          "the citation is `[gstack:plans\/foo]`. That's the whole rule"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 145,
+        "lines" : [
+          "Answering questions about people\/companies without checking the brain first",
+          "Using external APIs before checking the brain",
+          "Writing facts without inline `[Source: ...]` citations",
+          "Blocking the response to do enrichment",
+          "Overwriting user's direct statements with lower-authority sources",
+          "Creating brain pages for non-notable entities"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Tools Used",
+        "line" : 154,
+        "lines" : [
+          "`search` — keyword search",
+          "`query` — hybrid vector+keyword search",
+          "`get_page` — read a brain page",
+          "`put_page` — create\/update brain pages",
+          "`add_link` — cross-reference entities",
+          "`add_timeline_entry` — record events",
+          "`get_backlinks` — check who references an entity",
+          "`sync_brain` — sync changes to the index"
+        ],
+        "role" : "inert"
+      }
+    ],
+    "tools" : "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry\nget_backlinks\nsync_brain",
+    "triggers" : "any brain read\/write\/lookup\/citation",
+    "version" : "1.0.0",
+    "writes_pages" : "true",
+    "writes_to" : "people\/\ncompanies\/\ndeals\/\nconcepts\/\nmeetings\/"
+  },
+  "source_files" : [
+    "brain_ops.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 1,
+      "swift_line" : 534
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 539
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "brain-ops a input",
+      "swift_struct" : "BrainOpsInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when anyBrainReadWriteLookup fires",
+      "swift_struct" : "WhenAnybrainreadwritelookupFires"
+    }
+  ]
+}

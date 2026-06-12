@@ -1,0 +1,681 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "brain_first" : "exempt",
+    "description" : "Evolve your brain's schema pack. Add page types, propose new ones from corpus scans, backfill page.type on existing pages, audit pack health. Triggers when an agent notices untyped pages, custom domains needing typed entities (researcher, contract, deposition), or wants to see what types the pack declares.",
+    "name" : "schema-author",
+    "outline" : [
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 60,
+        "text" : "Non-goals (use these other skills instead)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 76,
+        "text" : "Convention"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 82,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 95,
+        "text" : "Tutorial + vision"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 100,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 102,
+        "text" : "Phase 1 — Brain (know which pack is active)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 112,
+        "text" : "Phase 2 — Assess (what does the current pack cover?)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 129,
+        "text" : "Phase 3 — Propose (what types should the pack add?)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 145,
+        "text" : "Phase 4 — Apply (mutate the pack)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 185,
+        "text" : "Phase 5 — Sync (backfill existing pages with the new types)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 203,
+        "text" : "Phase 6 — Verify"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 220,
+        "text" : "Phase 7 — Commit (preserve the change)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 235,
+        "text" : "Outputs"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 243,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 252,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 262,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 293,
+        "text" : "Failure modes"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 155,
+        "text" : "Then add the types one at a time"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 175,
+        "text" : "Validate before sync"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 187,
+        "text" : "Dry-run first"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 287,
+        "text" : "One line per mutation"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 288,
+        "text" : "Stats"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 289,
+        "text" : "Sync"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Non-goals (use these other skills instead)",
+        "line" : 60,
+        "lines" : [
+          "This skill AUTHORS the schema pack (adds page types, link verbs, prefixes,",
+          "flags). For these adjacent jobs, route elsewhere:",
+          "**Filing one specific page** → `skills\/brain-taxonomist\/SKILL.md`. Brain-",
+          "taxonomist routes at WRITE TIME (\"where does this note go?\"). schema-author",
+          "changes the rules at AUTHORING TIME (\"what types and prefixes exist?\")",
+          "**Schema-check as part of EIIRP iteration** → `skills\/eiirp\/SKILL.md`",
+          "already has a schema-check phase. Don't duplicate",
+          "**Just looking up a type's settings** → `gbrain schema explain <type>`",
+          "directly. This skill is for CHANGING the pack, not READING from it",
+          "**Querying who knows about X** → `skills\/expert-routing\/SKILL.md` (or",
+          "`gbrain whoknows` directly). schema-author makes a type expert-routable;",
+          "it does not run the query"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Convention",
+        "line" : 76,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "When to invoke",
+        "line" : 82,
+        "lines" : [
+          "Invoke when the user (or a sibling skill) says any of:",
+          "\"Add a `researcher` type to my schema\"",
+          "\"I have 4000 untyped pages under `meetings\/`\"",
+          "\"My brain doesn't know that `journal-article` is a type\"",
+          "\"Set `paper` to be extractable\"",
+          "\"Propose types from what I've ingested\"",
+          "\"Sync the new types to backfill existing pages\"",
+          "DON'T invoke for \"where does THIS note go\" (use brain-taxonomist) or",
+          "\"who knows about X\" (use expert-routing \/ `gbrain whoknows`)"
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "Tutorial + vision",
+        "line" : 95,
+        "lines" : [
+          "**Why this matters:** [`docs\/what-schemas-unlock.md`](..\/..\/docs\/what-schemas-unlock.md) — 7 killer use cases (4000 invisible meetings made queryable, founder ops brain, research brain, legal brain, team brain, agent-as-co-curator) plus the structural argument for why types matter at query time. Read this before pitching schema authoring to a user — it's the doc that explains the difference between a pile of notes and a brain with structure",
+          "**5-minute walkthrough:** [`docs\/schema-author-tutorial.md`](..\/..\/docs\/schema-author-tutorial.md) — fork the bundled pack, add a researcher type, sync, prove the T1.5 wiring via `gbrain whoknows`. Use placeholder pages so it runs against any brain without affecting real content"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 100,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 1 — Brain (know which pack is active)",
+        "line" : 102,
+        "lines" : [
+          "codeblock:plain:Z2JyYWluIHNjaGVtYSBhY3RpdmUgLS1qc29u",
+          "Output gives you `pack_name`, `version`, `sha8`, `page_types_count`, `source_tier`",
+          "If `source_tier === \"default\"`, the user is on bundled `gbrain-base` and any",
+          "mutation will need a fork first (Phase 4)"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 2 — Assess (what does the current pack cover?)",
+        "line" : 112,
+        "lines" : [
+          "codeblock:plain:Z2JyYWluIHNjaGVtYSBzdGF0cyAtLWpzb24=",
+          "Returns per-type page counts, untyped count, and `dead_prefixes` (pack-",
+          "declared prefixes with zero matching pages — probable mis-declarations)",
+          "If coverage < 90%, there's untyped content worth typing",
+          "codeblock:plain:Z2JyYWluIHNjaGVtYSByZXZpZXctb3JwaGFucyAtLWxpbWl0IDUwIC0tanNvbg==",
+          "Untyped pages drilldown. Look for shared path prefixes (e.g. \"12 of these",
+          "are under `research\/papers\/`\") — those are candidates for a new type"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 3 — Propose (what types should the pack add?)",
+        "line" : 129,
+        "lines" : [
+          "codeblock:plain:Z2JyYWluIHNjaGVtYSBkZXRlY3QgLS1qc29u",
+          "Clusters pages by `source_path` and proposes candidate types. Heuristic",
+          "only (no LLM call)",
+          "codeblock:plain:Z2JyYWluIHNjaGVtYSBzdWdnZXN0IC0tanNvbg==",
+          "LLM-refined candidates with confidence scores. Use the top-3 hit rate as",
+          "the signal for which to promote"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 4 — Apply (mutate the pack)",
+        "line" : 145,
+        "lines" : [
+          "If the active pack is bundled (`gbrain-base` or `gbrain-recommended`),",
+          "fork it first:",
+          "codeblock:plain:Z2JyYWluIHNjaGVtYSBmb3JrIGdicmFpbi1iYXNlIG1pbmUKZ2JyYWluIHNjaGVtYSB1c2UgbWluZQ==",
+          "Then add the types one at a time:",
+          "codeblock:plain:Z2JyYWluIHNjaGVtYSBhZGQtdHlwZSByZXNlYXJjaGVyIFwKICAtLXByaW1pdGl2ZSBlbnRpdHkgXAogIC0tcHJlZml4IHBlb3BsZS9yZXNlYXJjaGVycy8gXAogIC0tZXh0cmFjdGFibGUgXAogIC0tZXhwZXJ0",
+          "For complex multi-mutation refactors (e.g. add a type AND the link verb",
+          "that points to it), agents reaching this surface over MCP can use the",
+          "batched `schema_apply_mutations` op:",
+          "codeblock:jsonl:eyJvcCI6ICJhZGRfdHlwZSIsICJuYW1lIjogInJlc2VhcmNoZXIiLCAicHJpbWl0aXZlIjogImVudGl0eSIsICJwcmVmaXgiOiAicGVvcGxlL3Jlc2VhcmNoZXJzLyIsICJleHRyYWN0YWJsZSI6IHRydWUsICJleHBlcnRfcm91dGluZyI6IHRydWV9Cnsib3AiOiAiYWRkX3R5cGUiLCAibmFtZSI6ICJwYXBlciIsICJwcmltaXRpdmUiOiAiYW5ub3RhdGlvbiIsICJwcmVmaXgiOiAicmVzZWFyY2gvcGFwZXJzLyIsICJleHRyYWN0YWJsZSI6IHRydWV9Cnsib3AiOiAiYWRkX2xpbmtfdHlwZSIsICJuYW1lIjogImF1dGhvcmVkIiwgImluZmVyZW5jZSI6IHsicGFnZV90eXBlIjogInJlc2VhcmNoZXIiLCAidGFyZ2V0X3R5cGUiOiAicGFwZXIifX0=",
+          "Validate before sync:",
+          "codeblock:plain:Z2JyYWluIHNjaGVtYSBsaW50IC0td2l0aC1kYg==",
+          "The `--with-db` flag opts into the 2 DB-aware rules",
+          "(`extractable_empty_corpus`, `mutation_count_anomaly`) that detect",
+          "mis-declared types you'd otherwise discover only at runtime"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 5 — Sync (backfill existing pages with the new types)",
+        "line" : 185,
+        "lines" : [
+          "Dry-run first:",
+          "codeblock:plain:Z2JyYWluIHNjaGVtYSBzeW5jIC0tanNvbg==",
+          "Returns per-prefix `would_apply` counts + sample slugs. If the numbers",
+          "look right:",
+          "codeblock:plain:Z2JyYWluIHNjaGVtYSBzeW5jIC0tYXBwbHk=",
+          "Chunked UPDATE in 1000-row batches; never wedges concurrent writers",
+          "Idempotent on re-run (second `--apply` finds nothing to backfill)"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 6 — Verify",
+        "line" : 203,
+        "lines" : [
+          "codeblock:plain:Z2JyYWluIHNjaGVtYSBzdGF0cyAtLWpzb24=",
+          "Coverage should be ≥95% now. Spot-check the new type:",
+          "codeblock:plain:Z2JyYWluIHdob2tub3dzICJtYWNoaW5lIGxlYXJuaW5nIg==",
+          "If `researcher` was declared `--expert`, results should include",
+          "researcher-typed pages. (The pack-aware wiring at the query path was",
+          "added in v0.40.6.0 — pre-v0.40.6 brains silently ignored custom",
+          "expert-routed types.)"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 7 — Commit (preserve the change)",
+        "line" : 220,
+        "lines" : [
+          "If the pack is in source control, commit:",
+          "codeblock:plain:Y2Qgfi8uZ2JyYWluL3NjaGVtYS1wYWNrcy9taW5lCmdpdCBhZGQgcGFjay5qc29uCmdpdCBjb21taXQgLW0gInNjaGVtYTogYWRkIHJlc2VhcmNoZXIgKyBwYXBlciB0eXBlcyArIGF1dGhvcmVkIGxpbmsiCmdpdCBwdXNo",
+          "If the brain daemon is running (`gbrain serve --http`), other processes",
+          "pick up the change within 1 second (stat-mtime TTL gate in",
+          "loadActivePack — v0.40.6.0 closed the cross-process invalidation gap)"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Outputs",
+        "line" : 235,
+        "lines" : [
+          "Mutated pack file at `~\/.gbrain\/schema-packs\/<name>\/pack.{json,yaml}`",
+          "Audit row in `~\/.gbrain\/audit\/schema-mutations-YYYY-Www.jsonl` per mutation",
+          "`pages.type` backfilled on matching rows after `sync --apply`",
+          "Query paths (`whoknows`, `find_experts`) now route through the new",
+          "expert types"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 243,
+        "lines" : [
+          "**Inputs:** a natural-language request that names a type \/ prefix \/ link verb \/ flag change, OR the result of `gbrain schema review-orphans` showing untyped pages that need a new type",
+          "**Outputs:** mutated pack file at `~\/.gbrain\/schema-packs\/<name>\/pack.{json,yaml}` + an audit row in `~\/.gbrain\/audit\/schema-mutations-YYYY-Www.jsonl` + (if `sync --apply` ran) backfilled `pages.type` on matching rows",
+          "**Side effects:** invalidates the in-process pack cache + the query cache for the source. Other processes pick up the change within 1 second (stat-mtime TTL)",
+          "**Idempotency:** every primitive is idempotent. `add-alias`\/`add-prefix` no-op on duplicate; `sync --apply` finds nothing to update on second run",
+          "**Trust:** CLI = local trust (no scope check). MCP = OAuth `admin` scope (write ops). Audit log captures `actor: mcp:<clientId8>` per mutation",
+          "**Atomicity:** every mutation is wrapped in `withMutation`'s atomic write (`.tmp + fsync + rename`) + per-pack `O_CREAT|O_EXCL` lock. Crash mid-write leaves the original file untouched"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 252,
+        "lines" : [
+          "**Don't mutate `gbrain-base` or `gbrain-recommended`.** Fork first (`gbrain schema fork gbrain-base mine`). These are bundled packs; edits would be lost on upgrade. The mutation primitives refuse with `PACK_READONLY`",
+          "**Don't add a type for a directory you imported once for triage.** Pack types are permanent decisions; one-time imports are not. See `skills\/conventions\/schema-evolution.md` for the <20-pages-don't-pack-codify heuristic",
+          "**Don't add `--expert` to a type with no `path_prefixes`.** The `expert_routing_without_prefix` lint warns about this — expert-routed types with no prefix never match a put_page inference, so `whoknows` silently never surfaces them",
+          "**Don't promote a `schema suggest` candidate without verifying the prefix matches real content.** Run `lint --with-db` before `add-type` to catch prefix collisions pre-write",
+          "**Don't conflate \"filing one page\" with \"evolving the schema.\"** Filing routes via `brain-taxonomist`; schema-author is for authoring the type taxonomy itself. The Non-goals section above names the boundary",
+          "**Don't skip the dry-run before `sync --apply`.** Always run `sync` first to see `would_apply` counts + sample slugs. A pack prefix that matches 50,000 pages is recoverable but slow; verifying first is cheap",
+          "**Don't remove a type without checking references.** `remove-type` refuses with `STILL_REFERENCED` if another type's `aliases` \/ `enrichable_types` \/ `link_types` \/ `frontmatter_links` references it. Break the references first; don't add `--force`"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 262,
+        "lines" : [
+          "When invoked, this skill produces structured output suitable for both human + JSON consumption:",
+          "**Per-mutation result (JSON):**",
+          "codeblock:json:eyJzY2hlbWFfdmVyc2lvbiI6IDEsICJwYWNrIjogIm1pbmUiLCAicGF0aCI6ICIvVXNlcnMvLi4uL3BhY2suanNvbiIsICJmb3JtYXQiOiAianNvbiIsICJwcmV2X3NoYTgiOiAiYTFiMmMzZDQiLCAibmV3X3NoYTgiOiAiZTVmNmc3aDgifQ==",
+          "**Per-batch result (from `schema_apply_mutations` MCP op):**",
+          "codeblock:json:eyJzY2hlbWFfdmVyc2lvbiI6IDEsICJwYWNrIjogIm1pbmUiLCAiYmF0Y2hfaWQiOiAiYmF0Y2gtMTcxNjQ5MTQwMC1hYmMxMjMiLCAibXV0YXRpb25zX2FwcGxpZWQiOiAzLCAicmVzdWx0cyI6IFt7Li4ufSwgey4uLn0sIHsuLi59XX0=",
+          "**Stats JSON (per-source + aggregate + dead-prefix hints):**",
+          "codeblock:json:eyJzY2hlbWFfdmVyc2lvbiI6IDEsICJwYWNrX2lkZW50aXR5IjogIm1pbmVAMS4wLjArYWJjMTIzNDUiLCAiYWdncmVnYXRlIjogeyJ0b3RhbF9wYWdlcyI6IDQ4MjMsICJ0eXBlZF9wYWdlcyI6IDQ3MTAsICJ1bnR5cGVkX3BhZ2VzIjogMTEzLCAiY292ZXJhZ2UiOiAwLjk3NjYsICJieV90eXBlIjogW3sidHlwZSI6ICJwZXJzb24iLCAiY291bnQiOiAyMTA0fSwgLi4uXX0sICJwZXJfc291cmNlIjogWy4uLl0sICJkZWFkX3ByZWZpeGVzIjogW3sidHlwZSI6ICJyZXNlYXJjaGVyIiwgInByZWZpeCI6ICJwZW9wbGUvcmVzZWFyY2hlcnMvIn1dfQ==",
+          "**Sync dry-run JSON:**",
+          "codeblock:json:eyJzY2hlbWFfdmVyc2lvbiI6IDEsICJhcHBseSI6IGZhbHNlLCAicGFja19pZGVudGl0eSI6ICJtaW5lQDEuMC4wK2FiYzEyMzQ1IiwgInBlcl9wcmVmaXgiOiBbeyJ0eXBlIjogIm1lZXRpbmciLCAicHJlZml4IjogIm1lZXRpbmdzLyIsICJ3b3VsZF9hcHBseSI6IDQwMDAsICJzYW1wbGVfc2x1Z3MiOiBbIm1lZXRpbmdzLzIwMjYtMDEtMDEtZm9vIiwgLi4uXSwgImRlYWRfcHJlZml4IjogZmFsc2UsICJhcHBsaWVkIjogMH1dLCAidG90YWxfd291bGRfYXBwbHkiOiA0MDAwLCAidG90YWxfYXBwbGllZCI6IDB9",
+          "**Human output (the agent's final summary):**",
+          "One line per mutation: `Pack: <name> (<format>)` and `Sha8: <prev> → <new>`",
+          "Stats: total pages, typed %, untyped count, per-type breakdown, dead-prefix list",
+          "Sync: per-prefix `would_apply`\/`applied` count + sample slugs in dry-run mode",
+          "On failure, the error envelope follows the standard `StructuredAgentError` shape from `src\/core\/errors.ts`: `{error, code, message, details?}`. Codes from the mutation primitives: `PACK_NOT_FOUND`, `PACK_READONLY`, `PACK_CORRUPT`, `TYPE_EXISTS`, `TYPE_NOT_FOUND`, `INVALID_PRIMITIVE`, `INVALID_RESULT`, `IO_ERROR`, `STILL_REFERENCED`, `LOCK_BUSY`"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Failure modes",
+        "line" : 293,
+        "lines" : [
+          "`PACK_READONLY` → you tried to mutate `gbrain-base` or `gbrain-recommended`. Fork first",
+          "`INVALID_RESULT` → the mutation would create a dangling reference or",
+          "prefix collision. The pre-write lint gate caught it. Read the error",
+          "message; the lint rule name names the problem",
+          "`STILL_REFERENCED` → you tried to remove a type that another type's",
+          "`aliases` \/ `enrichable_types` \/ `link_types` \/ `frontmatter_links`",
+          "references. The error names every reference. Remove those first",
+          "`LOCK_BUSY` → another process is mid-mutation. Wait 30s and retry, or",
+          "pass `--force` if you know the holder is wedged",
+          "`permission_denied` (MCP only) → your OAuth client doesn't have `admin`",
+          "scope. Re-register with `gbrain auth register-client --scopes admin`"
+        ],
+        "role" : "inert"
+      }
+    ],
+    "tools" : "gbrain schema active\ngbrain schema list\ngbrain schema stats\ngbrain schema review-orphans\ngbrain schema detect\ngbrain schema suggest\ngbrain schema lint\ngbrain schema graph\ngbrain schema explain\ngbrain schema fork\ngbrain schema use\ngbrain schema add-type\ngbrain schema remove-type\ngbrain schema update-type\ngbrain schema add-alias\ngbrain schema remove-alias\ngbrain schema add-prefix\ngbrain schema remove-prefix\ngbrain schema add-link-type\ngbrain schema remove-link-type\ngbrain schema set-extractable\ngbrain schema set-expert-routing\ngbrain schema sync\ngbrain schema reload\nmcp:get_active_schema_pack\nmcp:list_schema_packs\nmcp:schema_stats\nmcp:schema_lint\nmcp:schema_graph\nmcp:schema_explain_type\nmcp:schema_review_orphans\nmcp:schema_apply_mutations\nmcp:reload_schema_pack",
+    "triggers" : "\"add a page type\"\n\"add a type to my schema\"\n\"my brain has untyped pages\"\n\"schema isn't matching my notes\"\n\"propose new types from my corpus\"\n\"backfill page types\"\n\"evolve my schema\"\n\"extend the schema pack\"\n\"create a custom type for\"\n\"researcher type\"\n\"make X an expert type\"\n\"schema pack add\"\n\"schema mutate\"\n\"schema sync\"\n\"schema author\"",
+    "writes_pages" : ""
+  },
+  "source_files" : [
+    "schema_author.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 1,
+      "swift_line" : 534
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 539
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 580
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 585
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 626
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 631
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 672
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 677
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 718
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 723
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 764
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 769
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 810
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 815
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 856
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 861
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 902
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 907
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 948
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 953
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 994
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 999
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1040
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1045
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1086
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1091
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1132
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1137
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1178
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1183
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "schema-author a input",
+      "swift_struct" : "SchemaAuthorInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when addPageType fires",
+      "swift_struct" : "WhenAddpagetypeFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when addTypeMySchema fires",
+      "swift_struct" : "WhenAddtypemyschemaFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when myBrainHasUntypedPages fires",
+      "swift_struct" : "WhenMybrainhasuntypedpagesFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when schemaIsnTMatchingMy fires",
+      "swift_struct" : "WhenSchemaisntmatchingmyFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when proposeNewTypesMyCorpus fires",
+      "swift_struct" : "WhenProposenewtypesmycorpusFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when backfillPageTypes fires",
+      "swift_struct" : "WhenBackfillpagetypesFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when evolveMySchema fires",
+      "swift_struct" : "WhenEvolvemyschemaFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when extendSchemaPack fires",
+      "swift_struct" : "WhenExtendschemapackFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when createCustomType fires",
+      "swift_struct" : "WhenCreatecustomtypeFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when researcherType fires",
+      "swift_struct" : "WhenResearchertypeFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when makeXExpertType fires",
+      "swift_struct" : "WhenMakexexperttypeFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when schemaPackAdd fires",
+      "swift_struct" : "WhenSchemapackaddFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when schemaMutate fires",
+      "swift_struct" : "WhenSchemamutateFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when schemaSync fires",
+      "swift_struct" : "WhenSchemasyncFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when schemaAuthor fires",
+      "swift_struct" : "WhenSchemaauthorFires"
+    }
+  ]
+}

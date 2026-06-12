@@ -1,0 +1,233 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Ingest links, articles, tweets, and ideas into the brain. Fetch content, save\nto brain with analysis, create author people page, and cross-link. Use when the\nuser shares a link or says \"read this\", \"save this\", \"think about this\".",
+    "mutating" : "true",
+    "name" : "idea-ingest",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 34,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 49,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 65,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 88,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 36,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 47,
+        "text" : "Format"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 34,
+        "lines" : [
+          "This skill guarantees:",
+          "Every ingested item has a brain page with genuine analysis (not just a summary)",
+          "The author gets a people page (MANDATORY for anyone whose thinking is worth ingesting)",
+          "Cross-links created bidirectionally (source ↔ author, source ↔ mentioned entities)",
+          "Raw source preserved for provenance via `gbrain files upload-raw`",
+          "Every fact has an inline `[Source: ...]` citation",
+          "Filing follows primary subject rules (not format-based)",
+          "Every mention of a person or company with a brain page MUST create a back-link",
+          "Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 49,
+        "lines" : [
+          "codeblock:bash:Z2JyYWluIGZpbGVzIHVwbG9hZC1yYXcgPGZpbGU+IC0tcGFnZSA8c2x1Zz4=",
+          "use judgment to ingest the idea source and connect the content to the brain:",
+          "Fetch the content with the appropriate tool for its type (web fetch, API, or PDF reader)",
+          "Identify the author and create or update their people page, cross-linking both directions",
+          "Save the page filed by primary subject (person, company, concept, or raw source)",
+          "Analyze the content against what the brain knows: active projects, contradictions, and connections",
+          "codeblock:bash:Z2JyYWluIHN5bmM="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 65,
+        "lines" : [
+          "codeblock:markdown:IyB7VGl0bGV9IOKAlCB7QXV0aG9yfQoKKipTb3VyY2U6Kioge1VSTH0KKipBdXRob3I6Kioge0F1dGhvcn0sIHtyb2xlfQoqKlB1Ymxpc2hlZDoqKiB7ZGF0ZX0KKipJbmdlc3RlZDoqKiB7ZGF0ZX0KCiMjIENvbnRleHQgKCggaW5lcnQgKSkKe1doeSB0aGlzIG1hdHRlcnMgbm93LCBjb25uZWN0ZWQgdG8gYnJhaW4ga25vd2xlZGdlfQoKIyMgU3VtbWFyeSAoKCBpbmVydCApKQp7My01IGJ1bGxldCBjb3JlIGFyZ3VtZW50c30KCiMjIEtleSBEYXRhIC8gQ2xhaW1zICgoIGluZXJ0ICkpCntTcGVjaWZpYyBmYWN0cywgbnVtYmVycywgcXVvdGVzfQoKIyMgQW5hbHlzaXMgKCggaW5lcnQgKSkKe0hvdyB0aGlzIGNvbm5lY3RzIHRvIGV4aXN0aW5nIGJyYWluIGtub3dsZWRnZS4gV2hhdCdzIG5ldy4gV2hhdCBjb250cmFkaWN0cy59"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 88,
+        "lines" : [
+          "Just summarizing without connecting to brain knowledge",
+          "Filing everything in `sources\/` (sources is for raw data dumps only)",
+          "Skipping the author people page",
+          "Not cross-linking to mentioned entities",
+          "Ingesting without checking brain first for existing coverage"
+        ],
+        "role" : "prohibitions"
+      }
+    ],
+    "tools" : "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry\nfile_upload",
+    "triggers" : "shares a link or URL\n\"read this\"\n\"save this\"\n\"think about this\"\n\"put this in brain\"",
+    "version" : "1.0.0",
+    "writes_pages" : "true",
+    "writes_to" : "people\/\nconcepts\/\nsources\/"
+  },
+  "source_files" : [
+    "idea_ingest.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 51,
+      "swift_line" : 506
+    },
+    {
+      "meridian_line" : 55,
+      "swift_line" : 516
+    },
+    {
+      "meridian_line" : 61,
+      "swift_line" : 527
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 568
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 573
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 614
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 619
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 660
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 665
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 706
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 711
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 752
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 757
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "idea-ingest a input",
+      "swift_struct" : "IdeaIngestInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when sharesLinkOrUrl fires",
+      "swift_struct" : "WhenShareslinkorurlFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when readThis fires",
+      "swift_struct" : "WhenReadthisFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when saveThis fires",
+      "swift_struct" : "WhenSavethisFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when thinkThis fires",
+      "swift_struct" : "WhenThinkthisFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when putThisInBrain fires",
+      "swift_struct" : "WhenPutthisinbrainFires"
+    }
+  ]
+}

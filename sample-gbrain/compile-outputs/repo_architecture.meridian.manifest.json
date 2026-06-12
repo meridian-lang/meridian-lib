@@ -1,0 +1,205 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Where new brain files go. Decision protocol for filing brain pages by primary\nsubject, not by format or source. Reference for all brain-writing skills.",
+    "mutating" : "false",
+    "name" : "repo-architecture",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 23,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 30,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 38,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 42,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 25,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 34,
+        "text" : "Walk the decision tree"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 40,
+        "text" : "Advisory"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 23,
+        "lines" : [
+          "This skill guarantees:",
+          "Every new page is filed by primary subject (not format, not source)",
+          "The decision protocol is followed for ambiguous cases",
+          "Common misfiling patterns are caught"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 30,
+        "lines" : [
+          "use judgment to file a new brain page by its primary subject:",
+          "Identify the primary subject (what you would search for to find this page)",
+          "Walk the decision tree: a person to people\/, a company to companies\/, a reusable concept to concepts\/, an original idea to originals\/, a meeting to meetings\/, media to media\/, and a raw data import to sources\/",
+          "Cross-link from related directories",
+          "Check the notability gate before creating the page"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 38,
+        "lines" : [
+          "Advisory: \"File this at `{type}\/{slug}.md` because the primary subject is {reason}.\""
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 42,
+        "lines" : [
+          "Filing by format (\"it's a PDF so it goes in sources\/\")",
+          "Filing by source (\"it came from email so it goes in sources\/\")",
+          "Creating pages without checking if one already exists",
+          "Using `sources\/` for anything except raw data dumps"
+        ],
+        "role" : "prohibitions"
+      }
+    ],
+    "tools" : "search\nget_page\nlist_pages",
+    "triggers" : "\"where does this go\"\n\"filing rules\"\n\"create new page\"\n\"which directory\"",
+    "version" : "1.0.0"
+  },
+  "source_files" : [
+    "repo_architecture.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 32,
+      "swift_line" : 502
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 543
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 548
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 589
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 594
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 635
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 640
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 681
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 686
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "repo-architecture a input",
+      "swift_struct" : "RepoArchitectureInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when whereDoesThisGo fires",
+      "swift_struct" : "WhenWheredoesthisgoFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when filingRules fires",
+      "swift_struct" : "WhenFilingrulesFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when createNewPage fires",
+      "swift_struct" : "WhenCreatenewpageFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when whichDirectory fires",
+      "swift_struct" : "WhenWhichdirectoryFires"
+    }
+  ]
+}

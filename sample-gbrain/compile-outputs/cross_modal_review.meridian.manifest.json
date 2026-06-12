@@ -1,0 +1,445 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Quality gate via second model. Spawn a different AI model to review work\nbefore committing. Includes refusal routing: if one model refuses, switch\nsilently to the next. Extended in v0.25.1 with structured review-mode\ngating (when to invoke vs not) and a Codex code-review handoff for the\ndiff-review case.",
+    "mutating" : "false",
+    "name" : "cross-modal-review",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 37,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 48,
+        "text" : "When to invoke (v0.25.1 gating)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 72,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 81,
+        "text" : "Code-review handoff (v0.25.1 extension)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 86,
+        "text" : "Codex Review"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 114,
+        "text" : "Adversarial Challenge"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 123,
+        "text" : "Refusal routing"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 133,
+        "text" : "Output format"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 135,
+        "text" : "Standard review"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 150,
+        "text" : "Code review"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 162,
+        "text" : "User-sovereignty rule (Iron Law)"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 171,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 180,
+        "text" : "Related skills"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 190,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 39,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 50,
+        "text" : "Invoke this skill when"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 65,
+        "text" : "Do NOT invoke for"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 125,
+        "text" : "If the primary review model refuses"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 37,
+        "lines" : [
+          "This skill guarantees:",
+          "Work product is reviewed by a different model before finalizing",
+          "The review is graded against the originating skill's Contract section",
+          "(what was promised), not vibes",
+          "Agreement and disagreement are reported transparently",
+          "Refusal from one model triggers a silent switch to the next in chain",
+          "The user always makes the final decision (user sovereignty)"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "When to invoke (v0.25.1 gating)",
+        "line" : 48,
+        "lines" : [
+          "Invoke this skill when:",
+          "**Significant code changes** — any commit touching 5+ files or 100+",
+          "lines. Architecture decisions, refactors, API changes",
+          "**Security-sensitive changes** — auth flows, brain-write trust boundaries,",
+          "webhook transforms, cross-skill data passing",
+          "**Stuck or churning** — 2+ iterations on the same problem without",
+          "progress",
+          "**Pre-bulk-operation** — before running batch enrichment, migrations,",
+          "or bulk writes (see [conventions\/test-before-bulk.md](..\/conventions\/test-before-bulk.md))",
+          "**Skill creation \/ modification** — new or rewritten skills that",
+          "affect operational behavior",
+          "**Brain-page quality concerns** — when brain writes need validation",
+          "against the originating skill's Contract",
+          "Do NOT invoke for:",
+          "Simple memory writes or brain-page updates",
+          "Single-file typo fixes",
+          "Routine cron output or heartbeat operations",
+          "Git commit \/ push of already-reviewed work"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 72,
+        "lines" : [
+          "use judgment to run a cross-modal review of the work product:",
+          "Capture the brain page, analysis, code diff, or decision to be reviewed",
+          "Load the originating skill's Contract section to see what was promised",
+          "Spawn a different review model and send it the work plus the Contract",
+          "Grade whether the output followed the Contract, pass or fail, with specific citations",
+          "Report agreement or disagreement to the user, never auto-applying the reviewer's suggestions"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Code-review handoff (v0.25.1 extension)",
+        "line" : 81,
+        "lines" : [
+          "For diff review specifically, gstack ships a `\/codex` skill that wraps",
+          "the OpenAI Codex CLI. Two modes:"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Codex Review",
+        "line" : 86,
+        "lines" : [
+          "Independent diff review from a different AI system. The user invokes",
+          "`\/codex review` (gstack-shipped); cross-modal-review's job is to",
+          "RECOGNIZE when this is the right tool and recommend it explicitly",
+          "**When to recommend `\/codex review`:**",
+          "After a substantive diff lands and before merge",
+          "When the user wants a second opinion that's NOT another Claude",
+          "**Output framing (when cross-modal-review surfaces Codex output):**",
+          "codeblock:plain:Q09ERVggUkVWSUVXIChpbmRlcGVuZGVudCBzZWNvbmQgb3Bpbmlvbik6CuKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkAo8ZnVsbCBjb2RleCBvdXRwdXQsIHZlcmJhdGltPgrilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZAKCkNST1NTLU1PREVMIEFOQUxZU0lTOgogIEJvdGggZm91bmQ6ICAgIFtvdmVybGFwcGluZyBmaW5kaW5nc10KICBPbmx5IENvZGV4OiAgICBbZmluZGluZ3MgdW5pcXVlIHRvIENvZGV4XQogIE9ubHkgQ2xhdWRlOiAgIFtmaW5kaW5ncyB1bmlxdWUgdG8gbXkgYW5hbHlzaXNdCiAgQWdyZWVtZW50OiAgICAgWCUgKE4vTSBmaW5kaW5ncyBvdmVybGFwKQ==",
+          "User decides what to act on. Cross-model agreement is signal, not",
+          "permission"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Adversarial Challenge",
+        "line" : 114,
+        "lines" : [
+          "Same shape, different prompt. Used on security-sensitive changes:",
+          "the reviewer is asked to find injection vectors, race conditions,",
+          "auth bypasses, data leaks, privilege escalation paths",
+          "Output adds an exploitability rating (CRITICAL \/ HIGH \/ MEDIUM \/ LOW)",
+          "and recommended mitigations"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Refusal routing",
+        "line" : 123,
+        "lines" : [
+          "If the primary review model refuses:",
+          "Switch silently to the next model in the chain (see",
+          "`conventions\/cross-modal.yaml`)",
+          "Don't show the refusal to the user",
+          "Don't announce the switch",
+          "If ALL models in the chain refuse, escalate to the user"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output format",
+        "line" : 133,
+        "lines" : [
+
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Standard review",
+        "line" : 135,
+        "lines" : [
+          "codeblock:plain:Q3Jvc3MtTW9kYWwgUmV2aWV3Cj09PT09PT09PT09PT09PT09PQpSZXZpZXdlcjogIHttb2RlbCBuYW1lfQpDb250cmFjdDogIHtvcmlnaW5hdGluZyBza2lsbH0KVmVyZGljdDogICBQQVNTIHwgSVNTVUVTIEZPVU5ECgpGaW5kaW5nczoKLSB7ZmluZGluZyB3aXRoIGV2aWRlbmNlfQoKQWdyZWVtZW50IHdpdGggcHJpbWFyeToge1h9JQ=="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Code review",
+        "line" : 150,
+        "lines" : [
+          "codeblock:plain:Q3Jvc3MtTW9kYWwgUmV2aWV3IChjb2RlKQo9PT09PT09PT09PT09PT09PT09PT09PT09PQpNb2RlOiAgICAgICAgICAgQ29kZXggUmV2aWV3IHwgQWR2ZXJzYXJpYWwgQ2hhbGxlbmdlCkZpbGVzIGNoYW5nZWQ6ICBOCkxpbmVzIGNoYW5nZWQ6ICArTiAvIC1OCgp7bW9kZS1zcGVjaWZpYyBvdXRwdXQgYWJvdmV9"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "User-sovereignty rule (Iron Law)",
+        "line" : 162,
+        "lines" : [
+          "Reviewer findings are INFORMATIONAL until the user explicitly approves",
+          "each one. Do NOT incorporate reviewer recommendations into the work",
+          "product without presenting each finding and getting explicit approval",
+          "This applies even when the reviewer is correct. Cross-model consensus",
+          "is a strong signal — present it as such — but the user makes the",
+          "decision"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 171,
+        "lines" : [
+          "❌ Auto-applying reviewer suggestions without user approval",
+          "❌ Showing model refusals to the user",
+          "❌ Using the same model for review and generation",
+          "❌ Skipping the Contract reference (reviewing vibes, not guarantees)",
+          "❌ Code-reviewing trivial changes (typos, formatting)",
+          "❌ Running code review without git-diff context"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Related skills",
+        "line" : 180,
+        "lines" : [
+          "gstack `\/codex` — the actual Codex CLI wrapper this skill hands off",
+          "to for diff-review mode. Cross-modal-review knows WHEN to invoke;",
+          "\/codex knows HOW",
+          "`skills\/testing\/SKILL.md` — runs the project test suite; complementary",
+          "signal for \"is this commit safe to land\"",
+          "`skills\/conventions\/cross-modal.yaml` — review pairs + refusal routing"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 190,
+        "lines" : [
+          "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
+        ],
+        "role" : "template"
+      }
+    ],
+    "tools" : "search\nquery\nget_page",
+    "triggers" : "\"second opinion\"\n\"cross-modal review\"\n\"double check this\"\n\"get another perspective\"\n\"challenge this code\"\n\"adversarial review\"",
+    "version" : "1.1.0"
+  },
+  "source_files" : [
+    "cross_modal_review.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 74,
+      "swift_line" : 503
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 544
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 549
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 590
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 595
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 636
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 641
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 682
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 687
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 728
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 733
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 774
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 779
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "cross-modal-review a input",
+      "swift_struct" : "CrossModalReviewInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when secondOpinion fires",
+      "swift_struct" : "WhenSecondopinionFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when crossModalReview fires",
+      "swift_struct" : "WhenCrossmodalreviewFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when doubleCheckThis fires",
+      "swift_struct" : "WhenDoublecheckthisFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when getAnotherPerspective fires",
+      "swift_struct" : "WhenGetanotherperspectiveFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when challengeThisCode fires",
+      "swift_struct" : "WhenChallengethiscodeFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when adversarialReview fires",
+      "swift_struct" : "WhenAdversarialreviewFires"
+    }
+  ]
+}

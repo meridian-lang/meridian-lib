@@ -1,0 +1,70 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "outline" : [
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 5,
+        "text" : "Overview"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 9,
+        "text" : "The setup skill provides"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Overview",
+        "line" : 5,
+        "lines" : [
+          "This skill has been replaced by the **setup** skill. See `skills\/setup\/SKILL.md`",
+          "The setup skill provides:",
+          "Auto-provision Supabase via CLI (< 2 min TTHW)",
+          "Manual fallback with non-interactive init",
+          "AGENTS.md auto-injection (upgrade-safe)",
+          "First import and health verification"
+        ],
+        "role" : "inert"
+      }
+    ]
+  },
+  "source_files" : [
+    "install.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "entry a input",
+      "swift_struct" : "EntryInput"
+    }
+  ]
+}

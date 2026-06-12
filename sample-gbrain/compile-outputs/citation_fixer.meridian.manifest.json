@@ -1,0 +1,504 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Audit and fix citation formatting across brain pages. Ensures every fact has\nan inline [Source: ...] citation matching the standard format. Extended in\nv0.25.1: scans for broken tweet\/post references that lack actual URLs and\nresolves them via the host's X \/ Twitter API integration.",
+    "mutating" : "true",
+    "name" : "citation-fixer",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 31,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 43,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 52,
+        "text" : "Tweet resolution pipeline (v0.25.1 extension)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 59,
+        "text" : "Step 1: Identify broken references"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 70,
+        "text" : "Step 2: Extract searchable content"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 78,
+        "text" : "Step 3: Search for the actual tweet"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 93,
+        "text" : "Step 4: Verify and extract metadata"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 102,
+        "text" : "Step 5: Patch the brain page"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 119,
+        "text" : "Batch mode"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 123,
+        "text" : "Find candidate pages"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 136,
+        "text" : "Priority order"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 143,
+        "text" : "Rate limiting"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 151,
+        "text" : "Output format"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 163,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 173,
+        "text" : "Integration"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 182,
+        "text" : "Metrics"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 199,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 33,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 95,
+        "text" : "Once a candidate is found"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 100,
+        "text" : "Construct the URL"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 121,
+        "text" : "When sweeping many pages"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 145,
+        "text" : "X API"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 175,
+        "text" : "This skill can be called"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 31,
+        "lines" : [
+          "This skill guarantees:",
+          "Every brain page is scanned for citation compliance",
+          "Missing citations are flagged with specific location",
+          "Malformed citations are fixed to match the standard format",
+          "**(v0.25.1)** Tweet \/ post references without URLs are resolved via",
+          "X API and patched with deterministic `https:\/\/x.com\/<handle>\/status\/<id>`",
+          "links",
+          "Results reported with counts (scanned, fixed, remaining)"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 43,
+        "lines" : [
+          "use judgment to scan pages and repair their citations:",
+          "List pages and read each one, checking for inline [Source: ...] citations",
+          "Identify facts without a citation, citations missing a date or source type, and citations with the wrong format",
+          "Rewrite malformed citations to match the quality convention",
+          "Resolve tweet references via the X API integration",
+          "Report counts of pages scanned, citations found, issues fixed, and remaining gaps"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Tweet resolution pipeline (v0.25.1 extension)",
+        "line" : 52,
+        "lines" : [
+          "For each broken tweet reference, follow this chain. The actual API call",
+          "goes through whatever X integration the host has configured (typical",
+          "shape: a recipe under `recipes\/x-api\/` with handle \/ search-all",
+          "endpoints)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Step 1: Identify broken references",
+        "line" : 59,
+        "lines" : [
+          "Scan the page for patterns that indicate tweet references without URLs:",
+          "Contains words like `tweeted`, `posted`, `said on X`, `RT`, `retweet`,",
+          "`X post`",
+          "Contains quoted text that looks like a tweet (short, punchy, often",
+          "starts with a quote)",
+          "Has `[Source: ... X\/Twitter ...]` without an `x.com` URL",
+          "References engagement metrics (likes, impressions) without a link"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Step 2: Extract searchable content",
+        "line" : 70,
+        "lines" : [
+          "From each broken reference, extract:",
+          "The **handle** (if mentioned: `@<username>`)",
+          "The **quoted text** (if available)",
+          "The **approximate date** (often present in surrounding timeline entries)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Step 3: Search for the actual tweet",
+        "line" : 78,
+        "lines" : [
+          "Use the host's X API integration. Query patterns:",
+          "codeblock:plain:IyBIYW5kbGUgKyBxdW90ZWQgdGV4dDoKZnJvbTo8aGFuZGxlPiAiPGV4YWN0IHF1b3RlIGZyYWdtZW50PiIKCiMgUXVvdGVkIHRleHQgb25seToKIjxleGFjdCBxdW90ZSBmcmFnbWVudD4iCgojIE9yaWdpbmFsIG9mIGEgcmV0d2VldDoKIjxleGFjdCBxdW90ZT4iIC1pczpyZXR3ZWV0"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Step 4: Verify and extract metadata",
+        "line" : 93,
+        "lines" : [
+          "Once a candidate is found:",
+          "Confirm the text matches the quoted fragment",
+          "Pull the tweet id, author handle, engagement metrics (likes \/ RTs \/",
+          "impressions)",
+          "Construct the URL: `https:\/\/x.com\/<handle>\/status\/<tweet_id>`"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Step 5: Patch the brain page",
+        "line" : 102,
+        "lines" : [
+          "Replace the broken citation with a proper one:",
+          "**Before:**",
+          "codeblock:plain:IjxxdW90ZSBmcmFnbWVudD4iIFtTb3VyY2U6IDxzb21lIGhhbmQtd2F2eSBhdHRyaWJ1dGlvbj5d",
+          "**After:**",
+          "codeblock:plain:IjxmdWxsIHZlcmlmaWVkIHF1b3RlPiIg4oCUIDxOPiBsaWtlcywgPE4+IFJUcywgPE4+IGltcHJlc3Npb25zCltTb3VyY2U6IFtYLzxoYW5kbGU+LCBZWVlZLU1NLUREXShodHRwczovL3guY29tLzxoYW5kbGU+L3N0YXR1cy88dHdlZXRfaWQ+KV0="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Batch mode",
+        "line" : 119,
+        "lines" : [
+          "When sweeping many pages:"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Find candidate pages",
+        "line" : 123,
+        "lines" : [
+          "codeblock:bash:IyBQYWdlcyBtZW50aW9uaW5nIHR3ZWV0cyBidXQgd2l0aCBubyB4LmNvbSBsaW5rcwpmb3IgZiBpbiAkKGZpbmQgLiAtbmFtZSAiKi5tZCIgLW5vdCAtcGF0aCAiLi9ub2RlX21vZHVsZXMvKiIpOyBkbwogIHJlZnM9JChncmVwIC1jaSAidHdlZXRcfHBvc3RlZFx8eCBwb3N0XHxSVFx8cmV0d2VldFx8c2FpZCBvbiBYIiAiJGYiKQogIGxpbmtzPSQoZ3JlcCAtYyAieC5jb20vLiovc3RhdHVzLyIgIiRmIikKICBpZiBbICIkcmVmcyIgLWd0IDIgXSAmJiBbICIkbGlua3MiIC1lcSAwIF07IHRoZW4KICAgIGVjaG8gIiRmIgogIGZpCmRvbmU="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Priority order",
+        "line" : 136,
+        "lines" : [
+          "Recently created \/ updated pages — fresh broken refs are easiest to",
+          "resolve while context is fresh",
+          "High-traffic pages (frequent reads \/ writes from other skills)",
+          "Everything else — bulk cleanup over time"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Rate limiting",
+        "line" : 143,
+        "lines" : [
+          "X API: respect the host's tier limits; don't hammer",
+          "Target ~50 pages per batch run",
+          "1-3 API calls per page (search + verify)",
+          "Batch-commit every 10-20 pages so a partial failure doesn't lose",
+          "progress"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output format",
+        "line" : 151,
+        "lines" : [
+          "codeblock:plain:Q2l0YXRpb24gQXVkaXQgUmVwb3J0Cj09PT09PT09PT09PT09PT09PT09PQpQYWdlcyBzY2FubmVkOiAgICAgICAgTgpDaXRhdGlvbnMgZm91bmQ6ICAgICAgTgpJc3N1ZXMgZml4ZWQ6ICAgICAgICAgTgpUd2VldCBsaW5rcyByZXNvbHZlZDogTgpSZW1haW5pbmcgZ2FwczogICAgICAgTiAocGFnZXMgd2l0aCB1bmNpdGFibGUgZmFjdHMp"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 163,
+        "lines" : [
+          "❌ Inventing citations for facts that have no source. Flag them",
+          "❌ Removing facts that lack citations (flag them; don't delete)",
+          "❌ Fixing citations without reading the full page context",
+          "❌ Batch-fixing without checking quality on a sample first",
+          "(see `conventions\/test-before-bulk.md`)",
+          "❌ Composing tweet URLs by guessing the tweet id. Always go through",
+          "the X API; deterministic links only"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Integration",
+        "line" : 173,
+        "lines" : [
+          "This skill can be called:",
+          "**Manually** — \"fix citations on this page\"",
+          "**As a batch cron** — weekly sweep of pages with broken refs",
+          "**By other skills** — `enrich` or `media-ingest` can call citation-fixer",
+          "before commit to validate output"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Metrics",
+        "line" : 182,
+        "lines" : [
+          "If running as a recurring batch, track state in a small JSON file under",
+          "`~\/.gbrain\/citation-fixer-state.json`:",
+          "codeblock:json:ewogICJsYXN0X3J1biI6ICIyMDI2LTA0LTE1VC4uLiIsCiAgInBhZ2VzX3NjYW5uZWQiOiAwLAogICJjaXRhdGlvbnNfZml4ZWQiOiAwLAogICJ0d2VldF9saW5rc19yZXNvbHZlZCI6IDAsCiAgImNpdGF0aW9uc191bnJlc29sdmFibGUiOiAwLAogICJwYWdlc19yZW1haW5pbmciOiAxNDI0Cn0="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 199,
+        "lines" : [
+          "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
+        ],
+        "role" : "template"
+      }
+    ],
+    "tools" : "search\nget_page\nput_page\nlist_pages",
+    "triggers" : "\"fix citations\"\n\"fix broken citations\"\n\"citation audit\"\n\"check citations\"\n\"citation fixer\"",
+    "version" : "1.1.0"
+  },
+  "source_files" : [
+    "citation_fixer.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 45,
+      "swift_line" : 503
+    },
+    {
+      "meridian_line" : 125,
+      "swift_line" : 514
+    },
+    {
+      "meridian_line" : 125,
+      "swift_line" : 525
+    },
+    {
+      "meridian_line" : 125,
+      "swift_line" : 537
+    },
+    {
+      "meridian_line" : 125,
+      "swift_line" : 548
+    },
+    {
+      "meridian_line" : 125,
+      "swift_line" : 559
+    },
+    {
+      "meridian_line" : 125,
+      "swift_line" : 570
+    },
+    {
+      "meridian_line" : 125,
+      "swift_line" : 581
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 622
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 627
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 668
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 673
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 714
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 719
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 760
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 765
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 806
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 811
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "citation-fixer a input",
+      "swift_struct" : "CitationFixerInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when fixCitations fires",
+      "swift_struct" : "WhenFixcitationsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when fixBrokenCitations fires",
+      "swift_struct" : "WhenFixbrokencitationsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when citationAudit fires",
+      "swift_struct" : "WhenCitationauditFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when checkCitations fires",
+      "swift_struct" : "WhenCheckcitationsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when citationFixer fires",
+      "swift_struct" : "WhenCitationfixerFires"
+    }
+  ]
+}

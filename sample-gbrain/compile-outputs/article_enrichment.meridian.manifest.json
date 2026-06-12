@@ -1,0 +1,397 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Transform raw article text dumps in the brain into structured pages with executive summary, verbatim quotes, key insights, why-it-matters, and cross-references. Replaces walls-of-text with quotable, actionable brain pages.",
+    "mutating" : "true",
+    "name" : "article-enrichment",
+    "outline" : [
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 29,
+        "text" : "What this does"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 45,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 54,
+        "text" : "The pipeline"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 67,
+        "text" : "Invocation"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 90,
+        "text" : "Quality bar"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 101,
+        "text" : "Model selection"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 112,
+        "text" : "Link convention"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 117,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 129,
+        "text" : "Related skills"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 136,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 147,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 92,
+        "text" : "An enriched page passes if it has"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 108,
+        "text" : "Rule"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 138,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 143,
+        "text" : "Privacy contract preserved"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "What this does",
+        "line" : 29,
+        "lines" : [
+          "Takes an article brain page that's a wall of raw extracted text and rewrites",
+          "it as a structured page with:",
+          "**Executive Summary** — 2-3 sentences, the ONE thing worth remembering",
+          "**Why It Matters** — connects to the user's specific projects + interests",
+          "(read from brain context, not assumed)",
+          "**Quotable Lines** — 3-5 VERBATIM quotes worth referencing in essays",
+          "**Key Insights** — actual insights, not topic labels",
+          "**Surprising or Counterintuitive** — what makes this content unique",
+          "**See Also** — standard markdown links to related brain pages",
+          "Raw source content is preserved in a collapsed `<details>` section so the",
+          "original is never lost"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "When to invoke",
+        "line" : 45,
+        "lines" : [
+          "New article page lands in the brain via media-ingest with `needs_enrichment: true`",
+          "Existing article page is a wall of text under a `## Content` header with",
+          "no synthesis",
+          "User says a brain page is useless, boring, or a dump",
+          "An LLM-judge brain-quality eval fails on quotability or actionability for",
+          "an article page"
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "The pipeline",
+        "line" : 54,
+        "lines" : [
+          "codeblock:plain:MS4gUkVBRCAgICAgIOKGkiBPcGVuIHRoZSBhcnRpY2xlIGJyYWluIHBhZ2U7IHBhcnNlIGZyb250bWF0dGVyICsgYm9keS4KMi4gU0NBTiAgICAgIOKGkiBMb29rIGZvciAjIyBDb250ZW50IChyYXcgZHVtcCkgYW5kIGFic2VuY2Ugb2YgIyMgRXhlY3V0aXZlIFN1bW1hcnkuCjMuIENPTlRFWFQgICDihpIgZ2JyYWluIHF1ZXJ5IHRoZSBhcnRpY2xlJ3Mga2V5IGVudGl0aWVzIHRvIGdyb3VuZCAiV2h5IEl0IE1hdHRlcnMiLgo0LiBFTlJJQ0ggICAg4oaSIFNvbm5ldCAoZGVmYXVsdCkgb3IgT3B1cyAoZm9yIGhpZ2gtdmFsdWUgY29udGVudCkgcmVzdHJ1Y3R1cmVzLgo1LiBXUklURSAgICAg4oaSIFJlcGxhY2UgIyMgQ29udGVudCB3aXRoIHRoZSBzdHJ1Y3R1cmVkIHNlY3Rpb25zOyBwcmVzZXJ2ZSByYXcKICAgICAgICAgICAgICAgc291cmNlIGluIDxkZXRhaWxzPjsgY2xlYXIgbmVlZHNfZW5yaWNobWVudCBpbiBmcm9udG1hdHRlci4KNi4gQ1JPU1MtTElOS+KGkiBBZGQgYmFjay1saW5rcyBmcm9tIHJlZmVyZW5jZWQgcGVvcGxlL2NvbXBhbmllcyBwYWdlcwogICAgICAgICAgICAgICAoSXJvbiBMYXcgcGVyIGNvbnZlbnRpb25zL3F1YWxpdHkubWQpLg=="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Invocation",
+        "line" : 67,
+        "lines" : [
+          "The skill itself is markdown instructions to the agent. It does NOT ship a",
+          "deterministic CLI command in v0.25.1. The agent uses gbrain's existing",
+          "operations:",
+          "codeblock:bash:IyAxLiBGaW5kIGNhbmRpZGF0ZSBwYWdlcwpnYnJhaW4gcXVlcnkgIm5lZWRzX2VucmljaG1lbnQ6IHRydWUgdHlwZTphcnRpY2xlIiAtLWxpbWl0IDUwCgojIDIuIEZvciBlYWNoIGNhbmRpZGF0ZSwgcmVhZCB0aGUgcGFnZQpnYnJhaW4gZ2V0IG1lZGlhL2FydGljbGVzLzxzbHVnPgoKIyAzLiBFbnJpY2ggdmlhIHRoZSBhZ2VudCdzIExMTSAoU29ubmV0IGJ5IGRlZmF1bHQ7IE9wdXMgZm9yIGhpZ2gtdmFsdWUpCiMgICAgVGhlIGFnZW50IHJlYWRzIHRoZSByYXcgY29udGVudCArIGJyYWluIGNvbnRleHQgKyB3cml0ZXMgdGhlIHN0cnVjdHVyZWQgcGFnZS4KCiMgNC4gV3JpdGUgdGhlIGVucmljaGVkIHBhZ2UKIyAgICBVc2UgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbiB3aXRoIHRoZSBuZXcgc3RydWN0dXJlZCBtYXJrZG93biBib2R5LgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzCiMgICAgRm9yIGV2ZXJ5IHBlcnNvbi9jb21wYW55IG1lbnRpb25lZCwgYWRkIGEgdGltZWxpbmUgYmFjay1saW5rLg=="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Quality bar",
+        "line" : 90,
+        "lines" : [
+          "An enriched page passes if it has:",
+          "✅ `## Executive Summary` (2-3 sentences)",
+          "✅ `## Quotable Lines` with ≥3 verbatim quotes (literal quotes, not paraphrase)",
+          "✅ `## Key Insights` with ≥3 bullets (insights, not topic labels)",
+          "✅ `## Why It Matters` connecting to specific brain context (not generic)",
+          "✅ `## See Also` with standard markdown links (NOT `[[wiki-links]]`)",
+          "✅ `<details>` block preserving the raw source content"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Model selection",
+        "line" : 101,
+        "lines" : [
+          "| Model | Use when | Quote accuracy |",
+          "|-------|----------|----------------|",
+          "| **Sonnet** (default) | Bulk enrichment, most articles | Good — occasionally paraphrases |",
+          "| **Opus** | High-value content, original-thinking pieces, longreads | Excellent — respects \"verbatim\" instruction |",
+          "Rule: for bulk enrichment, do a Sonnet draft pass and spot-check 5 with",
+          "the LLM-judge brain-quality eval. If quotes are paraphrased, switch to",
+          "Opus for that batch"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Link convention",
+        "line" : 112,
+        "lines" : [
+          "All cross-references use standard markdown links: `[Title](relative\/path.md)`",
+          "NEVER use `[[wiki-links]]` — they don't render on GitHub"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 117,
+        "lines" : [
+          "❌ Paraphrasing quotes (\"the author argues that…\"). Quotes are verbatim",
+          "or they're not quotes",
+          "❌ Generic \"Why It Matters\" (\"this is important because innovation\")",
+          "Tie to specific brain context or remove the section",
+          "❌ Inventing topic labels and calling them insights. An insight is a",
+          "thing the article says that you didn't already know",
+          "❌ Discarding the raw source. Always wrap it in `<details>`",
+          "❌ Re-enriching non-idempotently — check the `needs_enrichment` flag in",
+          "frontmatter; skip if already false"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Related skills",
+        "line" : 129,
+        "lines" : [
+          "`skills\/media-ingest\/SKILL.md` — creates the raw article pages this skill enriches",
+          "`skills\/idea-ingest\/SKILL.md` — link\/article ingestion with author people-page enforcement",
+          "`skills\/conventions\/quality.md` — citation + back-link rules"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 136,
+        "lines" : [
+          "This skill guarantees:",
+          "Routing matches the canonical triggers in the frontmatter",
+          "Output written under the directories listed in `writes_to:` (when applicable)",
+          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
+          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
+          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 147,
+        "lines" : [
+          "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"enrich this article\"\n\"enrich the article\"\n\"enriching the article\"\n\"enrich brain pages\"\n\"batch enrich\"\n\"enrich pass\"\n\"make brain pages useful\"",
+    "version" : "0.1.0",
+    "writes_pages" : "true",
+    "writes_to" : "media\/articles\/"
+  },
+  "source_files" : [
+    "article_enrichment.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 1,
+      "swift_line" : 534
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 539
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 580
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 585
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 626
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 631
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 672
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 677
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 718
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 723
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 764
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 769
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 810
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 815
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "article-enrichment a input",
+      "swift_struct" : "ArticleEnrichmentInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when enrichThisArticle fires",
+      "swift_struct" : "WhenEnrichthisarticleFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when enrichArticle fires",
+      "swift_struct" : "WhenEnricharticleFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when enrichingArticle fires",
+      "swift_struct" : "WhenEnrichingarticleFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when enrichBrainPages fires",
+      "swift_struct" : "WhenEnrichbrainpagesFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when batchEnrich fires",
+      "swift_struct" : "WhenBatchenrichFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when enrichPass fires",
+      "swift_struct" : "WhenEnrichpassFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when makeBrainPagesUseful fires",
+      "swift_struct" : "WhenMakebrainpagesusefulFires"
+    }
+  ]
+}

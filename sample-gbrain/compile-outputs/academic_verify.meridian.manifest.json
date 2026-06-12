@@ -1,0 +1,391 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Verify a research claim or academic citation by tracing it through publication → methodology → raw data → independent replication. Routes through perplexity-research for the actual web lookup, then formats results as a citation-checked brain page. Use when a book\/article\/conversation cites a study and you want to confirm the claim is real, replicated, and accurately characterized.",
+    "mutating" : "true",
+    "name" : "academic-verify",
+    "outline" : [
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 28,
+        "text" : "What this is"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 51,
+        "text" : "When to use this"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 62,
+        "text" : "What this skill is NOT"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 69,
+        "text" : "How it works (D7\/α: pure routing through perplexity-research)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 113,
+        "text" : "Output: brain page format"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 159,
+        "text" : "Useful databases (the agent uses these via perplexity-research)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 170,
+        "text" : "Standards (the rigor bar)"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 191,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 203,
+        "text" : "Related skills"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 212,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 223,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 214,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 219,
+        "text" : "Privacy contract preserved"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "What this is",
+        "line" : 28,
+        "lines" : [
+          "A claim-verification flow for academic \/ research statements. When a",
+          "book, article, or speaker cites a study or quotes a number, this skill",
+          "traces the claim through:",
+          "codeblock:plain:Y2xhaW0g4oaSIHB1YmxpY2F0aW9uIOKGkiBtZXRob2RvbG9neSBzZWN0aW9uIOKGkiByYXcgZGF0YSBzb3VyY2Ug4oaSIGluZGVwZW5kZW50IHZlcmlmaWNhdGlvbg==",
+          "At each step, it answers:",
+          "**Where does this number come from?** (Self-generated? Survey? Government data?)",
+          "**What's the baseline?** (Reduction from what? Over what time period?)",
+          "**Is the raw data available?** (Public? Proprietary? \"Available on request\"?)",
+          "**Has anyone independently verified it?** (Replication study? Government audit?)",
+          "**Are there confounding factors?** (Other interventions, policy changes, COVID, sampling bias?)",
+          "**Is the comparison fair?** (Cherry-picked comparison group? Survivorship bias?)",
+          "The output is a brain page under `concepts\/<claim-slug>.md` that records",
+          "the claim, the trace, and the verdict — so future references to the",
+          "same claim can re-use the verified analysis"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "When to use this",
+        "line" : 51,
+        "lines" : [
+          "A book quotes a study and you want to confirm it's real and not",
+          "miscited",
+          "An article makes a quantified claim (\"X reduced Y by 40%\") that you",
+          "want traced to the source data",
+          "You're writing something that depends on a piece of research and you",
+          "want to verify the underlying paper holds up",
+          "You're updating a brain page that cites a research claim and you want",
+          "to record the verification status alongside"
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "What this skill is NOT",
+        "line" : 62,
+        "lines" : [
+          "Not adversarial \/ oppo work. The point is rigor, not takedown",
+          "Not generic web research — use `perplexity-research` directly for",
+          "open-ended topic exploration",
+          "Not a brain-only lookup — that's `gbrain query`"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "How it works (D7\/α: pure routing through perplexity-research)",
+        "line" : 69,
+        "lines" : [
+          "academic-verify is a thin orchestrator. The actual web search is done",
+          "by [perplexity-research](..\/perplexity-research\/SKILL.md). academic-verify's",
+          "job is the *workflow*: scoping the claim precisely, sending it through",
+          "perplexity-research with citation-mode, then formatting the response",
+          "into a verdict-shaped brain page",
+          "codeblock:plain:U3RlcCAxOiBTY29wZSB0aGUgY2xhaW0KICBQaW4gZG93biBFWEFDVExZIHdoYXQncyBiZWluZyBjbGFpbWVkOgogICAg4oCiIFF1b3RlOiB3aG8gc2FpZCB3aGF0PwogICAg4oCiIFNvdXJjZTogd2hpY2ggcGFwZXIgLyBkYXRhc2V0IC8gc3VydmV5PwogICAg4oCiIE51bWJlcjogd2hhdCBzcGVjaWZpYyBxdWFudGl0eSBpcyBjbGFpbWVkPwogICAg4oCiIFBlcmlvZDogb3ZlciB3aGF0IHRpbWUgcmFuZ2U\/CgpTdGVwIDI6IEJyYWluLWZpcnN0IGxvb2t1cAogIGdicmFpbiBxdWVyeSAiPHBhcGVyIHRpdGxlPiBPUiA8YXV0aG9yIG5hbWU+IE9SIDxjbGFpbSBrZXl3b3Jkcz4iCiAgSWYgdGhlIGJyYWluIGhhcyBwcmlvciB2ZXJpZmljYXRpb24gb2YgdGhpcyBjbGFpbSwgcmV1c2UgaXQuCgpTdGVwIDM6IEludm9rZSBwZXJwbGV4aXR5LXJlc2VhcmNoIHdpdGggY2l0YXRpb24tbW9kZSBwcm9tcHQKICBTZW5kIHRoZSBjbGFpbSArIGJyYWluIGNvbnRleHQgdG8gcGVycGxleGl0eS1yZXNlYXJjaCB3aXRoIGEgcHJvbXB0CiAgdGhhdCBleHBsaWNpdGx5IGFza3MgZm9yOgogICAg4oCiIE9yaWdpbmFsIHB1YmxpY2F0aW9uICh0aXRsZSwgYXV0aG9ycywgam91cm5hbCwgeWVhciwgRE9JKQogICAg4oCiIE1ldGhvZG9sb2d5IHNlY3Rpb24gc3VtbWFyeQogICAg4oCiIFJhdyBkYXRhIGF2YWlsYWJpbGl0eSAocHVibGljIHJlcG8\/IHByb3ByaWV0YXJ5PykKICAgIOKAoiBJbmRlcGVuZGVudCByZXBsaWNhdGlvbiBzdGF0dXMgKFJldHJhY3Rpb24gV2F0Y2ggLyBQdWJQZWVyIGhpdHMpCiAgICDigKIgQ2l0YXRpb25zIG9mIHRoZSBwYXBlciB0aGF0IGNyaXRpcXVlIG9yIGNvbnRleHR1YWxpemUgaXQKClN0ZXAgNDogRm9ybWF0IHRoZSB2ZXJkaWN0CiAgV3JpdGUgdGhlIHJlc3VsdCB0byBjb25jZXB0cy88Y2xhaW0tc2x1Zz4ubWQuIFRoZSB2ZXJkaWN0IGlzIG9uZSBvZjoKICAgIOKAoiBWZXJpZmllZCDigJQgY2xhaW0gaXMgYWNjdXJhdGU7IHJhdyBkYXRhIGF2YWlsYWJsZTsgcmVwbGljYXRpb24gZXhpc3RzCiAgICDigKIgUGFydGlhbGx5IHZlcmlmaWVkIOKAlCBjbGFpbSBjb3JyZWN0IG9uIHRoZSB1bmRlcmx5aW5nIHBhcGVyIGJ1dAogICAgICBtZXRob2RvbG9neSBoYXMga25vd24gbGltaXRzOyByZWNvcmQgbGltaXRzIGV4cGxpY2l0bHkKICAgIOKAoiBVbnZlcmlmaWFibGUg4oCUIG5vIHB1YmxpYyBkYXRhLCBubyByZXBsaWNhdGlvbjsgbm90IGVub3VnaCB0byBhY3QKICAgIOKAoiBNaXNhdHRyaWJ1dGVkIOKAlCB0aGUgY2xhaW0gY2l0ZXMgYSBwYXBlciBidXQgdGhlIHBhcGVyIGRvZXNuJ3Qgc2F5IHRoYXQKICAgIOKAoiBSZXRyYWN0ZWQgLyBkaXNwdXRlZCDigJQgcGFwZXIgaGFzIGtub3duIHJldHJhY3Rpb24gb3IKICAgICAgd2VsbC1kb2N1bWVudGVkIGNyaXRpcXVlCgpTdGVwIDU6IENyb3NzLWxpbmsgdG8gb3JpZ2luYWwgc291cmNlcwogIEFkZCB0aGUgcGFwZXIgYXV0aG9ycyB0byBwZW9wbGUvIGlmIHRoZXkgaGF2ZSBicmFpbiBwYWdlcywgb3IgY3JlYXRlCiAgb25lIGlmIG5vdGFibGUuIElyb24gTGF3IHBlciBjb252ZW50aW9ucy9xdWFsaXR5Lm1kLg=="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output: brain page format",
+        "line" : 113,
+        "lines" : [
+          "codeblock:markdown:LS0tCnRpdGxlOiAiW0NsYWltIHN1bW1hcnldIOKAlCBWZXJpZmllZCIKdHlwZTogcmVzZWFyY2gKZGF0ZTogWVlZWS1NTS1ERAp2ZXJkaWN0OiAidmVyaWZpZWR8cGFydGlhbHx1bnZlcmlmaWFibGV8bWlzYXR0cmlidXRlZHxyZXRyYWN0ZWQiCmJyYWluX2NvbnRleHRfc2x1Z3M6IFsicGFnZXMgY2l0ZWQgYXMgY29udGV4dCJdCi0tLQoKIyBbQ2xhaW0gc3VtbWFyeV0g4oCUIFZlcmlmaWVkCgo+IE9uZS1saW5lOiB0aGUgdmVyZGljdCArIHRoZSBib3R0b20tbGluZSByZWFzb24uCgojIyBUaGUgQ2xhaW0gKCggaW5lcnQgKSkKCj4gRXhhY3QgcXVvdGUsIGV4YWN0bHkgYXMgc3RhdGVkLCB3aXRoIHNvdXJjZSBhdHRyaWJ1dGlvbi4KCiMjIFRyYWNlICgoIGluZXJ0ICkpCgp8IFN0ZXAgfCBGaW5kaW5nIHwgU291cmNlIHwKfC0tLS0tLXwtLS0tLS0tLS18LS0tLS0tLS18CnwgT3JpZ2luYWwgcHVibGljYXRpb24gfCBbVGl0bGUsIGF1dGhvcnMsIHllYXIsIERPSV0gfCBbVVJMXSB8CnwgTWV0aG9kb2xvZ3kgfCBbMS1saW5lIHN1bW1hcnk7IGZsYWcgb2J2aW91cyBsaW1pdHNdIHwgW1VSTF0gfAp8IFJhdyBkYXRhIHwgW1B1YmxpYyByZXBvIC8gcHJvcHJpZXRhcnkgLyBhdmFpbGFibGUtb24tcmVxdWVzdF0gfCBbVVJMXSB8CnwgSW5kZXBlbmRlbnQgcmVwbGljYXRpb24gfCBbUmVwbGljYXRpb24gc3R1ZGllcyBhbmQgdGhlaXIgcmVzdWx0c10gfCBbVVJMXSB8CnwgQ3JpdGljYWwgY2l0YXRpb25zIHwgW1BhcGVycyB0aGF0IGNyaXRpcXVlIHRoaXMgd29ya10gfCBbVVJMXSB8CgojIyBWZXJkaWN0ICgoIGluZXJ0ICkpCgpbVmVyaWZpZWQgLyBQYXJ0aWFsbHkgdmVyaWZpZWQgLyBVbnZlcmlmaWFibGUgLyBNaXNhdHRyaWJ1dGVkIC8gUmV0cmFjdGVkXQoKWzEtMiBwYXJhZ3JhcGhzIGV4cGxhaW5pbmcgV0hZIHRoZSB2ZXJkaWN0LCB3aXRoIHNwZWNpZmljIGV2aWRlbmNlLl0KCiMjIENhdmVhdHMgKCggaW5lcnQgKSkKCltIb25lc3QgbGltaXRzOiB3aGF0IHdlIGNvdWxkbid0IHZlcmlmeSwgd2hhdCB3b3VsZCBjaGFuZ2UgdGhlIHZlcmRpY3QuXQoKIyMgU2VlIEFsc28gKCggaW5lcnQgKSkKCi0gT3JpZ2luYWwgcGFwZXI6IFtUaXRsZV0oRE9JIFVSTCkKLSBBdXRob3JzJyBicmFpbiBwYWdlczogW0F1dGhvciAxXShwZW9wbGUvYXV0aG9yLTEubWQpLCAuLi4KLSBSZWxhdGVkIGNsYWltcyAodmVyaWZpZWQgb3Igb3RoZXJ3aXNlKTogWy4uLl0="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Useful databases (the agent uses these via perplexity-research)",
+        "line" : 159,
+        "lines" : [
+          "| Database | What it has | URL pattern |",
+          "|----------|-------------|-------------|",
+          "| Retraction Watch | Retractions, corrections, expressions of concern | retractionwatch.com\/?s=NAME |",
+          "| PubPeer | Anonymous post-publication peer review | pubpeer.com\/search?q=NAME |",
+          "| OSF | Pre-registrations, open data, open materials | osf.io\/search\/?q=QUERY |",
+          "| Semantic Scholar | Citation analysis, paper metadata | api.semanticscholar.org |",
+          "| OpenAlex | Open citation data, institutional affiliations | api.openalex.org |",
+          "| Many Labs | Replication results for social psychology | osf.io\/wx7ck\/ |"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Standards (the rigor bar)",
+        "line" : 170,
+        "lines" : [
+          "**Verified** — only when the underlying paper exists, raw data is",
+          "public OR an independent lab has confirmed the result, and the citing",
+          "source represents the claim accurately",
+          "**Partial** — paper is real and findings stand, but the citation",
+          "context oversells (e.g., \"X causes Y\" when the paper shows",
+          "correlation, or \"all studies find X\" when it's one underpowered study)",
+          "**Unverifiable** — the underlying number can't be traced to source",
+          "data, no replication has been done, no independent confirmation",
+          "exists. Not the same as \"wrong\" — say \"we couldn't verify.\"",
+          "**Misattributed** — the citation points to a paper, but the paper",
+          "doesn't actually say what the citation claims. Common in policy briefs",
+          "**Retracted \/ disputed** — paper has been retracted, has a major",
+          "expression-of-concern, or has well-documented critique that",
+          "contradicts the headline finding",
+          "Never claim a problem without evidence. The verification document",
+          "itself is the artifact — if the claim holds up, say so plainly. If it",
+          "doesn't, the trace speaks for itself"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 191,
+        "lines" : [
+          "❌ Skipping the brain-first lookup. Re-doing verification we've",
+          "already done is wasted Perplexity spend",
+          "❌ Bypassing perplexity-research and inventing the lookup. The",
+          "citations from Perplexity are the evidence — without them, the",
+          "verdict is just opinion",
+          "❌ Stating \"Verified\" without confirming raw data availability",
+          "Replication trumps any single paper",
+          "❌ Stating \"Unverifiable\" when you simply didn't look hard enough",
+          "The verdict is on the source, not on your search effort"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Related skills",
+        "line" : 203,
+        "lines" : [
+          "`skills\/perplexity-research\/SKILL.md` — the actual web-search engine",
+          "this skill routes through (D7\/α: pure routing, no new infrastructure)",
+          "`skills\/citation-fixer\/SKILL.md` — fixes citation FORMATTING; this",
+          "skill checks whether the cited claim is true",
+          "`skills\/conventions\/quality.md` — citation + back-link rules"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 212,
+        "lines" : [
+          "This skill guarantees:",
+          "Routing matches the canonical triggers in the frontmatter",
+          "Output written under the directories listed in `writes_to:` (when applicable)",
+          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
+          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
+          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 223,
+        "lines" : [
+          "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"verify this academic claim\"\n\"check this study\"\n\"academic verify\"\n\"validate citation\"\n\"is this study real\"\n\"Retraction Watch\"",
+    "version" : "0.1.0",
+    "writes_pages" : "true",
+    "writes_to" : "concepts\/"
+  },
+  "source_files" : [
+    "academic_verify.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 1,
+      "swift_line" : 534
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 539
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 580
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 585
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 626
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 631
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 672
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 677
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 718
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 723
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 764
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 769
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "academic-verify a input",
+      "swift_struct" : "AcademicVerifyInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when verifyThisAcademicClaim fires",
+      "swift_struct" : "WhenVerifythisacademicclaimFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when checkThisStudy fires",
+      "swift_struct" : "WhenCheckthisstudyFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when academicVerify fires",
+      "swift_struct" : "WhenAcademicverifyFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when validateCitation fires",
+      "swift_struct" : "WhenValidatecitationFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when isThisStudyReal fires",
+      "swift_struct" : "WhenIsthisstudyrealFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when retractionWatch fires",
+      "swift_struct" : "WhenRetractionwatchFires"
+    }
+  ]
+}

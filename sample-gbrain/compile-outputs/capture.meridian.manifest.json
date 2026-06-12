@@ -1,0 +1,332 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Save any thought or content into the brain via one CLI command. The single human-facing entrypoint that replaces \"put_page vs commit-then-sync vs autopilot-wait\" with one command that just works.",
+    "name" : "capture",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 22,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 34,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 40,
+        "text" : "What it does"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 48,
+        "text" : "How to use"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 60,
+        "text" : "Defaults"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 67,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 83,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 98,
+        "text" : "When NOT to use this skill"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 69,
+        "text" : "Default prints a 5-line receipt"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 22,
+        "lines" : [
+          "**Input:** the content to save (inline arg, `--file PATH`, or `--stdin`)",
+          "**Output:** a page in the brain DB AND a markdown file on disk under",
+          "`<sync.repo_path>\/<slug>.md`. Receipt printed to stdout",
+          "**Side effect:** the page becomes immediately queryable via `gbrain query`,",
+          "`gbrain search`, or any MCP-bound agent",
+          "**Idempotency:** same content → same `inbox\/YYYY-MM-DD-<hash8>` slug. The",
+          "daemon's 24h content-hash dedup catches re-captures",
+          "**Trust:** all captures via this skill are local-CLI trust (`remote: false`)",
+          "Untrusted webhook ingestion goes through `POST \/ingest`, not this verb"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 34,
+        "lines" : [
+          "\"Capture this thought\" \/ \"save this\" \/ \"drop this into my brain\" \/ \"remember this\"",
+          "The user pastes content and asks to keep it",
+          "After a meeting summary, a research note, or any synthesis that should land as a brain page"
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "What it does",
+        "line" : 40,
+        "lines" : [
+          "`gbrain capture` resolves to a `put_page` call (local) or a remote MCP call",
+          "(thin-client). Either way the page lands in the DB AND on disk in one move",
+          "via the v0.38 write-through plumbing. The default slug is",
+          "`inbox\/YYYY-MM-DD-<hash8>` so captures cluster in a predictable triage",
+          "location"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "How to use",
+        "line" : 48,
+        "lines" : [
+          "codeblock:bash:Z2JyYWluIGNhcHR1cmUgInRoZSB0aG91Z2h0IEkgd2FudCB0byByZW1lbWJlciIKZ2JyYWluIGNhcHR1cmUgLS1maWxlIC4vbm90ZXMvdG9kYXkubWQKZWNobyAiZnJvbSBhIHBpcGUiIHwgZ2JyYWluIGNhcHR1cmUgLS1zdGRpbgpnYnJhaW4gY2FwdHVyZSAiLi4uIiAtLXNsdWcgZGFpbHkvMjAyNi0wNS0yMQpnYnJhaW4gY2FwdHVyZSAiLi4uIiAtLXR5cGUgaWRlYSAtLXNvdXJjZSB2b2ljZS13aGlzcGVyCmdicmFpbiBjYXB0dXJlICIuLi4iIC0tcXVpZXQgICAgICAgICAgIyBzY3JpcHQtZnJpZW5kbHk6IHByaW50cyBqdXN0IHRoZSBzbHVnCmdicmFpbiBjYXB0dXJlICIuLi4iIC0tanNvbiAgICAgICAgICAgIyBzdHJ1Y3R1cmVkIG91dHB1dCBmb3IgYWdlbnRz"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Defaults",
+        "line" : 60,
+        "lines" : [
+          "**Slug:** `inbox\/YYYY-MM-DD-<hash8>` (stable for same content; the daemon's 24h dedup catches re-captures)",
+          "**Type:** `note` (override with `--type idea` etc.)",
+          "**Frontmatter stamps:** `captured_via: capture-cli`, `captured_at: <ISO>`",
+          "**Title:** first non-empty line of the body, capped at 80 chars"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 67,
+        "lines" : [
+          "Default prints a 5-line receipt:",
+          "codeblock:plain:Y2FwdHVyZWQ6CiAgc2x1ZzogICAgICAgICAgaW5ib3gvMjAyNi0wNS0yMS1hYmNkZWYxMgogIHN0YXR1czogICAgICAgIGNyZWF0ZWRfb3JfdXBkYXRlZAogIGNvbnRlbnRfaGFzaDogIGYzYTdiOWMwZDFlMmYzYTTigKYKICBmaWxlOiAgICAgICAgICAvVXNlcnMveW91L2JyYWluL2luYm94LzIwMjYtMDUtMjEtYWJjZGVmMTIubWQKICBjYXB0dXJlZF9hdDogICAyMDI2LTA1LTIxVDA0OjE1OjAwLjAwMFo=",
+          "`--quiet` prints only the slug (use for `SLUG=$(gbrain capture \"...\" --quiet)`)",
+          "`--json` prints structured output for downstream tools"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 83,
+        "lines" : [
+          "**Don't reach for `gbrain put`.** That's the old per-page primitive that",
+          "doesn't know about default slug generation, content-type heuristics, or",
+          "the receipt block. `capture` is the human-facing wrapper",
+          "**Don't try to bulk-import dozens of files by looping over `gbrain capture`.**",
+          "That's what `gbrain sync` (or `gbrain import`) is for. Capture is for",
+          "single thoughts, single notes, single transcripts",
+          "**Don't pre-format the content yourself with frontmatter if you don't need to.**",
+          "Capture wraps plain prose in sensible frontmatter (type + title +",
+          "captured_via + captured_at). The body becomes `# Title\\n\\n<your prose>`",
+          "Pass `--file PATH` if you already have a fully-formatted markdown file",
+          "**Don't pass secrets as inline content.** Inline args land in shell",
+          "history. Use `--file` or `--stdin` instead"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill",
+        "line" : 98,
+        "lines" : [
+          "Bulk ingestion of many files → `skills\/media-ingest\/SKILL.md` or `gbrain sync` instead",
+          "Article\/link with author + publication metadata → `skills\/idea-ingest\/SKILL.md` (it knows to build the people page)",
+          "Meeting transcripts → `skills\/meeting-ingestion\/SKILL.md` (attendee enrichment)",
+          "This skill is for the simple \"I have a thought, save it\" case. Specialized",
+          "ingestion paths handle their own slugging + cross-referencing"
+        ],
+        "role" : "inert"
+      }
+    ],
+    "triggers" : "\"capture this\"\n\"save this thought\"\n\"remember this\"\n\"ingest this into my brain\"\n\"drop this in the inbox\"\n\"save to brain\"",
+    "writes_pages" : "\"inbox\/*\""
+  },
+  "source_files" : [
+    "capture.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 50,
+      "swift_line" : 502
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 513
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 524
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 535
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 546
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 557
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 569
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 610
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 615
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 656
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 661
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 702
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 707
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 748
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 753
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 794
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 799
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 840
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 845
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "capture a input",
+      "swift_struct" : "CaptureInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when captureThis fires",
+      "swift_struct" : "WhenCapturethisFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when saveThisThought fires",
+      "swift_struct" : "WhenSavethisthoughtFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when rememberThis fires",
+      "swift_struct" : "WhenRememberthisFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when ingestThisMyBrain fires",
+      "swift_struct" : "WhenIngestthismybrainFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when dropThisInInbox fires",
+      "swift_struct" : "WhenDropthisininboxFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when saveBrain fires",
+      "swift_struct" : "WhenSavebrainFires"
+    }
+  ]
+}

@@ -1,0 +1,405 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Share brain pages as beautiful password-protected HTML with zero LLM calls",
+    "mutating" : "false",
+    "name" : "publish",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 24,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 32,
+        "text" : "When to Publish"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 39,
+        "text" : "Default: ALWAYS ENCRYPT"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 47,
+        "text" : "Quick Reference"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 66,
+        "text" : "What Gets Stripped"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 81,
+        "text" : "Sharing Workflows"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 83,
+        "text" : "Option A: Local file (simplest)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 91,
+        "text" : "Option B: Upload to cloud storage"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 106,
+        "text" : "Option C: Static hosting (Render, Netlify, S3)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 112,
+        "text" : "Option D: GitHub Pages \/ Gist"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 119,
+        "text" : "Password Protection Details"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 132,
+        "text" : "Updating a Published Page"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 141,
+        "text" : "Revoking Access"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 146,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 153,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 168,
+        "text" : "Tools Used"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 26,
+        "text" : "Published HTML is fully self-contained"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 24,
+        "lines" : [
+          "Published HTML is fully self-contained: no external dependencies, no server needed",
+          "All private metadata (frontmatter, source citations, confirmation numbers, brain cross-links, timeline) is stripped before publishing",
+          "Password protection uses AES-256-GCM with PBKDF2 key derivation; plaintext never appears in the encrypted HTML file",
+          "Default is always encrypted unless the user explicitly requests \"open\", \"no password\", or \"public\"",
+          "External URLs (`https:\/\/...`) are preserved; only internal brain paths are stripped"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "When to Publish",
+        "line" : 32,
+        "lines" : [
+          "User asks to share a brain page, create a shareable link, or says \"give me a page\"",
+          "User wants to send a deal memo, person briefing, or research to someone external",
+          "User asks to publish a data room analysis or trip plan",
+          "Any time brain content needs to leave the brain without exposing the whole system"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Default: ALWAYS ENCRYPT",
+        "line" : 39,
+        "lines" : [
+          "Brain content is private. Default to password-protected unless the user explicitly",
+          "says \"open\", \"no password\", or \"public\"",
+          "If no password is specified, auto-generate one. Share the password via a different",
+          "channel than the URL"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Quick Reference",
+        "line" : 47,
+        "lines" : [
+          "codeblock:bash:IyBCYXNpYyBwdWJsaXNoIChvdXRwdXRzIGxvY2FsIEhUTUwgZmlsZSkKZ2JyYWluIHB1Ymxpc2ggYnJhaW4vY29tcGFuaWVzL2FjbWUubWQKCiMgUGFzc3dvcmQgcHJvdGVjdGVkIChhdXRvLWdlbmVyYXRlIHBhc3N3b3JkKQpnYnJhaW4gcHVibGlzaCBicmFpbi9jb21wYW5pZXMvYWNtZS5tZCAtLXBhc3N3b3JkCgojIFBhc3N3b3JkIHByb3RlY3RlZCAoc3BlY2lmaWMgcGFzc3dvcmQpCmdicmFpbiBwdWJsaXNoIGJyYWluL2NvbXBhbmllcy9hY21lLm1kIC0tcGFzc3dvcmQgInNlY3JldDEyMyIKCiMgQ3VzdG9tIHRpdGxlCmdicmFpbiBwdWJsaXNoIGJyYWluL2NvbXBhbmllcy9hY21lLm1kIC0tcGFzc3dvcmQgLS10aXRsZSAiQWNtZSAtLSBEZWFsIEFuYWx5c2lzIgoKIyBDdXN0b20gb3V0cHV0IHBhdGgKZ2JyYWluIHB1Ymxpc2ggYnJhaW4vY29tcGFuaWVzL2FjbWUubWQgLS1vdXQgL3RtcC9hY21lLXNoYXJlLmh0bWw="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "What Gets Stripped",
+        "line" : 66,
+        "lines" : [
+          "The publish command automatically removes all private\/internal data:",
+          "| Stripped | Example | Why |",
+          "|---------|---------|-----|",
+          "| YAML frontmatter | `title:`, `type:`, `tags:` | Internal metadata |",
+          "| `[Source: ...]` citations | All formats | Provenance is internal |",
+          "| Confirmation numbers | `ABC123DEF` -> \"on file\" | PII\/booking data |",
+          "| Brain cross-links | `[Jane](..\/people\/jane.md)` -> `Jane` | Internal paths |",
+          "| Timeline section | Everything below `---` \/ `## Timeline` | Raw evidence log |",
+          "| \"See also\" lines | Internal references | Brain navigation |",
+          "**Preserved:** external URLs (`https:\/\/...`), all other content"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Sharing Workflows",
+        "line" : 81,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Option A: Local file (simplest)",
+        "line" : 83,
+        "lines" : [
+          "codeblock:bash:Z2JyYWluIHB1Ymxpc2ggYnJhaW4vcGVvcGxlL2phbmUtZG9lLm1kIC0tcGFzc3dvcmQgLS1vdXQgfi9EZXNrdG9wL2phbmUtYnJpZWZpbmcuaHRtbA==",
+          "Share the HTML file via email, Slack, Airdrop. Share the password separately"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Option B: Upload to cloud storage",
+        "line" : 91,
+        "lines" : [
+          "codeblock:bash:IyBQdWJsaXNoIGxvY2FsbHkgZmlyc3QKZ2JyYWluIHB1Ymxpc2ggYnJhaW4vY29tcGFuaWVzL2FjbWUubWQgLS1wYXNzd29yZCAic2VjcmV0IiAtLW91dCAvdG1wL2FjbWUuaHRtbAoKIyBVcGxvYWQgdG8gU3VwYWJhc2UgU3RvcmFnZQpnYnJhaW4gZmlsZXMgdXBsb2FkIC90bXAvYWNtZS5odG1sIC0tcGFnZSBzaGFyZXMvYWNtZQoKIyBHZXQgYSBzaWduZWQgVVJMICgxLWhvdXIgZXhwaXJ5KQpnYnJhaW4gZmlsZXMgc2lnbmVkLXVybCBzaGFyZXMvYWNtZS9hY21lLmh0bWw=",
+          "Share the signed URL + password. URL expires in 1 hour. Re-generate as needed"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Option C: Static hosting (Render, Netlify, S3)",
+        "line" : 106,
+        "lines" : [
+          "Upload the HTML file to any static hosting service. The file is self-contained,",
+          "no server logic needed. Password-protected files work entirely client-side via",
+          "Web Crypto API"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Option D: GitHub Pages \/ Gist",
+        "line" : 112,
+        "lines" : [
+          "codeblock:bash:Z2JyYWluIHB1Ymxpc2ggYnJhaW4vdHJpcHMvamFwYW4tMjAyNi5tZCAtLW91dCB0cmlwLmh0bWwKIyBVcGxvYWQgdG8gYSBHaXRIdWIgR2lzdCBvciBQYWdlcyByZXBv"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Password Protection Details",
+        "line" : 119,
+        "lines" : [
+          "**Algorithm:** AES-256-GCM",
+          "**Key derivation:** PBKDF2 with 100K iterations, SHA-256",
+          "**Salt:** Random 16 bytes per encryption",
+          "**IV:** Random 12 bytes per encryption",
+          "**Decryption:** Client-side via Web Crypto API (SubtleCrypto)",
+          "**No server auth needed** -- the HTML file is self-contained",
+          "**\"Remember on this device\"** -- saves password in localStorage",
+          "When encrypted, the published HTML contains ONLY ciphertext. The plaintext is",
+          "not present anywhere in the file"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Updating a Published Page",
+        "line" : 132,
+        "lines" : [
+          "Re-run the publish command with the same output path:",
+          "codeblock:bash:Z2JyYWluIHB1Ymxpc2ggYnJhaW4vY29tcGFuaWVzL2FjbWUubWQgLS1wYXNzd29yZCAic2FtZS1wYXNzd29yZCIgLS1vdXQgc2hhcmVzL2FjbWUuaHRtbA==",
+          "Same file, same URL (if hosted), updated content"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Revoking Access",
+        "line" : 141,
+        "lines" : [
+          "Delete the file. If using signed URLs, the URL expires automatically (1 hour)",
+          "If using static hosting, remove the file from the host"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 146,
+        "lines" : [
+          "**Publishing without encryption.** Brain content is private. Default to password-protected unless the user explicitly says \"open\", \"no password\", or \"public\"",
+          "**Sharing password and URL in the same channel.** Always share the password via a different channel than the URL for security",
+          "**Assuming the user wants raw markdown.** The publish command produces beautiful HTML. Don't copy-paste markdown when `gbrain publish` exists",
+          "**Including internal metadata.** Never manually share content that contains frontmatter, source citations, or timeline sections. Let the publish command strip it"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 153,
+        "lines" : [
+          "codeblock:plain:UFVCTElTSEVEOiBbcGFnZSB0aXRsZV0KPT09PT09PT09PT09PT09PT09PT09PT09CgpGaWxlOiBbb3V0cHV0IHBhdGhdCkVuY3J5cHRlZDogW3llcyAoQUVTLTI1Ni1HQ00pIC8gbm9dClBhc3N3b3JkOiBbYXV0by1nZW5lcmF0ZWQgcGFzc3dvcmQgLyB1c2VyLXByb3ZpZGVkIC8gbm9uZV0KU2l6ZTogW2ZpbGUgc2l6ZV0KClNoYXJlIHRoZSBmaWxlIHZpYTogW2VtYWlsIC8gU2xhY2sgLyBBaXJkcm9wIC8gY2xvdWQgdXBsb2FkXQpTaGFyZSB0aGUgcGFzc3dvcmQgdmlhOiBbYSBkaWZmZXJlbnQgY2hhbm5lbF0="
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Tools Used",
+        "line" : 168,
+        "lines" : [
+          "`gbrain publish` -- deterministic HTML generation (no LLM calls)",
+          "`gbrain files upload` -- upload to cloud storage (optional)",
+          "`gbrain files signed-url` -- generate access links (optional)"
+        ],
+        "role" : "inert"
+      }
+    ],
+    "tools" : "get_page\nsearch",
+    "triggers" : "\"share this page\"\n\"publish page\"\n\"create shareable link\""
+  },
+  "source_files" : [
+    "publish.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 49,
+      "swift_line" : 501
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 512
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 523
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 534
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 546
+    },
+    {
+      "meridian_line" : 114,
+      "swift_line" : 557
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 598
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 603
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 644
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 649
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 690
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 695
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "publish a input",
+      "swift_struct" : "PublishInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when shareThisPage fires",
+      "swift_struct" : "WhenSharethispageFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when publishPage fires",
+      "swift_struct" : "WhenPublishpageFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when createShareableLink fires",
+      "swift_struct" : "WhenCreateshareablelinkFires"
+    }
+  ]
+}

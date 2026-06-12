@@ -1,0 +1,530 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Answer questions using the brain's knowledge with 3-layer search, synthesis,\nand citation propagation. Use when the user asks a question, wants a lookup,\nor needs information from the brain.",
+    "mutating" : "false",
+    "name" : "query",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 36,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 45,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 54,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 62,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 70,
+        "text" : "Quality Rules"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 79,
+        "text" : "Token-Budget Awareness"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 91,
+        "text" : "Source precedence"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 103,
+        "text" : "Citation in Answers"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 111,
+        "text" : "Graph Traversal (v0.10.1+)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 133,
+        "text" : "Search Quality Awareness"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 142,
+        "text" : "Tools Used"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 38,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 64,
+        "text" : "Answers should include"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 66,
+        "text" : "Citations"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 67,
+        "text" : "Gap flags"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 73,
+        "text" : "Cite sources"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 74,
+        "text" : "Flag stale results"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 106,
+        "text" : "Cite the page"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 118,
+        "text" : "Available link types"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 123,
+        "text" : "Examples"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 36,
+        "lines" : [
+          "This skill guarantees:",
+          "Every answer is grounded in brain content (no hallucination)",
+          "Every claim has a citation tracing back to a specific page slug",
+          "Gaps are flagged explicitly (\"the brain doesn't have information on X\")",
+          "Source precedence is respected (user statements > compiled truth > timeline > external)",
+          "Conflicting sources are noted with both citations"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 45,
+        "lines" : [
+          "use judgment to answer the question from the brain with citations:",
+          "Decompose the question into keyword, semantic, and structured search strategies",
+          "Execute keyword search, hybrid query, and structural list or backlink lookups",
+          "Read the top results to gather full context",
+          "Synthesize an answer where every claim cites a specific page slug",
+          "Flag gaps explicitly when the brain lacks the information"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 54,
+        "lines" : [
+          "Answering from general knowledge when the brain has relevant content",
+          "Hallucinating facts not in the brain",
+          "Silently picking one source when sources conflict",
+          "Loading full pages when search chunks are sufficient",
+          "Ignoring source precedence (user statements are highest authority)"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 62,
+        "lines" : [
+          "Answers should include:",
+          "Direct response to the question",
+          "Citations: \"According to [Source: people\/jane-doe, compiled truth]...\"",
+          "Gap flags: \"The brain doesn't have information on X\"",
+          "Conflict notes when sources disagree"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Quality Rules",
+        "line" : 70,
+        "lines" : [
+          "Never hallucinate. Only answer from brain content",
+          "Cite sources: \"According to concepts\/do-things-that-dont-scale...\"",
+          "Flag stale results: if a search result shows [STALE], note that the info may be outdated",
+          "For \"who\" questions, use backlinks and typed links to find connections",
+          "For \"what happened\" questions, use timeline entries",
+          "For \"what do we know\" questions, read compiled_truth directly"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Token-Budget Awareness",
+        "line" : 79,
+        "lines" : [
+          "Search returns **chunks**, not full pages. Read the excerpts first before deciding",
+          "whether to load a full page",
+          "`gbrain search` \/ `gbrain query` return ranked chunks with context snippets",
+          "These are often enough to answer the question directly",
+          "Only use `gbrain get <slug>` to load the full page when a chunk confirms the",
+          "page is relevant and you need more context (e.g., compiled truth, timeline)",
+          "**\"Tell me about X\"** -- get the full page (the user wants the complete picture)",
+          "**\"Did anyone mention Y?\"** -- search results are enough (the user wants a yes\/no with evidence)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Source precedence",
+        "line" : 91,
+        "lines" : [
+          "When multiple sources provide conflicting information, follow this precedence:",
+          "**User's direct statements** (highest authority -- what the user told you directly)",
+          "**Compiled truth** (the brain's synthesized, cited understanding)",
+          "**Timeline entries** (raw evidence, reverse-chronological)",
+          "**External sources** (web search, API enrichment -- lowest authority)",
+          "When sources conflict, note the contradiction with both citations. Don't silently",
+          "pick one"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Citation in Answers",
+        "line" : 103,
+        "lines" : [
+          "When referencing brain pages in your answer, propagate inline citations:",
+          "Cite the page: \"According to [Source: people\/jane-doe, compiled truth]...\"",
+          "When brain pages have inline `[Source: ...]` citations, propagate them so",
+          "the user can trace facts to their origin",
+          "When you synthesize across multiple pages, cite all sources"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Graph Traversal (v0.10.1+)",
+        "line" : 111,
+        "lines" : [
+          "For relationship questions (\"who knows who at X?\", \"connections between A and B\",",
+          "\"who works at Acme?\", \"who attended the standup?\"), use the graph layer instead",
+          "of full-text search:",
+          "`gbrain graph-query <slug> --type <link_type> --depth N --direction in|out|both`",
+          "Available link types: `attended`, `works_at`, `invested_in`, `founded`, `advises`, `mentions`, `source`",
+          "`--direction in` answers \"who points to X?\" (e.g., who works at company X)",
+          "`--direction out` answers \"what does X point to?\" (default)",
+          "`--depth N` controls multi-hop traversal (default 5)",
+          "Examples:",
+          "\"Who works at Acme?\" → `gbrain graph-query companies\/acme --type works_at --direction in`",
+          "\"Who attended Demo Day W26?\" → `gbrain graph-query meetings\/demo-day-w26 --type attended --direction out`",
+          "\"What companies has Emily advised?\" → `gbrain graph-query people\/emily --type advises --direction out`",
+          "\"Who has Alice met (via meetings)?\" → `gbrain graph-query people\/alice --type attended --depth 2`",
+          "Combine with `gbrain query` for queries that need BOTH semantic similarity AND",
+          "graph structure. Search results are ranked with a small backlink boost so well-",
+          "connected entities surface higher"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Search Quality Awareness",
+        "line" : 133,
+        "lines" : [
+          "If search results seem off (wrong results, missing known pages, irrelevant hits):",
+          "Run `gbrain doctor --json` to check index health",
+          "Check embedding coverage -- partial embeddings degrade hybrid search",
+          "Compare keyword search (`gbrain search`) vs hybrid search (`gbrain query`)",
+          "for the same query to isolate whether the issue is embedding-related",
+          "Report search quality issues in the maintain workflow (see maintain skill)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Tools Used",
+        "line" : 142,
+        "lines" : [
+          "Keyword search gbrain (search)",
+          "Hybrid search gbrain (query)",
+          "Read a page from gbrain (get_page)",
+          "List pages in gbrain with filters (list_pages)",
+          "Check backlinks in gbrain (get_backlinks)",
+          "Traverse the link graph in gbrain (traverse_graph)",
+          "View timeline entries in gbrain (get_timeline)"
+        ],
+        "role" : "inert"
+      }
+    ],
+    "tools" : "search\nquery\nget_page\nlist_pages\nget_backlinks\ntraverse_graph\nget_timeline",
+    "triggers" : "\"what do we know about\"\n\"tell me about\"\n\"who is\"\n\"what happened\"\n\"search for\"\n\"look up\"\n\"background on\"\n\"notes on\"\n\"who knows who\"\n\"relationship between\"\n\"connections\"\n\"graph query\"",
+    "version" : "1.0.0"
+  },
+  "source_files" : [
+    "query.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 47,
+      "swift_line" : 503
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 544
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 549
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 590
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 595
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 636
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 641
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 682
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 687
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 728
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 733
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 774
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 779
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 820
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 825
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 866
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 871
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 912
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 917
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 958
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 963
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1004
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1009
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1050
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1055
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "query a input",
+      "swift_struct" : "QueryInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when whatDoWeKnow fires",
+      "swift_struct" : "WhenWhatdoweknowFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when tellMe fires",
+      "swift_struct" : "WhenTellmeFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when whoIs fires",
+      "swift_struct" : "WhenWhoisFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when whatHappened fires",
+      "swift_struct" : "WhenWhathappenedFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when search fires",
+      "swift_struct" : "WhenSearchFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when lookUp fires",
+      "swift_struct" : "WhenLookupFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when background fires",
+      "swift_struct" : "WhenBackgroundFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when notes fires",
+      "swift_struct" : "WhenNotesFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when whoKnowsWho fires",
+      "swift_struct" : "WhenWhoknowswhoFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when relationship fires",
+      "swift_struct" : "WhenRelationshipFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when connections fires",
+      "swift_struct" : "WhenConnectionsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when graphQuery fires",
+      "swift_struct" : "WhenGraphqueryFires"
+    }
+  ]
+}

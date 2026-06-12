@@ -1,0 +1,405 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Ingest a voice note with exact-phrasing preservation (never paraphrased). Routes content to originals\/, concepts\/, people\/, companies\/, ideas\/, personal\/, or voice-notes\/ based on a decision tree. The user's exact words are the signal.",
+    "mutating" : "true",
+    "name" : "voice-note-ingest",
+    "outline" : [
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 32,
+        "text" : "Iron Law"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 42,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 49,
+        "text" : "The pipeline"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 67,
+        "text" : "Decision tree (where the content goes)"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 100,
+        "text" : "Brain page format"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 146,
+        "text" : "Citation format"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 158,
+        "text" : "Naming convention"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 164,
+        "text" : "Bulk vs. single"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 169,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 179,
+        "text" : "Related skills"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 187,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 198,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 152,
+        "text" : "Include timestamps when available"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 160,
+        "text" : "Audio files"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 162,
+        "text" : "Brain pages"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 189,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 194,
+        "text" : "Privacy contract preserved"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Iron Law",
+        "line" : 32,
+        "lines" : [
+          "The user's **exact words** are the insight. Never paraphrase. Never clean",
+          "up. The vivid, unpolished, stream-of-consciousness phrasing captures",
+          "something that cleaned-up prose does not. Preserve it in block quotes",
+          "The Analysis section can interpret; the transcript section is sacred",
+          "✅ `\"The ambition-to-lifespan ratio has never been more fucked\"`",
+          "❌ `User noted the tension between ambition and mortality`"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 42,
+        "lines" : [
+          "The user sends an audio or voice message via any channel (Telegram, voice",
+          "memo upload, openclaw audio attachment). The host agent typically provides",
+          "the transcript text. If not, transcribe via `gbrain transcription` (Groq",
+          "Whisper by default; OpenAI fallback for audio > 25MB segmented via ffmpeg)"
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "The pipeline",
+        "line" : 49,
+        "lines" : [
+          "codeblock:plain:MS4gU1RPUkUgICAgICAg4oaSIFVwbG9hZCBvcmlnaW5hbCBhdWRpbyB0byBnYnJhaW4gc3RvcmFnZSBiYWNrZW5kCiAgICAgICAgICAgICAgICAgKFMzIC8gU3VwYWJhc2UgU3RvcmFnZSAvIGxvY2FsIOKAlCBwbHVnZ2FibGUgcGVyCiAgICAgICAgICAgICAgICAgc3JjL2NvcmUvc3RvcmFnZS50cykuCjIuIFRSQU5TQ1JJQkUgIOKGkiBVc2UgdGhlIGFnZW50LXByb3ZpZGVkIHRyYW5zY3JpcHQgdmVyYmF0aW0sIE9SIGNhbGwKICAgICAgICAgICAgICAgICBnYnJhaW4gdHJhbnNjcmlwdGlvbiBpZiBubyB0cmFuc2NyaXB0IHdhcyBzdXBwbGllZC4KMy4gUk9VVEUgICAgICAg4oaSIEFwcGx5IHRoZSBkZWNpc2lvbiB0cmVlIChiZWxvdykgdG8gZmluZCB0aGUgcmlnaHQKICAgICAgICAgICAgICAgICBkZXN0aW5hdGlvbiBkaXJlY3RvcnkuCjQuIFdSSVRFICAgICAgIOKGkiBDcmVhdGUgLyB1cGRhdGUgdGhlIGRlc3RpbmF0aW9uIGJyYWluIHBhZ2U7IHByZXNlcnZlIHRoZQogICAgICAgICAgICAgICAgIHZlcmJhdGltIHRyYW5zY3JpcHQgaW4gYSBibG9jay1xdW90ZWQgIlVzZXIncyBXb3JkcyIKICAgICAgICAgICAgICAgICBzZWN0aW9uLgo1LiBDUk9TUy1MSU5LICDihpIgRm9yIGV2ZXJ5IGVudGl0eSBtZW50aW9uZWQgKHBlcnNvbiwgY29tcGFueSksIGFkZCBhCiAgICAgICAgICAgICAgICAgdGltZWxpbmUgYmFjay1saW5rIGZyb20gVEhFSVIgYnJhaW4gcGFnZSB0byBUSElTIG9uZQogICAgICAgICAgICAgICAgIChJcm9uIExhdyBwZXIgY29udmVudGlvbnMvcXVhbGl0eS5tZCku"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Decision tree (where the content goes)",
+        "line" : 67,
+        "lines" : [
+          "Apply in order. First match wins. If multiple categories apply, file to",
+          "the primary directory and cross-link to the others",
+          "**Original idea, observation, or thesis** — the user is expressing a",
+          "novel thought, framework, or connection THEY generated",
+          "→ `originals\/<slug>.md`. Use the user's vivid language for the slug",
+          "**About a world concept they encountered** — a framework or model",
+          "someone else created that the user is referencing",
+          "→ `concepts\/<slug>.md`",
+          "**About a specific person** — new information, opinion, or observation",
+          "about someone",
+          "→ Update `people\/<person>.md` timeline",
+          "**About a specific company** — new info about a company",
+          "→ Update `companies\/<company>.md` timeline",
+          "**A product or business idea** — something that could be built",
+          "→ `ideas\/<slug>.md`",
+          "**A personal reflection** — therapy-adjacent, emotional, identity",
+          "→ Append to appropriate `personal\/<slug>.md`",
+          "**None of the above \/ random thought \/ doesn't fit cleanly** —",
+          "→ `voice-notes\/YYYY-MM-DD-<slug>.md` (catch-all)",
+          "**Multiple categories?** Create the primary page, then cross-link to all",
+          "others. If the voice note covers a person AND a novel idea, create the",
+          "originals\/ page AND update the person's timeline"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Brain page format",
+        "line" : 100,
+        "lines" : [
+          "For ALL voice-note-derived pages, include this skeleton:",
+          "codeblock:markdown:LS0tCnRpdGxlOiAiW1RpdGxlIGRlcml2ZWQgZnJvbSBjb250ZW50XSIKdHlwZTogW29yaWdpbmFsIHwgY29uY2VwdCB8IHZvaWNlLW5vdGUgfCAuLi5dCmNyZWF0ZWQ6IFlZWVktTU0tREQKdXBkYXRlZDogWVlZWS1NTS1ERAp0YWdzOiBbdm9pY2Utbm90ZSwgcmVsZXZhbnQtdGFnc10Kc291cmNlczoKICB2b2ljZS1ub3RlOgogICAgdHlwZTogdm9pY2Vfbm90ZQogICAgc3RvcmFnZV9wYXRoOiAiW2dicmFpbiBzdG9yYWdlIFVSTCBvciByZWxhdGl2ZSBwYXRoXSIKICAgIGFjcXVpcmVkOiBZWVlZLU1NLURECiAgICBhY3F1aXJlZF92aWE6ICJ2b2ljZSBub3RlIGZyb20gPGNoYW5uZWw+IgotLS0KCiMgVGl0bGUKCj4gRXhlY3V0aXZlIHN1bW1hcnkgb2Ygd2hhdCB3YXMgc2FpZCBhbmQgd2h5IGl0IG1hdHRlcnMuCgojIyBVc2VyJ3MgV29yZHMgKCggaW5lcnQgKSkKCj4gIkV4YWN0IHRyYW5zY3JpcHQsIHZlcmJhdGltLCBwcmVzZXJ2aW5nIGV2ZXJ5IHdvcmQsIGhlc2l0YXRpb24sIGFuZCB2ZXJiYWwKPiB0aWMuIFRoaXMgaXMgdGhlIHByaW1hcnkgc291cmNlIG1hdGVyaWFsLiBEbyBub3QgZWRpdC4iCgrwn5SKIFtBdWRpb10oW2dicmFpbiBzdG9yYWdlIFVSTCBvciByZWxhdGl2ZSBwYXRoXSkKCiMjIEFuYWx5c2lzICgoIGluZXJ0ICkpCgpbV2hhdCB0aGlzIG1lYW5zLCB3aHkgaXQgbWF0dGVycywgY29ubmVjdGlvbnMgdG8gb3RoZXIgdGhpbmtpbmcuIFRoZQphbmFseXNpcyBpcyB0aGUgYWdlbnQncyBpbnRlcnByZXRhdGlvbjsgdGhlIHRyYW5zY3JpcHQgYWJvdmUgaXMgc2FjcmVkLl0KCiMjIFNlZSBBbHNvICgoIGluZXJ0ICkpCgotIFtSZWxhdGVkIGJyYWluIHBhZ2VzIHdpdGggcmVsYXRpdmUgbGlua3NdCgotLS0KCiMjIFRpbWVsaW5lICgoIGluZXJ0ICkpCgotICoqWVlZWS1NTS1ERCoqIHwgdm9pY2Ugbm90ZSBmcm9tIDxjaGFubmVsPiDigJQgW0JyaWVmIGRlc2NyaXB0aW9uXQ=="
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Citation format",
+        "line" : 146,
+        "lines" : [
+          "codeblock:plain:W1NvdXJjZTogdm9pY2Ugbm90ZSwgPGNoYW5uZWw+LCBZWVlZLU1NLUREXQ==",
+          "Include timestamps when available:",
+          "codeblock:plain:W1NvdXJjZTogdm9pY2Ugbm90ZSwgPGNoYW5uZWw+LCBZWVlZLU1NLUREIEhIOk1NIFBUXQ=="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Naming convention",
+        "line" : 158,
+        "lines" : [
+          "Audio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,",
+          "`2026-04-13-rick-rubin-creative-philosophy.ogg`)",
+          "Brain pages: match the slug of the destination directory"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Bulk vs. single",
+        "line" : 164,
+        "lines" : [
+          "This skill handles ONE voice note at a time. Each is its own ingest cycle",
+          "No batching"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 169,
+        "lines" : [
+          "❌ **Paraphrasing the transcript.** The exact words are the signal",
+          "❌ **Cleaning up hesitations or filler words** (\"um\", \"like\", \"you",
+          "know\"). The texture matters",
+          "❌ **Creating a page with no entity cross-links** when people\/companies",
+          "were mentioned. Iron Law fail",
+          "❌ **Skipping the audio storage step.** Always upload the original; the",
+          "brain page has a `🔊 [Audio]` link back to it"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Related skills",
+        "line" : 179,
+        "lines" : [
+          "`skills\/signal-detector\/SKILL.md` — same exact-phrasing pattern for",
+          "text-channel idea capture",
+          "`skills\/idea-ingest\/SKILL.md` — for typed-text idea ingestion",
+          "`skills\/conventions\/quality.md` — citation + back-link rules"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 187,
+        "lines" : [
+          "This skill guarantees:",
+          "Routing matches the canonical triggers in the frontmatter",
+          "Output written under the directories listed in `writes_to:` (when applicable)",
+          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
+          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
+          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 198,
+        "lines" : [
+          "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"voice note\"\n\"ingest this voice memo\"\n\"transcribe and file\"\n\"voice note ingest\"\n\"save this audio note\"\n\"audio message\"",
+    "version" : "0.1.0",
+    "writes_pages" : "true",
+    "writes_to" : "voice-notes\/\noriginals\/\nconcepts\/\npeople\/\ncompanies\/\nideas\/\npersonal\/"
+  },
+  "source_files" : [
+    "voice_note_ingest.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 1,
+      "swift_line" : 534
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 539
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 580
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 585
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 626
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 631
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 672
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 677
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 718
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 723
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 764
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 769
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "voice-note-ingest a input",
+      "swift_struct" : "VoiceNoteIngestInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when voiceNote fires",
+      "swift_struct" : "WhenVoicenoteFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when ingestThisVoiceMemo fires",
+      "swift_struct" : "WhenIngestthisvoicememoFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when transcribeAndFile fires",
+      "swift_struct" : "WhenTranscribeandfileFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when voiceNoteIngest fires",
+      "swift_struct" : "WhenVoicenoteingestFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when saveThisAudioNote fires",
+      "swift_struct" : "WhenSavethisaudionoteFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when audioMessage fires",
+      "swift_struct" : "WhenAudiomessageFires"
+    }
+  ]
+}

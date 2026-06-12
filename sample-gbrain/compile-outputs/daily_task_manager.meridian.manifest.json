@@ -1,0 +1,265 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Task lifecycle management. Add, complete, defer, remove, and review tasks.\nMaintains a running task list as a brain page.",
+    "mutating" : "true",
+    "name" : "daily-task-manager",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 23,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 32,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 49,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 70,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 25,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 27,
+        "text" : "Task lifecycle"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 28,
+        "text" : "Priority levels"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 39,
+        "text" : "Add"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 40,
+        "text" : "Complete"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 41,
+        "text" : "Defer"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 42,
+        "text" : "Remove"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 43,
+        "text" : "Review"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 23,
+        "lines" : [
+          "This skill guarantees:",
+          "Tasks stored as a brain page (`ops\/tasks.md`) with structured format",
+          "Task lifecycle: add → in-progress → complete | defer",
+          "Priority levels: P0 (urgent), P1 (today), P2 (this week), P3 (backlog)",
+          "Completed tasks archived with completion date",
+          "Deferred tasks carry forward with reason"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 32,
+        "lines" : [
+          "codeblock:bash:Z2JyYWluIGdldCBvcHMvdGFza3M=",
+          "use judgment to choose and apply the requested task action:",
+          "Add: append a task with priority, description, due date, and a timeline entry",
+          "Complete: mark the task as done and move it to the completed section with the date",
+          "Defer: move the task to the next day or week with a reason",
+          "Remove: delete the task from the list (rare; prefer complete or defer)",
+          "Review: display all active tasks by priority",
+          "codeblock:bash:Z2JyYWluIHB1dCBvcHMvdGFza3M="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 49,
+        "lines" : [
+          "codeblock:markdown:IyBUYXNrcwoKIyMgUDAg4oCUIFVyZ2VudCAoKCBpbmVydCApKQotIFsgXSB7dGFzayBkZXNjcmlwdGlvbn0gKGR1ZToge2RhdGV9KQoKIyMgUDEg4oCUIFRvZGF5ICgoIGluZXJ0ICkpCi0gWyBdIHt0YXNrIGRlc2NyaXB0aW9ufQoKIyMgUDIg4oCUIFRoaXMgV2VlayAoKCBpbmVydCApKQotIFsgXSB7dGFzayBkZXNjcmlwdGlvbn0KCiMjIFAzIOKAlCBCYWNrbG9nICgoIGluZXJ0ICkpCi0gWyBdIHt0YXNrIGRlc2NyaXB0aW9ufQoKIyMgQ29tcGxldGVkICgoIGluZXJ0ICkpCi0gW3hdIHt0YXNrfSAoY29tcGxldGVkOiB7ZGF0ZX0p"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 70,
+        "lines" : [
+          "Adding tasks without a priority level",
+          "Completing tasks without recording the completion date",
+          "Deferring tasks without a reason",
+          "Letting the task list grow unbounded (review weekly)",
+          "Storing tasks outside the brain (they should be searchable)"
+        ],
+        "role" : "prohibitions"
+      }
+    ],
+    "tools" : "search\nget_page\nput_page\nadd_timeline_entry",
+    "triggers" : "\"add task\"\n\"complete task\"\n\"what are my tasks\"\n\"task list\"\n\"defer task\"",
+    "version" : "1.0.0"
+  },
+  "source_files" : [
+    "daily_task_manager.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 34,
+      "swift_line" : 503
+    },
+    {
+      "meridian_line" : 38,
+      "swift_line" : 513
+    },
+    {
+      "meridian_line" : 45,
+      "swift_line" : 524
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 565
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 570
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 611
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 616
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 657
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 662
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 703
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 708
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 749
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 754
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "daily-task-manager a input",
+      "swift_struct" : "DailyTaskManagerInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when addTask fires",
+      "swift_struct" : "WhenAddtaskFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when completeTask fires",
+      "swift_struct" : "WhenCompletetaskFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when whatAreMyTasks fires",
+      "swift_struct" : "WhenWhataremytasksFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when taskList fires",
+      "swift_struct" : "WhenTasklistFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when deferTask fires",
+      "swift_struct" : "WhenDefertaskFires"
+    }
+  ]
+}

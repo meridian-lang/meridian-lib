@@ -1,0 +1,257 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Generic framework for converting external events (SMS, meetings, social mentions)\ninto brain-ingestible signals. Define a transform function, register a webhook URL,\nand incoming events get processed through the brain pipeline.",
+    "mutating" : "true",
+    "name" : "webhook-transforms",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 21,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 30,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 42,
+        "text" : "Example Transforms"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 44,
+        "text" : "SMS Received"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 50,
+        "text" : "Meeting Completed"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 56,
+        "text" : "Social Mention"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 62,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 67,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 23,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 27,
+        "text" : "Input sanitization"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 28,
+        "text" : "Error handling"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 21,
+        "lines" : [
+          "This skill guarantees:",
+          "External events are transformed into brain pages with proper citations",
+          "Raw payloads are preserved (dead-letter queue if transform fails)",
+          "Entity extraction runs on every transformed event",
+          "Input sanitization: no raw HTML\/script passes to brain pages",
+          "Error handling: transform failure logs raw payload, retries once"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 30,
+        "lines" : [
+          "use judgment to define and run a webhook transform:",
+          "Map the event schema to the brain page format, sanitizing HTML and escaping script content",
+          "Register the webhook URL with the external service",
+          "On each event, parse the payload, run the transform, write the page, extract entities, enrich, and add timeline entries",
+          "On a transform failure, log the raw payload to a dead-letter file, surface the error type, and retry once without losing events",
+          "codeblock:bash:Z2JyYWluIHN5bmM="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Example Transforms",
+        "line" : 42,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "SMS Received",
+        "line" : 44,
+        "lines" : [
+          "codeblock:plain:SW5wdXQ6IHtmcm9tOiAiKzE1NTUuLi4iLCBib2R5OiAiTWVldGluZyBtb3ZlZCB0byAzcG0iLCB0aW1lc3RhbXA6ICIuLi4ifQpPdXRwdXQ6IFRpbWVsaW5lIGVudHJ5IG9uIHNlbmRlcidzIGJyYWluIHBhZ2UgKyB0YXNrIHVwZGF0ZSBpZiBhY3Rpb24gaXRlbSBkZXRlY3RlZA=="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Meeting Completed",
+        "line" : 50,
+        "lines" : [
+          "codeblock:plain:SW5wdXQ6IHt0aXRsZTogIldlZWtseSBzeW5jIiwgYXR0ZW5kZWVzOiBbLi4uXSwgdHJhbnNjcmlwdDogIi4uLiIsIHN1bW1hcnk6ICIuLi4ifQpPdXRwdXQ6IERlbGVnYXRlIHRvIG1lZXRpbmctaW5nZXN0aW9uIHNraWxs"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Social Mention",
+        "line" : 56,
+        "lines" : [
+          "codeblock:plain:SW5wdXQ6IHtwbGF0Zm9ybTogInR3aXR0ZXIiLCBhdXRob3I6ICJAaGFuZGxlIiwgdGV4dDogIi4uLiIsIHVybDogIi4uLiJ9Ck91dHB1dDogQnJhaW4gcGFnZSBpbiBtZWRpYS8gKyBlbnRpdHkgZXh0cmFjdGlvbiArIGJhY2tsaW5rcw=="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 62,
+        "lines" : [
+          "Event transformed and written to brain. Report: \"Webhook: {event_type} from {source}",
+          "→ {brain_page_path}\""
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 67,
+        "lines" : [
+          "Passing raw HTML\/script to brain pages (XSS risk)",
+          "Silently dropping events when transform fails (use dead-letter queue)",
+          "Processing webhooks without entity extraction",
+          "Not sanitizing external input before brain writes"
+        ],
+        "role" : "prohibitions"
+      }
+    ],
+    "tools" : "put_page\nadd_timeline_entry\nsearch",
+    "triggers" : "\"set up webhook\"\n\"process webhook event\"\n\"transform this event\"",
+    "version" : "1.0.0"
+  },
+  "source_files" : [
+    "webhook_transforms.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 32,
+      "swift_line" : 502
+    },
+    {
+      "meridian_line" : 38,
+      "swift_line" : 513
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 554
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 559
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 600
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 605
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 646
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 651
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "webhook-transforms a input",
+      "swift_struct" : "WebhookTransformsInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when setUpWebhook fires",
+      "swift_struct" : "WhenSetupwebhookFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when processWebhookEvent fires",
+      "swift_struct" : "WhenProcesswebhookeventFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when transformThisEvent fires",
+      "swift_struct" : "WhenTransformthiseventFires"
+    }
+  ]
+}

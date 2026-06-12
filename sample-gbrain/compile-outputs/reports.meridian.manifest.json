@@ -1,0 +1,212 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Save and load timestamped reports. Keyword routing for fast lookup. Cron jobs\nsave output as reports; the agent or user queries them by keyword.",
+    "mutating" : "true",
+    "name" : "reports",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 21,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 29,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 36,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 41,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 23,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 25,
+        "text" : "Keyword routing"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 38,
+        "text" : "Saved"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 39,
+        "text" : "Loaded"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 21,
+        "lines" : [
+          "This skill guarantees:",
+          "Reports saved with timestamped filenames and frontmatter",
+          "Keyword routing: query → report category mapping",
+          "Latest report loadable by category name",
+          "Reports are searchable via gbrain search\/query"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 29,
+        "lines" : [
+          "use judgment to save, load, and route reports by keyword:",
+          "Save a report to reports\/{category}\/{date}.md with title, type, category, date, and time frontmatter",
+          "Load the most recent report file for a given category",
+          "Route common queries to report categories (for example \"inbox\" to ea-inbox-sweep, \"morning\" to morning-briefing)"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 36,
+        "lines" : [
+          "Saved: `reports\/{category}\/{YYYY-MM-DD-HHMM}.md`",
+          "Loaded: full report content with metadata"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 41,
+        "lines" : [
+          "Saving reports without frontmatter (makes them unsearchable)",
+          "Using inconsistent category names across runs",
+          "Loading all reports when only the latest is needed",
+          "Not routing by keyword (forcing exact category name)"
+        ],
+        "role" : "prohibitions"
+      }
+    ],
+    "tools" : "get_page\nput_page\nsearch",
+    "triggers" : "\"save report\"\n\"load latest report\"\n\"what's the latest briefing\"\n\"show me the pulse\"",
+    "version" : "1.0.0"
+  },
+  "source_files" : [
+    "reports.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 31,
+      "swift_line" : 503
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 544
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 549
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 590
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 595
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 636
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 641
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 682
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 687
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "reports a input",
+      "swift_struct" : "ReportsInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when saveReport fires",
+      "swift_struct" : "WhenSavereportFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when loadLatestReport fires",
+      "swift_struct" : "WhenLoadlatestreportFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when whatSLatestBriefing fires",
+      "swift_struct" : "WhenWhatslatestbriefingFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when showMePulse fires",
+      "swift_struct" : "WhenShowmepulseFires"
+    }
+  ]
+}

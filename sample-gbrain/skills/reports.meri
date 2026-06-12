@@ -1,0 +1,46 @@
+---
+name: reports
+version: 1.0.0
+description: |
+  Save and load timestamped reports. Keyword routing for fast lookup. Cron jobs
+  save output as reports; the agent or user queries them by keyword.
+triggers:
+  - "save report"
+  - "load latest report"
+  - "what's the latest briefing"
+  - "show me the pulse"
+tools:
+  - get_page
+  - put_page
+  - search
+mutating: true
+---
+
+# Reports Skill
+
+## Contract (( inert, role: invariants ))
+
+This skill guarantees:
+- Reports saved with timestamped filenames and frontmatter
+- Keyword routing: query → report category mapping
+- Latest report loadable by category name
+- Reports are searchable via gbrain search/query
+
+## Phases
+
+use judgment to save, load, and route reports by keyword:
+  Save a report to reports/{category}/{date}.md with title, type, category, date, and time frontmatter.
+  Load the most recent report file for a given category.
+  Route common queries to report categories (for example "inbox" to ea-inbox-sweep, "morning" to morning-briefing).
+
+## Output Format
+
+Saved: `reports/{category}/{YYYY-MM-DD-HHMM}.md`
+Loaded: full report content with metadata.
+
+## Anti-Patterns (( inert, role: prohibitions ))
+
+- Saving reports without frontmatter (makes them unsearchable)
+- Using inconsistent category names across runs
+- Loading all reports when only the latest is needed
+- Not routing by keyword (forcing exact category name)

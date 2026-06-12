@@ -1,0 +1,69 @@
+# brain.merrules — the gbrain corpus rulebook.
+#
+# Three families of declarative rule extend Meridian's deterministic English
+# surface so a gbrain SKILL.md compiles with minimal edits:
+#
+#   === desugar ===      surface idioms  → canonical Meridian statements
+#   === sections ===     markdown heading aliases → closed section roles
+#   === conventions ===  Inform-style cross-cutting behaviour (back-links,
+#                        notability gate, brain-first) declared ONCE
+#
+# Every rule is a compile-time equivalence: its output re-parses + lowers
+# through the same strict pipeline, so a rule can never reach the LLM, widen
+# tool scope, or bypass strict mode.
+
+=== desugar ===
+
+# `If X -> Y` / `If X then Y` arrow conditionals (single-line action).
+rule "arrow-conditional":
+  match: If {condition} -> {action}
+  rewrite: {action} only when {condition}.
+
+rule "arrow-conditional-then":
+  match: If {condition} then {action}
+  rewrite: {action} only when {condition}.
+
+# `Report:`/`Output:` lines become a deterministic skill.report emit.
+rule "report-emit":
+  match: Report: {message}
+  lowers to: emit skill.report with message = {message}.
+
+rule "output-emit":
+  match: Output: {message}
+  lowers to: emit skill.report with message = {message}.
+
+# Markdown checklists (`- [ ] item`, `□ item`) are verification asserts.
+rule "checklist-open":
+  match: [ ] {item}
+  rewrite: make sure {item}.
+
+rule "checklist-done":
+  match: [x] {item}
+  rewrite: make sure {item}.
+
+rule "checklist-box":
+  match: □ {item}
+  rewrite: make sure {item}.
+
+=== sections ===
+
+section "Contract", "Guarantees", "Contract & Guarantees", "Invariants" -> invariants
+section "Phases", "Workflow", "Pipeline", "Protocol", "Steps", "Process", "Procedure" -> procedure
+section "When To Use", "Use When", "Primary Triggers", "When This Applies" -> applicability
+section "When NOT To Use", "When Not To Use", "Do NOT Use", "Skip When", "Do Not Use" -> negative-applicability
+section "Anti-Patterns", "Anti Patterns", "Avoid", "Pitfalls" -> prohibitions
+section "Output Format", "Output", "Report Format", "Result Format" -> template
+
+=== conventions ===
+
+# Iron-Law back-linking: any page that mentions an entity gets a reciprocal link.
+after writing a page that mentions an entity:
+  create a back-link from the entity to the page.
+
+# Notability gate before creating entity pages.
+before writing a page about an entity:
+  make sure the entity is notable.
+
+# Brain-first: consult the local knowledge graph before any external call.
+before calling an external service:
+  check the brain first.

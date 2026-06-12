@@ -1,0 +1,460 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Post-restart smoke tests + auto-fix for gbrain and OpenClaw environments.\nTests critical services, auto-fixes known issues, extensible via user-defined\ntest scripts in ~\/.gbrain\/smoke-tests.d\/*.sh.",
+    "mutating" : "true",
+    "name" : "smoke-test",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 24,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 33,
+        "text" : "Built-in Tests"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 46,
+        "text" : "Usage"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 48,
+        "text" : "CLI"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 53,
+        "text" : "Direct"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 58,
+        "text" : "From OpenClaw bootstrap"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 64,
+        "text" : "From an agent"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 69,
+        "text" : "Adding Custom Tests"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 85,
+        "text" : "Adding Built-in Tests"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 105,
+        "text" : "Design rules:"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 113,
+        "text" : "Environment Variables"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 123,
+        "text" : "Known Issues & Their Auto-Fixes"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 125,
+        "text" : "Codex Zod core.cjs Missing (discovered 2026-04-23)"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 132,
+        "text" : "GBrain Worker Auth Failure"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 137,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 153,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 26,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 79,
+        "text" : "Rules"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 24,
+        "lines" : [
+          "This skill guarantees:",
+          "8 core tests verify gbrain + OpenClaw health after restart",
+          "Known failures are auto-fixed before reporting",
+          "User-extensible via `~\/.gbrain\/smoke-tests.d\/*.sh` drop-in scripts",
+          "Results logged to `\/tmp\/gbrain-smoke-test.log`",
+          "Exit code = number of unfixed failures (0 = all pass)"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Built-in Tests",
+        "line" : 33,
+        "lines" : [
+          "| # | Test | Auto-Fix |",
+          "|---|------|----------|",
+          "| 1 | Bun runtime | Install from bun.sh |",
+          "| 2 | GBrain CLI loads | Reinstall deps |",
+          "| 3 | GBrain database (doctor) | — |",
+          "| 4 | GBrain worker process | Start worker |",
+          "| 5 | OpenClaw Codex plugin (Zod CJS) | `npm install zod@4 --force` |",
+          "| 6 | OpenClaw gateway | — (may not be started yet) |",
+          "| 7 | Embedding API key | — (check .env) |",
+          "| 8 | Brain repo exists | — |"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Usage",
+        "line" : 46,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "CLI",
+        "line" : 48,
+        "lines" : [
+          "codeblock:bash:Z2JyYWluIHNtb2tlLXRlc3Q="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Direct",
+        "line" : 53,
+        "lines" : [
+          "codeblock:bash:YmFzaCBzY3JpcHRzL3Ntb2tlLXRlc3Quc2g="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "From OpenClaw bootstrap",
+        "line" : 58,
+        "lines" : [
+          "Add to your `ensure-services.sh` or equivalent:",
+          "codeblock:bash:YmFzaCAvcGF0aC90by9nYnJhaW4vc2NyaXB0cy9zbW9rZS10ZXN0LnNoID4+IC90bXAvYm9vdHN0cmFwLmxvZyAyPiYx"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "From an agent",
+        "line" : 64,
+        "lines" : [
+          "codeblock:plain:ZXhlYzogYmFzaCAvZGF0YS9nYnJhaW4vc2NyaXB0cy9zbW9rZS10ZXN0LnNo"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Adding Custom Tests",
+        "line" : 69,
+        "lines" : [
+          "Create executable scripts in `~\/.gbrain\/smoke-tests.d\/`:",
+          "codeblock:bash:IyB+Ly5nYnJhaW4vc21va2UtdGVzdHMuZC9jaGVjay1yZWRpcy5zaAojIS9iaW4vYmFzaApyZWRpcy1jbGkgcGluZyB8IGdyZXAgLXEgUE9ORw==",
+          "Rules:",
+          "Exit 0 = pass, non-zero = fail",
+          "Filename becomes the test name (e.g. `check-redis` from `check-redis.sh`)",
+          "Keep tests fast (< 10s each)",
+          "Tests run in alphabetical order"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Adding Built-in Tests",
+        "line" : 85,
+        "lines" : [
+          "Edit `scripts\/smoke-test.sh`. Follow this pattern:",
+          "codeblock:bash:IyDilIDilIAgTi4gW1NlcnZpY2UgTmFtZV0g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACmlmIFt0ZXN0IGNvbmRpdGlvbl07IHRoZW4KICBwYXNzICJbU2VydmljZSBOYW1lXSIKZWxzZQogICMgQXV0by1maXggYXR0ZW1wdAogIFtmaXggY29tbWFuZF0KICBpZiBbcmUtdGVzdCBjb25kaXRpb25dOyB0aGVuCiAgICBmaXhlZCAiW1doYXQgd2FzIGZpeGVkXSIKICAgIHBhc3MgIltTZXJ2aWNlIE5hbWVdIChhZnRlciBmaXgpIgogIGVsc2UKICAgIGZhaWwgIltTZXJ2aWNlIE5hbWVdIOKAlCBbZXJyb3IgZGV0YWlsXSIKICBmaQpmaQ=="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Design rules:",
+        "line" : 105,
+        "lines" : [
+          "**Test first** — never fix without confirming broken",
+          "**Re-test after fix** — verify the fix worked",
+          "**Timeout everything** — `timeout N` on any command that could hang",
+          "**Use helpers** — `pass()`, `fail()`, `fixed()`, `skip()`",
+          "**Idempotent fixes** — safe to run repeatedly",
+          "**Skip gracefully** — `skip()` when a prerequisite is missing, don't fail"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Environment Variables",
+        "line" : 113,
+        "lines" : [
+          "| Var | Default | Description |",
+          "|-----|---------|-------------|",
+          "| `GBRAIN_SMOKE_LOG` | `\/tmp\/gbrain-smoke-test.log` | Log file path |",
+          "| `GBRAIN_DIR_OVERRIDE` | (auto-detect) | Force gbrain install path |",
+          "| `GBRAIN_DATABASE_URL` | (from .env) | Database connection URL |",
+          "| `OPENCLAW_GATEWAY_PORT` | `18789` | Gateway port to test |",
+          "| `GBRAIN_BRAIN_PATH` | `\/data\/brain` | Brain repo path |"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Known Issues & Their Auto-Fixes",
+        "line" : 123,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Codex Zod core.cjs Missing (discovered 2026-04-23)",
+        "line" : 125,
+        "lines" : [
+          "**Symptom:** `Cannot find module '.\/core.cjs'` → all Codex ACP sessions fail",
+          "**Cause:** Zod v4 npm package ships without `core.cjs` in some installs",
+          "**Auto-fix:** `npm install zod@4 --force` in the codex extension's zod dir",
+          "**Persistence:** Does NOT survive container restart (gateway reinstalls deps)",
+          "This is why smoke tests must run on every restart"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "GBrain Worker Auth Failure",
+        "line" : 132,
+        "lines" : [
+          "**Symptom:** Worker can't connect to DB",
+          "**Cause:** `GBRAIN_DATABASE_URL` not propagated to worker subprocess",
+          "**Auto-fix:** Script explicitly passes both `DATABASE_URL` and `GBRAIN_DATABASE_URL`"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 137,
+        "lines" : [
+          "❌ Running smoke tests on every chat turn. Once per container restart (or",
+          "on user request) is plenty. The script is cheap but it's not free",
+          "❌ Writing a user drop-in without `timeout N` around any command that",
+          "could hang. A single hung drop-in stalls every subsequent run",
+          "❌ Auto-fixing without confirming the check is actually broken first",
+          "The `pass → fail-detected → fix → re-test` loop is the contract; fixes",
+          "that skip the re-test can report success on a still-broken state",
+          "❌ Treating `skip` as `fail`. Missing prerequisites (no OpenClaw installed,",
+          "no brain repo configured) are skips, not failures. Exit code = count of",
+          "real failures, not skipped checks",
+          "❌ Hardcoding paths in a user drop-in. Read env vars",
+          "(`GBRAIN_DATABASE_URL`, `HOME`, etc.) so the script travels across",
+          "container rebuilds"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 153,
+        "lines" : [
+          "The script writes a one-line status per check to stdout (✅\/❌\/🔧\/⏭️) plus a",
+          "final summary line: `Results: N\/M passed, F auto-fixed, S skipped`. A",
+          "structured timestamped log appends to `$GBRAIN_SMOKE_LOG`",
+          "(default `\/tmp\/gbrain-smoke-test.log`) for post-run forensics. Exit code",
+          "equals the count of unfixed failures (0 = all pass, positive integer =",
+          "count of remaining failures)"
+        ],
+        "role" : "template"
+      }
+    ],
+    "tools" : "exec\nread",
+    "triggers" : "\"smoke test\"\n\"run smoke tests\"\n\"container restart check\"\n\"health check\"\n\"did the restart break anything\"\n\"did the container restart break anything\""
+  },
+  "source_files" : [
+    "smoke_test.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 49,
+      "swift_line" : 503
+    },
+    {
+      "meridian_line" : 54,
+      "swift_line" : 514
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 555
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 560
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 601
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 606
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 647
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 652
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 693
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 698
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 739
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 744
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 785
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 790
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "smoke-test a input",
+      "swift_struct" : "SmokeTestInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when smokeTest fires",
+      "swift_struct" : "WhenSmoketestFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runSmokeTests fires",
+      "swift_struct" : "WhenRunsmoketestsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when containerRestartCheck fires",
+      "swift_struct" : "WhenContainerrestartcheckFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when healthCheck fires",
+      "swift_struct" : "WhenHealthcheckFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when didRestartBreakAnything fires",
+      "swift_struct" : "WhenDidrestartbreakanythingFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when didContainerRestartBreakAnything fires",
+      "swift_struct" : "WhenDidcontainerrestartbreakanythingFires"
+    }
+  ]
+}

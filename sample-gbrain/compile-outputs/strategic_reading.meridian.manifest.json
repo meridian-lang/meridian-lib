@@ -1,0 +1,344 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "brain_first" : "exempt",
+    "description" : "Read a book, article, transcript, or case study through the lens of a specific strategic problem you're facing. Produces an applied playbook that maps the source onto the problem and gives short\/medium\/long-term recommendations. NOT for general book summaries.",
+    "mutating" : "true",
+    "name" : "strategic-reading",
+    "outline" : [
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 34,
+        "text" : "What this is"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 49,
+        "text" : "Inputs"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 57,
+        "text" : "Output"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 61,
+        "text" : "Brain page structure"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 105,
+        "text" : "Process"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 140,
+        "text" : "Quality bar"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 153,
+        "text" : "What this skill is NOT"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 162,
+        "text" : "Related skills"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 171,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 182,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 186,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 173,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 178,
+        "text" : "Privacy contract preserved"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "What this is",
+        "line" : 34,
+        "lines" : [
+          "Take a large text PLUS a specific strategic problem, produce analysis that",
+          "maps the text's insights onto the problem. This is not book summarization",
+          "This is reading with a mission",
+          "Where `book-mirror` personalizes a book to the reader's whole life,",
+          "`strategic-reading` personalizes it to ONE current problem. Same shape",
+          "(extract → analyze → mirror), different lens",
+          "**Canonical example:** a power-dynamics history book read against a",
+          "specific gatekeeper-vs-incumbent fight, producing a tactical analysis that",
+          "maps the book's playbook onto the situation with counter-tactics and a",
+          "short\/medium\/long-term playbook"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Inputs",
+        "line" : 49,
+        "lines" : [
+          "**Source text** — book (EPUB\/PDF), article, transcript, historical case",
+          "study, any large document",
+          "**Strategic problem** — the specific situation to analyze through the",
+          "lens of the text. The user describes this explicitly or it's obvious",
+          "from context"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output",
+        "line" : 57,
+        "lines" : [
+          "The brain page is the artifact. PDF is a rendering, never primary"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Brain page structure",
+        "line" : 61,
+        "lines" : [
+          "codeblock:markdown:IyBbU291cmNlIFRpdGxlXSDigJQgQXBwbGllZCB0byBbUHJvYmxlbV0KCj4gT25lLXBhcmFncmFwaCBleGVjdXRpdmUgc3VtbWFyeTogaG93IHRoZSBzb3VyY2UgbWFwcyB0byB0aGUgc2l0dWF0aW9uLAo+IHRoZSBrZXkgaW5zaWdodCwgdGhlIGJvdHRvbSBsaW5lLgoKIyMgVGhlIENvcmUgUGFyYWxsZWwgKCggaW5lcnQgKSkKSG93IHRoZSBzb3VyY2UncyBjZW50cmFsIGR5bmFtaWMgbWFwcyBvbnRvIHRoZSB1c2VyJ3Mgc2l0dWF0aW9uLgoKIyMgQ2hhcHRlciAvIFNlY3Rpb24gVHJpYWdlICgoIGluZXJ0ICkpCkZvciBlYWNoIG1ham9yIHNlY3Rpb24gb2YgdGhlIHNvdXJjZToKLSAyLTMgc2VudGVuY2Ugc3VtbWFyeSBvZiB3aGF0IGl0IHNheXMKLSBSZWxldmFuY2UgdG8gdGhlIHByb2JsZW06IEhJR0ggLyBNRURJVU0gLyBMT1cKLSBPbmUgZGlyZWN0bHkgYXBwbGljYWJsZSBxdW90ZSAoaWYgYW55KQoKIyMgVGhlIFNvdXJjZSdzIFBsYXlib29rICgoIGluZXJ0ICkpClRoZSBhdXRob3IncyBmcmFtZXdvcmssIHRhY3RpY3MsIG9yIHN0cmF0ZWdpZXMg4oCUIG9yZ2FuaXplZCBhczoKLSBXaGF0IHRoZSBwcm90YWdvbmlzdCBESUQgKHRhY3RpY3MpCi0gV2hhdCBXT1JLRUQgYW5kIHdoeQotIFdoYXQgRkFJTEVEIGFuZCB3aHkKLSBXaGF0IE9QUE9ORU5UUyBkaWQgdGhhdCB3YXMgZWZmZWN0aXZlCgojIyBDb3VudGVyLVRhY3RpY3MgKCggaW5lcnQgKSkKU3BlY2lmaWMgbW92ZXMgZnJvbSB0aGUgc291cmNlIHRoYXQgbWFwIHRvIHRoZSB1c2VyJ3Mgc2l0dWF0aW9uOgotIFdoYXQgdG8gRE8gKHdpdGggc291cmNlIGV2aWRlbmNlKQotIFdoYXQgdG8gQVZPSUQgKHdpdGggc291cmNlIGV2aWRlbmNlKQotIFdoYXQgdG8gV0FUQ0ggRk9SICh3YXJuaW5nIHNpZ25zIGZyb20gdGhlIHNvdXJjZSkKCiMjIEFwcGxpZWQgUGxheWJvb2sgKCggaW5lcnQgKSkKVGhlIHN5bnRoZXNpcyDigJQgYWN0aW9uYWJsZSByZWNvbW1lbmRhdGlvbnM6Ci0gKipTaG9ydC10ZXJtKiogKHRoaXMgd2VlayAvIHRoaXMgbW9udGgpCi0gKipNZWRpdW0tdGVybSoqICh0aGlzIHF1YXJ0ZXIpCi0gKipMb25nLXRlcm0qKiAodGhpcyB5ZWFyKykKCiMjIEtleSBRdW90ZXMgKCggaW5lcnQgKSkKRGlyZWN0IHF1b3RlcyBmcm9tIHRoZSBzb3VyY2UgdGhhdCBhcmUgZGV2YXN0YXRpbmdseSByZWxldmFudC4KTWF4aW11bSA1LTEwLiBRdWFsaXR5IG92ZXIgcXVhbnRpdHkuCgojIyBTZWUgQWxzbyAoKCBpbmVydCApKQpMaW5rcyB0byByZWxldmFudCBicmFpbiBwYWdlcyAocmVsYXRlZCBjb25jZXB0cywgcmVsYXRlZCBwcm9qZWN0cyku"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Process",
+        "line" : 105,
+        "lines" : [
+          "codeblock:plain:UGhhc2UgMTogSW5nZXN0IHRoZSBzb3VyY2UKICDilJzilIDilIAgRVBVQjogZXh0cmFjdCBjaGFwdGVycyB2aWEgQmVhdXRpZnVsU291cCAoc2VlIGJvb2stbWlycm9yIFNLSUxMLm1kCiAg4pSCICAgZm9yIHRoZSBleHRyYWN0aW9uIHBpcGVsaW5lKQogIOKUnOKUgOKUgCBQREY6IHBkZnRvdGV4dCAtbGF5b3V0CiAg4pSc4pSA4pSAIEFydGljbGU6IHdlYl9mZXRjaAogIOKUlOKUgOKUgCBJZGVudGlmeSBUYWJsZSBvZiBDb250ZW50cyBhbmQgdG90YWwgc2l6ZS4KClBoYXNlIDI6IFRyaWFnZSBjaGFwdGVycwogIOKUnOKUgOKUgCBSZWFkIGZpcnN0IDIwMDAgY2hhcnMgb2YgZWFjaCBjaGFwdGVyLgogIOKUnOKUgOKUgCBDbGFzc2lmeSByZWxldmFuY2UgdG8gdGhlIHByb2JsZW0gKEhJR0ggLyBNRURJVU0gLyBMT1cpLgogIOKUlOKUgOKUgCBISUdIIGNoYXB0ZXJzIGdldCBmdWxsIHJlYWRzLiBNRURJVU0gcGFydGlhbC4gTE9XIHNraXBwZWQuCgpQaGFzZSAzOiBEZWVwIHJlYWQgSElHSCBjaGFwdGVycwogIOKUnOKUgOKUgCBUYWN0aWNzIGFuZCBzdHJhdGVnaWVzIHVzZWQuCiAg4pSc4pSA4pSAIFBvd2VyIGR5bmFtaWNzIGFuZCBob3cgdGhleSBzaGlmdGVkLgogIOKUnOKUgOKUgCBTcGVjaWZpYyBxdW90ZXMgdGhhdCBtYXAgdG8gdGhlIHByb2JsZW0uCiAg4pSU4pSA4pSAIE1vbWVudHMgd2hlcmUgdGhlIHByb3RhZ29uaXN0J3MgYXBwcm9hY2ggc3VjY2VlZGVkIG9yIGZhaWxlZC4KClBoYXNlIDQ6IFN5bnRoZXNpemUKICDilJzilIDilIAgTWFwIHNvdXJjZSBpbnNpZ2h0cyBvbnRvIHRoZSBzcGVjaWZpYyBwcm9ibGVtLgogIOKUnOKUgOKUgCBCdWlsZCB0aGUgcGxheWJvb2sgKGRvIC8gYXZvaWQgLyB3YXRjaCBmb3IpLgogIOKUnOKUgOKUgCBHZW5lcmF0ZSBzaG9ydC9tZWRpdW0vbG9uZy10ZXJtIHJlY29tbWVuZGF0aW9ucy4KICDilJTilIDilIAgU2VsZWN0IHRoZSBtb3N0IGRldmFzdGF0aW5nIHF1b3Rlcy4KClBoYXNlIDU6IFdyaXRlIGFuZCBkZWxpdmVyCiAg4pSc4pSA4pSAIFdyaXRlIHRoZSBicmFpbiBwYWdlIGF0IHRoZSByaWdodCBsb2NhdGlvbjoKICDilIIgICAgIOKAoiBJZiBwcm9ibGVtLXNwZWNpZmljOiBwcm9qZWN0cy88c2x1Zz4vcGxheWJvb2subWQKICDilIIgICAgIOKAoiBJZiBnZW5lcmFsIHN0cmF0ZWd5OiBjb25jZXB0cy88c2x1Zz4ubWQKICDilJzilIDilIAgcHV0X3BhZ2UgdmlhIHRoZSBzdGFuZGFyZCBDTEkgZmxvdy4KICDilJTilIDilIAgT3B0aW9uYWw6IHJlbmRlciB0byBQREYgdmlhIHNraWxscy9icmFpbi1wZGYu"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Quality bar",
+        "line" : 140,
+        "lines" : [
+          "**Every recommendation must cite the source.** Don't say \"go direct to",
+          "the mayor\" — say \"go direct to the mayor, because when the protagonist",
+          "refused to be intimidated by a resignation threat (Ch 48), the bluff",
+          "that worked on five mayors finally failed.\"",
+          "**Direct quotes are mandatory.** The source's own words carry more",
+          "weight than paraphrase",
+          "**The analysis must be actionable.** Not \"this is interesting\" but \"do",
+          "this, avoid that, watch for this.\"",
+          "**Short\/medium\/long-term breakdown is mandatory.** The user needs to",
+          "know what to do tomorrow AND what to do this year"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "What this skill is NOT",
+        "line" : 153,
+        "lines" : [
+          "Not a book summary tool. Use a different skill (or `book-mirror` for",
+          "personalized analysis) for general summaries",
+          "Not a research tool. Use `perplexity-research` for finding new",
+          "information about a topic",
+          "Not academic literary analysis. No one cares about literary merit —",
+          "only strategic application"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Related skills",
+        "line" : 162,
+        "lines" : [
+          "`skills\/book-mirror\/SKILL.md` — book personalized to whole life (vs",
+          "problem)",
+          "`skills\/perplexity-research\/SKILL.md` — current-intel cross-reference",
+          "for fresh data",
+          "`skills\/conventions\/quality.md` — citation + back-link rules"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 171,
+        "lines" : [
+          "This skill guarantees:",
+          "Routing matches the canonical triggers in the frontmatter",
+          "Output written under the directories listed in `writes_to:` (when applicable)",
+          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
+          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
+          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 182,
+        "lines" : [
+          "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 186,
+        "lines" : [
+          "The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing"
+        ],
+        "role" : "prohibitions"
+      }
+    ],
+    "triggers" : "\"strategic reading\"\n\"read this through the lens of\"\n\"apply this to my problem\"\n\"what can I learn from this about\"\n\"extract a playbook from\"",
+    "version" : "0.1.0",
+    "writes_pages" : "true",
+    "writes_to" : "concepts\/\nprojects\/"
+  },
+  "source_files" : [
+    "strategic_reading.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 1,
+      "swift_line" : 535
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 540
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 581
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 586
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 627
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 632
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 673
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 678
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 719
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 724
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "strategic-reading a input",
+      "swift_struct" : "StrategicReadingInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when strategicReading fires",
+      "swift_struct" : "WhenStrategicreadingFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when readThisLens fires",
+      "swift_struct" : "WhenReadthislensFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when applyThisMyProblem fires",
+      "swift_struct" : "WhenApplythismyproblemFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when whatCanILearnThis fires",
+      "swift_struct" : "WhenWhatcanilearnthisFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when extractPlaybook fires",
+      "swift_struct" : "WhenExtractplaybookFires"
+    }
+  ]
+}

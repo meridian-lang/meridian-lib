@@ -1,0 +1,66 @@
+---
+name: daily-task-prep
+version: 1.0.0
+description: |
+  Morning preparation. Calendar lookahead, meeting context loading, open threads
+  from yesterday, active task review. Extends briefing with actionable prep.
+triggers:
+  - "morning prep"
+  - "prepare for today"
+  - "what's on my plate"
+  - "day prep"
+tools:
+  - search
+  - query
+  - get_page
+  - list_pages
+  - get_timeline
+mutating: false
+---
+
+# Daily Task Prep
+
+## Contract (( inert, role: invariants ))
+
+This skill guarantees:
+- Calendar/meetings for today are loaded with brain context per attendee
+- Open threads from yesterday are surfaced
+- Active tasks reviewed with priority ordering
+- Prep briefing is actionable (not just informational)
+
+## Phases
+
+```bash
+gbrain get ops/tasks
+```
+
+use judgment to compile the morning prep briefing:
+  Load today's calendar and, for each meeting, load attendee brain pages, recent timeline, and open threads.
+  Search the brain for yesterday's timeline entries and flag anything unresolved.
+  Surface P0 and P1 tasks from the task list.
+  Compile per-meeting context cards plus open threads and task priorities.
+
+## Output Format
+
+```
+Morning Prep — {date}
+======================
+Meetings today: {N}
+
+## {Meeting 1 title} at {time} (( inert ))
+Attendees: {names with brain context}
+Context: {recent interactions, open threads}
+Prep: {what to know before this meeting}
+
+## Open Threads (( inert ))
+- {thread from yesterday, with context}
+
+## Tasks (P0-P1) (( inert ))
+- {task with priority}
+```
+
+## Anti-Patterns (( inert, role: prohibitions ))
+
+- Listing meetings without loading attendee context from brain
+- Ignoring yesterday's unresolved threads
+- Presenting tasks without priority ordering

@@ -1,0 +1,394 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Ingest video, audio, PDF, book, screenshot, and GitHub repo content into the brain.\nMulti-format handling with entity extraction and backlink propagation. Covers\nvideo-ingest, youtube-ingest, and book-ingest subtypes.",
+    "mutating" : "true",
+    "name" : "media-ingest",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 42,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 55,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 57,
+        "text" : "Phase 1: Identify format and fetch"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 68,
+        "text" : "Phase 2: Upload raw source"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 72,
+        "text" : "Phase 3: Create brain page"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 96,
+        "text" : "Phase 4: Entity extraction and propagation"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 106,
+        "text" : "Phase 5: Sync"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 110,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 115,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 44,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 47,
+        "text" : "Entity extraction"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 70,
+        "text" : "Save the original file for provenance"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 98,
+        "text" : "For every person and company mentioned"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 42,
+        "lines" : [
+          "This skill guarantees:",
+          "Every ingested media item has a brain page with analysis (not just a transcript dump)",
+          "Transcripts (video\/audio) saved in raw and human-readable formats",
+          "Entity extraction: every person and company mentioned gets back-linked",
+          "Raw source files preserved via `gbrain files upload-raw`",
+          "Filing by primary subject, not by media format",
+          "Every mention of a person or company with a brain page MUST create a back-link"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 55,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 1: Identify format and fetch",
+        "line" : 57,
+        "lines" : [
+          "| Format | Action |",
+          "|--------|--------|",
+          "| YouTube\/video URL | Fetch transcript (Whisper, transcription service, or captions) |",
+          "| Audio file | Transcribe with available STT service |",
+          "| PDF | Extract text (OCR if needed) |",
+          "| Book PDF | Extract text, identify chapters\/sections |",
+          "| Screenshot\/image | OCR via vision model, extract text and entities |",
+          "| GitHub repo | Clone, read README + key files, summarize architecture |"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 2: Upload raw source",
+        "line" : 68,
+        "lines" : [
+          "Save the original file for provenance: `gbrain files upload-raw <file> --page <slug>`"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 3: Create brain page",
+        "line" : 72,
+        "lines" : [
+          "File by primary subject (not format). Use this template:",
+          "codeblock:markdown:IyB7VGl0bGV9CgoqKlNvdXJjZToqKiB7VVJMIG9yIGZpbGUgcGF0aH0KKipGb3JtYXQ6Kioge3ZpZGVvL2F1ZGlvL1BERi9ib29rL3NjcmVlbnNob3QvcmVwb30KKipDcmVhdGVkOioqIHtkYXRlfQoKIyMgU3VtbWFyeSAoKCBpbmVydCApKQp7S2V5IHBvaW50cywgbm90IGEgdHJhbnNjcmlwdCBkdW1wfQoKIyMgS2V5IFNlZ21lbnRzIC8gSGlnaGxpZ2h0cyAoKCBpbmVydCApKQp7Rm9yIHZpZGVvL2F1ZGlvOiB0aW1lc3RhbXBlZCBoaWdobGlnaHRzLiBGb3IgYm9va3M6IGNoYXB0ZXIgc3VtbWFyaWVzLn0KCiMjIFBlb3BsZSBNZW50aW9uZWQgKCggaW5lcnQgKSkKe0xpc3Qgd2l0aCBsaW5rcyB0byBicmFpbiBwYWdlc30KCiMjIENvbXBhbmllcyBNZW50aW9uZWQgKCggaW5lcnQgKSkKe0xpc3Qgd2l0aCBsaW5rcyB0byBicmFpbiBwYWdlc30="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 4: Entity extraction and propagation",
+        "line" : 96,
+        "lines" : [
+          "For every person and company mentioned:",
+          "Check brain for existing page",
+          "Create\/enrich if needed (delegate to enrich skill)",
+          "Add back-link from entity page to this media page",
+          "Add timeline entry on entity page",
+          "A media item is NOT fully ingested until entity propagation is complete"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 5: Sync",
+        "line" : 106,
+        "lines" : [
+          "`gbrain sync` to update the index"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 110,
+        "lines" : [
+          "Brain page created with summary, highlights, and entity cross-links. Report to user:",
+          "\"Ingested {title}: {N} entities detected, {N} pages updated.\""
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 115,
+        "lines" : [
+          "Dumping raw transcripts without analysis",
+          "Skipping entity extraction (\"I'll do that separately\")",
+          "Filing **raw ingest** by format (all videos in `media\/videos\/`) instead of by subject. Note: format-prefixed paths under `media\/<format>\/<slug>` ARE sanctioned for **synthesized one-of-one output** like book-mirror's `media\/books\/<slug>-personalized.md`. The anti-pattern is for raw ingest, not for sui generis synthesis. See `skills\/_brain-filing-rules.md` \"Sanctioned exception: synthesis output is sui generis.\"",
+          "Not preserving raw source files",
+          "Creating stub pages without meaningful content"
+        ],
+        "role" : "prohibitions"
+      }
+    ],
+    "tools" : "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry\nfile_upload",
+    "triggers" : "\"watch this video\"\n\"process this YouTube link\"\n\"ingest this PDF\"\n\"save this podcast\"\n\"process this book\"\n\"PDF book\"\n\"summarize this book\"\n\"ingest it into my brain\"\n\"what's in this screenshot\"\n\"check out this repo\"",
+    "version" : "1.0.0",
+    "writes_pages" : "true",
+    "writes_to" : "concepts\/\npeople\/\ncompanies\/\nsources\/"
+  },
+  "source_files" : [
+    "media_ingest.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 1,
+      "swift_line" : 535
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 540
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 581
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 586
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 627
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 632
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 673
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 678
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 719
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 724
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 765
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 770
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 811
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 816
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 857
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 862
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 903
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 908
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 949
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 954
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "media-ingest a input",
+      "swift_struct" : "MediaIngestInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when watchThisVideo fires",
+      "swift_struct" : "WhenWatchthisvideoFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when processThisYoutubeLink fires",
+      "swift_struct" : "WhenProcessthisyoutubelinkFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when ingestThisPdf fires",
+      "swift_struct" : "WhenIngestthispdfFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when saveThisPodcast fires",
+      "swift_struct" : "WhenSavethispodcastFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when processThisBook fires",
+      "swift_struct" : "WhenProcessthisbookFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when pdfBook fires",
+      "swift_struct" : "WhenPdfbookFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when summarizeThisBook fires",
+      "swift_struct" : "WhenSummarizethisbookFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when ingestItMyBrain fires",
+      "swift_struct" : "WhenIngestitmybrainFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when whatSInThisScreenshot fires",
+      "swift_struct" : "WhenWhatsinthisscreenshotFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when checkOutThisRepo fires",
+      "swift_struct" : "WhenCheckoutthisrepoFires"
+    }
+  ]
+}

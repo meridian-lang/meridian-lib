@@ -1,0 +1,425 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Generate a publication-quality PDF from any brain page via the gstack make-pdf binary. Strips YAML frontmatter, sanitizes emoji, applies running headers and page numbers. Brain page is always the source of truth; PDF is a rendering.",
+    "name" : "brain-pdf",
+    "outline" : [
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 19,
+        "text" : "The rule"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 25,
+        "text" : "What this does"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 36,
+        "text" : "Prerequisite: gstack make-pdf"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 55,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 67,
+        "text" : "Invocation"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 102,
+        "text" : "Common patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 118,
+        "text" : "Defaults: NO cover, NO TOC"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 125,
+        "text" : "Font requirements"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 138,
+        "text" : "Delivery"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 152,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 164,
+        "text" : "Related skills"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 173,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 184,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 48,
+        "text" : "Verify it exists before invoking"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 127,
+        "text" : "The renderer needs"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 131,
+        "text" : "Minimum body font size"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 132,
+        "text" : "Body text"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 175,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 180,
+        "text" : "Privacy contract preserved"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "The rule",
+        "line" : 19,
+        "lines" : [
+          "The brain page is ALWAYS the source of truth. The PDF is a rendering of",
+          "it, never a standalone artifact. If a PDF exists somewhere, the brain",
+          "page must exist behind it"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "What this does",
+        "line" : 25,
+        "lines" : [
+          "Renders a brain page (markdown with frontmatter) into a",
+          "publication-quality PDF using the gstack `make-pdf` binary. Output is",
+          "suitable for:",
+          "Sharing a personalized book mirror via email or Telegram",
+          "Delivering a strategic-reading playbook as a clean read",
+          "Producing a briefing or report with running headers and page numbers",
+          "Archiving a long-form essay in a portable format"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Prerequisite: gstack make-pdf",
+        "line" : 36,
+        "lines" : [
+          "This skill depends on the gstack `make-pdf` binary at:",
+          "codeblock:plain:JEhPTUUvLmNsYXVkZS9za2lsbHMvZ3N0YWNrL21ha2UtcGRmL2Rpc3QvcGRm",
+          "The user must have gstack co-installed. If absent, the skill cannot run",
+          "A future v0.26+ may bundle a fallback PDF renderer; for v0.25.1 gstack",
+          "is a soft prereq",
+          "Verify it exists before invoking:",
+          "codeblock:bash:UD0iJEhPTUUvLmNsYXVkZS9za2lsbHMvZ3N0YWNrL21ha2UtcGRmL2Rpc3QvcGRmIgpbIC14ICIkUCIgXSB8fCB7IGVjaG8gIm1ha2UtcGRmIG5vdCBpbnN0YWxsZWQ7IGluc3RhbGwgZ3N0YWNrIiA+JjI7IGV4aXQgMTsgfQ=="
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 55,
+        "lines" : [
+          "codeblock:plain:MS4gUkVTT0xWRSAg4oaSIENvbmZpcm0gdGhlIGJyYWluIHBhZ2UgZXhpc3RzIChnYnJhaW4gZ2V0IDxzbHVnPikuCjIuIFNUUklQICAgIOKGkiBSZW1vdmUgWUFNTCBmcm9udG1hdHRlciDigJQgdGhlIHJlbmRlcmVyIHdvdWxkIG90aGVyd2lzZQogICAgICAgICAgICAgIGR1bXAgaXQgYXMgYSBmdWxsIHBhZ2Ugb2YgcmF3IG1ldGFkYXRhIHRleHQuCjMuIFJFTkRFUiAgIOKGkiBJbnZva2UgbWFrZS1wZGYgd2l0aCBzYW5lIGRlZmF1bHRzIChubyAtLWNvdmVyLCBubyAtLXRvYykuCjQuIERFTElWRVIgIOKGkiBIYW5kIHRoZSBQREYgdG8gdGhlIHJlcXVlc3RlciB2aWEgdGhlIGFnZW50J3MgcHJlZmVycmVkCiAgICAgICAgICAgICAgY2hhbm5lbCAoZG8gbm90IHVzZSByYXcgYE1FRElBOmAgdGFncyBvbiBUZWxlZ3JhbSDigJQKICAgICAgICAgICAgICB0aGV5IGZhaWwgc2lsZW50bHkpLg=="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Invocation",
+        "line" : 67,
+        "lines" : [
+          "codeblock:bash:U0xVRz0icGF0aC90by9wYWdlIgpQPSIkSE9NRS8uY2xhdWRlL3NraWxscy9nc3RhY2svbWFrZS1wZGYvZGlzdC9wZGYiCgojIDEuIENvbmZpcm0gdGhlIHBhZ2UgZXhpc3RzLgpnYnJhaW4gZ2V0ICIkU0xVRyIgPiAvZGV2L251bGwgfHwgeyBlY2hvICJQYWdlICRTTFVHIG5vdCBmb3VuZCIgPiYyOyBleGl0IDE7IH0KCiMgMi4gR2V0IHRoZSByYXcgbWFya2Rvd24uIFR3byBwYXRoczogcmVhZCBmcm9tIHRoZSBicmFpbiByZXBvIChpZiB1c2VyCiMgICAgc3luY3MgbG9jYWxseSkgT1IgYXNrIGdicmFpbiBmb3IgdGhlIGJvZHkgdmlhIHRoZSBBUEkuCkJSQUlOX0RJUj0kKGdicmFpbiBjb25maWcgZ2V0IHN5bmMucmVwb19wYXRoIDI+L2Rldi9udWxsIHx8IGVjaG8pCmlmIFsgLW4gIiRCUkFJTl9ESVIiIF0gJiYgWyAtZiAiJEJSQUlOX0RJUi8kU0xVRy5tZCIgXTsgdGhlbgogIFJBVz0iJEJSQUlOX0RJUi8kU0xVRy5tZCIKZWxzZQogIFJBVz0kKG1rdGVtcCAvdG1wL2JyYWluLXBhZ2UtWFhYWFhYLm1kKQogIGdicmFpbiBnZXQgIiRTTFVHIiAtLXJhdyA+ICIkUkFXIiAgICMgd2hhdGV2ZXIgZmxhZyBleHBvc2VzIHJhdyBib2R5CmZpCgojIDMuIFN0cmlwIFlBTUwgZnJvbnRtYXR0ZXIg4oCUIHNlZDogc2tpcCB0aGUgb3BlbmluZyAnLS0tJyB0aHJvdWdoIHRoZQojICAgIGNsb3NpbmcgJy0tLScgKGxpbmVzIDEuLk4pLCB0aGVuIGtlZXAgZXZlcnl0aGluZyBhZnRlci4KQ0xFQU49JChta3RlbXAgL3RtcC9icmFpbi1wYWdlLWNsZWFuLVhYWFhYWC5tZCkKc2VkICcxey9eLS0tJC8hcX07IC9eLS0tJC8sL14tLS0kL2QnICIkUkFXIiA+ICIkQ0xFQU4iCgojIDQuIFJlbmRlci4gTk8gLS1jb3ZlciwgTk8gLS10b2MgYnkgZGVmYXVsdCDigJQgdGhleSBsb29rIGNvcnBvcmF0ZQojICAgIGFuZCB3YXN0ZSBzcGFjZS4gQWRkIHRoZW0gb25seSBpZiBleHBsaWNpdGx5IHJlcXVlc3RlZC4KT1VUPSIvdG1wLyQoYmFzZW5hbWUgIiRTTFVHIikucGRmIgpDT05UQUlORVI9MSAiJFAiIGdlbmVyYXRlICIkQ0xFQU4iICIkT1VUIgoKZWNobyAiUmVuZGVyZWQ6ICRPVVQi",
+          "`CONTAINER=1` is mandatory in containerized environments — it tells",
+          "Playwright to skip Chromium sandboxing. Harmless on bare-metal"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Common patterns",
+        "line" : 102,
+        "lines" : [
+          "codeblock:bash:IyBEZWZhdWx0IOKAlCBjbGVhbiBQREYsIG5vIGNvdmVyLCBubyBUT0MKYnJhaW4tcGRmIDxzbHVnPgoKIyBEcmFmdCB3YXRlcm1hcmsgZm9yIGluLXByb2dyZXNzIHdvcmsKQ09OVEFJTkVSPTEgIiRQIiBnZW5lcmF0ZSAtLXdhdGVybWFyayBEUkFGVCAiJENMRUFOIiAiJE9VVCIKCiMgT3B0aW9uYWwgY292ZXIgKyBUT0MgaWYgdGhlIHVzZXIgZXhwbGljaXRseSBhc2tzCkNPTlRBSU5FUj0xICIkUCIgZ2VuZXJhdGUgLS1jb3ZlciAtLXRvYyAiJENMRUFOIiAiJE9VVCIKCiMgQ3VzdG9tIHRpdGxlICsgYXV0aG9yIG92ZXJyaWRlIChvdGhlcndpc2UgcHVsbGVkIGZyb20gZnJvbnRtYXR0ZXIpCkNPTlRBSU5FUj0xICIkUCIgZ2VuZXJhdGUgLS10aXRsZSAiQ3VzdG9tIFRpdGxlIiAtLWF1dGhvciAiQ3VzdG9tIEF1dGhvciIgIiRDTEVBTiIgIiRPVVQi"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Defaults: NO cover, NO TOC",
+        "line" : 118,
+        "lines" : [
+          "These flags are off by default because they look corporate and waste",
+          "space on most personal-knowledge content. Only add them when the user",
+          "explicitly asks for \"formal\" output (e.g., something they're sending to",
+          "a board or printing as a deliverable)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Font requirements",
+        "line" : 125,
+        "lines" : [
+          "The renderer needs:",
+          "`fonts-liberation` (Helvetica\/Arial substitute)",
+          "`fonts-noto-cjk` (Chinese\/Japanese\/Korean characters)",
+          "Minimum body font size: 10pt (page chrome 9pt)",
+          "Body text: 11pt",
+          "If running in an environment without these fonts, install them via the",
+          "host's package manager (`apt install fonts-liberation fonts-noto-cjk` on",
+          "Debian\/Ubuntu containers)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Delivery",
+        "line" : 138,
+        "lines" : [
+          "After rendering, deliver via the agent's preferred channel:",
+          "**Telegram:** use the `message` tool with `filePath=\"\/tmp\/<slug>.pdf\"`",
+          "attachment. NEVER use raw `MEDIA:` tags — they fail silently",
+          "**Email:** attach via the host's email tool",
+          "**Direct file response:** print the PDF path; the user can pull it",
+          "manually",
+          "Always include the brain page link in the delivery message so the user",
+          "can also see it on GitHub \/ locally. The PDF is a rendering; the source",
+          "is the artifact"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 152,
+        "lines" : [
+          "❌ Generating a PDF without first confirming the brain page exists",
+          "No source = no PDF",
+          "❌ Skipping the frontmatter strip. The renderer dumps frontmatter as",
+          "raw text on the first page; ugly",
+          "❌ Skipping emoji sanitization. Emoji that don't map to the rendering",
+          "font show up as `□` boxes",
+          "❌ Adding `--cover` or `--toc` by default. Off unless asked",
+          "❌ Using raw `MEDIA:` tags for Telegram delivery. Use the `message`",
+          "tool with `filePath`"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Related skills",
+        "line" : 164,
+        "lines" : [
+          "`skills\/book-mirror\/SKILL.md` — produces a brain page that's a",
+          "natural input to brain-pdf (chapter-by-chapter personalized analysis)",
+          "`skills\/strategic-reading\/SKILL.md` — same shape, problem-lens variant",
+          "`skills\/publish\/SKILL.md` — share brain pages as password-protected",
+          "HTML (different rendering target)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 173,
+        "lines" : [
+          "This skill guarantees:",
+          "Routing matches the canonical triggers in the frontmatter",
+          "Output written under the directories listed in `writes_to:` (when applicable)",
+          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
+          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
+          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 184,
+        "lines" : [
+          "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"make pdf from brain\"\n\"brain pdf\"\n\"convert brain page to pdf\"\n\"publish this page as pdf\"\n\"export brain page\"",
+    "version" : "0.1.0"
+  },
+  "source_files" : [
+    "brain_pdf.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 104,
+      "swift_line" : 502
+    },
+    {
+      "meridian_line" : 104,
+      "swift_line" : 513
+    },
+    {
+      "meridian_line" : 104,
+      "swift_line" : 524
+    },
+    {
+      "meridian_line" : 104,
+      "swift_line" : 535
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 578
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 583
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 624
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 629
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 670
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 675
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 716
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 721
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 762
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 767
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "brain-pdf a input",
+      "swift_struct" : "BrainPdfInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when makePdfBrain fires",
+      "swift_struct" : "WhenMakepdfbrainFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when brainPdf fires",
+      "swift_struct" : "WhenBrainpdfFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when convertBrainPagePdf fires",
+      "swift_struct" : "WhenConvertbrainpagepdfFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when publishThisPageAsPdf fires",
+      "swift_struct" : "WhenPublishthispageaspdfFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when exportBrainPage fires",
+      "swift_struct" : "WhenExportbrainpageFires"
+    }
+  ]
+}

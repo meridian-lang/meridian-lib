@@ -1,0 +1,312 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_skill" : {
+    "description" : "Compile daily briefing with meeting context, active deals, and citation tracking",
+    "mutating" : "false",
+    "name" : "briefing",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 24,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 32,
+        "text" : "Phases"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 44,
+        "text" : "GBrain-Native Context Loading"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 48,
+        "text" : "Before a meeting"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 55,
+        "text" : "Before an email reply"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 62,
+        "text" : "Daily briefing queries"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 70,
+        "text" : "Output Format"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 94,
+        "text" : "Back-Linking During Briefing"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 100,
+        "text" : "Citation in Briefings"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 2,
+        "line" : 106,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 114,
+        "text" : "Tools Used"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 29,
+        "text" : "The briefing is read-only"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 57,
+        "text" : "Before drafting or triaging any email"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 24,
+        "lines" : [
+          "Every fact in the briefing includes an inline `[Source: slug, updated DATE]` citation",
+          "Meeting participants are resolved against the brain; gaps are explicitly flagged",
+          "Active deals and action items include deadlines and recency context",
+          "The briefing is read-only: no brain pages are created or modified unless the user explicitly requests it",
+          "Stale alerts surface pages relevant to today's context, not just all stale pages"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 32,
+        "lines" : [
+          "codeblock:bash:Z2JyYWluIHJlY2FsbCAtLXNpbmNlLWxhc3QtcnVuIC0tc3VwZXJzZXNzaW9ucyAtLXBlbmRpbmcgLS1yb2xsdXAgLS1qc29u",
+          "use judgment to compose the daily briefing:",
+          "Fold the recall pulse into a \"Brain pulse\" section: contradictions resolved overnight, top mentions, new facts since the last briefing, and a pending-consolidation footer",
+          "Summarize today's meetings with participant context loaded from the brain",
+          "List active deals with deadlines approaching in the next seven days and recent timeline entries",
+          "Surface time-sensitive threads, recent changes, people in play, and stale alerts relevant to today"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "GBrain-Native Context Loading",
+        "line" : 44,
+        "lines" : [
+          "Before generating any briefing, load context from gbrain systematically"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Before a meeting",
+        "line" : 48,
+        "lines" : [
+          "For every attendee on the calendar invite:",
+          "`gbrain search \"<attendee name>\"` -- find their brain page",
+          "`gbrain get <slug>` -- load compiled truth, recent timeline, relationship context",
+          "If no page exists, note the gap (\"No brain page for Sarah Chen -- consider enrichment\")"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Before an email reply",
+        "line" : 55,
+        "lines" : [
+          "Before drafting or triaging any email:",
+          "`gbrain search \"<sender name>\"` -- load sender context",
+          "Read their compiled truth to understand who they are, what they care about, and",
+          "your relationship history. This turns a cold reply into an informed one"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Daily briefing queries",
+        "line" : 62,
+        "lines" : [
+          "Run these queries to populate the briefing sections:",
+          "`gbrain query \"active deals status\"` -- deal pipeline snapshot",
+          "`gbrain query \"meetings this week\"` -- recent meeting pages with insights",
+          "`gbrain query \"pending commitments follow-ups\"` -- open threads and action items",
+          "`gbrain search --type person --sort updated --limit 10` -- people in play"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 70,
+        "lines" : [
+          "codeblock:plain:REFJTFkgQlJJRUZJTkcgLS0gW2RhdGVdCj09PT09PT09PT09PT09PT09PT09PT09PQoKTUVFVElOR1MgVE9EQVkKLSBbdGltZV0gW21lZXRpbmcgbmFtZV0KICBQYXJ0aWNpcGFudHM6IFtuYW1lXSAoc2x1ZzogcGVvcGxlL25hbWUsIFtrZXkgY29udGV4dF0pCgpBQ1RJVkUgREVBTFMKLSBbZGVhbCBuYW1lXSAtLSBbc3RhdHVzXSwgZGVhZGxpbmU6IFtkYXRlXQogIFJlY2VudDogW2xhdGVzdCB0aW1lbGluZSBlbnRyeV0KCkFDVElPTiBJVEVNUwotIFtpdGVtXSAtLSBkdWUgW2RhdGVdLCByZWxhdGVkIHRvIFtzbHVnXQoKUkVDRU5UIENIQU5HRVMgKDI0aCkKLSBbc2x1Z10gLS0gW3doYXQgY2hhbmdlZF0KClBFT1BMRSBJTiBQTEFZCi0gW25hbWVdIC0tIFt3aHkgdGhleSdyZSBhY3RpdmVd"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Back-Linking During Briefing",
+        "line" : 94,
+        "lines" : [
+          "If the briefing creates or updates any brain pages (e.g., new meeting prep",
+          "pages, updated entity pages), the back-linking iron law applies: every entity",
+          "mentioned must have a back-link from their page. See `skills\/_brain-filing-rules.md`"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Citation in Briefings",
+        "line" : 100,
+        "lines" : [
+          "When presenting facts from brain pages, include inline citations:",
+          "\"Jane is CTO of Acme [Source: people\/jane-doe, updated 2026-04-01]\"",
+          "This lets the user trace any claim back to the brain page and assess freshness"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 106,
+        "lines" : [
+          "**Briefing without brain queries.** Never generate a briefing from memory alone; always query gbrain for current data",
+          "**Uncited facts.** Every claim must include `[Source: slug, updated DATE]`. A fact without a citation is unverifiable",
+          "**Stale context presented as current.** If a page hasn't been updated in 30+ days, flag the staleness explicitly rather than presenting it as fresh",
+          "**Modifying brain pages unprompted.** The briefing is read-only by default. Do not create or update pages unless the user explicitly requests it",
+          "**Ignoring coverage gaps.** When a meeting participant has no brain page, say so. Silence about gaps hides ignorance"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Tools Used",
+        "line" : 114,
+        "lines" : [
+          "Search gbrain by name (query)",
+          "Read a page from gbrain (get_page)",
+          "List pages in gbrain by type (list_pages)",
+          "Check gbrain health (get_health)",
+          "View timeline entries in gbrain (get_timeline)"
+        ],
+        "role" : "inert"
+      }
+    ],
+    "tools" : "search\nquery\nget_page\nlist_pages\nget_timeline",
+    "triggers" : "\"daily briefing\"\n\"morning briefing\"\n\"what's happening today\""
+  },
+  "source_files" : [
+    "briefing.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 34,
+      "swift_line" : 501
+    },
+    {
+      "meridian_line" : 38,
+      "swift_line" : 511
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 552
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 557
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 598
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 603
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 644
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 649
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "briefing a input",
+      "swift_struct" : "BriefingInput"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when dailyBriefing fires",
+      "swift_struct" : "WhenDailybriefingFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when morningBriefing fires",
+      "swift_struct" : "WhenMorningbriefingFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when whatSHappeningToday fires",
+      "swift_struct" : "WhenWhatshappeningtodayFires"
+    }
+  ]
+}
