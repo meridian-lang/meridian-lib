@@ -32,8 +32,9 @@ public struct AnaphoraResolver: Sendable {
 
     private func replaceWholeWord(_ needle: String, in haystack: String, with replacement: String) -> String {
         let pattern = "\\b" + NSRegularExpression.escapedPattern(for: needle) + "\\b"
+        // Escaped literal pattern — compilation cannot fail; a failure is a bug.
         guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else {
-            return haystack
+            preconditionFailure("internal: constant whole-word regex failed to compile: \(pattern)")
         }
         let range = NSRange(haystack.startIndex..<haystack.endIndex, in: haystack)
         return regex.stringByReplacingMatches(in: haystack, range: range, withTemplate: replacement)

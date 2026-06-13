@@ -134,6 +134,9 @@ public struct Compiler {
     ) throws -> (swift: String, manifest: ManifestEmitter.Input) {
         let trace = options.trace
         var lexicon = options.lexicon
+        trace.resetProfile()
+        let compileSpan = trace.push(.timing, "compile \(meridianFile)")
+        defer { trace.pop(compileSpan); trace.profileSummary() }
 
         // Parse + merge every supplied rulebook into one effective Rulebook,
         // and build the desugar engine that the StatementParser consults.
@@ -194,15 +197,20 @@ public struct Compiler {
         // attribution; multi-vocab attributes still flow through the merged
         // config's individual statement source lines.
         let symbolsFile = vocabularies.first?.file ?? "config.merconfig"
-        let symbols = SymbolTable.build(from: config, sourceFile: symbolsFile, trace: trace, lexicon: lexicon)
+        let symbols = trace.phase("symbols") {
+            SymbolTable.build(from: config, sourceFile: symbolsFile, trace: trace, lexicon: lexicon)
+        }
 
-        let ast = try MeridianParser(symbols: symbols, trace: trace, lexicon: lexicon,
-                                     rewriteEngine: rewriteEngine).parse(meridianSource, file: meridianFile)
+        let engine = DiagnosticEngine(trace: trace)
+        let ast = try trace.phase("parse") {
+            try MeridianParser(symbols: symbols, trace: trace, lexicon: lexicon,
+                               rewriteEngine: rewriteEngine, diagnostics: engine).parse(meridianSource, file: meridianFile)
+        }
         return try lowerAndEmit(
             ast: ast, meridianFile: meridianFile,
             symbols: symbols, config: config, lexicon: lexicon, trace: trace,
             rulebook: rulebook, vocabularies: vocabularies, rulebooks: rulebooks,
-            preRegistered: false
+            preRegistered: false, engine: engine
         )
     }
 
@@ -283,12 +291,15 @@ public struct Compiler {
         let symbolsFile = vocabularies.first?.file ?? "config.merconfig"
         let symbols = SymbolTable.build(from: config, sourceFile: symbolsFile, trace: trace, lexicon: lexicon)
 
-        // Parse every skill against the SHARED symbol table.
-        var parsed: [(ast: MeridianFile, file: String)] = []
+        // Parse every skill against the SHARED symbol table. Each file gets its
+        // own per-file `DiagnosticEngine` (so batching never crosses files) used
+        // for both its parse and lower phases.
+        var parsed: [(ast: MeridianFile, file: String, engine: DiagnosticEngine)] = []
         for skill in skills {
+            let engine = DiagnosticEngine(trace: trace)
             let ast = try MeridianParser(symbols: symbols, trace: trace, lexicon: lexicon,
-                                         rewriteEngine: rewriteEngine).parse(skill.source, file: skill.file)
-            parsed.append((ast, skill.file))
+                                         rewriteEngine: rewriteEngine, diagnostics: engine).parse(skill.source, file: skill.file)
+            parsed.append((ast, skill.file, engine))
         }
 
         // Pre-register EVERY file's workflows as phrase stubs first, so a body
@@ -311,7 +322,7 @@ public struct Compiler {
                 ast: entry.ast, meridianFile: entry.file,
                 symbols: symbols, config: config, lexicon: lexicon, trace: trace,
                 rulebook: rulebook, vocabularies: vocabularies, rulebooks: rulebooks,
-                preRegistered: true
+                preRegistered: true, engine: entry.engine
             ).swift
         }
         return outputs
@@ -329,7 +340,8 @@ public struct Compiler {
         rulebook: Rulebook,
         vocabularies: [VocabularyInput],
         rulebooks: [RulebookInput],
-        preRegistered: Bool
+        preRegistered: Bool,
+        engine: DiagnosticEngine
     ) throws -> (swift: String, manifest: ManifestEmitter.Input) {
         try validateImports(ast.imports, against: vocabularies, file: meridianFile)
         try validateRulebookReferences(ast.metadata, against: rulebooks, file: meridianFile)
@@ -340,8 +352,17 @@ public struct Compiler {
         if let raw = ast.metadata?["allow-fallbacks"] {
             let (frontPolicy, unknown) = FallbackPolicy.parse(raw)
             effectivePolicy = effectivePolicy.merging(frontPolicy)
+            let fbLine = ast.metadata?.sourceLine ?? 1
             for token in unknown {
-                trace.log(.lowering, "frontmatter allow-fallbacks: unknown kind '\(token)' (allowed: \(FallbackKind.allCases.map(\.rawValue).joined(separator: ", ")))")
+                // A typo'd allow-fallbacks token would otherwise silently fail to
+                // take effect — surface it through the always-on funnel.
+                engine.report(Diagnostic.unresolved(
+                    .unknownFallbackKind,
+                    target: token,
+                    among: FallbackKind.allCases.map(\.rawValue),
+                    range: SourceRange(file: meridianFile, line: fbLine, column: 1),
+                    noun: "allow-fallbacks kind",
+                    help: "Use one of the recognized fallback kinds, or remove the token."))
             }
         }
 
@@ -379,12 +400,20 @@ public struct Compiler {
             scopedTools = set.sorted()
         }
 
+        // Batch diagnostics collector — per-file, single-threaded (passed in so
+        // it also holds any parse-phase diagnostics). The lowerer recovers
+        // per-workflow/per-rule into this engine so one compile reports many
+        // errors; we throw the aggregate before codegen.
         let lowerer = ASTToIR(symbols: symbols, sourceFile: meridianFile, trace: trace,
                               lexicon: lexicon, fallbackPolicy: effectivePolicy,
-                              rulebook: rulebook, scopedTools: scopedTools)
-        var workflows = try lowerer.lower(ast, preRegistered: preRegistered)
+                              rulebook: rulebook, scopedTools: scopedTools,
+                              frontmatterTools: frontmatter.tools + ast.toolsUsed,
+                              engine: engine)
+        var workflows = try trace.phase("lower") { try lowerer.lower(ast, preRegistered: preRegistered) }
         // 2B: lower the registered checkable adjectives to file-scope helpers.
         let loweredDefinitions = try lowerer.lowerRegisteredDefinitions()
+        // Surface all collected lowering diagnostics at once, before codegen.
+        try engine.throwIfErrors()
 
         // E: Frontmatter `triggers:` → typed triggers → one synthetic trigger
         // workflow each (wait for the trigger + fan out `trigger.<name>.fired`).
@@ -406,13 +435,15 @@ public struct Compiler {
             emitSourceLineComments: options.emitterOptions.emitSourceLineComments,
             namespaceEnum: options.emitterOptions.namespaceEnum
         )
-        let swift = SwiftEmitter(options: emitterOpts)
-            .emitFile(workflows: workflows,
-                      constantsDecl: constantsDecl,
-                      instancesDecl: instancesDecl,
-                      domainDecl: domainDecl,
-                      fileMetadata: ast.metadata,
-                      definitions: loweredDefinitions)
+        let swift = trace.phase("codegen") {
+            SwiftEmitter(options: emitterOpts, trace: trace)
+                .emitFile(workflows: workflows,
+                          constantsDecl: constantsDecl,
+                          instancesDecl: instancesDecl,
+                          domainDecl: domainDecl,
+                          fileMetadata: ast.metadata,
+                          definitions: loweredDefinitions)
+        }
 
         // Assemble the COMPLETE manifest Input as part of every compile. The
         // rich data computed here (workflows, outline, recorded sections) is no
@@ -427,6 +458,7 @@ public struct Compiler {
                     ManifestEmitter.InstanceManifestEntry(name: e.name, kind: e.kind)
                 }
             } ?? [],
+            sourceMap: Compiler.sourceMap(fromGeneratedSwift: swift),
             metadata: ast.metadata,
             outline: ast.outline,
             skillSections: ast.skillSections.map {
@@ -451,6 +483,22 @@ public struct Compiler {
                 }
         )
         return (swift, manifestInput)
+    }
+
+    /// Build the meridian-line → swift-line source map from the generated Swift
+    /// by reading the `// L{n}` provenance comments codegen emits above each
+    /// primitive. This is the compile→run bridge: a runtime JSONL event's Swift
+    /// location maps back to a Meridian source line through this table. Built as
+    /// part of `compileWithManifest` so EVERY emitted manifest carries it (the
+    /// CLI previously rebuilt it by hand, dropping it from library callers).
+    public static func sourceMap(fromGeneratedSwift swift: String) -> [ManifestEmitter.SourceMapEntry] {
+        swift.components(separatedBy: "\n").enumerated().compactMap { idx, line in
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            guard trimmed.hasPrefix("// L"),
+                  let lineNumber = Int(trimmed.dropFirst(4).split(separator: " ").first ?? "")
+            else { return nil }
+            return ManifestEmitter.SourceMapEntry(meridianLine: lineNumber, swiftLine: idx + 1)
+        }
     }
 
     /// 3A: backed relations rendered for the manifest (`meridian_relations`),
@@ -561,10 +609,15 @@ public struct Compiler {
             guard let imp = imports.first else { return }
             let raw = imp.path.trimmingCharacters(in: .whitespacesAndNewlines)
             let token = raw.hasSuffix(".") ? String(raw.dropLast()) : raw
-            throw CompilerError.semanticError(
-                message: "no vocabulary named `\(token)` was supplied (saw: )",
-                range: SourceRange(file: file, line: imp.sourceLine, column: 1)
-            )
+            throw CompilerError.diagnostics([
+                Diagnostic.unresolved(
+                    .unknownVocabulary,
+                    target: token,
+                    among: [],
+                    range: SourceRange(file: file, line: imp.sourceLine, column: 1),
+                    noun: "vocabulary",
+                    help: "Supply the `.merconfig` via the host (CLI: it is auto-discovered beside the source) and reference it in frontmatter `vocabulary:`.")
+            ])
         }
         let names  = Set(vocabularies.map(\.name))
         let files  = Set(vocabularies.map(\.file))
@@ -587,10 +640,15 @@ public struct Compiler {
             let matchesFile = files.contains { $0.caseInsensitiveCompare(token) == .orderedSame }
                             || files.contains { $0.caseInsensitiveCompare(basename) == .orderedSame }
             if !matchesName && !matchesFile {
-                throw CompilerError.semanticError(
-                    message: "no vocabulary named `\(token)` was supplied (saw: \(names.sorted().joined(separator: ", ")))",
-                    range: SourceRange(file: file, line: imp.sourceLine, column: 1)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.unresolved(
+                        .unknownVocabulary,
+                        target: token,
+                        among: names.sorted(),
+                        range: SourceRange(file: file, line: imp.sourceLine, column: 1),
+                        noun: "vocabulary",
+                        help: "Reference one of the supplied vocabularies in frontmatter `vocabulary:`, or supply the missing `.merconfig`.")
+                ])
             }
         }
     }
@@ -618,10 +676,15 @@ public struct Compiler {
                 || files.contains { $0.caseInsensitiveCompare(token) == .orderedSame }
                 || files.contains { $0.caseInsensitiveCompare(basename) == .orderedSame }
             if !ok {
-                throw CompilerError.semanticError(
-                    message: "no rulebook named `\(token)` was supplied (saw: \(names.sorted().joined(separator: ", ")))",
-                    range: SourceRange(file: file, line: line, column: 1)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.unresolved(
+                        .unknownRulebook,
+                        target: token,
+                        among: names.sorted(),
+                        range: SourceRange(file: file, line: line, column: 1),
+                        noun: "rulebook",
+                        help: "Reference one of the supplied rulebooks in frontmatter `rulebook:`, or supply the missing `.merrules`.")
+                ])
             }
         }
     }
@@ -747,4 +810,33 @@ public enum CompilerError: Error, Sendable {
     case syntaxError(message: String, range: SourceRange)
     case semanticError(message: String, range: SourceRange)
     case codegenError(message: String)
+    /// One or more structured diagnostics (the modern path). A failed compile
+    /// reports *all* collected errors here. Legacy cases above project into this
+    /// shape via `diagnostics` so every consumer can render uniformly.
+    case diagnostics([Diagnostic])
+
+    /// Project any `CompilerError` into structured diagnostics so renderers and
+    /// test shims can treat every error uniformly. Legacy cases map to generic
+    /// codes; `.diagnostics` returns its payload.
+    public var diagnostics: [Diagnostic] {
+        switch self {
+        case .diagnostics(let ds):
+            return ds
+        case .semanticError(let m, let r):
+            return [Diagnostic(code: .legacySemantic, severity: .error, message: m, primaryRange: r)]
+        case .syntaxError(let m, let r):
+            return [Diagnostic(code: .legacySyntax, severity: .error, message: m, primaryRange: r)]
+        case .codegenError(let m):
+            return [Diagnostic(code: .codegenError, severity: .error, message: m,
+                               primaryRange: SourceRange(file: "<generated>", line: 0, column: 1))]
+        case .notImplemented(let m):
+            return [Diagnostic(code: .notImplemented, severity: .error, message: m,
+                               primaryRange: SourceRange(file: "<unknown>", line: 0, column: 1))]
+        }
+    }
+
+    /// The first diagnostic's primary message (used by legacy text assertions).
+    public var primaryMessage: String {
+        diagnostics.first?.message ?? "\(self)"
+    }
 }

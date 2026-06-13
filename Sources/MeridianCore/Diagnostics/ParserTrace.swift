@@ -27,6 +27,7 @@ public final class ParserTrace: @unchecked Sendable {
     public static let shared = ParserTrace()
 
     public enum Category: String, CaseIterable, Sendable {
+        case tokenize           = "tokenize"
         case phraseParse        = "phrase.parse"
         case phraseMatch        = "phrase.match"
         case phraseExtractArgs  = "phrase.args"
@@ -38,6 +39,30 @@ public final class ParserTrace: @unchecked Sendable {
         case merconfig          = "merconfig"
         case rulebook           = "rulebook"
         case skill              = "skill"
+        case codegen            = "codegen"
+        case diagnostics        = "diagnostics"
+        case timing             = "timing"
+
+        /// Human-readable description for `meridian trace categories`.
+        public var summary: String {
+            switch self {
+            case .tokenize:          return "Lexing: fence collapse, comment/indent/heading decisions."
+            case .phraseParse:       return "Phrase-pattern parsing."
+            case .phraseMatch:       return "Phrase matching + scoring against the symbol table."
+            case .phraseExtractArgs: return "Argument extraction for a matched phrase."
+            case .phraseInline:      return "Phrase inlining (recursive expansion)."
+            case .statement:         return "Per-statement parser dispatch."
+            case .expression:        return "Expression parsing."
+            case .lowering:          return "AST → IR lowering."
+            case .symbols:           return "Symbol-table construction (kinds/properties/phrases/tools/…)."
+            case .merconfig:         return "Vocabulary (.merconfig) parsing."
+            case .rulebook:          return "Rulebook (.merrules) parsing + rewrite."
+            case .skill:             return "Skill/section role classification + scoped tools."
+            case .codegen:           return "Swift/manifest/domain emission."
+            case .diagnostics:       return "Every emitted diagnostic (errors/warnings/notes)."
+            case .timing:            return "Per-phase wall-clock timing + end-of-compile profile (off by default)."
+            }
+        }
 
         /// Group prefixes — enabling `phrase` enables every `phrase.*` category.
         public var groups: [String] {
@@ -59,6 +84,10 @@ public final class ParserTrace: @unchecked Sendable {
     private var _enabled: Set<String> = []
     private var _sink: Sink = .stderr
     private var indentLevel = 0
+    /// Accumulated per-phase wall-clock durations (seconds), in first-seen order.
+    private var _phaseOrder: [String] = []
+    private var _phaseDurations: [String: Double] = [:]
+    private var _diagnosticCount = 0
 
     public var sink: Sink {
         get { lock.lock(); defer { lock.unlock() }; return _sink }
@@ -143,6 +172,71 @@ public final class ParserTrace: @unchecked Sendable {
         let cat: Category
     }
 
+    // MARK: Timing
+
+    /// Run `body` as a named compile phase, recording its wall-clock duration
+    /// into the profile. The timing line is emitted under `.timing` (off by
+    /// default, so deterministic trace tests are unaffected); the duration is
+    /// always accumulated so `profileSummary()` can report even when `.timing`
+    /// output is disabled.
+    @discardableResult
+    public func phase<T>(_ name: String, _ body: () throws -> T) rethrows -> T {
+        let start = DispatchTime.now()
+        defer { accumulate(name, since: start) }
+        return try body()
+    }
+
+    /// Async variant of `phase(_:_:)`.
+    @discardableResult
+    public func phase<T>(_ name: String, _ body: () async throws -> T) async rethrows -> T {
+        let start = DispatchTime.now()
+        defer { accumulate(name, since: start) }
+        return try await body()
+    }
+
+    private func accumulate(_ name: String, since start: DispatchTime) {
+        let elapsed = Double(DispatchTime.now().uptimeNanoseconds &- start.uptimeNanoseconds) / 1_000_000_000
+        lock.lock()
+        if _phaseDurations[name] == nil { _phaseOrder.append(name) }
+        _phaseDurations[name, default: 0] += elapsed
+        lock.unlock()
+        log(.timing, "\(name): \(String(format: "%.2f", elapsed * 1000)) ms")
+    }
+
+    /// Emit the accumulated per-phase timing profile under `.timing`. Call once
+    /// at the end of a compile. No-op when `.timing` is disabled or no phases ran.
+    public func profileSummary() {
+        guard isEnabled(.timing) else { return }
+        lock.lock()
+        let order = _phaseOrder
+        let durations = _phaseDurations
+        let diags = _diagnosticCount
+        lock.unlock()
+        guard !order.isEmpty else { return }
+        let total = durations.values.reduce(0, +)
+        emit(.timing, "── compile profile ──")
+        for name in order {
+            let ms = (durations[name] ?? 0) * 1000
+            let pct = total > 0 ? (durations[name] ?? 0) / total * 100 : 0
+            emit(.timing, String(format: "  %-22@ %8.2f ms  (%4.1f%%)", name as NSString, ms, pct))
+        }
+        emit(.timing, String(format: "  %-22@ %8.2f ms", "total" as NSString, total * 1000))
+        emit(.timing, "  diagnostics emitted: \(diags)")
+    }
+
+    /// Reset accumulated timing state. Used between independent compiles that
+    /// share a trace instance (rare; mostly a test convenience).
+    public func resetProfile() {
+        lock.lock(); _phaseOrder.removeAll(); _phaseDurations.removeAll(); _diagnosticCount = 0; lock.unlock()
+    }
+
+    /// Mirror an emitted diagnostic into the `.diagnostics` stream and bump the
+    /// profile counter. Called by `DiagnosticEngine` whenever it records one.
+    public func recordDiagnostic(_ summary: @autoclosure () -> String) {
+        lock.lock(); _diagnosticCount += 1; lock.unlock()
+        log(.diagnostics, summary())
+    }
+
     // MARK: Emit
 
     private func emit(_ cat: Category, _ raw: String) {
@@ -188,7 +282,7 @@ extension ParserTrace {
     ///     let cap = ParserTrace.capturing(categories: [.phraseMatch])
     ///     _ = try Compiler(options: .init(trace: cap.trace)).compile(...)
     ///     for line in cap.lines() { print(line) }
-    public static func capturing(categories: [Category] = Category.allCases)
+    public static func capturing(categories: [Category] = Category.allCases.filter { $0 != .timing })
         -> (trace: ParserTrace, lines: @Sendable () -> [String])
     {
         let trace = ParserTrace()

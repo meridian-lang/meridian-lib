@@ -16,16 +16,22 @@ public struct StatementParser {
     /// Nil for plain `.meridian`/`.merconfig` parsing (engine is a no-op anyway
     /// when the rulebook is empty).
     private let rewriteEngine: RewriteEngine?
+    /// Optional batch collector. When present, `parseBlock` recovers from a
+    /// thrown `CompilerError` per statement (collect + skip the line) so a file
+    /// with several malformed statements reports them all at once.
+    private let diagnostics: DiagnosticEngine?
 
     private var exprParser: ExpressionParser { ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon) }
 
     public init(symbols: SymbolTable?, trace: ParserTrace = .shared,
                 lexicon: EnglishLexicon = .default,
-                rewriteEngine: RewriteEngine? = nil) {
+                rewriteEngine: RewriteEngine? = nil,
+                diagnostics: DiagnosticEngine? = nil) {
         self.symbols = symbols
         self.trace = trace
         self.lexicon = lexicon
         self.rewriteEngine = rewriteEngine
+        self.diagnostics = diagnostics
     }
 
     public func parseBlock(_ lines: [SourceLine], file: String = "") throws -> ASTBlock {
@@ -39,6 +45,10 @@ public struct StatementParser {
                 i += 1
                 continue
             }
+            // Per-statement recovery boundary: with a batch engine, a malformed
+            // statement is collected and skipped so the rest of the block still
+            // parses. Without one, the error propagates (first-error behaviour).
+            do {
             if shouldResolveAnaphora(content[i]) {
                 let resolved = try anaphora.resolve(content[i].statement, referents: referents, file: file, line: content[i].number)
                 if resolved != content[i].statement {
@@ -104,6 +114,10 @@ public struct StatementParser {
                 recordReferents(from: s, into: &referents)
             }
             i += max(consumed, 1)
+            } catch let e as CompilerError where diagnostics != nil {
+                diagnostics!.collect(e)
+                i += 1
+            }
         }
         return ASTBlock(statements: stmts, sourceLine: content.first?.number ?? 0)
     }
@@ -220,6 +234,7 @@ public struct StatementParser {
     func parseStatement(_ lines: [SourceLine], at i: Int, file: String) throws -> (StatementAST?, Int) {
         let line = lines[i]
         let t = line.statement
+        trace.log(.statement, "L\(line.number): \(ParserTrace.short(t))")
 
         // B6: Bare code-block sentinel lines are always consumed by the preceding
         // bind/decide statement.  If one reaches here it is orphaned — skip it.

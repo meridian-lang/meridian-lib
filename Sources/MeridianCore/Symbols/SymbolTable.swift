@@ -100,16 +100,8 @@ public final class SymbolTable: @unchecked Sendable {
     /// hints on unknown-verb errors. Returns nil when nothing is within an
     /// edit-distance budget proportional to the form length.
     public func nearestVerbForm(to form: String) -> String? {
-        let f = form.lowercased().trimmingCharacters(in: .whitespaces)
-        var best: (form: String, dist: Int)?
-        for v in verbs.values {
-            for cand in [v.base, v.thirdPerson, v.pastParticiple] {
-                let d = Self.levenshtein(f, cand.lowercased())
-                if best == nil || d < best!.dist { best = (cand, d) }
-            }
-        }
-        guard let b = best, b.dist <= Swift.max(2, f.count / 3) else { return nil }
-        return b.form
+        let candidates = verbs.values.flatMap { [$0.base, $0.thirdPerson, $0.pastParticiple] }
+        return Suggester().closest(form, among: candidates)
     }
 
     /// A ` (did you mean "…"?)` hint for an unknown verb form, or "" when no
@@ -117,23 +109,6 @@ public final class SymbolTable: @unchecked Sendable {
     /// used by both `ExpressionParser` and `ASTToIR` on unknown-verb errors.
     public func verbFormSuggestion(for form: String) -> String {
         nearestVerbForm(to: form).map { " (did you mean \"\($0)\"?)" } ?? ""
-    }
-
-    static func levenshtein(_ a: String, _ b: String) -> Int {
-        let x = Array(a), y = Array(b)
-        if x.isEmpty { return y.count }
-        if y.isEmpty { return x.count }
-        var prev = Array(0...y.count)
-        var cur = [Int](repeating: 0, count: y.count + 1)
-        for i in 1...x.count {
-            cur[0] = i
-            for j in 1...y.count {
-                let cost = x[i - 1] == y[j - 1] ? 0 : 1
-                cur[j] = Swift.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost)
-            }
-            swap(&prev, &cur)
-        }
-        return prev[y.count]
     }
 
     /// Declared property names for a kind (lowercased lookup).
@@ -168,8 +143,10 @@ public final class SymbolTable: @unchecked Sendable {
             switch stmt {
             case .kind(let k):
                 table.kinds[k.name.lowercased()] = k
+                trace.log(.symbols, "kind \(k.name)")
             case .property(let p):
                 table.properties[p.kind.lowercased(), default: []].append(contentsOf: p.properties)
+                trace.log(.symbols, "properties on \(p.kind): \(p.properties.map(\.name).joined(separator: ", "))")
                 for entry in p.properties {
                     if case .enumeration(let cases) = entry.type {
                         for c in cases {
@@ -179,10 +156,12 @@ public final class SymbolTable: @unchecked Sendable {
                 }
             case .relation(let r):
                 table.relations[r.verb.lowercased()] = r
+                trace.log(.symbols, "relation \(r.verb)")
             case .relationBacking(let b):
                 table.relationBackings[b.relation.lowercased()] = b.backing
             case .verb(let v):
                 table.verbs[v.base.lowercased()] = v
+                trace.log(.symbols, "verb \(v.base)")
             case .inverse:
                 break  // tracked via relation in Phase 4
             case .phrase(var p):
@@ -192,19 +171,25 @@ public final class SymbolTable: @unchecked Sendable {
                                         sourceLine: p.sourceLine, sourceFile: sourceFile)
                 }
                 table.phrases.append(p)
+                trace.log(.symbols, "phrase \(p.pattern.displayText)")
             case .definition(let d):
                 table.pendingDefinitions.append(d)
+                trace.log(.symbols, "definition \(d.adjective)")
             }
         }
         for c in config.constants {
             table.constants[c.name.lowercased()] = c
+            trace.log(.symbols, "constant \(c.name)")
         }
         for i in config.instances {
             table.instances[i.name.lowercased()] = i
+            trace.log(.symbols, "instance \(i.name)")
         }
         for t in config.tools {
             table.tools[t.methodName] = t
+            trace.log(.symbols, "tool \(t.methodName)")
         }
+        trace.log(.symbols, "built: \(table.kinds.count) kinds, \(table.phrases.count) phrases, \(table.tools.count) tools, \(table.relations.count) relations, \(table.verbs.count) verbs")
         return table
     }
 

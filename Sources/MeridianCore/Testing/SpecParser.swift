@@ -246,9 +246,12 @@ struct SpecParser {
                     let toolID = String(key.dropFirst("tool_stub ".count))
                         .trimmingCharacters(in: .whitespaces)
                     toolStubs.append((toolID: toolID, json: value))
+                } else {
+                    // Strict by default: an unrecognized key is almost always a
+                    // typo (`expect_swift_contain` for `..._contains`) and was
+                    // previously dropped silently.
+                    throw ParseError(message: "unknown test-spec key '\(key)'. Check for a typo; see docs/09 for the recognized keys.")
                 }
-                // Unknown keys are silently ignored so older runners can
-                // still process specs with keys added by newer versions.
             }
         }
 

@@ -44,6 +44,16 @@ struct CompileCommand: AsyncParsableCommand {
             help: "Write trace output to a file instead of stderr.")
     var traceFile: String?
 
+    @Option(name: .long,
+            help: "Diagnostics output format: human (snippet + caret) or json (stable schema for editors/CI).")
+    var diagnosticsFormat: DiagnosticsFormat = .human
+
+    @Flag(name: .long, help: "Preview unambiguous quick-fixes for diagnostics (did-you-mean replacements). Dry-run unless --write.")
+    var fix: Bool = false
+
+    @Flag(name: .long, help: "With --fix, apply the fixes to the source files in place.")
+    var write: Bool = false
+
     func run() async throws {
         let meridianURL  = URL(fileURLWithPath: input).standardized
         let outputURL    = URL(fileURLWithPath: output).standardized
@@ -97,17 +107,42 @@ struct CompileCommand: AsyncParsableCommand {
         )
         let compiler = Compiler(options: compilerOpts)
 
-        let compiled = try compiler.compileWithManifest(
-            meridianSource: meridianSource,
-            meridianFile:   meridianURL.lastPathComponent,
-            vocabularies:   vocabularies,
-            rulebooks:      rulebooks
-        )
+        // Source map for rendering diagnostics with snippets/carets, keyed by the
+        // basename the compiler stamps into each SourceRange.
+        var diagSources: [String: String] = [meridianURL.lastPathComponent: meridianSource]
+        var diagPaths: [String: URL] = [meridianURL.lastPathComponent: meridianURL]
+        for (i, url) in merconfigURLs.enumerated() {
+            diagSources[url.lastPathComponent] = vocabularies[i].source
+            diagPaths[url.lastPathComponent] = url
+        }
+        for (i, url) in rulebookURLs.enumerated() {
+            diagSources[url.lastPathComponent] = rulebooks[i].source
+            diagPaths[url.lastPathComponent] = url
+        }
+
+        let compiled: (swift: String, manifest: ManifestEmitter.Input)
+        do {
+            compiled = try compiler.compileWithManifest(
+                meridianSource: meridianSource,
+                meridianFile:   meridianURL.lastPathComponent,
+                vocabularies:   vocabularies,
+                rulebooks:      rulebooks
+            )
+        } catch {
+            if fix { applyQuickFixes(error, sources: diagSources, paths: diagPaths, write: write) }
+            throw reportCompilerError(error, sources: diagSources, format: diagnosticsFormat)
+        }
         var swift = compiled.swift
 
-        // Optionally format with swift-format
+        // D-DX-3: swift-format failure is cosmetic — keep the valid unformatted
+        // Swift and surface a warning, never fail the compile or drop it silently.
         if !noFormat {
-            swift = (try? format(swift)) ?? swift
+            do {
+                swift = try format(swift)
+            } catch {
+                FileHandle.standardError.write(Data(
+                    "warning[MER5001]: swift-format failed; writing unformatted Swift. (\(error))\n".utf8))
+            }
         }
 
         // Write output
@@ -126,7 +161,10 @@ struct CompileCommand: AsyncParsableCommand {
             toolsUsed: m.toolsUsed,
             kindsUsed: m.kindsUsed,
             instancesRequired: m.instancesRequired,
-            sourceMap: sourceMapEntries(fromGeneratedSwift: swift),
+            // Recompute from the *written* (possibly formatted) Swift so the
+            // swift_line numbers match the file on disk. Reuses the shared
+            // Compiler helper (single source of truth for the `// L` parsing).
+            sourceMap: Compiler.sourceMap(fromGeneratedSwift: swift),
             metadata: m.metadata,
             outline: m.outline,
             rules: m.rules,
@@ -172,18 +210,5 @@ struct CompileCommand: AsyncParsableCommand {
         let formatter = SwiftFormatter(configuration: config)
         try formatter.format(source: source, assumingFileURL: nil, selection: .infinite, to: &result)
         return result
-    }
-
-    private func sourceMapEntries(fromGeneratedSwift swift: String) -> [ManifestEmitter.SourceMapEntry] {
-        swift.components(separatedBy: "\n").enumerated().compactMap { idx, line in
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-            guard trimmed.hasPrefix("// L"),
-                  let lineNumber = Int(trimmed.dropFirst(4).split(separator: " ").first ?? "")
-            else { return nil }
-            return ManifestEmitter.SourceMapEntry(
-                meridianLine: lineNumber,
-                swiftLine: idx + 1
-            )
-        }
     }
 }

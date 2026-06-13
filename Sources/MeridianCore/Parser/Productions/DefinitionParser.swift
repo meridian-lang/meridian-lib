@@ -72,8 +72,9 @@ struct DefinitionParser {
 
     private func wholeWord(_ haystack: String, of needle: String, with replacement: String) -> String {
         let pattern = "\\b\(NSRegularExpression.escapedPattern(for: needle))\\b"
+        // Escaped literal pattern — compilation cannot fail; a failure is a bug.
         guard let re = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else {
-            return haystack
+            preconditionFailure("internal: constant whole-word regex failed to compile: \(pattern)")
         }
         let range = NSRange(haystack.startIndex..<haystack.endIndex, in: haystack)
         return re.stringByReplacingMatches(in: haystack, options: [], range: range,

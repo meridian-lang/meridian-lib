@@ -14,24 +14,30 @@ public struct MeridianParser {
     /// Optional desugar engine threaded into every StatementParser this parser
     /// constructs. Nil for plain `.meridian` files (no rulebook loaded).
     public let rewriteEngine: RewriteEngine?
+    /// Optional batch collector, threaded into every StatementParser this parser
+    /// builds so per-statement parse errors are collected rather than aborting.
+    public let diagnostics: DiagnosticEngine?
 
     public init(symbols: SymbolTable, trace: ParserTrace = .shared,
                 lexicon: EnglishLexicon = .default,
-                rewriteEngine: RewriteEngine? = nil) {
+                rewriteEngine: RewriteEngine? = nil,
+                diagnostics: DiagnosticEngine? = nil) {
         self.symbols = symbols
         self.trace = trace
         self.lexicon = lexicon
         self.rewriteEngine = rewriteEngine
+        self.diagnostics = diagnostics
     }
 
     private func makeStatementParser() -> StatementParser {
-        StatementParser(symbols: symbols, trace: trace, lexicon: lexicon, rewriteEngine: rewriteEngine)
+        StatementParser(symbols: symbols, trace: trace, lexicon: lexicon,
+                        rewriteEngine: rewriteEngine, diagnostics: diagnostics)
     }
 
     public func parse(_ source: String, file: String = "") throws -> MeridianFile {
         let token = trace.push(.merconfig, "MeridianParser.parse(\(file))")
         defer { trace.pop(token) }
-        let lines = IndentTokenizer().tokenize(source, file: file)
+        let lines = IndentTokenizer().tokenize(source, file: file, trace: trace)
         let outline = lines.compactMap { line -> HeadingEntry? in
             guard let level = line.headingLevel else { return nil }
             // Strip any trailing `(( … ))` marker so the outline carries the
@@ -230,7 +236,22 @@ public struct MeridianParser {
                 // Fold multi-line workflow header (continuation indented deeper, terminator ":")
                 let (headerText, headerEnd) = HeaderFolder.collect(lines, at: i)
                 var j = headerEnd
-                guard headerText.hasSuffix(":") else { i += 1; continue }
+                guard headerText.hasSuffix(":") else {
+                    // A top-level `to …` line that doesn't terminate with ':' is a
+                    // malformed workflow header in a plain `.meridian` file —
+                    // previously skipped silently, now surfaced. In a sectioned
+                    // skill doc (hasHeadings) such a line is ordinary prose
+                    // ("To keep things tidy, …"), so it stays a lenient skip.
+                    // Engine-less callers also keep the lenient skip.
+                    if let diagnostics, !hasHeadings {
+                        diagnostics.report(Diagnostic.structural(
+                            .malformedWorkflowHeader,
+                            message: "workflow header must end with ':'",
+                            range: SourceRange(file: file, line: line.number, column: 1),
+                            help: "End the 'to …' workflow header with a colon and indent its body beneath it, e.g. `To do the thing:`."))
+                    }
+                    i += 1; continue
+                }
                 // B3 / SkillMD-D17: Detect prose-mode annotations before the colon.
                 // (See `.ai/brainstorm-done/skill_md_expressiveness_d1_d28.md`.)
                 var rawPatternText = String(headerText.dropFirst(3).dropLast(1))

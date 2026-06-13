@@ -45,7 +45,7 @@ public struct RulebookParser {
         let token = trace.push(.rulebook, "RulebookParser.parse(\(file))")
         defer { trace.pop(token) }
 
-        let lines = IndentTokenizer().tokenize(source, file: file)
+        let lines = IndentTokenizer().tokenize(source, file: file, trace: trace)
 
         // Split into sections by `=== name ===` headers (same convention as
         // merconfig). Lines before the first header are ignored.
@@ -79,7 +79,15 @@ public struct RulebookParser {
             case "triggers", "trigger-words", "trigger words":
                 triggerWords += try parseTriggersSection(body, file: file)
             default:
-                trace.log(.rulebook, "ignoring unknown section: \(section)")
+                throw CompilerError.diagnostics([
+                    Diagnostic.unresolved(
+                        .rulebookSectionUnknown,
+                        target: section,
+                        among: ["desugar", "sections", "conventions", "triggers"],
+                        range: SourceRange(file: file, line: body.first?.number ?? 1, column: 1),
+                        noun: "rulebook section",
+                        help: "Use one of: `=== desugar ===`, `=== sections ===`, `=== conventions ===`, `=== triggers ===`.")
+                ])
             }
         }
 

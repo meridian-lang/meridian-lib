@@ -3712,3 +3712,103 @@ than 5`, `the count at least 3`, `the status equals "open"`) and with the full
 extension). Full `swift test` **775**; both typecheck gates green.
 
 STATUS: DONE
+
+---
+
+## 2026-06-13 09:50 UTC — World-class diagnostics, tracing & decision logs (D-DX-1…D-DX-5)
+
+CONTEXT: the request was a "world-class developer debugging experience" — no
+gaps in tracing, no silent fallbacks, always-on "did you mean", and detailed
+docs including decision logs queryable from the CLI and surfaced in diagnostics.
+Plan: `.cursor/plans/world-class_diagnostics_tracing_a44edab9.plan.md` (11
+pillars). This entry records the implementation. The governing decisions are
+`D-DX-1`…`D-DX-5` in `DecisionCatalog` (see `## Recent decisions` in AGENTS.md
+and `docs/15_DECISIONS.md`).
+
+WHAT LANDED (by pillar):
+
+- **Structured diagnostics** (`Sources/MeridianCore/Diagnostics/`):
+  `Diagnostic` (code/severity/primaryRange/suggestions/notes/help; `decision`
+  comes from `code.decision`), `DiagnosticCode` catalog of stable `MERxxxx`
+  codes (MER0001…MER5003) classified `nameResolution`/`structural`/`other`,
+  `DiagnosticRenderer` (human snippet+caret+ANSI, and stable JSON), and
+  `CompilerError.diagnostics([Diagnostic])` + a computed `diagnostics`
+  projection over the legacy cases (thrown type stays `CompilerError`).
+- **DiagnosticEngine** — per-file collector with coarse-grained recovery
+  (skip a whole workflow/rule/statement, never token-resync) so one compile
+  reports many errors. `throwIfErrors()` keeps the first-error contract.
+- **Suggester** — generalized from `SymbolTable.nearestVerbForm`/`levenshtein`
+  (Levenshtein + token overlap). The **always-on guarantee**:
+  `Diagnostic.unresolved(code,target,among,range,…)` is the ONLY way to build a
+  `.nameResolution` diagnostic (precondition-enforced) — within budget → a
+  `did you mean "X"?` suggestion (replacement+range), else a candidate-list
+  note; never a bare "unknown X". `Diagnostic.structural` requires non-empty
+  `help`.
+- **Precise spans** — `SourceSpan.swift`: Tier-1 accurate start columns
+  (first non-whitespace) and Tier-2 `SourceRange.span(inLine:ofSubstring:)`.
+- **No silent fallbacks** — former silent sites are now coded: malformed
+  header (MER1001), orphaned code block (MER1002), unrecognized statement
+  (MER1003), unparseable/unattached rule (MER1004/MER3006), phrase-inline
+  overflow (MER3001), `.merconfig` decl (MER5002), rulebook section (MER5003),
+  test-spec key (MER1007), `allow-fallbacks` token (MER2009), unknown tool
+  (MER2002); `swift-format` failure is a **warning** (MER5001, valid output
+  kept, `D-DX-3`). Constant-pattern `try? NSRegularExpression` →
+  `preconditionFailure` in `AnaphoraResolver`/`DefinitionParser`.
+- **BuiltinToolCatalog** (`Symbols/BuiltinToolCatalog.swift`) hand-mirrors
+  `MeridianTools.allToolIDs` (Core can't import MeridianTools); guard test
+  `builtinCatalogMirrorsRuntime` keeps them in lockstep. `ASTToIR.validateToolIDs`
+  validates every `InvokeIR.toolID` against built-ins ∪ vocabulary `=== tools
+  ===` ∪ frontmatter `tools:` (methodize-normalized, so `get_health`→`getHealth`
+  resolves) ∪ `workflow:` refs, with did-you-mean. New
+  `FallbackKind.unknownTools` escape hatch (`D-DX-5`).
+- **Tracing** — `ParserTrace` gained `.tokenize`/`.codegen`/`.diagnostics`/
+  `.timing` categories, `phase(_:)` timing spans + an end-of-compile
+  `profileSummary()` (`.timing` OFF by default, excluded from `capturing()`),
+  a top-level `compile` span in `compileWithManifest`, and `recordDiagnostic`
+  mirroring every emitted diagnostic. Dead trace points filled across the
+  tokenizer, statement/merconfig/symbol/rulebook/codegen/rule paths.
+- **Unified compile+runtime** — `Compiler.sourceMap(fromGeneratedSwift:)` is
+  now the single source of truth for the `// L` → swift-line map and is built
+  inside `compileWithManifest`, so EVERY emitted manifest carries it (the CLI
+  no longer rebuilds it). `RunCommand` no longer double-compiles: it compiles
+  once via `compileWithManifest` (engine + fallback policy + rulebooks) and
+  reuses `manifest.workflows` — the old `.silent()` re-lower that dropped
+  rulebooks/trace is gone.
+- **CLI** — `meridian explain <code|decision>` (cause+fix+rationale),
+  `meridian decisions` (list/search/`--id`/`--render`), `meridian trace
+  categories`; `--diagnostics-format human|json`, bounded `--fix`/`--write`
+  (token-aware: narrows a construct-level suggestion range to the single
+  misspelled word and only applies an unambiguous best match within budget —
+  cannot corrupt a line); `compile`/`check`/`verify`/`run` route through the
+  shared `reportCompilerError` + `applyQuickFixes` in `CLISupport.swift`.
+- **Decisions** — `DecisionCatalog` (`DecisionRecord`: id/title/status/
+  rationale/alternatives/consequences/seeAlso), `D-DX-1`…`D-DX-5`, linked from
+  `DiagnosticCode.decision`; rendered to `docs/15_DECISIONS.md` via
+  `meridian decisions --render` (staleness test in tests-corpus).
+- **Docs** — new `docs/14_DEVELOPER_EXPERIENCE.md` (11-section centerpiece),
+  rewrote `docs/08_TRACING.md` (new categories + timing + diagnostics
+  mirroring), regenerated `docs/15_DECISIONS.md`, updated `docs/README.md`,
+  `docs/07_CLI.md` (explain/decisions/trace categories/--diagnostics-format/
+  --fix/per-command --trace), and root `README.md`.
+
+PITFALLS CODIFIED:
+- `--fix` MUST be token-aware. Name-resolution suggestion ranges are
+  line/construct-level (they point at the whole `invoke …`/rule line, not the
+  misspelled token). Blindly overwriting the range would replace the entire
+  line. `applyQuickFixes` therefore locates the single word-token closest to
+  the replacement within the range and only replaces that, and only when it is
+  an unambiguous best match within `Suggester.defaultBudget`. Do not "simplify"
+  this to overwrite the suggestion range.
+- `ParserTrace.phase`'s async variant must do its locking in a synchronous
+  helper (`accumulate`), not in an `async` `defer` (NSLock across suspension
+  points is unsafe).
+- A `.merconfig` `=== tools ===` declaration needs the display-name + `====`
+  underline before the `~ signature` line, or the tool never registers (caught
+  by the new tool-id validation when fixtures omitted it).
+
+VALIDATION: builds clean; `meridian explain/decisions/trace categories` and the
+`--fix --write` round-trip verified by hand on a scratch fixture. Full
+`swift test` + both typecheck gates + corpus regen are the `tests-corpus`
+follow-up (next), where the confidence % is recorded.
+
+STATUS: IN PROGRESS (tests-corpus + confidence audit pending)

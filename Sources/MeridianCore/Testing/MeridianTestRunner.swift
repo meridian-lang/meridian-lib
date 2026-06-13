@@ -571,6 +571,11 @@ public struct MeridianTestRunner: Sendable {
         case .semanticError(let m, let r): return "semantic error at \(r): \(m)"
         case .codegenError(let m):        return "codegen error: \(m)"
         case .notImplemented(let m):      return "not implemented: \(m)"
+        case .diagnostics(let ds):
+            return ds.map { d in
+                let notes = d.notes.map { " note: \($0.message)" }.joined()
+                return "\(d.code.id) at \(d.primaryRange): \(d.message)\(notes)"
+            }.joined(separator: "; ")
         }
     }
 

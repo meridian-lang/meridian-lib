@@ -16,6 +16,19 @@ struct BuiltinToolsTests {
         #expect(!MeridianTools.allToolIDs.contains("validateOrder"))
     }
 
+    @Test("Core BuiltinToolCatalog stays in sync with MeridianTools.allToolIDs")
+    func builtinCatalogMirrorsRuntime() {
+        // MeridianCore cannot import MeridianTools, so BuiltinToolCatalog.ids is a
+        // hand-mirror. This guard fails the moment the two drift apart.
+        #expect(Set(BuiltinToolCatalog.ids) == Set(MeridianTools.allToolIDs),
+                Comment(rawValue: """
+                BuiltinToolCatalog.ids and MeridianTools.allToolIDs diverged.
+                only in catalog: \(Set(BuiltinToolCatalog.ids).subtracting(MeridianTools.allToolIDs).sorted())
+                only in runtime: \(Set(MeridianTools.allToolIDs).subtracting(BuiltinToolCatalog.ids).sorted())
+                """))
+        #expect(BuiltinToolCatalog.ids.count == BuiltinToolCatalog.idSet.count)
+    }
+
     @Test("json.parse and json.stringify round-trip basic values")
     func jsonRoundTrip() async throws {
         let parsed = try await MeridianTools.invoke("json.parse", args: ["text": .string(#"{"name":"Ada","n":2}"#)])

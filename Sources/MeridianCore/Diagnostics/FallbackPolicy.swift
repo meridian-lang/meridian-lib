@@ -26,6 +26,12 @@ public enum FallbackKind: String, Sendable, CaseIterable, Hashable {
     /// real phrase invocation. When allowed, the trigger workflow body
     /// records a documenting BindIR comment instead of executing.
     case unresolvedTriggerActions = "unresolved-trigger-actions"
+
+    /// An `invoke` whose tool ID matches no built-in, vocabulary `=== tools
+    /// ===` declaration, frontmatter `tools:` scoped tool, or workflow
+    /// reference. When allowed, the unrecognized tool ID is emitted as-is
+    /// (for host-provided tools registered only at runtime).
+    case unknownTools = "unknown-tools"
 }
 
 /// What a Meridian file allows to silently fall back. Constructed from the

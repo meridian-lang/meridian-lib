@@ -1047,6 +1047,69 @@ Tests: `Inform7Wave3Tests` (negated parse + negated-guard emit), `EnglishIdiomTe
 (single-line branch, `, otherwise` else, inline≡multiline equivalence). Full
 `swift test` 726 + both typecheck gates green.
 
+### 2026-06-13 — World-class diagnostics, tracing & decision logs (D-DX-1…D-DX-5)
+
+The compiler is now **fully observable and strict by default**. New
+`Sources/MeridianCore/Diagnostics/` surface (single source of truth, all
+`Sendable`): `Diagnostic` + `Suggestion` + `DiagnosticNote`; `DiagnosticCode`
+catalog of stable `MERxxxx` codes (MER0001…MER5003, classified
+`nameResolution`/`structural`/`other`); `DiagnosticEngine` (per-file collector,
+coarse-grained recovery, reports many errors per compile); `DiagnosticRenderer`
+(human snippet+caret+ANSI and stable JSON); `Suggester` (Levenshtein + token
+overlap); `DecisionCatalog` (`DecisionRecord`, `D-DX-1`…`D-DX-5`). `CompilerError`
+gained `.diagnostics([Diagnostic])` + a computed `diagnostics` projection over
+the legacy cases — **the thrown type stays `CompilerError`** so
+`#expect(throws: CompilerError.self)` sites are unaffected.
+
+**Always-on did-you-mean (D-DX-4).** `Diagnostic.unresolved(code,target,among,
+range,…)` is the ONLY way to build a `.nameResolution` diagnostic
+(precondition-enforced). Within edit-distance budget → a `did you mean "X"?`
+suggestion (`replacement`+`range`); otherwise a candidate-list note — never a
+bare "unknown X". `Diagnostic.structural` requires non-empty `help`.
+
+**No silent fallbacks (D-DX-1/D-DX-2/D-DX-3).** Former silent drops are coded
+errors (malformed header MER1001, orphaned code block MER1002, unrecognized
+statement MER1003, unparseable/unattached rule MER1004/MER3006, phrase-inline
+overflow MER3001, `.merconfig` decl MER5002, rulebook section MER5003, test-spec
+key MER1007, `allow-fallbacks` token MER2009, unknown tool MER2002). `swift-format`
+failure is a **warning** (MER5001). Constant-pattern `try? NSRegularExpression`
+→ `preconditionFailure`.
+
+**Tool-id validation (D-DX-5).** `BuiltinToolCatalog` (Core mirror of
+`MeridianTools.allToolIDs`, kept in lockstep by `builtinCatalogMirrorsRuntime`).
+`ASTToIR.validateToolIDs` checks every `InvokeIR.toolID` against built-ins ∪
+vocabulary `=== tools ===` ∪ frontmatter `tools:` (methodize-normalized) ∪
+`workflow:` refs. New `FallbackKind.unknownTools` opt-out.
+
+**Tracing.** `ParserTrace` gained `.tokenize`/`.codegen`/`.diagnostics`/`.timing`
+categories, `phase(_:)` timing + `profileSummary()` (`.timing` OFF by default,
+excluded from `capturing()`), a top-level compile span, and `recordDiagnostic`
+mirroring. Dead trace points filled across tokenizer/statement/symbols/merconfig/
+codegen/rule paths.
+
+**Unified compile+runtime.** `Compiler.sourceMap(fromGeneratedSwift:)` is the
+single `// L`→swift-line builder, invoked in `compileWithManifest` so EVERY
+manifest carries it. `RunCommand` compiles once (no more `.silent()` re-lower).
+
+**CLI.** `meridian explain <code|decision>`, `meridian decisions`
+(list/search/`--id`/`--render docs/15_DECISIONS.md`), `meridian trace categories`;
+`--diagnostics-format human|json`; bounded `--fix`/`--write`. `compile`/`check`/
+`verify`/`run` route through shared `reportCompilerError` + `applyQuickFixes` in
+`CLISupport.swift`.
+
+**Pitfalls.** (1) `--fix` is token-aware: name-resolution suggestion ranges are
+construct-level, so `applyQuickFixes` narrows to the single misspelled word and
+only applies an unambiguous best match within `Suggester.defaultBudget` — never
+overwrite the whole range. (2) `ParserTrace.phase`'s async variant locks in a
+sync helper (`accumulate`), not in an `async defer`. (3) A `.merconfig`
+`=== tools ===` decl needs the display-name + `====` underline before the `~`
+signature or the tool never registers.
+
+Docs: `docs/14_DEVELOPER_EXPERIENCE.md` (centerpiece), rewritten
+`docs/08_TRACING.md`, generated `docs/15_DECISIONS.md`, updated `docs/07_CLI.md`
++ `docs/README.md` + root `README.md`. Decisions are reachable at the point of
+error: `meridian explain MER2002` shows the fix AND the `D-DX-5` rationale.
+
 ### 2026-06-12 — Wave 3: relational layer (relations, verbs, descriptions)
 
 The relationships between kinds are now first-class and still fully

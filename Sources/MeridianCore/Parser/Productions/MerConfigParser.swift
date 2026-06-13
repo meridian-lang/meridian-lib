@@ -19,7 +19,7 @@ public struct MerConfigParser {
     public func parse(_ source: String, file: String = "") throws -> MerConfigFile {
         let token = trace.push(.merconfig, "MerConfigParser.parse(\(file))")
         defer { trace.pop(token) }
-        let lines = IndentTokenizer().tokenize(source, file: file)
+        let lines = IndentTokenizer().tokenize(source, file: file, trace: trace)
         var vocabulary:  [VocabularyStatement] = []
         var constants:   [ConstantDeclaration] = []
         var instances:   [InstanceDeclaration] = []
@@ -50,6 +50,7 @@ public struct MerConfigParser {
         }
 
         for (section, body) in sectionRanges {
+            trace.log(.merconfig, "section === \(section) === (\(body.filter(\.isContent).count) lines)")
             switch section {
             case "vocabulary":
                 vocabulary += try parseVocabularySection(body, file: file)
@@ -62,9 +63,10 @@ public struct MerConfigParser {
             case "language":
                 languageSynonyms = parseLanguageSection(body)
             default:
-                break
+                trace.log(.merconfig, "WARNING: ignoring unrecognized section === \(section) ===")
             }
         }
+        trace.log(.merconfig, "parsed \(vocabulary.count) vocab, \(constants.count) constants, \(instances.count) instances, \(tools.count) tools")
 
         return MerConfigFile(
             vocabulary: vocabulary,

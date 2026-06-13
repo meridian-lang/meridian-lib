@@ -28,22 +28,58 @@ ParserTrace.shared.enable([.phraseMatch, .lowering])
 ## Categories
 
 Categories form a two-level hierarchy: `group.leaf`. Enabling a group prefix
-enables all leaves under it.
+enables all leaves under it. The list below mirrors `ParserTrace.Category`;
+`meridian trace categories` prints the same set with descriptions.
 
 | Enum case | Raw value | Description |
 |---|---|---|
+| `.tokenize` | `tokenize` | Lexing: fence/table collapse, comment/indent/heading decisions (IndentTokenizer) |
 | `.phraseParse` | `phrase.parse` | Pattern tokenisation (PhrasePatternParser) |
 | `.phraseMatch` | `phrase.match` | Candidate scoring and winner selection |
 | `.phraseExtractArgs` | `phrase.args` | Argument text extraction per parameter slot |
 | `.phraseInline` | `phrase.inline` | Body expansion and argument substitution |
-| `.statement` | `statement` | Statement parsing dispatch (StatementParser) |
+| `.statement` | `statement` | Per-statement parser dispatch (StatementParser) |
 | `.expression` | `expression` | Expression parsing decisions (ExpressionParser) |
-| `.lowering` | `lowering` | AST → IR lowering decisions (ASTToIR) |
-| `.symbols` | `symbols` | Symbol table lookups |
-| `.merconfig` | `merconfig` | MerConfigParser section/phrase/tool parsing |
+| `.lowering` | `lowering` | AST → IR lowering decisions (ASTToIR) + rule classification |
+| `.symbols` | `symbols` | Symbol-table construction (kinds/properties/phrases/tools/…) |
+| `.merconfig` | `merconfig` | Vocabulary (.merconfig) section/phrase/tool parsing |
+| `.rulebook` | `rulebook` | Rulebook (.merrules) parsing + rewrite |
+| `.skill` | `skill` | Skill/section-role classification + scoped tools |
+| `.codegen` | `codegen` | Swift/manifest/domain emission (SwiftEmitter) |
+| `.diagnostics` | `diagnostics` | Every emitted diagnostic (errors/warnings/notes) |
+| `.timing` | `timing` | Per-phase wall-clock timing + end-of-compile profile (**off by default**) |
 
 Enable group `phrase` to get all four `phrase.*` categories at once.
 Enable `all` to get everything.
+
+### Timing & the compile profile
+
+`Compiler.compileWithManifest` wraps the whole pipeline in a top-level `compile`
+span and times each phase (`symbols`, `parse`, `lower`, `codegen`) via
+`trace.phase(_:)`. At end-of-compile it emits a profile under `.timing`:
+
+```
+[timing] ── compile profile ──
+[timing]   symbols                  1.20 ms  ( 8.0%)
+[timing]   parse                    6.40 ms  (42.7%)
+[timing]   lower                    4.10 ms  (27.3%)
+[timing]   codegen                  3.30 ms  (22.0%)
+[timing]   total                   15.00 ms
+[timing]   diagnostics emitted: 0
+```
+
+`.timing` is **off by default** and is excluded from `capturing()` assertions so
+trace tests remain deterministic. Enable it explicitly with `--trace timing`
+(or `all`).
+
+### Diagnostics mirroring
+
+Every `Diagnostic` the `DiagnosticEngine` reports is mirrored into the
+`.diagnostics` stream (`severity code @range: message`, plus suggestion/note
+lines) and counted in the timing profile. A full trace therefore shows exactly
+where each error/warning fired. See
+[14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) for the diagnostics
+surface itself.
 
 ---
 
@@ -157,10 +193,11 @@ trace.sink = .custom { line in myLogger.debug(line) }
 
 ## CLI integration
 
-`CompileCommand` creates a fresh `ParserTrace()` per compilation, configures
-it, then passes it through `Compiler.Options`. The same `--trace` and
-`--trace-file` flags are also available on `meridian check`, `meridian verify`,
-and `meridian run`:
+`CompileCommand` creates a fresh `ParserTrace()` per compilation (via the shared
+`makeCLITrace` bootstrap in `CLISupport.swift`), configures it, then passes it
+through `Compiler.Options`. `compile` accepts both `--trace` and `--trace-file`;
+`check`, `verify`, and `run` accept `--trace` (all routed through the same
+bootstrap). `meridian trace categories` lists the valid category tokens:
 
 ```swift
 let traceInstance = ParserTrace()

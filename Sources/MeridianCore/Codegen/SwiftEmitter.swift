@@ -45,9 +45,11 @@ public struct SwiftEmitter {
     }
 
     public let options: Options
+    public let trace: ParserTrace
 
-    public init(options: Options = Options()) {
+    public init(options: Options = Options(), trace: ParserTrace = .shared) {
         self.options = options
+        self.trace = trace
     }
 
     // MARK: - Public entry point
@@ -87,6 +89,7 @@ public struct SwiftEmitter {
             }
         }
         let namespace = options.namespaceEnum
+        trace.log(.codegen, "emit file: \(workflows.count) workflow(s), \(definitions.count) definition(s)\(namespace.map { ", namespace \($0)" } ?? "")")
         return StringTemplate {
             fileHeader()
             ""
@@ -115,6 +118,7 @@ public struct SwiftEmitter {
             for (idx, workflow) in workflows.enumerated() {
                 // B1: Emit skillMetadata on the first workflow struct only.
                 let skillEntries: [(String, String)]? = (idx == 0 ? fileMetadata?.entries : nil)
+                let _ = trace.log(.codegen, "emit workflow \(workflow.structName) (\(workflow.body.statements.count) top-level primitives, mode \(workflow.mode))")
                 emitWorkflow(workflow,
                              hasConstants: hasConstants,
                              hasInstances: hasInstances,

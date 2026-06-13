@@ -38,6 +38,14 @@ struct RunCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Keep the temporary SwiftPM package and print its path.")
     var keepTemp: Bool = false
 
+    @Option(name: .long,
+            help: "Activate parser/lowering trace categories (comma-separated). Examples: phrase, lowering, all.")
+    var trace: String?
+
+    @Option(name: .long,
+            help: "Diagnostics output format: human (snippet + caret) or json (stable schema for editors/CI).")
+    var diagnosticsFormat: DiagnosticsFormat = .human
+
     func run() async throws {
         let meridianURL = URL(fileURLWithPath: input).standardized
         guard FileManager.default.fileExists(atPath: meridianURL.path) else {
@@ -49,25 +57,51 @@ struct RunCommand: AsyncParsableCommand {
         let meridianSource = try String(contentsOf: meridianURL, encoding: .utf8)
         let merconfigURLs = try DependencyDiscovery.resolveMerconfigs(explicit: merconfig, beside: meridianURL)
         let vocabularies = try DependencyDiscovery.loadVocabularies(merconfigURLs)
+        let rulebookURLs = try DependencyDiscovery.resolveRulebooks(explicit: [], beside: meridianURL)
+        let rulebooks: [RulebookInput] = try rulebookURLs.map {
+            .init(name: $0.deletingPathExtension().lastPathComponent,
+                  file: $0.lastPathComponent, source: try String(contentsOf: $0, encoding: .utf8))
+        }
 
-        let compiler = Compiler()
-        let swift = try compiler.compile(
-            meridianSource: meridianSource,
-            meridianFile: meridianURL.lastPathComponent,
-            vocabularies: vocabularies
-        )
-        let workflows = try lowerWorkflows(
-            meridianSource: meridianSource,
-            meridianFile: meridianURL.lastPathComponent,
-            vocabularies: vocabularies
-        )
-        let targetWorkflow = try selectWorkflow(from: workflows)
+        var diagSources: [String: String] = [meridianURL.lastPathComponent: meridianSource]
+        for (i, url) in merconfigURLs.enumerated() { diagSources[url.lastPathComponent] = vocabularies[i].source }
+
+        // Compile ONCE through the canonical path (engine + fallback policy +
+        // rulebooks). Reuse the manifest's lowered workflows for target
+        // selection — no second `.silent()` re-lower that dropped rulebooks.
+        let compiler = Compiler(options: .init(trace: makeCLITrace(spec: trace)))
+        let compiled: (swift: String, manifest: ManifestEmitter.Input)
+        do {
+            compiled = try compiler.compileWithManifest(
+                meridianSource: meridianSource,
+                meridianFile: meridianURL.lastPathComponent,
+                vocabularies: vocabularies,
+                rulebooks: rulebooks
+            )
+        } catch {
+            throw reportCompilerError(error, sources: diagSources, format: diagnosticsFormat)
+        }
+        let swift = compiled.swift
+        let targetWorkflow = try selectWorkflow(from: compiled.manifest.workflows)
         let stem = meridianURL.deletingPathExtension().lastPathComponent
         let swiftURL = outputURL.appendingPathComponent(stem + ".swift")
         try swift.write(to: swiftURL, atomically: true, encoding: .utf8)
+        let m = compiled.manifest
         let manifest = try ManifestEmitter().emit(.init(
             sourceFiles: [meridianURL.lastPathComponent] + merconfigURLs.map(\.lastPathComponent),
-            workflows: workflows
+            workflows: m.workflows,
+            constantsDecl: m.constantsDecl,
+            toolsUsed: m.toolsUsed,
+            kindsUsed: m.kindsUsed,
+            instancesRequired: m.instancesRequired,
+            sourceMap: Compiler.sourceMap(fromGeneratedSwift: swift),
+            metadata: m.metadata,
+            outline: m.outline,
+            rules: m.rules,
+            skillSections: m.skillSections,
+            definitions: m.definitions,
+            relations: m.relations,
+            verbs: m.verbs
         ))
         try manifest.write(
             to: outputURL.appendingPathComponent(stem + ".meridian.manifest.json"),
@@ -95,21 +129,6 @@ struct RunCommand: AsyncParsableCommand {
             FileHandle.standardError.write(Data("temporary package: \(package.packageURL.path)\n".utf8))
         }
         print(result.stdout, terminator: result.stdout.hasSuffix("\n") ? "" : "\n")
-    }
-
-    private func lowerWorkflows(
-        meridianSource: String,
-        meridianFile: String,
-        vocabularies: [Compiler.VocabularyInput]
-    ) throws -> [IRWorkflow] {
-        var config = MerConfigFile()
-        for input in vocabularies {
-            let parsed = try MerConfigParser(trace: .silent()).parse(input.source, file: input.file)
-            config = config.merging(parsed)
-        }
-        let symbols = SymbolTable.build(from: config, sourceFile: vocabularies.first?.file ?? "config.merconfig", trace: .silent())
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse(meridianSource, file: meridianFile)
-        return try ASTToIR(symbols: symbols, sourceFile: meridianFile, trace: .silent()).lower(ast)
     }
 
     private func selectWorkflow(from workflows: [IRWorkflow]) throws -> IRWorkflow {

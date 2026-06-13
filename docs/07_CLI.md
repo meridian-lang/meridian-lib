@@ -39,8 +39,11 @@ meridian compile <source> [options]
 | `--timestamp` | false | Include a generation timestamp in the generated file header. |
 | `--no-line-comments` | false | Suppress `// L{n}` source-line comments in generated code. |
 | `--no-format` | false | Skip `swift-format` post-processing. |
-| `--trace <categories>` | (none) | Enable `ParserTrace` output. Comma or space-separated. Examples: `phrase`, `phrase.match`, `lowering`, `all`. Also read from `MERIDIAN_TRACE` env var. |
+| `--trace <categories>` | (none) | Enable `ParserTrace` output. Comma or space-separated. Examples: `phrase`, `phrase.match`, `lowering`, `timing`, `all`. Also read from `MERIDIAN_TRACE` env var. |
 | `--trace-file <path>` | stderr | Write trace output to a file instead of stderr. |
+| `--diagnostics-format <human\|json>` | `human` | `human` is the snippet + caret form; `json` is the stable machine schema for editors/CI (includes the `decision` id). |
+| `--fix` | false | Preview unambiguous quick-fixes (a diagnostic with one ranged suggestion). **Dry-run** unless `--write`. The fixer narrows to the single misspelled token and only applies an unambiguous best match, so it can't corrupt a line. |
+| `--write` | false | With `--fix`, apply the previewed fixes to the source files in place. |
 
 ### Output files
 
@@ -123,9 +126,22 @@ meridian verify examples/order_processing.meridian \
 
 Both commands:
 - Accept a repeatable `--merconfig` flag (same auto-detection logic as `compile`).
-- Accept `--trace <categories>` and `--trace-file <path>`.
-- Print a success summary (workflow count, vocabulary count) on exit 0.
-- Print the first compiler diagnostic to stderr and exit 1 on failure.
+- Accept `--trace <categories>`.
+- Accept `--diagnostics-format <human|json>`, `--fix`, and `--write` (same
+  semantics as `compile`).
+- Render diagnostics with source snippets + carets (rulebooks beside the source
+  are auto-loaded so their diagnostics resolve too).
+- Print a success summary (vocabulary count) on exit 0.
+- Print all collected compiler diagnostics to stderr and exit 1 on failure.
+
+```bash
+# Machine-readable diagnostics for an editor / CI
+meridian check order.meridian --diagnostics-format json
+
+# Preview a did-you-mean fix, then apply it
+meridian check order.meridian --fix
+meridian check order.meridian --fix --write
+```
 
 ---
 
@@ -345,6 +361,78 @@ meridian trace render build/events.jsonl --no-timings --no-sources
 
 ---
 
+## `meridian trace categories`
+
+List every compile-time trace category (the tokens accepted by `--trace`) with
+a one-line description. Discoverability companion to `--trace`.
+
+```bash
+meridian trace categories
+```
+
+---
+
+## `meridian explain`
+
+Print the long-form explanation for a diagnostic code — its cause and fix — plus
+the rationale and alternatives of the governing design decision. So "why is this
+an error?" is one command away from the error itself.
+
+```bash
+meridian explain <code|decision-id>
+```
+
+| Argument | Description |
+|---|---|
+| `<code\|decision-id>` | A diagnostic code (e.g. `MER2002`) or a decision id (e.g. `D-DX-5`). |
+
+```bash
+# Explain a diagnostic code (cause + fix + linked decision)
+meridian explain MER2002
+
+# Explain a design decision directly
+meridian explain D-DX-5
+```
+
+An unknown id is itself a guided error: it suggests the closest code/decision id.
+
+---
+
+## `meridian decisions`
+
+List, search, or render the structured design-decision catalog
+(`DecisionCatalog`). The decision log is queryable from the CLI, not just a doc.
+
+```bash
+meridian decisions [query] [options]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `[query]` | (none) | Filter decisions by id/title/rationale substring. |
+| `--id <D-DX-n>` | (none) | Print one decision in full (rationale, alternatives, consequences, see-also). |
+| `--render <path>` | (none) | Regenerate the readable decision log Markdown (`docs/15_DECISIONS.md`) from the catalog. A test fails if the committed file drifts. |
+
+```bash
+# List every decision
+meridian decisions
+
+# Search
+meridian decisions tool
+
+# Full detail for one
+meridian decisions --id D-DX-5
+
+# Regenerate the readable log (kept in sync by a staleness test)
+meridian decisions --render docs/15_DECISIONS.md
+```
+
+See [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) for the full
+diagnostics + decisions story and [15_DECISIONS.md](15_DECISIONS.md) for the
+generated log.
+
+---
+
 ## Config file auto-detection
 
 If `--merconfig` is not specified, the compiler searches:
@@ -356,8 +444,11 @@ When multiple files are found, they are all merged as if each had been passed
 separately with `--merconfig`. Duplicate kind/phrase/tool/constant/instance names
 across merged vocabularies are rejected with a sourced semantic error.
 
-If none is found, the compiler proceeds without a vocabulary (phrase invocations
-produce `_unresolved` binds).
+If none is found, the compiler proceeds without a vocabulary. The compiler is
+**strict by default**: an unresolved phrase or unknown tool is a coded error
+(MER2001 / MER2002) with a did-you-mean, not a silent `_unresolved` bind. Opt
+into placeholders per-file with frontmatter `allow-fallbacks: unresolved-phrases`
+(see [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) §6).
 
 ---
 
@@ -368,17 +459,25 @@ during development:
 
 | Category | What it shows |
 |---|---|
+| `tokenize` | Fence/table collapse, headings, indent/comment decisions |
 | `phrase` | All phrase pipeline stages (parse, match, args, inline) |
 | `phrase.match` | Which phrases are candidates and which wins |
 | `phrase.args` | Argument text extracted from each invocation slot |
 | `phrase.inline` | Body expansion and substitution steps |
 | `phrase.parse` | Pattern tokenisation |
 | `expression` | Expression parsing decisions |
-| `statement` | Statement parsing dispatch |
-| `lowering` | AST → IR lowering decisions |
-| `symbols` | Symbol table lookups |
+| `statement` | Per-statement parser dispatch |
+| `lowering` | AST → IR lowering + rule classification |
+| `symbols` | Symbol-table construction |
 | `merconfig` | MerConfig section and phrase parsing |
+| `rulebook` | `.merrules` parsing + rewrite |
+| `skill` | Section-role classification + scoped tools |
+| `codegen` | Swift/manifest/domain emission |
+| `diagnostics` | Every emitted diagnostic |
+| `timing` | Per-phase wall-clock + compile profile (off by default) |
 | `all` | Everything (verbose) |
+
+Run `meridian trace categories` to print this list with descriptions.
 
 The `MERIDIAN_TRACE` environment variable is also read at startup:
 

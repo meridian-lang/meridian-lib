@@ -19,7 +19,18 @@ struct VerifyCommand: AsyncParsableCommand {
             help: "Activate parser/lowering trace categories (comma-separated). Examples: phrase, phrase.match, lowering, all.")
     var trace: String?
 
+    @Option(name: .long,
+            help: "Diagnostics output format: human (snippet + caret) or json (stable schema for editors/CI).")
+    var diagnosticsFormat: DiagnosticsFormat = .human
+
+    @Flag(name: .long, help: "Preview unambiguous quick-fixes (did-you-mean replacements). Dry-run unless --write.")
+    var fix: Bool = false
+
+    @Flag(name: .long, help: "With --fix, apply the fixes to the source files in place.")
+    var write: Bool = false
+
     func run() async throws {
-        try await runDiagnosticsCheck(input: input, merconfig: merconfig, trace: trace)
+        try await runDiagnosticsCheck(input: input, merconfig: merconfig, trace: trace,
+                                      format: diagnosticsFormat, fix: fix, write: write)
     }
 }

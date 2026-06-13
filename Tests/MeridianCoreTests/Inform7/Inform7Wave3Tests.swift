@@ -536,9 +536,12 @@ struct DescriptionTests3C {
               complete with reason "ok".
             """)
         }
-        if case .semanticError(let message, _)? = err {
-            #expect(message.contains("did you mean"), Comment(rawValue: message))
-        }
+        // The passive-description verb path surfaces via the malformed-expression
+        // carrier; assert the rendered diagnostic suggests the nearest form.
+        let rendered = (err?.diagnostics ?? []).map { d in
+            ([d.message] + d.suggestions.map(\.rationale) + d.notes.map(\.message)).joined(separator: " ")
+        }.joined(separator: " ")
+        #expect(rendered.contains("did you mean"), Comment(rawValue: rendered))
     }
 
     @Test("tool-backed scalar navigation in a let hoists a single fetch invoke")

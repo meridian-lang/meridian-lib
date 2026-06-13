@@ -89,6 +89,8 @@ swift run meridian skill-deviation original-skills/ . \
 | [docs/10_BUILTIN_TOOLS.md](docs/10_BUILTIN_TOOLS.md) | Blueprint built-in tool catalog, arguments, registration |
 | [docs/11_RULEBOOKS.md](docs/11_RULEBOOKS.md) | `.merrules` desugars, section roles, conventions |
 | [docs/13_SKILL_MD_PORTING.md](docs/13_SKILL_MD_PORTING.md) | Porting gbrain `SKILL.md` → `.meri` (playbook, tiers, migrator) |
+| [docs/14_DEVELOPER_EXPERIENCE.md](docs/14_DEVELOPER_EXPERIENCE.md) | **Debugging** — diagnostics, `MERxxxx` codes, did-you-mean, batch reporting, tracing, `explain`/`decisions`/`--fix` |
+| [docs/15_DECISIONS.md](docs/15_DECISIONS.md) | The readable design-decision log (generated from `DecisionCatalog`) |
 | [Tests/README.md](Tests/README.md) | Test suites, forcing functions, adding new tests |
 | [docs/status.md](docs/status.md) | Phase progress, what's done, decision references |
 
@@ -259,15 +261,23 @@ See [`docs/06_RUNTIME.md`](docs/06_RUNTIME.md) §"Permissions and Policy" for de
 ## ⚠️  No silent fallbacks: every resolution failure is a hard error
 
 Meridian compiles **strictly by default**. If something can't be resolved at
-compile time, the compiler raises a sourced `semanticError` instead of
-silently emitting a placeholder:
+compile time, the compiler raises a coded, sourced `Diagnostic` (with a source
+caret and a `did you mean`/`help` hint) instead of silently emitting a
+placeholder:
 
 | Failure | What used to happen (V1) | What happens now |
 |---|---|---|
-| Phrase doesn't match any phrase or workflow | `_unresolved` BindIR placeholder | hard error pointing at the line |
-| Rule that the analyser can't classify | dropped silently | hard error |
-| Rule whose action verb matches no workflow | dropped silently | hard error |
-| `When …, do X` trigger whose action doesn't lower | stub comment | hard error |
+| Phrase doesn't match any phrase or workflow | `_unresolved` BindIR placeholder | MER2001 error with did-you-mean |
+| Unknown tool id | invoke that failed only at runtime | MER2002 error with did-you-mean |
+| Rule that the analyser can't classify | dropped silently | MER1004 error |
+| Rule whose action verb matches no workflow | dropped silently | MER3006 error |
+| `When …, do X` trigger whose action doesn't lower | stub comment | MER3007 error |
+| Malformed header / unknown config key / rulebook section | dropped silently | MER1001 / MER1007 / MER5003 error |
+| `swift-format` failure | swallowed | MER5001 **warning** (valid output kept) |
+
+The full diagnostics, tracing, and decision-log surface is documented in
+[docs/14_DEVELOPER_EXPERIENCE.md](docs/14_DEVELOPER_EXPERIENCE.md). Every
+compile error is queryable: `meridian explain MER2002`.
 
 **Opting back into a fallback is per-file**, via the `.meridian` frontmatter
 key `allow-fallbacks:` (comma-separated list, or `all`/`*` for everything):
@@ -279,9 +289,11 @@ allow-fallbacks: unresolved-phrases, unattached-rules
 ---
 ```
 
-The four kinds:
+The kinds:
 - `unresolved-phrases` — emit `_unresolved` BindIR for unknown phrase
   invocations.
+- `unknown-tools` — emit an unrecognized tool id as-is (for host-provided tools
+  registered only at runtime).
 - `unparseable-rules` — drop rules the analyser can't classify (still in
   manifest).
 - `unattached-rules` — drop rules whose action doesn't match any workflow

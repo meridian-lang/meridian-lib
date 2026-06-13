@@ -63,6 +63,7 @@ struct SampleGbrainSmokeTests {
         name: capture demo
         vocabulary: brain.merconfig
         rulebook: brain.merrules
+        allow-fallbacks: unknown-tools
         ---
         capture the note.
         search the brain for the note.
@@ -85,6 +86,7 @@ struct SampleGbrainSmokeTests {
         skill: true
         vocabulary: brain.merconfig
         rulebook: brain.merrules
+        allow-fallbacks: unknown-tools
         ---
         ## Contract
         The page priority is "p0".
@@ -403,6 +405,7 @@ struct SampleGbrainSmokeTests {
         name: arrow demo
         vocabulary: brain.merconfig
         rulebook: brain.merrules
+        allow-fallbacks: unknown-tools
         ---
         If the note is "urgent" -> capture the note.
         """

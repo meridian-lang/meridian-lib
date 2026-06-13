@@ -25,7 +25,9 @@ struct MeridianCLI: AsyncParsableCommand {
             TraceRenderCommand.self,
             RunCommand.self,
             VerifyCommand.self,
-            ResumeCommand.self
+            ResumeCommand.self,
+            ExplainCommand.self,
+            DecisionsCommand.self
         ]
     )
 }

@@ -24,13 +24,25 @@ public struct ASTToIR {
     /// names and passes the narrowed set here so the planner cannot reach
     /// outside the skill's declared capability surface.
     public let scopedTools: [String]?
+    /// Raw tool tokens declared in frontmatter `tools:` and `## Tools Used`.
+    /// Used (methodize-normalized) as an additional recognized tool source when
+    /// validating `InvokeIR.toolID`, so a tool declared in frontmatter but not in
+    /// `=== tools ===` (e.g. `get_health` → `getHealth`) still resolves.
+    public let frontmatterTools: [String]
+    /// Optional batch collector. When present, the per-workflow and per-rule
+    /// loops in `lower` recover from a thrown `CompilerError` (collect + skip the
+    /// construct) so one compile reports many errors. When `nil`, the historical
+    /// first-error-throws behaviour is preserved.
+    public let engine: DiagnosticEngine?
     private let maxInlineDepth = 8
 
     public init(symbols: SymbolTable, sourceFile: String = "", trace: ParserTrace = .shared,
                 lexicon: EnglishLexicon = .default,
                 fallbackPolicy: FallbackPolicy = .strict,
                 rulebook: Rulebook = .empty,
-                scopedTools: [String]? = nil) {
+                scopedTools: [String]? = nil,
+                frontmatterTools: [String] = [],
+                engine: DiagnosticEngine? = nil) {
         self.symbols = symbols
         self.sourceFile = sourceFile
         self.trace = trace
@@ -38,6 +50,8 @@ public struct ASTToIR {
         self.fallbackPolicy = fallbackPolicy
         self.rulebook = rulebook
         self.scopedTools = scopedTools
+        self.frontmatterTools = frontmatterTools
+        self.engine = engine
     }
 
     /// Effective tool allow-list for a prose/autonomy plan step.
@@ -89,7 +103,21 @@ public struct ASTToIR {
         // collisions) before any workflow body lowers.
         try validateRelationsAndVerbs()
 
-        var workflows = try file.workflows.map { try lowerWorkflow($0) }
+        // Per-workflow recovery boundary: with a batch engine, a workflow whose
+        // body fails to lower is collected and skipped so the rest of the file
+        // still reports. Cascade-safe because every workflow was registered as a
+        // phrase stub above, so dependent invocations still resolve.
+        var workflows: [IRWorkflow]
+        if let engine {
+            workflows = []
+            for wf in file.workflows {
+                if let lowered = try engine.recovering({ try lowerWorkflow(wf) }) {
+                    workflows.append(lowered)
+                }
+            }
+        } else {
+            workflows = try file.workflows.map { try lowerWorkflow($0) }
+        }
 
         // C1-C4: Classify and inject rules into lowered workflows.
         if !file.rules.isEmpty {
@@ -114,15 +142,21 @@ public struct ASTToIR {
                     if fallbackPolicy.allows(.unparseableRules) {
                         trace.log(.lowering, "rule unparseable @L\(raw.sourceLine) (allow-fallbacks: unparseable-rules): \(raw.text)")
                     } else {
-                        throw CompilerError.semanticError(
-                            message: "unparseable rule: \"\(raw.text)\". Use one of the supported rule shapes (must / must not / must be … by … before / when / may), or set frontmatter `allow-fallbacks: unparseable-rules` to drop it.",
-                            range: sourceRange(raw.sourceLine)
-                        )
+                        let diag = Diagnostic.structural(
+                            .unparseableRule,
+                            message: "unparseable rule: \"\(raw.text)\"",
+                            range: sourceRange(raw.sourceLine),
+                            help: "Use one of the supported rule shapes (must / must not / must be … by … before / when / may), or set frontmatter `allow-fallbacks: unparseable-rules` to drop it.")
+                        if let engine { engine.report(diag) } else { throw CompilerError.diagnostics([diag]) }
                     }
                 }
             }
 
-            workflows = try injector.inject(rules: parsedRules, into: workflows, sourceFile: sourceFile)
+            if let engine {
+                workflows = (try engine.recovering({ try injector.inject(rules: parsedRules, into: workflows, sourceFile: sourceFile) })) ?? workflows
+            } else {
+                workflows = try injector.inject(rules: parsedRules, into: workflows, sourceFile: sourceFile)
+            }
 
             // Surface unattached rules. Strict mode treats this as an error
             // because a rule that matches no workflow is almost always a bug
@@ -131,17 +165,24 @@ public struct ASTToIR {
                 if fallbackPolicy.allows(.unattachedRules) {
                     trace.log(.lowering, "rule did not attach (allow-fallbacks: unattached-rules): \(describeRule(u.rule)) — \(u.reason)")
                 } else {
-                    throw CompilerError.semanticError(
-                        message: "rule did not attach to any workflow: \(describeRule(u.rule)). Make sure the rule's action verb matches a workflow's name or parameter, or set frontmatter `allow-fallbacks: unattached-rules` to drop the rule.",
-                        range: sourceRange(ruleLine(u.rule))
-                    )
+                    let diag = Diagnostic.error(
+                        .unattachedRule,
+                        message: "rule did not attach to any workflow: \(describeRule(u.rule))",
+                        range: sourceRange(ruleLine(u.rule)),
+                        help: "Make sure the rule's action verb matches a workflow's name or parameter, or set frontmatter `allow-fallbacks: unattached-rules` to drop the rule.")
+                    if let engine { engine.report(diag) } else { throw CompilerError.diagnostics([diag]) }
                 }
             }
 
-            let triggers = try injector.synthesizeTriggers(parsedRules, sourceFile: sourceFile)
             // synthesizeTriggers may throw if a trigger's action doesn't lower
             // and the policy doesn't allow `unresolved-trigger-actions`.
-            workflows += triggers
+            if let engine {
+                if let triggers = try engine.recovering({ try injector.synthesizeTriggers(parsedRules, sourceFile: sourceFile) }) {
+                    workflows += triggers
+                }
+            } else {
+                workflows += try injector.synthesizeTriggers(parsedRules, sourceFile: sourceFile)
+            }
         }
 
         // J: Inject the rulebook's Inform-style conventions (before/check →
@@ -159,7 +200,78 @@ public struct ASTToIR {
             )
         }
 
+        // Pillar 6: every emitted tool ID must resolve to a recognized source
+        // (built-in catalog, vocabulary `=== tools ===`, frontmatter `tools:`,
+        // or a `workflow:` reference). A miss is almost always a typo or a
+        // forgotten declaration — surface it with did-you-mean.
+        validateToolIDs(in: workflows)
+
         return workflows
+    }
+
+    // MARK: - Tool-ID validation (Pillar 6)
+
+    /// Methodize a raw tool token the same way the invoke path does
+    /// (`get_health` → `getHealth`), so frontmatter `tools:` tokens line up
+    /// with the emitted `InvokeIR.toolID`.
+    private func methodizeToolToken(_ name: String) -> String {
+        let words = name.lowercased()
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty && !lexicon.articles.contains($0) }
+        guard let first = words.first else { return name }
+        return first + words.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined()
+    }
+
+    /// The union of every recognized tool ID for this compile, in the same
+    /// surface forms the invoke path can resolve. Because a declared tool is
+    /// matched case-insensitively against its `methodName` and an *undeclared*
+    /// tool is `methodize`-d (so the built-in `llm.chat` is invoked as
+    /// `llmChat`), every source contributes both its raw and methodized form,
+    /// and recognition is done on lowercased keys (see `validateToolIDs`).
+    private func recognizedToolForms() -> Set<String> {
+        var forms: Set<String> = []
+        func add(_ s: String) {
+            forms.insert(s.lowercased())
+            forms.insert(methodizeToolToken(s).lowercased())
+        }
+        for id in BuiltinToolCatalog.ids { add(id) }
+        for (key, decl) in symbols.tools {
+            add(key)
+            add(decl.methodName)
+        }
+        if let scopedTools { for s in scopedTools { add(s) } }
+        for token in frontmatterTools { add(token) }
+        return forms
+    }
+
+    private func validateToolIDs(in workflows: [IRWorkflow]) {
+        guard engine != nil else {
+            // Without a batch engine (the test-runner re-lower / RunCommand
+            // re-lower paths) the primary compile already validated tool IDs, so
+            // skip to avoid a redundant first-error throw on a non-canonical path.
+            return
+        }
+        if fallbackPolicy.allows(.unknownTools) { return }
+        let recognized = recognizedToolForms()
+        let candidates = Array(Set(BuiltinToolCatalog.ids + symbols.tools.values.map { $0.methodName })).sorted()
+        var seen: Set<String> = []
+        for prim in IRWalker.flatPrimitives(workflows: workflows) {
+            guard case .invoke(let inv) = prim else { continue }
+            let id = inv.toolID
+            // `workflow:<Struct>` references and already-recognized tools pass.
+            if id.hasPrefix("workflow:") || recognized.contains(id.lowercased()) { continue }
+            // The `_unresolved` placeholder (allow-fallbacks: unresolved-phrases)
+            // is reported elsewhere; don't double-flag its synthetic invoke.
+            if id.isEmpty || id == "_unresolved" { continue }
+            guard seen.insert(id).inserted else { continue }
+            engine?.report(Diagnostic.unresolved(
+                .unknownTool,
+                target: id,
+                among: candidates,
+                range: inv.sourceRange,
+                noun: "tool",
+                help: "Declare it in a `=== tools ===` block or frontmatter `tools:`, or set frontmatter `allow-fallbacks: unknown-tools` if it is a host-provided tool registered at runtime."))
+        }
     }
 
     /// Parse a convention body statement and lower it to IR through the strict
@@ -828,7 +940,13 @@ public struct ASTToIR {
 
         guard depth < maxInlineDepth else {
             trace.log(.phraseInline, "  depth limit reached — bailing out")
-            return []
+            throw CompilerError.diagnostics([
+                Diagnostic.error(
+                    .phraseInlineDepthExceeded,
+                    message: "phrase inlining exceeded the depth limit (\(maxInlineDepth)) at \"\(s.words)\"",
+                    range: sourceRange(s.sourceLine),
+                    help: "This usually means a phrase definition is cyclic (it inlines itself directly or transitively). Break the cycle, or call it as a workflow instead of a phrase.")
+            ])
         }
 
         // Command surface: a verbatim shell command (from a fenced ```bash
@@ -881,10 +999,16 @@ public struct ASTToIR {
                     sourceRange: sourceRange(s.sourceLine)
                 ))]
             } else {
-                throw CompilerError.semanticError(
-                    message: "unresolved phrase: \"\(s.words)\". Add a matching phrase or workflow, or set frontmatter `allow-fallbacks: unresolved-phrases` to allow placeholders.",
-                    range: sourceRange(s.sourceLine)
-                )
+                let candidates = symbols.phrases.map { $0.pattern.displayText }
+                throw CompilerError.diagnostics([
+                    Diagnostic.unresolved(
+                        .unresolvedPhrase,
+                        target: s.words,
+                        among: candidates,
+                        range: sourceRange(s.sourceLine),
+                        noun: "phrase",
+                        help: "Add a matching phrase or workflow, or set frontmatter `allow-fallbacks: unresolved-phrases` to allow placeholders.")
+                ])
             }
         }
 
@@ -1146,8 +1270,10 @@ public struct ASTToIR {
     private func wholeWordReplace(_ haystack: String, of needle: String, with replacement: String) -> String {
         guard !needle.isEmpty else { return haystack }
         let pattern = "\\b\(NSRegularExpression.escapedPattern(for: needle))\\b"
+        // The pattern is built from an escaped literal, so compilation cannot
+        // fail. A failure here is a compiler bug, not a recoverable condition.
         guard let re = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else {
-            return haystack.replacingOccurrences(of: needle, with: replacement, options: .caseInsensitive)
+            preconditionFailure("internal: constant whole-word regex failed to compile: \(pattern)")
         }
         let range = NSRange(haystack.startIndex..<haystack.endIndex, in: haystack)
         return re.stringByReplacingMatches(in: haystack, options: [], range: range, withTemplate: NSRegularExpression.escapedTemplate(for: replacement))
@@ -1328,6 +1454,7 @@ public struct ASTToIR {
         try symbols.definitions.values
             .sorted { $0.functionName < $1.functionName }
             .map { rec in
+                trace.log(.lowering, "lower definition \(rec.functionName) (adjective on \(rec.kind))")
                 // Rewrite the body so bare property references resolve against
                 // the subject (the function parameter), mirroring loop-var
                 // qualification.
@@ -1348,10 +1475,15 @@ public struct ASTToIR {
         try walkProperties(record.body) { base, prop in
             guard case .identifierRef(let n) = base, n.lowercased() == subject else { return }
             if !declared.contains(prop.lowercased()) {
-                throw CompilerError.semanticError(
-                    message: "definition \"\(record.adjective)\" references unknown property \"\(prop)\" on \(record.kind). Declared properties: [\(declared.sorted().joined(separator: ", "))].",
-                    range: sourceRange(record.sourceLine)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.unresolved(
+                        .unknownProperty,
+                        target: prop,
+                        among: declared.sorted(),
+                        range: sourceRange(record.sourceLine),
+                        noun: "property",
+                        help: "Declare property \"\(prop)\" on \(record.kind), or reference one of its declared properties.")
+                ])
             }
         }
     }
@@ -1376,10 +1508,12 @@ public struct ASTToIR {
         var visiting: Set<String> = []
         func dfs(_ adj: String, path: [String]) throws {
             if visiting.contains(adj) {
-                throw CompilerError.semanticError(
-                    message: "recursive definition detected: \(path.joined(separator: " → ")) → \(adj). Definitions must not reference themselves (directly or transitively).",
-                    range: sourceRange(symbols.definition(forAdjective: adj)?.sourceLine ?? 0)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.error(
+                        .definitionRecursion,
+                        message: "recursive definition detected: \(path.joined(separator: " → ")) → \(adj). Definitions must not reference themselves (directly or transitively).",
+                        range: sourceRange(symbols.definition(forAdjective: adj)?.sourceLine ?? 0))
+                ])
             }
             guard let record = symbols.definition(forAdjective: adj) else { return }
             visiting.insert(adj)
@@ -1410,10 +1544,15 @@ public struct ASTToIR {
     /// Resolve a surface adjective to a definition-predicate filter over `subject`.
     private func resolveAdjectiveFilter(adjective: String, subject: IRExpression, sourceLine: Int) throws -> IRExpression {
         guard let record = symbols.definition(forAdjective: adjective) else {
-            throw CompilerError.semanticError(
-                message: "unknown adjective \"\(adjective)\". Declare it with `Definition: a <kind> is \(adjective) if <condition>.`",
-                range: sourceRange(sourceLine)
-            )
+            throw CompilerError.diagnostics([
+                Diagnostic.unresolved(
+                    .unknownAdjective,
+                    target: adjective,
+                    among: symbols.definitions.values.map { $0.adjective },
+                    range: sourceRange(sourceLine),
+                    noun: "adjective",
+                    help: "Declare it with `Definition: a <kind> is \(adjective) if <condition>.`")
+            ])
         }
         return .definitionPredicate(functionName: record.functionName, subject: subject)
     }
@@ -1654,7 +1793,15 @@ public struct ASTToIR {
                                     object: ExpressionAST, scope: Set<String>? = nil,
                                     line: Int) throws -> IRExpression {
         guard let resolved = symbols.resolveVerbForm(verbForm) else {
-            throw semanticError("unknown verb \"\(verbForm)\"\(nearestVerbSuggestion(verbForm)). Declare it with `The verb to <base> (it <3rd>, it is <participle>) means the <relation> relation.`", line)
+            throw CompilerError.diagnostics([
+                Diagnostic.unresolved(
+                    .unknownVerb,
+                    target: verbForm,
+                    among: symbols.verbs.values.flatMap { [$0.base, $0.thirdPerson, $0.pastParticiple] },
+                    range: sourceRange(line),
+                    noun: "verb",
+                    help: "Declare it with `The verb to <base> (it <3rd>, it is <participle>) means the <relation> relation.`")
+            ])
         }
         let relName = resolved.verb.relation
         guard let rel = symbols.relation(named: relName),
@@ -1816,6 +1963,10 @@ public struct ASTToIR {
     // MARK: - Source range helper
 
     func sourceRange(_ line: Int) -> SourceRange {
+        // Column 0 = "whole line" (the renderer clamps to a line-accurate caret
+        // at column 1). This value also feeds codegen progress labels
+        // (`progress:…:C<col>`), so it must stay 0 to keep goldens stable; precise
+        // carets come from the Tier-2 `SourceLine.range(file:of:)` helper.
         SourceRange(file: sourceFile, line: line, column: 0)
     }
 }

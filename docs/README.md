@@ -24,12 +24,14 @@ runs against a small deterministic runtime.
 | 5 | [05_CODEGEN.md](05_CODEGEN.md) | Compiler contributors — `SwiftEmitter`, replay guards, `Value` wrapping, special forms |
 | 6 | [06_RUNTIME.md](06_RUNTIME.md) | Runtime & tool authors — API surface visible to generated code |
 | 7 | [07_CLI.md](07_CLI.md) | Workflow authors & CI — all `meridian` subcommands and flags |
-| 8 | [08_TRACING.md](08_TRACING.md) | Debuggers — `ParserTrace` categories, capturing, `--trace` CLI flag |
+| 8 | [08_TRACING.md](08_TRACING.md) | Debuggers — `ParserTrace` categories, timing, capturing, `--trace` CLI flag |
 | 9 | [09_MERIDIAN_TESTS.md](09_MERIDIAN_TESTS.md) | Contributors — `.meridian.test` spec format and `meridian test` runner |
 | 10 | [10_BUILTIN_TOOLS.md](10_BUILTIN_TOOLS.md) | Tool authors — Blueprint built-in catalog, registration, arguments |
 | 11 | [11_RULEBOOKS.md](11_RULEBOOKS.md) | Authors extending the surface — `.merrules` desugars, section roles, conventions |
 | 12 | [12_PROSE_AND_AUTONOMY.md](12_PROSE_AND_AUTONOMY.md) | Authors using plan/autonomy prose modes |
 | 13 | [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) | Authors porting gbrain `SKILL.md` → `.meri` (playbook + tiers + migrator) |
+| 14 | [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) | **Everyone debugging** — diagnostics, codes, did-you-mean, batch reporting, tracing, `explain`/`decisions`/`--fix` |
+| 15 | [15_DECISIONS.md](15_DECISIONS.md) | The readable design-decision log (generated from `DecisionCatalog`) |
 | — | [../Tests/README.md](../Tests/README.md) | All contributors — test suites, forcing functions, adding new tests |
 | — | [status.md](status.md) | Implementers — what's done, what's next, decision references |
 
@@ -56,7 +58,8 @@ meridian/
 │   │   ├── Formatter/          # MeridianFormatter.swift
 │   │   ├── Docs/               # MerconfigDocsRenderer.swift
 │   │   ├── Testing/            # MeridianTestRunner + SpecParser + Assertions
-│   │   ├── Diagnostics/        # ParserTrace.swift
+│   │   ├── Diagnostics/        # Diagnostic, DiagnosticEngine/Renderer, Suggester,
+│   │   │                       #   DiagnosticCode catalog, DecisionCatalog, ParserTrace
 │   │   └── Compiler.swift      # Top-level compile() entry point
 │   ├── MeridianCLI/            # meridian executable (ArgumentParser)
 │   │   └── Commands/           # compile, check, verify, run, resume, format, docs, test, trace

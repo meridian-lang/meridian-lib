@@ -307,7 +307,7 @@ public struct IndentTokenizer {
 
     public init() {}
 
-    public func tokenize(_ source: String, file: String = "") -> [SourceLine] {
+    public func tokenize(_ source: String, file: String = "", trace: ParserTrace = .shared) -> [SourceLine] {
         var lines: [SourceLine] = []
         let rawLines = source.components(separatedBy: "\n")
 
@@ -365,10 +365,13 @@ public struct IndentTokenizer {
                 switch parseBangMarker(text) {
                 case .table(let mode):
                     pendingMarker = (.table(mode), i + 1)
+                    trace.log(.tokenize, "L\(i + 1): block marker → table(\(mode.sentinelToken))")
                 case .checklist(let mode):
                     pendingMarker = (.checklist(mode), i + 1)
+                    trace.log(.tokenize, "L\(i + 1): block marker → checklist(\(mode.sentinelToken))")
                 case .invalid(let message):
                     lines.append(markerErrorLine(message, line: i + 1))
+                    trace.log(.tokenize, "L\(i + 1): invalid block marker: \(message)")
                 }
                 i += 1
                 continue
@@ -378,6 +381,7 @@ public struct IndentTokenizer {
             if isTableStart(at: i, in: rawLines) {
                 let (sentinel, next) = collapseTable(at: i, in: rawLines, indent: indent, mode: .decision)
                 lines.append(sentinel)
+                trace.log(.tokenize, "L\(i + 1): collapsed decision table (\(next - i) rows)")
                 i = next
                 continue
             }
@@ -407,10 +411,14 @@ public struct IndentTokenizer {
                 let sentinelText = codeBlockSentinelPrefix + lang + ":" + b64
                 lines.append(SourceLine(indent: indent, text: sentinelText,
                                         raw: raw, number: openingLineNumber))
+                trace.log(.tokenize, "L\(openingLineNumber): collapsed `\(lang)` fence (\(bodyParts.count) lines)")
                 continue
             }
 
             let marked = stripMarkdownSurface(from: text)
+            if let level = marked.headingLevel {
+                trace.log(.tokenize, "L\(i + 1): heading H\(level): \(marked.text)")
+            }
             lines.append(SourceLine(
                 indent: indent,
                 text: marked.text,

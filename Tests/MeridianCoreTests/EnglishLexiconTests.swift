@@ -358,7 +358,13 @@ struct ToolResolutionTests {
         === vocabulary ===
 
         === tools ===
+
+        Validate Order
+        ==============
         ~ validateOrder(order: Order) : Result
+
+        Validate
+        ========
         ~ validate(item: String) : Boolean
         """
         let mer = """

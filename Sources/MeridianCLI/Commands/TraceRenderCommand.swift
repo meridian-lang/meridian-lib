@@ -1,5 +1,6 @@
 import ArgumentParser
 import Foundation
+import MeridianCore
 import MeridianRuntime
 
 // MARK: - `meridian trace render`
@@ -13,9 +14,27 @@ struct TraceRenderCommand: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "trace",
         abstract: "Pretty-print a Meridian JSONL event stream as a tree.",
-        subcommands: [Render.self],
+        subcommands: [Render.self, Categories.self],
         defaultSubcommand: Render.self
     )
+
+    struct Categories: ParsableCommand {
+        static let configuration = CommandConfiguration(
+            commandName: "categories",
+            abstract: "List the compile-time trace categories accepted by --trace."
+        )
+
+        func run() throws {
+            print("Compile-time trace categories (use with --trace, comma-separated, or `all`):\n")
+            let width = ParserTrace.Category.allCases.map { $0.rawValue.count }.max() ?? 12
+            for cat in ParserTrace.Category.allCases {
+                let name = cat.rawValue.padding(toLength: width, withPad: " ", startingAt: 0)
+                print("  \(name)  \(cat.summary)")
+            }
+            print("\nGroup prefixes enable every sub-category (e.g. `phrase` enables phrase.parse/match/args/inline).")
+            print("`.timing` is off by default and excluded from captured trace assertions.")
+        }
+    }
 
     struct Render: ParsableCommand {
         static let configuration = CommandConfiguration(

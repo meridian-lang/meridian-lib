@@ -417,17 +417,24 @@ struct RuleInjector {
         if let lower = lowerAction {
             do {
                 _ = try lower(actionText, sr)
-            } catch let CompilerError.semanticError(message: m, range: r) {
+            } catch let error as CompilerError {
+                // The action lowerer may throw a legacy `.semanticError` or a
+                // modern `.diagnostics`. Project uniformly so the trigger
+                // fallback works regardless of which form fired.
+                let first = error.diagnostics.first
+                let m = first?.message ?? "\(error)"
+                let r = first?.primaryRange ?? sr
                 if fallbackPolicy.allows(.unresolvedTriggerActions) {
                     trace.log(.lowering, "trigger action unresolved (allow-fallbacks: unresolved-trigger-actions): \(actionText) — \(m)")
                 } else {
-                    throw CompilerError.semanticError(
-                        message: "trigger action does not resolve: \"\(actionText)\". \(m). Add a matching workflow/phrase, or set frontmatter `allow-fallbacks: unresolved-trigger-actions` to skip this check.",
-                        range: r
-                    )
+                    throw CompilerError.diagnostics([
+                        Diagnostic.error(
+                            .unresolvedTriggerAction,
+                            message: "trigger action does not resolve: \"\(actionText)\". \(m)",
+                            range: r,
+                            help: "Add a matching workflow/phrase, or set frontmatter `allow-fallbacks: unresolved-trigger-actions` to skip this check.")
+                    ])
                 }
-            } catch {
-                throw error
             }
         }
 

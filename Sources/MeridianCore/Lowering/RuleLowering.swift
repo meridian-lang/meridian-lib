@@ -70,27 +70,33 @@ public struct RuleAnalyzer {
     public func classify(_ rule: RuleAST) -> ParsedRule? {
         let text = rule.text.trimmingCharacters(in: .whitespaces)
         let lower = text.lowercased()
+        trace.log(.lowering, "classify rule @L\(rule.sourceLine): \(ParserTrace.short(text))")
 
         // TRIGGER: "When ..."
         if lower.hasPrefix("when ") {
+            trace.log(.lowering, "  → trigger")
             return classifyTrigger(text, rule: rule)
         }
 
         // PRECONDITION: "... must be <participle> by <role> before ..."
         if lower.contains(" must be ") && lower.contains(" by ") && lower.contains(" before ") {
+            trace.log(.lowering, "  → precondition")
             return classifyPrecondition(text, rule: rule)
         }
 
         // INVARIANT / PARAMETER GUARD: "... must not ..."
         if lower.contains(" must not ") {
+            trace.log(.lowering, "  → must-not (invariant/parameter-guard)")
             return classifyMustNot(text, rule: rule)
         }
 
         // PERMISSION: "... may ..."
         if lower.contains(" may ") {
+            trace.log(.lowering, "  → permission")
             return classifyPermission(text, rule: rule)
         }
 
+        trace.log(.lowering, "  → unclassified")
         return nil
     }
 
