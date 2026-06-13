@@ -75,15 +75,7 @@ struct CompileCommand: AsyncParsableCommand {
                                    file: url.lastPathComponent, source: src))
         }
 
-        let traceInstance = ParserTrace()
-        if let spec = trace {
-            traceInstance.enable(parsing: spec)
-        }
-        if let path = traceFile {
-            let url = URL(fileURLWithPath: path).standardized
-            FileManager.default.createFile(atPath: url.path, contents: nil)
-            traceInstance.sink = .file(url)
-        }
+        let traceInstance = makeCLITrace(spec: trace, file: traceFile)
 
         let resolvedNamespace: String?
         switch namespace.lowercased() {
@@ -155,47 +147,11 @@ struct CompileCommand: AsyncParsableCommand {
     // MARK: - Helpers
 
     private func resolveMerconfigs(beside meridianURL: URL) throws -> [URL] {
-        // Explicit overrides (one or more --merconfig flags). Order matters:
-        // the compiler concatenates declaration order, so leftmost wins for
-        // anything that shares a stable iteration order downstream.
-        if !merconfig.isEmpty {
-            return try merconfig.map { path in
-                let url = URL(fileURLWithPath: path).standardized
-                guard FileManager.default.fileExists(atPath: url.path) else {
-                    throw ValidationError("merconfig not found: \(path)")
-                }
-                return url
-            }
-        }
-        // Autodiscover every .merconfig in the input's directory (sorted by
-        // name for deterministic order). If the directory has none, fall back
-        // to the parent directory.
-        let dir = meridianURL.deletingLastPathComponent()
-        let files = (try? FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)) ?? []
-        let here = files.filter { $0.pathExtension == "merconfig" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
-        if !here.isEmpty { return here }
-        let parent = dir.deletingLastPathComponent()
-        let parentFiles = (try? FileManager.default.contentsOfDirectory(at: parent, includingPropertiesForKeys: nil)) ?? []
-        return parentFiles.filter { $0.pathExtension == "merconfig" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+        try DependencyDiscovery.resolveMerconfigs(explicit: merconfig, beside: meridianURL)
     }
 
     private func resolveRulebooks(beside meridianURL: URL) throws -> [URL] {
-        if !rulebook.isEmpty {
-            return try rulebook.map { path in
-                let url = URL(fileURLWithPath: path).standardized
-                guard FileManager.default.fileExists(atPath: url.path) else {
-                    throw ValidationError("rulebook not found: \(path)")
-                }
-                return url
-            }
-        }
-        let dir = meridianURL.deletingLastPathComponent()
-        let files = (try? FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)) ?? []
-        let here = files.filter { $0.pathExtension == "merrules" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
-        if !here.isEmpty { return here }
-        let parent = dir.deletingLastPathComponent()
-        let parentFiles = (try? FileManager.default.contentsOfDirectory(at: parent, includingPropertiesForKeys: nil)) ?? []
-        return parentFiles.filter { $0.pathExtension == "merrules" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+        try DependencyDiscovery.resolveRulebooks(explicit: rulebook, beside: meridianURL)
     }
 
     /// Derive a valid UpperCamelCase Swift identifier from a file stem,

@@ -48,30 +48,28 @@ struct TableParser {
 
     // MARK: Decision tables
 
-    /// Header names that mark the action column. The remaining columns are
-    /// conditions. When none match, the last column is the action.
-    private static let actionHeaders: Set<String> = ["action", "then", "do", "result"]
-
-    /// Symbolic comparison operators a cell may begin with, mapped to their
-    /// canonical lexicon spelling. Ordered longest-first so `>=` wins over `>`.
-    private static let symbolicOps: [(symbol: String, spelling: String)] = [
-        (">=", "is more than or equal to"),
-        ("<=", "is less than or equal to"),
-        ("!=", "is not"),
-        (">",  "is more than"),
-        ("<",  "is less than"),
-        ("=",  "is"),
+    /// Symbolic comparison operators a cell may begin with, mapped to the
+    /// comparison op they denote. The English *spelling* is sourced from
+    /// `lexicon.comparisonMarkers` (single source of truth); only the symbolic
+    /// notation itself is fixed here. Ordered longest-first so `>=` wins over `>`.
+    private static let symbolicOps: [(symbol: String, op: ComparisonOpAST)] = [
+        (">=", .greaterOrEqual),
+        ("<=", .lessOrEqual),
+        ("!=", .notEqual),
+        (">",  .greaterThan),
+        ("<",  .lessThan),
+        ("=",  .equal),
     ]
 
-    /// Generic condition-column headers that carry no information of their own
-    /// (the cell is the whole condition). Used by `aiDecisionProse` to avoid
-    /// emitting redundant phrasings like "condition is <intent description>".
-    private static let genericConditionHeaders: Set<String> = [
-        "condition", "situation", "case", "scenario", "when", "if", "trigger", "context", "state",
-    ]
+    /// The canonical English spelling for a comparison op — the first matching
+    /// `lexicon.comparisonMarkers` entry (defaults are ordered longest-first, so
+    /// this yields the most explicit phrasing, e.g. `.equal` → `is`).
+    private func spelling(for op: ComparisonOpAST) -> String? {
+        lexicon.comparisonMarkers.first(where: { $0.1 == op })?.0
+    }
 
     private func actionColumnIndex(_ header: [String]) -> Int {
-        for (idx, h) in header.enumerated() where Self.actionHeaders.contains(h.lowercased()) { return idx }
+        for (idx, h) in header.enumerated() where lexicon.tableActionHeaders.contains(h.lowercased()) { return idx }
         return max(header.count - 1, 0)
     }
 
@@ -93,10 +91,9 @@ struct TableParser {
             for (idx, cell) in row.enumerated() where idx != actionIdx {
                 guard idx < table.header.count else { continue }
                 let c = cell.trimmingCharacters(in: .whitespaces)
-                let lower = c.lowercased()
-                if c.isEmpty || c == "*" || c == "-" || c == "—" || c == "–" || lower == "any" { continue }
+                if isWildcardCell(c) { continue }
                 let h = table.header[idx].trimmingCharacters(in: .whitespaces)
-                if Self.genericConditionHeaders.contains(h.lowercased()) {
+                if lexicon.tableConditionHeaders.contains(h.lowercased()) {
                     conds.append(c)
                 } else {
                     conds.append("\(h) is \(c)")
@@ -139,14 +136,13 @@ struct TableParser {
     /// cell is a wildcard (the column does not constrain this row).
     private func conditionPredicate(header rawHeader: String, cell rawCell: String) -> String? {
         let cell = rawCell.trimmingCharacters(in: .whitespaces)
+        if isWildcardCell(cell) { return nil }
         let lower = cell.lowercased()
-        if cell.isEmpty || cell == "*" || cell == "-" || cell == "—" || cell == "–" || lower == "any" {
-            return nil
-        }
         let h = rawHeader.trimmingCharacters(in: .whitespaces).lowercased()
 
-        // Symbolic operator prefix → canonical spelling.
-        for (symbol, spelling) in Self.symbolicOps where cell.hasPrefix(symbol) {
+        // Symbolic operator prefix → canonical lexicon spelling.
+        for (symbol, op) in Self.symbolicOps where cell.hasPrefix(symbol) {
+            guard let spelling = spelling(for: op) else { continue }
             let value = String(cell.dropFirst(symbol.count)).trimmingCharacters(in: .whitespaces)
             return "\(h) \(spelling) \(value)"
         }
@@ -166,6 +162,14 @@ struct TableParser {
         // Bare value → equality. Quote a multi-word, non-numeric value so it
         // parses as a string literal rather than an identifier chain.
         return "\(h) is \(quoteIfNeeded(cell))"
+    }
+
+    /// A "wildcard" decision-table cell does not constrain its row (blank, a
+    /// dash/asterisk/em/en-dash placeholder, or the word `any`).
+    private func isWildcardCell(_ cell: String) -> Bool {
+        let c = cell.trimmingCharacters(in: .whitespaces)
+        if c.isEmpty { return true }
+        return lexicon.tableWildcardTokens.contains(c) || lexicon.tableWildcardTokens.contains(c.lowercased())
     }
 
     private func quoteIfNeeded(_ value: String) -> String {

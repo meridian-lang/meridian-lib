@@ -172,16 +172,11 @@ public struct SkillDeviation {
     /// comments, list-item lines) but also captures values for the Changed set.
     static func frontmatter(_ source: String) -> [String: String] {
         let lines = source.components(separatedBy: "\n")
-        var start = 0
-        while start < lines.count, lines[start].trimmingCharacters(in: .whitespaces).isEmpty { start += 1 }
-        guard start < lines.count, lines[start].trimmingCharacters(in: .whitespaces) == "---" else { return [:] }
-        var close = start + 1
-        while close < lines.count, lines[close].trimmingCharacters(in: .whitespaces) != "---" { close += 1 }
-        guard close < lines.count else { return [:] }
+        guard let fm = FrontmatterScanner.locate(lines, skipLeadingBlanks: true) else { return [:] }
 
         var result: [String: String] = [:]
         var lastKey: String?
-        for raw in lines[(start + 1)..<close] {
+        for raw in lines[(fm.open + 1)..<fm.close] {
             let trimmed = raw.trimmingCharacters(in: .whitespaces)
             if trimmed.isEmpty || trimmed.hasPrefix("#") { continue }
             // List-item continuation lines belong to the previous key.

@@ -20,10 +20,15 @@ let codeBlockSentinelPrefix = "\u{E000}codeblock:"
 /// `ASTToIR.lowerPhraseInvocation`.
 let shellCommandSentinelPrefix = "\u{E000}shell:"
 
-/// Language tags (lower-cased fence info strings) treated as literal shell
+/// Default fence info-string tags (lower-cased) treated as literal shell
 /// command blocks. A fenced block with one of these tags lowers each command
-/// line to a deterministic `shell.run` invoke.
-let shellFenceLanguages: Set<String> = ["bash", "sh", "shell", "console", "zsh"]
+/// line to a deterministic `shell.run` invoke. This is the single source of
+/// truth for the **default** set; it seeds `EnglishLexicon.default
+/// .shellFenceLanguages`, which a domain can extend via a `=== language ===`
+/// `Shell fence synonyms:` block. Lexicon-threaded call sites prefer
+/// `lexicon.isShellFence(_:)`; the lexicon-free authoring paths (the migrator
+/// marking pass) use the `isShellFence(_:)` free function below.
+public let shellFenceLanguages: Set<String> = ["bash", "sh", "shell", "console", "zsh"]
 
 func encodeShellCommand(_ command: String) -> String {
     shellCommandSentinelPrefix + Data(command.utf8).base64EncodedString()
@@ -31,10 +36,7 @@ func encodeShellCommand(_ command: String) -> String {
 
 func decodeShellCommand(_ words: String) -> String? {
     guard words.hasPrefix(shellCommandSentinelPrefix) else { return nil }
-    let b64 = String(words.dropFirst(shellCommandSentinelPrefix.count))
-    guard let data = Data(base64Encoded: b64),
-          let str  = String(data: data, encoding: .utf8) else { return nil }
-    return str
+    return decodeBase64Body(String(words.dropFirst(shellCommandSentinelPrefix.count)))
 }
 
 // MARK: - Table sentinel
@@ -56,9 +58,7 @@ func decodeTableSentinel(_ text: String) -> (mode: TableMode, body: String)? {
     let rest = String(text.dropFirst(tableSentinelPrefix.count))
     guard let colon = rest.firstIndex(of: ":") else { return nil }
     let token = String(rest[rest.startIndex ..< colon])
-    let b64 = String(rest[rest.index(after: colon)...])
-    guard let data = Data(base64Encoded: b64),
-          let body = String(data: data, encoding: .utf8) else { return nil }
+    guard let body = decodeBase64Body(String(rest[rest.index(after: colon)...])) else { return nil }
     return (TableMode.fromSentinel(token), body)
 }
 
@@ -78,18 +78,45 @@ func decodeChecklistSentinel(_ text: String) -> (mode: ChecklistMode, body: Stri
     let rest = String(text.dropFirst(checklistSentinelPrefix.count))
     guard let colon = rest.firstIndex(of: ":") else { return nil }
     let token = String(rest[rest.startIndex ..< colon])
-    let b64 = String(rest[rest.index(after: colon)...])
-    guard let data = Data(base64Encoded: b64),
-          let body = String(data: data, encoding: .utf8) else { return nil }
+    guard let body = decodeBase64Body(String(rest[rest.index(after: colon)...])) else { return nil }
     return (ChecklistMode.fromSentinel(token), body)
 }
 
 func decodeMarkerError(_ text: String) -> String? {
     guard text.hasPrefix(markerErrorSentinelPrefix) else { return nil }
-    let b64 = String(text.dropFirst(markerErrorSentinelPrefix.count))
+    return decodeBase64Body(String(text.dropFirst(markerErrorSentinelPrefix.count)))
+}
+
+// MARK: - Shared sentinel primitives
+
+/// Decode a base64 sentinel payload to its UTF-8 string. Single source of the
+/// `Data(base64Encoded:)` + UTF-8 step shared by every sentinel decoder.
+func decodeBase64Body(_ b64: String) -> String? {
     guard let data = Data(base64Encoded: b64),
           let str = String(data: data, encoding: .utf8) else { return nil }
     return str
+}
+
+/// Decode a `\u{E000}codeblock:<lang>:<base64-body>` sentinel into its fence
+/// language tag (lower-cased) and decoded body. The single parser for the
+/// code-block sentinel shape (previously open-coded in three places).
+func decodeCodeBlockSentinel(_ text: String) -> (lang: String, body: String)? {
+    guard text.hasPrefix(codeBlockSentinelPrefix) else { return nil }
+    let rest = String(text.dropFirst(codeBlockSentinelPrefix.count))
+    guard let colon = rest.firstIndex(of: ":") else { return nil }
+    let lang = String(rest[rest.startIndex ..< colon]).lowercased()
+    guard let body = decodeBase64Body(String(rest[rest.index(after: colon)...])) else { return nil }
+    return (lang, body)
+}
+
+/// True when a fence language tag denotes a shell command block under the
+/// **default** dialect set. Lexicon-aware code paths should prefer
+/// `lexicon.isShellFence(_:)` (which honors `=== language ===` extensions);
+/// this free function exists for the lexicon-free authoring paths (the
+/// `SkillMigrator` marking pass operates on raw markdown before any config
+/// lexicon is built, on the default dialects).
+func isShellFence(_ lang: String) -> Bool {
+    shellFenceLanguages.contains(lang.lowercased())
 }
 
 // MARK: - Block markers (enum-modeled, never raw strings)
@@ -595,46 +622,3 @@ public struct IndentTokenizer {
     }
 }
 
-// MARK: - Block extraction helpers
-
-extension Array where Element == SourceLine {
-
-    /// Content (non-empty, non-comment) lines only.
-    var contentLines: [SourceLine] { filter(\.isContent) }
-
-    /// Extract the indented body following `headerLine` — all lines with
-    /// strictly greater indent than `headerLine.indent`.
-    /// Stops at the first line whose indent is ≤ `headerLine.indent` (exclusive).
-    func indentedBlock(after headerIndex: Int) -> (lines: [SourceLine], nextIndex: Int) {
-        guard headerIndex < count else { return ([], headerIndex) }
-        let parentIndent = self[headerIndex].indent
-        var i = headerIndex + 1
-        var block: [SourceLine] = []
-        while i < count {
-            let line = self[i]
-            if line.isEmpty || line.isComment {
-                i += 1
-                continue
-            }
-            if line.indent <= parentIndent { break }
-            block.append(line)
-            i += 1
-        }
-        return (block, i)
-    }
-
-    /// Parse a continuation block: lines immediately after `startIndex` that
-    /// have strictly greater indent. Used for multi-line invoke args / emit payload.
-    func continuationLines(from startIndex: Int, parentIndent: Int) -> [SourceLine] {
-        var result: [SourceLine] = []
-        var i = startIndex
-        while i < count {
-            let line = self[i]
-            if line.isEmpty || line.isComment { i += 1; continue }
-            if line.indent <= parentIndent { break }
-            result.append(line)
-            i += 1
-        }
-        return result
-    }
-}

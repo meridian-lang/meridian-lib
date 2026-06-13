@@ -209,7 +209,7 @@ public struct SkillMigrator {
             if t.hasPrefix("```") {
                 if !inShellFence {
                     let lang = String(t.dropFirst(3)).trimmingCharacters(in: .whitespaces).lowercased()
-                    inShellFence = shellFenceLanguages.contains(lang)
+                    inShellFence = isShellFence(lang)
                 } else {
                     inShellFence = false
                 }
@@ -229,16 +229,14 @@ public struct SkillMigrator {
     /// implicit `input` default, normalized for scope membership.
     private func frontmatterParamScope(_ lines: [String]) -> Set<String> {
         var names: Set<String> = []
-        guard lines.first?.trimmingCharacters(in: .whitespaces) == "---" else { return names }
-        var i = 1
+        guard let fm = FrontmatterScanner.locate(lines, skipLeadingBlanks: false) else { return names }
         var inParams = false
-        while i < lines.count {
-            let t = lines[i].trimmingCharacters(in: .whitespaces)
-            if t == "---" { break }
+        for raw in lines[(fm.open + 1)..<fm.close] {
+            let t = raw.trimmingCharacters(in: .whitespaces)
             if inParams, t.hasPrefix("-") {
                 let item = t.dropFirst().trimmingCharacters(in: .whitespaces)
                 if !item.isEmpty { names.insert(SkillMigrator.scopeKey(item)) }
-                i += 1; continue
+                continue
             }
             inParams = false
             if let colon = t.firstIndex(of: ":") {
@@ -255,7 +253,6 @@ public struct SkillMigrator {
                     }
                 }
             }
-            i += 1
         }
         // The implicit single `input` parameter is always in scope for a
         // parameter-less skill.
@@ -321,9 +318,7 @@ public struct SkillMigrator {
         return sawLetter
     }
 
-    static func scopeKey(_ s: String) -> String {
-        String(s.lowercased().unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) }.map(Character.init))
-    }
+    static func scopeKey(_ s: String) -> String { ScopeNaming.key(s) }
 
     /// Apply the blockquote-preamble + heading-marker pass (see
     /// `deterministicTransform`). A heading-less document is returned untouched.
@@ -369,13 +364,7 @@ public struct SkillMigrator {
     /// Index of the first body line (after a leading `--- … ---` frontmatter
     /// block), or 0 when there is no frontmatter.
     private func frontmatterEnd(_ lines: [String]) -> Int {
-        guard lines.first?.trimmingCharacters(in: .whitespaces) == "---" else { return 0 }
-        var i = 1
-        while i < lines.count {
-            if lines[i].trimmingCharacters(in: .whitespaces) == "---" { return i + 1 }
-            i += 1
-        }
-        return 0
+        FrontmatterScanner.locate(lines, skipLeadingBlanks: false).map { $0.close + 1 } ?? 0
     }
 
     /// Recognize a `##`…`######` heading line (no leading whitespace, at least
@@ -470,15 +459,7 @@ public struct SkillMigrator {
     /// list-marker stripped, internal whitespace collapsed, trailing punctuation
     /// removed.
     static func normalizeConvention(_ s: String) -> String {
-        var t = s.trimmingCharacters(in: .whitespaces)
-        for marker in ["- ", "* ", "+ "] where t.hasPrefix(marker) {
-            t = String(t.dropFirst(marker.count)); break
-        }
-        let collapsed = t.lowercased()
-            .components(separatedBy: .whitespacesAndNewlines)
-            .filter { !$0.isEmpty }
-            .joined(separator: " ")
-        return collapsed.trimmingCharacters(in: CharacterSet(charactersIn: ".,;:!?"))
+        Rulebook.normalizeLine(s, stripListMarkers: true)
     }
 
     /// True iff every non-blank body line lives inside a shell fence
@@ -493,7 +474,7 @@ public struct SkillMigrator {
                 if !inFence {
                     inFence = true
                     let lang = String(t.dropFirst(3)).trimmingCharacters(in: .whitespaces).lowercased()
-                    if shellFenceLanguages.contains(lang) { sawShell = true } else { sawOther = true }
+                    if isShellFence(lang) { sawShell = true } else { sawOther = true }
                 } else {
                     inFence = false
                 }

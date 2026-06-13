@@ -54,7 +54,7 @@ public struct JSONLObserver: Observer {
         // Flatten well-known payload fields to top-level (matching golden JSONL shape)
         var payloadDict: [String: Any] = [:]
         for (k, v) in event.payload {
-            payloadDict[k] = v.jsonObject
+            payloadDict[k] = v.jsonEncodableObject
         }
 
         // Per-kind top-level promotions matching the golden event format
@@ -144,32 +144,11 @@ public extension JSONLObserver {
 
 // MARK: - ISO8601DateFormatter cache
 
-extension ISO8601DateFormatter {
-    nonisolated(unsafe) static let meridianFormatter: ISO8601DateFormatter = {
+public extension ISO8601DateFormatter {
+    nonisolated(unsafe) static public let meridianFormatter: ISO8601DateFormatter = {
         let f = ISO8601DateFormatter()
         f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return f
     }()
 }
 
-// MARK: - Value.jsonObject helper
-
-extension Value {
-    var jsonObject: Any {
-        switch self {
-        case .string(let s): return s
-        case .number(let n): return (n as NSDecimalNumber).doubleValue
-        case .boolean(let b): return b
-        case .money(let m): return m.description
-        case .duration(let d): return d.description
-        case .date(let d): return ISO8601DateFormatter.meridianFormatter.string(from: d)
-        case .dateTime(let d): return ISO8601DateFormatter.meridianFormatter.string(from: d)
-        case .enumValue(let v, _): return v
-        case .record(let dict): return dict.mapValues { $0.jsonObject }
-        case .list(let arr): return arr.map { $0.jsonObject }
-        case .reference(let r): return r
-        case .null: return NSNull()
-        case .opaque(let box): return String(describing: box)
-        }
-    }
-}

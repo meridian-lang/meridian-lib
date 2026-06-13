@@ -291,8 +291,8 @@ public struct ManifestEmitter {
         case .boolean(let b): return b
         case .money(let amount, let currency): return ["amount": (amount as NSDecimalNumber).doubleValue, "currency": currency]
         case .duration(let d): return d.components.seconds
-        case .date(let d): return ISO8601DateFormatter().string(from: d)
-        case .dateTime(let d): return ISO8601DateFormatter().string(from: d)
+        case .date(let d): return ISO8601DateFormatter.meridianFormatter.string(from: d)
+        case .dateTime(let d): return ISO8601DateFormatter.meridianFormatter.string(from: d)
         case .enumValue(let v, let kind): return ["value": v, "kind": kind]
         }
     }

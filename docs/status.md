@@ -18,6 +18,8 @@ Tracks the six-phase build plan from `meridian-handoff/docs/10_BUILD_PLAN.md`.
 | 6.5 | EnglishLexicon + SKILL-shaped extensions | ✅ Done | 100% |
 | 8 | Executable rules (Phase C) | ✅ Done | 100% |
 | G | Expressive SKILL.md surface + gbrain corpus | ✅ Done | 100% |
+| I7 | Inform-7-tier deterministic surface (Waves 1–3) | ✅ Done | 100% |
+| IR | Inert-reduction: executable tables/checklists + AI-routing | ✅ Done | 100% |
 
 ---
 
@@ -104,7 +106,9 @@ for Phases 2–3.
    `Compiler.buildDomainDecl` so generated structs list ancestor properties
    first, in declaration order. **Updated 2026-05-01:** non-scalar kinds now
    emit a `<KindName>Kind` protocol pair on top of the struct, composing one
-   of ten `Meridian<Base>` runtime markers (`Thing | Event | Action | Tool |
+   of the `Meridian<Base>` runtime markers (`Thing | Event | Action | Tool |
+   System | Integration | Artifact | Service | Agent | Model | Dataset |
+   Storage | Credential | Policy | Environment | Resource | Metric | Memory |
    Process | Message | Signal | Fact | Role | Verdict`). See
    [`05_CODEGEN.md`](05_CODEGEN.md) §"Domain types" and
    [`06_RUNTIME.md`](06_RUNTIME.md) §"Kind protocols".
@@ -357,10 +361,11 @@ in `IMPLEMENTATION_LOG.md` for the Phase 5/6 100% completion pass.
 ### Delivered
 
 1. **Rulebook engine** — `RulebookParser` + `RewriteEngine` + `ConventionInjector`
-   under `Sources/MeridianCore/Rulebook/` and `…/Lowering/`. Three external rule
+   under `Sources/MeridianCore/Rulebook/` and `…/Lowering/`. Four external rule
    families in `.merrules`: desugars, section-role aliases, Inform-style
-   conventions. New `rulebook` trace category. Referenced via the `rulebook:`
-   frontmatter key. See [11_RULEBOOKS.md](11_RULEBOOKS.md).
+   conventions, and trigger-classification words (`=== triggers ===`). New
+   `rulebook` trace category. Referenced via the `rulebook:` frontmatter key.
+   See [11_RULEBOOKS.md](11_RULEBOOKS.md).
 2. **Universal section semantics (structural, no `skill: true`)** —
    `SkillSectionBuilder` activates on any `##`/`###` heading and maps headings to
    a closed `SkillSectionRole` set: Contract→`assert`, Phases→procedure,
@@ -395,3 +400,47 @@ in `IMPLEMENTATION_LOG.md` for the Phase 5/6 100% completion pass.
   data-only extensibility, and `SkillMigrator` (deterministic + mock-LLM repair).
 
 See [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) for the porting playbook.
+
+---
+
+## Phase I7 — Inform-7-tier deterministic surface (Waves 1–3)
+
+**Completed.** Three waves of closed-grammar surfaces, no new IR primitive
+(only `IRExpression` / `ComparisonOp` cases + payload structs):
+
+- **Wave 1** — command annotations, typed command holes (`{ expr }`), single-
+  clause iteration refinements (`the first N <plural> whose … sorted by …`),
+  metadata sections (`## Tools Used`, output invariants).
+- **Wave 2** — boolean composition (`not`>`and`>`or`, `either … or`),
+  definitions (`Definition: a <kind> is <adj> if <cond>.`), quantifiers
+  (`all`/`any`/`no`/`at least N`), shared condition grammar (temporal windows,
+  emptiness).
+- **Wave 3** — relations, verbs, and descriptions (relation backings, verb
+  conjugations, `the largest <kind> whose …`, aggregates/superlatives).
+
+See `Inform7Wave*Tests` and the "Wave N" entries in `AGENTS.md`.
+
+---
+
+## Phase IR — Inert-reduction: executable Markdown + AI-routing
+
+**Completed.** Markdown structures that previously had to be `(( inert ))`
+documentation are now executable or AI-routed:
+
+1. **Executable tables** — `!!! table (( <mode> ))` (`BlockKind`/`TableMode`
+   enums): `decision` (→ per-row branches), `data[: name]` (→
+   `IRExpression.recordList`), `iteration`, `inert`, and the AI-routed
+   `ai-discretion` / `ai-autonomy`.
+2. **Executable / AI task lists** — unmarked `- [ ]` items lower to per-item
+   `assert`s; `!!! checklist (( <mode> ))` (`ChecklistMode`) selects `invariant`
+   / `ai-discretion` / `ai-autonomy` / `inert`.
+3. **AI-routing** — fuzzy tables/checklists route to the planner via
+   `ProseStepIR` (`.planThenExecute` / `.autonomousLoop`), the same path as
+   `use judgment to …:`. See [12_PROSE_AND_AUTONOMY.md](12_PROSE_AND_AUTONOMY.md).
+4. **`## Tools Used` is active metadata** — both bullet forms
+   (`<desc> (<id>)` and `` `<id>` — <desc>``) mine ids into `scopedTools` +
+   manifest `tools_used`.
+
+Corpus sweep converted 8 `## Tools Used` sections and one `### Confirm`
+checklist (`eiirp.meri`) out of inert. Tests: `TablesAndChecklistsTests`,
+plus the `Inform7Wave*` output-invariant generalization.

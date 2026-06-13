@@ -90,7 +90,7 @@ public enum MeridianTools {
 
     static func stringifyJSON(_ args: [String: Value]) throws -> Value {
         let value = args["value"] ?? .null
-        let data = try JSONSerialization.data(withJSONObject: jsonObject(from: value), options: [.sortedKeys])
+        let data = try JSONSerialization.data(withJSONObject: value.jsonEncodableObject, options: [.sortedKeys])
         return .string(String(data: data, encoding: .utf8) ?? "null")
     }
 
@@ -236,17 +236,6 @@ public enum MeridianTools {
         }
     }
 
-    private static func jsonObject(from value: Value) -> Any {
-        switch value {
-        case .string(let s): return s
-        case .number(let n): return NSDecimalNumber(decimal: n)
-        case .boolean(let b): return b
-        case .record(let dict): return dict.mapValues(jsonObject(from:))
-        case .list(let list): return list.map(jsonObject(from:))
-        case .null: return NSNull()
-        default: return value.description
-        }
-    }
 }
 
 // MARK: - ToolRegistry integration

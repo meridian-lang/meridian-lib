@@ -190,25 +190,8 @@ public struct MerConfigParser {
     /// Returns the joined text plus the number of lines consumed (>= 1).
     /// Continuation lines have indent strictly greater than the header.
     private func collectHeaderLines(_ content: [SourceLine], at i: Int) -> (text: String, consumed: Int) {
-        var text = content[i].statement
-        // If first line already ends with ":", we're done.
-        if text.hasSuffix(":") { return (text, 1) }
-        let headerIndent = content[i].indent
-        var j = i + 1
-        var consumed = 1
-        while j < content.count {
-            let l = content[j]
-            if l.indent > headerIndent {
-                let part = l.statement
-                text += " " + part
-                consumed += 1
-                j += 1
-                if part.hasSuffix(":") { break }
-            } else {
-                break
-            }
-        }
-        return (text, consumed)
+        let (text, next) = HeaderFolder.collect(content, at: i)
+        return (text, next - i)
     }
 
     // Collect the body lines of a phrase/workflow definition.
@@ -236,8 +219,10 @@ public struct MerConfigParser {
         // "A/An {name} is a kind of {parent}."
         let lower = t.lowercased()
         guard lower.contains(" is a kind of ") else { return nil }
+        // The leading indefinite article is part of the declaration skeleton;
+        // the strip itself defers to the lexicon (no duplicated a/an spelling).
         guard lower.hasPrefix("a ") || lower.hasPrefix("an ") else { return nil }
-        let rest = lower.hasPrefix("an ") ? String(t.dropFirst(3)) : String(t.dropFirst(2))
+        let rest = lexicon.stripLeadingArticle(t)
         guard let range = rest.lowercased().range(of: " is a kind of ") else { return nil }
         let name = String(rest[rest.startIndex ..< range.lowerBound]).trimmingCharacters(in: .whitespaces)
         let parent = String(rest[range.upperBound...]).trimmingCharacters(in: .whitespaces)
@@ -250,7 +235,7 @@ public struct MerConfigParser {
         let lower = t.lowercased()
         guard lower.hasPrefix("a ") || lower.hasPrefix("an ") else { return nil }
         guard let hasRange = lower.range(of: " has ") else { return nil }
-        let rest = lower.hasPrefix("an ") ? String(t.dropFirst(3)) : String(t.dropFirst(2))
+        let rest = lexicon.stripLeadingArticle(t)
         guard let range = rest.lowercased().range(of: " has ") else { return nil }
         let kindName = String(rest[rest.startIndex ..< range.lowerBound])
         let propText = String(rest[range.upperBound...]).trimmingCharacters(in: .whitespaces)
@@ -299,10 +284,14 @@ public struct MerConfigParser {
 
     private func extractPropName(_ t: String, before marker: String?) -> String {
         var s = t.trimmingCharacters(in: .whitespaces)
-        // strip leading article
-        for article in ["a ", "an ", "the ", "and a ", "and an "] {
-            if s.lowercased().hasPrefix(article) { s = String(s.dropFirst(article.count)); break }
+        // Strip a leading article. A fragment from an Oxford list may retain a
+        // leading connective ("and a phone number"); drop it (only when an
+        // article follows) before deferring to the lexicon for the article.
+        let lower = s.lowercased()
+        if lower.hasPrefix("and a ") || lower.hasPrefix("and an ") {
+            s = String(s.dropFirst("and ".count))
         }
+        s = lexicon.stripLeadingArticle(s)
         if let m = marker, let r = s.lowercased().range(of: m) {
             s = String(s[s.startIndex ..< r.lowerBound])
         }
@@ -487,11 +476,8 @@ public struct MerConfigParser {
             let t = line.statement
             // "There is a {kind} called {name}"
             guard t.lowercased().hasPrefix("there is ") else { i += 1; continue }
-            // strip "there is a/an "
-            var rest = String(t.dropFirst("there is ".count))
-            for art in ["a ", "an "] {
-                if rest.lowercased().hasPrefix(art) { rest = String(rest.dropFirst(art.count)); break }
-            }
+            // strip "there is " then the leading article (lexicon-owned)
+            let rest = lexicon.stripLeadingArticle(String(t.dropFirst("there is ".count)))
             guard let calledRange = rest.lowercased().range(of: " called ") else { i += 1; continue }
             let kind = String(rest[rest.startIndex ..< calledRange.lowerBound]).trimmingCharacters(in: .whitespaces)
             var nameAndRest = String(rest[calledRange.upperBound...]).trimmingCharacters(in: .whitespaces)
@@ -598,14 +584,10 @@ public struct MerConfigParser {
         if t.hasPrefix("$"), let v = Double(t.dropFirst()) { return .money(v, currency: "USD") }
         if t == "true"  { return .boolean(true) }
         if t == "false" { return .boolean(false) }
-        if let dur = parseDuration(t) { return .duration(dur.0, dur.1) }
+        if let dur = lexicon.parseDuration(t) { return .duration(dur.0, dur.1) }
         if let n = Int(t) { return .integer(n) }
         if let d = Double(t) { return .double(d) }
         return nil
-    }
-
-    private func parseDuration(_ s: String) -> (Double, TimeUnitAST)? {
-        lexicon.parseDuration(s)
     }
 
     // MARK: - Language section
@@ -630,40 +612,99 @@ public struct MerConfigParser {
         var durationSynonyms: [String: TimeUnitAST] = [:]
         var assertionSynonyms: [String] = []
         var timestampProperty: String? = nil
+        var emptySynonyms: [String] = []
+        var filledSynonyms: [String] = []
+        var pastWindowSynonyms: [String] = []
+        var futureWindowSynonyms: [String] = []
+        var timestampAliasSynonyms: [String] = []
+        var aggregateSynonyms: [(String, AggregateKindAST)] = []
+        var superlativeSynonyms: [String: SuperlativeDirection] = [:]
+        var sortBySynonyms: [String] = []
+        var ascendingSynonyms: [String] = []
+        var descendingSynonyms: [String] = []
+        var possessiveSynonyms: [String] = []
+        var anaphoraSynonyms: [String] = []
+        var conditionHeaderSynonyms: [String] = []
+        var actionHeaderSynonyms: [String] = []
+        var wildcardSynonyms: [String] = []
+        var shellFenceSynonyms: [String] = []
 
-        enum Mode { case none, comparison, duration, assertion }
+        enum Mode {
+            case none, comparison, duration, assertion
+            case empty, filled, pastWindow, futureWindow, timestampAlias
+            case aggregate, superlative, sortBy, ascending, descending
+            case possessive, anaphora
+            case conditionHeader, actionHeader, wildcard, shellFence
+        }
         var mode: Mode = .none
+
+        // Header → mode. Checked longest/most-specific first where prefixes
+        // overlap (e.g. `timestamp alias` before the `timestamp =` entry).
+        let headers: [(String, Mode)] = [
+            ("comparison synonym", .comparison),
+            ("duration synonym", .duration),
+            ("assertion synonym", .assertion),
+            ("empty synonym", .empty),
+            ("filled synonym", .filled),
+            ("past-window synonym", .pastWindow),
+            ("past window synonym", .pastWindow),
+            ("future-window synonym", .futureWindow),
+            ("future window synonym", .futureWindow),
+            ("timestamp alias", .timestampAlias),
+            ("aggregate synonym", .aggregate),
+            ("superlative synonym", .superlative),
+            ("sort-by synonym", .sortBy),
+            ("sort by synonym", .sortBy),
+            ("ascending synonym", .ascending),
+            ("descending synonym", .descending),
+            ("possessive synonym", .possessive),
+            ("anaphora synonym", .anaphora),
+            ("condition-header synonym", .conditionHeader),
+            ("condition header synonym", .conditionHeader),
+            ("action-header synonym", .actionHeader),
+            ("action header synonym", .actionHeader),
+            ("wildcard synonym", .wildcard),
+            ("shell-fence synonym", .shellFence),
+            ("shell fence synonym", .shellFence),
+        ]
 
         for line in content {
             let t = line.statement.trimmingCharacters(in: .whitespaces)
             let lower = t.lowercased()
 
-            if lower.hasPrefix("comparison synonym") {
-                mode = .comparison
-                continue
-            }
-            if lower.hasPrefix("duration synonym") {
-                mode = .duration
-                continue
-            }
-            if lower.hasPrefix("assertion synonym") {
-                mode = .assertion
+            if let header = headers.first(where: { lower.hasPrefix($0.0) }) {
+                mode = header.1
                 continue
             }
             // `timestamp = <propertyName>` — the property a temporal iteration
             // clause resolves against (default `updatedAt`). Standalone entry.
+            // (Distinct from the `Timestamp aliases:` header above.)
             if lower.hasPrefix("timestamp"), let eq = t.range(of: " = ") {
                 let value = String(t[eq.upperBound...]).trimmingCharacters(in: .whitespaces)
                 if !value.isEmpty { timestampProperty = value }
                 continue
             }
 
-            // Assertion synonyms are bare leading keywords (no `key = value`),
-            // e.g. `verify` or `guarantee that`. Captured verbatim, lower-cased.
-            if mode == .assertion {
-                let marker = lower.trimmingCharacters(in: .whitespaces)
-                if !marker.isEmpty { assertionSynonyms.append(marker) }
-                continue
+            // Bare-phrase blocks (no `key = value`); captured verbatim, lower-cased.
+            let marker = lower
+            switch mode {
+            case .assertion:     if !marker.isEmpty { assertionSynonyms.append(marker) };     continue
+            case .empty:         if !marker.isEmpty { emptySynonyms.append(marker) };         continue
+            case .filled:        if !marker.isEmpty { filledSynonyms.append(marker) };        continue
+            case .pastWindow:    if !marker.isEmpty { pastWindowSynonyms.append(marker) };    continue
+            case .futureWindow:  if !marker.isEmpty { futureWindowSynonyms.append(marker) };  continue
+            case .timestampAlias:if !marker.isEmpty { timestampAliasSynonyms.append(marker) };continue
+            case .sortBy:        if !marker.isEmpty { sortBySynonyms.append(marker) };        continue
+            case .ascending:     if !marker.isEmpty { ascendingSynonyms.append(marker) };     continue
+            case .descending:    if !marker.isEmpty { descendingSynonyms.append(marker) };    continue
+            case .possessive:    if !marker.isEmpty { possessiveSynonyms.append(marker) };    continue
+            case .anaphora:      if !marker.isEmpty { anaphoraSynonyms.append(marker) };      continue
+            case .conditionHeader: if !marker.isEmpty { conditionHeaderSynonyms.append(marker) }; continue
+            case .actionHeader:  if !marker.isEmpty { actionHeaderSynonyms.append(marker) };   continue
+            case .wildcard:      if !t.isEmpty { wildcardSynonyms.append(t) };                 continue
+            case .shellFence:    if !marker.isEmpty { shellFenceSynonyms.append(marker) };     continue
+            case .comparison, .duration, .aggregate, .superlative, .none:
+                break  // keyed `key = value` blocks handled below
             }
 
             // Parse "key = value" pair
@@ -673,16 +714,24 @@ public struct MerConfigParser {
 
             switch mode {
             case .comparison:
-                // Match value against known comparison operator names
                 if let op = resolveComparisonOp(value) {
                     comparisonSynonyms.append((key, op))
                 }
             case .duration:
-                // Match value against known duration unit names
                 if let unit = lexicon.durationUnits[value] {
                     durationSynonyms[key] = unit
                 }
-            case .assertion, .none:
+            case .aggregate:
+                switch value {
+                case "count": aggregateSynonyms.append((key, .count))
+                case "list":  aggregateSynonyms.append((key, .list))
+                default:      break
+                }
+            case .superlative:
+                if let dir = SuperlativeDirection(rawValue: value) {
+                    superlativeSynonyms[key] = dir
+                }
+            default:
                 break
             }
         }
@@ -690,7 +739,23 @@ public struct MerConfigParser {
         return LanguageSynonyms(comparisonSynonyms: comparisonSynonyms,
                                 durationSynonyms: durationSynonyms,
                                 assertionSynonyms: assertionSynonyms,
-                                timestampProperty: timestampProperty)
+                                timestampProperty: timestampProperty,
+                                emptySynonyms: emptySynonyms,
+                                filledSynonyms: filledSynonyms,
+                                pastWindowSynonyms: pastWindowSynonyms,
+                                futureWindowSynonyms: futureWindowSynonyms,
+                                timestampAliasSynonyms: timestampAliasSynonyms,
+                                aggregateSynonyms: aggregateSynonyms,
+                                superlativeSynonyms: superlativeSynonyms,
+                                sortBySynonyms: sortBySynonyms,
+                                ascendingSynonyms: ascendingSynonyms,
+                                descendingSynonyms: descendingSynonyms,
+                                possessiveSynonyms: possessiveSynonyms,
+                                anaphoraSynonyms: anaphoraSynonyms,
+                                conditionHeaderSynonyms: conditionHeaderSynonyms,
+                                actionHeaderSynonyms: actionHeaderSynonyms,
+                                wildcardSynonyms: wildcardSynonyms,
+                                shellFenceSynonyms: shellFenceSynonyms)
     }
 
     /// Resolve a human-readable operator description to a `ComparisonOpAST`.
@@ -702,17 +767,8 @@ public struct MerConfigParser {
                 return op
             }
         }
-        // Also handle plain English names
-        switch value {
-        case "greater than", "greater":    return .greaterThan
-        case "less than", "less":          return .lessThan
-        case "greater or equal", "greater than or equal", "greater or equal to": return .greaterOrEqual
-        case "less or equal", "less than or equal", "less or equal to": return .lessOrEqual
-        case "equal", "equals":            return .equal
-        case "not equal", "not equals":    return .notEqual
-        case "within":                     return .within
-        default:                           return nil
-        }
+        // Also handle plain English names (centralized spelling table).
+        return lexicon.grammar.comparisonOpSpellings[value]
     }
 }
 
@@ -817,7 +873,7 @@ public struct PhrasePatternParser {
         //   • copula forms ("is", "are", "has", "have", "was", "were")
         //   • another bare article ("a", "an") that starts the next parameter
         let connectors = lexicon.prepositions.union(lexicon.copulas)
-            .union(["and", "that", "whose", "which"])
+            .union(lexicon.grammar.phraseParamConnectors)
         let participles = lexicon.participles
 
         let words = afterArticle.components(separatedBy: " ").filter { !$0.isEmpty }
@@ -833,7 +889,7 @@ public struct PhrasePatternParser {
 
         for (idx, word) in words.enumerated() {
             let w = word.lowercased().trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-            if w == "called" {
+            if w == lexicon.grammar.calledIntroducer {
                 paramName = words.dropFirst(idx + 1).first?
                     .trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
                 remaining = Array(words.dropFirst(idx + 2))
@@ -877,14 +933,7 @@ public struct PhrasePatternParser {
     /// `"mailerServer"`). Mirrored on the codegen side via
     /// `SwiftEmitter.snakeToCamel` so phrase parameter names round-trip
     /// without conversion.
-    private func camelize(_ raw: String) -> String {
-        let parts = raw.lowercased()
-            .split(whereSeparator: { $0 == " " || $0 == "_" })
-            .map(String.init)
-        guard let head = parts.first else { return raw.lowercased() }
-        let tail = parts.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }
-        return ([head] + tail).joined()
-    }
+    private func camelize(_ raw: String) -> String { IdentifierNaming.lowerCamel(raw) }
 
     private func findNextParam(_ s: String) -> Range<String.Index>? {
         let lower = s.lowercased()

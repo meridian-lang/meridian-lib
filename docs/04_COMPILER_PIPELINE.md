@@ -49,16 +49,24 @@ synthetic lines carrying a private-use sentinel:
 - **Fenced code blocks** → `\u{E000}codeblock:<lang>:<base64>` (B6).
 - **Tables** → `\u{E000}table:<mode>:<base64>`. A contiguous header + `|---|`
   delimiter + rows block is collapsed; an optional `!!! table (( <mode> ))`
-  marker on the line directly above sets the `TableMode` (decision / data /
-  iteration / inert; `BlockKind` and `TableMode` are enums, not strings).
+  marker on the line directly above sets the `TableMode`: `decision` (default) /
+  `data[: name]` / `iteration` / `inert` / `ai-discretion` / `ai-autonomy`.
+- **Marked task lists** → `\u{E000}checklist:<mode>:<base64>`. A
+  `!!! checklist (( <mode> ))` marker folds the following contiguous `- [ ]` /
+  `- [x]` run into one sentinel carrying its `ChecklistMode` (`invariant` /
+  `ai-discretion` / `ai-autonomy` / `inert`) and the bullet conditions
+  (checkboxes stripped). An *unmarked* task list is **not** collapsed — its
+  items keep their per-item `isChecklist` / `checklistChecked` tags (default =
+  invariant asserts).
 - **Marker errors** → `\u{E000}markererror:<base64>`. The tokenizer is
   non-throwing, so a malformed/dangling `!!!` marker is carried as a sentinel
   and raised as a located `semanticError` by `StatementParser`.
 
-`SourceLine` additionally tags task-list items: `isChecklist` /
-`checklistChecked` (set when a list item is `- [ ]` / `- [x]`; the box is
-stripped from `statement`). `TableParser` and `StatementParser` decode these
-sentinels/flags in Stage 4/5.
+`BlockKind` (`table` / `checklist`), `TableMode`, and `ChecklistMode` are all
+**enums**, never raw dispatch strings (AGENTS.md "No hardcoded English-surface
+vocabulary"). A single `!!!` marker awaits its block via a `PendingBlock` enum;
+a marker whose following block is the wrong kind (or absent) is a marker error.
+`TableParser` and `StatementParser` decode these sentinels/flags in Stage 4/5.
 
 ---
 
@@ -221,7 +229,9 @@ lowerPhraseInvocation
   ├── matchPhrase finds a phrase → inlinePhrase
   │     substituteArgs (text + AST substitution, longest-param-first)
   │     then lowerBlock recursively (depth-limited to 8)
-  └── no match → BindIR(name: "_unresolved", …) placeholder
+  └── no match → strict default: hard `CompilerError.semanticError`
+        (only under `allow-fallbacks: unresolved-phrases` / lenient mode does
+         it degrade to a `BindIR(name: "_unresolved", …)` placeholder)
 ```
 
 `simultaneously` lowers to `SimultaneouslyIR` whose `branches` is a list of
@@ -360,6 +370,26 @@ the possessive-chain atom.
 `ComparisonOp` gains `.identifies` (relation identity, runtime
 `MeridianComparison.identifies`).
 
+#### Markdown tables and task lists → IR
+
+A table/checklist sentinel is expanded by `StatementParser` (Stage 4) *before*
+lowering — it never produces a new IR primitive, only ordinary statements:
+
+| Surface | Mode | Becomes |
+|---|---|---|
+| table | `decision` | one `if <conds>, <action>.` per row (re-parsed through the normal grammar → `BranchIR`) |
+| table | `data[: name]` | `bind <name> = recordList(…)` → `IRExpression.recordList` |
+| table | `ai-discretion` / `ai-autonomy` | one `ProseStepAST` (`TableParser.aiDecisionProse` renders rows as `when …, …`) → `ProseStepIR(.planThenExecute / .autonomousLoop)` |
+| table | `iteration` / `inert` | nothing (reserved / documentation) |
+| checklist | `invariant` (or unmarked) | one `assert` per item (checkable-or-error via `ConditionClassifier`) → `AssertIR` |
+| checklist | `ai-discretion` / `ai-autonomy` | one `ProseStepAST` embedding every criterion as the goal → `ProseStepIR` |
+| checklist | `inert` | nothing |
+
+The AI-routed modes take the **same** `ProseStepAST → ProseStepIR` path as
+`use judgment to …:` (an explicit dispatch), so they are valid in any workflow
+— a fuzzy decision table or acceptance checklist becomes a planner step instead
+of inert documentation. See [12_PROSE_AND_AUTONOMY.md](12_PROSE_AND_AUTONOMY.md).
+
 `recover` lowers to `RecoverIR(attachedTo: IRBlock, pattern: ErrorPattern, handler: IRBlock)`.
 The `attachedTo` block is the protected statement(s); `handler` is the catch block.
 
@@ -425,6 +455,13 @@ and non-executable alike) into `MeridianFile.skillSections`. There are no silent
 drops: pre-heading content, unrecognized-heading-with-content, and non-checkable
 invariant items are hard `semanticError`s.
 
+A `## Tools Used` section (role `.tools`) is non-executable but
+metadata-extracting: `extractToolID` mines each bullet's tool id into
+`scopedTools` + the manifest `tools_used`. Two bullet forms are accepted —
+`<description> (<tool_id>)` and the leading-backtick `` `<tool_id>` — <description>``
+(any separator). A bullet matching neither (e.g. a backticked CLI command whose
+token has spaces) is a hard error, so such sections stay `(( inert ))`.
+
 ## Stage 8 — Manifest emission (mandatory plumbing)
 
 The manifest is a first-class, always-produced output. `Compiler.compileWithManifest`
@@ -474,6 +511,6 @@ public enum CompilerError: Error, Sendable {
 | Tokenisation | none | Always succeeds |
 | Config parse | `MerConfigParseError` | Thrown to caller |
 | Meridian parse | `StatementParseError` | Thrown to caller |
-| Lowering | `CompilerError` | Thrown; unresolvable phrases produce `_unresolved` placeholders |
+| Lowering | `CompilerError` | Thrown; strict-by-default — an unresolvable phrase is a hard `semanticError` (only `allow-fallbacks`/lenient degrades it to a `_unresolved` placeholder) |
 | Emission | none | Always succeeds |
 | Formatting | Swift error | Non-fatal; logged to stderr, raw output written |

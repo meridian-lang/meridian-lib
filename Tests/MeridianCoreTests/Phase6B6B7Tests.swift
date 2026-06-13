@@ -318,8 +318,8 @@ struct InterpolatedStringEmissionTests {
         let out = emitter.emitFile(workflows: [wf])
         #expect(out.contains("private func meridianStringify("),
                 Comment(rawValue: "meridianStringify not found in:\n\(out)"))
-        #expect(out.contains("case .string(let s): return s"),
-                Comment(rawValue: "meridianStringify string case missing"))
+        #expect(out.contains("v.scalarDescription"),
+                Comment(rawValue: "meridianStringify should delegate to scalarDescription"))
     }
 
     @Test("strings with special chars are escaped in interpolation")

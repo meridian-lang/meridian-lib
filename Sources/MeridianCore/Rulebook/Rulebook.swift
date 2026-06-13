@@ -55,38 +55,55 @@ public enum SkillSectionRole: String, Sendable, CaseIterable, Equatable {
         }
     }
 
-    /// Built-in heading aliases applied when no rulebook rule matches. These
+    /// The built-in heading→role alias seed, expressed as data so it is the
+    /// single trackable source of the default `=== sections ===` aliases. These
     /// mirror the canonical SKILL.md section names so a skill compiles even
-    /// without a `=== sections ===` rulebook block. A rulebook may extend or
-    /// override these. Returns nil for unmapped headings (which, absent a
-    /// marker, are `unresolved` — a hard error if the section has content).
+    /// without a `=== sections ===` rulebook block; a rulebook extends or
+    /// overrides them (author rules are consulted first — see
+    /// `Rulebook.role(forHeading:)`). Aliases are stored pre-normalised
+    /// (lower-cased, whitespace-collapsed) to match `normalizeHeading` output.
+    ///
+    /// The open-ended numbered-phase heading (`Phase 1: …`, `Phase A.5: …`)
+    /// cannot be an exact-match alias and is recognised by prefix in
+    /// `builtinRole(forHeading:)`.
+    public static let builtinSectionAliases: [(alias: String, role: SkillSectionRole)] = [
+        ("contract", .invariants), ("guarantees", .invariants),
+        ("contract & guarantees", .invariants), ("invariants", .invariants),
+        ("phases", .procedure), ("workflow", .procedure), ("pipeline", .procedure),
+        ("protocol", .procedure), ("steps", .procedure), ("process", .procedure),
+        ("procedure", .procedure),
+        ("when to use", .applicability), ("use when", .applicability),
+        ("primary triggers", .applicability), ("when this applies", .applicability),
+        ("when to invoke", .applicability), ("when to run", .applicability),
+        ("when to use this", .applicability),
+        ("when not to use", .negativeApplicability), ("do not use", .negativeApplicability),
+        ("skip when", .negativeApplicability),
+        ("anti-patterns", .prohibitions), ("anti patterns", .prohibitions),
+        ("avoid", .prohibitions), ("pitfalls", .prohibitions),
+        ("output format", .template), ("output", .template), ("report format", .template),
+        ("result format", .template), ("output structure", .template),
+        ("brain page format", .template),
+        ("tools used", .tools), ("tools", .tools), ("tools required", .tools),
+        ("required tools", .tools),
+    ]
+
+    /// O(1) lookup table built from `builtinSectionAliases`.
+    private static let builtinAliasTable: [String: SkillSectionRole] =
+        Dictionary(builtinSectionAliases.map { ($0.alias, $0.role) }, uniquingKeysWith: { a, _ in a })
+
+    /// Built-in heading aliases applied when no rulebook rule matches. Backed by
+    /// `builtinSectionAliases` (the single data source) plus the open-ended
+    /// numbered-phase prefix rule. Returns nil for unmapped headings (which,
+    /// absent a marker, are `unresolved` — a hard error if the section has
+    /// content).
     public static func builtinRole(forHeading heading: String) -> SkillSectionRole? {
         let normalized = Rulebook.normalizeHeading(heading)
-        switch normalized {
-        case "contract", "guarantees", "contract & guarantees", "invariants":
-            return .invariants
-        case "phases", "workflow", "pipeline", "protocol", "steps", "process", "procedure":
-            return .procedure
-        case "when to use", "use when", "primary triggers", "when this applies",
-             "when to invoke", "when to run", "when to use this":
-            return .applicability
-        case "when not to use", "do not use", "skip when":
-            return .negativeApplicability
-        case "anti-patterns", "anti patterns", "avoid", "pitfalls":
-            return .prohibitions
-        case "output format", "output", "report format", "result format",
-             "output structure", "brain page format":
-            return .template
-        case "tools used", "tools", "tools required", "required tools":
-            return .tools
-        default:
-            // A numbered phase heading (`Phase 1: Inventory`, `Phase A.5: …`)
-            // is an executable procedure section. Exact-match aliases can't
-            // generalize across the open-ended N/A suffixes, so recognize the
-            // `phase` prefix here.
-            if normalized.hasPrefix("phase ") { return .procedure }
-            return nil
-        }
+        if let role = builtinAliasTable[normalized] { return role }
+        // A numbered phase heading (`Phase 1: Inventory`, `Phase A.5: …`) is an
+        // executable procedure section; the open-ended N/A suffix can't be an
+        // exact alias, so recognise the `phase` prefix here.
+        if normalized.hasPrefix("phase ") { return .procedure }
+        return nil
     }
 
     /// A non-executable / role marker mined from a heading's trailing
@@ -203,6 +220,23 @@ public struct SectionRoleRule: Sendable, Equatable {
     }
 }
 
+/// A trigger-classification keyword rule: `schedule: nightly`. Maps a single
+/// surface word to the `TriggerKind` it signals when it appears in a
+/// `triggers:` frontmatter spec. The `keyword` kind is the fallback and needs
+/// no words; the other three are keyword-driven.
+public struct TriggerWordRule: Sendable, Equatable {
+    public let kind: TriggerKind
+    /// Lower-cased single surface word.
+    public let word: String
+    public let sourceLine: Int
+
+    public init(kind: TriggerKind, word: String, sourceLine: Int = 0) {
+        self.kind = kind
+        self.word = word
+        self.sourceLine = sourceLine
+    }
+}
+
 /// A parsed rulebook. Empty by default, so existing `.meridian`/`.meri` files
 /// (which reference no rulebook) are byte-for-byte unaffected.
 public struct Rulebook: Sendable {
@@ -210,19 +244,68 @@ public struct Rulebook: Sendable {
     public let sectionRoles: [SectionRoleRule]
     /// Inform-style behavioral conventions, already classified into phases.
     public let conventions: [RulebookRule]
+    /// `=== triggers ===` keyword rules extending trigger classification.
+    public let triggerWords: [TriggerWordRule]
 
     public init(desugars: [DesugarRule] = [],
                 sectionRoles: [SectionRoleRule] = [],
-                conventions: [RulebookRule] = []) {
+                conventions: [RulebookRule] = [],
+                triggerWords: [TriggerWordRule] = []) {
         self.desugars = desugars
         self.sectionRoles = sectionRoles
         self.conventions = conventions
+        self.triggerWords = triggerWords
     }
 
     public static let empty = Rulebook()
 
+    /// The built-in trigger-classification keywords as a `=== triggers ===`
+    /// rulebook — the single data source `TriggerClassifier` seeds from. Author
+    /// rulebooks union additional words on top (see `triggerWordSets`).
+    public static let defaultTriggers = Rulebook(triggerWords:
+        ([
+            (TriggerKind.schedule, [
+                "nightly", "daily", "hourly", "weekly", "monthly", "cron",
+                "schedule", "scheduled", "morning", "evening", "midnight", "noon",
+            ]),
+            (TriggerKind.ambient, [
+                "always", "ambient", "continuous", "continuously", "inbound",
+                "every", "stream", "streaming", "watch", "watching", "ongoing",
+            ]),
+            (TriggerKind.event, [
+                "received", "arrives", "arrived", "created", "updated", "deleted",
+                "webhook", "fires", "fired", "pushed", "merged", "opened",
+                "closed", "on",
+            ]),
+        ] as [(TriggerKind, [String])]).flatMap { kind, words in
+            words.map { TriggerWordRule(kind: kind, word: $0) }
+        }
+    )
+
+    /// Merge this rulebook's trigger words over the built-in defaults, grouped
+    /// by kind for the classifier. Defaults are always included; author words
+    /// add to (never remove from) the set for a kind.
+    public func triggerWordSets() -> [TriggerKind: Set<String>] {
+        var sets: [TriggerKind: Set<String>] = [:]
+        for rule in Rulebook.defaultTriggers.triggerWords + triggerWords {
+            sets[rule.kind, default: []].insert(rule.word.lowercased())
+        }
+        return sets
+    }
+
+    /// The built-in section-role aliases as a `=== sections ===` rulebook. This
+    /// is the data form of `SkillSectionRole.builtinSectionAliases`; the
+    /// compiler still applies the builtins via `builtinRole(forHeading:)` (so
+    /// no resolution path changes), but exposing them as a `Rulebook` lets
+    /// tooling and docs treat the defaults and author extensions uniformly.
+    public static let defaultSections = Rulebook(
+        sectionRoles: SkillSectionRole.builtinSectionAliases.map {
+            SectionRoleRule(alias: $0.alias, role: $0.role)
+        }
+    )
+
     public var isEmpty: Bool {
-        desugars.isEmpty && sectionRoles.isEmpty && conventions.isEmpty
+        desugars.isEmpty && sectionRoles.isEmpty && conventions.isEmpty && triggerWords.isEmpty
     }
 
     /// Concatenate two rulebooks (left-hand entries take priority on ties:
@@ -232,7 +315,8 @@ public struct Rulebook: Sendable {
         Rulebook(
             desugars: desugars + other.desugars,
             sectionRoles: sectionRoles + other.sectionRoles,
-            conventions: conventions + other.conventions
+            conventions: conventions + other.conventions,
+            triggerWords: triggerWords + other.triggerWords
         )
     }
 
@@ -243,15 +327,29 @@ public struct Rulebook: Sendable {
         return sectionRoles.first { $0.alias == key }?.role
     }
 
-    /// Normalise a heading for alias comparison: lower-cased, trimmed, internal
-    /// whitespace collapsed, trailing punctuation removed.
-    public static func normalizeHeading(_ heading: String) -> String {
-        let collapsed = heading
+    /// Normalise a line for alias/heading comparison: optionally strip a leading
+    /// Markdown list marker, then lower-case, collapse internal whitespace, and
+    /// trim trailing punctuation. Single source for `normalizeHeading` and the
+    /// migrator's `normalizeConvention`.
+    public static func normalizeLine(_ s: String, stripListMarkers: Bool = false) -> String {
+        var t = s.trimmingCharacters(in: .whitespaces)
+        if stripListMarkers {
+            for marker in ["- ", "* ", "+ "] where t.hasPrefix(marker) {
+                t = String(t.dropFirst(marker.count)); break
+            }
+        }
+        let collapsed = t
             .lowercased()
             .components(separatedBy: .whitespacesAndNewlines)
             .filter { !$0.isEmpty }
             .joined(separator: " ")
         return collapsed.trimmingCharacters(in: CharacterSet(charactersIn: ":.,;!?"))
+    }
+
+    /// Normalise a heading for alias comparison: lower-cased, trimmed, internal
+    /// whitespace collapsed, trailing punctuation removed.
+    public static func normalizeHeading(_ heading: String) -> String {
+        normalizeLine(heading)
     }
 }
 

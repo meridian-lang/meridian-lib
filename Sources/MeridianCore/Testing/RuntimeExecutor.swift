@@ -138,14 +138,7 @@ struct RuntimeExecutor {
 
         // Register tool stubs
         for (toolID, json) in spec.toolStubs {
-            let escapedID  = toolID.replacingOccurrences(of: "\\", with: "\\\\")
-                .replacingOccurrences(of: "\"", with: "\\\"")
-            let escapedJSON = json.replacingOccurrences(of: "\\", with: "\\\\")
-                .replacingOccurrences(of: "\"", with: "\\\"")
-                .replacingOccurrences(of: "\n", with: "\\n")
-            lines.append("    await registry.register(tool: \"\(escapedID)\", .closure { _ in")
-            lines.append("        valueFromJSON(\"\(escapedJSON)\")")
-            lines.append("    })")
+            lines.append(contentsOf: DriverSourceBuilder.toolStub(name: toolID, json: json, indent: "    "))
         }
 
         lines.append("    let observer = InMemoryObserver()")
@@ -157,11 +150,8 @@ struct RuntimeExecutor {
         for param in workflow.parameters {
             let swiftType = pascalCase(param.kind.name)
             let json      = inputsByParam[param.name] ?? "{}"
-            let escaped   = json.replacingOccurrences(of: "\\", with: "\\\\")
-                .replacingOccurrences(of: "\"", with: "\\\"")
-                .replacingOccurrences(of: "\n", with: "\\n")
-            lines.append("    let _\(param.name)Data = Data(\"\(escaped)\".utf8)")
-            lines.append("    let \(param.name) = (try? JSONDecoder().decode(\(swiftType).self, from: _\(param.name)Data)) ?? \(swiftType)()")
+            lines.append(contentsOf: DriverSourceBuilder.paramDecode(
+                name: param.name, swiftType: swiftType, json: json, indent: "    ", force: false))
         }
 
         lines.append("")
@@ -182,33 +172,7 @@ struct RuntimeExecutor {
 
     /// Inline Value-from-JSON helper included in the driver (avoids extra deps).
     private func valueJSONHelper() -> [String] {
-        [
-            "func valueFromJSON(_ s: String) -> Value {",
-            "    guard let data = s.data(using: .utf8),",
-            "          let obj  = try? JSONSerialization.jsonObject(with: data) else {",
-            "        return .string(s)",
-            "    }",
-            "    return convertAny(obj)",
-            "}",
-            "func convertAny(_ obj: Any) -> Value {",
-            "    if obj is NSNull { return .null }",
-            "    if let s = obj as? String { return .string(s) }",
-            "    if let b = obj as? Bool   { return .boolean(b) }",
-            "    if let n = obj as? NSNumber {",
-            "        if CFGetTypeID(n) == CFBooleanGetTypeID() { return .boolean(n.boolValue) }",
-            "        return .number(Decimal(string: n.stringValue) ?? 0)",
-            "    }",
-            "    if let arr = obj as? [Any] { return .list(arr.map(convertAny)) }",
-            "    if let dict = obj as? [String: Any] {",
-            "        if let amt = dict[\"amount\"] as? NSNumber,",
-            "           let cur = dict[\"currency\"] as? String {",
-            "            return .money(Money(amount: Decimal(string: amt.stringValue) ?? 0, currency: cur))",
-            "        }",
-            "        return .record(dict.mapValues(convertAny))",
-            "    }",
-            "    return .null",
-            "}",
-        ]
+        DriverSourceBuilder.jsonBridge(includeMoneyCoercion: true)
     }
 
     // MARK: - Runtime assertion evaluation
@@ -266,9 +230,5 @@ struct RuntimeExecutor {
         return result.exitCode == 0
     }
 
-    private func pascalCase(_ raw: String) -> String {
-        raw.split(whereSeparator: { $0 == " " || $0 == "_" })
-            .map { $0.prefix(1).uppercased() + $0.dropFirst().lowercased() }
-            .joined()
-    }
+    private func pascalCase(_ raw: String) -> String { IdentifierNaming.pascalCase(raw) }
 }

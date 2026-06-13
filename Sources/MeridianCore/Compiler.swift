@@ -171,7 +171,23 @@ public struct Compiler {
             comparisonSynonyms: config.languageSynonyms.comparisonSynonyms,
             durationSynonyms: config.languageSynonyms.durationSynonyms,
             assertionSynonyms: config.languageSynonyms.assertionSynonyms,
-            timestampProperty: config.languageSynonyms.timestampProperty
+            timestampProperty: config.languageSynonyms.timestampProperty,
+            emptySynonyms: config.languageSynonyms.emptySynonyms,
+            filledSynonyms: config.languageSynonyms.filledSynonyms,
+            pastWindowSynonyms: config.languageSynonyms.pastWindowSynonyms,
+            futureWindowSynonyms: config.languageSynonyms.futureWindowSynonyms,
+            timestampAliasSynonyms: config.languageSynonyms.timestampAliasSynonyms,
+            aggregateSynonyms: config.languageSynonyms.aggregateSynonyms,
+            superlativeSynonyms: config.languageSynonyms.superlativeSynonyms,
+            sortBySynonyms: config.languageSynonyms.sortBySynonyms,
+            ascendingSynonyms: config.languageSynonyms.ascendingSynonyms,
+            descendingSynonyms: config.languageSynonyms.descendingSynonyms,
+            possessiveSynonyms: config.languageSynonyms.possessiveSynonyms,
+            anaphoraSynonyms: config.languageSynonyms.anaphoraSynonyms,
+            conditionHeaderSynonyms: config.languageSynonyms.conditionHeaderSynonyms,
+            actionHeaderSynonyms: config.languageSynonyms.actionHeaderSynonyms,
+            wildcardSynonyms: config.languageSynonyms.wildcardSynonyms,
+            shellFenceSynonyms: config.languageSynonyms.shellFenceSynonyms
         )
 
         // Use the first vocabulary file (if any) for symbol-table source
@@ -245,7 +261,23 @@ public struct Compiler {
             comparisonSynonyms: config.languageSynonyms.comparisonSynonyms,
             durationSynonyms: config.languageSynonyms.durationSynonyms,
             assertionSynonyms: config.languageSynonyms.assertionSynonyms,
-            timestampProperty: config.languageSynonyms.timestampProperty
+            timestampProperty: config.languageSynonyms.timestampProperty,
+            emptySynonyms: config.languageSynonyms.emptySynonyms,
+            filledSynonyms: config.languageSynonyms.filledSynonyms,
+            pastWindowSynonyms: config.languageSynonyms.pastWindowSynonyms,
+            futureWindowSynonyms: config.languageSynonyms.futureWindowSynonyms,
+            timestampAliasSynonyms: config.languageSynonyms.timestampAliasSynonyms,
+            aggregateSynonyms: config.languageSynonyms.aggregateSynonyms,
+            superlativeSynonyms: config.languageSynonyms.superlativeSynonyms,
+            sortBySynonyms: config.languageSynonyms.sortBySynonyms,
+            ascendingSynonyms: config.languageSynonyms.ascendingSynonyms,
+            descendingSynonyms: config.languageSynonyms.descendingSynonyms,
+            possessiveSynonyms: config.languageSynonyms.possessiveSynonyms,
+            anaphoraSynonyms: config.languageSynonyms.anaphoraSynonyms,
+            conditionHeaderSynonyms: config.languageSynonyms.conditionHeaderSynonyms,
+            actionHeaderSynonyms: config.languageSynonyms.actionHeaderSynonyms,
+            wildcardSynonyms: config.languageSynonyms.wildcardSynonyms,
+            shellFenceSynonyms: config.languageSynonyms.shellFenceSynonyms
         )
 
         let symbolsFile = vocabularies.first?.file ?? "config.merconfig"
@@ -358,7 +390,7 @@ public struct Compiler {
         // workflow each (wait for the trigger + fan out `trigger.<name>.fired`).
         // The host owns actual firing; routing is the resolver's job.
         if !frontmatter.triggers.isEmpty {
-            let classifier = TriggerClassifier(lexicon: lexicon)
+            let classifier = TriggerClassifier(lexicon: lexicon, rulebook: rulebook)
             let triggers = frontmatter.triggers.map {
                 classifier.classify($0, sourceLine: ast.metadata?.sourceLine ?? 0)
             }
@@ -696,11 +728,7 @@ public struct Compiler {
         }
     }
 
-    private func pascalCase(_ raw: String) -> String {
-        raw.split(whereSeparator: { $0 == " " || $0 == "_" })
-            .map { $0.prefix(1).uppercased() + $0.dropFirst().lowercased() }
-            .joined()
-    }
+    private func pascalCase(_ raw: String) -> String { IdentifierNaming.pascalCase(raw) }
 
     private func propertyValueToInstance(_ v: PropertyValueAST) -> SwiftEmitter.InstancesDecl.PropertyValue {
         switch v {
@@ -709,16 +737,7 @@ public struct Compiler {
         }
     }
 
-    private func constantToIRLiteral(_ lit: LiteralAST) -> IRLiteral {
-        switch lit {
-        case .string(let s):            return .string(s)
-        case .integer(let n):           return .number(Decimal(n))
-        case .double(let d):            return .number(Decimal(d))
-        case .boolean(let b):           return .boolean(b)
-        case .money(let a, let c):      return .money(Decimal(a), currency: c)
-        case .duration(let v, let u):   return .duration(.seconds(Int64(v * Double(u.inSeconds))))
-        }
-    }
+    private func constantToIRLiteral(_ lit: LiteralAST) -> IRLiteral { LiteralLowering.toIRLiteral(lit) }
 }
 
 // MARK: - CompilerError

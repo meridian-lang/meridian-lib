@@ -398,14 +398,19 @@ simultaneously:
 
 ### Comparison keywords
 
+The copula (`is`) is **optional** — each comparison has a copula-less form so a
+condition reads naturally either way (`the total is greater than 5` ≡ `the total
+greater than 5`). The full `… than or equal to` spellings are also accepted
+(the marker-internal `or` is shielded from the boolean `or` splitter).
+
 | Phrase | Operator |
 |---|---|
-| `equals` / `is` | `==` |
+| `equals` / `equal to` / `is` | `==` |
 | `does not equal` / `is not` | `!=` |
-| `is less than` / `is fewer than` | `<` |
-| `is more than` / `is greater than` | `>` |
-| `is at most` / `is no more than` | `<=` |
-| `is at least` / `is no fewer than` | `>=` |
+| `less than` / `fewer than` (opt. `is `) | `<` |
+| `more than` / `greater than` (opt. `is `) | `>` |
+| `at most` / `is no more than` / `less than or equal to` | `<=` |
+| `at least` / `is no fewer than` / `greater than or equal to` / `more than or equal to` | `>=` |
 | `is within` | `MeridianComparison.isWithin(…)` |
 | `contains` | `.contains(…)` |
 | `starts with` | `.hasPrefix(…)` |
@@ -625,6 +630,27 @@ and `assert`. Each entry is the literal phrase that precedes the condition
 (`verify the score is more than 100.`). The merged set is de-duplicated and
 sorted longest-first, so a multi-word marker (`guarantee that`) wins over any
 single-word prefix.
+
+In addition to `Comparison`/`Duration`/`Assertion`, the `=== language ===`
+section accepts synonym sub-blocks for every author-extensible category the
+condition/description grammar keys on (each merged into `EnglishLexicon` the same
+way): `Emptiness synonyms:` / `Filled synonyms:`, `Past window synonyms:` /
+`Future window synonyms:`, `Timestamp aliases:`, `Aggregate synonyms:`,
+`Superlative synonyms:`, `Sort-by synonyms:` / `Ascending synonyms:` /
+`Descending synonyms:`, `Possessive synonyms:`, `Anaphora synonyms:`, the
+table-header sets (`Condition header synonyms:` / `Action header synonyms:` /
+`Wildcard synonyms:`), and `Shell fence synonyms:` (extra fenced-code info-string
+tags treated as deterministic `shell.run` blocks — e.g. `fish`, `pwsh`, `nu` —
+on top of the default `bash`/`sh`/`shell`/`console`/`zsh`).
+
+**Where the line is — extensible vs. fixed.** Synonym categories above are
+*domain-renamable* and live in `EnglishLexicon`. The closed **grammar skeleton**
+— relativizers, the prose/idiom introducers (`with discretion`, `with autonomy`,
+`use judgment to`, `decide whether`, the wait/choice/background markers), and the
+relational markers (`is empty`, the passive ` by `, scalar-nav connectors) — is
+centralized in `FixedGrammar` (`EnglishLexicon.grammar`) and is **not**
+author-extensible; it defines *what the language is*, not *what a domain calls
+things*. See AGENTS.md §3.
 
 ---
 
@@ -873,17 +899,21 @@ one-sided temporal window on a configurable timestamp property
 `contains`, `is one of`. See [04_COMPILER_PIPELINE.md](04_COMPILER_PIPELINE.md).
 
 **Metadata sections (1D).** A `## Tools Used` section is non-executable but
-metadata-extracting: each bullet `<description> (<tool_id>)` mines `<tool_id>`
-into the workflow's scoped-tool set and the manifest `tools_used`. A malformed
-bullet is a hard error. An invariant of the form `every emitted <noun> matches
-pattern "<regex>"` lowers to an `AssertIR` over `meridianRegexMatches`.
+metadata-extracting: each bullet's tool id is mined into the workflow's
+scoped-tool set and the manifest `tools_used`. **Two bullet forms are accepted**
+(use whichever the source SKILL.md already uses — no reformatting required):
 
 ```
 ## Tools Used
 
-- Search gbrain by name (query)
-- Read a page from gbrain (get_page)
+- Search gbrain by name (query)            ← <description> (<tool_id>)
+- `get_page` — read a page from gbrain     ← `<tool_id>` — <description>
 ```
+
+A bullet matching neither form (e.g. a backticked CLI command whose token
+contains spaces) is a hard error — such a section should stay `(( inert ))`.
+An invariant of the form `every emitted <noun> matches pattern "<regex>"`
+lowers to an `AssertIR` over `meridianRegexMatches`.
 
 ### Inform 7-tier semantic core (Wave 2)
 
@@ -1107,6 +1137,11 @@ into one trigger workflow each, emitting a `trigger.<name>.fired` fan-out event:
 | `ambient` | `every inbound message` |
 | `event` | `meeting transcript received` |
 | `keyword` | `summarize my day` |
+
+Classification keyword sets are **data**: built-in defaults live in
+`Rulebook.defaultTriggers`, and a rulebook's `=== triggers ===` block
+(`<kind>: word1, word2, …`) extends them per kind (see
+[11_RULEBOOKS.md](11_RULEBOOKS.md) Family 4). `keyword` is the fallback.
 
 `sample-gbrain/RESOLVER.meri` is the trigger → skill dispatcher.
 

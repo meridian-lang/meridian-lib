@@ -46,7 +46,7 @@ struct ConditionClassifier {
         // `emitted` is the signal that this is an output-format invariant on a
         // single bound result — NOT a `every <plural>` collection quantifier
         // (Wave 2C), which must keep its quantifier meaning.
-        for prefix in ["every emitted ", "each emitted "] where lower.hasPrefix(prefix) {
+        for prefix in lexicon.grammar.emittedInvariantPrefixes where lower.hasPrefix(prefix) {
             return "the " + text.dropFirst(prefix.count)
         }
         return text
@@ -89,7 +89,7 @@ struct ConditionClassifier {
     /// descriptive dispatch phrases.
     func readsAsCondition(_ text: String) -> Bool {
         let lower = " \(text.lowercased()) "
-        let conditionCues = lexicon.copulas.union(["equals", "not"])
+        let conditionCues = lexicon.copulas.union(lexicon.grammar.conditionCueWords)
         if conditionCues.contains(where: { lower.contains(" \($0) ") }) { return true }
         for marker in lexicon.comparisonMarkers.map(\.0) {
             if lower.contains(" \(marker.lowercased()) ") { return true }

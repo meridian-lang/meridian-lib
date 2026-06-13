@@ -210,7 +210,7 @@ public struct RuleAnalyzer {
         var conditions: ExpressionAST? = nil
         var isBounded = false
         let actionLower = actionText.lowercased()
-        for boundedMarker in ["whose ", "up to ", "if "] {
+        for boundedMarker in lexicon.grammar.permissionBoundMarkers {
             if let markerRange = actionLower.range(of: " " + boundedMarker) {
                 let condText = String(actionText[markerRange.upperBound...])
                     .trimmingCharacters(in: .whitespaces)
@@ -253,7 +253,7 @@ public struct RuleAnalyzer {
         var kindWords: [String] = []
         var filterText: String? = nil
         var filterIntroducer: String? = nil
-        let introducers: Set<String> = ["with", "whose", "that", "which", "having"]
+        let introducers = lexicon.grammar.subjectFilterIntroducers
         for (i, word) in words.enumerated() {
             if introducers.contains(word.lowercased()) {
                 filterIntroducer = word.lowercased()
@@ -278,7 +278,7 @@ public struct RuleAnalyzer {
     private func extractObjectKind(from text: String) -> String {
         let trimmed = text.trimmingCharacters(in: .whitespaces).lowercased()
         let words = trimmed.components(separatedBy: " ")
-        let articles: Set<String> = ["a", "an", "the", "any", "some"]
+        let articles = lexicon.grammar.nounPhraseDeterminers
         for (i, w) in words.enumerated() {
             if articles.contains(w), i + 1 < words.count {
                 return words[(i + 1)...].joined(separator: " ")
@@ -317,8 +317,7 @@ public struct RuleAnalyzer {
         let trimmed = raw.trimmingCharacters(in: .whitespaces)
         let lower = trimmed.lowercased()
         // Possessive pronouns refer to the subject (e.g. "their credit limit").
-        let possessivePrefixes = ["their ", "his ", "her ", "its "]
-        for prefix in possessivePrefixes where lower.hasPrefix(prefix) {
+        for prefix in lexicon.possessivePronouns where lower.hasPrefix(prefix) {
             let rest = String(trimmed.dropFirst(prefix.count))
             if !subjectKind.isEmpty {
                 return .propertyAccess(.identifierRef(subjectKind), rest)

@@ -2,10 +2,14 @@ import Foundation
 import MeridianRuntime
 
 public struct AnaphoraResolver: Sendable {
-    public init() {}
+    private let lexicon: EnglishLexicon
+
+    public init(lexicon: EnglishLexicon = .default) {
+        self.lexicon = lexicon
+    }
 
     public func resolve(_ text: String, referents: [String], file: String = "", line: Int = 0) throws -> String {
-        let markers = ["that result", "the same", "it", "them"]
+        let markers = lexicon.anaphoraMarkers
         guard markers.contains(where: { containsWholeWord($0, in: text) }) else {
             return text
         }

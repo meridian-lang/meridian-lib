@@ -887,6 +887,96 @@ Full guidance: `docs/13_SKILL_MD_PORTING.md` (edit-budget callout after item 4).
 > may still use the bare form (e.g. `D17`); treat any bare `D<N>` outside
 > `meridian-handoff/docs/11_DECISIONS.md` as `SkillMD-D<N>`.
 
+### 2026-06-13 — Lexicon centralization & dedup: FixedGrammar, relational sweep, `=== sections ===` data seed, `=== triggers ===` family
+
+The surface-vocabulary rule (§3 "No hardcoded English-surface vocabulary") is now
+applied end-to-end. Every English-surface token the grammar keys on is either
+**author-extensible** (`EnglishLexicon` / `=== language ===` / `=== sections ===`
+/ `=== triggers ===`) or **centralized but fixed** in
+`FixedGrammar` (`Sources/MeridianCore/Language/FixedGrammar.swift`, exposed as
+`EnglishLexicon.grammar`). No hand-listed extensible English remains scattered
+across `Parser/`/`Lowering/`.
+
+- **`FixedGrammar`** holds the closed grammar skeleton: relativizers, negation
+  auxiliaries/contractions, the clause-negation introducer, quantifier
+  body-verbs/normalization/partitives, subject-filter introducers, permission
+  bound markers, noun-phrase determiners, phrase-param connectors, the `called`
+  introducer, `every emitted` invariant prefixes, the **3E prose/idiom
+  introducers** (judgment / `with discretion` / `with autonomy` / choice-gate /
+  background-spawn / passive-modality / `decide whether` / `decide using:` /
+  `you decide that` / `unless you decide that` / wait signal/approval/event/
+  matching), the **statement idiom rewrites** (`after`, `except when`,
+  `try … ; if it fails`, suffix `only when`/`unless`), and the **Wave-3
+  relational markers** (`emptyPredicateSuffix`/`notEmptyPredicateSuffix`,
+  `relativeClauseMarkers` [default `[" that "]`], `passiveByMarker`,
+  `scalarNavConnectors`, `pastParticipleSuffixes` `["ed","en"]`). It is exposed
+  as a defaulted stored field that `merging(...)` passes through unchanged — one
+  lexicon thread, no extra plumbing. **Promotion rule:** move an entry into an
+  author-extensible `EnglishLexicon` / rulebook field only when a real domain
+  needs to rename it.
+
+- **Pitfall — two participle lists, do NOT merge.** `FixedGrammar.
+  pastParticipleSuffixes` (`["ed","en"]`, used by the "did you mean a relation
+  verb?" heuristic) is distinct from `EnglishLexicon.participleSuffixes`
+  (`["ed","ing"]`, a verb-stop signal in phrase-pattern parsing). They answer
+  different parse questions; folding them changes behavior.
+
+- **`=== sections ===` builtin alias seed is data.** The ~40 heading→role aliases
+  are `SkillSectionRole.builtinSectionAliases` (single table + O(1) lookup);
+  `builtinRole(forHeading:)` consults the table plus the open-ended `phase `
+  prefix. `Rulebook.defaultSections` exposes the same data as a rulebook.
+  Resolution precedence is unchanged (`rulebook.role ?? builtinRole`).
+
+- **`=== triggers ===` is the 4th rulebook family.** `TriggerWordRule` +
+  `Rulebook.triggerWords` + `RulebookParser` (`<kind>: word1, word2, …`).
+  `Rulebook.defaultTriggers` seeds the historical schedule/ambient/event word
+  sets; `Rulebook.triggerWordSets()` unions defaults + author words by kind;
+  `TriggerClassifier.init(lexicon:rulebook:)` reads the merged sets (the static
+  word sets were removed from the classifier). `Rulebook` now has four families:
+  desugar, sections, conventions, triggers.
+
+Tests: `Tests/MeridianCoreTests/LexiconCentralizationTests.swift` (FixedGrammar
+defaults + merging passthrough; `=== triggers ===` classification/extension/
+unknown-kind/seed-stability; `=== sections ===` data-vs-`builtinRole`). Full
+`swift test` **769**; both typecheck gates green; goldens byte-identical
+(behavior-preserving throughout).
+
+### 2026-06-13 — Comparison-alias folding + lexicon-driven shell-fence dialects
+
+Two deliberate **grammar expansions** (not dedup) closing the two previously
+scoped-out items.
+
+- **Copula-less + ≥/≤ comparison spellings are now first-class.** Default
+  `comparisonMarkers` gained the bare canonical forms (`greater than`, `more
+  than`, `less than`, `fewer than`, `at least`, `at most`, `equals`, `equal to`)
+  and the ≥/≤ word forms (`greater than or equal to`, `more than or equal to`,
+  `less than or equal to`), each listed AFTER its `is …` sibling so the copula
+  form keeps match priority. So `the total greater than 5` / `the count at least
+  3` / `the status equals "open"` parse as comparisons without the copula.
+- **The `or` inside `… than or equal to` must be shielded from the boolean
+  splitter.** `parseLogical` (lowest precedence) splits on top-level ` or `
+  before the comparison layer, so a marker-internal ` or ` would be mis-read as
+  a disjunction. `ExpressionParser.maskComparisonOr` replaces ONLY the
+  marker-internal ` or ` with a PUA sentinel (`\u{E002}OR\u{E002}`) before the
+  split; each operand is `unmaskComparisonOr`'d before descending. The shielded
+  marker set is **derived from `lexicon.comparisonMarkers`** (or-bearing
+  entries) — no hardcoded list — so an or-bearing `=== language ===` synonym is
+  shielded automatically. A genuine `A or B` (even with ≥/≤ operands) still
+  splits. Heavily commented because the mechanism is non-obvious.
+- **`shellFenceLanguages` is author-extensible.** Now an `EnglishLexicon` field
+  (default seeded from the `public` module-level `shellFenceLanguages` constant
+  — single source of truth) with `EnglishLexicon.isShellFence(_:)`. Extend via
+  `=== language ===` `Shell fence synonyms:` (`fish`, `pwsh`, `nu`, …). The two
+  compile-path call sites (`StatementParser.shellBlockStatements`,
+  `SkillSectionBuilder.isShellCodeBlock`) use `lexicon.isShellFence`; the
+  `SkillMigrator` marking pass keeps the lexicon-free free function (it runs on
+  raw markdown before any config lexicon exists, on default dialects).
+
+Tests: `LexiconCentralizationTests` `ComparisonFoldingTests` (bare forms, copula
+priority, ≥/≤ family, `disjunctionStillSplits`) + `ShellFenceLexiconTests`
+(defaults + author extension). Full `swift test` **775**; both typecheck gates
+green.
+
 ### 2026-06-13 — `assert` invariant alias; assertion markers are lexicon-driven
 
 `assert <cond>.` now lowers to the same `AssertStatementAST`/`AssertIR` as

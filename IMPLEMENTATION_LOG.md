@@ -3559,3 +3559,156 @@ rejection) → 27; `swift test` 759; `MERIDIAN_GBRAIN_TYPECHECK=1` green. Portin
 rule 11 updated (no reformatting required).
 
 STATUS: DONE
+
+---
+
+## 2026-06-13 — Lexicon centralization & dedup: Phase 3 completion (FixedGrammar, relational sweep, === sections === / === triggers ===)
+
+DECISION: completed the remaining lexicon-centralization phases. No new IR
+primitive; the governing rule (extensible surface vocabulary lives in
+`EnglishLexicon` / rulebook families; fixed grammar-skeleton tokens are
+centralized but not author-extensible) is now applied across the parser,
+lowering, and skill paths.
+
+CONTEXT/DETAIL:
+
+- **FixedGrammar** (`Sources/MeridianCore/Language/FixedGrammar.swift`) is the
+  single home for the closed grammar skeleton, exposed as `EnglishLexicon.grammar`
+  (a defaulted stored field that `merging(...)` passes through unchanged, so no
+  extra call-site plumbing). It now also carries the 3E prose/idiom introducers
+  (judgment/discretion/autonomy/choice/background/passive-modality/decide/wait
+  families), the statement idiom rewrites (`after`, `except when`,
+  `try … ; if it fails`, suffix `only when`/`unless`), and the Wave-3 relational
+  markers (see below). Inline literals at the parse sites in `StatementParser`,
+  `MeridianParser`, `ExpressionParser`, `RuleLowering`, `RuleInjector`,
+  `MerConfigParser`, `ConditionClassifier`, and `SkillSectionBuilder` now read
+  these fields.
+
+- **Relational/condition-layer sweep** (`ExpressionParser`): four extensible
+  sites that Phase 3B missed are now grammar-sourced —
+  `is empty`/`is not empty` (`emptyPredicateSuffix`/`notEmptyPredicateSuffix`),
+  the description verb-clause split (`relativeClauseMarkers`, default `[" that "]`
+  — single-marker to preserve behavior; a maintainer extends in one place),
+  the passive/superlative agent marker (`passiveByMarker`), the scalar-nav
+  connectors (`scalarNavConnectors`), and the past-participle heuristic
+  (`pastParticipleSuffixes`, `["ed","en"]` — deliberately distinct from
+  `EnglishLexicon.participleSuffixes` `["ed","ing"]`, which is a verb-stop signal,
+  not past-participle detection). Pitfall captured: do NOT fold these two
+  participle lists together — they serve different parse decisions.
+
+- **3F — `=== sections ===` builtin alias seed as data.** The ~40 heading→role
+  aliases that lived in a literal `switch` in `SkillSectionRole.builtinRole` are
+  now a single data table, `SkillSectionRole.builtinSectionAliases`, with an O(1)
+  lookup; `builtinRole` consults the table plus the open-ended `phase ` prefix
+  rule (which can't be an exact alias). `Rulebook.defaultSections` exposes the
+  same data as a `=== sections ===` rulebook so tooling/docs treat defaults and
+  author extensions uniformly. Resolution precedence is unchanged
+  (`rulebook.role(forHeading:) ?? builtinRole`), so behavior is identical.
+
+- **3C — `=== triggers ===` rulebook family (new, 4th family).** `TriggerWordRule`
+  + `Rulebook.triggerWords` + `RulebookParser.parseTriggersSection` (`<kind>:
+  word1, word2, …`, kind ∈ `TriggerKind` raw values; unknown kind is a hard
+  `semanticError`). `Rulebook.defaultTriggers` is the data seed of the historical
+  `schedule`/`ambient`/`event` word sets (moved out of `TriggerClassifier`'s
+  statics); `Rulebook.triggerWordSets()` unions defaults + author words by kind.
+  `TriggerClassifier.init(lexicon:rulebook:)` reads the merged sets;
+  `Compiler.compileWithManifest` now passes the effective `rulebook`. Removed the
+  redundant explicit `every` check (it is already in the ambient set). Author
+  words add to (never remove from) a kind.
+
+IMPACT: surface vocabulary is now either author-extensible (lexicon /
+`=== language ===` / `=== sections ===` / `=== triggers ===`) or centralized in
+`FixedGrammar`; no hand-listed extensible English remains scattered across
+`Parser/`/`Lowering/`. `Rulebook` now has four families (desugar, sections,
+conventions, triggers).
+
+Tests: new `Tests/MeridianCoreTests/LexiconCentralizationTests.swift` (14 tests:
+FixedGrammar defaults + merging passthrough; `=== triggers ===` builtin
+classification, author extension, unknown-kind error, seed-stability; `===
+sections ===` data-vs-builtinRole agreement, representative aliases, phase
+prefix, unresolved). Full `swift test` **769**; both `MERIDIAN_GOLDEN_TYPECHECK=1`
+and `MERIDIAN_GBRAIN_TYPECHECK=1` gates green; goldens byte-identical
+(behavior-preserving throughout).
+
+STATUS: DONE
+
+### 2026-06-13 18:40 — DECISION: close last two in-scope inline-English residuals
+
+CONTEXT: Final comprehensiveness pass over the lexicon-centralization work. Two
+inline-English literals remained in the in-scope surface.
+
+DETAIL: (1) `ConditionClassifier.readsAsCondition` augmented copulas with an
+inline `["equals", "not"]`. Moved to `FixedGrammar.conditionCueWords`
+(default `["equals", "not"]`); call site is now
+`lexicon.copulas.union(lexicon.grammar.conditionCueWords)`. (2)
+`MerConfigParser.resolveComparisonOp`'s plain-English fallback `switch`
+(`greater than` → `.greaterThan`, …) duplicated comparison spellings inline.
+Replaced with a centralized `FixedGrammar.comparisonOpSpellings:
+[String: ComparisonOpAST]` data table; the function now returns
+`lexicon.grammar.comparisonOpSpellings[value]`. Both are behavior-identical
+relocations of data into `FixedGrammar` (the canonical
+`lexicon.comparisonMarkers` are still tried first in `resolveComparisonOp`).
+
+Deliberately NOT changed (rule-compliant, not leaks): the `.merconfig`
+schema-declaration keywords (`is a kind of`, `the verb to`, `relates one X to
+many Y`, cardinality `many`/`various`, `from`/`via`) are single-production
+structural syntax of the *schema-definition* language — AGENTS §3 second
+category explicitly permits these as literals kept in one place per production.
+The two earlier scoped-out items (comparison-alias fold; lexicon-driving
+`shellFenceLanguages`) remain by design: both are *behavior changes* to the
+source grammar, not dedup, and `shellFenceLanguages` is already centralized as a
+single module default.
+
+IMPACT: zero inline extensible-English vocabulary remains in any `Parser/` /
+`Lowering/` / skill-surface file; every such list now lives in `EnglishLexicon`
+or `FixedGrammar`. Tests: `LexiconCentralizationTests.conditionAndComparisonData`
+added. Full `swift test` green; both typecheck gates green; goldens
+byte-identical.
+
+STATUS: DONE
+
+### 2026-06-13 19:20 — DECISION: shell-fence dialects lexicon-driven + comparison-alias folding
+
+CONTEXT: The two previously scoped-out items were explicitly requested
+("break if it improves things — there is no existing behavior to maintain").
+
+DETAIL (shell fence dialects): `shellFenceLanguages` is now a field on
+`EnglishLexicon` (default seeded from the module-level `shellFenceLanguages`
+constant — single source of truth — which was made `public` to serve as a
+default-arg value). Added `EnglishLexicon.isShellFence(_:)`. Author-extensible
+via `=== language ===` `Shell fence synonyms:` →
+`LanguageSynonyms.shellFenceSynonyms` → `MerConfigParser.parseLanguageSection`
+(`.shellFence` mode) → `MerConfigFile.merging` → `EnglishLexicon.merging`
+(union, lower-cased) → forwarded from both `Compiler.compile` overloads. The two
+compile-path call sites (`StatementParser.shellBlockStatements`,
+`SkillSectionBuilder.isShellCodeBlock`) now use `lexicon.isShellFence`. The
+`SkillMigrator` marking pass keeps the lexicon-free free function `isShellFence`
+(it runs on raw markdown before any config lexicon is built, on default
+dialects) — documented at the free function.
+
+DETAIL (comparison-alias folding): the default `comparisonMarkers` now include
+the copula-less canonical spellings (`greater than`, `more than`, `less than`,
+`fewer than`, `at least`, `at most`, `equals`, `equal to`) AND the ≥/≤ word
+spellings (`greater than or equal to`, `more than or equal to`, `less than or
+equal to`), each placed after its `is …` sibling so the copula form keeps
+priority. The `… than or equal to` family embeds the word `or`, which the
+boolean disjunction layer (`parseLogical`, lowest precedence) would otherwise
+split on — producing a bogus `.logical(.or, …)` and no comparison. Fixed with a
+shield: `maskComparisonOr` replaces ONLY the marker-internal ` or ` with a
+PUA sentinel (`\u{E002}OR\u{E002}`) before the split; each disjunction operand is
+`unmaskComparisonOr`'d before descending to the comparison layer, so a genuine
+`A or B` (even with ≥/≤ operands) still splits while a marker-internal `or` is
+invisible to the splitter. The shielded marker set is DERIVED from
+`lexicon.comparisonMarkers` (or-bearing entries), so any or-bearing synonym
+added via `=== language ===` is shielded automatically — no hardcoded list.
+Heavily commented in `ExpressionParser` (the "Why we mask here" block) since the
+mechanism is non-obvious.
+
+IMPACT: conditions can now be written without the copula (`the total greater
+than 5`, `the count at least 3`, `the status equals "open"`) and with the full
+≥/≤ word spellings. Tests: `LexiconCentralizationTests`
+`ComparisonFoldingTests` (bare forms, copula priority, ≥/≤ family,
+`disjunctionStillSplits`) + `ShellFenceLexiconTests` (defaults + author
+extension). Full `swift test` **775**; both typecheck gates green.
+
+STATUS: DONE

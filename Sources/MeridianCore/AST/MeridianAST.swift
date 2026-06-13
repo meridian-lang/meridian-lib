@@ -14,14 +14,65 @@ public struct LanguageSynonyms: Sendable {
     /// Optional override for the temporal-iteration timestamp property
     /// (`=== language ===` `timestamp:` entry). `nil` keeps the lexicon default.
     public let timestampProperty: String?
+    // 3B author-extensible category synonyms (each a `=== language ===` block).
+    public let emptySynonyms: [String]
+    public let filledSynonyms: [String]
+    public let pastWindowSynonyms: [String]
+    public let futureWindowSynonyms: [String]
+    public let timestampAliasSynonyms: [String]
+    public let aggregateSynonyms: [(String, AggregateKindAST)]
+    public let superlativeSynonyms: [String: SuperlativeDirection]
+    public let sortBySynonyms: [String]
+    public let ascendingSynonyms: [String]
+    public let descendingSynonyms: [String]
+    public let possessiveSynonyms: [String]
+    public let anaphoraSynonyms: [String]
+    public let conditionHeaderSynonyms: [String]
+    public let actionHeaderSynonyms: [String]
+    public let wildcardSynonyms: [String]
+    /// Extra fence info-string tags treated as shell-command blocks
+    /// (`=== language ===` `Shell fence synonyms:` — e.g. `fish`, `pwsh`, `nu`).
+    public let shellFenceSynonyms: [String]
     public init(comparisonSynonyms: [(String, ComparisonOpAST)] = [],
                 durationSynonyms: [String: TimeUnitAST] = [:],
                 assertionSynonyms: [String] = [],
-                timestampProperty: String? = nil) {
+                timestampProperty: String? = nil,
+                emptySynonyms: [String] = [],
+                filledSynonyms: [String] = [],
+                pastWindowSynonyms: [String] = [],
+                futureWindowSynonyms: [String] = [],
+                timestampAliasSynonyms: [String] = [],
+                aggregateSynonyms: [(String, AggregateKindAST)] = [],
+                superlativeSynonyms: [String: SuperlativeDirection] = [:],
+                sortBySynonyms: [String] = [],
+                ascendingSynonyms: [String] = [],
+                descendingSynonyms: [String] = [],
+                possessiveSynonyms: [String] = [],
+                anaphoraSynonyms: [String] = [],
+                conditionHeaderSynonyms: [String] = [],
+                actionHeaderSynonyms: [String] = [],
+                wildcardSynonyms: [String] = [],
+                shellFenceSynonyms: [String] = []) {
         self.comparisonSynonyms = comparisonSynonyms
         self.durationSynonyms = durationSynonyms
         self.assertionSynonyms = assertionSynonyms
         self.timestampProperty = timestampProperty
+        self.emptySynonyms = emptySynonyms
+        self.filledSynonyms = filledSynonyms
+        self.pastWindowSynonyms = pastWindowSynonyms
+        self.futureWindowSynonyms = futureWindowSynonyms
+        self.timestampAliasSynonyms = timestampAliasSynonyms
+        self.aggregateSynonyms = aggregateSynonyms
+        self.superlativeSynonyms = superlativeSynonyms
+        self.sortBySynonyms = sortBySynonyms
+        self.ascendingSynonyms = ascendingSynonyms
+        self.descendingSynonyms = descendingSynonyms
+        self.possessiveSynonyms = possessiveSynonyms
+        self.anaphoraSynonyms = anaphoraSynonyms
+        self.conditionHeaderSynonyms = conditionHeaderSynonyms
+        self.actionHeaderSynonyms = actionHeaderSynonyms
+        self.wildcardSynonyms = wildcardSynonyms
+        self.shellFenceSynonyms = shellFenceSynonyms
     }
 }
 
@@ -55,7 +106,23 @@ public struct MerConfigFile: Sendable {
             comparisonSynonyms: languageSynonyms.comparisonSynonyms + other.languageSynonyms.comparisonSynonyms,
             durationSynonyms: languageSynonyms.durationSynonyms.merging(other.languageSynonyms.durationSynonyms) { _, new in new },
             assertionSynonyms: languageSynonyms.assertionSynonyms + other.languageSynonyms.assertionSynonyms,
-            timestampProperty: other.languageSynonyms.timestampProperty ?? languageSynonyms.timestampProperty
+            timestampProperty: other.languageSynonyms.timestampProperty ?? languageSynonyms.timestampProperty,
+            emptySynonyms: languageSynonyms.emptySynonyms + other.languageSynonyms.emptySynonyms,
+            filledSynonyms: languageSynonyms.filledSynonyms + other.languageSynonyms.filledSynonyms,
+            pastWindowSynonyms: languageSynonyms.pastWindowSynonyms + other.languageSynonyms.pastWindowSynonyms,
+            futureWindowSynonyms: languageSynonyms.futureWindowSynonyms + other.languageSynonyms.futureWindowSynonyms,
+            timestampAliasSynonyms: languageSynonyms.timestampAliasSynonyms + other.languageSynonyms.timestampAliasSynonyms,
+            aggregateSynonyms: languageSynonyms.aggregateSynonyms + other.languageSynonyms.aggregateSynonyms,
+            superlativeSynonyms: languageSynonyms.superlativeSynonyms.merging(other.languageSynonyms.superlativeSynonyms) { _, new in new },
+            sortBySynonyms: languageSynonyms.sortBySynonyms + other.languageSynonyms.sortBySynonyms,
+            ascendingSynonyms: languageSynonyms.ascendingSynonyms + other.languageSynonyms.ascendingSynonyms,
+            descendingSynonyms: languageSynonyms.descendingSynonyms + other.languageSynonyms.descendingSynonyms,
+            possessiveSynonyms: languageSynonyms.possessiveSynonyms + other.languageSynonyms.possessiveSynonyms,
+            anaphoraSynonyms: languageSynonyms.anaphoraSynonyms + other.languageSynonyms.anaphoraSynonyms,
+            conditionHeaderSynonyms: languageSynonyms.conditionHeaderSynonyms + other.languageSynonyms.conditionHeaderSynonyms,
+            actionHeaderSynonyms: languageSynonyms.actionHeaderSynonyms + other.languageSynonyms.actionHeaderSynonyms,
+            wildcardSynonyms: languageSynonyms.wildcardSynonyms + other.languageSynonyms.wildcardSynonyms,
+            shellFenceSynonyms: languageSynonyms.shellFenceSynonyms + other.languageSynonyms.shellFenceSynonyms
         )
         return MerConfigFile(
             vocabulary: vocabulary + other.vocabulary,

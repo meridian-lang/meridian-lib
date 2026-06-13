@@ -274,20 +274,22 @@ struct SkillSectionBuilder {
                 range: SourceRange(file: file, line: headingLine, column: 1)
             )
         }
-        if let marker = parsed.marker, marker.inert || marker.role != nil {
-            // Authoritative marker — no heading derivation.
-            let role = marker.role
-            let executes = !marker.inert && (role?.isExecutable ?? false)
-            let recorded = role?.rawValue ?? "inert"
-            return (parsed.cleanHeading, executes ? role : nil, executes, recorded)
-        }
-        // No marker: derive an executable role from the clean heading text.
-        // `.tools` is non-executable but metadata-extracting, so it is preserved
-        // (build() mines its bullets); other non-executable roles are nil'd.
+        // Marker-first decision is shared with `SkillMetrics` via
+        // `SectionRoleResolver`; the role-retention and error policy below is
+        // builder-specific. `.tools` is non-executable but metadata-extracting,
+        // so a derived `.tools` role is preserved (build() mines its bullets).
         let clean = parsed.cleanHeading
-        if let role = rulebook.role(forHeading: clean) ?? SkillSectionRole.builtinRole(forHeading: clean) {
-            let keep = role.isExecutable || role == .tools
-            return (clean, keep ? role : nil, role.isExecutable, role.rawValue)
+        let derived = rulebook.role(forHeading: clean) ?? SkillSectionRole.builtinRole(forHeading: clean)
+        let decision = SectionRoleResolver.decide(marker: parsed.marker, derivedRole: derived)
+        if decision.resolved {
+            let keptRole: SkillSectionRole?
+            if decision.fromMarker {
+                keptRole = decision.executes ? decision.role : nil
+            } else {
+                let keep = (decision.role?.isExecutable ?? false) || decision.role == SkillSectionRole.tools
+                keptRole = keep ? decision.role : nil
+            }
+            return (clean, keptRole, decision.executes, decision.recordedRole)
         }
         // Unresolved. Empty sections are harmless (recorded as inert); a section
         // with content is a hard error — no silent drops.
@@ -304,11 +306,8 @@ struct SkillSectionBuilder {
     /// (`bash`/`sh`/`shell`/…). Such blocks lower to deterministic `shell.run`
     /// invokes and remain executable within an executable section.
     private func isShellCodeBlock(_ line: SourceLine) -> Bool {
-        guard line.text.hasPrefix(codeBlockSentinelPrefix) else { return false }
-        let rest = line.text.dropFirst(codeBlockSentinelPrefix.count)
-        guard let colon = rest.firstIndex(of: ":") else { return false }
-        let lang = String(rest[rest.startIndex..<colon]).lowercased()
-        return shellFenceLanguages.contains(lang)
+        guard let (lang, _) = decodeCodeBlockSentinel(line.text) else { return false }
+        return lexicon.isShellFence(lang)
     }
 
     // MARK: Role lowering
@@ -328,7 +327,10 @@ struct SkillSectionBuilder {
         switch classify(text) {
         case .checkable:
             let cond = negated ? "not (\(text))" : text
-            return canonical("make sure \(cond)", from: group.head)
+            // Synthesize with the lexicon's primary assertion marker (default
+            // "make sure") so a domain that renames it stays self-consistent.
+            let marker = lexicon.assertionMarkers.first ?? "make sure"
+            return canonical("\(marker) \(cond)", from: group.head)
         case .dispatchPhrase, .fuzzy:
             // Contract/Anti-Patterns prose that isn't a checkable condition can
             // never become a deterministic assert — and we never silently drop
@@ -354,7 +356,12 @@ struct SkillSectionBuilder {
         case .checkable:
             // When-To-Use: skip (complete) unless the condition holds.
             // When-NOT-To-Use: skip (complete) when the condition holds.
-            let canonicalText = negated ? "complete only when \(text)" : "complete unless \(text)"
+            // `complete` is a fixed primitive; the suffix-conditional marker is
+            // sourced from grammar so this stays in lockstep with the parser.
+            let positiveMarker = lexicon.grammar.suffixConditionalMarkers
+                .first { $0 != lexicon.grammar.suffixConditionalNegated } ?? " only when "
+            let marker = negated ? positiveMarker : lexicon.grammar.suffixConditionalNegated
+            let canonicalText = "complete" + marker + text
             prelude.append(canonical(canonicalText, from: group.head))
         case .dispatchPhrase(let phrase):
             dispatch.append(phrase)

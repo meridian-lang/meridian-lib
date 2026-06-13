@@ -194,35 +194,19 @@ public final class SwiftPMPackageRunner {
             "import MeridianTools",
             "import GeneratedWorkflow",
             "",
-            "func valueFromJSON(_ s: String) -> Value {",
-            "    guard let data = s.data(using: .utf8),",
-            "          let obj = try? JSONSerialization.jsonObject(with: data) else { return .string(s) }",
-            "    return convertAny(obj)",
-            "}",
-            "func convertAny(_ obj: Any) -> Value {",
-            "    if obj is NSNull { return .null }",
-            "    if let s = obj as? String { return .string(s) }",
-            "    if let b = obj as? Bool { return .boolean(b) }",
-            "    if let n = obj as? NSNumber {",
-            "        if CFGetTypeID(n) == CFBooleanGetTypeID() { return .boolean(n.boolValue) }",
-            "        return .number(Decimal(string: n.stringValue) ?? 0)",
-            "    }",
-            "    if let arr = obj as? [Any] { return .list(arr.map(convertAny)) }",
-            "    if let dict = obj as? [String: Any] { return .record(dict.mapValues(convertAny)) }",
-            "    return .null",
-            "}",
+        ]
+        lines.append(contentsOf: DriverSourceBuilder.jsonBridge(includeMoneyCoercion: false))
+        lines.append(contentsOf: [
             "",
             "@main",
             "struct Driver {",
             "    static func main() async throws {",
             "        let registry = ToolRegistry()",
             "        await registry.registerBuiltins()"
-        ]
+        ])
 
         for pair in try parseAssignments(options.toolStubs, option: "--tool-stub") {
-            lines.append("        await registry.register(tool: \"\(escape(pair.name))\", .closure { _ in")
-            lines.append("            valueFromJSON(\"\(escape(pair.json))\")")
-            lines.append("        })")
+            lines.append(contentsOf: DriverSourceBuilder.toolStub(name: pair.name, json: pair.json, indent: "        "))
         }
 
         let checkpointRootExpr: String
@@ -242,8 +226,8 @@ public final class SwiftPMPackageRunner {
         for param in workflow.parameters {
             let swiftType = pascalCase(param.kind.name)
             let json = inputsByName[param.name] ?? "{}"
-            lines.append("        let _\(param.name)Data = Data(\"\(escape(json))\".utf8)")
-            lines.append("        let \(param.name) = try JSONDecoder().decode(\(swiftType).self, from: _\(param.name)Data)")
+            lines.append(contentsOf: DriverSourceBuilder.paramDecode(
+                name: param.name, swiftType: swiftType, json: json, indent: "        ", force: true))
         }
 
         let params = (["runtime: runtime"] + workflow.parameters.map { "\($0.name): \($0.name)" }).joined(separator: ", ")
@@ -269,17 +253,9 @@ public final class SwiftPMPackageRunner {
         }
     }
 
-    private func pascalCase(_ raw: String) -> String {
-        raw.split(whereSeparator: { $0 == " " || $0 == "_" })
-            .map { $0.prefix(1).uppercased() + $0.dropFirst().lowercased() }
-            .joined()
-    }
+    private func pascalCase(_ raw: String) -> String { IdentifierNaming.pascalCase(raw) }
 
-    private func escape(_ s: String) -> String {
-        s.replacingOccurrences(of: "\\", with: "\\\\")
-            .replacingOccurrences(of: "\"", with: "\\\"")
-            .replacingOccurrences(of: "\n", with: "\\n")
-    }
+    private func escape(_ s: String) -> String { escapeSwiftStringLiteral(s) }
 }
 
 public enum SwiftPMPackageRunnerError: Error, CustomStringConvertible {

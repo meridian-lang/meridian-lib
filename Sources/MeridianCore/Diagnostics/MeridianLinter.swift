@@ -15,13 +15,17 @@ public struct LintDiagnostic: Sendable, Equatable {
 }
 
 public struct MeridianLinter {
-    public init() {}
+    private let lexicon: EnglishLexicon
+
+    public init(lexicon: EnglishLexicon = .default) {
+        self.lexicon = lexicon
+    }
 
     public func lint(source: String, file: String = "") -> [LintDiagnostic] {
         let lines = IndentTokenizer().tokenize(source, file: file).filter(\.isContent)
         var diagnostics: [LintDiagnostic] = []
         var referents: [String] = []
-        let resolver = AnaphoraResolver()
+        let resolver = AnaphoraResolver(lexicon: lexicon)
 
         for line in lines where line.headingLevel == nil {
             let statement = line.statement
@@ -55,7 +59,14 @@ public struct MeridianLinter {
 
     private func containsAnaphora(_ text: String) -> Bool {
         let lower = text.lowercased()
-        return [" it", " them", "that result", "the same"].contains { lower.contains($0) }
+        return lexicon.anaphoraMarkers.contains { marker in
+            let pattern = "\\b" + NSRegularExpression.escapedPattern(for: marker) + "\\b"
+            guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else {
+                return false
+            }
+            let range = NSRange(lower.startIndex..<lower.endIndex, in: lower)
+            return regex.firstMatch(in: lower, range: range) != nil
+        }
     }
 
     private func paraphraseHint(for statement: String) -> String? {
@@ -69,11 +80,5 @@ public struct MeridianLinter {
         return nil
     }
 
-    private func camelize(_ raw: String) -> String {
-        let parts = raw.lowercased()
-            .split(whereSeparator: { $0 == " " || $0 == "_" })
-            .map(String.init)
-        guard let head = parts.first else { return raw.lowercased() }
-        return ([head] + parts.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }).joined()
-    }
+    private func camelize(_ raw: String) -> String { IdentifierNaming.lowerCamel(raw) }
 }

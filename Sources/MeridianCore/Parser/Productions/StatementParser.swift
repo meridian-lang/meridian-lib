@@ -32,7 +32,7 @@ public struct StatementParser {
         var stmts: [StatementAST] = []
         var content = lines.filter(\.isContent)
         var referents: [String] = []
-        let anaphora = AnaphoraResolver()
+        let anaphora = AnaphoraResolver(lexicon: lexicon)
         var i = 0
         while i < content.count {
             if content[i].headingLevel != nil {
@@ -175,7 +175,7 @@ public struct StatementParser {
 
     private func shouldResolveAnaphora(_ line: SourceLine) -> Bool {
         let lower = line.statement.lowercased()
-        if lower.contains("; if it fails ") { return false }
+        if lower.contains(lexicon.grammar.tryIdiomFailureSeparator) { return false }
         return true
     }
 
@@ -361,7 +361,7 @@ public struct StatementParser {
            let single = try parseInlineConditional(line, file: file) {
             return (.conditional(single), 1)
         }
-        if t.lowercased().hasPrefix("unless you decide that ") && t.hasSuffix(",") {
+        if t.lowercased().hasPrefix(lexicon.grammar.unlessYouDecideIntroducer) && t.hasSuffix(",") {
             let (cond, consumed) = try parseUnlessDecisionConditional(lines, at: i, file: file)
             return (.conditional(cond), consumed)
         }
@@ -533,7 +533,7 @@ public struct StatementParser {
         }
 
         // `use judgment to <goal>` — block (ends with ":") or single line.
-        for prefix in ["use judgment to ", "use judgement to ", "use your judgment to "] {
+        for prefix in lexicon.grammar.judgmentIntroducers {
             guard lower.hasPrefix(prefix) else { continue }
             var goal = String(t.dropFirst(prefix.count)).trimmingCharacters(in: .whitespaces)
             let isBlock = goal.hasSuffix(":")
@@ -551,15 +551,15 @@ public struct StatementParser {
         }
 
         // `with discretion:` block.
-        if lower == "with discretion:" || lower == "with discretion" {
+        if lower == lexicon.grammar.discretionMarker + ":" || lower == lexicon.grammar.discretionMarker {
             let body = collectBody()
             let proseText = body.text.joined(separator: "\n")
             return (.proseStep(ProseStepAST(text: proseText, sourceLine: line.number, dispatch: .discretion)), body.consumed)
         }
 
         // `with autonomy <options>:` block.
-        if lower.hasPrefix("with autonomy") {
-            let afterMarker = String(t.dropFirst("with autonomy".count))
+        if lower.hasPrefix(lexicon.grammar.autonomyMarker) {
+            let afterMarker = String(t.dropFirst(lexicon.grammar.autonomyMarker.count))
             let opts = afterMarker.hasSuffix(":")
                 ? String(afterMarker.dropLast()).trimmingCharacters(in: .whitespaces)
                 : afterMarker.trimmingCharacters(in: .whitespaces)
@@ -569,7 +569,7 @@ public struct StatementParser {
                 text: proseText,
                 sourceLine: line.number,
                 dispatch: .autonomy,
-                autonomy: parseAutonomyOptions(opts)
+                autonomy: AutonomyConfigAST.parse(opts, parseExpression: exprParser.parse)
             )), body.consumed)
         }
 
@@ -583,8 +583,7 @@ public struct StatementParser {
     private func parseChoiceGate(_ line: SourceLine) -> WaitStatementAST? {
         let t = line.statement
         let lower = t.lowercased()
-        let markers = ["ask the user to choose between ", "ask the user to choose from ",
-                       "choose between ", "ask to choose between "]
+        let markers = lexicon.grammar.choiceGateIntroducers
         guard let marker = markers.first(where: { lower.hasPrefix($0) }) else { return nil }
         let rest = String(t.dropFirst(marker.count))
         let options = doubleQuotedSpans(in: rest)
@@ -611,23 +610,12 @@ public struct StatementParser {
         return spans
     }
 
-    /// Parse autonomy-loop options from a `with autonomy …` clause via the
-    /// shared `AutonomyConfigAST.parse` factory.
-    private func parseAutonomyOptions(_ raw: String) -> AutonomyConfigAST {
-        AutonomyConfigAST.parse(raw, parseExpression: exprParser.parse)
-    }
-
     /// Expand a fenced shell code block into one `shell.run` invoke per command
     /// line. Returns `nil` when the line is not a shell-tagged code-block
     /// sentinel (so other code-block languages flow through unchanged).
     private func shellBlockStatements(_ line: SourceLine) -> [StatementAST]? {
-        let t = line.text
-        guard t.hasPrefix(codeBlockSentinelPrefix) else { return nil }
-        let rest = String(t.dropFirst(codeBlockSentinelPrefix.count))
-        guard let colon = rest.firstIndex(of: ":") else { return nil }
-        let lang = String(rest[rest.startIndex ..< colon]).lowercased()
-        guard shellFenceLanguages.contains(lang) else { return nil }
-        guard let body = decodeCodeBlockBody(t) else { return [] }
+        guard let (lang, body) = decodeCodeBlockSentinel(line.text) else { return nil }
+        guard lexicon.isShellFence(lang) else { return nil }
 
         let commands = splitShellCommands(body)
         return commands.map { cmd in
@@ -770,7 +758,7 @@ public struct StatementParser {
         let lower = t.lowercased()
 
         // Background spawn: `in the background, <stmt>.` → detached simultaneously.
-        for prefix in ["in the background, ", "in the background ", "spawn in the background, "] {
+        for prefix in lexicon.grammar.backgroundSpawnIntroducers {
             guard lower.hasPrefix(prefix) else { continue }
             let actionText = String(t.dropFirst(prefix.count)).trimmingCharacters(in: .whitespaces)
             guard !actionText.isEmpty else { return nil }
@@ -793,9 +781,9 @@ public struct StatementParser {
             ))
         }
 
-        if lower.hasPrefix("after "),
+        if lower.hasPrefix(lexicon.grammar.afterIdiomIntroducer),
            let comma = rangeOfMarkerOutsideQuotes(", ", in: t) {
-            let conditionText = String(t[t.index(t.startIndex, offsetBy: "after ".count)..<comma.lowerBound])
+            let conditionText = String(t[t.index(t.startIndex, offsetBy: lexicon.grammar.afterIdiomIntroducer.count)..<comma.lowerBound])
                 .trimmingCharacters(in: .whitespaces)
             let actionText = String(t[comma.upperBound...]).trimmingCharacters(in: .whitespaces)
             guard !conditionText.isEmpty, !actionText.isEmpty else { return nil }
@@ -809,18 +797,18 @@ public struct StatementParser {
             ))
         }
 
-        if let range = rangeOfMarkerOutsideQuotes(" except when ", in: t) {
+        if let range = rangeOfMarkerOutsideQuotes(lexicon.grammar.exceptWhenMarker, in: t) {
             let actionText = String(t[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
             let predicateText = String(t[range.upperBound...]).trimmingCharacters(in: .whitespaces)
             guard !actionText.isEmpty, !predicateText.isEmpty else { return nil }
-            let rewritten = "\(actionText) unless \(predicateText)"
+            let rewritten = "\(actionText)\(lexicon.grammar.suffixConditionalNegated)\(predicateText)"
             let rewrittenLine = SourceLine(indent: line.indent, text: rewritten, raw: line.raw, number: line.number)
             return try parseStatement([rewrittenLine], at: 0, file: file).0
         }
 
-        if lower.hasPrefix("try "),
-           let range = rangeOfMarkerOutsideQuotes("; if it fails ", in: t) {
-            let actionText = String(t[t.index(t.startIndex, offsetBy: "try ".count)..<range.lowerBound])
+        if lower.hasPrefix(lexicon.grammar.tryIdiomIntroducer),
+           let range = rangeOfMarkerOutsideQuotes(lexicon.grammar.tryIdiomFailureSeparator, in: t) {
+            let actionText = String(t[t.index(t.startIndex, offsetBy: lexicon.grammar.tryIdiomIntroducer.count)..<range.lowerBound])
                 .trimmingCharacters(in: .whitespaces)
             let handlerText = String(t[range.upperBound...]).trimmingCharacters(in: .whitespaces)
             guard !actionText.isEmpty, !handlerText.isEmpty else { return nil }
@@ -846,7 +834,7 @@ public struct StatementParser {
 
     private func passiveVoiceRewrite(_ text: String) -> String? {
         let lower = text.lowercased()
-        let markers = [" should be ", " must be ", " needs to be "]
+        let markers = lexicon.grammar.passiveModalityMarkers
         for marker in markers {
             guard let range = lower.range(of: marker) else { continue }
             let subject = String(text[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
@@ -861,7 +849,7 @@ public struct StatementParser {
 
     private func parseSuffixConditional(_ line: SourceLine, file: String) throws -> ConditionalStatementAST? {
         let t = line.statement
-        let markers = [" only when ", " unless "]
+        let markers = lexicon.grammar.suffixConditionalMarkers
         for marker in markers {
             guard let range = rangeOfMarkerOutsideQuotes(marker, in: t) else { continue }
             let actionText = String(t[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
@@ -873,7 +861,7 @@ public struct StatementParser {
             guard let stmt else { return nil }
 
             let parsedPredicate = parseDecisionPredicate(predicateText)
-            let condition: ExpressionAST = marker == " unless "
+            let condition: ExpressionAST = marker == lexicon.grammar.suffixConditionalNegated
                 ? .logical(.not, [parsedPredicate])
                 : parsedPredicate
             return ConditionalStatementAST(
@@ -891,7 +879,7 @@ public struct StatementParser {
         file: String
     ) throws -> (ConditionalStatementAST, Int) {
         let line = lines[i]
-        var question = String(line.statement.dropFirst("unless you decide that ".count))
+        var question = String(line.statement.dropFirst(lexicon.grammar.unlessYouDecideIntroducer.count))
         if question.hasSuffix(",") { question = String(question.dropLast()) }
         let parentIndent = line.indent
         var bodyLines: [SourceLine] = []
@@ -913,8 +901,8 @@ public struct StatementParser {
     private func parseDecisionPredicate(_ text: String) -> ExpressionAST {
         let t = text.trimmingCharacters(in: .whitespaces)
         let lower = t.lowercased()
-        if lower.hasPrefix("you decide that ") {
-            let question = String(t.dropFirst("you decide that ".count)).trimmingCharacters(in: .whitespaces)
+        if lower.hasPrefix(lexicon.grammar.youDecideIntroducer) {
+            let question = String(t.dropFirst(lexicon.grammar.youDecideIntroducer.count)).trimmingCharacters(in: .whitespaces)
             return .decideWhether(question: question)
         }
         return exprParser.parse(t)
@@ -933,7 +921,7 @@ public struct StatementParser {
 
             let singular = lexicon.singularize(rawNoun)
             let variable = camelize(singular)
-            let collection = ExpressionAST.identifierRef(camelize(pluralize(singular)))
+            let collection = ExpressionAST.identifierRef(camelize(lexicon.pluralize(singular)))
             let bodyText = "\(action) the \(singular)"
             let body = ASTBlock(
                 statements: [.phraseInvocation(PhraseInvocationAST(words: bodyText, sourceLine: line.number))],
@@ -960,15 +948,15 @@ public struct StatementParser {
         var ref = IterationRefinementAST()
 
         // 1. Trailing `sorted by <prop>[, <dir>]`.
-        if let r = rangeOfMarkerOutsideQuotes(" sorted by ", in: work) {
+        if let r = lexicon.sortByMarkers.lazy.compactMap({ rangeOfMarkerOutsideQuotes($0, in: work) }).first {
             let head = String(work[..<r.lowerBound])
             var tail = String(work[r.upperBound...]).trimmingCharacters(in: .whitespaces)
             var ascending = true
             if let comma = tail.range(of: ",") {
                 let dir = String(tail[comma.upperBound...]).trimmingCharacters(in: .whitespaces).lowercased()
                 tail = String(tail[..<comma.lowerBound]).trimmingCharacters(in: .whitespaces)
-                if dir.contains("newest") || dir.contains("descend") { ascending = false }
-                else if dir.contains("oldest") || dir.contains("ascend") { ascending = true }
+                if lexicon.descendingMarkers.contains(where: { dir.contains($0) }) { ascending = false }
+                else if lexicon.ascendingMarkers.contains(where: { dir.contains($0) }) { ascending = true }
             }
             if !tail.isEmpty { ref.sort = (camelize(tail), ascending) }
             work = head.trimmingCharacters(in: .whitespaces)
@@ -980,18 +968,13 @@ public struct StatementParser {
             let clause = String(work[r.upperBound...]).trimmingCharacters(in: .whitespaces)
             if !clause.isEmpty { ref.predicate = exprParser.parse(clause) }
             work = head.trimmingCharacters(in: .whitespaces)
-        } else if let r = rangeOfMarkerOutsideQuotes(" within the last ", in: work) {
-            let head = String(work[..<r.lowerBound])
-            let clause = String(work[r.upperBound...]).trimmingCharacters(in: .whitespaces)
+        } else if let hit = lexicon.temporalWindowMarkers.lazy.compactMap({ (marker, op) -> (Range<String.Index>, ComparisonOpAST)? in
+            rangeOfMarkerOutsideQuotes(marker, in: work).map { ($0, op) }
+        }).first {
+            let head = String(work[..<hit.0.lowerBound])
+            let clause = String(work[hit.0.upperBound...]).trimmingCharacters(in: .whitespaces)
             if let secs = durationSeconds(clause) {
-                ref.temporal = (lexicon.timestampProperty, .past, secs)
-            }
-            work = head.trimmingCharacters(in: .whitespaces)
-        } else if let r = rangeOfMarkerOutsideQuotes(" in the next ", in: work) {
-            let head = String(work[..<r.lowerBound])
-            let clause = String(work[r.upperBound...]).trimmingCharacters(in: .whitespaces)
-            if let secs = durationSeconds(clause) {
-                ref.temporal = (lexicon.timestampProperty, .future, secs)
+                ref.temporal = (lexicon.timestampProperty, hit.1 == .withinPast ? .past : .future, secs)
             }
             work = head.trimmingCharacters(in: .whitespaces)
         }
@@ -1017,14 +1000,6 @@ public struct StatementParser {
     private func durationSeconds(_ s: String) -> Double? {
         guard let (amount, unit) = lexicon.parseDuration(s) else { return nil }
         return amount * Double(unit.inSeconds)
-    }
-
-    private func pluralize(_ raw: String) -> String {
-        if raw.hasSuffix("s") { return raw }
-        if raw.hasSuffix("ch") || raw.hasSuffix("sh") || raw.hasSuffix("x") || raw.hasSuffix("z") {
-            return raw + "es"
-        }
-        return raw + "s"
     }
 
     private func splitStatementChain(_ text: String) -> [String] {
@@ -1114,31 +1089,15 @@ public struct StatementParser {
     }
 
     private func rangeOfMarkerOutsideQuotes(_ marker: String, in text: String) -> Range<String.Index>? {
-        let lower = text.lowercased()
-        var idx = lower.startIndex
-        var inString = false
-        while idx < lower.endIndex {
-            let c = lower[idx]
-            if c == "\"" {
-                inString.toggle()
-                idx = lower.index(after: idx)
-                continue
-            }
-            if !inString,
-               lower[idx...].hasPrefix(marker) {
-                return idx ..< lower.index(idx, offsetBy: marker.count)
-            }
-            idx = lower.index(after: idx)
-        }
-        return nil
+        QuoteAwareScanner.rangeOfMarker(marker, in: text, caseInsensitive: true)
     }
 
     // MARK: - Bind value (invoke expression or literal)
 
     private func parseBindValue(_ s: String, lines: [SourceLine], at i: Int) throws -> (ExpressionAST, Int) {
         // B3: "decide whether <question>" — routes to llm.decide at runtime.
-        if s.lowercased().hasPrefix("decide whether ") {
-            let question = String(s.dropFirst("decide whether ".count)).trimmingCharacters(in: .whitespaces)
+        if s.lowercased().hasPrefix(lexicon.grammar.decideWhetherIntroducer) {
+            let question = String(s.dropFirst(lexicon.grammar.decideWhetherIntroducer.count)).trimmingCharacters(in: .whitespaces)
             return (.decideWhether(question: question), 0)
         }
 
@@ -1147,7 +1106,7 @@ public struct StatementParser {
         // (.literal(.string)) and {{ expr }} interpolated bodies
         // (.interpolatedString) uniformly. Wrap both forms as .invoke so the
         // question argument can be any IRExpression (including interpolated).
-        if s.lowercased() == "decide using:" {
+        if s.lowercased() == lexicon.grammar.decideUsingMarker {
             var j = i + 1
             while j < lines.count {
                 let l = lines[j]
@@ -1172,19 +1131,6 @@ public struct StatementParser {
             return (expr, extra)
         }
         return (exprParser.parse(s), 0)
-    }
-
-    // MARK: - Code-block sentinel helper
-
-    /// Decode the base64 body from a code-block sentinel string.
-    private func decodeCodeBlockBody(_ s: String) -> String? {
-        guard s.hasPrefix(codeBlockSentinelPrefix) else { return nil }
-        let rest = String(s.dropFirst(codeBlockSentinelPrefix.count))
-        guard let colonIdx = rest.firstIndex(of: ":") else { return nil }
-        let b64 = String(rest[rest.index(after: colonIdx)...])
-        guard let data = Data(base64Encoded: b64),
-              let str  = String(data: data, encoding: .utf8) else { return nil }
-        return str
     }
 
     // MARK: - Invoke expression
@@ -1476,7 +1422,7 @@ public struct StatementParser {
             }
             let singular = lexicon.singularize(noun.trimmingCharacters(in: .whitespaces))
             variable   = camelize(singular)
-            collection = .identifierRef(camelize(pluralize(singular)))
+            collection = .identifierRef(camelize(lexicon.pluralize(singular)))
         }
 
         let parentIndent = line.indent
@@ -1525,22 +1471,22 @@ public struct StatementParser {
             return .duration(amount, unit)
         }
         // "for signal "name""
-        if s.lowercased().hasPrefix("for signal ") {
-            let sig = unquote(String(s.dropFirst("for signal ".count)))
+        if s.lowercased().hasPrefix(lexicon.grammar.waitSignalIntroducer) {
+            let sig = unquote(String(s.dropFirst(lexicon.grammar.waitSignalIntroducer.count)))
             return .signal(sig)
         }
         // "for approval from {role}"
-        if s.lowercased().hasPrefix("for approval from ") {
-            let roleWords = String(s.dropFirst("for approval from ".count))
+        if s.lowercased().hasPrefix(lexicon.grammar.waitApprovalIntroducer) {
+            let roleWords = String(s.dropFirst(lexicon.grammar.waitApprovalIntroducer.count))
                 .trimmingCharacters(in: .whitespaces)
             // subject is implicit (null at runtime); role is the stated words
             return .approval(subject: .literal(.string("")), byRole: roleWords)
         }
         // "for event {eventID}" or "for event {eventID} matching {predicate}"
-        if s.lowercased().hasPrefix("for event ") {
-            var rest = String(s.dropFirst("for event ".count)).trimmingCharacters(in: .whitespaces)
+        if s.lowercased().hasPrefix(lexicon.grammar.waitEventIntroducer) {
+            var rest = String(s.dropFirst(lexicon.grammar.waitEventIntroducer.count)).trimmingCharacters(in: .whitespaces)
             var matching: ExpressionAST? = nil
-            if let matchingRange = rest.range(of: " matching ", options: .caseInsensitive) {
+            if let matchingRange = rest.range(of: lexicon.grammar.waitMatchingMarker, options: .caseInsensitive) {
                 let predText = String(rest[matchingRange.upperBound...]).trimmingCharacters(in: .whitespaces)
                 matching = exprParser.parse(predText)
                 rest = String(rest[rest.startIndex ..< matchingRange.lowerBound]).trimmingCharacters(in: .whitespaces)
@@ -1665,11 +1611,6 @@ public struct StatementParser {
         return t.hasPrefix("recover from ")
             || t.hasPrefix("recover where ")
             || t == "simultaneously:"
-    }
-
-    /// Backwards-compat wrapper used by code that doesn't need the count.
-    private func collectMultiLine(_ lines: [SourceLine], at i: Int) -> String {
-        collectMultiLineCounted(lines, at: i).text
     }
 
     // MARK: - Utilities

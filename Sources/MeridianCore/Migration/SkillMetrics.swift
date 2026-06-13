@@ -81,13 +81,10 @@ public struct SkillMetrics: Sendable, Equatable {
     /// error only when it has content, which the real builder enforces).
     private static func sectionExecutes(_ heading: String) -> Bool {
         let parsed = SkillSectionRole.parseMarker(from: heading)
-        if let marker = parsed.marker, marker.inert || marker.role != nil {
-            return !marker.inert && (marker.role?.isExecutable ?? false)
-        }
-        if let role = SkillSectionRole.builtinRole(forHeading: parsed.cleanHeading) {
-            return role.isExecutable
-        }
-        return false
+        // Shared marker-first decision (metrics has no rulebook, so derivation is
+        // builtin-only); see `SectionRoleResolver`.
+        let derived = SkillSectionRole.builtinRole(forHeading: parsed.cleanHeading)
+        return SectionRoleResolver.decide(marker: parsed.marker, derivedRole: derived).executes
     }
 
     // MARK: - Judgment
@@ -127,14 +124,7 @@ public struct SkillMetrics: Sendable, Equatable {
     /// without frontmatter are returned verbatim.
     private static func bodyLines(of source: String) -> [String] {
         let lines = source.components(separatedBy: "\n")
-        var start = 0
-        while start < lines.count, lines[start].trimmingCharacters(in: .whitespaces).isEmpty { start += 1 }
-        guard start < lines.count, lines[start].trimmingCharacters(in: .whitespaces) == "---" else {
-            return lines
-        }
-        var close = start + 1
-        while close < lines.count, lines[close].trimmingCharacters(in: .whitespaces) != "---" { close += 1 }
-        guard close < lines.count else { return lines }
-        return Array(lines[(close + 1)...])
+        guard let fm = FrontmatterScanner.locate(lines, skipLeadingBlanks: true) else { return lines }
+        return Array(lines[(fm.close + 1)...])
     }
 }

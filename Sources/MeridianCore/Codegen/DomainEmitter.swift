@@ -360,9 +360,5 @@ public extension SwiftEmitter {
     }
 
     /// "validation result" → "ValidationResult"
-    private func typeName(_ raw: String) -> String {
-        raw.split(whereSeparator: { $0 == " " || $0 == "_" })
-            .map { $0.prefix(1).uppercased() + $0.dropFirst().lowercased() }
-            .joined()
-    }
+    private func typeName(_ raw: String) -> String { IdentifierNaming.pascalCase(raw) }
 }

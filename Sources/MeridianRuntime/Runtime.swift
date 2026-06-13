@@ -214,10 +214,7 @@ public actor Runtime {
             let executor = PlanExecutor(toolRegistry: toolRegistry)
             var bindings: [String: Value] = [:]
             for action in proposal.actions {
-                try await enforceActionLimits(action, sourceRange: sourceRange)
-                try await enforcePlanPolicy(action, sourceRange: sourceRange)
-                try await executor.validate(action, scopedTools: scope, sourceRange: sourceRange)
-                let result = try await invoke(tool: action.toolID, args: action.arguments, sourceRange: sourceRange)
+                let result = try await validateAndInvoke(action, scope: scope, executor: executor, sourceRange: sourceRange)
                 if let binding = action.resultBinding {
                     bindings[binding] = result
                 }
@@ -276,23 +273,15 @@ public actor Runtime {
         ))
 
         let initialSnapshot = makeSnapshot(from: loopValues)
-        if unless?(initialSnapshot) == true {
-            await emitAutonomyEnd(reason: "unless_condition_met", sourceRange: sourceRange)
-            return bindings
-        }
-        if until?(initialSnapshot) == true {
-            await emitAutonomyEnd(reason: "until_condition_met", sourceRange: sourceRange)
+        if let reason = checkAutonomyPredicates(snapshot: initialSnapshot, until: until, unless: unless) {
+            await emitAutonomyEnd(reason: reason, sourceRange: sourceRange)
             return bindings
         }
 
         for step in 0..<maxSteps {
             let currentSnapshot = makeSnapshot(from: loopValues)
-            if unless?(currentSnapshot) == true {
-                await emitAutonomyEnd(reason: "unless_condition_met", sourceRange: sourceRange)
-                return bindings
-            }
-            if until?(currentSnapshot) == true {
-                await emitAutonomyEnd(reason: "until_condition_met", sourceRange: sourceRange)
+            if let reason = checkAutonomyPredicates(snapshot: currentSnapshot, until: until, unless: unless) {
+                await emitAutonomyEnd(reason: reason, sourceRange: sourceRange)
                 return bindings
             }
             try await enforceHistoryLimits(observations, sourceRange: sourceRange)
@@ -312,10 +301,7 @@ public actor Runtime {
 
             case .action(let action):
                 do {
-                    try await enforceActionLimits(action, sourceRange: sourceRange)
-                    try await enforcePlanPolicy(action, sourceRange: sourceRange)
-                    try await executor.validate(action, scopedTools: scope, sourceRange: sourceRange)
-                    let result = try await invoke(tool: action.toolID, args: action.arguments, sourceRange: sourceRange)
+                    let result = try await validateAndInvoke(action, scope: scope, executor: executor, sourceRange: sourceRange)
                     if let binding = action.resultBinding {
                         bindings[binding] = result
                         loopValues[binding] = result
@@ -360,10 +346,7 @@ public actor Runtime {
                             )
                         }
                         for planned in proposal.actions {
-                            try await enforceActionLimits(planned, sourceRange: sourceRange)
-                            try await enforcePlanPolicy(planned, sourceRange: sourceRange)
-                            try await executor.validate(planned, scopedTools: scope, sourceRange: sourceRange)
-                            let result = try await invoke(tool: planned.toolID, args: planned.arguments, sourceRange: sourceRange)
+                            let result = try await validateAndInvoke(planned, scope: scope, executor: executor, sourceRange: sourceRange)
                             if let binding = planned.resultBinding {
                                 bindings[binding] = result
                                 loopValues[binding] = result
@@ -389,55 +372,34 @@ public actor Runtime {
     }
 
     private func enforcePlanningInputLimits(prose: String, sourceRange: SourceRange?) async throws {
-        guard prose.utf8.count <= planningLimits.maxProseBytes else {
-            await emitPlanRejection(
-                code: .prosePayloadTooLarge,
-                kind: "prose",
-                maxBytes: planningLimits.maxProseBytes,
-                sourceRange: sourceRange
-            )
-            throw MeridianRuntimeError.planningFailure(
-                .prosePayloadTooLarge,
-                message: "prose payload exceeds \(planningLimits.maxProseBytes) bytes",
-                sourceRange: sourceRange
-            )
-        }
+        try await enforceLimit(
+            bytes: prose.utf8.count, max: planningLimits.maxProseBytes,
+            code: .prosePayloadTooLarge, kind: "prose",
+            message: "prose payload exceeds \(planningLimits.maxProseBytes) bytes",
+            sourceRange: sourceRange
+        )
     }
 
     private func enforceSnapshotLimit(_ snapshot: StateSnapshot, sourceRange: SourceRange?) async throws {
         let bytes = encodedSize(snapshot) ?? describedSize(snapshot.asValues)
-        guard bytes <= planningLimits.maxSnapshotBytes else {
-            await emitPlanRejection(
-                code: .snapshotPayloadTooLarge,
-                kind: "snapshot",
-                maxBytes: planningLimits.maxSnapshotBytes,
-                sourceRange: sourceRange
-            )
-            throw MeridianRuntimeError.planningFailure(
-                .snapshotPayloadTooLarge,
-                message: "state snapshot exceeds \(planningLimits.maxSnapshotBytes) bytes",
-                sourceRange: sourceRange
-            )
-        }
+        try await enforceLimit(
+            bytes: bytes, max: planningLimits.maxSnapshotBytes,
+            code: .snapshotPayloadTooLarge, kind: "snapshot",
+            message: "state snapshot exceeds \(planningLimits.maxSnapshotBytes) bytes",
+            sourceRange: sourceRange
+        )
     }
 
     private func enforceHistoryLimits(_ observations: [ObservationTurn], sourceRange: SourceRange?) async throws {
         let bytes = observations.reduce(0) { total, turn in
             total + describedSize(turn.action) + describedSize(turn.outcome)
         }
-        guard bytes <= planningLimits.maxHistoryBytes else {
-            await emitPlanRejection(
-                code: .historyPayloadTooLarge,
-                kind: "history",
-                maxBytes: planningLimits.maxHistoryBytes,
-                sourceRange: sourceRange
-            )
-            throw MeridianRuntimeError.planningFailure(
-                .historyPayloadTooLarge,
-                message: "autonomy observation history exceeds \(planningLimits.maxHistoryBytes) bytes",
-                sourceRange: sourceRange
-            )
-        }
+        try await enforceLimit(
+            bytes: bytes, max: planningLimits.maxHistoryBytes,
+            code: .historyPayloadTooLarge, kind: "history",
+            message: "autonomy observation history exceeds \(planningLimits.maxHistoryBytes) bytes",
+            sourceRange: sourceRange
+        )
     }
 
     private func enforceProposalLimits(_ proposal: PlanProposal, sourceRange: SourceRange?) async throws {
@@ -448,38 +410,56 @@ public actor Runtime {
                     argTotal + pair.key.utf8.count + describedSize(pair.value)
                 }
         }
-        guard bytes <= planningLimits.maxProposalBytes else {
-            await emitPlanRejection(
-                code: .proposalPayloadTooLarge,
-                kind: "proposal",
-                maxBytes: planningLimits.maxProposalBytes,
-                sourceRange: sourceRange
-            )
-            throw MeridianRuntimeError.planningFailure(
-                .proposalPayloadTooLarge,
-                message: "planner proposal exceeds \(planningLimits.maxProposalBytes) bytes",
-                sourceRange: sourceRange
-            )
-        }
+        try await enforceLimit(
+            bytes: bytes, max: planningLimits.maxProposalBytes,
+            code: .proposalPayloadTooLarge, kind: "proposal",
+            message: "planner proposal exceeds \(planningLimits.maxProposalBytes) bytes",
+            sourceRange: sourceRange
+        )
     }
 
     private func enforceActionLimits(_ action: ProposedAction, sourceRange: SourceRange?) async throws {
         let bytes = action.arguments.reduce(0) { total, pair in
             total + pair.key.utf8.count + String(describing: pair.value).utf8.count
         }
-        guard bytes <= planningLimits.maxToolArgumentBytes else {
-            await emitPlanRejection(
-                code: .toolArgumentsPayloadTooLarge,
-                kind: "tool_arguments",
-                maxBytes: planningLimits.maxToolArgumentBytes,
-                sourceRange: sourceRange
-            )
-            throw MeridianRuntimeError.planningFailure(
-                .toolArgumentsPayloadTooLarge,
-                message: "tool arguments exceed \(planningLimits.maxToolArgumentBytes) bytes",
-                sourceRange: sourceRange
-            )
+        try await enforceLimit(
+            bytes: bytes, max: planningLimits.maxToolArgumentBytes,
+            code: .toolArgumentsPayloadTooLarge, kind: "tool_arguments",
+            message: "tool arguments exceed \(planningLimits.maxToolArgumentBytes) bytes",
+            sourceRange: sourceRange
+        )
+    }
+
+    /// Shared guard/reject/throw tail for every byte-budget limit: emit a
+    /// `plan.rejected` event and throw the matching `planningFailure` when
+    /// `bytes` exceeds `max`. Each caller keeps its own bespoke byte computation.
+    private func enforceLimit(bytes: Int, max: Int, code: PlanningFailureCode, kind: String, message: String, sourceRange: SourceRange?) async throws {
+        guard bytes <= max else {
+            await emitPlanRejection(code: code, kind: kind, maxBytes: max, sourceRange: sourceRange)
+            throw MeridianRuntimeError.planningFailure(code, message: message, sourceRange: sourceRange)
         }
+    }
+
+    /// The identical pre-invoke gauntlet a planned action runs in all three
+    /// planning paths (prose plan, autonomy step, autonomy replan): limit + host
+    /// policy + scoped-tool/schema validation, then dispatch. The divergent
+    /// binding / checkpoint / loop-state handling stays at the call sites.
+    private func validateAndInvoke(_ action: ProposedAction, scope: Set<String>, executor: PlanExecutor, sourceRange: SourceRange?) async throws -> Value {
+        try await enforceActionLimits(action, sourceRange: sourceRange)
+        try await enforcePlanPolicy(action, sourceRange: sourceRange)
+        try await executor.validate(action, scopedTools: scope, sourceRange: sourceRange)
+        return try await invoke(tool: action.toolID, args: action.arguments, sourceRange: sourceRange)
+    }
+
+    /// The autonomy loop's `unless`/`until` early-exit check (unless before
+    /// until), shared by the pre-loop and per-iteration guards. Returns the exact
+    /// `emitAutonomyEnd` reason string, or nil to continue.
+    private func checkAutonomyPredicates(snapshot: StateSnapshot,
+                                         until: (@Sendable (StateSnapshot) -> Bool)?,
+                                         unless: (@Sendable (StateSnapshot) -> Bool)?) -> String? {
+        if unless?(snapshot) == true { return "unless_condition_met" }
+        if until?(snapshot) == true { return "until_condition_met" }
+        return nil
     }
 
     private func makeSnapshot(from values: [String: Value]) -> StateSnapshot {

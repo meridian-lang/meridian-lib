@@ -253,6 +253,7 @@ Generated when `MerConfigFile.instances` is non-empty.
 | `recover` | `RecoverIR.attachedTo` is the protected block, `.handler` is the catch block. Emits `do { <attachedTo> } catch let _recoveredError { <handler> }`. Named patterns use `meridianMatches(_recoveredError, named: "…")`. |
 | `complete` | Emits two statements: `await runtime.complete(reason:)` then `return WorkflowResult(…)` |
 | `simultaneously` | Emits a `try await withThrowingTaskGroup(of: Void.self) { group in … }` block. Each `SimultaneouslyIR.branches[i]` becomes `group.addTask { … }`. After all tasks are added, the group drains with `for try await _ in group { }`. |
+| `proseStep` | `ProseStepIR.dispatchMode`: `.planThenExecute` → `try await runtime.executeProsePlan(prose: "…", scopedTools: […], …)`; `.autonomousLoop` → `runtime.executeAutonomousLoop(…)` with the `AutonomyConfigIR` (`until` / `unless` closures over a restored `StateSnapshot`, `replanAfterFailures`, `maxSteps`). The prose `text` is `escapeSwiftString`-escaped. Produced by `use judgment to …:`, `with discretion`/`with autonomy` bodies, AND `!!! table/checklist (( ai-discretion \| ai-autonomy ))` (see [12_PROSE_AND_AUTONOMY.md](12_PROSE_AND_AUTONOMY.md)). |
 
 ---
 

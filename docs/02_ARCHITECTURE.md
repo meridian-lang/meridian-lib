@@ -37,16 +37,33 @@ Sources/MeridianCore/
 │
 ├── Parser/
 │   ├── Lexical/
-│   │   ├── IndentTokenizer.swift    ← Converts raw source to SourceLine[]
+│   │   ├── IndentTokenizer.swift    ← Raw source → SourceLine[]; collapses
+│   │   │                              code-block / table / checklist blocks
+│   │   │                              (BlockKind / TableMode / ChecklistMode)
 │   │   └── ExpressionParser.swift  ← Parses single-line expressions
-│   └── Productions/
-│       ├── MerConfigParser.swift    ← Parses .merconfig files
-│       ├── MeridianParser.swift     ← Parses .meridian files
-│       ├── StatementParser.swift    ← Parses individual statements
-│       └── PhrasePatternParser.swift ← Parses "To {verb} a {kind}:" headers
+│   ├── Productions/
+│   │   ├── MerConfigParser.swift    ← Parses .merconfig files
+│   │   ├── MeridianParser.swift     ← Parses .meridian files
+│   │   ├── StatementParser.swift    ← Parses statements; expands table/checklist
+│   │   ├── TableParser.swift        ← Decodes table sentinels → branches /
+│   │   │                              recordList / AI-decision prose
+│   │   └── PhrasePatternParser.swift ← Parses "To {verb} a {kind}:" headers
+│   └── Skill/
+│       ├── SkillSectionBuilder.swift ← Heading → SkillSectionRole; ## Tools Used
+│       └── ConditionClassifier.swift ← checkable / dispatch-phrase / fuzzy
 │
 ├── AST/
-│   └── MeridianAST.swift           ← All AST node types
+│   └── MeridianAST.swift           ← All AST node types (+ LanguageSynonyms)
+│
+├── Language/
+│   ├── EnglishLexicon.swift        ← Author-extensible surface vocabulary
+│   │                                  (articles, copulas, comparison/duration/
+│   │                                  assertion markers, emptiness, temporal,
+│   │                                  aggregates, superlatives, …) + .grammar
+│   ├── FixedGrammar.swift          ← Closed grammar skeleton (relativizers,
+│   │                                  prose/idiom introducers, relational
+│   │                                  markers) — centralized, not extensible
+│   └── AnaphoraResolver.swift      ← Resolves anaphora via lexicon markers
 │
 ├── Symbols/
 │   └── SymbolTable.swift           ← Phrase matching + arg extraction
@@ -54,8 +71,16 @@ Sources/MeridianCore/
 ├── Lowering/
 │   └── ASTToIR.swift               ← AST → IR primitives + phrase inlining
 │
+├── Rulebook/
+│   ├── Rulebook.swift              ← 4 families: desugar / sections / conventions
+│   │                                  / triggers; builtin section + trigger seeds
+│   ├── RulebookParser.swift        ← Parses .merrules (=== name === sections)
+│   └── RewriteEngine.swift         ← Applies desugar rewrites (bounded fixpoint)
+│
 ├── IR/
-│   └── IRTypes.swift               ← IRWorkflow, IRPrimitive (11 cases), IRExpression
+│   └── IRTypes.swift               ← IRWorkflow, IRPrimitive (12 cases: the 11
+│                                      Blueprint primitives + proseStep for the
+│                                      discretion/autonomy prose path), IRExpression
 │
 ├── Codegen/
 │   ├── SwiftEmitter.swift          ← IR → Swift source (StringTemplate)

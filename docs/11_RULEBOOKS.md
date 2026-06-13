@@ -74,7 +74,7 @@ that don't list a `rulebook:` are byte-for-byte unaffected.
 
 ## File structure
 
-A `.merrules` file has three section families, each introduced by a
+A `.merrules` file has four section families, each introduced by a
 `=== name ===` header (the same delimiter style as `.merconfig`). `#` comment
 lines are ignored.
 
@@ -82,6 +82,7 @@ lines are ignored.
 === desugar ===
 === sections ===
 === conventions ===
+=== triggers ===
 ```
 
 ---
@@ -181,7 +182,11 @@ The closed role set (exhaustive `switch`, no `default:`):
 
 An **unmarked** heading with no rulebook alias resolves to its built-in default
 (`SkillSectionRole.builtinRole(forHeading:)`, which also recognizes the
-`Phase N: …` prefix and common applicability/output variants). A heading that
+`Phase N: …` prefix and common applicability/output variants). The built-in
+aliases are themselves **data** — `SkillSectionRole.builtinSectionAliases` (a
+single table, also exposed as the `Rulebook.defaultSections` rulebook) — so the
+defaults and author `=== sections ===` extensions share one representation.
+Resolution precedence is `rulebook alias ?? builtin`. A heading that
 resolves to nothing **and has content** is a hard `semanticError` — there is no
 silent `inert` fallback. The author then adds a `=== sections ===` alias here,
 forces a role inline with `(( role: <R> ))`, or marks it `(( inert ))`. Section
@@ -235,6 +240,37 @@ restatement — fewer edits, DRY, and matching gbrain's own `conventions/` desig
 The convention body is parsed and lowered through the same strict pipeline as
 any workflow statement, so an unresolved phrase inside a convention is a hard
 error.
+
+---
+
+## Family 4 — Trigger words (`=== triggers ===`)
+
+`triggers:` frontmatter entries describe **how** a skill is activated and are
+classified into a closed `TriggerKind` — `keyword` / `ambient` / `event` /
+`schedule` — by `TriggerClassifier`. The classification keyword sets are data:
+built-in defaults live in `Rulebook.defaultTriggers`, and a rulebook extends them
+per kind. `keyword` is the fallback (no words needed); the other three are
+keyword-driven (plus cron-shape detection for `schedule`).
+
+```
+=== triggers ===
+schedule: fortnightly, quarterly
+ambient: firehose
+event: ingested, reconciled
+```
+
+Each line is `<kind>: word1, word2, …` where `<kind>` is a `TriggerKind` raw
+value; an unknown kind is a hard `semanticError`. Author words **add to** (never
+remove from) the built-in set for a kind — `Rulebook.triggerWordSets()` unions
+`defaultTriggers` with the author rules. So with the block above, a `triggers:`
+spec of `fortnightly digest` classifies as `schedule` while the built-in
+`nightly`/`webhook received`/… still classify as before.
+
+A trigger never reaches the LLM: each compiles to a deterministic `wait` + a
+`trigger.<name>.fired` fan-out event (the host owns actual firing; routing is the
+resolver workflow's job). The typed kind + spec are recorded in the manifest
+under `meridian_skill.triggers`. See [03_LANGUAGE_QUICK_REFERENCE.md](03_LANGUAGE_QUICK_REFERENCE.md)
+for the `triggers:` frontmatter surface.
 
 ---
 

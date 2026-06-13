@@ -4,9 +4,12 @@ Meridian is a controlled natural language compiler. It reads English-shaped
 workflow specifications and produces type-safe, async/await Swift source that
 runs against a small deterministic runtime.
 
-> **Current status:** Phases 0–6 complete. Generated Swift compiles, links, and
-> runs against `MeridianRuntime`. Replay-safe resume, all 11 IR primitives,
-> Blueprint built-ins, full CLI, MeridianTestKit, and DocC bundles are shipped.
+> **Current status:** Phases 0–6 + the expressive SKILL.md surface (Phase G),
+> the Inform-7-tier deterministic surface (Waves 1–3), and the inert-reduction
+> program (executable Markdown tables/task-lists + AI-routing) are all complete.
+> Generated Swift compiles, links, and runs against `MeridianRuntime`.
+> Replay-safe resume, all 11 IR primitives, Blueprint built-ins, full CLI,
+> MeridianTestKit, and DocC bundles are shipped. See [status.md](status.md).
 
 ---
 

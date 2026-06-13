@@ -297,7 +297,7 @@ struct RuleInjector {
     private func extractObjectKindForPermission(_ text: String) -> String {
         let lower = text.lowercased().trimmingCharacters(in: .whitespaces)
         let words = lower.components(separatedBy: " ").filter { !$0.isEmpty }
-        let articles: Set<String> = ["a", "an", "the", "any", "some", "all"]
+        let articles = lexicon.grammar.nounPhraseDeterminers
         for (i, w) in words.enumerated() {
             if articles.contains(w), i + 1 < words.count {
                 return words[(i + 1)...].joined(separator: " ")
@@ -311,10 +311,8 @@ struct RuleInjector {
     /// workflow's display-name tokens. Stop-words and the subject's own
     /// kind tokens are filtered out so they don't inflate overlap.
     private func verbOverlap(_ actionText: String, workflow: IRWorkflow) -> Int {
-        let stopwords = lexicon.toolStopwords.union(lexicon.articles).union(lexicon.prepositions)
-        let actionTokens = Set(tokenize(actionText, stopwords: stopwords).flatMap { stems(of: $0) })
-        let workflowTokens = Set(tokenize(workflow.name, stopwords: stopwords).flatMap { stems(of: $0) })
-        return actionTokens.intersection(workflowTokens).count
+        WorkflowActionMatcher.overlap(action: actionText, workflow: workflow,
+                                      scope: .nameOnly, lexicon: lexicon)
     }
 
     /// True when a workflow body already contains an approval step — either
@@ -362,33 +360,10 @@ struct RuleInjector {
     /// Strips well-known suffixes so `orders`, `ordered`, `ordering`, `order`
     /// all collapse onto the same stem set. We always include the original
     /// to keep exact matches working too.
-    private func stems(of word: String) -> [String] {
-        var out: [String] = [word]
-        let lower = word.lowercased()
-        // Plurals (cars → car, batches → batch, parties → party)
-        if lower.hasSuffix("ies") && lower.count > 4 {
-            out.append(String(lower.dropLast(3)) + "y")
-        } else if lower.hasSuffix("es") && lower.count > 3 {
-            out.append(String(lower.dropLast(2)))
-        } else if lower.hasSuffix("s") && lower.count > 2 {
-            out.append(String(lower.dropLast()))
-        }
-        // Past tense / progressive
-        if lower.hasSuffix("ed") && lower.count > 3 {
-            out.append(String(lower.dropLast(2)))     // placed → plac
-            out.append(String(lower.dropLast()))      // placed → place (e-stem)
-        }
-        if lower.hasSuffix("ing") && lower.count > 4 {
-            out.append(String(lower.dropLast(3)))     // placing → plac
-            out.append(String(lower.dropLast(3)) + "e")  // placing → place
-        }
-        return out
-    }
+    private func stems(of word: String) -> [String] { WordStemmer.stems(of: word) }
 
     private func tokenize(_ s: String, stopwords: Set<String>) -> [String] {
-        s.lowercased()
-            .components(separatedBy: CharacterSet.alphanumerics.inverted)
-            .filter { !$0.isEmpty && !stopwords.contains($0) }
+        WordStemmer.tokenize(s, stopwords: stopwords)
     }
 
     private func buildInvariantCondition(filter: ExpressionAST?) -> IRExpression? {
@@ -424,7 +399,6 @@ struct RuleInjector {
         let condTokens = tokenize(conditionText, stopwords: stopwords)
         let eventName = camelCase(condTokens.prefix(5).joined(separator: " "))
         let actionEvent = "trigger." + eventName + ".fired"
-        let waitIR = WaitIR(condition: .event(eventName, matching: nil), timeout: nil, sourceRange: sr)
 
         // Trigger workflow has no parameters because the wait condition is
         // an external event whose payload supplies the subjects at runtime.
@@ -457,23 +431,16 @@ struct RuleInjector {
             }
         }
 
-        let emitIR = EmitIR(
-            eventID: actionEvent,
+        return TriggerWorkflowBuilder.make(
+            name: "when " + conditionText,
+            waitEvent: eventName,
+            fireEventID: actionEvent,
             payload: [
                 EmitField("action", .literal(.string(actionText))),
                 EmitField("condition", .literal(.string(conditionText)))
             ],
-            strict: true,
-            sourceRange: sr
-        )
-        let body = IRBlock(statements: [.wait(waitIR), .emit(emitIR)], sourceRange: sr)
-        return IRWorkflow(
-            name: "when " + conditionText,
-            parameters: [],
-            body: body,
-            mode: .strict,
             sourceFile: sourceFile,
-            sourceRange: sr
+            line: sourceLine
         )
     }
 
@@ -536,48 +503,11 @@ struct RuleInjector {
         }
     }
 
-    private func lowerLiteralSimple(_ lit: LiteralAST) -> IRExpression {
-        switch lit {
-        case .string(let s):        return .literal(.string(s))
-        case .integer(let n):       return .literal(.number(Decimal(n)))
-        case .double(let d):        return .literal(.number(Decimal(d)))
-        case .boolean(let b):       return .literal(.boolean(b))
-        case .money(let a, let c):  return .literal(.money(Decimal(a), currency: c))
-        case .duration(let v, let u):
-            return .literal(.duration(.seconds(Int64(v * Double(u.inSeconds)))))
-        }
-    }
+    private func lowerLiteralSimple(_ lit: LiteralAST) -> IRExpression { .literal(LiteralLowering.toIRLiteral(lit)) }
 
-    private func lowerOpSimple(_ op: ComparisonOpAST) -> ComparisonOp {
-        switch op {
-        case .equal:          return .equal
-        case .notEqual:       return .notEqual
-        case .lessThan:       return .lessThan
-        case .lessOrEqual:    return .lessOrEqual
-        case .greaterThan:    return .greaterThan
-        case .greaterOrEqual: return .greaterOrEqual
-        case .within:         return .withinDuration
-        case .contains:       return .contains
-        case .oneOf:          return .oneOf
-        case .matchesPattern: return .matchesPattern
-        case .withinPast:     return .withinPast
-        case .withinFuture:   return .withinFuture
-        case .isEmpty:        return .isEmpty
-        case .isNotEmpty:     return .isNotEmpty
-        }
-    }
+    private func lowerOpSimple(_ op: ComparisonOpAST) -> ComparisonOp { LiteralLowering.mapComparisonOp(op) }
 
-    private func lowerLogicalOpSimple(_ op: LogicalOpAST) -> LogicalOp {
-        switch op {
-        case .and: return .and
-        case .or:  return .or
-        case .not: return .not
-        }
-    }
+    private func lowerLogicalOpSimple(_ op: LogicalOpAST) -> LogicalOp { LiteralLowering.mapLogicalOp(op) }
 
-    private func camelCase(_ s: String) -> String {
-        let parts = s.split(whereSeparator: { $0 == " " || $0 == "_" }).map(String.init)
-        guard let first = parts.first else { return s }
-        return first + parts.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined()
-    }
+    private func camelCase(_ s: String) -> String { IdentifierNaming.camelPreservingCase(s) }
 }

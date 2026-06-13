@@ -194,6 +194,9 @@ public extension Value {
 // MARK: - CustomStringConvertible
 
 extension Value: CustomStringConvertible {
+    /// Debug rendering — quotes strings, summarises records/lists. NEVER the
+    /// basis for JSON serialization or string interpolation; use
+    /// `jsonEncodableObject` / `scalarDescription` for those.
     public var description: String {
         switch self {
         case .string(let s): return "\"\(s)\""
@@ -201,14 +204,57 @@ extension Value: CustomStringConvertible {
         case .boolean(let b): return b.description
         case .money(let m): return m.description
         case .duration(let d): return d.description
-        case .date(let d): return ISO8601DateFormatter().string(from: d)
-        case .dateTime(let d): return ISO8601DateFormatter().string(from: d)
+        case .date(let d): return ISO8601DateFormatter.meridianFormatter.string(from: d)
+        case .dateTime(let d): return ISO8601DateFormatter.meridianFormatter.string(from: d)
         case .enumValue(let v, _): return v
         case .record(let d): return "<Record \(d.keys.joined(separator: ","))>"
         case .list(let a): return "<List count=\(a.count)>"
         case .reference(let r): return "<Ref \(r)>"
         case .null: return "null"
         case .opaque(let v): return "<opaque \(v)>"
+        }
+    }
+}
+
+// MARK: - Canonical serialization
+
+public extension Value {
+    /// The single JSON-compatible projection used for event payloads, tool
+    /// arguments, and any `JSONSerialization`/`Codable` walk. Numbers preserve
+    /// decimal precision (`NSDecimalNumber`), dates use the cached fractional
+    /// ISO-8601 `meridianFormatter`, references/enum-values unwrap to their raw
+    /// payload, and money/duration use their `.description`. Records and lists
+    /// recurse. This is the canonical walk — never `description`.
+    var jsonEncodableObject: Any {
+        switch self {
+        case .string(let s): return s
+        case .number(let n): return NSDecimalNumber(decimal: n)
+        case .boolean(let b): return b
+        case .money(let m): return m.description
+        case .duration(let d): return d.description
+        case .date(let d): return ISO8601DateFormatter.meridianFormatter.string(from: d)
+        case .dateTime(let d): return ISO8601DateFormatter.meridianFormatter.string(from: d)
+        case .enumValue(let v, _): return v
+        case .record(let dict): return dict.mapValues { $0.jsonEncodableObject }
+        case .list(let arr): return arr.map { $0.jsonEncodableObject }
+        case .reference(let r): return r
+        case .null: return NSNull()
+        case .opaque(let box): return String(describing: box)
+        }
+    }
+
+    /// The single human-readable scalar rendering used for `{hole}` template
+    /// substitution and the emitted `meridianStringify` helper: raw (unquoted)
+    /// strings, plain numbers/booleans, fractional ISO-8601 dates, empty string
+    /// for null, and the debug `description` for composite/opaque values.
+    var scalarDescription: String {
+        switch self {
+        case .string(let s): return s
+        case .number(let n): return n.description
+        case .boolean(let b): return b ? "true" : "false"
+        case .date(let d), .dateTime(let d): return ISO8601DateFormatter.meridianFormatter.string(from: d)
+        case .null: return ""
+        default: return description
         }
     }
 }

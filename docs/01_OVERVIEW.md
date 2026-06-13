@@ -125,6 +125,14 @@ non-deterministic. The *compilation* is deterministic.
   side effects with stable progress labels.
 - **Blueprint built-ins** — `MeridianTools.registerBuiltins()` adds HTTP, file, JSON,
   regex, shell, MCP, schema validation, time, and UUID tools out of the box.
+- **Executable Markdown surface** — SKILL.md-shaped docs are first-class: `##`
+  headings carry section roles, Markdown tables compile to branches / data
+  records, and task lists to invariant asserts. Fuzzy tables/checklists route to
+  the planner via `(( ai-discretion ))` / `(( ai-autonomy ))` instead of being
+  inert documentation.
+- **Plan & autonomy prose** — `with discretion` / `with autonomy` (and the AI
+  Markdown markers) lower to a typed planner boundary, so judgment-bearing steps
+  are interwoven with deterministic IR rather than hand-waved.
 
 ## End-to-end flow
 

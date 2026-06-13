@@ -112,6 +112,13 @@ public final class SymbolTable: @unchecked Sendable {
         return b.form
     }
 
+    /// A ` (did you mean "…"?)` hint for an unknown verb form, or "" when no
+    /// declared form is close enough. Single source for the suggestion suffix
+    /// used by both `ExpressionParser` and `ASTToIR` on unknown-verb errors.
+    public func verbFormSuggestion(for form: String) -> String {
+        nearestVerbForm(to: form).map { " (did you mean \"\($0)\"?)" } ?? ""
+    }
+
     static func levenshtein(_ a: String, _ b: String) -> Int {
         let x = Array(a), y = Array(b)
         if x.isEmpty { return y.count }
@@ -279,37 +286,9 @@ public final class SymbolTable: @unchecked Sendable {
 
         let args = extractArgs(invocation, pattern: winner.phrase.pattern)
         for (k, v) in args {
-            trace.log(.phraseExtractArgs, "  arg[\(k)] = \(describeExpr(v))")
+            trace.log(.phraseExtractArgs, "  arg[\(k)] = \(v.traceDescription(detail: .compact))")
         }
         return (winner.phrase, args)
-    }
-
-    private func describeExpr(_ e: ExpressionAST) -> String {
-        switch e {
-        case .literal(.string(let s)):     return "\"\(s)\""
-        case .literal(.integer(let n)):    return "\(n)"
-        case .literal(.double(let d)):     return "\(d)"
-        case .literal:                     return "lit"
-        case .identifierRef(let n):        return "id(\(n))"
-        case .instanceRef(let n):          return "inst(\(n))"
-        case .constantRef(let n):          return "const(\(n))"
-        case .propertyAccess(let b, let p):return "\(describeExpr(b)).\(p)"
-        case .comparison:                  return "cmp(...)"
-        case .logical:                     return "logical(...)"
-        case .invoke(let tool, _):         return "invoke(\(tool))"
-        case .envVar(let n):               return "$\(n)"
-        case .now:                         return "now"
-        case .decideWhether(let q):        return "decide(\(q))"
-        case .interpolatedString(let segs): return "interp(\(segs.count) segs)"
-        case .recordList(let f, let rows): return "recordList(\(f.count) fields, \(rows.count) rows)"
-        case .quantified(let q):           return "quant(\(q.kind))"
-        case .verbPredicate(_, let v, _):  return "verb(\(v))"
-        case .relationTraversal(_, let r, _): return "rel(\(r))"
-        case .description(let d):          return "desc(\(d.noun))"
-        case .aggregate(let k, let d):     return "agg(\(k), \(d.noun))"
-        case .superlative(let s):          return "super(\(s.property))"
-        case .malformed(let m):            return "malformed(\(m))"
-        }
     }
 
     private func overlap(_ invWords: [String], pattern: PhrasePattern) -> Int {

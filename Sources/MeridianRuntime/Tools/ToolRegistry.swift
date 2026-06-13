@@ -156,7 +156,7 @@ public struct DefaultMCPClient: MCPClient {
             "jsonrpc": "2.0",
             "id": 1,
             "method": method,
-            "params": params.jsonCompatibleObject
+            "params": params.jsonEncodableObject
         ]
         return try JSONSerialization.data(withJSONObject: request)
     }
@@ -431,7 +431,7 @@ public actor ToolRegistry {
         case .string(let s):
             return Data(s.utf8)
         default:
-            let obj = value.jsonCompatibleObject
+            let obj = value.jsonEncodableObject
             guard JSONSerialization.isValidJSONObject(obj) else {
                 throw ToolError.argumentCoercion(field: "body", expected: "JSON-compatible value", actual: value.description)
             }
@@ -448,14 +448,7 @@ public actor ToolRegistry {
     }
 
     private func valueString(_ value: Value) -> String {
-        switch value {
-        case .string(let s): return s
-        case .number(let n): return n.description
-        case .boolean(let b): return b ? "true" : "false"
-        case .date(let d), .dateTime(let d): return ISO8601DateFormatter.meridianFormatter.string(from: d)
-        case .null: return ""
-        default: return value.description
-        }
+        value.scalarDescription
     }
 
     private func requiredString(_ args: [String: Value], _ key: String) throws -> String {
@@ -480,20 +473,6 @@ public actor ToolRegistry {
         case .duration(let duration)?: return duration
         case .number(let seconds)?: return .seconds(Int64((seconds as NSDecimalNumber).doubleValue))
         default: return nil
-        }
-    }
-}
-
-private extension Value {
-    var jsonCompatibleObject: Any {
-        switch self {
-        case .string(let s): return s
-        case .number(let n): return NSDecimalNumber(decimal: n)
-        case .boolean(let b): return b
-        case .record(let dict): return dict.mapValues { $0.jsonCompatibleObject }
-        case .list(let list): return list.map { $0.jsonCompatibleObject }
-        case .null: return NSNull()
-        default: return description
         }
     }
 }

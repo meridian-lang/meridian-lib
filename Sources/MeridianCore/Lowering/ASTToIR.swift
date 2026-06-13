@@ -41,6 +41,20 @@ public struct ASTToIR {
     }
 
     /// Effective tool allow-list for a prose/autonomy plan step.
+    /// Build a single prose-step statement. Both prose entry points (an explicit
+    /// `proseStep` AST node and an unresolved phrase invocation inside a
+    /// discretion/autonomy workflow) share the same scoped-tools and
+    /// source-range plumbing; only `text`, `dispatchMode`, and `autonomy` vary.
+    private func makeProseStep(text: String, dispatchMode: ProseDispatchMode, autonomy: AutonomyConfigIR?, line: Int) -> IRPrimitive {
+        .proseStep(ProseStepIR(
+            text: text,
+            scopedTools: effectiveScopedTools,
+            dispatchMode: dispatchMode,
+            autonomy: autonomy,
+            sourceRange: sourceRange(line)
+        ))
+    }
+
     private var effectiveScopedTools: [String] {
         scopedTools ?? Array(symbols.tools.keys).sorted()
     }
@@ -236,11 +250,7 @@ public struct ASTToIR {
     }
 
     /// Convert a natural-language kind name to UpperCamelCase Swift type name.
-    private func kindName(_ s: String) -> String {
-        s.split(separator: " ").map { word in
-            word.prefix(1).uppercased() + word.dropFirst().lowercased()
-        }.joined()
-    }
+    private func kindName(_ s: String) -> String { IdentifierNaming.pascalCaseFromSpaces(s) }
 
     // MARK: - Block lowering
 
@@ -291,9 +301,7 @@ public struct ASTToIR {
     /// folds camelCase parameter names (`pullRequest`), spaced bind names
     /// (`validation result` → `validationResult`), and lowered hole identifiers
     /// to a single comparable form.
-    private func scopeKey(_ s: String) -> String {
-        String(s.lowercased().unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) }.map(Character.init))
-    }
+    private func scopeKey(_ s: String) -> String { ScopeNaming.key(s) }
 
     private func modeFromBlock(_ block: ASTBlock) -> ExecutionMode {
         for stmt in block.statements {
@@ -547,13 +555,7 @@ public struct ASTToIR {
                     range: sourceRange(s.sourceLine)
                 )
             }
-            return [.proseStep(ProseStepIR(
-                text: s.text,
-                scopedTools: effectiveScopedTools,
-                dispatchMode: mode,
-                autonomy: effectiveAutonomy,
-                sourceRange: sourceRange(s.sourceLine)
-            ))]
+            return [makeProseStep(text: s.text, dispatchMode: mode, autonomy: effectiveAutonomy, line: s.sourceLine)]
 
         case .modal:
             return []  // handled at block level
@@ -633,32 +635,44 @@ public struct ASTToIR {
     /// `await` lives at statement scope, not inside the value expression.
     /// Non-relational values produce no prelude.
     private func lowerBindValue(_ expr: ExpressionAST, scope: Set<String>? = nil, line: Int) throws -> ([IRPrimitive], IRExpression) {
+        // Statement position can host an `await`, so a tool-backed relation fetch
+        // is allowed and its hoisted prelude is propagated.
+        if let rel = try lowerRelationalExpr(expr, allowToolFetch: true, scope: scope, line: line) {
+            return (rel.prelude, rel.expr)
+        }
+        return ([], try lowerExpr(expr, scope: scope, line: line))
+    }
+
+    /// Lower the four query-plan expression kinds (description / aggregate /
+    /// superlative / scalar `relationTraversal`) that share the plan builders.
+    /// Returns the hoisted prelude (tool fetches, only ever non-empty when
+    /// `allowToolFetch`) and the value expression, or nil for any other
+    /// expression (the caller falls back to `lowerExpr`). Single source for what
+    /// were two near-identical blocks in `lowerBindValue` (fetch-allowed) and
+    /// `lowerExpr` (value position, fetch-forbidden).
+    private func lowerRelationalExpr(_ expr: ExpressionAST, allowToolFetch: Bool, scope: Set<String>?, line: Int) throws -> (prelude: [IRPrimitive], expr: IRExpression)? {
         switch expr {
         case .description(let d):
-            let plan = try lowerDescriptionPlan(d, allowToolFetch: true, scope: scope, line: line)
+            let plan = try lowerDescriptionPlan(d, allowToolFetch: allowToolFetch, scope: scope, line: line)
             return (plan.prelude, .description(plan.ir))
         case .aggregate(let k, let d):
-            let plan = try lowerDescriptionPlan(d, allowToolFetch: true, scope: scope, line: line)
+            let plan = try lowerDescriptionPlan(d, allowToolFetch: allowToolFetch, scope: scope, line: line)
             return (plan.prelude, .aggregate(k == .count ? .count : .list, plan.ir))
         case .superlative(let s):
-            let plan = try lowerDescriptionPlan(s.description, allowToolFetch: true, scope: scope, line: line)
+            let plan = try lowerDescriptionPlan(s.description, allowToolFetch: allowToolFetch, scope: scope, line: line)
             return (plan.prelude, .superlative(SuperlativeIR(description: plan.ir,
                                                              sortPath: camelCase(s.property),
                                                              ascending: s.ascending)))
         case .relationTraversal(let base, let relation, let navKind):
             let plan = try lowerScalarTraversalPlan(base: base, relationForm: relation, navKind: navKind,
-                                                    allowToolFetch: true, scope: scope, line: line)
+                                                    allowToolFetch: allowToolFetch, scope: scope, line: line)
             return (plan.prelude, plan.expr)
         default:
-            return ([], try lowerExpr(expr, scope: scope, line: line))
+            return nil
         }
     }
 
-    private func camelCase(_ s: String) -> String {
-        let words = s.split(whereSeparator: { $0 == " " || $0 == "_" }).map(String.init)
-        guard let first = words.first else { return s }
-        return first + words.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined()
-    }
+    private func camelCase(_ s: String) -> String { IdentifierNaming.camelPreservingCase(s) }
 
     private func pascalCase(_ s: String) -> String {
         s.split(whereSeparator: { $0 == " " || $0 == "_" || $0 == "-" })
@@ -855,13 +869,7 @@ public struct ASTToIR {
         // tool call. Phrase resolution is only consulted in non-prose
         // workflows.
         if let proseDispatchMode {
-            return [.proseStep(ProseStepIR(
-                text: s.words,
-                scopedTools: effectiveScopedTools,
-                dispatchMode: proseDispatchMode,
-                autonomy: autonomyConfig,
-                sourceRange: sourceRange(s.sourceLine)
-            ))]
+            return [makeProseStep(text: s.words, dispatchMode: proseDispatchMode, autonomy: autonomyConfig, line: s.sourceLine)]
         }
 
         guard let (phrase, args) = symbols.matchPhrase(s.words, defaultParam: defaultParam) else {
@@ -1238,23 +1246,14 @@ public struct ASTToIR {
             return .recordList(fields: fields, rows: irRows)
         case .verbPredicate(let subject, let verb, let object):
             return try lowerVerbPredicate(subject: subject, verbForm: verb, object: object, scope: scope, line: line)
-        case .relationTraversal(let base, let relation, let navKind):
-            let plan = try lowerScalarTraversalPlan(base: base, relationForm: relation, navKind: navKind,
-                                                    allowToolFetch: false, scope: scope, line: line)
-            return plan.expr
-        case .description(let d):
+        case .relationTraversal, .description, .aggregate, .superlative:
             // Value position cannot host an `await` fetch, so a tool-backed
-            // source is rejected here (bind it first). Property-backed sources
-            // produce an empty prelude.
-            return .description(try lowerDescriptionPlan(d, allowToolFetch: false, scope: scope, line: line).ir)
-        case .aggregate(let kind, let d):
-            let plan = try lowerDescriptionPlan(d, allowToolFetch: false, scope: scope, line: line)
-            return .aggregate(kind == .count ? .count : .list, plan.ir)
-        case .superlative(let s):
-            let plan = try lowerDescriptionPlan(s.description, allowToolFetch: false, scope: scope, line: line)
-            return .superlative(SuperlativeIR(description: plan.ir,
-                                              sortPath: camelCase(s.property),
-                                              ascending: s.ascending))
+            // source is rejected inside the plan builders (bind it first);
+            // property-backed sources produce an empty prelude, which is dropped.
+            guard let rel = try lowerRelationalExpr(expr, allowToolFetch: false, scope: scope, line: line) else {
+                throw CompilerError.semanticError(message: "internal: unhandled relational expression", range: sourceRange(line))
+            }
+            return rel.expr
         }
     }
 
@@ -1329,17 +1328,14 @@ public struct ASTToIR {
         try symbols.definitions.values
             .sorted { $0.functionName < $1.functionName }
             .map { rec in
-                let qualified = qualifyDefinitionBody(try lowerExpr(rec.body), subjectVar: camelCase(rec.subjectVar))
+                // Rewrite the body so bare property references resolve against
+                // the subject (the function parameter), mirroring loop-var
+                // qualification.
+                let qualified = qualifyToLoopVar(try lowerExpr(rec.body), loopVar: camelCase(rec.subjectVar))
                 return LoweredDefinition(functionName: rec.functionName,
                                          subjectVar: camelCase(rec.subjectVar),
                                          body: qualified)
             }
-    }
-
-    /// Rewrite a definition body so bare property references resolve against the
-    /// subject (the function parameter), mirroring loop-var qualification.
-    private func qualifyDefinitionBody(_ e: IRExpression, subjectVar: String) -> IRExpression {
-        qualifyToLoopVar(e, loopVar: subjectVar)
     }
 
     /// Type-check a definition body: any property access on the subject must name
@@ -1472,16 +1468,7 @@ public struct ASTToIR {
         }
     }
 
-    private func lowerLiteral(_ lit: LiteralAST) -> IRLiteral {
-        switch lit {
-        case .string(let s):                return .string(s)
-        case .integer(let n):               return .number(Decimal(n))
-        case .double(let d):                return .number(Decimal(d))
-        case .boolean(let b):               return .boolean(b)
-        case .money(let a, let c):          return .money(Decimal(a), currency: c)
-        case .duration(let v, let unit):    return .duration(Duration.seconds(Int64(v * Double(unit.inSeconds))))
-        }
-    }
+    private func lowerLiteral(_ lit: LiteralAST) -> IRLiteral { LiteralLowering.toIRLiteral(lit) }
 
     /// Lower a 1C iteration refinement, qualifying the `whose` predicate's bare
     /// property LHS to a property access on the loop variable and turning the
@@ -1541,37 +1528,14 @@ public struct ASTToIR {
         }
     }
 
-    private func lowerCompOp(_ op: ComparisonOpAST) -> ComparisonOp {
-        switch op {
-        case .equal:          return .equal
-        case .notEqual:       return .notEqual
-        case .lessThan:       return .lessThan
-        case .lessOrEqual:    return .lessOrEqual
-        case .greaterThan:    return .greaterThan
-        case .greaterOrEqual: return .greaterOrEqual
-        case .within:         return .withinDuration
-        case .contains:       return .contains
-        case .oneOf:          return .oneOf
-        case .matchesPattern: return .matchesPattern
-        case .withinPast:     return .withinPast
-        case .withinFuture:   return .withinFuture
-        case .isEmpty:        return .isEmpty
-        case .isNotEmpty:     return .isNotEmpty
-        }
-    }
+    private func lowerCompOp(_ op: ComparisonOpAST) -> ComparisonOp { LiteralLowering.mapComparisonOp(op) }
 
-    private func lowerLogicalOp(_ op: LogicalOpAST) -> LogicalOp {
-        switch op {
-        case .and: return .and
-        case .or:  return .or
-        case .not: return .not
-        }
-    }
+    private func lowerLogicalOp(_ op: LogicalOpAST) -> LogicalOp { LiteralLowering.mapLogicalOp(op) }
 
     private func lowerWaitCondition(_ cond: WaitConditionAST) throws -> WaitConditionIR {
         switch cond {
         case .duration(let v, let unit):
-            return .duration(Duration.seconds(Int64(v * Double(unit.inSeconds))))
+            return .duration(LiteralLowering.durationSeconds(v, unit: unit))
         case .signal(let id):
             return .signal(id)
         case .approval(let subj, let role):
@@ -1680,7 +1644,7 @@ public struct ASTToIR {
     /// 3B: a " (did you mean …?)" hint for an unknown verb form, or "" when no
     /// declared form is close enough.
     private func nearestVerbSuggestion(_ form: String) -> String {
-        symbols.nearestVerbForm(to: form).map { " (did you mean \"\($0)\"?)" } ?? ""
+        symbols.verbFormSuggestion(for: form)
     }
 
     /// 3B: lower an active verb condition (`the user owns the page`) to a

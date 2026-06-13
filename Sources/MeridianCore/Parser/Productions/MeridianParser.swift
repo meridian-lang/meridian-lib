@@ -228,39 +228,26 @@ public struct MeridianParser {
 
             if isWorkflow {
                 // Fold multi-line workflow header (continuation indented deeper, terminator ":")
-                var headerText = t
-                var j = i + 1
-                if !headerText.hasSuffix(":") {
-                    while j < lines.count {
-                        let l = lines[j]
-                        if l.isEmpty || l.isComment { j += 1; continue }
-                        if l.indent > line.indent {
-                            let part = l.statement
-                            headerText += " " + part
-                            j += 1
-                            if part.hasSuffix(":") { break }
-                        } else {
-                            break
-                        }
-                    }
-                }
+                let (headerText, headerEnd) = HeaderFolder.collect(lines, at: i)
+                var j = headerEnd
                 guard headerText.hasSuffix(":") else { i += 1; continue }
                 // B3 / SkillMD-D17: Detect prose-mode annotations before the colon.
                 // (See `.ai/brainstorm-done/skill_md_expressiveness_d1_d28.md`.)
                 var rawPatternText = String(headerText.dropFirst(3).dropLast(1))
                     .trimmingCharacters(in: .whitespaces)
-                let discretionSuffix = ", with discretion"
+                let discretionSuffix = ", " + lexicon.grammar.discretionMarker
                 var allowsDiscretion = rawPatternText.lowercased().hasSuffix(discretionSuffix)
                 if allowsDiscretion {
                     rawPatternText = String(rawPatternText.dropLast(discretionSuffix.count))
                         .trimmingCharacters(in: .whitespaces)
                 }
                 var autonomy: AutonomyConfigAST?
-                if let autonomyRange = rawPatternText.lowercased().range(of: ", with autonomy") {
+                if let autonomyRange = rawPatternText.lowercased().range(of: ", " + lexicon.grammar.autonomyMarker) {
                     let options = String(rawPatternText[autonomyRange.upperBound...]).trimmingCharacters(in: .whitespaces)
                     rawPatternText = String(rawPatternText[..<autonomyRange.lowerBound]).trimmingCharacters(in: .whitespaces)
                     allowsDiscretion = true
-                    autonomy = parseAutonomyOptions(options)
+                    let exprParser = ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon)
+                    autonomy = AutonomyConfigAST.parse(options, parseExpression: exprParser.parse)
                 }
                 let pattern = PhrasePatternParser(trace: trace, lexicon: lexicon).parse(rawPatternText)
 
@@ -432,11 +419,6 @@ public struct MeridianParser {
         }
     }
 
-    private func parseAutonomyOptions(_ raw: String) -> AutonomyConfigAST {
-        let exprParser = ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon)
-        return AutonomyConfigAST.parse(raw, parseExpression: exprParser.parse)
-    }
-
     /// True for YAML block-scalar introducers (`|`, `|-`, `>`, `>-`, `>+`).
     private func isBlockScalarMarker(_ s: String) -> Bool {
         let t = s.trimmingCharacters(in: .whitespaces)
@@ -450,14 +432,7 @@ public struct MeridianParser {
         return k
     }
 
-    private func camelize(_ raw: String) -> String {
-        let parts = raw.lowercased()
-            .split(whereSeparator: { $0 == " " || $0 == "_" })
-            .map(String.init)
-        guard let head = parts.first else { return raw.lowercased() }
-        let tail = parts.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }
-        return ([head] + tail).joined()
-    }
+    private func camelize(_ raw: String) -> String { IdentifierNaming.lowerCamel(raw) }
 }
 
 /// Separator used to pack multi-valued frontmatter (YAML sequences and block

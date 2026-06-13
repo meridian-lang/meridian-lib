@@ -48,22 +48,17 @@ public struct SkillTrigger: Sendable, Equatable {
 }
 
 /// Classify a `triggers:` entry into a typed `SkillTrigger`. Pure + data-driven
-/// over small keyword sets so the rule is obvious and extensible.
+/// over keyword sets sourced from `Rulebook` (built-in defaults in
+/// `Rulebook.defaultTriggers`, extended by an author's `=== triggers ===`
+/// block) so the words are obvious and extensible without recompiling.
 struct TriggerClassifier {
     let lexicon: EnglishLexicon
+    private let wordSets: [TriggerKind: Set<String>]
 
-    private static let scheduleWords: Set<String> = [
-        "nightly", "daily", "hourly", "weekly", "monthly", "cron", "schedule",
-        "scheduled", "morning", "evening", "midnight", "noon"
-    ]
-    private static let ambientWords: Set<String> = [
-        "always", "ambient", "continuous", "continuously", "inbound", "every",
-        "stream", "streaming", "watch", "watching", "ongoing"
-    ]
-    private static let eventWords: Set<String> = [
-        "received", "arrives", "arrived", "created", "updated", "deleted",
-        "webhook", "fires", "fired", "pushed", "merged", "opened", "closed", "on"
-    ]
+    init(lexicon: EnglishLexicon, rulebook: Rulebook = .empty) {
+        self.lexicon = lexicon
+        self.wordSets = rulebook.triggerWordSets()
+    }
 
     func classify(_ raw: String, sourceLine: Int) -> SkillTrigger {
         let spec = raw.trimmingCharacters(in: .whitespaces)
@@ -76,10 +71,10 @@ struct TriggerClassifier {
         // Cron-style: contains a `*` or several space-separated time fields.
         if lower.contains("*") || isCronLike(lower) { return .schedule }
         let words = Set(lower.components(separatedBy: CharacterSet.alphanumerics.inverted).filter { !$0.isEmpty })
-        // Schedule keywords beat ambient `every` (e.g. "every morning").
-        if !words.isDisjoint(with: Self.scheduleWords) { return .schedule }
-        if words.contains("every") || !words.isDisjoint(with: Self.ambientWords) { return .ambient }
-        if !words.isDisjoint(with: Self.eventWords) { return .event }
+        // Schedule keywords beat ambient (e.g. "every morning" is a schedule).
+        if !words.isDisjoint(with: wordSets[.schedule] ?? []) { return .schedule }
+        if !words.isDisjoint(with: wordSets[.ambient] ?? []) { return .ambient }
+        if !words.isDisjoint(with: wordSets[.event] ?? []) { return .event }
         return .keyword
     }
 
@@ -125,25 +120,17 @@ struct TriggerSynthesizer {
 
     private func synthesizeOne(_ trigger: SkillTrigger, sourceFile: String,
                                explicitStructName: String) -> IRWorkflow {
-        let sr = SourceRange(file: sourceFile, line: trigger.sourceLine, column: 0)
-        let waitIR = WaitIR(condition: .event(trigger.name, matching: nil), timeout: nil, sourceRange: sr)
-        let emitIR = EmitIR(
-            eventID: "trigger.\(trigger.name).fired",
+        trace.log(.lowering, "trigger @L\(trigger.sourceLine) [\(trigger.kind.rawValue)] → when \(trigger.name)")
+        return TriggerWorkflowBuilder.make(
+            name: "when \(trigger.name) fires",
+            waitEvent: trigger.name,
+            fireEventID: "trigger.\(trigger.name).fired",
             payload: [
                 EmitField("kind", .literal(.string(trigger.kind.rawValue))),
                 EmitField("spec", .literal(.string(trigger.spec)))
             ],
-            strict: true,
-            sourceRange: sr
-        )
-        trace.log(.lowering, "trigger @L\(trigger.sourceLine) [\(trigger.kind.rawValue)] → when \(trigger.name)")
-        return IRWorkflow(
-            name: "when \(trigger.name) fires",
-            parameters: [],
-            body: IRBlock(statements: [.wait(waitIR), .emit(emitIR)], sourceRange: sr),
-            mode: .strict,
             sourceFile: sourceFile,
-            sourceRange: sr,
+            line: trigger.sourceLine,
             explicitStructName: explicitStructName
         )
     }

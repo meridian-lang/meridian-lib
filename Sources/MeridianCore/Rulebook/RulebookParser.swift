@@ -66,6 +66,7 @@ public struct RulebookParser {
         var desugars: [DesugarRule] = []
         var sectionRoles: [SectionRoleRule] = []
         var conventionLines: [RuleAST] = []
+        var triggerWords: [TriggerWordRule] = []
 
         for (section, body) in sectionRanges {
             switch section {
@@ -75,14 +76,17 @@ public struct RulebookParser {
                 sectionRoles += try parseSectionRolesSection(body, file: file)
             case "conventions", "behavior", "behaviour":
                 conventionLines += parseConventionsSection(body)
+            case "triggers", "trigger-words", "trigger words":
+                triggerWords += try parseTriggersSection(body, file: file)
             default:
                 trace.log(.rulebook, "ignoring unknown section: \(section)")
             }
         }
 
         let conventions = InformRulebookParser().parse(conventionLines)
-        trace.log(.rulebook, "parsed \(desugars.count) desugar, \(sectionRoles.count) section-role, \(conventions.count) convention rule(s)")
-        return Rulebook(desugars: desugars, sectionRoles: sectionRoles, conventions: conventions)
+        trace.log(.rulebook, "parsed \(desugars.count) desugar, \(sectionRoles.count) section-role, \(conventions.count) convention, \(triggerWords.count) trigger-word rule(s)")
+        return Rulebook(desugars: desugars, sectionRoles: sectionRoles,
+                        conventions: conventions, triggerWords: triggerWords)
     }
 
     // MARK: - Section header detection
@@ -247,6 +251,40 @@ public struct RulebookParser {
         let trimmed = current.trimmingCharacters(in: .whitespaces)
         if !trimmed.isEmpty { items.append(trimmed) }
         return items
+    }
+
+    // MARK: - Triggers section
+
+    /// Parse `=== triggers ===` lines of the form `<kind>: word1, word2, …`,
+    /// where `<kind>` is a `TriggerKind` raw value (`schedule`/`ambient`/
+    /// `event`/`keyword`). Each comma-separated word becomes a `TriggerWordRule`
+    /// that adds to the built-in classification set for that kind.
+    private func parseTriggersSection(_ lines: [SourceLine], file: String) throws -> [TriggerWordRule] {
+        var results: [TriggerWordRule] = []
+        for line in lines.filter(\.isContent) {
+            let t = line.statement
+            guard let colon = t.firstIndex(of: ":") else {
+                throw CompilerError.semanticError(
+                    message: "rulebook trigger rule needs `<kind>: <words>`: \(t)",
+                    range: SourceRange(file: file, line: line.number, column: 1)
+                )
+            }
+            let kindName = String(t[..<colon]).trimmingCharacters(in: .whitespaces).lowercased()
+            guard let kind = TriggerKind(rawValue: kindName) else {
+                throw CompilerError.semanticError(
+                    message: "unknown trigger kind `\(kindName)` (expected one of: \(TriggerKind.allCases.map(\.rawValue).joined(separator: ", ")))",
+                    range: SourceRange(file: file, line: line.number, column: 1)
+                )
+            }
+            let wordsPart = String(t[t.index(after: colon)...])
+            for raw in wordsPart.split(separator: ",") {
+                let word = raw.trimmingCharacters(in: .whitespaces).lowercased()
+                if !word.isEmpty {
+                    results.append(TriggerWordRule(kind: kind, word: word, sourceLine: line.number))
+                }
+            }
+        }
+        return results
     }
 
     // MARK: - Conventions section

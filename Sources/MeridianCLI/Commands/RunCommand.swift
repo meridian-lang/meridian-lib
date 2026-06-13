@@ -47,14 +47,8 @@ struct RunCommand: AsyncParsableCommand {
         try FileManager.default.createDirectory(at: outputURL, withIntermediateDirectories: true)
 
         let meridianSource = try String(contentsOf: meridianURL, encoding: .utf8)
-        let merconfigURLs = try resolveMerconfigs(beside: meridianURL)
-        let vocabularies = try merconfigURLs.map { url -> Compiler.VocabularyInput in
-            .init(
-                name: url.deletingPathExtension().lastPathComponent,
-                file: url.lastPathComponent,
-                source: try String(contentsOf: url, encoding: .utf8)
-            )
-        }
+        let merconfigURLs = try DependencyDiscovery.resolveMerconfigs(explicit: merconfig, beside: meridianURL)
+        let vocabularies = try DependencyDiscovery.loadVocabularies(merconfigURLs)
 
         let compiler = Compiler()
         let swift = try compiler.compile(
@@ -101,25 +95,6 @@ struct RunCommand: AsyncParsableCommand {
             FileHandle.standardError.write(Data("temporary package: \(package.packageURL.path)\n".utf8))
         }
         print(result.stdout, terminator: result.stdout.hasSuffix("\n") ? "" : "\n")
-    }
-
-    private func resolveMerconfigs(beside meridianURL: URL) throws -> [URL] {
-        if !merconfig.isEmpty {
-            return try merconfig.map { path in
-                let url = URL(fileURLWithPath: path).standardized
-                guard FileManager.default.fileExists(atPath: url.path) else {
-                    throw ValidationError("merconfig not found: \(path)")
-                }
-                return url
-            }
-        }
-        let dir = meridianURL.deletingLastPathComponent()
-        let files = (try? FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)) ?? []
-        let here = files.filter { $0.pathExtension == "merconfig" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
-        if !here.isEmpty { return here }
-        let parent = dir.deletingLastPathComponent()
-        let parentFiles = (try? FileManager.default.contentsOfDirectory(at: parent, includingPropertiesForKeys: nil)) ?? []
-        return parentFiles.filter { $0.pathExtension == "merconfig" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
     }
 
     private func lowerWorkflows(

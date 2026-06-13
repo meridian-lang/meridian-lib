@@ -44,6 +44,60 @@ The LLM boundary is typed:
 Strict workflows still reject unresolved lines. Prose fallback only applies
 inside headers that explicitly opt in with `with discretion` or `with autonomy`.
 
+## Entry points
+
+There are **three** ways prose reaches the planner — all of them explicit, none
+of them a silent fallthrough:
+
+1. A workflow header opts in with `, with discretion` / `, with autonomy` (every
+   body line is prose — see the strict contract below).
+2. A local `use judgment to <goal>:` / `with discretion:` / `with autonomy …:`
+   marker wraps one block inside an otherwise-deterministic workflow.
+3. A **fuzzy Markdown table or checklist** is routed to the planner with a
+   `(( ai-discretion ))` / `(( ai-autonomy ))` marker (below).
+
+All three lower to the same `ProseStepAST → ProseStepIR`; (2) and (3) carry an
+explicit dispatch, so they are valid in **any** workflow.
+
+### Fuzzy tables and checklists → the planner
+
+A decision table whose condition cells are *intent descriptions* (not checkable
+comparisons) and an acceptance checklist whose items are *not structurally
+checkable* are workflow steps that need judgment — not documentation. Instead of
+marking them `(( inert ))`, route them:
+
+```meridian
+## Route the request
+
+!!! table (( ai-discretion ))
+| Condition                          | Action                      |
+|------------------------------------|-----------------------------|
+| user asks for a deterministic run  | submit a shell job          |
+| user asks for an iterative agent   | spawn a research subagent   |
+
+## Confirm
+
+!!! checklist (( ai-autonomy ))
+- [ ] all entity pages are cross-linked
+- [ ] no DRY violations across skills
+```
+
+- `!!! table (( ai-discretion ))` → `TableParser.aiDecisionProse` renders the
+  rows as a ruleset (`when <conds>, <action>`; a wildcard row → `otherwise, …`)
+  and emits a `.planThenExecute` prose step: the planner picks the matching case
+  and carries out its action. `(( ai-autonomy ))` emits a loop instead.
+- `!!! checklist (( ai-autonomy ))` → `checklistProse` embeds every criterion as
+  the loop goal ("Ensure every acceptance criterion below holds, taking
+  corrective action until all are satisfied: - …") and emits a
+  `.autonomousLoop` prose step. `(( ai-discretion ))` verifies/resolves once.
+
+The criteria/rules are embedded **verbatim** in the prose step text, so the
+planner has the full ruleset as its goal context. The enclosing section must be
+executable (an `(( inert ))` section still suppresses the whole body). See
+[03_LANGUAGE_QUICK_REFERENCE.md](03_LANGUAGE_QUICK_REFERENCE.md) for the marker
+grammar and [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) rule 12 for the
+"does the workflow act on this?" porting heuristic.
+
 ## Failure Identity
 
 Planning/prose failures use stable `PlanningFailureCode` raw values carried by

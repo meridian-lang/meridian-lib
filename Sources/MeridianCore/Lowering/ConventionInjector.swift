@@ -80,40 +80,7 @@ struct ConventionInjector {
     /// stems. The threshold of two avoids spurious matches on a single common
     /// noun (e.g. every workflow that mentions "page").
     private func actionMatches(_ action: String, workflow: IRWorkflow) -> Bool {
-        let stopwords = lexicon.toolStopwords.union(lexicon.articles).union(lexicon.prepositions)
-        let actionStems = Set(tokenize(action, stopwords: stopwords).flatMap(stems))
-        guard !actionStems.isEmpty else { return false }
-        var workflowStems = Set(tokenize(workflow.name, stopwords: stopwords).flatMap(stems))
-        for p in workflow.parameters {
-            workflowStems.formUnion(tokenize(p.kind.name, stopwords: stopwords).flatMap(stems))
-        }
-        return actionStems.intersection(workflowStems).count >= 2
-    }
-
-    private func tokenize(_ s: String, stopwords: Set<String>) -> [String] {
-        s.lowercased()
-            .components(separatedBy: CharacterSet.alphanumerics.inverted)
-            .filter { !$0.isEmpty && !stopwords.contains($0) }
-    }
-
-    private func stems(of word: String) -> [String] {
-        var out: [String] = [word]
-        let lower = word.lowercased()
-        if lower.hasSuffix("ies") && lower.count > 4 {
-            out.append(String(lower.dropLast(3)) + "y")
-        } else if lower.hasSuffix("es") && lower.count > 3 {
-            out.append(String(lower.dropLast(2)))
-        } else if lower.hasSuffix("s") && lower.count > 2 {
-            out.append(String(lower.dropLast()))
-        }
-        if lower.hasSuffix("ed") && lower.count > 3 {
-            out.append(String(lower.dropLast(2)))
-            out.append(String(lower.dropLast()))
-        }
-        if lower.hasSuffix("ing") && lower.count > 4 {
-            out.append(String(lower.dropLast(3)))
-            out.append(String(lower.dropLast(3)) + "e")
-        }
-        return out
+        WorkflowActionMatcher.overlap(action: action, workflow: workflow,
+                                      scope: .nameAndParameters, lexicon: lexicon) >= 2
     }
 }

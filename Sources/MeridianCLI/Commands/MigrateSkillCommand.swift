@@ -70,7 +70,7 @@ struct MigrateSkillCommand: AsyncParsableCommand {
     private func runSingle(inputURL: URL, migrator: SkillMigrator, rulebookTarget: URL?) async throws {
         let markdown = try String(contentsOf: inputURL, encoding: .utf8)
         let stem = inputURL.deletingPathExtension().lastPathComponent
-        let result = try await migrator.migrate(markdown, file: "\(meriStem(forSkillAt: inputURL)).meri")
+        let result = try await migrator.migrate(markdown, file: "\(SkillDeviation.meriStem(forSkillAt: inputURL)).meri")
 
         if let out {
             let outURL = URL(fileURLWithPath: out).standardized
@@ -111,7 +111,7 @@ struct MigrateSkillCommand: AsyncParsableCommand {
         var allAliases: [SkillMigrator.SectionAlias] = []
         for file in skillFiles {
             let markdown = try String(contentsOf: file, encoding: .utf8)
-            let stem = meriStem(forSkillAt: file)
+            let stem = SkillDeviation.meriStem(forSkillAt: file)
             let result = try await migrator.migrate(markdown, file: "\(stem).meri")
             rows.append((stem, result))
             allAliases.append(contentsOf: result.sectionAliases)
@@ -285,16 +285,6 @@ struct MigrateSkillCommand: AsyncParsableCommand {
         }
         try fm.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
         try source.write(to: url, atomically: true, encoding: .utf8)
-    }
-
-    /// A SKILL.md typically lives in a `<skill-name>/SKILL.md` directory; use the
-    /// parent directory name as the .meri stem when the file itself is SKILL.md.
-    private func meriStem(forSkillAt url: URL) -> String {
-        SkillDeviation.meriStem(forSkillAt: url)
-    }
-
-    private func slug(_ name: String) -> String {
-        SkillDeviation.slug(name)
     }
 
     // MARK: - Reports

@@ -896,17 +896,7 @@ public struct SwiftEmitter {
             // B7: Build a Swift string by concatenating literal parts and
             // stringified expression parts via `meridianStringify`.
             if segs.isEmpty { return "\"\"" }
-            let parts = segs.map { seg -> String in
-                switch seg {
-                case .literal(let s):
-                    return "\"\(escapeSwiftString(s))\""
-                case .expression(let e):
-                    return "meridianStringify(\(emitValueExpr(e)))"
-                case .shellEscapedExpression(let e):
-                    return "meridianShellQuote(\(emitValueExpr(e)))"
-                }
-            }.joined(separator: " + ")
-            return "(\(parts))"
+            return "(\(interpolationParts(segs)))"
         case .definitionPredicate(let fn, let subject):
             return "\(fn)(\(emitComparisonOperand(subject)))"
         case .quantified(let q):
@@ -1055,17 +1045,7 @@ public struct SwiftEmitter {
         case .interpolatedString(let segs):
             // B7: Produce a Value.string(...) built from concatenated segments.
             if segs.isEmpty { return ".string(\"\")" }
-            let parts = segs.map { seg -> String in
-                switch seg {
-                case .literal(let s):
-                    return "\"\(escapeSwiftString(s))\""
-                case .expression(let e):
-                    return "meridianStringify(\(emitValueExpr(e)))"
-                case .shellEscapedExpression(let e):
-                    return "meridianShellQuote(\(emitValueExpr(e)))"
-                }
-            }.joined(separator: " + ")
-            return ".string(\(parts))"
+            return ".string(\(interpolationParts(segs)))"
         case .description(let d):
             return "Value.list(\(emitDescriptionList(d)))"
         case .aggregate(let kind, let d):
@@ -1082,6 +1062,23 @@ public struct SwiftEmitter {
             // wrapping the bare emission so it survives Swift type-checking.
             return ".init(\(emitExpr(expr)))"
         }
+    }
+
+    /// The ` + `-joined Swift fragments of an interpolated string's segments.
+    /// Shared by the plain (`emitExpr`) and Value-wrapped (`emitValueExpr`)
+    /// interpolation emitters, which differ only in the empty-case literal and
+    /// the wrapper they place around this body.
+    private func interpolationParts(_ segs: [IRInterpolationSegment]) -> String {
+        segs.map { seg -> String in
+            switch seg {
+            case .literal(let s):
+                return "\"\(escapeSwiftString(s))\""
+            case .expression(let e):
+                return "meridianStringify(\(emitValueExpr(e)))"
+            case .shellEscapedExpression(let e):
+                return "meridianShellQuote(\(emitValueExpr(e)))"
+            }
+        }.joined(separator: " + ")
     }
 
     /// Wrap an IRLiteral for use in `[String: Value]`.
@@ -1127,11 +1124,7 @@ public struct SwiftEmitter {
 
     /// Escape a String for use inside a Swift double-quoted string literal.
     private func escapeSwiftString(_ s: String) -> String {
-        s.replacingOccurrences(of: "\\", with: "\\\\")
-         .replacingOccurrences(of: "\"", with: "\\\"")
-         .replacingOccurrences(of: "\n", with: "\\n")
-         .replacingOccurrences(of: "\r", with: "\\r")
-         .replacingOccurrences(of: "\t", with: "\\t")
+        escapeSwiftStringLiteral(s)
     }
 
     private func propertyPath(_ expr: IRExpression) -> String {
@@ -1303,15 +1296,7 @@ public struct SwiftEmitter {
             "import MeridianRuntime"
             ""
             "// B7: Runtime helper for {{ expr }} interpolation in fenced code blocks."
-            "private func meridianStringify(_ v: Value) -> String {"
-            "    switch v {"
-            "    case .string(let s): return s"
-            "    case .number(let n): return \"\\(n)\""
-            "    case .boolean(let b): return b ? \"true\" : \"false\""
-            "    case .null: return \"\""
-            "    default: return v.description"
-            "    }"
-            "}"
+            "private func meridianStringify(_ v: Value) -> String { v.scalarDescription }"
             ""
             "// 1B: Shell-escape a value for safe interpolation inside a double-"
             "// quoted span of a shell command (escapes \\\\, \", $, and backtick)."
@@ -1357,21 +1342,13 @@ public struct SwiftEmitter {
         return false
     }
 
-    func snakeToCamel(_ s: String) -> String {
-        let parts = s.split(whereSeparator: { $0 == "_" || $0 == " " }).map(String.init)
-        guard let first = parts.first else { return s }
-        return first + parts.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined()
-    }
+    func snakeToCamel(_ s: String) -> String { IdentifierNaming.camelPreservingCase(s) }
 
     /// PascalCase a natural-language phrase the same way `ASTToIR.kindName`
     /// does (`"pull request"` → `"PullRequest"`). Used to compare param kinds
     /// against the declared domain kinds when deciding whether to emit a typed
     /// init param or fall back to `Value`.
-    func naturalToPascal(_ s: String) -> String {
-        s.split(separator: " ").map { word in
-            word.prefix(1).uppercased() + word.dropFirst().lowercased()
-        }.joined()
-    }
+    func naturalToPascal(_ s: String) -> String { IdentifierNaming.pascalCaseFromSpaces(s) }
 
 }
 
