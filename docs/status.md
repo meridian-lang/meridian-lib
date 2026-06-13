@@ -20,6 +20,7 @@ Tracks the six-phase build plan from `meridian-handoff/docs/10_BUILD_PLAN.md`.
 | G | Expressive SKILL.md surface + gbrain corpus | ✅ Done | 100% |
 | I7 | Inform-7-tier deterministic surface (Waves 1–3) | ✅ Done | 100% |
 | IR | Inert-reduction: executable tables/checklists + AI-routing | ✅ Done | 100% |
+| DX | World-class diagnostics, tracing & decision logs | ✅ Done | static-verified (gates pending a working shell) |
 
 ---
 
@@ -444,3 +445,60 @@ documentation are now executable or AI-routed:
 Corpus sweep converted 8 `## Tools Used` sections and one `### Confirm`
 checklist (`eiirp.meri`) out of inert. Tests: `TablesAndChecklistsTests`,
 plus the `Inform7Wave*` output-invariant generalization.
+
+---
+
+## Phase DX — World-class diagnostics, tracing & decision logs
+
+**Implemented; static-verified.** Eleven pillars delivering a world-class
+debugging experience. See [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md)
+(the centerpiece), [08_TRACING.md](08_TRACING.md), and
+[15_DECISIONS.md](15_DECISIONS.md).
+
+### Delivered
+
+1. **Structured diagnostics core** — `Diagnostic` (code + severity + range +
+   suggestions/notes/help + decision), a stable `MERxxxx` `DiagnosticCode`
+   catalog, and a `DiagnosticRenderer` (human snippet+caret form and stable
+   JSON). `CompilerError` gained a `.diagnostics([Diagnostic])` case plus a
+   `diagnostics` projection so legacy cases render uniformly.
+2. **Batch reporting** — `DiagnosticEngine` collects rather than aborts,
+   recovering at construct boundaries (workflow / rule / statement) so one
+   compile reports many errors (D-DX-2).
+3. **Always-on did-you-mean** — a generalized `Suggester` (Levenshtein + token
+   overlap) backs `Diagnostic.unresolved`, which **every** name-resolution error
+   funnels through; within budget → `did you mean "X"?`, otherwise a candidate
+   list — never a bare "unknown X" (D-DX-4). A guard test enumerates all
+   `.nameResolution` codes.
+4. **No silent fallbacks** — former silent drops (malformed headers, unparseable
+   rules/statements, unknown config keys/sections, unknown tools) are coded
+   diagnostics; strict-by-default with per-file `allow-fallbacks:` opt-out
+   (D-DX-1, D-DX-2, D-DX-5).
+5. **Tool-id validation** — Core-side `BuiltinToolCatalog` mirrors the runtime
+   built-ins; every `InvokeIR.toolID` is validated → `MER2002` with did-you-mean
+   (D-DX-5). New `FallbackKind.unknownTools`.
+6. **Accurate carets** — precise column offsets threaded through the
+   tokenizer/parsers via `SourceSpan` helpers.
+7. **Tracing** — `ParserTrace` gained `tokenize` / `codegen` / `diagnostics` /
+   `timing` categories, per-phase timed spans, an end-of-compile profile
+   summary, and diagnostics mirrored into the stream. Compile + runtime tracing
+   are unified.
+8. **CLI** — `meridian explain <code|decision-id>`, `meridian decisions`
+   (`--id` / `--render`), `meridian trace categories`, plus
+   `--diagnostics-format json` and `--fix` (token-aware, safe) across `compile`
+   / `check` / `verify` / `run`.
+9. **Decision logs** — `DecisionCatalog` (`D-DX-1`…`D-DX-5`) links codes to
+   rationale; surfaced at the point of error and rendered to
+   `docs/15_DECISIONS.md` (a staleness test guards drift).
+10. **Docs** — `docs/14_DEVELOPER_EXPERIENCE.md` added; `docs/08` rewritten;
+    `docs/01`/`02`/`04`/`07`/`README` updated.
+11. **Tests** — `SuggesterTests`, `DiagnosticTests` (incl. the always-on guard
+    + render snapshots), `NoSilentFallbackTests`, and `DecisionCatalogTests`
+    (incl. the docs/15 staleness check).
+
+### Gate status
+
+> The full `swift test` + `MERIDIAN_GOLDEN_TYPECHECK=1` /
+> `MERIDIAN_GBRAIN_TYPECHECK=1` gates are **pending a working build shell** — the
+> execution environment was unresponsive during the final pass. All new code was
+> verified statically against the live APIs. Re-run the gates before sign-off.

@@ -5,11 +5,14 @@ workflow specifications and produces type-safe, async/await Swift source that
 runs against a small deterministic runtime.
 
 > **Current status:** Phases 0–6 + the expressive SKILL.md surface (Phase G),
-> the Inform-7-tier deterministic surface (Waves 1–3), and the inert-reduction
-> program (executable Markdown tables/task-lists + AI-routing) are all complete.
+> the Inform-7-tier deterministic surface (Waves 1–3), the inert-reduction
+> program (executable Markdown tables/task-lists + AI-routing), and the
+> world-class diagnostics/tracing/decision-log layer (Phase DX) are all complete.
 > Generated Swift compiles, links, and runs against `MeridianRuntime`.
 > Replay-safe resume, all 11 IR primitives, Blueprint built-ins, full CLI,
-> MeridianTestKit, and DocC bundles are shipped. See [status.md](status.md).
+> MeridianTestKit, and DocC bundles are shipped. Every error is a stable
+> `MERxxxx` code with always-on did-you-mean and a linked design decision. See
+> [status.md](status.md) and [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md).
 
 ---
 
@@ -62,7 +65,8 @@ meridian/
 │   │   │                       #   DiagnosticCode catalog, DecisionCatalog, ParserTrace
 │   │   └── Compiler.swift      # Top-level compile() entry point
 │   ├── MeridianCLI/            # meridian executable (ArgumentParser)
-│   │   └── Commands/           # compile, check, verify, run, resume, format, docs, test, trace
+│   │   └── Commands/           # compile, check, verify, run, resume, format,
+│   │                           #   docs, test, trace, explain, decisions
 │   ├── MeridianTools/          # Blueprint built-in tool implementations
 │   ├── MeridianTestKit/        # Test helpers: WorkflowTestHarness, MockRuntime, etc.
 │   └── SampleDemoFlows/        # Phase 1 hand-written reference workflows

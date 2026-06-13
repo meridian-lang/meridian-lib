@@ -7,7 +7,7 @@
 │                     meridian (CLI)                          │
 │  Sources/MeridianCLI/Commands/                              │
 │  compile · check · verify · run · resume · format ·         │
-│  docs · test · trace                                        │
+│  docs · test · trace · explain · decisions                  │
 │  ArgumentParser + SwiftFormat integration                   │
 └──────────────────────┬──────────────────────────────────────┘
                        │ depends on
@@ -66,7 +66,10 @@ Sources/MeridianCore/
 │   └── AnaphoraResolver.swift      ← Resolves anaphora via lexicon markers
 │
 ├── Symbols/
-│   └── SymbolTable.swift           ← Phrase matching + arg extraction
+│   ├── SymbolTable.swift           ← Phrase matching + arg extraction
+│   └── BuiltinToolCatalog.swift    ← Core-side mirror of MeridianTools'
+│                                      built-in tool ids (D-DX-5); validates
+│                                      every InvokeIR.toolID
 │
 ├── Lowering/
 │   └── ASTToIR.swift               ← AST → IR primitives + phrase inlining
@@ -103,8 +106,31 @@ Sources/MeridianCore/
 │   └── SwiftPMPackageRunner.swift  ← Reusable temporary SwiftPM scaffolding
 │
 └── Diagnostics/
-    └── ParserTrace.swift           ← Category-scoped trace sink
+    ├── Diagnostic.swift            ← Diagnostic + Suggestion + DiagnosticNote;
+    │                                  the always-on `Diagnostic.unresolved`
+    │                                  / `.structural` funnels (D-DX-4)
+    ├── DiagnosticCode.swift        ← Stable `MERxxxx` catalog (id/title/
+    │                                  explanation/kind/DecisionRef)
+    ├── DiagnosticEngine.swift      ← Per-file collector; batch-reports with
+    │                                  coarse recovery (D-DX-2)
+    ├── DiagnosticRenderer.swift    ← Human (snippet+caret+did-you-mean) and
+    │                                  stable-JSON renderers
+    ├── Suggester.swift             ← "did you mean" engine (Levenshtein +
+    │                                  token overlap)
+    ├── DecisionCatalog.swift       ← `DecisionRecord`s behind the codes;
+    │                                  renders docs/15 (D-DX-1…5)
+    ├── FallbackPolicy.swift        ← `FallbackKind` + `allow-fallbacks:` policy
+    ├── SourceSpan.swift            ← SourceRange/SourceLine span helpers for
+    │                                  token-precise carets
+    ├── MeridianLinter.swift        ← `meridian lint` advisory checks
+    └── ParserTrace.swift           ← Category-scoped trace sink (+ timing
+                                       spans, profile summary, diagnostics mirror)
 ```
+
+The diagnostics subsystem is the backbone of the debugging experience — see
+[14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) for how these pieces fit
+together (codes, did-you-mean, batch reporting, tracing, `explain`/`decisions`/
+`--fix`).
 
 ## Compilation pipeline
 
@@ -168,6 +194,9 @@ Formatted Swift String
 | `IRPrimitive` | `IR/IRTypes` | One of 11 lowered statement kinds |
 | `IRWorkflow` | `IR/IRTypes` | Struct name, parameters, body block, execution mode |
 | `StringTemplate` | `modelhike` | Result-builder code builder used by `SwiftEmitter` |
+| `Diagnostic` | `Diagnostics/` | Coded error/warning: code + range + suggestions/notes/help + decision |
+| `DiagnosticCode` | `Diagnostics/` | Stable `MERxxxx` identity + kind + linked `DecisionRef` |
+| `DiagnosticEngine` | `Diagnostics/` | Per-file collector; batch-reports many errors with coarse recovery |
 
 ## External dependencies
 

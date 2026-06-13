@@ -655,10 +655,12 @@ list of `Compiler.VocabularyInput` records (`name`, `file`, `source`).
 Every input is parsed and merged via `MerConfigFile.merging(_:)` before
 the symbol table is built.
 
-`Compiler.validateImports(_:against:file:)` rejects an import that doesn't
-name a supplied vocabulary with `CompilerError.semanticError` (sourced).
-`Compiler.requireUniqueDeclarations(in:)` rejects duplicate kind / phrase /
-tool / constant / instance names in the merged config.
+`Compiler.validateImports(_:against:file:)` rejects a `vocabulary:` reference
+that doesn't name a supplied vocabulary with a coded `MER2005` diagnostic
+(`Diagnostic.unresolved` — sourced, with a did-you-mean against the supplied
+names). `Compiler.requireUniqueDeclarations(in:)` rejects duplicate kind /
+phrase / tool / constant / instance names in the merged config with a sourced
+error.
 
 The CLI's `--merconfig` flag is repeatable; if it's omitted, every
 `.merconfig` next to the input is auto-discovered (sorted by name for

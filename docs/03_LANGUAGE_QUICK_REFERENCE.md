@@ -506,9 +506,11 @@ vocabulary: github.merconfig
 #### Reserved frontmatter key — `allow-fallbacks` (no-silent-fallback policy)
 
 By default the compiler refuses to silently substitute a placeholder when
-something can't be resolved: an unknown phrase, an unparseable rule, a rule
-whose action verb doesn't match any workflow, or a trigger whose action
-doesn't lower. Each of these raises a hard `semanticError`. Set the
+something can't be resolved: an unknown phrase, an unknown tool, an unparseable
+rule, a rule whose action verb doesn't match any workflow, or a trigger whose
+action doesn't lower. Each of these raises a coded diagnostic (a stable
+`MERxxxx` code with a source caret and a did-you-mean — see
+[14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md)). Set the
 `allow-fallbacks` frontmatter key to a comma-separated list of fallback
 kinds to opt back into the older silent behaviour for **this file only**:
 
@@ -519,18 +521,19 @@ allow-fallbacks: unresolved-phrases, unattached-rules
 ---
 ```
 
-The four fallback kinds:
+The five fallback kinds:
 
-| Kind | What's allowed |
-|---|---|
-| `unresolved-phrases` | A phrase invocation that doesn't match any phrase or workflow lowers to an `_unresolved` `BindIR` placeholder. |
-| `unparseable-rules` | A rule whose text the analyser cannot classify is dropped from IR (still recorded in the manifest). |
-| `unattached-rules` | A rule that classified but matched no workflow is dropped from IR (still recorded in the manifest). |
-| `unresolved-trigger-actions` | A `When …, do X` trigger whose action verb resolves to nothing emits the `trigger.X.fired` fan-out event without validating that the action workflow exists. |
+| Kind | Code suppressed | What's allowed |
+|---|---|---|
+| `unresolved-phrases` | `MER2001` | A phrase invocation that doesn't match any phrase or workflow lowers to an `_unresolved` `BindIR` placeholder. |
+| `unknown-tools` | `MER2002` | An invoked tool id that isn't a built-in, vocabulary/frontmatter tool, or workflow reference is emitted as-is (for host-provided tools registered at runtime). |
+| `unparseable-rules` | `MER1004` | A rule whose text the analyser cannot classify is dropped from IR (still recorded in the manifest). |
+| `unattached-rules` | `MER3006` | A rule that classified but matched no workflow is dropped from IR (still recorded in the manifest). |
+| `unresolved-trigger-actions` | `MER3007` | A `When …, do X` trigger whose action verb resolves to nothing emits the `trigger.X.fired` fan-out event without validating that the action workflow exists. |
 
 `allow-fallbacks: all` (or `*`) opts into every kind. Without the key, every
-listed failure is reported as a sourced compile-time error pointing at the
-offending line.
+listed failure is reported as a sourced compile-time diagnostic pointing at the
+offending line. An unrecognized token here is itself an error (`MER2009`).
 
 ---
 
@@ -859,7 +862,9 @@ gbrain publish
 
 Natural-language imperative phrases (no literal `gbrain` prefix, e.g. "search
 the brain for the attendee") still resolve **strictly** against declared tool
-phrases; an unresolved NL phrase is a hard `semanticError`.
+phrases; an unresolved NL phrase is a hard error (`MER2001`, with a did-you-mean
+against the declared phrases — see
+[14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md)).
 
 ### Inform 7-tier surface (Wave 1)
 

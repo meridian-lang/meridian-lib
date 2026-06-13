@@ -375,7 +375,7 @@ JSON shape (one element per diagnostic):
   "code": "MER2002",
   "severity": "error",
   "message": "unknown tool \"chargepaymnt\"",
-  "range": { "file": "order.meridian", "startLine": 6, "startColumn": 0, "endLine": 6, "endColumn": 0 },
+  "range": { "file": "order.meridian", "startLine": 6, "startColumn": 10, "endLine": 6, "endColumn": 22 },
   "suggestions": [ { "replacement": "chargePayment", "rationale": "did you mean \"chargePayment\"?", "range": { … } } ],
   "notes": [],
   "help": "Declare it in a `=== tools ===` block …",
@@ -411,8 +411,9 @@ To add a new diagnostic:
    - name resolution → `engine.report(Diagnostic.unresolved(.yourCode, target:, among:, range:, noun:, help:))`. You *must* pass the candidate set; the suggester does the rest.
    - structural → `Diagnostic.structural(.yourCode, message:, range:, help:)` (help is mandatory).
    - other → `Diagnostic.error(.yourCode, message:, range:)`.
-3. **Range precision**: pass a `SourceRange`. Tier-1 (line-accurate) is automatic;
-   for a token-precise caret use `SourceRange.span(inLine:ofSubstring:)`.
+3. **Range precision**: pass a `SourceRange`. Tier-1 (line-accurate) is automatic
+   via `SourceLine.statementRange(file:)`; for a token-precise caret use
+   `SourceLine.range(file:of:)` (or `SourceRange.span(file:line:in:of:)`).
 4. **Decision (optional)**: add a `DecisionRecord` to `DecisionCatalog.all`, then
    `meridian decisions --render docs/15_DECISIONS.md`.
 5. **Tests**: the guarantee guard test will require a `.nameResolution` code to

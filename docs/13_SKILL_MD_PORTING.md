@@ -29,7 +29,8 @@ prose, section, idiom, trigger, or guard ever auto-invokes the planner. The only
 paths to the LLM are author-written markers: `with discretion` / `with autonomy`
 (workflow or section header) and the inline `use judgment to <goal>:` block (all
 lower to `ProseStepIR`). Everything else compiles to deterministic IR or is a
-hard `semanticError`. An unmarked, unresolved imperative step errors — it never
+hard error. An unmarked, unresolved imperative step is a coded `MER2001`
+diagnostic (with a did-you-mean against the declared phrases) — it never
 silently degrades to an LLM call.
 
 ---

@@ -133,6 +133,18 @@ non-deterministic. The *compilation* is deterministic.
 - **Plan & autonomy prose** — `with discretion` / `with autonomy` (and the AI
   Markdown markers) lower to a typed planner boundary, so judgment-bearing steps
   are interwoven with deterministic IR rather than hand-waved.
+- **World-class diagnostics** — every error is a stable, documented `MERxxxx`
+  code with a source snippet + caret. Name-resolution errors **always** carry a
+  `did you mean "X"?` suggestion (or a candidate list); there are no silent
+  fallbacks (strict-by-default, opt out per-file with `allow-fallbacks:`).
+  Errors are batch-reported, link to the design decision that governs them, and
+  are queryable via `meridian explain <code>` / `meridian decisions`. `--fix`
+  applies the unambiguous suggestions; `--diagnostics-format json` feeds editors
+  and CI. See [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md).
+- **Gap-free tracing** — `ParserTrace` exposes category-scoped, timed spans over
+  every compile phase (tokenize → parse → lower → codegen), a compile profile,
+  and diagnostics mirrored into the stream. Enable with `--trace <categories>`.
+  See [08_TRACING.md](08_TRACING.md).
 
 ## End-to-end flow
 

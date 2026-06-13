@@ -229,9 +229,10 @@ lowerPhraseInvocation
   ├── matchPhrase finds a phrase → inlinePhrase
   │     substituteArgs (text + AST substitution, longest-param-first)
   │     then lowerBlock recursively (depth-limited to 8)
-  └── no match → strict default: hard `CompilerError.semanticError`
-        (only under `allow-fallbacks: unresolved-phrases` / lenient mode does
-         it degrade to a `BindIR(name: "_unresolved", …)` placeholder)
+  └── no match → strict default: a coded `MER2001` diagnostic via
+        `Diagnostic.unresolved` (always carrying a did-you-mean / candidate
+         list). Only under `allow-fallbacks: unresolved-phrases` / lenient mode
+         does it degrade to a `BindIR(name: "_unresolved", …)` placeholder
 ```
 
 `simultaneously` lowers to `SimultaneouslyIR` whose `branches` is a list of
@@ -501,16 +502,52 @@ public enum CompilerError: Error, Sendable {
     case syntaxError(message: String, range: SourceRange)
     case semanticError(message: String, range: SourceRange)
     case codegenError(message: String)
+    /// The modern path: one or more structured, coded diagnostics. A failed
+    /// compile reports *all* collected errors here.
+    case diagnostics([Diagnostic])
+
+    /// Project ANY case into structured diagnostics so renderers, the CLI, and
+    /// tests treat every error uniformly. Legacy cases map to generic `MER0xxx`
+    /// codes; `.diagnostics` returns its payload.
+    public var diagnostics: [Diagnostic] { … }
 }
 ```
+
+Each `Diagnostic` carries a stable `DiagnosticCode` (e.g. `MER2002`), a
+severity, the primary `SourceRange`, plus the remediation surface — a
+did-you-mean `Suggestion` or candidate-list `DiagnosticNote`, optional `help`,
+and the governing `DecisionRef`. See
+[14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) for the full anatomy and
+the `MERxxxx` catalog, and [15_DECISIONS.md](15_DECISIONS.md) for the decisions
+the codes link to.
+
+## Batch reporting via `DiagnosticEngine`
+
+Lowering does not abort on the first error. A per-file, single-threaded
+`DiagnosticEngine` (`Sources/MeridianCore/Diagnostics/DiagnosticEngine.swift`)
+**collects** diagnostics and recovers at construct boundaries (workflow / rule /
+statement), skipping the offending construct wholesale rather than resyncing
+token-by-token (which would spawn cascade/phantom errors). Phrase stubs are
+pre-registered first, so a later workflow still resolves a reference to an
+earlier one even if that earlier one had an error. At the end of the phase
+`throwIfErrors()` raises a single `CompilerError.diagnostics([…])` with every
+collected error. The engine also mirrors each diagnostic into the trace stream
+(`.diagnostics` category) so `--trace diagnostics` shows them inline. This is
+decision **D-DX-2** (no silent fallbacks; batch-report with coarse recovery).
 
 ## Error handling
 
 | Stage | Error type | Behaviour |
 |---|---|---|
-| Tokenisation | none | Always succeeds |
-| Config parse | `MerConfigParseError` | Thrown to caller |
-| Meridian parse | `StatementParseError` | Thrown to caller |
-| Lowering | `CompilerError` | Thrown; strict-by-default — an unresolvable phrase is a hard `semanticError` (only `allow-fallbacks`/lenient degrades it to a `_unresolved` placeholder) |
+| Tokenisation | `\u{E000}markererror` sentinel | Non-throwing; raised later as a coded diagnostic by `StatementParser` |
+| Config parse | `CompilerError` | Unrecognized vocabulary declarations → `MER5002`; bad rulebook sections → `MER5003` |
+| Meridian parse | `CompilerError` | Malformed headers → `MER1001`, orphaned code blocks → `MER1002`, unparseable statements/rules → `MER1003`/`MER1004`, misplaced frontmatter → `MER1006`, removed `import` form → `MER1008` |
+| Lowering | `CompilerError.diagnostics` | **Strict-by-default, batch-collected.** Unresolved phrase → `MER2001`; unknown tool → `MER2002`; unknown kind/property/adjective/verb → `MER2003`/`MER2004`/`MER2007`/`MER2008`; unattached rule → `MER3006`; unresolved trigger action → `MER3007`. Per-file `allow-fallbacks:` (or `Compiler.Options.fallbackPolicy = .lenient`) downgrades the matching kind back to a `_unresolved`/stub placeholder |
 | Emission | none | Always succeeds |
-| Formatting | Swift error | Non-fatal; logged to stderr, raw output written |
+| Formatting | warning (`MER5001`) | **Non-fatal** (D-DX-3): the unformatted Swift is kept and written; a warning is reported to stderr |
+
+The CLI renders all of the above through a single `DiagnosticRenderer`
+(`reportCompilerError`), in either human (snippet + caret + did-you-mean) or
+`--diagnostics-format json` form, and `--fix` applies the unambiguous
+suggestions. See [07_CLI.md](07_CLI.md) and
+[14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md).
