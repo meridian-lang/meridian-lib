@@ -211,7 +211,7 @@ cite the source for each non-gap claim.
 - `find_trajectory` - structured typed-fact and event timelines for entities.
 - `find_contradictions` - cached suspected contradiction findings.
 
-## Tools Used (( inert ))
+## Tools Used
 
 - `search` - keyword search for exact phrase variants and dated mentions.
 - `query` - semantic search for conceptual matches.

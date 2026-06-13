@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/voice-note-ingest/SKILL.md
-+++ skills/voice_note_ingest.meri
++++ voice_note_ingest.meri
 @@ -29,7 +29,7 @@
  > **Convention:** see [_brain-filing-rules.md](../_brain-filing-rules.md) for
  > the filing decision protocol.

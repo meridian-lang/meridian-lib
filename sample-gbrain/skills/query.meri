@@ -51,7 +51,7 @@ use judgment to answer the question from the brain with citations:
   Synthesize an answer where every claim cites a specific page slug.
   Flag gaps explicitly when the brain lacks the information.
 
-## Coverage guard (( role: procedure ))
+## Coverage guard
 
 > If the indexed landing page is empty, the brain has a coverage gap; flag it
 > rather than answering from general knowledge.

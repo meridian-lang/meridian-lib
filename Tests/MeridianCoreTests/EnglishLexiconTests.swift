@@ -102,6 +102,21 @@ struct DurationParsingTests {
     func nonNumeric() {
         #expect(EnglishLexicon.default.parseDuration("many hours") == nil)
     }
+
+    @Test("stripLeadingArticle removes one leading article, preserving case")
+    func stripArticle() {
+        let lex = EnglishLexicon.default
+        #expect(lex.stripLeadingArticle("the Order") == "Order")
+        #expect(lex.stripLeadingArticle("a customer") == "customer")
+        #expect(lex.stripLeadingArticle("an Account") == "Account")
+        // No article → unchanged (trimmed).
+        #expect(lex.stripLeadingArticle("  Order  ") == "Order")
+        // Only the leading article is stripped, not an embedded one.
+        #expect(lex.stripLeadingArticle("the a-list") == "a-list")
+        // A word that merely starts with article letters is not an article.
+        #expect(lex.stripLeadingArticle("theatre") == "theatre")
+        #expect(lex.stripLeadingArticle("another") == "another")
+    }
 }
 
 @Suite("EnglishLexicon — comparison markers")
@@ -284,6 +299,50 @@ struct LanguageSynonymTests {
         )
         #expect(out.contains(".weeks(2)") || out.contains("Duration") || out.contains("wait"),
                 Comment(rawValue: "Expected wait/duration in:\n\(out)"))
+    }
+
+    @Test("assertion synonym in merconfig adds an invariant keyword")
+    func assertionSynonym() throws {
+        let mer = """
+        ---
+        vocabulary: test.merconfig
+        ---
+
+        To check a score:
+          verify the score is more than 100.
+        """
+        let cfg = """
+        === vocabulary ===
+
+        === language ===
+        Assertion synonyms:
+          verify
+        """
+        // "verify X" should lower to the same assert as "make sure X".
+        let out = try Compiler().compile(
+            meridianSource: mer,
+            meridianFile: "test.meridian",
+            merconfigSource: cfg,
+            merconfigFile: "test.merconfig"
+        )
+        #expect(out.contains("guard") || out.contains("MeridianRuntimeError") || out.contains("assert"),
+                Comment(rawValue: "Expected an assertion in:\n\(out)"))
+        #expect(!out.contains("_unresolved"),
+                Comment(rawValue: "Expected no unresolved placeholder in:\n\(out)"))
+    }
+
+    @Test("merging sorts assertion markers longest-first and de-dupes")
+    func assertionMarkerMerge() {
+        let merged = EnglishLexicon.default.merging(
+            comparisonSynonyms: [],
+            durationSynonyms: [:],
+            assertionSynonyms: ["assert", "guarantee that"]
+        )
+        // "guarantee that" (author) is retained; "assert" is de-duped (already a
+        // default); ordering is longest-first.
+        #expect(merged.assertionMarkers.first == "guarantee that")
+        #expect(merged.assertionMarkers.filter { $0 == "assert" }.count == 1)
+        #expect(merged.assertionMarkers.contains("make sure"))
     }
 }
 

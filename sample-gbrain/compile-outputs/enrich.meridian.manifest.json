@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Enrich brain pages with tiered enrichment protocol. Creates and updates\nperson\/company pages with compiled truth, timeline, and cross-links.\nUse when a new entity is mentioned or an existing page needs updating.",
     "mutating" : "true",
@@ -138,7 +218,7 @@
         "text" : "Output Format"
       },
       {
-        "kind" : "inert",
+        "kind" : "tools",
         "level" : 2,
         "line" : 336,
         "text" : "Tools Used"
@@ -267,11 +347,7 @@
         "line" : 73,
         "lines" : [
           "Scale enrichment to importance. Don't waste API calls on low-value entities",
-          "| Tier | Who | Effort | Sources |",
-          "|------|-----|--------|---------|",
-          "| 1 (key) | Inner circle, close collaborators, key contacts | Full pipeline | All available APIs + deep web research |",
-          "| 2 (notable) | Occasional interactions, industry figures | Moderate | Web research + social + brain cross-ref |",
-          "| 3 (minor) | Worth tracking, not critical | Light | Brain cross-ref + social lookup if handle known |"
+          "table:decision:fCBUaWVyIHwgV2hvIHwgRWZmb3J0IHwgU291cmNlcyB8CnwtLS0tLS18LS0tLS18LS0tLS0tLS18LS0tLS0tLS0tfAp8IDEgKGtleSkgfCBJbm5lciBjaXJjbGUsIGNsb3NlIGNvbGxhYm9yYXRvcnMsIGtleSBjb250YWN0cyB8IEZ1bGwgcGlwZWxpbmUgfCBBbGwgYXZhaWxhYmxlIEFQSXMgKyBkZWVwIHdlYiByZXNlYXJjaCB8CnwgMiAobm90YWJsZSkgfCBPY2Nhc2lvbmFsIGludGVyYWN0aW9ucywgaW5kdXN0cnkgZmlndXJlcyB8IE1vZGVyYXRlIHwgV2ViIHJlc2VhcmNoICsgc29jaWFsICsgYnJhaW4gY3Jvc3MtcmVmIHwKfCAzIChtaW5vcikgfCBXb3J0aCB0cmFja2luZywgbm90IGNyaXRpY2FsIHwgTGlnaHQgfCBCcmFpbiBjcm9zcy1yZWYgKyBzb2NpYWwgbG9va3VwIGlmIGhhbmRsZSBrbm93biB8"
         ],
         "role" : "inert"
       },
@@ -311,15 +387,7 @@
         "line" : 96,
         "lines" : [
           "Don't just capture facts. Capture texture:",
-          "| Signal Type | What to Extract |",
-          "|-------------|----------------|",
-          "| Opinions, beliefs | What They Believe section |",
-          "| Current projects, features shipped | What They're Building section |",
-          "| Ambition, career arc, motivation | What Motivates Them section |",
-          "| Topics they return to obsessively | Hobby Horses section |",
-          "| Who they amplify, argue with, respect | Network \/ Relationships |",
-          "| Ascending, plateauing, pivoting? | Trajectory section |",
-          "| Role, company, funding, location | State section (hard facts) |"
+          "table:decision:fCBTaWduYWwgVHlwZSB8IFdoYXQgdG8gRXh0cmFjdCB8CnwtLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgT3BpbmlvbnMsIGJlbGllZnMgfCBXaGF0IFRoZXkgQmVsaWV2ZSBzZWN0aW9uIHwKfCBDdXJyZW50IHByb2plY3RzLCBmZWF0dXJlcyBzaGlwcGVkIHwgV2hhdCBUaGV5J3JlIEJ1aWxkaW5nIHNlY3Rpb24gfAp8IEFtYml0aW9uLCBjYXJlZXIgYXJjLCBtb3RpdmF0aW9uIHwgV2hhdCBNb3RpdmF0ZXMgVGhlbSBzZWN0aW9uIHwKfCBUb3BpY3MgdGhleSByZXR1cm4gdG8gb2JzZXNzaXZlbHkgfCBIb2JieSBIb3JzZXMgc2VjdGlvbiB8CnwgV2hvIHRoZXkgYW1wbGlmeSwgYXJndWUgd2l0aCwgcmVzcGVjdCB8IE5ldHdvcmsgLyBSZWxhdGlvbnNoaXBzIHwKfCBBc2NlbmRpbmcsIHBsYXRlYXVpbmcsIHBpdm90aW5nPyB8IFRyYWplY3Rvcnkgc2VjdGlvbiB8CnwgUm9sZSwgY29tcGFueSwgZnVuZGluZywgbG9jYXRpb24gfCBTdGF0ZSBzZWN0aW9uIChoYXJkIGZhY3RzKSB8"
         ],
         "role" : "inert"
       },
@@ -345,14 +413,7 @@
           "LinkedIn data, career history, connections, education",
           "**4e. Company enrichment APIs (Tier 1)**",
           "Company data, financials, headcount, key hires, recent news",
-          "| Data Need | Example Sources | Tier |",
-          "|-----------|----------------|------|",
-          "| Web research | Perplexity, Brave, Exa | 1-2 |",
-          "| LinkedIn \/ career | Crustdata, Proxycurl, People Data Labs | 1 |",
-          "| Career history | Happenstance, LinkedIn | 1 |",
-          "| Funding \/ company data | Crunchbase, PitchBook, Clearbit | 1 |",
-          "| Social media | Platform APIs, web scraping | 1-3 |",
-          "| Meeting history | Calendar\/meeting transcript tools | 1-2 |"
+          "table:decision:fCBEYXRhIE5lZWQgfCBFeGFtcGxlIFNvdXJjZXMgfCBUaWVyIHwKfC0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18LS0tLS0tfAp8IFdlYiByZXNlYXJjaCB8IFBlcnBsZXhpdHksIEJyYXZlLCBFeGEgfCAxLTIgfAp8IExpbmtlZEluIC8gY2FyZWVyIHwgQ3J1c3RkYXRhLCBQcm94eWN1cmwsIFBlb3BsZSBEYXRhIExhYnMgfCAxIHwKfCBDYXJlZXIgaGlzdG9yeSB8IEhhcHBlbnN0YW5jZSwgTGlua2VkSW4gfCAxIHwKfCBGdW5kaW5nIC8gY29tcGFueSBkYXRhIHwgQ3J1bmNoYmFzZSwgUGl0Y2hCb29rLCBDbGVhcmJpdCB8IDEgfAp8IFNvY2lhbCBtZWRpYSB8IFBsYXRmb3JtIEFQSXMsIHdlYiBzY3JhcGluZyB8IDEtMyB8CnwgTWVldGluZyBoaXN0b3J5IHwgQ2FsZW5kYXIvbWVldGluZyB0cmFuc2NyaXB0IHRvb2xzIHwgMS0yIHw="
         ],
         "role" : "inert"
       },
@@ -498,7 +559,7 @@
           "Link entities in gbrain (add_link)",
           "Check backlinks in gbrain (get_backlinks)"
         ],
-        "role" : "inert"
+        "role" : "tools"
       }
     ],
     "tools" : "get_page\nput_page\nsearch\nquery\nadd_link\nadd_timeline_entry\nget_backlinks",
@@ -507,6 +568,36 @@
     "writes_pages" : "true",
     "writes_to" : "people\/\ncompanies\/"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "enrich.meri",
     "brain.merconfig"
@@ -514,47 +605,54 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 572
+      "swift_line" : 625
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 577
+      "swift_line" : 630
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 616
+      "swift_line" : 671
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 621
+      "swift_line" : 676
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 660
+      "swift_line" : 717
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 665
+      "swift_line" : 722
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 704
+      "swift_line" : 763
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 709
+      "swift_line" : 768
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 748
+      "swift_line" : 809
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 753
+      "swift_line" : 814
     }
   ],
   "tools_used" : [
-
+    "get_page",
+    "put_page",
+    "add_timeline_entry",
+    "list_pages",
+    "put_raw_data",
+    "get_raw_data",
+    "add_link",
+    "get_backlinks"
   ],
   "workflows" : [
     {

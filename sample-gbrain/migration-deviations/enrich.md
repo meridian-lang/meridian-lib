@@ -3,8 +3,8 @@
 - Original: `enrich/SKILL.md`
 - Ported: `enrich.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 86%
-- Lines: 350 -> 346 (+45 / -49)
+- Similarity: 87%
+- Lines: 350 -> 346 (+44 / -48)
 
 ## Frontmatter
 - Added: (none)
@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/enrich/SKILL.md
-+++ skills/enrich.meri
++++ enrich.meri
 @@ -28,9 +28,9 @@
  
  # Enrich Skill
@@ -279,13 +279,4 @@
  
  - Creating stub pages with no content
  - Enriching without checking brain first
-@@ -337,7 +333,7 @@
- 
- Both page types have bidirectional back-links to every entity they mention.
- 
--## Tools Used
-+## Tools Used (( inert ))
- 
- - Read a page from gbrain (get_page)
- - Store/update a page in gbrain (put_page)
 ```

@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Take any book (EPUB\/PDF), produce a personalized chapter-by-chapter analysis with two-column tables. Left column preserves the chapter content; right column maps every idea to the reader's actual life using brain context. Output is a single brain page at media\/books\/<slug>-personalized.md plus an optional PDF via brain-pdf.",
     "mutating" : "true",
@@ -184,6 +264,12 @@
         "level" : 3,
         "line" : 226,
         "text" : "Reports a JSON envelope on stdout"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 322,
+        "text" : "Optional"
       },
       {
         "kind" : "topic",
@@ -480,14 +566,14 @@
         "heading" : "Output checklist",
         "line" : 313,
         "lines" : [
-          "[ ] Book file exists locally (path known)",
-          "[ ] Chapter texts under `$WORK\/chapters\/*.txt` with sane word counts",
-          "[ ] Context pack at `$WORK\/context.md` is dense",
-          "[ ] `gbrain book-mirror --chapters-dir … --context-file … --slug … --title …` returned exit 0",
-          "[ ] `media\/books\/<slug>-personalized.md` exists in the brain",
-          "[ ] Fact-check pass complete (no errors against USER.md or other source-of-truth pages)",
-          "[ ] Cross-links added from referenced people\/companies",
-          "[ ] Optional: PDF rendered via brain-pdf and delivered"
+          "Book file exists locally (path known)",
+          "Chapter texts under `$WORK\/chapters\/*.txt` with sane word counts",
+          "Context pack at `$WORK\/context.md` is dense",
+          "`gbrain book-mirror --chapters-dir … --context-file … --slug … --title …` returned exit 0",
+          "`media\/books\/<slug>-personalized.md` exists in the brain",
+          "Fact-check pass complete (no errors against USER.md or other source-of-truth pages)",
+          "Cross-links added from referenced people\/companies",
+          "Optional: PDF rendered via brain-pdf and delivered"
         ],
         "role" : "inert"
       },
@@ -542,6 +628,36 @@
     "writes_pages" : "true",
     "writes_to" : "media\/books\/"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "book_mirror.meri",
     "brain.merconfig"
@@ -549,43 +665,43 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 571
+      "swift_line" : 622
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 576
+      "swift_line" : 627
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 615
+      "swift_line" : 666
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 620
+      "swift_line" : 671
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 659
+      "swift_line" : 710
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 664
+      "swift_line" : 715
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 703
+      "swift_line" : 754
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 708
+      "swift_line" : 759
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 747
+      "swift_line" : 798
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 752
+      "swift_line" : 803
     }
   ],
   "tools_used" : [

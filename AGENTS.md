@@ -178,7 +178,7 @@ meridian/
 | `lint` | Run `MeridianLinter`. |
 | `trace render` | Render captured `ParserTrace` logs. |
 | `preview-skill` | Preview a `SKILL.md` via `SkillMarkdownImporter`. |
-| `migrate-skill` | Convert a `SKILL.md` → strict `.meri`. Deterministic marking pass (blockquote preamble; `(( inert, role: invariants/prohibitions ))`, `(( role: procedure ))` for pure-shell unknowns, `(( inert ))` for other unknowns; recognized roles unmarked), then strict-compile. Injects no frontmatter; does NOT strip `skill: true`. `--batch` for a directory. |
+| `migrate-skill` | Convert a `SKILL.md` → strict `.meri`. Deterministic marking pass (blockquote preamble; `(( inert, role: invariants/prohibitions ))` for prose Contract/Anti-Patterns, `(( inert ))` for other narrative unknowns; recognized roles unmarked) **plus section-alias emission** — a pure-shell unknown heading is left clean and routed to a `=== sections ===` rulebook alias (`section "<heading>" -> procedure`) which the command **appends to the rulebook** (first `--rulebook`, else first autodiscovered `.merrules`, else a new `migrated-sections.merrules` beside `--out`; idempotent; printed as a snippet in stdout mode). Then strict-compile. Injects no frontmatter; does NOT strip `skill: true`. `--batch` for a directory. |
 | `skill-deviation` | Audit a ported `.meri` vs its original `SKILL.md`: frontmatter delta, tier, similarity, categories (`frontmatter-injected`, `section-marker-added`, `shell-block-routed`, `preamble-blockquoted`), and a `difflib`-faithful unified diff. `--batch --index` regenerates `sample-gbrain/migration-deviations/`. |
 
 `migrate-skill` and `skill-deviation` are backed by `SkillMigrator` /
@@ -204,6 +204,55 @@ source of truth; the migration corpus is reproducible with no external scripts).
 - `public` only on types and members that are part of a module's public API.
 - No force-unwrap (`!`) in production code.
 - Prefer `guard let` / `guard else` for early exits over nested `if let`.
+
+### No hardcoded English-surface vocabulary (load-bearing rule)
+
+**Never hardcode an English-surface word/keyword/phrase list inside parser,
+lowering, or codegen code.** Any set of surface tokens the grammar keys on —
+articles, prepositions, copulas, comparison markers, duration units, assertion
+introducers (`make sure`/`ensure`/`assert`), quantifier determiners, connector
+words, stop-words, etc. — belongs in `EnglishLexicon`
+(`Sources/MeridianCore/Language/EnglishLexicon.swift`), which is the single,
+domain-overridable source of surface vocabulary. The rulebook / `.merconfig`
+`=== language ===` section is the generalisation of this: it lets a domain
+*extend* the lexicon without recompiling Meridian.
+
+Concretely, when you reach for a literal like `["make sure ", "ensure "]` or
+`if lower.hasPrefix("every ")` in a `Parser/` or `Lowering/` file, **stop** and
+instead:
+
+1. Add (or reuse) a field on `EnglishLexicon` (e.g. `assertionMarkers`), with a
+   sensible default in `.default`.
+2. Thread it through `EnglishLexicon.init` and `merging(...)`.
+3. If it should be author-extensible, add a matching `LanguageSynonyms` field,
+   parse it in `MerConfigParser.parseLanguageSection` (a new `=== language ===`
+   sub-block), concatenate it in `MerConfigFile.merging`, and forward it from
+   both `Compiler.compile` overloads into `lexicon.merging(...)`.
+4. Read it via the threaded `lexicon` parameter at the call site.
+
+**Where the line is.** Two categories, two rules:
+
+- **Extensible vocabulary** — articles, prepositions, copulas, comparison
+  markers, duration units, assertion introducers, stop-words, and any
+  domain-synonymisable term. These MUST live in `EnglishLexicon` and SHOULD be
+  author-extensible via `=== language ===`. A literal list of these in a
+  `Parser/`/`Lowering/`/`Codegen/` file is a bug. Reference examples:
+  `assertionMarkers` + `Assertion synonyms:` (2026-06-13) and
+  `EnglishLexicon.stripLeadingArticle` (the canonical article stripper — never
+  re-list `["the ", "a ", "an "]` inline; call the helper).
+- **Fixed control-flow syntax** — the structural skeleton of the grammar:
+  `if`/`while`/`until`/`for each`/`otherwise`/`unless`, the quantifier
+  determiners (`every`/`all`/`any`/`some`/`no`) that map 1:1 to
+  `QuantifierKindAST`, block headers, and the `let … be …` / `do … and …`
+  shapes. These define *what the language is*, not *what a domain calls things*,
+  so they may remain literals — but keep each construct's trigger words in ONE
+  place (its parse production), commented, never copy-pasted across files. If a
+  domain ever needs to rename one, promote it to the lexicon at that point.
+
+Other narrow exceptions (justify in a comment): non-natural-language structural
+sentinels (e.g. the `\u{E000}` code-block / shell markers), Swift-keyword output
+in the emitter, and section-marker syntax (`(( … ))`). When in doubt, it goes in
+the lexicon.
 
 ### Dependencies
 
@@ -331,9 +380,13 @@ Key associated enums:
 - `.instanceRef(name: String)` — named instance (emits `instances.camelName`)
 - `.envVar(name: String)` — `$FOO` env var reference
 - `.nowExpression` — current timestamp (`Date()` in plain context, `.date(Date())` in value context)
-- `.comparison(IRExpression, ComparisonOp, IRExpression)` — comparison expression
+- `.comparison(IRExpression, ComparisonOp, IRExpression)` — comparison expression (`ComparisonOp` gained `.identifies` in Wave 3 — relation identity via `MeridianComparison.identifies`)
 - `.logical(LogicalOp, [IRExpression])` — and/or/not
-- `.relationTraversal(IRExpression, relationName: String, target: IRExpression?)` — relation traversal
+- `.relationTraversal(IRExpression, relationName: String, target: IRExpression?)` — relation traversal (repurposed in Wave 3 for scalar one-to-one navigation → `.propertyAccess`)
+- `.quantified(QuantifierIR)` — Wave 2C quantifier over a `DescriptionIR`
+- `.description(DescriptionIR)` — Wave 3C query plan (`Value.list` of a filtered/sorted/taken collection)
+- `.aggregate(AggregateKind, DescriptionIR)` — Wave 3C `.count` (emits `Decimal(…count)`) / `.list`
+- `.superlative(SuperlativeIR)` — Wave 3C sort-then-`.first`
 - `.invocation(InvokeIR)` — inline tool call (rare)
 
 **Workflow invocations** use `InvokeIR` with `toolID: "workflow:{StructName}"`.
@@ -757,6 +810,68 @@ collapse to one struct name are disambiguated with a numeric suffix via
 `id` property because the `MeridianKind` identity `id` is synthesised
 unconditionally (otherwise: duplicate `id`).
 
+### 14. A `role` section's body must be exclusively executable — split, don't comment
+
+A section with an executable role (`(( role: procedure ))`, `(( role: invariants ))`,
+…) makes **every** non-blank, non-comment line a live statement that must lower.
+So you cannot flip an `(( inert ))` documentation heading to a role and keep its
+narrative paragraph — that prose errors as an unresolved phrase. The **correct**
+fix is a structural split: keep the narrative in its `(( inert ))` section
+(verbatim, uncommented — it stays real documentation) and add a **separate**
+sibling/child heading whose body is **only** executable statements. A `###` child
+re-resolves its own role under an inert `##` parent; for sections already at
+`###`, add a sibling `###`. The gbrain back-linking conversions
+(`briefing` `### Enforce back-links`, `maintain` `### Repair missing back-links` /
+`### Create missing cross-references`) follow this shape.
+
+**ANTI-PATTERN — do NOT blockquote the prose to silence the error.** Prefixing the
+narrative with `>` (so `IndentTokenizer` treats it as a comment) is lossy: a
+blockquoted line is *dropped from the IR* — no longer enforced, asserted, or
+executed. That hides a real requirement behind a comment and is the one place the
+"no silent drops" guarantee (§11 / `SkillSectionBuilder` strictness) can't protect
+you, because the drop is author-chosen via `>` rather than compiler-rejected. Full
+guidance: `docs/13_SKILL_MD_PORTING.md` §"Common porting fixes" item 7.
+
+### 15. Narrative encodes executable contracts — mine it before marking inert
+
+The most-missed porting step (and the deeper lesson behind §14): SKILL.md prose
+rarely *only* describes — it usually states **conditions on execution** the
+language can lower. A sentence like "every entity the page mentions must have a
+back-link" reads like documentation but is a **post-condition** (`assert …` /
+`make sure …`, and/or a guarded loop that establishes it). "before X, Y must
+hold" is a **precondition** (`wait until …` / a leading guard). "if X, the rule
+applies" is an **applicability guard** (a branch). A qualifier like "fix the
+*missing* one" makes an action **conditional**, not unconditional (the
+back-linking loop is `if the entity does not link …`, never a bare `add`).
+
+**Before marking any normative sentence `(( inert ))`, classify it: post-
+condition, precondition, invariant, or guard? If it's any of those, lower it.**
+`(( inert ))` is only for genuinely non-executable material — rationale,
+examples, external references, formatting templates. `assert`/`ensure`/`make
+sure` are aliases (extensible via `=== language ===` `Assertion synonyms:`); pick
+the one closest to the source wording. Full guidance + the contract-shape table:
+`docs/13_SKILL_MD_PORTING.md` §"Common porting fixes" item 8.
+
+### 16. `(( role: procedure ))` is redundant on a recognized procedure heading
+
+`procedure` is the **implicit** role for any heading whose text normalizes to a
+recognized procedure synonym — `Phases`, `Workflow`, `Pipeline`, `Protocol`,
+`Steps`, `Process`, `Procedure`, or a `Phase N:` prefix
+(`SkillSectionRole.builtinRole`, `Sources/MeridianCore/Rulebook/Rulebook.swift`).
+On such a heading, writing `(( role: procedure ))` is noise — during migration,
+**name the executable section with one of those words and add no marker.**
+
+It is **not** a blanket default. A content-bearing heading whose text is *not* a
+recognized role (e.g. `### Enforce back-links`) is a **hard `semanticError`** —
+"unrecognized section heading … has content but no role" — never a silent
+fall-through to procedure (the no-silent-drops guarantee). So: never *add* the
+marker to a `Protocol`/`Steps`/`Phase N:` heading; never *strip* it from a custom
+heading unless you also rename the heading to a recognized synonym (or add a
+`=== sections ===` rulebook alias). The gbrain back-link sections use custom
+headings (`### Enforce back-links`, `### Repair missing back-links`), so their
+`(( role: procedure ))` markers are load-bearing and must not be removed as-is.
+Full guidance: `docs/13_SKILL_MD_PORTING.md` (edit-budget callout after item 4).
+
 ---
 
 ## 12. Recent decisions
@@ -771,6 +886,293 @@ unconditionally (otherwise: duplicate `id`).
 > (which uses bare `D1`–`D30`). Older log entries written before the rename
 > may still use the bare form (e.g. `D17`); treat any bare `D<N>` outside
 > `meridian-handoff/docs/11_DECISIONS.md` as `SkillMD-D<N>`.
+
+### 2026-06-13 — `assert` invariant alias; assertion markers are lexicon-driven
+
+`assert <cond>.` now lowers to the same `AssertStatementAST`/`AssertIR` as
+`make sure <cond>.` and `ensure <cond>.`. Crucially, the introducer keywords are
+**no longer hardcoded** in `StatementParser.parseEnglishIdiom` — they live in
+`EnglishLexicon.assertionMarkers` (default `["make sure", "ensure", "assert"]`)
+and are therefore extensible per-domain. A `.merconfig` `=== language ===`
+section can add more via a bare-keyword `Assertion synonyms:` block:
+
+```
+=== language ===
+Assertion synonyms:
+  verify
+  guarantee that
+```
+
+Plumbing mirrors the existing comparison/duration synonym path:
+`LanguageSynonyms.assertionSynonyms` → `MerConfigParser.parseLanguageSection`
+(new `assertion` mode; entries are bare keywords, captured BEFORE the
+`key = value` guard) → `MerConfigFile.merging` (concatenates) →
+`EnglishLexicon.merging(assertionSynonyms:)`, which de-dupes and sorts the
+merged set **longest-first** so a multi-word marker (`guarantee that`) wins over
+any single-word prefix. `StatementParser` matches with
+`lexicon.assertionMarkers.first(where: { lower.hasPrefix($0 + " ") })`. Both
+`Compiler.compile` overloads forward `config.languageSynonyms.assertionSynonyms`
+into the lexicon merge. Tests: `EnglishIdiomTests.assertAlias`,
+`LanguageSynonymTests.assertionSynonym` (end-to-end config-driven keyword) and
+`.assertionMarkerMerge` (ordering/de-dup). Full `swift test` 729 green.
+
+**Pitfall — bare-keyword section in `=== language ===`.** Unlike comparison and
+duration synonyms (`key = value`), assertion synonyms are bare phrases with no
+`=`. `parseLanguageSection` must capture them (when `mode == .assertion`) before
+the `guard let eqRange = t.range(of: " = ")` early-continue, or every entry is
+silently dropped. The mode `switch` at the bottom of the loop must also list
+`.assertion` (it `break`s — the work is done earlier) to stay exhaustive.
+
+### 2026-06-13 — Negated verb predicates + single-line conditionals + guarded iron-law repair
+
+Two small surface additions (still **no new IR primitive** — both reuse existing
+`.logical(.not, …)` / `BranchIR`), motivated by lowering narrative *contract*
+text (the back-linking iron law) into executable IR instead of inert prose.
+
+- **Negated active-verb predicate.** `ExpressionParser.parseActiveVerbIfPresent`
+  now recognizes do-support negation (`<subj> does not <verb> <obj>`, plus
+  `do/did` and contractions `doesn't/don't/didn't`) and wraps the predicate in
+  `.logical(.not, [verbPredicate])`. It also strips a single governing
+  preposition between verb and object (`link to the input` → object `the
+  input`), via `stripLeadingPreposition` (lexicon prepositions). Property-backed
+  only — a tool-backed verb still can't be tested inline.
+- **Single-line conditional modality.** `StatementParser` now parses
+  `if <cond>, <action> [, otherwise <action>].` on one line (in addition to the
+  comma-terminated multi-line header + indented body). Split point is the first
+  top-level comma outside quotes that is NOT an Oxford `, and`/`, or` joiner
+  (`inlineConditionSeparator`); a top-level `, otherwise <action>` tail becomes
+  the else-block. Both modalities produce identical `ConditionalStatementAST`.
+  Pitfall: the multi-line `if <cond>,` (trailing comma, no inline body) is still
+  matched first by the `hasSuffix(",")` branch — order matters.
+- **Vocabulary (gbrain).** `brain.merconfig` adds property-backed `Backlinking`
+  (`entity.links`, verb `link`) and `Referencing` (`page.links`, verb
+  `reference`) so the iron law is *checkable*. The back-linking sections in
+  `briefing`/`maintain` now lower to a guarded repair —
+  `if the entity does not link to the input, add a back-link …` →
+  `if !MeridianComparison.identifies(state.get("entity.links"), state.get("input")) { … link.add … }` —
+  so a back-link is created only when actually missing (the narrative's "a
+  mention WITHOUT a back-link" qualifier is now executable, not dropped).
+
+Tests: `Inform7Wave3Tests` (negated parse + negated-guard emit), `EnglishIdiomTests`
+(single-line branch, `, otherwise` else, inline≡multiline equivalence). Full
+`swift test` 726 + both typecheck gates green.
+
+### 2026-06-12 — Wave 3: relational layer (relations, verbs, descriptions)
+
+The relationships between kinds are now first-class and still fully
+deterministic. **No new IR primitive** — only new `IRExpression` cases
+(`.description`, `.aggregate`, `.superlative`; `.relationTraversal` was repurposed
+for scalar navigation), a `ComparisonOp.identifies`, and merconfig vocabulary.
+
+**3A relations + backing.** `.merconfig` gains two sentence shapes parsed by
+`MerConfigParser`: an **evaluation backing** (`<Rel> is read from the <kind>'s
+<property>.` → `RelationBackingAST.property`; `<Rel> is read via the <tool>
+tool.` → `.tool`) stored in `SymbolTable.relationBackings`, and cardinality now
+accepts `various` as a synonym for `many` (`parseCardinalityKind` singularizes
+the plural kind). `ASTToIR.validateRelationsAndVerbs` (runs right after
+`registerDefinitions`) validates every declared backing (kind/property must
+exist; tool must be declared) and requires a backing **only** for a relation
+named by a verb — an unbacked relation no verb references is allowed (legacy
+`ecommerce.merconfig` `contains`/`places`/… still compile).
+
+**3B verbs.** `The verb to <base> (it <3rd>, it is <participle>) means the
+<relation> relation.` → `SymbolTable.verbs` (keyed by base; omitted conjugations
+fall back to `EnglishLexicon.thirdPersonSingular`/`regularPastParticiple`).
+`resolveVerbForm` maps any form → `(verb, role)`. An **active-verb condition**
+(`the user owns the page`) lowers (property-backed) to `.comparison(obj.<prop>,
+.identifies, subj)` → `MeridianComparison.identifies(...)`. Tool-backed verbs
+**cannot** be tested inline (they need an `await` fetch) — hard error.
+
+**3C descriptions/aggregates/superlatives/scalar-nav/let.** A *description* is a
+deterministic query plan: `lowerDescriptionPlan` → `DescriptionIR { collection,
+elementVar, filters, sort, take }`. Passive (`pages owned by the user`) and
+relative (`pages that mention the entity`) clauses filter; `the number/list of
+…` → `.aggregate(.count/.list)`; `the most recent/oldest <desc>` and `the
+largest <desc> by <prop>` → `.superlative`; `the first N <desc> sorted by <prop>
+[descending]` → `take` + `sort`. Scalar nav (`the task assigned to the user`,
+one-to-one) carries its navigated-to kind on `.relationTraversal(_, relation:,
+navKind:)`; property-backed → `.propertyAccess`, tool-backed → a hoisted
+fetch-once `invoke` bound to a synthetic local (statement position only, via
+`lowerScalarTraversalPlan`). A `various` navigated side is a sourced error (use
+`the list of …`). `let <name> be <value>.` is sugar for `bind`. Emission:
+`emitDescriptionList` → `(coll.asList ?? []).filter{…}.sorted{…}.prefix(N)`;
+`.aggregate(.count)` is wrapped in `Decimal(…)` so `> 5` type-checks. **Tool-backed**
+descriptions/scalar-nav hoist a single prelude `invoke` (via `lowerBindValue`) and
+are therefore **statement-only** (`bind`/`let`/loop), never inline.
+
+**Operand scope + verb hints.** Relation operands (verb subject/object, passive
+clause operand, scalar-nav base) are validated against the in-scope name set
+threaded as `lowerExpr(_:scope:line:)` (params + binds + loop vars); an
+out-of-scope operand is a sourced error listing the in-scope names. `scope == nil`
+means "unknown here, skip" (no false positives where it isn't threaded). Unknown
+verbs only surface in the unambiguous `<plural declared kind> <participle> by
+<operand>` shape (`ExpressionParser.undeclaredPassiveVerbError`), carrying a
+`SymbolTable.nearestVerbForm` "did you mean …?" hint; every other relational
+production already requires `resolveVerbForm` to succeed. Relation-backing tool
+names resolve through `SymbolTable.tool(named:)` (display-name spaceless OR
+methodName), so `is read via the get backlinks tool` maps to `link.backlinks`.
+
+Manifest: `meridian_relations` (flat `name`/`left_kind`/`left_cardinality`/
+`right_kind`/`right_cardinality`/`backing`/`via`/`line`; only backed relations) +
+`meridian_verbs` (`base`/`third_person`/`past_participle`/`relation`/`line`).
+`CompileCommand` now forwards `definitions`/`relations`/`verbs` from
+`compileWithManifest` (it previously rebuilt a partial `Input` and dropped them).
+Showcase: `examples/relations.{merconfig,meridian}` (round-trips, type-checks)
+and the gbrain corpus — `brain.merconfig` declares `authorship` (property) +
+`mentioning` (tool) relations and `briefing.meri` uses `the pages written by the
+input`. Tests: `Inform7Wave3Tests` (32) + `SwiftEmitterTests`'
+`Wave3QueryPlanGoldenTests` (3 goldens) + runtime `IdentifiesTests` + three
+`wave3_3{a,b,c}.meridian.test` specs. Full `swift test` **721** green; both
+typecheck gates + SampleGbrain conformance green. Adding relations to the shared
+`brain.merconfig` makes every gbrain manifest carry `meridian_relations`/
+`meridian_verbs`, so `compile-outputs/` + `migration-deviations/ --index` were
+regenerated (tiers unchanged 42/10/1).
+
+**New pitfalls — Wave 3.** (1) `EnglishLexicon.singularize` was corrected to be
+the inverse of `pluralize`: it only strips `es` after a sibilant stem
+(`statuses`→`status`) and handles `ies`→`y`, so a plain `pages` singularizes to
+`page`, NOT `pag` (the old naive 2-char `es` strip). Cardinality kinds and
+description collection names depend on this. (2) `ExpressionParser`'s active-verb
+infix MUST skip a verb immediately preceded by a relativizer
+(`that`/`which`/`who`/`whose`) — otherwise `the pages that mention the entity`
+(a description) is mis-parsed as a top-level `verbPredicate`. (3) A workflow
+header must not embed a verb between two `a <kind>` params (`confirm that a user
+owns a page` folds `a user owns` into a `userOwns: Value` param). (4) Tool-backed
+relation traversal/description is statement-only; using it in an inline
+expression position is a sourced error by design. (5) `lowerExpr` now takes
+`scope: Set<String>? = nil`; pass the real scope from statement-position callers
+(condition, bind/rebind value, emit/assert/iteration) so relation operands are
+validated — leaving it `nil` silently disables operand validation, it does NOT
+flag everything. (6) The AST `.relationTraversal` case has THREE associated
+values now (`base`, `relation:`, `navKind:`); every match site (parser describe,
+`firstMalformed`, `subExpr`, `lowerExpr`, `SwiftEmitter`, `SymbolTable.describeExpr`)
+must include the `navKind` slot.
+
+### 2026-06-13 — Migrator emits section-title aliases to the rulebook
+
+The marking pass no longer stamps an inline `(( role: procedure ))` on an
+unrecognized **executable** (pure-shell) heading. Instead it leaves the heading
+clean and records a `SkillMigrator.SectionAlias(heading, role: .procedure)`;
+`SkillMigrator.markSections` now returns `(markdown, [SectionAlias])` and
+`deterministicTransform` / `migrate` thread the aliases through. The strict
+compile gets the aliases as a synthetic `=== sections ===` rulebook
+(`SkillMigrator.aliasRulebook`, internal name `__migrator-section-aliases__` so
+it never name-collides with a real `--rulebook`); the result surfaces them as
+`Result.sectionAliases`. `meridian migrate-skill` **persists** them to the
+rulebook — first `--rulebook`, else first autodiscovered `.merrules`, else a new
+`migrated-sections.merrules` beside `--out` — under a `=== sections ===` block,
+idempotently (skips headings already aliased, matched via
+`Rulebook.normalizeHeading`); in stdout/preview mode (no `--out`) it prints a
+snippet instead of writing. Net effect: organizational headings accrete into the
+rulebook as reusable data over a batch migration, and the corpus carries far
+fewer inline markers. Narrative (non-shell) unknowns still get `(( inert ))` —
+only provably-executable headings are auto-aliased. Corpus follow-through: the
+recurring `… guard` family (`Freshness/Stale-Page/Coverage/Escalation/Pre-Publish
+Guard`) and the back-link family are aliased in `sample-gbrain/brain.merrules`;
+their inline markers were removed. Tests:
+`SkillMigratorMarkingTests.{pureShellBecomesProcedure, aliasRulebookRendered}`.
+Pitfall: an alias-routed heading is clean in the `.meri`, so it **only** compiles
+with the alias present — `migrate-skill` must persist to the *same* rulebook the
+CLI later autodiscovers beside the file (for the gbrain corpus, the shared
+`brain.merrules`).
+
+### 2026-06-12 — Inert-reduction: executable Markdown tables + task-lists
+
+Two new block-level Markdown surfaces, both deterministic, no LLM. Goal:
+shrink the `(( inert ))` footprint by making structures that previously had no
+home executable.
+
+- **Tokenizer (`IndentTokenizer`).** New private-use sentinels alongside the B6
+  codeblock one: `tableSentinelPrefix` (`\u{E000}table:`) collapses a contiguous
+  Markdown table (header + `|---|` delimiter + rows) into one synthetic line;
+  `markerErrorSentinelPrefix` (`\u{E000}markererror:`) carries a deferred error
+  (the tokenizer is non-throwing) that `StatementParser.parseStatement` raises as
+  a located `semanticError`. `SourceLine` gained `isChecklist` /
+  `checklistChecked` (set for `- [ ]` / `- [x]`; the box is stripped). A table's
+  mode comes from an optional `!!! <kind> (( <attrs> ))` marker on the line
+  **directly above** it. **All markers are enums, never raw strings** (house
+  rule): `BlockKind` (`.table`) and `TableMode` (`.decision`, `.data(name:)`,
+  `.iteration`, `.inert`) with `parse`/`sentinelToken`/`fromSentinel`.
+- **`TableParser` + `StatementParser`.** A table is **decision-mode by default**:
+  last column (or `action`/`then`/`do`/`result` header) is the action, the rest
+  are conditions joined with `and`, lowered to one `if <conds>, <action>.` per
+  row (re-parsed through the normal inline-conditional grammar — no new IR). Cell
+  → predicate: bare value → `header is value` (multi-word non-numeric values are
+  auto-quoted); symbolic op prefix (`>= 90`) → canonical lexicon spelling; an
+  already-comparison phrase (`more than 5`, `contains x`) is used as-is; wildcard
+  (`*`/`-`/`any`/empty) drops the column. `data` mode binds a record list;
+  `inert`/`iteration` produce no statements (iteration reserved).
+- **Data tables → `recordList`.** New `ExpressionAST.recordList(fields:rows:)` +
+  `IRExpression.recordList` (lowered in `ASTToIR`, emitted by `SwiftEmitter` as
+  `Value.list([.record([...]), …])`; field keys camelCased so `for each row in
+  <name>` resolves `row.<field>`). `subExpr`/`firstMalformed`/describe handlers
+  added; `RuleInjector.lowerExprSimple` treats it as a non-rule shape.
+- **Task-lists → invariants.** A checklist item desugars to `make sure <cond>`
+  via the shared **`ConditionClassifier`** (extracted from `SkillSectionBuilder`;
+  single source of truth for checkable/dispatch/fuzzy). Checkable → `assert`;
+  non-checkable → hard error (rephrase or `(( inert ))`).
+- **Generalized 1D output invariant.** `every emitted <noun> <predicate>` (and
+  `each emitted …`) → `the <noun> <predicate>`, now for ANY checkable predicate
+  (not just `matches pattern`). Shared via `ConditionClassifier.normalizeFormatInvariant`.
+  `emitted` is the required signal (a bare `every <plural>` stays a Wave-2C
+  quantifier).
+- **Corpus.** `maintain.meri` re-authored: a single `Page-health scan` binds
+  `pages` once and runs `unwritten`/`orphan`/`stale` quantifier checks (new
+  `Definition: a page is orphan/stale …` in `brain.merconfig`, backed by new
+  `inbound links` / `compiled truth` properties); a `Graph extraction` section
+  binds a `HealthReport` (new kind + `Get Health` tool + `To check brain
+  health:` phrase) and runs guarded single-line extraction commands. New
+  rulebook section aliases `Page-Health Scan` / `Graph Extraction` → procedure.
+  Inert markers 729→724; all compile-outputs + migration-deviations regenerated.
+  Tests: `TablesAndChecklistsTests` (12) + a generalized-1D test; full `swift
+  test` (744) + both typecheck gates (`MERIDIAN_GBRAIN_TYPECHECK=1`,
+  `MERIDIAN_GOLDEN_TYPECHECK=1`) green.
+
+**New pitfalls.** (1) Property names whose **first word is a declared verb**
+(`to link` → `the health's link count`) parse as a verb predicate, not a
+property read — rename the property (`edge count`). (2) `every emitted` is
+rewritten to `the …`; a bare `every <plural>` must NOT be (it is a Wave-2C
+collection quantifier) — only the `emitted` qualifier triggers the rewrite. (3)
+A table/checklist that lands in a section needs that section to be a recognized
+**procedure** role (or aliased in the rulebook `=== sections ===`); an
+unrecognized heading with content is still a hard error. (4) A new heading used
+for executable content must be added to the rulebook section aliases, else
+"unrecognized section heading … has content but no role".
+
+**Corpus sweep (follow-up).** Audited all 31 corpus tables + 4 checklists: every
+remaining one is legitimately inert — evidence/benchmark, reference/lookup, a
+report template, a fuzzy LLM-routing aid (conditions are intent descriptions,
+not checkable comparisons), or a fuzzy acceptance checklist / template
+placeholder. Forcing any executable would violate the no-fuzzy-execution
+contract, so they stay inert (correctly). The one real win was **`## Tools
+Used`**: 8 skills had it marked `(( inert ))` when it is the recognized `.tools`
+metadata role — dropped the marker; `setup.meri`'s is a CLI command reference,
+kept inert. Tools now mine into the manifest `tools_used`. Inert 724→716.
+`extractToolID` accepts **both** bullet forms — `<desc> (<tool_id>)` and the
+leading-backtick `` `<tool_id>` — <desc>`` — so no skill needs reformatting (a
+backticked CLI command with spaces is correctly rejected and stays inert). Rule of thumb: **inert is correct for genuine documentation** — the
+goal is "inert not *needed* when content is operational", never "zero inert".
+Porting playbook gained rule 11 (`## Tools Used` is metadata, not inert).
+
+**AI-routing for fuzzy tables/checklists (follow-up).** A fuzzy decision table
+(intent→action) or fuzzy acceptance checklist is a workflow step that needs
+judgment, not documentation. Instead of inerting, route it to the planner via
+the existing `ProseStepAST`/`ProseStepIR` path (no new IR, no new runtime):
+`!!! table (( ai-discretion ))` / `(( ai-autonomy ))` (new `TableMode` cases) and
+`!!! checklist (( ai-autonomy ))` / `(( ai-discretion ))` / `(( inert ))` (new
+`BlockKind.checklist` + `ChecklistMode`; a marked checklist run collapses to a
+`checklistSentinelPrefix` sentinel — unmarked lists stay per-item invariant
+asserts). `TableParser.aiDecisionProse` renders rows as `when …, …`;
+`StatementParser.checklistStatements`/`checklistProse` embed every criterion as
+the planner goal. Explicit-dispatch prose steps are valid in any workflow, so
+this works in a sectioned skill's implicit workflow (the section must be
+executable; an `(( inert ))` section still suppresses the body). Demonstrated:
+`eiirp`'s `### Confirm` → `!!! checklist (( ai-autonomy ))` (emits
+`executeAutonomousLoop`). Rule of thumb: **does the workflow act on this?**
+yes+deterministic → decision/data/invariant; yes+fuzzy →
+`ai-discretion`/`ai-autonomy`; no → `inert`. Porting playbook rule 12. Inert
+716→715; `TablesAndChecklistsTests` 12→25; `swift test` 757 + gbrain typecheck
+green.
 
 ### 2026-06-12 — Wave 2: semantic core (booleans, definitions, quantifiers)
 
@@ -816,10 +1218,11 @@ both typecheck gates green.
 (`lowerAutonomyConfig`, `lowerRecoverPattern`, `lowerIterationRefinement`,
 `lowerWaitCondition`, test `lower` helpers) must `try`. (2) `qualifyToLoopVar`
 must qualify only the **LHS** of a comparison (qualifying both sides was a bug)
-and must recurse over `.logical`/`.definitionPredicate` trees. (3) The single-
-line `if <cond>, <stmt>.` form is NOT parsed as a branch — `if` requires a
-comma-terminated header with an indented body (use the multi-line form in
-tests/examples). (4) merconfig property decls need `, which is <type>` (with the
+and must recurse over `.logical`/`.definitionPredicate` trees. (3) ~~The single-
+line `if <cond>, <stmt>.` form is NOT parsed as a branch~~ — **obsolete as of
+2026-06-13**: the single-line `if <cond>, <action> [, otherwise <action>].` form
+is now a first-class branch alongside the multi-line comma-header + indented body
+(see the 2026-06-13 recent-decision entry). (4) merconfig property decls need `, which is <type>` (with the
 comma) or the bare comma-and list form; `a summary which is text` without the
 comma folds the whole phrase into the property name. (5) Adjective resolution
 happens at lowering (`symbols` fully populated), not parsing — the parser keeps

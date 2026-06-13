@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/perplexity-research/SKILL.md
-+++ skills/perplexity_research.meri
++++ perplexity_research.meri
 @@ -27,7 +27,7 @@
  > context as part of the Perplexity prompt — the web search focuses on
  > the delta between brain knowledge and current web state.

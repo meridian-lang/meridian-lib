@@ -29,6 +29,10 @@ public struct ManifestEmitter {
         /// 2B: Checkable adjective definitions (`Definition: a <kind> is <adj>
         /// if …`). Emitted as `meridian_definitions` when non-empty.
         public let definitions: [DefinitionManifestEntry]
+        /// 3A: Relations + their evaluation backing. `meridian_relations`.
+        public let relations: [RelationManifestEntry]
+        /// 3B: Verbs + conjugation + bound relation. `meridian_verbs`.
+        public let verbs: [VerbManifestEntry]
 
         public init(
             sourceFiles: [String] = [],
@@ -42,7 +46,9 @@ public struct ManifestEmitter {
             outline: [HeadingEntry] = [],
             rules: [RuleManifestEntry] = [],
             skillSections: [SkillSectionEntry] = [],
-            definitions: [DefinitionManifestEntry] = []
+            definitions: [DefinitionManifestEntry] = [],
+            relations: [RelationManifestEntry] = [],
+            verbs: [VerbManifestEntry] = []
         ) {
             self.sourceFiles = sourceFiles
             self.workflows = workflows
@@ -56,6 +62,43 @@ public struct ManifestEmitter {
             self.rules = rules
             self.skillSections = skillSections
             self.definitions = definitions
+            self.relations = relations
+            self.verbs = verbs
+        }
+    }
+
+    /// 3A: One relation + backing recorded for the manifest.
+    public struct RelationManifestEntry: Encodable {
+        public let name: String
+        public let leftKind: String
+        public let leftCardinality: String
+        public let rightKind: String
+        public let rightCardinality: String
+        /// "property" or "tool".
+        public let backing: String
+        /// For a property backing: "<kind>.<path>"; for a tool backing: the tool id.
+        public let via: String
+        public let line: Int
+        public init(name: String, leftKind: String, leftCardinality: String,
+                    rightKind: String, rightCardinality: String,
+                    backing: String, via: String, line: Int) {
+            self.name = name; self.leftKind = leftKind; self.leftCardinality = leftCardinality
+            self.rightKind = rightKind; self.rightCardinality = rightCardinality
+            self.backing = backing; self.via = via; self.line = line
+        }
+    }
+
+    /// 3B: One verb + conjugation + bound relation recorded for the manifest.
+    public struct VerbManifestEntry: Encodable {
+        public let base: String
+        public let thirdPerson: String
+        public let pastParticiple: String
+        public let relation: String
+        public let line: Int
+        public init(base: String, thirdPerson: String, pastParticiple: String,
+                    relation: String, line: Int) {
+            self.base = base; self.thirdPerson = thirdPerson
+            self.pastParticiple = pastParticiple; self.relation = relation; self.line = line
         }
     }
 
@@ -194,6 +237,24 @@ public struct ManifestEmitter {
         if !input.definitions.isEmpty {
             dict["meridian_definitions"] = input.definitions.map { d -> [String: Any] in
                 ["adjective": d.adjective, "kind": d.kind, "function": d.function, "line": d.line]
+            }
+        }
+        if !input.relations.isEmpty {
+            dict["meridian_relations"] = input.relations.map { r -> [String: Any] in
+                [
+                    "name": r.name,
+                    "left_kind": r.leftKind, "left_cardinality": r.leftCardinality,
+                    "right_kind": r.rightKind, "right_cardinality": r.rightCardinality,
+                    "backing": r.backing, "via": r.via, "line": r.line
+                ]
+            }
+        }
+        if !input.verbs.isEmpty {
+            dict["meridian_verbs"] = input.verbs.map { v -> [String: Any] in
+                [
+                    "base": v.base, "third_person": v.thirdPerson,
+                    "past_participle": v.pastParticiple, "relation": v.relation, "line": v.line
+                ]
             }
         }
         if !input.rules.isEmpty {

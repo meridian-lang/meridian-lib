@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/cron-scheduler/SKILL.md
-+++ skills/cron_scheduler.meri
++++ cron_scheduler.meri
 @@ -20,7 +20,7 @@
  
  > **Convention:** See `skills/conventions/test-before-bulk.md` — test every cron job on 3-5 items first.

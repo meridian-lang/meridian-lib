@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/daily-task-prep/SKILL.md
-+++ skills/daily_task_prep.meri
++++ daily_task_prep.meri
 @@ -20,7 +20,7 @@
  
  # Daily Task Prep

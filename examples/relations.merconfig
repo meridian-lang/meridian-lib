@@ -1,0 +1,72 @@
+# relations.merconfig
+# Wave 3 showcase vocabulary: relations with evaluation backing, verbs, and the
+# kinds/properties that descriptions, aggregates, and superlatives read from.
+
+=== vocabulary ===
+
+A user is a kind of thing.
+A user has a name, which is a String.
+A user has an email, which is a String.
+A user has a task, which is a String.
+
+A page is a kind of thing.
+A page has a title, which is a String.
+A page has an owner, which is a String.
+A page has a summary, which is a String.
+A page has a view count, which is a Number.
+A page has an updated at, which is a Date.
+A page has a status, which is one of (draft, published, archived).
+
+A task is a kind of thing.
+A task has a title, which is a String.
+A task has an assignee, which is a String.
+
+An entity is a kind of thing.
+An entity has a name, which is a String.
+
+A deal is a kind of thing.
+A deal has an amount, which is Money.
+A deal has a stage, which is one of (open, won, lost).
+A deal has an owner, which is a String.
+
+# Relations + evaluation backing (3A) and verbs (3B).
+
+Ownership relates one user to various pages.
+Ownership is read from the page's owner.
+The verb to own (it owns, it is owned) means the ownership relation.
+
+Assignment relates one user to one task.
+Assignment is read from the user's task.
+The verb to assign (it assigns, it is assigned) means the assignment relation.
+
+Mentioning relates various pages to various entities.
+Mentioning is read via the link tool.
+The verb to mention (it mentions, it is mentioned) means the mentioning relation.
+
+# Checkable adjectives (2B) used as description filters.
+
+Definition: a page is stale if its view count is less than 100.
+Definition: a page is popular if its view count is more than 1000.
+
+=== tools ===
+
+List Pages
+==========
+-- Return all pages owned by a user (the candidate collection).
+~ listPages(owner: String) : List
+
+List Deals
+==========
+-- Return all deals owned by a user.
+~ listDeals(owner: String) : List
+
+Link
+====
+-- Tool backing for the Mentioning relation: return the pages that mention
+-- a given entity.
+~ link(entity: String) : List
+
+Archive Page
+============
+-- Archive a single page by id.
+~ archivePage(id: String) : Page

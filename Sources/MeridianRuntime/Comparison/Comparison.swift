@@ -117,6 +117,41 @@ public enum MeridianComparison {
 
     public static func isNotEmpty(_ v: Value?) -> Bool { !isEmpty(v) }
 
+    // MARK: identity (3: relation link-property matching)
+
+    /// `true` when a relation link value `link` refers to `entity`. Used by
+    /// property-backed relations: `user owns page` ⟺ `page.owner identifies
+    /// user`. The link may store the entity directly, its `id`, or a record
+    /// carrying an `id`; a `various` link stores a `.list` of those, in which
+    /// case any element matching is a hit. The entity may be the value itself,
+    /// a record with an `id`, or a scalar id. We compare on the most specific
+    /// identity available:
+    ///   1. both reduce to a non-empty identity string → string equality;
+    ///   2. otherwise fall back to whole-Value equality.
+    /// `nil`/`.null` on either side is never a match.
+    public static func identifies(_ link: Value?, _ entity: Value?) -> Bool {
+        guard let link, let entity, !isEmpty(link), !isEmpty(entity) else { return false }
+        if case .list(let elems) = link {
+            return elems.contains { identifies($0, entity) }
+        }
+        if let a = identityString(link), let b = identityString(entity) { return a == b }
+        return link == entity
+    }
+
+    /// The identity string of a Value for relation matching: a `.string`/
+    /// `.reference` directly, the `id` member of a record, or `nil`.
+    private static func identityString(_ v: Value?) -> String? {
+        switch v {
+        case .string(let s)?:           return s
+        case .reference(let r)?:        return r
+        case .record(let d)?:
+            if case .string(let s)? = d["id"] { return s }
+            if case .reference(let r)? = d["id"] { return r }
+            return nil
+        default:                        return nil
+        }
+    }
+
     // MARK: ordering — Value <-> Value
 
     public static func lt(_ a: Value?, _ b: Value?) -> Bool { compare(numeric(a), numeric(b), op: <) }

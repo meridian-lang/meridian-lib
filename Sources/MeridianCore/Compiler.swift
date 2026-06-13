@@ -170,6 +170,7 @@ public struct Compiler {
         lexicon = lexicon.merging(
             comparisonSynonyms: config.languageSynonyms.comparisonSynonyms,
             durationSynonyms: config.languageSynonyms.durationSynonyms,
+            assertionSynonyms: config.languageSynonyms.assertionSynonyms,
             timestampProperty: config.languageSynonyms.timestampProperty
         )
 
@@ -243,6 +244,7 @@ public struct Compiler {
         lexicon = lexicon.merging(
             comparisonSynonyms: config.languageSynonyms.comparisonSynonyms,
             durationSynonyms: config.languageSynonyms.durationSynonyms,
+            assertionSynonyms: config.languageSynonyms.assertionSynonyms,
             timestampProperty: config.languageSynonyms.timestampProperty
         )
 
@@ -406,9 +408,38 @@ public struct Compiler {
                     ManifestEmitter.DefinitionManifestEntry(
                         adjective: $0.adjective, kind: $0.kind,
                         function: $0.functionName, line: $0.sourceLine)
+                },
+            relations: relationManifestEntries(symbols),
+            verbs: symbols.verbs.values
+                .sorted { $0.base < $1.base }
+                .map {
+                    ManifestEmitter.VerbManifestEntry(
+                        base: $0.base, thirdPerson: $0.thirdPerson,
+                        pastParticiple: $0.pastParticiple, relation: $0.relation, line: $0.sourceLine)
                 }
         )
         return (swift, manifestInput)
+    }
+
+    /// 3A: backed relations rendered for the manifest (`meridian_relations`),
+    /// sorted by name. Unbacked legacy relations are omitted.
+    private func relationManifestEntries(_ symbols: SymbolTable) -> [ManifestEmitter.RelationManifestEntry] {
+        func card(_ c: CardinalityAST) -> String { c == .one ? "one" : "various" }
+        return symbols.relations
+            .sorted { $0.key < $1.key }
+            .compactMap { (name, rel) in
+                guard let backing = symbols.backing(forRelation: name) else { return nil }
+                let kind: String
+                let via: String
+                switch backing {
+                case .property(let k, let path): kind = "property"; via = "\(k).\(path)"
+                case .tool(let toolID):          kind = "tool";     via = toolID
+                }
+                return ManifestEmitter.RelationManifestEntry(
+                    name: name, leftKind: rel.leftKind, leftCardinality: card(rel.leftCardinality),
+                    rightKind: rel.rightKind, rightCardinality: card(rel.rightCardinality),
+                    backing: kind, via: via, line: rel.sourceLine)
+            }
     }
 
     /// Resolve frontmatter `tools:` tokens to registered tool method names for

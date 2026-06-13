@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/media-ingest/SKILL.md
-+++ skills/media_ingest.meri
++++ media_ingest.meri
 @@ -35,11 +35,11 @@
  
  # Media Ingest Skill

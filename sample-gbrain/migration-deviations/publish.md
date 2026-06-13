@@ -16,14 +16,14 @@
 - preamble-blockquoted
 
 ## Metrics
-- Sections: 14/17 inert (82% inert ratio)
+- Sections: 15/17 inert (88% inert ratio)
 - Judgment: 0 blocks, 0 lines
 
 ## Unified diff
 
 ```diff
 --- original-skills/publish/SKILL.md
-+++ skills/publish.meri
++++ publish.meri
 @@ -13,15 +13,15 @@
  
  # Publish Skill
@@ -69,7 +69,7 @@
  channel than the URL.
  
 -## Quick Reference
-+## Pre-publish guard (( role: procedure ))
++## Pre-publish guard
 +
 +> Never publish an empty page: if any candidate page has no body, block the
 +> publish and ask the author to finish it first.

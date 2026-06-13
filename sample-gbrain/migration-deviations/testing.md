@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/testing/SKILL.md
-+++ skills/testing.meri
++++ testing.meri
 @@ -28,7 +28,7 @@
  > the test-before-bulk pattern; this skill enforces it across the project's
  > own test suite.

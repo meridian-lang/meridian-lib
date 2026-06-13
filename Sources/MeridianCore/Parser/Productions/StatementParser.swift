@@ -1,4 +1,5 @@
 import Foundation
+import MeridianRuntime
 
 // MARK: - StatementParser
 //
@@ -70,6 +71,25 @@ public struct StatementParser {
                     )
                 }
             }
+            // A `!!! checklist (( … ))`-marked task list collapses to a single
+            // sentinel: expand it per its mode (asserts / prose step / nothing).
+            if let expanded = try checklistStatements(content[i], file: file) {
+                for s in expanded {
+                    appendStatement(s, to: &stmts)
+                    recordReferents(from: s, into: &referents)
+                }
+                i += 1
+                continue
+            }
+            // An unmarked Markdown task-list item (`- [ ] …`) is an invariant: it
+            // desugars to a checkable `assert` (or a hard error when not checkable).
+            if content[i].isChecklist {
+                let stmt = try checklistInvariant(content[i], file: file)
+                appendStatement(stmt, to: &stmts)
+                recordReferents(from: stmt, into: &referents)
+                i += 1
+                continue
+            }
             if let expanded = try parseInlineChain(content[i], file: file), !expanded.isEmpty {
                 for s in expanded {
                     appendStatement(s, to: &stmts)
@@ -86,6 +106,71 @@ public struct StatementParser {
             i += max(consumed, 1)
         }
         return ASTBlock(statements: stmts, sourceLine: content.first?.number ?? 0)
+    }
+
+    /// Desugar a task-list checklist item to an invariant assert. A checkable
+    /// item becomes `make sure <cond>`; a non-checkable one is a hard error
+    /// (rephrase to a comparison or move under an `(( inert ))` section).
+    private func checklistInvariant(_ line: SourceLine, file: String) throws -> StatementAST {
+        let classifier = ConditionClassifier(symbols: symbols, lexicon: lexicon, trace: trace)
+        // Shared with Contract invariants: `every emitted <noun> <predicate>`
+        // is an assert on the bound result `<noun>`.
+        let text = classifier.normalizeFormatInvariant(line.statement)
+        switch classifier.classify(text) {
+        case .checkable:
+            return .assertStmt(AssertStatementAST(
+                condition: exprParser.parse(text),
+                message: "Expected \(text)",
+                sourceLine: line.number
+            ))
+        case .dispatchPhrase, .fuzzy:
+            throw CompilerError.semanticError(
+                message: "checklist item \"\(text)\" is not a structurally checkable predicate. Rephrase it as a comparison (e.g. `- [ ] the link count is at least 1`), route the whole list to the planner with a `!!! checklist (( ai-autonomy ))` marker above it, or move it under an `(( inert ))` section to keep it as documentation.",
+                range: SourceRange(file: file, line: line.number, column: 1)
+            )
+        }
+    }
+
+    /// Expand a `!!! checklist (( … ))` sentinel into statements per its mode:
+    ///   • invariant   → one `assert` per item (each must be checkable).
+    ///   • inert       → nothing (documentation).
+    ///   • aiAutonomy  → one autonomy prose step: loop until every criterion holds.
+    ///   • aiDiscretion → one discretion prose step: verify/resolve the criteria.
+    /// Returns nil when `line` is not a checklist sentinel.
+    private func checklistStatements(_ line: SourceLine, file: String) throws -> [StatementAST]? {
+        guard let (mode, body) = decodeChecklistSentinel(line.text) else { return nil }
+        let items = body.components(separatedBy: "\n")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        switch mode {
+        case .inert:
+            return []
+        case .invariant:
+            return try items.map { item in
+                let itemLine = SourceLine(indent: line.indent, text: item, raw: line.raw, number: line.number)
+                return try checklistInvariant(itemLine, file: file)
+            }
+        case .aiAutonomy:
+            return [proseStep(checklistProse(items, autonomy: true), dispatch: .autonomy, line: line)]
+        case .aiDiscretion:
+            return [proseStep(checklistProse(items, autonomy: false), dispatch: .discretion, line: line)]
+        }
+    }
+
+    /// Render a fuzzy acceptance checklist as planner instructions. The criteria
+    /// are embedded verbatim so the planner has them as the goal context.
+    private func checklistProse(_ items: [String], autonomy: Bool) -> String {
+        let header = autonomy
+            ? "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:"
+            : "Verify the following acceptance criteria and resolve any that are not met:"
+        return header + "\n" + items.map { "- \($0)" }.joined(separator: "\n")
+    }
+
+    /// Wrap synthesized planner prose in a `.proseStep` statement with an
+    /// explicit dispatch — the same path `use judgment to …:` takes, so it is
+    /// valid in any workflow and runs through the planner/scope/checkpoint code.
+    private func proseStep(_ text: String, dispatch: ProseDispatchAST, line: SourceLine) -> StatementAST {
+        .proseStep(ProseStepAST(text: text, sourceLine: line.number, dispatch: dispatch))
     }
 
     private func shouldResolveAnaphora(_ line: SourceLine) -> Bool {
@@ -139,6 +224,24 @@ public struct StatementParser {
         // B6: Bare code-block sentinel lines are always consumed by the preceding
         // bind/decide statement.  If one reaches here it is orphaned — skip it.
         if t.hasPrefix(codeBlockSentinelPrefix) { return (nil, 1) }
+
+        // A deferred marker error from the (non-throwing) tokenizer — raise it
+        // now as a located diagnostic.
+        if let message = decodeMarkerError(t) {
+            throw CompilerError.semanticError(
+                message: message,
+                range: SourceRange(file: file, line: line.number, column: 1)
+            )
+        }
+
+        // A table sentinel that reached here (e.g. an inert table producing no
+        // statements) is consumed; executable tables are expanded in
+        // `parseInlineChain` before this point.
+        if t.hasPrefix(tableSentinelPrefix) { return (nil, 1) }
+
+        // A checklist sentinel is expanded in `parseBlock`; one reaching here
+        // (e.g. an inert list producing no statements) is consumed.
+        if t.hasPrefix(checklistSentinelPrefix) { return (nil, 1) }
 
         // Rulebook desugar hook: rewrite a surface idiom (e.g. `If X -> Y`)
         // into a canonical statement, then re-parse. The engine reaches a
@@ -250,9 +353,34 @@ public struct StatementParser {
             let (cond, consumed) = try parseConditional(lines, at: i, file: file)
             return (.conditional(cond), consumed)
         }
+        // Single-line branch: `if {condition}, {action} [, otherwise {action}].`
+        // The comma after the condition already delimits it, so the indented
+        // multi-line form is optional — both modalities are supported and read as
+        // plain English (`if the entity does not link to the input, add …`).
+        if t.lowercased().hasPrefix("if "),
+           let single = try parseInlineConditional(line, file: file) {
+            return (.conditional(single), 1)
+        }
         if t.lowercased().hasPrefix("unless you decide that ") && t.hasSuffix(",") {
             let (cond, consumed) = try parseUnlessDecisionConditional(lines, at: i, file: file)
             return (.conditional(cond), consumed)
+        }
+
+        // 3C: "let {name} be {value}." — sugar for `bind`. Used so a description
+        // value reads naturally (`let candidates be the stale pages …`). The
+        // RHS goes through `parseBindValue`, so a tool-backed relation fetch is
+        // hoisted at lowering exactly as for `bind`.
+        if t.lowercased().hasPrefix("let "),
+           case let afterLet = String(t.dropFirst(4)),
+           let beRange = afterLet.range(of: " be ") {
+            let name = lexicon.stripLeadingArticle(
+                String(afterLet[afterLet.startIndex ..< beRange.lowerBound]))
+            var valueStr = String(afterLet[beRange.upperBound...]).trimmingCharacters(in: .whitespaces)
+            if valueStr.hasSuffix(".") { valueStr = String(valueStr.dropLast()) }
+            if !name.isEmpty, !valueStr.isEmpty {
+                let (expr, extra) = try parseBindValue(valueStr, lines: lines, at: i)
+                return (.bind(BindStatementAST(name: name, value: expr, sourceLine: line.number)), 1 + extra)
+            }
         }
 
         // "bind {name} = invoke {tool} with ..."
@@ -361,6 +489,12 @@ public struct StatementParser {
         // Inline backticked literal command on its own line, e.g. `gbrain publish`.
         if let inlineShell = inlineBacktickedCommand(line) {
             return [inlineShell]
+        }
+
+        // A collapsed Markdown table sentinel expands to per-row statements
+        // (decision branches, a data-table binding, or nothing for inert).
+        if let tableStatements = try tableStatements(line, file: file) {
+            return tableStatements
         }
 
         guard statement.lowercased().hasPrefix("do ") else { return nil }
@@ -504,6 +638,66 @@ public struct StatementParser {
         }
     }
 
+    /// Expand a collapsed Markdown table sentinel into statements per its mode.
+    /// Returns nil when the line is not a table sentinel; an (possibly empty)
+    /// array otherwise (empty = inert/iteration, consumed without execution).
+    private func tableStatements(_ line: SourceLine, file: String) throws -> [StatementAST]? {
+        guard let (mode, table) = TableParser.decode(line.text) else { return nil }
+        let parser = TableParser(lexicon: lexicon)
+        switch mode {
+        case .decision:
+            var out: [StatementAST] = []
+            for rowText in parser.decisionRowTexts(table) {
+                let rowLine = SourceLine(indent: line.indent, text: rowText, raw: line.raw, number: line.number)
+                if let expanded = try parseInlineChain(rowLine, file: file) {
+                    out.append(contentsOf: expanded)
+                } else if let stmt = try parseStatement([rowLine], at: 0, file: file).0 {
+                    out.append(stmt)
+                }
+            }
+            return out
+        case .data(let name):
+            return [dataTableBinding(table, name: name, line: line)]
+        case .aiDiscretion:
+            return [proseStep(parser.aiDecisionProse(table), dispatch: .discretion, line: line)]
+        case .aiAutonomy:
+            return [proseStep(parser.aiDecisionProse(table), dispatch: .autonomy, line: line)]
+        case .inert, .iteration:
+            return []
+        }
+    }
+
+    /// Build a `bind <name> = <recordList>` from a data table. Field names come
+    /// from the header; each cell is a literal value (numbers/money/duration
+    /// parse as literals, everything else is a string literal).
+    private func dataTableBinding(_ table: TableParser.ParsedTable, name: String?, line: SourceLine) -> StatementAST {
+        let fields = table.header
+        let rows = table.rows.map { row -> [ExpressionAST] in
+            (0 ..< fields.count).map { idx in
+                dataCellValue(idx < row.count ? row[idx] : "")
+            }
+        }
+        return .bind(BindStatementAST(
+            name: name ?? "table",
+            value: .recordList(fields: fields, rows: rows),
+            sourceLine: line.number
+        ))
+    }
+
+    /// Coerce a data-table cell to a literal expression. A cell that parses to a
+    /// literal keeps its type; anything else becomes a string literal (a data
+    /// value is never a state read).
+    private func dataCellValue(_ raw: String) -> ExpressionAST {
+        let cell = raw.trimmingCharacters(in: .whitespaces)
+        if cell.isEmpty { return .literal(.string("")) }
+        if cell.hasPrefix("\"") && cell.hasSuffix("\"") && cell.count >= 2 {
+            return .literal(.string(String(cell.dropFirst().dropLast())))
+        }
+        let parsed = exprParser.parse(cell)
+        if case .literal = parsed { return parsed }
+        return .literal(.string(cell))
+    }
+
     /// Split a shell-block body into individual commands, dropping blank lines
     /// and `#` comments and joining trailing-backslash line continuations.
     private func splitShellCommands(_ body: String) -> [String] {
@@ -589,9 +783,8 @@ public struct StatementParser {
             ))
         }
 
-        if lower.hasPrefix("make sure ") || lower.hasPrefix("ensure ") {
-            let prefix = lower.hasPrefix("make sure ") ? "make sure " : "ensure "
-            let condition = String(t.dropFirst(prefix.count)).trimmingCharacters(in: .whitespaces)
+        if let marker = lexicon.assertionMarkers.first(where: { lower.hasPrefix($0 + " ") }) {
+            let condition = String(t.dropFirst(marker.count + 1)).trimmingCharacters(in: .whitespaces)
             guard !condition.isEmpty else { return nil }
             return .assertStmt(AssertStatementAST(
                 condition: exprParser.parse(condition),
@@ -1191,6 +1384,62 @@ public struct StatementParser {
             elseBlock: elseBlock,
             sourceLine: line.number
         ), consumed)
+    }
+
+    /// Single-line branch `if <cond>, <then> [, otherwise <else>].`. The
+    /// condition/then split is the first top-level comma (outside quotes) that
+    /// does not introduce an Oxford `and`/`or` continuation; an optional top-level
+    /// `, otherwise <else>` tail supplies the else-block. Returns nil when there is
+    /// no inline body (the comma-terminated multi-line header is handled upstream).
+    private func parseInlineConditional(_ line: SourceLine, file: String) throws -> ConditionalStatementAST? {
+        let t = line.statement
+        let afterIf = String(t.dropFirst(3)).trimmingCharacters(in: .whitespaces)
+        guard let sep = inlineConditionSeparator(in: afterIf) else { return nil }
+        let condText = String(afterIf[..<sep.lowerBound]).trimmingCharacters(in: .whitespaces)
+        var bodyText = String(afterIf[sep.upperBound...]).trimmingCharacters(in: .whitespaces)
+        guard !condText.isEmpty, !bodyText.isEmpty else { return nil }
+
+        var elseBlock: ASTBlock? = nil
+        if let elseRange = rangeOfMarkerOutsideQuotes(", otherwise ", in: bodyText) {
+            let elseText = String(bodyText[elseRange.upperBound...]).trimmingCharacters(in: .whitespaces)
+            bodyText = String(bodyText[..<elseRange.lowerBound]).trimmingCharacters(in: .whitespaces)
+            if !elseText.isEmpty {
+                let elseLine = SourceLine(indent: line.indent + 2, text: elseText, raw: line.raw, number: line.number)
+                elseBlock = try parseBlock([elseLine], file: file)
+            }
+        }
+        guard !bodyText.isEmpty else { return nil }
+
+        let thenLine = SourceLine(indent: line.indent + 2, text: bodyText, raw: line.raw, number: line.number)
+        let thenBlock = try parseBlock([thenLine], file: file)
+        return ConditionalStatementAST(
+            condition: parseDecisionPredicate(condText),
+            thenBlock: thenBlock,
+            elseBlock: elseBlock,
+            sourceLine: line.number
+        )
+    }
+
+    /// The comma that separates an inline condition from its action: the first
+    /// top-level comma outside double quotes that is not an Oxford `, and`/`, or`
+    /// joiner inside the condition.
+    private func inlineConditionSeparator(in s: String) -> Range<String.Index>? {
+        var inQuotes = false
+        var idx = s.startIndex
+        while idx < s.endIndex {
+            let c = s[idx]
+            if c == "\"" {
+                inQuotes.toggle()
+            } else if c == ",", !inQuotes {
+                let after = String(s[s.index(after: idx)...]).drop(while: { $0 == " " }).lowercased()
+                if after.hasPrefix("and ") || after.hasPrefix("or ") {
+                    idx = s.index(after: idx); continue
+                }
+                return idx..<s.index(after: idx)
+            }
+            idx = s.index(after: idx)
+        }
+        return nil
     }
 
     // MARK: - Iteration

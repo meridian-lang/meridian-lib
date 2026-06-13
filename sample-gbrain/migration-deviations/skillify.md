@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/skillify/SKILL.md
-+++ skills/skillify.meri
++++ skillify.meri
 @@ -30,14 +30,14 @@
  > dimension list *before* tests cement behavior. Use `/cross-modal-review`
  > for ad-hoc second opinions; use Phase 3 here when skillifying a feature.

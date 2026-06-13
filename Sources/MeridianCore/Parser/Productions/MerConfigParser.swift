@@ -145,6 +145,19 @@ public struct MerConfigParser {
                 i += 1; continue
             }
 
+            // 3B: "The verb to {base} (…) means the {relation} relation."
+            if t.lowercased().hasPrefix("the verb to ") {
+                if let v = parseVerb(t, line: line.number) { results.append(.verb(v)) }
+                i += 1; continue
+            }
+
+            // 3A: "{Relation} is read from the {kind}'s {prop}." / "… via the {tool} tool."
+            if t.lowercased().contains(" is read ") {
+                if let backing = parseRelationBacking(t, line: line.number) {
+                    results.append(.relationBacking(backing)); i += 1; continue
+                }
+            }
+
             // "A {name} is a kind of {parent}."
             if let kind = parseKindDecl(t, line: line.number) {
                 results.append(.kind(kind)); i += 1; continue
@@ -307,10 +320,7 @@ public struct MerConfigParser {
     /// type clause like `"a Date."` → `"Date"`. Preserves the original case
     /// (`Money`, `Decimal`) so the generated Swift uses canonical type names.
     private func stripTypeArticle(_ raw: String) -> String {
-        var s = raw.trimmingCharacters(in: .whitespaces)
-        for article in ["a ", "an ", "the "] {
-            if s.lowercased().hasPrefix(article) { s = String(s.dropFirst(article.count)); break }
-        }
+        let s = lexicon.stripLeadingArticle(raw)
         return s.trimmingCharacters(in: .whitespaces)
                 .trimmingCharacters(in: Self.propPunctuation)
                 .trimmingCharacters(in: .whitespaces)
@@ -337,12 +347,105 @@ public struct MerConfigParser {
 
     private func parseCardinalityKind(_ s: String) -> (CardinalityAST, String) {
         let lower = s.lowercased()
-        let card: CardinalityAST = lower.hasPrefix("many ") ? .many : .one
+        // 3A: `various` is a synonym for `many`.
+        let card: CardinalityAST = (lower.hasPrefix("many ") || lower.hasPrefix("various ")) ? .many : .one
         var rest = s
-        if lower.hasPrefix("one ") || lower.hasPrefix("many ") {
-            rest = String(s.dropFirst(lower.hasPrefix("one ") ? 4 : 5))
+        for prefix in ["one ", "many ", "various "] where lower.hasPrefix(prefix) {
+            rest = String(s.dropFirst(prefix.count)); break
         }
-        return (card, rest.trimmingCharacters(in: .whitespaces).lowercased())
+        // A trailing plural after `various`/`many` reads naturally ("various pages").
+        var kind = rest.trimmingCharacters(in: .whitespaces).lowercased()
+        if card == .many { kind = lexicon.singularize(kind) }
+        return (card, kind)
+    }
+
+    // MARK: - 3A. Relation evaluation backing
+
+    /// `<Relation> is read from the <kind>'s <property>.`
+    /// `<Relation> is read via the <tool> tool.` (or `… via <tool.id>.`)
+    private func parseRelationBacking(_ t: String, line: Int) -> RelationBackingDeclaration? {
+        let lower = t.lowercased()
+        guard let readRange = lower.range(of: " is read ") else { return nil }
+        let relation = String(t[t.startIndex ..< readRange.lowerBound])
+            .trimmingCharacters(in: .whitespaces).lowercased()
+        guard !relation.isEmpty else { return nil }
+        var rest = String(t[readRange.upperBound...])
+            .trimmingCharacters(in: CharacterSet(charactersIn: ". "))
+        let restLower = rest.lowercased()
+        if restLower.hasPrefix("from ") {
+            let body = lexicon.stripLeadingArticle(String(rest.dropFirst("from ".count)))
+            guard let apo = body.range(of: "'s ") else { return nil }
+            let kind = String(body[body.startIndex ..< apo.lowerBound])
+                .trimmingCharacters(in: .whitespaces).lowercased()
+            let prop = String(body[apo.upperBound...])
+                .trimmingCharacters(in: .whitespaces).lowercased()
+            guard !kind.isEmpty, !prop.isEmpty else { return nil }
+            return RelationBackingDeclaration(
+                relation: relation, backing: .property(kind: kind, path: prop), sourceLine: line)
+        }
+        if restLower.hasPrefix("via ") {
+            rest = String(rest.dropFirst("via ".count)).trimmingCharacters(in: .whitespaces)
+            for art in ["the "] where rest.lowercased().hasPrefix(art) {
+                rest = String(rest.dropFirst(art.count)); break
+            }
+            if rest.lowercased().hasSuffix(" tool") {
+                rest = String(rest.dropLast(" tool".count)).trimmingCharacters(in: .whitespaces)
+            }
+            guard !rest.isEmpty else { return nil }
+            return RelationBackingDeclaration(
+                relation: relation, backing: .tool(toolID: rest), sourceLine: line)
+        }
+        return nil
+    }
+
+    // MARK: - 3B. Verb declaration
+
+    /// `The verb to own (he owns, it is owned) means the ownership relation.`
+    /// The conjugation table is optional; missing forms fall back to regular
+    /// morphology.
+    private func parseVerb(_ t: String, line: Int) -> VerbDeclaration? {
+        let lower = t.lowercased()
+        guard lower.hasPrefix("the verb to ") else { return nil }
+        let rest = String(t.dropFirst("the verb to ".count))
+        guard let meansRange = rest.lowercased().range(of: " means ") else { return nil }
+        let head = String(rest[rest.startIndex ..< meansRange.lowerBound])
+            .trimmingCharacters(in: .whitespaces)
+        var meaning = String(rest[meansRange.upperBound...])
+            .trimmingCharacters(in: CharacterSet(charactersIn: ". "))
+        for art in ["the "] where meaning.lowercased().hasPrefix(art) {
+            meaning = String(meaning.dropFirst(art.count)); break
+        }
+        if meaning.lowercased().hasSuffix(" relation") {
+            meaning = String(meaning.dropLast(" relation".count))
+        }
+        let relation = meaning.trimmingCharacters(in: .whitespaces).lowercased()
+        guard !relation.isEmpty else { return nil }
+
+        var base = head
+        var third: String?
+        var participle: String?
+        if let open = head.range(of: "(") {
+            base = String(head[head.startIndex ..< open.lowerBound]).trimmingCharacters(in: .whitespaces)
+            let inside = String(head[open.upperBound...].prefix { $0 != ")" })
+            for part in inside.components(separatedBy: ",") {
+                let words = part.trimmingCharacters(in: .whitespaces).lowercased()
+                if let r = words.range(of: " is ") {
+                    participle = String(words[r.upperBound...]).trimmingCharacters(in: .whitespaces)
+                } else if words.hasPrefix("is ") {
+                    participle = String(words.dropFirst(3)).trimmingCharacters(in: .whitespaces)
+                } else if let last = words.split(separator: " ").last {
+                    third = String(last)
+                }
+            }
+        }
+        base = base.trimmingCharacters(in: .whitespaces).lowercased()
+        guard !base.isEmpty else { return nil }
+        return VerbDeclaration(
+            base: base,
+            thirdPerson: third ?? lexicon.thirdPersonSingular(base),
+            pastParticiple: participle ?? lexicon.regularPastParticiple(base),
+            relation: relation,
+            sourceLine: line)
     }
 
     // MARK: - Inverse declaration
@@ -517,14 +620,18 @@ public struct MerConfigParser {
     /// Duration synonyms:
     ///   hr = hour
     ///   mins = minute
+    /// Assertion synonyms:
+    ///   verify
+    ///   guarantee
     /// ```
     private func parseLanguageSection(_ lines: [SourceLine]) -> LanguageSynonyms {
         let content = lines.filter(\.isContent)
         var comparisonSynonyms: [(String, ComparisonOpAST)] = []
         var durationSynonyms: [String: TimeUnitAST] = [:]
+        var assertionSynonyms: [String] = []
         var timestampProperty: String? = nil
 
-        enum Mode { case none, comparison, duration }
+        enum Mode { case none, comparison, duration, assertion }
         var mode: Mode = .none
 
         for line in content {
@@ -539,11 +646,23 @@ public struct MerConfigParser {
                 mode = .duration
                 continue
             }
+            if lower.hasPrefix("assertion synonym") {
+                mode = .assertion
+                continue
+            }
             // `timestamp = <propertyName>` — the property a temporal iteration
             // clause resolves against (default `updatedAt`). Standalone entry.
             if lower.hasPrefix("timestamp"), let eq = t.range(of: " = ") {
                 let value = String(t[eq.upperBound...]).trimmingCharacters(in: .whitespaces)
                 if !value.isEmpty { timestampProperty = value }
+                continue
+            }
+
+            // Assertion synonyms are bare leading keywords (no `key = value`),
+            // e.g. `verify` or `guarantee that`. Captured verbatim, lower-cased.
+            if mode == .assertion {
+                let marker = lower.trimmingCharacters(in: .whitespaces)
+                if !marker.isEmpty { assertionSynonyms.append(marker) }
                 continue
             }
 
@@ -563,13 +682,14 @@ public struct MerConfigParser {
                 if let unit = lexicon.durationUnits[value] {
                     durationSynonyms[key] = unit
                 }
-            case .none:
+            case .assertion, .none:
                 break
             }
         }
 
         return LanguageSynonyms(comparisonSynonyms: comparisonSynonyms,
                                 durationSynonyms: durationSynonyms,
+                                assertionSynonyms: assertionSynonyms,
                                 timestampProperty: timestampProperty)
     }
 

@@ -282,7 +282,7 @@ Timeline entries: N
 Raw source: [preserved at path / uploaded to cloud]
 ```
 
-## Tools Used (( inert ))
+## Tools Used
 
 - Read a page from gbrain (get_page)
 - Store/update a page in gbrain (put_page)

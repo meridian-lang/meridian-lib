@@ -12,17 +12,16 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 
 ## Metrics
-- Sections: 3/5 inert (60% inert ratio)
+- Sections: 4/5 inert (80% inert ratio)
 - Judgment: 1 blocks, 3 lines
 
 ## Unified diff
 
 ```diff
 --- original-skills/reports/SKILL.md
-+++ skills/reports.meri
++++ reports.meri
 @@ -18,7 +18,7 @@
  
  # Reports Skill
@@ -58,7 +57,7 @@
 +  Load the most recent report file for a given category.
 +  Route common queries to report categories (for example "inbox" to ea-inbox-sweep, "morning" to morning-briefing).
 +
-+## Escalation guard (( role: procedure ))
++## Escalation guard
 +
 +> When a report run finds two or more high-priority pages, escalate so the
 +> pulse never buries multiple p0s in a routine digest.

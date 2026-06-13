@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/install/SKILL.md
-+++ skills/install.meri
++++ install.meri
 @@ -1,4 +1,8 @@
 +---
 +---

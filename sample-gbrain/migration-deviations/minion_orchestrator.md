@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/minion-orchestrator/SKILL.md
-+++ skills/minion_orchestrator.meri
++++ minion_orchestrator.meri
 @@ -44,7 +44,7 @@
  
  # Minion Orchestrator

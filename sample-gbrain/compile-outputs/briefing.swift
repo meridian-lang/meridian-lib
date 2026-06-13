@@ -45,6 +45,16 @@ private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
     return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
 }
 
+private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
 private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
     let __subject = __subjectValue ?? .null
     return MeridianComparison.isEmpty(__subject.member("body"))
@@ -92,6 +102,9 @@ public protocol PageKind: MeridianThing {
     var slug: String { get }
     var body: String { get }
     var author: String { get }
+    var compiledTruth: String { get }
+    var links: [String] { get }
+    var inboundLinks: [String] { get }
     var priority: PagePriority { get }
     var enrichmentTier: PageEnrichmentTier { get }
 }
@@ -102,6 +115,9 @@ public struct Page: PageKind {
     public var slug: String
     public var body: String
     public var author: String
+    public var compiledTruth: String
+    public var links: [String]
+    public var inboundLinks: [String]
     public var priority: PagePriority
     public var enrichmentTier: PageEnrichmentTier
 
@@ -111,6 +127,9 @@ public struct Page: PageKind {
         slug: String = "",
         body: String = "",
         author: String = "",
+        compiledTruth: String = "",
+        links: [String] = [],
+        inboundLinks: [String] = [],
         priority: PagePriority = .p0,
         enrichmentTier: PageEnrichmentTier = .tier1
     ) {
@@ -119,6 +138,9 @@ public struct Page: PageKind {
         self.slug = slug
         self.body = body
         self.author = author
+        self.compiledTruth = compiledTruth
+        self.links = links
+        self.inboundLinks = inboundLinks
         self.priority = priority
         self.enrichmentTier = enrichmentTier
     }
@@ -444,21 +466,25 @@ public struct Brain: BrainKind {
 public protocol EntityKind: MeridianThing {
     var name: String { get }
     var type: String { get }
+    var links: [String] { get }
 }
 
 public struct Entity: EntityKind {
     public var id: String
     public var name: String
     public var type: String
+    public var links: [String]
 
     public init(
         id: String = "",
         name: String = "",
-        type: String = ""
+        type: String = "",
+        links: [String] = []
     ) {
         self.id = id
         self.name = name
         self.type = type
+        self.links = links
     }
 }
 
@@ -491,6 +517,31 @@ public struct Input: MeridianThing {
         id: String = ""
     ) {
         self.id = id
+    }
+}
+
+public protocol HealthReportKind: MeridianArtifact {
+    var edgeCount: String { get }
+    var timelineCount: String { get }
+    var pageCount: String { get }
+}
+
+public struct HealthReport: HealthReportKind {
+    public var id: String
+    public var edgeCount: String
+    public var timelineCount: String
+    public var pageCount: String
+
+    public init(
+        id: String = "",
+        edgeCount: String = "",
+        timelineCount: String = "",
+        pageCount: String = ""
+    ) {
+        self.id = id
+        self.edgeCount = edgeCount
+        self.timelineCount = timelineCount
+        self.pageCount = pageCount
     }
 }
 
@@ -650,16 +701,58 @@ public struct BriefingInput: MeridianWorkflow {
             try await runtime.checkpoint(label: "progress:0.7:L64:C0", state: state.snapshot())
         }
         // L65
+        state.bind("mine", Value.list(((state.get("pages"))?.asList ?? []).filter { __e in (MeridianComparison.identifies(__e.member("author"), state.get("input") ?? .null)) }))
+        // L66
         if ((!(((state.get("pages"))?.asList ?? []).filter { __e in (meridianDef_Page_urgent(__e)) }).isEmpty)) || ((!(((state.get("pages"))?.asList ?? []).filter { __e in (meridianDef_Page_unwritten(__e)) }).isEmpty)) {
-            if __meridianShouldRun("progress:0.8.then.0:L66:C0") {
-                // L66
+            if __meridianShouldRun("progress:0.9.then.0:L67:C0") {
+                // L67
                 try await runtime.emit(
                     event: "briefing.attention",
                     payload: [
                         "status": .string("needs review"),
                     ]
                 )
-                try await runtime.checkpoint(label: "progress:0.8.then.0:L66:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.9.then.0:L67:C0", state: state.snapshot())
+            }
+        }
+
+        if __meridianShouldRun("progress:0.10:L102:C0") {
+            // L102
+            let __relEntities = try await runtime.invoke(
+                tool: "link.backlinks",
+                args: [
+                    "page": state.get("input") ?? .null,
+                ]
+            )
+            state.bind("__relEntities", __relEntities)
+
+            try await runtime.checkpoint(label: "progress:0.10:L102:C0", state: state.snapshot())
+        }
+        // L102
+        state.bind("mentioned", Value.list(((state.get("__relEntities"))?.asList ?? [])))
+        // L103
+        for (__meridianLoopIndex_0_12, entity) in (state.get("mentioned")?.asList ?? []).enumerated() {
+            let __meridianLoopLabel_0_12 = "progress:0.12:iteration:\(__meridianLoopIndex_0_12)"
+            if __meridianShouldRun(__meridianLoopLabel_0_12) {
+            state.bind("entity", entity)
+                // L104
+                if !(MeridianComparison.identifies(state.get("entity.links"), state.get("input"))) {
+                    if __meridianShouldRun("progress:0.12.body.0.then.0:L133:C0") {
+                        // L133
+                        let link = try await runtime.invoke(
+                            tool: "link.add",
+                            args: [
+                                "entity": state.get("entity") ?? .null,
+                                "input": state.get("input") ?? .null,
+                            ]
+                        )
+                        state.bind("link", link)
+
+                        try await runtime.checkpoint(label: "progress:0.12.body.0.then.0:L133:C0", state: state.snapshot())
+                    }
+                }
+
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_12, state: state.snapshot())
             }
         }
 

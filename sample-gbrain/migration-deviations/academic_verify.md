@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/academic-verify/SKILL.md
-+++ skills/academic_verify.meri
++++ academic_verify.meri
 @@ -25,7 +25,7 @@
  > for the lookup chain. This skill enforces brain-first by checking
  > existing brain pages before issuing a fresh web search.

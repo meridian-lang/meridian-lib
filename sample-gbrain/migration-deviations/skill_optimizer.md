@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/skill-optimizer/SKILL.md
-+++ skills/skill_optimizer.meri
++++ skill_optimizer.meri
 @@ -14,19 +14,19 @@
  
  # Skill Optimizer

@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/smoke-test/SKILL.md
-+++ skills/smoke_test.meri
++++ smoke_test.meri
 @@ -21,7 +21,7 @@
  
  > Run `gbrain smoke-test` or `bash scripts/smoke-test.sh` after any container restart.

@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Set up GBrain with auto-provision Supabase or PGLite, AGENTS.md injection, first import",
     "mutating" : "true",
@@ -576,12 +656,7 @@
         "heading" : "BEFORE (grep) vs AFTER (gbrain)",
         "line" : 319,
         "lines" : [
-          "| Task | Before (grep) | After (gbrain) |",
-          "|------|---------------|-----------------|",
-          "| Find a person | `grep -r \"Pedro\" brain\/` | `gbrain search \"Pedro\"` |",
-          "| Understand a topic | `grep -rl \"deal\" brain\/ \\| head -5 && cat ...` | `gbrain query \"what's the status of the deal\"` |",
-          "| Read a known page | `cat brain\/people\/pedro.md` | `gbrain get people\/pedro` |",
-          "| Find connections | `grep -rl \"Brex\" brain\/ \\| xargs grep \"Pedro\"` | `gbrain query \"Pedro Brex relationship\"` |"
+          "table:decision:fCBUYXNrIHwgQmVmb3JlIChncmVwKSB8IEFmdGVyIChnYnJhaW4pIHwKfC0tLS0tLXwtLS0tLS0tLS0tLS0tLS18LS0tLS0tLS0tLS0tLS0tLS18CnwgRmluZCBhIHBlcnNvbiB8IGBncmVwIC1yICJQZWRybyIgYnJhaW4vYCB8IGBnYnJhaW4gc2VhcmNoICJQZWRybyJgIHwKfCBVbmRlcnN0YW5kIGEgdG9waWMgfCBgZ3JlcCAtcmwgImRlYWwiIGJyYWluLyBcfCBoZWFkIC01ICYmIGNhdCAuLi5gIHwgYGdicmFpbiBxdWVyeSAid2hhdCdzIHRoZSBzdGF0dXMgb2YgdGhlIGRlYWwiYCB8CnwgUmVhZCBhIGtub3duIHBhZ2UgfCBgY2F0IGJyYWluL3Blb3BsZS9wZWRyby5tZGAgfCBgZ2JyYWluIGdldCBwZW9wbGUvcGVkcm9gIHwKfCBGaW5kIGNvbm5lY3Rpb25zIHwgYGdyZXAgLXJsICJCcmV4IiBicmFpbi8gXHwgeGFyZ3MgZ3JlcCAiUGVkcm8iYCB8IGBnYnJhaW4gcXVlcnkgIlBlZHJvIEJyZXggcmVsYXRpb25zaGlwImAgfA=="
         ],
         "role" : "inert"
       },
@@ -616,10 +691,7 @@
         "heading" : "gbrain vs memory_search",
         "line" : 349,
         "lines" : [
-          "| Layer | What it stores | When to use |",
-          "|-------|---------------|-------------|",
-          "| **gbrain** | World knowledge: people, companies, deals, meetings, concepts, media | \"Who is Pedro?\", \"What happened at the board meeting?\" |",
-          "| **memory_search** | Agent operational state: preferences, decisions, session context | \"How does the user like formatting?\", \"What did we decide about X?\" |",
+          "table:decision:fCBMYXllciB8IFdoYXQgaXQgc3RvcmVzIHwgV2hlbiB0byB1c2UgfAp8LS0tLS0tLXwtLS0tLS0tLS0tLS0tLS18LS0tLS0tLS0tLS0tLXwKfCAqKmdicmFpbioqIHwgV29ybGQga25vd2xlZGdlOiBwZW9wbGUsIGNvbXBhbmllcywgZGVhbHMsIG1lZXRpbmdzLCBjb25jZXB0cywgbWVkaWEgfCAiV2hvIGlzIFBlZHJvPyIsICJXaGF0IGhhcHBlbmVkIGF0IHRoZSBib2FyZCBtZWV0aW5nPyIgfAp8ICoqbWVtb3J5X3NlYXJjaCoqIHwgQWdlbnQgb3BlcmF0aW9uYWwgc3RhdGU6IHByZWZlcmVuY2VzLCBkZWNpc2lvbnMsIHNlc3Npb24gY29udGV4dCB8ICJIb3cgZG9lcyB0aGUgdXNlciBsaWtlIGZvcm1hdHRpbmc\/IiwgIldoYXQgZGlkIHdlIGRlY2lkZSBhYm91dCBYPyIgfA==",
           "Both should be checked. gbrain for facts about the world. memory_search for how",
           "the agent should behave"
         ],
@@ -680,14 +752,7 @@
         "lines" : [
           "**If any gbrain command fails, run `gbrain doctor --json` first.** Report the full",
           "output. It checks connection, pgvector, RLS, schema version, and embeddings",
-          "| What You See | Why | Fix |",
-          "|---|---|---|",
-          "| Connection refused | Supabase project paused, IPv6, or wrong URL | Use Transaction pooler (port 6543), or supabase.com\/dashboard > Restore |",
-          "| Password authentication failed | Wrong password | Project Settings > Database > Reset password |",
-          "| pgvector not available | Extension not enabled | Run `CREATE EXTENSION vector;` in SQL Editor |",
-          "| OpenAI key invalid | Expired or wrong key | platform.openai.com\/api-keys > Create new |",
-          "| No pages found | Query before import | Import files into gbrain first |",
-          "| RLS not enabled | Security gap | Run `gbrain init` again (auto-enables RLS) |"
+          "table:decision:fCBXaGF0IFlvdSBTZWUgfCBXaHkgfCBGaXggfAp8LS0tfC0tLXwtLS18CnwgQ29ubmVjdGlvbiByZWZ1c2VkIHwgU3VwYWJhc2UgcHJvamVjdCBwYXVzZWQsIElQdjYsIG9yIHdyb25nIFVSTCB8IFVzZSBUcmFuc2FjdGlvbiBwb29sZXIgKHBvcnQgNjU0MyksIG9yIHN1cGFiYXNlLmNvbS9kYXNoYm9hcmQgPiBSZXN0b3JlIHwKfCBQYXNzd29yZCBhdXRoZW50aWNhdGlvbiBmYWlsZWQgfCBXcm9uZyBwYXNzd29yZCB8IFByb2plY3QgU2V0dGluZ3MgPiBEYXRhYmFzZSA+IFJlc2V0IHBhc3N3b3JkIHwKfCBwZ3ZlY3RvciBub3QgYXZhaWxhYmxlIHwgRXh0ZW5zaW9uIG5vdCBlbmFibGVkIHwgUnVuIGBDUkVBVEUgRVhURU5TSU9OIHZlY3RvcjtgIGluIFNRTCBFZGl0b3IgfAp8IE9wZW5BSSBrZXkgaW52YWxpZCB8IEV4cGlyZWQgb3Igd3Jvbmcga2V5IHwgcGxhdGZvcm0ub3BlbmFpLmNvbS9hcGkta2V5cyA+IENyZWF0ZSBuZXcgfAp8IE5vIHBhZ2VzIGZvdW5kIHwgUXVlcnkgYmVmb3JlIGltcG9ydCB8IEltcG9ydCBmaWxlcyBpbnRvIGdicmFpbiBmaXJzdCB8CnwgUkxTIG5vdCBlbmFibGVkIHwgU2VjdXJpdHkgZ2FwIHwgUnVuIGBnYnJhaW4gaW5pdGAgYWdhaW4gKGF1dG8tZW5hYmxlcyBSTFMpIHw="
         ],
         "role" : "inert"
       },
@@ -848,6 +913,36 @@
     "tools" : "get_stats\nget_health\nsync_brain\nput_page",
     "triggers" : "\"set up gbrain\"\n\"initialize brain\"\n\"gbrain setup\""
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "setup.meri",
     "brain.merconfig"
@@ -855,31 +950,31 @@
   "source_map" : [
     {
       "meridian_line" : 30,
-      "swift_line" : 541
+      "swift_line" : 592
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 580
+      "swift_line" : 631
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 585
+      "swift_line" : 636
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 624
+      "swift_line" : 675
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 629
+      "swift_line" : 680
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 668
+      "swift_line" : 719
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 673
+      "swift_line" : 724
     }
   ],
   "tools_used" : [

@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/concept-synthesis/SKILL.md
-+++ skills/concept_synthesis.meri
++++ concept_synthesis.meri
 @@ -23,7 +23,7 @@
  > **Convention:** see [_brain-filing-rules.md](../_brain-filing-rules.md) —
  > output files under `concepts/` per the primary-subject rule.

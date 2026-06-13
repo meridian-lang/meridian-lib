@@ -495,7 +495,7 @@ Sample pages:
 Next: Phase N+1 — [description]. Ready to proceed?
 ```
 
-## Tools Used (( inert ))
+## Tools Used
 
 - `search` — check for existing pages before creating
 - `query` — hybrid search for entity deduplication

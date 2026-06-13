@@ -19,7 +19,11 @@ struct SkillMigratorMarkingTests {
     }
 
     static func mark(_ source: String) -> String {
-        migrator().markSections(source)
+        migrator().markSections(source).markdown
+    }
+
+    static func aliases(_ source: String) -> [SkillMigrator.SectionAlias] {
+        migrator().markSections(source).aliases
     }
 
     @Test("prose Contract is marked inert with the invariants role")
@@ -46,17 +50,34 @@ struct SkillMigratorMarkingTests {
                 Comment(rawValue: out))
     }
 
-    @Test("an unrecognized heading whose body is only shell fences becomes a procedure")
+    @Test("an unrecognized pure-shell heading is routed to a procedure rulebook alias, not an inline marker")
     func pureShellBecomesProcedure() {
-        let out = Self.mark("""
+        let source = """
         ## How to use
 
         ```bash
         gbrain capture "x"
         ```
-        """)
-        #expect(out.contains("## How to use (( role: procedure ))"),
+        """
+        let out = Self.mark(source)
+        // The heading stays clean — no inline marker.
+        #expect(out.contains("## How to use\n") || out.hasSuffix("## How to use"),
                 Comment(rawValue: out))
+        #expect(!out.contains("(( role: procedure ))"), Comment(rawValue: out))
+        // …the role is emitted as a rulebook section alias instead.
+        let aliases = Self.aliases(source)
+        #expect(aliases == [SkillMigrator.SectionAlias(heading: "How to use", role: .procedure)],
+                Comment(rawValue: "\(aliases)"))
+    }
+
+    @Test("aliasRulebook renders a === sections === input for the chosen aliases")
+    func aliasRulebookRendered() {
+        let books = SkillMigrator.aliasRulebook(
+            [SkillMigrator.SectionAlias(heading: "How to use", role: .procedure)])
+        #expect(books.count == 1)
+        #expect(books.first?.source.contains("=== sections ===") == true)
+        #expect(books.first?.source.contains("section \"How to use\" -> procedure") == true)
+        #expect(SkillMigrator.aliasRulebook([]).isEmpty)
     }
 
     @Test("an unrecognized narrative heading is marked inert")

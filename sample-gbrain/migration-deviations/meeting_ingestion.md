@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/meeting-ingestion/SKILL.md
-+++ skills/meeting_ingestion.meri
++++ meeting_ingestion.meri
 @@ -29,7 +29,7 @@
  
  > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.

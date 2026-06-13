@@ -37,9 +37,7 @@ struct DefinitionParser {
         if t.hasSuffix(".") { t = String(t.dropLast()) }
 
         // Strip a leading article on the subject.
-        for a in ["a ", "an ", "the "] where t.lowercased().hasPrefix(a) {
-            t = String(t.dropFirst(a.count)); break
-        }
+        t = lexicon.stripLeadingArticle(t)
 
         // Split on " if " (the condition introducer).
         guard let ifRange = t.range(of: " if ", options: .caseInsensitive) else { return nil }

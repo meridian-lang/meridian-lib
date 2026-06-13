@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/book-mirror/SKILL.md
-+++ skills/book_mirror.meri
++++ book_mirror.meri
 @@ -26,7 +26,7 @@
  > for the lookup chain (brain → search → external) the context-gathering
  > phase follows.

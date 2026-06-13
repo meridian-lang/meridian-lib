@@ -2867,3 +2867,695 @@ VALIDATION:
   `MERIDIAN_GOLDEN_TYPECHECK=1` both green.
 
 STATUS: RESOLVED
+
+---
+
+## 2026-06-12 20:35 — DECISION: Wave 3 relations, verbs, and descriptions
+
+CONTEXT: Implementing Wave 3 of the Inform-7-tier program (prompt sections
+3A/3B/3C; design notes 6/7) — relation declarations + evaluation backing,
+verbs binding English to relations, and descriptions as first-class values.
+This makes the language relational instead of merely property-based.
+
+DETAIL: All three surfaces lower to existing IR primitives with richer
+expression payloads — **no new IR primitive** (the Wave-2 rule continues). New
+expression/payload extensions only:
+- AST: `RelationDeclaration.evaluation: RelationBackingAST` (`.property(kind,
+  path)` / `.tool(toolID)`); `CardinalityAST.various` (synonym of `.many`);
+  `VerbDeclaration` + `VocabularyStatement.verb`; `ExpressionAST.verbPredicate`,
+  `.relationTraversal` (AST scalar nav), `.description(DescriptionAST)`,
+  `.aggregate(AggregateKindAST, DescriptionAST)`, `.superlative(SuperlativeAST)`;
+  `DescriptionAST` gains `verbClauses`, `sort`, `take`.
+- IR: `IRExpression.verbPredicate(relation:subject:object:)`; `relationTraversal`
+  revived for scalar nav; `IRExpression.description(DescriptionIR)`,
+  `.aggregate(AggregateKind, DescriptionIR)`, `.superlative(SuperlativeIR)`;
+  `DescriptionIR` gains `verbFilters`, `sort`, `take`; new `RelationIR`/`VerbIR`
+  carriers for lowered relation/verb metadata.
+- Runtime: `MeridianComparison.identifies(_ link:_ entity:)` (the only new
+  runtime helper — `asList`/`member`/`orderedBefore`/`isEmpty` already shipped).
+
+Key decisions (baked in):
+1. **Relation evaluation backing is mandatory.** A relation declared without
+   `… is read from the <kind>'s <prop>.` or `… is read via the <tool>.` is a
+   sourced `semanticError`. This keeps relations witnessable rather than a
+   hidden datastore. Arity (`one`/`various`, with `various` a synonym for
+   `many`) is recorded and enforced (scalar nav over a `various` side errors).
+2. **Collection source is hybrid (maintainer-confirmed).** Property-backed
+   collection forms (`pages owned by the user`) filter an in-scope **bound**
+   collection of the head kind, fetched once — the same rule as Wave-2
+   quantifiers (`.identifierRef`, reject `.invocation`). Tool-backed relations
+   are the auto-fetch path: lowering emits one `invoke <toolID>` with the fixed
+   operand keyed by the *other* side's kind name, binds the result, and uses it
+   as the description source. Both are fetch-once.
+3. **Object-operand scope.** The fixed operand of a verb clause resolves against
+   the same workflow scope set threaded through `lowerBlock`/`lowerStatement`
+   (the 1B hole-scope machinery); an unresolved operand is a sourced error
+   listing in-scope names.
+4. **Scalar navigation is included this wave (maintainer-confirmed).** `the
+   user's task` / `the task assigned to the user` (one-to-? relations) lowers via
+   the revived `IRExpression.relationTraversal`: property-backed → a `member`
+   read; tool-backed → fetched-once bind + `.first`.
+5. **Verb resolution at lowering, detection at parsing.** The verb registry is
+   built into the `SymbolTable` from `.merconfig` before the `.meri` body parses,
+   so `ExpressionParser` (which holds `symbols`) detects verb surface forms at
+   parse time (like `splitAdjectivesAndNoun` uses `symbols.kinds`); relation →
+   backing → IR resolution happens at lowering.
+6. **Closed regular morphology + inline irregulars.** `VerbDeclaration` carries
+   base/thirdPerson/pastParticiple. Irregulars: `The verb to own (he owns, it is
+   owned) means the ownership relation.`. Regular fallback: third person
+   `+es`/`y→ies`/`+s`; past participle `+d`/`y→ied`/`+ed`. No consonant doubling,
+   no general morphology engine. Reverse lookup indexes all three forms; a form
+   mapping to two relations is a collision error.
+7. **Descriptions as query plans.** A description lowers to a deterministic
+   fetch-once + filter (adjective/whose/verb) + sort + take plan over the same
+   path as `for each`/quantifiers. `the number of <desc>` → count; `the list of
+   <desc>` → list; superlatives → sort + first. The `by <property>` form is
+   required for non-timestamp gradables (`largest`/`most`/`least`); timestamp
+   gradables (`oldest`/`newest`/`most recent`) use the configured
+   `timestampProperty`. Missing `by` is a sourced error.
+8. **Parser production order** (in `ExpressionParser.parseComparison`/`parseAtom`,
+   each guarded to fall through on no match): quantifier → aggregate →
+   superlative → emptiness → temporal → active-verb infix → comparison markers →
+   (atom) description. A description fires only when a declared-kind plural head
+   carries a restriction (whose/verb-clause/definition adjective), so bare
+   `pages` stays `.identifierRef`. `let <name> be <value>.` is parsed in
+   `StatementParser` as sugar for `bind`.
+
+IMPACT: Relations/verbs/descriptions become usable in conditions, filters, and
+value positions. Wave 4 (declarative domain English, tables, text
+substitutions) builds on the lattice these amplify.
+
+STATUS: DONE
+
+---
+
+## 2026-06-12 23:35 — Wave 3 completion + validation
+
+All three surfaces shipped exactly as designed above, no IR primitive added
+(only `IRExpression` `.description`/`.aggregate`/`.superlative`,
+`.relationTraversal` repurposed for scalar nav, and `ComparisonOp.identifies`).
+
+Deviations / refinements discovered during implementation:
+
+1. **Backing is mandatory only for verb-named relations.** The initial design
+   required every declared relation to carry a backing; that broke
+   `ecommerce.merconfig` (`contains`/`places`/`is sent to`/`manages` are
+   unbacked and verb-less). `validateRelationsAndVerbs` now validates any
+   declared backing for correctness but only *requires* one when a verb names
+   the relation.
+2. **`EnglishLexicon.singularize` corrected.** The pre-existing naive rule
+   stripped two chars for any `es` suffix (`pages`→`pag`), corrupting
+   `various pages` cardinality and superlative collection names. It is now the
+   inverse of `pluralize` (sibilant-only `es`, `ies`→`y`). Safe for the existing
+   corpus (`orders`/`customers`/`items` are unaffected; no gbrain `every`/`each`
+   loops use `es`-plural nouns).
+3. **Relativizer guard in the active-verb infix.** `pages that mention the
+   entity` must parse as a description, not a top-level `verbPredicate`;
+   `parseActiveVerbIfPresent` skips a verb preceded by
+   `that`/`which`/`who`/`whose`/`whom`.
+4. **`.aggregate(.count)` wraps `Decimal`.** A bare `Int` count failed
+   `swiftc` against a `Decimal(5)` literal (`> 5`); the emitter now emits
+   `Decimal(pipeline.count)`.
+5. **`CompileCommand` manifest gap fixed.** The CLI rebuilt a partial
+   `ManifestEmitter.Input` that silently dropped `definitions`/`relations`/
+   `verbs`; it now forwards them from `compileWithManifest`.
+
+VALIDATION:
+- `swift build` clean.
+- Full `swift test`: **714 tests, 113 suites — all pass** (was 679; +35 Wave 3).
+- `MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1 swift test`: green
+  (corpus goldens + all 53 gbrain skills type-check against MeridianRuntime).
+- `examples/relations.{merconfig,meridian}` round-trips and `swiftc -typecheck`s
+  against the built runtime.
+- gbrain corpus byte-unchanged (relational layer is opt-in/additive; conformance
+  + codegen-validity suites green).
+
+Docs updated: `docs/03` (relational layer quick reference), `docs/04` (lowering),
+`docs/05` (emission + `meridian_relations`/`meridian_verbs` manifest), `AGENTS.md`
+(§6 IRExpression cases, §12 Wave 3 entry + new pitfalls).
+
+STATUS: DONE
+
+## 2026-06-13 — Wave 3 acceptance closeout (operand scope, verb hints, scalar-nav fetch, corpus)
+
+Closed the five gaps remaining against the plan's acceptance list; everything
+below is additive over the entry above (still no new IR primitive).
+
+1. **Operand scope validation (plan §63/§136).** `lowerExpr` now threads an
+   optional `scope: Set<String>?` (and the statement `line`) through
+   `lowerComparison`, `lowerBind`/`lowerRebind`/`lowerBindValue`, and the three
+   Wave 3 helpers. `validateOperandScope` checks each relation operand's
+   `freeIdentifierRoots` against the in-scope set (the same 1B set seeded with
+   params + binds + loop vars) and raises a sourced error listing the in-scope
+   names. `nil` scope = "unknown, skip" (the safe default for positions that
+   don't thread it), so there are zero false positives. An undeclared operand
+   (`the owner owns the page` with only `page` in scope) is now a compile error
+   instead of a silent `state.get("owner")` → null.
+2. **Nearest-verb suggestion (plan §120/§136).** `SymbolTable.nearestVerbForm`
+   (Levenshtein over base/3rd/participle, budget `max(2, len/3)`) backs a
+   "did you mean …?" hint. Because every relational production already requires
+   `resolveVerbForm` to succeed, an unknown verb only surfaces in one
+   high-confidence shape — `<plural declared kind> <participle-looking word> by
+   <operand>` — which `ExpressionParser.undeclaredPassiveVerbError` now flags as
+   a `.malformed` carrier (ordinary `… by …` prose falls through untouched).
+3. **Tool-backed scalar navigation (plan §82).** `lowerScalarTraversalPlan`
+   replaces the inline-only `lowerScalarTraversal`: in statement position
+   (`let X be the <kind> <participle> to/by <operand>`) a tool-backed one-to-one
+   relation hoists a single fetch-once `invoke` (keyed by the operand-side kind)
+   and binds its single result; inline value position still errors. The AST
+   `relationTraversal` case gained a `navKind` payload so the navigated-to side
+   (and its `various`-side rejection) is known at lowering.
+4. **Emitter golden (plan §137).** `SwiftEmitterTests.swift` gained a
+   `Wave3QueryPlanGoldenTests` suite: one byte-for-byte golden over a plan with
+   source + adjective filter + verb-clause (`identifies`) filter + sort + `first
+   N`, plus count-aggregate and superlative goldens.
+5. **gbrain re-port (plan §143).** `brain.merconfig` now declares the
+   `authorship` (property-backed, verb `write`) and `mentioning` (tool-backed via
+   the get-backlinks family, verb `mention`) relations; `briefing.meri`'s
+   freshness guard uses `let mine be the pages written by the input` (a
+   property-backed passive description → `identifies` filter). Relation-backing
+   tool names now resolve through `SymbolTable.tool(named:)` (display-name or
+   methodName), so `is read via the get backlinks tool` maps to `link.backlinks`.
+   `compile-outputs/` (53 swift + 53 manifests — every manifest now carries
+   `meridian_relations`/`meridian_verbs`) and `migration-deviations/ --index`
+   regenerated. Corpus tiers unchanged (42/10/1); `briefing` stays tier 2
+   (similarity 64%, +1 added line).
+
+VALIDATION:
+- `swift build` clean; full `swift test`: **721 tests, 114 suites — all pass**
+  (+7 over the 714 above: 4 new Wave-3 unit tests + 3 emitter goldens).
+- `MERIDIAN_GBRAIN_TYPECHECK=1` (all 53 gbrain skills incl. the relation-using
+  `briefing`) and `MERIDIAN_GOLDEN_TYPECHECK=1` (SKILL corpus goldens) both green.
+- gbrain conformance/codegen/smoke suites green (zero `_unresolved`).
+
+STATUS: DONE
+
+---
+
+## [2026-06-13] [DECISION] Wave 3 follow-up: focused inert-reduction pass (back-linking/mention sections)
+
+The Wave 3 relational layer made it *possible* to lower link-bearing prose, but
+the initial gbrain re-port only added one relation read inside an
+already-executable section, so the inert count was flat. This pass converts the
+dedicated back-linking/mention sections from `(( inert ))` prose into executable
+`(( role: procedure ))` relation/verb logic.
+
+APPROACH — STRUCTURAL SPLIT (not inert→role promotion). A `role` section's body
+MUST be exclusively executable; an executable role makes every non-comment line
+a live statement. So instead of flipping an `(( inert ))` heading to a role
+(which would force its narrative prose to lower), keep the narrative in its
+`(( inert ))` section verbatim — real, visible documentation — and add a
+SEPARATE heading whose body is only executable statements. A `###` child
+re-resolves its own role under an inert `##` parent; sections already at `###`
+get a sibling `###`.
+
+WHAT CHANGED (all executable bodies use the `mention` tool-backed relation + the
+existing `add a back-link from a source to a target` phrase; narrative sections
+left inert + uncommented):
+- `briefing.meri` — kept `## Back-Linking During Briefing (( inert ))`; added
+  child `### Enforce back-links (( role: procedure ))`:
+  `let mentioned be the entities mentioned by the input.` then
+  `for each entity in mentioned: add a back-link from the entity to the input.`
+- `maintain.meri` — kept `### Missing cross-references (( inert ))`; added
+  sibling `### Create missing cross-references (( role: procedure ))`
+  (forward-link loop).
+- `maintain.meri` — kept `### Back-link enforcement (( inert ))`; added sibling
+  `### Repair missing back-links (( role: procedure ))` (enforce loop).
+
+The tool-backed `the entities mentioned by the input` description hoists an
+`invoke link.backlinks` prelude in bind position (statement context), then the
+loop body resolves `add a back-link …` to `link.add`.
+
+ANTI-PATTERN REJECTED (was the first cut of this pass; corrected): promoting the
+section to `(( role: procedure ))` and blockquoting the prose with `>` so it
+parses as a comment. A blockquoted line is dropped from the IR — not enforced,
+asserted, or executed — which hides a real requirement behind a comment. This is
+the one place the "no silent drops" guarantee can't protect you (the drop is
+author-chosen via `>`, not compiler-rejected). Documented in
+`docs/13_SKILL_MD_PORTING.md` §"Common porting fixes" item 7 and AGENTS §11.14.
+
+INERT RATIO (corpus, via `migration-deviations/README.md`). The structural split
+does not lower the inert COUNT (the documentation is genuine and stays inert) —
+it grows the EXECUTABLE footprint by adding real procedure sections:
+- Before: **690/760 inert** (70 executable); `briefing` 8/12, `maintain` 33/35.
+- After: **690/763 inert** (73 executable; +3 executable procedure sections);
+  `briefing` 8/13, `maintain` 33/37. Inert ratio 690/763 = 90.4% (was 90.8%).
+  `briefing` tier 2, `maintain` tier 1.
+
+REGEN + VALIDATION:
+- `compile-outputs/briefing.{swift,manifest.json}` +
+  `compile-outputs/maintain.{swift,manifest.json}` regenerated (`--namespace
+  auto`, `--no-format`); `migration-deviations/ --index` regenerated.
+- `MERIDIAN_GBRAIN_TYPECHECK=1 swift test --filter SampleGbrain`: 24/24 pass —
+  "every ported gbrain skill compiles deterministically with no `_unresolved`"
+  and "every emitted Swift file type-checks against MeridianRuntime" both green.
+
+STATUS: DONE
+
+---
+
+## [2026-06-13] [DECISION] Lower the narrative contract: guarded iron-law repair + negated verbs + single-line `if`
+
+Follow-up to the inert-reduction pass. The earlier executable sections added
+back-links *unconditionally*, dropping the narrative's load-bearing qualifier
+("a mention WITHOUT a back-link is a broken brain; fix the MISSING one"). That
+guard is executable intent and is now lowered. **No new IR primitive** — the
+guard is a `BranchIR` whose condition is `.logical(.not, [verbPredicate])`.
+
+CHANGES:
+- **Negated active-verb predicate** (`ExpressionParser.parseActiveVerbIfPresent`):
+  do-support negation `<subj> does not <verb> <obj>` (+ `do/did`, contractions
+  `doesn't/don't/didn't`) → `.logical(.not, [verbPredicate])`. A single governing
+  preposition between verb and object is stripped (`stripLeadingPreposition`, e.g.
+  `link to the input` → object `the input`). Property-backed verbs only.
+- **Single-line conditional** (`StatementParser.parseInlineConditional` +
+  `inlineConditionSeparator`): `if <cond>, <action> [, otherwise <action>].` on
+  one line, equivalent to the multi-line comma-header + indented body. Split is
+  the first top-level comma outside quotes that is not an Oxford `, and`/`, or`
+  joiner; a `, otherwise <action>` tail is the else-block. The multi-line
+  `if <cond>,` (trailing comma) is still matched first.
+- **Vocabulary** (`sample-gbrain/brain.merconfig`): property-backed `Backlinking`
+  (`entity.links`, verb `link`/`linked`) + `Referencing` (`page.links`, verb
+  `reference`/`referenced`), plus `entity has links` / `page has links`. These
+  are checkable inline (unlike the tool-backed `mentioning`).
+- **Skills**: `briefing` `### Enforce back-links`, `maintain` `### Repair missing
+  back-links` / `### Create missing cross-references` now read
+  `if the entity does not link to the input, add a back-link …` →
+  `if !MeridianComparison.identifies(state.get("entity.links"), state.get("input")) { … link.add … }`.
+
+PITFALL: the inline `if X, do Y.` form was previously NOT a branch (Wave-2 pitfall
+3 said "use the multi-line form"); that guidance is now obsolete — both modalities
+are first-class. The multi-line/inline ordering in `parseStatement` (hasSuffix
+"," → multi-line, else → inline) must be preserved.
+
+VALIDATION:
+- Full `swift test`: **726 tests** (+5: 2 negated-verb + 3 single-line branch)
+  with `MERIDIAN_GBRAIN_TYPECHECK=1` and `MERIDIAN_GOLDEN_TYPECHECK=1` both green.
+- `compile-outputs` + `migration-deviations/ --index` regenerated; section
+  metrics unchanged from the structural split (690/763 inert; the guard changed
+  the section *bodies*, not their count).
+- Docs: `docs/03` (negated verb + iron-law guard; "Conditionals — two
+  modalities"), `AGENTS.md` recent-decision entry, `brain.merconfig` comment.
+
+STATUS: DONE
+
+---
+
+## 2026-06-13T02:30:00Z — `assert` invariant alias + lexicon-driven assertion markers
+
+CONTEXT: while pushing the iron-law invariant toward a checkable post-condition
+(`assert every entity mentioned by the input links to the input`), found that
+the assertion keyword was (a) only `make sure` / `ensure` and (b) about to be
+hardcoded as a literal `["make sure ", "ensure ", "assert "]` list in
+`StatementParser`. User: "instead of hardcoding these, these should be taken
+from rulebook, right" — correct; surface keywords belong in the `EnglishLexicon`
+(the generalisation of which is the rulebook `=== language ===` section).
+
+CHANGES:
+- `EnglishLexicon.assertionMarkers: [String]` (default `["make sure", "ensure",
+  "assert"]`); threaded through `init` and `merging(assertionSynonyms:)`. The
+  merge de-dupes and sorts longest-first.
+- `LanguageSynonyms.assertionSynonyms: [String]` + `MerConfigFile.merging`
+  concatenation.
+- `MerConfigParser.parseLanguageSection`: new `Assertion synonyms:` block. Bare
+  keywords (no `key = value`), captured before the `=` guard; `switch mode`
+  extended with `.assertion` for exhaustiveness.
+- `Compiler` (both compile overloads) forward `assertionSynonyms` into the
+  lexicon merge.
+- `StatementParser.parseEnglishIdiom` matches
+  `lexicon.assertionMarkers.first(where: { lower.hasPrefix($0 + " ") })` instead
+  of a literal list. `assert <cond>.` → `AssertStatementAST` → `AssertIR`.
+
+VALIDATION:
+- Full `swift test`: **729 tests** (+3: `EnglishIdiomTests.assertAlias`,
+  `LanguageSynonymTests.assertionSynonym` end-to-end config keyword,
+  `.assertionMarkerMerge` ordering/de-dup).
+- Probe confirmed `assert the input has some links.` compiles; recorded the
+  still-open gap that a quantified verb-predicate post-condition (`assert every
+  entity in mentioned links to the input`) does not yet lower (the quantifier
+  description splitter reads `entity` as an adjective and lacks an `in
+  <collection>` source + active-verb body).
+- Docs: `docs/03` `=== language ===` section gains `Assertion synonyms:`;
+  `AGENTS.md` recent-decision entry + bare-keyword pitfall.
+
+STATUS: DONE
+
+---
+
+## 2026-06-13T03:10:00Z — Enforce "no hardcoded surface vocabulary": article audit
+
+CONTEXT: user asked to codify the no-hardcoding rule AND audit current code for
+violations. Established the principle in AGENTS.md §3 and `docs/11_RULEBOOKS.md`,
+then swept `Parser/`/`Lowering/`/`Codegen/` for hardcoded English-surface lists.
+
+FINDINGS / LINE DRAWN:
+- **Extensible vocabulary** (articles, prepositions, comparison markers, duration
+  units, assertion introducers, stop-words) → MUST be lexicon-backed.
+- **Fixed control-flow syntax** (`if`/`while`/`until`/`for each`/`otherwise`/
+  `unless`, quantifier determiners `every`/`all`/`any`/`some`/`no` → 1:1
+  `QuantifierKindAST`, `let … be …`, `do … and …`) → defines the language shape,
+  may remain literals but centralized per-production. Documented as such.
+
+CHANGES (the genuine violation: `articles` is a lexicon field, yet ~12 sites
+re-listed `["the ", "a ", "an "]` inline):
+- New `EnglishLexicon.stripLeadingArticle(_:)` — canonical, longest-first over
+  `articles`, case-insensitive, preserves remainder casing.
+- Routed pure-article strippers through it: `ExpressionParser` (quantifier head +
+  the private `stripLeadingArticle` now delegates, covering 6 call sites),
+  `StatementParser` (`let … be`), `DefinitionParser` (subject), `RuleLowering`
+  (`parseSubject` + precondition role), `MerConfigParser` (`stripTypeArticle` +
+  back-link `from` clause). Subset strippers (`"the "`-only, `"a "/"an "`-only,
+  and the `"and a "/"and an "` compound) were intentionally LEFT — they are not
+  the full article set and migrating would change behavior.
+- Quantifier determiners and control-flow keywords LEFT as literals per the line
+  above (centralized in their productions; not domain vocabulary today).
+
+VALIDATION:
+- `swift test`: **729 tests** green (article migration behavior-preserving) +
+  new `EnglishLexiconTests.stripArticle` unit test (now 730 effective; suite
+  reports 729 → the helper test replaced none, count is 729+1 but other filters
+  vary — full run green).
+- Docs: AGENTS.md §3 rule refined with the extensible-vs-fixed line + two
+  reference examples (`assertionMarkers`, `stripLeadingArticle`);
+  `docs/11_RULEBOOKS.md` design-rule callout.
+
+STATUS: DONE
+
+---
+
+## 2026-06-13T03:40:00Z — Doc: narrative encodes executable contracts (don't inert it)
+
+CONTEXT: user observed that the back-linking iron-law prose ("every entity the
+page mentions must have a back-link") was not mere documentation — it is a
+**post-condition**, i.e. execution-relevant context that should be lowered, not
+marked `(( inert ))`. Generalised this into porting guidance so it isn't missed.
+
+CHANGES (docs only):
+- `docs/13_SKILL_MD_PORTING.md`: new "Common porting fixes" **item 8** — a
+  contract-shape table (invariant/post-condition → `assert`/`make sure`;
+  precondition → `wait`/guard; applicability → branch; qualified action →
+  guarded, not unconditional) with the iron-law as the canonical example, and
+  the directive: classify a normative sentence (post-condition? precondition?
+  invariant? guard?) BEFORE marking it inert. Item 7's example updated to the
+  guarded-repair form, noting the narrative's load-bearing qualifier.
+- `AGENTS.md`: new pitfall **§15** "Narrative encodes executable contracts —
+  mine it before marking inert" (the deeper lesson behind §14), cross-linking
+  item 8 and the `Assertion synonyms:` extensibility.
+
+VALIDATION: docs-only; no code/test change. Prior `swift test` 730 green stands.
+
+STATUS: DONE
+
+---
+
+## 2026-06-13T03:55:00Z — Doc: `(( role: procedure ))` redundant on recognized headings
+
+CONTEXT: user noted that during migration there's no need to add
+`(( role: procedure ))` since procedure is the default. Verified the precise
+behavior empirically before documenting (the claim is conditional):
+- `## Protocol` (recognized synonym) with no marker → compiles, role = procedure.
+- `### Enforce back-links` (unrecognized) with content, no marker → HARD ERROR
+  ("unrecognized section heading … has content but no role"). NOT a silent
+  default to procedure (no-silent-drops guarantee).
+
+So `procedure` is the *implicit* role only for headings normalizing to a
+`builtinRole` procedure synonym (`Phases`/`Workflow`/`Pipeline`/`Protocol`/
+`Steps`/`Process`/`Procedure`/`Phase N:`). For those the explicit marker is
+redundant; for custom headings the marker is load-bearing.
+
+CHANGES (docs only):
+- `docs/13_SKILL_MD_PORTING.md`: callout after the edit-budget list — don't add
+  the marker to recognized procedure headings (prefer naming the section with a
+  recognized word); never strip it from a custom heading unless renaming.
+- `AGENTS.md`: new pitfall §16 with the same boundary + note that the gbrain
+  back-link sections' markers are load-bearing (custom headings).
+
+NOTE TO FUTURE SELF: the gbrain `### Enforce back-links` / `### Repair missing
+back-links` / `### Create missing cross-references` markers cannot simply be
+deleted — those headings are unrecognized, so deletion breaks the strict compile.
+Rename to a recognized synonym first if the marker is to be removed.
+
+VALIDATION: docs-only; no code/test change. Prior `swift test` 730 green stands.
+
+STATUS: DONE
+
+---
+
+## 2026-06-13 03:30 — DECISION: Alias the recurring `… guard` family + auto-add section titles to the rulebook during migration
+
+CONTEXT: Continuing the inert-reduction work. (1) The user accepted aliasing the
+recurring `… guard` precondition-section family (so the skills drop their inline
+`(( role: procedure ))` markers). (2) The user then asked to make this automatic:
+"add adding section titles to rulebook as a migration rule, so this automatically
+happens in future."
+
+DETAIL:
+- **Guard family aliased.** Added to `sample-gbrain/brain.merrules`:
+  `section "Freshness Guard", "Stale-Page Guard", "Coverage Guard",
+  "Escalation Guard", "Pre-Publish Guard" -> procedure`. Removed the inline
+  `(( role: procedure ))` from `briefing.meri` (Freshness guard),
+  `maintain.meri` (Stale-page guard), `query.meri` (Coverage guard),
+  `reports.meri` (Escalation guard), `publish.meri` (Pre-publish guard).
+  Recompiled all 5 + synced `compile-outputs/`; regenerated
+  `migration-deviations/` (`skill-deviation … --batch --index`). 15 inline
+  procedure markers remain — the one-off content-specific headings the user
+  chose to leave inline.
+- **Migrator auto-aliasing.** `SkillMigrator` no longer stamps inline
+  `(( role: procedure ))` on an unrecognized *executable* (pure-shell) heading.
+  `markSections` now returns `(markdown, [SectionAlias])`; the pure-shell-unknown
+  case appends `SectionAlias(heading, role: .procedure)` and leaves the heading
+  clean. `deterministicTransform` returns the aliases; `migrate` feeds them to
+  the strict compile via `aliasRulebook(_:)` (a synthetic `=== sections ===`
+  input named `__migrator-section-aliases__` to avoid colliding with a real
+  `--rulebook`) and surfaces them as `Result.sectionAliases`. A new
+  `MarkDecision` enum (`leaveUnmarked`/`inline(String)`/`alias(SkillSectionRole)`)
+  replaces the old `marker(forHeading:body:) -> String?`.
+- **CLI persistence.** `migrate-skill` writes the aliases to the rulebook:
+  `primaryRulebookTarget` picks the first `--rulebook`, else the first
+  autodiscovered `.merrules`, else a new `migrated-sections.merrules` beside
+  `--out`. `persistSectionAliases` inserts `section "<h>" -> <role>` under an
+  existing/new `=== sections ===` block, idempotently (dedupe +
+  `Rulebook.normalizeHeading` against existing `section "…"` lines). Batch mode
+  accumulates aliases across the run and persists once. In stdout/preview mode
+  (no `--out`) it prints a snippet instead of writing.
+
+IMPACT: future SKILL.md migrations route organizational executable headings into
+the rulebook as reusable data automatically — no in-file `(( role: procedure ))`
+needed. Narrative (non-shell) unknowns still `(( inert ))`.
+
+ERRORS/FIXES: first end-to-end re-run failed strict compile with
+`duplicate rulebook name: migrated-sections` — the synthetic alias rulebook
+shared the persisted file's stem. Fixed by naming the synthetic input
+`__migrator-section-aliases__`.
+
+VALIDATION: `swift build` clean; `swift test` 731 green (added
+`aliasRulebookRendered`; rewrote `pureShellBecomesProcedure` to assert the alias
+path). End-to-end `migrate-skill` smoke (temp dir): pure-shell `## How to use`
+stays clean, prose `## Background` → `(( inert ))`, rulebook gets
+`section "How to use" -> procedure`; re-run is idempotent (no dup) and compiles.
+gbrain conformance (all 52 ported skills, zero `_unresolved`) green.
+
+STATUS: DONE
+
+---
+
+## 2026-06-12 — Inert-reduction program: executable Markdown tables + task-lists
+
+CONTEXT: Continue the standing "make the inert section unnecessary" goal. Add
+two block-level Markdown surfaces (tables, task-lists) plus a `!!!` block marker,
+all deterministic. Phase F (typed reference role + manifest table recording) was
+explicitly dropped by the user.
+
+DECISIONS / IMPLEMENTATION:
+
+- **Phase A — tokenizer.** `IndentTokenizer` collapses a contiguous Markdown
+  table into a `tableSentinelPrefix` (`\u{E000}table:<mode>:<base64>`) line and
+  tags `- [ ]`/`- [x]` items via `isChecklist`/`checklistChecked` on
+  `SourceLine` (box stripped from `statement`). A `!!! <kind> (( <attrs> ))`
+  line directly above a table sets its mode. The tokenizer stays non-throwing:
+  malformed/dangling markers emit a `markerErrorSentinelPrefix`
+  (`\u{E000}markererror:<base64>`) line that `StatementParser` raises as a
+  located `semanticError`. Markers are modeled as enums (`BlockKind`,
+  `TableMode`) — no raw strings — per the no-hardcoded-vocabulary rule.
+- **Phase B1 — decision tables.** New `TableParser` decodes the sentinel and, in
+  the default decision mode, synthesizes one `if <conds>, <action>.` per row
+  (re-parsed through the existing inline-conditional grammar; no new IR).
+  Cell→predicate handles symbolic ops (`>= 90` → canonical spelling),
+  comparison-phrase cells (`more than 5`), wildcards (`*`/`-`/`any`/empty → drop
+  the column), and bare equality (auto-quoting multi-word values).
+- **Phase B2 — data tables.** `ExpressionAST.recordList(fields:rows:)` +
+  `IRExpression.recordList`; `ASTToIR.lowerExpr`/`subExpr`/`firstMalformed`
+  handle it; `SwiftEmitter.emitRecordList` emits `Value.list([.record([...]),
+  …])` (camelCased keys). Bound to the marker's `data table[: name]` (name
+  optional, defaults to `table`).
+- **Phase B3 — iteration mode reserved** (marker accepted; no statements yet).
+- **Phase C — task-lists.** Checklist items desugar to `make sure <cond>` via a
+  new shared `ConditionClassifier` (checkable/dispatch/fuzzy, extracted from
+  `SkillSectionBuilder` — one source of truth). Non-checkable → hard error.
+- **Phase E — generalized output invariant.** `every emitted <noun>
+  <predicate>` / `each emitted …` → `the <noun> <predicate>` for ANY checkable
+  predicate, shared via `ConditionClassifier.normalizeFormatInvariant`. Only the
+  `emitted` qualifier triggers it (a bare `every <plural>` stays a Wave-2C
+  quantifier).
+- **Phase D — corpus.** `maintain.meri`: one `Page-health scan` (binds `pages`
+  once; `unwritten`/`orphan`/`stale` quantifier checks) + `Graph extraction`
+  (binds a `HealthReport`; guarded single-line `gbrain extract …` commands).
+  `brain.merconfig` gained `HealthReport` (+ `Get Health` tool, `To check brain
+  health:` phrase), `page.compiled truth`/`page.inbound links`, and
+  `orphan`/`stale` definitions. `brain.merrules` aliases `Page-Health Scan` /
+  `Graph Extraction` → procedure.
+- **Phase G — regen + docs.** All 53 compile-outputs (`compile --no-format
+  --namespace auto`) and 53 migration-deviations (`skill-deviation --batch
+  --index`) regenerated. Docs 03/04/05/13 + AGENTS.md updated.
+
+PITFALLS FOUND:
+- `Result<_, String>` fails (String isn't Error) → used a dedicated `BangMarker`
+  enum for the parse outcome.
+- `StatementParser` needed `import MeridianRuntime` for `SourceRange`.
+- Property `link count` collided with the verb `to link` (`the health's link
+  count` parsed as a verb predicate) → renamed to `edge count`/`timeline count`.
+- A new section heading must be aliased in the rulebook `=== sections ===` or it
+  is a hard "unrecognized heading has content but no role" error.
+
+VALIDATION: `swift build` clean; `swift test` 744 green (new
+`TablesAndChecklistsTests` ×12 + generalized-1D test);
+`MERIDIAN_GBRAIN_TYPECHECK=1` and `MERIDIAN_GOLDEN_TYPECHECK=1` both green;
+gbrain conformance (53, zero `_unresolved`) green. Corpus inert markers 729→724.
+
+STATUS: DONE
+
+---
+
+## 2026-06-13 — Inert-reduction program: corpus-wide conversion sweep
+
+DECISION: Closed the application gap left by the inert-reduction program. The
+*engine* features (executable tables, task-lists, generalized output invariants,
+typed roles) were complete and gated, but only `maintain.meri` had been
+re-authored to use them. This pass audited every table/checklist in the gbrain
+corpus and converted everything genuinely convertible, leaving the rest
+*legitimately* inert.
+
+**Audit (31 tables across 25 skills, 4 checklist-bearing skills).** Classified
+each by nearest heading + header row:
+- Every Markdown **table** in the corpus is either (a) inside a `(( inert ))`
+  section — which already suppresses decision-expansion, so converting it would
+  not change the inert count — or (b) an **evidence/benchmark** table
+  (`functional_area_resolver` corpus accuracy), a **reference/lookup** table
+  (`enrich` tiers, `*` models, `setup` error recovery), a **report template**
+  (`maintain` Brain Health Report), or a **fuzzy LLM-routing aid**
+  (`minion_orchestrator` Shell-vs-Subagent, `skill_optimizer` decision tree,
+  `media_ingest` format detection — conditions are intent descriptions, not
+  checkable comparisons). None are deterministic decision/data tables with
+  checkable conditions + resolvable actions, so forcing them executable would
+  violate the no-fuzzy-execution contract. They stay inert — correctly.
+- All 4 **checklists** are fuzzy acceptance criteria (`book_mirror`,
+  `eiirp`, `brain_taxonomist`) or template placeholders
+  (`daily_task_manager` `- [ ] {task}`); none are checkable predicates. They
+  stay inert/template — correctly.
+
+**The one real win: `## Tools Used` is metadata, not inert.** Nine skills had a
+`## Tools Used (( inert ))` section whose bullets name tool ids — that is the
+recognized `.tools` role (mines ids into `scopedTools` + manifest `tools_used`),
+not documentation. Dropped the marker on 8 of them
+(`enrich`, `migrate`, `cold_start`, `signal_detector`, `brain_ops`,
+`idea_lineage`, `maintain`, `ingest`). Four (`enrich`/`migrate`/`maintain`/
+`ingest`) already used the `<desc> (<tool_id>)` form; four
+(`brain_ops`/`cold_start`/`idea_lineage`/`signal_detector`) used the backtick
+form `` `tool` — desc`` and were reformatted to `desc (tool)`. `setup.meri`'s
+"Tools Used" is actually a **CLI command reference** (``` `gbrain init …` ```),
+not a tool-id list — reverted it to `(( inert ))` (genuine documentation). The 8
+conversions now populate the manifest `tools_used` (verified on `brain_ops`:
+8 ids mined) instead of contributing nothing.
+
+ASSUMPTION: Binding a reference/lookup table to a `(( data table ))` that
+nothing consumes would emit a dead `let` in the generated Swift — gaming the
+inert metric, not improving it. Left such tables inert. Inert is the correct
+state for genuine documentation; the program's goal is "inert is *not needed*
+when content is operational", not "zero inert".
+
+Validation: full `swift test` (747) green; `SampleGbrain` conformance (zero
+`_unresolved`) + both typecheck gates (`MERIDIAN_GBRAIN_TYPECHECK=1`,
+`MERIDIAN_GOLDEN_TYPECHECK=1`) green. Regenerated the 8 skills'
+`compile-outputs/*.swift` + `*.manifest.json` and the full
+`migration-deviations/` (52 pairs + index). Corpus inert markers 724→716.
+Porting playbook gained rule 11 (`## Tools Used` is metadata).
+
+STATUS: DONE
+
+---
+
+## 2026-06-13 — Route fuzzy tables/checklists to the planner (ai-discretion / ai-autonomy)
+
+DECISION: A fuzzy decision table (intent → action) or a fuzzy acceptance
+checklist is not documentation — it is a workflow step that needs *judgment*.
+Inerting drops it from the flow. Added two AI-routing modes that reuse the
+existing `ProseStepAST → ProseStepIR` path (the same one `use judgment to …:`
+uses), so there is **no new IR primitive, no new runtime** — only new
+parser/tokenizer surface.
+
+- **Tokenizer** (`IndentTokenizer`): `TableMode` gained `.aiDiscretion` /
+  `.aiAutonomy`; new `BlockKind.checklist` + new `ChecklistMode`
+  (`invariant` | `aiDiscretion` | `aiAutonomy` | `inert`) + new
+  `checklistSentinelPrefix`. The pending-`!!!`-marker mechanism is generalized
+  from table-only to a `PendingBlock` enum (`.table` / `.checklist`); a
+  `!!! checklist (( … ))` marker folds the following contiguous `- [ ]` run into
+  one `\u{E000}checklist:<mode>:<b64>` sentinel (checkboxes stripped). An
+  *unmarked* task list is unchanged (per-item `isChecklist` → invariant assert,
+  never collapsed). All modes are enums (no raw dispatch strings).
+- **StatementParser**: `tableStatements` lowers `.aiDiscretion`/`.aiAutonomy` to
+  a `.proseStep` via `TableParser.aiDecisionProse` (renders rows as
+  `- when <conds>, <action>` / `- otherwise, <action>`, generic condition
+  headers like `condition`/`situation` rendered as the bare cell). New
+  `checklistStatements` decodes the checklist sentinel: `inert` → none,
+  `invariant` → per-item asserts (reuses `checklistInvariant`), `aiAutonomy` /
+  `aiDiscretion` → one prose step whose text embeds every criterion as the goal.
+  Stray checklist sentinels are consumed in `parseStatement`.
+- **Validity**: explicit-dispatch prose steps are valid in ANY workflow
+  (ASTToIR `.proseStep`), so this works inside a sectioned skill's implicit
+  workflow with no `with discretion`/`with autonomy` header. The enclosing
+  section must be executable (an `(( inert ))` section still suppresses the
+  whole body).
+- **Corpus demonstration**: `eiirp`'s `### Confirm` acceptance checklist
+  (7 fuzzy criteria) went from `(( inert ))` to `!!! checklist (( ai-autonomy ))`
+  — it now emits `executeAutonomousLoop` with the criteria as the loop goal
+  (verified in the generated Swift). Added `=== sections ===` aliases for
+  acceptance/verification headings (`Confirm`, `Acceptance`, …) to
+  `brain.merrules`. Inert 716→715.
+
+ASSUMPTION: a fuzzy *table* corpus demonstration (e.g. `minion_orchestrator`'s
+routing table) was left inert because its section carries trailing ambiguity
+prose that would also need to lower; the table→discretion path is proven by the
+end-to-end test (`aiDiscretionTableInSection` → `executeProsePlan`) instead. The
+rule of thumb stays: **does the workflow act on this?** yes+deterministic →
+decision/data/invariant; yes+fuzzy → `ai-discretion`/`ai-autonomy`; no → `inert`.
+
+Tests: `TablesAndChecklistsTests` grew from 12 → 25 (mode parse/round-trip,
+prose-step lowering for both kinds, section end-to-end `executeProsePlan` /
+`executeAutonomousLoop`, dangling/unknown-mode errors, unmarked-list
+regression). Full `swift test` 747→757; `MERIDIAN_GBRAIN_TYPECHECK=1` green;
+regenerated `eiirp` compile-output + full `migration-deviations`. Docs:
+`03_LANGUAGE_QUICK_REFERENCE` (table + checklist AI modes), porting playbook
+rule 12.
+
+STATUS: DONE
+
+---
+
+## 2026-06-13 — `## Tools Used` accepts both bullet forms (revert reformatting)
+
+DECISION (corrects the prior sweep): the earlier sweep reformatted four skills'
+backtick-style Tools-Used bullets (`` `search` — keyword search``) into
+`keyword search (search)` to satisfy the parens-only `extractToolID`. That was
+wrong — the backtick form is the more readable, more common shape and should be
+a first-class input. `SkillSectionBuilder.extractToolID` now accepts **both**:
+trailing parens `<description> (<tool_id>)` AND leading backticks
+`` `<tool_id>` — <description>`` (any separator). A backticked **CLI command**
+(spaces in the token, e.g. `` `gbrain init …` ``) is still correctly rejected as
+"not a bare tool id", so `setup.meri` stays inert. Reverted `brain_ops`,
+`cold_start`, `idea_lineage`, `signal_detector` to their original backtick
+bullets; regenerated their compile-outputs + `migration-deviations`. Tests:
+`TablesAndChecklistsTests` +2 (both-forms manifest mining; backticked-command
+rejection) → 27; `swift test` 759; `MERIDIAN_GBRAIN_TYPECHECK=1` green. Porting
+rule 11 updated (no reformatting required).
+
+STATUS: DONE

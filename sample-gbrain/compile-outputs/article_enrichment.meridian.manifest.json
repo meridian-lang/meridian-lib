@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Transform raw article text dumps in the brain into structured pages with executive summary, verbatim quotes, key insights, why-it-matters, and cross-references. Replaces walls-of-text with quotable, actionable brain pages.",
     "mutating" : "true",
@@ -183,10 +263,7 @@
         "heading" : "Model selection",
         "line" : 101,
         "lines" : [
-          "| Model | Use when | Quote accuracy |",
-          "|-------|----------|----------------|",
-          "| **Sonnet** (default) | Bulk enrichment, most articles | Good — occasionally paraphrases |",
-          "| **Opus** | High-value content, original-thinking pieces, longreads | Excellent — respects \"verbatim\" instruction |",
+          "table:decision:fCBNb2RlbCB8IFVzZSB3aGVuIHwgUXVvdGUgYWNjdXJhY3kgfAp8LS0tLS0tLXwtLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgKipTb25uZXQqKiAoZGVmYXVsdCkgfCBCdWxrIGVucmljaG1lbnQsIG1vc3QgYXJ0aWNsZXMgfCBHb29kIOKAlCBvY2Nhc2lvbmFsbHkgcGFyYXBocmFzZXMgfAp8ICoqT3B1cyoqIHwgSGlnaC12YWx1ZSBjb250ZW50LCBvcmlnaW5hbC10aGlua2luZyBwaWVjZXMsIGxvbmdyZWFkcyB8IEV4Y2VsbGVudCDigJQgcmVzcGVjdHMgInZlcmJhdGltIiBpbnN0cnVjdGlvbiB8",
           "Rule: for bulk enrichment, do a Sonnet draft pass and spot-check 5 with",
           "the LLM-judge brain-quality eval. If quotes are paraphrased, switch to",
           "Opus for that batch"
@@ -260,6 +337,36 @@
     "writes_pages" : "true",
     "writes_to" : "media\/articles\/"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "article_enrichment.meri",
     "brain.merconfig"
@@ -267,59 +374,59 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 571
+      "swift_line" : 622
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 576
+      "swift_line" : 627
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 615
+      "swift_line" : 666
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 620
+      "swift_line" : 671
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 659
+      "swift_line" : 710
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 664
+      "swift_line" : 715
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 703
+      "swift_line" : 754
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 708
+      "swift_line" : 759
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 747
+      "swift_line" : 798
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 752
+      "swift_line" : 803
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 791
+      "swift_line" : 842
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 796
+      "swift_line" : 847
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 835
+      "swift_line" : 886
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 840
+      "swift_line" : 891
     }
   ],
   "tools_used" : [

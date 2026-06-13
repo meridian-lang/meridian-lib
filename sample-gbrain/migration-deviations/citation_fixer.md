@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/citation-fixer/SKILL.md
-+++ skills/citation_fixer.meri
++++ citation_fixer.meri
 @@ -28,7 +28,7 @@
  > **Output rule:** all links MUST be deterministic (built from API data,
  > not composed by LLM). See [_output-rules.md](../_output-rules.md).

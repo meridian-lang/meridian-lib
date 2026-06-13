@@ -333,7 +333,7 @@ An enriched company page contains:
 
 Both page types have bidirectional back-links to every entity they mention.
 
-## Tools Used (( inert ))
+## Tools Used
 
 - Read a page from gbrain (get_page)
 - Store/update a page in gbrain (put_page)

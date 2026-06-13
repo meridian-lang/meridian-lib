@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/schema-unify/SKILL.md
-+++ skills/schema_unify.meri
++++ schema_unify.meri
 @@ -28,28 +28,28 @@
  
  # Schema Unification (gbrain-base → gbrain-base-v2)

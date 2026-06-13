@@ -151,7 +151,7 @@ the citation is `[gstack:plans/foo]`. That's the whole rule.
 - Overwriting user's direct statements with lower-authority sources
 - Creating brain pages for non-notable entities
 
-## Tools Used (( inert ))
+## Tools Used
 
 - `search` — keyword search
 - `query` — hybrid vector+keyword search

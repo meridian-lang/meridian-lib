@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Unified Minions skill for both deterministic shell jobs and LLM subagent\norchestration. Replaces the older `gbrain-jobs` routing intent. Use when:\nsubmitting gbrain jobs, shell\/background tasks, spawning subagents,\nchecking progress, steering running work, pausing\/resuming, parallel\nfan-out. One durable, observable, steerable queue interface.",
     "mutating" : "true",
@@ -191,15 +271,7 @@
         "heading" : "Route the Request: Shell Job vs Subagent",
         "line" : 67,
         "lines" : [
-          "| Condition | Action |",
-          "|---|---|",
-          "| User asks for deterministic command\/script run | Shell job (CLI: `gbrain jobs submit shell ...`) |",
-          "| User asks to \"run in minions\" + explicit command\/argv | Shell job (CLI, `--params` with `cmd` or `argv`) |",
-          "| User asks for research\/reasoning\/iterative agent | Subagent job (CLI: `gbrain agent run`) |",
-          "| User asks to steer\/pause\/resume an agent | Subagent job lifecycle tools (MCP-callable) |",
-          "| Single simple operation under ~30s | Consider inline execution first |",
-          "| Needs restart durability\/observability | Submit as Minion job |",
-          "| Parallel work (2+ streams) | `gbrain agent run --fanout-manifest` or parent + child subagents |",
+          "table:decision:fCBDb25kaXRpb24gfCBBY3Rpb24gfAp8LS0tfC0tLXwKfCBVc2VyIGFza3MgZm9yIGRldGVybWluaXN0aWMgY29tbWFuZC9zY3JpcHQgcnVuIHwgU2hlbGwgam9iIChDTEk6IGBnYnJhaW4gam9icyBzdWJtaXQgc2hlbGwgLi4uYCkgfAp8IFVzZXIgYXNrcyB0byAicnVuIGluIG1pbmlvbnMiICsgZXhwbGljaXQgY29tbWFuZC9hcmd2IHwgU2hlbGwgam9iIChDTEksIGAtLXBhcmFtc2Agd2l0aCBgY21kYCBvciBgYXJndmApIHwKfCBVc2VyIGFza3MgZm9yIHJlc2VhcmNoL3JlYXNvbmluZy9pdGVyYXRpdmUgYWdlbnQgfCBTdWJhZ2VudCBqb2IgKENMSTogYGdicmFpbiBhZ2VudCBydW5gKSB8CnwgVXNlciBhc2tzIHRvIHN0ZWVyL3BhdXNlL3Jlc3VtZSBhbiBhZ2VudCB8IFN1YmFnZW50IGpvYiBsaWZlY3ljbGUgdG9vbHMgKE1DUC1jYWxsYWJsZSkgfAp8IFNpbmdsZSBzaW1wbGUgb3BlcmF0aW9uIHVuZGVyIH4zMHMgfCBDb25zaWRlciBpbmxpbmUgZXhlY3V0aW9uIGZpcnN0IHwKfCBOZWVkcyByZXN0YXJ0IGR1cmFiaWxpdHkvb2JzZXJ2YWJpbGl0eSB8IFN1Ym1pdCBhcyBNaW5pb24gam9iIHwKfCBQYXJhbGxlbCB3b3JrICgyKyBzdHJlYW1zKSB8IGBnYnJhaW4gYWdlbnQgcnVuIC0tZmFub3V0LW1hbmlmZXN0YCBvciBwYXJlbnQgKyBjaGlsZCBzdWJhZ2VudHMgfA==",
           "If intent is ambiguous, ask one clarification:",
           "\"Do you want a deterministic shell command job, or an LLM agent job?\""
         ],
@@ -428,6 +500,36 @@
     "triggers" : "\"gbrain jobs submit\"\n\"submit a gbrain job\"\n\"submit a shell job\"\n\"shell job\"\n\"run shell command in background\"\n\"deterministic background task\"\n\"spawn agent\"\n\"background task\"\n\"run in background\"\n\"check on agent\"\n\"agent progress\"\n\"what's running\"\n\"steer agent\"\n\"change direction\"\n\"tell the agent\"\n\"pause agent\"\n\"stop agent\"\n\"resume agent\"\n\"parallel tasks\"\n\"fan out\"\n\"do these in parallel\"",
     "version" : "1.0.0"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "minion_orchestrator.meri",
     "brain.merconfig"
@@ -435,171 +537,171 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 570
+      "swift_line" : 621
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 575
+      "swift_line" : 626
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 614
+      "swift_line" : 665
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 619
+      "swift_line" : 670
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 658
+      "swift_line" : 709
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 663
+      "swift_line" : 714
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 702
+      "swift_line" : 753
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 707
+      "swift_line" : 758
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 746
+      "swift_line" : 797
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 751
+      "swift_line" : 802
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 790
+      "swift_line" : 841
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 795
+      "swift_line" : 846
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 834
+      "swift_line" : 885
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 839
+      "swift_line" : 890
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 878
+      "swift_line" : 929
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 883
+      "swift_line" : 934
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 922
+      "swift_line" : 973
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 927
+      "swift_line" : 978
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 966
+      "swift_line" : 1017
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 971
+      "swift_line" : 1022
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1010
+      "swift_line" : 1061
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1015
+      "swift_line" : 1066
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1054
+      "swift_line" : 1105
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1059
+      "swift_line" : 1110
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1098
+      "swift_line" : 1149
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1103
+      "swift_line" : 1154
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1142
+      "swift_line" : 1193
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1147
+      "swift_line" : 1198
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1186
+      "swift_line" : 1237
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1191
+      "swift_line" : 1242
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1230
+      "swift_line" : 1281
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1235
+      "swift_line" : 1286
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1274
+      "swift_line" : 1325
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1279
+      "swift_line" : 1330
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1318
+      "swift_line" : 1369
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1323
+      "swift_line" : 1374
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1362
+      "swift_line" : 1413
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1367
+      "swift_line" : 1418
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1406
+      "swift_line" : 1457
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1411
+      "swift_line" : 1462
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1450
+      "swift_line" : 1501
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1455
+      "swift_line" : 1506
     }
   ],
   "tools_used" : [

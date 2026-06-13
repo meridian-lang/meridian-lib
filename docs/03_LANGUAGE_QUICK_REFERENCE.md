@@ -278,6 +278,31 @@ To leniently sync analytics for an order placed by a customer:
 
 ---
 
+### Conditionals — two modalities
+
+A branch may be written **multi-line** (comma-terminated header + an indented
+body) or **single-line** (the action follows the comma on the same line). The
+comma after the condition is the delimiter in both, so the single-line form
+reads as plain English:
+
+```
+if the entity does not link to the input, add a back-link from the entity to the input.
+```
+
+is exactly equivalent to
+
+```
+if the entity does not link to the input,
+  add a back-link from the entity to the input.
+```
+
+The single-line form also takes an optional `, otherwise <action>` tail for the
+else-block (`if ci is passed, complete, otherwise complete with reason "blocked".`).
+The condition/action split is the first top-level comma outside quotes that is
+not an Oxford `, and`/`, or` joiner, so multi-argument actions
+(`emit e with a = 1, b = 2`) and grouped conditions still parse. (Per-line guard
+forms `<action> only when <cond>` / `<action> unless <cond>` remain available.)
+
 ### `wait` forms
 
 Duration wait — suspends for a fixed duration:
@@ -586,10 +611,20 @@ Comparison synonyms:
 Duration synonyms:
   fortnight = week
   hr = hour
+Assertion synonyms:
+  verify
+  guarantee that
 ```
 
 Synonyms are merged into the `EnglishLexicon` before parsing begins. They take
 priority over defaults (prepended to the comparison-marker list).
+
+`Assertion synonyms:` lists bare leading keywords that introduce an
+invariant/assertion statement, alongside the built-in `make sure`, `ensure`,
+and `assert`. Each entry is the literal phrase that precedes the condition
+(`verify the score is more than 100.`). The merged set is de-duplicated and
+sorted longest-first, so a multi-word marker (`guarantee that`) wins over any
+single-word prefix.
 
 ---
 
@@ -933,6 +968,103 @@ sourced error ("bind the result first, then quantify over it").
   itself. These lower through `MeridianComparison.isEmpty` / `isNotEmpty`.
   Relation-backed emptiness is deferred to Wave 3.
 
+### Inform 7-tier relational layer (Wave 3)
+
+Relations, verbs, and descriptions make the relationships between kinds
+first-class — still 100% deterministic, no LLM. Three surfaces:
+
+**Relations + evaluation backing (3A).** A relation is declared in `.merconfig`
+with a cardinality and an **evaluation backing** that says how to compute it:
+
+```
+Ownership relates one user to various pages.
+Ownership is read from the page's owner.        # property-backed
+Mentioning relates various pages to various entities.
+Mentioning is read via the link tool.           # tool-backed
+```
+
+`various` is a synonym for `many`. A **property backing** (`read from the
+<kind>'s <property>`) means the link is stored at `<kind>.<property>` (a
+foreign-key id, a reference, or a list of them). A **tool backing** (`read via
+the <tool> tool`) means the related set is produced by invoking `<tool>` once.
+A relation that is named by a verb (below) **must** have a backing; an
+unbacked relation that no verb references is allowed (legacy vocabularies).
+
+**Verbs (3B).** A verb names a relation and supplies its conjugations:
+
+```
+The verb to own (it owns, it is owned) means the ownership relation.
+```
+
+The three forms are `base` (`own`), `third-person` (`owns`), and
+`past-participle` (`owned`); omitted forms fall back to regular morphology
+(`EnglishLexicon.thirdPersonSingular` / `regularPastParticiple`). A verb form
+must be globally unambiguous across relations.
+
+An **active-verb condition** uses the third-person form as an infix predicate:
+
+```
+if the user owns the page, ...
+```
+
+For a **property-backed** relation this lowers to an identity check on the
+backing property — `MeridianComparison.identifies(page.owner, user)` — with no
+tool call and no LLM. A tool-backed verb **cannot** be tested inline (it needs
+an `await` fetch): materialise the related set with a description first.
+
+A verb predicate may be **negated** with do-support — `the entity does not link
+to the input` (or the contraction `doesn't`) — which wraps the predicate in a
+logical `not`. A governing preposition between verb and object (`link to …`) is
+absorbed. This makes the iron-law guard executable: fetch the related set, then
+only act when the link is genuinely missing —
+
+```
+let mentioned be the entities mentioned by the input.
+for each entity in mentioned:
+  if the entity does not link to the input, add a back-link from the entity to the input.
+```
+
+(`mention` is tool-backed → the set is fetched once; `link` is property-backed
+on `entity.links` → the guard is a `MeridianComparison.identifies` check.)
+
+**Descriptions, aggregates, superlatives (3C).** A *description* is a
+deterministic query plan over a bound collection. Relation clauses restrict the
+element set:
+
+```
+let owned be the pages owned by the user.              # passive (object gap)
+let mentioned be the pages that mention the entity.    # relative clause (subject gap)
+let top be the first 3 pages sorted by view count descending.
+```
+
+| Form | Lowers to |
+|---|---|
+| `the <adj> <plural> [owned by X \| that <verb> X]` | `.filter` over the collection |
+| `the number of <desc>` / `the count of <desc>` | `Decimal(filtered.count)` (compares numerically) |
+| `the list of <desc>` | `Value.list(filtered)` |
+| `the most recent <desc>` / `the oldest <desc>` | timestamp superlative → `.sorted{…}.first` |
+| `the largest <desc> by <property>` | magnitude superlative (requires `by`) |
+| `the first N <desc> sorted by <property> [descending]` | `.sorted{…}.prefix(N)` |
+
+A **property-backed** description filters the in-scope collection. A
+**tool-backed** description (`that mention …`) hoists a single prelude `invoke`
+before the statement and reads its bound result — so it is only valid in a
+**statement** position (a `bind` / `let` / loop), never inline in an expression.
+
+**Scalar relation navigation.** A one-to-one relation can be navigated to a
+single value:
+
+```
+let assigned be the task assigned to the user.    # → user.task
+```
+
+Property-backed scalar navigation lowers to a `.propertyAccess`
+(`state.get("user.task")`); tool-backed scalar navigation in an inline
+expression is a sourced error.
+
+**`let <name> be <value>.`** is syntactic sugar for `bind <name> = <value>.`
+(introduced for readable relational binds).
+
 ### Explicit judgment markers
 
 ```
@@ -984,3 +1116,109 @@ into one trigger workflow each, emitting a `trigger.<name>.fired` fan-out event:
 set of `.meri` files against shared vocabularies + rulebooks, pre-registering
 every file's workflows as phrase stubs first so cross-skill invocations and the
 resolver resolve across files. Single-file `compile(…)` remains the default.
+
+### Markdown tables (executable)
+
+A Markdown table is **executable by default** (a *decision table*). The
+tokenizer collapses a contiguous header + delimiter + rows block into one
+synthetic line; `TableParser` then lowers it per its mode. A table needs no
+heading, so its mode is set by an optional `!!! table (( <mode> ))` marker on
+the line **directly above** the table:
+
+| Marker | Mode | Lowers to |
+|---|---|---|
+| *(none)* / `!!! table (( decision table ))` | decision | one `if <conds>, <action>.` per row |
+| `!!! table (( data table[: <name>] ))` | data | `bind <name> = <recordList>` (name optional, defaults to `table`) |
+| `!!! table (( iteration table ))` | iteration | reserved (accepted; no statements yet) |
+| `!!! table (( ai-discretion ))` | ai-discretion | a discretion prose step (`ProseStepIR(.planThenExecute)`) — the planner picks the matching row and does its action |
+| `!!! table (( ai-autonomy ))` | ai-autonomy | an autonomy prose step (`ProseStepIR(.autonomousLoop)`) |
+| `!!! table (( inert ))` | inert | nothing (documentation only) |
+
+**Decision table.** The last column (or one headed `action`/`then`/`do`/`result`)
+is the action; the remaining columns are conditions joined with `and`. A cell
+maps to a predicate: a bare value → `header is value`; an operator-prefixed cell
+(`>= 90`) → the canonical spelling (`header is more than or equal to 90`); a
+comparison phrase (`more than 5`, `contains x`) is used as-is; a wildcard
+(`*`, `-`, `any`, empty) drops the column. An all-wildcard row is an
+unconditional action.
+
+```
+| status | priority | action               |
+|--------|----------|----------------------|
+| open   | >= p1    | escalate the issue   |
+| closed | *        | archive the issue    |
+```
+
+**Data table.** A list of records, one per row, bound to a name. Field names are
+camelCased so a later `for each row in <name>` resolves `row.<field>`.
+
+```
+!!! table (( data table: tiers ))
+| name  | floor |
+|-------|-------|
+| gold  | 100   |
+| silver| 50    |
+```
+
+**Fuzzy decision table → the planner.** When the condition cells are *intent
+descriptions* rather than checkable comparisons, mark the table
+`!!! table (( ai-discretion ))`. The rows are rendered as a ruleset
+(`when <conds>, <action>`; a wildcard row → `otherwise, <action>`) and handed to
+a discretion prose step — the same path as `use judgment to …:`, valid in any
+workflow. Use `(( ai-autonomy ))` for a loop instead of a single decision.
+
+```
+!!! table (( ai-discretion ))
+| Condition                       | Action                      |
+|---------------------------------|-----------------------------|
+| user asks for a deterministic run | submit a shell job        |
+| user asks for an iterative agent  | spawn a research subagent |
+```
+
+An unrecognized block kind, an unknown mode, or a `!!!` marker not directly
+above a table is a **hard error** (no silent drop).
+
+### Task lists (invariants, or AI acceptance loops)
+
+A Markdown checklist item is an **invariant assert** by default. `- [ ]` and
+`- [x]` desugar to `make sure <condition>`, routed through the same
+checkable-or-error classifier as Contract invariants: a structurally checkable
+predicate becomes an `assert`; a fuzzy/descriptive item is a **hard error**.
+
+```
+- [ ] the link count is at least 1
+- [ ] the page's body is not empty
+```
+
+**Fuzzy acceptance checklist → the planner.** When the items are genuine
+acceptance criteria that aren't structurally checkable, don't inert them — put a
+`!!! checklist (( <mode> ))` marker directly above the list. The contiguous run
+collapses into one prose step with every criterion embedded as the goal:
+
+| Marker | Lowers to |
+|---|---|
+| *(none)* / `!!! checklist (( invariant ))` | one `assert` per item (each must be checkable) |
+| `!!! checklist (( ai-autonomy ))` | `ProseStepIR(.autonomousLoop)` — loop, act until every criterion holds |
+| `!!! checklist (( ai-discretion ))` | `ProseStepIR(.planThenExecute)` — verify/resolve the criteria once |
+| `!!! checklist (( inert ))` | nothing (documentation only) |
+
+```
+!!! checklist (( ai-autonomy ))
+- [ ] all entity pages are cross-linked
+- [ ] no DRY violations across skills
+- [ ] gbrain doctor reports schema_pack_consistency: ok
+```
+
+A `!!! checklist` marker not directly above a task list, or an unknown mode, is a
+**hard error**.
+
+### Output-format invariants (generalized 1D)
+
+`every emitted <noun> <predicate>` (and `each emitted …`) is sugar for an assert
+on the bound result `<noun>` — generalized beyond `matches pattern "<regex>"` to
+**any** checkable predicate (`contains`, comparisons, `is empty`, …):
+
+```
+- every emitted report contains "Sources".
+- each emitted summary is not empty.
+```

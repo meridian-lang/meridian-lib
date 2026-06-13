@@ -350,9 +350,15 @@ to be a `Value`. Two emission helpers exist:
 | `.identifierRef` / `.propertyAccess` | `state.get("key") ?? .null` |
 | `.constantRef` / `.instanceRef` | `Value.from(constants.x)` / `Value.from(instances.x)` |
 | `.envVar("FOO")` | `.string(ProcessInfo.…["FOO"] ?? "")` |
+| `.recordList(fields, rows)` | `Value.list([.record([...]), …])` |
 
 `Value.from(_:)` overloads in `MeridianRuntime/Value/ValueCoercion.swift` bridge
 typed Swift primitives into `Value`.
+
+A `.recordList` (lowered from a Markdown *data table*) emits a
+`Value.list([.record([...]), ...])`, one record per row; field keys are
+camelCased so a later `for each row in <name>` resolves `row.<field>` against the
+record. Both `emitExpr` and `emitValueExpr` share `emitRecordList`.
 
 ---
 
@@ -443,6 +449,56 @@ The closure parameter is always `__e`. The runtime helpers `Value.asList`,
 `Value.member`, `MeridianComparison.isEmpty` / `isNotEmpty`, and the Wave 1
 temporal/order helpers back the generated closures.
 
+## Relational layer emission (Wave 3)
+
+### Active-verb conditions
+
+A property-backed active verb (`the user owns the page`) emits an identity
+comparison on the backing property — no tool call:
+
+```swift
+if MeridianComparison.identifies(state.get("page.owner"), state.get("user")) { … }
+```
+
+`MeridianComparison.identifies(link, entity)` matches a foreign-key string /
+reference / record-`id` on either side, and a list link matches when any element
+identifies the entity. `ComparisonOp.identifies` also drives `emitElementExpr`
+(when the verb appears inside a description filter, the operand is the closure
+element `__e`).
+
+### Descriptions, aggregates, superlatives
+
+`emitDescriptionList` renders a description as a `[Value]` pipeline over the
+fetch-once collection: `(coll.asList ?? []).filter { __e in … }`, then an
+optional `.sorted { __a, __b in MeridianComparison.orderedBefore(…) }`, then an
+optional `.prefix(N)`.
+
+```swift
+// let owned be the pages owned by the user.
+state.bind("owned", Value.list(((state.get("pages"))?.asList ?? [])
+  .filter { __e in (MeridianComparison.identifies(__e.member("owner"), state.get("user") ?? .null)) }))
+
+// let biggest be the largest deal by amount.
+state.bind("biggest", (((state.get("deals"))?.asList ?? [])
+  .sorted { __a, __b in MeridianComparison.orderedBefore(__a.member("amount"), __b.member("amount"), ascending: false) }.first))
+```
+
+| IR | Emission |
+|---|---|
+| `.description(d)` | `Value.list(<pipeline>)` |
+| `.aggregate(.count, d)` | `Decimal(<pipeline>.count)` (wrapped so `> 5` type-checks) |
+| `.aggregate(.list, d)` | `Value.list(<pipeline>)` |
+| `.superlative(s)` | `(<sorted-pipeline>.first)` |
+
+A **tool-backed** description is lowered with its collection set to a hoisted
+prelude `invoke`; the emitted bind reads that synthetic result. `let assigned be
+the task assigned to the user.` (scalar navigation, property-backed) emits
+`state.bind("assigned", state.get("user.task"))`.
+
+`needsValueComparison` returns `true` for `.superlative`, `.description`, and
+`.aggregate(.list)` so `Value`-aware comparison helpers are used; a `.count`
+aggregate is a `Decimal` and compares with the plain numeric operators.
+
 ---
 
 ## Workflow recursion
@@ -528,6 +584,28 @@ a host can map an adjective back to the emitted Swift:
 
 Entries are sorted by `function` (deterministic). The key is omitted entirely
 when no definitions are present, so non-definition files are byte-unchanged.
+
+### `meridian_relations` / `meridian_verbs` (Wave 3)
+
+Declared relations (with a backing) and verbs are recorded so a host can map a
+verb back to its relation and evaluation strategy:
+
+```json
+"meridian_relations": [
+  { "name": "ownership", "left_kind": "user", "left_cardinality": "one",
+    "right_kind": "page", "right_cardinality": "many",
+    "backing": "property", "via": "page.owner", "line": 34 }
+],
+"meridian_verbs": [
+  { "base": "own", "third_person": "owns", "past_participle": "owned",
+    "relation": "ownership", "line": 36 }
+]
+```
+
+`backing` is `"property"` or `"tool"`; `via` holds the `<kind>.<path>` (property
+backing) or the tool id (tool backing). Only relations that have a declared
+backing are emitted. Both keys are omitted when empty, so non-relational files
+are byte-unchanged.
 
 ### Complete manifest input
 

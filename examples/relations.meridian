@@ -1,0 +1,30 @@
+---
+name: relations showcase
+vocabulary: relations.merconfig
+---
+
+To audit content for a user:
+  bind pages = invoke list pages with owner = the user's id.
+  let owned be the pages owned by the user.
+  let recent be the most recent page.
+  let popular be the list of popular pages.
+  let top be the first 3 pages sorted by view count descending.
+  if the number of stale pages is more than 5,
+    emit content.stale_alert with owner = the user's id, count = the number of stale pages.
+
+To find mentions for an entity:
+  let mentioned be the pages that mention the entity.
+  emit mentions.found with entity = the entity's id, pages = mentioned.
+
+To review the task of a user:
+  let assigned be the task assigned to the user.
+  emit task.reviewed with user = the user's id, task = assigned.
+
+To verify a page for a user:
+  if the user owns the page,
+    emit ownership.confirmed with user = the user's id, page = the page's id.
+
+To rank deals for a user:
+  bind deals = invoke list deals with owner = the user's id.
+  let biggest be the largest deal by amount.
+  emit deals.ranked with owner = the user's id, top = biggest.

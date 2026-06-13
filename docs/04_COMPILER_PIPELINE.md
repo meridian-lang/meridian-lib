@@ -43,6 +43,23 @@ struct SourceLine {
 Indentation is significant: continuation lines (deeper indent than their
 parent) are detected by comparing `.indent` values.
 
+The tokenizer also collapses block-level Markdown structures into single
+synthetic lines carrying a private-use sentinel:
+
+- **Fenced code blocks** → `\u{E000}codeblock:<lang>:<base64>` (B6).
+- **Tables** → `\u{E000}table:<mode>:<base64>`. A contiguous header + `|---|`
+  delimiter + rows block is collapsed; an optional `!!! table (( <mode> ))`
+  marker on the line directly above sets the `TableMode` (decision / data /
+  iteration / inert; `BlockKind` and `TableMode` are enums, not strings).
+- **Marker errors** → `\u{E000}markererror:<base64>`. The tokenizer is
+  non-throwing, so a malformed/dangling `!!!` marker is carried as a sentinel
+  and raised as a located `semanticError` by `StatementParser`.
+
+`SourceLine` additionally tags task-list items: `isChecklist` /
+`checklistChecked` (set when a list item is `- [ ]` / `- [x]`; the box is
+stripped from `statement`). `TableParser` and `StatementParser` decode these
+sentinels/flags in Stage 4/5.
+
 ---
 
 ## Stage 2 — Config parsing (`MerConfigParser`)
@@ -302,6 +319,46 @@ operators `withinPast` / `withinFuture` (temporal windows) and `isEmpty` /
 (mixed `and`/`or`, malformed quantifier/description, unidentifiable kind) become
 an `ExpressionAST.malformed(String)` carrying a fully-formed diagnostic. The
 throwing `lowerExpr` surfaces it as a sourced `CompilerError.semanticError`.
+
+#### Relational layer (Wave 3)
+
+**Symbol registration.** `MerConfigParser` parses two new sentence shapes into
+`SymbolTable`: relation backings (`<Relation> is read from the <kind>'s
+<property>.` / `… is read via the <tool> tool.` → `relationBackings`) and verbs
+(`The verb to <base> (it <3rd>, it is <participle>) means the <relation>
+relation.` → `verbs`, keyed by base form). `resolveVerbForm` maps any
+conjugation back to its declared verb + role (`base` / `thirdPerson` /
+`pastParticiple`).
+
+**Validation (runs after definitions).** `ASTToIR.validateRelationsAndVerbs`:
+every declared backing must name a declared relation and a valid kind/property
+(property backing) or declared tool (tool backing); every verb must name a
+**backed** relation; verb forms must be globally unambiguous. An unbacked
+relation that no verb references is permitted (legacy vocabularies).
+
+**Parser precedence.** `ExpressionParser.parseComparison` runs the active-verb
+infix check *before* the comparison markers, but skips a verb immediately
+preceded by a relativizer (`that`/`which`/`who`/`whose`) so a description's
+relative clause is not mistaken for a top-level predicate. `parseAtom` tries
+aggregate → superlative → scalar-navigation → description before falling back to
+the possessive-chain atom.
+
+**Lowering.**
+- `lowerVerbPredicate` (active verb) → `.comparison(<obj>.<backingProp>,
+  .identifies, <subj>)` for a property-backed relation; tool-backed verbs raise
+  a sourced error (bind the related set first).
+- `lowerScalarTraversal` (one-to-one navigation) → `.propertyAccess` for a
+  property-backed relation; tool-backed inline navigation is an error.
+- `lowerDescriptionPlan` → `DescriptionIR { collection, elementVar, filters,
+  sort, take }`. The collection name is normalized singular→plural
+  (`EnglishLexicon.pluralize`) so `the largest deal` reads the `deals` bind.
+  A **tool-backed** clause sets the collection to a synthesized prelude `invoke`
+  (hoisted via `lowerBindValue`), so descriptions over tool-backed relations are
+  statement-only. Aggregates wrap a `DescriptionIR` (`.count` / `.list`);
+  superlatives wrap one with a sort key (`SuperlativeIR`).
+
+`ComparisonOp` gains `.identifies` (relation identity, runtime
+`MeridianComparison.identifies`).
 
 `recover` lowers to `RecoverIR(attachedTo: IRBlock, pattern: ErrorPattern, handler: IRBlock)`.
 The `attachedTo` block is the protected statement(s); `handler` is the catch block.

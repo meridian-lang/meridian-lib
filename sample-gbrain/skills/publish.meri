@@ -44,7 +44,7 @@ says "open", "no password", or "public".
 If no password is specified, auto-generate one. Share the password via a different
 channel than the URL.
 
-## Pre-publish guard (( role: procedure ))
+## Pre-publish guard
 
 > Never publish an empty page: if any candidate page has no body, block the
 > publish and ask the author to finish it first.

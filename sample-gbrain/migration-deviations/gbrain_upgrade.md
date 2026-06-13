@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/gbrain-upgrade/SKILL.md
-+++ skills/gbrain_upgrade.meri
++++ gbrain_upgrade.meri
 @@ -28,7 +28,7 @@
  > This skill turns that marker into the right action for the operator's chosen
  > mode.

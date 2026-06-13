@@ -64,6 +64,21 @@ section "When NOT To Use", "When Not To Use", "Do NOT Use", "Skip When", "Do Not
 section "Anti-Patterns", "Anti Patterns", "Avoid", "Pitfalls" -> prohibitions
 section "Output Format", "Output", "Report Format", "Result Format" -> template
 
+# Iron-law back-linking / cross-reference enforcement sections (executable).
+# Aliasing the descriptive headings to `procedure` lets the skills name the
+# section naturally and drop the redundant `(( role: procedure ))` marker.
+section "Enforce Back-Links", "Repair Missing Back-Links", "Create Missing Cross-References" -> procedure
+
+# Recurring "<X> guard" precondition sections across the corpus (executable).
+section "Freshness Guard", "Stale-Page Guard", "Coverage Guard", "Escalation Guard", "Pre-Publish Guard" -> procedure
+
+# Health-audit scans + structured-graph backfill (executable).
+section "Page-Health Scan", "Graph Extraction" -> procedure
+
+# Acceptance / verification sections — fuzzy criteria routed to the planner via
+# a `!!! checklist (( ai-autonomy ))` marker (loop until every criterion holds).
+section "Confirm", "Acceptance", "Acceptance Criteria", "Definition Of Done", "Exit Criteria", "Verification" -> procedure
+
 === conventions ===
 
 # Iron-Law back-linking: any page that mentions an entity gets a reciprocal link.

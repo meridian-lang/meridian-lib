@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Day-one data bootstrapping for a new brain. Sequences the highest-leverage\ndata sources to go from empty brain to useful brain in one session. Uses\nClawVisor for safe credential handling — the agent never holds raw API keys.\nCovers Gmail import, calendar sync, contacts seeding, X\/Twitter archive,\nconversation imports, and file archives.\nUse when a user has just finished gbrain setup and asks \"now what?\"",
     "mutating" : "true",
@@ -234,7 +314,7 @@
         "text" : "Output Format"
       },
       {
-        "kind" : "inert",
+        "kind" : "tools",
         "level" : 2,
         "line" : 498,
         "text" : "Tools Used"
@@ -391,16 +471,7 @@
         "line" : 70,
         "lines" : [
           "Data sources ranked by **information density × ease of import**:",
-          "| Priority | Source | Why | Time | Pages Created |",
-          "|----------|--------|-----|------|---------------|",
-          "| 1 | Existing markdown\/Obsidian | Highest density — it's already structured | 5 min | 100s-1000s |",
-          "| 2 | Google Contacts | Seeds the people\/ directory — names, emails, companies | 10 min | 50-500 |",
-          "| 3 | Google Calendar (90 days) | Meeting history with attendee context | 15 min | 30-90 |",
-          "| 4 | Gmail (recent threads) | Relationship context, active threads, org chart signals | 20 min | 50-200 |",
-          "| 5 | Conversations (ChatGPT\/Claude exports) | Your thinking, questions, mental models | 15 min | 10-100 |",
-          "| 6 | X\/Twitter archive | Your public positions, takes, engagement patterns | 20 min | 30-365 |",
-          "| 7 | File archives (Dropbox\/Drive\/local) | Historical documents, old writing, photos | 30+ min | varies |",
-          "| 8 | Meeting transcripts (Circleback\/etc.) | Deep relationship context from recorded calls | 20 min | 10-50 |"
+          "table:decision:fCBQcmlvcml0eSB8IFNvdXJjZSB8IFdoeSB8IFRpbWUgfCBQYWdlcyBDcmVhdGVkIHwKfC0tLS0tLS0tLS18LS0tLS0tLS18LS0tLS18LS0tLS0tfC0tLS0tLS0tLS0tLS0tLXwKfCAxIHwgRXhpc3RpbmcgbWFya2Rvd24vT2JzaWRpYW4gfCBIaWdoZXN0IGRlbnNpdHkg4oCUIGl0J3MgYWxyZWFkeSBzdHJ1Y3R1cmVkIHwgNSBtaW4gfCAxMDBzLTEwMDBzIHwKfCAyIHwgR29vZ2xlIENvbnRhY3RzIHwgU2VlZHMgdGhlIHBlb3BsZS8gZGlyZWN0b3J5IOKAlCBuYW1lcywgZW1haWxzLCBjb21wYW5pZXMgfCAxMCBtaW4gfCA1MC01MDAgfAp8IDMgfCBHb29nbGUgQ2FsZW5kYXIgKDkwIGRheXMpIHwgTWVldGluZyBoaXN0b3J5IHdpdGggYXR0ZW5kZWUgY29udGV4dCB8IDE1IG1pbiB8IDMwLTkwIHwKfCA0IHwgR21haWwgKHJlY2VudCB0aHJlYWRzKSB8IFJlbGF0aW9uc2hpcCBjb250ZXh0LCBhY3RpdmUgdGhyZWFkcywgb3JnIGNoYXJ0IHNpZ25hbHMgfCAyMCBtaW4gfCA1MC0yMDAgfAp8IDUgfCBDb252ZXJzYXRpb25zIChDaGF0R1BUL0NsYXVkZSBleHBvcnRzKSB8IFlvdXIgdGhpbmtpbmcsIHF1ZXN0aW9ucywgbWVudGFsIG1vZGVscyB8IDE1IG1pbiB8IDEwLTEwMCB8CnwgNiB8IFgvVHdpdHRlciBhcmNoaXZlIHwgWW91ciBwdWJsaWMgcG9zaXRpb25zLCB0YWtlcywgZW5nYWdlbWVudCBwYXR0ZXJucyB8IDIwIG1pbiB8IDMwLTM2NSB8CnwgNyB8IEZpbGUgYXJjaGl2ZXMgKERyb3Bib3gvRHJpdmUvbG9jYWwpIHwgSGlzdG9yaWNhbCBkb2N1bWVudHMsIG9sZCB3cml0aW5nLCBwaG90b3MgfCAzMCsgbWluIHwgdmFyaWVzIHwKfCA4IHwgTWVldGluZyB0cmFuc2NyaXB0cyAoQ2lyY2xlYmFjay9ldGMuKSB8IERlZXAgcmVsYXRpb25zaGlwIGNvbnRleHQgZnJvbSByZWNvcmRlZCBjYWxscyB8IDIwIG1pbiB8IDEwLTUwIHw="
         ],
         "role" : "inert"
       },
@@ -856,7 +927,7 @@
           "`add_timeline_entry` — record events on entity timelines",
           "`sync_brain` — sync changes to the index after each phase"
         ],
-        "role" : "inert"
+        "role" : "tools"
       }
     ],
     "tools" : "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry\nsync_brain",
@@ -865,6 +936,36 @@
     "writes_pages" : "true",
     "writes_to" : "people\/\ncompanies\/\nmeetings\/\ndaily\/\nmedia\/\nconversations\/\nsources\/"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "cold_start.meri",
     "brain.merconfig"
@@ -872,139 +973,145 @@
   "source_map" : [
     {
       "meridian_line" : 154,
-      "swift_line" : 544
+      "swift_line" : 596
     },
     {
       "meridian_line" : 154,
-      "swift_line" : 555
+      "swift_line" : 607
     },
     {
       "meridian_line" : 154,
-      "swift_line" : 566
+      "swift_line" : 619
     },
     {
       "meridian_line" : 154,
-      "swift_line" : 577
-    },
-    {
-      "meridian_line" : 154,
-      "swift_line" : 588
-    },
-    {
-      "meridian_line" : 154,
-      "swift_line" : 599
-    },
-    {
-      "meridian_line" : 154,
-      "swift_line" : 610
-    },
-    {
-      "meridian_line" : 154,
-      "swift_line" : 621
-    },
-    {
-      "meridian_line" : 154,
-      "swift_line" : 632
+      "swift_line" : 630
     },
     {
       "meridian_line" : 154,
       "swift_line" : 643
     },
     {
-      "meridian_line" : 170,
+      "meridian_line" : 154,
       "swift_line" : 654
     },
     {
-      "meridian_line" : 170,
+      "meridian_line" : 154,
       "swift_line" : 665
     },
     {
-      "meridian_line" : 170,
+      "meridian_line" : 154,
       "swift_line" : 676
     },
     {
-      "meridian_line" : 170,
+      "meridian_line" : 154,
       "swift_line" : 687
     },
     {
-      "meridian_line" : 212,
+      "meridian_line" : 154,
       "swift_line" : 698
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 737
+      "meridian_line" : 170,
+      "swift_line" : 709
     },
     {
-      "meridian_line" : 1,
+      "meridian_line" : 170,
+      "swift_line" : 720
+    },
+    {
+      "meridian_line" : 170,
+      "swift_line" : 731
+    },
+    {
+      "meridian_line" : 170,
       "swift_line" : 742
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 781
+      "meridian_line" : 212,
+      "swift_line" : 753
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 786
+      "swift_line" : 796
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 825
+      "swift_line" : 801
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 830
+      "swift_line" : 842
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 869
+      "swift_line" : 847
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 874
+      "swift_line" : 888
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 913
+      "swift_line" : 893
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 918
+      "swift_line" : 934
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 957
+      "swift_line" : 939
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 962
+      "swift_line" : 980
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1001
+      "swift_line" : 985
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1006
+      "swift_line" : 1026
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1045
+      "swift_line" : 1031
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1050
+      "swift_line" : 1072
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1089
+      "swift_line" : 1077
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1094
+      "swift_line" : 1118
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1123
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1164
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1169
     }
   ],
   "tools_used" : [
-
+    "search",
+    "query",
+    "get_page",
+    "put_page",
+    "add_link",
+    "add_timeline_entry",
+    "sync_brain"
   ],
   "workflows" : [
     {

@@ -1,0 +1,51 @@
+name: Wave 3C — descriptions, aggregates, superlatives
+description: ```
+Descriptions are deterministic query plans over a bound collection: a passive
+relation clause filters it, an aggregate counts it (wrapped in `Decimal` so it
+compares numerically), and a superlative sorts-then-takes the first element.
+The candidate collection is fetched once and reused across all three forms.
+```
+tags: inform7, wave3, descriptions, codegen
+
+vocab_inline rel: ```
+=== vocabulary ===
+A user is a kind of thing.
+A page is a kind of thing.
+A page has an owner, which is a String.
+A page has a view count, which is a Number.
+A page has an updated at, which is a Date.
+Ownership relates one user to various pages.
+Ownership is read from the page's owner.
+The verb to own (it owns, it is owned) means the ownership relation.
+Definition: a page is popular if its view count is more than 1000.
+
+=== tools ===
+
+List Pages
+==========
+~ listPages(owner: String) : List
+```
+
+source_inline: ```
+---
+name: audit
+parameters: user
+vocabulary: rel.merconfig
+---
+
+To audit content for a user:
+  bind pages = invoke list pages with owner = the user's id.
+  let owned be the pages owned by the user.
+  let recent be the most recent page.
+  if the number of popular pages is more than 5,
+    complete with reason "many".
+```
+
+expect_compile: pass
+expect_no_unresolved:
+expect_workflow_count: 1
+expect_workflow_named: AuditContent
+expect_invoke_tool: listPages
+expect_swift_contains: MeridianComparison.identifies(__e.member("owner")
+expect_swift_contains: }.first
+expect_swift_contains: Decimal(

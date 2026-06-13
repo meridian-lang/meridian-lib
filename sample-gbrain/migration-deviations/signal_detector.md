@@ -3,8 +3,8 @@
 - Original: `signal-detector/SKILL.md`
 - Ported: `signal_detector.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 89%
-- Lines: 113 -> 113 (+12 / -12)
+- Similarity: 90%
+- Lines: 113 -> 113 (+11 / -11)
 
 ## Frontmatter
 - Added: (none)
@@ -23,7 +23,7 @@
 
 ```diff
 --- original-skills/signal-detector/SKILL.md
-+++ skills/signal_detector.meri
++++ signal_detector.meri
 @@ -24,16 +24,16 @@
  
  # Signal Detector — Ambient Brain Capture
@@ -84,13 +84,4 @@
  
  - Blocking the main response to wait for signal detection to complete
  - Paraphrasing the user's original thinking instead of capturing exact phrasing
-@@ -102,7 +102,7 @@
- - Skipping back-links after creating/updating pages
- - Running on purely operational messages ("ok", "thanks", "do it")
- 
--## Tools Used
-+## Tools Used (( inert ))
- 
- - `search` — check if entity page exists
- - `query` — semantic search for related context
 ```

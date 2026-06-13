@@ -71,6 +71,10 @@ public struct ASTToIR {
         // regardless of source order. Idempotent across repeated `lower` calls.
         try registerDefinitions(file.definitions)
 
+        // 3A/3B: validate the relational layer (backings, verb→relation, form
+        // collisions) before any workflow body lowers.
+        try validateRelationsAndVerbs()
+
         var workflows = try file.workflows.map { try lowerWorkflow($0) }
 
         // C1-C4: Classify and inject rules into lowered workflows.
@@ -300,8 +304,8 @@ public struct ASTToIR {
 
     private func lowerAutonomyConfig(_ config: AutonomyConfigAST) throws -> AutonomyConfigIR {
         AutonomyConfigIR(
-            until: try config.until.map(lowerExpr),
-            unless: try config.unless.map(lowerExpr),
+            until: try config.until.map { try lowerExpr($0) },
+            unless: try config.unless.map { try lowerExpr($0) },
             replanAfterFailures: config.replanAfterFailures,
             maxSteps: config.maxSteps
         )
@@ -371,13 +375,30 @@ public struct ASTToIR {
                 if case .expression(let x) = s, let m = firstMalformed(x) { return m }
             }
             return nil
-        case .quantified(let q):
-            if let wp = q.description.wherePredicate, let m = firstMalformed(wp) { return m }
-            if let b = q.body, let m = firstMalformed(b) { return m }
+        case .recordList(_, let rows):
+            for row in rows { for cell in row { if let m = firstMalformed(cell) { return m } } }
             return nil
+        case .quantified(let q):
+            return firstMalformedInDescription(q.description) ?? q.body.flatMap(firstMalformed)
+        case .verbPredicate(let s, _, let o):
+            return firstMalformed(s) ?? firstMalformed(o)
+        case .relationTraversal(let b, _, _):
+            return firstMalformed(b)
+        case .description(let d):
+            return firstMalformedInDescription(d)
+        case .aggregate(_, let d):
+            return firstMalformedInDescription(d)
+        case .superlative(let s):
+            return firstMalformedInDescription(s.description)
         default:
             return nil
         }
+    }
+
+    private func firstMalformedInDescription(_ d: DescriptionAST) -> String? {
+        if let wp = d.wherePredicate, let m = firstMalformed(wp) { return m }
+        for c in d.verbClauses { if let m = firstMalformed(c.operand) { return m } }
+        return nil
     }
 
     func lowerStatement(
@@ -393,15 +414,15 @@ public struct ASTToIR {
         switch stmt {
 
         case .bind(let s):
-            return try lowerBind(s, mode: mode, depth: depth)
+            return try lowerBind(s, mode: mode, depth: depth, scope: scope)
 
         case .rebind(let s):
-            return try lowerRebind(s, mode: mode, depth: depth)
+            return try lowerRebind(s, mode: mode, depth: depth, scope: scope)
 
         case .emit(let s):
             let ir = EmitIR(
                 eventID: s.eventID,
-                payload: try s.payload.map { EmitField($0.0, try lowerExpr($0.1)) },
+                payload: try s.payload.map { EmitField($0.0, try lowerExpr($0.1, scope: scope, line: s.sourceLine)) },
                 strict: mode == .strict,
                 sourceRange: sourceRange(s.sourceLine)
             )
@@ -433,9 +454,9 @@ public struct ASTToIR {
             return [.wait(WaitIR(condition: cond, sourceRange: sourceRange(s.sourceLine)))]
 
         case .assertStmt(let s):
-            let otherwise = try s.otherwise.map { try lowerBlock($0, mode: mode, depth: depth) }
+            let otherwise = try s.otherwise.map { try lowerBlock($0, mode: mode, depth: depth, scope: scope) }
             return [.assert(AssertIR(
-                condition: try lowerExpr(s.condition),
+                condition: try lowerExpr(s.condition, scope: scope, line: s.sourceLine),
                 message: s.message,
                 otherwiseAction: otherwise,
                 sourceRange: sourceRange(s.sourceLine)
@@ -444,7 +465,7 @@ public struct ASTToIR {
         case .conditional(let s):
             let thenBlock = try lowerBlock(s.thenBlock, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: scope)
             let elseBlock = try s.elseBlock.map { try lowerBlock($0, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: scope) }
-            let condExpr  = try lowerExpr(s.condition)
+            let condExpr  = try lowerExpr(s.condition, scope: scope, line: s.sourceLine)
             return [.branch(BranchIR(
                 condition: .predicate(condExpr),
                 thenBlock: thenBlock,
@@ -465,7 +486,7 @@ public struct ASTToIR {
             switch s.mode {
             case .forEach(let variable, let collection):
                 let param = variable.trimmingCharacters(in: .whitespaces)
-                let coll  = try lowerExpr(collection)
+                let coll  = try lowerExpr(collection, scope: scope, line: s.sourceLine)
                 let refinement = try s.refinement.map { try lowerIterationRefinement($0, loopVar: param) }
                 return [.iterate(IterateIR(
                     mode: .overCollection(parameter: param, kind: KindRef("Any"), collection: coll),
@@ -473,12 +494,12 @@ public struct ASTToIR {
                 ))]
             case .whileCondition(let cond):
                 return [.iterate(IterateIR(
-                    mode: .whileCondition(try lowerExpr(cond)),
+                    mode: .whileCondition(try lowerExpr(cond, scope: scope, line: s.sourceLine)),
                     body: body, sourceRange: range
                 ))]
             case .untilCondition(let cond):
                 return [.iterate(IterateIR(
-                    mode: .untilCondition(try lowerExpr(cond)),
+                    mode: .untilCondition(try lowerExpr(cond, scope: scope, line: s.sourceLine)),
                     body: body, sourceRange: range
                 ))]
             }
@@ -575,32 +596,62 @@ public struct ASTToIR {
 
     // MARK: - Bind lowering
 
-    private func lowerBind(_ s: BindStatementAST, mode: ExecutionMode, depth: Int) throws -> [IRPrimitive] {
+    private func lowerBind(_ s: BindStatementAST, mode: ExecutionMode, depth: Int,
+                           scope: Set<String>? = nil) throws -> [IRPrimitive] {
         let bindName = camelCase(s.name)
         if case .invoke(let toolID, let args) = s.value {
             let invokeIR = InvokeIR(
                 toolID: toolID,
-                arguments: try args.map { InvokeArg($0.0, try lowerExpr($0.1)) },
+                arguments: try args.map { InvokeArg($0.0, try lowerExpr($0.1, scope: scope, line: s.sourceLine)) },
                 resultBinding: bindName,
                 sourceRange: sourceRange(s.sourceLine)
             )
             return [.invoke(invokeIR)]
         }
-        return [.bind(BindIR(name: bindName, expression: try lowerExpr(s.value), sourceRange: sourceRange(s.sourceLine)))]
+        let (prelude, value) = try lowerBindValue(s.value, scope: scope, line: s.sourceLine)
+        return prelude + [.bind(BindIR(name: bindName, expression: value, sourceRange: sourceRange(s.sourceLine)))]
     }
 
-    private func lowerRebind(_ s: RebindStatementAST, mode: ExecutionMode, depth: Int) throws -> [IRPrimitive] {
+    private func lowerRebind(_ s: RebindStatementAST, mode: ExecutionMode, depth: Int,
+                             scope: Set<String>? = nil) throws -> [IRPrimitive] {
         let bindName = camelCase(s.name)
         if case .invoke(let toolID, let args) = s.value {
             let invokeIR = InvokeIR(
                 toolID: toolID,
-                arguments: try args.map { InvokeArg($0.0, try lowerExpr($0.1)) },
+                arguments: try args.map { InvokeArg($0.0, try lowerExpr($0.1, scope: scope, line: s.sourceLine)) },
                 resultBinding: bindName,
                 sourceRange: sourceRange(s.sourceLine)
             )
             return [.invoke(invokeIR)]
         }
-        return [.bind(BindIR(name: bindName, expression: try lowerExpr(s.value), isRebind: true, sourceRange: sourceRange(s.sourceLine)))]
+        let (prelude, value) = try lowerBindValue(s.value, scope: scope, line: s.sourceLine)
+        return prelude + [.bind(BindIR(name: bindName, expression: value, isRebind: true, sourceRange: sourceRange(s.sourceLine)))]
+    }
+
+    /// 3C: lower a bind right-hand side, hoisting a tool-backed relation fetch
+    /// (description or scalar navigation) into a preceding `invoke` — so the
+    /// `await` lives at statement scope, not inside the value expression.
+    /// Non-relational values produce no prelude.
+    private func lowerBindValue(_ expr: ExpressionAST, scope: Set<String>? = nil, line: Int) throws -> ([IRPrimitive], IRExpression) {
+        switch expr {
+        case .description(let d):
+            let plan = try lowerDescriptionPlan(d, allowToolFetch: true, scope: scope, line: line)
+            return (plan.prelude, .description(plan.ir))
+        case .aggregate(let k, let d):
+            let plan = try lowerDescriptionPlan(d, allowToolFetch: true, scope: scope, line: line)
+            return (plan.prelude, .aggregate(k == .count ? .count : .list, plan.ir))
+        case .superlative(let s):
+            let plan = try lowerDescriptionPlan(s.description, allowToolFetch: true, scope: scope, line: line)
+            return (plan.prelude, .superlative(SuperlativeIR(description: plan.ir,
+                                                             sortPath: camelCase(s.property),
+                                                             ascending: s.ascending)))
+        case .relationTraversal(let base, let relation, let navKind):
+            let plan = try lowerScalarTraversalPlan(base: base, relationForm: relation, navKind: navKind,
+                                                    allowToolFetch: true, scope: scope, line: line)
+            return (plan.prelude, plan.expr)
+        default:
+            return ([], try lowerExpr(expr, scope: scope, line: line))
+        }
     }
 
     private func camelCase(_ s: String) -> String {
@@ -1036,16 +1087,22 @@ public struct ASTToIR {
         case .instanceRef, .constantRef, .literal, .envVar, .now, .decideWhether, .malformed:
             return expr
         case .quantified(let q):
-            let desc = DescriptionAST(
-                noun: q.description.noun,
-                adjectives: q.description.adjectives,
-                wherePredicate: q.description.wherePredicate.map { subExpr($0, args: args) }
-            )
             return .quantified(QuantifierAST(
                 kind: q.kind,
-                description: desc,
+                description: subDescription(q.description, args: args),
                 body: q.body.map { subExpr($0, args: args) }
             ))
+        case .verbPredicate(let s, let v, let o):
+            return .verbPredicate(subject: subExpr(s, args: args), verb: v, object: subExpr(o, args: args))
+        case .relationTraversal(let b, let r, let nk):
+            return .relationTraversal(subExpr(b, args: args), relation: r, navKind: nk)
+        case .description(let d):
+            return .description(subDescription(d, args: args))
+        case .aggregate(let k, let d):
+            return .aggregate(k, subDescription(d, args: args))
+        case .superlative(let s):
+            return .superlative(SuperlativeAST(description: subDescription(s.description, args: args),
+                                               property: s.property, ascending: s.ascending))
         case .interpolatedString(let segs):
             return .interpolatedString(segs.map { seg in
                 switch seg {
@@ -1053,7 +1110,25 @@ public struct ASTToIR {
                 case .expression(let e): return .expression(subExpr(e, args: args))
                 }
             })
+        case .recordList(let fields, let rows):
+            return .recordList(fields: fields, rows: rows.map { $0.map { subExpr($0, args: args) } })
         }
+    }
+
+    /// Phrase-arg substitution inside a description (where-predicate + verb-clause
+    /// operands recurse; adjectives/noun/sort/take are surface text untouched).
+    private func subDescription(_ d: DescriptionAST, args: [String: ExpressionAST]) -> DescriptionAST {
+        DescriptionAST(
+            noun: d.noun,
+            adjectives: d.adjectives,
+            wherePredicate: d.wherePredicate.map { subExpr($0, args: args) },
+            verbClauses: d.verbClauses.map {
+                VerbClauseAST(verbForm: $0.verbForm,
+                              operand: subExpr($0.operand, args: args),
+                              elementIsSubject: $0.elementIsSubject)
+            },
+            sort: d.sort, take: d.take
+        )
     }
 
     /// Replace whole-word occurrences of `needle` (case-insensitive) with
@@ -1092,10 +1167,16 @@ public struct ASTToIR {
 
     // MARK: - Expression lowering
 
-    func lowerExpr(_ expr: ExpressionAST) throws -> IRExpression {
+    /// Lower an expression. `scope`, when non-nil, is the set of in-scope names
+    /// (workflow params + earlier binds + loop vars, normalized via `scopeKey`)
+    /// used to validate Wave 3 relation operands; `nil` means "scope unknown here,
+    /// skip operand validation" (the safe default for positions that don't thread
+    /// it). `line` carries the enclosing statement's source line so Wave 3 errors
+    /// point at the right place.
+    func lowerExpr(_ expr: ExpressionAST, scope: Set<String>? = nil, line: Int = 0) throws -> IRExpression {
         switch expr {
         case .malformed(let message):
-            throw CompilerError.semanticError(message: message, range: sourceRange(0))
+            throw CompilerError.semanticError(message: message, range: sourceRange(line))
         case .quantified(let q):
             return try lowerQuantifier(q)
         case .literal(let lit):
@@ -1121,11 +1202,11 @@ public struct ASTToIR {
         case .instanceRef(let name):
             return .instanceRef(name: name.lowercased())
         case .propertyAccess(let base, let prop):
-            return .propertyAccess(try lowerExpr(base), propertyName: prop)
+            return .propertyAccess(try lowerExpr(base, scope: scope, line: line), propertyName: prop)
         case .comparison(let lhs, let op, let rhs):
-            return try lowerComparison(lhs, op, rhs)
+            return try lowerComparison(lhs, op, rhs, scope: scope, line: line)
         case .logical(let op, let exprs):
-            return .logical(lowerLogicalOp(op), try exprs.map(lowerExpr))
+            return .logical(lowerLogicalOp(op), try exprs.map { try lowerExpr($0, scope: scope, line: line) })
         case .envVar(let name):
             return .envVar(name: name)
         case .now:
@@ -1133,7 +1214,7 @@ public struct ASTToIR {
         case .invoke(let toolID, let args):
             return .invocation(InvokeIR(
                 toolID: toolID,
-                arguments: try args.map { InvokeArg($0.0, try lowerExpr($0.1)) }
+                arguments: try args.map { InvokeArg($0.0, try lowerExpr($0.1, scope: scope, line: line)) }
             ))
         case .decideWhether(let question):
             // SkillMD-D11a: Delegate to the runtime's Discretion protocol, not
@@ -1148,24 +1229,47 @@ public struct ASTToIR {
             let irSegs = try segs.map { seg -> IRInterpolationSegment in
                 switch seg {
                 case .literal(let s):    return .literal(s)
-                case .expression(let e): return .expression(try lowerExpr(e))
+                case .expression(let e): return .expression(try lowerExpr(e, scope: scope, line: line))
                 }
             }
             return .interpolatedString(irSegs)
+        case .recordList(let fields, let rows):
+            let irRows = try rows.map { row in try row.map { try lowerExpr($0, scope: scope, line: line) } }
+            return .recordList(fields: fields, rows: irRows)
+        case .verbPredicate(let subject, let verb, let object):
+            return try lowerVerbPredicate(subject: subject, verbForm: verb, object: object, scope: scope, line: line)
+        case .relationTraversal(let base, let relation, let navKind):
+            let plan = try lowerScalarTraversalPlan(base: base, relationForm: relation, navKind: navKind,
+                                                    allowToolFetch: false, scope: scope, line: line)
+            return plan.expr
+        case .description(let d):
+            // Value position cannot host an `await` fetch, so a tool-backed
+            // source is rejected here (bind it first). Property-backed sources
+            // produce an empty prelude.
+            return .description(try lowerDescriptionPlan(d, allowToolFetch: false, scope: scope, line: line).ir)
+        case .aggregate(let kind, let d):
+            let plan = try lowerDescriptionPlan(d, allowToolFetch: false, scope: scope, line: line)
+            return .aggregate(kind == .count ? .count : .list, plan.ir)
+        case .superlative(let s):
+            let plan = try lowerDescriptionPlan(s.description, allowToolFetch: false, scope: scope, line: line)
+            return .superlative(SuperlativeIR(description: plan.ir,
+                                              sortPath: camelCase(s.property),
+                                              ascending: s.ascending))
         }
     }
 
     /// Lower a comparison. Handles three special shapes before the generic
     /// path: checkable-adjective predicates (`X is/is not <adj>`), the emptiness
     /// operators (RHS is an ignored placeholder), and ordinary comparisons.
-    private func lowerComparison(_ lhs: ExpressionAST, _ op: ComparisonOpAST, _ rhs: ExpressionAST) throws -> IRExpression {
+    private func lowerComparison(_ lhs: ExpressionAST, _ op: ComparisonOpAST, _ rhs: ExpressionAST,
+                                 scope: Set<String>? = nil, line: Int = 0) throws -> IRExpression {
         // 2B: `X is <adj>` / `X is not <adj>` — a checkable-adjective predicate,
         // recognised ONLY when the LHS is in subject position (lowers to a bare
         // identifier reference) and the RHS names a registered adjective.
         if op == .equal || op == .notEqual,
            case .identifierRef(let adjName) = rhs,
            let record = symbols.definition(forAdjective: adjName) {
-            let loweredLhs = try lowerExpr(lhs)
+            let loweredLhs = try lowerExpr(lhs, scope: scope, line: line)
             if case .identifierRef = loweredLhs {
                 let pred = IRExpression.definitionPredicate(functionName: record.functionName, subject: loweredLhs)
                 return op == .equal ? pred : .logical(.not, [pred])
@@ -1174,9 +1278,10 @@ public struct ASTToIR {
         }
         switch op {
         case .isEmpty, .isNotEmpty:
-            return .comparison(try lowerExpr(lhs), lowerCompOp(op), .literal(.boolean(true)))
+            return .comparison(try lowerExpr(lhs, scope: scope, line: line), lowerCompOp(op), .literal(.boolean(true)))
         default:
-            return .comparison(try lowerExpr(lhs), lowerCompOp(op), try lowerExpr(rhs))
+            return .comparison(try lowerExpr(lhs, scope: scope, line: line), lowerCompOp(op),
+                               try lowerExpr(rhs, scope: scope, line: line))
         }
     }
 
@@ -1476,6 +1581,272 @@ public struct ASTToIR {
         case .choice(let prompt, let options):
             return .choice(prompt: prompt, options: options)
         }
+    }
+
+    // MARK: - 3A/3B/3C. Relations, verbs, descriptions
+
+    private func semanticError(_ message: String, _ line: Int) -> CompilerError {
+        CompilerError.semanticError(message: message, range: sourceRange(line))
+    }
+
+    /// Validate the relational layer once per file. Backing is mandatory for any
+    /// relation that is *used* relationally — i.e. referenced by a declared verb
+    /// (every relational surface form goes through a verb). A bare legacy
+    /// relation with no verb and no backing is left untouched for compatibility.
+    /// Any backing that IS declared must be well-formed (a real side + property,
+    /// or a declared tool); every verb must map to a declared, backed relation;
+    /// and no conjugated verb form may be shared by two relations.
+    func validateRelationsAndVerbs() throws {
+        for (name, backing) in symbols.relationBackings.sorted(by: { $0.key < $1.key }) {
+            guard let rel = symbols.relation(named: name) else {
+                throw semanticError(
+                    "evaluation backing names relation \"\(name)\", which is not declared (write `\(name.capitalized) relates …` first).", 0)
+            }
+            try validateBacking(backing, of: rel)
+        }
+        var formOwner: [String: String] = [:]
+        for v in symbols.verbs.values.sorted(by: { $0.base < $1.base }) {
+            guard let rel = symbols.relation(named: v.relation) else {
+                throw semanticError(
+                    "verb `to \(v.base)` means the \(v.relation) relation, which is not declared.",
+                    v.sourceLine)
+            }
+            guard symbols.backing(forRelation: v.relation) != nil else {
+                throw semanticError(
+                    "verb `to \(v.base)` means the \(v.relation) relation, which has no evaluation backing. Add `\(rel.verb.capitalized) is read from the <kind>'s <property>.` or `\(rel.verb.capitalized) is read via the <tool> tool.`",
+                    v.sourceLine)
+            }
+            for form in [v.base, v.thirdPerson, v.pastParticiple] {
+                let f = form.lowercased()
+                if let other = formOwner[f], other != v.relation {
+                    throw semanticError(
+                        "verb form \"\(form)\" is ambiguous between the \(other) and \(v.relation) relations.",
+                        v.sourceLine)
+                }
+                formOwner[f] = v.relation
+            }
+        }
+    }
+
+    private func validateBacking(_ backing: RelationBackingAST, of rel: RelationDeclaration) throws {
+        switch backing {
+        case .property(let kind, let path):
+            let k = kind.lowercased()
+            guard k == rel.leftKind.lowercased() || k == rel.rightKind.lowercased() else {
+                throw semanticError(
+                    "relation \"\(rel.verb)\" is read from `\(kind)`, which is not one of its kinds (`\(rel.leftKind)`, `\(rel.rightKind)`).",
+                    rel.sourceLine)
+            }
+            let props = symbols.propertyNames(of: k)
+            if !props.isEmpty && !props.contains(path.lowercased()) {
+                throw semanticError(
+                    "relation \"\(rel.verb)\" reads `\(kind).\(path)`, but `\(kind)` has no declared property `\(path)`.",
+                    rel.sourceLine)
+            }
+        case .tool(let toolID):
+            guard symbols.tool(named: toolID) != nil else {
+                throw semanticError(
+                    "relation \"\(rel.verb)\" is read via tool `\(toolID)`, which is not declared in the vocabulary.",
+                    rel.sourceLine)
+            }
+        }
+    }
+
+    /// The relation side that is not `elementKind` (used to key a tool-backed
+    /// fetch by the fixed operand's kind, and to check scalar-nav cardinality).
+    private func otherSide(of rel: RelationDeclaration, fromElementKind elementKind: String)
+        -> (kind: String, cardinality: CardinalityAST) {
+        if elementKind.lowercased() == rel.leftKind.lowercased() {
+            return (rel.rightKind, rel.rightCardinality)
+        }
+        return (rel.leftKind, rel.leftCardinality)
+    }
+
+    /// 3B/3C: a relation operand must resolve to an in-scope name (a workflow
+    /// parameter, an earlier bind, or an enclosing loop variable). Runs only when
+    /// `scope` is known; constants/instances/literals/enum-cases contribute no
+    /// free identifier roots, so they always pass.
+    private func validateOperandScope(_ operand: IRExpression, scope: Set<String>?,
+                                      role: String, line: Int) throws {
+        guard let scope else { return }
+        for root in freeIdentifierRoots(operand) where !scope.contains(scopeKey(root)) {
+            let known = scope.sorted().joined(separator: ", ")
+            throw semanticError(
+                "\(role) references \"\(root)\", which is not in scope. In-scope names: [\(known)]. Reference a workflow parameter or an earlier bind.",
+                line)
+        }
+    }
+
+    /// 3B: a " (did you mean …?)" hint for an unknown verb form, or "" when no
+    /// declared form is close enough.
+    private func nearestVerbSuggestion(_ form: String) -> String {
+        symbols.nearestVerbForm(to: form).map { " (did you mean \"\($0)\"?)" } ?? ""
+    }
+
+    /// 3B: lower an active verb condition (`the user owns the page`) to a
+    /// property-backed `identifies` comparison. Tool-backed verbs can't be tested
+    /// inline (they need an `await` fetch) — bind the related set first.
+    private func lowerVerbPredicate(subject: ExpressionAST, verbForm: String,
+                                    object: ExpressionAST, scope: Set<String>? = nil,
+                                    line: Int) throws -> IRExpression {
+        guard let resolved = symbols.resolveVerbForm(verbForm) else {
+            throw semanticError("unknown verb \"\(verbForm)\"\(nearestVerbSuggestion(verbForm)). Declare it with `The verb to <base> (it <3rd>, it is <participle>) means the <relation> relation.`", line)
+        }
+        let relName = resolved.verb.relation
+        guard let rel = symbols.relation(named: relName),
+              let backing = symbols.backing(forRelation: relName) else {
+            throw semanticError("relation \"\(relName)\" for verb \"\(verbForm)\" is undeclared or unbacked.", line)
+        }
+        switch backing {
+        case .property(let bKind, let path):
+            let subjIR = try lowerExpr(subject, scope: scope, line: line)
+            let objIR = try lowerExpr(object, scope: scope, line: line)
+            try validateOperandScope(subjIR, scope: scope, role: "verb subject", line: line)
+            try validateOperandScope(objIR, scope: scope, role: "verb object", line: line)
+            let bk = bKind.lowercased()
+            if bk == rel.rightKind.lowercased() {
+                return .comparison(.propertyAccess(objIR, propertyName: path), .identifies, subjIR)
+            } else if bk == rel.leftKind.lowercased() {
+                return .comparison(.propertyAccess(subjIR, propertyName: path), .identifies, objIR)
+            }
+            throw semanticError("relation backing kind `\(bKind)` is not a side of relation \"\(relName)\".", line)
+        case .tool:
+            throw semanticError("verb \"\(verbForm)\" is tool-backed and cannot be tested inline. Bind the related set first (e.g. `let related be \(rel.leftKind.lowercased())s that \(resolved.verb.thirdPerson) …`).", line)
+        }
+    }
+
+    struct ScalarNavPlan { let expr: IRExpression; let prelude: [IRPrimitive] }
+
+    /// 3C: lower scalar relation navigation (`the task assigned to the user`,
+    /// navigating TO `navKind`) to a single related value. Property-backed → a
+    /// `member` read from the operand. Tool-backed → a single fetch-once `invoke`
+    /// (hoisted into `prelude` when `allowToolFetch`), whose result IS the related
+    /// value (a one-to-one tool returns the entity, not a list). The navigated-to
+    /// side must be `one` — a `various` side needs `the list of …`.
+    private func lowerScalarTraversalPlan(base: ExpressionAST, relationForm: String, navKind: String,
+                                          allowToolFetch: Bool, scope: Set<String>? = nil,
+                                          line: Int) throws -> ScalarNavPlan {
+        guard let resolved = symbols.resolveVerbForm(relationForm) else {
+            throw semanticError("unknown relation form \"\(relationForm)\"\(nearestVerbSuggestion(relationForm)) in navigation.", line)
+        }
+        let relName = resolved.verb.relation
+        guard let rel = symbols.relation(named: relName),
+              let backing = symbols.backing(forRelation: relName) else {
+            throw semanticError("relation \"\(relName)\" for \"\(relationForm)\" is undeclared or unbacked.", line)
+        }
+        // The navigated-to side must not be `various` (use `the list of …`).
+        let navCardinality: CardinalityAST =
+            navKind.lowercased() == rel.leftKind.lowercased() ? rel.leftCardinality : rel.rightCardinality
+        if case .many = navCardinality {
+            throw semanticError("relation \"\(relName)\" relates to various \(navKind)s; navigate it with `the list of …`, not scalar `the \(navKind)`.", line)
+        }
+        let baseIR = try lowerExpr(base, scope: scope, line: line)
+        try validateOperandScope(baseIR, scope: scope, role: "navigation operand", line: line)
+        switch backing {
+        case .property(_, let path):
+            return ScalarNavPlan(expr: .propertyAccess(baseIR, propertyName: path), prelude: [])
+        case .tool(let toolID):
+            guard allowToolFetch else {
+                throw semanticError("tool-backed relation \"\(relName)\" cannot be navigated in an inline expression; bind it first (e.g. `let result be the \(navKind) \(relationForm) …`).", line)
+            }
+            // The operand is the side that is NOT navKind; key the invoke by it.
+            let operandKind = navKind.lowercased() == rel.leftKind.lowercased() ? rel.rightKind : rel.leftKind
+            let synth = "__nav\(pascalCase(navKind))"
+            let resolvedID = symbols.tool(named: toolID)?.methodName ?? toolID
+            let invoke = InvokeIR(
+                toolID: resolvedID,
+                arguments: [InvokeArg(camelCase(operandKind), baseIR)],
+                resultBinding: synth,
+                sourceRange: sourceRange(line))
+            return ScalarNavPlan(expr: .identifierRef(name: synth), prelude: [.invoke(invoke)])
+        }
+    }
+
+    struct DescriptionPlan { let ir: DescriptionIR; let prelude: [IRPrimitive] }
+
+    /// 3C: lower a description to a fetch-once + filter + sort + take plan. A
+    /// single tool-backed verb clause becomes the source (a hoisted `invoke`,
+    /// returned in `prelude`); property-backed clauses, adjectives, and `whose`
+    /// become element-context filters. `allowToolFetch` is false in value/condition
+    /// positions that cannot host the `await` fetch.
+    private func lowerDescriptionPlan(_ d: DescriptionAST, allowToolFetch: Bool,
+                                      scope: Set<String>? = nil, line: Int) throws -> DescriptionPlan {
+        let noun = d.noun.trimmingCharacters(in: .whitespaces)
+        guard !noun.isEmpty else {
+            throw semanticError("description is missing a collection noun.", line)
+        }
+        let elementVar = lexicon.singularize(noun.lowercased())
+
+        var prelude: [IRPrimitive] = []
+        var filters: [IRExpression] = []
+        var toolSource: (verbForm: String, toolID: String, operandKey: String, operand: IRExpression)? = nil
+
+        for clause in d.verbClauses {
+            guard let resolved = symbols.resolveVerbForm(clause.verbForm) else {
+                throw semanticError("unknown verb form \"\(clause.verbForm)\" in description.", line)
+            }
+            let relName = resolved.verb.relation
+            guard let rel = symbols.relation(named: relName),
+                  let backing = symbols.backing(forRelation: relName) else {
+                throw semanticError("relation \"\(relName)\" for verb \"\(clause.verbForm)\" is undeclared or unbacked.", line)
+            }
+            let operandIR = try lowerExpr(clause.operand, scope: scope, line: line)
+            try validateOperandScope(operandIR, scope: scope, role: "relation operand", line: line)
+            switch backing {
+            case .tool(let toolID):
+                guard toolSource == nil else {
+                    throw semanticError("a description may use at most one tool-backed relation clause.", line)
+                }
+                let other = otherSide(of: rel, fromElementKind: elementVar)
+                let resolvedID = symbols.tool(named: toolID)?.methodName ?? toolID
+                toolSource = (clause.verbForm, resolvedID, camelCase(other.kind), operandIR)
+            case .property(let bKind, let path):
+                guard bKind.lowercased() == elementVar.lowercased() else {
+                    throw semanticError("property-backed relation \"\(relName)\" stores its link on `\(bKind)`, but the description iterates `\(elementVar)`. Use `the list of …` / scalar navigation, or back the relation with a tool, to traverse from a fixed entity.", line)
+                }
+                filters.append(.comparison(
+                    .propertyAccess(.identifierRef(name: elementVar), propertyName: path),
+                    .identifies, operandIR))
+            }
+        }
+
+        let collection: IRExpression
+        if let src = toolSource {
+            guard allowToolFetch else {
+                throw semanticError("a tool-backed relation (`\(src.verbForm)`) must be bound before use — e.g. `let matches be \(noun) that \(src.verbForm) …`, then read `matches`.", line)
+            }
+            let synth = "__rel\(camelCase(noun).prefix(1).uppercased())\(camelCase(noun).dropFirst())"
+            prelude.append(.invoke(InvokeIR(
+                toolID: src.toolID,
+                arguments: [InvokeArg(src.operandKey, src.operand)],
+                resultBinding: synth,
+                sourceRange: sourceRange(line))))
+            collection = .identifierRef(name: synth)
+        } else {
+            // Normalize the surface noun (singular in superlatives `the largest
+            // deal`, plural in `the stale pages`) to the plural collection name
+            // that the author binds in scope.
+            let collectionName = lexicon.pluralize(elementVar)
+            let c = try lowerExpr(.identifierRef(collectionName))
+            if case .invocation = c {
+                throw semanticError("description source must be a bound collection name (a parameter or earlier bind), not a tool call.", line)
+            }
+            collection = c
+        }
+
+        for adj in d.adjectives {
+            filters.append(try resolveAdjectiveFilter(
+                adjective: adj, subject: .identifierRef(name: elementVar), sourceLine: line))
+        }
+        if let wp = d.wherePredicate {
+            filters.append(qualifyToLoopVar(try lowerExpr(wp), loopVar: elementVar))
+        }
+
+        let sort = d.sort.map { (path: camelCase($0.property), ascending: $0.ascending) }
+        return DescriptionPlan(
+            ir: DescriptionIR(collection: collection, elementVar: elementVar,
+                              filters: filters, sort: sort, take: d.take),
+            prelude: prelude)
     }
 
     // MARK: - Source range helper

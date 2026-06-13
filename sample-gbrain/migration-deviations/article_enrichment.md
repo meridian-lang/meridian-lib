@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/article-enrichment/SKILL.md
-+++ skills/article_enrichment.meri
++++ article_enrichment.meri
 @@ -26,7 +26,7 @@
  > personalized one-of-one synthesis output uses the sanctioned
  > `media/articles/<slug>-personalized.md` exception.

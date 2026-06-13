@@ -119,6 +119,57 @@ struct IRExpressionEmissionTests {
     }
 }
 
+// MARK: - Wave 3 query-plan golden
+
+@Suite("Wave 3 query-plan emission")
+struct Wave3QueryPlanGoldenTests {
+
+    private let emitter = SwiftEmitter()
+
+    // One description IR exercising every query-plan stage at once: a bound
+    // collection source, an adjective (definition) filter, a verb-clause
+    // (`identifies`) filter, a total order, and a `first N` take-prefix. The
+    // emitted Swift is asserted byte-for-byte so any drift in the pipeline
+    // shape — element-context rewriting, filter conjunction, sort key, or the
+    // `Array(...prefix(n))` wrap — is caught here.
+    @Test("source + adjective + verb clause + sort + first N → a single golden pipeline")
+    func fullQueryPlanGolden() {
+        let plan = DescriptionIR(
+            collection: .identifierRef(name: "pages"),
+            elementVar: "page",
+            filters: [
+                .definitionPredicate(functionName: "meridianDef_Page_popular",
+                                     subject: .identifierRef(name: "page")),
+                .comparison(.propertyAccess(.identifierRef(name: "page"), propertyName: "owner"),
+                            .identifies, .identifierRef(name: "user"))
+            ],
+            sort: (path: "updatedAt", ascending: false),
+            take: 3
+        )
+        let expected = #"""
+        Value.list(Array(((state.get("pages"))?.asList ?? []).filter { __e in (meridianDef_Page_popular(__e)) && (MeridianComparison.identifies(__e.member("owner"), state.get("user") ?? .null)) }.sorted { __a, __b in MeridianComparison.orderedBefore(__a.member("updatedAt"), __b.member("updatedAt"), ascending: false) }.prefix(3)))
+        """#
+        let out = emitter.emitExpr(.description(plan))
+        #expect(out == expected, Comment(rawValue: out))
+    }
+
+    @Test("the same plan as a count aggregate wraps the pipeline in Decimal(...).count")
+    func countAggregateGolden() {
+        let plan = DescriptionIR(collection: .identifierRef(name: "pages"), elementVar: "page")
+        #expect(emitter.emitExpr(.aggregate(.count, plan))
+                == #"Decimal(((state.get("pages"))?.asList ?? []).count)"#)
+    }
+
+    @Test("a superlative forces its own sort and takes .first")
+    func superlativeGolden() {
+        let plan = SuperlativeIR(
+            description: DescriptionIR(collection: .identifierRef(name: "deals"), elementVar: "deal"),
+            sortPath: "amount", ascending: false)
+        #expect(emitter.emitExpr(.superlative(plan))
+                == #"(((state.get("deals"))?.asList ?? []).sorted { __a, __b in MeridianComparison.orderedBefore(__a.member("amount"), __b.member("amount"), ascending: false) }.first)"#)
+    }
+}
+
 // MARK: - SwiftEmitter primitive tests
 
 @Suite("SwiftEmitter primitives")

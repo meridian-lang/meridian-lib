@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/cross-modal-review/SKILL.md
-+++ skills/cross_modal_review.meri
++++ cross_modal_review.meri
 @@ -34,7 +34,7 @@
  > for ad-hoc second opinions; use `gbrain eval cross-modal` for the
  > skillify Phase 3 quality gate. The two are complementary, not redundant.

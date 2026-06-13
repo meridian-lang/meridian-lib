@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/skill-creator/SKILL.md
-+++ skills/skill_creator.meri
++++ skill_creator.meri
 @@ -17,7 +17,7 @@
  
  # Skill Creator

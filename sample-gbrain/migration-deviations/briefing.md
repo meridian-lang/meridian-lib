@@ -3,8 +3,8 @@
 - Original: `briefing/SKILL.md`
 - Ported: `briefing.meri`
 - Tier: 2 (light edits)
-- Similarity: 64%
-- Lines: 153 -> 119 (+32 / -66)
+- Similarity: 61%
+- Lines: 153 -> 127 (+41 / -67)
 
 ## Frontmatter
 - Added: (none)
@@ -16,14 +16,14 @@
 - preamble-blockquoted
 
 ## Metrics
-- Sections: 8/12 inert (67% inert ratio)
+- Sections: 10/13 inert (77% inert ratio)
 - Judgment: 1 blocks, 2 lines
 
 ## Unified diff
 
 ```diff
 --- original-skills/briefing/SKILL.md
-+++ skills/briefing.meri
++++ briefing.meri
 @@ -5,23 +5,17 @@
    - "daily briefing"
    - "morning briefing"
@@ -50,7 +50,7 @@
  
  - Every fact in the briefing includes an inline `[Source: slug, updated DATE]` citation.
  - Meeting participants are resolved against the brain; gaps are explicitly flagged.
-@@ -31,73 +25,45 @@
+@@ -31,73 +25,46 @@
  
  ## Phases
  
@@ -140,18 +140,19 @@
 +Before drafting or triaging any email, load sender context from the brain and
 +read their compiled truth. This turns a cold reply into an informed one.
 +
-+## Freshness guard (( role: procedure ))
++## Freshness guard
 +
 +> Surface today's high-priority and empty pages so the briefing flags them
 +> instead of presenting stale context as current.
 +
 +bind pages = invoke list pages with filter = "today".
++let mine be the pages written by the input.
 +if any urgent pages or any unwritten pages,
 +  emit briefing.attention with status = "needs review".
  
  ## Output Format
  
-@@ -123,19 +89,19 @@
+@@ -123,19 +90,26 @@
  - [name] -- [why they're active]
  ```
  
@@ -160,9 +161,17 @@
  
  If the briefing creates or updates any brain pages (e.g., new meeting prep
  pages, updated entity pages), the back-linking iron law applies: every entity
- mentioned must have a back-link from their page. See `skills/_brain-filing-rules.md`.
+-mentioned must have a back-link from their page. See `skills/_brain-filing-rules.md`.
++the page mentions must have a back-link from their page. See
++`skills/_brain-filing-rules.md`.
  
 -## Citation in Briefings
++### Enforce back-links
++
++let mentioned be the entities mentioned by the input.
++for each entity in mentioned:
++  if the entity does not link to the input, add a back-link from the entity to the input.
++
 +## Citation in Briefings (( inert ))
  
  When presenting facts from brain pages, include inline citations:

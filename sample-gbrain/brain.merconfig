@@ -43,14 +43,20 @@ A brain is a kind of system.
 An entity is a kind of thing.
 An attendee is a kind of person.
 An input is a kind of thing.
+A health report is a kind of artifact.
 
 # --- Properties (plain) ---
 
 A page has a title, a slug, a body, and an author.
+A page has a compiled truth.
+A page has links, which is a List.
+A page has inbound links, which is a List.
+A health report has an edge count, a timeline count, and a page count.
 A person has a name, a headline, an email, and a company.
 A company has a name, a domain, and a description.
 A meeting has a title, a date, and a transcript.
 An entity has a name and a type.
+An entity has links, which is a List.
 A signal has a name and a phrasing.
 A job has an id and a status.
 A report has a title and a body.
@@ -71,8 +77,38 @@ A query has a mode, which is one of (fast, deep, exhaustive).
 
 Definition: a page is unwritten if it has no body.
 Definition: a page is urgent if its priority is "p0".
+Definition: a page is orphan if it has no inbound links.
+Definition: a page is stale if its compiled truth is empty.
 Definition: a job is finished if its state is "succeeded".
 Definition: a job is broken if its state is "failed".
+
+# --- Relations + verbs (Wave 3) ---
+# The brain is relational: pages are authored, entities are mentioned, pages
+# back-link to each other. Authorship is property-backed (the link lives on
+# `page.author`); mentioning is tool-backed (the get-backlinks family witnesses
+# it on demand). Backlinking (`entity.links`) and Referencing (`page.links`) are
+# property-backed so they can be TESTED inline — the iron-law guard
+# `if the entity does not link to the input, add a back-link …` lowers to a
+# `MeridianComparison.identifies` check, so a back-link is only created when it is
+# actually missing. Skill bodies traverse these with the English verbs below
+# (`the pages written by the author`, `pages that mention the entity`,
+# `the entity links to the input`).
+
+Authorship relates one person to various pages.
+Authorship is read from the page's author.
+The verb to write (it writes, it is written) means the authorship relation.
+
+Mentioning relates various pages to various entities.
+Mentioning is read via the get backlinks tool.
+The verb to mention (it mentions, it is mentioned) means the mentioning relation.
+
+Backlinking relates various entities to various pages.
+Backlinking is read from the entity's links.
+The verb to link (it links, it is linked) means the backlinking relation.
+
+Referencing relates various pages to various entities.
+Referencing is read from the page's links.
+The verb to reference (it references, it is referenced) means the referencing relation.
 
 # --- Phrase library: natural-language steps that wrap the tool families ---
 # Skill bodies say these in plain English; each lowers to a deterministic
@@ -114,6 +150,9 @@ To verify a claim:
 To publish a page at a slug:
   invoke publish page with slug = the slug.
 
+To check brain health:
+  bind health = invoke get health.
+
 === constants ===
 
 The default enrichment tier is "tier2".
@@ -149,6 +188,11 @@ List Pages
 ==========
 -- List pages, optionally filtered.
 ~ page.list(filter: String) : List
+
+Get Health
+==========
+-- Return the brain health dashboard (counts per dimension).
+~ health.get() : HealthReport
 
 # Link family ------------------------------------------------------------------
 

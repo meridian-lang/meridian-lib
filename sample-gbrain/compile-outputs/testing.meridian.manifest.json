@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Skill validation framework PLUS daily test-suite health and regression\nintelligence. Validates skill conformance (frontmatter, manifest coverage,\nresolver coverage). Runs the project test suite in tiered phases (unit \/\nevals \/ integration \/ system health), classifies failures, and produces\na regression-aware report.",
     "mutating" : "false",
@@ -254,12 +334,7 @@
         "heading" : "Test tiers",
         "line" : 104,
         "lines" : [
-          "| Tier | What it runs | Wall time | Gates |",
-          "|------|--------------|-----------|-------|",
-          "| **Unit** | `bun test` (deterministic, zero external calls) | <2s | Every commit |",
-          "| **Evals** | LLM-judge or quality evals | ~60s | Daily |",
-          "| **Integration** | E2E tests against real Postgres | ~5m | Pre-ship + nightly |",
-          "| **System health** | Disk \/ memory \/ CPU \/ service liveness | <10s | Daily |"
+          "table:decision:fCBUaWVyIHwgV2hhdCBpdCBydW5zIHwgV2FsbCB0aW1lIHwgR2F0ZXMgfAp8LS0tLS0tfC0tLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tfC0tLS0tLS18CnwgKipVbml0KiogfCBgYnVuIHRlc3RgIChkZXRlcm1pbmlzdGljLCB6ZXJvIGV4dGVybmFsIGNhbGxzKSB8IDwycyB8IEV2ZXJ5IGNvbW1pdCB8CnwgKipFdmFscyoqIHwgTExNLWp1ZGdlIG9yIHF1YWxpdHkgZXZhbHMgfCB+NjBzIHwgRGFpbHkgfAp8ICoqSW50ZWdyYXRpb24qKiB8IEUyRSB0ZXN0cyBhZ2FpbnN0IHJlYWwgUG9zdGdyZXMgfCB+NW0gfCBQcmUtc2hpcCArIG5pZ2h0bHkgfAp8ICoqU3lzdGVtIGhlYWx0aCoqIHwgRGlzayAvIG1lbW9yeSAvIENQVSAvIHNlcnZpY2UgbGl2ZW5lc3MgfCA8MTBzIHwgRGFpbHkgfA=="
         ],
         "role" : "inert"
       },
@@ -286,13 +361,7 @@
           "regression)",
           "Check if it's a known flake (API timeout, service down)",
           "Check if a dependency was updated (gbrain, bun, etc.)",
-          "| Classification | Marker | Action |",
-          "|---------------|--------|--------|",
-          "| **REGRESSION** — code changed, test broke | 🔴 | Flag with the commit that broke it |",
-          "| **STALE** — test expects old behavior; code is correct | 🟡 | Fix the test, not the code |",
-          "| **FLAKE** — API timeout, service down, LLM variance | ⚠️ | Note, don't alarm; retry once |",
-          "| **NEW** — test was just added and isn't passing yet | 🟢 | Check if intentional |",
-          "| **INFRA** — container restart wiped state | 🛠 | Run bootstrap, retest |",
+          "table:decision:fCBDbGFzc2lmaWNhdGlvbiB8IE1hcmtlciB8IEFjdGlvbiB8CnwtLS0tLS0tLS0tLS0tLS18LS0tLS0tLS18LS0tLS0tLS18CnwgKipSRUdSRVNTSU9OKiog4oCUIGNvZGUgY2hhbmdlZCwgdGVzdCBicm9rZSB8IPCflLQgfCBGbGFnIHdpdGggdGhlIGNvbW1pdCB0aGF0IGJyb2tlIGl0IHwKfCAqKlNUQUxFKiog4oCUIHRlc3QgZXhwZWN0cyBvbGQgYmVoYXZpb3I7IGNvZGUgaXMgY29ycmVjdCB8IPCfn6EgfCBGaXggdGhlIHRlc3QsIG5vdCB0aGUgY29kZSB8CnwgKipGTEFLRSoqIOKAlCBBUEkgdGltZW91dCwgc2VydmljZSBkb3duLCBMTE0gdmFyaWFuY2UgfCDimqDvuI8gfCBOb3RlLCBkb24ndCBhbGFybTsgcmV0cnkgb25jZSB8CnwgKipORVcqKiDigJQgdGVzdCB3YXMganVzdCBhZGRlZCBhbmQgaXNuJ3QgcGFzc2luZyB5ZXQgfCDwn5+iIHwgQ2hlY2sgaWYgaW50ZW50aW9uYWwgfAp8ICoqSU5GUkEqKiDigJQgY29udGFpbmVyIHJlc3RhcnQgd2lwZWQgc3RhdGUgfCDwn5ugIHwgUnVuIGJvb3RzdHJhcCwgcmV0ZXN0IHw=",
           "codeblock:plain:8J+nqiBEYWlseSBUZXN0cyDigJQgWVlZWS1NTS1ERAoKVW5pdDogICBYL1kgcGFzc2VkIChaIHNraXBwZWQpCkV2YWxzOiAgWC9ZIHBhc3NlZApTeXN0ZW06IFtoZWFsdGggc3VtbWFyeV0KClJFR1JFU1NJT05TOgogIPCflLQgPHRlc3QtbmFtZT46IGJyb2tlIGJ5IGNvbW1pdCA8c2hhPiAiPGNvbW1pdCBtZXNzYWdlPiIKClNUQUxFIFRFU1RTOgogIPCfn6EgPHRlc3QtbmFtZT46IGV4cGVjdHMgWCBidXQgY29kZSBub3cgZG9lcyBZIChjb21taXQgPHNoYT4pCgpGTEFLRVM6CiAg4pqg77iPIDx0ZXN0LW5hbWU+OiB0aW1lb3V0IChyZXRyeSBwYXNzZWQpCgrinIUgQUxMIENMRUFSICAod2hlbiBhcHBsaWNhYmxlKQ==",
           "**DO auto-fix:**",
           "Test expects an old file path after a rename → update the test",
@@ -366,6 +435,36 @@
     "triggers" : "\"validate skills\"\n\"test skills\"\n\"skill health check\"\n\"run conformance tests\"\n\"run the tests\"\n\"how are the tests\"\n\"what's broken\"\n\"daily test run\"",
     "version" : "1.1.0"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "testing.meri",
     "brain.merconfig"
@@ -373,71 +472,71 @@
   "source_map" : [
     {
       "meridian_line" : 64,
-      "swift_line" : 541
+      "swift_line" : 592
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 579
+      "swift_line" : 630
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 584
+      "swift_line" : 635
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 623
+      "swift_line" : 674
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 628
+      "swift_line" : 679
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 667
+      "swift_line" : 718
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 672
+      "swift_line" : 723
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 711
+      "swift_line" : 762
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 716
+      "swift_line" : 767
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 755
+      "swift_line" : 806
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 760
+      "swift_line" : 811
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 799
+      "swift_line" : 850
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 804
+      "swift_line" : 855
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 843
+      "swift_line" : 894
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 848
+      "swift_line" : 899
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 887
+      "swift_line" : 938
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 892
+      "swift_line" : 943
     }
   ],
   "tools_used" : [

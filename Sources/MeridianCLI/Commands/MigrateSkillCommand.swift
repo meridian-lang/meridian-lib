@@ -55,16 +55,19 @@ struct MigrateSkillCommand: AsyncParsableCommand {
             repair: repairClosure()
         )
 
+        let depsDir = batch ? inputURL : inputURL.deletingLastPathComponent()
+        let rulebookTarget = out == nil ? nil : primaryRulebookTarget(beside: depsDir)
+
         if batch {
-            try await runBatch(inputURL: inputURL, migrator: migrator)
+            try await runBatch(inputURL: inputURL, migrator: migrator, rulebookTarget: rulebookTarget)
         } else {
-            try await runSingle(inputURL: inputURL, migrator: migrator)
+            try await runSingle(inputURL: inputURL, migrator: migrator, rulebookTarget: rulebookTarget)
         }
     }
 
     // MARK: - Single + batch drivers
 
-    private func runSingle(inputURL: URL, migrator: SkillMigrator) async throws {
+    private func runSingle(inputURL: URL, migrator: SkillMigrator, rulebookTarget: URL?) async throws {
         let markdown = try String(contentsOf: inputURL, encoding: .utf8)
         let stem = inputURL.deletingPathExtension().lastPathComponent
         let result = try await migrator.migrate(markdown, file: "\(meriStem(forSkillAt: inputURL)).meri")
@@ -77,6 +80,8 @@ struct MigrateSkillCommand: AsyncParsableCommand {
             print(result.meriSource)
         }
 
+        try persistSectionAliases(result.sectionAliases, to: rulebookTarget)
+
         if let report {
             let text = singleReport(stem: stem, result: result)
             try text.write(to: URL(fileURLWithPath: report).standardized, atomically: true, encoding: .utf8)
@@ -87,7 +92,7 @@ struct MigrateSkillCommand: AsyncParsableCommand {
         }
     }
 
-    private func runBatch(inputURL: URL, migrator: SkillMigrator) async throws {
+    private func runBatch(inputURL: URL, migrator: SkillMigrator, rulebookTarget: URL?) async throws {
         let fm = FileManager.default
         var isDir: ObjCBool = false
         guard fm.fileExists(atPath: inputURL.path, isDirectory: &isDir), isDir.boolValue else {
@@ -103,17 +108,21 @@ struct MigrateSkillCommand: AsyncParsableCommand {
         if let outDir { try fm.createDirectory(at: outDir, withIntermediateDirectories: true) }
 
         var failures = 0
+        var allAliases: [SkillMigrator.SectionAlias] = []
         for file in skillFiles {
             let markdown = try String(contentsOf: file, encoding: .utf8)
             let stem = meriStem(forSkillAt: file)
             let result = try await migrator.migrate(markdown, file: "\(stem).meri")
             rows.append((stem, result))
+            allAliases.append(contentsOf: result.sectionAliases)
             if !result.compiledOK { failures += 1 }
             if let outDir {
                 try writeMeri(result.meriSource, to: outDir.appendingPathComponent("\(stem).meri"))
             }
             print("\(result.compiledOK ? "✓" : "✗") \(stem)  edits=\(result.report.editCount) repairs=\(result.report.repairAttempts)")
         }
+
+        try persistSectionAliases(allAliases, to: rulebookTarget)
 
         if let report {
             let matrix = coverageMatrix(rows: rows)
@@ -160,6 +169,91 @@ struct MigrateSkillCommand: AsyncParsableCommand {
                                    file: url.lastPathComponent, source: src))
         }
         return (vocabularies, rulebooks)
+    }
+
+    /// The rulebook file section aliases are persisted to: the first `--rulebook`
+    /// if given, else the first autodiscovered `.merrules`, else a new
+    /// `migrated-sections.merrules` beside the output (single: output's parent;
+    /// batch: the output directory).
+    private func primaryRulebookTarget(beside dir: URL) -> URL? {
+        if let first = rulebook.first { return URL(fileURLWithPath: first).standardized }
+        if let discovered = autodiscover(extension: "merrules", from: dir).first { return discovered }
+        guard let out else { return nil }
+        let outURL = URL(fileURLWithPath: out).standardized
+        let base = batch ? outURL : outURL.deletingLastPathComponent()
+        return base.appendingPathComponent("migrated-sections.merrules")
+    }
+
+    /// Append section-role aliases (heading → role) to the rulebook so future
+    /// compiles/re-migrations recognize the heading with no in-file marker. Skips
+    /// aliases already present (normalized-heading match), creates the
+    /// `=== sections ===` block (and the file) when absent, and — when there is
+    /// no target (stdout/preview mode) — prints a snippet instead of writing.
+    private func persistSectionAliases(_ aliases: [SkillMigrator.SectionAlias], to target: URL?) throws {
+        let unique = dedupeAliases(aliases)
+        guard !unique.isEmpty else { return }
+
+        guard let target else {
+            print("// Add these section aliases to your .merrules (=== sections ===):")
+            for a in unique { print("section \"\(a.heading)\" -> \(a.role.rawValue)") }
+            return
+        }
+
+        let existing = (try? String(contentsOf: target, encoding: .utf8)) ?? ""
+        let known = existingAliasHeadings(in: existing)
+        let fresh = unique.filter { !known.contains(Rulebook.normalizeHeading($0.heading)) }
+        guard !fresh.isEmpty else { return }
+
+        let newLines = fresh.map { "section \"\($0.heading)\" -> \($0.role.rawValue)" }
+        let updated = insertSectionLines(newLines, into: existing)
+        try FileManager.default.createDirectory(
+            at: target.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try updated.write(to: target, atomically: true, encoding: .utf8)
+        print("✓ \(fresh.count) section alias(es) → \(target.lastPathComponent)")
+    }
+
+    /// De-duplicate by normalized heading (first role wins).
+    private func dedupeAliases(_ aliases: [SkillMigrator.SectionAlias]) -> [SkillMigrator.SectionAlias] {
+        var seen = Set<String>()
+        var out: [SkillMigrator.SectionAlias] = []
+        for a in aliases where seen.insert(Rulebook.normalizeHeading(a.heading)).inserted {
+            out.append(a)
+        }
+        return out
+    }
+
+    /// Normalized headings already aliased by any `section "…" -> role` line.
+    private func existingAliasHeadings(in source: String) -> Set<String> {
+        var out: Set<String> = []
+        for raw in source.components(separatedBy: "\n") {
+            let t = raw.trimmingCharacters(in: .whitespaces)
+            guard t.hasPrefix("section ") else { continue }
+            var rest = Substring(t)
+            while let open = rest.firstIndex(of: "\"") {
+                let afterOpen = rest.index(after: open)
+                guard let close = rest[afterOpen...].firstIndex(of: "\"") else { break }
+                out.insert(Rulebook.normalizeHeading(String(rest[afterOpen..<close])))
+                rest = rest[rest.index(after: close)...]
+            }
+        }
+        return out
+    }
+
+    /// Insert `section …` lines under an existing `=== sections ===` header, or
+    /// append a fresh block when none exists.
+    private func insertSectionLines(_ lines: [String], into source: String) -> String {
+        var fileLines = source.isEmpty ? [] : source.components(separatedBy: "\n")
+        if let headerIdx = fileLines.firstIndex(where: {
+            $0.trimmingCharacters(in: .whitespaces) == "=== sections ==="
+        }) {
+            fileLines.insert(contentsOf: lines, at: headerIdx + 1)
+            return fileLines.joined(separator: "\n")
+        }
+        var text = source
+        if !text.isEmpty, !text.hasSuffix("\n") { text += "\n" }
+        if !text.isEmpty { text += "\n" }
+        text += "=== sections ===\n" + lines.joined(separator: "\n") + "\n"
+        return text
     }
 
     private func autodiscover(extension ext: String, from dir: URL) -> [URL] {

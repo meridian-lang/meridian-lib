@@ -526,10 +526,12 @@ struct RuleInjector {
                 toolID: "runtime.discretion.decide",
                 arguments: [InvokeArg("question", .literal(.string(q)))]
             ))
-        case .quantified, .malformed:
-            // Quantifiers and parse-error carriers are not produced in rule
-            // bodies (which are constrained to the supported rule shapes); a
-            // benign placeholder keeps this lowerer total.
+        case .quantified, .malformed, .recordList,
+             .verbPredicate, .relationTraversal, .description, .aggregate, .superlative:
+            // Quantifiers, relational forms, data tables, and parse-error
+            // carriers are not produced in rule bodies (which are constrained to
+            // the supported rule shapes); a benign placeholder keeps this
+            // lowerer total.
             return .literal(.boolean(false))
         }
     }

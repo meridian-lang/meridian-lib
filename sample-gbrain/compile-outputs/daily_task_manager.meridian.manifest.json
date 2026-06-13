@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Task lifecycle management. Add, complete, defer, remove, and review tasks.\nMaintains a running task list as a brain page.",
     "mutating" : "true",
@@ -148,6 +228,36 @@
     "triggers" : "\"add task\"\n\"complete task\"\n\"what are my tasks\"\n\"task list\"\n\"defer task\"",
     "version" : "1.0.0"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "daily_task_manager.meri",
     "brain.merconfig"
@@ -155,55 +265,55 @@
   "source_map" : [
     {
       "meridian_line" : 34,
-      "swift_line" : 542
+      "swift_line" : 593
     },
     {
       "meridian_line" : 38,
-      "swift_line" : 552
+      "swift_line" : 603
     },
     {
       "meridian_line" : 45,
-      "swift_line" : 562
+      "swift_line" : 613
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 601
+      "swift_line" : 652
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 606
+      "swift_line" : 657
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 645
+      "swift_line" : 696
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 650
+      "swift_line" : 701
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 689
+      "swift_line" : 740
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 694
+      "swift_line" : 745
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 733
+      "swift_line" : 784
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 738
+      "swift_line" : 789
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 777
+      "swift_line" : 828
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 782
+      "swift_line" : 833
     }
   ],
   "tools_used" : [

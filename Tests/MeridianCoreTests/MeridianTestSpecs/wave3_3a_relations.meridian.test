@@ -1,0 +1,36 @@
+name: Wave 3A — relation backing + active verb
+description: ```
+A relation declared with an evaluation backing (`Ownership is read from the
+page's owner.`) plus a verb that names it (`to own`) makes an active-verb
+condition (`the user owns the page`) lower deterministically to an identity
+comparison on the backing property — no LLM, no per-call tool.
+```
+tags: inform7, wave3, relations, codegen
+
+vocab_inline rel: ```
+=== vocabulary ===
+A user is a kind of thing.
+A page is a kind of thing.
+A page has an owner, which is a String.
+Ownership relates one user to various pages.
+Ownership is read from the page's owner.
+The verb to own (it owns, it is owned) means the ownership relation.
+```
+
+source_inline: ```
+---
+name: verify
+parameters: user, page
+vocabulary: rel.merconfig
+---
+
+To verify a page for a user:
+  if the user owns the page,
+    complete with reason "ok".
+```
+
+expect_compile: pass
+expect_no_unresolved:
+expect_workflow_count: 1
+expect_workflow_named: VerifyPage
+expect_swift_contains: MeridianComparison.identifies(state.get("page.owner"), state.get("user"))

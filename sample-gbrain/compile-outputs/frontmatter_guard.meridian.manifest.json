@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Validate and auto-repair YAML frontmatter on brain pages. Catches malformed\npages before they enter the brain (missing closing ---, nested quotes, slug\nmismatches, null bytes, empty frontmatter, YAML parse failures). Wraps the\n`gbrain frontmatter` CLI for agent-driven workflows.",
     "mutating" : "true",
@@ -172,16 +252,7 @@
         "heading" : "Validation classes",
         "line" : 43,
         "lines" : [
-          "| Code | Meaning | Auto-fixable? |",
-          "|------|---------|---------------|",
-          "| `MISSING_OPEN` | File doesn't start with `---` | No (needs human) |",
-          "| `MISSING_CLOSE` | No closing `---` before first heading | Yes |",
-          "| `YAML_PARSE` | YAML failed to parse | Sometimes (depends on cause) |",
-          "| `SLUG_MISMATCH` | Frontmatter `slug:` differs from path-derived slug | Yes (removes the field) |",
-          "| `NULL_BYTES` | Binary corruption (`\\x00`) | Yes |",
-          "| `NESTED_QUOTES` | `title: \"outer \"inner\" outer\"` shape | Yes |",
-          "| `NON_STRING_FIELD` | `title`\/`type`\/`slug` is an unquoted non-string scalar (e.g. `title: 123`, `slug: 2024-06-01`) | No (quote the value) |",
-          "| `EMPTY_FRONTMATTER` | Open + close present but nothing between | No (needs human) |"
+          "table:decision:fCBDb2RlIHwgTWVhbmluZyB8IEF1dG8tZml4YWJsZT8gfAp8LS0tLS0tfC0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tLS18CnwgYE1JU1NJTkdfT1BFTmAgfCBGaWxlIGRvZXNuJ3Qgc3RhcnQgd2l0aCBgLS0tYCB8IE5vIChuZWVkcyBodW1hbikgfAp8IGBNSVNTSU5HX0NMT1NFYCB8IE5vIGNsb3NpbmcgYC0tLWAgYmVmb3JlIGZpcnN0IGhlYWRpbmcgfCBZZXMgfAp8IGBZQU1MX1BBUlNFYCB8IFlBTUwgZmFpbGVkIHRvIHBhcnNlIHwgU29tZXRpbWVzIChkZXBlbmRzIG9uIGNhdXNlKSB8CnwgYFNMVUdfTUlTTUFUQ0hgIHwgRnJvbnRtYXR0ZXIgYHNsdWc6YCBkaWZmZXJzIGZyb20gcGF0aC1kZXJpdmVkIHNsdWcgfCBZZXMgKHJlbW92ZXMgdGhlIGZpZWxkKSB8CnwgYE5VTExfQllURVNgIHwgQmluYXJ5IGNvcnJ1cHRpb24gKGBceDAwYCkgfCBZZXMgfAp8IGBORVNURURfUVVPVEVTYCB8IGB0aXRsZTogIm91dGVyICJpbm5lciIgb3V0ZXIiYCBzaGFwZSB8IFllcyB8CnwgYE5PTl9TVFJJTkdfRklFTERgIHwgYHRpdGxlYC9gdHlwZWAvYHNsdWdgIGlzIGFuIHVucXVvdGVkIG5vbi1zdHJpbmcgc2NhbGFyIChlLmcuIGB0aXRsZTogMTIzYCwgYHNsdWc6IDIwMjQtMDYtMDFgKSB8IE5vIChxdW90ZSB0aGUgdmFsdWUpIHwKfCBgRU1QVFlfRlJPTlRNQVRURVJgIHwgT3BlbiArIGNsb3NlIHByZXNlbnQgYnV0IG5vdGhpbmcgYmV0d2VlbiB8IE5vIChuZWVkcyBodW1hbikgfA=="
         ],
         "role" : "inert"
       },
@@ -355,6 +426,36 @@
     "triggers" : "\"validate frontmatter\"\n\"check frontmatter\"\n\"fix frontmatter\"\n\"frontmatter audit\"\n\"brain lint\"",
     "version" : "1.0.0"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "frontmatter_guard.meri",
     "brain.merconfig"
@@ -362,43 +463,43 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 570
+      "swift_line" : 621
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 575
+      "swift_line" : 626
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 614
+      "swift_line" : 665
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 619
+      "swift_line" : 670
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 658
+      "swift_line" : 709
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 663
+      "swift_line" : 714
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 702
+      "swift_line" : 753
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 707
+      "swift_line" : 758
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 746
+      "swift_line" : 797
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 751
+      "swift_line" : 802
     }
   ],
   "tools_used" : [

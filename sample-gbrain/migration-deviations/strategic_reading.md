@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/strategic-reading/SKILL.md
-+++ skills/strategic_reading.meri
++++ strategic_reading.meri
 @@ -31,7 +31,7 @@
  > output files by primary subject (concepts/ for general strategy, projects/
  > for problem-tied playbooks).

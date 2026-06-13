@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/archive-crawler/SKILL.md
-+++ skills/archive_crawler.meri
++++ archive_crawler.meri
 @@ -26,7 +26,7 @@
  > this skill is **schema-generic**: it reads the user's filing rules from
  > the rules JSON instead of hardcoding any specific era / archive layout.

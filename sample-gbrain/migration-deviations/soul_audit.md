@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/soul-audit/SKILL.md
-+++ skills/soul_audit.meri
++++ soul_audit.meri
 @@ -18,13 +18,13 @@
  
  # Soul Audit — Agent Identity Builder

@@ -447,6 +447,9 @@ public indirect enum IRExpression: Sendable {
     case invocation(InvokeIR)
     /// B6/B7: Fenced code-block body with `{{ expr }}` interpolation.
     case interpolatedString([IRInterpolationSegment])
+    /// Data table: a list of records sharing `fields`, one record per row.
+    /// Emitted as `.list([.record([...]), ...])`.
+    case recordList(fields: [String], rows: [[IRExpression]])
     /// 2B: A checkable adjective predicate (`X is stale`). `functionName` is the
     /// precomputed `meridianDef_<Kind>_<adjCamel>` helper; `subject` is the
     /// value the predicate runs over. The emitter needs no definition registry.
@@ -454,6 +457,28 @@ public indirect enum IRExpression: Sendable {
     /// 2C: A quantified description, emitted as a single-expression IIFE so it
     /// slots into any condition position (`if`, `assert`, `whose`, …).
     case quantified(QuantifierIR)
+    /// 3C: A description used as a value — emitted as a `Value.list(...)` of the
+    /// fetched-once, filtered, sorted, taken element set.
+    case description(DescriptionIR)
+    /// 3C: An aggregate over a description. `.count` emits a bare `Int`
+    /// expression (so it composes with numeric comparisons); `.list` emits a
+    /// `Value.list(...)`.
+    case aggregate(AggregateKind, DescriptionIR)
+    /// 3C: A superlative — a description reduced to a single element by a sort
+    /// key, emitted as `(…).sorted{…}.first` (a `Value?`).
+    case superlative(SuperlativeIR)
+}
+
+public enum AggregateKind: Sendable, Equatable { case count, list }
+
+/// 3C: a lowered superlative (description + sort key + direction → first).
+public struct SuperlativeIR: Sendable {
+    public let description: DescriptionIR
+    public let sortPath: String
+    public let ascending: Bool
+    public init(description: DescriptionIR, sortPath: String, ascending: Bool) {
+        self.description = description; self.sortPath = sortPath; self.ascending = ascending
+    }
 }
 
 // MARK: - 2C. Quantifiers (IR)
@@ -474,8 +499,14 @@ public struct DescriptionIR: Sendable {
     public let collection: IRExpression
     public let elementVar: String
     public let filters: [IRExpression]
-    public init(collection: IRExpression, elementVar: String, filters: [IRExpression] = []) {
+    /// 3C: a post-filter total order (`sorted by <path>`).
+    public let sort: (path: String, ascending: Bool)?
+    /// 3C: a post-sort `first N` take-prefix.
+    public let take: Int?
+    public init(collection: IRExpression, elementVar: String, filters: [IRExpression] = [],
+                sort: (path: String, ascending: Bool)? = nil, take: Int? = nil) {
         self.collection = collection; self.elementVar = elementVar; self.filters = filters
+        self.sort = sort; self.take = take
     }
 }
 
@@ -515,6 +546,10 @@ public enum ComparisonOp: Sendable {
     /// 2 (shared condition grammar): property-backed emptiness checks. The RHS
     /// operand is unused (a `.literal(.boolean(true))` placeholder).
     case isEmpty, isNotEmpty
+    /// 3B: relation link identity (`page.owner identifies user`). LHS is the
+    /// link property (scalar or list); RHS is the entity being matched. Lowered
+    /// from active verb predicates and property-backed verb clauses.
+    case identifies
 }
 
 public enum LogicalOp: Sendable {

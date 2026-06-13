@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "brain_first" : "exempt",
     "description" : "Evolve your brain's schema pack. Add page types, propose new ones from corpus scans, backfill page.type on existing pages, audit pack health. Triggers when an agent notices untyped pages, custom domains needing typed entities (researcher, contract, deposition), or wants to see what types the pack declares.",
@@ -416,6 +496,36 @@
     "triggers" : "\"add a page type\"\n\"add a type to my schema\"\n\"my brain has untyped pages\"\n\"schema isn't matching my notes\"\n\"propose new types from my corpus\"\n\"backfill page types\"\n\"evolve my schema\"\n\"extend the schema pack\"\n\"create a custom type for\"\n\"researcher type\"\n\"make X an expert type\"\n\"schema pack add\"\n\"schema mutate\"\n\"schema sync\"\n\"schema author\"",
     "writes_pages" : ""
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "schema_author.meri",
     "brain.merconfig"
@@ -423,123 +533,123 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 570
+      "swift_line" : 621
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 575
+      "swift_line" : 626
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 614
+      "swift_line" : 665
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 619
+      "swift_line" : 670
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 658
+      "swift_line" : 709
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 663
+      "swift_line" : 714
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 702
+      "swift_line" : 753
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 707
+      "swift_line" : 758
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 746
+      "swift_line" : 797
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 751
+      "swift_line" : 802
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 790
+      "swift_line" : 841
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 795
+      "swift_line" : 846
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 834
+      "swift_line" : 885
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 839
+      "swift_line" : 890
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 878
+      "swift_line" : 929
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 883
+      "swift_line" : 934
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 922
+      "swift_line" : 973
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 927
+      "swift_line" : 978
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 966
+      "swift_line" : 1017
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 971
+      "swift_line" : 1022
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1010
+      "swift_line" : 1061
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1015
+      "swift_line" : 1066
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1054
+      "swift_line" : 1105
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1059
+      "swift_line" : 1110
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1098
+      "swift_line" : 1149
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1103
+      "swift_line" : 1154
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1142
+      "swift_line" : 1193
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1147
+      "swift_line" : 1198
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1186
+      "swift_line" : 1237
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1191
+      "swift_line" : 1242
     }
   ],
   "tools_used" : [

@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/functional-area-resolver/SKILL.md
-+++ skills/functional_area_resolver.meri
++++ functional_area_resolver.meri
 @@ -36,18 +36,18 @@
  
  # Functional-Area Resolver — Pattern for Compressing Routing Tables

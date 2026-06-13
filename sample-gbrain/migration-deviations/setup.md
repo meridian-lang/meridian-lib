@@ -23,7 +23,7 @@
 
 ```diff
 --- original-skills/setup/SKILL.md
-+++ skills/setup.meri
++++ setup.meri
 @@ -15,9 +15,9 @@
  
  # Setup GBrain

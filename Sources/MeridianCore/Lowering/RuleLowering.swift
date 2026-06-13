@@ -128,13 +128,7 @@ public struct RuleAnalyzer {
 
         let roleText = String(afterMustBe[byRange.upperBound..<beforeRange.lowerBound])
             .trimmingCharacters(in: .whitespaces)
-        var cleanRole = roleText
-        for article in ["an ", "a ", "the "] {
-            if cleanRole.lowercased().hasPrefix(article) {
-                cleanRole = String(cleanRole.dropFirst(article.count))
-                break
-            }
-        }
+        let cleanRole = lexicon.stripLeadingArticle(roleText)
 
         let (subjectKind, subjectFilter, _) = parseSubject(subjectPart)
         let actionText = subjectPart.lowercased()
@@ -252,13 +246,7 @@ public struct RuleAnalyzer {
     /// access on the subject so identifier references like `status` become
     /// `subject's status` (handled by ExpressionParser's possessive parser).
     private func parseSubject(_ text: String) -> (kind: String, filter: ExpressionAST?, actionHint: String?) {
-        var s = text
-        for article in ["an ", "a ", "the "] {
-            if s.lowercased().hasPrefix(article) {
-                s = String(s.dropFirst(article.count))
-                break
-            }
-        }
+        var s = lexicon.stripLeadingArticle(text)
         if s.hasSuffix(".") { s = String(s.dropLast()) }
 
         let words = s.components(separatedBy: " ")

@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Brain knowledge base operations. The core read\/write cycle: brain-first lookup,\nread-enrich-write loop, source attribution, ambient enrichment, back-linking.\nRead this before any brain interaction.",
     "mutating" : "true",
@@ -84,7 +164,7 @@
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "inert",
+        "kind" : "tools",
         "level" : 2,
         "line" : 154,
         "text" : "Tools Used"
@@ -292,7 +372,7 @@
           "`get_backlinks` — check who references an entity",
           "`sync_brain` — sync changes to the index"
         ],
-        "role" : "inert"
+        "role" : "tools"
       }
     ],
     "tools" : "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry\nget_backlinks\nsync_brain",
@@ -301,6 +381,36 @@
     "writes_pages" : "true",
     "writes_to" : "people\/\ncompanies\/\ndeals\/\nconcepts\/\nmeetings\/"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "brain_ops.meri",
     "brain.merconfig"
@@ -308,15 +418,22 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 572
+      "swift_line" : 624
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 577
+      "swift_line" : 629
     }
   ],
   "tools_used" : [
-
+    "search",
+    "query",
+    "get_page",
+    "put_page",
+    "add_link",
+    "add_timeline_entry",
+    "get_backlinks",
+    "sync_brain"
   ],
   "workflows" : [
     {

@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Share brain pages as beautiful password-protected HTML with zero LLM calls",
     "mutating" : "false",
@@ -190,14 +270,7 @@
         "line" : 75,
         "lines" : [
           "The publish command automatically removes all private\/internal data:",
-          "| Stripped | Example | Why |",
-          "|---------|---------|-----|",
-          "| YAML frontmatter | `title:`, `type:`, `tags:` | Internal metadata |",
-          "| `[Source: ...]` citations | All formats | Provenance is internal |",
-          "| Confirmation numbers | `ABC123DEF` -> \"on file\" | PII\/booking data |",
-          "| Brain cross-links | `[Jane](..\/people\/jane.md)` -> `Jane` | Internal paths |",
-          "| Timeline section | Everything below `---` \/ `## Timeline` | Raw evidence log |",
-          "| \"See also\" lines | Internal references | Brain navigation |",
+          "table:decision:fCBTdHJpcHBlZCB8IEV4YW1wbGUgfCBXaHkgfAp8LS0tLS0tLS0tfC0tLS0tLS0tLXwtLS0tLXwKfCBZQU1MIGZyb250bWF0dGVyIHwgYHRpdGxlOmAsIGB0eXBlOmAsIGB0YWdzOmAgfCBJbnRlcm5hbCBtZXRhZGF0YSB8CnwgYFtTb3VyY2U6IC4uLl1gIGNpdGF0aW9ucyB8IEFsbCBmb3JtYXRzIHwgUHJvdmVuYW5jZSBpcyBpbnRlcm5hbCB8CnwgQ29uZmlybWF0aW9uIG51bWJlcnMgfCBgQUJDMTIzREVGYCAtPiAib24gZmlsZSIgfCBQSUkvYm9va2luZyBkYXRhIHwKfCBCcmFpbiBjcm9zcy1saW5rcyB8IGBbSmFuZV0oLi4vcGVvcGxlL2phbmUubWQpYCAtPiBgSmFuZWAgfCBJbnRlcm5hbCBwYXRocyB8CnwgVGltZWxpbmUgc2VjdGlvbiB8IEV2ZXJ5dGhpbmcgYmVsb3cgYC0tLWAgLyBgIyMgVGltZWxpbmVgIHwgUmF3IGV2aWRlbmNlIGxvZyB8CnwgIlNlZSBhbHNvIiBsaW5lcyB8IEludGVybmFsIHJlZmVyZW5jZXMgfCBCcmFpbiBuYXZpZ2F0aW9uIHw=",
           "**Preserved:** external URLs (`https:\/\/...`), all other content"
         ],
         "role" : "inert"
@@ -325,6 +398,36 @@
     "tools" : "get_page\nsearch",
     "triggers" : "\"share this page\"\n\"publish page\"\n\"create shareable link\""
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "publish.meri",
     "brain.merconfig"
@@ -332,63 +435,63 @@
   "source_map" : [
     {
       "meridian_line" : 52,
-      "swift_line" : 541
+      "swift_line" : 592
     },
     {
       "meridian_line" : 53,
-      "swift_line" : 552
+      "swift_line" : 603
     },
     {
       "meridian_line" : 54,
-      "swift_line" : 555
-    },
-    {
-      "meridian_line" : 58,
-      "swift_line" : 562
-    },
-    {
-      "meridian_line" : 58,
-      "swift_line" : 573
-    },
-    {
-      "meridian_line" : 58,
-      "swift_line" : 584
-    },
-    {
-      "meridian_line" : 58,
-      "swift_line" : 595
-    },
-    {
-      "meridian_line" : 58,
       "swift_line" : 606
     },
     {
+      "meridian_line" : 58,
+      "swift_line" : 613
+    },
+    {
+      "meridian_line" : 58,
+      "swift_line" : 624
+    },
+    {
+      "meridian_line" : 58,
+      "swift_line" : 635
+    },
+    {
+      "meridian_line" : 58,
+      "swift_line" : 646
+    },
+    {
+      "meridian_line" : 58,
+      "swift_line" : 657
+    },
+    {
       "meridian_line" : 123,
-      "swift_line" : 617
+      "swift_line" : 668
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 656
+      "swift_line" : 707
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 661
+      "swift_line" : 712
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 700
+      "swift_line" : 751
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 705
+      "swift_line" : 756
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 744
+      "swift_line" : 795
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 749
+      "swift_line" : 800
     }
   ],
   "tools_used" : [

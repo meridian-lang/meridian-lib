@@ -12,18 +12,17 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 - preamble-blockquoted
 
 ## Metrics
-- Sections: 10/12 inert (83% inert ratio)
+- Sections: 11/12 inert (92% inert ratio)
 - Judgment: 1 blocks, 5 lines
 
 ## Unified diff
 
 ```diff
 --- original-skills/query/SKILL.md
-+++ skills/query.meri
++++ query.meri
 @@ -31,9 +31,9 @@
  
  # Query Skill
@@ -59,7 +58,7 @@
 +  Flag gaps explicitly when the brain lacks the information.
  
 -## Anti-Patterns
-+## Coverage guard (( role: procedure ))
++## Coverage guard
 +
 +> If the indexed landing page is empty, the brain has a coverage gap; flag it
 +> rather than answering from general knowledge.

@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "brain_first" : "exempt",
     "description" : "Migrate a brain from gbrain-base (or any pack) to gbrain-base-v2's 14-canonical-type taxonomy via gbrain onboard --check + the unify-types Minion handler. Collapses 94 noisy types to 15 canonical with subtypes, alias rows, and link rows. Triggers when an agent notices pack_upgrade_available, type_proliferation, or asks \"what is the canonical taxonomy \/ how do I clean up my page types\".",
@@ -420,6 +500,36 @@
     "tools" : "gbrain onboard --check\ngbrain onboard --check --explain\ngbrain onboard --check --json\ngbrain jobs submit unify-types\ngbrain jobs follow\ngbrain schema active\ngbrain schema use\ngbrain schema stats\ngbrain pages restore\nmcp:run_onboard",
     "triggers" : "\"unify my types\"\n\"migrate to gbrain-base-v2\"\n\"94 types to 14\"\n\"apply canonical taxonomy\"\n\"clean up my page types\"\n\"pack upgrade\"\n\"shrink type proliferation\"\n\"what does the canonical taxonomy look like\"\n\"consolidate page types\"\n\"retype pages to canonical\""
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "schema_unify.meri",
     "brain.merconfig"
@@ -427,83 +537,83 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 569
+      "swift_line" : 620
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 574
+      "swift_line" : 625
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 613
+      "swift_line" : 664
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 618
+      "swift_line" : 669
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 657
+      "swift_line" : 708
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 662
+      "swift_line" : 713
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 701
+      "swift_line" : 752
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 706
+      "swift_line" : 757
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 745
+      "swift_line" : 796
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 750
+      "swift_line" : 801
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 789
+      "swift_line" : 840
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 794
+      "swift_line" : 845
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 833
+      "swift_line" : 884
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 838
+      "swift_line" : 889
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 877
+      "swift_line" : 928
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 882
+      "swift_line" : 933
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 921
+      "swift_line" : 972
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 926
+      "swift_line" : 977
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 965
+      "swift_line" : 1016
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 970
+      "swift_line" : 1021
     }
   ],
   "tools_used" : [

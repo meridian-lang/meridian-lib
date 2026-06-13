@@ -4,7 +4,7 @@
 - Ported: `brain_ops.meri`
 - Tier: 1 (near-verbatim)
 - Similarity: 93%
-- Lines: 164 -> 164 (+12 / -12)
+- Lines: 164 -> 164 (+11 / -11)
 
 ## Frontmatter
 - Added: (none)
@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/brain-ops/SKILL.md
-+++ skills/brain_ops.meri
++++ brain_ops.meri
 @@ -28,13 +28,13 @@
  
  # Brain Operations — The Ambient Context Layer
@@ -112,13 +112,4 @@
  
  - Answering questions about people/companies without checking the brain first
  - Using external APIs before checking the brain
-@@ -151,7 +151,7 @@
- - Overwriting user's direct statements with lower-authority sources
- - Creating brain pages for non-notable entities
- 
--## Tools Used
-+## Tools Used (( inert ))
- 
- - `search` — keyword search
- - `query` — hybrid vector+keyword search
 ```

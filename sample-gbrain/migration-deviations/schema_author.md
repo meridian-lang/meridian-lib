@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/schema-author/SKILL.md
-+++ skills/schema_author.meri
++++ schema_author.meri
 @@ -57,7 +57,7 @@
  
  # schema-author — evolve your schema pack

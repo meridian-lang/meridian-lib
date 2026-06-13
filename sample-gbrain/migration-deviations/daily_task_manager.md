@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/daily-task-manager/SKILL.md
-+++ skills/daily_task_manager.meri
++++ daily_task_manager.meri
 @@ -20,7 +20,7 @@
  
  # Daily Task Manager

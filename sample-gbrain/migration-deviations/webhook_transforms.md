@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/webhook-transforms/SKILL.md
-+++ skills/webhook_transforms.meri
++++ webhook_transforms.meri
 @@ -18,7 +18,7 @@
  
  # Webhook Transforms

@@ -4,7 +4,7 @@
 - Ported: `cold_start.meri`
 - Tier: 1 (near-verbatim)
 - Similarity: 92%
-- Lines: 507 -> 507 (+43 / -43)
+- Lines: 507 -> 507 (+42 / -42)
 
 ## Frontmatter
 - Added: (none)
@@ -23,7 +23,7 @@
 
 ```diff
 --- original-skills/cold-start/SKILL.md
-+++ skills/cold_start.meri
++++ cold_start.meri
 @@ -40,14 +40,14 @@
  
  # Cold Start — Day-One Brain Bootstrapping
@@ -327,13 +327,4 @@
  
  If the session is interrupted:
  
-@@ -495,7 +495,7 @@
- Next: Phase N+1 — [description]. Ready to proceed?
- ```
- 
--## Tools Used
-+## Tools Used (( inert ))
- 
- - `search` — check for existing pages before creating
- - `query` — hybrid search for entity deduplication
 ```

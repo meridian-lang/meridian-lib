@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Ingest meeting transcripts into brain pages with attendee enrichment, entity\npropagation, and timeline merge. A meeting is NOT fully ingested until the\nenrich skill has processed every entity.",
     "mutating" : "true",
@@ -227,6 +307,36 @@
     "writes_pages" : "true",
     "writes_to" : "meetings\/\npeople\/\ncompanies\/"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "meeting_ingestion.meri",
     "brain.merconfig"
@@ -234,35 +344,35 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 572
+      "swift_line" : 623
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 577
+      "swift_line" : 628
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 616
+      "swift_line" : 667
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 621
+      "swift_line" : 672
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 660
+      "swift_line" : 711
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 665
+      "swift_line" : 716
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 704
+      "swift_line" : 755
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 709
+      "swift_line" : 760
     }
   ],
   "tools_used" : [

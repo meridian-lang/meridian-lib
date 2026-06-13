@@ -249,3 +249,64 @@ struct EmptinessTests {
         #expect(MeridianComparison.isNotEmpty(.number(0)))
     }
 }
+
+// MARK: - MeridianComparison.identifies (Wave 3 relation matching)
+
+@Suite("Wave 3 — identifies (relation links)")
+struct IdentifiesTests {
+
+    @Test("a foreign-key string matches a record by its id")
+    func stringMatchesRecordId() {
+        let user = Value.record(["id": .string("u-1"), "name": .string("Ada")])
+        // page.owner holds the user's id string.
+        #expect(MeridianComparison.identifies(.string("u-1"), user))
+        #expect(!MeridianComparison.identifies(.string("u-2"), user))
+    }
+
+    @Test("two records match when their ids agree")
+    func recordsMatchById() {
+        let a = Value.record(["id": .string("x"), "k": .number(1)])
+        let b = Value.record(["id": .string("x"), "k": .number(2)])
+        #expect(MeridianComparison.identifies(a, b))
+        let c = Value.record(["id": .string("y")])
+        #expect(!MeridianComparison.identifies(a, c))
+    }
+
+    @Test("a reference is an identity string")
+    func referenceIdentity() {
+        #expect(MeridianComparison.identifies(.reference("r-9"), .string("r-9")))
+        #expect(MeridianComparison.identifies(.string("r-9"), .reference("r-9")))
+    }
+
+    @Test("a list link matches when any element identifies the entity")
+    func listLinkAny() {
+        let entity = Value.record(["id": .string("e-2")])
+        let links = Value.list([.string("e-1"), .string("e-2"), .string("e-3")])
+        #expect(MeridianComparison.identifies(links, entity))
+        let missing = Value.list([.string("e-7"), .string("e-8")])
+        #expect(!MeridianComparison.identifies(missing, entity))
+    }
+
+    @Test("plain scalar equality when neither side has an identity string")
+    func scalarEquality() {
+        #expect(MeridianComparison.identifies(.number(5), .number(5)))
+        #expect(!MeridianComparison.identifies(.number(5), .number(6)))
+    }
+
+    @Test("nil or empty operands never identify")
+    func nilOrEmpty() {
+        let user = Value.record(["id": .string("u-1")])
+        #expect(!MeridianComparison.identifies(nil, user))
+        #expect(!MeridianComparison.identifies(.string("u-1"), nil))
+        #expect(!MeridianComparison.identifies(.string(""), user))
+        #expect(!MeridianComparison.identifies(.list([]), user))
+    }
+
+    @Test("a record without an id does not match a string by identity")
+    func recordWithoutId() {
+        let noId = Value.record(["name": .string("Ada")])
+        // No identity string on the record; falls through to direct ==, which
+        // a bare string can never satisfy against a record.
+        #expect(!MeridianComparison.identifies(.string("Ada"), noId))
+    }
+}

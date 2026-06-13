@@ -63,7 +63,13 @@ public struct ExpressionParser {
         case .now:                         return "now"
         case .decideWhether(let q):        return "decide(\(q))"
         case .interpolatedString(let segs): return "interp(\(segs.count) segs)"
+        case .recordList(let f, let rows):  return "recordList(\(f.count) fields, \(rows.count) rows)"
         case .quantified(let q):           return "quant(\(q.kind), \(q.description.noun))"
+        case .verbPredicate(let s, let v, let o): return "verb(\(describe(s)) \(v) \(describe(o)))"
+        case .relationTraversal(let b, let r, _): return "rel(\(describe(b)) ~ \(r))"
+        case .description(let d):          return "desc(\(d.noun))"
+        case .aggregate(let k, let d):     return "agg(\(k), \(d.noun))"
+        case .superlative(let s):          return "super(\(s.ascending ? "min" : "max") \(s.property) of \(s.description.noun))"
         case .malformed(let m):            return "malformed(\(m))"
         }
     }
@@ -170,10 +176,13 @@ public struct ExpressionParser {
 
     private func parseComparison(_ s: String) -> ExpressionAST {
         let t = s.trimmingCharacters(in: .whitespaces)
-        // Leaf-level precedence: quantifier → emptiness → temporal → markers → atom.
+        // Leaf-level precedence: quantifier → emptiness → temporal → active-verb
+        // predicate → comparison markers → atom (aggregate/superlative/
+        // description/scalar-nav are resolved inside parseAtom as value operands).
         if let q = parseQuantifierIfPresent(t) { return q }
         if let e = parseEmptinessIfPresent(t) { return e }
         if let tw = parseTemporalIfPresent(t) { return tw }
+        if let v = parseActiveVerbIfPresent(t) { return v }
         for (marker, op) in lexicon.comparisonMarkers {
             if let (lhs, rhs) = split(t, around: [marker]) {
                 return .comparison(parseAtom(lhs), op, parseAtom(rhs))
@@ -323,6 +332,19 @@ public struct ExpressionParser {
 
         // integer
         if let n = Int(t) { return .literal(.integer(n)) }
+
+        // 3C: relational value atoms (need the symbol table to resolve kinds /
+        // verbs). Precedence: aggregate (`the number/list of …`) → superlative
+        // (`the oldest …`) → scalar navigation (`the task assigned to X`) →
+        // description (`the stale pages that mention X`). A bare plural kind with
+        // no restriction is NOT a description and falls through to an identifier.
+        if symbols != nil {
+            if let agg = parseAggregateIfPresent(t) { return agg }
+            if let sup = parseSuperlativeIfPresent(t) { return sup }
+            if let nav = parseScalarNavIfPresent(t) { return nav }
+            if let desc = parseDescription(t) { return .description(desc) }
+            if let bad = undeclaredPassiveVerbError(t) { return bad }
+        }
 
         // possessive chain: "the customer's account manager's email" — also
         // handles bare possessives like "order's id" (after text substitution
@@ -499,10 +521,7 @@ public struct ExpressionParser {
         for p in ["of the ", "of "] where rest.lowercased().hasPrefix(p) {
             rest = String(rest.dropFirst(p.count)); break
         }
-        for a in ["the ", "an ", "a "] where rest.lowercased().hasPrefix(a) {
-            rest = String(rest.dropFirst(a.count)); break
-        }
-        rest = rest.trimmingCharacters(in: .whitespaces)
+        rest = lexicon.stripLeadingArticle(rest)
         guard !rest.isEmpty else {
             return .malformed("quantifier \"\(s)\" is missing a description (e.g. `all pages`).")
         }
@@ -606,5 +625,272 @@ public struct ExpressionParser {
         case "include": return "includes" + rest
         default:        return b
         }
+    }
+
+    // MARK: - 3B/3C. Relational surface forms
+
+    private func stripLeadingArticle(_ s: String) -> String {
+        lexicon.stripLeadingArticle(s)
+    }
+
+    /// 3B: active verb predicate `<subject> <verbs> <object>` (`the user owns the
+    /// page`). Splits on the earliest non-initial word that is an active (third
+    /// person / base) form of a declared verb. Past participles are skipped (they
+    /// are passive description clauses, not active predicates).
+    private func parseActiveVerbIfPresent(_ s: String) -> ExpressionAST? {
+        guard let sym = symbols, !sym.verbs.isEmpty else { return nil }
+        guard rangeOfMarkerOutsideQuotes("\"", in: s) == nil else { return nil }
+        let words = s.split(separator: " ").map(String.init)
+        guard words.count >= 3 else { return nil }
+        let relativizers: Set<String> = ["that", "which", "who", "whose", "whom"]
+        // Do-support auxiliaries that carry the negation in front of a base verb
+        // (`the entity does not link …`); contractions fuse the negator (`doesn't`).
+        let auxiliaries: Set<String> = ["does", "do", "did"]
+        let negContractions: Set<String> = ["doesn't", "don't", "didn't"]
+        for idx in 1..<(words.count - 1) {
+            let w = words[idx].lowercased()
+            guard let resolved = sym.resolveVerbForm(w), resolved.role != .pastParticiple else { continue }
+            // A verb immediately preceded by a relativizer is a relative-clause
+            // predicate inside a description (`pages that mention …`), not a
+            // top-level active-verb condition. Let parseAtom/description own it.
+            if relativizers.contains(words[idx - 1].lowercased()) { continue }
+            // Detect a negated predicate (`<subject> does not <verb> <object>` or
+            // `<subject> doesn't <verb> <object>`) so the verb's subject excludes
+            // the auxiliary + negator. The result is wrapped in `not`.
+            var subjectEnd = idx
+            var negated = false
+            let prev = words[idx - 1].lowercased()
+            if prev == "not", idx >= 2, auxiliaries.contains(words[idx - 2].lowercased()) {
+                subjectEnd = idx - 2
+                negated = true
+            } else if negContractions.contains(prev) {
+                subjectEnd = idx - 1
+                negated = true
+            }
+            let subject = words[0..<subjectEnd].joined(separator: " ")
+            let object = stripLeadingPreposition(words[(idx + 1)...].joined(separator: " "))
+            guard !subject.isEmpty, !object.isEmpty else { continue }
+            let predicate: ExpressionAST = .verbPredicate(subject: parseAtom(subject), verb: w, object: parseAtom(object))
+            return negated ? .logical(.not, [predicate]) : predicate
+        }
+        return nil
+    }
+
+    /// Strip a single leading preposition token (`link to the input` → `the
+    /// input`). Verbs that govern a preposition (`link to`, `report to`) carry it
+    /// between verb and object; objects of bare-transitive verbs are unaffected.
+    private func stripLeadingPreposition(_ s: String) -> String {
+        let t = s.trimmingCharacters(in: .whitespaces)
+        guard let first = t.split(separator: " ").first.map({ String($0).lowercased() }),
+              lexicon.prepositions.contains(first) else { return t }
+        return String(t.dropFirst(first.count)).trimmingCharacters(in: .whitespaces)
+    }
+
+    /// 3C: `the number of <desc>` / `the count of <desc>` / `the list of <desc>`.
+    private func parseAggregateIfPresent(_ raw: String) -> ExpressionAST? {
+        let s = stripLeadingArticle(raw)
+        let forms: [(String, AggregateKindAST)] =
+            [("number of ", .count), ("count of ", .count), ("list of ", .list)]
+        for (kw, kind) in forms where s.lowercased().hasPrefix(kw) {
+            let inner = String(s.dropFirst(kw.count)).trimmingCharacters(in: .whitespaces)
+            guard let desc = parseDescriptionOrBare(inner) else { return nil }
+            return .aggregate(kind, desc)
+        }
+        return nil
+    }
+
+    /// 3C: a superlative `the <gradable> <desc> [by <property>]`. Timestamp
+    /// gradables (`oldest`/`newest`/`most recent`) default to the lexicon's
+    /// timestamp property; magnitude gradables require `by <property>`.
+    private func parseSuperlativeIfPresent(_ raw: String) -> ExpressionAST? {
+        guard symbols != nil else { return nil }
+        let s = stripLeadingArticle(raw)
+        let words = s.split(separator: " ").map(String.init)
+        guard let first = words.first?.lowercased() else { return nil }
+        var gradable = first
+        var rest = words.dropFirst().joined(separator: " ")
+        if first == "most", words.count >= 2, words[1].lowercased() == "recent" {
+            gradable = "most recent"
+            rest = words.dropFirst(2).joined(separator: " ")
+        }
+        guard let dir = superlativeDirection(gradable) else { return nil }
+        var property: String?
+        if let r = rangeOfMarkerOutsideQuotes(" by ", in: rest.lowercased()) {
+            property = String(rest[r.upperBound...]).trimmingCharacters(in: .whitespaces).lowercased()
+            rest = String(rest[rest.startIndex..<r.lowerBound]).trimmingCharacters(in: .whitespaces)
+        }
+        guard let desc = parseDescriptionOrBare(rest) else { return nil }
+        let prop: String
+        if dir.needsBy {
+            guard let p = property else {
+                return .malformed("superlative `\(gradable)` needs a `by <property>` (e.g. `the \(gradable) \(desc.noun) by amount`).")
+            }
+            prop = p
+        } else {
+            prop = property ?? lexicon.timestampProperty
+        }
+        return .superlative(SuperlativeAST(description: desc, property: prop, ascending: dir.ascending))
+    }
+
+    private func superlativeDirection(_ g: String) -> (ascending: Bool, needsBy: Bool)? {
+        switch g {
+        case "oldest", "earliest":                  return (true, false)
+        case "newest", "latest", "most recent":     return (false, false)
+        case "smallest", "lowest", "least", "fewest": return (true, true)
+        case "largest", "highest", "most", "greatest", "biggest": return (false, true)
+        default:                                    return nil
+        }
+    }
+
+    /// 3C: scalar relation navigation `the <kind> <participle> {to|by} <operand>`
+    /// (`the task assigned to the user`). The head must be a singular declared
+    /// kind; a plural head is a passive description clause, handled elsewhere.
+    private func parseScalarNavIfPresent(_ raw: String) -> ExpressionAST? {
+        guard let sym = symbols else { return nil }
+        let s = stripLeadingArticle(raw)
+        let words = s.split(separator: " ").map(String.init)
+        guard words.count >= 4 else { return nil }
+        for idx in 1..<(words.count - 1) {
+            let w = words[idx].lowercased()
+            guard let resolved = sym.resolveVerbForm(w), resolved.role == .pastParticiple else { continue }
+            let conn = words[idx + 1].lowercased()
+            guard conn == "to" || conn == "by" else { continue }
+            let head = words[0..<idx].joined(separator: " ").lowercased()
+            guard sym.kinds[head] != nil else { return nil }
+            let operand = words[(idx + 2)...].joined(separator: " ")
+            guard !operand.isEmpty else { return nil }
+            return .relationTraversal(parseAtom(operand), relation: w, navKind: head)
+        }
+        return nil
+    }
+
+    /// 3C: parse a description `[first N] [adjectives] <plural kind> [whose … |
+    /// that <verb clause> | <participle> by <operand>] [sorted by <property>
+    /// [ascending|descending]]`. Returns nil unless the head is a plural declared
+    /// kind carrying at least one restriction/adjective/sort/take.
+    private func parseDescription(_ raw: String) -> DescriptionAST? {
+        guard let sym = symbols else { return nil }
+        var s = stripLeadingArticle(raw)
+
+        var take: Int?
+        let leading = s.split(separator: " ").map(String.init)
+        if leading.count >= 2, leading[0].lowercased() == "first", let n = Int(leading[1]) {
+            take = n
+            s = leading[2...].joined(separator: " ")
+        }
+
+        var sort: (property: String, ascending: Bool)?
+        if let r = rangeOfMarkerOutsideQuotes(" sorted by ", in: s.lowercased()) {
+            var tail = String(s[r.upperBound...]).trimmingCharacters(in: .whitespaces)
+            var asc = true
+            if tail.lowercased().hasSuffix(" descending") {
+                asc = false; tail = String(tail.dropLast(" descending".count))
+            } else if tail.lowercased().hasSuffix(" ascending") {
+                tail = String(tail.dropLast(" ascending".count))
+            }
+            sort = (property: tail.trimmingCharacters(in: .whitespaces).lowercased(), ascending: asc)
+            s = String(s[s.startIndex..<r.lowerBound]).trimmingCharacters(in: .whitespaces)
+        }
+
+        var wherePred: ExpressionAST?
+        var verbClauses: [VerbClauseAST] = []
+        var descPart = s
+
+        if let wr = rangeOfMarkerOutsideQuotes(" whose ", in: s.lowercased()) {
+            descPart = String(s[s.startIndex..<wr.lowerBound]).trimmingCharacters(in: .whitespaces)
+            wherePred = parse(String(s[wr.upperBound...]))
+        } else if let tr = rangeOfMarkerOutsideQuotes(" that ", in: s.lowercased()) {
+            descPart = String(s[s.startIndex..<tr.lowerBound]).trimmingCharacters(in: .whitespaces)
+            guard let vc = parseThatClause(String(s[tr.upperBound...])) else { return nil }
+            verbClauses.append(vc)
+        } else if let vc = parsePassiveClauseSuffix(&descPart) {
+            verbClauses.append(vc)
+        }
+
+        let (adjectives, noun) = splitAdjectivesAndNoun(descPart)
+        guard !noun.isEmpty else { return nil }
+        let singular = lexicon.singularize(noun.lowercased())
+        guard sym.kinds[singular] != nil, noun.lowercased() != singular else { return nil }
+        if wherePred == nil && verbClauses.isEmpty && adjectives.isEmpty && sort == nil && take == nil {
+            return nil
+        }
+        return DescriptionAST(noun: noun, adjectives: adjectives, wherePredicate: wherePred,
+                              verbClauses: verbClauses, sort: sort, take: take)
+    }
+
+    /// A description, or (failing that) a bare plural declared kind with no
+    /// restriction (used as an aggregate/superlative source).
+    private func parseDescriptionOrBare(_ inner: String) -> DescriptionAST? {
+        if let d = parseDescription(inner) { return d }
+        guard let sym = symbols else { return nil }
+        let s = stripLeadingArticle(inner)
+        let (adjectives, noun) = splitAdjectivesAndNoun(s)
+        guard !noun.isEmpty else { return nil }
+        let singular = lexicon.singularize(noun.lowercased())
+        guard sym.kinds[singular] != nil else { return nil }
+        return DescriptionAST(noun: noun, adjectives: adjectives)
+    }
+
+    /// Parse a `that …` relative clause into a verb clause. Subject-gap
+    /// (`that mention the entity`) has the verb first; object-gap (`that the user
+    /// owns`) has the verb last.
+    private func parseThatClause(_ raw: String) -> VerbClauseAST? {
+        guard let sym = symbols else { return nil }
+        let words = raw.trimmingCharacters(in: .whitespaces).split(separator: " ").map(String.init)
+        guard !words.isEmpty else { return nil }
+        if let r = sym.resolveVerbForm(words[0].lowercased()), r.role != .pastParticiple {
+            let operand = words[1...].joined(separator: " ")
+            guard !operand.isEmpty else { return nil }
+            return VerbClauseAST(verbForm: words[0].lowercased(),
+                                 operand: parseAtom(operand), elementIsSubject: true)
+        }
+        if words.count >= 2, let r = sym.resolveVerbForm(words.last!.lowercased()), r.role != .pastParticiple {
+            let operand = words[0..<(words.count - 1)].joined(separator: " ")
+            guard !operand.isEmpty else { return nil }
+            return VerbClauseAST(verbForm: words.last!.lowercased(),
+                                 operand: parseAtom(operand), elementIsSubject: false)
+        }
+        return nil
+    }
+
+    /// Detect a trailing passive clause `<participle> by <operand>` on `descPart`,
+    /// removing it from `descPart` and returning the verb clause (element = object).
+    private func parsePassiveClauseSuffix(_ descPart: inout String) -> VerbClauseAST? {
+        guard let sym = symbols else { return nil }
+        guard let byR = rangeOfMarkerOutsideQuotes(" by ", in: descPart.lowercased()) else { return nil }
+        let head = String(descPart[descPart.startIndex..<byR.lowerBound]).trimmingCharacters(in: .whitespaces)
+        let operand = String(descPart[byR.upperBound...]).trimmingCharacters(in: .whitespaces)
+        let hw = head.split(separator: " ").map(String.init)
+        guard let last = hw.last,
+              let r = sym.resolveVerbForm(last.lowercased()), r.role == .pastParticiple,
+              !operand.isEmpty else { return nil }
+        descPart = hw[0..<(hw.count - 1)].joined(separator: " ")
+        return VerbClauseAST(verbForm: last.lowercased(),
+                             operand: parseAtom(operand), elementIsSubject: false)
+    }
+
+    /// 3B: a high-confidence "you meant a relation verb here" error. Fires ONLY
+    /// when the text is unambiguously shaped like a passive relation clause —
+    /// `<plural declared kind> <participle-looking word> by <operand>` — but the
+    /// participle word names no declared verb. Ordinary prose ending in `… by …`
+    /// falls through untouched (the head must be a plural declared kind and the
+    /// pre-`by` word must look like a participle). This is the only place an
+    /// unknown relation verb surfaces, since every other relational production
+    /// requires `resolveVerbForm` to already succeed.
+    private func undeclaredPassiveVerbError(_ raw: String) -> ExpressionAST? {
+        guard let sym = symbols else { return nil }
+        let s = stripLeadingArticle(raw)
+        guard let byR = rangeOfMarkerOutsideQuotes(" by ", in: s.lowercased()) else { return nil }
+        let head = String(s[s.startIndex..<byR.lowerBound]).trimmingCharacters(in: .whitespaces)
+        let operand = String(s[byR.upperBound...]).trimmingCharacters(in: .whitespaces)
+        let hw = head.split(separator: " ").map(String.init)
+        guard hw.count >= 2, !operand.isEmpty, let cand = hw.last?.lowercased() else { return nil }
+        let looksParticiple = cand.hasSuffix("ed") || cand.hasSuffix("en")
+        guard looksParticiple, sym.resolveVerbForm(cand) == nil else { return nil }
+        let noun = hw[hw.count - 2].lowercased()
+        let singular = lexicon.singularize(noun)
+        guard sym.kinds[singular] != nil, noun != singular else { return nil }
+        let hint = sym.nearestVerbForm(to: cand).map { " (did you mean \"\($0)\"?)" } ?? ""
+        return .malformed("unknown relation verb \"\(cand)\"\(hint). Declare it with `The verb to <base> (it <3rd>, it is \(cand)) means the <relation> relation.`")
     }
 }

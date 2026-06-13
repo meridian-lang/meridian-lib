@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/idea-ingest/SKILL.md
-+++ skills/idea_ingest.meri
++++ idea_ingest.meri
 @@ -31,7 +31,7 @@
  
  > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.

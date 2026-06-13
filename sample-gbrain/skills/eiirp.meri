@@ -276,9 +276,9 @@ gbrain search "<topic keywords>"                # brain pages findable
 gbrain orphans                                  # any pages without inbound links?
 ```
 
-### Confirm (( inert ))
+### Confirm
 
-Confirm:
+!!! checklist (( ai-autonomy ))
 - [ ] All brain pages have proper frontmatter against active schema pack
 - [ ] All entity pages are cross-linked
 - [ ] Any new skills have routing entries in `skills/RESOLVER.md`

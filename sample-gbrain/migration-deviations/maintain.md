@@ -2,9 +2,9 @@
 
 - Original: `maintain/SKILL.md`
 - Ported: `maintain.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 90%
-- Lines: 431 -> 440 (+47 / -38)
+- Tier: 2 (light edits)
+- Similarity: 84%
+- Lines: 431 -> 449 (+81 / -63)
 
 ## Frontmatter
 - Added: (none)
@@ -12,18 +12,17 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 - preamble-blockquoted
 
 ## Metrics
-- Sections: 33/35 inert (94% inert ratio)
+- Sections: 32/33 inert (97% inert ratio)
 - Judgment: 0 blocks, 0 lines
 
 ## Unified diff
 
 ```diff
 --- original-skills/maintain/SKILL.md
-+++ skills/maintain.meri
++++ maintain.meri
 @@ -37,9 +37,9 @@
  
  # Maintain Skill
@@ -37,25 +36,30 @@
  
  This skill guarantees:
  - All health dimensions are checked (stale, orphan, dead links, cross-refs, backlinks, citations, filing, tags)
-@@ -50,7 +50,16 @@
+@@ -50,7 +50,21 @@
  
  ## Phases
  
 -### Autonomous path (v0.36.4.0) — when you want to reach a target score
-+### Stale-page guard (( role: procedure ))
++### Page-health scan
 +
-+> Surface pages that have no body so the audit never reports a brain as healthy
-+> while empty pages sit in it.
++> Surface pages that need attention so the audit never reports a brain as
++> healthy while problems sit in it. Each dimension is a checkable adjective
++> (`unwritten`/`orphan`/`stale`) defined in `brain.merconfig`.
 +
 +bind pages = invoke list pages with filter = "all".
 +if any pages are unwritten,
-+  emit maintain.stale_pages with action = "review".
++  emit maintain.unwritten_pages with action = "review".
++if any pages are orphan,
++  emit maintain.orphan_pages with action = "link".
++if any pages are stale,
++  emit maintain.stale_pages with action = "rewrite".
 +
 +### Autonomous path (v0.36.4.0) — when you want to reach a target score (( inert ))
  
  If the user asks "get my brain to 90/100" or "fix what's broken", prefer the
  one-command loop over walking each dimension by hand:
-@@ -76,30 +85,30 @@
+@@ -76,44 +90,42 @@
  - You're investigating why score is stuck below `--remediate`'s ceiling
  - A specific dimension needs manual judgment that the auto path skips
  
@@ -66,49 +70,73 @@
  2. **Check each dimension:**
  
 -### Stale pages
-+### Stale pages (( inert ))
- Pages where compiled_truth is older than the latest timeline entry. The assessment hasn't been updated to reflect recent evidence.
- - Check the health output for stale page count
- - For each stale page: read the page from gbrain, review timeline, determine if compiled_truth needs rewriting
- 
+-Pages where compiled_truth is older than the latest timeline entry. The assessment hasn't been updated to reflect recent evidence.
+-- Check the health output for stale page count
+-- For each stale page: read the page from gbrain, review timeline, determine if compiled_truth needs rewriting
+-
 -### Orphan pages
-+### Orphan pages (( inert ))
- Pages with zero inbound links. Nobody references them.
- - Review orphans: are they genuinely isolated or just missing links?
- - Add links in gbrain from related pages or flag for deletion
- 
+-Pages with zero inbound links. Nobody references them.
+-- Review orphans: are they genuinely isolated or just missing links?
+-- Add links in gbrain from related pages or flag for deletion
+-
 -### Dead links
-+### Dead links (( inert ))
- Links pointing to pages that don't exist.
- - Remove dead links in gbrain
- 
+-Links pointing to pages that don't exist.
+-- Remove dead links in gbrain
+-
 -### Missing cross-references
-+### Missing cross-references (( inert ))
- Pages that mention entity names but don't have formal links.
- - Read compiled_truth from gbrain, extract entity mentions, create links in gbrain
- 
+-Pages that mention entity names but don't have formal links.
+-- Read compiled_truth from gbrain, extract entity mentions, create links in gbrain
+-
 -### Link graph extraction
-+### Link graph extraction (( inert ))
- If link_count is 0 or low relative to page_count, run batch extraction:
- ```bash
- gbrain extract links --dir ~/brain
-@@ -107,13 +116,13 @@
- This scans all markdown files for entity references, See Also sections, and
- frontmatter fields, then creates typed links in the database.
- 
+-If link_count is 0 or low relative to page_count, run batch extraction:
+-```bash
+-gbrain extract links --dir ~/brain
+-```
+-This scans all markdown files for entity references, See Also sections, and
+-frontmatter fields, then creates typed links in the database.
+-
 -### Timeline extraction
-+### Timeline extraction (( inert ))
- If timeline_entry_count is 0, extract structured timeline from markdown:
- ```bash
- gbrain extract timeline --dir ~/brain
- ```
- 
+-If timeline_entry_count is 0, extract structured timeline from markdown:
+-```bash
+-gbrain extract timeline --dir ~/brain
+-```
+-
 -### Dream cycle (v0.23): synthesize + patterns
++### Dimension reference (( inert ))
++
++The page-level dimensions are now checkable adjectives driven by the
++`Page-health scan` above, not hand-walked prose:
++
++- **Stale** — `compiled truth` is empty (`Definition: a page is stale …`); the
++  assessment hasn't been written to reflect recent evidence.
++- **Orphan** — zero inbound links (`Definition: a page is orphan …`); nobody
++  references the page.
++- **Dead links / missing cross-references** — handled by the executable
++  `Create missing cross-references` and `Repair missing back-links` sections,
++  which add a back-link only when the relation is actually absent.
++
++### Create missing cross-references
++
++let referenced be the entities mentioned by the input.
++for each entity in referenced:
++  if the input does not reference the entity, add a back-link from the input to the entity.
++
++### Graph extraction
++
++> Backfill the structured graph layer when it is empty. The counts come from
++> the brain health dashboard; each guard runs the matching extraction command.
++
++Check brain health.
++if the health's edge count is 0,
++  `gbrain extract links --dir ~/brain`.
++if the health's timeline count is 0,
++  `gbrain extract timeline --dir ~/brain`.
++
 +### Dream cycle (v0.23): synthesize + patterns (( inert ))
  
  `gbrain dream` runs the full 8-phase maintenance cycle:
  
-@@ -190,7 +199,7 @@
+@@ -190,7 +202,7 @@
  Parses `- **YYYY-MM-DD** | Source — Summary` and `### YYYY-MM-DD — Title` formats.
  Note: extracted entries improve structured queries (`gbrain timeline`), not vector search.
  
@@ -117,7 +145,7 @@
  Verify autopilot is running:
  ```bash
  gbrain autopilot --status
-@@ -204,7 +213,7 @@
+@@ -204,7 +216,7 @@
  Minion job and supervises the worker child — one install step gives you
  sync + extract + embed + backlinks + durable job processing.
  
@@ -126,7 +154,7 @@
  A v0.11.0 install where the migration skill never fired leaves Minions
  partially set up: schema is applied, but `~/.gbrain/preferences.json`
  doesn't exist, autopilot runs inline, host manifests still reference
-@@ -224,7 +233,7 @@
+@@ -224,7 +236,7 @@
  
  Full troubleshooting guide: `docs/guides/minions-fix.md`.
  
@@ -135,16 +163,22 @@
  Check that the back-linking iron law is being followed:
  - For each recently updated page, check if entities mentioned in it have
    corresponding back-links FROM those entity pages
-@@ -232,7 +241,7 @@
+@@ -232,7 +244,13 @@
  - Fix: add the missing back-link to the entity's Timeline or See Also section
  - Format: `- **YYYY-MM-DD** | Referenced in [page title](path) -- brief context`
  
 -### Filing rule violations
++### Repair missing back-links
++
++let mentioned be the entities mentioned by the input.
++for each entity in mentioned:
++  if the entity does not link to the input, add a back-link from the entity to the input.
++
 +### Filing rule violations (( inert ))
  Check for common misfiling patterns (see `skills/_brain-filing-rules.md`):
  - Content with clear primary subjects filed in `sources/` instead of the
    appropriate directory (people/, companies/, concepts/, etc.)
-@@ -240,18 +249,18 @@
+@@ -240,18 +258,18 @@
    people, companies, or concepts -- these may be misfiled
  - Flag misfiled pages for review or re-filing
  
@@ -166,7 +200,7 @@
  
  The `links` and `timeline_entries` tables are the structured graph layer.
  Populate them periodically or after major imports:
-@@ -279,22 +288,22 @@
+@@ -279,22 +297,22 @@
  So link-extract is mostly a one-time backfill. timeline-extract should be re-run
  after bulk imports or content edits that add new dated entries.
  
@@ -193,7 +227,7 @@
  Check the integrity of stored files and redirect pointers:
  - Run `gbrain files verify` to check all DB records have valid data
  - Run `gbrain files status` to see migration state (local, mirrored, redirected)
-@@ -302,11 +311,11 @@
+@@ -302,11 +320,11 @@
  - Check for large binary files (>= 100 MB) still in git that should be in cloud storage
  - If storage backend is configured: verify redirect pointers resolve (download test)
  
@@ -207,7 +241,7 @@
  
  Periodically verify search quality hasn't regressed. Run a battery of test
  queries across difficulty tiers:
-@@ -325,18 +334,18 @@
+@@ -325,18 +343,18 @@
  - After embedding regeneration
  - Monthly to track quality drift
  
@@ -229,7 +263,7 @@
  
  Run `gbrain embed --stale` to refresh embeddings for pages that have changed since
  their last embedding. For large brains (>5000 pages), run this with nohup:
-@@ -344,18 +353,18 @@
+@@ -344,18 +362,18 @@
  nohup gbrain embed --stale > /tmp/gbrain-embed.log 2>&1 &
  ```
  
@@ -251,7 +285,7 @@
  
  After maintenance runs, save a report:
  - Health check results (before/after scores for each dimension)
-@@ -367,13 +376,13 @@
+@@ -367,13 +385,13 @@
  
  This creates an audit trail for brain health over time.
  
@@ -267,7 +301,7 @@
  
  - Fixing pages without reading them first -- you must understand context before editing
  - Silently skipping dimensions -- every dimension must be checked and reported, even if clean
-@@ -389,7 +398,7 @@
+@@ -389,7 +407,7 @@
  The maintenance report follows this structure:
  
  ```
@@ -276,7 +310,7 @@
  
  | Dimension           | Issues Found | Fixed | Remaining |
  |----------------------|-------------|-------|-----------|
-@@ -407,17 +416,17 @@
+@@ -407,13 +425,13 @@
  | File storage         | N           | N     | N         |
  | Open threads         | N           | N     | N         |
  
@@ -293,9 +327,4 @@
  [Items requiring user attention or confirmation]
  ```
  
--## Tools Used
-+## Tools Used (( inert ))
- 
- - Check gbrain health (get_health)
- - List pages in gbrain with filters (list_pages)
 ```

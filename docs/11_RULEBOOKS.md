@@ -12,6 +12,16 @@ section. They are parsed by `RulebookParser`
 recursive-descent parser in the same style as `MerConfigParser` — and applied
 by `RewriteEngine` (desugars) and `ConventionInjector` (behavioural rules).
 
+> **Design rule — surface vocabulary is data, not code.** Never hardcode an
+> English-surface word/phrase list (articles, prepositions, comparison markers,
+> duration units, assertion introducers like `make sure`/`ensure`/`assert`,
+> quantifier determiners, connectors, stop-words, …) inside the parser, lowering,
+> or codegen. It belongs in `EnglishLexicon` and — when it should be
+> domain-extensible — in the `=== language ===` section (or a `.merrules`
+> rulebook), so authors can extend the surface without recompiling Meridian. See
+> AGENTS.md §3 "No hardcoded English-surface vocabulary" for the end-to-end
+> procedure; `assertionMarkers` / `Assertion synonyms:` is the reference example.
+
 ---
 
 ## The invariant that keeps the core clean

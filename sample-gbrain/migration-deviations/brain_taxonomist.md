@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/brain-taxonomist/SKILL.md
-+++ skills/brain_taxonomist.meri
++++ brain_taxonomist.meri
 @@ -21,13 +21,13 @@
  
  # brain-taxonomist

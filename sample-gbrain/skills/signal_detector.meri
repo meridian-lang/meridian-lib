@@ -102,7 +102,7 @@ The output is brain pages created/updated and the signal log line.
 - Skipping back-links after creating/updating pages
 - Running on purely operational messages ("ok", "thanks", "do it")
 
-## Tools Used (( inert ))
+## Tools Used
 
 - `search` — check if entity page exists
 - `query` — semantic search for related context

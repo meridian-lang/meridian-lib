@@ -13,6 +13,12 @@ public final class SymbolTable: @unchecked Sendable {
     public private(set) var kinds:     [String: KindDeclaration]     = [:]
     public private(set) var properties:[String: [PropertyEntry]]     = [:]   // keyed by kind name
     public private(set) var relations: [String: RelationDeclaration] = [:]   // keyed by verb
+    /// 3A: relation evaluation backings, keyed by relation name (lowercased). A
+    /// relation declared without a backing sentence is a compile error
+    /// (validated in `ASTToIR.validateRelationsAndVerbs`).
+    public private(set) var relationBackings: [String: RelationBackingAST] = [:]
+    /// 3B: declared verbs, keyed by base form (lowercased).
+    public private(set) var verbs:     [String: VerbDeclaration]      = [:]
     public private(set) var constants: [String: ConstantDeclaration] = [:]
     public private(set) var instances: [String: InstanceDeclaration] = [:]
     public private(set) var tools:     [String: ToolDeclaration]     = [:]   // keyed by methodName
@@ -55,6 +61,72 @@ public final class SymbolTable: @unchecked Sendable {
     /// The definition record for a surface adjective, if any.
     public func definition(forAdjective adjective: String) -> DefinitionRecord? {
         definitions[adjective.lowercased().trimmingCharacters(in: .whitespaces)]
+    }
+
+    // MARK: - 3A/3B. Relations + verbs
+
+    /// Which grammatical role a matched verb surface form plays.
+    public enum VerbFormRole: Sendable, Equatable {
+        case base, thirdPerson, pastParticiple
+    }
+
+    public func relation(named name: String) -> RelationDeclaration? {
+        relations[name.lowercased().trimmingCharacters(in: .whitespaces)]
+    }
+
+    public func backing(forRelation name: String) -> RelationBackingAST? {
+        relationBackings[name.lowercased().trimmingCharacters(in: .whitespaces)]
+    }
+
+    /// 3B: resolve a surface verb form to its declared verb and the conjugation
+    /// that matched. Past participle ⇒ passive/object-gap reading; base/third
+    /// person ⇒ active/subject reading. Verbs are scanned in a deterministic
+    /// (base-sorted) order; genuine form collisions are reported at validation.
+    public func resolveVerbForm(_ form: String) -> (verb: VerbDeclaration, role: VerbFormRole)? {
+        let f = form.lowercased().trimmingCharacters(in: .whitespaces)
+        for v in verbs.values.sorted(by: { $0.base < $1.base }) {
+            if v.pastParticiple.lowercased() == f { return (v, .pastParticiple) }
+            if v.thirdPerson.lowercased() == f { return (v, .thirdPerson) }
+            if v.base.lowercased() == f { return (v, .base) }
+        }
+        return nil
+    }
+
+    /// True when `form` is any conjugated form of a declared verb.
+    public func isVerbForm(_ form: String) -> Bool { resolveVerbForm(form) != nil }
+
+    /// 3B: the declared verb surface form (base / 3rd person / participle) closest
+    /// to `form` by edit distance, when reasonably close. Powers "did you mean"
+    /// hints on unknown-verb errors. Returns nil when nothing is within an
+    /// edit-distance budget proportional to the form length.
+    public func nearestVerbForm(to form: String) -> String? {
+        let f = form.lowercased().trimmingCharacters(in: .whitespaces)
+        var best: (form: String, dist: Int)?
+        for v in verbs.values {
+            for cand in [v.base, v.thirdPerson, v.pastParticiple] {
+                let d = Self.levenshtein(f, cand.lowercased())
+                if best == nil || d < best!.dist { best = (cand, d) }
+            }
+        }
+        guard let b = best, b.dist <= Swift.max(2, f.count / 3) else { return nil }
+        return b.form
+    }
+
+    static func levenshtein(_ a: String, _ b: String) -> Int {
+        let x = Array(a), y = Array(b)
+        if x.isEmpty { return y.count }
+        if y.isEmpty { return x.count }
+        var prev = Array(0...y.count)
+        var cur = [Int](repeating: 0, count: y.count + 1)
+        for i in 1...x.count {
+            cur[0] = i
+            for j in 1...y.count {
+                let cost = x[i - 1] == y[j - 1] ? 0 : 1
+                cur[j] = Swift.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost)
+            }
+            swap(&prev, &cur)
+        }
+        return prev[y.count]
     }
 
     /// Declared property names for a kind (lowercased lookup).
@@ -100,6 +172,10 @@ public final class SymbolTable: @unchecked Sendable {
                 }
             case .relation(let r):
                 table.relations[r.verb.lowercased()] = r
+            case .relationBacking(let b):
+                table.relationBackings[b.relation.lowercased()] = b.backing
+            case .verb(let v):
+                table.verbs[v.base.lowercased()] = v
             case .inverse:
                 break  // tracked via relation in Phase 4
             case .phrase(var p):
@@ -225,7 +301,13 @@ public final class SymbolTable: @unchecked Sendable {
         case .now:                         return "now"
         case .decideWhether(let q):        return "decide(\(q))"
         case .interpolatedString(let segs): return "interp(\(segs.count) segs)"
+        case .recordList(let f, let rows): return "recordList(\(f.count) fields, \(rows.count) rows)"
         case .quantified(let q):           return "quant(\(q.kind))"
+        case .verbPredicate(_, let v, _):  return "verb(\(v))"
+        case .relationTraversal(_, let r, _): return "rel(\(r))"
+        case .description(let d):          return "desc(\(d.noun))"
+        case .aggregate(let k, let d):     return "agg(\(k), \(d.noun))"
+        case .superlative(let s):          return "super(\(s.property))"
         case .malformed(let m):            return "malformed(\(m))"
         }
     }

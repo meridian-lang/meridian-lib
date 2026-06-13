@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Route content to specialized ingestion skills. Detects input type and delegates.",
     "mutating" : "true",
@@ -132,7 +212,7 @@
         "text" : "Output Format"
       },
       {
-        "kind" : "inert",
+        "kind" : "tools",
         "level" : 2,
         "line" : 285,
         "text" : "Tools Used"
@@ -532,7 +612,7 @@
           "Store raw data in gbrain (put_raw_data)",
           "Check backlinks in gbrain (get_backlinks)"
         ],
-        "role" : "inert"
+        "role" : "tools"
       }
     ],
     "tools" : "search\nget_page\nput_page\nadd_link\nadd_timeline_entry\nsync_brain",
@@ -540,6 +620,36 @@
     "writes_pages" : "true",
     "writes_to" : "people\/\ncompanies\/\nconcepts\/\nmeetings\/\nsources\/"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "ingest.meri",
     "brain.merconfig"
@@ -547,43 +657,50 @@
   "source_map" : [
     {
       "meridian_line" : 54,
-      "swift_line" : 542
+      "swift_line" : 592
     },
     {
       "meridian_line" : 68,
-      "swift_line" : 551
-    },
-    {
-      "meridian_line" : 73,
-      "swift_line" : 561
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 600
-    },
-    {
-      "meridian_line" : 1,
       "swift_line" : 605
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 644
+      "meridian_line" : 73,
+      "swift_line" : 619
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 649
+      "swift_line" : 660
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 688
+      "swift_line" : 665
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 693
+      "swift_line" : 706
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 711
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 752
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 757
     }
   ],
   "tools_used" : [
-
+    "get_page",
+    "put_page",
+    "add_timeline_entry",
+    "add_link",
+    "get_tags",
+    "add_tag",
+    "put_raw_data",
+    "get_backlinks"
   ],
   "workflows" : [
     {

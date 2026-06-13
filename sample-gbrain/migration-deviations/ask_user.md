@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/ask-user/SKILL.md
-+++ skills/ask_user.meri
++++ ask_user.meri
 @@ -16,7 +16,7 @@
  
  # Ask User — Choice Gate Pattern

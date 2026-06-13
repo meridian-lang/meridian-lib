@@ -138,7 +138,10 @@ struct CompileCommand: AsyncParsableCommand {
             metadata: m.metadata,
             outline: m.outline,
             rules: m.rules,
-            skillSections: m.skillSections
+            skillSections: m.skillSections,
+            definitions: m.definitions,
+            relations: m.relations,
+            verbs: m.verbs
         ))
         let manifestFile = outputURL.appendingPathComponent(
             meridianURL.deletingPathExtension().lastPathComponent + ".meridian.manifest.json"

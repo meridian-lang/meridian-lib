@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/frontmatter-guard/SKILL.md
-+++ skills/frontmatter_guard.meri
++++ frontmatter_guard.meri
 @@ -21,7 +21,7 @@
  
  > **Convention:** see `skills/conventions/quality.md` for citation rules; this skill is structural validation, not citation auditing.

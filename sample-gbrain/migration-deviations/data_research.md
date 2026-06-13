@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/data-research/SKILL.md
-+++ skills/data_research.meri
++++ data_research.meri
 @@ -28,10 +28,10 @@
  
  # Data Research

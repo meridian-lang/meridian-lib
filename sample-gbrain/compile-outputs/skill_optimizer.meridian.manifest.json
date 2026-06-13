@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "brain_first" : "exempt",
     "description" : "Self-evolving skill optimization via SkillOpt-paper-grounded text-space optimizer.",
@@ -175,16 +255,7 @@
         "heading" : "Decision tree",
         "line" : 125,
         "lines" : [
-          "| Situation | Action |",
-          "|---|---|",
-          "| Skill has no benchmark | `gbrain skillopt foo --bootstrap-from-skill` → review + strengthen the judges → delete sentinel → `gbrain skillopt foo --bootstrap-reviewed --split 1:1:1` (see section above) |",
-          "| Skill has a `routing-eval.jsonl` and you want a head start | `gbrain skillopt foo --bootstrap-from-routing` → review the generated tasks → `--bootstrap-reviewed` (routing tasks test dispatch; tighten them into quality tasks before trusting) |",
-          "| Iterating on an existing skill | `gbrain skillopt foo --benchmark skills\/foo\/skillopt-benchmark.jsonl` |",
-          "| Costly run, want preview | Add `--dry-run` |",
-          "| Bundled skill (skills\/ in gbrain repo) | Default writes proposed.md; to commit in place add `--allow-mutate-bundled` AND `--held-out <path>` (>=5 benchmark-disjoint tasks) — else it hard-refuses |",
-          "| Want to review changes before applying | Add `--no-mutate` (writes proposed.md, no held-out needed) |",
-          "| Guard against benchmark overfitting | Add `--held-out <path>` — a candidate that beats the benchmark but regresses on the held-out set is refused |",
-          "| Mid-run crash | `gbrain skillopt foo --resume <run-id>` |"
+          "table:decision:fCBTaXR1YXRpb24gfCBBY3Rpb24gfAp8LS0tfC0tLXwKfCBTa2lsbCBoYXMgbm8gYmVuY2htYXJrIHwgYGdicmFpbiBza2lsbG9wdCBmb28gLS1ib290c3RyYXAtZnJvbS1za2lsbGAg4oaSIHJldmlldyArIHN0cmVuZ3RoZW4gdGhlIGp1ZGdlcyDihpIgZGVsZXRlIHNlbnRpbmVsIOKGkiBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLWJvb3RzdHJhcC1yZXZpZXdlZCAtLXNwbGl0IDE6MToxYCAoc2VlIHNlY3Rpb24gYWJvdmUpIHwKfCBTa2lsbCBoYXMgYSBgcm91dGluZy1ldmFsLmpzb25sYCBhbmQgeW91IHdhbnQgYSBoZWFkIHN0YXJ0IHwgYGdicmFpbiBza2lsbG9wdCBmb28gLS1ib290c3RyYXAtZnJvbS1yb3V0aW5nYCDihpIgcmV2aWV3IHRoZSBnZW5lcmF0ZWQgdGFza3Mg4oaSIGAtLWJvb3RzdHJhcC1yZXZpZXdlZGAgKHJvdXRpbmcgdGFza3MgdGVzdCBkaXNwYXRjaDsgdGlnaHRlbiB0aGVtIGludG8gcXVhbGl0eSB0YXNrcyBiZWZvcmUgdHJ1c3RpbmcpIHwKfCBJdGVyYXRpbmcgb24gYW4gZXhpc3Rpbmcgc2tpbGwgfCBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLWJlbmNobWFyayBza2lsbHMvZm9vL3NraWxsb3B0LWJlbmNobWFyay5qc29ubGAgfAp8IENvc3RseSBydW4sIHdhbnQgcHJldmlldyB8IEFkZCBgLS1kcnktcnVuYCB8CnwgQnVuZGxlZCBza2lsbCAoc2tpbGxzLyBpbiBnYnJhaW4gcmVwbykgfCBEZWZhdWx0IHdyaXRlcyBwcm9wb3NlZC5tZDsgdG8gY29tbWl0IGluIHBsYWNlIGFkZCBgLS1hbGxvdy1tdXRhdGUtYnVuZGxlZGAgQU5EIGAtLWhlbGQtb3V0IDxwYXRoPmAgKD49NSBiZW5jaG1hcmstZGlzam9pbnQgdGFza3MpIOKAlCBlbHNlIGl0IGhhcmQtcmVmdXNlcyB8CnwgV2FudCB0byByZXZpZXcgY2hhbmdlcyBiZWZvcmUgYXBwbHlpbmcgfCBBZGQgYC0tbm8tbXV0YXRlYCAod3JpdGVzIHByb3Bvc2VkLm1kLCBubyBoZWxkLW91dCBuZWVkZWQpIHwKfCBHdWFyZCBhZ2FpbnN0IGJlbmNobWFyayBvdmVyZml0dGluZyB8IEFkZCBgLS1oZWxkLW91dCA8cGF0aD5gIOKAlCBhIGNhbmRpZGF0ZSB0aGF0IGJlYXRzIHRoZSBiZW5jaG1hcmsgYnV0IHJlZ3Jlc3NlcyBvbiB0aGUgaGVsZC1vdXQgc2V0IGlzIHJlZnVzZWQgfAp8IE1pZC1ydW4gY3Jhc2ggfCBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLXJlc3VtZSA8cnVuLWlkPmAgfA=="
         ],
         "role" : "inert"
       },
@@ -251,6 +322,36 @@
     "triggers" : "\"optimize this skill\"\n\"tune the skill against the benchmark\"\n\"make the skill better\"\n\"run skillopt\"\n\"skillopt for\"",
     "version" : "0.1.0"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "skill_optimizer.meri",
     "brain.merconfig"
@@ -258,43 +359,43 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 570
+      "swift_line" : 621
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 575
+      "swift_line" : 626
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 614
+      "swift_line" : 665
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 619
+      "swift_line" : 670
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 658
+      "swift_line" : 709
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 663
+      "swift_line" : 714
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 702
+      "swift_line" : 753
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 707
+      "swift_line" : 758
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 746
+      "swift_line" : 797
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 751
+      "swift_line" : 802
     }
   ],
   "tools_used" : [

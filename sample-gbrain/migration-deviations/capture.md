@@ -23,7 +23,7 @@
 
 ```diff
 --- original-skills/capture/SKILL.md
-+++ skills/capture.meri
++++ capture.meri
 @@ -14,12 +14,12 @@
  
  # capture — the single ingestion entrypoint

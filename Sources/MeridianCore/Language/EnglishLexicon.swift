@@ -36,6 +36,12 @@ public struct EnglishLexicon: Sendable {
     /// Stop-words stripped before token-overlap tool-resolution scoring.
     public let toolStopwords: Set<String>
 
+    /// Leading keywords that introduce an invariant/assertion statement
+    /// (`make sure X.`, `ensure X.`, `assert X.`). Ordered longest-first so a
+    /// multi-word marker matches before a single-word prefix of it. Extend via
+    /// a `=== language ===` `Assertion synonyms:` block.
+    public let assertionMarkers: [String]
+
     /// The element property a temporal iteration clause (`within the last`/`in
     /// the next`) resolves `updated`/`created`-style references to. Default
     /// `updatedAt`; override via a `=== language ===` `timestamp:` entry.
@@ -50,6 +56,7 @@ public struct EnglishLexicon: Sendable {
         comparisonMarkers: [(String, ComparisonOpAST)],
         durationUnits: [String: TimeUnitAST],
         toolStopwords: Set<String>,
+        assertionMarkers: [String] = ["make sure", "ensure", "assert"],
         timestampProperty: String = "updatedAt"
     ) {
         self.articles = articles
@@ -60,6 +67,7 @@ public struct EnglishLexicon: Sendable {
         self.comparisonMarkers = comparisonMarkers
         self.durationUnits = durationUnits
         self.toolStopwords = toolStopwords
+        self.assertionMarkers = assertionMarkers
         self.timestampProperty = timestampProperty
     }
 
@@ -112,6 +120,26 @@ public struct EnglishLexicon: Sendable {
                         "and", "or", "invoke", "call", "run"]
     )
 
+    // MARK: - Articles
+
+    /// Strip a single leading article (`a`/`an`/`the`, plus any domain-added
+    /// `articles` entries) from `s`, if present. Case-insensitive; the returned
+    /// string preserves the original casing of the remainder. Longest article
+    /// first, so a multi-word article cannot be shadowed by a shorter prefix.
+    /// Use this instead of re-listing `["the ", "a ", "an "]` inline — articles
+    /// are lexicon-owned surface vocabulary (see AGENTS.md §3).
+    public func stripLeadingArticle(_ s: String) -> String {
+        let trimmed = s.trimmingCharacters(in: .whitespaces)
+        let lower = trimmed.lowercased()
+        for article in articles.sorted(by: { $0.count > $1.count }) {
+            let prefix = article + " "
+            if lower.hasPrefix(prefix) {
+                return String(trimmed.dropFirst(prefix.count)).trimmingCharacters(in: .whitespaces)
+            }
+        }
+        return trimmed
+    }
+
     // MARK: - Duration parsing
 
     /// Try to parse "N unit" text into a (Double, TimeUnitAST) pair using this
@@ -136,13 +164,67 @@ public struct EnglishLexicon: Sendable {
 
     public func singularize(_ raw: String) -> String {
         let s = raw.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        // `ies` → `y` (after a consonant): `categories` → `category`.
+        if s.hasSuffix("ies"), s.count > 3 {
+            let stem = s.dropLast(3)
+            if let prev = stem.last, !"aeiou".contains(prev) { return String(stem) + "y" }
+        }
+        // `es` only strips two when the stem ends in a sibilant (`statuses` →
+        // `status`, `boxes` → `box`). Plain `pages` must NOT become `pag`.
         if s.hasSuffix("es"), s.count > 2 {
-            return String(s.dropLast(2))
+            let stem = s.dropLast(2)
+            if stem.hasSuffix("s") || stem.hasSuffix("x") || stem.hasSuffix("z")
+                || stem.hasSuffix("ch") || stem.hasSuffix("sh") {
+                return String(stem)
+            }
         }
         if s.hasSuffix("s"), s.count > 1 {
             return String(s.dropLast())
         }
         return s
+    }
+
+    /// Regular pluralization, the inverse of `singularize`: `y→ies` after a
+    /// consonant, `+es` after a sibilant, else `+s`. Already-plural inputs are
+    /// returned unchanged.
+    public func pluralize(_ raw: String) -> String {
+        let s = raw.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !s.isEmpty else { return s }
+        if s.hasSuffix("s") || s.hasSuffix("x") || s.hasSuffix("z")
+            || s.hasSuffix("ch") || s.hasSuffix("sh") { return s.hasSuffix("s") ? s : s + "es" }
+        if s.hasSuffix("y"), let prev = s.dropLast().last, !"aeiou".contains(prev) {
+            return String(s.dropLast()) + "ies"
+        }
+        return s + "s"
+    }
+
+    // MARK: - 3B. Regular verb morphology
+
+    /// Third-person singular of a regular verb base: `+es` after a sibilant/
+    /// `o`/`x`/`z`, `y→ies` after a consonant, else `+s`. No consonant doubling.
+    /// Authors override irregulars inline in the verb declaration.
+    public func thirdPersonSingular(_ base: String) -> String {
+        let b = base.lowercased()
+        guard let last = b.last else { return b }
+        if b.hasSuffix("s") || b.hasSuffix("sh") || b.hasSuffix("ch") || b.hasSuffix("x") || b.hasSuffix("z") || b.hasSuffix("o") {
+            return b + "es"
+        }
+        if last == "y", let prev = b.dropLast().last, !"aeiou".contains(prev) {
+            return String(b.dropLast()) + "ies"
+        }
+        return b + "s"
+    }
+
+    /// Regular past participle: `+d` after `e`, `y→ied` after a consonant, else
+    /// `+ed`. No consonant doubling; irregulars are declared inline.
+    public func regularPastParticiple(_ base: String) -> String {
+        let b = base.lowercased()
+        guard let last = b.last else { return b }
+        if last == "e" { return b + "d" }
+        if last == "y", let prev = b.dropLast().last, !"aeiou".contains(prev) {
+            return String(b.dropLast()) + "ied"
+        }
+        return b + "ed"
     }
 
     // MARK: - Struct-name derivation
@@ -186,11 +268,18 @@ public struct EnglishLexicon: Sendable {
     public func merging(
         comparisonSynonyms: [(String, ComparisonOpAST)],
         durationSynonyms: [String: TimeUnitAST],
+        assertionSynonyms: [String] = [],
         timestampProperty: String? = nil
     ) -> EnglishLexicon {
         let mergedComparisons = comparisonSynonyms + comparisonMarkers
         var mergedDuration = durationUnits
         for (k, v) in durationSynonyms { mergedDuration[k] = v }
+        // Author-supplied markers take priority; de-duplicate, then sort
+        // longest-first so a multi-word marker wins over a single-word prefix.
+        var seen = Set<String>()
+        let mergedAssertions = (assertionSynonyms.map { $0.lowercased() } + assertionMarkers)
+            .filter { seen.insert($0).inserted }
+            .sorted { $0.count > $1.count }
         return EnglishLexicon(
             articles: articles,
             prepositions: prepositions,
@@ -200,6 +289,7 @@ public struct EnglishLexicon: Sendable {
             comparisonMarkers: mergedComparisons,
             durationUnits: mergedDuration,
             toolStopwords: toolStopwords,
+            assertionMarkers: mergedAssertions,
             timestampProperty: timestampProperty ?? self.timestampProperty
         )
     }

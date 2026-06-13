@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/skillpack-check/SKILL.md
-+++ skills/skillpack_check.meri
++++ skillpack_check.meri
 @@ -23,7 +23,7 @@
  
  # Skillpack Check

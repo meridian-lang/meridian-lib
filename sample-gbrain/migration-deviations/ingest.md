@@ -4,7 +4,7 @@
 - Ported: `ingest.meri`
 - Tier: 1 (near-verbatim)
 - Similarity: 86%
-- Lines: 312 -> 295 (+34 / -51)
+- Lines: 312 -> 295 (+33 / -50)
 
 ## Frontmatter
 - Added: (none)
@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/ingest/SKILL.md
-+++ skills/ingest.meri
++++ ingest.meri
 @@ -24,11 +24,11 @@
  
  # Ingest Skill
@@ -217,13 +217,4 @@
  
  - **Appending to State sections.** State is rewritten with the current best understanding on every update. Append-only State sections grow stale and contradictory.
  - **Ingesting without back-links.** An unlinked mention is a broken brain. Every entity mentioned must have a back-link from their page to the page mentioning them.
-@@ -299,7 +282,7 @@
- Raw source: [preserved at path / uploaded to cloud]
- ```
- 
--## Tools Used
-+## Tools Used (( inert ))
- 
- - Read a page from gbrain (get_page)
- - Store/update a page in gbrain (put_page)
 ```

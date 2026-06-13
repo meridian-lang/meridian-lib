@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Verify a research claim or academic citation by tracing it through publication → methodology → raw data → independent replication. Routes through perplexity-research for the actual web lookup, then formats results as a citation-checked brain page. Use when a book\/article\/conversation cites a study and you want to confirm the claim is real, replicated, and accurately characterized.",
     "mutating" : "true",
@@ -175,14 +255,7 @@
         "heading" : "Useful databases (the agent uses these via perplexity-research)",
         "line" : 159,
         "lines" : [
-          "| Database | What it has | URL pattern |",
-          "|----------|-------------|-------------|",
-          "| Retraction Watch | Retractions, corrections, expressions of concern | retractionwatch.com\/?s=NAME |",
-          "| PubPeer | Anonymous post-publication peer review | pubpeer.com\/search?q=NAME |",
-          "| OSF | Pre-registrations, open data, open materials | osf.io\/search\/?q=QUERY |",
-          "| Semantic Scholar | Citation analysis, paper metadata | api.semanticscholar.org |",
-          "| OpenAlex | Open citation data, institutional affiliations | api.openalex.org |",
-          "| Many Labs | Replication results for social psychology | osf.io\/wx7ck\/ |"
+          "table:decision:fCBEYXRhYmFzZSB8IFdoYXQgaXQgaGFzIHwgVVJMIHBhdHRlcm4gfAp8LS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18CnwgUmV0cmFjdGlvbiBXYXRjaCB8IFJldHJhY3Rpb25zLCBjb3JyZWN0aW9ucywgZXhwcmVzc2lvbnMgb2YgY29uY2VybiB8IHJldHJhY3Rpb253YXRjaC5jb20vP3M9TkFNRSB8CnwgUHViUGVlciB8IEFub255bW91cyBwb3N0LXB1YmxpY2F0aW9uIHBlZXIgcmV2aWV3IHwgcHVicGVlci5jb20vc2VhcmNoP3E9TkFNRSB8CnwgT1NGIHwgUHJlLXJlZ2lzdHJhdGlvbnMsIG9wZW4gZGF0YSwgb3BlbiBtYXRlcmlhbHMgfCBvc2YuaW8vc2VhcmNoLz9xPVFVRVJZIHwKfCBTZW1hbnRpYyBTY2hvbGFyIHwgQ2l0YXRpb24gYW5hbHlzaXMsIHBhcGVyIG1ldGFkYXRhIHwgYXBpLnNlbWFudGljc2Nob2xhci5vcmcgfAp8IE9wZW5BbGV4IHwgT3BlbiBjaXRhdGlvbiBkYXRhLCBpbnN0aXR1dGlvbmFsIGFmZmlsaWF0aW9ucyB8IGFwaS5vcGVuYWxleC5vcmcgfAp8IE1hbnkgTGFicyB8IFJlcGxpY2F0aW9uIHJlc3VsdHMgZm9yIHNvY2lhbCBwc3ljaG9sb2d5IHwgb3NmLmlvL3d4N2NrLyB8"
         ],
         "role" : "inert"
       },
@@ -270,6 +343,36 @@
     "writes_pages" : "true",
     "writes_to" : "concepts\/"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "academic_verify.meri",
     "brain.merconfig"
@@ -277,51 +380,51 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 571
+      "swift_line" : 622
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 576
+      "swift_line" : 627
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 615
+      "swift_line" : 666
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 620
+      "swift_line" : 671
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 659
+      "swift_line" : 710
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 664
+      "swift_line" : 715
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 703
+      "swift_line" : 754
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 708
+      "swift_line" : 759
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 747
+      "swift_line" : 798
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 752
+      "swift_line" : 803
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 791
+      "swift_line" : 842
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 796
+      "swift_line" : 847
     }
   ],
   "tools_used" : [

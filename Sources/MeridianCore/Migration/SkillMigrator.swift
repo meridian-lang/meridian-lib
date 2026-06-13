@@ -47,6 +47,19 @@ public struct SkillMigrator {
         public let attempt: Int
     }
 
+    /// A markdown heading the migrator routed to a closed section role via a
+    /// rulebook `=== sections ===` alias (instead of an inline `(( … ))` marker).
+    /// The CLI persists these to the rulebook so future compiles/re-migrations
+    /// recognize the heading with no in-file marker.
+    public struct SectionAlias: Sendable, Equatable {
+        public let heading: String
+        public let role: SkillSectionRole
+        public init(heading: String, role: SkillSectionRole) {
+            self.heading = heading
+            self.role = role
+        }
+    }
+
     public struct Report: Sendable {
         public var compiledOK: Bool
         public var repairAttempts: Int
@@ -62,6 +75,10 @@ public struct SkillMigrator {
         public var meriSource: String
         public var report: Report
         public var compiledOK: Bool
+        /// Section-role aliases the migrator emitted for the rulebook (each an
+        /// unrecognized executable heading routed to a closed role). Empty when
+        /// every heading resolved via a built-in role or an inline marker.
+        public var sectionAliases: [SectionAlias]
     }
 
     let compiler: Compiler
@@ -83,8 +100,15 @@ public struct SkillMigrator {
     }
 
     public func migrate(_ markdown: String, file: String = "skill.meri") async throws -> Result {
-        let (transformed, addedKeys) = deterministicTransform(markdown)
+        let (transformed, addedKeys, aliases) = deterministicTransform(markdown)
         let originalLineCount = markdown.components(separatedBy: "\n").count
+
+        // The aliases the marking pass chose (e.g. a pure-shell heading routed to
+        // `procedure`) are left UNMARKED in the .meri, so they must be supplied to
+        // the strict compile as a synthetic rulebook — otherwise an unrecognized
+        // heading with content is a hard error. The CLI persists the same aliases
+        // to the on-disk rulebook so the written .meri compiles standalone.
+        let effectiveRulebooks = rulebookInputs + Self.aliasRulebook(aliases)
 
         var candidate = transformed
         var diagnostics: [String] = []
@@ -94,24 +118,38 @@ public struct SkillMigrator {
             do {
                 _ = try compiler.compile(
                     meridianSource: candidate, meridianFile: file,
-                    vocabularies: vocabularies, rulebooks: rulebookInputs
+                    vocabularies: vocabularies, rulebooks: effectiveRulebooks
                 )
                 return result(candidate, addedKeys: addedKeys, diagnostics: diagnostics,
                               attempts: attempts, originalLineCount: originalLineCount,
-                              compiledOK: true)
+                              compiledOK: true, aliases: aliases)
             } catch {
                 let diag = describe(error)
                 diagnostics.append(diag)
                 guard let repair, attempts < options.maxRepair else {
                     return result(candidate, addedKeys: addedKeys, diagnostics: diagnostics,
                                   attempts: attempts, originalLineCount: originalLineCount,
-                                  compiledOK: false)
+                                  compiledOK: false, aliases: aliases)
                 }
                 attempts += 1
                 candidate = try await repair(RepairRequest(
                     candidate: candidate, diagnostic: diag, attempt: attempts))
             }
         }
+    }
+
+    /// Render section aliases as a synthetic `=== sections ===` rulebook input
+    /// (empty array → no input), so the marking pass's unmarked executable
+    /// headings resolve during the strict compile.
+    static func aliasRulebook(_ aliases: [SectionAlias]) -> [RulebookInput] {
+        guard !aliases.isEmpty else { return [] }
+        var lines = ["=== sections ==="]
+        for a in aliases {
+            lines.append("section \"\(a.heading)\" -> \(a.role.rawValue)")
+        }
+        return [RulebookInput(name: "__migrator-section-aliases__",
+                              file: "__migrator-section-aliases__.merrules",
+                              source: lines.joined(separator: "\n") + "\n")]
     }
 
     // MARK: - Deterministic transform
@@ -145,8 +183,10 @@ public struct SkillMigrator {
     /// organizational headings get `(( inert ))` and are the author's residue to
     /// resolve (split into a procedure section, alias in the rulebook, or keep
     /// inert). `addedKeys` is always empty — the pass adds no frontmatter.
-    func deterministicTransform(_ markdown: String) -> (source: String, addedKeys: [String]) {
-        (rewriteCommandPlaceholders(markSections(markdown)), [])
+    func deterministicTransform(_ markdown: String)
+        -> (source: String, addedKeys: [String], aliases: [SectionAlias]) {
+        let (marked, aliases) = markSections(markdown)
+        return (rewriteCommandPlaceholders(marked), [], aliases)
     }
 
     // MARK: - Command hole rewrite (1B)
@@ -287,12 +327,12 @@ public struct SkillMigrator {
 
     /// Apply the blockquote-preamble + heading-marker pass (see
     /// `deterministicTransform`). A heading-less document is returned untouched.
-    func markSections(_ markdown: String) -> String {
+    func markSections(_ markdown: String) -> (markdown: String, aliases: [SectionAlias]) {
         var lines = markdown.components(separatedBy: "\n")
         let bodyStart = frontmatterEnd(lines)
 
         let headingIdxs = lines.indices.filter { $0 >= bodyStart && headingMatch(lines[$0]) != nil }
-        guard let firstHeading = headingIdxs.first else { return markdown }
+        guard let firstHeading = headingIdxs.first else { return (markdown, []) }
 
         // 1. Blockquote preamble (body lines before the first heading).
         if firstHeading > bodyStart {
@@ -303,17 +343,25 @@ public struct SkillMigrator {
             }
         }
 
-        // 2. Mark headings.
+        // 2. Mark headings (or route to a rulebook alias).
+        var aliases: [SectionAlias] = []
         for (k, idx) in headingIdxs.enumerated() {
             guard let m = headingMatch(lines[idx]) else { continue }
             if m.text.hasSuffix("))") { continue }   // already marked — idempotent
             let end = (k + 1 < headingIdxs.count) ? headingIdxs[k + 1] : lines.count
             let body = lines[(idx + 1)..<end]
-            if let marker = marker(forHeading: m.text, body: body) {
+            switch decision(forHeading: m.text, body: body) {
+            case .leaveUnmarked:
+                break
+            case .inline(let marker):
                 lines[idx] = "\(m.hashes) \(m.text) \(marker)"
+            case .alias(let role):
+                // Leave the heading clean; the role is supplied via a rulebook
+                // `=== sections ===` alias the CLI persists.
+                aliases.append(SectionAlias(heading: m.text, role: role))
             }
         }
-        return lines.joined(separator: "\n")
+        return (lines.joined(separator: "\n"), aliases)
     }
 
     // MARK: - Marking helpers
@@ -345,25 +393,42 @@ public struct SkillMigrator {
         return (String(repeating: "#", count: hashes), text)
     }
 
-    /// The marker to append to `heading` (or nil to leave it unmarked), chosen by
-    /// the built-in role alias and, for unrecognized headings, whether the body
-    /// restates a rulebook convention, then whether the body is pure shell.
-    private func marker(forHeading heading: String, body: ArraySlice<String>) -> String? {
+    /// How the marking pass handles a heading.
+    private enum MarkDecision {
+        /// Recognized role — leave the heading clean, no marker, no alias.
+        case leaveUnmarked
+        /// Append an inline `(( … ))` marker (inert / invariants / prohibitions /
+        /// convention-ref — non-executable or role-restating prose).
+        case inline(String)
+        /// Route to a closed role via a rulebook `=== sections ===` alias instead
+        /// of an inline `(( role: … ))` marker. Used for unrecognized *executable*
+        /// headings (a pure-shell section), so the heading stays clean and the
+        /// role lives as reusable rulebook data.
+        case alias(SkillSectionRole)
+    }
+
+    /// Decide how to handle `heading`, by the built-in role alias and, for
+    /// unrecognized headings, whether the body restates a rulebook convention,
+    /// then whether the body is pure shell.
+    private func decision(forHeading heading: String, body: ArraySlice<String>) -> MarkDecision {
         switch SkillSectionRole.builtinRole(forHeading: heading) {
         case .invariants:
-            return "(( inert, role: invariants ))"
+            return .inline("(( inert, role: invariants ))")
         case .prohibitions:
-            return "(( inert, role: prohibitions ))"
+            return .inline("(( inert, role: prohibitions ))")
         case .some:
             // procedure / applicability / negative-applicability / template /
             // tools — these lower as their role, leave them unmarked.
-            return nil
+            return .leaveUnmarked
         case .none:
             // 1D: a section whose body verbatim restates an external rulebook
             // convention is recorded as `convention-ref` (inert metadata) rather
             // than generic inert prose.
-            if bodyRestatesConvention(body) { return "(( inert, role: convention-ref ))" }
-            return sectionIsPureShell(body) ? "(( role: procedure ))" : "(( inert ))"
+            if bodyRestatesConvention(body) { return .inline("(( inert, role: convention-ref ))") }
+            // An unrecognized *executable* (pure-shell) heading is routed to
+            // `procedure` via a rulebook alias — preferred over an inline marker
+            // (see AGENTS.md §16 / docs/13). Other unknowns stay inert prose.
+            return sectionIsPureShell(body) ? .alias(.procedure) : .inline("(( inert ))")
         }
     }
 
@@ -444,7 +509,8 @@ public struct SkillMigrator {
     // MARK: - Helpers
 
     private func result(_ source: String, addedKeys: [String], diagnostics: [String],
-                        attempts: Int, originalLineCount: Int, compiledOK: Bool) -> Result {
+                        attempts: Int, originalLineCount: Int, compiledOK: Bool,
+                        aliases: [SectionAlias]) -> Result {
         let resultLineCount = source.components(separatedBy: "\n").count
         let report = Report(
             compiledOK: compiledOK,
@@ -455,7 +521,8 @@ public struct SkillMigrator {
             resultLineCount: resultLineCount,
             editCount: addedKeys.count + attempts
         )
-        return Result(meriSource: source, report: report, compiledOK: compiledOK)
+        return Result(meriSource: source, report: report, compiledOK: compiledOK,
+                      sectionAliases: aliases)
     }
 
     private func describe(_ error: any Error) -> String {

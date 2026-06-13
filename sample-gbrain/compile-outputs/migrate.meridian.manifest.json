@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Universal migration from Obsidian, Notion, Logseq, markdown, CSV, JSON, Roam",
     "mutating" : "true",
@@ -72,7 +152,7 @@
         "text" : "Output Format"
       },
       {
-        "kind" : "inert",
+        "kind" : "tools",
         "level" : 2,
         "line" : 128,
         "text" : "Tools Used"
@@ -121,15 +201,7 @@
         "heading" : "Supported Sources",
         "line" : 29,
         "lines" : [
-          "| Source | Format | Strategy |",
-          "|--------|--------|----------|",
-          "| Obsidian | Markdown + `[[wikilinks]]` | Direct import, convert wikilinks to gbrain links |",
-          "| Notion | Exported markdown or CSV | Parse Notion's export structure |",
-          "| Logseq | Markdown with `((block refs))` | Convert block refs to page links |",
-          "| Plain markdown | Any .md directory | Import directory into gbrain directly |",
-          "| CSV | Tabular data | Map columns to frontmatter fields |",
-          "| JSON | Structured data | Map keys to page fields |",
-          "| Roam | JSON export | Convert block structure to pages |"
+          "table:decision:fCBTb3VyY2UgfCBGb3JtYXQgfCBTdHJhdGVneSB8CnwtLS0tLS0tLXwtLS0tLS0tLXwtLS0tLS0tLS0tfAp8IE9ic2lkaWFuIHwgTWFya2Rvd24gKyBgW1t3aWtpbGlua3NdXWAgfCBEaXJlY3QgaW1wb3J0LCBjb252ZXJ0IHdpa2lsaW5rcyB0byBnYnJhaW4gbGlua3MgfAp8IE5vdGlvbiB8IEV4cG9ydGVkIG1hcmtkb3duIG9yIENTViB8IFBhcnNlIE5vdGlvbidzIGV4cG9ydCBzdHJ1Y3R1cmUgfAp8IExvZ3NlcSB8IE1hcmtkb3duIHdpdGggYCgoYmxvY2sgcmVmcykpYCB8IENvbnZlcnQgYmxvY2sgcmVmcyB0byBwYWdlIGxpbmtzIHwKfCBQbGFpbiBtYXJrZG93biB8IEFueSAubWQgZGlyZWN0b3J5IHwgSW1wb3J0IGRpcmVjdG9yeSBpbnRvIGdicmFpbiBkaXJlY3RseSB8CnwgQ1NWIHwgVGFidWxhciBkYXRhIHwgTWFwIGNvbHVtbnMgdG8gZnJvbnRtYXR0ZXIgZmllbGRzIHwKfCBKU09OIHwgU3RydWN0dXJlZCBkYXRhIHwgTWFwIGtleXMgdG8gcGFnZSBmaWVsZHMgfAp8IFJvYW0gfCBKU09OIGV4cG9ydCB8IENvbnZlcnQgYmxvY2sgc3RydWN0dXJlIHRvIHBhZ2VzIHw="
         ],
         "role" : "inert"
       },
@@ -240,12 +312,42 @@
           "Check gbrain health (get_health)",
           "Search gbrain (query)"
         ],
-        "role" : "inert"
+        "role" : "tools"
       }
     ],
     "tools" : "put_page\nsearch\nadd_link\nadd_tag\nsync_brain",
     "triggers" : "\"migrate from\"\n\"import from obsidian\"\n\"import from notion\""
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "migrate.meri",
     "brain.merconfig"
@@ -253,35 +355,41 @@
   "source_map" : [
     {
       "meridian_line" : 43,
-      "swift_line" : 540
+      "swift_line" : 590
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 578
+      "swift_line" : 634
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 583
+      "swift_line" : 639
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 622
+      "swift_line" : 680
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 627
+      "swift_line" : 685
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 666
+      "swift_line" : 726
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 671
+      "swift_line" : 731
     }
   ],
   "tools_used" : [
-
+    "put_page",
+    "get_page",
+    "add_link",
+    "add_tag",
+    "get_stats",
+    "get_health",
+    "query"
   ],
   "workflows" : [
     {

@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Compile daily briefing with meeting context, active deals, and citation tracking",
     "mutating" : "false",
@@ -62,31 +142,37 @@
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 68,
+        "line" : 69,
         "text" : "Output Format"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 92,
+        "line" : 93,
         "text" : "Back-Linking During Briefing"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 100,
+        "text" : "Enforce back-links"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 98,
+        "line" : 106,
         "text" : "Citation in Briefings"
       },
       {
         "kind" : "prohibitions",
         "level" : 2,
-        "line" : 104,
+        "line" : 112,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 112,
+        "line" : 120,
         "text" : "Tools Used"
       },
       {
@@ -176,6 +262,7 @@
         "line" : 59,
         "lines" : [
           "bind pages = invoke list pages with filter = \"today\"",
+          "let mine be the pages written by the input",
           "if any urgent pages or any unwritten pages,",
           "emit briefing.attention with status = \"needs review\""
         ],
@@ -184,7 +271,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 68,
+        "line" : 69,
         "lines" : [
           "codeblock:plain:REFJTFkgQlJJRUZJTkcgLS0gW2RhdGVdCj09PT09PT09PT09PT09PT09PT09PT09PQoKTUVFVElOR1MgVE9EQVkKLSBbdGltZV0gW21lZXRpbmcgbmFtZV0KICBQYXJ0aWNpcGFudHM6IFtuYW1lXSAoc2x1ZzogcGVvcGxlL25hbWUsIFtrZXkgY29udGV4dF0pCgpBQ1RJVkUgREVBTFMKLSBbZGVhbCBuYW1lXSAtLSBbc3RhdHVzXSwgZGVhZGxpbmU6IFtkYXRlXQogIFJlY2VudDogW2xhdGVzdCB0aW1lbGluZSBlbnRyeV0KCkFDVElPTiBJVEVNUwotIFtpdGVtXSAtLSBkdWUgW2RhdGVdLCByZWxhdGVkIHRvIFtzbHVnXQoKUkVDRU5UIENIQU5HRVMgKDI0aCkKLSBbc2x1Z10gLS0gW3doYXQgY2hhbmdlZF0KClBFT1BMRSBJTiBQTEFZCi0gW25hbWVdIC0tIFt3aHkgdGhleSdyZSBhY3RpdmVd"
         ],
@@ -193,18 +280,30 @@
       {
         "executes" : false,
         "heading" : "Back-Linking During Briefing",
-        "line" : 92,
+        "line" : 93,
         "lines" : [
           "If the briefing creates or updates any brain pages (e.g., new meeting prep",
           "pages, updated entity pages), the back-linking iron law applies: every entity",
-          "mentioned must have a back-link from their page. See `skills\/_brain-filing-rules.md`"
+          "the page mentions must have a back-link from their page. See",
+          "`skills\/_brain-filing-rules.md`"
         ],
         "role" : "inert"
       },
       {
+        "executes" : true,
+        "heading" : "Enforce back-links",
+        "line" : 100,
+        "lines" : [
+          "let mentioned be the entities mentioned by the input",
+          "for each entity in mentioned:",
+          "if the entity does not link to the input, add a back-link from the entity to the input"
+        ],
+        "role" : "procedure"
+      },
+      {
         "executes" : false,
         "heading" : "Citation in Briefings",
-        "line" : 98,
+        "line" : 106,
         "lines" : [
           "When presenting facts from brain pages, include inline citations:",
           "\"Jane is CTO of Acme [Source: people\/jane-doe, updated 2026-04-01]\"",
@@ -215,7 +314,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 104,
+        "line" : 112,
         "lines" : [
           "**Briefing without brain queries.** Never generate a briefing from memory alone; always query gbrain for current data",
           "**Uncited facts.** Every claim must include `[Source: slug, updated DATE]`. A fact without a citation is unverifiable",
@@ -228,7 +327,7 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 112,
+        "line" : 120,
         "lines" : [
           "Search gbrain by name (query)",
           "Read a page from gbrain (get_page)",
@@ -241,6 +340,36 @@
     ],
     "triggers" : "\"daily briefing\"\n\"morning briefing\"\n\"what's happening today\""
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "briefing.meri",
     "brain.merconfig"
@@ -248,75 +377,99 @@
   "source_map" : [
     {
       "meridian_line" : 28,
-      "swift_line" : 540
+      "swift_line" : 591
     },
     {
       "meridian_line" : 32,
-      "swift_line" : 550
+      "swift_line" : 601
     },
     {
       "meridian_line" : 42,
-      "swift_line" : 559
+      "swift_line" : 610
     },
     {
       "meridian_line" : 43,
-      "swift_line" : 565
+      "swift_line" : 616
     },
     {
       "meridian_line" : 44,
-      "swift_line" : 577
+      "swift_line" : 628
     },
     {
       "meridian_line" : 49,
-      "swift_line" : 593
+      "swift_line" : 644
     },
     {
       "meridian_line" : 50,
-      "swift_line" : 605
+      "swift_line" : 656
     },
     {
       "meridian_line" : 51,
-      "swift_line" : 617
+      "swift_line" : 668
     },
     {
       "meridian_line" : 52,
-      "swift_line" : 629
+      "swift_line" : 680
     },
     {
       "meridian_line" : 64,
-      "swift_line" : 641
+      "swift_line" : 692
     },
     {
       "meridian_line" : 65,
-      "swift_line" : 652
+      "swift_line" : 703
     },
     {
       "meridian_line" : 66,
-      "swift_line" : 655
+      "swift_line" : 705
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 695
+      "meridian_line" : 67,
+      "swift_line" : 708
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 700
+      "meridian_line" : 102,
+      "swift_line" : 720
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 739
+      "meridian_line" : 102,
+      "swift_line" : 731
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 744
+      "meridian_line" : 103,
+      "swift_line" : 733
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 783
+      "meridian_line" : 104,
+      "swift_line" : 738
+    },
+    {
+      "meridian_line" : 133,
+      "swift_line" : 741
     },
     {
       "meridian_line" : 1,
       "swift_line" : 788
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 793
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 832
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 837
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 876
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 881
     }
   ],
   "tools_used" : [

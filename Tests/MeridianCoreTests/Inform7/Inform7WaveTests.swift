@@ -410,6 +410,22 @@ struct MetadataSectionTests {
         #expect(out.contains("private func meridianRegexMatches"))
     }
 
+    @Test("output invariant generalizes beyond regex to any checkable predicate")
+    func outputInvariantGeneralized() throws {
+        let out = try compile("""
+        ## Contract
+        - every emitted report contains "Sources".
+        - each emitted summary is not empty.
+
+        ## Protocol
+        `echo hi`
+        """)
+        // `every emitted X contains "Y"` → assert on bound result `report`.
+        #expect(out.contains(".contains("))
+        // `each emitted X is not empty` → emptiness assert on `summary`.
+        #expect(out.contains("MeridianComparison.isNotEmpty"))
+    }
+
     @Test("a Tools Used heading resolves to the tools role")
     func toolsRole() {
         #expect(SkillSectionRole.builtinRole(forHeading: "Tools Used") == .tools)
@@ -474,7 +490,7 @@ struct ConventionRestatementTests {
         let out = migrator(rulebook).markSections("""
         ## Citation Policy
         Always include a citation.
-        """)
+        """).markdown
         #expect(out.contains("(( inert, role: convention-ref ))"))
     }
 
@@ -483,7 +499,7 @@ struct ConventionRestatementTests {
         let out = migrator(rulebook).markSections("""
         ## Random Notes
         This text matches no convention at all.
-        """)
+        """).markdown
         #expect(out.contains("(( inert ))"))
         #expect(!out.contains("convention-ref"))
     }
@@ -495,7 +511,7 @@ struct ConventionRestatementTests {
         let out = mig.markSections("""
         ## Citation Policy
         Always include a citation.
-        """)
+        """).markdown
         #expect(!out.contains("convention-ref"))
     }
 }

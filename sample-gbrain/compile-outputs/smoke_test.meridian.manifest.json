@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Post-restart smoke tests + auto-fix for gbrain and OpenClaw environments.\nTests critical services, auto-fixes known issues, extensible via user-defined\ntest scripts in ~\/.gbrain\/smoke-tests.d\/*.sh.",
     "mutating" : "true",
@@ -146,16 +226,7 @@
         "heading" : "Built-in Tests",
         "line" : 33,
         "lines" : [
-          "| # | Test | Auto-Fix |",
-          "|---|------|----------|",
-          "| 1 | Bun runtime | Install from bun.sh |",
-          "| 2 | GBrain CLI loads | Reinstall deps |",
-          "| 3 | GBrain database (doctor) | — |",
-          "| 4 | GBrain worker process | Start worker |",
-          "| 5 | OpenClaw Codex plugin (Zod CJS) | `npm install zod@4 --force` |",
-          "| 6 | OpenClaw gateway | — (may not be started yet) |",
-          "| 7 | Embedding API key | — (check .env) |",
-          "| 8 | Brain repo exists | — |"
+          "table:decision:fCAjIHwgVGVzdCB8IEF1dG8tRml4IHwKfC0tLXwtLS0tLS18LS0tLS0tLS0tLXwKfCAxIHwgQnVuIHJ1bnRpbWUgfCBJbnN0YWxsIGZyb20gYnVuLnNoIHwKfCAyIHwgR0JyYWluIENMSSBsb2FkcyB8IFJlaW5zdGFsbCBkZXBzIHwKfCAzIHwgR0JyYWluIGRhdGFiYXNlIChkb2N0b3IpIHwg4oCUIHwKfCA0IHwgR0JyYWluIHdvcmtlciBwcm9jZXNzIHwgU3RhcnQgd29ya2VyIHwKfCA1IHwgT3BlbkNsYXcgQ29kZXggcGx1Z2luIChab2QgQ0pTKSB8IGBucG0gaW5zdGFsbCB6b2RANCAtLWZvcmNlYCB8CnwgNiB8IE9wZW5DbGF3IGdhdGV3YXkgfCDigJQgKG1heSBub3QgYmUgc3RhcnRlZCB5ZXQpIHwKfCA3IHwgRW1iZWRkaW5nIEFQSSBrZXkgfCDigJQgKGNoZWNrIC5lbnYpIHwKfCA4IHwgQnJhaW4gcmVwbyBleGlzdHMgfCDigJQgfA=="
         ],
         "role" : "inert"
       },
@@ -249,13 +320,7 @@
         "heading" : "Environment Variables",
         "line" : 113,
         "lines" : [
-          "| Var | Default | Description |",
-          "|-----|---------|-------------|",
-          "| `GBRAIN_SMOKE_LOG` | `\/tmp\/gbrain-smoke-test.log` | Log file path |",
-          "| `GBRAIN_DIR_OVERRIDE` | (auto-detect) | Force gbrain install path |",
-          "| `GBRAIN_DATABASE_URL` | (from .env) | Database connection URL |",
-          "| `OPENCLAW_GATEWAY_PORT` | `18789` | Gateway port to test |",
-          "| `GBRAIN_BRAIN_PATH` | `\/data\/brain` | Brain repo path |"
+          "table:decision:fCBWYXIgfCBEZWZhdWx0IHwgRGVzY3JpcHRpb24gfAp8LS0tLS18LS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18CnwgYEdCUkFJTl9TTU9LRV9MT0dgIHwgYC90bXAvZ2JyYWluLXNtb2tlLXRlc3QubG9nYCB8IExvZyBmaWxlIHBhdGggfAp8IGBHQlJBSU5fRElSX09WRVJSSURFYCB8IChhdXRvLWRldGVjdCkgfCBGb3JjZSBnYnJhaW4gaW5zdGFsbCBwYXRoIHwKfCBgR0JSQUlOX0RBVEFCQVNFX1VSTGAgfCAoZnJvbSAuZW52KSB8IERhdGFiYXNlIGNvbm5lY3Rpb24gVVJMIHwKfCBgT1BFTkNMQVdfR0FURVdBWV9QT1JUYCB8IGAxODc4OWAgfCBHYXRld2F5IHBvcnQgdG8gdGVzdCB8CnwgYEdCUkFJTl9CUkFJTl9QQVRIYCB8IGAvZGF0YS9icmFpbmAgfCBCcmFpbiByZXBvIHBhdGggfA=="
         ],
         "role" : "inert"
       },
@@ -331,6 +396,36 @@
     "tools" : "exec\nread",
     "triggers" : "\"smoke test\"\n\"run smoke tests\"\n\"container restart check\"\n\"health check\"\n\"did the restart break anything\"\n\"did the container restart break anything\""
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "smoke_test.meri",
     "brain.merconfig"
@@ -338,59 +433,59 @@
   "source_map" : [
     {
       "meridian_line" : 49,
-      "swift_line" : 541
+      "swift_line" : 592
     },
     {
       "meridian_line" : 54,
-      "swift_line" : 552
+      "swift_line" : 603
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 591
+      "swift_line" : 642
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 596
+      "swift_line" : 647
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 635
+      "swift_line" : 686
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 640
+      "swift_line" : 691
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 679
+      "swift_line" : 730
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 684
+      "swift_line" : 735
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 723
+      "swift_line" : 774
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 728
+      "swift_line" : 779
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 767
+      "swift_line" : 818
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 772
+      "swift_line" : 823
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 811
+      "swift_line" : 862
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 816
+      "swift_line" : 867
     }
   ],
   "tools_used" : [

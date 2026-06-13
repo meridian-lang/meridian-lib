@@ -4,7 +4,7 @@
 - Ported: `idea_lineage.meri`
 - Tier: 1 (near-verbatim)
 - Similarity: 92%
-- Lines: 223 -> 223 (+18 / -18)
+- Lines: 223 -> 223 (+17 / -17)
 
 ## Frontmatter
 - Added: (none)
@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/idea-lineage/SKILL.md
-+++ skills/idea_lineage.meri
++++ idea_lineage.meri
 @@ -35,7 +35,7 @@
  > the distinction between holder-attributed takes and the brain owner's hot
  > facts. Do not collapse those layers when summarizing lineage.
@@ -150,13 +150,4 @@
  
  - `skills/concept-synthesis/SKILL.md` - broad mutating concept-map synthesis.
  - `skills/query/SKILL.md` - general brain search and cited answers.
-@@ -211,7 +211,7 @@
- - `find_trajectory` - structured typed-fact and event timelines for entities.
- - `find_contradictions` - cached suspected contradiction findings.
- 
--## Tools Used
-+## Tools Used (( inert ))
- 
- - `search` - keyword search for exact phrase variants and dated mentions.
- - `query` - semantic search for conceptual matches.
 ```

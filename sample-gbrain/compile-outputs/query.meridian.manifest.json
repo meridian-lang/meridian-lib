@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Answer questions using the brain's knowledge with 3-layer search, synthesis,\nand citation propagation. Use when the user asks a question, wants a lookup,\nor needs information from the brain.",
     "mutating" : "false",
@@ -326,6 +406,36 @@
     "triggers" : "\"what do we know about\"\n\"tell me about\"\n\"who is\"\n\"what happened\"\n\"search for\"\n\"look up\"\n\"background on\"\n\"notes on\"\n\"who knows who\"\n\"relationship between\"\n\"connections\"\n\"graph query\"",
     "version" : "1.0.0"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "query.meri",
     "brain.merconfig"
@@ -333,115 +443,115 @@
   "source_map" : [
     {
       "meridian_line" : 47,
-      "swift_line" : 541
+      "swift_line" : 592
     },
     {
       "meridian_line" : 59,
-      "swift_line" : 551
+      "swift_line" : 602
     },
     {
       "meridian_line" : 60,
-      "swift_line" : 562
+      "swift_line" : 613
     },
     {
       "meridian_line" : 61,
-      "swift_line" : 565
+      "swift_line" : 616
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 600
+      "swift_line" : 651
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 605
+      "swift_line" : 656
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 644
+      "swift_line" : 695
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 649
+      "swift_line" : 700
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 688
+      "swift_line" : 739
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 693
+      "swift_line" : 744
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 732
+      "swift_line" : 783
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 737
+      "swift_line" : 788
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 776
+      "swift_line" : 827
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 781
+      "swift_line" : 832
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 820
+      "swift_line" : 871
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 825
+      "swift_line" : 876
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 864
+      "swift_line" : 915
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 869
+      "swift_line" : 920
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 908
+      "swift_line" : 959
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 913
+      "swift_line" : 964
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 952
+      "swift_line" : 1003
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 957
+      "swift_line" : 1008
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 996
+      "swift_line" : 1047
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1001
+      "swift_line" : 1052
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1040
+      "swift_line" : 1091
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1045
+      "swift_line" : 1096
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1084
+      "swift_line" : 1135
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1089
+      "swift_line" : 1140
     }
   ],
   "tools_used" : [

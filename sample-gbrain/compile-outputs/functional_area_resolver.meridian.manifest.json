@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "brain_first" : "exempt",
     "description" : "Compress an agent's routing file (RESOLVER.md or AGENTS.md) by converting\ngranular skill-per-row tables into functional-area dispatchers. Each area\nlists sub-skills in a \"(dispatcher for: ...)\" clause. The LLM reads one\narea entry and routes to the correct sub-skill. Proven via held-out\nA\/B eval: dispatcher pattern outperforms naive pipe-table compression.",
@@ -314,11 +394,7 @@
         "heading" : "Training corpus (n=20, 3 seeds × 3 variants × 3 models, LENIENT)",
         "line" : 96,
         "lines" : [
-          "| Variant | Opus 4.7 | Sonnet 4.6 | Haiku 4.5 | Size |",
-          "|---|---|---|---|---|",
-          "| baseline (270 bullet rows) | 81.7% ± 7.2% | 86.7% ± 7.2% | 73.3% ± 7.2% | 25KB |",
-          "| **functional-areas** (this pattern) | **98.3% ± 7.2%** | **100% ± 0%** | **88.3% ± 7.2%** | **13KB** |",
-          "| resolver-of-resolvers (no dispatcher clause) | 63.3% ± 14.3% | 41.7% ± 7.2% | 65.0% ± 12.4% | 10KB |"
+          "table:decision:fCBWYXJpYW50IHwgT3B1cyA0LjcgfCBTb25uZXQgNC42IHwgSGFpa3UgNC41IHwgU2l6ZSB8CnwtLS18LS0tfC0tLXwtLS18LS0tfAp8IGJhc2VsaW5lICgyNzAgYnVsbGV0IHJvd3MpIHwgODEuNyUgwrEgNy4yJSB8IDg2LjclIMKxIDcuMiUgfCA3My4zJSDCsSA3LjIlIHwgMjVLQiB8CnwgKipmdW5jdGlvbmFsLWFyZWFzKiogKHRoaXMgcGF0dGVybikgfCAqKjk4LjMlIMKxIDcuMiUqKiB8ICoqMTAwJSDCsSAwJSoqIHwgKio4OC4zJSDCsSA3LjIlKiogfCAqKjEzS0IqKiB8CnwgcmVzb2x2ZXItb2YtcmVzb2x2ZXJzIChubyBkaXNwYXRjaGVyIGNsYXVzZSkgfCA2My4zJSDCsSAxNC4zJSB8IDQxLjclIMKxIDcuMiUgfCA2NS4wJSDCsSAxMi40JSB8IDEwS0IgfA=="
         ],
         "role" : "inert"
       },
@@ -327,11 +403,7 @@
         "heading" : "Held-out blind corpus (n=5, 3 seeds, LENIENT)",
         "line" : 104,
         "lines" : [
-          "| Variant | Opus 4.7 | Sonnet 4.6 | Haiku 4.5 |",
-          "|---|---|---|---|",
-          "| baseline | 100% ± 0% | 100% ± 0% | 100% ± 0% |",
-          "| **functional-areas** | **100% ± 0%** | **100% ± 0%** | **100% ± 0%** |",
-          "| resolver-of-resolvers | 100% ± 0% | **73.3% ± 28.7%** | 100% ± 0% |"
+          "table:decision:fCBWYXJpYW50IHwgT3B1cyA0LjcgfCBTb25uZXQgNC42IHwgSGFpa3UgNC41IHwKfC0tLXwtLS18LS0tfC0tLXwKfCBiYXNlbGluZSB8IDEwMCUgwrEgMCUgfCAxMDAlIMKxIDAlIHwgMTAwJSDCsSAwJSB8CnwgKipmdW5jdGlvbmFsLWFyZWFzKiogfCAqKjEwMCUgwrEgMCUqKiB8ICoqMTAwJSDCsSAwJSoqIHwgKioxMDAlIMKxIDAlKiogfAp8IHJlc29sdmVyLW9mLXJlc29sdmVycyB8IDEwMCUgwrEgMCUgfCAqKjczLjMlIMKxIDI4LjclKiogfCAxMDAlIMKxIDAlIHw="
         ],
         "role" : "inert"
       },
@@ -628,6 +700,36 @@
     "triggers" : "\"compress agents.md\"\n\"compress my resolver\"\n\"resolver too big\"\n\"resolver.md too big\"\n\"agents.md too large\"\n\"shrink routing table\"\n\"slim down agents.md\"\n\"functional area resolver\"\n\"functional area dispatcher\"\n\"context-health agents\"\n\"context-health resolver\"\n\"reduce context budget\"",
     "version" : "1.0.0"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "functional_area_resolver.meri",
     "brain.merconfig"
@@ -635,99 +737,99 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 572
+      "swift_line" : 623
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 577
+      "swift_line" : 628
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 616
+      "swift_line" : 667
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 621
+      "swift_line" : 672
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 660
+      "swift_line" : 711
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 665
+      "swift_line" : 716
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 704
+      "swift_line" : 755
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 709
+      "swift_line" : 760
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 748
+      "swift_line" : 799
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 753
+      "swift_line" : 804
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 792
+      "swift_line" : 843
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 797
+      "swift_line" : 848
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 836
+      "swift_line" : 887
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 841
+      "swift_line" : 892
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 880
+      "swift_line" : 931
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 885
+      "swift_line" : 936
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 924
+      "swift_line" : 975
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 929
+      "swift_line" : 980
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 968
+      "swift_line" : 1019
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 973
+      "swift_line" : 1024
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1012
+      "swift_line" : 1063
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1017
+      "swift_line" : 1068
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1056
+      "swift_line" : 1107
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1061
+      "swift_line" : 1112
     }
   ],
   "tools_used" : [

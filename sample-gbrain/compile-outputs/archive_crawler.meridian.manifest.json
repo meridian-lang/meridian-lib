@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Universal archivist for personal file archives (Dropbox\/B2\/Gmail-takeout\/local-mount\/hard-drive-dump). Filters for high-value content (the user's own writing, ideas, relationships) and surfaces it interactively. REFUSES TO RUN without an explicit gbrain.yml `archive-crawler.scan_paths:` allow-list.",
     "mutating" : "true",
@@ -256,15 +336,7 @@
         "line" : 92,
         "lines" : [
           "Before showing anything to the user, apply the gold filter:",
-          "| Keep (show) | Skip (note existence, don't show) |",
-          "|-------------|-----------------------------------|",
-          "| Personal writing (journals, letters, reflections, essays) | System files, configs, package.json, node_modules |",
-          "| Conversations (IM logs, email threads with substance) | Binary blobs (images \/ video) |",
-          "| Ideas, theses, frameworks | Receipts, invoices, tax docs |",
-          "| Relationship material (letters to \/ from people who matter) | Spam, newsletters, mailing-list bulk |",
-          "| Creative work (poetry, stories, code with soul) | Corrupted \/ null files |",
-          "| Origin stories (first versions of things that became important) | |",
-          "| Emotional content (anger, love, grief, discovery) | |"
+          "table:decision:fCBLZWVwIChzaG93KSB8IFNraXAgKG5vdGUgZXhpc3RlbmNlLCBkb24ndCBzaG93KSB8CnwtLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tfAp8IFBlcnNvbmFsIHdyaXRpbmcgKGpvdXJuYWxzLCBsZXR0ZXJzLCByZWZsZWN0aW9ucywgZXNzYXlzKSB8IFN5c3RlbSBmaWxlcywgY29uZmlncywgcGFja2FnZS5qc29uLCBub2RlX21vZHVsZXMgfAp8IENvbnZlcnNhdGlvbnMgKElNIGxvZ3MsIGVtYWlsIHRocmVhZHMgd2l0aCBzdWJzdGFuY2UpIHwgQmluYXJ5IGJsb2JzIChpbWFnZXMgLyB2aWRlbykgfAp8IElkZWFzLCB0aGVzZXMsIGZyYW1ld29ya3MgfCBSZWNlaXB0cywgaW52b2ljZXMsIHRheCBkb2NzIHwKfCBSZWxhdGlvbnNoaXAgbWF0ZXJpYWwgKGxldHRlcnMgdG8gLyBmcm9tIHBlb3BsZSB3aG8gbWF0dGVyKSB8IFNwYW0sIG5ld3NsZXR0ZXJzLCBtYWlsaW5nLWxpc3QgYnVsayB8CnwgQ3JlYXRpdmUgd29yayAocG9ldHJ5LCBzdG9yaWVzLCBjb2RlIHdpdGggc291bCkgfCBDb3JydXB0ZWQgLyBudWxsIGZpbGVzIHwKfCBPcmlnaW4gc3RvcmllcyAoZmlyc3QgdmVyc2lvbnMgb2YgdGhpbmdzIHRoYXQgYmVjYW1lIGltcG9ydGFudCkgfCB8CnwgRW1vdGlvbmFsIGNvbnRlbnQgKGFuZ2VyLCBsb3ZlLCBncmllZiwgZGlzY292ZXJ5KSB8IHw="
         ],
         "role" : "inert"
       },
@@ -467,6 +539,36 @@
     "writes_pages" : "true",
     "writes_to" : "originals\/\npersonal\/\nideas\/"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "archive_crawler.meri",
     "brain.merconfig"
@@ -474,91 +576,91 @@
   "source_map" : [
     {
       "meridian_line" : 204,
-      "swift_line" : 543
+      "swift_line" : 594
     },
     {
       "meridian_line" : 204,
-      "swift_line" : 554
+      "swift_line" : 605
     },
     {
       "meridian_line" : 204,
-      "swift_line" : 565
+      "swift_line" : 616
     },
     {
       "meridian_line" : 204,
-      "swift_line" : 576
+      "swift_line" : 627
     },
     {
       "meridian_line" : 204,
-      "swift_line" : 587
+      "swift_line" : 638
     },
     {
       "meridian_line" : 204,
-      "swift_line" : 598
+      "swift_line" : 649
     },
     {
       "meridian_line" : 204,
-      "swift_line" : 609
+      "swift_line" : 660
     },
     {
       "meridian_line" : 219,
-      "swift_line" : 620
+      "swift_line" : 671
     },
     {
       "meridian_line" : 219,
-      "swift_line" : 631
+      "swift_line" : 682
     },
     {
       "meridian_line" : 219,
-      "swift_line" : 642
+      "swift_line" : 693
     },
     {
       "meridian_line" : 219,
-      "swift_line" : 653
+      "swift_line" : 704
     },
     {
       "meridian_line" : 219,
-      "swift_line" : 664
+      "swift_line" : 715
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 703
+      "swift_line" : 754
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 708
+      "swift_line" : 759
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 747
+      "swift_line" : 798
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 752
+      "swift_line" : 803
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 791
+      "swift_line" : 842
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 796
+      "swift_line" : 847
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 835
+      "swift_line" : 886
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 840
+      "swift_line" : 891
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 879
+      "swift_line" : 930
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 884
+      "swift_line" : 935
     }
   ],
   "tools_used" : [

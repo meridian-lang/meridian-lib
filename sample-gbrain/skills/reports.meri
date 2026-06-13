@@ -33,7 +33,7 @@ use judgment to save, load, and route reports by keyword:
   Load the most recent report file for a given category.
   Route common queries to report categories (for example "inbox" to ea-inbox-sweep, "morning" to morning-briefing).
 
-## Escalation guard (( role: procedure ))
+## Escalation guard
 
 > When a report run finds two or more high-priority pages, escalate so the
 > pulse never buries multiple p0s in a routine digest.

@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/brain-pdf/SKILL.md
-+++ skills/brain_pdf.meri
++++ brain_pdf.meri
 @@ -16,13 +16,13 @@
  > output rules. The PDF is a rendering — never the primary artifact. If a
  > PDF exists, the source brain page exists behind it.

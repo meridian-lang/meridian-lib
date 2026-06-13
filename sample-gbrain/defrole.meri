@@ -1,0 +1,12 @@
+---
+name: defrole
+vocabulary: brain.merconfig
+---
+
+## Overview (( inert ))
+
+Doc.
+
+### Enforce back-links
+
+let mentioned be the entities mentioned by the input.

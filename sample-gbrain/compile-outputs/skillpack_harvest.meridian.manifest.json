@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Lift a proven skill from a host repo (e.g. your OpenClaw fork) back into\ngbrain's bundle so other clients can scaffold it. Editorial workflow:\nthe CLI does the file copy + privacy lint; this skill drives the\njudgment-heavy genericization (scrub real names, generalize triggers,\nlift fork-specific conventions to references).",
     "mutating" : "true",
@@ -436,6 +516,36 @@
     "writes_pages" : "false",
     "writes_to" : "skills\/<harvested-slug>\/\nopenclaw.plugin.json"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "skillpack_harvest.meri",
     "brain.merconfig"
@@ -443,83 +553,83 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 571
+      "swift_line" : 622
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 576
+      "swift_line" : 627
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 615
+      "swift_line" : 666
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 620
+      "swift_line" : 671
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 659
+      "swift_line" : 710
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 664
+      "swift_line" : 715
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 703
+      "swift_line" : 754
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 708
+      "swift_line" : 759
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 747
+      "swift_line" : 798
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 752
+      "swift_line" : 803
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 791
+      "swift_line" : 842
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 796
+      "swift_line" : 847
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 835
+      "swift_line" : 886
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 840
+      "swift_line" : 891
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 879
+      "swift_line" : 930
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 884
+      "swift_line" : 935
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 923
+      "swift_line" : 974
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 928
+      "swift_line" : 979
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 967
+      "swift_line" : 1018
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 972
+      "swift_line" : 1023
     }
   ],
   "tools_used" : [

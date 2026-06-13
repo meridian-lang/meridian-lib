@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Everything In Its Right Place. The universal post-work organizer. After\nany significant work session, EIIRP runs a 7-phase audit: (1) inventory\nevery output, (2) walk taxonomy to decide where each lands, (3) check\nschema-pack consistency against the brain's actual shape, (4) file\nenriched brain pages, (5) audit the skill graph for DRY+MECE, (6) verify\nresolvability, (7) report. Named after the Radiohead song. Nothing\nproduced during significant work lives only in chat — knowledge becomes\npermanent, patterns become reusable.",
     "distinct_from" : "name: brain-taxonomist",
@@ -116,7 +196,7 @@
         "text" : "Phase 6: CHECK_RESOLVABLE — Verify everything routes"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
         "line" : 279,
         "text" : "Confirm"
@@ -234,12 +314,6 @@
         "level" : 3,
         "line" : 270,
         "text" : "After all filing and skillification"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 281,
-        "text" : "Confirm"
       },
       {
         "kind" : "topic",
@@ -468,20 +542,13 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Confirm",
         "line" : 279,
         "lines" : [
-          "Confirm:",
-          "[ ] All brain pages have proper frontmatter against active schema pack",
-          "[ ] All entity pages are cross-linked",
-          "[ ] Any new skills have routing entries in `skills\/RESOLVER.md`",
-          "[ ] No DRY violations (no duplicated logic across skills)",
-          "[ ] No MECE violations (no ambiguous routing between skills)",
-          "[ ] Active schema pack updated if new content types emerged",
-          "[ ] `gbrain doctor` reports `schema_pack_consistency: ok`"
+          "checklist:ai-autonomy:QWxsIGJyYWluIHBhZ2VzIGhhdmUgcHJvcGVyIGZyb250bWF0dGVyIGFnYWluc3QgYWN0aXZlIHNjaGVtYSBwYWNrCkFsbCBlbnRpdHkgcGFnZXMgYXJlIGNyb3NzLWxpbmtlZApBbnkgbmV3IHNraWxscyBoYXZlIHJvdXRpbmcgZW50cmllcyBpbiBgc2tpbGxzL1JFU09MVkVSLm1kYApObyBEUlkgdmlvbGF0aW9ucyAobm8gZHVwbGljYXRlZCBsb2dpYyBhY3Jvc3Mgc2tpbGxzKQpObyBNRUNFIHZpb2xhdGlvbnMgKG5vIGFtYmlndW91cyByb3V0aW5nIGJldHdlZW4gc2tpbGxzKQpBY3RpdmUgc2NoZW1hIHBhY2sgdXBkYXRlZCBpZiBuZXcgY29udGVudCB0eXBlcyBlbWVyZ2VkCmBnYnJhaW4gZG9jdG9yYCByZXBvcnRzIGBzY2hlbWFfcGFja19jb25zaXN0ZW5jeTogb2tg"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : true,
@@ -606,6 +673,36 @@
     "writes_pages" : "true",
     "writes_to" : "people\/\ncompanies\/\ndeals\/\nmeetings\/\nconcepts\/\nprojects\/\ncivic\/\nwriting\/\nanalysis\/\nguides\/"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "eiirp.meri",
     "brain.merconfig"
@@ -613,103 +710,91 @@
   "source_map" : [
     {
       "meridian_line" : 191,
-      "swift_line" : 549
+      "swift_line" : 605
     },
     {
       "meridian_line" : 272,
-      "swift_line" : 559
+      "swift_line" : 615
     },
     {
       "meridian_line" : 272,
-      "swift_line" : 570
+      "swift_line" : 627
     },
     {
       "meridian_line" : 272,
-      "swift_line" : 581
+      "swift_line" : 638
     },
     {
       "meridian_line" : 272,
-      "swift_line" : 592
+      "swift_line" : 649
+    },
+    {
+      "meridian_line" : 282,
+      "swift_line" : 660
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 631
+      "swift_line" : 703
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 708
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 749
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 754
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 795
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 800
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 841
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 846
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 807
+      "swift_line" : 887
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 812
+      "swift_line" : 892
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 851
+      "swift_line" : 933
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 856
+      "swift_line" : 938
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 895
+      "swift_line" : 979
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 900
+      "swift_line" : 984
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 939
+      "swift_line" : 1025
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 944
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 983
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 988
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 1027
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 1032
+      "swift_line" : 1030
     },
     {
       "meridian_line" : 1,
@@ -721,43 +806,59 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1115
+      "swift_line" : 1117
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1120
+      "swift_line" : 1122
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1159
+      "swift_line" : 1163
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1164
+      "swift_line" : 1168
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1203
+      "swift_line" : 1209
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1208
+      "swift_line" : 1214
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1247
+      "swift_line" : 1255
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1252
+      "swift_line" : 1260
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1291
+      "swift_line" : 1301
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1296
+      "swift_line" : 1306
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1347
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1352
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1393
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1398
     }
   ],
   "tools_used" : [

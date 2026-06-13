@@ -155,29 +155,41 @@ struct SkillSectionBuilder {
                       toolsUsed: toolsUsed)
     }
 
-    /// Extract a tool id from a `## Tools Used` bullet of the form
-    /// `<verb phrase> (<tool_id>)`. The id is the parenthesized token; malformed
-    /// bullets (no parens, empty id, or non-identifier id) are a hard error.
+    /// Extract a tool id from a `## Tools Used` bullet. Two equally-valid forms
+    /// are accepted (authors keep whichever reads better):
+    ///   • trailing parens — `<description> (<tool_id>)`
+    ///   • leading backticks — `` `<tool_id>` — <description> `` (any separator)
+    /// The id must be letters/digits/`.`/`_`/`-`. A bullet matching neither form
+    /// (or whose candidate id is not a valid identifier) is a hard error.
     private func extractToolID(from group: StatementGroup) throws -> String {
         let text = group.head.statement.trimmingCharacters(in: .whitespaces)
         let line = group.head.number
-        guard let open = text.range(of: "(", options: .backwards),
-              let close = text.range(of: ")", options: .backwards),
-              open.upperBound < close.lowerBound else {
-            throw CompilerError.semanticError(
-                message: "malformed `Tools Used` bullet \"\(text)\": expected `<description> (<tool_id>)`. Put the tool id in parentheses, e.g. `Search the brain (gbrain_search)`.",
-                range: SourceRange(file: file, line: line, column: 1)
-            )
+
+        // Form 1: id in trailing parentheses. Backwards search so a description
+        // that itself contains parentheses keeps the LAST `(…)` as the id.
+        if let open = text.range(of: "(", options: .backwards),
+           let close = text.range(of: ")", options: .backwards),
+           open.upperBound < close.lowerBound {
+            let id = String(text[open.upperBound..<close.lowerBound]).trimmingCharacters(in: .whitespaces)
+            if isValidToolID(id) { return id }
         }
-        let id = String(text[open.upperBound..<close.lowerBound]).trimmingCharacters(in: .whitespaces)
-        let valid = !id.isEmpty && id.allSatisfy { $0.isLetter || $0.isNumber || $0 == "." || $0 == "_" || $0 == "-" }
-        guard valid else {
-            throw CompilerError.semanticError(
-                message: "invalid tool id `\(id)` in `Tools Used` bullet \"\(text)\". A tool id is letters, digits, `.`, `_`, or `-` (e.g. `gbrain_search`, `http.get`).",
-                range: SourceRange(file: file, line: line, column: 1)
-            )
+
+        // Form 2: id in leading backticks (`` `search` — keyword search``). The
+        // backticked token must be a bare tool id — a backticked CLI command
+        // (`` `gbrain init …` ``) has spaces and so is correctly rejected.
+        if text.hasPrefix("`"), let closeTick = text.dropFirst().firstIndex(of: "`") {
+            let id = String(text[text.index(after: text.startIndex)..<closeTick]).trimmingCharacters(in: .whitespaces)
+            if isValidToolID(id) { return id }
         }
-        return id
+
+        throw CompilerError.semanticError(
+            message: "malformed `Tools Used` bullet \"\(text)\": expected `<description> (<tool_id>)` or `` `<tool_id>` — <description> ``. A tool id is letters, digits, `.`, `_`, or `-` (e.g. `gbrain_search`, `http.get`).",
+            range: SourceRange(file: file, line: line, column: 1)
+        )
+    }
+
+    private func isValidToolID(_ id: String) -> Bool {
+        !id.isEmpty && id.allSatisfy { $0.isLetter || $0.isNumber || $0 == "." || $0 == "_" || $0 == "-" }
     }
 
     // MARK: Section splitting
@@ -309,14 +321,10 @@ struct SkillSectionBuilder {
                 range: SourceRange(file: file, line: group.head.number, column: 1)
             )
         }
-        var text = group.head.statement
-        // 1D output invariant: `every emitted <noun> matches pattern "<regex>"`
-        // is sugar for an assert on the bound result `<noun>`. Normalize the
-        // leading quantifier to a definite reference so the comparison's LHS
-        // resolves to that binding (`the <noun> matches pattern "<regex>"`).
-        if text.lowercased().hasPrefix("every emitted ") {
-            text = "the " + text.dropFirst("every emitted ".count)
-        }
+        // 1D output invariant: `every emitted <noun> <predicate>` is sugar for an
+        // assert on the bound result `<noun>` (shared normalization).
+        let classifier = ConditionClassifier(symbols: symbols, lexicon: lexicon, trace: trace)
+        let text = classifier.normalizeFormatInvariant(group.head.statement)
         switch classify(text) {
         case .checkable:
             let cond = negated ? "not (\(text))" : text
@@ -365,72 +373,12 @@ struct SkillSectionBuilder {
 
     // MARK: Applicability classification
 
-    enum Applicability {
-        case checkable
-        case dispatchPhrase(String)
-        case fuzzy
-    }
+    typealias Applicability = ConditionClassifier.Classification
 
     /// Classify a section line as a structurally-checkable predicate, a literal
-    /// dispatch phrase (an intent), or a fuzzy condition. The distinction is
-    /// deterministic: a line that parses to a comparison/logical over concrete
-    /// operands is checkable; a line that *reads as a condition* (contains a
-    /// copula/comparison marker) but isn't checkable is fuzzy; a line with no
-    /// copula/comparison is a descriptive dispatch phrase.
+    /// dispatch phrase (an intent), or a fuzzy condition. Delegates to the
+    /// shared `ConditionClassifier` (single source of truth).
     func classify(_ text: String) -> Applicability {
-        let parser = ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon)
-        let expr = parser.parse(text)
-        if isCheckable(expr) { return .checkable }
-        if readsAsCondition(text) { return .fuzzy }
-        return .dispatchPhrase(text)
-    }
-
-    private func isCheckable(_ expr: ExpressionAST) -> Bool {
-        switch expr {
-        case .comparison(let lhs, let op, let rhs):
-            switch op {
-            case .lessThan, .lessOrEqual, .greaterThan, .greaterOrEqual, .within, .contains,
-                 .oneOf, .matchesPattern, .withinPast, .withinFuture, .isEmpty, .isNotEmpty:
-                return true
-            case .equal, .notEqual:
-                return isConcrete(rhs) || isConcrete(lhs)
-            }
-        case .logical(let logOp, let parts):
-            switch logOp {
-            case .and, .or: return !parts.isEmpty && parts.allSatisfy(isCheckable)
-            case .not:      return parts.first.map(isCheckable) ?? false
-            }
-        default:
-            return false
-        }
-    }
-
-    /// A "concrete" operand is one whose value is structurally determinate at
-    /// runtime: a literal, a named constant/instance, `now`, or a property
-    /// access (`order.total`). A bare identifier (an adjective like `notable`)
-    /// is NOT concrete.
-    private func isConcrete(_ expr: ExpressionAST) -> Bool {
-        switch expr {
-        case .literal, .constantRef, .instanceRef, .envVar, .now, .propertyAccess:
-            return true
-        default:
-            return false
-        }
-    }
-
-    /// True when the text grammatically reads as a *condition* (contains a
-    /// copula or comparison marker) — used to separate fuzzy conditions from
-    /// descriptive dispatch phrases.
-    private func readsAsCondition(_ text: String) -> Bool {
-        let lower = " \(text.lowercased()) "
-        // Copulas come from the lexicon (house convention: no hardcoded word
-        // lists). `equals`/`not` are extra condition cues the lexicon's copula
-        // set doesn't carry (equality is spelled `is` there).
-        let conditionCues = lexicon.copulas.union(["equals", "not"])
-        if conditionCues.contains(where: { lower.contains(" \($0) ") }) { return true }
-        for marker in lexicon.comparisonMarkers.map(\.0) {
-            if lower.contains(" \(marker.lowercased()) ") { return true }
-        }
-        return false
+        ConditionClassifier(symbols: symbols, lexicon: lexicon, trace: trace).classify(text)
     }
 }

@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/skillpack-harvest/SKILL.md
-+++ skills/skillpack_harvest.meri
++++ skillpack_harvest.meri
 @@ -31,12 +31,12 @@
  > file placement rules. This skill writes into gbrain's own tree, not the
  > brain repo's notes.

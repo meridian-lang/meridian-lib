@@ -11,7 +11,87 @@
   "kinds_used" : [
 
   ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
   "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
   "meridian_skill" : {
     "description" : "Ingest links, articles, tweets, and ideas into the brain. Fetch content, save\nto brain with analysis, create author people page, and cross-link. Use when the\nuser shares a link or says \"read this\", \"save this\", \"think about this\".",
     "mutating" : "true",
@@ -116,6 +196,36 @@
     "writes_pages" : "true",
     "writes_to" : "people\/\nconcepts\/\nsources\/"
   },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
   "source_files" : [
     "idea_ingest.meri",
     "brain.merconfig"
@@ -123,55 +233,55 @@
   "source_map" : [
     {
       "meridian_line" : 51,
-      "swift_line" : 544
+      "swift_line" : 595
     },
     {
       "meridian_line" : 55,
-      "swift_line" : 554
+      "swift_line" : 605
     },
     {
       "meridian_line" : 61,
-      "swift_line" : 564
+      "swift_line" : 615
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 603
+      "swift_line" : 654
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 608
+      "swift_line" : 659
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 647
+      "swift_line" : 698
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 652
+      "swift_line" : 703
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 691
+      "swift_line" : 742
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 696
+      "swift_line" : 747
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 735
+      "swift_line" : 786
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 740
+      "swift_line" : 791
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 779
+      "swift_line" : 830
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 784
+      "swift_line" : 835
     }
   ],
   "tools_used" : [

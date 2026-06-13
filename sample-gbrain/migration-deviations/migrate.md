@@ -3,8 +3,8 @@
 - Original: `migrate/SKILL.md`
 - Ported: `migrate.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 89%
-- Lines: 137 -> 137 (+15 / -15)
+- Similarity: 90%
+- Lines: 137 -> 137 (+14 / -14)
 
 ## Frontmatter
 - Added: (none)
@@ -22,7 +22,7 @@
 
 ```diff
 --- original-skills/migrate/SKILL.md
-+++ skills/migrate.meri
++++ migrate.meri
 @@ -16,9 +16,9 @@
  
  # Migrate Skill
@@ -102,13 +102,4 @@
  
  - **Bulk import without sample test.** Never import the full dataset before verifying with 5-10 files. The cost of cleaning up hundreds of bad pages is enormous.
  - **Destroying source data.** Migration is additive. Never modify, move, or delete the source files.
-@@ -125,7 +125,7 @@
- - Search test: [query] -> [result count] hits
- ```
- 
--## Tools Used
-+## Tools Used (( inert ))
- 
- - Store/update pages in gbrain (put_page)
- - Read pages from gbrain (get_page)
 ```

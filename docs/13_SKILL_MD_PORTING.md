@@ -58,6 +58,37 @@ Per skill, the required edits are bounded to:
 `meridian migrate-skill` injects no frontmatter and applies (1)–(2) wherever it
 can; the strict compile surfaces the residue (3)–(4) as located errors.
 
+> **The migrator adds section titles to the rulebook for you.** When the marking
+> pass meets an unrecognized **executable** heading (a section whose body is only
+> shell fences — see option 2(b)), it does **not** stamp an inline
+> `(( role: procedure ))`. Instead it leaves the heading clean and emits a
+> `=== sections ===` alias (`section "<heading>" -> procedure`), which the CLI
+> **appends to the rulebook** — the first `--rulebook` given, else the first
+> autodiscovered `.merrules`, else a new `migrated-sections.merrules` beside the
+> output. Persistence is idempotent (a heading already aliased is skipped) and,
+> in stdout/preview mode (no `--out`), the aliases are printed as a snippet
+> instead of written. So the rulebook accretes the corpus's organizational
+> headings over a batch migration, and re-running compiles cleanly with no
+> in-file markers. Narrative (non-shell) unknowns still get `(( inert ))`; the
+> migrator only auto-aliases headings it can prove are executable.
+
+> **`(( role: procedure ))` is redundant on a recognized procedure heading —
+> don't add it.** `procedure` is the *implicit* role for any heading whose text
+> normalizes to a recognized procedure synonym: `Phases`, `Workflow`,
+> `Pipeline`, `Protocol`, `Steps`, `Process`, `Procedure`, or a `Phase N:`
+> prefix (`SkillSectionRole.builtinRole`). For those, an explicit
+> `(( role: procedure ))` is noise — prefer option 2(a): just **name the
+> executable section** with one of those words and write no marker at all.
+>
+> The marker is **not** a blanket default, though: a content-bearing heading
+> whose text is *not* a recognized role (e.g. `### Enforce back-links`) is a
+> **hard error**, not a silent fall-through to procedure (no silent drops). So
+> when you do need a custom/descriptive heading on executable lines, you must
+> either rename it to a recognized synonym (preferred), add a `=== sections ===`
+> rulebook alias, or keep the explicit `(( role: procedure ))`. In short: never
+> *add* the marker to a `## Protocol`/`## Steps`/`Phase N:` heading; never
+> *strip* it from a custom heading unless you also rename the heading.
+
 ---
 
 ## How a `SKILL.md` decomposes onto Meridian
@@ -205,6 +236,128 @@ within the budget above.
 6. **Loose anaphora-prone paragraphs under `## Contract`.** Each item must be a
    structurally checkable comparison, or mark the section
    `(( inert, role: invariants ))`; a non-checkable invariant item is a hard error.
+7. **Adding executable logic to a documentation section → split, don't comment.**
+   A `role` section makes **every** non-blank, non-comment line a live statement
+   that must lower, so you cannot simply flip an `(( inert ))` heading to
+   `(( role: procedure ))` while keeping its descriptive paragraph — that prose
+   now errors as an unresolved phrase. The **correct** fix is a structural split
+   (edit-budget item 4): keep the narrative in its `(( inert ))` section verbatim
+   (it stays real, visible documentation) and add a **separate** sibling/child
+   heading whose body is **only** executable statements. Example (`briefing.meri`
+   back-linking):
+
+   ```
+   ## Back-Linking During Briefing (( inert ))
+
+   If the briefing creates or updates any brain pages, the back-linking iron
+   law applies: every entity the page mentions must have a back-link from their
+   page. See `skills/_brain-filing-rules.md`.
+
+   ### Enforce back-links (( role: procedure ))
+
+   let mentioned be the entities mentioned by the input.
+   for each entity in mentioned:
+     if the entity does not link to the input, add a back-link from the entity to the input.
+   ```
+
+   The procedure section contains zero prose; the documentation stays inert and
+   uncommented. (A `###` child re-resolves its own role, so it can sit under an
+   inert `##` parent; for sections already at `###`, add a sibling `###`.)
+
+   Note how the procedure preserves the narrative's **load-bearing qualifier**:
+   the prose says "a mention *without* a back-link is a broken brain; fix the
+   *missing* one" — so the loop is guarded (`if the entity does not link …`), not
+   an unconditional `add`. The qualifier is execution-relevant context, not
+   decoration (see fix 8).
+
+   > **ANTI-PATTERN — do NOT blockquote the prose to silence the error.** It is
+   > tempting to promote the section to `(( role: procedure ))` and prefix the
+   > narrative with `>` so `IndentTokenizer` treats it as a comment. Don't: a
+   > blockquoted line is *dropped from the IR* — no longer enforced, asserted, or
+   > executed. That hides a real requirement behind a comment and is the one place
+   > the "no silent drops" guarantee can't protect you (the drop is author-chosen
+   > via `>`, not compiler-rejected). A `role` section's body must be exclusively
+   > executable statements; everything else belongs in an `(( inert ))` section.
+8. **Narrative encodes executable *contracts* — mine it before inerting.** This
+   is the most-missed step. SKILL.md prose rarely just *describes*; it usually
+   states **conditions on execution** that the language can lower:
+
+   | Narrative shape | Lower it as | Example |
+   |---|---|---|
+   | "every X must Y" / "X is always Z after" (an **invariant / post-condition**) | `assert …` / `make sure …` (and/or a guarded repair loop that establishes it) | "every entity the page mentions must have a back-link" |
+   | "before doing X, Y must hold" (a **precondition**) | `wait until …` / a leading `assert` guard | "wait for approval before merging" |
+   | "if X, then the rule applies" (an **applicability guard**) | `if X, …` (single- or multi-line branch) | "if the briefing updates a page, the iron law applies" |
+   | "a mention WITHOUT a back-link is broken; fix the MISSING one" (a **qualified** action) | guarded action, not unconditional | the `if the entity does not link …` guard above |
+
+   The back-linking iron law is the canonical case: "every entity the page
+   mentions must have a back-link" reads like documentation but is a
+   **post-condition**. Lowering it (the guarded loop *establishes* it; an
+   `assert`/`make sure` can *verify* it) captures intent the inert prose would
+   have thrown away. **Before you mark any normative sentence `(( inert ))`, ask:
+   is this a post-condition, precondition, invariant, or guard?** If yes, lower
+   it — inert is only for genuinely non-executable material (rationale, examples,
+   external references, formatting templates).
+
+   > `assert`, `ensure`, and `make sure` are aliases for the same invariant
+   > statement; a domain can add more introducers via a `=== language ===`
+   > `Assertion synonyms:` block (see `docs/03`). Use whichever reads closest to
+   > the source prose.
+
+9. **Markdown structures are executable — don't reflexively inert them.**
+
+   | SKILL.md shape | Lower it as | Notes |
+   |---|---|---|
+   | A **decision table** (conditions → action) | leave as a table (decision is the default) | last column / `action` header is the action; cells become `header is value` predicates |
+   | A **data/lookup table** (rows of values) | `!!! table (( data table[: <name>] ))` above it | binds a record list; iterate with `for each row in <name>` |
+   | A table that's genuinely reference-only | `!!! table (( inert ))` above it | the only place a table is inert (tables have no heading to mark) |
+   | An **acceptance checklist** (`- [ ] …`) | leave as a task list | each item is an invariant `assert`; a non-checkable item is a hard error → rephrase or inert |
+   | An **output-format rule** (`every emitted X …`) | `every emitted <noun> <predicate>` | generalized beyond regex to any checkable predicate |
+
+   A `!!!` marker that is not directly above a table, an unknown block kind, or
+   an unknown table mode is a **hard error** — never silently dropped.
+
+10. **Watch for property names that collide with declared verbs.** A `=== language ===`
+    /vocabulary verb (e.g. `to link`) makes any possessive property access whose
+    *first word* is that verb (`the health's link count`) parse as a verb
+    predicate, not a property read. Rename the property to avoid the verb word
+    (`edge count`, not `link count`). This is why `brain.merconfig`'s health
+    report uses `edge count` / `timeline count`.
+
+11. **`## Tools Used` is metadata, not inert.** A `## Tools Used` (or `Tools`,
+    `Tools Required`, `Required Tools`) section whose bullets each name a tool id
+    is the recognized `.tools` role — it mines the ids into the workflow's
+    `scopedTools` and the manifest `tools_used`. Do **not** mark it `(( inert ))`.
+    Two bullet forms are accepted (keep whichever reads better, no reformatting):
+    `<description> (<tool_id>)` and the leading-backtick `` `<tool_id>` — <description>``
+    (any separator). A bullet matching neither — including a section that is
+    actually a **CLI command reference** (``` `gbrain init …` -- create brain ```,
+    whose backticked token has spaces and so isn't a bare tool id) — is genuine
+    documentation; keep that one `(( inert ))`.
+
+12. **Fuzzy tables/checklists are AI steps, not inert.** A decision table whose
+    condition cells are *intent descriptions* (not checkable comparisons) and an
+    acceptance checklist whose items are *not structurally checkable* are still
+    part of the workflow — they just need judgment. Route them to the planner via
+    the two AI modes instead of dropping them with `(( inert ))`:
+
+    | Fuzzy shape | Mark it | Lowers to | The planner gets |
+    |---|---|---|---|
+    | Decision/routing table (intent → action) | `!!! table (( ai-discretion ))` | `ProseStepIR(.planThenExecute)` | "Decide which case applies and carry out its action: when …, …" (every row embedded) |
+    | Acceptance checklist (`- [ ] all pages cross-linked`) | `!!! checklist (( ai-autonomy ))` above the list | `ProseStepIR(.autonomousLoop)` | "Ensure every acceptance criterion below holds, taking corrective action until all are satisfied: - …" (every item embedded) |
+
+    This is the **same path** `use judgment to …:` takes (an explicit
+    `ProseStepAST` dispatch), so it is valid in any workflow and runs through the
+    existing planner / scope / checkpoint machinery — no new IR. The section the
+    block sits under must be **executable** (a recognized `procedure`-role
+    heading, or aliased in `=== sections ===`), since an `(( inert ))` section
+    suppresses the whole body. Prefer `(( inert ))` for a table/checklist *only*
+    when it is genuine reference material the workflow never acts on (benchmark
+    evidence, a lookup the procedure never consults, a CLI reference). Decide:
+    **does the workflow act on this?** Yes + deterministic → decision/data table
+    or invariant checklist; yes + fuzzy → `ai-discretion` / `ai-autonomy`; no →
+    `inert`. Worked example: `eiirp`'s `### Confirm` acceptance checklist was
+    `(( inert ))`; it is now `!!! checklist (( ai-autonomy ))`, so the seven
+    criteria become an autonomous loop that closes the workflow.
 
 ---
 

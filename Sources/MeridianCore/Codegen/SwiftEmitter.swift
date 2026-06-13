@@ -650,6 +650,7 @@ public struct SwiftEmitter {
             case .matchesPattern: return "meridianRegexMatches(\(l), \(emitExpr(rhs)))"
             case .isEmpty:        return "MeridianComparison.isEmpty(\(l))"
             case .isNotEmpty:     return "MeridianComparison.isNotEmpty(\(l))"
+            case .identifies:     return "MeridianComparison.identifies(\(l), \(emitValueExpr(rhs)))"
             case .equal:          return "MeridianComparison.eq(\(l), \(emitValueExpr(rhs)))"
             case .notEqual:       return "MeridianComparison.neq(\(l), \(emitValueExpr(rhs)))"
             case .lessThan:       return "MeridianComparison.lt(\(l), \(emitValueExpr(rhs)))"
@@ -863,6 +864,8 @@ public struct SwiftEmitter {
                 return "(\(emitExpr(lhs))).hasSuffix(\(emitExpr(rhs)))"
             case .oneOf:
                 return "(\(emitExpr(rhs))).contains(\(emitExpr(lhs)))"
+            case .identifies:
+                return "MeridianComparison.identifies(\(emitComparisonOperand(lhs)), \(emitComparisonOperand(rhs)))"
             case .equal, .notEqual, .lessThan, .lessOrEqual, .greaterThan, .greaterOrEqual:
                 // Use Value-aware helpers when either side reads from state
                 // (returns Value?) — Swift can't compare Optional<Value> with `<`.
@@ -909,7 +912,67 @@ public struct SwiftEmitter {
         case .quantified(let q):
             return emitQuantifier(q, operand: { self.emitComparisonOperand($0) },
                                   element: { e, ev in self.emitElementExpr(e, loopVar: ev, closureParam: "__e") })
+        case .description(let d):
+            return "Value.list(\(emitDescriptionList(d)))"
+        case .aggregate(let kind, let d):
+            switch kind {
+            // Wrap the element count in `Decimal` so it compares against the
+            // `Decimal` numeric literals produced elsewhere (`> 5`).
+            case .count: return "Decimal(\(emitDescriptionList(d)).count)"
+            case .list:  return "Value.list(\(emitDescriptionList(d)))"
+            }
+        case .superlative(let s):
+            return "(\(emitSuperlativeList(s)).first)"
+        case .recordList(let fields, let rows):
+            return emitRecordList(fields: fields, rows: rows)
         }
+    }
+
+    /// Data table → `Value.list([.record([...]), ...])`. Field names are
+    /// camelCased so `for each row in <name>` property access (`row.fieldName`)
+    /// resolves against the record keys.
+    private func emitRecordList(fields: [String], rows: [[IRExpression]]) -> String {
+        let records = rows.map { row -> String in
+            let pairs = zip(fields, row).map { field, cell in
+                "\"\(escapeSwiftString(snakeToCamel(field)))\": \(emitValueExpr(cell))"
+            }.joined(separator: ", ")
+            return ".record([\(pairs)])"
+        }.joined(separator: ", ")
+        return "Value.list([\(records)])"
+    }
+
+    /// 3C: render a description as a `[Value]` pipeline — `(coll.asList ?? [])`
+    /// filtered (element context), sorted, then `prefix`-taken. Shared by the
+    /// description / aggregate / superlative emitters.
+    func emitDescriptionList(_ d: DescriptionIR) -> String {
+        let ev = d.elementVar
+        let coll = emitComparisonOperand(d.collection)
+        var pipeline = "((\(coll))?.asList ?? [])"
+        if !d.filters.isEmpty {
+            let parts = d.filters
+                .map { "(\(emitElementExpr($0, loopVar: ev, closureParam: "__e")))" }
+                .joined(separator: " && ")
+            pipeline += ".filter { __e in \(parts) }"
+        }
+        if let sort = d.sort {
+            let key = escapeSwiftString(sort.path)
+            pipeline += ".sorted { __a, __b in MeridianComparison.orderedBefore(__a.member(\"\(key)\"), __b.member(\"\(key)\"), ascending: \(sort.ascending)) }"
+        }
+        if let take = d.take {
+            pipeline = "Array(\(pipeline).prefix(\(take)))"
+        }
+        return pipeline
+    }
+
+    /// 3C: a superlative reuses the description pipeline but forces its own sort
+    /// key/direction so `.first` is the min (ascending) or max element.
+    private func emitSuperlativeList(_ s: SuperlativeIR) -> String {
+        let forced = DescriptionIR(collection: s.description.collection,
+                                   elementVar: s.description.elementVar,
+                                   filters: s.description.filters,
+                                   sort: (path: s.sortPath, ascending: s.ascending),
+                                   take: nil)
+        return emitDescriptionList(forced)
     }
 
     /// Emit a checkable-adjective helper. The body is rendered in element
@@ -1003,6 +1066,17 @@ public struct SwiftEmitter {
                 }
             }.joined(separator: " + ")
             return ".string(\(parts))"
+        case .description(let d):
+            return "Value.list(\(emitDescriptionList(d)))"
+        case .aggregate(let kind, let d):
+            switch kind {
+            case .count: return ".number(Decimal(\(emitDescriptionList(d)).count))"
+            case .list:  return "Value.list(\(emitDescriptionList(d)))"
+            }
+        case .superlative(let s):
+            return "(\(emitExpr(.superlative(s))) ?? .null)"
+        case .recordList(let fields, let rows):
+            return emitRecordList(fields: fields, rows: rows)
         default:
             // For derived expressions we rely on the runtime `Value(...)` init,
             // wrapping the bare emission so it survives Swift type-checking.
@@ -1098,6 +1172,10 @@ public struct SwiftEmitter {
     private func needsValueComparison(_ expr: IRExpression) -> Bool {
         switch expr {
         case .identifierRef, .propertyAccess: return true
+        // 3C: a superlative is a `Value?`; a `.list` aggregate / description is a
+        // `Value`. A `.count` aggregate is a bare `Int` and compares directly.
+        case .superlative, .description:      return true
+        case .aggregate(let kind, _):         return kind == .list
         default:                              return false
         }
     }

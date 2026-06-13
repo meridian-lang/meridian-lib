@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/repo-architecture/SKILL.md
-+++ skills/repo_architecture.meri
++++ repo_architecture.meri
 @@ -20,7 +20,7 @@
  
  > **Full filing rules:** See `skills/_brain-filing-rules.md`

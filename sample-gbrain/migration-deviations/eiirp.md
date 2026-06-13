@@ -3,8 +3,8 @@
 - Original: `eiirp/SKILL.md`
 - Ported: `eiirp.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 89%
-- Lines: 395 -> 397 (+46 / -44)
+- Similarity: 88%
+- Lines: 395 -> 397 (+47 / -45)
 
 ## Frontmatter
 - Added: (none)
@@ -21,7 +21,7 @@
 
 ```diff
 --- original-skills/eiirp/SKILL.md
-+++ skills/eiirp.meri
++++ eiirp.meri
 @@ -68,7 +68,7 @@
  
  > *"Everything in its right place"* — Radiohead, Kid A
@@ -156,15 +156,17 @@
  1. **[skill-A] + [skill-B]** → [merged-skill] — [why]
  ```
  
-@@ -275,6 +275,8 @@
- gbrain search "<topic keywords>"                # brain pages findable
+@@ -276,7 +276,9 @@
  gbrain orphans                                  # any pages without inbound links?
  ```
-+
-+### Confirm (( inert ))
  
- Confirm:
+-Confirm:
++### Confirm
++
++!!! checklist (( ai-autonomy ))
  - [ ] All brain pages have proper frontmatter against active schema pack
+ - [ ] All entity pages are cross-linked
+ - [ ] Any new skills have routing entries in `skills/RESOLVER.md`
 @@ -288,24 +290,24 @@
  ## Phase 7: REPORT — Summary
  

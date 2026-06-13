@@ -7,14 +7,20 @@ import Foundation
 public struct LanguageSynonyms: Sendable {
     public let comparisonSynonyms: [(String, ComparisonOpAST)]
     public let durationSynonyms: [String: TimeUnitAST]
+    /// Extra leading keywords that introduce an invariant/assertion statement
+    /// (`=== language ===` `Assertion synonyms:` block). Merged ahead of the
+    /// lexicon defaults (`make sure` / `ensure` / `assert`).
+    public let assertionSynonyms: [String]
     /// Optional override for the temporal-iteration timestamp property
     /// (`=== language ===` `timestamp:` entry). `nil` keeps the lexicon default.
     public let timestampProperty: String?
     public init(comparisonSynonyms: [(String, ComparisonOpAST)] = [],
                 durationSynonyms: [String: TimeUnitAST] = [:],
+                assertionSynonyms: [String] = [],
                 timestampProperty: String? = nil) {
         self.comparisonSynonyms = comparisonSynonyms
         self.durationSynonyms = durationSynonyms
+        self.assertionSynonyms = assertionSynonyms
         self.timestampProperty = timestampProperty
     }
 }
@@ -48,6 +54,7 @@ public struct MerConfigFile: Sendable {
         let mergedSynonyms = LanguageSynonyms(
             comparisonSynonyms: languageSynonyms.comparisonSynonyms + other.languageSynonyms.comparisonSynonyms,
             durationSynonyms: languageSynonyms.durationSynonyms.merging(other.languageSynonyms.durationSynonyms) { _, new in new },
+            assertionSynonyms: languageSynonyms.assertionSynonyms + other.languageSynonyms.assertionSynonyms,
             timestampProperty: other.languageSynonyms.timestampProperty ?? languageSynonyms.timestampProperty
         )
         return MerConfigFile(
@@ -69,6 +76,11 @@ public enum VocabularyStatement: Sendable {
     /// 2B: `Definition: a page is stale if <condition>.` — a checkable
     /// adjective declared in the merconfig vocabulary.
     case definition(DefinitionDeclaration)
+    /// 3A: `<Relation> is read from the <kind>'s <prop>.` / `… is read via the
+    /// <tool>.` — the evaluation backing of a previously-declared relation.
+    case relationBacking(RelationBackingDeclaration)
+    /// 3B: `The verb to own (he owns, it is owned) means the ownership relation.`
+    case verb(VerbDeclaration)
 }
 
 /// 2B: A checkable adjective definition (`Definition: a <kind> is <adjective>
@@ -125,6 +137,7 @@ public enum PropertyTypeAST: Sendable {
 }
 
 public struct RelationDeclaration: Sendable {
+    /// The relation name as written (`Ownership`, `Mentioning`), lowercased.
     public let verb: String
     public let leftCardinality: CardinalityAST
     public let leftKind: String
@@ -135,6 +148,45 @@ public struct RelationDeclaration: Sendable {
                 rightCardinality: CardinalityAST, rightKind: String, sourceLine: Int = 0) {
         self.verb = verb; self.leftCardinality = leftCardinality; self.leftKind = leftKind
         self.rightCardinality = rightCardinality; self.rightKind = rightKind
+        self.sourceLine = sourceLine
+    }
+}
+
+/// 3A: how a relation is evaluated. Backing is mandatory — an unbacked relation
+/// is a compile error (relations must be witnessable, not a hidden datastore).
+public enum RelationBackingAST: Sendable, Equatable {
+    /// `Ownership is read from the page's owner.` — the link lives at
+    /// `<kind>.<path>` (the `kind` is one side of the relation; `path` holds the
+    /// related entity / its id).
+    case property(kind: String, path: String)
+    /// `Mentioning is read via the link tool.` — the related collection is
+    /// produced by invoking `toolID` once with the fixed operand.
+    case tool(toolID: String)
+}
+
+/// 3A: `<Relation> is read from the <kind>'s <prop>.` / `… is read via the
+/// <tool>.`. Pairs a relation name with its evaluation backing.
+public struct RelationBackingDeclaration: Sendable {
+    public let relation: String
+    public let backing: RelationBackingAST
+    public let sourceLine: Int
+    public init(relation: String, backing: RelationBackingAST, sourceLine: Int = 0) {
+        self.relation = relation; self.backing = backing; self.sourceLine = sourceLine
+    }
+}
+
+/// 3B: a verb bound to a relation, with its conjugation table.
+/// `The verb to own (he owns, it is owned) means the ownership relation.`
+public struct VerbDeclaration: Sendable {
+    public let base: String            // "own"
+    public let thirdPerson: String     // "owns"
+    public let pastParticiple: String  // "owned"
+    public let relation: String        // "ownership" (lowercased relation name)
+    public let sourceLine: Int
+    public init(base: String, thirdPerson: String, pastParticiple: String,
+                relation: String, sourceLine: Int = 0) {
+        self.base = base; self.thirdPerson = thirdPerson
+        self.pastParticiple = pastParticiple; self.relation = relation
         self.sourceLine = sourceLine
     }
 }
@@ -763,8 +815,24 @@ public indirect enum ExpressionAST: Sendable {
     case decideWhether(question: String)
     /// B6/B7: Fenced code block that contains `{{ expr }}` interpolation markers.
     case interpolatedString([InterpolationSegment])
+    /// Data table: a list of records sharing `fields`, one record per row.
+    /// Lowers to `.list([.record([...])])`.
+    case recordList(fields: [String], rows: [[ExpressionAST]])
     /// 2C: A quantified description (`all/any/no/at least N … <description>`).
     case quantified(QuantifierAST)
+    /// 3B: An active verb condition (`the user owns the page`). Resolved to a
+    /// relation predicate at lowering via the verb table.
+    case verbPredicate(subject: ExpressionAST, verb: String, object: ExpressionAST)
+    /// 3C: Scalar relation navigation (`the task assigned to the user`). `relation`
+    /// is the surface verb/relation form; resolved + directed at lowering.
+    case relationTraversal(ExpressionAST, relation: String, navKind: String)
+    /// 3C: A description used as a value (`the stale pages that mention the entity`).
+    case description(DescriptionAST)
+    /// 3C: An aggregate over a description (`the number of …`, `the list of …`).
+    case aggregate(AggregateKindAST, DescriptionAST)
+    /// 3C: A superlative over a description (`the oldest stale page`,
+    /// `the largest deal by amount`).
+    case superlative(SuperlativeAST)
     /// 2A/2B/2C carrier: a surface-level violation (mixed bare and/or, an
     /// invalid quantifier/description shape, an unidentifiable kind) recorded
     /// at parse time with a fully-formed diagnostic. `ExpressionParser.parse`
@@ -784,17 +852,55 @@ public enum QuantifierKindAST: Sendable, Equatable {
     case exactly(Int)
 }
 
-/// A description = `[adjectives] <kind plural> ( whose <predicate> )?`. The
-/// adjectives are kept as raw surface strings and resolved to definition
-/// predicates at lowering. `wherePredicate`, when present, terminates the
-/// description.
+/// A description = `[adjectives] <kind plural> ( whose <predicate> | <verb
+/// clause> )* [sorted by …] [first N]`. The adjectives are kept as raw surface
+/// strings and resolved to definition predicates at lowering. `wherePredicate`,
+/// when present, terminates the where-restriction; `verbClauses` carry relation
+/// relative/passive restrictions (3B).
 public struct DescriptionAST: Sendable {
     /// The collection noun as written (typically plural, e.g. "pages").
     public let noun: String
     public let adjectives: [String]
     public let wherePredicate: ExpressionAST?
-    public init(noun: String, adjectives: [String] = [], wherePredicate: ExpressionAST? = nil) {
+    /// 3B: relation relative/passive clauses restricting the element set.
+    public let verbClauses: [VerbClauseAST]
+    /// 3C: a `sorted by <property>[, dir]` order.
+    public let sort: (property: String, ascending: Bool)?
+    /// 3C: a `the first N` take-prefix (post-filter, post-sort).
+    public let take: Int?
+    public init(noun: String, adjectives: [String] = [], wherePredicate: ExpressionAST? = nil,
+                verbClauses: [VerbClauseAST] = [],
+                sort: (property: String, ascending: Bool)? = nil, take: Int? = nil) {
         self.noun = noun; self.adjectives = adjectives; self.wherePredicate = wherePredicate
+        self.verbClauses = verbClauses; self.sort = sort; self.take = take
+    }
+}
+
+/// 3B: a relation clause restricting a description's element set. The element
+/// (the iterated kind) plays either the subject or object role of `verbForm`'s
+/// relation; `operand` is the fixed other side.
+///   `pages that mention the entity`  → elementIsSubject = true,  operand = entity
+///   `pages owned by the user`        → elementIsSubject = false, operand = user
+///   `pages that the user owns`       → elementIsSubject = false, operand = user
+public struct VerbClauseAST: Sendable {
+    public let verbForm: String
+    public let operand: ExpressionAST
+    public let elementIsSubject: Bool
+    public init(verbForm: String, operand: ExpressionAST, elementIsSubject: Bool) {
+        self.verbForm = verbForm; self.operand = operand; self.elementIsSubject = elementIsSubject
+    }
+}
+
+public enum AggregateKindAST: Sendable, Equatable { case count, list }
+
+/// 3C: a superlative — a description reduced to a single element by a sort key.
+/// `ascending == true` takes the minimum (oldest/smallest); `false` the maximum.
+public struct SuperlativeAST: Sendable {
+    public let description: DescriptionAST
+    public let property: String
+    public let ascending: Bool
+    public init(description: DescriptionAST, property: String, ascending: Bool) {
+        self.description = description; self.property = property; self.ascending = ascending
     }
 }
 
