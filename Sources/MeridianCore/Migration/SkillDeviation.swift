@@ -59,7 +59,8 @@ public struct SkillDeviation {
         originalName: String,
         portedName: String,
         originalDiffPath: String? = nil,
-        portedDiffPath: String? = nil
+        portedDiffPath: String? = nil,
+        rulebook: Rulebook = .empty
     ) -> DeviationReport {
         let originalLines = originalMarkdown.components(separatedBy: "\n")
         let portedLines = portedMeri.components(separatedBy: "\n")
@@ -106,7 +107,7 @@ public struct SkillDeviation {
             similarity: similarity,
             categories: categories,
             unifiedDiff: diff,
-            metrics: SkillMetrics.analyze(portedMeri)
+            metrics: SkillMetrics.analyze(portedMeri, rulebook: rulebook)
         )
     }
 
@@ -147,7 +148,22 @@ public struct SkillDeviation {
         out.append("## Metrics")
         let m = r.metrics
         out.append("- Sections: \(m.inertSections)/\(m.totalSections) inert (\(percent(m.inertRatio)) inert ratio)")
+        out.append("- Operational inert: \(m.operationalInertSections)")
+        out.append("- Unclassified inert: \(m.unclassifiedInertSections)")
+        if !m.inertCategoryCounts.isEmpty {
+            let categoryText = m.inertCategoryCounts
+                .map { "\($0.category.rawValue)=\($0.count)" }
+                .joined(separator: ", ")
+            out.append("- Inert categories: \(categoryText)")
+        }
         out.append("- Judgment: \(m.judgmentBlocks) blocks, \(m.judgmentLines) lines")
+        if !m.inertDetails.isEmpty {
+            out.append("")
+            out.append("### Inert section details")
+            for detail in m.inertDetails {
+                out.append("- L\(detail.line) `\(detail.heading)`: \(detail.category.rawValue) — \(detail.reason)")
+            }
+        }
         if includeDiff {
             out.append("")
             out.append("## Unified diff")

@@ -2,9 +2,9 @@
 
 - Original: `ingest/SKILL.md`
 - Ported: `ingest.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 86%
-- Lines: 312 -> 295 (+33 / -50)
+- Tier: 2 (light edits)
+- Similarity: 71%
+- Lines: 312 -> 297 (+81 / -96)
 
 ## Frontmatter
 - Added: (none)
@@ -12,18 +12,39 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - preamble-blockquoted
 
 ## Metrics
-- Sections: 18/20 inert (90% inert ratio)
-- Judgment: 2 blocks, 8 lines
+- Sections: 15/20 inert (75% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: reference-documentation=13, template=1, tools-metadata=1
+- Judgment: 3 blocks, 32 lines
+
+### Inert section details
+- L19 `Citation Requirements (MANDATORY)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L39 `Entity Detection on Every Message`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L55 `What counts as notable`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L63 `What to capture from the user's own thinking`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L74 `Media Workflows`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L79 `Articles & Web Content`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L95 `Videos & Podcasts`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L118 `PDFs & Documents`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L131 `Screenshots & Images`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L143 `Meeting Transcripts`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L166 `Social Media Content`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L212 `Test Before Bulk`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L226 `Quality Rules`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L246 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L264 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/ingest/SKILL.md
-+++ ingest.meri
-@@ -24,11 +24,11 @@
++++ skills/ingest.meri
+@@ -24,25 +24,22 @@
  
  # Ingest Skill
  
@@ -33,24 +54,36 @@
  > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.
  
 -## Contract
-+## Contract (( inert, role: invariants ))
- 
- - Every fact written to a brain page carries an inline `[Source: ...]` citation with date and provenance.
- - Every entity mention creates a back-link from the entity's page to the page mentioning them (Iron Law).
-@@ -38,11 +38,7 @@
- 
- > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
- 
+-
+-- Every fact written to a brain page carries an inline `[Source: ...]` citation with date and provenance.
+-- Every entity mention creates a back-link from the entity's page to the page mentioning them (Iron Law).
+-- Raw sources are preserved for provenance via `gbrain files upload-raw` with automatic size routing.
+-- State sections are rewritten with current best understanding, never appended to.
+-- Entity detection fires on every inbound message; notable entities get pages or updates.
+-
+-> **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
+-
 -Every mention of a person or company with a brain page MUST create a back-link
 -FROM that entity's page TO the page mentioning them. An unlinked mention is a
 -broken brain. See `skills/_brain-filing-rules.md` for format.
 -
 -## Citation Requirements (MANDATORY)
++## Contract (( role: procedure ))
++
++!!! checklist (( ai-autonomy ))
++- [ ] Every fact written to a brain page carries an inline `[Source: ...]` citation with date and provenance.
++- [ ] Every entity mention creates a back-link from the entity's page to the page mentioning them (Iron Law).
++- [ ] Raw sources are preserved for provenance via `gbrain files upload-raw` with automatic size routing.
++- [ ] State sections are rewritten with current best understanding, never appended to.
++- [ ] Entity detection fires on every inbound message; notable entities get pages or updates.
++
++> > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
++
 +## Citation Requirements (MANDATORY) (( inert ))
  
  Every fact written to a brain page must carry an inline `[Source: ...]` citation.
  
-@@ -55,43 +51,30 @@
+@@ -55,43 +52,30 @@
  
  ## Phases
  
@@ -112,7 +145,7 @@
  
  - People the user interacts with or discusses (not random mentions)
  - Companies relevant to the user's work or interests
-@@ -99,7 +82,7 @@
+@@ -99,7 +83,7 @@
  - The user's own original thinking (ideas, theses, observations) -- highest value
  - See `skills/_brain-filing-rules.md` for the full notability gate
  
@@ -121,7 +154,7 @@
  
  Original thinking is the most valuable signal. Capture exact phrasing -- the user's
  language IS the insight. Don't paraphrase.
-@@ -110,12 +93,12 @@
+@@ -110,12 +94,12 @@
  - Contrarian positions with reasoning
  - Strong reactions to external stimuli (what triggered it and why)
  
@@ -136,7 +169,7 @@
  
  **Input:** URL shared by user, or article mentioned in conversation.
  
-@@ -131,7 +114,7 @@
+@@ -131,7 +115,7 @@
  **Write to:** appropriate directory per filing rules (about a person -> `people/`,
  about a company -> `companies/`, reusable framework -> `concepts/`, raw data -> `sources/`)
  
@@ -145,7 +178,7 @@
  
  **Input:** URL (YouTube, podcast, etc.) or local audio/video file.
  
-@@ -154,7 +137,7 @@
+@@ -154,7 +138,7 @@
  - Verbatim quotes with real speaker names (not "speaker_0")
  - All entities extracted with context and back-linked
  
@@ -154,7 +187,7 @@
  
  **Input:** File path or URL.
  
-@@ -167,7 +150,7 @@
+@@ -167,7 +151,7 @@
  
  **Write to:** per filing rules (file by primary subject, not format).
  
@@ -163,7 +196,7 @@
  
  **Input:** Image file.
  
-@@ -179,7 +162,7 @@
+@@ -179,7 +163,7 @@
  
  **Write to:** depends on content -- route to the appropriate workflow above.
  
@@ -172,7 +205,7 @@
  
  **Input:** Transcript from meeting recording service, or manual notes.
  
-@@ -202,7 +185,7 @@
+@@ -202,7 +186,7 @@
  - Names tension or what was left unsaid
  - Captures actual dynamic, not performative summary
  
@@ -181,25 +214,80 @@
  
  **Input:** Tweet, thread, or social media post.
  
-@@ -216,7 +199,7 @@
+@@ -216,39 +200,39 @@
  **Write to:** `media/x/` for daily aggregation, or entity-specific directories
  if the post is primarily about a person/company.
  
 -## Raw Source Preservation
-+## Raw Source Preservation (( inert ))
- 
- Every ingested item must have its raw source preserved for provenance.
- 
-@@ -248,7 +231,7 @@
- 
- Use `put_raw_data` in gbrain to store raw API responses and metadata (JSON, not binary).
- 
+-
+-Every ingested item must have its raw source preserved for provenance.
+-
+-**Use `gbrain files upload-raw` for automatic size routing:**
+-```bash
+-gbrain files upload-raw <file> --page <page-slug> --type <type>
+-```
+-
+-- **< 100 MB text/PDF**: stays in git (brain repo `.raw/` sidecar directories)
+-- **>= 100 MB OR media** (video, audio, images): uploaded to cloud storage
+-  via TUS resumable upload, `.redirect.yaml` pointer left in the brain repo
+-
+-The `.redirect.yaml` pointer format:
+-```yaml
+-target: supabase://brain-files/page-slug/filename.mp4
+-bucket: brain-files
+-storage_path: page-slug/filename.mp4
+-size: 524288000
+-size_human: 500 MB
+-hash: sha256:abc123...
+-mime: video/mp4
+-uploaded: 2026-04-11T...
+-type: transcript
+-```
+-
+-**Accessing stored files:**
+-- `gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing/sharing
+-- `gbrain files restore <dir>` -- download back to local from cloud storage
+-
+-Use `put_raw_data` in gbrain to store raw API responses and metadata (JSON, not binary).
+-
 -## Test Before Bulk
++## Raw Source Preservation (( role: procedure ))
++
++use judgment to follow the Raw Source Preservation guidance:
++  Every ingested item must have its raw source preserved for provenance.
++  
++  **Use `gbrain files upload-raw` for automatic size routing:**
++  ```bash
++  gbrain files upload-raw <file> --page <page-slug> --type <type>
++  ```
++  
++  item: **< 100 MB text/PDF**: stays in git (brain repo `.raw/` sidecar directories)
++  item: **>= 100 MB OR media** (video, audio, images): uploaded to cloud storage
++    via TUS resumable upload, `.redirect.yaml` pointer left in the brain repo
++  
++  The `.redirect.yaml` pointer format:
++  ```yaml
++  target: supabase://brain-files/page-slug/filename.mp4
++  bucket: brain-files
++  storage_path: page-slug/filename.mp4
++  size: 524288000
++  size_human: 500 MB
++  hash: sha256:abc123...
++  mime: video/mp4
++  uploaded: 2026-04-11T...
++  type: transcript
++  ```
++  
++  **Accessing stored files:**
++  item: `gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing/sharing
++  item: `gbrain files restore <dir>` -- download back to local from cloud storage
++  
++  Use `put_raw_data` in gbrain to store raw API responses and metadata (JSON, not binary).
 +## Test Before Bulk (( inert ))
  
  When processing multiple items (batch video ingestion, bulk meeting processing, etc.):
  
-@@ -262,7 +245,7 @@
+@@ -262,7 +246,7 @@
  The marginal cost of testing 3 items first is near zero. The cost of cleaning
  up 100 bad pages is enormous.
  
@@ -208,13 +296,26 @@
  
  - Executive summary in compiled_truth must be updated, not just timeline appended
  - State section is REWRITTEN, not appended to. Current best understanding only.
-@@ -273,7 +256,7 @@
+@@ -273,13 +257,14 @@
  - Back-links: every entity mention creates a back-link (Iron Law)
  - Filing: file by primary subject, not format or source (see filing rules)
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
+-
+-- **Appending to State sections.** State is rewritten with the current best understanding on every update. Append-only State sections grow stale and contradictory.
+-- **Ingesting without back-links.** An unlinked mention is a broken brain. Every entity mentioned must have a back-link from their page to the page mentioning them.
+-- **Skipping raw source preservation.** Every ingested item must have its raw source preserved. A brain page without provenance is unverifiable.
+-- **Bulk processing without sample test.** Test on 3-5 items first. Fix quality issues in the approach, not via one-off patches.
+-- **Paraphrasing the user's original thinking.** The user's exact language IS the insight. Capture verbatim phrasing for ideas, theses, and frameworks.
++## Anti-Patterns (( role: procedure ))
++
++!!! checklist (( ai-autonomy ))
++- [ ] **Appending to State sections.** State is rewritten with the current best understanding on every update. Append-only State sections grow stale and contradictory.
++- [ ] **Ingesting without back-links.** An unlinked mention is a broken brain. Every entity mentioned must have a back-link from their page to the page mentioning them.
++- [ ] **Skipping raw source preservation.** Every ingested item must have its raw source preserved. A brain page without provenance is unverifiable.
++- [ ] **Bulk processing without sample test.** Test on 3-5 items first. Fix quality issues in the approach, not via one-off patches.
++- [ ] **Paraphrasing the user's original thinking.** The user's exact language IS the insight. Capture verbatim phrasing for ideas, theses, and frameworks.
  
- - **Appending to State sections.** State is rewritten with the current best understanding on every update. Append-only State sections grow stale and contradictory.
- - **Ingesting without back-links.** An unlinked mention is a broken brain. Every entity mentioned must have a back-link from their page to the page mentioning them.
+ ## Output Format
+ 
 ```

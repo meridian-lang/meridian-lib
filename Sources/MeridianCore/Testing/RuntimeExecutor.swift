@@ -90,7 +90,8 @@ struct RuntimeExecutor {
     // MARK: - Package scaffolding
 
     private func packageManifest(repoRoot: URL) -> String {
-        """
+        let packageIdentity = repoRoot.lastPathComponent
+        return """
         // swift-tools-version: 6.0
         import PackageDescription
 
@@ -104,7 +105,7 @@ struct RuntimeExecutor {
                 .target(
                     name: "GeneratedWorkflow",
                     dependencies: [
-                        .product(name: "MeridianRuntime", package: "meridian")
+                        .product(name: "MeridianRuntime", package: "\(packageIdentity)")
                     ],
                     path: "Sources/GeneratedWorkflow"
                 ),
@@ -112,7 +113,7 @@ struct RuntimeExecutor {
                     name: "Driver",
                     dependencies: [
                         "GeneratedWorkflow",
-                        .product(name: "MeridianRuntime", package: "meridian")
+                        .product(name: "MeridianRuntime", package: "\(packageIdentity)")
                     ],
                     path: "Sources/Driver"
                 )

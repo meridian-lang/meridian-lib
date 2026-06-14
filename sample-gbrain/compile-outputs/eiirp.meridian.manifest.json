@@ -100,7 +100,7 @@
     "name" : "skillify reason: \"skillify is the meta-skill for turning a feature into a tested skill. EIIRP calls skillify when Phase 5 identifies a reusable pattern.\"",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 71,
         "text" : "Contract"
@@ -172,7 +172,7 @@
         "text" : "Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
         "line" : 216,
         "text" : "5a. New pattern identification"
@@ -214,7 +214,7 @@
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 347,
         "text" : "Anti-Patterns"
@@ -222,37 +222,37 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 366,
+        "line" : 367,
         "text" : "Hard Rules"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 368,
+        "line" : 369,
         "text" : "Knowledge domain"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 375,
+        "line" : 376,
         "text" : "Capability domain"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 381,
+        "line" : 382,
         "text" : "Meta"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 385,
+        "line" : 386,
         "text" : "Changelog"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 387,
+        "line" : 388,
         "text" : "v1.0.0 — gbrain v0.39.0.0"
       },
       {
@@ -264,14 +264,8 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 148,
+        "line" : 149,
         "text" : "Output"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 182,
-        "text" : "If schema needs change"
       },
       {
         "kind" : "topic",
@@ -300,7 +294,7 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 218,
+        "line" : 219,
         "text" : "Ask"
       },
       {
@@ -326,24 +320,13 @@
     "reason" : "\"brain-taxonomist classifies individual pages at write time (the filing GATE). EIIRP orchestrates the full post-work LIFECYCLE — inventory + taxonomy + schema + skillify + verify.\"",
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 71,
         "lines" : [
-          "After any significant work, EIIRP organizes ALL outputs across two domains:",
-          "**Knowledge domain (brain):**",
-          "Every piece of knowledge lands in the correct brain location",
-          "All sources are cited and linked",
-          "The active schema pack is updated if a new content type emerged",
-          "Entity pages created\/updated with cross-links",
-          "**Capability domain (skills):**",
-          "Every reusable pattern becomes a composable skill",
-          "Existing skills are audited for DRY violations",
-          "Skill graph is MECE — no gaps, no overlaps, no ambiguous routing",
-          "**The meta-guarantee:** Nothing produced during significant work lives only in chat",
-          "Knowledge → brain. Patterns → skills. Everything in its right place"
+
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
@@ -389,10 +372,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 2: TAXONOMY — Where does each piece go?",
         "line" : 131,
         "lines" : [
+          "use judgment to follow the Phase 2: TAXONOMY — Where does each piece go? guidance:",
           "**Read the active schema pack first** (the single source of truth for",
           "filing decisions in v0.39+):",
           "codeblock:bash:Z2JyYWluIHNjaGVtYSBzaG93IC0tanNvbg==",
@@ -408,10 +392,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 3: SCHEMA CHECK — Does the active pack cover this content?",
         "line" : 159,
         "lines" : [
+          "use judgment to follow the Phase 3: SCHEMA CHECK — Does the active pack cover this content? guidance:",
           "This is where EIIRP closes the schema-derivation loop. If the work",
           "produced content that doesn't fit any existing `page_types`, propose",
           "adding a new type via the v0.39 cathedral:",
@@ -421,9 +406,9 @@
           "the suggestion to the user and let them choose. The schema-cathedral",
           "ships the primitives; EIIRP enforces the human-in-the-loop gate",
           "If schema needs change:",
-          "Propose the addition to the user before running `review-candidates --apply`",
-          "Document the change in the commit message of the next sync",
-          "The schema-pack engine writes the delta to",
+          "item: Propose the addition to the user before running `review-candidates --apply`",
+          "item: Document the change in the commit message of the next sync",
+          "item: The schema-pack engine writes the delta to",
           "`~\/.gbrain\/schema-pack-deltas\/` — review and merge into the active",
           "pack via `gbrain schema edit` (or hand-edit the YAML)"
         ],
@@ -476,37 +461,39 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities",
         "line" : 212,
         "lines" : [
+          "use judgment to follow the Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities guidance:",
           "This phase operates on the SKILL graph, not just the research"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "5a. New pattern identification",
         "line" : 216,
         "lines" : [
+          "use judgment to follow the 5a. New pattern identification guidance:",
           "Ask: did this work reveal REPEATABLE patterns that will recur?",
           "**Indicators of a reusable pattern:**",
-          "You used a specific sequence of searches across multiple sources",
-          "You followed a specific verification\/cross-referencing methodology",
-          "You wrote code that could be parameterized for different inputs",
-          "The output format is generalizable",
-          "The user is likely to ask for similar work on a different topic",
+          "item: You used a specific sequence of searches across multiple sources",
+          "item: You followed a specific verification\/cross-referencing methodology",
+          "item: You wrote code that could be parameterized for different inputs",
+          "item: The output format is generalizable",
+          "item: The user is likely to ask for similar work on a different topic",
           "**For each identified pattern:**",
           "Identify the composable pieces (DRY, MECE):",
-          "Shared logic → `lib\/` (not copy-pasted into skills)",
-          "Search methodology → skill or lib function",
-          "Output template → brain template or skill phase",
-          "Filing logic → already covered by brain-taxonomist + active pack",
+          "item: Shared logic → `lib\/` (not copy-pasted into skills)",
+          "item: Search methodology → skill or lib function",
+          "item: Output template → brain template or skill phase",
+          "item: Filing logic → already covered by brain-taxonomist + active pack",
           "DRY check via the v0.19 resolver:",
           "codeblock:bash:Z2JyYWluIGNoZWNrLXJlc29sdmFibGU=",
           "Look for overlapping triggers or unreachable skills"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -573,33 +560,18 @@
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
         "line" : 347,
         "lines" : [
-          "**Hardcoding directory tables in EIIRP's logic.** Every filing decision",
-          "reads `gbrain schema show --json`. Users on `gbrain-recommended` AND",
-          "custom packs MUST get the right behavior automatically. Pinned by D9",
-          "from \/plan-eng-review",
-          "**Auto-applying low-confidence schema suggestions.** Confidence < 0.6",
-          "from `gbrain schema suggest` is \"manual review required\" per codex",
-          "finding #9. EIIRP surfaces it; the user accepts",
-          "**Skipping Phase 5 SKILL GRAPH AUDIT because \"this was a one-off.\"**",
-          "If the work took >10 minutes, the methodology is probably reusable",
-          "Audit anyway; defer the skillify decision to the user",
-          "**Filing synthesis output by topic alone.** Synthesis pages tied to a",
-          "single source + reader are sui generis; they file under",
-          "`media\/<format>\/<slug>-personalized.md`. See _brain-filing-rules.md",
-          "\"Sanctioned exception\" section",
-          "**Treating non-English sources as secondary citations.** Multilingual",
-          "sources are first-class"
+          "checklist:ai-autonomy:KipIYXJkY29kaW5nIGRpcmVjdG9yeSB0YWJsZXMgaW4gRUlJUlAncyBsb2dpYy4qKiBFdmVyeSBmaWxpbmcgZGVjaXNpb24gcmVhZHMgYGdicmFpbiBzY2hlbWEgc2hvdyAtLWpzb25gLiBVc2VycyBvbiBgZ2JyYWluLXJlY29tbWVuZGVkYCBBTkQgY3VzdG9tIHBhY2tzIE1VU1QgZ2V0IHRoZSByaWdodCBiZWhhdmlvciBhdXRvbWF0aWNhbGx5LiBQaW5uZWQgYnkgRDkgZnJvbSAvcGxhbi1lbmctcmV2aWV3LgoqKkF1dG8tYXBwbHlpbmcgbG93LWNvbmZpZGVuY2Ugc2NoZW1hIHN1Z2dlc3Rpb25zLioqIENvbmZpZGVuY2UgPCAwLjYgZnJvbSBgZ2JyYWluIHNjaGVtYSBzdWdnZXN0YCBpcyAibWFudWFsIHJldmlldyByZXF1aXJlZCIgcGVyIGNvZGV4IGZpbmRpbmcgIzkuIEVJSVJQIHN1cmZhY2VzIGl0OyB0aGUgdXNlciBhY2NlcHRzLgoqKlNraXBwaW5nIFBoYXNlIDUgU0tJTEwgR1JBUEggQVVESVQgYmVjYXVzZSAidGhpcyB3YXMgYSBvbmUtb2ZmLiIqKiBJZiB0aGUgd29yayB0b29rID4xMCBtaW51dGVzLCB0aGUgbWV0aG9kb2xvZ3kgaXMgcHJvYmFibHkgcmV1c2FibGUuIEF1ZGl0IGFueXdheTsgZGVmZXIgdGhlIHNraWxsaWZ5IGRlY2lzaW9uIHRvIHRoZSB1c2VyLgoqKkZpbGluZyBzeW50aGVzaXMgb3V0cHV0IGJ5IHRvcGljIGFsb25lLioqIFN5bnRoZXNpcyBwYWdlcyB0aWVkIHRvIGEgc2luZ2xlIHNvdXJjZSArIHJlYWRlciBhcmUgc3VpIGdlbmVyaXM7IHRoZXkgZmlsZSB1bmRlciBgbWVkaWEvPGZvcm1hdD4vPHNsdWc+LXBlcnNvbmFsaXplZC5tZGAuIFNlZSBfYnJhaW4tZmlsaW5nLXJ1bGVzLm1kICJTYW5jdGlvbmVkIGV4Y2VwdGlvbiIgc2VjdGlvbi4KKipUcmVhdGluZyBub24tRW5nbGlzaCBzb3VyY2VzIGFzIHNlY29uZGFyeSBjaXRhdGlvbnMuKiogTXVsdGlsaW5ndWFsIHNvdXJjZXMgYXJlIGZpcnN0LWNsYXNzLg=="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Hard Rules",
-        "line" : 366,
+        "line" : 367,
         "lines" : [
 
         ],
@@ -608,7 +580,7 @@
       {
         "executes" : false,
         "heading" : "Knowledge domain",
-        "line" : 368,
+        "line" : 369,
         "lines" : [
           "**Never leave research only in chat.** If it took >10 minutes to produce, it gets a brain page",
           "**Every source gets a citation.** No \"according to reports\" without a URL",
@@ -621,7 +593,7 @@
       {
         "executes" : false,
         "heading" : "Capability domain",
-        "line" : 375,
+        "line" : 376,
         "lines" : [
           "**DRY is sacred.** If the same logic appears in two skills, extract it to `lib\/`",
           "**MECE is sacred.** Every trigger phrase routes to exactly one skill",
@@ -633,7 +605,7 @@
       {
         "executes" : false,
         "heading" : "Meta",
-        "line" : 381,
+        "line" : 382,
         "lines" : [
           "**EIIRP is idempotent.** Running it twice on the same work should produce no changes the second time",
           "**EIIRP consumes the active schema pack as data.** Never hard-code directory tables in EIIRP's logic — read from `gbrain schema show --json` so users who picked `gbrain-recommended` OR custom packs get the right behavior automatically"
@@ -643,28 +615,29 @@
       {
         "executes" : false,
         "heading" : "Changelog",
-        "line" : 385,
+        "line" : 386,
         "lines" : [
 
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "v1.0.0 — gbrain v0.39.0.0",
-        "line" : 387,
+        "line" : 388,
         "lines" : [
-          "Initial port from upstream OpenClaw. Genericized — no references to",
+          "use judgment to follow the v1.0.0 — gbrain v0.39.0.0 guidance:",
+          "item: Initial port from upstream OpenClaw. Genericized — no references to",
           "private fork names per CLAUDE.md privacy rules",
-          "Phase 3 SCHEMA CHECK rewritten to consume the v0.39 cathedral CLI",
+          "item: Phase 3 SCHEMA CHECK rewritten to consume the v0.39 cathedral CLI",
           "(`detect | suggest | review-candidates`) instead of a private",
           "`brain\/schema.md`",
-          "Phase 5 SKILL GRAPH AUDIT calls `gbrain check-resolvable` instead of",
+          "item: Phase 5 SKILL GRAPH AUDIT calls `gbrain check-resolvable` instead of",
           "upstream `scripts\/skill-dry-check.mjs`",
-          "Phase 6 verification uses `gbrain doctor`'s schema_pack_consistency",
+          "item: Phase 6 verification uses `gbrain doctor`'s schema_pack_consistency",
           "check (T7) for the persistent surface"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       }
     ],
     "tools" : "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry",
@@ -709,72 +682,64 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 191,
-      "swift_line" : 605
-    },
-    {
-      "meridian_line" : 272,
-      "swift_line" : 615
-    },
-    {
-      "meridian_line" : 272,
-      "swift_line" : 627
-    },
-    {
-      "meridian_line" : 272,
-      "swift_line" : 638
-    },
-    {
-      "meridian_line" : 272,
-      "swift_line" : 649
-    },
-    {
-      "meridian_line" : 282,
-      "swift_line" : 660
+      "meridian_line" : 133,
+      "swift_line" : 592
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 703
+      "swift_line" : 630
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 708
+      "swift_line" : 635
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 749
+      "swift_line" : 674
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 754
+      "swift_line" : 679
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 795
+      "swift_line" : 718
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 800
+      "swift_line" : 723
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 841
+      "swift_line" : 762
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 846
+      "swift_line" : 767
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 887
+      "swift_line" : 806
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 892
+      "swift_line" : 811
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 933
+      "swift_line" : 850
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 855
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 894
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 899
     },
     {
       "meridian_line" : 1,
@@ -782,35 +747,43 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 979
+      "swift_line" : 943
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 984
+      "swift_line" : 982
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1025
+      "swift_line" : 987
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1030
+      "swift_line" : 1026
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1071
+      "swift_line" : 1031
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1076
+      "swift_line" : 1070
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1117
+      "swift_line" : 1075
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1122
+      "swift_line" : 1114
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1119
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1158
     },
     {
       "meridian_line" : 1,
@@ -818,47 +791,27 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1168
+      "swift_line" : 1202
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1209
+      "swift_line" : 1207
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1214
+      "swift_line" : 1246
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1255
+      "swift_line" : 1251
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1260
+      "swift_line" : 1290
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1301
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 1306
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 1347
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 1352
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 1393
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 1398
+      "swift_line" : 1295
     }
   ],
   "tools_used" : [

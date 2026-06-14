@@ -97,7 +97,7 @@
     "name" : "resolver",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 12,
         "text" : "Contract"
@@ -105,69 +105,60 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 20,
+        "line" : 21,
         "text" : "Phases"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 28,
+        "line" : 29,
         "text" : "Routing tables"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 30,
+        "line" : 31,
         "text" : "Always-on (every message)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 35,
+        "line" : 36,
         "text" : "Brain operations"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 42,
+        "line" : 43,
         "text" : "Content and media ingestion"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 48,
+        "line" : 49,
         "text" : "Maintenance and operations"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 54,
+        "line" : 55,
         "text" : "Anti-Patterns"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 14,
-        "text" : "This skill guarantees"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 12,
         "lines" : [
-          "This skill guarantees:",
-          "Every inbound request maps to exactly one owning skill, or to a short chain of skills that are designed to compose",
-          "The resolver only selects; it never performs brain reads or writes itself",
-          "Always-on detection (signal-detector, brain-ops) runs on every message regardless of routing"
+          "checklist:ai-autonomy:RXZlcnkgaW5ib3VuZCByZXF1ZXN0IG1hcHMgdG8gZXhhY3RseSBvbmUgb3duaW5nIHNraWxsLCBvciB0byBhIHNob3J0IGNoYWluIG9mIHNraWxscyB0aGF0IGFyZSBkZXNpZ25lZCB0byBjb21wb3NlClRoZSByZXNvbHZlciBvbmx5IHNlbGVjdHM7IGl0IG5ldmVyIHBlcmZvcm1zIGJyYWluIHJlYWRzIG9yIHdyaXRlcyBpdHNlbGYKQWx3YXlzLW9uIGRldGVjdGlvbiAoc2lnbmFsLWRldGVjdG9yLCBicmFpbi1vcHMpIHJ1bnMgb24gZXZlcnkgbWVzc2FnZSByZWdhcmRsZXNzIG9mIHJvdXRpbmc="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 20,
+        "line" : 21,
         "lines" : [
           "use judgment to route the request to the owning skill:",
           "Read the request and identify the dominant intent (brain operation, ingestion, maintenance, scheduling, or meta)",
@@ -180,7 +171,7 @@
       {
         "executes" : false,
         "heading" : "Routing tables",
-        "line" : 28,
+        "line" : 29,
         "lines" : [
 
         ],
@@ -189,7 +180,7 @@
       {
         "executes" : false,
         "heading" : "Always-on (every message)",
-        "line" : 30,
+        "line" : 31,
         "lines" : [
           "Every inbound message routes to signal-detector, spawned in parallel and never blocking the response",
           "Any brain read, write, lookup, or citation routes to brain-ops"
@@ -199,7 +190,7 @@
       {
         "executes" : false,
         "heading" : "Brain operations",
-        "line" : 35,
+        "line" : 36,
         "lines" : [
           "A question about what the brain knows (\"what do we know about\", \"who is\", \"background on\") routes to query",
           "Creating or enriching a person or company page routes to enrich",
@@ -211,7 +202,7 @@
       {
         "executes" : false,
         "heading" : "Content and media ingestion",
-        "line" : 42,
+        "line" : 43,
         "lines" : [
           "\"capture this\", \"save this thought\", \"remember this\" routes to capture",
           "A shared link, article, tweet, or idea routes to idea-ingest",
@@ -222,7 +213,7 @@
       {
         "executes" : false,
         "heading" : "Maintenance and operations",
-        "line" : 48,
+        "line" : 49,
         "lines" : [
           "Brain health, consolidation, and cleanup route to maintain",
           "Scheduling recurring work routes to cron-scheduler",
@@ -231,15 +222,13 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 54,
+        "line" : 55,
         "lines" : [
-          "Routing to more than one skill when a single skill clearly owns the request",
-          "Performing brain reads or writes inside the resolver instead of delegating",
-          "Skipping always-on detection because a specific skill matched"
+          "checklist:ai-autonomy:Um91dGluZyB0byBtb3JlIHRoYW4gb25lIHNraWxsIHdoZW4gYSBzaW5nbGUgc2tpbGwgY2xlYXJseSBvd25zIHRoZSByZXF1ZXN0ClBlcmZvcm1pbmcgYnJhaW4gcmVhZHMgb3Igd3JpdGVzIGluc2lkZSB0aGUgcmVzb2x2ZXIgaW5zdGVhZCBvZiBkZWxlZ2F0aW5nClNraXBwaW5nIGFsd2F5cy1vbiBkZXRlY3Rpb24gYmVjYXVzZSBhIHNwZWNpZmljIHNraWxsIG1hdGNoZWQ="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "triggers" : "\"which skill\"\n\"route this\"\n\"what skill handles\""
@@ -280,32 +269,40 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 22,
-      "swift_line" : 589
+      "meridian_line" : 17,
+      "swift_line" : 581
+    },
+    {
+      "meridian_line" : 23,
+      "swift_line" : 592
+    },
+    {
+      "meridian_line" : 58,
+      "swift_line" : 601
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 627
+      "swift_line" : 641
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 632
+      "swift_line" : 646
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 671
+      "swift_line" : 685
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 676
+      "swift_line" : 690
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 715
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 720
+      "swift_line" : 734
     }
   ],
   "tools_used" : [

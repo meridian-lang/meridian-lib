@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -589,13 +581,13 @@ public struct TestingInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "TestingInput", parameters: [:])
 
-        // L64
-        let __meridianProseResults_L64 = try await runtime.executeProsePlan(
-            prose: "validate skill conformance\nWalk the skills directory and list every subdirectory containing a SKILL.md\nValidate each file's frontmatter fields and required sections\nCheck that the manifest lists every skill directory and the resolver references every manifest skill\nCheck the resolver-to-frontmatter trigger round-trip and report results",
+        // L51
+        let __meridianProseResults_L51 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance\nThis mode guarantees:\nitem: Every skill directory has a `SKILL.md` file\nitem: Every `SKILL.md` has valid YAML frontmatter (`name`, `description`)\nitem: Every `SKILL.md` has required sections per\n`test/skills-conformance.test.ts`\nitem: `skills/manifest.json` lists every skill directory\nitem: `skills/RESOLVER.md` references every skill in the manifest\nitem: `openclaw.plugin.json` `skills[]` round-trips with both\nitem: No MECE violations (duplicate triggers across skills)\nuse judgment to validate skill conformance:\nWalk the skills directory and list every subdirectory containing a SKILL.md\nValidate each file's frontmatter fields and required sections\nCheck that the manifest lists every skill directory and the resolver references every manifest skill\nCheck the resolver-to-frontmatter trigger round-trip and report results\nuse judgment to follow the Automation guidance:\ncodeblock:bash:YnVuIHRlc3QgdGVzdC9za2lsbHMtY29uZm9ybWFuY2UudGVzdC50cyB0ZXN0L3Jlc29sdmVyLnRlc3QudHM=\nThe CI-gated check is the package.json `test` script\nuse judgment to follow the Test tiers guidance:\ntable:decision:fCBUaWVyIHwgV2hhdCBpdCBydW5zIHwgV2FsbCB0aW1lIHwgR2F0ZXMgfAp8LS0tLS0tfC0tLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tfC0tLS0tLS18CnwgKipVbml0KiogfCBgYnVuIHRlc3RgIChkZXRlcm1pbmlzdGljLCB6ZXJvIGV4dGVybmFsIGNhbGxzKSB8IDwycyB8IEV2ZXJ5IGNvbW1pdCB8CnwgKipFdmFscyoqIHwgTExNLWp1ZGdlIG9yIHF1YWxpdHkgZXZhbHMgfCB+NjBzIHwgRGFpbHkgfAp8ICoqSW50ZWdyYXRpb24qKiB8IEUyRSB0ZXN0cyBhZ2FpbnN0IHJlYWwgUG9zdGdyZXMgfCB+NW0gfCBQcmUtc2hpcCArIG5pZ2h0bHkgfAp8ICoqU3lzdGVtIGhlYWx0aCoqIHwgRGlzayAvIG1lbW9yeSAvIENQVSAvIHNlcnZpY2UgbGl2ZW5lc3MgfCA8MTBzIHwgRGFpbHkgfA==\nchecklist:ai-autonomy:4p2MIFNraXBwaW5nIGNvbmZvcm1hbmNlIHZhbGlkYXRpb24gYWZ0ZXIgYWRkaW5nIGEgbmV3IHNraWxsCuKdjCBBZGRpbmcgc2tpbGxzIHRvIGBtYW5pZmVzdC5qc29uYCB3aXRob3V0IGFkZGluZyB0byBSRVNPTFZFUi5tZArinYwgVHJlYXRpbmcgZXZlcnkgcmVkIHRlc3QgYXMgYSByZWdyZXNzaW9uLiBDbGFzc2lmeSBmaXJzdDsgbWFueSBhcmUgc3RhbGUgb3IgZmxha3kuCuKdjCBBdXRvLXVuLXNraXBwaW5nIGEgdGVzdCB3aXRob3V0IHVuZGVyc3RhbmRpbmcgd2h5IGl0IHdhcyBza2lwcGVkCuKdjCBBdXRvLSJmaXhpbmciIGEgc2VjdXJpdHkgdGVzdCBmYWlsdXJlCuKdjCBSZXBvcnRpbmcgImFsbCBjbGVhciIgd2l0aG91dCBhY3R1YWxseSBydW5uaW5nIHN5c3RlbSBoZWFsdGggY2hlY2tz\nuse judgment to follow the Contract guidance:\nmarkererror:YSBgISEhIGNoZWNrbGlzdGAgbWFya2VyIG11c3QgaW1tZWRpYXRlbHkgcHJlY2VkZSBhIHRhc2sgbGlzdCAob25lIG9yIG1vcmUgYC0gWyBdYCAvIGAtIFt4XWAgaXRlbXMp\nitem: [ ] Routing matches the canonical triggers in the frontmatter\nitem: [ ] Output written under the directories listed in `writes_to:` (when applicable)\nitem: [ ] Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nitem: [ ] Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
             snapshot: state.snapshot(),
             scopedTools: ["page.list", "page.search", "shell.run"]
         )
-        for (__key, __value) in __meridianProseResults_L64 {
+        for (__key, __value) in __meridianProseResults_L51 {
             state.bind(__key, __value)
         }
 

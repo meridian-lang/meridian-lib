@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -587,8 +579,19 @@ public struct CaptureInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "CaptureInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L50:C0") {
-            // L50
+        // L25
+        let __meridianProseResults_L25 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- **Input:** the content to save (inline arg, `--file PATH`, or `--stdin`)\n- **Output:** a page in the brain DB AND a markdown file on disk under `<sync.repo_path>/<slug>.md`. Receipt printed to stdout.\n- **Side effect:** the page becomes immediately queryable via `gbrain query`, `gbrain search`, or any MCP-bound agent.\n- **Idempotency:** same content → same `inbox/YYYY-MM-DD-<hash8>` slug. The daemon's 24h content-hash dedup catches re-captures.\n- **Trust:** all captures via this skill are local-CLI trust (`remote: false`) Untrusted webhook ingestion goes through `POST /ingest`, not this verb.",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L25 {
+            state.bind(__key, __value)
+        }
+        if __meridianShouldRun("progress:0.1:L51:C0") {
+            // L51
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -596,10 +599,10 @@ public struct CaptureInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.0:L50:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.1:L51:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.1:L50:C0") {
-            // L50
+        if __meridianShouldRun("progress:0.2:L51:C0") {
+            // L51
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -607,10 +610,10 @@ public struct CaptureInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.1:L50:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.2:L51:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.2:L50:C0") {
-            // L50
+        if __meridianShouldRun("progress:0.3:L51:C0") {
+            // L51
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -618,10 +621,10 @@ public struct CaptureInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.2:L50:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.3:L51:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.3:L50:C0") {
-            // L50
+        if __meridianShouldRun("progress:0.4:L51:C0") {
+            // L51
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -629,10 +632,10 @@ public struct CaptureInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.3:L50:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.4:L51:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.4:L50:C0") {
-            // L50
+        if __meridianShouldRun("progress:0.5:L51:C0") {
+            // L51
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -640,10 +643,10 @@ public struct CaptureInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.4:L50:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.5:L51:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.5:L50:C0") {
-            // L50
+        if __meridianShouldRun("progress:0.6:L51:C0") {
+            // L51
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -651,10 +654,10 @@ public struct CaptureInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.5:L50:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.6:L51:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.6:L50:C0") {
-            // L50
+        if __meridianShouldRun("progress:0.7:L51:C0") {
+            // L51
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -662,7 +665,18 @@ public struct CaptureInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.6:L50:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.7:L51:C0", state: state.snapshot())
+        }
+        // L87
+        let __meridianProseResults_L87 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- **Don't reach for `gbrain put`.** That's the old per-page primitive that doesn't know about default slug generation, content-type heuristics, or the receipt block. `capture` is the human-facing wrapper.\n- **Don't try to bulk-import dozens of files by looping over `gbrain capture`.** That's what `gbrain sync` (or `gbrain import`) is for. Capture is for single thoughts, single notes, single transcripts.\n- **Don't pre-format the content yourself with frontmatter if you don't need to.** Capture wraps plain prose in sensible frontmatter (type + title + captured_via + captured_at). The body becomes `# Title\\n\\n<your prose>`. Pass `--file PATH` if you already have a fully-formatted markdown file.\n- **Don't pass secrets as inline content.** Inline args land in shell history. Use `--file` or `--stdin` instead.",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L87 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

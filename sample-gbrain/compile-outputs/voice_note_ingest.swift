@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -590,6 +582,15 @@ public struct VoiceNoteIngestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "VoiceNoteIngestInput", parameters: [:])
 
+        // L160
+        let __meridianProseResults_L160 = try await runtime.executeProsePlan(
+            prose: "follow the Naming convention guidance\nitem: Audio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,\n`2026-04-13-rick-rubin-creative-philosophy.ogg`)\nitem: Brain pages: match the slug of the destination directory\nchecklist:ai-autonomy:4p2MICoqUGFyYXBocmFzaW5nIHRoZSB0cmFuc2NyaXB0LioqIFRoZSBleGFjdCB3b3JkcyBhcmUgdGhlIHNpZ25hbArinYwgKipDbGVhbmluZyB1cCBoZXNpdGF0aW9ucyBvciBmaWxsZXIgd29yZHMqKiAoInVtIiwgImxpa2UiLCAieW91IGtub3ciKS4gVGhlIHRleHR1cmUgbWF0dGVycy4K4p2MICoqQ3JlYXRpbmcgYSBwYWdlIHdpdGggbm8gZW50aXR5IGNyb3NzLWxpbmtzKiogd2hlbiBwZW9wbGUvY29tcGFuaWVzIHdlcmUgbWVudGlvbmVkLiBJcm9uIExhdyBmYWlsLgrinYwgKipTa2lwcGluZyB0aGUgYXVkaW8gc3RvcmFnZSBzdGVwLioqIEFsd2F5cyB1cGxvYWQgdGhlIG9yaWdpbmFsOyB0aGUgYnJhaW4gcGFnZSBoYXMgYSBg8J+UiiBbQXVkaW9dYCBsaW5rIGJhY2sgdG8gaXQu\nchecklist:ai-autonomy:Um91dGluZyBtYXRjaGVzIHRoZSBjYW5vbmljYWwgdHJpZ2dlcnMgaW4gdGhlIGZyb250bWF0dGVyCk91dHB1dCB3cml0dGVuIHVuZGVyIHRoZSBkaXJlY3RvcmllcyBsaXN0ZWQgaW4gYHdyaXRlc190bzpgICh3aGVuIGFwcGxpY2FibGUpCkNvbnZlbnRpb25zIHJlZmVyZW5jZWQgKGBxdWFsaXR5Lm1kYCwgYGJyYWluLWZpcnN0Lm1kYCwgYF9icmFpbi1maWxpbmctcnVsZXMubWRgKSBhcmUgZm9sbG93ZWQKUHJpdmFjeSBjb250cmFjdCBwcmVzZXJ2ZWQ6IG5vIHJlYWwgbmFtZXMsIG5vIGZvcmstc3BlY2lmaWMgZmlsZXN5c3RlbSBwYXRoIGxpdGVyYWxzLCBubyB1cHN0cmVhbS1mb3JrIHJlZmVyZW5jZXM=",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L160 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

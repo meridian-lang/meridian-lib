@@ -104,7 +104,7 @@
         "text" : "Purpose"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 30,
         "text" : "Contract"
@@ -112,121 +112,109 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 39,
+        "line" : 40,
         "text" : "Critical: this skill reads the ACTIVE schema pack as data"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 54,
+        "line" : 55,
         "text" : "When to Consult (MANDATORY)"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 67,
+        "line" : 68,
         "text" : "Decision Protocol"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 69,
+        "line" : 70,
         "text" : "Step 1: Identify primary subject type"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 80,
+        "line" : 81,
         "text" : "Step 2: Look up the directory for that type in the active pack"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 91,
+        "line" : 92,
         "text" : "Step 3: For books — determine sub-category"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 99,
+        "line" : 100,
         "text" : "Step 4: Construct the slug"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 105,
+        "line" : 106,
         "text" : "Step 5: Validate before writing"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 116,
+        "line" : 117,
         "text" : "Integration with Other Skills"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 123,
+        "line" : 124,
         "text" : "Periodic Drift Detection"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 136,
+        "line" : 137,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 161,
+        "line" : 162,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 176,
+        "line" : 178,
         "text" : "Hard Rules"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 186,
+        "line" : 188,
         "text" : "Changelog"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 188,
+        "line" : 190,
         "text" : "v1.0.0 — gbrain v0.39.0.0"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 32,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 34,
-        "text" : "The decision is reproducible"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 62,
+        "line" : 63,
         "text" : "You do NOT need to consult for"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 71,
+        "line" : 72,
         "text" : "Walk these questions in order"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 138,
+        "line" : 139,
         "text" : "Advisory"
       }
     ],
@@ -243,23 +231,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 30,
         "lines" : [
-          "This skill guarantees:",
-          "Every new page is filed at the path determined by the ACTIVE schema pack — never against a hardcoded directory table baked into this skill",
-          "The decision is reproducible: invoking brain-taxonomist twice on the same content produces the same recommended path",
-          "Ambiguous cases surface to the user via `skills\/ask-user\/` rather than silently picking a default",
-          "Per-source overrides via `--source <id>` are honored — multi-brain users (Persona B) get a different recommendation per source if their packs diverge",
-          "When no matching `page_types[]` entry exists in the active pack, the skill signals to EIIRP Phase 3 (SCHEMA CHECK) rather than picking the closest-fitting fallback"
+          "checklist:ai-autonomy:RXZlcnkgbmV3IHBhZ2UgaXMgZmlsZWQgYXQgdGhlIHBhdGggZGV0ZXJtaW5lZCBieSB0aGUgQUNUSVZFIHNjaGVtYSBwYWNrIOKAlCBuZXZlciBhZ2FpbnN0IGEgaGFyZGNvZGVkIGRpcmVjdG9yeSB0YWJsZSBiYWtlZCBpbnRvIHRoaXMgc2tpbGwKVGhlIGRlY2lzaW9uIGlzIHJlcHJvZHVjaWJsZTogaW52b2tpbmcgYnJhaW4tdGF4b25vbWlzdCB0d2ljZSBvbiB0aGUgc2FtZSBjb250ZW50IHByb2R1Y2VzIHRoZSBzYW1lIHJlY29tbWVuZGVkIHBhdGgKQW1iaWd1b3VzIGNhc2VzIHN1cmZhY2UgdG8gdGhlIHVzZXIgdmlhIGBza2lsbHMvYXNrLXVzZXIvYCByYXRoZXIgdGhhbiBzaWxlbnRseSBwaWNraW5nIGEgZGVmYXVsdApQZXItc291cmNlIG92ZXJyaWRlcyB2aWEgYC0tc291cmNlIDxpZD5gIGFyZSBob25vcmVkIOKAlCBtdWx0aS1icmFpbiB1c2VycyAoUGVyc29uYSBCKSBnZXQgYSBkaWZmZXJlbnQgcmVjb21tZW5kYXRpb24gcGVyIHNvdXJjZSBpZiB0aGVpciBwYWNrcyBkaXZlcmdlCldoZW4gbm8gbWF0Y2hpbmcgYHBhZ2VfdHlwZXNbXWAgZW50cnkgZXhpc3RzIGluIHRoZSBhY3RpdmUgcGFjaywgdGhlIHNraWxsIHNpZ25hbHMgdG8gRUlJUlAgUGhhc2UgMyAoU0NIRU1BIENIRUNLKSByYXRoZXIgdGhhbiBwaWNraW5nIHRoZSBjbG9zZXN0LWZpdHRpbmcgZmFsbGJhY2s="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Critical: this skill reads the ACTIVE schema pack as data",
-        "line" : 39,
+        "line" : 40,
         "lines" : [
           "`brain-taxonomist` has NO hardcoded directory table. Every decision is",
           "driven by `gbrain schema show --json`. This means:",
@@ -278,7 +261,7 @@
       {
         "executes" : false,
         "heading" : "When to Consult (MANDATORY)",
-        "line" : 54,
+        "line" : 55,
         "lines" : [
           "Run the taxonomist check before writing to the brain in these cases:",
           "**New brain page** — any `type` (person, company, concept, book, meeting, etc.)",
@@ -294,7 +277,7 @@
       {
         "executes" : false,
         "heading" : "Decision Protocol",
-        "line" : 67,
+        "line" : 68,
         "lines" : [
 
         ],
@@ -303,7 +286,7 @@
       {
         "executes" : false,
         "heading" : "Step 1: Identify primary subject type",
-        "line" : 69,
+        "line" : 70,
         "lines" : [
           "Walk these questions in order:",
           "Is the primary subject a NAMED PERSON? → person-typed directory",
@@ -317,22 +300,23 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Step 2: Look up the directory for that type in the active pack",
-        "line" : 80,
+        "line" : 81,
         "lines" : [
+          "use judgment to follow the Step 2: Look up the directory for that type in the active pack guidance:",
           "codeblock:bash:Z2JyYWluIHNjaGVtYSBzaG93IC0tanNvbiB8IGpxICcucGFnZV90eXBlc1tdIHwgc2VsZWN0KC5wcmltaXRpdmUgPT0gImVudGl0eSIpJw==",
           "Each `page_types[]` entry has a `path_prefixes:` array. The first prefix",
           "is the canonical path. If multiple types match (e.g. both `person` and",
           "`founder` exist in the pack with `expert_routing: true`), prefer the more",
           "specific one (the one with the more specific path prefix)"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Step 3: For books — determine sub-category",
-        "line" : 91,
+        "line" : 92,
         "lines" : [
           "The `gbrain-recommended` pack treats books as `media\/books\/<category>\/<slug>.md`",
           "where category is one of: psychology, philosophy, spirituality, business,",
@@ -345,33 +329,32 @@
       {
         "executes" : false,
         "heading" : "Step 4: Construct the slug",
-        "line" : 99,
+        "line" : 100,
         "lines" : [
-          "kebab-case, descriptive",
-          "no author name unless disambiguation is needed",
-          "match the canonical path prefix exactly (no leading slash)"
+
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Step 5: Validate before writing",
-        "line" : 105,
+        "line" : 106,
         "lines" : [
-          "Path follows the active pack's `page_types[].path_prefixes`",
-          "Slug is kebab-case, descriptive",
-          "Frontmatter includes `type:` matching one of the pack's `page_types[].name`",
-          "Cross-links to related pages are included",
+          "use judgment to follow the Step 5: Validate before writing guidance:",
+          "item: [ ] Path follows the active pack's `page_types[].path_prefixes`",
+          "item: [ ] Slug is kebab-case, descriptive",
+          "item: [ ] Frontmatter includes `type:` matching one of the pack's `page_types[].name`",
+          "item: [ ] Cross-links to related pages are included",
           "If the active pack doesn't have a type for what you're trying to file,",
           "DON'T pick the closest-fitting one. Instead, signal to EIIRP that a new",
           "type is needed and let the schema-pack cathedral handle the proposal flow"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Integration with Other Skills",
-        "line" : 116,
+        "line" : 117,
         "lines" : [
           "`eiirp` — calls this skill as Phase 2 TAXONOMY for every output in its inventory",
           "`ingest` — article\/media ingestion consults brain-taxonomist for filing",
@@ -381,20 +364,21 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Periodic Drift Detection",
-        "line" : 123,
+        "line" : 124,
         "lines" : [
+          "use judgment to follow the Periodic Drift Detection guidance:",
           "codeblock:bash:IyBXaGF0IHBhZ2VzIGhhdmUgbm8gdHlwZSBtYXRjaGluZyB0aGUgYWN0aXZlIHBhY2s\/CmdicmFpbiBzY2hlbWEgcmV2aWV3LW9ycGhhbnMgLS1qc29uCgojIFdoYXQncyB0aGUgb3ZlcmFsbCBoZWFsdGg\/CmdicmFpbiBkb2N0b3IgLS1qc29uIHwganEgJy5jaGVja3NbXSB8IHNlbGVjdCgubmFtZSA9PSAic2NoZW1hX3BhY2tfY29uc2lzdGVuY3kiKSc=",
           "When `schema_pack_consistency` warns at >10% untyped, run the EIIRP",
           "Phase 3 SCHEMA CHECK flow to surface candidate types via `schema detect`"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 136,
+        "line" : 137,
         "lines" : [
           "Advisory: a single recommendation block plus a one-line reasoning trail",
           "codeblock:markdown:KipGaWxlIGF0OioqIGA8ZGlyZWN0b3J5Pi88c2x1Zz4ubWRgCioqUmVhc29uaW5nOioqCi0gUHJpbWFyeSBzdWJqZWN0OiA8cGVyc29ufGNvbXBhbnl8Y29uY2VwdHwuLi4+Ci0gTWF0Y2hlZCBwYWdlX3R5cGU6IDxuYW1lPiAocHJpbWl0aXZlOiA8ZW50aXR5fHRlbXBvcmFsfGNvbmNlcHR8bWVkaWF8YW5ub3RhdGlvbj4pCi0gQWN0aXZlIHBhY2s6IDxwYWNrLW5hbWU+IHY8dmVyc2lvbj4KLSBTb3VyY2U6IDxzb3VyY2VfaWQ+",
@@ -407,29 +391,18 @@
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 161,
+        "line" : 162,
         "lines" : [
-          "**Hardcoded directory table in this skill.** Every decision goes through",
-          "`gbrain schema show --json`. v0.39+ broke the old hardcoded table on",
-          "purpose so users on `gbrain-recommended` or custom packs get the right",
-          "routing automatically",
-          "**Picking the closest-fitting type when no type matches.** Closest-fit",
-          "silently degrades user filing. Surface to EIIRP Phase 3 instead",
-          "**Ignoring `--source <id>` on multi-brain setups.** Per-source overrides",
-          "are tier-3 in the 7-tier resolution chain; missing the flag silently",
-          "uses the brain-wide active pack",
-          "**Auto-applying a `gbrain schema review-candidates --apply` decision.**",
-          "Even high-confidence suggestions need user approval — this skill is a",
-          "GATE, not an automator"
+          "checklist:ai-autonomy:KipIYXJkY29kZWQgZGlyZWN0b3J5IHRhYmxlIGluIHRoaXMgc2tpbGwuKiogRXZlcnkgZGVjaXNpb24gZ29lcyB0aHJvdWdoIGBnYnJhaW4gc2NoZW1hIHNob3cgLS1qc29uYC4gdjAuMzkrIGJyb2tlIHRoZSBvbGQgaGFyZGNvZGVkIHRhYmxlIG9uIHB1cnBvc2Ugc28gdXNlcnMgb24gYGdicmFpbi1yZWNvbW1lbmRlZGAgb3IgY3VzdG9tIHBhY2tzIGdldCB0aGUgcmlnaHQgcm91dGluZyBhdXRvbWF0aWNhbGx5LgoqKlBpY2tpbmcgdGhlIGNsb3Nlc3QtZml0dGluZyB0eXBlIHdoZW4gbm8gdHlwZSBtYXRjaGVzLioqIENsb3Nlc3QtZml0IHNpbGVudGx5IGRlZ3JhZGVzIHVzZXIgZmlsaW5nLiBTdXJmYWNlIHRvIEVJSVJQIFBoYXNlIDMgaW5zdGVhZC4KKipJZ25vcmluZyBgLS1zb3VyY2UgPGlkPmAgb24gbXVsdGktYnJhaW4gc2V0dXBzLioqIFBlci1zb3VyY2Ugb3ZlcnJpZGVzIGFyZSB0aWVyLTMgaW4gdGhlIDctdGllciByZXNvbHV0aW9uIGNoYWluOyBtaXNzaW5nIHRoZSBmbGFnIHNpbGVudGx5IHVzZXMgdGhlIGJyYWluLXdpZGUgYWN0aXZlIHBhY2suCioqQXV0by1hcHBseWluZyBhIGBnYnJhaW4gc2NoZW1hIHJldmlldy1jYW5kaWRhdGVzIC0tYXBwbHlgIGRlY2lzaW9uLioqIEV2ZW4gaGlnaC1jb25maWRlbmNlIHN1Z2dlc3Rpb25zIG5lZWQgdXNlciBhcHByb3ZhbCDigJQgdGhpcyBza2lsbCBpcyBhIEdBVEUsIG5vdCBhbiBhdXRvbWF0b3Iu"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Hard Rules",
-        "line" : 176,
+        "line" : 178,
         "lines" : [
           "**Never hardcode a directory table in this skill.** Every decision goes",
           "through `gbrain schema show --json`. The active pack is canonical",
@@ -444,7 +417,7 @@
       {
         "executes" : false,
         "heading" : "Changelog",
-        "line" : 186,
+        "line" : 188,
         "lines" : [
 
         ],
@@ -453,7 +426,7 @@
       {
         "executes" : false,
         "heading" : "v1.0.0 — gbrain v0.39.0.0",
-        "line" : 188,
+        "line" : 190,
         "lines" : [
           "Initial port from upstream OpenClaw. Genericized — no references to",
           "private fork names per CLAUDE.md privacy rules",
@@ -505,68 +478,76 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 621
+      "meridian_line" : 34,
+      "swift_line" : 584
+    },
+    {
+      "meridian_line" : 83,
+      "swift_line" : 595
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 626
+      "swift_line" : 633
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 665
+      "swift_line" : 638
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 670
+      "swift_line" : 677
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 709
+      "swift_line" : 682
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 714
+      "swift_line" : 721
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 753
+      "swift_line" : 726
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 758
+      "swift_line" : 765
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 797
+      "swift_line" : 770
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 802
+      "swift_line" : 809
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 841
+      "swift_line" : 814
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 846
+      "swift_line" : 853
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 885
+      "swift_line" : 858
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 890
+      "swift_line" : 897
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 929
+      "swift_line" : 902
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 934
+      "swift_line" : 941
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 946
     }
   ],
   "tools_used" : [

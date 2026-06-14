@@ -109,7 +109,7 @@
         "text" : "What this does"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 36,
         "text" : "Prerequisite: gstack make-pdf"
@@ -121,7 +121,7 @@
         "text" : "Workflow"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 67,
         "text" : "Invocation"
@@ -151,7 +151,7 @@
         "text" : "Delivery"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 152,
         "text" : "Anti-Patterns"
@@ -159,26 +159,20 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 164,
+        "line" : 165,
         "text" : "Related skills"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 173,
+        "line" : 174,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 184,
+        "line" : 186,
         "text" : "Output Format"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 48,
-        "text" : "Verify it exists before invoking"
       },
       {
         "kind" : "topic",
@@ -197,18 +191,6 @@
         "level" : 3,
         "line" : 132,
         "text" : "Body text"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 175,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 180,
-        "text" : "Privacy contract preserved"
       }
     ],
     "sections" : [
@@ -239,10 +221,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Prerequisite: gstack make-pdf",
         "line" : 36,
         "lines" : [
+          "use judgment to follow the Prerequisite: gstack make-pdf guidance:",
           "This skill depends on the gstack `make-pdf` binary at:",
           "codeblock:plain:JEhPTUUvLmNsYXVkZS9za2lsbHMvZ3N0YWNrL21ha2UtcGRmL2Rpc3QvcGRm",
           "The user must have gstack co-installed. If absent, the skill cannot run",
@@ -251,7 +234,7 @@
           "Verify it exists before invoking:",
           "codeblock:bash:UD0iJEhPTUUvLmNsYXVkZS9za2lsbHMvZ3N0YWNrL21ha2UtcGRmL2Rpc3QvcGRmIgpbIC14ICIkUCIgXSB8fCB7IGVjaG8gIm1ha2UtcGRmIG5vdCBpbnN0YWxsZWQ7IGluc3RhbGwgZ3N0YWNrIiA+JjI7IGV4aXQgMTsgfQ=="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : true,
@@ -263,15 +246,16 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Invocation",
         "line" : 67,
         "lines" : [
+          "use judgment to follow the Invocation guidance:",
           "codeblock:bash:U0xVRz0icGF0aC90by9wYWdlIgpQPSIkSE9NRS8uY2xhdWRlL3NraWxscy9nc3RhY2svbWFrZS1wZGYvZGlzdC9wZGYiCgojIDEuIENvbmZpcm0gdGhlIHBhZ2UgZXhpc3RzLgpnYnJhaW4gZ2V0ICIkU0xVRyIgPiAvZGV2L251bGwgfHwgeyBlY2hvICJQYWdlICRTTFVHIG5vdCBmb3VuZCIgPiYyOyBleGl0IDE7IH0KCiMgMi4gR2V0IHRoZSByYXcgbWFya2Rvd24uIFR3byBwYXRoczogcmVhZCBmcm9tIHRoZSBicmFpbiByZXBvIChpZiB1c2VyCiMgICAgc3luY3MgbG9jYWxseSkgT1IgYXNrIGdicmFpbiBmb3IgdGhlIGJvZHkgdmlhIHRoZSBBUEkuCkJSQUlOX0RJUj0kKGdicmFpbiBjb25maWcgZ2V0IHN5bmMucmVwb19wYXRoIDI+L2Rldi9udWxsIHx8IGVjaG8pCmlmIFsgLW4gIiRCUkFJTl9ESVIiIF0gJiYgWyAtZiAiJEJSQUlOX0RJUi8kU0xVRy5tZCIgXTsgdGhlbgogIFJBVz0iJEJSQUlOX0RJUi8kU0xVRy5tZCIKZWxzZQogIFJBVz0kKG1rdGVtcCAvdG1wL2JyYWluLXBhZ2UtWFhYWFhYLm1kKQogIGdicmFpbiBnZXQgIiRTTFVHIiAtLXJhdyA+ICIkUkFXIiAgICMgd2hhdGV2ZXIgZmxhZyBleHBvc2VzIHJhdyBib2R5CmZpCgojIDMuIFN0cmlwIFlBTUwgZnJvbnRtYXR0ZXIg4oCUIHNlZDogc2tpcCB0aGUgb3BlbmluZyAnLS0tJyB0aHJvdWdoIHRoZQojICAgIGNsb3NpbmcgJy0tLScgKGxpbmVzIDEuLk4pLCB0aGVuIGtlZXAgZXZlcnl0aGluZyBhZnRlci4KQ0xFQU49JChta3RlbXAgL3RtcC9icmFpbi1wYWdlLWNsZWFuLVhYWFhYWC5tZCkKc2VkICcxey9eLS0tJC8hcX07IC9eLS0tJC8sL14tLS0kL2QnICIkUkFXIiA+ICIkQ0xFQU4iCgojIDQuIFJlbmRlci4gTk8gLS1jb3ZlciwgTk8gLS10b2MgYnkgZGVmYXVsdCDigJQgdGhleSBsb29rIGNvcnBvcmF0ZQojICAgIGFuZCB3YXN0ZSBzcGFjZS4gQWRkIHRoZW0gb25seSBpZiBleHBsaWNpdGx5IHJlcXVlc3RlZC4KT1VUPSIvdG1wLyQoYmFzZW5hbWUgIiRTTFVHIikucGRmIgpDT05UQUlORVI9MSAiJFAiIGdlbmVyYXRlICIkQ0xFQU4iICIkT1VUIgoKZWNobyAiUmVuZGVyZWQ6ICRPVVQi",
           "`CONTAINER=1` is mandatory in containerized environments — it tells",
           "Playwright to skip Chromium sandboxing. Harmless on bare-metal"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : true,
@@ -328,26 +312,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
         "line" : 152,
         "lines" : [
-          "❌ Generating a PDF without first confirming the brain page exists",
-          "No source = no PDF",
-          "❌ Skipping the frontmatter strip. The renderer dumps frontmatter as",
-          "raw text on the first page; ugly",
-          "❌ Skipping emoji sanitization. Emoji that don't map to the rendering",
-          "font show up as `□` boxes",
-          "❌ Adding `--cover` or `--toc` by default. Off unless asked",
-          "❌ Using raw `MEDIA:` tags for Telegram delivery. Use the `message`",
-          "tool with `filePath`"
+          "checklist:ai-autonomy:4p2MIEdlbmVyYXRpbmcgYSBQREYgd2l0aG91dCBmaXJzdCBjb25maXJtaW5nIHRoZSBicmFpbiBwYWdlIGV4aXN0cyBObyBzb3VyY2UgPSBubyBQREYuCuKdjCBTa2lwcGluZyB0aGUgZnJvbnRtYXR0ZXIgc3RyaXAuIFRoZSByZW5kZXJlciBkdW1wcyBmcm9udG1hdHRlciBhcyByYXcgdGV4dCBvbiB0aGUgZmlyc3QgcGFnZTsgdWdseS4K4p2MIFNraXBwaW5nIGVtb2ppIHNhbml0aXphdGlvbi4gRW1vamkgdGhhdCBkb24ndCBtYXAgdG8gdGhlIHJlbmRlcmluZyBmb250IHNob3cgdXAgYXMgYOKWoWAgYm94ZXMuCuKdjCBBZGRpbmcgYC0tY292ZXJgIG9yIGAtLXRvY2AgYnkgZGVmYXVsdC4gT2ZmIHVubGVzcyBhc2tlZArinYwgVXNpbmcgcmF3IGBNRURJQTpgIHRhZ3MgZm9yIFRlbGVncmFtIGRlbGl2ZXJ5LiBVc2UgdGhlIGBtZXNzYWdlYCB0b29sIHdpdGggYGZpbGVQYXRoYC4="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Related skills",
-        "line" : 164,
+        "line" : 165,
         "lines" : [
           "`skills\/book-mirror\/SKILL.md` — produces a brain page that's a",
           "natural input to brain-pdf (chapter-by-chapter personalized analysis)",
@@ -358,23 +334,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
-        "line" : 173,
+        "line" : 174,
         "lines" : [
-          "This skill guarantees:",
-          "Routing matches the canonical triggers in the frontmatter",
-          "Output written under the directories listed in `writes_to:` (when applicable)",
-          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
-          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
-          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+          "checklist:ai-autonomy:Um91dGluZyBtYXRjaGVzIHRoZSBjYW5vbmljYWwgdHJpZ2dlcnMgaW4gdGhlIGZyb250bWF0dGVyCk91dHB1dCB3cml0dGVuIHVuZGVyIHRoZSBkaXJlY3RvcmllcyBsaXN0ZWQgaW4gYHdyaXRlc190bzpgICh3aGVuIGFwcGxpY2FibGUpCkNvbnZlbnRpb25zIHJlZmVyZW5jZWQgKGBxdWFsaXR5Lm1kYCwgYGJyYWluLWZpcnN0Lm1kYCwgYF9icmFpbi1maWxpbmctcnVsZXMubWRgKSBhcmUgZm9sbG93ZWQKUHJpdmFjeSBjb250cmFjdCBwcmVzZXJ2ZWQ6IG5vIHJlYWwgbmFtZXMsIG5vIGZvcmstc3BlY2lmaWMgZmlsZXN5c3RlbSBwYXRoIGxpdGVyYWxzLCBubyB1cHN0cmVhbS1mb3JrIHJlZmVyZW5jZXM="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 184,
+        "line" : 186,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -420,60 +391,48 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 104,
-      "swift_line" : 591
-    },
-    {
-      "meridian_line" : 104,
-      "swift_line" : 602
-    },
-    {
-      "meridian_line" : 104,
-      "swift_line" : 613
-    },
-    {
-      "meridian_line" : 104,
-      "swift_line" : 624
+      "meridian_line" : 38,
+      "swift_line" : 582
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 663
+      "swift_line" : 620
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 668
+      "swift_line" : 625
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 707
+      "swift_line" : 664
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 712
+      "swift_line" : 669
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 751
+      "swift_line" : 708
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 756
+      "swift_line" : 713
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 795
+      "swift_line" : 752
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 800
+      "swift_line" : 757
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 839
+      "swift_line" : 796
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 844
+      "swift_line" : 801
     }
   ],
   "tools_used" : [

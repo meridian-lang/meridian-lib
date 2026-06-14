@@ -98,7 +98,7 @@
     "name" : "cross-modal-review",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 37,
         "text" : "Contract"
@@ -106,126 +106,108 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 48,
+        "line" : 49,
         "text" : "When to invoke (v0.25.1 gating)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 72,
+        "line" : 73,
         "text" : "Phases"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 81,
+        "line" : 82,
         "text" : "Code-review handoff (v0.25.1 extension)"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 86,
+        "line" : 87,
         "text" : "Codex Review"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 114,
+        "line" : 115,
         "text" : "Adversarial Challenge"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 123,
+        "line" : 124,
         "text" : "Refusal routing"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 133,
+        "line" : 134,
         "text" : "Output format"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 135,
+        "line" : 136,
         "text" : "Standard review"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 150,
+        "line" : 151,
         "text" : "Code review"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 162,
+        "line" : 163,
         "text" : "User-sovereignty rule (Iron Law)"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 171,
+        "line" : 172,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 180,
+        "line" : 182,
         "text" : "Related skills"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 190,
+        "line" : 192,
         "text" : "Output Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 39,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 50,
+        "line" : 51,
         "text" : "Invoke this skill when"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 65,
+        "line" : 66,
         "text" : "Do NOT invoke for"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 125,
-        "text" : "If the primary review model refuses"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 37,
         "lines" : [
-          "This skill guarantees:",
-          "Work product is reviewed by a different model before finalizing",
-          "The review is graded against the originating skill's Contract section",
-          "(what was promised), not vibes",
-          "Agreement and disagreement are reported transparently",
-          "Refusal from one model triggers a silent switch to the next in chain",
-          "The user always makes the final decision (user sovereignty)"
+          "checklist:ai-autonomy:V29yayBwcm9kdWN0IGlzIHJldmlld2VkIGJ5IGEgZGlmZmVyZW50IG1vZGVsIGJlZm9yZSBmaW5hbGl6aW5nClRoZSByZXZpZXcgaXMgZ3JhZGVkIGFnYWluc3QgdGhlIG9yaWdpbmF0aW5nIHNraWxsJ3MgQ29udHJhY3Qgc2VjdGlvbiAod2hhdCB3YXMgcHJvbWlzZWQpLCBub3QgdmliZXMuCkFncmVlbWVudCBhbmQgZGlzYWdyZWVtZW50IGFyZSByZXBvcnRlZCB0cmFuc3BhcmVudGx5ClJlZnVzYWwgZnJvbSBvbmUgbW9kZWwgdHJpZ2dlcnMgYSBzaWxlbnQgc3dpdGNoIHRvIHRoZSBuZXh0IGluIGNoYWluClRoZSB1c2VyIGFsd2F5cyBtYWtlcyB0aGUgZmluYWwgZGVjaXNpb24gKHVzZXIgc292ZXJlaWdudHkp"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "When to invoke (v0.25.1 gating)",
-        "line" : 48,
+        "line" : 49,
         "lines" : [
           "Invoke this skill when:",
           "**Significant code changes** — any commit touching 5+ files or 100+",
@@ -251,7 +233,7 @@
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 72,
+        "line" : 73,
         "lines" : [
           "use judgment to run a cross-modal review of the work product:",
           "Capture the brain page, analysis, code diff, or decision to be reviewed",
@@ -265,7 +247,7 @@
       {
         "executes" : false,
         "heading" : "Code-review handoff (v0.25.1 extension)",
-        "line" : 81,
+        "line" : 82,
         "lines" : [
           "For diff review specifically, gstack ships a `\/codex` skill that wraps",
           "the OpenAI Codex CLI. Two modes:"
@@ -273,27 +255,28 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Codex Review",
-        "line" : 86,
+        "line" : 87,
         "lines" : [
+          "use judgment to follow the Codex Review guidance:",
           "Independent diff review from a different AI system. The user invokes",
           "`\/codex review` (gstack-shipped); cross-modal-review's job is to",
           "RECOGNIZE when this is the right tool and recommend it explicitly",
           "**When to recommend `\/codex review`:**",
-          "After a substantive diff lands and before merge",
-          "When the user wants a second opinion that's NOT another Claude",
+          "item: After a substantive diff lands and before merge",
+          "item: When the user wants a second opinion that's NOT another Claude",
           "**Output framing (when cross-modal-review surfaces Codex output):**",
           "codeblock:plain:Q09ERVggUkVWSUVXIChpbmRlcGVuZGVudCBzZWNvbmQgb3Bpbmlvbik6CuKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkAo8ZnVsbCBjb2RleCBvdXRwdXQsIHZlcmJhdGltPgrilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZAKCkNST1NTLU1PREVMIEFOQUxZU0lTOgogIEJvdGggZm91bmQ6ICAgIFtvdmVybGFwcGluZyBmaW5kaW5nc10KICBPbmx5IENvZGV4OiAgICBbZmluZGluZ3MgdW5pcXVlIHRvIENvZGV4XQogIE9ubHkgQ2xhdWRlOiAgIFtmaW5kaW5ncyB1bmlxdWUgdG8gbXkgYW5hbHlzaXNdCiAgQWdyZWVtZW50OiAgICAgWCUgKE4vTSBmaW5kaW5ncyBvdmVybGFwKQ==",
           "User decides what to act on. Cross-model agreement is signal, not",
           "permission"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Adversarial Challenge",
-        "line" : 114,
+        "line" : 115,
         "lines" : [
           "Same shape, different prompt. Used on security-sensitive changes:",
           "the reviewer is asked to find injection vectors, race conditions,",
@@ -304,10 +287,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Refusal routing",
-        "line" : 123,
+        "line" : 124,
         "lines" : [
+          "use judgment to follow the Refusal routing guidance:",
           "If the primary review model refuses:",
           "Switch silently to the next model in the chain (see",
           "`conventions\/cross-modal.yaml`)",
@@ -315,12 +299,12 @@
           "Don't announce the switch",
           "If ALL models in the chain refuse, escalate to the user"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output format",
-        "line" : 133,
+        "line" : 134,
         "lines" : [
 
         ],
@@ -329,7 +313,7 @@
       {
         "executes" : false,
         "heading" : "Standard review",
-        "line" : 135,
+        "line" : 136,
         "lines" : [
           "codeblock:plain:Q3Jvc3MtTW9kYWwgUmV2aWV3Cj09PT09PT09PT09PT09PT09PQpSZXZpZXdlcjogIHttb2RlbCBuYW1lfQpDb250cmFjdDogIHtvcmlnaW5hdGluZyBza2lsbH0KVmVyZGljdDogICBQQVNTIHwgSVNTVUVTIEZPVU5ECgpGaW5kaW5nczoKLSB7ZmluZGluZyB3aXRoIGV2aWRlbmNlfQoKQWdyZWVtZW50IHdpdGggcHJpbWFyeToge1h9JQ=="
         ],
@@ -338,7 +322,7 @@
       {
         "executes" : false,
         "heading" : "Code review",
-        "line" : 150,
+        "line" : 151,
         "lines" : [
           "codeblock:plain:Q3Jvc3MtTW9kYWwgUmV2aWV3IChjb2RlKQo9PT09PT09PT09PT09PT09PT09PT09PT09PQpNb2RlOiAgICAgICAgICAgQ29kZXggUmV2aWV3IHwgQWR2ZXJzYXJpYWwgQ2hhbGxlbmdlCkZpbGVzIGNoYW5nZWQ6ICBOCkxpbmVzIGNoYW5nZWQ6ICArTiAvIC1OCgp7bW9kZS1zcGVjaWZpYyBvdXRwdXQgYWJvdmV9"
         ],
@@ -347,7 +331,7 @@
       {
         "executes" : false,
         "heading" : "User-sovereignty rule (Iron Law)",
-        "line" : 162,
+        "line" : 163,
         "lines" : [
           "Reviewer findings are INFORMATIONAL until the user explicitly approves",
           "each one. Do NOT incorporate reviewer recommendations into the work",
@@ -359,23 +343,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 171,
+        "line" : 172,
         "lines" : [
-          "❌ Auto-applying reviewer suggestions without user approval",
-          "❌ Showing model refusals to the user",
-          "❌ Using the same model for review and generation",
-          "❌ Skipping the Contract reference (reviewing vibes, not guarantees)",
-          "❌ Code-reviewing trivial changes (typos, formatting)",
-          "❌ Running code review without git-diff context"
+          "checklist:ai-autonomy:4p2MIEF1dG8tYXBwbHlpbmcgcmV2aWV3ZXIgc3VnZ2VzdGlvbnMgd2l0aG91dCB1c2VyIGFwcHJvdmFsCuKdjCBTaG93aW5nIG1vZGVsIHJlZnVzYWxzIHRvIHRoZSB1c2VyCuKdjCBVc2luZyB0aGUgc2FtZSBtb2RlbCBmb3IgcmV2aWV3IGFuZCBnZW5lcmF0aW9uCuKdjCBTa2lwcGluZyB0aGUgQ29udHJhY3QgcmVmZXJlbmNlIChyZXZpZXdpbmcgdmliZXMsIG5vdCBndWFyYW50ZWVzKQrinYwgQ29kZS1yZXZpZXdpbmcgdHJpdmlhbCBjaGFuZ2VzICh0eXBvcywgZm9ybWF0dGluZykK4p2MIFJ1bm5pbmcgY29kZSByZXZpZXcgd2l0aG91dCBnaXQtZGlmZiBjb250ZXh0"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Related skills",
-        "line" : 180,
+        "line" : 182,
         "lines" : [
           "gstack `\/codex` — the actual Codex CLI wrapper this skill hands off",
           "to for diff-review mode. Cross-modal-review knows WHEN to invoke;",
@@ -389,7 +368,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 190,
+        "line" : 192,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -436,56 +415,64 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 74,
-      "swift_line" : 592
+      "meridian_line" : 42,
+      "swift_line" : 584
+    },
+    {
+      "meridian_line" : 75,
+      "swift_line" : 595
+    },
+    {
+      "meridian_line" : 89,
+      "swift_line" : 604
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 630
+      "swift_line" : 642
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 635
+      "swift_line" : 647
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 674
+      "swift_line" : 686
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 679
+      "swift_line" : 691
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 718
+      "swift_line" : 730
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 723
+      "swift_line" : 735
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 762
+      "swift_line" : 774
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 767
+      "swift_line" : 779
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 806
+      "swift_line" : 818
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 811
+      "swift_line" : 823
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 850
+      "swift_line" : 862
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 855
+      "swift_line" : 867
     }
   ],
   "tools_used" : [

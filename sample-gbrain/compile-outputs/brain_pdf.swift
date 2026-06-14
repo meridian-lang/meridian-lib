@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -587,49 +579,14 @@ public struct BrainPdfInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "BrainPdfInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L104:C0") {
-            // L104
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("brain-pdf <slug>"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.0:L104:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L104:C0") {
-            // L104
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("CONTAINER=1 \"$P\" generate --watermark DRAFT \"$CLEAN\" \"$OUT\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L104:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L104:C0") {
-            // L104
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("CONTAINER=1 \"$P\" generate --cover --toc \"$CLEAN\" \"$OUT\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L104:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.3:L104:C0") {
-            // L104
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("CONTAINER=1 \"$P\" generate --title \"Custom Title\" --author \"Custom Author\" \"$CLEAN\" \"$OUT\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.3:L104:C0", state: state.snapshot())
+        // L38
+        let __meridianProseResults_L38 = try await runtime.executeProsePlan(
+            prose: "follow the Prerequisite: gstack make-pdf guidance\nThis skill depends on the gstack `make-pdf` binary at:\ncodeblock:plain:JEhPTUUvLmNsYXVkZS9za2lsbHMvZ3N0YWNrL21ha2UtcGRmL2Rpc3QvcGRm\nThe user must have gstack co-installed. If absent, the skill cannot run\nA future v0.26+ may bundle a fallback PDF renderer; for v0.25.1 gstack\nis a soft prereq\nVerify it exists before invoking:\ncodeblock:bash:UD0iJEhPTUUvLmNsYXVkZS9za2lsbHMvZ3N0YWNrL21ha2UtcGRmL2Rpc3QvcGRmIgpbIC14ICIkUCIgXSB8fCB7IGVjaG8gIm1ha2UtcGRmIG5vdCBpbnN0YWxsZWQ7IGluc3RhbGwgZ3N0YWNrIiA+JjI7IGV4aXQgMTsgfQ==\ncodeblock:plain:MS4gUkVTT0xWRSAg4oaSIENvbmZpcm0gdGhlIGJyYWluIHBhZ2UgZXhpc3RzIChnYnJhaW4gZ2V0IDxzbHVnPikuCjIuIFNUUklQICAgIOKGkiBSZW1vdmUgWUFNTCBmcm9udG1hdHRlciDigJQgdGhlIHJlbmRlcmVyIHdvdWxkIG90aGVyd2lzZQogICAgICAgICAgICAgIGR1bXAgaXQgYXMgYSBmdWxsIHBhZ2Ugb2YgcmF3IG1ldGFkYXRhIHRleHQuCjMuIFJFTkRFUiAgIOKGkiBJbnZva2UgbWFrZS1wZGYgd2l0aCBzYW5lIGRlZmF1bHRzIChubyAtLWNvdmVyLCBubyAtLXRvYykuCjQuIERFTElWRVIgIOKGkiBIYW5kIHRoZSBQREYgdG8gdGhlIHJlcXVlc3RlciB2aWEgdGhlIGFnZW50J3MgcHJlZmVycmVkCiAgICAgICAgICAgICAgY2hhbm5lbCAoZG8gbm90IHVzZSByYXcgYE1FRElBOmAgdGFncyBvbiBUZWxlZ3JhbSDigJQKICAgICAgICAgICAgICB0aGV5IGZhaWwgc2lsZW50bHkpLg==\nuse judgment to follow the Invocation guidance:\ncodeblock:bash:U0xVRz0icGF0aC90by9wYWdlIgpQPSIkSE9NRS8uY2xhdWRlL3NraWxscy9nc3RhY2svbWFrZS1wZGYvZGlzdC9wZGYiCgojIDEuIENvbmZpcm0gdGhlIHBhZ2UgZXhpc3RzLgpnYnJhaW4gZ2V0ICIkU0xVRyIgPiAvZGV2L251bGwgfHwgeyBlY2hvICJQYWdlICRTTFVHIG5vdCBmb3VuZCIgPiYyOyBleGl0IDE7IH0KCiMgMi4gR2V0IHRoZSByYXcgbWFya2Rvd24uIFR3byBwYXRoczogcmVhZCBmcm9tIHRoZSBicmFpbiByZXBvIChpZiB1c2VyCiMgICAgc3luY3MgbG9jYWxseSkgT1IgYXNrIGdicmFpbiBmb3IgdGhlIGJvZHkgdmlhIHRoZSBBUEkuCkJSQUlOX0RJUj0kKGdicmFpbiBjb25maWcgZ2V0IHN5bmMucmVwb19wYXRoIDI+L2Rldi9udWxsIHx8IGVjaG8pCmlmIFsgLW4gIiRCUkFJTl9ESVIiIF0gJiYgWyAtZiAiJEJSQUlOX0RJUi8kU0xVRy5tZCIgXTsgdGhlbgogIFJBVz0iJEJSQUlOX0RJUi8kU0xVRy5tZCIKZWxzZQogIFJBVz0kKG1rdGVtcCAvdG1wL2JyYWluLXBhZ2UtWFhYWFhYLm1kKQogIGdicmFpbiBnZXQgIiRTTFVHIiAtLXJhdyA+ICIkUkFXIiAgICMgd2hhdGV2ZXIgZmxhZyBleHBvc2VzIHJhdyBib2R5CmZpCgojIDMuIFN0cmlwIFlBTUwgZnJvbnRtYXR0ZXIg4oCUIHNlZDogc2tpcCB0aGUgb3BlbmluZyAnLS0tJyB0aHJvdWdoIHRoZQojICAgIGNsb3NpbmcgJy0tLScgKGxpbmVzIDEuLk4pLCB0aGVuIGtlZXAgZXZlcnl0aGluZyBhZnRlci4KQ0xFQU49JChta3RlbXAgL3RtcC9icmFpbi1wYWdlLWNsZWFuLVhYWFhYWC5tZCkKc2VkICcxey9eLS0tJC8hcX07IC9eLS0tJC8sL14tLS0kL2QnICIkUkFXIiA+ICIkQ0xFQU4iCgojIDQuIFJlbmRlci4gTk8gLS1jb3ZlciwgTk8gLS10b2MgYnkgZGVmYXVsdCDigJQgdGhleSBsb29rIGNvcnBvcmF0ZQojICAgIGFuZCB3YXN0ZSBzcGFjZS4gQWRkIHRoZW0gb25seSBpZiBleHBsaWNpdGx5IHJlcXVlc3RlZC4KT1VUPSIvdG1wLyQoYmFzZW5hbWUgIiRTTFVHIikucGRmIgpDT05UQUlORVI9MSAiJFAiIGdlbmVyYXRlICIkQ0xFQU4iICIkT1VUIgoKZWNobyAiUmVuZGVyZWQ6ICRPVVQi\n`CONTAINER=1` is mandatory in containerized environments — it tells\nPlaywright to skip Chromium sandboxing. Harmless on bare-metal\ncodeblock:bash:IyBEZWZhdWx0IOKAlCBjbGVhbiBQREYsIG5vIGNvdmVyLCBubyBUT0MKYnJhaW4tcGRmIDxzbHVnPgoKIyBEcmFmdCB3YXRlcm1hcmsgZm9yIGluLXByb2dyZXNzIHdvcmsKQ09OVEFJTkVSPTEgIiRQIiBnZW5lcmF0ZSAtLXdhdGVybWFyayBEUkFGVCAiJENMRUFOIiAiJE9VVCIKCiMgT3B0aW9uYWwgY292ZXIgKyBUT0MgaWYgdGhlIHVzZXIgZXhwbGljaXRseSBhc2tzCkNPTlRBSU5FUj0xICIkUCIgZ2VuZXJhdGUgLS1jb3ZlciAtLXRvYyAiJENMRUFOIiAiJE9VVCIKCiMgQ3VzdG9tIHRpdGxlICsgYXV0aG9yIG92ZXJyaWRlIChvdGhlcndpc2UgcHVsbGVkIGZyb20gZnJvbnRtYXR0ZXIpCkNPTlRBSU5FUj0xICIkUCIgZ2VuZXJhdGUgLS10aXRsZSAiQ3VzdG9tIFRpdGxlIiAtLWF1dGhvciAiQ3VzdG9tIEF1dGhvciIgIiRDTEVBTiIgIiRPVVQi\nchecklist:ai-autonomy:4p2MIEdlbmVyYXRpbmcgYSBQREYgd2l0aG91dCBmaXJzdCBjb25maXJtaW5nIHRoZSBicmFpbiBwYWdlIGV4aXN0cyBObyBzb3VyY2UgPSBubyBQREYuCuKdjCBTa2lwcGluZyB0aGUgZnJvbnRtYXR0ZXIgc3RyaXAuIFRoZSByZW5kZXJlciBkdW1wcyBmcm9udG1hdHRlciBhcyByYXcgdGV4dCBvbiB0aGUgZmlyc3QgcGFnZTsgdWdseS4K4p2MIFNraXBwaW5nIGVtb2ppIHNhbml0aXphdGlvbi4gRW1vamkgdGhhdCBkb24ndCBtYXAgdG8gdGhlIHJlbmRlcmluZyBmb250IHNob3cgdXAgYXMgYOKWoWAgYm94ZXMuCuKdjCBBZGRpbmcgYC0tY292ZXJgIG9yIGAtLXRvY2AgYnkgZGVmYXVsdC4gT2ZmIHVubGVzcyBhc2tlZArinYwgVXNpbmcgcmF3IGBNRURJQTpgIHRhZ3MgZm9yIFRlbGVncmFtIGRlbGl2ZXJ5LiBVc2UgdGhlIGBtZXNzYWdlYCB0b29sIHdpdGggYGZpbGVQYXRoYC4=\nchecklist:ai-autonomy:Um91dGluZyBtYXRjaGVzIHRoZSBjYW5vbmljYWwgdHJpZ2dlcnMgaW4gdGhlIGZyb250bWF0dGVyCk91dHB1dCB3cml0dGVuIHVuZGVyIHRoZSBkaXJlY3RvcmllcyBsaXN0ZWQgaW4gYHdyaXRlc190bzpgICh3aGVuIGFwcGxpY2FibGUpCkNvbnZlbnRpb25zIHJlZmVyZW5jZWQgKGBxdWFsaXR5Lm1kYCwgYGJyYWluLWZpcnN0Lm1kYCwgYF9icmFpbi1maWxpbmctcnVsZXMubWRgKSBhcmUgZm9sbG93ZWQKUHJpdmFjeSBjb250cmFjdCBwcmVzZXJ2ZWQ6IG5vIHJlYWwgbmFtZXMsIG5vIGZvcmstc3BlY2lmaWMgZmlsZXN5c3RlbSBwYXRoIGxpdGVyYWxzLCBubyB1cHN0cmVhbS1mb3JrIHJlZmVyZW5jZXM=",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L38 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

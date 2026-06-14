@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -591,6 +583,26 @@ public struct MediaIngestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "MediaIngestInput", parameters: [:])
 
+        // L46
+        let __meridianProseResults_L46 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Every ingested media item has a brain page with analysis (not just a transcript dump)\n- Transcripts (video/audio) saved in raw and human-readable formats\n- Entity extraction: every person and company mentioned gets back-linked\n- Raw source files preserved via `gbrain files upload-raw`\n- Filing by primary subject, not by media format",
+            snapshot: state.snapshot(),
+            scopedTools: ["link.add", "page.get", "page.search", "publish", "shell.run", "timeline.add"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L46 {
+            state.bind(__key, __value)
+        }
+        // L71
+        let __meridianProseResults_L71 = try await runtime.executeProsePlan(
+            prose: "follow the Phase 2: Upload raw source guidance\nSave the original file for provenance: `gbrain files upload-raw <file> --page <slug>`\nuse judgment to follow the Phase 3: Create brain page guidance:\nFile by primary subject (not format). Use this template:\ncodeblock:markdown:IyB7VGl0bGV9CgoqKlNvdXJjZToqKiB7VVJMIG9yIGZpbGUgcGF0aH0KKipGb3JtYXQ6Kioge3ZpZGVvL2F1ZGlvL1BERi9ib29rL3NjcmVlbnNob3QvcmVwb30KKipDcmVhdGVkOioqIHtkYXRlfQojIyBTdW1tYXJ5ICgoIGluZXJ0ICkpCntLZXkgcG9pbnRzLCBub3QgYSB0cmFuc2NyaXB0IGR1bXB9CgojIyBLZXkgU2VnbWVudHMgLyBIaWdobGlnaHRzICgoIGluZXJ0ICkpCntGb3IgdmlkZW8vYXVkaW86IHRpbWVzdGFtcGVkIGhpZ2hsaWdodHMuIEZvciBib29rczogY2hhcHRlciBzdW1tYXJpZXMufQoKIyMgUGVvcGxlIE1lbnRpb25lZCAoKCBpbmVydCApKQp7TGlzdCB3aXRoIGxpbmtzIHRvIGJyYWluIHBhZ2VzfQoKIyMgQ29tcGFuaWVzIE1lbnRpb25lZCAoKCBpbmVydCApKQp7TGlzdCB3aXRoIGxpbmtzIHRvIGJyYWluIHBhZ2VzfQ==\nuse judgment to follow the Phase 4: Entity extraction and propagation guidance:\nFor every person and company mentioned:\nCheck brain for existing page\nCreate/enrich if needed (delegate to enrich skill)\nAdd back-link from entity page to this media page\nAdd timeline entry on entity page\nA media item is NOT fully ingested until entity propagation is complete\nuse judgment to follow the Phase 5: Sync guidance:\n`gbrain sync` to update the index\nchecklist:ai-autonomy:RHVtcGluZyByYXcgdHJhbnNjcmlwdHMgd2l0aG91dCBhbmFseXNpcwpTa2lwcGluZyBlbnRpdHkgZXh0cmFjdGlvbiAoIkknbGwgZG8gdGhhdCBzZXBhcmF0ZWx5IikKRmlsaW5nICoqcmF3IGluZ2VzdCoqIGJ5IGZvcm1hdCAoYWxsIHZpZGVvcyBpbiBgbWVkaWEvdmlkZW9zL2ApIGluc3RlYWQgb2YgYnkgc3ViamVjdC4gTm90ZTogZm9ybWF0LXByZWZpeGVkIHBhdGhzIHVuZGVyIGBtZWRpYS88Zm9ybWF0Pi88c2x1Zz5gIEFSRSBzYW5jdGlvbmVkIGZvciAqKnN5bnRoZXNpemVkIG9uZS1vZi1vbmUgb3V0cHV0KiogbGlrZSBib29rLW1pcnJvcidzIGBtZWRpYS9ib29rcy88c2x1Zz4tcGVyc29uYWxpemVkLm1kYC4gVGhlIGFudGktcGF0dGVybiBpcyBmb3IgcmF3IGluZ2VzdCwgbm90IGZvciBzdWkgZ2VuZXJpcyBzeW50aGVzaXMuIFNlZSBgc2tpbGxzL19icmFpbi1maWxpbmctcnVsZXMubWRgICJTYW5jdGlvbmVkIGV4Y2VwdGlvbjogc3ludGhlc2lzIG91dHB1dCBpcyBzdWkgZ2VuZXJpcy4iCk5vdCBwcmVzZXJ2aW5nIHJhdyBzb3VyY2UgZmlsZXMKQ3JlYXRpbmcgc3R1YiBwYWdlcyB3aXRob3V0IG1lYW5pbmdmdWwgY29udGVudA==",
+            snapshot: state.snapshot(),
+            scopedTools: ["link.add", "page.get", "page.search", "publish", "shell.run", "timeline.add"]
+        )
+        for (__key, __value) in __meridianProseResults_L71 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

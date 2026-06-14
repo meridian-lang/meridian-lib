@@ -98,7 +98,7 @@
     "name" : "idea-ingest",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 34,
         "text" : "Contract"
@@ -106,56 +106,36 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 49,
+        "line" : 50,
         "text" : "Phases"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 65,
+        "line" : 66,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 88,
+        "line" : 89,
         "text" : "Anti-Patterns"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 36,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 47,
-        "text" : "Format"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 34,
         "lines" : [
-          "This skill guarantees:",
-          "Every ingested item has a brain page with genuine analysis (not just a summary)",
-          "The author gets a people page (MANDATORY for anyone whose thinking is worth ingesting)",
-          "Cross-links created bidirectionally (source ↔ author, source ↔ mentioned entities)",
-          "Raw source preserved for provenance via `gbrain files upload-raw`",
-          "Every fact has an inline `[Source: ...]` citation",
-          "Filing follows primary subject rules (not format-based)",
-          "Every mention of a person or company with a brain page MUST create a back-link",
-          "Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`"
+          "checklist:ai-autonomy:RXZlcnkgaW5nZXN0ZWQgaXRlbSBoYXMgYSBicmFpbiBwYWdlIHdpdGggZ2VudWluZSBhbmFseXNpcyAobm90IGp1c3QgYSBzdW1tYXJ5KQpUaGUgYXV0aG9yIGdldHMgYSBwZW9wbGUgcGFnZSAoTUFOREFUT1JZIGZvciBhbnlvbmUgd2hvc2UgdGhpbmtpbmcgaXMgd29ydGggaW5nZXN0aW5nKQpDcm9zcy1saW5rcyBjcmVhdGVkIGJpZGlyZWN0aW9uYWxseSAoc291cmNlIOKGlCBhdXRob3IsIHNvdXJjZSDihpQgbWVudGlvbmVkIGVudGl0aWVzKQpSYXcgc291cmNlIHByZXNlcnZlZCBmb3IgcHJvdmVuYW5jZSB2aWEgYGdicmFpbiBmaWxlcyB1cGxvYWQtcmF3YApFdmVyeSBmYWN0IGhhcyBhbiBpbmxpbmUgYFtTb3VyY2U6IC4uLl1gIGNpdGF0aW9uCkZpbGluZyBmb2xsb3dzIHByaW1hcnkgc3ViamVjdCBydWxlcyAobm90IGZvcm1hdC1iYXNlZCk="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 49,
+        "line" : 50,
         "lines" : [
           "codeblock:bash:Z2JyYWluIGZpbGVzIHVwbG9hZC1yYXcgPGZpbGU+IC0tcGFnZSA8c2x1Zz4=",
           "use judgment to ingest the idea source and connect the content to the brain:",
@@ -170,24 +150,20 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 65,
+        "line" : 66,
         "lines" : [
           "codeblock:markdown:IyB7VGl0bGV9IOKAlCB7QXV0aG9yfQoKKipTb3VyY2U6Kioge1VSTH0KKipBdXRob3I6Kioge0F1dGhvcn0sIHtyb2xlfQoqKlB1Ymxpc2hlZDoqKiB7ZGF0ZX0KKipJbmdlc3RlZDoqKiB7ZGF0ZX0KCiMjIENvbnRleHQgKCggaW5lcnQgKSkKe1doeSB0aGlzIG1hdHRlcnMgbm93LCBjb25uZWN0ZWQgdG8gYnJhaW4ga25vd2xlZGdlfQoKIyMgU3VtbWFyeSAoKCBpbmVydCApKQp7My01IGJ1bGxldCBjb3JlIGFyZ3VtZW50c30KCiMjIEtleSBEYXRhIC8gQ2xhaW1zICgoIGluZXJ0ICkpCntTcGVjaWZpYyBmYWN0cywgbnVtYmVycywgcXVvdGVzfQoKIyMgQW5hbHlzaXMgKCggaW5lcnQgKSkKe0hvdyB0aGlzIGNvbm5lY3RzIHRvIGV4aXN0aW5nIGJyYWluIGtub3dsZWRnZS4gV2hhdCdzIG5ldy4gV2hhdCBjb250cmFkaWN0cy59"
         ],
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 88,
+        "line" : 89,
         "lines" : [
-          "Just summarizing without connecting to brain knowledge",
-          "Filing everything in `sources\/` (sources is for raw data dumps only)",
-          "Skipping the author people page",
-          "Not cross-linking to mentioned entities",
-          "Ingesting without checking brain first for existing coverage"
+          "checklist:ai-autonomy:SnVzdCBzdW1tYXJpemluZyB3aXRob3V0IGNvbm5lY3RpbmcgdG8gYnJhaW4ga25vd2xlZGdlCkZpbGluZyBldmVyeXRoaW5nIGluIGBzb3VyY2VzL2AgKHNvdXJjZXMgaXMgZm9yIHJhdyBkYXRhIGR1bXBzIG9ubHkpClNraXBwaW5nIHRoZSBhdXRob3IgcGVvcGxlIHBhZ2UKTm90IGNyb3NzLWxpbmtpbmcgdG8gbWVudGlvbmVkIGVudGl0aWVzCkluZ2VzdGluZyB3aXRob3V0IGNoZWNraW5nIGJyYWluIGZpcnN0IGZvciBleGlzdGluZyBjb3ZlcmFnZQ=="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "tools" : "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry\nfile_upload",
@@ -232,56 +208,64 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 51,
-      "swift_line" : 595
+      "meridian_line" : 38,
+      "swift_line" : 586
     },
     {
-      "meridian_line" : 55,
-      "swift_line" : 605
+      "meridian_line" : 52,
+      "swift_line" : 598
     },
     {
-      "meridian_line" : 61,
-      "swift_line" : 615
+      "meridian_line" : 56,
+      "swift_line" : 608
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 654
+      "meridian_line" : 62,
+      "swift_line" : 618
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 659
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 698
+      "meridian_line" : 92,
+      "swift_line" : 628
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 703
+      "swift_line" : 668
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 742
+      "swift_line" : 673
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 747
+      "swift_line" : 712
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 786
+      "swift_line" : 717
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 791
+      "swift_line" : 756
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 830
+      "swift_line" : 761
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 835
+      "swift_line" : 800
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 805
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 844
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 849
     }
   ],
   "tools_used" : [

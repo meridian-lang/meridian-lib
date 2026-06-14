@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -589,6 +581,37 @@ public struct MinionOrchestratorInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "MinionOrchestratorInput", parameters: [:])
 
+        // L52
+        let __meridianProseResults_L52 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Deterministic shell jobs (`gbrain jobs submit shell ...`)\n- LLM subagent jobs (`gbrain agent run ...`)",
+            snapshot: state.snapshot(),
+            scopedTools: ["cancel_job", "get_job", "get_job_progress", "jobs.status", "jobs.submit", "list_jobs", "page.list", "pause_job", "replay_job", "resume_job", "send_job_message", "shell.run", "submit_job"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L52 {
+            state.bind(__key, __value)
+        }
+        // L63
+        let __meridianProseResults_L63 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Jobs survive gateway restart (Postgres-backed)\n- Every job has structured progress, token accounting, and session transcripts\n- Running agents can be steered mid-flight via inbox messages\n- Jobs can be paused, resumed, or cancelled at any time\n- Parent-child DAGs with configurable failure policies",
+            snapshot: state.snapshot(),
+            scopedTools: ["cancel_job", "get_job", "get_job_progress", "jobs.status", "jobs.submit", "list_jobs", "page.list", "pause_job", "replay_job", "resume_job", "send_job_message", "shell.run", "submit_job"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L63 {
+            state.bind(__key, __value)
+        }
+        // L91
+        let __meridianProseResults_L91 = try await runtime.executeProsePlan(
+            prose: "follow the Preconditions (read before submitting your first shell job) guidance\nitem: **`GBRAIN_ALLOW_SHELL_JOBS=1` must be set on the worker environment.**\nWithout it, the shell handler refuses to register and submissions sit in\n`waiting` silently. Gate lives in `src/core/minions/handlers/shell.ts`\nitem: **Security:** flipping `GBRAIN_ALLOW_SHELL_JOBS=1` authorizes arbitrary\ncommand execution on the worker. On a shared queue, this is a remote code\nexecution surface. Treat as privileged infrastructure authorization\nitem: **Execution mode — pick one:**\nitem: **Postgres + daemon:** `gbrain jobs work` runs a persistent worker that\nclaims and executes jobs from the queue\nitem: **PGLite + --follow:** `gbrain jobs submit ... --follow` runs inline\nThe daemon mode is not available on PGLite (exclusive file lock). See\n`docs/guides/minions-shell-jobs.md`\nitem: **MCP boundary:** shell-job submission is CLI-only. `submit_job name=\"shell\"`\nover MCP throws an `OperationError` with code `permission_denied` (\"'shell'\njobs cannot be submitted over MCP\") because `shell` is in `PROTECTED_JOB_NAMES`\nAgents CAN observe shell jobs via `get_job` / `list_jobs` / `get_job_progress`\n(not protected), but cannot submit them. Operator or autopilot submits;\nagent observes\nitem: **Verify setup:** after configuration, run `gbrain jobs stats` (CLI) to\nconfirm the worker is registered and consuming the queue\nuse judgment to follow the Phase 1: Submit guidance:\ncodeblock:plain:Z2JyYWluIGFnZW50IHJ1biAiUmVzZWFyY2ggQWNtZSBDb3JwIHJldmVudWUiIC0tdG9vbHMgInNlYXJjaCxxdWVyeSI=\n`--tools` accepts a comma-separated subset of `BRAIN_TOOL_ALLOWLIST` (see\n`src/core/minions/tools/brain-allowlist.ts`): `query`, `search`, `get_page`,\n`list_pages`, `file_list`, `file_url`, `get_backlinks`, `traverse_graph`,\n`resolve_slugs`, `get_ingest_log`, `put_page`. Anything outside the allow-list\nis rejected at submit time with `allowed_tools references unknown tool`\nFor parallel work with a fan-out manifest:\ncodeblock:plain:Z2JyYWluIGFnZW50IHJ1biAtLWZhbm91dC1tYW5pZmVzdCBjb21wYW5pZXMuanNvbg==\nThe manifest describes N children + 1 aggregator. Each child runs\n`name=\"subagent\"` under the hood; the aggregator runs `name=\"subagent_aggregator\"`\nand claims AFTER every child terminates. See\n`src/core/minions/handlers/subagent.ts` and\n`src/core/minions/handlers/subagent-aggregator.ts`\nFlags (from `src/commands/agent.ts`):\nitem: `--subagent-def <name>` — named subagent definition\nitem: `--model <id>` — override model\nitem: `--max-turns <N>` — cap the LLM loop\nitem: `--tools <csv>` — allow-listed brain tools (see above)\nitem: `--timeout-ms <N>` — hard timeout per job\nitem: `--fanout-manifest <file>` — N children + 1 aggregator\nitem: `--follow` / `--no-follow` — stream logs + wait (default on TTY)\nitem: `--detach` — submit and return immediately\nQueue/priority/retry tuning is not exposed by `gbrain agent run`; submit the\nraw `subagent` handler via `gbrain jobs submit` (requires CLI trust) if you\nneed those knobs\nuse judgment to follow the Phase 2: Monitor guidance:\ncodeblock:plain:bGlzdF9qb2JzIC0tc3RhdHVzIGFjdGl2ZSAgICAgICAgICAjIE1DUCDigJQgd2hhdCdzIHJ1bm5pbmc/CmdldF9qb2IgSUQgICAgICAgICAgICAgICAgICAgICAgICAgIyBNQ1Ag4oCUIGZ1bGwgZGV0YWlscyArIGxvZ3MgKyB0b2tlbnMKZ2V0X2pvYl9wcm9ncmVzcyBJRCAgICAgICAgICAgICAgICAjIE1DUCDigJQgc3RydWN0dXJlZCBwcm9ncmVzcyBzbmFwc2hvdApnYnJhaW4gam9icyBzdGF0cyAgICAgICAgICAgICAgICAgICMgQ0xJIOKAlCBxdWV1ZSBoZWFsdGggZGFzaGJvYXJkCmdicmFpbiBhZ2VudCBsb2dzIElEIC0tZm9sbG93ICAgICAgIyBDTEkg4oCUIHN0cmVhbWluZyB0cmFuc2NyaXB0ICsgaGVhcnRiZWF0\nProgress includes: step count, total steps, message, token usage, last tool called\nuse judgment to follow the Phase 3: Steer guidance:\nSend a message to redirect a running agent:\ncodeblock:plain:c2VuZF9qb2JfbWVzc2FnZSBpZD1JRCBwYXlsb2FkPXsiZGlyZWN0aXZlIjoiZm9jdXMgb24gcmV2ZW51ZSwgc2tpcCBoZWFkY291bnQifQ==\nThe agent handler reads inbox messages on each iteration and injects them as\ncontext. Messages are acknowledged (read receipts tracked)\nOnly the parent job or admin can send messages (sender validation)\nuse judgment to follow the Phase 5: Review Results guidance:\ncodeblock:plain:Z2V0X2pvYiBJRCAgICAgICAgICAgICAgICAgICAgICAgICAjIHJlc3VsdCwgdG9rZW4gY291bnRzLCB0cmFuc2NyaXB0\nToken accounting: every job tracks `tokens_input`, `tokens_output`, `tokens_cache_read`\nChild tokens roll up to parent automatically on completion\nchecklist:ai-autonomy:RG9uJ3Qgc3Bhd24gYSBNaW5pb24gZm9yIGEgc2luZ2xlIHNlYXJjaCBxdWVyeSAodXNlIHNlYXJjaCB0b29sIGRpcmVjdGx5KQpEb24ndCBmaXJlLWFuZC1mb3JnZXQgd2l0aG91dCBjaGVja2luZyByZXN1bHRzCkRvbid0IHNwYXduID4gNSBjb25jdXJyZW50IGFnZW50cyB3aXRob3V0IGNoZWNraW5nIGBnYnJhaW4gam9icyBzdGF0c2AgZmlyc3QKRm9yIHN1YmFnZW50IHdvcmssIGRvbid0IHVzZSBgc2Vzc2lvbnNfc3Bhd25gIHdpdGggYHJ1bnRpbWU6ICJzdWJhZ2VudCJgIHdoZW4gTWluaW9ucyBpcyBhdmFpbGFibGUgKHVzZSBgZ2JyYWluIGFnZW50IHJ1bmAgaW5zdGVhZCkKRG9uJ3QgcG9sbCBgZ2V0X2pvYmAgaW4gYSB0aWdodCBsb29wICh1c2UgYGdldF9qb2JfcHJvZ3Jlc3NgIGZvciBsaWdodHdlaWdodCBjaGVja3Mp",
+            snapshot: state.snapshot(),
+            scopedTools: ["cancel_job", "get_job", "get_job_progress", "jobs.status", "jobs.submit", "list_jobs", "page.list", "pause_job", "replay_job", "resume_job", "send_job_message", "shell.run", "submit_job"]
+        )
+        for (__key, __value) in __meridianProseResults_L91 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

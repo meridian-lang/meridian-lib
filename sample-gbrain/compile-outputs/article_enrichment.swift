@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -590,6 +582,15 @@ public struct ArticleEnrichmentInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ArticleEnrichmentInput", parameters: [:])
 
+        // L47
+        let __meridianProseResults_L47 = try await runtime.executeProsePlan(
+            prose: "follow the When to invoke guidance\nitem: New article page lands in the brain via media-ingest with `needs_enrichment: true`\nitem: Existing article page is a wall of text under a `## Content` header with\nno synthesis\nitem: User says a brain page is useless, boring, or a dump\nitem: An LLM-judge brain-quality eval fails on quotability or actionability for\nan article page\nuse judgment to follow the Invocation guidance:\nThe skill itself is markdown instructions to the agent. It does NOT ship a\ndeterministic CLI command in v0.25.1. The agent uses gbrain's existing\noperations:\ncodeblock:bash:IyAxLiBGaW5kIGNhbmRpZGF0ZSBwYWdlcwpnYnJhaW4gcXVlcnkgIm5lZWRzX2VucmljaG1lbnQ6IHRydWUgdHlwZTphcnRpY2xlIiAtLWxpbWl0IDUwCgojIDIuIEZvciBlYWNoIGNhbmRpZGF0ZSwgcmVhZCB0aGUgcGFnZQpnYnJhaW4gZ2V0IG1lZGlhL2FydGljbGVzLzxzbHVnPgoKIyAzLiBFbnJpY2ggdmlhIHRoZSBhZ2VudCdzIExMTSAoU29ubmV0IGJ5IGRlZmF1bHQ7IE9wdXMgZm9yIGhpZ2gtdmFsdWUpCiMgICAgVGhlIGFnZW50IHJlYWRzIHRoZSByYXcgY29udGVudCArIGJyYWluIGNvbnRleHQgKyB3cml0ZXMgdGhlIHN0cnVjdHVyZWQgcGFnZS4KCiMgNC4gV3JpdGUgdGhlIGVucmljaGVkIHBhZ2UKIyAgICBVc2UgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbiB3aXRoIHRoZSBuZXcgc3RydWN0dXJlZCBtYXJrZG93biBib2R5LgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzCiMgICAgRm9yIGV2ZXJ5IHBlcnNvbi9jb21wYW55IG1lbnRpb25lZCwgYWRkIGEgdGltZWxpbmUgYmFjay1saW5rLg==\nuse judgment to follow the Model selection guidance:\ntable:decision:fCBNb2RlbCB8IFVzZSB3aGVuIHwgUXVvdGUgYWNjdXJhY3kgfAp8LS0tLS0tLXwtLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgKipTb25uZXQqKiAoZGVmYXVsdCkgfCBCdWxrIGVucmljaG1lbnQsIG1vc3QgYXJ0aWNsZXMgfCBHb29kIOKAlCBvY2Nhc2lvbmFsbHkgcGFyYXBocmFzZXMgfAp8ICoqT3B1cyoqIHwgSGlnaC12YWx1ZSBjb250ZW50LCBvcmlnaW5hbC10aGlua2luZyBwaWVjZXMsIGxvbmdyZWFkcyB8IEV4Y2VsbGVudCDigJQgcmVzcGVjdHMgInZlcmJhdGltIiBpbnN0cnVjdGlvbiB8\nRule: for bulk enrichment, do a Sonnet draft pass and spot-check 5 with\nthe LLM-judge brain-quality eval. If quotes are paraphrased, switch to\nOpus for that batch\nchecklist:ai-autonomy:4p2MIFBhcmFwaHJhc2luZyBxdW90ZXMgKCJ0aGUgYXV0aG9yIGFyZ3VlcyB0aGF04oCmIikuIFF1b3RlcyBhcmUgdmVyYmF0aW0gb3IgdGhleSdyZSBub3QgcXVvdGVzLgrinYwgR2VuZXJpYyAiV2h5IEl0IE1hdHRlcnMiICgidGhpcyBpcyBpbXBvcnRhbnQgYmVjYXVzZSBpbm5vdmF0aW9uIikgVGllIHRvIHNwZWNpZmljIGJyYWluIGNvbnRleHQgb3IgcmVtb3ZlIHRoZSBzZWN0aW9uLgrinYwgSW52ZW50aW5nIHRvcGljIGxhYmVscyBhbmQgY2FsbGluZyB0aGVtIGluc2lnaHRzLiBBbiBpbnNpZ2h0IGlzIGEgdGhpbmcgdGhlIGFydGljbGUgc2F5cyB0aGF0IHlvdSBkaWRuJ3QgYWxyZWFkeSBrbm93LgrinYwgRGlzY2FyZGluZyB0aGUgcmF3IHNvdXJjZS4gQWx3YXlzIHdyYXAgaXQgaW4gYDxkZXRhaWxzPmAK4p2MIFJlLWVucmljaGluZyBub24taWRlbXBvdGVudGx5IOKAlCBjaGVjayB0aGUgYG5lZWRzX2VucmljaG1lbnRgIGZsYWcgaW4gZnJvbnRtYXR0ZXI7IHNraXAgaWYgYWxyZWFkeSBmYWxzZS4=\nchecklist:ai-autonomy:Um91dGluZyBtYXRjaGVzIHRoZSBjYW5vbmljYWwgdHJpZ2dlcnMgaW4gdGhlIGZyb250bWF0dGVyCk91dHB1dCB3cml0dGVuIHVuZGVyIHRoZSBkaXJlY3RvcmllcyBsaXN0ZWQgaW4gYHdyaXRlc190bzpgICh3aGVuIGFwcGxpY2FibGUpCkNvbnZlbnRpb25zIHJlZmVyZW5jZWQgKGBxdWFsaXR5Lm1kYCwgYGJyYWluLWZpcnN0Lm1kYCwgYF9icmFpbi1maWxpbmctcnVsZXMubWRgKSBhcmUgZm9sbG93ZWQKUHJpdmFjeSBjb250cmFjdCBwcmVzZXJ2ZWQ6IG5vIHJlYWwgbmFtZXMsIG5vIGZvcmstc3BlY2lmaWMgZmlsZXN5c3RlbSBwYXRoIGxpdGVyYWxzLCBubyB1cHN0cmVhbS1mb3JrIHJlZmVyZW5jZXM=",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L47 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

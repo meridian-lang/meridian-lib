@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -591,6 +583,26 @@ public struct MeetingIngestionInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "MeetingIngestionInput", parameters: [:])
 
+        // L36
+        let __meridianProseResults_L36 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Meeting page created with attendees, summary, key decisions, action items\n- EVERY attendee gets a people page (created or updated)\n- EVERY company discussed gets entity propagation\n- Timeline entries on ALL mentioned entities (timeline merge)\n- Meeting is NOT fully ingested until enrich runs for every entity\n- Back-links created bidirectionally",
+            snapshot: state.snapshot(),
+            scopedTools: ["link.add", "page.get", "page.search", "publish", "shell.run", "timeline.add"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L36 {
+            state.bind(__key, __value)
+        }
+        // L52
+        let __meridianProseResults_L52 = try await runtime.executeProsePlan(
+            prose: "follow the Phase 1: Parse the transcript guidance\nExtract from the transcript:\nitem: Attendees (names, roles if available)\nitem: Date, time, duration\nitem: Key topics discussed\nitem: Decisions made\nitem: Action items with owners\nitem: Companies and projects mentioned\ncodeblock:markdown:IyB7TWVldGluZyBUaXRsZX0g4oCUIHtEYXRlfQogIAoqKkF0dGVuZGVlczoqKiB7bGlzdCB3aXRoIGxpbmtzIHRvIHBlb3BsZSBwYWdlc30KKipEYXRlOioqIHtZWVlZLU1NLUREfQoqKkR1cmF0aW9uOioqIHtpZiBhdmFpbGFibGV9CgojIyBTdW1tYXJ5ICgoIGluZXJ0ICkpCnszLTUgYnVsbGV0IGtleSBvdXRjb21lc30KCiMjIEtleSBEZWNpc2lvbnMgKCggaW5lcnQgKSkKe0RlY2lzaW9ucyB3aXRoIGNvbnRleHR9CgojIyBBY3Rpb24gSXRlbXMgKCggaW5lcnQgKSkKe1Rhc2tzIHdpdGggb3duZXJzIGFuZCBkZWFkbGluZXN9CgojIyBEaXNjdXNzaW9uIE5vdGVzICgoIGluZXJ0ICkpCntTdHJ1Y3R1cmVkIG5vdGVzIGJ5IHRvcGljfQ==\nuse judgment to follow the Phase 3: Attendee enrichment (MANDATORY) guidance:\nFor EACH attendee:\n`gbrain search \"{name}\"` — does a people page exist?\nIf NO → create via enrich skill (this is mandatory, not optional)\nIf YES → update compiled truth with meeting context\nAdd timeline entry on the person's page:\n`gbrain timeline-add <person-slug> <date> \"Attended <meeting-title>\"`\n**Note (v0.10.1):** Once the meeting page is written via `gbrain put`, the\nauto-link post-hook automatically creates `attended` links from the meeting\nto each attendee whose page is referenced as `[Name](people/slug)`. You don't\nneed to call `gbrain link` for attendees. You DO still need `gbrain timeline-add`\nfor dated events (auto-link only handles links, not timeline entries)\nuse judgment to follow the Phase 4: Entity propagation (MANDATORY) guidance:\nFor each company, project, or concept discussed:\nCheck brain for existing page\nCreate/update as needed\nAdd timeline entry referencing the meeting\nBack-link from entity page to meeting page\nuse judgment to follow the Phase 5: Timeline merge guidance:\nThe same event appears on ALL mentioned entities' timelines. If Alice met Bob at\nAcme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page\nuse judgment to follow the Phase 6: Sync guidance:\n`gbrain sync` to update the index\nchecklist:ai-autonomy:Q3JlYXRpbmcgdGhlIG1lZXRpbmcgcGFnZSB3aXRob3V0IGVucmljaGluZyBhdHRlbmRlZXMKU2tpcHBpbmcgZW50aXR5IHByb3BhZ2F0aW9uICgiSSdsbCBkbyB0aGF0IGxhdGVyIikKTm90IG1lcmdpbmcgdGltZWxpbmVzIGFjcm9zcyBhbGwgbWVudGlvbmVkIGVudGl0aWVzCkNyZWF0aW5nIGF0dGVuZGVlIHN0dWJzIHdpdGhvdXQgbWVhbmluZ2Z1bCBjb250ZW50CkZpbGluZyBtZWV0aW5nIHBhZ2VzIHdpdGhvdXQgY3Jvc3MtbGlua2luZyB0byBhbGwgcGFydGljaXBhbnRz",
+            snapshot: state.snapshot(),
+            scopedTools: ["link.add", "page.get", "page.search", "publish", "shell.run", "timeline.add"]
+        )
+        for (__key, __value) in __meridianProseResults_L52 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

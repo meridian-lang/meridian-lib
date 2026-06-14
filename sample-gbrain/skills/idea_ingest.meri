@@ -31,20 +31,21 @@ writes_to:
 
 > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-This skill guarantees:
-- Every ingested item has a brain page with genuine analysis (not just a summary)
-- The author gets a people page (MANDATORY for anyone whose thinking is worth ingesting)
-- Cross-links created bidirectionally (source ↔ author, source ↔ mentioned entities)
-- Raw source preserved for provenance via `gbrain files upload-raw`
-- Every fact has an inline `[Source: ...]` citation
-- Filing follows primary subject rules (not format-based)
+> This skill guarantees:
+!!! checklist (( ai-autonomy ))
+- [ ] Every ingested item has a brain page with genuine analysis (not just a summary)
+- [ ] The author gets a people page (MANDATORY for anyone whose thinking is worth ingesting)
+- [ ] Cross-links created bidirectionally (source ↔ author, source ↔ mentioned entities)
+- [ ] Raw source preserved for provenance via `gbrain files upload-raw`
+- [ ] Every fact has an inline `[Source: ...]` citation
+- [ ] Filing follows primary subject rules (not format-based)
 
-> **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
+> > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
 
-Every mention of a person or company with a brain page MUST create a back-link.
-Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`
+> Every mention of a person or company with a brain page MUST create a back-link.
+> Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`
 
 ## Phases
 
@@ -85,10 +86,11 @@ gbrain sync
 {How this connects to existing brain knowledge. What's new. What contradicts.}
 ```
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- Just summarizing without connecting to brain knowledge
-- Filing everything in `sources/` (sources is for raw data dumps only)
-- Skipping the author people page
-- Not cross-linking to mentioned entities
-- Ingesting without checking brain first for existing coverage
+!!! checklist (( ai-autonomy ))
+- [ ] Just summarizing without connecting to brain knowledge
+- [ ] Filing everything in `sources/` (sources is for raw data dumps only)
+- [ ] Skipping the author people page
+- [ ] Not cross-linking to mentioned entities
+- [ ] Ingesting without checking brain first for existing coverage

@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -591,8 +583,19 @@ public struct IdeaIngestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "IdeaIngestInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L51:C0") {
-            // L51
+        // L38
+        let __meridianProseResults_L38 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Every ingested item has a brain page with genuine analysis (not just a summary)\n- The author gets a people page (MANDATORY for anyone whose thinking is worth ingesting)\n- Cross-links created bidirectionally (source ↔ author, source ↔ mentioned entities)\n- Raw source preserved for provenance via `gbrain files upload-raw`\n- Every fact has an inline `[Source: ...]` citation\n- Filing follows primary subject rules (not format-based)",
+            snapshot: state.snapshot(),
+            scopedTools: ["link.add", "page.get", "page.search", "publish", "shell.run", "timeline.add"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L38 {
+            state.bind(__key, __value)
+        }
+        if __meridianShouldRun("progress:0.1:L52:C0") {
+            // L52
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -600,19 +603,19 @@ public struct IdeaIngestInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.0:L51:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.1:L52:C0", state: state.snapshot())
         }
-        // L55
-        let __meridianProseResults_L55 = try await runtime.executeProsePlan(
+        // L56
+        let __meridianProseResults_L56 = try await runtime.executeProsePlan(
             prose: "ingest the idea source and connect the content to the brain\nFetch the content with the appropriate tool for its type (web fetch, API, or PDF reader)\nIdentify the author and create or update their people page, cross-linking both directions\nSave the page filed by primary subject (person, company, concept, or raw source)\nAnalyze the content against what the brain knows: active projects, contradictions, and connections",
             snapshot: state.snapshot(),
             scopedTools: ["link.add", "page.get", "page.search", "publish", "shell.run", "timeline.add"]
         )
-        for (__key, __value) in __meridianProseResults_L55 {
+        for (__key, __value) in __meridianProseResults_L56 {
             state.bind(__key, __value)
         }
-        if __meridianShouldRun("progress:0.2:L61:C0") {
-            // L61
+        if __meridianShouldRun("progress:0.3:L62:C0") {
+            // L62
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -620,7 +623,18 @@ public struct IdeaIngestInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.2:L61:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.3:L62:C0", state: state.snapshot())
+        }
+        // L92
+        let __meridianProseResults_L92 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Just summarizing without connecting to brain knowledge\n- Filing everything in `sources/` (sources is for raw data dumps only)\n- Skipping the author people page\n- Not cross-linking to mentioned entities\n- Ingesting without checking brain first for existing coverage",
+            snapshot: state.snapshot(),
+            scopedTools: ["link.add", "page.get", "page.search", "publish", "shell.run", "timeline.add"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L92 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

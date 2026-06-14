@@ -398,13 +398,13 @@ public struct SkillMigrator {
 
     /// Decide how to handle `heading`, by the built-in role alias and, for
     /// unrecognized headings, whether the body restates a rulebook convention,
-    /// then whether the body is pure shell.
+    /// then whether the body is provably executable-only.
     private func decision(forHeading heading: String, body: ArraySlice<String>) -> MarkDecision {
         switch SkillSectionRole.builtinRole(forHeading: heading) {
         case .invariants:
-            return .inline("(( inert, role: invariants ))")
+            return sectionIsCheckableRoleBody(body) ? .leaveUnmarked : .inline("(( inert, role: invariants ))")
         case .prohibitions:
-            return .inline("(( inert, role: prohibitions ))")
+            return sectionIsCheckableRoleBody(body) ? .leaveUnmarked : .inline("(( inert, role: prohibitions ))")
         case .some:
             // procedure / applicability / negative-applicability / template /
             // tools — these lower as their role, leave them unmarked.
@@ -414,10 +414,10 @@ public struct SkillMigrator {
             // convention is recorded as `convention-ref` (inert metadata) rather
             // than generic inert prose.
             if bodyRestatesConvention(body) { return .inline("(( inert, role: convention-ref ))") }
-            // An unrecognized *executable* (pure-shell) heading is routed to
+            // An unrecognized *executable* heading is routed to
             // `procedure` via a rulebook alias — preferred over an inline marker
             // (see AGENTS.md §16 / docs/13). Other unknowns stay inert prose.
-            return sectionIsPureShell(body) ? .alias(.procedure) : .inline("(( inert ))")
+            return sectionIsExecutableOnly(body) ? .alias(.procedure) : .inline("(( inert ))")
         }
     }
 
@@ -462,29 +462,138 @@ public struct SkillMigrator {
         Rulebook.normalizeLine(s, stripListMarkers: true)
     }
 
-    /// True iff every non-blank body line lives inside a shell fence
-    /// (```bash/```sh/…) — i.e. the section is only deterministic shell commands.
-    private func sectionIsPureShell(_ body: ArraySlice<String>) -> Bool {
-        var inFence = false
-        var sawShell = false
-        var sawOther = false
+    /// True iff every non-blank body line is a structurally checkable predicate
+    /// once Markdown bullet/number markers are stripped. This is intentionally
+    /// all-or-nothing: one narrative intro line keeps the section inert so the
+    /// author can split prose from executable assertions.
+    private func sectionIsCheckableRoleBody(_ body: ArraySlice<String>) -> Bool {
+        let classifier = ConditionClassifier(symbols: nil, lexicon: .default, trace: .silent())
+        var sawContent = false
         for raw in body {
-            let t = raw.trimmingCharacters(in: .whitespaces)
+            let t = stripMarkdownListMarker(raw.trimmingCharacters(in: .whitespaces))
+            if t.isEmpty || t.hasPrefix("#") || t.hasPrefix(">") { continue }
+            sawContent = true
+            if case .checkable = classifier.classify(t) { continue }
+            return false
+        }
+        return sawContent
+    }
+
+    /// True iff every non-blank body line is already executable by today's
+    /// deterministic Markdown surface: shell fences, whole-line backticked
+    /// commands, explicit block markers, checkable task-list items, or a
+    /// choice-gate with quoted options. It deliberately rejects mixed prose.
+    private func sectionIsExecutableOnly(_ body: ArraySlice<String>) -> Bool {
+        var inShellFence = false
+        var inNonShellFence = false
+        var sawContent = false
+        var pendingTableMarker = false
+        var pendingChecklistMarker = false
+        let classifier = ConditionClassifier(symbols: nil, lexicon: .default, trace: .silent())
+
+        for raw in body {
+            var t = raw.trimmingCharacters(in: .whitespaces)
             if t.hasPrefix("```") {
-                if !inFence {
-                    inFence = true
+                if !inShellFence && !inNonShellFence {
                     let lang = String(t.dropFirst(3)).trimmingCharacters(in: .whitespaces).lowercased()
-                    if isShellFence(lang) { sawShell = true } else { sawOther = true }
+                    if isShellFence(lang) {
+                        inShellFence = true
+                        sawContent = true
+                    } else {
+                        inNonShellFence = true
+                    }
                 } else {
-                    inFence = false
+                    inShellFence = false
+                    inNonShellFence = false
                 }
                 continue
             }
-            if inFence { continue }
+            if inShellFence { continue }
+            if inNonShellFence { return false }
+            if t.isEmpty || t.hasPrefix("#") || t.hasPrefix(">") { continue }
+
+            t = stripMarkdownListMarker(t)
             if t.isEmpty { continue }
-            sawOther = true
+            sawContent = true
+
+            if t.hasPrefix("!!! table") {
+                pendingTableMarker = !t.lowercased().contains("inert")
+                continue
+            }
+            if pendingTableMarker {
+                if isMarkdownTableLine(t) { continue }
+                pendingTableMarker = false
+            }
+
+            if t.hasPrefix("!!! checklist") {
+                pendingChecklistMarker = !t.lowercased().contains("inert")
+                continue
+            }
+            if pendingChecklistMarker {
+                if isTaskListLine(t) { continue }
+                pendingChecklistMarker = false
+            }
+
+            if isWholeLineBacktickedCommand(t) { continue }
+            if isChoiceGateLine(t) { continue }
+            if isTaskListLine(t) {
+                let item = stripTaskListBox(t)
+                if case .checkable = classifier.classify(item) { continue }
+            }
+            return false
         }
-        return sawShell && !sawOther
+        return sawContent
+    }
+
+    private func stripMarkdownListMarker(_ raw: String) -> String {
+        var s = raw.trimmingCharacters(in: .whitespaces)
+        if s.hasPrefix("- ") || s.hasPrefix("* ") {
+            return String(s.dropFirst(2)).trimmingCharacters(in: .whitespaces)
+        }
+        var digits = ""
+        var idx = s.startIndex
+        while idx < s.endIndex, s[idx].isNumber {
+            digits.append(s[idx])
+            idx = s.index(after: idx)
+        }
+        if !digits.isEmpty, idx < s.endIndex, s[idx] == "." || s[idx] == ")" {
+            let after = s.index(after: idx)
+            if after == s.endIndex || s[after].isWhitespace {
+                s = String(s[after...]).trimmingCharacters(in: .whitespaces)
+            }
+        }
+        return s
+    }
+
+    private func isWholeLineBacktickedCommand(_ s: String) -> Bool {
+        let trimmed = s.trimmingCharacters(in: .whitespaces)
+        let commandSpan = StatementParser.splitCommandAnnotation(trimmed).command
+        guard commandSpan.hasPrefix("`"), commandSpan.hasSuffix("`") else { return false }
+        let inner = commandSpan.dropFirst().dropLast().trimmingCharacters(in: .whitespaces)
+        return !inner.isEmpty && !inner.contains("`")
+    }
+
+    private func isChoiceGateLine(_ s: String) -> Bool {
+        let lower = s.lowercased()
+        return lower.hasPrefix("ask the user to choose between ")
+            && s.filter { $0 == "\"" }.count >= 4
+    }
+
+    private func isTaskListLine(_ s: String) -> Bool {
+        let lower = s.lowercased()
+        return lower.hasPrefix("[ ] ") || lower.hasPrefix("[x] ")
+    }
+
+    private func stripTaskListBox(_ s: String) -> String {
+        let lower = s.lowercased()
+        if lower.hasPrefix("[ ] ") || lower.hasPrefix("[x] ") {
+            return String(s.dropFirst(4)).trimmingCharacters(in: .whitespaces)
+        }
+        return s
+    }
+
+    private func isMarkdownTableLine(_ s: String) -> Bool {
+        s.contains("|")
     }
 
     // MARK: - Helpers

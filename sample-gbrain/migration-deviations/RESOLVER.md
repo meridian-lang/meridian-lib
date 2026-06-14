@@ -4,7 +4,7 @@
 - Ported: `RESOLVER.meri`
 - Tier: 3 (structural rewrite)
 - Similarity: 18%
-- Lines: 136 -> 59 (+41 / -118)
+- Lines: 136 -> 61 (+43 / -118)
 
 ## Frontmatter
 - Added: `description`, `name`, `triggers`
@@ -13,17 +13,28 @@
 ## Categories
 - frontmatter-injected
 - section-marker-added
+- shell-block-routed
 
 ## Metrics
-- Sections: 7/8 inert (88% inert ratio)
+- Sections: 5/8 inert (62% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: reference-documentation=5
 - Judgment: 1 blocks, 4 lines
+
+### Inert section details
+- L21 `Routing tables`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L23 `Always-on (every message)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L28 `Brain operations`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L35 `Content and media ingestion`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L41 `Maintenance and operations`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
 ```diff
 --- original-skills/RESOLVER.md
 +++ RESOLVER.meri
-@@ -1,136 +1,59 @@
+@@ -1,136 +1,61 @@
 +---
 +name: resolver
 +description: The skill dispatcher. Routes an inbound request to the skill that owns it. Skills are the implementation; the resolver only selects. When two skills could match, read both — they are designed to chain (for example, ingest then enrich for each entity).
@@ -36,18 +47,19 @@
  # GBrain Skill Resolver
  
 -This is the dispatcher. Skills are the implementation. **Read the skill file before acting.** If two skills could match, read both. They are designed to chain (e.g., ingest then enrich for each entity).
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
  
 -## Always-on (every message)
-+This skill guarantees:
++> This skill guarantees:
  
 -| Trigger | Skill |
 -|---------|-------|
 -| Every inbound message (spawn parallel, don't block) | `skills/signal-detector/SKILL.md` |
 -| Any brain read/write/lookup/citation | `skills/brain-ops/SKILL.md` |
-+- Every inbound request maps to exactly one owning skill, or to a short chain of skills that are designed to compose.
-+- The resolver only selects; it never performs brain reads or writes itself.
-+- Always-on detection (signal-detector, brain-ops) runs on every message regardless of routing.
++!!! checklist (( ai-autonomy ))
++- [ ] Every inbound request maps to exactly one owning skill, or to a short chain of skills that are designed to compose.
++- [ ] The resolver only selects; it never performs brain reads or writes itself.
++- [ ] Always-on detection (signal-detector, brain-ops) runs on every message regardless of routing.
  
 -## Brain operations
 +## Phases
@@ -151,7 +163,7 @@
 +- Daily preparation routes to daily-task-prep; task changes route to daily-task-manager.
  
 -## Identity & access (always-on)
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
  
 -| Trigger | Skill |
 -|---------|-------|
@@ -159,9 +171,10 @@
 -| Agent needs to know its identity/vibe | Read `SOUL.md` |
 -| Agent needs user context | Read `USER.md` |
 -| Operational cadence (what to check and when) | Read `HEARTBEAT.md` |
-+- Routing to more than one skill when a single skill clearly owns the request.
-+- Performing brain reads or writes inside the resolver instead of delegating.
-+- Skipping always-on detection because a specific skill matched.
++!!! checklist (( ai-autonomy ))
++- [ ] Routing to more than one skill when a single skill clearly owns the request.
++- [ ] Performing brain reads or writes inside the resolver instead of delegating.
++- [ ] Skipping always-on detection because a specific skill matched.
  
 -## Disambiguation rules
 -

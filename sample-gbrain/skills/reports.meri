@@ -18,13 +18,14 @@ mutating: true
 
 # Reports Skill
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-This skill guarantees:
-- Reports saved with timestamped filenames and frontmatter
-- Keyword routing: query → report category mapping
-- Latest report loadable by category name
-- Reports are searchable via gbrain search/query
+> This skill guarantees:
+!!! checklist (( ai-autonomy ))
+- [ ] Reports saved with timestamped filenames and frontmatter
+- [ ] Keyword routing: query → report category mapping
+- [ ] Latest report loadable by category name
+- [ ] Reports are searchable via gbrain search/query
 
 ## Phases
 
@@ -47,9 +48,10 @@ if at least 2 urgent pages,
 Saved: `reports/{category}/{YYYY-MM-DD-HHMM}.md`
 Loaded: full report content with metadata.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- Saving reports without frontmatter (makes them unsearchable)
-- Using inconsistent category names across runs
-- Loading all reports when only the latest is needed
-- Not routing by keyword (forcing exact category name)
+!!! checklist (( ai-autonomy ))
+- [ ] Saving reports without frontmatter (makes them unsearchable)
+- [ ] Using inconsistent category names across runs
+- [ ] Loading all reports when only the latest is needed
+- [ ] Not routing by keyword (forcing exact category name)

@@ -117,13 +117,13 @@
         "text" : "The pipeline"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 74,
         "text" : "Starting a benchmark from the skill itself (the common case)"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 125,
         "text" : "Decision tree"
@@ -135,21 +135,21 @@
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 149,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 167,
+        "line" : 168,
         "text" : "Contract"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 184,
+        "line" : 185,
         "text" : "Related skills"
       },
       {
@@ -205,10 +205,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Starting a benchmark from the skill itself (the common case)",
         "line" : 74,
         "lines" : [
+          "use judgment to follow the Starting a benchmark from the skill itself (the common case) guidance:",
           "**The user will NOT hand-write a benchmark, and you shouldn't start from a blank",
           "file either.** When the user says \"make skill X better\" and",
           "`skills\/X\/skillopt-benchmark.jsonl` doesn't exist, generate a starter from the",
@@ -248,16 +249,17 @@
           "`--split 1:1:1`. The human walkthrough lives at",
           "`docs\/tutorials\/improving-skills-with-skillopt.md`"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Decision tree",
         "line" : 125,
         "lines" : [
+          "use judgment to follow the Decision tree guidance:",
           "table:decision:fCBTaXR1YXRpb24gfCBBY3Rpb24gfAp8LS0tfC0tLXwKfCBTa2lsbCBoYXMgbm8gYmVuY2htYXJrIHwgYGdicmFpbiBza2lsbG9wdCBmb28gLS1ib290c3RyYXAtZnJvbS1za2lsbGAg4oaSIHJldmlldyArIHN0cmVuZ3RoZW4gdGhlIGp1ZGdlcyDihpIgZGVsZXRlIHNlbnRpbmVsIOKGkiBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLWJvb3RzdHJhcC1yZXZpZXdlZCAtLXNwbGl0IDE6MToxYCAoc2VlIHNlY3Rpb24gYWJvdmUpIHwKfCBTa2lsbCBoYXMgYSBgcm91dGluZy1ldmFsLmpzb25sYCBhbmQgeW91IHdhbnQgYSBoZWFkIHN0YXJ0IHwgYGdicmFpbiBza2lsbG9wdCBmb28gLS1ib290c3RyYXAtZnJvbS1yb3V0aW5nYCDihpIgcmV2aWV3IHRoZSBnZW5lcmF0ZWQgdGFza3Mg4oaSIGAtLWJvb3RzdHJhcC1yZXZpZXdlZGAgKHJvdXRpbmcgdGFza3MgdGVzdCBkaXNwYXRjaDsgdGlnaHRlbiB0aGVtIGludG8gcXVhbGl0eSB0YXNrcyBiZWZvcmUgdHJ1c3RpbmcpIHwKfCBJdGVyYXRpbmcgb24gYW4gZXhpc3Rpbmcgc2tpbGwgfCBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLWJlbmNobWFyayBza2lsbHMvZm9vL3NraWxsb3B0LWJlbmNobWFyay5qc29ubGAgfAp8IENvc3RseSBydW4sIHdhbnQgcHJldmlldyB8IEFkZCBgLS1kcnktcnVuYCB8CnwgQnVuZGxlZCBza2lsbCAoc2tpbGxzLyBpbiBnYnJhaW4gcmVwbykgfCBEZWZhdWx0IHdyaXRlcyBwcm9wb3NlZC5tZDsgdG8gY29tbWl0IGluIHBsYWNlIGFkZCBgLS1hbGxvdy1tdXRhdGUtYnVuZGxlZGAgQU5EIGAtLWhlbGQtb3V0IDxwYXRoPmAgKD49NSBiZW5jaG1hcmstZGlzam9pbnQgdGFza3MpIOKAlCBlbHNlIGl0IGhhcmQtcmVmdXNlcyB8CnwgV2FudCB0byByZXZpZXcgY2hhbmdlcyBiZWZvcmUgYXBwbHlpbmcgfCBBZGQgYC0tbm8tbXV0YXRlYCAod3JpdGVzIHByb3Bvc2VkLm1kLCBubyBoZWxkLW91dCBuZWVkZWQpIHwKfCBHdWFyZCBhZ2FpbnN0IGJlbmNobWFyayBvdmVyZml0dGluZyB8IEFkZCBgLS1oZWxkLW91dCA8cGF0aD5gIOKAlCBhIGNhbmRpZGF0ZSB0aGF0IGJlYXRzIHRoZSBiZW5jaG1hcmsgYnV0IHJlZ3Jlc3NlcyBvbiB0aGUgaGVsZC1vdXQgc2V0IGlzIHJlZnVzZWQgfAp8IE1pZC1ydW4gY3Jhc2ggfCBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLXJlc3VtZSA8cnVuLWlkPmAgfA=="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -275,42 +277,27 @@
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
         "line" : 149,
         "lines" : [
-          "**Don't bypass the validation gate.** The median-of-3 + epsilon=0.05 is",
-          "load-bearing; without it, the optimizer accepts noise as improvement",
-          "**Don't optimize bundled skills without `--allow-mutate-bundled` AND",
-          "`--held-out`.** They ship with gbrain and are load-bearing for downstream",
-          "agents. In-place mutation requires both flags (held-out >=5 benchmark-disjoint",
-          "tasks); without the held-out set the run hard-refuses and points you at",
-          "proposed.md",
-          "**Don't use bootstrap output without strengthening it.** Both",
-          "`--bootstrap-from-skill` and `--bootstrap-from-routing` have the optimizer",
-          "model invent success criteria — generic and weak by default. Review and",
-          "tighten the judges before SkillOpt optimizes against them, or it trains the",
-          "skill toward benchmark artifacts instead of real quality",
-          "**Don't skip `--split 1:1:1` on a ~15-task starter.** The default `4:1:5`",
-          "split drops the validation set below the `D_sel >= 5` floor and the run",
-          "aborts with `d_sel_too_small`"
+          "checklist:ai-autonomy:KipEb24ndCBieXBhc3MgdGhlIHZhbGlkYXRpb24gZ2F0ZS4qKiBUaGUgbWVkaWFuLW9mLTMgKyBlcHNpbG9uPTAuMDUgaXMgbG9hZC1iZWFyaW5nOyB3aXRob3V0IGl0LCB0aGUgb3B0aW1pemVyIGFjY2VwdHMgbm9pc2UgYXMgaW1wcm92ZW1lbnQuCioqRG9uJ3Qgb3B0aW1pemUgYnVuZGxlZCBza2lsbHMgd2l0aG91dCBgLS1hbGxvdy1tdXRhdGUtYnVuZGxlZGAgQU5EIGAtLWhlbGQtb3V0YC4qKiBUaGV5IHNoaXAgd2l0aCBnYnJhaW4gYW5kIGFyZSBsb2FkLWJlYXJpbmcgZm9yIGRvd25zdHJlYW0gYWdlbnRzLiBJbi1wbGFjZSBtdXRhdGlvbiByZXF1aXJlcyBib3RoIGZsYWdzIChoZWxkLW91dCA+PTUgYmVuY2htYXJrLWRpc2pvaW50IHRhc2tzKTsgd2l0aG91dCB0aGUgaGVsZC1vdXQgc2V0IHRoZSBydW4gaGFyZC1yZWZ1c2VzIGFuZCBwb2ludHMgeW91IGF0IHByb3Bvc2VkLm1kLgoqKkRvbid0IHVzZSBib290c3RyYXAgb3V0cHV0IHdpdGhvdXQgc3RyZW5ndGhlbmluZyBpdC4qKiBCb3RoIGAtLWJvb3RzdHJhcC1mcm9tLXNraWxsYCBhbmQgYC0tYm9vdHN0cmFwLWZyb20tcm91dGluZ2AgaGF2ZSB0aGUgb3B0aW1pemVyIG1vZGVsIGludmVudCBzdWNjZXNzIGNyaXRlcmlhIOKAlCBnZW5lcmljIGFuZCB3ZWFrIGJ5IGRlZmF1bHQuIFJldmlldyBhbmQgdGlnaHRlbiB0aGUganVkZ2VzIGJlZm9yZSBTa2lsbE9wdCBvcHRpbWl6ZXMgYWdhaW5zdCB0aGVtLCBvciBpdCB0cmFpbnMgdGhlIHNraWxsIHRvd2FyZCBiZW5jaG1hcmsgYXJ0aWZhY3RzIGluc3RlYWQgb2YgcmVhbCBxdWFsaXR5LgoqKkRvbid0IHNraXAgYC0tc3BsaXQgMToxOjFgIG9uIGEgfjE1LXRhc2sgc3RhcnRlci4qKiBUaGUgZGVmYXVsdCBgNDoxOjVgIHNwbGl0IGRyb3BzIHRoZSB2YWxpZGF0aW9uIHNldCBiZWxvdyB0aGUgYERfc2VsID49IDVgIGZsb29yIGFuZCB0aGUgcnVuIGFib3J0cyB3aXRoIGBkX3NlbF90b29fc21hbGxgLg=="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
-        "line" : 167,
+        "line" : 168,
         "lines" : [
-          "`runSkillOpt(opts)` returns:",
           "codeblock:plain:ewogIG91dGNvbWU6ICdhY2NlcHRlZCcgfCAnbm9faW1wcm92ZW1lbnQnIHwgJ2Fib3J0ZWQnIHwgJ2Vycm9yZWQnLAogIHJlY2VpcHQ6IHsKICAgIHJ1bl9pZCwgc2tpbGxfc2hhOCwgYmVuY2htYXJrX3NoYTgsIG1vZGVscywgY29zdCwKICAgIGJhc2VsaW5lX3NlbF9zY29yZSwgYmVzdF9zZWxfc2NvcmUsICAgLy8gcmVhbCBtZWFzdXJlZCBiYXNlbGluZSAobm8gbG9uZ2VyIGhhcmRjb2RlZCAwKQogICAgYmFzZWxpbmVfdGVzdF9zY29yZSwgdGVzdF9zY29yZSwgICAgICAvLyBmaW5hbCBoZWxkLW91dCB0ZXN0LXNwbGl0IGV2YWwKICB9LAogIGZpbmFsVGV4dDogc3RyaW5nLAogIG11dGF0ZWRTa2lsbEZpbGU6IGJvb2xlYW4sCiAgcHJvcG9zZWRQYXRoPzogc3RyaW5nCn0="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Related skills",
-        "line" : 184,
+        "line" : 185,
         "lines" : [
           "`skillify` — scaffolds a new skill (use BEFORE skillopt)",
           "`skillpack-check` — audits skill conformance (item 13 surfaces skillopt status)",
@@ -358,44 +345,48 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 621
+      "meridian_line" : 76,
+      "swift_line" : 584
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 626
+      "swift_line" : 622
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 665
+      "swift_line" : 627
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 670
+      "swift_line" : 666
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 709
+      "swift_line" : 671
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 714
+      "swift_line" : 710
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 753
+      "swift_line" : 715
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 758
+      "swift_line" : 754
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 797
+      "swift_line" : 759
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 802
+      "swift_line" : 798
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 803
     }
   ],
   "tools_used" : [

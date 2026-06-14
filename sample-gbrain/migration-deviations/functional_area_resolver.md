@@ -2,9 +2,9 @@
 
 - Original: `functional-area-resolver/SKILL.md`
 - Ported: `functional_area_resolver.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 92%
-- Lines: 354 -> 354 (+27 / -27)
+- Tier: 3 (structural rewrite)
+- Similarity: 48%
+- Lines: 354 -> 359 (+187 / -182)
 
 ## Frontmatter
 - Added: (none)
@@ -12,16 +12,41 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 
 ## Metrics
-- Sections: 26/26 inert (100% inert ratio)
-- Judgment: 0 blocks, 0 lines
+- Sections: 19/26 inert (73% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: reference-documentation=18, template=1
+- Judgment: 5 blocks, 74 lines
+
+### Inert section details
+- L4 `Problem`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L10 `Solution: Functional-Area Dispatchers`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L15 `Before (270 rows, 25KB)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L27 `After (13 rows, 13KB)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L36 `Why It Works`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L46 `A/B Eval Results`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L77 `What the data shows`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L100 `Methodology caveats`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L118 `Prior work and citations`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L144 `How To Compress`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L146 `Step 1: Preconditions`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L169 `Step 3: Identify functional areas`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L185 `Step 4: Build the area entry format`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L200 `Step 5: Keep always-on entries separate`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L264 `Step 7: Review the diff before committing`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L281 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L304 `Maintenance`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L317 `Changelog`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L319 `v1.0.0 — 2026-05-11`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
 ```diff
 --- original-skills/functional-area-resolver/SKILL.md
-+++ functional_area_resolver.meri
++++ skills/functional_area_resolver.meri
 @@ -36,18 +36,18 @@
  
  # Functional-Area Resolver — Pattern for Compressing Routing Tables
@@ -71,60 +96,139 @@
  
  Three resolver architectures tested across three Anthropic frontier models
  (Opus 4.7, Sonnet 4.6, Haiku 4.5) on real production AGENTS.md content,
-@@ -93,7 +93,7 @@
+@@ -93,82 +93,82 @@
    production behavior — an agent that lands in `gmail` for an email intent
    succeeds even if the resolver entry said `executive-assistant`.
  
 -### Training corpus (n=20, 3 seeds × 3 variants × 3 models, LENIENT)
-+### Training corpus (n=20, 3 seeds × 3 variants × 3 models, LENIENT) (( inert ))
- 
- | Variant | Opus 4.7 | Sonnet 4.6 | Haiku 4.5 | Size |
- |---|---|---|---|---|
-@@ -101,7 +101,7 @@
- | **functional-areas** (this pattern) | **98.3% ± 7.2%** | **100% ± 0%** | **88.3% ± 7.2%** | **13KB** |
- | resolver-of-resolvers (no dispatcher clause) | 63.3% ± 14.3% | 41.7% ± 7.2% | 65.0% ± 12.4% | 10KB |
- 
+-
+-| Variant | Opus 4.7 | Sonnet 4.6 | Haiku 4.5 | Size |
+-|---|---|---|---|---|
+-| baseline (270 bullet rows) | 81.7% ± 7.2% | 86.7% ± 7.2% | 73.3% ± 7.2% | 25KB |
+-| **functional-areas** (this pattern) | **98.3% ± 7.2%** | **100% ± 0%** | **88.3% ± 7.2%** | **13KB** |
+-| resolver-of-resolvers (no dispatcher clause) | 63.3% ± 14.3% | 41.7% ± 7.2% | 65.0% ± 12.4% | 10KB |
+-
 -### Held-out blind corpus (n=5, 3 seeds, LENIENT)
-+### Held-out blind corpus (n=5, 3 seeds, LENIENT) (( inert ))
- 
- | Variant | Opus 4.7 | Sonnet 4.6 | Haiku 4.5 |
- |---|---|---|---|
-@@ -109,7 +109,7 @@
- | **functional-areas** | **100% ± 0%** | **100% ± 0%** | **100% ± 0%** |
- | resolver-of-resolvers | 100% ± 0% | **73.3% ± 28.7%** | 100% ± 0% |
- 
+-
+-| Variant | Opus 4.7 | Sonnet 4.6 | Haiku 4.5 |
+-|---|---|---|---|
+-| baseline | 100% ± 0% | 100% ± 0% | 100% ± 0% |
+-| **functional-areas** | **100% ± 0%** | **100% ± 0%** | **100% ± 0%** |
+-| resolver-of-resolvers | 100% ± 0% | **73.3% ± 28.7%** | 100% ± 0% |
+-
 -### What the data shows
+-
++### Training corpus (n=20, 3 seeds × 3 variants × 3 models, LENIENT) (( role: procedure ))
++
++use judgment to follow the Training corpus (n=20, 3 seeds × 3 variants × 3 models, LENIENT) guidance:
++  | Variant | Opus 4.7 | Sonnet 4.6 | Haiku 4.5 | Size |
++  |---|---|---|---|---|
++  | baseline (270 bullet rows) | 81.7% ± 7.2% | 86.7% ± 7.2% | 73.3% ± 7.2% | 25KB |
++  | **functional-areas** (this pattern) | **98.3% ± 7.2%** | **100% ± 0%** | **88.3% ± 7.2%** | **13KB** |
++  | resolver-of-resolvers (no dispatcher clause) | 63.3% ± 14.3% | 41.7% ± 7.2% | 65.0% ± 12.4% | 10KB |
++### Held-out blind corpus (n=5, 3 seeds, LENIENT) (( role: procedure ))
++  
++use judgment to follow the Held-out blind corpus (n=5, 3 seeds, LENIENT) guidance:
++  | Variant | Opus 4.7 | Sonnet 4.6 | Haiku 4.5 |
++  |---|---|---|---|
++  | baseline | 100% ± 0% | 100% ± 0% | 100% ± 0% |
++  | **functional-areas** | **100% ± 0%** | **100% ± 0%** | **100% ± 0%** |
++  | resolver-of-resolvers | 100% ± 0% | **73.3% ± 28.7%** | 100% ± 0% |
 +### What the data shows (( inert ))
- 
++  
  1. **Functional-areas BEATS baseline on training across all three models** (+13 to +17pp) at 48% the size. Held-out is saturated at 100% for both — within margin of error.
- 
-@@ -119,7 +119,7 @@
- 
+-
++  
+ 2. **The `(dispatcher for: ...)` clause is the load-bearing signal.** resolver-of-resolvers strips that clause and collapses to 41.7% on Sonnet — the catastrophic failure case the original PR predicted, now observed.
+-
++  
+ 3. **The pattern works because the LLM can drill into the dispatcher list.** Most "STRICT failures" are the LLM picking a more-specific sub-skill (`gmail` instead of `executive-assistant`). That's the pattern working as designed. STRICT scoring under-counts; LENIENT scoring reflects production agent behavior.
+-
++  
  4. **The pattern's value scales with model tier.** Compression gain (functional-areas vs baseline, training, LENIENT) is +17pp on Opus, +13pp on Sonnet, +15pp on Haiku. Sonnet shows the cleanest separation between functional-areas and resolver-of-resolvers (100% vs 41.7%) — model capacity affects how much the dispatcher signal matters.
- 
+-
 -### Reproduce
-+### Reproduce (( inert ))
- 
- ```bash
- cd evals/functional-area-resolver
-@@ -132,7 +132,7 @@
- Receipts (model, prompt_template_hash, fixtures_hash, harness_sha, ts):
- `evals/functional-area-resolver/baseline-runs/2026-05-11-{opus-4-7,sonnet-4-6,haiku-4-5}.jsonl`.
- 
+-
+-```bash
+-cd evals/functional-area-resolver
+-node harness.mjs --model opus    # ~225 LLM calls, ~$1.70 at Opus pricing
+-node harness.mjs --model sonnet  # ~$1.00
+-node harness.mjs --model haiku   # ~$0.30
+-node rescore.mjs baseline-runs/2026-05-11-opus-4-7.jsonl  # zero-cost re-score
+-```
+-
+-Receipts (model, prompt_template_hash, fixtures_hash, harness_sha, ts):
+-`evals/functional-area-resolver/baseline-runs/2026-05-11-{opus-4-7,sonnet-4-6,haiku-4-5}.jsonl`.
+-
 -### Methodology caveats
+-
+-- **Production prompt matters.** With a naive "return the skill slug" prompt
++  
++### Reproduce (( role: procedure ))
++  
++use judgment to follow the Reproduce guidance:
++  ```bash
++  cd evals/functional-area-resolver
++  node harness.mjs --model opus    # ~225 LLM calls, ~$1.70 at Opus pricing
++  node harness.mjs --model sonnet  # ~$1.00
++  node harness.mjs --model haiku   # ~$0.30
++  node rescore.mjs baseline-runs/2026-05-11-opus-4-7.jsonl  # zero-cost re-score
++  ```
++  
++  Receipts (model, prompt_template_hash, fixtures_hash, harness_sha, ts):
++  `evals/functional-area-resolver/baseline-runs/2026-05-11-{opus-4-7,sonnet-4-6,haiku-4-5}.jsonl`.
 +### Methodology caveats (( inert ))
- 
- - **Production prompt matters.** With a naive "return the skill slug" prompt
++  
++  item: **Production prompt matters.** With a naive "return the skill slug" prompt
    (no instruction about `(dispatcher for: ...)`), every compression variant
-@@ -150,7 +150,7 @@
+   collapses to ~30-60% on Opus. The dispatcher-aware prompt is in
+   `evals/functional-area-resolver/harness-runner.ts:PROMPT_TEMPLATE`. Use it
+   as the template for your agent's harness; without it, compression breaks.
+-- **Training corpus and variants were authored by the same release.** Held-out
++  item: **Training corpus and variants were authored by the same release.** Held-out
+   corpus was written before the variants and never adjusted; this mitigates
+   but does not eliminate overfitting.
+-- **Confidence intervals via t-distribution across n=3 seeded repeats.** Hold the
++  item: **Confidence intervals via t-distribution across n=3 seeded repeats.** Hold the
+   n=3 lower-bound: high CIs mean the underlying sample is noisy.
+-- **Single-vendor result.** All three models are Anthropic. Cross-vendor
++  item: **Single-vendor result.** All three models are Anthropic. Cross-vendor
+   verification (Gemini, GPT) is a v0.33.x follow-up.
+-- **Held-out blind set is small (n=5).** Saturated at 100% across most cells —
++  item: **Held-out blind set is small (n=5).** Saturated at 100% across most cells —
    the harness can't distinguish between "100%" and "95% with one nondeterministic
    miss." Expanding to ≥20 is a v0.33.x follow-up.
- 
+-
 -### Prior work and citations
+-
++  
 +### Prior work and citations (( inert ))
- 
++  
  The pattern is a **static-prompt analog of hierarchical agent routing**, a
  2024-2025 research direction:
+-
+-- **AnyTool** ([arXiv:2402.04253](https://arxiv.org/abs/2402.04253)) showed
++  
++  item: **AnyTool** ([arXiv:2402.04253](https://arxiv.org/abs/2402.04253)) showed
+   meta-agent → category-agent → tool-agent hierarchy on 16K APIs beats flat
+   retrieval by +35.4pp. The `(dispatcher for: ...)` clause is the
+   meta-agent's view collapsed into a single LLM pass.
+-- **RAG-MCP** ([arXiv:2505.03275](https://arxiv.org/html/2505.03275v1))
++  item: **RAG-MCP** ([arXiv:2505.03275](https://arxiv.org/html/2505.03275v1))
+   reports 49.2% prompt-token reduction at 3.2× accuracy gain via
+   embedding-based pre-retrieval. The token-reduction story matches ours
+   (48% smaller), via a different mechanism (RAG vs static dispatcher).
+-- **Anthropic Agent Skills**
++  item: **Anthropic Agent Skills**
+   ([engineering blog](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills))
+   promotes progressive disclosure: frontmatter (~80 tokens) always loaded,
+   SKILL.md body loaded on match. This skill applies the same principle at
+   the routing-table level, not the per-skill body level.
+-
++  
+ The 2025-2026 literature has no published benchmark for **static-prompt
+ hierarchical routing** (every published hierarchical scheme resolves the
+ hierarchy at runtime via a second LLM call). Our finding — that the
 @@ -176,9 +176,9 @@
  routing accuracy — is the open contribution. See
  `evals/functional-area-resolver/README.md` for methodology details.
@@ -138,74 +242,276 @@
  
  Refuse to compress if either gate fails:
  - Source routing file is under 12KB (compression overhead exceeds benefit).
-@@ -187,7 +187,7 @@
+@@ -187,151 +187,156 @@
  
  If a user wants to override either gate, they ask explicitly with `--force`.
  
 -### Step 2: When to compress which file
-+### Step 2: When to compress which file (( inert ))
- 
- GBrain workspaces often have TWO routing files merged at runtime (per
- `src/core/check-resolvable.ts` v0.31.7): `skills/RESOLVER.md` and a sibling
-@@ -201,7 +201,7 @@
- If the deployment uses only one routing file, this section is a no-op —
- compress that one.
- 
+-
+-GBrain workspaces often have TWO routing files merged at runtime (per
+-`src/core/check-resolvable.ts` v0.31.7): `skills/RESOLVER.md` and a sibling
+-`../AGENTS.md`. Choose which to compress:
+-
+-- Only one is fat (>12KB): compress that one; leave the small one alone.
+-- Both are fat: compress them separately, in order: AGENTS.md first
+-  (usually the larger one in OpenClaw-style deployments), then RESOLVER.md.
+-- Only the small one is fat (rare): same rule — compress it.
+-
+-If the deployment uses only one routing file, this section is a no-op —
+-compress that one.
+-
 -### Step 3: Identify functional areas
+-
++### Step 2: When to compress which file (( role: procedure ))
++
++use judgment to follow the Step 2: When to compress which file guidance:
++  GBrain workspaces often have TWO routing files merged at runtime (per
++  `src/core/check-resolvable.ts` v0.31.7): `skills/RESOLVER.md` and a sibling
++  `../AGENTS.md`. Choose which to compress:
++  
++  item: Only one is fat (>12KB): compress that one; leave the small one alone.
++  item: Both are fat: compress them separately, in order: AGENTS.md first
++    (usually the larger one in OpenClaw-style deployments), then RESOLVER.md.
++  item: Only the small one is fat (rare): same rule — compress it.
++  
++  If the deployment uses only one routing file, this section is a no-op —
++  compress that one.
 +### Step 3: Identify functional areas (( inert ))
- 
++  
  Group skills by domain. Typical areas (adjust per deployment):
- 
-@@ -217,7 +217,7 @@
- - **Tasks & Logistics** — daily-task-manager as dispatcher
- - **People & Contacts** — google-contacts as dispatcher
- 
+-
+-- **Brain & Knowledge** — brain-ops as dispatcher
+-- **Content Ingestion** — ingest as dispatcher
+-- **Calendar & Scheduling** — google-calendar as dispatcher
+-- **Email & Comms** — executive-assistant as dispatcher
+-- **Research & Investigation** — perplexity-research as dispatcher
+-- **X/Twitter & Social** — x-ingest as dispatcher
+-- **Places & Travel** — checkin as dispatcher
+-- **Product & Building** — acp-coding as dispatcher
+-- **Infrastructure** — healthcheck as dispatcher
+-- **Tasks & Logistics** — daily-task-manager as dispatcher
+-- **People & Contacts** — google-contacts as dispatcher
+-
 -### Step 4: Build the area entry format
+-
++  
++  item: **Brain & Knowledge** — brain-ops as dispatcher
++  item: **Content Ingestion** — ingest as dispatcher
++  item: **Calendar & Scheduling** — google-calendar as dispatcher
++  item: **Email & Comms** — executive-assistant as dispatcher
++  item: **Research & Investigation** — perplexity-research as dispatcher
++  item: **X/Twitter & Social** — x-ingest as dispatcher
++  item: **Places & Travel** — checkin as dispatcher
++  item: **Product & Building** — acp-coding as dispatcher
++  item: **Infrastructure** — healthcheck as dispatcher
++  item: **Tasks & Logistics** — daily-task-manager as dispatcher
++  item: **People & Contacts** — google-contacts as dispatcher
++  
 +### Step 4: Build the area entry format (( inert ))
- 
++  
  Each area entry follows this template:
- 
-@@ -232,12 +232,12 @@
- - Sub-skill list should be comprehensive — this is how the LLM knows what's available
- - The dispatcher skill file should have its own internal routing table
- 
+-
+-```
+-- **{Area Name}**: {comma-separated trigger phrases} -> `{dispatcher-skill}`
++  
++```
++  item: **{Area Name}**: {comma-separated trigger phrases} -> `{dispatcher-skill}`
+   (dispatcher for: {comma-separated sub-skill names})
+ ```
+-
++  
+ Rules:
+-- Trigger phrases should be broad enough to catch intent ("brain pages, enrich,
++  item: Trigger phrases should be broad enough to catch intent ("brain pages, enrich,
+   search, filing, citations, book analysis")
+-- Sub-skill list should be comprehensive — this is how the LLM knows what's available
+-- The dispatcher skill file should have its own internal routing table
+-
 -### Step 5: Keep always-on entries separate
+-
++  item: Sub-skill list should be comprehensive — this is how the LLM knows what's available
++  item: The dispatcher skill file should have its own internal routing table
++  
 +### Step 5: Keep always-on entries separate (( inert ))
- 
++  
  Gates and always-on entries (acknowledge, multi-user, entity-detector, etc.)
  stay as individual rows — they're checked on every message, not dispatched.
- 
+-
 -### Step 6 (MANDATORY): Verify routing accuracy
-+### Step 6 (MANDATORY): Verify routing accuracy (( inert ))
- 
- Run two gates before committing the compressed file. Do NOT commit if either
- fails.
-@@ -296,12 +296,12 @@
-   Lenient scoring stays accurate for any sub-skill present in your
-   `(dispatcher for: ...)` lists.
- 
+-
+-Run two gates before committing the compressed file. Do NOT commit if either
+-fails.
+-
+-**Gate 1: Structural verification.** Confirms your `routing-eval.jsonl`
+-fixtures still resolve to the right skills under the compressed routing file.
+-Run from the workspace whose routing file you just edited:
+-
+-```bash
+-gbrain routing-eval --json
+-```
+-
+-If accuracy on your fixtures drops below 95%, revert and tune the area
+-entries before re-running.
+-
+-**Gate 2: LLM A/B verification on YOUR edited file.** Confirms a frontier
+-LLM can still drill into the dispatcher list and reach sub-skills under
+-your specific compression. Requires a gbrain repo checkout because the
+-harness lives there. Copy your edited routing file into the harness's
+-variants directory, then invoke the harness with `--variants` pointing
+-at it:
+-
+-```bash
+-# In your agent workspace, identify the routing file you just compressed.
+-EDITED=/path/to/your/AGENTS.md       # or skills/RESOLVER.md, whichever you edited
+-
+-# In your gbrain repo checkout:
+-cd /path/to/gbrain/evals/functional-area-resolver
+-TMP=$(mktemp -d)/variants && mkdir -p "$TMP"
+-cp "$EDITED" "$TMP/my-edit.md"
+-
+-# Run the harness against your file (sequential, ~75 calls × $0.0076 ≈ $0.57 on Opus).
+-ANTHROPIC_API_KEY=... node harness.mjs --variants-dir "$TMP" --variants my-edit \
+-                                       --model opus --parallel 3 --yes
+-```
+-
+-The harness uses gbrain's bundled fixture set, so this verifies "did the LLM
+-land in the right sub-skill for routing intents the gbrain-bundled fixtures
+-cover" — a regression check on shared skills, not a full re-eval of YOUR
+-fixture set. For full eval coverage, mirror this skill's
+-`fixtures.jsonl` + `fixtures-held-out.jsonl` setup with intents specific
+-to your skills.
+-
+-If the lenient (same-area) score on your variant drops below 95%, revert the
+-compression and tune. Common causes:
+-- A sub-skill was omitted from the `(dispatcher for: ...)` list.
+-- Trigger phrases for an area are too narrow (LLM can't recognize intent).
+-- Areas were collapsed too aggressively (too few areas — see Anti-Patterns).
+-- ASCII `->` vs Unicode `→` mismatch — the harness now accepts both, but
+-  earlier versions only matched Unicode. Pin gbrain to v0.32.3.0+.
+-
+-Common false negatives on the harness eval (NOT bugs in your compression):
+-- The gbrain-bundled fixtures target skill names like `enrich`, `query`,
+-  `gmail`, `executive-assistant`. If your routing file doesn't expose
+-  those skills at all, expect strict-scoring failures on those fixtures.
+-  Lenient scoring stays accurate for any sub-skill present in your
+-  `(dispatcher for: ...)` lists.
+-
 -### Step 7: Review the diff before committing
+-
++  
++### Step 6 (MANDATORY): Verify routing accuracy (( role: procedure ))
++  
++use judgment to follow the Step 6 (MANDATORY): Verify routing accuracy guidance:
++  Run two gates before committing the compressed file. Do NOT commit if either
++  fails.
++  
++  **Gate 1: Structural verification.** Confirms your `routing-eval.jsonl`
++  fixtures still resolve to the right skills under the compressed routing file.
++  Run from the workspace whose routing file you just edited:
++  
++  ```bash
++  gbrain routing-eval --json
++  ```
++  
++  If accuracy on your fixtures drops below 95%, revert and tune the area
++  entries before re-running.
++  
++  **Gate 2: LLM A/B verification on YOUR edited file.** Confirms a frontier
++  LLM can still drill into the dispatcher list and reach sub-skills under
++  your specific compression. Requires a gbrain repo checkout because the
++  harness lives there. Copy your edited routing file into the harness's
++  variants directory, then invoke the harness with `--variants` pointing
++  at it:
++  
++  ```bash
++  # In your agent workspace, identify the routing file you just compressed.
++  EDITED=/path/to/your/AGENTS.md       # or skills/RESOLVER.md, whichever you edited
++  
++  # In your gbrain repo checkout:
++  cd /path/to/gbrain/evals/functional-area-resolver
++  TMP=$(mktemp -d)/variants && mkdir -p "$TMP"
++  cp "$EDITED" "$TMP/my-edit.md"
++  
++  # Run the harness against your file (sequential, ~75 calls × $0.0076 ≈ $0.57 on Opus).
++  ANTHROPIC_API_KEY=... node harness.mjs --variants-dir "$TMP" --variants my-edit \
++                                         --model opus --parallel 3 --yes
++  ```
++  
++  The harness uses gbrain's bundled fixture set, so this verifies "did the LLM
++  land in the right sub-skill for routing intents the gbrain-bundled fixtures
++  cover" — a regression check on shared skills, not a full re-eval of YOUR
++  fixture set. For full eval coverage, mirror this skill's
++  `fixtures.jsonl` + `fixtures-held-out.jsonl` setup with intents specific
++  to your skills.
++  
++  If the lenient (same-area) score on your variant drops below 95%, revert the
++  compression and tune. Common causes:
++  item: A sub-skill was omitted from the `(dispatcher for: ...)` list.
++  item: Trigger phrases for an area are too narrow (LLM can't recognize intent).
++  item: Areas were collapsed too aggressively (too few areas — see Anti-Patterns).
++  item: ASCII `->` vs Unicode `→` mismatch — the harness now accepts both, but
++    earlier versions only matched Unicode. Pin gbrain to v0.32.3.0+.
++  
++  Common false negatives on the harness eval (NOT bugs in your compression):
++  item: The gbrain-bundled fixtures target skill names like `enrich`, `query`,
++    `gmail`, `executive-assistant`. If your routing file doesn't expose
++    those skills at all, expect strict-scoring failures on those fixtures.
++    Lenient scoring stays accurate for any sub-skill present in your
++    `(dispatcher for: ...)` lists.
 +### Step 7: Review the diff before committing (( inert ))
- 
++  
  Show the user the proposed edit (or the actual git diff) and wait for
  explicit approval before staging. Same convention as `skills/book-mirror/SKILL.md`.
  
 -## Contract
-+## Contract (( inert, role: invariants ))
+-
+-This skill guarantees:
+-
+-- Routing matches the canonical triggers in the frontmatter.
+-- Compression is only performed when the preconditions in Step 1 pass (file ≥12KB AND clean working tree, or `--force`).
+-- The mandatory verification gate in Step 6 fires on the user's edited file, not on sample variants. The user runs `gbrain routing-eval --json` AND the gbrain-repo harness (`node harness.mjs --variants-dir <tmp> --variants my-edit`) before committing the compressed file.
+-- Privacy contract preserved: no fork-specific filesystem path literals (server-side brain home, OpenClaw fork home) leak into the compressed output.
+-
+-The full behavior contract is documented in the body sections above; this section exists for the conformance test.
++## Contract (( role: procedure ))
++
++> This skill guarantees:
++
++!!! checklist (( ai-autonomy ))
++- [ ] Routing matches the canonical triggers in the frontmatter.
++- [ ] Compression is only performed when the preconditions in Step 1 pass (file ≥12KB AND clean working tree, or `--force`).
++- [ ] The mandatory verification gate in Step 6 fires on the user's edited file, not on sample variants. The user runs `gbrain routing-eval --json` AND the gbrain-repo harness (`node harness.mjs --variants-dir <tmp> --variants my-edit`) before committing the compressed file.
++- [ ] Privacy contract preserved: no fork-specific filesystem path literals (server-side brain home, OpenClaw fork home) leak into the compressed output.
++
++> The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  
- This skill guarantees:
- 
-@@ -316,7 +316,7 @@
+ ## Output Format
  
  The compressed routing file follows the area-entry template documented in Step 4 ("Build the area entry format"). Each entry: `- **{Area Name}**: {trigger phrases} -> \`{dispatcher-skill}\` (dispatcher for: {sub-skill list})`. The dispatcher arrow may be either ASCII `->` (default in this template) or Unicode `→` (used in some production deployments); the gbrain harness accepts both.
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
- 
- - **Resolver-of-resolvers with pipe tables.** Tested and failed (see eval
+-
+-- **Resolver-of-resolvers with pipe tables.** Tested and failed (see eval
++## Anti-Patterns (( role: procedure ))
++
++!!! checklist (( ai-autonomy ))
++- [ ] **Resolver-of-resolvers with pipe tables.** Tested and failed (see eval
    table). The LLM picks area names from the table instead of drilling into
-@@ -331,7 +331,7 @@
- - **Too many areas.** Defeats the purpose. If you have 50 areas, just keep
+   sub-skills.
+ 
+-- **Removing sub-skill names.** Without the `(dispatcher for: ...)` list,
++!!! checklist (( ai-autonomy ))
++- [ ] **Removing sub-skill names.** Without the `(dispatcher for: ...)` list,
+   the LLM can't route to specific sub-skills. The list is the routing signal.
+ 
+-- **Too few areas.** Collapsing to <5 areas makes each area too broad.
++!!! checklist (( ai-autonomy ))
++- [ ] **Too few areas.** Collapsing to <5 areas makes each area too broad.
+   12-15 areas is the sweet spot.
+ 
+-- **Too many areas.** Defeats the purpose. If you have 50 areas, just keep
++!!! checklist (( ai-autonomy ))
++- [ ] **Too many areas.** Defeats the purpose. If you have 50 areas, just keep
    individual rows.
  
 -## Maintenance
@@ -213,7 +519,7 @@
  
  When adding a new skill:
  1. Identify its functional area.
-@@ -344,9 +344,9 @@
+@@ -344,9 +349,9 @@
  2. Add the area entry to the routing file.
  3. Run the routing eval (Step 6) to verify.
  

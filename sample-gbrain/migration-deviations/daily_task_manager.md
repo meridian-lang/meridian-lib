@@ -3,8 +3,8 @@
 - Original: `daily-task-manager/SKILL.md`
 - Ported: `daily_task_manager.meri`
 - Tier: 2 (light edits)
-- Similarity: 76%
-- Lines: 71 -> 77 (+21 / -15)
+- Similarity: 60%
+- Lines: 71 -> 79 (+34 / -26)
 
 ## Frontmatter
 - Added: (none)
@@ -12,26 +12,43 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 
 ## Metrics
-- Sections: 3/4 inert (75% inert ratio)
+- Sections: 1/4 inert (25% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: template=1
 - Judgment: 1 blocks, 5 lines
+
+### Inert section details
+- L31 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/daily-task-manager/SKILL.md
-+++ daily_task_manager.meri
-@@ -20,7 +20,7 @@
++++ skills/daily_task_manager.meri
+@@ -20,52 +20,60 @@
  
  # Daily Task Manager
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
  
- This skill guarantees:
- - Tasks stored as a brain page (`ops/tasks.md`) with structured format
-@@ -31,37 +31,43 @@
+-This skill guarantees:
+-- Tasks stored as a brain page (`ops/tasks.md`) with structured format
+-- Task lifecycle: add → in-progress → complete | defer
+-- Priority levels: P0 (urgent), P1 (today), P2 (this week), P3 (backlog)
+-- Completed tasks archived with completion date
+-- Deferred tasks carry forward with reason
++> This skill guarantees:
++!!! checklist (( ai-autonomy ))
++- [ ] Tasks stored as a brain page (`ops/tasks.md`) with structured format
++- [ ] Task lifecycle: add → in-progress → complete | defer
++- [ ] Priority levels: P0 (urgent), P1 (today), P2 (this week), P3 (backlog)
++- [ ] Completed tasks archived with completion date
++- [ ] Deferred tasks carry forward with reason
  
  ## Phases
  
@@ -85,8 +102,18 @@
  ```
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
  
- - Adding tasks without a priority level
- - Completing tasks without recording the completion date
+-- Adding tasks without a priority level
+-- Completing tasks without recording the completion date
+-- Deferring tasks without a reason
+-- Letting the task list grow unbounded (review weekly)
+-- Storing tasks outside the brain (they should be searchable)
++!!! checklist (( ai-autonomy ))
++- [ ] Adding tasks without a priority level
++- [ ] Completing tasks without recording the completion date
++- [ ] Deferring tasks without a reason
++- [ ] Letting the task list grow unbounded (review weekly)
++- [ ] Storing tasks outside the brain (they should be searchable)
+ 
 ```

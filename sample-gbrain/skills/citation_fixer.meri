@@ -28,17 +28,18 @@ mutating: true
 > **Output rule:** all links MUST be deterministic (built from API data,
 > not composed by LLM). See [_output-rules.md](../_output-rules.md).
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-This skill guarantees:
+> This skill guarantees:
 
-- Every brain page is scanned for citation compliance.
-- Missing citations are flagged with specific location.
-- Malformed citations are fixed to match the standard format.
-- **(v0.25.1)** Tweet / post references without URLs are resolved via
+!!! checklist (( ai-autonomy ))
+- [ ] Every brain page is scanned for citation compliance.
+- [ ] Missing citations are flagged with specific location.
+- [ ] Malformed citations are fixed to match the standard format.
+- [ ] **(v0.25.1)** Tweet / post references without URLs are resolved via
   X API and patched with deterministic `https://x.com/<handle>/status/<id>`
   links.
-- Results reported with counts (scanned, fixed, remaining).
+- [ ] Results reported with counts (scanned, fixed, remaining).
 
 ## Phases
 
@@ -160,14 +161,15 @@ Tweet links resolved: N
 Remaining gaps:       N (pages with uncitable facts)
 ```
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- ❌ Inventing citations for facts that have no source. Flag them.
-- ❌ Removing facts that lack citations (flag them; don't delete).
-- ❌ Fixing citations without reading the full page context.
-- ❌ Batch-fixing without checking quality on a sample first
+!!! checklist (( ai-autonomy ))
+- [ ] ❌ Inventing citations for facts that have no source. Flag them.
+- [ ] ❌ Removing facts that lack citations (flag them; don't delete).
+- [ ] ❌ Fixing citations without reading the full page context.
+- [ ] ❌ Batch-fixing without checking quality on a sample first
   (see `conventions/test-before-bulk.md`).
-- ❌ Composing tweet URLs by guessing the tweet id. Always go through
+- [ ] ❌ Composing tweet URLs by guessing the tweet id. Always go through
   the X API; deterministic links only.
 
 ## Integration (( inert ))
@@ -179,23 +181,22 @@ This skill can be called:
 - **By other skills** — `enrich` or `media-ingest` can call citation-fixer
   before commit to validate output
 
-## Metrics (( inert ))
+## Metrics (( role: procedure ))
 
-If running as a recurring batch, track state in a small JSON file under
-`~/.gbrain/citation-fixer-state.json`:
-
-```json
-{
-  "last_run": "2026-04-15T...",
-  "pages_scanned": 0,
-  "citations_fixed": 0,
-  "tweet_links_resolved": 0,
-  "citations_unresolvable": 0,
-  "pages_remaining": 1424
-}
-```
-
-
+use judgment to follow the Metrics guidance:
+  If running as a recurring batch, track state in a small JSON file under
+  `~/.gbrain/citation-fixer-state.json`:
+  
+  ```json
+  {
+    "last_run": "2026-04-15T...",
+    "pages_scanned": 0,
+    "citations_fixed": 0,
+    "tweet_links_resolved": 0,
+    "citations_unresolvable": 0,
+    "pages_remaining": 1424
+  }
+  ```
 ## Output Format
 
 The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).

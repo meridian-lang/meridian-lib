@@ -98,7 +98,7 @@
     "name" : "schema-author",
     "outline" : [
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 60,
         "text" : "Non-goals (use these other skills instead)"
@@ -110,7 +110,7 @@
         "text" : "Convention"
       },
       {
-        "kind" : "applicability",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 82,
         "text" : "When to invoke"
@@ -176,86 +176,69 @@
         "text" : "Outputs"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 243,
         "text" : "Contract"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 252,
+        "line" : 253,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 262,
+        "line" : 264,
         "text" : "Output Format"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 293,
+        "line" : 295,
         "text" : "Failure modes"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 155,
-        "text" : "Then add the types one at a time"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 175,
-        "text" : "Validate before sync"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 187,
-        "text" : "Dry-run first"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 287,
+        "line" : 289,
         "text" : "One line per mutation"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 288,
+        "line" : 290,
         "text" : "Stats"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 289,
+        "line" : 291,
         "text" : "Sync"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Non-goals (use these other skills instead)",
         "line" : 60,
         "lines" : [
+          "use judgment to follow the Non-goals (use these other skills instead) guidance:",
           "This skill AUTHORS the schema pack (adds page types, link verbs, prefixes,",
           "flags). For these adjacent jobs, route elsewhere:",
-          "**Filing one specific page** → `skills\/brain-taxonomist\/SKILL.md`. Brain-",
+          "item: **Filing one specific page** → `skills\/brain-taxonomist\/SKILL.md`. Brain-",
           "taxonomist routes at WRITE TIME (\"where does this note go?\"). schema-author",
           "changes the rules at AUTHORING TIME (\"what types and prefixes exist?\")",
-          "**Schema-check as part of EIIRP iteration** → `skills\/eiirp\/SKILL.md`",
+          "item: **Schema-check as part of EIIRP iteration** → `skills\/eiirp\/SKILL.md`",
           "already has a schema-check phase. Don't duplicate",
-          "**Just looking up a type's settings** → `gbrain schema explain <type>`",
+          "item: **Just looking up a type's settings** → `gbrain schema explain <type>`",
           "directly. This skill is for CHANGING the pack, not READING from it",
-          "**Querying who knows about X** → `skills\/expert-routing\/SKILL.md` (or",
+          "item: **Querying who knows about X** → `skills\/expert-routing\/SKILL.md` (or",
           "`gbrain whoknows` directly). schema-author makes a type expert-routable;",
           "it does not run the query"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -267,21 +250,22 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "When to invoke",
         "line" : 82,
         "lines" : [
+          "use judgment to follow the When to invoke guidance:",
           "Invoke when the user (or a sibling skill) says any of:",
-          "\"Add a `researcher` type to my schema\"",
-          "\"I have 4000 untyped pages under `meetings\/`\"",
-          "\"My brain doesn't know that `journal-article` is a type\"",
-          "\"Set `paper` to be extractable\"",
-          "\"Propose types from what I've ingested\"",
-          "\"Sync the new types to backfill existing pages\"",
+          "item: \"Add a `researcher` type to my schema\"",
+          "item: \"I have 4000 untyped pages under `meetings\/`\"",
+          "item: \"My brain doesn't know that `journal-article` is a type\"",
+          "item: \"Set `paper` to be extractable\"",
+          "item: \"Propose types from what I've ingested\"",
+          "item: \"Sync the new types to backfill existing pages\"",
           "DON'T invoke for \"where does THIS note go\" (use brain-taxonomist) or",
           "\"who knows about X\" (use expert-routing \/ `gbrain whoknows`)"
         ],
-        "role" : "applicability"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -303,10 +287,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 1 — Brain (know which pack is active)",
         "line" : 102,
         "lines" : [
+          "use judgment to follow the Phase 1 — Brain (know which pack is active) guidance:",
           "codeblock:plain:Z2JyYWluIHNjaGVtYSBhY3RpdmUgLS1qc29u",
           "Output gives you `pack_name`, `version`, `sha8`, `page_types_count`, `source_tier`",
           "If `source_tier === \"default\"`, the user is on bundled `gbrain-base` and any",
@@ -344,10 +329,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 4 — Apply (mutate the pack)",
         "line" : 145,
         "lines" : [
+          "use judgment to follow the Phase 4 — Apply (mutate the pack) guidance:",
           "If the active pack is bundled (`gbrain-base` or `gbrain-recommended`),",
           "fork it first:",
           "codeblock:plain:Z2JyYWluIHNjaGVtYSBmb3JrIGdicmFpbi1iYXNlIG1pbmUKZ2JyYWluIHNjaGVtYSB1c2UgbWluZQ==",
@@ -366,10 +352,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 5 — Sync (backfill existing pages with the new types)",
         "line" : 185,
         "lines" : [
+          "use judgment to follow the Phase 5 — Sync (backfill existing pages with the new types) guidance:",
           "Dry-run first:",
           "codeblock:plain:Z2JyYWluIHNjaGVtYSBzeW5jIC0tanNvbg==",
           "Returns per-prefix `would_apply` counts + sample slugs. If the numbers",
@@ -381,10 +368,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 6 — Verify",
         "line" : 203,
         "lines" : [
+          "use judgment to follow the Phase 6 — Verify guidance:",
           "codeblock:plain:Z2JyYWluIHNjaGVtYSBzdGF0cyAtLWpzb24=",
           "Coverage should be ≥95% now. Spot-check the new type:",
           "codeblock:plain:Z2JyYWluIHdob2tub3dzICJtYWNoaW5lIGxlYXJuaW5nIg==",
@@ -396,10 +384,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 7 — Commit (preserve the change)",
         "line" : 220,
         "lines" : [
+          "use judgment to follow the Phase 7 — Commit (preserve the change) guidance:",
           "If the pack is in source control, commit:",
           "codeblock:plain:Y2Qgfi8uZ2JyYWluL3NjaGVtYS1wYWNrcy9taW5lCmdpdCBhZGQgcGFjay5qc29uCmdpdCBjb21taXQgLW0gInNjaGVtYTogYWRkIHJlc2VhcmNoZXIgKyBwYXBlciB0eXBlcyArIGF1dGhvcmVkIGxpbmsiCmdpdCBwdXNo",
           "If the brain daemon is running (`gbrain serve --http`), other processes",
@@ -422,38 +411,27 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 243,
         "lines" : [
-          "**Inputs:** a natural-language request that names a type \/ prefix \/ link verb \/ flag change, OR the result of `gbrain schema review-orphans` showing untyped pages that need a new type",
-          "**Outputs:** mutated pack file at `~\/.gbrain\/schema-packs\/<name>\/pack.{json,yaml}` + an audit row in `~\/.gbrain\/audit\/schema-mutations-YYYY-Www.jsonl` + (if `sync --apply` ran) backfilled `pages.type` on matching rows",
-          "**Side effects:** invalidates the in-process pack cache + the query cache for the source. Other processes pick up the change within 1 second (stat-mtime TTL)",
-          "**Idempotency:** every primitive is idempotent. `add-alias`\/`add-prefix` no-op on duplicate; `sync --apply` finds nothing to update on second run",
-          "**Trust:** CLI = local trust (no scope check). MCP = OAuth `admin` scope (write ops). Audit log captures `actor: mcp:<clientId8>` per mutation",
-          "**Atomicity:** every mutation is wrapped in `withMutation`'s atomic write (`.tmp + fsync + rename`) + per-pack `O_CREAT|O_EXCL` lock. Crash mid-write leaves the original file untouched"
+          "checklist:ai-autonomy:KipJbnB1dHM6KiogYSBuYXR1cmFsLWxhbmd1YWdlIHJlcXVlc3QgdGhhdCBuYW1lcyBhIHR5cGUgLyBwcmVmaXggLyBsaW5rIHZlcmIgLyBmbGFnIGNoYW5nZSwgT1IgdGhlIHJlc3VsdCBvZiBgZ2JyYWluIHNjaGVtYSByZXZpZXctb3JwaGFuc2Agc2hvd2luZyB1bnR5cGVkIHBhZ2VzIHRoYXQgbmVlZCBhIG5ldyB0eXBlCioqT3V0cHV0czoqKiBtdXRhdGVkIHBhY2sgZmlsZSBhdCBgfi8uZ2JyYWluL3NjaGVtYS1wYWNrcy88bmFtZT4vcGFjay57anNvbix5YW1sfWAgKyBhbiBhdWRpdCByb3cgaW4gYH4vLmdicmFpbi9hdWRpdC9zY2hlbWEtbXV0YXRpb25zLVlZWVktV3d3Lmpzb25sYCArIChpZiBgc3luYyAtLWFwcGx5YCByYW4pIGJhY2tmaWxsZWQgYHBhZ2VzLnR5cGVgIG9uIG1hdGNoaW5nIHJvd3MKKipTaWRlIGVmZmVjdHM6KiogaW52YWxpZGF0ZXMgdGhlIGluLXByb2Nlc3MgcGFjayBjYWNoZSArIHRoZSBxdWVyeSBjYWNoZSBmb3IgdGhlIHNvdXJjZS4gT3RoZXIgcHJvY2Vzc2VzIHBpY2sgdXAgdGhlIGNoYW5nZSB3aXRoaW4gMSBzZWNvbmQgKHN0YXQtbXRpbWUgVFRMKQoqKklkZW1wb3RlbmN5OioqIGV2ZXJ5IHByaW1pdGl2ZSBpcyBpZGVtcG90ZW50LiBgYWRkLWFsaWFzYC9gYWRkLXByZWZpeGAgbm8tb3Agb24gZHVwbGljYXRlOyBgc3luYyAtLWFwcGx5YCBmaW5kcyBub3RoaW5nIHRvIHVwZGF0ZSBvbiBzZWNvbmQgcnVuCioqVHJ1c3Q6KiogQ0xJID0gbG9jYWwgdHJ1c3QgKG5vIHNjb3BlIGNoZWNrKS4gTUNQID0gT0F1dGggYGFkbWluYCBzY29wZSAod3JpdGUgb3BzKS4gQXVkaXQgbG9nIGNhcHR1cmVzIGBhY3RvcjogbWNwOjxjbGllbnRJZDg+YCBwZXIgbXV0YXRpb24KKipBdG9taWNpdHk6KiogZXZlcnkgbXV0YXRpb24gaXMgd3JhcHBlZCBpbiBgd2l0aE11dGF0aW9uYCdzIGF0b21pYyB3cml0ZSAoYC50bXAgKyBmc3luYyArIHJlbmFtZWApICsgcGVyLXBhY2sgYE9fQ1JFQVR8T19FWENMYCBsb2NrLiBDcmFzaCBtaWQtd3JpdGUgbGVhdmVzIHRoZSBvcmlnaW5hbCBmaWxlIHVudG91Y2hlZA=="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 252,
+        "line" : 253,
         "lines" : [
-          "**Don't mutate `gbrain-base` or `gbrain-recommended`.** Fork first (`gbrain schema fork gbrain-base mine`). These are bundled packs; edits would be lost on upgrade. The mutation primitives refuse with `PACK_READONLY`",
-          "**Don't add a type for a directory you imported once for triage.** Pack types are permanent decisions; one-time imports are not. See `skills\/conventions\/schema-evolution.md` for the <20-pages-don't-pack-codify heuristic",
-          "**Don't add `--expert` to a type with no `path_prefixes`.** The `expert_routing_without_prefix` lint warns about this — expert-routed types with no prefix never match a put_page inference, so `whoknows` silently never surfaces them",
-          "**Don't promote a `schema suggest` candidate without verifying the prefix matches real content.** Run `lint --with-db` before `add-type` to catch prefix collisions pre-write",
-          "**Don't conflate \"filing one page\" with \"evolving the schema.\"** Filing routes via `brain-taxonomist`; schema-author is for authoring the type taxonomy itself. The Non-goals section above names the boundary",
-          "**Don't skip the dry-run before `sync --apply`.** Always run `sync` first to see `would_apply` counts + sample slugs. A pack prefix that matches 50,000 pages is recoverable but slow; verifying first is cheap",
-          "**Don't remove a type without checking references.** `remove-type` refuses with `STILL_REFERENCED` if another type's `aliases` \/ `enrichable_types` \/ `link_types` \/ `frontmatter_links` references it. Break the references first; don't add `--force`"
+          "checklist:ai-autonomy:KipEb24ndCBtdXRhdGUgYGdicmFpbi1iYXNlYCBvciBgZ2JyYWluLXJlY29tbWVuZGVkYC4qKiBGb3JrIGZpcnN0IChgZ2JyYWluIHNjaGVtYSBmb3JrIGdicmFpbi1iYXNlIG1pbmVgKS4gVGhlc2UgYXJlIGJ1bmRsZWQgcGFja3M7IGVkaXRzIHdvdWxkIGJlIGxvc3Qgb24gdXBncmFkZS4gVGhlIG11dGF0aW9uIHByaW1pdGl2ZXMgcmVmdXNlIHdpdGggYFBBQ0tfUkVBRE9OTFlgCioqRG9uJ3QgYWRkIGEgdHlwZSBmb3IgYSBkaXJlY3RvcnkgeW91IGltcG9ydGVkIG9uY2UgZm9yIHRyaWFnZS4qKiBQYWNrIHR5cGVzIGFyZSBwZXJtYW5lbnQgZGVjaXNpb25zOyBvbmUtdGltZSBpbXBvcnRzIGFyZSBub3QuIFNlZSBgc2tpbGxzL2NvbnZlbnRpb25zL3NjaGVtYS1ldm9sdXRpb24ubWRgIGZvciB0aGUgPDIwLXBhZ2VzLWRvbid0LXBhY2stY29kaWZ5IGhldXJpc3RpYwoqKkRvbid0IGFkZCBgLS1leHBlcnRgIHRvIGEgdHlwZSB3aXRoIG5vIGBwYXRoX3ByZWZpeGVzYC4qKiBUaGUgYGV4cGVydF9yb3V0aW5nX3dpdGhvdXRfcHJlZml4YCBsaW50IHdhcm5zIGFib3V0IHRoaXMg4oCUIGV4cGVydC1yb3V0ZWQgdHlwZXMgd2l0aCBubyBwcmVmaXggbmV2ZXIgbWF0Y2ggYSBwdXRfcGFnZSBpbmZlcmVuY2UsIHNvIGB3aG9rbm93c2Agc2lsZW50bHkgbmV2ZXIgc3VyZmFjZXMgdGhlbQoqKkRvbid0IHByb21vdGUgYSBgc2NoZW1hIHN1Z2dlc3RgIGNhbmRpZGF0ZSB3aXRob3V0IHZlcmlmeWluZyB0aGUgcHJlZml4IG1hdGNoZXMgcmVhbCBjb250ZW50LioqIFJ1biBgbGludCAtLXdpdGgtZGJgIGJlZm9yZSBgYWRkLXR5cGVgIHRvIGNhdGNoIHByZWZpeCBjb2xsaXNpb25zIHByZS13cml0ZQoqKkRvbid0IGNvbmZsYXRlICJmaWxpbmcgb25lIHBhZ2UiIHdpdGggImV2b2x2aW5nIHRoZSBzY2hlbWEuIioqIEZpbGluZyByb3V0ZXMgdmlhIGBicmFpbi10YXhvbm9taXN0YDsgc2NoZW1hLWF1dGhvciBpcyBmb3IgYXV0aG9yaW5nIHRoZSB0eXBlIHRheG9ub215IGl0c2VsZi4gVGhlIE5vbi1nb2FscyBzZWN0aW9uIGFib3ZlIG5hbWVzIHRoZSBib3VuZGFyeQoqKkRvbid0IHNraXAgdGhlIGRyeS1ydW4gYmVmb3JlIGBzeW5jIC0tYXBwbHlgLioqIEFsd2F5cyBydW4gYHN5bmNgIGZpcnN0IHRvIHNlZSBgd291bGRfYXBwbHlgIGNvdW50cyArIHNhbXBsZSBzbHVncy4gQSBwYWNrIHByZWZpeCB0aGF0IG1hdGNoZXMgNTAsMDAwIHBhZ2VzIGlzIHJlY292ZXJhYmxlIGJ1dCBzbG93OyB2ZXJpZnlpbmcgZmlyc3QgaXMgY2hlYXAKKipEb24ndCByZW1vdmUgYSB0eXBlIHdpdGhvdXQgY2hlY2tpbmcgcmVmZXJlbmNlcy4qKiBgcmVtb3ZlLXR5cGVgIHJlZnVzZXMgd2l0aCBgU1RJTExfUkVGRVJFTkNFRGAgaWYgYW5vdGhlciB0eXBlJ3MgYGFsaWFzZXNgIC8gYGVucmljaGFibGVfdHlwZXNgIC8gYGxpbmtfdHlwZXNgIC8gYGZyb250bWF0dGVyX2xpbmtzYCByZWZlcmVuY2VzIGl0LiBCcmVhayB0aGUgcmVmZXJlbmNlcyBmaXJzdDsgZG9uJ3QgYWRkIGAtLWZvcmNlYA=="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 262,
+        "line" : 264,
         "lines" : [
           "When invoked, this skill produces structured output suitable for both human + JSON consumption:",
           "**Per-mutation result (JSON):**",
@@ -475,7 +453,7 @@
       {
         "executes" : false,
         "heading" : "Failure modes",
-        "line" : 293,
+        "line" : 295,
         "lines" : [
           "`PACK_READONLY` → you tried to mutate `gbrain-base` or `gbrain-recommended`. Fork first",
           "`INVALID_RESULT` → the mutation would create a dangling reference or",
@@ -532,124 +510,128 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 621
+      "meridian_line" : 62,
+      "swift_line" : 584
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 626
+      "swift_line" : 622
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 665
+      "swift_line" : 627
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 670
+      "swift_line" : 666
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 709
+      "swift_line" : 671
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 714
+      "swift_line" : 710
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 753
+      "swift_line" : 715
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 758
+      "swift_line" : 754
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 797
+      "swift_line" : 759
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 802
+      "swift_line" : 798
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 841
+      "swift_line" : 803
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 846
+      "swift_line" : 842
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 885
+      "swift_line" : 847
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 890
+      "swift_line" : 886
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 929
+      "swift_line" : 891
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 934
+      "swift_line" : 930
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 973
+      "swift_line" : 935
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 978
+      "swift_line" : 974
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1017
+      "swift_line" : 979
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1022
+      "swift_line" : 1018
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1061
+      "swift_line" : 1023
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1066
+      "swift_line" : 1062
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1105
+      "swift_line" : 1067
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1110
+      "swift_line" : 1106
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1149
+      "swift_line" : 1111
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1154
+      "swift_line" : 1150
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1193
+      "swift_line" : 1155
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1198
+      "swift_line" : 1194
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1237
+      "swift_line" : 1199
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1242
+      "swift_line" : 1238
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1243
     }
   ],
   "tools_used" : [

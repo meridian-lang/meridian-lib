@@ -98,7 +98,7 @@
     "name" : "reports",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 21,
         "text" : "Contract"
@@ -106,70 +106,54 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 29,
+        "line" : 30,
         "text" : "Phases"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 36,
+        "line" : 37,
         "text" : "Escalation guard"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 45,
+        "line" : 46,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 50,
+        "line" : 51,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 23,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 25,
-        "text" : "Keyword routing"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 47,
+        "line" : 48,
         "text" : "Saved"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 48,
+        "line" : 49,
         "text" : "Loaded"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 21,
         "lines" : [
-          "This skill guarantees:",
-          "Reports saved with timestamped filenames and frontmatter",
-          "Keyword routing: query → report category mapping",
-          "Latest report loadable by category name",
-          "Reports are searchable via gbrain search\/query"
+          "checklist:ai-autonomy:UmVwb3J0cyBzYXZlZCB3aXRoIHRpbWVzdGFtcGVkIGZpbGVuYW1lcyBhbmQgZnJvbnRtYXR0ZXIKS2V5d29yZCByb3V0aW5nOiBxdWVyeSDihpIgcmVwb3J0IGNhdGVnb3J5IG1hcHBpbmcKTGF0ZXN0IHJlcG9ydCBsb2FkYWJsZSBieSBjYXRlZ29yeSBuYW1lClJlcG9ydHMgYXJlIHNlYXJjaGFibGUgdmlhIGdicmFpbiBzZWFyY2gvcXVlcnk="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 29,
+        "line" : 30,
         "lines" : [
           "use judgment to save, load, and route reports by keyword:",
           "Save a report to reports\/{category}\/{date}.md with title, type, category, date, and time frontmatter",
@@ -181,7 +165,7 @@
       {
         "executes" : true,
         "heading" : "Escalation guard",
-        "line" : 36,
+        "line" : 37,
         "lines" : [
           "bind pages = invoke list pages with filter = \"report\"",
           "if at least 2 urgent pages,",
@@ -192,7 +176,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 45,
+        "line" : 46,
         "lines" : [
           "Saved: `reports\/{category}\/{YYYY-MM-DD-HHMM}.md`",
           "Loaded: full report content with metadata"
@@ -200,16 +184,13 @@
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 50,
+        "line" : 51,
         "lines" : [
-          "Saving reports without frontmatter (makes them unsearchable)",
-          "Using inconsistent category names across runs",
-          "Loading all reports when only the latest is needed",
-          "Not routing by keyword (forcing exact category name)"
+          "checklist:ai-autonomy:U2F2aW5nIHJlcG9ydHMgd2l0aG91dCBmcm9udG1hdHRlciAobWFrZXMgdGhlbSB1bnNlYXJjaGFibGUpClVzaW5nIGluY29uc2lzdGVudCBjYXRlZ29yeSBuYW1lcyBhY3Jvc3MgcnVucwpMb2FkaW5nIGFsbCByZXBvcnRzIHdoZW4gb25seSB0aGUgbGF0ZXN0IGlzIG5lZWRlZApOb3Qgcm91dGluZyBieSBrZXl3b3JkIChmb3JjaW5nIGV4YWN0IGNhdGVnb3J5IG5hbWUp"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "tools" : "get_page\nput_page\nsearch",
@@ -252,52 +233,60 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 31,
-      "swift_line" : 592
+      "meridian_line" : 25,
+      "swift_line" : 584
     },
     {
-      "meridian_line" : 41,
-      "swift_line" : 602
+      "meridian_line" : 32,
+      "swift_line" : 595
     },
     {
       "meridian_line" : 42,
-      "swift_line" : 613
+      "swift_line" : 605
     },
     {
       "meridian_line" : 43,
       "swift_line" : 616
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 651
+      "meridian_line" : 44,
+      "swift_line" : 619
+    },
+    {
+      "meridian_line" : 54,
+      "swift_line" : 625
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 656
+      "swift_line" : 665
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 695
+      "swift_line" : 670
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 700
+      "swift_line" : 709
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 739
+      "swift_line" : 714
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 744
+      "swift_line" : 753
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 783
+      "swift_line" : 758
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 788
+      "swift_line" : 797
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 802
     }
   ],
   "tools_used" : [

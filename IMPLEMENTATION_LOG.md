@@ -4273,3 +4273,99 @@ fails only because it spawns a nested `swift build` of a generated SwiftPM
 package that cannot resolve the local `meridian` package path inside this
 sandbox — a bucket-A live path, unrelated to this coverage work (no
 runtime/codegen source was changed).
+
+## 2026-06-14T09:45:00Z — Inert Reduction Plan implementation
+
+Implemented the attached Inert Reduction plan without editing the plan file.
+The first wave target is now enforced as "0% unclassified operational inert",
+not "zero inert headings": reference documentation, templates, examples, and
+convention references remain valid inert material, while procedure-shaped or
+normative residue is classified and reported.
+
+**Audit/reporting.** `SkillMetrics` now emits per-section inert details
+(`InertSection`) with categories for operational procedure/content, normative
+contracts, templates, tools metadata, convention references, reference docs, and
+unclassified residue. `SkillDeviation.renderMarkdown` and
+`skill-deviation --batch --index` include `Operational inert`, `Unclassified
+inert`, and category summaries, so future ports can tell "valid documentation"
+from suppressed operational content.
+
+**Migrator.** `SkillMigrator` classifies section bodies before marking inert:
+checkable `Contract`/`Anti-Patterns` bodies stay executable, while mixed/fuzzy
+contracts remain inert-with-role. Unknown headings are aliased to `procedure`
+only when all body groups are deterministic surfaces (shell fences, whole-line or
+embedded commands, explicit table/checklist markers, checkable task-list items,
+or choice gates). Numbered list marker stripping now handles both `1.` and `1)`.
+
+**Parser/procedure lowering.** `StatementParser` now lowers labelled/listed
+embedded backticked commands to `shell.run` with the surrounding prose as an
+annotation, while guarding primitive statements (`emit`, `bind`, `invoke`, `if`,
+etc.) from accidental shell-command reinterpretation. Choice gates accept
+indented numbered/bulleted/quoted option lists, and choice-result branches parse
+`if yes:`, `if no:`, `if the user agrees/declines:`, and
+`if the user picks/selects/chooses N:`.
+
+**Corpus/vocabulary.** Fixed the `Tools Used` regressions in `setup`, `publish`,
+`query`, and `minion_orchestrator`; removed the executable `Post-import` inert
+marker in `cold_start`; added gbrain phrase wrappers (`list pages`, `get
+back-links`, `add timeline entry`, `assess notability`, `get job status`, `make
+pdf`) and section aliases for prerequisites, quality/hard rules, verification,
+resume/post-import/health-style procedures. Regenerated all
+`sample-gbrain/compile-outputs` via `swift run meridian compile … --no-format
+--namespace auto`, and regenerated `sample-gbrain/migration-deviations/` with
+`swift run meridian skill-deviation sample-gbrain/original-skills sample-gbrain
+--batch --out sample-gbrain/migration-deviations --index`.
+
+**Testing/coverage.** Added direct tests across `SkillDeviationTests`,
+`SkillMigratorMarkingTests`, `StatementParserCoverageTests`,
+`UniversalSectionsTests`, `LexiconCentralizationTests`, `TestingInfraCoverageTests`,
+and `MeridianCLITests`. Fixed the temporary SwiftPM package identity/root
+detection used by runtime tests for workspaces whose directory name is not the
+package identity. Validation commands green:
+
+- `swift test`
+- `./scripts/coverage.swift --gate`
+- `MERIDIAN_GBRAIN_TYPECHECK=1 swift test --filter SampleGbrainCodegenTests`
+
+### 2026-06-14T09:56:00Z — Operational inert driven to zero
+
+Follow-up to the inert-reduction audit after the first pass still left
+operational residue in the deviation reports.
+
+**Audit/reporting.** `SkillMetrics` is now rulebook-aware: section aliases from
+the active `.merrules` are applied before metrics classify a heading as inert.
+`skill-deviation` autodiscovers and merges rulebooks beside the ported corpus,
+so alias-routed executable headings are no longer false-positive inert sections.
+Deviation reports now include per-section inert details (`line`, heading,
+category, reason), which made the remaining residue actionable instead of just
+aggregate counts.
+
+**Taxonomy.** Reference/template/tools/convention sections are classified before
+executable-shape detection, so command examples inside documentation no longer
+inflate operational residue. Remaining non-executable categories are now:
+reference documentation, templates, and tools metadata.
+
+**Corpus.** Every remaining operational-inert section in `sample-gbrain` was
+converted to an explicit executable route. Fuzzy `Contract` / `Anti-Patterns`
+sections became `(( role: procedure ))` with `!!! checklist (( ai-autonomy ))`.
+Other suppressed operational/content sections became `(( role: procedure ))`
+with `use judgment to follow … guidance:` wrappers. This trades textual
+near-verbatim similarity for the stricter guarantee that operational content is
+never silently inert.
+
+**Parser.** Marked checklist blocks now keep indented continuation lines and
+blank-separated items together. The generated guidance form
+`use judgment to follow the … guidance:` collects prose until the next heading,
+which makes wrapped Markdown/code/list guidance robust under tokenizer
+normalization.
+
+**Result.** Regenerated `sample-gbrain/migration-deviations/README.md` reports:
+`Operational inert: 0`, `Unclassified inert: 0`; inert categories are
+`reference-documentation=342`, `template=58`, `tools-metadata=13`.
+Regenerated `sample-gbrain/compile-outputs/`.
+
+**Validation.**
+
+- `swift test`
+- `./scripts/coverage.swift --gate`
+- `MERIDIAN_GBRAIN_TYPECHECK=1 swift test --filter SampleGbrain`

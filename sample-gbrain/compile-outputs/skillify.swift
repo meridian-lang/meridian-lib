@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -589,49 +581,14 @@ public struct SkillifyInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SkillifyInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L238:C0") {
-            // L238
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("bun test test/<skill>.test.ts                    # unit tests"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.0:L238:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L238:C0") {
-            // L238
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain skillify check skills/<slug>/scripts/<slug>.mjs --json | jq '.[] | .items[] | select(.name | contains(\"Cross-modal\"))'"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L238:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L238:C0") {
-            // L238
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("ls ~/.gbrain/.gbrain/eval-receipts/              # receipt landed"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L238:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.3:L238:C0") {
-            // L238
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain check-resolvable --json | jq .ok          # resolver clean"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.3:L238:C0", state: state.snapshot())
+        // L58
+        let __meridianProseResults_L58 = try await runtime.executeProsePlan(
+            prose: "follow the Phase 0: Should This Be a Skill? guidance\nBefore skillifying, check:\nitem: Will this be invoked 2+ times? (One-off work ≠ skill)\nitem: Is there >20 lines of logic? (Trivial helpers don't need full infrastructure)\nitem: Does it have a clear trigger phrase a user would actually say?\nIf no to all three, it's a script, not a skill. Move on\ncodeblock:plain:RmVhdHVyZTogW25hbWVdCkNvZGU6IFtwYXRoXQpNaXNzaW5nIGl0ZW1zOiBbY2hlY2sgZWFjaCBvZiB0aGUgMTFd\nuse judgment to follow the Step 3: Run the eval gate guidance:\ncodeblock:bash:Z2JyYWluIGV2YWwgY3Jvc3MtbW9kYWwgXAogIC0tdGFzayAiV2hhdCB0aGlzIHNraWxsIGlzIHN1cHBvc2VkIHRvIGFjY29tcGxpc2giIFwKICAtLW91dHB1dCBza2lsbHMvPHNsdWc+L1NLSUxMLm1k\nThe command runs 3 frontier models from 3 different providers in parallel,\nscores the OUTPUT against the TASK on 5 documented dimensions, and writes a\nreceipt under `~/.gbrain/.gbrain/eval-receipts/<slug>-<sha8>.json` (the\nsha-8 binds the receipt to the current SKILL.md content — re-running after\nedits writes a new receipt)\n**Default models** (override per slot via `--slot-a-model`, `--slot-b-model`,\n`--slot-c-model`):\ntable:decision:fCBTbG90IHwgRGVmYXVsdCB8IFByb3ZpZGVyIHwKfC0tLS0tLXwtLS0tLS0tLS18LS0tLS0tLS0tLXwKfCBBIHwgYG9wZW5haTpncHQtNG9gIHwgT3BlbkFJIHwKfCBCIHwgYGFudGhyb3BpYzpjbGF1ZGUtb3B1cy00LTdgIHwgQW50aHJvcGljIHwKfCBDIHwgYGdvb2dsZTpnZW1pbmktMS41LXByb2AgfCBHb29nbGUgfA==\n**These MUST be frontier models from DIFFERENT providers.** Using a single\nprovider's family or budget models defeats the purpose — different families\nhave less correlated blind spots. Refresh the list when a new model\ngeneration ships\n**Pass criteria (BOTH must be true):**\nEvery dimension's mean across successful models ≥ 7\nNo single model scored any dimension < 5 (the floor)\n**Inconclusive:** fewer than 2 of 3 models returned parseable scores\nReceipt is still written (forensics) but the gate is not authoritative\nExit code 2; CI wrappers should treat this as \"did not run cleanly\", not\n\"failed quality gate\"\nuse judgment to follow the Provider configuration guidance:\nModels resolve through the gbrain AI gateway. Configure once with:\ncodeblock:bash:Z2JyYWluIHByb3ZpZGVycyB0ZXN0ICAgICMgc2VlIHdoYXQncyBjb25maWd1cmVkCmdicmFpbiBjb25maWcgICAgICAgICAgICAjIHNldCBrZXlz\nOr set env vars: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`,\n`GOOGLE_GENERATIVE_AI_API_KEY`, `TOGETHER_API_KEY`, etc. The gateway reads\nfrom `~/.gbrain/config.json` plus `process.env`\nuse judgment to follow the Cost expectations guidance:\n3 cycles × 3 models = 9 frontier calls max per run. With Opus-class +\nGPT-4o-class + Gemini-1.5-Pro, expect $1–3 per full run on default\n`--max-tokens 4000`. Receipts include the per-call model identifiers so\nyou can audit retroactively\nuse judgment to follow the Phase 4: Tests (items 4-6) guidance:\nNOW that eval has proven quality, write tests that lock it in:\n**Unit tests** — every branch of deterministic logic. Mock external calls\n**Integration tests** — hit real endpoints. Catch bugs mocks hide\n**LLM evals** — quality/correctness for LLM steps. Lighter than cross-modal eval — test specific behaviors\nuse judgment to follow the Phase 5: Resolver + Check-Resolvable (items 7-9) guidance:\nAdd to skills/RESOLVER.md with trigger phrases users ACTUALLY type\nResolver eval: feed triggers, assert correct routing\nCheck-resolvable:\nitem: Skill reachable from skills/RESOLVER.md (not orphaned)\nitem: No MECE overlap with other skills\nitem: No DRY violations (shared logic in lib/, not copy-pasted)\nitem: No ambiguous trigger routing\nuse judgment to follow the Phase 6: E2E + Brain Filing (items 10-11) guidance:\nitem: E2E smoke: full pipeline from trigger to side effect\nitem: Brain filing: add to brain/RESOLVER.md if the skill writes brain pages\ncodeblock:bash:YnVuIHRlc3QgdGVzdC88c2tpbGw+LnRlc3QudHMgICAgICAgICAgICAgICAgICAgICMgdW5pdCB0ZXN0cwpnYnJhaW4gc2tpbGxpZnkgY2hlY2sgc2tpbGxzLzxzbHVnPi9zY3JpcHRzLzxzbHVnPi5tanMgLS1qc29uIHwgXAogIGpxICcuW10gfCAuaXRlbXNbXSB8IHNlbGVjdCgubmFtZSB8IGNvbnRhaW5zKCJDcm9zcy1tb2RhbCIpKScKbHMgfi8uZ2JyYWluLy5nYnJhaW4vZXZhbC1yZWNlaXB0cy8gICAgICAgICAgICAgICMgcmVjZWlwdCBsYW5kZWQKZ2JyYWluIGNoZWNrLXJlc29sdmFibGUgLS1qc29uIHwganEgLm9rICAgICAgICAgICMgcmVzb2x2ZXIgY2xlYW4=\nchecklist:ai-autonomy:4p2MIFdyaXRpbmcgdGVzdHMgYmVmb3JlIGNyb3NzLW1vZGFsIGV2YWwgKGxvY2tzIGluIG1lZGlvY3JpdHkpCuKdjCBVc2luZyBidWRnZXQgbW9kZWxzIGZvciBldmFsIChDIHN0dWRlbnQgZ3JhZGluZyBBIHN0dWRlbnQpCuKdjCBVc2luZyBhIHNpbmdsZSBwcm92aWRlcidzIGZhbWlseSBmb3IgYWxsIDMgc2xvdHMgKGNvcnJlbGF0ZWQgYmxpbmQgc3BvdHMpCuKdjCBTa2lwcGluZyBldmFsICJiZWNhdXNlIHRoZSBvdXRwdXQgbG9va3MgZmluZSIgKHlvdXIganVkZ21lbnQgaXNuJ3QgMyBtb2RlbHMpCuKdjCBFdmFsIHdpdGhvdXQgZml4IGN5Y2xlICh2YW5pdHkgbWV0cmljcykK4p2MIENvZGUgd2l0aCBubyBTS0lMTC5tZCAoaW52aXNpYmxlIHRvIHJlc29sdmVyKQrinYwgVGVzdHMgdGhhdCByZWltcGxlbWVudCBwcm9kdWN0aW9uIGNvZGUgKG1hc2tzIHJlYWwgYnVncykK4p2MIFJlc29sdmVyIGVudHJ5IHdpdGggaW50ZXJuYWwgamFyZ29uIChtdXN0IG1pcnJvciByZWFsIHVzZXIgbGFuZ3VhZ2UpCuKdjCBUd28gc2tpbGxzIGRvaW5nIHRoZSBzYW1lIHRoaW5nIChtZXJnZSBvciBraWxsIG9uZSkK4p2MIFJ1bm5pbmcgY3Jvc3MtbW9kYWwgZXZhbCBvbiB0cml2aWFsIG91dHB1dHMgKDwgMjAwIHRva2Vucywgbm90IHdvcnRoIDkgQVBJIGNhbGxzKQ==",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L58 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

@@ -609,7 +609,24 @@ public struct IndentTokenizer {
         -> (SourceLine, Int) {
         var conditions: [String] = []
         var j = start
-        while j < rawLines.count, isChecklistItemLine(rawLines[j]) {
+        while j < rawLines.count {
+            guard isChecklistItemLine(rawLines[j]) else {
+                let t = trimmed(rawLines[j])
+                if !conditions.isEmpty, t.isEmpty {
+                    var k = j + 1
+                    while k < rawLines.count, trimmed(rawLines[k]).isEmpty { k += 1 }
+                    if k < rawLines.count, isChecklistItemLine(rawLines[k]) {
+                        j += 1
+                        continue
+                    }
+                }
+                if !conditions.isEmpty, !t.isEmpty, rawLines[j].prefix(while: { $0 == " " }).count > indent {
+                    conditions[conditions.count - 1] += " " + t
+                    j += 1
+                    continue
+                }
+                break
+            }
             let t = trimmed(rawLines[j])
             var body = String(t.dropFirst(2)).trimmingCharacters(in: .whitespaces)
             // Strip the `[ ]` / `[x]` box (3 chars) plus following space.

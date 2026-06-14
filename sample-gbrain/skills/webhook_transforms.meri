@@ -18,14 +18,15 @@ mutating: true
 
 # Webhook Transforms
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-This skill guarantees:
-- External events are transformed into brain pages with proper citations
-- Raw payloads are preserved (dead-letter queue if transform fails)
-- Entity extraction runs on every transformed event
-- Input sanitization: no raw HTML/script passes to brain pages
-- Error handling: transform failure logs raw payload, retries once
+> This skill guarantees:
+!!! checklist (( ai-autonomy ))
+- [ ] External events are transformed into brain pages with proper citations
+- [ ] Raw payloads are preserved (dead-letter queue if transform fails)
+- [ ] Entity extraction runs on every transformed event
+- [ ] Input sanitization: no raw HTML/script passes to brain pages
+- [ ] Error handling: transform failure logs raw payload, retries once
 
 ## Phases
 
@@ -64,9 +65,10 @@ Output: Brain page in media/ + entity extraction + backlinks
 Event transformed and written to brain. Report: "Webhook: {event_type} from {source}
 → {brain_page_path}"
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- Passing raw HTML/script to brain pages (XSS risk)
-- Silently dropping events when transform fails (use dead-letter queue)
-- Processing webhooks without entity extraction
-- Not sanitizing external input before brain writes
+!!! checklist (( ai-autonomy ))
+- [ ] Passing raw HTML/script to brain pages (XSS risk)
+- [ ] Silently dropping events when transform fails (use dead-letter queue)
+- [ ] Processing webhooks without entity extraction
+- [ ] Not sanitizing external input before brain writes

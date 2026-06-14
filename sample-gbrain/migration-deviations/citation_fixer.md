@@ -2,9 +2,9 @@
 
 - Original: `citation-fixer/SKILL.md`
 - Ported: `citation_fixer.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 88%
-- Lines: 209 -> 202 (+21 / -28)
+- Tier: 2 (light edits)
+- Similarity: 73%
+- Lines: 209 -> 203 (+52 / -58)
 
 ## Frontmatter
 - Added: (none)
@@ -15,24 +15,56 @@
 - shell-block-routed
 
 ## Metrics
-- Sections: 15/17 inert (88% inert ratio)
-- Judgment: 1 blocks, 5 lines
+- Sections: 12/17 inert (71% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: reference-documentation=10, template=2
+- Judgment: 2 blocks, 17 lines
+
+### Inert section details
+- L32 `Tweet resolution pipeline (v0.25.1 extension)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L39 `Step 1: Identify broken references`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L50 `Step 2: Extract searchable content`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L58 `Step 3: Search for the actual tweet`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L73 `Step 4: Verify and extract metadata`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L82 `Step 5: Patch the brain page`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L99 `Batch mode`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L116 `Priority order`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L123 `Rate limiting`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L131 `Output format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L154 `Integration`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L179 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/citation-fixer/SKILL.md
-+++ citation_fixer.meri
-@@ -28,7 +28,7 @@
++++ skills/citation_fixer.meri
+@@ -28,42 +28,36 @@
  > **Output rule:** all links MUST be deterministic (built from API data,
  > not composed by LLM). See [_output-rules.md](../_output-rules.md).
  
 -## Contract
-+## Contract (( inert, role: invariants ))
- 
- This skill guarantees:
- 
-@@ -42,28 +42,21 @@
+-
+-This skill guarantees:
+-
+-- Every brain page is scanned for citation compliance.
+-- Missing citations are flagged with specific location.
+-- Malformed citations are fixed to match the standard format.
+-- **(v0.25.1)** Tweet / post references without URLs are resolved via
++## Contract (( role: procedure ))
++
++> This skill guarantees:
++
++!!! checklist (( ai-autonomy ))
++- [ ] Every brain page is scanned for citation compliance.
++- [ ] Missing citations are flagged with specific location.
++- [ ] Malformed citations are fixed to match the standard format.
++- [ ] **(v0.25.1)** Tweet / post references without URLs are resolved via
+   X API and patched with deterministic `https://x.com/<handle>/status/<id>`
+   links.
+-- Results reported with counts (scanned, fixed, remaining).
++- [ ] Results reported with counts (scanned, fixed, remaining).
  
  ## Phases
  
@@ -70,7 +102,7 @@
  
  Scan the page for patterns that indicate tweet references without URLs:
  
-@@ -74,7 +67,7 @@
+@@ -74,7 +68,7 @@
  - Has `[Source: ... X/Twitter ...]` without an `x.com` URL
  - References engagement metrics (likes, impressions) without a link
  
@@ -79,7 +111,7 @@
  
  From each broken reference, extract:
  
-@@ -82,7 +75,7 @@
+@@ -82,7 +76,7 @@
  - The **quoted text** (if available)
  - The **approximate date** (often present in surrounding timeline entries)
  
@@ -88,7 +120,7 @@
  
  Use the host's X API integration. Query patterns:
  
-@@ -97,7 +90,7 @@
+@@ -97,7 +91,7 @@
  "<exact quote>" -is:retweet
  ```
  
@@ -97,7 +129,7 @@
  
  Once a candidate is found:
  
-@@ -106,7 +99,7 @@
+@@ -106,7 +100,7 @@
    impressions).
  - Construct the URL: `https://x.com/<handle>/status/<tweet_id>`.
  
@@ -106,7 +138,7 @@
  
  Replace the broken citation with a proper one:
  
-@@ -123,11 +116,11 @@
+@@ -123,11 +117,11 @@
  [Source: [X/<handle>, YYYY-MM-DD](https://x.com/<handle>/status/<tweet_id>)]
  ```
  
@@ -120,7 +152,7 @@
  
  ```bash
  # Pages mentioning tweets but with no x.com links
-@@ -140,14 +133,14 @@
+@@ -140,14 +134,14 @@
  done
  ```
  
@@ -137,17 +169,26 @@
  
  - X API: respect the host's tier limits; don't hammer.
  - Target ~50 pages per batch run.
-@@ -167,7 +160,7 @@
+@@ -167,17 +161,18 @@
  Remaining gaps:       N (pages with uncitable facts)
  ```
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
- 
- - ❌ Inventing citations for facts that have no source. Flag them.
- - ❌ Removing facts that lack citations (flag them; don't delete).
-@@ -177,7 +170,7 @@
- - ❌ Composing tweet URLs by guessing the tweet id. Always go through
+-
+-- ❌ Inventing citations for facts that have no source. Flag them.
+-- ❌ Removing facts that lack citations (flag them; don't delete).
+-- ❌ Fixing citations without reading the full page context.
+-- ❌ Batch-fixing without checking quality on a sample first
++## Anti-Patterns (( role: procedure ))
++
++!!! checklist (( ai-autonomy ))
++- [ ] ❌ Inventing citations for facts that have no source. Flag them.
++- [ ] ❌ Removing facts that lack citations (flag them; don't delete).
++- [ ] ❌ Fixing citations without reading the full page context.
++- [ ] ❌ Batch-fixing without checking quality on a sample first
+   (see `conventions/test-before-bulk.md`).
+-- ❌ Composing tweet URLs by guessing the tweet id. Always go through
++- [ ] ❌ Composing tweet URLs by guessing the tweet id. Always go through
    the X API; deterministic links only.
  
 -## Integration
@@ -155,13 +196,44 @@
  
  This skill can be called:
  
-@@ -186,7 +179,7 @@
+@@ -186,23 +181,22 @@
  - **By other skills** — `enrich` or `media-ingest` can call citation-fixer
    before commit to validate output
  
 -## Metrics
-+## Metrics (( inert ))
+-
+-If running as a recurring batch, track state in a small JSON file under
+-`~/.gbrain/citation-fixer-state.json`:
+-
+-```json
+-{
+-  "last_run": "2026-04-15T...",
+-  "pages_scanned": 0,
+-  "citations_fixed": 0,
+-  "tweet_links_resolved": 0,
+-  "citations_unresolvable": 0,
+-  "pages_remaining": 1424
+-}
+-```
+-
+-
++## Metrics (( role: procedure ))
++
++use judgment to follow the Metrics guidance:
++  If running as a recurring batch, track state in a small JSON file under
++  `~/.gbrain/citation-fixer-state.json`:
++  
++  ```json
++  {
++    "last_run": "2026-04-15T...",
++    "pages_scanned": 0,
++    "citations_fixed": 0,
++    "tweet_links_resolved": 0,
++    "citations_unresolvable": 0,
++    "pages_remaining": 1424
++  }
++  ```
+ ## Output Format
  
- If running as a recurring batch, track state in a small JSON file under
- `~/.gbrain/citation-fixer-state.json`:
+ The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
 ```

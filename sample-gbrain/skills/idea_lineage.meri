@@ -63,92 +63,93 @@ Canonical examples:
 - Not a writing mode by default: do not write a lineage page unless the user
   explicitly asks for a saved artifact after seeing the read-only answer.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-This skill guarantees:
+> This skill guarantees:
 
-- A single-idea scope is preserved. Broad corpus or "map my concepts" prompts
+!!! checklist (( ai-autonomy ))
+- [ ] A single-idea scope is preserved. Broad corpus or "map my concepts" prompts
   route to `skills/concept-synthesis/SKILL.md` instead.
-- Every lineage claim cites existing brain evidence: page slug, source id when
+- [ ] Every lineage claim cites existing brain evidence: page slug, source id when
   present, date, and short quote or snippet.
-- Missing evidence is labeled as a gap, not patched with plausible narrative.
-- Contradictions, reversals, and abandoned branches are separated from normal
+- [ ] Missing evidence is labeled as a gap, not patched with plausible narrative.
+- [ ] Contradictions, reversals, and abandoned branches are separated from normal
   temporal evolution.
-- The default mode is read-only and does not mutate brain pages.
+- [ ] The default mode is read-only and does not mutate brain pages.
 
 ## Phases
 
-### Phase 1: Resolve the idea target (( inert, role: procedure ))
+### Phase 1: Resolve the idea target (( role: procedure ))
 
-1. Restate the idea in one sentence.
-2. Search for exact phrase variants with `search`.
-3. Run one semantic `query` for the natural-language version.
-4. Check `list_pages` for concept pages when the idea has an obvious concept
-   slug or title.
-5. If results point to an entity/metric/status trajectory rather than a concept,
-   hand off to `find_trajectory` or the normal query/think trajectory path.
-
-If multiple distinct ideas share the same phrase, ask the user to choose the
-intended one before synthesizing.
-
-### Phase 2: Gather evidence (( inert, role: procedure ))
-
-Collect enough evidence to support or reject each output bucket:
-
-- Search chunks with dates and source slugs.
-- Full pages via `get_page` for the top relevant concept, note, transcript,
-  meeting, article, or project pages.
-- Related concept pages through backlinks, `related` frontmatter, or repeated
-  co-occurrence in search results.
-- Takes via `takes_search` when the idea appears as a belief, bet, hunch, or
-  attributed claim.
-- Cached contradiction findings via `find_contradictions` when the user asks
-  about inconsistency or the search results show obvious conflict.
-- `find_trajectory` only when the evidence is entity/attribute-shaped, such as
-  a role/status/metric evolution that is relevant to the idea's story.
-
-Prefer fewer high-quality sources over a long unsorted pile. Read full pages
-when snippets imply a lineage milestone.
-
-### Phase 3: Classify lineage moments (( inert, role: procedure ))
-
-Classify evidence into these buckets:
-
-1. **First mention** - earliest dated evidence where the idea appears.
-2. **Best articulation** - the clearest or most complete expression, not
-   necessarily the newest.
-3. **Current live version** - the most recent high-authority version that still
-   appears active.
-4. **Reversals** - places where the user's stance changed direction.
-5. **Contradictions** - claims that cannot both be true at the same time or
-   under the same assumptions. Distinguish these from legitimate temporal
-   supersession.
-6. **Abandoned branches** - promising variants that appear and then disappear,
-   lose support, or are explicitly rejected.
-7. **Related concepts** - nearby ideas that shaped or inherited part of the
-   original idea.
-
-When a bucket has no evidence, write "No clear evidence found" with a brief note
-about what was checked.
-
-### Phase 4: Synthesize the lineage (( inert, role: procedure ))
-
-Write the answer in the output format below. Keep the synthesis proportional to
-the evidence. Do not overfit a smooth evolution if the evidence is sparse,
-messy, or contradictory.
-
-### Phase 5: Suggest optional next action (( inert, role: procedure ))
-
-If useful, offer one concrete follow-up:
-
-- Save the lineage as a brain page.
-- Run broad `concept-synthesis` if the user actually wants the whole concept
-  map refreshed.
-- Run or inspect trajectory data if the idea turned out to depend on structured
-  entity facts.
-- Run a contradiction probe only when stale cached findings are insufficient
-  and the user explicitly wants that heavier pass.
-
+use judgment to follow the Phase 1: Resolve the idea target guidance:
+  1. Restate the idea in one sentence.
+  2. Search for exact phrase variants with `search`.
+  3. Run one semantic `query` for the natural-language version.
+  4. Check `list_pages` for concept pages when the idea has an obvious concept
+     slug or title.
+  5. If results point to an entity/metric/status trajectory rather than a concept,
+     hand off to `find_trajectory` or the normal query/think trajectory path.
+  
+  If multiple distinct ideas share the same phrase, ask the user to choose the
+  intended one before synthesizing.
+### Phase 2: Gather evidence (( role: procedure ))
+  
+use judgment to follow the Phase 2: Gather evidence guidance:
+  Collect enough evidence to support or reject each output bucket:
+  
+  item: Search chunks with dates and source slugs.
+  item: Full pages via `get_page` for the top relevant concept, note, transcript,
+    meeting, article, or project pages.
+  item: Related concept pages through backlinks, `related` frontmatter, or repeated
+    co-occurrence in search results.
+  item: Takes via `takes_search` when the idea appears as a belief, bet, hunch, or
+    attributed claim.
+  item: Cached contradiction findings via `find_contradictions` when the user asks
+    about inconsistency or the search results show obvious conflict.
+  item: `find_trajectory` only when the evidence is entity/attribute-shaped, such as
+    a role/status/metric evolution that is relevant to the idea's story.
+  
+  Prefer fewer high-quality sources over a long unsorted pile. Read full pages
+  when snippets imply a lineage milestone.
+### Phase 3: Classify lineage moments (( role: procedure ))
+  
+use judgment to follow the Phase 3: Classify lineage moments guidance:
+  Classify evidence into these buckets:
+  
+  1. **First mention** - earliest dated evidence where the idea appears.
+  2. **Best articulation** - the clearest or most complete expression, not
+     necessarily the newest.
+  3. **Current live version** - the most recent high-authority version that still
+     appears active.
+  4. **Reversals** - places where the user's stance changed direction.
+  5. **Contradictions** - claims that cannot both be true at the same time or
+     under the same assumptions. Distinguish these from legitimate temporal
+     supersession.
+  6. **Abandoned branches** - promising variants that appear and then disappear,
+     lose support, or are explicitly rejected.
+  7. **Related concepts** - nearby ideas that shaped or inherited part of the
+     original idea.
+  
+  When a bucket has no evidence, write "No clear evidence found" with a brief note
+  about what was checked.
+### Phase 4: Synthesize the lineage (( role: procedure ))
+  
+use judgment to follow the Phase 4: Synthesize the lineage guidance:
+  Write the answer in the output format below. Keep the synthesis proportional to
+  the evidence. Do not overfit a smooth evolution if the evidence is sparse,
+  messy, or contradictory.
+### Phase 5: Suggest optional next action (( role: procedure ))
+  
+use judgment to follow the Phase 5: Suggest optional next action guidance:
+  If useful, offer one concrete follow-up:
+  
+  item: Save the lineage as a brain page.
+  item: Run broad `concept-synthesis` if the user actually wants the whole concept
+    map refreshed.
+  item: Run or inspect trajectory data if the idea turned out to depend on structured
+    entity facts.
+  item: Run a contradiction probe only when stale cached findings are insufficient
+    and the user explicitly wants that heavier pass.
 ## Output Format
 
 Use this shape for normal answers:
@@ -192,15 +193,16 @@ cite the source for each non-gap claim.
   undated page, or a fuzzy semantic match.
 - Preserve source ids in citations when search or page payloads include them.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- Running `concept-synthesis` for a single-idea question.
-- Presenting an entity's MRR, ARR, role, or status trajectory as conceptual
+!!! checklist (( ai-autonomy ))
+- [ ] Running `concept-synthesis` for a single-idea question.
+- [ ] Presenting an entity's MRR, ARR, role, or status trajectory as conceptual
   lineage without explaining the distinction.
-- Treating normal temporal evolution as contradiction.
-- Inventing abandoned branches because the story would be more interesting.
-- Saving or rewriting brain pages without explicit user instruction.
-- Using real names, companies, funds, or fork-specific examples in bundled
+- [ ] Treating normal temporal evolution as contradiction.
+- [ ] Inventing abandoned branches because the story would be more interesting.
+- [ ] Saving or rewriting brain pages without explicit user instruction.
+- [ ] Using real names, companies, funds, or fork-specific examples in bundled
   fixtures or documentation.
 
 ## Related Skills and Operations (( inert ))

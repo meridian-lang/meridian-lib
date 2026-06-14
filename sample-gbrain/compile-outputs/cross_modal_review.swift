@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -589,13 +581,33 @@ public struct CrossModalReviewInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "CrossModalReviewInput", parameters: [:])
 
-        // L74
-        let __meridianProseResults_L74 = try await runtime.executeProsePlan(
+        // L42
+        let __meridianProseResults_L42 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Work product is reviewed by a different model before finalizing\n- The review is graded against the originating skill's Contract section (what was promised), not vibes.\n- Agreement and disagreement are reported transparently\n- Refusal from one model triggers a silent switch to the next in chain\n- The user always makes the final decision (user sovereignty)",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.search", "shell.run"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L42 {
+            state.bind(__key, __value)
+        }
+        // L75
+        let __meridianProseResults_L75 = try await runtime.executeProsePlan(
             prose: "run a cross-modal review of the work product\nCapture the brain page, analysis, code diff, or decision to be reviewed\nLoad the originating skill's Contract section to see what was promised\nSpawn a different review model and send it the work plus the Contract\nGrade whether the output followed the Contract, pass or fail, with specific citations\nReport agreement or disagreement to the user, never auto-applying the reviewer's suggestions",
             snapshot: state.snapshot(),
             scopedTools: ["page.get", "page.search", "shell.run"]
         )
-        for (__key, __value) in __meridianProseResults_L74 {
+        for (__key, __value) in __meridianProseResults_L75 {
+            state.bind(__key, __value)
+        }
+        // L89
+        let __meridianProseResults_L89 = try await runtime.executeProsePlan(
+            prose: "follow the Codex Review guidance\nIndependent diff review from a different AI system. The user invokes\n`/codex review` (gstack-shipped); cross-modal-review's job is to\nRECOGNIZE when this is the right tool and recommend it explicitly\n**When to recommend `/codex review`:**\nitem: After a substantive diff lands and before merge\nitem: When the user wants a second opinion that's NOT another Claude\n**Output framing (when cross-modal-review surfaces Codex output):**\ncodeblock:plain:Q09ERVggUkVWSUVXIChpbmRlcGVuZGVudCBzZWNvbmQgb3Bpbmlvbik6CuKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkAo8ZnVsbCBjb2RleCBvdXRwdXQsIHZlcmJhdGltPgrilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZAKCkNST1NTLU1PREVMIEFOQUxZU0lTOgogIEJvdGggZm91bmQ6ICAgIFtvdmVybGFwcGluZyBmaW5kaW5nc10KICBPbmx5IENvZGV4OiAgICBbZmluZGluZ3MgdW5pcXVlIHRvIENvZGV4XQogIE9ubHkgQ2xhdWRlOiAgIFtmaW5kaW5ncyB1bmlxdWUgdG8gbXkgYW5hbHlzaXNdCiAgQWdyZWVtZW50OiAgICAgWCUgKE4vTSBmaW5kaW5ncyBvdmVybGFwKQ==\nUser decides what to act on. Cross-model agreement is signal, not\npermission\nuse judgment to follow the Refusal routing guidance:\nIf the primary review model refuses:\nSwitch silently to the next model in the chain (see\n`conventions/cross-modal.yaml`)\nDon't show the refusal to the user\nDon't announce the switch\nIf ALL models in the chain refuse, escalate to the user\nchecklist:ai-autonomy:4p2MIEF1dG8tYXBwbHlpbmcgcmV2aWV3ZXIgc3VnZ2VzdGlvbnMgd2l0aG91dCB1c2VyIGFwcHJvdmFsCuKdjCBTaG93aW5nIG1vZGVsIHJlZnVzYWxzIHRvIHRoZSB1c2VyCuKdjCBVc2luZyB0aGUgc2FtZSBtb2RlbCBmb3IgcmV2aWV3IGFuZCBnZW5lcmF0aW9uCuKdjCBTa2lwcGluZyB0aGUgQ29udHJhY3QgcmVmZXJlbmNlIChyZXZpZXdpbmcgdmliZXMsIG5vdCBndWFyYW50ZWVzKQrinYwgQ29kZS1yZXZpZXdpbmcgdHJpdmlhbCBjaGFuZ2VzICh0eXBvcywgZm9ybWF0dGluZykK4p2MIFJ1bm5pbmcgY29kZSByZXZpZXcgd2l0aG91dCBnaXQtZGlmZiBjb250ZXh0",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.search", "shell.run"]
+        )
+        for (__key, __value) in __meridianProseResults_L89 {
             state.bind(__key, __value)
         }
 

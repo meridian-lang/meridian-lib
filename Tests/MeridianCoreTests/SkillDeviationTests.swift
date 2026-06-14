@@ -290,6 +290,7 @@ struct SkillDeviationTests {
         let md = SkillDeviation.renderMarkdown(r, includeDiff: false)
         #expect(md.contains("## Metrics"))
         #expect(md.contains("1/2 inert"))
+        #expect(md.contains("Operational inert:"))
     }
 }
 
@@ -389,5 +390,166 @@ struct SkillMetricsTests {
         """
         let m = SkillMetrics.analyze(src)
         #expect(m.totalSections == 1)
+    }
+
+    @Test("inert taxonomy separates operational residue from valid metadata/docs")
+    func inertTaxonomy() {
+        let src = """
+        ---
+        name: demo
+        ---
+        ## Phase 1: Setup (( inert, role: procedure ))
+
+        ```bash
+        gbrain sync
+        ```
+
+        ## Contract (( inert, role: invariants ))
+
+        - Every fact is cited.
+
+        ## Output Format
+
+        ```markdown
+        ## Report
+        ```
+
+        ## Tools Used
+
+        - query (page.query)
+
+        ## Why this works (( inert ))
+
+        This is explanatory background.
+        """
+        let m = SkillMetrics.analyze(src)
+        #expect(m.totalSections == 5)
+        #expect(m.inertSections == 5)
+        #expect(m.operationalInertSections == 2)
+        #expect(m.unclassifiedInertSections == 0)
+        let categories = Dictionary(uniqueKeysWithValues: m.inertCategoryCounts.map { ($0.category, $0.count) })
+        #expect(categories[.operationalProcedure] == 1)
+        #expect(categories[.normativeContract] == 1)
+        #expect(categories[.template] == 1)
+        #expect(categories[.toolsMetadata] == 1)
+        #expect(categories[.referenceDocumentation] == 1)
+    }
+
+    @Test("inert taxonomy detects executable-shaped and convention-reference residue")
+    func inertTaxonomyExecutableShapes() {
+        let src = """
+        ## Command Step (( inert ))
+
+        `gbrain stats`
+
+        ## Shell Step (( inert ))
+
+        ```bash
+        gbrain doctor --json
+        ```
+
+        ## Task Step (( inert ))
+
+        - [ ] the page count is at least 1
+
+        ## Table Step (( inert ))
+
+        | status | action |
+        |---|---|
+        | ready | complete |
+
+        ## AI Checklist (( inert ))
+
+        !!! checklist (( ai-autonomy ))
+        - [ ] the report is useful
+
+        ## Convention (( inert, role: convention-ref ))
+
+        Check the brain first.
+
+        ## Mystery
+
+        Lower me someday.
+
+        ## Notes (( inert ))
+
+        Example: this is explanatory.
+        """
+        let m = SkillMetrics.analyze(src)
+        let categories = Dictionary(uniqueKeysWithValues: m.inertCategoryCounts.map { ($0.category, $0.count) })
+        #expect(categories[.operationalContent] == 5)
+        #expect(categories[.conventionReference] == 1)
+        #expect(categories[.referenceDocumentation] == 1)
+        #expect(categories[.unclassified] == 1)
+        #expect(m.unclassifiedInertSections == 1)
+    }
+
+    @Test("inert taxonomy ignores non-command code spans")
+    func inertTaxonomyNonCommandCodeSpan() {
+        let src = """
+        ## Type Note (( inert ))
+
+        `Page`
+
+        `unfinished
+        """
+        let m = SkillMetrics.analyze(src)
+        #expect(m.inertDetails.first?.category == .referenceDocumentation)
+    }
+
+    @Test("inert taxonomy treats non-shell fenced blocks as reference docs")
+    func inertTaxonomyNonShellFence() {
+        let src = """
+        ## Data Shape (( inert ))
+
+        ```json
+        {"name": "page"}
+        ```
+        """
+        let m = SkillMetrics.analyze(src)
+        #expect(m.inertDetails.first?.category == .referenceDocumentation)
+    }
+
+    @Test("inert taxonomy covers AI markers reference bodies and judgment variants")
+    func inertTaxonomyBranchCoverage() {
+        let src = """
+        ## Applicability (( inert, role: applicability ))
+
+        Check only when inputs exist.
+
+        ## Negative Applicability (( inert, role: negative-applicability ))
+
+        Skip unless inputs exist.
+
+        ## Fuzzy Checklist (( inert ))
+
+        * [x] Review ambiguous evidence.
+
+        ## Fuzzy Route (( inert ))
+
+        !!! checklist (( ai-autonomy ))
+
+        ## AI Note (( inert ))
+
+        use judgment to decide whether the evidence is enough
+
+        ## Reference Body (( inert ))
+
+        > This is just explanatory context.
+
+        ## Judgment with discretion:
+          step one
+
+          step two
+        ## Judgment with autonomy:
+          step three
+        """
+        let m = SkillMetrics.analyze(src)
+        #expect(m.inertDetails.contains { $0.category == .operationalProcedure && $0.role == "applicability" })
+        #expect(m.inertDetails.contains { $0.category == .operationalProcedure && $0.role == "negative-applicability" })
+        #expect(m.inertDetails.filter { $0.category == .operationalContent }.count >= 3)
+        #expect(m.inertDetails.contains { $0.heading == "Reference Body" && $0.category == .referenceDocumentation })
+        #expect(m.judgmentBlocks == 3)
+        #expect(m.judgmentLines == 3)
     }
 }

@@ -152,7 +152,7 @@
         "text" : "Phase 5: Post-migration"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 134,
         "text" : "Rollback"
@@ -170,111 +170,57 @@
         "text" : "Decision tree"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 186,
         "text" : "Contract"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 209,
+        "line" : 213,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 218,
+        "line" : 223,
         "text" : "Output Format"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 246,
+        "line" : 251,
         "text" : "Reference"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 60,
+        "line" : 61,
         "text" : "Expected"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 72,
-        "text" : "Run the per-cluster narrative"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 96,
-        "text" : "Watch progress per phase"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 106,
-        "text" : "Apply phases"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 122,
-        "text" : "Expected"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 149,
-        "text" : "Revert the active pack flip"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 188,
-        "text" : "Inputs"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 193,
-        "text" : "Outputs"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 199,
-        "text" : "Side effects"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 204,
-        "text" : "Failure modes"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 230,
+        "line" : 235,
         "text" : "Final celebration summary to stderr"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 249,
+        "line" : 254,
         "text" : "Architecture"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 250,
+        "line" : 255,
         "text" : "Pack-upgrade mechanism"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 251,
+        "line" : 256,
         "text" : "Issue"
       }
     ],
@@ -319,10 +265,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 1: Discovery",
         "line" : 52,
         "lines" : [
+          "use judgment to follow the Phase 1: Discovery guidance:",
           "Confirm the brain is actually on `gbrain-base` (not already on v2)",
           "codeblock:bash:Z2JyYWluIHNjaGVtYSBhY3RpdmUgLS1qc29uIHwganEgLXIgJy5pZGVudGl0eSc=",
           "Expected: `gbrain-base@1.0.0+<sha>`. If you see `gbrain-base-v2@...`, the brain is already on v2 — skip the migration",
@@ -333,26 +280,28 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 2: Preview",
         "line" : 70,
         "lines" : [
+          "use judgment to follow the Phase 2: Preview guidance:",
           "Run the per-cluster narrative:",
           "codeblock:bash:Z2JyYWluIG9uYm9hcmQgLS1jaGVjayAtLWV4cGxhaW4=",
           "This invokes the `unify-types` handler in dry-run mode and prints:",
-          "How many pages would retype per cluster (tweets, articles, companies, etc.)",
-          "How many concept-redirect pages would become alias rows",
-          "How many edge-shaped pages would convert to real links",
-          "The synthesized catch-all rules for unknown types",
+          "item: How many pages would retype per cluster (tweets, articles, companies, etc.)",
+          "item: How many concept-redirect pages would become alias rows",
+          "item: How many edge-shaped pages would convert to real links",
+          "item: The synthesized catch-all rules for unknown types",
           "Review the output. If the proposed changes look wrong, **don't** proceed — file an issue or write a custom pack with adjusted mapping_rules"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 3: Apply",
         "line" : 86,
         "lines" : [
+          "use judgment to follow the Phase 3: Apply guidance:",
           "The handler is PROTECTED (manual_only per D17) — autopilot will never auto-fire it. Submit explicitly:",
           "codeblock:bash:Z2JyYWluIGpvYnMgc3VibWl0IHVuaWZ5LXR5cGVzIFwKICAtLWFsbG93LXByb3RlY3RlZCBcCiAgLS1wYXJhbXMgJ3sidGFyZ2V0X3BhY2siOiJnYnJhaW4tYmFzZS12MiJ9Jw==",
           "Watch progress per phase:",
@@ -362,10 +311,10 @@
           "Stats snapshot (pre-state for celebration summary)",
           "Acquire `gbrain-unify` db-lock (60min TTL)",
           "Apply phases:",
-          "Explicit retype rules (tweets, articles, companies, etc.)",
-          "Catch-all retype (unknown types → note with legacy_type)",
-          "Page-to-link rules (atom-partner-link, symlink)",
-          "Page-to-alias rules (concept-redirect)",
+          "item: Explicit retype rules (tweets, articles, companies, etc.)",
+          "item: Catch-all retype (unknown types → note with legacy_type)",
+          "item: Page-to-link rules (atom-partner-link, symlink)",
+          "item: Page-to-alias rules (concept-redirect)",
           "Final sync (untyped rows by path-prefix)",
           "**Flip active pack** to gbrain-base-v2 (D13)",
           "Verify + celebration summary"
@@ -373,34 +322,37 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 4: Verify",
         "line" : 115,
         "lines" : [
+          "use judgment to follow the Phase 4: Verify guidance:",
           "codeblock:bash:Z2JyYWluIG9uYm9hcmQgLS1jaGVjawpnYnJhaW4gc2NoZW1hIHN0YXRz",
           "Expected:",
-          "`pack_upgrade_available` → `ok` (active pack is now v2)",
-          "`type_proliferation` → `ok` (≤16 distinct typed values)",
-          "`dangling_aliases` → `ok` (slug_aliases all point at active canonicals)",
-          "`gbrain schema stats` shows ≤16 distinct types"
+          "item: `pack_upgrade_available` → `ok` (active pack is now v2)",
+          "item: `type_proliferation` → `ok` (≤16 distinct typed values)",
+          "item: `dangling_aliases` → `ok` (slug_aliases all point at active canonicals)",
+          "item: `gbrain schema stats` shows ≤16 distinct types"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 5: Post-migration",
         "line" : 128,
         "lines" : [
+          "use judgment to follow the Phase 5: Post-migration guidance:",
           "Anything that used `--type article` keeps working post-unify if your CLI calls go through the `expandTypeFilter` helper (it expands `article` to `media+subtype=article` automatically). Direct SQL against `pages.type` needs updating to the canonical types",
           "Search queries get a small ranking signal: pages reached via `slug_aliases` (canonicals of one or more aliases) get a 1.05x boost. Visible via `gbrain search --explain`"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Rollback",
         "line" : 134,
         "lines" : [
+          "use judgment to follow the Rollback guidance:",
           "Every retyped page preserves `frontmatter.legacy_type = <original>` per D8. Restore types via:",
           "codeblock:sql:VVBEQVRFIHBhZ2VzIFNFVCB0eXBlID0gZnJvbnRtYXR0ZXItPj4nbGVnYWN5X3R5cGUnCldIRVJFIHNvdXJjZV9pZCA9ICdkZWZhdWx0JyBBTkQgZnJvbnRtYXR0ZXItPj4nbGVnYWN5X3R5cGUnIElTIE5PVCBOVUxMOw==",
           "Page-to-alias and page-to-link source pages soft-delete with 72h TTL. Restore within that window:",
@@ -408,7 +360,7 @@
           "Revert the active pack flip:",
           "codeblock:bash:Z2JyYWluIHNjaGVtYSB1c2UgZ2JyYWluLWJhc2U="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -433,48 +385,30 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 186,
         "lines" : [
-          "Inputs:",
-          "A brain on `gbrain-base` (or any pack with `migration_from: gbrain-base-v2`)",
-          "Write access to submit a PROTECTED Minion handler (`--allow-protected`)",
-          "~10 min wallclock on a 186K-page brain",
-          "Outputs:",
-          "Pages retyped to canonical types with `frontmatter.legacy_type` preserved (per-page rollback signal)",
-          "`slug_aliases` rows for concept-redirect pages (alias table IS the resolver — no link rewrite)",
-          "Real `links` rows for edge-shaped pages (`atom-partner-link`, `symlink`, etc.)",
-          "Active pack flipped to `gbrain-base-v2` atomically at end of successful run",
-          "Side effects:",
-          "Source pages soft-deleted with 72h restore TTL (`gbrain pages restore <slug>`)",
-          "One-time cache invalidation on KNOBS_HASH_VERSION bump (5→6); self-healing in `cache.ttl_seconds`",
-          "Query-time `--type X` alias-expands via `expandTypeFilter` (D14 back-compat)",
-          "Failure modes:",
-          "Concurrent submission rejected by the `gbrain-unify` db-lock; second call exits gracefully",
-          "Catch-all retype excludes `page_to_link` + `page_to_alias` source types (caught in E2E pre-merge)",
-          "Phase failures abort the run before `active_pack_flipped`; partial state restorable via op_checkpoint resume"
+          "checklist:ai-autonomy:QSBicmFpbiBvbiBgZ2JyYWluLWJhc2VgIChvciBhbnkgcGFjayB3aXRoIGBtaWdyYXRpb25fZnJvbTogZ2JyYWluLWJhc2UtdjJgKQpXcml0ZSBhY2Nlc3MgdG8gc3VibWl0IGEgUFJPVEVDVEVEIE1pbmlvbiBoYW5kbGVyIChgLS1hbGxvdy1wcm90ZWN0ZWRgKQp+MTAgbWluIHdhbGxjbG9jayBvbiBhIDE4NkstcGFnZSBicmFpbg==",
+          "checklist:ai-autonomy:UGFnZXMgcmV0eXBlZCB0byBjYW5vbmljYWwgdHlwZXMgd2l0aCBgZnJvbnRtYXR0ZXIubGVnYWN5X3R5cGVgIHByZXNlcnZlZCAocGVyLXBhZ2Ugcm9sbGJhY2sgc2lnbmFsKQpgc2x1Z19hbGlhc2VzYCByb3dzIGZvciBjb25jZXB0LXJlZGlyZWN0IHBhZ2VzIChhbGlhcyB0YWJsZSBJUyB0aGUgcmVzb2x2ZXIg4oCUIG5vIGxpbmsgcmV3cml0ZSkKUmVhbCBgbGlua3NgIHJvd3MgZm9yIGVkZ2Utc2hhcGVkIHBhZ2VzIChgYXRvbS1wYXJ0bmVyLWxpbmtgLCBgc3ltbGlua2AsIGV0Yy4pCkFjdGl2ZSBwYWNrIGZsaXBwZWQgdG8gYGdicmFpbi1iYXNlLXYyYCBhdG9taWNhbGx5IGF0IGVuZCBvZiBzdWNjZXNzZnVsIHJ1bg==",
+          "checklist:ai-autonomy:U291cmNlIHBhZ2VzIHNvZnQtZGVsZXRlZCB3aXRoIDcyaCByZXN0b3JlIFRUTCAoYGdicmFpbiBwYWdlcyByZXN0b3JlIDxzbHVnPmApCk9uZS10aW1lIGNhY2hlIGludmFsaWRhdGlvbiBvbiBLTk9CU19IQVNIX1ZFUlNJT04gYnVtcCAoNeKGkjYpOyBzZWxmLWhlYWxpbmcgaW4gYGNhY2hlLnR0bF9zZWNvbmRzYApRdWVyeS10aW1lIGAtLXR5cGUgWGAgYWxpYXMtZXhwYW5kcyB2aWEgYGV4cGFuZFR5cGVGaWx0ZXJgIChEMTQgYmFjay1jb21wYXQp",
+          "checklist:ai-autonomy:Q29uY3VycmVudCBzdWJtaXNzaW9uIHJlamVjdGVkIGJ5IHRoZSBgZ2JyYWluLXVuaWZ5YCBkYi1sb2NrOyBzZWNvbmQgY2FsbCBleGl0cyBncmFjZWZ1bGx5CkNhdGNoLWFsbCByZXR5cGUgZXhjbHVkZXMgYHBhZ2VfdG9fbGlua2AgKyBgcGFnZV90b19hbGlhc2Agc291cmNlIHR5cGVzIChjYXVnaHQgaW4gRTJFIHByZS1tZXJnZSkKUGhhc2UgZmFpbHVyZXMgYWJvcnQgdGhlIHJ1biBiZWZvcmUgYGFjdGl2ZV9wYWNrX2ZsaXBwZWRgOyBwYXJ0aWFsIHN0YXRlIHJlc3RvcmFibGUgdmlhIG9wX2NoZWNrcG9pbnQgcmVzdW1l"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 209,
+        "line" : 213,
         "lines" : [
-          "DON'T:",
-          "Submit `unify-types` directly via the MCP `submit_job` op without `--allow-protected`. PROTECTED handlers require trusted local callers; remote MCP rejection is the intentional trust boundary",
-          "Edit `mapping_rules` in `gbrain-base-v2.yaml` to skip clusters you don't trust. Fork the pack instead (`gbrain schema fork`) so the source-of-truth migration stays consistent across brains",
-          "Run `unify-types` from inside an autopilot tick. The check is `manual_only` per D17 — autopilot deliberately never auto-fires it because pack upgrades are one-time consenting taxonomy decisions",
-          "Hard-delete soft-deleted source pages before the 72h restore window. Use `gbrain pages restore <slug>` first if rollback is needed",
-          "Assume `frontmatter.legacy_type` survives every roundtrip. The marker is canonical for the immediate post-migration window; downstream re-imports may overwrite it"
+          "checklist:ai-autonomy:U3VibWl0IGB1bmlmeS10eXBlc2AgZGlyZWN0bHkgdmlhIHRoZSBNQ1AgYHN1Ym1pdF9qb2JgIG9wIHdpdGhvdXQgYC0tYWxsb3ctcHJvdGVjdGVkYC4gUFJPVEVDVEVEIGhhbmRsZXJzIHJlcXVpcmUgdHJ1c3RlZCBsb2NhbCBjYWxsZXJzOyByZW1vdGUgTUNQIHJlamVjdGlvbiBpcyB0aGUgaW50ZW50aW9uYWwgdHJ1c3QgYm91bmRhcnkKRWRpdCBgbWFwcGluZ19ydWxlc2AgaW4gYGdicmFpbi1iYXNlLXYyLnlhbWxgIHRvIHNraXAgY2x1c3RlcnMgeW91IGRvbid0IHRydXN0LiBGb3JrIHRoZSBwYWNrIGluc3RlYWQgKGBnYnJhaW4gc2NoZW1hIGZvcmtgKSBzbyB0aGUgc291cmNlLW9mLXRydXRoIG1pZ3JhdGlvbiBzdGF5cyBjb25zaXN0ZW50IGFjcm9zcyBicmFpbnMKUnVuIGB1bmlmeS10eXBlc2AgZnJvbSBpbnNpZGUgYW4gYXV0b3BpbG90IHRpY2suIFRoZSBjaGVjayBpcyBgbWFudWFsX29ubHlgIHBlciBEMTcg4oCUIGF1dG9waWxvdCBkZWxpYmVyYXRlbHkgbmV2ZXIgYXV0by1maXJlcyBpdCBiZWNhdXNlIHBhY2sgdXBncmFkZXMgYXJlIG9uZS10aW1lIGNvbnNlbnRpbmcgdGF4b25vbXkgZGVjaXNpb25zCkhhcmQtZGVsZXRlIHNvZnQtZGVsZXRlZCBzb3VyY2UgcGFnZXMgYmVmb3JlIHRoZSA3MmggcmVzdG9yZSB3aW5kb3cuIFVzZSBgZ2JyYWluIHBhZ2VzIHJlc3RvcmUgPHNsdWc+YCBmaXJzdCBpZiByb2xsYmFjayBpcyBuZWVkZWQKQXNzdW1lIGBmcm9udG1hdHRlci5sZWdhY3lfdHlwZWAgc3Vydml2ZXMgZXZlcnkgcm91bmR0cmlwLiBUaGUgbWFya2VyIGlzIGNhbm9uaWNhbCBmb3IgdGhlIGltbWVkaWF0ZSBwb3N0LW1pZ3JhdGlvbiB3aW5kb3c7IGRvd25zdHJlYW0gcmUtaW1wb3J0cyBtYXkgb3ZlcndyaXRlIGl0"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 218,
+        "line" : 223,
         "lines" : [
           "Per phase, the handler emits to stderr:",
           "codeblock:plain:W3VuaWZ5LXR5cGVzXSBwaGFzZT1yZXR5cGUtZXhwbGljaXQgYXBwbGllZD1OIHNraXBwZWQ9TSAgY29zdD1VU0QgIHR0bD1OcwpbdW5pZnktdHlwZXNdIHBoYXNlPXJldHlwZS1jYXRjaC1hbGwgYXBwbGllZD1OClt1bmlmeS10eXBlc10gcGhhc2U9cGFnZS10by1saW5rIGNvbnZlcnRlZD1OIHBhZ2VzIHNvZnQtZGVsZXRlZApbdW5pZnktdHlwZXNdIHBoYXNlPXBhZ2UtdG8tYWxpYXMgYWxpYXNlZD1OIHBhZ2VzIHNvZnQtZGVsZXRlZApbdW5pZnktdHlwZXNdIHBoYXNlPXN5bmMgcmVzaWR1YWw9TgpbdW5pZnktdHlwZXNdIGFjdGl2ZV9wYWNrIGZsaXBwZWQgZnJvbSBnYnJhaW4tYmFzZSB0byBnYnJhaW4tYmFzZS12Mg==",
@@ -487,7 +421,7 @@
       {
         "executes" : false,
         "heading" : "Reference",
-        "line" : 246,
+        "line" : 251,
         "lines" : [
           "Plan + decisions: `~\/.claude\/plans\/system-instruction-you-are-working-transient-elephant.md`",
           "Architecture: `docs\/architecture\/type-taxonomy.md`",
@@ -536,84 +470,88 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 620
+      "meridian_line" : 54,
+      "swift_line" : 583
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 625
+      "swift_line" : 621
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 664
+      "swift_line" : 626
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 669
+      "swift_line" : 665
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 708
+      "swift_line" : 670
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 713
+      "swift_line" : 709
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 752
+      "swift_line" : 714
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 757
+      "swift_line" : 753
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 796
+      "swift_line" : 758
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 801
+      "swift_line" : 797
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 840
+      "swift_line" : 802
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 845
+      "swift_line" : 841
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 884
+      "swift_line" : 846
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 889
+      "swift_line" : 885
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 928
+      "swift_line" : 890
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 933
+      "swift_line" : 929
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 972
+      "swift_line" : 934
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 977
+      "swift_line" : 973
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1016
+      "swift_line" : 978
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1021
+      "swift_line" : 1017
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1022
     }
   ],
   "tools_used" : [

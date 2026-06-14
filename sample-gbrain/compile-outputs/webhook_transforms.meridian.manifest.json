@@ -98,7 +98,7 @@
     "name" : "webhook-transforms",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 21,
         "text" : "Contract"
@@ -106,83 +106,60 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 30,
+        "line" : 31,
         "text" : "Phases"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 42,
+        "line" : 43,
         "text" : "Example Transforms"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 44,
+        "line" : 45,
         "text" : "SMS Received"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 50,
+        "line" : 51,
         "text" : "Meeting Completed"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 56,
+        "line" : 57,
         "text" : "Social Mention"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 62,
+        "line" : 63,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 67,
+        "line" : 68,
         "text" : "Anti-Patterns"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 23,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 27,
-        "text" : "Input sanitization"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 28,
-        "text" : "Error handling"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 21,
         "lines" : [
-          "This skill guarantees:",
-          "External events are transformed into brain pages with proper citations",
-          "Raw payloads are preserved (dead-letter queue if transform fails)",
-          "Entity extraction runs on every transformed event",
-          "Input sanitization: no raw HTML\/script passes to brain pages",
-          "Error handling: transform failure logs raw payload, retries once"
+          "checklist:ai-autonomy:RXh0ZXJuYWwgZXZlbnRzIGFyZSB0cmFuc2Zvcm1lZCBpbnRvIGJyYWluIHBhZ2VzIHdpdGggcHJvcGVyIGNpdGF0aW9ucwpSYXcgcGF5bG9hZHMgYXJlIHByZXNlcnZlZCAoZGVhZC1sZXR0ZXIgcXVldWUgaWYgdHJhbnNmb3JtIGZhaWxzKQpFbnRpdHkgZXh0cmFjdGlvbiBydW5zIG9uIGV2ZXJ5IHRyYW5zZm9ybWVkIGV2ZW50CklucHV0IHNhbml0aXphdGlvbjogbm8gcmF3IEhUTUwvc2NyaXB0IHBhc3NlcyB0byBicmFpbiBwYWdlcwpFcnJvciBoYW5kbGluZzogdHJhbnNmb3JtIGZhaWx1cmUgbG9ncyByYXcgcGF5bG9hZCwgcmV0cmllcyBvbmNl"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 30,
+        "line" : 31,
         "lines" : [
           "use judgment to define and run a webhook transform:",
           "Map the event schema to the brain page format, sanitizing HTML and escaping script content",
@@ -196,7 +173,7 @@
       {
         "executes" : false,
         "heading" : "Example Transforms",
-        "line" : 42,
+        "line" : 43,
         "lines" : [
 
         ],
@@ -205,7 +182,7 @@
       {
         "executes" : false,
         "heading" : "SMS Received",
-        "line" : 44,
+        "line" : 45,
         "lines" : [
           "codeblock:plain:SW5wdXQ6IHtmcm9tOiAiKzE1NTUuLi4iLCBib2R5OiAiTWVldGluZyBtb3ZlZCB0byAzcG0iLCB0aW1lc3RhbXA6ICIuLi4ifQpPdXRwdXQ6IFRpbWVsaW5lIGVudHJ5IG9uIHNlbmRlcidzIGJyYWluIHBhZ2UgKyB0YXNrIHVwZGF0ZSBpZiBhY3Rpb24gaXRlbSBkZXRlY3RlZA=="
         ],
@@ -214,7 +191,7 @@
       {
         "executes" : false,
         "heading" : "Meeting Completed",
-        "line" : 50,
+        "line" : 51,
         "lines" : [
           "codeblock:plain:SW5wdXQ6IHt0aXRsZTogIldlZWtseSBzeW5jIiwgYXR0ZW5kZWVzOiBbLi4uXSwgdHJhbnNjcmlwdDogIi4uLiIsIHN1bW1hcnk6ICIuLi4ifQpPdXRwdXQ6IERlbGVnYXRlIHRvIG1lZXRpbmctaW5nZXN0aW9uIHNraWxs"
         ],
@@ -223,7 +200,7 @@
       {
         "executes" : false,
         "heading" : "Social Mention",
-        "line" : 56,
+        "line" : 57,
         "lines" : [
           "codeblock:plain:SW5wdXQ6IHtwbGF0Zm9ybTogInR3aXR0ZXIiLCBhdXRob3I6ICJAaGFuZGxlIiwgdGV4dDogIi4uLiIsIHVybDogIi4uLiJ9Ck91dHB1dDogQnJhaW4gcGFnZSBpbiBtZWRpYS8gKyBlbnRpdHkgZXh0cmFjdGlvbiArIGJhY2tsaW5rcw=="
         ],
@@ -232,7 +209,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 62,
+        "line" : 63,
         "lines" : [
           "Event transformed and written to brain. Report: \"Webhook: {event_type} from {source}",
           "→ {brain_page_path}\""
@@ -240,16 +217,13 @@
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 67,
+        "line" : 68,
         "lines" : [
-          "Passing raw HTML\/script to brain pages (XSS risk)",
-          "Silently dropping events when transform fails (use dead-letter queue)",
-          "Processing webhooks without entity extraction",
-          "Not sanitizing external input before brain writes"
+          "checklist:ai-autonomy:UGFzc2luZyByYXcgSFRNTC9zY3JpcHQgdG8gYnJhaW4gcGFnZXMgKFhTUyByaXNrKQpTaWxlbnRseSBkcm9wcGluZyBldmVudHMgd2hlbiB0cmFuc2Zvcm0gZmFpbHMgKHVzZSBkZWFkLWxldHRlciBxdWV1ZSkKUHJvY2Vzc2luZyB3ZWJob29rcyB3aXRob3V0IGVudGl0eSBleHRyYWN0aW9uCk5vdCBzYW5pdGl6aW5nIGV4dGVybmFsIGlucHV0IGJlZm9yZSBicmFpbiB3cml0ZXM="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "tools" : "put_page\nadd_timeline_entry\nsearch",
@@ -292,36 +266,44 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 32,
-      "swift_line" : 592
+      "meridian_line" : 25,
+      "swift_line" : 584
     },
     {
-      "meridian_line" : 38,
-      "swift_line" : 602
+      "meridian_line" : 33,
+      "swift_line" : 595
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 641
+      "meridian_line" : 39,
+      "swift_line" : 605
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 646
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 685
+      "meridian_line" : 71,
+      "swift_line" : 615
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 655
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 660
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 699
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 704
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 743
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 748
     }
   ],
   "tools_used" : [

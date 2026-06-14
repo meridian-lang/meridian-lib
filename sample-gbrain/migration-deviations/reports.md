@@ -3,8 +3,8 @@
 - Original: `reports/SKILL.md`
 - Ported: `reports.meri`
 - Tier: 2 (light edits)
-- Similarity: 71%
-- Lines: 60 -> 56 (+15 / -19)
+- Similarity: 54%
+- Lines: 60 -> 58 (+26 / -28)
 
 ## Frontmatter
 - Added: (none)
@@ -12,26 +12,41 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 
 ## Metrics
-- Sections: 4/5 inert (80% inert ratio)
+- Sections: 1/5 inert (20% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: template=1
 - Judgment: 1 blocks, 3 lines
+
+### Inert section details
+- L29 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/reports/SKILL.md
-+++ reports.meri
-@@ -18,7 +18,7 @@
++++ skills/reports.meri
+@@ -18,43 +18,41 @@
  
  # Reports Skill
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
  
- This skill guarantees:
- - Reports saved with timestamped filenames and frontmatter
-@@ -28,30 +28,26 @@
+-This skill guarantees:
+-- Reports saved with timestamped filenames and frontmatter
+-- Keyword routing: query → report category mapping
+-- Latest report loadable by category name
+-- Reports are searchable via gbrain search/query
++> This skill guarantees:
++!!! checklist (( ai-autonomy ))
++- [ ] Reports saved with timestamped filenames and frontmatter
++- [ ] Keyword routing: query → report category mapping
++- [ ] Latest report loadable by category name
++- [ ] Reports are searchable via gbrain search/query
  
  ## Phases
  
@@ -72,8 +87,16 @@
  Loaded: full report content with metadata.
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
  
- - Saving reports without frontmatter (makes them unsearchable)
- - Using inconsistent category names across runs
+-- Saving reports without frontmatter (makes them unsearchable)
+-- Using inconsistent category names across runs
+-- Loading all reports when only the latest is needed
+-- Not routing by keyword (forcing exact category name)
++!!! checklist (( ai-autonomy ))
++- [ ] Saving reports without frontmatter (makes them unsearchable)
++- [ ] Using inconsistent category names across runs
++- [ ] Loading all reports when only the latest is needed
++- [ ] Not routing by keyword (forcing exact category name)
+ 
 ```

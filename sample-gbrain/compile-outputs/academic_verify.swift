@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -590,6 +582,15 @@ public struct AcademicVerifyInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "AcademicVerifyInput", parameters: [:])
 
+        // L53
+        let __meridianProseResults_L53 = try await runtime.executeProsePlan(
+            prose: "follow the When to use this guidance\nitem: A book quotes a study and you want to confirm it's real and not\nmiscited\nitem: An article makes a quantified claim (\"X reduced Y by 40%\") that you\nwant traced to the source data\nitem: You're writing something that depends on a piece of research and you\nwant to verify the underlying paper holds up\nitem: You're updating a brain page that cites a research claim and you want\nto record the verification status alongside\nuse judgment to follow the Useful databases (the agent uses these via perplexity-research) guidance:\ntable:decision:fCBEYXRhYmFzZSB8IFdoYXQgaXQgaGFzIHwgVVJMIHBhdHRlcm4gfAp8LS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18CnwgUmV0cmFjdGlvbiBXYXRjaCB8IFJldHJhY3Rpb25zLCBjb3JyZWN0aW9ucywgZXhwcmVzc2lvbnMgb2YgY29uY2VybiB8IHJldHJhY3Rpb253YXRjaC5jb20vP3M9TkFNRSB8CnwgUHViUGVlciB8IEFub255bW91cyBwb3N0LXB1YmxpY2F0aW9uIHBlZXIgcmV2aWV3IHwgcHVicGVlci5jb20vc2VhcmNoP3E9TkFNRSB8CnwgT1NGIHwgUHJlLXJlZ2lzdHJhdGlvbnMsIG9wZW4gZGF0YSwgb3BlbiBtYXRlcmlhbHMgfCBvc2YuaW8vc2VhcmNoLz9xPVFVRVJZIHwKfCBTZW1hbnRpYyBTY2hvbGFyIHwgQ2l0YXRpb24gYW5hbHlzaXMsIHBhcGVyIG1ldGFkYXRhIHwgYXBpLnNlbWFudGljc2Nob2xhci5vcmcgfAp8IE9wZW5BbGV4IHwgT3BlbiBjaXRhdGlvbiBkYXRhLCBpbnN0aXR1dGlvbmFsIGFmZmlsaWF0aW9ucyB8IGFwaS5vcGVuYWxleC5vcmcgfAp8IE1hbnkgTGFicyB8IFJlcGxpY2F0aW9uIHJlc3VsdHMgZm9yIHNvY2lhbCBwc3ljaG9sb2d5IHwgb3NmLmlvL3d4N2NrLyB8\nchecklist:ai-autonomy:4p2MIFNraXBwaW5nIHRoZSBicmFpbi1maXJzdCBsb29rdXAuIFJlLWRvaW5nIHZlcmlmaWNhdGlvbiB3ZSd2ZSBhbHJlYWR5IGRvbmUgaXMgd2FzdGVkIFBlcnBsZXhpdHkgc3BlbmQuCuKdjCBCeXBhc3NpbmcgcGVycGxleGl0eS1yZXNlYXJjaCBhbmQgaW52ZW50aW5nIHRoZSBsb29rdXAuIFRoZSBjaXRhdGlvbnMgZnJvbSBQZXJwbGV4aXR5IGFyZSB0aGUgZXZpZGVuY2Ug4oCUIHdpdGhvdXQgdGhlbSwgdGhlIHZlcmRpY3QgaXMganVzdCBvcGluaW9uLgrinYwgU3RhdGluZyAiVmVyaWZpZWQiIHdpdGhvdXQgY29uZmlybWluZyByYXcgZGF0YSBhdmFpbGFiaWxpdHkgUmVwbGljYXRpb24gdHJ1bXBzIGFueSBzaW5nbGUgcGFwZXIuCuKdjCBTdGF0aW5nICJVbnZlcmlmaWFibGUiIHdoZW4geW91IHNpbXBseSBkaWRuJ3QgbG9vayBoYXJkIGVub3VnaCBUaGUgdmVyZGljdCBpcyBvbiB0aGUgc291cmNlLCBub3Qgb24geW91ciBzZWFyY2ggZWZmb3J0Lg==\nchecklist:ai-autonomy:Um91dGluZyBtYXRjaGVzIHRoZSBjYW5vbmljYWwgdHJpZ2dlcnMgaW4gdGhlIGZyb250bWF0dGVyCk91dHB1dCB3cml0dGVuIHVuZGVyIHRoZSBkaXJlY3RvcmllcyBsaXN0ZWQgaW4gYHdyaXRlc190bzpgICh3aGVuIGFwcGxpY2FibGUpCkNvbnZlbnRpb25zIHJlZmVyZW5jZWQgKGBxdWFsaXR5Lm1kYCwgYGJyYWluLWZpcnN0Lm1kYCwgYF9icmFpbi1maWxpbmctcnVsZXMubWRgKSBhcmUgZm9sbG93ZWQKUHJpdmFjeSBjb250cmFjdCBwcmVzZXJ2ZWQ6IG5vIHJlYWwgbmFtZXMsIG5vIGZvcmstc3BlY2lmaWMgZmlsZXN5c3RlbSBwYXRoIGxpdGVyYWxzLCBubyB1cHN0cmVhbS1mb3JrIHJlZmVyZW5jZXM=",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L53 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

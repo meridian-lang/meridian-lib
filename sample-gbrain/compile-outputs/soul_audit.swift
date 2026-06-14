@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -589,6 +581,26 @@ public struct SoulAuditInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SoulAuditInput", parameters: [:])
 
+        // L31
+        let __meridianProseResults_L31 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- SOUL.md generated from user's description of agent identity, vibe, mission\n- USER.md generated from user's self-description (role, projects, key people)\n- ACCESS_POLICY.md generated with configurable access tiers\n- HEARTBEAT.md generated with operational cadence the user chooses\n- Each phase is independent and re-runnable\n- Default mode (skip soul-audit): installs minimal templates from `templates/`",
+            snapshot: state.snapshot(),
+            scopedTools: ["publish", "shell.run"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L31 {
+            state.bind(__key, __value)
+        }
+        // L42
+        let __meridianProseResults_L42 = try await runtime.executeProsePlan(
+            prose: "follow the Phase 1: Identity Interview guidance\nAsk: \"What is this agent to you? Research partner? Executive assistant? Thinking partner? All of the above?\"\nGenerate: SOUL.md identity section\nuse judgment to follow the Phase 2: Vibe Calibration guidance:\nShow 3-4 communication style examples:\nitem: **Formal:** \"I've prepared a comprehensive analysis of the situation...\"\nitem: **Direct:** \"Here's what's happening. Three things matter.\"\nitem: **Technical:** \"The root cause is in the connection pooling. Here's the fix.\"\nitem: **Casual:** \"Yeah so basically the thing is broken because X. Easy fix.\"\nAsk which feels right. Generate: SOUL.md vibe + communication style sections\nuse judgment to follow the Phase 3: Mission Mapping guidance:\nAsk: \"What are your top 3-5 goals? What are you trying to accomplish?\"\nGenerate: SOUL.md mission + operating principles sections\nuse judgment to follow the Phase 4: User Profile guidance:\nAsk: \"Tell me about yourself. What do you do? What are you working on? Who are the key people in your world?\"\nGenerate: USER.md with role, projects, key people, communication preferences\nuse judgment to follow the Phase 5: Boundaries guidance:\nAsk: \"Who should have access to your brain? Are there people who should see some but not all? Anyone to keep out entirely?\"\nGenerate: ACCESS_POLICY.md with 4 tiers (Full/Work/Family/None)\nuse judgment to follow the Phase 6: Operational Cadence guidance:\nAsk: \"How often should the agent check in? Morning briefing? End of day summary? What recurring jobs do you want?\"\nGenerate: HEARTBEAT.md with operational cadence\nchecklist:ai-autonomy:U2hpcHBpbmcgcHJlLWZpbGxlZCBTT1VMLm1kIG9yIFVTRVIubWQgY29udGVudCAocHJpdmFjeSB2aW9sYXRpb24pCk1ha2luZyBzb3VsLWF1ZGl0IG1hbmRhdG9yeSBvbiBmaXJzdCBib290IChoaWdoIGZyaWN0aW9uLCBvcHRpb25hbCBpcyBiZXR0ZXIpCkFza2luZyBhbGwgNiBwaGFzZXMgaW4gb25lIGdvIChvdmVyd2hlbG1pbmcsIGVhY2ggaXMgaW5kZXBlbmRlbnQpCk5vdCBvZmZlcmluZyB0byByZS1ydW4gaW5kaXZpZHVhbCBwaGFzZXM=",
+            snapshot: state.snapshot(),
+            scopedTools: ["publish", "shell.run"]
+        )
+        for (__key, __value) in __meridianProseResults_L42 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

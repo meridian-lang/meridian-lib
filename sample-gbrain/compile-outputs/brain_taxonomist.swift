@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -589,6 +581,26 @@ public struct BrainTaxonomistInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "BrainTaxonomistInput", parameters: [:])
 
+        // L34
+        let __meridianProseResults_L34 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Every new page is filed at the path determined by the ACTIVE schema pack — never against a hardcoded directory table baked into this skill\n- The decision is reproducible: invoking brain-taxonomist twice on the same content produces the same recommended path\n- Ambiguous cases surface to the user via `skills/ask-user/` rather than silently picking a default\n- Per-source overrides via `--source <id>` are honored — multi-brain users (Persona B) get a different recommendation per source if their packs diverge\n- When no matching `page_types[]` entry exists in the active pack, the skill signals to EIIRP Phase 3 (SCHEMA CHECK) rather than picking the closest-fitting fallback",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L34 {
+            state.bind(__key, __value)
+        }
+        // L83
+        let __meridianProseResults_L83 = try await runtime.executeProsePlan(
+            prose: "follow the Step 2: Look up the directory for that type in the active pack guidance\ncodeblock:bash:Z2JyYWluIHNjaGVtYSBzaG93IC0tanNvbiB8IGpxICcucGFnZV90eXBlc1tdIHwgc2VsZWN0KC5wcmltaXRpdmUgPT0gImVudGl0eSIpJw==\nEach `page_types[]` entry has a `path_prefixes:` array. The first prefix\nis the canonical path. If multiple types match (e.g. both `person` and\n`founder` exist in the pack with `expert_routing: true`), prefer the more\nspecific one (the one with the more specific path prefix)\nuse judgment to follow the Step 5: Validate before writing guidance:\nitem: [ ] Path follows the active pack's `page_types[].path_prefixes`\nitem: [ ] Slug is kebab-case, descriptive\nitem: [ ] Frontmatter includes `type:` matching one of the pack's `page_types[].name`\nitem: [ ] Cross-links to related pages are included\nIf the active pack doesn't have a type for what you're trying to file,\nDON'T pick the closest-fitting one. Instead, signal to EIIRP that a new\ntype is needed and let the schema-pack cathedral handle the proposal flow\nuse judgment to follow the Periodic Drift Detection guidance:\ncodeblock:bash:IyBXaGF0IHBhZ2VzIGhhdmUgbm8gdHlwZSBtYXRjaGluZyB0aGUgYWN0aXZlIHBhY2s/CmdicmFpbiBzY2hlbWEgcmV2aWV3LW9ycGhhbnMgLS1qc29uCgojIFdoYXQncyB0aGUgb3ZlcmFsbCBoZWFsdGg/CmdicmFpbiBkb2N0b3IgLS1qc29uIHwganEgJy5jaGVja3NbXSB8IHNlbGVjdCgubmFtZSA9PSAic2NoZW1hX3BhY2tfY29uc2lzdGVuY3kiKSc=\nWhen `schema_pack_consistency` warns at >10% untyped, run the EIIRP\nPhase 3 SCHEMA CHECK flow to surface candidate types via `schema detect`\nchecklist:ai-autonomy:KipIYXJkY29kZWQgZGlyZWN0b3J5IHRhYmxlIGluIHRoaXMgc2tpbGwuKiogRXZlcnkgZGVjaXNpb24gZ29lcyB0aHJvdWdoIGBnYnJhaW4gc2NoZW1hIHNob3cgLS1qc29uYC4gdjAuMzkrIGJyb2tlIHRoZSBvbGQgaGFyZGNvZGVkIHRhYmxlIG9uIHB1cnBvc2Ugc28gdXNlcnMgb24gYGdicmFpbi1yZWNvbW1lbmRlZGAgb3IgY3VzdG9tIHBhY2tzIGdldCB0aGUgcmlnaHQgcm91dGluZyBhdXRvbWF0aWNhbGx5LgoqKlBpY2tpbmcgdGhlIGNsb3Nlc3QtZml0dGluZyB0eXBlIHdoZW4gbm8gdHlwZSBtYXRjaGVzLioqIENsb3Nlc3QtZml0IHNpbGVudGx5IGRlZ3JhZGVzIHVzZXIgZmlsaW5nLiBTdXJmYWNlIHRvIEVJSVJQIFBoYXNlIDMgaW5zdGVhZC4KKipJZ25vcmluZyBgLS1zb3VyY2UgPGlkPmAgb24gbXVsdGktYnJhaW4gc2V0dXBzLioqIFBlci1zb3VyY2Ugb3ZlcnJpZGVzIGFyZSB0aWVyLTMgaW4gdGhlIDctdGllciByZXNvbHV0aW9uIGNoYWluOyBtaXNzaW5nIHRoZSBmbGFnIHNpbGVudGx5IHVzZXMgdGhlIGJyYWluLXdpZGUgYWN0aXZlIHBhY2suCioqQXV0by1hcHBseWluZyBhIGBnYnJhaW4gc2NoZW1hIHJldmlldy1jYW5kaWRhdGVzIC0tYXBwbHlgIGRlY2lzaW9uLioqIEV2ZW4gaGlnaC1jb25maWRlbmNlIHN1Z2dlc3Rpb25zIG5lZWQgdXNlciBhcHByb3ZhbCDigJQgdGhpcyBza2lsbCBpcyBhIEdBVEUsIG5vdCBhbiBhdXRvbWF0b3Iu",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L83 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

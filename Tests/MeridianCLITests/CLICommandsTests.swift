@@ -264,6 +264,17 @@ struct TestSubcommandTests {
         var cmd = try TestCommand.parse([t.url.path, "--verbose"])
         do { try cmd.run() } catch { /* ExitCode(1) if the spec fails in isolation */ }
     }
+
+    @Test("tag filter can skip a copied spec")
+    func tagFilteredSpecSkips() throws {
+        let t = TempDir()
+        let spec = ex("Tests/MeridianCoreTests/MeridianTestSpecs/compile_only.meridian.test")
+        t.write("compile_only.meridian.test", try String(contentsOfFile: spec, encoding: .utf8))
+        t.write("order_processing.meridian", try String(contentsOfFile: ex("Tests/MeridianCoreTests/MeridianTestSpecs/order_processing.meridian"), encoding: .utf8))
+        t.write("ecommerce.merconfig", try String(contentsOfFile: ex("Tests/MeridianCoreTests/MeridianTestSpecs/ecommerce.merconfig"), encoding: .utf8))
+        var cmd = try TestCommand.parse([t.url.path, "--tag", "does-not-match"])
+        try cmd.run()
+    }
 }
 
 // MARK: - trace render
@@ -318,6 +329,23 @@ struct SkillDeviationCommandTests {
         var cmd = try SkillDeviationCommand.parse([orig.path, port.path, "--out", t.path("reports"), "--no-diff"])
         try await cmd.run()
         #expect(FileManager.default.fileExists(atPath: t.path("reports/x.md")))
+    }
+
+    @Test("batch index includes operational inert metrics")
+    func batchIndex() async throws {
+        let t = TempDir()
+        let origDir = t.url.appendingPathComponent("orig")
+        let portDir = t.url.appendingPathComponent("ported")
+        let reports = t.url.appendingPathComponent("reports")
+        try FileManager.default.createDirectory(at: origDir.appendingPathComponent("demo"), withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: portDir.appendingPathComponent("skills"), withIntermediateDirectories: true)
+        try "# Demo\n\n## Steps\nDo it.\n".write(to: origDir.appendingPathComponent("demo/SKILL.md"), atomically: true, encoding: .utf8)
+        try "## Steps (( inert, role: procedure ))\n\n`gbrain stats`\n".write(to: portDir.appendingPathComponent("skills/demo.meri"), atomically: true, encoding: .utf8)
+        var cmd = try SkillDeviationCommand.parse([origDir.path, portDir.path, "--batch", "--out", reports.path, "--index", "--no-diff"])
+        try await cmd.run()
+        let readme = try String(contentsOf: reports.appendingPathComponent("README.md"), encoding: .utf8)
+        #expect(readme.contains("Operational inert:"), Comment(rawValue: readme))
+        #expect(readme.contains("operational inert"), Comment(rawValue: readme))
     }
 
     @Test("missing original throws")

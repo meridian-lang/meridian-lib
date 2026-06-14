@@ -3,8 +3,8 @@
 - Original: `webhook-transforms/SKILL.md`
 - Ported: `webhook_transforms.meri`
 - Tier: 2 (light edits)
-- Similarity: 75%
-- Lines: 84 -> 73 (+14 / -25)
+- Similarity: 62%
+- Lines: 84 -> 75 (+26 / -35)
 
 ## Frontmatter
 - Added: (none)
@@ -12,26 +12,47 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 
 ## Metrics
-- Sections: 7/8 inert (88% inert ratio)
+- Sections: 5/8 inert (62% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: reference-documentation=4, template=1
 - Judgment: 1 blocks, 4 lines
+
+### Inert section details
+- L26 `Example Transforms`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L28 `SMS Received`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L34 `Meeting Completed`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L40 `Social Mention`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L46 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/webhook-transforms/SKILL.md
-+++ webhook_transforms.meri
-@@ -18,7 +18,7 @@
++++ skills/webhook_transforms.meri
+@@ -18,53 +18,43 @@
  
  # Webhook Transforms
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
  
- This skill guarantees:
- - External events are transformed into brain pages with proper citations
-@@ -29,42 +29,31 @@
+-This skill guarantees:
+-- External events are transformed into brain pages with proper citations
+-- Raw payloads are preserved (dead-letter queue if transform fails)
+-- Entity extraction runs on every transformed event
+-- Input sanitization: no raw HTML/script passes to brain pages
+-- Error handling: transform failure logs raw payload, retries once
++> This skill guarantees:
++!!! checklist (( ai-autonomy ))
++- [ ] External events are transformed into brain pages with proper citations
++- [ ] Raw payloads are preserved (dead-letter queue if transform fails)
++- [ ] Entity extraction runs on every transformed event
++- [ ] Input sanitization: no raw HTML/script passes to brain pages
++- [ ] Error handling: transform failure logs raw payload, retries once
  
  ## Phases
  
@@ -86,13 +107,21 @@
  ```
  Input: {platform: "twitter", author: "@handle", text: "...", url: "..."}
  Output: Brain page in media/ + entity extraction + backlinks
-@@ -75,7 +64,7 @@
+@@ -75,10 +65,11 @@
  Event transformed and written to brain. Report: "Webhook: {event_type} from {source}
  → {brain_page_path}"
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
  
- - Passing raw HTML/script to brain pages (XSS risk)
- - Silently dropping events when transform fails (use dead-letter queue)
+-- Passing raw HTML/script to brain pages (XSS risk)
+-- Silently dropping events when transform fails (use dead-letter queue)
+-- Processing webhooks without entity extraction
+-- Not sanitizing external input before brain writes
++!!! checklist (( ai-autonomy ))
++- [ ] Passing raw HTML/script to brain pages (XSS risk)
++- [ ] Silently dropping events when transform fails (use dead-letter queue)
++- [ ] Processing webhooks without entity extraction
++- [ ] Not sanitizing external input before brain writes
+ 
 ```

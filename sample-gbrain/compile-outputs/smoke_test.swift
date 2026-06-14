@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -588,27 +580,25 @@ public struct SmokeTestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SmokeTestInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L49:C0") {
-            // L49
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain smoke-test"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.0:L49:C0", state: state.snapshot())
+        // L28
+        let __meridianProseResults_L28 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- 8 core tests verify gbrain + OpenClaw health after restart\n- Known failures are auto-fixed before reporting\n- User-extensible via `~/.gbrain/smoke-tests.d/*.sh` drop-in scripts\n- Results logged to `/tmp/gbrain-smoke-test.log`\n- Exit code = number of unfixed failures (0 = all pass)",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L28 {
+            state.bind(__key, __value)
         }
-        if __meridianShouldRun("progress:0.1:L54:C0") {
-            // L54
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("bash scripts/smoke-test.sh"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L54:C0", state: state.snapshot())
+        // L36
+        let __meridianProseResults_L36 = try await runtime.executeProsePlan(
+            prose: "follow the Built-in Tests guidance\ntable:decision:fCAjIHwgVGVzdCB8IEF1dG8tRml4IHwKfC0tLXwtLS0tLS18LS0tLS0tLS0tLXwKfCAxIHwgQnVuIHJ1bnRpbWUgfCBJbnN0YWxsIGZyb20gYnVuLnNoIHwKfCAyIHwgR0JyYWluIENMSSBsb2FkcyB8IFJlaW5zdGFsbCBkZXBzIHwKfCAzIHwgR0JyYWluIGRhdGFiYXNlIChkb2N0b3IpIHwg4oCUIHwKfCA0IHwgR0JyYWluIHdvcmtlciBwcm9jZXNzIHwgU3RhcnQgd29ya2VyIHwKfCA1IHwgT3BlbkNsYXcgQ29kZXggcGx1Z2luIChab2QgQ0pTKSB8IGBucG0gaW5zdGFsbCB6b2RANCAtLWZvcmNlYCB8CnwgNiB8IE9wZW5DbGF3IGdhdGV3YXkgfCDigJQgKG1heSBub3QgYmUgc3RhcnRlZCB5ZXQpIHwKfCA3IHwgRW1iZWRkaW5nIEFQSSBrZXkgfCDigJQgKGNoZWNrIC5lbnYpIHwKfCA4IHwgQnJhaW4gcmVwbyBleGlzdHMgfCDigJQgfA==\ncodeblock:bash:Z2JyYWluIHNtb2tlLXRlc3Q=\ncodeblock:bash:YmFzaCBzY3JpcHRzL3Ntb2tlLXRlc3Quc2g=\nuse judgment to follow the From OpenClaw bootstrap guidance:\nAdd to your `ensure-services.sh` or equivalent:\ncodeblock:bash:YmFzaCAvcGF0aC90by9nYnJhaW4vc2NyaXB0cy9zbW9rZS10ZXN0LnNoID4+IC90bXAvYm9vdHN0cmFwLmxvZyAyPiYx\nuse judgment to follow the Adding Custom Tests guidance:\nCreate executable scripts in `~/.gbrain/smoke-tests.d/`:\ncodeblock:bash:IyB+Ly5nYnJhaW4vc21va2UtdGVzdHMuZC9jaGVjay1yZWRpcy5zaAojIS9iaW4vYmFzaApyZWRpcy1jbGkgcGluZyB8IGdyZXAgLXEgUE9ORw==\nRules:\nitem: Exit 0 = pass, non-zero = fail\nitem: Filename becomes the test name (e.g. `check-redis` from `check-redis.sh`)\nitem: Keep tests fast (< 10s each)\nitem: Tests run in alphabetical order\nuse judgment to follow the Adding Built-in Tests guidance:\nEdit `scripts/smoke-test.sh`. Follow this pattern:\ncodeblock:bash:IyDilIDilIAgTi4gW1NlcnZpY2UgTmFtZV0g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACmlmIFt0ZXN0IGNvbmRpdGlvbl07IHRoZW4KICBwYXNzICJbU2VydmljZSBOYW1lXSIKZWxzZQogICMgQXV0by1maXggYXR0ZW1wdAogIFtmaXggY29tbWFuZF0KICBpZiBbcmUtdGVzdCBjb25kaXRpb25dOyB0aGVuCiAgICBmaXhlZCAiW1doYXQgd2FzIGZpeGVkXSIKICAgIHBhc3MgIltTZXJ2aWNlIE5hbWVdIChhZnRlciBmaXgpIgogIGVsc2UKICAgIGZhaWwgIltTZXJ2aWNlIE5hbWVdIOKAlCBbZXJyb3IgZGV0YWlsXSIKICBmaQpmaQ==\nuse judgment to follow the Environment Variables guidance:\ntable:decision:fCBWYXIgfCBEZWZhdWx0IHwgRGVzY3JpcHRpb24gfAp8LS0tLS18LS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18CnwgYEdCUkFJTl9TTU9LRV9MT0dgIHwgYC90bXAvZ2JyYWluLXNtb2tlLXRlc3QubG9nYCB8IExvZyBmaWxlIHBhdGggfAp8IGBHQlJBSU5fRElSX09WRVJSSURFYCB8IChhdXRvLWRldGVjdCkgfCBGb3JjZSBnYnJhaW4gaW5zdGFsbCBwYXRoIHwKfCBgR0JSQUlOX0RBVEFCQVNFX1VSTGAgfCAoZnJvbSAuZW52KSB8IERhdGFiYXNlIGNvbm5lY3Rpb24gVVJMIHwKfCBgT1BFTkNMQVdfR0FURVdBWV9QT1JUYCB8IGAxODc4OWAgfCBHYXRld2F5IHBvcnQgdG8gdGVzdCB8CnwgYEdCUkFJTl9CUkFJTl9QQVRIYCB8IGAvZGF0YS9icmFpbmAgfCBCcmFpbiByZXBvIHBhdGggfA==\nchecklist:ai-autonomy:4p2MIFJ1bm5pbmcgc21va2UgdGVzdHMgb24gZXZlcnkgY2hhdCB0dXJuLiBPbmNlIHBlciBjb250YWluZXIgcmVzdGFydCAob3Igb24gdXNlciByZXF1ZXN0KSBpcyBwbGVudHkuIFRoZSBzY3JpcHQgaXMgY2hlYXAgYnV0IGl0J3Mgbm90IGZyZWUuCuKdjCBXcml0aW5nIGEgdXNlciBkcm9wLWluIHdpdGhvdXQgYHRpbWVvdXQgTmAgYXJvdW5kIGFueSBjb21tYW5kIHRoYXQgY291bGQgaGFuZy4gQSBzaW5nbGUgaHVuZyBkcm9wLWluIHN0YWxscyBldmVyeSBzdWJzZXF1ZW50IHJ1bi4K4p2MIEF1dG8tZml4aW5nIHdpdGhvdXQgY29uZmlybWluZyB0aGUgY2hlY2sgaXMgYWN0dWFsbHkgYnJva2VuIGZpcnN0IFRoZSBgcGFzcyDihpIgZmFpbC1kZXRlY3RlZCDihpIgZml4IOKGkiByZS10ZXN0YCBsb29wIGlzIHRoZSBjb250cmFjdDsgZml4ZXMgdGhhdCBza2lwIHRoZSByZS10ZXN0IGNhbiByZXBvcnQgc3VjY2VzcyBvbiBhIHN0aWxsLWJyb2tlbiBzdGF0ZS4K4p2MIFRyZWF0aW5nIGBza2lwYCBhcyBgZmFpbGAuIE1pc3NpbmcgcHJlcmVxdWlzaXRlcyAobm8gT3BlbkNsYXcgaW5zdGFsbGVkLCBubyBicmFpbiByZXBvIGNvbmZpZ3VyZWQpIGFyZSBza2lwcywgbm90IGZhaWx1cmVzLiBFeGl0IGNvZGUgPSBjb3VudCBvZiByZWFsIGZhaWx1cmVzLCBub3Qgc2tpcHBlZCBjaGVja3MuCuKdjCBIYXJkY29kaW5nIHBhdGhzIGluIGEgdXNlciBkcm9wLWluLiBSZWFkIGVudiB2YXJzIChgR0JSQUlOX0RBVEFCQVNFX1VSTGAsIGBIT01FYCwgZXRjLikgc28gdGhlIHNjcmlwdCB0cmF2ZWxzIGFjcm9zcyBjb250YWluZXIgcmVidWlsZHMu",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L36 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

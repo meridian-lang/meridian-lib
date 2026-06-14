@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -589,17 +581,28 @@ public struct QueryInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "QueryInput", parameters: [:])
 
-        // L47
-        let __meridianProseResults_L47 = try await runtime.executeProsePlan(
-            prose: "answer the question from the brain with citations\nDecompose the question into keyword, semantic, and structured search strategies\nExecute keyword search, hybrid query, and structural list or backlink lookups\nRead the top results to gather full context\nSynthesize an answer where every claim cites a specific page slug\nFlag gaps explicitly when the brain lacks the information",
+        // L40
+        let __meridianProseResults_L40 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Every answer is grounded in brain content (no hallucination)\n- Every claim has a citation tracing back to a specific page slug\n- Gaps are flagged explicitly (\"the brain doesn't have information on X\")\n- Source precedence is respected (user statements > compiled truth > timeline > external)\n- Conflicting sources are noted with both citations",
             snapshot: state.snapshot(),
-            scopedTools: ["link.backlinks", "page.get", "page.list", "page.search", "shell.run"]
+            scopedTools: ["get_backlinks", "get_page", "get_timeline", "link.backlinks", "list_pages", "page.get", "page.list", "page.search", "query", "search", "shell.run", "traverse_graph"],
+            maxSteps: 32,
+            replanAfterFailures: 3
         )
-        for (__key, __value) in __meridianProseResults_L47 {
+        for (__key, __value) in __meridianProseResults_L40 {
             state.bind(__key, __value)
         }
-        if __meridianShouldRun("progress:0.1:L59:C0") {
-            // L59
+        // L48
+        let __meridianProseResults_L48 = try await runtime.executeProsePlan(
+            prose: "answer the question from the brain with citations\nDecompose the question into keyword, semantic, and structured search strategies\nExecute keyword search, hybrid query, and structural list or backlink lookups\nRead the top results to gather full context\nSynthesize an answer where every claim cites a specific page slug\nFlag gaps explicitly when the brain lacks the information",
+            snapshot: state.snapshot(),
+            scopedTools: ["get_backlinks", "get_page", "get_timeline", "link.backlinks", "list_pages", "page.get", "page.list", "page.search", "query", "search", "shell.run", "traverse_graph"]
+        )
+        for (__key, __value) in __meridianProseResults_L48 {
+            state.bind(__key, __value)
+        }
+        if __meridianShouldRun("progress:0.2:L60:C0") {
+            // L60
             let page = try await runtime.invoke(
                 tool: "page.get",
                 args: [
@@ -608,17 +611,28 @@ public struct QueryInput: MeridianWorkflow {
             )
             state.bind("page", page)
 
-            try await runtime.checkpoint(label: "progress:0.1:L59:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.2:L60:C0", state: state.snapshot())
         }
-        // L60
+        // L61
         if meridianDef_Page_unwritten(state.get("page")) {
-            if __meridianShouldRun("progress:0.2.then.0:L61:C0") {
-                // L61
+            if __meridianShouldRun("progress:0.3.then.0:L62:C0") {
+                // L62
                 try await runtime.emit(event: "query.gap", payload: [:])
-                try await runtime.checkpoint(label: "progress:0.2.then.0:L61:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.3.then.0:L62:C0", state: state.snapshot())
             }
         }
 
+        // L67
+        let __meridianProseResults_L67 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Answering from general knowledge when the brain has relevant content\n- Hallucinating facts not in the brain\n- Silently picking one source when sources conflict\n- Loading full pages when search chunks are sufficient\n- Ignoring source precedence (user statements are highest authority)",
+            snapshot: state.snapshot(),
+            scopedTools: ["get_backlinks", "get_page", "get_timeline", "link.backlinks", "list_pages", "page.get", "page.list", "page.search", "query", "search", "shell.run", "traverse_graph"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L67 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

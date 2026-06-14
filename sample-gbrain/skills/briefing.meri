@@ -15,13 +15,14 @@ mutating: false
 > **Filing rule:** When the briefing creates or updates brain pages,
 > follow `skills/_brain-filing-rules.md`.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-- Every fact in the briefing includes an inline `[Source: slug, updated DATE]` citation.
-- Meeting participants are resolved against the brain; gaps are explicitly flagged.
-- Active deals and action items include deadlines and recency context.
-- The briefing is read-only: no brain pages are created or modified unless the user explicitly requests it.
-- Stale alerts surface pages relevant to today's context, not just all stale pages.
+!!! checklist (( ai-autonomy ))
+- [ ] Every fact in the briefing includes an inline `[Source: slug, updated DATE]` citation.
+- [ ] Meeting participants are resolved against the brain; gaps are explicitly flagged.
+- [ ] Active deals and action items include deadlines and recency context.
+- [ ] The briefing is read-only: no brain pages are created or modified unless the user explicitly requests it.
+- [ ] Stale alerts surface pages relevant to today's context, not just all stale pages.
 
 ## Phases
 
@@ -90,15 +91,15 @@ PEOPLE IN PLAY
 - [name] -- [why they're active]
 ```
 
-## Back-Linking During Briefing (( inert ))
+## Back-Linking During Briefing (( role: procedure ))
 
-If the briefing creates or updates any brain pages (e.g., new meeting prep
-pages, updated entity pages), the back-linking iron law applies: every entity
-the page mentions must have a back-link from their page. See
-`skills/_brain-filing-rules.md`.
-
+use judgment to follow the Back-Linking During Briefing guidance:
+  If the briefing creates or updates any brain pages (e.g., new meeting prep
+  pages, updated entity pages), the back-linking iron law applies: every entity
+  the page mentions must have a back-link from their page. See
+  `skills/_brain-filing-rules.md`.
 ### Enforce back-links
-
+  
 let mentioned be the entities mentioned by the input.
 for each entity in mentioned:
   if the entity does not link to the input, add a back-link from the entity to the input.
@@ -109,13 +110,14 @@ When presenting facts from brain pages, include inline citations:
 - "Jane is CTO of Acme [Source: people/jane-doe, updated 2026-04-01]"
 - This lets the user trace any claim back to the brain page and assess freshness
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- **Briefing without brain queries.** Never generate a briefing from memory alone; always query gbrain for current data.
-- **Uncited facts.** Every claim must include `[Source: slug, updated DATE]`. A fact without a citation is unverifiable.
-- **Stale context presented as current.** If a page hasn't been updated in 30+ days, flag the staleness explicitly rather than presenting it as fresh.
-- **Modifying brain pages unprompted.** The briefing is read-only by default. Do not create or update pages unless the user explicitly requests it.
-- **Ignoring coverage gaps.** When a meeting participant has no brain page, say so. Silence about gaps hides ignorance.
+!!! checklist (( ai-autonomy ))
+- [ ] **Briefing without brain queries.** Never generate a briefing from memory alone; always query gbrain for current data.
+- [ ] **Uncited facts.** Every claim must include `[Source: slug, updated DATE]`. A fact without a citation is unverifiable.
+- [ ] **Stale context presented as current.** If a page hasn't been updated in 30+ days, flag the staleness explicitly rather than presenting it as fresh.
+- [ ] **Modifying brain pages unprompted.** The briefing is read-only by default. Do not create or update pages unless the user explicitly requests it.
+- [ ] **Ignoring coverage gaps.** When a meeting participant has no brain page, say so. Silence about gaps hides ignorance.
 
 ## Tools Used
 

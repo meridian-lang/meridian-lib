@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -588,8 +580,19 @@ public struct PublishInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "PublishInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L52:C0") {
-            // L52
+        // L27
+        let __meridianProseResults_L27 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Published HTML is fully self-contained: no external dependencies, no server needed\n- All private metadata (frontmatter, source citations, confirmation numbers, brain cross-links, timeline) is stripped before publishing\n- Password protection uses AES-256-GCM with PBKDF2 key derivation; plaintext never appears in the encrypted HTML file\n- Default is always encrypted unless the user explicitly requests \"open\", \"no password\", or \"public\"\n- External URLs (`https://...`) are preserved; only internal brain paths are stripped",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.search", "shell.run"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L27 {
+            state.bind(__key, __value)
+        }
+        if __meridianShouldRun("progress:0.1:L53:C0") {
+            // L53
             let pages = try await runtime.invoke(
                 tool: "page.list",
                 args: [
@@ -598,19 +601,19 @@ public struct PublishInput: MeridianWorkflow {
             )
             state.bind("pages", pages)
 
-            try await runtime.checkpoint(label: "progress:0.0:L52:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.1:L53:C0", state: state.snapshot())
         }
-        // L53
+        // L54
         if (!(((state.get("pages"))?.asList ?? []).filter { __e in (meridianDef_Page_unwritten(__e)) }).isEmpty) {
-            if __meridianShouldRun("progress:0.1.then.0:L54:C0") {
-                // L54
+            if __meridianShouldRun("progress:0.2.then.0:L55:C0") {
+                // L55
                 try await runtime.emit(event: "publish.blocked", payload: [:])
-                try await runtime.checkpoint(label: "progress:0.1.then.0:L54:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.2.then.0:L55:C0", state: state.snapshot())
             }
         }
 
-        if __meridianShouldRun("progress:0.2:L58:C0") {
-            // L58
+        if __meridianShouldRun("progress:0.3:L59:C0") {
+            // L59
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -618,10 +621,10 @@ public struct PublishInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.2:L58:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.3:L59:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.3:L58:C0") {
-            // L58
+        if __meridianShouldRun("progress:0.4:L59:C0") {
+            // L59
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -629,10 +632,10 @@ public struct PublishInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.3:L58:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.4:L59:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.4:L58:C0") {
-            // L58
+        if __meridianShouldRun("progress:0.5:L59:C0") {
+            // L59
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -640,10 +643,10 @@ public struct PublishInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.4:L58:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.5:L59:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.5:L58:C0") {
-            // L58
+        if __meridianShouldRun("progress:0.6:L59:C0") {
+            // L59
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -651,10 +654,10 @@ public struct PublishInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.5:L58:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.6:L59:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.6:L58:C0") {
-            // L58
+        if __meridianShouldRun("progress:0.7:L59:C0") {
+            // L59
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -662,18 +665,16 @@ public struct PublishInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.6:L58:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.7:L59:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.7:L123:C0") {
-            // L123
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain publish brain/trips/japan-2026.md --out trip.html"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.7:L123:C0", state: state.snapshot())
+        // L95
+        let __meridianProseResults_L95 = try await runtime.executeProsePlan(
+            prose: "follow the Option A: Local file (simplest) guidance\ncodeblock:bash:Z2JyYWluIHB1Ymxpc2ggYnJhaW4vcGVvcGxlL2phbmUtZG9lLm1kIC0tcGFzc3dvcmQgLS1vdXQgfi9EZXNrdG9wL2phbmUtYnJpZWZpbmcuaHRtbA==\nShare the HTML file via email, Slack, Airdrop. Share the password separately\nuse judgment to follow the Option B: Upload to cloud storage guidance:\ncodeblock:bash:IyBQdWJsaXNoIGxvY2FsbHkgZmlyc3QKZ2JyYWluIHB1Ymxpc2ggYnJhaW4vY29tcGFuaWVzL2FjbWUubWQgLS1wYXNzd29yZCAic2VjcmV0IiAtLW91dCAvdG1wL2FjbWUuaHRtbAoKIyBVcGxvYWQgdG8gU3VwYWJhc2UgU3RvcmFnZQpnYnJhaW4gZmlsZXMgdXBsb2FkIC90bXAvYWNtZS5odG1sIC0tcGFnZSBzaGFyZXMvYWNtZQoKIyBHZXQgYSBzaWduZWQgVVJMICgxLWhvdXIgZXhwaXJ5KQpnYnJhaW4gZmlsZXMgc2lnbmVkLXVybCBzaGFyZXMvYWNtZS9hY21lLmh0bWw=\nShare the signed URL + password. URL expires in 1 hour. Re-generate as needed\ncodeblock:bash:Z2JyYWluIHB1Ymxpc2ggYnJhaW4vdHJpcHMvamFwYW4tMjAyNi5tZCAtLW91dCB0cmlwLmh0bWwKIyBVcGxvYWQgdG8gYSBHaXRIdWIgR2lzdCBvciBQYWdlcyByZXBv\nuse judgment to follow the Updating a Published Page guidance:\nRe-run the publish command with the same output path:\ncodeblock:bash:Z2JyYWluIHB1Ymxpc2ggYnJhaW4vY29tcGFuaWVzL2FjbWUubWQgLS1wYXNzd29yZCAic2FtZS1wYXNzd29yZCIgLS1vdXQgc2hhcmVzL2FjbWUuaHRtbA==\nSame file, same URL (if hosted), updated content\nchecklist:ai-autonomy:KipQdWJsaXNoaW5nIHdpdGhvdXQgZW5jcnlwdGlvbi4qKiBCcmFpbiBjb250ZW50IGlzIHByaXZhdGUuIERlZmF1bHQgdG8gcGFzc3dvcmQtcHJvdGVjdGVkIHVubGVzcyB0aGUgdXNlciBleHBsaWNpdGx5IHNheXMgIm9wZW4iLCAibm8gcGFzc3dvcmQiLCBvciAicHVibGljIgoqKlNoYXJpbmcgcGFzc3dvcmQgYW5kIFVSTCBpbiB0aGUgc2FtZSBjaGFubmVsLioqIEFsd2F5cyBzaGFyZSB0aGUgcGFzc3dvcmQgdmlhIGEgZGlmZmVyZW50IGNoYW5uZWwgdGhhbiB0aGUgVVJMIGZvciBzZWN1cml0eQoqKkFzc3VtaW5nIHRoZSB1c2VyIHdhbnRzIHJhdyBtYXJrZG93bi4qKiBUaGUgcHVibGlzaCBjb21tYW5kIHByb2R1Y2VzIGJlYXV0aWZ1bCBIVE1MLiBEb24ndCBjb3B5LXBhc3RlIG1hcmtkb3duIHdoZW4gYGdicmFpbiBwdWJsaXNoYCBleGlzdHMKKipJbmNsdWRpbmcgaW50ZXJuYWwgbWV0YWRhdGEuKiogTmV2ZXIgbWFudWFsbHkgc2hhcmUgY29udGVudCB0aGF0IGNvbnRhaW5zIGZyb250bWF0dGVyLCBzb3VyY2UgY2l0YXRpb25zLCBvciB0aW1lbGluZSBzZWN0aW9ucy4gTGV0IHRoZSBwdWJsaXNoIGNvbW1hbmQgc3RyaXAgaXQ=",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.search", "shell.run"]
+        )
+        for (__key, __value) in __meridianProseResults_L95 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

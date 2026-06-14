@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -589,13 +581,35 @@ public struct RepoArchitectureInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "RepoArchitectureInput", parameters: [:])
 
-        // L32
-        let __meridianProseResults_L32 = try await runtime.executeProsePlan(
+        // L27
+        let __meridianProseResults_L27 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Every new page is filed by primary subject (not format, not source)\n- The decision protocol is followed for ambiguous cases\n- Common misfiling patterns are caught",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.list", "page.search", "shell.run"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L27 {
+            state.bind(__key, __value)
+        }
+        // L33
+        let __meridianProseResults_L33 = try await runtime.executeProsePlan(
             prose: "file a new brain page by its primary subject\nIdentify the primary subject (what you would search for to find this page)\nWalk the decision tree: a person to people/, a company to companies/, a reusable concept to concepts/, an original idea to originals/, a meeting to meetings/, media to media/, and a raw data import to sources/\nCross-link from related directories\nCheck the notability gate before creating the page",
             snapshot: state.snapshot(),
             scopedTools: ["page.get", "page.list", "page.search", "shell.run"]
         )
-        for (__key, __value) in __meridianProseResults_L32 {
+        for (__key, __value) in __meridianProseResults_L33 {
+            state.bind(__key, __value)
+        }
+        // L46
+        let __meridianProseResults_L46 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Filing by format (\"it's a PDF so it goes in sources/\")\n- Filing by source (\"it came from email so it goes in sources/\")\n- Creating pages without checking if one already exists\n- Using `sources/` for anything except raw data dumps",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.list", "page.search", "shell.run"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L46 {
             state.bind(__key, __value)
         }
 

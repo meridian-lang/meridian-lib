@@ -46,9 +46,9 @@ Per skill, the required edits are bounded to:
 2. **Prefer, in order:** (a) a heading that already resolves to a recognized
    role; (b) a `=== sections ===` rulebook alias for an organizational heading;
    (c) an explicit marker on the existing heading — `(( inert ))` for narrative
-   documentation, `(( inert, role: invariants ))` / `(( inert, role: prohibitions ))`
-   for prose `## Contract` / `## Anti-Patterns`, or `(( role: <R> ))` to force a
-   role inline.
+   documentation or templates, `(( inert, role: invariants ))` /
+   `(( inert, role: prohibitions ))` only when the prose is not structurally
+   checkable, or `(( role: <R> ))` to force a role inline.
 3. **As needed:** wrap genuine judgment lines in `use judgment to …:` /
    mark a phase `with discretion:`.
 4. **Rarely (structural rewrite):** split a MIXED prose+steps section into an
@@ -60,8 +60,10 @@ Per skill, the required edits are bounded to:
 can; the strict compile surfaces the residue (3)–(4) as located errors.
 
 > **The migrator adds section titles to the rulebook for you.** When the marking
-> pass meets an unrecognized **executable** heading (a section whose body is only
-> shell fences — see option 2(b)), it does **not** stamp an inline
+> pass meets an unrecognized **executable-only** heading (a section whose body is
+> made only of deterministic Markdown surfaces such as shell fences, whole-line
+> or embedded backticked commands, explicit table/checklist markers, checkable
+> task-list items, or choice gates), it does **not** stamp an inline
 > `(( role: procedure ))`. Instead it leaves the heading clean and emits a
 > `=== sections ===` alias (`section "<heading>" -> procedure`), which the CLI
 > **appends to the rulebook** — the first `--rulebook` given, else the first
@@ -70,8 +72,8 @@ can; the strict compile surfaces the residue (3)–(4) as located errors.
 > in stdout/preview mode (no `--out`), the aliases are printed as a snippet
 > instead of written. So the rulebook accretes the corpus's organizational
 > headings over a batch migration, and re-running compiles cleanly with no
-> in-file markers. Narrative (non-shell) unknowns still get `(( inert ))`; the
-> migrator only auto-aliases headings it can prove are executable.
+> in-file markers. Mixed narrative/procedure unknowns still get `(( inert ))`;
+> split them structurally before making the executable part live.
 
 > **`(( role: procedure ))` is redundant on a recognized procedure heading —
 > don't add it.** `procedure` is the *implicit* role for any heading whose text
@@ -126,13 +128,18 @@ surface" for the grammar.
 
 - **Procedure idioms** (rulebook desugars): `If … -> …`, `If … then …`,
   bare `for each <kind>:`, `Report:` / `Output:` → emit, checklists.
-- **Command surface:** fenced ` ```bash `/` ```sh `/` ```shell ` blocks AND
-  inline backticked `gbrain …` commands inside a `procedure`-role section lower
-  to `invoke shell.run with command = "<verbatim>"`. Multi-line blocks lower to
-  one invoke per command line. This is a deterministic `invoke` (never an LLM)
-  and avoids pre-declaring ~80 CLI verbs.
-- **Choice-gate:** `ask the user to choose between "A", "B", or "C".` → emit
-  `ask.choice` + `wait` (`WaitConditionIR.choice`) + branch on the response.
+- **Command surface:** fenced ` ```bash `/` ```sh `/` ```shell ` blocks,
+  whole-line backticked commands, and command-looking embedded backtick spans
+  inside labelled/listed procedure prose lower to `invoke shell.run with command
+  = "<verbatim>"`. Surrounding prose becomes the source annotation. Multi-line
+  blocks lower to one invoke per command line. This is a deterministic `invoke`
+  (never an LLM) and avoids pre-declaring ~80 CLI verbs.
+- **Choice-gate:** `ask the user to choose between "A", "B", or "C".` and the
+  Markdown option-list form (`ask the user to choose between:` followed by
+  indented numbered/bulleted/quoted options) emit `ask.choice` + `wait`
+  (`WaitConditionIR.choice`). Follow-up `if yes:`, `if no:`, `if the user
+  agrees:`, `if the user declines:`, and `if the user picks/selects/chooses N:`
+  lines lower to deterministic branches over the selected value.
 - **Background spawn:** `in the background, <stmt>.` → detached `Task {}` (no
   join).
 - **Conventions:** Iron-Law back-linking, notability gate, and brain-first are
@@ -359,6 +366,34 @@ within the budget above.
     `inert`. Worked example: `eiirp`'s `### Confirm` acceptance checklist was
     `(( inert ))`; it is now `!!! checklist (( ai-autonomy ))`, so the seven
     criteria become an autonomous loop that closes the workflow.
+
+13. **Operational inert must go to zero.** The deviation index reports
+    `Operational inert`, `Unclassified inert`, and an inert-category breakdown;
+    per-file reports list every inert heading with its category and reason.
+    Treat both `unclassified` and `operational inert` as porting bugs.
+    Operational inert means a section is procedure-shaped, checkable/normative,
+    or contains executable Markdown surfaces but is still suppressed. Fix it by
+    removing the marker, adding a section alias, splitting mixed prose, lowering
+    deterministic lines, or explicitly routing fuzzy work with
+    `ai-discretion` / `ai-autonomy`.
+
+14. **`Contract` / `Anti-Patterns` are executable or explicitly AI-routed.**
+    When every line is checkable, leave the section live so invariant/prohibition
+    lowering can produce assertions. When the contract is fuzzy or mixed, do not
+    leave it `(( inert, role: invariants/prohibitions ))`; make it an executable
+    procedure section and route the checklist to the planner:
+
+    ```meri
+    ## Contract (( role: procedure ))
+
+    !!! checklist (( ai-autonomy ))
+    - [ ] Every fact has a source citation.
+    - [ ] Gaps are called out explicitly.
+    ```
+
+    Long operational prose that cannot be deterministically lowered should use
+    an explicit judgment block, e.g. `use judgment to follow the <heading>
+    guidance:`. That form intentionally collects prose until the next heading.
 
 ---
 

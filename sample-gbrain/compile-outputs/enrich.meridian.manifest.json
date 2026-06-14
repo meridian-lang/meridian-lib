@@ -98,7 +98,7 @@
     "name" : "enrich",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 33,
         "text" : "Contract"
@@ -106,191 +106,162 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 46,
+        "line" : 47,
         "text" : "Philosophy"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 52,
+        "line" : 53,
         "text" : "Citation Requirements (MANDATORY)"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 58,
+        "line" : 59,
         "text" : "When To Enrich"
       },
       {
         "kind" : "applicability",
         "level" : 3,
-        "line" : 60,
+        "line" : 61,
         "text" : "Primary triggers"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 67,
+        "line" : 68,
         "text" : "Do NOT enrich"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 73,
+        "line" : 74,
         "text" : "Enrichment Tiers"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 83,
+        "line" : 84,
         "text" : "The Enrichment Protocol (7 Steps)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 85,
+        "line" : 86,
         "text" : "Step 1: Identify entities"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 89,
+        "line" : 90,
         "text" : "Step 2: Check brain state"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 96,
+        "line" : 97,
         "text" : "Step 3: Extract signal from source"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 110,
+        "line" : 111,
         "text" : "Step 4: External data source lookups"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 144,
+        "line" : 145,
         "text" : "Step 5: Save raw data (preserves provenance)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 159,
+        "line" : 160,
         "text" : "Step 6: Write to brain"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 267,
+        "line" : 268,
         "text" : "Step 7: Cross-reference"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 280,
+        "line" : 281,
         "text" : "Bulk Enrichment Rules"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 289,
+        "line" : 290,
         "text" : "Validation Rules"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 297,
+        "line" : 298,
         "text" : "Report Storage"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 308,
+        "line" : 309,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 315,
+        "line" : 317,
         "text" : "Output Format"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 336,
+        "line" : 338,
         "text" : "Tools Used"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 35,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 39,
-        "text" : "Tiered enrichment"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 40,
-        "text" : "No stubs"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 91,
+        "line" : 92,
         "text" : "For each entity"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 116,
-        "text" : "Check related pages"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 295,
+        "line" : 296,
         "text" : "When in doubt"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 317,
+        "line" : 319,
         "text" : "An enriched person page contains"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 327,
+        "line" : 329,
         "text" : "An enriched company page contains"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 33,
         "lines" : [
-          "This skill guarantees:",
-          "Every enriched page has compiled truth (State section) with inline citations",
-          "Every enriched page has a timeline with dated entries",
-          "Back-links are created bidirectionally",
-          "Tiered enrichment: Tier 1 (full), Tier 2 (medium), Tier 3 (minimal) based on notability",
-          "No stubs: every new page has meaningful content from web search or existing brain context"
+          "checklist:ai-autonomy:RXZlcnkgZW5yaWNoZWQgcGFnZSBoYXMgY29tcGlsZWQgdHJ1dGggKFN0YXRlIHNlY3Rpb24pIHdpdGggaW5saW5lIGNpdGF0aW9ucwpFdmVyeSBlbnJpY2hlZCBwYWdlIGhhcyBhIHRpbWVsaW5lIHdpdGggZGF0ZWQgZW50cmllcwpCYWNrLWxpbmtzIGFyZSBjcmVhdGVkIGJpZGlyZWN0aW9uYWxseQpUaWVyZWQgZW5yaWNobWVudDogVGllciAxIChmdWxsKSwgVGllciAyIChtZWRpdW0pLCBUaWVyIDMgKG1pbmltYWwpIGJhc2VkIG9uIG5vdGFiaWxpdHkKTm8gc3R1YnM6IGV2ZXJ5IG5ldyBwYWdlIGhhcyBtZWFuaW5nZnVsIGNvbnRlbnQgZnJvbSB3ZWIgc2VhcmNoIG9yIGV4aXN0aW5nIGJyYWluIGNvbnRleHQ="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Philosophy",
-        "line" : 46,
+        "line" : 47,
         "lines" : [
           "A brain page should read like an intelligence dossier, not a LinkedIn scrape",
           "Facts are table stakes. Texture is the value -- what do they believe, what are",
@@ -301,7 +272,7 @@
       {
         "executes" : false,
         "heading" : "Citation Requirements (MANDATORY)",
-        "line" : 52,
+        "line" : 53,
         "lines" : [
           "When sources conflict, note the contradiction with both citations"
         ],
@@ -310,7 +281,7 @@
       {
         "executes" : false,
         "heading" : "When To Enrich",
-        "line" : 58,
+        "line" : 59,
         "lines" : [
 
         ],
@@ -319,7 +290,7 @@
       {
         "executes" : true,
         "heading" : "Primary triggers",
-        "line" : 60,
+        "line" : 61,
         "lines" : [
           "User mentions an entity in conversation",
           "Entity appears in a meeting transcript or email",
@@ -332,7 +303,7 @@
       {
         "executes" : false,
         "heading" : "Do NOT enrich",
-        "line" : 67,
+        "line" : 68,
         "lines" : [
           "Random mentions with no relationship signal",
           "Bot\/spam accounts",
@@ -342,19 +313,20 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Enrichment Tiers",
-        "line" : 73,
+        "line" : 74,
         "lines" : [
+          "use judgment to follow the Enrichment Tiers guidance:",
           "Scale enrichment to importance. Don't waste API calls on low-value entities",
           "table:decision:fCBUaWVyIHwgV2hvIHwgRWZmb3J0IHwgU291cmNlcyB8CnwtLS0tLS18LS0tLS18LS0tLS0tLS18LS0tLS0tLS0tfAp8IDEgKGtleSkgfCBJbm5lciBjaXJjbGUsIGNsb3NlIGNvbGxhYm9yYXRvcnMsIGtleSBjb250YWN0cyB8IEZ1bGwgcGlwZWxpbmUgfCBBbGwgYXZhaWxhYmxlIEFQSXMgKyBkZWVwIHdlYiByZXNlYXJjaCB8CnwgMiAobm90YWJsZSkgfCBPY2Nhc2lvbmFsIGludGVyYWN0aW9ucywgaW5kdXN0cnkgZmlndXJlcyB8IE1vZGVyYXRlIHwgV2ViIHJlc2VhcmNoICsgc29jaWFsICsgYnJhaW4gY3Jvc3MtcmVmIHwKfCAzIChtaW5vcikgfCBXb3J0aCB0cmFja2luZywgbm90IGNyaXRpY2FsIHwgTGlnaHQgfCBCcmFpbiBjcm9zcy1yZWYgKyBzb2NpYWwgbG9va3VwIGlmIGhhbmRsZSBrbm93biB8"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "The Enrichment Protocol (7 Steps)",
-        "line" : 83,
+        "line" : 84,
         "lines" : [
 
         ],
@@ -363,7 +335,7 @@
       {
         "executes" : false,
         "heading" : "Step 1: Identify entities",
-        "line" : 85,
+        "line" : 86,
         "lines" : [
           "Extract people, companies, concepts from the incoming signal"
         ],
@@ -372,7 +344,7 @@
       {
         "executes" : false,
         "heading" : "Step 2: Check brain state",
-        "line" : 89,
+        "line" : 90,
         "lines" : [
           "For each entity:",
           "`gbrain search \"name\"` -- does a page already exist?",
@@ -382,45 +354,47 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Step 3: Extract signal from source",
-        "line" : 96,
+        "line" : 97,
         "lines" : [
+          "use judgment to follow the Step 3: Extract signal from source guidance:",
           "Don't just capture facts. Capture texture:",
           "table:decision:fCBTaWduYWwgVHlwZSB8IFdoYXQgdG8gRXh0cmFjdCB8CnwtLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgT3BpbmlvbnMsIGJlbGllZnMgfCBXaGF0IFRoZXkgQmVsaWV2ZSBzZWN0aW9uIHwKfCBDdXJyZW50IHByb2plY3RzLCBmZWF0dXJlcyBzaGlwcGVkIHwgV2hhdCBUaGV5J3JlIEJ1aWxkaW5nIHNlY3Rpb24gfAp8IEFtYml0aW9uLCBjYXJlZXIgYXJjLCBtb3RpdmF0aW9uIHwgV2hhdCBNb3RpdmF0ZXMgVGhlbSBzZWN0aW9uIHwKfCBUb3BpY3MgdGhleSByZXR1cm4gdG8gb2JzZXNzaXZlbHkgfCBIb2JieSBIb3JzZXMgc2VjdGlvbiB8CnwgV2hvIHRoZXkgYW1wbGlmeSwgYXJndWUgd2l0aCwgcmVzcGVjdCB8IE5ldHdvcmsgLyBSZWxhdGlvbnNoaXBzIHwKfCBBc2NlbmRpbmcsIHBsYXRlYXVpbmcsIHBpdm90aW5nPyB8IFRyYWplY3Rvcnkgc2VjdGlvbiB8CnwgUm9sZSwgY29tcGFueSwgZnVuZGluZywgbG9jYXRpb24gfCBTdGF0ZSBzZWN0aW9uIChoYXJkIGZhY3RzKSB8"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Step 4: External data source lookups",
-        "line" : 110,
+        "line" : 111,
         "lines" : [
+          "use judgment to follow the Step 4: External data source lookups guidance:",
           "Priority order -- stop when you have enough signal for the entity's tier",
           "**4a. Brain cross-reference (always, all tiers)**",
-          "`gbrain search \"name\"` and `gbrain query \"what do we know about name\"`",
-          "Check related pages: company pages for person enrichment and vice versa",
-          "This is free and often the richest source",
+          "item: `gbrain search \"name\"` and `gbrain query \"what do we know about name\"`",
+          "item: Check related pages: company pages for person enrichment and vice versa",
+          "item: This is free and often the richest source",
           "**4b. Web research (Tier 1 and 2)**",
-          "Use Perplexity, Brave Search, Exa, or equivalent web research tool",
-          "**Key pattern:** Send existing brain knowledge as context so the search",
+          "item: Use Perplexity, Brave Search, Exa, or equivalent web research tool",
+          "item: **Key pattern:** Send existing brain knowledge as context so the search",
           "returns DELTA (what's new vs what you already know), not a rehash",
-          "Opus-class models for Tier 1 deep research, lighter models for Tier 2",
+          "item: Opus-class models for Tier 1 deep research, lighter models for Tier 2",
           "**4c. Social media lookup (all tiers when handle known)**",
-          "Pull recent posts\/tweets for tone, interests, current focus",
-          "Social media is the highest-texture signal for what someone actually thinks",
+          "item: Pull recent posts\/tweets for tone, interests, current focus",
+          "item: Social media is the highest-texture signal for what someone actually thinks",
           "**4d. People enrichment APIs (Tier 1)**",
-          "LinkedIn data, career history, connections, education",
+          "item: LinkedIn data, career history, connections, education",
           "**4e. Company enrichment APIs (Tier 1)**",
-          "Company data, financials, headcount, key hires, recent news",
+          "item: Company data, financials, headcount, key hires, recent news",
           "table:decision:fCBEYXRhIE5lZWQgfCBFeGFtcGxlIFNvdXJjZXMgfCBUaWVyIHwKfC0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18LS0tLS0tfAp8IFdlYiByZXNlYXJjaCB8IFBlcnBsZXhpdHksIEJyYXZlLCBFeGEgfCAxLTIgfAp8IExpbmtlZEluIC8gY2FyZWVyIHwgQ3J1c3RkYXRhLCBQcm94eWN1cmwsIFBlb3BsZSBEYXRhIExhYnMgfCAxIHwKfCBDYXJlZXIgaGlzdG9yeSB8IEhhcHBlbnN0YW5jZSwgTGlua2VkSW4gfCAxIHwKfCBGdW5kaW5nIC8gY29tcGFueSBkYXRhIHwgQ3J1bmNoYmFzZSwgUGl0Y2hCb29rLCBDbGVhcmJpdCB8IDEgfAp8IFNvY2lhbCBtZWRpYSB8IFBsYXRmb3JtIEFQSXMsIHdlYiBzY3JhcGluZyB8IDEtMyB8CnwgTWVldGluZyBoaXN0b3J5IHwgQ2FsZW5kYXIvbWVldGluZyB0cmFuc2NyaXB0IHRvb2xzIHwgMS0yIHw="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Step 5: Save raw data (preserves provenance)",
-        "line" : 144,
+        "line" : 145,
         "lines" : [
           "Store raw API responses via `put_raw_data` in gbrain:",
           "codeblock:json:ewogICJzb3VyY2UiOiAiY3J1c3RkYXRhIiwKICAiZmV0Y2hlZF9hdCI6ICIyMDI2LTA0LTExVC4uLiIsCiAgInF1ZXJ5IjogImphbmUgZG9lIiwKICAiZGF0YSI6IHsgLi4uIH0KfQ==",
@@ -432,7 +406,7 @@
       {
         "executes" : false,
         "heading" : "Step 6: Write to brain",
-        "line" : 159,
+        "line" : 160,
         "lines" : [
           "Check notability gate (see `skills\/_brain-filing-rules.md`)",
           "Check filing rules -- where does this entity go?",
@@ -445,7 +419,7 @@
           "Update State section with new facts",
           "Flag contradictions between new signal and existing compiled truth",
           "Don't overwrite user-written assessments with API boilerplate",
-          "codeblock:markdown:LS0tCnRpdGxlOiBGdWxsIE5hbWUKdHlwZTogcGVyc29uCmNyZWF0ZWQ6IFlZWVktTU0tREQKdXBkYXRlZDogWVlZWS1NTS1ERAp0YWdzOiBbXQpjb21wYW55OiBDdXJyZW50IENvbXBhbnkKcmVsYXRpb25zaGlwOiBIb3cgdGhlIHVzZXIga25vd3MgdGhlbQplbWFpbDoKbGlua2VkaW46CnR3aXR0ZXI6CmxvY2F0aW9uOgotLS0KCiMgRnVsbCBOYW1lCgo+IDEtcGFyYWdyYXBoIGV4ZWN1dGl2ZSBzdW1tYXJ5OiBIT1cgZG8geW91IGtub3cgdGhlbSwgV0hZIGRvIHRoZXkgbWF0dGVyLAo+IHdoYXQncyB0aGUgY3VycmVudCBzdGF0ZSBvZiB0aGUgcmVsYXRpb25zaGlwLgoKIyMgU3RhdGUgKCggaW5lcnQgKSkKUm9sZSwgY29tcGFueSwga2V5IGNvbnRleHQuIEhhcmQgZmFjdHMgb25seS4KCiMjIFdoYXQgVGhleSBCZWxpZXZlICgoIGluZXJ0ICkpCklkZW9sb2d5LCBmaXJzdCBwcmluY2lwbGVzLCB3b3JsZHZpZXcuIFdoYXQgaGlsbHMgZG8gdGhleSBkaWUgb24\/CgojIyBXaGF0IFRoZXkncmUgQnVpbGRpbmcgKCggaW5lcnQgKSkKQ3VycmVudCBwcm9qZWN0cywgcmVjZW50IGxhdW5jaGVzLCB3aGF0IHRoZXkncmUgZm9jdXNlZCBvbi4KCiMjIFdoYXQgTW90aXZhdGVzIFRoZW0gKCggaW5lcnQgKSkKQW1iaXRpb24sIGNhcmVlciBhcmMsIHdoYXQgZHJpdmVzIHRoZW0uCgojIyBIb2JieSBIb3JzZXMgKCggaW5lcnQgKSkKVG9waWNzIHRoZXkgcmV0dXJuIHRvIG9ic2Vzc2l2ZWx5LiBSZWN1cnJpbmcgdGhlbWVzIGluIHRoZWlyIHdvcmsvcG9zdHMuCgojIyBBc3Nlc3NtZW50ICgoIGluZXJ0ICkpCllvdXIgcmVhZCBvbiB0aGlzIHBlcnNvbi4gU3RyZW5ndGhzLCBnYXBzLCB0cmFqZWN0b3J5LgoKIyMgVHJhamVjdG9yeSAoKCBpbmVydCApKQpBc2NlbmRpbmcsIHBsYXRlYXVpbmcsIHBpdm90aW5nLCBkZWNsaW5pbmc\/IFdoZXJlIGFyZSB0aGV5IGhlYWRlZD8KCiMjIFJlbGF0aW9uc2hpcCAoKCBpbmVydCApKQpIaXN0b3J5IG9mIGludGVyYWN0aW9ucywgc2hhcmVkIGNvbnRleHQsIHJlbGF0aW9uc2hpcCBxdWFsaXR5LgoKIyMgQ29udGFjdCAoKCBpbmVydCApKQpFbWFpbCwgc29jaWFsIGhhbmRsZXMsIHByZWZlcnJlZCBjb21tdW5pY2F0aW9uIGNoYW5uZWwuCgojIyBOZXR3b3JrICgoIGluZXJ0ICkpCktleSBjb25uZWN0aW9ucywgbXV0dWFsIGNvbnRhY3RzLCBvcmdhbml6YXRpb25hbCByZWxhdGlvbnNoaXBzLgoKIyMgT3BlbiBUaHJlYWRzICgoIGluZXJ0ICkpCkFjdGl2ZSBjb252ZXJzYXRpb25zLCBwZW5kaW5nIGl0ZW1zLCB0aGluZ3MgdG8gZm9sbG93IHVwIG9uLgoKLS0tCgojIyBUaW1lbGluZSAoKCBpbmVydCApKQpSZXZlcnNlIGNocm9ub2xvZ2ljYWwuIEV2ZXJ5IGVudHJ5IGhhcyBhIGRhdGUgYW5kIFtTb3VyY2U6IC4uLl0gY2l0YXRpb24uCi0gKipZWVlZLU1NLUREKiogfCBFdmVudCBkZXNjcmlwdGlvbiBbU291cmNlOiAuLi5d",
+          "codeblock:markdown:LS0tCnRpdGxlOiBGdWxsIE5hbWUKdHlwZTogcGVyc29uCmNyZWF0ZWQ6IFlZWVktTU0tREQKdXBkYXRlZDogWVlZWS1NTS1ERAp0YWdzOiBbXQpjb21wYW55OiBDdXJyZW50IENvbXBhbnkKcmVsYXRpb25zaGlwOiBIb3cgdGhlIHVzZXIga25vd3MgdGhlbQplbWFpbDoKbGlua2VkaW46CnR3aXR0ZXI6CmxvY2F0aW9uOgotLS0KICAKIyBGdWxsIE5hbWUKICAKPiAxLXBhcmFncmFwaCBleGVjdXRpdmUgc3VtbWFyeTogSE9XIGRvIHlvdSBrbm93IHRoZW0sIFdIWSBkbyB0aGV5IG1hdHRlciwKPiB3aGF0J3MgdGhlIGN1cnJlbnQgc3RhdGUgb2YgdGhlIHJlbGF0aW9uc2hpcC4KCiMjIFN0YXRlICgoIGluZXJ0ICkpClJvbGUsIGNvbXBhbnksIGtleSBjb250ZXh0LiBIYXJkIGZhY3RzIG9ubHkuCgojIyBXaGF0IFRoZXkgQmVsaWV2ZSAoKCBpbmVydCApKQpJZGVvbG9neSwgZmlyc3QgcHJpbmNpcGxlcywgd29ybGR2aWV3LiBXaGF0IGhpbGxzIGRvIHRoZXkgZGllIG9uPwoKIyMgV2hhdCBUaGV5J3JlIEJ1aWxkaW5nICgoIGluZXJ0ICkpCkN1cnJlbnQgcHJvamVjdHMsIHJlY2VudCBsYXVuY2hlcywgd2hhdCB0aGV5J3JlIGZvY3VzZWQgb24uCgojIyBXaGF0IE1vdGl2YXRlcyBUaGVtICgoIGluZXJ0ICkpCkFtYml0aW9uLCBjYXJlZXIgYXJjLCB3aGF0IGRyaXZlcyB0aGVtLgoKIyMgSG9iYnkgSG9yc2VzICgoIGluZXJ0ICkpClRvcGljcyB0aGV5IHJldHVybiB0byBvYnNlc3NpdmVseS4gUmVjdXJyaW5nIHRoZW1lcyBpbiB0aGVpciB3b3JrL3Bvc3RzLgoKIyMgQXNzZXNzbWVudCAoKCBpbmVydCApKQpZb3VyIHJlYWQgb24gdGhpcyBwZXJzb24uIFN0cmVuZ3RocywgZ2FwcywgdHJhamVjdG9yeS4KCiMjIFRyYWplY3RvcnkgKCggaW5lcnQgKSkKQXNjZW5kaW5nLCBwbGF0ZWF1aW5nLCBwaXZvdGluZywgZGVjbGluaW5nPyBXaGVyZSBhcmUgdGhleSBoZWFkZWQ\/CgojIyBSZWxhdGlvbnNoaXAgKCggaW5lcnQgKSkKSGlzdG9yeSBvZiBpbnRlcmFjdGlvbnMsIHNoYXJlZCBjb250ZXh0LCByZWxhdGlvbnNoaXAgcXVhbGl0eS4KCiMjIENvbnRhY3QgKCggaW5lcnQgKSkKRW1haWwsIHNvY2lhbCBoYW5kbGVzLCBwcmVmZXJyZWQgY29tbXVuaWNhdGlvbiBjaGFubmVsLgoKIyMgTmV0d29yayAoKCBpbmVydCApKQpLZXkgY29ubmVjdGlvbnMsIG11dHVhbCBjb250YWN0cywgb3JnYW5pemF0aW9uYWwgcmVsYXRpb25zaGlwcy4KCiMjIE9wZW4gVGhyZWFkcyAoKCBpbmVydCApKQpBY3RpdmUgY29udmVyc2F0aW9ucywgcGVuZGluZyBpdGVtcywgdGhpbmdzIHRvIGZvbGxvdyB1cCBvbi4KCi0tLQoKIyMgVGltZWxpbmUgKCggaW5lcnQgKSkKUmV2ZXJzZSBjaHJvbm9sb2dpY2FsLiBFdmVyeSBlbnRyeSBoYXMgYSBkYXRlIGFuZCBbU291cmNlOiAuLi5dIGNpdGF0aW9uLgotICoqWVlZWS1NTS1ERCoqIHwgRXZlbnQgZGVzY3JpcHRpb24gW1NvdXJjZTogLi4uXQ==",
           "codeblock:markdown:LS0tCnRpdGxlOiBDb21wYW55IE5hbWUKdHlwZTogY29tcGFueQpjcmVhdGVkOiBZWVlZLU1NLURECnVwZGF0ZWQ6IFlZWVktTU0tREQKdGFnczogW10KLS0tCgojIENvbXBhbnkgTmFtZQoKPiAxLXBhcmFncmFwaCBleGVjdXRpdmUgc3VtbWFyeS4KCiMjIFN0YXRlICgoIGluZXJ0ICkpCldoYXQgdGhleSBkbywgc3RhZ2UsIGtleSBwZW9wbGUsIGtleSBtZXRyaWNzLCB5b3VyIGNvbm5lY3Rpb24uCgojIyBPcGVuIFRocmVhZHMgKCggaW5lcnQgKSkKQWN0aXZlIGl0ZW1zLCBwZW5kaW5nIGRlY2lzaW9ucywgdGhpbmdzIHRvIHRyYWNrLgoKLS0tCgojIyBUaW1lbGluZSAoKCBpbmVydCApKQotICoqWVlZWS1NTS1ERCoqIHwgRXZlbnQgZGVzY3JpcHRpb24gW1NvdXJjZTogLi4uXQ=="
         ],
         "role" : "inert"
@@ -453,7 +427,7 @@
       {
         "executes" : false,
         "heading" : "Step 7: Cross-reference",
-        "line" : 267,
+        "line" : 268,
         "lines" : [
           "Update company pages from person enrichment (and vice versa)",
           "Update related project\/deal pages if relevant context surfaced",
@@ -470,7 +444,7 @@
       {
         "executes" : false,
         "heading" : "Bulk Enrichment Rules",
-        "line" : 280,
+        "line" : 281,
         "lines" : [
           "**Test on 3-5 entities first.** Read actual output. Check quality",
           "Only proceed to bulk after test shots pass your quality bar",
@@ -484,7 +458,7 @@
       {
         "executes" : false,
         "heading" : "Validation Rules",
-        "line" : 289,
+        "line" : 290,
         "lines" : [
           "Connection count < 20 on LinkedIn = likely wrong person, skip",
           "Name mismatch between brain and API = skip, flag for review",
@@ -497,7 +471,7 @@
       {
         "executes" : false,
         "heading" : "Report Storage",
-        "line" : 297,
+        "line" : 298,
         "lines" : [
           "After enrichment sweeps, save a report:",
           "Number of entities processed",
@@ -510,21 +484,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 308,
+        "line" : 309,
         "lines" : [
-          "Creating stub pages with no content",
-          "Enriching without checking brain first",
-          "Overwriting user's direct statements with API data",
-          "Creating pages for non-notable entities"
+          "checklist:ai-autonomy:Q3JlYXRpbmcgc3R1YiBwYWdlcyB3aXRoIG5vIGNvbnRlbnQKRW5yaWNoaW5nIHdpdGhvdXQgY2hlY2tpbmcgYnJhaW4gZmlyc3QKT3ZlcndyaXRpbmcgdXNlcidzIGRpcmVjdCBzdGF0ZW1lbnRzIHdpdGggQVBJIGRhdGEKQ3JlYXRpbmcgcGFnZXMgZm9yIG5vbi1ub3RhYmxlIGVudGl0aWVz"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 315,
+        "line" : 317,
         "lines" : [
           "An enriched person page contains:",
           "**Frontmatter** with type, tags, company, relationship, and contact fields",
@@ -548,7 +519,7 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 336,
+        "line" : 338,
         "lines" : [
           "Read a page from gbrain (get_page)",
           "Store\/update a page in gbrain (put_page)",
@@ -604,44 +575,52 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 625
+      "meridian_line" : 37,
+      "swift_line" : 586
+    },
+    {
+      "meridian_line" : 76,
+      "swift_line" : 597
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 630
+      "swift_line" : 635
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 671
+      "swift_line" : 640
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 676
+      "swift_line" : 679
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 717
+      "swift_line" : 684
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 722
+      "swift_line" : 723
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 728
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 767
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 809
+      "swift_line" : 772
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 814
+      "swift_line" : 811
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 816
     }
   ],
   "tools_used" : [

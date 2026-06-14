@@ -98,7 +98,7 @@
     "name" : "daily-task-prep",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 23,
         "text" : "Contract"
@@ -106,46 +106,36 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 31,
+        "line" : 32,
         "text" : "Phases"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 43,
+        "line" : 44,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 62,
+        "line" : 63,
         "text" : "Anti-Patterns"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 25,
-        "text" : "This skill guarantees"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 23,
         "lines" : [
-          "This skill guarantees:",
-          "Calendar\/meetings for today are loaded with brain context per attendee",
-          "Open threads from yesterday are surfaced",
-          "Active tasks reviewed with priority ordering",
-          "Prep briefing is actionable (not just informational)"
+          "checklist:ai-autonomy:Q2FsZW5kYXIvbWVldGluZ3MgZm9yIHRvZGF5IGFyZSBsb2FkZWQgd2l0aCBicmFpbiBjb250ZXh0IHBlciBhdHRlbmRlZQpPcGVuIHRocmVhZHMgZnJvbSB5ZXN0ZXJkYXkgYXJlIHN1cmZhY2VkCkFjdGl2ZSB0YXNrcyByZXZpZXdlZCB3aXRoIHByaW9yaXR5IG9yZGVyaW5nClByZXAgYnJpZWZpbmcgaXMgYWN0aW9uYWJsZSAobm90IGp1c3QgaW5mb3JtYXRpb25hbCk="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 31,
+        "line" : 32,
         "lines" : [
           "codeblock:bash:Z2JyYWluIGdldCBvcHMvdGFza3M=",
           "use judgment to compile the morning prep briefing:",
@@ -159,22 +149,20 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 43,
+        "line" : 44,
         "lines" : [
           "codeblock:plain:TW9ybmluZyBQcmVwIOKAlCB7ZGF0ZX0KPT09PT09PT09PT09PT09PT09PT09PQpNZWV0aW5ncyB0b2RheToge059CgojIyB7TWVldGluZyAxIHRpdGxlfSBhdCB7dGltZX0gKCggaW5lcnQgKSkKQXR0ZW5kZWVzOiB7bmFtZXMgd2l0aCBicmFpbiBjb250ZXh0fQpDb250ZXh0OiB7cmVjZW50IGludGVyYWN0aW9ucywgb3BlbiB0aHJlYWRzfQpQcmVwOiB7d2hhdCB0byBrbm93IGJlZm9yZSB0aGlzIG1lZXRpbmd9CgojIyBPcGVuIFRocmVhZHMgKCggaW5lcnQgKSkKLSB7dGhyZWFkIGZyb20geWVzdGVyZGF5LCB3aXRoIGNvbnRleHR9CgojIyBUYXNrcyAoUDAtUDEpICgoIGluZXJ0ICkpCi0ge3Rhc2sgd2l0aCBwcmlvcml0eX0="
         ],
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 62,
+        "line" : 63,
         "lines" : [
-          "Listing meetings without loading attendee context from brain",
-          "Ignoring yesterday's unresolved threads",
-          "Presenting tasks without priority ordering"
+          "checklist:ai-autonomy:TGlzdGluZyBtZWV0aW5ncyB3aXRob3V0IGxvYWRpbmcgYXR0ZW5kZWUgY29udGV4dCBmcm9tIGJyYWluCklnbm9yaW5nIHllc3RlcmRheSdzIHVucmVzb2x2ZWQgdGhyZWFkcwpQcmVzZW50aW5nIHRhc2tzIHdpdGhvdXQgcHJpb3JpdHkgb3JkZXJpbmc="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "tools" : "search\nquery\nget_page\nlist_pages\nget_timeline",
@@ -217,44 +205,52 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 33,
-      "swift_line" : 593
+      "meridian_line" : 27,
+      "swift_line" : 584
     },
     {
-      "meridian_line" : 37,
-      "swift_line" : 603
+      "meridian_line" : 34,
+      "swift_line" : 596
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 641
+      "meridian_line" : 38,
+      "swift_line" : 606
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 646
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 685
+      "meridian_line" : 66,
+      "swift_line" : 615
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 655
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 660
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 699
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 773
+      "swift_line" : 704
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 743
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 748
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 787
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 792
     }
   ],
   "tools_used" : [

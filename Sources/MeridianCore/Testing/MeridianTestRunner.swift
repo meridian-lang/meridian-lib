@@ -596,10 +596,19 @@ public struct MeridianTestRunner: Sendable {
     }
 
     private func findRepoRoot(from dir: URL) -> URL? {
+        if let root = findMeridianPackageRoot(from: dir) { return root }
+        return findMeridianPackageRoot(from: URL(fileURLWithPath: FileManager.default.currentDirectoryPath))
+    }
+
+    private func findMeridianPackageRoot(from dir: URL) -> URL? {
         var current = dir
         let fm = FileManager.default
         for _ in 0..<10 {
-            if fm.fileExists(atPath: current.appendingPathComponent("Package.swift").path) {
+            let manifest = current.appendingPathComponent("Package.swift")
+            if fm.fileExists(atPath: manifest.path),
+               let source = try? String(contentsOf: manifest, encoding: .utf8),
+               source.contains("name: \"meridian\""),
+               source.contains("MeridianRuntime") {
                 return current
             }
             current = current.deletingLastPathComponent()

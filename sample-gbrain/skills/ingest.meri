@@ -28,15 +28,16 @@ writes_to:
 
 > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-- Every fact written to a brain page carries an inline `[Source: ...]` citation with date and provenance.
-- Every entity mention creates a back-link from the entity's page to the page mentioning them (Iron Law).
-- Raw sources are preserved for provenance via `gbrain files upload-raw` with automatic size routing.
-- State sections are rewritten with current best understanding, never appended to.
-- Entity detection fires on every inbound message; notable entities get pages or updates.
+!!! checklist (( ai-autonomy ))
+- [ ] Every fact written to a brain page carries an inline `[Source: ...]` citation with date and provenance.
+- [ ] Every entity mention creates a back-link from the entity's page to the page mentioning them (Iron Law).
+- [ ] Raw sources are preserved for provenance via `gbrain files upload-raw` with automatic size routing.
+- [ ] State sections are rewritten with current best understanding, never appended to.
+- [ ] Entity detection fires on every inbound message; notable entities get pages or updates.
 
-> **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
+> > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
 
 ## Citation Requirements (MANDATORY) (( inert ))
 
@@ -199,38 +200,38 @@ about a company -> `companies/`, reusable framework -> `concepts/`, raw data -> 
 **Write to:** `media/x/` for daily aggregation, or entity-specific directories
 if the post is primarily about a person/company.
 
-## Raw Source Preservation (( inert ))
+## Raw Source Preservation (( role: procedure ))
 
-Every ingested item must have its raw source preserved for provenance.
-
-**Use `gbrain files upload-raw` for automatic size routing:**
-```bash
-gbrain files upload-raw <file> --page <page-slug> --type <type>
-```
-
-- **< 100 MB text/PDF**: stays in git (brain repo `.raw/` sidecar directories)
-- **>= 100 MB OR media** (video, audio, images): uploaded to cloud storage
-  via TUS resumable upload, `.redirect.yaml` pointer left in the brain repo
-
-The `.redirect.yaml` pointer format:
-```yaml
-target: supabase://brain-files/page-slug/filename.mp4
-bucket: brain-files
-storage_path: page-slug/filename.mp4
-size: 524288000
-size_human: 500 MB
-hash: sha256:abc123...
-mime: video/mp4
-uploaded: 2026-04-11T...
-type: transcript
-```
-
-**Accessing stored files:**
-- `gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing/sharing
-- `gbrain files restore <dir>` -- download back to local from cloud storage
-
-Use `put_raw_data` in gbrain to store raw API responses and metadata (JSON, not binary).
-
+use judgment to follow the Raw Source Preservation guidance:
+  Every ingested item must have its raw source preserved for provenance.
+  
+  **Use `gbrain files upload-raw` for automatic size routing:**
+  ```bash
+  gbrain files upload-raw <file> --page <page-slug> --type <type>
+  ```
+  
+  item: **< 100 MB text/PDF**: stays in git (brain repo `.raw/` sidecar directories)
+  item: **>= 100 MB OR media** (video, audio, images): uploaded to cloud storage
+    via TUS resumable upload, `.redirect.yaml` pointer left in the brain repo
+  
+  The `.redirect.yaml` pointer format:
+  ```yaml
+  target: supabase://brain-files/page-slug/filename.mp4
+  bucket: brain-files
+  storage_path: page-slug/filename.mp4
+  size: 524288000
+  size_human: 500 MB
+  hash: sha256:abc123...
+  mime: video/mp4
+  uploaded: 2026-04-11T...
+  type: transcript
+  ```
+  
+  **Accessing stored files:**
+  item: `gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing/sharing
+  item: `gbrain files restore <dir>` -- download back to local from cloud storage
+  
+  Use `put_raw_data` in gbrain to store raw API responses and metadata (JSON, not binary).
 ## Test Before Bulk (( inert ))
 
 When processing multiple items (batch video ingestion, bulk meeting processing, etc.):
@@ -256,13 +257,14 @@ up 100 bad pages is enormous.
 - Back-links: every entity mention creates a back-link (Iron Law)
 - Filing: file by primary subject, not format or source (see filing rules)
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- **Appending to State sections.** State is rewritten with the current best understanding on every update. Append-only State sections grow stale and contradictory.
-- **Ingesting without back-links.** An unlinked mention is a broken brain. Every entity mentioned must have a back-link from their page to the page mentioning them.
-- **Skipping raw source preservation.** Every ingested item must have its raw source preserved. A brain page without provenance is unverifiable.
-- **Bulk processing without sample test.** Test on 3-5 items first. Fix quality issues in the approach, not via one-off patches.
-- **Paraphrasing the user's original thinking.** The user's exact language IS the insight. Capture verbatim phrasing for ideas, theses, and frameworks.
+!!! checklist (( ai-autonomy ))
+- [ ] **Appending to State sections.** State is rewritten with the current best understanding on every update. Append-only State sections grow stale and contradictory.
+- [ ] **Ingesting without back-links.** An unlinked mention is a broken brain. Every entity mentioned must have a back-link from their page to the page mentioning them.
+- [ ] **Skipping raw source preservation.** Every ingested item must have its raw source preserved. A brain page without provenance is unverifiable.
+- [ ] **Bulk processing without sample test.** Test on 3-5 items first. Fix quality issues in the approach, not via one-off patches.
+- [ ] **Paraphrasing the user's original thinking.** The user's exact language IS the insight. Capture verbatim phrasing for ideas, theses, and frameworks.
 
 ## Output Format
 

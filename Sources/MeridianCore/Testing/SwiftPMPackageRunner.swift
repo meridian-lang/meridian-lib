@@ -151,7 +151,8 @@ public final class SwiftPMPackageRunner {
     }
 
     private func meridianRunPackageManifest(repoRoot: URL) -> String {
-        """
+        let packageIdentity = repoRoot.lastPathComponent
+        return """
         // swift-tools-version: 6.0
         import PackageDescription
 
@@ -165,7 +166,7 @@ public final class SwiftPMPackageRunner {
                 .target(
                     name: "GeneratedWorkflow",
                     dependencies: [
-                        .product(name: "MeridianRuntime", package: "meridian")
+                        .product(name: "MeridianRuntime", package: "\(packageIdentity)")
                     ],
                     path: "Sources/GeneratedWorkflow"
                 ),
@@ -173,8 +174,8 @@ public final class SwiftPMPackageRunner {
                     name: "Driver",
                     dependencies: [
                         "GeneratedWorkflow",
-                        .product(name: "MeridianRuntime", package: "meridian"),
-                        .product(name: "MeridianTools", package: "meridian")
+                        .product(name: "MeridianRuntime", package: "\(packageIdentity)"),
+                        .product(name: "MeridianTools", package: "\(packageIdentity)")
                     ],
                     path: "Sources/Driver"
                 )

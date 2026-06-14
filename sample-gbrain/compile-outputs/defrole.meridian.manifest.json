@@ -1,0 +1,193 @@
+{
+  "constants" : {
+    "default enrichment tier" : "tier2",
+    "default priority" : "p2",
+    "enrichment window in days" : 7,
+    "notability threshold" : 20
+  },
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "broken",
+      "function" : "meridianDef_Job_broken",
+      "kind" : "job",
+      "line" : 83
+    },
+    {
+      "adjective" : "finished",
+      "function" : "meridianDef_Job_finished",
+      "kind" : "job",
+      "line" : 82
+    },
+    {
+      "adjective" : "orphan",
+      "function" : "meridianDef_Page_orphan",
+      "kind" : "page",
+      "line" : 80
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Page_stale",
+      "kind" : "page",
+      "line" : 81
+    },
+    {
+      "adjective" : "unwritten",
+      "function" : "meridianDef_Page_unwritten",
+      "kind" : "page",
+      "line" : 78
+    },
+    {
+      "adjective" : "urgent",
+      "function" : "meridianDef_Page_urgent",
+      "kind" : "page",
+      "line" : 79
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "property",
+      "left_cardinality" : "one",
+      "left_kind" : "person",
+      "line" : 97,
+      "name" : "authorship",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "page.author"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "entity",
+      "line" : 105,
+      "name" : "backlinking",
+      "right_cardinality" : "various",
+      "right_kind" : "page",
+      "via" : "entity.links"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 101,
+      "name" : "mentioning",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "get backlinks"
+    },
+    {
+      "backing" : "property",
+      "left_cardinality" : "various",
+      "left_kind" : "page",
+      "line" : 109,
+      "name" : "referencing",
+      "right_cardinality" : "various",
+      "right_kind" : "entity",
+      "via" : "page.links"
+    }
+  ],
+  "meridian_skill" : {
+    "name" : "defrole",
+    "outline" : [
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 6,
+        "text" : "Overview"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 10,
+        "text" : "Enforce back-links"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Overview",
+        "line" : 6,
+        "lines" : [
+          "Doc"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Enforce back-links",
+        "line" : 10,
+        "lines" : [
+          "let mentioned be the entities mentioned by the input"
+        ],
+        "role" : "procedure"
+      }
+    ],
+    "vocabulary" : "brain.merconfig"
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "link",
+      "line" : 107,
+      "past_participle" : "linked",
+      "relation" : "backlinking",
+      "third_person" : "links"
+    },
+    {
+      "base" : "mention",
+      "line" : 103,
+      "past_participle" : "mentioned",
+      "relation" : "mentioning",
+      "third_person" : "mentions"
+    },
+    {
+      "base" : "reference",
+      "line" : 111,
+      "past_participle" : "referenced",
+      "relation" : "referencing",
+      "third_person" : "references"
+    },
+    {
+      "base" : "write",
+      "line" : 99,
+      "past_participle" : "written",
+      "relation" : "authorship",
+      "third_person" : "writes"
+    }
+  ],
+  "source_files" : [
+    "defrole.meri",
+    "brain.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 12,
+      "swift_line" : 581
+    },
+    {
+      "meridian_line" : 12,
+      "swift_line" : 592
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
+        }
+      ],
+      "source_name" : "defrole a input",
+      "swift_struct" : "DefroleInput"
+    }
+  ]
+}

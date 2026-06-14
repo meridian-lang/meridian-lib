@@ -110,7 +110,7 @@
         "text" : "Mode 1: Skill conformance validation"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 3,
         "line" : 49,
         "text" : "Contract"
@@ -122,7 +122,7 @@
         "text" : "Phases"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
         "line" : 70,
         "text" : "Automation"
@@ -146,7 +146,7 @@
         "text" : "When to use"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
         "line" : 104,
         "text" : "Test tiers"
@@ -164,46 +164,34 @@
         "text" : "State (regression history)"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 230,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 241,
+        "line" : 242,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 252,
+        "line" : 254,
         "text" : "Output Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 51,
-        "text" : "This mode guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 123,
+        "line" : 124,
         "text" : "Parse"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 132,
+        "line" : 133,
         "text" : "Parse"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 149,
-        "text" : "For each failing test"
       },
       {
         "kind" : "topic",
@@ -216,18 +204,6 @@
         "level" : 3,
         "line" : 224,
         "text" : "This enables"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 243,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 248,
-        "text" : "Privacy contract preserved"
       }
     ],
     "sections" : [
@@ -259,21 +235,22 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 49,
         "lines" : [
+          "use judgment to follow the Contract guidance:",
           "This mode guarantees:",
-          "Every skill directory has a `SKILL.md` file",
-          "Every `SKILL.md` has valid YAML frontmatter (`name`, `description`)",
-          "Every `SKILL.md` has required sections per",
+          "item: Every skill directory has a `SKILL.md` file",
+          "item: Every `SKILL.md` has valid YAML frontmatter (`name`, `description`)",
+          "item: Every `SKILL.md` has required sections per",
           "`test\/skills-conformance.test.ts`",
-          "`skills\/manifest.json` lists every skill directory",
-          "`skills\/RESOLVER.md` references every skill in the manifest",
-          "`openclaw.plugin.json` `skills[]` round-trips with both",
-          "No MECE violations (duplicate triggers across skills)"
+          "item: `skills\/manifest.json` lists every skill directory",
+          "item: `skills\/RESOLVER.md` references every skill in the manifest",
+          "item: `openclaw.plugin.json` `skills[]` round-trips with both",
+          "item: No MECE violations (duplicate triggers across skills)"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
@@ -289,21 +266,22 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Automation",
         "line" : 70,
         "lines" : [
+          "use judgment to follow the Automation guidance:",
           "codeblock:bash:YnVuIHRlc3QgdGVzdC9za2lsbHMtY29uZm9ybWFuY2UudGVzdC50cyB0ZXN0L3Jlc29sdmVyLnRlc3QudHM=",
           "The CI-gated check is the package.json `test` script"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output format",
         "line" : 78,
         "lines" : [
-          "codeblock:plain:U2tpbGwgVmFsaWRhdGlvbiBSZXBvcnQKPT09PT09PT09PT09PT09PT09PT09PT09ClNraWxscyBmb3VuZDogICAgICAgIE4KQ29uZm9ybWFuY2U6ICAgICAgICAgTi9OIHBhc3MKTWFuaWZlc3QgY292ZXJhZ2U6ICAgTi9OClJlc29sdmVyIGNvdmVyYWdlOiAgIE4vTgpSb3VuZC10cmlwOiAgICAgICAgICBOL04KTUVDRSB2aW9sYXRpb25zOiAgICAgTgoKSXNzdWVzOgotIDxza2lsbD46IDxpc3N1ZT4="
+          "codeblock:plain:U2tpbGwgVmFsaWRhdGlvbiBSZXBvcnQKPT09PT09PT09PT09PT09PT09PT09PT09ClNraWxscyBmb3VuZDogICAgICAgIE4KQ29uZm9ybWFuY2U6ICAgICAgICAgTi9OIHBhc3MKTWFuaWZlc3QgY292ZXJhZ2U6ICAgTi9OClJlc29sdmVyIGNvdmVyYWdlOiAgIE4vTgpSb3VuZC10cmlwOiAgICAgICAgICBOL04KTUVDRSB2aW9sYXRpb25zOiAgICAgTgogIApJc3N1ZXM6CiAgaXRlbTogPHNraWxsPjogPGlzc3VlPg=="
         ],
         "role" : "template"
       },
@@ -330,13 +308,14 @@
         "role" : "applicability"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Test tiers",
         "line" : 104,
         "lines" : [
+          "use judgment to follow the Test tiers guidance:",
           "table:decision:fCBUaWVyIHwgV2hhdCBpdCBydW5zIHwgV2FsbCB0aW1lIHwgR2F0ZXMgfAp8LS0tLS0tfC0tLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tfC0tLS0tLS18CnwgKipVbml0KiogfCBgYnVuIHRlc3RgIChkZXRlcm1pbmlzdGljLCB6ZXJvIGV4dGVybmFsIGNhbGxzKSB8IDwycyB8IEV2ZXJ5IGNvbW1pdCB8CnwgKipFdmFscyoqIHwgTExNLWp1ZGdlIG9yIHF1YWxpdHkgZXZhbHMgfCB+NjBzIHwgRGFpbHkgfAp8ICoqSW50ZWdyYXRpb24qKiB8IEUyRSB0ZXN0cyBhZ2FpbnN0IHJlYWwgUG9zdGdyZXMgfCB+NW0gfCBQcmUtc2hpcCArIG5pZ2h0bHkgfAp8ICoqU3lzdGVtIGhlYWx0aCoqIHwgRGlzayAvIG1lbW9yeSAvIENQVSAvIHNlcnZpY2UgbGl2ZW5lc3MgfCA8MTBzIHwgRGFpbHkgfA=="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -344,15 +323,18 @@
         "line" : 113,
         "lines" : [
           "When the cron fires (or the user asks), do ALL of this:",
+          "use judgment to follow the 1. Run unit tests guidance:",
           "codeblock:bash:YnVuIHRlc3QgMj4mMQ==",
           "Parse: total passed, total failed, total skipped, file-level results",
+          "use judgment to follow the 2. Run evals (if the project has an evals config) guidance:",
           "codeblock:bash:IyBBZGFwdCB0byB0aGUgcHJvamVjdCdzIGV2YWwgY29uZmlnCmJ1biB0ZXN0IC0tZmlsdGVyIGV2YWwgMj4mMQ==",
           "Parse: same format. Note any flakes (tests that fail due to API",
           "timeouts, not code bugs)",
-          "Disk \/ memory \/ CPU",
-          "gbrain: `gbrain doctor --fast --json`",
-          "Database connection (if applicable)",
-          "Critical files exist (CLAUDE.md, AGENTS.md, etc.)",
+          "item: Disk \/ memory \/ CPU",
+          "item: gbrain: `gbrain doctor --fast --json`",
+          "item: Database connection (if applicable)",
+          "item: Critical files exist (CLAUDE.md, AGENTS.md, etc.)",
+          "use judgment to follow the 4. Git diff analysis (CRITICAL — regression intelligence) guidance:",
           "codeblock:bash:IyBXaGF0IGNoYW5nZWQgc2luY2UgbGFzdCB0ZXN0IHJ1bj8KZ2l0IGxvZyAtLW9uZWxpbmUgLS1zaW5jZT0iMjQgaG91cnMgYWdvIg==",
           "For each failing test:",
           "Check if the test itself was modified recently (test change, not",
@@ -361,18 +343,19 @@
           "regression)",
           "Check if it's a known flake (API timeout, service down)",
           "Check if a dependency was updated (gbrain, bun, etc.)",
+          "use judgment to follow the 5. Classify each failure guidance:",
           "table:decision:fCBDbGFzc2lmaWNhdGlvbiB8IE1hcmtlciB8IEFjdGlvbiB8CnwtLS0tLS0tLS0tLS0tLS18LS0tLS0tLS18LS0tLS0tLS18CnwgKipSRUdSRVNTSU9OKiog4oCUIGNvZGUgY2hhbmdlZCwgdGVzdCBicm9rZSB8IPCflLQgfCBGbGFnIHdpdGggdGhlIGNvbW1pdCB0aGF0IGJyb2tlIGl0IHwKfCAqKlNUQUxFKiog4oCUIHRlc3QgZXhwZWN0cyBvbGQgYmVoYXZpb3I7IGNvZGUgaXMgY29ycmVjdCB8IPCfn6EgfCBGaXggdGhlIHRlc3QsIG5vdCB0aGUgY29kZSB8CnwgKipGTEFLRSoqIOKAlCBBUEkgdGltZW91dCwgc2VydmljZSBkb3duLCBMTE0gdmFyaWFuY2UgfCDimqDvuI8gfCBOb3RlLCBkb24ndCBhbGFybTsgcmV0cnkgb25jZSB8CnwgKipORVcqKiDigJQgdGVzdCB3YXMganVzdCBhZGRlZCBhbmQgaXNuJ3QgcGFzc2luZyB5ZXQgfCDwn5+iIHwgQ2hlY2sgaWYgaW50ZW50aW9uYWwgfAp8ICoqSU5GUkEqKiDigJQgY29udGFpbmVyIHJlc3RhcnQgd2lwZWQgc3RhdGUgfCDwn5ugIHwgUnVuIGJvb3RzdHJhcCwgcmV0ZXN0IHw=",
-          "codeblock:plain:8J+nqiBEYWlseSBUZXN0cyDigJQgWVlZWS1NTS1ERAoKVW5pdDogICBYL1kgcGFzc2VkIChaIHNraXBwZWQpCkV2YWxzOiAgWC9ZIHBhc3NlZApTeXN0ZW06IFtoZWFsdGggc3VtbWFyeV0KClJFR1JFU1NJT05TOgogIPCflLQgPHRlc3QtbmFtZT46IGJyb2tlIGJ5IGNvbW1pdCA8c2hhPiAiPGNvbW1pdCBtZXNzYWdlPiIKClNUQUxFIFRFU1RTOgogIPCfn6EgPHRlc3QtbmFtZT46IGV4cGVjdHMgWCBidXQgY29kZSBub3cgZG9lcyBZIChjb21taXQgPHNoYT4pCgpGTEFLRVM6CiAg4pqg77iPIDx0ZXN0LW5hbWU+OiB0aW1lb3V0IChyZXRyeSBwYXNzZWQpCgrinIUgQUxMIENMRUFSICAod2hlbiBhcHBsaWNhYmxlKQ==",
+          "codeblock:plain:8J+nqiBEYWlseSBUZXN0cyDigJQgWVlZWS1NTS1ERAogIApVbml0OiAgIFgvWSBwYXNzZWQgKFogc2tpcHBlZCkKRXZhbHM6ICBYL1kgcGFzc2VkClN5c3RlbTogW2hlYWx0aCBzdW1tYXJ5XQogIApSRUdSRVNTSU9OUzoKICDwn5S0IDx0ZXN0LW5hbWU+OiBicm9rZSBieSBjb21taXQgPHNoYT4gIjxjb21taXQgbWVzc2FnZT4iCiAgClNUQUxFIFRFU1RTOgogIPCfn6EgPHRlc3QtbmFtZT46IGV4cGVjdHMgWCBidXQgY29kZSBub3cgZG9lcyBZIChjb21taXQgPHNoYT4pCiAgCkZMQUtFUzoKICDimqDvuI8gPHRlc3QtbmFtZT46IHRpbWVvdXQgKHJldHJ5IHBhc3NlZCkKICAK4pyFIEFMTCBDTEVBUiAgKHdoZW4gYXBwbGljYWJsZSk=",
           "**DO auto-fix:**",
-          "Test expects an old file path after a rename → update the test",
-          "Test expects an old version string → update",
-          "Test expects a file that was intentionally deleted → remove the test",
-          "Import path broke because file moved → fix the import",
+          "item: Test expects an old file path after a rename → update the test",
+          "item: Test expects an old version string → update",
+          "item: Test expects a file that was intentionally deleted → remove the test",
+          "item: Import path broke because file moved → fix the import",
           "**DO NOT auto-fix:**",
-          "Test expects behavior A but code now does B → ASK first. Maybe the",
+          "item: Test expects behavior A but code now does B → ASK first. Maybe the",
           "test is right and the code has a bug",
-          "Security test failing → ALWAYS escalate, never auto-fix",
-          "Test was skipped with a TODO → don't un-skip without understanding why",
+          "item: Security test failing → ALWAYS escalate, never auto-fix",
+          "item: Test was skipped with a TODO → don't un-skip without understanding why",
           "When uncertain: check the commit message that changed the code, check",
           "if there's a related PR or conversation, ask the user if still unclear"
         ],
@@ -386,45 +369,39 @@
           "Track results in `~\/.gbrain\/test-state.json` for trend tracking:",
           "codeblock:json:ewogICJsYXN0UnVuIjogIjIwMjYtMDQtMTZUMTM6Mzc6MDBaIiwKICAidW5pdCI6IHsgInBhc3NlZCI6IDEyNjIsICJmYWlsZWQiOiAzMSwgInNraXBwZWQiOiA4IH0sCiAgImV2YWxzIjogeyAicGFzc2VkIjogMTcsICJmYWlsZWQiOiAwIH0sCiAgInN5c3RlbSI6IHsgImRvY3RvciI6ICJvayIsICJnYnJhaW4iOiAiMC4yNS4xIiB9LAogICJmYWlsdXJlSGlzdG9yeSI6IFsKICAgIHsgInRlc3QiOiAiPG5hbWU+IiwgInNpbmNlIjogIjIwMjYtMDQtMTQiLCAiY2xhc3NpZmljYXRpb24iOiAic3RhbGUiIH0KICBdCn0=",
           "This enables:",
-          "Trend tracking (are we getting better or worse?)",
-          "Flake detection (same test fails intermittently)",
-          "Regression velocity (how fast do we break things after changes?)"
+          "item: Trend tracking (are we getting better or worse?)",
+          "item: Flake detection (same test fails intermittently)",
+          "item: Regression velocity (how fast do we break things after changes?)"
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
         "line" : 230,
         "lines" : [
-          "❌ Skipping conformance validation after adding a new skill",
-          "❌ Adding skills to `manifest.json` without adding to RESOLVER.md",
-          "❌ Treating every red test as a regression. Classify first; many are",
-          "stale or flaky",
-          "❌ Auto-un-skipping a test without understanding why it was skipped",
-          "❌ Auto-\"fixing\" a security test failure",
-          "❌ Reporting \"all clear\" without actually running system health checks"
+          "checklist:ai-autonomy:4p2MIFNraXBwaW5nIGNvbmZvcm1hbmNlIHZhbGlkYXRpb24gYWZ0ZXIgYWRkaW5nIGEgbmV3IHNraWxsCuKdjCBBZGRpbmcgc2tpbGxzIHRvIGBtYW5pZmVzdC5qc29uYCB3aXRob3V0IGFkZGluZyB0byBSRVNPTFZFUi5tZArinYwgVHJlYXRpbmcgZXZlcnkgcmVkIHRlc3QgYXMgYSByZWdyZXNzaW9uLiBDbGFzc2lmeSBmaXJzdDsgbWFueSBhcmUgc3RhbGUgb3IgZmxha3kuCuKdjCBBdXRvLXVuLXNraXBwaW5nIGEgdGVzdCB3aXRob3V0IHVuZGVyc3RhbmRpbmcgd2h5IGl0IHdhcyBza2lwcGVkCuKdjCBBdXRvLSJmaXhpbmciIGEgc2VjdXJpdHkgdGVzdCBmYWlsdXJlCuKdjCBSZXBvcnRpbmcgImFsbCBjbGVhciIgd2l0aG91dCBhY3R1YWxseSBydW5uaW5nIHN5c3RlbSBoZWFsdGggY2hlY2tz"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
-        "line" : 241,
+        "line" : 242,
         "lines" : [
-          "This skill guarantees:",
-          "Routing matches the canonical triggers in the frontmatter",
-          "Output written under the directories listed in `writes_to:` (when applicable)",
-          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
-          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
-          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+          "use judgment to follow the Contract guidance:",
+          "markererror:YSBgISEhIGNoZWNrbGlzdGAgbWFya2VyIG11c3QgaW1tZWRpYXRlbHkgcHJlY2VkZSBhIHRhc2sgbGlzdCAob25lIG9yIG1vcmUgYC0gWyBdYCAvIGAtIFt4XWAgaXRlbXMp",
+          "item: [ ] Routing matches the canonical triggers in the frontmatter",
+          "item: [ ] Output written under the directories listed in `writes_to:` (when applicable)",
+          "item: [ ] Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
+          "item: [ ] Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 252,
+        "line" : 254,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -471,72 +448,72 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 64,
-      "swift_line" : 592
+      "meridian_line" : 51,
+      "swift_line" : 584
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 630
+      "swift_line" : 622
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 635
+      "swift_line" : 627
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 674
+      "swift_line" : 666
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 679
+      "swift_line" : 671
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 718
+      "swift_line" : 710
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 723
+      "swift_line" : 715
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 762
+      "swift_line" : 754
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 767
+      "swift_line" : 759
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 806
+      "swift_line" : 798
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 811
+      "swift_line" : 803
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 850
+      "swift_line" : 842
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 855
+      "swift_line" : 847
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 894
+      "swift_line" : 886
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 899
+      "swift_line" : 891
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 938
+      "swift_line" : 930
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 943
+      "swift_line" : 935
     }
   ],
   "tools_used" : [

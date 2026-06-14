@@ -352,9 +352,10 @@ public struct StatementParser {
             }
         }
 
-        // Choice-gate: `ask the user to choose between "A", "B", or "C":`
-        if let choice = parseChoiceGate(line) {
-            return (.wait(choice), 1)
+        // Choice-gate: `ask the user to choose between "A", "B", or "C":`, or
+        // the SKILL.md list form with indented quoted/numbered options.
+        if let choice = parseChoiceGate(lines, at: i) {
+            return (.wait(choice.statement), choice.consumed)
         }
 
         // "emit {eventID} with ..." (possibly multi-line payload)
@@ -375,6 +376,10 @@ public struct StatementParser {
         if t.lowercased().hasPrefix("if "),
            let single = try parseInlineConditional(line, file: file) {
             return (.conditional(single), 1)
+        }
+        // Choice branches: `if yes:`, `if no:`, `if the user picks 1:`, etc.
+        if let choiceBranch = try parseChoiceBranch(lines, at: i, file: file) {
+            return (.conditional(choiceBranch.statement), choiceBranch.consumed)
         }
         if t.lowercased().hasPrefix(lexicon.grammar.unlessYouDecideIntroducer) && t.hasSuffix(",") {
             let (cond, consumed) = try parseUnlessDecisionConditional(lines, at: i, file: file)
@@ -506,6 +511,14 @@ public struct StatementParser {
             return [inlineShell]
         }
 
+        // Operational Markdown often writes a labelled step around a single
+        // command span: `Verify: `gbrain doctor --json`` or
+        // `**Sync** - `gbrain sync``. Treat that as the same deterministic
+        // shell command, carrying the surrounding prose as the source annotation.
+        if let embeddedShell = embeddedBacktickedCommand(line) {
+            return [embeddedShell]
+        }
+
         // A collapsed Markdown table sentinel expands to per-row statements
         // (decision branches, a data-table binding, or nothing for inert).
         if let tableStatements = try tableStatements(line, file: file) {
@@ -535,12 +548,20 @@ public struct StatementParser {
         let line = lines[i]
         let t = line.statement
         let lower = t.lowercased()
+        let collectUntilNextHeading = lower.hasPrefix("use judgment to follow the ")
 
         func collectBody() -> (text: [String], consumed: Int) {
             var bodyLines: [String] = []
             var j = i + 1
             while j < lines.count {
                 let l = lines[j]
+                if collectUntilNextHeading {
+                    if l.headingLevel != nil { break }
+                    if l.isEmpty || l.isComment { j += 1; continue }
+                    bodyLines.append(l.statement)
+                    j += 1
+                    continue
+                }
                 if l.isEmpty || l.isComment { j += 1; continue }
                 if l.indent > line.indent { bodyLines.append(l.statement); j += 1 } else { break }
             }
@@ -592,21 +613,115 @@ public struct StatementParser {
     }
 
     /// Parse a choice-gate statement:
-    /// `ask the user to choose between "A", "B", or "C":` (trailing `:` optional).
-    /// Options are the double-quoted spans. Returns nil when the line is not a
-    /// choice gate or declares no options.
-    private func parseChoiceGate(_ line: SourceLine) -> WaitStatementAST? {
+    /// `ask the user to choose between "A", "B", or "C":` (trailing `:` optional),
+    /// or the Markdown option-list form:
+    ///
+    ///   ask the user to choose between:
+    ///       1. Supabase
+    ///       2. BYO Postgres
+    ///
+    /// Numbered options use the number as the runtime selection value so
+    /// follow-up branches like `if the user picks 1:` can route deterministically.
+    private func parseChoiceGate(_ lines: [SourceLine], at i: Int) -> (statement: WaitStatementAST, consumed: Int)? {
+        let line = lines[i]
         let t = line.statement
         let lower = t.lowercased()
         let markers = lexicon.grammar.choiceGateIntroducers
-        guard let marker = markers.first(where: { lower.hasPrefix($0) }) else { return nil }
+        let marker = markers.first(where: { lower.hasPrefix($0) })
+            ?? markers.map { $0.trimmingCharacters(in: .whitespaces) }
+                .first(where: { lower == $0 || lower == $0 + ":" })
+        guard let marker else { return nil }
         let rest = String(t.dropFirst(marker.count))
-        let options = doubleQuotedSpans(in: rest)
+        var options = doubleQuotedSpans(in: rest)
+        var consumed = 1
+        if options.isEmpty {
+            let collected = collectChoiceOptions(lines, after: i)
+            options = collected.options
+            consumed += collected.consumed
+        }
         guard !options.isEmpty else { return nil }
-        return WaitStatementAST(
+        return (WaitStatementAST(
             condition: .choice(prompt: t, options: options),
             sourceLine: line.number
-        )
+        ), consumed)
+    }
+
+    private func collectChoiceOptions(_ lines: [SourceLine], after i: Int) -> (options: [String], consumed: Int) {
+        let parentIndent = lines[i].indent
+        var options: [String] = []
+        var consumed = 0
+        var j = i + 1
+        while j < lines.count {
+            let line = lines[j]
+            if line.isEmpty || line.isComment { j += 1; consumed += 1; continue }
+            guard line.indent > parentIndent else { break }
+            if let option = choiceOptionValue(line.raw) ?? choiceOptionValue(line.statement) {
+                options.append(option)
+                j += 1
+                consumed += 1
+                continue
+            }
+            break
+        }
+        return (options, consumed)
+    }
+
+    private func choiceOptionValue(_ text: String) -> String? {
+        let raw = text.trimmingCharacters(in: .whitespaces)
+        if let quoted = doubleQuotedSpans(in: raw).first { return quoted }
+        if let numeric = leadingChoiceNumber(in: raw) { return numeric }
+        let stripped = stripMarkdownListMarker(raw)
+        return stripped.isEmpty ? nil : stripped
+    }
+
+    private func leadingChoiceNumber(in s: String) -> String? {
+        var digits = ""
+        var idx = s.startIndex
+        while idx < s.endIndex, s[idx].isNumber {
+            digits.append(s[idx])
+            idx = s.index(after: idx)
+        }
+        guard !digits.isEmpty, idx < s.endIndex, s[idx] == "." || s[idx] == ")" else { return nil }
+        return digits
+    }
+
+    private func parseChoiceBranch(_ lines: [SourceLine], at i: Int, file: String) throws
+        -> (statement: ConditionalStatementAST, consumed: Int)? {
+        let line = lines[i]
+        let t = line.statement.trimmingCharacters(in: .whitespaces)
+        guard t.lowercased().hasPrefix("if "), t.hasSuffix(":") else { return nil }
+        let label = String(t.dropFirst(3).dropLast()).trimmingCharacters(in: .whitespaces)
+        guard let selected = choiceBranchSelection(label) else { return nil }
+
+        let parentIndent = line.indent
+        var bodyLines: [SourceLine] = []
+        var j = i + 1
+        while j < lines.count {
+            let l = lines[j]
+            if l.isEmpty || l.isComment { j += 1; continue }
+            if l.indent > parentIndent {
+                bodyLines.append(l)
+                j += 1
+            } else {
+                break
+            }
+        }
+        let body = try parseBlock(bodyLines, file: file)
+        let condition = exprParser.parse("choice is \"\(selected)\"")
+        return (ConditionalStatementAST(condition: condition, thenBlock: body, elseBlock: nil,
+                                        sourceLine: line.number), j - i)
+    }
+
+    private func choiceBranchSelection(_ label: String) -> String? {
+        let lower = label.lowercased()
+        if lower == "yes" || lower == "the user agrees" || lower == "the user says yes" { return "yes" }
+        if lower == "no" || lower == "the user declines" || lower == "the user says no" { return "no" }
+        let prefixes = ["the user picks ", "the user selects ", "the user chooses ", "user picks ", "user selects ", "user chooses "]
+        for prefix in prefixes where lower.hasPrefix(prefix) {
+            let value = String(label.dropFirst(prefix.count)).trimmingCharacters(in: .whitespaces)
+            return value.isEmpty ? nil : value
+        }
+        return nil
     }
 
     /// Extract the contents of each double-quoted span in `s`, in order.
@@ -743,6 +858,101 @@ public struct StatementParser {
             annotation: annotation,
             sourceLine: line.number
         ))
+    }
+
+    /// A line with exactly one backtick command span plus prose, e.g.
+    /// `Verify: `gbrain doctor --json``. This covers common SKILL.md numbered
+    /// and labelled command steps after `IndentTokenizer` strips list markers.
+    private func embeddedBacktickedCommand(_ line: SourceLine) -> StatementAST? {
+        let raw = line.statement.trimmingCharacters(in: .whitespaces)
+        guard !startsWithPrimitiveStatement(raw) else { return nil }
+        let spans = Self.backtickSpans(in: raw)
+        guard spans.count == 1 else { return nil }
+        let span = spans[0]
+        let command = String(raw[span.lowerBound..<span.upperBound]).trimmingCharacters(in: .whitespaces)
+        guard !command.isEmpty, commandLooksShellLike(command) else { return nil }
+
+        var annotationSource = raw
+        annotationSource.replaceSubrange(span.fullRange(in: raw), with: "")
+        let annotation = cleanCommandAnnotation(annotationSource)
+        return .phraseInvocation(PhraseInvocationAST(
+            words: encodeShellCommand(command),
+            annotation: annotation.isEmpty ? nil : annotation,
+            sourceLine: line.number
+        ))
+    }
+
+    private func startsWithPrimitiveStatement(_ raw: String) -> Bool {
+        let lower = raw.lowercased()
+        let prefixes = [
+            "emit ", "bind ", "rebind ", "invoke ", "if ", "while ", "until ",
+            "wait ", "recover ", "complete", "commit", "let ", "for each ",
+            "for every ", "simultaneously:"
+        ]
+        return prefixes.contains { lower.hasPrefix($0) }
+    }
+
+    private struct BacktickSpan {
+        let lowerBound: String.Index
+        let upperBound: String.Index
+
+        func fullRange(in s: String) -> ClosedRange<String.Index> {
+            s.index(before: lowerBound)...upperBound
+        }
+    }
+
+    private static func backtickSpans(in s: String) -> [BacktickSpan] {
+        var spans: [BacktickSpan] = []
+        var open: String.Index? = nil
+        var i = s.startIndex
+        while i < s.endIndex {
+            if s[i] == "`" {
+                if let start = open {
+                    spans.append(BacktickSpan(lowerBound: s.index(after: start), upperBound: i))
+                    open = nil
+                } else {
+                    open = i
+                }
+            }
+            i = s.index(after: i)
+        }
+        return spans
+    }
+
+    private func commandLooksShellLike(_ command: String) -> Bool {
+        command.contains(" ") || command.contains("/") || command.contains(".") || command.contains("-")
+    }
+
+    private func cleanCommandAnnotation(_ raw: String) -> String {
+        var s = raw
+            .replacingOccurrences(of: "**", with: "")
+            .replacingOccurrences(of: "__", with: "")
+            .trimmingCharacters(in: .whitespaces)
+        while let last = s.last, last == ":" || last == "-" || last == "\u{2014}" || last == "\u{2013}" {
+            s.removeLast()
+            s = s.trimmingCharacters(in: .whitespaces)
+        }
+        return s
+    }
+
+    private func stripMarkdownListMarker(_ raw: String) -> String {
+        var s = raw.trimmingCharacters(in: .whitespaces)
+        if s.hasPrefix("- ") || s.hasPrefix("* ") {
+            return String(s.dropFirst(2)).trimmingCharacters(in: .whitespaces)
+        }
+        var digits = ""
+        var idx = s.startIndex
+        while idx < s.endIndex, s[idx].isNumber {
+            digits.append(s[idx])
+            idx = s.index(after: idx)
+        }
+        if !digits.isEmpty, idx < s.endIndex, s[idx] == "." || s[idx] == ")" {
+            let after = s.index(after: idx)
+            if after == s.endIndex || s[after].isWhitespace {
+                s = String(s[after...]).trimmingCharacters(in: .whitespaces)
+            }
+        }
+        return s
     }
 
     /// Split a command bullet into the command span and an optional trailing

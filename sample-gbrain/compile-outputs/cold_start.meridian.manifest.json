@@ -98,7 +98,7 @@
     "name" : "cold-start",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 50,
         "text" : "Contract"
@@ -106,358 +106,324 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 64,
+        "line" : 65,
         "text" : "Prerequisites"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 70,
+        "line" : 71,
         "text" : "The Priority Stack"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 85,
+        "line" : 86,
         "text" : "Phase 0: ClawVisor Setup (Required for API Access)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 127,
+        "line" : 128,
         "text" : "If the user declines ClawVisor"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 147,
+        "line" : 148,
         "text" : "Phase 1: Existing Markdown \/ Obsidian Import"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 152,
+        "line" : 153,
         "text" : "Discovery"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 168,
+        "line" : 169,
         "text" : "Import"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 182,
+        "line" : 183,
         "text" : "Post-import"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 193,
+        "line" : 194,
         "text" : "Phase 2: Google Contacts → People Pages"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 200,
+        "line" : 201,
         "text" : "Via ClawVisor"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 210,
+        "line" : 211,
         "text" : "Via direct Google People API"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 217,
+        "line" : 218,
         "text" : "Processing rules"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 230,
+        "line" : 231,
         "text" : "Quality gate"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 236,
+        "line" : 237,
         "text" : "Phase 3: Google Calendar (Last 90 Days)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 242,
+        "line" : 243,
         "text" : "Fetch events"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 257,
+        "line" : 258,
         "text" : "Brain structure"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 268,
+        "line" : 269,
         "text" : "Entity enrichment"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 276,
+        "line" : 277,
         "text" : "Phase 4: Gmail (Recent Threads)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 281,
+        "line" : 282,
         "text" : "Strategy: Smart sampling, not bulk import"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 290,
+        "line" : 291,
         "text" : "Processing"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 298,
+        "line" : 299,
         "text" : "Filtering rules"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 311,
+        "line" : 312,
         "text" : "Phase 5: Conversation Exports (ChatGPT \/ Claude \/ Perplexity)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 317,
+        "line" : 318,
         "text" : "Supported formats"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 323,
+        "line" : 324,
         "text" : "Processing"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 338,
+        "line" : 339,
         "text" : "Quality rule"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 342,
+        "line" : 343,
         "text" : "Phase 6: X\/Twitter Archive"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 347,
+        "line" : 348,
         "text" : "Data sources"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 354,
+        "line" : 355,
         "text" : "Brain structure"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 364,
+        "line" : 365,
         "text" : "Processing"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 372,
+        "line" : 373,
         "text" : "Phase 7: File Archives"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 396,
+        "line" : 397,
         "text" : "Phase 8: Meeting Transcripts"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 407,
+        "line" : 408,
         "text" : "Post-Bootstrap Checklist"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 452,
+        "line" : 453,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 469,
+        "line" : 471,
         "text" : "Resume Protocol"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 478,
+        "line" : 480,
         "text" : "Output Format"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 498,
+        "line" : 500,
         "text" : "Tools Used"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 108,
+        "line" : 109,
         "text" : "Set environment variables"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 117,
+        "line" : 118,
         "text" : "Save the standing task ID"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 138,
+        "line" : 139,
         "text" : "Tell the user"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 184,
-        "text" : "Run link extraction"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 185,
-        "text" : "Run timeline extraction"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 186,
-        "text" : "Start embeddings"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 219,
+        "line" : 220,
         "text" : "For each contact"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 225,
-        "text" : "Source attribution"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 270,
+        "line" : 271,
         "text" : "For each event with attendees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 272,
+        "line" : 273,
         "text" : "Add a timeline entry to their page"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 292,
+        "line" : 293,
         "text" : "For each email thread"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 325,
+        "line" : 326,
         "text" : "For each conversation"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 409,
+        "line" : 410,
         "text" : "After completing available phases"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 425,
+        "line" : 426,
         "text" : "Calendar"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 426,
+        "line" : 427,
         "text" : "Email"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 427,
+        "line" : 428,
         "text" : "X"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 428,
+        "line" : 429,
         "text" : "Brain repo"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 471,
+        "line" : 473,
         "text" : "If the session is interrupted"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 480,
+        "line" : 482,
         "text" : "After each phase"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 50,
         "lines" : [
-          "Every import phase is gated on user consent (ask-user pattern) before proceeding",
-          "**Google\/social API access goes through ClawVisor.** The agent never holds raw OAuth",
-          "tokens or API keys. This is a safety requirement, not a preference. ClawVisor vaults",
-          "credentials, enforces task-scoped authorization, logs every API call, and requires",
-          "human approval for destructive operations. If the user doesn't want ClawVisor, the",
-          "only safe alternative is offline file exports (Google Takeout, Twitter archive download)",
-          "Each phase is independently valuable — the user can stop after any phase and still",
-          "have a useful brain",
-          "Progress is tracked in `~\/.gbrain\/cold-start-state.json` so interrupted sessions",
-          "can resume",
-          "Entity detection and cross-linking run on every import, not as a separate pass"
+          "checklist:ai-autonomy:RXZlcnkgaW1wb3J0IHBoYXNlIGlzIGdhdGVkIG9uIHVzZXIgY29uc2VudCAoYXNrLXVzZXIgcGF0dGVybikgYmVmb3JlIHByb2NlZWRpbmcKKipHb29nbGUvc29jaWFsIEFQSSBhY2Nlc3MgZ29lcyB0aHJvdWdoIENsYXdWaXNvci4qKiBUaGUgYWdlbnQgbmV2ZXIgaG9sZHMgcmF3IE9BdXRoIHRva2VucyBvciBBUEkga2V5cy4gVGhpcyBpcyBhIHNhZmV0eSByZXF1aXJlbWVudCwgbm90IGEgcHJlZmVyZW5jZS4gQ2xhd1Zpc29yIHZhdWx0cyBjcmVkZW50aWFscywgZW5mb3JjZXMgdGFzay1zY29wZWQgYXV0aG9yaXphdGlvbiwgbG9ncyBldmVyeSBBUEkgY2FsbCwgYW5kIHJlcXVpcmVzIGh1bWFuIGFwcHJvdmFsIGZvciBkZXN0cnVjdGl2ZSBvcGVyYXRpb25zLiBJZiB0aGUgdXNlciBkb2Vzbid0IHdhbnQgQ2xhd1Zpc29yLCB0aGUgb25seSBzYWZlIGFsdGVybmF0aXZlIGlzIG9mZmxpbmUgZmlsZSBleHBvcnRzIChHb29nbGUgVGFrZW91dCwgVHdpdHRlciBhcmNoaXZlIGRvd25sb2FkKS4KRWFjaCBwaGFzZSBpcyBpbmRlcGVuZGVudGx5IHZhbHVhYmxlIOKAlCB0aGUgdXNlciBjYW4gc3RvcCBhZnRlciBhbnkgcGhhc2UgYW5kIHN0aWxsIGhhdmUgYSB1c2VmdWwgYnJhaW4uClByb2dyZXNzIGlzIHRyYWNrZWQgaW4gYH4vLmdicmFpbi9jb2xkLXN0YXJ0LXN0YXRlLmpzb25gIHNvIGludGVycnVwdGVkIHNlc3Npb25zIGNhbiByZXN1bWUuCkVudGl0eSBkZXRlY3Rpb24gYW5kIGNyb3NzLWxpbmtpbmcgcnVuIG9uIGV2ZXJ5IGltcG9ydCwgbm90IGFzIGEgc2VwYXJhdGUgcGFzcw=="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Prerequisites",
-        "line" : 64,
+        "line" : 65,
         "lines" : [
           "GBrain installed and initialized (`gbrain doctor --json` all green)",
           "Brain repo cloned and synced",
@@ -466,19 +432,20 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "The Priority Stack",
-        "line" : 70,
+        "line" : 71,
         "lines" : [
+          "use judgment to follow the The Priority Stack guidance:",
           "Data sources ranked by **information density × ease of import**:",
           "table:decision:fCBQcmlvcml0eSB8IFNvdXJjZSB8IFdoeSB8IFRpbWUgfCBQYWdlcyBDcmVhdGVkIHwKfC0tLS0tLS0tLS18LS0tLS0tLS18LS0tLS18LS0tLS0tfC0tLS0tLS0tLS0tLS0tLXwKfCAxIHwgRXhpc3RpbmcgbWFya2Rvd24vT2JzaWRpYW4gfCBIaWdoZXN0IGRlbnNpdHkg4oCUIGl0J3MgYWxyZWFkeSBzdHJ1Y3R1cmVkIHwgNSBtaW4gfCAxMDBzLTEwMDBzIHwKfCAyIHwgR29vZ2xlIENvbnRhY3RzIHwgU2VlZHMgdGhlIHBlb3BsZS8gZGlyZWN0b3J5IOKAlCBuYW1lcywgZW1haWxzLCBjb21wYW5pZXMgfCAxMCBtaW4gfCA1MC01MDAgfAp8IDMgfCBHb29nbGUgQ2FsZW5kYXIgKDkwIGRheXMpIHwgTWVldGluZyBoaXN0b3J5IHdpdGggYXR0ZW5kZWUgY29udGV4dCB8IDE1IG1pbiB8IDMwLTkwIHwKfCA0IHwgR21haWwgKHJlY2VudCB0aHJlYWRzKSB8IFJlbGF0aW9uc2hpcCBjb250ZXh0LCBhY3RpdmUgdGhyZWFkcywgb3JnIGNoYXJ0IHNpZ25hbHMgfCAyMCBtaW4gfCA1MC0yMDAgfAp8IDUgfCBDb252ZXJzYXRpb25zIChDaGF0R1BUL0NsYXVkZSBleHBvcnRzKSB8IFlvdXIgdGhpbmtpbmcsIHF1ZXN0aW9ucywgbWVudGFsIG1vZGVscyB8IDE1IG1pbiB8IDEwLTEwMCB8CnwgNiB8IFgvVHdpdHRlciBhcmNoaXZlIHwgWW91ciBwdWJsaWMgcG9zaXRpb25zLCB0YWtlcywgZW5nYWdlbWVudCBwYXR0ZXJucyB8IDIwIG1pbiB8IDMwLTM2NSB8CnwgNyB8IEZpbGUgYXJjaGl2ZXMgKERyb3Bib3gvRHJpdmUvbG9jYWwpIHwgSGlzdG9yaWNhbCBkb2N1bWVudHMsIG9sZCB3cml0aW5nLCBwaG90b3MgfCAzMCsgbWluIHwgdmFyaWVzIHwKfCA4IHwgTWVldGluZyB0cmFuc2NyaXB0cyAoQ2lyY2xlYmFjay9ldGMuKSB8IERlZXAgcmVsYXRpb25zaGlwIGNvbnRleHQgZnJvbSByZWNvcmRlZCBjYWxscyB8IDIwIG1pbiB8IDEwLTUwIHw="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Phase 0: ClawVisor Setup (Required for API Access)",
-        "line" : 85,
+        "line" : 86,
         "lines" : [
           "[ClawVisor](https:\/\/clawvisor.com) is a credential gateway that sits between the",
           "agent and your APIs. The agent never sees your credentials — ClawVisor injects",
@@ -510,7 +477,7 @@
       {
         "executes" : false,
         "heading" : "If the user declines ClawVisor",
-        "line" : 127,
+        "line" : 128,
         "lines" : [
           "Do NOT fall back to direct OAuth. Instead, skip Phases 2-4 (Contacts, Calendar,",
           "Gmail) and proceed with offline-only imports:",
@@ -527,10 +494,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 1: Existing Markdown \/ Obsidian Import",
-        "line" : 147,
+        "line" : 148,
         "lines" : [
+          "use judgment to follow the Phase 1: Existing Markdown \/ Obsidian Import guidance:",
           "**The highest-leverage first import.** If the user already has a notes system, this",
           "is hundreds or thousands of structured pages ready to go"
         ],
@@ -539,7 +507,7 @@
       {
         "executes" : true,
         "heading" : "Discovery",
-        "line" : 152,
+        "line" : 153,
         "lines" : [
           "codeblock:bash:ZWNobyAiPT09IE1hcmtkb3duIFJlcG9zaXRvcnkgRGlzY292ZXJ5ID09PSIKZm9yIGRpciBpbiAvZGF0YS8qIH4vZ2l0Lyogfi9Eb2N1bWVudHMvKiB+L25vdGVzLyogfi9vYnNpZGlhbi8qIDI+L2Rldi9udWxsOyBkbwogIGlmIFsgLWQgIiRkaXIiIF07IHRoZW4KICAgIG1kX2NvdW50PSQoZmluZCAiJGRpciIgLW5hbWUgIioubWQiIC1ub3QgLXBhdGggIiovbm9kZV9tb2R1bGVzLyoiIFwKICAgICAgLW5vdCAtcGF0aCAiKi8uZ2l0LyoiIC1ub3QgLXBhdGggIiovLm9ic2lkaWFuLyoiIDI+L2Rldi9udWxsIHwgd2MgLWwgfCB0ciAtZCAnICcpCiAgICBpZiBbICIkbWRfY291bnQiIC1ndCA1IF07IHRoZW4KICAgICAgdG90YWxfc2l6ZT0kKGR1IC1zaCAiJGRpciIgMj4vZGV2L251bGwgfCBjdXQgLWYxKQogICAgICBlY2hvICIgICRkaXIgKCR0b3RhbF9zaXplLCAkbWRfY291bnQgLm1kIGZpbGVzKSIKICAgIGZpCiAgZmkKZG9uZQ=="
         ],
@@ -548,28 +516,27 @@
       {
         "executes" : true,
         "heading" : "Import",
-        "line" : 168,
+        "line" : 169,
         "lines" : [
-          "codeblock:bash:IyBGb3IgT2JzaWRpYW4gdmF1bHRzLCB1c2UgdGhlIG1pZ3JhdGUgc2tpbGwgZm9yIHByb3BlciB3aWtpbGluayBoYW5kbGluZwpnYnJhaW4gbWlncmF0ZSAtLWZyb20gb2JzaWRpYW4gLS1wYXRoIC9wYXRoL3RvL3ZhdWx0CgojIEZvciBwbGFpbiBtYXJrZG93biBkaXJlY3RvcmllcwpnYnJhaW4gaW1wb3J0IC9wYXRoL3RvL2RpciAtLW5vLWVtYmVkIC0td29ya2VycyA0CgojIFZlcmlmeQpnYnJhaW4gc3RhdHMKZ2JyYWluIHNlYXJjaCAiPHRvcGljIGZyb20gdGhlIGltcG9ydGVkIGRhdGE+Ig=="
+          "codeblock:bash:IyBGb3IgT2JzaWRpYW4gdmF1bHRzLCB1c2UgdGhlIG1pZ3JhdGUgc2tpbGwgZm9yIHByb3BlciB3aWtpbGluayBoYW5kbGluZwpnYnJhaW4gbWlncmF0ZSAtLWZyb20gb2JzaWRpYW4gLS1wYXRoIC9wYXRoL3RvL3ZhdWx0CiAgCiMgRm9yIHBsYWluIG1hcmtkb3duIGRpcmVjdG9yaWVzCmdicmFpbiBpbXBvcnQgL3BhdGgvdG8vZGlyIC0tbm8tZW1iZWQgLS13b3JrZXJzIDQKICAKIyBWZXJpZnkKZ2JyYWluIHN0YXRzCmdicmFpbiBzZWFyY2ggIjx0b3BpYyBmcm9tIHRoZSBpbXBvcnRlZCBkYXRhPiI="
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Post-import",
-        "line" : 182,
+        "line" : 183,
         "lines" : [
-          "Run link extraction: `gbrain extract links --source db`",
-          "Run timeline extraction: `gbrain extract timeline --source db`",
-          "Start embeddings: `gbrain embed --stale` (runs in background)"
+
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 2: Google Contacts → People Pages",
-        "line" : 193,
+        "line" : 194,
         "lines" : [
+          "use judgment to follow the Phase 2: Google Contacts → People Pages guidance:",
           "**Seeds the people\/ directory.** Every person in your contacts becomes a brain page",
           "with name, email, phone, company, and notes. This is the foundation that all other",
           "imports build on — when Gmail references \"john@acme.com\", the brain already knows",
@@ -580,7 +547,7 @@
       {
         "executes" : false,
         "heading" : "Via ClawVisor",
-        "line" : 200,
+        "line" : 201,
         "lines" : [
           "codeblock:javascript:Ly8gRmV0Y2ggYWxsIGNvbnRhY3RzCmNvbnN0IGNvbnRhY3RzID0gYXdhaXQgY2xhd3Zpc29yKCdnb29nbGUuY29udGFjdHMnLCAnbGlzdF9jb250YWN0cycsIHsKICBsaW1pdDogMTAwMCwKICBmaWVsZHM6ICduYW1lcyxlbWFpbEFkZHJlc3NlcyxwaG9uZU51bWJlcnMsb3JnYW5pemF0aW9ucyxiaW9ncmFwaGllcycKfSk7"
         ],
@@ -589,7 +556,7 @@
       {
         "executes" : true,
         "heading" : "Via direct Google People API",
-        "line" : 210,
+        "line" : 211,
         "lines" : [
           "codeblock:bash:Y3VybCAtcyAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICRHT09HTEVfVE9LRU4iIFwKICAiaHR0cHM6Ly9wZW9wbGUuZ29vZ2xlYXBpcy5jb20vdjEvcGVvcGxlL21lL2Nvbm5lY3Rpb25zP3BlcnNvbkZpZWxkcz1uYW1lcyxlbWFpbEFkZHJlc3NlcyxwaG9uZU51bWJlcnMsb3JnYW5pemF0aW9ucyxiaW9ncmFwaGllcyZwYWdlU2l6ZT0xMDAwIg=="
         ],
@@ -598,16 +565,16 @@
       {
         "executes" : false,
         "heading" : "Processing rules",
-        "line" : 217,
+        "line" : 218,
         "lines" : [
           "For each contact:",
           "**Filter out noise** — skip contacts with no name, no email, or that are clearly",
           "automated (noreply@, no-reply@, support@, notifications@)",
           "**Check brain first** — `gbrain search \"name\"` to avoid duplicates",
           "**Create people\/ page** with:",
-          "Name, email(s), phone(s), company, title",
-          "Source attribution: `[Source: Google Contacts, YYYY-MM-DD]`",
-          "Any notes from the contact as initial context",
+          "item: Name, email(s), phone(s), company, title",
+          "item: Source attribution: `[Source: Google Contacts, YYYY-MM-DD]`",
+          "item: Any notes from the contact as initial context",
           "**Link to company** — if the contact has an organization, create\/update the",
           "company page and link the person to it"
         ],
@@ -616,17 +583,18 @@
       {
         "executes" : false,
         "heading" : "Quality gate",
-        "line" : 230,
+        "line" : 231,
         "lines" : [
           "After importing 5 contacts, pause and show the user a sample page. Ask:"
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 3: Google Calendar (Last 90 Days)",
-        "line" : 236,
+        "line" : 237,
         "lines" : [
+          "use judgment to follow the Phase 3: Google Calendar (Last 90 Days) guidance:",
           "**Meeting history with attendee context.** Calendar events reveal who the user meets",
           "with, how often, and in what context. Combined with contacts, this builds a rich",
           "relationship map"
@@ -636,7 +604,7 @@
       {
         "executes" : false,
         "heading" : "Fetch events",
-        "line" : 242,
+        "line" : 243,
         "lines" : [
           "codeblock:javascript:Ly8gVmlhIENsYXdWaXNvciDigJQgcXVlcnkgQUxMIGNhbGVuZGFyIGFjY291bnRzCmNvbnN0IGFjY291bnRzID0gWydwcmltYXJ5QGdtYWlsLmNvbScsICd3b3JrQGNvbXBhbnkuY29tJ107CmZvciAoY29uc3QgYWNjb3VudCBvZiBhY2NvdW50cykgewogIGNvbnN0IGV2ZW50cyA9IGF3YWl0IGNsYXd2aXNvcihgZ29vZ2xlLmNhbGVuZGFyOiR7YWNjb3VudH1gLCAnbGlzdF9ldmVudHMnLCB7CiAgICB0aW1lTWluOiBuZXcgRGF0ZShEYXRlLm5vdygpIC0gOTAgKiA4NjQwMDAwMCkudG9JU09TdHJpbmcoKSwKICAgIHRpbWVNYXg6IG5ldyBEYXRlKCkudG9JU09TdHJpbmcoKSwKICAgIHNpbmdsZUV2ZW50czogdHJ1ZSwKICAgIG9yZGVyQnk6ICdzdGFydFRpbWUnCiAgfSk7Cn0="
         ],
@@ -645,7 +613,7 @@
       {
         "executes" : false,
         "heading" : "Brain structure",
-        "line" : 257,
+        "line" : 258,
         "lines" : [
           "Follow the three-tier calendar architecture:",
           "codeblock:plain:YnJhaW4vZGFpbHkvY2FsZW5kYXIvCuKUnOKUgOKUgCBjYWxlbmRhci1sb2cubWQgICAgICAgICAgICAgIOKGkCBjb21waWxlZCB0cnV0aCAocGF0dGVybnMsIGtleSBwZW9wbGUpCuKUnOKUgOKUgCBZWVlZLwrilIIgICDilJzilIDilIAgWVlZWS1NTS5tZCAgICAgICAgICAgICAgIOKGkCBtb250aGx5IHN1bW1hcnkK4pSCICAg4pSU4pSA4pSAIFlZWVktTU0tREQubWQgICAgICAgICAgICDihpAgZGFpbHkgZXZlbnQgbG9n"
@@ -655,7 +623,7 @@
       {
         "executes" : false,
         "heading" : "Entity enrichment",
-        "line" : 268,
+        "line" : 269,
         "lines" : [
           "For each event with attendees:",
           "Look up each attendee in the brain (they should exist from Phase 2)",
@@ -666,10 +634,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 4: Gmail (Recent Threads)",
-        "line" : 276,
+        "line" : 277,
         "lines" : [
+          "use judgment to follow the Phase 4: Gmail (Recent Threads) guidance:",
           "**Relationship context and active threads.** Email reveals organizational",
           "relationships, ongoing conversations, and communication patterns"
         ],
@@ -678,7 +647,7 @@
       {
         "executes" : false,
         "heading" : "Strategy: Smart sampling, not bulk import",
-        "line" : 281,
+        "line" : 282,
         "lines" : [
           "Don't import every email. Import the **signal**:",
           "**Sent mail (last 30 days)** — who the user actively communicates with",
@@ -691,7 +660,7 @@
       {
         "executes" : false,
         "heading" : "Processing",
-        "line" : 290,
+        "line" : 291,
         "lines" : [
           "For each email thread:",
           "**Entity detection** — extract people, companies mentioned",
@@ -704,25 +673,26 @@
       {
         "executes" : false,
         "heading" : "Filtering rules",
-        "line" : 298,
+        "line" : 299,
         "lines" : [
           "**Auto-skip (never import):**",
-          "noreply@, no-reply@, notifications@, support@, mailer-daemon@",
-          "Unsubscribe-heavy senders (marketing)",
-          "GitHub\/Jira\/Linear notification emails",
-          "Calendar invites (already captured in Phase 3)",
+          "item: noreply@, no-reply@, notifications@, support@, mailer-daemon@",
+          "item: Unsubscribe-heavy senders (marketing)",
+          "item: GitHub\/Jira\/Linear notification emails",
+          "item: Calendar invites (already captured in Phase 3)",
           "**Always import:**",
-          "Direct emails from people in the brain",
-          "Starred\/flagged emails",
-          "Emails the user sent (their words are highest-value signal)"
+          "item: Direct emails from people in the brain",
+          "item: Starred\/flagged emails",
+          "item: Emails the user sent (their words are highest-value signal)"
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 5: Conversation Exports (ChatGPT \/ Claude \/ Perplexity)",
-        "line" : 311,
+        "line" : 312,
         "lines" : [
+          "use judgment to follow the Phase 5: Conversation Exports (ChatGPT \/ Claude \/ Perplexity) guidance:",
           "**Your thinking, captured.** AI conversation exports reveal what the user",
           "was researching, building, and thinking about. This is original thinking",
           "preserved in dialog form"
@@ -732,26 +702,24 @@
       {
         "executes" : false,
         "heading" : "Supported formats",
-        "line" : 317,
+        "line" : 318,
         "lines" : [
-          "**ChatGPT:** Settings → Data Controls → Export → `conversations.json`",
-          "**Claude:** Download from claude.ai conversation history",
-          "**Perplexity:** Export from settings"
+
         ],
         "role" : "inert"
       },
       {
         "executes" : false,
         "heading" : "Processing",
-        "line" : 323,
+        "line" : 324,
         "lines" : [
           "For each conversation:",
           "**Assess significance** (1-5 scale):",
-          "1 = Pure utility (how-tos, quick lookups) → skip or minimal page",
-          "2 = Minor context → 1-paragraph note",
-          "3 = Notable (reveals interests, building something) → full page",
-          "4 = Important (deep personal processing, strategic thinking) → rich page",
-          "5 = Defining (identity work, breakthrough insights) → full treatment",
+          "item: 1 = Pure utility (how-tos, quick lookups) → skip or minimal page",
+          "item: 2 = Minor context → 1-paragraph note",
+          "item: 3 = Notable (reveals interests, building something) → full page",
+          "item: 4 = Important (deep personal processing, strategic thinking) → rich page",
+          "item: 5 = Defining (identity work, breakthrough insights) → full treatment",
           "**Extract entities** — people, companies, concepts discussed",
           "**Capture original thinking** — the user's exact phrasing is the signal",
           "Never paraphrase",
@@ -763,17 +731,18 @@
       {
         "executes" : false,
         "heading" : "Quality rule",
-        "line" : 338,
+        "line" : 339,
         "lines" : [
           "Only import conversations rated 3+. The brain is for signal, not noise"
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 6: X\/Twitter Archive",
-        "line" : 342,
+        "line" : 343,
         "lines" : [
+          "use judgment to follow the Phase 6: X\/Twitter Archive guidance:",
           "**Your public positions and engagement patterns.** Twitter reveals what the user",
           "thinks, who they engage with, and what ideas they're developing publicly"
         ],
@@ -782,10 +751,10 @@
       {
         "executes" : false,
         "heading" : "Data sources",
-        "line" : 347,
+        "line" : 348,
         "lines" : [
           "**Twitter data export** (Settings → Your Account → Download Archive)",
-          "Contains all tweets, likes, DMs, bookmarks",
+          "item: Contains all tweets, likes, DMs, bookmarks",
           "**Live API** (if available) — recent tweets and engagement",
           "**Bookmarks** — curated signal, high value"
         ],
@@ -794,7 +763,7 @@
       {
         "executes" : false,
         "heading" : "Brain structure",
-        "line" : 354,
+        "line" : 355,
         "lines" : [
           "codeblock:plain:YnJhaW4vbWVkaWEveC97aGFuZGxlfS8K4pSc4pSA4pSAIHgtbG9nLm1kICAgICAgICAgICAgICAgICAgICAg4oaQIGNvbXBpbGVkIHRydXRoICh0aGVtZXMsIHZvaWNlLCBrZXkgdGhyZWFkcykK4pSc4pSA4pSAIGRhaWx5L1lZWVktTU0tREQubWQgICAgICAgICAg4oaQIGRhaWx5IHR3ZWV0IGxvZwrilJzilIDilIAgbW9udGhseS9ZWVlZLU1NLm1kICAgICAgICAgICDihpAgbW9udGhseSByb2xsdXAK4pSU4pSA4pSAIGJvb2ttYXJrcy8gICAgICAgICAgICAgICAgICAg4oaQIHNhdmVkL2Jvb2ttYXJrZWQgY29udGVudA=="
         ],
@@ -803,20 +772,16 @@
       {
         "executes" : false,
         "heading" : "Processing",
-        "line" : 364,
+        "line" : 365,
         "lines" : [
-          "**Original tweets** → capture with full context, extract entities",
-          "**Quote tweets** → capture the user's commentary + the source tweet",
-          "**Threads** → reconstruct as a single narrative",
-          "**Bookmarks** → high-signal curation, import with tags",
-          "**Likes** — low signal, skip unless the user wants them"
+
         ],
         "role" : "inert"
       },
       {
         "executes" : false,
         "heading" : "Phase 7: File Archives",
-        "line" : 372,
+        "line" : 373,
         "lines" : [
           "**Historical documents, old writing, photos with metadata.** This is the long tail —",
           "less structured but potentially very high value (old journals, letters, early writing)",
@@ -834,24 +799,25 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 8: Meeting Transcripts",
-        "line" : 396,
+        "line" : 397,
         "lines" : [
+          "use judgment to follow the Phase 8: Meeting Transcripts guidance:",
           "**Deep relationship context from recorded calls.** If the user has a meeting",
           "recording service (Circleback, Otter, Fireflies, Read.ai), import recent",
           "transcripts",
           "Delegate to `meeting-ingestion` skill. Key rules:",
-          "Always pull the **complete transcript**, not just the AI summary",
-          "Entity propagation is MANDATORY — every attendee gets a timeline update",
-          "A meeting is NOT fully ingested until all entity pages are updated"
+          "item: Always pull the **complete transcript**, not just the AI summary",
+          "item: Entity propagation is MANDATORY — every attendee gets a timeline update",
+          "item: A meeting is NOT fully ingested until all entity pages are updated"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Post-Bootstrap Checklist",
-        "line" : 407,
+        "line" : 408,
         "lines" : [
           "After completing available phases:",
           "**Verify brain health:**",
@@ -870,31 +836,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 452,
+        "line" : 453,
         "lines" : [
-          "**Giving the agent raw OAuth tokens.** This is the #1 anti-pattern. An agent with",
-          "raw Gmail\/Calendar tokens is an uncontrolled attack surface — one prompt injection",
-          "and your entire Google account is exposed. Use ClawVisor. If the user declines",
-          "ClawVisor, skip to offline imports. Never offer direct OAuth as a fallback",
-          "**Bulk importing everything without filtering.** The brain is for signal, not noise",
-          "Filter out automated senders, marketing emails, utility conversations",
-          "**Importing without entity cross-linking.** Every import should detect entities and",
-          "update existing brain pages. Isolated imports don't compound",
-          "**Not gating on user consent.** Every phase should be presented as a choice. The user",
-          "may not want their DMs or therapy conversations imported",
-          "**Importing everything at significance 1.** Not every conversation is worth a brain",
-          "page. Use the significance scale and skip utility content",
-          "**Creating people pages for automated senders.** Sentry, GitHub notifications,",
-          "newsletter platforms are not people. Filter by the rules in Phase 4"
+          "checklist:ai-autonomy:KipHaXZpbmcgdGhlIGFnZW50IHJhdyBPQXV0aCB0b2tlbnMuKiogVGhpcyBpcyB0aGUgIzEgYW50aS1wYXR0ZXJuLiBBbiBhZ2VudCB3aXRoIHJhdyBHbWFpbC9DYWxlbmRhciB0b2tlbnMgaXMgYW4gdW5jb250cm9sbGVkIGF0dGFjayBzdXJmYWNlIOKAlCBvbmUgcHJvbXB0IGluamVjdGlvbiBhbmQgeW91ciBlbnRpcmUgR29vZ2xlIGFjY291bnQgaXMgZXhwb3NlZC4gVXNlIENsYXdWaXNvci4gSWYgdGhlIHVzZXIgZGVjbGluZXMgQ2xhd1Zpc29yLCBza2lwIHRvIG9mZmxpbmUgaW1wb3J0cy4gTmV2ZXIgb2ZmZXIgZGlyZWN0IE9BdXRoIGFzIGEgZmFsbGJhY2suCioqQnVsayBpbXBvcnRpbmcgZXZlcnl0aGluZyB3aXRob3V0IGZpbHRlcmluZy4qKiBUaGUgYnJhaW4gaXMgZm9yIHNpZ25hbCwgbm90IG5vaXNlIEZpbHRlciBvdXQgYXV0b21hdGVkIHNlbmRlcnMsIG1hcmtldGluZyBlbWFpbHMsIHV0aWxpdHkgY29udmVyc2F0aW9ucy4KKipJbXBvcnRpbmcgd2l0aG91dCBlbnRpdHkgY3Jvc3MtbGlua2luZy4qKiBFdmVyeSBpbXBvcnQgc2hvdWxkIGRldGVjdCBlbnRpdGllcyBhbmQgdXBkYXRlIGV4aXN0aW5nIGJyYWluIHBhZ2VzLiBJc29sYXRlZCBpbXBvcnRzIGRvbid0IGNvbXBvdW5kLgoqKk5vdCBnYXRpbmcgb24gdXNlciBjb25zZW50LioqIEV2ZXJ5IHBoYXNlIHNob3VsZCBiZSBwcmVzZW50ZWQgYXMgYSBjaG9pY2UuIFRoZSB1c2VyIG1heSBub3Qgd2FudCB0aGVpciBETXMgb3IgdGhlcmFweSBjb252ZXJzYXRpb25zIGltcG9ydGVkLgoqKkltcG9ydGluZyBldmVyeXRoaW5nIGF0IHNpZ25pZmljYW5jZSAxLioqIE5vdCBldmVyeSBjb252ZXJzYXRpb24gaXMgd29ydGggYSBicmFpbiBwYWdlLiBVc2UgdGhlIHNpZ25pZmljYW5jZSBzY2FsZSBhbmQgc2tpcCB1dGlsaXR5IGNvbnRlbnQuCioqQ3JlYXRpbmcgcGVvcGxlIHBhZ2VzIGZvciBhdXRvbWF0ZWQgc2VuZGVycy4qKiBTZW50cnksIEdpdEh1YiBub3RpZmljYXRpb25zLCBuZXdzbGV0dGVyIHBsYXRmb3JtcyBhcmUgbm90IHBlb3BsZS4gRmlsdGVyIGJ5IHRoZSBydWxlcyBpbiBQaGFzZSA0Lg=="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Resume Protocol",
-        "line" : 469,
+        "line" : 471,
         "lines" : [
           "If the session is interrupted:",
           "Read `~\/.gbrain\/cold-start-state.json`",
@@ -907,7 +860,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 478,
+        "line" : 480,
         "lines" : [
           "After each phase:",
           "codeblock:plain:UEhBU0UgTiBDT01QTEVURTogW3NvdXJjZSBuYW1lXQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQoKUGFnZXMgY3JlYXRlZDogTgpQYWdlcyB1cGRhdGVkOiBOCkVudGl0aWVzIGxpbmtlZDogTgpUaW1lIGVsYXBzZWQ6IE4gbWluCgpTYW1wbGUgcGFnZXM6Ci0gcGVvcGxlL2phbmUtc21pdGgubWQgKGNyZWF0ZWQg4oCUIDMgZW1haWxzLCA1IG1lZXRpbmdzKQotIGNvbXBhbmllcy9hY21lLWNvcnAubWQgKHVwZGF0ZWQg4oCUIDIgbmV3IGVtcGxveWVlcyBsaW5rZWQpCgpOZXh0OiBQaGFzZSBOKzEg4oCUIFtkZXNjcmlwdGlvbl0uIFJlYWR5IHRvIHByb2NlZWQ\/"
@@ -917,7 +870,7 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 498,
+        "line" : 500,
         "lines" : [
           "`search` — check for existing pages before creating",
           "`query` — hybrid search for entity deduplication",
@@ -972,136 +925,84 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 154,
-      "swift_line" : 596
+      "meridian_line" : 53,
+      "swift_line" : 586
     },
     {
-      "meridian_line" : 154,
-      "swift_line" : 607
-    },
-    {
-      "meridian_line" : 154,
-      "swift_line" : 619
-    },
-    {
-      "meridian_line" : 154,
-      "swift_line" : 630
-    },
-    {
-      "meridian_line" : 154,
-      "swift_line" : 643
-    },
-    {
-      "meridian_line" : 154,
-      "swift_line" : 654
-    },
-    {
-      "meridian_line" : 154,
-      "swift_line" : 665
-    },
-    {
-      "meridian_line" : 154,
-      "swift_line" : 676
-    },
-    {
-      "meridian_line" : 154,
-      "swift_line" : 687
-    },
-    {
-      "meridian_line" : 154,
-      "swift_line" : 698
-    },
-    {
-      "meridian_line" : 170,
-      "swift_line" : 709
-    },
-    {
-      "meridian_line" : 170,
-      "swift_line" : 720
-    },
-    {
-      "meridian_line" : 170,
-      "swift_line" : 731
-    },
-    {
-      "meridian_line" : 170,
-      "swift_line" : 742
-    },
-    {
-      "meridian_line" : 212,
-      "swift_line" : 753
+      "meridian_line" : 73,
+      "swift_line" : 597
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 796
+      "swift_line" : 635
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 801
+      "swift_line" : 640
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 842
+      "swift_line" : 679
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 847
+      "swift_line" : 684
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 888
+      "swift_line" : 723
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 893
+      "swift_line" : 728
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 934
+      "swift_line" : 767
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 939
+      "swift_line" : 772
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 980
+      "swift_line" : 811
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 985
+      "swift_line" : 816
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1026
+      "swift_line" : 855
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1031
+      "swift_line" : 860
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1072
+      "swift_line" : 899
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1077
+      "swift_line" : 904
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1118
+      "swift_line" : 943
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1123
+      "swift_line" : 948
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1164
+      "swift_line" : 987
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1169
+      "swift_line" : 992
     }
   ],
   "tools_used" : [

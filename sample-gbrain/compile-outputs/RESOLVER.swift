@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -586,13 +578,35 @@ public struct ResolverInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ResolverInput", parameters: [:])
 
-        // L22
-        let __meridianProseResults_L22 = try await runtime.executeProsePlan(
+        // L17
+        let __meridianProseResults_L17 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Every inbound request maps to exactly one owning skill, or to a short chain of skills that are designed to compose\n- The resolver only selects; it never performs brain reads or writes itself\n- Always-on detection (signal-detector, brain-ops) runs on every message regardless of routing",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L17 {
+            state.bind(__key, __value)
+        }
+        // L23
+        let __meridianProseResults_L23 = try await runtime.executeProsePlan(
             prose: "route the request to the owning skill\nRead the request and identify the dominant intent (brain operation, ingestion, maintenance, scheduling, or meta)\nMatch the intent against the trigger phrases of each skill and select the single owning skill\nWhen two skills could match, select both and order them so their outputs chain (for example, ingest before enrich)\nRead the selected skill file before acting",
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
         )
-        for (__key, __value) in __meridianProseResults_L22 {
+        for (__key, __value) in __meridianProseResults_L23 {
+            state.bind(__key, __value)
+        }
+        // L58
+        let __meridianProseResults_L58 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Routing to more than one skill when a single skill clearly owns the request\n- Performing brain reads or writes inside the resolver instead of delegating\n- Skipping always-on detection because a specific skill matched",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L58 {
             state.bind(__key, __value)
         }
 

@@ -20,12 +20,13 @@ mutating: false
 
 > **Full filing rules:** See `skills/_brain-filing-rules.md`
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-This skill guarantees:
-- Every new page is filed by primary subject (not format, not source)
-- The decision protocol is followed for ambiguous cases
-- Common misfiling patterns are caught
+> This skill guarantees:
+!!! checklist (( ai-autonomy ))
+- [ ] Every new page is filed by primary subject (not format, not source)
+- [ ] The decision protocol is followed for ambiguous cases
+- [ ] Common misfiling patterns are caught
 
 ## Phases
 
@@ -39,9 +40,10 @@ use judgment to file a new brain page by its primary subject:
 
 Advisory: "File this at `{type}/{slug}.md` because the primary subject is {reason}."
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- Filing by format ("it's a PDF so it goes in sources/")
-- Filing by source ("it came from email so it goes in sources/")
-- Creating pages without checking if one already exists
-- Using `sources/` for anything except raw data dumps
+!!! checklist (( ai-autonomy ))
+- [ ] Filing by format ("it's a PDF so it goes in sources/")
+- [ ] Filing by source ("it came from email so it goes in sources/")
+- [ ] Creating pages without checking if one already exists
+- [ ] Using `sources/` for anything except raw data dumps

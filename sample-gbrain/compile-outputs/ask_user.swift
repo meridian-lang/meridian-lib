@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -588,8 +580,26 @@ public struct AskUserInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "AskUserInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L31:C0") {
-            // L31
+        // L59
+        if MeridianComparison.gt(state.get("time-criticalOperationsWhereDelayCosts"), state.get("wrongChoice")) {
+            // L59
+            await runtime.complete(reason: nil)
+            return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+        }
+
+        // L22
+        let __meridianProseResults_L22 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Present 2-4 options (no more — decision paralysis kicks in past 4)\n- Always include an escape hatch (Skip, Cancel, or \"none of these\")\n- Stop the turn immediately after presenting choices. No follow-up tool calls, no preemptive action, no default-and-proceed.\n- The user's response triggers the next turn. Acknowledge briefly, then branch\n- One question per message — never stack multiple choice gates\n- Self-explanatory option labels: action verb plus brief qualifier, not \"Option 1\"",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L22 {
+            state.bind(__key, __value)
+        }
+        if __meridianShouldRun("progress:0.2:L32:C0") {
+            // L32
             try await runtime.emit(
                 event: "ask.choice",
                 payload: [
@@ -597,13 +607,24 @@ public struct AskUserInput: MeridianWorkflow {
                     "options": .string("Proceed, Adjust, Skip"),
                 ]
             )
-            try await runtime.checkpoint(label: "progress:0.0:L31:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.2:L32:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.1:L31:C0") {
-            // L31
+        if __meridianShouldRun("progress:0.3:L32:C0") {
+            // L32
             try await runtime.wait(.choice(prompt: "ask the user to choose between \"Proceed\", \"Adjust\", or \"Skip\"", options: ["Proceed", "Adjust", "Skip"]))
             state.bind("choice", .string(await runtime.consumeChoiceSelection()))
-            try await runtime.checkpoint(label: "progress:0.1:L31:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.3:L32:C0", state: state.snapshot())
+        }
+        // L227
+        let __meridianProseResults_L227 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- **Continuing the turn after presenting choices.** \"While you decide, I'll start on...\" defeats the gate. Stop. Wait. The whole point is that the user controls what happens next.\n- **Picking a default and proceeding silently.** If the question matters enough to ask, it matters enough to wait. Silent defaults erode trust the next time you do ask.\n- **More than 4 options.** Decision paralysis is real. Group, summarize, or split into staged questions instead.\n- **No escape hatch.** Every choice gate must let the user decline. \"None of these\" / \"Skip\" / \"Cancel\" is mandatory.\n- **Stacking multiple choice gates in one message.** The user can only answer one question per turn. Multi-question gates either get half-answered or dropped entirely.\n- **Cryptic option labels.** \"Option 1\" forces re-reading the context. \"Merge into existing page\" is self-explanatory.\n- **Asking about low-stakes decisions.** If the wrong answer costs nothing, just pick the best option and mention it. Reserve gates for forks where rework is expensive.",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L227 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

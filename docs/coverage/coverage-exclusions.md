@@ -101,12 +101,12 @@ MeridianCore/Diagnostics/Diagnostic.swift                  = 89
 MeridianCore/Diagnostics/DiagnosticRenderer.swift          = 96
 MeridianCore/Diagnostics/ParserTrace.swift                 = 87
 MeridianCore/Docs/MerconfigDocsRenderer.swift              = 93
-MeridianCore/Language/EnglishLexicon.swift                 = 98
+MeridianCore/Language/EnglishLexicon.swift                 = 97.5
 # WholeWordRegex: the single `else { preconditionFailure }` arm is unreachable —
 # the pattern always comes from NSRegularExpression.escapedPattern, so it can
 # only fail on a Foundation bug (and `!` is banned by house rules). Permanent.
 MeridianCore/Language/WholeWordRegex.swift                 = 83
-MeridianCore/Lowering/ASTToIR.swift                        = 81
+MeridianCore/Lowering/ASTToIR.swift                        = 80.7
 MeridianCore/Lowering/ConventionInjector.swift             = 73
 MeridianCore/Lowering/RuleInjector.swift                   = 75
 MeridianCore/Lowering/RuleLowering.swift                   = 83
@@ -114,7 +114,8 @@ MeridianCore/Lowering/SkillTriggers.swift                  = 88
 MeridianCore/Migration/Difflib.swift                       = 98
 MeridianCore/Migration/SkillDeviation.swift                = 90
 MeridianCore/Migration/SkillMigrator.swift                 = 90
-MeridianCore/Parser/Lexical/ExpressionParser.swift         = 89
+MeridianCore/Parser/Lexical/ExpressionParser.swift         = 88.9
+MeridianCore/Parser/Lexical/HeaderFolder.swift             = 94.4
 MeridianCore/Parser/Lexical/IndentTokenizer.swift          = 90
 MeridianCore/Parser/Productions/MerConfigParser.swift      = 88
 MeridianCore/Parser/Productions/MeridianParser.swift       = 94

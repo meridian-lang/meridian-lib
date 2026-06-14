@@ -20,13 +20,14 @@ mutating: false
 
 # Daily Task Prep
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-This skill guarantees:
-- Calendar/meetings for today are loaded with brain context per attendee
-- Open threads from yesterday are surfaced
-- Active tasks reviewed with priority ordering
-- Prep briefing is actionable (not just informational)
+> This skill guarantees:
+!!! checklist (( ai-autonomy ))
+- [ ] Calendar/meetings for today are loaded with brain context per attendee
+- [ ] Open threads from yesterday are surfaced
+- [ ] Active tasks reviewed with priority ordering
+- [ ] Prep briefing is actionable (not just informational)
 
 ## Phases
 
@@ -59,8 +60,9 @@ Prep: {what to know before this meeting}
 - {task with priority}
 ```
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- Listing meetings without loading attendee context from brain
-- Ignoring yesterday's unresolved threads
-- Presenting tasks without priority ordering
+!!! checklist (( ai-autonomy ))
+- [ ] Listing meetings without loading attendee context from brain
+- [ ] Ignoring yesterday's unresolved threads
+- [ ] Presenting tasks without priority ordering

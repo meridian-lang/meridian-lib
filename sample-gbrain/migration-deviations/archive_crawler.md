@@ -2,9 +2,9 @@
 
 - Original: `archive-crawler/SKILL.md`
 - Ported: `archive_crawler.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 90%
-- Lines: 321 -> 321 (+32 / -32)
+- Tier: 2 (light edits)
+- Similarity: 54%
+- Lines: 321 -> 324 (+149 / -146)
 
 ## Frontmatter
 - Added: (none)
@@ -15,14 +15,30 @@
 - shell-block-routed
 
 ## Metrics
-- Sections: 19/22 inert (86% inert ratio)
-- Judgment: 0 blocks, 0 lines
+- Sections: 11/22 inert (50% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: reference-documentation=10, template=1
+- Judgment: 6 blocks, 68 lines
+
+### Inert section details
+- L12 `Safety gate (REQUIRED, no exceptions)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L43 `What this is`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L52 `Concepts`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L163 `File-type handlers`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L165 `Plain text / HTML / Markdown`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L168 ``.mbox` (email archives)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L212 ``.zip` / `.tar` / `.tar.gz``: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L216 `Images`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L221 `Manifest template`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L283 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L304 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/archive-crawler/SKILL.md
-+++ archive_crawler.meri
++++ skills/archive_crawler.meri
 @@ -26,7 +26,7 @@
  > this skill is **schema-generic**: it reads the user's filing rules from
  > the rules JSON instead of hardcoding any specific era / archive layout.
@@ -41,69 +57,213 @@
  
  Generic engine for exploring any tree of personal content within an
  explicit allow-list. Works on local mounts, Dropbox API targets,
-@@ -66,9 +66,9 @@
+@@ -66,109 +66,109 @@
  it interactively for review. Skips noise (system files, configs, binary
  blobs).
  
 -## Concepts
 -
 -### Source
+-
+-A source is any tree of files to explore. Sources have:
+-
+-- **type**: `local` | `dropbox` | `backblaze` | `gmail-takeout` | `mbox` | `pst`
+-- **root**: filesystem path, Dropbox path, B2 prefix, mbox path
+-- **manifest**: a brain page tracking progress at
+-  `projects/<archive-slug>/STATUS.md`
+-
+-### Manifest
+-
+-Every archive exploration gets a manifest brain page that tracks:
+-
+-1. **Tree inventory** — folders / files / sizes / types
+-2. **Triage status** — each item: `⬜ unseen` / `👀 reviewed` /
+-   `✅ ingested` / `⏭️ skip` / `🔥 high-signal`
+-3. **User reactions** — exact quotes when they react (per
+-   conventions/quality.md exact-phrasing rule)
+-4. **Priority queue** — what to explore next, ranked
+-5. **Session log** — timestamped record of what was shown per session
+-
+-### Gold filter
+-
+-Before showing anything to the user, apply the gold filter:
+-
+-| Keep (show) | Skip (note existence, don't show) |
+-|-------------|-----------------------------------|
+-| Personal writing (journals, letters, reflections, essays) | System files, configs, package.json, node_modules |
+-| Conversations (IM logs, email threads with substance) | Binary blobs (images / video) |
+-| Ideas, theses, frameworks | Receipts, invoices, tax docs |
+-| Relationship material (letters to / from people who matter) | Spam, newsletters, mailing-list bulk |
+-| Creative work (poetry, stories, code with soul) | Corrupted / null files |
+-| Origin stories (first versions of things that became important) | |
+-| Emotional content (anger, love, grief, discovery) | |
+-
 +## Concepts (( inert ))
 +
-+### Source (( inert ))
- 
- A source is any tree of files to explore. Sources have:
- 
-@@ -77,7 +77,7 @@
- - **manifest**: a brain page tracking progress at
-   `projects/<archive-slug>/STATUS.md`
- 
--### Manifest
-+### Manifest (( inert ))
- 
- Every archive exploration gets a manifest brain page that tracks:
- 
-@@ -89,7 +89,7 @@
- 4. **Priority queue** — what to explore next, ranked
- 5. **Session log** — timestamped record of what was shown per session
- 
--### Gold filter
-+### Gold filter (( inert ))
- 
- Before showing anything to the user, apply the gold filter:
- 
-@@ -105,7 +105,7 @@
- 
++### Source (( role: procedure ))
++
++use judgment to follow the Source guidance:
++  A source is any tree of files to explore. Sources have:
++  
++  item: **type**: `local` | `dropbox` | `backblaze` | `gmail-takeout` | `mbox` | `pst`
++  item: **root**: filesystem path, Dropbox path, B2 prefix, mbox path
++  item: **manifest**: a brain page tracking progress at
++    `projects/<archive-slug>/STATUS.md`
++### Manifest (( role: procedure ))
++  
++use judgment to follow the Manifest guidance:
++  Every archive exploration gets a manifest brain page that tracks:
++  
++  1. **Tree inventory** — folders / files / sizes / types
++  2. **Triage status** — each item: `⬜ unseen` / `👀 reviewed` /
++     `✅ ingested` / `⏭️ skip` / `🔥 high-signal`
++  3. **User reactions** — exact quotes when they react (per
++     conventions/quality.md exact-phrasing rule)
++  4. **Priority queue** — what to explore next, ranked
++  5. **Session log** — timestamped record of what was shown per session
++### Gold filter (( role: procedure ))
++  
++use judgment to follow the Gold filter guidance:
++  Before showing anything to the user, apply the gold filter:
++  
++  | Keep (show) | Skip (note existence, don't show) |
++  |-------------|-----------------------------------|
++  | Personal writing (journals, letters, reflections, essays) | System files, configs, package.json, node_modules |
++  | Conversations (IM logs, email threads with substance) | Binary blobs (images / video) |
++  | Ideas, theses, frameworks | Receipts, invoices, tax docs |
++  | Relationship material (letters to / from people who matter) | Spam, newsletters, mailing-list bulk |
++  | Creative work (poetry, stories, code with soul) | Corrupted / null files |
++  | Origin stories (first versions of things that became important) | |
++  | Emotional content (anger, love, grief, discovery) | |
  ## Protocol
  
 -### Phase 1: Inventory
-+### Phase 1: Inventory (( inert, role: procedure ))
- 
- When pointed at a new source:
- 
-@@ -119,7 +119,7 @@
- 6. **Present to user** — show the map and proposed order. Let them
-    override.
- 
+-
+-When pointed at a new source:
+-
+-1. **Confirm scan_paths is set** (safety gate). Exit if not.
+-2. **Map the tree** — list folders + files + sizes + date ranges.
+-3. **Classify folders** — group by likely content type (writing, email,
+-   code, photos, docs, system).
+-4. **Create manifest** — write `projects/<archive-slug>/STATUS.md` with
+-   the full inventory.
+-5. **Propose priority queue** — rank folders by likely gold density.
+-6. **Present to user** — show the map and proposed order. Let them
+-   override.
+-
 -### Phase 2: Crawl
-+### Phase 2: Crawl (( inert, role: procedure ))
- 
- Work through folders in priority order:
- 
-@@ -132,7 +132,7 @@
- 5. **Update manifest** — mark item status after each interaction.
- 6. **Never re-show** — check the manifest before presenting anything.
- 
+-
+-Work through folders in priority order:
+-
+-1. **Read before showing** — open each candidate file, apply the gold
+-   filter, skip noise.
+-2. **Show one at a time** — present gold items individually for review.
+-3. **Capture exact reaction** — track the user's response in the
+-   manifest using their exact words (per conventions/quality.md).
+-4. **Ingest if worth keeping** — create a brain page immediately.
+-5. **Update manifest** — mark item status after each interaction.
+-6. **Never re-show** — check the manifest before presenting anything.
+-
 -### Phase 3: Ingest
-+### Phase 3: Ingest (( inert, role: procedure ))
- 
- When an item is worth keeping, file it by **primary subject** per
- `_brain-filing-rules.md`:
-@@ -168,7 +168,7 @@
- 
- **User's reaction:** [exact quote, no paraphrasing]
- 
+-
+-When an item is worth keeping, file it by **primary subject** per
+-`_brain-filing-rules.md`:
+-
+-- User's own writing / ideas / origin-story content → `originals/<slug>.md`
+-- Reflections / personal-life content → `personal/<slug>.md`
+-- Product / business ideas → `ideas/<slug>.md`
+-- Letters or threads about a specific person → `people/<person>/timeline`
+-  back-link plus the letter at `personal/<slug>.md` or `originals/<slug>.md`
+-
+-**The skill is schema-generic.** It does NOT bake in any specific
+-era-folder structure (e.g., `originals/archive/` for pre-2003,
+-`originals/yc-era/` for post-2019, etc.). The user's filing rules from
+-`_brain-filing-rules.json` are read at runtime; the agent decides per-page
+-where content lands within those sanctioned directories.
+-
+-Brain page format:
+-
+-```markdown
+----
+-title: "[Title or first line]"
+-type: original
+-source_type: "[local|dropbox|backblaze|gmail-takeout|mbox|pst]"
+-source_path: "[path within the allow-listed scan_paths]"
+-date: "YYYY-MM-DD"  # date from the file metadata or content
+-people: ["person-1", "person-2"]
+-tags: ["tag-1", "tag-2"]
+----
+-
+-# [Title]
+-
+-[Summary: what it is, when it's from, why it matters]
+-
+-**User's reaction:** [exact quote, no paraphrasing]
+-
 -## Context
++### Phase 1: Inventory (( role: procedure ))
++
++use judgment to follow the Phase 1: Inventory guidance:
++  When pointed at a new source:
++  
++  1. **Confirm scan_paths is set** (safety gate). Exit if not.
++  2. **Map the tree** — list folders + files + sizes + date ranges.
++  3. **Classify folders** — group by likely content type (writing, email,
++     code, photos, docs, system).
++  4. **Create manifest** — write `projects/<archive-slug>/STATUS.md` with
++     the full inventory.
++  5. **Propose priority queue** — rank folders by likely gold density.
++  6. **Present to user** — show the map and proposed order. Let them
++     override.
++### Phase 2: Crawl (( role: procedure ))
++  
++use judgment to follow the Phase 2: Crawl guidance:
++  Work through folders in priority order:
++  
++  1. **Read before showing** — open each candidate file, apply the gold
++     filter, skip noise.
++  2. **Show one at a time** — present gold items individually for review.
++  3. **Capture exact reaction** — track the user's response in the
++     manifest using their exact words (per conventions/quality.md).
++  4. **Ingest if worth keeping** — create a brain page immediately.
++  5. **Update manifest** — mark item status after each interaction.
++  6. **Never re-show** — check the manifest before presenting anything.
++### Phase 3: Ingest (( role: procedure ))
++  
++use judgment to follow the Phase 3: Ingest guidance:
++  When an item is worth keeping, file it by **primary subject** per
++  `_brain-filing-rules.md`:
++  
++  item: User's own writing / ideas / origin-story content → `originals/<slug>.md`
++  item: Reflections / personal-life content → `personal/<slug>.md`
++  item: Product / business ideas → `ideas/<slug>.md`
++  item: Letters or threads about a specific person → `people/<person>/timeline`
++    back-link plus the letter at `personal/<slug>.md` or `originals/<slug>.md`
++  
++  **The skill is schema-generic.** It does NOT bake in any specific
++  era-folder structure (e.g., `originals/archive/` for pre-2003,
++  `originals/yc-era/` for post-2019, etc.). The user's filing rules from
++  `_brain-filing-rules.json` are read at runtime; the agent decides per-page
++  where content lands within those sanctioned directories.
++  
++  Brain page format:
++  
++  ```markdown
++  ---
++  title: "[Title or first line]"
++  type: original
++  source_type: "[local|dropbox|backblaze|gmail-takeout|mbox|pst]"
++  source_path: "[path within the allow-listed scan_paths]"
++  date: "YYYY-MM-DD"  # date from the file metadata or content
++  people: ["person-1", "person-2"]
++  tags: ["tag-1", "tag-2"]
++  ---
++  
++  # [Title]
++  
++  [Summary: what it is, when it's from, why it matters]
++  
++  **User's reaction:** [exact quote, no paraphrasing]
 +## Context (( inert ))
  
  [Cross-links to people, concepts, projects.]
@@ -163,21 +323,28 @@
  
  ```markdown
  ---
-@@ -249,40 +249,40 @@
+@@ -249,53 +249,55 @@
  
  # [Archive Name] — Ingestion Status
  
 -## Source
-+## Source (( inert ))
- - **Type:** [local|dropbox|...]
- - **Allow-listed paths:** [from gbrain.yml]
- - **Total files:** [N]
- - **Total size:** [X GB]
- - **Date range:** [earliest] — [latest]
- 
+-- **Type:** [local|dropbox|...]
+-- **Allow-listed paths:** [from gbrain.yml]
+-- **Total files:** [N]
+-- **Total size:** [X GB]
+-- **Date range:** [earliest] — [latest]
+-
 -## Inventory
 -
 -### [Folder 1]
++## Source (( role: procedure ))
++
++use judgment to follow the Source guidance:
++  item: **Type:** [local|dropbox|...]
++  item: **Allow-listed paths:** [from gbrain.yml]
++  item: **Total files:** [N]
++  item: **Total size:** [X GB]
++  item: **Date range:** [earliest] — [latest]
 +## Inventory (( inert ))
 +
 +### [Folder 1] (( inert ))
@@ -210,12 +377,25 @@
  ```
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
- 
- - ❌ Running without `archive-crawler.scan_paths:` set. Hard refusal.
+-
+-- ❌ Running without `archive-crawler.scan_paths:` set. Hard refusal.
++## Anti-Patterns (( role: procedure ))
++
++!!! checklist (( ai-autonomy ))
++- [ ] ❌ Running without `archive-crawler.scan_paths:` set. Hard refusal.
    This is the safety contract — never bypass.
-@@ -295,7 +295,7 @@
- - ❌ Skipping back-links when content references people / companies who
+-- ❌ Hardcoding era-specific filing paths (e.g., `originals/archive/`,
++- [ ] ❌ Hardcoding era-specific filing paths (e.g., `originals/archive/`,
+   `originals/yc-era/`). Read filing rules at runtime instead.
+-- ❌ Re-showing items already marked in the manifest. The user's time
++- [ ] ❌ Re-showing items already marked in the manifest. The user's time
+   is the scarcest resource.
+-- ❌ Paraphrasing reactions. Exact words only.
+-- ❌ Wrapping found content in lessons or takeaways. Let stories breathe.
+-- ❌ Skipping back-links when content references people / companies who
++- [ ] ❌ Paraphrasing reactions. Exact words only.
++- [ ] ❌ Wrapping found content in lessons or takeaways. Let stories breathe.
++- [ ] ❌ Skipping back-links when content references people / companies who
    have brain pages. Iron Law per conventions/quality.md.
  
 -## Related skills
@@ -223,13 +403,32 @@
  
  - `skills/voice-note-ingest/SKILL.md` — same exact-phrasing pattern for
    audio capture
-@@ -304,7 +304,7 @@
+@@ -304,16 +306,17 @@
  - `skills/conventions/quality.md` — citations, back-links, voice
  
  
 -## Contract
-+## Contract (( inert, role: invariants ))
+-
+-This skill guarantees:
+-
+-- Routing matches the canonical triggers in the frontmatter.
+-- Output written under the directories listed in `writes_to:` (when applicable).
+-- Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
+-- Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
+-
+-The full behavior contract is documented in the body sections above; this section exists for the conformance test.
++## Contract (( role: procedure ))
++
++> This skill guarantees:
++
++!!! checklist (( ai-autonomy ))
++- [ ] Routing matches the canonical triggers in the frontmatter.
++- [ ] Output written under the directories listed in `writes_to:` (when applicable).
++- [ ] Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
++- [ ] Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
++
++> The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  
- This skill guarantees:
+ ## Output Format
  
 ```

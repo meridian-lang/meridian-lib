@@ -63,6 +63,8 @@ section "When To Use", "Use When", "Primary Triggers", "When This Applies" -> ap
 section "When NOT To Use", "When Not To Use", "Do NOT Use", "Skip When", "Do Not Use" -> negative-applicability
 section "Anti-Patterns", "Anti Patterns", "Avoid", "Pitfalls" -> prohibitions
 section "Output Format", "Output", "Report Format", "Result Format" -> template
+section "Prerequisites", "Preconditions" -> applicability
+section "Quality Rules", "Hard Rules", "Verification Checklist", "Quality Gate" -> invariants
 
 # Iron-law back-linking / cross-reference enforcement sections (executable).
 # Aliasing the descriptive headings to `procedure` lets the skills name the
@@ -78,6 +80,9 @@ section "Page-Health Scan", "Graph Extraction" -> procedure
 # Acceptance / verification sections — fuzzy criteria routed to the planner via
 # a `!!! checklist (( ai-autonomy ))` marker (loop until every criterion holds).
 section "Confirm", "Acceptance", "Acceptance Criteria", "Definition Of Done", "Exit Criteria", "Verification" -> procedure
+
+# Operational protocol headings that recur across setup/import/schema skills.
+section "Resume Protocol", "Post-Import", "Post Import", "Health Check", "Full Verification", "Lookup Sequence", "Sync-After-Write Rule" -> procedure
 
 === conventions ===
 

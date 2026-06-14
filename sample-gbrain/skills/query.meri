@@ -33,14 +33,15 @@ mutating: false
 
 > Answer questions using the brain's knowledge with 3-layer search and synthesis.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-This skill guarantees:
-- Every answer is grounded in brain content (no hallucination)
-- Every claim has a citation tracing back to a specific page slug
-- Gaps are flagged explicitly ("the brain doesn't have information on X")
-- Source precedence is respected (user statements > compiled truth > timeline > external)
-- Conflicting sources are noted with both citations
+> This skill guarantees:
+!!! checklist (( ai-autonomy ))
+- [ ] Every answer is grounded in brain content (no hallucination)
+- [ ] Every claim has a citation tracing back to a specific page slug
+- [ ] Gaps are flagged explicitly ("the brain doesn't have information on X")
+- [ ] Source precedence is respected (user statements > compiled truth > timeline > external)
+- [ ] Conflicting sources are noted with both citations
 
 ## Phases
 
@@ -60,13 +61,14 @@ bind page = invoke get page with slug = "index".
 if the page is unwritten,
   emit query.gap with status "no coverage".
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- Answering from general knowledge when the brain has relevant content
-- Hallucinating facts not in the brain
-- Silently picking one source when sources conflict
-- Loading full pages when search chunks are sufficient
-- Ignoring source precedence (user statements are highest authority)
+!!! checklist (( ai-autonomy ))
+- [ ] Answering from general knowledge when the brain has relevant content
+- [ ] Hallucinating facts not in the brain
+- [ ] Silently picking one source when sources conflict
+- [ ] Loading full pages when search chunks are sufficient
+- [ ] Ignoring source precedence (user statements are highest authority)
 
 ## Output Format
 
@@ -148,7 +150,7 @@ If search results seem off (wrong results, missing known pages, irrelevant hits)
   for the same query to isolate whether the issue is embedding-related
 - Report search quality issues in the maintain workflow (see maintain skill)
 
-## Tools Used (( inert ))
+## Tools Used
 
 - Keyword search gbrain (search)
 - Hybrid search gbrain (query)

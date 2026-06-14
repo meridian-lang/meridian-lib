@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -590,6 +582,26 @@ public struct SkillpackHarvestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SkillpackHarvestInput", parameters: [:])
 
+        // L77
+        let __meridianProseResults_L77 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- **Skipping the dry-run.** Always preview first. Files land in gbrain's working tree; cleanup is a `git checkout` away, but you shouldn't need to.\n- **Trusting the linter alone.** The default regex set catches the common cases. It doesn't catch every proper noun. Phase 3 (the editorial pass) is the primary defense.\n- **Harvesting `--no-lint` without justification.** The lint exists for a reason. If you bypass it, document why in the commit.\n- **Harvesting a skill that's still in flux.** Wait until the host version stabilizes. Otherwise you'll harvest, then re-harvest, then re-harvest, and that churns gbrain's bundle for no benefit.\n- **Moving files instead of copying.** Harvest is a copy. The host retains its skill. Don't `rm -rf` the source after harvesting.\n- **Harvesting batch (multiple skills at once).** Not supported, and for good reason — the editorial review per skill is real work.",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L77 {
+            state.bind(__key, __value)
+        }
+        // L95
+        let __meridianProseResults_L95 = try await runtime.executeProsePlan(
+            prose: "follow the When to invoke guidance\nitem: The user developed a skill in their host fork (Wintermute, Neuromancer,\nZion, etc.) and wants other gbrain clients to be able to use it\nitem: A skill has proven itself in production and is ready to generalize\nitem: The user explicitly asks to \"harvest\" or \"publish\" a skill upstream\nDo NOT invoke when:\nitem: The skill is still in flux locally — let it stabilize first\nitem: The skill references private content that can't be generalized\nitem: The user just wants to share a one-off draft (use a gist instead)\nuse judgment to follow the Phase 1 — Plan guidance:\nAsk the user:\nitem: What slug should the harvested skill have? (Slugs must be kebab-case,\nglobally unique in the gbrain bundle.)\nitem: Which host repo is the source? (Path to repo root, not to the skill\ndirectory — e.g. `~/git/wintermute`, not `~/git/wintermute/skills/foo`.)\nitem: Should paired source files come along? (Check the host SKILL.md's\nfrontmatter `sources:` array.)\nuse judgment to follow the Phase 3 — Genericization checklist (the editorial pass) guidance:\nBefore running the real harvest, walk the host's `skills/<slug>/`\nfiles and apply this checklist. If anything matches, edit the host\nfile FIRST, then run harvest\n**Fork-specific names → generic phrasing**\nitem: `Wintermute` → `your OpenClaw` (or `OpenClaw deployment`)\nitem: `Neuromancer`, `Zion`, `<personal-fork-name>` → same treatment\nitem: Personal first names (`garry`, `jane`, etc.) → `the user` /\n`you` / a generic placeholder\n**Real entities → placeholders**\nitem: Real people, companies, deals, funds → placeholder slugs\n(`alice-example`, `acme-example`, `fund-a`, etc.)\nitem: Email addresses → strip entirely OR use `example@example.com`\nitem: Internal Slack channels → `#some-channel` or strip\nitem: Specific tracker IDs / Linear ticket numbers → strip\n**Fork-specific conventions → references**\nitem: Mentions of `<host-repo>/docs/...` files → either lift the doc\ninto gbrain OR replace with a generic placeholder explanation\nitem: Mentions of `<host-repo>/skills/<other-fork-only-skill>` → either\ndecide to harvest that one too, or replace with a generic\npattern reference\n**Triggers array generalizes**\nitem: Read every entry in frontmatter `triggers:`. None should\nreference the user's name, fork name, or internal tools\nitem: \"Have garry sign off on it\" → \"have the user sign off on it\"\n**routing-eval.jsonl examples are scrubbed**\nitem: Open `skills/<slug>/routing-eval.jsonl`. Every `intent` field\ngets the same scrub as `triggers:`\n**Code comments + log strings**\nitem: If a paired source is going to be harvested, walk it for the\nsame private-pattern leaks. Comments are the most common\nhiding spot\nuse judgment to follow the Phase 4 — Real harvest guidance:\nOnce Phase 3 is complete, run the real harvest:\ncodeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290Pg==\nDefault behavior:\nitem: Path-confinement + symlink rejection at file copy\nitem: Privacy linter runs against `~/.gbrain/harvest-private-patterns.txt`\n(plus built-in defaults: `\\bWintermute\\b`, email, Slack channels)\nitem: On any match → rollback (delete the harvested files) + exit non-zero\nitem: `openclaw.plugin.json` updated to add the slug, sorted\nOutcomes:\nitem: `harvested` — success, manifest updated, files in gbrain's tree\nitem: `lint_failed` — privacy linter caught something. Go back to Phase 3,\nscrub the host file, retry\nitem: `slug_collision` — gbrain already has a skill at that slug. Either\nuse a different slug, or pass `--overwrite-local` if you really\nmean to replace\nuse judgment to follow the Phase 5 — Verify in gbrain guidance:\nAfter a successful harvest:\n`bun test test/skills-conformance.test.ts` — confirms the new\nSKILL.md meets the frontmatter contract\n`gbrain skillpack check --strict` — confirms no drift between\nbundle and gbrain's own checkout\n`gbrain skillpack list` — confirms the slug shows up in the bundle\nReview the diff: `cd <gbrainRoot> && git diff -- skills/<slug>/`\nCommit the additions in gbrain (do NOT commit any leftover files\nin the host repo — harvest is a copy, not a move)\nuse judgment to follow the Phase 6 — Downstream announcement (optional) guidance:\nIf other gbrain clients should pick up the new skill:\nitem: Note it in `CHANGELOG.md` under \"Skills added\" for the next release\nitem: Tag the user / contributor in the PR if the skill came from\nsomeone outside the core team\nuse judgment to follow the Bypass: `--no-lint` guidance:\nThe privacy linter is the safety net. The editorial pass is the\nprimary defense. If you've completed Phase 3 thoroughly and the\nlinter is still firing on a false positive, use `--no-lint`:\ncodeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290PiAtLW5vLWxpbnQ=\n**Document the bypass in the commit message.** Future maintainers\nshould be able to see WHY the lint was bypassed (e.g. \"Wintermute\nappears in a citation, not a real reference — verified manually\")\nNever bypass the linter on a casual basis. The whole point of the\ndefault-on lint is that real names occasionally slip through the\neditorial pass",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L95 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

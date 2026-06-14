@@ -147,7 +147,7 @@
         "text" : "Related skills"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 171,
         "text" : "Contract"
@@ -155,26 +155,14 @@
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 182,
+        "line" : 183,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 186,
+        "line" : 187,
         "text" : "Anti-Patterns"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 173,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 178,
-        "text" : "Privacy contract preserved"
       }
     ],
     "sections" : [
@@ -282,36 +270,31 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 171,
         "lines" : [
-          "This skill guarantees:",
-          "Routing matches the canonical triggers in the frontmatter",
-          "Output written under the directories listed in `writes_to:` (when applicable)",
-          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
-          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
-          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+          "checklist:ai-autonomy:Um91dGluZyBtYXRjaGVzIHRoZSBjYW5vbmljYWwgdHJpZ2dlcnMgaW4gdGhlIGZyb250bWF0dGVyCk91dHB1dCB3cml0dGVuIHVuZGVyIHRoZSBkaXJlY3RvcmllcyBsaXN0ZWQgaW4gYHdyaXRlc190bzpgICh3aGVuIGFwcGxpY2FibGUpCkNvbnZlbnRpb25zIHJlZmVyZW5jZWQgKGBxdWFsaXR5Lm1kYCwgYGJyYWluLWZpcnN0Lm1kYCwgYF9icmFpbi1maWxpbmctcnVsZXMubWRgKSBhcmUgZm9sbG93ZWQKUHJpdmFjeSBjb250cmFjdCBwcmVzZXJ2ZWQ6IG5vIHJlYWwgbmFtZXMsIG5vIGZvcmstc3BlY2lmaWMgZmlsZXN5c3RlbSBwYXRoIGxpdGVyYWxzLCBubyB1cHN0cmVhbS1mb3JrIHJlZmVyZW5jZXM="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 182,
+        "line" : 183,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 186,
+        "line" : 187,
         "lines" : [
-          "The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing"
+
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "triggers" : "\"strategic reading\"\n\"read this through the lens of\"\n\"apply this to my problem\"\n\"what can I learn from this about\"\n\"extract a playbook from\"",
@@ -355,44 +338,48 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 623
+      "meridian_line" : 176,
+      "swift_line" : 586
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 628
+      "swift_line" : 626
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 667
+      "swift_line" : 631
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 672
+      "swift_line" : 670
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 711
+      "swift_line" : 675
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 716
+      "swift_line" : 714
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 755
+      "swift_line" : 719
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 760
+      "swift_line" : 758
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 799
+      "swift_line" : 763
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 804
+      "swift_line" : 802
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 807
     }
   ],
   "tools_used" : [

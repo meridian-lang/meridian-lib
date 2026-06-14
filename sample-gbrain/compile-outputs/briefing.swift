@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -587,8 +579,19 @@ public struct BriefingInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "BriefingInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L28:C0") {
-            // L28
+        // L21
+        let __meridianProseResults_L21 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Every fact in the briefing includes an inline `[Source: slug, updated DATE]` citation\n- Meeting participants are resolved against the brain; gaps are explicitly flagged\n- Active deals and action items include deadlines and recency context\n- The briefing is read-only: no brain pages are created or modified unless the user explicitly requests it\n- Stale alerts surface pages relevant to today's context, not just all stale pages",
+            snapshot: state.snapshot(),
+            scopedTools: ["get_health", "get_page", "get_timeline", "list_pages", "query", "shell.run"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L21 {
+            state.bind(__key, __value)
+        }
+        if __meridianShouldRun("progress:0.1:L29:C0") {
+            // L29
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -596,24 +599,24 @@ public struct BriefingInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.0:L28:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.1:L29:C0", state: state.snapshot())
         }
-        // L32
-        let __meridianProseResults_L32 = try await runtime.executeProsePlan(
+        // L33
+        let __meridianProseResults_L33 = try await runtime.executeProsePlan(
             prose: "compose the daily briefing\nFold the recall pulse into a \"Brain pulse\" section: contradictions resolved overnight, top mentions, new facts since the last briefing, and a pending-consolidation footer\nSummarize today's meetings with the participant context loaded below",
             snapshot: state.snapshot(),
             scopedTools: ["get_health", "get_page", "get_timeline", "list_pages", "query", "shell.run"]
         )
-        for (__key, __value) in __meridianProseResults_L32 {
+        for (__key, __value) in __meridianProseResults_L33 {
             state.bind(__key, __value)
         }
-        // L42
-        for (__meridianLoopIndex_0_2, attendee) in (state.get("attendees")?.asList ?? []).enumerated() {
-            let __meridianLoopLabel_0_2 = "progress:0.2:iteration:\(__meridianLoopIndex_0_2)"
-            if __meridianShouldRun(__meridianLoopLabel_0_2) {
+        // L43
+        for (__meridianLoopIndex_0_3, attendee) in (state.get("attendees")?.asList ?? []).enumerated() {
+            let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
+            if __meridianShouldRun(__meridianLoopLabel_0_3) {
             state.bind("attendee", attendee)
-                if __meridianShouldRun("progress:0.2.body.0:L43:C0") {
-                    // L43
+                if __meridianShouldRun("progress:0.3.body.0:L44:C0") {
+                    // L44
                     // find their brain page
                     _ = try await runtime.invoke(
                         tool: "shell.run",
@@ -622,10 +625,10 @@ public struct BriefingInput: MeridianWorkflow {
                         ]
                     )
 
-                    try await runtime.checkpoint(label: "progress:0.2.body.0:L43:C0", state: state.snapshot())
+                    try await runtime.checkpoint(label: "progress:0.3.body.0:L44:C0", state: state.snapshot())
                 }
-                if __meridianShouldRun("progress:0.2.body.1:L44:C0") {
-                    // L44
+                if __meridianShouldRun("progress:0.3.body.1:L45:C0") {
+                    // L45
                     // load compiled truth, recent timeline, relationship context
                     _ = try await runtime.invoke(
                         tool: "shell.run",
@@ -634,14 +637,14 @@ public struct BriefingInput: MeridianWorkflow {
                         ]
                     )
 
-                    try await runtime.checkpoint(label: "progress:0.2.body.1:L44:C0", state: state.snapshot())
+                    try await runtime.checkpoint(label: "progress:0.3.body.1:L45:C0", state: state.snapshot())
                 }
-                try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
 
-        if __meridianShouldRun("progress:0.3:L49:C0") {
-            // L49
+        if __meridianShouldRun("progress:0.4:L50:C0") {
+            // L50
             // deal pipeline snapshot
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -650,10 +653,10 @@ public struct BriefingInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.3:L49:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.4:L50:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.4:L50:C0") {
-            // L50
+        if __meridianShouldRun("progress:0.5:L51:C0") {
+            // L51
             // recent meeting pages with insights
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -662,10 +665,10 @@ public struct BriefingInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.4:L50:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.5:L51:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.5:L51:C0") {
-            // L51
+        if __meridianShouldRun("progress:0.6:L52:C0") {
+            // L52
             // open threads and action items
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -674,10 +677,10 @@ public struct BriefingInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.5:L51:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.6:L52:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.6:L52:C0") {
-            // L52
+        if __meridianShouldRun("progress:0.7:L53:C0") {
+            // L53
             // people in play
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -686,10 +689,10 @@ public struct BriefingInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.6:L52:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.7:L53:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.7:L64:C0") {
-            // L64
+        if __meridianShouldRun("progress:0.8:L65:C0") {
+            // L65
             let pages = try await runtime.invoke(
                 tool: "page.list",
                 args: [
@@ -698,64 +701,33 @@ public struct BriefingInput: MeridianWorkflow {
             )
             state.bind("pages", pages)
 
-            try await runtime.checkpoint(label: "progress:0.7:L64:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.8:L65:C0", state: state.snapshot())
         }
-        // L65
-        state.bind("mine", Value.list(((state.get("pages"))?.asList ?? []).filter { __e in (MeridianComparison.identifies(__e.member("author"), state.get("input") ?? .null)) }))
         // L66
+        state.bind("mine", Value.list(((state.get("pages"))?.asList ?? []).filter { __e in (MeridianComparison.identifies(__e.member("author"), state.get("input") ?? .null)) }))
+        // L67
         if ((!(((state.get("pages"))?.asList ?? []).filter { __e in (meridianDef_Page_urgent(__e)) }).isEmpty)) || ((!(((state.get("pages"))?.asList ?? []).filter { __e in (meridianDef_Page_unwritten(__e)) }).isEmpty)) {
-            if __meridianShouldRun("progress:0.9.then.0:L67:C0") {
-                // L67
+            if __meridianShouldRun("progress:0.10.then.0:L68:C0") {
+                // L68
                 try await runtime.emit(
                     event: "briefing.attention",
                     payload: [
                         "status": .string("needs review"),
                     ]
                 )
-                try await runtime.checkpoint(label: "progress:0.9.then.0:L67:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.10.then.0:L68:C0", state: state.snapshot())
             }
         }
 
-        if __meridianShouldRun("progress:0.10:L102:C0") {
-            // L102
-            let __relEntities = try await runtime.invoke(
-                tool: "link.backlinks",
-                args: [
-                    "page": state.get("input") ?? .null,
-                ]
-            )
-            state.bind("__relEntities", __relEntities)
-
-            try await runtime.checkpoint(label: "progress:0.10:L102:C0", state: state.snapshot())
+        // L96
+        let __meridianProseResults_L96 = try await runtime.executeProsePlan(
+            prose: "follow the Back-Linking During Briefing guidance\nIf the briefing creates or updates any brain pages (e.g., new meeting prep\npages, updated entity pages), the back-linking iron law applies: every entity\nthe page mentions must have a back-link from their page. See\n`skills/_brain-filing-rules.md`\nlet mentioned be the entities mentioned by the input\nfor each entity in mentioned:\nif the entity does not link to the input, add a back-link from the entity to the input\nchecklist:ai-autonomy:KipCcmllZmluZyB3aXRob3V0IGJyYWluIHF1ZXJpZXMuKiogTmV2ZXIgZ2VuZXJhdGUgYSBicmllZmluZyBmcm9tIG1lbW9yeSBhbG9uZTsgYWx3YXlzIHF1ZXJ5IGdicmFpbiBmb3IgY3VycmVudCBkYXRhCioqVW5jaXRlZCBmYWN0cy4qKiBFdmVyeSBjbGFpbSBtdXN0IGluY2x1ZGUgYFtTb3VyY2U6IHNsdWcsIHVwZGF0ZWQgREFURV1gLiBBIGZhY3Qgd2l0aG91dCBhIGNpdGF0aW9uIGlzIHVudmVyaWZpYWJsZQoqKlN0YWxlIGNvbnRleHQgcHJlc2VudGVkIGFzIGN1cnJlbnQuKiogSWYgYSBwYWdlIGhhc24ndCBiZWVuIHVwZGF0ZWQgaW4gMzArIGRheXMsIGZsYWcgdGhlIHN0YWxlbmVzcyBleHBsaWNpdGx5IHJhdGhlciB0aGFuIHByZXNlbnRpbmcgaXQgYXMgZnJlc2gKKipNb2RpZnlpbmcgYnJhaW4gcGFnZXMgdW5wcm9tcHRlZC4qKiBUaGUgYnJpZWZpbmcgaXMgcmVhZC1vbmx5IGJ5IGRlZmF1bHQuIERvIG5vdCBjcmVhdGUgb3IgdXBkYXRlIHBhZ2VzIHVubGVzcyB0aGUgdXNlciBleHBsaWNpdGx5IHJlcXVlc3RzIGl0CioqSWdub3JpbmcgY292ZXJhZ2UgZ2Fwcy4qKiBXaGVuIGEgbWVldGluZyBwYXJ0aWNpcGFudCBoYXMgbm8gYnJhaW4gcGFnZSwgc2F5IHNvLiBTaWxlbmNlIGFib3V0IGdhcHMgaGlkZXMgaWdub3JhbmNl",
+            snapshot: state.snapshot(),
+            scopedTools: ["get_health", "get_page", "get_timeline", "list_pages", "query", "shell.run"]
+        )
+        for (__key, __value) in __meridianProseResults_L96 {
+            state.bind(__key, __value)
         }
-        // L102
-        state.bind("mentioned", Value.list(((state.get("__relEntities"))?.asList ?? [])))
-        // L103
-        for (__meridianLoopIndex_0_12, entity) in (state.get("mentioned")?.asList ?? []).enumerated() {
-            let __meridianLoopLabel_0_12 = "progress:0.12:iteration:\(__meridianLoopIndex_0_12)"
-            if __meridianShouldRun(__meridianLoopLabel_0_12) {
-            state.bind("entity", entity)
-                // L104
-                if !(MeridianComparison.identifies(state.get("entity.links"), state.get("input"))) {
-                    if __meridianShouldRun("progress:0.12.body.0.then.0:L133:C0") {
-                        // L133
-                        let link = try await runtime.invoke(
-                            tool: "link.add",
-                            args: [
-                                "entity": state.get("entity") ?? .null,
-                                "input": state.get("input") ?? .null,
-                            ]
-                        )
-                        state.bind("link", link)
-
-                        try await runtime.checkpoint(label: "progress:0.12.body.0.then.0:L133:C0", state: state.snapshot())
-                    }
-                }
-
-                try await runtime.checkpoint(label: __meridianLoopLabel_0_12, state: state.snapshot())
-            }
-        }
-
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

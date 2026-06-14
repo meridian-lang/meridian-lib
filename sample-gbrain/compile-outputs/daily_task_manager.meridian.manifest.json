@@ -98,7 +98,7 @@
     "name" : "daily-task-manager",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 23,
         "text" : "Contract"
@@ -106,89 +106,66 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 32,
+        "line" : 33,
         "text" : "Phases"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 49,
+        "line" : 50,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 70,
+        "line" : 71,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 25,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 27,
-        "text" : "Task lifecycle"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 28,
-        "text" : "Priority levels"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 39,
+        "line" : 40,
         "text" : "Add"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 40,
+        "line" : 41,
         "text" : "Complete"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 41,
+        "line" : 42,
         "text" : "Defer"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 42,
+        "line" : 43,
         "text" : "Remove"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 43,
+        "line" : 44,
         "text" : "Review"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 23,
         "lines" : [
-          "This skill guarantees:",
-          "Tasks stored as a brain page (`ops\/tasks.md`) with structured format",
-          "Task lifecycle: add → in-progress → complete | defer",
-          "Priority levels: P0 (urgent), P1 (today), P2 (this week), P3 (backlog)",
-          "Completed tasks archived with completion date",
-          "Deferred tasks carry forward with reason"
+          "checklist:ai-autonomy:VGFza3Mgc3RvcmVkIGFzIGEgYnJhaW4gcGFnZSAoYG9wcy90YXNrcy5tZGApIHdpdGggc3RydWN0dXJlZCBmb3JtYXQKVGFzayBsaWZlY3ljbGU6IGFkZCDihpIgaW4tcHJvZ3Jlc3Mg4oaSIGNvbXBsZXRlIHwgZGVmZXIKUHJpb3JpdHkgbGV2ZWxzOiBQMCAodXJnZW50KSwgUDEgKHRvZGF5KSwgUDIgKHRoaXMgd2VlayksIFAzIChiYWNrbG9nKQpDb21wbGV0ZWQgdGFza3MgYXJjaGl2ZWQgd2l0aCBjb21wbGV0aW9uIGRhdGUKRGVmZXJyZWQgdGFza3MgY2FycnkgZm9yd2FyZCB3aXRoIHJlYXNvbg=="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 32,
+        "line" : 33,
         "lines" : [
           "codeblock:bash:Z2JyYWluIGdldCBvcHMvdGFza3M=",
           "use judgment to choose and apply the requested task action:",
@@ -204,24 +181,20 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 49,
+        "line" : 50,
         "lines" : [
           "codeblock:markdown:IyBUYXNrcwoKIyMgUDAg4oCUIFVyZ2VudCAoKCBpbmVydCApKQotIFsgXSB7dGFzayBkZXNjcmlwdGlvbn0gKGR1ZToge2RhdGV9KQoKIyMgUDEg4oCUIFRvZGF5ICgoIGluZXJ0ICkpCi0gWyBdIHt0YXNrIGRlc2NyaXB0aW9ufQoKIyMgUDIg4oCUIFRoaXMgV2VlayAoKCBpbmVydCApKQotIFsgXSB7dGFzayBkZXNjcmlwdGlvbn0KCiMjIFAzIOKAlCBCYWNrbG9nICgoIGluZXJ0ICkpCi0gWyBdIHt0YXNrIGRlc2NyaXB0aW9ufQoKIyMgQ29tcGxldGVkICgoIGluZXJ0ICkpCi0gW3hdIHt0YXNrfSAoY29tcGxldGVkOiB7ZGF0ZX0p"
         ],
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 70,
+        "line" : 71,
         "lines" : [
-          "Adding tasks without a priority level",
-          "Completing tasks without recording the completion date",
-          "Deferring tasks without a reason",
-          "Letting the task list grow unbounded (review weekly)",
-          "Storing tasks outside the brain (they should be searchable)"
+          "checklist:ai-autonomy:QWRkaW5nIHRhc2tzIHdpdGhvdXQgYSBwcmlvcml0eSBsZXZlbApDb21wbGV0aW5nIHRhc2tzIHdpdGhvdXQgcmVjb3JkaW5nIHRoZSBjb21wbGV0aW9uIGRhdGUKRGVmZXJyaW5nIHRhc2tzIHdpdGhvdXQgYSByZWFzb24KTGV0dGluZyB0aGUgdGFzayBsaXN0IGdyb3cgdW5ib3VuZGVkIChyZXZpZXcgd2Vla2x5KQpTdG9yaW5nIHRhc2tzIG91dHNpZGUgdGhlIGJyYWluICh0aGV5IHNob3VsZCBiZSBzZWFyY2hhYmxlKQ=="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "tools" : "search\nget_page\nput_page\nadd_timeline_entry",
@@ -264,56 +237,64 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 34,
-      "swift_line" : 593
+      "meridian_line" : 27,
+      "swift_line" : 584
     },
     {
-      "meridian_line" : 38,
-      "swift_line" : 603
+      "meridian_line" : 35,
+      "swift_line" : 596
     },
     {
-      "meridian_line" : 45,
-      "swift_line" : 613
+      "meridian_line" : 39,
+      "swift_line" : 606
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 652
+      "meridian_line" : 46,
+      "swift_line" : 616
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 657
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 696
+      "meridian_line" : 74,
+      "swift_line" : 626
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 701
+      "swift_line" : 666
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 740
+      "swift_line" : 671
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 745
+      "swift_line" : 710
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 784
+      "swift_line" : 715
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 789
+      "swift_line" : 754
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 828
+      "swift_line" : 759
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 833
+      "swift_line" : 798
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 803
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 842
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 847
     }
   ],
   "tools_used" : [

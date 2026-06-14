@@ -98,7 +98,7 @@
     "name" : "skill-creator",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 20,
         "text" : "Contract"
@@ -106,53 +106,36 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 29,
+        "line" : 30,
         "text" : "Phases"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 41,
+        "line" : 42,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 45,
+        "line" : 46,
         "text" : "Anti-Patterns"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 22,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 24,
-        "text" : "MECE check"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 20,
         "lines" : [
-          "This skill guarantees:",
-          "New skill follows conformance standard (frontmatter + required sections)",
-          "MECE check: no overlap with existing skills' triggers",
-          "Manifest.json updated",
-          "RESOLVER.md updated with routing entry",
-          "Skill passes conformance tests (`bun test test\/skills-conformance.test.ts`)"
+          "checklist:ai-autonomy:TmV3IHNraWxsIGZvbGxvd3MgY29uZm9ybWFuY2Ugc3RhbmRhcmQgKGZyb250bWF0dGVyICsgcmVxdWlyZWQgc2VjdGlvbnMpCk1FQ0UgY2hlY2s6IG5vIG92ZXJsYXAgd2l0aCBleGlzdGluZyBza2lsbHMnIHRyaWdnZXJzCk1hbmlmZXN0Lmpzb24gdXBkYXRlZApSRVNPTFZFUi5tZCB1cGRhdGVkIHdpdGggcm91dGluZyBlbnRyeQpTa2lsbCBwYXNzZXMgY29uZm9ybWFuY2UgdGVzdHMgKGBidW4gdGVzdCB0ZXN0L3NraWxscy1jb25mb3JtYW5jZS50ZXN0LnRzYCk="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 29,
+        "line" : 30,
         "lines" : [
           "use judgment to create a new skill:",
           "Identify the missing capability or user intent that has no skill",
@@ -166,24 +149,20 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 41,
+        "line" : 42,
         "lines" : [
           "New `skills\/{name}\/SKILL.md` file + updated manifest + updated resolver"
         ],
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 45,
+        "line" : 46,
         "lines" : [
-          "Creating a skill that overlaps with an existing one (violates MECE)",
-          "Skipping the MECE check against existing skills",
-          "Creating a skill without triggers in frontmatter",
-          "Not updating manifest.json and RESOLVER.md",
-          "Creating a skill without an Anti-Patterns section"
+          "checklist:ai-autonomy:Q3JlYXRpbmcgYSBza2lsbCB0aGF0IG92ZXJsYXBzIHdpdGggYW4gZXhpc3Rpbmcgb25lICh2aW9sYXRlcyBNRUNFKQpTa2lwcGluZyB0aGUgTUVDRSBjaGVjayBhZ2FpbnN0IGV4aXN0aW5nIHNraWxscwpDcmVhdGluZyBhIHNraWxsIHdpdGhvdXQgdHJpZ2dlcnMgaW4gZnJvbnRtYXR0ZXIKTm90IHVwZGF0aW5nIG1hbmlmZXN0Lmpzb24gYW5kIFJFU09MVkVSLm1kCkNyZWF0aW5nIGEgc2tpbGwgd2l0aG91dCBhbiBBbnRpLVBhdHRlcm5zIHNlY3Rpb24="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "tools" : "search\nlist_pages",
@@ -226,36 +205,44 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 31,
-      "swift_line" : 592
+      "meridian_line" : 24,
+      "swift_line" : 584
     },
     {
-      "meridian_line" : 37,
-      "swift_line" : 602
+      "meridian_line" : 32,
+      "swift_line" : 595
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 641
+      "meridian_line" : 38,
+      "swift_line" : 605
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 646
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 685
+      "meridian_line" : 49,
+      "swift_line" : 615
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 655
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 660
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 699
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 704
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 743
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 748
     }
   ],
   "tools_used" : [

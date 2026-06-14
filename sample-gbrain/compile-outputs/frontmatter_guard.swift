@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -589,6 +581,26 @@ public struct FrontmatterGuardInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "FrontmatterGuardInput", parameters: [:])
 
+        // L28
+        let __meridianProseResults_L28 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Every brain page is scanned against the eight canonical frontmatter validation classes\n- Mechanical errors (nested quotes, missing closing `---`, null bytes, slug mismatch) are auto-repairable on demand with `.bak` backups\n- Validation logic is shared with `gbrain doctor`'s `frontmatter_integrity` subcheck — single source of truth\n- Reports per source (gbrain is multi-source since v0.18.0); never silently audits the wrong root",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L28 {
+            state.bind(__key, __value)
+        }
+        // L46
+        let __meridianProseResults_L46 = try await runtime.executeProsePlan(
+            prose: "follow the Validation classes guidance\ntable:decision:fCBDb2RlIHwgTWVhbmluZyB8IEF1dG8tZml4YWJsZT8gfAp8LS0tLS0tfC0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tLS18CnwgYE1JU1NJTkdfT1BFTmAgfCBGaWxlIGRvZXNuJ3Qgc3RhcnQgd2l0aCBgLS0tYCB8IE5vIChuZWVkcyBodW1hbikgfAp8IGBNSVNTSU5HX0NMT1NFYCB8IE5vIGNsb3NpbmcgYC0tLWAgYmVmb3JlIGZpcnN0IGhlYWRpbmcgfCBZZXMgfAp8IGBZQU1MX1BBUlNFYCB8IFlBTUwgZmFpbGVkIHRvIHBhcnNlIHwgU29tZXRpbWVzIChkZXBlbmRzIG9uIGNhdXNlKSB8CnwgYFNMVUdfTUlTTUFUQ0hgIHwgRnJvbnRtYXR0ZXIgYHNsdWc6YCBkaWZmZXJzIGZyb20gcGF0aC1kZXJpdmVkIHNsdWcgfCBZZXMgKHJlbW92ZXMgdGhlIGZpZWxkKSB8CnwgYE5VTExfQllURVNgIHwgQmluYXJ5IGNvcnJ1cHRpb24gKGBceDAwYCkgfCBZZXMgfAp8IGBORVNURURfUVVPVEVTYCB8IGB0aXRsZTogIm91dGVyICJpbm5lciIgb3V0ZXIiYCBzaGFwZSB8IFllcyB8CnwgYE5PTl9TVFJJTkdfRklFTERgIHwgYHRpdGxlYC9gdHlwZWAvYHNsdWdgIGlzIGFuIHVucXVvdGVkIG5vbi1zdHJpbmcgc2NhbGFyIChlLmcuIGB0aXRsZTogMTIzYCwgYHNsdWc6IDIwMjQtMDYtMDFgKSB8IE5vIChxdW90ZSB0aGUgdmFsdWUpIHwKfCBgRU1QVFlfRlJPTlRNQVRURVJgIHwgT3BlbiArIGNsb3NlIHByZXNlbnQgYnV0IG5vdGhpbmcgYmV0d2VlbiB8IE5vIChuZWVkcyBodW1hbikgfA==\nuse judgment to follow the Phase 1: Audit guidance:\nRun a read-only scan across all registered sources (or one with `--source <id>`)\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIGF1ZGl0IC0tanNvbg==\nReports:\nitem: Per-source counts grouped by error code\nitem: Sample of up to 20 affected pages per source\nitem: Total count\nitem: Scan timestamp\nOutput is JSON; agents parse `errors_by_code` and `per_source` to decide next steps\nuse judgment to follow the Phase 2: Validate one path guidance:\nValidate a single file or directory (does not require source registration):\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWpzb24=\nExit code 0 = clean; 1 = errors found. Use this in CI pipelines or pre-commit hooks\nuse judgment to follow the Phase 3: Fix guidance:\nWhen issues are found:\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWZpeA==\n`--fix` writes `<file>.bak` for every modified file before mutating. The backup is the safety contract — works whether the brain is a git repo or a plain directory\n`--dry-run` previews without writing. Use this before applying fixes in batch\nuse judgment to follow the Phase 4: Pre-commit hook (optional) guidance:\nFor brain repos that ARE git repos, install the pre-commit hook to block malformed pages from being committed in the first place:\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIGluc3RhbGwtaG9vayBbLS1zb3VyY2UgPGlkPl0=\nThe hook runs `gbrain frontmatter validate` against staged `.md`/`.mdx` files. Bypass with `git commit --no-verify`",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L46 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

@@ -98,142 +98,126 @@
     "name" : "smoke-test",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 24,
         "text" : "Contract"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 33,
+        "line" : 34,
         "text" : "Built-in Tests"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 46,
+        "line" : 47,
         "text" : "Usage"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 48,
+        "line" : 49,
         "text" : "CLI"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 53,
+        "line" : 54,
         "text" : "Direct"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 58,
+        "line" : 59,
         "text" : "From OpenClaw bootstrap"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 64,
+        "line" : 66,
         "text" : "From an agent"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 69,
+        "line" : 71,
         "text" : "Adding Custom Tests"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 85,
+        "line" : 87,
         "text" : "Adding Built-in Tests"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 105,
+        "line" : 107,
         "text" : "Design rules:"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 113,
+        "line" : 115,
         "text" : "Environment Variables"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 123,
+        "line" : 125,
         "text" : "Known Issues & Their Auto-Fixes"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 125,
+        "line" : 127,
         "text" : "Codex Zod core.cjs Missing (discovered 2026-04-23)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 132,
+        "line" : 134,
         "text" : "GBrain Worker Auth Failure"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 137,
+        "line" : 139,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 153,
+        "line" : 156,
         "text" : "Output Format"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 26,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 79,
-        "text" : "Rules"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 24,
         "lines" : [
-          "This skill guarantees:",
-          "8 core tests verify gbrain + OpenClaw health after restart",
-          "Known failures are auto-fixed before reporting",
-          "User-extensible via `~\/.gbrain\/smoke-tests.d\/*.sh` drop-in scripts",
-          "Results logged to `\/tmp\/gbrain-smoke-test.log`",
-          "Exit code = number of unfixed failures (0 = all pass)"
+          "checklist:ai-autonomy:OCBjb3JlIHRlc3RzIHZlcmlmeSBnYnJhaW4gKyBPcGVuQ2xhdyBoZWFsdGggYWZ0ZXIgcmVzdGFydApLbm93biBmYWlsdXJlcyBhcmUgYXV0by1maXhlZCBiZWZvcmUgcmVwb3J0aW5nClVzZXItZXh0ZW5zaWJsZSB2aWEgYH4vLmdicmFpbi9zbW9rZS10ZXN0cy5kLyouc2hgIGRyb3AtaW4gc2NyaXB0cwpSZXN1bHRzIGxvZ2dlZCB0byBgL3RtcC9nYnJhaW4tc21va2UtdGVzdC5sb2dgCkV4aXQgY29kZSA9IG51bWJlciBvZiB1bmZpeGVkIGZhaWx1cmVzICgwID0gYWxsIHBhc3Mp"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Built-in Tests",
-        "line" : 33,
+        "line" : 34,
         "lines" : [
+          "use judgment to follow the Built-in Tests guidance:",
           "table:decision:fCAjIHwgVGVzdCB8IEF1dG8tRml4IHwKfC0tLXwtLS0tLS18LS0tLS0tLS0tLXwKfCAxIHwgQnVuIHJ1bnRpbWUgfCBJbnN0YWxsIGZyb20gYnVuLnNoIHwKfCAyIHwgR0JyYWluIENMSSBsb2FkcyB8IFJlaW5zdGFsbCBkZXBzIHwKfCAzIHwgR0JyYWluIGRhdGFiYXNlIChkb2N0b3IpIHwg4oCUIHwKfCA0IHwgR0JyYWluIHdvcmtlciBwcm9jZXNzIHwgU3RhcnQgd29ya2VyIHwKfCA1IHwgT3BlbkNsYXcgQ29kZXggcGx1Z2luIChab2QgQ0pTKSB8IGBucG0gaW5zdGFsbCB6b2RANCAtLWZvcmNlYCB8CnwgNiB8IE9wZW5DbGF3IGdhdGV3YXkgfCDigJQgKG1heSBub3QgYmUgc3RhcnRlZCB5ZXQpIHwKfCA3IHwgRW1iZWRkaW5nIEFQSSBrZXkgfCDigJQgKGNoZWNrIC5lbnYpIHwKfCA4IHwgQnJhaW4gcmVwbyBleGlzdHMgfCDigJQgfA=="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Usage",
-        "line" : 46,
+        "line" : 47,
         "lines" : [
 
         ],
@@ -242,7 +226,7 @@
       {
         "executes" : true,
         "heading" : "CLI",
-        "line" : 48,
+        "line" : 49,
         "lines" : [
           "codeblock:bash:Z2JyYWluIHNtb2tlLXRlc3Q="
         ],
@@ -251,60 +235,63 @@
       {
         "executes" : true,
         "heading" : "Direct",
-        "line" : 53,
+        "line" : 54,
         "lines" : [
           "codeblock:bash:YmFzaCBzY3JpcHRzL3Ntb2tlLXRlc3Quc2g="
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "From OpenClaw bootstrap",
-        "line" : 58,
+        "line" : 59,
         "lines" : [
+          "use judgment to follow the From OpenClaw bootstrap guidance:",
           "Add to your `ensure-services.sh` or equivalent:",
           "codeblock:bash:YmFzaCAvcGF0aC90by9nYnJhaW4vc2NyaXB0cy9zbW9rZS10ZXN0LnNoID4+IC90bXAvYm9vdHN0cmFwLmxvZyAyPiYx"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "From an agent",
-        "line" : 64,
+        "line" : 66,
         "lines" : [
           "codeblock:plain:ZXhlYzogYmFzaCAvZGF0YS9nYnJhaW4vc2NyaXB0cy9zbW9rZS10ZXN0LnNo"
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Adding Custom Tests",
-        "line" : 69,
+        "line" : 71,
         "lines" : [
+          "use judgment to follow the Adding Custom Tests guidance:",
           "Create executable scripts in `~\/.gbrain\/smoke-tests.d\/`:",
           "codeblock:bash:IyB+Ly5nYnJhaW4vc21va2UtdGVzdHMuZC9jaGVjay1yZWRpcy5zaAojIS9iaW4vYmFzaApyZWRpcy1jbGkgcGluZyB8IGdyZXAgLXEgUE9ORw==",
           "Rules:",
-          "Exit 0 = pass, non-zero = fail",
-          "Filename becomes the test name (e.g. `check-redis` from `check-redis.sh`)",
-          "Keep tests fast (< 10s each)",
-          "Tests run in alphabetical order"
+          "item: Exit 0 = pass, non-zero = fail",
+          "item: Filename becomes the test name (e.g. `check-redis` from `check-redis.sh`)",
+          "item: Keep tests fast (< 10s each)",
+          "item: Tests run in alphabetical order"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Adding Built-in Tests",
-        "line" : 85,
+        "line" : 87,
         "lines" : [
+          "use judgment to follow the Adding Built-in Tests guidance:",
           "Edit `scripts\/smoke-test.sh`. Follow this pattern:",
           "codeblock:bash:IyDilIDilIAgTi4gW1NlcnZpY2UgTmFtZV0g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACmlmIFt0ZXN0IGNvbmRpdGlvbl07IHRoZW4KICBwYXNzICJbU2VydmljZSBOYW1lXSIKZWxzZQogICMgQXV0by1maXggYXR0ZW1wdAogIFtmaXggY29tbWFuZF0KICBpZiBbcmUtdGVzdCBjb25kaXRpb25dOyB0aGVuCiAgICBmaXhlZCAiW1doYXQgd2FzIGZpeGVkXSIKICAgIHBhc3MgIltTZXJ2aWNlIE5hbWVdIChhZnRlciBmaXgpIgogIGVsc2UKICAgIGZhaWwgIltTZXJ2aWNlIE5hbWVdIOKAlCBbZXJyb3IgZGV0YWlsXSIKICBmaQpmaQ=="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Design rules:",
-        "line" : 105,
+        "line" : 107,
         "lines" : [
           "**Test first** — never fix without confirming broken",
           "**Re-test after fix** — verify the fix worked",
@@ -316,18 +303,19 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Environment Variables",
-        "line" : 113,
+        "line" : 115,
         "lines" : [
+          "use judgment to follow the Environment Variables guidance:",
           "table:decision:fCBWYXIgfCBEZWZhdWx0IHwgRGVzY3JpcHRpb24gfAp8LS0tLS18LS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18CnwgYEdCUkFJTl9TTU9LRV9MT0dgIHwgYC90bXAvZ2JyYWluLXNtb2tlLXRlc3QubG9nYCB8IExvZyBmaWxlIHBhdGggfAp8IGBHQlJBSU5fRElSX09WRVJSSURFYCB8IChhdXRvLWRldGVjdCkgfCBGb3JjZSBnYnJhaW4gaW5zdGFsbCBwYXRoIHwKfCBgR0JSQUlOX0RBVEFCQVNFX1VSTGAgfCAoZnJvbSAuZW52KSB8IERhdGFiYXNlIGNvbm5lY3Rpb24gVVJMIHwKfCBgT1BFTkNMQVdfR0FURVdBWV9QT1JUYCB8IGAxODc4OWAgfCBHYXRld2F5IHBvcnQgdG8gdGVzdCB8CnwgYEdCUkFJTl9CUkFJTl9QQVRIYCB8IGAvZGF0YS9icmFpbmAgfCBCcmFpbiByZXBvIHBhdGggfA=="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Known Issues & Their Auto-Fixes",
-        "line" : 123,
+        "line" : 125,
         "lines" : [
 
         ],
@@ -336,7 +324,7 @@
       {
         "executes" : false,
         "heading" : "Codex Zod core.cjs Missing (discovered 2026-04-23)",
-        "line" : 125,
+        "line" : 127,
         "lines" : [
           "**Symptom:** `Cannot find module '.\/core.cjs'` → all Codex ACP sessions fail",
           "**Cause:** Zod v4 npm package ships without `core.cjs` in some installs",
@@ -349,7 +337,7 @@
       {
         "executes" : false,
         "heading" : "GBrain Worker Auth Failure",
-        "line" : 132,
+        "line" : 134,
         "lines" : [
           "**Symptom:** Worker can't connect to DB",
           "**Cause:** `GBRAIN_DATABASE_URL` not propagated to worker subprocess",
@@ -358,30 +346,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 137,
+        "line" : 139,
         "lines" : [
-          "❌ Running smoke tests on every chat turn. Once per container restart (or",
-          "on user request) is plenty. The script is cheap but it's not free",
-          "❌ Writing a user drop-in without `timeout N` around any command that",
-          "could hang. A single hung drop-in stalls every subsequent run",
-          "❌ Auto-fixing without confirming the check is actually broken first",
-          "The `pass → fail-detected → fix → re-test` loop is the contract; fixes",
-          "that skip the re-test can report success on a still-broken state",
-          "❌ Treating `skip` as `fail`. Missing prerequisites (no OpenClaw installed,",
-          "no brain repo configured) are skips, not failures. Exit code = count of",
-          "real failures, not skipped checks",
-          "❌ Hardcoding paths in a user drop-in. Read env vars",
-          "(`GBRAIN_DATABASE_URL`, `HOME`, etc.) so the script travels across",
-          "container rebuilds"
+          "checklist:ai-autonomy:4p2MIFJ1bm5pbmcgc21va2UgdGVzdHMgb24gZXZlcnkgY2hhdCB0dXJuLiBPbmNlIHBlciBjb250YWluZXIgcmVzdGFydCAob3Igb24gdXNlciByZXF1ZXN0KSBpcyBwbGVudHkuIFRoZSBzY3JpcHQgaXMgY2hlYXAgYnV0IGl0J3Mgbm90IGZyZWUuCuKdjCBXcml0aW5nIGEgdXNlciBkcm9wLWluIHdpdGhvdXQgYHRpbWVvdXQgTmAgYXJvdW5kIGFueSBjb21tYW5kIHRoYXQgY291bGQgaGFuZy4gQSBzaW5nbGUgaHVuZyBkcm9wLWluIHN0YWxscyBldmVyeSBzdWJzZXF1ZW50IHJ1bi4K4p2MIEF1dG8tZml4aW5nIHdpdGhvdXQgY29uZmlybWluZyB0aGUgY2hlY2sgaXMgYWN0dWFsbHkgYnJva2VuIGZpcnN0IFRoZSBgcGFzcyDihpIgZmFpbC1kZXRlY3RlZCDihpIgZml4IOKGkiByZS10ZXN0YCBsb29wIGlzIHRoZSBjb250cmFjdDsgZml4ZXMgdGhhdCBza2lwIHRoZSByZS10ZXN0IGNhbiByZXBvcnQgc3VjY2VzcyBvbiBhIHN0aWxsLWJyb2tlbiBzdGF0ZS4K4p2MIFRyZWF0aW5nIGBza2lwYCBhcyBgZmFpbGAuIE1pc3NpbmcgcHJlcmVxdWlzaXRlcyAobm8gT3BlbkNsYXcgaW5zdGFsbGVkLCBubyBicmFpbiByZXBvIGNvbmZpZ3VyZWQpIGFyZSBza2lwcywgbm90IGZhaWx1cmVzLiBFeGl0IGNvZGUgPSBjb3VudCBvZiByZWFsIGZhaWx1cmVzLCBub3Qgc2tpcHBlZCBjaGVja3MuCuKdjCBIYXJkY29kaW5nIHBhdGhzIGluIGEgdXNlciBkcm9wLWluLiBSZWFkIGVudiB2YXJzIChgR0JSQUlOX0RBVEFCQVNFX1VSTGAsIGBIT01FYCwgZXRjLikgc28gdGhlIHNjcmlwdCB0cmF2ZWxzIGFjcm9zcyBjb250YWluZXIgcmVidWlsZHMu"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 153,
+        "line" : 156,
         "lines" : [
           "The script writes a one-line status per check to stdout (✅\/❌\/🔧\/⏭️) plus a",
           "final summary line: `Results: N\/M passed, F auto-fixed, S skipped`. A",
@@ -432,60 +408,60 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 49,
-      "swift_line" : 592
+      "meridian_line" : 28,
+      "swift_line" : 583
     },
     {
-      "meridian_line" : 54,
-      "swift_line" : 603
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 642
+      "meridian_line" : 36,
+      "swift_line" : 594
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 647
+      "swift_line" : 632
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 686
+      "swift_line" : 637
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 691
+      "swift_line" : 676
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 730
+      "swift_line" : 681
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 735
+      "swift_line" : 720
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 774
+      "swift_line" : 725
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 779
+      "swift_line" : 764
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 818
+      "swift_line" : 769
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 823
+      "swift_line" : 808
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 862
+      "swift_line" : 813
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 867
+      "swift_line" : 852
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 857
     }
   ],
   "tools_used" : [

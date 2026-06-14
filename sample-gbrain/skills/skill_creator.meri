@@ -17,14 +17,15 @@ mutating: true
 
 # Skill Creator
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-This skill guarantees:
-- New skill follows conformance standard (frontmatter + required sections)
-- MECE check: no overlap with existing skills' triggers
-- Manifest.json updated
-- RESOLVER.md updated with routing entry
-- Skill passes conformance tests (`bun test test/skills-conformance.test.ts`)
+> This skill guarantees:
+!!! checklist (( ai-autonomy ))
+- [ ] New skill follows conformance standard (frontmatter + required sections)
+- [ ] MECE check: no overlap with existing skills' triggers
+- [ ] Manifest.json updated
+- [ ] RESOLVER.md updated with routing entry
+- [ ] Skill passes conformance tests (`bun test test/skills-conformance.test.ts`)
 
 ## Phases
 
@@ -42,10 +43,11 @@ bun test test/skills-conformance.test.ts
 
 New `skills/{name}/SKILL.md` file + updated manifest + updated resolver.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- Creating a skill that overlaps with an existing one (violates MECE)
-- Skipping the MECE check against existing skills
-- Creating a skill without triggers in frontmatter
-- Not updating manifest.json and RESOLVER.md
-- Creating a skill without an Anti-Patterns section
+!!! checklist (( ai-autonomy ))
+- [ ] Creating a skill that overlaps with an existing one (violates MECE)
+- [ ] Skipping the MECE check against existing skills
+- [ ] Creating a skill without triggers in frontmatter
+- [ ] Not updating manifest.json and RESOLVER.md
+- [ ] Creating a skill without an Anti-Patterns section

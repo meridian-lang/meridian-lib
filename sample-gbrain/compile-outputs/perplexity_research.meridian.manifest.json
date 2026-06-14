@@ -116,13 +116,13 @@
         "text" : "Output structure"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 90,
         "text" : "Invocation"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 120,
         "text" : "Models"
@@ -134,13 +134,13 @@
         "text" : "Integration patterns"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
         "line" : 132,
         "text" : "Entity enrichment"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
         "line" : 143,
         "text" : "Deal \/ company monitoring (cron)"
@@ -158,52 +158,34 @@
         "text" : "Recency filter"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 161,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 170,
+        "line" : 171,
         "text" : "Environment"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 176,
+        "line" : 177,
         "text" : "Related skills"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 186,
+        "line" : 187,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 197,
+        "line" : 199,
         "text" : "Output Format"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 174,
-        "text" : "Optional"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 188,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 193,
-        "text" : "Privacy contract preserved"
       }
     ],
     "sections" : [
@@ -244,26 +226,28 @@
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Invocation",
         "line" : 90,
         "lines" : [
+          "use judgment to follow the Invocation guidance:",
           "The skill is markdown agent instructions; the agent uses Perplexity's",
           "API directly (or a host-provided `perplexity` CLI if installed):",
           "codeblock:bash:IyAxLiBQdWxsIGJyYWluIGNvbnRleHQKZ2JyYWluIGdldCA8c2x1Zz4gICAgICAgICAgICAgICAgICAgICMgb3IKZ2JyYWluIHF1ZXJ5ICI8dG9waWMga2V5d29yZHM+IgoKIyAyLiBDb21wb3NlIHRoZSBQZXJwbGV4aXR5IHF1ZXJ5IHdpdGggYnJhaW4gY29udGV4dCBpbmxpbmU6CiMgICAgIiIiCiMgICAgVG9waWM6IDx0b3BpYz4KIyAgICBCcmFpbiBjb250ZXh0ICh3aGF0IHdlIGFscmVhZHkga25vdyk6IDxlbWJlZGRlZCBnYnJhaW4gY29udGVudD4KIyAgICBGaW5kOiB3aGF0J3MgTkVXIHNpbmNlIDIwMjYtTU0tREQgdGhhdCB0aGUgYnJhaW4gZG9lc24ndCByZWZsZWN0LgojICAgIENpdGUgZXZlcnkgY2xhaW0uCiMgICAgIiIiCgojIDMuIENhbGwgUGVycGxleGl0eSBBUEkgb3IgdGhlIGhvc3QncyBwZXJwbGV4aXR5IGJpbmFyeToKIyAgICBjdXJsIGh0dHBzOi8vYXBpLnBlcnBsZXhpdHkuYWkvY2hhdC9jb21wbGV0aW9ucyBcCiMgICAgICAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICRQRVJQTEVYSVRZX0FQSV9LRVkiIFwKIyAgICAgIC1IICJDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24iIFwKIyAgICAgIC1kICd7Im1vZGVsIjogInNvbmFyLXBybyIsICJtZXNzYWdlcyI6IFt7InJvbGUiOiJ1c2VyIiwiY29udGVudCI6Ii4uLiJ9XX0nCgojIDQuIFdyaXRlIHRoZSBzdHJ1Y3R1cmVkIHJlc2VhcmNoIHBhZ2UgdmlhIHB1dF9wYWdlOgpnYnJhaW4gcHV0X3BhZ2UgcmVzZWFyY2gvPHNsdWc+ICAgICAgIyB2aWEgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzIG1lbnRpb25lZCAocGVvcGxlLCBjb21wYW5pZXMpIHBlciBJcm9uIExhdy4="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Models",
         "line" : 120,
         "lines" : [
+          "use judgment to follow the Models guidance:",
           "table:decision:fCBNb2RlbCB8IENvc3QgLyBxdWVyeSB8IFVzZSB3aGVuIHwKfC0tLS0tLS18LS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tfAp8IFBlcnBsZXhpdHkgc29uYXItcHJvIHwgflwkMC4wNCB8IERlZXAgYW5hbHlzaXMsIGVudGl0eSBlbnJpY2htZW50LCBkZWFsIHJlc2VhcmNoIHwKfCBQZXJwbGV4aXR5IHNvbmFyIHwgflwkMC4wMDcgfCBRdWljayBsb29rdXBzLCBidWxrIG1vbml0b3JpbmcsIGJyaWVmaW5nIHBpcGVsaW5lcyB8",
           "Default to sonar-pro. Drop to sonar for bulk \/ cron contexts where cost",
           "matters more than depth"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -275,25 +259,27 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Entity enrichment",
         "line" : 132,
         "lines" : [
+          "use judgment to follow the Entity enrichment guidance:",
           "Called by `skills\/enrich\/SKILL.md` when an entity page (person, company)",
           "needs current web context:",
           "codeblock:bash:QlJBSU49JChnYnJhaW4gZ2V0IHBlb3BsZS88c2x1Zz4gMj4vZGV2L251bGwpCiMgU2VuZCA8c2x1Zz4ncyBwYWdlIGNvbnRlbnQgYXMgYnJhaW5fY29udGV4dCB0byBQZXJwbGV4aXR5LCBnZXQgY3VycmVudAojIG5ld3MgLyByb2xlIC8gY29udGV4dCwgdGhlbiB1cGRhdGUgdGhlIGJyYWluIHBhZ2Ugd2l0aCB3aGF0J3MgbmV3Lg=="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Deal \/ company monitoring (cron)",
         "line" : 143,
         "lines" : [
+          "use judgment to follow the Deal \/ company monitoring (cron) guidance:",
           "For each active item under `deals\/` or `companies\/`:",
           "codeblock:bash:IyBXZWVrbHk6IHB1bGwgcmVjZW50IG5ld3MgcGVyIGNvbXBhbnk7IGZsYWcgY2hhbmdlcyBmb3IgcmV2aWV3Lg=="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -316,34 +302,30 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
         "line" : 161,
         "lines" : [
-          "❌ Sending NO brain context. Then it's just a search — use `web_fetch`",
-          "instead",
-          "❌ Truncating the brain context. The whole point is \"knows what you",
-          "know.\" Send dense context",
-          "❌ Discarding citations. Every claim in the output must have a URL",
-          "❌ Skipping the cross-link step when entities are mentioned. Iron Law"
+          "checklist:ai-autonomy:4p2MIFNlbmRpbmcgTk8gYnJhaW4gY29udGV4dC4gVGhlbiBpdCdzIGp1c3QgYSBzZWFyY2gg4oCUIHVzZSBgd2ViX2ZldGNoYCBpbnN0ZWFkLgrinYwgVHJ1bmNhdGluZyB0aGUgYnJhaW4gY29udGV4dC4gVGhlIHdob2xlIHBvaW50IGlzICJrbm93cyB3aGF0IHlvdSBrbm93LiIgU2VuZCBkZW5zZSBjb250ZXh0LgrinYwgRGlzY2FyZGluZyBjaXRhdGlvbnMuIEV2ZXJ5IGNsYWltIGluIHRoZSBvdXRwdXQgbXVzdCBoYXZlIGEgVVJMCuKdjCBTa2lwcGluZyB0aGUgY3Jvc3MtbGluayBzdGVwIHdoZW4gZW50aXRpZXMgYXJlIG1lbnRpb25lZC4gSXJvbiBMYXc="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Environment",
-        "line" : 170,
+        "line" : 171,
         "lines" : [
-          "`PERPLEXITY_API_KEY` set in the agent's environment (or in",
+          "use judgment to follow the Environment guidance:",
+          "item: `PERPLEXITY_API_KEY` set in the agent's environment (or in",
           "`~\/.gbrain\/.env`)",
-          "Optional: install Perplexity's official CLI for richer streaming output"
+          "item: Optional: install Perplexity's official CLI for richer streaming output"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Related skills",
-        "line" : 176,
+        "line" : 177,
         "lines" : [
           "`skills\/academic-verify\/SKILL.md` — wraps perplexity-research for",
           "citation-verified academic claim checking",
@@ -355,23 +337,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
-        "line" : 186,
+        "line" : 187,
         "lines" : [
-          "This skill guarantees:",
-          "Routing matches the canonical triggers in the frontmatter",
-          "Output written under the directories listed in `writes_to:` (when applicable)",
-          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
-          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
-          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+          "checklist:ai-autonomy:Um91dGluZyBtYXRjaGVzIHRoZSBjYW5vbmljYWwgdHJpZ2dlcnMgaW4gdGhlIGZyb250bWF0dGVyCk91dHB1dCB3cml0dGVuIHVuZGVyIHRoZSBkaXJlY3RvcmllcyBsaXN0ZWQgaW4gYHdyaXRlc190bzpgICh3aGVuIGFwcGxpY2FibGUpCkNvbnZlbnRpb25zIHJlZmVyZW5jZWQgKGBxdWFsaXR5Lm1kYCwgYGJyYWluLWZpcnN0Lm1kYCwgYF9icmFpbi1maWxpbmctcnVsZXMubWRgKSBhcmUgZm9sbG93ZWQKUHJpdmFjeSBjb250cmFjdCBwcmVzZXJ2ZWQ6IG5vIHJlYWwgbmFtZXMsIG5vIGZvcmstc3BlY2lmaWMgZmlsZXN5c3RlbSBwYXRoIGxpdGVyYWxzLCBubyB1cHN0cmVhbS1mb3JrIHJlZmVyZW5jZXM="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 197,
+        "line" : 199,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -419,60 +396,64 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 622
+      "meridian_line" : 92,
+      "swift_line" : 585
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 627
+      "swift_line" : 623
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 666
+      "swift_line" : 628
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 671
+      "swift_line" : 667
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 710
+      "swift_line" : 672
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 715
+      "swift_line" : 711
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 754
+      "swift_line" : 716
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 759
+      "swift_line" : 755
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 798
+      "swift_line" : 760
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 803
+      "swift_line" : 799
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 842
+      "swift_line" : 804
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 847
+      "swift_line" : 843
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 886
+      "swift_line" : 848
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 891
+      "swift_line" : 887
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 892
     }
   ],
   "tools_used" : [

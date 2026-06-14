@@ -98,7 +98,7 @@
     "name" : "setup",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 20,
         "text" : "Contract"
@@ -106,298 +106,270 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 28,
+        "line" : 29,
         "text" : "Install (if not already installed)"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 34,
+        "line" : 35,
         "text" : "How GBrain connects"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 47,
+        "line" : 48,
         "text" : "Why Supabase"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 55,
+        "line" : 56,
         "text" : "Prerequisites"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 61,
+        "line" : 62,
         "text" : "Available init options"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 71,
+        "line" : 72,
         "text" : "Phase A.5: Choose Topology (run BEFORE Phase A)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 95,
+        "line" : 96,
         "text" : "If the user picks 1 (single brain) — proceed to Phase A"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 99,
+        "line" : 100,
         "text" : "If the user picks 2 (cross-machine thin client)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 149,
+        "line" : 150,
         "text" : "If the user picks 3 (split-engine per-worktree)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 163,
+        "line" : 164,
         "text" : "Phase A: Supabase Setup (recommended)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 186,
+        "line" : 187,
         "text" : "Phase B: BYO Postgres (alternative)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 198,
+        "line" : 199,
         "text" : "Phase C: First Import"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 280,
+        "line" : 281,
         "text" : "Phase C.5: One-step autopilot + Minions install (v0.11.1+)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 314,
+        "line" : 315,
         "text" : "Phase D: Brain-First Lookup Protocol"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 319,
+        "line" : 320,
         "text" : "BEFORE (grep) vs AFTER (gbrain)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 328,
+        "line" : 329,
         "text" : "Lookup sequence (MANDATORY for every entity question)"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 337,
+        "line" : 338,
         "text" : "Sync-after-write rule"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 349,
+        "line" : 350,
         "text" : "gbrain vs memory_search"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 359,
+        "line" : 360,
         "text" : "Self-upgrade marker protocol (inject into AGENTS.md)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 384,
+        "line" : 385,
         "text" : "Phase E: Load the Production Agent Guide"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 402,
+        "line" : 403,
         "text" : "Phase F: Health Check"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 407,
+        "line" : 408,
         "text" : "Error Recovery"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 421,
+        "line" : 422,
         "text" : "Phase G: Auto-Update Check (if not already configured)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 436,
+        "line" : 437,
         "text" : "Phase H: Live Sync Setup (MUST ADD)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 473,
+        "line" : 474,
         "text" : "Phase I: Full Verification"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 491,
+        "line" : 492,
         "text" : "Phase J: Cold Start — Populate Your Brain (AUTOMATIC)"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 523,
+        "line" : 524,
         "text" : "Schema State Tracking"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 536,
+        "line" : 537,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 545,
+        "line" : 547,
         "text" : "Output Format"
       },
       {
-        "kind" : "inert",
+        "kind" : "tools",
         "level" : 2,
-        "line" : 567,
+        "line" : 569,
         "text" : "Tools Used"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 53,
+        "line" : 54,
         "text" : "Alternative"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 169,
-        "text" : "Name"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 170,
-        "text" : "Region"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 171,
-        "text" : "Database password"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 176,
-        "text" : "Initialize gbrain"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 180,
+        "line" : 182,
         "text" : "Verify"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 191,
+        "line" : 193,
         "text" : "Run"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 192,
+        "line" : 194,
         "text" : "Verify"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 221,
+        "line" : 222,
         "text" : "Then check progress"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 232,
+        "line" : 233,
         "text" : "This is the magical moment"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 397,
+        "line" : 398,
         "text" : "Tell the user"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 430,
-        "text" : "If they agree"
       },
       {
         "kind" : "topic",
         "level" : 3,
         "line" : 431,
+        "text" : "If they agree"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 432,
         "text" : "Test"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 470,
+        "line" : 472,
         "text" : "Tell the user"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 486,
+        "line" : 488,
         "text" : "Tell the user"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 515,
+        "line" : 516,
         "text" : "If the user says no or wants to stop"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 20,
         "lines" : [
-          "Setup completes with a working brain verified by `gbrain doctor --json` (all checks OK)",
-          "The brain-first lookup protocol is injected into the project's AGENTS.md or equivalent",
-          "Live sync is configured and verified (a test change pushed and found via search)",
-          "Schema state is tracked in `~\/.gbrain\/update-state.json` so future upgrades know what the user adopted or declined",
-          "No Supabase anon key is requested; GBrain uses only the database connection string"
+          "checklist:ai-autonomy:U2V0dXAgY29tcGxldGVzIHdpdGggYSB3b3JraW5nIGJyYWluIHZlcmlmaWVkIGJ5IGBnYnJhaW4gZG9jdG9yIC0tanNvbmAgKGFsbCBjaGVja3MgT0spClRoZSBicmFpbi1maXJzdCBsb29rdXAgcHJvdG9jb2wgaXMgaW5qZWN0ZWQgaW50byB0aGUgcHJvamVjdCdzIEFHRU5UUy5tZCBvciBlcXVpdmFsZW50CkxpdmUgc3luYyBpcyBjb25maWd1cmVkIGFuZCB2ZXJpZmllZCAoYSB0ZXN0IGNoYW5nZSBwdXNoZWQgYW5kIGZvdW5kIHZpYSBzZWFyY2gpClNjaGVtYSBzdGF0ZSBpcyB0cmFja2VkIGluIGB+Ly5nYnJhaW4vdXBkYXRlLXN0YXRlLmpzb25gIHNvIGZ1dHVyZSB1cGdyYWRlcyBrbm93IHdoYXQgdGhlIHVzZXIgYWRvcHRlZCBvciBkZWNsaW5lZApObyBTdXBhYmFzZSBhbm9uIGtleSBpcyByZXF1ZXN0ZWQ7IEdCcmFpbiB1c2VzIG9ubHkgdGhlIGRhdGFiYXNlIGNvbm5lY3Rpb24gc3RyaW5n"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Install (if not already installed)",
-        "line" : 28,
+        "line" : 29,
         "lines" : [
           "codeblock:bash:YnVuIGFkZCBnaXRodWI6Z2Fycnl0YW4vZ2JyYWlu"
         ],
@@ -406,7 +378,7 @@
       {
         "executes" : false,
         "heading" : "How GBrain connects",
-        "line" : 34,
+        "line" : 35,
         "lines" : [
           "GBrain connects directly to Postgres over the wire protocol. NOT through the",
           "Supabase REST API. You need the **database connection string** (a `postgresql:\/\/` URI),",
@@ -422,7 +394,7 @@
       {
         "executes" : false,
         "heading" : "Why Supabase",
-        "line" : 47,
+        "line" : 48,
         "lines" : [
           "Supabase gives you managed Postgres + pgvector (vector search built in) for $25\/mo:",
           "8GB database + 100GB storage on Pro tier",
@@ -435,7 +407,7 @@
       {
         "executes" : false,
         "heading" : "Prerequisites",
-        "line" : 55,
+        "line" : 56,
         "lines" : [
           "A Supabase account (Pro tier recommended, $25\/mo) OR any Postgres with pgvector",
           "An OpenAI API key (for semantic search embeddings, ~$4-5 for 7,500 pages)",
@@ -446,7 +418,7 @@
       {
         "executes" : false,
         "heading" : "Available init options",
-        "line" : 61,
+        "line" : 62,
         "lines" : [
           "`gbrain init --supabase` -- interactive wizard (prompts for connection string)",
           "`gbrain init --url <connection_string>` -- direct, no prompts",
@@ -460,7 +432,7 @@
       {
         "executes" : false,
         "heading" : "Phase A.5: Choose Topology (run BEFORE Phase A)",
-        "line" : 71,
+        "line" : 72,
         "lines" : [
           "GBrain supports three deployment shapes. Pick the right one before installing,",
           "because picking wrong creates contention or duplicate work that's painful to",
@@ -473,17 +445,18 @@
       {
         "executes" : false,
         "heading" : "If the user picks 1 (single brain) — proceed to Phase A",
-        "line" : 95,
+        "line" : 96,
         "lines" : [
           "Continue with the existing `gbrain init --supabase` \/ `--pglite` setup below"
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "If the user picks 2 (cross-machine thin client)",
-        "line" : 99,
+        "line" : 100,
         "lines" : [
+          "use judgment to follow the If the user picks 2 (cross-machine thin client) guidance:",
           "**Confirm a host already exists.** Ask: \"Is the remote `gbrain serve --http`",
           "already running on the host machine?\" If no, the user needs to set up the",
           "host first (Phases A-C on the host, then `gbrain serve --http`). Don't try",
@@ -515,12 +488,12 @@
           "already configured this machine. Refusing without `--force` is the correct",
           "behavior; either accept the existing config or pass `--force` to refresh"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "If the user picks 3 (split-engine per-worktree)",
-        "line" : 149,
+        "line" : 150,
         "lines" : [
           "This shape requires per-worktree wiring that gstack handles, not gbrain",
           "directly. gbrain's role is just to run a local engine when `GBRAIN_HOME` is",
@@ -535,16 +508,17 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase A: Supabase Setup (recommended)",
-        "line" : 163,
+        "line" : 164,
         "lines" : [
+          "use judgment to follow the Phase A: Supabase Setup (recommended) guidance:",
           "Guide the user through creating a Supabase project:",
           "\"Go to https:\/\/supabase.com and sign up or log in.\"",
           "\"Click 'New Project' in the top left.\"",
-          "Name: `gbrain`",
-          "Region: pick the one closest to you",
-          "Database password: generate a strong one and save it",
+          "item: Name: `gbrain`",
+          "item: Region: pick the one closest to you",
+          "item: Database password: generate a strong one and save it",
           "\"Wait about 2 minutes for the project to initialize.\"",
           "\"Find the connection string: click **Connect** in the top navigation bar,",
           "then **Connection String** > **Transaction pooler**, and copy the string",
@@ -559,10 +533,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase B: BYO Postgres (alternative)",
-        "line" : 186,
+        "line" : 187,
         "lines" : [
+          "use judgment to follow the Phase B: BYO Postgres (alternative) guidance:",
           "If the user already has Postgres with pgvector:",
           "Get the connection string from the user",
           "Run: `gbrain init --non-interactive --url \"<connection_string>\"`",
@@ -576,7 +551,7 @@
       {
         "executes" : false,
         "heading" : "Phase C: First Import",
-        "line" : 198,
+        "line" : 199,
         "lines" : [
           "**Discover markdown repos.** Scan the environment for git repos with markdown content",
           "codeblock:bash:ZWNobyAiPT09IEdCcmFpbiBFbnZpcm9ubWVudCBEaXNjb3ZlcnkgPT09Igpmb3IgZGlyIGluIC9kYXRhLyogfi9naXQvKiB+L0RvY3VtZW50cy8qIDI+L2Rldi9udWxsOyBkbwogIGlmIFsgLWQgIiRkaXIvLmdpdCIgXTsgdGhlbgogICAgbWRfY291bnQ9JChmaW5kICIkZGlyIiAtbmFtZSAiKi5tZCIgLW5vdCAtcGF0aCAiKi9ub2RlX21vZHVsZXMvKiIgLW5vdCAtcGF0aCAiKi8uZ2l0LyoiIDI+L2Rldi9udWxsIHwgd2MgLWwgfCB0ciAtZCAnICcpCiAgICBpZiBbICIkbWRfY291bnQiIC1ndCAxMCBdOyB0aGVuCiAgICAgIHRvdGFsX3NpemU9JChkdSAtc2ggIiRkaXIiIDI+L2Rldi9udWxsIHwgY3V0IC1mMSkKICAgICAgZWNobyAiICAkZGlyICgkdG90YWxfc2l6ZSwgJG1kX2NvdW50IC5tZCBmaWxlcykiCiAgICBmaQogIGZpCmRvbmUKZWNobyAiPT09IERpc2NvdmVyeSBDb21wbGV0ZSA9PT0i",
@@ -612,22 +587,23 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase C.5: One-step autopilot + Minions install (v0.11.1+)",
-        "line" : 280,
+        "line" : 281,
         "lines" : [
+          "use judgment to follow the Phase C.5: One-step autopilot + Minions install (v0.11.1+) guidance:",
           "Run the migration runner once, then install autopilot. Two commands, done:",
           "codeblock:bash:Z2JyYWluIGFwcGx5LW1pZ3JhdGlvbnMgLS15ZXMgICAgICAgIyBhcHBsaWVzIGFueSBwZW5kaW5nIG1pZ3JhdGlvbnM7IGlkZW1wb3RlbnQgb24gaGVhbHRoeSBpbnN0YWxscwpnYnJhaW4gYXV0b3BpbG90IC0taW5zdGFsbCAgICAgICAgICAjIHN1cGVydmlzZXMgaXRzZWxmICsgZm9ya3MgdGhlIE1pbmlvbnMgd29ya2VyOyBlbnYtYXdhcmU=",
           "What `gbrain autopilot --install` does:",
-          "On **macOS**: writes a launchd plist at `~\/Library\/LaunchAgents\/com.gbrain.autopilot.plist`",
-          "On **Linux with systemd**: writes `~\/.config\/systemd\/user\/gbrain-autopilot.service`",
+          "item: On **macOS**: writes a launchd plist at `~\/Library\/LaunchAgents\/com.gbrain.autopilot.plist`",
+          "item: On **Linux with systemd**: writes `~\/.config\/systemd\/user\/gbrain-autopilot.service`",
           "with `Restart=on-failure`",
-          "On **ephemeral containers** (Render \/ Railway \/ Fly \/ Docker): writes",
+          "item: On **ephemeral containers** (Render \/ Railway \/ Fly \/ Docker): writes",
           "`~\/.gbrain\/start-autopilot.sh` and prints the one-line your agent's",
           "bootstrap should source to launch autopilot on every container start",
           "Auto-injects into OpenClaw's `hooks\/bootstrap\/ensure-services.sh` if",
           "detected (use `--no-inject` to opt out)",
-          "On **Linux without systemd**: installs a crontab entry (every 5 min)",
+          "item: On **Linux without systemd**: installs a crontab entry (every 5 min)",
           "Autopilot then supervises the Minions worker as a child process. Users get",
           "sync + extract + embed + backlinks + durable Postgres-backed job processing",
           "from ONE install step. No separate `gbrain jobs work` daemon to manage",
@@ -642,10 +618,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase D: Brain-First Lookup Protocol",
-        "line" : 314,
+        "line" : 315,
         "lines" : [
+          "use judgment to follow the Phase D: Brain-First Lookup Protocol guidance:",
           "Inject the brain-first lookup protocol into the project's AGENTS.md (or equivalent)",
           "This replaces grep-based knowledge lookups with structured gbrain queries"
         ],
@@ -654,7 +631,7 @@
       {
         "executes" : false,
         "heading" : "BEFORE (grep) vs AFTER (gbrain)",
-        "line" : 319,
+        "line" : 320,
         "lines" : [
           "table:decision:fCBUYXNrIHwgQmVmb3JlIChncmVwKSB8IEFmdGVyIChnYnJhaW4pIHwKfC0tLS0tLXwtLS0tLS0tLS0tLS0tLS18LS0tLS0tLS0tLS0tLS0tLS18CnwgRmluZCBhIHBlcnNvbiB8IGBncmVwIC1yICJQZWRybyIgYnJhaW4vYCB8IGBnYnJhaW4gc2VhcmNoICJQZWRybyJgIHwKfCBVbmRlcnN0YW5kIGEgdG9waWMgfCBgZ3JlcCAtcmwgImRlYWwiIGJyYWluLyBcfCBoZWFkIC01ICYmIGNhdCAuLi5gIHwgYGdicmFpbiBxdWVyeSAid2hhdCdzIHRoZSBzdGF0dXMgb2YgdGhlIGRlYWwiYCB8CnwgUmVhZCBhIGtub3duIHBhZ2UgfCBgY2F0IGJyYWluL3Blb3BsZS9wZWRyby5tZGAgfCBgZ2JyYWluIGdldCBwZW9wbGUvcGVkcm9gIHwKfCBGaW5kIGNvbm5lY3Rpb25zIHwgYGdyZXAgLXJsICJCcmV4IiBicmFpbi8gXHwgeGFyZ3MgZ3JlcCAiUGVkcm8iYCB8IGBnYnJhaW4gcXVlcnkgIlBlZHJvIEJyZXggcmVsYXRpb25zaGlwImAgfA=="
         ],
@@ -663,7 +640,7 @@
       {
         "executes" : false,
         "heading" : "Lookup sequence (MANDATORY for every entity question)",
-        "line" : 328,
+        "line" : 329,
         "lines" : [
           "`gbrain search \"name\"` -- keyword match, fast, works without embeddings",
           "`gbrain query \"what do we know about name\"` -- hybrid search, needs embeddings",
@@ -674,22 +651,23 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Sync-after-write rule",
-        "line" : 337,
+        "line" : 338,
         "lines" : [
+          "use judgment to follow the Sync-after-write rule guidance:",
           "After creating or updating any brain page in the repo, sync immediately so the",
           "index stays current:",
           "codeblock:bash:Z2JyYWluIHN5bmMgLS1uby1wdWxsIC0tbm8tZW1iZWQ=",
           "This indexes new\/changed files without pulling from git or regenerating embeddings",
           "Embeddings can be refreshed later in batch (`gbrain embed --stale`)"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "gbrain vs memory_search",
-        "line" : 349,
+        "line" : 350,
         "lines" : [
           "table:decision:fCBMYXllciB8IFdoYXQgaXQgc3RvcmVzIHwgV2hlbiB0byB1c2UgfAp8LS0tLS0tLXwtLS0tLS0tLS0tLS0tLS18LS0tLS0tLS0tLS0tLXwKfCAqKmdicmFpbioqIHwgV29ybGQga25vd2xlZGdlOiBwZW9wbGUsIGNvbXBhbmllcywgZGVhbHMsIG1lZXRpbmdzLCBjb25jZXB0cywgbWVkaWEgfCAiV2hvIGlzIFBlZHJvPyIsICJXaGF0IGhhcHBlbmVkIGF0IHRoZSBib2FyZCBtZWV0aW5nPyIgfAp8ICoqbWVtb3J5X3NlYXJjaCoqIHwgQWdlbnQgb3BlcmF0aW9uYWwgc3RhdGU6IHByZWZlcmVuY2VzLCBkZWNpc2lvbnMsIHNlc3Npb24gY29udGV4dCB8ICJIb3cgZG9lcyB0aGUgdXNlciBsaWtlIGZvcm1hdHRpbmc\/IiwgIldoYXQgZGlkIHdlIGRlY2lkZSBhYm91dCBYPyIgfA==",
           "Both should be checked. gbrain for facts about the world. memory_search for how",
@@ -700,7 +678,7 @@
       {
         "executes" : false,
         "heading" : "Self-upgrade marker protocol (inject into AGENTS.md)",
-        "line" : 359,
+        "line" : 360,
         "lines" : [
           "gbrain keeps itself current by riding invocation frequency: any `gbrain` command",
           "may print `UPGRADE_AVAILABLE <old> <new>` (or a one-time `JUST_UPGRADED <old>",
@@ -719,7 +697,7 @@
       {
         "executes" : false,
         "heading" : "Phase E: Load the Production Agent Guide",
-        "line" : 384,
+        "line" : 385,
         "lines" : [
           "Read `docs\/GBRAIN_SKILLPACK.md`. This is the reference architecture for how a",
           "production agent uses gbrain: the brain-agent loop, entity detection, enrichment",
@@ -736,30 +714,32 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase F: Health Check",
-        "line" : 402,
+        "line" : 403,
         "lines" : [
+          "use judgment to follow the Phase F: Health Check guidance:",
           "Run `gbrain doctor --json` and report the results. Every check should be OK",
           "If any check fails, the doctor output tells you exactly what's wrong and how to fix it"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Error Recovery",
-        "line" : 407,
+        "line" : 408,
         "lines" : [
+          "use judgment to follow the Error Recovery guidance:",
           "**If any gbrain command fails, run `gbrain doctor --json` first.** Report the full",
           "output. It checks connection, pgvector, RLS, schema version, and embeddings",
           "table:decision:fCBXaGF0IFlvdSBTZWUgfCBXaHkgfCBGaXggfAp8LS0tfC0tLXwtLS18CnwgQ29ubmVjdGlvbiByZWZ1c2VkIHwgU3VwYWJhc2UgcHJvamVjdCBwYXVzZWQsIElQdjYsIG9yIHdyb25nIFVSTCB8IFVzZSBUcmFuc2FjdGlvbiBwb29sZXIgKHBvcnQgNjU0MyksIG9yIHN1cGFiYXNlLmNvbS9kYXNoYm9hcmQgPiBSZXN0b3JlIHwKfCBQYXNzd29yZCBhdXRoZW50aWNhdGlvbiBmYWlsZWQgfCBXcm9uZyBwYXNzd29yZCB8IFByb2plY3QgU2V0dGluZ3MgPiBEYXRhYmFzZSA+IFJlc2V0IHBhc3N3b3JkIHwKfCBwZ3ZlY3RvciBub3QgYXZhaWxhYmxlIHwgRXh0ZW5zaW9uIG5vdCBlbmFibGVkIHwgUnVuIGBDUkVBVEUgRVhURU5TSU9OIHZlY3RvcjtgIGluIFNRTCBFZGl0b3IgfAp8IE9wZW5BSSBrZXkgaW52YWxpZCB8IEV4cGlyZWQgb3Igd3Jvbmcga2V5IHwgcGxhdGZvcm0ub3BlbmFpLmNvbS9hcGkta2V5cyA+IENyZWF0ZSBuZXcgfAp8IE5vIHBhZ2VzIGZvdW5kIHwgUXVlcnkgYmVmb3JlIGltcG9ydCB8IEltcG9ydCBmaWxlcyBpbnRvIGdicmFpbiBmaXJzdCB8CnwgUkxTIG5vdCBlbmFibGVkIHwgU2VjdXJpdHkgZ2FwIHwgUnVuIGBnYnJhaW4gaW5pdGAgYWdhaW4gKGF1dG8tZW5hYmxlcyBSTFMpIHw="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Phase G: Auto-Update Check (if not already configured)",
-        "line" : 421,
+        "line" : 422,
         "lines" : [
           "If the user's install did NOT include setting up auto-update checks (e.g., they",
           "used the manual install path or an older version of the OpenClaw\/Hermes paste), offer it:",
@@ -771,10 +751,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase H: Live Sync Setup (MUST ADD)",
-        "line" : 436,
+        "line" : 437,
         "lines" : [
+          "use judgment to follow the Phase H: Live Sync Setup (MUST ADD) guidance:",
           "The brain repo is the source of truth. If sync doesn't run automatically, the",
           "vector DB falls behind and gbrain returns stale answers. This phase is not optional",
           "Read `docs\/GBRAIN_SKILLPACK.md` Section 18 for the full reference. Key points:",
@@ -787,17 +768,17 @@
           "pooler** string (port 5432 on the `pooler.supabase.com` host, IPv4), or enable",
           "Supabase's IPv4 add-on",
           "**Set up automatic sync.** Choose the approach that fits your environment:",
-          "**Cron** (recommended for agents): register a cron every 5-30 minutes:",
+          "item: **Cron** (recommended for agents): register a cron every 5-30 minutes:",
           "`gbrain sync --repo \/data\/brain && gbrain embed --stale`",
-          "**Watch mode**: `gbrain sync --watch --repo \/data\/brain` under a process",
+          "item: **Watch mode**: `gbrain sync --watch --repo \/data\/brain` under a process",
           "manager. Pair with a cron fallback (watch exits after 5 consecutive failures)",
-          "**Webhook or git hook**: if available in your environment",
+          "item: **Webhook or git hook**: if available in your environment",
           "**Verify sync works.** Don't just check that the command ran. Check that it",
           "worked:",
-          "`gbrain stats` should show page count close to syncable file count in the repo",
-          "If page count is way too low, the direct connection is unreachable on IPv4 and",
+          "item: `gbrain stats` should show page count close to syncable file count in the repo",
+          "item: If page count is way too low, the direct connection is unreachable on IPv4 and",
           "sync is silently skipping pages (see point 1)",
-          "Push a test change and confirm it appears in `gbrain search`",
+          "item: Push a test change and confirm it appears in `gbrain search`",
           "**Chain sync + embed.** Always run both: `gbrain sync --repo <path> && gbrain",
           "embed --stale`. For small syncs, embeddings are generated inline. The `embed",
           "--stale` is a safety net for any stale chunks",
@@ -807,10 +788,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase I: Full Verification",
-        "line" : 473,
+        "line" : 474,
         "lines" : [
+          "use judgment to follow the Phase I: Full Verification guidance:",
           "Run the full verification runbook to confirm the entire installation is working",
           "Read `docs\/GBRAIN_VERIFY.md`",
           "Execute each check in order",
@@ -828,7 +810,7 @@
       {
         "executes" : false,
         "heading" : "Phase J: Cold Start — Populate Your Brain (AUTOMATIC)",
-        "line" : 491,
+        "line" : 492,
         "lines" : [
           "Setup is done. The brain works. But it's empty. **This is the most important",
           "moment** — an empty brain is useless. Transition directly to the cold-start",
@@ -851,7 +833,7 @@
       {
         "executes" : false,
         "heading" : "Schema State Tracking",
-        "line" : 523,
+        "line" : 524,
         "lines" : [
           "After presenting the recommended directories (Phase C\/E) and the user selects which",
           "ones to create, write `~\/.gbrain\/update-state.json` recording:",
@@ -866,23 +848,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 536,
+        "line" : 537,
         "lines" : [
-          "**Ending setup without offering cold-start.** An empty brain is useless. Phase J (cold-start) is where setup pays off. Always present the \"Ready to populate?\" prompt after verification. Skipping this is like installing an app and never logging in",
-          "**Asking for the Supabase anon key.** GBrain connects directly to Postgres over the wire protocol, not through the REST API. Only the database connection string is needed",
-          "**Skipping live sync setup.** If sync doesn't run automatically, the vector DB falls behind and search returns stale answers. Phase H is not optional",
-          "**Declaring setup complete without verification.** \"The command ran\" is not the same as \"it worked.\" Push a test change, wait for sync, search for the corrected text",
-          "**Leaving the direct connection unreachable on IPv4.** GBrain uses the Transaction pooler (port 6543) for reads and a derived direct connection (`db.<ref>.supabase.co:5432`, IPv6-only) for migrations, DDL, and sync transactions. On an IPv4-only host, reads work but sync silently skips pages. Set `GBRAIN_DIRECT_DATABASE_URL` to the Session pooler string (port 5432, IPv4), or enable the IPv4 add-on",
-          "**Importing without proving search.** The magical moment is the user seeing search find things grep couldn't. Don't skip it"
+          "checklist:ai-autonomy:KipFbmRpbmcgc2V0dXAgd2l0aG91dCBvZmZlcmluZyBjb2xkLXN0YXJ0LioqIEFuIGVtcHR5IGJyYWluIGlzIHVzZWxlc3MuIFBoYXNlIEogKGNvbGQtc3RhcnQpIGlzIHdoZXJlIHNldHVwIHBheXMgb2ZmLiBBbHdheXMgcHJlc2VudCB0aGUgIlJlYWR5IHRvIHBvcHVsYXRlPyIgcHJvbXB0IGFmdGVyIHZlcmlmaWNhdGlvbi4gU2tpcHBpbmcgdGhpcyBpcyBsaWtlIGluc3RhbGxpbmcgYW4gYXBwIGFuZCBuZXZlciBsb2dnaW5nIGluCioqQXNraW5nIGZvciB0aGUgU3VwYWJhc2UgYW5vbiBrZXkuKiogR0JyYWluIGNvbm5lY3RzIGRpcmVjdGx5IHRvIFBvc3RncmVzIG92ZXIgdGhlIHdpcmUgcHJvdG9jb2wsIG5vdCB0aHJvdWdoIHRoZSBSRVNUIEFQSS4gT25seSB0aGUgZGF0YWJhc2UgY29ubmVjdGlvbiBzdHJpbmcgaXMgbmVlZGVkCioqU2tpcHBpbmcgbGl2ZSBzeW5jIHNldHVwLioqIElmIHN5bmMgZG9lc24ndCBydW4gYXV0b21hdGljYWxseSwgdGhlIHZlY3RvciBEQiBmYWxscyBiZWhpbmQgYW5kIHNlYXJjaCByZXR1cm5zIHN0YWxlIGFuc3dlcnMuIFBoYXNlIEggaXMgbm90IG9wdGlvbmFsCioqRGVjbGFyaW5nIHNldHVwIGNvbXBsZXRlIHdpdGhvdXQgdmVyaWZpY2F0aW9uLioqICJUaGUgY29tbWFuZCByYW4iIGlzIG5vdCB0aGUgc2FtZSBhcyAiaXQgd29ya2VkLiIgUHVzaCBhIHRlc3QgY2hhbmdlLCB3YWl0IGZvciBzeW5jLCBzZWFyY2ggZm9yIHRoZSBjb3JyZWN0ZWQgdGV4dAoqKkxlYXZpbmcgdGhlIGRpcmVjdCBjb25uZWN0aW9uIHVucmVhY2hhYmxlIG9uIElQdjQuKiogR0JyYWluIHVzZXMgdGhlIFRyYW5zYWN0aW9uIHBvb2xlciAocG9ydCA2NTQzKSBmb3IgcmVhZHMgYW5kIGEgZGVyaXZlZCBkaXJlY3QgY29ubmVjdGlvbiAoYGRiLjxyZWY+LnN1cGFiYXNlLmNvOjU0MzJgLCBJUHY2LW9ubHkpIGZvciBtaWdyYXRpb25zLCBEREwsIGFuZCBzeW5jIHRyYW5zYWN0aW9ucy4gT24gYW4gSVB2NC1vbmx5IGhvc3QsIHJlYWRzIHdvcmsgYnV0IHN5bmMgc2lsZW50bHkgc2tpcHMgcGFnZXMuIFNldCBgR0JSQUlOX0RJUkVDVF9EQVRBQkFTRV9VUkxgIHRvIHRoZSBTZXNzaW9uIHBvb2xlciBzdHJpbmcgKHBvcnQgNTQzMiwgSVB2NCksIG9yIGVuYWJsZSB0aGUgSVB2NCBhZGQtb24KKipJbXBvcnRpbmcgd2l0aG91dCBwcm92aW5nIHNlYXJjaC4qKiBUaGUgbWFnaWNhbCBtb21lbnQgaXMgdGhlIHVzZXIgc2VlaW5nIHNlYXJjaCBmaW5kIHRoaW5ncyBncmVwIGNvdWxkbid0LiBEb24ndCBza2lwIGl0"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 545,
+        "line" : 547,
         "lines" : [
           "codeblock:plain:R0JSQUlOIFNFVFVQIENPTVBMRVRFCj09PT09PT09PT09PT09PT09PT09PQoKRW5naW5lOiBbUEdMaXRlIC8gU3VwYWJhc2UgUG9zdGdyZXNdCkNvbm5lY3Rpb246IFt2ZXJpZmllZCAvIHBvb2xlciBtb2RlIGNvbmZpcm1lZF0KUGFnZXMgaW1wb3J0ZWQ6IE4KRW1iZWRkaW5nczogTi9OIChrZXl3b3JkIHNlYXJjaCBhY3RpdmUsIHNlbWFudGljIGltcHJvdmluZykKTGl2ZSBzeW5jOiBbY29uZmlndXJlZCAvIG1ldGhvZF0KSGVhbHRoIGNoZWNrOiBhbGwgT0sgLyBbc3BlY2lmaWMgZmFpbHVyZXNdClZlcmlmaWNhdGlvbjogW0dCUkFJTl9WRVJJRlkubWQgcmVzdWx0c10KCvCfp6AgUmVhZHkgdG8gcG9wdWxhdGUgeW91ciBicmFpbj8gSSBjYW4gY29ubmVjdCB5b3VyIEdvb2dsZSBzZXJ2aWNlcywKaW1wb3J0IHlvdXIgbm90ZXMsIGFuZCBwdWxsIGluIHlvdXIgY29udmVyc2F0aW9ucyDigJQgYWxsIGluIG9uZSBzZXNzaW9uLgrihpIgTGF1bmNoaW5nIGNvbGQtc3RhcnQuLi4=",
           "**The output should transition directly into cold-start (Phase J), not end",
@@ -893,21 +870,21 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 567,
+        "line" : 569,
         "lines" : [
-          "`gbrain init --non-interactive --url ...` -- create brain",
-          "`gbrain import <dir> --no-embed [--workers N]` -- import files",
-          "`gbrain search <query>` -- search brain",
-          "`gbrain doctor --json` -- health check",
-          "`gbrain check-update --json` -- check for updates",
-          "`gbrain embed refresh` -- generate embeddings",
-          "`gbrain embed --stale` -- backfill missing embeddings",
-          "`gbrain sync --repo <path>` -- one-shot sync from brain repo",
-          "`gbrain sync --watch --repo <path>` -- continuous sync polling",
-          "`gbrain config get sync.last_run` -- check last sync timestamp",
-          "`gbrain stats` -- page count + embed coverage"
+          "Create brain with `gbrain init --non-interactive --url ...` (shell.run)",
+          "Import files with `gbrain import <dir> --no-embed [--workers N]` (shell.run)",
+          "Search brain with `gbrain search <query>` (shell.run)",
+          "Health check with `gbrain doctor --json` (shell.run)",
+          "Check updates with `gbrain check-update --json` (shell.run)",
+          "Generate embeddings with `gbrain embed refresh` (shell.run)",
+          "Backfill missing embeddings with `gbrain embed --stale` (shell.run)",
+          "One-shot repo sync with `gbrain sync --repo <path>` (shell.run)",
+          "Continuous sync polling with `gbrain sync --watch --repo <path>` (shell.run)",
+          "Check last sync timestamp with `gbrain config get sync.last_run` (shell.run)",
+          "Page count and embed coverage with `gbrain stats` (shell.run)"
         ],
-        "role" : "inert"
+        "role" : "tools"
       }
     ],
     "tools" : "get_stats\nget_health\nsync_brain\nput_page",
@@ -949,36 +926,54 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 30,
-      "swift_line" : 592
+      "meridian_line" : 23,
+      "swift_line" : 583
+    },
+    {
+      "meridian_line" : 31,
+      "swift_line" : 595
+    },
+    {
+      "meridian_line" : 102,
+      "swift_line" : 605
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 631
+      "swift_line" : 643
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 648
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 687
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 692
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 731
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 736
     }
   ],
   "tools_used" : [
-
+    "shell.run",
+    "shell.run",
+    "shell.run",
+    "shell.run",
+    "shell.run",
+    "shell.run",
+    "shell.run",
+    "shell.run",
+    "shell.run",
+    "shell.run",
+    "shell.run"
   ],
   "workflows" : [
     {

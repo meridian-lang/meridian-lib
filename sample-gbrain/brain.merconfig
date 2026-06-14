@@ -153,6 +153,24 @@ To publish a page at a slug:
 To check brain health:
   bind health = invoke get health.
 
+To list pages matching a filter:
+  bind pages = invoke list pages with filter = the filter.
+
+To get back-links for a slug:
+  bind links = invoke get backlinks with slug = the slug.
+
+To add a timeline entry for an entity with a timeline entry:
+  invoke add timeline entry with entity = the entity, entry = the timeline entry.
+
+To assess notability of an entity:
+  bind score = invoke assess notability with entity = the entity.
+
+To get the status of a job:
+  bind status = invoke get job status with id = the job's id.
+
+To make a PDF for a slug:
+  bind pdf = invoke make pdf with slug = the slug.
+
 === constants ===
 
 The default enrichment tier is "tier2".

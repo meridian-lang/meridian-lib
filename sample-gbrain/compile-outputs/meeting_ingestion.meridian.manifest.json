@@ -98,7 +98,7 @@
     "name" : "meeting-ingestion",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 32,
         "text" : "Contract"
@@ -106,132 +106,108 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 47,
+        "line" : 48,
         "text" : "Phases"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 49,
+        "line" : 50,
         "text" : "Phase 1: Parse the transcript"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 59,
+        "line" : 60,
         "text" : "Phase 2: Create meeting page"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 81,
+        "line" : 82,
         "text" : "Phase 3: Attendee enrichment (MANDATORY)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 96,
+        "line" : 97,
         "text" : "Phase 4: Entity propagation (MANDATORY)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 104,
+        "line" : 105,
         "text" : "Phase 5: Timeline merge"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 109,
+        "line" : 110,
         "text" : "Phase 6: Sync"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 113,
+        "line" : 114,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 118,
+        "line" : 119,
         "text" : "Anti-Patterns"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 34,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 51,
-        "text" : "Extract from the transcript"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 83,
-        "text" : "For EACH attendee"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 32,
         "lines" : [
-          "This skill guarantees:",
-          "Meeting page created with attendees, summary, key decisions, action items",
-          "EVERY attendee gets a people page (created or updated)",
-          "EVERY company discussed gets entity propagation",
-          "Timeline entries on ALL mentioned entities (timeline merge)",
-          "Meeting is NOT fully ingested until enrich runs for every entity",
-          "Back-links created bidirectionally",
-          "Every attendee and company mentioned MUST get a back-link from their page to",
-          "the meeting page. An unlinked mention is a broken brain"
+          "checklist:ai-autonomy:TWVldGluZyBwYWdlIGNyZWF0ZWQgd2l0aCBhdHRlbmRlZXMsIHN1bW1hcnksIGtleSBkZWNpc2lvbnMsIGFjdGlvbiBpdGVtcwpFVkVSWSBhdHRlbmRlZSBnZXRzIGEgcGVvcGxlIHBhZ2UgKGNyZWF0ZWQgb3IgdXBkYXRlZCkKRVZFUlkgY29tcGFueSBkaXNjdXNzZWQgZ2V0cyBlbnRpdHkgcHJvcGFnYXRpb24KVGltZWxpbmUgZW50cmllcyBvbiBBTEwgbWVudGlvbmVkIGVudGl0aWVzICh0aW1lbGluZSBtZXJnZSkKTWVldGluZyBpcyBOT1QgZnVsbHkgaW5nZXN0ZWQgdW50aWwgZW5yaWNoIHJ1bnMgZm9yIGV2ZXJ5IGVudGl0eQpCYWNrLWxpbmtzIGNyZWF0ZWQgYmlkaXJlY3Rpb25hbGx5"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 47,
+        "line" : 48,
         "lines" : [
 
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 1: Parse the transcript",
-        "line" : 49,
+        "line" : 50,
         "lines" : [
+          "use judgment to follow the Phase 1: Parse the transcript guidance:",
           "Extract from the transcript:",
-          "Attendees (names, roles if available)",
-          "Date, time, duration",
-          "Key topics discussed",
-          "Decisions made",
-          "Action items with owners",
-          "Companies and projects mentioned"
+          "item: Attendees (names, roles if available)",
+          "item: Date, time, duration",
+          "item: Key topics discussed",
+          "item: Decisions made",
+          "item: Action items with owners",
+          "item: Companies and projects mentioned"
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Phase 2: Create meeting page",
-        "line" : 59,
+        "line" : 60,
         "lines" : [
-          "codeblock:markdown:IyB7TWVldGluZyBUaXRsZX0g4oCUIHtEYXRlfQoKKipBdHRlbmRlZXM6Kioge2xpc3Qgd2l0aCBsaW5rcyB0byBwZW9wbGUgcGFnZXN9CioqRGF0ZToqKiB7WVlZWS1NTS1ERH0KKipEdXJhdGlvbjoqKiB7aWYgYXZhaWxhYmxlfQoKIyMgU3VtbWFyeSAoKCBpbmVydCApKQp7My01IGJ1bGxldCBrZXkgb3V0Y29tZXN9CgojIyBLZXkgRGVjaXNpb25zICgoIGluZXJ0ICkpCntEZWNpc2lvbnMgd2l0aCBjb250ZXh0fQoKIyMgQWN0aW9uIEl0ZW1zICgoIGluZXJ0ICkpCntUYXNrcyB3aXRoIG93bmVycyBhbmQgZGVhZGxpbmVzfQoKIyMgRGlzY3Vzc2lvbiBOb3RlcyAoKCBpbmVydCApKQp7U3RydWN0dXJlZCBub3RlcyBieSB0b3BpY30="
+          "codeblock:markdown:IyB7TWVldGluZyBUaXRsZX0g4oCUIHtEYXRlfQogIAoqKkF0dGVuZGVlczoqKiB7bGlzdCB3aXRoIGxpbmtzIHRvIHBlb3BsZSBwYWdlc30KKipEYXRlOioqIHtZWVlZLU1NLUREfQoqKkR1cmF0aW9uOioqIHtpZiBhdmFpbGFibGV9CgojIyBTdW1tYXJ5ICgoIGluZXJ0ICkpCnszLTUgYnVsbGV0IGtleSBvdXRjb21lc30KCiMjIEtleSBEZWNpc2lvbnMgKCggaW5lcnQgKSkKe0RlY2lzaW9ucyB3aXRoIGNvbnRleHR9CgojIyBBY3Rpb24gSXRlbXMgKCggaW5lcnQgKSkKe1Rhc2tzIHdpdGggb3duZXJzIGFuZCBkZWFkbGluZXN9CgojIyBEaXNjdXNzaW9uIE5vdGVzICgoIGluZXJ0ICkpCntTdHJ1Y3R1cmVkIG5vdGVzIGJ5IHRvcGljfQ=="
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 3: Attendee enrichment (MANDATORY)",
-        "line" : 81,
+        "line" : 82,
         "lines" : [
+          "use judgment to follow the Phase 3: Attendee enrichment (MANDATORY) guidance:",
           "For EACH attendee:",
           "`gbrain search \"{name}\"` — does a people page exist?",
           "If NO → create via enrich skill (this is mandatory, not optional)",
@@ -240,16 +216,18 @@
           "`gbrain timeline-add <person-slug> <date> \"Attended <meeting-title>\"`",
           "**Note (v0.10.1):** Once the meeting page is written via `gbrain put`, the",
           "auto-link post-hook automatically creates `attended` links from the meeting",
+          "to each attendee whose page is referenced as `[Name](people\/slug)`. You don't",
           "need to call `gbrain link` for attendees. You DO still need `gbrain timeline-add`",
           "for dated events (auto-link only handles links, not timeline entries)"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 4: Entity propagation (MANDATORY)",
-        "line" : 96,
+        "line" : 97,
         "lines" : [
+          "use judgment to follow the Phase 4: Entity propagation (MANDATORY) guidance:",
           "For each company, project, or concept discussed:",
           "Check brain for existing page",
           "Create\/update as needed",
@@ -259,20 +237,22 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 5: Timeline merge",
-        "line" : 104,
+        "line" : 105,
         "lines" : [
+          "use judgment to follow the Phase 5: Timeline merge guidance:",
           "The same event appears on ALL mentioned entities' timelines. If Alice met Bob at",
           "Acme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 6: Sync",
-        "line" : 109,
+        "line" : 110,
         "lines" : [
+          "use judgment to follow the Phase 6: Sync guidance:",
           "`gbrain sync` to update the index"
         ],
         "role" : "procedure"
@@ -280,7 +260,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 113,
+        "line" : 114,
         "lines" : [
           "Meeting page created. Report: \"Meeting ingested: {N} attendees enriched, {N} entities",
           "updated, {N} action items captured.\""
@@ -288,17 +268,13 @@
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 118,
+        "line" : 119,
         "lines" : [
-          "Creating the meeting page without enriching attendees",
-          "Skipping entity propagation (\"I'll do that later\")",
-          "Not merging timelines across all mentioned entities",
-          "Creating attendee stubs without meaningful content",
-          "Filing meeting pages without cross-linking to all participants"
+          "checklist:ai-autonomy:Q3JlYXRpbmcgdGhlIG1lZXRpbmcgcGFnZSB3aXRob3V0IGVucmljaGluZyBhdHRlbmRlZXMKU2tpcHBpbmcgZW50aXR5IHByb3BhZ2F0aW9uICgiSSdsbCBkbyB0aGF0IGxhdGVyIikKTm90IG1lcmdpbmcgdGltZWxpbmVzIGFjcm9zcyBhbGwgbWVudGlvbmVkIGVudGl0aWVzCkNyZWF0aW5nIGF0dGVuZGVlIHN0dWJzIHdpdGhvdXQgbWVhbmluZ2Z1bCBjb250ZW50CkZpbGluZyBtZWV0aW5nIHBhZ2VzIHdpdGhvdXQgY3Jvc3MtbGlua2luZyB0byBhbGwgcGFydGljaXBhbnRz"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "tools" : "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry",
@@ -343,36 +319,44 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 623
+      "meridian_line" : 36,
+      "swift_line" : 586
+    },
+    {
+      "meridian_line" : 52,
+      "swift_line" : 597
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 628
+      "swift_line" : 635
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 667
+      "swift_line" : 640
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 672
+      "swift_line" : 679
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 711
+      "swift_line" : 684
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 716
+      "swift_line" : 723
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 755
+      "swift_line" : 728
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 760
+      "swift_line" : 767
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 772
     }
   ],
   "tools_used" : [

@@ -155,25 +155,26 @@ Include timestamps when available:
 [Source: voice note, <channel>, YYYY-MM-DD HH:MM PT]
 ```
 
-## Naming convention (( inert ))
+## Naming convention (( role: procedure ))
 
-- Audio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,
-  `2026-04-13-rick-rubin-creative-philosophy.ogg`)
-- Brain pages: match the slug of the destination directory.
-
+use judgment to follow the Naming convention guidance:
+  item: Audio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,
+    `2026-04-13-rick-rubin-creative-philosophy.ogg`)
+  item: Brain pages: match the slug of the destination directory.
 ## Bulk vs. single (( inert ))
 
 This skill handles ONE voice note at a time. Each is its own ingest cycle.
 No batching.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- ❌ **Paraphrasing the transcript.** The exact words are the signal.
-- ❌ **Cleaning up hesitations or filler words** ("um", "like", "you
+!!! checklist (( ai-autonomy ))
+- [ ] ❌ **Paraphrasing the transcript.** The exact words are the signal.
+- [ ] ❌ **Cleaning up hesitations or filler words** ("um", "like", "you
   know"). The texture matters.
-- ❌ **Creating a page with no entity cross-links** when people/companies
+- [ ] ❌ **Creating a page with no entity cross-links** when people/companies
   were mentioned. Iron Law fail.
-- ❌ **Skipping the audio storage step.** Always upload the original; the
+- [ ] ❌ **Skipping the audio storage step.** Always upload the original; the
   brain page has a `🔊 [Audio]` link back to it.
 
 ## Related skills (( inert ))
@@ -184,16 +185,17 @@ No batching.
 - `skills/conventions/quality.md` — citation + back-link rules
 
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-This skill guarantees:
+> This skill guarantees:
 
-- Routing matches the canonical triggers in the frontmatter.
-- Output written under the directories listed in `writes_to:` (when applicable).
-- Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
-- Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
+!!! checklist (( ai-autonomy ))
+- [ ] Routing matches the canonical triggers in the frontmatter.
+- [ ] Output written under the directories listed in `writes_to:` (when applicable).
+- [ ] Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
+- [ ] Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
 
-The full behavior contract is documented in the body sections above; this section exists for the conformance test.
+> The full behavior contract is documented in the body sections above; this section exists for the conformance test.
 
 ## Output Format
 

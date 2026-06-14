@@ -98,7 +98,7 @@
     "name" : "repo-architecture",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 23,
         "text" : "Contract"
@@ -106,57 +106,48 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 30,
+        "line" : 31,
         "text" : "Phases"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 38,
+        "line" : 39,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 42,
+        "line" : 43,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 25,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 34,
+        "line" : 35,
         "text" : "Walk the decision tree"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 40,
+        "line" : 41,
         "text" : "Advisory"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 23,
         "lines" : [
-          "This skill guarantees:",
-          "Every new page is filed by primary subject (not format, not source)",
-          "The decision protocol is followed for ambiguous cases",
-          "Common misfiling patterns are caught"
+          "checklist:ai-autonomy:RXZlcnkgbmV3IHBhZ2UgaXMgZmlsZWQgYnkgcHJpbWFyeSBzdWJqZWN0IChub3QgZm9ybWF0LCBub3Qgc291cmNlKQpUaGUgZGVjaXNpb24gcHJvdG9jb2wgaXMgZm9sbG93ZWQgZm9yIGFtYmlndW91cyBjYXNlcwpDb21tb24gbWlzZmlsaW5nIHBhdHRlcm5zIGFyZSBjYXVnaHQ="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 30,
+        "line" : 31,
         "lines" : [
           "use judgment to file a new brain page by its primary subject:",
           "Identify the primary subject (what you would search for to find this page)",
@@ -169,23 +160,20 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 38,
+        "line" : 39,
         "lines" : [
           "Advisory: \"File this at `{type}\/{slug}.md` because the primary subject is {reason}.\""
         ],
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 42,
+        "line" : 43,
         "lines" : [
-          "Filing by format (\"it's a PDF so it goes in sources\/\")",
-          "Filing by source (\"it came from email so it goes in sources\/\")",
-          "Creating pages without checking if one already exists",
-          "Using `sources\/` for anything except raw data dumps"
+          "checklist:ai-autonomy:RmlsaW5nIGJ5IGZvcm1hdCAoIml0J3MgYSBQREYgc28gaXQgZ29lcyBpbiBzb3VyY2VzLyIpCkZpbGluZyBieSBzb3VyY2UgKCJpdCBjYW1lIGZyb20gZW1haWwgc28gaXQgZ29lcyBpbiBzb3VyY2VzLyIpCkNyZWF0aW5nIHBhZ2VzIHdpdGhvdXQgY2hlY2tpbmcgaWYgb25lIGFscmVhZHkgZXhpc3RzClVzaW5nIGBzb3VyY2VzL2AgZm9yIGFueXRoaW5nIGV4Y2VwdCByYXcgZGF0YSBkdW1wcw=="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "tools" : "search\nget_page\nlist_pages",
@@ -228,40 +216,48 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 32,
-      "swift_line" : 592
+      "meridian_line" : 27,
+      "swift_line" : 584
+    },
+    {
+      "meridian_line" : 33,
+      "swift_line" : 595
+    },
+    {
+      "meridian_line" : 46,
+      "swift_line" : 604
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 630
+      "swift_line" : 644
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 635
+      "swift_line" : 649
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 674
+      "swift_line" : 688
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 679
+      "swift_line" : 693
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 718
+      "swift_line" : 732
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 723
+      "swift_line" : 737
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 762
+      "swift_line" : 776
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 767
+      "swift_line" : 781
     }
   ],
   "tools_used" : [

@@ -44,12 +44,14 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         let fm = FileManager.default
         guard fm.fileExists(atPath: origURL.path) else { throw ValidationError("Original not found: \(original)") }
         guard fm.fileExists(atPath: portURL.path) else { throw ValidationError("Ported file not found: \(ported)") }
+        let rulebook = try loadRulebook(beside: portURL)
 
         let report = SkillDeviation.analyze(
             originalMarkdown: try String(contentsOf: origURL, encoding: .utf8),
             portedMeri: try String(contentsOf: portURL, encoding: .utf8),
             originalName: origURL.lastPathComponent,
-            portedName: portURL.lastPathComponent
+            portedName: portURL.lastPathComponent,
+            rulebook: rulebook
         )
         let markdown = SkillDeviation.renderMarkdown(report, includeDiff: !noDiff)
 
@@ -98,6 +100,7 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
 
         let outDir = out.map { URL(fileURLWithPath: $0).standardized }
         if let outDir { try fm.createDirectory(at: outDir, withIntermediateDirectories: true) }
+        let rulebook = try loadRulebook(beside: portDir.appendingPathComponent("placeholder.meri"))
 
         var rows: [SkillDeviation.DeviationReport] = []
         var unpairedOriginals: [String] = []
@@ -119,7 +122,8 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
                 originalName: origRel,
                 portedName: meriURL.lastPathComponent,
                 originalDiffPath: "\(origDir.lastPathComponent)/\(origRel)",
-                portedDiffPath: displayName(meriURL, base: portDir)
+                portedDiffPath: displayName(meriURL, base: portDir),
+                rulebook: rulebook
             )
             rows.append(report)
             let reportStem = meriURL.deletingPathExtension().lastPathComponent
@@ -186,6 +190,17 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         return url.lastPathComponent
     }
 
+    private func loadRulebook(beside inputURL: URL) throws -> Rulebook {
+        let urls = try DependencyDiscovery.resolveRulebooks(explicit: [], beside: inputURL)
+        var merged = Rulebook.empty
+        let parser = RulebookParser(trace: .silent())
+        for url in urls {
+            let source = try String(contentsOf: url, encoding: .utf8)
+            merged = merged.merging(try parser.parse(source, file: url.lastPathComponent))
+        }
+        return merged
+    }
+
     // MARK: - Index
 
     private func buildIndex(
@@ -206,9 +221,12 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         let avg = rows.isEmpty ? 0 : rows.map(\.similarity).reduce(0, +) / Double(rows.count)
         let totalSections = rows.reduce(0) { $0 + $1.metrics.totalSections }
         let inertSections = rows.reduce(0) { $0 + $1.metrics.inertSections }
+        let operationalInertSections = rows.reduce(0) { $0 + $1.metrics.operationalInertSections }
+        let unclassifiedInertSections = rows.reduce(0) { $0 + $1.metrics.unclassifiedInertSections }
         let totalJudgmentBlocks = rows.reduce(0) { $0 + $1.metrics.judgmentBlocks }
         let totalJudgmentLines = rows.reduce(0) { $0 + $1.metrics.judgmentLines }
         let avgInertRatio = rows.isEmpty ? 0 : rows.map(\.metrics.inertRatio).reduce(0, +) / Double(rows.count)
+        let categoryCounts = inertCategorySummary(rows)
         out.append("## Summary")
         out.append("")
         out.append("- Pairs analyzed: \(rows.count)")
@@ -217,19 +235,24 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         out.append("- Tier 3 (structural rewrite): \(tier3)")
         out.append("- Average similarity: \(percent(avg))")
         out.append("- Sections: \(inertSections)/\(totalSections) inert (avg inert ratio \(percent(avgInertRatio)))")
+        out.append("- Operational inert: \(operationalInertSections)")
+        out.append("- Unclassified inert: \(unclassifiedInertSections)")
+        if !categoryCounts.isEmpty {
+            out.append("- Inert categories: " + categoryCounts.map { "\($0.category.rawValue)=\($0.count)" }.joined(separator: ", "))
+        }
         out.append("- Judgment: \(totalJudgmentBlocks) blocks, \(totalJudgmentLines) lines")
         out.append("- Non-skill directories skipped (no SKILL.md, e.g. `conventions/`, `migrations/`): \(skippedNonSkillDirs)")
         out.append("")
         out.append("## Per-skill")
         out.append("")
-        out.append("| skill | tier | similarity | lines | inert | judgment | frontmatter added | categories |")
-        out.append("|---|---|---|---|---|---|---|---|")
+        out.append("| skill | tier | similarity | lines | inert | operational inert | judgment | frontmatter added | categories |")
+        out.append("|---|---|---|---|---|---|---|---|---|")
         for r in rows {
             let stem = (r.portedName as NSString).deletingPathExtension
             let fmAdded = r.frontmatterAdded.isEmpty ? "(none)" : r.frontmatterAdded.joined(separator: " ")
             let cats = r.categories.isEmpty ? "(none)" : r.categories.joined(separator: " ")
             let m = r.metrics
-            out.append("| [\(stem)](\(stem).md) | \(r.tier) | \(percent(r.similarity)) | \(r.originalLineCount)→\(r.portedLineCount) | \(m.inertSections)/\(m.totalSections) | \(m.judgmentBlocks)/\(m.judgmentLines) | \(fmAdded) | \(cats) |")
+            out.append("| [\(stem)](\(stem).md) | \(r.tier) | \(percent(r.similarity)) | \(r.originalLineCount)→\(r.portedLineCount) | \(m.inertSections)/\(m.totalSections) | \(m.operationalInertSections) | \(m.judgmentBlocks)/\(m.judgmentLines) | \(fmAdded) | \(cats) |")
         }
         if !unpairedOriginals.isEmpty {
             out.append("")
@@ -244,6 +267,17 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
             for u in unpairedPorted { out.append("- `\(u)`") }
         }
         return out.joined(separator: "\n") + "\n"
+    }
+
+    private func inertCategorySummary(_ rows: [SkillDeviation.DeviationReport])
+        -> [(category: SkillMetrics.InertCategory, count: Int)] {
+        var counts: [SkillMetrics.InertCategory: Int] = [:]
+        for row in rows {
+            for detail in row.metrics.inertDetails {
+                counts[detail.category, default: 0] += 1
+            }
+        }
+        return counts.map { ($0.key, $0.value) }.sorted { $0.category < $1.category }
     }
 
     private func percent(_ x: Double) -> String { String(format: "%.0f%%", x * 100) }

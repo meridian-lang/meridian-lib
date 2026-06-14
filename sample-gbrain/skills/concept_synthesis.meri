@@ -70,29 +70,29 @@ Phase 4: Cluster + map (LLM)
     └── Identify idea genealogies (concept A → evolved into concept B)
 ```
 
-## Invocation (( inert ))
+## Invocation (( role: procedure ))
 
-The skill is markdown agent instructions. The agent uses gbrain's
-existing operations + LLM passes:
-
-```bash
-# 1. List all concept pages
-gbrain query "type:concept" --limit 10000 --json
-
-# 2. Phase 1 dedup — agent applies Jaccard + substring locally,
-#    then LLM passes to identify semantic duplicates.
-
-# 3. Phase 2 tier — agent scores each canonical concept based on
-#    frequency / timespan / breadth and writes tier into frontmatter.
-
-# 4. Phase 3 synthesis — for each T1/T2, agent reads the timeline
-#    + associated source pages and writes a synthesis section
-#    onto the concept page via put_page.
-
-# 5. Phase 4 clustering — agent reads the tiered concept list
-#    and writes concepts/README.md with the full intellectual map.
-```
-
+use judgment to follow the Invocation guidance:
+  The skill is markdown agent instructions. The agent uses gbrain's
+  existing operations + LLM passes:
+  
+  ```bash
+  # 1. List all concept pages
+  gbrain query "type:concept" --limit 10000 --json
+  
+  # 2. Phase 1 dedup — agent applies Jaccard + substring locally,
+  #    then LLM passes to identify semantic duplicates.
+  
+  # 3. Phase 2 tier — agent scores each canonical concept based on
+  #    frequency / timespan / breadth and writes tier into frontmatter.
+  
+  # 4. Phase 3 synthesis — for each T1/T2, agent reads the timeline
+  #    + associated source pages and writes a synthesis section
+  #    onto the concept page via put_page.
+  
+  # 5. Phase 4 clustering — agent reads the tiered concept list
+  #    and writes concepts/README.md with the full intellectual map.
+  ```
 ## Output: concept page format (post-synthesis) (( inert ))
 
 ### T1 Canon — full synthesis (( inert ))
@@ -221,15 +221,16 @@ This is heavy work. Run on a cadence, not on every signal:
 - Manual trigger for a full re-synthesis when the corpus shifts
   significantly.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- ❌ Running synthesis on T3/T4 — wastes API budget on ideas that may
+!!! checklist (( ai-autonomy ))
+- [ ] ❌ Running synthesis on T3/T4 — wastes API budget on ideas that may
   never sharpen.
-- ❌ Hallucinating quotes or dates. The timeline must be verifiable
+- [ ] ❌ Hallucinating quotes or dates. The timeline must be verifiable
   against existing brain pages.
-- ❌ Generic cluster names ("Various Topics"). If you can't name the
+- [ ] ❌ Generic cluster names ("Various Topics"). If you can't name the
   cluster, the cluster isn't real.
-- ❌ Re-synthesizing already-synthesized T1s without new source material.
+- [ ] ❌ Re-synthesizing already-synthesized T1s without new source material.
   Idempotency-respect.
 
 ## Related skills (( inert ))
@@ -239,16 +240,17 @@ This is heavy work. Run on a cadence, not on every signal:
 - `skills/idea-ingest/SKILL.md` — same for links / articles
 
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-This skill guarantees:
+> This skill guarantees:
 
-- Routing matches the canonical triggers in the frontmatter.
-- Output written under the directories listed in `writes_to:` (when applicable).
-- Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
-- Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
+!!! checklist (( ai-autonomy ))
+- [ ] Routing matches the canonical triggers in the frontmatter.
+- [ ] Output written under the directories listed in `writes_to:` (when applicable).
+- [ ] Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
+- [ ] Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
 
-The full behavior contract is documented in the body sections above; this section exists for the conformance test.
+> The full behavior contract is documented in the body sections above; this section exists for the conformance test.
 
 ## Output Format
 

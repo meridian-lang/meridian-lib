@@ -110,7 +110,7 @@
         "text" : "Architecture"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 73,
         "text" : "Invocation"
@@ -170,7 +170,7 @@
         "text" : "Cron integration"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 224,
         "text" : "Anti-Patterns"
@@ -178,32 +178,20 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 235,
+        "line" : 236,
         "text" : "Related skills"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 242,
+        "line" : 243,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 253,
+        "line" : 255,
         "text" : "Output Format"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 244,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 249,
-        "text" : "Privacy contract preserved"
       }
     ],
     "sections" : [
@@ -233,15 +221,16 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Invocation",
         "line" : 73,
         "lines" : [
+          "use judgment to follow the Invocation guidance:",
           "The skill is markdown agent instructions. The agent uses gbrain's",
           "existing operations + LLM passes:",
           "codeblock:bash:IyAxLiBMaXN0IGFsbCBjb25jZXB0IHBhZ2VzCmdicmFpbiBxdWVyeSAidHlwZTpjb25jZXB0IiAtLWxpbWl0IDEwMDAwIC0tanNvbgoKIyAyLiBQaGFzZSAxIGRlZHVwIOKAlCBhZ2VudCBhcHBsaWVzIEphY2NhcmQgKyBzdWJzdHJpbmcgbG9jYWxseSwKIyAgICB0aGVuIExMTSBwYXNzZXMgdG8gaWRlbnRpZnkgc2VtYW50aWMgZHVwbGljYXRlcy4KCiMgMy4gUGhhc2UgMiB0aWVyIOKAlCBhZ2VudCBzY29yZXMgZWFjaCBjYW5vbmljYWwgY29uY2VwdCBiYXNlZCBvbgojICAgIGZyZXF1ZW5jeSAvIHRpbWVzcGFuIC8gYnJlYWR0aCBhbmQgd3JpdGVzIHRpZXIgaW50byBmcm9udG1hdHRlci4KCiMgNC4gUGhhc2UgMyBzeW50aGVzaXMg4oCUIGZvciBlYWNoIFQxL1QyLCBhZ2VudCByZWFkcyB0aGUgdGltZWxpbmUKIyAgICArIGFzc29jaWF0ZWQgc291cmNlIHBhZ2VzIGFuZCB3cml0ZXMgYSBzeW50aGVzaXMgc2VjdGlvbgojICAgIG9udG8gdGhlIGNvbmNlcHQgcGFnZSB2aWEgcHV0X3BhZ2UuCgojIDUuIFBoYXNlIDQgY2x1c3RlcmluZyDigJQgYWdlbnQgcmVhZHMgdGhlIHRpZXJlZCBjb25jZXB0IGxpc3QKIyAgICBhbmQgd3JpdGVzIGNvbmNlcHRzL1JFQURNRS5tZCB3aXRoIHRoZSBmdWxsIGludGVsbGVjdHVhbCBtYXAu"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -339,25 +328,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
         "line" : 224,
         "lines" : [
-          "❌ Running synthesis on T3\/T4 — wastes API budget on ideas that may",
-          "never sharpen",
-          "❌ Hallucinating quotes or dates. The timeline must be verifiable",
-          "against existing brain pages",
-          "❌ Generic cluster names (\"Various Topics\"). If you can't name the",
-          "cluster, the cluster isn't real",
-          "❌ Re-synthesizing already-synthesized T1s without new source material",
-          "Idempotency-respect"
+          "checklist:ai-autonomy:4p2MIFJ1bm5pbmcgc3ludGhlc2lzIG9uIFQzL1Q0IOKAlCB3YXN0ZXMgQVBJIGJ1ZGdldCBvbiBpZGVhcyB0aGF0IG1heSBuZXZlciBzaGFycGVuLgrinYwgSGFsbHVjaW5hdGluZyBxdW90ZXMgb3IgZGF0ZXMuIFRoZSB0aW1lbGluZSBtdXN0IGJlIHZlcmlmaWFibGUgYWdhaW5zdCBleGlzdGluZyBicmFpbiBwYWdlcy4K4p2MIEdlbmVyaWMgY2x1c3RlciBuYW1lcyAoIlZhcmlvdXMgVG9waWNzIikuIElmIHlvdSBjYW4ndCBuYW1lIHRoZSBjbHVzdGVyLCB0aGUgY2x1c3RlciBpc24ndCByZWFsLgrinYwgUmUtc3ludGhlc2l6aW5nIGFscmVhZHktc3ludGhlc2l6ZWQgVDFzIHdpdGhvdXQgbmV3IHNvdXJjZSBtYXRlcmlhbCBJZGVtcG90ZW5jeS1yZXNwZWN0Lg=="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Related skills",
-        "line" : 235,
+        "line" : 236,
         "lines" : [
           "`skills\/signal-detector\/SKILL.md` — creates raw concept stubs from text channels",
           "`skills\/voice-note-ingest\/SKILL.md` — same for audio channels",
@@ -366,23 +348,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
-        "line" : 242,
+        "line" : 243,
         "lines" : [
-          "This skill guarantees:",
-          "Routing matches the canonical triggers in the frontmatter",
-          "Output written under the directories listed in `writes_to:` (when applicable)",
-          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
-          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
-          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+          "checklist:ai-autonomy:Um91dGluZyBtYXRjaGVzIHRoZSBjYW5vbmljYWwgdHJpZ2dlcnMgaW4gdGhlIGZyb250bWF0dGVyCk91dHB1dCB3cml0dGVuIHVuZGVyIHRoZSBkaXJlY3RvcmllcyBsaXN0ZWQgaW4gYHdyaXRlc190bzpgICh3aGVuIGFwcGxpY2FibGUpCkNvbnZlbnRpb25zIHJlZmVyZW5jZWQgKGBxdWFsaXR5Lm1kYCwgYGJyYWluLWZpcnN0Lm1kYCwgYF9icmFpbi1maWxpbmctcnVsZXMubWRgKSBhcmUgZm9sbG93ZWQKUHJpdmFjeSBjb250cmFjdCBwcmVzZXJ2ZWQ6IG5vIHJlYWwgbmFtZXMsIG5vIGZvcmstc3BlY2lmaWMgZmlsZXN5c3RlbSBwYXRoIGxpdGVyYWxzLCBubyB1cHN0cmVhbS1mb3JrIHJlZmVyZW5jZXM="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 253,
+        "line" : 255,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -430,52 +407,56 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 622
+      "meridian_line" : 75,
+      "swift_line" : 585
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 627
+      "swift_line" : 623
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 666
+      "swift_line" : 628
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 671
+      "swift_line" : 667
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 710
+      "swift_line" : 672
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 715
+      "swift_line" : 711
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 754
+      "swift_line" : 716
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 759
+      "swift_line" : 755
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 798
+      "swift_line" : 760
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 803
+      "swift_line" : 799
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 842
+      "swift_line" : 804
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 847
+      "swift_line" : 843
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 848
     }
   ],
   "tools_used" : [

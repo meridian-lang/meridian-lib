@@ -3,8 +3,8 @@
 - Original: `briefing/SKILL.md`
 - Ported: `briefing.meri`
 - Tier: 2 (light edits)
-- Similarity: 61%
-- Lines: 153 -> 127 (+41 / -67)
+- Similarity: 52%
+- Lines: 153 -> 129 (+55 / -79)
 
 ## Frontmatter
 - Added: (none)
@@ -16,15 +16,25 @@
 - preamble-blockquoted
 
 ## Metrics
-- Sections: 10/13 inert (77% inert ratio)
-- Judgment: 1 blocks, 2 lines
+- Sections: 5/13 inert (38% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: reference-documentation=3, template=1, tools-metadata=1
+- Judgment: 2 blocks, 6 lines
+
+### Inert section details
+- L28 `GBrain-Native Context Loading`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L46 `Before an email reply`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L61 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L98 `Citation in Briefings`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L113 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/briefing/SKILL.md
-+++ briefing.meri
-@@ -5,23 +5,17 @@
++++ skills/briefing.meri
+@@ -5,99 +5,67 @@
    - "daily briefing"
    - "morning briefing"
    - "what's happening today"
@@ -46,11 +56,19 @@
  > follow `skills/_brain-filing-rules.md`.
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
  
- - Every fact in the briefing includes an inline `[Source: slug, updated DATE]` citation.
- - Meeting participants are resolved against the brain; gaps are explicitly flagged.
-@@ -31,73 +25,46 @@
+-- Every fact in the briefing includes an inline `[Source: slug, updated DATE]` citation.
+-- Meeting participants are resolved against the brain; gaps are explicitly flagged.
+-- Active deals and action items include deadlines and recency context.
+-- The briefing is read-only: no brain pages are created or modified unless the user explicitly requests it.
+-- Stale alerts surface pages relevant to today's context, not just all stale pages.
++!!! checklist (( ai-autonomy ))
++- [ ] Every fact in the briefing includes an inline `[Source: slug, updated DATE]` citation.
++- [ ] Meeting participants are resolved against the brain; gaps are explicitly flagged.
++- [ ] Active deals and action items include deadlines and recency context.
++- [ ] The briefing is read-only: no brain pages are created or modified unless the user explicitly requests it.
++- [ ] Stale alerts surface pages relevant to today's context, not just all stale pages.
  
  ## Phases
  
@@ -152,26 +170,28 @@
  
  ## Output Format
  
-@@ -123,19 +90,26 @@
+@@ -123,25 +91,33 @@
  - [name] -- [why they're active]
  ```
  
 -## Back-Linking During Briefing
-+## Back-Linking During Briefing (( inert ))
++## Back-Linking During Briefing (( role: procedure ))
  
- If the briefing creates or updates any brain pages (e.g., new meeting prep
- pages, updated entity pages), the back-linking iron law applies: every entity
+-If the briefing creates or updates any brain pages (e.g., new meeting prep
+-pages, updated entity pages), the back-linking iron law applies: every entity
 -mentioned must have a back-link from their page. See `skills/_brain-filing-rules.md`.
-+the page mentions must have a back-link from their page. See
-+`skills/_brain-filing-rules.md`.
- 
--## Citation in Briefings
++use judgment to follow the Back-Linking During Briefing guidance:
++  If the briefing creates or updates any brain pages (e.g., new meeting prep
++  pages, updated entity pages), the back-linking iron law applies: every entity
++  the page mentions must have a back-link from their page. See
++  `skills/_brain-filing-rules.md`.
 +### Enforce back-links
-+
++  
 +let mentioned be the entities mentioned by the input.
 +for each entity in mentioned:
 +  if the entity does not link to the input, add a back-link from the entity to the input.
-+
+ 
+-## Citation in Briefings
 +## Citation in Briefings (( inert ))
  
  When presenting facts from brain pages, include inline citations:
@@ -179,8 +199,20 @@
  - This lets the user trace any claim back to the brain page and assess freshness
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
  
- - **Briefing without brain queries.** Never generate a briefing from memory alone; always query gbrain for current data.
- - **Uncited facts.** Every claim must include `[Source: slug, updated DATE]`. A fact without a citation is unverifiable.
+-- **Briefing without brain queries.** Never generate a briefing from memory alone; always query gbrain for current data.
+-- **Uncited facts.** Every claim must include `[Source: slug, updated DATE]`. A fact without a citation is unverifiable.
+-- **Stale context presented as current.** If a page hasn't been updated in 30+ days, flag the staleness explicitly rather than presenting it as fresh.
+-- **Modifying brain pages unprompted.** The briefing is read-only by default. Do not create or update pages unless the user explicitly requests it.
+-- **Ignoring coverage gaps.** When a meeting participant has no brain page, say so. Silence about gaps hides ignorance.
++!!! checklist (( ai-autonomy ))
++- [ ] **Briefing without brain queries.** Never generate a briefing from memory alone; always query gbrain for current data.
++- [ ] **Uncited facts.** Every claim must include `[Source: slug, updated DATE]`. A fact without a citation is unverifiable.
++- [ ] **Stale context presented as current.** If a page hasn't been updated in 30+ days, flag the staleness explicitly rather than presenting it as fresh.
++- [ ] **Modifying brain pages unprompted.** The briefing is read-only by default. Do not create or update pages unless the user explicitly requests it.
++- [ ] **Ignoring coverage gaps.** When a meeting participant has no brain page, say so. Silence about gaps hides ignorance.
+ 
+ ## Tools Used
+ 
 ```

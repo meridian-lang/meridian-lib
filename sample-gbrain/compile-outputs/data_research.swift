@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -589,6 +581,15 @@ public struct DataResearchInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "DataResearchInput", parameters: [:])
 
+        // L52
+        let __meridianProseResults_L52 = try await runtime.executeProsePlan(
+            prose: "follow the Phase 1: Define Research Recipe guidance\nAsk the user what they want to track. Either:\nitem: Pick a built-in recipe: investor-updates, expense-tracker, company-updates\nitem: Define a custom recipe with: source queries, classification rules, extraction schema,\ntracker page path, tracker format\nRecipes are YAML files at `~/.gbrain/recipes/{name}.yaml`. Use `gbrain research init`\nto scaffold a new one\nuse judgment to follow the Phase 2: Search Sources guidance:\nBrain first (maybe we already have this data). Then:\nitem: **Email** via credential gateway: windowed queries (quarterly, monthly if truncated)\nitem: **Web** via search: public filings, press releases, regulatory data\nitem: **APIs**: any structured data source the recipe defines\nitem: **Attachments**: PDF extraction, HTML stripping\nuse judgment to follow the Phase 3: Classify guidance:\nDeterministic first (regex patterns from recipe), LLM fallback\nLog every LLM fallback for future regex improvement (fail-improve loop)\nSkip marketing, newsletters, noise based on recipe's classification rules\nuse judgment to follow the Phase 4: Extract Structured Data guidance:\n**EXTRACTION INTEGRITY RULE:**\nSave raw source immediately (before any extraction)\nExtract fields using deterministic regex first, LLM fallback\nWhen summarizing batch results: **re-read from saved files**\nNever trust LLM working memory after batch processing\nThis prevents a known hallucination bug where batch-processed amounts were\n13/13 wrong from LLM working memory while saved files were correct\nuse judgment to follow the Phase 5: Archive Raw Sources guidance:\nitem: `put_raw_data` for email bodies, API responses\nitem: `file_upload` for PDF attachments, documents\nitem: Create `.redirect.yaml` pointers for large files in storage\nitem: Every tracker entry must link back to its raw source\nuse judgment to follow the Phase 6: Deduplicate guidance:\nBefore adding to tracker:\nitem: Exact match (same key fields) → skip\nitem: Fuzzy match (same entity + date + similar amount within tolerance) → flag for review\nitem: Different amount for same entity+date → add with note (could be correction)\nuse judgment to follow the Phase 7: Update Canonical Tracker + Backlink guidance:\nitem: Parse existing tracker page (markdown table)\nitem: Append new entries in correct section (grouped by year/quarter/entity)\nitem: Compute running totals\nitem: Backlink every mentioned entity (person → people/ page, company → companies/ page)\nitem: Uses enrichment service for entity pages\nchecklist:ai-autonomy:VHJ1c3RpbmcgTExNIHdvcmtpbmcgbWVtb3J5IGZvciBhbW91bnRzIGFmdGVyIGJhdGNoIHByb2Nlc3NpbmcgKHVzZSBleHRyYWN0aW9uIGludGVncml0eSBydWxlKQpDcmVhdGluZyB0cmFja2VyIGVudHJpZXMgd2l0aG91dCByYXcgc291cmNlIGxpbmtzClJ1bm5pbmcgd2l0aG91dCBkZWR1cGxpY2F0aW9uIChsZWFkcyB0byBkb3VibGUtY291bnRlZCBlbnRyaWVzKQpIYXJkY29kaW5nIHNvdXJjZS1zcGVjaWZpYyBwYXR0ZXJucyBpbiB0aGUgcGlwZWxpbmUgY29kZSAodXNlIHJlY2lwZXMp",
+            snapshot: state.snapshot(),
+            scopedTools: ["link.add", "page.get", "page.search", "publish", "shell.run", "timeline.add"]
+        )
+        for (__key, __value) in __meridianProseResults_L52 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

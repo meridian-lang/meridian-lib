@@ -3,8 +3,8 @@
 - Original: `idea-ingest/SKILL.md`
 - Ported: `idea_ingest.meri`
 - Tier: 2 (light edits)
-- Similarity: 78%
-- Lines: 105 -> 95 (+17 / -27)
+- Similarity: 62%
+- Lines: 105 -> 97 (+34 / -42)
 
 ## Frontmatter
 - Added: (none)
@@ -12,26 +12,53 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 
 ## Metrics
-- Sections: 3/4 inert (75% inert ratio)
+- Sections: 1/4 inert (25% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: template=1
 - Judgment: 1 blocks, 4 lines
+
+### Inert section details
+- L38 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/idea-ingest/SKILL.md
-+++ idea_ingest.meri
-@@ -31,7 +31,7 @@
++++ skills/idea_ingest.meri
+@@ -31,46 +31,37 @@
  
  > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
  
- This skill guarantees:
- - Every ingested item has a brain page with genuine analysis (not just a summary)
-@@ -48,29 +48,19 @@
+-This skill guarantees:
+-- Every ingested item has a brain page with genuine analysis (not just a summary)
+-- The author gets a people page (MANDATORY for anyone whose thinking is worth ingesting)
+-- Cross-links created bidirectionally (source ↔ author, source ↔ mentioned entities)
+-- Raw source preserved for provenance via `gbrain files upload-raw`
+-- Every fact has an inline `[Source: ...]` citation
+-- Filing follows primary subject rules (not format-based)
++> This skill guarantees:
++!!! checklist (( ai-autonomy ))
++- [ ] Every ingested item has a brain page with genuine analysis (not just a summary)
++- [ ] The author gets a people page (MANDATORY for anyone whose thinking is worth ingesting)
++- [ ] Cross-links created bidirectionally (source ↔ author, source ↔ mentioned entities)
++- [ ] Raw source preserved for provenance via `gbrain files upload-raw`
++- [ ] Every fact has an inline `[Source: ...]` citation
++- [ ] Filing follows primary subject rules (not format-based)
+ 
+-> **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
++> > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
+ 
+-Every mention of a person or company with a brain page MUST create a back-link.
+-Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`
++> Every mention of a person or company with a brain page MUST create a back-link.
++> Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`
  
  ## Phases
  
@@ -72,7 +99,7 @@
  
  ## Output Format
  
-@@ -82,20 +72,20 @@
+@@ -82,24 +73,25 @@
  **Published:** {date}
  **Ingested:** {date}
  
@@ -94,8 +121,18 @@
  ```
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
  
- - Just summarizing without connecting to brain knowledge
- - Filing everything in `sources/` (sources is for raw data dumps only)
+-- Just summarizing without connecting to brain knowledge
+-- Filing everything in `sources/` (sources is for raw data dumps only)
+-- Skipping the author people page
+-- Not cross-linking to mentioned entities
+-- Ingesting without checking brain first for existing coverage
++!!! checklist (( ai-autonomy ))
++- [ ] Just summarizing without connecting to brain knowledge
++- [ ] Filing everything in `sources/` (sources is for raw data dumps only)
++- [ ] Skipping the author people page
++- [ ] Not cross-linking to mentioned entities
++- [ ] Ingesting without checking brain first for existing coverage
+ 
 ```

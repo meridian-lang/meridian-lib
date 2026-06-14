@@ -15,13 +15,19 @@
 
 ## Metrics
 - Sections: 1/1 inert (100% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: reference-documentation=1
 - Judgment: 0 blocks, 0 lines
+
+### Inert section details
+- L3 `Overview`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
 ```diff
 --- original-skills/install/SKILL.md
-+++ install.meri
++++ skills/install.meri
 @@ -1,4 +1,8 @@
 +---
 +---

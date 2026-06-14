@@ -50,6 +50,35 @@ struct SkillMigratorMarkingTests {
                 Comment(rawValue: out))
     }
 
+    @Test("checkable Contract and Anti-Patterns remain executable")
+    func checkableRoleSectionsExecutable() {
+        let out = Self.mark("""
+        ## Contract
+
+        - the page count is at least 1
+
+        ## Anti-Patterns
+
+        - the error count is greater than 0
+        """)
+        #expect(out.contains("## Contract\n"), Comment(rawValue: out))
+        #expect(!out.contains("## Contract (("), Comment(rawValue: out))
+        #expect(out.contains("## Anti-Patterns\n"), Comment(rawValue: out))
+        #expect(!out.contains("## Anti-Patterns (("), Comment(rawValue: out))
+    }
+
+    @Test("mixed prose keeps Contract inert even with checkable bullets")
+    func mixedContractStillInert() {
+        let out = Self.mark("""
+        ## Contract
+
+        This skill guarantees:
+        - the page count is at least 1
+        """)
+        #expect(out.contains("## Contract (( inert, role: invariants ))"),
+                Comment(rawValue: out))
+    }
+
     @Test("an unrecognized pure-shell heading is routed to a procedure rulebook alias, not an inline marker")
     func pureShellBecomesProcedure() {
         let source = """
@@ -68,6 +97,100 @@ struct SkillMigratorMarkingTests {
         let aliases = Self.aliases(source)
         #expect(aliases == [SkillMigrator.SectionAlias(heading: "How to use", role: .procedure)],
                 Comment(rawValue: "\(aliases)"))
+    }
+
+    @Test("an unrecognized whole-line command section is routed to a procedure alias")
+    func commandOnlyBecomesProcedure() {
+        let source = """
+        ## Post import
+
+        - `gbrain extract links --source db` -- extract links
+        - `gbrain stats`
+        """
+        let out = Self.mark(source)
+        #expect(out.contains("## Post import\n"), Comment(rawValue: out))
+        #expect(!out.contains("## Post import (("), Comment(rawValue: out))
+        #expect(Self.aliases(source) == [SkillMigrator.SectionAlias(heading: "Post import", role: .procedure)])
+    }
+
+    @Test("an unrecognized mixed prose and command section stays inert")
+    func mixedCommandProseStaysInert() {
+        let out = Self.mark("""
+        ## Post import
+
+        Run the cleanup commands below.
+        - `gbrain extract links --source db`
+        """)
+        #expect(out.contains("## Post import (( inert ))"), Comment(rawValue: out))
+    }
+
+    @Test("choice-only unknown heading is routed to procedure")
+    func choiceOnlyBecomesProcedure() {
+        let source = """
+        ## Choose topology
+
+        ask the user to choose between "single", "remote".
+        """
+        #expect(Self.aliases(source) == [SkillMigrator.SectionAlias(heading: "Choose topology", role: .procedure)])
+    }
+
+    @Test("checkable task-list unknown heading is routed to procedure")
+    func checkableTaskListBecomesProcedure() {
+        let source = """
+        ## Verification pass
+
+        - [ ] the page count is at least 1
+        - [x] the error count is less than 1
+        """
+        #expect(Self.aliases(source) == [SkillMigrator.SectionAlias(heading: "Verification pass", role: .procedure)])
+    }
+
+    @Test("explicit table marker unknown heading is routed to procedure")
+    func tableMarkerBecomesProcedure() {
+        let source = """
+        ## Decision table
+
+        !!! table
+        | status | action |
+        |---|---|
+        | ready | complete |
+        """
+        #expect(Self.aliases(source) == [SkillMigrator.SectionAlias(heading: "Decision table", role: .procedure)])
+    }
+
+    @Test("non-shell fenced prose keeps unknown heading inert")
+    func nonShellFenceStaysInert() {
+        let out = Self.mark("""
+        ## Example output
+
+        ```markdown
+        # Report
+        ```
+        """)
+        #expect(out.contains("## Example output (( inert ))"), Comment(rawValue: out))
+    }
+
+    @Test("explicit inert block marker keeps unknown heading inert")
+    func inertBlockMarkerStaysInert() {
+        let out = Self.mark("""
+        ## Reference table
+
+        !!! table (( inert ))
+        | item | note |
+        |---|---|
+        | a | b |
+        """)
+        #expect(out.contains("## Reference table (( inert ))"), Comment(rawValue: out))
+    }
+
+    @Test("numbered command item with parenthesis marker is routed to procedure")
+    func numberedParenCommandBecomesProcedure() {
+        let source = """
+        ## Setup command
+
+        1) `gbrain stats`
+        """
+        #expect(Self.aliases(source) == [SkillMigrator.SectionAlias(heading: "Setup command", role: .procedure)])
     }
 
     @Test("aliasRulebook renders a === sections === input for the chosen aliases")

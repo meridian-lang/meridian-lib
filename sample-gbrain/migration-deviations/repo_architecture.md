@@ -3,8 +3,8 @@
 - Original: `repo-architecture/SKILL.md`
 - Ported: `repo_architecture.meri`
 - Tier: 2 (light edits)
-- Similarity: 80%
-- Lines: 54 -> 48 (+7 / -13)
+- Similarity: 63%
+- Lines: 54 -> 50 (+17 / -21)
 
 ## Frontmatter
 - Added: (none)
@@ -12,26 +12,39 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 
 ## Metrics
-- Sections: 3/4 inert (75% inert ratio)
+- Sections: 1/4 inert (25% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: template=1
 - Judgment: 1 blocks, 4 lines
+
+### Inert section details
+- L22 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/repo-architecture/SKILL.md
-+++ repo_architecture.meri
-@@ -20,7 +20,7 @@
++++ skills/repo_architecture.meri
+@@ -20,35 +20,31 @@
  
  > **Full filing rules:** See `skills/_brain-filing-rules.md`
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
  
- This skill guarantees:
- - Every new page is filed by primary subject (not format, not source)
-@@ -29,23 +29,17 @@
+-This skill guarantees:
+-- Every new page is filed by primary subject (not format, not source)
+-- The decision protocol is followed for ambiguous cases
+-- Common misfiling patterns are caught
++> This skill guarantees:
++!!! checklist (( ai-autonomy ))
++- [ ] Every new page is filed by primary subject (not format, not source)
++- [ ] The decision protocol is followed for ambiguous cases
++- [ ] Common misfiling patterns are caught
  
  ## Phases
  
@@ -57,8 +70,16 @@
  Advisory: "File this at `{type}/{slug}.md` because the primary subject is {reason}."
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
  
- - Filing by format ("it's a PDF so it goes in sources/")
- - Filing by source ("it came from email so it goes in sources/")
+-- Filing by format ("it's a PDF so it goes in sources/")
+-- Filing by source ("it came from email so it goes in sources/")
+-- Creating pages without checking if one already exists
+-- Using `sources/` for anything except raw data dumps
++!!! checklist (( ai-autonomy ))
++- [ ] Filing by format ("it's a PDF so it goes in sources/")
++- [ ] Filing by source ("it came from email so it goes in sources/")
++- [ ] Creating pages without checking if one already exists
++- [ ] Using `sources/` for anything except raw data dumps
+ 
 ```

@@ -104,7 +104,7 @@
         "text" : "What this does"
       },
       {
-        "kind" : "applicability",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 45,
         "text" : "When to invoke"
@@ -116,7 +116,7 @@
         "text" : "The pipeline"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 67,
         "text" : "Invocation"
@@ -128,7 +128,7 @@
         "text" : "Quality bar"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 101,
         "text" : "Model selection"
@@ -140,7 +140,7 @@
         "text" : "Link convention"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 117,
         "text" : "Anti-Patterns"
@@ -148,19 +148,19 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 129,
+        "line" : 130,
         "text" : "Related skills"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 136,
+        "line" : 137,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 147,
+        "line" : 149,
         "text" : "Output Format"
       },
       {
@@ -172,20 +172,8 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 108,
+        "line" : 109,
         "text" : "Rule"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 138,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 143,
-        "text" : "Privacy contract preserved"
       }
     ],
     "sections" : [
@@ -209,18 +197,19 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "When to invoke",
         "line" : 45,
         "lines" : [
-          "New article page lands in the brain via media-ingest with `needs_enrichment: true`",
-          "Existing article page is a wall of text under a `## Content` header with",
+          "use judgment to follow the When to invoke guidance:",
+          "item: New article page lands in the brain via media-ingest with `needs_enrichment: true`",
+          "item: Existing article page is a wall of text under a `## Content` header with",
           "no synthesis",
-          "User says a brain page is useless, boring, or a dump",
-          "An LLM-judge brain-quality eval fails on quotability or actionability for",
+          "item: User says a brain page is useless, boring, or a dump",
+          "item: An LLM-judge brain-quality eval fails on quotability or actionability for",
           "an article page"
         ],
-        "role" : "applicability"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -232,16 +221,17 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Invocation",
         "line" : 67,
         "lines" : [
+          "use judgment to follow the Invocation guidance:",
           "The skill itself is markdown instructions to the agent. It does NOT ship a",
           "deterministic CLI command in v0.25.1. The agent uses gbrain's existing",
           "operations:",
           "codeblock:bash:IyAxLiBGaW5kIGNhbmRpZGF0ZSBwYWdlcwpnYnJhaW4gcXVlcnkgIm5lZWRzX2VucmljaG1lbnQ6IHRydWUgdHlwZTphcnRpY2xlIiAtLWxpbWl0IDUwCgojIDIuIEZvciBlYWNoIGNhbmRpZGF0ZSwgcmVhZCB0aGUgcGFnZQpnYnJhaW4gZ2V0IG1lZGlhL2FydGljbGVzLzxzbHVnPgoKIyAzLiBFbnJpY2ggdmlhIHRoZSBhZ2VudCdzIExMTSAoU29ubmV0IGJ5IGRlZmF1bHQ7IE9wdXMgZm9yIGhpZ2gtdmFsdWUpCiMgICAgVGhlIGFnZW50IHJlYWRzIHRoZSByYXcgY29udGVudCArIGJyYWluIGNvbnRleHQgKyB3cml0ZXMgdGhlIHN0cnVjdHVyZWQgcGFnZS4KCiMgNC4gV3JpdGUgdGhlIGVucmljaGVkIHBhZ2UKIyAgICBVc2UgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbiB3aXRoIHRoZSBuZXcgc3RydWN0dXJlZCBtYXJrZG93biBib2R5LgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzCiMgICAgRm9yIGV2ZXJ5IHBlcnNvbi9jb21wYW55IG1lbnRpb25lZCwgYWRkIGEgdGltZWxpbmUgYmFjay1saW5rLg=="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -259,16 +249,17 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Model selection",
         "line" : 101,
         "lines" : [
+          "use judgment to follow the Model selection guidance:",
           "table:decision:fCBNb2RlbCB8IFVzZSB3aGVuIHwgUXVvdGUgYWNjdXJhY3kgfAp8LS0tLS0tLXwtLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgKipTb25uZXQqKiAoZGVmYXVsdCkgfCBCdWxrIGVucmljaG1lbnQsIG1vc3QgYXJ0aWNsZXMgfCBHb29kIOKAlCBvY2Nhc2lvbmFsbHkgcGFyYXBocmFzZXMgfAp8ICoqT3B1cyoqIHwgSGlnaC12YWx1ZSBjb250ZW50LCBvcmlnaW5hbC10aGlua2luZyBwaWVjZXMsIGxvbmdyZWFkcyB8IEV4Y2VsbGVudCDigJQgcmVzcGVjdHMgInZlcmJhdGltIiBpbnN0cnVjdGlvbiB8",
           "Rule: for bulk enrichment, do a Sonnet draft pass and spot-check 5 with",
           "the LLM-judge brain-quality eval. If quotes are paraphrased, switch to",
           "Opus for that batch"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -281,26 +272,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
         "line" : 117,
         "lines" : [
-          "❌ Paraphrasing quotes (\"the author argues that…\"). Quotes are verbatim",
-          "or they're not quotes",
-          "❌ Generic \"Why It Matters\" (\"this is important because innovation\")",
-          "Tie to specific brain context or remove the section",
-          "❌ Inventing topic labels and calling them insights. An insight is a",
-          "thing the article says that you didn't already know",
-          "❌ Discarding the raw source. Always wrap it in `<details>`",
-          "❌ Re-enriching non-idempotently — check the `needs_enrichment` flag in",
-          "frontmatter; skip if already false"
+          "checklist:ai-autonomy:4p2MIFBhcmFwaHJhc2luZyBxdW90ZXMgKCJ0aGUgYXV0aG9yIGFyZ3VlcyB0aGF04oCmIikuIFF1b3RlcyBhcmUgdmVyYmF0aW0gb3IgdGhleSdyZSBub3QgcXVvdGVzLgrinYwgR2VuZXJpYyAiV2h5IEl0IE1hdHRlcnMiICgidGhpcyBpcyBpbXBvcnRhbnQgYmVjYXVzZSBpbm5vdmF0aW9uIikgVGllIHRvIHNwZWNpZmljIGJyYWluIGNvbnRleHQgb3IgcmVtb3ZlIHRoZSBzZWN0aW9uLgrinYwgSW52ZW50aW5nIHRvcGljIGxhYmVscyBhbmQgY2FsbGluZyB0aGVtIGluc2lnaHRzLiBBbiBpbnNpZ2h0IGlzIGEgdGhpbmcgdGhlIGFydGljbGUgc2F5cyB0aGF0IHlvdSBkaWRuJ3QgYWxyZWFkeSBrbm93LgrinYwgRGlzY2FyZGluZyB0aGUgcmF3IHNvdXJjZS4gQWx3YXlzIHdyYXAgaXQgaW4gYDxkZXRhaWxzPmAK4p2MIFJlLWVucmljaGluZyBub24taWRlbXBvdGVudGx5IOKAlCBjaGVjayB0aGUgYG5lZWRzX2VucmljaG1lbnRgIGZsYWcgaW4gZnJvbnRtYXR0ZXI7IHNraXAgaWYgYWxyZWFkeSBmYWxzZS4="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Related skills",
-        "line" : 129,
+        "line" : 130,
         "lines" : [
           "`skills\/media-ingest\/SKILL.md` — creates the raw article pages this skill enriches",
           "`skills\/idea-ingest\/SKILL.md` — link\/article ingestion with author people-page enforcement",
@@ -309,23 +292,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
-        "line" : 136,
+        "line" : 137,
         "lines" : [
-          "This skill guarantees:",
-          "Routing matches the canonical triggers in the frontmatter",
-          "Output written under the directories listed in `writes_to:` (when applicable)",
-          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
-          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
-          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+          "checklist:ai-autonomy:Um91dGluZyBtYXRjaGVzIHRoZSBjYW5vbmljYWwgdHJpZ2dlcnMgaW4gdGhlIGZyb250bWF0dGVyCk91dHB1dCB3cml0dGVuIHVuZGVyIHRoZSBkaXJlY3RvcmllcyBsaXN0ZWQgaW4gYHdyaXRlc190bzpgICh3aGVuIGFwcGxpY2FibGUpCkNvbnZlbnRpb25zIHJlZmVyZW5jZWQgKGBxdWFsaXR5Lm1kYCwgYGJyYWluLWZpcnN0Lm1kYCwgYF9icmFpbi1maWxpbmctcnVsZXMubWRgKSBhcmUgZm9sbG93ZWQKUHJpdmFjeSBjb250cmFjdCBwcmVzZXJ2ZWQ6IG5vIHJlYWwgbmFtZXMsIG5vIGZvcmstc3BlY2lmaWMgZmlsZXN5c3RlbSBwYXRoIGxpdGVyYWxzLCBubyB1cHN0cmVhbS1mb3JrIHJlZmVyZW5jZXM="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 147,
+        "line" : 149,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -373,60 +351,64 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 622
+      "meridian_line" : 47,
+      "swift_line" : 585
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 627
+      "swift_line" : 623
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 666
+      "swift_line" : 628
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 671
+      "swift_line" : 667
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 710
+      "swift_line" : 672
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 715
+      "swift_line" : 711
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 754
+      "swift_line" : 716
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 759
+      "swift_line" : 755
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 798
+      "swift_line" : 760
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 803
+      "swift_line" : 799
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 842
+      "swift_line" : 804
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 847
+      "swift_line" : 843
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 886
+      "swift_line" : 848
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 891
+      "swift_line" : 887
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 892
     }
   ],
   "tools_used" : [

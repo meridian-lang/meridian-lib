@@ -98,7 +98,7 @@
     "name" : "signal-detector",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 36,
         "text" : "Contract"
@@ -106,110 +106,75 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 55,
+        "line" : 56,
         "text" : "Phases"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 57,
+        "line" : 58,
         "text" : "Phase 1: Idea\/Observation Detection (PRIMARY)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 69,
+        "line" : 70,
         "text" : "Phase 2: Entity Detection (SECONDARY)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 84,
+        "line" : 85,
         "text" : "Phase 3: Signal Logging"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 92,
+        "line" : 93,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 97,
+        "line" : 98,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 105,
+        "line" : 107,
         "text" : "Tools Used"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 38,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 52,
-        "text" : "Format"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 72,
-        "text" : "For each entity"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 86,
-        "text" : "Always log a one-line summary"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 36,
         "lines" : [
-          "This skill guarantees:",
-          "Fires on every message (no exceptions unless purely operational)",
-          "Runs in parallel (spawned, never blocks main response)",
-          "Captures ideas with the user's EXACT phrasing (no paraphrasing)",
-          "Detects entity mentions and creates\/enriches brain pages",
-          "Logs a one-line summary of what was captured",
-          "Back-links all entity mentions (Iron Law)",
-          "Citations on every fact written",
-          "Every time this skill creates or updates a brain page that mentions a person or company:",
-          "Check if that person\/company has a brain page",
-          "If yes → add a back-link FROM their page TO the page you just created\/updated",
-          "Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`",
-          "An unlinked mention is a broken brain"
+          "checklist:ai-autonomy:RmlyZXMgb24gZXZlcnkgbWVzc2FnZSAobm8gZXhjZXB0aW9ucyB1bmxlc3MgcHVyZWx5IG9wZXJhdGlvbmFsKQpSdW5zIGluIHBhcmFsbGVsIChzcGF3bmVkLCBuZXZlciBibG9ja3MgbWFpbiByZXNwb25zZSkKQ2FwdHVyZXMgaWRlYXMgd2l0aCB0aGUgdXNlcidzIEVYQUNUIHBocmFzaW5nIChubyBwYXJhcGhyYXNpbmcpCkRldGVjdHMgZW50aXR5IG1lbnRpb25zIGFuZCBjcmVhdGVzL2VucmljaGVzIGJyYWluIHBhZ2VzCkxvZ3MgYSBvbmUtbGluZSBzdW1tYXJ5IG9mIHdoYXQgd2FzIGNhcHR1cmVkCkJhY2stbGlua3MgYWxsIGVudGl0eSBtZW50aW9ucyAoSXJvbiBMYXcpCkNpdGF0aW9ucyBvbiBldmVyeSBmYWN0IHdyaXR0ZW4="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 55,
+        "line" : 56,
         "lines" : [
 
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 1: Idea\/Observation Detection (PRIMARY)",
-        "line" : 57,
+        "line" : 58,
         "lines" : [
+          "use judgment to follow the Phase 1: Idea\/Observation Detection (PRIMARY) guidance:",
           "When the user expresses a novel thought, observation, thesis, or framework:",
-          "If it's the user's **original thinking** (they generated it) → create\/update `originals\/{slug}`",
-          "If it's a **world concept** they're referencing → create\/update `concepts\/{slug}`",
-          "If it's a **product or business idea** → create\/update `ideas\/{slug}`",
+          "item: If it's the user's **original thinking** (they generated it) → create\/update `originals\/{slug}`",
+          "item: If it's a **world concept** they're referencing → create\/update `concepts\/{slug}`",
+          "item: If it's a **product or business idea** → create\/update `ideas\/{slug}`",
           "**Capture exact phrasing.** The user's language IS the insight. Don't paraphrase",
           "**Cross-linking (MANDATORY):** Every original MUST link to related people, companies,",
           "meetings, and concepts. An original without cross-links is a dead original"
@@ -217,16 +182,17 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 2: Entity Detection (SECONDARY)",
-        "line" : 69,
+        "line" : 70,
         "lines" : [
+          "use judgment to follow the Phase 2: Entity Detection (SECONDARY) guidance:",
           "Extract entity mentions (people, companies, media titles)",
           "For each entity:",
-          "`gbrain search \"name\"` — does a page exist?",
-          "If NO page → check notability. If notable, create page with enrichment",
-          "If page exists but THIN → trigger enrich",
-          "If page exists and RICH → no action",
+          "item: `gbrain search \"name\"` — does a page exist?",
+          "item: If NO page → check notability. If notable, create page with enrichment",
+          "item: If page exists but THIN → trigger enrich",
+          "item: If page exists and RICH → no action",
           "For new FACTS with specific dates → call `gbrain timeline-add <slug> <date> \"<summary>\"`",
           "**Auto-link (v0.10.1):** When you write\/update an originals or ideas page that",
           "references a person or company, the auto-link post-hook on `put_page`",
@@ -236,13 +202,14 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 3: Signal Logging",
-        "line" : 84,
+        "line" : 85,
         "lines" : [
+          "use judgment to follow the Phase 3: Signal Logging guidance:",
           "Always log a one-line summary:",
-          "`Signals: 0 ideas, 0 entities, 0 facts (skipped: operational)`",
-          "`Signals: 1 idea (captured → originals\/x), 2 entities (enriched → people\/y, companies\/z)`",
+          "item: `Signals: 0 ideas, 0 entities, 0 facts (skipped: operational)`",
+          "item: `Signals: 1 idea (captured → originals\/x), 2 entities (enriched → people\/y, companies\/z)`",
           "This makes the ambient capture loop debuggable"
         ],
         "role" : "procedure"
@@ -250,7 +217,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 92,
+        "line" : 93,
         "lines" : [
           "No visible output to the user. This skill runs silently in the background",
           "The output is brain pages created\/updated and the signal log line"
@@ -258,22 +225,18 @@
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 97,
+        "line" : 98,
         "lines" : [
-          "Blocking the main response to wait for signal detection to complete",
-          "Paraphrasing the user's original thinking instead of capturing exact phrasing",
-          "Creating pages for non-notable entities (one-off mentions)",
-          "Skipping back-links after creating\/updating pages",
-          "Running on purely operational messages (\"ok\", \"thanks\", \"do it\")"
+          "checklist:ai-autonomy:QmxvY2tpbmcgdGhlIG1haW4gcmVzcG9uc2UgdG8gd2FpdCBmb3Igc2lnbmFsIGRldGVjdGlvbiB0byBjb21wbGV0ZQpQYXJhcGhyYXNpbmcgdGhlIHVzZXIncyBvcmlnaW5hbCB0aGlua2luZyBpbnN0ZWFkIG9mIGNhcHR1cmluZyBleGFjdCBwaHJhc2luZwpDcmVhdGluZyBwYWdlcyBmb3Igbm9uLW5vdGFibGUgZW50aXRpZXMgKG9uZS1vZmYgbWVudGlvbnMpClNraXBwaW5nIGJhY2stbGlua3MgYWZ0ZXIgY3JlYXRpbmcvdXBkYXRpbmcgcGFnZXMKUnVubmluZyBvbiBwdXJlbHkgb3BlcmF0aW9uYWwgbWVzc2FnZXMgKCJvayIsICJ0aGFua3MiLCAiZG8gaXQiKQ=="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 105,
+        "line" : 107,
         "lines" : [
           "`search` — check if entity page exists",
           "`query` — semantic search for related context",
@@ -327,12 +290,20 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 624
+      "meridian_line" : 40,
+      "swift_line" : 586
+    },
+    {
+      "meridian_line" : 60,
+      "swift_line" : 597
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 629
+      "swift_line" : 635
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 640
     }
   ],
   "tools_used" : [

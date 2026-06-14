@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -67,581 +59,598 @@ private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
 
 public enum BrainOps {
 
-    // MARK: - Domain types
+// MARK: - Domain types
 
-    public enum BrainUpgradeMode: String, Hashable, Codable, Sendable {
-        case off, auto, notify
+public enum BrainUpgradeMode: String, Hashable, Codable, Sendable {
+    case off, auto, notify
+}
+
+public enum JobState: String, Hashable, Codable, Sendable {
+    case queued, running, succeeded, failed, cancelled, paused
+}
+
+public enum PageEnrichmentTier: String, Hashable, Codable, Sendable {
+    case tier1, tier2, tier3
+}
+
+public enum PagePriority: String, Hashable, Codable, Sendable {
+    case p0, p1, p2, p3
+}
+
+public enum QueryMode: String, Hashable, Codable, Sendable {
+    case fast, deep, exhaustive
+}
+
+public enum SignalTier: String, Hashable, Codable, Sendable {
+    case tier1, tier2, tier3
+}
+
+public enum VerdictStatus: String, Hashable, Codable, Sendable {
+    case verified, partial, unverifiable, misattributed, retracted
+}
+
+public protocol PageKind: MeridianThing {
+    var title: String { get }
+    var slug: String { get }
+    var body: String { get }
+    var author: String { get }
+    var compiledTruth: String { get }
+    var links: [String] { get }
+    var inboundLinks: [String] { get }
+    var priority: PagePriority { get }
+    var enrichmentTier: PageEnrichmentTier { get }
+}
+
+public struct Page: PageKind {
+    public var id: String
+    public var title: String
+    public var slug: String
+    public var body: String
+    public var author: String
+    public var compiledTruth: String
+    public var links: [String]
+    public var inboundLinks: [String]
+    public var priority: PagePriority
+    public var enrichmentTier: PageEnrichmentTier
+
+    public init(
+        id: String = "",
+        title: String = "",
+        slug: String = "",
+        body: String = "",
+        author: String = "",
+        compiledTruth: String = "",
+        links: [String] = [],
+        inboundLinks: [String] = [],
+        priority: PagePriority = .p0,
+        enrichmentTier: PageEnrichmentTier = .tier1
+    ) {
+        self.id = id
+        self.title = title
+        self.slug = slug
+        self.body = body
+        self.author = author
+        self.compiledTruth = compiledTruth
+        self.links = links
+        self.inboundLinks = inboundLinks
+        self.priority = priority
+        self.enrichmentTier = enrichmentTier
+    }
+}
+
+public protocol PersonKind: MeridianThing {
+    var name: String { get }
+    var headline: String { get }
+    var email: String { get }
+    var company: String { get }
+}
+
+public struct Person: PersonKind {
+    public var id: String
+    public var name: String
+    public var headline: String
+    public var email: String
+    public var company: String
+
+    public init(
+        id: String = "",
+        name: String = "",
+        headline: String = "",
+        email: String = "",
+        company: String = ""
+    ) {
+        self.id = id
+        self.name = name
+        self.headline = headline
+        self.email = email
+        self.company = company
+    }
+}
+
+public protocol CompanyKind: MeridianThing {
+    var name: String { get }
+    var domain: String { get }
+    var description: String { get }
+}
+
+public struct Company: CompanyKind {
+    public var id: String
+    public var name: String
+    public var domain: String
+    public var description: String
+
+    public init(
+        id: String = "",
+        name: String = "",
+        domain: String = "",
+        description: String = ""
+    ) {
+        self.id = id
+        self.name = name
+        self.domain = domain
+        self.description = description
+    }
+}
+
+public protocol MeetingKind: MeridianEvent {
+    var title: String { get }
+    var date: String { get }
+    var transcript: String { get }
+}
+
+public struct Meeting: MeetingKind {
+    public var id: String
+    public var title: String
+    public var date: String
+    public var transcript: String
+
+    public init(
+        id: String = "",
+        title: String = "",
+        date: String = "",
+        transcript: String = ""
+    ) {
+        self.id = id
+        self.title = title
+        self.date = date
+        self.transcript = transcript
+    }
+}
+
+public struct Concept: MeridianThing {
+    public var id: String
+
+    public init(
+        id: String = ""
+    ) {
+        self.id = id
+    }
+}
+
+public struct Idea: MeridianThing {
+    public var id: String
+
+    public init(
+        id: String = ""
+    ) {
+        self.id = id
+    }
+}
+
+public struct Original: MeridianArtifact {
+    public var id: String
+
+    public init(
+        id: String = ""
+    ) {
+        self.id = id
+    }
+}
+
+public struct Deal: MeridianThing {
+    public var id: String
+
+    public init(
+        id: String = ""
+    ) {
+        self.id = id
+    }
+}
+
+public struct Link: MeridianThing {
+    public var id: String
+
+    public init(
+        id: String = ""
+    ) {
+        self.id = id
+    }
+}
+
+public struct Source: MeridianThing {
+    public var id: String
+
+    public init(
+        id: String = ""
+    ) {
+        self.id = id
+    }
+}
+
+public struct TimelineEntry: MeridianEvent {
+    public var id: String
+
+    public init(
+        id: String = ""
+    ) {
+        self.id = id
+    }
+}
+
+public protocol ReportKind: MeridianArtifact {
+    var title: String { get }
+    var body: String { get }
+}
+
+public struct Report: ReportKind {
+    public var id: String
+    public var title: String
+    public var body: String
+
+    public init(
+        id: String = "",
+        title: String = "",
+        body: String = ""
+    ) {
+        self.id = id
+        self.title = title
+        self.body = body
+    }
+}
+
+public protocol JobKind: MeridianProcess {
+    var status: String { get }
+    var state: JobState { get }
+}
+
+public struct Job: JobKind {
+    public var id: String
+    public var status: String
+    public var state: JobState
+
+    public init(
+        id: String = "",
+        status: String = "",
+        state: JobState = .queued
+    ) {
+        self.id = id
+        self.status = status
+        self.state = state
+    }
+}
+
+public struct Task: MeridianProcess {
+    public var id: String
+
+    public init(
+        id: String = ""
+    ) {
+        self.id = id
+    }
+}
+
+public protocol SignalKind: MeridianSignal {
+    var name: String { get }
+    var phrasing: String { get }
+    var tier: SignalTier { get }
+}
+
+public struct Signal: SignalKind {
+    public var id: String
+    public var name: String
+    public var phrasing: String
+    public var tier: SignalTier
+
+    public init(
+        id: String = "",
+        name: String = "",
+        phrasing: String = "",
+        tier: SignalTier = .tier1
+    ) {
+        self.id = id
+        self.name = name
+        self.phrasing = phrasing
+        self.tier = tier
+    }
+}
+
+public struct Transcript: MeridianArtifact {
+    public var id: String
+
+    public init(
+        id: String = ""
+    ) {
+        self.id = id
+    }
+}
+
+public struct WebhookEvent: MeridianEvent {
+    public var id: String
+
+    public init(
+        id: String = ""
+    ) {
+        self.id = id
+    }
+}
+
+public struct SchemaPack: MeridianThing {
+    public var id: String
+
+    public init(
+        id: String = ""
+    ) {
+        self.id = id
+    }
+}
+
+public struct Recipe: MeridianThing {
+    public var id: String
+
+    public init(
+        id: String = ""
+    ) {
+        self.id = id
+    }
+}
+
+public protocol VerdictKind: MeridianVerdict {
+    var status: VerdictStatus { get }
+}
+
+public struct Verdict: VerdictKind {
+    public var id: String
+    public var status: VerdictStatus
+
+    public init(
+        id: String = "",
+        status: VerdictStatus = .verified
+    ) {
+        self.id = id
+        self.status = status
+    }
+}
+
+public protocol QueryKind: MeridianThing {
+    var mode: QueryMode { get }
+}
+
+public struct Query: QueryKind {
+    public var id: String
+    public var mode: QueryMode
+
+    public init(
+        id: String = "",
+        mode: QueryMode = .fast
+    ) {
+        self.id = id
+        self.mode = mode
+    }
+}
+
+public protocol BrainKind: MeridianSystem {
+    var upgradeMode: BrainUpgradeMode { get }
+}
+
+public struct Brain: BrainKind {
+    public var id: String
+    public var upgradeMode: BrainUpgradeMode
+
+    public init(
+        id: String = "",
+        upgradeMode: BrainUpgradeMode = .off
+    ) {
+        self.id = id
+        self.upgradeMode = upgradeMode
+    }
+}
+
+public protocol EntityKind: MeridianThing {
+    var name: String { get }
+    var type: String { get }
+    var links: [String] { get }
+}
+
+public struct Entity: EntityKind {
+    public var id: String
+    public var name: String
+    public var type: String
+    public var links: [String]
+
+    public init(
+        id: String = "",
+        name: String = "",
+        type: String = "",
+        links: [String] = []
+    ) {
+        self.id = id
+        self.name = name
+        self.type = type
+        self.links = links
+    }
+}
+
+public struct Attendee: PersonKind {
+    public var id: String
+    public var name: String
+    public var headline: String
+    public var email: String
+    public var company: String
+
+    public init(
+        id: String = "",
+        name: String = "",
+        headline: String = "",
+        email: String = "",
+        company: String = ""
+    ) {
+        self.id = id
+        self.name = name
+        self.headline = headline
+        self.email = email
+        self.company = company
+    }
+}
+
+public struct Input: MeridianThing {
+    public var id: String
+
+    public init(
+        id: String = ""
+    ) {
+        self.id = id
+    }
+}
+
+public protocol HealthReportKind: MeridianArtifact {
+    var edgeCount: String { get }
+    var timelineCount: String { get }
+    var pageCount: String { get }
+}
+
+public struct HealthReport: HealthReportKind {
+    public var id: String
+    public var edgeCount: String
+    public var timelineCount: String
+    public var pageCount: String
+
+    public init(
+        id: String = "",
+        edgeCount: String = "",
+        timelineCount: String = "",
+        pageCount: String = ""
+    ) {
+        self.id = id
+        self.edgeCount = edgeCount
+        self.timelineCount = timelineCount
+        self.pageCount = pageCount
+    }
+}
+
+
+public struct Constants: Sendable {
+    public let defaultEnrichmentTier: String = "tier2"
+    public let defaultPriority: String = "p2"
+    public let notabilityThreshold: Decimal = Decimal(20)
+    public let enrichmentWindowInDays: Decimal = Decimal(7)
+}
+
+private static let constants = Constants()
+
+public struct BrainOpsInput: MeridianWorkflow {
+    public let runtime: Runtime
+    public let input: Input
+
+    public static let skillMetadata: [String: String] = [
+        "name": "brain-ops",
+        "version": "1.0.0",
+        "description": "Brain knowledge base operations. The core read/write cycle: brain-first lookup,\nread-enrich-write loop, source attribution, ambient enrichment, back-linking.\nRead this before any brain interaction.",
+        "triggers": "any brain read/write/lookup/citation",
+        "tools": "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry\nget_backlinks\nsync_brain",
+        "mutating": "true",
+        "writes_pages": "true",
+        "writes_to": "people/\ncompanies/\ndeals/\nconcepts/\nmeetings/",
+    ]
+
+    public init(runtime: Runtime, input: Input) {
+        self.runtime = runtime
+        self.input = input
     }
 
-    public enum JobState: String, Hashable, Codable, Sendable {
-        case queued, running, succeeded, failed, cancelled, paused
-    }
-
-    public enum PageEnrichmentTier: String, Hashable, Codable, Sendable {
-        case tier1, tier2, tier3
-    }
-
-    public enum PagePriority: String, Hashable, Codable, Sendable {
-        case p0, p1, p2, p3
-    }
-
-    public enum QueryMode: String, Hashable, Codable, Sendable {
-        case fast, deep, exhaustive
-    }
-
-    public enum SignalTier: String, Hashable, Codable, Sendable {
-        case tier1, tier2, tier3
-    }
-
-    public enum VerdictStatus: String, Hashable, Codable, Sendable {
-        case verified, partial, unverifiable, misattributed, retracted
-    }
-
-    public protocol PageKind: MeridianThing {
-        var title: String { get }
-        var slug: String { get }
-        var body: String { get }
-        var author: String { get }
-        var compiledTruth: String { get }
-        var links: [String] { get }
-        var inboundLinks: [String] { get }
-        var priority: PagePriority { get }
-        var enrichmentTier: PageEnrichmentTier { get }
-    }
-
-    public struct Page: PageKind {
-        public var id: String
-        public var title: String
-        public var slug: String
-        public var body: String
-        public var author: String
-        public var compiledTruth: String
-        public var links: [String]
-        public var inboundLinks: [String]
-        public var priority: PagePriority
-        public var enrichmentTier: PageEnrichmentTier
-
-        public init(
-            id: String = "",
-            title: String = "",
-            slug: String = "",
-            body: String = "",
-            author: String = "",
-            compiledTruth: String = "",
-            links: [String] = [],
-            inboundLinks: [String] = [],
-            priority: PagePriority = .p0,
-            enrichmentTier: PageEnrichmentTier = .tier1
-        ) {
-            self.id = id
-            self.title = title
-            self.slug = slug
-            self.body = body
-            self.author = author
-            self.compiledTruth = compiledTruth
-            self.links = links
-            self.inboundLinks = inboundLinks
-            self.priority = priority
-            self.enrichmentTier = enrichmentTier
+    public func run() async throws -> WorkflowResult {
+        var state = State()
+        state.bind("input", input)
+        let __meridianResumeContext = await runtime.consumeResumeContext()
+        if let __meridianResumeContext {
+            state.restore(from: __meridianResumeContext.restoredState)
         }
-    }
-
-    public protocol PersonKind: MeridianThing {
-        var name: String { get }
-        var headline: String { get }
-        var email: String { get }
-        var company: String { get }
-    }
-
-    public struct Person: PersonKind {
-        public var id: String
-        public var name: String
-        public var headline: String
-        public var email: String
-        public var company: String
-
-        public init(
-            id: String = "",
-            name: String = "",
-            headline: String = "",
-            email: String = "",
-            company: String = ""
-        ) {
-            self.id = id
-            self.name = name
-            self.headline = headline
-            self.email = email
-            self.company = company
+        var __meridianResumeTarget = __meridianResumeContext?.lastCheckpointLabel
+        func __meridianShouldRun(_ label: String) -> Bool {
+            guard let target = __meridianResumeTarget else { return true }
+            if target == label { __meridianResumeTarget = nil }
+            return false
         }
-    }
+        let constants = Constants()
+        await runtime.workflowStarted(workflowName: "BrainOpsInput", parameters: [:])
 
-    public protocol CompanyKind: MeridianThing {
-        var name: String { get }
-        var domain: String { get }
-        var description: String { get }
-    }
-
-    public struct Company: CompanyKind {
-        public var id: String
-        public var name: String
-        public var domain: String
-        public var description: String
-
-        public init(
-            id: String = "",
-            name: String = "",
-            domain: String = "",
-            description: String = ""
-        ) {
-            self.id = id
-            self.name = name
-            self.domain = domain
-            self.description = description
+        // L41
+        let __meridianProseResults_L41 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Brain is checked BEFORE any external API call (brain-first lookup)\n- Every inbound signal triggers the READ → ENRICH → WRITE loop\n- Every outbound response checks brain for relevant context\n- Source attribution on every fact written (inline `[Source: ...]` citations)\n- User's direct statements are highest-authority data\n- Back-links maintained on every brain write (Iron Law)",
+            snapshot: state.snapshot(),
+            scopedTools: ["add_link", "add_timeline_entry", "get_backlinks", "get_page", "link.add", "link.backlinks", "page.get", "page.search", "publish", "put_page", "query", "search", "shell.run", "sync_brain", "timeline.add"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L41 {
+            state.bind(__key, __value)
         }
-    }
-
-    public protocol MeetingKind: MeridianEvent {
-        var title: String { get }
-        var date: String { get }
-        var transcript: String { get }
-    }
-
-    public struct Meeting: MeetingKind {
-        public var id: String
-        public var title: String
-        public var date: String
-        public var transcript: String
-
-        public init(
-            id: String = "",
-            title: String = "",
-            date: String = "",
-            transcript: String = ""
-        ) {
-            self.id = id
-            self.title = title
-            self.date = date
-            self.transcript = transcript
-        }
-    }
-
-    public struct Concept: MeridianThing {
-        public var id: String
-
-        public init(
-            id: String = ""
-        ) {
-            self.id = id
-        }
-    }
-
-    public struct Idea: MeridianThing {
-        public var id: String
-
-        public init(
-            id: String = ""
-        ) {
-            self.id = id
-        }
-    }
-
-    public struct Original: MeridianArtifact {
-        public var id: String
-
-        public init(
-            id: String = ""
-        ) {
-            self.id = id
-        }
-    }
-
-    public struct Deal: MeridianThing {
-        public var id: String
-
-        public init(
-            id: String = ""
-        ) {
-            self.id = id
-        }
-    }
-
-    public struct Link: MeridianThing {
-        public var id: String
-
-        public init(
-            id: String = ""
-        ) {
-            self.id = id
-        }
-    }
-
-    public struct Source: MeridianThing {
-        public var id: String
-
-        public init(
-            id: String = ""
-        ) {
-            self.id = id
-        }
-    }
-
-    public struct TimelineEntry: MeridianEvent {
-        public var id: String
-
-        public init(
-            id: String = ""
-        ) {
-            self.id = id
-        }
-    }
-
-    public protocol ReportKind: MeridianArtifact {
-        var title: String { get }
-        var body: String { get }
-    }
-
-    public struct Report: ReportKind {
-        public var id: String
-        public var title: String
-        public var body: String
-
-        public init(
-            id: String = "",
-            title: String = "",
-            body: String = ""
-        ) {
-            self.id = id
-            self.title = title
-            self.body = body
-        }
-    }
-
-    public protocol JobKind: MeridianProcess {
-        var status: String { get }
-        var state: JobState { get }
-    }
-
-    public struct Job: JobKind {
-        public var id: String
-        public var status: String
-        public var state: JobState
-
-        public init(
-            id: String = "",
-            status: String = "",
-            state: JobState = .queued
-        ) {
-            self.id = id
-            self.status = status
-            self.state = state
-        }
-    }
-
-    public struct Task: MeridianProcess {
-        public var id: String
-
-        public init(
-            id: String = ""
-        ) {
-            self.id = id
-        }
-    }
-
-    public protocol SignalKind: MeridianSignal {
-        var name: String { get }
-        var phrasing: String { get }
-        var tier: SignalTier { get }
-    }
-
-    public struct Signal: SignalKind {
-        public var id: String
-        public var name: String
-        public var phrasing: String
-        public var tier: SignalTier
-
-        public init(
-            id: String = "",
-            name: String = "",
-            phrasing: String = "",
-            tier: SignalTier = .tier1
-        ) {
-            self.id = id
-            self.name = name
-            self.phrasing = phrasing
-            self.tier = tier
-        }
-    }
-
-    public struct Transcript: MeridianArtifact {
-        public var id: String
-
-        public init(
-            id: String = ""
-        ) {
-            self.id = id
-        }
-    }
-
-    public struct WebhookEvent: MeridianEvent {
-        public var id: String
-
-        public init(
-            id: String = ""
-        ) {
-            self.id = id
-        }
-    }
-
-    public struct SchemaPack: MeridianThing {
-        public var id: String
-
-        public init(
-            id: String = ""
-        ) {
-            self.id = id
-        }
-    }
-
-    public struct Recipe: MeridianThing {
-        public var id: String
-
-        public init(
-            id: String = ""
-        ) {
-            self.id = id
-        }
-    }
-
-    public protocol VerdictKind: MeridianVerdict {
-        var status: VerdictStatus { get }
-    }
-
-    public struct Verdict: VerdictKind {
-        public var id: String
-        public var status: VerdictStatus
-
-        public init(
-            id: String = "",
-            status: VerdictStatus = .verified
-        ) {
-            self.id = id
-            self.status = status
-        }
-    }
-
-    public protocol QueryKind: MeridianThing {
-        var mode: QueryMode { get }
-    }
-
-    public struct Query: QueryKind {
-        public var id: String
-        public var mode: QueryMode
-
-        public init(
-            id: String = "",
-            mode: QueryMode = .fast
-        ) {
-            self.id = id
-            self.mode = mode
-        }
-    }
-
-    public protocol BrainKind: MeridianSystem {
-        var upgradeMode: BrainUpgradeMode { get }
-    }
-
-    public struct Brain: BrainKind {
-        public var id: String
-        public var upgradeMode: BrainUpgradeMode
-
-        public init(
-            id: String = "",
-            upgradeMode: BrainUpgradeMode = .off
-        ) {
-            self.id = id
-            self.upgradeMode = upgradeMode
-        }
-    }
-
-    public protocol EntityKind: MeridianThing {
-        var name: String { get }
-        var type: String { get }
-        var links: [String] { get }
-    }
-
-    public struct Entity: EntityKind {
-        public var id: String
-        public var name: String
-        public var type: String
-        public var links: [String]
-
-        public init(
-            id: String = "",
-            name: String = "",
-            type: String = "",
-            links: [String] = []
-        ) {
-            self.id = id
-            self.name = name
-            self.type = type
-            self.links = links
-        }
-    }
-
-    public struct Attendee: PersonKind {
-        public var id: String
-        public var name: String
-        public var headline: String
-        public var email: String
-        public var company: String
-
-        public init(
-            id: String = "",
-            name: String = "",
-            headline: String = "",
-            email: String = "",
-            company: String = ""
-        ) {
-            self.id = id
-            self.name = name
-            self.headline = headline
-            self.email = email
-            self.company = company
-        }
-    }
-
-    public struct Input: MeridianThing {
-        public var id: String
-
-        public init(
-            id: String = ""
-        ) {
-            self.id = id
-        }
-    }
-
-    public protocol HealthReportKind: MeridianArtifact {
-        var edgeCount: String { get }
-        var timelineCount: String { get }
-        var pageCount: String { get }
-    }
-
-    public struct HealthReport: HealthReportKind {
-        public var id: String
-        public var edgeCount: String
-        public var timelineCount: String
-        public var pageCount: String
-
-        public init(
-            id: String = "",
-            edgeCount: String = "",
-            timelineCount: String = "",
-            pageCount: String = ""
-        ) {
-            self.id = id
-            self.edgeCount = edgeCount
-            self.timelineCount = timelineCount
-            self.pageCount = pageCount
-        }
-    }
-
-    public struct Constants: Sendable {
-        public let defaultEnrichmentTier: String = "tier2"
-        public let defaultPriority: String = "p2"
-        public let notabilityThreshold: Decimal = Decimal(20)
-        public let enrichmentWindowInDays: Decimal = Decimal(7)
-    }
-
-    private static let constants = Constants()
-
-    public struct BrainOpsInput: MeridianWorkflow {
-        public let runtime: Runtime
-        public let input: Input
-
-        public static let skillMetadata: [String: String] = [
-            "name": "brain-ops",
-            "version": "1.0.0",
-            "description":
-                "Brain knowledge base operations. The core read/write cycle: brain-first lookup,\nread-enrich-write loop, source attribution, ambient enrichment, back-linking.\nRead this before any brain interaction.",
-            "triggers": "any brain read/write/lookup/citation",
-            "tools": "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry\nget_backlinks\nsync_brain",
-            "mutating": "true",
-            "writes_pages": "true",
-            "writes_to": "people/\ncompanies/\ndeals/\nconcepts/\nmeetings/",
-        ]
-
-        public init(runtime: Runtime, input: Input) {
-            self.runtime = runtime
-            self.input = input
+        // L58
+        let __meridianProseResults_L58 = try await runtime.executeProsePlan(
+            prose: "follow the Phase 1: Brain-First Lookup (MANDATORY) guidance\nBefore using ANY external API to research a person, company, or topic:\n`gbrain search \"name\"` — keyword search for existing pages\n`gbrain query \"natural question about name\"` — hybrid search for context\n`gbrain get <slug>` — if you know the slug, read the full page\nCheck backlinks: who references this entity?\nCheck timeline: recent events involving this entity\nThe brain almost always has something. External APIs fill gaps, not start from scratch\nuse judgment to follow the Phase 2: On Every Inbound Signal (READ → ENRICH → WRITE) guidance:\nEvery message, meeting, email, or conversation that references a person or company:\n**Detect entities** — people, companies, deals mentioned\n**Load brain pages** — read existing pages for context before responding\n**Identify new information** — what does this signal tell us that the page doesn't know?\n**Write it back** — update the brain page with new info + timeline entry + source citation\n**Create if missing** — if notable and no page exists, create via enrich skill\n**User's direct statements are the highest-value data source.** Write them to brain\npages immediately with attribution `[Source: User, YYYY-MM-DD]`\nuse judgment to follow the Phase 2.5: Structured Graph Updates (automatic) guidance:\nEvery `put_page` call automatically extracts entity references and writes them\nto the graph (`links` table) with inferred relationship types. Stale links\n(refs no longer in the page text) are removed in the same call. This is\n\"auto-link\" reconciliation\nitem: No manual `add_link` calls needed for ordinary page writes\nitem: Inferred link types: `attended` (meeting -> person), `works_at`, `invested_in`,\n`founded`, `advises`, `source` (frontmatter), `mentions` (default)\nitem: The `put_page` MCP response includes `auto_links: { created, removed, errors }`\nso the agent can verify outcomes\nitem: To disable: `gbrain config set auto_link false`. Default is on\nitem: Timeline entries with specific dates still need explicit `gbrain timeline-add`\n(or batch via `gbrain extract timeline --source db`)\nuse judgment to follow the Phase 3: On Every Outbound Response (READ → PULL → RESPOND) guidance:\nBefore answering any question about a person, company, or topic:\n**Check the brain** — read relevant pages\n**Pull context** — use compiled truth + recent timeline\n**Respond with context** — the brain makes every answer better\nDon't answer from general knowledge when a brain page exists\nuse judgment to follow the Phase 4: Ambient Enrichment guidance:\nThis is not a special mode. This is the default. Everything the user says is an\ningest event\nitem: Person mentioned → check brain, create/enrich if needed (spawn background)\nitem: Company mentioned → same\nitem: Link shared → ingest it (delegate to idea-ingest)\nitem: Data shared → delegate to appropriate skill\n**Rules:**\nitem: Never interrupt the conversation to do enrichment\nitem: Spawn sub-agents for anything that would slow down the response\nitem: Never announce \"I'm enriching the brain\" — just do it silently\nchecklist:ai-autonomy:QW5zd2VyaW5nIHF1ZXN0aW9ucyBhYm91dCBwZW9wbGUvY29tcGFuaWVzIHdpdGhvdXQgY2hlY2tpbmcgdGhlIGJyYWluIGZpcnN0ClVzaW5nIGV4dGVybmFsIEFQSXMgYmVmb3JlIGNoZWNraW5nIHRoZSBicmFpbgpXcml0aW5nIGZhY3RzIHdpdGhvdXQgaW5saW5lIGBbU291cmNlOiAuLi5dYCBjaXRhdGlvbnMKQmxvY2tpbmcgdGhlIHJlc3BvbnNlIHRvIGRvIGVucmljaG1lbnQKT3ZlcndyaXRpbmcgdXNlcidzIGRpcmVjdCBzdGF0ZW1lbnRzIHdpdGggbG93ZXItYXV0aG9yaXR5IHNvdXJjZXMKQ3JlYXRpbmcgYnJhaW4gcGFnZXMgZm9yIG5vbi1ub3RhYmxlIGVudGl0aWVz",
+            snapshot: state.snapshot(),
+            scopedTools: ["add_link", "add_timeline_entry", "get_backlinks", "get_page", "link.add", "link.backlinks", "page.get", "page.search", "publish", "put_page", "query", "search", "shell.run", "sync_brain", "timeline.add"]
+        )
+        for (__key, __value) in __meridianProseResults_L58 {
+            state.bind(__key, __value)
         }
 
-        public func run() async throws -> WorkflowResult {
-            var state = State()
-            state.bind("input", input)
-            let __meridianResumeContext = await runtime.consumeResumeContext()
-            if let __meridianResumeContext {
-                state.restore(from: __meridianResumeContext.restoredState)
-            }
-            var __meridianResumeTarget = __meridianResumeContext?.lastCheckpointLabel
-            func __meridianShouldRun(_ label: String) -> Bool {
-                guard let target = __meridianResumeTarget else { return true }
-                if target == label { __meridianResumeTarget = nil }
-                return false
-            }
-            let constants = Constants()
-            await runtime.workflowStarted(workflowName: "BrainOpsInput", parameters: [:])
+        await runtime.complete(reason: nil)
+        return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+    }
+}
 
-            await runtime.complete(reason: nil)
-            return WorkflowResult(
-                reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(),
-                bindings: state.snapshot().asValues)
-        }
+public struct WhenAnybrainreadwritelookupFires: MeridianWorkflow {
+    public let runtime: Runtime
+
+    public init(runtime: Runtime) {
+        self.runtime = runtime
     }
 
-    public struct WhenAnybrainreadwritelookupFires: MeridianWorkflow {
-        public let runtime: Runtime
+    public func run() async throws -> WorkflowResult {
+        var state = State()
+        let __meridianResumeContext = await runtime.consumeResumeContext()
+        if let __meridianResumeContext {
+            state.restore(from: __meridianResumeContext.restoredState)
+        }
+        var __meridianResumeTarget = __meridianResumeContext?.lastCheckpointLabel
+        func __meridianShouldRun(_ label: String) -> Bool {
+            guard let target = __meridianResumeTarget else { return true }
+            if target == label { __meridianResumeTarget = nil }
+            return false
+        }
+        let constants = Constants()
+        await runtime.workflowStarted(workflowName: "WhenAnybrainreadwritelookupFires", parameters: [:])
 
-        public init(runtime: Runtime) {
-            self.runtime = runtime
+        if __meridianShouldRun("progress:0.0:L1:C0") {
+            // L1
+            try await runtime.wait(.event("anyBrainReadWriteLookup", matching: nil))
+            try await runtime.checkpoint(label: "progress:0.0:L1:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L1:C0") {
+            // L1
+            try await runtime.emit(
+                event: "trigger.anyBrainReadWriteLookup.fired",
+                payload: [
+                    "kind": .string("keyword"),
+                    "spec": .string("any brain read/write/lookup/citation"),
+                ]
+            )
+            try await runtime.checkpoint(label: "progress:0.1:L1:C0", state: state.snapshot())
         }
 
-        public func run() async throws -> WorkflowResult {
-            var state = State()
-            let __meridianResumeContext = await runtime.consumeResumeContext()
-            if let __meridianResumeContext {
-                state.restore(from: __meridianResumeContext.restoredState)
-            }
-            var __meridianResumeTarget = __meridianResumeContext?.lastCheckpointLabel
-            func __meridianShouldRun(_ label: String) -> Bool {
-                guard let target = __meridianResumeTarget else { return true }
-                if target == label { __meridianResumeTarget = nil }
-                return false
-            }
-            let constants = Constants()
-            await runtime.workflowStarted(workflowName: "WhenAnybrainreadwritelookupFires", parameters: [:])
-
-            if __meridianShouldRun("progress:0.0:L1:C0") {
-                // L1
-                try await runtime.wait(.event("anyBrainReadWriteLookup", matching: nil))
-                try await runtime.checkpoint(label: "progress:0.0:L1:C0", state: state.snapshot())
-            }
-            if __meridianShouldRun("progress:0.1:L1:C0") {
-                // L1
-                try await runtime.emit(
-                    event: "trigger.anyBrainReadWriteLookup.fired",
-                    payload: [
-                        "kind": .string("keyword"),
-                        "spec": .string("any brain read/write/lookup/citation"),
-                    ]
-                )
-                try await runtime.checkpoint(label: "progress:0.1:L1:C0", state: state.snapshot())
-            }
-
-            await runtime.complete(reason: nil)
-            return WorkflowResult(
-                reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(),
-                bindings: state.snapshot().asValues)
-        }
+        await runtime.complete(reason: nil)
+        return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
     }
+}
 
 }

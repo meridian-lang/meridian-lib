@@ -104,7 +104,7 @@
         "text" : "What this is"
       },
       {
-        "kind" : "applicability",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 51,
         "text" : "When to use this"
@@ -128,7 +128,7 @@
         "text" : "Output: brain page format"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 159,
         "text" : "Useful databases (the agent uses these via perplexity-research)"
@@ -140,7 +140,7 @@
         "text" : "Standards (the rigor bar)"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 191,
         "text" : "Anti-Patterns"
@@ -148,32 +148,20 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 203,
+        "line" : 204,
         "text" : "Related skills"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 212,
+        "line" : 213,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 223,
+        "line" : 225,
         "text" : "Output Format"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 214,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 219,
-        "text" : "Privacy contract preserved"
       }
     ],
     "sections" : [
@@ -200,20 +188,21 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "When to use this",
         "line" : 51,
         "lines" : [
-          "A book quotes a study and you want to confirm it's real and not",
+          "use judgment to follow the When to use this guidance:",
+          "item: A book quotes a study and you want to confirm it's real and not",
           "miscited",
-          "An article makes a quantified claim (\"X reduced Y by 40%\") that you",
+          "item: An article makes a quantified claim (\"X reduced Y by 40%\") that you",
           "want traced to the source data",
-          "You're writing something that depends on a piece of research and you",
+          "item: You're writing something that depends on a piece of research and you",
           "want to verify the underlying paper holds up",
-          "You're updating a brain page that cites a research claim and you want",
+          "item: You're updating a brain page that cites a research claim and you want",
           "to record the verification status alongside"
         ],
-        "role" : "applicability"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -251,13 +240,14 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Useful databases (the agent uses these via perplexity-research)",
         "line" : 159,
         "lines" : [
+          "use judgment to follow the Useful databases (the agent uses these via perplexity-research) guidance:",
           "table:decision:fCBEYXRhYmFzZSB8IFdoYXQgaXQgaGFzIHwgVVJMIHBhdHRlcm4gfAp8LS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18CnwgUmV0cmFjdGlvbiBXYXRjaCB8IFJldHJhY3Rpb25zLCBjb3JyZWN0aW9ucywgZXhwcmVzc2lvbnMgb2YgY29uY2VybiB8IHJldHJhY3Rpb253YXRjaC5jb20vP3M9TkFNRSB8CnwgUHViUGVlciB8IEFub255bW91cyBwb3N0LXB1YmxpY2F0aW9uIHBlZXIgcmV2aWV3IHwgcHVicGVlci5jb20vc2VhcmNoP3E9TkFNRSB8CnwgT1NGIHwgUHJlLXJlZ2lzdHJhdGlvbnMsIG9wZW4gZGF0YSwgb3BlbiBtYXRlcmlhbHMgfCBvc2YuaW8vc2VhcmNoLz9xPVFVRVJZIHwKfCBTZW1hbnRpYyBTY2hvbGFyIHwgQ2l0YXRpb24gYW5hbHlzaXMsIHBhcGVyIG1ldGFkYXRhIHwgYXBpLnNlbWFudGljc2Nob2xhci5vcmcgfAp8IE9wZW5BbGV4IHwgT3BlbiBjaXRhdGlvbiBkYXRhLCBpbnN0aXR1dGlvbmFsIGFmZmlsaWF0aW9ucyB8IGFwaS5vcGVuYWxleC5vcmcgfAp8IE1hbnkgTGFicyB8IFJlcGxpY2F0aW9uIHJlc3VsdHMgZm9yIHNvY2lhbCBwc3ljaG9sb2d5IHwgb3NmLmlvL3d4N2NrLyB8"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -285,26 +275,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
         "line" : 191,
         "lines" : [
-          "❌ Skipping the brain-first lookup. Re-doing verification we've",
-          "already done is wasted Perplexity spend",
-          "❌ Bypassing perplexity-research and inventing the lookup. The",
-          "citations from Perplexity are the evidence — without them, the",
-          "verdict is just opinion",
-          "❌ Stating \"Verified\" without confirming raw data availability",
-          "Replication trumps any single paper",
-          "❌ Stating \"Unverifiable\" when you simply didn't look hard enough",
-          "The verdict is on the source, not on your search effort"
+          "checklist:ai-autonomy:4p2MIFNraXBwaW5nIHRoZSBicmFpbi1maXJzdCBsb29rdXAuIFJlLWRvaW5nIHZlcmlmaWNhdGlvbiB3ZSd2ZSBhbHJlYWR5IGRvbmUgaXMgd2FzdGVkIFBlcnBsZXhpdHkgc3BlbmQuCuKdjCBCeXBhc3NpbmcgcGVycGxleGl0eS1yZXNlYXJjaCBhbmQgaW52ZW50aW5nIHRoZSBsb29rdXAuIFRoZSBjaXRhdGlvbnMgZnJvbSBQZXJwbGV4aXR5IGFyZSB0aGUgZXZpZGVuY2Ug4oCUIHdpdGhvdXQgdGhlbSwgdGhlIHZlcmRpY3QgaXMganVzdCBvcGluaW9uLgrinYwgU3RhdGluZyAiVmVyaWZpZWQiIHdpdGhvdXQgY29uZmlybWluZyByYXcgZGF0YSBhdmFpbGFiaWxpdHkgUmVwbGljYXRpb24gdHJ1bXBzIGFueSBzaW5nbGUgcGFwZXIuCuKdjCBTdGF0aW5nICJVbnZlcmlmaWFibGUiIHdoZW4geW91IHNpbXBseSBkaWRuJ3QgbG9vayBoYXJkIGVub3VnaCBUaGUgdmVyZGljdCBpcyBvbiB0aGUgc291cmNlLCBub3Qgb24geW91ciBzZWFyY2ggZWZmb3J0Lg=="
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Related skills",
-        "line" : 203,
+        "line" : 204,
         "lines" : [
           "`skills\/perplexity-research\/SKILL.md` — the actual web-search engine",
           "this skill routes through (D7\/α: pure routing, no new infrastructure)",
@@ -315,23 +297,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
-        "line" : 212,
+        "line" : 213,
         "lines" : [
-          "This skill guarantees:",
-          "Routing matches the canonical triggers in the frontmatter",
-          "Output written under the directories listed in `writes_to:` (when applicable)",
-          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
-          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
-          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+          "checklist:ai-autonomy:Um91dGluZyBtYXRjaGVzIHRoZSBjYW5vbmljYWwgdHJpZ2dlcnMgaW4gdGhlIGZyb250bWF0dGVyCk91dHB1dCB3cml0dGVuIHVuZGVyIHRoZSBkaXJlY3RvcmllcyBsaXN0ZWQgaW4gYHdyaXRlc190bzpgICh3aGVuIGFwcGxpY2FibGUpCkNvbnZlbnRpb25zIHJlZmVyZW5jZWQgKGBxdWFsaXR5Lm1kYCwgYGJyYWluLWZpcnN0Lm1kYCwgYF9icmFpbi1maWxpbmctcnVsZXMubWRgKSBhcmUgZm9sbG93ZWQKUHJpdmFjeSBjb250cmFjdCBwcmVzZXJ2ZWQ6IG5vIHJlYWwgbmFtZXMsIG5vIGZvcmstc3BlY2lmaWMgZmlsZXN5c3RlbSBwYXRoIGxpdGVyYWxzLCBubyB1cHN0cmVhbS1mb3JrIHJlZmVyZW5jZXM="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 223,
+        "line" : 225,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -379,52 +356,56 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 622
+      "meridian_line" : 53,
+      "swift_line" : 585
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 627
+      "swift_line" : 623
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 666
+      "swift_line" : 628
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 671
+      "swift_line" : 667
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 710
+      "swift_line" : 672
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 715
+      "swift_line" : 711
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 754
+      "swift_line" : 716
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 759
+      "swift_line" : 755
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 798
+      "swift_line" : 760
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 803
+      "swift_line" : 799
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 842
+      "swift_line" : 804
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 847
+      "swift_line" : 843
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 848
     }
   ],
   "tools_used" : [

@@ -20,14 +20,15 @@ mutating: true
 
 # Daily Task Manager
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
 
-This skill guarantees:
-- Tasks stored as a brain page (`ops/tasks.md`) with structured format
-- Task lifecycle: add → in-progress → complete | defer
-- Priority levels: P0 (urgent), P1 (today), P2 (this week), P3 (backlog)
-- Completed tasks archived with completion date
-- Deferred tasks carry forward with reason
+> This skill guarantees:
+!!! checklist (( ai-autonomy ))
+- [ ] Tasks stored as a brain page (`ops/tasks.md`) with structured format
+- [ ] Task lifecycle: add → in-progress → complete | defer
+- [ ] Priority levels: P0 (urgent), P1 (today), P2 (this week), P3 (backlog)
+- [ ] Completed tasks archived with completion date
+- [ ] Deferred tasks carry forward with reason
 
 ## Phases
 
@@ -67,10 +68,11 @@ gbrain put ops/tasks
 - [x] {task} (completed: {date})
 ```
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
 
-- Adding tasks without a priority level
-- Completing tasks without recording the completion date
-- Deferring tasks without a reason
-- Letting the task list grow unbounded (review weekly)
-- Storing tasks outside the brain (they should be searchable)
+!!! checklist (( ai-autonomy ))
+- [ ] Adding tasks without a priority level
+- [ ] Completing tasks without recording the completion date
+- [ ] Deferring tasks without a reason
+- [ ] Letting the task list grow unbounded (review weekly)
+- [ ] Storing tasks outside the brain (they should be searchable)

@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -589,17 +581,28 @@ public struct ReportsInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ReportsInput", parameters: [:])
 
-        // L31
-        let __meridianProseResults_L31 = try await runtime.executeProsePlan(
+        // L25
+        let __meridianProseResults_L25 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Reports saved with timestamped filenames and frontmatter\n- Keyword routing: query → report category mapping\n- Latest report loadable by category name\n- Reports are searchable via gbrain search/query",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.search", "publish", "shell.run"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L25 {
+            state.bind(__key, __value)
+        }
+        // L32
+        let __meridianProseResults_L32 = try await runtime.executeProsePlan(
             prose: "save, load, and route reports by keyword\nSave a report to reports/{category}/{date}.md with title, type, category, date, and time frontmatter\nLoad the most recent report file for a given category\nRoute common queries to report categories (for example \"inbox\" to ea-inbox-sweep, \"morning\" to morning-briefing)",
             snapshot: state.snapshot(),
             scopedTools: ["page.get", "page.search", "publish", "shell.run"]
         )
-        for (__key, __value) in __meridianProseResults_L31 {
+        for (__key, __value) in __meridianProseResults_L32 {
             state.bind(__key, __value)
         }
-        if __meridianShouldRun("progress:0.1:L41:C0") {
-            // L41
+        if __meridianShouldRun("progress:0.2:L42:C0") {
+            // L42
             let pages = try await runtime.invoke(
                 tool: "page.list",
                 args: [
@@ -608,17 +611,28 @@ public struct ReportsInput: MeridianWorkflow {
             )
             state.bind("pages", pages)
 
-            try await runtime.checkpoint(label: "progress:0.1:L41:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.2:L42:C0", state: state.snapshot())
         }
-        // L42
+        // L43
         if ((((state.get("pages"))?.asList ?? []).filter { __e in (meridianDef_Page_urgent(__e)) }).count >= 2) {
-            if __meridianShouldRun("progress:0.2.then.0:L43:C0") {
-                // L43
+            if __meridianShouldRun("progress:0.3.then.0:L44:C0") {
+                // L44
                 try await runtime.emit(event: "reports.escalate", payload: [:])
-                try await runtime.checkpoint(label: "progress:0.2.then.0:L43:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.3.then.0:L44:C0", state: state.snapshot())
             }
         }
 
+        // L54
+        let __meridianProseResults_L54 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Saving reports without frontmatter (makes them unsearchable)\n- Using inconsistent category names across runs\n- Loading all reports when only the latest is needed\n- Not routing by keyword (forcing exact category name)",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.search", "publish", "shell.run"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L54 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

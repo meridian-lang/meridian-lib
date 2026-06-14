@@ -2,9 +2,9 @@
 
 - Original: `skill-creator/SKILL.md`
 - Ported: `skill_creator.meri`
-- Tier: 2 (light edits)
-- Similarity: 64%
-- Lines: 83 -> 52 (+9 / -40)
+- Tier: 3 (structural rewrite)
+- Similarity: 47%
+- Lines: 83 -> 54 (+22 / -51)
 
 ## Frontmatter
 - Added: (none)
@@ -12,26 +12,43 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 
 ## Metrics
-- Sections: 3/4 inert (75% inert ratio)
+- Sections: 1/4 inert (25% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: template=1
 - Judgment: 1 blocks, 4 lines
+
+### Inert section details
+- L26 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/skill-creator/SKILL.md
-+++ skill_creator.meri
-@@ -17,7 +17,7 @@
++++ skills/skill_creator.meri
+@@ -17,67 +17,38 @@
  
  # Skill Creator
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
  
- This skill guarantees:
- - New skill follows conformance standard (frontmatter + required sections)
-@@ -28,52 +28,21 @@
+-This skill guarantees:
+-- New skill follows conformance standard (frontmatter + required sections)
+-- MECE check: no overlap with existing skills' triggers
+-- Manifest.json updated
+-- RESOLVER.md updated with routing entry
+-- Skill passes conformance tests (`bun test test/skills-conformance.test.ts`)
++> This skill guarantees:
++!!! checklist (( ai-autonomy ))
++- [ ] New skill follows conformance standard (frontmatter + required sections)
++- [ ] MECE check: no overlap with existing skills' triggers
++- [ ] Manifest.json updated
++- [ ] RESOLVER.md updated with routing entry
++- [ ] Skill passes conformance tests (`bun test test/skills-conformance.test.ts`)
  
  ## Phases
  
@@ -88,8 +105,18 @@
  New `skills/{name}/SKILL.md` file + updated manifest + updated resolver.
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
  
- - Creating a skill that overlaps with an existing one (violates MECE)
- - Skipping the MECE check against existing skills
+-- Creating a skill that overlaps with an existing one (violates MECE)
+-- Skipping the MECE check against existing skills
+-- Creating a skill without triggers in frontmatter
+-- Not updating manifest.json and RESOLVER.md
+-- Creating a skill without an Anti-Patterns section
++!!! checklist (( ai-autonomy ))
++- [ ] Creating a skill that overlaps with an existing one (violates MECE)
++- [ ] Skipping the MECE check against existing skills
++- [ ] Creating a skill without triggers in frontmatter
++- [ ] Not updating manifest.json and RESOLVER.md
++- [ ] Creating a skill without an Anti-Patterns section
+ 
 ```

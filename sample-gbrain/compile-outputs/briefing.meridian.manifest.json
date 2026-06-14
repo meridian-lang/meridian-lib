@@ -98,7 +98,7 @@
     "name" : "briefing",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 18,
         "text" : "Contract"
@@ -106,106 +106,96 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 26,
+        "line" : 27,
         "text" : "Phases"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 36,
+        "line" : 37,
         "text" : "GBrain-Native Context Loading"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 40,
+        "line" : 41,
         "text" : "Before a meeting"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 47,
+        "line" : 48,
         "text" : "Daily briefing queries"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 54,
+        "line" : 55,
         "text" : "Before an email reply"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 59,
+        "line" : 60,
         "text" : "Freshness guard"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 69,
+        "line" : 70,
         "text" : "Output Format"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 93,
+        "line" : 94,
         "text" : "Back-Linking During Briefing"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 100,
+        "line" : 101,
         "text" : "Enforce back-links"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 106,
+        "line" : 107,
         "text" : "Citation in Briefings"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 112,
+        "line" : 113,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 120,
+        "line" : 122,
         "text" : "Tools Used"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 23,
-        "text" : "The briefing is read-only"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 42,
+        "line" : 43,
         "text" : "For every attendee"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 18,
         "lines" : [
-          "Every fact in the briefing includes an inline `[Source: slug, updated DATE]` citation",
-          "Meeting participants are resolved against the brain; gaps are explicitly flagged",
-          "Active deals and action items include deadlines and recency context",
-          "The briefing is read-only: no brain pages are created or modified unless the user explicitly requests it",
-          "Stale alerts surface pages relevant to today's context, not just all stale pages"
+          "checklist:ai-autonomy:RXZlcnkgZmFjdCBpbiB0aGUgYnJpZWZpbmcgaW5jbHVkZXMgYW4gaW5saW5lIGBbU291cmNlOiBzbHVnLCB1cGRhdGVkIERBVEVdYCBjaXRhdGlvbgpNZWV0aW5nIHBhcnRpY2lwYW50cyBhcmUgcmVzb2x2ZWQgYWdhaW5zdCB0aGUgYnJhaW47IGdhcHMgYXJlIGV4cGxpY2l0bHkgZmxhZ2dlZApBY3RpdmUgZGVhbHMgYW5kIGFjdGlvbiBpdGVtcyBpbmNsdWRlIGRlYWRsaW5lcyBhbmQgcmVjZW5jeSBjb250ZXh0ClRoZSBicmllZmluZyBpcyByZWFkLW9ubHk6IG5vIGJyYWluIHBhZ2VzIGFyZSBjcmVhdGVkIG9yIG1vZGlmaWVkIHVubGVzcyB0aGUgdXNlciBleHBsaWNpdGx5IHJlcXVlc3RzIGl0ClN0YWxlIGFsZXJ0cyBzdXJmYWNlIHBhZ2VzIHJlbGV2YW50IHRvIHRvZGF5J3MgY29udGV4dCwgbm90IGp1c3QgYWxsIHN0YWxlIHBhZ2Vz"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 26,
+        "line" : 27,
         "lines" : [
           "codeblock:bash:Z2JyYWluIHJlY2FsbCAtLXNpbmNlLWxhc3QtcnVuIC0tc3VwZXJzZXNzaW9ucyAtLXBlbmRpbmcgLS1yb2xsdXAgLS1qc29u",
           "use judgment to compose the daily briefing:",
@@ -217,7 +207,7 @@
       {
         "executes" : false,
         "heading" : "GBrain-Native Context Loading",
-        "line" : 36,
+        "line" : 37,
         "lines" : [
           "Before generating any briefing, load context from gbrain systematically"
         ],
@@ -226,7 +216,7 @@
       {
         "executes" : true,
         "heading" : "Before a meeting",
-        "line" : 40,
+        "line" : 41,
         "lines" : [
           "For every attendee:",
           "`gbrain search \"{the attendee's name}\"` -- find their brain page",
@@ -237,7 +227,7 @@
       {
         "executes" : true,
         "heading" : "Daily briefing queries",
-        "line" : 47,
+        "line" : 48,
         "lines" : [
           "`gbrain query \"active deals status\"` -- deal pipeline snapshot",
           "`gbrain query \"meetings this week\"` -- recent meeting pages with insights",
@@ -249,7 +239,7 @@
       {
         "executes" : false,
         "heading" : "Before an email reply",
-        "line" : 54,
+        "line" : 55,
         "lines" : [
           "Before drafting or triaging any email, load sender context from the brain and",
           "read their compiled truth. This turns a cold reply into an informed one"
@@ -259,7 +249,7 @@
       {
         "executes" : true,
         "heading" : "Freshness guard",
-        "line" : 59,
+        "line" : 60,
         "lines" : [
           "bind pages = invoke list pages with filter = \"today\"",
           "let mine be the pages written by the input",
@@ -271,28 +261,29 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 69,
+        "line" : 70,
         "lines" : [
           "codeblock:plain:REFJTFkgQlJJRUZJTkcgLS0gW2RhdGVdCj09PT09PT09PT09PT09PT09PT09PT09PQoKTUVFVElOR1MgVE9EQVkKLSBbdGltZV0gW21lZXRpbmcgbmFtZV0KICBQYXJ0aWNpcGFudHM6IFtuYW1lXSAoc2x1ZzogcGVvcGxlL25hbWUsIFtrZXkgY29udGV4dF0pCgpBQ1RJVkUgREVBTFMKLSBbZGVhbCBuYW1lXSAtLSBbc3RhdHVzXSwgZGVhZGxpbmU6IFtkYXRlXQogIFJlY2VudDogW2xhdGVzdCB0aW1lbGluZSBlbnRyeV0KCkFDVElPTiBJVEVNUwotIFtpdGVtXSAtLSBkdWUgW2RhdGVdLCByZWxhdGVkIHRvIFtzbHVnXQoKUkVDRU5UIENIQU5HRVMgKDI0aCkKLSBbc2x1Z10gLS0gW3doYXQgY2hhbmdlZF0KClBFT1BMRSBJTiBQTEFZCi0gW25hbWVdIC0tIFt3aHkgdGhleSdyZSBhY3RpdmVd"
         ],
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Back-Linking During Briefing",
-        "line" : 93,
+        "line" : 94,
         "lines" : [
+          "use judgment to follow the Back-Linking During Briefing guidance:",
           "If the briefing creates or updates any brain pages (e.g., new meeting prep",
           "pages, updated entity pages), the back-linking iron law applies: every entity",
           "the page mentions must have a back-link from their page. See",
           "`skills\/_brain-filing-rules.md`"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Enforce back-links",
-        "line" : 100,
+        "line" : 101,
         "lines" : [
           "let mentioned be the entities mentioned by the input",
           "for each entity in mentioned:",
@@ -303,7 +294,7 @@
       {
         "executes" : false,
         "heading" : "Citation in Briefings",
-        "line" : 106,
+        "line" : 107,
         "lines" : [
           "When presenting facts from brain pages, include inline citations:",
           "\"Jane is CTO of Acme [Source: people\/jane-doe, updated 2026-04-01]\"",
@@ -312,22 +303,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 112,
+        "line" : 113,
         "lines" : [
-          "**Briefing without brain queries.** Never generate a briefing from memory alone; always query gbrain for current data",
-          "**Uncited facts.** Every claim must include `[Source: slug, updated DATE]`. A fact without a citation is unverifiable",
-          "**Stale context presented as current.** If a page hasn't been updated in 30+ days, flag the staleness explicitly rather than presenting it as fresh",
-          "**Modifying brain pages unprompted.** The briefing is read-only by default. Do not create or update pages unless the user explicitly requests it",
-          "**Ignoring coverage gaps.** When a meeting participant has no brain page, say so. Silence about gaps hides ignorance"
+          "checklist:ai-autonomy:KipCcmllZmluZyB3aXRob3V0IGJyYWluIHF1ZXJpZXMuKiogTmV2ZXIgZ2VuZXJhdGUgYSBicmllZmluZyBmcm9tIG1lbW9yeSBhbG9uZTsgYWx3YXlzIHF1ZXJ5IGdicmFpbiBmb3IgY3VycmVudCBkYXRhCioqVW5jaXRlZCBmYWN0cy4qKiBFdmVyeSBjbGFpbSBtdXN0IGluY2x1ZGUgYFtTb3VyY2U6IHNsdWcsIHVwZGF0ZWQgREFURV1gLiBBIGZhY3Qgd2l0aG91dCBhIGNpdGF0aW9uIGlzIHVudmVyaWZpYWJsZQoqKlN0YWxlIGNvbnRleHQgcHJlc2VudGVkIGFzIGN1cnJlbnQuKiogSWYgYSBwYWdlIGhhc24ndCBiZWVuIHVwZGF0ZWQgaW4gMzArIGRheXMsIGZsYWcgdGhlIHN0YWxlbmVzcyBleHBsaWNpdGx5IHJhdGhlciB0aGFuIHByZXNlbnRpbmcgaXQgYXMgZnJlc2gKKipNb2RpZnlpbmcgYnJhaW4gcGFnZXMgdW5wcm9tcHRlZC4qKiBUaGUgYnJpZWZpbmcgaXMgcmVhZC1vbmx5IGJ5IGRlZmF1bHQuIERvIG5vdCBjcmVhdGUgb3IgdXBkYXRlIHBhZ2VzIHVubGVzcyB0aGUgdXNlciBleHBsaWNpdGx5IHJlcXVlc3RzIGl0CioqSWdub3JpbmcgY292ZXJhZ2UgZ2Fwcy4qKiBXaGVuIGEgbWVldGluZyBwYXJ0aWNpcGFudCBoYXMgbm8gYnJhaW4gcGFnZSwgc2F5IHNvLiBTaWxlbmNlIGFib3V0IGdhcHMgaGlkZXMgaWdub3JhbmNl"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 120,
+        "line" : 122,
         "lines" : [
           "Search gbrain by name (query)",
           "Read a page from gbrain (get_page)",
@@ -376,100 +363,88 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 28,
-      "swift_line" : 591
+      "meridian_line" : 21,
+      "swift_line" : 582
     },
     {
-      "meridian_line" : 32,
-      "swift_line" : 601
+      "meridian_line" : 29,
+      "swift_line" : 594
     },
     {
-      "meridian_line" : 42,
-      "swift_line" : 610
+      "meridian_line" : 33,
+      "swift_line" : 604
     },
     {
       "meridian_line" : 43,
-      "swift_line" : 616
+      "swift_line" : 613
     },
     {
       "meridian_line" : 44,
-      "swift_line" : 628
+      "swift_line" : 619
     },
     {
-      "meridian_line" : 49,
-      "swift_line" : 644
+      "meridian_line" : 45,
+      "swift_line" : 631
     },
     {
       "meridian_line" : 50,
-      "swift_line" : 656
+      "swift_line" : 647
     },
     {
       "meridian_line" : 51,
-      "swift_line" : 668
+      "swift_line" : 659
     },
     {
       "meridian_line" : 52,
-      "swift_line" : 680
+      "swift_line" : 671
     },
     {
-      "meridian_line" : 64,
-      "swift_line" : 692
+      "meridian_line" : 53,
+      "swift_line" : 683
     },
     {
       "meridian_line" : 65,
-      "swift_line" : 703
+      "swift_line" : 695
     },
     {
       "meridian_line" : 66,
-      "swift_line" : 705
+      "swift_line" : 706
     },
     {
       "meridian_line" : 67,
       "swift_line" : 708
     },
     {
-      "meridian_line" : 102,
-      "swift_line" : 720
+      "meridian_line" : 68,
+      "swift_line" : 711
     },
     {
-      "meridian_line" : 102,
-      "swift_line" : 731
-    },
-    {
-      "meridian_line" : 103,
-      "swift_line" : 733
-    },
-    {
-      "meridian_line" : 104,
-      "swift_line" : 738
-    },
-    {
-      "meridian_line" : 133,
-      "swift_line" : 741
+      "meridian_line" : 96,
+      "swift_line" : 722
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 788
+      "swift_line" : 760
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 793
+      "swift_line" : 765
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 832
+      "swift_line" : 804
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 837
+      "swift_line" : 809
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 876
+      "swift_line" : 848
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 881
+      "swift_line" : 853
     }
   ],
   "tools_used" : [

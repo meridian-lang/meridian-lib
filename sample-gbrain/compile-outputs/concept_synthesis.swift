@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -590,6 +582,15 @@ public struct ConceptSynthesisInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ConceptSynthesisInput", parameters: [:])
 
+        // L75
+        let __meridianProseResults_L75 = try await runtime.executeProsePlan(
+            prose: "follow the Invocation guidance\nThe skill is markdown agent instructions. The agent uses gbrain's\nexisting operations + LLM passes:\ncodeblock:bash:IyAxLiBMaXN0IGFsbCBjb25jZXB0IHBhZ2VzCmdicmFpbiBxdWVyeSAidHlwZTpjb25jZXB0IiAtLWxpbWl0IDEwMDAwIC0tanNvbgoKIyAyLiBQaGFzZSAxIGRlZHVwIOKAlCBhZ2VudCBhcHBsaWVzIEphY2NhcmQgKyBzdWJzdHJpbmcgbG9jYWxseSwKIyAgICB0aGVuIExMTSBwYXNzZXMgdG8gaWRlbnRpZnkgc2VtYW50aWMgZHVwbGljYXRlcy4KCiMgMy4gUGhhc2UgMiB0aWVyIOKAlCBhZ2VudCBzY29yZXMgZWFjaCBjYW5vbmljYWwgY29uY2VwdCBiYXNlZCBvbgojICAgIGZyZXF1ZW5jeSAvIHRpbWVzcGFuIC8gYnJlYWR0aCBhbmQgd3JpdGVzIHRpZXIgaW50byBmcm9udG1hdHRlci4KCiMgNC4gUGhhc2UgMyBzeW50aGVzaXMg4oCUIGZvciBlYWNoIFQxL1QyLCBhZ2VudCByZWFkcyB0aGUgdGltZWxpbmUKIyAgICArIGFzc29jaWF0ZWQgc291cmNlIHBhZ2VzIGFuZCB3cml0ZXMgYSBzeW50aGVzaXMgc2VjdGlvbgojICAgIG9udG8gdGhlIGNvbmNlcHQgcGFnZSB2aWEgcHV0X3BhZ2UuCgojIDUuIFBoYXNlIDQgY2x1c3RlcmluZyDigJQgYWdlbnQgcmVhZHMgdGhlIHRpZXJlZCBjb25jZXB0IGxpc3QKIyAgICBhbmQgd3JpdGVzIGNvbmNlcHRzL1JFQURNRS5tZCB3aXRoIHRoZSBmdWxsIGludGVsbGVjdHVhbCBtYXAu\nchecklist:ai-autonomy:4p2MIFJ1bm5pbmcgc3ludGhlc2lzIG9uIFQzL1Q0IOKAlCB3YXN0ZXMgQVBJIGJ1ZGdldCBvbiBpZGVhcyB0aGF0IG1heSBuZXZlciBzaGFycGVuLgrinYwgSGFsbHVjaW5hdGluZyBxdW90ZXMgb3IgZGF0ZXMuIFRoZSB0aW1lbGluZSBtdXN0IGJlIHZlcmlmaWFibGUgYWdhaW5zdCBleGlzdGluZyBicmFpbiBwYWdlcy4K4p2MIEdlbmVyaWMgY2x1c3RlciBuYW1lcyAoIlZhcmlvdXMgVG9waWNzIikuIElmIHlvdSBjYW4ndCBuYW1lIHRoZSBjbHVzdGVyLCB0aGUgY2x1c3RlciBpc24ndCByZWFsLgrinYwgUmUtc3ludGhlc2l6aW5nIGFscmVhZHktc3ludGhlc2l6ZWQgVDFzIHdpdGhvdXQgbmV3IHNvdXJjZSBtYXRlcmlhbCBJZGVtcG90ZW5jeS1yZXNwZWN0Lg==\nchecklist:ai-autonomy:Um91dGluZyBtYXRjaGVzIHRoZSBjYW5vbmljYWwgdHJpZ2dlcnMgaW4gdGhlIGZyb250bWF0dGVyCk91dHB1dCB3cml0dGVuIHVuZGVyIHRoZSBkaXJlY3RvcmllcyBsaXN0ZWQgaW4gYHdyaXRlc190bzpgICh3aGVuIGFwcGxpY2FibGUpCkNvbnZlbnRpb25zIHJlZmVyZW5jZWQgKGBxdWFsaXR5Lm1kYCwgYGJyYWluLWZpcnN0Lm1kYCwgYF9icmFpbi1maWxpbmctcnVsZXMubWRgKSBhcmUgZm9sbG93ZWQKUHJpdmFjeSBjb250cmFjdCBwcmVzZXJ2ZWQ6IG5vIHJlYWwgbmFtZXMsIG5vIGZvcmstc3BlY2lmaWMgZmlsZXN5c3RlbSBwYXRoIGxpdGVyYWxzLCBubyB1cHN0cmVhbS1mb3JrIHJlZmVyZW5jZXM=",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L75 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

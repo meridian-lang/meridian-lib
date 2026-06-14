@@ -2,9 +2,9 @@
 
 - Original: `query/SKILL.md`
 - Ported: `query.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 85%
-- Lines: 156 -> 160 (+25 / -21)
+- Tier: 2 (light edits)
+- Similarity: 79%
+- Lines: 156 -> 162 (+37 / -31)
 
 ## Frontmatter
 - Added: (none)
@@ -12,18 +12,32 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - preamble-blockquoted
 
 ## Metrics
-- Sections: 11/12 inert (92% inert ratio)
+- Sections: 8/12 inert (67% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: reference-documentation=6, template=1, tools-metadata=1
 - Judgment: 1 blocks, 5 lines
+
+### Inert section details
+- L43 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L51 `Quality Rules`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L60 `Token-Budget Awareness`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L72 `Source precedence`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L84 `Citation in Answers`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L92 `Graph Traversal (v0.10.1+)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L114 `Search Quality Awareness`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L123 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/query/SKILL.md
-+++ query.meri
-@@ -31,9 +31,9 @@
++++ skills/query.meri
+@@ -31,38 +31,44 @@
  
  # Query Skill
  
@@ -31,11 +45,21 @@
 +> Answer questions using the brain's knowledge with 3-layer search and synthesis.
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
  
- This skill guarantees:
- - Every answer is grounded in brain content (no hallucination)
-@@ -44,19 +44,23 @@
+-This skill guarantees:
+-- Every answer is grounded in brain content (no hallucination)
+-- Every claim has a citation tracing back to a specific page slug
+-- Gaps are flagged explicitly ("the brain doesn't have information on X")
+-- Source precedence is respected (user statements > compiled truth > timeline > external)
+-- Conflicting sources are noted with both citations
++> This skill guarantees:
++!!! checklist (( ai-autonomy ))
++- [ ] Every answer is grounded in brain content (no hallucination)
++- [ ] Every claim has a citation tracing back to a specific page slug
++- [ ] Gaps are flagged explicitly ("the brain doesn't have information on X")
++- [ ] Source precedence is respected (user statements > compiled truth > timeline > external)
++- [ ] Conflicting sources are noted with both citations
  
  ## Phases
  
@@ -59,7 +83,12 @@
  
 -## Anti-Patterns
 +## Coverage guard
-+
+ 
+-- Answering from general knowledge when the brain has relevant content
+-- Hallucinating facts not in the brain
+-- Silently picking one source when sources conflict
+-- Loading full pages when search chunks are sufficient
+-- Ignoring source precedence (user statements are highest authority)
 +> If the indexed landing page is empty, the brain has a coverage gap; flag it
 +> rather than answering from general knowledge.
 +
@@ -67,11 +96,18 @@
 +if the page is unwritten,
 +  emit query.gap with status "no coverage".
 +
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++
++!!! checklist (( ai-autonomy ))
++- [ ] Answering from general knowledge when the brain has relevant content
++- [ ] Hallucinating facts not in the brain
++- [ ] Silently picking one source when sources conflict
++- [ ] Loading full pages when search chunks are sufficient
++- [ ] Ignoring source precedence (user statements are highest authority)
  
- - Answering from general knowledge when the brain has relevant content
- - Hallucinating facts not in the brain
-@@ -72,7 +76,7 @@
+ ## Output Format
+ 
+@@ -72,7 +78,7 @@
  - Gap flags: "The brain doesn't have information on X"
  - Conflict notes when sources disagree
  
@@ -80,7 +116,7 @@
  
  - Never hallucinate. Only answer from brain content.
  - Cite sources: "According to concepts/do-things-that-dont-scale..."
-@@ -81,7 +85,7 @@
+@@ -81,7 +87,7 @@
  - For "what happened" questions, use timeline entries
  - For "what do we know" questions, read compiled_truth directly
  
@@ -89,7 +125,7 @@
  
  Search returns **chunks**, not full pages. Read the excerpts first before deciding
  whether to load a full page.
-@@ -93,7 +97,7 @@
+@@ -93,7 +99,7 @@
  - **"Tell me about X"** -- get the full page (the user wants the complete picture).
  - **"Did anyone mention Y?"** -- search results are enough (the user wants a yes/no with evidence).
  
@@ -98,7 +134,7 @@
  
  When multiple sources provide conflicting information, follow this precedence:
  
-@@ -105,7 +109,7 @@
+@@ -105,7 +111,7 @@
  When sources conflict, note the contradiction with both citations. Don't silently
  pick one.
  
@@ -107,7 +143,7 @@
  
  When referencing brain pages in your answer, propagate inline citations:
  - Cite the page: "According to [Source: people/jane-doe, compiled truth]..."
-@@ -113,7 +117,7 @@
+@@ -113,7 +119,7 @@
    the user can trace facts to their origin
  - When you synthesize across multiple pages, cite all sources
  
@@ -116,7 +152,7 @@
  
  For relationship questions ("who knows who at X?", "connections between A and B",
  "who works at Acme?", "who attended the standup?"), use the graph layer instead
-@@ -135,7 +139,7 @@
+@@ -135,7 +141,7 @@
  graph structure. Search results are ranked with a small backlink boost so well-
  connected entities surface higher.
  
@@ -125,13 +161,4 @@
  
  If search results seem off (wrong results, missing known pages, irrelevant hits):
  - Run `gbrain doctor --json` to check index health
-@@ -144,7 +148,7 @@
-   for the same query to isolate whether the issue is embedding-related
- - Report search quality issues in the maintain workflow (see maintain skill)
- 
--## Tools Used
-+## Tools Used (( inert ))
- 
- - Keyword search gbrain (search)
- - Hybrid search gbrain (query)
 ```

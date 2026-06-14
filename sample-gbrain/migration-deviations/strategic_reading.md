@@ -3,8 +3,8 @@
 - Original: `strategic-reading/SKILL.md`
 - Ported: `strategic_reading.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 92%
-- Lines: 189 -> 189 (+15 / -15)
+- Similarity: 88%
+- Lines: 189 -> 190 (+23 / -22)
 
 ## Frontmatter
 - Added: (none)
@@ -12,16 +12,30 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 
 ## Metrics
-- Sections: 10/11 inert (91% inert ratio)
+- Sections: 8/11 inert (73% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: reference-documentation=6, template=2
 - Judgment: 0 blocks, 0 lines
+
+### Inert section details
+- L12 `What this is`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L27 `Inputs`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L35 `Output`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L39 `Brain page structure`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L118 `Quality bar`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L131 `What this skill is NOT`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L140 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L161 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/strategic-reading/SKILL.md
-+++ strategic_reading.meri
++++ skills/strategic_reading.meri
 @@ -31,7 +31,7 @@
  > output files by primary subject (concepts/ for general strategy, projects/
  > for problem-tied playbooks).
@@ -123,22 +137,37 @@
  
  - `skills/book-mirror/SKILL.md` — book personalized to whole life (vs
    problem)
-@@ -168,7 +168,7 @@
+@@ -168,22 +168,23 @@
  - `skills/conventions/quality.md` — citation + back-link rules
  
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
  
- This skill guarantees:
+-This skill guarantees:
++> This skill guarantees:
  
-@@ -183,7 +183,7 @@
+-- Routing matches the canonical triggers in the frontmatter.
+-- Output written under the directories listed in `writes_to:` (when applicable).
+-- Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
+-- Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
++!!! checklist (( ai-autonomy ))
++- [ ] Routing matches the canonical triggers in the frontmatter.
++- [ ] Output written under the directories listed in `writes_to:` (when applicable).
++- [ ] Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
++- [ ] Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
+ 
+-The full behavior contract is documented in the body sections above; this section exists for the conformance test.
++> The full behavior contract is documented in the body sections above; this section exists for the conformance test.
+ 
+ ## Output Format
  
  The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
  
- The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing.
+-The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing.
++> The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing.
  
 ```

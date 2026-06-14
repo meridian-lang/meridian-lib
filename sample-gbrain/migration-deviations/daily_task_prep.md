@@ -3,8 +3,8 @@
 - Original: `daily-task-prep/SKILL.md`
 - Ported: `daily_task_prep.meri`
 - Tier: 2 (light edits)
-- Similarity: 82%
-- Lines: 62 -> 67 (+14 / -9)
+- Similarity: 69%
+- Lines: 62 -> 69 (+24 / -17)
 
 ## Frontmatter
 - Added: (none)
@@ -12,26 +12,41 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 
 ## Metrics
-- Sections: 3/4 inert (75% inert ratio)
+- Sections: 1/4 inert (25% inert ratio)
+- Operational inert: 0
+- Unclassified inert: 0
+- Inert categories: template=1
 - Judgment: 1 blocks, 4 lines
+
+### Inert section details
+- L25 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/daily-task-prep/SKILL.md
-+++ daily_task_prep.meri
-@@ -20,7 +20,7 @@
++++ skills/daily_task_prep.meri
+@@ -20,20 +20,26 @@
  
  # Daily Task Prep
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
  
- This skill guarantees:
- - Calendar/meetings for today are loaded with brain context per attendee
-@@ -30,10 +30,15 @@
+-This skill guarantees:
+-- Calendar/meetings for today are loaded with brain context per attendee
+-- Open threads from yesterday are surfaced
+-- Active tasks reviewed with priority ordering
+-- Prep briefing is actionable (not just informational)
++> This skill guarantees:
++!!! checklist (( ai-autonomy ))
++- [ ] Calendar/meetings for today are loaded with brain context per attendee
++- [ ] Open threads from yesterday are surfaced
++- [ ] Active tasks reviewed with priority ordering
++- [ ] Prep briefing is actionable (not just informational)
  
  ## Phases
  
@@ -51,7 +66,7 @@
  
  ## Output Format
  
-@@ -42,19 +47,19 @@
+@@ -42,21 +48,22 @@
  ======================
  Meetings today: {N}
  
@@ -71,8 +86,14 @@
  ```
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
  
- - Listing meetings without loading attendee context from brain
- - Ignoring yesterday's unresolved threads
+-- Listing meetings without loading attendee context from brain
+-- Ignoring yesterday's unresolved threads
+-- Presenting tasks without priority ordering
++!!! checklist (( ai-autonomy ))
++- [ ] Listing meetings without loading attendee context from brain
++- [ ] Ignoring yesterday's unresolved threads
++- [ ] Presenting tasks without priority ordering
+ 
 ```

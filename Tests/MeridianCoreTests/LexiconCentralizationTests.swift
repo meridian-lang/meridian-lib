@@ -53,6 +53,80 @@ struct FixedGrammarDefaultsTests {
     }
 }
 
+@Suite("EnglishLexicon — morphology branch coverage")
+struct EnglishLexiconMorphologyBranchTests {
+    @Test("pluralize and verb morphology cover empty and suffix branches")
+    func morphologyBranches() {
+        let lex = EnglishLexicon.default
+        #expect(lex.singularize("boxes") == "box")
+        #expect(lex.singularize("buzzes") == "buzz")
+        #expect(lex.singularize("churches") == "church")
+        #expect(lex.singularize("brushes") == "brush")
+        #expect(lex.singularize("ties") == "ty")
+        #expect(lex.singularize("series") == "sery")
+        #expect(lex.pluralize("") == "")
+        #expect(lex.pluralize("box") == "boxes")
+        #expect(lex.pluralize("church") == "churches")
+        #expect(lex.pluralize("brush") == "brushes")
+        #expect(lex.pluralize("buzz") == "buzzes")
+        #expect(lex.pluralize("status") == "status")
+        #expect(lex.pluralize("toy") == "toys")
+        #expect(lex.pluralize("city") == "cities")
+        #expect(lex.thirdPersonSingular("") == "")
+        #expect(lex.thirdPersonSingular("go") == "goes")
+        #expect(lex.thirdPersonSingular("fix") == "fixes")
+        #expect(lex.thirdPersonSingular("buzz") == "buzzes")
+        #expect(lex.thirdPersonSingular("watch") == "watches")
+        #expect(lex.thirdPersonSingular("try") == "tries")
+        #expect(lex.regularPastParticiple("") == "")
+        #expect(lex.regularPastParticiple("move") == "moved")
+        #expect(lex.regularPastParticiple("play") == "played")
+        #expect(lex.regularPastParticiple("try") == "tried")
+        #expect(lex.regularPastParticiple("walk") == "walked")
+
+        let merged = lex.merging(
+            comparisonSynonyms: [],
+            durationSynonyms: ["fortnight": .week],
+            timestampProperty: "createdAt",
+            emptySynonyms: ["lacks"],
+            filledSynonyms: ["includes"],
+            pastWindowSynonyms: ["during the past"],
+            futureWindowSynonyms: ["during the next"],
+            timestampAliasSynonyms: ["touched"],
+            superlativeSynonyms: ["freshest": .newest],
+            sortBySynonyms: ["ordered by"],
+            ascendingSynonyms: ["up"],
+            descendingSynonyms: ["down"],
+            possessiveSynonyms: ["our"],
+            anaphoraSynonyms: ["that value"],
+            conditionHeaderSynonyms: ["given"],
+            actionHeaderSynonyms: ["outcome"],
+            wildcardSynonyms: ["whatever"],
+            shellFenceSynonyms: ["fish"]
+        )
+        #expect(merged.parseDuration("2 fortnights")?.1 == .week)
+        #expect(merged.parseDuration("2 widgets") == nil)
+        #expect(merged.timestampProperty == "createdAt")
+        #expect(merged.emptyMarkers.contains(" lacks "))
+        #expect(merged.filledMarkers.contains(" includes "))
+        #expect(merged.temporalWindowMarkers.contains { $0.0 == " during the past " && $0.1 == .withinPast })
+        #expect(merged.temporalWindowMarkers.contains { $0.0 == " during the next " && $0.1 == .withinFuture })
+        #expect(merged.timestampAliases.contains("touched"))
+        #expect(merged.superlativeGradables["freshest"] == .newest)
+        #expect(merged.sortByMarkers.contains(" ordered by "))
+        #expect(merged.ascendingMarkers.contains("up"))
+        #expect(merged.descendingMarkers.contains("down"))
+        #expect(merged.possessivePronouns.contains("our "))
+        #expect(merged.anaphoraMarkers.contains("that value"))
+        #expect(merged.tableConditionHeaders.contains("given"))
+        #expect(merged.tableActionHeaders.contains("outcome"))
+        #expect(merged.tableWildcardTokens.contains("whatever"))
+        #expect(merged.isShellFence("fish"))
+        #expect(lex.structName(from: "123 import") == "_123Import")
+        #expect(lex.structName(from: "the an a") == "Workflow")
+    }
+}
+
 @Suite("Comparison-alias folding — copula-less canonical spellings are live")
 struct ComparisonFoldingTests {
 
@@ -205,8 +279,11 @@ struct SectionAliasDataTests {
         #expect(SkillSectionRole.builtinRole(forHeading: "Contract") == .invariants)
         #expect(SkillSectionRole.builtinRole(forHeading: "Workflow") == .procedure)
         #expect(SkillSectionRole.builtinRole(forHeading: "When To Use") == .applicability)
+        #expect(SkillSectionRole.builtinRole(forHeading: "Prerequisites") == .applicability)
         #expect(SkillSectionRole.builtinRole(forHeading: "When NOT To Use") == .negativeApplicability)
         #expect(SkillSectionRole.builtinRole(forHeading: "Anti-Patterns") == .prohibitions)
+        #expect(SkillSectionRole.builtinRole(forHeading: "Quality Rules") == .invariants)
+        #expect(SkillSectionRole.builtinRole(forHeading: "Verification Checklist") == .invariants)
         #expect(SkillSectionRole.builtinRole(forHeading: "Output Format") == .template)
         #expect(SkillSectionRole.builtinRole(forHeading: "Tools Used") == .tools)
     }

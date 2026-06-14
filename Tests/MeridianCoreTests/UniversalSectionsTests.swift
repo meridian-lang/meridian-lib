@@ -86,6 +86,32 @@ struct UniversalSectionMarkerTests {
         #expect(phase.role == "procedure")
         #expect(phase.executes == true)
     }
+
+    @Test("prerequisites and quality headings resolve to executable check sections")
+    func prerequisiteAndQualityAliases() throws {
+        let ast = try parse("""
+        ## Prerequisites
+        the connection count is at least 1.
+
+        ## Quality Rules
+        the result count is at least 1.
+
+        ## Output Format
+        ```markdown
+        # Report
+        ```
+        """)
+        let prerequisites = try #require(ast.skillSections.first { $0.heading == "Prerequisites" })
+        let quality = try #require(ast.skillSections.first { $0.heading == "Quality Rules" })
+        let output = try #require(ast.skillSections.first { $0.heading == "Output Format" })
+        #expect(prerequisites.role == "applicability")
+        #expect(prerequisites.executes)
+        #expect(quality.role == "invariants")
+        #expect(quality.executes)
+        #expect(output.role == "template")
+        #expect(!output.executes)
+        #expect((ast.workflows.first?.body.statements.count ?? 0) >= 2)
+    }
 }
 
 @Suite("Universal sections — no silent drops (hard errors)")

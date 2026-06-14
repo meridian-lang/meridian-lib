@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -590,6 +582,15 @@ public struct PerplexityResearchInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "PerplexityResearchInput", parameters: [:])
 
+        // L92
+        let __meridianProseResults_L92 = try await runtime.executeProsePlan(
+            prose: "follow the Invocation guidance\nThe skill is markdown agent instructions; the agent uses Perplexity's\nAPI directly (or a host-provided `perplexity` CLI if installed):\ncodeblock:bash:IyAxLiBQdWxsIGJyYWluIGNvbnRleHQKZ2JyYWluIGdldCA8c2x1Zz4gICAgICAgICAgICAgICAgICAgICMgb3IKZ2JyYWluIHF1ZXJ5ICI8dG9waWMga2V5d29yZHM+IgoKIyAyLiBDb21wb3NlIHRoZSBQZXJwbGV4aXR5IHF1ZXJ5IHdpdGggYnJhaW4gY29udGV4dCBpbmxpbmU6CiMgICAgIiIiCiMgICAgVG9waWM6IDx0b3BpYz4KIyAgICBCcmFpbiBjb250ZXh0ICh3aGF0IHdlIGFscmVhZHkga25vdyk6IDxlbWJlZGRlZCBnYnJhaW4gY29udGVudD4KIyAgICBGaW5kOiB3aGF0J3MgTkVXIHNpbmNlIDIwMjYtTU0tREQgdGhhdCB0aGUgYnJhaW4gZG9lc24ndCByZWZsZWN0LgojICAgIENpdGUgZXZlcnkgY2xhaW0uCiMgICAgIiIiCgojIDMuIENhbGwgUGVycGxleGl0eSBBUEkgb3IgdGhlIGhvc3QncyBwZXJwbGV4aXR5IGJpbmFyeToKIyAgICBjdXJsIGh0dHBzOi8vYXBpLnBlcnBsZXhpdHkuYWkvY2hhdC9jb21wbGV0aW9ucyBcCiMgICAgICAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICRQRVJQTEVYSVRZX0FQSV9LRVkiIFwKIyAgICAgIC1IICJDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24iIFwKIyAgICAgIC1kICd7Im1vZGVsIjogInNvbmFyLXBybyIsICJtZXNzYWdlcyI6IFt7InJvbGUiOiJ1c2VyIiwiY29udGVudCI6Ii4uLiJ9XX0nCgojIDQuIFdyaXRlIHRoZSBzdHJ1Y3R1cmVkIHJlc2VhcmNoIHBhZ2UgdmlhIHB1dF9wYWdlOgpnYnJhaW4gcHV0X3BhZ2UgcmVzZWFyY2gvPHNsdWc+ICAgICAgIyB2aWEgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzIG1lbnRpb25lZCAocGVvcGxlLCBjb21wYW5pZXMpIHBlciBJcm9uIExhdy4=\nuse judgment to follow the Models guidance:\ntable:decision:fCBNb2RlbCB8IENvc3QgLyBxdWVyeSB8IFVzZSB3aGVuIHwKfC0tLS0tLS18LS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tfAp8IFBlcnBsZXhpdHkgc29uYXItcHJvIHwgflwkMC4wNCB8IERlZXAgYW5hbHlzaXMsIGVudGl0eSBlbnJpY2htZW50LCBkZWFsIHJlc2VhcmNoIHwKfCBQZXJwbGV4aXR5IHNvbmFyIHwgflwkMC4wMDcgfCBRdWljayBsb29rdXBzLCBidWxrIG1vbml0b3JpbmcsIGJyaWVmaW5nIHBpcGVsaW5lcyB8\nDefault to sonar-pro. Drop to sonar for bulk / cron contexts where cost\nmatters more than depth\nuse judgment to follow the Entity enrichment guidance:\nCalled by `skills/enrich/SKILL.md` when an entity page (person, company)\nneeds current web context:\ncodeblock:bash:QlJBSU49JChnYnJhaW4gZ2V0IHBlb3BsZS88c2x1Zz4gMj4vZGV2L251bGwpCiMgU2VuZCA8c2x1Zz4ncyBwYWdlIGNvbnRlbnQgYXMgYnJhaW5fY29udGV4dCB0byBQZXJwbGV4aXR5LCBnZXQgY3VycmVudAojIG5ld3MgLyByb2xlIC8gY29udGV4dCwgdGhlbiB1cGRhdGUgdGhlIGJyYWluIHBhZ2Ugd2l0aCB3aGF0J3MgbmV3Lg==\nuse judgment to follow the Deal / company monitoring (cron) guidance:\nFor each active item under `deals/` or `companies/`:\ncodeblock:bash:IyBXZWVrbHk6IHB1bGwgcmVjZW50IG5ld3MgcGVyIGNvbXBhbnk7IGZsYWcgY2hhbmdlcyBmb3IgcmV2aWV3Lg==\nchecklist:ai-autonomy:4p2MIFNlbmRpbmcgTk8gYnJhaW4gY29udGV4dC4gVGhlbiBpdCdzIGp1c3QgYSBzZWFyY2gg4oCUIHVzZSBgd2ViX2ZldGNoYCBpbnN0ZWFkLgrinYwgVHJ1bmNhdGluZyB0aGUgYnJhaW4gY29udGV4dC4gVGhlIHdob2xlIHBvaW50IGlzICJrbm93cyB3aGF0IHlvdSBrbm93LiIgU2VuZCBkZW5zZSBjb250ZXh0LgrinYwgRGlzY2FyZGluZyBjaXRhdGlvbnMuIEV2ZXJ5IGNsYWltIGluIHRoZSBvdXRwdXQgbXVzdCBoYXZlIGEgVVJMCuKdjCBTa2lwcGluZyB0aGUgY3Jvc3MtbGluayBzdGVwIHdoZW4gZW50aXRpZXMgYXJlIG1lbnRpb25lZC4gSXJvbiBMYXc=\nuse judgment to follow the Environment guidance:\nitem: `PERPLEXITY_API_KEY` set in the agent's environment (or in\n`~/.gbrain/.env`)\nitem: Optional: install Perplexity's official CLI for richer streaming output\nchecklist:ai-autonomy:Um91dGluZyBtYXRjaGVzIHRoZSBjYW5vbmljYWwgdHJpZ2dlcnMgaW4gdGhlIGZyb250bWF0dGVyCk91dHB1dCB3cml0dGVuIHVuZGVyIHRoZSBkaXJlY3RvcmllcyBsaXN0ZWQgaW4gYHdyaXRlc190bzpgICh3aGVuIGFwcGxpY2FibGUpCkNvbnZlbnRpb25zIHJlZmVyZW5jZWQgKGBxdWFsaXR5Lm1kYCwgYGJyYWluLWZpcnN0Lm1kYCwgYF9icmFpbi1maWxpbmctcnVsZXMubWRgKSBhcmUgZm9sbG93ZWQKUHJpdmFjeSBjb250cmFjdCBwcmVzZXJ2ZWQ6IG5vIHJlYWwgbmFtZXMsIG5vIGZvcmstc3BlY2lmaWMgZmlsZXN5c3RlbSBwYXRoIGxpdGVyYWxzLCBubyB1cHN0cmVhbS1mb3JrIHJlZmVyZW5jZXM=",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L92 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

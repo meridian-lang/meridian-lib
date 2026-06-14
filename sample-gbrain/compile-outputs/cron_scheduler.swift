@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -589,13 +581,33 @@ public struct CronSchedulerInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "CronSchedulerInput", parameters: [:])
 
-        // L34
-        let __meridianProseResults_L34 = try await runtime.executeProsePlan(
+        // L27
+        let __meridianProseResults_L27 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Schedule staggering: max 1 job per 5-minute slot, no collisions\n- Quiet hours gating: timezone-aware, with user-awake override\n- Thin job prompts: jobs say \"Read skills/X/SKILL.md and run it\" (no inline 3000-word prompts)\n- Idempotency: jobs can run twice without duplicate side effects\n- Results saved as reports: `reports/{job-name}/{YYYY-MM-DD-HHMM}.md`",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.search", "publish", "shell.run"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L27 {
+            state.bind(__key, __value)
+        }
+        // L35
+        let __meridianProseResults_L35 = try await runtime.executeProsePlan(
             prose: "schedule a cron job\nDefine the job name, cron schedule, skill to run, and timeout\nValidate the schedule against existing jobs using the five-minute offset rule and suggest the next free slot on collision\nCheck quiet hours (default 11 PM to 8 AM) and hold output during quiet hours\nRegister the entry with the host scheduler, executing via Minions rather than a direct agent turn\nWrite a thin one-line job prompt that reads and runs the target skill",
             snapshot: state.snapshot(),
             scopedTools: ["page.get", "page.search", "publish", "shell.run"]
         )
-        for (__key, __value) in __meridianProseResults_L34 {
+        for (__key, __value) in __meridianProseResults_L35 {
+            state.bind(__key, __value)
+        }
+        // L55
+        let __meridianProseResults_L55 = try await runtime.executeProsePlan(
+            prose: "follow the multi-source sync guidance\nWhen the brain has 2+ active sources (anything `gbrain sources list` shows with a non-null `local_path` that isn't archived), use one consolidated cron line instead of N per-source entries\n**Preferred (multi-source)**:\ncodeblock:cron:Ki81ICogKiAqICogZ2JyYWluIHN5bmMgLS1hbGwgLS1wYXJhbGxlbCA0IC0td29ya2VycyA0IC0tc2tpcC1mYWlsZWQ=\nThis replaces N per-source lines AND auto-picks-up future sources without\na crontab edit. Concurrency budget: `parallel × workers × 2 ≈ 32`\nconnections during the wave (each per-file worker opens its own\n2-connection pool). Stay under your Postgres `max_connections` setting\n**Avoid (legacy)**: separate `gbrain sync --source default` and\n`gbrain sync --source zion-brain` entries staggered by 5 minutes. They\nrequire manual deconfliction every time a new source is added, and a\nslow source can race a fast source on the legacy global `gbrain-sync`\nlock (v0.40.3.0+ uses per-source `gbrain-sync:<sourceId>` locks but the\nper-source cron pattern doesn't benefit from the parallelism that\n`--all --parallel` actually delivers)\n`gbrain doctor` surfaces the recommended line as a `sync_consolidation`\ncheck whenever it detects 2+ active sources. Paste-ready from there\nchecklist:ai-autonomy:U2NoZWR1bGluZyBqb2JzIGF0IHRoZSBzYW1lIG1pbnV0ZSAoOjAwIGZvciBldmVyeXRoaW5nKQpJbmxpbmUgMzAwMC13b3JkIHByb21wdHMgaW4gY3JvbiBqb2JzICh1c2Ugc2tpbGwgZmlsZSByZWZlcmVuY2VzKQpSdW5uaW5nIGNyb24gam9icyB3aXRob3V0IHRlc3Rpbmcgb24gMy01IGl0ZW1zIGZpcnN0CkpvYnMgdGhhdCBwcm9kdWNlIGRpZmZlcmVudCBvdXRwdXQgb24gcmUtcnVuIChub3QgaWRlbXBvdGVudCkKU2VuZGluZyBub3RpZmljYXRpb25zIGR1cmluZyBxdWlldCBob3VycyAoc2F2ZSB0byBoZWxkIHF1ZXVlIGluc3RlYWQpClNlcGFyYXRlIHBlci1zb3VyY2UgYGdicmFpbiBzeW5jIC0tc291cmNlIDxpZD5gIGNyb24gZW50cmllcyB3aGVuIGBnYnJhaW4gc3luYyAtLWFsbCAtLXBhcmFsbGVsIE4gLS13b3JrZXJzIE5gIHdvdWxkIHJlcGxhY2UgdGhlbSB3aXRoIG9uZSBsaW5lIHRoYXQgYXV0by1waWNrcy11cCBmdXR1cmUgc291cmNlcy4=",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.search", "publish", "shell.run"]
+        )
+        for (__key, __value) in __meridianProseResults_L55 {
             state.bind(__key, __value)
         }
 

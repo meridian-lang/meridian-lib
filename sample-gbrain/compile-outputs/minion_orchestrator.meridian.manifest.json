@@ -98,7 +98,7 @@
     "name" : "minion-orchestrator",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 47,
         "text" : "Contract"
@@ -106,170 +106,139 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 67,
+        "line" : 69,
         "text" : "Route the Request: Shell Job vs Subagent"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 82,
+        "line" : 84,
         "text" : "Shell Jobs (Deterministic Scripts)"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 87,
+        "line" : 89,
         "text" : "Preconditions (read before submitting your first shell job)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 110,
+        "line" : 112,
         "text" : "Submit (CLI, operator or autopilot)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 135,
+        "line" : 137,
         "text" : "Monitor (agents or operator)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 149,
+        "line" : 151,
         "text" : "Control (MCP-callable)"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 161,
+        "line" : 163,
         "text" : "Subagent Jobs (LLM Orchestration)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 171,
+        "line" : 173,
         "text" : "Phase 1: Submit"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 208,
+        "line" : 210,
         "text" : "Phase 2: Monitor"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 220,
+        "line" : 222,
         "text" : "Phase 3: Steer"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 232,
+        "line" : 234,
         "text" : "Phase 4: Lifecycle"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 244,
+        "line" : 246,
         "text" : "Phase 5: Review Results"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 253,
+        "line" : 255,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 283,
+        "line" : 285,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "inert",
+        "kind" : "tools",
         "level" : 2,
-        "line" : 291,
+        "line" : 294,
         "text" : "Tools Used"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 50,
-        "text" : "This single skill handles two lanes"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 54,
-        "text" : "When to route to Minions"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 60,
-        "text" : "Guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 115,
+        "line" : 117,
         "text" : "Command string form"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 218,
+        "line" : 221,
         "text" : "Progress includes"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 250,
+        "line" : 253,
         "text" : "Token accounting"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 255,
+        "line" : 257,
         "text" : "When reporting job status to the user"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 265,
+        "line" : 267,
         "text" : "When reporting completion"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 47,
         "lines" : [
-          "Minions is a Postgres-native job queue for durable, observable background work",
-          "This single skill handles two lanes:",
-          "Deterministic shell jobs (`gbrain jobs submit shell ...`)",
-          "LLM subagent jobs (`gbrain agent run ...`)",
-          "When to route to Minions: durable, observable work that must survive restarts,",
-          "fan out across many parallel tasks, or persist across sessions. Routing policy",
-          "is defined in `skills\/conventions\/subagent-routing.md` — the project default is",
-          "`pain_triggered` (native subagents first, Minions after specific pain signals",
-          "fire); Mode A (all-through-Minions) is opt-in",
-          "Guarantees:",
-          "Jobs survive gateway restart (Postgres-backed)",
-          "Every job has structured progress, token accounting, and session transcripts",
-          "Running agents can be steered mid-flight via inbox messages",
-          "Jobs can be paused, resumed, or cancelled at any time",
-          "Parent-child DAGs with configurable failure policies"
+          "checklist:ai-autonomy:RGV0ZXJtaW5pc3RpYyBzaGVsbCBqb2JzIChgZ2JyYWluIGpvYnMgc3VibWl0IHNoZWxsIC4uLmApCkxMTSBzdWJhZ2VudCBqb2JzIChgZ2JyYWluIGFnZW50IHJ1biAuLi5gKQ==",
+          "checklist:ai-autonomy:Sm9icyBzdXJ2aXZlIGdhdGV3YXkgcmVzdGFydCAoUG9zdGdyZXMtYmFja2VkKQpFdmVyeSBqb2IgaGFzIHN0cnVjdHVyZWQgcHJvZ3Jlc3MsIHRva2VuIGFjY291bnRpbmcsIGFuZCBzZXNzaW9uIHRyYW5zY3JpcHRzClJ1bm5pbmcgYWdlbnRzIGNhbiBiZSBzdGVlcmVkIG1pZC1mbGlnaHQgdmlhIGluYm94IG1lc3NhZ2VzCkpvYnMgY2FuIGJlIHBhdXNlZCwgcmVzdW1lZCwgb3IgY2FuY2VsbGVkIGF0IGFueSB0aW1lClBhcmVudC1jaGlsZCBEQUdzIHdpdGggY29uZmlndXJhYmxlIGZhaWx1cmUgcG9saWNpZXM="
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Route the Request: Shell Job vs Subagent",
-        "line" : 67,
+        "line" : 69,
         "lines" : [
           "table:decision:fCBDb25kaXRpb24gfCBBY3Rpb24gfAp8LS0tfC0tLXwKfCBVc2VyIGFza3MgZm9yIGRldGVybWluaXN0aWMgY29tbWFuZC9zY3JpcHQgcnVuIHwgU2hlbGwgam9iIChDTEk6IGBnYnJhaW4gam9icyBzdWJtaXQgc2hlbGwgLi4uYCkgfAp8IFVzZXIgYXNrcyB0byAicnVuIGluIG1pbmlvbnMiICsgZXhwbGljaXQgY29tbWFuZC9hcmd2IHwgU2hlbGwgam9iIChDTEksIGAtLXBhcmFtc2Agd2l0aCBgY21kYCBvciBgYXJndmApIHwKfCBVc2VyIGFza3MgZm9yIHJlc2VhcmNoL3JlYXNvbmluZy9pdGVyYXRpdmUgYWdlbnQgfCBTdWJhZ2VudCBqb2IgKENMSTogYGdicmFpbiBhZ2VudCBydW5gKSB8CnwgVXNlciBhc2tzIHRvIHN0ZWVyL3BhdXNlL3Jlc3VtZSBhbiBhZ2VudCB8IFN1YmFnZW50IGpvYiBsaWZlY3ljbGUgdG9vbHMgKE1DUC1jYWxsYWJsZSkgfAp8IFNpbmdsZSBzaW1wbGUgb3BlcmF0aW9uIHVuZGVyIH4zMHMgfCBDb25zaWRlciBpbmxpbmUgZXhlY3V0aW9uIGZpcnN0IHwKfCBOZWVkcyByZXN0YXJ0IGR1cmFiaWxpdHkvb2JzZXJ2YWJpbGl0eSB8IFN1Ym1pdCBhcyBNaW5pb24gam9iIHwKfCBQYXJhbGxlbCB3b3JrICgyKyBzdHJlYW1zKSB8IGBnYnJhaW4gYWdlbnQgcnVuIC0tZmFub3V0LW1hbmlmZXN0YCBvciBwYXJlbnQgKyBjaGlsZCBzdWJhZ2VudHMgfA==",
           "If intent is ambiguous, ask one clarification:",
@@ -280,7 +249,7 @@
       {
         "executes" : false,
         "heading" : "Shell Jobs (Deterministic Scripts)",
-        "line" : 82,
+        "line" : 84,
         "lines" : [
           "Use for reproducible command execution, ETL steps, cron work, and scriptable",
           "tasks where no LLM reasoning loop is needed"
@@ -288,37 +257,38 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Preconditions (read before submitting your first shell job)",
-        "line" : 87,
+        "line" : 89,
         "lines" : [
-          "**`GBRAIN_ALLOW_SHELL_JOBS=1` must be set on the worker environment.**",
+          "use judgment to follow the Preconditions (read before submitting your first shell job) guidance:",
+          "item: **`GBRAIN_ALLOW_SHELL_JOBS=1` must be set on the worker environment.**",
           "Without it, the shell handler refuses to register and submissions sit in",
           "`waiting` silently. Gate lives in `src\/core\/minions\/handlers\/shell.ts`",
-          "**Security:** flipping `GBRAIN_ALLOW_SHELL_JOBS=1` authorizes arbitrary",
+          "item: **Security:** flipping `GBRAIN_ALLOW_SHELL_JOBS=1` authorizes arbitrary",
           "command execution on the worker. On a shared queue, this is a remote code",
           "execution surface. Treat as privileged infrastructure authorization",
-          "**Execution mode — pick one:**",
-          "**Postgres + daemon:** `gbrain jobs work` runs a persistent worker that",
+          "item: **Execution mode — pick one:**",
+          "item: **Postgres + daemon:** `gbrain jobs work` runs a persistent worker that",
           "claims and executes jobs from the queue",
-          "**PGLite + --follow:** `gbrain jobs submit ... --follow` runs inline",
+          "item: **PGLite + --follow:** `gbrain jobs submit ... --follow` runs inline",
           "The daemon mode is not available on PGLite (exclusive file lock). See",
           "`docs\/guides\/minions-shell-jobs.md`",
-          "**MCP boundary:** shell-job submission is CLI-only. `submit_job name=\"shell\"`",
+          "item: **MCP boundary:** shell-job submission is CLI-only. `submit_job name=\"shell\"`",
           "over MCP throws an `OperationError` with code `permission_denied` (\"'shell'",
           "jobs cannot be submitted over MCP\") because `shell` is in `PROTECTED_JOB_NAMES`",
           "Agents CAN observe shell jobs via `get_job` \/ `list_jobs` \/ `get_job_progress`",
           "(not protected), but cannot submit them. Operator or autopilot submits;",
           "agent observes",
-          "**Verify setup:** after configuration, run `gbrain jobs stats` (CLI) to",
+          "item: **Verify setup:** after configuration, run `gbrain jobs stats` (CLI) to",
           "confirm the worker is registered and consuming the queue"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Submit (CLI, operator or autopilot)",
-        "line" : 110,
+        "line" : 112,
         "lines" : [
           "Shell jobs take their command via `--params` as a JSON object with `cmd` (string)",
           "or `argv` (array), plus `cwd` and optional `env`",
@@ -338,7 +308,7 @@
       {
         "executes" : false,
         "heading" : "Monitor (agents or operator)",
-        "line" : 135,
+        "line" : 137,
         "lines" : [
           "These operations are MCP-callable and safe for agent use:",
           "codeblock:plain:bGlzdF9qb2JzIC0tbmFtZSBzaGVsbCAtLXN0YXR1cyBhY3RpdmUKZ2V0X2pvYiBJRApnZXRfam9iX3Byb2dyZXNzIElE",
@@ -351,7 +321,7 @@
       {
         "executes" : false,
         "heading" : "Control (MCP-callable)",
-        "line" : 149,
+        "line" : 151,
         "lines" : [
           "codeblock:plain:Y2FuY2VsX2pvYiBpZD1JRApyZXBsYXlfam9iIGlkPUlE",
           "`replay_job` is not protected — only shell *submission* is. Agents can",
@@ -363,7 +333,7 @@
       {
         "executes" : false,
         "heading" : "Subagent Jobs (LLM Orchestration)",
-        "line" : 161,
+        "line" : 163,
         "lines" : [
           "Use for open-ended reasoning, tool-using research, and fan-out synthesis",
           "**User-facing entrypoint:** `gbrain agent run <prompt>` is the canonical way",
@@ -374,10 +344,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 1: Submit",
-        "line" : 171,
+        "line" : 173,
         "lines" : [
+          "use judgment to follow the Phase 1: Submit guidance:",
           "codeblock:plain:Z2JyYWluIGFnZW50IHJ1biAiUmVzZWFyY2ggQWNtZSBDb3JwIHJldmVudWUiIC0tdG9vbHMgInNlYXJjaCxxdWVyeSI=",
           "`--tools` accepts a comma-separated subset of `BRAIN_TOOL_ALLOWLIST` (see",
           "`src\/core\/minions\/tools\/brain-allowlist.ts`): `query`, `search`, `get_page`,",
@@ -392,14 +363,14 @@
           "`src\/core\/minions\/handlers\/subagent.ts` and",
           "`src\/core\/minions\/handlers\/subagent-aggregator.ts`",
           "Flags (from `src\/commands\/agent.ts`):",
-          "`--subagent-def <name>` — named subagent definition",
-          "`--model <id>` — override model",
-          "`--max-turns <N>` — cap the LLM loop",
-          "`--tools <csv>` — allow-listed brain tools (see above)",
-          "`--timeout-ms <N>` — hard timeout per job",
-          "`--fanout-manifest <file>` — N children + 1 aggregator",
-          "`--follow` \/ `--no-follow` — stream logs + wait (default on TTY)",
-          "`--detach` — submit and return immediately",
+          "item: `--subagent-def <name>` — named subagent definition",
+          "item: `--model <id>` — override model",
+          "item: `--max-turns <N>` — cap the LLM loop",
+          "item: `--tools <csv>` — allow-listed brain tools (see above)",
+          "item: `--timeout-ms <N>` — hard timeout per job",
+          "item: `--fanout-manifest <file>` — N children + 1 aggregator",
+          "item: `--follow` \/ `--no-follow` — stream logs + wait (default on TTY)",
+          "item: `--detach` — submit and return immediately",
           "Queue\/priority\/retry tuning is not exposed by `gbrain agent run`; submit the",
           "raw `subagent` handler via `gbrain jobs submit` (requires CLI trust) if you",
           "need those knobs"
@@ -407,20 +378,22 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 2: Monitor",
-        "line" : 208,
+        "line" : 210,
         "lines" : [
+          "use judgment to follow the Phase 2: Monitor guidance:",
           "codeblock:plain:bGlzdF9qb2JzIC0tc3RhdHVzIGFjdGl2ZSAgICAgICAgICAjIE1DUCDigJQgd2hhdCdzIHJ1bm5pbmc\/CmdldF9qb2IgSUQgICAgICAgICAgICAgICAgICAgICAgICAgIyBNQ1Ag4oCUIGZ1bGwgZGV0YWlscyArIGxvZ3MgKyB0b2tlbnMKZ2V0X2pvYl9wcm9ncmVzcyBJRCAgICAgICAgICAgICAgICAjIE1DUCDigJQgc3RydWN0dXJlZCBwcm9ncmVzcyBzbmFwc2hvdApnYnJhaW4gam9icyBzdGF0cyAgICAgICAgICAgICAgICAgICMgQ0xJIOKAlCBxdWV1ZSBoZWFsdGggZGFzaGJvYXJkCmdicmFpbiBhZ2VudCBsb2dzIElEIC0tZm9sbG93ICAgICAgIyBDTEkg4oCUIHN0cmVhbWluZyB0cmFuc2NyaXB0ICsgaGVhcnRiZWF0",
           "Progress includes: step count, total steps, message, token usage, last tool called"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 3: Steer",
-        "line" : 220,
+        "line" : 222,
         "lines" : [
+          "use judgment to follow the Phase 3: Steer guidance:",
           "Send a message to redirect a running agent:",
           "codeblock:plain:c2VuZF9qb2JfbWVzc2FnZSBpZD1JRCBwYXlsb2FkPXsiZGlyZWN0aXZlIjoiZm9jdXMgb24gcmV2ZW51ZSwgc2tpcCBoZWFkY291bnQifQ==",
           "The agent handler reads inbox messages on each iteration and injects them as",
@@ -432,7 +405,7 @@
       {
         "executes" : false,
         "heading" : "Phase 4: Lifecycle",
-        "line" : 232,
+        "line" : 234,
         "lines" : [
           "codeblock:plain:cGF1c2Vfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICAjIGZyZWV6ZSB3aXRob3V0IGxvc2luZyBzdGF0ZQpyZXN1bWVfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgcGljayB1cCB3aGVyZSBpdCBsZWZ0IG9mZgpjYW5jZWxfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgaGFyZCBzdG9wCnJlcGxheV9qb2IgaWQ9SUQgICAgICAgICAgICAgICAgICAgIyByZS1ydW4gd2l0aCBzYW1lIG9yIG1vZGlmaWVkIHBhcmFtcwpyZXBsYXlfam9iIGlkPUlEIGRhdGFfb3ZlcnJpZGVzPXsiZGVwdGgiOiJkZWVwIn0gICMgcmVwbGF5IHdpdGggY2hhbmdlcw==",
           "All lifecycle ops are MCP-callable"
@@ -440,10 +413,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 5: Review Results",
-        "line" : 244,
+        "line" : 246,
         "lines" : [
+          "use judgment to follow the Phase 5: Review Results guidance:",
           "codeblock:plain:Z2V0X2pvYiBJRCAgICAgICAgICAgICAgICAgICAgICAgICAjIHJlc3VsdCwgdG9rZW4gY291bnRzLCB0cmFuc2NyaXB0",
           "Token accounting: every job tracks `tokens_input`, `tokens_output`, `tokens_cache_read`",
           "Child tokens roll up to parent automatically on completion"
@@ -453,7 +427,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 253,
+        "line" : 255,
         "lines" : [
           "When reporting job status to the user:",
           "codeblock:plain:Sm9iICNJRCAobmFtZSkg4oCUIHN0YXR1cwpQcm9ncmVzczogc3RlcC90b3RhbCDigJQgbGFzdCBhY3Rpb24KVG9rZW5zOiBpbnB1dF9jb3VudCBpbiAvIG91dHB1dF9jb3VudCBvdXQgKCsgY2FjaGVfcmVhZCBjYWNoZWQpClJ1bnRpbWU6IFhzCkNoaWxkcmVuOiBOIHBlbmRpbmcsIE0gY29tcGxldGVk",
@@ -465,35 +439,31 @@
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 283,
+        "line" : 285,
         "lines" : [
-          "Don't spawn a Minion for a single search query (use search tool directly)",
-          "Don't fire-and-forget without checking results",
-          "Don't spawn > 5 concurrent agents without checking `gbrain jobs stats` first",
-          "For subagent work, don't use `sessions_spawn` with `runtime: \"subagent\"` when Minions is available (use `gbrain agent run` instead)",
-          "Don't poll `get_job` in a tight loop (use `get_job_progress` for lightweight checks)"
+          "checklist:ai-autonomy:RG9uJ3Qgc3Bhd24gYSBNaW5pb24gZm9yIGEgc2luZ2xlIHNlYXJjaCBxdWVyeSAodXNlIHNlYXJjaCB0b29sIGRpcmVjdGx5KQpEb24ndCBmaXJlLWFuZC1mb3JnZXQgd2l0aG91dCBjaGVja2luZyByZXN1bHRzCkRvbid0IHNwYXduID4gNSBjb25jdXJyZW50IGFnZW50cyB3aXRob3V0IGNoZWNraW5nIGBnYnJhaW4gam9icyBzdGF0c2AgZmlyc3QKRm9yIHN1YmFnZW50IHdvcmssIGRvbid0IHVzZSBgc2Vzc2lvbnNfc3Bhd25gIHdpdGggYHJ1bnRpbWU6ICJzdWJhZ2VudCJgIHdoZW4gTWluaW9ucyBpcyBhdmFpbGFibGUgKHVzZSBgZ2JyYWluIGFnZW50IHJ1bmAgaW5zdGVhZCkKRG9uJ3QgcG9sbCBgZ2V0X2pvYmAgaW4gYSB0aWdodCBsb29wICh1c2UgYGdldF9qb2JfcHJvZ3Jlc3NgIGZvciBsaWdodHdlaWdodCBjaGVja3Mp"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 291,
+        "line" : 294,
         "lines" : [
-          "Submit a background job — `submit_job` (MCP, non-protected names only; shell jobs are CLI-only, subagent jobs via `gbrain agent run`)",
-          "Get job details — `get_job` (MCP)",
-          "List jobs with filters — `list_jobs` (MCP)",
-          "Cancel a job — `cancel_job` (MCP)",
-          "Pause a job — `pause_job` (MCP)",
-          "Resume a paused job — `resume_job` (MCP)",
-          "Replay a completed\/failed job — `replay_job` (MCP)",
-          "Send sidechannel message — `send_job_message` (MCP)",
-          "Get structured progress — `get_job_progress` (MCP)",
-          "Queue stats — `gbrain jobs stats` (CLI; no MCP equivalent)"
+          "Submit a background job (submit_job)",
+          "Get job details (get_job)",
+          "List jobs with filters (list_jobs)",
+          "Cancel a job (cancel_job)",
+          "Pause a job (pause_job)",
+          "Resume a paused job (resume_job)",
+          "Replay a completed\/failed job (replay_job)",
+          "Send sidechannel message (send_job_message)",
+          "Get structured progress (get_job_progress)",
+          "Queue stats with `gbrain jobs stats` (shell.run)"
         ],
-        "role" : "inert"
+        "role" : "tools"
       }
     ],
     "tools" : "submit_job\nget_job\nlist_jobs\ncancel_job\npause_job\nresume_job\nreplay_job\nsend_job_message\nget_job_progress",
@@ -536,176 +506,197 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 621
+      "meridian_line" : 52,
+      "swift_line" : 584
+    },
+    {
+      "meridian_line" : 63,
+      "swift_line" : 595
+    },
+    {
+      "meridian_line" : 91,
+      "swift_line" : 606
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 626
+      "swift_line" : 644
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 665
+      "swift_line" : 649
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 670
+      "swift_line" : 688
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 709
+      "swift_line" : 693
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 714
+      "swift_line" : 732
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 753
+      "swift_line" : 737
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 758
+      "swift_line" : 776
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 797
+      "swift_line" : 781
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 802
+      "swift_line" : 820
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 841
+      "swift_line" : 825
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 846
+      "swift_line" : 864
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 885
+      "swift_line" : 869
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 890
+      "swift_line" : 908
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 929
+      "swift_line" : 913
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 934
+      "swift_line" : 952
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 973
+      "swift_line" : 957
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 978
+      "swift_line" : 996
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1017
+      "swift_line" : 1001
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1022
+      "swift_line" : 1040
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1061
+      "swift_line" : 1045
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1066
+      "swift_line" : 1084
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1105
+      "swift_line" : 1089
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1110
+      "swift_line" : 1128
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1149
+      "swift_line" : 1133
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1154
+      "swift_line" : 1172
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1193
+      "swift_line" : 1177
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1198
+      "swift_line" : 1216
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1237
+      "swift_line" : 1221
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1242
+      "swift_line" : 1260
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1281
+      "swift_line" : 1265
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1286
+      "swift_line" : 1304
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1325
+      "swift_line" : 1309
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1330
+      "swift_line" : 1348
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1369
+      "swift_line" : 1353
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1374
+      "swift_line" : 1392
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1413
+      "swift_line" : 1397
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1418
+      "swift_line" : 1436
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1457
+      "swift_line" : 1441
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1462
+      "swift_line" : 1480
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1501
+      "swift_line" : 1485
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1506
+      "swift_line" : 1524
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1529
     }
   ],
   "tools_used" : [
-
+    "submit_job",
+    "get_job",
+    "list_jobs",
+    "cancel_job",
+    "pause_job",
+    "resume_job",
+    "replay_job",
+    "send_job_message",
+    "get_job_progress",
+    "shell.run"
   ],
   "workflows" : [
     {

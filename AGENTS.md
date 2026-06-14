@@ -915,6 +915,63 @@ Full guidance: `docs/13_SKILL_MD_PORTING.md` (edit-budget callout after item 4).
 > may still use the bare form (e.g. `D17`); treat any bare `D<N>` outside
 > `meridian-handoff/docs/11_DECISIONS.md` as `SkillMD-D<N>`.
 
+### 2026-06-14 — Inert-reduction audit + deterministic SKILL.md procedure lowering
+
+The gbrain inert-reduction pass now separates **operational inert** from valid
+reference/template inert. `SkillMetrics` reports `InertSection` details with a
+category (`operational-procedure`, `operational-content`, `normative-contract`,
+`template`, `tools-metadata`, `convention-reference`, `reference-documentation`,
+`unclassified`), and `SkillDeviation` / `skill-deviation --batch --index` surface
+`Operational inert`, `Unclassified inert`, and category summaries. Treat
+`unclassified` as a porting bug; total inert is allowed to remain high when the
+content is genuine documentation, examples, templates, or convention references.
+
+`SkillMigrator` is now content-aware before marking sections inert. Checkable
+`Contract`/`Anti-Patterns` bodies are left executable; mixed or fuzzy contracts
+stay inert-with-role. Unknown headings are aliased to `procedure` only when every
+body group is a deterministic surface: shell fences, whole-line or embedded
+backticked commands, explicit table/checklist markers, checkable task-list items,
+or choice gates. Mixed prose/procedure sections must still be split structurally.
+
+`StatementParser` now handles labelled/listed embedded backticked commands
+(`**Verify** - \`gbrain doctor --json\`` → `shell.run` with annotation), choice
+gates with indented numbered/bulleted/quoted options, and choice-result branches
+(`if yes:`, `if no:`, `if the user agrees/declines:`,
+`if the user picks/selects/chooses N:`). Primitive statements beginning with
+`emit`/`bind`/`invoke`/`if`/etc. are guarded so their backticks are not mistaken
+for shell commands.
+
+Corpus follow-through: fixed the `Tools Used` regressions, removed an executable
+`Post-import` inert marker, expanded `brain.merconfig` phrase wrappers and
+`brain.merrules` section aliases, regenerated all `sample-gbrain/compile-outputs`
+and `sample-gbrain/migration-deviations`. Validation: full `swift test`,
+`./scripts/coverage.swift --gate`, and
+`MERIDIAN_GBRAIN_TYPECHECK=1 swift test --filter SampleGbrainCodegenTests` green.
+
+**2026-06-14 follow-up — operational inert is now zero.** `SkillMetrics` accepts
+a `Rulebook` and `skill-deviation` autodiscovers/merges `.merrules`, so
+rulebook-routed executable headings are not false-positive inert. Per-report
+`### Inert section details` lists each inert heading with category and reason.
+Taxonomy now classifies reference/template/tools/convention sections before
+command/table/checklist shape detection; command examples in docs are not
+operational residue.
+
+The gbrain corpus was tightened so every operational or normative inert section
+is now explicit execution: fuzzy `Contract` / `Anti-Patterns` sections are
+`(( role: procedure ))` with `!!! checklist (( ai-autonomy ))`; remaining
+operational prose sections are `(( role: procedure ))` with generated
+`use judgment to follow … guidance:` wrappers. The trade-off is deliberate:
+migration-deviation similarity drops, but the report guarantee is stronger:
+`Operational inert: 0`, `Unclassified inert: 0`; remaining inert is only
+reference docs/templates/tools metadata.
+
+Parser pitfall: `!!! checklist (( ai-autonomy ))` must keep Markdown task-list
+continuations in the sentinel. `IndentTokenizer.collapseChecklist` now preserves
+indented continuation lines and blank-separated task items. The generated
+`use judgment to follow the … guidance:` form intentionally collects until the
+next heading, because tokenizer normalization can otherwise outdent Markdown list
+or code-fence prose inside a wrapped section.
+
 ### 2026-06-13 — Lexicon centralization & dedup: FixedGrammar, relational sweep, `=== sections ===` data seed, `=== triggers ===` family
 
 The surface-vocabulary rule (§3 "No hardcoded English-surface vocabulary") is now

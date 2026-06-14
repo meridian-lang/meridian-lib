@@ -6,15 +6,7 @@ import Foundation
 import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
-private func meridianStringify(_ v: Value) -> String {
-    switch v {
-    case .string(let s): return s
-    case .number(let n): return "\(n)"
-    case .boolean(let b): return b ? "true" : "false"
-    case .null: return ""
-    default: return v.description
-    }
-}
+private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -589,6 +581,37 @@ public struct SkillpackCheckInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SkillpackCheckInput", parameters: [:])
 
+        // L31
+        let __meridianProseResults_L31 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- **`healthy`** (bool): true if no action needed\n- **`summary`** (string): one-line summary safe to quote in a briefing\n- **`actions`** (string[]): every remediation command. If non-empty, run them\n- **`doctor`**: full `gbrain doctor --fast --json` output (filesystem checks)\n- **`migrations`**: applied/pending/partial counts from `apply-migrations --list`",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L31 {
+            state.bind(__key, __value)
+        }
+        // L39
+        let __meridianProseResults_L39 = try await runtime.executeAutonomousLoop(
+            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- `0` — healthy, nothing to do\n- `1` — action needed. Read `actions[]` and execute\n- `2` — could not determine (binary crash or missing subcommand). Investigate",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            maxSteps: 32,
+            replanAfterFailures: 3
+        )
+        for (__key, __value) in __meridianProseResults_L39 {
+            state.bind(__key, __value)
+        }
+        // L45
+        let __meridianProseResults_L45 = try await runtime.executeProsePlan(
+            prose: "follow the When to run guidance\nitem: **Daily cron** (e.g. your OpenClaw's `morning-briefing`): `gbrain skillpack-check --quiet`\nExit code alone tells you if anything is wrong; surface a one-liner in the\nbriefing only when exit != 0. No JSON noise in happy-path briefings\nitem: **On demand**: `gbrain skillpack-check` for the full JSON when debugging\nitem: **In a CI pipeline**: same pattern — exit code gates, JSON is the evidence\nuse judgment to follow the Action needed (`healthy: false`) guidance:\nThe `actions[]` array contains the commands to run, in order. Execute them:\ncodeblock:bash:Zm9yIGNtZCBpbiAkKGVjaG8gIiRSRVBPUlQiIHwganEgLXIgJy5hY3Rpb25zW10nKTsgZG8KICBldmFsICIkY21kIgpkb25l\nCommon `actions[]` entries and what they mean:\nitem: `gbrain apply-migrations --yes` — A migration is pending or half-finished\nRun this (it's idempotent). If it exits `status: \"partial\"`, the host has\nnon-builtin cron handlers that need plugin registration — follow\n`skills/migrations/v0.11.0.md`\nitem: `gbrain embed --stale` — Embeddings are stale\nitem: `gbrain check-backlinks --fix` — Dead links or missing back-links\nitem: Free-text action (no `Run:` prefix in the source message) — agent judgment\nneeded. Quote it in the report for the user\nchecklist:ai-autonomy:4p2MIFJ1bm5pbmcgd2l0aG91dCBgLS1xdWlldGAgaW4gYSBjcm9uIHRoYXQgZW1haWxzIGl0cyBvdXRwdXQg4oCUIHlvdSdsbCBnZXQgdGhlIGZ1bGwgSlNPTiBibG9iIGluIGV2ZXJ5IGRhaWx5IGVtYWlsLiBVc2UgYC0tcXVpZXRgIGluIGNyb25zLgrinYwgSWdub3JpbmcgZXhpdCBjb2RlIDIuIEEgY3Jhc2hlZCBkb2N0b3IgaXMgd29yc2UgdGhhbiBhIGZhaWxpbmcgY2hlY2sgYmVjYXVzZSB5b3UgZG9uJ3QgZXZlbiBrbm93IHdoYXQncyB3cm9uZy4K4p2MIFJ1bm5pbmcgb24gZXZlcnkgY2hhdCB0dXJuLiBPbmNlIHBlciBob3VyIChvciBvbiB1c2VyIHJlcXVlc3QpIGlzIHBsZW50eQrinYwgVHJlYXRpbmcgd2FybmluZ3MgYXMgZmFpbHVyZXMuIE9ubHkgYGZhaWxgIHN0YXR1cyBuZWVkcyBhY3Rpb247IGB3YXJuYCBpcyBpbmZvcm1hdGlvbmFsLg==",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L45 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

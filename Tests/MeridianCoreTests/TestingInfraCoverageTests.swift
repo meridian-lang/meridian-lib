@@ -82,4 +82,19 @@ struct SwiftPMPackageRunnerCoverageTests {
         let fail = try runner.runProcess(["false"])
         #expect(fail.exitCode != 0)
     }
+
+    @Test("run-driver package manifest uses the path dependency identity")
+    func runDriverManifestIdentity() throws {
+        let runner = try SwiftPMPackageRunner.temporary(prefix: "mer-cov")
+        defer { try? runner.remove() }
+        let repo = FileManager.default.temporaryDirectory.appendingPathComponent("meridian checkout with spaces")
+        let workflow = IRWorkflow(name: "run", parameters: [], body: IRBlock(statements: [.complete(CompleteIR())]))
+        try runner.writeMeridianRunDriverPackage(
+            repoRoot: repo,
+            generatedSource: "import MeridianRuntime\n",
+            workflow: workflow
+        )
+        let manifest = try runner.readFile("Package.swift")
+        #expect(manifest.contains("package: \"meridian checkout with spaces\""), Comment(rawValue: manifest))
+    }
 }
