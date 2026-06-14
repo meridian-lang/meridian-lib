@@ -84,15 +84,28 @@ let package = Package(
             path: "Sources/MeridianTools"
         ),
 
-        // MARK: - MeridianCLI — meridian executable (Week 3+)
-        .executableTarget(
-            name: "MeridianCLI",
+        // MARK: - MeridianCLIKit — CLI command library (Week 3+)
+        // Holds every subcommand body + shared CLI support so the logic is
+        // unit-testable in-process (an executable target's symbols can't be
+        // imported by a test target). `MeridianCLI` is a thin @main shell.
+        .target(
+            name: "MeridianCLIKit",
             dependencies: [
                 "MeridianCore",
                 "MeridianRuntime",
                 "MeridianTools",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .product(name: "SwiftFormat", package: "swift-format")
+            ],
+            path: "Sources/MeridianCLIKit"
+        ),
+
+        // MARK: - MeridianCLI — meridian executable (Week 3+)
+        .executableTarget(
+            name: "MeridianCLI",
+            dependencies: [
+                "MeridianCLIKit",
+                .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
             path: "Sources/MeridianCLI"
         ),
@@ -152,6 +165,11 @@ let package = Package(
             name: "MeridianToolsTests",
             dependencies: ["MeridianTools", "MeridianTestKit", "MeridianCore"],
             path: "Tests/MeridianToolsTests"
+        ),
+        .testTarget(
+            name: "MeridianCLITests",
+            dependencies: ["MeridianCLIKit", "MeridianCore", "MeridianRuntime"],
+            path: "Tests/MeridianCLITests"
         ),
         // MeridianCLI is exercised end-to-end via integration tests
         // (`Tests/MeridianIntegrationTests`) and the `examples/*.meridian.test`

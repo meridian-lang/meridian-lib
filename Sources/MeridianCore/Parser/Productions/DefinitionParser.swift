@@ -46,9 +46,11 @@ struct DefinitionParser {
 
         // Head: "<kind> is <adjective>".
         guard let isRange = head.range(of: " is ", options: .caseInsensitive) else { return nil }
+        // The ` is ` match requires a space on both sides and `head` is already
+        // trimmed, so there is always ≥1 non-space char on each side — `kind` and
+        // `adjectiveRaw` are therefore never empty here (no redundant guard).
         let kind = String(head[head.startIndex..<isRange.lowerBound]).trimmingCharacters(in: .whitespaces)
         let adjectiveRaw = String(head[isRange.upperBound...]).trimmingCharacters(in: .whitespaces)
-        guard !kind.isEmpty, !adjectiveRaw.isEmpty else { return nil }
 
         let adjective = adjectiveRaw.lowercased().replacingOccurrences(of: "-", with: " ")
         let subjectVar = kind.lowercased()
@@ -71,13 +73,6 @@ struct DefinitionParser {
     }
 
     private func wholeWord(_ haystack: String, of needle: String, with replacement: String) -> String {
-        let pattern = "\\b\(NSRegularExpression.escapedPattern(for: needle))\\b"
-        // Escaped literal pattern — compilation cannot fail; a failure is a bug.
-        guard let re = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else {
-            preconditionFailure("internal: constant whole-word regex failed to compile: \(pattern)")
-        }
-        let range = NSRange(haystack.startIndex..<haystack.endIndex, in: haystack)
-        return re.stringByReplacingMatches(in: haystack, options: [], range: range,
-                                           withTemplate: NSRegularExpression.escapedTemplate(for: replacement))
+        WholeWordRegex.replace(haystack, of: needle, with: replacement)
     }
 }

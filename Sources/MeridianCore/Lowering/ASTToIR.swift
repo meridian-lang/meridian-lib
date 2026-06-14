@@ -1268,15 +1268,7 @@ public struct ASTToIR {
     /// argument substitution to avoid mangling words like "ordered" when
     /// substituting "order".
     private func wholeWordReplace(_ haystack: String, of needle: String, with replacement: String) -> String {
-        guard !needle.isEmpty else { return haystack }
-        let pattern = "\\b\(NSRegularExpression.escapedPattern(for: needle))\\b"
-        // The pattern is built from an escaped literal, so compilation cannot
-        // fail. A failure here is a compiler bug, not a recoverable condition.
-        guard let re = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else {
-            preconditionFailure("internal: constant whole-word regex failed to compile: \(pattern)")
-        }
-        let range = NSRange(haystack.startIndex..<haystack.endIndex, in: haystack)
-        return re.stringByReplacingMatches(in: haystack, options: [], range: range, withTemplate: NSRegularExpression.escapedTemplate(for: replacement))
+        WholeWordRegex.replace(haystack, of: needle, with: replacement)
     }
 
     /// Render an ExpressionAST back to a text fragment for phrase text substitution.

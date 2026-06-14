@@ -58,15 +58,7 @@ public struct MeridianLinter {
     }
 
     private func containsAnaphora(_ text: String) -> Bool {
-        let lower = text.lowercased()
-        return lexicon.anaphoraMarkers.contains { marker in
-            let pattern = "\\b" + NSRegularExpression.escapedPattern(for: marker) + "\\b"
-            guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else {
-                return false
-            }
-            let range = NSRange(lower.startIndex..<lower.endIndex, in: lower)
-            return regex.firstMatch(in: lower, range: range) != nil
-        }
+        lexicon.anaphoraMarkers.contains { WholeWordRegex.contains($0, in: text) }
     }
 
     private func paraphraseHint(for statement: String) -> String? {

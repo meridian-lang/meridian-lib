@@ -12,10 +12,6 @@ public enum ValueError: Error, Sendable {
 public extension Value {
     /// Attempt to coerce this value to the given Swift type.
     func coerce<T>(to type: T.Type) throws -> T {
-        // .opaque fast-path
-        if let v = (self as? AnyHashableSendable)?.unwrap(as: T.self) {
-            return v
-        }
         switch self {
         case .opaque(let box):
             if let v = box.unwrap(as: T.self) { return v }

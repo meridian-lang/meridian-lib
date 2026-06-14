@@ -97,7 +97,9 @@ meridian/
 │   │   │   └── ManifestEmitter.swift
 │   │   └── Diagnostics/ParserTrace.swift
 │   │
-│   ├── MeridianCLI/
+│   ├── MeridianCLI/          ← thin @main shell (CLI.swift only)
+│   ├── MeridianCLIKit/       ← CLI command library (testable; imported by MeridianCLI)
+│   │   ├── CLISupport.swift  ← DependencyDiscovery + diagnostics/trace helpers
 │   │   └── Commands/         ← one file per subcommand:
 │   │       ├── CompileCommand.swift        (compile → Swift + manifest)
 │   │       ├── RunCommand.swift            (compile + execute via SwiftPM)
@@ -656,6 +658,32 @@ swift test --filter Phase3ForcingFunction
 swift test --filter SwiftEmitterTests
 swift test --filter ParserTraceTests
 ```
+
+### Code coverage gate
+
+Coverage is enforced per-file by `scripts/coverage.swift` (Swift shebang script —
+no `.sh`, no CI workflow). `docs/coverage/coverage-exclusions.md` is the single
+reviewed source of truth for every file allowed below 100% region coverage; each
+carries a justified regression floor. `docs/coverage/coverage-baseline.md` is the
+generated report (do not hand-edit).
+
+**Policy:** code requiring a live external thing (subprocess, network, SwiftPM
+build, LLM provider) is exempt from 100% and keeps a permanent relaxed floor;
+**everything reachable in-process must aim for 100%** — its floor is a temporary
+target, ratcheted up as tests land and removed once the file hits 100%. Run/enforce:
+
+```bash
+scripts/coverage.swift --gate            # build + test + enforce
+scripts/coverage.swift --no-test --gate  # enforce, reusing existing .profdata
+```
+
+To raise coverage: find unexecuted lines with `xcrun llvm-cov show … | rg '\|\s+0\|'`,
+add a direct unit test (construct IR/context and call the emitter/evaluator —
+faster and more targeted than a full compile), then re-baseline and tighten the
+file's floor. **Pitfall:** coverage is measured per *file* and recompiling the
+test binary can shift a `Sources/` file's ratio a fraction in either direction —
+always re-baseline after changing the test set and set floors from the fresh run.
+Full guide: [`docs/coverage/README.md`](docs/coverage/README.md).
 
 ### Phase 3 forcing function
 

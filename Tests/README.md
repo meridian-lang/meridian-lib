@@ -140,15 +140,44 @@ a closure. Pass `cap.trace` into the compiler; call `cap.lines()` after.
 
 ---
 
+## Code coverage
+
+Coverage is measured and **enforced** per-file by `scripts/coverage.swift` (a
+Swift shebang script — no `.sh`, no CI workflow). Every in-scope
+`Sources/Meridian*` file has a required floor (100% by default); the gate fails
+the moment any file drops below it. `docs/coverage/coverage-exclusions.md` is the
+reviewed list of files allowed below 100%, each with a justification and floor;
+`docs/coverage/coverage-baseline.md` is the generated report.
+
+**Policy:** code that needs a live external thing (subprocess, network, SwiftPM
+build, LLM provider) is exempt from 100% and keeps a permanent relaxed floor;
+everything reachable in-process aims for 100% — its floor is a temporary target,
+ratcheted up as tests land and removed once the file reaches 100%.
+
+```bash
+scripts/coverage.swift --gate            # build + test + enforce
+scripts/coverage.swift --no-test --gate  # enforce, reusing existing .profdata
+scripts/coverage.swift --html .coverage-html   # clickable drill-down
+```
+
+To raise a number: find unexecuted lines with
+`xcrun llvm-cov show … | rg '\|\s+0\|'`, add a direct unit test (construct
+IR/context and call the emitter/evaluator — faster and more targeted than a full
+compile; see `SwiftEmitterCoverageTests`, `AssertionsCoverageTests`,
+`MeridianToolsCoverageTests`), then re-baseline and tighten the file's floor.
+
+**Full guide — how & why, the pipeline, the two files, the floor buckets, and the
+per-file-measurement pitfall — lives in
+[`docs/coverage/README.md`](../docs/coverage/README.md).**
+
+---
+
 ## CI expectations
 
-The CI matrix runs `swift test` on:
-
-- macOS 14 (minimum deployment target)
-- macOS 15 (latest)
-
-All 128+ tests must pass before merging to `main`. The Phase 3 forcing
-function is the most important gate.
+`swift test` must pass with zero failures before merging to `main`, on macOS 14
+(minimum deployment target) and macOS 15 (latest). The Phase 3 forcing function
+is the most important behavioral gate; `scripts/coverage.swift --gate` is the
+coverage gate (see [Code coverage](#code-coverage) above).
 
 ---
 

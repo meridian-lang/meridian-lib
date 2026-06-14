@@ -27,6 +27,8 @@ struct BuiltinToolsTests {
                 only in runtime: \(Set(MeridianTools.allToolIDs).subtracting(BuiltinToolCatalog.ids).sorted())
                 """))
         #expect(BuiltinToolCatalog.ids.count == BuiltinToolCatalog.idSet.count)
+        #expect(BuiltinToolCatalog.contains("http.get"))
+        #expect(!BuiltinToolCatalog.contains("definitely.not.a.tool"))
     }
 
     @Test("json.parse and json.stringify round-trip basic values")

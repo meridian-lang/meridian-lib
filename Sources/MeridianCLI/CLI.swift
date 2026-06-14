@@ -2,9 +2,7 @@
 // Full implementation in Phase 3 (compile) and Phase 6 (all subcommands).
 
 import ArgumentParser
-import MeridianCore
-import MeridianRuntime
-import MeridianTools
+import MeridianCLIKit
 
 @main
 struct MeridianCLI: AsyncParsableCommand {

@@ -1,6 +1,7 @@
 import Foundation
 import Testing
 @testable import MeridianCore
+import MeridianRuntime
 
 @Suite("Diagnostic")
 struct DiagnosticTests {

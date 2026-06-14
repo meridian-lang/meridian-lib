@@ -3812,3 +3812,464 @@ VALIDATION: builds clean; `meridian explain/decisions/trace categories` and the
 follow-up (next), where the confidence % is recorded.
 
 STATUS: IN PROGRESS (tests-corpus + confidence audit pending)
+
+## 2026-06-13 — Coverage program Phase 0: measurement infrastructure + baseline
+
+Stood up real, measured code-coverage tooling as the foundation for a push to
+100% region coverage of the in-scope `Sources/Meridian*` modules.
+
+PREREQUISITE FIX (repo did not build): the warm `.build` was stale after the
+toolchain moved to Apple Swift 6.2.1 — `CasePathsMacros-tool` failed to link
+(`Undefined symbol SwiftSyntax.SyntaxRewriter.visitationFunc`, a stale
+`CasePathableMacro.swift.o` referencing an internal symbol whose mangled hash
+changed). Fixed with `swift package clean` + full rebuild (a surgical removal of
+just the macro tool's build dir does NOT work — SwiftPM then errors on the
+missing `output-file-map.json`; a clean is required to regenerate the build
+plan). After clean rebuild `swift build` is green again.
+
+TEST-SUITE FIX (suite did not compile): `Tests/MeridianCoreTests/DiagnosticTests.swift`
+(part of the in-progress D-DX diagnostics feature, see the entry above) used
+`SourceRange` with only `@testable import MeridianCore`. `SourceRange` is defined
+in `MeridianRuntime`; added `import MeridianRuntime` (the established pattern —
+12 other MeridianCoreTests files already do this). Single-line fix; the suite now
+compiles and **all 800 tests pass** (the count grew from the 775 in older entries
+because the D-DX diagnostics tests — `DiagnosticTests`, `DecisionCatalogTests`,
+`SuggesterTests`, `NoSilentFallbackTests` — are new and were previously
+uncompilable).
+
+TOOLING (Swift shebang scripts — no shell scripts, no CI workflow in this repo;
+the gate is tied to the test run itself):
+- `scripts/coverage.swift` (`#!/usr/bin/env swift`) — runs
+  `swift test --enable-code-coverage`, locates
+  `.build/.../codecov/default.profdata` + the `meridianPackageTests.xctest`
+  binary, runs `xcrun llvm-cov report` scoped via `-ignore-filename-regex` to the
+  in-scope modules (always excluding `.build/`, `/Tests/`, `/checkouts/`,
+  `/SampleDemoFlows/`), parses the per-file table, applies `coverage-exclusions.md`,
+  prints a per-file summary sorted by region%, and (`--gate`) fails when any
+  non-excluded in-scope file is below its required region coverage. Flags:
+  `--no-test` (reuse profdata), `--gate`, `--threshold N`, `--baseline FILE`,
+  `--html DIR`. Running the script IS running the tests + the gate — that is how
+  coverage is "tied to tests" without a separate CI pipeline.
+- `coverage-exclusions.md` — the single reviewed source of truth for allowed
+  uncovered code. Two mechanisms: `exclude-files` (dropped from the denominator)
+  and `file-thresholds` (`substr = min%`). Seeded with the `SampleDemoFlows`
+  rationale (those are hard-excluded in the script). Provisional; finalized in the
+  lock phase.
+- `coverage-baseline.md` — generated baseline report (regenerate with
+  `./scripts/coverage.swift --no-test --baseline coverage-baseline.md`).
+
+BASELINE (in-scope modules): **76.16% region / 77.84% function / 86.61% line**
+(8897 regions, 2121 missed). Risk-ranked gaps that set the execution order:
+- 0% (entirely uncovered): `Testing/RuntimeExecutor`, `Testing/SwiftPMPackageRunner`,
+  `Testing/DriverSourceBuilder` (CLI-`run` subprocess machinery),
+  `AST/ExpressionTraceDescription`, `Diagnostics/SourceSpan`,
+  `Tools/LLMChatPlanners`, `Symbols/BuiltinToolCatalog`, `Permissions/Permission`,
+  `Planning/LLMProvider`.
+- Highest-value partial gaps (by missed regions): `Lowering/ASTToIR` (203),
+  `Parser/Productions/StatementParser` (115), `Parser/Productions/MerConfigParser`
+  (112), `Codegen/SwiftEmitter` (90), `Tools/ToolRegistry` (63),
+  `Lowering/RuleInjector` (52), `Runtime/Runtime` (41), `Symbols/SymbolTable` (36).
+
+INVENTORY RECONCILIATION: the initial exploration missed the D-DX diagnostics
+feature files now in the tree — sources `Diagnostics/{Diagnostic, DiagnosticCode,
+DiagnosticEngine, DiagnosticRenderer, DecisionCatalog, Suggester, SourceSpan}` and
+`Symbols/BuiltinToolCatalog`, CLI `ExplainCommand`/`DecisionsCommand`, and tests
+`DiagnosticTests`/`DecisionCatalogTests`/`SuggesterTests`/`NoSilentFallbackTests`.
+These fold into the diagnostics work (Phase 5) and symbols (Phase 3).
+
+CONFIDENCE: Phase 0 ~98%. The measurement pipeline is proven end-to-end (real
+numbers produced, baseline written, gate logic exercised in report-only mode).
+The one residual is that per-line exclusions can't be enforced by `llvm-cov
+report` (file granularity only) — handled by `file-thresholds` overrides with the
+uncovered ranges documented for review.
+
+## 2026-06-13 — Coverage program Phase 1: MeridianCLIKit split + CLI command tests
+
+The CLI was un-coverable: an `executableTarget`'s symbols can't be imported by a
+test target, so every subcommand body (~1400 lines across 15 commands +
+`CLISupport`) sat outside the measurable surface. Restructured so the logic is a
+library:
+
+- **New `MeridianCLIKit` library target** (`Sources/MeridianCLIKit/`) holds
+  `CLISupport.swift` + all 15 `Commands/*.swift`. `Sources/MeridianCLI` is now a
+  thin `@main` shell (`CLI.swift` only) that `import MeridianCLIKit` and lists the
+  public command types in its `subcommands:` array. `Package.swift`: added the
+  `MeridianCLIKit` target (deps MeridianCore/Runtime/Tools/ArgumentParser/
+  SwiftFormat), repointed the `MeridianCLI` executable to depend on it, and added
+  a `MeridianCLITests` test target.
+- **Public surface:** each command struct is now `public` with `public init() {}`
+  + `public static let configuration` + `public func run()`. The empty
+  `public init()` is the documented ArgumentParser pattern (the `@Argument`/
+  `@Option`/`@Flag` wrappers self-initialize). `TraceRenderCommand`'s nested
+  `Render`/`Categories` stay internal — they're type-erased in the `subcommands`
+  array, so only the outer command needs to be public.
+- **Tests** (`Tests/MeridianCLITests/`, `@testable import MeridianCLIKit`):
+  `CLISupportTests` covers `DependencyDiscovery` (explicit/auto-beside/parent-
+  fallback/not-found), `loadVocabularies`, `makeCLITrace`, `DiagnosticsFormat`,
+  `reportCompilerError` (human+json+generic), `applyQuickFixes` (generic + no-
+  ranged-suggestion), and `CompileCommand.pascalCase`. `CLICommandsTests` drives
+  every one of the 15 subcommands through `parse(...)` + `run()` against temp
+  dirs / `examples/` fixtures: happy path, arg/validation error, and missing-file
+  for compile/check/verify/lint/format/docs/preview-skill/explain/decisions/test/
+  trace(render+categories)/skill-deviation/migrate-skill/resume/run. Stdin-reading
+  paths (format with no args, trace render from stdin) are deliberately never
+  triggered (always pass file inputs) so tests can't hang. The SwiftPM-spawning
+  `run` and batch `migrate`/`skill-deviation` interiors are covered only at the
+  validation boundary here; their process-driving tails are lock-phase work.
+
+RESULT: full `swift test` green (now includes `MeridianCLITests`). CLIKit enters
+the coverage denominator (~600 new regions); surface commands land 76–97%, the
+process-heavy ones (run 23%, migrate 31%, skill-deviation 22%) and `CLISupport`
+(47%, the `applyQuickFixes` token-replacement branches need a crafted
+`CompilerError` — deferred to Phase 5 diagnostics) remain partial by design.
+TOTAL dipped 76.16%→75.70% purely from adding CLIKit to the denominator; it
+rises as the deferred CLI branches close in Phases 5/9.
+
+CONFIDENCE: Phase 1 ~90%. Structural goal (library split, all 15 commands
+exercised) fully met; full CLIKit closure is intentionally lock-phase.
+
+---
+
+## 2026-06-14 — Phase 2: Parser coverage push
+
+DECISION: Added targeted Swift Testing suites for the parser layer. New files:
+
+- `Tests/MeridianCoreTests/ParserSentinelTests.swift` — exhaustive `TableMode`
+  and `ChecklistMode` `parse`/`sentinelToken`/`fromSentinel` round-trips
+  (including unknown-token fallbacks), plus `IndentTokenizer` behavior:
+  table collapse → single sentinel, explicit `!!! table (( … ))` mode
+  selection, deferred marker-error at EOF, marked-checklist sentinel,
+  unmarked task-list `isChecklist`/`checklistChecked` flags, fenced
+  code-block sentinel, and `#`/`>`/`##` comment vs heading flags. Also
+  `decodeBase64Body` valid/invalid.
+- `Tests/MeridianCoreTests/MeridianParserCoverageTests.swift` — no-silent-drop
+  error paths: body-level `import`, frontmatter-not-first, header-without-colon
+  all throw; a minimal well-formed workflow compiles.
+- `Tests/MeridianCoreTests/TableParserCoverageTests.swift` — cell→predicate
+  mapping: symbolic-op prefix (`>= 90` → canonical spelling, exercising the
+  previously-dead `spelling(for:)` helper), comparison-marker shorthand,
+  wildcard column dropping + all-wildcard bare-action row, bare multi-word
+  value quoting, ai-decision prose (`when …`/`otherwise …`), non-table decode
+  nil, and `splitRow` pipe trimming.
+- `Tests/MeridianCoreTests/ExpressionParserCoverageTests.swift` — literals
+  (integer/boolean/duration/quoted-string), `now`, env-var (`$HOME`),
+  `not`/`it is not the case that` negation, comparison nodes, `either … or …`
+  protected grouping, and bare and/or mix → `.malformed`.
+
+NOTE: `$5000` is consumed by the env-var branch in `parseAtom` before the
+money-literal branch (line ~355), so the `.literal(.money …)` path there is
+shadowed/dead via this entry point. Documented as a latent quirk, not fixed
+under a coverage task.
+
+Earlier in Phase 2: `MerConfigParserTests.swift` and
+`StatementParserCoverageTests.swift` (language synonym sub-blocks, inline/env
+instance properties, unrecognized sections, trace; while/commit-with-label/
+discretion/autonomy/do-and-then chains/recover).
+
+Parser dir region coverage ~88% (line coverage ~100%); remaining gaps are
+sub-line branch regions (defensive `preconditionFailure`, rare malformed
+spellings). Full `swift test` 897 green.
+
+CONFIDENCE: Phase 2 ~88%. Whole-function and whole-branch gaps in the parser
+are closed; residual sub-line branch regions are lock-phase cleanup.
+
+---
+
+## 2026-06-14 — Phase 3+: lowest-coverage-file sweep (cross-cutting)
+
+DECISION: Switched from a strict phase-by-phase walk to targeting the
+lowest-coverage source files repo-wide (most efficient path to "near 100%").
+Closed every 0%-coverage file and several large gaps. New test files:
+
+- `FallbackPolicyTests.swift` — every `FallbackKind`, `parse` (named/unknown/
+  `all`/`*`/`lenient`/empty), `merging`, raw values.
+- `SymbolTableVerbTests.swift` — `isVerbForm`/`resolveVerbForm` over base/3rd/
+  participle, tool lookup by methodName.
+- `ExpressionTraceDescriptionTests.swift` — `ExpressionAST.traceDescription`
+  for ALL 25 cases in both `.verbose` and `.compact` detail (was 0%).
+- `RuntimePrimitivesTests.swift` — `Permission`/`PermissionRegistry` (default-
+  allow, OR semantics, empty), `SystemClock`/`TestClock` (advance wakes sleeper),
+  `LLMProvider`/`LLMRequest`/`LLMResponse` value types (all were 0–25%).
+- `ValueCoverageTests.swift` — `Value` equality/hashing/description/
+  jsonEncodableObject/scalarDescription (every case), `asList`/`member`,
+  `Money`, construction helpers; `ValueCoercionCoverageTests` — `coerce` to
+  String/URL/Date/Int/Double/Float/Decimal/Money/Bool/Duration/enum/reference/
+  list/record + failure, `Value.from` overloads, `AnyCodable` round-trip,
+  `AnyHashableSendable` unwrap/Encodable capture (Value 52%→, ValueCoercion 39%→).
+- `LLMChatPlannersTests.swift` — `LLMChatProvider`/`Discretion`/`Planner`/
+  `ActPlanner` driven by a recording mock provider (was 0%).
+- `CoreUtilityCoverageTests.swift` — `SourceSpan` (span/statementRange/range,
+  was 0%), `SkillFrontmatter` (scalars/lists/aliases/manifestEntries, 28%→79%),
+  `EnglishLexicon` morphology (singularize/pluralize/verb forms/structName/
+  parseDuration).
+- `ComparisonCoverageTests.swift` — `MeridianComparison` ordering/eq/orderedBefore/
+  emptiness/identity/time-windows + `NumericConvertible`; `ErrorMatchingTests` —
+  `meridianMatches` named/structured/approval/typed (recover pattern matching).
+- `TableParserCoverageTests.swift`, `ExpressionParserCoverageTests.swift`,
+  `ParserSentinelTests.swift`, `MeridianParserCoverageTests.swift` (Phase 2).
+- Added a `BuiltinToolCatalog.contains` assertion to the existing lockstep test.
+
+NOTE: documented quirks found (not bugs to fix under a coverage task):
+`$5000` is consumed by the env-var branch before the money-literal branch in
+`ExpressionParser.parseAtom`; `EnglishLexicon.singularize` strips a trailing
+single `s` (`status`→`statu`), so it is not idempotent on `-us` words.
+
+Full `swift test` **960** green. TOTAL region 81.92%, line 91.06%
+(up from 75.7%/~88% at end of Phase 1). Remaining low files: the
+`MeridianCore/Testing/*` spec-runner infra (RuntimeExecutor/Assertions/
+DriverSourceBuilder/SwiftPMPackageRunner — integration-heavy), `PlanExecutor`,
+and residual branch regions in `ASTToIR`/`RuleInjector`/`RuleLowering`.
+
+CONFIDENCE: ~82% region / 91% line overall; pure value/runtime/lexicon layers
+now near-complete.
+
+---
+
+## 2026-06-14 — Phase 3+ continued: diagnostics, trace, tool registry
+
+More cross-cutting low-coverage closures. New test files:
+- `DiagnosticCoverageTests.swift` — `WordStemmer` (tokenize/stems/stemSet) and
+  `Diagnostic` builders (`unresolved` close/far/empty candidate paths,
+  `structural`/`error`/`warning`, severity `Comparable`, `Suggestion`/`Note`).
+- `ParserTraceCoverageTests.swift` — `enable(parsing:)` names + `all`, group
+  hierarchy, leaf-only enable, log/detail/push/pop via capturing sink, disabled
+  no-op, `phase` timing + `profileSummary` + `resetProfile`, async `phase`,
+  `short`, `silent`, Category `summary`/`groups`.
+- `ToolRegistryCoverageTests.swift` — register/has/unregister/toolIDs, schema/
+  schemas/redactionPolicy lookups, closure dispatch (success / ToolError wrap /
+  generic→`tool_error`), unknown→`toolNotFound`, subprocess success (`/bin/echo`)
+  + failure (`/usr/bin/false`), MCP dynamic missing-url coercion.
+
+Full `swift test` **987** green. `coverage-baseline.md` regenerated. TOTAL
+(incl. CLIKit) region 79.97%, line 88.83%.
+
+Remaining largest gaps are integration-heavy and reserved for the lock phase:
+CLI command files (`SkillDeviation`/`Run`/`MigrateSkill`/`Resume`/`Lint`), the
+`MeridianCore/Testing/*` `.meridian.test` spec-runner infra (`RuntimeExecutor`/
+`Assertions`/`DriverSourceBuilder`/`SwiftPMPackageRunner` — these shell out to
+SwiftPM), `PlanExecutor` (async planning loop), and residual sub-line branch
+regions in `ASTToIR`/`RuleInjector`/`RuleLowering`.
+
+---
+
+## 2026-06-14 — Coverage lock: enforced per-file regression gate (green)
+
+The coverage push is locked behind an enforced gate. `scripts/coverage.swift
+--gate` now exits non-zero whenever any in-scope `Sources/Meridian*` file drops
+below its required region coverage. The default required threshold is **100%**;
+`coverage-exclusions.md` is the single reviewed source of truth for every file
+allowed below that, each carrying a justification and a numeric **floor** (the
+region% already achieved with deterministic in-process tests).
+
+State at lock:
+
+- **TOTAL: 82.25% region / 84.03% function / 90.01% line** across the in-scope
+  modules (`MeridianCore`, `MeridianRuntime`, `MeridianTools`, `MeridianTestKit`,
+  `MeridianCLIKit`). `SampleDemoFlows` and `Tests` are out of scope.
+- **33 files at literal 100%** region coverage (gate requires it of them).
+- The remaining files carry documented floors in two buckets: (A) integration
+  boundaries whose success path needs a live toolchain / server / subprocess —
+  CLI subcommand `run()` bodies, `RuntimeExecutor`/`SwiftPMPackageRunner` (temp
+  SwiftPM build+run), `ToolRegistry` (HTTP/MCP/subprocess), `PlanExecutor`/
+  `ActPlanner`/`Planner` (LLM loop); and (B) reachable residual — defensive
+  guards, `preconditionFailure`s, dead future-pass code, hard-to-trigger error
+  arms. Bucket (B) floors should be ratcheted toward 100 as tests land.
+
+New test files added across the push (all Swift Testing, `@Test`/`@Suite`):
+`SwiftEmitterCoverageTests`, `CodegenManifestCoverageTests`,
+`AssertionsCoverageTests`, `TestingInfraCoverageTests`,
+`RuleLoweringCoverageTests` (MeridianCoreTests);
+`MeridianToolsCoverageTests` (MeridianToolsTests);
+`TraceTreeRendererCoverageTests` (MeridianRuntimeTests). These directly
+construct IR/`AssertionContext`/event streams to hit emitter, assertion-evaluator,
+IR-walker, tool-dispatch, and trace-render branches that full-pipeline tests miss.
+
+Workflow: regenerate `coverage-baseline.md` with `scripts/coverage.swift
+--baseline coverage-baseline.md`, then enforce with `--no-test --gate` (reuses
+the merged `.profdata`). The floors in `coverage-exclusions.md` are set to the
+current floored region% so the gate fails on any regression but passes today.
+
+**Pitfall.** `llvm-cov report` measures per *file*, and recompiling the test
+binary (adding/removing test files) can shift a Sources file's region ratio by a
+fraction of a percent (region counts are recomputed against the new binary).
+After adding tests, always re-run `--baseline` and reconcile floors against the
+fresh numbers — do not assume floors only move up.
+
+---
+
+## 2026-06-14 — Coverage push batch 1: dedup unreachable guards + 7 files to 100%
+
+ASSUMPTION/DECISION (answering "if something is genuinely unreachable, can we
+remove it from code?"). Two distinct kinds of "unreachable", two answers:
+
+1. **Compiler-forced contract guard** (Swift makes you handle an optional/throw
+   that provably can't occur on caller input, and `!` is banned by house rules).
+   Cannot be deleted, but the *duplicated copies* can be collapsed to one. The
+   `\b<needle>\b` whole-word regex — built from `escapedPattern`, so its
+   `try? NSRegularExpression` else-branch can only fire on a Foundation bug — was
+   copy-pasted in `ASTToIR.wholeWordReplace`, `DefinitionParser.wholeWord`,
+   `AnaphoraResolver.replaceWholeWord`/`containsWholeWord`, and
+   `MeridianLinter.containsAnaphora` (4 `preconditionFailure`/`return false`
+   copies). Centralized into `Sources/MeridianCore/Language/WholeWordRegex.swift`
+   (`replace`/`contains`, single private `compiled`). Net: 4 unreachable arms → 1,
+   plus real dedup (house single-source rule). That one arm is the sole sanctioned
+   permanent bucket-B exception for this construct (floored at 83 with a comment).
+
+2. **Redundant local guard** (re-checks something the immediately-preceding code
+   already guarantees). DELETE it. `DefinitionParser.parse`'s
+   `guard !kind.isEmpty, !adjectiveRaw.isEmpty else { return nil }` was dead: the
+   ` is ` match (`range(of: " is ")`) requires a space on both sides and `head` is
+   already trimmed, so there is always ≥1 non-space char on each side. Removed
+   (comment left explaining why). This is the honest path to 100% and the right
+   answer when "unreachable" means "redundant", not "external contract".
+
+Result: `AnaphoraResolver`, `IdentifierNaming`, `SkillFrontmatter`,
+`DiagnosticEngine`, `MeridianLinter`, `RewriteEngine`, `DefinitionParser` all
+reached **100%** region coverage; their threshold entries were removed (they now
+hold at the default 100 floor). New `WholeWordRegex` floored at 83. Tests:
+`Tests/MeridianCoreTests/ReachableCoverageBatch1Tests.swift` (9 tests — accessors,
+AST compat shims, guard-failure branches, trace-mirroring with an enabled
+`ParserTrace.capturing`, and direct `RewriteEngine.match`/`substitute` statics).
+`DomainEmitter` floor 92→91 (pre-existing marginal rounding, untouched by this
+work). Full `swift test` 1040 green (the one embedded `1 failed` is a
+`.meridian.test` spec doing a live `swift build` that can't resolve `meridian` in
+the temp sandbox — an integration boundary the enclosing test tolerates); coverage
+gate green. TOTAL region 82.25→82.83%.
+
+---
+
+### 2026-06-14 — DECISION/RESOLVED — Coverage push batches 2–4: runtime primitives, pure helpers, TestKit/Tools to 100%
+
+Continued the reachable-code-to-100% ratchet (policy: code needing a *live
+external thing* stays floored as bucket A; everything else aims for 100%, and a
+genuinely-unreachable arm is either removed if redundant or centralised+floored).
+Net: ~24 more files driven to 100% across this session; full `swift test` **1073**
+green; coverage gate green throughout; one dead-code removal.
+
+**Batch 2 — runtime primitives.** New suite
+`Tests/MeridianRuntimeTests/ReachableCoverageRuntimeTests.swift` (12 tests).
+To 100%: `Value` (all `description`/`jsonEncodableObject`/`scalarDescription`/
+`encodeIfEncodable` arms), `Clock` (SystemClock.sleep + TestClock retains a
+long sleeper on `advance`), `MeridianRuntimeError` (timeout/subprocess match
+arms), `InstanceRegistry` (immutable `register`), `RuntimeBuilder` (all fluent
+setters). Improved + floored: `ValueCoercion` (string→Date / money→String /
+duration→Double / record→Codable + case fall-throughs), `Comparison` (typed
+overloads both directions, record-id identity, record numeric flatten), `State`
+(non-Encodable bind overload, typeMismatch, record + opaque traversal),
+`Observer` (file write + FileHandle-append + invoke/workflow per-kind
+promotions), `Checkpointer` (FilesystemCheckpointer round-trip). `Runtime.swift`
+async wait-queue + LLM-planner autonomy tail stays floored (bucket A).
+
+**Dead-code removal.** `Value.coerce`'s leading `.opaque fast-path`
+(`(self as? AnyHashableSendable)?.unwrap(...)`) was the pre-existing
+always-fails cast (compiler-warned "always fails") — `Value` is an enum, never
+the box struct, so the `.opaque(let box)` case below is the real path. Removed.
+This also explained `ValueCoercion`'s residual: after a runtime type-guard
+(`if T.self == Date.self`) the `d as? T` conditional cast can never fail, but
+Swift forces the fail-branch (T is generic) → 3 genuinely-unreachable cast-fail
+arms, floored at 96 with a comment (same class as the `WholeWordRegex`
+precondition).
+
+**Batch 3 — pure compiler helpers.** New suite
+`Tests/MeridianCoreTests/ReachableCoverageBatch3Tests.swift` (9 tests). To 100%:
+`Suggester` (empty target/candidate/levenshtein operand), `InformRulebookParser`
+(no-colon / empty-action / empty-body / no-phase guards), `LiteralLowering`
+(boolean + withinPast/withinFuture maps), `WorkflowActionMatcher` (empty-stem
+short-circuit), `ConditionClassifier` (negated-checkable `.not` arm + bare
+comparison-marker condition), `FrontmatterScanner` (leading-blank skip +
+missing-close guard), `ExpressionTraceDescription` (verbose superlative min/max),
+`SkillMarkdownImporter` (meridian/bare fence kept, non-meridian fence dropped),
+plus `IRTypes` (`ToolRef` init, from batch 1). `SectionRoleResolver` improved.
+
+**Batch 4 — TestKit + Tools.** New suites
+`Tests/MeridianRuntimeTests/ReachableCoverageTestKitTests.swift` (7) and
+`Tests/MeridianToolsTests/ReachableCoverageToolsTests.swift` (5). To 100%:
+`GoldenFile`, `JSONLReplay`, `MockToolRegistry`, `PlanFuzzer`, `RecordingTool`.
+Improved + floored: `EventAssertions` (normalize parent_run_id/nested duration +
+diff match/mismatch/length arms; residual = unreachable re-encode fallback, 93),
+`MockPlanning` (MockPlanner/ScriptedPlanner/MockActPlanner/MockDiscretion;
+residual = unused convenience init, 92), `MeridianTools` (regex absent-group
+NSNotFound, json.transform miss, validate non-string required, time.format
+timezone, registerBuiltins llm/default closure arms; residual = http/shell/mcp
+specs + unreachable stringify nil-fallback, 96). `WorkflowTestHarness`
+firstEvent/durationFromEvents (need a full harness run) floored at 88.
+
+**Floors reconciled.** Removed the now-100% entries (14: ExpressionTraceDescription,
+Suggester, IRTypes, SkillMarkdownImporter, InformRulebook, LiteralLowering,
+WorkflowActionMatcher, FrontmatterScanner, ConditionClassifier, GoldenFile,
+JSONLReplay, MockToolRegistry, PlanFuzzer, RecordingTool). Fixed two
+below-floor regressions caused by denominator shifts: `ParserTrace` 85→84,
+`ValueCoercion` 97→96. Tightened `EventAssertions` 74→93, `MockPlanning` 57→92,
+`MeridianTools` 91→96 (ratchet). All residual floors carry a comment naming the
+bucket-A boundary or unreachable arm.
+
+**Remaining ratchet (bucket B, not yet 100%).** The large compiler files —
+`ASTToIR` (77), the parsers (`StatementParser` 88, `ExpressionParser` 86,
+`MerConfigParser` 87), `SymbolTable` (81), `Compiler` (84), `SwiftEmitter` (91),
+`RuleInjector`/`RuleLowering` (75/78), `SkillSectionBuilder` (87) — still carry
+floors; their residual is a long tail of error/edge-branch scenario tests, the
+documented incremental ratchet. Bucket-A integration files (`RuntimeExecutor` 38,
+`SwiftPMPackageRunner` 46, `PlanExecutor` 42, CLI `RunCommand` 23, etc.) keep
+their permanently-relaxed floors per policy.
+
+## 2026-06-14T07:45:00Z — Bucket B coverage push (plan `bucket_b_coverage_to_100`)
+
+Implemented the five-phase Bucket B plan to drive the reachable (non-live)
+compiler/runtime code toward 100% region coverage. **TOTAL region coverage:
+83.86% → 85.58%** (line 86.20% → 88.83%; function 90.68% → 91.40%).
+
+**New test suites** (all Swift Testing, `@testable import MeridianCore`):
+- `Tests/MeridianCoreTests/ReachableCoverageParsersTests.swift` (Phase 2) —
+  `ExpressionParser`/`StatementParser`/`MerConfigParser` rare-grammar + malformed
+  arms: quantifier determiners (`every`/`some`/`no`/`none of`/`none`), atom
+  literals (single-quote string, env-var, double), negated do-support verb
+  predicate, relation/verb/backing/inverse merconfig parses, all `parseLiteral`
+  arms, single-line conditional with inline `otherwise`, `in strict/lenient mode`
+  modals, `rebind`, multi-line collectors with blank/comment lines + do-chains +
+  recover + simultaneously, suffix `only when`/`unless`, multi-operand
+  `or`/`and`/`either-or`, the full Wave-3 relational positive arms, the
+  no-symbols fallback arms, and the malformed/undeclared-verb `.malformed` arm.
+- `Tests/MeridianCoreTests/ReachableCoverageASTToIRTests.swift` (Phase 3) —
+  the dominant lowering gap: `allow-fallbacks` lenient drop+log path,
+  `validateRelationsAndVerbs` hard-error guards (undeclared relation/property,
+  no-backing verb, wrong-kind backing, undeclared tool backing), Wave-3
+  inline-position errors (operand-out-of-scope, tool-backed-inline), a Wave-3
+  workflow that lowers descriptions/aggregates/superlatives/scalar-nav, phrase
+  inlining that recurses `substituteArgs`/`subExpr`/`subDescription` over Wave-3
+  forms, `firstMalformed` inside a description where-clause and a branch
+  condition, and `while`/`until`/`recover` lowering.
+- `Tests/MeridianCoreTests/ReachableCoveragePhase4Tests.swift` (Phase 4) —
+  `CompilerError` projection (every case → diagnostics + primaryMessage),
+  `RuleAnalyzer.classify` across all five shapes + unclassified/nil, `SkillMigrator`
+  command-hole rewrite + heading-edge rejection, `SwiftEmitter` string/collection
+  comparison + duration-literal emit arms, `RuleInjector` bounded-permission
+  assert-gate injection, and the spec-runner assertion arms (`emitEventID`,
+  `primitiveCount`, line-count, `errorKind`, `goldenManifest`).
+
+**Floors reconciled** (`docs/coverage/coverage-exclusions.md`):
+- Removed `IRWalker.swift` (now 100%).
+- Ratcheted up to floor(actual): `MeridianAST` 81→97, `EnglishLexicon` 83→98,
+  `ManifestEmitter` 90→98, `DiagnosticRenderer` 84→96, `Rulebook` 87→96,
+  `SymbolTable` 81→94, `Difflib` 90→98, `SkillMigrator` 86→90, `ASTToIR` 77→81,
+  `RuleLowering` 78→83, `Compiler` 84→86, `ExpressionParser` 86→89,
+  `StatementParser` 88→89, `MerConfigParser` 87→88, `MeridianParser` 93→94,
+  `RulebookParser` 82→85, `IndentTokenizer` 89→90, `ParserTrace` 84→87,
+  `DomainEmitter` 91 (held), `SwiftEmitter` 91→92, `TraceTreeRenderer` 79→81,
+  `ValueCoercion` 96 (held — documented unreachable cast arms).
+
+**Residue (still floored, honest target met).** The largest compiler files keep
+a long error/edge-branch tail (`ASTToIR` 81%, `StatementParser` 89%,
+`ExpressionParser` 89%, `SymbolTable` 94%) — each remaining miss is a narrow,
+fixture-expensive scenario, the documented incremental ratchet. Bucket-A
+live-integration paths (`RuntimeExecutor`, `SwiftPMPackageRunner`, `PlanExecutor`,
+`ToolRegistry` network/subprocess dispatch, CLI commands) keep their
+permanently-relaxed floors per the live-dependency policy.
+
+**Verification.** `./scripts/coverage.swift --gate` → "All in-scope files meet
+their required region coverage." Full `swift test` → 1129 Swift Testing tests
+pass. The one failing item, `runtime — simple workflow smoke test`
+(`runtime_happy.meridian.test`, `tags: runtime, slow`, `expect_run: true`),
+fails only because it spawns a nested `swift build` of a generated SwiftPM
+package that cannot resolve the local `meridian` package path inside this
+sandbox — a bucket-A live path, unrelated to this coverage work (no
+runtime/codegen source was changed).

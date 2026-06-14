@@ -35,7 +35,8 @@ runs against a small deterministic runtime.
 | 13 | [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) | Authors porting gbrain `SKILL.md` → `.meri` (playbook + tiers + migrator) |
 | 14 | [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) | **Everyone debugging** — diagnostics, codes, did-you-mean, batch reporting, tracing, `explain`/`decisions`/`--fix` |
 | 15 | [15_DECISIONS.md](15_DECISIONS.md) | The readable design-decision log (generated from `DecisionCatalog`) |
-| — | [../Tests/README.md](../Tests/README.md) | All contributors — test suites, forcing functions, adding new tests |
+| — | [coverage/README.md](coverage/README.md) | **Anyone touching tests** — how & why coverage is measured, the enforced per-file gate, and how to raise it |
+| — | [../Tests/README.md](../Tests/README.md) | All contributors — test suites, forcing functions, adding tests |
 | — | [status.md](status.md) | Implementers — what's done, what's next, decision references |
 
 ---
