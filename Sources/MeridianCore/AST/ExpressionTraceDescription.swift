@@ -38,6 +38,8 @@ extension ExpressionAST {
         case .decideWhether(let q):             return "decide(\(q))"
         case .interpolatedString(let segs):     return "interp(\(segs.count) segs)"
         case .recordList(let f, let rows):      return "recordList(\(f.count) fields, \(rows.count) rows)"
+        case .tableLookup(let table, let keyColumn, _, let valueColumn):
+            return detail == .verbose ? "tableLookup(\(table), \(keyColumn) -> \(valueColumn))" : "tableLookup(\(table))"
         case .quantified(let q):
             return detail == .verbose ? "quant(\(q.kind), \(q.description.noun))" : "quant(\(q.kind))"
         case .verbPredicate(let s, let v, let o):

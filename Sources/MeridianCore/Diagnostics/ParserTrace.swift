@@ -1,4 +1,5 @@
 import Foundation
+import MeridianRuntime
 
 // MARK: - ParserTrace
 //
@@ -37,6 +38,7 @@ public final class ParserTrace: @unchecked Sendable {
         case lowering           = "lowering"
         case symbols            = "symbols"
         case merconfig          = "merconfig"
+        case parse              = "parse"
         case rulebook           = "rulebook"
         case skill              = "skill"
         case codegen            = "codegen"
@@ -56,6 +58,7 @@ public final class ParserTrace: @unchecked Sendable {
             case .lowering:          return "AST → IR lowering."
             case .symbols:           return "Symbol-table construction (kinds/properties/phrases/tools/…)."
             case .merconfig:         return "Vocabulary (.merconfig) parsing."
+            case .parse:             return "Meridian (.meridian/.meri) file parsing."
             case .rulebook:          return "Rulebook (.merrules) parsing + rewrite."
             case .skill:             return "Skill/section role classification + scoped tools."
             case .codegen:           return "Swift/manifest/domain emission."
@@ -115,6 +118,35 @@ public final class ParserTrace: @unchecked Sendable {
         lock.lock()
         _enabled.formUnion(names)
         lock.unlock()
+    }
+
+    /// Tokens accepted by `enable(parsing:)` / `--trace` (leaf categories + group
+    /// prefixes + `all`). Used for MER2010 validation in the CLI.
+    public static func knownTraceTokens() -> Set<String> {
+        var tokens: Set<String> = ["all"]
+        for cat in Category.allCases {
+            for g in cat.groups { tokens.insert(g) }
+        }
+        return tokens
+    }
+
+    /// Return MER2010 diagnostics for unknown tokens in a trace spec (empty when valid).
+    public static func validateTraceSpec(_ spec: String) -> [Diagnostic] {
+        let parts = spec.lowercased()
+            .components(separatedBy: CharacterSet(charactersIn: ", "))
+            .filter { !$0.isEmpty }
+        if parts.contains("all") { return [] }
+        let known = knownTraceTokens()
+        return parts.compactMap { token -> Diagnostic? in
+            guard !known.contains(token) else { return nil }
+            return Diagnostic.unresolved(
+                .unknownTraceCategory,
+                target: token,
+                among: known.sorted(),
+                range: SourceRange(file: "<trace>", line: 1, column: 1),
+                noun: "trace category",
+                help: "Run `meridian trace categories` to list valid tokens.")
+        }
     }
 
     public func enable(_ cats: [Category]) {

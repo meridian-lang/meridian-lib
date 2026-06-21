@@ -35,7 +35,7 @@ public struct MeridianParser {
     }
 
     public func parse(_ source: String, file: String = "") throws -> MeridianFile {
-        let token = trace.push(.merconfig, "MeridianParser.parse(\(file))")
+        let token = trace.push(.parse, "MeridianParser.parse(\(file))")
         defer { trace.pop(token) }
         let lines = IndentTokenizer().tokenize(source, file: file, trace: trace)
         let outline = lines.compactMap { line -> HeadingEntry? in
@@ -46,7 +46,7 @@ public struct MeridianParser {
             return HeadingEntry(level: level, text: clean, line: line.number)
         } + lines.compactMap { line -> HeadingEntry? in
             guard line.headingLevel == nil,
-                  !line.statement.lowercased().hasPrefix("to "),
+                  !line.statement.lowercased().hasPrefix(lexicon.grammar.merconfig.workflowHeaderPrefix),
                   let (label, rest) = StatementParser.topicLabel(in: line.statement),
                   !rest.isEmpty || line.indent == 0 else { return nil }
             return HeadingEntry(level: 3, text: label, line: line.number, kind: "topic")
@@ -79,10 +79,13 @@ public struct MeridianParser {
                 var hasCloser = false
                 for n in (k + 1)..<lines.count where lines[n].text == "---" { hasCloser = true; break }
                 if hasCloser {
-                    throw CompilerError.semanticError(
-                        message: "frontmatter must be the first entry in the file (only blank lines may precede the opening `---`)",
-                        range: SourceRange(file: file, line: lines[k].number, column: 1)
-                    )
+                    throw CompilerError.diagnostics([
+                        Diagnostic.structural(
+                            .frontmatterPlacement,
+                            message: "frontmatter must be the first entry in the file (only blank lines may precede the opening `---`)",
+                            range: SourceRange(file: file, line: lines[k].number, column: 1),
+                            help: "Move the `---` block to the top of the file, before any comments or workflow text.")
+                    ])
                 }
             }
         }
@@ -205,7 +208,7 @@ public struct MeridianParser {
 
             // 2B: top-level `Definition:` lines are pulled out of the implicit
             // body so they register as checkable adjectives, not procedure steps.
-            if DefinitionParser.isDefinitionLine(t) {
+            if DefinitionParser.isDefinitionLine(t, lexicon: lexicon) {
                 if let def = DefinitionParser(lexicon: lexicon, symbols: symbols, trace: trace)
                     .parse(t, line: line.number) {
                     definitions.append(def)
@@ -217,20 +220,26 @@ public struct MeridianParser {
             // diagnostic so existing files migrate cleanly. Skill docs are exempt:
             // a SKILL.md procedure line may legitimately begin with the English
             // verb "Import" ("Import the vault directory into gbrain").
-            if !hasHeadings, lower.hasPrefix("import vocabulary from ") || lower.hasPrefix("import ") {
-                throw CompilerError.semanticError(
-                    message: "body-level `import` is no longer supported. Move the merconfig path(s) to frontmatter `vocabulary:` (comma-separated).",
-                    range: SourceRange(file: file, line: line.number, column: 1)
-                )
+            if !hasHeadings,
+               lower.hasPrefix(lexicon.grammar.legacyImportVocabularyPrefix)
+                || lower.hasPrefix(lexicon.grammar.legacyImportPrefix) {
+                throw CompilerError.diagnostics([
+                    Diagnostic.structural(
+                        .removedImportForm,
+                        message: "body-level `import` is no longer supported",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Move the merconfig path(s) to frontmatter `vocabulary:` (comma-separated) and rulebooks to `rulebook:`.")
+                ])
             }
 
             // Rules: starts with "A customer …", "An order …", "When …"
             // (suppressed for skill docs, where these are narrative prose).
+            let startsWithParameterArticle = lexicon.findEarliestArticle(t)?
+                .intro.trimmingCharacters(in: .whitespaces).isEmpty == true
             let isRule = !hasHeadings &&
-                        (t.lowercased().hasPrefix("a ") ||
-                         t.lowercased().hasPrefix("an ") ||
-                         t.lowercased().hasPrefix("when "))
-            let isWorkflow = t.lowercased().hasPrefix("to ")
+                        (startsWithParameterArticle ||
+                         lower.hasPrefix(lexicon.grammar.topLevelRulePrefix))
+            let isWorkflow = lower.hasPrefix(lexicon.grammar.merconfig.workflowHeaderPrefix)
 
             if isWorkflow {
                 // Fold multi-line workflow header (continuation indented deeper, terminator ":")
@@ -254,7 +263,7 @@ public struct MeridianParser {
                 }
                 // B3 / SkillMD-D17: Detect prose-mode annotations before the colon.
                 // (See `.ai/brainstorm-done/skill_md_expressiveness_d1_d28.md`.)
-                var rawPatternText = String(headerText.dropFirst(3).dropLast(1))
+                var rawPatternText = String(headerText.dropFirst(lexicon.grammar.merconfig.workflowHeaderPrefix.count).dropLast(1))
                     .trimmingCharacters(in: .whitespaces)
                 let discretionSuffix = ", " + lexicon.grammar.discretionMarker
                 var allowsDiscretion = rawPatternText.lowercased().hasSuffix(discretionSuffix)
@@ -263,7 +272,7 @@ public struct MeridianParser {
                         .trimmingCharacters(in: .whitespaces)
                 }
                 var autonomy: AutonomyConfigAST?
-                if let autonomyRange = rawPatternText.lowercased().range(of: ", " + lexicon.grammar.autonomyMarker) {
+                if let autonomyRange = rawPatternText.range(of: ", " + lexicon.grammar.autonomyMarker, options: [.caseInsensitive]) {
                     let options = String(rawPatternText[autonomyRange.upperBound...]).trimmingCharacters(in: .whitespaces)
                     rawPatternText = String(rawPatternText[..<autonomyRange.lowerBound]).trimmingCharacters(in: .whitespaces)
                     allowsDiscretion = true
@@ -335,10 +344,13 @@ public struct MeridianParser {
             toolsUsed = built.toolsUsed
             let implicitName = implicit.pattern.displayText.lowercased()
             if workflows.contains(where: { $0.pattern.displayText.lowercased() == implicitName }) {
-                throw CompilerError.semanticError(
-                    message: "ambiguous entry workflow: frontmatter `name` matches an explicit workflow while top-level statements are also present",
-                    range: SourceRange(file: file, line: implicit.sourceLine, column: 1)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.error(
+                        .ambiguousEntryWorkflow,
+                        message: "ambiguous entry workflow: frontmatter `name` matches an explicit workflow while top-level statements are also present",
+                        range: SourceRange(file: file, line: implicit.sourceLine, column: 1),
+                        help: "Remove the duplicate explicit workflow or drop the implicit top-level body.")
+                ])
             }
             workflows.insert(implicit, at: 0)
         }
@@ -431,10 +443,16 @@ public struct MeridianParser {
             .filter { !$0.isEmpty }
         return try tokens.map { kind in
             guard let resolved = symbols.resolveKindName(kind) else {
-                throw CompilerError.semanticError(
-                    message: "frontmatter parameter `\(kind)` does not resolve to an imported vocabulary kind",
-                    range: SourceRange(file: file, line: sourceLine, column: 1)
-                )
+                let candidates = Array(symbols.kinds.values.map(\.name)).sorted()
+                throw CompilerError.diagnostics([
+                    Diagnostic.unresolved(
+                        .unknownKind,
+                        target: kind,
+                        among: candidates,
+                        range: SourceRange(file: file, line: sourceLine, column: 1),
+                        noun: "kind",
+                        help: "Declare the kind in a `.merconfig` `=== vocabulary ===` block and list the file in frontmatter `vocabulary:`.")
+                ])
             }
             return PhraseParameterAST(name: camelize(resolved), kind: resolved)
         }

@@ -122,7 +122,7 @@ struct MerConfigSectionsTests {
         try MerConfigParser(trace: ParserTrace.silent()).parse(src, file: "t.merconfig")
     }
 
-    @Test("an unrecognized section is ignored without throwing")
+    @Test("an unrecognized section is MER5010")
     func unrecognizedSection() throws {
         let src = """
         === bogus ===
@@ -130,8 +130,12 @@ struct MerConfigSectionsTests {
         === vocabulary ===
         An order is a kind of thing.
         """
-        let cfg = try parse(src)
-        #expect(cfg.vocabulary.count == 1)
+        do {
+            _ = try parse(src)
+            Issue.record("expected MER5010 for unknown section")
+        } catch let e as CompilerError {
+            #expect(e.diagnostics.contains { $0.code.id == "MER5010" })
+        }
     }
 
     @Test("inline instance properties parse via ' with '")
@@ -175,12 +179,12 @@ struct MerConfigTraceTests {
         _ = try MerConfigParser(trace: cap.trace).parse("""
         === vocabulary ===
         An order is a kind of thing.
-        === unknownsection ===
-        noise
+        === language ===
+        Assertion synonyms:
+         verify
         """, file: "trace.merconfig")
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("section === vocabulary ===") })
-        #expect(lines.contains { $0.contains("ignoring unrecognized section") })
         #expect(lines.contains { $0.contains("parsed 1 vocab") })
     }
 }

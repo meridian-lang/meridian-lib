@@ -142,37 +142,37 @@
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 70,
+        "line" : 79,
         "text" : "Output Format"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 94,
+        "line" : 103,
         "text" : "Back-Linking During Briefing"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 101,
+        "line" : 110,
         "text" : "Enforce back-links"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 107,
+        "line" : 116,
         "text" : "Citation in Briefings"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 113,
+        "line" : 122,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 122,
+        "line" : 131,
         "text" : "Tools Used"
       },
       {
@@ -254,14 +254,17 @@
           "bind pages = invoke list pages with filter = \"today\"",
           "let mine be the pages written by the input",
           "if any urgent pages or any unwritten pages,",
-          "emit briefing.attention with status = \"needs review\""
+          "emit briefing.attention with status = \"needs review\"",
+          "bind briefing body =",
+          "codeblock:plain:REFJTFkgQlJJRUZJTkcgLS0gW2RhdGVdCj09PT09PT09PT09PT09PT09PT09PT09PQpbZm9yIGVhY2ggcGFnZSBpbiBtaW5lXS0ge3sgcGFnZS5pZCB9fQpbZW5kIGZvcl0KW2lmIGFueSB1cmdlbnQgcGFnZXNdTmVlZHMgYXR0ZW50aW9uW290aGVyd2lzZV1ObyB1cmdlbnQgcGFnZXNbZW5kIGlmXQ==",
+          "emit briefing.report with body = briefing body"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 70,
+        "line" : 79,
         "lines" : [
           "codeblock:plain:REFJTFkgQlJJRUZJTkcgLS0gW2RhdGVdCj09PT09PT09PT09PT09PT09PT09PT09PQoKTUVFVElOR1MgVE9EQVkKLSBbdGltZV0gW21lZXRpbmcgbmFtZV0KICBQYXJ0aWNpcGFudHM6IFtuYW1lXSAoc2x1ZzogcGVvcGxlL25hbWUsIFtrZXkgY29udGV4dF0pCgpBQ1RJVkUgREVBTFMKLSBbZGVhbCBuYW1lXSAtLSBbc3RhdHVzXSwgZGVhZGxpbmU6IFtkYXRlXQogIFJlY2VudDogW2xhdGVzdCB0aW1lbGluZSBlbnRyeV0KCkFDVElPTiBJVEVNUwotIFtpdGVtXSAtLSBkdWUgW2RhdGVdLCByZWxhdGVkIHRvIFtzbHVnXQoKUkVDRU5UIENIQU5HRVMgKDI0aCkKLSBbc2x1Z10gLS0gW3doYXQgY2hhbmdlZF0KClBFT1BMRSBJTiBQTEFZCi0gW25hbWVdIC0tIFt3aHkgdGhleSdyZSBhY3RpdmVd"
         ],
@@ -270,7 +273,7 @@
       {
         "executes" : true,
         "heading" : "Back-Linking During Briefing",
-        "line" : 94,
+        "line" : 103,
         "lines" : [
           "use judgment to follow the Back-Linking During Briefing guidance:",
           "If the briefing creates or updates any brain pages (e.g., new meeting prep",
@@ -283,7 +286,7 @@
       {
         "executes" : true,
         "heading" : "Enforce back-links",
-        "line" : 101,
+        "line" : 110,
         "lines" : [
           "let mentioned be the entities mentioned by the input",
           "for each entity in mentioned:",
@@ -294,7 +297,7 @@
       {
         "executes" : false,
         "heading" : "Citation in Briefings",
-        "line" : 107,
+        "line" : 116,
         "lines" : [
           "When presenting facts from brain pages, include inline citations:",
           "\"Jane is CTO of Acme [Source: people\/jane-doe, updated 2026-04-01]\"",
@@ -305,7 +308,7 @@
       {
         "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 113,
+        "line" : 122,
         "lines" : [
           "checklist:ai-autonomy:KipCcmllZmluZyB3aXRob3V0IGJyYWluIHF1ZXJpZXMuKiogTmV2ZXIgZ2VuZXJhdGUgYSBicmllZmluZyBmcm9tIG1lbW9yeSBhbG9uZTsgYWx3YXlzIHF1ZXJ5IGdicmFpbiBmb3IgY3VycmVudCBkYXRhCioqVW5jaXRlZCBmYWN0cy4qKiBFdmVyeSBjbGFpbSBtdXN0IGluY2x1ZGUgYFtTb3VyY2U6IHNsdWcsIHVwZGF0ZWQgREFURV1gLiBBIGZhY3Qgd2l0aG91dCBhIGNpdGF0aW9uIGlzIHVudmVyaWZpYWJsZQoqKlN0YWxlIGNvbnRleHQgcHJlc2VudGVkIGFzIGN1cnJlbnQuKiogSWYgYSBwYWdlIGhhc24ndCBiZWVuIHVwZGF0ZWQgaW4gMzArIGRheXMsIGZsYWcgdGhlIHN0YWxlbmVzcyBleHBsaWNpdGx5IHJhdGhlciB0aGFuIHByZXNlbnRpbmcgaXQgYXMgZnJlc2gKKipNb2RpZnlpbmcgYnJhaW4gcGFnZXMgdW5wcm9tcHRlZC4qKiBUaGUgYnJpZWZpbmcgaXMgcmVhZC1vbmx5IGJ5IGRlZmF1bHQuIERvIG5vdCBjcmVhdGUgb3IgdXBkYXRlIHBhZ2VzIHVubGVzcyB0aGUgdXNlciBleHBsaWNpdGx5IHJlcXVlc3RzIGl0CioqSWdub3JpbmcgY292ZXJhZ2UgZ2Fwcy4qKiBXaGVuIGEgbWVldGluZyBwYXJ0aWNpcGFudCBoYXMgbm8gYnJhaW4gcGFnZSwgc2F5IHNvLiBTaWxlbmNlIGFib3V0IGdhcHMgaGlkZXMgaWdub3JhbmNl"
         ],
@@ -314,7 +317,7 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 122,
+        "line" : 131,
         "lines" : [
           "Search gbrain by name (query)",
           "Read a page from gbrain (get_page)",
@@ -364,87 +367,95 @@
   "source_map" : [
     {
       "meridian_line" : 21,
-      "swift_line" : 582
+      "swift_line" : 600
     },
     {
       "meridian_line" : 29,
-      "swift_line" : 594
+      "swift_line" : 612
     },
     {
       "meridian_line" : 33,
-      "swift_line" : 604
+      "swift_line" : 622
     },
     {
       "meridian_line" : 43,
-      "swift_line" : 613
-    },
-    {
-      "meridian_line" : 44,
-      "swift_line" : 619
-    },
-    {
-      "meridian_line" : 45,
       "swift_line" : 631
     },
     {
+      "meridian_line" : 44,
+      "swift_line" : 637
+    },
+    {
+      "meridian_line" : 45,
+      "swift_line" : 649
+    },
+    {
       "meridian_line" : 50,
-      "swift_line" : 647
+      "swift_line" : 665
     },
     {
       "meridian_line" : 51,
-      "swift_line" : 659
+      "swift_line" : 677
     },
     {
       "meridian_line" : 52,
-      "swift_line" : 671
+      "swift_line" : 689
     },
     {
       "meridian_line" : 53,
-      "swift_line" : 683
+      "swift_line" : 701
     },
     {
       "meridian_line" : 65,
-      "swift_line" : 695
+      "swift_line" : 713
     },
     {
       "meridian_line" : 66,
-      "swift_line" : 706
+      "swift_line" : 724
     },
     {
       "meridian_line" : 67,
-      "swift_line" : 708
+      "swift_line" : 726
     },
     {
       "meridian_line" : 68,
-      "swift_line" : 711
+      "swift_line" : 729
     },
     {
-      "meridian_line" : 96,
-      "swift_line" : 722
+      "meridian_line" : 69,
+      "swift_line" : 740
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 760
+      "meridian_line" : 77,
+      "swift_line" : 743
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 765
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 804
+      "meridian_line" : 105,
+      "swift_line" : 752
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 809
+      "swift_line" : 790
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 848
+      "swift_line" : 795
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 853
+      "swift_line" : 834
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 839
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 878
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 883
     }
   ],
   "tools_used" : [

@@ -133,43 +133,106 @@ public struct Compiler {
         rulebooks: [RulebookInput] = []
     ) throws -> (swift: String, manifest: ManifestEmitter.Input) {
         let trace = options.trace
-        var lexicon = options.lexicon
         trace.resetProfile()
         let compileSpan = trace.push(.timing, "compile \(meridianFile)")
         defer { trace.pop(compileSpan); trace.profileSummary() }
 
-        // Parse + merge every supplied rulebook into one effective Rulebook,
-        // and build the desugar engine that the StatementParser consults.
+        let engine = DiagnosticEngine(trace: trace)
+        let bootstrap = try bootstrap(
+            meridianSources: [(meridianSource, meridianFile)],
+            vocabularies: vocabularies,
+            rulebooks: rulebooks,
+            trace: trace,
+            engine: engine,
+            duplicateRulebookHelp: "Each `--rulebook` / frontmatter `rulebook:` entry must have a unique name.",
+            duplicateVocabularyHelp: "Each `--vocabulary` / frontmatter `vocabulary:` entry must have a unique name."
+        )
+
+        let ast = try trace.phase("parse") {
+            try MeridianParser(symbols: bootstrap.symbols, trace: trace, lexicon: bootstrap.lexicon,
+                               rewriteEngine: bootstrap.rewriteEngine, diagnostics: engine).parse(meridianSource, file: meridianFile)
+        }
+        return try lowerAndEmit(
+            ast: ast, meridianFile: meridianFile,
+            symbols: bootstrap.symbols, config: bootstrap.config, lexicon: bootstrap.lexicon, trace: trace,
+            rulebook: bootstrap.rulebook, vocabularies: vocabularies, rulebooks: rulebooks,
+            preRegistered: false, engine: engine
+        )
+    }
+    public struct SkillpackInput: Sendable {
+        public let source: String
+        public let file: String
+        public init(source: String, file: String) {
+            self.source = source
+            self.file = file
+        }
+    }
+
+    private struct BootstrapContext {
+        let config: MerConfigFile
+        let lexicon: EnglishLexicon
+        let rulebook: Rulebook
+        let rewriteEngine: RewriteEngine?
+        let symbols: SymbolTable
+        let engine: DiagnosticEngine
+    }
+
+    private func bootstrap(
+        meridianSources: [(source: String, file: String)],
+        vocabularies: [VocabularyInput],
+        rulebooks: [RulebookInput],
+        trace: ParserTrace,
+        engine: DiagnosticEngine,
+        duplicateRulebookHelp: String,
+        duplicateVocabularyHelp: String
+    ) throws -> BootstrapContext {
+        var lexicon = options.lexicon
         var rulebook = Rulebook.empty
         var seenRulebooks: Set<String> = []
         for input in rulebooks {
             if !seenRulebooks.insert(input.name).inserted {
-                throw CompilerError.semanticError(
-                    message: "duplicate rulebook name: \(input.name)",
-                    range: SourceRange(file: input.file, line: 1, column: 1)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.error(
+                        .duplicateName,
+                        message: "duplicate rulebook name: \(input.name)",
+                        range: SourceRange(file: input.file, line: 1, column: 1),
+                        help: duplicateRulebookHelp)
+                ])
             }
             let parsed = try RulebookParser(trace: trace).parse(input.source, file: input.file)
             rulebook = rulebook.merging(parsed)
         }
         let rewriteEngine = rulebook.isEmpty ? nil : RewriteEngine(rulebook: rulebook, trace: trace)
 
-        // Parse + merge every supplied .merconfig.
         var config = MerConfigFile()
         var seenNames: Set<String> = []
         for input in vocabularies {
             if !seenNames.insert(input.name).inserted {
-                throw CompilerError.semanticError(
-                    message: "duplicate vocabulary name: \(input.name)",
-                    range: SourceRange(file: input.file, line: 1, column: 1)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.error(
+                        .duplicateName,
+                        message: "duplicate vocabulary name: \(input.name)",
+                        range: SourceRange(file: input.file, line: 1, column: 1),
+                        help: duplicateVocabularyHelp)
+                ])
             }
-            let parsed = try MerConfigParser(trace: trace, lexicon: lexicon).parse(input.source, file: input.file)
+            let parsed = try MerConfigParser(trace: trace, lexicon: lexicon, diagnostics: engine)
+                .parse(input.source, file: input.file)
             config = config.merging(parsed)
         }
-        try requireUniqueDeclarations(in: config)
+        for meridian in meridianSources {
+            let inlineDomain = try harvestDomainVocabulary(
+                from: meridian.source,
+                file: meridian.file,
+                rulebook: rulebook,
+                trace: trace,
+                lexicon: lexicon
+            )
+            config = config.merging(inlineDomain)
+        }
+        try requireUniqueDeclarations(in: config, engine: engine)
+        try engine.throwIfErrors()
 
-        // Apply language synonyms from merged config into the effective lexicon.
         lexicon = lexicon.merging(
             comparisonSynonyms: config.languageSynonyms.comparisonSynonyms,
             durationSynonyms: config.languageSynonyms.durationSynonyms,
@@ -193,35 +256,18 @@ public struct Compiler {
             shellFenceSynonyms: config.languageSynonyms.shellFenceSynonyms
         )
 
-        // Use the first vocabulary file (if any) for symbol-table source
-        // attribution; multi-vocab attributes still flow through the merged
-        // config's individual statement source lines.
         let symbolsFile = vocabularies.first?.file ?? "config.merconfig"
         let symbols = trace.phase("symbols") {
             SymbolTable.build(from: config, sourceFile: symbolsFile, trace: trace, lexicon: lexicon)
         }
-
-        let engine = DiagnosticEngine(trace: trace)
-        let ast = try trace.phase("parse") {
-            try MeridianParser(symbols: symbols, trace: trace, lexicon: lexicon,
-                               rewriteEngine: rewriteEngine, diagnostics: engine).parse(meridianSource, file: meridianFile)
-        }
-        return try lowerAndEmit(
-            ast: ast, meridianFile: meridianFile,
-            symbols: symbols, config: config, lexicon: lexicon, trace: trace,
-            rulebook: rulebook, vocabularies: vocabularies, rulebooks: rulebooks,
-            preRegistered: false, engine: engine
+        return BootstrapContext(
+            config: config,
+            lexicon: lexicon,
+            rulebook: rulebook,
+            rewriteEngine: rewriteEngine,
+            symbols: symbols,
+            engine: engine
         )
-    }
-
-    /// One `.meri` skill source within a skillpack.
-    public struct SkillpackInput: Sendable {
-        public let source: String
-        public let file: String
-        public init(source: String, file: String) {
-            self.source = source
-            self.file = file
-        }
     }
 
     /// Skillpack entry point: compile a *set* of `.meri` files against shared
@@ -236,60 +282,16 @@ public struct Compiler {
         rulebooks: [RulebookInput] = []
     ) throws -> [String: String] {
         let trace = options.trace
-        var lexicon = options.lexicon
-
-        var rulebook = Rulebook.empty
-        var seenRulebooks: Set<String> = []
-        for input in rulebooks {
-            if !seenRulebooks.insert(input.name).inserted {
-                throw CompilerError.semanticError(
-                    message: "duplicate rulebook name: \(input.name)",
-                    range: SourceRange(file: input.file, line: 1, column: 1)
-                )
-            }
-            let parsed = try RulebookParser(trace: trace).parse(input.source, file: input.file)
-            rulebook = rulebook.merging(parsed)
-        }
-        let rewriteEngine = rulebook.isEmpty ? nil : RewriteEngine(rulebook: rulebook, trace: trace)
-
-        var config = MerConfigFile()
-        var seenNames: Set<String> = []
-        for input in vocabularies {
-            if !seenNames.insert(input.name).inserted {
-                throw CompilerError.semanticError(
-                    message: "duplicate vocabulary name: \(input.name)",
-                    range: SourceRange(file: input.file, line: 1, column: 1)
-                )
-            }
-            let parsed = try MerConfigParser(trace: trace, lexicon: lexicon).parse(input.source, file: input.file)
-            config = config.merging(parsed)
-        }
-        try requireUniqueDeclarations(in: config)
-        lexicon = lexicon.merging(
-            comparisonSynonyms: config.languageSynonyms.comparisonSynonyms,
-            durationSynonyms: config.languageSynonyms.durationSynonyms,
-            assertionSynonyms: config.languageSynonyms.assertionSynonyms,
-            timestampProperty: config.languageSynonyms.timestampProperty,
-            emptySynonyms: config.languageSynonyms.emptySynonyms,
-            filledSynonyms: config.languageSynonyms.filledSynonyms,
-            pastWindowSynonyms: config.languageSynonyms.pastWindowSynonyms,
-            futureWindowSynonyms: config.languageSynonyms.futureWindowSynonyms,
-            timestampAliasSynonyms: config.languageSynonyms.timestampAliasSynonyms,
-            aggregateSynonyms: config.languageSynonyms.aggregateSynonyms,
-            superlativeSynonyms: config.languageSynonyms.superlativeSynonyms,
-            sortBySynonyms: config.languageSynonyms.sortBySynonyms,
-            ascendingSynonyms: config.languageSynonyms.ascendingSynonyms,
-            descendingSynonyms: config.languageSynonyms.descendingSynonyms,
-            possessiveSynonyms: config.languageSynonyms.possessiveSynonyms,
-            anaphoraSynonyms: config.languageSynonyms.anaphoraSynonyms,
-            conditionHeaderSynonyms: config.languageSynonyms.conditionHeaderSynonyms,
-            actionHeaderSynonyms: config.languageSynonyms.actionHeaderSynonyms,
-            wildcardSynonyms: config.languageSynonyms.wildcardSynonyms,
-            shellFenceSynonyms: config.languageSynonyms.shellFenceSynonyms
+        let engine = DiagnosticEngine(trace: trace)
+        let bootstrap = try bootstrap(
+            meridianSources: skills.map { ($0.source, $0.file) },
+            vocabularies: vocabularies,
+            rulebooks: rulebooks,
+            trace: trace,
+            engine: engine,
+            duplicateRulebookHelp: "Supply each rulebook only once or rename the duplicate.",
+            duplicateVocabularyHelp: "Supply each vocabulary only once or rename the duplicate."
         )
-
-        let symbolsFile = vocabularies.first?.file ?? "config.merconfig"
-        let symbols = SymbolTable.build(from: config, sourceFile: symbolsFile, trace: trace, lexicon: lexicon)
 
         // Parse every skill against the SHARED symbol table. Each file gets its
         // own per-file `DiagnosticEngine` (so batching never crosses files) used
@@ -297,8 +299,8 @@ public struct Compiler {
         var parsed: [(ast: MeridianFile, file: String, engine: DiagnosticEngine)] = []
         for skill in skills {
             let engine = DiagnosticEngine(trace: trace)
-            let ast = try MeridianParser(symbols: symbols, trace: trace, lexicon: lexicon,
-                                         rewriteEngine: rewriteEngine, diagnostics: engine).parse(skill.source, file: skill.file)
+            let ast = try MeridianParser(symbols: bootstrap.symbols, trace: trace, lexicon: bootstrap.lexicon,
+                                         rewriteEngine: bootstrap.rewriteEngine, diagnostics: engine).parse(skill.source, file: skill.file)
             parsed.append((ast, skill.file, engine))
         }
 
@@ -306,8 +308,8 @@ public struct Compiler {
         // in one skill can invoke a workflow declared in another.
         for entry in parsed {
             for wf in entry.ast.workflows {
-                let structName = IRWorkflow.structName(from: wf.pattern.displayText, lexicon: lexicon)
-                symbols.registerWorkflowPhrase(
+                let structName = IRWorkflow.structName(from: wf.pattern.displayText, lexicon: bootstrap.lexicon)
+                bootstrap.symbols.registerWorkflowPhrase(
                     pattern: wf.pattern,
                     structName: structName,
                     sourceLine: wf.sourceLine,
@@ -320,8 +322,8 @@ public struct Compiler {
         for entry in parsed {
             outputs[entry.file] = try lowerAndEmit(
                 ast: entry.ast, meridianFile: entry.file,
-                symbols: symbols, config: config, lexicon: lexicon, trace: trace,
-                rulebook: rulebook, vocabularies: vocabularies, rulebooks: rulebooks,
+                symbols: bootstrap.symbols, config: bootstrap.config, lexicon: bootstrap.lexicon, trace: trace,
+                rulebook: bootstrap.rulebook, vocabularies: vocabularies, rulebooks: rulebooks,
                 preRegistered: true, engine: entry.engine
             ).swift
         }
@@ -382,7 +384,7 @@ public struct Compiler {
                 )
             })
 
-        let domainDecl = buildDomainDecl(from: config)
+        let domainDecl = try buildDomainDecl(from: config)
 
         // Narrow the plan-step tool allow-list to the skill's declared `tools:`
         // frontmatter (if any). Unresolved tokens fall back to the full set so a
@@ -562,7 +564,8 @@ public struct Compiler {
     /// Reject duplicate kind / phrase / tool / constant / instance names in
     /// the merged config. Without this check, a second `kind: order` from a
     /// second .merconfig would silently shadow the first.
-    private func requireUniqueDeclarations(in config: MerConfigFile) throws {
+    private func requireUniqueDeclarations(in config: MerConfigFile,
+                                           engine: DiagnosticEngine? = nil) throws {
         func ensureUnique<S: Sequence>(_ seq: S, _ kind: String,
                                        name: (S.Element) -> String,
                                        line: (S.Element) -> Int) throws {
@@ -570,10 +573,16 @@ public struct Compiler {
             for el in seq {
                 let n = name(el)
                 if let prev = seen[n] {
-                    throw CompilerError.semanticError(
+                    let diag = Diagnostic.error(
+                        .duplicateDeclaration,
                         message: "duplicate \(kind) `\(n)` (first at line \(prev))",
-                        range: SourceRange(file: "<merged>", line: line(el), column: 1)
-                    )
+                        range: SourceRange(file: "<merged>", line: line(el), column: 1),
+                        help: "Rename or remove the duplicate \(kind) declaration.")
+                    if let engine {
+                        engine.report(diag)
+                    } else {
+                        throw CompilerError.diagnostics([diag])
+                    }
                 }
                 seen[n] = line(el)
             }
@@ -592,6 +601,48 @@ public struct Compiler {
         try ensureUnique(config.tools,     "tool",     name: { $0.displayName }, line: { $0.sourceLine })
         try ensureUnique(config.constants, "constant", name: { $0.name }, line: { $0.sourceLine })
         try ensureUnique(config.instances, "instance", name: { $0.name }, line: { $0.sourceLine })
+    }
+
+    /// Wave 4A: `## Domain` sections in a `.meri` file are assembly-time
+    /// vocabulary declarations. They must be harvested before the main
+    /// `MeridianParser` runs so frontmatter parameters, workflow headers, and
+    /// expressions can resolve the newly-declared kinds/properties.
+    private func harvestDomainVocabulary(from source: String,
+                                         file: String,
+                                         rulebook: Rulebook,
+                                         trace: ParserTrace,
+                                         lexicon: EnglishLexicon) throws -> MerConfigFile {
+        let lines = IndentTokenizer().tokenize(source, file: file, trace: trace)
+        var sections: [[SourceLine]] = []
+        var currentIsDomain = false
+        var current: [SourceLine] = []
+
+        func role(for heading: String) -> SkillSectionRole? {
+            let parsed = SkillSectionRole.parseMarker(from: heading)
+            if let markerRole = parsed.marker?.role {
+                return markerRole
+            }
+            return rulebook.role(forHeading: parsed.cleanHeading)
+                ?? SkillSectionRole.builtinRole(forHeading: parsed.cleanHeading)
+        }
+
+        for line in lines {
+            if line.headingLevel != nil {
+                if currentIsDomain, !current.isEmpty { sections.append(current) }
+                current = []
+                currentIsDomain = role(for: line.text) == .domain
+                continue
+            }
+            if currentIsDomain, line.isContent {
+                current.append(line)
+            }
+        }
+        if currentIsDomain, !current.isEmpty { sections.append(current) }
+
+        guard !sections.isEmpty else { return MerConfigFile() }
+        let parser = MerConfigParser(trace: trace, lexicon: lexicon)
+        let vocab = try sections.flatMap { try parser.parseVocabularyLines($0, file: file) }
+        return MerConfigFile(vocabulary: vocab)
     }
 
     /// Verify each `vocabulary:` entry from the frontmatter resolves to one of
@@ -693,7 +744,7 @@ public struct Compiler {
     /// can turn into typed Swift structs. Inheritance is flattened here (each
     /// generated struct lists ancestor properties first, in declaration order)
     /// so the emitter doesn't need to know about kind chains.
-    private func buildDomainDecl(from config: MerConfigFile) -> SwiftEmitter.DomainDecl? {
+    private func buildDomainDecl(from config: MerConfigFile) throws -> SwiftEmitter.DomainDecl? {
         var kinds: [String: KindDeclaration] = [:]
         var props: [String: [PropertyEntry]] = [:]
         for stmt in config.vocabulary {
@@ -704,6 +755,7 @@ public struct Compiler {
             }
         }
         if kinds.isEmpty { return nil }
+        props = try mergeEnumDefaults(in: props)
 
         // Collect enumerations: every property typed as `one of (a, b, c)` becomes
         // a top-level enum named `<KindType><PropertyName>` (e.g. `OrderStatus`).
@@ -711,9 +763,9 @@ public struct Compiler {
         var enumNameByKindProp: [String: String] = [:]   // "order|status" → "OrderStatus"
         for (kindName, entries) in props {
             for e in entries {
-                if case .enumeration(let cases) = e.type {
-                    let typeName = pascalCase(kindName) + pascalCase(e.name)
-                    enumerations.append(.init(typeName, cases))
+                if case .enumeration(let cases, let defaultCase) = e.type {
+                    let typeName = IdentifierNaming.pascalCase(kindName) + IdentifierNaming.pascalCase(e.name)
+                    enumerations.append(.init(typeName, cases, defaultCase: defaultCase))
                     enumNameByKindProp["\(kindName)|\(e.name)"] = typeName
                 }
             }
@@ -736,15 +788,71 @@ public struct Compiler {
         return SwiftEmitter.DomainDecl(kinds: outKinds, enumerations: enumerations)
     }
 
+    private func mergeEnumDefaults(in props: [String: [PropertyEntry]]) throws -> [String: [PropertyEntry]] {
+        var out = props
+        for (kind, entries) in props {
+            let defaults: [(value: String, lineEntry: PropertyEntry)] = entries.compactMap { entry in
+                if case .enumeration(let cases, let defaultCase) = entry.type,
+                   entry.name.isEmpty, cases.isEmpty, let defaultCase {
+                    return (defaultCase, entry)
+                }
+                return nil
+            }
+            guard !defaults.isEmpty else { continue }
+            var concrete = entries.filter { entry in
+                if case .enumeration(let cases, let defaultCase) = entry.type {
+                    return !(entry.name.isEmpty && cases.isEmpty && defaultCase != nil)
+                }
+                return true
+            }
+            for (defaultValue, _) in defaults {
+                let matches = concrete.enumerated().filter { _, entry in
+                    if case .enumeration(let cases, _) = entry.type {
+                        return cases.contains { $0.caseInsensitiveCompare(defaultValue) == .orderedSame }
+                    }
+                    return false
+                }
+                guard matches.count == 1, let match = matches.first else {
+                    throw CompilerError.diagnostics([
+                        Diagnostic.error(
+                            .invalidEnumDefault,
+                            message: "default enum case `\(defaultValue)` for `\(kind)` does not identify exactly one enum property. Add `, called the <property>` to the `can be` declaration or choose a case unique to one property.",
+                            range: SourceRange(file: "<merged>", line: 1, column: 1),
+                            help: "Disambiguate with `, called the <property>` or pick a case that belongs to only one enum property.")
+                    ])
+                }
+                let (idx, entry) = match
+                if case .enumeration(let cases, let existingDefault) = entry.type {
+                    if let existingDefault,
+                       existingDefault.caseInsensitiveCompare(defaultValue) != .orderedSame {
+                        throw CompilerError.diagnostics([
+                            Diagnostic.error(
+                                .invalidEnumDefault,
+                                message: "conflicting defaults for `\(kind).\(entry.name)`: `\(existingDefault)` and `\(defaultValue)`",
+                                range: SourceRange(file: "<merged>", line: 1, column: 1),
+                                help: "Pick a single default case per enum property.")
+                        ])
+                    }
+                    concrete[idx] = PropertyEntry(
+                        name: entry.name,
+                        type: .enumeration(cases: cases, defaultCase: existingDefault ?? defaultValue)
+                    )
+                }
+            }
+            out[kind] = concrete
+        }
+        return out
+    }
+
     /// Walk the parent chain (excluding the kind itself, root → direct parent).
-    /// Stops at `thing` or any built-in scalar. Cycle-safe.
+    /// Stops at the semantic root or any built-in scalar. Cycle-safe.
     private func ancestorChain(of name: String, in kinds: [String: KindDeclaration]) -> [String] {
         var chain: [String] = []
         var cur = name
         var seen: Set<String> = [cur]
         while let kd = kinds[cur] {
             let p = kd.parent.lowercased()
-            if p == "thing" || builtinScalars.contains(p) { break }
+            if BuiltinSemanticBase.isRoot(p) || BuiltinScalarTypes.scalarParents.contains(p) { break }
             if seen.contains(kd.parent) { break }
             chain.insert(kd.parent, at: 0)
             seen.insert(kd.parent)
@@ -752,11 +860,6 @@ public struct Compiler {
         }
         return chain
     }
-
-    private let builtinScalars: Set<String> = [
-        "string", "number", "money", "date", "datetime",
-        "boolean", "bool", "duration", "list"
-    ]
 
     private func propertyToDecl(_ p: PropertyEntry,
                                 kindName: String,
@@ -767,31 +870,16 @@ public struct Compiler {
             return .init(p.name, .scalar("String"))
         case .explicit(let typeName):
             return .init(p.name, .scalar(scalarTypeName(typeName)))
-        case .enumeration:
+        case .enumeration(_, let defaultCase):
             // The enumeration's Swift type was registered above; look it up.
             let enumName = enumByKindProp["\(kindName)|\(p.name)"] ?? "String"
-            return .init(p.name, .enumeration(enumName))
+            return .init(p.name, .enumeration(enumName, defaultCase: defaultCase))
         }
     }
 
     private func scalarTypeName(_ raw: String) -> String {
-        switch raw.lowercased() {
-        case "string":      return "String"
-        case "number":      return "Decimal"
-        case "money":       return "Money"
-        case "date":        return "Date"
-        case "datetime":    return "Date"
-        case "boolean":     return "Bool"
-        case "bool":        return "Bool"
-        case "duration":    return "Duration"
-        case "list":        return "[String]"
-        default:
-            // Custom kind name → reference its generated Swift type.
-            return pascalCase(raw)
-        }
+        BuiltinScalarTypes.swiftTypeName(for: raw) ?? IdentifierNaming.pascalCase(raw)
     }
-
-    private func pascalCase(_ raw: String) -> String { IdentifierNaming.pascalCase(raw) }
 
     private func propertyValueToInstance(_ v: PropertyValueAST) -> SwiftEmitter.InstancesDecl.PropertyValue {
         switch v {

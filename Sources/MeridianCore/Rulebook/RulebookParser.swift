@@ -91,7 +91,27 @@ public struct RulebookParser {
             }
         }
 
-        let conventions = InformRulebookParser().parse(conventionLines)
+        var conventions: [RulebookRule] = []
+        let convParser = InformRulebookParser()
+        for rule in conventionLines {
+            if let parsed = convParser.parse(rule) {
+                conventions.append(parsed)
+            } else {
+                throw CompilerError.diagnostics([
+                    Diagnostic.structural(
+                        .unparseableRule,
+                        message: "unparseable convention rule",
+                        range: SourceRange(file: file, line: rule.sourceLine, column: 1),
+                        help: "Use an Inform-style phase prefix: `before …:`, `after …:`, `check …:`, `instead of …:`, `carry out …:`, or `report …:`.")
+                ])
+            }
+        }
+        conventions.sort { lhs, rhs in
+            if lhs.phase.rawValue == rhs.phase.rawValue {
+                return lhs.sourceLine < rhs.sourceLine
+            }
+            return lhs.phase.rawValue < rhs.phase.rawValue
+        }
         trace.log(.rulebook, "parsed \(desugars.count) desugar, \(sectionRoles.count) section-role, \(conventions.count) convention, \(triggerWords.count) trigger-word rule(s)")
         return Rulebook(desugars: desugars, sectionRoles: sectionRoles,
                         conventions: conventions, triggerWords: triggerWords)
@@ -146,10 +166,13 @@ public struct RulebookParser {
             }
 
             guard let m = matchText, let r = rewriteText, !m.isEmpty, !r.isEmpty else {
-                throw CompilerError.semanticError(
-                    message: "rulebook desugar rule \(name.isEmpty ? "<unnamed>" : "\"\(name)\"") needs both `match:` and `rewrite:`/`lowers to:`",
-                    range: SourceRange(file: file, line: line.number, column: 1)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.structural(
+                        .malformedRulebookEntry,
+                        message: "rulebook desugar rule \(name.isEmpty ? "<unnamed>" : "\"\(name)\"") needs both `match:` and `rewrite:`/`lowers to:`",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Add indented `match:` and `rewrite:` (or `lowers to:`) lines under the rule header.")
+                ])
             }
             results.append(DesugarRule(
                 name: name,
@@ -213,20 +236,26 @@ public struct RulebookParser {
             let t = line.statement
             guard t.lowercased().hasPrefix("section ") else { continue }
             guard let arrow = t.range(of: "->") else {
-                throw CompilerError.semanticError(
-                    message: "rulebook section rule needs `-> <role>`: \(t)",
-                    range: SourceRange(file: file, line: line.number, column: 1)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.structural(
+                        .malformedRulebookEntry,
+                        message: "rulebook section rule needs `-> <role>`: \(t)",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Write `section \"Heading\" -> <role>` where <role> is a recognized section role.")
+                ])
             }
             let aliasPart = String(t[t.index(t.startIndex, offsetBy: "section ".count)..<arrow.lowerBound])
             let roleName = String(t[arrow.upperBound...])
                 .trimmingCharacters(in: .whitespaces)
                 .lowercased()
             guard let role = SkillSectionRole(rawValue: roleName) else {
-                throw CompilerError.semanticError(
-                    message: "unknown section role `\(roleName)` (expected one of: \(SkillSectionRole.allCases.map(\.rawValue).joined(separator: ", ")))",
-                    range: SourceRange(file: file, line: line.number, column: 1)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.error(
+                        .malformedRulebookEntry,
+                        message: "unknown section role `\(roleName)` (expected one of: \(SkillSectionRole.allCases.map(\.rawValue).joined(separator: ", ")))",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Use one of the recognized section roles after `->`.")
+                ])
             }
             // One rule may declare several comma-separated aliases.
             for rawAlias in splitQuotedList(aliasPart) {
@@ -272,17 +301,23 @@ public struct RulebookParser {
         for line in lines.filter(\.isContent) {
             let t = line.statement
             guard let colon = t.firstIndex(of: ":") else {
-                throw CompilerError.semanticError(
-                    message: "rulebook trigger rule needs `<kind>: <words>`: \(t)",
-                    range: SourceRange(file: file, line: line.number, column: 1)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.structural(
+                        .malformedRulebookEntry,
+                        message: "rulebook trigger rule needs `<kind>: <words>`: \(t)",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Write `<schedule|ambient|event|keyword>: word1, word2, …`.")
+                ])
             }
             let kindName = String(t[..<colon]).trimmingCharacters(in: .whitespaces).lowercased()
             guard let kind = TriggerKind(rawValue: kindName) else {
-                throw CompilerError.semanticError(
-                    message: "unknown trigger kind `\(kindName)` (expected one of: \(TriggerKind.allCases.map(\.rawValue).joined(separator: ", ")))",
-                    range: SourceRange(file: file, line: line.number, column: 1)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.error(
+                        .malformedRulebookEntry,
+                        message: "unknown trigger kind `\(kindName)` (expected one of: \(TriggerKind.allCases.map(\.rawValue).joined(separator: ", ")))",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Use one of: schedule, ambient, event, keyword.")
+                ])
             }
             let wordsPart = String(t[t.index(after: colon)...])
             for raw in wordsPart.split(separator: ",") {

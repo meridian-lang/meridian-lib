@@ -3,11 +3,11 @@ import Foundation
 /// Whole-word, case-insensitive regex utilities.
 ///
 /// The `\b<needle>\b` pattern — built from an *escaped literal* needle and used
-/// for token-safe substitution and membership checks — was copy-pasted across
-/// the lowerer (`ASTToIR.wholeWordReplace`), the definition parser, the anaphora
-/// resolver, and the linter. This collapses them into one place (house
-/// single-source rule) and, just as importantly, collapses the duplicated
-/// "impossible compile failure" guard into a single line.
+/// for token-safe substitution and membership checks — is used directly by the
+/// lowerer, definition parser, anaphora resolver, and linter. This keeps the
+/// regex construction in one place (house single-source rule) and, just as
+/// importantly, collapses the duplicated "impossible compile failure" guard into
+/// a single line.
 ///
 /// Because the pattern always comes from `NSRegularExpression.escapedPattern`,
 /// it is always a valid regex; the compile can only fail on a Foundation bug,

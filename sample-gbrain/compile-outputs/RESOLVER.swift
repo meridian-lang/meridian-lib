@@ -7,6 +7,24 @@ import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
 private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
+private func meridianFormat(_ v: Value, as formatter: String) -> String {
+    switch formatter.lowercased() {
+    case "integer":
+        if case .number(let n) = v { return NSDecimalNumber(decimal: n).intValue.description }
+    case let f where f.hasPrefix("decimal(") && f.hasSuffix(")"):
+        if case .number(let n) = v, let places = Int(f.dropFirst("decimal(".count).dropLast()) {
+            let nf = NumberFormatter(); nf.minimumFractionDigits = places; nf.maximumFractionDigits = places
+            return nf.string(from: NSDecimalNumber(decimal: n)) ?? n.description
+        }
+    case "short date", "long date":
+        if case .date(let d) = v {
+            let df = DateFormatter(); df.dateStyle = formatter.lowercased() == "short date" ? .short : .long; df.timeStyle = .none
+            return df.string(from: d)
+        }
+    default: break
+    }
+    return meridianStringify(v)
+}
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -590,23 +608,41 @@ public struct ResolverInput: MeridianWorkflow {
             state.bind(__key, __value)
         }
         // L23
-        let __meridianProseResults_L23 = try await runtime.executeProsePlan(
-            prose: "route the request to the owning skill\nRead the request and identify the dominant intent (brain operation, ingestion, maintenance, scheduling, or meta)\nMatch the intent against the trigger phrases of each skill and select the single owning skill\nWhen two skills could match, select both and order them so their outputs chain (for example, ingest before enrich)\nRead the selected skill file before acting",
-            snapshot: state.snapshot(),
-            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
-        )
-        for (__key, __value) in __meridianProseResults_L23 {
-            state.bind(__key, __value)
+        state.bind("table", Value.list([.record(["triggerPhrase": .string("capture this"), "skill": .string("capture")]), .record(["triggerPhrase": .string("save this thought"), "skill": .string("capture")]), .record(["triggerPhrase": .string("remember this"), "skill": .string("capture")]), .record(["triggerPhrase": .string("ingest this"), "skill": .string("ingest")]), .record(["triggerPhrase": .string("brain health"), "skill": .string("maintain")]), .record(["triggerPhrase": .string("consolidation"), "skill": .string("maintain")]), .record(["triggerPhrase": .string("cleanup"), "skill": .string("maintain")]), .record(["triggerPhrase": .string("scheduling recurring work"), "skill": .string("cron-scheduler")]), .record(["triggerPhrase": .string("daily preparation"), "skill": .string("daily-task-prep")]), .record(["triggerPhrase": .string("task changes"), "skill": .string("daily-task-manager")])]))
+        // L39
+        do {
+            // L38
+            state.bind("owningSkill", try ({ () throws -> Value? in guard let __rows = state.get("table")?.asList else { throw ToolError.implementation(code: "table.lookup_miss", message: "table table is not bound", cause: nil) }; for __row in __rows { if MeridianComparison.eq(__row.member("triggerPhrase"), state.get("input")) { return __row.member("skill") } }; throw ToolError.implementation(code: "table.lookup_miss", message: "no row in table where triggerPhrase matches", cause: nil) })())
+        } catch let _recoveredError where meridianMatches(_recoveredError, named: "table.lookup_miss") {
+            // L40
+            let __meridianProseResults_L40 = try await runtime.executeProsePlan(
+                prose: "route the request to the owning skill\nRead the request and identify the dominant intent (brain operation, ingestion, maintenance, scheduling, or meta)\nMatch fuzzy intent against the trigger phrases of each skill and select the single owning skill\nWhen two skills could match, select both and order them so their outputs chain (for example, ingest before enrich)\nRead the selected skill file before acting",
+                snapshot: state.snapshot(),
+                scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+            )
+            for (__key, __value) in __meridianProseResults_L40 {
+                state.bind(__key, __value)
+            }
         }
-        // L58
-        let __meridianProseResults_L58 = try await runtime.executeAutonomousLoop(
+        if __meridianShouldRun("progress:0.3:L45:C0") {
+            // L45
+            try await runtime.emit(
+                event: "resolver.route",
+                payload: [
+                    "skill": state.get("owningSkill") ?? .null,
+                ]
+            )
+            try await runtime.checkpoint(label: "progress:0.3:L45:C0", state: state.snapshot())
+        }
+        // L76
+        let __meridianProseResults_L76 = try await runtime.executeAutonomousLoop(
             prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Routing to more than one skill when a single skill clearly owns the request\n- Performing brain reads or writes inside the resolver instead of delegating\n- Skipping always-on detection because a specific skill matched",
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
             maxSteps: 32,
             replanAfterFailures: 3
         )
-        for (__key, __value) in __meridianProseResults_L58 {
+        for (__key, __value) in __meridianProseResults_L76 {
             state.bind(__key, __value)
         }
 

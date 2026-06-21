@@ -11,14 +11,10 @@ import ModelHike
 //   * Scalar parents (`String|Number|Money|Date|DateTime|Boolean|Duration|
 //     List|Reference`) → emit `public typealias Foo = …`. No protocol —
 //     typealiases can't gain conformance.
-//   * Semantic parents (`thing|event|action|tool|system|integration|artifact|
-//     service|agent|model|dataset|storage|credential|policy|environment|
-//     resource|metric|memory|process|message|signal|fact|role|verdict`) and
-//     chained user kinds → emit BOTH:
+//   * Semantic parents (`BuiltinSemanticBase`) and chained user kinds → emit BOTH:
 //       1. `public protocol FooKind: <Parent> { var <prop>: T { get } … }`
-//          where `<Parent>` is `Meridian<Base>` (e.g. `MeridianThing`,
-//          `MeridianEvent`) for kinds whose parent is a semantic base, or
-//          `<Parent>Kind` for kinds whose parent is another declared kind.
+//          where `<Parent>` is the semantic base's runtime protocol for built-in
+//          bases, or `<Parent>Kind` for another declared kind.
 //          Property requirements list the kind's own properties only —
 //          inherited ones come transitively through the parent protocol.
 //       2. `public struct Foo: FooKind { var id: String; var <inherited>; …; var <own>; …; init(…) { … } }`
@@ -30,8 +26,8 @@ import ModelHike
 //     Top-level (not nested) so generated code can write `ValidationVerdict.invalid`
 //     without pre-pending the owning kind path.
 //   * Every kind protocol composes `Hashable`, `Codable`, and `Sendable`
-//     transitively via `Thing`, which is enough for `State`'s opaque traversal
-//     to JSON-round-trip dotted lookups (`customer.email`).
+//     transitively via the semantic root `Thing`, which is enough for `State`'s opaque
+//     traversal to JSON-round-trip dotted lookups (`customer.email`).
 
 public extension SwiftEmitter {
 
@@ -48,13 +44,13 @@ public extension SwiftEmitter {
 
         public enum PropertyType {
             case scalar(String)        // "String", "Decimal", "Money", …
-            case enumeration(String)   // top-level enum name, e.g. "ValidationVerdict"
+            case enumeration(String, defaultCase: String?)   // top-level enum name, e.g. "ValidationVerdict"
             case list                  // "[Value]"
         }
 
         public struct Kind {
             public let name: String        // natural-language: "validation result"
-            public let parent: String      // "thing" or another kind name (lower-cased)
+            public let parent: String      // semantic base or another kind name (lower-cased)
             public let ownProperties: [Property]
             /// Flattened inheritance — all ancestor properties merged in declaration order.
             public let inheritedProperties: [Property]
@@ -69,8 +65,10 @@ public extension SwiftEmitter {
         public struct Enumeration {
             public let typeName: String       // "ValidationVerdict"
             public let cases: [String]        // ["valid", "invalid"]
-            public init(_ typeName: String, _ cases: [String]) {
+            public let defaultCase: String?
+            public init(_ typeName: String, _ cases: [String], defaultCase: String? = nil) {
                 self.typeName = typeName; self.cases = cases
+                self.defaultCase = defaultCase
             }
         }
 
@@ -100,7 +98,7 @@ public extension SwiftEmitter {
         // Lookup table: enum-type-name → first-case identifier (e.g. "valid").
         // Used to default enum-typed fields in generated initializers.
         let firstCase: [String: String] = Dictionary(uniqueKeysWithValues: d.enumerations.compactMap { e in
-            e.cases.first.map { (e.typeName, caseIdentifier($0)) }
+            (e.defaultCase ?? e.cases.first).map { (e.typeName, escapeIdentifierIfNeeded(caseIdentifier($0))) }
         })
         // Set of declared kind names (lowercase, natural-language) so the
         // protocol-emit step can decide whether a parent name refers to
@@ -141,9 +139,13 @@ public extension SwiftEmitter {
     /// Single-word cases drop the explicit raw value (Swift defaults match).
     private func enumCaseDecl(_ raw: String) -> String {
         let trimmed = raw.trimmingCharacters(in: .whitespaces)
+        let identifier = caseIdentifier(trimmed)
+        let escapedIdentifier = escapeIdentifierIfNeeded(identifier)
         if trimmed.contains(" ") || trimmed.contains("-") {
-            let identifier = caseIdentifier(trimmed)
-            return "\(identifier) = \"\(trimmed)\""
+            return "\(escapedIdentifier) = \"\(trimmed)\""
+        }
+        if escapedIdentifier != trimmed {
+            return "\(escapedIdentifier) = \"\(trimmed)\""
         }
         return trimmed
     }
@@ -156,66 +158,29 @@ public extension SwiftEmitter {
         return ([head] + tail).joined()
     }
 
+    private func escapeIdentifierIfNeeded(_ identifier: String) -> String {
+        if Self.swiftKeywords.contains(identifier) {
+            return "`\(identifier)`"
+        }
+        return identifier
+    }
+
+    private static let swiftKeywords: Set<String> = [
+        "associatedtype", "class", "deinit", "enum", "extension", "fileprivate",
+        "func", "import", "init", "inout", "internal", "let", "open", "operator",
+        "private", "precedencegroup", "protocol", "public", "rethrows", "static",
+        "struct", "subscript", "typealias", "var", "break", "case", "catch",
+        "continue", "default", "defer", "do", "else", "fallthrough", "for",
+        "guard", "if", "in", "repeat", "return", "throw", "switch", "where",
+        "while", "as", "Any", "false", "is", "nil", "self", "Self", "super",
+        "throws", "true", "try"
+    ]
+
     // MARK: - Structs / typealiases
 
     /// Built-in scalar parents — kinds inheriting from these collapse to a
-    /// `typealias` (no protocol, no struct). Reference is included here
-    /// because at the value level it's a `String`-typed identifier; the spec
-    /// places it alongside `String`/`Number`/etc. as a built-in primitive.
-    private static let scalarParents: Set<String> = [
-        "string", "number", "money", "date", "datetime", "boolean", "bool",
-        "duration", "list", "reference"
-    ]
-
-    /// Map a parent name like "Number" to a Swift scalar type.
-    private static let scalarTypeMap: [String: String] = [
-        "string":    "String",
-        "number":    "Decimal",
-        "money":     "Money",
-        "date":      "Date",
-        "datetime":  "Date",
-        "boolean":   "Bool",
-        "bool":      "Bool",
-        "duration":  "Duration",
-        "reference": "String",
-        // Untyped lists default to `[String]` so the containing struct stays
-        // Codable. A typed-list syntax (`A foo has items, which is a list of …`)
-        // is deferred to a later phase.
-        "list":      "[String]"
-    ]
-
-    /// Built-in semantic bases — kinds inheriting from one of these get a
-    /// `<KindName>Kind` protocol that composes the matching runtime protocol
-    /// (`MeridianThing`, `MeridianEvent`, …). The mapping mirrors
-    /// `Sources/MeridianRuntime/Domain/Thing.swift`. Vocabulary authors pick
-    /// the base that matches the kind's role; the type system then carries
-    /// that role through every workflow that references the kind.
-    private static let semanticBases: [String: String] = [
-        "thing":       "MeridianThing",
-        "event":       "MeridianEvent",
-        "action":      "MeridianAction",
-        "tool":        "MeridianTool",
-        "system":      "MeridianSystem",
-        "integration": "MeridianIntegration",
-        "artifact":    "MeridianArtifact",
-        "service":     "MeridianService",
-        "agent":       "MeridianAgent",
-        "model":       "MeridianModel",
-        "dataset":     "MeridianDataset",
-        "storage":     "MeridianStorage",
-        "credential":  "MeridianCredential",
-        "policy":      "MeridianPolicy",
-        "environment": "MeridianEnvironment",
-        "resource":    "MeridianResource",
-        "metric":      "MeridianMetric",
-        "memory":      "MeridianMemory",
-        "process":     "MeridianProcess",
-        "message":     "MeridianMessage",
-        "signal":      "MeridianSignal",
-        "fact":        "MeridianFact",
-        "role":        "MeridianRole",
-        "verdict":     "MeridianVerdict",
-    ]
+    /// `typealias` (no protocol, no struct).
+    private static let scalarParents = BuiltinScalarTypes.scalarParents
 
     private func emitKind(_ k: DomainDecl.Kind,
                           enumFirstCase: [String: String],
@@ -223,7 +188,7 @@ public extension SwiftEmitter {
                           kindsWithDescendants: Set<String>) -> StringTemplate {
         let parentLower = k.parent.lowercased()
         if Self.scalarParents.contains(parentLower) && k.ownProperties.isEmpty {
-            return emitTypealias(k, scalar: Self.scalarTypeMap[parentLower] ?? "Value")
+            return emitTypealias(k, scalar: BuiltinScalarTypes.swiftTypeName(for: parentLower) ?? "Value")
         }
         // An empty `<KindName>Kind` protocol adds nothing the parent doesn't
         // already give us — but we **must** keep it when descendants exist,
@@ -231,7 +196,7 @@ public extension SwiftEmitter {
         // chain through (structs can't be the inheritance anchor).
         // `id` is synthesised on the struct unconditionally, so an explicit
         // `id` own property is not a reason to emit a `<KindName>Kind` protocol.
-        let hasOwnNonIdProps = k.ownProperties.contains { snakeToCamel($0.name).lowercased() != "id" }
+        let hasOwnNonIdProps = k.ownProperties.contains { IdentifierNaming.camelPreservingCase($0.name).lowercased() != "id" }
         let needsProtocol = hasOwnNonIdProps
             || kindsWithDescendants.contains(k.name.lowercased())
         return emitProtocolAndStruct(
@@ -250,21 +215,22 @@ public extension SwiftEmitter {
 
     /// Resolve the inherited protocol for a kind. Three cases:
     ///
-    ///   1. The parent is one of the built-in semantic bases (`thing`,
-    ///      `event`, `action`, …) → use the matching `Meridian<Base>` runtime
-    ///      protocol so the type system carries the kind's role.
+    ///   1. The parent is one of `BuiltinSemanticBase`'s cases (`thing`,
+    ///      `event`, `action`, …) → use the
+    ///      matching `Meridian<Base>` runtime protocol so the type system carries
+    ///      the kind's role.
     ///   2. The parent is another declared kind → chain through its
     ///      `<ParentKind>Kind` protocol so the natural-language `is a kind of`
     ///      graph maps one-for-one onto Swift protocol inheritance.
     ///   3. The parent is unrecognised (e.g. a misspelt or unsupported word)
-    ///      → fall back to `MeridianThing`. The compile still succeeds and
-    ///      the kind picks up the runtime conformances; the diagnostic
-    ///      surface is a separate concern handled at validation time.
+    ///      → fall back to the semantic root protocol `MeridianThing`. The compile still
+    ///      succeeds and the kind picks up the runtime conformances; the
+    ///      diagnostic surface is a separate concern handled at validation time.
     private func parentProtocol(for k: DomainDecl.Kind, kindNames: Set<String>) -> String {
         let parent = k.parent.lowercased()
-        if let base = Self.semanticBases[parent] { return base }
+        if let base = BuiltinSemanticBase.runtimeProtocolName(for: parent) { return base }
         if kindNames.contains(parent) { return "\(typeName(k.parent))Kind" }
-        return "MeridianThing"
+        return BuiltinSemanticBase.root.runtimeProtocolName
     }
 
     private func emitProtocolAndStruct(_ k: DomainDecl.Kind,
@@ -284,7 +250,7 @@ public extension SwiftEmitter {
         // (`A job has an id and a status.`); drop those so we don't emit a
         // duplicate stored property / init parameter / protocol requirement.
         func isIdProperty(_ p: DomainDecl.Property) -> Bool {
-            snakeToCamel(p.name).lowercased() == "id"
+            IdentifierNaming.camelPreservingCase(p.name).lowercased() == "id"
         }
         let allProps       = (k.inheritedProperties + k.ownProperties).filter { !isIdProperty($0) }
 
@@ -293,16 +259,16 @@ public extension SwiftEmitter {
         // generated protocol declarations a one-line-per-own-property summary
         // of the kind, which matches how the merconfig is written.
         let protoLines = k.ownProperties.filter { !isIdProperty($0) }.map { p in
-            "    var \(snakeToCamel(p.name)): \(swiftType(p.type)) { get }"
+            "    var \(IdentifierNaming.camelPreservingCase(p.name)): \(swiftType(p.type)) { get }"
         }
 
         // Struct declares every flattened property (so a single instance
         // satisfies the protocol chain in one place) and gets a default-arg
         // init for terse construction in tests/fixtures.
-        let propLines = allProps.map { "    public var \(snakeToCamel($0.name)): \(swiftType($0.type))" }
+        let propLines = allProps.map { "    public var \(IdentifierNaming.camelPreservingCase($0.name)): \(swiftType($0.type))" }
         let initParams = (["id: String = \"\""] + allProps.map { initParamDecl($0, enumFirstCase: enumFirstCase) })
             .joined(separator: ",\n        ")
-        let initAssigns = (["self.id = id"] + allProps.map { "self.\(snakeToCamel($0.name)) = \(snakeToCamel($0.name))" })
+        let initAssigns = (["self.id = id"] + allProps.map { "self.\(IdentifierNaming.camelPreservingCase($0.name)) = \(IdentifierNaming.camelPreservingCase($0.name))" })
 
         return StringTemplate {
             if emitProtocolDecl {
@@ -325,13 +291,13 @@ public extension SwiftEmitter {
     }
 
     private func initParamDecl(_ p: DomainDecl.Property, enumFirstCase: [String: String]) -> String {
-        "\(snakeToCamel(p.name)): \(swiftType(p.type)) = \(defaultExpr(p.type, enumFirstCase: enumFirstCase))"
+        "\(IdentifierNaming.camelPreservingCase(p.name)): \(swiftType(p.type)) = \(defaultExpr(p.type, enumFirstCase: enumFirstCase))"
     }
 
     private func swiftType(_ t: DomainDecl.PropertyType) -> String {
         switch t {
         case .scalar(let s):       return s
-        case .enumeration(let e):  return e
+        case .enumeration(let e, _):  return e
         case .list:                return "[String]"
         }
     }
@@ -351,8 +317,10 @@ public extension SwiftEmitter {
             case "[String]":    return "[]"
             default:            return "\(s)()"
             }
-        case .enumeration(let e):
-            // Use the first declared case (declaration order is preserved).
+        case .enumeration(let e, let defaultCase):
+            // Use the author default when present, otherwise the first declared
+            // case (declaration order is preserved).
+            if let defaultCase { return ".\(escapeIdentifierIfNeeded(caseIdentifier(defaultCase)))" }
             if let first = enumFirstCase[e] { return ".\(first)" }
             return ".init(rawValue: \"\")!"
         case .list:             return "[]"

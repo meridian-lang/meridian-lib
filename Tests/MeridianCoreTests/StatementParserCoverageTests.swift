@@ -73,6 +73,25 @@ struct StatementParserCoverageTests {
         }
     }
 
+    @Test("embedded every/each markers parse as action-over-collection loops")
+    func embeddedEveryEachMarkers() throws {
+        let every = try parse("review every comment.")
+        guard case .iteration(let everyLoop) = every.statements.first,
+              case .forEach(let everyVariable, .identifierRef(let everyCollection)) = everyLoop.mode else {
+            Issue.record("expected embedded every loop"); return
+        }
+        #expect(everyVariable == "comment")
+        #expect(everyCollection == "comments")
+
+        let each = try parse("inspect each pull request.")
+        guard case .iteration(let eachLoop) = each.statements.first,
+              case .forEach(let eachVariable, .identifierRef(let eachCollection)) = eachLoop.mode else {
+            Issue.record("expected embedded each loop"); return
+        }
+        #expect(eachVariable == "pullRequest")
+        #expect(eachCollection == "pullRequests")
+    }
+
     @Test("a leading recover (no predecessor) uses the placeholder attachment")
     func leadingRecover() throws {
         let block = try parse("""

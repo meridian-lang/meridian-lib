@@ -115,12 +115,15 @@ long-form entry (and the linked decision). This table mirrors
 |---|---|---|
 | MER1001 | malformed workflow header | structural |
 | MER1002 | orphaned code block | structural |
-| MER1003 | unrecognized statement | structural |
+| MER1003 | malformed statement | structural |
 | MER1004 | unparseable rule | structural |
 | MER1005 | malformed condition | structural |
 | MER1006 | misplaced frontmatter | structural |
 | MER1007 | unknown test-spec key | nameResolution |
 | MER1008 | removed import form | structural |
+| MER1009 | sectioned document structural error | structural |
+| MER1010 | uncheckable predicate | structural |
+| MER1011 | invalid table cell | structural |
 
 ### MER2xxx — name resolution (always suggest)
 
@@ -149,6 +152,12 @@ long-form entry (and the linked decision). This table mirrors
 | MER3006 | unattached rule | D-DX-2 |
 | MER3007 | unresolved trigger action | D-DX-2 |
 | MER3008 | tool-backed expression must be a statement | — |
+| MER3010 | ambiguous entry workflow | — |
+| MER3011 | prose not allowed | — |
+| MER3012 | command hole out of scope | — |
+| MER3013 | quantifier semantic error | — |
+| MER3014 | ambiguous anaphora | — |
+| MER3015 | invalid enum default | — |
 
 ### MER4xxx — codegen
 
@@ -163,6 +172,9 @@ long-form entry (and the linked decision). This table mirrors
 | MER5001 | swift-format failed (warning) | D-DX-3 |
 | MER5002 | unrecognized vocabulary declaration | — |
 | MER5003 | unknown rulebook section | — |
+| MER5004 | malformed rulebook entry | — |
+| MER5005 | unrecognized block property | — |
+| MER5010 | unknown merconfig section | — |
 
 ---
 
@@ -242,11 +254,15 @@ Former silent recoveries are now coded diagnostics. The audited table:
 |---|---|
 | Malformed workflow header (missing `:`) | MER1001 (error) |
 | Orphaned fenced code block | MER1002 (error) |
-| Unrecognized statement line | MER1003 (error) |
+| Unrecognized statement line | MER1003 (error — malformed structural surface only; free-form phrase → MER2001) |
 | Unparseable / unattached rule | MER1004 / MER3006 (error) |
+| Malformed condition / expression carrier | MER1005 (error) |
+| Misplaced frontmatter | MER1006 (error) |
+| Removed body-level `import` | MER1008 (error) |
 | Phrase-inline depth overflow | MER3001 (error) |
-| Unrecognized `.merconfig` declaration | MER5002 (error) |
+| Unrecognized `.merconfig` declaration / malformed tool | MER5002 (error) |
 | Unknown rulebook `=== section ===` | MER5003 (error) |
+| Unknown merconfig `=== section ===` | MER5010 (error) |
 | Unknown `.meridian.test` key | MER1007 (error) |
 | Unknown `allow-fallbacks:` token | MER2009 (error) |
 | Unknown tool id | MER2002 (error) |
@@ -263,6 +279,22 @@ strict checks.
 `unresolved-trigger-actions`, `unknown-tools`), or process-wide via
 `Compiler.Options.fallbackPolicy = .lenient` for hosts/tests.
 
+### 6.1 Intentional silent consumes (compile-time)
+
+These are **not** errors — source that is explicitly non-executable by syntax or
+role:
+
+- blank lines and comment / blockquote-comment lines (`>`)
+- inert table/checklist sentinels (`!!! table (( inert ))`, `!!! checklist (( inert ))`)
+- inert/template/domain section bodies routed as non-executable
+- pure outline/topic labels with no statement body (`Comments:` with empty rest)
+- workflow headers in sectioned skill docs that read as prose (not `to …:`)
+
+Every other consume/drop must emit a coded diagnostic or use a named
+`allow-fallbacks:` kind. Accountability: `DiagnosticCodeCatalog.swift` lists
+every `MERxxxx` code as `active`, `reserved`, or `deprecated`; tests assert each
+non-reserved code has at least one production emitter.
+
 ---
 
 ## 7. Tracing
@@ -278,14 +310,15 @@ is the coverage + timing summary.
 |---|---|---|
 | `tokenize` | `IndentTokenizer` | fence/table collapse, headings, indent/comment decisions |
 | `merconfig` | `MerConfigParser` | each section + declaration counts |
+| `parse` | `MeridianParser` | `.meridian`/`.meri` file parsing |
 | `symbols` | `SymbolTable.build` | every kind/property/relation/verb/phrase/tool/constant/instance |
-| `phrase.parse` | `PhrasePatternParser` | phrase-pattern tokenization |
+| `parse` / `phrase.parse` | parser productions | parse spans, branch routing, and phrase-pattern tokenization |
 | `phrase.match` | `SymbolTable.matchPhrase` | candidate scoring + winner |
 | `phrase.args` | `SymbolTable.extractArgs` | per-slot argument extraction |
 | `phrase.inline` | `ASTToIR.inlinePhrase` | recursive body expansion |
-| `statement` | `StatementParser.parseStatement` | per-statement dispatch |
+| `statement` | `StatementParser.parseStatement` | per-statement dispatch (`L42 -> bind`, …) |
 | `expression` | `ExpressionParser` | expression parsing decisions |
-| `lowering` | `ASTToIR`, `RuleAnalyzer` | AST → IR, rule classification |
+| `lowering` | `ASTToIR`, `RuleAnalyzer` | AST → IR (`L42 lowerStatement bind`), rule classification |
 | `rulebook` | `RulebookParser` / rewrite | `.merrules` parsing + rewrites |
 | `skill` | section builder | section-role classification + scoped tools |
 | `codegen` | `SwiftEmitter` | per-file / per-workflow emission |

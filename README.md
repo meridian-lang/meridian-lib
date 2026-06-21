@@ -104,7 +104,8 @@ Original spec docs (read-only reference): [`meridian-handoff/docs/`](meridian-ha
 Sources/
 ├── MeridianRuntime/          # Runtime library (generated code imports this)
 ├── MeridianCore/             # Compiler: parser, AST, IR, codegen, formatter, docs, testing
-├── MeridianCLI/              # meridian executable (compile, run, check, test, format, docs, trace, migrate-skill, skill-deviation…)
+├── MeridianCLI/              # thin @main executable
+├── MeridianCLIKit/           # command implementations (compile, run, check, test, format, docs, trace, migrate-skill, skill-deviation…)
 ├── MeridianTools/            # Blueprint built-in tool implementations
 ├── MeridianTestKit/          # Test helpers: WorkflowTestHarness, MockRuntime, etc.
 └── SampleDemoFlows/          # Hand-written reference workflows (Phase 1)
@@ -149,7 +150,7 @@ IMPLEMENTATION_LOG.md         # Append-only decision log
   `with autonomy` asks an `ActPlanner` one step at a time. Runtime validation,
   host policy, and scoped tool execution remain deterministic.
 - **Deterministic compilation** — same source always produces the same Swift.
-- **11 IR primitives** — invoke, bind, rebind, branch, emit, complete, iterate, assert, wait, commit, recover, simultaneously.
+- **12 IR primitives** — invoke, bind, rebind, branch, emit, complete, iterate, assert, wait, commit, recover, simultaneously, proseStep.
 - **Phrase inlining** — vocabulary phrases expand at compile time.
 - **Workflow recursion** — workflows can call themselves or other workflows.
 - **Typed domain** — kinds become typed Swift `struct`s; generated inits are fully typed.

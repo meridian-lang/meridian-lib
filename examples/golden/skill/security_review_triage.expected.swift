@@ -7,6 +7,24 @@ import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
 private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
+private func meridianFormat(_ v: Value, as formatter: String) -> String {
+    switch formatter.lowercased() {
+    case "integer":
+        if case .number(let n) = v { return NSDecimalNumber(decimal: n).intValue.description }
+    case let f where f.hasPrefix("decimal(") && f.hasSuffix(")"):
+        if case .number(let n) = v, let places = Int(f.dropFirst("decimal(".count).dropLast()) {
+            let nf = NumberFormatter(); nf.minimumFractionDigits = places; nf.maximumFractionDigits = places
+            return nf.string(from: NSDecimalNumber(decimal: n)) ?? n.description
+        }
+    case "short date", "long date":
+        if case .date(let d) = v {
+            let df = DateFormatter(); df.dateStyle = formatter.lowercased() == "short date" ? .short : .long; df.timeStyle = .none
+            return df.string(from: d)
+        }
+    default: break
+    }
+    return meridianStringify(v)
+}
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -29,193 +47,646 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
 
 // MARK: - Domain types
 
-public struct Repository: MeridianThing {
+public enum CheckStatus: String, Hashable, Codable, Sendable {
+    case queued, in_progress, success, failure, neutral
+}
+
+public enum CiRunStatus: String, Hashable, Codable, Sendable {
+    case pending, running, passed, failed, cancelled
+}
+
+public enum CustomerProfileTier: String, Hashable, Codable, Sendable {
+    case free, standard, enterprise, vip
+}
+
+public enum CustomerTicketPriority: String, Hashable, Codable, Sendable {
+    case low, normal, high, urgent
+}
+
+public enum CustomerTicketStatus: String, Hashable, Codable, Sendable {
+    case new, triaged, waiting, resolved, escalated
+}
+
+public enum DependencyEcosystem: String, Hashable, Codable, Sendable {
+    case swift, npm, pypi, gem, cargo, gomod
+}
+
+public enum DeploymentEnvironment: String, Hashable, Codable, Sendable {
+    case dev, staging, canary, prod
+}
+
+public enum DeploymentHealth: String, Hashable, Codable, Sendable {
+    case healthy, degraded, unhealthy, unknown
+}
+
+public enum DeploymentStatus: String, Hashable, Codable, Sendable {
+    case pending, in_progress, succeeded, failed, rolled_back
+}
+
+public enum IncidentSeverity: String, Hashable, Codable, Sendable {
+    case low, medium, high, critical
+}
+
+public enum IncidentStatus: String, Hashable, Codable, Sendable {
+    case `open` = "open", investigating, mitigated, closed
+}
+
+public enum PolicyDecisionOutcome: String, Hashable, Codable, Sendable {
+    case allow, deny, warn, `defer` = "defer"
+}
+
+public enum PullRequestMergeStatus: String, Hashable, Codable, Sendable {
+    case unknown, behind, ahead, conflicting, mergeable
+}
+
+public enum PullRequestStatus: String, Hashable, Codable, Sendable {
+    case `open` = "open", draft, closed, merged
+}
+
+public enum ReleaseAudience: String, Hashable, Codable, Sendable {
+    case `internal` = "internal", beta, ga
+}
+
+public enum ReleaseStatus: String, Hashable, Codable, Sendable {
+    case drafted, gated, rolling, released, halted
+}
+
+public enum RemediationTaskStatus: String, Hashable, Codable, Sendable {
+    case queued, running, blocked, completed, abandoned
+}
+
+public enum RepositoryRiskTier: String, Hashable, Codable, Sendable {
+    case sandbox, standard, regulated, restricted
+}
+
+public enum RepositoryVisibility: String, Hashable, Codable, Sendable {
+    case `public` = "public", `private` = "private", `internal` = "internal"
+}
+
+public enum ReviewCommentSeverity: String, Hashable, Codable, Sendable {
+    case info, low, medium, high, critical
+}
+
+public enum ReviewCommentStatus: String, Hashable, Codable, Sendable {
+    case `open` = "open", resolved, outdated
+}
+
+public enum ReviewerRole: String, Hashable, Codable, Sendable {
+    case engineer, lead, security, sre, manager
+}
+
+public enum RolloutStageStatus: String, Hashable, Codable, Sendable {
+    case waiting, active, completed, aborted
+}
+
+public enum VulnerabilitySeverity: String, Hashable, Codable, Sendable {
+    case informational, low, medium, high, critical
+}
+
+public protocol RepositoryKind: MeridianThing {
+    var name: String { get }
+    var defaultBranch: String { get }
+    var visibility: RepositoryVisibility { get }
+    var riskTier: RepositoryRiskTier { get }
+}
+
+public struct Repository: RepositoryKind {
     public var id: String
+    public var name: String
+    public var defaultBranch: String
+    public var visibility: RepositoryVisibility
+    public var riskTier: RepositoryRiskTier
 
     public init(
-        id: String = ""
+        id: String = "",
+        name: String = "",
+        defaultBranch: String = "",
+        visibility: RepositoryVisibility = .`public`,
+        riskTier: RepositoryRiskTier = .sandbox
     ) {
         self.id = id
+        self.name = name
+        self.defaultBranch = defaultBranch
+        self.visibility = visibility
+        self.riskTier = riskTier
     }
 }
 
-public struct PullRequest: MeridianThing {
+public protocol PullRequestKind: MeridianThing {
+    var number: String { get }
+    var title: String { get }
+    var author: String { get }
+    var branch: String { get }
+    var baseBranch: String { get }
+    var status: PullRequestStatus { get }
+    var mergeStatus: PullRequestMergeStatus { get }
+    var diffSize: Decimal { get }
+    var riskScore: Decimal { get }
+}
+
+public struct PullRequest: PullRequestKind {
     public var id: String
+    public var number: String
+    public var title: String
+    public var author: String
+    public var branch: String
+    public var baseBranch: String
+    public var status: PullRequestStatus
+    public var mergeStatus: PullRequestMergeStatus
+    public var diffSize: Decimal
+    public var riskScore: Decimal
 
     public init(
-        id: String = ""
+        id: String = "",
+        number: String = "",
+        title: String = "",
+        author: String = "",
+        branch: String = "",
+        baseBranch: String = "",
+        status: PullRequestStatus = .`open`,
+        mergeStatus: PullRequestMergeStatus = .unknown,
+        diffSize: Decimal = Decimal(0),
+        riskScore: Decimal = Decimal(0)
     ) {
         self.id = id
+        self.number = number
+        self.title = title
+        self.author = author
+        self.branch = branch
+        self.baseBranch = baseBranch
+        self.status = status
+        self.mergeStatus = mergeStatus
+        self.diffSize = diffSize
+        self.riskScore = riskScore
     }
 }
 
-public struct ReviewComment: MeridianMessage {
+public protocol ReviewCommentKind: MeridianMessage {
+    var author: String { get }
+    var body: String { get }
+    var status: ReviewCommentStatus { get }
+    var severity: ReviewCommentSeverity { get }
+}
+
+public struct ReviewComment: ReviewCommentKind {
     public var id: String
+    public var author: String
+    public var body: String
+    public var status: ReviewCommentStatus
+    public var severity: ReviewCommentSeverity
 
     public init(
-        id: String = ""
+        id: String = "",
+        author: String = "",
+        body: String = "",
+        status: ReviewCommentStatus = .`open`,
+        severity: ReviewCommentSeverity = .info
     ) {
         self.id = id
+        self.author = author
+        self.body = body
+        self.status = status
+        self.severity = severity
     }
 }
 
-public struct Reviewer: MeridianRole {
+public protocol ReviewerKind: MeridianRole {
+    var name: String { get }
+    var role: ReviewerRole { get }
+}
+
+public struct Reviewer: ReviewerKind {
     public var id: String
+    public var name: String
+    public var role: ReviewerRole
 
     public init(
-        id: String = ""
+        id: String = "",
+        name: String = "",
+        role: ReviewerRole = .engineer
     ) {
         self.id = id
+        self.name = name
+        self.role = role
     }
 }
 
-public struct Commit: MeridianThing {
+public protocol CommitKind: MeridianThing {
+    var sha: String { get }
+    var author: String { get }
+    var message: String { get }
+}
+
+public struct Commit: CommitKind {
     public var id: String
+    public var sha: String
+    public var author: String
+    public var message: String
 
     public init(
-        id: String = ""
+        id: String = "",
+        sha: String = "",
+        author: String = "",
+        message: String = ""
     ) {
         self.id = id
+        self.sha = sha
+        self.author = author
+        self.message = message
     }
 }
 
-public struct CiRun: MeridianThing {
+public protocol CiRunKind: MeridianThing {
+    var status: CiRunStatus { get }
+    var conclusion: String { get }
+    var failedJobs: [String] { get }
+    var attempt: Decimal { get }
+}
+
+public struct CiRun: CiRunKind {
     public var id: String
+    public var status: CiRunStatus
+    public var conclusion: String
+    public var failedJobs: [String]
+    public var attempt: Decimal
 
     public init(
-        id: String = ""
+        id: String = "",
+        status: CiRunStatus = .pending,
+        conclusion: String = "",
+        failedJobs: [String] = [],
+        attempt: Decimal = Decimal(0)
     ) {
         self.id = id
+        self.status = status
+        self.conclusion = conclusion
+        self.failedJobs = failedJobs
+        self.attempt = attempt
     }
 }
 
-public struct Check: MeridianThing {
+public protocol CheckKind: MeridianThing {
+    var name: String { get }
+    var status: CheckStatus { get }
+    var required: Bool { get }
+}
+
+public struct Check: CheckKind {
     public var id: String
+    public var name: String
+    public var status: CheckStatus
+    public var required: Bool
 
     public init(
-        id: String = ""
+        id: String = "",
+        name: String = "",
+        status: CheckStatus = .queued,
+        required: Bool = false
     ) {
         self.id = id
+        self.name = name
+        self.status = status
+        self.required = required
     }
 }
 
-public struct Deployment: MeridianThing {
+public protocol DeploymentKind: MeridianThing {
+    var environment: DeploymentEnvironment { get }
+    var status: DeploymentStatus { get }
+    var rollout: Decimal { get }
+    var health: DeploymentHealth { get }
+}
+
+public struct Deployment: DeploymentKind {
     public var id: String
+    public var environment: DeploymentEnvironment
+    public var status: DeploymentStatus
+    public var rollout: Decimal
+    public var health: DeploymentHealth
 
     public init(
-        id: String = ""
+        id: String = "",
+        environment: DeploymentEnvironment = .dev,
+        status: DeploymentStatus = .pending,
+        rollout: Decimal = Decimal(0),
+        health: DeploymentHealth = .healthy
     ) {
         self.id = id
+        self.environment = environment
+        self.status = status
+        self.rollout = rollout
+        self.health = health
     }
 }
 
-public struct Release: MeridianThing {
+public protocol ReleaseKind: MeridianThing {
+    var version: String { get }
+    var status: ReleaseStatus { get }
+    var audience: ReleaseAudience { get }
+    var cutoffDate: Date { get }
+}
+
+public struct Release: ReleaseKind {
     public var id: String
+    public var version: String
+    public var status: ReleaseStatus
+    public var audience: ReleaseAudience
+    public var cutoffDate: Date
 
     public init(
-        id: String = ""
+        id: String = "",
+        version: String = "",
+        status: ReleaseStatus = .drafted,
+        audience: ReleaseAudience = .`internal`,
+        cutoffDate: Date = Date()
     ) {
         self.id = id
+        self.version = version
+        self.status = status
+        self.audience = audience
+        self.cutoffDate = cutoffDate
     }
 }
 
-public struct RolloutStage: MeridianThing {
+public protocol RolloutStageKind: MeridianThing {
+    var name: String { get }
+    var status: RolloutStageStatus { get }
+    var audiencePercent: Decimal { get }
+}
+
+public struct RolloutStage: RolloutStageKind {
     public var id: String
+    public var name: String
+    public var status: RolloutStageStatus
+    public var audiencePercent: Decimal
 
     public init(
-        id: String = ""
+        id: String = "",
+        name: String = "",
+        status: RolloutStageStatus = .waiting,
+        audiencePercent: Decimal = Decimal(0)
     ) {
         self.id = id
+        self.name = name
+        self.status = status
+        self.audiencePercent = audiencePercent
     }
 }
 
-public struct Incident: MeridianProcess {
+public protocol IncidentKind: MeridianProcess {
+    var ticket: String { get }
+    var severity: IncidentSeverity { get }
+    var status: IncidentStatus { get }
+    var service: String { get }
+    var detectedAt: Date { get }
+    var blocked: Bool { get }
+}
+
+public struct Incident: IncidentKind {
     public var id: String
+    public var ticket: String
+    public var severity: IncidentSeverity
+    public var status: IncidentStatus
+    public var service: String
+    public var detectedAt: Date
+    public var blocked: Bool
 
     public init(
-        id: String = ""
+        id: String = "",
+        ticket: String = "",
+        severity: IncidentSeverity = .low,
+        status: IncidentStatus = .`open`,
+        service: String = "",
+        detectedAt: Date = Date(),
+        blocked: Bool = false
     ) {
         self.id = id
+        self.ticket = ticket
+        self.severity = severity
+        self.status = status
+        self.service = service
+        self.detectedAt = detectedAt
+        self.blocked = blocked
     }
 }
 
-public struct Vulnerability: MeridianFact {
+public protocol VulnerabilityKind: MeridianFact {
+    var severity: VulnerabilitySeverity { get }
+    var package: String { get }
+    var fixedIn: String { get }
+    var exploitKnown: Bool { get }
+}
+
+public struct Vulnerability: VulnerabilityKind {
     public var id: String
+    public var severity: VulnerabilitySeverity
+    public var package: String
+    public var fixedIn: String
+    public var exploitKnown: Bool
 
     public init(
-        id: String = ""
+        id: String = "",
+        severity: VulnerabilitySeverity = .informational,
+        package: String = "",
+        fixedIn: String = "",
+        exploitKnown: Bool = false
     ) {
         self.id = id
+        self.severity = severity
+        self.package = package
+        self.fixedIn = fixedIn
+        self.exploitKnown = exploitKnown
     }
 }
 
-public struct Dependency: MeridianThing {
+public protocol DependencyKind: MeridianThing {
+    var name: String { get }
+    var currentVersion: String { get }
+    var availableVersion: String { get }
+    var ecosystem: DependencyEcosystem { get }
+    var pinned: Bool { get }
+}
+
+public struct Dependency: DependencyKind {
     public var id: String
+    public var name: String
+    public var currentVersion: String
+    public var availableVersion: String
+    public var ecosystem: DependencyEcosystem
+    public var pinned: Bool
 
     public init(
-        id: String = ""
+        id: String = "",
+        name: String = "",
+        currentVersion: String = "",
+        availableVersion: String = "",
+        ecosystem: DependencyEcosystem = .swift,
+        pinned: Bool = false
     ) {
         self.id = id
+        self.name = name
+        self.currentVersion = currentVersion
+        self.availableVersion = availableVersion
+        self.ecosystem = ecosystem
+        self.pinned = pinned
     }
 }
 
-public struct PolicyDecision: MeridianVerdict {
+public protocol PolicyDecisionKind: MeridianVerdict {
+    var identifier: String { get }
+    var outcome: PolicyDecisionOutcome { get }
+    var rationale: String { get }
+    var policyName: String { get }
+}
+
+public struct PolicyDecision: PolicyDecisionKind {
     public var id: String
+    public var identifier: String
+    public var outcome: PolicyDecisionOutcome
+    public var rationale: String
+    public var policyName: String
 
     public init(
-        id: String = ""
+        id: String = "",
+        identifier: String = "",
+        outcome: PolicyDecisionOutcome = .allow,
+        rationale: String = "",
+        policyName: String = ""
     ) {
         self.id = id
+        self.identifier = identifier
+        self.outcome = outcome
+        self.rationale = rationale
+        self.policyName = policyName
     }
 }
 
-public struct RemediationTask: MeridianAction {
+public protocol RemediationTaskKind: MeridianAction {
+    var description: String { get }
+    var status: RemediationTaskStatus { get }
+    var owner: String { get }
+}
+
+public struct RemediationTask: RemediationTaskKind {
     public var id: String
+    public var description: String
+    public var status: RemediationTaskStatus
+    public var owner: String
 
     public init(
-        id: String = ""
+        id: String = "",
+        description: String = "",
+        status: RemediationTaskStatus = .queued,
+        owner: String = ""
     ) {
         self.id = id
+        self.description = description
+        self.status = status
+        self.owner = owner
     }
 }
 
-public struct AuditNote: MeridianEvent {
+public protocol AuditNoteKind: MeridianEvent {
+    var actor: String { get }
+    var message: String { get }
+    var recordedAt: Date { get }
+}
+
+public struct AuditNote: AuditNoteKind {
     public var id: String
+    public var actor: String
+    public var message: String
+    public var recordedAt: Date
 
     public init(
-        id: String = ""
+        id: String = "",
+        actor: String = "",
+        message: String = "",
+        recordedAt: Date = Date()
     ) {
         self.id = id
+        self.actor = actor
+        self.message = message
+        self.recordedAt = recordedAt
     }
 }
 
-public struct CustomerTicket: MeridianThing {
+public protocol CustomerTicketKind: MeridianThing {
+    var subject: String { get }
+    var priority: CustomerTicketPriority { get }
+    var status: CustomerTicketStatus { get }
+    var customerId: String { get }
+}
+
+public struct CustomerTicket: CustomerTicketKind {
     public var id: String
+    public var subject: String
+    public var priority: CustomerTicketPriority
+    public var status: CustomerTicketStatus
+    public var customerId: String
 
     public init(
-        id: String = ""
+        id: String = "",
+        subject: String = "",
+        priority: CustomerTicketPriority = .low,
+        status: CustomerTicketStatus = .new,
+        customerId: String = ""
     ) {
         self.id = id
+        self.subject = subject
+        self.priority = priority
+        self.status = status
+        self.customerId = customerId
     }
 }
 
-public struct CustomerProfile: MeridianThing {
+public protocol CustomerProfileKind: MeridianThing {
+    var tier: CustomerProfileTier { get }
+    var contactEmail: String { get }
+    var accountManager: String { get }
+}
+
+public struct CustomerProfile: CustomerProfileKind {
     public var id: String
+    public var tier: CustomerProfileTier
+    public var contactEmail: String
+    public var accountManager: String
 
     public init(
-        id: String = ""
+        id: String = "",
+        tier: CustomerProfileTier = .free,
+        contactEmail: String = "",
+        accountManager: String = ""
     ) {
         self.id = id
+        self.tier = tier
+        self.contactEmail = contactEmail
+        self.accountManager = accountManager
     }
 }
 
-public struct SlaPolicy: MeridianThing {
+public protocol SlaPolicyKind: MeridianThing {
+    var name: String { get }
+    var responseMinutes: Decimal { get }
+    var resolutionHours: Decimal { get }
+}
+
+public struct SlaPolicy: SlaPolicyKind {
     public var id: String
+    public var name: String
+    public var responseMinutes: Decimal
+    public var resolutionHours: Decimal
 
     public init(
-        id: String = ""
+        id: String = "",
+        name: String = "",
+        responseMinutes: Decimal = Decimal(0),
+        resolutionHours: Decimal = Decimal(0)
     ) {
         self.id = id
+        self.name = name
+        self.responseMinutes = responseMinutes
+        self.resolutionHours = resolutionHours
     }
 }
 

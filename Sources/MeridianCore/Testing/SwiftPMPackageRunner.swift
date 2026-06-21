@@ -212,20 +212,20 @@ public final class SwiftPMPackageRunner {
 
         let checkpointRootExpr: String
         if let checkpointRoot = options.checkpointRoot {
-            checkpointRootExpr = "try FilesystemCheckpointer(rootURL: URL(fileURLWithPath: \"\(escape(checkpointRoot))\"))"
+            checkpointRootExpr = "try FilesystemCheckpointer(rootURL: URL(fileURLWithPath: \"\(escapeSwiftStringLiteral(checkpointRoot))\"))"
         } else {
             checkpointRootExpr = "InMemoryCheckpointer()"
         }
 
         lines.append(contentsOf: [
             "        let observer = JSONLObserver.stdout",
-            "        let runtime = Runtime(toolRegistry: registry, observer: observer, checkpointer: \(checkpointRootExpr), runID: \"\(escape(options.runID))\")"
+            "        let runtime = Runtime(toolRegistry: registry, observer: observer, checkpointer: \(checkpointRootExpr), runID: \"\(escapeSwiftStringLiteral(options.runID))\")"
         ])
 
         let inputs = try parseAssignments(options.inputJSON, option: "--input-json")
         let inputsByName = Dictionary(inputs.map { ($0.name, $0.json) }, uniquingKeysWith: { _, new in new })
         for param in workflow.parameters {
-            let swiftType = pascalCase(param.kind.name)
+            let swiftType = IdentifierNaming.pascalCase(param.kind.name)
             let json = inputsByName[param.name] ?? "{}"
             lines.append(contentsOf: DriverSourceBuilder.paramDecode(
                 name: param.name, swiftType: swiftType, json: json, indent: "        ", force: true))
@@ -254,9 +254,6 @@ public final class SwiftPMPackageRunner {
         }
     }
 
-    private func pascalCase(_ raw: String) -> String { IdentifierNaming.pascalCase(raw) }
-
-    private func escape(_ s: String) -> String { escapeSwiftStringLiteral(s) }
 }
 
 public enum SwiftPMPackageRunnerError: Error, CustomStringConvertible {

@@ -7,6 +7,24 @@ import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
 private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
+private func meridianFormat(_ v: Value, as formatter: String) -> String {
+    switch formatter.lowercased() {
+    case "integer":
+        if case .number(let n) = v { return NSDecimalNumber(decimal: n).intValue.description }
+    case let f where f.hasPrefix("decimal(") && f.hasSuffix(")"):
+        if case .number(let n) = v, let places = Int(f.dropFirst("decimal(".count).dropLast()) {
+            let nf = NumberFormatter(); nf.minimumFractionDigits = places; nf.maximumFractionDigits = places
+            return nf.string(from: NSDecimalNumber(decimal: n)) ?? n.description
+        }
+    case "short date", "long date":
+        if case .date(let d) = v {
+            let df = DateFormatter(); df.dateStyle = formatter.lowercased() == "short date" ? .short : .long; df.timeStyle = .none
+            return df.string(from: d)
+        }
+    default: break
+    }
+    return meridianStringify(v)
+}
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -29,33 +47,102 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
 
 // MARK: - Domain types
 
-public struct PullRequest: MeridianThing {
+public enum CiRunStatus: String, Hashable, Codable, Sendable {
+    case pending, running, passed, failed, cancelled
+}
+
+public enum CommentStatus: String, Hashable, Codable, Sendable {
+    case `open` = "open", resolved, outdated
+}
+
+public enum PullRequestMergeStatus: String, Hashable, Codable, Sendable {
+    case unknown, behind, ahead, conflicting, mergeable
+}
+
+public enum PullRequestStatus: String, Hashable, Codable, Sendable {
+    case `open` = "open", closed, merged, draft
+}
+
+public protocol PullRequestKind: MeridianThing {
+    var number: String { get }
+    var title: String { get }
+    var status: PullRequestStatus { get }
+    var mergeStatus: PullRequestMergeStatus { get }
+    var headBranch: String { get }
+    var baseBranch: String { get }
+}
+
+public struct PullRequest: PullRequestKind {
     public var id: String
+    public var number: String
+    public var title: String
+    public var status: PullRequestStatus
+    public var mergeStatus: PullRequestMergeStatus
+    public var headBranch: String
+    public var baseBranch: String
 
     public init(
-        id: String = ""
+        id: String = "",
+        number: String = "",
+        title: String = "",
+        status: PullRequestStatus = .`open`,
+        mergeStatus: PullRequestMergeStatus = .unknown,
+        headBranch: String = "",
+        baseBranch: String = ""
     ) {
         self.id = id
+        self.number = number
+        self.title = title
+        self.status = status
+        self.mergeStatus = mergeStatus
+        self.headBranch = headBranch
+        self.baseBranch = baseBranch
     }
 }
 
-public struct Comment: MeridianThing {
+public protocol CommentKind: MeridianThing {
+    var author: String { get }
+    var body: String { get }
+    var status: CommentStatus { get }
+}
+
+public struct Comment: CommentKind {
     public var id: String
+    public var author: String
+    public var body: String
+    public var status: CommentStatus
 
     public init(
-        id: String = ""
+        id: String = "",
+        author: String = "",
+        body: String = "",
+        status: CommentStatus = .`open`
     ) {
         self.id = id
+        self.author = author
+        self.body = body
+        self.status = status
     }
 }
 
-public struct CiRun: MeridianThing {
+public protocol CiRunKind: MeridianThing {
+    var status: CiRunStatus { get }
+    var conclusion: String { get }
+}
+
+public struct CiRun: CiRunKind {
     public var id: String
+    public var status: CiRunStatus
+    public var conclusion: String
 
     public init(
-        id: String = ""
+        id: String = "",
+        status: CiRunStatus = .pending,
+        conclusion: String = ""
     ) {
         self.id = id
+        self.status = status
+        self.conclusion = conclusion
     }
 }
 

@@ -133,11 +133,9 @@ public struct SkillMetrics: Sendable, Equatable {
 
     // MARK: - Section role
 
-    /// The `##`/`###` heading text (marker included), or nil for non-heading
-    /// lines. A level-1 `#` title is not a section.
+    /// Valid section heading text, or nil for non-heading lines.
     private static func headingText(_ trimmed: String) -> String? {
-        guard trimmed.hasPrefix("##") else { return nil }
-        return String(trimmed.drop(while: { $0 == "#" })).trimmingCharacters(in: .whitespaces)
+        SkillMarkdownShape.headingText(trimmed)
     }
 
     /// Mirrors `SkillSectionBuilder.resolve`: a trailing `(( … ))` marker is
@@ -235,17 +233,17 @@ public struct SkillMetrics: Sendable, Equatable {
             if wholeLineBacktickedCommand(trimmed) { return true }
             if trimmed.hasPrefix("|") && trimmed.contains("|") { return true }
             let lower = trimmed.lowercased()
-            if lower.contains("ai-autonomy") || lower.contains("ai-discretion") || lower.contains("use judgment to") { return true }
+            if lower.contains(TableMode.aiAutonomy.sentinelToken)
+                || lower.contains(TableMode.aiDiscretion.sentinelToken)
+                || EnglishLexicon.default.grammar.judgmentIntroducers.contains(where: { lower.contains($0) }) {
+                return true
+            }
         }
         return false
     }
 
     private static func wholeLineBacktickedCommand(_ trimmed: String) -> Bool {
-        guard trimmed.hasPrefix("`") else { return false }
-        let command = trimmed.split(separator: "`", omittingEmptySubsequences: false)
-        guard command.count >= 3 else { return false }
-        let inner = command[1].trimmingCharacters(in: .whitespaces)
-        return inner.contains(" ") || inner.contains(".")
+        SkillMarkdownShape.wholeLineBacktickedCommand(trimmed)
     }
 
     private static func looksReferenceLike(_ heading: String, body: [String]) -> Bool {
@@ -270,9 +268,10 @@ public struct SkillMetrics: Sendable, Equatable {
 
     private static func isJudgmentHeader(_ trimmed: String) -> Bool {
         let lower = trimmed.lowercased()
-        return lower.contains("use judgment to")
-            || lower.contains("with discretion")
-            || lower.contains("with autonomy")
+        let grammar = EnglishLexicon.default.grammar
+        return grammar.judgmentIntroducers.contains { lower.contains($0) }
+            || lower.contains(grammar.discretionMarker)
+            || lower.contains(grammar.autonomyMarker)
     }
 
     /// Count of non-blank lines indented deeper than the judgment header,

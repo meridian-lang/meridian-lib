@@ -19,5 +19,8 @@ struct MeridianLinterTests {
     func paraphraseHints() {
         let diagnostics = MeridianLinter().lint(source: "please maybe resolve the comment.")
         #expect(diagnostics.contains { $0.severity == "info" })
+
+        let infixMaybe = MeridianLinter().lint(source: "resolve maybe the comment.")
+        #expect(infixMaybe.contains { $0.hint?.contains("discretion") == true })
     }
 }

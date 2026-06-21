@@ -51,6 +51,7 @@ struct TraceEnabledCompileTests {
         #expect(lines.contains { $0.hasPrefix("[symbols]") })
         #expect(lines.contains { $0.hasPrefix("[merconfig]") })
         #expect(lines.contains { $0.hasPrefix("[lowering]") })
+        #expect(lines.contains { $0.hasPrefix("[parse]") || $0.hasPrefix("[statement]") })
         // The relational fixture inlines/dispatches phrases and lowers a
         // definition, so the phrase-inline + lowering arms must have fired.
         #expect(lines.contains { $0.contains("lower definition") || $0.contains("lowerWorkflow") })

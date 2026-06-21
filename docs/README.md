@@ -9,7 +9,7 @@ runs against a small deterministic runtime.
 > program (executable Markdown tables/task-lists + AI-routing), and the
 > world-class diagnostics/tracing/decision-log layer (Phase DX) are all complete.
 > Generated Swift compiles, links, and runs against `MeridianRuntime`.
-> Replay-safe resume, all 11 IR primitives, Blueprint built-ins, full CLI,
+> Replay-safe resume, all 12 IR primitives, Blueprint built-ins, full CLI,
 > MeridianTestKit, and DocC bundles are shipped. Every error is a stable
 > `MERxxxx` code with always-on did-you-mean and a linked design decision. See
 > [status.md](status.md) and [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md).
@@ -57,7 +57,7 @@ meridian/
 │   │   ├── AST/                # AST node types (post-parse, pre-IR)
 │   │   ├── Symbols/            # SymbolTable + phrase matching
 │   │   ├── Lowering/           # AST → IR (ASTToIR.swift)
-│   │   ├── IR/                 # IRTypes.swift — 11 IR primitives
+│   │   ├── IR/                 # IRTypes.swift — 12 IR primitives
 │   │   ├── Codegen/            # SwiftEmitter.swift + ManifestEmitter.swift
 │   │   ├── Formatter/          # MeridianFormatter.swift
 │   │   ├── Docs/               # MerconfigDocsRenderer.swift
@@ -65,9 +65,11 @@ meridian/
 │   │   ├── Diagnostics/        # Diagnostic, DiagnosticEngine/Renderer, Suggester,
 │   │   │                       #   DiagnosticCode catalog, DecisionCatalog, ParserTrace
 │   │   └── Compiler.swift      # Top-level compile() entry point
-│   ├── MeridianCLI/            # meridian executable (ArgumentParser)
-│   │   └── Commands/           # compile, check, verify, run, resume, format,
-│   │                           #   docs, test, trace, explain, decisions
+│   ├── MeridianCLI/            # thin meridian @main executable
+│   ├── MeridianCLIKit/         # ArgumentParser command implementations:
+│   │                           #   compile, check, verify, run, resume, format,
+│   │                           #   docs, test, lint, trace, explain, decisions,
+│   │                           #   preview-skill, migrate-skill, skill-deviation
 │   ├── MeridianTools/          # Blueprint built-in tool implementations
 │   ├── MeridianTestKit/        # Test helpers: WorkflowTestHarness, MockRuntime, etc.
 │   └── SampleDemoFlows/        # Phase 1 hand-written reference workflows

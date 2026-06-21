@@ -27,6 +27,13 @@ struct FixedGrammarDefaultsTests {
         #expect(g.scalarNavConnectors == ["to", "by"])
         #expect(g.afterIdiomIntroducer == "after ")
         #expect(g.tryIdiomFailureSeparator == "; if it fails ")
+        #expect(g.iterationMarkers.embeddedEachMarkers == [" every ", " each "])
+        #expect(g.autonomyMarkers.replanAfter == ["re-plan after", "replan after"])
+        #expect(g.autonomyMarkers.maxSteps == ["max", "up to"])
+        #expect(g.autonomyMarkers.boundaryMarkers.contains(" until "))
+        #expect(g.judgmentFollowCollectPrefix == "use judgment to follow the ")
+        #expect(g.lintMarkers.politenessPrefixes == ["please "])
+        #expect(g.lintMarkers.uncertaintyMarkers == [" maybe ", "maybe "])
     }
 
     @Test("merging preserves the grammar passthrough unchanged")

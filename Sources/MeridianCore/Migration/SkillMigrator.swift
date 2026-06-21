@@ -367,19 +367,8 @@ public struct SkillMigrator {
         FrontmatterScanner.locate(lines, skipLeadingBlanks: false).map { $0.close + 1 } ?? 0
     }
 
-    /// Recognize a `##`…`######` heading line (no leading whitespace, at least
-    /// one space after the hashes, non-empty text). Returns the hash run and the
-    /// trimmed heading text.
     private func headingMatch(_ line: String) -> (hashes: String, text: String)? {
-        guard line.hasPrefix("##") else { return nil }
-        var hashes = 0
-        for ch in line { if ch == "#" { hashes += 1 } else { break } }
-        guard (2...6).contains(hashes) else { return nil }
-        let after = line.dropFirst(hashes)
-        guard let first = after.first, first == " " || first == "\t" else { return nil }
-        let text = after.trimmingCharacters(in: .whitespaces)
-        guard !text.isEmpty else { return nil }
-        return (String(repeating: "#", count: hashes), text)
+        SkillMarkdownShape.headingMatch(line)
     }
 
     /// How the marking pass handles a heading.
@@ -517,7 +506,7 @@ public struct SkillMigrator {
             sawContent = true
 
             if t.hasPrefix("!!! table") {
-                pendingTableMarker = !t.lowercased().contains("inert")
+                pendingTableMarker = !t.lowercased().contains(TableMode.inert.sentinelToken)
                 continue
             }
             if pendingTableMarker {
@@ -526,7 +515,7 @@ public struct SkillMigrator {
             }
 
             if t.hasPrefix("!!! checklist") {
-                pendingChecklistMarker = !t.lowercased().contains("inert")
+                pendingChecklistMarker = !t.lowercased().contains(ChecklistMode.inert.sentinelToken)
                 continue
             }
             if pendingChecklistMarker {
@@ -566,16 +555,12 @@ public struct SkillMigrator {
     }
 
     private func isWholeLineBacktickedCommand(_ s: String) -> Bool {
-        let trimmed = s.trimmingCharacters(in: .whitespaces)
-        let commandSpan = StatementParser.splitCommandAnnotation(trimmed).command
-        guard commandSpan.hasPrefix("`"), commandSpan.hasSuffix("`") else { return false }
-        let inner = commandSpan.dropFirst().dropLast().trimmingCharacters(in: .whitespaces)
-        return !inner.isEmpty && !inner.contains("`")
+        SkillMarkdownShape.wholeLineBacktickedCommand(s)
     }
 
     private func isChoiceGateLine(_ s: String) -> Bool {
         let lower = s.lowercased()
-        return lower.hasPrefix("ask the user to choose between ")
+        return EnglishLexicon.default.grammar.choiceGateIntroducers.contains { lower.hasPrefix($0) }
             && s.filter { $0 == "\"" }.count >= 4
     }
 

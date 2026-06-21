@@ -3,7 +3,7 @@ import MeridianRuntime
 
 // MARK: - IRPrimitiveKind
 
-/// The 10 IR primitive kinds, used in `expect_primitive_count` assertions.
+/// The 12 IR primitive kinds, used in `expect_primitive_count` assertions.
 public enum IRPrimitiveKind: String, Sendable, CaseIterable {
     case invoke, bind, branch, emit, complete, wait, iterate, assert, commit, recover, simultaneously, proseStep
 }

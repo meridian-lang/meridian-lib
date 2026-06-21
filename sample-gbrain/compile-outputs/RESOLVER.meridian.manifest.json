@@ -103,45 +103,51 @@
         "text" : "Contract"
       },
       {
-        "kind" : "procedure",
+        "kind" : "tables",
         "level" : 2,
         "line" : 21,
+        "text" : "Tables"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 36,
         "text" : "Phases"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 29,
+        "line" : 47,
         "text" : "Routing tables"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 31,
+        "line" : 49,
         "text" : "Always-on (every message)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 36,
+        "line" : 54,
         "text" : "Brain operations"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 43,
+        "line" : 61,
         "text" : "Content and media ingestion"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 49,
+        "line" : 67,
         "text" : "Maintenance and operations"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 55,
+        "line" : 73,
         "text" : "Anti-Patterns"
       }
     ],
@@ -157,21 +163,33 @@
       },
       {
         "executes" : true,
-        "heading" : "Phases",
+        "heading" : "Tables",
         "line" : 21,
         "lines" : [
+          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IGNhcHR1cmUgdGhpcyB8IGNhcHR1cmUgfAp8IHNhdmUgdGhpcyB0aG91Z2h0IHwgY2FwdHVyZSB8CnwgcmVtZW1iZXIgdGhpcyB8IGNhcHR1cmUgfAp8IGluZ2VzdCB0aGlzIHwgaW5nZXN0IHwKfCBicmFpbiBoZWFsdGggfCBtYWludGFpbiB8CnwgY29uc29saWRhdGlvbiB8IG1haW50YWluIHwKfCBjbGVhbnVwIHwgbWFpbnRhaW4gfAp8IHNjaGVkdWxpbmcgcmVjdXJyaW5nIHdvcmsgfCBjcm9uLXNjaGVkdWxlciB8CnwgZGFpbHkgcHJlcGFyYXRpb24gfCBkYWlseS10YXNrLXByZXAgfAp8IHRhc2sgY2hhbmdlcyB8IGRhaWx5LXRhc2stbWFuYWdlciB8"
+        ],
+        "role" : "tables"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 36,
+        "lines" : [
+          "bind owning skill = the skill corresponding to the trigger phrase input in the table",
+          "recover from \"table.lookup_miss\":",
           "use judgment to route the request to the owning skill:",
           "Read the request and identify the dominant intent (brain operation, ingestion, maintenance, scheduling, or meta)",
-          "Match the intent against the trigger phrases of each skill and select the single owning skill",
+          "Match fuzzy intent against the trigger phrases of each skill and select the single owning skill",
           "When two skills could match, select both and order them so their outputs chain (for example, ingest before enrich)",
-          "Read the selected skill file before acting"
+          "Read the selected skill file before acting",
+          "emit resolver.route with skill = owning skill"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Routing tables",
-        "line" : 29,
+        "line" : 47,
         "lines" : [
 
         ],
@@ -180,7 +198,7 @@
       {
         "executes" : false,
         "heading" : "Always-on (every message)",
-        "line" : 31,
+        "line" : 49,
         "lines" : [
           "Every inbound message routes to signal-detector, spawned in parallel and never blocking the response",
           "Any brain read, write, lookup, or citation routes to brain-ops"
@@ -190,7 +208,7 @@
       {
         "executes" : false,
         "heading" : "Brain operations",
-        "line" : 36,
+        "line" : 54,
         "lines" : [
           "A question about what the brain knows (\"what do we know about\", \"who is\", \"background on\") routes to query",
           "Creating or enriching a person or company page routes to enrich",
@@ -202,7 +220,7 @@
       {
         "executes" : false,
         "heading" : "Content and media ingestion",
-        "line" : 43,
+        "line" : 61,
         "lines" : [
           "\"capture this\", \"save this thought\", \"remember this\" routes to capture",
           "A shared link, article, tweet, or idea routes to idea-ingest",
@@ -213,7 +231,7 @@
       {
         "executes" : false,
         "heading" : "Maintenance and operations",
-        "line" : 49,
+        "line" : 67,
         "lines" : [
           "Brain health, consolidation, and cleanup route to maintain",
           "Scheduling recurring work routes to cron-scheduler",
@@ -224,7 +242,7 @@
       {
         "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 55,
+        "line" : 73,
         "lines" : [
           "checklist:ai-autonomy:Um91dGluZyB0byBtb3JlIHRoYW4gb25lIHNraWxsIHdoZW4gYSBzaW5nbGUgc2tpbGwgY2xlYXJseSBvd25zIHRoZSByZXF1ZXN0ClBlcmZvcm1pbmcgYnJhaW4gcmVhZHMgb3Igd3JpdGVzIGluc2lkZSB0aGUgcmVzb2x2ZXIgaW5zdGVhZCBvZiBkZWxlZ2F0aW5nClNraXBwaW5nIGFsd2F5cy1vbiBkZXRlY3Rpb24gYmVjYXVzZSBhIHNwZWNpZmljIHNraWxsIG1hdGNoZWQ="
         ],
@@ -270,39 +288,55 @@
   "source_map" : [
     {
       "meridian_line" : 17,
-      "swift_line" : 581
+      "swift_line" : 599
     },
     {
       "meridian_line" : 23,
-      "swift_line" : 592
+      "swift_line" : 610
     },
     {
-      "meridian_line" : 58,
-      "swift_line" : 601
+      "meridian_line" : 39,
+      "swift_line" : 612
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 641
+      "meridian_line" : 38,
+      "swift_line" : 614
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 646
+      "meridian_line" : 40,
+      "swift_line" : 617
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 685
+      "meridian_line" : 45,
+      "swift_line" : 628
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 690
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 729
+      "meridian_line" : 76,
+      "swift_line" : 637
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 677
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 682
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 721
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 726
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 765
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 770
     }
   ],
   "tools_used" : [

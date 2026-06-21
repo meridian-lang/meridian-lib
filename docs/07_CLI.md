@@ -1,6 +1,7 @@
 # Meridian — CLI Reference
 
-The `meridian` executable is built from `Sources/MeridianCLI/`.
+The `meridian` executable has a thin `Sources/MeridianCLI/` entry point; command
+implementations live in the testable `Sources/MeridianCLIKit/` module.
 
 ---
 
@@ -38,6 +39,7 @@ meridian compile <source> [options]
 | `-o, --output <dir>` | `build` | Directory to write the generated `.swift` and `.meridian.manifest.json`. Created with intermediate directories if needed. |
 | `--timestamp` | false | Include a generation timestamp in the generated file header. |
 | `--no-line-comments` | false | Suppress `// L{n}` source-line comments in generated code. |
+| `--namespace <auto\|none>` | `auto` | Wrap generated declarations in `public enum <Stem> { … }` by default. Use `none` for flat output. |
 | `--no-format` | false | Skip `swift-format` post-processing. |
 | `--trace <categories>` | (none) | Enable `ParserTrace` output. Comma or space-separated. Examples: `phrase`, `phrase.match`, `lowering`, `timing`, `all`. Also read from `MERIDIAN_TRACE` env var. |
 | `--trace-file <path>` | stderr | Write trace output to a file instead of stderr. |
@@ -290,6 +292,41 @@ Rendered sections: kinds, properties, relations, phrases, constants, instances, 
 
 ---
 
+## `meridian lint`
+
+Report Meridian authoring diagnostics without compiling or lowering the file.
+This is a lightweight preflight for editor integrations and quick local checks.
+
+```bash
+meridian lint <input>
+```
+
+Output is one diagnostic per line:
+
+```text
+path/to/file.meri:12: warning: message hint: optional hint
+```
+
+The command exits non-zero when any diagnostic has severity `error`.
+
+---
+
+## `meridian preview-skill`
+
+Preview a `SKILL.md` file as Meridian surface syntax using
+`SkillMarkdownImporter`. This is a read-only preview; use `migrate-skill` for
+strict compilation and deterministic marking.
+
+```bash
+meridian preview-skill <SKILL.md> [--name <frontmatter-name>]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--name <text>` | `imported skill` | Name to place in generated frontmatter |
+
+---
+
 ## `meridian test`
 
 Discover and run `.meridian.test` spec files. Each spec is compiled in-process
@@ -460,6 +497,7 @@ during development:
 | Category | What it shows |
 |---|---|
 | `tokenize` | Fence/table collapse, headings, indent/comment decisions |
+| `parse` | Top-level parse spans and parser branch routing |
 | `phrase` | All phrase pipeline stages (parse, match, args, inline) |
 | `phrase.match` | Which phrases are candidates and which wins |
 | `phrase.args` | Argument text extracted from each invocation slot |

@@ -14,7 +14,7 @@ enum WorkflowActionMatcher {
 
     /// Count of action stems that also appear in the workflow's token set. Zero
     /// when the action has no content stems.
-    static func overlap(action: String, workflow: IRWorkflow, scope: Scope, lexicon: EnglishLexicon) -> Int {
+    static func actionStemOverlap(action: String, workflow: IRWorkflow, scope: Scope, lexicon: EnglishLexicon) -> Int {
         let stopwords = lexicon.toolStopwords.union(lexicon.articles).union(lexicon.prepositions)
         func stemSet(_ s: String) -> Set<String> {
             Set(WordStemmer.tokenize(s, stopwords: stopwords).flatMap(WordStemmer.stems))

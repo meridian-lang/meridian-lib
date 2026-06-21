@@ -86,7 +86,7 @@ public struct IRParameter: Sendable, Hashable {
     }
 }
 
-// MARK: - The 10 IR primitives
+// MARK: - The 12 IR primitives
 
 public indirect enum IRPrimitive: Sendable {
     case invoke(InvokeIR)
@@ -424,6 +424,9 @@ public struct AutonomyConfigIR: Sendable {
 public enum IRInterpolationSegment: Sendable {
     case literal(String)
     case expression(IRExpression)
+    case conditional(condition: IRExpression, then: [IRInterpolationSegment], otherwise: [IRInterpolationSegment])
+    case forEach(variable: String, collection: IRExpression, body: [IRInterpolationSegment])
+    case formatted(IRExpression, formatter: String)
     /// A command hole (1B) that sits inside a double-quoted span of a shell
     /// command: its value is shell-escaped (for use within `"…"`) by the
     /// emitted `meridianShellQuote` helper rather than interpolated verbatim.
@@ -450,6 +453,8 @@ public indirect enum IRExpression: Sendable {
     /// Data table: a list of records sharing `fields`, one record per row.
     /// Emitted as `.list([.record([...]), ...])`.
     case recordList(fields: [String], rows: [[IRExpression]])
+    /// Wave 4B: deterministic lookup in a named data table.
+    case tableLookup(table: String, keyColumn: String, key: IRExpression, valueColumn: String)
     /// 2B: A checkable adjective predicate (`X is stale`). `functionName` is the
     /// precomputed `meridianDef_<Kind>_<adjCamel>` helper; `subject` is the
     /// value the predicate runs over. The emitter needs no definition registry.

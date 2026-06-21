@@ -1,0 +1,95 @@
+---
+description: Codegen conventions for SwiftEmitter — string escaping, namespacing, Value wrapping, comparison emission, Constants/Instances structs, struct naming, recursive workflow calls. Read when editing the emitter.
+globs: Sources/MeridianCore/Codegen/**/*.swift
+alwaysApply: false
+---
+
+# Codegen conventions
+
+### `SwiftEmitter`
+
+- Uses `StringTemplate` (result-builder DSL from `modelhike`).
+- Each `emit*` method returns a `StringTemplate`.
+- Top-level: `emitFile(…).toString(separator: "\n")`.
+- `Ctx` carries indent depth. `.s` is the current indent string. `.in(1)` is
+  one level deeper.
+
+### Always escape source-derived strings (`escapeSwiftString`)
+
+Any string that originates from source text and is interpolated into a Swift
+`"…"` literal **must** go through `escapeSwiftString` (escapes `\ " \n \r \t`).
+This is not optional — an unescaped value with an embedded `"` or newline emits
+invalid Swift that compiles to *source* fine but fails `swiftc` (and aborts
+swift-format via an uncatchable assertion). Current call sites that must stay
+escaped: `skillMetadata` keys/values, `state.get("…")` keys (`emitExpr`
+identifier/property), `assert` messages, `complete(reason:)`, emit event IDs,
+env-var names, prose-step text, choice prompts, string literals. The YAML
+block-scalar `triggers:` value (multi-line) is the canonical regression case.
+
+### Namespacing (`Options.namespaceEnum`)
+
+When set, `emitFile` wraps all generated declarations (domain types,
+`Constants`, `Instances`, workflow + trigger structs) in
+`public enum <name> { … }`. The file header (imports + private
+`meridianStringify`) stays at file scope; module-level `constants`/`instances`
+become `private static let` (enums can't hold stored instance properties — each
+`run()` still emits its own local `let`, so bare references resolve there).
+Indentation inside the enum is intentionally left to swift-format. The
+`Compiler`/library default is `nil` (flat — preserves the existing goldens);
+the `meridian compile` CLI defaults to `--namespace auto` (PascalCase of the
+file stem; `none` disables). This lets independently-generated files share one
+Swift module without per-file domain-type collisions.
+
+### Value wrapping (the `emitValueExpr` rule)
+
+Every value placed into a `[String: Value]` dictionary (invoke args, emit
+payloads) must be a `Value`. Use `emitValueExpr`:
+
+| Expression type | Emits |
+|---|---|
+| `.literal(.string("x"))` | `.string("x")` |
+| `.literal(.number(n))` | `.number(Decimal(n))` |
+| `.nowExpression` | `.date(Date())` |
+| `.identifierRef` / `.propertyAccess` | `state.get("key") ?? .null` |
+| `.constantRef` | `Value.from(constants.camelName)` |
+| `.instanceRef` | `Value.from(instances.camelName)` |
+| `.envVar("FOO")` | `.string(ProcessInfo.processInfo.environment["FOO"] ?? "")` |
+
+### Comparison emission
+
+State reads return `Value?`. Never use `<`, `>`, `==` directly on `Value?`.
+Always route through `MeridianComparison.*` helpers when either operand may
+be a `Value?`. `needsValueComparison(_:)` detects this.
+
+Special: `withinDuration` → `MeridianComparison.isWithin(lhs, rhs)`.
+
+### Constants struct
+
+Always declare as `public struct Constants: Sendable`. Both a module-level
+`private let constants = Constants()` and a local `let constants = Constants()`
+inside each `run()` are emitted.
+
+### Instances struct
+
+Always declare as `public struct Instances: Sendable`. Each instance property
+is a `public let name: Value = .record([…])`. Module-level + local bindings
+are both emitted.
+
+### Workflow struct naming
+
+`IRWorkflow.structName(from: name)` — takes significant words (strips articles)
+up to the first preposition-introducing-a-parameter.
+
+### Source-line comments
+
+Emitted by default. Each IR primitive gets a `// L{lineNumber}` comment on its
+own line above it. Disable with `SwiftEmitter.Options(emitSourceLineComments: false)`.
+
+### Recursive workflow calls
+
+`emitWorkflowCall` emits:
+```swift
+_ = try await StructName(runtime: runtime, arg1: val1, …).run()
+```
+`emitWorkflowCallArg` uses bare Swift names (not `state.get`) for parameters
+because the init signature expects typed domain types.

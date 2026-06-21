@@ -3,8 +3,8 @@
 - Original: `RESOLVER.md`
 - Ported: `RESOLVER.meri`
 - Tier: 3 (structural rewrite)
-- Similarity: 18%
-- Lines: 136 -> 61 (+43 / -118)
+- Similarity: 19%
+- Lines: 136 -> 79 (+59 / -116)
 
 ## Frontmatter
 - Added: `description`, `name`, `triggers`
@@ -16,25 +16,25 @@
 - shell-block-routed
 
 ## Metrics
-- Sections: 5/8 inert (62% inert ratio)
+- Sections: 5/9 inert (56% inert ratio)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert categories: reference-documentation=5
 - Judgment: 1 blocks, 4 lines
 
 ### Inert section details
-- L21 `Routing tables`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L23 `Always-on (every message)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L28 `Brain operations`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L35 `Content and media ingestion`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L41 `Maintenance and operations`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L39 `Routing tables`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L41 `Always-on (every message)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L46 `Brain operations`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L53 `Content and media ingestion`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L59 `Maintenance and operations`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
 ```diff
 --- original-skills/RESOLVER.md
 +++ RESOLVER.meri
-@@ -1,136 +1,61 @@
+@@ -1,136 +1,79 @@
 +---
 +name: resolver
 +description: The skill dispatcher. Routes an inbound request to the skill that owns it. Skills are the implementation; the resolver only selects. When two skills could match, read both — they are designed to chain (for example, ingest then enrich for each entity).
@@ -62,7 +62,7 @@
 +- [ ] Always-on detection (signal-detector, brain-ops) runs on every message regardless of routing.
  
 -## Brain operations
-+## Phases
++## Tables
  
 -| Trigger | Skill |
 -|---------|-------|
@@ -79,14 +79,21 @@
 -| "validate frontmatter", "check frontmatter", "fix frontmatter", "frontmatter audit", "brain lint" | `skills/frontmatter-guard/SKILL.md` |
 -| "what search mode", "is my cache hot", "tune my retrieval", "compare search modes", "clear search overrides" | `gbrain search modes/stats/tune` directly. See `skills/conventions/search-modes.md` |
 -| "eval results", "search benchmark", "haters-immune methodology", "regression check on retrieval" | `gbrain eval run-all` / `gbrain eval compare`. See `docs/eval/SEARCH_MODE_METHODOLOGY.md` |
-+use judgment to route the request to the owning skill:
-+  Read the request and identify the dominant intent (brain operation, ingestion, maintenance, scheduling, or meta).
-+  Match the intent against the trigger phrases of each skill and select the single owning skill.
-+  When two skills could match, select both and order them so their outputs chain (for example, ingest before enrich).
-+  Read the selected skill file before acting.
++| trigger phrase | skill |
++| --- | --- |
++| capture this | capture |
++| save this thought | capture |
++| remember this | capture |
++| ingest this | ingest |
++| brain health | maintain |
++| consolidation | maintain |
++| cleanup | maintain |
++| scheduling recurring work | cron-scheduler |
++| daily preparation | daily-task-prep |
++| task changes | daily-task-manager |
  
 -## Content & media ingestion
-+## Routing tables (( inert ))
++## Phases
  
 -| Trigger | Skill |
 -|---------|-------|
@@ -95,11 +102,17 @@
 -| "watch this video", "process this YouTube link", "ingest this PDF", "save this podcast", "process this book", "summarize this book", "PDF book", "ingest it into my brain", "what's in this screenshot", "check out this repo" | `skills/media-ingest/SKILL.md` |
 -| Meeting transcript received | `skills/meeting-ingestion/SKILL.md` |
 -| Generic "ingest this" (auto-routes to above) | `skills/ingest/SKILL.md` |
-+### Always-on (every message) (( inert ))
++bind owning skill = the skill corresponding to the trigger phrase input in the table.
++recover from "table.lookup_miss":
++  use judgment to route the request to the owning skill:
++    Read the request and identify the dominant intent (brain operation, ingestion, maintenance, scheduling, or meta).
++    Match fuzzy intent against the trigger phrases of each skill and select the single owning skill.
++    When two skills could match, select both and order them so their outputs chain (for example, ingest before enrich).
++    Read the selected skill file before acting.
++emit resolver.route with skill = owning skill.
  
 -## Thinking skills (from GStack)
-+- Every inbound message routes to signal-detector, spawned in parallel and never blocking the response.
-+- Any brain read, write, lookup, or citation routes to brain-ops.
++## Routing tables (( inert ))
  
 -| Trigger | Skill |
 -|---------|-------|
@@ -107,17 +120,15 @@
 -| "Review this plan", "CEO review", "poke holes" | GStack: ceo-review |
 -| "Debug", "fix", "broken", "investigate" | GStack: investigate |
 -| "Retro", "what shipped", "retrospective" | GStack: retro |
-+### Brain operations (( inert ))
++### Always-on (every message) (( inert ))
  
 -> These skills come from GStack. If GStack is installed, the agent reads them directly.
 -> If not, brain-only mode still works (brain skills function without thinking skills).
-+- A question about what the brain knows ("what do we know about", "who is", "background on") routes to query.
-+- Creating or enriching a person or company page routes to enrich.
-+- Filing a new page routes to repo-architecture.
-+- Fixing broken citations routes to citation-fixer.
++- Every inbound message routes to signal-detector, spawned in parallel and never blocking the response.
++- Any brain read, write, lookup, or citation routes to brain-ops.
  
 -## Operational
-+### Content and media ingestion (( inert ))
++### Brain operations (( inert ))
  
 -| Trigger | Skill |
 -|---------|-------|
@@ -137,12 +148,13 @@
 -| Webhook setup, external event processing | `skills/webhook-transforms/SKILL.md` |
 -| "Spawn agent", "background task", "parallel tasks", "steer agent", "pause/resume agent", "gbrain jobs submit", "submit a gbrain job", "submit a shell job", "shell job" | `skills/minion-orchestrator/SKILL.md` |
 -| "present options", "ask before proceeding", "choice gate", "user decision" | `skills/ask-user/SKILL.md` |
-+- "capture this", "save this thought", "remember this" routes to capture.
-+- A shared link, article, tweet, or idea routes to idea-ingest.
-+- A generic "ingest this" routes to ingest, which auto-routes to the specialized ingester.
++- A question about what the brain knows ("what do we know about", "who is", "background on") routes to query.
++- Creating or enriching a person or company page routes to enrich.
++- Filing a new page routes to repo-architecture.
++- Fixing broken citations routes to citation-fixer.
  
 -## Setup & migration
-+### Maintenance and operations (( inert ))
++### Content and media ingestion (( inert ))
  
 -| Trigger | Skill |
 -|---------|-------|
@@ -158,12 +170,12 @@
 -| Agent identity, "who am I", customize agent | `skills/soul-audit/SKILL.md` |
 -| "Populate links", "extract links", "backfill graph" | `skills/maintain/SKILL.md` (graph population phase) |
 -| "Populate timeline", "extract timeline entries" | `skills/maintain/SKILL.md` (graph population phase) |
-+- Brain health, consolidation, and cleanup route to maintain.
-+- Scheduling recurring work routes to cron-scheduler.
-+- Daily preparation routes to daily-task-prep; task changes route to daily-task-manager.
++- "capture this", "save this thought", "remember this" routes to capture.
++- A shared link, article, tweet, or idea routes to idea-ingest.
++- A generic "ingest this" routes to ingest, which auto-routes to the specialized ingester.
  
 -## Identity & access (always-on)
-+## Anti-Patterns (( role: procedure ))
++### Maintenance and operations (( inert ))
  
 -| Trigger | Skill |
 -|---------|-------|
@@ -171,20 +183,24 @@
 -| Agent needs to know its identity/vibe | Read `SOUL.md` |
 -| Agent needs user context | Read `USER.md` |
 -| Operational cadence (what to check and when) | Read `HEARTBEAT.md` |
-+!!! checklist (( ai-autonomy ))
-+- [ ] Routing to more than one skill when a single skill clearly owns the request.
-+- [ ] Performing brain reads or writes inside the resolver instead of delegating.
-+- [ ] Skipping always-on detection because a specific skill matched.
++- Brain health, consolidation, and cleanup route to maintain.
++- Scheduling recurring work routes to cron-scheduler.
++- Daily preparation routes to daily-task-prep; task changes route to daily-task-manager.
  
 -## Disambiguation rules
--
++## Anti-Patterns (( role: procedure ))
+ 
 -When multiple skills could match:
 -1. Prefer the most specific skill (meeting-ingestion over ingest)
 -2. If the user mentions a URL, route by content type (link → idea-ingest, video → media-ingest)
 -3. If the user mentions a person/company, check if enrich or query fits better
 -4. Chaining is explicit in each skill's Phases section
 -5. When in doubt, ask the user (see `skills/ask-user/SKILL.md` for the choice-gate pattern)
--
++!!! checklist (( ai-autonomy ))
++- [ ] Routing to more than one skill when a single skill clearly owns the request.
++- [ ] Performing brain reads or writes inside the resolver instead of delegating.
++- [ ] Skipping always-on detection because a specific skill matched.
+ 
 -## Conventions (cross-cutting)
 -
 -These apply to ALL brain-writing skills:

@@ -4369,3 +4369,363 @@ Regenerated `sample-gbrain/compile-outputs/`.
 - `swift test`
 - `./scripts/coverage.swift --gate`
 - `MERIDIAN_GBRAIN_TYPECHECK=1 swift test --filter SampleGbrain`
+
+### 2026-06-16T04:25:00Z — Inform-7 Wave 4 declarative domain, tables, templates
+
+Implemented Wave 4 as payload extensions only: no new IR statement primitive.
+
+**4A domain English.** `PropertyTypeAST.enumeration` now carries an optional
+author default, threaded through `Compiler.buildDomainDecl`, `SymbolTable`, and
+`DomainEmitter`. `.merconfig` and `.meri` `## Domain` support `called the`,
+`can be ... or ...`, and `is usually ...`; domain sections are harvested before
+`SymbolTable.build` so frontmatter parameters can reference inline-declared
+kinds. `MER5002` is now raised for unrecognized vocabulary lines after preserving
+legacy `kind X is a thing`, bare `X is a kind of thing`, and block property
+syntax (`X has properties: field: Type.`).
+
+**4B tables.** Added `SkillSectionRole.tables`. Under `## Tables`, unmarked pipe
+tables default to data mode; explicit `!!! table (( data table: name ))` still
+works. Data table headers may carry scalar type annotations, and invalid cells
+throw row/column diagnostics. Added `ExpressionAST`/`IRExpression.tableLookup`
+for `the <value> corresponding to the <key column> <key> in the <table>`.
+Generated lookup code scans the bound table and throws
+`ToolError.implementation(code: "table.lookup_miss", ...)`, which existing
+`recover from "table.lookup_miss":` matching catches.
+
+**4C templates.** `InterpolationSegment` / `IRInterpolationSegment` gained
+conditional, loop, and formatted payloads. The template parser recognizes only
+closed directives (`[if]`, `[otherwise]`, `[end if]`, `[for each]`, `[end for]`);
+other bracketed text remains literal. `SwiftEmitter` emits string-building IIFEs
+plus a generated `meridianFormat(_:as:)` helper for `integer`, `decimal(N)`,
+`short date`, and `long date`. Loop bodies render `{{ row.field }}` against the
+current row value.
+
+**Validation.** Baseline `swift build && swift test` was green before changes.
+Focused Wave 4 tests pass, full `swift test` passed after regenerating affected
+goldens. Added `examples/skill/domain.meri` as the Wave 4 showcase and enrolled
+it in `SkillCorpusGoldenTests`.
+
+**2026-06-16 follow-up — confidence gap closed.** The showcase now exercises all
+three Wave 4 surfaces together: `## Domain`, a typed `## Tables` lookup, and a
+source-level fenced text-substitution template with `[for each]`, `[if]`, and
+`{{ expr as a formatter }}`. Fixed the parser gap that made `bind name =` with
+an empty RHS fall through to phrase parsing instead of consuming the following
+fenced code block. Also fixed template scanner string-index correctness by using
+case-insensitive ranges on the original string, and fixed terminator handling so
+`[otherwise]` / `[end if]` / `[end for]` stop after preceding literal text rather
+than becoming literals. Source templates inside `[for each row in table]` now emit
+loop-variable member reads for both `{{ row.field }}` and formatted variants,
+including the dotted-identifier shape produced by the source parser.
+
+Corpus follow-through is now real, not only logged: `RESOLVER.meri` exact trigger
+phrases moved to a `## Tables` dispatch table with `table.lookup_miss` judgment
+fallback; `briefing.meri` emits an explicit `briefing.report` body from a
+`[for each page in mine]` template while `## Output Format` remains template
+metadata. Regenerated all `sample-gbrain/compile-outputs/` and
+`sample-gbrain/migration-deviations/ --index`. Current deviation metrics:
+53 pairs, tiers 1/37/15, average similarity 59%, `Operational inert: 0`,
+`Unclassified inert: 0`; RESOLVER is tier 3 / 19%, briefing is tier 2 / 51%.
+
+### 2026-06-17 — World-class diagnostics & tracing completion
+
+Implemented the diagnostics/tracing DX plan end-to-end: `DiagnosticCodeCatalog`
+(accountability metadata + inventory test), wired MER1002/1003/1005/1006/1008/5010
+and migrated MER3003–3008/2003 paths off MER0001 shims, eliminated silent drops
+(merconfig sections/tools, InformRulebook conventions), expanded ParserTrace
+(`.parse`, statement/lowering dispatch), structured MER5001 warnings via
+DiagnosticRenderer, documented intentional consume allowlist in
+`docs/14_DEVELOPER_EXPERIENCE.md` §6.1. Validation: `swift test --filter
+DiagnosticTests`, `NoSilentFallbackTests`, full `swift test`.
+
+### 2026-06-17 — Diagnostics/tracing 100% completion pass
+
+Closed every remaining gap from the confidence audit:
+
+- **Zero production `CompilerError.semanticError` throws** — all call sites in
+  `SkillSectionBuilder`, `RulebookParser`, `StatementParser`, `MeridianParser`,
+  `ASTToIR`, `Compiler` (`compileSkillpack` duplicates + enum defaults),
+  `AnaphoraResolver` now emit coded `Diagnostic` values (MER1009–1011, MER3010–3015,
+  MER5004–5005, MER0004 for internal invariant).
+- **MER1007 wired** — `SpecParser` unknown keys funnel through
+  `Diagnostic.unresolved(.invalidTestSpecKey, …)` with a recognized-key list.
+- **MER5005 block-property diagnostics** — `MerConfigParser` reports unparseable
+  `has properties:` lines instead of `compactMap` silent drops.
+- **Trace depth** — `TableParser` row expansion, `RuleInjector` attachment matrix,
+  `SwiftEmitter` per-IR-primitive codegen, `SkillSectionBuilder` role-resolution
+  detail; expanded `ParserTraceTests` + MER1007 catalog test.
+- **Validation:** full `swift test`, coverage gate, both typecheck gates green.
+
+### 2026-06-21 — Hardcoding/dedup/docs sweep Phase 1: lexicon-owned articles
+
+Started the codebase-hardening sweep by removing true English-surface vocabulary
+duplicates while preserving generated output:
+
+- `EnglishLexicon` now owns phrase-parameter article detection via
+  `parameterArticles` + `findEarliestArticle(_:)`, preserving the earliest-slot
+  invariant from phrase-pattern parsing. `parameterArticles` remains separate
+  from general `articles` so the definite article can be stripped from
+  expressions without becoming a workflow parameter introducer.
+- Merconfig phrase parsing, relation backing, verb declarations, table lookups,
+  possessive chains, output-format invariants, and implicit bind naming now route
+  article/preposition handling through `EnglishLexicon` rather than local lists
+  or duplicated literals.
+- Superlative parsing now recognizes multi-word gradables from
+  `superlativeGradables` instead of hardcoding the `"most recent"` special case.
+
+Validation: full `swift test` passed; coverage gate passed after re-baselining
+fresh floors for `ExpressionParser.swift` (87.33) and `ConditionClassifier.swift`
+(97.67, temporary defensive empty-article branch); both golden and gbrain
+typecheck gates passed.
+
+### 2026-06-21 — Hardcoding/dedup/docs sweep Phase 2: fixed grammar centralization
+
+Centralized the closed grammar skeleton behind `EnglishLexicon.grammar` while
+preserving author-extensible vocabulary boundaries:
+
+- Added grouped `FixedGrammar` data for statement keywords, quantifier
+  determiners, boolean connectors, rule markers, merconfig skeleton phrases,
+  table lookup markers, template directives, choice branch labels, iteration
+  markers, Inform rule outcomes, idiom wrappers, and negation wrappers.
+- Routed parser/lowering/linter call sites through those groups instead of
+  scattered fixed literals, including `StatementParser`, `ExpressionParser`,
+  `MerConfigParser`, `MeridianParser`, `DefinitionParser`, `TableParser`,
+  `InformRulebook`, `SymbolTable`, `SkillSectionBuilder`, and
+  `MeridianLinter`.
+- Fixed unsafe case-insensitive string slicing discovered during validation:
+  `QuoteAwareScanner.rangeOfMarker(..., caseInsensitive: true)` now returns
+  original-string indices, and `ExpressionParser` no longer passes lowercased
+  haystacks into quote-aware split helpers before slicing the original source.
+- Converted `FixedGrammar` from a large value type to an immutable `final class`.
+  The expanded struct overflowed Swift concurrency task stacks during repeated
+  expression parsing (`the order's id` in `invoke ... with ...` arguments).
+  Keeping `lexicon.grammar` reference-backed preserves the ergonomic access
+  pattern without copying the full grammar payload.
+- Added focused regression coverage for direct anaphora resolver no-marker /
+  ambiguous paths and uppercase comparison marker parsing.
+
+Validation: full `swift test` passed; coverage gate passed after re-baselining
+fresh floors for `ExpressionParser.swift` (87.25) and
+`SkillSectionBuilder.swift` (82.47); both golden and gbrain typecheck gates
+passed.
+
+### 2026-06-21 — Hardcoding/dedup/docs sweep Phase 3: shared naming and parser cleanup
+
+Removed duplicate helper logic and clarified intentionally different algorithms:
+
+- `IdentifierNaming.methodize(_:stopwords:limit:fallback:)` now owns the shared
+  lower-camel method-name algorithm for undeclared tools and trigger workflow
+  names. `StatementParser.methodize`, `ASTToIR.methodizeToolToken`, and
+  `SkillTriggers.canonicalName` route through it.
+- `IdentifierNaming.lowerCamelSplittingHyphen(_:)` owns the hyphen-aware
+  lower-camel family formerly embedded in `StatementParser.camelize`.
+- Compiler bootstrap for rulebook merge, vocabulary parsing, inline domain
+  harvest, duplicate declaration checks, lexicon merge, and symbol-table build
+  is centralized in `Compiler.bootstrap(...)`. `compileSkillpack` now passes a
+  `DiagnosticEngine` into merconfig parsing for parity with single-file compile.
+- `ObjectKindExtractor` owns action object-kind extraction with explicit
+  no-article fallback modes (`fullText` for parameter guards, `lastWord` for
+  permission matching).
+- `SymbolTable.overlap` was renamed to `phraseMatchScore`, and
+  `WorkflowActionMatcher.overlap` to `actionStemOverlap`, because they use
+  different scoring algorithms.
+- Removed `IterationStatementAST.variable` / `.collection` compatibility
+  accessors; callers switch on `IterationStatementAST.mode`.
+- Removed forwarding wrappers around `WholeWordRegex`, `IdentifierNaming.
+  pascalCase`, and `escapeSwiftStringLiteral` where direct calls were clearer.
+- Fixed the migrator choice-gate bug: `SkillMigrator.isChoiceGateLine` now checks
+  all `FixedGrammar.choiceGateIntroducers`, not just `ask the user to choose
+  between`.
+- `SkillMetrics` and `SkillMigrator` now use fixed grammar/default enum tokens
+  for AI discretion/autonomy and inert marker checks instead of re-listing prose
+  marker strings.
+
+Validation: full `swift test` passed; coverage gate passed after adding direct
+tests for `IdentifierNaming` and `ObjectKindExtractor` and re-baselining
+`EnglishLexicon.swift` to 97.2; both golden and gbrain typecheck gates passed.
+
+### 2026-06-21 — Hardcoding/dedup/docs sweep Phase 4: documentation refresh
+
+Refreshed the public docs and contributor guide after the hardening sweep:
+
+- Updated IR primitive references to the current 12-case set, including
+  `proseStep`, across the README, docs index, overview, architecture, status,
+  and rulebook docs.
+- Updated runtime/codegen docs for `WaitCondition.choice` and the current
+  29-case `EventKind` surface.
+- Updated CLI docs to reflect the thin `MeridianCLI` entry point plus
+  `MeridianCLIKit` command module, `compile --namespace auto|none`, and the
+  shipped `lint` / `preview-skill` commands.
+- Updated built-in tool docs for `llm.decide` / `llm.judge`, keeping
+  `llm.chat` documented as intentionally not implemented.
+- Updated tracing and diagnostics docs for the `.parse` category and the
+  current diagnostic catalog additions (`MER1009`-`MER1011`, `MER3010`-`MER3015`,
+  `MER5004`, `MER5005`, `MER5010`).
+- Removed stale documentation references to the deleted `PhrasePatternParser`
+  file; phrase-pattern parsing is now documented as shared inline logic in
+  `MerConfigParser` / `MeridianParser`, backed by
+  `EnglishLexicon.findEarliestArticle(_:)` and `parameterArticles`.
+
+Validation: full `swift test` passed; `scripts/coverage.swift --gate` passed
+after re-baselining the reviewed `MerConfigParser.swift` floor to the fresh
+85.57% measurement; `MERIDIAN_GOLDEN_TYPECHECK=1 swift test` passed; and
+`MERIDIAN_GBRAIN_TYPECHECK=1 swift test --filter SampleGbrainCodegenTests`
+passed.
+
+### 2026-06-21 — Hardcoding/dedup/docs sweep final 100% audit pass
+
+Closed the remaining audit gaps after the Phase 4 confidence review:
+
+- Verified this workspace copy is not a git repository (`.git` is absent in the
+  workspace and parent), so the final audit uses targeted source/doc scans plus
+  validation gates rather than `git diff`.
+- Removed the stale `Assertions.swift` comment that still said "10 IR primitive
+  kinds"; it now matches the 12-case assertion enum.
+- Centralized two naming families that were still local helpers:
+  `IdentifierNaming.pascalCaseSplittingHyphenPreservingCase(_:)` for lowering
+  helper names and `IdentifierNaming.swiftTypeNameFromStem(_:)` for CLI namespace
+  derivation. `CompileCommand` now uses the shared helper and the CLI test covers
+  the helper directly.
+- Removed the unreachable `PhrasePatternParser.findNextParam` branch in
+  `MerConfigParser`; the helper always returned `nil`, so phrase-pattern parsing
+  now takes the tail-literal path directly.
+- Moved leftover fixed English markers into `FixedGrammar`: autonomy option
+  markers (`until`, `unless`, `re-plan after`, `up to`), embedded `every`/`each`
+  iteration markers, linter paraphrase cues (`please`, `maybe`), and the migrator
+  judgment-follow collection prefix.
+- Replaced the remaining hardcoded `is ` comparison-prefix strip in
+  `RuleLowering` with lexicon-driven copula stripping.
+- Re-ran hardcoding/stale-reference scans. Remaining English-surface arrays in
+  production compiler code are confined to `EnglishLexicon.swift` and
+  `FixedGrammar.swift`; stale count/path scans returned no findings.
+
+Validation: full `swift test` passed; `scripts/coverage.swift --gate` passed
+after re-baselining reviewed floors affected by the final centralization
+(`CompileCommand.swift` 73.97, `StatementParser.swift` 86.58,
+`SkillSectionBuilder.swift` 81.82); `scripts/coverage.swift --no-test --gate`
+passed; `MERIDIAN_GOLDEN_TYPECHECK=1 swift test` passed; and
+`MERIDIAN_GBRAIN_TYPECHECK=1 swift test --filter SampleGbrainCodegenTests`
+passed. IDE lints on edited files reported no errors.
+
+### 2026-06-21 — Hardcoding/dedup/docs sweep test-hardening pass
+
+Raised confidence in the final centralization changes with direct focused tests:
+
+- `AutonomyModeTests` now directly covers every centralized autonomy option
+  marker: `until`, `unless`, `replan after`, `re-plan after`, `max`, and
+  `up to`.
+- `StatementParserCoverageTests` now covers the centralized embedded
+  `every`/`each` action-over-collection markers.
+- `RuleLoweringCoverageTests` now covers lexicon-driven copula stripping via an
+  `is more than` subject-filter comparison, in addition to the existing bare
+  `more than` shorthand path.
+- `MeridianLinterTests` now covers the infix `maybe` uncertainty cue as well as
+  the prefix form.
+- `LexiconCentralizationTests` now locks the new `FixedGrammar` data groups:
+  autonomy markers, embedded iteration markers, linter markers, and the
+  judgment-follow collection prefix.
+- `CLICommandsTests` now covers a custom `--namespace` value, and
+  `CLISupportTests` covers the centralized `IdentifierNaming.swiftTypeNameFromStem`
+  namespace helper directly.
+
+Coverage follow-through: the new tests raised the previously lowered floors back
+up from the final audit pass (`CompileCommand.swift` 75.34,
+`StatementParser.swift` 87.18, `SkillSectionBuilder.swift` 82.47) and also raised
+`MerConfigParser.swift` to 86.67; `docs/coverage/coverage-exclusions.md` was
+tightened to those fresh measurements.
+
+Validation: focused suites passed; full `scripts/coverage.swift --gate` passed
+with 1199 tests; tightened `scripts/coverage.swift --no-test --gate` passed;
+`MERIDIAN_GOLDEN_TYPECHECK=1 swift test` passed on rerun (one unrelated
+subprocess-timeout test flaked once under load and passed under `swift test
+--filter ToolRegistry`); `MERIDIAN_GBRAIN_TYPECHECK=1 swift test --filter
+SampleGbrainCodegenTests` passed. IDE lints on edited files reported no errors.
+
+### 2026-06-21 — Background audit follow-up: docs drift, scalar single-source, migration shape helpers
+
+Followed up on the completed background audits after the hardening pass:
+
+- Fixed remaining documentation/rule drift: `docs/06_RUNTIME.md` now lists the
+  planning/autonomy `EventKind` cases in the enum snippet; `docs/01_OVERVIEW.md`
+  includes `proseStep` in the 12-primitive diagram; `docs/README.md` and
+  `docs/02_ARCHITECTURE.md` describe the thin `MeridianCLI` / command-owning
+  `MeridianCLIKit` split and the newer CLI commands; `docs/07_CLI.md` includes
+  the `parse` trace category. `.cursor/rules/compiler-internals.mdc`,
+  `.cursor/rules/runtime.mdc`, and `.cursor/rules/tracing.mdc` were brought in
+  sync with 12 IR primitives, 29 event kinds, and `parse` tracing. `AGENTS.md`
+  now distinguishes runtime `trace render` from compile-time `ParserTrace`.
+- Closed the last non-central English-surface call sites surfaced by the audit:
+  inline/multiline `otherwise` and `invoke` checks now use
+  `FixedStatementKeywords`; argument substitution / `exprToText` use
+  `EnglishLexicon.definiteArticle`; active-verb negation reads the fixed
+  `not` marker; merconfig comparison alias folding strips copulas through the
+  threaded lexicon; rule lowering's `" of "` possession guard lives in
+  `FixedRuleMarkers`.
+- Added `BuiltinScalarTypes` as the single source for builtin scalar parent/type
+  mapping, replacing the divergent compiler/domain-emitter tables (`text`,
+  `list`, and `reference` now live in one map).
+- Added `SkillMarkdownShape` as the shared Markdown heading and whole-line
+  backticked-command recognizer used by both `SkillMetrics` and `SkillMigrator`.
+  The shared command detector still requires command-shaped content (space or
+  dot) so an inert code span like `` `foo` `` remains reference documentation.
+- Removed an inline lower-camel reimplementation from `ASTToIR.subExpr` and
+  cleaned stale comments in rule lowering/injection and skill metrics.
+
+Validation: full `swift test` passed (1199 tests); `scripts/coverage.swift
+--gate` ran the test+coverage path and passed after re-baselining four reviewed
+floors to the fresh report (`SkillSectionBuilder.swift` 81.82,
+`StatementParser.swift` 86.98, `SkillMigrator.swift` 89.82, `SymbolTable.swift`
+93.55); `scripts/coverage.swift --no-test --gate` passed; both generated Swift
+typecheck gates passed (`MERIDIAN_GOLDEN_TYPECHECK=1 swift test` and
+`MERIDIAN_GBRAIN_TYPECHECK=1 swift test --filter SampleGbrainCodegenTests`).
+IDE lints on edited files reported no errors. The workspace remains outside a
+git repository, so changed-file inventory used targeted scans/lints rather than
+`git status`.
+
+### 2026-06-21 — Semantic base root centralized
+
+Moved the domain semantic-base vocabulary out of ad hoc string checks:
+
+- Added `BuiltinSemanticBase` as the single enum for built-in semantic bases
+  (`thing`, `event`, `action`, software/AI bases, etc.), with `.root`,
+  `isRoot(_:)`, and `runtimeProtocolName` helpers.
+- `Compiler.ancestorChain` now stops at `BuiltinSemanticBase.isRoot(parent)`
+  instead of comparing to a hardcoded `"thing"` string.
+- `DomainEmitter.parentProtocol` now resolves `Meridian<Base>` protocol names via
+  `BuiltinSemanticBase.runtimeProtocolName(for:)` and falls back to
+  `BuiltinSemanticBase.root.runtimeProtocolName`; the old private semantic-base
+  dictionary was removed.
+- Follow-up scans found no remaining production `MeridianCore` occurrences of
+  `p == "thing"`, the private `semanticBases` table, or hardcoded
+  `"MeridianThing"` fallback strings. Remaining `kind of thing` / `MeridianThing`
+  mentions are language docs, examples, tests, or runtime protocol definitions.
+
+Validation: `swift test --filter DomainSemanticBasesTests` passed; full
+`swift test` passed; IDE lints on edited files reported no errors.
+
+### 2026-06-21 — Semantic base centralization 100% audit closure
+
+Closed the remaining confidence gap after centralizing the semantic root:
+
+- Split `BuiltinSemanticBase` into its own source file, separate from scalar
+  type mapping, so semantic bases and scalar parents are independently named
+  concepts.
+- Removed hardcoded semantic-base protocol examples and root names from
+  `DomainEmitter` comments; code comments now refer to `BuiltinSemanticBase` and
+  the semantic root protocol.
+- Updated `DomainSemanticBasesTests` to use `BuiltinSemanticBase.allCases`,
+  `.root`, and `.runtimeProtocolName` instead of duplicating the full base list
+  and expected `Meridian<Base>` names. The tests now fail automatically if the
+  enum changes without codegen following it.
+- Re-ran targeted scans over production `MeridianCore` source and the dedicated
+  semantic-base tests. No remaining matches for a private `semanticBases` table,
+  `p == "thing"`, hardcoded `"thing"` / `"MeridianThing"` / `"MeridianEvent"` /
+  `"MeridianAction"` in the compiler/codegen semantic-base surface, or duplicated
+  semantic-base literals in `DomainSemanticBasesTests`.
+
+Validation: focused `DomainSemanticBasesTests` passed; full `swift test` passed;
+`scripts/coverage.swift --gate` completed its test+coverage run and the new
+`BuiltinSemanticBase.swift` file measured 100%; `scripts/coverage.swift --no-test
+--gate` passed after re-baselining the unrelated fresh `MerConfigParser.swift`
+coverage measurement to 86.65; `MERIDIAN_GOLDEN_TYPECHECK=1 swift test` passed;
+`MERIDIAN_GBRAIN_TYPECHECK=1 swift test --filter SampleGbrainCodegenTests`
+passed; IDE lints on edited files reported no errors.

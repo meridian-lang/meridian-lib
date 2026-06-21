@@ -46,8 +46,9 @@ public struct MeridianLinter {
                     hint: hint
                 ))
             }
-            if statement.lowercased().hasPrefix("bind ") {
-                let rest = String(statement.dropFirst("bind ".count))
+            let bindPrefix = lexicon.grammar.statement.bindPrefix
+            if statement.lowercased().hasPrefix(bindPrefix) {
+                let rest = String(statement.dropFirst(bindPrefix.count))
                 if let eq = rest.range(of: " = ") {
                     referents.append(camelize(String(rest[..<eq.lowerBound])))
                     if referents.count > 4 { referents = Array(referents.suffix(4)) }
@@ -63,10 +64,10 @@ public struct MeridianLinter {
 
     private func paraphraseHint(for statement: String) -> String? {
         let lower = statement.lowercased()
-        if lower.hasPrefix("please ") {
+        if lexicon.grammar.lintMarkers.politenessPrefixes.contains(where: { lower.hasPrefix($0) }) {
             return "Drop `please`; Meridian treats commands as workflow steps."
         }
-        if lower.contains(" maybe ") || lower.hasPrefix("maybe ") {
+        if lexicon.grammar.lintMarkers.uncertaintyMarkers.contains(where: { lower.contains($0) || lower.hasPrefix($0) }) {
             return "Use `with discretion` for planner judgment, or spell a deterministic condition with `only when` / `unless`."
         }
         return nil

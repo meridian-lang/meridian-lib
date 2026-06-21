@@ -39,6 +39,20 @@ struct CompileCommandTests {
         #expect(swift.contains("enum OrderProcessing"))
     }
 
+    @Test("custom namespace value is passed through")
+    func namespaceCustom() async throws {
+        let t = TempDir()
+        var cmd = try CompileCommand.parse([
+            ex("examples/order_processing.meridian"),
+            "--merconfig", ex("examples/ecommerce.merconfig"),
+            "--output", t.url.path,
+            "--no-format", "--namespace", "CustomNS"
+        ])
+        try await cmd.run()
+        let swift = try String(contentsOfFile: t.path("order_processing.swift"), encoding: .utf8)
+        #expect(swift.contains("enum CustomNS"))
+    }
+
     @Test("missing input throws")
     func missingInput() async throws {
         var cmd = try CompileCommand.parse(["/definitely/missing.meridian"])

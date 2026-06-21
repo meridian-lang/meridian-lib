@@ -30,6 +30,10 @@ An order is a kind of thing.
 A customer is a kind of person.
 ```
 
+Wave 4 also accepts domain declarations inside a `.meri` `## Domain` section.
+Those declarations are harvested before workflow parsing, so frontmatter
+parameters and later procedure statements can reference the newly-declared kinds.
+
 **Semantic bases** — pick the one that matches the kind's role; the type
 system carries that role through every workflow that references the kind.
 Each base maps to a `Meridian<Base>` runtime protocol; the kind's generated
@@ -77,6 +81,55 @@ An email address is a kind of String.
 **Chained inheritance**: `A customer is a kind of person.` chains
 `CustomerKind: PersonKind` and `Customer` flattens all properties from
 `Person` plus its own.
+
+#### Declarative properties and states
+
+```
+A page has a text called the summary.
+A page can be draft or published, called the lifecycle.
+A page is usually draft.
+```
+
+`called the` names a typed property from the leading type noun. `can be ... or
+...` declares an enum-backed state property; without `called the`, the property
+name is derived as `<kind> state` (for example `pageState`). `usually` sets the
+generated Swift initializer default for the matching enum case.
+
+### Tables
+
+Markdown pipe tables are executable data when marked explicitly or when they
+appear under a `.meri` `## Tables` section:
+
+```
+## Tables
+| trigger phrase | skill | score (Number) |
+| --- | --- | --- |
+| daily briefing | briefing | 10 |
+```
+
+Unmarked tables outside `## Tables` remain decision tables. A data table binds a
+`Value.list` of records; annotated headers such as `score (Number)` validate
+cells and report row/column coordinates. Lookups use:
+
+```
+the skill corresponding to the trigger phrase "daily briefing" in the table
+```
+
+A required miss throws `table.lookup_miss`, so `recover from "table.lookup_miss":`
+can handle it.
+
+### Text Substitutions
+
+Fenced string templates support expression holes plus closed directives:
+
+```
+[if the score is more than 5]high[otherwise]low[end if]
+[for each row in rows]{{ row.name }}[end for]
+{{ total as a integer }}
+```
+
+Only `[if ...]`, `[otherwise]`, `[end if]`, `[for each ...]`, and `[end for]`
+are directives; other bracketed text such as `[date]` stays literal.
 
 **Empty-protocol elision**: a leaf kind with no own properties and no
 descendants gets a struct only — no `<KindName>Kind` protocol is emitted,

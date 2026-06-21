@@ -19,6 +19,7 @@ Tracks the six-phase build plan from `meridian-handoff/docs/10_BUILD_PLAN.md`.
 | 8 | Executable rules (Phase C) | ✅ Done | 100% |
 | G | Expressive SKILL.md surface + gbrain corpus | ✅ Done | 100% |
 | I7 | Inform-7-tier deterministic surface (Waves 1–3) | ✅ Done | 100% |
+| I7-W4 | Inform-7-tier Wave 4: declarative domain, tables, templates | ✅ Done | 100% |
 | IR | Inert-reduction: executable tables/checklists + AI-routing | ✅ Done | 100% |
 | DX | World-class diagnostics, tracing & decision logs | ✅ Done | static-verified (gates pending a working shell) |
 
@@ -27,7 +28,7 @@ Tracks the six-phase build plan from `meridian-handoff/docs/10_BUILD_PLAN.md`.
 ## Phase 0 — Scaffolding + Runtime
 
 **Completed.** `MeridianRuntime` actor, `Value` enum, `State`, `MeridianWorkflow`
-protocol, `WorkflowResult`, `Event` + `EventKind` (22 cases), `RuntimeApprovalVerdict`,
+protocol, `WorkflowResult`, `Event` + `EventKind` (29 cases), `RuntimeApprovalVerdict`,
 `MeridianComparison`, `ValueCoercion`, SwiftPM project layout, example files
 copied into `examples/`.
 
@@ -49,7 +50,7 @@ for Phases 2–3.
 **Completed.**
 
 - `IndentTokenizer` tokenises source into `[SourceLine]`.
-- `PhrasePatternParser` parses `To {pattern}:` headers into `[PatternSegment]`.
+- `MerConfigParser` / `MeridianParser` parse `To {pattern}:` headers into `[PatternSegment]`.
 - `MerConfigParser` parses `.merconfig` (vocabulary, constants, instances, tools).
 - `MeridianParser` parses `.meridian` (imports, workflows, bodies).
 - `StatementParser` parses individual statements (if/branch, bind/rebind,
@@ -63,7 +64,7 @@ for Phases 2–3.
 
 ## Phase 3 — IR + Codegen
 
-**Completed (~99% at gate; superseded by Phase 5/6 work that extended the IR to 11 primitives).**
+**Completed (~99% at gate; superseded by later work that extended the IR to 12 primitives).**
 
 - `ASTToIR` lowers `MeridianFile` to `[IRWorkflow]`.
   - Phrase inlining with substitution (length-descending, whole-word replacement).
@@ -164,7 +165,7 @@ Signed off in
 
 ### Delivered
 
-1. **`wait`** ✅ — All four `WaitConditionIR` cases fully implemented end-to-end:
+1. **`wait`** ✅ — All five `WaitConditionIR` cases fully implemented end-to-end:
    - `.duration`: `Clock.sleep`-backed, honours `timeout:` parameter.
    - `.signal`: actor-isolated `CheckedContinuation` queue; `deliverSignal(_:)` API.
    - `.approval`: keyed by `(subject: Value, role: String)`; `.approved` resumes
@@ -174,7 +175,8 @@ Signed off in
      matching `emit(event:…)` call. `WaitCondition.event` matching predicate is
      now `Optional` (`nil` = accept any event with matching id).
    - Source forms `wait for signal`, `wait for approval from`, `wait for event …
-     matching` all parse and lower to the correct `WaitConditionIR`.
+     matching` all parse and lower to the correct `WaitConditionIR`; choice
+     gates lower to `WaitConditionIR.choice`.
    - Codegen: approval emits `RoleRef(identifier:)`, event with matching emits
      a `{ _event in … }` closure.
 2. **`iterate`** ✅ — unchanged from prior delivery.
@@ -221,8 +223,8 @@ in `IMPLEMENTATION_LOG.md` for the Phase 5/6 100% completion pass.
 1. **`MeridianTools` Blueprint built-ins** — opt-in canonical families:
    `http.get/post/put/delete`, `file.read/write/append`,
    `json.parse/stringify/transform`, `regex.match/replace`, `shell.run`,
-   `mcp.call`, `llm.chat`, `validate.json_schema`, `time.now/format`,
-   and `uuid.generate`. Ecommerce demo stubs were removed from
+   `mcp.call`, `llm.chat`, `llm.decide/judge`, `validate.json_schema`,
+   `time.now/format`, and `uuid.generate`. Ecommerce demo stubs were removed from
    `registerBuiltins()`; examples/tests register domain tools explicitly.
 2. **`meridian check` / `verify`** — parse + lower without emitting. Re-uses the
    compile pipeline so `check` and `compile` agree on validity. Exits 1
@@ -356,7 +358,7 @@ in `IMPLEMENTATION_LOG.md` for the Phase 5/6 100% completion pass.
 
 ## Phase G — Expressive SKILL.md surface + gbrain corpus
 
-**Done.** 530 tests / 85 suites green. Zero new IR primitives — only a
+**Done.** 1192 tests / 200 suites green. Zero new IR primitives — only a
 `detached` flag on `SimultaneouslyIR` and a `.choice` case on `WaitConditionIR`.
 
 ### Delivered

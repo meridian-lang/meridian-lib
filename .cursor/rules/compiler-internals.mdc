@@ -1,0 +1,113 @@
+---
+description: Compiler architecture quick reference (matchPhrase, lowering, parsing invariants) and the 12 IR primitives + IRExpression cases. Read when editing the parser, lowering, symbol table, or IR.
+globs: Sources/MeridianCore/Parser/**/*.swift,Sources/MeridianCore/Lowering/**/*.swift,Sources/MeridianCore/Symbols/**/*.swift,Sources/MeridianCore/IR/**/*.swift
+alwaysApply: false
+---
+
+# Compiler architecture quick reference
+
+### `SymbolTable.matchPhrase`
+
+- Anchors on the **first significant word** of the invocation.
+- Scores candidates by literal-keyword overlap.
+- Calls `extractArgs` → `ExpressionParser` on each argument slot.
+- `stripPatternSlop` removes leading articles (`a/an/the`) and leading kind
+  words (e.g. `reason`) from extracted argument text.
+- Phrase-pattern parsing uses `EnglishLexicon.findEarliestArticle(_:)`, which
+  finds the **earliest** parameter article occurrence (`a`/`an` by default), not
+  the last. This is a correctness invariant — do not change it.
+
+### `ASTToIR.lowerPhraseInvocation`
+
+1. If the invocation starts with `"invoke "` → `buildInvokeExpr` → `InvokeIR`.
+2. If `matchPhrase` returns a result with `workflowStructName != nil` → emit
+   `InvokeIR(toolID: "workflow:{StructName}", arguments: ordered by pattern)`.
+3. If `matchPhrase` returns a regular phrase → `inlinePhrase` → `lowerBlock`
+   (recursion depth-limited to 8).
+4. Otherwise → `BindIR(name: "_unresolved")` placeholder.
+
+**Argument substitution order:** sort by descending key length, then use
+`WholeWordRegex.replace` (regex `\b…\b`, case-insensitive) for each substitution.
+This prevents shorter keys from mangling longer ones.
+
+### `ASTToIR.exprToText`
+
+Do **not** prefix bare identifiers with `"the "`. This was reverted after
+causing `state.get("the order.id")` bugs. Identifiers go through as-is.
+
+### `ExpressionParser.parseAtom`
+
+Recognises possessive `'s` chains **without** a leading article. The check is:
+```swift
+t.contains("'s ") || t.hasSuffix("'s")
+```
+This was added so `"order's id"` parses as a property access after text
+substitution strips the leading article.
+
+### `StatementParser.collectMultiLineCounted`
+
+Returns `(text: String, consumed: Int)`. The `consumed` count tells
+`parseBlock` how many additional lines to skip. Always use this (not
+`collectMultiLine`) when iterating with an explicit index `i`.
+
+### Multi-line phrase headers
+
+Both `MerConfigParser` and `MeridianParser` call `collectHeaderLines(…)` when
+a header line ends with `,` or other non-`:` characters. It keeps appending
+continuation lines (at a deeper indent) until one ends with `:`.
+
+### Workflow stub registration
+
+Before lowering, `ASTToIR.lower(_ file:)` calls
+`symbols.registerWorkflowPhrase(workflow:)` for every `WorkflowAST`. This
+makes all workflows resolvable as phrase invocations within other workflows
+(and themselves), enabling self-recursion.
+
+---
+
+# IR primitives reference
+
+All 12 IR primitives live in `Sources/MeridianCore/IR/IRTypes.swift`:
+
+| Primitive | Swift type | Key fields |
+|---|---|---|
+| `invoke` | `InvokeIR` | `toolID: String`, `arguments: [InvokeArg]`, `resultBinding: String?` |
+| `bind` / `rebind` | `BindIR` | `name: String`, `expression: IRExpression`, `isRebind: Bool` (shared type) |
+| `branch` | `BranchIR` | `condition: BranchCondition`, `thenBlock: IRBlock`, `elseBlock: IRBlock?` |
+| `emit` | `EmitIR` | `eventID: String`, `payload: [EmitField]`, `strict: Bool` |
+| `complete` | `CompleteIR` | `reason: String?` |
+| `wait` | `WaitIR` | `condition: WaitConditionIR`, `timeout: Duration?` |
+| `iterate` | `IterateIR` | `mode: IterateMode`, `body: IRBlock` |
+| `assert` | `AssertIR` | `condition: IRExpression`, `message: String?`, `otherwiseAction: IRBlock?` |
+| `commit` | `CommitIR` | `label: String?` (optional) |
+| `recover` | `RecoverIR` | `pattern: ErrorPattern`, `handler: IRBlock`, `attachedTo: IRBlock` |
+| `simultaneously` | `SimultaneouslyIR` | `branches: [IRBlock]` — parallel execution groups |
+| `proseStep` | `ProseStepIR` | `text: String`, `dispatchMode: ProseDispatchMode`, `autonomy: AutonomyConfigIR?` |
+
+Key associated enums:
+- `BranchCondition`: `.predicate(IRExpression)` or `.match(IRExpression, [BranchCase])`
+- `IterateMode`: `.overCollection(parameter:kind:collection:)`, `.whileCondition(IRExpression)`, `.untilCondition(IRExpression)`
+- `WaitConditionIR`: `.duration(Duration)`, `.signal(String)`, `.approval(of:by:)`, `.event(String, matching:)`
+- `ErrorPattern`: `.anyError`, `.named(String)`, `.typed(KindRef)`, `.predicate(IRExpression)`
+- `ExecutionMode`: `.strict` or `.lenient` — carried on `IRWorkflow.mode`
+
+`IRExpression` cases:
+- `.literal(IRLiteral)` — string, number, boolean, money, duration, date, dateTime, enumValue
+- `.identifierRef(name: String)` — bare name (reads via `state.get`)
+- `.propertyAccess(IRExpression, propertyName: String)` — `order.id` (reads via `state.get("order.id")`)
+- `.constantRef(name: String)` — named constant (emits `constants.camelName`)
+- `.instanceRef(name: String)` — named instance (emits `instances.camelName`)
+- `.envVar(name: String)` — `$FOO` env var reference
+- `.nowExpression` — current timestamp (`Date()` in plain context, `.date(Date())` in value context)
+- `.comparison(IRExpression, ComparisonOp, IRExpression)` — comparison expression (`ComparisonOp` gained `.identifies` in Wave 3 — relation identity via `MeridianComparison.identifies`)
+- `.logical(LogicalOp, [IRExpression])` — and/or/not
+- `.relationTraversal(IRExpression, relationName: String, target: IRExpression?)` — relation traversal (repurposed in Wave 3 for scalar one-to-one navigation → `.propertyAccess`)
+- `.quantified(QuantifierIR)` — Wave 2C quantifier over a `DescriptionIR`
+- `.description(DescriptionIR)` — Wave 3C query plan (`Value.list` of a filtered/sorted/taken collection)
+- `.aggregate(AggregateKind, DescriptionIR)` — Wave 3C `.count` (emits `Decimal(…count)`) / `.list`
+- `.superlative(SuperlativeIR)` — Wave 3C sort-then-`.first`
+- `.invocation(InvokeIR)` — inline tool call (rare)
+
+**Workflow invocations** use `InvokeIR` with `toolID: "workflow:{StructName}"`.
+`SwiftEmitter` detects the prefix and emits a struct-init call instead of
+`runtime.invoke(…)`.

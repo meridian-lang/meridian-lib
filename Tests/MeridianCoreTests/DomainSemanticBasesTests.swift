@@ -18,10 +18,11 @@ struct DomainSemanticBasesTests {
     /// `kind of <base>` line. The probe kind is given a single own property
     /// so the `<KindName>Kind` protocol is emitted (otherwise the leaf-elide
     /// rule would skip it and the test would be checking nothing).
-    private func compileForBase(_ base: String) throws -> String {
-        let kindNoun = base == "thing" ? "widget" : "\(base) widget"
+    private func compileForBase(_ base: BuiltinSemanticBase) throws -> String {
+        let baseName = base.rawValue
+        let kindNoun = base == .root ? "widget" : "\(baseName) widget"
         let article = "A"
-        let kindLine = "\(article) \(kindNoun) is a kind of \(base)."
+        let kindLine = "\(article) \(kindNoun) is a kind of \(baseName)."
         let propLine = "\(article) \(kindNoun) has a label, which is a String."
         let cfg = """
         === vocabulary ===
@@ -32,7 +33,7 @@ struct DomainSemanticBasesTests {
         """
         let mer = """
         ---
-        name: kind of \(base) demo
+        name: kind of \(baseName) demo
         vocabulary: probe.merconfig
         ---
         To probe a \(kindNoun):
@@ -51,47 +52,19 @@ struct DomainSemanticBasesTests {
 
     /// Generated kind-protocol name for a "<adjective> widget" kind, e.g.
     /// `event widget` → `EventWidgetKind`.
-    private func protocolName(for base: String) -> String {
-        let kindNoun = base == "thing" ? "widget" : "\(base) widget"
-        let pascal = kindNoun
-            .split(separator: " ")
-            .map { $0.prefix(1).uppercased() + $0.dropFirst().lowercased() }
-            .joined()
-        return "\(pascal)Kind"
+    private func protocolName(for base: BuiltinSemanticBase) -> String {
+        let kindNoun = base == .root ? "widget" : "\(base.rawValue) widget"
+        return "\(IdentifierNaming.pascalCaseFromSpaces(kindNoun))Kind"
     }
 
     @Test(
         "each semantic base maps to its Meridian<Base> protocol",
-        arguments: [
-            ("thing",   "MeridianThing"),
-            ("event",   "MeridianEvent"),
-            ("action",  "MeridianAction"),
-            ("tool",    "MeridianTool"),
-            ("system",      "MeridianSystem"),
-            ("integration", "MeridianIntegration"),
-            ("artifact",    "MeridianArtifact"),
-            ("service",     "MeridianService"),
-            ("agent",       "MeridianAgent"),
-            ("model",       "MeridianModel"),
-            ("dataset",     "MeridianDataset"),
-            ("storage",     "MeridianStorage"),
-            ("credential",  "MeridianCredential"),
-            ("policy",      "MeridianPolicy"),
-            ("environment", "MeridianEnvironment"),
-            ("resource",    "MeridianResource"),
-            ("metric",      "MeridianMetric"),
-            ("memory",      "MeridianMemory"),
-            ("process", "MeridianProcess"),
-            ("message", "MeridianMessage"),
-            ("signal",  "MeridianSignal"),
-            ("fact",    "MeridianFact"),
-            ("role",    "MeridianRole"),
-            ("verdict", "MeridianVerdict"),
-        ]
+        arguments: BuiltinSemanticBase.allCases
     )
-    func semanticBaseLowersToRuntimeProtocol(base: String, expected: String) throws {
+    func semanticBaseLowersToRuntimeProtocol(base: BuiltinSemanticBase) throws {
         let swift = try compileForBase(base)
         let proto = protocolName(for: base)
+        let expected = base.runtimeProtocolName
         #expect(
             swift.contains("public protocol \(proto): \(expected) {"),
             Comment(rawValue: "expected `\(proto): \(expected)` in:\n\(swift)")
@@ -100,6 +73,13 @@ struct DomainSemanticBasesTests {
             swift.contains("public struct \(String(proto.dropLast(4))): \(proto) {"),
             Comment(rawValue: "expected struct conforming to \(proto) in:\n\(swift)")
         )
+    }
+
+    @Test("semantic-base enum owns root and protocol naming")
+    func semanticBaseEnumOwnsRootAndProtocolNaming() {
+        #expect(BuiltinSemanticBase.root == .thing)
+        #expect(BuiltinSemanticBase.isRoot(BuiltinSemanticBase.root.rawValue))
+        #expect(BuiltinSemanticBase.runtimeProtocolName(for: BuiltinSemanticBase.root.rawValue) == BuiltinSemanticBase.root.runtimeProtocolName)
     }
 
     @Test("scalar parents still collapse to typealias (no protocol/struct)")
@@ -165,7 +145,7 @@ struct DomainSemanticBasesTests {
             merconfigSource: cfg,
             merconfigFile: "probe.merconfig"
         )
-        #expect(swift.contains("public protocol PersonKind: MeridianThing {"))
+        #expect(swift.contains("public protocol PersonKind: \(BuiltinSemanticBase.root.runtimeProtocolName) {"))
         #expect(swift.contains("public protocol CustomerKind: PersonKind {"))
         #expect(swift.contains("public struct Customer: CustomerKind {"))
     }
@@ -199,7 +179,7 @@ struct DomainSemanticBasesTests {
         )
         // Struct conforms directly to the runtime base — no empty
         // `PullRequestKind` protocol, no double indirection.
-        #expect(swift.contains("public struct PullRequest: MeridianThing {"))
+        #expect(swift.contains("public struct PullRequest: \(BuiltinSemanticBase.root.runtimeProtocolName) {"))
         #expect(!swift.contains("public protocol PullRequestKind"))
     }
 
@@ -234,7 +214,7 @@ struct DomainSemanticBasesTests {
             merconfigSource: cfg,
             merconfigFile: "probe.merconfig"
         )
-        #expect(swift.contains("public protocol PullRequestKind: MeridianThing {"))
+        #expect(swift.contains("public protocol PullRequestKind: \(BuiltinSemanticBase.root.runtimeProtocolName) {"))
         #expect(swift.contains("public struct PullRequest: PullRequestKind {"))
         #expect(swift.contains("public protocol DraftPullRequestKind: PullRequestKind {"))
         #expect(swift.contains("public struct DraftPullRequest: DraftPullRequestKind {"))

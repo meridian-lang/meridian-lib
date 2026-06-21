@@ -18,6 +18,12 @@ import Foundation
 
 struct TableParser {
     let lexicon: EnglishLexicon
+    let trace: ParserTrace
+
+    init(lexicon: EnglishLexicon, trace: ParserTrace = .shared) {
+        self.lexicon = lexicon
+        self.trace = trace
+    }
 
     /// A decoded table: the header cells and the data rows (the Markdown
     /// delimiter row is dropped).
@@ -126,9 +132,10 @@ struct TableParser {
             if predicates.isEmpty {
                 out.append(action)
             } else {
-                out.append("if \(predicates.joined(separator: " and ")), \(action)")
+                out.append("\(lexicon.grammar.statement.ifPrefix)\(predicates.joined(separator: lexicon.grammar.booleanConnectors.andMarker)), \(action)")
             }
         }
+        trace.log(.statement, "table decision -> \(out.count) row statement(s)")
         return out
     }
 
@@ -149,11 +156,12 @@ struct TableParser {
 
         // Cell already phrased as a comparison (`more than 5`, `contains x`,
         // `is at least 3`, `matches pattern "…"`). Restore the canonical form.
+        let isPrefix = lexicon.grammar.merconfig.isMarker.trimmingCharacters(in: .whitespaces) + " "
         for (spelling, _) in lexicon.comparisonMarkers {
-            if spelling.hasPrefix("is ") {
-                let core = String(spelling.dropFirst(3))
+            if spelling.hasPrefix(isPrefix) {
+                let core = String(spelling.dropFirst(isPrefix.count))
                 if lower == spelling || lower.hasPrefix(spelling + " ") { return "\(h) \(cell)" }
-                if lower == core || lower.hasPrefix(core + " ") { return "\(h) is \(cell)" }
+                if lower == core || lower.hasPrefix(core + " ") { return "\(h)\(lexicon.grammar.merconfig.isMarker)\(cell)" }
             } else {
                 if lower == spelling || lower.hasPrefix(spelling + " ") { return "\(h) \(cell)" }
             }
@@ -161,7 +169,7 @@ struct TableParser {
 
         // Bare value → equality. Quote a multi-word, non-numeric value so it
         // parses as a string literal rather than an identifier chain.
-        return "\(h) is \(quoteIfNeeded(cell))"
+        return "\(h)\(lexicon.grammar.merconfig.isMarker)\(quoteIfNeeded(cell))"
     }
 
     /// A "wildcard" decision-table cell does not constrain its row (blank, a

@@ -90,8 +90,8 @@ extension DiagnosticCode {
         kind: .structural, decision: DecisionRef("D-DX-2"))
 
     public static let unparseableStatement = DiagnosticCode(
-        id: "MER1003", title: "unrecognized statement",
-        explanation: "A non-empty line inside a workflow body did not match any known statement form and was not a recognized phrase invocation.",
+        id: "MER1003", title: "malformed statement",
+        explanation: "A line inside a workflow body matched a structural statement introducer (bind/rebind, let … be, if/while/until block header, recover, etc.) but was malformed. Free-form natural language that does not match a structural form remains a phrase invocation and surfaces as MER2001 if unresolved.",
         kind: .structural, decision: DecisionRef("D-DX-2"))
 
     public static let unparseableRule = DiagnosticCode(
@@ -117,6 +117,21 @@ extension DiagnosticCode {
     public static let removedImportForm = DiagnosticCode(
         id: "MER1008", title: "removed import form",
         explanation: "Body-level `import` is removed. Declare vocabulary/rulebook dependencies in frontmatter (`vocabulary:` / `rulebook:`).",
+        kind: .structural)
+
+    public static let sectionStructuralError = DiagnosticCode(
+        id: "MER1009", title: "sectioned document structural error",
+        explanation: "A heading-bearing `.meri` document violated the section-role model (content before the first heading, unrecognized heading, malformed marker, or malformed Tools Used bullet).",
+        kind: .structural, decision: DecisionRef("D-DX-2"))
+
+    public static let uncheckablePredicate = DiagnosticCode(
+        id: "MER1010", title: "uncheckable predicate",
+        explanation: "An invariant, prohibition, applicability, or checklist item is not a structurally checkable comparison and cannot lower to deterministic IR.",
+        kind: .structural, decision: DecisionRef("D-DX-2"))
+
+    public static let invalidTableCell = DiagnosticCode(
+        id: "MER1011", title: "invalid table cell",
+        explanation: "A data-table cell value does not match the column's declared scalar type.",
         kind: .structural)
 
     // MARK: MER2xxx — name resolution
@@ -213,6 +228,36 @@ extension DiagnosticCode {
         explanation: "A tool-backed relation traversal or description requires an `await` fetch and cannot be used in an inline expression position. Bind it with `let`/`bind` first.",
         kind: .other)
 
+    public static let ambiguousEntryWorkflow = DiagnosticCode(
+        id: "MER3010", title: "ambiguous entry workflow",
+        explanation: "Frontmatter `name` matches an explicit workflow while top-level statements also define an implicit entry workflow.",
+        kind: .other)
+
+    public static let proseDisallowed = DiagnosticCode(
+        id: "MER3011", title: "prose not allowed",
+        explanation: "Free-form prose steps require `with discretion` / `with autonomy` on the workflow or an explicit `use judgment to …:` marker.",
+        kind: .other, decision: DecisionRef("D-DX-1"))
+
+    public static let commandHoleOutOfScope = DiagnosticCode(
+        id: "MER3012", title: "command hole out of scope",
+        explanation: "A `{ expr }` hole in a backticked command references a name that is not in scope (workflow parameter, earlier bind, or loop variable).",
+        kind: .other)
+
+    public static let quantifierSemantic = DiagnosticCode(
+        id: "MER3013", title: "quantifier semantic error",
+        explanation: "A collection quantifier is missing its noun, uses a tool call as its source, or lacks a required body/restriction.",
+        kind: .other)
+
+    public static let ambiguousAnaphora = DiagnosticCode(
+        id: "MER3014", title: "ambiguous anaphora",
+        explanation: "An anaphoric marker (`it`, `this`, …) appears when more than one referent is in scope; spell out the referenced value.",
+        kind: .other)
+
+    public static let invalidEnumDefault = DiagnosticCode(
+        id: "MER3015", title: "invalid enum default",
+        explanation: "A `can be` / `is usually` default case does not identify exactly one enum property, or two defaults conflict on the same property.",
+        kind: .other)
+
     // MARK: MER4xxx — codegen
 
     public static let codegenError = DiagnosticCode(
@@ -234,8 +279,23 @@ extension DiagnosticCode {
 
     public static let rulebookSectionUnknown = DiagnosticCode(
         id: "MER5003", title: "unknown rulebook section",
-        explanation: "A `=== section ===` header in a `.merrules` is not one of the recognized rulebook sections (desugar / sections / conventions / language).",
+        explanation: "A `=== section ===` header in a `.merrules` is not one of the recognized rulebook sections (desugar / sections / conventions / triggers / language).",
         kind: .nameResolution)
+
+    public static let unknownMerconfigSection = DiagnosticCode(
+        id: "MER5010", title: "unknown merconfig section",
+        explanation: "A `=== section ===` header in a `.merconfig` is not one of the recognized sections (vocabulary / constants / instances / tools / language).",
+        kind: .structural)
+
+    public static let malformedRulebookEntry = DiagnosticCode(
+        id: "MER5004", title: "malformed rulebook entry",
+        explanation: "A line in a `.merrules` section matched a rule shape but was missing required fields (`match:`/`rewrite:`, `-> <role>`, or `<kind>: <words>`).",
+        kind: .structural)
+
+    public static let unrecognizedBlockProperty = DiagnosticCode(
+        id: "MER5005", title: "unrecognized block property",
+        explanation: "A line inside a `has properties:` block did not match any known property declaration form.",
+        kind: .structural)
 
     /// Every catalog code, for `meridian explain`, the staleness/guard tests,
     /// and uniqueness checks. Keep this list complete — a guard test asserts
@@ -245,14 +305,18 @@ extension DiagnosticCode {
         .malformedWorkflowHeader, .orphanedCodeBlock, .unparseableStatement,
         .unparseableRule, .malformedCondition, .frontmatterPlacement,
         .invalidTestSpecKey, .removedImportForm,
+        .sectionStructuralError, .uncheckablePredicate, .invalidTableCell,
         .unresolvedPhrase, .unknownTool, .unknownKind, .unknownProperty,
         .unknownVocabulary, .unknownRulebook, .unknownAdjective, .unknownVerb,
         .unknownFallbackKind, .unknownTraceCategory,
         .phraseInlineDepthExceeded, .definitionRecursion, .duplicateDeclaration,
         .duplicateName, .relationBackingInvalid, .unattachedRule,
         .unresolvedTriggerAction, .toolBackedInlineDisallowed,
+        .ambiguousEntryWorkflow, .proseDisallowed, .commandHoleOutOfScope,
+        .quantifierSemantic, .ambiguousAnaphora, .invalidEnumDefault,
         .codegenError,
         .swiftFormatFailed, .vocabularyDeclarationUnrecognized, .rulebookSectionUnknown,
+        .unknownMerconfigSection, .malformedRulebookEntry, .unrecognizedBlockProperty,
     ]
 
     /// Look up a code by its stable id (`"MER2001"`), case-insensitively.

@@ -215,11 +215,7 @@ public struct ASTToIR {
     /// (`get_health` → `getHealth`), so frontmatter `tools:` tokens line up
     /// with the emitted `InvokeIR.toolID`.
     private func methodizeToolToken(_ name: String) -> String {
-        let words = name.lowercased()
-            .components(separatedBy: CharacterSet.alphanumerics.inverted)
-            .filter { !$0.isEmpty && !lexicon.articles.contains($0) }
-        guard let first = words.first else { return name }
-        return first + words.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined()
+        IdentifierNaming.methodize(name, stopwords: lexicon.articles)
     }
 
     /// The union of every recognized tool ID for this compile, in the same
@@ -443,7 +439,13 @@ public struct ASTToIR {
     private func assertNoMalformed(_ stmt: StatementAST) throws {
         func check(_ e: ExpressionAST?) throws {
             guard let e, let msg = firstMalformed(e) else { return }
-            throw CompilerError.semanticError(message: msg, range: sourceRange(stmt.sourceLine))
+            let diag = Diagnostic.structural(
+                .malformedCondition,
+                message: msg,
+                range: sourceRange(stmt.sourceLine),
+                help: "Rewrite the condition using explicit grouping (`either … or …`, parentheses via sub-clauses) or fix the quantifier/description shape.")
+            if let engine { engine.report(diag) }
+            throw CompilerError.diagnostics([diag])
         }
         switch stmt {
         case .bind(let s):        try check(s.value)
@@ -492,12 +494,26 @@ public struct ASTToIR {
             return nil
         case .interpolatedString(let segs):
             for s in segs {
-                if case .expression(let x) = s, let m = firstMalformed(x) { return m }
+                switch s {
+                case .expression(let x), .formatted(let x, _):
+                    if let m = firstMalformed(x) { return m }
+                case .conditional(let c, let t, let o):
+                    if let m = firstMalformed(c) { return m }
+                    if let m = firstMalformed(.interpolatedString(t)) { return m }
+                    if let m = firstMalformed(.interpolatedString(o)) { return m }
+                case .forEach(_, let c, let b):
+                    if let m = firstMalformed(c) { return m }
+                    if let m = firstMalformed(.interpolatedString(b)) { return m }
+                case .literal:
+                    break
+                }
             }
             return nil
         case .recordList(_, let rows):
             for row in rows { for cell in row { if let m = firstMalformed(cell) { return m } } }
             return nil
+        case .tableLookup(_, _, let key, _):
+            return firstMalformed(key)
         case .quantified(let q):
             return firstMalformedInDescription(q.description) ?? q.body.flatMap(firstMalformed)
         case .verbPredicate(let s, _, let o):
@@ -531,6 +547,7 @@ public struct ASTToIR {
         scope: Set<String> = []
     ) throws -> [IRPrimitive] {
         try assertNoMalformed(stmt)
+        trace.log(.lowering, "L\(stmt.sourceLine) lowerStatement \(Self.statementKind(stmt))")
         switch stmt {
 
         case .bind(let s):
@@ -662,10 +679,10 @@ public struct ASTToIR {
                 effectiveAutonomy = autonomyConfig
             }
             guard let mode = effectiveMode else {
-                throw CompilerError.semanticError(
-                    message: "free-form prose is only allowed in workflows marked `with discretion` or `with autonomy`, or inside an explicit `use judgment to …:` marker",
-                    range: sourceRange(s.sourceLine)
-                )
+                throw semanticError(
+                    "free-form prose is only allowed in workflows marked `with discretion` or `with autonomy`, or inside an explicit `use judgment to …:` marker",
+                    s.sourceLine, code: .proseDisallowed,
+                    help: "Mark the workflow `with discretion`/`with autonomy` or wrap the step in `use judgment to …:`.")
             }
             return [makeProseStep(text: s.text, dispatchMode: mode, autonomy: effectiveAutonomy, line: s.sourceLine)]
 
@@ -786,12 +803,6 @@ public struct ASTToIR {
 
     private func camelCase(_ s: String) -> String { IdentifierNaming.camelPreservingCase(s) }
 
-    private func pascalCase(_ s: String) -> String {
-        s.split(whereSeparator: { $0 == " " || $0 == "_" || $0 == "-" })
-            .map { $0.prefix(1).uppercased() + $0.dropFirst() }
-            .joined()
-    }
-
     /// Inverse of `camelCase`: `"mailerServer"` → `"mailer server"`. Used by
     /// phrase-invocation text substitution so a body written as
     /// `the mailer server` matches a camelCase parameter name.
@@ -852,10 +863,10 @@ public struct ASTToIR {
                     let unresolved = freeIdentifierRoots(lowered).filter { !scope.contains(scopeKey($0)) }
                     if let bad = unresolved.first {
                         let known = scope.sorted().joined(separator: ", ")
-                        throw CompilerError.semanticError(
-                            message: "command hole \"{\(exprText)}\" references \"\(bad)\", which is not in scope. In-scope names: [\(known)]. Reference a workflow parameter, an earlier bind, or the enclosing loop variable; write `{{`/`}}` for a literal brace.",
-                            range: sourceRange(sourceLine)
-                        )
+                        throw semanticError(
+                            "command hole \"{\(exprText)}\" references \"\(bad)\", which is not in scope. In-scope names: [\(known)]. Reference a workflow parameter, an earlier bind, or the enclosing loop variable; write `{{`/`}}` for a literal brace.",
+                            sourceLine, code: .commandHoleOutOfScope,
+                            help: "Reference a workflow parameter, earlier bind, loop variable, or escape with `{{`/`}}`.")
                     }
                     segments.append(inQuote ? .shellEscapedExpression(lowered) : .expression(lowered))
                 } else {
@@ -911,11 +922,17 @@ public struct ASTToIR {
             return freeIdentifierRoots(base) + (target.map(freeIdentifierRoots) ?? [])
         case .invocation(let ir):
             return ir.arguments.flatMap { freeIdentifierRoots($0.value) }
+        case .tableLookup(_, _, let key, _):
+            return freeIdentifierRoots(key)
         case .interpolatedString(let segs):
             return segs.flatMap { seg -> [String] in
                 switch seg {
                 case .literal:                       return []
                 case .expression(let x):             return freeIdentifierRoots(x)
+                case .conditional(let c, let t, let o):
+                    return freeIdentifierRoots(c) + t.flatMap { _ in [] } + o.flatMap { _ in [] }
+                case .forEach(_, let c, _):          return freeIdentifierRoots(c)
+                case .formatted(let x, _):           return freeIdentifierRoots(x)
                 case .shellEscapedExpression(let x):  return freeIdentifierRoots(x)
                 }
             }
@@ -965,7 +982,7 @@ public struct ASTToIR {
             ))]
         }
 
-        if s.words.lowercased().hasPrefix("invoke ") {
+        if s.words.lowercased().hasPrefix(lexicon.grammar.statement.invokePrefix) {
             let sp = StatementParser(symbols: symbols, trace: trace, lexicon: lexicon)
             let expr = sp.buildInvokeExpr(s.words)
             if case .invoke(let toolID, let args) = expr {
@@ -1087,8 +1104,8 @@ public struct ASTToIR {
 
     private func implicitBindName(from invocationWords: String) -> String? {
         var text = invocationWords.trimmingCharacters(in: .whitespaces)
-        if text.lowercased().hasPrefix("invoke ") {
-            text = String(text.dropFirst("invoke ".count)).trimmingCharacters(in: .whitespaces)
+        if text.lowercased().hasPrefix(lexicon.grammar.statement.invokePrefix) {
+            text = String(text.dropFirst(lexicon.grammar.statement.invokePrefix.count)).trimmingCharacters(in: .whitespaces)
         }
         let tokens = text.split(separator: " ").map(String.init)
         guard tokens.count > 1 else { return nil }
@@ -1097,7 +1114,7 @@ public struct ASTToIR {
         for token in tokens.dropFirst() {
             let cleaned = token.trimmingCharacters(in: CharacterSet(charactersIn: ",;:."))
             let lower = cleaned.lowercased()
-            if lexicon.prepositions.contains(lower) || lower == "with" {
+            if lexicon.prepositions.contains(lower) {
                 break
             }
             if lexicon.articles.contains(lower) { continue }
@@ -1170,11 +1187,13 @@ public struct ASTToIR {
                 let spaced = decamel(param).replacingOccurrences(of: "_", with: " ")
                 let snake  = param.replacingOccurrences(of: " ", with: "_")
                 let variants = Array(Set([spaced, snake, param]))
-                for v in variants {
-                    words = wholeWordReplace(words, of: "the \(v)", with: argText)
+                if let definiteArticle = lexicon.definiteArticle {
+                    for v in variants {
+                        words = WholeWordRegex.replace(words, of: "\(definiteArticle) \(v)", with: argText)
+                    }
                 }
                 for v in variants {
-                    words = wholeWordReplace(words, of: v, with: argText)
+                    words = WholeWordRegex.replace(words, of: v, with: argText)
                 }
             }
             return .phraseInvocation(PhraseInvocationAST(words: words, sourceLine: s.sourceLine))
@@ -1202,10 +1221,7 @@ public struct ASTToIR {
             // ("payment_processor", legacy), and camelCase ("paymentProcessor").
             let lower = name.lowercased().trimmingCharacters(in: .whitespaces)
             let snake = lower.replacingOccurrences(of: " ", with: "_")
-            let camel = lower.split(whereSeparator: { $0 == " " || $0 == "_" })
-                .enumerated()
-                .map { i, w in i == 0 ? String(w) : w.prefix(1).uppercased() + w.dropFirst() }
-                .joined()
+            let camel = IdentifierNaming.lowerCamel(lower)
             return args[lower] ?? args[snake] ?? args[camel] ?? expr
         case .propertyAccess(let base, let prop):
             let subBase = subExpr(base, args: args)
@@ -1240,10 +1256,38 @@ public struct ASTToIR {
                 switch seg {
                 case .literal:           return seg
                 case .expression(let e): return .expression(subExpr(e, args: args))
+                case .conditional(let c, let t, let o):
+                    return .conditional(
+                        condition: subExpr(c, args: args),
+                        then: t.map { subInterpolationSegment($0, args: args) },
+                        otherwise: o.map { subInterpolationSegment($0, args: args) }
+                    )
+                case .forEach(let v, let c, let b):
+                    return .forEach(variable: v, collection: subExpr(c, args: args), body: b.map { subInterpolationSegment($0, args: args) })
+                case .formatted(let e, let f):
+                    return .formatted(subExpr(e, args: args), formatter: f)
                 }
             })
         case .recordList(let fields, let rows):
             return .recordList(fields: fields, rows: rows.map { $0.map { subExpr($0, args: args) } })
+        case .tableLookup(let table, let keyColumn, let key, let valueColumn):
+            return .tableLookup(table: table, keyColumn: keyColumn, key: subExpr(key, args: args), valueColumn: valueColumn)
+        }
+    }
+
+    private func subInterpolationSegment(_ seg: InterpolationSegment, args: [String: ExpressionAST]) -> InterpolationSegment {
+        switch seg {
+        case .literal, .expression:
+            if case .expression(let e) = seg { return .expression(subExpr(e, args: args)) }
+            return seg
+        case .conditional(let c, let t, let o):
+            return .conditional(condition: subExpr(c, args: args),
+                                then: t.map { subInterpolationSegment($0, args: args) },
+                                otherwise: o.map { subInterpolationSegment($0, args: args) })
+        case .forEach(let v, let c, let b):
+            return .forEach(variable: v, collection: subExpr(c, args: args), body: b.map { subInterpolationSegment($0, args: args) })
+        case .formatted(let e, let f):
+            return .formatted(subExpr(e, args: args), formatter: f)
         }
     }
 
@@ -1263,14 +1307,6 @@ public struct ASTToIR {
         )
     }
 
-    /// Replace whole-word occurrences of `needle` (case-insensitive) with
-    /// `replacement`, keeping any internal text untouched. Used for phrase
-    /// argument substitution to avoid mangling words like "ordered" when
-    /// substituting "order".
-    private func wholeWordReplace(_ haystack: String, of needle: String, with replacement: String) -> String {
-        WholeWordRegex.replace(haystack, of: needle, with: replacement)
-    }
-
     /// Render an ExpressionAST back to a text fragment for phrase text substitution.
     /// Identifiers render bare (without "the ") so substitution into a body that
     /// already has "the {param}" produces clean possessive forms like "order's id".
@@ -1278,8 +1314,8 @@ public struct ASTToIR {
     private func exprToText(_ expr: ExpressionAST) -> String {
         switch expr {
         case .identifierRef(let n):             return n
-        case .instanceRef(let n):               return "the \(n)"
-        case .constantRef(let n):               return "the \(n)"
+        case .instanceRef(let n):               return [lexicon.definiteArticle, n].compactMap { $0 }.joined(separator: " ")
+        case .constantRef(let n):               return [lexicon.definiteArticle, n].compactMap { $0 }.joined(separator: " ")
         case .propertyAccess(let base, let p):  return "\(exprToText(base))'s \(p)"
         case .literal(.string(let s)):          return "\"\(s)\""
         case .literal(.integer(let n)):         return "\(n)"
@@ -1302,7 +1338,13 @@ public struct ASTToIR {
     func lowerExpr(_ expr: ExpressionAST, scope: Set<String>? = nil, line: Int = 0) throws -> IRExpression {
         switch expr {
         case .malformed(let message):
-            throw CompilerError.semanticError(message: message, range: sourceRange(line))
+            let diag = Diagnostic.structural(
+                .malformedCondition,
+                message: message,
+                range: sourceRange(line),
+                help: "Rewrite the condition using explicit grouping or fix the quantifier/description shape.")
+            if let engine { engine.report(diag) }
+            throw CompilerError.diagnostics([diag])
         case .quantified(let q):
             return try lowerQuantifier(q)
         case .literal(let lit):
@@ -1356,12 +1398,33 @@ public struct ASTToIR {
                 switch seg {
                 case .literal(let s):    return .literal(s)
                 case .expression(let e): return .expression(try lowerExpr(e, scope: scope, line: line))
+                case .conditional(let c, let t, let o):
+                    return .conditional(
+                        condition: try lowerExpr(c, scope: scope, line: line),
+                        then: try lowerInterpolationSegments(t, scope: scope, line: line),
+                        otherwise: try lowerInterpolationSegments(o, scope: scope, line: line)
+                    )
+                case .forEach(let v, let c, let b):
+                    return .forEach(
+                        variable: v,
+                        collection: try lowerExpr(c, scope: scope, line: line),
+                        body: try lowerInterpolationSegments(b, scope: scope.map { $0.union([v]) }, line: line)
+                    )
+                case .formatted(let e, let f):
+                    return .formatted(try lowerExpr(e, scope: scope, line: line), formatter: f)
                 }
             }
             return .interpolatedString(irSegs)
         case .recordList(let fields, let rows):
             let irRows = try rows.map { row in try row.map { try lowerExpr($0, scope: scope, line: line) } }
             return .recordList(fields: fields, rows: irRows)
+        case .tableLookup(let table, let keyColumn, let key, let valueColumn):
+            return .tableLookup(
+                table: table,
+                keyColumn: keyColumn,
+                key: try lowerExpr(key, scope: scope, line: line),
+                valueColumn: valueColumn
+            )
         case .verbPredicate(let subject, let verb, let object):
             return try lowerVerbPredicate(subject: subject, verbForm: verb, object: object, scope: scope, line: line)
         case .relationTraversal, .description, .aggregate, .superlative:
@@ -1369,9 +1432,39 @@ public struct ASTToIR {
             // source is rejected inside the plan builders (bind it first);
             // property-backed sources produce an empty prelude, which is dropped.
             guard let rel = try lowerRelationalExpr(expr, allowToolFetch: false, scope: scope, line: line) else {
-                throw CompilerError.semanticError(message: "internal: unhandled relational expression", range: sourceRange(line))
+                throw CompilerError.diagnostics([
+                    Diagnostic.error(.internalError,
+                                     message: "internal: unhandled relational expression",
+                                     range: sourceRange(line),
+                                     help: "This is a compiler bug; please report it with the source file and line number.")
+                ])
             }
             return rel.expr
+        }
+    }
+
+    private func lowerInterpolationSegments(_ segments: [InterpolationSegment], scope: Set<String>?, line: Int) throws -> [IRInterpolationSegment] {
+        try segments.map { seg in
+            switch seg {
+            case .literal(let s):
+                return .literal(s)
+            case .expression(let e):
+                return .expression(try lowerExpr(e, scope: scope, line: line))
+            case .conditional(let c, let t, let o):
+                return .conditional(
+                    condition: try lowerExpr(c, scope: scope, line: line),
+                    then: try lowerInterpolationSegments(t, scope: scope, line: line),
+                    otherwise: try lowerInterpolationSegments(o, scope: scope, line: line)
+                )
+            case .forEach(let v, let c, let b):
+                return .forEach(
+                    variable: v,
+                    collection: try lowerExpr(c, scope: scope, line: line),
+                    body: try lowerInterpolationSegments(b, scope: scope.map { $0.union([v]) }, line: line)
+                )
+            case .formatted(let e, let f):
+                return .formatted(try lowerExpr(e, scope: scope, line: line), formatter: f)
+            }
         }
     }
 
@@ -1417,10 +1510,13 @@ public struct ASTToIR {
             let fn = definitionFunctionName(kind: d.kind, adjective: key)
             if let existing = symbols.definition(forAdjective: key) {
                 if existing.functionName == fn { continue }   // benign re-register
-                throw CompilerError.semanticError(
-                    message: "duplicate definition for adjective \"\(d.adjective)\": already defined for kind \"\(existing.kind)\". Adjective names must be globally unique.",
-                    range: sourceRange(d.sourceLine)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.error(
+                        .duplicateDeclaration,
+                        message: "duplicate definition for adjective \"\(d.adjective)\": already defined for kind \"\(existing.kind)\"",
+                        range: sourceRange(d.sourceLine),
+                        help: "Adjective names must be globally unique across kinds — rename one of the definitions.")
+                ])
             }
             symbols.registerDefinition(.init(
                 adjective: key, kind: d.kind, subjectVar: d.subjectVar,
@@ -1437,7 +1533,7 @@ public struct ASTToIR {
     }
 
     private func definitionFunctionName(kind: String, adjective: String) -> String {
-        "meridianDef_\(pascalCase(kind))_\(camelCase(adjective))"
+        "meridianDef_\(IdentifierNaming.pascalCaseSplittingHyphenPreservingCase(kind))_\(camelCase(adjective))"
     }
 
     /// Lower every registered adjective definition to a `LoweredDefinition`,
@@ -1554,8 +1650,8 @@ public struct ASTToIR {
     private func lowerQuantifier(_ q: QuantifierAST) throws -> IRExpression {
         let noun = q.description.noun.trimmingCharacters(in: .whitespaces)
         guard !noun.isEmpty else {
-            throw CompilerError.semanticError(
-                message: "quantifier is missing a collection noun.", range: sourceRange(0))
+            throw semanticError("quantifier is missing a collection noun.", 0, code: .quantifierSemantic,
+                                help: "Write `every/all/no … <plural>` with a collection noun.")
         }
         let elementVar = lexicon.singularize(noun.lowercased())
 
@@ -1563,9 +1659,10 @@ public struct ASTToIR {
         // rejected so the collection isn't re-evaluated per reducer.
         let collection = try lowerExpr(.identifierRef(noun))
         if case .invocation = collection {
-            throw CompilerError.semanticError(
-                message: "quantifier source must be a bound collection name (a parameter or earlier bind), not a tool call.",
-                range: sourceRange(0))
+            throw semanticError(
+                "quantifier source must be a bound collection name (a parameter or earlier bind), not a tool call.",
+                0, code: .quantifierSemantic,
+                help: "Bind the collection with `let`/`bind` first, then quantify over the bound name.")
         }
 
         var filters: [IRExpression] = []
@@ -1579,9 +1676,10 @@ public struct ASTToIR {
 
         let body = try q.body.map { qualifyToLoopVar(try lowerExpr($0), loopVar: elementVar) }
         if case .all = q.kind, body == nil, filters.isEmpty {
-            throw CompilerError.semanticError(
-                message: "`all <description>` needs a body (e.g. `all pages have a summary`) or a `whose`/adjective restriction.",
-                range: sourceRange(0))
+            throw semanticError(
+                "`all <description>` needs a body (e.g. `all pages have a summary`) or a `whose`/adjective restriction.",
+                0, code: .quantifierSemantic,
+                help: "Add a `whose` clause, adjective filter, or body predicate after the collection.")
         }
 
         let desc = DescriptionIR(collection: collection, elementVar: elementVar, filters: filters)
@@ -1680,8 +1778,11 @@ public struct ASTToIR {
 
     // MARK: - 3A/3B/3C. Relations, verbs, descriptions
 
-    private func semanticError(_ message: String, _ line: Int) -> CompilerError {
-        CompilerError.semanticError(message: message, range: sourceRange(line))
+    private func semanticError(_ message: String, _ line: Int, code: DiagnosticCode = .relationBackingInvalid,
+                             help: String? = nil) -> CompilerError {
+        CompilerError.diagnostics([
+            Diagnostic.error(code, message: message, range: sourceRange(line), help: help)
+        ])
     }
 
     /// Validate the relational layer once per file. Backing is mandatory for any
@@ -1774,10 +1875,6 @@ public struct ASTToIR {
 
     /// 3B: a " (did you mean …?)" hint for an unknown verb form, or "" when no
     /// declared form is close enough.
-    private func nearestVerbSuggestion(_ form: String) -> String {
-        symbols.verbFormSuggestion(for: form)
-    }
-
     /// 3B: lower an active verb condition (`the user owns the page`) to a
     /// property-backed `identifies` comparison. Tool-backed verbs can't be tested
     /// inline (they need an `await` fetch) — bind the related set first.
@@ -1814,7 +1911,10 @@ public struct ASTToIR {
             }
             throw semanticError("relation backing kind `\(bKind)` is not a side of relation \"\(relName)\".", line)
         case .tool:
-            throw semanticError("verb \"\(verbForm)\" is tool-backed and cannot be tested inline. Bind the related set first (e.g. `let related be \(rel.leftKind.lowercased())s that \(resolved.verb.thirdPerson) …`).", line)
+            throw semanticError(
+                "verb \"\(verbForm)\" is tool-backed and cannot be tested inline. Bind the related set first (e.g. `let related be \(rel.leftKind.lowercased())s that \(resolved.verb.thirdPerson) …`).",
+                line, code: .toolBackedInlineDisallowed,
+                help: "Tool-backed relations require an `await` fetch — bind them with `let`/`bind` in statement position first.")
         }
     }
 
@@ -1830,7 +1930,7 @@ public struct ASTToIR {
                                           allowToolFetch: Bool, scope: Set<String>? = nil,
                                           line: Int) throws -> ScalarNavPlan {
         guard let resolved = symbols.resolveVerbForm(relationForm) else {
-            throw semanticError("unknown relation form \"\(relationForm)\"\(nearestVerbSuggestion(relationForm)) in navigation.", line)
+            throw semanticError("unknown relation form \"\(relationForm)\"\(symbols.verbFormSuggestion(for: relationForm)) in navigation.", line)
         }
         let relName = resolved.verb.relation
         guard let rel = symbols.relation(named: relName),
@@ -1850,11 +1950,14 @@ public struct ASTToIR {
             return ScalarNavPlan(expr: .propertyAccess(baseIR, propertyName: path), prelude: [])
         case .tool(let toolID):
             guard allowToolFetch else {
-                throw semanticError("tool-backed relation \"\(relName)\" cannot be navigated in an inline expression; bind it first (e.g. `let result be the \(navKind) \(relationForm) …`).", line)
+                throw semanticError(
+                    "tool-backed relation \"\(relName)\" cannot be navigated in an inline expression; bind it first (e.g. `let result be the \(navKind) \(relationForm) …`).",
+                    line, code: .toolBackedInlineDisallowed,
+                    help: "Scalar navigation through a tool-backed relation requires a statement-position bind first.")
             }
             // The operand is the side that is NOT navKind; key the invoke by it.
             let operandKind = navKind.lowercased() == rel.leftKind.lowercased() ? rel.rightKind : rel.leftKind
-            let synth = "__nav\(pascalCase(navKind))"
+            let synth = "__nav\(IdentifierNaming.pascalCaseSplittingHyphenPreservingCase(navKind))"
             let resolvedID = symbols.tool(named: toolID)?.methodName ?? toolID
             let invoke = InvokeIR(
                 toolID: resolvedID,
@@ -1916,7 +2019,10 @@ public struct ASTToIR {
         let collection: IRExpression
         if let src = toolSource {
             guard allowToolFetch else {
-                throw semanticError("a tool-backed relation (`\(src.verbForm)`) must be bound before use — e.g. `let matches be \(noun) that \(src.verbForm) …`, then read `matches`.", line)
+                throw semanticError(
+                    "a tool-backed relation (`\(src.verbForm)`) must be bound before use — e.g. `let matches be \(noun) that \(src.verbForm) …`, then read `matches`.",
+                    line, code: .toolBackedInlineDisallowed,
+                    help: "Descriptions over tool-backed relations must be bound in statement position before use in an expression.")
             }
             let synth = "__rel\(camelCase(noun).prefix(1).uppercased())\(camelCase(noun).dropFirst())"
             prelude.append(.invoke(InvokeIR(
@@ -1960,5 +2066,25 @@ public struct ASTToIR {
         // (`progress:…:C<col>`), so it must stay 0 to keep goldens stable; precise
         // carets come from the Tier-2 `SourceLine.range(file:of:)` helper.
         SourceRange(file: sourceFile, line: line, column: 0)
+    }
+
+    private static func statementKind(_ stmt: StatementAST) -> String {
+        switch stmt {
+        case .bind: return "bind"
+        case .rebind: return "rebind"
+        case .emit: return "emit"
+        case .complete: return "complete"
+        case .commit: return "commit"
+        case .wait: return "wait"
+        case .assertStmt: return "assert"
+        case .conditional: return "branch"
+        case .iteration: return "iterate"
+        case .recover: return "recover"
+        case .simultaneously: return "simultaneously"
+        case .phraseInvocation: return "phrase"
+        case .proseStep: return "prose"
+        case .modal: return "modal"
+        case .labelled: return "labelled"
+        }
     }
 }

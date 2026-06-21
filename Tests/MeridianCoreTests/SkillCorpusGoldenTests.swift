@@ -69,6 +69,7 @@ struct SkillCorpusGoldenTests {
         "customer_support_router.meridian",
         "dependency_upgrade_sweep.meri",
         "deployment_promotion.meri",
+        "domain.meri",
         "flaky_ci_stabilizer.meri",
         "hotfix_commander.meridian",
         "incident_pr_response.meri",

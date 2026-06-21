@@ -1,4 +1,5 @@
 import Foundation
+import MeridianRuntime
 
 // MARK: - MerConfigParser
 //
@@ -10,10 +11,13 @@ public struct MerConfigParser {
 
     public let trace: ParserTrace
     public let lexicon: EnglishLexicon
+    private let diagnostics: DiagnosticEngine?
 
-    public init(trace: ParserTrace = .shared, lexicon: EnglishLexicon = .default) {
+    public init(trace: ParserTrace = .shared, lexicon: EnglishLexicon = .default,
+                diagnostics: DiagnosticEngine? = nil) {
         self.trace = trace
         self.lexicon = lexicon
+        self.diagnostics = diagnostics
     }
 
     public func parse(_ source: String, file: String = "") throws -> MerConfigFile {
@@ -53,17 +57,27 @@ public struct MerConfigParser {
             trace.log(.merconfig, "section === \(section) === (\(body.filter(\.isContent).count) lines)")
             switch section {
             case "vocabulary":
-                vocabulary += try parseVocabularySection(body, file: file)
+                vocabulary += try parseVocabularyLines(body, file: file)
             case "constants":
                 constants += parseConstantsSection(body)
             case "instances":
                 instances += parseInstancesSection(body)
             case "tools":
-                tools += parseToolsSection(body)
+                tools += try parseToolsSection(body, file: file)
             case "language":
                 languageSynonyms = parseLanguageSection(body)
             default:
-                trace.log(.merconfig, "WARNING: ignoring unrecognized section === \(section) ===")
+                let range = SourceRange(file: file, line: body.first?.number ?? 1, column: 1)
+                let diag = Diagnostic.structural(
+                    .unknownMerconfigSection,
+                    message: "unknown merconfig section `=== \(section) ===`",
+                    range: range,
+                    help: "Use one of: `=== vocabulary ===`, `=== constants ===`, `=== instances ===`, `=== tools ===`, `=== language ===`.")
+                if let diagnostics {
+                    diagnostics.report(diag)
+                } else {
+                    throw CompilerError.diagnostics([diag])
+                }
             }
         }
         trace.log(.merconfig, "parsed \(vocabulary.count) vocab, \(constants.count) constants, \(instances.count) instances, \(tools.count) tools")
@@ -95,7 +109,7 @@ public struct MerConfigParser {
 
     // MARK: - Vocabulary section
 
-    private func parseVocabularySection(_ lines: [SourceLine], file: String) throws -> [VocabularyStatement] {
+    func parseVocabularyLines(_ lines: [SourceLine], file: String) throws -> [VocabularyStatement] {
         var results: [VocabularyStatement] = []
         var i = 0
         let content = lines.filter(\.isContent)
@@ -112,10 +126,10 @@ public struct MerConfigParser {
             //                   to an email address,
             //                   with a subject line,
             //                   and a message body:
-            if t.lowercased().hasPrefix("to ") {
+            if t.lowercased().hasPrefix(lexicon.grammar.merconfig.workflowHeaderPrefix) {
                 let (headerText, headerConsumed) = collectHeaderLines(content, at: i)
                 if headerText.hasSuffix(":") {
-                    let patternText = String(headerText.dropFirst(3).dropLast(1))
+                    let patternText = String(headerText.dropFirst(lexicon.grammar.merconfig.workflowHeaderPrefix.count).dropLast(1))
                         .trimmingCharacters(in: .whitespaces)
                     let pattern = PhrasePatternParser(trace: trace, lexicon: lexicon).parse(patternText)
                     // Body lines: strictly deeper indent than the header itself,
@@ -138,8 +152,43 @@ public struct MerConfigParser {
                 }
             }
 
+            // Block property syntax:
+            //
+            //     repository has:
+            //       name which is a string.
+            //       status which is one of (open, closed).
+            if let block = parsePropertyBlockHeader(t, line: line.number) {
+                var body: [SourceLine] = []
+                var k = i + 1
+                while k < content.count, content[k].indent > line.indent {
+                    body.append(content[k]); k += 1
+                }
+                var entries: [PropertyEntry] = []
+                for bodyLine in body where bodyLine.isContent {
+                    let stmt = bodyLine.statement.trimmingCharacters(in: .whitespaces)
+                    if stmt.isEmpty { continue }
+                    if let entry = parseBlockPropertyEntry(stmt) {
+                        entries.append(entry)
+                    } else {
+                        try reportBlockPropertyDiagnostic(
+                            message: "unrecognized property line in `\(block.kind) has properties:` block: \"\(stmt)\"",
+                            range: SourceRange(file: file, line: bodyLine.number, column: 1),
+                            help: "Use `name which is a string.`, `name which is one of (a, b).`, or `name: type`.")
+                    }
+                }
+                if !entries.isEmpty {
+                    results.append(.property(PropertyDeclaration(
+                        kind: block.kind,
+                        properties: entries,
+                        sourceLine: block.line
+                    )))
+                    i = k
+                    continue
+                }
+            }
+
             // 2B: "Definition: a {kind} is {adjective} if {condition}."
-            if DefinitionParser.isDefinitionLine(t) {
+            if DefinitionParser.isDefinitionLine(t, lexicon: lexicon) {
                 if let def = DefinitionParser(lexicon: lexicon, symbols: nil, trace: trace)
                     .parse(t, line: line.number) {
                     results.append(.definition(def))
@@ -148,13 +197,13 @@ public struct MerConfigParser {
             }
 
             // 3B: "The verb to {base} (…) means the {relation} relation."
-            if t.lowercased().hasPrefix("the verb to ") {
+            if t.lowercased().hasPrefix(lexicon.grammar.merconfig.verbDeclPrefix) {
                 if let v = parseVerb(t, line: line.number) { results.append(.verb(v)) }
                 i += 1; continue
             }
 
             // 3A: "{Relation} is read from the {kind}'s {prop}." / "… via the {tool} tool."
-            if t.lowercased().contains(" is read ") {
+            if t.lowercased().contains(lexicon.grammar.merconfig.isReadMarker) {
                 if let backing = parseRelationBacking(t, line: line.number) {
                     results.append(.relationBacking(backing)); i += 1; continue
                 }
@@ -165,13 +214,23 @@ public struct MerConfigParser {
                 results.append(.kind(kind)); i += 1; continue
             }
 
+            // "A {kind} can be {case} or {case}[, called the {property}]."
+            if let prop = parseCanBeDecl(t, line: line.number) {
+                results.append(.property(prop)); i += 1; continue
+            }
+
+            // "A {kind} is usually {case}."
+            if let prop = parseUsuallyDecl(t, line: line.number) {
+                results.append(.property(prop)); i += 1; continue
+            }
+
             // "A {kind} has {properties}."
             if let prop = parsePropertyDecl(t, line: line.number) {
                 results.append(.property(prop)); i += 1; continue
             }
 
             // "The inverse of {x} is {y}."
-            if t.lowercased().hasPrefix("the inverse of ") {
+            if t.lowercased().hasPrefix(lexicon.grammar.merconfig.inversePrefix) {
                 if let inv = parseInverse(t, line: line.number) {
                     results.append(.inverse(inv))
                 }
@@ -183,9 +242,54 @@ public struct MerConfigParser {
                 results.append(.relation(rel)); i += 1; continue
             }
 
-            i += 1
+            throw CompilerError.diagnostics([
+                Diagnostic.structural(
+                    .vocabularyDeclarationUnrecognized,
+                    message: "unrecognized vocabulary declaration: \"\(t)\"",
+                    range: SourceRange(file: file, line: line.number, column: 1),
+                    help: "Use a known vocabulary form such as `A page is a kind of thing.`, `A page has a text called the summary.`, `A page can be archived or live.`, `Definition: ...`, a relation, a verb, or a `To ...:` phrase.")
+            ])
         }
         return results
+    }
+
+    private func parsePropertyBlockHeader(_ t: String, line: Int) -> (kind: String, line: Int)? {
+        let lower = t.lowercased()
+        let suffix: String
+        if lower.hasSuffix(lexicon.grammar.merconfig.propertiesBlockSuffix) {
+            suffix = lexicon.grammar.merconfig.propertiesBlockSuffix
+        } else if lower.hasSuffix(lexicon.grammar.merconfig.hasBlockSuffix) {
+            suffix = lexicon.grammar.merconfig.hasBlockSuffix
+        } else {
+            return nil
+        }
+        let kind = String(t.dropLast(suffix.count)).trimmingCharacters(in: .whitespaces)
+        return kind.isEmpty ? nil : (kind, line)
+    }
+
+    private func parseBlockPropertyEntry(_ t: String) -> PropertyEntry? {
+        let lower = t.lowercased()
+        if let colon = t.firstIndex(of: ":") {
+            let name = extractPropName(String(t[t.startIndex..<colon]), before: nil)
+            let type = stripTypeArticle(String(t[t.index(after: colon)...]))
+            return PropertyEntry(name: name, type: .explicit(type))
+        }
+        if lower.contains(" " + lexicon.grammar.merconfig.whichIsOneOfMarker) {
+            let name = extractPropName(t, before: lexicon.grammar.merconfig.whichIsOneOfMarker)
+            let enumPart = t.components(separatedBy: "(").dropFirst().first?
+                .components(separatedBy: ")").first ?? ""
+            let values = enumPart.components(separatedBy: ",").map {
+                $0.trimmingCharacters(in: .whitespaces)
+            }.filter { !$0.isEmpty }
+            return values.isEmpty ? nil : PropertyEntry(name: name, type: .enumeration(cases: values, defaultCase: nil))
+        }
+        if let range = t.range(of: lexicon.grammar.merconfig.whichIsMarker, options: [.caseInsensitive]) {
+            let name = extractPropName(String(t[t.startIndex..<range.lowerBound]), before: nil)
+            let type = stripTypeArticle(String(t[range.upperBound...]))
+            return PropertyEntry(name: name, type: .explicit(type))
+        }
+        let name = extractPropName(t, before: nil)
+        return name.isEmpty ? nil : PropertyEntry(name: name, type: .defaulted)
     }
 
     /// Fold a multi-line phrase/workflow header into a single string.
@@ -220,12 +324,24 @@ public struct MerConfigParser {
     private func parseKindDecl(_ t: String, line: Int) -> KindDeclaration? {
         // "A/An {name} is a kind of {parent}."
         let lower = t.lowercased()
-        guard lower.contains(" is a kind of ") else { return nil }
+        let merconfig = lexicon.grammar.merconfig
+        if lower.hasPrefix(merconfig.kindPrefix),
+           let range = t.range(of: merconfig.isMarker, options: [.caseInsensitive]) {
+            let rawName = String(t[t.index(t.startIndex, offsetBy: merconfig.kindPrefix.count)..<range.lowerBound])
+                .trimmingCharacters(in: .whitespaces)
+            let rawParent = String(t[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+            let parent = lexicon.stripLeadingArticle(rawParent)
+                .trimmingCharacters(in: .whitespaces)
+            guard !rawName.isEmpty, !parent.isEmpty else { return nil }
+            return KindDeclaration(name: rawName.lowercased(), parent: parent.lowercased(), sourceLine: line)
+        }
+        guard lower.contains(merconfig.kindOfMarker) else { return nil }
         // The leading indefinite article is part of the declaration skeleton;
         // the strip itself defers to the lexicon (no duplicated a/an spelling).
-        guard lower.hasPrefix("a ") || lower.hasPrefix("an ") else { return nil }
-        let rest = lexicon.stripLeadingArticle(t)
-        guard let range = rest.lowercased().range(of: " is a kind of ") else { return nil }
+        let rest = lexicon.hasLeadingArticle(lower)
+            ? lexicon.stripLeadingArticle(t)
+            : t
+        guard let range = rest.range(of: merconfig.kindOfMarker, options: [.caseInsensitive]) else { return nil }
         let name = String(rest[rest.startIndex ..< range.lowerBound]).trimmingCharacters(in: .whitespaces)
         let parent = String(rest[range.upperBound...]).trimmingCharacters(in: .whitespaces)
         return KindDeclaration(name: name, parent: parent, sourceLine: line)
@@ -235,10 +351,12 @@ public struct MerConfigParser {
 
     private func parsePropertyDecl(_ t: String, line: Int) -> PropertyDeclaration? {
         let lower = t.lowercased()
-        guard lower.hasPrefix("a ") || lower.hasPrefix("an ") else { return nil }
-        guard let hasRange = lower.range(of: " has ") else { return nil }
-        let rest = lexicon.stripLeadingArticle(t)
-        guard let range = rest.lowercased().range(of: " has ") else { return nil }
+        let merconfig = lexicon.grammar.merconfig
+        guard let hasRange = t.range(of: merconfig.hasMarker, options: [.caseInsensitive]) else { return nil }
+        let rest = lexicon.hasLeadingArticle(lower)
+            ? lexicon.stripLeadingArticle(t)
+            : t
+        guard let range = rest.range(of: merconfig.hasMarker, options: [.caseInsensitive]) else { return nil }
         let kindName = String(rest[rest.startIndex ..< range.lowerBound])
         let propText = String(rest[range.upperBound...]).trimmingCharacters(in: .whitespaces)
         _ = hasRange
@@ -252,17 +370,21 @@ public struct MerConfigParser {
         // Handle "a name, an email, and a phone number" (comma list)
         // Handle "a status, which is one of (active, suspended, closed)"
         // Handle "a credit limit, which is Money"
-        if t.lowercased().contains("which is one of") {
-            let name = extractPropName(t, before: "which is one of")
+        // Handle "a text called the summary"
+        if let called = parseCalledProperty(t) {
+            return [called]
+        }
+        if t.lowercased().contains(lexicon.grammar.merconfig.whichIsOneOfMarker) {
+            let name = extractPropName(t, before: lexicon.grammar.merconfig.whichIsOneOfMarker)
             let enumPart = t.components(separatedBy: "(").dropFirst().first?
                             .components(separatedBy: ")").first ?? ""
             let values = enumPart.components(separatedBy: ",").map {
                 $0.trimmingCharacters(in: .whitespaces)
             }.filter { !$0.isEmpty }
-            return [PropertyEntry(name: name, type: .enumeration(values))]
+            return [PropertyEntry(name: name, type: .enumeration(cases: values, defaultCase: nil))]
         }
-        if t.lowercased().contains(", which is ") {
-            let parts = t.components(separatedBy: ", which is ")
+        if t.lowercased().contains(lexicon.grammar.merconfig.commaWhichIsMarker) {
+            let parts = t.components(separatedBy: lexicon.grammar.merconfig.commaWhichIsMarker)
             let name = extractPropName(parts[0], before: nil)
             let type = stripTypeArticle(parts[1])
             return [PropertyEntry(name: name, type: .explicit(type))]
@@ -273,13 +395,83 @@ public struct MerConfigParser {
         // First split on commas, then split each fragment on " and " so the
         // English connective gives the same shape as a comma list.
         let items = t.components(separatedBy: ",")
-            .flatMap { $0.components(separatedBy: " and ") }
+            .flatMap { $0.components(separatedBy: lexicon.grammar.merconfig.andMarker) }
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
         return items.map { item in
             let name = extractPropName(item, before: nil)
             return PropertyEntry(name: name, type: .defaulted)
         }
+    }
+
+    private func parseCalledProperty(_ t: String) -> PropertyEntry? {
+        let marker = " \(lexicon.grammar.calledIntroducer) "
+        guard let range = t.range(of: marker, options: [.caseInsensitive]) else { return nil }
+        let typeText = String(t[t.startIndex..<range.lowerBound])
+        let nameText = String(t[range.upperBound...])
+        let type = stripTypeArticle(typeText)
+        let name = extractPropName(nameText, before: nil)
+        guard !type.isEmpty, !name.isEmpty else { return nil }
+        return PropertyEntry(name: name, type: .explicit(type))
+    }
+
+    private func parseCanBeDecl(_ t: String, line: Int) -> PropertyDeclaration? {
+        let lower = t.lowercased()
+        guard lexicon.hasLeadingArticle(lower) else { return nil }
+        let marker = lexicon.grammar.domainCanBeMarker
+        guard let fullRange = t.range(of: marker, options: [.caseInsensitive]) else { return nil }
+        let rest = lexicon.stripLeadingArticle(t)
+        guard let range = rest.range(of: marker, options: [.caseInsensitive]) else { return nil }
+        _ = fullRange
+        let kindName = String(rest[rest.startIndex..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
+        var casesText = String(rest[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+        var propertyName: String?
+        let calledMarker = ", \(lexicon.grammar.calledIntroducer) "
+        if let calledRange = casesText.range(of: calledMarker, options: [.caseInsensitive]) {
+            let nameText = String(casesText[calledRange.upperBound...])
+            propertyName = extractPropName(nameText, before: nil)
+            casesText = String(casesText[casesText.startIndex..<calledRange.lowerBound])
+                .trimmingCharacters(in: .whitespaces)
+        }
+        let values = enumCases(from: casesText)
+        guard !kindName.isEmpty, values.count >= 2 else { return nil }
+        let explicitName = propertyName?.trimmingCharacters(in: .whitespaces)
+        let propName = (explicitName?.isEmpty == false)
+            ? explicitName!
+            : "\(lexicon.singularize(kindName.lowercased())) state"
+        return PropertyDeclaration(
+            kind: kindName,
+            properties: [PropertyEntry(name: propName, type: .enumeration(cases: values, defaultCase: nil))],
+            sourceLine: line
+        )
+    }
+
+    private func parseUsuallyDecl(_ t: String, line: Int) -> PropertyDeclaration? {
+        let lower = t.lowercased()
+        guard lexicon.hasLeadingArticle(lower) else { return nil }
+        let marker = lexicon.grammar.domainUsuallyMarker
+        guard lower.contains(marker) else { return nil }
+        let rest = lexicon.stripLeadingArticle(t)
+        guard let range = rest.range(of: marker, options: [.caseInsensitive]) else { return nil }
+        let kindName = String(rest[rest.startIndex..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
+        let defaultCase = String(rest[range.upperBound...])
+            .trimmingCharacters(in: .whitespaces)
+            .trimmingCharacters(in: Self.propPunctuation)
+            .trimmingCharacters(in: .whitespaces)
+        guard !kindName.isEmpty, !defaultCase.isEmpty else { return nil }
+        return PropertyDeclaration(
+            kind: kindName,
+            properties: [PropertyEntry(name: "", type: .enumeration(cases: [], defaultCase: defaultCase))],
+            sourceLine: line
+        )
+    }
+
+    private func enumCases(from raw: String) -> [String] {
+        raw.replacingOccurrences(of: lexicon.grammar.booleanConnectors.oxfordOrMarker, with: ", ")
+            .replacingOccurrences(of: lexicon.grammar.booleanConnectors.orMarker, with: ", ")
+            .components(separatedBy: ",")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
     }
 
     private static let propPunctuation = CharacterSet(charactersIn: ",.;:")
@@ -290,15 +482,18 @@ public struct MerConfigParser {
         // leading connective ("and a phone number"); drop it (only when an
         // article follows) before deferring to the lexicon for the article.
         let lower = s.lowercased()
-        if lower.hasPrefix("and a ") || lower.hasPrefix("and an ") {
-            s = String(s.dropFirst("and ".count))
+        for prefix in lexicon.grammar.merconfig.relationContinuationPrefixes where lower.hasPrefix(prefix) {
+            s = String(s.dropFirst(lexicon.grammar.iterationMarkers.cleanupAndPrefix.count))
+            break
         }
         s = lexicon.stripLeadingArticle(s)
-        if let m = marker, let r = s.lowercased().range(of: m) {
+        if let m = marker, let r = s.range(of: m, options: [.caseInsensitive]) {
             s = String(s[s.startIndex ..< r.lowerBound])
         }
         // strip trailing ", which is ..."
-        if let r = s.range(of: ", which") { s = String(s[s.startIndex ..< r.lowerBound]) }
+        if let r = s.range(of: lexicon.grammar.merconfig.commaWhichIsMarker.trimmingCharacters(in: .whitespaces)) {
+            s = String(s[s.startIndex ..< r.lowerBound])
+        }
         // strip trailing punctuation (e.g. comma left over when extracting before
         // a "which is …" marker, or terminal period at statement end).
         return s.trimmingCharacters(in: .whitespaces)
@@ -321,11 +516,12 @@ public struct MerConfigParser {
 
     private func parseRelation(_ t: String, line: Int) -> RelationDeclaration? {
         // "{verb} relates one {kind} to {cardinality} {kind}."
-        guard let relRange = t.lowercased().range(of: " relates ") else { return nil }
+        let merconfig = lexicon.grammar.merconfig
+        guard let relRange = t.range(of: merconfig.relatesMarker, options: [.caseInsensitive]) else { return nil }
         let verb = String(t[t.startIndex ..< relRange.lowerBound]).trimmingCharacters(in: .whitespaces)
         let rest = String(t[relRange.upperBound...]).trimmingCharacters(in: .whitespaces)
         // rest: "one {kind} to {cardinality} {kind}"
-        guard let toRange = rest.lowercased().range(of: " to ") else { return nil }
+        guard let toRange = rest.range(of: merconfig.toMarker, options: [.caseInsensitive]) else { return nil }
         let leftPart  = String(rest[rest.startIndex ..< toRange.lowerBound]).trimmingCharacters(in: .whitespaces)
         let rightPart = String(rest[toRange.upperBound...]).trimmingCharacters(in: .whitespaces)
         let (lCard, lKind) = parseCardinalityKind(leftPart)
@@ -339,9 +535,10 @@ public struct MerConfigParser {
     private func parseCardinalityKind(_ s: String) -> (CardinalityAST, String) {
         let lower = s.lowercased()
         // 3A: `various` is a synonym for `many`.
-        let card: CardinalityAST = (lower.hasPrefix("many ") || lower.hasPrefix("various ")) ? .many : .one
+        let merconfig = lexicon.grammar.merconfig
+        let card: CardinalityAST = (lower.hasPrefix(merconfig.manyPrefix) || lower.hasPrefix(merconfig.variousPrefix)) ? .many : .one
         var rest = s
-        for prefix in ["one ", "many ", "various "] where lower.hasPrefix(prefix) {
+        for prefix in merconfig.cardinalityPrefixes where lower.hasPrefix(prefix) {
             rest = String(s.dropFirst(prefix.count)); break
         }
         // A trailing plural after `various`/`many` reads naturally ("various pages").
@@ -355,16 +552,16 @@ public struct MerConfigParser {
     /// `<Relation> is read from the <kind>'s <property>.`
     /// `<Relation> is read via the <tool> tool.` (or `… via <tool.id>.`)
     private func parseRelationBacking(_ t: String, line: Int) -> RelationBackingDeclaration? {
-        let lower = t.lowercased()
-        guard let readRange = lower.range(of: " is read ") else { return nil }
+        let merconfig = lexicon.grammar.merconfig
+        guard let readRange = t.range(of: merconfig.isReadMarker, options: [.caseInsensitive]) else { return nil }
         let relation = String(t[t.startIndex ..< readRange.lowerBound])
             .trimmingCharacters(in: .whitespaces).lowercased()
         guard !relation.isEmpty else { return nil }
         var rest = String(t[readRange.upperBound...])
             .trimmingCharacters(in: CharacterSet(charactersIn: ". "))
         let restLower = rest.lowercased()
-        if restLower.hasPrefix("from ") {
-            let body = lexicon.stripLeadingArticle(String(rest.dropFirst("from ".count)))
+        if restLower.hasPrefix(merconfig.fromPrefix) {
+            let body = lexicon.stripLeadingArticle(String(rest.dropFirst(merconfig.fromPrefix.count)))
             guard let apo = body.range(of: "'s ") else { return nil }
             let kind = String(body[body.startIndex ..< apo.lowerBound])
                 .trimmingCharacters(in: .whitespaces).lowercased()
@@ -374,13 +571,11 @@ public struct MerConfigParser {
             return RelationBackingDeclaration(
                 relation: relation, backing: .property(kind: kind, path: prop), sourceLine: line)
         }
-        if restLower.hasPrefix("via ") {
-            rest = String(rest.dropFirst("via ".count)).trimmingCharacters(in: .whitespaces)
-            for art in ["the "] where rest.lowercased().hasPrefix(art) {
-                rest = String(rest.dropFirst(art.count)); break
-            }
-            if rest.lowercased().hasSuffix(" tool") {
-                rest = String(rest.dropLast(" tool".count)).trimmingCharacters(in: .whitespaces)
+        if restLower.hasPrefix(merconfig.viaPrefix) {
+            rest = String(rest.dropFirst(merconfig.viaPrefix.count)).trimmingCharacters(in: .whitespaces)
+            rest = lexicon.stripLeadingArticle(rest)
+            if rest.lowercased().hasSuffix(merconfig.toolSuffix) {
+                rest = String(rest.dropLast(merconfig.toolSuffix.count)).trimmingCharacters(in: .whitespaces)
             }
             guard !rest.isEmpty else { return nil }
             return RelationBackingDeclaration(
@@ -396,18 +591,17 @@ public struct MerConfigParser {
     /// morphology.
     private func parseVerb(_ t: String, line: Int) -> VerbDeclaration? {
         let lower = t.lowercased()
-        guard lower.hasPrefix("the verb to ") else { return nil }
-        let rest = String(t.dropFirst("the verb to ".count))
-        guard let meansRange = rest.lowercased().range(of: " means ") else { return nil }
+        let merconfig = lexicon.grammar.merconfig
+        guard lower.hasPrefix(merconfig.verbDeclPrefix) else { return nil }
+        let rest = String(t.dropFirst(merconfig.verbDeclPrefix.count))
+        guard let meansRange = rest.range(of: merconfig.meansMarker, options: [.caseInsensitive]) else { return nil }
         let head = String(rest[rest.startIndex ..< meansRange.lowerBound])
             .trimmingCharacters(in: .whitespaces)
         var meaning = String(rest[meansRange.upperBound...])
             .trimmingCharacters(in: CharacterSet(charactersIn: ". "))
-        for art in ["the "] where meaning.lowercased().hasPrefix(art) {
-            meaning = String(meaning.dropFirst(art.count)); break
-        }
-        if meaning.lowercased().hasSuffix(" relation") {
-            meaning = String(meaning.dropLast(" relation".count))
+        meaning = lexicon.stripLeadingArticle(meaning)
+        if meaning.lowercased().hasSuffix(merconfig.relationSuffix) {
+            meaning = String(meaning.dropLast(merconfig.relationSuffix.count))
         }
         let relation = meaning.trimmingCharacters(in: .whitespaces).lowercased()
         guard !relation.isEmpty else { return nil }
@@ -420,10 +614,10 @@ public struct MerConfigParser {
             let inside = String(head[open.upperBound...].prefix { $0 != ")" })
             for part in inside.components(separatedBy: ",") {
                 let words = part.trimmingCharacters(in: .whitespaces).lowercased()
-                if let r = words.range(of: " is ") {
+                if let r = words.range(of: merconfig.isMarker) {
                     participle = String(words[r.upperBound...]).trimmingCharacters(in: .whitespaces)
-                } else if words.hasPrefix("is ") {
-                    participle = String(words.dropFirst(3)).trimmingCharacters(in: .whitespaces)
+                } else if words.hasPrefix(merconfig.isMarker.trimmingCharacters(in: .whitespaces) + " ") {
+                    participle = String(words.dropFirst((merconfig.isMarker.trimmingCharacters(in: .whitespaces) + " ").count)).trimmingCharacters(in: .whitespaces)
                 } else if let last = words.split(separator: " ").last {
                     third = String(last)
                 }
@@ -443,9 +637,10 @@ public struct MerConfigParser {
 
     private func parseInverse(_ t: String, line: Int) -> InverseDeclaration? {
         // "The inverse of {x} is {y}."
-        guard let ofRange = t.lowercased().range(of: "the inverse of ") else { return nil }
+        let merconfig = lexicon.grammar.merconfig
+        guard let ofRange = t.range(of: merconfig.inversePrefix, options: [.caseInsensitive]) else { return nil }
         let rest = String(t[ofRange.upperBound...])
-        guard let isRange = rest.lowercased().range(of: " is ") else { return nil }
+        guard let isRange = rest.range(of: merconfig.isMarker, options: [.caseInsensitive]) else { return nil }
         let forward = String(rest[rest.startIndex ..< isRange.lowerBound]).trimmingCharacters(in: .whitespaces)
         let inverse  = String(rest[isRange.upperBound...]).trimmingCharacters(in: .whitespaces)
         return InverseDeclaration(forwardGerund: forward, inverseGerund: inverse, sourceLine: line)
@@ -457,9 +652,9 @@ public struct MerConfigParser {
         lines.filter(\.isContent).compactMap { line in
             // "The {name} is {value}."
             let t = line.statement
-            guard t.lowercased().hasPrefix("the ") else { return nil }
-            let rest = String(t.dropFirst(4))
-            guard let isRange = rest.lowercased().range(of: " is ") else { return nil }
+            guard lexicon.hasLeadingArticle(t) else { return nil }
+            let rest = lexicon.stripLeadingArticle(t)
+            guard let isRange = rest.range(of: lexicon.grammar.merconfig.isMarker, options: [.caseInsensitive]) else { return nil }
             let name  = String(rest[rest.startIndex ..< isRange.lowerBound])
             let value = String(rest[isRange.upperBound...]).trimmingCharacters(in: .whitespaces)
             guard let lit = parseLiteral(value) else { return nil }
@@ -477,19 +672,20 @@ public struct MerConfigParser {
             let line = content[i]
             let t = line.statement
             // "There is a {kind} called {name}"
-            guard t.lowercased().hasPrefix("there is ") else { i += 1; continue }
+            let merconfig = lexicon.grammar.merconfig
+            guard t.lowercased().hasPrefix(merconfig.thereIsPrefix) else { i += 1; continue }
             // strip "there is " then the leading article (lexicon-owned)
-            let rest = lexicon.stripLeadingArticle(String(t.dropFirst("there is ".count)))
-            guard let calledRange = rest.lowercased().range(of: " called ") else { i += 1; continue }
+            let rest = lexicon.stripLeadingArticle(String(t.dropFirst(merconfig.thereIsPrefix.count)))
+            guard let calledRange = rest.range(of: merconfig.calledMarker, options: [.caseInsensitive]) else { i += 1; continue }
             let kind = String(rest[rest.startIndex ..< calledRange.lowerBound]).trimmingCharacters(in: .whitespaces)
             var nameAndRest = String(rest[calledRange.upperBound...]).trimmingCharacters(in: .whitespaces)
 
             // Inline form: "called {name} with prop1 = v1, prop2 = v2"
             var props: [(String, PropertyValueAST)] = []
-            if nameAndRest.contains(" with ") {
-                let parts = nameAndRest.components(separatedBy: " with ")
+            if nameAndRest.contains(merconfig.withMarker) {
+                let parts = nameAndRest.components(separatedBy: merconfig.withMarker)
                 nameAndRest = parts[0].trimmingCharacters(in: .whitespaces)
-                props = parseInlineProperties(parts.dropFirst().joined(separator: " with "))
+                props = parseInlineProperties(parts.dropFirst().joined(separator: merconfig.withMarker))
             } else if line.text.hasSuffix(":") {
                 // Block form: properties on subsequent lines
                 nameAndRest = String(nameAndRest.dropLast())  // remove ":"
@@ -526,7 +722,7 @@ public struct MerConfigParser {
 
     // MARK: - Tools section
 
-    private func parseToolsSection(_ lines: [SourceLine]) -> [ToolDeclaration] {
+    private func parseToolsSection(_ lines: [SourceLine], file: String) throws -> [ToolDeclaration] {
         var results: [ToolDeclaration] = []
         let content = lines.filter(\.isContent)
         var i = 0
@@ -543,14 +739,52 @@ public struct MerConfigParser {
             while i < content.count && content[i].text.hasPrefix("--") { i += 1 }
 
             // Method signature: "~ methodName(params) : ReturnType"
-            guard i < content.count, content[i].text.hasPrefix("~") else { continue }
+            guard i < content.count, content[i].text.hasPrefix("~") else {
+                try reportToolDiagnostic(
+                    message: "tool \"\(displayName)\" is missing a `~ methodName(params) : ReturnType` signature line",
+                    range: SourceRange(file: file, line: line.number, column: 1),
+                    help: "After the title underline and optional `--` description, declare `~ chargePayment(order: Order) : Order`.")
+                i += 1
+                continue
+            }
             let sig = content[i].text.dropFirst().trimmingCharacters(in: .whitespaces)
             if let tool = parseToolSignature(sig, displayName: displayName, sourceLine: line.number) {
                 results.append(tool)
+            } else {
+                try reportToolDiagnostic(
+                    message: "malformed tool signature for \"\(displayName)\": \"\(sig)\"",
+                    range: SourceRange(file: file, line: content[i].number, column: 1),
+                    help: "Use `~ methodName(param: Type, …) : ReturnType` with balanced parentheses.")
             }
             i += 1
         }
         return results
+    }
+
+    private func reportToolDiagnostic(message: String, range: SourceRange, help: String) throws {
+        let diag = Diagnostic.structural(
+            .vocabularyDeclarationUnrecognized,
+            message: message,
+            range: range,
+            help: help)
+        if let diagnostics {
+            diagnostics.report(diag)
+        } else {
+            throw CompilerError.diagnostics([diag])
+        }
+    }
+
+    private func reportBlockPropertyDiagnostic(message: String, range: SourceRange, help: String) throws {
+        let diag = Diagnostic.structural(
+            .unrecognizedBlockProperty,
+            message: message,
+            range: range,
+            help: help)
+        if let diagnostics {
+            diagnostics.report(diag)
+        } else {
+            throw CompilerError.diagnostics([diag])
+        }
     }
 
     private func parseToolSignature(_ sig: String, displayName: String, sourceLine: Int) -> ToolDeclaration? {
@@ -764,13 +998,24 @@ public struct MerConfigParser {
     private func resolveComparisonOp(_ value: String) -> ComparisonOpAST? {
         // Try matching the value against existing comparison markers
         for (marker, op) in lexicon.comparisonMarkers {
-            if marker.lowercased() == value
-                || marker.lowercased().replacingOccurrences(of: "is ", with: "") == value {
+            let lowerMarker = marker.lowercased()
+            if lowerMarker == value || stripLeadingCopula(lowerMarker) == value {
                 return op
             }
         }
         // Also handle plain English names (centralized spelling table).
         return lexicon.grammar.comparisonOpSpellings[value]
+    }
+
+    private func stripLeadingCopula(_ marker: String) -> String {
+        let trimmed = marker.trimmingCharacters(in: .whitespaces)
+        for copula in lexicon.copulas.sorted(by: { $0.count > $1.count }) {
+            let prefix = copula + " "
+            if trimmed.hasPrefix(prefix) {
+                return String(trimmed.dropFirst(prefix.count)).trimmingCharacters(in: .whitespaces)
+            }
+        }
+        return trimmed
     }
 }
 
@@ -807,17 +1052,9 @@ public struct PhrasePatternParser {
                 segments.append(.parameter(param))
                 current = rest.trimmingCharacters(in: .whitespaces)
             } else {
-                // Take text until next "a "/"an " that starts a parameter
-                if let range = findNextParam(current) {
-                    let lit = String(current[current.startIndex ..< range.lowerBound]).trimmingCharacters(in: .whitespaces)
-                    trace.log(.phraseParse, "  → literal[\(lit)] (advanced)")
-                    segments.append(.literal(lit))
-                    current = String(current[range.lowerBound...])
-                } else {
-                    trace.log(.phraseParse, "  → literal[\(current.trimmingCharacters(in: .whitespaces))] (tail)")
-                    segments.append(.literal(current.trimmingCharacters(in: .whitespaces)))
-                    current = ""
-                }
+                trace.log(.phraseParse, "  → literal[\(current.trimmingCharacters(in: .whitespaces))] (tail)")
+                segments.append(.literal(current.trimmingCharacters(in: .whitespaces)))
+                current = ""
             }
         }
         let result = PhrasePattern(segments: segments.filter {
@@ -836,29 +1073,10 @@ public struct PhrasePatternParser {
     }
 
     private func tryParseParam(_ s: String) -> (String, String, PhraseParameterAST)? {
-        // Find the EARLIEST occurrence of " a " or " an " (or at start of string).
+        // Find the EARLIEST occurrence of an article-delimited parameter slot.
         // Picking the earliest is critical: in "of a customer for an amount" the
         // first parameter slot starts at "a customer", not "an amount".
-        func findArticle(_ source: String) -> (intro: String, rest: String)? {
-            let l = source.lowercased()
-            for prefix in ["an ", "a "] {
-                if l.hasPrefix(prefix) { return ("", String(source.dropFirst(prefix.count))) }
-            }
-            var best: (range: Range<String.Index>, len: Int)? = nil
-            for infix in [" an ", " a "] {
-                if let r = l.range(of: infix) {
-                    if best == nil || r.lowerBound < best!.range.lowerBound {
-                        best = (r, infix.count)
-                    }
-                }
-            }
-            guard let pick = best else { return nil }
-            let intro = String(source[source.startIndex ..< pick.range.lowerBound])
-            let rest  = String(source[pick.range.upperBound...])
-            return (intro, rest)
-        }
-
-        guard let (intro, afterArticle) = findArticle(s) else {
+        guard let (intro, afterArticle) = lexicon.findEarliestArticle(s) else {
             trace.log(.phraseParse, "tryParseParam(\"\(s)\") → no article")
             return nil
         }
@@ -901,7 +1119,7 @@ public struct PhrasePatternParser {
             // a new bare article (start of the next parameter slot)
             let isVerb = participles.contains(w)
                 || lexicon.participleSuffixes.contains(where: { w.hasSuffix($0) && idx > 0 && w.count > 3 })
-            if connectors.contains(w) || isVerb || w == "a" || w == "an" {
+            if connectors.contains(w) || isVerb || lexicon.articles.contains(w) {
                 remaining = Array(words.dropFirst(idx))
                 break
             }
@@ -932,22 +1150,6 @@ public struct PhrasePatternParser {
     }
 
     /// Lower-camelCase a multi-word identifier (`"mailer server"` →
-    /// `"mailerServer"`). Mirrored on the codegen side via
-    /// `SwiftEmitter.snakeToCamel` so phrase parameter names round-trip
-    /// without conversion.
+    /// `"mailerServer"`).
     private func camelize(_ raw: String) -> String { IdentifierNaming.lowerCamel(raw) }
-
-    private func findNextParam(_ s: String) -> Range<String.Index>? {
-        let lower = s.lowercased()
-        // Find next " a " or " an " in the middle of the text
-        var best: Range<String.Index>? = nil
-        for marker in [" a ", " an "] {
-            if let r = lower.range(of: marker) {
-                if best == nil || r.lowerBound < best!.lowerBound {
-                    best = r.upperBound ..< r.upperBound
-                }
-            }
-        }
-        return nil  // no partial advance; we let tryParseParam handle it
-    }
 }

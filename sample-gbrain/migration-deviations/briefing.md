@@ -3,8 +3,8 @@
 - Original: `briefing/SKILL.md`
 - Ported: `briefing.meri`
 - Tier: 2 (light edits)
-- Similarity: 52%
-- Lines: 153 -> 129 (+55 / -79)
+- Similarity: 51%
+- Lines: 153 -> 138 (+64 / -79)
 
 ## Frontmatter
 - Added: (none)
@@ -25,16 +25,16 @@
 ### Inert section details
 - L28 `GBrain-Native Context Loading`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L46 `Before an email reply`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L61 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L98 `Citation in Briefings`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L113 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L70 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L107 `Citation in Briefings`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L122 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/briefing/SKILL.md
 +++ skills/briefing.meri
-@@ -5,99 +5,67 @@
+@@ -5,99 +5,76 @@
    - "daily briefing"
    - "morning briefing"
    - "what's happening today"
@@ -167,10 +167,19 @@
 +let mine be the pages written by the input.
 +if any urgent pages or any unwritten pages,
 +  emit briefing.attention with status = "needs review".
++bind briefing body =
++  ```
++  DAILY BRIEFING -- [date]
++  ========================
++  [for each page in mine]- {{ page.id }}
++  [end for]
++  [if any urgent pages]Needs attention[otherwise]No urgent pages[end if]
++  ```
++emit briefing.report with body = briefing body.
  
  ## Output Format
  
-@@ -123,25 +91,33 @@
+@@ -123,25 +100,33 @@
  - [name] -- [why they're active]
  ```
  

@@ -239,6 +239,8 @@ public struct SwiftEmitter {
     // MARK: - Primitive dispatch
 
     func emitPrimitive(_ p: IRPrimitive, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
+        let range = sourceRange(of: p)
+        trace.log(.codegen, "emit \(primitiveTraceName(p)) L\(range.startLine)")
         switch p {
         case .invoke(let ir):   return emitInvoke(ir, ctx: ctx)
         case .bind(let ir):     return emitBind(ir, ctx: ctx)
@@ -314,6 +316,23 @@ public struct SwiftEmitter {
         }
     }
 
+    private func primitiveTraceName(_ p: IRPrimitive) -> String {
+        switch p {
+        case .invoke: return "invoke"
+        case .bind(let ir): return ir.isRebind ? "rebind" : "bind"
+        case .branch: return "branch"
+        case .emit: return "emit"
+        case .complete: return "complete"
+        case .commit: return "commit"
+        case .iterate: return "iterate"
+        case .assert: return "assert"
+        case .recover: return "recover"
+        case .wait: return "wait"
+        case .simultaneously: return "simultaneously"
+        case .proseStep: return "proseStep"
+        }
+    }
+
     func swiftIdentifierSuffix(_ raw: String) -> String {
         raw.map { ch in
             ch.isLetter || ch.isNumber ? String(ch) : "_"
@@ -365,7 +384,7 @@ public struct SwiftEmitter {
         let binding = ir.resultBinding.map { "let \($0) = " } ?? "_ = "
         let targetParams = ctx.workflowParamTypes[structName] ?? []
         let argParts = ir.arguments.map { a in
-            let key = snakeToCamel(a.key)
+            let key = IdentifierNaming.camelPreservingCase(a.key)
             // Find the receiving init's typed kind name (if known) so we can
             // wrap a Value-typed call site in `Value.from(arg).coerce(to: …)`.
             let targetKind = targetParams.first { $0.name == key || $0.name == a.key }?.kind
@@ -562,7 +581,7 @@ public struct SwiftEmitter {
                 // Iterate over a `Value.list` binding. `MeridianRuntime` ships
                 // a `Value.asList` accessor that returns `[Value]?` so the
                 // generated code stays free of force-casts.
-                let var_ = snakeToCamel(param)
+                let var_ = IdentifierNaming.camelPreservingCase(param)
                 "\(ctx.s)for (\(loopIndex), \(var_)) in (\(emitExpr(collection))?.asList ?? []).enumerated() {"
                 "\(inner.s)let \(loopLabel) = \"progress:\(path):iteration:\\(\(loopIndex))\""
                 "\(inner.s)if __meridianShouldRun(\(loopLabel)) {"
@@ -605,7 +624,7 @@ public struct SwiftEmitter {
                                     ctx: Ctx, workflow: IRWorkflow, path: String,
                                     loopIndex: String, loopLabel: String) -> StringTemplate {
         let inner = ctx.in(1)
-        let var_ = snakeToCamel(param)
+        let var_ = IdentifierNaming.camelPreservingCase(param)
         let suffix = swiftIdentifierSuffix(path)
         let srcVar = "__meridianSrc_\(suffix)"
 
@@ -692,7 +711,7 @@ public struct SwiftEmitter {
         case .identifierRef(let name) where name == loopVar:
             return closureParam
         case .propertyAccess(let base, let prop):
-            let key = escapeSwiftString(snakeToCamel(prop))
+            let key = escapeSwiftString(IdentifierNaming.camelPreservingCase(prop))
             if case .identifierRef(let n) = base, n == loopVar {
                 return "\(closureParam).member(\"\(key)\")"
             }
@@ -834,9 +853,9 @@ public struct SwiftEmitter {
         case .literal(let lit):
             return emitLiteral(lit)
         case .constantRef(let name):
-            return "constants.\(snakeToCamel(name))"
+            return "constants.\(IdentifierNaming.camelPreservingCase(name))"
         case .instanceRef(let name):
-            return "instances.\(snakeToCamel(name))"
+            return "instances.\(IdentifierNaming.camelPreservingCase(name))"
         case .identifierRef(let name):
             return "state.get(\"\(escapeSwiftString(name))\")"
         case .propertyAccess(let base, let prop):
@@ -844,7 +863,7 @@ public struct SwiftEmitter {
             // generated Swift property names *and* with the keys produced by
             // Codable's default encoding when an opaque domain value is
             // traversed by `State.get`.
-            let path = propertyPath(base) + "." + snakeToCamel(prop)
+            let path = propertyPath(base) + "." + IdentifierNaming.camelPreservingCase(prop)
             return "state.get(\"\(escapeSwiftString(path))\")"
         case .comparison(let lhs, let op, let rhs):
             switch op {
@@ -895,7 +914,7 @@ public struct SwiftEmitter {
             }
             return "/* inline invoke: \(ir.toolID) */"
         case .relationTraversal(let base, let rel, _):
-            return "\(emitExpr(base)).\(snakeToCamel(rel))"
+            return "\(emitExpr(base)).\(IdentifierNaming.camelPreservingCase(rel))"
         case .interpolatedString(let segs):
             // B7: Build a Swift string by concatenating literal parts and
             // stringified expression parts via `meridianStringify`.
@@ -919,6 +938,8 @@ public struct SwiftEmitter {
             return "(\(emitSuperlativeList(s)).first)"
         case .recordList(let fields, let rows):
             return emitRecordList(fields: fields, rows: rows)
+        case .tableLookup(let table, let keyColumn, let key, let valueColumn):
+            return emitTableLookup(table: table, keyColumn: keyColumn, key: key, valueColumn: valueColumn)
         }
     }
 
@@ -928,11 +949,19 @@ public struct SwiftEmitter {
     private func emitRecordList(fields: [String], rows: [[IRExpression]]) -> String {
         let records = rows.map { row -> String in
             let pairs = zip(fields, row).map { field, cell in
-                "\"\(escapeSwiftString(snakeToCamel(field)))\": \(emitValueExpr(cell))"
+                "\"\(escapeSwiftString(IdentifierNaming.camelPreservingCase(field)))\": \(emitValueExpr(cell))"
             }.joined(separator: ", ")
             return ".record([\(pairs)])"
         }.joined(separator: ", ")
         return "Value.list([\(records)])"
+    }
+
+    private func emitTableLookup(table: String, keyColumn: String, key: IRExpression, valueColumn: String) -> String {
+        let tableKey = escapeSwiftString(IdentifierNaming.camelPreservingCase(table))
+        let keyField = escapeSwiftString(IdentifierNaming.camelPreservingCase(keyColumn))
+        let valueField = escapeSwiftString(IdentifierNaming.camelPreservingCase(valueColumn))
+        let keyExpr = emitComparisonOperand(key)
+        return "try ({ () throws -> Value? in guard let __rows = state.get(\"\(tableKey)\")?.asList else { throw ToolError.implementation(code: \"table.lookup_miss\", message: \"table \(tableKey) is not bound\", cause: nil) }; for __row in __rows { if MeridianComparison.eq(__row.member(\"\(keyField)\"), \(keyExpr)) { return __row.member(\"\(valueField)\") } }; throw ToolError.implementation(code: \"table.lookup_miss\", message: \"no row in \(tableKey) where \(keyField) matches\", cause: nil) })()"
     }
 
     /// 3C: render a description as a `[Value]` pipeline — `(coll.asList ?? [])`
@@ -1061,6 +1090,8 @@ public struct SwiftEmitter {
             return "(\(emitExpr(.superlative(s))) ?? .null)"
         case .recordList(let fields, let rows):
             return emitRecordList(fields: fields, rows: rows)
+        case .tableLookup(let table, let keyColumn, let key, let valueColumn):
+            return "(\(emitTableLookup(table: table, keyColumn: keyColumn, key: key, valueColumn: valueColumn)) ?? .null)"
         default:
             // For derived expressions we rely on the runtime `Value(...)` init,
             // wrapping the bare emission so it survives Swift type-checking.
@@ -1079,10 +1110,61 @@ public struct SwiftEmitter {
                 return "\"\(escapeSwiftString(s))\""
             case .expression(let e):
                 return "meridianStringify(\(emitValueExpr(e)))"
+            case .formatted(let e, let f):
+                return "meridianFormat(\(emitValueExpr(e)), as: \"\(escapeSwiftString(f))\")"
+            case .conditional(let condition, let thenSegs, let elseSegs):
+                return "({ () -> String in if \(emitExpr(condition)) { return \(interpolationParts(thenSegs)) } else { return \(interpolationParts(elseSegs)) } })()"
+            case .forEach(let variable, let collection, let body):
+                let coll = emitComparisonOperand(collection)
+                return "({ () -> String in var __out = \"\"; for __item in ((\(coll))?.asList ?? []) { __out += \(interpolationParts(body, loopVariable: variable, elementName: "__item")) }; return __out })()"
             case .shellEscapedExpression(let e):
                 return "meridianShellQuote(\(emitValueExpr(e)))"
             }
         }.joined(separator: " + ")
+    }
+
+    private func interpolationParts(_ segs: [IRInterpolationSegment], loopVariable: String, elementName: String) -> String {
+        segs.map { seg -> String in
+            switch seg {
+            case .literal(let s):
+                return "\"\(escapeSwiftString(s))\""
+            case .expression(let e):
+                return "meridianStringify(\(emitLoopValueExpr(e, loopVariable: loopVariable, elementName: elementName)))"
+            case .formatted(let e, let f):
+                return "meridianFormat(\(emitLoopValueExpr(e, loopVariable: loopVariable, elementName: elementName)), as: \"\(escapeSwiftString(f))\")"
+            case .conditional(let condition, let thenSegs, let elseSegs):
+                return "({ () -> String in if \(emitLoopBoolExpr(condition, loopVariable: loopVariable, elementName: elementName)) { return \(interpolationParts(thenSegs, loopVariable: loopVariable, elementName: elementName)) } else { return \(interpolationParts(elseSegs, loopVariable: loopVariable, elementName: elementName)) } })()"
+            case .forEach:
+                return "\"\""
+            case .shellEscapedExpression(let e):
+                return "meridianShellQuote(\(emitLoopValueExpr(e, loopVariable: loopVariable, elementName: elementName)))"
+            }
+        }.joined(separator: " + ")
+    }
+
+    private func emitLoopValueExpr(_ e: IRExpression, loopVariable: String, elementName: String) -> String {
+        switch e {
+        case .identifierRef(let name) where name == loopVariable:
+            return elementName
+        case .identifierRef(let name) where name.hasPrefix(loopVariable + "."):
+            let path = String(name.dropFirst(loopVariable.count + 1))
+            return "\(elementName).member(\"\(escapeSwiftString(IdentifierNaming.camelPreservingCase(path)))\") ?? .null"
+        case .propertyAccess(.identifierRef(let name), let prop) where name == loopVariable:
+            return "\(elementName).member(\"\(escapeSwiftString(IdentifierNaming.camelPreservingCase(prop)))\") ?? .null"
+        default:
+            return emitValueExpr(e)
+        }
+    }
+
+    private func emitLoopBoolExpr(_ e: IRExpression, loopVariable: String, elementName: String) -> String {
+        switch e {
+        case .comparison(let l, let op, let r):
+            let lhs = emitLoopValueExpr(l, loopVariable: loopVariable, elementName: elementName)
+            let rhs = emitLoopValueExpr(r, loopVariable: loopVariable, elementName: elementName)
+            return "MeridianComparison.\(compHelper(op))(\(lhs), \(rhs))"
+        default:
+            return emitExpr(e)
+        }
     }
 
     /// Wrap an IRLiteral for use in `[String: Value]`.
@@ -1134,7 +1216,7 @@ public struct SwiftEmitter {
     private func propertyPath(_ expr: IRExpression) -> String {
         switch expr {
         case .identifierRef(let name):      return name
-        case .propertyAccess(let b, let p): return propertyPath(b) + "." + snakeToCamel(p)
+        case .propertyAccess(let b, let p): return propertyPath(b) + "." + IdentifierNaming.camelPreservingCase(p)
         default:                            return emitExpr(expr)
         }
     }
@@ -1201,7 +1283,7 @@ public struct SwiftEmitter {
         StringTemplate {
             "public struct Constants: Sendable {"
             for e in decl.entries {
-                "    public let \(snakeToCamel(e.name)): \(typeOfLiteral(e.value)) = \(emitLiteral(e.value))"
+                "    public let \(IdentifierNaming.camelPreservingCase(e.name)): \(typeOfLiteral(e.value)) = \(emitLiteral(e.value))"
             }
             "}"
             ""
@@ -1250,9 +1332,9 @@ public struct SwiftEmitter {
                     // Record keys use the same camelCase convention as
                     // generated property paths so `state.get("foo.authType")`
                     // resolves through any matching `.record(["authType": …])`.
-                    "        \"\(snakeToCamel(f.key))\": \(emitInstanceValue(f.value)),"
+                    "        \"\(IdentifierNaming.camelPreservingCase(f.key))\": \(emitInstanceValue(f.value)),"
                 }
-                "    public let \(snakeToCamel(e.name)): Value = .record(["
+                "    public let \(IdentifierNaming.camelPreservingCase(e.name)): Value = .record(["
                 for line in recordLines { line }
                 "    ])"
             }
@@ -1301,6 +1383,24 @@ public struct SwiftEmitter {
             ""
             "// B7: Runtime helper for {{ expr }} interpolation in fenced code blocks."
             "private func meridianStringify(_ v: Value) -> String { v.scalarDescription }"
+            "private func meridianFormat(_ v: Value, as formatter: String) -> String {"
+            "    switch formatter.lowercased() {"
+            "    case \"integer\":"
+            "        if case .number(let n) = v { return NSDecimalNumber(decimal: n).intValue.description }"
+            "    case let f where f.hasPrefix(\"decimal(\") && f.hasSuffix(\")\"):"
+            "        if case .number(let n) = v, let places = Int(f.dropFirst(\"decimal(\".count).dropLast()) {"
+            "            let nf = NumberFormatter(); nf.minimumFractionDigits = places; nf.maximumFractionDigits = places"
+            "            return nf.string(from: NSDecimalNumber(decimal: n)) ?? n.description"
+            "        }"
+            "    case \"short date\", \"long date\":"
+            "        if case .date(let d) = v {"
+            "            let df = DateFormatter(); df.dateStyle = formatter.lowercased() == \"short date\" ? .short : .long; df.timeStyle = .none"
+            "            return df.string(from: d)"
+            "        }"
+            "    default: break"
+            "    }"
+            "    return meridianStringify(v)"
+            "}"
             ""
             "// 1B: Shell-escape a value for safe interpolation inside a double-"
             "// quoted span of a shell command (escapes \\\\, \", $, and backtick)."
@@ -1345,8 +1445,6 @@ public struct SwiftEmitter {
         }
         return false
     }
-
-    func snakeToCamel(_ s: String) -> String { IdentifierNaming.camelPreservingCase(s) }
 
     /// PascalCase a natural-language phrase the same way `ASTToIR.kindName`
     /// does (`"pull request"` → `"PullRequest"`). Used to compare param kinds

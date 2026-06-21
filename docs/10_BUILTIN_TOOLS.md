@@ -2,7 +2,7 @@
 
 Meridian ships a set of **Blueprint built-in tools** in the `MeridianTools` module.
 They cover the most common workflow needs — HTTP, filesystem, JSON, regex, shell
-execution, schema validation, time, UUID generation, and integration with MCP
+execution, deterministic LLM decision stubs, schema validation, time, UUID generation, and integration with MCP
 (Message Control Plane) services.
 
 Built-ins are **opt-in**. `ToolRegistry` starts empty. To register them, call:
@@ -45,6 +45,8 @@ Tool stubs passed via `--tool-stub` in the CLI override built-ins for that run.
 | `shell.run` | Shell | `.subprocess` | Run a shell command via `/bin/sh -c` |
 | `mcp.call` | MCP | `.mcp` | Call an MCP method (replaceable transport) |
 | `llm.chat` | LLM | `.closure` | **Intentionally not implemented** — see below |
+| `llm.decide` | LLM | `.closure` | Deterministic decision stub; hosts override |
+| `llm.judge` | LLM | `.closure` | Deterministic judge stub; hosts override |
 | `validate.json_schema` | Validation | `.closure` | Validate a record against a simple JSON Schema |
 | `time.now` | Time | `.closure` | Return current UTC timestamp as `.dateTime` |
 | `time.format` | Time | `.closure` | Format a date/dateTime as a string |
@@ -308,7 +310,7 @@ The default `MCPSpec()` with no transport configured throws
 
 ---
 
-## LLM tool
+## LLM tools
 
 ### `llm.chat`
 
@@ -334,6 +336,13 @@ await registry.register(tool: "llm.chat", .closure { args in
     return .record(["content": .string(response), "role": .string("assistant")])
 })
 ```
+
+### `llm.decide` / `llm.judge`
+
+`llm.decide` and `llm.judge` are deterministic test-safe stubs that return
+`.boolean(false)` by default. They exist so `decide whether …` surfaces and
+legacy judge-style workflows have stable tool IDs; production hosts should
+override them with provider-backed policy.
 
 ---
 

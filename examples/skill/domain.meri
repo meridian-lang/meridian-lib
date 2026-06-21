@@ -1,0 +1,28 @@
+---
+name: domain table report
+vocabulary: domain.merconfig
+---
+
+## Domain
+A page is a kind of thing.
+A page has a text called the title.
+A page can be draft or published, called the lifecycle.
+A page is usually draft.
+
+## Tables
+| trigger phrase | skill | score (Number) |
+| --- | --- | --- |
+| daily briefing | briefing | 10 |
+| maintenance sweep | maintain | 20 |
+
+## Phases
+bind chosen skill = the skill corresponding to the trigger phrase "daily briefing" in the table.
+bind report body =
+  ```
+  [date]
+  [for each row in table]- {{ row.skill }}: {{ row.score as a integer }}
+  [end for]
+  [if chosen skill is briefing]chosen briefing[otherwise]chosen another skill[end if]
+  ```
+emit domain.report with body = report body.
+complete.

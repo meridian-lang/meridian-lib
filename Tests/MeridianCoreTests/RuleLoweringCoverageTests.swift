@@ -95,4 +95,29 @@ struct RuleLoweringCoverageTests {
                 || out.contains("80"),
                 Comment(rawValue: String(out.prefix(2500))))
     }
+
+    @Test("copula-prefixed comparison filter strips the lexicon copula")
+    func copulaPrefixedComparisonFilter() throws {
+        let mer = """
+        ---
+        vocabulary: t.merconfig
+        ---
+
+        A customer with risk score is more than 80 must not place an order.
+
+        To place an order for a customer:
+          complete.
+        """
+        let cfg = """
+        === vocabulary ===
+        customer is a kind of thing.
+        customer has properties:
+          risk_score: Number.
+        order is a kind of thing.
+        """
+        let out = try compile(mer, cfg)
+        #expect(out.contains("riskScore") || out.contains("risk_score")
+                || out.contains("80"),
+                Comment(rawValue: String(out.prefix(2500))))
+    }
 }

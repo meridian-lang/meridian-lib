@@ -39,4 +39,23 @@ struct AnaphoraTests {
         )
         #expect(resolved == "summarize analysisResult")
     }
+
+    @Test("text without an anaphora marker passes through")
+    func noMarkerPassesThrough() throws {
+        let resolved = try AnaphoraResolver().resolve(
+            "summarize the report",
+            referents: ["analysisResult"]
+        )
+        #expect(resolved == "summarize the report")
+    }
+
+    @Test("direct resolver reports ambiguous anaphora")
+    func directAmbiguousReferentThrows() throws {
+        #expect(throws: CompilerError.self) {
+            _ = try AnaphoraResolver().resolve(
+                "summarize it",
+                referents: ["first", "second"]
+            )
+        }
+    }
 }

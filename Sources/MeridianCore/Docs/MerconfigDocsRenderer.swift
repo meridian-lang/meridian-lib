@@ -154,7 +154,9 @@ public struct MerconfigDocsRenderer {
         switch t {
         case .defaulted:                  return "<inferred>"
         case .explicit(let name):         return name
-        case .enumeration(let cases):     return "enum {\(cases.joined(separator: ", "))}"
+        case .enumeration(let cases, let defaultCase):
+            let suffix = defaultCase.map { " (default: \($0))" } ?? ""
+            return "enum {\(cases.joined(separator: ", "))}\(suffix)"
         }
     }
 

@@ -18,13 +18,31 @@ triggers:
 - [ ] The resolver only selects; it never performs brain reads or writes itself.
 - [ ] Always-on detection (signal-detector, brain-ops) runs on every message regardless of routing.
 
+## Tables
+
+| trigger phrase | skill |
+| --- | --- |
+| capture this | capture |
+| save this thought | capture |
+| remember this | capture |
+| ingest this | ingest |
+| brain health | maintain |
+| consolidation | maintain |
+| cleanup | maintain |
+| scheduling recurring work | cron-scheduler |
+| daily preparation | daily-task-prep |
+| task changes | daily-task-manager |
+
 ## Phases
 
-use judgment to route the request to the owning skill:
-  Read the request and identify the dominant intent (brain operation, ingestion, maintenance, scheduling, or meta).
-  Match the intent against the trigger phrases of each skill and select the single owning skill.
-  When two skills could match, select both and order them so their outputs chain (for example, ingest before enrich).
-  Read the selected skill file before acting.
+bind owning skill = the skill corresponding to the trigger phrase input in the table.
+recover from "table.lookup_miss":
+  use judgment to route the request to the owning skill:
+    Read the request and identify the dominant intent (brain operation, ingestion, maintenance, scheduling, or meta).
+    Match fuzzy intent against the trigger phrases of each skill and select the single owning skill.
+    When two skills could match, select both and order them so their outputs chain (for example, ingest before enrich).
+    Read the selected skill file before acting.
+emit resolver.route with skill = owning skill.
 
 ## Routing tables (( inert ))
 

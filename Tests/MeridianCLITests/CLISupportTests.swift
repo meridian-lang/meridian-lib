@@ -27,18 +27,18 @@ final class TempDir {
     func path(_ name: String) -> String { url.appendingPathComponent(name).path }
 }
 
-// MARK: - pascalCase
+// MARK: - namespace naming
 
-@Suite("CLI support — pascalCase")
+@Suite("CLI support — namespace naming")
 struct PascalCaseTests {
     @Test("splits on non-alphanumerics and guards leading digits")
     func pascalCase() {
-        #expect(CompileCommand.pascalCase("idea_lineage") == "IdeaLineage")
-        #expect(CompileCommand.pascalCase("webhook-transforms") == "WebhookTransforms")
-        #expect(CompileCommand.pascalCase("order") == "Order")
-        #expect(CompileCommand.pascalCase("2fast") == "_2fast")
-        #expect(CompileCommand.pascalCase("") == "Skill")
-        #expect(CompileCommand.pascalCase("a.b.c") == "ABC")
+        #expect(IdentifierNaming.swiftTypeNameFromStem("idea_lineage") == "IdeaLineage")
+        #expect(IdentifierNaming.swiftTypeNameFromStem("webhook-transforms") == "WebhookTransforms")
+        #expect(IdentifierNaming.swiftTypeNameFromStem("order") == "Order")
+        #expect(IdentifierNaming.swiftTypeNameFromStem("2fast") == "_2fast")
+        #expect(IdentifierNaming.swiftTypeNameFromStem("") == "Skill")
+        #expect(IdentifierNaming.swiftTypeNameFromStem("a.b.c") == "ABC")
     }
 }
 

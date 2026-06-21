@@ -34,6 +34,11 @@ public enum SkillSectionRole: String, Sendable, CaseIterable, Equatable {
     case prohibitions
     /// `## Output Format` → a declared result template.
     case template
+    /// `## Domain` / `## Vocabulary` → assembly-time kind/property declarations.
+    case domain
+    /// `## Tables` → declarative data tables; unmarked tables default to data
+    /// binds instead of decision-table branches.
+    case tables
     /// `## Tools Used` → metadata-extracting: bullets name the tools the skill
     /// is scoped to. Non-executable, but mined into `scopedTools` + manifest.
     case tools
@@ -48,9 +53,9 @@ public enum SkillSectionRole: String, Sendable, CaseIterable, Equatable {
     /// `convention-ref`/`inert`) whose content is recorded but never executed.
     public var isExecutable: Bool {
         switch self {
-        case .invariants, .procedure, .applicability, .negativeApplicability, .prohibitions:
+        case .invariants, .procedure, .applicability, .negativeApplicability, .prohibitions, .tables:
             return true
-        case .template, .tools, .conventionRef, .inert:
+        case .template, .domain, .tools, .conventionRef, .inert:
             return false
         }
     }
@@ -86,6 +91,8 @@ public enum SkillSectionRole: String, Sendable, CaseIterable, Equatable {
         ("output format", .template), ("output", .template), ("report format", .template),
         ("result format", .template), ("output structure", .template),
         ("brain page format", .template),
+        ("domain", .domain), ("vocabulary", .domain), ("types", .domain),
+        ("tables", .tables), ("data tables", .tables), ("dispatch tables", .tables),
         ("tools used", .tools), ("tools", .tools), ("tools required", .tools),
         ("required tools", .tools),
     ]

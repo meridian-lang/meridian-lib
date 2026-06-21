@@ -23,6 +23,11 @@ public struct EnglishLexicon: Sendable {
     /// Articles stripped from argument slot text and possessive chains.
     public let articles: Set<String>
 
+    /// Indefinite articles that introduce phrase-pattern parameter slots.
+    /// Kept separate from `articles` so a definite article (`the`) can still be
+    /// stripped from expressions without accidentally creating new parameters.
+    public let parameterArticles: Set<String>
+
     /// Prepositions used as stop-words when deriving struct names and
     /// tokenising phrase invocations.
     public let prepositions: Set<String>
@@ -144,6 +149,7 @@ public struct EnglishLexicon: Sendable {
 
     public init(
         articles: Set<String>,
+        parameterArticles: Set<String> = ["a", "an"],
         prepositions: Set<String>,
         copulas: Set<String>,
         participles: Set<String>,
@@ -183,6 +189,7 @@ public struct EnglishLexicon: Sendable {
         shellFenceLanguages: Set<String> = MeridianCore.shellFenceLanguages
     ) {
         self.articles = articles
+        self.parameterArticles = parameterArticles
         self.prepositions = prepositions
         self.copulas = copulas
         self.participles = participles
@@ -213,6 +220,7 @@ public struct EnglishLexicon: Sendable {
     /// Default English surface used when no custom lexicon is supplied.
     public static let `default` = EnglishLexicon(
         articles: ["a", "an", "the"],
+        parameterArticles: ["a", "an"],
         prepositions: ["of", "for", "with", "by", "from", "to", "on", "at", "via",
                        "about", "into", "through", "during", "before", "after",
                        "because", "between", "since", "until", "upon"],
@@ -299,6 +307,48 @@ public struct EnglishLexicon: Sendable {
             }
         }
         return trimmed
+    }
+
+    public func hasLeadingArticle(_ s: String) -> Bool {
+        let lower = s.trimmingCharacters(in: .whitespaces).lowercased()
+        return articles.contains { lower.hasPrefix($0 + " ") }
+    }
+
+    public var definiteArticle: String? {
+        if articles.contains("the") { return "the" }
+        return articles.sorted().first
+    }
+
+    /// Find the earliest article-delimited parameter slot in a phrase pattern.
+    /// Returns the text before the article (`intro`) and the text after it
+    /// (`rest`), preserving source casing. Prefix matches are preferred over
+    /// infix matches; infix matches choose the earliest position.
+    public func findEarliestArticle(_ source: String) -> (intro: String, rest: String)? {
+        let sortedArticles = parameterArticles.sorted(by: { $0.count > $1.count })
+        let lower = source.lowercased()
+        for article in sortedArticles {
+            let prefix = article + " "
+            if lower.hasPrefix(prefix) {
+                return ("", String(source.dropFirst(prefix.count)))
+            }
+        }
+
+        var best: (range: Range<String.Index>, length: Int)?
+        for article in sortedArticles {
+            let marker = " \(article) "
+            if let range = source.range(of: marker, options: [.caseInsensitive]) {
+                if best == nil
+                    || range.lowerBound < best!.range.lowerBound
+                    || (range.lowerBound == best!.range.lowerBound && marker.count > best!.length) {
+                    best = (range, marker.count)
+                }
+            }
+        }
+
+        guard let pick = best else { return nil }
+        let intro = String(source[source.startIndex ..< pick.range.lowerBound])
+        let rest = String(source[pick.range.upperBound...])
+        return (intro, rest)
     }
 
     // MARK: - Duration parsing
@@ -468,6 +518,7 @@ public struct EnglishLexicon: Sendable {
 
         return EnglishLexicon(
             articles: articles,
+            parameterArticles: parameterArticles,
             prepositions: prepositions,
             copulas: copulas,
             participles: participles,

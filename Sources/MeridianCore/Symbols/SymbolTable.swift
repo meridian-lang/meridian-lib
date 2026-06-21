@@ -148,7 +148,7 @@ public final class SymbolTable: @unchecked Sendable {
                 table.properties[p.kind.lowercased(), default: []].append(contentsOf: p.properties)
                 trace.log(.symbols, "properties on \(p.kind): \(p.properties.map(\.name).joined(separator: ", "))")
                 for entry in p.properties {
-                    if case .enumeration(let cases) = entry.type {
+                    if case .enumeration(let cases, _) = entry.type {
                         for c in cases {
                             table.enumCases.insert(c.lowercased().trimmingCharacters(in: .whitespaces))
                         }
@@ -227,7 +227,7 @@ public final class SymbolTable: @unchecked Sendable {
     ) -> (phrase: PhraseDefinition, args: [String: ExpressionAST])? {
         if let direct = matchPhraseDirect(invocation) { return direct }
         guard let defaultParam else { return nil }
-        let filled = "\(invocation) for the \(defaultParam.kind)"
+        let filled = "\(invocation)\(lexicon.grammar.implicitParamFillConnector)\(defaultParam.kind)"
         trace.log(.phraseMatch, "phrase.match.implicit-fill: \"\(invocation)\" → \"\(filled)\"")
         return matchPhraseDirect(filled)
     }
@@ -236,7 +236,7 @@ public final class SymbolTable: @unchecked Sendable {
         let token = trace.push(.phraseMatch, "matchPhrase: \"\(invocation)\"")
         defer { trace.pop(token) }
 
-        let invWords = tokenize(invocation)
+        let invWords = WordStemmer.tokenize(invocation, stopwords: lexicon.toolStopwords)
         guard let firstWord = invWords.first else {
             trace.log(.phraseMatch, "no significant words")
             return nil
@@ -251,13 +251,13 @@ public final class SymbolTable: @unchecked Sendable {
             let patternLiteralText = phrase.pattern.segments.compactMap { seg -> String? in
                 if case .literal(let s) = seg { return s } else { return nil }
             }.joined(separator: " ")
-            let patternFirstWords = Set(tokenize(patternLiteralText))
+            let patternFirstWords = Set(WordStemmer.tokenize(patternLiteralText, stopwords: lexicon.toolStopwords))
             guard patternFirstWords.contains(firstWord) else {
                 trace.log(.phraseMatch, "  skip @L\(phrase.sourceLine) (no \"\(firstWord)\" in pattern)")
                 continue
             }
 
-            let score = overlap(invWords, pattern: phrase.pattern)
+            let score = phraseMatchScore(invWords, pattern: phrase.pattern)
             trace.log(.phraseMatch, "  candidate @L\(phrase.sourceLine) score=\(score) literals=\(patternFirstWords.sorted())")
             if score > (best?.score ?? -1) {
                 best = (score, phrase)
@@ -276,7 +276,7 @@ public final class SymbolTable: @unchecked Sendable {
         return (winner.phrase, args)
     }
 
-    private func overlap(_ invWords: [String], pattern: PhrasePattern) -> Int {
+    private func phraseMatchScore(_ invWords: [String], pattern: PhrasePattern) -> Int {
         let literalWords = literalKeywords(pattern)
         let paramWords   = paramKindKeywords(pattern)
         // Literal-keyword overlap is the primary score, in doubled units so
@@ -311,7 +311,7 @@ public final class SymbolTable: @unchecked Sendable {
         var words: [String] = []
         for seg in pattern.segments {
             if case .literal(let lit) = seg {
-                words += tokenize(lit)
+                words += WordStemmer.tokenize(lit, stopwords: lexicon.toolStopwords)
             }
         }
         return Set(words)
@@ -321,8 +321,8 @@ public final class SymbolTable: @unchecked Sendable {
         var words: [String] = []
         for seg in pattern.segments {
             if case .parameter(let p) = seg {
-                words += tokenize(p.kind)
-                words += tokenize(p.name)
+                words += WordStemmer.tokenize(p.kind, stopwords: lexicon.toolStopwords)
+                words += WordStemmer.tokenize(p.name, stopwords: lexicon.toolStopwords)
             }
         }
         return Set(words)
@@ -344,8 +344,7 @@ public final class SymbolTable: @unchecked Sendable {
                 trace.log(.phraseExtractArgs, "literal[\(lit)]  remaining=\"\(remaining)\"")
                 let words = lit.components(separatedBy: " ").filter { !$0.isEmpty }
                 for word in words {
-                    let lower = remaining.lowercased()
-                    if let range = lower.range(of: word.lowercased()) {
+                    if let range = remaining.range(of: word, options: [.caseInsensitive]) {
                         let consumed = String(remaining[remaining.startIndex ..< range.upperBound])
                         remaining = String(remaining[range.upperBound...])
                             .trimmingCharacters(in: .whitespaces)
@@ -360,7 +359,7 @@ public final class SymbolTable: @unchecked Sendable {
                 let rawArgText: String
                 if let terminator = terminators.first {
                     let firstWord = terminator.lowercased().components(separatedBy: " ").first ?? ""
-                    if let range = remaining.lowercased().range(of: " \(firstWord)") {
+                    if let range = remaining.range(of: " \(firstWord)", options: [.caseInsensitive]) {
                         rawArgText = String(remaining[remaining.startIndex ..< range.lowerBound])
                         remaining = String(remaining[range.lowerBound...])
                             .trimmingCharacters(in: .whitespaces)
@@ -451,11 +450,11 @@ public final class SymbolTable: @unchecked Sendable {
     /// Uses token-overlap scoring: candidates are ranked by how many tokenized
     /// words they share with the invocation, penalised by extra candidate words.
     public func tool(fromWords words: String) -> ToolDeclaration? {
-        let invocationTokens = Set(tokenize(words))
+        let invocationTokens = Set(WordStemmer.tokenize(words, stopwords: lexicon.toolStopwords))
         guard !invocationTokens.isEmpty else { return nil }
         var best: (score: Int, penalty: Int, decl: ToolDeclaration)? = nil
         for decl in tools.values {
-            let candidateTokens = Set(tokenize(decl.displayName + " " + decl.methodName))
+            let candidateTokens = Set(WordStemmer.tokenize(decl.displayName + " " + decl.methodName, stopwords: lexicon.toolStopwords))
             let overlap = invocationTokens.intersection(candidateTokens).count
             guard overlap > 0 else { continue }
             let extra = candidateTokens.subtracting(invocationTokens).count
@@ -469,13 +468,5 @@ public final class SymbolTable: @unchecked Sendable {
             }
         }
         return best?.decl
-    }
-
-    // MARK: - Utilities
-
-    private func tokenize(_ s: String) -> [String] {
-        s.lowercased()
-            .components(separatedBy: CharacterSet.alphanumerics.inverted)
-            .filter { !$0.isEmpty && !lexicon.toolStopwords.contains($0) }
     }
 }

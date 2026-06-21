@@ -87,7 +87,7 @@ are appended until one ends with `:`.
 
 Body lines follow at a deeper indent than the `To` line.
 
-`PhrasePatternParser.parse(_:)` tokenises a pattern like
+Header parsing tokenises a pattern like
 `"send an email via a mailer server, to an email address, …"` into
 `[PatternSegment]`:
 
@@ -101,8 +101,9 @@ Body lines follow at a deeper indent than the `To` line.
 …
 ```
 
-`tryParseParam` finds an article (`a`/`an`) to locate the parameter boundary.
-It uses `findArticle` which picks the **earliest** article occurrence by
+`MerConfigParser` / `MeridianParser` share the same phrase-pattern logic.
+Parameter detection uses `EnglishLexicon.findEarliestArticle(_:)` over
+`parameterArticles` (`a`/`an`) to pick the **earliest** article occurrence by
 string position (not iteration order — an important correctness detail).
 
 Trailing punctuation (`,` `;`) in the parameter text is stripped before the
@@ -168,6 +169,7 @@ Dispatches based on the first word:
   - `wait for signal "<name>".` → `WaitConditionAST.signal`
   - `wait for approval of <expr> from <role>.` → `WaitConditionAST.approval`
   - `wait for event <id>.` / `wait for event <id> matching <predicate>.` → `WaitConditionAST.event`
+  - choice gates lower to `WaitConditionAST.choice`
 - `if … ,` → `parseConditional` (recursive)
 - `bind … = …` / `rebind … = …` → `parseBindValue` → `parseInvokeExpr` or `ExpressionParser`
 - `for each … in …` → `parseIteration`
@@ -399,6 +401,7 @@ The `attachedTo` block is the protected statement(s); `handler` is the catch blo
 - `.signal` → `WaitConditionIR.signal(String)`
 - `.approval` → `WaitConditionIR.approval(of: IRExpression, by: RoleRef)`
 - `.event` → `WaitConditionIR.event(String, matching: IRExpression?)`
+- `.choice` → `WaitConditionIR.choice(prompt: String, options: [String])`
 
 ### `lowerExpr`
 
@@ -551,3 +554,22 @@ The CLI renders all of the above through a single `DiagnosticRenderer`
 `--diagnostics-format json` form, and `--fix` applies the unambiguous
 suggestions. See [07_CLI.md](07_CLI.md) and
 [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md).
+
+## Wave 4 Pipeline Notes
+
+`.meri` `## Domain` sections are harvested before symbol-table construction.
+The harvester reuses `MerConfigParser` vocabulary productions and merges the
+result into the effective `MerConfigFile`, so inline kinds/properties participate
+in parameter parsing, relation validation, and domain codegen exactly like
+`.merconfig` declarations.
+
+Under `## Tables`, unmarked Markdown tables are rewritten to data-table mode by
+`SkillSectionBuilder` before statement parsing. `StatementParser` validates typed
+cells, then lowers the table to the existing record-list expression. Table lookup
+syntax lowers to `IRExpression.tableLookup`, an expression-only scan over the
+bound table that throws `table.lookup_miss` on a required miss.
+
+Text substitutions remain expression payloads: `ExpressionParser` emits nested
+`InterpolationSegment` trees for `[if]`, `[for each]`, and formatted holes;
+`ASTToIR` recursively lowers them to `IRInterpolationSegment`; `SwiftEmitter`
+turns the payload into Swift string-building code.

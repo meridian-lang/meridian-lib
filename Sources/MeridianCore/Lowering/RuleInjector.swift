@@ -100,6 +100,7 @@ struct RuleInjector {
                     if hasParameter(of: kind, in: workflow) {
                         if workflowAlreadyHandlesApproval(workflow.body) {
                             trace.log(.lowering, "precondition L\(sourceLine): workflow '\(workflow.name)' already handles approval; recording rule in manifest only")
+                            trace.log(.lowering, "rule matrix L\(sourceLine) precondition x '\(workflow.name)': skip (approval handled)")
                             attached.insert(rIdx)
                             continue
                         }
@@ -147,6 +148,11 @@ struct RuleInjector {
                         attached.insert(rIdx)
                     }
                 }
+
+                let (ruleLine, ruleKind) = ruleTraceLabel(rule)
+                let attachedHere = !prepended.isEmpty || insertGateAtZero != nil
+                trace.log(.lowering,
+                          "rule matrix L\(ruleLine) \(ruleKind) x '\(workflow.name)': \(attachedHere ? "attach" : "skip")")
 
                 if !prepended.isEmpty || insertGateAtZero != nil {
                     var stmts = result[idx].body.statements
@@ -295,23 +301,14 @@ struct RuleInjector {
     /// `"approve any order"` → `"order"`, `"approve orders"` → `"orders"`,
     /// `"escalate the order"` → `"order"`.
     private func extractObjectKindForPermission(_ text: String) -> String {
-        let lower = text.lowercased().trimmingCharacters(in: .whitespaces)
-        let words = lower.components(separatedBy: " ").filter { !$0.isEmpty }
-        let articles = lexicon.grammar.nounPhraseDeterminers
-        for (i, w) in words.enumerated() {
-            if articles.contains(w), i + 1 < words.count {
-                return words[(i + 1)...].joined(separator: " ")
-            }
-        }
-        // No article — return the last word (heuristic: action verbs precede nouns).
-        return words.last ?? ""
+        ObjectKindExtractor(lexicon: lexicon).extract(from: text, noArticleFallback: .lastWord)
     }
 
     /// Count how many stems of the rule's action verb tokens appear in the
     /// workflow's display-name tokens. Stop-words and the subject's own
     /// kind tokens are filtered out so they don't inflate overlap.
     private func verbOverlap(_ actionText: String, workflow: IRWorkflow) -> Int {
-        WorkflowActionMatcher.overlap(action: actionText, workflow: workflow,
+        WorkflowActionMatcher.actionStemOverlap(action: actionText, workflow: workflow,
                                       scope: .nameOnly, lexicon: lexicon)
     }
 
@@ -356,10 +353,7 @@ struct RuleInjector {
         return false
     }
 
-    /// Generate simple morphological stems for an English word.
-    /// Strips well-known suffixes so `orders`, `ordered`, `ordering`, `order`
-    /// all collapse onto the same stem set. We always include the original
-    /// to keep exact matches working too.
+    /// Shared lightweight stem expansion used by workflow/action matching.
     private func stems(of word: String) -> [String] { WordStemmer.stems(of: word) }
 
     private func tokenize(_ s: String, stopwords: Set<String>) -> [String] {
@@ -493,6 +487,16 @@ struct RuleInjector {
                 switch seg {
                 case .literal(let s):    return .literal(s)
                 case .expression(let e): return .expression(lowerExprSimple(e))
+                case .conditional(let c, let t, let o):
+                    return .conditional(
+                        condition: lowerExprSimple(c),
+                        then: t.map { lowerInterpolationSegmentSimple($0) },
+                        otherwise: o.map { lowerInterpolationSegmentSimple($0) }
+                    )
+                case .forEach(let v, let c, let b):
+                    return .forEach(variable: v, collection: lowerExprSimple(c), body: b.map { lowerInterpolationSegmentSimple($0) })
+                case .formatted(let e, let f):
+                    return .formatted(lowerExprSimple(e), formatter: f)
                 }
             })
         case .decideWhether(let q):
@@ -500,7 +504,7 @@ struct RuleInjector {
                 toolID: "runtime.discretion.decide",
                 arguments: [InvokeArg("question", .literal(.string(q)))]
             ))
-        case .quantified, .malformed, .recordList,
+        case .quantified, .malformed, .recordList, .tableLookup,
              .verbPredicate, .relationTraversal, .description, .aggregate, .superlative:
             // Quantifiers, relational forms, data tables, and parse-error
             // carriers are not produced in rule bodies (which are constrained to
@@ -512,9 +516,34 @@ struct RuleInjector {
 
     private func lowerLiteralSimple(_ lit: LiteralAST) -> IRExpression { .literal(LiteralLowering.toIRLiteral(lit)) }
 
+    private func lowerInterpolationSegmentSimple(_ seg: InterpolationSegment) -> IRInterpolationSegment {
+        switch seg {
+        case .literal(let s): return .literal(s)
+        case .expression(let e): return .expression(lowerExprSimple(e))
+        case .conditional(let c, let t, let o):
+            return .conditional(condition: lowerExprSimple(c),
+                                then: t.map { lowerInterpolationSegmentSimple($0) },
+                                otherwise: o.map { lowerInterpolationSegmentSimple($0) })
+        case .forEach(let v, let c, let b):
+            return .forEach(variable: v, collection: lowerExprSimple(c), body: b.map { lowerInterpolationSegmentSimple($0) })
+        case .formatted(let e, let f):
+            return .formatted(lowerExprSimple(e), formatter: f)
+        }
+    }
+
     private func lowerOpSimple(_ op: ComparisonOpAST) -> ComparisonOp { LiteralLowering.mapComparisonOp(op) }
 
     private func lowerLogicalOpSimple(_ op: LogicalOpAST) -> LogicalOp { LiteralLowering.mapLogicalOp(op) }
 
     private func camelCase(_ s: String) -> String { IdentifierNaming.camelPreservingCase(s) }
+
+    private func ruleTraceLabel(_ rule: ParsedRule) -> (line: Int, kind: String) {
+        switch rule {
+        case .invariant(_, _, _, let line, _): return (line, "invariant")
+        case .parameterGuard(_, _, _, let line, _): return (line, "parameterGuard")
+        case .precondition(_, _, _, _, let line, _): return (line, "precondition")
+        case .trigger(_, _, let line, _): return (line, "trigger")
+        case .permission(_, _, _, _, _, let line, _): return (line, "permission")
+        }
+    }
 }

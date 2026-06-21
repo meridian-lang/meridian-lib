@@ -44,8 +44,33 @@ struct ReachableCoverageBatch3Tests {
     @Test("WorkflowActionMatcher returns 0 when the action has no content stems")
     func actionMatcherEmptyStems() {
         let wf = IRWorkflow(name: "process order", parameters: [], body: IRBlock(statements: []))
-        #expect(WorkflowActionMatcher.overlap(
+        #expect(WorkflowActionMatcher.actionStemOverlap(
             action: "the of a an", workflow: wf, scope: .nameOnly, lexicon: .default) == 0)
+    }
+
+    @Test("ObjectKindExtractor uses explicit no-article fallback modes")
+    func objectKindExtractorFallbacks() {
+        let extractor = ObjectKindExtractor(lexicon: .default)
+        #expect(extractor.extract(from: "place an order", noArticleFallback: .fullText) == "order")
+        #expect(extractor.extract(from: "approve orders", noArticleFallback: .fullText) == "approve orders")
+        #expect(extractor.extract(from: "approve orders", noArticleFallback: .lastWord) == "orders")
+        #expect(extractor.extract(from: "   ", noArticleFallback: .lastWord) == "")
+    }
+
+    @Test("IdentifierNaming methodize filters stopwords, limits tokens, and falls back")
+    func identifierMethodize() {
+        #expect(IdentifierNaming.lowerCamelSplittingHyphen("Review_comment id") == "reviewCommentId")
+        #expect(IdentifierNaming.methodize("Invoke Validate-Order!", stopwords: ["invoke"]) == "validateOrder")
+        #expect(IdentifierNaming.methodize("a b c", limit: 2) == "aB")
+        #expect(IdentifierNaming.methodize("!!!", fallback: "trigger") == "trigger")
+        #expect(IdentifierNaming.methodize("!!!") == "!!!")
+    }
+
+    @Test("StatementParser methodize delegates to shared naming")
+    func statementParserMethodize() {
+        let parser = StatementParser(symbols: SymbolTable(), trace: .silent())
+        #expect(parser.methodize("the Validate-Order tool") == "validateOrderTool")
+        #expect(parser.methodize("!!!") == "!!!")
     }
 
     @Test("ConditionClassifier: negated checkable predicate + comparison-marker condition")

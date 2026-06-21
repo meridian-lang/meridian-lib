@@ -41,9 +41,9 @@ struct ReachableCoverageBatch1Tests {
         #expect(!WholeWordRegex.contains("", in: "anything"))
     }
 
-    // MARK: MeridianAST — inits + backward-compat iteration accessors
+    // MARK: MeridianAST — inits + iteration modes
 
-    @Test("rebind/let AST inits and iteration variable/collection accessors")
+    @Test("rebind/let AST inits and iteration modes")
     func astShims() {
         let rb = RebindStatementAST(name: "total", value: .literal(.integer(1)), sourceLine: 3)
         #expect(rb.name == "total" && rb.sourceLine == 3)
@@ -51,14 +51,18 @@ struct ReachableCoverageBatch1Tests {
         let forEach = IterationStatementAST(
             mode: .forEach(variable: "item", collection: .identifierRef("items")),
             body: ASTBlock(statements: []))
-        #expect(forEach.variable == "item")
-        if case .identifierRef(let c)? = forEach.collection { #expect(c == "items") }
-        else { Issue.record("expected collection identifierRef") }
+        if case .forEach(let variable, .identifierRef(let collection)) = forEach.mode {
+            #expect(variable == "item")
+            #expect(collection == "items")
+        } else {
+            Issue.record("expected for-each mode")
+        }
 
         let whileLoop = IterationStatementAST(
             mode: .whileCondition(.literal(.boolean(true))), body: ASTBlock(statements: []))
-        #expect(whileLoop.variable == nil)
-        #expect(whileLoop.collection == nil)
+        if case .whileCondition(.literal(.boolean(true))) = whileLoop.mode {} else {
+            Issue.record("expected while-condition mode")
+        }
     }
 
     // MARK: IR symbol refs

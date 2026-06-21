@@ -1,3 +1,5 @@
+import Foundation
+
 /// Single source of truth for converting natural-language phrases into Swift
 /// identifiers. The codebase needs a handful of *behaviorally distinct* naming
 /// conventions (lower-camel vs Pascal, case-preserving vs lower-rest, which
@@ -5,14 +7,14 @@
 /// into one parameterised `convert` plus thin named wrappers, so the logic
 /// lives once. Families that genuinely diverge (hyphen-splitting, bespoke
 /// fallbacks) keep their own implementations — never cross-merge them.
-enum IdentifierNaming {
+public enum IdentifierNaming {
 
     enum Casing { case camel, pascal }
 
-    /// The two word-separator sets the convergent families use. Families that
-    /// also split on `-` are intentionally separate (they keep their own code).
+    /// The word-separator sets the convergent families use.
     static let spaceOnly: Set<Character> = [" "]
     static let spaceAndUnderscore: Set<Character> = [" ", "_"]
+    static let spaceUnderscoreHyphen: Set<Character> = [" ", "_", "-"]
 
     /// Convert `raw` to an identifier.
     /// - casing: `.camel` keeps the first word verbatim; `.pascal` upper-cases
@@ -56,6 +58,24 @@ enum IdentifierNaming {
         convert(raw, separators: spaceAndUnderscore, casing: .camel, lowercaseInputFirst: true)
     }
 
+    /// lowerCamelCase, splitting on space/underscore/hyphen. Used for surfaces
+    /// that historically accepted hyphenated field-ish names as one family.
+    static func lowerCamelSplittingHyphen(_ raw: String) -> String {
+        convert(raw, separators: spaceUnderscoreHyphen, casing: .camel, lowercaseInputFirst: true)
+    }
+
+    /// Method-style lowerCamelCase from a tool or trigger phrase. Splits on any
+    /// non-alphanumeric separator, filters stopwords, and optionally limits the
+    /// number of retained tokens.
+    static func methodize(_ raw: String, stopwords: Set<String> = [], limit: Int? = nil, fallback: String? = nil) -> String {
+        let tokens = raw.lowercased()
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty && !stopwords.contains($0) }
+        let retained = limit.map { Array(tokens.prefix($0)) } ?? tokens
+        guard let first = retained.first else { return fallback ?? raw }
+        return first + retained.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined()
+    }
+
     /// camelCase preserving each word's existing case, splitting on
     /// space/underscore (`"order ID"` → `"orderID"`). Bind/result naming.
     static func camelPreservingCase(_ raw: String) -> String {
@@ -72,6 +92,23 @@ enum IdentifierNaming {
     /// (`"validation result"` → `"ValidationResult"`). Domain/type naming.
     static func pascalCase(_ raw: String) -> String {
         convert(raw, separators: spaceAndUnderscore, casing: .pascal, lowercaseWordRest: true)
+    }
+
+    /// PascalCase, splitting on space/underscore/hyphen while preserving each
+    /// word's existing tail case. Used for synthetic lowering helper names where
+    /// historical output preserved author casing.
+    static func pascalCaseSplittingHyphenPreservingCase(_ raw: String) -> String {
+        convert(raw, separators: spaceUnderscoreHyphen, casing: .pascal)
+    }
+
+    /// PascalCase from an arbitrary file stem or generated namespace. Splits on
+    /// non-alphanumeric boundaries and prefixes `_` when the result would start
+    /// with a digit.
+    public static func swiftTypeNameFromStem(_ raw: String, fallback: String = "Skill") -> String {
+        let parts = raw.split(whereSeparator: { !($0.isLetter || $0.isNumber) })
+        let joined = parts.map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined()
+        guard let first = joined.first else { return fallback }
+        return first.isNumber ? "_" + joined : joined
     }
 }
 

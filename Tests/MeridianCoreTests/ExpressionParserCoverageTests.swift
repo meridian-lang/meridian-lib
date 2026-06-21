@@ -72,6 +72,17 @@ struct ExpressionParserCoverageTests {
         #expect({ if case .comparison = p.parse("the total is more than 5") { return true } else { return false } }())
     }
 
+    @Test("comparison markers match case-insensitively outside quotes")
+    func uppercaseComparisonMarker() {
+        let e = p.parse("the total IS MORE THAN 5")
+        if case .comparison(let lhs, .greaterThan, let rhs) = e {
+            #expect({ if case .identifierRef("total") = lhs { return true } else { return false } }())
+            #expect({ if case .literal(.integer(5)) = rhs { return true } else { return false } }())
+        } else {
+            Issue.record("expected a greater-than comparison")
+        }
+    }
+
     @Test("a duration literal parses")
     func duration() {
         #expect({ if case .literal(.duration) = p.parse("1 hour") { return true } else { return false } }())

@@ -14,7 +14,7 @@ Swift code imports and depends on at runtime. It provides:
 9. `ToolRegistry` — tool dispatch (closure, subprocess, HTTP, MCP)
 10. `InstanceRegistry` — named instance lookup
 11. `Checkpointer` — checkpoint persistence (in-memory + filesystem-backed)
-12. `WaitCondition` — wait semantics (duration, signal, approval, event)
+12. `WaitCondition` — wait semantics (duration, signal, approval, event, choice)
 13. `MeridianRuntimeError` — typed error envelope
 
 ---
@@ -181,10 +181,11 @@ public enum WaitCondition: Sendable {
     case signal(String)
     case approval(of: Value, by: RoleRef)
     case event(String, matching: (@Sendable (Event) -> Bool)?)
+    case choice(prompt: String, options: [String])
 }
 ```
 
-All four variants are implemented end-to-end:
+All five variants are implemented end-to-end:
 
 | Variant | Semantics |
 |---|---|
@@ -192,9 +193,10 @@ All four variants are implemented end-to-end:
 | `.signal` | Blocks until `deliverSignal(_:)` is called with the matching name. Signals delivered while no waiter exists are dropped. |
 | `.approval` | Blocks until `deliverApproval(of:by:verdict:)` fires. `.approved` resumes normally; `.denied` throws `MeridianRuntimeError.approvalDenied`. |
 | `.event` | Blocks until `deliverEvent(_:)` or any `emit(event:)` call fires an event matching the event ID and optional predicate. `nil` predicate = accept any event with matching ID. |
+| `.choice` | Blocks until `deliverChoice(_:)` supplies a selected option for a choice gate. |
 
 **Timeout note:** The `timeout:` parameter is forwarded for all variants;
-for `.signal`, `.approval`, and `.event` it is accepted at the API level but
+for `.signal`, `.approval`, `.event`, and `.choice` it is accepted at the API level but
 not enforced in v1. Only `.duration` actively uses the clock-based timeout.
 
 `RuntimeApprovalVerdict` (2 cases, distinct from the domain `ApprovalVerdict`):
@@ -473,6 +475,13 @@ public enum EventKind: String, Codable, Sendable {
     case invokeStart        = "invoke.start"
     case invokeEnd          = "invoke.end"
     case invokeError        = "invoke.error"
+    case planStart          = "plan.start"
+    case planEnd            = "plan.end"
+    case planError          = "plan.error"
+    case planRejected       = "plan.rejected"
+    case autonomyStart      = "autonomy.start"
+    case autonomyStep       = "autonomy.step"
+    case autonomyEnd        = "autonomy.end"
     case branchTaken        = "branch.taken"
     case iterateStart       = "iterate.start"
     case iterateIteration   = "iterate.iteration"
@@ -488,7 +497,7 @@ public enum EventKind: String, Codable, Sendable {
 }
 ```
 
-22 event kinds across all IR primitives and lifecycle events.
+29 event kinds across all IR primitives, planning/autonomy, and lifecycle events.
 
 ---
 
@@ -881,7 +890,7 @@ model. Permission logic that requires identity is a host concern.
 
 ## Choice-gate (`WaitConditionIR.choice`)
 
-The gbrain SKILL surface adds a fifth `WaitCondition` case for the ask-user
+The gbrain SKILL surface uses the fifth `WaitCondition` case for the ask-user
 pattern (`ask the user to choose between "A", "B".`):
 
 ```swift
@@ -911,3 +920,16 @@ Fenced ` ```bash ` blocks and inline backticked `gbrain …` commands lower to
 `.subprocess` built-in (`/bin/sh -c {command}`), returning
 `{ stdout, stderr, exitCode }`. No new tool or merconfig declaration is needed.
 See [10_BUILTIN_TOOLS.md](10_BUILTIN_TOOLS.md) for its argument/return shape.
+
+---
+
+## Wave 4 Runtime Surface
+
+Wave 4 did not add a runtime actor API. Generated table lookups reuse
+`ToolError.implementation(code: "table.lookup_miss", ...)` so the existing
+`meridianMatches(_:named:)` code-based recover matching handles
+`recover from "table.lookup_miss":`.
+
+Template formatting is emitted as a private generated Swift helper
+(`meridianFormat(_:as:)`) rather than a shared runtime service. It formats
+`Value` payloads for the closed formatter set used by the compiler.

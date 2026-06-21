@@ -149,7 +149,7 @@ struct RuntimeExecutor {
         // Decode inputs
         let inputsByParam = Dictionary(spec.inputs.map { ($0.paramName, $0.json) }, uniquingKeysWith: { _, new in new })
         for param in workflow.parameters {
-            let swiftType = pascalCase(param.kind.name)
+            let swiftType = IdentifierNaming.pascalCase(param.kind.name)
             let json      = inputsByParam[param.name] ?? "{}"
             lines.append(contentsOf: DriverSourceBuilder.paramDecode(
                 name: param.name, swiftType: swiftType, json: json, indent: "    ", force: false))
@@ -231,5 +231,4 @@ struct RuntimeExecutor {
         return result.exitCode == 0
     }
 
-    private func pascalCase(_ raw: String) -> String { IdentifierNaming.pascalCase(raw) }
 }

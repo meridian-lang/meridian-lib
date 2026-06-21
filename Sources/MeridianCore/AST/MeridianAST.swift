@@ -200,7 +200,7 @@ public struct PropertyEntry: Sendable {
 public enum PropertyTypeAST: Sendable {
     case defaulted
     case explicit(String)
-    case enumeration([String])
+    case enumeration(cases: [String], defaultCase: String?)
 }
 
 public struct RelationDeclaration: Sendable {
@@ -520,13 +520,14 @@ public struct AutonomyConfigAST: Sendable {
         parseExpression: (String) -> ExpressionAST
     ) -> AutonomyConfigAST {
         let lower = raw.lowercased()
-        let boundaries = [" until ", " unless ", " re-plan after ", " replan after ", " max ", " up to "]
+        let markers = EnglishLexicon.default.grammar.autonomyMarkers
+        let boundaries = markers.boundaryMarkers
         func clause(_ marker: String) -> String? {
-            guard let range = lower.range(of: "\(marker) ") else { return nil }
+            guard let range = raw.range(of: "\(marker) ", options: [.caseInsensitive]) else { return nil }
             let start = range.upperBound
             var end = raw.endIndex
             for next in boundaries {
-                if let r = lower[start...].range(of: next), r.lowerBound < end { end = r.lowerBound }
+                if let r = raw[start...].range(of: next, options: [.caseInsensitive]), r.lowerBound < end { end = r.lowerBound }
             }
             let text = String(raw[start..<end]).trimmingCharacters(in: .whitespacesAndNewlines)
             return text.isEmpty ? nil : text
@@ -537,10 +538,10 @@ public struct AutonomyConfigAST: Sendable {
             return Int(String(digits))
         }
         return AutonomyConfigAST(
-            until: clause("until").map(parseExpression),
-            unless: clause("unless").map(parseExpression),
-            replanAfterFailures: intAfter("re-plan after") ?? intAfter("replan after") ?? 3,
-            maxSteps: intAfter("max") ?? intAfter("up to") ?? 32
+            until: clause(markers.until).map(parseExpression),
+            unless: clause(markers.unless).map(parseExpression),
+            replanAfterFailures: markers.replanAfter.compactMap(intAfter).first ?? 3,
+            maxSteps: markers.maxSteps.compactMap(intAfter).first ?? 32
         )
     }
 }
@@ -748,16 +749,6 @@ public struct IterationStatementAST: Sendable {
         self.mode = mode; self.body = body; self.sourceLine = sourceLine
         self.refinement = refinement
     }
-    /// Backward-compatible accessor — non-nil only for `.forEach` loops.
-    public var variable: String? {
-        if case .forEach(let v, _) = mode { return v }
-        return nil
-    }
-    /// Backward-compatible accessor — non-nil only for `.forEach` loops.
-    public var collection: ExpressionAST? {
-        if case .forEach(_, let c) = mode { return c }
-        return nil
-    }
 }
 
 public struct SimultaneouslyStatementAST: Sendable {
@@ -865,6 +856,9 @@ public struct RecoverStatementAST: Sendable {
 public enum InterpolationSegment: Sendable {
     case literal(String)
     case expression(ExpressionAST)
+    case conditional(condition: ExpressionAST, then: [InterpolationSegment], otherwise: [InterpolationSegment])
+    case forEach(variable: String, collection: ExpressionAST, body: [InterpolationSegment])
+    case formatted(ExpressionAST, formatter: String)
 }
 
 public indirect enum ExpressionAST: Sendable {
@@ -885,6 +879,8 @@ public indirect enum ExpressionAST: Sendable {
     /// Data table: a list of records sharing `fields`, one record per row.
     /// Lowers to `.list([.record([...])])`.
     case recordList(fields: [String], rows: [[ExpressionAST]])
+    /// Wave 4B: deterministic lookup in a named data table.
+    case tableLookup(table: String, keyColumn: String, key: ExpressionAST, valueColumn: String)
     /// 2C: A quantified description (`all/any/no/at least N … <description>`).
     case quantified(QuantifierAST)
     /// 3B: An active verb condition (`the user owns the page`). Resolved to a

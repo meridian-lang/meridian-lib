@@ -80,7 +80,7 @@ struct ConventionInjector {
     /// stems. The threshold of two avoids spurious matches on a single common
     /// noun (e.g. every workflow that mentions "page").
     private func actionMatches(_ action: String, workflow: IRWorkflow) -> Bool {
-        WorkflowActionMatcher.overlap(action: action, workflow: workflow,
-                                      scope: .nameAndParameters, lexicon: lexicon) >= 2
+        WorkflowActionMatcher.actionStemOverlap(action: action, workflow: workflow,
+                                                scope: .nameAndParameters, lexicon: lexicon) >= 2
     }
 }

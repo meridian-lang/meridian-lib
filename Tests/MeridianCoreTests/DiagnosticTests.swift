@@ -130,4 +130,47 @@ struct DiagnosticTests {
         #expect(err.diagnostics.count == 1)
         #expect(err.diagnostics.first?.code.id == "MER2002")
     }
+
+    @Test("catalog metadata covers every DiagnosticCode.all entry")
+    func catalogMetadataComplete() {
+        #expect(DiagnosticCode.catalog.count == DiagnosticCode.all.count)
+        for code in DiagnosticCode.all {
+            guard let entry = DiagnosticCode.catalogByID[code.id] else {
+                Issue.record("missing catalog metadata for \(code.id)")
+                continue
+            }
+            switch entry.status {
+            case .reserved:
+                #expect(entry.emitters.isEmpty, Comment(rawValue: "\(code.id) reserved but has emitters"))
+            case .active, .deprecated:
+                #expect(!entry.emitters.isEmpty, Comment(rawValue: "\(code.id) has no production emitter listed"))
+            }
+        }
+    }
+
+    @Test("unknown trace category validates to MER2010")
+    func unknownTraceCategory() {
+        let ds = ParserTrace.validateTraceSpec("not-a-real-category")
+        #expect(ds.count == 1)
+        #expect(ds.first?.code.id == "MER2010")
+    }
+
+    @Test("unknown test-spec key validates to MER1007")
+    func unknownTestSpecKey() {
+        let spec = """
+        source_inline: ```
+        to x:
+          emit y.
+        ```
+        bad_key: oops
+        """
+        do {
+            _ = try SpecParser().parse(spec, fileURL: URL(fileURLWithPath: "/tmp/t.meridian.test"))
+            Issue.record("expected MER1007")
+        } catch let e as CompilerError {
+            #expect(e.diagnostics.first?.code.id == "MER1007")
+        } catch {
+            Issue.record("unexpected error: \(error)")
+        }
+    }
 }

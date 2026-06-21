@@ -1,0 +1,104 @@
+---
+description: Testing conventions — running tests, the per-file coverage gate (scripts/coverage.swift), the Phase 3 forcing function, golden string tests, capturing trace in tests, multi-line #expect diagnostics. Read when editing or adding tests.
+globs: Tests/**/*.swift,sample-gbrain/Tests/**/*.swift,scripts/coverage.swift
+alwaysApply: false
+---
+
+# Testing conventions
+
+### Run all tests
+
+```bash
+swift test
+```
+
+### Major implementation gate
+
+After any major implementation session (even outside a formal phase), run the
+full local gate unless the user explicitly narrows validation:
+
+```bash
+swift test
+MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1 swift test
+scripts/coverage.swift --gate
+```
+
+The typecheck env vars are required for changes that affect generated Swift,
+codegen, domain emission, migration, or the gbrain corpus. They are the only
+gates that feed generated output to `swiftc`.
+Do not skip the coverage gate for substantive production changes; it enforces
+the per-file coverage floors documented under `docs/coverage/`.
+
+### Run a single test file
+
+```bash
+swift test --filter Phase3ForcingFunction
+swift test --filter SwiftEmitterTests
+swift test --filter ParserTraceTests
+```
+
+### Code coverage gate
+
+Coverage is enforced per-file by `scripts/coverage.swift` (Swift shebang script —
+no `.sh`, no CI workflow). `docs/coverage/coverage-exclusions.md` is the single
+reviewed source of truth for every file allowed below 100% region coverage; each
+carries a justified regression floor. `docs/coverage/coverage-baseline.md` is the
+generated report (do not hand-edit).
+
+**Policy:** code requiring a live external thing (subprocess, network, SwiftPM
+build, LLM provider) is exempt from 100% and keeps a permanent relaxed floor;
+**everything reachable in-process must aim for 100%** — its floor is a temporary
+target, ratcheted up as tests land and removed once the file hits 100%. Run/enforce:
+
+```bash
+scripts/coverage.swift --gate            # build + test + enforce
+scripts/coverage.swift --no-test --gate  # enforce, reusing existing .profdata
+```
+
+To raise coverage: find unexecuted lines with `xcrun llvm-cov show … | rg '\|\s+0\|'`,
+add a direct unit test (construct IR/context and call the emitter/evaluator —
+faster and more targeted than a full compile), then re-baseline and tighten the
+file's floor. **Pitfall:** coverage is measured per *file* and recompiling the
+test binary can shift a `Sources/` file's ratio a fraction in either direction —
+always re-baseline after changing the test set and set floors from the fresh run.
+Full guide: [`docs/coverage/README.md`](docs/coverage/README.md).
+
+### Phase 3 forcing function
+
+`Tests/MeridianCoreTests/Phase3ForcingFunction.swift` — 8 tests that compile
+`examples/order_processing.meridian` + `examples/ecommerce.merconfig`
+in-process and assert structural correctness. These are the primary regression
+gate for the compiler. They must always pass before merging.
+
+### Golden string tests (`SwiftEmitterTests`)
+
+Assert specific substrings (not entire files) against emitted Swift. When
+codegen output changes, update the golden strings. Keep assertions minimal —
+only test the structural element being introduced.
+
+### Capturing trace in tests
+
+```swift
+// capturing() is a static factory — NOT a closure-based API.
+// Pass cap.trace to the compiler; call cap.lines() afterwards.
+let cap = ParserTrace.capturing(categories: [.phraseMatch])
+
+_ = try Compiler(options: .init(trace: cap.trace)).compile(
+    meridianSource: mer,
+    meridianFile: "test.meridian",
+    merconfigSource: cfg,
+    merconfigFile: "test.merconfig"
+)
+
+let lines = cap.lines()
+#expect(lines.contains { $0.contains("validate an order") })
+```
+
+### `#expect` with multi-line diagnostics
+
+Use `Comment(rawValue:)` to pass multi-line failure messages to `#expect`:
+
+```swift
+#expect(out.contains("Constants: Sendable"),
+    Comment(rawValue: "Expected 'Constants: Sendable' in:\n\(out)"))
+```

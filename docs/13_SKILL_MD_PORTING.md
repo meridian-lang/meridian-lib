@@ -420,3 +420,24 @@ marker.
   deterministic-only mode works offline; bounded LLM-assisted repair (mock
   provider in tests) auto-repairs residual diagnostics; every accepted migration
   compiles strict.
+
+---
+
+## Wave 4 Porting Fixes
+
+Use `## Domain` for skill-local vocabulary that would otherwise force a separate
+`.merconfig` edit: small kind declarations, `called the` properties, and
+`can be ... or ...` states with `usually` defaults. Keep domain sentences out of
+procedure bodies; there they are conditions or errors, not assembly-time
+vocabulary.
+
+Use `## Tables` for deterministic dispatch or lookup tables. Annotate columns
+when type matters (`score (Number)`, `deadline (Date)`), and then use lookup
+phrases like `the skill corresponding to the trigger phrase "daily briefing" in
+the table`. If missing rows are expected, attach `recover from
+"table.lookup_miss":`.
+
+Use text substitutions inside explicit string/fenced expression positions, not
+by making `## Output Format` executable. `[date]`-style placeholders remain
+literal unless they use the closed directives `[if ...]`, `[otherwise]`,
+`[end if]`, `[for each ...]`, or `[end for]`.

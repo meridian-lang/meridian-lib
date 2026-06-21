@@ -24,28 +24,30 @@ struct DefinitionParser {
     }
 
     /// True when `text` begins a definition (`Definition:` prefix).
-    static func isDefinitionLine(_ text: String) -> Bool {
-        text.trimmingCharacters(in: .whitespaces).lowercased().hasPrefix("definition:")
+    static func isDefinitionLine(_ text: String, lexicon: EnglishLexicon = .default) -> Bool {
+        text.trimmingCharacters(in: .whitespaces)
+            .lowercased()
+            .hasPrefix(lexicon.grammar.definitionPrefix)
     }
 
     /// Parse a `Definition:` line into a declaration, or nil when the shape is
     /// not recognised.
     func parse(_ rawLine: String, line: Int) -> DefinitionDeclaration? {
         var t = rawLine.trimmingCharacters(in: .whitespaces)
-        guard t.lowercased().hasPrefix("definition:") else { return nil }
-        t = String(t.dropFirst("definition:".count)).trimmingCharacters(in: .whitespaces)
+        guard t.lowercased().hasPrefix(lexicon.grammar.definitionPrefix) else { return nil }
+        t = String(t.dropFirst(lexicon.grammar.definitionPrefix.count)).trimmingCharacters(in: .whitespaces)
         if t.hasSuffix(".") { t = String(t.dropLast()) }
 
         // Strip a leading article on the subject.
         t = lexicon.stripLeadingArticle(t)
 
         // Split on " if " (the condition introducer).
-        guard let ifRange = t.range(of: " if ", options: .caseInsensitive) else { return nil }
+        guard let ifRange = t.range(of: lexicon.grammar.definitionIfMarker, options: .caseInsensitive) else { return nil }
         let head = String(t[t.startIndex..<ifRange.lowerBound]).trimmingCharacters(in: .whitespaces)
         let condition = String(t[ifRange.upperBound...]).trimmingCharacters(in: .whitespaces)
 
         // Head: "<kind> is <adjective>".
-        guard let isRange = head.range(of: " is ", options: .caseInsensitive) else { return nil }
+        guard let isRange = head.range(of: lexicon.grammar.merconfig.isMarker, options: .caseInsensitive) else { return nil }
         // The ` is ` match requires a space on both sides and `head` is already
         // trimmed, so there is always ≥1 non-space char on each side — `kind` and
         // `adjectiveRaw` are therefore never empty here (no redundant guard).
@@ -67,12 +69,8 @@ struct DefinitionParser {
 
     /// Replace whole-word `its`→`<subject>'s` and `it`→`<subject>`.
     private func rewriteSubjectPronouns(_ s: String, subject: String) -> String {
-        var out = wholeWord(s, of: "its", with: subject + "'s")
-        out = wholeWord(out, of: "it", with: subject)
+        var out = WholeWordRegex.replace(s, of: lexicon.grammar.definitionPossessivePronoun, with: subject + "'s")
+        out = WholeWordRegex.replace(out, of: lexicon.grammar.definitionSubjectPronoun, with: subject)
         return out
-    }
-
-    private func wholeWord(_ haystack: String, of needle: String, with replacement: String) -> String {
-        WholeWordRegex.replace(haystack, of: needle, with: replacement)
     }
 }

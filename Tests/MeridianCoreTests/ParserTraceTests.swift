@@ -73,4 +73,69 @@ struct ParserTraceTests {
         cap.trace.log(.phraseParse, "y")
         #expect(cap.lines().count == 1)
     }
+
+    @Test("statement category emits table expansion during compile")
+    func statementTableTrace() throws {
+        let cap = ParserTrace.capturing(categories: [.statement])
+        let merconfig = """
+        === vocabulary ===
+
+        An order is a kind of thing.
+        """
+        let meridian = """
+        To route an order:
+
+        | Status | Action |
+        | --- | --- |
+        | open | emit order.validated.
+        """
+        _ = try Compiler(options: .init(trace: cap.trace)).compile(
+            meridianSource: meridian,
+            merconfigSource: merconfig
+        )
+        let log = cap.lines().joined(separator: "\n")
+        #expect(log.contains("table "))
+    }
+
+    @Test("lowering category emits rule attachment matrix")
+    func ruleMatrixTrace() throws {
+        var url = URL(fileURLWithPath: #file)
+        while !FileManager.default.fileExists(atPath: url.appendingPathComponent("Package.swift").path) {
+            let parent = url.deletingLastPathComponent()
+            if parent.path == url.path { break }
+            url = parent
+        }
+        let examples = url.appendingPathComponent("examples")
+        let mer = try String(contentsOf: examples.appendingPathComponent("order_processing.meridian"), encoding: .utf8)
+        let cfg = try String(contentsOf: examples.appendingPathComponent("ecommerce.merconfig"), encoding: .utf8)
+        let cap = ParserTrace.capturing(categories: [.lowering])
+        _ = try Compiler(options: .init(trace: cap.trace)).compile(
+            meridianSource: mer, meridianFile: "order_processing.meridian",
+            merconfigSource: cfg, merconfigFile: "ecommerce.merconfig"
+        )
+        let log = cap.lines().joined(separator: "\n")
+        #expect(log.contains("rule matrix"))
+    }
+
+    @Test("codegen category logs per-primitive emission")
+    func codegenPrimitiveTrace() throws {
+        let cap = ParserTrace.capturing(categories: [.codegen])
+        let merconfig = """
+        === vocabulary ===
+
+        An order is a kind of thing.
+        """
+        let meridian = """
+        To process an order:
+          emit order.validated.
+          complete.
+        """
+        _ = try Compiler(options: .init(trace: cap.trace)).compile(
+            meridianSource: meridian,
+            merconfigSource: merconfig
+        )
+        let log = cap.lines().joined(separator: "\n")
+        #expect(log.contains("emit emit"))
+        #expect(log.contains("emit complete"))
+    }
 }

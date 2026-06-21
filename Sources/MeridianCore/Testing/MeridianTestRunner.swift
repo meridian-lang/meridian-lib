@@ -246,6 +246,11 @@ public struct MeridianTestRunner: Sendable {
             return try SpecParser().parse(raw, fileURL: url)
         } catch let e as SpecParser.ParseError {
             throw SpecError.parseError(e.message, file: url.lastPathComponent)
+        } catch let e as CompilerError {
+            if case .diagnostics(let ds) = e, let first = ds.first {
+                throw SpecError.parseError("[\(first.code.id)] \(first.message)", file: url.lastPathComponent)
+            }
+            throw SpecError.parseError("\(e)", file: url.lastPathComponent)
         } catch let e as SpecError {
             throw e
         } catch {

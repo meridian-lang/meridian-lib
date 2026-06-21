@@ -138,10 +138,11 @@ public struct StatementParser {
                 sourceLine: line.number
             ))
         case .dispatchPhrase, .fuzzy:
-            throw CompilerError.semanticError(
+            try raiseStructural(
+                .uncheckablePredicate,
                 message: "checklist item \"\(text)\" is not a structurally checkable predicate. Rephrase it as a comparison (e.g. `- [ ] the link count is at least 1`), route the whole list to the planner with a `!!! checklist (( ai-autonomy ))` marker above it, or move it under an `(( inert ))` section to keep it as documentation.",
-                range: SourceRange(file: file, line: line.number, column: 1)
-            )
+                range: SourceRange(file: file, line: line.number, column: 1),
+                help: "Rephrase as a comparison, add `!!! checklist (( ai-autonomy ))` above the list, or mark the section `(( inert ))`.")
         }
     }
 
@@ -237,25 +238,28 @@ public struct StatementParser {
         trace.log(.statement, "L\(line.number): \(ParserTrace.short(t))")
 
         // B6: Bare code-block sentinel lines are always consumed by the preceding
-        // bind/decide statement.  If one reaches here it is orphaned — skip it.
-        if t.hasPrefix(codeBlockSentinelPrefix) { return (nil, 1) }
+        // bind/decide statement.  If one reaches here it is orphaned.
+        if t.hasPrefix(codeBlockSentinelPrefix) {
+            try raiseStructural(
+                .orphanedCodeBlock,
+                message: "orphaned fenced code block",
+                range: SourceRange(file: file, line: line.number, column: 1),
+                help: "Place the fenced block under a `bind name =` or `decide using:` statement that consumes it, or remove it.")
+        }
 
         // A deferred marker error from the (non-throwing) tokenizer — raise it
         // now as a located diagnostic.
         if let message = decodeMarkerError(t) {
-            throw CompilerError.semanticError(
+            try raiseStructural(
+                .unparseableStatement,
                 message: message,
-                range: SourceRange(file: file, line: line.number, column: 1)
-            )
+                range: SourceRange(file: file, line: line.number, column: 1),
+                help: "Fix the block marker syntax (`!!! table (( … ))`, `!!! checklist (( … ))`, etc.) or move it under a recognized section.")
         }
 
-        // A table sentinel that reached here (e.g. an inert table producing no
-        // statements) is consumed; executable tables are expanded in
-        // `parseInlineChain` before this point.
+        // Intentional inert consumes (see docs/14_DEVELOPER_EXPERIENCE.md §6.1):
+        // table/checklist sentinels that produce no executable statements.
         if t.hasPrefix(tableSentinelPrefix) { return (nil, 1) }
-
-        // A checklist sentinel is expanded in `parseBlock`; one reaching here
-        // (e.g. an inert list producing no statements) is consumed.
         if t.hasPrefix(checklistSentinelPrefix) { return (nil, 1) }
 
         // Rulebook desugar hook: rewrite a surface idiom (e.g. `If X -> Y`)
@@ -282,12 +286,15 @@ public struct StatementParser {
     func parseStatementWithoutRewrite(_ lines: [SourceLine], at i: Int, file: String) throws -> (StatementAST?, Int) {
         let line = lines[i]
         let t = line.statement
+        let lower = t.lowercased()
+        let statement = lexicon.grammar.statement
 
         // Explicit judgment markers — the ONLY local path prose reaches the
         // planner: `use judgment to <goal>:` / `with discretion:` /
         // `with autonomy …:`. Checked before topic-label / idiom parsing so a
         // trailing-colon header isn't misread as a label.
         if let (stmt, consumed) = try parseJudgmentMarker(lines, at: i) {
+            trace.log(.statement, "L\(line.number) -> judgment")
             return (stmt, consumed)
         }
 
@@ -295,7 +302,7 @@ public struct StatementParser {
         // the topic-label rule: a capitalized header like `For every attendee:`
         // otherwise matches `topicLabel` (uppercase, ≤40 chars, letters/spaces)
         // with an empty body and is dropped, orphaning the loop body bullets.
-        if t.lowercased().hasPrefix("for each ") || t.lowercased().hasPrefix("for every ") {
+        if lower.hasPrefix(statement.forEachPrefix) || lower.hasPrefix(statement.forEveryPrefix) {
             if let (iter, consumed) = try? parseIteration(lines, at: i, file: file) {
                 return (.iteration(iter), consumed)
             }
@@ -317,8 +324,8 @@ public struct StatementParser {
             return (.conditional(conditional), 1)
         }
 
-        if t.lowercased().hasPrefix("otherwise ") {
-            let handlerText = String(t.dropFirst("otherwise ".count)).trimmingCharacters(in: .whitespaces)
+        if lower.hasPrefix(statement.otherwisePrefix) {
+            let handlerText = String(t.dropFirst(statement.otherwisePrefix.count)).trimmingCharacters(in: .whitespaces)
             let handlerLine = SourceLine(indent: line.indent + 2, text: handlerText, raw: line.raw, number: line.number)
             let handler = try parseBlock([handlerLine], file: file)
             let placeholder = StatementAST.phraseInvocation(PhraseInvocationAST(words: "", sourceLine: line.number))
@@ -326,27 +333,27 @@ public struct StatementParser {
         }
 
         // "in lenient mode." or "in strict mode."
-        if t.lowercased() == "in lenient mode" { return (.modal(.lenient), 1) }
-        if t.lowercased() == "in strict mode"  { return (.modal(.strict), 1) }
+        if lower == statement.lenientMode { return (.modal(.lenient), 1) }
+        if lower == statement.strictMode  { return (.modal(.strict), 1) }
 
         // "complete." or "complete with reason "X"."
-        if t.lowercased() == "complete" { return (.complete(CompleteStatementAST(sourceLine: line.number)), 1) }
-        if t.lowercased().hasPrefix("complete with reason ") {
-            let rest = String(t.dropFirst("complete with reason ".count))
+        if lower == statement.complete { return (.complete(CompleteStatementAST(sourceLine: line.number)), 1) }
+        if lower.hasPrefix(statement.completeWithReasonPrefix) {
+            let rest = String(t.dropFirst(statement.completeWithReasonPrefix.count))
             let reason = unquote(rest)
             return (.complete(CompleteStatementAST(reason: reason, sourceLine: line.number)), 1)
         }
 
         // "commit." or "commit with label "X"."
-        if t.lowercased() == "commit" { return (.commit(CommitStatementAST(sourceLine: line.number)), 1) }
-        if t.lowercased().hasPrefix("commit with label ") {
-            let label = unquote(String(t.dropFirst("commit with label ".count)))
+        if lower == statement.commit { return (.commit(CommitStatementAST(sourceLine: line.number)), 1) }
+        if lower.hasPrefix(statement.commitWithLabelPrefix) {
+            let label = unquote(String(t.dropFirst(statement.commitWithLabelPrefix.count)))
             return (.commit(CommitStatementAST(label: label, sourceLine: line.number)), 1)
         }
 
         // "wait {duration}."
-        if t.lowercased().hasPrefix("wait ") {
-            let rest = String(t.dropFirst(5))
+        if lower.hasPrefix(statement.waitPrefix) {
+            let rest = String(t.dropFirst(statement.waitPrefix.count))
             if let cond = parseWaitCondition(rest) {
                 return (.wait(WaitStatementAST(condition: cond, sourceLine: line.number)), 1)
             }
@@ -359,21 +366,22 @@ public struct StatementParser {
         }
 
         // "emit {eventID} with ..." (possibly multi-line payload)
-        if t.lowercased().hasPrefix("emit ") {
+        if lower.hasPrefix(statement.emitPrefix) {
             let (emitStmt, extra) = try parseEmit(lines, at: i)
             return (.emit(emitStmt), 1 + extra)
         }
 
         // "if {condition},"  (conditional, possibly followed by "otherwise,")
-        if t.lowercased().hasPrefix("if ") && t.hasSuffix(",") {
+        if lower.hasPrefix(statement.ifPrefix) && t.hasSuffix(",") {
             let (cond, consumed) = try parseConditional(lines, at: i, file: file)
+            trace.log(.statement, "L\(line.number) -> conditional")
             return (.conditional(cond), consumed)
         }
         // Single-line branch: `if {condition}, {action} [, otherwise {action}].`
         // The comma after the condition already delimits it, so the indented
         // multi-line form is optional — both modalities are supported and read as
         // plain English (`if the entity does not link to the input, add …`).
-        if t.lowercased().hasPrefix("if "),
+        if lower.hasPrefix(statement.ifPrefix),
            let single = try parseInlineConditional(line, file: file) {
             return (.conditional(single), 1)
         }
@@ -381,7 +389,7 @@ public struct StatementParser {
         if let choiceBranch = try parseChoiceBranch(lines, at: i, file: file) {
             return (.conditional(choiceBranch.statement), choiceBranch.consumed)
         }
-        if t.lowercased().hasPrefix(lexicon.grammar.unlessYouDecideIntroducer) && t.hasSuffix(",") {
+        if lower.hasPrefix(lexicon.grammar.unlessYouDecideIntroducer) && t.hasSuffix(",") {
             let (cond, consumed) = try parseUnlessDecisionConditional(lines, at: i, file: file)
             return (.conditional(cond), consumed)
         }
@@ -390,25 +398,31 @@ public struct StatementParser {
         // value reads naturally (`let candidates be the stale pages …`). The
         // RHS goes through `parseBindValue`, so a tool-backed relation fetch is
         // hoisted at lowering exactly as for `bind`.
-        if t.lowercased().hasPrefix("let "),
-           case let afterLet = String(t.dropFirst(4)),
-           let beRange = afterLet.range(of: " be ") {
+        if lower.hasPrefix(statement.letPrefix),
+           case let afterLet = String(t.dropFirst(statement.letPrefix.count)),
+           let beRange = afterLet.range(of: statement.letBeMarker) {
             let name = lexicon.stripLeadingArticle(
                 String(afterLet[afterLet.startIndex ..< beRange.lowerBound]))
             var valueStr = String(afterLet[beRange.upperBound...]).trimmingCharacters(in: .whitespaces)
             if valueStr.hasSuffix(".") { valueStr = String(valueStr.dropLast()) }
             if !name.isEmpty, !valueStr.isEmpty {
                 let (expr, extra) = try parseBindValue(valueStr, lines: lines, at: i)
+                trace.log(.statement, "L\(line.number) -> letBind")
                 return (.bind(BindStatementAST(name: name, value: expr, sourceLine: line.number)), 1 + extra)
             }
+            try raiseStructural(
+                .unparseableStatement,
+                message: "malformed `let … be …` statement",
+                range: SourceRange(file: file, line: line.number, column: 1),
+                help: "Use `let <name> be <value>.` with both a non-empty name and value.")
         }
 
         // "bind {name} = invoke {tool} with ..."
         // "rebind {name} = invoke {tool} with ..."
-        if t.lowercased().hasPrefix("bind ") || t.lowercased().hasPrefix("rebind ") {
-            let isRebind = t.lowercased().hasPrefix("rebind ")
-            let rest = String(t.dropFirst(isRebind ? 7 : 5))
-            if let eqRange = rest.range(of: " = ") {
+        if lower.hasPrefix(statement.bindPrefix) || lower.hasPrefix(statement.rebindPrefix) {
+            let isRebind = lower.hasPrefix(statement.rebindPrefix)
+            let rest = String(t.dropFirst(isRebind ? statement.rebindPrefix.count : statement.bindPrefix.count))
+            if let eqRange = rest.range(of: "=") {
                 let name = String(rest[rest.startIndex ..< eqRange.lowerBound]).trimmingCharacters(in: .whitespaces)
                 let valueStr = String(rest[eqRange.upperBound...]).trimmingCharacters(in: .whitespaces)
                 // Collect continuation lines (for multi-line invoke args)
@@ -416,13 +430,24 @@ public struct StatementParser {
                 let stmt = isRebind
                     ? StatementAST.rebind(RebindStatementAST(name: name, value: expr, sourceLine: line.number))
                     : StatementAST.bind(BindStatementAST(name: name, value: expr, sourceLine: line.number))
+                trace.log(.statement, "L\(line.number) -> \(isRebind ? "rebind" : "bind")")
                 return (stmt, 1 + extra)
             }
+            try raiseStructural(
+                .unparseableStatement,
+                message: "malformed `\(isRebind ? "rebind" : "bind")` assignment (expected `=`)",
+                range: SourceRange(file: file, line: line.number, column: 1),
+                help: "Use `bind <name> = <value>.` or `rebind <name> = <value>.`; an empty RHS may be followed by an indented fenced code block.")
         }
 
         // B2: "while {condition},"
-        if t.lowercased().hasPrefix("while ") && t.hasSuffix(",") {
-            let condText = String(t.dropFirst("while ".count).dropLast()).trimmingCharacters(in: .whitespaces)
+        if lower.hasPrefix(statement.whilePrefix) && t.hasSuffix(",") {
+            let condText = String(t.dropFirst(statement.whilePrefix.count).dropLast()).trimmingCharacters(in: .whitespaces)
+            guard !condText.isEmpty else {
+                try raiseStructural(.unparseableStatement, message: "malformed `while` block header (empty condition)",
+                                    range: SourceRange(file: file, line: line.number, column: 1),
+                                    help: "Use `while <condition>,` with a non-empty condition and an indented body.")
+            }
             let cond = exprParser.parse(condText)
             let parentIndent = line.indent
             var bodyLines: [SourceLine] = []
@@ -434,12 +459,18 @@ public struct StatementParser {
                 else { break }
             }
             let body = try parseBlock(bodyLines, file: file)
+            trace.log(.statement, "L\(line.number) -> while")
             return (.iteration(IterationStatementAST(mode: .whileCondition(cond), body: body, sourceLine: line.number)), j - i)
         }
 
         // B2: "until {condition},"
-        if t.lowercased().hasPrefix("until ") && t.hasSuffix(",") {
-            let condText = String(t.dropFirst("until ".count).dropLast()).trimmingCharacters(in: .whitespaces)
+        if lower.hasPrefix(statement.untilPrefix) && t.hasSuffix(",") {
+            let condText = String(t.dropFirst(statement.untilPrefix.count).dropLast()).trimmingCharacters(in: .whitespaces)
+            guard !condText.isEmpty else {
+                try raiseStructural(.unparseableStatement, message: "malformed `until` block header (empty condition)",
+                                    range: SourceRange(file: file, line: line.number, column: 1),
+                                    help: "Use `until <condition>,` with a non-empty condition and an indented body.")
+            }
             let cond = exprParser.parse(condText)
             let parentIndent = line.indent
             var bodyLines: [SourceLine] = []
@@ -451,22 +482,33 @@ public struct StatementParser {
                 else { break }
             }
             let body = try parseBlock(bodyLines, file: file)
+            trace.log(.statement, "L\(line.number) -> until")
             return (.iteration(IterationStatementAST(mode: .untilCondition(cond), body: body, sourceLine: line.number)), j - i)
         }
 
         // "simultaneously:" with each top-level body statement as a branch.
-        if t.lowercased() == "simultaneously:" {
+        if lower == statement.simultaneouslyHeader {
             let (sim, consumed) = try parseSimultaneously(lines, at: i, file: file)
             return (.simultaneously(sim), consumed)
         }
 
         // "recover from {pattern}:"  or  "recover where {predicate}:"
-        let tl = t.lowercased()
-        if tl.hasPrefix("recover from ") || tl.hasPrefix("recover where ") {
+        let tl = lower
+        if tl.hasPrefix(statement.recoverFromPrefix) || tl.hasPrefix(statement.recoverWherePrefix) {
             let (rec, consumed) = try parseRecover(lines, at: i, file: file)
+            trace.log(.statement, "L\(line.number) -> recover")
             // The `attached` field is a placeholder — `parseBlock` will replace it
             // with the actual preceding statement after the loop iteration returns.
             return (.recover(rec), consumed)
+        }
+
+        // Malformed recover introducer without a parseable pattern.
+        if tl.hasPrefix(statement.recoverPrefix) {
+            try raiseStructural(
+                .unparseableStatement,
+                message: "malformed `recover` header",
+                range: SourceRange(file: file, line: line.number, column: 1),
+                help: "Use `recover from \"<code>\":` or `recover where <predicate>:` with an indented handler body.")
         }
 
         if let every = parseEveryEach(line) {
@@ -477,8 +519,18 @@ public struct StatementParser {
         // Continuation lines (deeper indent, no period) are folded into the
         // invocation text and reported in `consumed` so `parseBlock` skips them.
         let (folded, contConsumed) = collectMultiLineCounted(lines, at: i)
+        trace.log(.statement, "L\(line.number) -> phraseInvocation")
         return (.phraseInvocation(PhraseInvocationAST(words: folded, sourceLine: line.number)),
                 1 + contConsumed)
+    }
+
+    /// Report a structural diagnostic through the batch engine (if any) and throw
+    /// so engine-less callers still fail fast.
+    private func raiseStructural(_ code: DiagnosticCode, message: String,
+                                 range: SourceRange, help: String) throws -> Never {
+        let diag = Diagnostic.structural(code, message: message, range: range, help: help)
+        if let diagnostics { diagnostics.report(diag) }
+        throw CompilerError.diagnostics([diag])
     }
 
     public static func topicLabel(in text: String) -> (label: String, rest: String)? {
@@ -525,8 +577,8 @@ public struct StatementParser {
             return tableStatements
         }
 
-        guard statement.lowercased().hasPrefix("do ") else { return nil }
-        let rest = String(statement.dropFirst(3)).trimmingCharacters(in: .whitespaces)
+        guard statement.lowercased().hasPrefix(lexicon.grammar.statement.doPrefix) else { return nil }
+        let rest = String(statement.dropFirst(lexicon.grammar.statement.doPrefix.count)).trimmingCharacters(in: .whitespaces)
         let chunks = splitStatementChain(rest)
         guard chunks.count > 1 else { return nil }
         return try chunks.compactMap { chunk in
@@ -548,7 +600,7 @@ public struct StatementParser {
         let line = lines[i]
         let t = line.statement
         let lower = t.lowercased()
-        let collectUntilNextHeading = lower.hasPrefix("use judgment to follow the ")
+        let collectUntilNextHeading = lower.hasPrefix(lexicon.grammar.judgmentFollowCollectPrefix)
 
         func collectBody() -> (text: [String], consumed: Int) {
             var bodyLines: [String] = []
@@ -689,8 +741,9 @@ public struct StatementParser {
         -> (statement: ConditionalStatementAST, consumed: Int)? {
         let line = lines[i]
         let t = line.statement.trimmingCharacters(in: .whitespaces)
-        guard t.lowercased().hasPrefix("if "), t.hasSuffix(":") else { return nil }
-        let label = String(t.dropFirst(3).dropLast()).trimmingCharacters(in: .whitespaces)
+        let statement = lexicon.grammar.statement
+        guard t.lowercased().hasPrefix(statement.ifPrefix), t.hasSuffix(":") else { return nil }
+        let label = String(t.dropFirst(statement.ifPrefix.count).dropLast()).trimmingCharacters(in: .whitespaces)
         guard let selected = choiceBranchSelection(label) else { return nil }
 
         let parentIndent = line.indent
@@ -707,17 +760,17 @@ public struct StatementParser {
             }
         }
         let body = try parseBlock(bodyLines, file: file)
-        let condition = exprParser.parse("choice is \"\(selected)\"")
+        let condition = exprParser.parse("\(lexicon.grammar.choiceBranchLabels.choiceConditionPrefix)\"\(selected)\"")
         return (ConditionalStatementAST(condition: condition, thenBlock: body, elseBlock: nil,
                                         sourceLine: line.number), j - i)
     }
 
     private func choiceBranchSelection(_ label: String) -> String? {
         let lower = label.lowercased()
-        if lower == "yes" || lower == "the user agrees" || lower == "the user says yes" { return "yes" }
-        if lower == "no" || lower == "the user declines" || lower == "the user says no" { return "no" }
-        let prefixes = ["the user picks ", "the user selects ", "the user chooses ", "user picks ", "user selects ", "user chooses "]
-        for prefix in prefixes where lower.hasPrefix(prefix) {
+        let labels = lexicon.grammar.choiceBranchLabels
+        if labels.yesLabels.contains(lower) { return "yes" }
+        if labels.noLabels.contains(lower) { return "no" }
+        for prefix in labels.pickPrefixes where lower.hasPrefix(prefix) {
             let value = String(label.dropFirst(prefix.count)).trimmingCharacters(in: .whitespaces)
             return value.isEmpty ? nil : value
         }
@@ -761,7 +814,8 @@ public struct StatementParser {
     /// array otherwise (empty = inert/iteration, consumed without execution).
     private func tableStatements(_ line: SourceLine, file: String) throws -> [StatementAST]? {
         guard let (mode, table) = TableParser.decode(line.text) else { return nil }
-        let parser = TableParser(lexicon: lexicon)
+        trace.log(.statement, "table \(mode) \(table.rows.count) row(s), \(table.header.count) column(s) @L\(line.number)")
+        let parser = TableParser(lexicon: lexicon, trace: trace)
         switch mode {
         case .decision:
             var out: [StatementAST] = []
@@ -775,7 +829,7 @@ public struct StatementParser {
             }
             return out
         case .data(let name):
-            return [dataTableBinding(table, name: name, line: line)]
+            return [try dataTableBinding(table, name: name, line: line, file: file)]
         case .aiDiscretion:
             return [proseStep(parser.aiDecisionProse(table), dispatch: .discretion, line: line)]
         case .aiAutonomy:
@@ -788,11 +842,19 @@ public struct StatementParser {
     /// Build a `bind <name> = <recordList>` from a data table. Field names come
     /// from the header; each cell is a literal value (numbers/money/duration
     /// parse as literals, everything else is a string literal).
-    private func dataTableBinding(_ table: TableParser.ParsedTable, name: String?, line: SourceLine) -> StatementAST {
-        let fields = table.header
-        let rows = table.rows.map { row -> [ExpressionAST] in
-            (0 ..< fields.count).map { idx in
-                dataCellValue(idx < row.count ? row[idx] : "")
+    private func dataTableBinding(_ table: TableParser.ParsedTable, name: String?, line: SourceLine, file: String) throws -> StatementAST {
+        let columns = table.header.map(parseDataColumnHeader)
+        let fields = columns.map(\.name)
+        let rows = try table.rows.enumerated().map { rowIndex, row -> [ExpressionAST] in
+            try (0 ..< fields.count).map { idx in
+                try dataCellValue(
+                    idx < row.count ? row[idx] : "",
+                    type: columns[idx].type,
+                    row: rowIndex + 1,
+                    column: fields[idx],
+                    line: line,
+                    file: file
+                )
             }
         }
         return .bind(BindStatementAST(
@@ -805,15 +867,57 @@ public struct StatementParser {
     /// Coerce a data-table cell to a literal expression. A cell that parses to a
     /// literal keeps its type; anything else becomes a string literal (a data
     /// value is never a state read).
-    private func dataCellValue(_ raw: String) -> ExpressionAST {
+    private func parseDataColumnHeader(_ raw: String) -> (name: String, type: String?) {
+        let trimmed = raw.trimmingCharacters(in: .whitespaces)
+        guard trimmed.hasSuffix(")"), let open = trimmed.lastIndex(of: "(") else {
+            return (trimmed, nil)
+        }
+        let name = String(trimmed[trimmed.startIndex..<open]).trimmingCharacters(in: .whitespaces)
+        let type = String(trimmed[trimmed.index(after: open)..<trimmed.index(before: trimmed.endIndex)])
+            .trimmingCharacters(in: .whitespaces)
+        return (name.isEmpty ? trimmed : name, type.isEmpty ? nil : type)
+    }
+
+    private func dataCellValue(_ raw: String, type: String?, row: Int, column: String, line: SourceLine, file: String) throws -> ExpressionAST {
         let cell = raw.trimmingCharacters(in: .whitespaces)
         if cell.isEmpty { return .literal(.string("")) }
         if cell.hasPrefix("\"") && cell.hasSuffix("\"") && cell.count >= 2 {
             return .literal(.string(String(cell.dropFirst().dropLast())))
         }
         let parsed = exprParser.parse(cell)
+        if let type {
+            try validateDataCell(parsed, raw: cell, type: type, row: row, column: column, line: line, file: file)
+        }
         if case .literal = parsed { return parsed }
         return .literal(.string(cell))
+    }
+
+    private func validateDataCell(_ parsed: ExpressionAST, raw: String, type: String, row: Int, column: String, line: SourceLine, file: String) throws {
+        let lower = type.lowercased()
+        let ok: Bool
+        switch lower {
+        case "string", "text":
+            ok = true
+        case "number":
+            if case .literal(.integer) = parsed { ok = true }
+            else if case .literal(.double) = parsed { ok = true }
+            else { ok = false }
+        case "money":
+            if case .literal(.money) = parsed { ok = true } else { ok = false }
+        case "boolean", "bool":
+            if case .literal(.boolean) = parsed { ok = true } else { ok = false }
+        case "duration":
+            if case .literal(.duration) = parsed { ok = true } else { ok = false }
+        default:
+            ok = true
+        }
+        guard ok else {
+            try raiseStructural(
+                .invalidTableCell,
+                message: "table cell at row \(row), column `\(column)` expected \(type), got `\(raw)`",
+                range: SourceRange(file: file, line: line.number, column: 1),
+                help: "Fix the cell value to match the column type or remove the `(Type)` annotation from the header.")
+        }
     }
 
     /// Split a shell-block body into individual commands, dropping blank lines
@@ -884,12 +988,7 @@ public struct StatementParser {
 
     private func startsWithPrimitiveStatement(_ raw: String) -> Bool {
         let lower = raw.lowercased()
-        let prefixes = [
-            "emit ", "bind ", "rebind ", "invoke ", "if ", "while ", "until ",
-            "wait ", "recover ", "complete", "commit", "let ", "for each ",
-            "for every ", "simultaneously:"
-        ]
-        return prefixes.contains { lower.hasPrefix($0) }
+        return lexicon.grammar.statement.primitivePrefixes.contains { lower.hasPrefix($0) }
     }
 
     private struct BacktickSpan {
@@ -1058,10 +1157,9 @@ public struct StatementParser {
     }
 
     private func passiveVoiceRewrite(_ text: String) -> String? {
-        let lower = text.lowercased()
         let markers = lexicon.grammar.passiveModalityMarkers
         for marker in markers {
-            guard let range = lower.range(of: marker) else { continue }
+            guard let range = text.range(of: marker, options: [.caseInsensitive]) else { continue }
             let subject = String(text[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
             var verb = String(text[range.upperBound...]).trimmingCharacters(in: .whitespaces)
             guard !subject.isEmpty, verb.hasSuffix("ed") else { continue }
@@ -1135,7 +1233,7 @@ public struct StatementParser {
 
     private func parseEveryEach(_ line: SourceLine) -> IterationStatementAST? {
         let t = line.statement
-        for marker in [" every ", " each "] {
+        for marker in lexicon.grammar.iterationMarkers.embeddedEachMarkers {
             guard let range = rangeOfMarkerOutsideQuotes(marker, in: t) else { continue }
             let action = String(t[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
             let rawNounPhrase = String(t[range.upperBound...]).trimmingCharacters(in: .whitespaces)
@@ -1188,7 +1286,7 @@ public struct StatementParser {
         }
 
         // 2. Single filter clause: whose / within the last / in the next.
-        if let r = rangeOfMarkerOutsideQuotes(" whose ", in: work) {
+        if let r = rangeOfMarkerOutsideQuotes(lexicon.grammar.iterationMarkers.whoseMarker, in: work) {
             let head = String(work[..<r.lowerBound])
             let clause = String(work[r.upperBound...]).trimmingCharacters(in: .whitespaces)
             if !clause.isEmpty { ref.predicate = exprParser.parse(clause) }
@@ -1209,8 +1307,8 @@ public struct StatementParser {
         for article in lexicon.articles where firstScan.lowercased().hasPrefix(article + " ") {
             firstScan = String(firstScan.dropFirst(article.count + 1)); break
         }
-        if firstScan.lowercased().hasPrefix("first ") {
-            let after = String(firstScan.dropFirst("first ".count)).trimmingCharacters(in: .whitespaces)
+        if firstScan.lowercased().hasPrefix(lexicon.grammar.iterationMarkers.firstPrefix) {
+            let after = String(firstScan.dropFirst(lexicon.grammar.iterationMarkers.firstPrefix.count)).trimmingCharacters(in: .whitespaces)
             let comps = after.split(separator: " ", maxSplits: 1).map(String.init)
             if let n = Int(comps.first ?? "") {
                 ref.take = n
@@ -1252,34 +1350,34 @@ public struct StatementParser {
 
                 // Enter "invoke args" mode when we see ` with ` at depth 0.
                 if depth == 0, !inInvokeArgs,
-                   text[i...].lowercased().hasPrefix(" with ") {
+                   text[i...].lowercased().hasPrefix(lexicon.grammar.merconfig.withMarker) {
                     inInvokeArgs = true
                 }
 
                 // `, and ` is a chain terminator even when we're inside an
                 // invoke argument list — `and` introduces the next element.
                 if depth == 0,
-                   text[i...].lowercased().hasPrefix(", and ") {
+                   text[i...].lowercased().hasPrefix(lexicon.grammar.iterationMarkers.chainCommaAndMarker) {
                     parts.append(cleanChainPart(current))
                     current = ""
                     inInvokeArgs = false
-                    i = text.index(i, offsetBy: ", and ".count)
+                    i = text.index(i, offsetBy: lexicon.grammar.iterationMarkers.chainCommaAndMarker.count)
                     continue
                 }
                 if depth == 0,
-                   text[i...].lowercased().hasPrefix(" and ") {
+                   text[i...].lowercased().hasPrefix(lexicon.grammar.iterationMarkers.chainAndMarker) {
                     parts.append(cleanChainPart(current))
                     current = ""
                     inInvokeArgs = false
-                    i = text.index(i, offsetBy: " and ".count)
+                    i = text.index(i, offsetBy: lexicon.grammar.iterationMarkers.chainAndMarker.count)
                     continue
                 }
                 if depth == 0,
-                   text[i...].lowercased().hasPrefix(" then ") {
+                   text[i...].lowercased().hasPrefix(lexicon.grammar.iterationMarkers.chainThenMarker) {
                     parts.append(cleanChainPart(current))
                     current = ""
                     inInvokeArgs = false
-                    i = text.index(i, offsetBy: " then ".count)
+                    i = text.index(i, offsetBy: lexicon.grammar.iterationMarkers.chainThenMarker.count)
                     continue
                 }
                 // Plain comma only splits when not collecting invoke arguments.
@@ -1299,18 +1397,17 @@ public struct StatementParser {
 
     private func cleanChainPart(_ part: String) -> String {
         var s = part.trimmingCharacters(in: .whitespaces)
-        if s.lowercased().hasPrefix("and ") { s = String(s.dropFirst(4)).trimmingCharacters(in: .whitespaces) }
-        if s.lowercased().hasPrefix("then ") { s = String(s.dropFirst(5)).trimmingCharacters(in: .whitespaces) }
+        if s.lowercased().hasPrefix(lexicon.grammar.iterationMarkers.cleanupAndPrefix) {
+            s = String(s.dropFirst(lexicon.grammar.iterationMarkers.cleanupAndPrefix.count)).trimmingCharacters(in: .whitespaces)
+        }
+        if s.lowercased().hasPrefix(lexicon.grammar.iterationMarkers.cleanupThenPrefix) {
+            s = String(s.dropFirst(lexicon.grammar.iterationMarkers.cleanupThenPrefix.count)).trimmingCharacters(in: .whitespaces)
+        }
         return s
     }
 
     private func camelize(_ raw: String) -> String {
-        let parts = raw.lowercased()
-            .split(whereSeparator: { $0 == " " || $0 == "_" || $0 == "-" })
-            .map(String.init)
-        guard let head = parts.first else { return raw.lowercased() }
-        let tail = parts.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }
-        return ([head] + tail).joined()
+        IdentifierNaming.lowerCamelSplittingHyphen(raw)
     }
 
     private func rangeOfMarkerOutsideQuotes(_ marker: String, in text: String) -> Range<String.Index>? {
@@ -1320,6 +1417,18 @@ public struct StatementParser {
     // MARK: - Bind value (invoke expression or literal)
 
     private func parseBindValue(_ s: String, lines: [SourceLine], at i: Int) throws -> (ExpressionAST, Int) {
+        if s.trimmingCharacters(in: .whitespaces).isEmpty {
+            var j = i + 1
+            while j < lines.count {
+                let l = lines[j]
+                if l.isEmpty || l.isComment { j += 1; continue }
+                if l.statement.hasPrefix(codeBlockSentinelPrefix) {
+                    return (exprParser.parseAtom(l.statement), j - i)
+                }
+                break
+            }
+        }
+
         // B3: "decide whether <question>" — routes to llm.decide at runtime.
         if s.lowercased().hasPrefix(lexicon.grammar.decideWhetherIntroducer) {
             let question = String(s.dropFirst(lexicon.grammar.decideWhetherIntroducer.count)).trimmingCharacters(in: .whitespaces)
@@ -1351,7 +1460,7 @@ public struct StatementParser {
             return (exprParser.parseAtom(s), 0)
         }
 
-        if s.lowercased().hasPrefix("invoke ") {
+        if s.lowercased().hasPrefix(lexicon.grammar.statement.invokePrefix) {
             let (expr, extra) = parseInvokeExpr(s, lines: lines, at: i)
             return (expr, extra)
         }
@@ -1393,23 +1502,30 @@ public struct StatementParser {
     func buildInvokeExpr(_ s: String) -> ExpressionAST {
         // "invoke {tool name} with {k = v, k = v}"
         // Strip "invoke "
+        trace.log(.statement, "buildInvokeExpr start: \(ParserTrace.short(s))")
         var rest = s
-        if rest.lowercased().hasPrefix("invoke ") { rest = String(rest.dropFirst(7)) }
+        if rest.lowercased().hasPrefix(lexicon.grammar.statement.invokePrefix) {
+            rest = String(rest.dropFirst(lexicon.grammar.statement.invokePrefix.count))
+        }
+        trace.log(.statement, "buildInvokeExpr rest: \(ParserTrace.short(rest))")
 
         let toolName: String
         let args: [(String, ExpressionAST)]
 
-        if let withRange = rest.lowercased().range(of: " with ") {
+        if let withRange = rest.range(of: lexicon.grammar.merconfig.withMarker, options: [.caseInsensitive]) {
             toolName = String(rest[rest.startIndex ..< withRange.lowerBound]).trimmingCharacters(in: .whitespaces)
             let argStr = String(rest[withRange.upperBound...]).trimmingCharacters(in: .whitespaces)
+            trace.log(.statement, "buildInvokeExpr args: \(ParserTrace.short(argStr))")
             args = parseArgList(argStr)
         } else {
             toolName = rest.trimmingCharacters(in: .whitespaces)
             args = []
         }
+        trace.log(.statement, "buildInvokeExpr tool: \(toolName) args=\(args.count)")
 
         // Resolve tool method name
         let methodName = symbols?.tool(fromWords: toolName)?.methodName ?? methodize(toolName)
+        trace.log(.statement, "buildInvokeExpr method: \(methodName)")
         return .invoke(methodName, args)
     }
 
@@ -1422,6 +1538,7 @@ public struct StatementParser {
             guard let range = p.range(of: " = ") ?? p.range(of: "=") else { return nil }
             let key = String(p[p.startIndex ..< range.lowerBound]).trimmingCharacters(in: .whitespaces)
             let val = String(p[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+            trace.log(.statement, "parseArgList key=\(key) val=\(ParserTrace.short(val))")
             return (key, exprParser.parse(val))
         }
     }
@@ -1462,7 +1579,7 @@ public struct StatementParser {
     private func parseEmit(_ lines: [SourceLine], at i: Int) throws -> (EmitStatementAST, Int) {
         let line = lines[i]
         let t = line.statement
-        var rest = String(t.dropFirst(5)).trimmingCharacters(in: .whitespaces)  // drop "emit "
+        var rest = String(t.dropFirst(lexicon.grammar.statement.emitPrefix.count)).trimmingCharacters(in: .whitespaces)
 
         let eventID: String
         var extra = 0
@@ -1491,7 +1608,7 @@ public struct StatementParser {
             }
         }
 
-        if let withRange = rest.lowercased().range(of: " with ") {
+        if let withRange = rest.range(of: lexicon.grammar.merconfig.withMarker, options: [.caseInsensitive]) {
             eventID = String(rest[rest.startIndex ..< withRange.lowerBound]).trimmingCharacters(in: .whitespaces)
             let argStr = String(rest[withRange.upperBound...]).trimmingCharacters(in: .whitespaces)
             let payload = parseArgList(argStr)
@@ -1510,7 +1627,9 @@ public struct StatementParser {
 
         // condition text: strip leading "if " and trailing ","
         var condText = t
-        if condText.lowercased().hasPrefix("if ") { condText = String(condText.dropFirst(3)) }
+        if condText.lowercased().hasPrefix(lexicon.grammar.statement.ifPrefix) {
+            condText = String(condText.dropFirst(lexicon.grammar.statement.ifPrefix.count))
+        }
         if condText.hasSuffix(",") { condText = String(condText.dropLast()) }
         let condition = parseDecisionPredicate(condText)
 
@@ -1526,12 +1645,13 @@ public struct StatementParser {
             else { break }
         }
 
-        // Check for "otherwise,"
+        // Check for the grammar's `otherwise` branch marker.
         var elseBlock: ASTBlock? = nil
         var elseConsumed = j
         if j < lines.count && lines[j].isContent {
             let nextText = lines[j].statement.lowercased()
-            if nextText == "otherwise" || nextText == "otherwise," {
+            let keywords = lexicon.grammar.statement
+            if nextText == keywords.otherwiseKeyword || nextText == keywords.otherwiseCommaKeyword {
                 let otherwiseIndent = lines[j].indent
                 var elseLines: [SourceLine] = []
                 var k = j + 1
@@ -1564,14 +1684,14 @@ public struct StatementParser {
     /// no inline body (the comma-terminated multi-line header is handled upstream).
     private func parseInlineConditional(_ line: SourceLine, file: String) throws -> ConditionalStatementAST? {
         let t = line.statement
-        let afterIf = String(t.dropFirst(3)).trimmingCharacters(in: .whitespaces)
+        let afterIf = String(t.dropFirst(lexicon.grammar.statement.ifPrefix.count)).trimmingCharacters(in: .whitespaces)
         guard let sep = inlineConditionSeparator(in: afterIf) else { return nil }
         let condText = String(afterIf[..<sep.lowerBound]).trimmingCharacters(in: .whitespaces)
         var bodyText = String(afterIf[sep.upperBound...]).trimmingCharacters(in: .whitespaces)
         guard !condText.isEmpty, !bodyText.isEmpty else { return nil }
 
         var elseBlock: ASTBlock? = nil
-        if let elseRange = rangeOfMarkerOutsideQuotes(", otherwise ", in: bodyText) {
+        if let elseRange = rangeOfMarkerOutsideQuotes(lexicon.grammar.statement.inlineOtherwiseMarker, in: bodyText) {
             let elseText = String(bodyText[elseRange.upperBound...]).trimmingCharacters(in: .whitespaces)
             bodyText = String(bodyText[..<elseRange.lowerBound]).trimmingCharacters(in: .whitespaces)
             if !elseText.isEmpty {
@@ -1603,7 +1723,8 @@ public struct StatementParser {
                 inQuotes.toggle()
             } else if c == ",", !inQuotes {
                 let after = String(s[s.index(after: idx)...]).drop(while: { $0 == " " }).lowercased()
-                if after.hasPrefix("and ") || after.hasPrefix("or ") {
+                if after.hasPrefix(lexicon.grammar.iterationMarkers.cleanupAndPrefix)
+                    || after.hasPrefix(lexicon.grammar.booleanConnectors.orMarker.trimmingCharacters(in: .whitespaces) + " ") {
                     idx = s.index(after: idx); continue
                 }
                 return idx..<s.index(after: idx)
@@ -1619,8 +1740,10 @@ public struct StatementParser {
         let line = lines[i]
         let t = line.statement
         // "for each {var} in {collection},"
-        var rest = t.lowercased().hasPrefix("for each ") ? String(t.dropFirst(9))
-                 : String(t.dropFirst("for every ".count))
+        let statement = lexicon.grammar.statement
+        var rest = t.lowercased().hasPrefix(statement.forEachPrefix)
+            ? String(t.dropFirst(statement.forEachPrefix.count))
+            : String(t.dropFirst(statement.forEveryPrefix.count))
         if rest.hasSuffix(",") { rest = String(rest.dropLast()) }
         if rest.hasSuffix(":") { rest = String(rest.dropLast()) }
         rest = rest.trimmingCharacters(in: .whitespaces)
@@ -1633,7 +1756,7 @@ public struct StatementParser {
         // <unit>` clause is swallowed by the naive ` in ` collection split and
         // the future window is silently lost.
         let (headPhrase, refinement) = extractIterationRefinement(rest)
-        if let inRange = headPhrase.lowercased().range(of: " in ") {
+        if let inRange = headPhrase.range(of: lexicon.grammar.iterationMarkers.collectionInMarker, options: [.caseInsensitive]) {
             // Explicit collection: `for each {var} in {collection}`.
             variable   = String(headPhrase[headPhrase.startIndex ..< inRange.lowerBound]).trimmingCharacters(in: .whitespaces)
             collection = exprParser.parse(String(headPhrase[inRange.upperBound...]))
@@ -1746,8 +1869,9 @@ public struct StatementParser {
         // Parse pattern
         let pattern: RecoverPatternAST
         let tl = headerText.lowercased()
-        if tl.hasPrefix("recover from ") {
-            var rest = String(headerText.dropFirst("recover from ".count)).trimmingCharacters(in: .whitespaces)
+        let statement = lexicon.grammar.statement
+        if tl.hasPrefix(statement.recoverFromPrefix) {
+            var rest = String(headerText.dropFirst(statement.recoverFromPrefix.count)).trimmingCharacters(in: .whitespaces)
             // Authors can write the name as either a bare identifier
             // (`recover from approval_denied`) or a string literal
             // (`recover from "planning.host_policy_denied"`). The quoted form
@@ -1768,7 +1892,7 @@ public struct StatementParser {
             }
         } else {
             // "recover where {predicate}"
-            let predText = String(headerText.dropFirst("recover where ".count)).trimmingCharacters(in: .whitespaces)
+            let predText = String(headerText.dropFirst(statement.recoverWherePrefix.count)).trimmingCharacters(in: .whitespaces)
             pattern = .predicate(exprParser.parse(predText))
         }
 
@@ -1833,9 +1957,10 @@ public struct StatementParser {
     /// statement from the parser entirely.
     private func isStructuralBoundary(_ line: SourceLine) -> Bool {
         let t = line.statement.lowercased()
-        return t.hasPrefix("recover from ")
-            || t.hasPrefix("recover where ")
-            || t == "simultaneously:"
+        let statement = lexicon.grammar.statement
+        return t.hasPrefix(statement.recoverFromPrefix)
+            || t.hasPrefix(statement.recoverWherePrefix)
+            || t == statement.simultaneouslyHeader
     }
 
     // MARK: - Utilities
@@ -1851,10 +1976,6 @@ public struct StatementParser {
 
     /// Convert a multi-word tool name to lowerCamelCase method name.
     func methodize(_ name: String) -> String {
-        let words = name.lowercased()
-            .components(separatedBy: CharacterSet.alphanumerics.inverted)
-            .filter { !$0.isEmpty && !lexicon.articles.contains($0) }
-        guard let first = words.first else { return name }
-        return first + words.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined()
+        IdentifierNaming.methodize(name, stopwords: lexicon.articles)
     }
 }

@@ -33,7 +33,11 @@ public struct RulebookRule: Sendable, Equatable {
 }
 
 public struct InformRulebookParser {
-    public init() {}
+    let lexicon: EnglishLexicon
+
+    public init(lexicon: EnglishLexicon = .default) {
+        self.lexicon = lexicon
+    }
 
     public func parse(_ rules: [RuleAST]) -> [RulebookRule] {
         rules.compactMap(parse).sorted { lhs, rhs in
@@ -47,14 +51,10 @@ public struct InformRulebookParser {
     public func parse(_ rule: RuleAST) -> RulebookRule? {
         let text = rule.text.trimmingCharacters(in: .whitespacesAndNewlines)
         let lower = text.lowercased()
-        let phasePrefixes: [(String, RulebookPhase)] = [
-            ("before ", .before),
-            ("instead of ", .instead),
-            ("check ", .check),
-            ("carry out ", .carryOut),
-            ("after ", .after),
-            ("report ", .report)
+        let phases: [RulebookPhase] = [
+            .before, .instead, .check, .carryOut, .after, .report,
         ]
+        let phasePrefixes = Array(zip(lexicon.grammar.informRulePhasePrefixes, phases))
         guard let (prefix, phase) = phasePrefixes.first(where: { lower.hasPrefix($0.0) }) else {
             return nil
         }
@@ -74,9 +74,9 @@ public struct InformRulebookParser {
 
     private func outcome(from body: String) -> RulebookOutcome {
         let lower = body.lowercased()
-        if lower.contains("stop") { return .stopRulebook }
-        if lower.contains("success") { return .success }
-        if lower.contains("fail") { return .failure }
+        if lower.contains(lexicon.grammar.informStopOutcome) { return .stopRulebook }
+        if lower.contains(lexicon.grammar.informSuccessOutcome) { return .success }
+        if lower.contains(lexicon.grammar.informFailureOutcome) { return .failure }
         return .continueRulebook
     }
 }

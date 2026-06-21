@@ -90,10 +90,11 @@ struct SkillSectionBuilder {
             // builder is not invoked; the body is parsed verbatim instead.)
             if sec.isPreamble {
                 if !sec.rawLines.isEmpty {
-                    throw CompilerError.semanticError(
+                    try raiseStructural(
+                        .sectionStructuralError,
                         message: "content before the first heading: \"\(sec.rawLines[0].statement)\". Every line in a sectioned document must live under a heading — move it under a heading, or make it a comment (`#`/`>`).",
-                        range: SourceRange(file: file, line: sec.rawLines[0].number, column: 1)
-                    )
+                        range: SourceRange(file: file, line: sec.rawLines[0].number, column: 1),
+                        help: "Move the line under a `##`/`###` heading or prefix it with `#` or `>` to make it a comment.")
                 }
                 continue
             }
@@ -134,6 +135,8 @@ struct SkillSectionBuilder {
                 switch role {
                 case .procedure:
                     procedure.append(contentsOf: group.lines)
+                case .tables:
+                    procedure.append(contentsOf: group.lines.map(tableLineDefaultingToData))
                 case .invariants:
                     prelude.append(try assertLine(for: group, role: role, negated: false))
                 case .prohibitions:
@@ -142,7 +145,7 @@ struct SkillSectionBuilder {
                     try applyApplicability(group, negated: false, prelude: &prelude, dispatch: &dispatch)
                 case .negativeApplicability:
                     try applyApplicability(group, negated: true, prelude: &prelude, dispatch: &negativeDispatch)
-                case .template, .tools, .conventionRef, .inert:
+                case .template, .domain, .tools, .conventionRef, .inert:
                     // Non-executable roles never have executes == true.
                     break
                 }
@@ -182,9 +185,32 @@ struct SkillSectionBuilder {
             if isValidToolID(id) { return id }
         }
 
-        throw CompilerError.semanticError(
-            message: "malformed `Tools Used` bullet \"\(text)\": expected `<description> (<tool_id>)` or `` `<tool_id>` — <description> ``. A tool id is letters, digits, `.`, `_`, or `-` (e.g. `gbrain_search`, `http.get`).",
-            range: SourceRange(file: file, line: line, column: 1)
+        throw CompilerError.diagnostics([
+            Diagnostic.structural(
+                .sectionStructuralError,
+                message: "malformed `Tools Used` bullet \"\(text)\": expected `<description> (<tool_id>)` or `` `<tool_id>` — <description> ``. A tool id is letters, digits, `.`, `_`, or `-` (e.g. `gbrain_search`, `http.get`).",
+                range: SourceRange(file: file, line: line, column: 1),
+                help: "Use `<description> (<tool_id>)` or `` `<tool_id>` — <description> `` with a bare tool id (no spaces inside backticks).")
+        ])
+    }
+
+    private func tableLineDefaultingToData(_ line: SourceLine) -> SourceLine {
+        guard let (mode, body) = decodeTableSentinel(line.text), mode == .decision else {
+            return line
+        }
+        let sentinel = tableSentinelPrefix
+            + TableMode.data(name: nil).sentinelToken
+            + ":"
+            + Data(body.utf8).base64EncodedString()
+        return SourceLine(
+            indent: line.indent,
+            text: sentinel,
+            raw: line.raw,
+            number: line.number,
+            listMarker: line.listMarker,
+            headingLevel: line.headingLevel,
+            isChecklist: line.isChecklist,
+            checklistChecked: line.checklistChecked
         )
     }
 
@@ -269,10 +295,11 @@ struct SkillSectionBuilder {
         throws -> (clean: String, role: SkillSectionRole?, executes: Bool, recordedRole: String) {
         let parsed = SkillSectionRole.parseMarker(from: heading)
         if let unknown = parsed.unknownRole {
-            throw CompilerError.semanticError(
+            try raiseStructural(
+                .sectionStructuralError,
                 message: "unknown section marker term `\(unknown)` in heading \"\(heading)\". Use `(( inert ))`, `(( inert, role: <role> ))`, or `(( role: <role> ))` where <role> is one of: \(SkillSectionRole.allCases.map(\.rawValue).joined(separator: ", ")).",
-                range: SourceRange(file: file, line: headingLine, column: 1)
-            )
+                range: SourceRange(file: file, line: headingLine, column: 1),
+                help: "Fix the marker syntax or choose a recognized role from the list in the message.")
         }
         // Marker-first decision is shared with `SkillMetrics` via
         // `SectionRoleResolver`; the role-retention and error policy below is
@@ -281,6 +308,7 @@ struct SkillSectionBuilder {
         let clean = parsed.cleanHeading
         let derived = rulebook.role(forHeading: clean) ?? SkillSectionRole.builtinRole(forHeading: clean)
         let decision = SectionRoleResolver.decide(marker: parsed.marker, derivedRole: derived)
+        trace.log(.skill, "resolve '\(clean)' -> \(decision.recordedRole) executes=\(decision.executes) marker=\(decision.fromMarker) @L\(headingLine)")
         if decision.resolved {
             let keptRole: SkillSectionRole?
             if decision.fromMarker {
@@ -294,10 +322,11 @@ struct SkillSectionBuilder {
         // Unresolved. Empty sections are harmless (recorded as inert); a section
         // with content is a hard error — no silent drops.
         if hasContent {
-            throw CompilerError.semanticError(
+            try raiseStructural(
+                .sectionStructuralError,
                 message: "unrecognized section heading \"\(clean)\" has content but no role. Rename it to a recognized role, add a `=== sections ===` rulebook alias, force a role with `(( role: <role> ))`, or mark it `(( inert ))`.",
-                range: SourceRange(file: file, line: headingLine, column: 1)
-            )
+                range: SourceRange(file: file, line: headingLine, column: 1),
+                help: "Add a `=== sections ===` alias in the rulebook, rename to a recognized heading, add `(( role: … ))`, or mark `(( inert ))`.")
         }
         return (clean, nil, false, "inert")
     }
@@ -315,10 +344,11 @@ struct SkillSectionBuilder {
     private func assertLine(for group: StatementGroup, role: SkillSectionRole, negated: Bool) throws -> SourceLine {
         // Multi-line invariant/prohibition blocks aren't single conditions.
         guard !group.isMultiline else {
-            throw CompilerError.semanticError(
+            try raiseStructural(
+                .sectionStructuralError,
                 message: "multi-line \(role.rawValue) item under a checkable section is not a single predicate. Make each item a one-line checkable comparison, or mark the section `(( inert, role: \(role.rawValue) ))`.",
-                range: SourceRange(file: file, line: group.head.number, column: 1)
-            )
+                range: SourceRange(file: file, line: group.head.number, column: 1),
+                help: "Split into one-line comparisons or mark the section `(( inert, role: \(role.rawValue) ))`.")
         }
         // 1D output invariant: `every emitted <noun> <predicate>` is sugar for an
         // assert on the bound result `<noun>` (shared normalization).
@@ -326,19 +356,22 @@ struct SkillSectionBuilder {
         let text = classifier.normalizeFormatInvariant(group.head.statement)
         switch classify(text) {
         case .checkable:
-            let cond = negated ? "not (\(text))" : text
+            let cond = negated
+                ? "\(lexicon.grammar.negationWrapperPrefix)\(text)\(lexicon.grammar.negationWrapperSuffix)"
+                : text
             // Synthesize with the lexicon's primary assertion marker (default
             // "make sure") so a domain that renames it stays self-consistent.
-            let marker = lexicon.assertionMarkers.first ?? "make sure"
+            let marker = lexicon.assertionMarkers.first ?? EnglishLexicon.default.assertionMarkers.first ?? ""
             return canonical("\(marker) \(cond)", from: group.head)
         case .dispatchPhrase, .fuzzy:
             // Contract/Anti-Patterns prose that isn't a checkable condition can
             // never become a deterministic assert — and we never silently drop
             // it or route it to an LLM. The author marks the section inert.
-            throw CompilerError.semanticError(
+            try raiseStructural(
+                .uncheckablePredicate,
                 message: "\(role.rawValue) item \"\(text)\" is not a structurally checkable predicate. Rephrase it as a comparison (e.g. `the connection count is at least 20`), or mark the section `(( inert, role: \(role.rawValue) ))` to keep it as documentation.",
-                range: SourceRange(file: file, line: group.head.number, column: 1)
-            )
+                range: SourceRange(file: file, line: group.head.number, column: 1),
+                help: "Rephrase as a checkable comparison or mark the section `(( inert, role: \(role.rawValue) ))`.")
         }
     }
 
@@ -359,18 +392,21 @@ struct SkillSectionBuilder {
             // `complete` is a fixed primitive; the suffix-conditional marker is
             // sourced from grammar so this stays in lockstep with the parser.
             let positiveMarker = lexicon.grammar.suffixConditionalMarkers
-                .first { $0 != lexicon.grammar.suffixConditionalNegated } ?? " only when "
+                .first { $0 != lexicon.grammar.suffixConditionalNegated }
+                ?? EnglishLexicon.default.grammar.suffixConditionalMarkers.first { $0 != EnglishLexicon.default.grammar.suffixConditionalNegated }
+                ?? ""
             let marker = negated ? positiveMarker : lexicon.grammar.suffixConditionalNegated
-            let canonicalText = "complete" + marker + text
+            let canonicalText = lexicon.grammar.statement.complete + marker + text
             prelude.append(canonical(canonicalText, from: group.head))
         case .dispatchPhrase(let phrase):
             dispatch.append(phrase)
             trace.log(.skill, "applicability dispatch phrase @L\(group.head.number): \(phrase)")
         case .fuzzy:
-            throw CompilerError.semanticError(
+            try raiseStructural(
+                .uncheckablePredicate,
                 message: "fuzzy applicability condition \"\(text)\" is neither structurally checkable nor a literal dispatch phrase. Rephrase it as a checkable predicate (a comparison such as `the connection count is at least 20`), move it to a `triggers:` dispatch phrase, or wrap it in an explicit `use judgment to …:` marker.",
-                range: SourceRange(file: file, line: group.head.number, column: 1)
-            )
+                range: SourceRange(file: file, line: group.head.number, column: 1),
+                help: "Rephrase as a comparison, move to `triggers:`, or wrap in `use judgment to …:`.")
         }
     }
 
@@ -387,5 +423,12 @@ struct SkillSectionBuilder {
     /// shared `ConditionClassifier` (single source of truth).
     func classify(_ text: String) -> Applicability {
         ConditionClassifier(symbols: symbols, lexicon: lexicon, trace: trace).classify(text)
+    }
+
+    private func raiseStructural(_ code: DiagnosticCode, message: String,
+                                 range: SourceRange, help: String) throws -> Never {
+        throw CompilerError.diagnostics([
+            Diagnostic.structural(code, message: message, range: range, help: help)
+        ])
     }
 }

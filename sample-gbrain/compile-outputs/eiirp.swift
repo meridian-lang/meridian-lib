@@ -7,6 +7,24 @@ import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
 private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
+private func meridianFormat(_ v: Value, as formatter: String) -> String {
+    switch formatter.lowercased() {
+    case "integer":
+        if case .number(let n) = v { return NSDecimalNumber(decimal: n).intValue.description }
+    case let f where f.hasPrefix("decimal(") && f.hasSuffix(")"):
+        if case .number(let n) = v, let places = Int(f.dropFirst("decimal(".count).dropLast()) {
+            let nf = NumberFormatter(); nf.minimumFractionDigits = places; nf.maximumFractionDigits = places
+            return nf.string(from: NSDecimalNumber(decimal: n)) ?? n.description
+        }
+    case "short date", "long date":
+        if case .date(let d) = v {
+            let df = DateFormatter(); df.dateStyle = formatter.lowercased() == "short date" ? .short : .long; df.timeStyle = .none
+            return df.string(from: d)
+        }
+    default: break
+    }
+    return meridianStringify(v)
+}
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).

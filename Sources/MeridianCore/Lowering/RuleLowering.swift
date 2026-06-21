@@ -70,28 +70,31 @@ public struct RuleAnalyzer {
     public func classify(_ rule: RuleAST) -> ParsedRule? {
         let text = rule.text.trimmingCharacters(in: .whitespaces)
         let lower = text.lowercased()
+        let markers = lexicon.grammar.ruleMarkers
         trace.log(.lowering, "classify rule @L\(rule.sourceLine): \(ParserTrace.short(text))")
 
         // TRIGGER: "When ..."
-        if lower.hasPrefix("when ") {
+        if lower.hasPrefix(markers.whenPrefix) {
             trace.log(.lowering, "  → trigger")
             return classifyTrigger(text, rule: rule)
         }
 
         // PRECONDITION: "... must be <participle> by <role> before ..."
-        if lower.contains(" must be ") && lower.contains(" by ") && lower.contains(" before ") {
+        if lower.contains(markers.mustBeMarker)
+            && lower.contains(markers.byMarker)
+            && lower.contains(markers.beforeMarker) {
             trace.log(.lowering, "  → precondition")
             return classifyPrecondition(text, rule: rule)
         }
 
         // INVARIANT / PARAMETER GUARD: "... must not ..."
-        if lower.contains(" must not ") {
+        if lower.contains(markers.mustNotMarker) {
             trace.log(.lowering, "  → must-not (invariant/parameter-guard)")
             return classifyMustNot(text, rule: rule)
         }
 
         // PERMISSION: "... may ..."
-        if lower.contains(" may ") {
+        if lower.contains(markers.mayMarker) {
             trace.log(.lowering, "  → permission")
             return classifyPermission(text, rule: rule)
         }
@@ -104,9 +107,10 @@ public struct RuleAnalyzer {
 
     private func classifyTrigger(_ text: String, rule: RuleAST) -> ParsedRule? {
         let lower = text.lowercased()
-        guard lower.hasPrefix("when ") else { return nil }
-        let rest = String(text.dropFirst(5))  // drop "When "
-        guard let commaRange = rest.range(of: ", ") else { return nil }
+        let markers = lexicon.grammar.ruleMarkers
+        guard lower.hasPrefix(markers.whenPrefix) else { return nil }
+        let rest = String(text.dropFirst(markers.whenPrefix.count))
+        guard let commaRange = rest.range(of: markers.commaSeparator) else { return nil }
         let conditionText = String(rest[rest.startIndex..<commaRange.lowerBound])
             .trimmingCharacters(in: .whitespaces)
         var actionText = String(rest[commaRange.upperBound...])
@@ -123,14 +127,14 @@ public struct RuleAnalyzer {
     // MARK: - Precondition
 
     private func classifyPrecondition(_ text: String, rule: RuleAST) -> ParsedRule? {
-        let lower = text.lowercased()
-        guard let mustBeRange = lower.range(of: " must be ") else { return nil }
+        let markers = lexicon.grammar.ruleMarkers
+        guard let mustBeRange = text.range(of: markers.mustBeMarker, options: [.caseInsensitive]) else { return nil }
         let subjectPart = String(text[text.startIndex..<mustBeRange.lowerBound])
             .trimmingCharacters(in: .whitespaces)
-        let afterMustBe = String(lower[mustBeRange.upperBound...])
+        let afterMustBe = String(text[mustBeRange.upperBound...])
 
-        guard let byRange = afterMustBe.range(of: " by ") else { return nil }
-        guard let beforeRange = afterMustBe.range(of: " before ") else { return nil }
+        guard let byRange = afterMustBe.range(of: markers.byMarker, options: [.caseInsensitive]) else { return nil }
+        guard let beforeRange = afterMustBe.range(of: markers.beforeMarker, options: [.caseInsensitive]) else { return nil }
 
         let roleText = String(afterMustBe[byRange.upperBound..<beforeRange.lowerBound])
             .trimmingCharacters(in: .whitespaces)
@@ -152,8 +156,8 @@ public struct RuleAnalyzer {
     // MARK: - Must not
 
     private func classifyMustNot(_ text: String, rule: RuleAST) -> ParsedRule? {
-        let lower = text.lowercased()
-        guard let mustNotRange = lower.range(of: " must not ") else { return nil }
+        let markers = lexicon.grammar.ruleMarkers
+        guard let mustNotRange = text.range(of: markers.mustNotMarker, options: [.caseInsensitive]) else { return nil }
         let subjectPart = String(text[text.startIndex..<mustNotRange.lowerBound])
             .trimmingCharacters(in: .whitespaces)
         var actionText = String(text[mustNotRange.upperBound...])
@@ -162,8 +166,7 @@ public struct RuleAnalyzer {
 
         let (subjectKind, subjectFilter, _) = parseSubject(subjectPart)
 
-        let actionLower = actionText.lowercased()
-        if let whoseRange = actionLower.range(of: " whose ") {
+        if let whoseRange = actionText.range(of: markers.whoseMarker, options: [.caseInsensitive]) {
             let objectPart = String(actionText[actionText.startIndex..<whoseRange.lowerBound])
                 .trimmingCharacters(in: .whitespaces)
             let predicatePart = String(actionText[whoseRange.upperBound...])
@@ -203,8 +206,7 @@ public struct RuleAnalyzer {
     // MARK: - Permission
 
     private func classifyPermission(_ text: String, rule: RuleAST) -> ParsedRule? {
-        let lower = text.lowercased()
-        guard let mayRange = lower.range(of: " may ") else { return nil }
+        guard let mayRange = text.range(of: lexicon.grammar.ruleMarkers.mayMarker, options: [.caseInsensitive]) else { return nil }
         let subjectPart = String(text[text.startIndex..<mayRange.lowerBound])
             .trimmingCharacters(in: .whitespaces)
         var actionText = String(text[mayRange.upperBound...])
@@ -215,9 +217,8 @@ public struct RuleAnalyzer {
 
         var conditions: ExpressionAST? = nil
         var isBounded = false
-        let actionLower = actionText.lowercased()
         for boundedMarker in lexicon.grammar.permissionBoundMarkers {
-            if let markerRange = actionLower.range(of: " " + boundedMarker) {
+            if let markerRange = actionText.range(of: " " + boundedMarker, options: [.caseInsensitive]) {
                 let condText = String(actionText[markerRange.upperBound...])
                     .trimmingCharacters(in: .whitespaces)
                 let actionOnly = String(actionText[actionText.startIndex..<markerRange.lowerBound])
@@ -279,23 +280,14 @@ public struct RuleAnalyzer {
 
     /// Extract the object noun from a parameterGuard action object like
     /// `"place an order"` → `"order"` or `"approve any orders"` → `"orders"`.
-    /// We pick the words after the first article. Without an article, return
-    /// the full string lowercased so `parseSubject`-style fallback can run.
+    /// We pick the words after the first noun-phrase determiner. Without one,
+    /// return the full string lowercased so `parseSubject`-style fallback can run.
     private func extractObjectKind(from text: String) -> String {
-        let trimmed = text.trimmingCharacters(in: .whitespaces).lowercased()
-        let words = trimmed.components(separatedBy: " ")
-        let articles = lexicon.grammar.nounPhraseDeterminers
-        for (i, w) in words.enumerated() {
-            if articles.contains(w), i + 1 < words.count {
-                return words[(i + 1)...].joined(separator: " ")
-            }
-        }
-        // No article — the whole string IS the kind (e.g. "orders").
-        return trimmed
+        ObjectKindExtractor(lexicon: lexicon).extract(from: text, noArticleFallback: .fullText)
     }
 
     /// Walk a parsed predicate expression and qualify its bare identifiers:
-    ///   - `"total amount"` (no possessive) → `objectKind.total_amount`
+    ///   - `"total amount"` (no possessive) → `objectKind.totalAmount`
     ///   - `"their X"` / `"his X"` / `"her X"` / `"its X"` → `subjectKind.X`
     ///
     /// Used by parameter-guard predicate lowering so `state.get("order.totalAmount")`
@@ -330,7 +322,7 @@ public struct RuleAnalyzer {
             }
         }
         // Bare property reference → object's property.
-        if !objectKind.isEmpty && !lower.contains(" of ") {
+        if !objectKind.isEmpty && !lower.contains(lexicon.grammar.ruleMarkers.possessiveOfMarker) {
             return .propertyAccess(.identifierRef(objectKind), trimmed)
         }
         return .identifierRef(trimmed)
@@ -353,18 +345,15 @@ public struct RuleAnalyzer {
         guard !trimmed.isEmpty, !subject.isEmpty else { return nil }
 
         // Try the longest comparison phrase that appears in the clause.
-        // We use the lexicon-tracked phrases minus their leading "is " so
+        // We use the lexicon-tracked phrases minus a leading copula so
         // shorthand rule clauses still parse.
         let comparisonPhrases: [(phrase: String, op: ComparisonOpAST)] = lexicon.comparisonMarkers.compactMap { (m, op) in
-            let stripped = m.lowercased().hasPrefix("is ")
-                ? String(m.dropFirst(3))
-                : m.lowercased()
+            let stripped = stripLeadingCopula(m)
             return stripped.isEmpty ? nil : (stripped, op)
         }
-        let lower = trimmed.lowercased()
         var bestMatch: (phrase: String, op: ComparisonOpAST, range: Range<String.Index>)? = nil
         for (phrase, op) in comparisonPhrases {
-            if let r = lower.range(of: " " + phrase + " ") {
+            if let r = trimmed.range(of: " " + phrase + " ", options: [.caseInsensitive]) {
                 if bestMatch == nil || phrase.count > bestMatch!.phrase.count {
                     bestMatch = (phrase, op, r)
                 }
@@ -418,5 +407,16 @@ public struct RuleAnalyzer {
         let lhs = ExpressionAST.propertyAccess(.identifierRef(subject), property)
         let rhs = exprParser.parse(value)
         return .comparison(lhs, .equal, rhs)
+    }
+
+    private func stripLeadingCopula(_ marker: String) -> String {
+        let lower = marker.lowercased()
+        for copula in lexicon.copulas.sorted(by: { $0.count > $1.count }) {
+            let prefix = copula + " "
+            if lower.hasPrefix(prefix) {
+                return String(marker.dropFirst(prefix.count)).lowercased()
+            }
+        }
+        return lower
     }
 }

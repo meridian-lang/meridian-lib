@@ -88,12 +88,7 @@ struct TriggerClassifier {
 
     private func canonicalName(_ spec: String) -> String {
         let stopwords = lexicon.articles.union(lexicon.prepositions)
-        let tokens = spec.lowercased()
-            .components(separatedBy: CharacterSet.alphanumerics.inverted)
-            .filter { !$0.isEmpty && !stopwords.contains($0) }
-        let head = tokens.prefix(5)
-        guard let first = head.first else { return "trigger" }
-        return first + head.dropFirst().map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined()
+        return IdentifierNaming.methodize(spec, stopwords: stopwords, limit: 5, fallback: "trigger")
     }
 }
 

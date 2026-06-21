@@ -107,7 +107,7 @@ rule "report-emit":
 - **`rewrite:` (preferred, surface-only).** The output re-parses + lowers
   through the strict pipeline, so a bad rewrite fails loudly. Use this for
   anything expressible as an existing canonical statement.
-- **`lowers to:` (escape hatch).** Targets one of the 11 existing primitives
+- **`lowers to:` (escape hatch).** Targets one of the 12 existing primitives
   directly via the canonical statement surface (e.g. `emit …`). This is "use an
   existing primitive directly," **not** hand-authored IR and **not** new
   semantics. Reserve it for constructs with no clean canonical equivalent.
@@ -308,3 +308,15 @@ MERIDIAN_TRACE=rulebook meridian compile sample-gbrain/skills/ingest.meri \
 ```
 
 See also [08_TRACING.md](08_TRACING.md).
+
+## Built-In Wave 4 Section Roles
+
+`## Domain` (`Vocabulary`, `Types`) is a non-executable section whose body is
+harvested as vocabulary before workflow parsing. Use it for small skill-local
+kind/property/state declarations.
+
+`## Tables` (`Data Tables`, `Dispatch Tables`) is executable. Unmarked Markdown
+pipe tables in this section default to data mode, while explicit `!!! table`
+markers still override the mode. Rulebook `=== sections ===` aliases can route
+other recurring table headings to `tables` when a corpus uses different
+terminology.

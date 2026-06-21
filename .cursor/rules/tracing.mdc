@@ -1,0 +1,57 @@
+---
+description: ParserTrace conventions — category hierarchy, MERIDIAN_TRACE env var, thread safety, adding a trace point, the trace parameter convention. Read when editing diagnostics/tracing.
+globs: Sources/MeridianCore/Diagnostics/**/*.swift
+alwaysApply: false
+---
+
+# ParserTrace conventions
+
+### Category hierarchy
+
+Group prefixes enable entire groups. Leaves enable one stream.
+
+| Enum case | Raw value (CLI / env var string) |
+|---|---|
+| `.parse` | `parse` |
+| `.phraseParse` | `phrase.parse` |
+| `.phraseMatch` | `phrase.match` |
+| `.phraseExtractArgs` | `phrase.args` |
+| `.phraseInline` | `phrase.inline` |
+| `.statement` | `statement` |
+| `.expression` | `expression` |
+| `.lowering` | `lowering` |
+| `.symbols` | `symbols` |
+| `.merconfig` | `merconfig` |
+
+### `MERIDIAN_TRACE` env var
+
+`ParserTrace()` reads `MERIDIAN_TRACE` **at init time** and auto-enables
+categories. Both `ParserTrace.shared` and fresh `ParserTrace()` instances
+read this env var. This means:
+- Setting `MERIDIAN_TRACE=all swift test` activates tracing globally for that
+  test run.
+- Tests that create `ParserTrace()` will inherit env-var activation unless
+  they call `disableAll()` explicitly.
+- Use `ParserTrace.silent()` in tests that want guaranteed silence regardless
+  of env var.
+
+### Thread safety
+
+`ParserTrace` is `@unchecked Sendable` with internal `NSLock` for all mutable
+state. It is safe to call `log/push/pop` from concurrent contexts. In unit
+tests, prefer a fresh `ParserTrace.capturing(…).trace` per test to avoid
+cross-test output mixing.
+
+### Adding a trace point
+
+1. Optionally add a new `Category` case and its `rawValue` string.
+2. Call `trace.log(.category, "…")` or `trace.push/pop` in the relevant method.
+3. Add a `capturing(categories:)` test to `ParserTraceTests.swift`.
+
+### The `trace` parameter convention
+
+Every compiler component that can produce trace output takes
+`trace: ParserTrace = .shared` as a constructor parameter.
+- Default is `.shared` (works in production).
+- Unit tests pass a fresh `ParserTrace()` or `ParserTrace.silent()`.
+- The CLI sets the shared instance's categories and sink in `CompileCommand`.

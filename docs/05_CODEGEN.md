@@ -248,7 +248,7 @@ Generated when `MerConfigFile.instances` is non-empty.
 | `iterate` | `IterateIR.mode` is `IterateMode`: `.overCollection` → `for x in (state.get("items")?.asList ?? []) { … }`; `.whileCondition` → `while`; `.untilCondition` → `while !(…)`. Loop iterations checkpoint at each boundary with a unique `__meridianLoopLabel_N` identifier. |
 | `assert` | `AssertIR.otherwiseAction: IRBlock?`. If nil: `try await runtime.assert(condition, message: "…")`. If set: `if !condition { try await runtime.assert(false, …); <block> } else { try await runtime.assert(true, …) }`. Both shapes route through `Runtime.assert` so `assert.passed` / `assert.failed` events fire. |
 | `emit` | `EmitIR.payload: [EmitField]` (not a dict). `EmitIR.strict: Bool` × `IRWorkflow.mode` decides `try await runtime.emit` vs `await runtime.emitLenient` |
-| `wait` | `WaitIR.condition: WaitConditionIR`. Duration emits `try await runtime.wait(.duration(.seconds(…)))`. Signal emits `try await runtime.wait(.signal("name"))`. Approval emits `try await runtime.wait(.approval(of: …, by: RoleRef(identifier: "…")))`. Event with matching emits a `{ _event in … }` closure. |
+| `wait` | `WaitIR.condition: WaitConditionIR`. Duration emits `try await runtime.wait(.duration(.seconds(…)))`. Signal emits `try await runtime.wait(.signal("name"))`. Approval emits `try await runtime.wait(.approval(of: …, by: RoleRef(identifier: "…")))`. Event with matching emits a `{ _event in … }` closure. Choice gates emit `ask.choice` + `runtime.wait(.choice(prompt:options:))`. |
 | `commit` | `CommitIR.label: String?`. Emits `try await runtime.checkpoint(label: "x", state: state.snapshot())` |
 | `recover` | `RecoverIR.attachedTo` is the protected block, `.handler` is the catch block. Emits `do { <attachedTo> } catch let _recoveredError { <handler> }`. Named patterns use `meridianMatches(_recoveredError, named: "…")`. |
 | `complete` | Emits two statements: `await runtime.complete(reason:)` then `return WorkflowResult(…)` |
@@ -717,3 +717,19 @@ Task {
 
 The host delivers the user's pick with `runtime.deliverChoice(_:)`. See
 [06_RUNTIME.md](06_RUNTIME.md) §"Choice-gate".
+
+## Wave 4 Codegen
+
+Enum-typed domain properties now preserve an author `usually` default. If no
+default is written, generated initializers continue to default to the first enum
+case.
+
+Data tables still emit as `Value.list([.record(...)])`, so loops and state reads
+use the existing value path. `IRExpression.tableLookup` emits a deterministic
+scan over the table list and throws `ToolError.implementation(code:
+"table.lookup_miss", ...)` when no row matches the required key.
+
+Interpolated strings can contain conditionals, loops, and formatted holes.
+`SwiftEmitter` builds those strings with local string buffers and includes the
+private `meridianFormat(_:as:)` helper in the generated header for `integer`,
+`decimal(N)`, `short date`, and `long date`.

@@ -34,7 +34,8 @@ enables all leaves under it. The list below mirrors `ParserTrace.Category`;
 | Enum case | Raw value | Description |
 |---|---|---|
 | `.tokenize` | `tokenize` | Lexing: fence/table collapse, comment/indent/heading decisions (IndentTokenizer) |
-| `.phraseParse` | `phrase.parse` | Pattern tokenisation (PhrasePatternParser) |
+| `.parse` | `parse` | Top-level parse phase spans and parser branch routing |
+| `.phraseParse` | `phrase.parse` | Pattern tokenisation for workflow and phrase headers |
 | `.phraseMatch` | `phrase.match` | Candidate scoring and winner selection |
 | `.phraseExtractArgs` | `phrase.args` | Argument text extraction per parameter slot |
 | `.phraseInline` | `phrase.inline` | Body expansion and argument substitution |

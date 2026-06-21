@@ -34,10 +34,12 @@ public struct ExpressionParser {
 
     public func parse(_ raw: String) -> ExpressionAST {
         let s = raw.trimmingCharacters(in: .whitespaces)
+        trace.log(.expression, "parse.start(\"\(s)\")")
         // 2A: normalise `, and`/`, or` to plain joins, then bracket any
         // `either … or …` group into an opaque sentinel so the boolean splitter
         // sees it as a single operand.
         let prepared = protectEitherGroups(normalizeBooleanCommas(s))
+        trace.log(.expression, "parse.prepared(\"\(prepared)\")")
         let result = parseLogical(prepared)
         trace.log(.expression, "parse(\"\(s)\") → \(result.traceDescription(detail: .verbose))")
         return result
@@ -52,6 +54,7 @@ public struct ExpressionParser {
 
     private func parseLogical(_ s: String) -> ExpressionAST {
         let t = s.trimmingCharacters(in: .whitespaces)
+        trace.log(.expression, "parseLogical(\"\(t)\")")
         // `it is not the case that X` → ¬X (a readable negation of a clause).
         if t.lowercased().hasPrefix(lexicon.grammar.clauseNegationIntroducer) {
             let inner = String(t.dropFirst(lexicon.grammar.clauseNegationIntroducer.count))
@@ -83,12 +86,12 @@ public struct ExpressionParser {
         // a real "A or B" — even one whose operands contain ≥/≤ comparisons —
         // still splits correctly (see `disjunctionStillSplits` test).
         let masked = maskComparisonOr(t)
-        let hasOr  = rangeOfMarkerOutsideQuotes(" or ", in: masked) != nil
-        let hasAnd = rangeOfMarkerOutsideQuotes(" and ", in: masked) != nil
+        let hasOr  = rangeOfMarkerOutsideQuotes(lexicon.grammar.booleanConnectors.orMarker, in: masked) != nil
+        let hasAnd = rangeOfMarkerOutsideQuotes(lexicon.grammar.booleanConnectors.andMarker, in: masked) != nil
         if hasOr && hasAnd {
             return .malformed(mixedBooleanMessage(t))
         }
-        if hasOr, let parts = splitTopLevel(masked, on: " or ") {
+        if hasOr, let parts = splitTopLevel(masked, on: lexicon.grammar.booleanConnectors.orMarker) {
             let ops = parts.map { parseAnd(unmaskComparisonOr($0)) }
             return ops.count == 1 ? ops[0] : .logical(.or, ops)
         }
@@ -116,7 +119,7 @@ public struct ExpressionParser {
     private var orBearingComparisonMarkers: [String] {
         lexicon.comparisonMarkers
             .map { $0.0.lowercased() }
-            .filter { $0.contains(" or ") }
+            .filter { $0.contains(lexicon.grammar.booleanConnectors.orMarker) }
             .sorted { $0.count > $1.count }
     }
 
@@ -128,10 +131,12 @@ public struct ExpressionParser {
     /// before it is parsed. The leading `guard` is a fast path for the common
     /// case of a clause with no ` or ` at all.
     private func maskComparisonOr(_ t: String) -> String {
-        guard t.lowercased().contains(" or ") else { return t }
+        guard t.lowercased().contains(lexicon.grammar.booleanConnectors.orMarker) else { return t }
         var result = t
         for marker in orBearingComparisonMarkers {
-            let masked = marker.replacingOccurrences(of: " or ", with: " \(Self.orMaskToken) ")
+            let masked = marker.replacingOccurrences(
+                of: lexicon.grammar.booleanConnectors.orMarker,
+                with: " \(Self.orMaskToken) ")
             result = result.replacingOccurrences(of: marker, with: masked, options: .caseInsensitive)
         }
         return result
@@ -141,11 +146,12 @@ public struct ExpressionParser {
     /// comparison layer sees the marker in its original form. Applied to each
     /// disjunction operand right before it descends past the boolean layers.
     private func unmaskComparisonOr(_ s: String) -> String {
-        s.replacingOccurrences(of: " \(Self.orMaskToken) ", with: " or ")
+        s.replacingOccurrences(of: " \(Self.orMaskToken) ", with: lexicon.grammar.booleanConnectors.orMarker)
     }
 
     private func parseAnd(_ s: String) -> ExpressionAST {
-        if let andParts = splitTopLevel(s, on: " and ") {
+        trace.log(.expression, "parseAnd(\"\(s)\")")
+        if let andParts = splitTopLevel(s, on: lexicon.grammar.booleanConnectors.andMarker) {
             let operands = andParts.map { parseNot($0) }
             return operands.count == 1 ? operands[0] : .logical(.and, operands)
         }
@@ -154,8 +160,9 @@ public struct ExpressionParser {
 
     private func parseNot(_ s: String) -> ExpressionAST {
         let t = s.trimmingCharacters(in: .whitespaces)
-        if t.lowercased().hasPrefix("not ") {
-            let inner = parseNot(String(t.dropFirst(4)))
+        trace.log(.expression, "parseNot(\"\(t)\")")
+        if t.lowercased().hasPrefix(lexicon.grammar.booleanConnectors.notPrefix) {
+            let inner = parseNot(String(t.dropFirst(lexicon.grammar.booleanConnectors.notPrefix.count)))
             return .logical(.not, [inner])
         }
         return parseComparison(t)
@@ -175,7 +182,7 @@ public struct ExpressionParser {
     /// disjunction body, so `A and either B or C` becomes `A and <sentinel>`
     /// (= A ∧ (B ∨ C)) and `either A or B` becomes a single `<sentinel>`.
     private func protectEitherGroups(_ s: String) -> String {
-        guard let r = rangeOfWordOutsideQuotes("either ", in: s) else { return s }
+        guard let r = rangeOfWordOutsideQuotes(lexicon.grammar.booleanConnectors.eitherPrefix, in: s) else { return s }
         let prefix = String(s[s.startIndex..<r.lowerBound])
         let body = String(s[r.upperBound...])
         let encoded = Data(body.utf8).base64EncodedString()
@@ -184,7 +191,7 @@ public struct ExpressionParser {
 
     /// Parse a previously-protected `either` body (`A or B or C`) into `.or`.
     private func parseEitherBody(_ body: String) -> ExpressionAST {
-        guard let parts = splitTopLevel(body, on: " or ") else {
+        guard let parts = splitTopLevel(body, on: lexicon.grammar.booleanConnectors.orMarker) else {
             return parse(body)
         }
         let ops = parts.map { parse($0) }
@@ -193,8 +200,14 @@ public struct ExpressionParser {
 
     /// Normalise Oxford-style `, and`/`, or` joins to plain ` and `/` or `.
     private func normalizeBooleanCommas(_ s: String) -> String {
-        var out = replaceOutsideQuotes(s, find: ", and ", with: " and ")
-        out = replaceOutsideQuotes(out, find: ", or ", with: " or ")
+        var out = replaceOutsideQuotes(
+            s,
+            find: lexicon.grammar.booleanConnectors.oxfordAndMarker,
+            with: lexicon.grammar.booleanConnectors.andMarker)
+        out = replaceOutsideQuotes(
+            out,
+            find: lexicon.grammar.booleanConnectors.oxfordOrMarker,
+            with: lexicon.grammar.booleanConnectors.orMarker)
         return out
     }
 
@@ -220,18 +233,25 @@ public struct ExpressionParser {
 
     private func parseComparison(_ s: String) -> ExpressionAST {
         let t = s.trimmingCharacters(in: .whitespaces)
+        trace.log(.expression, "parseComparison(\"\(t)\")")
         // Leaf-level precedence: quantifier → emptiness → temporal → active-verb
         // predicate → comparison markers → atom (aggregate/superlative/
         // description/scalar-nav are resolved inside parseAtom as value operands).
+        trace.log(.expression, "parseComparison.quantifier")
         if let q = parseQuantifierIfPresent(t) { return q }
+        trace.log(.expression, "parseComparison.emptiness")
         if let e = parseEmptinessIfPresent(t) { return e }
+        trace.log(.expression, "parseComparison.temporal")
         if let tw = parseTemporalIfPresent(t) { return tw }
+        trace.log(.expression, "parseComparison.activeVerb")
         if let v = parseActiveVerbIfPresent(t) { return v }
+        trace.log(.expression, "parseComparison.markers")
         for (marker, op) in lexicon.comparisonMarkers {
             if let (lhs, rhs) = split(t, around: [marker]) {
                 return .comparison(parseAtom(lhs), op, parseAtom(rhs))
             }
         }
+        trace.log(.expression, "parseComparison.atom")
         return parseAtom(t)
     }
 
@@ -255,14 +275,14 @@ public struct ExpressionParser {
         let emptyMarkers  = lexicon.emptyMarkers
         let filledMarkers = lexicon.filledMarkers
         for m in emptyMarkers {
-            if let r = rangeOfMarkerOutsideQuotes(m, in: lower) {
+            if let r = rangeOfMarkerOutsideQuotes(m, in: s) {
                 let subj = String(s[s.startIndex..<r.lowerBound])
                 let prop = String(s[r.upperBound...]).trimmingCharacters(in: .whitespaces)
                 return .comparison(.propertyAccess(parseAtom(subj), prop), .isEmpty, placeholder)
             }
         }
         for m in filledMarkers {
-            if let r = rangeOfMarkerOutsideQuotes(m, in: lower) {
+            if let r = rangeOfMarkerOutsideQuotes(m, in: s) {
                 let subj = String(s[s.startIndex..<r.lowerBound])
                 let prop = String(s[r.upperBound...]).trimmingCharacters(in: .whitespaces)
                 return .comparison(.propertyAccess(parseAtom(subj), prop), .isNotEmpty, placeholder)
@@ -276,9 +296,8 @@ public struct ExpressionParser {
     /// `modified`, `changed`) — or an empty subject — resolves to the lexicon's
     /// `timestampProperty`.
     private func parseTemporalIfPresent(_ s: String) -> ExpressionAST? {
-        let lower = s.lowercased()
         for (marker, op) in lexicon.temporalWindowMarkers {
-            if let r = rangeOfMarkerOutsideQuotes(marker, in: lower) {
+            if let r = rangeOfMarkerOutsideQuotes(marker, in: s) {
                 let before = String(s[s.startIndex..<r.lowerBound]).trimmingCharacters(in: .whitespaces)
                 let after  = String(s[r.upperBound...]).trimmingCharacters(in: .whitespaces)
                 guard let dur = parseLeadingDuration(after) else { return nil }
@@ -321,7 +340,10 @@ public struct ExpressionParser {
         // for `{{ expr }}` interpolation markers (B7).
         if t.hasPrefix(codeBlockSentinelPrefix) {
             if let (_, body) = decodeCodeBlockSentinel(t) {
-                if body.contains("{{") {
+                let lowerBody = body.lowercased()
+                if body.contains("{{")
+                    || lowerBody.contains(lexicon.grammar.templateDirectives.ifPrefix)
+                    || lowerBody.contains(lexicon.grammar.templateDirectives.forEachPrefix) {
                     let segs = parseInterpolationSegments(body)
                     // Collapse a single literal-only segment to a plain string literal.
                     if segs.count == 1, case .literal(let plain) = segs[0] {
@@ -365,6 +387,8 @@ public struct ExpressionParser {
         // integer
         if let n = Int(t) { return .literal(.integer(n)) }
 
+        if let lookup = parseTableLookupIfPresent(t) { return lookup }
+
         // 3C: relational value atoms (need the symbol table to resolve kinds /
         // verbs). Precedence: aggregate (`the number/list of …`) → superlative
         // (`the oldest …`) → scalar navigation (`the task assigned to X`) →
@@ -394,17 +418,47 @@ public struct ExpressionParser {
         return .identifierRef(t)
     }
 
+    private func parseTableLookupIfPresent(_ s: String) -> ExpressionAST? {
+        guard lexicon.hasLeadingArticle(s) else { return nil }
+        let body = lexicon.stripLeadingArticle(s)
+        let corrMarker = lexicon.grammar.tableLookup.correspondingToMarker
+        let inMarker = lexicon.grammar.tableLookup.inTableMarker
+        guard let corr = body.range(of: corrMarker, options: [.caseInsensitive]),
+              let inRange = body.range(of: inMarker, options: [.caseInsensitive, .backwards]),
+              corr.upperBound < inRange.lowerBound else { return nil }
+
+        let valueColumn = String(body[body.startIndex..<corr.lowerBound])
+            .trimmingCharacters(in: .whitespaces)
+        let keyPhrase = String(body[corr.upperBound..<inRange.lowerBound]).trimmingCharacters(in: .whitespaces)
+        let tableName = String(body[inRange.upperBound...]).trimmingCharacters(in: .whitespaces)
+        guard !valueColumn.isEmpty, !keyPhrase.isEmpty, !tableName.isEmpty else { return nil }
+
+        let (keyColumn, keyText) = splitTableLookupKeyPhrase(keyPhrase)
+        guard !keyColumn.isEmpty, !keyText.isEmpty else { return nil }
+        return .tableLookup(
+            table: tableName,
+            keyColumn: keyColumn,
+            key: parse(keyText),
+            valueColumn: valueColumn
+        )
+    }
+
+    private func splitTableLookupKeyPhrase(_ keyPhrase: String) -> (column: String, key: String) {
+        if let quote = keyPhrase.firstIndex(of: "\"") {
+            let column = String(keyPhrase[keyPhrase.startIndex..<quote]).trimmingCharacters(in: .whitespaces)
+            let key = String(keyPhrase[quote...]).trimmingCharacters(in: .whitespaces)
+            return (column, key)
+        }
+        let parts = keyPhrase.split(separator: " ").map(String.init)
+        guard parts.count > 1 else { return ("", keyPhrase) }
+        return (parts.dropLast().joined(separator: " "), parts.last ?? "")
+    }
+
     // MARK: - Possessive chain
 
     func parsePossessiveChain(_ s: String) -> ExpressionAST {
         // Strip article then split on "'s"
-        var stripped = s
-        for article in lexicon.articles.sorted(by: { $0.count > $1.count }) {
-            if stripped.lowercased().hasPrefix(article + " ") {
-                stripped = String(stripped.dropFirst(article.count + 1))
-                break
-            }
-        }
+        let stripped = lexicon.stripLeadingArticle(s)
 
         let parts = stripped.components(separatedBy: "'s")
         guard !parts.isEmpty else { return .identifierRef(stripped) }
@@ -440,31 +494,124 @@ public struct ExpressionParser {
     /// - `\{{` is treated as an escaped `{{` that produces a literal `{{`.
     /// - Unclosed `{{` is treated as a literal fragment to the end of the string.
     func parseInterpolationSegments(_ body: String) -> [InterpolationSegment] {
+        parseTemplateSegments(body).segments
+    }
+
+    private func parseTemplateSegments(_ body: String, terminators: Set<String> = []) -> (segments: [InterpolationSegment], terminator: String?, rest: String) {
         var segments: [InterpolationSegment] = []
         var remaining = body
-        while let openRange = remaining.range(of: "{{") {
-            let prefix = String(remaining[remaining.startIndex..<openRange.lowerBound])
-            // \{{ — escaped open marker
-            if prefix.hasSuffix("\\") {
+
+        while !remaining.isEmpty {
+            let remainingLower = remaining.lowercased()
+            if let term = terminators.first(where: { remainingLower.hasPrefix($0) }) {
+                return (segments, term, String(remaining.dropFirst(term.count)))
+            }
+
+            let template = lexicon.grammar.templateDirectives
+            let markers = [
+                "{{",
+                template.ifPrefix,
+                template.otherwiseTerminator,
+                template.endIfTerminator,
+                template.forEachPrefix,
+                template.endForTerminator,
+            ]
+            let next = markers.compactMap { marker -> (String, Range<String.Index>)? in
+                remaining.range(of: marker, options: marker == "{{" ? [] : [.caseInsensitive]).map { (marker, $0) }
+            }.min { $0.1.lowerBound < $1.1.lowerBound }
+
+            guard let (marker, range) = next else {
+                segments.append(.literal(remaining))
+                return (segments, nil, "")
+            }
+
+            let prefix = String(remaining[remaining.startIndex..<range.lowerBound])
+            if terminators.contains(marker) {
+                if !prefix.isEmpty { segments.append(.literal(prefix)) }
+                return (segments, marker, String(remaining[range.upperBound...]))
+            }
+            if marker == "{{", prefix.hasSuffix("\\") {
                 segments.append(.literal(String(prefix.dropLast()) + "{{"))
-                remaining = String(remaining[openRange.upperBound...])
+                remaining = String(remaining[range.upperBound...])
                 continue
             }
             if !prefix.isEmpty { segments.append(.literal(prefix)) }
-            remaining = String(remaining[openRange.upperBound...])
-            guard let closeRange = remaining.range(of: "}}") else {
-                // No matching close — treat the rest as a literal.
-                segments.append(.literal("{{" + remaining))
-                remaining = ""
-                break
+            remaining = String(remaining[range.lowerBound...])
+            let lower = remaining.lowercased()
+
+            if lower.hasPrefix("{{") {
+                guard let close = remaining.range(of: "}}") else {
+                    segments.append(.literal(remaining)); return (segments, nil, "")
+                }
+                let exprText = String(remaining[remaining.index(remaining.startIndex, offsetBy: 2)..<close.lowerBound])
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                if !exprText.isEmpty {
+                    if let formatted = parseFormattedInterpolation(exprText) {
+                        segments.append(.formatted(formatted.expr, formatter: formatted.formatter))
+                    } else {
+                        segments.append(.expression(parse(exprText)))
+                    }
+                }
+                remaining = String(remaining[close.upperBound...])
+                continue
             }
-            let exprText = String(remaining[remaining.startIndex..<closeRange.lowerBound])
-                .trimmingCharacters(in: .whitespaces)
-            segments.append(.expression(parse(exprText)))
-            remaining = String(remaining[closeRange.upperBound...])
+
+            if lower.hasPrefix(template.ifPrefix) {
+                guard let close = remaining.firstIndex(of: "]") else {
+                    segments.append(.literal(remaining)); return (segments, nil, "")
+                }
+                let condText = String(remaining[remaining.index(remaining.startIndex, offsetBy: template.ifPrefix.count)..<close])
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                let tail = String(remaining[remaining.index(after: close)...])
+                let thenParsed = parseTemplateSegments(tail, terminators: [template.otherwiseTerminator, template.endIfTerminator])
+                let elseParsed: (segments: [InterpolationSegment], terminator: String?, rest: String)
+                if thenParsed.terminator == template.otherwiseTerminator {
+                    elseParsed = parseTemplateSegments(thenParsed.rest, terminators: [template.endIfTerminator])
+                } else {
+                    elseParsed = ([], nil, thenParsed.rest)
+                }
+                segments.append(.conditional(condition: parse(condText), then: thenParsed.segments, otherwise: elseParsed.segments))
+                remaining = elseParsed.rest
+                continue
+            }
+
+            if lower.hasPrefix(template.forEachPrefix) {
+                guard let close = remaining.firstIndex(of: "]") else {
+                    segments.append(.literal(remaining)); return (segments, nil, "")
+                }
+                let header = String(remaining[remaining.index(remaining.startIndex, offsetBy: template.forEachPrefix.count)..<close])
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                let parts = splitForEachHeader(header)
+                let tail = String(remaining[remaining.index(after: close)...])
+                let bodyParsed = parseTemplateSegments(tail, terminators: [template.endForTerminator])
+                segments.append(.forEach(variable: parts.variable, collection: parse(parts.collection), body: bodyParsed.segments))
+                remaining = bodyParsed.rest
+                continue
+            }
+
+            segments.append(.literal(marker))
+            remaining = String(remaining.dropFirst(marker.count))
         }
-        if !remaining.isEmpty { segments.append(.literal(remaining)) }
-        return segments
+
+        return (segments, nil, "")
+    }
+
+    private func parseFormattedInterpolation(_ text: String) -> (expr: ExpressionAST, formatter: String)? {
+        let marker = lexicon.grammar.templateDirectives.formatAsMarker
+        guard let range = text.range(of: marker, options: [.caseInsensitive]) else { return nil }
+        let expr = String(text[text.startIndex..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
+        let formatter = String(text[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+        guard !expr.isEmpty, !formatter.isEmpty else { return nil }
+        return (parse(expr), formatter)
+    }
+
+    private func splitForEachHeader(_ header: String) -> (variable: String, collection: String) {
+        if let range = header.range(of: lexicon.grammar.templateDirectives.loopInMarker, options: [.caseInsensitive]) {
+            let variable = String(header[header.startIndex..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
+            let collection = String(header[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+            return (variable.isEmpty ? "item" : variable, collection)
+        }
+        return ("item", header)
     }
 
     // MARK: - Helpers
@@ -473,10 +620,9 @@ public struct ExpressionParser {
         // Find the marker only in *unquoted* regions of `s`. Splitting inside a
         // string literal — e.g. `"Your order is on hold"` — would otherwise
         // chop the literal at " is ".
-        let lower = s.lowercased()
         for marker in markers {
             let needle = " \(marker) "
-            if let r = rangeOfMarkerOutsideQuotes(needle, in: lower) {
+            if let r = rangeOfMarkerOutsideQuotesCaseInsensitive(needle, in: s) {
                 let lhs = String(s[s.startIndex ..< r.lowerBound]).trimmingCharacters(in: .whitespaces)
                 let rhs = String(s[r.upperBound...]).trimmingCharacters(in: .whitespaces)
                 return (lhs, rhs)
@@ -487,6 +633,10 @@ public struct ExpressionParser {
 
     private func rangeOfMarkerOutsideQuotes(_ marker: String, in s: String) -> Range<String.Index>? {
         QuoteAwareScanner.rangeOfMarker(marker, in: s)
+    }
+
+    private func rangeOfMarkerOutsideQuotesCaseInsensitive(_ marker: String, in s: String) -> Range<String.Index>? {
+        QuoteAwareScanner.rangeOfMarker(marker, in: s, caseInsensitive: true)
     }
 
     /// Like `rangeOfMarkerOutsideQuotes` but the match must begin at a word
@@ -528,6 +678,7 @@ public struct ExpressionParser {
     /// Detect a leading quantifier determiner and parse the whole leaf as a
     /// quantified description. Returns nil when there is no determiner.
     private func parseQuantifierIfPresent(_ s: String) -> ExpressionAST? {
+        trace.log(.expression, "parseQuantifierIfPresent(\"\(s)\")")
         guard let (kind, rest0) = matchDeterminer(s) else { return nil }
         var rest = rest0.trimmingCharacters(in: .whitespaces)
         for p in lexicon.grammar.quantifierPartitiveMarkers where rest.lowercased().hasPrefix(p) {
@@ -556,17 +707,28 @@ public struct ExpressionParser {
     /// Match a leading quantifier determiner; return the kind and the remainder.
     private func matchDeterminer(_ s: String) -> (QuantifierKindAST, String)? {
         let lower = s.lowercased()
+        trace.log(.expression, "matchDeterminer(\"\(s)\")")
         func after(_ prefix: String) -> String { String(s.dropFirst(prefix.count)) }
-        if lower.hasPrefix("all ")     { return (.all, after("all ")) }
-        if lower.hasPrefix("every ")   { return (.all, after("every ")) }
-        if lower.hasPrefix("any ")     { return (.any, after("any ")) }
-        if lower.hasPrefix("some ")    { return (.any, after("some ")) }
-        if lower.hasPrefix("none of ") { return (.none, after("none of ")) }
-        if lower.hasPrefix("none ")    { return (.none, after("none ")) }
-        if lower.hasPrefix("no ")      { return (.none, after("no ")) }
+        for marker in lexicon.grammar.quantifierDeterminers.all where lower.hasPrefix(marker) {
+            trace.log(.expression, "matchDeterminer.all \(marker)")
+            return (.all, after(marker))
+        }
+        for marker in lexicon.grammar.quantifierDeterminers.any where lower.hasPrefix(marker) {
+            trace.log(.expression, "matchDeterminer.any \(marker)")
+            return (.any, after(marker))
+        }
+        for marker in lexicon.grammar.quantifierDeterminers.none where lower.hasPrefix(marker) {
+            trace.log(.expression, "matchDeterminer.none \(marker)")
+            return (.none, after(marker))
+        }
         for (kw, make): (String, (Int) -> QuantifierKindAST) in
-            [("at least ", { .atLeast($0) }), ("at most ", { .atMost($0) }), ("exactly ", { .exactly($0) })] {
+            [
+                (lexicon.grammar.quantifierDeterminers.atLeastPrefix, { .atLeast($0) }),
+                (lexicon.grammar.quantifierDeterminers.atMostPrefix, { .atMost($0) }),
+                (lexicon.grammar.quantifierDeterminers.exactlyPrefix, { .exactly($0) }),
+            ] {
             if lower.hasPrefix(kw) {
+                trace.log(.expression, "matchDeterminer.count \(kw)")
                 let tail = after(kw).trimmingCharacters(in: .whitespaces)
                 let parts = tail.split(separator: " ", maxSplits: 1).map(String.init)
                 if let first = parts.first, let n = Int(first) {
@@ -574,6 +736,7 @@ public struct ExpressionParser {
                 }
             }
         }
+        trace.log(.expression, "matchDeterminer.none")
         return nil
     }
 
@@ -582,15 +745,14 @@ public struct ExpressionParser {
     /// (`have`/`has`/`are`/`is`/`contain`/`include`) introduces a per-element
     /// body (kept verbatim from the verb onward).
     private func splitDescriptionAndBody(_ s: String) -> (desc: String, whereText: String?, body: String?) {
-        if let wr = rangeOfMarkerOutsideQuotes(" whose ", in: s.lowercased()) {
+        if let wr = rangeOfMarkerOutsideQuotesCaseInsensitive(lexicon.grammar.iterationMarkers.whoseMarker, in: s) {
             let desc = String(s[s.startIndex..<wr.lowerBound]).trimmingCharacters(in: .whitespaces)
             let cond = String(s[wr.upperBound...]).trimmingCharacters(in: .whitespaces)
             return (desc, cond, nil)
         }
         var earliest: Range<String.Index>? = nil
-        let lower = s.lowercased()
         for v in lexicon.grammar.quantifierBodyVerbs {
-            if let r = rangeOfMarkerOutsideQuotes(v, in: lower) {
+            if let r = rangeOfMarkerOutsideQuotesCaseInsensitive(v, in: s) {
                 if earliest == nil || r.lowerBound < earliest!.lowerBound { earliest = r }
             }
         }
@@ -662,7 +824,8 @@ public struct ExpressionParser {
             var subjectEnd = idx
             var negated = false
             let prev = words[idx - 1].lowercased()
-            if prev == "not", idx >= 2, auxiliaries.contains(words[idx - 2].lowercased()) {
+            let notKeyword = lexicon.grammar.booleanConnectors.notPrefix.trimmingCharacters(in: .whitespaces)
+            if prev == notKeyword, idx >= 2, auxiliaries.contains(words[idx - 2].lowercased()) {
                 subjectEnd = idx - 2
                 negated = true
             } else if negContractions.contains(prev) {
@@ -705,17 +868,18 @@ public struct ExpressionParser {
     private func parseSuperlativeIfPresent(_ raw: String) -> ExpressionAST? {
         guard symbols != nil else { return nil }
         let s = lexicon.stripLeadingArticle(raw)
-        let words = s.split(separator: " ").map(String.init)
-        guard let first = words.first?.lowercased() else { return nil }
-        var gradable = first
-        var rest = words.dropFirst().joined(separator: " ")
-        if first == "most", words.count >= 2, words[1].lowercased() == "recent" {
-            gradable = "most recent"
-            rest = words.dropFirst(2).joined(separator: " ")
+        let lower = s.lowercased()
+        let gradables = lexicon.superlativeGradables.keys.sorted {
+            $0.count == $1.count ? $0 < $1 : $0.count > $1.count
         }
+        guard let gradable = gradables.first(where: { lower == $0 || lower.hasPrefix($0 + " ") }) else {
+            return nil
+        }
+        let restStart = s.index(s.startIndex, offsetBy: gradable.count)
+        var rest = String(s[restStart...]).trimmingCharacters(in: .whitespaces)
         guard let dir = superlativeDirection(gradable) else { return nil }
         var property: String?
-        if let r = rangeOfMarkerOutsideQuotes(lexicon.grammar.passiveByMarker, in: rest.lowercased()) {
+        if let r = rangeOfMarkerOutsideQuotesCaseInsensitive(lexicon.grammar.passiveByMarker, in: rest) {
             property = String(rest[r.upperBound...]).trimmingCharacters(in: .whitespaces).lowercased()
             rest = String(rest[rest.startIndex..<r.lowerBound]).trimmingCharacters(in: .whitespaces)
         }
@@ -769,13 +933,14 @@ public struct ExpressionParser {
 
         var take: Int?
         let leading = s.split(separator: " ").map(String.init)
-        if leading.count >= 2, leading[0].lowercased() == "first", let n = Int(leading[1]) {
+        let first = lexicon.grammar.iterationMarkers.firstPrefix.trimmingCharacters(in: .whitespaces)
+        if leading.count >= 2, leading[0].lowercased() == first, let n = Int(leading[1]) {
             take = n
             s = leading[2...].joined(separator: " ")
         }
 
         var sort: (property: String, ascending: Bool)?
-        if let r = lexicon.sortByMarkers.lazy.compactMap({ rangeOfMarkerOutsideQuotes($0, in: s.lowercased()) }).first {
+        if let r = lexicon.sortByMarkers.lazy.compactMap({ rangeOfMarkerOutsideQuotesCaseInsensitive($0, in: s) }).first {
             var tail = String(s[r.upperBound...]).trimmingCharacters(in: .whitespaces)
             var asc = true
             if let m = lexicon.descendingMarkers.first(where: { tail.lowercased().hasSuffix(" " + $0) }) {
@@ -791,11 +956,11 @@ public struct ExpressionParser {
         var verbClauses: [VerbClauseAST] = []
         var descPart = s
 
-        if let wr = rangeOfMarkerOutsideQuotes(" whose ", in: s.lowercased()) {
+        if let wr = rangeOfMarkerOutsideQuotesCaseInsensitive(lexicon.grammar.iterationMarkers.whoseMarker, in: s) {
             descPart = String(s[s.startIndex..<wr.lowerBound]).trimmingCharacters(in: .whitespaces)
             wherePred = parse(String(s[wr.upperBound...]))
         } else if let tr = lexicon.grammar.relativeClauseMarkers.lazy
-            .compactMap({ rangeOfMarkerOutsideQuotes($0, in: s.lowercased()) }).first {
+            .compactMap({ rangeOfMarkerOutsideQuotesCaseInsensitive($0, in: s) }).first {
             descPart = String(s[s.startIndex..<tr.lowerBound]).trimmingCharacters(in: .whitespaces)
             guard let vc = parseThatClause(String(s[tr.upperBound...])) else { return nil }
             verbClauses.append(vc)
@@ -858,7 +1023,7 @@ public struct ExpressionParser {
     /// which otherwise stay intentionally divergent (one requires the head's last
     /// word to resolve as a participle; the other requires it to NOT resolve).
     private func splitByClause(_ text: String) -> (head: [String], operand: String)? {
-        guard let byR = rangeOfMarkerOutsideQuotes(lexicon.grammar.passiveByMarker, in: text.lowercased()) else { return nil }
+        guard let byR = rangeOfMarkerOutsideQuotesCaseInsensitive(lexicon.grammar.passiveByMarker, in: text) else { return nil }
         let head = String(text[text.startIndex..<byR.lowerBound]).trimmingCharacters(in: .whitespaces)
         let operand = String(text[byR.upperBound...]).trimmingCharacters(in: .whitespaces)
         return (head.split(separator: " ").map(String.init), operand)

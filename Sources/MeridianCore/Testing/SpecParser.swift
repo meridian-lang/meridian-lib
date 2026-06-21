@@ -1,4 +1,5 @@
 import Foundation
+import MeridianRuntime
 
 // MARK: - SpecParser
 
@@ -18,6 +19,20 @@ import Foundation
 ///     `expect_invoke_tool`, `expect_emit_event`, `expect_trace_contains`,
 ///     `tool_stub <id>`, `input <param>`, and any other `expect_*` assertion key.
 struct SpecParser {
+
+    /// Keys recognized by `buildSpec` (for MER1007 did-you-mean).
+    static let recognizedKeys: [String] = [
+        "name", "description", "tags", "only", "skip", "skip_reason", "trace",
+        "source", "source_inline", "vocab", "golden_swift", "no_line_comments",
+        "expect_compile", "expect_error_kind", "expect_error_contains", "expect_error_line",
+        "expect_swift_contains", "expect_swift_not_contains", "expect_swift_matches",
+        "golden_swift_path", "golden_manifest", "expect_swift_line_count_min",
+        "expect_swift_line_count_max", "expect_workflow_count", "expect_workflow_named",
+        "expect_no_unresolved", "expect_invoke_tool", "expect_emit_event",
+        "expect_primitive_count", "expect_workflow_mode", "expect_formatter_idempotent",
+        "expect_trace_contains", "expect_run", "workflow", "expect_event_kinds",
+        "expect_event_kinds_prefix", "expect_final_event_kind", "expect_run_succeeded",
+    ]
 
     struct ParseError: Error, CustomStringConvertible {
         let message: String
@@ -247,10 +262,15 @@ struct SpecParser {
                         .trimmingCharacters(in: .whitespaces)
                     toolStubs.append((toolID: toolID, json: value))
                 } else {
-                    // Strict by default: an unrecognized key is almost always a
-                    // typo (`expect_swift_contain` for `..._contains`) and was
-                    // previously dropped silently.
-                    throw ParseError(message: "unknown test-spec key '\(key)'. Check for a typo; see docs/09 for the recognized keys.")
+                    throw CompilerError.diagnostics([
+                        Diagnostic.unresolved(
+                            .invalidTestSpecKey,
+                            target: key,
+                            among: Self.recognizedKeys,
+                            range: SourceRange(file: fileURL.lastPathComponent, line: 1, column: 1),
+                            noun: "test-spec key",
+                            help: "Check for a typo; see docs/09_MERIDIAN_TESTS.md for recognized keys.")
+                    ])
                 }
             }
         }

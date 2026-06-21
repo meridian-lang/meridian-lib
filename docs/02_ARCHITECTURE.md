@@ -5,9 +5,11 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     meridian (CLI)                          │
-│  Sources/MeridianCLI/Commands/                              │
-│  compile · check · verify · run · resume · format ·         │
-│  docs · test · trace · explain · decisions                  │
+│  Sources/MeridianCLI/CLI.swift (thin @main)                  │
+│  Sources/MeridianCLIKit/Commands/                           │
+│  compile · check · verify · run · resume · format · docs ·  │
+│  test · lint · trace · explain · decisions · preview-skill ·│
+│  migrate-skill · skill-deviation                            │
 │  ArgumentParser + SwiftFormat integration                   │
 └──────────────────────┬──────────────────────────────────────┘
                        │ depends on
@@ -47,7 +49,7 @@ Sources/MeridianCore/
 │   │   ├── StatementParser.swift    ← Parses statements; expands table/checklist
 │   │   ├── TableParser.swift        ← Decodes table sentinels → branches /
 │   │   │                              recordList / AI-decision prose
-│   │   └── PhrasePatternParser.swift ← Parses "To {verb} a {kind}:" headers
+│   │                                  (phrase/workflow headers parse inline)
 │   └── Skill/
 │       ├── SkillSectionBuilder.swift ← Heading → SkillSectionRole; ## Tools Used
 │       └── ConditionClassifier.swift ← checkable / dispatch-phrase / fuzzy
@@ -81,8 +83,8 @@ Sources/MeridianCore/
 │   └── RewriteEngine.swift         ← Applies desugar rewrites (bounded fixpoint)
 │
 ├── IR/
-│   └── IRTypes.swift               ← IRWorkflow, IRPrimitive (12 cases: the 11
-│                                      Blueprint primitives + proseStep for the
+│   └── IRTypes.swift               ← IRWorkflow, IRPrimitive (12 cases: 11
+│                                      deterministic primitives + proseStep for the
 │                                      discretion/autonomy prose path), IRExpression
 │
 ├── Codegen/
@@ -191,7 +193,7 @@ Formatted Swift String
 | `SymbolTable` | `Symbols/` | Keyed index; drives `matchPhrase` + `extractArgs` |
 | `ExpressionAST` | `MeridianAST` | Parsed expression tree (pre-IR) |
 | `IRExpression` | `IRTypes` | Lowered expression (post-IR) |
-| `IRPrimitive` | `IR/IRTypes` | One of 11 lowered statement kinds |
+| `IRPrimitive` | `IR/IRTypes` | One of 12 lowered statement kinds |
 | `IRWorkflow` | `IR/IRTypes` | Struct name, parameters, body block, execution mode |
 | `StringTemplate` | `modelhike` | Result-builder code builder used by `SwiftEmitter` |
 | `Diagnostic` | `Diagnostics/` | Coded error/warning: code + range + suggestions/notes/help + decision |

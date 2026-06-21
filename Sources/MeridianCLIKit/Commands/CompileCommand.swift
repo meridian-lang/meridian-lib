@@ -1,6 +1,7 @@
 import ArgumentParser
 import Foundation
 import MeridianCore
+import MeridianRuntime
 import SwiftFormat
 
 public struct CompileCommand: AsyncParsableCommand {
@@ -94,7 +95,7 @@ public struct CompileCommand: AsyncParsableCommand {
         case "none", "off", "false", "":
             resolvedNamespace = nil
         case "auto":
-            resolvedNamespace = Self.pascalCase(meridianURL.deletingPathExtension().lastPathComponent)
+            resolvedNamespace = IdentifierNaming.swiftTypeNameFromStem(meridianURL.deletingPathExtension().lastPathComponent)
         default:
             resolvedNamespace = namespace
         }
@@ -122,6 +123,17 @@ public struct CompileCommand: AsyncParsableCommand {
             diagPaths[url.lastPathComponent] = url
         }
 
+        if let trace {
+            let traceWarnings = ParserTrace.validateTraceSpec(trace)
+            if !traceWarnings.isEmpty {
+                let renderer = DiagnosticRenderer(sources: diagSources, options: .init(color: stderrIsTTY()))
+                let rendered = diagnosticsFormat == .json
+                    ? renderer.renderJSON(traceWarnings)
+                    : renderer.render(traceWarnings)
+                FileHandle.standardError.write(Data((rendered + "\n").utf8))
+            }
+        }
+
         let compiled: (swift: String, manifest: ManifestEmitter.Input)
         do {
             compiled = try compiler.compileWithManifest(
@@ -141,9 +153,18 @@ public struct CompileCommand: AsyncParsableCommand {
         if !noFormat {
             do {
                 swift = try format(swift)
-            } catch {
-                FileHandle.standardError.write(Data(
-                    "warning[MER5001]: swift-format failed; writing unformatted Swift. (\(error))\n".utf8))
+            } catch let formatError {
+                let outName = meridianURL.deletingPathExtension().lastPathComponent + ".swift"
+                let warn = Diagnostic.warning(
+                    .swiftFormatFailed,
+                    message: "swift-format failed; writing unformatted Swift (\(formatError))",
+                    range: SourceRange(file: outName, line: 1, column: 1),
+                    help: "Install swift-format or pass `--no-format`; the emitted Swift is still valid.")
+                let renderer = DiagnosticRenderer(sources: diagSources, options: .init(color: stderrIsTTY()))
+                let rendered = diagnosticsFormat == .json
+                    ? renderer.renderJSON([warn])
+                    : renderer.render([warn])
+                FileHandle.standardError.write(Data((rendered + "\n").utf8))
             }
         }
 
@@ -192,16 +213,6 @@ public struct CompileCommand: AsyncParsableCommand {
 
     private func resolveRulebooks(beside meridianURL: URL) throws -> [URL] {
         try DependencyDiscovery.resolveRulebooks(explicit: rulebook, beside: meridianURL)
-    }
-
-    /// Derive a valid UpperCamelCase Swift identifier from a file stem,
-    /// splitting on any non-alphanumeric boundary (so `idea_lineage` →
-    /// `IdeaLineage`, `webhook-transforms` → `WebhookTransforms`).
-    static func pascalCase(_ stem: String) -> String {
-        let parts = stem.split(whereSeparator: { !($0.isLetter || $0.isNumber) })
-        let joined = parts.map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined()
-        guard let first = joined.first else { return "Skill" }
-        return first.isNumber ? "_" + joined : joined
     }
 
     private func format(_ source: String) throws -> String {

@@ -66,6 +66,15 @@ bind pages = invoke list pages with filter = "today".
 let mine be the pages written by the input.
 if any urgent pages or any unwritten pages,
   emit briefing.attention with status = "needs review".
+bind briefing body =
+  ```
+  DAILY BRIEFING -- [date]
+  ========================
+  [for each page in mine]- {{ page.id }}
+  [end for]
+  [if any urgent pages]Needs attention[otherwise]No urgent pages[end if]
+  ```
+emit briefing.report with body = briefing body.
 
 ## Output Format
 

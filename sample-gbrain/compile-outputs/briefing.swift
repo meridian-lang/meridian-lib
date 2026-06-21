@@ -7,6 +7,24 @@ import MeridianRuntime
 
 // B7: Runtime helper for {{ expr }} interpolation in fenced code blocks.
 private func meridianStringify(_ v: Value) -> String { v.scalarDescription }
+private func meridianFormat(_ v: Value, as formatter: String) -> String {
+    switch formatter.lowercased() {
+    case "integer":
+        if case .number(let n) = v { return NSDecimalNumber(decimal: n).intValue.description }
+    case let f where f.hasPrefix("decimal(") && f.hasSuffix(")"):
+        if case .number(let n) = v, let places = Int(f.dropFirst("decimal(".count).dropLast()) {
+            let nf = NumberFormatter(); nf.minimumFractionDigits = places; nf.maximumFractionDigits = places
+            return nf.string(from: NSDecimalNumber(decimal: n)) ?? n.description
+        }
+    case "short date", "long date":
+        if case .date(let d) = v {
+            let df = DateFormatter(); df.dateStyle = formatter.lowercased() == "short date" ? .short : .long; df.timeStyle = .none
+            return df.string(from: d)
+        }
+    default: break
+    }
+    return meridianStringify(v)
+}
 
 // 1B: Shell-escape a value for safe interpolation inside a double-
 // quoted span of a shell command (escapes \\, ", $, and backtick).
@@ -719,13 +737,25 @@ public struct BriefingInput: MeridianWorkflow {
             }
         }
 
-        // L96
-        let __meridianProseResults_L96 = try await runtime.executeProsePlan(
+        // L69
+        state.bind("briefingBody", ("DAILY BRIEFING -- [date]\n========================\n" + ({ () -> String in var __out = ""; for __item in ((state.get("mine"))?.asList ?? []) { __out += "- " + meridianStringify(__item.member("id") ?? .null) + "\n" }; return __out })() + "\n" + ({ () -> String in if (!(((state.get("pages"))?.asList ?? []).filter { __e in (meridianDef_Page_urgent(__e)) }).isEmpty) { return "Needs attention" } else { return "No urgent pages" } })()))
+        if __meridianShouldRun("progress:0.12:L77:C0") {
+            // L77
+            try await runtime.emit(
+                event: "briefing.report",
+                payload: [
+                    "body": state.get("briefingBody") ?? .null,
+                ]
+            )
+            try await runtime.checkpoint(label: "progress:0.12:L77:C0", state: state.snapshot())
+        }
+        // L105
+        let __meridianProseResults_L105 = try await runtime.executeProsePlan(
             prose: "follow the Back-Linking During Briefing guidance\nIf the briefing creates or updates any brain pages (e.g., new meeting prep\npages, updated entity pages), the back-linking iron law applies: every entity\nthe page mentions must have a back-link from their page. See\n`skills/_brain-filing-rules.md`\nlet mentioned be the entities mentioned by the input\nfor each entity in mentioned:\nif the entity does not link to the input, add a back-link from the entity to the input\nchecklist:ai-autonomy:KipCcmllZmluZyB3aXRob3V0IGJyYWluIHF1ZXJpZXMuKiogTmV2ZXIgZ2VuZXJhdGUgYSBicmllZmluZyBmcm9tIG1lbW9yeSBhbG9uZTsgYWx3YXlzIHF1ZXJ5IGdicmFpbiBmb3IgY3VycmVudCBkYXRhCioqVW5jaXRlZCBmYWN0cy4qKiBFdmVyeSBjbGFpbSBtdXN0IGluY2x1ZGUgYFtTb3VyY2U6IHNsdWcsIHVwZGF0ZWQgREFURV1gLiBBIGZhY3Qgd2l0aG91dCBhIGNpdGF0aW9uIGlzIHVudmVyaWZpYWJsZQoqKlN0YWxlIGNvbnRleHQgcHJlc2VudGVkIGFzIGN1cnJlbnQuKiogSWYgYSBwYWdlIGhhc24ndCBiZWVuIHVwZGF0ZWQgaW4gMzArIGRheXMsIGZsYWcgdGhlIHN0YWxlbmVzcyBleHBsaWNpdGx5IHJhdGhlciB0aGFuIHByZXNlbnRpbmcgaXQgYXMgZnJlc2gKKipNb2RpZnlpbmcgYnJhaW4gcGFnZXMgdW5wcm9tcHRlZC4qKiBUaGUgYnJpZWZpbmcgaXMgcmVhZC1vbmx5IGJ5IGRlZmF1bHQuIERvIG5vdCBjcmVhdGUgb3IgdXBkYXRlIHBhZ2VzIHVubGVzcyB0aGUgdXNlciBleHBsaWNpdGx5IHJlcXVlc3RzIGl0CioqSWdub3JpbmcgY292ZXJhZ2UgZ2Fwcy4qKiBXaGVuIGEgbWVldGluZyBwYXJ0aWNpcGFudCBoYXMgbm8gYnJhaW4gcGFnZSwgc2F5IHNvLiBTaWxlbmNlIGFib3V0IGdhcHMgaGlkZXMgaWdub3JhbmNl",
             snapshot: state.snapshot(),
             scopedTools: ["get_health", "get_page", "get_timeline", "list_pages", "query", "shell.run"]
         )
-        for (__key, __value) in __meridianProseResults_L96 {
+        for (__key, __value) in __meridianProseResults_L105 {
             state.bind(__key, __value)
         }
 

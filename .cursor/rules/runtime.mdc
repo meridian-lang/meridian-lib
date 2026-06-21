@@ -1,0 +1,104 @@
+---
+description: Runtime conventions for MeridianRuntime — Value enum, Value.from, NumericConvertible, State.get keys, Runtime.init signature, sync elapsedMS/eventCount, RuntimeApprovalVerdict, Observer/Event naming. Read when editing the runtime.
+globs: Sources/MeridianRuntime/**/*.swift
+alwaysApply: false
+---
+
+# Runtime conventions
+
+### `Value` enum
+
+All state bindings, invoke arguments, and emit payloads use `Value`.
+It is `Sendable` but NOT `Hashable` or `Codable` at the top level.
+
+Full case list:
+```swift
+case string(String)
+case number(Decimal)
+case boolean(Bool)
+case money(Money)
+case duration(Duration)
+case date(Date)
+case dateTime(Date)               // separate from .date
+case enumValue(String, kind: String)
+case record([String: Value])
+case list([Value])
+case reference(String)
+case null                          // also exposed as Value.unit
+case opaque(AnyHashableSendable)   // type-erasing box
+```
+
+Never compare `Value?` with Swift operators. Use `MeridianComparison.*`.
+
+### `Value.from(_:)`
+
+`ValueCoercion.swift` defines overloads for bridging typed Swift values into
+`Value`. Add new overloads here if a new typed constant kind is introduced.
+
+### `NumericConvertible`
+
+Protocol for types that can be compared numerically inside `MeridianComparison`.
+Currently adopted by: `Decimal`, `Int`, `Double`, `Money`, `Duration`.
+Add new numeric types here if needed.
+
+### `State.get` key format
+
+Keys are dot-separated paths that mirror the source property access:
+- `"order"` — top-level workflow parameter
+- `"order.id"` — nested property
+- `"result"` — local bind result
+
+Bind names are **camelCased** from multi-word source names
+(`"validation result"` → `"validationResult"`).
+
+### `Runtime.init` signature
+
+```swift
+Runtime(
+    toolRegistry: ToolRegistry,           // required
+    instanceRegistry: InstanceRegistry,   // default .empty
+    observer: any Observer,               // default JSONLObserver.stdout
+    checkpointer: any Checkpointer,       // default InMemoryCheckpointer()
+    clock: any Clock,                     // default SystemClock()
+    runID: String,                        // default UUID
+    parentRunID: String?,                 // for nested workflows
+    parentSequence: Int?,
+    maxNestingDepth: Int                  // default 32
+)
+```
+
+Do NOT use `tools: [String: any MeridianTool]` — that API does not exist.
+Tools are registered via `ToolRegistry.Builder`.
+
+### `elapsedMS()` and `eventCount()` are NOT async
+
+Generated code calls these without `await`. They return `Double` and `Int`
+respectively.
+
+### `RuntimeApprovalVerdict` has 2 cases
+
+```swift
+public enum RuntimeApprovalVerdict: String, Codable, Sendable {
+    case approved
+    case denied
+}
+```
+
+The 3-case `ApprovalVerdict` (`.approved`, `.denied`, `.deferred`) is a
+domain type generated from vocabulary. They are distinct.
+
+### `Observer` not `EventSink`
+
+The event sink protocol is `Observer` (not `EventSink`):
+```swift
+public protocol Observer: Sendable {
+    func record(_ event: Event) async
+}
+```
+Implementations: `JSONLObserver`, `InMemoryObserver`, `CompositeObserver`.
+Use `InMemoryObserver` in tests.
+
+### `Event` not `MeridianEvent`
+
+The event type is `Event`, not `MeridianEvent`. It has 29 `EventKind` cases.
+See `docs/06_RUNTIME.md` for the full list.

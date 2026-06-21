@@ -47,7 +47,10 @@ struct ConditionClassifier {
         // single bound result — NOT a `every <plural>` collection quantifier
         // (Wave 2C), which must keep its quantifier meaning.
         for prefix in lexicon.grammar.emittedInvariantPrefixes where lower.hasPrefix(prefix) {
-            return "the " + text.dropFirst(prefix.count)
+            guard let article = lexicon.definiteArticle else {
+                return String(text.dropFirst(prefix.count))
+            }
+            return "\(article) " + text.dropFirst(prefix.count)
         }
         return text
     }
