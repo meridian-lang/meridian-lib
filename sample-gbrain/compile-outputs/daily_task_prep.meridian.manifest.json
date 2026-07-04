@@ -98,7 +98,7 @@
     "name" : "daily-task-prep",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "invariants",
         "level" : 2,
         "line" : 23,
         "text" : "Contract"
@@ -106,63 +106,73 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 32,
+        "line" : 31,
         "text" : "Phases"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 44,
+        "line" : 38,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "prohibitions",
         "level" : 2,
-        "line" : 63,
+        "line" : 57,
         "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 25,
+        "text" : "This skill guarantees"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 23,
         "lines" : [
-          "checklist:ai-autonomy:Q2FsZW5kYXIvbWVldGluZ3MgZm9yIHRvZGF5IGFyZSBsb2FkZWQgd2l0aCBicmFpbiBjb250ZXh0IHBlciBhdHRlbmRlZQpPcGVuIHRocmVhZHMgZnJvbSB5ZXN0ZXJkYXkgYXJlIHN1cmZhY2VkCkFjdGl2ZSB0YXNrcyByZXZpZXdlZCB3aXRoIHByaW9yaXR5IG9yZGVyaW5nClByZXAgYnJpZWZpbmcgaXMgYWN0aW9uYWJsZSAobm90IGp1c3QgaW5mb3JtYXRpb25hbCk="
+          "This skill guarantees:",
+          "Calendar\/meetings for today are loaded with brain context per attendee",
+          "Open threads from yesterday are surfaced",
+          "Active tasks reviewed with priority ordering",
+          "Prep briefing is actionable (not just informational)"
         ],
-        "role" : "procedure"
+        "role" : "invariants"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phases",
-        "line" : 32,
+        "line" : 31,
         "lines" : [
-          "codeblock:bash:Z2JyYWluIGdldCBvcHMvdGFza3M=",
-          "use judgment to compile the morning prep briefing:",
-          "Load today's calendar and, for each meeting, load attendee brain pages, recent timeline, and open threads",
-          "Search the brain for yesterday's timeline entries and flag anything unresolved",
-          "Surface P0 and P1 tasks from the task list",
-          "Compile per-meeting context cards plus open threads and task priorities"
+          "**Load calendar.** Check today's meetings. For each: load attendee brain pages, recent timeline, open threads",
+          "**Check yesterday's threads.** Search brain for yesterday's timeline entries. Flag anything unresolved",
+          "**Review active tasks.** Load `ops\/tasks` from brain. Surface P0 and P1 items",
+          "**Compile prep briefing.** Per-meeting context cards + open threads + task priorities"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 44,
+        "line" : 38,
         "lines" : [
           "codeblock:plain:TW9ybmluZyBQcmVwIOKAlCB7ZGF0ZX0KPT09PT09PT09PT09PT09PT09PT09PQpNZWV0aW5ncyB0b2RheToge059CgojIyB7TWVldGluZyAxIHRpdGxlfSBhdCB7dGltZX0gKCggaW5lcnQgKSkKQXR0ZW5kZWVzOiB7bmFtZXMgd2l0aCBicmFpbiBjb250ZXh0fQpDb250ZXh0OiB7cmVjZW50IGludGVyYWN0aW9ucywgb3BlbiB0aHJlYWRzfQpQcmVwOiB7d2hhdCB0byBrbm93IGJlZm9yZSB0aGlzIG1lZXRpbmd9CgojIyBPcGVuIFRocmVhZHMgKCggaW5lcnQgKSkKLSB7dGhyZWFkIGZyb20geWVzdGVyZGF5LCB3aXRoIGNvbnRleHR9CgojIyBUYXNrcyAoUDAtUDEpICgoIGluZXJ0ICkpCi0ge3Rhc2sgd2l0aCBwcmlvcml0eX0="
         ],
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 63,
+        "line" : 57,
         "lines" : [
-          "checklist:ai-autonomy:TGlzdGluZyBtZWV0aW5ncyB3aXRob3V0IGxvYWRpbmcgYXR0ZW5kZWUgY29udGV4dCBmcm9tIGJyYWluCklnbm9yaW5nIHllc3RlcmRheSdzIHVucmVzb2x2ZWQgdGhyZWFkcwpQcmVzZW50aW5nIHRhc2tzIHdpdGhvdXQgcHJpb3JpdHkgb3JkZXJpbmc="
+          "Listing meetings without loading attendee context from brain",
+          "Ignoring yesterday's unresolved threads",
+          "Presenting tasks without priority ordering"
         ],
-        "role" : "procedure"
+        "role" : "prohibitions"
       }
     ],
     "tools" : "search\nquery\nget_page\nlist_pages\nget_timeline",
@@ -205,52 +215,36 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 27,
-      "swift_line" : 602
-    },
-    {
-      "meridian_line" : 34,
-      "swift_line" : 614
-    },
-    {
-      "meridian_line" : 38,
-      "swift_line" : 624
-    },
-    {
-      "meridian_line" : 66,
-      "swift_line" : 633
+      "meridian_line" : 1,
+      "swift_line" : 631
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 673
+      "swift_line" : 636
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 678
+      "swift_line" : 675
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 717
+      "swift_line" : 680
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 722
+      "swift_line" : 719
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 761
+      "swift_line" : 724
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 766
+      "swift_line" : 763
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 805
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 810
+      "swift_line" : 768
     }
   ],
   "tools_used" : [

@@ -42,12 +42,18 @@ struct DefinitionParser {
         t = lexicon.stripLeadingArticle(t)
 
         // Split on " if " (the condition introducer).
-        guard let ifRange = t.range(of: lexicon.grammar.definitionIfMarker, options: .caseInsensitive) else { return nil }
+        guard let ifRange = t.range(of: lexicon.grammar.definitionIfMarker, options: .caseInsensitive) else {
+            trace.log(.statement, "L\(line): definition rejected — no \"\(lexicon.grammar.definitionIfMarker)\" condition introducer in \"\(t)\"")
+            return nil
+        }
         let head = String(t[t.startIndex..<ifRange.lowerBound]).trimmingCharacters(in: .whitespaces)
         let condition = String(t[ifRange.upperBound...]).trimmingCharacters(in: .whitespaces)
 
         // Head: "<kind> is <adjective>".
-        guard let isRange = head.range(of: lexicon.grammar.merconfig.isMarker, options: .caseInsensitive) else { return nil }
+        guard let isRange = head.range(of: lexicon.grammar.merconfig.isMarker, options: .caseInsensitive) else {
+            trace.log(.statement, "L\(line): definition rejected — head \"\(head)\" has no \"is\" marker")
+            return nil
+        }
         // The ` is ` match requires a space on both sides and `head` is already
         // trimmed, so there is always ≥1 non-space char on each side — `kind` and
         // `adjectiveRaw` are therefore never empty here (no redundant guard).
@@ -61,6 +67,7 @@ struct DefinitionParser {
         let bodyText = rewriteSubjectPronouns(condition, subject: subjectVar)
         let body = ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon).parse(bodyText)
 
+        trace.log(.statement, "L\(line): definition parsed — kind=\"\(subjectVar)\" adjective=\"\(adjective)\"")
         return DefinitionDeclaration(
             adjective: adjective, kind: subjectVar, subjectVar: subjectVar,
             body: body, sourceLine: line

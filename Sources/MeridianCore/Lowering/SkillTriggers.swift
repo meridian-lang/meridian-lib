@@ -53,16 +53,19 @@ public struct SkillTrigger: Sendable, Equatable {
 /// block) so the words are obvious and extensible without recompiling.
 struct TriggerClassifier {
     let lexicon: EnglishLexicon
+    let trace: ParserTrace
     private let wordSets: [TriggerKind: Set<String>]
 
-    init(lexicon: EnglishLexicon, rulebook: Rulebook = .empty) {
+    init(lexicon: EnglishLexicon, rulebook: Rulebook = .empty, trace: ParserTrace = .shared) {
         self.lexicon = lexicon
+        self.trace = trace
         self.wordSets = rulebook.triggerWordSets()
     }
 
     func classify(_ raw: String, sourceLine: Int) -> SkillTrigger {
         let spec = raw.trimmingCharacters(in: .whitespaces)
         let kind = kindOf(spec)
+        trace.log(.lowering, "trigger classify @L\(sourceLine) \"\(spec)\" → \(kind.rawValue)")
         return SkillTrigger(kind: kind, spec: spec, name: canonicalName(spec), sourceLine: sourceLine)
     }
 

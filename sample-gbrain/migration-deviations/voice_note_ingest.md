@@ -2,9 +2,9 @@
 
 - Original: `voice-note-ingest/SKILL.md`
 - Ported: `voice_note_ingest.meri`
-- Tier: 2 (light edits)
-- Similarity: 84%
-- Lines: 201 -> 203 (+34 / -32)
+- Tier: 1 (near-verbatim)
+- Similarity: 92%
+- Lines: 201 -> 201 (+16 / -16)
 
 ## Frontmatter
 - Added: (none)
@@ -12,24 +12,27 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 
 ## Metrics
-- Sections: 8/12 inert (67% inert ratio)
-- Operational inert: 0
+- Sections: 12/12 inert (100% inert ratio)
+- Operational inert: 2
 - Unclassified inert: 0
-- Inert categories: reference-documentation=6, template=2
-- Judgment: 1 blocks, 3 lines
+- Inert categories: normative-contract=1, operational-procedure=1, reference-documentation=8, template=2
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
 - L10 `Iron Law`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L20 `When to invoke`: operational-procedure — Marked or derived as applicability, but inert suppresses execution.
 - L27 `The pipeline`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L45 `Decision tree (where the content goes)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L78 `Brain page format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 - L124 `Citation format`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L136 `Naming convention`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L142 `Bulk vs. single`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L158 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L178 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L147 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L157 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L165 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
+- L176 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
@@ -45,7 +48,15 @@
  
  The user's **exact words** are the insight. Never paraphrase. Never clean
  up. The vivid, unpolished, stream-of-consciousness phrasing captures
-@@ -46,7 +46,7 @@
+@@ -39,14 +39,14 @@
+ - ✅ `"The ambition-to-lifespan ratio has never been more fucked"`
+ - ❌ `User noted the tension between ambition and mortality`
+ 
+-## When to invoke
++## When to invoke (( inert, role: applicability ))
+ 
+ The user sends an audio or voice message via any channel (Telegram, voice
+ memo upload, openclaw audio attachment). The host agent typically provides
  the transcript text. If not, transcribe via `gbrain transcription` (Groq
  Whisper by default; OpenAI fallback for audio > 25MB segmented via ffmpeg).
  
@@ -63,6 +74,15 @@
  
  Apply in order. First match wins. If multiple categories apply, file to
  the primary directory and cross-link to the others.
+@@ -97,7 +97,7 @@
+ others. If the voice note covers a person AND a novel idea, create the
+ originals/ page AND update the person's timeline.
+ 
+-## Brain page format
++## Brain page format (( inert, role: template ))
+ 
+ For ALL voice-note-derived pages, include this skeleton:
+ 
 @@ -120,30 +120,30 @@
  
  > Executive summary of what was said and why it matters.
@@ -99,43 +119,30 @@
  
  ```
  [Source: voice note, <channel>, YYYY-MM-DD]
-@@ -155,28 +155,29 @@
+@@ -155,18 +155,18 @@
  [Source: voice note, <channel>, YYYY-MM-DD HH:MM PT]
  ```
  
 -## Naming convention
--
--- Audio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,
--  `2026-04-13-rick-rubin-creative-philosophy.ogg`)
--- Brain pages: match the slug of the destination directory.
--
++## Naming convention (( inert ))
+ 
+ - Audio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,
+   `2026-04-13-rick-rubin-creative-philosophy.ogg`)
+ - Brain pages: match the slug of the destination directory.
+ 
 -## Bulk vs. single
-+## Naming convention (( role: procedure ))
-+
-+use judgment to follow the Naming convention guidance:
-+  item: Audio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,
-+    `2026-04-13-rick-rubin-creative-philosophy.ogg`)
-+  item: Brain pages: match the slug of the destination directory.
 +## Bulk vs. single (( inert ))
  
  This skill handles ONE voice note at a time. Each is its own ingest cycle.
  No batching.
  
 -## Anti-Patterns
--
--- ❌ **Paraphrasing the transcript.** The exact words are the signal.
--- ❌ **Cleaning up hesitations or filler words** ("um", "like", "you
-+## Anti-Patterns (( role: procedure ))
-+
-+!!! checklist (( ai-autonomy ))
-+- [ ] ❌ **Paraphrasing the transcript.** The exact words are the signal.
-+- [ ] ❌ **Cleaning up hesitations or filler words** ("um", "like", "you
-   know"). The texture matters.
--- ❌ **Creating a page with no entity cross-links** when people/companies
-+- [ ] ❌ **Creating a page with no entity cross-links** when people/companies
-   were mentioned. Iron Law fail.
--- ❌ **Skipping the audio storage step.** Always upload the original; the
-+- [ ] ❌ **Skipping the audio storage step.** Always upload the original; the
++## Anti-Patterns (( inert, role: prohibitions ))
+ 
+ - ❌ **Paraphrasing the transcript.** The exact words are the signal.
+ - ❌ **Cleaning up hesitations or filler words** ("um", "like", "you
+@@ -176,7 +176,7 @@
+ - ❌ **Skipping the audio storage step.** Always upload the original; the
    brain page has a `🔊 [Audio]` link back to it.
  
 -## Related skills
@@ -143,32 +150,22 @@
  
  - `skills/signal-detector/SKILL.md` — same exact-phrasing pattern for
    text-channel idea capture
-@@ -184,16 +185,17 @@
+@@ -184,7 +184,7 @@
  - `skills/conventions/quality.md` — citation + back-link rules
  
  
 -## Contract
--
--This skill guarantees:
--
--- Routing matches the canonical triggers in the frontmatter.
--- Output written under the directories listed in `writes_to:` (when applicable).
--- Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
--- Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
--
--The full behavior contract is documented in the body sections above; this section exists for the conformance test.
-+## Contract (( role: procedure ))
-+
-+> This skill guarantees:
-+
-+!!! checklist (( ai-autonomy ))
-+- [ ] Routing matches the canonical triggers in the frontmatter.
-+- [ ] Output written under the directories listed in `writes_to:` (when applicable).
-+- [ ] Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
-+- [ ] Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
-+
-+> The full behavior contract is documented in the body sections above; this section exists for the conformance test.
++## Contract (( inert, role: invariants ))
  
- ## Output Format
+ This skill guarantees:
+ 
+@@ -195,7 +195,7 @@
+ 
+ The full behavior contract is documented in the body sections above; this section exists for the conformance test.
+ 
+-## Output Format
++## Output Format (( inert, role: template ))
+ 
+ The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
  
 ```

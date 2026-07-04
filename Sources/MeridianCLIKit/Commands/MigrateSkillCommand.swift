@@ -39,6 +39,14 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Overwrite an existing output file.")
     var force: Bool = false
 
+    @Option(name: .long,
+            help: "Activate parser/lowering trace categories (comma-separated). Examples: skill, lowering, all. Silent by default.")
+    var trace: String?
+
+    @Option(name: .long,
+            help: "Write trace output to a file instead of stderr.")
+    var traceFile: String?
+
     public func run() async throws {
         let inputURL = URL(fileURLWithPath: input).standardized
         let fm = FileManager.default
@@ -49,12 +57,16 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
         let (vocabularies, rulebooks) =
             try loadDependencies(beside: batch ? inputURL : inputURL.deletingLastPathComponent())
 
+        // Silent unless --trace is given (migration is noisy over a whole
+        // corpus, so opt-in tracing under `.skill` mirrors `compile`/`check`).
+        let traceInstance = makeCLITrace(spec: trace, file: traceFile)
         let migrator = SkillMigrator(
-            compiler: Compiler(options: .init(trace: ParserTrace.silent())),
+            compiler: Compiler(options: .init(trace: traceInstance)),
             vocabularies: vocabularies,
             rulebooks: rulebooks,
             options: .init(maxRepair: maxRepair),
-            repair: repairClosure()
+            repair: repairClosure(),
+            trace: traceInstance
         )
 
         let depsDir = batch ? inputURL : inputURL.deletingLastPathComponent()

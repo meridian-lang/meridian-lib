@@ -16,8 +16,17 @@ public struct PreviewSkillCommand: ParsableCommand {
     @Option(help: "Name to place in generated frontmatter.")
     var name: String = "imported skill"
 
+    @Option(name: .long,
+            help: "Activate parser/lowering trace categories (comma-separated). Examples: skill, all.")
+    var trace: String?
+
+    @Option(name: .long,
+            help: "Write trace output to a file instead of stderr.")
+    var traceFile: String?
+
     public func run() throws {
         let markdown = try String(contentsOfFile: input, encoding: .utf8)
-        print(SkillMarkdownImporter().preview(markdown, name: name))
+        let traceInstance = makeCLITrace(spec: trace, file: traceFile)
+        print(SkillMarkdownImporter(trace: traceInstance).preview(markdown, name: name))
     }
 }

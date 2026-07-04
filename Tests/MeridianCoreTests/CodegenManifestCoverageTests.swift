@@ -26,7 +26,9 @@ struct ManifestEmitterCoverageTests {
             instancesRequired: [inst],
             rules: [rule]
         )
-        let json = try ManifestEmitter().emit(input)
+        let cap = ParserTrace.capturing(categories: [.codegen])
+        let json = try ManifestEmitter(trace: cap.trace).emit(input)
+        #expect(cap.lines().contains { $0.contains("emit manifest:") })
         #expect(json.contains("\"apiKey\""))
         #expect(json.contains("sk_test"))
         #expect(json.contains("meridian_rules"))

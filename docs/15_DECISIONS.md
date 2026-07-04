@@ -42,7 +42,7 @@ Silent drops (malformed headers, unparseable rules/statements, unknown config ke
 - Constructs are skipped wholesale on error (cascade-resistant); phrase stubs are pre-registered so dependents still resolve.
 - Structural codes carry a mandatory `help` string with the concrete fix.
 
-**See also:** MER1001, MER1002, MER1003, MER1004, MER3006, MER3007
+**See also:** MER1001, MER1002, MER1003, MER1004, MER2011, MER3006, MER3007, MER3016
 
 ## D-DX-3 — swift-format failure is a recoverable warning, not an error
 

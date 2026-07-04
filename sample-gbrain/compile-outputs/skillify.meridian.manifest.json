@@ -98,7 +98,7 @@
     "name" : "skillify",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "invariants",
         "level" : 2,
         "line" : 33,
         "text" : "Contract"
@@ -158,7 +158,7 @@
         "text" : "Step 2: Run the skill, capture output"
       },
       {
-        "kind" : "procedure",
+        "kind" : "inert",
         "level" : 3,
         "line" : 116,
         "text" : "Step 3: Run the eval gate"
@@ -176,13 +176,13 @@
         "text" : "Cycles + cost guardrails"
       },
       {
-        "kind" : "procedure",
+        "kind" : "inert",
         "level" : 3,
         "line" : 188,
         "text" : "Provider configuration"
       },
       {
-        "kind" : "procedure",
+        "kind" : "inert",
         "level" : 3,
         "line" : 201,
         "text" : "Cost expectations"
@@ -236,7 +236,7 @@
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "prohibitions",
         "level" : 2,
         "line" : 299,
         "text" : "Anti-Patterns"
@@ -256,14 +256,32 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 198,
+        "line" : 197,
         "text" : "Or set env vars"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 225,
+        "line" : 224,
         "text" : "Resolver eval"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 225,
+        "text" : "Check-resolvable"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 233,
+        "text" : "E2E smoke"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 234,
+        "text" : "Brain filing"
       },
       {
         "kind" : "topic",
@@ -274,13 +292,16 @@
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 33,
         "lines" : [
-
+          "A feature is \"properly skilled\" when all 11 checklist items pass. Item 3",
+          "(cross-modal eval) is informational in v1.1.0 — it does not gate the",
+          "skillpack-check audit, but a missing or stale receipt is surfaced so the",
+          "user knows where the gate stands"
         ],
-        "role" : "procedure"
+        "role" : "invariants"
       },
       {
         "executes" : false,
@@ -292,21 +313,20 @@
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 0: Should This Be a Skill?",
         "line" : 56,
         "lines" : [
-          "use judgment to follow the Phase 0: Should This Be a Skill? guidance:",
           "Before skillifying, check:",
-          "item: Will this be invoked 2+ times? (One-off work ≠ skill)",
-          "item: Is there >20 lines of logic? (Trivial helpers don't need full infrastructure)",
-          "item: Does it have a clear trigger phrase a user would actually say?",
+          "Will this be invoked 2+ times? (One-off work ≠ skill)",
+          "Is there >20 lines of logic? (Trivial helpers don't need full infrastructure)",
+          "Does it have a clear trigger phrase a user would actually say?",
           "If no to all three, it's a script, not a skill. Move on"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 1: Audit",
         "line" : 65,
         "lines" : [
@@ -315,7 +335,7 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 2: Write SKILL.md + Code (items 1-2)",
         "line" : 73,
         "lines" : [
@@ -335,7 +355,7 @@
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 3: Cross-Modal Eval (item 3) — THE QUALITY GATE",
         "line" : 98,
         "lines" : [
@@ -375,11 +395,10 @@
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Step 3: Run the eval gate",
         "line" : 116,
         "lines" : [
-          "use judgment to follow the Step 3: Run the eval gate guidance:",
           "codeblock:bash:Z2JyYWluIGV2YWwgY3Jvc3MtbW9kYWwgXAogIC0tdGFzayAiV2hhdCB0aGlzIHNraWxsIGlzIHN1cHBvc2VkIHRvIGFjY29tcGxpc2giIFwKICAtLW91dHB1dCBza2lsbHMvPHNsdWc+L1NLSUxMLm1k",
           "The command runs 3 frontier models from 3 different providers in parallel,",
           "scores the OUTPUT against the TASK on 5 documented dimensions, and writes a",
@@ -401,14 +420,14 @@
           "Exit code 2; CI wrappers should treat this as \"did not run cleanly\", not",
           "\"failed quality gate\""
         ],
-        "role" : "procedure"
+        "role" : "inert"
       },
       {
         "executes" : false,
         "heading" : "Step 4: Cycle until you pass (≤3 cycles)",
         "line" : 154,
         "lines" : [
-          "codeblock:plain:Q1lDTEUgMToKICBFdmFsIOKGkiBzY29yZXMgKyB0b3AgMTAgaW1wcm92ZW1lbnRzCiAgSUYgcGFzczog4oaSIGRvbmUsIHdyaXRlIHRlc3RzCiAgRUxTRToKICAgIEFwcGx5IHRvcCAxMCBpbXByb3ZlbWVudHMgdG8gdGhlIGFjdHVhbCBmaWxlCiAgICBMb2c6IHdoaWNoIGltcHJvdmVtZW50cyBhcHBsaWVkLCB3aGF0IGNoYW5nZWQKICAKQ1lDTEUgMjoKICBSZS1ldmFsIHRoZSBGSVhFRCBvdXRwdXQgKHNhbWUgMyBtb2RlbHMsIHNhbWUgZGltZW5zaW9ucykKICBDb21wYXJlOiBiZWZvcmUvYWZ0ZXIgc2NvcmVzIHBlciBkaW1lbnNpb24gKHRyYWNrIGRlbHRhKQogIElGIHBhc3M6IOKGkiBkb25lLCB3cml0ZSB0ZXN0cwogIEVMU0U6IGFwcGx5IHJlbWFpbmluZyBpbXByb3ZlbWVudHMgKyBuZXcgb25lcwogIApDWUNMRSAzIChmaW5hbCk6CiAgUmUtZXZhbAogIElGIHBhc3M6IOKGkiBzaGlwCiAgRUxTRTog4oaSIHNoaXAgd2l0aCBLTk9XTl9HQVBTIHNlY3Rpb24gbGlzdGluZzoKICBpdGVtOiBXaGljaCBkaW1lbnNpb25zIGFyZSBzdGlsbCBiZWxvdyA3CiAgaXRlbTogV2hpY2ggaW1wcm92ZW1lbnRzIGNvdWxkbid0IGJlIHJlc29sdmVkCiAgaXRlbTogV2h5IChlLmcuLCAid291bGQgcmVxdWlyZSBhcmNoaXRlY3R1cmFsIGNoYW5nZSIp"
+          "codeblock:plain:Q1lDTEUgMToKICBFdmFsIOKGkiBzY29yZXMgKyB0b3AgMTAgaW1wcm92ZW1lbnRzCiAgSUYgcGFzczog4oaSIGRvbmUsIHdyaXRlIHRlc3RzCiAgRUxTRToKICAgIEFwcGx5IHRvcCAxMCBpbXByb3ZlbWVudHMgdG8gdGhlIGFjdHVhbCBmaWxlCiAgICBMb2c6IHdoaWNoIGltcHJvdmVtZW50cyBhcHBsaWVkLCB3aGF0IGNoYW5nZWQKCkNZQ0xFIDI6CiAgUmUtZXZhbCB0aGUgRklYRUQgb3V0cHV0IChzYW1lIDMgbW9kZWxzLCBzYW1lIGRpbWVuc2lvbnMpCiAgQ29tcGFyZTogYmVmb3JlL2FmdGVyIHNjb3JlcyBwZXIgZGltZW5zaW9uICh0cmFjayBkZWx0YSkKICBJRiBwYXNzOiDihpIgZG9uZSwgd3JpdGUgdGVzdHMKICBFTFNFOiBhcHBseSByZW1haW5pbmcgaW1wcm92ZW1lbnRzICsgbmV3IG9uZXMKCkNZQ0xFIDMgKGZpbmFsKToKICBSZS1ldmFsCiAgSUYgcGFzczog4oaSIHNoaXAKICBFTFNFOiDihpIgc2hpcCB3aXRoIEtOT1dOX0dBUFMgc2VjdGlvbiBsaXN0aW5nOgogICAgLSBXaGljaCBkaW1lbnNpb25zIGFyZSBzdGlsbCBiZWxvdyA3CiAgICAtIFdoaWNoIGltcHJvdmVtZW50cyBjb3VsZG4ndCBiZSByZXNvbHZlZAogICAgLSBXaHkgKGUuZy4sICJ3b3VsZCByZXF1aXJlIGFyY2hpdGVjdHVyYWwgY2hhbmdlIik="
         ],
         "role" : "inert"
       },
@@ -417,52 +436,55 @@
         "heading" : "Cycles + cost guardrails",
         "line" : 179,
         "lines" : [
-
+          "Default `--cycles 3` in TTY, `--cycles 1` in non-TTY (limits scripted",
+          "bulk spend in CI loops)",
+          "The command prints an estimated max-cost-per-cycle from a small pricing",
+          "constant before each run. Real cost varies with prompt size; treat the",
+          "estimate as a ceiling for default `--max-tokens 4000`",
+          "A `--budget-usd N` hard cap is a v0.27.x follow-up TODO"
         ],
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Provider configuration",
         "line" : 188,
         "lines" : [
-          "use judgment to follow the Provider configuration guidance:",
           "Models resolve through the gbrain AI gateway. Configure once with:",
           "codeblock:bash:Z2JyYWluIHByb3ZpZGVycyB0ZXN0ICAgICMgc2VlIHdoYXQncyBjb25maWd1cmVkCmdicmFpbiBjb25maWcgICAgICAgICAgICAjIHNldCBrZXlz",
           "Or set env vars: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`,",
           "`GOOGLE_GENERATIVE_AI_API_KEY`, `TOGETHER_API_KEY`, etc. The gateway reads",
           "from `~\/.gbrain\/config.json` plus `process.env`"
         ],
-        "role" : "procedure"
+        "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Cost expectations",
         "line" : 201,
         "lines" : [
-          "use judgment to follow the Cost expectations guidance:",
           "3 cycles × 3 models = 9 frontier calls max per run. With Opus-class +",
           "GPT-4o-class + Gemini-1.5-Pro, expect $1–3 per full run on default",
           "`--max-tokens 4000`. Receipts include the per-call model identifiers so",
           "you can audit retroactively"
         ],
-        "role" : "procedure"
+        "role" : "inert"
       },
       {
         "executes" : false,
         "heading" : "Skip cross-modal eval when:",
         "line" : 208,
         "lines" : [
-
+          "Output is < 200 tokens (trivial — not worth 9 API calls)",
+          "The skill is a thin wrapper around a single API call (one cycle is enough)"
         ],
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 4: Tests (items 4-6)",
         "line" : 213,
         "lines" : [
-          "use judgment to follow the Phase 4: Tests (items 4-6) guidance:",
           "NOW that eval has proven quality, write tests that lock it in:",
           "**Unit tests** — every branch of deterministic logic. Mock external calls",
           "**Integration tests** — hit real endpoints. Catch bugs mocks hide",
@@ -471,29 +493,27 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 5: Resolver + Check-Resolvable (items 7-9)",
         "line" : 221,
         "lines" : [
-          "use judgment to follow the Phase 5: Resolver + Check-Resolvable (items 7-9) guidance:",
           "Add to skills\/RESOLVER.md with trigger phrases users ACTUALLY type",
           "Resolver eval: feed triggers, assert correct routing",
           "Check-resolvable:",
-          "item: Skill reachable from skills\/RESOLVER.md (not orphaned)",
-          "item: No MECE overlap with other skills",
-          "item: No DRY violations (shared logic in lib\/, not copy-pasted)",
-          "item: No ambiguous trigger routing"
+          "Skill reachable from skills\/RESOLVER.md (not orphaned)",
+          "No MECE overlap with other skills",
+          "No DRY violations (shared logic in lib\/, not copy-pasted)",
+          "No ambiguous trigger routing"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 6: E2E + Brain Filing (items 10-11)",
         "line" : 231,
         "lines" : [
-          "use judgment to follow the Phase 6: E2E + Brain Filing (items 10-11) guidance:",
-          "item: E2E smoke: full pipeline from trigger to side effect",
-          "item: Brain filing: add to brain\/RESOLVER.md if the skill writes brain pages"
+          "E2E smoke: full pipeline from trigger to side effect",
+          "Brain filing: add to brain\/RESOLVER.md if the skill writes brain pages"
         ],
         "role" : "procedure"
       },
@@ -547,8 +567,8 @@
           "receipt to the current `SKILL.md` content. `gbrain skillify check`",
           "surfaces the status (`found` \/ `stale` \/ `missing`) as informational",
           "**An audit verdict** from `gbrain skillify check`: `properly skilled` |",
-          "`close — create: <missing items>` | `needs skillify — run \/skillify on",
-          "<target>`. Score is `<passed>\/<total>`. Required items gate the verdict;",
+          "`close — create: <missing items>` | ``needs skillify — run \/skillify on",
+          "<target>`. Score is `<passed>\/<total>``. Required items gate the verdict;",
           "item 11 (cross-modal eval) is informational and never blocks PASS",
           "JSON output (`gbrain skillify check --json`) includes the same fields plus",
           "the per-item detail string, so agents can route on the structured envelope",
@@ -557,13 +577,22 @@
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
         "line" : 299,
         "lines" : [
-          "checklist:ai-autonomy:4p2MIFdyaXRpbmcgdGVzdHMgYmVmb3JlIGNyb3NzLW1vZGFsIGV2YWwgKGxvY2tzIGluIG1lZGlvY3JpdHkpCuKdjCBVc2luZyBidWRnZXQgbW9kZWxzIGZvciBldmFsIChDIHN0dWRlbnQgZ3JhZGluZyBBIHN0dWRlbnQpCuKdjCBVc2luZyBhIHNpbmdsZSBwcm92aWRlcidzIGZhbWlseSBmb3IgYWxsIDMgc2xvdHMgKGNvcnJlbGF0ZWQgYmxpbmQgc3BvdHMpCuKdjCBTa2lwcGluZyBldmFsICJiZWNhdXNlIHRoZSBvdXRwdXQgbG9va3MgZmluZSIgKHlvdXIganVkZ21lbnQgaXNuJ3QgMyBtb2RlbHMpCuKdjCBFdmFsIHdpdGhvdXQgZml4IGN5Y2xlICh2YW5pdHkgbWV0cmljcykK4p2MIENvZGUgd2l0aCBubyBTS0lMTC5tZCAoaW52aXNpYmxlIHRvIHJlc29sdmVyKQrinYwgVGVzdHMgdGhhdCByZWltcGxlbWVudCBwcm9kdWN0aW9uIGNvZGUgKG1hc2tzIHJlYWwgYnVncykK4p2MIFJlc29sdmVyIGVudHJ5IHdpdGggaW50ZXJuYWwgamFyZ29uIChtdXN0IG1pcnJvciByZWFsIHVzZXIgbGFuZ3VhZ2UpCuKdjCBUd28gc2tpbGxzIGRvaW5nIHRoZSBzYW1lIHRoaW5nIChtZXJnZSBvciBraWxsIG9uZSkK4p2MIFJ1bm5pbmcgY3Jvc3MtbW9kYWwgZXZhbCBvbiB0cml2aWFsIG91dHB1dHMgKDwgMjAwIHRva2Vucywgbm90IHdvcnRoIDkgQVBJIGNhbGxzKQ=="
+          "❌ Writing tests before cross-modal eval (locks in mediocrity)",
+          "❌ Using budget models for eval (C student grading A student)",
+          "❌ Using a single provider's family for all 3 slots (correlated blind spots)",
+          "❌ Skipping eval \"because the output looks fine\" (your judgment isn't 3 models)",
+          "❌ Eval without fix cycle (vanity metrics)",
+          "❌ Code with no SKILL.md (invisible to resolver)",
+          "❌ Tests that reimplement production code (masks real bugs)",
+          "❌ Resolver entry with internal jargon (must mirror real user language)",
+          "❌ Two skills doing the same thing (merge or kill one)",
+          "❌ Running cross-modal eval on trivial outputs (< 200 tokens, not worth 9 API calls)"
         ],
-        "role" : "procedure"
+        "role" : "prohibitions"
       }
     ],
     "tools" : "exec\nread\nwrite",
@@ -606,56 +635,68 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 58,
-      "swift_line" : 602
+      "meridian_line" : 238,
+      "swift_line" : 603
+    },
+    {
+      "meridian_line" : 238,
+      "swift_line" : 614
+    },
+    {
+      "meridian_line" : 238,
+      "swift_line" : 625
+    },
+    {
+      "meridian_line" : 238,
+      "swift_line" : 636
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 640
+      "swift_line" : 675
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 645
+      "swift_line" : 680
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 684
+      "swift_line" : 719
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 689
+      "swift_line" : 724
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 728
+      "swift_line" : 763
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 733
+      "swift_line" : 768
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 772
+      "swift_line" : 807
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 777
+      "swift_line" : 812
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 816
+      "swift_line" : 851
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 821
+      "swift_line" : 856
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 860
+      "swift_line" : 895
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 865
+      "swift_line" : 900
     }
   ],
   "tools_used" : [

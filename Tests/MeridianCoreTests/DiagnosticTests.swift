@@ -98,10 +98,10 @@ struct DiagnosticTests {
                                       range: SourceRange(file: "t.meridian", startLine: 5, startColumn: 10, endLine: 5, endColumn: 22),
                                       noun: "tool")
         let out = DiagnosticRenderer(sources: ["t.meridian": source]).render(d)
-        #expect(out.contains("[MER2002]"))
+        #expect(out.contains("[\(DiagnosticCode.unknownTool.id)]"))
         #expect(out.contains("^"))
         #expect(out.contains("did you mean \"chargePayment\"?"))
-        #expect(out.contains("meridian explain MER2002"))
+        #expect(out.contains("meridian explain \(DiagnosticCode.unknownTool.id)"))
         // D-DX-5 rationale surfaced inline.
         #expect(out.contains("D-DX-5"))
     }
@@ -114,7 +114,7 @@ struct DiagnosticTests {
         let data = json.data(using: .utf8)!
         let arr = try JSONSerialization.jsonObject(with: data) as! [[String: Any]]
         #expect(arr.count == 1)
-        #expect(arr[0]["code"] as? String == "MER2002")
+        #expect(arr[0]["code"] as? String == DiagnosticCode.unknownTool.id)
         #expect(arr[0]["severity"] as? String == "error")
         #expect(arr[0]["decision"] as? String == "D-DX-5")
         let suggestions = arr[0]["suggestions"] as! [[String: Any]]
@@ -128,7 +128,7 @@ struct DiagnosticTests {
         let d = Diagnostic.unresolved(.unknownTool, target: "x", among: ["y"], range: range(), noun: "tool")
         let err = CompilerError.diagnostics([d])
         #expect(err.diagnostics.count == 1)
-        #expect(err.diagnostics.first?.code.id == "MER2002")
+        #expect(err.diagnostics.first?.code == .unknownTool)
     }
 
     @Test("catalog metadata covers every DiagnosticCode.all entry")
@@ -148,14 +148,49 @@ struct DiagnosticTests {
         }
     }
 
-    @Test("unknown trace category validates to MER2010")
+    @Test("unknown trace category validates to unknownTraceCategory")
     func unknownTraceCategory() {
         let ds = ParserTrace.validateTraceSpec("not-a-real-category")
         #expect(ds.count == 1)
-        #expect(ds.first?.code.id == "MER2010")
+        #expect(ds.first?.code == .unknownTraceCategory)
     }
 
-    @Test("unknown test-spec key validates to MER1007")
+    // MARK: New codes (Diagnostics Tracing Overhaul)
+
+    /// `MER2011` guards `ASTToIR.lowerPhraseInvocation`'s workflow-call
+    /// argument mapping (`Sources/MeridianCore/Lowering/ASTToIR.swift`,
+    /// `ordered.map`): every declared workflow parameter must find a matching
+    /// key in the extracted `args` dict, under one of a few name/kind/spacing
+    /// variants. `SymbolTable.extractArgs` currently populates an entry for
+    /// EVERY parameter segment of the winning pattern unconditionally (even an
+    /// under-supplied invocation just gets an empty/malformed value for the
+    /// unfilled slot) — so this `throw` is a hardening guard against a FUTURE
+    /// regression reintroducing the original silent `compactMap`-drop, not a
+    /// live-fire path under the current architecture. It is still registered,
+    /// catalogued, and rendered exactly like every other diagnostic.
+    @Test("missing phrase argument renders with a did-you-mean-shaped candidate list")
+    func missingPhraseArgumentRenders() {
+        let d = Diagnostic.unresolved(.missingPhraseArgument, target: "accountManager",
+                                      among: ["order", "customer"], range: range(), noun: "phrase argument")
+        #expect(d.code == .missingPhraseArgument)
+        #expect(d.code.kind == .nameResolution)
+        #expect(!d.suggestions.isEmpty || !d.notes.isEmpty)
+    }
+
+    /// `MER3016` fires when a rule's predicate parses to an expression shape a
+    /// rule body cannot express (quantifiers, descriptions, aggregates,
+    /// superlatives, relation traversals, verb predicates, data tables, or a
+    /// parse-error carrier) — see `NoSilentFallbackTests.unlowerableRulePredicate`
+    /// for the end-to-end compile trigger.
+    @Test("unlowerable rule predicate carries actionable rewrite help")
+    func unlowerableRulePredicateStructural() {
+        let d = Diagnostic.error(.unlowerableRulePredicate, message: "x",
+                                 range: range(), help: "rewrite the predicate")
+        #expect(d.code == .unlowerableRulePredicate)
+        #expect(d.help == "rewrite the predicate")
+    }
+
+    @Test("unknown test-spec key validates to invalidTestSpecKey")
     func unknownTestSpecKey() {
         let spec = """
         source_inline: ```
@@ -166,9 +201,9 @@ struct DiagnosticTests {
         """
         do {
             _ = try SpecParser().parse(spec, fileURL: URL(fileURLWithPath: "/tmp/t.meridian.test"))
-            Issue.record("expected MER1007")
+            Issue.record("expected invalidTestSpecKey")
         } catch let e as CompilerError {
-            #expect(e.diagnostics.first?.code.id == "MER1007")
+            #expect(e.diagnostics.first?.code == .invalidTestSpecKey)
         } catch {
             Issue.record("unexpected error: \(error)")
         }

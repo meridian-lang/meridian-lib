@@ -600,55 +600,6 @@ public struct IngestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "IngestInput", parameters: [:])
 
-        // L34
-        let __meridianProseResults_L34 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Every fact written to a brain page carries an inline `[Source: ...]` citation with date and provenance\n- Every entity mention creates a back-link from the entity's page to the page mentioning them (Iron Law)\n- Raw sources are preserved for provenance via `gbrain files upload-raw` with automatic size routing\n- State sections are rewritten with current best understanding, never appended to\n- Entity detection fires on every inbound message; notable entities get pages or updates",
-            snapshot: state.snapshot(),
-            scopedTools: ["add_link", "add_tag", "add_timeline_entry", "get_backlinks", "get_page", "get_tags", "link.add", "page.get", "page.search", "publish", "put_page", "put_raw_data", "shell.run", "timeline.add"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L34 {
-            state.bind(__key, __value)
-        }
-        // L55
-        let __meridianProseResults_L55 = try await runtime.executeProsePlan(
-            prose: "ingest the source and update the brain\nParse the source to extract people, companies, dates, and events\nFor each entity mentioned, read its page and update compiled truth, or create a new page after the notability gate\nAppend a timeline entry for each event with date, summary, and source citation\nCreate cross-reference links for every entity pair mentioned together\nBack-link every mentioned entity's page to this page, and merge the event onto each entity's timeline",
-            snapshot: state.snapshot(),
-            scopedTools: ["add_link", "add_tag", "add_timeline_entry", "get_backlinks", "get_page", "get_tags", "link.add", "page.get", "page.search", "publish", "put_page", "put_raw_data", "shell.run", "timeline.add"]
-        )
-        for (__key, __value) in __meridianProseResults_L55 {
-            state.bind(__key, __value)
-        }
-        // L69
-        let __meridianProseResults_L69 = try await runtime.executeProsePlan(
-            prose: "detect and file entities on every message\nScan the message for mentions of people, companies, concepts, and original thinking\nFor each entity, search the brain; load and update an existing page, or create a new page after the notability gate\nDetect and enrich alongside the response so the conversation is never blocked",
-            snapshot: state.snapshot(),
-            scopedTools: ["add_link", "add_tag", "add_timeline_entry", "get_backlinks", "get_page", "get_tags", "link.add", "page.get", "page.search", "publish", "put_page", "put_raw_data", "shell.run", "timeline.add"]
-        )
-        for (__key, __value) in __meridianProseResults_L69 {
-            state.bind(__key, __value)
-        }
-        if __meridianShouldRun("progress:0.3:L74:C0") {
-            // L74
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain sync --no-pull --no-embed"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.3:L74:C0", state: state.snapshot())
-        }
-        // L205
-        let __meridianProseResults_L205 = try await runtime.executeProsePlan(
-            prose: "follow the Raw Source Preservation guidance\nEvery ingested item must have its raw source preserved for provenance\n**Use `gbrain files upload-raw` for automatic size routing:**\ncodeblock:bash:Z2JyYWluIGZpbGVzIHVwbG9hZC1yYXcgPGZpbGU+IC0tcGFnZSA8cGFnZS1zbHVnPiAtLXR5cGUgPHR5cGU+\nitem: **< 100 MB text/PDF**: stays in git (brain repo `.raw/` sidecar directories)\nitem: **>= 100 MB OR media** (video, audio, images): uploaded to cloud storage\nvia TUS resumable upload, `.redirect.yaml` pointer left in the brain repo\nThe `.redirect.yaml` pointer format:\ncodeblock:yaml:dGFyZ2V0OiBzdXBhYmFzZTovL2JyYWluLWZpbGVzL3BhZ2Utc2x1Zy9maWxlbmFtZS5tcDQKYnVja2V0OiBicmFpbi1maWxlcwpzdG9yYWdlX3BhdGg6IHBhZ2Utc2x1Zy9maWxlbmFtZS5tcDQKc2l6ZTogNTI0Mjg4MDAwCnNpemVfaHVtYW46IDUwMCBNQgpoYXNoOiBzaGEyNTY6YWJjMTIzLi4uCm1pbWU6IHZpZGVvL21wNAp1cGxvYWRlZDogMjAyNi0wNC0xMVQuLi4KdHlwZTogdHJhbnNjcmlwdA==\n**Accessing stored files:**\nitem: `gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing/sharing\nitem: `gbrain files restore <dir>` -- download back to local from cloud storage\nUse `put_raw_data` in gbrain to store raw API responses and metadata (JSON, not binary)\nchecklist:ai-autonomy:KipBcHBlbmRpbmcgdG8gU3RhdGUgc2VjdGlvbnMuKiogU3RhdGUgaXMgcmV3cml0dGVuIHdpdGggdGhlIGN1cnJlbnQgYmVzdCB1bmRlcnN0YW5kaW5nIG9uIGV2ZXJ5IHVwZGF0ZS4gQXBwZW5kLW9ubHkgU3RhdGUgc2VjdGlvbnMgZ3JvdyBzdGFsZSBhbmQgY29udHJhZGljdG9yeQoqKkluZ2VzdGluZyB3aXRob3V0IGJhY2stbGlua3MuKiogQW4gdW5saW5rZWQgbWVudGlvbiBpcyBhIGJyb2tlbiBicmFpbi4gRXZlcnkgZW50aXR5IG1lbnRpb25lZCBtdXN0IGhhdmUgYSBiYWNrLWxpbmsgZnJvbSB0aGVpciBwYWdlIHRvIHRoZSBwYWdlIG1lbnRpb25pbmcgdGhlbQoqKlNraXBwaW5nIHJhdyBzb3VyY2UgcHJlc2VydmF0aW9uLioqIEV2ZXJ5IGluZ2VzdGVkIGl0ZW0gbXVzdCBoYXZlIGl0cyByYXcgc291cmNlIHByZXNlcnZlZC4gQSBicmFpbiBwYWdlIHdpdGhvdXQgcHJvdmVuYW5jZSBpcyB1bnZlcmlmaWFibGUKKipCdWxrIHByb2Nlc3Npbmcgd2l0aG91dCBzYW1wbGUgdGVzdC4qKiBUZXN0IG9uIDMtNSBpdGVtcyBmaXJzdC4gRml4IHF1YWxpdHkgaXNzdWVzIGluIHRoZSBhcHByb2FjaCwgbm90IHZpYSBvbmUtb2ZmIHBhdGNoZXMKKipQYXJhcGhyYXNpbmcgdGhlIHVzZXIncyBvcmlnaW5hbCB0aGlua2luZy4qKiBUaGUgdXNlcidzIGV4YWN0IGxhbmd1YWdlIElTIHRoZSBpbnNpZ2h0LiBDYXB0dXJlIHZlcmJhdGltIHBocmFzaW5nIGZvciBpZGVhcywgdGhlc2VzLCBhbmQgZnJhbWV3b3Jrcw==",
-            snapshot: state.snapshot(),
-            scopedTools: ["add_link", "add_tag", "add_timeline_entry", "get_backlinks", "get_page", "get_tags", "link.add", "page.get", "page.search", "publish", "put_page", "put_raw_data", "shell.run", "timeline.add"]
-        )
-        for (__key, __value) in __meridianProseResults_L205 {
-            state.bind(__key, __value)
-        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

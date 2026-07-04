@@ -177,7 +177,7 @@ public struct CompileCommand: AsyncParsableCommand {
         // metadata, outline, recorded sections), merging in the source map
         // derived from the generated Swift. No more thin `workflows: []` stub.
         let m = compiled.manifest
-        let manifest = try ManifestEmitter().emit(.init(
+        let manifest = try ManifestEmitter(trace: traceInstance).emit(.init(
             sourceFiles: [meridianURL.lastPathComponent] + merconfigURLs.map(\.lastPathComponent),
             workflows: m.workflows,
             constantsDecl: m.constantsDecl,

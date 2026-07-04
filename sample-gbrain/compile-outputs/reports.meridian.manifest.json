@@ -98,7 +98,7 @@
     "name" : "reports",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "invariants",
         "level" : 2,
         "line" : 21,
         "text" : "Contract"
@@ -106,77 +106,81 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 30,
+        "line" : 29,
         "text" : "Phases"
-      },
-      {
-        "kind" : "procedure",
-        "level" : 2,
-        "line" : 37,
-        "text" : "Escalation guard"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 46,
+        "line" : 49,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "prohibitions",
         "level" : 2,
-        "line" : 51,
+        "line" : 54,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 48,
+        "line" : 23,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 25,
+        "text" : "Keyword routing"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 51,
         "text" : "Saved"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 49,
+        "line" : 52,
         "text" : "Loaded"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 21,
         "lines" : [
-          "checklist:ai-autonomy:UmVwb3J0cyBzYXZlZCB3aXRoIHRpbWVzdGFtcGVkIGZpbGVuYW1lcyBhbmQgZnJvbnRtYXR0ZXIKS2V5d29yZCByb3V0aW5nOiBxdWVyeSDihpIgcmVwb3J0IGNhdGVnb3J5IG1hcHBpbmcKTGF0ZXN0IHJlcG9ydCBsb2FkYWJsZSBieSBjYXRlZ29yeSBuYW1lClJlcG9ydHMgYXJlIHNlYXJjaGFibGUgdmlhIGdicmFpbiBzZWFyY2gvcXVlcnk="
+          "This skill guarantees:",
+          "Reports saved with timestamped filenames and frontmatter",
+          "Keyword routing: query → report category mapping",
+          "Latest report loadable by category name",
+          "Reports are searchable via gbrain search\/query"
         ],
-        "role" : "procedure"
+        "role" : "invariants"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phases",
-        "line" : 30,
+        "line" : 29,
         "lines" : [
-          "use judgment to save, load, and route reports by keyword:",
-          "Save a report to reports\/{category}\/{date}.md with title, type, category, date, and time frontmatter",
-          "Load the most recent report file for a given category",
-          "Route common queries to report categories (for example \"inbox\" to ea-inbox-sweep, \"morning\" to morning-briefing)"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Escalation guard",
-        "line" : 37,
-        "lines" : [
-          "bind pages = invoke list pages with filter = \"report\"",
-          "if at least 2 urgent pages,",
-          "emit reports.escalate with severity \"high\""
+          "**Save report.** Write to `reports\/{category}\/{YYYY-MM-DD-HHMM}.md` with frontmatter:",
+          "codeblock:yaml:LS0tCnRpdGxlOiB7cmVwb3J0IHRpdGxlfQp0eXBlOiByZXBvcnQKY2F0ZWdvcnk6IHtjYXRlZ29yeSBuYW1lfQpkYXRlOiB7WVlZWS1NTS1ERH0KdGltZToge0hIOk1NIFBUfQotLS0=",
+          "**Load latest.** Given a category, find the most recent report file",
+          "**Keyword routing.** Map common queries to report categories:",
+          "\"email\" \/ \"inbox\" → ea-inbox-sweep",
+          "\"social\" \/ \"mentions\" → social-mentions",
+          "\"briefing\" \/ \"morning\" → morning-briefing",
+          "\"meeting\" → meeting-sync",
+          "Custom mappings configurable"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 46,
+        "line" : 49,
         "lines" : [
           "Saved: `reports\/{category}\/{YYYY-MM-DD-HHMM}.md`",
           "Loaded: full report content with metadata"
@@ -184,13 +188,16 @@
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 51,
+        "line" : 54,
         "lines" : [
-          "checklist:ai-autonomy:U2F2aW5nIHJlcG9ydHMgd2l0aG91dCBmcm9udG1hdHRlciAobWFrZXMgdGhlbSB1bnNlYXJjaGFibGUpClVzaW5nIGluY29uc2lzdGVudCBjYXRlZ29yeSBuYW1lcyBhY3Jvc3MgcnVucwpMb2FkaW5nIGFsbCByZXBvcnRzIHdoZW4gb25seSB0aGUgbGF0ZXN0IGlzIG5lZWRlZApOb3Qgcm91dGluZyBieSBrZXl3b3JkIChmb3JjaW5nIGV4YWN0IGNhdGVnb3J5IG5hbWUp"
+          "Saving reports without frontmatter (makes them unsearchable)",
+          "Using inconsistent category names across runs",
+          "Loading all reports when only the latest is needed",
+          "Not routing by keyword (forcing exact category name)"
         ],
-        "role" : "procedure"
+        "role" : "prohibitions"
       }
     ],
     "tools" : "get_page\nput_page\nsearch",
@@ -233,60 +240,36 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 25,
-      "swift_line" : 602
-    },
-    {
-      "meridian_line" : 32,
-      "swift_line" : 613
-    },
-    {
-      "meridian_line" : 42,
-      "swift_line" : 623
-    },
-    {
-      "meridian_line" : 43,
-      "swift_line" : 634
-    },
-    {
-      "meridian_line" : 44,
-      "swift_line" : 637
-    },
-    {
-      "meridian_line" : 54,
-      "swift_line" : 643
+      "meridian_line" : 1,
+      "swift_line" : 631
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 683
+      "swift_line" : 636
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 688
+      "swift_line" : 675
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 727
+      "swift_line" : 680
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 732
+      "swift_line" : 719
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 771
+      "swift_line" : 724
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 776
+      "swift_line" : 763
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 815
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 820
+      "swift_line" : 768
     }
   ],
   "tools_used" : [

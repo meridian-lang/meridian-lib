@@ -97,13 +97,13 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 5,
+        "line" : 3,
         "text" : "Overview"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 9,
+        "line" : 7,
         "text" : "The setup skill provides"
       }
     ],
@@ -111,7 +111,7 @@
       {
         "executes" : false,
         "heading" : "Overview",
-        "line" : 5,
+        "line" : 3,
         "lines" : [
           "This skill has been replaced by the **setup** skill. See `skills\/setup\/SKILL.md`",
           "The setup skill provides:",

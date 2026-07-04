@@ -2,9 +2,9 @@
 
 - Original: `skillify/SKILL.md`
 - Ported: `skillify.meri`
-- Tier: 2 (light edits)
-- Similarity: 56%
-- Lines: 311 -> 312 (+138 / -137)
+- Tier: 1 (near-verbatim)
+- Similarity: 91%
+- Lines: 311 -> 311 (+27 / -27)
 
 ## Frontmatter
 - Added: (none)
@@ -12,27 +12,38 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 
 ## Metrics
-- Sections: 11/24 inert (46% inert ratio)
-- Operational inert: 0
+- Sections: 23/24 inert (96% inert ratio)
+- Operational inert: 10
 - Unclassified inert: 0
-- Inert categories: reference-documentation=10, template=1
-- Judgment: 7 blocks, 58 lines
+- Inert categories: normative-contract=1, operational-content=2, operational-procedure=7, reference-documentation=12, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
+- L11 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
 - L18 `The Checklist`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L34 `Phase 0: Should This Be a Skill?`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L43 `Phase 1: Audit`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L51 `Phase 2: Write SKILL.md + Code (items 1-2)`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
 - L53 `SKILL.md frontmatter template (copy-paste):`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L76 `Phase 3: Cross-Modal Eval (item 3) — THE QUALITY GATE`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
 - L78 `Why this comes before tests`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L83 `Step 1: Pick a representative input`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L89 `Step 2: Run the skill, capture output`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L94 `Step 3: Run the eval gate`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L132 `Step 4: Cycle until you pass (≤3 cycles)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L157 `Cycles + cost guardrails`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L166 `Provider configuration`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
+- L179 `Cost expectations`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L186 `Skip cross-modal eval when:`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L191 `Phase 4: Tests (items 4-6)`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L199 `Phase 5: Resolver + Check-Resolvable (items 7-9)`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L209 `Phase 6: E2E + Brain Filing (items 10-11)`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
 - L224 `Worked Example: Skillifying a "summarize-pr" Feature`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L243 `Quality Gates`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L256 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L277 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
@@ -44,63 +55,58 @@
  > for ad-hoc second opinions; use Phase 3 here when skillifying a feature.
  
 -## Contract
--
--A feature is "properly skilled" when all 11 checklist items pass. Item 3
--(cross-modal eval) is informational in v1.1.0 — it does not gate the
--skillpack-check audit, but a missing or stale receipt is surfaced so the
--user knows where the gate stands.
--
++## Contract (( inert, role: invariants ))
+ 
+ A feature is "properly skilled" when all 11 checklist items pass. Item 3
+ (cross-modal eval) is informational in v1.1.0 — it does not gate the
+ skillpack-check audit, but a missing or stale receipt is surfaced so the
+ user knows where the gate stands.
+ 
 -## The Checklist
-+## Contract (( role: procedure ))
-+
-+> A feature is "properly skilled" when all 11 checklist items pass. Item 3
-+> (cross-modal eval) is informational in v1.1.0 — it does not gate the
-+> skillpack-check audit, but a missing or stale receipt is surfaced so the
-+> user knows where the gate stands.
-+
 +## The Checklist (( inert ))
  
  ```
  □ 1.  SKILL.md           — skill file with frontmatter + contract + phases
-@@ -53,15 +53,15 @@
+@@ -53,7 +53,7 @@
  □ 11. Brain filing       — if it writes pages, entry in brain/RESOLVER.md
  ```
  
 -## Phase 0: Should This Be a Skill?
--
--Before skillifying, check:
--- Will this be invoked 2+ times? (One-off work ≠ skill)
--- Is there >20 lines of logic? (Trivial helpers don't need full infrastructure)
--- Does it have a clear trigger phrase a user would actually say?
--
--If no to all three, it's a script, not a skill. Move on.
--
-+## Phase 0: Should This Be a Skill? (( role: procedure ))
-+
-+use judgment to follow the Phase 0: Should This Be a Skill? guidance:
-+  Before skillifying, check:
-+  item: Will this be invoked 2+ times? (One-off work ≠ skill)
-+  item: Is there >20 lines of logic? (Trivial helpers don't need full infrastructure)
-+  item: Does it have a clear trigger phrase a user would actually say?
-+  
-+  If no to all three, it's a script, not a skill. Move on.
- ## Phase 1: Audit
++## Phase 0: Should This Be a Skill? (( inert, role: procedure ))
+ 
+ Before skillifying, check:
+ - Will this be invoked 2+ times? (One-off work ≠ skill)
+@@ -62,7 +62,7 @@
+ 
+ If no to all three, it's a script, not a skill. Move on.
+ 
+-## Phase 1: Audit
++## Phase 1: Audit (( inert, role: procedure ))
  
  ```
-@@ -72,7 +72,7 @@
+ Feature: [name]
+@@ -70,9 +70,9 @@
+ Missing items: [check each of the 11]
+ ```
  
- ## Phase 2: Write SKILL.md + Code (items 1-2)
- 
+-## Phase 2: Write SKILL.md + Code (items 1-2)
+-
 -### SKILL.md frontmatter template (copy-paste):
++## Phase 2: Write SKILL.md + Code (items 1-2) (( inert, role: procedure ))
++
 +### SKILL.md frontmatter template (copy-paste): (( inert ))
  
  ```yaml
  ---
-@@ -97,62 +97,62 @@
+@@ -95,25 +95,25 @@
  
- ## Phase 3: Cross-Modal Eval (item 3) — THE QUALITY GATE
+ Extract deterministic code into `scripts/*.ts`.
  
+-## Phase 3: Cross-Modal Eval (item 3) — THE QUALITY GATE
+-
 -### Why this comes before tests
++## Phase 3: Cross-Modal Eval (item 3) — THE QUALITY GATE (( inert, role: procedure ))
++
 +### Why this comes before tests (( inert ))
  
  Tests lock in behavior. If the behavior is mediocre, tests lock in mediocrity.
@@ -120,229 +126,78 @@
  evaluated.
  
 -### Step 3: Run the eval gate
--
--```bash
--gbrain eval cross-modal \
--  --task "What this skill is supposed to accomplish" \
--  --output skills/<slug>/SKILL.md
--```
--
--The command runs 3 frontier models from 3 different providers in parallel,
--scores the OUTPUT against the TASK on 5 documented dimensions, and writes a
--receipt under `~/.gbrain/.gbrain/eval-receipts/<slug>-<sha8>.json` (the
--sha-8 binds the receipt to the current SKILL.md content — re-running after
--edits writes a new receipt).
--
--**Default models** (override per slot via `--slot-a-model`, `--slot-b-model`,
--`--slot-c-model`):
--
--| Slot | Default | Provider |
--|------|---------|----------|
--| A | `openai:gpt-4o` | OpenAI |
--| B | `anthropic:claude-opus-4-7` | Anthropic |
--| C | `google:gemini-1.5-pro` | Google |
--
--**These MUST be frontier models from DIFFERENT providers.** Using a single
--provider's family or budget models defeats the purpose — different families
--have less correlated blind spots. Refresh the list when a new model
--generation ships.
--
--**Pass criteria (BOTH must be true):**
--
--1. Every dimension's mean across successful models ≥ 7.
--2. No single model scored any dimension < 5 (the floor).
--
--**Inconclusive:** fewer than 2 of 3 models returned parseable scores.
--Receipt is still written (forensics) but the gate is not authoritative.
--Exit code 2; CI wrappers should treat this as "did not run cleanly", not
--"failed quality gate".
--
--### Step 4: Cycle until you pass (≤3 cycles)
--
-+### Step 3: Run the eval gate (( role: procedure ))
-+
-+use judgment to follow the Step 3: Run the eval gate guidance:
-+  ```bash
-+  gbrain eval cross-modal \
-+    --task "What this skill is supposed to accomplish" \
-+    --output skills/<slug>/SKILL.md
-+  ```
-+  
-+  The command runs 3 frontier models from 3 different providers in parallel,
-+  scores the OUTPUT against the TASK on 5 documented dimensions, and writes a
-+  receipt under `~/.gbrain/.gbrain/eval-receipts/<slug>-<sha8>.json` (the
-+  sha-8 binds the receipt to the current SKILL.md content — re-running after
-+  edits writes a new receipt).
-+  
-+  **Default models** (override per slot via `--slot-a-model`, `--slot-b-model`,
-+  `--slot-c-model`):
-+  
-+  | Slot | Default | Provider |
-+  |------|---------|----------|
-+  | A | `openai:gpt-4o` | OpenAI |
-+  | B | `anthropic:claude-opus-4-7` | Anthropic |
-+  | C | `google:gemini-1.5-pro` | Google |
-+  
-+  **These MUST be frontier models from DIFFERENT providers.** Using a single
-+  provider's family or budget models defeats the purpose — different families
-+  have less correlated blind spots. Refresh the list when a new model
-+  generation ships.
-+  
-+  **Pass criteria (BOTH must be true):**
-+  
-+  1. Every dimension's mean across successful models ≥ 7.
-+  2. No single model scored any dimension < 5 (the floor).
-+  
-+  **Inconclusive:** fewer than 2 of 3 models returned parseable scores.
-+  Receipt is still written (forensics) but the gate is not authoritative.
-+  Exit code 2; CI wrappers should treat this as "did not run cleanly", not
-+  "failed quality gate".
-+### Step 4: Cycle until you pass (≤3 cycles) (( inert ))
-+  
- ```
- CYCLE 1:
-   Eval → scores + top 10 improvements
-@@ -160,79 +160,79 @@
-   ELSE:
-     Apply top 10 improvements to the actual file
-     Log: which improvements applied, what changed
--
-+  
- CYCLE 2:
-   Re-eval the FIXED output (same 3 models, same dimensions)
-   Compare: before/after scores per dimension (track delta)
-   IF pass: → done, write tests
-   ELSE: apply remaining improvements + new ones
--
-+  
- CYCLE 3 (final):
-   Re-eval
-   IF pass: → ship
-   ELSE: → ship with KNOWN_GAPS section listing:
--    - Which dimensions are still below 7
--    - Which improvements couldn't be resolved
--    - Why (e.g., "would require architectural change")
--```
--
--### Cycles + cost guardrails
--
--- Default `--cycles 3` in TTY, `--cycles 1` in non-TTY (limits scripted
-+  item: Which dimensions are still below 7
-+  item: Which improvements couldn't be resolved
-+  item: Why (e.g., "would require architectural change")
-+```
-+  
-+### Cycles + cost guardrails (( inert ))
-+  
-+  item: Default `--cycles 3` in TTY, `--cycles 1` in non-TTY (limits scripted
-   bulk spend in CI loops).
--- The command prints an estimated max-cost-per-cycle from a small pricing
-+  item: The command prints an estimated max-cost-per-cycle from a small pricing
-   constant before each run. Real cost varies with prompt size; treat the
-   estimate as a ceiling for default `--max-tokens 4000`.
--- A `--budget-usd N` hard cap is a v0.27.x follow-up TODO.
--
--### Provider configuration
--
--Models resolve through the gbrain AI gateway. Configure once with:
--
--```bash
--gbrain providers test    # see what's configured
--gbrain config            # set keys
--```
--
--Or set env vars: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`,
--`GOOGLE_GENERATIVE_AI_API_KEY`, `TOGETHER_API_KEY`, etc. The gateway reads
--from `~/.gbrain/config.json` plus `process.env`.
--
--### Cost expectations
--
--3 cycles × 3 models = 9 frontier calls max per run. With Opus-class +
--GPT-4o-class + Gemini-1.5-Pro, expect $1–3 per full run on default
--`--max-tokens 4000`. Receipts include the per-call model identifiers so
--you can audit retroactively.
--
--### Skip cross-modal eval when:
--
--- Output is < 200 tokens (trivial — not worth 9 API calls).
--- The skill is a thin wrapper around a single API call (one cycle is enough).
--
--## Phase 4: Tests (items 4-6)
--
--NOW that eval has proven quality, write tests that lock it in:
--
--**Unit tests** — every branch of deterministic logic. Mock external calls.
--**Integration tests** — hit real endpoints. Catch bugs mocks hide.
--**LLM evals** — quality/correctness for LLM steps. Lighter than cross-modal eval — test specific behaviors.
--
--## Phase 5: Resolver + Check-Resolvable (items 7-9)
--
--1. Add to skills/RESOLVER.md with trigger phrases users ACTUALLY type
--2. Resolver eval: feed triggers, assert correct routing
--3. Check-resolvable:
--   - Skill reachable from skills/RESOLVER.md (not orphaned)
--   - No MECE overlap with other skills
--   - No DRY violations (shared logic in lib/, not copy-pasted)
--   - No ambiguous trigger routing
--
--## Phase 6: E2E + Brain Filing (items 10-11)
--
--- E2E smoke: full pipeline from trigger to side effect
--- Brain filing: add to brain/RESOLVER.md if the skill writes brain pages
--
-+  item: A `--budget-usd N` hard cap is a v0.27.x follow-up TODO.
-+  
-+### Provider configuration (( role: procedure ))
-+  
-+use judgment to follow the Provider configuration guidance:
-+  Models resolve through the gbrain AI gateway. Configure once with:
-+  
-+  ```bash
-+  gbrain providers test    # see what's configured
-+  gbrain config            # set keys
-+  ```
-+  
-+  Or set env vars: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`,
-+  `GOOGLE_GENERATIVE_AI_API_KEY`, `TOGETHER_API_KEY`, etc. The gateway reads
-+  from `~/.gbrain/config.json` plus `process.env`.
-+### Cost expectations (( role: procedure ))
-+  
-+use judgment to follow the Cost expectations guidance:
-+  3 cycles × 3 models = 9 frontier calls max per run. With Opus-class +
-+  GPT-4o-class + Gemini-1.5-Pro, expect $1–3 per full run on default
-+  `--max-tokens 4000`. Receipts include the per-call model identifiers so
-+  you can audit retroactively.
-+### Skip cross-modal eval when: (( inert ))
-+  
-+  item: Output is < 200 tokens (trivial — not worth 9 API calls).
-+  item: The skill is a thin wrapper around a single API call (one cycle is enough).
-+
-+## Phase 4: Tests (items 4-6) (( role: procedure ))
-+
-+use judgment to follow the Phase 4: Tests (items 4-6) guidance:
-+  NOW that eval has proven quality, write tests that lock it in:
-+  
-+  **Unit tests** — every branch of deterministic logic. Mock external calls.
-+  **Integration tests** — hit real endpoints. Catch bugs mocks hide.
-+  **LLM evals** — quality/correctness for LLM steps. Lighter than cross-modal eval — test specific behaviors.
-+## Phase 5: Resolver + Check-Resolvable (items 7-9) (( role: procedure ))
-+
-+use judgment to follow the Phase 5: Resolver + Check-Resolvable (items 7-9) guidance:
-+  1. Add to skills/RESOLVER.md with trigger phrases users ACTUALLY type
-+  2. Resolver eval: feed triggers, assert correct routing
-+  3. Check-resolvable:
-+  item: Skill reachable from skills/RESOLVER.md (not orphaned)
-+  item: No MECE overlap with other skills
-+  item: No DRY violations (shared logic in lib/, not copy-pasted)
-+  item: No ambiguous trigger routing
-+## Phase 6: E2E + Brain Filing (items 10-11) (( role: procedure ))
-+
-+use judgment to follow the Phase 6: E2E + Brain Filing (items 10-11) guidance:
-+  item: E2E smoke: full pipeline from trigger to side effect
-+  item: Brain filing: add to brain/RESOLVER.md if the skill writes brain pages
- ## Phase 7: Verify
++### Step 3: Run the eval gate (( inert ))
  
  ```bash
+ gbrain eval cross-modal \
+@@ -151,7 +151,7 @@
+ Exit code 2; CI wrappers should treat this as "did not run cleanly", not
+ "failed quality gate".
+ 
+-### Step 4: Cycle until you pass (≤3 cycles)
++### Step 4: Cycle until you pass (≤3 cycles) (( inert ))
+ 
+ ```
+ CYCLE 1:
+@@ -176,7 +176,7 @@
+     - Why (e.g., "would require architectural change")
+ ```
+ 
+-### Cycles + cost guardrails
++### Cycles + cost guardrails (( inert ))
+ 
+ - Default `--cycles 3` in TTY, `--cycles 1` in non-TTY (limits scripted
+   bulk spend in CI loops).
+@@ -185,7 +185,7 @@
+   estimate as a ceiling for default `--max-tokens 4000`.
+ - A `--budget-usd N` hard cap is a v0.27.x follow-up TODO.
+ 
+-### Provider configuration
++### Provider configuration (( inert ))
+ 
+ Models resolve through the gbrain AI gateway. Configure once with:
+ 
+@@ -198,19 +198,19 @@
+ `GOOGLE_GENERATIVE_AI_API_KEY`, `TOGETHER_API_KEY`, etc. The gateway reads
+ from `~/.gbrain/config.json` plus `process.env`.
+ 
+-### Cost expectations
++### Cost expectations (( inert ))
+ 
+ 3 cycles × 3 models = 9 frontier calls max per run. With Opus-class +
+ GPT-4o-class + Gemini-1.5-Pro, expect $1–3 per full run on default
+ `--max-tokens 4000`. Receipts include the per-call model identifiers so
+ you can audit retroactively.
+ 
+-### Skip cross-modal eval when:
++### Skip cross-modal eval when: (( inert ))
+ 
+ - Output is < 200 tokens (trivial — not worth 9 API calls).
+ - The skill is a thin wrapper around a single API call (one cycle is enough).
+ 
+-## Phase 4: Tests (items 4-6)
++## Phase 4: Tests (items 4-6) (( inert, role: procedure ))
+ 
+ NOW that eval has proven quality, write tests that lock it in:
+ 
+@@ -218,7 +218,7 @@
+ **Integration tests** — hit real endpoints. Catch bugs mocks hide.
+ **LLM evals** — quality/correctness for LLM steps. Lighter than cross-modal eval — test specific behaviors.
+ 
+-## Phase 5: Resolver + Check-Resolvable (items 7-9)
++## Phase 5: Resolver + Check-Resolvable (items 7-9) (( inert, role: procedure ))
+ 
+ 1. Add to skills/RESOLVER.md with trigger phrases users ACTUALLY type
+ 2. Resolver eval: feed triggers, assert correct routing
+@@ -228,7 +228,7 @@
+    - No DRY violations (shared logic in lib/, not copy-pasted)
+    - No ambiguous trigger routing
+ 
+-## Phase 6: E2E + Brain Filing (items 10-11)
++## Phase 6: E2E + Brain Filing (items 10-11) (( inert, role: procedure ))
+ 
+ - E2E smoke: full pipeline from trigger to side effect
+ - Brain filing: add to brain/RESOLVER.md if the skill writes brain pages
 @@ -243,7 +243,7 @@
  gbrain check-resolvable --json | jq .ok          # resolver clean
  ```
@@ -361,35 +216,32 @@
  
  NOT properly skilled until:
  
-@@ -296,16 +296,17 @@
+@@ -275,7 +275,7 @@
+ - Check-resolvable shows no orphans, overlaps, or DRY violations.
+ - Brain filing if applicable.
+ 
+-## Output Format
++## Output Format (( inert, role: template ))
+ 
+ Skillify produces three durable artifacts per skill:
+ 
+@@ -288,15 +288,15 @@
+    receipt to the current `SKILL.md` content. `gbrain skillify check`
+    surfaces the status (`found` / `stale` / `missing`) as informational.
+ 3. **An audit verdict** from `gbrain skillify check`: `properly skilled` |
+-   `close — create: <missing items>` | `needs skillify — run /skillify on
+-   <target>`. Score is `<passed>/<total>`. Required items gate the verdict;
++   `close — create: <missing items>` | ``needs skillify — run /skillify on
++   <target>`. Score is `<passed>/<total>``. Required items gate the verdict;
+    item 11 (cross-modal eval) is informational and never blocks PASS.
+ 
+ JSON output (`gbrain skillify check --json`) includes the same fields plus
  the per-item detail string, so agents can route on the structured envelope
  without parsing prose.
  
 -## Anti-Patterns
--
--- ❌ Writing tests before cross-modal eval (locks in mediocrity)
--- ❌ Using budget models for eval (C student grading A student)
--- ❌ Using a single provider's family for all 3 slots (correlated blind spots)
--- ❌ Skipping eval "because the output looks fine" (your judgment isn't 3 models)
--- ❌ Eval without fix cycle (vanity metrics)
--- ❌ Code with no SKILL.md (invisible to resolver)
--- ❌ Tests that reimplement production code (masks real bugs)
--- ❌ Resolver entry with internal jargon (must mirror real user language)
--- ❌ Two skills doing the same thing (merge or kill one)
--- ❌ Running cross-modal eval on trivial outputs (< 200 tokens, not worth 9 API calls)
--
-+## Anti-Patterns (( role: procedure ))
-+
-+!!! checklist (( ai-autonomy ))
-+- [ ] ❌ Writing tests before cross-modal eval (locks in mediocrity)
-+- [ ] ❌ Using budget models for eval (C student grading A student)
-+- [ ] ❌ Using a single provider's family for all 3 slots (correlated blind spots)
-+- [ ] ❌ Skipping eval "because the output looks fine" (your judgment isn't 3 models)
-+- [ ] ❌ Eval without fix cycle (vanity metrics)
-+- [ ] ❌ Code with no SKILL.md (invisible to resolver)
-+- [ ] ❌ Tests that reimplement production code (masks real bugs)
-+- [ ] ❌ Resolver entry with internal jargon (must mirror real user language)
-+- [ ] ❌ Two skills doing the same thing (merge or kill one)
-+- [ ] ❌ Running cross-modal eval on trivial outputs (< 200 tokens, not worth 9 API calls)
-+
++## Anti-Patterns (( inert, role: prohibitions ))
+ 
+ - ❌ Writing tests before cross-modal eval (locks in mediocrity)
+ - ❌ Using budget models for eval (C student grading A student)
 ```

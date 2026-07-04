@@ -353,7 +353,7 @@ struct SkillSectionBuilder {
         // 1D output invariant: `every emitted <noun> <predicate>` is sugar for an
         // assert on the bound result `<noun>` (shared normalization).
         let classifier = ConditionClassifier(symbols: symbols, lexicon: lexicon, trace: trace)
-        let text = classifier.normalizeFormatInvariant(group.head.statement)
+        let text = stripAssertionMarker(classifier.normalizeFormatInvariant(group.head.statement))
         switch classify(text) {
         case .checkable:
             let cond = negated
@@ -412,6 +412,23 @@ struct SkillSectionBuilder {
 
     private func canonical(_ text: String, from line: SourceLine) -> SourceLine {
         SourceLine(indent: 0, text: text + ".", raw: text, number: line.number)
+    }
+
+    private func stripAssertionMarker(_ text: String) -> String {
+        let trimmed = text.trimmingCharacters(in: .whitespaces)
+        let lower = trimmed.lowercased()
+        // Invariant sections may already read like authored assertions
+        // ("make sure ..."). Accept only lexicon-owned markers and try the
+        // longest first so domain-specific multi-word markers win.
+        for marker in lexicon.assertionMarkers.sorted(by: { $0.count > $1.count }) {
+            let m = marker.lowercased()
+            if lower == m { return "" }
+            let prefix = m + " "
+            if lower.hasPrefix(prefix) {
+                return String(trimmed.dropFirst(prefix.count)).trimmingCharacters(in: .whitespaces)
+            }
+        }
+        return trimmed
     }
 
     // MARK: Applicability classification

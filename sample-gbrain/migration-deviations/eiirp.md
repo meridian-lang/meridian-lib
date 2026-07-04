@@ -2,9 +2,9 @@
 
 - Original: `eiirp/SKILL.md`
 - Ported: `eiirp.meri`
-- Tier: 2 (light edits)
-- Similarity: 59%
-- Lines: 395 -> 400 (+165 / -160)
+- Tier: 1 (near-verbatim)
+- Similarity: 88%
+- Lines: 395 -> 395 (+49 / -49)
 
 ## Frontmatter
 - Added: (none)
@@ -12,77 +12,64 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 
 ## Metrics
-- Sections: 14/26 inert (54% inert ratio)
-- Operational inert: 0
+- Sections: 25/25 inert (100% inert ratio)
+- Operational inert: 10
 - Unclassified inert: 0
-- Inert categories: reference-documentation=13, template=1
-- Judgment: 5 blocks, 70 lines
+- Inert categories: normative-contract=2, operational-content=1, operational-procedure=7, reference-documentation=14, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
+- L6 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
+- L24 `When to Use`: operational-procedure — Marked or derived as applicability, but inert suppresses execution.
 - L33 `Phase 1: INVENTORY — What did we produce?`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L37 `Knowledge outputs`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L46 `Capability outputs`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L66 `Phase 2: TAXONOMY — Where does each piece go?`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L94 `Phase 3: SCHEMA CHECK — Does the active pack cover this content?`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L124 `Phase 4: FILE — Create enriched brain pages`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
 - L128 `4a. Primary research page`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L137 `4b. Entity pages (people, companies)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L143 `4c. Commit and verify`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L147 `Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L151 `5a. New pattern identification`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L174 `5b. Existing skill audit`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L182 `5c. Present the plan`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L252 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L302 `Hard Rules`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L304 `Knowledge domain`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L311 `Capability domain`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L317 `Meta`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L321 `Changelog`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L203 `Phase 6: CHECK_RESOLVABLE — Verify everything routes`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L223 `Phase 7: REPORT — Summary`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L250 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L280 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L299 `Hard Rules`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
+- L301 `Knowledge domain`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L308 `Capability domain`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L314 `Meta`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L318 `Changelog`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L320 `v1.0.0 — gbrain v0.39.0.0`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
 ```diff
 --- original-skills/eiirp/SKILL.md
 +++ skills/eiirp.meri
-@@ -68,23 +68,23 @@
+@@ -68,7 +68,7 @@
  
  > *"Everything in its right place"* — Radiohead, Kid A
  
 -## Contract
--
--After any significant work, EIIRP organizes ALL outputs across two domains:
--
--**Knowledge domain (brain):**
--1. Every piece of knowledge lands in the correct brain location.
--2. All sources are cited and linked.
--3. The active schema pack is updated if a new content type emerged.
--4. Entity pages created/updated with cross-links.
--
--**Capability domain (skills):**
--5. Every reusable pattern becomes a composable skill.
--6. Existing skills are audited for DRY violations.
--7. Skill graph is MECE — no gaps, no overlaps, no ambiguous routing.
--
--**The meta-guarantee:** Nothing produced during significant work lives only in chat.
--Knowledge → brain. Patterns → skills. Everything in its right place.
-+## Contract (( role: procedure ))
-+
-+> After any significant work, EIIRP organizes ALL outputs across two domains:
-+
-+> **Knowledge domain (brain):**
-+> 1. Every piece of knowledge lands in the correct brain location.
-+> 2. All sources are cited and linked.
-+> 3. The active schema pack is updated if a new content type emerged.
-+> 4. Entity pages created/updated with cross-links.
-+
-+> **Capability domain (skills):**
-+> 5. Every reusable pattern becomes a composable skill.
-+> 6. Existing skills are audited for DRY violations.
-+> 7. Skill graph is MECE — no gaps, no overlaps, no ambiguous routing.
-+
-+> **The meta-guarantee:** Nothing produced during significant work lives only in chat.
-+> Knowledge → brain. Patterns → skills. Everything in its right place.
++## Contract (( inert, role: invariants ))
  
- ## When to Use
+ After any significant work, EIIRP organizes ALL outputs across two domains:
  
+@@ -86,7 +86,7 @@
+ **The meta-guarantee:** Nothing produced during significant work lives only in chat.
+ Knowledge → brain. Patterns → skills. Everything in its right place.
+ 
+-## When to Use
++## When to Use (( inert, role: applicability ))
+ 
+ - After completing a deep research thread.
+ - After building something new (code, pipeline, workflow).
 @@ -95,11 +95,11 @@
  - When a work session produced both knowledge AND new capabilities.
  - When you notice skill overlap, duplication, or gaps.
@@ -115,127 +102,30 @@
  - Topic: [topic]
  - Date: [date]
  - Knowledge outputs: [count] (sources, entities, concepts)
-@@ -128,69 +128,69 @@
+@@ -128,7 +128,7 @@
  - Reusable methodology: [yes/no — describe if yes]
  ```
  
 -## Phase 2: TAXONOMY — Where does each piece go?
--
--**Read the active schema pack first** (the single source of truth for
--filing decisions in v0.39+):
--
--```bash
--gbrain schema show --json
--```
--
--The pack's `page_types[]` lists every directory the brain accepts plus
--the primitive each maps to. Walk it for each output and pick the directory
--whose `path_prefixes` matches the content's primary subject.
--
--If `brain-taxonomist` is installed, INVOKE IT for ambiguous cases. It runs
--the same decision protocol against the active pack and gives you a single
--recommended filing path with reasoning.
--
--Output: a filing plan table:
--
--```
--| Content | Brain path | Action |
--|---------|-----------|--------|
--| Primary research | reference/.../page.md | CREATE |
--| Person X | people/x-slug.md | CREATE |
--| Person Y | people/y-slug.md | UPDATE (already exists) |
--| ... | ... | ... |
--```
--
++## Phase 2: TAXONOMY — Where does each piece go? (( inert, role: procedure ))
+ 
+ **Read the active schema pack first** (the single source of truth for
+ filing decisions in v0.39+):
+@@ -156,7 +156,7 @@
+ | ... | ... | ... |
+ ```
+ 
 -## Phase 3: SCHEMA CHECK — Does the active pack cover this content?
--
--This is where EIIRP closes the schema-derivation loop. If the work
--produced content that doesn't fit any existing `page_types`, propose
--adding a new type via the v0.39 cathedral:
--
--```bash
--# What's emerging in the brain that the active pack doesn't cover?
--gbrain schema detect --json
--
--# LLM-refined suggestions (heuristic when no API key set).
--gbrain schema suggest --json
--
--# Review what's pending; promote or ignore each candidate.
--gbrain schema review-candidates --json
--gbrain schema review-candidates --apply <prefix-or-type-name>
--```
--
--**Confidence floor (codex finding #9):** when `gbrain schema suggest`
--returns confidence < 0.6 on a proposed type, DO NOT auto-apply. Surface
--the suggestion to the user and let them choose. The schema-cathedral
--ships the primitives; EIIRP enforces the human-in-the-loop gate.
--
--If schema needs change:
--- Propose the addition to the user before running `review-candidates --apply`.
--- Document the change in the commit message of the next sync.
--- The schema-pack engine writes the delta to
--  `~/.gbrain/schema-pack-deltas/` — review and merge into the active
--  pack via `gbrain schema edit` (or hand-edit the YAML).
--
-+## Phase 2: TAXONOMY — Where does each piece go? (( role: procedure ))
-+
-+use judgment to follow the Phase 2: TAXONOMY — Where does each piece go? guidance:
-+  **Read the active schema pack first** (the single source of truth for
-+  filing decisions in v0.39+):
-+  
-+  ```bash
-+  gbrain schema show --json
-+  ```
-+  
-+  The pack's `page_types[]` lists every directory the brain accepts plus
-+  the primitive each maps to. Walk it for each output and pick the directory
-+  whose `path_prefixes` matches the content's primary subject.
-+  
-+  If `brain-taxonomist` is installed, INVOKE IT for ambiguous cases. It runs
-+  the same decision protocol against the active pack and gives you a single
-+  recommended filing path with reasoning.
-+  
-+  Output: a filing plan table:
-+  
-+  ```
-+  | Content | Brain path | Action |
-+  |---------|-----------|--------|
-+  | Primary research | reference/.../page.md | CREATE |
-+  | Person X | people/x-slug.md | CREATE |
-+  | Person Y | people/y-slug.md | UPDATE (already exists) |
-+  | ... | ... | ... |
-+  ```
-+## Phase 3: SCHEMA CHECK — Does the active pack cover this content? (( role: procedure ))
-+
-+use judgment to follow the Phase 3: SCHEMA CHECK — Does the active pack cover this content? guidance:
-+  This is where EIIRP closes the schema-derivation loop. If the work
-+  produced content that doesn't fit any existing `page_types`, propose
-+  adding a new type via the v0.39 cathedral:
-+  
-+  ```bash
-+  # What's emerging in the brain that the active pack doesn't cover?
-+  gbrain schema detect --json
-+  
-+  # LLM-refined suggestions (heuristic when no API key set).
-+  gbrain schema suggest --json
-+  
-+  # Review what's pending; promote or ignore each candidate.
-+  gbrain schema review-candidates --json
-+  gbrain schema review-candidates --apply <prefix-or-type-name>
-+  ```
-+  
-+  **Confidence floor (codex finding #9):** when `gbrain schema suggest`
-+  returns confidence < 0.6 on a proposed type, DO NOT auto-apply. Surface
-+  the suggestion to the user and let them choose. The schema-cathedral
-+  ships the primitives; EIIRP enforces the human-in-the-loop gate.
-+  
-+  If schema needs change:
-+  item: Propose the addition to the user before running `review-candidates --apply`.
-+  item: Document the change in the commit message of the next sync.
-+  item: The schema-pack engine writes the delta to
-+    `~/.gbrain/schema-pack-deltas/` — review and merge into the active
-+    pack via `gbrain schema edit` (or hand-edit the YAML).
- ## Phase 4: FILE — Create enriched brain pages
++## Phase 3: SCHEMA CHECK — Does the active pack cover this content? (( inert, role: procedure ))
+ 
+ This is where EIIRP closes the schema-derivation loop. If the work
+ produced content that doesn't fit any existing `page_types`, propose
+@@ -186,11 +186,11 @@
+   `~/.gbrain/schema-pack-deltas/` — review and merge into the active
+   pack via `gbrain schema edit` (or hand-edit the YAML).
+ 
+-## Phase 4: FILE — Create enriched brain pages
++## Phase 4: FILE — Create enriched brain pages (( inert, role: procedure ))
  
  For each item in the filing plan:
  
@@ -244,7 +134,7 @@
  Use the brain page template. MUST include:
  - Proper frontmatter (`type`, `title`, `date`, `tags`, sources)
  - **State** section — current status/key findings
-@@ -199,67 +199,67 @@
+@@ -199,21 +199,21 @@
  - **Entity links** — backlinks to all related brain pages
  - **See Also** — related concepts, reference pages
  
@@ -261,75 +151,33 @@
  brain repo). Verify every link resolves.
  
 -## Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities
--
--This phase operates on the SKILL graph, not just the research.
--
++## Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities (( inert, role: procedure ))
+ 
+ This phase operates on the SKILL graph, not just the research.
+ 
 -### 5a. New pattern identification
--
--Ask: did this work reveal REPEATABLE patterns that will recur?
--
--**Indicators of a reusable pattern:**
--- You used a specific sequence of searches across multiple sources.
--- You followed a specific verification/cross-referencing methodology.
--- You wrote code that could be parameterized for different inputs.
--- The output format is generalizable.
--- The user is likely to ask for similar work on a different topic.
--
--**For each identified pattern:**
--1. Identify the composable pieces (DRY, MECE):
--   - Shared logic → `lib/` (not copy-pasted into skills)
--   - Search methodology → skill or lib function
--   - Output template → brain template or skill phase
--   - Filing logic → already covered by brain-taxonomist + active pack
--2. DRY check via the v0.19 resolver:
--   ```bash
--   gbrain check-resolvable
--   ```
--   Look for overlapping triggers or unreachable skills.
--
++### 5a. New pattern identification (( inert ))
+ 
+ Ask: did this work reveal REPEATABLE patterns that will recur?
+ 
+@@ -236,7 +236,7 @@
+    ```
+    Look for overlapping triggers or unreachable skills.
+ 
 -### 5b. Existing skill audit
-+## Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities (( role: procedure ))
-+
-+use judgment to follow the Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities guidance:
-+  This phase operates on the SKILL graph, not just the research.
-+### 5a. New pattern identification (( role: procedure ))
-+  
-+use judgment to follow the 5a. New pattern identification guidance:
-+  Ask: did this work reveal REPEATABLE patterns that will recur?
-+  
-+  **Indicators of a reusable pattern:**
-+  item: You used a specific sequence of searches across multiple sources.
-+  item: You followed a specific verification/cross-referencing methodology.
-+  item: You wrote code that could be parameterized for different inputs.
-+  item: The output format is generalizable.
-+  item: The user is likely to ask for similar work on a different topic.
-+  
-+  **For each identified pattern:**
-+  1. Identify the composable pieces (DRY, MECE):
-+  item: Shared logic → `lib/` (not copy-pasted into skills)
-+  item: Search methodology → skill or lib function
-+  item: Output template → brain template or skill phase
-+  item: Filing logic → already covered by brain-taxonomist + active pack
-+  2. DRY check via the v0.19 resolver:
-+     ```bash
-+     gbrain check-resolvable
-+     ```
-+     Look for overlapping triggers or unreachable skills.
 +### 5b. Existing skill audit (( inert ))
  For ALL skills used or touched during this work, check:
  1. Were any skills BYPASSED? (did you do something manually that a skill should handle?)
  2. Are there skills that OVERLAP with what you just did? (merge candidates)
- 3. Is shared code copy-pasted between skills? (extract to `lib/`)
--
-+  
+@@ -244,28 +244,28 @@
+ 
  **The MECE question:** If someone asked for this exact work again tomorrow on a different topic, which skills would they invoke? Is the path clear and unambiguous? If not, fix the routing.
--
+ 
 -### 5c. Present the plan
 -```
 -## Skill Graph Changes
 -
 -### New skills to create
-+  
 +### 5c. Present the plan (( inert ))
 +```
 +## Skill Graph Changes (( inert ))
@@ -352,19 +200,19 @@
  1. **[skill-A] + [skill-B]** → [merged-skill] — [why]
  ```
  
-@@ -276,7 +276,9 @@
- gbrain orphans                                  # any pages without inbound links?
- ```
+ On approval: invoke `/skillify` for each new/modified skill.
  
--Confirm:
-+### Confirm
-+
-+!!! checklist (( ai-autonomy ))
- - [ ] All brain pages have proper frontmatter against active schema pack
- - [ ] All entity pages are cross-linked
- - [ ] Any new skills have routing entries in `skills/RESOLVER.md`
-@@ -288,24 +290,24 @@
- ## Phase 7: REPORT — Summary
+-## Phase 6: CHECK_RESOLVABLE — Verify everything routes
++## Phase 6: CHECK_RESOLVABLE — Verify everything routes (( inert, role: procedure ))
+ 
+ After all filing and skillification:
+ 
+@@ -285,53 +285,53 @@
+ - [ ] Active schema pack updated if new content types emerged
+ - [ ] `gbrain doctor` reports `schema_pack_consistency: ok`
+ 
+-## Phase 7: REPORT — Summary
++## Phase 7: REPORT — Summary (( inert, role: procedure ))
  
  ```markdown
 -## EIIRP Complete: [Topic]
@@ -395,7 +243,12 @@
  - DRY check: [clean]
  - MECE audit: [clean]
  - Active pack: [name] v[version]
-@@ -317,21 +319,21 @@
+ - schema_pack_consistency: [ok / warn — pct untyped]
+ ```
+ 
+-## Output Format
++## Output Format (( inert, role: template ))
+ 
  EIIRP produces a single Phase 7 report block. Plain markdown:
  
  ```markdown
@@ -424,41 +277,23 @@
  - DRY check: [clean|N violations]
  - MECE audit: [clean|N overlaps]
  - Active pack: [name] v[version]
-@@ -342,54 +344,57 @@
+@@ -342,7 +342,7 @@
  report doubles as a sync checkpoint for downstream skills (skillpack-check
  reads it; doctor cross-references the pack version).
  
 -## Anti-Patterns
--
--- **Hardcoding directory tables in EIIRP's logic.** Every filing decision
-+## Anti-Patterns (( role: procedure ))
-+
-+!!! checklist (( ai-autonomy ))
-+- [ ] **Hardcoding directory tables in EIIRP's logic.** Every filing decision
++## Anti-Patterns (( inert, role: prohibitions ))
+ 
+ - **Hardcoding directory tables in EIIRP's logic.** Every filing decision
    reads `gbrain schema show --json`. Users on `gbrain-recommended` AND
-   custom packs MUST get the right behavior automatically. Pinned by D9
-   from /plan-eng-review.
--- **Auto-applying low-confidence schema suggestions.** Confidence < 0.6
-+- [ ] **Auto-applying low-confidence schema suggestions.** Confidence < 0.6
-   from `gbrain schema suggest` is "manual review required" per codex
-   finding #9. EIIRP surfaces it; the user accepts.
--- **Skipping Phase 5 SKILL GRAPH AUDIT because "this was a one-off."**
-+- [ ] **Skipping Phase 5 SKILL GRAPH AUDIT because "this was a one-off."**
-   If the work took >10 minutes, the methodology is probably reusable.
-   Audit anyway; defer the skillify decision to the user.
--- **Filing synthesis output by topic alone.** Synthesis pages tied to a
-+- [ ] **Filing synthesis output by topic alone.** Synthesis pages tied to a
-   single source + reader are sui generis; they file under
-   `media/<format>/<slug>-personalized.md`. See _brain-filing-rules.md
-   "Sanctioned exception" section.
--- **Treating non-English sources as secondary citations.** Multilingual
-+- [ ] **Treating non-English sources as secondary citations.** Multilingual
+@@ -361,28 +361,28 @@
+ - **Treating non-English sources as secondary citations.** Multilingual
    sources are first-class.
  
 -## Hard Rules
 -
 -### Knowledge domain
-+## Hard Rules (( inert ))
++## Hard Rules (( inert, role: invariants ))
 +
 +### Knowledge domain (( inert ))
  - **Never leave research only in chat.** If it took >10 minutes to produce, it gets a brain page.
@@ -482,29 +317,10 @@
 -## Changelog
 -
 -### v1.0.0 — gbrain v0.39.0.0
--- Initial port from upstream OpenClaw. Genericized — no references to
--  private fork names per CLAUDE.md privacy rules.
--- Phase 3 SCHEMA CHECK rewritten to consume the v0.39 cathedral CLI
--  (`detect | suggest | review-candidates`) instead of a private
--  `brain/schema.md`.
--- Phase 5 SKILL GRAPH AUDIT calls `gbrain check-resolvable` instead of
--  upstream `scripts/skill-dry-check.mjs`.
--- Phase 6 verification uses `gbrain doctor`'s schema_pack_consistency
--  check (T7) for the persistent surface.
--
 +## Changelog (( inert ))
 +
-+### v1.0.0 — gbrain v0.39.0.0 (( role: procedure ))
-+
-+use judgment to follow the v1.0.0 — gbrain v0.39.0.0 guidance:
-+  item: Initial port from upstream OpenClaw. Genericized — no references to
-+    private fork names per CLAUDE.md privacy rules.
-+  item: Phase 3 SCHEMA CHECK rewritten to consume the v0.39 cathedral CLI
-+    (`detect | suggest | review-candidates`) instead of a private
-+    `brain/schema.md`.
-+  item: Phase 5 SKILL GRAPH AUDIT calls `gbrain check-resolvable` instead of
-+    upstream `scripts/skill-dry-check.mjs`.
-+  item: Phase 6 verification uses `gbrain doctor`'s schema_pack_consistency
-+    check (T7) for the persistent surface.
-+
++### v1.0.0 — gbrain v0.39.0.0 (( inert ))
+ - Initial port from upstream OpenClaw. Genericized — no references to
+   private fork names per CLAUDE.md privacy rules.
+ - Phase 3 SCHEMA CHECK rewritten to consume the v0.39 cathedral CLI
 ```

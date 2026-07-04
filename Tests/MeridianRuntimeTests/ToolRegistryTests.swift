@@ -163,7 +163,7 @@ struct ToolRegistryTests {
         let registry = ToolRegistry()
         await registry.register(tool: "slow", .subprocess(SubprocessSpec(
             binary: "/bin/sh",
-            argTemplate: ["-c", "sleep 2"],
+            argTemplate: ["-c", "sleep 30"],
             timeout: .milliseconds(100)
         )))
 

@@ -59,7 +59,7 @@ struct ReachableCoverageParsersTests {
     }
 
     private func notMalformed(_ e: ExpressionAST, _ label: String) {
-        if case .malformed(let m) = e { Issue.record("\(label): malformed — \(m)") }
+        if case .malformed(let m, _) = e { Issue.record("\(label): malformed — \(m)") }
     }
 
     // MARK: ExpressionParser — quantifier determiners

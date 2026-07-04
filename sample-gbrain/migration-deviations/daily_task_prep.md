@@ -2,9 +2,9 @@
 
 - Original: `daily-task-prep/SKILL.md`
 - Ported: `daily_task_prep.meri`
-- Tier: 2 (light edits)
-- Similarity: 69%
-- Lines: 62 -> 69 (+24 / -17)
+- Tier: 1 (near-verbatim)
+- Similarity: 90%
+- Lines: 62 -> 62 (+6 / -6)
 
 ## Frontmatter
 - Added: (none)
@@ -12,61 +12,44 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 
 ## Metrics
-- Sections: 1/4 inert (25% inert ratio)
-- Operational inert: 0
+- Sections: 4/4 inert (100% inert ratio)
+- Operational inert: 2
 - Unclassified inert: 0
-- Inert categories: template=1
-- Judgment: 1 blocks, 4 lines
+- Inert categories: normative-contract=1, operational-procedure=1, reference-documentation=1, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L25 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L4 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
+- L12 `Phases`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L19 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L38 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
 ```diff
 --- original-skills/daily-task-prep/SKILL.md
 +++ skills/daily_task_prep.meri
-@@ -20,20 +20,26 @@
+@@ -20,7 +20,7 @@
  
  # Daily Task Prep
  
 -## Contract
-+## Contract (( role: procedure ))
++## Contract (( inert, role: invariants ))
  
--This skill guarantees:
--- Calendar/meetings for today are loaded with brain context per attendee
--- Open threads from yesterday are surfaced
--- Active tasks reviewed with priority ordering
--- Prep briefing is actionable (not just informational)
-+> This skill guarantees:
-+!!! checklist (( ai-autonomy ))
-+- [ ] Calendar/meetings for today are loaded with brain context per attendee
-+- [ ] Open threads from yesterday are surfaced
-+- [ ] Active tasks reviewed with priority ordering
-+- [ ] Prep briefing is actionable (not just informational)
+ This skill guarantees:
+ - Calendar/meetings for today are loaded with brain context per attendee
+@@ -28,7 +28,7 @@
+ - Active tasks reviewed with priority ordering
+ - Prep briefing is actionable (not just informational)
  
- ## Phases
+-## Phases
++## Phases (( inert, role: procedure ))
  
--1. **Load calendar.** Check today's meetings. For each: load attendee brain pages, recent timeline, open threads.
--2. **Check yesterday's threads.** Search brain for yesterday's timeline entries. Flag anything unresolved.
--3. **Review active tasks.** Load `ops/tasks` from brain. Surface P0 and P1 items.
--4. **Compile prep briefing.** Per-meeting context cards + open threads + task priorities.
-+```bash
-+gbrain get ops/tasks
-+```
-+
-+use judgment to compile the morning prep briefing:
-+  Load today's calendar and, for each meeting, load attendee brain pages, recent timeline, and open threads.
-+  Search the brain for yesterday's timeline entries and flag anything unresolved.
-+  Surface P0 and P1 tasks from the task list.
-+  Compile per-meeting context cards plus open threads and task priorities.
- 
- ## Output Format
- 
-@@ -42,21 +48,22 @@
+ 1. **Load calendar.** Check today's meetings. For each: load attendee brain pages, recent timeline, open threads.
+ 2. **Check yesterday's threads.** Search brain for yesterday's timeline entries. Flag anything unresolved.
+@@ -42,19 +42,19 @@
  ======================
  Meetings today: {N}
  
@@ -86,14 +69,8 @@
  ```
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
++## Anti-Patterns (( inert, role: prohibitions ))
  
--- Listing meetings without loading attendee context from brain
--- Ignoring yesterday's unresolved threads
--- Presenting tasks without priority ordering
-+!!! checklist (( ai-autonomy ))
-+- [ ] Listing meetings without loading attendee context from brain
-+- [ ] Ignoring yesterday's unresolved threads
-+- [ ] Presenting tasks without priority ordering
- 
+ - Listing meetings without loading attendee context from brain
+ - Ignoring yesterday's unresolved threads
 ```

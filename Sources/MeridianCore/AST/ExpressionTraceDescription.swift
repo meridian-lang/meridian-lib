@@ -52,7 +52,7 @@ extension ExpressionAST {
             return detail == .verbose
                 ? "super(\(s.ascending ? "min" : "max") \(s.property) of \(s.description.noun))"
                 : "super(\(s.property))"
-        case .malformed(let m):                 return "malformed(\(m))"
+        case .malformed(let m, _):               return "malformed(\(m))"
         }
     }
 }

@@ -227,6 +227,15 @@ struct TriggerRulebookTests {
         #expect(c.classify("0 9 * * 1", sourceLine: 1).kind == .schedule) // cron-like
     }
 
+    @Test("classify logs the classification decision under .lowering")
+    func classifyTraced() {
+        let cap = ParserTrace.capturing(categories: [.lowering])
+        let c = TriggerClassifier(lexicon: .default, trace: cap.trace)
+        #expect(c.classify("nightly", sourceLine: 3).kind == .schedule)
+        let lines = cap.lines()
+        #expect(lines.contains { $0.contains("trigger classify") && $0.contains("L3") && $0.contains("nightly") && $0.contains("schedule") })
+    }
+
     @Test("an author === triggers === block extends classification")
     func authorExtends() throws {
         let rb = try RulebookParser(trace: .silent()).parse("""

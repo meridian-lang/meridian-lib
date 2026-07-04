@@ -2,9 +2,9 @@
 
 - Original: `skill-creator/SKILL.md`
 - Ported: `skill_creator.meri`
-- Tier: 3 (structural rewrite)
-- Similarity: 47%
-- Lines: 83 -> 54 (+22 / -51)
+- Tier: 1 (near-verbatim)
+- Similarity: 89%
+- Lines: 83 -> 83 (+9 / -9)
 
 ## Frontmatter
 - Added: (none)
@@ -12,111 +12,80 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 
 ## Metrics
-- Sections: 1/4 inert (25% inert ratio)
-- Operational inert: 0
+- Sections: 4/4 inert (100% inert ratio)
+- Operational inert: 2
 - Unclassified inert: 0
-- Inert categories: template=1
-- Judgment: 1 blocks, 4 lines
+- Inert categories: normative-contract=1, operational-procedure=1, reference-documentation=1, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L26 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L4 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
+- L13 `Phases`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L56 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L60 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
 ```diff
 --- original-skills/skill-creator/SKILL.md
 +++ skills/skill_creator.meri
-@@ -17,67 +17,38 @@
+@@ -17,7 +17,7 @@
  
  # Skill Creator
  
 -## Contract
-+## Contract (( role: procedure ))
++## Contract (( inert, role: invariants ))
  
--This skill guarantees:
--- New skill follows conformance standard (frontmatter + required sections)
--- MECE check: no overlap with existing skills' triggers
--- Manifest.json updated
--- RESOLVER.md updated with routing entry
--- Skill passes conformance tests (`bun test test/skills-conformance.test.ts`)
-+> This skill guarantees:
-+!!! checklist (( ai-autonomy ))
-+- [ ] New skill follows conformance standard (frontmatter + required sections)
-+- [ ] MECE check: no overlap with existing skills' triggers
-+- [ ] Manifest.json updated
-+- [ ] RESOLVER.md updated with routing entry
-+- [ ] Skill passes conformance tests (`bun test test/skills-conformance.test.ts`)
+ This skill guarantees:
+ - New skill follows conformance standard (frontmatter + required sections)
+@@ -26,7 +26,7 @@
+ - RESOLVER.md updated with routing entry
+ - Skill passes conformance tests (`bun test test/skills-conformance.test.ts`)
  
- ## Phases
- 
--1. **Identify the gap.** What capability is missing? What user intent has no skill?
--2. **MECE check.** Review `skills/manifest.json` and `skills/RESOLVER.md`. Does any existing skill already cover this? If so, extend it instead of creating a new one.
--3. **Create SKILL.md.** Use this template:
-+use judgment to create a new skill:
-+  Identify the missing capability or user intent that has no skill.
-+  Run a MECE check against the manifest and resolver, extending an existing skill rather than duplicating coverage.
-+  Create the SKILL.md from the standard template with frontmatter, Contract, Phases, Output Format, and Anti-Patterns.
-+  Add the skill to the manifest and to the resolver routing table.
- 
--```yaml
-----
--name: {skill-name}
--version: 1.0.0
--description: |
--  {One paragraph describing what the skill does and when to use it.}
--triggers:
--  - "{trigger phrase 1}"
--  - "{trigger phrase 2}"
--tools:
--  - {tool1}
--  - {tool2}
--mutating: {true|false}
-----
--
--# {Skill Title}
--
--## Contract
--{What this skill guarantees — 3-5 bullet points}
--
 -## Phases
--{Numbered workflow steps}
--
--## Output Format
--{What good output looks like}
--
--## Anti-Patterns
--{What NOT to do — 3-5 items}
--
--## Tools Used
--{GBrain operations used, with descriptions}
-+```bash
-+bun test test/skills-conformance.test.ts
- ```
--
--4. **Add to manifest.** Update `skills/manifest.json` with name, path, description.
--5. **Add to resolver.** Update `skills/RESOLVER.md` with routing entry in the appropriate category.
--6. **Verify.** Run `bun test test/skills-conformance.test.ts` to confirm the new skill passes.
++## Phases (( inert, role: procedure ))
  
- ## Output Format
+ 1. **Identify the gap.** What capability is missing? What user intent has no skill?
+ 2. **MECE check.** Review `skills/manifest.json` and `skills/RESOLVER.md`. Does any existing skill already cover this? If so, extend it instead of creating a new one.
+@@ -49,19 +49,19 @@
+ 
+ # {Skill Title}
+ 
+-## Contract
++## Contract (( inert, role: invariants ))
+ {What this skill guarantees — 3-5 bullet points}
+ 
+-## Phases
++## Phases (( inert, role: procedure ))
+ {Numbered workflow steps}
+ 
+-## Output Format
++## Output Format (( inert, role: template ))
+ {What good output looks like}
+ 
+-## Anti-Patterns
++## Anti-Patterns (( inert, role: prohibitions ))
+ {What NOT to do — 3-5 items}
+ 
+-## Tools Used
++## Tools Used (( inert, role: tools ))
+ {GBrain operations used, with descriptions}
+ ```
+ 
+@@ -69,11 +69,11 @@
+ 5. **Add to resolver.** Update `skills/RESOLVER.md` with routing entry in the appropriate category.
+ 6. **Verify.** Run `bun test test/skills-conformance.test.ts` to confirm the new skill passes.
+ 
+-## Output Format
++## Output Format (( inert, role: template ))
  
  New `skills/{name}/SKILL.md` file + updated manifest + updated resolver.
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
++## Anti-Patterns (( inert, role: prohibitions ))
  
--- Creating a skill that overlaps with an existing one (violates MECE)
--- Skipping the MECE check against existing skills
--- Creating a skill without triggers in frontmatter
--- Not updating manifest.json and RESOLVER.md
--- Creating a skill without an Anti-Patterns section
-+!!! checklist (( ai-autonomy ))
-+- [ ] Creating a skill that overlaps with an existing one (violates MECE)
-+- [ ] Skipping the MECE check against existing skills
-+- [ ] Creating a skill without triggers in frontmatter
-+- [ ] Not updating manifest.json and RESOLVER.md
-+- [ ] Creating a skill without an Anti-Patterns section
- 
+ - Creating a skill that overlaps with an existing one (violates MECE)
+ - Skipping the MECE check against existing skills
 ```

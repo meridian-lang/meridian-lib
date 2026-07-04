@@ -93,100 +93,113 @@
     }
   ],
   "meridian_skill" : {
-    "description" : "Run `gbrain skillpack-check` to produce an agent-readable JSON health report\nfor the gbrain install. Wraps `gbrain doctor` + `gbrain apply-migrations\n--list` so a host agent (your OpenClaw's morning-briefing, any OpenClaw cron)\ncan see at a glance whether the skillpack needs attention.\n\nUse when the user asks \"is gbrain healthy?\", when a cron fires a morning\ncheck, or proactively when something seems off (jobs not running, brain\nnot updating, autopilot silent).",
+    "description" : "Run `gbrain skillpack-check` to produce an agent-readable JSON health report\nfor the gbrain install. Wraps `gbrain doctor` + ``gbrain apply-migrations\n--list`` so a host agent (your OpenClaw's morning-briefing, any OpenClaw cron)\ncan see at a glance whether the skillpack needs attention.\n\nUse when the user asks \"is gbrain healthy?\", when a cron fires a morning\ncheck, or proactively when something seems off (jobs not running, brain\nnot updating, autopilot silent).",
     "mutating" : "false",
     "name" : "skillpack-check",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "invariants",
         "level" : 2,
         "line" : 26,
         "text" : "Contract"
       },
       {
-        "kind" : "procedure",
+        "kind" : "applicability",
         "level" : 2,
-        "line" : 43,
+        "line" : 41,
         "text" : "When to run"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 51,
+        "line" : 49,
         "text" : "What to do with the output"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 53,
+        "line" : 51,
         "text" : "Happy path (`healthy: true`)"
       },
       {
-        "kind" : "procedure",
+        "kind" : "inert",
         "level" : 3,
-        "line" : 57,
+        "line" : 55,
         "text" : "Action needed (`healthy: false`)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 78,
+        "line" : 76,
         "text" : "Determine failure (`exit 2`)"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 87,
+        "line" : 85,
         "text" : "Output format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "prohibitions",
         "level" : 2,
-        "line" : 111,
+        "line" : 109,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 122,
+        "line" : 119,
         "text" : "Output Format"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 128,
+        "line" : 125,
         "text" : "Related"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 36,
+        "text" : "Exit code"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 26,
         "lines" : [
-          "checklist:ai-autonomy:KipgaGVhbHRoeWAqKiAoYm9vbCk6IHRydWUgaWYgbm8gYWN0aW9uIG5lZWRlZAoqKmBzdW1tYXJ5YCoqIChzdHJpbmcpOiBvbmUtbGluZSBzdW1tYXJ5IHNhZmUgdG8gcXVvdGUgaW4gYSBicmllZmluZwoqKmBhY3Rpb25zYCoqIChzdHJpbmdbXSk6IGV2ZXJ5IHJlbWVkaWF0aW9uIGNvbW1hbmQuIElmIG5vbi1lbXB0eSwgcnVuIHRoZW0KKipgZG9jdG9yYCoqOiBmdWxsIGBnYnJhaW4gZG9jdG9yIC0tZmFzdCAtLWpzb25gIG91dHB1dCAoZmlsZXN5c3RlbSBjaGVja3MpCioqYG1pZ3JhdGlvbnNgKio6IGFwcGxpZWQvcGVuZGluZy9wYXJ0aWFsIGNvdW50cyBmcm9tIGBhcHBseS1taWdyYXRpb25zIC0tbGlzdGA=",
-          "checklist:ai-autonomy:YDBgIOKAlCBoZWFsdGh5LCBub3RoaW5nIHRvIGRvCmAxYCDigJQgYWN0aW9uIG5lZWRlZC4gUmVhZCBgYWN0aW9uc1tdYCBhbmQgZXhlY3V0ZQpgMmAg4oCUIGNvdWxkIG5vdCBkZXRlcm1pbmUgKGJpbmFyeSBjcmFzaCBvciBtaXNzaW5nIHN1YmNvbW1hbmQpLiBJbnZlc3RpZ2F0ZQ=="
+          "Running `gbrain skillpack-check` returns a JSON report with:",
+          "**`healthy`** (bool): true if no action needed",
+          "**`summary`** (string): one-line summary safe to quote in a briefing",
+          "**`actions`** (string[]): every remediation command. If non-empty, run them",
+          "**`doctor`**: full `gbrain doctor --fast --json` output (filesystem checks)",
+          "**`migrations`**: applied\/pending\/partial counts from `apply-migrations --list`",
+          "Exit code:",
+          "`0` — healthy, nothing to do",
+          "`1` — action needed. Read `actions[]` and execute",
+          "`2` — could not determine (binary crash or missing subcommand). Investigate"
         ],
-        "role" : "procedure"
+        "role" : "invariants"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "When to run",
-        "line" : 43,
+        "line" : 41,
         "lines" : [
-          "use judgment to follow the When to run guidance:",
-          "item: **Daily cron** (e.g. your OpenClaw's `morning-briefing`): `gbrain skillpack-check --quiet`",
+          "**Daily cron** (e.g. your OpenClaw's `morning-briefing`): `gbrain skillpack-check --quiet`",
           "Exit code alone tells you if anything is wrong; surface a one-liner in the",
           "briefing only when exit != 0. No JSON noise in happy-path briefings",
-          "item: **On demand**: `gbrain skillpack-check` for the full JSON when debugging",
-          "item: **In a CI pipeline**: same pattern — exit code gates, JSON is the evidence"
+          "**On demand**: `gbrain skillpack-check` for the full JSON when debugging",
+          "**In a CI pipeline**: same pattern — exit code gates, JSON is the evidence"
         ],
-        "role" : "procedure"
+        "role" : "applicability"
       },
       {
         "executes" : false,
         "heading" : "What to do with the output",
-        "line" : 51,
+        "line" : 49,
         "lines" : [
 
         ],
@@ -195,36 +208,35 @@
       {
         "executes" : false,
         "heading" : "Happy path (`healthy: true`)",
-        "line" : 53,
+        "line" : 51,
         "lines" : [
           "Surface the summary in the agent's output only if asked. Nothing else"
         ],
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Action needed (`healthy: false`)",
-        "line" : 57,
+        "line" : 55,
         "lines" : [
-          "use judgment to follow the Action needed (`healthy: false`) guidance:",
           "The `actions[]` array contains the commands to run, in order. Execute them:",
           "codeblock:bash:Zm9yIGNtZCBpbiAkKGVjaG8gIiRSRVBPUlQiIHwganEgLXIgJy5hY3Rpb25zW10nKTsgZG8KICBldmFsICIkY21kIgpkb25l",
           "Common `actions[]` entries and what they mean:",
-          "item: `gbrain apply-migrations --yes` — A migration is pending or half-finished",
+          "`gbrain apply-migrations --yes` — A migration is pending or half-finished",
           "Run this (it's idempotent). If it exits `status: \"partial\"`, the host has",
           "non-builtin cron handlers that need plugin registration — follow",
           "`skills\/migrations\/v0.11.0.md`",
-          "item: `gbrain embed --stale` — Embeddings are stale",
-          "item: `gbrain check-backlinks --fix` — Dead links or missing back-links",
-          "item: Free-text action (no `Run:` prefix in the source message) — agent judgment",
+          "`gbrain embed --stale` — Embeddings are stale",
+          "`gbrain check-backlinks --fix` — Dead links or missing back-links",
+          "Free-text action (no `Run:` prefix in the source message) — agent judgment",
           "needed. Quote it in the report for the user"
         ],
-        "role" : "procedure"
+        "role" : "inert"
       },
       {
         "executes" : false,
         "heading" : "Determine failure (`exit 2`)",
-        "line" : 78,
+        "line" : 76,
         "lines" : [
           "Treat as urgent. Probably means the gbrain binary is missing from `$PATH` or",
           "a required subcommand crashed. Check:",
@@ -237,25 +249,31 @@
       {
         "executes" : false,
         "heading" : "Output format",
-        "line" : 87,
+        "line" : 85,
         "lines" : [
           "codeblock:json:ewogICJ2ZXJzaW9uIjogIjAuMTEuMSIsCiAgInRzIjogIjIwMjYtMDQtMThUMTI6MzQ6NTYuNzg5WiIsCiAgImhlYWx0aHkiOiBmYWxzZSwKICAic3VtbWFyeSI6ICJnYnJhaW4gc2tpbGxwYWNrIG5lZWRzIGF0dGVudGlvbjogMSBhY3Rpb24ocykg4oCUIGdicmFpbiBhcHBseS1taWdyYXRpb25zIC0teWVzIiwKICAiYWN0aW9ucyI6IFsiZ2JyYWluIGFwcGx5LW1pZ3JhdGlvbnMgLS15ZXMiXSwKICAiZG9jdG9yIjogewogICAgImV4aXRfY29kZSI6IDEsCiAgICAiY2hlY2tzIjogWwogICAgICB7ICJuYW1lIjogIm1pbmlvbnNfbWlncmF0aW9uIiwgInN0YXR1cyI6ICJmYWlsIiwgIm1lc3NhZ2UiOiAiTUlOSU9OUyBIQUxGLUlOU1RBTExFRCAocGFydGlhbCBtaWdyYXRpb246IDAuMTEuMCkuIFJ1bjogZ2JyYWluIGFwcGx5LW1pZ3JhdGlvbnMgLS15ZXMiIH0KICAgIF0KICB9LAogICJtaWdyYXRpb25zIjogewogICAgImFwcGxpZWRfY291bnQiOiAwLAogICAgInBlbmRpbmdfY291bnQiOiAwLAogICAgInBhcnRpYWxfY291bnQiOiAxLAogICAgInN0ZG91dCI6ICIuLi4iCiAgfQp9"
         ],
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 111,
+        "line" : 109,
         "lines" : [
-          "checklist:ai-autonomy:4p2MIFJ1bm5pbmcgd2l0aG91dCBgLS1xdWlldGAgaW4gYSBjcm9uIHRoYXQgZW1haWxzIGl0cyBvdXRwdXQg4oCUIHlvdSdsbCBnZXQgdGhlIGZ1bGwgSlNPTiBibG9iIGluIGV2ZXJ5IGRhaWx5IGVtYWlsLiBVc2UgYC0tcXVpZXRgIGluIGNyb25zLgrinYwgSWdub3JpbmcgZXhpdCBjb2RlIDIuIEEgY3Jhc2hlZCBkb2N0b3IgaXMgd29yc2UgdGhhbiBhIGZhaWxpbmcgY2hlY2sgYmVjYXVzZSB5b3UgZG9uJ3QgZXZlbiBrbm93IHdoYXQncyB3cm9uZy4K4p2MIFJ1bm5pbmcgb24gZXZlcnkgY2hhdCB0dXJuLiBPbmNlIHBlciBob3VyIChvciBvbiB1c2VyIHJlcXVlc3QpIGlzIHBsZW50eQrinYwgVHJlYXRpbmcgd2FybmluZ3MgYXMgZmFpbHVyZXMuIE9ubHkgYGZhaWxgIHN0YXR1cyBuZWVkcyBhY3Rpb247IGB3YXJuYCBpcyBpbmZvcm1hdGlvbmFsLg=="
+          "❌ Running without `--quiet` in a cron that emails its output — you'll get",
+          "the full JSON blob in every daily email. Use `--quiet` in crons",
+          "❌ Ignoring exit code 2. A crashed doctor is worse than a failing check",
+          "because you don't even know what's wrong",
+          "❌ Running on every chat turn. Once per hour (or on user request) is plenty",
+          "❌ Treating warnings as failures. Only `fail` status needs action;",
+          "`warn` is informational"
         ],
-        "role" : "procedure"
+        "role" : "prohibitions"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 122,
+        "line" : 119,
         "lines" : [
           "The skill itself doesn't write files; it reports the CLI output verbatim to",
           "the user (or to the agent's briefing pipeline). One-line summary first,",
@@ -266,7 +284,7 @@
       {
         "executes" : false,
         "heading" : "Related",
-        "line" : 128,
+        "line" : 125,
         "lines" : [
           "`gbrain doctor` — the underlying filesystem + DB check. skillpack-check",
           "composes this",
@@ -318,56 +336,44 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 31,
-      "swift_line" : 602
-    },
-    {
-      "meridian_line" : 39,
-      "swift_line" : 613
-    },
-    {
-      "meridian_line" : 45,
-      "swift_line" : 624
+      "meridian_line" : 1,
+      "swift_line" : 631
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 662
+      "swift_line" : 636
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 667
+      "swift_line" : 675
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 706
+      "swift_line" : 680
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 711
+      "swift_line" : 719
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 750
+      "swift_line" : 724
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 755
+      "swift_line" : 763
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 794
+      "swift_line" : 768
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 799
+      "swift_line" : 807
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 838
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 843
+      "swift_line" : 812
     }
   ],
   "tools_used" : [

@@ -64,7 +64,7 @@ public struct DecisionsCommand: ParsableCommand {
         for d in records {
             print("\(d.id)  [\(d.status.rawValue)]  \(d.title)")
             if !d.seeAlso.isEmpty {
-                print("    see also: \(d.seeAlso.joined(separator: ", "))")
+                print("    see also: \(d.seeAlso.map(\.id).joined(separator: ", "))")
             }
         }
         print("\nRun `meridian explain <id>` for the full rationale + alternatives.")
@@ -85,7 +85,7 @@ extension ExplainCommand {
             for c in decision.consequences { print("  - \(c)") }
         }
         if !decision.seeAlso.isEmpty {
-            print("\nSee also: \(decision.seeAlso.joined(separator: ", "))")
+            print("\nSee also: \(decision.seeAlso.map(\.id).joined(separator: ", "))")
         }
     }
 }

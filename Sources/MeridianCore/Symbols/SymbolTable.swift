@@ -104,11 +104,15 @@ public final class SymbolTable: @unchecked Sendable {
         return Suggester().closest(form, among: candidates)
     }
 
-    /// A ` (did you mean "…"?)` hint for an unknown verb form, or "" when no
-    /// declared form is close enough. Single source for the suggestion suffix
-    /// used by both `ExpressionParser` and `ASTToIR` on unknown-verb errors.
-    public func verbFormSuggestion(for form: String) -> String {
-        nearestVerbForm(to: form).map { " (did you mean \"\($0)\"?)" } ?? ""
+    /// A structured "did you mean" `Suggestion` for an unknown verb form, or
+    /// `nil` when no declared form is close enough. Range-less (advisory
+    /// only) since the caller only knows the offending word, not its exact
+    /// source column. Single source for the suggestion attached to
+    /// unknown-verb diagnostics (`DescriptionGrammar`'s passive-verb carrier).
+    public func verbFormSuggestion(for form: String) -> Suggestion? {
+        nearestVerbForm(to: form).map {
+            Suggestion(replacement: $0, rationale: "did you mean \"\($0)\"?")
+        }
     }
 
     /// Declared property names for a kind (lowercased lookup).
@@ -225,14 +229,18 @@ public final class SymbolTable: @unchecked Sendable {
         _ invocation: String,
         defaultParam: PhraseParameterAST? = nil
     ) -> (phrase: PhraseDefinition, args: [String: ExpressionAST])? {
-        if let direct = matchPhraseDirect(invocation) { return direct }
+        if let direct = matchPhraseDirect(invocation) {
+            return direct
+        }
         guard let defaultParam else { return nil }
         let filled = "\(invocation)\(lexicon.grammar.implicitParamFillConnector)\(defaultParam.kind)"
         trace.log(.phraseMatch, "phrase.match.implicit-fill: \"\(invocation)\" → \"\(filled)\"")
         return matchPhraseDirect(filled)
     }
 
-    private func matchPhraseDirect(_ invocation: String) -> (phrase: PhraseDefinition, args: [String: ExpressionAST])? {
+    private func matchPhraseDirect(
+        _ invocation: String
+    ) -> (phrase: PhraseDefinition, args: [String: ExpressionAST])? {
         let token = trace.push(.phraseMatch, "matchPhrase: \"\(invocation)\"")
         defer { trace.pop(token) }
 
@@ -330,7 +338,10 @@ public final class SymbolTable: @unchecked Sendable {
 
     /// Extract argument expressions by matching parameter slots in the pattern
     /// against word positions in the invocation text.
-    func extractArgs(_ invocation: String, pattern: PhrasePattern) -> [String: ExpressionAST] {
+    func extractArgs(
+        _ invocation: String,
+        pattern: PhrasePattern
+    ) -> [String: ExpressionAST] {
         let token = trace.push(.phraseExtractArgs, "extractArgs from \"\(invocation)\"")
         defer { trace.pop(token) }
 

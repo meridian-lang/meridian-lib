@@ -436,6 +436,16 @@ simultaneously:
 
 ## Expressions
 
+Wave 5 records the expression/description/template/idiom surface in
+`GrammarTable` (`Sources/MeridianCore/Grammar/`) — the single reviewable
+registry for anchors, screening, and generated grammar reference text.
+`ExpressionParser` dispatches to one independent production unit per
+`GrammarTable` entry (`Sources/MeridianCore/Parser/Lexical/Productions/`),
+each either a real `pegex` grammar or a dedicated hand-written Swift function
+per `GrammarProduction.implementation` — there is one parser implementation
+and no rollout flag (see `docs/04_COMPILER_PIPELINE.md`'s
+`ExpressionParser.parse` section).
+
 | Form | Example |
 |---|---|
 | Possessive chain | `the order's total amount` |
@@ -857,7 +867,7 @@ section body lowers:
 
 | Role (default headings) | Lowers to |
 |---|---|
-| `invariants` (Contract, Guarantees) | `assert` (checkable items only) |
+| `invariants` (Contract, Guarantees) | `assert` (checkable items only; leading assertion markers such as `make sure`, `ensure`, and `assert` are accepted) |
 | `procedure` (Phases, Workflow, Protocol, Steps, `Phase N: …`) | executable statements |
 | `applicability` (When To Use, When to invoke/run) | preconditions / dispatch predicates |
 | `negative-applicability` (When NOT To Use, Do NOT Use) | soft-skip guards / negative dispatch predicates |
@@ -876,7 +886,8 @@ content:
    `semanticError`: rename it to a recognized role, add a `=== sections ===`
    alias, force a role with `(( role: <R> ))`, or mark it `(( inert ))`.
 3. **A non-checkable `Contract`/`Anti-Patterns` item** (prose, not a structural
-   comparison) is a `semanticError`. Rephrase it as a comparison, or mark the
+   comparison or quantifier) is a `semanticError`. Rephrase it as a comparison,
+   quantifier, or `make sure …` / `ensure …` assertion, or mark the
    section `(( inert, role: invariants ))` / `(( inert, role: prohibitions ))`
    to keep it as labelled documentation.
 
@@ -948,11 +959,11 @@ For every attendee:
 
 **Iteration refinements (1C).** A single-clause filter / temporal window /
 ordering / count, in this order: `for each [the first N] <kind plural> [whose
-<prop> <comp> <value> | within the last N <unit> | in the next N <unit>] [sorted
-by <prop>[, newest first|oldest first]]`. The list is filtered, sorted, and
-truncated **pre-loop** (so `the first N` counts post-filter). `whose` lowers to
-a comparison on the loop element; `within the last`/`in the next` lower to a
-one-sided temporal window on a configurable timestamp property
+<prop> <comp> <value> | [is] within the last N <unit> | [is] in the next N <unit>]
+[sorted by <prop>[, newest first|oldest first]]`. The list is filtered, sorted,
+and truncated **pre-loop** (so `the first N` counts post-filter). `whose` lowers
+to a comparison on the loop element; `[is] within the last`/`[is] in the next`
+lower to a one-sided temporal window on a configurable timestamp property
 (`LanguageSynonyms.timestampProperty`, default `updatedAt`). New comparators:
 `contains`, `is one of`. See [04_COMPILER_PIPELINE.md](04_COMPILER_PIPELINE.md).
 

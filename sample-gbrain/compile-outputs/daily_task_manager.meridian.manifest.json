@@ -98,7 +98,7 @@
     "name" : "daily-task-manager",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "invariants",
         "level" : 2,
         "line" : 23,
         "text" : "Contract"
@@ -106,95 +106,92 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 33,
+        "line" : 32,
         "text" : "Phases"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 50,
+        "line" : 43,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "prohibitions",
         "level" : 2,
-        "line" : 71,
+        "line" : 64,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 40,
-        "text" : "Add"
+        "line" : 25,
+        "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 41,
-        "text" : "Complete"
+        "line" : 27,
+        "text" : "Task lifecycle"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 42,
-        "text" : "Defer"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 43,
-        "text" : "Remove"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 44,
-        "text" : "Review"
+        "line" : 28,
+        "text" : "Priority levels"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 23,
         "lines" : [
-          "checklist:ai-autonomy:VGFza3Mgc3RvcmVkIGFzIGEgYnJhaW4gcGFnZSAoYG9wcy90YXNrcy5tZGApIHdpdGggc3RydWN0dXJlZCBmb3JtYXQKVGFzayBsaWZlY3ljbGU6IGFkZCDihpIgaW4tcHJvZ3Jlc3Mg4oaSIGNvbXBsZXRlIHwgZGVmZXIKUHJpb3JpdHkgbGV2ZWxzOiBQMCAodXJnZW50KSwgUDEgKHRvZGF5KSwgUDIgKHRoaXMgd2VlayksIFAzIChiYWNrbG9nKQpDb21wbGV0ZWQgdGFza3MgYXJjaGl2ZWQgd2l0aCBjb21wbGV0aW9uIGRhdGUKRGVmZXJyZWQgdGFza3MgY2FycnkgZm9yd2FyZCB3aXRoIHJlYXNvbg=="
+          "This skill guarantees:",
+          "Tasks stored as a brain page (`ops\/tasks.md`) with structured format",
+          "Task lifecycle: add → in-progress → complete | defer",
+          "Priority levels: P0 (urgent), P1 (today), P2 (this week), P3 (backlog)",
+          "Completed tasks archived with completion date",
+          "Deferred tasks carry forward with reason"
         ],
-        "role" : "procedure"
+        "role" : "invariants"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phases",
-        "line" : 33,
+        "line" : 32,
         "lines" : [
-          "codeblock:bash:Z2JyYWluIGdldCBvcHMvdGFza3M=",
-          "use judgment to choose and apply the requested task action:",
-          "Add: append a task with priority, description, due date, and a timeline entry",
-          "Complete: mark the task as done and move it to the completed section with the date",
-          "Defer: move the task to the next day or week with a reason",
-          "Remove: delete the task from the list (rare; prefer complete or defer)",
-          "Review: display all active tasks by priority",
-          "codeblock:bash:Z2JyYWluIHB1dCBvcHMvdGFza3M="
+          "**Load current tasks.** `gbrain get ops\/tasks` — read the task list",
+          "**Execute the requested action:**",
+          "**Add:** Append task with priority, description, due date. Add timeline entry",
+          "**Complete:** Mark as done, move to completed section with date",
+          "**Defer:** Move to next day\/week with reason",
+          "**Remove:** Delete from list (rare, prefer complete or defer)",
+          "**Review:** Display all active tasks by priority",
+          "**Save.** `gbrain put ops\/tasks` — write updated task list"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 50,
+        "line" : 43,
         "lines" : [
           "codeblock:markdown:IyBUYXNrcwoKIyMgUDAg4oCUIFVyZ2VudCAoKCBpbmVydCApKQotIFsgXSB7dGFzayBkZXNjcmlwdGlvbn0gKGR1ZToge2RhdGV9KQoKIyMgUDEg4oCUIFRvZGF5ICgoIGluZXJ0ICkpCi0gWyBdIHt0YXNrIGRlc2NyaXB0aW9ufQoKIyMgUDIg4oCUIFRoaXMgV2VlayAoKCBpbmVydCApKQotIFsgXSB7dGFzayBkZXNjcmlwdGlvbn0KCiMjIFAzIOKAlCBCYWNrbG9nICgoIGluZXJ0ICkpCi0gWyBdIHt0YXNrIGRlc2NyaXB0aW9ufQoKIyMgQ29tcGxldGVkICgoIGluZXJ0ICkpCi0gW3hdIHt0YXNrfSAoY29tcGxldGVkOiB7ZGF0ZX0p"
         ],
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 71,
+        "line" : 64,
         "lines" : [
-          "checklist:ai-autonomy:QWRkaW5nIHRhc2tzIHdpdGhvdXQgYSBwcmlvcml0eSBsZXZlbApDb21wbGV0aW5nIHRhc2tzIHdpdGhvdXQgcmVjb3JkaW5nIHRoZSBjb21wbGV0aW9uIGRhdGUKRGVmZXJyaW5nIHRhc2tzIHdpdGhvdXQgYSByZWFzb24KTGV0dGluZyB0aGUgdGFzayBsaXN0IGdyb3cgdW5ib3VuZGVkIChyZXZpZXcgd2Vla2x5KQpTdG9yaW5nIHRhc2tzIG91dHNpZGUgdGhlIGJyYWluICh0aGV5IHNob3VsZCBiZSBzZWFyY2hhYmxlKQ=="
+          "Adding tasks without a priority level",
+          "Completing tasks without recording the completion date",
+          "Deferring tasks without a reason",
+          "Letting the task list grow unbounded (review weekly)",
+          "Storing tasks outside the brain (they should be searchable)"
         ],
-        "role" : "procedure"
+        "role" : "prohibitions"
       }
     ],
     "tools" : "search\nget_page\nput_page\nadd_timeline_entry",
@@ -237,64 +234,44 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 27,
-      "swift_line" : 602
-    },
-    {
-      "meridian_line" : 35,
-      "swift_line" : 614
-    },
-    {
-      "meridian_line" : 39,
-      "swift_line" : 624
-    },
-    {
-      "meridian_line" : 46,
-      "swift_line" : 634
-    },
-    {
-      "meridian_line" : 74,
-      "swift_line" : 644
+      "meridian_line" : 1,
+      "swift_line" : 631
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 684
+      "swift_line" : 636
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 689
+      "swift_line" : 675
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 728
+      "swift_line" : 680
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 733
+      "swift_line" : 719
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 772
+      "swift_line" : 724
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 777
+      "swift_line" : 763
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 816
+      "swift_line" : 768
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 821
+      "swift_line" : 807
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 860
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 865
+      "swift_line" : 812
     }
   ],
   "tools_used" : [

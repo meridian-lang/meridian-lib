@@ -82,6 +82,8 @@ let out = try Compiler(options: opts).compile(
 - `Tests/MeridianCoreTests/`, `Tests/MeridianRuntimeTests/`,
   `sample-gbrain/Tests/` — test targets.
 - `examples/` — `.merconfig` / `.meridian` samples + `golden/`.
+- `corpora/` — Wave 6 validation corpora: `erp/` and `procedures/` synthetic
+  proxy corpora (originals, strict ports, compile outputs, deviation indexes).
 - `docs/` — numbered docs (`01_OVERVIEW` … `15_DECISIONS`, `coverage/`).
 - `meridian-handoff/docs/` — **read-only** original spec (blueprint, language,
   IR, codegen, runtime API, build plan, decisions).
@@ -182,6 +184,16 @@ sentinels (e.g. the `\u{E000}` code-block / shell markers), Swift-keyword output
 in the emitter, and section-marker syntax (`(( … ))`). When in doubt, it goes in
 the lexicon.
 
+### Wave 5 parser infrastructure norm
+
+New expression/description/template/idiom surface forms are **GrammarTable data
+edits first**. Register the production in `PegexSurfaceGrammar` (name, canonical
+example, summary, anchors from `EnglishLexicon`/`FixedGrammar`), add the matching
+table-order test, then wire parsing. Do not add new expression-level
+quote-shielding or trailing-period scanners at call sites: pegex/grammar-table
+parsing owns expression markers, and `SentenceBreaker` owns statement
+terminators.
+
 ### Dependencies
 
 - `modelhike` (local, `../modelhike`) — `StringTemplate` for codegen.
@@ -213,13 +225,15 @@ full local gate unless the user explicitly narrows validation:
 
 ```bash
 swift test
-MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1 swift test
+MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1 MERIDIAN_CORPORA_TYPECHECK=1 swift test
 scripts/coverage.swift --gate
 ```
 
 If the change affects generated Swift, codegen, domain emission, migration, or
 the gbrain corpus, do not skip the typecheck env vars; they are the only gates
-that feed generated output to `swiftc`.
+that feed generated output to `swiftc`. Changes that affect corpus migration,
+rulebooks, or generated Swift for `corpora/erp` / `corpora/procedures` must also
+run `MERIDIAN_CORPORA_TYPECHECK=1 swift test --filter CorporaConformanceTests`.
 Do not skip the coverage gate for substantive production changes; it enforces
 the per-file coverage floors documented under `docs/coverage/`.
 If a change affects generated artifacts, regenerate and include the matching
@@ -434,6 +448,19 @@ heading unless you also rename the heading to a recognized synonym (or add a
 headings (`### Enforce back-links`, `### Repair missing back-links`), so their
 `(( role: procedure ))` markers are load-bearing and must not be removed as-is.
 Full guidance: `docs/13_SKILL_MD_PORTING.md` (edit-budget callout after item 4).
+
+### 17. `NonterminalScreen` masks must fully represent a production's anchors
+
+`NonterminalScreen` is a live pre-filter for selected expression productions.
+Its bitmask vocabulary is fixed-capacity (`Bitset128`, 128 anchor slots). A
+production may only receive a nonzero screening mask when **every one** of its
+anchors is present in the vocabulary. If any anchor is outside the capacity
+budget, the whole production must fall back to mask `0` (always eligible).
+
+Never build a partial production mask by dropping missing anchors. A partial
+mask under-represents real trigger words and can wrongly screen out valid
+expressions. This previously broke quantifiers when some determiners
+(`every`/`any`/`no`/…) were not represented in the first 64 anchors.
 
 ---
 

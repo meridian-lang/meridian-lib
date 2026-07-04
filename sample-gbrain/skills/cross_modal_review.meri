@@ -34,17 +34,16 @@ mutating: false
 > for ad-hoc second opinions; use `gbrain eval cross-modal` for the
 > skillify Phase 3 quality gate. The two are complementary, not redundant.
 
-## Contract (( role: procedure ))
+## Contract (( inert, role: invariants ))
 
-> This skill guarantees:
+This skill guarantees:
 
-!!! checklist (( ai-autonomy ))
-- [ ] Work product is reviewed by a different model before finalizing.
-- [ ] The review is graded against the originating skill's Contract section
+- Work product is reviewed by a different model before finalizing.
+- The review is graded against the originating skill's Contract section
   (what was promised), not vibes.
-- [ ] Agreement and disagreement are reported transparently.
-- [ ] Refusal from one model triggers a silent switch to the next in chain.
-- [ ] The user always makes the final decision (user sovereignty).
+- Agreement and disagreement are reported transparently.
+- Refusal from one model triggers a silent switch to the next in chain.
+- The user always makes the final decision (user sovereignty).
 
 ## When to invoke (v0.25.1 gating) (( inert ))
 
@@ -70,68 +69,73 @@ Do NOT invoke for:
 - Routine cron output or heartbeat operations
 - Git commit / push of already-reviewed work
 
-## Phases
+## Phases (( inert, role: procedure ))
 
-use judgment to run a cross-modal review of the work product:
-  Capture the brain page, analysis, code diff, or decision to be reviewed.
-  Load the originating skill's Contract section to see what was promised.
-  Spawn a different review model and send it the work plus the Contract.
-  Grade whether the output followed the Contract, pass or fail, with specific citations.
-  Report agreement or disagreement to the user, never auto-applying the reviewer's suggestions.
+1. **Capture the work product.** The brain page, analysis, code diff,
+   or decision to be reviewed.
+2. **Load the Contract.** Read the originating skill's Contract section
+   (what was promised).
+3. **Spawn review model.** Send the work + Contract to a different
+   model. Use [conventions/model-routing.md](../conventions/model-routing.md)
+   for model selection.
+4. **Grade.** Model evaluates: did the output follow the Contract?
+   Pass / fail with specific citations.
+5. **Report.** Present agreement / disagreement to the user. Never
+   auto-apply the reviewer's suggestions.
 
 ## Code-review handoff (v0.25.1 extension) (( inert ))
 
 For diff review specifically, gstack ships a `/codex` skill that wraps
 the OpenAI Codex CLI. Two modes:
 
-### Codex Review (( role: procedure ))
+### Codex Review (( inert ))
 
-use judgment to follow the Codex Review guidance:
-  Independent diff review from a different AI system. The user invokes
-  `/codex review` (gstack-shipped); cross-modal-review's job is to
-  RECOGNIZE when this is the right tool and recommend it explicitly.
-  
-  **When to recommend `/codex review`:**
-  item: After a substantive diff lands and before merge
-  item: When the user wants a second opinion that's NOT another Claude
-  
-  **Output framing (when cross-modal-review surfaces Codex output):**
-  
-  ```
-  CODEX REVIEW (independent second opinion):
-  ══════════════════════════════════════════
-  <full codex output, verbatim>
-  ══════════════════════════════════════════
-  
-  CROSS-MODEL ANALYSIS:
-    Both found:    [overlapping findings]
-    Only Codex:    [findings unique to Codex]
-    Only Claude:   [findings unique to my analysis]
-    Agreement:     X% (N/M findings overlap)
-  ```
-  
-  User decides what to act on. Cross-model agreement is signal, not
-  permission.
+Independent diff review from a different AI system. The user invokes
+`/codex review` (gstack-shipped); cross-modal-review's job is to
+RECOGNIZE when this is the right tool and recommend it explicitly.
+
+**When to recommend `/codex review`:**
+- After a substantive diff lands and before merge
+- When the user wants a second opinion that's NOT another Claude
+
+**Output framing (when cross-modal-review surfaces Codex output):**
+
+```
+CODEX REVIEW (independent second opinion):
+══════════════════════════════════════════
+<full codex output, verbatim>
+══════════════════════════════════════════
+
+CROSS-MODEL ANALYSIS:
+  Both found:    [overlapping findings]
+  Only Codex:    [findings unique to Codex]
+  Only Claude:   [findings unique to my analysis]
+  Agreement:     X% (N/M findings overlap)
+```
+
+User decides what to act on. Cross-model agreement is signal, not
+permission.
+
 ### Adversarial Challenge (( inert ))
-  
+
 Same shape, different prompt. Used on security-sensitive changes:
 the reviewer is asked to find injection vectors, race conditions,
 auth bypasses, data leaks, privilege escalation paths.
-  
+
 Output adds an exploitability rating (CRITICAL / HIGH / MEDIUM / LOW)
 and recommended mitigations.
 
-## Refusal routing (( role: procedure ))
+## Refusal routing (( inert ))
 
-use judgment to follow the Refusal routing guidance:
-  If the primary review model refuses:
-  
-  1. Switch silently to the next model in the chain (see
-     `conventions/cross-modal.yaml`).
-  2. Don't show the refusal to the user.
-  3. Don't announce the switch.
-  4. If ALL models in the chain refuse, escalate to the user.
-## Output format
+If the primary review model refuses:
+
+1. Switch silently to the next model in the chain (see
+   `conventions/cross-modal.yaml`).
+2. Don't show the refusal to the user.
+3. Don't announce the switch.
+4. If ALL models in the chain refuse, escalate to the user.
+
+## Output format (( inert, role: template ))
 
 ### Standard review (( inert ))
 
@@ -169,15 +173,14 @@ This applies even when the reviewer is correct. Cross-model consensus
 is a strong signal — present it as such — but the user makes the
 decision.
 
-## Anti-Patterns (( role: procedure ))
+## Anti-Patterns (( inert, role: prohibitions ))
 
-!!! checklist (( ai-autonomy ))
-- [ ] ❌ Auto-applying reviewer suggestions without user approval
-- [ ] ❌ Showing model refusals to the user
-- [ ] ❌ Using the same model for review and generation
-- [ ] ❌ Skipping the Contract reference (reviewing vibes, not guarantees)
-- [ ] ❌ Code-reviewing trivial changes (typos, formatting)
-- [ ] ❌ Running code review without git-diff context
+- ❌ Auto-applying reviewer suggestions without user approval
+- ❌ Showing model refusals to the user
+- ❌ Using the same model for review and generation
+- ❌ Skipping the Contract reference (reviewing vibes, not guarantees)
+- ❌ Code-reviewing trivial changes (typos, formatting)
+- ❌ Running code review without git-diff context
 
 ## Related skills (( inert ))
 
@@ -189,6 +192,6 @@ decision.
 - `skills/conventions/cross-modal.yaml` — review pairs + refusal routing
 
 
-## Output Format
+## Output Format (( inert, role: template ))
 
 The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).

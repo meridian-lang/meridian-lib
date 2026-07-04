@@ -98,7 +98,7 @@
     "name" : "repo-architecture",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "invariants",
         "level" : 2,
         "line" : 23,
         "text" : "Contract"
@@ -106,74 +106,86 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 31,
+        "line" : 30,
         "text" : "Phases"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 39,
+        "line" : 44,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "prohibitions",
         "level" : 2,
-        "line" : 43,
+        "line" : 48,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 35,
-        "text" : "Walk the decision tree"
+        "line" : 25,
+        "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 41,
+        "line" : 46,
         "text" : "Advisory"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 23,
         "lines" : [
-          "checklist:ai-autonomy:RXZlcnkgbmV3IHBhZ2UgaXMgZmlsZWQgYnkgcHJpbWFyeSBzdWJqZWN0IChub3QgZm9ybWF0LCBub3Qgc291cmNlKQpUaGUgZGVjaXNpb24gcHJvdG9jb2wgaXMgZm9sbG93ZWQgZm9yIGFtYmlndW91cyBjYXNlcwpDb21tb24gbWlzZmlsaW5nIHBhdHRlcm5zIGFyZSBjYXVnaHQ="
+          "This skill guarantees:",
+          "Every new page is filed by primary subject (not format, not source)",
+          "The decision protocol is followed for ambiguous cases",
+          "Common misfiling patterns are caught"
         ],
-        "role" : "procedure"
+        "role" : "invariants"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phases",
-        "line" : 31,
+        "line" : 30,
         "lines" : [
-          "use judgment to file a new brain page by its primary subject:",
-          "Identify the primary subject (what you would search for to find this page)",
-          "Walk the decision tree: a person to people\/, a company to companies\/, a reusable concept to concepts\/, an original idea to originals\/, a meeting to meetings\/, media to media\/, and a raw data import to sources\/",
-          "Cross-link from related directories",
-          "Check the notability gate before creating the page"
+          "**Identify the primary subject.** What would you search for to find this page?",
+          "**Walk the decision tree:**",
+          "About a person → `people\/{name-slug}.md`",
+          "About a company → `companies\/{name-slug}.md`",
+          "A reusable concept\/framework → `concepts\/{slug}.md`",
+          "An original idea → `originals\/{slug}.md`",
+          "A meeting → `meetings\/{slug}.md`",
+          "Media content → `media\/{type}\/{slug}.md`",
+          "Raw data import → `sources\/{slug}.md`",
+          "**Cross-link.** Link from related directories",
+          "**Check notability.** See `skills\/conventions\/quality.md` notability gate"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 39,
+        "line" : 44,
         "lines" : [
           "Advisory: \"File this at `{type}\/{slug}.md` because the primary subject is {reason}.\""
         ],
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 43,
+        "line" : 48,
         "lines" : [
-          "checklist:ai-autonomy:RmlsaW5nIGJ5IGZvcm1hdCAoIml0J3MgYSBQREYgc28gaXQgZ29lcyBpbiBzb3VyY2VzLyIpCkZpbGluZyBieSBzb3VyY2UgKCJpdCBjYW1lIGZyb20gZW1haWwgc28gaXQgZ29lcyBpbiBzb3VyY2VzLyIpCkNyZWF0aW5nIHBhZ2VzIHdpdGhvdXQgY2hlY2tpbmcgaWYgb25lIGFscmVhZHkgZXhpc3RzClVzaW5nIGBzb3VyY2VzL2AgZm9yIGFueXRoaW5nIGV4Y2VwdCByYXcgZGF0YSBkdW1wcw=="
+          "Filing by format (\"it's a PDF so it goes in sources\/\")",
+          "Filing by source (\"it came from email so it goes in sources\/\")",
+          "Creating pages without checking if one already exists",
+          "Using `sources\/` for anything except raw data dumps"
         ],
-        "role" : "procedure"
+        "role" : "prohibitions"
       }
     ],
     "tools" : "search\nget_page\nlist_pages",
@@ -216,48 +228,36 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 27,
-      "swift_line" : 602
-    },
-    {
-      "meridian_line" : 33,
-      "swift_line" : 613
-    },
-    {
-      "meridian_line" : 46,
-      "swift_line" : 622
+      "meridian_line" : 1,
+      "swift_line" : 631
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 662
+      "swift_line" : 636
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 667
+      "swift_line" : 675
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 706
+      "swift_line" : 680
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 711
+      "swift_line" : 719
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 750
+      "swift_line" : 724
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 755
+      "swift_line" : 763
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 794
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 799
+      "swift_line" : 768
     }
   ],
   "tools_used" : [

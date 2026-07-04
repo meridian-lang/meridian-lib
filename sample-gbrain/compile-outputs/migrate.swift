@@ -598,26 +598,6 @@ public struct MigrateInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "MigrateInput", parameters: [:])
 
-        // L24
-        let __meridianProseResults_L24 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Source data is never modified or deleted; migration is additive only\n- Every migrated page is verified round-trip: written to gbrain, read back, spot-checked\n- Cross-references from the source system (wikilinks, block refs, tags) are converted to gbrain equivalents\n- Migration is tested on a sample (5-10 files) before bulk execution\n- Post-migration health check confirms page count, link integrity, and embedding coverage",
-            snapshot: state.snapshot(),
-            scopedTools: ["add_link", "add_tag", "get_health", "get_page", "get_stats", "link.add", "page.search", "publish", "put_page", "query", "shell.run"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L24 {
-            state.bind(__key, __value)
-        }
-        // L32
-        let __meridianProseResults_L32 = try await runtime.executeProsePlan(
-            prose: "follow the Supported Sources guidance\ntable:decision:fCBTb3VyY2UgfCBGb3JtYXQgfCBTdHJhdGVneSB8CnwtLS0tLS0tLXwtLS0tLS0tLXwtLS0tLS0tLS0tfAp8IE9ic2lkaWFuIHwgTWFya2Rvd24gKyBgW1t3aWtpbGlua3NdXWAgfCBEaXJlY3QgaW1wb3J0LCBjb252ZXJ0IHdpa2lsaW5rcyB0byBnYnJhaW4gbGlua3MgfAp8IE5vdGlvbiB8IEV4cG9ydGVkIG1hcmtkb3duIG9yIENTViB8IFBhcnNlIE5vdGlvbidzIGV4cG9ydCBzdHJ1Y3R1cmUgfAp8IExvZ3NlcSB8IE1hcmtkb3duIHdpdGggYCgoYmxvY2sgcmVmcykpYCB8IENvbnZlcnQgYmxvY2sgcmVmcyB0byBwYWdlIGxpbmtzIHwKfCBQbGFpbiBtYXJrZG93biB8IEFueSAubWQgZGlyZWN0b3J5IHwgSW1wb3J0IGRpcmVjdG9yeSBpbnRvIGdicmFpbiBkaXJlY3RseSB8CnwgQ1NWIHwgVGFidWxhciBkYXRhIHwgTWFwIGNvbHVtbnMgdG8gZnJvbnRtYXR0ZXIgZmllbGRzIHwKfCBKU09OIHwgU3RydWN0dXJlZCBkYXRhIHwgTWFwIGtleXMgdG8gcGFnZSBmaWVsZHMgfAp8IFJvYW0gfCBKU09OIGV4cG9ydCB8IENvbnZlcnQgYmxvY2sgc3RydWN0dXJlIHRvIHBhZ2VzIHw=\nuse judgment to migrate an external source into the brain:\nAssess the source format, file count, and structure\nPlan how source fields map to gbrain fields (type, title, tags, compiled truth, timeline)\nTest with a sample of five to ten files and verify by reading them back\nBulk import the full directory, then verify health and spot-check pages\nExtract cross-references and create typed links\nuse judgment to follow the Obsidian Migration guidance:\nImport the vault directory into gbrain (Obsidian vaults are markdown directories)\nWire the graph with native wikilink support (v0.12.1+):\ncodeblock:bash:Z2JyYWluIGV4dHJhY3QgbGlua3MgLS1zb3VyY2UgZGIgLS1kcnktcnVuIHwgaGVhZCAtMjAgICAgIyBwcmV2aWV3CmdicmFpbiBleHRyYWN0IGxpbmtzIC0tc291cmNlIGRiICAgICAgICAgICAgICAgICAgICAgICAgICMgY29tbWl0\n`extract links` natively parses `[[relative/path]]` and `[[relative/path|Display Text]]`\nalongside standard `[text](page.md)` markdown syntax. Ancestor-search resolution handles\nwiki KBs where authors omit one or more leading `../` prefixes. The `.md` suffix is\ninferred automatically for wikilinks\nObsidian-specific:\nitem: Tags (`#tag`) become gbrain tags\nitem: Frontmatter properties map to gbrain frontmatter\nitem: Attachments (images, PDFs) are noted but handled separately via file storage\nchecklist:ai-autonomy:KipCdWxrIGltcG9ydCB3aXRob3V0IHNhbXBsZSB0ZXN0LioqIE5ldmVyIGltcG9ydCB0aGUgZnVsbCBkYXRhc2V0IGJlZm9yZSB2ZXJpZnlpbmcgd2l0aCA1LTEwIGZpbGVzLiBUaGUgY29zdCBvZiBjbGVhbmluZyB1cCBodW5kcmVkcyBvZiBiYWQgcGFnZXMgaXMgZW5vcm1vdXMKKipEZXN0cm95aW5nIHNvdXJjZSBkYXRhLioqIE1pZ3JhdGlvbiBpcyBhZGRpdGl2ZS4gTmV2ZXIgbW9kaWZ5LCBtb3ZlLCBvciBkZWxldGUgdGhlIHNvdXJjZSBmaWxlcwoqKklnbm9yaW5nIGNyb3NzLXJlZmVyZW5jZXMuKiogV2lraWxpbmtzLCBibG9jayByZWZzLCBhbmQgdGFncyBmcm9tIHRoZSBzb3VyY2Ugc3lzdGVtIG11c3QgYmUgY29udmVydGVkIHRvIGdicmFpbiBlcXVpdmFsZW50cy4gRHJvcHBpbmcgdGhlbSBsb3NlcyB0aGUga25vd2xlZGdlIGdyYXBoCioqU2tpcHBpbmcgdmVyaWZpY2F0aW9uLioqIEEgbWlncmF0aW9uIHdpdGhvdXQgcG9zdC1pbXBvcnQgaGVhbHRoIGNoZWNrLCBwYWdlIGNvdW50IGNvbXBhcmlzb24sIGFuZCBzcG90LWNoZWNrIHJlYWRzIGlzIGluY29tcGxldGU=",
-            snapshot: state.snapshot(),
-            scopedTools: ["add_link", "add_tag", "get_health", "get_page", "get_stats", "link.add", "page.search", "publish", "put_page", "query", "shell.run"]
-        )
-        for (__key, __value) in __meridianProseResults_L32 {
-            state.bind(__key, __value)
-        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

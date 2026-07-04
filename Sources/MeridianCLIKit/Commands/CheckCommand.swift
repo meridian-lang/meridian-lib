@@ -32,6 +32,10 @@ public struct CheckCommand: AsyncParsableCommand {
     var trace: String?
 
     @Option(name: .long,
+            help: "Write trace output to a file instead of stderr.")
+    var traceFile: String?
+
+    @Option(name: .long,
             help: "Diagnostics output format: human (snippet + caret) or json (stable schema for editors/CI).")
     var diagnosticsFormat: DiagnosticsFormat = .human
 
@@ -42,7 +46,7 @@ public struct CheckCommand: AsyncParsableCommand {
     var write: Bool = false
 
     public func run() async throws {
-        try await runDiagnosticsCheck(input: input, merconfig: merconfig, trace: trace,
+        try await runDiagnosticsCheck(input: input, merconfig: merconfig, trace: trace, traceFile: traceFile,
                                       format: diagnosticsFormat, fix: fix, write: write)
     }
 }

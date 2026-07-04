@@ -599,48 +599,6 @@ public struct SkillCreatorInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SkillCreatorInput", parameters: [:])
 
-        // L24
-        let __meridianProseResults_L24 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- New skill follows conformance standard (frontmatter + required sections)\n- MECE check: no overlap with existing skills' triggers\n- Manifest.json updated\n- RESOLVER.md updated with routing entry\n- Skill passes conformance tests (`bun test test/skills-conformance.test.ts`)",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.list", "page.search", "shell.run"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L24 {
-            state.bind(__key, __value)
-        }
-        // L32
-        let __meridianProseResults_L32 = try await runtime.executeProsePlan(
-            prose: "create a new skill\nIdentify the missing capability or user intent that has no skill\nRun a MECE check against the manifest and resolver, extending an existing skill rather than duplicating coverage\nCreate the SKILL.md from the standard template with frontmatter, Contract, Phases, Output Format, and Anti-Patterns\nAdd the skill to the manifest and to the resolver routing table",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.list", "page.search", "shell.run"]
-        )
-        for (__key, __value) in __meridianProseResults_L32 {
-            state.bind(__key, __value)
-        }
-        if __meridianShouldRun("progress:0.2:L38:C0") {
-            // L38
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("bun test test/skills-conformance.test.ts"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L38:C0", state: state.snapshot())
-        }
-        // L49
-        let __meridianProseResults_L49 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Creating a skill that overlaps with an existing one (violates MECE)\n- Skipping the MECE check against existing skills\n- Creating a skill without triggers in frontmatter\n- Not updating manifest.json and RESOLVER.md\n- Creating a skill without an Anti-Patterns section",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.list", "page.search", "shell.run"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L49 {
-            state.bind(__key, __value)
-        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

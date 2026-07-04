@@ -10,9 +10,12 @@ import Foundation
 //      the CLI autodiscovers `.merconfig`/`.merrules`), but it blockquotes
 //      pre-heading preamble and appends an authoritative `(( … ))` marker to
 //      every heading that would not otherwise resolve to an executable role
-//      (prose Contract/Anti-Patterns → inert-with-role, pure-shell unknown →
-//      `(( role: procedure ))`, other unknown → `(( inert ))`). It does NOT
-//      strip `skill: true` (a one-time corpus edit). See `deterministicTransform`.
+//      (prose Contract/Anti-Patterns → inert-with-role, executable unknown →
+//      a reusable `procedure` section alias, other unknown → `(( inert ))`).
+//      Markdown list items are normalized and tried as executable candidates
+//      rather than inerted because they contain bullets, bold text, or links.
+//      It does NOT strip `skill: true` (a one-time corpus edit). See
+//      `deterministicTransform`.
 //   2. Strict compile — run the candidate through `Compiler` exactly like a
 //      hand-authored file.
 //   3. Bounded repair — when compilation fails AND a repair closure is
@@ -86,22 +89,31 @@ public struct SkillMigrator {
     let rulebookInputs: [RulebookInput]
     let options: Options
     let repair: (@Sendable (RepairRequest) async throws -> String)?
+    /// Opt-in debug trace for the migration pass, under `.skill`. Defaults to
+    /// the compiler's own trace so `--trace skill` on the CLI covers migration
+    /// without a second flag; pass an explicit trace to decouple them.
+    let trace: ParserTrace
 
     public init(compiler: Compiler,
                 vocabularies: [Compiler.VocabularyInput],
                 rulebooks: [RulebookInput] = [],
                 options: Options = Options(),
-                repair: (@Sendable (RepairRequest) async throws -> String)? = nil) {
+                repair: (@Sendable (RepairRequest) async throws -> String)? = nil,
+                trace: ParserTrace? = nil) {
         self.compiler = compiler
         self.vocabularies = vocabularies
         self.rulebookInputs = rulebooks
         self.options = options
         self.repair = repair
+        self.trace = trace ?? compiler.options.trace
     }
 
     public func migrate(_ markdown: String, file: String = "skill.meri") async throws -> Result {
-        let (transformed, addedKeys, aliases) = deterministicTransform(markdown)
+        trace.log(.skill, "migrate \"\(file)\": \(markdown.components(separatedBy: "\n").count) source line(s)")
+        let (transformed, addedKeys, aliases) = try deterministicTransform(markdown)
         let originalLineCount = markdown.components(separatedBy: "\n").count
+
+        trace.log(.skill, "migrate \"\(file)\": marking pass added \(addedKeys.count) frontmatter key(s), \(aliases.count) section alias(es)")
 
         // The aliases the marking pass chose (e.g. a pure-shell heading routed to
         // `procedure`) are left UNMARKED in the .meri, so they must be supplied to
@@ -115,18 +127,22 @@ public struct SkillMigrator {
         var attempts = 0
 
         while true {
+            trace.log(.skill, "migrate \"\(file)\": strict compile attempt \(attempts)")
             do {
                 _ = try compiler.compile(
                     meridianSource: candidate, meridianFile: file,
                     vocabularies: vocabularies, rulebooks: effectiveRulebooks
                 )
+                trace.log(.skill, "migrate \"\(file)\": compiled OK after \(attempts) repair attempt(s)")
                 return result(candidate, addedKeys: addedKeys, diagnostics: diagnostics,
                               attempts: attempts, originalLineCount: originalLineCount,
                               compiledOK: true, aliases: aliases)
             } catch {
                 let diag = describe(error)
                 diagnostics.append(diag)
+                trace.log(.skill, "migrate \"\(file)\": attempt \(attempts) failed — \(diag)")
                 guard let repair, attempts < options.maxRepair else {
+                    trace.log(.skill, "migrate \"\(file)\": giving up after \(attempts) attempt(s) (no repair closure or maxRepair reached)")
                     return result(candidate, addedKeys: addedKeys, diagnostics: diagnostics,
                                   attempts: attempts, originalLineCount: originalLineCount,
                                   compiledOK: false, aliases: aliases)
@@ -170,11 +186,19 @@ public struct SkillMigrator {
     ///          (the gbrain corpus states these as prose, not checkable predicates)
     ///        • Anti-Patterns/Avoid/Pitfalls   → `(( inert, role: prohibitions ))`
     ///        • a recognized procedure/applicability/negative/template heading
-    ///          → left unmarked (it lowers as that role)
-    ///        • an unrecognized heading whose body is *only* shell fences
-    ///          → `(( role: procedure ))` (the fences stay deterministic
-    ///          `shell.run` invokes)
+    ///          → left unmarked only when its body is structurally lowerable;
+    ///          narrative bodies stay inert with the heading's semantic role
+    ///          preserved where useful
+    ///        • an unrecognized heading whose body is *only* executable
+    ///          candidates (shell fences, command spans, choice gates, checkable
+    ///          task-list items, or list items normalized from Markdown)
+    ///          → a `procedure` section alias
     ///        • every other unrecognized heading → `(( inert ))`
+    ///   3. **Heading-less narrative** — when a document has no `##`/`###`
+    ///      headings and the body is prose narrative rather than an executable
+    ///      flat procedure/list, wrap the body under `## Overview (( inert ))`.
+    ///      Plain phrase-only documents and all-list Markdown procedures are
+    ///      left for strict compile after inline presentation is normalized.
     ///
     /// Idempotent (an already-marked heading is left untouched) and
     /// frontmatter-preserving. It does NOT strip `skill: true` — that is a
@@ -183,9 +207,9 @@ public struct SkillMigrator {
     /// organizational headings get `(( inert ))` and are the author's residue to
     /// resolve (split into a procedure section, alias in the rulebook, or keep
     /// inert). `addedKeys` is always empty — the pass adds no frontmatter.
-    func deterministicTransform(_ markdown: String)
+    func deterministicTransform(_ markdown: String) throws
         -> (source: String, addedKeys: [String], aliases: [SectionAlias]) {
-        let (marked, aliases) = markSections(markdown)
+        let (marked, aliases) = try markSections(markdown)
         return (rewriteCommandPlaceholders(marked), [], aliases)
     }
 
@@ -321,21 +345,22 @@ public struct SkillMigrator {
     static func scopeKey(_ s: String) -> String { ScopeNaming.key(s) }
 
     /// Apply the blockquote-preamble + heading-marker pass (see
-    /// `deterministicTransform`). A heading-less document is returned untouched.
-    func markSections(_ markdown: String) -> (markdown: String, aliases: [SectionAlias]) {
+    /// `deterministicTransform`). A heading-less executable flat procedure or
+    /// Markdown list of procedure candidates is returned for strict compile;
+    /// narrative-only heading-less documents are wrapped under
+    /// `## Overview (( inert ))`.
+    func markSections(_ markdown: String) throws -> (markdown: String, aliases: [SectionAlias]) {
         var lines = markdown.components(separatedBy: "\n")
         let bodyStart = frontmatterEnd(lines)
 
         let headingIdxs = lines.indices.filter { $0 >= bodyStart && headingMatch(lines[$0]) != nil }
-        guard let firstHeading = headingIdxs.first else { return (markdown, []) }
+        guard let firstHeading = headingIdxs.first else {
+            return try wrapHeadinglessNarrativeIfNeeded(lines, bodyStart: bodyStart)
+        }
 
         // 1. Blockquote preamble (body lines before the first heading).
         if firstHeading > bodyStart {
-            for i in bodyStart..<firstHeading {
-                let t = lines[i].trimmingCharacters(in: .whitespaces)
-                if t.isEmpty || t.hasPrefix("#") || t.hasPrefix(">") { continue }
-                lines[i] = "> " + lines[i]
-            }
+            lines = blockquoteBody(lines, from: bodyStart, to: firstHeading)
         }
 
         // 2. Mark headings (or route to a rulebook alias).
@@ -345,18 +370,114 @@ public struct SkillMigrator {
             if m.text.hasSuffix("))") { continue }   // already marked — idempotent
             let end = (k + 1 < headingIdxs.count) ? headingIdxs[k + 1] : lines.count
             let body = lines[(idx + 1)..<end]
-            switch decision(forHeading: m.text, body: body) {
+            switch try decision(forHeading: m.text, body: body) {
             case .leaveUnmarked:
+                if shouldNormalizeExecutableBody(forHeading: m.text) {
+                    normalizeMarkdownFormattingForLowering(&lines, (idx + 1)..<end)
+                }
                 break
             case .inline(let marker):
                 lines[idx] = "\(m.hashes) \(m.text) \(marker)"
             case .alias(let role):
                 // Leave the heading clean; the role is supplied via a rulebook
                 // `=== sections ===` alias the CLI persists.
+                if role == .procedure {
+                    normalizeMarkdownFormattingForLowering(&lines, (idx + 1)..<end)
+                }
                 aliases.append(SectionAlias(heading: m.text, role: role))
             }
         }
         return (lines.joined(separator: "\n"), aliases)
+    }
+
+    private func shouldNormalizeExecutableBody(forHeading heading: String) -> Bool {
+        switch SkillSectionRole.builtinRole(forHeading: heading) {
+        case .procedure, .invariants, .prohibitions, .applicability, .negativeApplicability:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// When a document has no `##`/`###` headings, wrap prose paragraphs under
+    /// `## Overview (( inert ))`. Markdown list items are treated as procedure
+    /// candidates after presentation formatting is stripped, so strict compile
+    /// gets the first chance to lower them.
+    private func wrapHeadinglessNarrativeIfNeeded(_ lines: [String], bodyStart: Int)
+        throws -> (markdown: String, aliases: [SectionAlias]) {
+        var lines = lines
+        let body = lines[bodyStart..<lines.count]
+        if sectionIsExecutableOnly(body) {
+            normalizeMarkdownFormattingForLowering(&lines, bodyStart..<lines.count)
+            return (lines.joined(separator: "\n"), [])
+        }
+        guard headinglessBodyNeedsInertOverview(body) else {
+            normalizeMarkdownFormattingForLowering(&lines, bodyStart..<lines.count)
+            return (lines.joined(separator: "\n"), [])
+        }
+
+        let insertAt = headinglessOverviewInsertIndex(lines, bodyStart: bodyStart)
+        trace.log(.skill, "heading-less narrative: insert ## Overview (( inert )) at L\(insertAt + 1)")
+        lines.insert("## Overview (( inert ))", at: insertAt)
+        if insertAt + 1 < lines.count,
+           !lines[insertAt + 1].trimmingCharacters(in: .whitespaces).isEmpty {
+            lines.insert("", at: insertAt + 1)
+        }
+        return (lines.joined(separator: "\n"), [])
+    }
+
+    /// Index at which to insert `## Overview (( inert ))`: immediately after a
+    /// leading `#` title and any following blank lines, or at the first body line.
+    private func headinglessOverviewInsertIndex(_ lines: [String], bodyStart: Int) -> Int {
+        var i = bodyStart
+        while i < lines.count {
+            let t = lines[i].trimmingCharacters(in: .whitespaces)
+            if t.isEmpty { i += 1; continue }
+            if t.hasPrefix("#") && !t.hasPrefix("##") {
+                var j = i + 1
+                while j < lines.count, lines[j].trimmingCharacters(in: .whitespaces).isEmpty {
+                    j += 1
+                }
+                return j
+            }
+            break
+        }
+        return i
+    }
+
+    /// True when a heading-less body reads as prose narrative rather than a flat
+    /// procedure candidate. Markdown list markers and inline presentation do not
+    /// decide inertness by themselves.
+    private func headinglessBodyNeedsInertOverview(_ body: ArraySlice<String>) -> Bool {
+        let classifier = ConditionClassifier(symbols: nil, lexicon: .default, trace: trace)
+        for raw in body {
+            let trimmed = raw.trimmingCharacters(in: .whitespaces)
+            if trimmed.isEmpty { continue }
+            if trimmed.hasPrefix("#") && !trimmed.hasPrefix("##") { continue }
+            if trimmed.hasPrefix(">") { continue }
+
+            let stripped = stripMarkdownListMarker(trimmed)
+            let text = normalizeMarkdownLineForLowering(stripped)
+            if text.isEmpty { continue }
+
+            if isTaskListLine(stripped) {
+                let item = normalizeMarkdownLineForLowering(stripTaskListBox(stripped))
+                if case .fuzzy = classifier.classify(item) { return true }
+                continue
+            }
+
+            if case .fuzzy = classifier.classify(text) { return true }
+            if !isMarkdownListLine(trimmed), !isProcedureCandidateLine(text) { return true }
+        }
+        return false
+    }
+
+    /// Markdown surface signals that still indicate documentation rather than a
+    /// flat procedure step after formatting is stripped.
+    private func lineHasMarkdownNarrativeMarkers(_ line: String) -> Bool {
+        if isTaskListLine(line) { return false }
+        if line.hasSuffix(":") { return true }
+        return false
     }
 
     // MARK: - Marking helpers
@@ -388,21 +509,31 @@ public struct SkillMigrator {
     /// Decide how to handle `heading`, by the built-in role alias and, for
     /// unrecognized headings, whether the body restates a rulebook convention,
     /// then whether the body is provably executable-only.
-    private func decision(forHeading heading: String, body: ArraySlice<String>) -> MarkDecision {
+    private func decision(forHeading heading: String, body: ArraySlice<String>) throws -> MarkDecision {
         switch SkillSectionRole.builtinRole(forHeading: heading) {
         case .invariants:
             return sectionIsCheckableRoleBody(body) ? .leaveUnmarked : .inline("(( inert, role: invariants ))")
         case .prohibitions:
             return sectionIsCheckableRoleBody(body) ? .leaveUnmarked : .inline("(( inert, role: prohibitions ))")
+        case .applicability:
+            return sectionIsCheckableRoleBody(body) ? .leaveUnmarked : .inline("(( inert, role: applicability ))")
+        case .negativeApplicability:
+            return sectionIsCheckableRoleBody(body) ? .leaveUnmarked : .inline("(( inert, role: negative-applicability ))")
+        case .procedure:
+            return sectionIsExecutableOnly(body) ? .leaveUnmarked : .inline("(( inert, role: procedure ))")
+        case .template:
+            return sectionIsTemplateBody(body) ? .leaveUnmarked : .inline("(( inert, role: template ))")
+        case .tools:
+            return sectionIsToolListBody(body) ? .leaveUnmarked : .inline("(( inert, role: tools ))")
         case .some:
-            // procedure / applicability / negative-applicability / template /
-            // tools — these lower as their role, leave them unmarked.
+            // Domain / tables sections are already declarative metadata with
+            // closed parsers; leave them to their role-specific handlers.
             return .leaveUnmarked
         case .none:
             // 1D: a section whose body verbatim restates an external rulebook
             // convention is recorded as `convention-ref` (inert metadata) rather
             // than generic inert prose.
-            if bodyRestatesConvention(body) { return .inline("(( inert, role: convention-ref ))") }
+            if try bodyRestatesConvention(body) { return .inline("(( inert, role: convention-ref ))") }
             // An unrecognized *executable* heading is routed to
             // `procedure` via a rulebook alias — preferred over an inline marker
             // (see AGENTS.md §16 / docs/13). Other unknowns stay inert prose.
@@ -410,12 +541,17 @@ public struct SkillMigrator {
         }
     }
 
-    /// Lazily-parsed, normalized rulebook convention strings (each rule's
-    /// `action` and `body`) used for convention-restatement detection.
-    private var conventionStrings: Set<String> {
+    /// Parsed, normalized rulebook convention strings (each rule's `action`
+    /// and `body`) used for convention-restatement detection. A rulebook
+    /// input that fails to parse is a real authoring error in the supplied
+    /// `.merrules` — surfaced here rather than silently treated as "no
+    /// conventions" (which would have made every restated-convention section
+    /// fall through to generic `(( inert ))`, losing the more specific
+    /// `convention-ref` marker with no indication why).
+    private func conventionStrings() throws -> Set<String> {
         var out: Set<String> = []
         for input in rulebookInputs {
-            guard let book = try? RulebookParser().parse(input.source, file: input.file) else { continue }
+            let book = try RulebookParser().parse(input.source, file: input.file)
             for rule in book.conventions {
                 let action = SkillMigrator.normalizeConvention(rule.action)
                 let body = SkillMigrator.normalizeConvention(rule.body)
@@ -428,8 +564,8 @@ public struct SkillMigrator {
 
     /// True iff every non-blank, non-fence body line restates a known rulebook
     /// convention (exact, case-insensitive, punctuation/whitespace-normalized).
-    private func bodyRestatesConvention(_ body: ArraySlice<String>) -> Bool {
-        let conventions = conventionStrings
+    private func bodyRestatesConvention(_ body: ArraySlice<String>) throws -> Bool {
+        let conventions = try conventionStrings()
         guard !conventions.isEmpty else { return false }
         var sawContent = false
         var inFence = false
@@ -456,10 +592,10 @@ public struct SkillMigrator {
     /// all-or-nothing: one narrative intro line keeps the section inert so the
     /// author can split prose from executable assertions.
     private func sectionIsCheckableRoleBody(_ body: ArraySlice<String>) -> Bool {
-        let classifier = ConditionClassifier(symbols: nil, lexicon: .default, trace: .silent())
+        let classifier = ConditionClassifier(symbols: nil, lexicon: .default, trace: trace)
         var sawContent = false
         for raw in body {
-            let t = stripMarkdownListMarker(raw.trimmingCharacters(in: .whitespaces))
+            let t = normalizeMarkdownLineForLowering(stripMarkdownListMarker(raw.trimmingCharacters(in: .whitespaces)))
             if t.isEmpty || t.hasPrefix("#") || t.hasPrefix(">") { continue }
             sawContent = true
             if case .checkable = classifier.classify(t) { continue }
@@ -469,16 +605,16 @@ public struct SkillMigrator {
     }
 
     /// True iff every non-blank body line is already executable by today's
-    /// deterministic Markdown surface: shell fences, whole-line backticked
-    /// commands, explicit block markers, checkable task-list items, or a
-    /// choice-gate with quoted options. It deliberately rejects mixed prose.
+    /// deterministic Markdown surface, or is a Markdown list item that should be
+    /// tried as a procedure line after presentation formatting is stripped. It
+    /// deliberately rejects mixed prose paragraphs.
     private func sectionIsExecutableOnly(_ body: ArraySlice<String>) -> Bool {
         var inShellFence = false
         var inNonShellFence = false
         var sawContent = false
         var pendingTableMarker = false
         var pendingChecklistMarker = false
-        let classifier = ConditionClassifier(symbols: nil, lexicon: .default, trace: .silent())
+        let classifier = ConditionClassifier(symbols: nil, lexicon: .default, trace: trace)
 
         for raw in body {
             var t = raw.trimmingCharacters(in: .whitespaces)
@@ -501,7 +637,8 @@ public struct SkillMigrator {
             if inNonShellFence { return false }
             if t.isEmpty || t.hasPrefix("#") || t.hasPrefix(">") { continue }
 
-            t = stripMarkdownListMarker(t)
+            let wasMarkdownList = isMarkdownListLine(t)
+            t = normalizeMarkdownLineForLowering(stripMarkdownListMarker(t))
             if t.isEmpty { continue }
             sawContent = true
 
@@ -526,12 +663,146 @@ public struct SkillMigrator {
             if isWholeLineBacktickedCommand(t) { continue }
             if isChoiceGateLine(t) { continue }
             if isTaskListLine(t) {
-                let item = stripTaskListBox(t)
+                let item = normalizeMarkdownLineForLowering(stripTaskListBox(t))
                 if case .checkable = classifier.classify(item) { continue }
+            }
+            if wasMarkdownList {
+                if case .fuzzy = classifier.classify(t) { return false }
+                if lineHasMarkdownNarrativeMarkers(t) { return false }
+                continue
             }
             return false
         }
         return sawContent
+    }
+
+    private func normalizeMarkdownFormattingForLowering(_ lines: inout [String], _ range: Range<Int>) {
+        var inFence = false
+        for i in range where i < lines.count {
+            let trimmed = lines[i].trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("```") {
+                inFence.toggle()
+                continue
+            }
+            if inFence || trimmed.isEmpty || trimmed.hasPrefix("#") || trimmed.hasPrefix(">") {
+                continue
+            }
+            let leading = lines[i].prefix { $0 == " " || $0 == "\t" }
+            let normalized = normalizeMarkdownLineForLowering(trimmed)
+            lines[i] = String(leading) + normalized
+        }
+    }
+
+    private func normalizeMarkdownLineForLowering(_ raw: String) -> String {
+        let trimmed = raw.trimmingCharacters(in: .whitespaces)
+        if isWholeLineBacktickedCommand(trimmed) { return trimmed }
+        return stripMarkdownLinksAndEmphasis(trimmed)
+            .replacingOccurrences(of: "  ", with: " ")
+            .trimmingCharacters(in: .whitespaces)
+    }
+
+    private func stripMarkdownLinksAndEmphasis(_ raw: String) -> String {
+        var out = ""
+        var i = raw.startIndex
+        while i < raw.endIndex {
+            if raw[i] == "[",
+               let close = raw[i...].firstIndex(of: "]") {
+                let afterClose = raw.index(after: close)
+                if afterClose < raw.endIndex,
+                   raw[afterClose] == "(",
+                   let closeParen = raw[afterClose...].firstIndex(of: ")") {
+                    out += raw[raw.index(after: i)..<close]
+                    i = raw.index(after: closeParen)
+                    continue
+                }
+            }
+            if raw[i] == "*", raw.index(after: i) < raw.endIndex, raw[raw.index(after: i)] == "*" {
+                i = raw.index(i, offsetBy: 2)
+                continue
+            }
+            if raw[i] == "_", raw.index(after: i) < raw.endIndex, raw[raw.index(after: i)] == "_" {
+                i = raw.index(i, offsetBy: 2)
+                continue
+            }
+            out.append(raw[i])
+            i = raw.index(after: i)
+        }
+        return out
+    }
+
+    private func isProcedureCandidateLine(_ text: String) -> Bool {
+        let lower = text.lowercased()
+        let statementGrammar = EnglishLexicon.default.grammar.statement
+        return lower.hasPrefix(statementGrammar.doPrefix)
+            || statementGrammar.primitivePrefixes.contains { lower.hasPrefix($0) }
+            || isWholeLineBacktickedCommand(text)
+            || isChoiceGateLine(text)
+    }
+
+    private func sectionIsTemplateBody(_ body: ArraySlice<String>) -> Bool {
+        var sawContent = false
+        var inFence = false
+        for raw in body {
+            let t = raw.trimmingCharacters(in: .whitespaces)
+            if t.hasPrefix("```") {
+                inFence.toggle()
+                sawContent = true
+                continue
+            }
+            if inFence {
+                sawContent = true
+                continue
+            }
+            if t.isEmpty || t.hasPrefix("#") || t.hasPrefix(">") { continue }
+            sawContent = true
+            if t.hasPrefix("|") || t.contains("{{") || t.hasPrefix("- ") || t.hasPrefix("* ") { continue }
+            return false
+        }
+        return sawContent
+    }
+
+    private func sectionIsToolListBody(_ body: ArraySlice<String>) -> Bool {
+        var sawContent = false
+        for raw in body {
+            let t = stripMarkdownListMarker(raw.trimmingCharacters(in: .whitespaces))
+            if t.isEmpty || t.hasPrefix("#") || t.hasPrefix(">") { continue }
+            sawContent = true
+            if isValidToolBullet(t) { continue }
+            return false
+        }
+        return sawContent
+    }
+
+    private func isValidToolBullet(_ t: String) -> Bool {
+        if let open = t.lastIndex(of: "("), t.hasSuffix(")") {
+            let id = String(t[t.index(after: open)..<t.index(before: t.endIndex)])
+            return isToolID(id)
+        }
+        if t.hasPrefix("`"), let close = t.dropFirst().firstIndex(of: "`") {
+            let id = String(t[t.index(after: t.startIndex)..<close])
+            let rest = t[t.index(after: close)...].trimmingCharacters(in: .whitespaces)
+            return isToolID(id) && (rest.hasPrefix("—") || rest.hasPrefix("--"))
+        }
+        return false
+    }
+
+    private func isToolID(_ id: String) -> Bool {
+        guard !id.isEmpty else { return false }
+        return id.allSatisfy { ch in
+            ch.isLetter || ch.isNumber || ch == "." || ch == "_" || ch == "-"
+        }
+    }
+
+    private func blockquoteBody(_ lines: [String], from start: Int, to end: Int? = nil) -> [String] {
+        var out = lines
+        let upper = end ?? lines.count
+        guard start < upper else { return out }
+        for i in start..<upper {
+            let t = out[i].trimmingCharacters(in: .whitespaces)
+            if t.isEmpty || t.hasPrefix("#") || t.hasPrefix(">") { continue }
+            out[i] = "> " + out[i]
+        }
+        return out
     }
 
     private func stripMarkdownListMarker(_ raw: String) -> String {
@@ -552,6 +823,10 @@ public struct SkillMigrator {
             }
         }
         return s
+    }
+
+    private func isMarkdownListLine(_ raw: String) -> Bool {
+        stripMarkdownListMarker(raw) != raw.trimmingCharacters(in: .whitespaces)
     }
 
     private func isWholeLineBacktickedCommand(_ s: String) -> Bool {

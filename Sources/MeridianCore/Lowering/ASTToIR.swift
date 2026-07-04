@@ -438,12 +438,13 @@ public struct ASTToIR {
     /// definition bodies and quantifier sub-expressions).
     private func assertNoMalformed(_ stmt: StatementAST) throws {
         func check(_ e: ExpressionAST?) throws {
-            guard let e, let msg = firstMalformed(e) else { return }
+            guard let e, let found = firstMalformed(e) else { return }
             let diag = Diagnostic.structural(
                 .malformedCondition,
-                message: msg,
+                message: found.message,
                 range: sourceRange(stmt.sourceLine),
-                help: "Rewrite the condition using explicit grouping (`either … or …`, parentheses via sub-clauses) or fix the quantifier/description shape.")
+                help: "Rewrite the condition using explicit grouping (`either … or …`, parentheses via sub-clauses) or fix the quantifier/description shape.",
+                suggestions: found.suggestion.map { [$0] } ?? [])
             if let engine { engine.report(diag) }
             throw CompilerError.diagnostics([diag])
         }
@@ -477,11 +478,12 @@ public struct ASTToIR {
     }
 
     /// Depth-first search for the first `.malformed` carrier anywhere inside an
-    /// expression tree. Returns its diagnostic message, or `nil` when clean.
-    private func firstMalformed(_ e: ExpressionAST) -> String? {
+    /// expression tree. Returns its diagnostic message plus any structured
+    /// "did you mean" suggestion it carries, or `nil` when clean.
+    private func firstMalformed(_ e: ExpressionAST) -> (message: String, suggestion: Suggestion?)? {
         switch e {
-        case .malformed(let m):
-            return m
+        case .malformed(let m, let suggestion):
+            return (m, suggestion)
         case .propertyAccess(let base, _):
             return firstMalformed(base)
         case .comparison(let l, _, let r):
@@ -531,7 +533,7 @@ public struct ASTToIR {
         }
     }
 
-    private func firstMalformedInDescription(_ d: DescriptionAST) -> String? {
+    private func firstMalformedInDescription(_ d: DescriptionAST) -> (message: String, suggestion: Suggestion?)? {
         if let wp = d.wherePredicate, let m = firstMalformed(wp) { return m }
         for c in d.verbClauses { if let m = firstMalformed(c.operand) { return m } }
         return nil
@@ -858,15 +860,23 @@ public struct ASTToIR {
                 // brace whose content *is* word-shaped is written `{{…}}`.
                 if !precededByDollar, isReferenceLikeHole(exprText) {
                     if !literal.isEmpty { segments.append(.literal(literal)); literal = "" }
-                    let parsed = ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon).parse(exprText)
+                    let parsed = ExpressionParser(
+                        symbols: symbols,
+                        trace: trace,
+                        lexicon: lexicon
+                    ).parse(exprText)
                     let lowered = try lowerExpr(parsed)
                     let unresolved = freeIdentifierRoots(lowered).filter { !scope.contains(scopeKey($0)) }
                     if let bad = unresolved.first {
-                        let known = scope.sorted().joined(separator: ", ")
-                        throw semanticError(
-                            "command hole \"{\(exprText)}\" references \"\(bad)\", which is not in scope. In-scope names: [\(known)]. Reference a workflow parameter, an earlier bind, or the enclosing loop variable; write `{{`/`}}` for a literal brace.",
-                            sourceLine, code: .commandHoleOutOfScope,
-                            help: "Reference a workflow parameter, earlier bind, loop variable, or escape with `{{`/`}}`.")
+                        throw CompilerError.diagnostics([
+                            Diagnostic.unresolved(
+                                .commandHoleOutOfScope,
+                                target: bad,
+                                among: Array(scope),
+                                range: sourceRange(sourceLine),
+                                noun: "reference",
+                                help: "Command hole \"{\(exprText)}\" is not in scope. Reference a workflow parameter, earlier bind, loop variable, or escape with `{{`/`}}`.")
+                        ])
                     }
                     segments.append(inQuote ? .shellEscapedExpression(lowered) : .expression(lowered))
                 } else {
@@ -1007,7 +1017,10 @@ public struct ASTToIR {
             return [makeProseStep(text: s.words, dispatchMode: proseDispatchMode, autonomy: autonomyConfig, line: s.sourceLine)]
         }
 
-        guard let (phrase, args) = symbols.matchPhrase(s.words, defaultParam: defaultParam) else {
+        guard let (phrase, args) = symbols.matchPhrase(
+            s.words,
+            defaultParam: defaultParam
+        ) else {
             if fallbackPolicy.allows(.unresolvedPhrases) {
                 trace.log(.phraseInline, "  UNRESOLVED — emitting placeholder (allow-fallbacks: unresolved-phrases)")
                 return [.bind(BindIR(
@@ -1039,7 +1052,7 @@ public struct ASTToIR {
             // already camelCased). Try the verbatim form first and fall back to
             // a few common case/spacing variants so a body written with snake
             // or space-separated parameter names still resolves.
-            let ordered: [InvokeArg] = try phrase.pattern.parameters.compactMap { p in
+            let ordered: [InvokeArg] = try phrase.pattern.parameters.map { p in
                 let candidates = [
                     p.name,
                     p.name.lowercased(),
@@ -1051,7 +1064,15 @@ public struct ASTToIR {
                         return InvokeArg(p.name, try lowerExpr(val))
                     }
                 }
-                return nil
+                throw CompilerError.diagnostics([
+                    Diagnostic.unresolved(
+                        .missingPhraseArgument,
+                        target: p.name,
+                        among: Array(args.keys),
+                        range: sourceRange(s.sourceLine),
+                        noun: "phrase argument",
+                        help: "Workflow \"\(structName)\" declares a parameter \"\(p.name)\" (kind \(p.kind)); the invocation \"\(s.words)\" did not supply a matching argument. Pass an argument named \"\(p.name)\", or rename it to match.")
+                ])
             }
             trace.log(.phraseInline, "  workflow call → \(structName)  args=\(ordered.map(\.key))")
             return [.invoke(InvokeIR(
@@ -1337,12 +1358,13 @@ public struct ASTToIR {
     /// point at the right place.
     func lowerExpr(_ expr: ExpressionAST, scope: Set<String>? = nil, line: Int = 0) throws -> IRExpression {
         switch expr {
-        case .malformed(let message):
+        case .malformed(let message, let suggestion):
             let diag = Diagnostic.structural(
                 .malformedCondition,
                 message: message,
                 range: sourceRange(line),
-                help: "Rewrite the condition using explicit grouping or fix the quantifier/description shape.")
+                help: "Rewrite the condition using explicit grouping or fix the quantifier/description shape.",
+                suggestions: suggestion.map { [$0] } ?? [])
             if let engine { engine.report(diag) }
             throw CompilerError.diagnostics([diag])
         case .quantified(let q):
@@ -1866,15 +1888,35 @@ public struct ASTToIR {
                                       role: String, line: Int) throws {
         guard let scope else { return }
         for root in freeIdentifierRoots(operand) where !scope.contains(scopeKey(root)) {
-            let known = scope.sorted().joined(separator: ", ")
-            throw semanticError(
-                "\(role) references \"\(root)\", which is not in scope. In-scope names: [\(known)]. Reference a workflow parameter or an earlier bind.",
-                line)
+            throw CompilerError.diagnostics([
+                Diagnostic.unresolved(
+                    .commandHoleOutOfScope,
+                    target: root,
+                    among: Array(scope),
+                    range: sourceRange(line),
+                    noun: "reference in \(role)",
+                    help: "Reference a workflow parameter or an earlier bind.")
+            ])
         }
     }
 
-    /// 3B: a " (did you mean …?)" hint for an unknown verb form, or "" when no
-    /// declared form is close enough.
+    /// The ONLY way to build an "unknown verb form" diagnostic — every
+    /// verb-form lookup miss (inline predicate, scalar navigation, description
+    /// clause) funnels through here so the candidate set and "did you mean" are
+    /// always structured (`MER2008`), never a bare `semanticError` string.
+    private func unknownVerbError(_ verbForm: String, line: Int, extraHelp: String = "") -> CompilerError {
+        CompilerError.diagnostics([
+            Diagnostic.unresolved(
+                .unknownVerb,
+                target: verbForm,
+                among: symbols.verbs.values.flatMap { [$0.base, $0.thirdPerson, $0.pastParticiple] },
+                range: sourceRange(line),
+                noun: "verb",
+                help: "Declare it with `The verb to <base> (it <3rd>, it is <participle>) means the <relation> relation.`"
+                    + (extraHelp.isEmpty ? "" : " \(extraHelp)"))
+        ])
+    }
+
     /// 3B: lower an active verb condition (`the user owns the page`) to a
     /// property-backed `identifies` comparison. Tool-backed verbs can't be tested
     /// inline (they need an `await` fetch) — bind the related set first.
@@ -1882,15 +1924,7 @@ public struct ASTToIR {
                                     object: ExpressionAST, scope: Set<String>? = nil,
                                     line: Int) throws -> IRExpression {
         guard let resolved = symbols.resolveVerbForm(verbForm) else {
-            throw CompilerError.diagnostics([
-                Diagnostic.unresolved(
-                    .unknownVerb,
-                    target: verbForm,
-                    among: symbols.verbs.values.flatMap { [$0.base, $0.thirdPerson, $0.pastParticiple] },
-                    range: sourceRange(line),
-                    noun: "verb",
-                    help: "Declare it with `The verb to <base> (it <3rd>, it is <participle>) means the <relation> relation.`")
-            ])
+            throw unknownVerbError(verbForm, line: line)
         }
         let relName = resolved.verb.relation
         guard let rel = symbols.relation(named: relName),
@@ -1930,7 +1964,8 @@ public struct ASTToIR {
                                           allowToolFetch: Bool, scope: Set<String>? = nil,
                                           line: Int) throws -> ScalarNavPlan {
         guard let resolved = symbols.resolveVerbForm(relationForm) else {
-            throw semanticError("unknown relation form \"\(relationForm)\"\(symbols.verbFormSuggestion(for: relationForm)) in navigation.", line)
+            throw unknownVerbError(relationForm, line: line,
+                                   extraHelp: "Navigation forms resolve the same verb table as inline verb tests.")
         }
         let relName = resolved.verb.relation
         guard let rel = symbols.relation(named: relName),
@@ -1989,7 +2024,8 @@ public struct ASTToIR {
 
         for clause in d.verbClauses {
             guard let resolved = symbols.resolveVerbForm(clause.verbForm) else {
-                throw semanticError("unknown verb form \"\(clause.verbForm)\" in description.", line)
+                throw unknownVerbError(clause.verbForm, line: line,
+                                       extraHelp: "Description verb clauses resolve the same verb table as inline verb tests.")
             }
             let relName = resolved.verb.relation
             guard let rel = symbols.relation(named: relName),

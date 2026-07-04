@@ -45,6 +45,10 @@ public struct RunCommand: AsyncParsableCommand {
     var trace: String?
 
     @Option(name: .long,
+            help: "Write trace output to a file instead of stderr.")
+    var traceFile: String?
+
+    @Option(name: .long,
             help: "Diagnostics output format: human (snippet + caret) or json (stable schema for editors/CI).")
     var diagnosticsFormat: DiagnosticsFormat = .human
 
@@ -71,7 +75,8 @@ public struct RunCommand: AsyncParsableCommand {
         // Compile ONCE through the canonical path (engine + fallback policy +
         // rulebooks). Reuse the manifest's lowered workflows for target
         // selection — no second `.silent()` re-lower that dropped rulebooks.
-        let compiler = Compiler(options: .init(trace: makeCLITrace(spec: trace)))
+        let traceInstance = makeCLITrace(spec: trace, file: traceFile)
+        let compiler = Compiler(options: .init(trace: traceInstance))
         let compiled: (swift: String, manifest: ManifestEmitter.Input)
         do {
             compiled = try compiler.compileWithManifest(
@@ -89,7 +94,7 @@ public struct RunCommand: AsyncParsableCommand {
         let swiftURL = outputURL.appendingPathComponent(stem + ".swift")
         try swift.write(to: swiftURL, atomically: true, encoding: .utf8)
         let m = compiled.manifest
-        let manifest = try ManifestEmitter().emit(.init(
+        let manifest = try ManifestEmitter(trace: traceInstance).emit(.init(
             sourceFiles: [meridianURL.lastPathComponent] + merconfigURLs.map(\.lastPathComponent),
             workflows: m.workflows,
             constantsDecl: m.constantsDecl,

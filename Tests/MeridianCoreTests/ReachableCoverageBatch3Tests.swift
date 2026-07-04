@@ -77,8 +77,12 @@ struct ReachableCoverageBatch3Tests {
     func conditionClassifier() {
         let cc = ConditionClassifier(symbols: nil, lexicon: .default, trace: .silent())
         let cmp = ExpressionAST.comparison(.literal(.integer(1)), .greaterThan, .literal(.integer(5)))
+        let eq1 = ExpressionAST.comparison(.literal(.integer(1)), .equal, .literal(.integer(1)))
+        let eq2 = ExpressionAST.comparison(.literal(.integer(2)), .equal, .literal(.integer(2)))
         #expect(cc.isCheckable(.logical(.not, [cmp])))         // .not arm (non-empty)
         #expect(cc.isCheckable(.logical(.not, [])) == false)   // .not arm (empty → ?? false)
+        #expect(cc.isCheckable(.logical(.and, [eq1, eq2])))
+        #expect(cc.isCheckable(.logical(.or, [eq1, eq2])))
         #expect(cc.readsAsCondition("amount more than 5"))     // comparison-marker arm (no copula)
     }
 

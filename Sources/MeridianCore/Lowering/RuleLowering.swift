@@ -59,7 +59,10 @@ public struct RuleAnalyzer {
     private let exprParser: ExpressionParser
     private let trace: ParserTrace
 
-    public init(lexicon: EnglishLexicon = .default, trace: ParserTrace = .shared) {
+    public init(
+        lexicon: EnglishLexicon = .default,
+        trace: ParserTrace = .shared
+    ) {
         self.lexicon = lexicon
         self.trace = trace
         self.exprParser = ExpressionParser(symbols: nil, trace: trace, lexicon: lexicon)

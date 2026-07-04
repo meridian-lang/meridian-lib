@@ -185,21 +185,44 @@ parent) into a single text fragment *and* returns the consumed count so
 
 ### `ExpressionParser.parse`
 
-Parses a single-line expression string:
-1. `parseComparison` — splits on markers (`is more than`, `equals`, `is within`,
-   …) **outside** quoted string regions (quote-aware via `rangeOfMarkerOutsideQuotes`).
-2. `parseAtom` — recognises:
-   - Possessive chains (`the X's Y`) → `parsePossessiveChain`
-   - Bare possessives (`X's Y`, detected by `'s` presence) → `parsePossessiveChain`
-   - Quoted string literals
-   - Duration literals (`30 days`)
-   - Numeric literals
-   - Money literals (`$5000`)
-   - `now` keyword
-   - Identifier / constant / instance ref
+`ExpressionParser` is a thin orchestrator over ~16 independent production
+units (`Sources/MeridianCore/Parser/Lexical/Productions/`), each either a real
+`pegex` grammar or a dedicated hand-written Swift function — whichever is
+clearer for that specific pattern (see `GrammarTable`'s
+`GrammarProduction.implementation`, and `IMPLEMENTATION_LOG.md`'s "Per-production
+expression grammar" entry for the full pegex-vs-hand-written rationale table).
+There is one expression parser implementation and no rollout flag.
 
-`resolveBase` checks `SymbolTable` to decide whether a bare name is a
-`.constantRef`, `.instanceRef`, or plain `.identifierRef`.
+Dispatch is **nested**, not a flat list of alternatives:
+- `parse(_:)` is the `boolean` production (`not`/`either`/`and`/`or`,
+  `it is not the case that …`), built from `pegex` keyword/choice primitives
+  over a `QuoteAwareScanner`-protected `and`/`or` split. Mixing `and` and `or`
+  at the same level without an intervening `either` is a hard `.malformed`
+  error (2A rule); a leading comma before `and`/`or` is tolerated
+  (Oxford-comma).
+- `boolean`'s fundamental **atom**, tried at *every* leaf position it recurses
+  to (the top of the expression, an `either`'s body, each and/or operand), is
+  `parseClause`: `quantifier` → `emptiness`/`temporal-window` → `active-verb`
+  → `comparison` → `parseAtom`, in that order.
+- `parseAtom` tries `literal-atom` → `table-lookup` → (with a symbol table)
+  `aggregate` → `superlative` → `scalar-navigation` → `description` →
+  undeclared-passive-verb error → `possessive-chain` → bare identifier, in
+  that order.
+
+So a bare quantifier/description/etc. with no `and`/`or` in it still flows
+through the same `parseClause` step as a combined `A and B` expression's
+operands — there is no separate top-level branch for the uncombined case.
+
+`NonterminalScreen` (Wave 5B) is wired in as a live pre-filter: `quantifier`,
+`comparison`, `aggregate`, and `superlative` are gated by it before being
+tried, since their anchor vocabularies are closed, lexicon-derived keyword
+sets that fully cover what each production matches on. Productions with
+open-ended or dynamic trigger sets (`active-verb`'s domain-declared verbs,
+`emptiness`/`temporal-window`'s suffix forms) are always tried unconditionally.
+
+`resolveBase` (inside `PossessiveChainParser`) checks `SymbolTable` to decide
+whether a bare name is a `.constantRef`, `.instanceRef`, or plain
+`.identifierRef`.
 
 ### Output
 
@@ -545,7 +568,7 @@ decision **D-DX-2** (no silent fallbacks; batch-report with coarse recovery).
 | Tokenisation | `\u{E000}markererror` sentinel | Non-throwing; raised later as a coded diagnostic by `StatementParser` |
 | Config parse | `CompilerError` | Unrecognized vocabulary declarations → `MER5002`; bad rulebook sections → `MER5003` |
 | Meridian parse | `CompilerError` | Malformed headers → `MER1001`, orphaned code blocks → `MER1002`, unparseable statements/rules → `MER1003`/`MER1004`, misplaced frontmatter → `MER1006`, removed `import` form → `MER1008` |
-| Lowering | `CompilerError.diagnostics` | **Strict-by-default, batch-collected.** Unresolved phrase → `MER2001`; unknown tool → `MER2002`; unknown kind/property/adjective/verb → `MER2003`/`MER2004`/`MER2007`/`MER2008`; unattached rule → `MER3006`; unresolved trigger action → `MER3007`. Per-file `allow-fallbacks:` (or `Compiler.Options.fallbackPolicy = .lenient`) downgrades the matching kind back to a `_unresolved`/stub placeholder |
+| Lowering | `CompilerError.diagnostics` | **Strict-by-default, batch-collected.** Unresolved phrase → `MER2001`; unknown tool → `MER2002`; unknown kind/property/adjective/verb → `MER2003`/`MER2004`/`MER2007`/`MER2008`; a matched workflow/phrase call missing a declared parameter's argument (hardening guard; see `ASTToIR.lowerPhraseInvocation`) → `MER2011`; unattached rule → `MER3006`; unresolved trigger action → `MER3007`; a rule predicate that can't lower to a rule-body expression (quantifier/description/aggregate/superlative/relation-traversal/verb-predicate/table-lookup/parse-error inside a `must`/`must not` predicate) → `MER3016`. Per-file `allow-fallbacks:` (or `Compiler.Options.fallbackPolicy = .lenient`) downgrades the matching kind back to a `_unresolved`/stub placeholder |
 | Emission | none | Always succeeds |
 | Formatting | warning (`MER5001`) | **Non-fatal** (D-DX-3): the unformatted Swift is kept and written; a warning is reported to stderr |
 

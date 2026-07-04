@@ -57,7 +57,7 @@ public struct Compiler {
 
     /// Emit the companion JSON manifest.
     public func emitManifest(_ input: ManifestEmitter.Input) throws -> String {
-        try ManifestEmitter().emit(input)
+        try ManifestEmitter(trace: options.trace).emit(input)
     }
 
     // MARK: - Phase 3: Source → Swift
@@ -150,7 +150,8 @@ public struct Compiler {
 
         let ast = try trace.phase("parse") {
             try MeridianParser(symbols: bootstrap.symbols, trace: trace, lexicon: bootstrap.lexicon,
-                               rewriteEngine: bootstrap.rewriteEngine, diagnostics: engine).parse(meridianSource, file: meridianFile)
+                               rewriteEngine: bootstrap.rewriteEngine, diagnostics: engine)
+                .parse(meridianSource, file: meridianFile)
         }
         return try lowerAndEmit(
             ast: ast, meridianFile: meridianFile,
@@ -199,7 +200,9 @@ public struct Compiler {
                         help: duplicateRulebookHelp)
                 ])
             }
-            let parsed = try RulebookParser(trace: trace).parse(input.source, file: input.file)
+            let parsed = try trace.phase("bootstrap.rulebook") {
+                try RulebookParser(trace: trace).parse(input.source, file: input.file)
+            }
             rulebook = rulebook.merging(parsed)
         }
         let rewriteEngine = rulebook.isEmpty ? nil : RewriteEngine(rulebook: rulebook, trace: trace)
@@ -216,24 +219,28 @@ public struct Compiler {
                         help: duplicateVocabularyHelp)
                 ])
             }
-            let parsed = try MerConfigParser(trace: trace, lexicon: lexicon, diagnostics: engine)
-                .parse(input.source, file: input.file)
+            let parsed = try trace.phase("bootstrap.merconfig") {
+                try MerConfigParser(trace: trace, lexicon: lexicon, diagnostics: engine)
+                    .parse(input.source, file: input.file)
+            }
             config = config.merging(parsed)
         }
         for meridian in meridianSources {
-            let inlineDomain = try harvestDomainVocabulary(
-                from: meridian.source,
-                file: meridian.file,
-                rulebook: rulebook,
-                trace: trace,
-                lexicon: lexicon
-            )
+            let inlineDomain = try trace.phase("bootstrap.inlineDomain") {
+                try harvestDomainVocabulary(
+                    from: meridian.source,
+                    file: meridian.file,
+                    rulebook: rulebook,
+                    trace: trace,
+                    lexicon: lexicon
+                )
+            }
             config = config.merging(inlineDomain)
         }
         try requireUniqueDeclarations(in: config, engine: engine)
         try engine.throwIfErrors()
 
-        lexicon = lexicon.merging(
+        lexicon = trace.phase("bootstrap.lexiconMerge") { lexicon.merging(
             comparisonSynonyms: config.languageSynonyms.comparisonSynonyms,
             durationSynonyms: config.languageSynonyms.durationSynonyms,
             assertionSynonyms: config.languageSynonyms.assertionSynonyms,
@@ -254,7 +261,7 @@ public struct Compiler {
             actionHeaderSynonyms: config.languageSynonyms.actionHeaderSynonyms,
             wildcardSynonyms: config.languageSynonyms.wildcardSynonyms,
             shellFenceSynonyms: config.languageSynonyms.shellFenceSynonyms
-        )
+        ) }
 
         let symbolsFile = vocabularies.first?.file ?? "config.merconfig"
         let symbols = trace.phase("symbols") {
@@ -300,7 +307,8 @@ public struct Compiler {
         for skill in skills {
             let engine = DiagnosticEngine(trace: trace)
             let ast = try MeridianParser(symbols: bootstrap.symbols, trace: trace, lexicon: bootstrap.lexicon,
-                                         rewriteEngine: bootstrap.rewriteEngine, diagnostics: engine).parse(skill.source, file: skill.file)
+                                         rewriteEngine: bootstrap.rewriteEngine, diagnostics: engine)
+                .parse(skill.source, file: skill.file)
             parsed.append((ast, skill.file, engine))
         }
 
@@ -421,7 +429,7 @@ public struct Compiler {
         // workflow each (wait for the trigger + fan out `trigger.<name>.fired`).
         // The host owns actual firing; routing is the resolver's job.
         if !frontmatter.triggers.isEmpty {
-            let classifier = TriggerClassifier(lexicon: lexicon, rulebook: rulebook)
+            let classifier = TriggerClassifier(lexicon: lexicon, rulebook: rulebook, trace: trace)
             let triggers = frontmatter.triggers.map {
                 classifier.classify($0, sourceLine: ast.metadata?.sourceLine ?? 0)
             }
@@ -871,8 +879,17 @@ public struct Compiler {
         case .explicit(let typeName):
             return .init(p.name, .scalar(scalarTypeName(typeName)))
         case .enumeration(_, let defaultCase):
-            // The enumeration's Swift type was registered above; look it up.
-            let enumName = enumByKindProp["\(kindName)|\(p.name)"] ?? "String"
+            // The enumeration's Swift type was registered above (same `props`
+            // dict, same "kind|property" key) — the lookup is guaranteed to
+            // succeed by construction. Falling back to a bogus "String" enum
+            // name here would silently corrupt the property into a
+            // nonsensical `.enumeration("String", …)` that later crashes in
+            // `DomainEmitter.defaultExpr`'s `enumFirstCase` lookup instead of
+            // surfacing the real internal-consistency bug at its source.
+            guard let enumName = enumByKindProp["\(kindName)|\(p.name)"] else {
+                preconditionFailure(
+                    "internal: no registered enum type for \(kindName).\(p.name) — MER0004 enumByKindProp/props desynchronized")
+            }
             return .init(p.name, .enumeration(enumName, defaultCase: defaultCase))
         }
     }

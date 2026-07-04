@@ -208,6 +208,53 @@ struct DefinitionTests {
         #expect(out.contains("meridianDef_Page_empty"), Comment(rawValue: out))
     }
 
+    @Test("definitions accept copula-temporal windows")
+    func definitionTemporalWindowWithCopula() throws {
+        let out = try compile("""
+        ---
+        name: review
+        parameters: page
+        vocabulary: t.merconfig
+        ---
+        Definition: a page is stale if its last reviewed is within the last 7 days.
+
+        To review a page:
+          if the page is stale,
+            complete with reason "recent".
+        """)
+        #expect(out.contains("MeridianComparison.isWithinPast(__subject.member(\"lastReviewed\")"),
+                Comment(rawValue: out))
+    }
+
+    @Test("definitions compare two properties on the subject")
+    func definitionSubjectPropertyComparison() throws {
+        let out = try Compiler().compile(
+            meridianSource: """
+            ---
+            name: inventory
+            parameters: product
+            vocabulary: inventory.merconfig
+            ---
+            Definition: a product is short if its quantity on hand is less than its reorder point.
+
+            To inspect a product:
+              if the product is short,
+                complete with reason "restock".
+            """,
+            meridianFile: "inventory.meri",
+            merconfigSource: """
+            === vocabulary ===
+            A product is a kind of thing.
+            A product has a quantity on hand and a reorder point.
+            """,
+            merconfigFile: "inventory.merconfig"
+        )
+
+        #expect(out.contains("MeridianComparison.lt(__subject.member(\"quantityOnHand\"), __subject.member(\"reorderPoint\")"),
+                Comment(rawValue: out))
+        #expect(!out.contains("state.get(\"product.reorderPoint\")"), Comment(rawValue: out))
+    }
+
     @Test("a recursive definition is a hard error")
     func recursionRejected() {
         #expect(throws: (any Error).self) {
@@ -311,6 +358,25 @@ struct ConditionGrammarTests {
         guard case .literal(.duration) = rhs else {
             Issue.record("expected duration literal"); return
         }
+    }
+
+    @Test("copula before temporal windows is optional")
+    func temporalCopulaOptional() {
+        guard case .comparison(let pastLHS, .withinPast, _) = parse("page's last reviewed is within the last 7 days") else {
+            Issue.record("expected is-within to parse as withinPast"); return
+        }
+        guard case .propertyAccess(_, let pastProp) = pastLHS else {
+            Issue.record("expected property access lhs"); return
+        }
+        #expect(pastProp == "last reviewed")
+
+        guard case .comparison(let futureLHS, .withinFuture, _) = parse("deadline is in the next 3 days") else {
+            Issue.record("expected is-in-the-next to parse as withinFuture"); return
+        }
+        guard case .identifierRef(let name) = futureLHS else {
+            Issue.record("expected identifier lhs"); return
+        }
+        #expect(name == "deadline")
     }
 
     @Test("in the next N days → withinFuture")

@@ -37,12 +37,58 @@ causing `state.get("the order.id")` bugs. Identifiers go through as-is.
 
 ### `ExpressionParser.parseAtom`
 
-Recognises possessive `'s` chains **without** a leading article. The check is:
+Recognises possessive `'s` chains **without** a leading article (then
+delegates to `PossessiveChainParser`). The check is:
 ```swift
 t.contains("'s ") || t.hasSuffix("'s")
 ```
 This was added so `"order's id"` parses as a property access after text
 substitution strips the leading article.
+
+### Per-production expression grammar (Wave 5)
+
+`ExpressionParser` (`Sources/MeridianCore/Parser/Lexical/ExpressionParser.swift`)
+is a **thin orchestrator only** — it holds `symbols`/`trace`/`lexicon`/`screen`
+and dispatches to one independent unit per `GrammarTable` production, each in
+its own file under `Sources/MeridianCore/Parser/Lexical/Productions/`. Each
+production is either a real `pegex` grammar (`*Grammar.swift`) or a dedicated
+hand-written Swift function (`*Parser.swift`), decided per-production in
+`GrammarProduction.implementation` — see `IMPLEMENTATION_LOG.md`'s
+"Per-production expression grammar" entry for the full rationale table. There
+is one expression parser implementation; do not add mode switches around
+expression parsing.
+
+- **Dispatch is nested, not flat** — this is the one structural detail that
+  matters for combined expressions. `parse(_:)` is the `boolean` production;
+  its atom, tried at *every* leaf position (top of the expression, an
+  `either`'s body, each and/or operand), is `parseClause`: `quantifier` →
+  `emptiness`/`temporal-window` → `active-verb` → `comparison` → `parseAtom`.
+  `parseAtom` tries `literal-atom` → `table-lookup` → (with symbols)
+  `aggregate` → `superlative` → `scalar-navigation` → `description` →
+  undeclared-passive-verb error → `possessive-chain` → bare identifier. A bare
+  quantifier/description/etc. with no `and`/`or` in it still flows through the
+  same `parseClause` step as a combined expression's operands — never add a
+  separate top-level branch for the "uncombined" case.
+- New surface forms must be registered in `Sources/MeridianCore/Grammar/GrammarTable.swift`
+  via `PegexSurfaceGrammar` before they are parsed ad hoc. The table is the
+  source for production docs, screening anchors, and the golden-corpus coverage.
+- `NonterminalScreen` is a **live pre-filter** wired into `parseClause`/
+  `parseAtom` (not just benchmarking) for `quantifier`/`comparison`/
+  `aggregate`/`superlative` — their anchor vocabularies are closed,
+  lexicon-derived sets that fully cover what the production matches on.
+  **Correctness invariant:** `NonterminalScreen`'s bitmask vocabulary has a
+  fixed capacity (`Bitset128`, 128 slots); a production is only screened
+  (given a nonzero mask) if *every one* of its anchors got a vocabulary slot.
+  If any single anchor was dropped for capacity reasons, the whole production
+  must fall back to mask `0` (always tried) — a partial mask silently
+  under-represents real trigger words and wrongly screens sentences out (this
+  broke `quantifier`'s `every`/`any`/`no`/… determiners during the Wave 5
+  per-production rewrite; see `IMPLEMENTATION_LOG.md`). Do not screen a
+  production whose anchor list can't be fully proven present in the vocabulary.
+- `NonterminalScreen` anchor matching must avoid substring false positives for
+  short word anchors (`in` must not match inside another word).
+- `SentenceBreaker` owns statement terminator stripping; do not reintroduce
+  direct `hasSuffix(".")` / `dropLast()` statement logic at call sites.
 
 ### `StatementParser.collectMultiLineCounted`
 

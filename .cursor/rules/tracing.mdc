@@ -8,10 +8,12 @@ alwaysApply: false
 
 ### Category hierarchy
 
-Group prefixes enable entire groups. Leaves enable one stream.
+Group prefixes enable entire groups. Leaves enable one stream. Full list
+lives in `docs/08_TRACING.md`; `meridian trace categories` prints it live.
 
 | Enum case | Raw value (CLI / env var string) |
 |---|---|
+| `.tokenize` | `tokenize` |
 | `.parse` | `parse` |
 | `.phraseParse` | `phrase.parse` |
 | `.phraseMatch` | `phrase.match` |
@@ -22,6 +24,18 @@ Group prefixes enable entire groups. Leaves enable one stream.
 | `.lowering` | `lowering` |
 | `.symbols` | `symbols` |
 | `.merconfig` | `merconfig` |
+| `.rulebook` | `rulebook` |
+| `.skill` | `skill` |
+| `.codegen` | `codegen` |
+| `.diagnostics` | `diagnostics` |
+| `.timing` | `timing` (off by default; excluded from `capturing()`'s default set) |
+
+`.diagnostics` mirrors every `DiagnosticEngine`-reported `Diagnostic` into the
+trace stream. `.timing` accumulates `trace.phase(_:)` spans (bootstrap
+sub-phases, `symbols`/`parse`/`lower`/`codegen`) and prints an end-of-compile
+profile; it's opt-in only, so `ParserTrace.capturing()` (no explicit
+`categories:`) never includes it — pass `categories: [.timing]` explicitly to
+assert timing output.
 
 ### `MERIDIAN_TRACE` env var
 
@@ -53,5 +67,18 @@ cross-test output mixing.
 Every compiler component that can produce trace output takes
 `trace: ParserTrace = .shared` as a constructor parameter.
 - Default is `.shared` (works in production).
-- Unit tests pass a fresh `ParserTrace()` or `ParserTrace.silent()`.
-- The CLI sets the shared instance's categories and sink in `CompileCommand`.
+- Unit tests pass a fresh `ParserTrace()` (via `ParserTrace.capturing(categories:)`)
+  or `ParserTrace.silent()`.
+- The CLI never mutates `.shared`: `compile`, `check`, `verify`, `run`,
+  `migrate-skill`, and `preview-skill` each build a fresh, isolated instance
+  via `makeCLITrace(spec:file:)` (`Sources/MeridianCLIKit/CLISupport.swift`)
+  from their own `--trace`/`--trace-file` options and thread it down into
+  `Compiler`, `SkillMigrator`, `SkillMarkdownImporter`, and `ManifestEmitter`.
+
+### No silent-trace components
+
+Nothing in the compile pipeline is allowed to hardcode `.silent()` for a
+`trace` it was handed — that would silently discard a caller's `--trace`
+request. `SkillMigrator` and `SkillMarkdownImporter` both default their `trace`
+parameter to `.shared`/the owning `Compiler`'s trace, never to `.silent()`;
+only test call sites should pass `.silent()` explicitly.

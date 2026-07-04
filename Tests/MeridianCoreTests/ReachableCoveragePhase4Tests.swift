@@ -73,7 +73,7 @@ struct ReachableCoveragePhase4Tests {
     // MARK: SkillMigrator.deterministicTransform
 
     @Test("deterministicTransform rewrites <param> command holes inside shell + backtick spans")
-    func migratorCommandHoles() {
+    func migratorCommandHoles() throws {
         let m = SkillMigrator(
             compiler: Compiler(options: .init(trace: .silent())),
             vocabularies: [], rulebooks: []
@@ -92,14 +92,14 @@ struct ReachableCoveragePhase4Tests {
         gbrain capture "<ticket>"
         ```
         """
-        let out = m.deterministicTransform(md).source
+        let out = try m.deterministicTransform(md).source
         // The resolved <ticket> hole becomes a {ticket} interpolation in both
         // the inline backtick span and the fenced shell block.
         #expect(out.contains("{ticket}"), Comment(rawValue: out))
     }
 
     @Test("heading matcher rejects 1-hash, 7-hash, no-space, and empty-text headings")
-    func migratorHeadingEdges() {
+    func migratorHeadingEdges() throws {
         let m = SkillMigrator(
             compiler: Compiler(options: .init(trace: .silent())),
             vocabularies: [], rulebooks: []
@@ -117,7 +117,7 @@ struct ReachableCoveragePhase4Tests {
 
         ## 
         """
-        let out = m.markSections(md).markdown
+        let out = try m.markSections(md).markdown
         #expect(out.contains("####### too deep"), Comment(rawValue: out))
         #expect(out.contains("##nospace"), Comment(rawValue: out))
     }

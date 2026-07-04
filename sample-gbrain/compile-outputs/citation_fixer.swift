@@ -599,28 +599,8 @@ public struct CitationFixerInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "CitationFixerInput", parameters: [:])
 
-        // L36
-        let __meridianProseResults_L36 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Every brain page is scanned for citation compliance\n- Missing citations are flagged with specific location\n- Malformed citations are fixed to match the standard format\n- **(v0.25.1)** Tweet / post references without URLs are resolved via X API and patched with deterministic `https://x.com/<handle>/status/<id>` links.\n- Results reported with counts (scanned, fixed, remaining)",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.get", "page.list", "page.search", "publish", "shell.run"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L36 {
-            state.bind(__key, __value)
-        }
-        // L46
-        let __meridianProseResults_L46 = try await runtime.executeProsePlan(
-            prose: "scan pages and repair their citations\nList pages and read each one, checking for inline [Source: ...] citations\nIdentify facts without a citation, citations missing a date or source type, and citations with the wrong format\nRewrite malformed citations to match the quality convention\nResolve tweet references via the X API integration\nReport counts of pages scanned, citations found, issues fixed, and remaining gaps",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.get", "page.list", "page.search", "publish", "shell.run"]
-        )
-        for (__key, __value) in __meridianProseResults_L46 {
-            state.bind(__key, __value)
-        }
-        if __meridianShouldRun("progress:0.2:L126:C0") {
-            // L126
+        if __meridianShouldRun("progress:0.0:L132:C0") {
+            // L132
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -628,10 +608,10 @@ public struct CitationFixerInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.2:L126:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.0:L132:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.3:L126:C0") {
-            // L126
+        if __meridianShouldRun("progress:0.1:L132:C0") {
+            // L132
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -639,10 +619,10 @@ public struct CitationFixerInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.3:L126:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.1:L132:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.4:L126:C0") {
-            // L126
+        if __meridianShouldRun("progress:0.2:L132:C0") {
+            // L132
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -650,10 +630,10 @@ public struct CitationFixerInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.4:L126:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.2:L132:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.5:L126:C0") {
-            // L126
+        if __meridianShouldRun("progress:0.3:L132:C0") {
+            // L132
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -661,10 +641,10 @@ public struct CitationFixerInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.5:L126:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.3:L132:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.6:L126:C0") {
-            // L126
+        if __meridianShouldRun("progress:0.4:L132:C0") {
+            // L132
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -672,10 +652,10 @@ public struct CitationFixerInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.6:L126:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.4:L132:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.7:L126:C0") {
-            // L126
+        if __meridianShouldRun("progress:0.5:L132:C0") {
+            // L132
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -683,10 +663,10 @@ public struct CitationFixerInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.7:L126:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.5:L132:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.8:L126:C0") {
-            // L126
+        if __meridianShouldRun("progress:0.6:L132:C0") {
+            // L132
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -694,27 +674,7 @@ public struct CitationFixerInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.8:L126:C0", state: state.snapshot())
-        }
-        // L167
-        let __meridianProseResults_L167 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- ❌ Inventing citations for facts that have no source. Flag them\n- ❌ Removing facts that lack citations (flag them; don't delete)\n- ❌ Fixing citations without reading the full page context\n- ❌ Batch-fixing without checking quality on a sample first (see `conventions/test-before-bulk.md`).\n- ❌ Composing tweet URLs by guessing the tweet id. Always go through the X API; deterministic links only.",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.get", "page.list", "page.search", "publish", "shell.run"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L167 {
-            state.bind(__key, __value)
-        }
-        // L186
-        let __meridianProseResults_L186 = try await runtime.executeProsePlan(
-            prose: "follow the Metrics guidance\nIf running as a recurring batch, track state in a small JSON file under\n`~/.gbrain/citation-fixer-state.json`:\ncodeblock:json:ewogICJsYXN0X3J1biI6ICIyMDI2LTA0LTE1VC4uLiIsCiAgInBhZ2VzX3NjYW5uZWQiOiAwLAogICJjaXRhdGlvbnNfZml4ZWQiOiAwLAogICJ0d2VldF9saW5rc19yZXNvbHZlZCI6IDAsCiAgImNpdGF0aW9uc191bnJlc29sdmFibGUiOiAwLAogICJwYWdlc19yZW1haW5pbmciOiAxNDI0Cn0=",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.get", "page.list", "page.search", "publish", "shell.run"]
-        )
-        for (__key, __value) in __meridianProseResults_L186 {
-            state.bind(__key, __value)
+            try await runtime.checkpoint(label: "progress:0.6:L132:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

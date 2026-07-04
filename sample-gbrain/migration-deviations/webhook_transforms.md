@@ -2,9 +2,9 @@
 
 - Original: `webhook-transforms/SKILL.md`
 - Ported: `webhook_transforms.meri`
-- Tier: 2 (light edits)
-- Similarity: 62%
-- Lines: 84 -> 75 (+26 / -35)
+- Tier: 1 (near-verbatim)
+- Similarity: 90%
+- Lines: 84 -> 84 (+8 / -8)
 
 ## Frontmatter
 - Added: (none)
@@ -12,82 +12,54 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 
 ## Metrics
-- Sections: 5/8 inert (62% inert ratio)
-- Operational inert: 0
+- Sections: 8/8 inert (100% inert ratio)
+- Operational inert: 2
 - Unclassified inert: 0
-- Inert categories: reference-documentation=4, template=1
-- Judgment: 1 blocks, 4 lines
+- Inert categories: normative-contract=1, operational-procedure=1, reference-documentation=5, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L26 `Example Transforms`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L28 `SMS Received`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L34 `Meeting Completed`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L40 `Social Mention`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L46 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L4 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
+- L13 `Phases`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L36 `Example Transforms`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L38 `SMS Received`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L44 `Meeting Completed`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L50 `Social Mention`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L56 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L61 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
 ```diff
 --- original-skills/webhook-transforms/SKILL.md
 +++ skills/webhook_transforms.meri
-@@ -18,53 +18,43 @@
+@@ -18,7 +18,7 @@
  
  # Webhook Transforms
  
 -## Contract
-+## Contract (( role: procedure ))
++## Contract (( inert, role: invariants ))
  
--This skill guarantees:
--- External events are transformed into brain pages with proper citations
--- Raw payloads are preserved (dead-letter queue if transform fails)
--- Entity extraction runs on every transformed event
--- Input sanitization: no raw HTML/script passes to brain pages
--- Error handling: transform failure logs raw payload, retries once
-+> This skill guarantees:
-+!!! checklist (( ai-autonomy ))
-+- [ ] External events are transformed into brain pages with proper citations
-+- [ ] Raw payloads are preserved (dead-letter queue if transform fails)
-+- [ ] Entity extraction runs on every transformed event
-+- [ ] Input sanitization: no raw HTML/script passes to brain pages
-+- [ ] Error handling: transform failure logs raw payload, retries once
+ This skill guarantees:
+ - External events are transformed into brain pages with proper citations
+@@ -27,7 +27,7 @@
+ - Input sanitization: no raw HTML/script passes to brain pages
+ - Error handling: transform failure logs raw payload, retries once
  
- ## Phases
+-## Phases
++## Phases (( inert, role: procedure ))
  
--1. **Define transform.** Map event schema to brain page format:
--   - Input: raw webhook payload (JSON)
--   - Output: brain page content (markdown) + metadata (slug, type, citations)
--   - Must sanitize: strip HTML tags, escape script content
-+use judgment to define and run a webhook transform:
-+  Map the event schema to the brain page format, sanitizing HTML and escaping script content.
-+  Register the webhook URL with the external service.
-+  On each event, parse the payload, run the transform, write the page, extract entities, enrich, and add timeline entries.
-+  On a transform failure, log the raw payload to a dead-letter file, surface the error type, and retry once without losing events.
+ 1. **Define transform.** Map event schema to brain page format:
+    - Input: raw webhook payload (JSON)
+@@ -50,32 +50,32 @@
+    - Retry once
+    - Don't lose events
  
--2. **Register webhook URL.** Provide the external service with the webhook endpoint.
-+```bash
-+gbrain sync
-+```
- 
--3. **On event received:**
--   - Parse payload
--   - Run transform function
--   - Write brain page via `gbrain put`
--   - Extract entities, run enrichment
--   - Add timeline entries to mentioned entities
--   - Sync: `gbrain sync`
+-## Example Transforms
 +## Example Transforms (( inert ))
  
--4. **Error handling:**
--   - If transform throws: log raw payload to `_dead-letter/{timestamp}.md`
--   - Surface error type to agent
--   - Retry once
--   - Don't lose events
--
--## Example Transforms
--
 -### SMS Received
 +### SMS Received (( inert ))
  ```
@@ -107,21 +79,17 @@
  ```
  Input: {platform: "twitter", author: "@handle", text: "...", url: "..."}
  Output: Brain page in media/ + entity extraction + backlinks
-@@ -75,10 +65,11 @@
+ ```
+ 
+-## Output Format
++## Output Format (( inert, role: template ))
+ 
  Event transformed and written to brain. Report: "Webhook: {event_type} from {source}
  → {brain_page_path}"
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
++## Anti-Patterns (( inert, role: prohibitions ))
  
--- Passing raw HTML/script to brain pages (XSS risk)
--- Silently dropping events when transform fails (use dead-letter queue)
--- Processing webhooks without entity extraction
--- Not sanitizing external input before brain writes
-+!!! checklist (( ai-autonomy ))
-+- [ ] Passing raw HTML/script to brain pages (XSS risk)
-+- [ ] Silently dropping events when transform fails (use dead-letter queue)
-+- [ ] Processing webhooks without entity extraction
-+- [ ] Not sanitizing external input before brain writes
- 
+ - Passing raw HTML/script to brain pages (XSS risk)
+ - Silently dropping events when transform fails (use dead-letter queue)
 ```

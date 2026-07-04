@@ -71,6 +71,24 @@ struct CompileCommandTests {
     }
 }
 
+@Suite("CLI command — bench-parse")
+struct BenchParseCommandTests {
+    @Test("bench-parse runs over a sentence file")
+    func smoke() throws {
+        let t = TempDir()
+        let input = t.write(
+            "sentences.txt",
+            """
+            total amount is more than 500
+            status is not active
+            """
+        )
+        var cmd = try BenchParseCommand.parse([input.path])
+
+        try cmd.run()
+    }
+}
+
 // MARK: - check / verify
 
 @Suite("CLI command — check / verify")
@@ -105,6 +123,32 @@ struct CheckVerifyCommandTests {
     func checkMissing() async throws {
         var cmd = try CheckCommand.parse(["/definitely/missing.meridian"])
         await #expect(throws: (any Error).self) { try await cmd.run() }
+    }
+
+    @Test("check --trace-file writes trace output to disk (B3 CLI parity)")
+    func checkTraceFile() async throws {
+        let t = TempDir()
+        var cmd = try CheckCommand.parse([
+            ex("examples/order_processing.meridian"),
+            "--merconfig", ex("examples/ecommerce.merconfig"),
+            "--trace", "all", "--trace-file", t.path("trace.log")
+        ])
+        try await cmd.run()
+        let trace = try String(contentsOfFile: t.path("trace.log"), encoding: .utf8)
+        #expect(!trace.isEmpty)
+    }
+
+    @Test("verify --trace-file writes trace output to disk (B3 CLI parity)")
+    func verifyTraceFile() async throws {
+        let t = TempDir()
+        var cmd = try VerifyCommand.parse([
+            ex("examples/order_processing.meridian"),
+            "--merconfig", ex("examples/ecommerce.merconfig"),
+            "--trace", "all", "--trace-file", t.path("trace.log")
+        ])
+        try await cmd.run()
+        let trace = try String(contentsOfFile: t.path("trace.log"), encoding: .utf8)
+        #expect(!trace.isEmpty)
     }
 }
 
@@ -194,6 +238,19 @@ struct PreviewSkillCommandTests {
         let md = t.write("SKILL.md", "# Title\n\n## Overview\nDo the thing.\n")
         var cmd = try PreviewSkillCommand.parse([md.path, "--name", "sample"])
         try cmd.run()
+    }
+
+    @Test("--trace-file writes trace output to disk (B3 CLI parity)")
+    func traceFile() throws {
+        let t = TempDir()
+        let md = t.write("SKILL.md", "# Title\n\n## Overview\nDo the thing.\n")
+        var cmd = try PreviewSkillCommand.parse([
+            md.path, "--name", "sample",
+            "--trace", "all", "--trace-file", t.path("trace.log")
+        ])
+        try cmd.run()
+        let trace = try String(contentsOfFile: t.path("trace.log"), encoding: .utf8)
+        #expect(!trace.isEmpty)
     }
 }
 
@@ -387,6 +444,19 @@ struct MigrateSkillCommandTests {
     func missing() async throws {
         var cmd = try MigrateSkillCommand.parse(["/nope/SKILL.md"])
         await #expect(throws: (any Error).self) { try await cmd.run() }
+    }
+
+    @Test("--trace-file writes trace output to disk (B3 CLI parity)")
+    func traceFile() async throws {
+        let t = TempDir()
+        t.write("v.merconfig", "An input is a kind of thing.\n")
+        let md = t.write("SKILL.md", "---\nname: demo\n---\n# Demo\n\n## Overview\nThis is a demonstration.\n")
+        var cmd = try MigrateSkillCommand.parse([
+            md.path, "--trace", "all", "--trace-file", t.path("trace.log")
+        ])
+        do { try await cmd.run() } catch { /* ExitCode(1) when the candidate does not strict-compile */ }
+        let trace = try String(contentsOfFile: t.path("trace.log"), encoding: .utf8)
+        #expect(!trace.isEmpty)
     }
 }
 

@@ -38,6 +38,22 @@ struct DecisionCatalogTests {
         #expect(DecisionCatalog.lookup("d-dx-5")?.id == "D-DX-5")
     }
 
+    @Test("every seeAlso link resolves to a catalog entry")
+    func seeAlsoLinksResolve() {
+        for d in DecisionCatalog.all {
+            for link in d.seeAlso {
+                switch link {
+                case .diagnostic(let code):
+                    #expect(DiagnosticCode.lookup(code.id) == code,
+                            Comment(rawValue: "\(d.id) seeAlso references unknown code \(code.id)"))
+                case .decision(let ref):
+                    #expect(DecisionCatalog.lookup(ref.id) != nil,
+                            Comment(rawValue: "\(d.id) seeAlso references unknown decision \(ref.id)"))
+                }
+            }
+        }
+    }
+
     @Test("docs/15_DECISIONS.md matches the rendered catalog (no drift)")
     func docIsInSync() throws {
         let docURL = repoRoot.appendingPathComponent("docs/15_DECISIONS.md")

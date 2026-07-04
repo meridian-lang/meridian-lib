@@ -33,44 +33,38 @@ mutating: false
 
 > Answer questions using the brain's knowledge with 3-layer search and synthesis.
 
-## Contract (( role: procedure ))
+## Contract (( inert, role: invariants ))
 
-> This skill guarantees:
-!!! checklist (( ai-autonomy ))
-- [ ] Every answer is grounded in brain content (no hallucination)
-- [ ] Every claim has a citation tracing back to a specific page slug
-- [ ] Gaps are flagged explicitly ("the brain doesn't have information on X")
-- [ ] Source precedence is respected (user statements > compiled truth > timeline > external)
-- [ ] Conflicting sources are noted with both citations
+This skill guarantees:
+- Every answer is grounded in brain content (no hallucination)
+- Every claim has a citation tracing back to a specific page slug
+- Gaps are flagged explicitly ("the brain doesn't have information on X")
+- Source precedence is respected (user statements > compiled truth > timeline > external)
+- Conflicting sources are noted with both citations
 
-## Phases
+## Phases (( inert, role: procedure ))
 
-use judgment to answer the question from the brain with citations:
-  Decompose the question into keyword, semantic, and structured search strategies.
-  Execute keyword search, hybrid query, and structural list or backlink lookups.
-  Read the top results to gather full context.
-  Synthesize an answer where every claim cites a specific page slug.
-  Flag gaps explicitly when the brain lacks the information.
+1. **Decompose the question** into search strategies:
+   - Keyword search for specific names, dates, terms
+   - Semantic query for conceptual questions
+   - Structured queries (list by type, backlinks) for relational questions
+2. **Execute searches:**
+   - Keyword search gbrain for FTS matches (search)
+   - Hybrid search gbrain for semantic+keyword with expansion (query)
+   - List pages in gbrain by type or check backlinks for structural queries
+3. **Read top results.** Read the top 3-5 pages from gbrain to get full context.
+4. **Synthesize answer** with citations. Every claim traces back to a specific page slug.
+5. **Flag gaps.** If the brain doesn't have info, say "the brain doesn't have information on X" rather than hallucinating.
 
-## Coverage guard
+## Anti-Patterns (( inert, role: prohibitions ))
 
-> If the indexed landing page is empty, the brain has a coverage gap; flag it
-> rather than answering from general knowledge.
+- Answering from general knowledge when the brain has relevant content
+- Hallucinating facts not in the brain
+- Silently picking one source when sources conflict
+- Loading full pages when search chunks are sufficient
+- Ignoring source precedence (user statements are highest authority)
 
-bind page = invoke get page with slug = "index".
-if the page is unwritten,
-  emit query.gap with status "no coverage".
-
-## Anti-Patterns (( role: procedure ))
-
-!!! checklist (( ai-autonomy ))
-- [ ] Answering from general knowledge when the brain has relevant content
-- [ ] Hallucinating facts not in the brain
-- [ ] Silently picking one source when sources conflict
-- [ ] Loading full pages when search chunks are sufficient
-- [ ] Ignoring source precedence (user statements are highest authority)
-
-## Output Format
+## Output Format (( inert, role: template ))
 
 Answers should include:
 - Direct response to the question
@@ -78,7 +72,7 @@ Answers should include:
 - Gap flags: "The brain doesn't have information on X"
 - Conflict notes when sources disagree
 
-## Quality Rules (( inert ))
+## Quality Rules (( inert, role: invariants ))
 
 - Never hallucinate. Only answer from brain content.
 - Cite sources: "According to concepts/do-things-that-dont-scale..."

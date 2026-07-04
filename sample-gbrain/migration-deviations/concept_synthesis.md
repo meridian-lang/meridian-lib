@@ -2,9 +2,9 @@
 
 - Original: `concept-synthesis/SKILL.md`
 - Ported: `concept_synthesis.meri`
-- Tier: 2 (light edits)
-- Similarity: 75%
-- Lines: 256 -> 258 (+66 / -64)
+- Tier: 1 (near-verbatim)
+- Similarity: 89%
+- Lines: 256 -> 256 (+29 / -29)
 
 ## Frontmatter
 - Added: (none)
@@ -12,18 +12,18 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 
 ## Metrics
-- Sections: 13/16 inert (81% inert ratio)
-- Operational inert: 0
+- Sections: 16/16 inert (100% inert ratio)
+- Operational inert: 2
 - Unclassified inert: 0
-- Inert categories: reference-documentation=12, template=1
-- Judgment: 1 blocks, 15 lines
+- Inert categories: normative-contract=1, operational-content=1, reference-documentation=13, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
 - L10 `What this solves`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L23 `Architecture`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L57 `Invocation`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L80 `Output: concept page format (post-synthesis)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L82 `T1 Canon — full synthesis`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L129 `T3 / T4 — stub only (no LLM synthesis)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
@@ -33,8 +33,10 @@
 - L185 `Tier quality`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L192 `Synthesis quality`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L198 `Cron integration`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L220 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L239 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L208 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L219 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L226 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
+- L237 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
@@ -59,59 +61,22 @@
  
  ```
  Phase 1: Dedup + merge (deterministic)
-@@ -70,32 +70,32 @@
+@@ -70,7 +70,7 @@
      └── Identify idea genealogies (concept A → evolved into concept B)
  ```
  
 -## Invocation
--
--The skill is markdown agent instructions. The agent uses gbrain's
--existing operations + LLM passes:
--
--```bash
--# 1. List all concept pages
--gbrain query "type:concept" --limit 10000 --json
--
--# 2. Phase 1 dedup — agent applies Jaccard + substring locally,
--#    then LLM passes to identify semantic duplicates.
--
--# 3. Phase 2 tier — agent scores each canonical concept based on
--#    frequency / timespan / breadth and writes tier into frontmatter.
--
--# 4. Phase 3 synthesis — for each T1/T2, agent reads the timeline
--#    + associated source pages and writes a synthesis section
--#    onto the concept page via put_page.
--
--# 5. Phase 4 clustering — agent reads the tiered concept list
--#    and writes concepts/README.md with the full intellectual map.
--```
--
++## Invocation (( inert ))
+ 
+ The skill is markdown agent instructions. The agent uses gbrain's
+ existing operations + LLM passes:
+@@ -93,9 +93,9 @@
+ #    and writes concepts/README.md with the full intellectual map.
+ ```
+ 
 -## Output: concept page format (post-synthesis)
 -
 -### T1 Canon — full synthesis
-+## Invocation (( role: procedure ))
-+
-+use judgment to follow the Invocation guidance:
-+  The skill is markdown agent instructions. The agent uses gbrain's
-+  existing operations + LLM passes:
-+  
-+  ```bash
-+  # 1. List all concept pages
-+  gbrain query "type:concept" --limit 10000 --json
-+  
-+  # 2. Phase 1 dedup — agent applies Jaccard + substring locally,
-+  #    then LLM passes to identify semantic duplicates.
-+  
-+  # 3. Phase 2 tier — agent scores each canonical concept based on
-+  #    frequency / timespan / breadth and writes tier into frontmatter.
-+  
-+  # 4. Phase 3 synthesis — for each T1/T2, agent reads the timeline
-+  #    + associated source pages and writes a synthesis section
-+  #    onto the concept page via put_page.
-+  
-+  # 5. Phase 4 clustering — agent reads the tiered concept list
-+  #    and writes concepts/README.md with the full intellectual map.
-+  ```
 +## Output: concept page format (post-synthesis) (( inert ))
 +
 +### T1 Canon — full synthesis (( inert ))
@@ -228,26 +193,17 @@
  
  This is heavy work. Run on a cadence, not on every signal:
  
-@@ -221,34 +221,36 @@
+@@ -221,7 +221,7 @@
  - Manual trigger for a full re-synthesis when the corpus shifts
    significantly.
  
 -## Anti-Patterns
--
--- ❌ Running synthesis on T3/T4 — wastes API budget on ideas that may
-+## Anti-Patterns (( role: procedure ))
-+
-+!!! checklist (( ai-autonomy ))
-+- [ ] ❌ Running synthesis on T3/T4 — wastes API budget on ideas that may
++## Anti-Patterns (( inert, role: prohibitions ))
+ 
+ - ❌ Running synthesis on T3/T4 — wastes API budget on ideas that may
    never sharpen.
--- ❌ Hallucinating quotes or dates. The timeline must be verifiable
-+- [ ] ❌ Hallucinating quotes or dates. The timeline must be verifiable
-   against existing brain pages.
--- ❌ Generic cluster names ("Various Topics"). If you can't name the
-+- [ ] ❌ Generic cluster names ("Various Topics"). If you can't name the
-   cluster, the cluster isn't real.
--- ❌ Re-synthesizing already-synthesized T1s without new source material.
-+- [ ] ❌ Re-synthesizing already-synthesized T1s without new source material.
+@@ -232,14 +232,14 @@
+ - ❌ Re-synthesizing already-synthesized T1s without new source material.
    Idempotency-respect.
  
 -## Related skills
@@ -259,27 +215,17 @@
  
  
 -## Contract
--
--This skill guarantees:
--
--- Routing matches the canonical triggers in the frontmatter.
--- Output written under the directories listed in `writes_to:` (when applicable).
--- Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
--- Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
--
--The full behavior contract is documented in the body sections above; this section exists for the conformance test.
-+## Contract (( role: procedure ))
-+
-+> This skill guarantees:
-+
-+!!! checklist (( ai-autonomy ))
-+- [ ] Routing matches the canonical triggers in the frontmatter.
-+- [ ] Output written under the directories listed in `writes_to:` (when applicable).
-+- [ ] Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
-+- [ ] Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
-+
-+> The full behavior contract is documented in the body sections above; this section exists for the conformance test.
++## Contract (( inert, role: invariants ))
  
- ## Output Format
+ This skill guarantees:
+ 
+@@ -250,7 +250,7 @@
+ 
+ The full behavior contract is documented in the body sections above; this section exists for the conformance test.
+ 
+-## Output Format
++## Output Format (( inert, role: template ))
+ 
+ The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
  
 ```

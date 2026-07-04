@@ -90,6 +90,18 @@ public struct SwiftEmitter {
         }
         let namespace = options.namespaceEnum
         trace.log(.codegen, "emit file: \(workflows.count) workflow(s), \(definitions.count) definition(s)\(namespace.map { ", namespace \($0)" } ?? "")")
+        if let namespace {
+            trace.log(.codegen, "emit namespace wrapper: public enum \(namespace)")
+        }
+        if let d = domainDecl {
+            trace.log(.codegen, "emit domain: \(d.kinds.count) kind(s), \(d.enumerations.count) enumeration(s)")
+        }
+        if let c = constantsDecl {
+            trace.log(.codegen, "emit constants: \(c.entries.count) entrie(s)")
+        }
+        if let i = instancesDecl {
+            trace.log(.codegen, "emit instances: \(i.entries.count) entrie(s)")
+        }
         return StringTemplate {
             fileHeader()
             ""
@@ -666,6 +678,7 @@ public struct SwiftEmitter {
         switch e {
         case .comparison(let lhs, let op, let rhs):
             let l = emitElementOperand(lhs, loopVar: loopVar, closureParam: closureParam)
+            let r = emitElementValueExpr(rhs, loopVar: loopVar, closureParam: closureParam)
             switch op {
             case .withinPast:     return "MeridianComparison.isWithinPast(\(l), \(emitExpr(rhs)))"
             case .withinFuture:   return "MeridianComparison.isWithinFuture(\(l), \(emitExpr(rhs)))"
@@ -673,13 +686,13 @@ public struct SwiftEmitter {
             case .matchesPattern: return "meridianRegexMatches(\(l), \(emitExpr(rhs)))"
             case .isEmpty:        return "MeridianComparison.isEmpty(\(l))"
             case .isNotEmpty:     return "MeridianComparison.isNotEmpty(\(l))"
-            case .identifies:     return "MeridianComparison.identifies(\(l), \(emitValueExpr(rhs)))"
-            case .equal:          return "MeridianComparison.eq(\(l), \(emitValueExpr(rhs)))"
-            case .notEqual:       return "MeridianComparison.neq(\(l), \(emitValueExpr(rhs)))"
-            case .lessThan:       return "MeridianComparison.lt(\(l), \(emitValueExpr(rhs)))"
-            case .lessOrEqual:    return "MeridianComparison.le(\(l), \(emitValueExpr(rhs)))"
-            case .greaterThan:    return "MeridianComparison.gt(\(l), \(emitValueExpr(rhs)))"
-            case .greaterOrEqual: return "MeridianComparison.ge(\(l), \(emitValueExpr(rhs)))"
+            case .identifies:     return "MeridianComparison.identifies(\(l), \(r))"
+            case .equal:          return "MeridianComparison.eq(\(l), \(r))"
+            case .notEqual:       return "MeridianComparison.neq(\(l), \(r))"
+            case .lessThan:       return "MeridianComparison.lt(\(l), \(r))"
+            case .lessOrEqual:    return "MeridianComparison.le(\(l), \(r))"
+            case .greaterThan:    return "MeridianComparison.gt(\(l), \(r))"
+            case .greaterOrEqual: return "MeridianComparison.ge(\(l), \(r))"
             case .contains:       return "((\(l))?.description ?? \"\").contains(\(emitExpr(rhs)))"
             case .startsWith:     return "((\(l))?.description ?? \"\").hasPrefix(\(emitExpr(rhs)))"
             case .endsWith:       return "((\(l))?.description ?? \"\").hasSuffix(\(emitExpr(rhs)))"
@@ -718,6 +731,21 @@ public struct SwiftEmitter {
             return "\(emitElementOperand(base, loopVar: loopVar, closureParam: closureParam))?.member(\"\(key)\")"
         default:
             return emitExpr(e)
+        }
+    }
+
+    /// Element-context value operand for comparison helpers. A same-subject
+    /// property on either side of a definition/filter comparison must read from
+    /// the closure/subject value, not from workflow `state` (which is absent in
+    /// generated definition helpers).
+    private func emitElementValueExpr(_ e: IRExpression, loopVar: String, closureParam: String) -> String {
+        switch e {
+        case .identifierRef(let name) where name == loopVar:
+            return closureParam
+        case .identifierRef, .propertyAccess:
+            return "\(emitElementOperand(e, loopVar: loopVar, closureParam: closureParam)) ?? .null"
+        default:
+            return emitValueExpr(e)
         }
     }
 
@@ -1159,11 +1187,42 @@ public struct SwiftEmitter {
     private func emitLoopBoolExpr(_ e: IRExpression, loopVariable: String, elementName: String) -> String {
         switch e {
         case .comparison(let l, let op, let r):
-            let lhs = emitLoopValueExpr(l, loopVariable: loopVariable, elementName: elementName)
-            let rhs = emitLoopValueExpr(r, loopVariable: loopVariable, elementName: elementName)
-            return "MeridianComparison.\(compHelper(op))(\(lhs), \(rhs))"
+            return emitLoopComparison(l, op, r, loopVariable: loopVariable, elementName: elementName)
         default:
             return emitExpr(e)
+        }
+    }
+
+    /// Exhaustive over `ComparisonOp` (17 cases) — mirrors `emitElementExpr`'s
+    /// `whose`-clause comparison switch, adapted to `emitLoopValueExpr`'s
+    /// always-`Value` (never native/never-optional) operand emission. This
+    /// replaces a bug where every op funnelled through `compHelper`, whose
+    /// `default:` silently degraded any non-relational op (`contains`,
+    /// `oneOf`, `isEmpty`, `matchesPattern`, `identifies`, `within*`) to an
+    /// equality check — a silent-wrong-codegen gap (no compile error, wrong
+    /// runtime semantics). Being exhaustive (no `default:`) means a future
+    /// `ComparisonOp` case fails to compile here until wired, instead of
+    /// silently reusing `eq`.
+    private func emitLoopComparison(
+        _ l: IRExpression, _ op: ComparisonOp, _ r: IRExpression,
+        loopVariable: String, elementName: String
+    ) -> String {
+        func lv(_ e: IRExpression) -> String { emitLoopValueExpr(e, loopVariable: loopVariable, elementName: elementName) }
+        let lhs = lv(l)
+        switch op {
+        case .withinDuration: return "MeridianComparison.isWithin(\(lhs), \(emitExpr(r)))"
+        case .withinPast:     return "MeridianComparison.isWithinPast(\(lhs), \(emitExpr(r)))"
+        case .withinFuture:   return "MeridianComparison.isWithinFuture(\(lhs), \(emitExpr(r)))"
+        case .matchesPattern: return "meridianRegexMatches(\(lhs), \(emitExpr(r)))"
+        case .isEmpty:        return "MeridianComparison.isEmpty(\(lhs))"
+        case .isNotEmpty:     return "MeridianComparison.isNotEmpty(\(lhs))"
+        case .identifies:     return "MeridianComparison.identifies(\(lhs), \(lv(r)))"
+        case .equal, .notEqual, .lessThan, .lessOrEqual, .greaterThan, .greaterOrEqual:
+            return "MeridianComparison.\(compHelper(op))(\(lhs), \(lv(r)))"
+        case .contains:       return "(\(lhs).description).contains(\(emitExpr(r)))"
+        case .startsWith:     return "(\(lhs).description).hasPrefix(\(emitExpr(r)))"
+        case .endsWith:       return "(\(lhs).description).hasSuffix(\(emitExpr(r)))"
+        case .oneOf:          return "(\(emitExpr(r))).contains(\(lhs))"
         }
     }
 
@@ -1221,6 +1280,12 @@ public struct SwiftEmitter {
         }
     }
 
+    /// Callers gate on the 6 relational ops before calling this (the
+    /// exhaustive `.comparison` switches in `emitExpr`/`emitLoopComparison`
+    /// only reach `compOp` from that arm), so `default:` is UNREACHABLE
+    /// today. Hardened rather than silently formatting a bogus operator
+    /// comment (MER0004-class defensive guard; no behavior change for any
+    /// currently-reachable op).
     private func compOp(_ op: ComparisonOp) -> String {
         switch op {
         case .equal:          return "=="
@@ -1229,11 +1294,13 @@ public struct SwiftEmitter {
         case .lessOrEqual:    return "<="
         case .greaterThan:    return ">"
         case .greaterOrEqual: return ">="
-        default:              return "/* \(op) */"
+        default:
+            preconditionFailure("internal: compOp(\(op)) called with a non-relational op — MER0004 (compiler bug: all callers must gate on the 6 relational ops)")
         }
     }
 
-    /// Map a comparison op to the corresponding `MeridianComparison.X` helper name.
+    /// Map a comparison op to the corresponding `MeridianComparison.X` helper
+    /// name. Same unreachable-`default:` guarantee as `compOp` (see above).
     private func compHelper(_ op: ComparisonOp) -> String {
         switch op {
         case .equal:          return "eq"
@@ -1242,7 +1309,8 @@ public struct SwiftEmitter {
         case .lessOrEqual:    return "le"
         case .greaterThan:    return "gt"
         case .greaterOrEqual: return "ge"
-        default:              return "eq"
+        default:
+            preconditionFailure("internal: compHelper(\(op)) called with a non-relational op — MER0004 (compiler bug: all callers must gate on the 6 relational ops)")
         }
     }
 

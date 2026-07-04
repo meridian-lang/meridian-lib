@@ -28,16 +28,19 @@ writes_to:
 
 > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.
 
-## Contract (( role: procedure ))
+## Contract (( inert, role: invariants ))
 
-!!! checklist (( ai-autonomy ))
-- [ ] Every fact written to a brain page carries an inline `[Source: ...]` citation with date and provenance.
-- [ ] Every entity mention creates a back-link from the entity's page to the page mentioning them (Iron Law).
-- [ ] Raw sources are preserved for provenance via `gbrain files upload-raw` with automatic size routing.
-- [ ] State sections are rewritten with current best understanding, never appended to.
-- [ ] Entity detection fires on every inbound message; notable entities get pages or updates.
+- Every fact written to a brain page carries an inline `[Source: ...]` citation with date and provenance.
+- Every entity mention creates a back-link from the entity's page to the page mentioning them (Iron Law).
+- Raw sources are preserved for provenance via `gbrain files upload-raw` with automatic size routing.
+- State sections are rewritten with current best understanding, never appended to.
+- Entity detection fires on every inbound message; notable entities get pages or updates.
 
-> > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
+> **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
+
+Every mention of a person or company with a brain page MUST create a back-link
+FROM that entity's page TO the page mentioning them. An unlinked mention is a
+broken brain. See `skills/_brain-filing-rules.md` for format.
 
 ## Citation Requirements (MANDATORY) (( inert ))
 
@@ -50,30 +53,43 @@ Every fact written to a brain page must carry an inline `[Source: ...]` citation
 - **Social media:** `[Source: X/@handle, YYYY-MM-DD](URL)` (include link)
 - **Synthesis:** `[Source: compiled from {sources}]`
 
-## Phases
+## Phases (( inert, role: procedure ))
 
-use judgment to ingest the source and update the brain:
-  Parse the source to extract people, companies, dates, and events.
-  For each entity mentioned, read its page and update compiled truth, or create a new page after the notability gate.
-  Append a timeline entry for each event with date, summary, and source citation.
-  Create cross-reference links for every entity pair mentioned together.
-  Back-link every mentioned entity's page to this page, and merge the event onto each entity's timeline.
+> **Router note:** This skill is a router. For specialized ingestion, see: idea-ingest, media-ingest, meeting-ingestion.
+
+1. **Parse the source.** Extract people, companies, dates, and events from the input.
+2. **For each entity mentioned:**
+   - Read the entity's page from gbrain to check if it exists
+   - If exists: update compiled_truth (rewrite State section with new info, don't append)
+   - If new: check notability gate, then store the page in gbrain with the appropriate type and slug
+3. **Append to timeline.** Add a timeline entry in gbrain for each event, with date, summary, and source citation.
+4. **Create cross-reference links.** Link entities in gbrain for every entity pair mentioned together, using the appropriate relationship type.
+5. **Back-link all entities.** Update EVERY mentioned entity's page with a back-link to this page (Iron Law).
+6. **Timeline merge.** The same event appears on ALL mentioned entities' timelines. If Alice met Bob at Acme Corp, the event goes on Alice's page, Bob's page, and Acme Corp's page.
 
 ## Entity Detection on Every Message (( inert ))
 
 Production agents should detect entity mentions on EVERY inbound message. This is
 the signal detection loop that makes the brain compound over time.
 
-### Protocol
+### Protocol (( inert, role: procedure ))
 
-use judgment to detect and file entities on every message:
-  Scan the message for mentions of people, companies, concepts, and original thinking.
-  For each entity, search the brain; load and update an existing page, or create a new page after the notability gate.
-  Detect and enrich alongside the response so the conversation is never blocked.
-
-```bash
-gbrain sync --no-pull --no-embed
-```
+1. **Scan the message** for entity mentions: people, companies, concepts, original
+   thinking. Fire on every message (no exceptions unless purely operational).
+2. **For each entity detected:**
+   - `gbrain search "name"` -- does a page already exist?
+   - **If yes:** load context with `gbrain get <slug>`. Use the compiled truth to
+     inform your response. Update the page if the message contains new information.
+   - **If no:** assess notability (see `skills/_brain-filing-rules.md`). If the entity
+     is worth tracking, create a new page with `gbrain put <type/slug>` and populate
+     with what you know.
+3. **After creating or updating pages:** sync to gbrain:
+   ```bash
+   gbrain sync --no-pull --no-embed
+   ```
+4. **Don't block the conversation.** Entity detection and enrichment should happen
+   alongside the response, not before it. The user shouldn't wait for brain writes
+   to get an answer.
 
 ### What counts as notable (( inert ))
 
@@ -200,38 +216,38 @@ about a company -> `companies/`, reusable framework -> `concepts/`, raw data -> 
 **Write to:** `media/x/` for daily aggregation, or entity-specific directories
 if the post is primarily about a person/company.
 
-## Raw Source Preservation (( role: procedure ))
+## Raw Source Preservation (( inert ))
 
-use judgment to follow the Raw Source Preservation guidance:
-  Every ingested item must have its raw source preserved for provenance.
-  
-  **Use `gbrain files upload-raw` for automatic size routing:**
-  ```bash
-  gbrain files upload-raw <file> --page <page-slug> --type <type>
-  ```
-  
-  item: **< 100 MB text/PDF**: stays in git (brain repo `.raw/` sidecar directories)
-  item: **>= 100 MB OR media** (video, audio, images): uploaded to cloud storage
-    via TUS resumable upload, `.redirect.yaml` pointer left in the brain repo
-  
-  The `.redirect.yaml` pointer format:
-  ```yaml
-  target: supabase://brain-files/page-slug/filename.mp4
-  bucket: brain-files
-  storage_path: page-slug/filename.mp4
-  size: 524288000
-  size_human: 500 MB
-  hash: sha256:abc123...
-  mime: video/mp4
-  uploaded: 2026-04-11T...
-  type: transcript
-  ```
-  
-  **Accessing stored files:**
-  item: `gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing/sharing
-  item: `gbrain files restore <dir>` -- download back to local from cloud storage
-  
-  Use `put_raw_data` in gbrain to store raw API responses and metadata (JSON, not binary).
+Every ingested item must have its raw source preserved for provenance.
+
+**Use `gbrain files upload-raw` for automatic size routing:**
+```bash
+gbrain files upload-raw <file> --page <page-slug> --type <type>
+```
+
+- **< 100 MB text/PDF**: stays in git (brain repo `.raw/` sidecar directories)
+- **>= 100 MB OR media** (video, audio, images): uploaded to cloud storage
+  via TUS resumable upload, `.redirect.yaml` pointer left in the brain repo
+
+The `.redirect.yaml` pointer format:
+```yaml
+target: supabase://brain-files/page-slug/filename.mp4
+bucket: brain-files
+storage_path: page-slug/filename.mp4
+size: 524288000
+size_human: 500 MB
+hash: sha256:abc123...
+mime: video/mp4
+uploaded: 2026-04-11T...
+type: transcript
+```
+
+**Accessing stored files:**
+- `gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing/sharing
+- `gbrain files restore <dir>` -- download back to local from cloud storage
+
+Use `put_raw_data` in gbrain to store raw API responses and metadata (JSON, not binary).
+
 ## Test Before Bulk (( inert ))
 
 When processing multiple items (batch video ingestion, bulk meeting processing, etc.):
@@ -246,7 +262,7 @@ When processing multiple items (batch video ingestion, bulk meeting processing, 
 The marginal cost of testing 3 items first is near zero. The cost of cleaning
 up 100 bad pages is enormous.
 
-## Quality Rules (( inert ))
+## Quality Rules (( inert, role: invariants ))
 
 - Executive summary in compiled_truth must be updated, not just timeline appended
 - State section is REWRITTEN, not appended to. Current best understanding only.
@@ -257,14 +273,13 @@ up 100 bad pages is enormous.
 - Back-links: every entity mention creates a back-link (Iron Law)
 - Filing: file by primary subject, not format or source (see filing rules)
 
-## Anti-Patterns (( role: procedure ))
+## Anti-Patterns (( inert, role: prohibitions ))
 
-!!! checklist (( ai-autonomy ))
-- [ ] **Appending to State sections.** State is rewritten with the current best understanding on every update. Append-only State sections grow stale and contradictory.
-- [ ] **Ingesting without back-links.** An unlinked mention is a broken brain. Every entity mentioned must have a back-link from their page to the page mentioning them.
-- [ ] **Skipping raw source preservation.** Every ingested item must have its raw source preserved. A brain page without provenance is unverifiable.
-- [ ] **Bulk processing without sample test.** Test on 3-5 items first. Fix quality issues in the approach, not via one-off patches.
-- [ ] **Paraphrasing the user's original thinking.** The user's exact language IS the insight. Capture verbatim phrasing for ideas, theses, and frameworks.
+- **Appending to State sections.** State is rewritten with the current best understanding on every update. Append-only State sections grow stale and contradictory.
+- **Ingesting without back-links.** An unlinked mention is a broken brain. Every entity mentioned must have a back-link from their page to the page mentioning them.
+- **Skipping raw source preservation.** Every ingested item must have its raw source preserved. A brain page without provenance is unverifiable.
+- **Bulk processing without sample test.** Test on 3-5 items first. Fix quality issues in the approach, not via one-off patches.
+- **Paraphrasing the user's original thinking.** The user's exact language IS the insight. Capture verbatim phrasing for ideas, theses, and frameworks.
 
 ## Output Format
 

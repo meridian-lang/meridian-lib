@@ -57,6 +57,7 @@ extension DiagnosticCode {
         .init(.unknownVerb, status: .active, emitters: ["ASTToIR.swift"]),
         .init(.unknownFallbackKind, status: .active, emitters: ["Compiler.swift"]),
         .init(.unknownTraceCategory, status: .active, emitters: ["ParserTrace.swift", "CLISupport.swift"]),
+        .init(.missingPhraseArgument, status: .active, emitters: ["ASTToIR.swift:lowerPhraseInvocation"]),
 
         // MER3xxx — semantics
         .init(.phraseInlineDepthExceeded, status: .active, emitters: ["ASTToIR.swift"]),
@@ -73,6 +74,7 @@ extension DiagnosticCode {
         .init(.quantifierSemantic, status: .active, emitters: ["ASTToIR.swift"]),
         .init(.ambiguousAnaphora, status: .active, emitters: ["AnaphoraResolver.swift"]),
         .init(.invalidEnumDefault, status: .active, emitters: ["Compiler.swift:mergeEnumDefaults"]),
+        .init(.unlowerableRulePredicate, status: .active, emitters: ["RuleInjector.swift:lowerExprSimple"]),
 
         // MER4xxx — codegen
         .init(.codegenError, status: .active, emitters: ["Compiler.swift:codegenError projection"]),

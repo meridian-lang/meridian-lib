@@ -97,7 +97,7 @@
     "name" : "capture",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "invariants",
         "level" : 2,
         "line" : 22,
         "text" : "Contract"
@@ -105,66 +105,74 @@
       {
         "kind" : "applicability",
         "level" : 2,
-        "line" : 35,
+        "line" : 34,
         "text" : "When to invoke"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 41,
+        "line" : 40,
         "text" : "What it does"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 49,
+        "line" : 48,
         "text" : "How to use"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 61,
+        "line" : 60,
         "text" : "Defaults"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 68,
+        "line" : 67,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "prohibitions",
         "level" : 2,
-        "line" : 84,
+        "line" : 83,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 100,
+        "line" : 98,
         "text" : "When NOT to use this skill"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 70,
+        "line" : 69,
         "text" : "Default prints a 5-line receipt"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 22,
         "lines" : [
-          "checklist:ai-autonomy:KipJbnB1dDoqKiB0aGUgY29udGVudCB0byBzYXZlIChpbmxpbmUgYXJnLCBgLS1maWxlIFBBVEhgLCBvciBgLS1zdGRpbmApCioqT3V0cHV0OioqIGEgcGFnZSBpbiB0aGUgYnJhaW4gREIgQU5EIGEgbWFya2Rvd24gZmlsZSBvbiBkaXNrIHVuZGVyIGA8c3luYy5yZXBvX3BhdGg+LzxzbHVnPi5tZGAuIFJlY2VpcHQgcHJpbnRlZCB0byBzdGRvdXQuCioqU2lkZSBlZmZlY3Q6KiogdGhlIHBhZ2UgYmVjb21lcyBpbW1lZGlhdGVseSBxdWVyeWFibGUgdmlhIGBnYnJhaW4gcXVlcnlgLCBgZ2JyYWluIHNlYXJjaGAsIG9yIGFueSBNQ1AtYm91bmQgYWdlbnQuCioqSWRlbXBvdGVuY3k6Kiogc2FtZSBjb250ZW50IOKGkiBzYW1lIGBpbmJveC9ZWVlZLU1NLURELTxoYXNoOD5gIHNsdWcuIFRoZSBkYWVtb24ncyAyNGggY29udGVudC1oYXNoIGRlZHVwIGNhdGNoZXMgcmUtY2FwdHVyZXMuCioqVHJ1c3Q6KiogYWxsIGNhcHR1cmVzIHZpYSB0aGlzIHNraWxsIGFyZSBsb2NhbC1DTEkgdHJ1c3QgKGByZW1vdGU6IGZhbHNlYCkgVW50cnVzdGVkIHdlYmhvb2sgaW5nZXN0aW9uIGdvZXMgdGhyb3VnaCBgUE9TVCAvaW5nZXN0YCwgbm90IHRoaXMgdmVyYi4="
+          "**Input:** the content to save (inline arg, `--file PATH`, or `--stdin`)",
+          "**Output:** a page in the brain DB AND a markdown file on disk under",
+          "`<sync.repo_path>\/<slug>.md`. Receipt printed to stdout",
+          "**Side effect:** the page becomes immediately queryable via `gbrain query`,",
+          "`gbrain search`, or any MCP-bound agent",
+          "**Idempotency:** same content → same `inbox\/YYYY-MM-DD-<hash8>` slug. The",
+          "daemon's 24h content-hash dedup catches re-captures",
+          "**Trust:** all captures via this skill are local-CLI trust (`remote: false`)",
+          "Untrusted webhook ingestion goes through `POST \/ingest`, not this verb"
         ],
-        "role" : "procedure"
+        "role" : "invariants"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "When to invoke",
-        "line" : 35,
+        "line" : 34,
         "lines" : [
           "\"Capture this thought\" \/ \"save this\" \/ \"drop this into my brain\" \/ \"remember this\"",
           "The user pastes content and asks to keep it",
@@ -175,7 +183,7 @@
       {
         "executes" : false,
         "heading" : "What it does",
-        "line" : 41,
+        "line" : 40,
         "lines" : [
           "`gbrain capture` resolves to a `put_page` call (local) or a remote MCP call",
           "(thin-client). Either way the page lands in the DB AND on disk in one move",
@@ -188,7 +196,7 @@
       {
         "executes" : true,
         "heading" : "How to use",
-        "line" : 49,
+        "line" : 48,
         "lines" : [
           "codeblock:bash:Z2JyYWluIGNhcHR1cmUgInRoZSB0aG91Z2h0IEkgd2FudCB0byByZW1lbWJlciIKZ2JyYWluIGNhcHR1cmUgLS1maWxlIC4vbm90ZXMvdG9kYXkubWQKZWNobyAiZnJvbSBhIHBpcGUiIHwgZ2JyYWluIGNhcHR1cmUgLS1zdGRpbgpnYnJhaW4gY2FwdHVyZSAiLi4uIiAtLXNsdWcgZGFpbHkvMjAyNi0wNS0yMQpnYnJhaW4gY2FwdHVyZSAiLi4uIiAtLXR5cGUgaWRlYSAtLXNvdXJjZSB2b2ljZS13aGlzcGVyCmdicmFpbiBjYXB0dXJlICIuLi4iIC0tcXVpZXQgICAgICAgICAgIyBzY3JpcHQtZnJpZW5kbHk6IHByaW50cyBqdXN0IHRoZSBzbHVnCmdicmFpbiBjYXB0dXJlICIuLi4iIC0tanNvbiAgICAgICAgICAgIyBzdHJ1Y3R1cmVkIG91dHB1dCBmb3IgYWdlbnRz"
         ],
@@ -197,7 +205,7 @@
       {
         "executes" : false,
         "heading" : "Defaults",
-        "line" : 61,
+        "line" : 60,
         "lines" : [
           "**Slug:** `inbox\/YYYY-MM-DD-<hash8>` (stable for same content; the daemon's 24h dedup catches re-captures)",
           "**Type:** `note` (override with `--type idea` etc.)",
@@ -209,7 +217,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 68,
+        "line" : 67,
         "lines" : [
           "Default prints a 5-line receipt:",
           "codeblock:plain:Y2FwdHVyZWQ6CiAgc2x1ZzogICAgICAgICAgaW5ib3gvMjAyNi0wNS0yMS1hYmNkZWYxMgogIHN0YXR1czogICAgICAgIGNyZWF0ZWRfb3JfdXBkYXRlZAogIGNvbnRlbnRfaGFzaDogIGYzYTdiOWMwZDFlMmYzYTTigKYKICBmaWxlOiAgICAgICAgICAvVXNlcnMveW91L2JyYWluL2luYm94LzIwMjYtMDUtMjEtYWJjZGVmMTIubWQKICBjYXB0dXJlZF9hdDogICAyMDI2LTA1LTIxVDA0OjE1OjAwLjAwMFo=",
@@ -219,18 +227,29 @@
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 84,
+        "line" : 83,
         "lines" : [
-          "checklist:ai-autonomy:KipEb24ndCByZWFjaCBmb3IgYGdicmFpbiBwdXRgLioqIFRoYXQncyB0aGUgb2xkIHBlci1wYWdlIHByaW1pdGl2ZSB0aGF0IGRvZXNuJ3Qga25vdyBhYm91dCBkZWZhdWx0IHNsdWcgZ2VuZXJhdGlvbiwgY29udGVudC10eXBlIGhldXJpc3RpY3MsIG9yIHRoZSByZWNlaXB0IGJsb2NrLiBgY2FwdHVyZWAgaXMgdGhlIGh1bWFuLWZhY2luZyB3cmFwcGVyLgoqKkRvbid0IHRyeSB0byBidWxrLWltcG9ydCBkb3plbnMgb2YgZmlsZXMgYnkgbG9vcGluZyBvdmVyIGBnYnJhaW4gY2FwdHVyZWAuKiogVGhhdCdzIHdoYXQgYGdicmFpbiBzeW5jYCAob3IgYGdicmFpbiBpbXBvcnRgKSBpcyBmb3IuIENhcHR1cmUgaXMgZm9yIHNpbmdsZSB0aG91Z2h0cywgc2luZ2xlIG5vdGVzLCBzaW5nbGUgdHJhbnNjcmlwdHMuCioqRG9uJ3QgcHJlLWZvcm1hdCB0aGUgY29udGVudCB5b3Vyc2VsZiB3aXRoIGZyb250bWF0dGVyIGlmIHlvdSBkb24ndCBuZWVkIHRvLioqIENhcHR1cmUgd3JhcHMgcGxhaW4gcHJvc2UgaW4gc2Vuc2libGUgZnJvbnRtYXR0ZXIgKHR5cGUgKyB0aXRsZSArIGNhcHR1cmVkX3ZpYSArIGNhcHR1cmVkX2F0KS4gVGhlIGJvZHkgYmVjb21lcyBgIyBUaXRsZVxuXG48eW91ciBwcm9zZT5gLiBQYXNzIGAtLWZpbGUgUEFUSGAgaWYgeW91IGFscmVhZHkgaGF2ZSBhIGZ1bGx5LWZvcm1hdHRlZCBtYXJrZG93biBmaWxlLgoqKkRvbid0IHBhc3Mgc2VjcmV0cyBhcyBpbmxpbmUgY29udGVudC4qKiBJbmxpbmUgYXJncyBsYW5kIGluIHNoZWxsIGhpc3RvcnkuIFVzZSBgLS1maWxlYCBvciBgLS1zdGRpbmAgaW5zdGVhZC4="
+          "**Don't reach for `gbrain put`.** That's the old per-page primitive that",
+          "doesn't know about default slug generation, content-type heuristics, or",
+          "the receipt block. `capture` is the human-facing wrapper",
+          "**Don't try to bulk-import dozens of files by looping over `gbrain capture`.**",
+          "That's what `gbrain sync` (or `gbrain import`) is for. Capture is for",
+          "single thoughts, single notes, single transcripts",
+          "**Don't pre-format the content yourself with frontmatter if you don't need to.**",
+          "Capture wraps plain prose in sensible frontmatter (type + title +",
+          "captured_via + captured_at). The body becomes `# Title\\n\\n<your prose>`",
+          "Pass `--file PATH` if you already have a fully-formatted markdown file",
+          "**Don't pass secrets as inline content.** Inline args land in shell",
+          "history. Use `--file` or `--stdin` instead"
         ],
-        "role" : "procedure"
+        "role" : "prohibitions"
       },
       {
         "executes" : false,
         "heading" : "When NOT to use this skill",
-        "line" : 100,
+        "line" : 98,
         "lines" : [
           "Bulk ingestion of many files → `skills\/media-ingest\/SKILL.md` or `gbrain sync` instead",
           "Article\/link with author + publication metadata → `skills\/idea-ingest\/SKILL.md` (it knows to build the people page)",
@@ -280,88 +299,80 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 25,
-      "swift_line" : 600
+      "meridian_line" : 50,
+      "swift_line" : 601
     },
     {
-      "meridian_line" : 51,
+      "meridian_line" : 50,
       "swift_line" : 612
     },
     {
-      "meridian_line" : 51,
+      "meridian_line" : 50,
       "swift_line" : 623
     },
     {
-      "meridian_line" : 51,
+      "meridian_line" : 50,
       "swift_line" : 634
     },
     {
-      "meridian_line" : 51,
+      "meridian_line" : 50,
       "swift_line" : 645
     },
     {
-      "meridian_line" : 51,
+      "meridian_line" : 50,
       "swift_line" : 656
     },
     {
-      "meridian_line" : 51,
+      "meridian_line" : 50,
       "swift_line" : 667
     },
     {
-      "meridian_line" : 51,
-      "swift_line" : 678
-    },
-    {
-      "meridian_line" : 87,
-      "swift_line" : 688
+      "meridian_line" : 1,
+      "swift_line" : 706
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 728
+      "swift_line" : 711
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 733
+      "swift_line" : 750
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 772
+      "swift_line" : 755
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 777
+      "swift_line" : 794
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 816
+      "swift_line" : 799
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 821
+      "swift_line" : 838
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 860
+      "swift_line" : 843
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 865
+      "swift_line" : 882
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 904
+      "swift_line" : 887
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 909
+      "swift_line" : 926
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 948
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 953
+      "swift_line" : 931
     }
   ],
   "tools_used" : [

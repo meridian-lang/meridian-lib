@@ -139,6 +139,7 @@ long-form entry (and the linked decision). This table mirrors
 | MER2008 | unknown verb | D-DX-4 |
 | MER2009 | unknown allow-fallbacks kind | — |
 | MER2010 | unknown trace category | — |
+| MER2011 | missing phrase argument | D-DX-2 |
 
 ### MER3xxx — semantics
 
@@ -158,6 +159,7 @@ long-form entry (and the linked decision). This table mirrors
 | MER3013 | quantifier semantic error | — |
 | MER3014 | ambiguous anaphora | — |
 | MER3015 | invalid enum default | — |
+| MER3016 | unlowerable rule predicate | D-DX-2 |
 
 ### MER4xxx — codegen
 

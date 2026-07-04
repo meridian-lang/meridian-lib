@@ -63,7 +63,9 @@ can; the strict compile surfaces the residue (3)–(4) as located errors.
 > pass meets an unrecognized **executable-only** heading (a section whose body is
 > made only of deterministic Markdown surfaces such as shell fences, whole-line
 > or embedded backticked commands, explicit table/checklist markers, checkable
-> task-list items, or choice gates), it does **not** stamp an inline
+> task-list items, choice gates, or Markdown list items that can be tried as
+> procedure steps after presentation formatting is stripped), it does **not**
+> stamp an inline
 > `(( role: procedure ))`. Instead it leaves the heading clean and emits a
 > `=== sections ===` alias (`section "<heading>" -> procedure`), which the CLI
 > **appends to the rulebook** — the first `--rulebook` given, else the first
@@ -72,8 +74,11 @@ can; the strict compile surfaces the residue (3)–(4) as located errors.
 > in stdout/preview mode (no `--out`), the aliases are printed as a snippet
 > instead of written. So the rulebook accretes the corpus's organizational
 > headings over a batch migration, and re-running compiles cleanly with no
-> in-file markers. Mixed narrative/procedure unknowns still get `(( inert ))`;
-> split them structurally before making the executable part live.
+> in-file markers. List formatting is not proof of documentation: `**bold**`,
+> `__emphasis__`, and `[label](url)` are normalized away before strict compile
+> gets a chance to lower the item. Mixed prose paragraphs plus procedure items
+> still get `(( inert ))`; split them structurally before making the executable
+> part live.
 
 > **`(( role: procedure ))` is redundant on a recognized procedure heading —
 > don't add it.** `procedure` is the *implicit* role for any heading whose text
@@ -240,7 +245,10 @@ within the budget above.
    must still lower). To document narrative, put it under an explicit
    `## Overview (( inert ))` heading — an unmarked, unrecognized heading with
    content is a hard error, and content before the first heading is too (move it
-   under a heading or make it a `#`/`>` comment).
+   under a heading or make it a `#`/`>` comment). **`migrate-skill` adds this
+   heading automatically** when the source has no `##`/`###` sections and the
+   body reads as markdown narrative (bullets, emphasis, topic labels, …) rather
+   than an executable flat procedure.
 6. **Loose anaphora-prone paragraphs under `## Contract`.** Each item must be a
    structurally checkable comparison, or mark the section
    `(( inert, role: invariants ))`; a non-checkable invariant item is a hard error.

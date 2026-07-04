@@ -599,48 +599,6 @@ public struct DailyTaskPrepInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "DailyTaskPrepInput", parameters: [:])
 
-        // L27
-        let __meridianProseResults_L27 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Calendar/meetings for today are loaded with brain context per attendee\n- Open threads from yesterday are surfaced\n- Active tasks reviewed with priority ordering\n- Prep briefing is actionable (not just informational)",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.get", "page.list", "page.search", "shell.run"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L27 {
-            state.bind(__key, __value)
-        }
-        if __meridianShouldRun("progress:0.1:L34:C0") {
-            // L34
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain get ops/tasks"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L34:C0", state: state.snapshot())
-        }
-        // L38
-        let __meridianProseResults_L38 = try await runtime.executeProsePlan(
-            prose: "compile the morning prep briefing\nLoad today's calendar and, for each meeting, load attendee brain pages, recent timeline, and open threads\nSearch the brain for yesterday's timeline entries and flag anything unresolved\nSurface P0 and P1 tasks from the task list\nCompile per-meeting context cards plus open threads and task priorities",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.get", "page.list", "page.search", "shell.run"]
-        )
-        for (__key, __value) in __meridianProseResults_L38 {
-            state.bind(__key, __value)
-        }
-        // L66
-        let __meridianProseResults_L66 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Listing meetings without loading attendee context from brain\n- Ignoring yesterday's unresolved threads\n- Presenting tasks without priority ordering",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.get", "page.list", "page.search", "shell.run"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L66 {
-            state.bind(__key, __value)
-        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

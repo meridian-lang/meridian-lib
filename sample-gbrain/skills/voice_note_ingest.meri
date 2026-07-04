@@ -39,7 +39,7 @@ The Analysis section can interpret; the transcript section is sacred.
 - ✅ `"The ambition-to-lifespan ratio has never been more fucked"`
 - ❌ `User noted the tension between ambition and mortality`
 
-## When to invoke
+## When to invoke (( inert, role: applicability ))
 
 The user sends an audio or voice message via any channel (Telegram, voice
 memo upload, openclaw audio attachment). The host agent typically provides
@@ -97,7 +97,7 @@ the primary directory and cross-link to the others.
 others. If the voice note covers a person AND a novel idea, create the
 originals/ page AND update the person's timeline.
 
-## Brain page format
+## Brain page format (( inert, role: template ))
 
 For ALL voice-note-derived pages, include this skeleton:
 
@@ -155,26 +155,25 @@ Include timestamps when available:
 [Source: voice note, <channel>, YYYY-MM-DD HH:MM PT]
 ```
 
-## Naming convention (( role: procedure ))
+## Naming convention (( inert ))
 
-use judgment to follow the Naming convention guidance:
-  item: Audio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,
-    `2026-04-13-rick-rubin-creative-philosophy.ogg`)
-  item: Brain pages: match the slug of the destination directory.
+- Audio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,
+  `2026-04-13-rick-rubin-creative-philosophy.ogg`)
+- Brain pages: match the slug of the destination directory.
+
 ## Bulk vs. single (( inert ))
 
 This skill handles ONE voice note at a time. Each is its own ingest cycle.
 No batching.
 
-## Anti-Patterns (( role: procedure ))
+## Anti-Patterns (( inert, role: prohibitions ))
 
-!!! checklist (( ai-autonomy ))
-- [ ] ❌ **Paraphrasing the transcript.** The exact words are the signal.
-- [ ] ❌ **Cleaning up hesitations or filler words** ("um", "like", "you
+- ❌ **Paraphrasing the transcript.** The exact words are the signal.
+- ❌ **Cleaning up hesitations or filler words** ("um", "like", "you
   know"). The texture matters.
-- [ ] ❌ **Creating a page with no entity cross-links** when people/companies
+- ❌ **Creating a page with no entity cross-links** when people/companies
   were mentioned. Iron Law fail.
-- [ ] ❌ **Skipping the audio storage step.** Always upload the original; the
+- ❌ **Skipping the audio storage step.** Always upload the original; the
   brain page has a `🔊 [Audio]` link back to it.
 
 ## Related skills (( inert ))
@@ -185,18 +184,17 @@ No batching.
 - `skills/conventions/quality.md` — citation + back-link rules
 
 
-## Contract (( role: procedure ))
+## Contract (( inert, role: invariants ))
 
-> This skill guarantees:
+This skill guarantees:
 
-!!! checklist (( ai-autonomy ))
-- [ ] Routing matches the canonical triggers in the frontmatter.
-- [ ] Output written under the directories listed in `writes_to:` (when applicable).
-- [ ] Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
-- [ ] Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
+- Routing matches the canonical triggers in the frontmatter.
+- Output written under the directories listed in `writes_to:` (when applicable).
+- Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
+- Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
 
-> The full behavior contract is documented in the body sections above; this section exists for the conformance test.
+The full behavior contract is documented in the body sections above; this section exists for the conformance test.
 
-## Output Format
+## Output Format (( inert, role: template ))
 
 The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).

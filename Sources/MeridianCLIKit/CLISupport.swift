@@ -197,6 +197,7 @@ func stderrIsTTY() -> Bool {
 /// `verify`: load vocab + rulebooks, compile (discarding emitted Swift), and
 /// report with source snippets. Throws `ExitCode(1)` on a compiler error.
 func runDiagnosticsCheck(input: String, merconfig: [String], trace: String?,
+                         traceFile: String? = nil,
                          format: DiagnosticsFormat = .human,
                          fix: Bool = false, write: Bool = false) async throws {
     let meridianURL = URL(fileURLWithPath: input).standardized
@@ -223,7 +224,7 @@ func runDiagnosticsCheck(input: String, merconfig: [String], trace: String?,
         diagPaths[url.lastPathComponent] = url
     }
 
-    let compiler = Compiler(options: .init(trace: makeCLITrace(spec: trace)))
+    let compiler = Compiler(options: .init(trace: makeCLITrace(spec: trace, file: traceFile)))
     do {
         _ = try compiler.compileWithManifest(
             meridianSource: meridianSource,

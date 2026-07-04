@@ -2,9 +2,9 @@
 
 - Original: `meeting-ingestion/SKILL.md`
 - Ported: `meeting_ingestion.meri`
-- Tier: 3 (structural rewrite)
-- Similarity: 49%
-- Lines: 125 -> 127 (+65 / -63)
+- Tier: 1 (near-verbatim)
+- Similarity: 89%
+- Lines: 125 -> 125 (+14 / -14)
 
 ## Frontmatter
 - Added: (none)
@@ -12,83 +12,62 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 
 ## Metrics
-- Sections: 1/10 inert (10% inert ratio)
-- Operational inert: 0
+- Sections: 10/10 inert (100% inert ratio)
+- Operational inert: 7
 - Unclassified inert: 0
-- Inert categories: template=1
-- Judgment: 5 blocks, 26 lines
+- Inert categories: operational-procedure=7, reference-documentation=2, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L88 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L6 `Contract`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L21 `Phases`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L23 `Phase 1: Parse the transcript`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L33 `Phase 2: Create meeting page`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L55 `Phase 3: Attendee enrichment (MANDATORY)`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L70 `Phase 4: Entity propagation (MANDATORY)`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L78 `Phase 5: Timeline merge`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L83 `Phase 6: Sync`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L87 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L92 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
 ```diff
 --- original-skills/meeting-ingestion/SKILL.md
 +++ skills/meeting_ingestion.meri
-@@ -29,97 +29,99 @@
+@@ -29,7 +29,7 @@
  
  > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.
  
 -## Contract
-+## Contract (( role: procedure ))
++## Contract (( inert, role: invariants ))
  
--This skill guarantees:
--- Meeting page created with attendees, summary, key decisions, action items
--- EVERY attendee gets a people page (created or updated)
--- EVERY company discussed gets entity propagation
--- Timeline entries on ALL mentioned entities (timeline merge)
--- Meeting is NOT fully ingested until enrich runs for every entity
--- Back-links created bidirectionally
-+> This skill guarantees:
-+!!! checklist (( ai-autonomy ))
-+- [ ] Meeting page created with attendees, summary, key decisions, action items
-+- [ ] EVERY attendee gets a people page (created or updated)
-+- [ ] EVERY company discussed gets entity propagation
-+- [ ] Timeline entries on ALL mentioned entities (timeline merge)
-+- [ ] Meeting is NOT fully ingested until enrich runs for every entity
-+- [ ] Back-links created bidirectionally
+ This skill guarantees:
+ - Meeting page created with attendees, summary, key decisions, action items
+@@ -44,9 +44,9 @@
+ Every attendee and company mentioned MUST get a back-link from their page to
+ the meeting page. An unlinked mention is a broken brain.
  
--> **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
-+> > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
- 
--Every attendee and company mentioned MUST get a back-link from their page to
--the meeting page. An unlinked mention is a broken brain.
-+> Every attendee and company mentioned MUST get a back-link from their page to
-+> the meeting page. An unlinked mention is a broken brain.
- 
- ## Phases
+-## Phases
++## Phases (( inert, role: procedure ))
  
 -### Phase 1: Parse the transcript
-+### Phase 1: Parse the transcript (( role: procedure ))
++### Phase 1: Parse the transcript (( inert, role: procedure ))
  
--Extract from the transcript:
--- Attendees (names, roles if available)
--- Date, time, duration
--- Key topics discussed
--- Decisions made
--- Action items with owners
--- Companies and projects mentioned
--
-+use judgment to follow the Phase 1: Parse the transcript guidance:
-+  Extract from the transcript:
-+  item: Attendees (names, roles if available)
-+  item: Date, time, duration
-+  item: Key topics discussed
-+  item: Decisions made
-+  item: Action items with owners
-+  item: Companies and projects mentioned
- ### Phase 2: Create meeting page
--
-+  
+ Extract from the transcript:
+ - Attendees (names, roles if available)
+@@ -56,7 +56,7 @@
+ - Action items with owners
+ - Companies and projects mentioned
+ 
+-### Phase 2: Create meeting page
++### Phase 2: Create meeting page (( inert, role: procedure ))
+ 
  ```markdown
  # {Meeting Title} — {Date}
--
-+  
- **Attendees:** {list with links to people pages}
+@@ -65,20 +65,20 @@
  **Date:** {YYYY-MM-DD}
  **Duration:** {if available}
  
@@ -110,86 +89,43 @@
  ```
  
 -### Phase 3: Attendee enrichment (MANDATORY)
-+### Phase 3: Attendee enrichment (MANDATORY) (( role: procedure ))
++### Phase 3: Attendee enrichment (MANDATORY) (( inert, role: procedure ))
  
--For EACH attendee:
--1. `gbrain search "{name}"` — does a people page exist?
--2. If NO → create via enrich skill (this is mandatory, not optional)
--3. If YES → update compiled truth with meeting context
--4. Add timeline entry on the person's page:
--   `gbrain timeline-add <person-slug> <date> "Attended <meeting-title>"`
--
--**Note (v0.10.1):** Once the meeting page is written via `gbrain put`, the
--auto-link post-hook automatically creates `attended` links from the meeting
--to each attendee whose page is referenced as `[Name](people/slug)`. You don't
--need to call `gbrain link` for attendees. You DO still need `gbrain timeline-add`
--for dated events (auto-link only handles links, not timeline entries).
--
+ For EACH attendee:
+ 1. `gbrain search "{name}"` — does a people page exist?
+@@ -93,7 +93,7 @@
+ need to call `gbrain link` for attendees. You DO still need `gbrain timeline-add`
+ for dated events (auto-link only handles links, not timeline entries).
+ 
 -### Phase 4: Entity propagation (MANDATORY)
--
--For each company, project, or concept discussed:
--1. Check brain for existing page
--2. Create/update as needed
--3. Add timeline entry referencing the meeting
--4. Back-link from entity page to meeting page
--
++### Phase 4: Entity propagation (MANDATORY) (( inert, role: procedure ))
+ 
+ For each company, project, or concept discussed:
+ 1. Check brain for existing page
+@@ -101,21 +101,21 @@
+ 3. Add timeline entry referencing the meeting
+ 4. Back-link from entity page to meeting page
+ 
 -### Phase 5: Timeline merge
--
--The same event appears on ALL mentioned entities' timelines. If Alice met Bob at
--Acme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page.
--
++### Phase 5: Timeline merge (( inert, role: procedure ))
+ 
+ The same event appears on ALL mentioned entities' timelines. If Alice met Bob at
+ Acme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page.
+ 
 -### Phase 6: Sync
--
--`gbrain sync` to update the index.
--
-+use judgment to follow the Phase 3: Attendee enrichment (MANDATORY) guidance:
-+  For EACH attendee:
-+  1. `gbrain search "{name}"` — does a people page exist?
-+  2. If NO → create via enrich skill (this is mandatory, not optional)
-+  3. If YES → update compiled truth with meeting context
-+  4. Add timeline entry on the person's page:
-+     `gbrain timeline-add <person-slug> <date> "Attended <meeting-title>"`
-+  
-+  **Note (v0.10.1):** Once the meeting page is written via `gbrain put`, the
-+  auto-link post-hook automatically creates `attended` links from the meeting
-+  to each attendee whose page is referenced as `[Name](people/slug)`. You don't
-+  need to call `gbrain link` for attendees. You DO still need `gbrain timeline-add`
-+  for dated events (auto-link only handles links, not timeline entries).
-+### Phase 4: Entity propagation (MANDATORY) (( role: procedure ))
-+  
-+use judgment to follow the Phase 4: Entity propagation (MANDATORY) guidance:
-+  For each company, project, or concept discussed:
-+  1. Check brain for existing page
-+  2. Create/update as needed
-+  3. Add timeline entry referencing the meeting
-+  4. Back-link from entity page to meeting page
-+### Phase 5: Timeline merge (( role: procedure ))
-+  
-+use judgment to follow the Phase 5: Timeline merge guidance:
-+  The same event appears on ALL mentioned entities' timelines. If Alice met Bob at
-+  Acme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page.
-+### Phase 6: Sync (( role: procedure ))
-+  
-+use judgment to follow the Phase 6: Sync guidance:
-+  `gbrain sync` to update the index.
- ## Output Format
++### Phase 6: Sync (( inert, role: procedure ))
+ 
+ `gbrain sync` to update the index.
+ 
+-## Output Format
++## Output Format (( inert, role: template ))
  
  Meeting page created. Report: "Meeting ingested: {N} attendees enriched, {N} entities
  updated, {N} action items captured."
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
++## Anti-Patterns (( inert, role: prohibitions ))
  
--- Creating the meeting page without enriching attendees
--- Skipping entity propagation ("I'll do that later")
--- Not merging timelines across all mentioned entities
--- Creating attendee stubs without meaningful content
--- Filing meeting pages without cross-linking to all participants
-+!!! checklist (( ai-autonomy ))
-+- [ ] Creating the meeting page without enriching attendees
-+- [ ] Skipping entity propagation ("I'll do that later")
-+- [ ] Not merging timelines across all mentioned entities
-+- [ ] Creating attendee stubs without meaningful content
-+- [ ] Filing meeting pages without cross-linking to all participants
- 
+ - Creating the meeting page without enriching attendees
+ - Skipping entity propagation ("I'll do that later")
 ```

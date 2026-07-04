@@ -128,7 +128,7 @@ meridian verify examples/order_processing.meridian \
 
 Both commands:
 - Accept a repeatable `--merconfig` flag (same auto-detection logic as `compile`).
-- Accept `--trace <categories>`.
+- Accept `--trace <categories>` and `--trace-file <path>` (full parity with `compile`).
 - Accept `--diagnostics-format <human|json>`, `--fix`, and `--write` (same
   semantics as `compile`).
 - Render diagnostics with source snippets + carets (rulebooks beside the source
@@ -143,6 +143,29 @@ meridian check order.meridian --diagnostics-format json
 # Preview a did-you-mean fix, then apply it
 meridian check order.meridian --fix
 meridian check order.meridian --fix --write
+```
+
+---
+
+## `meridian bench-parse`
+
+Benchmark parser infrastructure over newline-delimited expression/sentence
+files. Reports two timings for the (sole) per-production `ExpressionParser`
+dispatcher: unscreened (every `clause`/`atom` alternative tried
+unconditionally) vs `NonterminalScreen`-gated (the live pre-filter used in
+normal compilation) — the speedup the screen buys on top of dispatch.
+
+```bash
+meridian bench-parse parser-fixtures.txt
+```
+
+Output:
+
+```text
+sentences: 42
+unscreened: 0.002345 s
+screened:   0.002100 s
+screened candidates: 57
 ```
 
 ---
@@ -172,6 +195,8 @@ meridian run <source> [options]
 | `--run-id <id>` | `cli-run` | Run ID passed to the runtime |
 | `--checkpoint-root <dir>` | (none) | Use `FilesystemCheckpointer` rooted at this directory |
 | `--keep-temp` | false | Keep the temporary SwiftPM package and print its path to stderr |
+| `--trace <categories>` | (none) | Enable `ParserTrace` output for the compile step (same categories as `compile`) |
+| `--trace-file <path>` | stderr | Write trace output to a file instead of stderr |
 
 ### Notes
 
@@ -324,6 +349,8 @@ meridian preview-skill <SKILL.md> [--name <frontmatter-name>]
 | Flag | Default | Description |
 |---|---|---|
 | `--name <text>` | `imported skill` | Name to place in generated frontmatter |
+| `--trace <categories>` | (none) | Enable `ParserTrace` output; logs under the `skill` category |
+| `--trace-file <path>` | stderr | Write trace output to a file instead of stderr |
 
 ---
 
@@ -523,7 +550,11 @@ The `MERIDIAN_TRACE` environment variable is also read at startup:
 MERIDIAN_TRACE=phrase.match meridian compile examples/order_processing.meridian
 ```
 
-The `--trace` flag is available on `compile`, `check`, `verify`, and `run`.
+The `--trace` flag (and its `--trace-file` companion, to redirect output to a
+file instead of stderr) is available on `compile`, `check`, `verify`, `run`,
+`migrate-skill`, and `preview-skill` — every subcommand that runs the compiler
+or the skill-migration pipeline. `migrate-skill` and `preview-skill` log under
+the `.skill` category (`meridian migrate-skill SKILL.md --trace skill`).
 
 ---
 
@@ -608,6 +639,8 @@ meridian migrate-skill <input> [options]
 | `--report <path>` | none | Write a per-skill migration report (`compiles`, added keys, repair attempts, edit count, line delta). |
 | `--batch` | false | Treat `<input>` as a directory; migrate every `SKILL.md` and emit a coverage matrix. |
 | `--force` | false | Overwrite an existing output file. |
+| `--trace <categories>` | (none) | Enable `ParserTrace` output; migration-specific logging is under the `skill` category |
+| `--trace-file <path>` | stderr | Write trace output to a file instead of stderr |
 
 ### Deterministic-only example
 

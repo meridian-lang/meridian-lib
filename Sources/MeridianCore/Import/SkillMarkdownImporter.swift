@@ -1,9 +1,14 @@
 import Foundation
 
 public struct SkillMarkdownImporter {
-    public init() {}
+    private let trace: ParserTrace
+
+    public init(trace: ParserTrace = .shared) {
+        self.trace = trace
+    }
 
     public func preview(_ markdown: String, name: String = "imported skill") -> String {
+        trace.log(.skill, "preview \"\(name)\": \(markdown.components(separatedBy: "\n").count) source line(s)")
         var output: [String] = [
             "---",
             "name: \(name)",

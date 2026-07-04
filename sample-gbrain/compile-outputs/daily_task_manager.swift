@@ -599,59 +599,6 @@ public struct DailyTaskManagerInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "DailyTaskManagerInput", parameters: [:])
 
-        // L27
-        let __meridianProseResults_L27 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Tasks stored as a brain page (`ops/tasks.md`) with structured format\n- Task lifecycle: add → in-progress → complete | defer\n- Priority levels: P0 (urgent), P1 (today), P2 (this week), P3 (backlog)\n- Completed tasks archived with completion date\n- Deferred tasks carry forward with reason",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.get", "page.search", "publish", "shell.run", "timeline.add"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L27 {
-            state.bind(__key, __value)
-        }
-        if __meridianShouldRun("progress:0.1:L35:C0") {
-            // L35
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain get ops/tasks"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L35:C0", state: state.snapshot())
-        }
-        // L39
-        let __meridianProseResults_L39 = try await runtime.executeProsePlan(
-            prose: "choose and apply the requested task action\nAdd: append a task with priority, description, due date, and a timeline entry\nComplete: mark the task as done and move it to the completed section with the date\nDefer: move the task to the next day or week with a reason\nRemove: delete the task from the list (rare; prefer complete or defer)\nReview: display all active tasks by priority",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.get", "page.search", "publish", "shell.run", "timeline.add"]
-        )
-        for (__key, __value) in __meridianProseResults_L39 {
-            state.bind(__key, __value)
-        }
-        if __meridianShouldRun("progress:0.3:L46:C0") {
-            // L46
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain put ops/tasks"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.3:L46:C0", state: state.snapshot())
-        }
-        // L74
-        let __meridianProseResults_L74 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Adding tasks without a priority level\n- Completing tasks without recording the completion date\n- Deferring tasks without a reason\n- Letting the task list grow unbounded (review weekly)\n- Storing tasks outside the brain (they should be searchable)",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.get", "page.search", "publish", "shell.run", "timeline.add"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L74 {
-            state.bind(__key, __value)
-        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

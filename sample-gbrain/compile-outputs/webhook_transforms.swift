@@ -599,48 +599,6 @@ public struct WebhookTransformsInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WebhookTransformsInput", parameters: [:])
 
-        // L25
-        let __meridianProseResults_L25 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- External events are transformed into brain pages with proper citations\n- Raw payloads are preserved (dead-letter queue if transform fails)\n- Entity extraction runs on every transformed event\n- Input sanitization: no raw HTML/script passes to brain pages\n- Error handling: transform failure logs raw payload, retries once",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.search", "publish", "shell.run", "timeline.add"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L25 {
-            state.bind(__key, __value)
-        }
-        // L33
-        let __meridianProseResults_L33 = try await runtime.executeProsePlan(
-            prose: "define and run a webhook transform\nMap the event schema to the brain page format, sanitizing HTML and escaping script content\nRegister the webhook URL with the external service\nOn each event, parse the payload, run the transform, write the page, extract entities, enrich, and add timeline entries\nOn a transform failure, log the raw payload to a dead-letter file, surface the error type, and retry once without losing events",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.search", "publish", "shell.run", "timeline.add"]
-        )
-        for (__key, __value) in __meridianProseResults_L33 {
-            state.bind(__key, __value)
-        }
-        if __meridianShouldRun("progress:0.2:L39:C0") {
-            // L39
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain sync"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L39:C0", state: state.snapshot())
-        }
-        // L71
-        let __meridianProseResults_L71 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Passing raw HTML/script to brain pages (XSS risk)\n- Silently dropping events when transform fails (use dead-letter queue)\n- Processing webhooks without entity extraction\n- Not sanitizing external input before brain writes",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.search", "publish", "shell.run", "timeline.add"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L71 {
-            state.bind(__key, __value)
-        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

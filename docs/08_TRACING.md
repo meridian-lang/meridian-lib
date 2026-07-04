@@ -194,11 +194,12 @@ trace.sink = .custom { line in myLogger.debug(line) }
 
 ## CLI integration
 
-`CompileCommand` creates a fresh `ParserTrace()` per compilation (via the shared
-`makeCLITrace` bootstrap in `CLISupport.swift`), configures it, then passes it
-through `Compiler.Options`. `compile` accepts both `--trace` and `--trace-file`;
-`check`, `verify`, and `run` accept `--trace` (all routed through the same
-bootstrap). `meridian trace categories` lists the valid category tokens:
+Every subcommand that runs the compiler or migration pipeline creates a fresh
+`ParserTrace()` per invocation (via the shared `makeCLITrace(spec:file:)`
+bootstrap in `CLISupport.swift`), configures it, then passes it down.
+`compile`, `check`, `verify`, `run`, `migrate-skill`, and `preview-skill` ALL
+accept both `--trace` and `--trace-file` (full parity — none of them are
+`--trace`-only). `meridian trace categories` lists the valid category tokens:
 
 ```swift
 let traceInstance = ParserTrace()
@@ -215,10 +216,15 @@ This does NOT touch `ParserTrace.shared` — each CLI invocation gets its own
 isolated instance.
 
 ```bash
-# Trace available on compile, check, verify, and run
+# Trace available on compile, check, verify, run, migrate-skill, preview-skill
 meridian check examples/order_processing.meridian --trace phrase.match
 meridian verify examples/order_processing.meridian --trace lowering
 meridian run examples/order_processing.meridian --trace all
+meridian migrate-skill SKILL.md --trace skill --trace-file /tmp/migrate.log
+meridian preview-skill SKILL.md --trace skill
+
+# --trace-file redirects to a file instead of stderr, on every one of the above
+meridian check examples/order_processing.meridian --trace all --trace-file /tmp/check.log
 ```
 
 ---
@@ -234,7 +240,16 @@ MeridianParser(symbols: st, trace: trace).parse(source, file: "order.meridian")
 StatementParser(symbols: st, trace: trace).parseBlock(lines)
 ExpressionParser(symbols: st, trace: trace).parse(text)
 ASTToIR(symbols: st, sourceFile: "order.meridian", trace: trace).lower(file)
+SwiftEmitter(options: emitterOpts, trace: trace).emitFile(workflows: workflows, …)
+ManifestEmitter(trace: trace).emit(…)
+SkillMigrator(compiler: compiler, vocabularies: vocabs, trace: trace).migrate(markdown, file: "skill.meri")
+SkillMarkdownImporter(trace: trace).preview(markdown, name: "…")
 ```
+
+`SkillMigrator` and `SkillMarkdownImporter` default `trace` to the owning
+`Compiler`'s trace / `.shared` respectively — never to `.silent()` — so a
+caller's `--trace`/`--trace-file` request is always honored, logged under the
+`.skill` category (`migrate "file.meri": …`).
 
 In unit tests you can pass an explicit `ParserTrace()` per test, or
 `ParserTrace.silent()` to suppress all output.

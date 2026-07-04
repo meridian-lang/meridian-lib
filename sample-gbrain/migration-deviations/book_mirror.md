@@ -2,9 +2,9 @@
 
 - Original: `book-mirror/SKILL.md`
 - Ported: `book_mirror.meri`
-- Tier: 3 (structural rewrite)
-- Similarity: 49%
-- Lines: 351 -> 352 (+180 / -179)
+- Tier: 1 (near-verbatim)
+- Similarity: 93%
+- Lines: 351 -> 351 (+26 / -26)
 
 ## Frontmatter
 - Added: (none)
@@ -12,30 +12,38 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 
 ## Metrics
-- Sections: 14/23 inert (61% inert ratio)
-- Operational inert: 0
+- Sections: 23/23 inert (100% inert ratio)
+- Operational inert: 8
 - Unclassified inert: 0
-- Inert categories: reference-documentation=13, template=1
-- Judgment: 7 blocks, 108 lines
+- Inert categories: normative-contract=1, operational-content=7, reference-documentation=14, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
 - L14 `What this does`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L26 `Trust contract (read this before running)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L44 `The pipeline`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L56 `1. Acquiring the book`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L74 `2. Text extraction`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L80 `EPUB`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
+- L113 `PDF`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L124 `Quality check`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L135 `3. Context gathering`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L140 `What to pull`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L158 `Assemble a context pack`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
+- L189 `4. Analysis: invoke `gbrain book-mirror``: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L218 `Model: Opus by default`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L225 `Cost gate`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L231 `5. PDF (optional)`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L241 `6. Fact-check and cross-link`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L262 `Quality bar (the bar)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L283 `Anti-patterns (do not do these)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L298 `Output checklist`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L309 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L330 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L318 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
+- L329 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L333 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
@@ -69,47 +77,20 @@
  
  ```
  1. ACQUIRE   → User has the EPUB/PDF locally (manual; book-acquisition is
-@@ -68,91 +68,91 @@
+@@ -68,7 +68,7 @@
  6. PDF       → Optional: render via skills/brain-pdf for delivery.
  ```
  
 -## 1. Acquiring the book
--
--book-acquisition (legal-grey-area downloader) was deliberately not shipped
--in this skill wave. The user drops the EPUB/PDF manually. Common paths the
--user might use:
--
--```bash
--# User-supplied path
--ls path/to/book.epub
--ls path/to/book.pdf
--
--# Or already in the brain repo (recommended for tracking)
--ls $BRAIN_DIR/media/books/
--```
--
--Resolve `$BRAIN_DIR` from the gbrain config (`gbrain config get sync.repo_path`)
--or accept it from the user.
--
++## 1. Acquiring the book (( inert ))
+ 
+ book-acquisition (legal-grey-area downloader) was deliberately not shipped
+ in this skill wave. The user drops the EPUB/PDF manually. Common paths the
+@@ -86,13 +86,13 @@
+ Resolve `$BRAIN_DIR` from the gbrain config (`gbrain config get sync.repo_path`)
+ or accept it from the user.
+ 
 -## 2. Text extraction
-+## 1. Acquiring the book (( role: procedure ))
-+
-+use judgment to follow the 1. Acquiring the book guidance:
-+  book-acquisition (legal-grey-area downloader) was deliberately not shipped
-+  in this skill wave. The user drops the EPUB/PDF manually. Common paths the
-+  user might use:
-+  
-+  ```bash
-+  # User-supplied path
-+  ls path/to/book.epub
-+  ls path/to/book.pdf
-+  
-+  # Or already in the brain repo (recommended for tracking)
-+  ls $BRAIN_DIR/media/books/
-+  ```
-+  
-+  Resolve `$BRAIN_DIR` from the gbrain config (`gbrain config get sync.repo_path`)
-+  or accept it from the user.
 +## 2. Text extraction (( inert ))
  
  Goal: one `.txt` file per chapter under a temp directory. The agent has
@@ -117,108 +98,29 @@
  extracted directory as input.
  
 -### EPUB
--
--```bash
--SLUG="this-book"                                # kebab-case
--WORK="$(mktemp -d)/$SLUG"
--mkdir -p "$WORK/chapters"
--unzip -o path/to/book.epub -d "$WORK/unpacked"
--
--# Find content files (XHTML/HTML), sorted (chapter order = sort order)
--find "$WORK/unpacked" -name "*.xhtml" -o -name "*.html" | sort > "$WORK/files.txt"
--
--# Strip HTML to text per chapter
--python3 - <<'PY'
--from bs4 import BeautifulSoup
--import os, sys
--work = os.environ['WORK']
--files = open(f'{work}/files.txt').read().splitlines()
--for i, path in enumerate(files, 1):
--    html = open(path, encoding='utf-8', errors='replace').read()
--    text = BeautifulSoup(html, 'html.parser').get_text('\n')
--    text = '\n'.join(line.strip() for line in text.splitlines() if line.strip())
--    with open(f'{work}/chapters/{i:02d}.txt', 'w') as f:
--        f.write(text)
--PY
--```
--
--If `bs4` is missing: `pip3 install beautifulsoup4 lxml`.
--
--Inspect the chapter files to identify which are real chapters vs front
--matter (TOC, copyright, acknowledgments). Often the EPUB ships one file
--per chapter; sometimes multiple chapters per file. Use
--`head -5 "$WORK/chapters/"*.txt` to spot-check.
--
++### EPUB (( inert ))
+ 
+ ```bash
+ SLUG="this-book"                                # kebab-case
+@@ -125,7 +125,7 @@
+ per chapter; sometimes multiple chapters per file. Use
+ `head -5 "$WORK/chapters/"*.txt` to spot-check.
+ 
 -### PDF
--
--```bash
--pdftotext -layout path/to/book.pdf "$WORK/full.txt"
--```
--
--Then split by chapter heading (look for "Chapter N", "CHAPTER N", or
--all-caps title lines) using `awk` or `python`. If the PDF is a scan with
--no embedded text, fall back to OCR via `skills/brain-pdf` or another
--vision tool.
--
++### PDF (( inert ))
+ 
+ ```bash
+ pdftotext -layout path/to/book.pdf "$WORK/full.txt"
+@@ -136,7 +136,7 @@
+ no embedded text, fall back to OCR via `skills/brain-pdf` or another
+ vision tool.
+ 
 -### Quality check
--
-+### EPUB (( role: procedure ))
-+
-+use judgment to follow the EPUB guidance:
-+  ```bash
-+  SLUG="this-book"                                # kebab-case
-+  WORK="$(mktemp -d)/$SLUG"
-+  mkdir -p "$WORK/chapters"
-+  unzip -o path/to/book.epub -d "$WORK/unpacked"
-+  
-+  # Find content files (XHTML/HTML), sorted (chapter order = sort order)
-+  find "$WORK/unpacked" -name "*.xhtml" -o -name "*.html" | sort > "$WORK/files.txt"
-+  
-+  # Strip HTML to text per chapter
-+  python3 - <<'PY'
-+  from bs4 import BeautifulSoup
-+  import os, sys
-+  work = os.environ['WORK']
-+  files = open(f'{work}/files.txt').read().splitlines()
-+  for i, path in enumerate(files, 1):
-+      html = open(path, encoding='utf-8', errors='replace').read()
-+      text = BeautifulSoup(html, 'html.parser').get_text('\n')
-+      text = '\n'.join(line.strip() for line in text.splitlines() if line.strip())
-+      with open(f'{work}/chapters/{i:02d}.txt', 'w') as f:
-+          f.write(text)
-+  PY
-+  ```
-+  
-+  If `bs4` is missing: `pip3 install beautifulsoup4 lxml`.
-+  
-+  Inspect the chapter files to identify which are real chapters vs front
-+  matter (TOC, copyright, acknowledgments). Often the EPUB ships one file
-+  per chapter; sometimes multiple chapters per file. Use
-+  `head -5 "$WORK/chapters/"*.txt` to spot-check.
-+### PDF (( role: procedure ))
-+  
-+use judgment to follow the PDF guidance:
-+  ```bash
-+  pdftotext -layout path/to/book.pdf "$WORK/full.txt"
-+  ```
-+  
-+  Then split by chapter heading (look for "Chapter N", "CHAPTER N", or
-+  all-caps title lines) using `awk` or `python`. If the PDF is a scan with
-+  no embedded text, fall back to OCR via `skills/brain-pdf` or another
-+  vision tool.
 +### Quality check (( inert ))
-+  
+ 
  For each chapter file:
--
--- Word count > 1500 (typical chapter range 2k–8k words).
--- No HTML tags.
--- Paragraphs preserved with `\n\n`.
--
-+  
-+  item: Word count > 1500 (typical chapter range 2k–8k words).
-+  item: No HTML tags.
-+  item: Paragraphs preserved with `\n\n`.
-+  
+ 
+@@ -147,12 +147,12 @@
  Save a `chapters/INDEX.md` mapping chapter number → title → file → word
  count for reference.
  
@@ -233,169 +135,56 @@
  
  1. **Templates: USER.md and SOUL.md** if the user maintains them
     (gbrain ships templates at `templates/USER.md` and `templates/SOUL.md`;
-@@ -170,90 +170,90 @@
+@@ -170,7 +170,7 @@
  5. **Standing patterns** — anything in the user's reflections or
     originals that's been recurring.
  
 -### Assemble a context pack
--
--Write everything to a single file the CLI can read:
--
--```bash
--CONTEXT="$WORK/context.md"
--{
--  echo "## USER.md (if any)"
--  [ -f "$BRAIN_DIR/USER.md" ] && cat "$BRAIN_DIR/USER.md"
--  echo
--  echo "## SOUL.md (if any)"
--  [ -f "$BRAIN_DIR/SOUL.md" ] && cat "$BRAIN_DIR/SOUL.md"
--  echo
--  echo "## Recent reflections (last 14 days)"
--  # Pull recent daily reflections — adapt to the user's filing scheme
--  # ...
--  echo
--  echo "## Topic-relevant brain pages"
--  # gbrain query the book's key themes, embed top results
--  # ...
--  echo
--  echo "## Themes & cruxes"
--  # A 1-page summary, written by the agent, calling out:
--  # - What's currently active in the user's life that this book intersects
--  # - Specific quotes from the user that map to book themes
--  # - People and dates that should appear in the right column
--} > "$CONTEXT"
--```
--
--Make this dense. It's read by every chapter subagent.
--
++### Assemble a context pack (( inert ))
+ 
+ Write everything to a single file the CLI can read:
+ 
+@@ -201,7 +201,7 @@
+ 
+ Make this dense. It's read by every chapter subagent.
+ 
 -## 4. Analysis: invoke `gbrain book-mirror`
--
--```bash
--gbrain book-mirror \
--  --chapters-dir "$WORK/chapters" \
--  --context-file "$CONTEXT" \
--  --slug "$SLUG" \
--  --title "Book Title Goes Here" \
--  --author "Author Name" \
--  --model claude-opus-4-7
--```
--
--The CLI:
--
--- Validates inputs and loads chapter files.
--- Prints a cost estimate (~$0.30/chapter at Opus) and prompts to confirm.
--- Submits N child subagent jobs with read-only `allowed_tools`.
--- Waits for every child to complete.
--- Reads each child's `job.result` (the markdown analysis text).
--- Assembles all chapters into one page with frontmatter + intro + per-chapter
--  sections + closing.
--- Writes ONE `put_page` to `media/books/<slug>-personalized.md`.
--- Reports a JSON envelope on stdout:
--  `{"slug": "...", "chapters_total": N, "chapters_completed": N, "chapters_failed": 0}`.
--
--If any chapter failed, the CLI exits 1 and the user can re-run — idempotency
--keys (`book-mirror:<slug>:ch-<N>`) deduplicate completed chapters at the
--queue level, so retry is cheap.
--
++## 4. Analysis: invoke `gbrain book-mirror` (( inert ))
+ 
+ ```bash
+ gbrain book-mirror \
+@@ -230,20 +230,20 @@
+ keys (`book-mirror:<slug>:ch-<N>`) deduplicate completed chapters at the
+ queue level, so retry is cheap.
+ 
 -### Model: Opus by default
 -
-+### Assemble a context pack (( role: procedure ))
-+
-+use judgment to follow the Assemble a context pack guidance:
-+  Write everything to a single file the CLI can read:
-+  
-+  ```bash
-+  CONTEXT="$WORK/context.md"
-+  {
-+    echo "## USER.md (if any)"
-+    [ -f "$BRAIN_DIR/USER.md" ] && cat "$BRAIN_DIR/USER.md"
-+    echo
-+    echo "## SOUL.md (if any)"
-+    [ -f "$BRAIN_DIR/SOUL.md" ] && cat "$BRAIN_DIR/SOUL.md"
-+    echo
-+    echo "## Recent reflections (last 14 days)"
-+    # Pull recent daily reflections — adapt to the user's filing scheme
-+    # ...
-+    echo
-+    echo "## Topic-relevant brain pages"
-+    # gbrain query the book's key themes, embed top results
-+    # ...
-+    echo
-+    echo "## Themes & cruxes"
-+    # A 1-page summary, written by the agent, calling out:
-+    # - What's currently active in the user's life that this book intersects
-+    # - Specific quotes from the user that map to book themes
-+    # - People and dates that should appear in the right column
-+  } > "$CONTEXT"
-+  ```
-+  
-+  Make this dense. It's read by every chapter subagent.
-+## 4. Analysis: invoke `gbrain book-mirror` (( role: procedure ))
-+
-+use judgment to follow the 4. Analysis: invoke `gbrain book-mirror` guidance:
-+  ```bash
-+  gbrain book-mirror \
-+    --chapters-dir "$WORK/chapters" \
-+    --context-file "$CONTEXT" \
-+    --slug "$SLUG" \
-+    --title "Book Title Goes Here" \
-+    --author "Author Name" \
-+    --model claude-opus-4-7
-+  ```
-+  
-+  The CLI:
-+  
-+  item: Validates inputs and loads chapter files.
-+  item: Prints a cost estimate (~$0.30/chapter at Opus) and prompts to confirm.
-+  item: Submits N child subagent jobs with read-only `allowed_tools`.
-+  item: Waits for every child to complete.
-+  item: Reads each child's `job.result` (the markdown analysis text).
-+  item: Assembles all chapters into one page with frontmatter + intro + per-chapter
-+    sections + closing.
-+  item: Writes ONE `put_page` to `media/books/<slug>-personalized.md`.
-+  item: Reports a JSON envelope on stdout:
-+    `{"slug": "...", "chapters_total": N, "chapters_completed": N, "chapters_failed": 0}`.
-+  
-+  If any chapter failed, the CLI exits 1 and the user can re-run — idempotency
-+  keys (`book-mirror:<slug>:ch-<N>`) deduplicate completed chapters at the
-+  queue level, so retry is cheap.
+-The default model is `claude-opus-4-7`. Sonnet works (use `--model
+-claude-sonnet-4-6`) but the right-column quality drops noticeably — the
 +### Model: Opus by default (( inert ))
-+  
- The default model is `claude-opus-4-7`. Sonnet works (use `--model
- claude-sonnet-4-6`) but the right-column quality drops noticeably — the
++
++The default model is `claude-opus-4-7`. Sonnet works (use ``--model
++claude-sonnet-4-6``) but the right-column quality drops noticeably — the
  texture that makes the analysis read like a therapist who knows the user
  needs Opus-grade reasoning.
--
+ 
 -### Cost gate
--
-+  
 +### Cost gate (( inert ))
-+  
+ 
  The CLI refuses to spend in a non-TTY context without `--yes`. CI / scripted
  invocations must pass `--yes` explicitly. TTY users get a `[y/N]` prompt
  before submission.
  
 -## 5. PDF (optional)
--
--After the brain page is written, render to PDF using `skills/brain-pdf`:
--
--```bash
--gbrain put_page  # already done by the CLI; nothing to add here
--# Then invoke brain-pdf:
--# (see skills/brain-pdf/SKILL.md for the make-pdf invocation)
--```
--
++## 5. PDF (optional) (( inert ))
+ 
+ After the brain page is written, render to PDF using `skills/brain-pdf`:
+ 
+@@ -253,7 +253,7 @@
+ # (see skills/brain-pdf/SKILL.md for the make-pdf invocation)
+ ```
+ 
 -## 6. Fact-check and cross-link
-+## 5. PDF (optional) (( role: procedure ))
-+
-+use judgment to follow the 5. PDF (optional) guidance:
-+  After the brain page is written, render to PDF using `skills/brain-pdf`:
-+  
-+  ```bash
-+  gbrain put_page  # already done by the CLI; nothing to add here
-+  # Then invoke brain-pdf:
-+  # (see skills/brain-pdf/SKILL.md for the make-pdf invocation)
-+  ```
 +## 6. Fact-check and cross-link (( inert ))
  
  After the page lands, run a fact-check pass on factual claims about the
@@ -418,73 +207,45 @@
  
  - ❌ **Skimming chapters.** Standing instruction: preserve detail.
  - ❌ **Generic right column.** "This might apply if you've ever felt…" →
-@@ -310,18 +310,18 @@
+@@ -310,7 +310,7 @@
  - ❌ **Truncating the LEFT column.** The book's actual content needs to
    survive.
  
 -## Output checklist
--
--- [ ] Book file exists locally (path known).
--- [ ] Chapter texts under `$WORK/chapters/*.txt` with sane word counts.
--- [ ] Context pack at `$WORK/context.md` is dense.
--- [ ] `gbrain book-mirror --chapters-dir … --context-file … --slug … --title …` returned exit 0.
--- [ ] `media/books/<slug>-personalized.md` exists in the brain.
--- [ ] Fact-check pass complete (no errors against USER.md or other source-of-truth pages).
--- [ ] Cross-links added from referenced people/companies.
--- [ ] Optional: PDF rendered via brain-pdf and delivered.
--
++## Output checklist (( inert ))
+ 
+ - [ ] Book file exists locally (path known).
+ - [ ] Chapter texts under `$WORK/chapters/*.txt` with sane word counts.
+@@ -321,7 +321,7 @@
+ - [ ] Cross-links added from referenced people/companies.
+ - [ ] Optional: PDF rendered via brain-pdf and delivered.
+ 
 -## Related skills
-+## Output checklist (( role: procedure ))
-+
-+use judgment to follow the Output checklist guidance:
-+  item: [ ] Book file exists locally (path known).
-+  item: [ ] Chapter texts under `$WORK/chapters/*.txt` with sane word counts.
-+  item: [ ] Context pack at `$WORK/context.md` is dense.
-+  item: [ ] `gbrain book-mirror --chapters-dir … --context-file … --slug … --title …` returned exit 0.
-+  item: [ ] `media/books/<slug>-personalized.md` exists in the brain.
-+  item: [ ] Fact-check pass complete (no errors against USER.md or other source-of-truth pages).
-+  item: [ ] Cross-links added from referenced people/companies.
-+  item: [ ] Optional: PDF rendered via brain-pdf and delivered.
 +## Related skills (( inert ))
  
  - `skills/brain-pdf/SKILL.md` — render the personalized page to PDF.
  - `skills/strategic-reading/SKILL.md` — read a book through a specific
-@@ -330,22 +330,23 @@
+@@ -330,7 +330,7 @@
    rather than books.
  
  
 -## Contract
--
--This skill guarantees:
--
--- Routing matches the canonical triggers in the frontmatter.
--- Output written under the directories listed in `writes_to:` (when applicable).
--- Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
--- Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
--
--The full behavior contract is documented in the body sections above; this section exists for the conformance test.
-+## Contract (( role: procedure ))
-+
-+> This skill guarantees:
-+
-+!!! checklist (( ai-autonomy ))
-+- [ ] Routing matches the canonical triggers in the frontmatter.
-+- [ ] Output written under the directories listed in `writes_to:` (when applicable).
-+- [ ] Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
-+- [ ] Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
-+
-+> The full behavior contract is documented in the body sections above; this section exists for the conformance test.
++## Contract (( inert, role: invariants ))
  
- ## Output Format
+ This skill guarantees:
+ 
+@@ -341,11 +341,11 @@
+ 
+ The full behavior contract is documented in the body sections above; this section exists for the conformance test.
+ 
+-## Output Format
++## Output Format (( inert, role: template ))
  
  The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
  
 -## Anti-Patterns
--
--The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing.
--
-+## Anti-Patterns (( role: procedure ))
-+
-+> The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing.
-+
++## Anti-Patterns (( inert, role: prohibitions ))
+ 
+ The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing.
+ 
 ```

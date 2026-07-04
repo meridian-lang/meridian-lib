@@ -2,9 +2,9 @@
 
 - Original: `brain-pdf/SKILL.md`
 - Ported: `brain_pdf.meri`
-- Tier: 2 (light edits)
-- Similarity: 61%
-- Lines: 187 -> 189 (+74 / -72)
+- Tier: 1 (near-verbatim)
+- Similarity: 94%
+- Lines: 187 -> 187 (+12 / -12)
 
 ## Frontmatter
 - Added: (none)
@@ -12,23 +12,27 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 
 ## Metrics
-- Sections: 7/13 inert (54% inert ratio)
-- Operational inert: 0
+- Sections: 12/13 inert (92% inert ratio)
+- Operational inert: 4
 - Unclassified inert: 0
-- Inert categories: reference-documentation=6, template=1
-- Judgment: 2 blocks, 38 lines
+- Inert categories: normative-contract=1, operational-content=2, operational-procedure=1, reference-documentation=7, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
 - L8 `The rule`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L14 `What this does`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L25 `Prerequisite: gstack make-pdf`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
+- L44 `Workflow`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
+- L56 `Invocation`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L107 `Defaults: NO cover, NO TOC`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L114 `Font requirements`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L127 `Delivery`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L154 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L175 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L141 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L153 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L162 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
+- L173 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
@@ -51,128 +55,33 @@
  
  Renders a brain page (markdown with frontmatter) into a
  publication-quality PDF using the gstack `make-pdf` binary. Output is
-@@ -33,25 +33,25 @@
+@@ -33,7 +33,7 @@
  - Producing a briefing or report with running headers and page numbers
  - Archiving a long-form essay in a portable format
  
 -## Prerequisite: gstack make-pdf
-+## Prerequisite: gstack make-pdf (( role: procedure ))
++## Prerequisite: gstack make-pdf (( inert ))
  
--This skill depends on the gstack `make-pdf` binary at:
--
--```
--$HOME/.claude/skills/gstack/make-pdf/dist/pdf
--```
--
--The user must have gstack co-installed. If absent, the skill cannot run.
--A future v0.26+ may bundle a fallback PDF renderer; for v0.25.1 gstack
--is a soft prereq.
--
--Verify it exists before invoking:
--
--```bash
--P="$HOME/.claude/skills/gstack/make-pdf/dist/pdf"
--[ -x "$P" ] || { echo "make-pdf not installed; install gstack" >&2; exit 1; }
--```
--
-+use judgment to follow the Prerequisite: gstack make-pdf guidance:
-+  This skill depends on the gstack `make-pdf` binary at:
-+  
-+  ```
-+  $HOME/.claude/skills/gstack/make-pdf/dist/pdf
-+  ```
-+  
-+  The user must have gstack co-installed. If absent, the skill cannot run.
-+  A future v0.26+ may bundle a fallback PDF renderer; for v0.25.1 gstack
-+  is a soft prereq.
-+  
-+  Verify it exists before invoking:
-+  
-+  ```bash
-+  P="$HOME/.claude/skills/gstack/make-pdf/dist/pdf"
-+  [ -x "$P" ] || { echo "make-pdf not installed; install gstack" >&2; exit 1; }
-+  ```
- ## Workflow
+ This skill depends on the gstack `make-pdf` binary at:
+ 
+@@ -52,7 +52,7 @@
+ [ -x "$P" ] || { echo "make-pdf not installed; install gstack" >&2; exit 1; }
+ ```
+ 
+-## Workflow
++## Workflow (( inert, role: procedure ))
  
  ```
-@@ -64,42 +64,42 @@
+ 1. RESOLVE  → Confirm the brain page exists (gbrain get <slug>).
+@@ -64,7 +64,7 @@
                they fail silently).
  ```
  
 -## Invocation
-+## Invocation (( role: procedure ))
- 
--```bash
--SLUG="path/to/page"
--P="$HOME/.claude/skills/gstack/make-pdf/dist/pdf"
--
--# 1. Confirm the page exists.
--gbrain get "$SLUG" > /dev/null || { echo "Page $SLUG not found" >&2; exit 1; }
--
--# 2. Get the raw markdown. Two paths: read from the brain repo (if user
--#    syncs locally) OR ask gbrain for the body via the API.
--BRAIN_DIR=$(gbrain config get sync.repo_path 2>/dev/null || echo)
--if [ -n "$BRAIN_DIR" ] && [ -f "$BRAIN_DIR/$SLUG.md" ]; then
--  RAW="$BRAIN_DIR/$SLUG.md"
--else
--  RAW=$(mktemp /tmp/brain-page-XXXXXX.md)
--  gbrain get "$SLUG" --raw > "$RAW"   # whatever flag exposes raw body
--fi
--
--# 3. Strip YAML frontmatter — sed: skip the opening '---' through the
--#    closing '---' (lines 1..N), then keep everything after.
--CLEAN=$(mktemp /tmp/brain-page-clean-XXXXXX.md)
--sed '1{/^---$/!q}; /^---$/,/^---$/d' "$RAW" > "$CLEAN"
--
--# 4. Render. NO --cover, NO --toc by default — they look corporate
--#    and waste space. Add them only if explicitly requested.
--OUT="/tmp/$(basename "$SLUG").pdf"
--CONTAINER=1 "$P" generate "$CLEAN" "$OUT"
--
--echo "Rendered: $OUT"
--```
--
--`CONTAINER=1` is mandatory in containerized environments — it tells
--Playwright to skip Chromium sandboxing. Harmless on bare-metal.
--
--## Common patterns
-+use judgment to follow the Invocation guidance:
-+  ```bash
-+  SLUG="path/to/page"
-+  P="$HOME/.claude/skills/gstack/make-pdf/dist/pdf"
-+  
-+  # 1. Confirm the page exists.
-+  gbrain get "$SLUG" > /dev/null || { echo "Page $SLUG not found" >&2; exit 1; }
-+  
-+  # 2. Get the raw markdown. Two paths: read from the brain repo (if user
-+  #    syncs locally) OR ask gbrain for the body via the API.
-+  BRAIN_DIR=$(gbrain config get sync.repo_path 2>/dev/null || echo)
-+  if [ -n "$BRAIN_DIR" ] && [ -f "$BRAIN_DIR/$SLUG.md" ]; then
-+    RAW="$BRAIN_DIR/$SLUG.md"
-+  else
-+    RAW=$(mktemp /tmp/brain-page-XXXXXX.md)
-+    gbrain get "$SLUG" --raw > "$RAW"   # whatever flag exposes raw body
-+  fi
-+  
-+  # 3. Strip YAML frontmatter — sed: skip the opening '---' through the
-+  #    closing '---' (lines 1..N), then keep everything after.
-+  CLEAN=$(mktemp /tmp/brain-page-clean-XXXXXX.md)
-+  sed '1{/^---$/!q}; /^---$/,/^---$/d' "$RAW" > "$CLEAN"
-+  
-+  # 4. Render. NO --cover, NO --toc by default — they look corporate
-+  #    and waste space. Add them only if explicitly requested.
-+  OUT="/tmp/$(basename "$SLUG").pdf"
-+  CONTAINER=1 "$P" generate "$CLEAN" "$OUT"
-+  
-+  echo "Rendered: $OUT"
-+  ```
-+  
-+  `CONTAINER=1` is mandatory in containerized environments — it tells
-+  Playwright to skip Chromium sandboxing. Harmless on bare-metal.
-+## Common patterns (( role: procedure ))
++## Invocation (( inert ))
  
  ```bash
- # Default — clean PDF, no cover, no TOC
+ SLUG="path/to/page"
 @@ -115,14 +115,14 @@
  CONTAINER=1 "$P" generate --title "Custom Title" --author "Custom Author" "$CLEAN" "$OUT"
  ```
@@ -199,27 +108,17 @@
  
  After rendering, deliver via the agent's preferred channel:
  
-@@ -149,19 +149,20 @@
+@@ -149,7 +149,7 @@
  can also see it on GitHub / locally. The PDF is a rendering; the source
  is the artifact.
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
++## Anti-Patterns (( inert, role: prohibitions ))
  
--- ❌ Generating a PDF without first confirming the brain page exists.
-+!!! checklist (( ai-autonomy ))
-+- [ ] ❌ Generating a PDF without first confirming the brain page exists.
+ - ❌ Generating a PDF without first confirming the brain page exists.
    No source = no PDF.
--- ❌ Skipping the frontmatter strip. The renderer dumps frontmatter as
-+- [ ] ❌ Skipping the frontmatter strip. The renderer dumps frontmatter as
-   raw text on the first page; ugly.
--- ❌ Skipping emoji sanitization. Emoji that don't map to the rendering
-+- [ ] ❌ Skipping emoji sanitization. Emoji that don't map to the rendering
-   font show up as `□` boxes.
--- ❌ Adding `--cover` or `--toc` by default. Off unless asked.
--- ❌ Using raw `MEDIA:` tags for Telegram delivery. Use the `message`
-+- [ ] ❌ Adding `--cover` or `--toc` by default. Off unless asked.
-+- [ ] ❌ Using raw `MEDIA:` tags for Telegram delivery. Use the `message`
+@@ -161,7 +161,7 @@
+ - ❌ Using raw `MEDIA:` tags for Telegram delivery. Use the `message`
    tool with `filePath`.
  
 -## Related skills
@@ -227,29 +126,22 @@
  
  - `skills/book-mirror/SKILL.md` — produces a brain page that's a
    natural input to brain-pdf (chapter-by-chapter personalized analysis).
-@@ -170,16 +171,17 @@
+@@ -170,7 +170,7 @@
    HTML (different rendering target).
  
  
 -## Contract
-+## Contract (( role: procedure ))
++## Contract (( inert, role: invariants ))
  
--This skill guarantees:
-+> This skill guarantees:
+ This skill guarantees:
  
--- Routing matches the canonical triggers in the frontmatter.
--- Output written under the directories listed in `writes_to:` (when applicable).
--- Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
--- Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
-+!!! checklist (( ai-autonomy ))
-+- [ ] Routing matches the canonical triggers in the frontmatter.
-+- [ ] Output written under the directories listed in `writes_to:` (when applicable).
-+- [ ] Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed.
-+- [ ] Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references.
+@@ -181,7 +181,7 @@
  
--The full behavior contract is documented in the body sections above; this section exists for the conformance test.
-+> The full behavior contract is documented in the body sections above; this section exists for the conformance test.
+ The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  
- ## Output Format
+-## Output Format
++## Output Format (( inert, role: template ))
+ 
+ The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
  
 ```

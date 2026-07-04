@@ -3,8 +3,8 @@ import Foundation
 // MARK: - ConditionClassifier
 //
 // Shared deterministic classification of a one-line condition into:
-//   • checkable      — parses to a comparison/logical over concrete operands
-//                      (lowers to a real `assert` / precondition).
+//   • checkable      — parses to a comparison/logical/quantifier over concrete
+//                      operands (lowers to a real `assert` / precondition).
 //   • dispatchPhrase  — reads as a descriptive intent (no copula/comparison);
 //                      used as a literal applicability/dispatch phrase.
 //   • fuzzy          — reads as a condition (has a copula/comparison marker) but
@@ -29,8 +29,15 @@ struct ConditionClassifier {
     func classify(_ text: String) -> Classification {
         let parser = ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon)
         let expr = parser.parse(text)
-        if isCheckable(expr) { return .checkable }
-        if readsAsCondition(text) { return .fuzzy }
+        if isCheckable(expr) {
+            trace.log(.statement, "condition(\"\(text)\") → checkable")
+            return .checkable
+        }
+        if readsAsCondition(text) {
+            trace.log(.statement, "condition(\"\(text)\") → fuzzy (reads as condition but not structurally checkable)")
+            return .fuzzy
+        }
+        trace.log(.statement, "condition(\"\(text)\") → dispatchPhrase")
         return .dispatchPhrase(text)
     }
 
@@ -70,6 +77,8 @@ struct ConditionClassifier {
             case .and, .or: return !parts.isEmpty && parts.allSatisfy(isCheckable)
             case .not:      return parts.first.map(isCheckable) ?? false
             }
+        case .quantified:
+            return true
         default:
             return false
         }

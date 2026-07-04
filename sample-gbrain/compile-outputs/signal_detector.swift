@@ -601,26 +601,6 @@ public struct SignalDetectorInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SignalDetectorInput", parameters: [:])
 
-        // L40
-        let __meridianProseResults_L40 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Fires on every message (no exceptions unless purely operational)\n- Runs in parallel (spawned, never blocks main response)\n- Captures ideas with the user's EXACT phrasing (no paraphrasing)\n- Detects entity mentions and creates/enriches brain pages\n- Logs a one-line summary of what was captured\n- Back-links all entity mentions (Iron Law)\n- Citations on every fact written",
-            snapshot: state.snapshot(),
-            scopedTools: ["add_link", "add_timeline_entry", "get_page", "link.add", "page.get", "page.search", "publish", "put_page", "query", "search", "shell.run", "timeline.add"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L40 {
-            state.bind(__key, __value)
-        }
-        // L60
-        let __meridianProseResults_L60 = try await runtime.executeProsePlan(
-            prose: "follow the Phase 1: Idea/Observation Detection (PRIMARY) guidance\nWhen the user expresses a novel thought, observation, thesis, or framework:\nitem: If it's the user's **original thinking** (they generated it) → create/update `originals/{slug}`\nitem: If it's a **world concept** they're referencing → create/update `concepts/{slug}`\nitem: If it's a **product or business idea** → create/update `ideas/{slug}`\n**Capture exact phrasing.** The user's language IS the insight. Don't paraphrase\n**Cross-linking (MANDATORY):** Every original MUST link to related people, companies,\nmeetings, and concepts. An original without cross-links is a dead original\nuse judgment to follow the Phase 2: Entity Detection (SECONDARY) guidance:\nExtract entity mentions (people, companies, media titles)\nFor each entity:\nitem: `gbrain search \"name\"` — does a page exist?\nitem: If NO page → check notability. If notable, create page with enrichment\nitem: If page exists but THIN → trigger enrich\nitem: If page exists and RICH → no action\nFor new FACTS with specific dates → call `gbrain timeline-add <slug> <date> \"<summary>\"`\n**Auto-link (v0.10.1):** When you write/update an originals or ideas page that\nreferences a person or company, the auto-link post-hook on `put_page`\nautomatically creates the link from the new page to that entity. You don't\nneed to call `gbrain link` manually. Timeline entries still need explicit calls\nuse judgment to follow the Phase 3: Signal Logging guidance:\nAlways log a one-line summary:\nitem: `Signals: 0 ideas, 0 entities, 0 facts (skipped: operational)`\nitem: `Signals: 1 idea (captured → originals/x), 2 entities (enriched → people/y, companies/z)`\nThis makes the ambient capture loop debuggable\nchecklist:ai-autonomy:QmxvY2tpbmcgdGhlIG1haW4gcmVzcG9uc2UgdG8gd2FpdCBmb3Igc2lnbmFsIGRldGVjdGlvbiB0byBjb21wbGV0ZQpQYXJhcGhyYXNpbmcgdGhlIHVzZXIncyBvcmlnaW5hbCB0aGlua2luZyBpbnN0ZWFkIG9mIGNhcHR1cmluZyBleGFjdCBwaHJhc2luZwpDcmVhdGluZyBwYWdlcyBmb3Igbm9uLW5vdGFibGUgZW50aXRpZXMgKG9uZS1vZmYgbWVudGlvbnMpClNraXBwaW5nIGJhY2stbGlua3MgYWZ0ZXIgY3JlYXRpbmcvdXBkYXRpbmcgcGFnZXMKUnVubmluZyBvbiBwdXJlbHkgb3BlcmF0aW9uYWwgbWVzc2FnZXMgKCJvayIsICJ0aGFua3MiLCAiZG8gaXQiKQ==",
-            snapshot: state.snapshot(),
-            scopedTools: ["add_link", "add_timeline_entry", "get_page", "link.add", "page.get", "page.search", "publish", "put_page", "query", "search", "shell.run", "timeline.add"]
-        )
-        for (__key, __value) in __meridianProseResults_L60 {
-            state.bind(__key, __value)
-        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

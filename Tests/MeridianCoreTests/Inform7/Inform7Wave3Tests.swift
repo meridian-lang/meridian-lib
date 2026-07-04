@@ -484,11 +484,11 @@ struct DescriptionTests3C {
         #expect(out.contains("state.bind(\"assigned\", state.get(\"user.task\"))"), Comment(rawValue: out))
     }
 
-    @Test("a relation operand that is not in scope is a sourced error listing in-scope names")
-    func operandOutOfScopeRejected() {
+    @Test("a relation operand that is not in scope is a sourced commandHoleOutOfScope error naming in-scope candidates")
+    func operandOutOfScopeRejected() throws {
         // `the owner` is neither a parameter nor an earlier bind — it must be a
         // compile error, not a silent `state.get("owner") -> null` at runtime.
-        let err = #expect(throws: CompilerError.self) {
+        let caught = #expect(throws: CompilerError.self) {
             _ = try wave3Compile("""
             ---
             name: verify
@@ -500,10 +500,16 @@ struct DescriptionTests3C {
                 complete with reason "ok".
             """)
         }
-        if case .semanticError(let message, _)? = err {
-            #expect(message.contains("not in scope"), Comment(rawValue: message))
-            #expect(message.contains("In-scope names"), Comment(rawValue: message))
-        }
+        let err = try #require(caught)
+        let diags = err.diagnostics
+        #expect(diags.count == 1)
+        let diag = try #require(diags.first)
+        #expect(diag.code == .commandHoleOutOfScope, Comment(rawValue: "\(diag.code)"))
+        #expect(diag.message.contains("owner"), Comment(rawValue: diag.message))
+        // The scope's only in-bounds name is the workflow parameter `page` —
+        // never bare, always a suggestion or a candidate-list note (Pillar 3).
+        #expect(!diag.suggestions.isEmpty || !diag.notes.isEmpty,
+                Comment(rawValue: "\(diag)"))
     }
 
     @Test("an in-scope operand (parameter or earlier bind) passes validation")

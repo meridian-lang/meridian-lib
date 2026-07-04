@@ -57,7 +57,10 @@ struct RuleInjector {
                 switch rule {
                 case .invariant(let kind, let filter, let actionText, let sourceLine, let originalText):
                     if verbAndSubjectMatch(actionText: actionText, subjectKind: kind, workflow: workflow) {
-                        if let cond = buildInvariantCondition(filter: filter) {
+                        if let cond = try buildInvariantCondition(
+                            filter: filter,
+                            sourceRange: SourceRange(file: sourceFile, line: sourceLine, column: 0)
+                        ) {
                             prepended.append(.assert(AssertIR(
                                 condition: cond,
                                 message: originalText,
@@ -70,12 +73,13 @@ struct RuleInjector {
 
                 case .parameterGuard(let kind, let actionText, let predicate, let sourceLine, let originalText):
                     if verbAndSubjectMatch(actionText: actionText, subjectKind: kind, workflow: workflow) {
-                        let negated = IRExpression.logical(.not, [lowerExprSimple(predicate)])
+                        let sr = SourceRange(file: sourceFile, line: sourceLine, column: 0)
+                        let negated = IRExpression.logical(.not, [try lowerExprSimple(predicate, sourceRange: sr)])
                         prepended.append(.assert(AssertIR(
                             condition: negated,
                             message: originalText,
                             otherwiseAction: nil,
-                            sourceRange: SourceRange(file: sourceFile, line: sourceLine, column: 0)
+                            sourceRange: sr
                         )))
                         attached.insert(rIdx)
                     }
@@ -110,7 +114,7 @@ struct RuleInjector {
                         ) {
                             let sr = SourceRange(file: sourceFile, line: sourceLine, column: 0)
                             if let filter = filter {
-                                let cond = lowerExprSimple(filter)
+                                let cond = try lowerExprSimple(filter, sourceRange: sr)
                                 let then = IRBlock(statements: [.wait(waitIR)], sourceRange: sr)
                                 prepended.append(.branch(BranchIR(
                                     condition: .predicate(cond),
@@ -137,7 +141,10 @@ struct RuleInjector {
                     //     matches a workflow that operates on an order).
                     if permissionMatches(actorKind: kind, allowedAction: allowedAction, workflow: workflow) {
                         if isBounded, let conditions = conditions {
-                            let gateExpr = lowerExprSimple(conditions)
+                            let gateExpr = try lowerExprSimple(
+                                conditions,
+                                sourceRange: SourceRange(file: sourceFile, line: sourceLine, column: 0)
+                            )
                             insertGateAtZero = .assert(AssertIR(
                                 condition: gateExpr,
                                 message: "Permission required: \(originalText)",
@@ -180,7 +187,7 @@ struct RuleInjector {
             unattachedRules.append((rule, "no workflow matched the rule's action"))
         }
 
-        result = applyPermissions(rules: rules, to: result, sourceFile: sourceFile)
+        result = try applyPermissions(rules: rules, to: result, sourceFile: sourceFile)
         return result
     }
 
@@ -204,27 +211,28 @@ struct RuleInjector {
 
     // MARK: - Permission softening
 
-    private func applyPermissions(rules: [ParsedRule], to workflows: [IRWorkflow], sourceFile: String) -> [IRWorkflow] {
+    private func applyPermissions(rules: [ParsedRule], to workflows: [IRWorkflow], sourceFile: String) throws -> [IRWorkflow] {
         let permissions = rules.compactMap { rule -> ParsedRule? in
             if case .permission = rule { return rule } else { return nil }
         }
         guard !permissions.isEmpty else { return workflows }
 
-        return workflows.map { workflow in
+        return try workflows.map { workflow in
             var changed = false
-            let newStatements = workflow.body.statements.map { stmt -> IRPrimitive in
+            let newStatements = try workflow.body.statements.map { stmt -> IRPrimitive in
                 guard case .assert(let assertIR) = stmt else { return stmt }
-                let softened = permissions.compactMap { perm -> IRExpression? in
-                    guard case .permission(let kind, let filter, let allowedAction, let conditions, _, _, _) = perm else {
-                        return nil
+                var softened: [IRExpression] = []
+                for perm in permissions {
+                    guard case .permission(let kind, let filter, let allowedAction, let conditions, _, let sourceLine, _) = perm else {
+                        continue
                     }
-                    guard permissionMatches(actorKind: kind, allowedAction: allowedAction, workflow: workflow) else { return nil }
+                    guard permissionMatches(actorKind: kind, allowedAction: allowedAction, workflow: workflow) else { continue }
+                    let sr = SourceRange(file: sourceFile, line: sourceLine, column: 0)
                     var parts: [IRExpression] = []
-                    if let f = filter { parts.append(lowerExprSimple(f)) }
-                    if let c = conditions { parts.append(lowerExprSimple(c)) }
-                    if parts.isEmpty { return .literal(.boolean(true)) }
-                    if parts.count == 1 { return parts[0] }
-                    return .logical(.and, parts)
+                    if let f = filter { parts.append(try lowerExprSimple(f, sourceRange: sr)) }
+                    if let c = conditions { parts.append(try lowerExprSimple(c, sourceRange: sr)) }
+                    if parts.isEmpty { softened.append(.literal(.boolean(true))); continue }
+                    softened.append(parts.count == 1 ? parts[0] : .logical(.and, parts))
                 }
                 guard !softened.isEmpty else { return stmt }
                 changed = true
@@ -360,9 +368,9 @@ struct RuleInjector {
         WordStemmer.tokenize(s, stopwords: stopwords)
     }
 
-    private func buildInvariantCondition(filter: ExpressionAST?) -> IRExpression? {
+    private func buildInvariantCondition(filter: ExpressionAST?, sourceRange: SourceRange) throws -> IRExpression? {
         guard let filter = filter else { return nil }
-        return .logical(.not, [lowerExprSimple(filter)])
+        return .logical(.not, [try lowerExprSimple(filter, sourceRange: sourceRange)])
     }
 
     private func buildPreconditionWait(
@@ -449,7 +457,21 @@ struct RuleInjector {
     // Intentionally avoids symbol-table lookups so rule predicates are
     // lowered without side-effects on the symbol table.
 
-    private func lowerExprSimple(_ expr: ExpressionAST) -> IRExpression {
+    /// Rule predicates lower a constrained subset of `ExpressionAST` — the
+    /// shapes a boolean condition can actually take (literals, identifiers,
+    /// comparisons, logical combinations, property access, invokes,
+    /// interpolation, discretion). Quantifiers, relational traversals,
+    /// descriptions/aggregates/superlatives, data tables, and parse-error
+    /// carriers are NOT silently coerced to `false` (that would make a rule
+    /// silently never fire) — they raise `MER3016` instead. Of these,
+    /// `.quantified`/`.tableLookup`/`.malformed` are reachable today (the
+    /// `RuleAnalyzer`'s `ExpressionParser` has `symbols: nil`, which also
+    /// makes `.description`/`.aggregate`/`.superlative`/`.relationTraversal`/
+    /// `.verbPredicate` unreachable, and `.recordList` is never produced by
+    /// `ExpressionParser.parse` at all) — all nine still raise so a future
+    /// change that makes one of them reachable fails loudly instead of
+    /// reintroducing a silent `false`.
+    private func lowerExprSimple(_ expr: ExpressionAST, sourceRange: SourceRange) throws -> IRExpression {
         switch expr {
         case .literal(let lit):
             return lowerLiteralSimple(lit)
@@ -464,11 +486,14 @@ struct RuleInjector {
             if symbols.enumCases.contains(lower) { return .literal(.string(lower)) }
             return .identifierRef(name: n)
         case .propertyAccess(let b, let p):
-            return .propertyAccess(lowerExprSimple(b), propertyName: p)
+            return .propertyAccess(try lowerExprSimple(b, sourceRange: sourceRange), propertyName: p)
         case .comparison(let l, let op, let r):
-            return .comparison(lowerExprSimple(l), lowerOpSimple(op), lowerExprSimple(r))
+            return .comparison(
+                try lowerExprSimple(l, sourceRange: sourceRange),
+                lowerOpSimple(op),
+                try lowerExprSimple(r, sourceRange: sourceRange))
         case .logical(let op, let exprs):
-            return .logical(lowerLogicalOpSimple(op), exprs.map { lowerExprSimple($0) })
+            return .logical(lowerLogicalOpSimple(op), try exprs.map { try lowerExprSimple($0, sourceRange: sourceRange) })
         case .envVar(let n):
             return .envVar(name: n)
         case .now:
@@ -480,24 +505,11 @@ struct RuleInjector {
         case .invoke(let tool, let args):
             return .invocation(InvokeIR(
                 toolID: tool,
-                arguments: args.map { InvokeArg($0.0, lowerExprSimple($0.1)) }
+                arguments: try args.map { InvokeArg($0.0, try lowerExprSimple($0.1, sourceRange: sourceRange)) }
             ))
         case .interpolatedString(let segs):
-            return .interpolatedString(segs.map { seg -> IRInterpolationSegment in
-                switch seg {
-                case .literal(let s):    return .literal(s)
-                case .expression(let e): return .expression(lowerExprSimple(e))
-                case .conditional(let c, let t, let o):
-                    return .conditional(
-                        condition: lowerExprSimple(c),
-                        then: t.map { lowerInterpolationSegmentSimple($0) },
-                        otherwise: o.map { lowerInterpolationSegmentSimple($0) }
-                    )
-                case .forEach(let v, let c, let b):
-                    return .forEach(variable: v, collection: lowerExprSimple(c), body: b.map { lowerInterpolationSegmentSimple($0) })
-                case .formatted(let e, let f):
-                    return .formatted(lowerExprSimple(e), formatter: f)
-                }
+            return .interpolatedString(try segs.map { seg in
+                try lowerInterpolationSegmentSimple(seg, sourceRange: sourceRange)
             })
         case .decideWhether(let q):
             return .invocation(InvokeIR(
@@ -506,28 +518,34 @@ struct RuleInjector {
             ))
         case .quantified, .malformed, .recordList, .tableLookup,
              .verbPredicate, .relationTraversal, .description, .aggregate, .superlative:
-            // Quantifiers, relational forms, data tables, and parse-error
-            // carriers are not produced in rule bodies (which are constrained to
-            // the supported rule shapes); a benign placeholder keeps this
-            // lowerer total.
-            return .literal(.boolean(false))
+            throw CompilerError.diagnostics([
+                Diagnostic.error(
+                    .unlowerableRulePredicate,
+                    message: "rule predicate uses an expression form a rule body cannot express (\(expr.traceDescription(detail: .compact)))",
+                    range: sourceRange,
+                    help: "Rewrite the rule's condition as a direct comparison, boolean combination (and/or/not), property access, or checkable adjective. Quantifiers, relation traversals, descriptions, aggregates, superlatives, and data tables are not supported inside a rule's filter/predicate/conditions.")
+            ])
         }
     }
 
     private func lowerLiteralSimple(_ lit: LiteralAST) -> IRExpression { .literal(LiteralLowering.toIRLiteral(lit)) }
 
-    private func lowerInterpolationSegmentSimple(_ seg: InterpolationSegment) -> IRInterpolationSegment {
+    private func lowerInterpolationSegmentSimple(_ seg: InterpolationSegment, sourceRange: SourceRange) throws -> IRInterpolationSegment {
         switch seg {
         case .literal(let s): return .literal(s)
-        case .expression(let e): return .expression(lowerExprSimple(e))
+        case .expression(let e): return .expression(try lowerExprSimple(e, sourceRange: sourceRange))
         case .conditional(let c, let t, let o):
-            return .conditional(condition: lowerExprSimple(c),
-                                then: t.map { lowerInterpolationSegmentSimple($0) },
-                                otherwise: o.map { lowerInterpolationSegmentSimple($0) })
+            return .conditional(
+                condition: try lowerExprSimple(c, sourceRange: sourceRange),
+                then: try t.map { try lowerInterpolationSegmentSimple($0, sourceRange: sourceRange) },
+                otherwise: try o.map { try lowerInterpolationSegmentSimple($0, sourceRange: sourceRange) })
         case .forEach(let v, let c, let b):
-            return .forEach(variable: v, collection: lowerExprSimple(c), body: b.map { lowerInterpolationSegmentSimple($0) })
+            return .forEach(
+                variable: v,
+                collection: try lowerExprSimple(c, sourceRange: sourceRange),
+                body: try b.map { try lowerInterpolationSegmentSimple($0, sourceRange: sourceRange) })
         case .formatted(let e, let f):
-            return .formatted(lowerExprSimple(e), formatter: f)
+            return .formatted(try lowerExprSimple(e, sourceRange: sourceRange), formatter: f)
         }
     }
 

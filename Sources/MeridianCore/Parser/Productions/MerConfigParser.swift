@@ -192,13 +192,25 @@ public struct MerConfigParser {
                 if let def = DefinitionParser(lexicon: lexicon, symbols: nil, trace: trace)
                     .parse(t, line: line.number) {
                     results.append(.definition(def))
+                } else {
+                    try reportVocabularyDiagnostic(
+                        message: "malformed definition: \"\(t)\"",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Use `Definition: a <kind> is <adjective> if <condition>.`.")
                 }
                 i += 1; continue
             }
 
             // 3B: "The verb to {base} (…) means the {relation} relation."
             if t.lowercased().hasPrefix(lexicon.grammar.merconfig.verbDeclPrefix) {
-                if let v = parseVerb(t, line: line.number) { results.append(.verb(v)) }
+                if let v = parseVerb(t, line: line.number) {
+                    results.append(.verb(v))
+                } else {
+                    try reportVocabularyDiagnostic(
+                        message: "malformed verb declaration: \"\(t)\"",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Use `The verb to <base> (<third-person>, <past-participle>) means the <relation> relation.`.")
+                }
                 i += 1; continue
             }
 
@@ -233,6 +245,11 @@ public struct MerConfigParser {
             if t.lowercased().hasPrefix(lexicon.grammar.merconfig.inversePrefix) {
                 if let inv = parseInverse(t, line: line.number) {
                     results.append(.inverse(inv))
+                } else {
+                    try reportVocabularyDiagnostic(
+                        message: "malformed inverse declaration: \"\(t)\"",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Use `The inverse of <relation> is <relation>.`.")
                 }
                 i += 1; continue
             }
@@ -777,6 +794,24 @@ public struct MerConfigParser {
     private func reportBlockPropertyDiagnostic(message: String, range: SourceRange, help: String) throws {
         let diag = Diagnostic.structural(
             .unrecognizedBlockProperty,
+            message: message,
+            range: range,
+            help: help)
+        if let diagnostics {
+            diagnostics.report(diag)
+        } else {
+            throw CompilerError.diagnostics([diag])
+        }
+    }
+
+    /// A line matched a vocabulary shape's INTRODUCER (definition/verb/inverse
+    /// prefix) but the dedicated parser for that shape returned `nil` — i.e.
+    /// it is malformed, not merely "not this shape". Report it explicitly
+    /// instead of silently dropping the line (the old behaviour: `i += 1;
+    /// continue` regardless of whether parsing actually succeeded).
+    private func reportVocabularyDiagnostic(message: String, range: SourceRange, help: String) throws {
+        let diag = Diagnostic.structural(
+            .vocabularyDeclarationUnrecognized,
             message: message,
             range: range,
             help: help)

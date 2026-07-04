@@ -1,5 +1,23 @@
 import Foundation
 
+/// A cross-reference from a design decision to another catalog entry.
+public enum CatalogLink: Sendable, Hashable {
+    case diagnostic(DiagnosticCode)
+    case decision(DecisionRef)
+
+    public var id: String {
+        switch self {
+        case .diagnostic(let code): return code.id
+        case .decision(let ref): return ref.id
+        }
+    }
+}
+
+extension CatalogLink {
+    public static func diag(_ code: DiagnosticCode) -> Self { .diagnostic(code) }
+    public static func decision(_ id: String) -> Self { .decision(DecisionRef(id)) }
+}
+
 /// A structured design decision behind the diagnostics/developer-experience
 /// surface. Decisions are reachable *at the point of error*: a `DiagnosticCode`
 /// may carry a `DecisionRef`, and both `meridian explain` and the rendered
@@ -19,11 +37,11 @@ public struct DecisionRecord: Sendable, Hashable {
     public let rationale: String
     public let alternatives: [String]
     public let consequences: [String]
-    public let seeAlso: [String]
+    public let seeAlso: [CatalogLink]
 
     public init(id: String, title: String, status: Status = .accepted,
                 rationale: String, alternatives: [String] = [],
-                consequences: [String] = [], seeAlso: [String] = []) {
+                consequences: [String] = [], seeAlso: [CatalogLink] = []) {
         self.id = id
         self.title = title
         self.status = status
@@ -52,7 +70,7 @@ public enum DecisionCatalog {
                 "Every phrase must resolve, or the file must opt into the fallback.",
                 "The error funnels through `Diagnostic.unresolved`, so it always carries a did-you-mean or candidate list.",
             ],
-            seeAlso: ["MER2001", "D-DX-2"]),
+            seeAlso: [.diag(.unresolvedPhrase), .decision("D-DX-2")]),
 
         DecisionRecord(
             id: "D-DX-2",
@@ -66,7 +84,12 @@ public enum DecisionCatalog {
                 "Constructs are skipped wholesale on error (cascade-resistant); phrase stubs are pre-registered so dependents still resolve.",
                 "Structural codes carry a mandatory `help` string with the concrete fix.",
             ],
-            seeAlso: ["MER1001", "MER1002", "MER1003", "MER1004", "MER3006", "MER3007"]),
+            seeAlso: [
+                .diag(.malformedWorkflowHeader), .diag(.orphanedCodeBlock),
+                .diag(.unparseableStatement), .diag(.unparseableRule),
+                .diag(.missingPhraseArgument), .diag(.unattachedRule),
+                .diag(.unresolvedTriggerAction), .diag(.unlowerableRulePredicate),
+            ]),
 
         DecisionRecord(
             id: "D-DX-3",
@@ -79,7 +102,7 @@ public enum DecisionCatalog {
             consequences: [
                 "`compile` always writes Swift; a formatting failure is reported as a warning.",
             ],
-            seeAlso: ["MER5001"]),
+            seeAlso: [.diag(.swiftFormatFailed)]),
 
         DecisionRecord(
             id: "D-DX-4",
@@ -93,7 +116,10 @@ public enum DecisionCatalog {
                 "A guard test enumerates all `.nameResolution` codes and asserts each yields a suggestion or candidate-list note.",
                 "Suggestions carry `replacement` + `range`, powering `--fix` and editor quick-fixes.",
             ],
-            seeAlso: ["MER2003", "MER2004", "MER2007", "MER2008"]),
+            seeAlso: [
+                .diag(.unknownKind), .diag(.unknownProperty),
+                .diag(.unknownAdjective), .diag(.unknownVerb),
+            ]),
 
         DecisionRecord(
             id: "D-DX-5",
@@ -107,7 +133,7 @@ public enum DecisionCatalog {
                 "Recognition mirrors the invoke path (case-insensitive against methodName; methodized built-ins).",
                 "`allow-fallbacks: unknown-tools` downgrades per-file for host-provided tools.",
             ],
-            seeAlso: ["MER2002"]),
+            seeAlso: [.diag(.unknownTool)]),
     ]
 
     public static func lookup(_ id: String) -> DecisionRecord? {
@@ -144,7 +170,8 @@ public enum DecisionCatalog {
                 for c in d.consequences { out += "- \(c)\n" }
             }
             if !d.seeAlso.isEmpty {
-                out += "\n**See also:** \(d.seeAlso.joined(separator: ", "))\n"
+                let links = d.seeAlso.map(\.id).joined(separator: ", ")
+                out += "\n**See also:** \(links)\n"
             }
         }
         return out

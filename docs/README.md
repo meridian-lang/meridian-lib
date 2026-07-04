@@ -35,6 +35,8 @@ runs against a small deterministic runtime.
 | 13 | [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) | Authors porting gbrain `SKILL.md` → `.meri` (playbook + tiers + migrator) |
 | 14 | [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) | **Everyone debugging** — diagnostics, codes, did-you-mean, batch reporting, tracing, `explain`/`decisions`/`--fix` |
 | 15 | [15_DECISIONS.md](15_DECISIONS.md) | The readable design-decision log (generated from `DecisionCatalog`) |
+| 15b | [15_PROBLEM_MESSAGES.md](15_PROBLEM_MESSAGES.md) | Inform-style problem-message template and active diagnostic-code reference |
+| 16 | [16_EXPRESSIVENESS_REPORT.md](16_EXPRESSIVENESS_REPORT.md) | Wave 6 corpus metrics, mechanism coverage, and caveats |
 | — | [coverage/README.md](coverage/README.md) | **Anyone touching tests** — how & why coverage is measured, the enforced per-file gate, and how to raise it |
 | — | [../Tests/README.md](../Tests/README.md) | All contributors — test suites, forcing functions, adding tests |
 | — | [status.md](status.md) | Implementers — what's done, what's next, decision references |
@@ -54,6 +56,8 @@ meridian/
 │   │   └── Protocol/           # MeridianWorkflow, ToolRegistry, Checkpointer
 │   ├── MeridianCore/           # Compiler: parser, IR, codegen
 │   │   ├── Parser/             # Lexical + grammar + statement + expression parsers
+│   │   │                       #   Lexical/Productions/ — one file per expression
+│   │   │                       #   grammar production (pegex or hand-written)
 │   │   ├── AST/                # AST node types (post-parse, pre-IR)
 │   │   ├── Symbols/            # SymbolTable + phrase matching
 │   │   ├── Lowering/           # AST → IR (ASTToIR.swift)
@@ -62,6 +66,8 @@ meridian/
 │   │   ├── Formatter/          # MeridianFormatter.swift
 │   │   ├── Docs/               # MerconfigDocsRenderer.swift
 │   │   ├── Testing/            # MeridianTestRunner + SpecParser + Assertions
+│   │   ├── Grammar/            # Wave 5 GrammarTable (per-production registry),
+│   │   │                       #   NonterminalScreen, parser benchmark
 │   │   ├── Diagnostics/        # Diagnostic, DiagnosticEngine/Renderer, Suggester,
 │   │   │                       #   DiagnosticCode catalog, DecisionCatalog, ParserTrace
 │   │   └── Compiler.swift      # Top-level compile() entry point

@@ -138,9 +138,17 @@ public struct RulebookParser {
         while i < content.count {
             let line = content[i]
             let t = line.statement
-            guard t.lowercased().hasPrefix("rule ") else { i += 1; continue }
+            guard t.lowercased().hasPrefix("rule ") else {
+                throw CompilerError.diagnostics([
+                    Diagnostic.structural(
+                        .malformedRulebookEntry,
+                        message: "unrecognized line in `=== desugar ===` section: \"\(t)\"",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Every top-level line in a `=== desugar ===` section must start with `rule \"<name>\":` (optionally `(priority N)`).")
+                ])
+            }
 
-            let (name, priority) = parseRuleHeader(t)
+            let (name, priority) = try parseRuleHeader(t, line: line.number, file: file)
             var matchText: String? = nil
             var rewriteText: String? = nil
             var targetsPrimitive = false
@@ -189,7 +197,7 @@ public struct RulebookParser {
     }
 
     /// `rule "name":` or `rule "name" (priority 10):`
-    private func parseRuleHeader(_ t: String) -> (name: String, priority: Int) {
+    private func parseRuleHeader(_ t: String, line: Int, file: String) throws -> (name: String, priority: Int) {
         var rest = String(t.dropFirst("rule ".count)).trimmingCharacters(in: .whitespaces)
         var name = ""
         if rest.hasPrefix("\"") , let close = rest.dropFirst().firstIndex(of: "\"") {
@@ -200,7 +208,16 @@ public struct RulebookParser {
         if let pr = rest.range(of: "priority", options: .caseInsensitive) {
             let after = rest[pr.upperBound...]
             let digits = after.drop(while: { !$0.isNumber }).prefix(while: { $0.isNumber })
-            priority = Int(String(digits)) ?? 0
+            guard !digits.isEmpty, let parsed = Int(String(digits)) else {
+                throw CompilerError.diagnostics([
+                    Diagnostic.structural(
+                        .malformedRulebookEntry,
+                        message: "rule \(name.isEmpty ? "<unnamed>" : "\"\(name)\"") has a `priority` marker with no valid number: \"\(t)\"",
+                        range: SourceRange(file: file, line: line, column: 1),
+                        help: "Use `(priority <integer>)`, e.g. `(priority 10)`.")
+                ])
+            }
+            priority = parsed
         }
         return (name, priority)
     }
@@ -234,7 +251,15 @@ public struct RulebookParser {
         var results: [SectionRoleRule] = []
         for line in lines.filter(\.isContent) {
             let t = line.statement
-            guard t.lowercased().hasPrefix("section ") else { continue }
+            guard t.lowercased().hasPrefix("section ") else {
+                throw CompilerError.diagnostics([
+                    Diagnostic.structural(
+                        .malformedRulebookEntry,
+                        message: "unrecognized line in `=== sections ===` section: \"\(t)\"",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Every line in a `=== sections ===` section must start with `section \"<Heading>\" -> <role>`.")
+                ])
+            }
             guard let arrow = t.range(of: "->") else {
                 throw CompilerError.diagnostics([
                     Diagnostic.structural(

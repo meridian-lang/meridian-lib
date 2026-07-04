@@ -266,7 +266,7 @@ public struct SourceLine: Sendable {
 
     /// Text with trailing "." stripped (most statements end with ".").
     public var statement: String {
-        text.hasSuffix(".") ? String(text.dropLast()) : text
+        SentenceBreaker().statementText(from: text)
     }
 
     public init(

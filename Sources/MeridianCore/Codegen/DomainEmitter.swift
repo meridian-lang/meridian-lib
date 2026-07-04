@@ -319,10 +319,20 @@ public extension SwiftEmitter {
             }
         case .enumeration(let e, let defaultCase):
             // Use the author default when present, otherwise the first declared
-            // case (declaration order is preserved).
+            // case (declaration order is preserved). `emitDomain`'s `firstCase`
+            // table is built from every enum in `d.enumerations`, and
+            // `Compiler.propertyToDecl` guarantees every enumeration-typed
+            // property names a registered enum with >= 1 case (parse-time
+            // rejects empty `one of ()` lists) — so this lookup cannot
+            // legitimately miss. Emitting a force-unwrapped `.init(rawValue:
+            // "")!` here would be a crash-prone landmine in the GENERATED
+            // program rather than a real, resolvable default.
             if let defaultCase { return ".\(escapeIdentifierIfNeeded(caseIdentifier(defaultCase)))" }
-            if let first = enumFirstCase[e] { return ".\(first)" }
-            return ".init(rawValue: \"\")!"
+            guard let first = enumFirstCase[e] else {
+                preconditionFailure(
+                    "internal: no first case registered for enum \(e) — MER0004 emitDomain firstCase/enumeration desynchronized")
+            }
+            return ".\(first)"
         case .list:             return "[]"
         }
     }

@@ -159,12 +159,12 @@ struct SampleGbrainConformanceTests {
         #expect(!result.meriSource.contains("skill: true"))
     }
 
-    @Test("migrator (deterministic-only) fails on unmarked prose without a repair closure")
-    func migratorDeterministicFailsOnProse() async throws {
+    @Test("migrator (deterministic-only) fails on explicitly live prose without a repair closure")
+    func migratorDeterministicFailsOnExplicitLiveProse() async throws {
         let markdown = """
         # Prose Demo
 
-        ## Phases
+        ## Phases (( role: procedure ))
         Ponder the deeper meaning of the request and act accordingly.
         """
         let result = try await Self.migrator().migrate(markdown, file: "prose_demo.meri")
@@ -177,7 +177,7 @@ struct SampleGbrainConformanceTests {
         let markdown = """
         # Repair Demo
 
-        ## Phases
+        ## Phases (( role: procedure ))
         Ponder the deeper meaning of the request and act accordingly.
         """
         // The mock "LLM" only ever rephrases the flagged line into an explicit

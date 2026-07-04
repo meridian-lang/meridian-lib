@@ -134,7 +134,7 @@
         "text" : "Citation format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "inert",
         "level" : 2,
         "line" : 158,
         "text" : "Naming convention"
@@ -146,7 +146,7 @@
         "text" : "Bulk vs. single"
       },
       {
-        "kind" : "procedure",
+        "kind" : "prohibitions",
         "level" : 2,
         "line" : 169,
         "text" : "Anti-Patterns"
@@ -154,19 +154,19 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 180,
+        "line" : 179,
         "text" : "Related skills"
       },
       {
-        "kind" : "procedure",
+        "kind" : "invariants",
         "level" : 2,
-        "line" : 188,
+        "line" : 187,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 200,
+        "line" : 198,
         "text" : "Output Format"
       },
       {
@@ -174,6 +174,30 @@
         "level" : 3,
         "line" : 152,
         "text" : "Include timestamps when available"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 160,
+        "text" : "Audio files"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 162,
+        "text" : "Brain pages"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 189,
+        "text" : "This skill guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 194,
+        "text" : "Privacy contract preserved"
       }
     ],
     "sections" : [
@@ -192,7 +216,7 @@
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "When to invoke",
         "line" : 42,
         "lines" : [
@@ -264,16 +288,15 @@
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Naming convention",
         "line" : 158,
         "lines" : [
-          "use judgment to follow the Naming convention guidance:",
-          "item: Audio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,",
+          "Audio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,",
           "`2026-04-13-rick-rubin-creative-philosophy.ogg`)",
-          "item: Brain pages: match the slug of the destination directory"
+          "Brain pages: match the slug of the destination directory"
         ],
-        "role" : "procedure"
+        "role" : "inert"
       },
       {
         "executes" : false,
@@ -286,18 +309,24 @@
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
         "line" : 169,
         "lines" : [
-          "checklist:ai-autonomy:4p2MICoqUGFyYXBocmFzaW5nIHRoZSB0cmFuc2NyaXB0LioqIFRoZSBleGFjdCB3b3JkcyBhcmUgdGhlIHNpZ25hbArinYwgKipDbGVhbmluZyB1cCBoZXNpdGF0aW9ucyBvciBmaWxsZXIgd29yZHMqKiAoInVtIiwgImxpa2UiLCAieW91IGtub3ciKS4gVGhlIHRleHR1cmUgbWF0dGVycy4K4p2MICoqQ3JlYXRpbmcgYSBwYWdlIHdpdGggbm8gZW50aXR5IGNyb3NzLWxpbmtzKiogd2hlbiBwZW9wbGUvY29tcGFuaWVzIHdlcmUgbWVudGlvbmVkLiBJcm9uIExhdyBmYWlsLgrinYwgKipTa2lwcGluZyB0aGUgYXVkaW8gc3RvcmFnZSBzdGVwLioqIEFsd2F5cyB1cGxvYWQgdGhlIG9yaWdpbmFsOyB0aGUgYnJhaW4gcGFnZSBoYXMgYSBg8J+UiiBbQXVkaW9dYCBsaW5rIGJhY2sgdG8gaXQu"
+          "❌ **Paraphrasing the transcript.** The exact words are the signal",
+          "❌ **Cleaning up hesitations or filler words** (\"um\", \"like\", \"you",
+          "know\"). The texture matters.",
+          "❌ **Creating a page with no entity cross-links** when people\/companies",
+          "were mentioned. Iron Law fail",
+          "❌ **Skipping the audio storage step.** Always upload the original; the",
+          "brain page has a `🔊 [Audio]` link back to it"
         ],
-        "role" : "procedure"
+        "role" : "prohibitions"
       },
       {
         "executes" : false,
         "heading" : "Related skills",
-        "line" : 180,
+        "line" : 179,
         "lines" : [
           "`skills\/signal-detector\/SKILL.md` — same exact-phrasing pattern for",
           "text-channel idea capture",
@@ -307,18 +336,23 @@
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
-        "line" : 188,
+        "line" : 187,
         "lines" : [
-          "checklist:ai-autonomy:Um91dGluZyBtYXRjaGVzIHRoZSBjYW5vbmljYWwgdHJpZ2dlcnMgaW4gdGhlIGZyb250bWF0dGVyCk91dHB1dCB3cml0dGVuIHVuZGVyIHRoZSBkaXJlY3RvcmllcyBsaXN0ZWQgaW4gYHdyaXRlc190bzpgICh3aGVuIGFwcGxpY2FibGUpCkNvbnZlbnRpb25zIHJlZmVyZW5jZWQgKGBxdWFsaXR5Lm1kYCwgYGJyYWluLWZpcnN0Lm1kYCwgYF9icmFpbi1maWxpbmctcnVsZXMubWRgKSBhcmUgZm9sbG93ZWQKUHJpdmFjeSBjb250cmFjdCBwcmVzZXJ2ZWQ6IG5vIHJlYWwgbmFtZXMsIG5vIGZvcmstc3BlY2lmaWMgZmlsZXN5c3RlbSBwYXRoIGxpdGVyYWxzLCBubyB1cHN0cmVhbS1mb3JrIHJlZmVyZW5jZXM="
+          "This skill guarantees:",
+          "Routing matches the canonical triggers in the frontmatter",
+          "Output written under the directories listed in `writes_to:` (when applicable)",
+          "Conventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed",
+          "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
+          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
         ],
-        "role" : "procedure"
+        "role" : "invariants"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 200,
+        "line" : 198,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -366,56 +400,52 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 160,
-      "swift_line" : 603
+      "meridian_line" : 1,
+      "swift_line" : 632
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 641
+      "swift_line" : 637
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 646
+      "swift_line" : 676
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 685
+      "swift_line" : 681
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 720
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 725
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 764
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 773
+      "swift_line" : 769
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 808
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 817
+      "swift_line" : 813
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 822
+      "swift_line" : 852
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 861
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 866
+      "swift_line" : 857
     }
   ],
   "tools_used" : [

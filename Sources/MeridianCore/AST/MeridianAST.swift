@@ -900,7 +900,10 @@ public indirect enum ExpressionAST: Sendable {
     /// invalid quantifier/description shape, an unidentifiable kind) recorded
     /// at parse time with a fully-formed diagnostic. `ExpressionParser.parse`
     /// stays non-throwing; `ASTToIR.assertNoMalformed` raises the sourced error.
-    case malformed(String)
+    /// The optional `suggestion` carries a structured "did you mean" (e.g. the
+    /// closest declared verb form) so it survives as a real `Suggestion` on
+    /// the emitted `Diagnostic`, not just text baked into the message.
+    case malformed(String, suggestion: Suggestion? = nil)
 }
 
 // MARK: - 2C. Quantifiers over descriptions

@@ -601,25 +601,170 @@ public struct ColdStartInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ColdStartInput", parameters: [:])
 
-        // L53
-        let __meridianProseResults_L53 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Every import phase is gated on user consent (ask-user pattern) before proceeding\n- **Google/social API access goes through ClawVisor.** The agent never holds raw OAuth tokens or API keys. This is a safety requirement, not a preference. ClawVisor vaults credentials, enforces task-scoped authorization, logs every API call, and requires human approval for destructive operations. If the user doesn't want ClawVisor, the only safe alternative is offline file exports (Google Takeout, Twitter archive download).\n- Each phase is independently valuable — the user can stop after any phase and still have a useful brain.\n- Progress is tracked in `~/.gbrain/cold-start-state.json` so interrupted sessions can resume.\n- Entity detection and cross-linking run on every import, not as a separate pass",
-            snapshot: state.snapshot(),
-            scopedTools: ["add_link", "add_timeline_entry", "get_page", "link.add", "page.get", "page.search", "publish", "put_page", "query", "search", "shell.run", "sync_brain", "timeline.add"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L53 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L154:C0") {
+            // L154
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo \"=== Markdown Repository Discovery ===\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L154:C0", state: state.snapshot())
         }
-        // L73
-        let __meridianProseResults_L73 = try await runtime.executeProsePlan(
-            prose: "follow the The Priority Stack guidance\nData sources ranked by **information density × ease of import**:\ntable:decision:fCBQcmlvcml0eSB8IFNvdXJjZSB8IFdoeSB8IFRpbWUgfCBQYWdlcyBDcmVhdGVkIHwKfC0tLS0tLS0tLS18LS0tLS0tLS18LS0tLS18LS0tLS0tfC0tLS0tLS0tLS0tLS0tLXwKfCAxIHwgRXhpc3RpbmcgbWFya2Rvd24vT2JzaWRpYW4gfCBIaWdoZXN0IGRlbnNpdHkg4oCUIGl0J3MgYWxyZWFkeSBzdHJ1Y3R1cmVkIHwgNSBtaW4gfCAxMDBzLTEwMDBzIHwKfCAyIHwgR29vZ2xlIENvbnRhY3RzIHwgU2VlZHMgdGhlIHBlb3BsZS8gZGlyZWN0b3J5IOKAlCBuYW1lcywgZW1haWxzLCBjb21wYW5pZXMgfCAxMCBtaW4gfCA1MC01MDAgfAp8IDMgfCBHb29nbGUgQ2FsZW5kYXIgKDkwIGRheXMpIHwgTWVldGluZyBoaXN0b3J5IHdpdGggYXR0ZW5kZWUgY29udGV4dCB8IDE1IG1pbiB8IDMwLTkwIHwKfCA0IHwgR21haWwgKHJlY2VudCB0aHJlYWRzKSB8IFJlbGF0aW9uc2hpcCBjb250ZXh0LCBhY3RpdmUgdGhyZWFkcywgb3JnIGNoYXJ0IHNpZ25hbHMgfCAyMCBtaW4gfCA1MC0yMDAgfAp8IDUgfCBDb252ZXJzYXRpb25zIChDaGF0R1BUL0NsYXVkZSBleHBvcnRzKSB8IFlvdXIgdGhpbmtpbmcsIHF1ZXN0aW9ucywgbWVudGFsIG1vZGVscyB8IDE1IG1pbiB8IDEwLTEwMCB8CnwgNiB8IFgvVHdpdHRlciBhcmNoaXZlIHwgWW91ciBwdWJsaWMgcG9zaXRpb25zLCB0YWtlcywgZW5nYWdlbWVudCBwYXR0ZXJucyB8IDIwIG1pbiB8IDMwLTM2NSB8CnwgNyB8IEZpbGUgYXJjaGl2ZXMgKERyb3Bib3gvRHJpdmUvbG9jYWwpIHwgSGlzdG9yaWNhbCBkb2N1bWVudHMsIG9sZCB3cml0aW5nLCBwaG90b3MgfCAzMCsgbWluIHwgdmFyaWVzIHwKfCA4IHwgTWVldGluZyB0cmFuc2NyaXB0cyAoQ2lyY2xlYmFjay9ldGMuKSB8IERlZXAgcmVsYXRpb25zaGlwIGNvbnRleHQgZnJvbSByZWNvcmRlZCBjYWxscyB8IDIwIG1pbiB8IDEwLTUwIHw=\nuse judgment to follow the Phase 1: Existing Markdown / Obsidian Import guidance:\n**The highest-leverage first import.** If the user already has a notes system, this\nis hundreds or thousands of structured pages ready to go\ncodeblock:bash:ZWNobyAiPT09IE1hcmtkb3duIFJlcG9zaXRvcnkgRGlzY292ZXJ5ID09PSIKZm9yIGRpciBpbiAvZGF0YS8qIH4vZ2l0Lyogfi9Eb2N1bWVudHMvKiB+L25vdGVzLyogfi9vYnNpZGlhbi8qIDI+L2Rldi9udWxsOyBkbwogIGlmIFsgLWQgIiRkaXIiIF07IHRoZW4KICAgIG1kX2NvdW50PSQoZmluZCAiJGRpciIgLW5hbWUgIioubWQiIC1ub3QgLXBhdGggIiovbm9kZV9tb2R1bGVzLyoiIFwKICAgICAgLW5vdCAtcGF0aCAiKi8uZ2l0LyoiIC1ub3QgLXBhdGggIiovLm9ic2lkaWFuLyoiIDI+L2Rldi9udWxsIHwgd2MgLWwgfCB0ciAtZCAnICcpCiAgICBpZiBbICIkbWRfY291bnQiIC1ndCA1IF07IHRoZW4KICAgICAgdG90YWxfc2l6ZT0kKGR1IC1zaCAiJGRpciIgMj4vZGV2L251bGwgfCBjdXQgLWYxKQogICAgICBlY2hvICIgICRkaXIgKCR0b3RhbF9zaXplLCAkbWRfY291bnQgLm1kIGZpbGVzKSIKICAgIGZpCiAgZmkKZG9uZQ==\ncodeblock:bash:IyBGb3IgT2JzaWRpYW4gdmF1bHRzLCB1c2UgdGhlIG1pZ3JhdGUgc2tpbGwgZm9yIHByb3BlciB3aWtpbGluayBoYW5kbGluZwpnYnJhaW4gbWlncmF0ZSAtLWZyb20gb2JzaWRpYW4gLS1wYXRoIC9wYXRoL3RvL3ZhdWx0CiAgCiMgRm9yIHBsYWluIG1hcmtkb3duIGRpcmVjdG9yaWVzCmdicmFpbiBpbXBvcnQgL3BhdGgvdG8vZGlyIC0tbm8tZW1iZWQgLS13b3JrZXJzIDQKICAKIyBWZXJpZnkKZ2JyYWluIHN0YXRzCmdicmFpbiBzZWFyY2ggIjx0b3BpYyBmcm9tIHRoZSBpbXBvcnRlZCBkYXRhPiI=\nuse judgment to follow the Phase 2: Google Contacts → People Pages guidance:\n**Seeds the people/ directory.** Every person in your contacts becomes a brain page\nwith name, email, phone, company, and notes. This is the foundation that all other\nimports build on — when Gmail references \"john@acme.com\", the brain already knows\nwho John is\ncodeblock:bash:Y3VybCAtcyAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICRHT09HTEVfVE9LRU4iIFwKICAiaHR0cHM6Ly9wZW9wbGUuZ29vZ2xlYXBpcy5jb20vdjEvcGVvcGxlL21lL2Nvbm5lY3Rpb25zP3BlcnNvbkZpZWxkcz1uYW1lcyxlbWFpbEFkZHJlc3NlcyxwaG9uZU51bWJlcnMsb3JnYW5pemF0aW9ucyxiaW9ncmFwaGllcyZwYWdlU2l6ZT0xMDAwIg==\nuse judgment to follow the Phase 3: Google Calendar (Last 90 Days) guidance:\n**Meeting history with attendee context.** Calendar events reveal who the user meets\nwith, how often, and in what context. Combined with contacts, this builds a rich\nrelationship map\nuse judgment to follow the Phase 4: Gmail (Recent Threads) guidance:\n**Relationship context and active threads.** Email reveals organizational\nrelationships, ongoing conversations, and communication patterns\nuse judgment to follow the Phase 5: Conversation Exports (ChatGPT / Claude / Perplexity) guidance:\n**Your thinking, captured.** AI conversation exports reveal what the user\nwas researching, building, and thinking about. This is original thinking\npreserved in dialog form\nuse judgment to follow the Phase 6: X/Twitter Archive guidance:\n**Your public positions and engagement patterns.** Twitter reveals what the user\nthinks, who they engage with, and what ideas they're developing publicly\nuse judgment to follow the Phase 8: Meeting Transcripts guidance:\n**Deep relationship context from recorded calls.** If the user has a meeting\nrecording service (Circleback, Otter, Fireflies, Read.ai), import recent\ntranscripts\nDelegate to `meeting-ingestion` skill. Key rules:\nitem: Always pull the **complete transcript**, not just the AI summary\nitem: Entity propagation is MANDATORY — every attendee gets a timeline update\nitem: A meeting is NOT fully ingested until all entity pages are updated\nchecklist:ai-autonomy:KipHaXZpbmcgdGhlIGFnZW50IHJhdyBPQXV0aCB0b2tlbnMuKiogVGhpcyBpcyB0aGUgIzEgYW50aS1wYXR0ZXJuLiBBbiBhZ2VudCB3aXRoIHJhdyBHbWFpbC9DYWxlbmRhciB0b2tlbnMgaXMgYW4gdW5jb250cm9sbGVkIGF0dGFjayBzdXJmYWNlIOKAlCBvbmUgcHJvbXB0IGluamVjdGlvbiBhbmQgeW91ciBlbnRpcmUgR29vZ2xlIGFjY291bnQgaXMgZXhwb3NlZC4gVXNlIENsYXdWaXNvci4gSWYgdGhlIHVzZXIgZGVjbGluZXMgQ2xhd1Zpc29yLCBza2lwIHRvIG9mZmxpbmUgaW1wb3J0cy4gTmV2ZXIgb2ZmZXIgZGlyZWN0IE9BdXRoIGFzIGEgZmFsbGJhY2suCioqQnVsayBpbXBvcnRpbmcgZXZlcnl0aGluZyB3aXRob3V0IGZpbHRlcmluZy4qKiBUaGUgYnJhaW4gaXMgZm9yIHNpZ25hbCwgbm90IG5vaXNlIEZpbHRlciBvdXQgYXV0b21hdGVkIHNlbmRlcnMsIG1hcmtldGluZyBlbWFpbHMsIHV0aWxpdHkgY29udmVyc2F0aW9ucy4KKipJbXBvcnRpbmcgd2l0aG91dCBlbnRpdHkgY3Jvc3MtbGlua2luZy4qKiBFdmVyeSBpbXBvcnQgc2hvdWxkIGRldGVjdCBlbnRpdGllcyBhbmQgdXBkYXRlIGV4aXN0aW5nIGJyYWluIHBhZ2VzLiBJc29sYXRlZCBpbXBvcnRzIGRvbid0IGNvbXBvdW5kLgoqKk5vdCBnYXRpbmcgb24gdXNlciBjb25zZW50LioqIEV2ZXJ5IHBoYXNlIHNob3VsZCBiZSBwcmVzZW50ZWQgYXMgYSBjaG9pY2UuIFRoZSB1c2VyIG1heSBub3Qgd2FudCB0aGVpciBETXMgb3IgdGhlcmFweSBjb252ZXJzYXRpb25zIGltcG9ydGVkLgoqKkltcG9ydGluZyBldmVyeXRoaW5nIGF0IHNpZ25pZmljYW5jZSAxLioqIE5vdCBldmVyeSBjb252ZXJzYXRpb24gaXMgd29ydGggYSBicmFpbiBwYWdlLiBVc2UgdGhlIHNpZ25pZmljYW5jZSBzY2FsZSBhbmQgc2tpcCB1dGlsaXR5IGNvbnRlbnQuCioqQ3JlYXRpbmcgcGVvcGxlIHBhZ2VzIGZvciBhdXRvbWF0ZWQgc2VuZGVycy4qKiBTZW50cnksIEdpdEh1YiBub3RpZmljYXRpb25zLCBuZXdzbGV0dGVyIHBsYXRmb3JtcyBhcmUgbm90IHBlb3BsZS4gRmlsdGVyIGJ5IHRoZSBydWxlcyBpbiBQaGFzZSA0Lg==",
-            snapshot: state.snapshot(),
-            scopedTools: ["add_link", "add_timeline_entry", "get_page", "link.add", "page.get", "page.search", "publish", "put_page", "query", "search", "shell.run", "sync_brain", "timeline.add"]
-        )
-        for (__key, __value) in __meridianProseResults_L73 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.1:L154:C0") {
+            // L154
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("for dir in /data/* ~/git/* ~/Documents/* ~/notes/* ~/obsidian/* 2>/dev/null; do"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L154:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L154:C0") {
+            // L154
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("if [ -d \"$dir\" ]; then"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L154:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L154:C0") {
+            // L154
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("md_count=$(find \"$dir\" -name \"*.md\" -not -path \"*/node_modules/*\" -not -path \"*/.git/*\" -not -path \"*/.obsidian/*\" 2>/dev/null | wc -l | tr -d ' ')"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.3:L154:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.4:L154:C0") {
+            // L154
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("if [ \"$md_count\" -gt 5 ]; then"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.4:L154:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.5:L154:C0") {
+            // L154
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("total_size=$(du -sh \"$dir\" 2>/dev/null | cut -f1)"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.5:L154:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.6:L154:C0") {
+            // L154
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo \"  $dir ($total_size, $md_count .md files)\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.6:L154:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.7:L154:C0") {
+            // L154
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("fi"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.7:L154:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.8:L154:C0") {
+            // L154
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("fi"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.8:L154:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.9:L154:C0") {
+            // L154
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("done"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.9:L154:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.10:L170:C0") {
+            // L170
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain migrate --from obsidian --path /path/to/vault"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.10:L170:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.11:L170:C0") {
+            // L170
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain import /path/to/dir --no-embed --workers 4"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.11:L170:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.12:L170:C0") {
+            // L170
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain stats"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.12:L170:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.13:L170:C0") {
+            // L170
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain search \"<topic from the imported data>\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.13:L170:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.14:L212:C0") {
+            // L212
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("curl -s -H \"Authorization: Bearer $GOOGLE_TOKEN\" \"https://people.googleapis.com/v1/people/me/connections?personFields=names,emailAddresses,phoneNumbers,organizations,biographies&pageSize=1000\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.14:L212:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

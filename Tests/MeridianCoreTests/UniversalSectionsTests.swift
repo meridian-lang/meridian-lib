@@ -112,6 +112,34 @@ struct UniversalSectionMarkerTests {
         #expect(!output.executes)
         #expect((ast.workflows.first?.body.statements.count ?? 0) >= 2)
     }
+
+    @Test("invariants sections accept explicit assertion markers")
+    func invariantsAcceptAssertionMarkers() throws {
+        let out = try Compiler(options: .init(trace: .silent())).compile(
+            meridianSource: """
+            ---
+            name: guarded
+            vocabulary: t.merconfig
+            ---
+
+            ## Checks (( role: invariants ))
+            make sure no batches whose status is "failed".
+
+            ## Steps
+            complete.
+            """,
+            meridianFile: "guarded.meri",
+            merconfigSource: """
+            === vocabulary ===
+            A batch is a kind of process.
+            A batch has a status.
+            """,
+            merconfigFile: "t.merconfig"
+        )
+
+        #expect(out.contains(".isEmpty"), Comment(rawValue: out))
+        #expect(out.contains("complete(reason: nil)"), Comment(rawValue: out))
+    }
 }
 
 @Suite("Universal sections — no silent drops (hard errors)")

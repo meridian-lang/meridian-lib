@@ -186,6 +186,11 @@ extension DiagnosticCode {
         explanation: "A `--trace` token is not a recognized tracing category. Run `meridian trace categories` to list them.",
         kind: .nameResolution)
 
+    public static let missingPhraseArgument = DiagnosticCode(
+        id: "MER2011", title: "missing phrase argument",
+        explanation: "A workflow-call phrase's declared parameter did not match any extracted argument (by name, kind, or a common spacing/case variant). The generated call would be missing a required initializer argument.",
+        kind: .nameResolution, decision: DecisionRef("D-DX-2"))
+
     // MARK: MER3xxx — semantics
 
     public static let phraseInlineDepthExceeded = DiagnosticCode(
@@ -239,9 +244,9 @@ extension DiagnosticCode {
         kind: .other, decision: DecisionRef("D-DX-1"))
 
     public static let commandHoleOutOfScope = DiagnosticCode(
-        id: "MER3012", title: "command hole out of scope",
-        explanation: "A `{ expr }` hole in a backticked command references a name that is not in scope (workflow parameter, earlier bind, or loop variable).",
-        kind: .other)
+        id: "MER3012", title: "operand out of scope",
+        explanation: "An expression position (a `{ expr }` command hole, a verb subject/object, a relation/navigation operand) references a name that is not in scope (workflow parameter, earlier bind, or loop variable).",
+        kind: .nameResolution)
 
     public static let quantifierSemantic = DiagnosticCode(
         id: "MER3013", title: "quantifier semantic error",
@@ -257,6 +262,11 @@ extension DiagnosticCode {
         id: "MER3015", title: "invalid enum default",
         explanation: "A `can be` / `is usually` default case does not identify exactly one enum property, or two defaults conflict on the same property.",
         kind: .other)
+
+    public static let unlowerableRulePredicate = DiagnosticCode(
+        id: "MER3016", title: "unlowerable rule predicate",
+        explanation: "A rule body's condition used an expression shape (a quantifier, relational traversal, data table, or a parse-error carrier) that a rule predicate cannot express. Rewrite the condition as a direct comparison, boolean combination, or checkable adjective.",
+        kind: .other, decision: DecisionRef("D-DX-2"))
 
     // MARK: MER4xxx — codegen
 
@@ -308,12 +318,13 @@ extension DiagnosticCode {
         .sectionStructuralError, .uncheckablePredicate, .invalidTableCell,
         .unresolvedPhrase, .unknownTool, .unknownKind, .unknownProperty,
         .unknownVocabulary, .unknownRulebook, .unknownAdjective, .unknownVerb,
-        .unknownFallbackKind, .unknownTraceCategory,
+        .unknownFallbackKind, .unknownTraceCategory, .missingPhraseArgument,
         .phraseInlineDepthExceeded, .definitionRecursion, .duplicateDeclaration,
         .duplicateName, .relationBackingInvalid, .unattachedRule,
         .unresolvedTriggerAction, .toolBackedInlineDisallowed,
         .ambiguousEntryWorkflow, .proseDisallowed, .commandHoleOutOfScope,
         .quantifierSemantic, .ambiguousAnaphora, .invalidEnumDefault,
+        .unlowerableRulePredicate,
         .codegenError,
         .swiftFormatFailed, .vocabularyDeclarationUnrecognized, .rulebookSectionUnknown,
         .unknownMerconfigSection, .malformedRulebookEntry, .unrecognizedBlockProperty,

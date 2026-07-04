@@ -21,7 +21,9 @@ public struct StatementParser {
     /// with several malformed statements reports them all at once.
     private let diagnostics: DiagnosticEngine?
 
-    private var exprParser: ExpressionParser { ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon) }
+    private var exprParser: ExpressionParser {
+        ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon)
+    }
 
     public init(symbols: SymbolTable?, trace: ParserTrace = .shared,
                 lexicon: EnglishLexicon = .default,
@@ -302,25 +304,43 @@ public struct StatementParser {
         // the topic-label rule: a capitalized header like `For every attendee:`
         // otherwise matches `topicLabel` (uppercase, ≤40 chars, letters/spaces)
         // with an empty body and is dropped, orphaning the loop body bullets.
+        // `parseIteration` only throws when its body contains a genuinely
+        // malformed statement — that diagnostic must surface, not be silently
+        // swallowed and re-routed to a misleading `topicLabel`/other match.
         if lower.hasPrefix(statement.forEachPrefix) || lower.hasPrefix(statement.forEveryPrefix) {
-            if let (iter, consumed) = try? parseIteration(lines, at: i, file: file) {
-                return (.iteration(iter), consumed)
-            }
+            let (iter, consumed) = try parseIteration(lines, at: i, file: file)
+            trace.log(.statement, "L\(line.number) -> iteration (for each/for every)")
+            return (.iteration(iter), consumed)
         }
 
         if let (label, rest) = StatementParser.topicLabel(in: t) {
-            guard !rest.isEmpty else { return (nil, 1) }
+            guard !rest.isEmpty else {
+                try raiseStructural(
+                    .unparseableStatement,
+                    message: "topic label \"\(label):\" has no statement after the colon",
+                    range: SourceRange(file: file, line: line.number, column: 1),
+                    help: "Add a statement after the label's colon (e.g. `\(label): complete.`), or remove the empty label.")
+            }
             let labelledLine = SourceLine(indent: line.indent, text: rest, raw: line.raw, number: line.number)
             let (stmt, consumed) = try parseStatement([labelledLine] + Array(lines.dropFirst(i + 1)), at: 0, file: file)
-            guard let stmt else { return (nil, consumed) }
+            guard let stmt else {
+                try raiseStructural(
+                    .unparseableStatement,
+                    message: "topic label \"\(label):\" wraps content that produces no statement",
+                    range: SourceRange(file: file, line: line.number, column: 1),
+                    help: "A topic label must wrap a real statement (e.g. `\(label): complete.`); it cannot wrap a table/checklist sentinel or other inert content.")
+            }
+            trace.log(.statement, "L\(line.number) -> labelled")
             return (.labelled(LabelledStatementAST(label: label, statement: stmt, sourceLine: line.number)), consumed)
         }
 
         if let idiom = try parseEnglishIdiom(line, file: file) {
+            trace.log(.statement, "L\(line.number) -> englishIdiom")
             return (idiom, 1)
         }
 
         if let conditional = try parseSuffixConditional(line, file: file) {
+            trace.log(.statement, "L\(line.number) -> suffixConditional")
             return (.conditional(conditional), 1)
         }
 
@@ -329,25 +349,40 @@ public struct StatementParser {
             let handlerLine = SourceLine(indent: line.indent + 2, text: handlerText, raw: line.raw, number: line.number)
             let handler = try parseBlock([handlerLine], file: file)
             let placeholder = StatementAST.phraseInvocation(PhraseInvocationAST(words: "", sourceLine: line.number))
+            trace.log(.statement, "L\(line.number) -> otherwise (bare recover handler)")
             return (.recover(RecoverStatementAST(pattern: .any, handler: handler, attached: placeholder, sourceLine: line.number)), 1)
         }
 
         // "in lenient mode." or "in strict mode."
-        if lower == statement.lenientMode { return (.modal(.lenient), 1) }
-        if lower == statement.strictMode  { return (.modal(.strict), 1) }
+        if lower == statement.lenientMode {
+            trace.log(.statement, "L\(line.number) -> modal(lenient)")
+            return (.modal(.lenient), 1)
+        }
+        if lower == statement.strictMode {
+            trace.log(.statement, "L\(line.number) -> modal(strict)")
+            return (.modal(.strict), 1)
+        }
 
         // "complete." or "complete with reason "X"."
-        if lower == statement.complete { return (.complete(CompleteStatementAST(sourceLine: line.number)), 1) }
+        if lower == statement.complete {
+            trace.log(.statement, "L\(line.number) -> complete")
+            return (.complete(CompleteStatementAST(sourceLine: line.number)), 1)
+        }
         if lower.hasPrefix(statement.completeWithReasonPrefix) {
             let rest = String(t.dropFirst(statement.completeWithReasonPrefix.count))
             let reason = unquote(rest)
+            trace.log(.statement, "L\(line.number) -> complete(reason:)")
             return (.complete(CompleteStatementAST(reason: reason, sourceLine: line.number)), 1)
         }
 
         // "commit." or "commit with label "X"."
-        if lower == statement.commit { return (.commit(CommitStatementAST(sourceLine: line.number)), 1) }
+        if lower == statement.commit {
+            trace.log(.statement, "L\(line.number) -> commit")
+            return (.commit(CommitStatementAST(sourceLine: line.number)), 1)
+        }
         if lower.hasPrefix(statement.commitWithLabelPrefix) {
             let label = unquote(String(t.dropFirst(statement.commitWithLabelPrefix.count)))
+            trace.log(.statement, "L\(line.number) -> commit(label:)")
             return (.commit(CommitStatementAST(label: label, sourceLine: line.number)), 1)
         }
 
@@ -355,6 +390,7 @@ public struct StatementParser {
         if lower.hasPrefix(statement.waitPrefix) {
             let rest = String(t.dropFirst(statement.waitPrefix.count))
             if let cond = parseWaitCondition(rest) {
+                trace.log(.statement, "L\(line.number) -> wait")
                 return (.wait(WaitStatementAST(condition: cond, sourceLine: line.number)), 1)
             }
         }
@@ -362,12 +398,14 @@ public struct StatementParser {
         // Choice-gate: `ask the user to choose between "A", "B", or "C":`, or
         // the SKILL.md list form with indented quoted/numbered options.
         if let choice = parseChoiceGate(lines, at: i) {
+            trace.log(.statement, "L\(line.number) -> choiceGate")
             return (.wait(choice.statement), choice.consumed)
         }
 
         // "emit {eventID} with ..." (possibly multi-line payload)
         if lower.hasPrefix(statement.emitPrefix) {
             let (emitStmt, extra) = try parseEmit(lines, at: i)
+            trace.log(.statement, "L\(line.number) -> emit")
             return (.emit(emitStmt), 1 + extra)
         }
 
@@ -383,14 +421,17 @@ public struct StatementParser {
         // plain English (`if the entity does not link to the input, add …`).
         if lower.hasPrefix(statement.ifPrefix),
            let single = try parseInlineConditional(line, file: file) {
+            trace.log(.statement, "L\(line.number) -> inlineConditional")
             return (.conditional(single), 1)
         }
         // Choice branches: `if yes:`, `if no:`, `if the user picks 1:`, etc.
         if let choiceBranch = try parseChoiceBranch(lines, at: i, file: file) {
+            trace.log(.statement, "L\(line.number) -> choiceBranch")
             return (.conditional(choiceBranch.statement), choiceBranch.consumed)
         }
         if lower.hasPrefix(lexicon.grammar.unlessYouDecideIntroducer) && t.hasSuffix(",") {
             let (cond, consumed) = try parseUnlessDecisionConditional(lines, at: i, file: file)
+            trace.log(.statement, "L\(line.number) -> unlessDecisionConditional")
             return (.conditional(cond), consumed)
         }
 
@@ -489,6 +530,7 @@ public struct StatementParser {
         // "simultaneously:" with each top-level body statement as a branch.
         if lower == statement.simultaneouslyHeader {
             let (sim, consumed) = try parseSimultaneously(lines, at: i, file: file)
+            trace.log(.statement, "L\(line.number) -> simultaneously")
             return (.simultaneously(sim), consumed)
         }
 
@@ -512,6 +554,7 @@ public struct StatementParser {
         }
 
         if let every = parseEveryEach(line) {
+            trace.log(.statement, "L\(line.number) -> iteration (every/each shorthand)")
             return (.iteration(every), 1)
         }
 
@@ -581,10 +624,19 @@ public struct StatementParser {
         let rest = String(statement.dropFirst(lexicon.grammar.statement.doPrefix.count)).trimmingCharacters(in: .whitespaces)
         let chunks = splitStatementChain(rest)
         guard chunks.count > 1 else { return nil }
-        return try chunks.compactMap { chunk in
+        var result: [StatementAST] = []
+        for chunk in chunks {
             let synthetic = SourceLine(indent: line.indent, text: chunk, raw: line.raw, number: line.number)
-            return try parseStatement([synthetic], at: 0, file: file).0
+            guard let stmt = try parseStatement([synthetic], at: 0, file: file).0 else {
+                try raiseStructural(
+                    .unparseableStatement,
+                    message: "`do … and …` chain includes an unparseable chunk: \"\(chunk)\"",
+                    range: SourceRange(file: file, line: line.number, column: 1),
+                    help: "Every chunk of a `do A and B [and C …]` chain must be a valid statement on its own.")
+            }
+            result.append(stmt)
         }
+        return result
     }
 
     /// Parse an explicit judgment marker into a `.proseStep` carrying its own
@@ -825,6 +877,12 @@ public struct StatementParser {
                     out.append(contentsOf: expanded)
                 } else if let stmt = try parseStatement([rowLine], at: 0, file: file).0 {
                     out.append(stmt)
+                } else {
+                    try raiseStructural(
+                        .unparseableStatement,
+                        message: "decision-table row does not parse as a statement: \"\(rowText)\"",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Each decision-table row must expand to a valid action or chained actions (e.g. `emit x.` or `bind y = z.`). Fix the row's action column, or remove the row.")
                 }
             }
             return out

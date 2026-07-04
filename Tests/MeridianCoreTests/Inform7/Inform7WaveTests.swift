@@ -279,7 +279,7 @@ struct CommandHoleTests {
         } catch let error as CompilerError {
             let message = "\(error)"
             #expect(message.contains("widget"))
-            #expect(message.contains("in scope") || message.contains("In-scope"))
+            #expect(message.contains("not in scope"))
             // `order` is the workflow parameter and must be listed as in-scope.
             #expect(message.contains("order"))
         } catch {
@@ -486,8 +486,8 @@ struct ConventionRestatementTests {
     """
 
     @Test("a section body that verbatim restates a convention is marked convention-ref")
-    func restatementMarked() {
-        let out = migrator(rulebook).markSections("""
+    func restatementMarked() throws {
+        let out = try migrator(rulebook).markSections("""
         ## Citation Policy
         Always include a citation.
         """).markdown
@@ -495,8 +495,8 @@ struct ConventionRestatementTests {
     }
 
     @Test("a section that does not restate a convention is plain inert")
-    func nonRestatementInert() {
-        let out = migrator(rulebook).markSections("""
+    func nonRestatementInert() throws {
+        let out = try migrator(rulebook).markSections("""
         ## Random Notes
         This text matches no convention at all.
         """).markdown
@@ -505,10 +505,10 @@ struct ConventionRestatementTests {
     }
 
     @Test("with no rulebook conventions, nothing is marked convention-ref")
-    func noConventionsNoMark() {
+    func noConventionsNoMark() throws {
         let mig = SkillMigrator(
             compiler: Compiler(options: .init(fallbackPolicy: .lenient)), vocabularies: [])
-        let out = mig.markSections("""
+        let out = try mig.markSections("""
         ## Citation Policy
         Always include a citation.
         """).markdown

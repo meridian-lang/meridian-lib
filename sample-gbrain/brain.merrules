@@ -56,6 +56,19 @@ rule "checklist-box":
   rewrite: make sure {item}.
 
 === sections ===
+section "`.doc` / `.docx`" -> procedure
+section "`.pst` (Outlook archives)" -> procedure
+section "Common patterns" -> procedure
+section "How to use" -> procedure
+section "Find candidate pages" -> procedure
+section "Discovery" -> procedure
+section "Import" -> procedure
+section "Via direct Google People API" -> procedure
+section "Quick Reference" -> procedure
+section "Option D: GitHub Pages / Gist" -> procedure
+section "Install (if not already installed)" -> procedure
+section "CLI" -> procedure
+section "Direct" -> procedure
 
 section "Contract", "Guarantees", "Contract & Guarantees", "Invariants" -> invariants
 section "Phases", "Workflow", "Pipeline", "Protocol", "Steps", "Process", "Procedure" -> procedure

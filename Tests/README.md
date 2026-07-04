@@ -8,6 +8,7 @@ swift test --filter MeridianCoreTests               # core compiler tests
 swift test --filter Phase3ForcingFunction           # end-to-end forcing function
 swift test --filter ParserTraceTests                # trace facility tests
 swift test --filter SwiftEmitterTests               # codegen golden tests
+MERIDIAN_CORPORA_TYPECHECK=1 swift test --filter CorporaConformanceTests
 ```
 
 For `.meridian.test` spec files and the `meridian test` runner, see
@@ -40,6 +41,14 @@ hand-written Phase 1 reference flows in `SampleDemoFlows/`.
 ### `MeridianToolsTests` (Phase 6)
 
 Tests for built-in tool implementations.
+
+### `CorporaTests`
+
+Wave 6 corpus validation for `corpora/erp` and `corpora/procedures`. The suite
+checks corpus completeness, strict compile, mechanism coverage, generated Swift
+sanity, and opt-in generated Swift typechecking. Set
+`MERIDIAN_CORPORA_TYPECHECK=1` to feed every generated synthetic-corpus Swift
+file to `swiftc -typecheck` against `MeridianRuntime`.
 
 ---
 

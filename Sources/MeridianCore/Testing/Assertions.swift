@@ -301,10 +301,18 @@ private func errorLine(_ err: CompilerError) -> Int? {
 /// `expect_error_kind` assertions: codegen for `MER4xxx`, syntax for `MER1xxx`
 /// / `MER0002`, semantic otherwise.
 private func diagnosticErrorKind(_ err: CompilerError) -> CompileErrorKind {
-    guard let code = err.diagnostics.first?.code.id else { return .semantic }
-    if code.hasPrefix("MER4") { return .codegen }
-    if code.hasPrefix("MER1") || code == "MER0002" { return .syntax }
-    return .semantic
+    guard let code = err.diagnostics.first?.code else { return .semantic }
+    return code.specCompileErrorKind
+}
+
+extension DiagnosticCode {
+    /// Legacy `.meridian.test` `expect_error_kind` band mapping.
+    fileprivate var specCompileErrorKind: CompileErrorKind {
+        if self == .codegenError { return .codegen }
+        if self == .legacySyntax { return .syntax }
+        if id.hasPrefix("MER1") { return .syntax }
+        return .semantic
+    }
 }
 
 private func evaluateGolden(

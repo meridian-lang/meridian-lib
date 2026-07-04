@@ -122,7 +122,7 @@ struct MerConfigSectionsTests {
         try MerConfigParser(trace: ParserTrace.silent()).parse(src, file: "t.merconfig")
     }
 
-    @Test("an unrecognized section is MER5010")
+    @Test("an unrecognized section is unknownMerconfigSection")
     func unrecognizedSection() throws {
         let src = """
         === bogus ===
@@ -132,9 +132,9 @@ struct MerConfigSectionsTests {
         """
         do {
             _ = try parse(src)
-            Issue.record("expected MER5010 for unknown section")
+            Issue.record("expected unknownMerconfigSection for unknown section")
         } catch let e as CompilerError {
-            #expect(e.diagnostics.contains { $0.code.id == "MER5010" })
+            #expect(e.diagnostics.contains { $0.code == .unknownMerconfigSection })
         }
     }
 

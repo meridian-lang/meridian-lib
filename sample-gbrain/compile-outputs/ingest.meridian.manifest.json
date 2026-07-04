@@ -98,7 +98,7 @@
     "name" : "ingest",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "invariants",
         "level" : 2,
         "line" : 31,
         "text" : "Contract"
@@ -106,216 +106,235 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 42,
+        "line" : 45,
         "text" : "Citation Requirements (MANDATORY)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 53,
+        "line" : 56,
         "text" : "Phases"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 62,
+        "line" : 70,
         "text" : "Entity Detection on Every Message"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 67,
+        "line" : 75,
         "text" : "Protocol"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 78,
+        "line" : 94,
         "text" : "What counts as notable"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 86,
+        "line" : 102,
         "text" : "What to capture from the user's own thinking"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 97,
+        "line" : 113,
         "text" : "Media Workflows"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 102,
+        "line" : 118,
         "text" : "Articles & Web Content"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 118,
+        "line" : 134,
         "text" : "Videos & Podcasts"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 141,
+        "line" : 157,
         "text" : "PDFs & Documents"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 154,
+        "line" : 170,
         "text" : "Screenshots & Images"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 166,
+        "line" : 182,
         "text" : "Meeting Transcripts"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 189,
+        "line" : 205,
         "text" : "Social Media Content"
       },
       {
-        "kind" : "procedure",
+        "kind" : "inert",
         "level" : 2,
-        "line" : 203,
+        "line" : 219,
         "text" : "Raw Source Preservation"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 235,
+        "line" : 251,
         "text" : "Test Before Bulk"
       },
       {
-        "kind" : "inert",
+        "kind" : "invariants",
         "level" : 2,
-        "line" : 249,
+        "line" : 265,
         "text" : "Quality Rules"
       },
       {
-        "kind" : "procedure",
+        "kind" : "prohibitions",
         "level" : 2,
-        "line" : 260,
+        "line" : 276,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 269,
+        "line" : 284,
         "text" : "Output Format"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 287,
+        "line" : 302,
         "text" : "Tools Used"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 108,
+        "line" : 63,
+        "text" : "If exists"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 64,
+        "text" : "If new"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 124,
         "text" : "Extract"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 109,
+        "line" : 125,
         "text" : "Summarize"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 110,
-        "text" : "Extract entities"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 112,
-        "text" : "Analyze for the user"
       },
       {
         "kind" : "topic",
         "level" : 3,
         "line" : 126,
+        "text" : "Extract entities"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 128,
+        "text" : "Analyze for the user"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 142,
         "text" : "Analyze"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 148,
+        "line" : 164,
         "text" : "Summarize"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 160,
+        "line" : 176,
         "text" : "If tweet screenshot"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 161,
+        "line" : 177,
         "text" : "If article screenshot"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 195,
+        "line" : 211,
         "text" : "If images present"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 196,
+        "line" : 212,
         "text" : "Summarize"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 255,
+        "line" : 271,
         "text" : "Link types"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 256,
+        "line" : 272,
         "text" : "Source attribution"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 257,
+        "line" : 273,
         "text" : "Back-links"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 258,
+        "line" : 274,
         "text" : "Filing"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 31,
         "lines" : [
-          "checklist:ai-autonomy:RXZlcnkgZmFjdCB3cml0dGVuIHRvIGEgYnJhaW4gcGFnZSBjYXJyaWVzIGFuIGlubGluZSBgW1NvdXJjZTogLi4uXWAgY2l0YXRpb24gd2l0aCBkYXRlIGFuZCBwcm92ZW5hbmNlCkV2ZXJ5IGVudGl0eSBtZW50aW9uIGNyZWF0ZXMgYSBiYWNrLWxpbmsgZnJvbSB0aGUgZW50aXR5J3MgcGFnZSB0byB0aGUgcGFnZSBtZW50aW9uaW5nIHRoZW0gKElyb24gTGF3KQpSYXcgc291cmNlcyBhcmUgcHJlc2VydmVkIGZvciBwcm92ZW5hbmNlIHZpYSBgZ2JyYWluIGZpbGVzIHVwbG9hZC1yYXdgIHdpdGggYXV0b21hdGljIHNpemUgcm91dGluZwpTdGF0ZSBzZWN0aW9ucyBhcmUgcmV3cml0dGVuIHdpdGggY3VycmVudCBiZXN0IHVuZGVyc3RhbmRpbmcsIG5ldmVyIGFwcGVuZGVkIHRvCkVudGl0eSBkZXRlY3Rpb24gZmlyZXMgb24gZXZlcnkgaW5ib3VuZCBtZXNzYWdlOyBub3RhYmxlIGVudGl0aWVzIGdldCBwYWdlcyBvciB1cGRhdGVz"
+          "Every fact written to a brain page carries an inline `[Source: ...]` citation with date and provenance",
+          "Every entity mention creates a back-link from the entity's page to the page mentioning them (Iron Law)",
+          "Raw sources are preserved for provenance via `gbrain files upload-raw` with automatic size routing",
+          "State sections are rewritten with current best understanding, never appended to",
+          "Entity detection fires on every inbound message; notable entities get pages or updates",
+          "Every mention of a person or company with a brain page MUST create a back-link",
+          "FROM that entity's page TO the page mentioning them. An unlinked mention is a",
+          "broken brain. See `skills\/_brain-filing-rules.md` for format"
         ],
-        "role" : "procedure"
+        "role" : "invariants"
       },
       {
         "executes" : false,
         "heading" : "Citation Requirements (MANDATORY)",
-        "line" : 42,
+        "line" : 45,
         "lines" : [
           "Every fact written to a brain page must carry an inline `[Source: ...]` citation",
           "**User's statements:** `[Source: User, {context}, YYYY-MM-DD]`",
@@ -328,23 +347,26 @@
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phases",
-        "line" : 53,
+        "line" : 56,
         "lines" : [
-          "use judgment to ingest the source and update the brain:",
-          "Parse the source to extract people, companies, dates, and events",
-          "For each entity mentioned, read its page and update compiled truth, or create a new page after the notability gate",
-          "Append a timeline entry for each event with date, summary, and source citation",
-          "Create cross-reference links for every entity pair mentioned together",
-          "Back-link every mentioned entity's page to this page, and merge the event onto each entity's timeline"
+          "**Parse the source.** Extract people, companies, dates, and events from the input",
+          "**For each entity mentioned:**",
+          "Read the entity's page from gbrain to check if it exists",
+          "If exists: update compiled_truth (rewrite State section with new info, don't append)",
+          "If new: check notability gate, then store the page in gbrain with the appropriate type and slug",
+          "**Append to timeline.** Add a timeline entry in gbrain for each event, with date, summary, and source citation",
+          "**Create cross-reference links.** Link entities in gbrain for every entity pair mentioned together, using the appropriate relationship type",
+          "**Back-link all entities.** Update EVERY mentioned entity's page with a back-link to this page (Iron Law)",
+          "**Timeline merge.** The same event appears on ALL mentioned entities' timelines. If Alice met Bob at Acme Corp, the event goes on Alice's page, Bob's page, and Acme Corp's page"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Entity Detection on Every Message",
-        "line" : 62,
+        "line" : 70,
         "lines" : [
           "Production agents should detect entity mentions on EVERY inbound message. This is",
           "the signal detection loop that makes the brain compound over time"
@@ -352,22 +374,31 @@
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Protocol",
-        "line" : 67,
+        "line" : 75,
         "lines" : [
-          "use judgment to detect and file entities on every message:",
-          "Scan the message for mentions of people, companies, concepts, and original thinking",
-          "For each entity, search the brain; load and update an existing page, or create a new page after the notability gate",
-          "Detect and enrich alongside the response so the conversation is never blocked",
-          "codeblock:bash:Z2JyYWluIHN5bmMgLS1uby1wdWxsIC0tbm8tZW1iZWQ="
+          "**Scan the message** for entity mentions: people, companies, concepts, original",
+          "thinking. Fire on every message (no exceptions unless purely operational)",
+          "**For each entity detected:**",
+          "`gbrain search \"name\"` -- does a page already exist?",
+          "**If yes:** load context with `gbrain get <slug>`. Use the compiled truth to",
+          "inform your response. Update the page if the message contains new information",
+          "**If no:** assess notability (see `skills\/_brain-filing-rules.md`). If the entity",
+          "is worth tracking, create a new page with `gbrain put <type\/slug>` and populate",
+          "with what you know",
+          "**After creating or updating pages:** sync to gbrain:",
+          "codeblock:bash:Z2JyYWluIHN5bmMgLS1uby1wdWxsIC0tbm8tZW1iZWQ=",
+          "**Don't block the conversation.** Entity detection and enrichment should happen",
+          "alongside the response, not before it. The user shouldn't wait for brain writes",
+          "to get an answer"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "What counts as notable",
-        "line" : 78,
+        "line" : 94,
         "lines" : [
           "People the user interacts with or discusses (not random mentions)",
           "Companies relevant to the user's work or interests",
@@ -380,7 +411,7 @@
       {
         "executes" : false,
         "heading" : "What to capture from the user's own thinking",
-        "line" : 86,
+        "line" : 102,
         "lines" : [
           "Original thinking is the most valuable signal. Capture exact phrasing -- the user's",
           "language IS the insight. Don't paraphrase",
@@ -395,7 +426,7 @@
       {
         "executes" : false,
         "heading" : "Media Workflows",
-        "line" : 97,
+        "line" : 113,
         "lines" : [
           "Content the user encounters should be captured in the brain. File by PRIMARY",
           "SUBJECT, not by format (see `skills\/_brain-filing-rules.md`)"
@@ -405,7 +436,7 @@
       {
         "executes" : false,
         "heading" : "Articles & Web Content",
-        "line" : 102,
+        "line" : 118,
         "lines" : [
           "**Input:** URL shared by user, or article mentioned in conversation",
           "**Process:**",
@@ -424,7 +455,7 @@
       {
         "executes" : false,
         "heading" : "Videos & Podcasts",
-        "line" : 118,
+        "line" : 134,
         "lines" : [
           "**Input:** URL (YouTube, podcast, etc.) or local audio\/video file",
           "**Process:**",
@@ -449,7 +480,7 @@
       {
         "executes" : false,
         "heading" : "PDFs & Documents",
-        "line" : 141,
+        "line" : 157,
         "lines" : [
           "**Input:** File path or URL",
           "**Process:**",
@@ -465,7 +496,7 @@
       {
         "executes" : false,
         "heading" : "Screenshots & Images",
-        "line" : 154,
+        "line" : 170,
         "lines" : [
           "**Input:** Image file",
           "**Process:**",
@@ -480,7 +511,7 @@
       {
         "executes" : false,
         "heading" : "Meeting Transcripts",
-        "line" : 166,
+        "line" : 182,
         "lines" : [
           "**Input:** Transcript from meeting recording service, or manual notes",
           "**Process:**",
@@ -505,7 +536,7 @@
       {
         "executes" : false,
         "heading" : "Social Media Content",
-        "line" : 189,
+        "line" : 205,
         "lines" : [
           "**Input:** Tweet, thread, or social media post",
           "**Process:**",
@@ -520,30 +551,29 @@
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Raw Source Preservation",
-        "line" : 203,
+        "line" : 219,
         "lines" : [
-          "use judgment to follow the Raw Source Preservation guidance:",
           "Every ingested item must have its raw source preserved for provenance",
           "**Use `gbrain files upload-raw` for automatic size routing:**",
           "codeblock:bash:Z2JyYWluIGZpbGVzIHVwbG9hZC1yYXcgPGZpbGU+IC0tcGFnZSA8cGFnZS1zbHVnPiAtLXR5cGUgPHR5cGU+",
-          "item: **< 100 MB text\/PDF**: stays in git (brain repo `.raw\/` sidecar directories)",
-          "item: **>= 100 MB OR media** (video, audio, images): uploaded to cloud storage",
+          "**< 100 MB text\/PDF**: stays in git (brain repo `.raw\/` sidecar directories)",
+          "**>= 100 MB OR media** (video, audio, images): uploaded to cloud storage",
           "via TUS resumable upload, `.redirect.yaml` pointer left in the brain repo",
           "The `.redirect.yaml` pointer format:",
           "codeblock:yaml:dGFyZ2V0OiBzdXBhYmFzZTovL2JyYWluLWZpbGVzL3BhZ2Utc2x1Zy9maWxlbmFtZS5tcDQKYnVja2V0OiBicmFpbi1maWxlcwpzdG9yYWdlX3BhdGg6IHBhZ2Utc2x1Zy9maWxlbmFtZS5tcDQKc2l6ZTogNTI0Mjg4MDAwCnNpemVfaHVtYW46IDUwMCBNQgpoYXNoOiBzaGEyNTY6YWJjMTIzLi4uCm1pbWU6IHZpZGVvL21wNAp1cGxvYWRlZDogMjAyNi0wNC0xMVQuLi4KdHlwZTogdHJhbnNjcmlwdA==",
           "**Accessing stored files:**",
-          "item: `gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing\/sharing",
-          "item: `gbrain files restore <dir>` -- download back to local from cloud storage",
+          "`gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing\/sharing",
+          "`gbrain files restore <dir>` -- download back to local from cloud storage",
           "Use `put_raw_data` in gbrain to store raw API responses and metadata (JSON, not binary)"
         ],
-        "role" : "procedure"
+        "role" : "inert"
       },
       {
         "executes" : false,
         "heading" : "Test Before Bulk",
-        "line" : 235,
+        "line" : 251,
         "lines" : [
           "When processing multiple items (batch video ingestion, bulk meeting processing, etc.):",
           "**Test on 3-5 items first.** Run in test mode if available",
@@ -560,7 +590,7 @@
       {
         "executes" : false,
         "heading" : "Quality Rules",
-        "line" : 249,
+        "line" : 265,
         "lines" : [
           "Executive summary in compiled_truth must be updated, not just timeline appended",
           "State section is REWRITTEN, not appended to. Current best understanding only",
@@ -571,21 +601,25 @@
           "Back-links: every entity mention creates a back-link (Iron Law)",
           "Filing: file by primary subject, not format or source (see filing rules)"
         ],
-        "role" : "inert"
+        "role" : "invariants"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 260,
+        "line" : 276,
         "lines" : [
-          "checklist:ai-autonomy:KipBcHBlbmRpbmcgdG8gU3RhdGUgc2VjdGlvbnMuKiogU3RhdGUgaXMgcmV3cml0dGVuIHdpdGggdGhlIGN1cnJlbnQgYmVzdCB1bmRlcnN0YW5kaW5nIG9uIGV2ZXJ5IHVwZGF0ZS4gQXBwZW5kLW9ubHkgU3RhdGUgc2VjdGlvbnMgZ3JvdyBzdGFsZSBhbmQgY29udHJhZGljdG9yeQoqKkluZ2VzdGluZyB3aXRob3V0IGJhY2stbGlua3MuKiogQW4gdW5saW5rZWQgbWVudGlvbiBpcyBhIGJyb2tlbiBicmFpbi4gRXZlcnkgZW50aXR5IG1lbnRpb25lZCBtdXN0IGhhdmUgYSBiYWNrLWxpbmsgZnJvbSB0aGVpciBwYWdlIHRvIHRoZSBwYWdlIG1lbnRpb25pbmcgdGhlbQoqKlNraXBwaW5nIHJhdyBzb3VyY2UgcHJlc2VydmF0aW9uLioqIEV2ZXJ5IGluZ2VzdGVkIGl0ZW0gbXVzdCBoYXZlIGl0cyByYXcgc291cmNlIHByZXNlcnZlZC4gQSBicmFpbiBwYWdlIHdpdGhvdXQgcHJvdmVuYW5jZSBpcyB1bnZlcmlmaWFibGUKKipCdWxrIHByb2Nlc3Npbmcgd2l0aG91dCBzYW1wbGUgdGVzdC4qKiBUZXN0IG9uIDMtNSBpdGVtcyBmaXJzdC4gRml4IHF1YWxpdHkgaXNzdWVzIGluIHRoZSBhcHByb2FjaCwgbm90IHZpYSBvbmUtb2ZmIHBhdGNoZXMKKipQYXJhcGhyYXNpbmcgdGhlIHVzZXIncyBvcmlnaW5hbCB0aGlua2luZy4qKiBUaGUgdXNlcidzIGV4YWN0IGxhbmd1YWdlIElTIHRoZSBpbnNpZ2h0LiBDYXB0dXJlIHZlcmJhdGltIHBocmFzaW5nIGZvciBpZGVhcywgdGhlc2VzLCBhbmQgZnJhbWV3b3Jrcw=="
+          "**Appending to State sections.** State is rewritten with the current best understanding on every update. Append-only State sections grow stale and contradictory",
+          "**Ingesting without back-links.** An unlinked mention is a broken brain. Every entity mentioned must have a back-link from their page to the page mentioning them",
+          "**Skipping raw source preservation.** Every ingested item must have its raw source preserved. A brain page without provenance is unverifiable",
+          "**Bulk processing without sample test.** Test on 3-5 items first. Fix quality issues in the approach, not via one-off patches",
+          "**Paraphrasing the user's original thinking.** The user's exact language IS the insight. Capture verbatim phrasing for ideas, theses, and frameworks"
         ],
-        "role" : "procedure"
+        "role" : "prohibitions"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 269,
+        "line" : 284,
         "lines" : [
           "codeblock:plain:SU5HRVNURUQ6IFt0aXRsZV0KPT09PT09PT09PT09PT09PT09CgpQYWdlOiBbc2x1Z10KVHlwZTogW3BlcnNvbiAvIGNvbXBhbnkgLyBtZWV0aW5nIC8gbWVkaWEgLyBjb25jZXB0XQpTb3VyY2U6IFtzb3VyY2UgZGVzY3JpcHRpb25dCgpFbnRpdGllcyBkZXRlY3RlZDogTgotIFtlbnRpdHldIC0+IFtjcmVhdGVkIC8gdXBkYXRlZF0gKFtzbHVnXSkKCkJhY2stbGlua3MgY3JlYXRlZDogTgpUaW1lbGluZSBlbnRyaWVzOiBOClJhdyBzb3VyY2U6IFtwcmVzZXJ2ZWQgYXQgcGF0aCAvIHVwbG9hZGVkIHRvIGNsb3VkXQ=="
         ],
@@ -594,7 +628,7 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 287,
+        "line" : 302,
         "lines" : [
           "Read a page from gbrain (get_page)",
           "Store\/update a page in gbrain (put_page)",
@@ -649,24 +683,16 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 34,
-      "swift_line" : 603
+      "meridian_line" : 1,
+      "swift_line" : 632
     },
     {
-      "meridian_line" : 55,
-      "swift_line" : 614
+      "meridian_line" : 1,
+      "swift_line" : 637
     },
     {
-      "meridian_line" : 69,
-      "swift_line" : 623
-    },
-    {
-      "meridian_line" : 74,
-      "swift_line" : 633
-    },
-    {
-      "meridian_line" : 205,
-      "swift_line" : 643
+      "meridian_line" : 1,
+      "swift_line" : 676
     },
     {
       "meridian_line" : 1,
@@ -674,23 +700,11 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 686
+      "swift_line" : 720
     },
     {
       "meridian_line" : 1,
       "swift_line" : 725
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 730
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 769
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 774
     }
   ],
   "tools_used" : [
