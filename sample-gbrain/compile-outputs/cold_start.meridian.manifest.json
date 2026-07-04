@@ -146,7 +146,7 @@
         "text" : "Import"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
         "line" : 182,
         "text" : "Post-import"
@@ -388,6 +388,24 @@
       {
         "kind" : "topic",
         "level" : 3,
+        "line" : 319,
+        "text" : "ChatGPT"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 320,
+        "text" : "Claude"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 321,
+        "text" : "Perplexity"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
         "line" : 325,
         "text" : "For each conversation"
       },
@@ -555,7 +573,7 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Post-import",
         "line" : 182,
         "lines" : [
@@ -563,7 +581,7 @@
           "Run timeline extraction: `gbrain extract timeline --source db`",
           "Start embeddings: `gbrain embed --stale` (runs in background)"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -734,9 +752,9 @@
         "heading" : "Supported formats",
         "line" : 317,
         "lines" : [
-          "**ChatGPT:** Settings → Data Controls → Export → `conversations.json`",
-          "**Claude:** Download from claude.ai conversation history",
-          "**Perplexity:** Export from settings"
+          "ChatGPT: Settings → Data Controls → Export → `conversations.json`",
+          "Claude: Download from claude.ai conversation history",
+          "Perplexity: Export from settings"
         ],
         "role" : "inert"
       },
@@ -805,11 +823,11 @@
         "heading" : "Processing",
         "line" : 364,
         "lines" : [
-          "**Original tweets** → capture with full context, extract entities",
-          "**Quote tweets** → capture the user's commentary + the source tweet",
-          "**Threads** → reconstruct as a single narrative",
-          "**Bookmarks** → high-signal curation, import with tags",
-          "**Likes** — low signal, skip unless the user wants them"
+          "Original tweets → capture with full context, extract entities",
+          "Quote tweets → capture the user's commentary + the source tweet",
+          "Threads → reconstruct as a single narrative",
+          "Bookmarks → high-signal curation, import with tags",
+          "Likes — low signal, skip unless the user wants them"
         ],
         "role" : "inert"
       },
@@ -1028,80 +1046,92 @@
       "swift_line" : 748
     },
     {
-      "meridian_line" : 212,
+      "meridian_line" : 184,
       "swift_line" : 759
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 798
+      "meridian_line" : 185,
+      "swift_line" : 771
+    },
+    {
+      "meridian_line" : 186,
+      "swift_line" : 783
+    },
+    {
+      "meridian_line" : 212,
+      "swift_line" : 795
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 803
+      "swift_line" : 834
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 842
+      "swift_line" : 839
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 847
+      "swift_line" : 878
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 886
+      "swift_line" : 883
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 891
+      "swift_line" : 922
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 930
+      "swift_line" : 927
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 935
+      "swift_line" : 966
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 974
+      "swift_line" : 971
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 979
+      "swift_line" : 1010
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1018
+      "swift_line" : 1015
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1023
+      "swift_line" : 1054
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1062
+      "swift_line" : 1059
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1067
+      "swift_line" : 1098
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1106
+      "swift_line" : 1103
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1111
+      "swift_line" : 1142
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1150
+      "swift_line" : 1147
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1155
+      "swift_line" : 1186
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1191
     }
   ],
   "tools_used" : [

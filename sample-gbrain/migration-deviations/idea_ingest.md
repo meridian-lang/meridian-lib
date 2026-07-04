@@ -12,6 +12,15 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L6 `Contract`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L21 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L47 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L70 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 4/4 inert (100% inert ratio)

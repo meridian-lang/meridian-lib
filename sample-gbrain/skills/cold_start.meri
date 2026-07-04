@@ -179,7 +179,7 @@ gbrain stats
 gbrain search "<topic from the imported data>"
 ```
 
-### Post-import (( inert ))
+### Post-import
 
 - Run link extraction: `gbrain extract links --source db`
 - Run timeline extraction: `gbrain extract timeline --source db`
@@ -316,9 +316,9 @@ preserved in dialog form.
 
 ### Supported formats (( inert ))
 
-- **ChatGPT:** Settings → Data Controls → Export → `conversations.json`
-- **Claude:** Download from claude.ai conversation history
-- **Perplexity:** Export from settings
+- ChatGPT: Settings → Data Controls → Export → `conversations.json`
+- Claude: Download from claude.ai conversation history
+- Perplexity: Export from settings
 
 ### Processing (( inert ))
 
@@ -363,11 +363,11 @@ brain/media/x/{handle}/
 
 ### Processing (( inert ))
 
-- **Original tweets** → capture with full context, extract entities
-- **Quote tweets** → capture the user's commentary + the source tweet
-- **Threads** → reconstruct as a single narrative
-- **Bookmarks** → high-signal curation, import with tags
-- **Likes** — low signal, skip unless the user wants them
+- Original tweets → capture with full context, extract entities
+- Quote tweets → capture the user's commentary + the source tweet
+- Threads → reconstruct as a single narrative
+- Bookmarks → high-signal curation, import with tags
+- Likes — low signal, skip unless the user wants them
 
 ## Phase 7: File Archives (( inert, role: procedure ))
 

@@ -3,8 +3,8 @@
 - Original: `archive-crawler/SKILL.md`
 - Ported: `archive_crawler.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 90%
-- Lines: 321 -> 321 (+33 / -33)
+- Similarity: 88%
+- Lines: 321 -> 321 (+38 / -38)
 
 ## Frontmatter
 - Added: (none)
@@ -12,6 +12,31 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L12 `Safety gate (REQUIRED, no exceptions)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L43 `What this is`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L52 `Concepts`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L54 `Source`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L63 `Manifest`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L75 `Gold filter`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L89 `Protocol`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L91 `Phase 1: Inventory`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L105 `Phase 2: Crawl`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L118 `Phase 3: Ingest`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L163 `File-type handlers`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L165 `Plain text / HTML / Markdown`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L168 ``.mbox` (email archives)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L212 ``.zip` / `.tar` / `.tar.gz``: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L216 `Images`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L221 `Manifest template`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L268 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L281 `Related skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L290 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L301 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections: 20/22 inert (91% inert ratio)
@@ -173,21 +198,25 @@
  
  ```markdown
  ---
-@@ -249,40 +249,40 @@
- 
+@@ -250,39 +250,39 @@
  # [Archive Name] — Ingestion Status
  
--## Source
-+## Source (( inert ))
- - **Type:** [local|dropbox|...]
- - **Allow-listed paths:** [from gbrain.yml]
- - **Total files:** [N]
- - **Total size:** [X GB]
- - **Date range:** [earliest] — [latest]
- 
+ ## Source
+-- **Type:** [local|dropbox|...]
+-- **Allow-listed paths:** [from gbrain.yml]
+-- **Total files:** [N]
+-- **Total size:** [X GB]
+-- **Date range:** [earliest] — [latest]
+-
 -## Inventory
 -
 -### [Folder 1]
++- Type: [local|dropbox|...]
++- Allow-listed paths: [from gbrain.yml]
++- Total files: [N]
++- Total size: [X GB]
++- Date range: [earliest] — [latest]
++
 +## Inventory (( inert ))
 +
 +### [Folder 1] (( inert ))

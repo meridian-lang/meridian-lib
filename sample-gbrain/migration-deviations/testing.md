@@ -3,8 +3,8 @@
 - Original: `testing/SKILL.md`
 - Ported: `testing.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 91%
-- Lines: 257 -> 257 (+22 / -22)
+- Similarity: 88%
+- Lines: 257 -> 257 (+30 / -30)
 
 ## Frontmatter
 - Added: (none)
@@ -12,12 +12,37 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L8 `Two modes`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L24 `Mode 1: Skill conformance validation`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L26 `Contract`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L39 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L49 `Automation`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L57 `Output format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L73 `Mode 2: Project test-suite health (v0.25.1)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L75 `When to use`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L83 `Test tiers`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L92 `Daily run protocol`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L96 `1. Run unit tests`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L104 `2. Run evals (if the project has an evals config)`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L121 `4. Git diff analysis (CRITICAL — regression intelligence)`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L137 `5. Classify each failure`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L147 `6. Report format`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L168 `7. Auto-fix protocol`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L187 `State (regression history)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L209 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L220 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L231 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections: 21/21 inert (100% inert ratio)
+- Sections: 20/21 inert (95% inert ratio)
 - Operational inert: 10
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-content=7, operational-procedure=2, reference-documentation=9, template=2
+- Inert categories: normative-contract=1, operational-content=7, operational-procedure=2, reference-documentation=8, template=2
 - Judgment: 0 blocks, 0 lines
 
 ### Inert section details
@@ -33,7 +58,6 @@
 - L92 `Daily run protocol`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L96 `1. Run unit tests`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L104 `2. Run evals (if the project has an evals config)`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
-- L114 `3. Run system health checks`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L121 `4. Git diff analysis (CRITICAL — regression intelligence)`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L137 `5. Classify each failure`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L147 `6. Report format`: reference-documentation — Reference documentation, rationale, examples, or changelog.
@@ -70,20 +94,31 @@
  
  This mode guarantees:
  
-@@ -59,7 +59,7 @@
+@@ -59,17 +59,17 @@
  - `openclaw.plugin.json` `skills[]` round-trips with both
  - No MECE violations (duplicate triggers across skills)
  
 -### Phases
-+### Phases (( inert, role: procedure ))
- 
- 1. **Walk skills directory.** List all subdirs containing `SKILL.md`.
- 2. **Validate frontmatter.** Parse YAML, check required fields.
-@@ -69,7 +69,7 @@
- 6. **Check round-trip.** RESOLVER trigger ↔ frontmatter triggers.
- 7. **Report results.**
- 
+-
+-1. **Walk skills directory.** List all subdirs containing `SKILL.md`.
+-2. **Validate frontmatter.** Parse YAML, check required fields.
+-3. **Validate sections.** Check for the required headings.
+-4. **Check manifest.** Every skill dir must be in `manifest.json`.
+-5. **Check resolver.** Every manifest skill must have a RESOLVER row.
+-6. **Check round-trip.** RESOLVER trigger ↔ frontmatter triggers.
+-7. **Report results.**
+-
 -### Automation
++### Phases (( inert, role: procedure ))
++
++1. Walk skills directory. List all subdirs containing `SKILL.md`.
++2. Validate frontmatter. Parse YAML, check required fields.
++3. Validate sections. Check for the required headings.
++4. Check manifest. Every skill dir must be in `manifest.json`.
++5. Check resolver. Every manifest skill must have a RESOLVER row.
++6. Check round-trip. RESOLVER trigger ↔ frontmatter triggers.
++7. Report results.
++
 +### Automation (( inert ))
  
  ```bash
@@ -133,15 +168,7 @@
  
  ```bash
  # Adapt to the project's eval config
-@@ -134,14 +134,14 @@
- Parse: same format. Note any flakes (tests that fail due to API
- timeouts, not code bugs).
- 
--#### 3. Run system health checks
-+#### 3. Run system health checks (( inert ))
- 
- - Disk / memory / CPU
- - gbrain: `gbrain doctor --fast --json`
+@@ -141,7 +141,7 @@
  - Database connection (if applicable)
  - Critical files exist (CLAUDE.md, AGENTS.md, etc.)
  

@@ -14,6 +14,19 @@
 - section-marker-added
 - preamble-blockquoted
 - command-hole-rewritten
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L13 `Contract`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L32 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L34 `Phase 1: Idea/Observation Detection (PRIMARY)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L46 `Phase 2: Entity Detection (SECONDARY)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L61 `Phase 3: Signal Logging`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L69 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L74 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L82 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections: 8/8 inert (100% inert ratio)

@@ -1,0 +1,300 @@
+{
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "overdue",
+      "function" : "meridianDef_Invoice_overdue",
+      "kind" : "invoice",
+      "line" : 30
+    },
+    {
+      "adjective" : "unpaid",
+      "function" : "meridianDef_Invoice_unpaid",
+      "kind" : "invoice",
+      "line" : 29
+    },
+    {
+      "adjective" : "blocked",
+      "function" : "meridianDef_Order_blocked",
+      "kind" : "order",
+      "line" : 27
+    },
+    {
+      "adjective" : "fulfilled",
+      "function" : "meridianDef_Order_fulfilled",
+      "kind" : "order",
+      "line" : 28
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Order_open",
+      "kind" : "order",
+      "line" : 26
+    },
+    {
+      "adjective" : "short",
+      "function" : "meridianDef_Product_short",
+      "kind" : "product",
+      "line" : 31
+    },
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_PurchaseOrder_pending",
+      "kind" : "purchase order",
+      "line" : 32
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 38,
+      "name" : "collection",
+      "right_cardinality" : "one",
+      "right_kind" : "a payment",
+      "via" : "payment.collect"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 34,
+      "name" : "fulfillment",
+      "right_cardinality" : "one",
+      "right_kind" : "a shipment",
+      "via" : "shipment.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 36,
+      "name" : "invoicing",
+      "right_cardinality" : "one",
+      "right_kind" : "an invoice",
+      "via" : "invoice.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a product",
+      "line" : 40,
+      "name" : "replenishment",
+      "right_cardinality" : "one",
+      "right_kind" : "a purchase order",
+      "via" : "purchase_order.create"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Release fulfilled ERP orders after reservation and shipment checks.",
+    "name" : "fulfill order",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 11,
+        "text" : "When this applies"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 15,
+        "text" : "Operator notes"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 20,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 29,
+        "text" : "Checks"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 21,
+        "text" : "Step"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 23,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 27,
+        "text" : "Publish"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "When this applies",
+        "line" : 11,
+        "lines" : [
+          "\"fulfill ERP orders\"",
+          "\"release shipments\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "Operator notes",
+        "line" : 15,
+        "lines" : [
+          "Warehouse operators say \"release the shipment\" rather than \"invoke the",
+          "fulfillment workflow.\" This skill keeps that vocabulary while compiling to",
+          "declared tool calls"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 20,
+        "lines" : [
+          "Step: `ofbiz shipment --pending --json` to capture pending warehouse work",
+          "fetch open orders",
+          "Check: all orders have a number",
+          "for each order:",
+          "reserve inventory for the order",
+          "ship the order",
+          "Publish: \"shipment release queue drained\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Checks",
+        "line" : 29,
+        "lines" : [
+          "Every released order should already have inventory reserved"
+        ],
+        "role" : "invariants"
+      }
+    ],
+    "triggers" : "\"fulfill ERP orders\"\n\"release shipments\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "collect",
+      "line" : 45,
+      "past_participle" : "collected",
+      "relation" : "collection",
+      "third_person" : "collects"
+    },
+    {
+      "base" : "fulfill",
+      "line" : 43,
+      "past_participle" : "fulfilled",
+      "relation" : "fulfillment",
+      "third_person" : "fulfills"
+    },
+    {
+      "base" : "invoice",
+      "line" : 44,
+      "past_participle" : "invoiced",
+      "relation" : "invoicing",
+      "third_person" : "invoices"
+    },
+    {
+      "base" : "replenish",
+      "line" : 46,
+      "past_participle" : "replenished",
+      "relation" : "replenishment",
+      "third_person" : "replenishes"
+    }
+  ],
+  "source_files" : [
+    "fulfillorder.meri",
+    "erp.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 21,
+      "swift_line" : 403
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 415
+    },
+    {
+      "meridian_line" : 23,
+      "swift_line" : 427
+    },
+    {
+      "meridian_line" : 24,
+      "swift_line" : 431
+    },
+    {
+      "meridian_line" : 58,
+      "swift_line" : 437
+    },
+    {
+      "meridian_line" : 67,
+      "swift_line" : 449
+    },
+    {
+      "meridian_line" : 27,
+      "swift_line" : 465
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 502
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 507
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 545
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 550
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "fulfill order",
+      "swift_struct" : "FulfillOrder"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when fulfillErpOrders fires",
+      "swift_struct" : "WhenFulfillerpordersFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when releaseShipments fires",
+      "swift_struct" : "WhenReleaseshipmentsFires"
+    }
+  ]
+}

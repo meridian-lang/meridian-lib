@@ -12,6 +12,19 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L4 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L13 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L36 `Example Transforms`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L38 `SMS Received`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L44 `Meeting Completed`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L50 `Social Mention`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L56 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L61 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 8/8 inert (100% inert ratio)

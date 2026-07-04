@@ -126,7 +126,7 @@ NEVER use `[[wiki-links]]` — they don't render on GitHub.
 - ❌ Re-enriching non-idempotently — check the `needs_enrichment` flag in
   frontmatter; skip if already false.
 
-## Related skills (( inert ))
+## Related skills
 
 - `skills/media-ingest/SKILL.md` — creates the raw article pages this skill enriches
 - `skills/idea-ingest/SKILL.md` — link/article ingestion with author people-page enforcement

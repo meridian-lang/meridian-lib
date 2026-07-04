@@ -1,0 +1,260 @@
+{
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "orphaned",
+      "function" : "meridianDef_AuditRow_orphaned",
+      "kind" : "audit row",
+      "line" : 24
+    },
+    {
+      "adjective" : "ready",
+      "function" : "meridianDef_Batch_ready",
+      "kind" : "batch",
+      "line" : 19
+    },
+    {
+      "adjective" : "settled",
+      "function" : "meridianDef_Batch_settled",
+      "kind" : "batch",
+      "line" : 20
+    },
+    {
+      "adjective" : "violated",
+      "function" : "meridianDef_Constraint_violated",
+      "kind" : "constraint",
+      "line" : 23
+    },
+    {
+      "adjective" : "lagging",
+      "function" : "meridianDef_IndexJob_lagging",
+      "kind" : "index job",
+      "line" : 25
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Ledger_open",
+      "kind" : "ledger",
+      "line" : 18
+    },
+    {
+      "adjective" : "duplicate",
+      "function" : "meridianDef_Record_duplicate",
+      "kind" : "record",
+      "line" : 22
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Record_stale",
+      "kind" : "record",
+      "line" : 21
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a ledger",
+      "line" : 31,
+      "name" : "auditing",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "audit_row.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a record",
+      "line" : 29,
+      "name" : "canonicalization",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "record.mark_canonical"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a batch",
+      "line" : 27,
+      "name" : "settlement",
+      "right_cardinality" : "one",
+      "right_kind" : "a ledger",
+      "via" : "batch.settle"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Rebuild lagging indexes after a deterministic age check.",
+    "name" : "rebuild index",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 11,
+        "text" : "Use this when"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 15,
+        "text" : "Procedure"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 22,
+        "text" : "Assertions"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 17,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 20,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "Use this when",
+        "line" : 11,
+        "lines" : [
+          "\"rebuild lagging indexes\"",
+          "\"index job stale\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Procedure",
+        "line" : 15,
+        "lines" : [
+          "fetch lagging index jobs",
+          "Check: any lagging index jobs",
+          "for each index job:",
+          "rebuild the index job",
+          "Emit: \"lagging index jobs rebuilt\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Assertions",
+        "line" : 22,
+        "lines" : [
+          "make sure all index jobs have a name"
+        ],
+        "role" : "invariants"
+      }
+    ],
+    "triggers" : "\"rebuild lagging indexes\"\n\"index job stale\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "audit",
+      "line" : 36,
+      "past_participle" : "audited",
+      "relation" : "auditing",
+      "third_person" : "audits"
+    },
+    {
+      "base" : "canonicalize",
+      "line" : 35,
+      "past_participle" : "canonicalized",
+      "relation" : "canonicalization",
+      "third_person" : "canonicalizes"
+    },
+    {
+      "base" : "settle",
+      "line" : 34,
+      "past_participle" : "settled",
+      "relation" : "settlement",
+      "third_person" : "settles"
+    }
+  ],
+  "source_files" : [
+    "rebuildindex.meri",
+    "procedures.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 23,
+      "swift_line" : 300
+    },
+    {
+      "meridian_line" : 54,
+      "swift_line" : 305
+    },
+    {
+      "meridian_line" : 17,
+      "swift_line" : 317
+    },
+    {
+      "meridian_line" : 18,
+      "swift_line" : 321
+    },
+    {
+      "meridian_line" : 66,
+      "swift_line" : 327
+    },
+    {
+      "meridian_line" : 20,
+      "swift_line" : 343
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 380
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 385
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 423
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 428
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "rebuild index",
+      "swift_struct" : "RebuildIndex"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when rebuildLaggingIndexes fires",
+      "swift_struct" : "WhenRebuildlaggingindexesFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when indexJobStale fires",
+      "swift_struct" : "WhenIndexjobstaleFires"
+    }
+  ]
+}

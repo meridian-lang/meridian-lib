@@ -12,6 +12,27 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L10 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L22 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L38 `Tweet resolution pipeline (v0.25.1 extension)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L45 `Step 1: Identify broken references`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L56 `Step 2: Extract searchable content`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L64 `Step 3: Search for the actual tweet`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L79 `Step 4: Verify and extract metadata`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L88 `Step 5: Patch the brain page`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L105 `Batch mode`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L122 `Priority order`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L129 `Rate limiting`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L137 `Output format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L149 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L159 `Integration`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L168 `Metrics`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L185 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections: 16/17 inert (94% inert ratio)

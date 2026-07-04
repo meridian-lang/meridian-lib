@@ -210,12 +210,12 @@
         "heading" : "Phases",
         "line" : 41,
         "lines" : [
-          "**Assess the source.** What format? How many files? What structure?",
-          "**Plan the mapping.** How do source fields map to gbrain fields (type, title, tags, compiled_truth, timeline)?",
-          "**Test with a sample.** Import 5-10 files, verify by reading them back from gbrain and exporting",
-          "**Bulk import.** Import the full directory into gbrain",
-          "**Verify.** Check gbrain health and statistics, spot-check pages",
-          "**Build links.** Extract cross-references from content and create typed links in gbrain"
+          "Assess the source. What format? How many files? What structure?",
+          "Plan the mapping. How do source fields map to gbrain fields (type, title, tags, compiled_truth, timeline)?",
+          "Test with a sample. Import 5-10 files, verify by reading them back from gbrain and exporting",
+          "Bulk import. Import the full directory into gbrain",
+          "Verify. Check gbrain health and statistics, spot-check pages",
+          "Build links. Extract cross-references from content and create typed links in gbrain"
         ],
         "role" : "procedure"
       },

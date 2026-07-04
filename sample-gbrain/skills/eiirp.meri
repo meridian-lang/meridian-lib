@@ -248,16 +248,16 @@ For ALL skills used or touched during this work, check:
 ```
 ## Skill Graph Changes (( inert ))
 
-### New skills to create (( inert ))
-1. **[skill-name]** — [what it does]
+### New skills to create
+1. [skill-name] — [what it does]
    - DRY check: [clean / overlaps with X]
    - Recommendation: [create / merge into X]
 
-### Existing skills to update (( inert ))
-1. **[skill-name]** — [what changed, why]
+### Existing skills to update
+1. [skill-name] — [what changed, why]
 
-### Code to extract to lib/ (( inert ))
-1. **lib/[name].ts** — [what it does, which skills use it]
+### Code to extract to lib/
+1. lib/[name].ts — [what it does, which skills use it]
 
 ### Skills to merge or deprecate (( inert ))
 1. **[skill-A] + [skill-B]** → [merged-skill] — [why]
@@ -290,18 +290,18 @@ Confirm:
 ```markdown
 ## EIIRP Complete: [Topic] (( inert ))
 
-### Brain pages created/updated (( inert ))
+### Brain pages created/updated
 - [path] — [description]
 - ...
 
-### Entity pages (( inert ))
+### Entity pages
 - [path] — [created/updated]
 - ...
 
-### Schema changes (( inert ))
+### Schema changes
 - [none / description of changes + which pack delta file]
 
-### Skills identified (( inert ))
+### Skills identified
 - [skill-name] — [status: created / merged / deferred]
 - ...
 
@@ -319,16 +319,16 @@ EIIRP produces a single Phase 7 report block. Plain markdown:
 ```markdown
 ## EIIRP Complete: [topic] (( inert ))
 
-### Brain pages created/updated (( inert ))
+### Brain pages created/updated
 - [path] — [description]
 
-### Entity pages (( inert ))
+### Entity pages
 - [path] — [created|updated]
 
-### Schema changes (( inert ))
+### Schema changes
 - [none | description of changes + which pack delta file]
 
-### Skills identified (( inert ))
+### Skills identified
 - [skill-name] — [status: created|merged|deferred]
 
 ### Resolver status (( inert ))

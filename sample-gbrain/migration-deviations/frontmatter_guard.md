@@ -12,6 +12,28 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L6 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L14 `Why This Exists`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L25 `Validation classes`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L38 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L40 `Phase 1: Audit`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L56 `Phase 2: Validate one path`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L66 `Phase 3: Fix`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L78 `Phase 4: Pre-commit hook (optional)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L88 `Trigger words`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L97 `Output rules`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L105 `Chains with`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L111 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L153 `Prevention — Writing Valid Frontmatter`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L157 `YAML arrays (the historical #1 error source)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L184 `Quoted scalars`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L197 `When to quote at all`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L204 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 17/17 inert (100% inert ratio)

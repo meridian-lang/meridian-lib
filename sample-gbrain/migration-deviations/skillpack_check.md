@@ -12,6 +12,21 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L4 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L19 `When to run`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L27 `What to do with the output`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L29 `Happy path (`healthy: true`)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L33 `Action needed (`healthy: false`)`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L54 `Determine failure (`exit 2`)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L63 `Output format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L87 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L97 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L103 `Related`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 10/10 inert (100% inert ratio)

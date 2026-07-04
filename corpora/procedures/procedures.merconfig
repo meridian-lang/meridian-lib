@@ -1,0 +1,120 @@
+=== vocabulary ===
+A ledger is a kind of storage.
+A batch is a kind of process.
+A record is a kind of thing.
+A constraint is a kind of thing.
+An audit row is a kind of thing.
+An index job is a kind of process.
+A trigger phrase is a kind of thing.
+
+A ledger has a name, a status, and an updated at.
+A batch has a name, a status, a ledger id, and an updated at.
+A record has a key, a status, a checksum, and an updated at.
+A constraint has a name, a status, and a table name.
+An audit row has a key, a status, a table name, and an updated at.
+An index job has a name, a status, and an updated at.
+A trigger phrase has a text.
+
+Definition: a ledger is open if its status is "open".
+Definition: a batch is ready if its status is "ready".
+Definition: a batch is settled if its status is "settled".
+Definition: a record is stale if its updated at is within the last 30 days.
+Definition: a record is duplicate if its status is "duplicate".
+Definition: a constraint is violated if its status is "violated".
+Definition: an audit row is orphaned if its status is "orphaned".
+Definition: an index job is lagging if its updated at is within the last 7 days.
+
+Settlement relates a batch to a ledger.
+Settlement is read via the batch.settle tool.
+Canonicalization relates a record to an audit row.
+Canonicalization is read via the record.mark_canonical tool.
+Auditing relates a ledger to an audit row.
+Auditing is read via the audit_row.list tool.
+
+The verb to settle (it settles, it is settled) means the settlement relation.
+The verb to canonicalize (it canonicalizes, it is canonicalized) means the canonicalization relation.
+The verb to audit (it audits, it is audited) means the auditing relation.
+
+To fetch ready batches:
+  bind batches = invoke batch.list with status = "ready".
+
+To fetch stale records:
+  bind records = invoke record.list with status = "stale".
+
+To fetch duplicate records:
+  bind records = invoke record.list with status = "duplicate".
+
+To fetch violated constraints:
+  bind constraints = invoke constraint.list with status = "violated".
+
+To fetch orphaned audit rows:
+  bind audit rows = invoke audit_row.list with status = "orphaned".
+
+To fetch lagging index jobs:
+  bind index jobs = invoke index.list with status = "lagging".
+
+To reconcile a ledger:
+  bind result = invoke ledger.reconcile with ledger = the ledger.
+
+To settle a batch:
+  bind settlement = invoke batch.settle with batch = the batch.
+
+To mark a record canonical:
+  invoke record.mark_canonical with record = the record.
+
+To rebuild an index job:
+  bind job = invoke index.rebuild with index job = the index job.
+
+To purge a record:
+  invoke record.purge with record = the record.
+
+=== tools ===
+List Batches
+============
+-- List batches by status.
+~ batch.list(status: String) : List
+
+List Records
+============
+-- List records by status.
+~ record.list(status: String) : List
+
+List Constraints
+================
+-- List constraints by status.
+~ constraint.list(status: String) : List
+
+List Audit Rows
+===============
+-- List audit rows by status.
+~ audit_row.list(status: String) : List
+
+List Index Jobs
+===============
+-- List index jobs by status.
+~ index.list(status: String) : List
+
+Reconcile Ledger
+================
+-- Reconcile a ledger.
+~ ledger.reconcile(ledger: Ledger) : Boolean
+
+Settle Batch
+============
+-- Settle a batch.
+~ batch.settle(batch: Batch) : Boolean
+
+Mark Canonical
+==============
+-- Mark a record canonical.
+~ record.mark_canonical(record: Record) : Boolean
+
+Rebuild Index
+=============
+-- Rebuild an index.
+~ index.rebuild(indexJob: IndexJob) : IndexJob
+
+Purge Record
+============
+-- Purge a record.
+~ record.purge(record: Record) : Boolean

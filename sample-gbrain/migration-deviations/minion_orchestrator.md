@@ -12,6 +12,27 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L4 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L24 `Route the Request: Shell Job vs Subagent`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L39 `Shell Jobs (Deterministic Scripts)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L44 `Preconditions (read before submitting your first shell job)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L67 `Submit (CLI, operator or autopilot)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L92 `Monitor (agents or operator)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L106 `Control (MCP-callable)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L118 `Subagent Jobs (LLM Orchestration)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L128 `Phase 1: Submit`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L165 `Phase 2: Monitor`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L177 `Phase 3: Steer`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L189 `Phase 4: Lifecycle`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L201 `Phase 5: Review Results`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L210 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L240 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L248 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections: 16/16 inert (100% inert ratio)

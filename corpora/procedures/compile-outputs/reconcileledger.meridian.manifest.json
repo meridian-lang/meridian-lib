@@ -1,0 +1,302 @@
+{
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "orphaned",
+      "function" : "meridianDef_AuditRow_orphaned",
+      "kind" : "audit row",
+      "line" : 24
+    },
+    {
+      "adjective" : "ready",
+      "function" : "meridianDef_Batch_ready",
+      "kind" : "batch",
+      "line" : 19
+    },
+    {
+      "adjective" : "settled",
+      "function" : "meridianDef_Batch_settled",
+      "kind" : "batch",
+      "line" : 20
+    },
+    {
+      "adjective" : "violated",
+      "function" : "meridianDef_Constraint_violated",
+      "kind" : "constraint",
+      "line" : 23
+    },
+    {
+      "adjective" : "lagging",
+      "function" : "meridianDef_IndexJob_lagging",
+      "kind" : "index job",
+      "line" : 25
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Ledger_open",
+      "kind" : "ledger",
+      "line" : 18
+    },
+    {
+      "adjective" : "duplicate",
+      "function" : "meridianDef_Record_duplicate",
+      "kind" : "record",
+      "line" : 22
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Record_stale",
+      "kind" : "record",
+      "line" : 21
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a ledger",
+      "line" : 31,
+      "name" : "auditing",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "audit_row.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a record",
+      "line" : 29,
+      "name" : "canonicalization",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "record.mark_canonical"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a batch",
+      "line" : 27,
+      "name" : "settlement",
+      "right_cardinality" : "one",
+      "right_kind" : "a ledger",
+      "via" : "batch.settle"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Reconcile ready ledger batches from a SQL-backed system.",
+    "name" : "reconcile ledger",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 11,
+        "text" : "Invocation"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 15,
+        "text" : "DBA notes"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 19,
+        "text" : "Procedure"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 27,
+        "text" : "Assertions"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 30,
+        "text" : "Output"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 20,
+        "text" : "SQL"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 22,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 25,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "Invocation",
+        "line" : 11,
+        "lines" : [
+          "\"reconcile ledger\"",
+          "\"settle ledger batches\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "DBA notes",
+        "line" : 15,
+        "lines" : [
+          "The operator starts from a SQL snapshot and then lets Meridian drive only the",
+          "declared deterministic settlement tools"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Procedure",
+        "line" : 19,
+        "lines" : [
+          "SQL: `psql -c \"select id,status from ledger_batch where status='ready'\" --csv` to snapshot ready batches",
+          "fetch ready batches",
+          "Check: all batches have a name",
+          "for each batch:",
+          "settle the batch",
+          "Emit: \"ledger batches reconciled\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Assertions",
+        "line" : 27,
+        "lines" : [
+          "no batches whose status is \"failed\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output",
+        "line" : 30,
+        "lines" : [
+          "The DBA expects a short reconciliation receipt and a list of settled batch ids"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"reconcile ledger\"\n\"settle ledger batches\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "audit",
+      "line" : 36,
+      "past_participle" : "audited",
+      "relation" : "auditing",
+      "third_person" : "audits"
+    },
+    {
+      "base" : "canonicalize",
+      "line" : 35,
+      "past_participle" : "canonicalized",
+      "relation" : "canonicalization",
+      "third_person" : "canonicalizes"
+    },
+    {
+      "base" : "settle",
+      "line" : 34,
+      "past_participle" : "settled",
+      "relation" : "settlement",
+      "third_person" : "settles"
+    }
+  ],
+  "source_files" : [
+    "reconcileledger.meri",
+    "procedures.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 28,
+      "swift_line" : 300
+    },
+    {
+      "meridian_line" : 20,
+      "swift_line" : 305
+    },
+    {
+      "meridian_line" : 39,
+      "swift_line" : 317
+    },
+    {
+      "meridian_line" : 22,
+      "swift_line" : 329
+    },
+    {
+      "meridian_line" : 23,
+      "swift_line" : 333
+    },
+    {
+      "meridian_line" : 60,
+      "swift_line" : 339
+    },
+    {
+      "meridian_line" : 25,
+      "swift_line" : 355
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 392
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 397
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 435
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 440
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "reconcile ledger",
+      "swift_struct" : "ReconcileLedger"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when reconcileLedger fires",
+      "swift_struct" : "WhenReconcileledgerFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when settleLedgerBatches fires",
+      "swift_struct" : "WhenSettleledgerbatchesFires"
+    }
+  ]
+}

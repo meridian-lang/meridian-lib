@@ -12,6 +12,17 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L6 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L15 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L28 `Idempotency Requirement`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L35 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L39 `Multi-source brains: use `sync --all`, not per-source entries`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L67 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 6/6 inert (100% inert ratio)

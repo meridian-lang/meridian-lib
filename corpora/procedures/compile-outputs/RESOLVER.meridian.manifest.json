@@ -1,0 +1,195 @@
+{
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "orphaned",
+      "function" : "meridianDef_AuditRow_orphaned",
+      "kind" : "audit row",
+      "line" : 24
+    },
+    {
+      "adjective" : "ready",
+      "function" : "meridianDef_Batch_ready",
+      "kind" : "batch",
+      "line" : 19
+    },
+    {
+      "adjective" : "settled",
+      "function" : "meridianDef_Batch_settled",
+      "kind" : "batch",
+      "line" : 20
+    },
+    {
+      "adjective" : "violated",
+      "function" : "meridianDef_Constraint_violated",
+      "kind" : "constraint",
+      "line" : 23
+    },
+    {
+      "adjective" : "lagging",
+      "function" : "meridianDef_IndexJob_lagging",
+      "kind" : "index job",
+      "line" : 25
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Ledger_open",
+      "kind" : "ledger",
+      "line" : 18
+    },
+    {
+      "adjective" : "duplicate",
+      "function" : "meridianDef_Record_duplicate",
+      "kind" : "record",
+      "line" : 22
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Record_stale",
+      "kind" : "record",
+      "line" : 21
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a ledger",
+      "line" : 31,
+      "name" : "auditing",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "audit_row.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a record",
+      "line" : 29,
+      "name" : "canonicalization",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "record.mark_canonical"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a batch",
+      "line" : 27,
+      "name" : "settlement",
+      "right_cardinality" : "one",
+      "right_kind" : "a ledger",
+      "via" : "batch.settle"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Route a synthetic DBA request to a procedure skill id.",
+    "name" : "procedures resolver",
+    "outline" : [
+      {
+        "kind" : "tables",
+        "level" : 2,
+        "line" : 11,
+        "text" : "Tables"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 23,
+        "text" : "Procedure"
+      }
+    ],
+    "parameters" : "trigger phrase",
+    "rulebook" : "procedures.merrules",
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "Tables",
+        "line" : 11,
+        "lines" : [
+          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHJlY29uY2lsZSBsZWRnZXIgfCByZWNvbmNpbGVsZWRnZXIgfAp8IGFnaW5nIHJlcG9ydCB8IGFnaW5ncmVwb3J0IHwKfCBkZWR1cGUgcmVjb3JkcyB8IGRlZHVwZXJlY29yZHMgfAp8IGNhc2NhZGUgY2xvc2UgfCBjYXNjYWRlY2xvc2UgfAp8IHJlYnVpbGQgbGFnZ2luZyBpbmRleGVzIHwgcmVidWlsZGluZGV4IHwKfCB2YWxpZGF0ZSBjb25zdHJhaW50cyB8IHZhbGlkYXRlY29uc3RyYWludHMgfAp8IHB1cmdlIGV4cGlyZWQgcmVjb3JkcyB8IHB1cmdlZXhwaXJlZCB8Cnwgc2V0dGxlIHJlYWR5IGJhdGNoZXMgfCBzZXR0bGViYXRjaCB8"
+        ],
+        "role" : "tables"
+      },
+      {
+        "executes" : true,
+        "heading" : "Procedure",
+        "line" : 23,
+        "lines" : [
+          "bind selected skill = the skill corresponding to the trigger phrase trigger phrase in the table",
+          "emit procedure.dispatch with skill = selected skill",
+          "complete"
+        ],
+        "role" : "procedure"
+      }
+    ],
+    "vocabulary" : "procedures.merconfig"
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "audit",
+      "line" : 36,
+      "past_participle" : "audited",
+      "relation" : "auditing",
+      "third_person" : "audits"
+    },
+    {
+      "base" : "canonicalize",
+      "line" : 35,
+      "past_participle" : "canonicalized",
+      "relation" : "canonicalization",
+      "third_person" : "canonicalizes"
+    },
+    {
+      "base" : "settle",
+      "line" : 34,
+      "past_participle" : "settled",
+      "relation" : "settlement",
+      "third_person" : "settles"
+    }
+  ],
+  "source_files" : [
+    "RESOLVER.meri",
+    "procedures.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 12,
+      "swift_line" : 304
+    },
+    {
+      "meridian_line" : 24,
+      "swift_line" : 306
+    },
+    {
+      "meridian_line" : 25,
+      "swift_line" : 309
+    },
+    {
+      "meridian_line" : 26,
+      "swift_line" : 318
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "TriggerPhrase",
+          "name" : "triggerPhrase"
+        }
+      ],
+      "source_name" : "procedures resolver a trigger phrase",
+      "swift_struct" : "ProceduresResolverTriggerPhrase"
+    }
+  ]
+}

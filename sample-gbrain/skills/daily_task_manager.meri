@@ -45,16 +45,16 @@ This skill guarantees:
 ```markdown
 # Tasks
 
-## P0 — Urgent (( inert ))
+## P0 — Urgent
 - [ ] {task description} (due: {date})
 
-## P1 — Today (( inert ))
+## P1 — Today
 - [ ] {task description}
 
-## P2 — This Week (( inert ))
+## P2 — This Week
 - [ ] {task description}
 
-## P3 — Backlog (( inert ))
+## P3 — Backlog
 - [ ] {task description}
 
 ## Completed (( inert ))

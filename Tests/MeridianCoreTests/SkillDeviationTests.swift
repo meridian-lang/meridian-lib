@@ -148,6 +148,53 @@ struct SkillDeviationTests {
         #expect(!r.categories.contains("preamble-blockquoted"))
     }
 
+    @Test("new inert sections are first-class deviations")
+    func inertSectionDeviations() {
+        let original = """
+        ## Phases
+
+        Do the work.
+        """
+        let ported = """
+        ## Phases (( inert, role: procedure ))
+
+        Do the work.
+        """
+        let r = SkillDeviation.analyze(
+            originalMarkdown: original,
+            portedMeri: ported,
+            originalName: "a",
+            portedName: "b"
+        )
+        #expect(r.categories.contains("inert-section-added"))
+        #expect(r.inertSectionDeviations.map(\.heading) == ["Phases"])
+        let md = SkillDeviation.renderMarkdown(r, includeDiff: false)
+        #expect(md.contains("## Inert deviations"))
+        #expect(md.contains("`Phases`: operational-procedure"))
+    }
+
+    @Test("original explicit inert sections are not counted as new inert deviations")
+    func originalExplicitInertSectionNotNewDeviation() {
+        let original = """
+        ## Notes (( inert ))
+
+        Reference material.
+        """
+        let ported = """
+        ## Notes (( inert ))
+
+        Reference material.
+        """
+        let r = SkillDeviation.analyze(
+            originalMarkdown: original,
+            portedMeri: ported,
+            originalName: "a",
+            portedName: "b"
+        )
+        #expect(!r.categories.contains("inert-section-added"))
+        #expect(r.inertSectionDeviations.isEmpty)
+    }
+
     @Test("preamble-blockquoted detected when the port blockquotes pre-heading prose")
     func preambleBlockquoteCategory() {
         let original = """

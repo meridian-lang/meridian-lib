@@ -3,8 +3,8 @@
 - Original: `idea-lineage/SKILL.md`
 - Ported: `idea_lineage.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 91%
-- Lines: 223 -> 223 (+21 / -21)
+- Similarity: 92%
+- Lines: 223 -> 223 (+17 / -17)
 
 ## Frontmatter
 - Added: (none)
@@ -12,6 +12,25 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L11 `What this solves`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L28 `What this is not`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L39 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L52 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L54 `Phase 1: Resolve the idea target`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L67 `Phase 2: Gather evidence`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L86 `Phase 3: Classify lineage moments`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L107 `Phase 4: Synthesize the lineage`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L113 `Phase 5: Suggest optional next action`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L125 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L155 `Quality Rules`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L168 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L179 `Related Skills and Operations`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L187 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections: 14/14 inert (100% inert ratio)
@@ -115,7 +134,7 @@
  
  If useful, offer one concrete follow-up:
  
-@@ -149,37 +149,37 @@
+@@ -149,12 +149,12 @@
  - Run a contradiction probe only when stale cached findings are insufficient
    and the user explicitly wants that heavier pass.
  
@@ -129,23 +148,9 @@
 +## Current Live Version (( inert ))
  [1-3 sentences. Include confidence: high / medium / low.]
  
--## Lineage
-+## Lineage (( inert ))
- - First mention: [date] - [claim] ([source-id:slug], "short quote")
- - Best articulation: [date] - [claim] ([source-id:slug], "short quote")
- - Turning point: [date] - [what changed] ([source-id:slug])
- 
--## Reversals and Contradictions
-+## Reversals and Contradictions (( inert ))
- - Reversal: [what changed, with before/after evidence]
- - Contradiction: [what conflicts, or "No clear evidence found"]
- 
--## Abandoned Branches
-+## Abandoned Branches (( inert ))
- - [branch] - [why it appears abandoned, with evidence]
- 
--## Related Concepts
-+## Related Concepts (( inert ))
+ ## Lineage
+@@ -172,14 +172,14 @@
+ ## Related Concepts
  - [concept slug or title] - [relationship]
  
 -## Evidence Gaps

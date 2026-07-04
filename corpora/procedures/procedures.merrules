@@ -1,0 +1,24 @@
+=== desugar ===
+
+rule "procedure-sql-command":
+  match: SQL: `{command}` to {purpose}
+  rewrite: `{command}` -- {purpose}.
+
+rule "procedure-check":
+  match: Check: {condition}
+  rewrite: make sure {condition}.
+
+rule "procedure-note":
+  match: Note: {message}
+  lowers to: emit procedure.note with message = {message}.
+
+rule "procedure-emit":
+  match: Emit: {message}
+  lowers to: emit procedure.report with message = {message}.
+
+=== sections ===
+
+section "Procedure", "Transaction body", "Batch body" -> procedure
+section "Invocation", "Use this when" -> applicability
+section "Assertions", "Postconditions", "Constraints" -> invariants
+section "Trace shape" -> template

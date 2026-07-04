@@ -1,0 +1,271 @@
+{
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "orphaned",
+      "function" : "meridianDef_AuditRow_orphaned",
+      "kind" : "audit row",
+      "line" : 24
+    },
+    {
+      "adjective" : "ready",
+      "function" : "meridianDef_Batch_ready",
+      "kind" : "batch",
+      "line" : 19
+    },
+    {
+      "adjective" : "settled",
+      "function" : "meridianDef_Batch_settled",
+      "kind" : "batch",
+      "line" : 20
+    },
+    {
+      "adjective" : "violated",
+      "function" : "meridianDef_Constraint_violated",
+      "kind" : "constraint",
+      "line" : 23
+    },
+    {
+      "adjective" : "lagging",
+      "function" : "meridianDef_IndexJob_lagging",
+      "kind" : "index job",
+      "line" : 25
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Ledger_open",
+      "kind" : "ledger",
+      "line" : 18
+    },
+    {
+      "adjective" : "duplicate",
+      "function" : "meridianDef_Record_duplicate",
+      "kind" : "record",
+      "line" : 22
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Record_stale",
+      "kind" : "record",
+      "line" : 21
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a ledger",
+      "line" : 31,
+      "name" : "auditing",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "audit_row.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a record",
+      "line" : 29,
+      "name" : "canonicalization",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "record.mark_canonical"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a batch",
+      "line" : 27,
+      "name" : "settlement",
+      "right_cardinality" : "one",
+      "right_kind" : "a ledger",
+      "via" : "batch.settle"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Render a deterministic report over stale records.",
+    "name" : "aging report",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 11,
+        "text" : "Invocation"
+      },
+      {
+        "kind" : "tables",
+        "level" : 2,
+        "line" : 15,
+        "text" : "Tables"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 21,
+        "text" : "Procedure"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 32,
+        "text" : "Trace shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 23,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 30,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "Invocation",
+        "line" : 11,
+        "lines" : [
+          "\"aging report\"",
+          "\"stale record report\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Tables",
+        "line" : 15,
+        "lines" : [
+          "table:decision:fCBidWNrZXQgfCBhY3Rpb24gfAp8IC0tLSB8IC0tLSB8Cnwgc3RhbGUgfCByZXZpZXcgfAp8IGR1cGxpY2F0ZSB8IG1lcmdlIHw="
+        ],
+        "role" : "tables"
+      },
+      {
+        "executes" : true,
+        "heading" : "Procedure",
+        "line" : 21,
+        "lines" : [
+          "fetch stale records",
+          "Check: any stale records",
+          "bind aging report =",
+          "codeblock:plain:YWdpbmc6Cltmb3IgZWFjaCByb3cgaW4gdGFibGVdLSB7eyByb3cuYnVja2V0IH19IC0+IHt7IHJvdy5hY3Rpb24gfX0KW2VuZCBmb3Jd",
+          "Emit: aging report"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Trace shape",
+        "line" : 32,
+        "lines" : [
+          "One row per aging bucket, followed by the deterministic action"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"aging report\"\n\"stale record report\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "audit",
+      "line" : 36,
+      "past_participle" : "audited",
+      "relation" : "auditing",
+      "third_person" : "audits"
+    },
+    {
+      "base" : "canonicalize",
+      "line" : 35,
+      "past_participle" : "canonicalized",
+      "relation" : "canonicalization",
+      "third_person" : "canonicalizes"
+    },
+    {
+      "base" : "settle",
+      "line" : 34,
+      "past_participle" : "settled",
+      "relation" : "settlement",
+      "third_person" : "settles"
+    }
+  ],
+  "source_files" : [
+    "agingreport.meri",
+    "procedures.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 16,
+      "swift_line" : 299
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 302
+    },
+    {
+      "meridian_line" : 23,
+      "swift_line" : 314
+    },
+    {
+      "meridian_line" : 24,
+      "swift_line" : 318
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 321
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 358
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 363
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 401
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 406
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "aging report",
+      "swift_struct" : "AgingReport"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when agingReport fires",
+      "swift_struct" : "WhenAgingreportFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when staleRecordReport fires",
+      "swift_struct" : "WhenStalerecordreportFires"
+    }
+  ]
+}

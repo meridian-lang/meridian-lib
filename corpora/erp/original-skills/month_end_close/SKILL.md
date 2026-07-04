@@ -1,0 +1,23 @@
+---
+name: month end close
+description: Close the synthetic ERP accounting period after unpaid-invoice checks.
+triggers:
+  - "month-end close"
+  - "close accounting period"
+---
+
+# Month End Close
+
+## When this applies
+- "month-end close"
+- "close accounting period"
+
+## Close sequence (( role: procedure ))
+fetch unpaid invoices.
+Check: no invoices whose balance is more than 0.
+close the accounting period.
+Publish: "accounting period closed".
+
+## Accounting notes (( inert ))
+The real-world phrase "soft close" is intentionally left as documentation; the
+compiled behavior uses an explicit period-close tool.

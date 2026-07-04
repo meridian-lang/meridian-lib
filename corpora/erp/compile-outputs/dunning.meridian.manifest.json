@@ -1,0 +1,278 @@
+{
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "overdue",
+      "function" : "meridianDef_Invoice_overdue",
+      "kind" : "invoice",
+      "line" : 30
+    },
+    {
+      "adjective" : "unpaid",
+      "function" : "meridianDef_Invoice_unpaid",
+      "kind" : "invoice",
+      "line" : 29
+    },
+    {
+      "adjective" : "blocked",
+      "function" : "meridianDef_Order_blocked",
+      "kind" : "order",
+      "line" : 27
+    },
+    {
+      "adjective" : "fulfilled",
+      "function" : "meridianDef_Order_fulfilled",
+      "kind" : "order",
+      "line" : 28
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Order_open",
+      "kind" : "order",
+      "line" : 26
+    },
+    {
+      "adjective" : "short",
+      "function" : "meridianDef_Product_short",
+      "kind" : "product",
+      "line" : 31
+    },
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_PurchaseOrder_pending",
+      "kind" : "purchase order",
+      "line" : 32
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 38,
+      "name" : "collection",
+      "right_cardinality" : "one",
+      "right_kind" : "a payment",
+      "via" : "payment.collect"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 34,
+      "name" : "fulfillment",
+      "right_cardinality" : "one",
+      "right_kind" : "a shipment",
+      "via" : "shipment.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 36,
+      "name" : "invoicing",
+      "right_cardinality" : "one",
+      "right_kind" : "an invoice",
+      "via" : "invoice.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a product",
+      "line" : 40,
+      "name" : "replenishment",
+      "right_cardinality" : "one",
+      "right_kind" : "a purchase order",
+      "via" : "purchase_order.create"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Collect overdue unpaid invoices with deterministic payment attempts.",
+    "name" : "dunning",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 11,
+        "text" : "When operators call this"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 15,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 23,
+        "text" : "Controls"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 16,
+        "text" : "Step"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 18,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 21,
+        "text" : "Publish"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When operators call this",
+        "line" : 11,
+        "lines" : [
+          "\"run dunning\"",
+          "\"collect overdue invoices\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 15,
+        "lines" : [
+          "Step: `ofbiz accounting dunning --dry-run --json` to snapshot overdue accounts",
+          "fetch unpaid invoices",
+          "Check: any unpaid invoices",
+          "for each invoice:",
+          "collect payment for the invoice",
+          "Publish: \"dunning collection pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Controls",
+        "line" : 23,
+        "lines" : [
+          "Do not contact customers whose account is under manual review"
+        ],
+        "role" : "invariants"
+      }
+    ],
+    "triggers" : "\"run dunning\"\n\"collect overdue invoices\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "collect",
+      "line" : 45,
+      "past_participle" : "collected",
+      "relation" : "collection",
+      "third_person" : "collects"
+    },
+    {
+      "base" : "fulfill",
+      "line" : 43,
+      "past_participle" : "fulfilled",
+      "relation" : "fulfillment",
+      "third_person" : "fulfills"
+    },
+    {
+      "base" : "invoice",
+      "line" : 44,
+      "past_participle" : "invoiced",
+      "relation" : "invoicing",
+      "third_person" : "invoices"
+    },
+    {
+      "base" : "replenish",
+      "line" : 46,
+      "past_participle" : "replenished",
+      "relation" : "replenishment",
+      "third_person" : "replenishes"
+    }
+  ],
+  "source_files" : [
+    "dunning.meri",
+    "erp.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 16,
+      "swift_line" : 403
+    },
+    {
+      "meridian_line" : 52,
+      "swift_line" : 415
+    },
+    {
+      "meridian_line" : 18,
+      "swift_line" : 427
+    },
+    {
+      "meridian_line" : 19,
+      "swift_line" : 431
+    },
+    {
+      "meridian_line" : 64,
+      "swift_line" : 437
+    },
+    {
+      "meridian_line" : 21,
+      "swift_line" : 453
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 490
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 495
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 533
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 538
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "dunning",
+      "swift_struct" : "Dunning"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runDunning fires",
+      "swift_struct" : "WhenRundunningFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when collectOverdueInvoices fires",
+      "swift_struct" : "WhenCollectoverdueinvoicesFires"
+    }
+  ]
+}

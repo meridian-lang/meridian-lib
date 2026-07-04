@@ -20,6 +20,8 @@ Tracks the six-phase build plan from `meridian-handoff/docs/10_BUILD_PLAN.md`.
 | G | Expressive SKILL.md surface + gbrain corpus | ✅ Done | 100% |
 | I7 | Inform-7-tier deterministic surface (Waves 1–3) | ✅ Done | 100% |
 | I7-W4 | Inform-7-tier Wave 4: declarative domain, tables, templates | ✅ Done | 100% |
+| I7-W5 | Inform-7-tier Wave 5: parser infrastructure for scale | ✅ Done | 100% |
+| I7-W6 | Inform-7-tier Wave 6: validation, corpus diversification, report | ✅ Done | 100% |
 | IR | Inert-reduction: executable tables/checklists + AI-routing | ✅ Done | 100% |
 | DX | World-class diagnostics, tracing & decision logs | ✅ Done | static-verified (gates pending a working shell) |
 
@@ -422,6 +424,26 @@ See [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) for the porting playbook.
   conjugations, `the largest <kind> whose …`, aggregates/superlatives).
 
 See `Inform7Wave*Tests` and the "Wave N" entries in `AGENTS.md`.
+
+---
+
+## Phase I7-W6 — validation, corpus diversification, report
+
+**Completed.** Wave 6 adds two synthetic proxy corpora under `corpora/`:
+
+- `corpora/erp/` — ERP/OFBiz-style operator runbooks, 8 migrated skills +
+  `RESOLVER`, vocabulary/rulebook, compile outputs, deviation index.
+- `corpora/procedures/` — DBA/stored-procedure runbooks, 8 migrated skills +
+  `RESOLVER`, vocabulary/rulebook, compile outputs, deviation index.
+- `Tests/CorporaTests/CorporaConformanceTests.swift` — corpus completeness,
+  strict compile, mechanism coverage, generated-Swift sanity, and opt-in
+  `MERIDIAN_CORPORA_TYPECHECK=1` generated Swift typechecking.
+- `docs/16_EXPRESSIVENESS_REPORT.md` — final Wave 6 metrics, worked examples,
+  mechanism coverage, and caveats.
+
+Confidence: 100% for the synthetic-corpus validation scope. The report is
+explicit that the two new corpora are synthetic proxies, not independent
+maintainer-supplied corpora.
 
 ---
 

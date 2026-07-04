@@ -13,6 +13,31 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L8 `Contract`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L22 `Citation Requirements (MANDATORY)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L33 `Phases`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L47 `Entity Detection on Every Message`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L52 `Protocol`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L71 `What counts as notable`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L79 `What to capture from the user's own thinking`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L90 `Media Workflows`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L95 `Articles & Web Content`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L111 `Videos & Podcasts`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L134 `PDFs & Documents`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L147 `Screenshots & Images`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L159 `Meeting Transcripts`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L182 `Social Media Content`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L196 `Raw Source Preservation`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L228 `Test Before Bulk`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L242 `Quality Rules`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L253 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L261 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L279 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections: 20/20 inert (100% inert ratio)

@@ -141,6 +141,11 @@ public struct SkillMigrator {
                 let diag = describe(error)
                 diagnostics.append(diag)
                 trace.log(.skill, "migrate \"\(file)\": attempt \(attempts) failed — \(diag)")
+                if let revised = markEnclosingSectionInert(forDiagnostic: diag, in: candidate) {
+                    trace.log(.skill, "migrate \"\(file)\": marking failed section inert and retrying strict compile")
+                    candidate = revised
+                    continue
+                }
                 guard let repair, attempts < options.maxRepair else {
                     trace.log(.skill, "migrate \"\(file)\": giving up after \(attempts) attempt(s) (no repair closure or maxRepair reached)")
                     return result(candidate, addedKeys: addedKeys, diagnostics: diagnostics,
@@ -247,6 +252,83 @@ public struct SkillMigrator {
             }
         }
         return out.joined(separator: "\n")
+    }
+
+    /// If strict compile proves that a Markdown item inside a section cannot
+    /// lower, keep the all-or-nothing section contract by marking the enclosing
+    /// section inert and retrying. Original `SKILL.md` stays untouched; this only
+    /// edits the generated `.meri` candidate.
+    private func markEnclosingSectionInert(forDiagnostic diagnostic: String, in source: String) -> String? {
+        guard let line = diagnosticLine(diagnostic) else { return nil }
+        var lines = source.components(separatedBy: "\n")
+        let target = max(0, min(line - 1, lines.count - 1))
+        var headingIndex: Int?
+
+        for i in stride(from: target, through: 0, by: -1) {
+            if headingMatch(lines[i]) != nil {
+                headingIndex = i
+                break
+            }
+        }
+        guard let idx = headingIndex,
+              let heading = headingMatch(lines[idx]),
+              !heading.text.hasSuffix("))") else {
+            return nil
+        }
+
+        lines[idx] = "\(heading.hashes) \(heading.text) \(inertMarker(forHeading: heading.text))"
+        return lines.joined(separator: "\n")
+    }
+
+    private func diagnosticLine(_ diagnostic: String) -> Int? {
+        if diagnostic.hasPrefix("L") {
+            let rest = diagnostic.dropFirst()
+            let digits = rest.prefix { $0.isNumber }
+            if !digits.isEmpty { return Int(digits) }
+        }
+
+        var i = diagnostic.startIndex
+        while i < diagnostic.endIndex {
+            guard diagnostic[i] == ":" else {
+                i = diagnostic.index(after: i)
+                continue
+            }
+            let lineStart = diagnostic.index(after: i)
+            let lineDigits = diagnostic[lineStart...].prefix { $0.isNumber }
+            guard !lineDigits.isEmpty else {
+                i = lineStart
+                continue
+            }
+            let afterLine = diagnostic.index(lineStart, offsetBy: lineDigits.count)
+            if afterLine < diagnostic.endIndex, diagnostic[afterLine] == ":" {
+                let columnStart = diagnostic.index(after: afterLine)
+                let columnDigits = diagnostic[columnStart...].prefix { $0.isNumber }
+                if !columnDigits.isEmpty { return Int(lineDigits) }
+            }
+            i = afterLine
+        }
+        return nil
+    }
+
+    private func inertMarker(forHeading heading: String) -> String {
+        switch SkillSectionRole.builtinRole(forHeading: heading) {
+        case .invariants:
+            return "(( inert, role: invariants ))"
+        case .prohibitions:
+            return "(( inert, role: prohibitions ))"
+        case .applicability:
+            return "(( inert, role: applicability ))"
+        case .negativeApplicability:
+            return "(( inert, role: negative-applicability ))"
+        case .procedure:
+            return "(( inert, role: procedure ))"
+        case .template:
+            return "(( inert, role: template ))"
+        case .tools:
+            return "(( inert, role: tools ))"
+        case .some, .none:
+            return "(( inert ))"
+        }
     }
 
     /// Frontmatter `parameters:` names (inline comma list or `- ` items) plus the

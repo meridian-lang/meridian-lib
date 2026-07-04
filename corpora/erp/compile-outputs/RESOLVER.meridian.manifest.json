@@ -1,0 +1,206 @@
+{
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "overdue",
+      "function" : "meridianDef_Invoice_overdue",
+      "kind" : "invoice",
+      "line" : 30
+    },
+    {
+      "adjective" : "unpaid",
+      "function" : "meridianDef_Invoice_unpaid",
+      "kind" : "invoice",
+      "line" : 29
+    },
+    {
+      "adjective" : "blocked",
+      "function" : "meridianDef_Order_blocked",
+      "kind" : "order",
+      "line" : 27
+    },
+    {
+      "adjective" : "fulfilled",
+      "function" : "meridianDef_Order_fulfilled",
+      "kind" : "order",
+      "line" : 28
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Order_open",
+      "kind" : "order",
+      "line" : 26
+    },
+    {
+      "adjective" : "short",
+      "function" : "meridianDef_Product_short",
+      "kind" : "product",
+      "line" : 31
+    },
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_PurchaseOrder_pending",
+      "kind" : "purchase order",
+      "line" : 32
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 38,
+      "name" : "collection",
+      "right_cardinality" : "one",
+      "right_kind" : "a payment",
+      "via" : "payment.collect"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 34,
+      "name" : "fulfillment",
+      "right_cardinality" : "one",
+      "right_kind" : "a shipment",
+      "via" : "shipment.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 36,
+      "name" : "invoicing",
+      "right_cardinality" : "one",
+      "right_kind" : "an invoice",
+      "via" : "invoice.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a product",
+      "line" : 40,
+      "name" : "replenishment",
+      "right_cardinality" : "one",
+      "right_kind" : "a purchase order",
+      "via" : "purchase_order.create"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Route a synthetic ERP operator request to a skill id.",
+    "name" : "erp resolver",
+    "outline" : [
+      {
+        "kind" : "tables",
+        "level" : 2,
+        "line" : 11,
+        "text" : "Tables"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 23,
+        "text" : "Workflow"
+      }
+    ],
+    "parameters" : "trigger phrase",
+    "rulebook" : "erp.merrules",
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "Tables",
+        "line" : 11,
+        "lines" : [
+          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHByb2Nlc3Mgb3BlbiBvcmRlcnMgfCBwbGFjZW9yZGVyIHwKfCBmdWxmaWxsIEVSUCBvcmRlcnMgfCBmdWxmaWxsb3JkZXIgfAp8IHJ1biBpbnZvaWNlcyB8IGludm9pY2VydW4gfAp8IHJ1biBkdW5uaW5nIHwgZHVubmluZyB8CnwgcmVzdG9jayBzaG9ydCBwcm9kdWN0cyB8IHJlc3RvY2sgfAp8IHJlY2VpdmUgaW5ib3VuZCBzaGlwbWVudCB8IHJlY2VpdmVzaGlwbWVudCB8CnwgY2FuY2VsIGJsb2NrZWQgb3JkZXJzIHwgY2FuY2Vsb3JkZXIgfAp8IG1vbnRoLWVuZCBjbG9zZSB8IG1vbnRoZW5kY2xvc2UgfA=="
+        ],
+        "role" : "tables"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 23,
+        "lines" : [
+          "bind selected skill = the skill corresponding to the trigger phrase trigger phrase in the table",
+          "emit erp.dispatch with skill = selected skill",
+          "complete"
+        ],
+        "role" : "procedure"
+      }
+    ],
+    "vocabulary" : "erp.merconfig"
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "collect",
+      "line" : 45,
+      "past_participle" : "collected",
+      "relation" : "collection",
+      "third_person" : "collects"
+    },
+    {
+      "base" : "fulfill",
+      "line" : 43,
+      "past_participle" : "fulfilled",
+      "relation" : "fulfillment",
+      "third_person" : "fulfills"
+    },
+    {
+      "base" : "invoice",
+      "line" : 44,
+      "past_participle" : "invoiced",
+      "relation" : "invoicing",
+      "third_person" : "invoices"
+    },
+    {
+      "base" : "replenish",
+      "line" : 46,
+      "past_participle" : "replenished",
+      "relation" : "replenishment",
+      "third_person" : "replenishes"
+    }
+  ],
+  "source_files" : [
+    "RESOLVER.meri",
+    "erp.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 12,
+      "swift_line" : 407
+    },
+    {
+      "meridian_line" : 24,
+      "swift_line" : 409
+    },
+    {
+      "meridian_line" : 25,
+      "swift_line" : 412
+    },
+    {
+      "meridian_line" : 26,
+      "swift_line" : 421
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "TriggerPhrase",
+          "name" : "triggerPhrase"
+        }
+      ],
+      "source_name" : "erp resolver a trigger phrase",
+      "swift_struct" : "ErpResolverTriggerPhrase"
+    }
+  ]
+}

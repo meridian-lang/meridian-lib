@@ -12,6 +12,26 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L13 `What this does`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L25 `When to use this vs other tools`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L35 `Output structure`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L73 `Invocation`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L103 `Models`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L113 `Integration patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L115 `Entity enrichment`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L126 `Deal / company monitoring (cron)`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L134 `Morning briefing`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L139 `Recency filter`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L144 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L153 `Environment`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L159 `Related skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L169 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L180 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections: 15/15 inert (100% inert ratio)

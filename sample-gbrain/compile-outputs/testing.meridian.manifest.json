@@ -280,13 +280,13 @@
         "heading" : "Phases",
         "line" : 62,
         "lines" : [
-          "**Walk skills directory.** List all subdirs containing `SKILL.md`",
-          "**Validate frontmatter.** Parse YAML, check required fields",
-          "**Validate sections.** Check for the required headings",
-          "**Check manifest.** Every skill dir must be in `manifest.json`",
-          "**Check resolver.** Every manifest skill must have a RESOLVER row",
-          "**Check round-trip.** RESOLVER trigger ↔ frontmatter triggers",
-          "**Report results.**"
+          "Walk skills directory. List all subdirs containing `SKILL.md`",
+          "Validate frontmatter. Parse YAML, check required fields",
+          "Validate sections. Check for the required headings",
+          "Check manifest. Every skill dir must be in `manifest.json`",
+          "Check resolver. Every manifest skill must have a RESOLVER row",
+          "Check round-trip. RESOLVER trigger ↔ frontmatter triggers",
+          "Report results"
         ],
         "role" : "procedure"
       },

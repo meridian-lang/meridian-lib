@@ -13,6 +13,19 @@
 ## Categories
 - section-marker-added
 - command-hole-rewritten
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L9 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L21 `When to run`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L33 `Inline upgrade flow`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L35 `mode = off`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L38 `mode = auto`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L49 `mode = notify (default)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L84 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L96 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections: 8/8 inert (100% inert ratio)

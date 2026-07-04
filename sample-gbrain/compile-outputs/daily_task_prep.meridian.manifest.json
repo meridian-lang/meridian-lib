@@ -147,10 +147,10 @@
         "heading" : "Phases",
         "line" : 31,
         "lines" : [
-          "**Load calendar.** Check today's meetings. For each: load attendee brain pages, recent timeline, open threads",
-          "**Check yesterday's threads.** Search brain for yesterday's timeline entries. Flag anything unresolved",
-          "**Review active tasks.** Load `ops\/tasks` from brain. Surface P0 and P1 items",
-          "**Compile prep briefing.** Per-meeting context cards + open threads + task priorities"
+          "Load calendar. Check today's meetings. For each: load attendee brain pages, recent timeline, open threads",
+          "Check yesterday's threads. Search brain for yesterday's timeline entries. Flag anything unresolved",
+          "Review active tasks. Load `ops\/tasks` from brain. Surface P0 and P1 items",
+          "Compile prep briefing. Per-meeting context cards + open threads + task priorities"
         ],
         "role" : "procedure"
       },
@@ -159,7 +159,7 @@
         "heading" : "Output Format",
         "line" : 38,
         "lines" : [
-          "codeblock:plain:TW9ybmluZyBQcmVwIOKAlCB7ZGF0ZX0KPT09PT09PT09PT09PT09PT09PT09PQpNZWV0aW5ncyB0b2RheToge059CgojIyB7TWVldGluZyAxIHRpdGxlfSBhdCB7dGltZX0gKCggaW5lcnQgKSkKQXR0ZW5kZWVzOiB7bmFtZXMgd2l0aCBicmFpbiBjb250ZXh0fQpDb250ZXh0OiB7cmVjZW50IGludGVyYWN0aW9ucywgb3BlbiB0aHJlYWRzfQpQcmVwOiB7d2hhdCB0byBrbm93IGJlZm9yZSB0aGlzIG1lZXRpbmd9CgojIyBPcGVuIFRocmVhZHMgKCggaW5lcnQgKSkKLSB7dGhyZWFkIGZyb20geWVzdGVyZGF5LCB3aXRoIGNvbnRleHR9CgojIyBUYXNrcyAoUDAtUDEpICgoIGluZXJ0ICkpCi0ge3Rhc2sgd2l0aCBwcmlvcml0eX0="
+          "codeblock:plain:TW9ybmluZyBQcmVwIOKAlCB7ZGF0ZX0KPT09PT09PT09PT09PT09PT09PT09PQpNZWV0aW5ncyB0b2RheToge059CgojIyB7TWVldGluZyAxIHRpdGxlfSBhdCB7dGltZX0gKCggaW5lcnQgKSkKQXR0ZW5kZWVzOiB7bmFtZXMgd2l0aCBicmFpbiBjb250ZXh0fQpDb250ZXh0OiB7cmVjZW50IGludGVyYWN0aW9ucywgb3BlbiB0aHJlYWRzfQpQcmVwOiB7d2hhdCB0byBrbm93IGJlZm9yZSB0aGlzIG1lZXRpbmd9CgojIyBPcGVuIFRocmVhZHMKLSB7dGhyZWFkIGZyb20geWVzdGVyZGF5LCB3aXRoIGNvbnRleHR9CgojIyBUYXNrcyAoUDAtUDEpICgoIGluZXJ0ICkpCi0ge3Rhc2sgd2l0aCBwcmlvcml0eX0="
         ],
         "role" : "template"
       },

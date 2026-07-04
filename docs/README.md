@@ -6,8 +6,10 @@ runs against a small deterministic runtime.
 
 > **Current status:** Phases 0–6 + the expressive SKILL.md surface (Phase G),
 > the Inform-7-tier deterministic surface (Waves 1–3), the inert-reduction
-> program (executable Markdown tables/task-lists + AI-routing), and the
-> world-class diagnostics/tracing/decision-log layer (Phase DX) are all complete.
+> program (executable Markdown tables/task-lists + AI-routing), the
+> world-class diagnostics/tracing/decision-log layer (Phase DX), Wave 5 parser
+> infrastructure (grammar table, screening, sentence breaker, problem messages),
+> and Wave 6 validation/reporting across three corpus families are all complete.
 > Generated Swift compiles, links, and runs against `MeridianRuntime`.
 > Replay-safe resume, all 12 IR primitives, Blueprint built-ins, full CLI,
 > MeridianTestKit, and DocC bundles are shipped. Every error is a stable
@@ -85,6 +87,9 @@ meridian/
 │   ├── MeridianToolsTests/     # Built-in tool behaviour
 │   ├── MeridianIntegrationTests/ # Round-trip (compile → build → run) tests
 │   └── README.md               # Test suite guide + how to add tests
+├── corpora/
+│   ├── erp/                    # Wave 6 synthetic ERP/OFBiz proxy corpus
+│   └── procedures/             # Wave 6 synthetic stored-procedure proxy corpus
 ├── examples/
 │   ├── ecommerce.merconfig     # Vocabulary, phrases, tools, instances, constants
 │   ├── order_processing.meridian # Workflows that use the vocabulary

@@ -12,6 +12,37 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L4 `Problem`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L10 `Solution: Functional-Area Dispatchers`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L15 `Before (270 rows, 25KB)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L27 `After (13 rows, 13KB)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L36 `Why It Works`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L46 `A/B Eval Results`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L61 `Training corpus (n=20, 3 seeds × 3 variants × 3 models, LENIENT)`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L69 `Held-out blind corpus (n=5, 3 seeds, LENIENT)`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L77 `What the data shows`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L87 `Reproduce`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L100 `Methodology caveats`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L118 `Prior work and citations`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L144 `How To Compress`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L146 `Step 1: Preconditions`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L155 `Step 2: When to compress which file`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L169 `Step 3: Identify functional areas`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L185 `Step 4: Build the area entry format`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L200 `Step 5: Keep always-on entries separate`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L205 `Step 6 (MANDATORY): Verify routing accuracy`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L264 `Step 7: Review the diff before committing`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L269 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L280 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L284 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L299 `Maintenance`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L312 `Changelog`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L314 `v1.0.0 — 2026-05-11`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 26/26 inert (100% inert ratio)

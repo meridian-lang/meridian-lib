@@ -12,6 +12,22 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L12 `What this is`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L35 `When to use this`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L46 `What this skill is NOT`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L53 `How it works (D7/α: pure routing through perplexity-research)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L97 `Output: brain page format`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L143 `Useful databases (the agent uses these via perplexity-research)`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L154 `Standards (the rigor bar)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L175 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L187 `Related skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L196 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L207 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections: 11/11 inert (100% inert ratio)

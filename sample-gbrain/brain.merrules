@@ -56,6 +56,45 @@ rule "checklist-box":
   rewrite: make sure {item}.
 
 === sections ===
+section "Source" -> procedure
+section "Related skills" -> procedure
+section "Constraints" -> procedure
+section "Step 4: Construct the slug" -> procedure
+section "Integration with Other Skills" -> procedure
+section "Defaults" -> procedure
+section "Supported formats" -> procedure
+section "Processing" -> procedure
+section "Related Concepts" -> procedure
+section "[Cluster Name]" -> procedure
+section "[Other Cluster]" -> procedure
+section "Dedup quality" -> procedure
+section "P0 — Urgent" -> procedure
+section "P1 — Today" -> procedure
+section "P2 — This Week" -> procedure
+section "P3 — Backlog" -> procedure
+section "Open Threads" -> procedure
+section "New skills to create" -> procedure
+section "Existing skills to update" -> procedure
+section "Code to extract to lib/" -> procedure
+section "Brain pages created/updated" -> procedure
+section "Entity pages" -> procedure
+section "Schema changes" -> procedure
+section "Skills identified" -> procedure
+section "Do NOT enrich" -> procedure
+section "CREATE path" -> procedure
+section "UPDATE path" -> procedure
+section "Bulk Enrichment Rules" -> procedure
+section "Validation Rules" -> procedure
+section "Lineage" -> procedure
+section "Reversals and Contradictions" -> procedure
+section "Abandoned Branches" -> procedure
+section "Related Skills and Operations" -> procedure
+section "What counts as notable" -> procedure
+section "Notion Migration" -> procedure
+section "When to Publish" -> procedure
+section "Tutorial + vision" -> procedure
+section "Reference" -> procedure
+section "3. Run system health checks" -> procedure
 section "`.doc` / `.docx`" -> procedure
 section "`.pst` (Outlook archives)" -> procedure
 section "Common patterns" -> procedure

@@ -40,12 +40,12 @@ mutating: true
 
 ## Phases (( inert, role: procedure ))
 
-1. **Assess the source.** What format? How many files? What structure?
-2. **Plan the mapping.** How do source fields map to gbrain fields (type, title, tags, compiled_truth, timeline)?
-3. **Test with a sample.** Import 5-10 files, verify by reading them back from gbrain and exporting.
-4. **Bulk import.** Import the full directory into gbrain.
-5. **Verify.** Check gbrain health and statistics, spot-check pages.
-6. **Build links.** Extract cross-references from content and create typed links in gbrain.
+1. Assess the source. What format? How many files? What structure?
+2. Plan the mapping. How do source fields map to gbrain fields (type, title, tags, compiled_truth, timeline)?
+3. Test with a sample. Import 5-10 files, verify by reading them back from gbrain and exporting.
+4. Bulk import. Import the full directory into gbrain.
+5. Verify. Check gbrain health and statistics, spot-check pages.
+6. Build links. Extract cross-references from content and create typed links in gbrain.
 
 ## Obsidian Migration (( inert ))
 

@@ -12,6 +12,23 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L10 `Iron Law`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L20 `When to invoke`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L27 `The pipeline`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L45 `Decision tree (where the content goes)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L78 `Brain page format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L124 `Citation format`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L136 `Naming convention`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L142 `Bulk vs. single`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L147 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L157 `Related skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L165 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L176 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections: 12/12 inert (100% inert ratio)

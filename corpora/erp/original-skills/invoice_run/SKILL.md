@@ -1,0 +1,36 @@
+---
+name: invoice run
+description: Generate invoices and render a compact routing receipt.
+triggers:
+  - "run invoices"
+  - "billing batch"
+---
+
+# Invoice Run
+
+## When this applies
+- "run invoices"
+- "billing batch"
+
+## Tables
+| status | queue |
+| --- | --- |
+| unpaid | collections |
+| fulfilled | archive |
+
+## Workflow (( role: procedure ))
+fetch open orders.
+for each order:
+  create an invoice for the order.
+bind selected queue = the queue corresponding to the status "unpaid" in the table.
+bind invoice receipt =
+  ```
+  invoice-routing:
+  [for each row in table]- {{ row.status }} -> {{ row.queue }}
+  [end for]
+  selected: {{ selected queue }}
+  ```
+emit erp.invoice_receipt with body = invoice receipt.
+
+## Report shape (( inert, role: template ))
+The receipt groups invoice states by downstream queue.

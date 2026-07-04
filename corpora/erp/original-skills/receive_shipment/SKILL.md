@@ -1,0 +1,21 @@
+---
+name: receive shipment
+description: Record inbound warehouse receipts from an ERP manifest.
+triggers:
+  - "receive inbound shipment"
+  - "shipment received"
+---
+
+# Receive Shipment
+
+## When this applies
+- "receive inbound shipment"
+- "shipment received"
+
+## Workflow (( role: procedure ))
+Step: `ofbiz warehouse receive --today --json` to snapshot inbound manifests.
+Publish: "warehouse receiving manifest captured".
+
+## Human notes (( inert ))
+Inbound receiving is intentionally shell-backed in this synthetic corpus because
+the source system exposes a manifest command rather than a first-class API call.

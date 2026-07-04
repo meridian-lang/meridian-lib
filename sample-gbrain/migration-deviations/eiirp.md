@@ -3,8 +3,8 @@
 - Original: `eiirp/SKILL.md`
 - Ported: `eiirp.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 88%
-- Lines: 395 -> 395 (+49 / -49)
+- Similarity: 90%
+- Lines: 395 -> 395 (+39 / -39)
 
 ## Frontmatter
 - Added: (none)
@@ -12,6 +12,36 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L6 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L24 `When to Use`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L33 `Phase 1: INVENTORY — What did we produce?`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L37 `Knowledge outputs`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L46 `Capability outputs`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L66 `Phase 2: TAXONOMY — Where does each piece go?`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L94 `Phase 3: SCHEMA CHECK — Does the active pack cover this content?`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L124 `Phase 4: FILE — Create enriched brain pages`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L128 `4a. Primary research page`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L137 `4b. Entity pages (people, companies)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L143 `4c. Commit and verify`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L147 `Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L151 `5a. New pattern identification`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L174 `5b. Existing skill audit`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L182 `5c. Present the plan`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L203 `Phase 6: CHECK_RESOLVABLE — Verify everything routes`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L223 `Phase 7: REPORT — Summary`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L250 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L280 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L299 `Hard Rules`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L301 `Knowledge domain`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L308 `Capability domain`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L314 `Meta`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L318 `Changelog`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L320 `v1.0.0 — gbrain v0.39.0.0`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 25/25 inert (100% inert ratio)
@@ -176,26 +206,26 @@
 -### 5c. Present the plan
 -```
 -## Skill Graph Changes
--
--### New skills to create
 +### 5c. Present the plan (( inert ))
 +```
 +## Skill Graph Changes (( inert ))
-+
-+### New skills to create (( inert ))
- 1. **[skill-name]** — [what it does]
+ 
+ ### New skills to create
+-1. **[skill-name]** — [what it does]
++1. [skill-name] — [what it does]
     - DRY check: [clean / overlaps with X]
     - Recommendation: [create / merge into X]
  
--### Existing skills to update
-+### Existing skills to update (( inert ))
- 1. **[skill-name]** — [what changed, why]
+ ### Existing skills to update
+-1. **[skill-name]** — [what changed, why]
++1. [skill-name] — [what changed, why]
  
--### Code to extract to lib/
-+### Code to extract to lib/ (( inert ))
- 1. **lib/[name].ts** — [what it does, which skills use it]
- 
+ ### Code to extract to lib/
+-1. **lib/[name].ts** — [what it does, which skills use it]
+-
 -### Skills to merge or deprecate
++1. lib/[name].ts — [what it does, which skills use it]
++
 +### Skills to merge or deprecate (( inert ))
  1. **[skill-A] + [skill-B]** → [merged-skill] — [why]
  ```
@@ -207,7 +237,7 @@
  
  After all filing and skillification:
  
-@@ -285,53 +285,53 @@
+@@ -285,10 +285,10 @@
  - [ ] Active schema pack updated if new content types emerged
  - [ ] `gbrain doctor` reports `schema_pack_consistency: ok`
  
@@ -216,25 +246,11 @@
  
  ```markdown
 -## EIIRP Complete: [Topic]
--
--### Brain pages created/updated
 +## EIIRP Complete: [Topic] (( inert ))
-+
-+### Brain pages created/updated (( inert ))
+ 
+ ### Brain pages created/updated
  - [path] — [description]
- - ...
- 
--### Entity pages
-+### Entity pages (( inert ))
- - [path] — [created/updated]
- - ...
- 
--### Schema changes
-+### Schema changes (( inert ))
- - [none / description of changes + which pack delta file]
- 
--### Skills identified
-+### Skills identified (( inert ))
+@@ -305,19 +305,19 @@
  - [skill-name] — [status: created / merged / deferred]
  - ...
  
@@ -253,23 +269,12 @@
  
  ```markdown
 -## EIIRP Complete: [topic]
--
--### Brain pages created/updated
 +## EIIRP Complete: [topic] (( inert ))
-+
-+### Brain pages created/updated (( inert ))
+ 
+ ### Brain pages created/updated
  - [path] — [description]
- 
--### Entity pages
-+### Entity pages (( inert ))
- - [path] — [created|updated]
- 
--### Schema changes
-+### Schema changes (( inert ))
- - [none | description of changes + which pack delta file]
- 
--### Skills identified
-+### Skills identified (( inert ))
+@@ -331,7 +331,7 @@
+ ### Skills identified
  - [skill-name] — [status: created|merged|deferred]
  
 -### Resolver status

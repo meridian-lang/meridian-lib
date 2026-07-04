@@ -12,6 +12,25 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L6 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L15 `Built-in Tests`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L28 `Usage`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L40 `From OpenClaw bootstrap`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L46 `From an agent`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L51 `Adding Custom Tests`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L67 `Adding Built-in Tests`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L87 `Design rules:`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L95 `Environment Variables`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L105 `Known Issues & Their Auto-Fixes`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L107 `Codex Zod core.cjs Missing (discovered 2026-04-23)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L114 `GBrain Worker Auth Failure`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L119 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L135 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections: 14/16 inert (88% inert ratio)

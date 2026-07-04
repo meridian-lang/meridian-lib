@@ -1,0 +1,263 @@
+{
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "overdue",
+      "function" : "meridianDef_Invoice_overdue",
+      "kind" : "invoice",
+      "line" : 30
+    },
+    {
+      "adjective" : "unpaid",
+      "function" : "meridianDef_Invoice_unpaid",
+      "kind" : "invoice",
+      "line" : 29
+    },
+    {
+      "adjective" : "blocked",
+      "function" : "meridianDef_Order_blocked",
+      "kind" : "order",
+      "line" : 27
+    },
+    {
+      "adjective" : "fulfilled",
+      "function" : "meridianDef_Order_fulfilled",
+      "kind" : "order",
+      "line" : 28
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Order_open",
+      "kind" : "order",
+      "line" : 26
+    },
+    {
+      "adjective" : "short",
+      "function" : "meridianDef_Product_short",
+      "kind" : "product",
+      "line" : 31
+    },
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_PurchaseOrder_pending",
+      "kind" : "purchase order",
+      "line" : 32
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 38,
+      "name" : "collection",
+      "right_cardinality" : "one",
+      "right_kind" : "a payment",
+      "via" : "payment.collect"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 34,
+      "name" : "fulfillment",
+      "right_cardinality" : "one",
+      "right_kind" : "a shipment",
+      "via" : "shipment.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 36,
+      "name" : "invoicing",
+      "right_cardinality" : "one",
+      "right_kind" : "an invoice",
+      "via" : "invoice.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a product",
+      "line" : 40,
+      "name" : "replenishment",
+      "right_cardinality" : "one",
+      "right_kind" : "a purchase order",
+      "via" : "purchase_order.create"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Close the synthetic ERP accounting period after unpaid-invoice checks.",
+    "name" : "month end close",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 11,
+        "text" : "When this applies"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 15,
+        "text" : "Close sequence"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 21,
+        "text" : "Accounting notes"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 17,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 19,
+        "text" : "Publish"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "When this applies",
+        "line" : 11,
+        "lines" : [
+          "\"month-end close\"",
+          "\"close accounting period\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Close sequence",
+        "line" : 15,
+        "lines" : [
+          "fetch unpaid invoices",
+          "Check: no invoices whose balance is more than 0",
+          "close the accounting period",
+          "Publish: \"accounting period closed\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Accounting notes",
+        "line" : 21,
+        "lines" : [
+          "The real-world phrase \"soft close\" is intentionally left as documentation; the",
+          "compiled behavior uses an explicit period-close tool"
+        ],
+        "role" : "inert"
+      }
+    ],
+    "triggers" : "\"month-end close\"\n\"close accounting period\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "collect",
+      "line" : 45,
+      "past_participle" : "collected",
+      "relation" : "collection",
+      "third_person" : "collects"
+    },
+    {
+      "base" : "fulfill",
+      "line" : 43,
+      "past_participle" : "fulfilled",
+      "relation" : "fulfillment",
+      "third_person" : "fulfills"
+    },
+    {
+      "base" : "invoice",
+      "line" : 44,
+      "past_participle" : "invoiced",
+      "relation" : "invoicing",
+      "third_person" : "invoices"
+    },
+    {
+      "base" : "replenish",
+      "line" : 46,
+      "past_participle" : "replenished",
+      "relation" : "replenishment",
+      "third_person" : "replenishes"
+    }
+  ],
+  "source_files" : [
+    "monthendclose.meri",
+    "erp.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 52,
+      "swift_line" : 403
+    },
+    {
+      "meridian_line" : 17,
+      "swift_line" : 415
+    },
+    {
+      "meridian_line" : 76,
+      "swift_line" : 420
+    },
+    {
+      "meridian_line" : 19,
+      "swift_line" : 427
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 464
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 469
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 507
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 512
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "month end close",
+      "swift_struct" : "MonthEndClose"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when monthEndClose fires",
+      "swift_struct" : "WhenMonthendcloseFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when closeAccountingPeriod fires",
+      "swift_struct" : "WhenCloseaccountingperiodFires"
+    }
+  ]
+}

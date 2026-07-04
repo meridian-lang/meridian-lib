@@ -13,6 +13,22 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L6 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L15 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L29 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L37 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L45 `Quality Rules`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L54 `Token-Budget Awareness`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L66 `Source precedence`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L78 `Citation in Answers`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L86 `Graph Traversal (v0.10.1+)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L108 `Search Quality Awareness`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L117 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections: 11/11 inert (100% inert ratio)

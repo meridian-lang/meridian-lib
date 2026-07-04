@@ -61,13 +61,13 @@ This mode guarantees:
 
 ### Phases (( inert, role: procedure ))
 
-1. **Walk skills directory.** List all subdirs containing `SKILL.md`.
-2. **Validate frontmatter.** Parse YAML, check required fields.
-3. **Validate sections.** Check for the required headings.
-4. **Check manifest.** Every skill dir must be in `manifest.json`.
-5. **Check resolver.** Every manifest skill must have a RESOLVER row.
-6. **Check round-trip.** RESOLVER trigger ↔ frontmatter triggers.
-7. **Report results.**
+1. Walk skills directory. List all subdirs containing `SKILL.md`.
+2. Validate frontmatter. Parse YAML, check required fields.
+3. Validate sections. Check for the required headings.
+4. Check manifest. Every skill dir must be in `manifest.json`.
+5. Check resolver. Every manifest skill must have a RESOLVER row.
+6. Check round-trip. RESOLVER trigger ↔ frontmatter triggers.
+7. Report results.
 
 ### Automation (( inert ))
 
@@ -134,7 +134,7 @@ bun test --filter eval 2>&1
 Parse: same format. Note any flakes (tests that fail due to API
 timeouts, not code bugs).
 
-#### 3. Run system health checks (( inert ))
+#### 3. Run system health checks
 
 - Disk / memory / CPU
 - gbrain: `gbrain doctor --fast --json`

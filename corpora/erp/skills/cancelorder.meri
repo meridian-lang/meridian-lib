@@ -1,0 +1,23 @@
+---
+name: cancel order
+description: Cancel blocked open orders after deterministic guard checks.
+triggers:
+  - "cancel blocked orders"
+  - "void ERP orders"
+---
+
+# Cancel Order
+
+## When this applies (( inert, role: applicability ))
+- "cancel blocked orders"
+- "void ERP orders"
+
+## Workflow (( role: procedure ))
+fetch open orders.
+Check: any orders whose status is "blocked".
+for each order whose status is "blocked":
+  cancel the order.
+Publish: "blocked orders cancelled".
+
+## Controls (( inert, role: invariants ))
+An already fulfilled order must not be cancelled by this runbook.

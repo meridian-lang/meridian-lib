@@ -14,6 +14,16 @@
 - frontmatter-injected
 - section-marker-added
 - shell-block-routed
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L39 `Routing tables`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L41 `Always-on (every message)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L46 `Brain operations`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L53 `Content and media ingestion`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L59 `Maintenance and operations`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 5/9 inert (56% inert ratio)

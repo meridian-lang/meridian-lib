@@ -104,10 +104,10 @@ clarify(
 
 ## Constraints (( inert ))
 
-- **2-4 options max.** More than 4 creates decision paralysis.
-- **Labels must be self-explanatory.** The user shouldn't need to re-read context.
-- **Always include an escape hatch.** At minimum: "Skip" or "Cancel" as the last option.
-- **One question per message.** Never stack multiple choice gates.
+- 2-4 options max. More than 4 creates decision paralysis.
+- Labels must be self-explanatory. The user shouldn't need to re-read context.
+- Always include an escape hatch. At minimum: "Skip" or "Cancel" as the last option.
+- One question per message. Never stack multiple choice gates.
 
 ## How To Gate (CRITICAL) (( inert ))
 

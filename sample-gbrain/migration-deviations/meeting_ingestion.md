@@ -12,6 +12,21 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L6 `Contract`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L21 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L23 `Phase 1: Parse the transcript`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L33 `Phase 2: Create meeting page`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L55 `Phase 3: Attendee enrichment (MANDATORY)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L70 `Phase 4: Entity propagation (MANDATORY)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L78 `Phase 5: Timeline merge`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L83 `Phase 6: Sync`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L87 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L92 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 10/10 inert (100% inert ratio)

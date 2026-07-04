@@ -475,7 +475,7 @@
         "heading" : "Bulk Enrichment Rules",
         "line" : 284,
         "lines" : [
-          "**Test on 3-5 entities first.** Read actual output. Check quality",
+          "Test on 3-5 entities first. Read actual output. Check quality",
           "Only proceed to bulk after test shots pass your quality bar",
           "3+ entities from one source -> batch process or spawn sub-agent",
           "Throttle API calls. Respect rate limits",

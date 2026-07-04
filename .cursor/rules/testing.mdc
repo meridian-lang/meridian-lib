@@ -19,13 +19,18 @@ full local gate unless the user explicitly narrows validation:
 
 ```bash
 swift test
-MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1 swift test
+MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1 MERIDIAN_CORPORA_TYPECHECK=1 swift test
 scripts/coverage.swift --gate
 ```
 
 The typecheck env vars are required for changes that affect generated Swift,
-codegen, domain emission, migration, or the gbrain corpus. They are the only
-gates that feed generated output to `swiftc`.
+codegen, domain emission, migration, or any committed corpus. They are the only
+gates that feed generated output to `swiftc`. For changes scoped to the Wave 6
+synthetic corpora, run the focused gate:
+
+```bash
+MERIDIAN_CORPORA_TYPECHECK=1 swift test --filter CorporaConformanceTests
+```
 Do not skip the coverage gate for substantive production changes; it enforces
 the per-file coverage floors documented under `docs/coverage/`.
 
@@ -36,6 +41,31 @@ swift test --filter Phase3ForcingFunction
 swift test --filter SwiftEmitterTests
 swift test --filter ParserTraceTests
 ```
+
+### Wave 5 parser tests
+
+- Add one `GrammarTableTests` assertion per new `GrammarProduction`, in table
+  order (including its `implementation: .pegex`/`.handWritten` choice), so
+  registry coverage is visually reviewable.
+- There is one expression-parser implementation, so there is no differential
+  harness to run new productions against. The primary
+  oracle is the ~150 existing behavior tests (`Inform7Wave2/3/4Tests`,
+  `ExpressionParserCoverageTests`, `ReachableCoverageParsersTests`,
+  `EnglishLexiconTests`, `LexiconCentralizationTests`, `Phase6B6B7Tests`) that
+  pattern-match exact `ExpressionAST` shapes — these must keep passing
+  unmodified after any production-level change. `ExpressionParserGoldenTests`
+  is a supplementary belt-and-suspenders check: it freezes
+  `traceDescription(.verbose)` output for a curated sentence corpus (captured
+  from the pre-rewrite parser) and asserts the dispatcher still reproduces it,
+  except for documented entries in `ExpressionParserGoldenCorpus.deliberateDivergences`.
+- Use `NonterminalScreeningTests` for anchor-mask changes and `SentenceBreakerTests`
+  for tokenizer/FSM changes. Any new production anchor added to
+  `PegexSurfaceGrammar` must keep the whole anchor set within `NonterminalScreen`'s
+  `Bitset128` (128-slot) vocabulary budget, or that production silently loses
+  its screening speedup (falls back to always-tried, not incorrect — see
+  `compiler-internals.mdc`'s correctness invariant — but worth noticing).
+- Smoke `meridian bench-parse` via `BenchParseCommandTests` when benchmark output
+  changes (2-way: unscreened vs `NonterminalScreen`-gated dispatch).
 
 ### Code coverage gate
 

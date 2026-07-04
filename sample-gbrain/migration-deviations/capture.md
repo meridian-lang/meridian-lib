@@ -3,8 +3,8 @@
 - Original: `capture/SKILL.md`
 - Ported: `capture.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 90%
-- Lines: 106 -> 106 (+11 / -11)
+- Similarity: 86%
+- Lines: 106 -> 106 (+15 / -15)
 
 ## Frontmatter
 - Added: (none)
@@ -13,6 +13,18 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L9 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L21 `When to invoke`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L27 `What it does`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L47 `Defaults`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L54 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L70 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L85 `When NOT to use this skill`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 7/8 inert (88% inert ratio)
@@ -76,10 +88,14 @@
 -## Defaults
 +## Defaults (( inert ))
  
- - **Slug:** `inbox/YYYY-MM-DD-<hash8>` (stable for same content; the daemon's 24h dedup catches re-captures).
- - **Type:** `note` (override with `--type idea` etc.).
- - **Frontmatter stamps:** `captured_via: capture-cli`, `captured_at: <ISO>`.
- - **Title:** first non-empty line of the body, capped at 80 chars.
+-- **Slug:** `inbox/YYYY-MM-DD-<hash8>` (stable for same content; the daemon's 24h dedup catches re-captures).
+-- **Type:** `note` (override with `--type idea` etc.).
+-- **Frontmatter stamps:** `captured_via: capture-cli`, `captured_at: <ISO>`.
+-- **Title:** first non-empty line of the body, capped at 80 chars.
++- Slug: `inbox/YYYY-MM-DD-<hash8>` (stable for same content; the daemon's 24h dedup catches re-captures).
++- Type: `note` (override with `--type idea` etc.).
++- Frontmatter stamps: `captured_via: capture-cli`, `captured_at: <ISO>`.
++- Title: first non-empty line of the body, capped at 80 chars.
  
 -## Output Format
 +## Output Format (( inert, role: template ))

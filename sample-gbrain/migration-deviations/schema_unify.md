@@ -13,6 +13,27 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L8 `brain_first: exempt`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L12 `When this skill fires`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L19 `Mental model (one paragraph)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L23 `Workflow`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L25 `Phase 1: Discovery`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L43 `Phase 2: Preview`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L59 `Phase 3: Apply`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L88 `Phase 4: Verify`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L101 `Phase 5: Post-migration`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L107 `Rollback`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L128 `Anti-patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L136 `Decision tree`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L159 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L182 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L191 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L219 `Reference`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 16/16 inert (100% inert ratio)

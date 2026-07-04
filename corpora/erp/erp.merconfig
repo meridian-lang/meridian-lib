@@ -1,0 +1,127 @@
+=== vocabulary ===
+An order is a kind of thing.
+An order item is a kind of thing.
+A customer is a kind of person.
+An invoice is a kind of artifact.
+A payment is a kind of event.
+A product is a kind of thing.
+A shipment is a kind of event.
+A purchase order is a kind of artifact.
+A warehouse is a kind of thing.
+A period is a kind of thing.
+A trigger phrase is a kind of thing.
+
+An order has a number, a status, a total amount, a customer id, and an updated at.
+An order item has a sku, a quantity, and a status.
+A customer has a customer id, a name, and a status.
+An invoice has a number, a status, a balance, a due date, and an updated at.
+A payment has a reference, a status, and an amount.
+A product has a sku, a status, a quantity on hand, a reorder point, and an updated at.
+A shipment has a tracking number, a status, and an updated at.
+A purchase order has a number, a status, and an updated at.
+A warehouse has a name and a region.
+A period has a name, a status, and a closed at.
+A trigger phrase has a text.
+
+Definition: an order is open if its status is "open".
+Definition: an order is blocked if its status is "blocked".
+Definition: an order is fulfilled if its status is "fulfilled".
+Definition: an invoice is unpaid if its balance is more than 0.
+Definition: an invoice is overdue if its due date is within the last 1 days.
+Definition: a product is short if its quantity on hand is less than its reorder point.
+Definition: a purchase order is pending if its status is "pending".
+
+Fulfillment relates an order to a shipment.
+Fulfillment is read via the shipment.create tool.
+Invoicing relates an order to an invoice.
+Invoicing is read via the invoice.create tool.
+Collection relates an invoice to a payment.
+Collection is read via the payment.collect tool.
+Replenishment relates a product to a purchase order.
+Replenishment is read via the purchase_order.create tool.
+
+The verb to fulfill (it fulfills, it is fulfilled) means the fulfillment relation.
+The verb to invoice (it invoices, it is invoiced) means the invoicing relation.
+The verb to collect (it collects, it is collected) means the collection relation.
+The verb to replenish (it replenishes, it is replenished) means the replenishment relation.
+
+To fetch open orders:
+  bind orders = invoke order.list with status = "open".
+
+To fetch unpaid invoices:
+  bind invoices = invoke invoice.list with status = "unpaid".
+
+To fetch short products:
+  bind products = invoke product.list with status = "short".
+
+To reserve inventory for an order:
+  invoke inventory.reserve with order = the order.
+
+To create an invoice for an order:
+  bind invoice = invoke invoice.create with order = the order.
+
+To collect payment for an invoice:
+  bind payment = invoke payment.collect with invoice = the invoice.
+
+To ship an order:
+  bind shipment = invoke shipment.create with order = the order.
+
+To create a purchase order for a product:
+  bind purchase order = invoke purchase_order.create with product = the product.
+
+To cancel an order:
+  invoke order.cancel with order = the order.
+
+To close the accounting period:
+  invoke period.close.
+
+=== tools ===
+List Orders
+===========
+-- List orders by status.
+~ order.list(status: String) : List
+
+List Invoices
+=============
+-- List invoices by status.
+~ invoice.list(status: String) : List
+
+List Products
+=============
+-- List products by status.
+~ product.list(status: String) : List
+
+Reserve Inventory
+=================
+-- Reserve inventory for an order.
+~ inventory.reserve(order: Order) : Boolean
+
+Create Invoice
+==============
+-- Create an invoice for an order.
+~ invoice.create(order: Order) : Invoice
+
+Collect Payment
+===============
+-- Collect payment for an invoice.
+~ payment.collect(invoice: Invoice) : Payment
+
+Create Shipment
+===============
+-- Ship an order.
+~ shipment.create(order: Order) : Shipment
+
+Create Purchase Order
+=====================
+-- Create replenishment purchase order.
+~ purchase_order.create(product: Product) : PurchaseOrder
+
+Cancel Order
+============
+-- Cancel an order.
+~ order.cancel(order: Order) : Boolean
+
+Close Period
+============
+-- Close the accounting period.
+~ period.close() : Boolean

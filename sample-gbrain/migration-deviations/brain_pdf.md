@@ -12,6 +12,23 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L8 `The rule`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L14 `What this does`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L25 `Prerequisite: gstack make-pdf`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L44 `Workflow`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L56 `Invocation`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L107 `Defaults: NO cover, NO TOC`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L114 `Font requirements`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L127 `Delivery`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L141 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L153 `Related skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L162 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L173 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections: 12/13 inert (92% inert ratio)

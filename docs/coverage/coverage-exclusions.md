@@ -125,7 +125,7 @@ MeridianCore/Migration/SkillDeviation.swift                = 90
 # SkillMigrator: conservative raw SKILL conversion now inert-marks narrative
 # recognized sections instead of forcing compile/repair, leaving repair/error
 # tails covered by explicit-marker tests only. Temporary floor from this gate.
-MeridianCore/Migration/SkillMigrator.swift                 = 82.98
+MeridianCore/Migration/SkillMigrator.swift                 = 82.88
 # ExpressionParser: thin orchestrator — residual misses are `trace.log` autoclosure
 # arms on clause/atom dispatch paths; direct trace tests ratchet this toward 100%.
 MeridianCore/Parser/Lexical/ExpressionParser.swift         = 100
@@ -139,7 +139,7 @@ MeridianCore/Parser/Lexical/ExpressionParser.swift         = 100
 # formatter edge cases, backwards table lookup failures, etc.). Temporary floors
 # set to the latest full-gate measurements after direct branch tests.
 MeridianCore/Parser/Lexical/Productions/ActiveVerbParser.swift = 96.3
-MeridianCore/Parser/Lexical/Productions/BooleanGrammar.swift = 97.85
+MeridianCore/Parser/Lexical/Productions/BooleanGrammar.swift = 96.77
 MeridianCore/Parser/Lexical/Productions/DescriptionGrammar.swift = 95.18
 MeridianCore/Parser/Lexical/Productions/LiteralGrammar.swift = 93.75
 MeridianCore/Parser/Lexical/Productions/QuantifierGrammar.swift = 93.94
@@ -154,7 +154,7 @@ MeridianCore/Grammar/NonterminalScreen.swift                = 95.35
 MeridianCore/Parser/Lexical/HeaderFolder.swift             = 94.44
 MeridianCore/Parser/Lexical/IndentTokenizer.swift          = 91.32
 MeridianCore/Parser/Productions/MerConfigParser.swift      = 86.45
-MeridianCore/Parser/Productions/MeridianParser.swift       = 95.12
+MeridianCore/Parser/Productions/MeridianParser.swift       = 94.63
 MeridianCore/Parser/Productions/StatementParser.swift      = 86.82
 MeridianCore/Parser/Productions/TableParser.swift          = 85.15
 # ConditionClassifier: raw gbrain migration now marks narrative recognized

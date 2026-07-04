@@ -377,6 +377,14 @@ struct ConditionGrammarTests {
             Issue.record("expected identifier lhs"); return
         }
         #expect(name == "deadline")
+
+        guard case .comparison(let implicitTimestamp, .withinPast, _) = parse("is within the last 2 days") else {
+            Issue.record("expected bare is-within to use timestamp property"); return
+        }
+        guard case .identifierRef(let timestampName) = implicitTimestamp else {
+            Issue.record("expected timestamp identifier lhs"); return
+        }
+        #expect(timestampName == EnglishLexicon.default.timestampProperty)
     }
 
     @Test("in the next N days → withinFuture")

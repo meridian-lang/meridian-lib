@@ -13,6 +13,26 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L13 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L32 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L48 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L66 `When to invoke`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L78 `Preconditions`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L92 `Workflow`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L94 `Phase 1 — Plan`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L104 `Phase 2 — Dry-run + privacy-lint preview`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L123 `Phase 3 — Genericization checklist (the editorial pass)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L163 `Phase 4 — Real harvest`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L186 `Phase 5 — Verify in gbrain`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L199 `Phase 6 — Downstream announcement (optional)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L206 `Bypass: `--no-lint``: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L224 `What harvest does NOT do`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L235 `Files this skill touches`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 15/15 inert (100% inert ratio)

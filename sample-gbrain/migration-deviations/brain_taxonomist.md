@@ -12,6 +12,28 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L4 `Purpose`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L10 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L19 `Critical: this skill reads the ACTIVE schema pack as data`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L34 `When to Consult (MANDATORY)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L47 `Decision Protocol`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L49 `Step 1: Identify primary subject type`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L60 `Step 2: Look up the directory for that type in the active pack`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L71 `Step 3: For books — determine sub-category`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L79 `Step 4: Construct the slug`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L85 `Step 5: Validate before writing`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L96 `Integration with Other Skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L103 `Periodic Drift Detection`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L116 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L141 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L156 `Hard Rules`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L166 `Changelog`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L168 `v1.0.0 — gbrain v0.39.0.0`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 17/17 inert (100% inert ratio)

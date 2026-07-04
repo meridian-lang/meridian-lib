@@ -49,6 +49,9 @@ public struct SkillDeviation {
         /// Wave 0 expressiveness counters over the ported `.meri` (see
         /// `SkillMetrics`): section inert ratio and judgment block/line counts.
         public var metrics: SkillMetrics
+        /// Ported sections that became inert even though the corresponding
+        /// original heading was not already marked inert.
+        public var inertSectionDeviations: [SkillMetrics.InertSection]
     }
 
     // MARK: - Analysis
@@ -85,10 +88,19 @@ public struct SkillDeviation {
             .filter { normalizeValue(origFM[$0] ?? "") != normalizeValue(portFM[$0] ?? "") }
             .sorted()
 
-        let categories = detectCategories(
+        let metrics = SkillMetrics.analyze(portedMeri, rulebook: rulebook)
+        let inertDeviations = inertSectionDeviations(
+            originalMarkdown: originalMarkdown,
+            metrics: metrics
+        )
+
+        var categories = detectCategories(
             originalMarkdown: originalMarkdown, portedMeri: portedMeri,
             frontmatterAdded: fmAdded
         )
+        if !inertDeviations.isEmpty {
+            categories.append("inert-section-added")
+        }
 
         return DeviationReport(
             originalName: originalName,
@@ -107,7 +119,8 @@ public struct SkillDeviation {
             similarity: similarity,
             categories: categories,
             unifiedDiff: diff,
-            metrics: SkillMetrics.analyze(portedMeri, rulebook: rulebook)
+            metrics: metrics,
+            inertSectionDeviations: inertDeviations
         )
     }
 
@@ -144,6 +157,15 @@ public struct SkillDeviation {
         } else {
             for c in r.categories { out.append("- \(c)") }
         }
+        if !r.inertSectionDeviations.isEmpty {
+            out.append("")
+            out.append("## Inert deviations")
+            out.append("")
+            out.append("These sections were made non-executable in the port and should be reviewed as migration deviations:")
+            for detail in r.inertSectionDeviations {
+                out.append("- L\(detail.line) `\(detail.heading)`: \(detail.category.rawValue) - \(detail.reason)")
+            }
+        }
         out.append("")
         out.append("## Metrics")
         let m = r.metrics
@@ -179,6 +201,54 @@ public struct SkillDeviation {
             out.append("```")
         }
         return out.joined(separator: "\n") + "\n"
+    }
+
+    private static func inertSectionDeviations(
+        originalMarkdown: String,
+        metrics: SkillMetrics
+    ) -> [SkillMetrics.InertSection] {
+        let originalInert = originalExplicitInertHeadings(originalMarkdown)
+        return metrics.inertDetails.filter { detail in
+            !originalInert.contains(normalizeHeading(detail.heading))
+        }
+    }
+
+    private static func originalExplicitInertHeadings(_ source: String) -> Set<String> {
+        var out: Set<String> = []
+        var inFence = false
+        for raw in bodyLines(of: source) {
+            let trimmed = raw.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("```") {
+                inFence.toggle()
+                continue
+            }
+            if inFence { continue }
+            guard let heading = SkillMarkdownShape.headingText(trimmed) else { continue }
+            let parsed = SkillSectionRole.parseMarker(from: heading)
+            if parsed.marker?.inert == true {
+                out.insert(normalizeHeading(parsed.cleanHeading))
+            }
+        }
+        return out
+    }
+
+    private static func normalizeHeading(_ heading: String) -> String {
+        heading
+            .lowercased()
+            .replacingOccurrences(of: #"[\s\p{Punct}]+"#, with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespaces)
+    }
+
+    private static func bodyLines(of source: String) -> [String] {
+        let lines = source.components(separatedBy: "\n")
+        guard let fm = FrontmatterScanner.locate(lines, skipLeadingBlanks: true) else {
+            return lines
+        }
+        var out = Array(lines[..<fm.open])
+        if fm.close + 1 < lines.count {
+            out.append(contentsOf: lines[(fm.close + 1)...])
+        }
+        return out
     }
 
     // MARK: - Frontmatter extraction

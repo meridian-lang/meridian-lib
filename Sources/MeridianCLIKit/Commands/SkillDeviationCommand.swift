@@ -223,6 +223,7 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         let inertSections = rows.reduce(0) { $0 + $1.metrics.inertSections }
         let operationalInertSections = rows.reduce(0) { $0 + $1.metrics.operationalInertSections }
         let unclassifiedInertSections = rows.reduce(0) { $0 + $1.metrics.unclassifiedInertSections }
+        let inertDeviations = rows.reduce(0) { $0 + $1.inertSectionDeviations.count }
         let totalJudgmentBlocks = rows.reduce(0) { $0 + $1.metrics.judgmentBlocks }
         let totalJudgmentLines = rows.reduce(0) { $0 + $1.metrics.judgmentLines }
         let avgInertRatio = rows.isEmpty ? 0 : rows.map(\.metrics.inertRatio).reduce(0, +) / Double(rows.count)
@@ -235,6 +236,7 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         out.append("- Tier 3 (structural rewrite): \(tier3)")
         out.append("- Average similarity: \(percent(avg))")
         out.append("- Sections: \(inertSections)/\(totalSections) inert (avg inert ratio \(percent(avgInertRatio)))")
+        out.append("- Inert deviations: \(inertDeviations)")
         out.append("- Operational inert: \(operationalInertSections)")
         out.append("- Unclassified inert: \(unclassifiedInertSections)")
         if !categoryCounts.isEmpty {
@@ -245,14 +247,14 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         out.append("")
         out.append("## Per-skill")
         out.append("")
-        out.append("| skill | tier | similarity | lines | inert | operational inert | judgment | frontmatter added | categories |")
-        out.append("|---|---|---|---|---|---|---|---|---|")
+        out.append("| skill | tier | similarity | lines | inert deviations | inert | operational inert | judgment | frontmatter added | categories |")
+        out.append("|---|---|---|---|---|---|---|---|---|---|")
         for r in rows {
             let stem = (r.portedName as NSString).deletingPathExtension
             let fmAdded = r.frontmatterAdded.isEmpty ? "(none)" : r.frontmatterAdded.joined(separator: " ")
             let cats = r.categories.isEmpty ? "(none)" : r.categories.joined(separator: " ")
             let m = r.metrics
-            out.append("| [\(stem)](\(stem).md) | \(r.tier) | \(percent(r.similarity)) | \(r.originalLineCount)→\(r.portedLineCount) | \(m.inertSections)/\(m.totalSections) | \(m.operationalInertSections) | \(m.judgmentBlocks)/\(m.judgmentLines) | \(fmAdded) | \(cats) |")
+            out.append("| [\(stem)](\(stem).md) | \(r.tier) | \(percent(r.similarity)) | \(r.originalLineCount)→\(r.portedLineCount) | \(r.inertSectionDeviations.count) | \(m.inertSections)/\(m.totalSections) | \(m.operationalInertSections) | \(m.judgmentBlocks)/\(m.judgmentLines) | \(fmAdded) | \(cats) |")
         }
         if !unpairedOriginals.isEmpty {
             out.append("")

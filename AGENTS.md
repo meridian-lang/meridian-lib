@@ -122,6 +122,11 @@ source of truth; the migration corpus is reproducible with no external scripts).
 - **No file headers.** No `//  FileName.swift`, no `// Created by…` comments.
 - **No obvious comments.** Comments only explain non-obvious intent, trade-offs,
   or constraints.
+- **Original `SKILL.md` files are read-only.** Never edit
+  `sample-gbrain/original-skills/**/SKILL.md` or other upstream/original corpus
+  `SKILL.md` sources to make strict compile pass. Fix compiler/migrator behavior
+  or generated/ported `.meri` files instead; preserve originals as the immutable
+  comparison baseline for deviation reports.
 - **Append-only log.** Every assumption, decision, or blocker goes in
   `IMPLEMENTATION_LOG.md` with a UTC timestamp. Never delete entries.
 
@@ -234,6 +239,38 @@ the gbrain corpus, do not skip the typecheck env vars; they are the only gates
 that feed generated output to `swiftc`. Changes that affect corpus migration,
 rulebooks, or generated Swift for `corpora/erp` / `corpora/procedures` must also
 run `MERIDIAN_CORPORA_TYPECHECK=1 swift test --filter CorporaConformanceTests`.
+When diagnosing strict-compile failures across any corpus ports, use the
+readable reporter instead of an inline shell loop:
+
+```bash
+swift scripts/strict-compile-report.swift
+swift scripts/strict-compile-report.swift --root corpora/erp --vocab corpora/erp/erp.merconfig --rulebook corpora/erp/erp.merrules
+```
+
+When regenerating committed compile outputs, use the shared script instead of
+hand-written loops:
+
+```bash
+swift scripts/generate-compile-outputs.swift --corpus gbrain
+swift scripts/generate-compile-outputs.swift --corpus erp
+swift scripts/generate-compile-outputs.swift --corpus procedures
+```
+
+It cleans each selected `<root>/compile-outputs/` directory and recompiles
+`skills/*.meri` plus `RESOLVER.meri` with `--no-format --namespace auto`.
+When regenerating migration deviation reports, use the shared script instead of
+hand-written loops:
+
+```bash
+swift scripts/generate-deviations.swift --corpus gbrain
+swift scripts/generate-deviations.swift --corpus erp
+swift scripts/generate-deviations.swift --corpus procedures
+```
+
+It runs `skill-deviation --batch --index` for `sample-gbrain`, `corpora/erp`,
+and `corpora/procedures`. Original `SKILL.md` sources remain immutable
+baselines; regenerate reports from the current originals and ported `.meri`
+files rather than editing originals to improve metrics.
 Do not skip the coverage gate for substantive production changes; it enforces
 the per-file coverage floors documented under `docs/coverage/`.
 If a change affects generated artifacts, regenerate and include the matching

@@ -134,9 +134,9 @@ the user's worldview, why it matters. Third-person analytical voice.]
 | YYYY-MM | "Sharpening" | Anti-pattern emerges |
 | YYYY-MM | "Peak form" | Cleanest expression |
 
-## Related Concepts (( inert ))
-- [sibling concept](sibling-concept.md) — relationship description
-- [sibling concept](sibling-concept.md) — relationship description
+## Related Concepts
+- sibling concept — relationship description
+- sibling concept — relationship description
 
 ## Timeline (( inert ))
 [Full timeline with deduped entries, quotes, source links]
@@ -168,11 +168,11 @@ mention_count: 1
 ## Canon (T1) — N concepts (( inert ))
 The permanent intellectual fingerprint. Ideas that recur across years.
 
-### [Cluster Name] (( inert ))
-- [concept-slug](concept-slug.md) — one-line characterization
+### [Cluster Name]
+- concept-slug — one-line characterization
 - ...
 
-### [Other Cluster] (( inert ))
+### [Other Cluster]
 - ...
 
 ## Developing (T2) — N concepts (( inert ))
@@ -232,7 +232,7 @@ This is heavy work. Run on a cadence, not on every signal:
 - ❌ Re-synthesizing already-synthesized T1s without new source material.
   Idempotency-respect.
 
-## Related skills (( inert ))
+## Related skills
 
 - `skills/signal-detector/SKILL.md` — creates raw concept stubs from text channels
 - `skills/voice-note-ingest/SKILL.md` — same for audio channels

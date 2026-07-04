@@ -3,8 +3,8 @@
 - Original: `enrich/SKILL.md`
 - Ported: `enrich.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 87%
-- Lines: 350 -> 350 (+44 / -44)
+- Similarity: 88%
+- Lines: 350 -> 350 (+43 / -43)
 
 ## Frontmatter
 - Added: (none)
@@ -13,12 +13,40 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L6 `Contract`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L23 `Philosophy`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L29 `Citation Requirements (MANDATORY)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L35 `When To Enrich`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L37 `Primary triggers`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L44 `Do NOT enrich`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L50 `Enrichment Tiers`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L60 `The Enrichment Protocol (7 Steps)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L62 `Step 1: Identify entities`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L66 `Step 2: Check brain state`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L73 `Step 3: Extract signal from source`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L87 `Step 4: External data source lookups`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L121 `Step 5: Save raw data (preserves provenance)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L136 `Step 6: Write to brain`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L155 `Person page template`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L217 `Company page template`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L244 `Step 7: Cross-reference`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L257 `Bulk Enrichment Rules`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L266 `Validation Rules`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L274 `Report Storage`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L285 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L292 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L313 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
-- Sections: 25/25 inert (100% inert ratio)
+- Sections: 23/25 inert (92% inert ratio)
 - Operational inert: 4
 - Unclassified inert: 0
-- Inert categories: operational-content=3, operational-procedure=1, reference-documentation=19, template=1, tools-metadata=1
+- Inert categories: operational-content=3, operational-procedure=1, reference-documentation=17, template=1, tools-metadata=1
 - Judgment: 0 blocks, 0 lines
 
 ### Inert section details
@@ -36,8 +64,6 @@
 - L87 `Step 4: External data source lookups`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L121 `Step 5: Save raw data (preserves provenance)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L136 `Step 6: Write to brain`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L138 `CREATE path`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L147 `UPDATE path`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L155 `Person page template`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L217 `Company page template`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L244 `Step 7: Cross-reference`: reference-documentation — Reference documentation, rationale, examples, or changelog.
@@ -152,28 +178,15 @@
  
  Store raw API responses via `put_raw_data` in gbrain:
  ```json
-@@ -160,9 +160,9 @@
+@@ -160,7 +160,7 @@
  Raw data preserves provenance. If the compiled truth is ever questioned,
  the raw data shows exactly what the API returned.
  
 -### Step 6: Write to brain
--
--#### CREATE path
 +### Step 6: Write to brain (( inert ))
-+
-+#### CREATE path (( inert ))
  
- 1. Check notability gate (see `skills/_brain-filing-rules.md`)
- 2. Check filing rules -- where does this entity go?
-@@ -171,7 +171,7 @@
- 5. Add first timeline entry
- 6. Leave empty sections as `[No data yet]` (don't fill with boilerplate)
+ #### CREATE path
  
--#### UPDATE path
-+#### UPDATE path (( inert ))
- 
- 1. Add new timeline entries (reverse-chronological, append-only)
- 2. Update compiled truth ONLY if the new signal materially changes the picture
 @@ -179,7 +179,7 @@
  4. Flag contradictions between new signal and existing compiled truth
  5. Don't overwrite user-written assessments with API boilerplate
@@ -268,16 +281,19 @@
  
  - Update company pages from person enrichment (and vice versa)
  - Update related project/deal pages if relevant context surfaced
-@@ -281,7 +281,7 @@
+@@ -281,16 +281,16 @@
  field in the put_page response (`{ created, removed, errors }`).
  Timeline entries still need explicit `gbrain timeline-add` calls.
  
 -## Bulk Enrichment Rules
+-
+-- **Test on 3-5 entities first.** Read actual output. Check quality.
 +## Bulk Enrichment Rules (( inert ))
- 
- - **Test on 3-5 entities first.** Read actual output. Check quality.
++
++- Test on 3-5 entities first. Read actual output. Check quality.
  - Only proceed to bulk after test shots pass your quality bar.
-@@ -290,7 +290,7 @@
+ - 3+ entities from one source -> batch process or spawn sub-agent
+ - Throttle API calls. Respect rate limits.
  - Commit every 5-10 entities during bulk runs.
  - Save a report after bulk enrichment (see Report Storage below).
  

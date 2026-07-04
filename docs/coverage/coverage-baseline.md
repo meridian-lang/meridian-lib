@@ -19,27 +19,27 @@ MeridianRuntime/Planning/ActPlanner.swift                    75.00%   80.00%    
 MeridianCLIKit/Commands/CompileCommand.swift                 75.34%   79.79%       18
 MeridianRuntime/Tools/ToolRegistry.swift                     75.34%   87.61%       54
 MeridianCLIKit/Commands/ExplainCommand.swift                 76.00%   80.36%        6
-MeridianCore/Lowering/ASTToIR.swift                          76.48%   84.24%      231
-MeridianCLIKit/Commands/SkillDeviationCommand.swift          77.86%   91.22%       29
+MeridianCore/Lowering/ASTToIR.swift                          77.09%   84.33%      225
+MeridianCLIKit/Commands/SkillDeviationCommand.swift          78.03%   91.32%       29
 MeridianCore/Testing/MeridianTestRunner.swift                79.49%   86.68%       40
 MeridianRuntime/Planning/Planner.swift                       80.00%   84.21%        1
 MeridianCore/Parser/Lexical/Productions/TableLookupGrammar.swift   81.25%   96.55%        3
 MeridianCLIKit/Commands/TestCommand.swift                    81.40%   83.95%        8
-MeridianCore/Parser/Skill/SkillSectionBuilder.swift          81.82%   89.71%       28
-MeridianCore/Testing/Assertions.swift                        81.86%   92.34%       37
+MeridianCore/Testing/Assertions.swift                        81.64%   92.42%       38
 MeridianRuntime/Tracing/TraceTreeRenderer.swift              81.97%   94.31%       22
+MeridianCore/Migration/SkillMigrator.swift                   82.88%   90.62%       89
+MeridianCore/Parser/Skill/SkillSectionBuilder.swift          82.93%   90.74%       28
 MeridianCore/Language/WholeWordRegex.swift                   83.33%   90.48%        2
 MeridianCore/Parser/Lexical/Productions/ScalarNavigationParser.swift   83.33%  100.00%        3
 MeridianRuntime/Runtime.swift                                83.40%   91.87%       41
 MeridianRuntime/Checkpoints/Checkpointer.swift               83.93%   89.78%        9
-MeridianCore/Migration/SkillMigrator.swift                   84.63%   91.73%       73
 MeridianCore/Lowering/RuleLowering.swift                     84.82%   96.63%       17
 MeridianCLIKit/Commands/TraceRenderCommand.swift             85.00%   90.00%        3
 MeridianCore/Parser/Productions/TableParser.swift            85.15%   99.23%       15
 MeridianCore/Rulebook/RulebookParser.swift                   85.93%   81.02%       19
-MeridianCore/Parser/Productions/StatementParser.swift        86.82%   94.80%      136
-MeridianCore/Parser/Productions/MerConfigParser.swift        87.18%   95.84%       66
-MeridianCore/Codegen/SwiftEmitter.swift                      87.58%   96.23%       77
+MeridianCore/Parser/Productions/MerConfigParser.swift        87.18%   95.49%       66
+MeridianCore/Parser/Productions/StatementParser.swift        87.21%   95.25%      132
+MeridianCore/Codegen/SwiftEmitter.swift                      88.00%   96.53%       75
 MeridianTestKit/WorkflowTestHarness.swift                    88.46%   94.51%        3
 MeridianCore/Compiler.swift                                  88.89%   91.69%       36
 MeridianCore/Parser/Skill/SectionRoleResolver.swift          88.89%   94.12%        1
@@ -47,10 +47,10 @@ MeridianCore/Diagnostics/Diagnostic.swift                    89.66%   96.39%    
 MeridianCore/Lowering/SkillTriggers.swift                    89.74%   95.65%        4
 MeridianCore/Diagnostics/ParserTrace.swift                   90.08%   96.57%       12
 MeridianCore/Testing/SpecParser.swift                        90.55%   97.73%       12
-MeridianCore/Codegen/DomainEmitter.swift                     91.09%   98.14%        9
 MeridianCore/Docs/MerconfigDocsRenderer.swift                91.14%   99.05%        7
-MeridianCore/Migration/SkillDeviation.swift                  91.14%   97.51%       14
 MeridianCore/Parser/Lexical/IndentTokenizer.swift            91.70%   97.53%       22
+MeridianCore/Migration/SkillDeviation.swift                  91.89%   97.67%       15
+MeridianCore/Codegen/DomainEmitter.swift                     92.08%   98.51%        8
 MeridianRuntime/Events/Observer.swift                        92.86%   97.12%        3
 MeridianTestKit/MockPlanning.swift                           92.86%   96.88%        1
 MeridianTestKit/EventAssertions.swift                        93.55%   98.08%        2
@@ -59,7 +59,7 @@ MeridianCore/Parser/Lexical/Productions/QuantifierGrammar.swift   93.94%   99.12
 MeridianCLIKit/Commands/FormatCommand.swift                  94.12%   88.24%        2
 MeridianCLIKit/Commands/DocsCommand.swift                    94.44%   97.14%        1
 MeridianCore/Symbols/SymbolTable.swift                       94.59%   97.26%       10
-MeridianCore/Parser/Productions/MeridianParser.swift         95.12%   98.39%       10
+MeridianCore/Parser/Productions/MeridianParser.swift         94.63%   97.99%       11
 MeridianCore/Parser/Lexical/Productions/DescriptionGrammar.swift   95.18%   99.24%        4
 MeridianCore/Grammar/NonterminalScreen.swift                 95.35%   98.37%        2
 MeridianCore/Parser/Lexical/Productions/SuperlativeGrammar.swift   95.45%  100.00%        1
@@ -70,11 +70,11 @@ MeridianTools/MeridianTools.swift                            96.27%   97.73%    
 MeridianCore/Parser/Lexical/Productions/ActiveVerbParser.swift   96.30%  100.00%        1
 MeridianCore/Parser/Lexical/Productions/TemplateInterpolationParser.swift   96.49%  100.00%        2
 MeridianCore/Rulebook/Rulebook.swift                         96.55%   96.50%        2
-MeridianCLIKit/Commands/DecisionsCommand.swift               97.14%   96.97%        1
+MeridianCore/Parser/Lexical/Productions/BooleanGrammar.swift   96.77%   99.47%        3
 MeridianCore/AST/MeridianAST.swift                           97.17%   99.40%        3
+MeridianCLIKit/Commands/DecisionsCommand.swift               97.30%   97.06%        1
 MeridianRuntime/Value/ValueCoercion.swift                    97.32%   97.54%        3
-MeridianCore/Parser/Skill/ConditionClassifier.swift          97.83%   98.63%        1
-MeridianCore/Parser/Lexical/Productions/BooleanGrammar.swift   97.85%  100.00%        2
+MeridianCore/Parser/Skill/ConditionClassifier.swift          97.87%   98.67%        1
 MeridianCore/Language/EnglishLexicon.swift                   97.90%   99.24%        3
 MeridianCore/AST/ExpressionTraceDescription.swift            98.08%  100.00%        1
 MeridianCore/Migration/Difflib.swift                         98.28%   99.41%        2
@@ -153,5 +153,5 @@ MeridianTestKit/PlanFuzzer.swift                            100.00%  100.00%    
 MeridianTestKit/RecordingTool.swift                         100.00%  100.00%        0
 MeridianTools/LLMChatPlanners.swift                         100.00%  100.00%        0
 
-TOTAL                                                                           11006              1529    86.11%        3263               333    89.79%       24106              1821    92.45%           0                 0         -
+TOTAL                                                                           11117              1536    86.18%        3286               335    89.81%       24309              1825    92.49%           0                 0         -
 ```

@@ -13,6 +13,25 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L7 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L14 `When to Use`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L21 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L23 `Phase 1: Define Research Recipe`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L33 `Phase 2: Search Sources`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L41 `Phase 3: Classify`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L47 `Phase 4: Extract Structured Data`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L58 `Phase 5: Archive Raw Sources`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L65 `Phase 6: Deduplicate`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L72 `Phase 7: Update Canonical Tracker + Backlink`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L80 `Built-In Recipes`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L88 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L95 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L109 `Conventions`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 14/14 inert (100% inert ratio)

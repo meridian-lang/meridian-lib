@@ -1,0 +1,258 @@
+{
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "orphaned",
+      "function" : "meridianDef_AuditRow_orphaned",
+      "kind" : "audit row",
+      "line" : 24
+    },
+    {
+      "adjective" : "ready",
+      "function" : "meridianDef_Batch_ready",
+      "kind" : "batch",
+      "line" : 19
+    },
+    {
+      "adjective" : "settled",
+      "function" : "meridianDef_Batch_settled",
+      "kind" : "batch",
+      "line" : 20
+    },
+    {
+      "adjective" : "violated",
+      "function" : "meridianDef_Constraint_violated",
+      "kind" : "constraint",
+      "line" : 23
+    },
+    {
+      "adjective" : "lagging",
+      "function" : "meridianDef_IndexJob_lagging",
+      "kind" : "index job",
+      "line" : 25
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Ledger_open",
+      "kind" : "ledger",
+      "line" : 18
+    },
+    {
+      "adjective" : "duplicate",
+      "function" : "meridianDef_Record_duplicate",
+      "kind" : "record",
+      "line" : 22
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Record_stale",
+      "kind" : "record",
+      "line" : 21
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a ledger",
+      "line" : 31,
+      "name" : "auditing",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "audit_row.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a record",
+      "line" : 29,
+      "name" : "canonicalization",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "record.mark_canonical"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a batch",
+      "line" : 27,
+      "name" : "settlement",
+      "right_cardinality" : "one",
+      "right_kind" : "a ledger",
+      "via" : "batch.settle"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Close orphaned audit rows left by upstream cascade deletes.",
+    "name" : "cascade close",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 11,
+        "text" : "Invocation"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 15,
+        "text" : "Transaction body"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 21,
+        "text" : "DBA notes"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 16,
+        "text" : "SQL"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 18,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 19,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "Invocation",
+        "line" : 11,
+        "lines" : [
+          "\"cascade close\"",
+          "\"orphaned audit rows\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Transaction body",
+        "line" : 15,
+        "lines" : [
+          "SQL: `psql -c \"select key,table_name from audit_rows where status='orphaned'\" --csv` to snapshot orphaned audit rows",
+          "fetch orphaned audit rows",
+          "Check: any orphaned audit rows",
+          "Emit: \"orphaned audit rows recorded for deterministic close\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "DBA notes",
+        "line" : 21,
+        "lines" : [
+          "The source system owns physical cascade delete; Meridian records the deterministic",
+          "audit close and refuses to invent a hidden datastore"
+        ],
+        "role" : "inert"
+      }
+    ],
+    "triggers" : "\"cascade close\"\n\"orphaned audit rows\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "audit",
+      "line" : 36,
+      "past_participle" : "audited",
+      "relation" : "auditing",
+      "third_person" : "audits"
+    },
+    {
+      "base" : "canonicalize",
+      "line" : 35,
+      "past_participle" : "canonicalized",
+      "relation" : "canonicalization",
+      "third_person" : "canonicalizes"
+    },
+    {
+      "base" : "settle",
+      "line" : 34,
+      "past_participle" : "settled",
+      "relation" : "settlement",
+      "third_person" : "settles"
+    }
+  ],
+  "source_files" : [
+    "cascadeclose.meri",
+    "procedures.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 16,
+      "swift_line" : 300
+    },
+    {
+      "meridian_line" : 51,
+      "swift_line" : 312
+    },
+    {
+      "meridian_line" : 18,
+      "swift_line" : 324
+    },
+    {
+      "meridian_line" : 19,
+      "swift_line" : 329
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 366
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 371
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 409
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 414
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "cascade close",
+      "swift_struct" : "CascadeClose"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when cascadeClose fires",
+      "swift_struct" : "WhenCascadecloseFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when orphanedAuditRows fires",
+      "swift_struct" : "WhenOrphanedauditrowsFires"
+    }
+  ]
+}

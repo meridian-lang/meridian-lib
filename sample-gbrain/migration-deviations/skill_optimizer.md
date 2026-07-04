@@ -13,6 +13,20 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L9 `When to invoke this skill`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L16 `Iron Law`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L34 `The pipeline`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L61 `Starting a benchmark from the skill itself (the common case)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L112 `Decision tree`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L125 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L136 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L154 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L171 `Related skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 9/9 inert (100% inert ratio)

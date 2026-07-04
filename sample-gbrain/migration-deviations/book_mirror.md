@@ -12,6 +12,34 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L14 `What this does`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L26 `Trust contract (read this before running)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L44 `The pipeline`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L56 `1. Acquiring the book`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L74 `2. Text extraction`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L80 `EPUB`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L113 `PDF`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L124 `Quality check`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L135 `3. Context gathering`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L140 `What to pull`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L158 `Assemble a context pack`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L189 `4. Analysis: invoke `gbrain book-mirror``: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L218 `Model: Opus by default`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L225 `Cost gate`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L231 `5. PDF (optional)`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L241 `6. Fact-check and cross-link`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L262 `Quality bar (the bar)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L283 `Anti-patterns (do not do these)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L298 `Output checklist`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L309 `Related skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L318 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L329 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L333 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 23/23 inert (100% inert ratio)

@@ -12,6 +12,22 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L12 `What this is`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L27 `Inputs`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L35 `Output`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L39 `Brain page structure`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L83 `Process`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L118 `Quality bar`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L131 `What this skill is NOT`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L140 `Related skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L149 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L160 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L164 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 11/11 inert (100% inert ratio)

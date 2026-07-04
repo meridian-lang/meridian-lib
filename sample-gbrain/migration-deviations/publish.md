@@ -13,6 +13,25 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L12 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L20 `When to Publish`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L27 `Default: ALWAYS ENCRYPT`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L54 `What Gets Stripped`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L69 `Sharing Workflows`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L71 `Option A: Local file (simplest)`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L79 `Option B: Upload to cloud storage`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L94 `Option C: Static hosting (Render, Netlify, S3)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L107 `Password Protection Details`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L120 `Updating a Published Page`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L129 `Revoking Access`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L134 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L141 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L156 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections: 14/16 inert (88% inert ratio)

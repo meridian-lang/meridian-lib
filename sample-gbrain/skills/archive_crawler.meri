@@ -249,12 +249,12 @@ scan_paths: ["paths from gbrain.yml"]
 
 # [Archive Name] — Ingestion Status
 
-## Source (( inert ))
-- **Type:** [local|dropbox|...]
-- **Allow-listed paths:** [from gbrain.yml]
-- **Total files:** [N]
-- **Total size:** [X GB]
-- **Date range:** [earliest] — [latest]
+## Source
+- Type: [local|dropbox|...]
+- Allow-listed paths: [from gbrain.yml]
+- Total files: [N]
+- Total size: [X GB]
+- Date range: [earliest] — [latest]
 
 ## Inventory (( inert ))
 

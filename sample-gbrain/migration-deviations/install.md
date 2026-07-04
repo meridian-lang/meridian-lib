@@ -2,43 +2,43 @@
 
 - Original: `install/SKILL.md`
 - Ported: `install.meri`
-- Tier: 3 (structural rewrite)
-- Similarity: 40%
-- Lines: 10 -> 10 (+6 / -6)
+- Tier: 1 (near-verbatim)
+- Similarity: 91%
+- Lines: 10 -> 12 (+2 / -0)
 
 ## Frontmatter
 - Added: (none)
 - Removed: (none)
 
 ## Categories
-- preamble-blockquoted
+- section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L3 `Overview`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
-- Sections: 0/0 inert (0% inert ratio)
+- Sections: 1/1 inert (100% inert ratio)
 - Operational inert: 0
 - Unclassified inert: 0
+- Inert categories: reference-documentation=1
 - Judgment: 0 blocks, 0 lines
+
+### Inert section details
+- L3 `Overview`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
 ```diff
 --- original-skills/install/SKILL.md
 +++ skills/install.meri
-@@ -1,10 +1,10 @@
+@@ -1,4 +1,6 @@
  # Install GBrain (Deprecated)
++
++## Overview (( inert ))
  
--This skill has been replaced by the **setup** skill. See `skills/setup/SKILL.md`.
-+> This skill has been replaced by the **setup** skill. See `skills/setup/SKILL.md`.
- 
--The setup skill provides:
--- Auto-provision Supabase via CLI (< 2 min TTHW)
--- Manual fallback with non-interactive init
--- AGENTS.md auto-injection (upgrade-safe)
--- First import and health verification
-+> The setup skill provides:
-+> - Auto-provision Supabase via CLI (< 2 min TTHW)
-+> - Manual fallback with non-interactive init
-+> - AGENTS.md auto-injection (upgrade-safe)
-+> - First import and health verification
+ This skill has been replaced by the **setup** skill. See `skills/setup/SKILL.md`.
  
 ```

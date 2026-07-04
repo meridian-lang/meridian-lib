@@ -1,0 +1,267 @@
+{
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "overdue",
+      "function" : "meridianDef_Invoice_overdue",
+      "kind" : "invoice",
+      "line" : 30
+    },
+    {
+      "adjective" : "unpaid",
+      "function" : "meridianDef_Invoice_unpaid",
+      "kind" : "invoice",
+      "line" : 29
+    },
+    {
+      "adjective" : "blocked",
+      "function" : "meridianDef_Order_blocked",
+      "kind" : "order",
+      "line" : 27
+    },
+    {
+      "adjective" : "fulfilled",
+      "function" : "meridianDef_Order_fulfilled",
+      "kind" : "order",
+      "line" : 28
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Order_open",
+      "kind" : "order",
+      "line" : 26
+    },
+    {
+      "adjective" : "short",
+      "function" : "meridianDef_Product_short",
+      "kind" : "product",
+      "line" : 31
+    },
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_PurchaseOrder_pending",
+      "kind" : "purchase order",
+      "line" : 32
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 38,
+      "name" : "collection",
+      "right_cardinality" : "one",
+      "right_kind" : "a payment",
+      "via" : "payment.collect"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 34,
+      "name" : "fulfillment",
+      "right_cardinality" : "one",
+      "right_kind" : "a shipment",
+      "via" : "shipment.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 36,
+      "name" : "invoicing",
+      "right_cardinality" : "one",
+      "right_kind" : "an invoice",
+      "via" : "invoice.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a product",
+      "line" : 40,
+      "name" : "replenishment",
+      "right_cardinality" : "one",
+      "right_kind" : "a purchase order",
+      "via" : "purchase_order.create"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Cancel blocked open orders after deterministic guard checks.",
+    "name" : "cancel order",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 11,
+        "text" : "When this applies"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 15,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 22,
+        "text" : "Controls"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 17,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 20,
+        "text" : "Publish"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "When this applies",
+        "line" : 11,
+        "lines" : [
+          "\"cancel blocked orders\"",
+          "\"void ERP orders\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 15,
+        "lines" : [
+          "fetch open orders",
+          "Check: any orders whose status is \"blocked\"",
+          "for each order whose status is \"blocked\":",
+          "cancel the order",
+          "Publish: \"blocked orders cancelled\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Controls",
+        "line" : 22,
+        "lines" : [
+          "An already fulfilled order must not be cancelled by this runbook"
+        ],
+        "role" : "invariants"
+      }
+    ],
+    "triggers" : "\"cancel blocked orders\"\n\"void ERP orders\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "collect",
+      "line" : 45,
+      "past_participle" : "collected",
+      "relation" : "collection",
+      "third_person" : "collects"
+    },
+    {
+      "base" : "fulfill",
+      "line" : 43,
+      "past_participle" : "fulfilled",
+      "relation" : "fulfillment",
+      "third_person" : "fulfills"
+    },
+    {
+      "base" : "invoice",
+      "line" : 44,
+      "past_participle" : "invoiced",
+      "relation" : "invoicing",
+      "third_person" : "invoices"
+    },
+    {
+      "base" : "replenish",
+      "line" : 46,
+      "past_participle" : "replenished",
+      "relation" : "replenishment",
+      "third_person" : "replenishes"
+    }
+  ],
+  "source_files" : [
+    "cancelorder.meri",
+    "erp.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 49,
+      "swift_line" : 403
+    },
+    {
+      "meridian_line" : 17,
+      "swift_line" : 415
+    },
+    {
+      "meridian_line" : 18,
+      "swift_line" : 419
+    },
+    {
+      "meridian_line" : 19,
+      "swift_line" : 426
+    },
+    {
+      "meridian_line" : 20,
+      "swift_line" : 435
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 472
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 477
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 515
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 520
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "cancel order",
+      "swift_struct" : "CancelOrder"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when cancelBlockedOrders fires",
+      "swift_struct" : "WhenCancelblockedordersFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when voidErpOrders fires",
+      "swift_struct" : "WhenVoiderpordersFires"
+    }
+  ]
+}

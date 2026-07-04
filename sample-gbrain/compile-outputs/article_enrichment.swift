@@ -600,6 +600,42 @@ public struct ArticleEnrichmentInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ArticleEnrichmentInput", parameters: [:])
 
+        if __meridianShouldRun("progress:0.0:L131:C0") {
+            // L131
+            // — creates the raw article pages this skill enriches
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/media-ingest/SKILL.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L131:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L132:C0") {
+            // L132
+            // — link/article ingestion with author people-page enforcement
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/idea-ingest/SKILL.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L132:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L133:C0") {
+            // L133
+            // — citation + back-link rules
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/conventions/quality.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L133:C0", state: state.snapshot())
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

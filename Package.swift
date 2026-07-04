@@ -154,7 +154,10 @@ let package = Package(
             name: "MeridianCoreTests",
             dependencies: ["MeridianCore", "MeridianTestKit"],
             path: "Tests/MeridianCoreTests",
-            resources: [.copy("Fixtures")]
+            resources: [
+                .copy("Fixtures"),
+                .copy("MeridianTestSpecs"),
+            ]
         ),
         .testTarget(
             name: "MeridianRuntimeTests",
@@ -202,6 +205,11 @@ let package = Package(
             name: "SampleGbrainTests",
             dependencies: ["MeridianCore", "MeridianRuntime"],
             path: "sample-gbrain/Tests"
+        ),
+        .testTarget(
+            name: "CorporaTests",
+            dependencies: ["MeridianCore", "MeridianRuntime"],
+            path: "Tests/CorporaTests"
         )
     ],
     swiftLanguageModes: [.v6]

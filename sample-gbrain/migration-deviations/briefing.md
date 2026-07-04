@@ -13,6 +13,22 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L9 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L17 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L61 `GBrain-Native Context Loading`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L65 `Before a meeting`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L72 `Before an email reply`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L79 `Daily briefing queries`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L87 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L111 `Back-Linking During Briefing`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L117 `Citation in Briefings`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L123 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L131 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections: 11/11 inert (100% inert ratio)

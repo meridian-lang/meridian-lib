@@ -600,6 +600,42 @@ public struct ConceptSynthesisInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ConceptSynthesisInput", parameters: [:])
 
+        if __meridianShouldRun("progress:0.0:L237:C0") {
+            // L237
+            // — creates raw concept stubs from text channels
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/signal-detector/SKILL.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L237:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L238:C0") {
+            // L238
+            // — same for audio channels
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/voice-note-ingest/SKILL.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L238:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L239:C0") {
+            // L239
+            // — same for links / articles
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/idea-ingest/SKILL.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L239:C0", state: state.snapshot())
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

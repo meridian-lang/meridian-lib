@@ -3,8 +3,8 @@
 - Original: `daily-task-manager/SKILL.md`
 - Ported: `daily_task_manager.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 89%
-- Lines: 71 -> 71 (+8 / -8)
+- Similarity: 94%
+- Lines: 71 -> 71 (+4 / -4)
 
 ## Frontmatter
 - Added: (none)
@@ -12,6 +12,15 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L4 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L13 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L24 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L45 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 4/4 inert (100% inert ratio)
@@ -49,24 +58,8 @@
  
  1. **Load current tasks.** `gbrain get ops/tasks` — read the task list.
  2. **Execute the requested action:**
-@@ -45,23 +45,23 @@
- ```markdown
- # Tasks
- 
--## P0 — Urgent
-+## P0 — Urgent (( inert ))
- - [ ] {task description} (due: {date})
- 
--## P1 — Today
-+## P1 — Today (( inert ))
- - [ ] {task description}
- 
--## P2 — This Week
-+## P2 — This Week (( inert ))
- - [ ] {task description}
- 
--## P3 — Backlog
-+## P3 — Backlog (( inert ))
+@@ -57,11 +57,11 @@
+ ## P3 — Backlog
  - [ ] {task description}
  
 -## Completed

@@ -13,6 +13,20 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L8 `Contract`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L21 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L23 `Phase 1: Identify format and fetch`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L34 `Phase 2: Upload raw source`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L38 `Phase 3: Create brain page`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L62 `Phase 4: Entity extraction and propagation`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L72 `Phase 5: Sync`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L76 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L81 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 9/9 inert (100% inert ratio)

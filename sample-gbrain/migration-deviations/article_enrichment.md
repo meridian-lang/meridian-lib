@@ -4,7 +4,7 @@
 - Ported: `article_enrichment.meri`
 - Tier: 1 (near-verbatim)
 - Similarity: 93%
-- Lines: 150 -> 150 (+11 / -11)
+- Lines: 150 -> 150 (+10 / -10)
 
 ## Frontmatter
 - Added: (none)
@@ -12,12 +12,27 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L12 `What this does`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L28 `When to invoke`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L37 `The pipeline`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L50 `Invocation`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L73 `Quality bar`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L84 `Model selection`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L95 `Link convention`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L100 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L119 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L130 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections: 11/11 inert (100% inert ratio)
+- Sections: 10/11 inert (91% inert ratio)
 - Operational inert: 4
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-content=2, operational-procedure=1, reference-documentation=6, template=1
+- Inert categories: normative-contract=1, operational-content=2, operational-procedure=1, reference-documentation=5, template=1
 - Judgment: 0 blocks, 0 lines
 
 ### Inert section details
@@ -29,7 +44,6 @@
 - L84 `Model selection`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
 - L95 `Link convention`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L100 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L112 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L119 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
 - L130 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
@@ -107,15 +121,7 @@
  
  - ❌ Paraphrasing quotes ("the author argues that…"). Quotes are verbatim
    or they're not quotes.
-@@ -126,14 +126,14 @@
- - ❌ Re-enriching non-idempotently — check the `needs_enrichment` flag in
-   frontmatter; skip if already false.
- 
--## Related skills
-+## Related skills (( inert ))
- 
- - `skills/media-ingest/SKILL.md` — creates the raw article pages this skill enriches
- - `skills/idea-ingest/SKILL.md` — link/article ingestion with author people-page enforcement
+@@ -133,7 +133,7 @@
  - `skills/conventions/quality.md` — citation + back-link rules
  
  

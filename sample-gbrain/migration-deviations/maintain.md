@@ -13,6 +13,45 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L6 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L15 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L17 `Autonomous path (v0.36.4.0) — when you want to reach a target score`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L43 `Manual path`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L48 `Stale pages`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L53 `Orphan pages`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L58 `Dead links`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L62 `Missing cross-references`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L66 `Link graph extraction`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L74 `Timeline extraction`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L80 `Dream cycle (v0.23): synthesize + patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L157 `Autopilot check`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L171 `Fix a half-migrated install`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L191 `Back-link enforcement`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L199 `Filing rule violations`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L207 `Citation audit`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L214 `Tag consistency`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L218 `Graph population (v0.10.3+)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L246 `Embedding freshness`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L252 `Security (RLS verification)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L256 `Schema health`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L261 `File storage health`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L269 `Open threads`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L273 `Benchmark Testing`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L292 `Heartbeat Integration`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L297 `On every heartbeat (hourly or per-session)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L303 `Weekly maintenance`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L311 `Daily verification`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L316 `Stale compiled truth detection`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L322 `Report Storage`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L334 `Quality Rules`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L340 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L351 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L384 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections: 34/34 inert (100% inert ratio)

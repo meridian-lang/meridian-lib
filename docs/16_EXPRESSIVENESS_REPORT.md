@@ -27,11 +27,11 @@ Wave 0 baseline for gbrain (`IMPLEMENTATION_LOG.md`, "Wave 0 baseline"):
 
 Wave 6 final measurements:
 
-| Corpus | Pairs | Tier 1 | Tier 2 | Tier 3 | Avg similarity | Sections inert | Avg inert ratio | Judgment |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| gbrain | 53 | 50 | 1 | 2 | 89% | 735/753 | 96% | 1 block / 4 lines |
-| ERP/OFBiz proxy | 9 | 8 | 1 | 0 | 93% | 16/30 | 49% | 0 blocks / 0 lines |
-| stored-procedure proxy | 9 | 8 | 1 | 0 | 95% | 7/29 | 21% | 0 blocks / 0 lines |
+| Corpus | Pairs | Tier 1 | Tier 2 | Tier 3 | Avg similarity | Sections inert | Inert deviations | Avg inert ratio | Judgment |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| gbrain | 53 | 51 | 1 | 1 | 90% | 730/754 | 730 | 97% | 1 block / 4 lines |
+| ERP/OFBiz proxy | 9 | 8 | 1 | 0 | 93% | 16/30 | 6 | 49% | 0 blocks / 0 lines |
+| stored-procedure proxy | 9 | 8 | 1 | 0 | 95% | 6/29 | 0 | 18% | 0 blocks / 0 lines |
 
 The gbrain inert ratio is higher than the Wave 0 baseline because later
 migration hardening intentionally preserved narrative SKILL.md material as

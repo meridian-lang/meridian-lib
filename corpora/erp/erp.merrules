@@ -1,0 +1,24 @@
+=== desugar ===
+
+rule "erp-step-command":
+  match: Step: `{command}` to {purpose}
+  rewrite: `{command}` -- {purpose}.
+
+rule "erp-check":
+  match: Check: {condition}
+  rewrite: make sure {condition}.
+
+rule "erp-note":
+  match: Note: {message}
+  lowers to: emit erp.note with message = {message}.
+
+rule "erp-publish":
+  match: Publish: {message}
+  lowers to: emit erp.report with message = {message}.
+
+=== sections ===
+
+section "Workflow", "Close sequence" -> procedure
+section "When this applies", "Use this when", "When operators call this" -> applicability
+section "Checks", "Controls", "Guarantees" -> invariants
+section "Output", "Report shape" -> template

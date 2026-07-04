@@ -3,8 +3,8 @@
 - Original: `ask-user/SKILL.md`
 - Ported: `ask_user.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 90%
-- Lines: 254 -> 254 (+26 / -26)
+- Similarity: 87%
+- Lines: 254 -> 254 (+32 / -32)
 
 ## Frontmatter
 - Added: (none)
@@ -12,6 +12,34 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L4 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L14 `What This Is`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L26 `When To Use`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L35 `When NOT To Use`: operational-procedure - Marked or derived as negative-applicability, but inert suppresses execution.
+- L42 `How To Present Choices`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L44 `Platform-agnostic format (works everywhere)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L59 `With inline buttons (Telegram, Discord, Slack)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L74 `With the `clarify` tool (OpenClaw agents)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L90 `Constraints`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L97 `How To Gate (CRITICAL)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L109 `How To Handle The Response`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L118 `Handling text responses`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L126 `Formatting Guidelines`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L128 `Question line emoji prefix`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L138 `Context block`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L142 `Button/option labels`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L150 `Examples`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L152 `Cold-start phase gate`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L165 `Filing decision`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L178 `Destructive operation`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L191 `Integration With Other Skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L204 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L221 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections: 23/23 inert (100% inert ratio)
@@ -121,14 +149,20 @@
  ```
  
 -## Constraints
-+## Constraints (( inert ))
- 
- - **2-4 options max.** More than 4 creates decision paralysis.
- - **Labels must be self-explanatory.** The user shouldn't need to re-read context.
- - **Always include an escape hatch.** At minimum: "Skip" or "Cancel" as the last option.
- - **One question per message.** Never stack multiple choice gates.
- 
+-
+-- **2-4 options max.** More than 4 creates decision paralysis.
+-- **Labels must be self-explanatory.** The user shouldn't need to re-read context.
+-- **Always include an escape hatch.** At minimum: "Skip" or "Cancel" as the last option.
+-- **One question per message.** Never stack multiple choice gates.
+-
 -## How To Gate (CRITICAL)
++## Constraints (( inert ))
++
++- 2-4 options max. More than 4 creates decision paralysis.
++- Labels must be self-explanatory. The user shouldn't need to re-read context.
++- Always include an escape hatch. At minimum: "Skip" or "Cancel" as the last option.
++- One question per message. Never stack multiple choice gates.
++
 +## How To Gate (CRITICAL) (( inert ))
  
  After presenting choices, **you MUST stop your turn.** Do not:

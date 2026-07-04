@@ -13,6 +13,22 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L10 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L20 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L22 `Phase 1: Identity Interview`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L26 `Phase 2: Vibe Calibration`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L34 `Phase 3: Mission Mapping`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L38 `Phase 4: User Profile`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L42 `Phase 5: Boundaries`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L46 `Phase 6: Operational Cadence`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L50 `Default Mode (Skip Soul-Audit)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L58 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L63 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 11/11 inert (100% inert ratio)

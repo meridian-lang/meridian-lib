@@ -3,8 +3,8 @@
 - Original: `migrate/SKILL.md`
 - Ported: `migrate.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 93%
-- Lines: 137 -> 137 (+9 / -9)
+- Similarity: 89%
+- Lines: 137 -> 137 (+15 / -15)
 
 ## Frontmatter
 - Added: (none)
@@ -13,6 +13,21 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L6 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L14 `Supported Sources`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L26 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L35 `Obsidian Migration`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L55 `Notion Migration`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L63 `CSV Migration`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L71 `Verification`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L80 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L87 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L113 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections: 10/10 inert (100% inert ratio)
@@ -59,18 +74,25 @@
  
  | Source | Format | Strategy |
  |--------|--------|----------|
-@@ -38,7 +38,7 @@
+@@ -38,16 +38,16 @@
  | JSON | Structured data | Map keys to page fields |
  | Roam | JSON export | Convert block structure to pages |
  
 -## Phases
 +## Phases (( inert, role: procedure ))
  
- 1. **Assess the source.** What format? How many files? What structure?
- 2. **Plan the mapping.** How do source fields map to gbrain fields (type, title, tags, compiled_truth, timeline)?
-@@ -47,7 +47,7 @@
- 5. **Verify.** Check gbrain health and statistics, spot-check pages.
- 6. **Build links.** Extract cross-references from content and create typed links in gbrain.
+-1. **Assess the source.** What format? How many files? What structure?
+-2. **Plan the mapping.** How do source fields map to gbrain fields (type, title, tags, compiled_truth, timeline)?
+-3. **Test with a sample.** Import 5-10 files, verify by reading them back from gbrain and exporting.
+-4. **Bulk import.** Import the full directory into gbrain.
+-5. **Verify.** Check gbrain health and statistics, spot-check pages.
+-6. **Build links.** Extract cross-references from content and create typed links in gbrain.
++1. Assess the source. What format? How many files? What structure?
++2. Plan the mapping. How do source fields map to gbrain fields (type, title, tags, compiled_truth, timeline)?
++3. Test with a sample. Import 5-10 files, verify by reading them back from gbrain and exporting.
++4. Bulk import. Import the full directory into gbrain.
++5. Verify. Check gbrain health and statistics, spot-check pages.
++6. Build links. Extract cross-references from content and create typed links in gbrain.
  
 -## Obsidian Migration
 +## Obsidian Migration (( inert ))

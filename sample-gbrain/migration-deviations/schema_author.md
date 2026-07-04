@@ -3,8 +3,8 @@
 - Original: `schema-author/SKILL.md`
 - Ported: `schema_author.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 94%
-- Lines: 306 -> 306 (+18 / -18)
+- Similarity: 93%
+- Lines: 306 -> 306 (+22 / -22)
 
 ## Frontmatter
 - Added: (none)
@@ -12,6 +12,28 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L4 `Non-goals (use these other skills instead)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L20 `Convention`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L26 `When to invoke`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L39 `Tutorial + vision`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L44 `Workflow`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L46 `Phase 1 — Brain (know which pack is active)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L56 `Phase 2 — Assess (what does the current pack cover?)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L73 `Phase 3 — Propose (what types should the pack add?)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L89 `Phase 4 — Apply (mutate the pack)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L129 `Phase 5 — Sync (backfill existing pages with the new types)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L147 `Phase 6 — Verify`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L164 `Phase 7 — Commit (preserve the change)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L179 `Outputs`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L187 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L196 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L206 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L237 `Failure modes`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 17/17 inert (100% inert ratio)
@@ -74,14 +96,18 @@
  "who knows about X" (use expert-routing / `gbrain whoknows`).
  
 -## Tutorial + vision
-+## Tutorial + vision (( inert ))
- 
- - **Why this matters:** [`docs/what-schemas-unlock.md`](../../docs/what-schemas-unlock.md) — 7 killer use cases (4000 invisible meetings made queryable, founder ops brain, research brain, legal brain, team brain, agent-as-co-curator) plus the structural argument for why types matter at query time. Read this before pitching schema authoring to a user — it's the doc that explains the difference between a pile of notes and a brain with structure.
- - **5-minute walkthrough:** [`docs/schema-author-tutorial.md`](../../docs/schema-author-tutorial.md) — fork the bundled pack, add a researcher type, sync, prove the T1.5 wiring via `gbrain whoknows`. Use placeholder pages so it runs against any brain without affecting real content.
- 
+-
+-- **Why this matters:** [`docs/what-schemas-unlock.md`](../../docs/what-schemas-unlock.md) — 7 killer use cases (4000 invisible meetings made queryable, founder ops brain, research brain, legal brain, team brain, agent-as-co-curator) plus the structural argument for why types matter at query time. Read this before pitching schema authoring to a user — it's the doc that explains the difference between a pile of notes and a brain with structure.
+-- **5-minute walkthrough:** [`docs/schema-author-tutorial.md`](../../docs/schema-author-tutorial.md) — fork the bundled pack, add a researcher type, sync, prove the T1.5 wiring via `gbrain whoknows`. Use placeholder pages so it runs against any brain without affecting real content.
+-
 -## Workflow
 -
 -### Phase 1 — Brain (know which pack is active)
++## Tutorial + vision (( inert ))
++
++- Why this matters: `docs/what-schemas-unlock.md` — 7 killer use cases (4000 invisible meetings made queryable, founder ops brain, research brain, legal brain, team brain, agent-as-co-curator) plus the structural argument for why types matter at query time. Read this before pitching schema authoring to a user — it's the doc that explains the difference between a pile of notes and a brain with structure.
++- 5-minute walkthrough: `docs/schema-author-tutorial.md` — fork the bundled pack, add a researcher type, sync, prove the T1.5 wiring via `gbrain whoknows`. Use placeholder pages so it runs against any brain without affecting real content.
++
 +## Workflow (( inert, role: procedure ))
 +
 +### Phase 1 — Brain (know which pack is active) (( inert, role: procedure ))

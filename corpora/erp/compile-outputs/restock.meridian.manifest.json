@@ -1,0 +1,271 @@
+{
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "overdue",
+      "function" : "meridianDef_Invoice_overdue",
+      "kind" : "invoice",
+      "line" : 30
+    },
+    {
+      "adjective" : "unpaid",
+      "function" : "meridianDef_Invoice_unpaid",
+      "kind" : "invoice",
+      "line" : 29
+    },
+    {
+      "adjective" : "blocked",
+      "function" : "meridianDef_Order_blocked",
+      "kind" : "order",
+      "line" : 27
+    },
+    {
+      "adjective" : "fulfilled",
+      "function" : "meridianDef_Order_fulfilled",
+      "kind" : "order",
+      "line" : 28
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Order_open",
+      "kind" : "order",
+      "line" : 26
+    },
+    {
+      "adjective" : "short",
+      "function" : "meridianDef_Product_short",
+      "kind" : "product",
+      "line" : 31
+    },
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_PurchaseOrder_pending",
+      "kind" : "purchase order",
+      "line" : 32
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 38,
+      "name" : "collection",
+      "right_cardinality" : "one",
+      "right_kind" : "a payment",
+      "via" : "payment.collect"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 34,
+      "name" : "fulfillment",
+      "right_cardinality" : "one",
+      "right_kind" : "a shipment",
+      "via" : "shipment.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 36,
+      "name" : "invoicing",
+      "right_cardinality" : "one",
+      "right_kind" : "an invoice",
+      "via" : "invoice.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a product",
+      "line" : 40,
+      "name" : "replenishment",
+      "right_cardinality" : "one",
+      "right_kind" : "a purchase order",
+      "via" : "purchase_order.create"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Raise replenishment purchase orders for short products.",
+    "name" : "restock",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 11,
+        "text" : "Use this when"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 15,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 22,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 17,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 20,
+        "text" : "Publish"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "Use this when",
+        "line" : 11,
+        "lines" : [
+          "\"restock short products\"",
+          "\"inventory below reorder point\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 15,
+        "lines" : [
+          "fetch short products",
+          "Check: any short products",
+          "for each product:",
+          "create a purchase order for the product",
+          "Publish: \"replenishment purchase orders raised\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 22,
+        "lines" : [
+          "make sure all products have a sku"
+        ],
+        "role" : "invariants"
+      }
+    ],
+    "triggers" : "\"restock short products\"\n\"inventory below reorder point\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "collect",
+      "line" : 45,
+      "past_participle" : "collected",
+      "relation" : "collection",
+      "third_person" : "collects"
+    },
+    {
+      "base" : "fulfill",
+      "line" : 43,
+      "past_participle" : "fulfilled",
+      "relation" : "fulfillment",
+      "third_person" : "fulfills"
+    },
+    {
+      "base" : "invoice",
+      "line" : 44,
+      "past_participle" : "invoiced",
+      "relation" : "invoicing",
+      "third_person" : "invoices"
+    },
+    {
+      "base" : "replenish",
+      "line" : 46,
+      "past_participle" : "replenished",
+      "relation" : "replenishment",
+      "third_person" : "replenishes"
+    }
+  ],
+  "source_files" : [
+    "restock.meri",
+    "erp.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 23,
+      "swift_line" : 403
+    },
+    {
+      "meridian_line" : 55,
+      "swift_line" : 408
+    },
+    {
+      "meridian_line" : 17,
+      "swift_line" : 420
+    },
+    {
+      "meridian_line" : 18,
+      "swift_line" : 424
+    },
+    {
+      "meridian_line" : 70,
+      "swift_line" : 430
+    },
+    {
+      "meridian_line" : 20,
+      "swift_line" : 446
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 483
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 488
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 526
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 531
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "restock",
+      "swift_struct" : "Restock"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when restockShortProducts fires",
+      "swift_struct" : "WhenRestockshortproductsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when inventoryBelowReorderPoint fires",
+      "swift_struct" : "WhenInventorybelowreorderpointFires"
+    }
+  ]
+}

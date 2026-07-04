@@ -13,6 +13,41 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L6 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L20 `How GBrain connects`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L33 `Why Supabase`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L41 `Prerequisites`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L47 `Available init options`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L57 `Phase A.5: Choose Topology (run BEFORE Phase A)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L81 `If the user picks 1 (single brain) — proceed to Phase A`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L85 `If the user picks 2 (cross-machine thin client)`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L135 `If the user picks 3 (split-engine per-worktree)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L149 `Phase A: Supabase Setup (recommended)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L172 `Phase B: BYO Postgres (alternative)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L184 `Phase C: First Import`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L266 `Phase C.5: One-step autopilot + Minions install (v0.11.1+)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L300 `Phase D: Brain-First Lookup Protocol`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L305 `BEFORE (grep) vs AFTER (gbrain)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L314 `Lookup sequence (MANDATORY for every entity question)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L323 `Sync-after-write rule`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L335 `gbrain vs memory_search`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L345 `Self-upgrade marker protocol (inject into AGENTS.md)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L370 `Phase E: Load the Production Agent Guide`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L388 `Phase F: Health Check`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L393 `Error Recovery`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L407 `Phase G: Auto-Update Check (if not already configured)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L422 `Phase H: Live Sync Setup (MUST ADD)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L459 `Phase I: Full Verification`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L477 `Phase J: Cold Start — Populate Your Brain (AUTOMATIC)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L509 `Schema State Tracking`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L522 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L531 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L553 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections: 30/31 inert (97% inert ratio)

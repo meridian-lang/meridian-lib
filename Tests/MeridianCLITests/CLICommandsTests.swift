@@ -415,7 +415,9 @@ struct SkillDeviationCommandTests {
         var cmd = try SkillDeviationCommand.parse([origDir.path, portDir.path, "--batch", "--out", reports.path, "--index", "--no-diff"])
         try await cmd.run()
         let readme = try String(contentsOf: reports.appendingPathComponent("README.md"), encoding: .utf8)
+        #expect(readme.contains("Inert deviations:"), Comment(rawValue: readme))
         #expect(readme.contains("Operational inert:"), Comment(rawValue: readme))
+        #expect(readme.contains("inert-section-added"), Comment(rawValue: readme))
         #expect(readme.contains("operational inert"), Comment(rawValue: readme))
     }
 

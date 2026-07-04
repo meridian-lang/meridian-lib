@@ -3,8 +3,8 @@
 - Original: `cold-start/SKILL.md`
 - Ported: `cold_start.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 91%
-- Lines: 507 -> 507 (+45 / -45)
+- Similarity: 89%
+- Lines: 507 -> 507 (+56 / -56)
 
 ## Frontmatter
 - Added: (none)
@@ -13,12 +13,50 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L11 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L25 `Prerequisites`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L31 `The Priority Stack`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L46 `Phase 0: ClawVisor Setup (Required for API Access)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L88 `If the user declines ClawVisor`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L108 `Phase 1: Existing Markdown / Obsidian Import`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L154 `Phase 2: Google Contacts → People Pages`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L161 `Via ClawVisor`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L178 `Processing rules`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L191 `Quality gate`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L197 `Phase 3: Google Calendar (Last 90 Days)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L203 `Fetch events`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L218 `Brain structure`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L229 `Entity enrichment`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L237 `Phase 4: Gmail (Recent Threads)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L242 `Strategy: Smart sampling, not bulk import`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L251 `Processing`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L259 `Filtering rules`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L272 `Phase 5: Conversation Exports (ChatGPT / Claude / Perplexity)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L278 `Supported formats`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L284 `Processing`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L299 `Quality rule`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L303 `Phase 6: X/Twitter Archive`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L308 `Data sources`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L315 `Brain structure`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L325 `Processing`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L333 `Phase 7: File Archives`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L357 `Phase 8: Meeting Transcripts`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L368 `Post-Bootstrap Checklist`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L413 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L430 `Resume Protocol`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L439 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L459 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
-- Sections: 34/37 inert (92% inert ratio)
+- Sections: 33/37 inert (89% inert ratio)
 - Operational inert: 10
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-content=1, operational-procedure=8, reference-documentation=22, template=1, tools-metadata=1
+- Inert categories: normative-contract=1, operational-content=1, operational-procedure=8, reference-documentation=21, template=1, tools-metadata=1
 - Judgment: 0 blocks, 0 lines
 
 ### Inert section details
@@ -28,7 +66,6 @@
 - L46 `Phase 0: ClawVisor Setup (Required for API Access)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L88 `If the user declines ClawVisor`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L108 `Phase 1: Existing Markdown / Obsidian Import`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L143 `Post-import`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L154 `Phase 2: Google Contacts → People Pages`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
 - L161 `Via ClawVisor`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L178 `Processing rules`: reference-documentation — Reference documentation, rationale, examples, or changelog.
@@ -128,15 +165,7 @@
  
  **The highest-leverage first import.** If the user already has a notes system, this
  is hundreds or thousands of structured pages ready to go.
-@@ -179,25 +179,25 @@
- gbrain search "<topic from the imported data>"
- ```
- 
--### Post-import
-+### Post-import (( inert ))
- 
- - Run link extraction: `gbrain extract links --source db`
- - Run timeline extraction: `gbrain extract timeline --source db`
+@@ -186,18 +186,18 @@
  - Start embeddings: `gbrain embed --stale` (runs in background)
  
  > **Track progress:**
@@ -255,13 +284,18 @@
  preserved in dialog form.
  
 -### Supported formats
-+### Supported formats (( inert ))
- 
- - **ChatGPT:** Settings → Data Controls → Export → `conversations.json`
- - **Claude:** Download from claude.ai conversation history
- - **Perplexity:** Export from settings
- 
+-
+-- **ChatGPT:** Settings → Data Controls → Export → `conversations.json`
+-- **Claude:** Download from claude.ai conversation history
+-- **Perplexity:** Export from settings
+-
 -### Processing
++### Supported formats (( inert ))
++
++- ChatGPT: Settings → Data Controls → Export → `conversations.json`
++- Claude: Download from claude.ai conversation history
++- Perplexity: Export from settings
++
 +### Processing (( inert ))
  
  For each conversation:
@@ -294,20 +328,27 @@
  
  ```
  brain/media/x/{handle}/
-@@ -361,7 +361,7 @@
+@@ -361,15 +361,15 @@
  └── bookmarks/                   ← saved/bookmarked content
  ```
  
 -### Processing
-+### Processing (( inert ))
- 
- - **Original tweets** → capture with full context, extract entities
- - **Quote tweets** → capture the user's commentary + the source tweet
-@@ -369,7 +369,7 @@
- - **Bookmarks** → high-signal curation, import with tags
- - **Likes** — low signal, skip unless the user wants them
- 
+-
+-- **Original tweets** → capture with full context, extract entities
+-- **Quote tweets** → capture the user's commentary + the source tweet
+-- **Threads** → reconstruct as a single narrative
+-- **Bookmarks** → high-signal curation, import with tags
+-- **Likes** — low signal, skip unless the user wants them
+-
 -## Phase 7: File Archives
++### Processing (( inert ))
++
++- Original tweets → capture with full context, extract entities
++- Quote tweets → capture the user's commentary + the source tweet
++- Threads → reconstruct as a single narrative
++- Bookmarks → high-signal curation, import with tags
++- Likes — low signal, skip unless the user wants them
++
 +## Phase 7: File Archives (( inert, role: procedure ))
  
  **Historical documents, old writing, photos with metadata.** This is the long tail —

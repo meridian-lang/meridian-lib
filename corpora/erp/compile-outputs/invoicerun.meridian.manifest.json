@@ -1,0 +1,280 @@
+{
+  "instances_required" : [
+
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "overdue",
+      "function" : "meridianDef_Invoice_overdue",
+      "kind" : "invoice",
+      "line" : 30
+    },
+    {
+      "adjective" : "unpaid",
+      "function" : "meridianDef_Invoice_unpaid",
+      "kind" : "invoice",
+      "line" : 29
+    },
+    {
+      "adjective" : "blocked",
+      "function" : "meridianDef_Order_blocked",
+      "kind" : "order",
+      "line" : 27
+    },
+    {
+      "adjective" : "fulfilled",
+      "function" : "meridianDef_Order_fulfilled",
+      "kind" : "order",
+      "line" : 28
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Order_open",
+      "kind" : "order",
+      "line" : 26
+    },
+    {
+      "adjective" : "short",
+      "function" : "meridianDef_Product_short",
+      "kind" : "product",
+      "line" : 31
+    },
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_PurchaseOrder_pending",
+      "kind" : "purchase order",
+      "line" : 32
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 38,
+      "name" : "collection",
+      "right_cardinality" : "one",
+      "right_kind" : "a payment",
+      "via" : "payment.collect"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 34,
+      "name" : "fulfillment",
+      "right_cardinality" : "one",
+      "right_kind" : "a shipment",
+      "via" : "shipment.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 36,
+      "name" : "invoicing",
+      "right_cardinality" : "one",
+      "right_kind" : "an invoice",
+      "via" : "invoice.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a product",
+      "line" : 40,
+      "name" : "replenishment",
+      "right_cardinality" : "one",
+      "right_kind" : "a purchase order",
+      "via" : "purchase_order.create"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Generate invoices and render a compact routing receipt.",
+    "name" : "invoice run",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 11,
+        "text" : "When this applies"
+      },
+      {
+        "kind" : "tables",
+        "level" : 2,
+        "line" : 15,
+        "text" : "Tables"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 21,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 35,
+        "text" : "Report shape"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "When this applies",
+        "line" : 11,
+        "lines" : [
+          "\"run invoices\"",
+          "\"billing batch\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Tables",
+        "line" : 15,
+        "lines" : [
+          "table:decision:fCBzdGF0dXMgfCBxdWV1ZSB8CnwgLS0tIHwgLS0tIHwKfCB1bnBhaWQgfCBjb2xsZWN0aW9ucyB8CnwgZnVsZmlsbGVkIHwgYXJjaGl2ZSB8"
+        ],
+        "role" : "tables"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 21,
+        "lines" : [
+          "fetch open orders",
+          "for each order:",
+          "create an invoice for the order",
+          "bind selected queue = the queue corresponding to the status \"unpaid\" in the table",
+          "bind invoice receipt =",
+          "codeblock:plain:aW52b2ljZS1yb3V0aW5nOgpbZm9yIGVhY2ggcm93IGluIHRhYmxlXS0ge3sgcm93LnN0YXR1cyB9fSAtPiB7eyByb3cucXVldWUgfX0KW2VuZCBmb3JdCnNlbGVjdGVkOiB7eyBzZWxlY3RlZCBxdWV1ZSB9fQ==",
+          "emit erp.invoice_receipt with body = invoice receipt"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 35,
+        "lines" : [
+          "The receipt groups invoice states by downstream queue"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"run invoices\"\n\"billing batch\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "collect",
+      "line" : 45,
+      "past_participle" : "collected",
+      "relation" : "collection",
+      "third_person" : "collects"
+    },
+    {
+      "base" : "fulfill",
+      "line" : 43,
+      "past_participle" : "fulfilled",
+      "relation" : "fulfillment",
+      "third_person" : "fulfills"
+    },
+    {
+      "base" : "invoice",
+      "line" : 44,
+      "past_participle" : "invoiced",
+      "relation" : "invoicing",
+      "third_person" : "invoices"
+    },
+    {
+      "base" : "replenish",
+      "line" : 46,
+      "past_participle" : "replenished",
+      "relation" : "replenishment",
+      "third_person" : "replenishes"
+    }
+  ],
+  "source_files" : [
+    "invoicerun.meri",
+    "erp.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 16,
+      "swift_line" : 402
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 405
+    },
+    {
+      "meridian_line" : 23,
+      "swift_line" : 416
+    },
+    {
+      "meridian_line" : 61,
+      "swift_line" : 422
+    },
+    {
+      "meridian_line" : 25,
+      "swift_line" : 437
+    },
+    {
+      "meridian_line" : 26,
+      "swift_line" : 439
+    },
+    {
+      "meridian_line" : 33,
+      "swift_line" : 442
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 479
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 484
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 522
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 527
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "invoice run",
+      "swift_struct" : "InvoiceRun"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runInvoices fires",
+      "swift_struct" : "WhenRuninvoicesFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when billingBatch fires",
+      "swift_struct" : "WhenBillingbatchFires"
+    }
+  ]
+}

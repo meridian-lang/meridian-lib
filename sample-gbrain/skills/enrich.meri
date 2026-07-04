@@ -162,7 +162,7 @@ the raw data shows exactly what the API returned.
 
 ### Step 6: Write to brain (( inert ))
 
-#### CREATE path (( inert ))
+#### CREATE path
 
 1. Check notability gate (see `skills/_brain-filing-rules.md`)
 2. Check filing rules -- where does this entity go?
@@ -171,7 +171,7 @@ the raw data shows exactly what the API returned.
 5. Add first timeline entry
 6. Leave empty sections as `[No data yet]` (don't fill with boilerplate)
 
-#### UPDATE path (( inert ))
+#### UPDATE path
 
 1. Add new timeline entries (reverse-chronological, append-only)
 2. Update compiled truth ONLY if the new signal materially changes the picture
@@ -283,7 +283,7 @@ Timeline entries still need explicit `gbrain timeline-add` calls.
 
 ## Bulk Enrichment Rules (( inert ))
 
-- **Test on 3-5 entities first.** Read actual output. Check quality.
+- Test on 3-5 entities first. Read actual output. Check quality.
 - Only proceed to bulk after test shots pass your quality bar.
 - 3+ entities from one source -> batch process or spawn sub-agent
 - Throttle API calls. Respect rate limits.

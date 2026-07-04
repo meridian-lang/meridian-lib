@@ -176,7 +176,7 @@
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 235,
         "text" : "Related skills"
@@ -257,7 +257,7 @@
         "heading" : "T1 Canon — full synthesis",
         "line" : 98,
         "lines" : [
-          "codeblock:markdown:LS0tCnRpdGxlOiAiY29uY2VwdCBuYW1lIgp0eXBlOiBjb25jZXB0CnRpZXI6IDEKdGllcl9sYWJlbDogIkNhbm9uIgptZW50aW9uX2NvdW50OiAxOApkaXN0aW5jdF9tb250aHM6IDgKZmlyc3RfbWVudGlvbjogIllZWVktTU0tREQiCmxhc3RfbWVudGlvbjogIllZWVktTU0tREQiCmNvbXBvc2l0ZV9zY29yZTogNzguNAphbGlhc2VzOiBbImFsdGVybmF0ZSBwaHJhc2luZyAxIiwgImFsdGVybmF0ZSBwaHJhc2luZyAyIl0KcmVsYXRlZDogWyJzaWJsaW5nLWNvbmNlcHQtMSIsICJzaWJsaW5nLWNvbmNlcHQtMiJdCi0tLQoKIyBjb25jZXB0IG5hbWUKCioqVGllciAxIOKAlCBDYW5vbioqIHwgMTggbWVudGlvbnMgYWNyb3NzIDggbW9udGhzCgojIyBTeW50aGVzaXMgKCggaW5lcnQgKSkKClsyLTQgcGFyYWdyYXBoIG5hcnJhdGl2ZSB0cmFjaW5nIGhvdyB0aGUgaWRlYSBldm9sdmVkLCB3aGF0IGl0IG1lYW5zIGluCnRoZSB1c2VyJ3Mgd29ybGR2aWV3LCB3aHkgaXQgbWF0dGVycy4gVGhpcmQtcGVyc29uIGFuYWx5dGljYWwgdm9pY2UuXQoKIyMgQmVzdCBBcnRpY3VsYXRpb24gKCggaW5lcnQgKSkKCj4gIlZlcmJhdGltIHF1b3RlIGZyb20gYSBzb3VyY2Ug4oCUIHRoZSBtb3N0IHByZWNpc2Ugb3IgaGlnaGVzdC1lbmdhZ2VtZW50Cj4gZXhwcmVzc2lvbiBvZiB0aGlzIGlkZWEuIiDigJQgW0RhdGVdKHNvdXJjZS11cmwpCgojIyBFdm9sdXRpb24gKCggaW5lcnQgKSkKCnwgUGVyaW9kIHwgRXhwcmVzc2lvbiB8IFNpZ25hbCB8CnwtLS0tLS0tLXwtLS0tLS0tLS0tLXwtLS0tLS0tLXwKfCBZWVlZLU1NIHwgIkZpcnN0IGFydGljdWxhdGlvbiIgfCBGaXJzdCB1c2Ug4oCUIGFzcGlyYXRpb24gZnJhbWUgfAp8IFlZWVktTU0gfCAiU2hhcnBlbmluZyIgfCBBbnRpLXBhdHRlcm4gZW1lcmdlcyB8CnwgWVlZWS1NTSB8ICJQZWFrIGZvcm0iIHwgQ2xlYW5lc3QgZXhwcmVzc2lvbiB8CgojIyBSZWxhdGVkIENvbmNlcHRzICgoIGluZXJ0ICkpCi0gW3NpYmxpbmcgY29uY2VwdF0oc2libGluZy1jb25jZXB0Lm1kKSDigJQgcmVsYXRpb25zaGlwIGRlc2NyaXB0aW9uCi0gW3NpYmxpbmcgY29uY2VwdF0oc2libGluZy1jb25jZXB0Lm1kKSDigJQgcmVsYXRpb25zaGlwIGRlc2NyaXB0aW9uCgojIyBUaW1lbGluZSAoKCBpbmVydCApKQpbRnVsbCB0aW1lbGluZSB3aXRoIGRlZHVwZWQgZW50cmllcywgcXVvdGVzLCBzb3VyY2UgbGlua3Nd"
+          "codeblock:markdown:LS0tCnRpdGxlOiAiY29uY2VwdCBuYW1lIgp0eXBlOiBjb25jZXB0CnRpZXI6IDEKdGllcl9sYWJlbDogIkNhbm9uIgptZW50aW9uX2NvdW50OiAxOApkaXN0aW5jdF9tb250aHM6IDgKZmlyc3RfbWVudGlvbjogIllZWVktTU0tREQiCmxhc3RfbWVudGlvbjogIllZWVktTU0tREQiCmNvbXBvc2l0ZV9zY29yZTogNzguNAphbGlhc2VzOiBbImFsdGVybmF0ZSBwaHJhc2luZyAxIiwgImFsdGVybmF0ZSBwaHJhc2luZyAyIl0KcmVsYXRlZDogWyJzaWJsaW5nLWNvbmNlcHQtMSIsICJzaWJsaW5nLWNvbmNlcHQtMiJdCi0tLQoKIyBjb25jZXB0IG5hbWUKCioqVGllciAxIOKAlCBDYW5vbioqIHwgMTggbWVudGlvbnMgYWNyb3NzIDggbW9udGhzCgojIyBTeW50aGVzaXMgKCggaW5lcnQgKSkKClsyLTQgcGFyYWdyYXBoIG5hcnJhdGl2ZSB0cmFjaW5nIGhvdyB0aGUgaWRlYSBldm9sdmVkLCB3aGF0IGl0IG1lYW5zIGluCnRoZSB1c2VyJ3Mgd29ybGR2aWV3LCB3aHkgaXQgbWF0dGVycy4gVGhpcmQtcGVyc29uIGFuYWx5dGljYWwgdm9pY2UuXQoKIyMgQmVzdCBBcnRpY3VsYXRpb24gKCggaW5lcnQgKSkKCj4gIlZlcmJhdGltIHF1b3RlIGZyb20gYSBzb3VyY2Ug4oCUIHRoZSBtb3N0IHByZWNpc2Ugb3IgaGlnaGVzdC1lbmdhZ2VtZW50Cj4gZXhwcmVzc2lvbiBvZiB0aGlzIGlkZWEuIiDigJQgW0RhdGVdKHNvdXJjZS11cmwpCgojIyBFdm9sdXRpb24gKCggaW5lcnQgKSkKCnwgUGVyaW9kIHwgRXhwcmVzc2lvbiB8IFNpZ25hbCB8CnwtLS0tLS0tLXwtLS0tLS0tLS0tLXwtLS0tLS0tLXwKfCBZWVlZLU1NIHwgIkZpcnN0IGFydGljdWxhdGlvbiIgfCBGaXJzdCB1c2Ug4oCUIGFzcGlyYXRpb24gZnJhbWUgfAp8IFlZWVktTU0gfCAiU2hhcnBlbmluZyIgfCBBbnRpLXBhdHRlcm4gZW1lcmdlcyB8CnwgWVlZWS1NTSB8ICJQZWFrIGZvcm0iIHwgQ2xlYW5lc3QgZXhwcmVzc2lvbiB8CgojIyBSZWxhdGVkIENvbmNlcHRzCi0gc2libGluZyBjb25jZXB0IOKAlCByZWxhdGlvbnNoaXAgZGVzY3JpcHRpb24KLSBzaWJsaW5nIGNvbmNlcHQg4oCUIHJlbGF0aW9uc2hpcCBkZXNjcmlwdGlvbgoKIyMgVGltZWxpbmUgKCggaW5lcnQgKSkKW0Z1bGwgdGltZWxpbmUgd2l0aCBkZWR1cGVkIGVudHJpZXMsIHF1b3Rlcywgc291cmNlIGxpbmtzXQ=="
         ],
         "role" : "inert"
       },
@@ -275,7 +275,7 @@
         "heading" : "Output: cluster map at concepts\/README.md",
         "line" : 163,
         "lines" : [
-          "codeblock:markdown:IyBJbnRlbGxlY3R1YWwgVW5pdmVyc2UKCiMjIENhbm9uIChUMSkg4oCUIE4gY29uY2VwdHMgKCggaW5lcnQgKSkKVGhlIHBlcm1hbmVudCBpbnRlbGxlY3R1YWwgZmluZ2VycHJpbnQuIElkZWFzIHRoYXQgcmVjdXIgYWNyb3NzIHllYXJzLgoKIyMjIFtDbHVzdGVyIE5hbWVdICgoIGluZXJ0ICkpCi0gW2NvbmNlcHQtc2x1Z10oY29uY2VwdC1zbHVnLm1kKSDigJQgb25lLWxpbmUgY2hhcmFjdGVyaXphdGlvbgotIC4uLgoKIyMjIFtPdGhlciBDbHVzdGVyXSAoKCBpbmVydCApKQotIC4uLgoKIyMgRGV2ZWxvcGluZyAoVDIpIOKAlCBOIGNvbmNlcHRzICgoIGluZXJ0ICkpClNoYXJwZW5pbmcuIE1pZ2h0IGJlY29tZSBjYW5vbi4KCiMjIFNwZWN1bGF0aXZlIChUMykg4oCUIE4gY29uY2VwdHMgKCggaW5lcnQgKSkKVGVzdGluZyBpbiBwdWJsaWMuCgojIyBTdGF0cyAoKCBpbmVydCApKQotIFRvdGFsIGNvbmNlcHRzOiBOCi0gVDEgQ2Fub246IE4KLSBUMiBEZXZlbG9waW5nOiBOCi0gVDMgU3BlY3VsYXRpdmU6IE4KLSBUNCBSaWZmOiBOCi0gRWFybGllc3Qgc291cmNlOiBZWVlZLU1NLURECi0gTGF0ZXN0IHNvdXJjZTogWVlZWS1NTS1ERA=="
+          "codeblock:markdown:IyBJbnRlbGxlY3R1YWwgVW5pdmVyc2UKCiMjIENhbm9uIChUMSkg4oCUIE4gY29uY2VwdHMgKCggaW5lcnQgKSkKVGhlIHBlcm1hbmVudCBpbnRlbGxlY3R1YWwgZmluZ2VycHJpbnQuIElkZWFzIHRoYXQgcmVjdXIgYWNyb3NzIHllYXJzLgoKIyMjIFtDbHVzdGVyIE5hbWVdCi0gY29uY2VwdC1zbHVnIOKAlCBvbmUtbGluZSBjaGFyYWN0ZXJpemF0aW9uCi0gLi4uCgojIyMgW090aGVyIENsdXN0ZXJdCi0gLi4uCgojIyBEZXZlbG9waW5nIChUMikg4oCUIE4gY29uY2VwdHMgKCggaW5lcnQgKSkKU2hhcnBlbmluZy4gTWlnaHQgYmVjb21lIGNhbm9uLgoKIyMgU3BlY3VsYXRpdmUgKFQzKSDigJQgTiBjb25jZXB0cyAoKCBpbmVydCApKQpUZXN0aW5nIGluIHB1YmxpYy4KCiMjIFN0YXRzICgoIGluZXJ0ICkpCi0gVG90YWwgY29uY2VwdHM6IE4KLSBUMSBDYW5vbjogTgotIFQyIERldmVsb3Bpbmc6IE4KLSBUMyBTcGVjdWxhdGl2ZTogTgotIFQ0IFJpZmY6IE4KLSBFYXJsaWVzdCBzb3VyY2U6IFlZWVktTU0tREQKLSBMYXRlc3Qgc291cmNlOiBZWVlZLU1NLURE"
         ],
         "role" : "inert"
       },
@@ -355,7 +355,7 @@
         "role" : "prohibitions"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Related skills",
         "line" : 235,
         "lines" : [
@@ -363,7 +363,7 @@
           "`skills\/voice-note-ingest\/SKILL.md` — same for audio channels",
           "`skills\/idea-ingest\/SKILL.md` — same for links \/ articles"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -430,52 +430,64 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 632
+      "meridian_line" : 237,
+      "swift_line" : 604
+    },
+    {
+      "meridian_line" : 238,
+      "swift_line" : 616
+    },
+    {
+      "meridian_line" : 239,
+      "swift_line" : 628
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 637
+      "swift_line" : 668
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 676
+      "swift_line" : 673
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 681
+      "swift_line" : 712
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 720
+      "swift_line" : 717
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 725
+      "swift_line" : 756
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 764
+      "swift_line" : 761
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 769
+      "swift_line" : 800
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 808
+      "swift_line" : 805
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 813
+      "swift_line" : 844
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 852
+      "swift_line" : 849
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 857
+      "swift_line" : 888
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 893
     }
   ],
   "tools_used" : [

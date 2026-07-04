@@ -210,6 +210,34 @@ struct SkillMigratorMarkingTests {
         #expect(try Self.aliases(source) == [SkillMigrator.SectionAlias(heading: "Setup steps", role: .procedure)])
     }
 
+    @Test("failed Markdown procedure item marks the whole recognized section inert")
+    func failedMarkdownProcedureItemInertsSection() async throws {
+        let result = try await Self.migrator().migrate("""
+        ## Phases
+
+        1. Load calendar. Check today's meetings.
+        2. Compile prep briefing.
+        """)
+
+        #expect(result.compiledOK)
+        #expect(result.meriSource.contains("## Phases (( inert, role: procedure ))"),
+                Comment(rawValue: result.meriSource))
+    }
+
+    @Test("failed Markdown item under unknown heading marks that section inert")
+    func failedUnknownMarkdownItemInertsSection() async throws {
+        let result = try await Self.migrator().migrate("""
+        ## Related skills
+
+        - `skillify` — scaffolds a new skill
+        - conventions/quality.md — output quality standards
+        """)
+
+        #expect(result.compiledOK)
+        #expect(result.meriSource.contains("## Related skills (( inert ))"),
+                Comment(rawValue: result.meriSource))
+    }
+
     @Test("heading-less markdown list is not auto-wrapped as inert")
     func headinglessMarkdownListTriedAsProcedure() throws {
         let out = try Self.mark("""

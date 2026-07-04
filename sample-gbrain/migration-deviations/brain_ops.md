@@ -13,6 +13,23 @@
 ## Categories
 - section-marker-added
 - preamble-blockquoted
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L10 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L20 `Iron Law: Back-Linking (MANDATORY)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L26 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L28 `Phase 1: Brain-First Lookup (MANDATORY)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L40 `Phase 2: On Every Inbound Signal (READ → ENRICH → WRITE)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L53 `Phase 2.5: Structured Graph Updates (automatic)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L69 `Phase 3: On Every Outbound Response (READ → PULL → RESPOND)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L79 `Phase 4: Ambient Enrichment`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L94 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L99 `Cross-source citation format (v0.18.0+)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L118 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L127 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections: 12/12 inert (100% inert ratio)

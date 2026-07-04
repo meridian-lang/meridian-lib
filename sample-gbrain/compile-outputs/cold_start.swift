@@ -755,7 +755,43 @@ public struct ColdStartInput: MeridianWorkflow {
 
             try await runtime.checkpoint(label: "progress:0.13:L170:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.14:L212:C0") {
+        if __meridianShouldRun("progress:0.14:L184:C0") {
+            // L184
+            // Run link extraction
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain extract links --source db"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.14:L184:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.15:L185:C0") {
+            // L185
+            // Run timeline extraction
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain extract timeline --source db"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.15:L185:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.16:L186:C0") {
+            // L186
+            // Start embeddings:  (runs in background)
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain embed --stale"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.16:L186:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.17:L212:C0") {
             // L212
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -764,7 +800,7 @@ public struct ColdStartInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.14:L212:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.17:L212:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

@@ -146,7 +146,7 @@
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 129,
         "text" : "Related skills"
@@ -298,7 +298,7 @@
         "role" : "prohibitions"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Related skills",
         "line" : 129,
         "lines" : [
@@ -306,7 +306,7 @@
           "`skills\/idea-ingest\/SKILL.md` — link\/article ingestion with author people-page enforcement",
           "`skills\/conventions\/quality.md` — citation + back-link rules"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -373,60 +373,72 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 632
+      "meridian_line" : 131,
+      "swift_line" : 604
+    },
+    {
+      "meridian_line" : 132,
+      "swift_line" : 616
+    },
+    {
+      "meridian_line" : 133,
+      "swift_line" : 628
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 637
+      "swift_line" : 668
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 676
+      "swift_line" : 673
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 681
+      "swift_line" : 712
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 720
+      "swift_line" : 717
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 725
+      "swift_line" : 756
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 764
+      "swift_line" : 761
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 769
+      "swift_line" : 800
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 808
+      "swift_line" : 805
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 813
+      "swift_line" : 844
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 852
+      "swift_line" : 849
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 857
+      "swift_line" : 888
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 896
+      "swift_line" : 893
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 901
+      "swift_line" : 932
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 937
     }
   ],
   "tools_used" : [

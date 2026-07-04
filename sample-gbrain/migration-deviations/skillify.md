@@ -12,6 +12,34 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L11 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L18 `The Checklist`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L34 `Phase 0: Should This Be a Skill?`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L43 `Phase 1: Audit`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L51 `Phase 2: Write SKILL.md + Code (items 1-2)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L53 `SKILL.md frontmatter template (copy-paste):`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L76 `Phase 3: Cross-Modal Eval (item 3) — THE QUALITY GATE`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L78 `Why this comes before tests`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L83 `Step 1: Pick a representative input`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L89 `Step 2: Run the skill, capture output`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L94 `Step 3: Run the eval gate`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L132 `Step 4: Cycle until you pass (≤3 cycles)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L157 `Cycles + cost guardrails`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L166 `Provider configuration`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L179 `Cost expectations`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L186 `Skip cross-modal eval when:`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L191 `Phase 4: Tests (items 4-6)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L199 `Phase 5: Resolver + Check-Resolvable (items 7-9)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L209 `Phase 6: E2E + Brain Filing (items 10-11)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L224 `Worked Example: Skillifying a "summarize-pr" Feature`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L243 `Quality Gates`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L256 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L277 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
 - Sections: 23/24 inert (96% inert ratio)

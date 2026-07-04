@@ -12,6 +12,25 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L15 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L26 `When to invoke (v0.25.1 gating)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L50 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
+- L64 `Code-review handoff (v0.25.1 extension)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L69 `Codex Review`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L97 `Adversarial Challenge`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L106 `Refusal routing`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L116 `Output format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L118 `Standard review`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L133 `Code review`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L145 `User-sovereignty rule (Iron Law)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L154 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L163 `Related skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L173 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections: 14/14 inert (100% inert ratio)

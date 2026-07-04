@@ -12,12 +12,32 @@
 
 ## Categories
 - section-marker-added
+- inert-section-added
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L10 `What this solves`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L23 `Architecture`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L57 `Invocation`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
+- L80 `Output: concept page format (post-synthesis)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L82 `T1 Canon — full synthesis`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L129 `T3 / T4 — stub only (no LLM synthesis)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L147 `Output: cluster map at concepts/README.md`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L178 `Quality gates`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L180 `Dedup quality`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L185 `Tier quality`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L192 `Synthesis quality`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L198 `Cron integration`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L208 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L226 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
+- L237 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections: 16/16 inert (100% inert ratio)
+- Sections: 15/16 inert (94% inert ratio)
 - Operational inert: 2
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-content=1, reference-documentation=13, template=1
+- Inert categories: normative-contract=1, operational-content=1, reference-documentation=12, template=1
 - Judgment: 0 blocks, 0 lines
 
 ### Inert section details
@@ -34,7 +54,6 @@
 - L192 `Synthesis quality`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L198 `Cron integration`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L208 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L219 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L226 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
 - L237 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
@@ -104,16 +123,17 @@
  
  | Period | Expression | Signal |
  |--------|-----------|--------|
-@@ -134,15 +134,15 @@
- | YYYY-MM | "Sharpening" | Anti-pattern emerges |
+@@ -135,14 +135,14 @@
  | YYYY-MM | "Peak form" | Cleanest expression |
  
--## Related Concepts
-+## Related Concepts (( inert ))
- - [sibling concept](sibling-concept.md) — relationship description
- - [sibling concept](sibling-concept.md) — relationship description
- 
+ ## Related Concepts
+-- [sibling concept](sibling-concept.md) — relationship description
+-- [sibling concept](sibling-concept.md) — relationship description
+-
 -## Timeline
++- sibling concept — relationship description
++- sibling concept — relationship description
++
 +## Timeline (( inert ))
  [Full timeline with deduped entries, quotes, source links]
  ```
@@ -137,13 +157,12 @@
 +## Canon (T1) — N concepts (( inert ))
  The permanent intellectual fingerprint. Ideas that recur across years.
  
--### [Cluster Name]
-+### [Cluster Name] (( inert ))
- - [concept-slug](concept-slug.md) — one-line characterization
+ ### [Cluster Name]
+-- [concept-slug](concept-slug.md) — one-line characterization
++- concept-slug — one-line characterization
  - ...
  
--### [Other Cluster]
-+### [Other Cluster] (( inert ))
+ ### [Other Cluster]
  - ...
  
 -## Developing (T2) — N concepts
@@ -202,15 +221,7 @@
  
  - ❌ Running synthesis on T3/T4 — wastes API budget on ideas that may
    never sharpen.
-@@ -232,14 +232,14 @@
- - ❌ Re-synthesizing already-synthesized T1s without new source material.
-   Idempotency-respect.
- 
--## Related skills
-+## Related skills (( inert ))
- 
- - `skills/signal-detector/SKILL.md` — creates raw concept stubs from text channels
- - `skills/voice-note-ingest/SKILL.md` — same for audio channels
+@@ -239,7 +239,7 @@
  - `skills/idea-ingest/SKILL.md` — same for links / articles
  
  

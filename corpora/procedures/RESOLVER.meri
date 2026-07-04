@@ -1,0 +1,26 @@
+---
+name: procedures resolver
+description: Route a synthetic DBA request to a procedure skill id.
+parameters: trigger phrase
+vocabulary: procedures.merconfig
+rulebook: procedures.merrules
+---
+
+# Procedures Resolver
+
+## Tables
+| trigger phrase | skill |
+| --- | --- |
+| reconcile ledger | reconcileledger |
+| aging report | agingreport |
+| dedupe records | deduperecords |
+| cascade close | cascadeclose |
+| rebuild lagging indexes | rebuildindex |
+| validate constraints | validateconstraints |
+| purge expired records | purgeexpired |
+| settle ready batches | settlebatch |
+
+## Procedure
+bind selected skill = the skill corresponding to the trigger phrase trigger phrase in the table.
+emit procedure.dispatch with skill = selected skill.
+complete.

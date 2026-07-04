@@ -30,10 +30,10 @@ This skill guarantees:
 
 ## Phases (( inert, role: procedure ))
 
-1. **Load calendar.** Check today's meetings. For each: load attendee brain pages, recent timeline, open threads.
-2. **Check yesterday's threads.** Search brain for yesterday's timeline entries. Flag anything unresolved.
-3. **Review active tasks.** Load `ops/tasks` from brain. Surface P0 and P1 items.
-4. **Compile prep briefing.** Per-meeting context cards + open threads + task priorities.
+1. Load calendar. Check today's meetings. For each: load attendee brain pages, recent timeline, open threads.
+2. Check yesterday's threads. Search brain for yesterday's timeline entries. Flag anything unresolved.
+3. Review active tasks. Load `ops/tasks` from brain. Surface P0 and P1 items.
+4. Compile prep briefing. Per-meeting context cards + open threads + task priorities.
 
 ## Output Format
 
@@ -47,7 +47,7 @@ Attendees: {names with brain context}
 Context: {recent interactions, open threads}
 Prep: {what to know before this meeting}
 
-## Open Threads (( inert ))
+## Open Threads
 - {thread from yesterday, with context}
 
 ## Tasks (P0-P1) (( inert ))
