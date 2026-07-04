@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 

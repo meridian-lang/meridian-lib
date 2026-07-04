@@ -110,7 +110,7 @@
         "text" : "Mode 1: Skill conformance validation"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 3,
         "line" : 49,
         "text" : "Contract"
@@ -118,115 +118,109 @@
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 62,
+        "line" : 66,
         "text" : "Phases"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 72,
+        "line" : 76,
         "text" : "Automation"
       },
       {
         "kind" : "template",
         "level" : 3,
-        "line" : 80,
+        "line" : 87,
         "text" : "Output format"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 96,
+        "line" : 103,
         "text" : "Mode 2: Project test-suite health (v0.25.1)"
       },
       {
-        "kind" : "applicability",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 98,
+        "line" : 105,
         "text" : "When to use"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 106,
+        "line" : 114,
         "text" : "Test tiers"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 115,
+        "line" : 127,
         "text" : "Daily run protocol"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 210,
+        "line" : 236,
         "text" : "State (regression history)"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 232,
+        "line" : 259,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 243,
+        "line" : 271,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 254,
+        "line" : 283,
         "text" : "Output Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 51,
-        "text" : "This mode guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 125,
+        "line" : 133,
         "text" : "Parse"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 134,
+        "line" : 144,
         "text" : "Parse"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 151,
+        "line" : 179,
         "text" : "For each failing test"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 207,
+        "line" : 233,
         "text" : "When uncertain"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 226,
+        "line" : 253,
         "text" : "This enables"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 245,
+        "line" : 274,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 250,
+        "line" : 279,
         "text" : "Privacy contract preserved"
       }
     ],
@@ -259,33 +253,33 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 49,
         "lines" : [
-          "This mode guarantees:",
-          "Every skill directory has a `SKILL.md` file",
-          "Every `SKILL.md` has valid YAML frontmatter (`name`, `description`)",
-          "Every `SKILL.md` has required sections per",
-          "`test\/skills-conformance.test.ts`",
+          "use judgment to follow the Contract guidance:",
           "`skills\/manifest.json` lists every skill directory",
           "`skills\/RESOLVER.md` references every skill in the manifest",
           "`openclaw.plugin.json` `skills[]` round-trips with both",
-          "No MECE violations (duplicate triggers across skills)"
+          "No MECE violations (duplicate triggers across skills)",
+          "Every skill directory has a `SKILL.md` file",
+          "Every `SKILL.md` has valid YAML frontmatter (`name`, `description`)",
+          "Every `SKILL.md` has required sections per",
+          "`test\/skills-conformance.test.ts`"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phases",
-        "line" : 62,
+        "line" : 66,
         "lines" : [
           "Walk skills directory. List all subdirs containing `SKILL.md`",
-          "Validate frontmatter. Parse YAML, check required fields",
-          "Validate sections. Check for the required headings",
+          "Parse YAML, check required fields",
+          "Check for the required headings",
           "Check manifest. Every skill dir must be in `manifest.json`",
-          "Check resolver. Every manifest skill must have a RESOLVER row",
-          "Check round-trip. RESOLVER trigger ↔ frontmatter triggers",
+          "Every manifest skill must have a RESOLVER row",
+          "RESOLVER trigger ↔ frontmatter triggers",
           "Report results"
         ],
         "role" : "procedure"
@@ -293,17 +287,17 @@
       {
         "executes" : false,
         "heading" : "Automation",
-        "line" : 72,
+        "line" : 76,
         "lines" : [
-          "codeblock:bash:YnVuIHRlc3QgdGVzdC9za2lsbHMtY29uZm9ybWFuY2UudGVzdC50cyB0ZXN0L3Jlc29sdmVyLnRlc3QudHM=",
-          "The CI-gated check is the package.json `test` script"
+          "The CI-gated check is the package.json `test` script",
+          "codeblock:bash:YnVuIHRlc3QgdGVzdC9za2lsbHMtY29uZm9ybWFuY2UudGVzdC50cyB0ZXN0L3Jlc29sdmVyLnRlc3QudHM="
         ],
         "role" : "inert"
       },
       {
         "executes" : false,
         "heading" : "Output format",
-        "line" : 80,
+        "line" : 87,
         "lines" : [
           "codeblock:plain:U2tpbGwgVmFsaWRhdGlvbiBSZXBvcnQKPT09PT09PT09PT09PT09PT09PT09PT09ClNraWxscyBmb3VuZDogICAgICAgIE4KQ29uZm9ybWFuY2U6ICAgICAgICAgTi9OIHBhc3MKTWFuaWZlc3QgY292ZXJhZ2U6ICAgTi9OClJlc29sdmVyIGNvdmVyYWdlOiAgIE4vTgpSb3VuZC10cmlwOiAgICAgICAgICBOL04KTUVDRSB2aW9sYXRpb25zOiAgICAgTgoKSXNzdWVzOgotIDxza2lsbD46IDxpc3N1ZT4="
         ],
@@ -312,59 +306,61 @@
       {
         "executes" : false,
         "heading" : "Mode 2: Project test-suite health (v0.25.1)",
-        "line" : 96,
+        "line" : 103,
         "lines" : [
 
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "When to use",
-        "line" : 98,
+        "line" : 105,
         "lines" : [
+          "use judgment to follow the When to use guidance:",
           "Daily test cron fires",
           "User asks \"run the tests\" \/ \"how are the tests\" \/ \"what's broken\"",
           "After significant code changes (often via cross-modal-review)",
           "After container restart (bootstrap)",
           "When something seems off and you want to verify system health"
         ],
-        "role" : "applicability"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Test tiers",
-        "line" : 106,
+        "line" : 114,
         "lines" : [
-          "table:decision:fCBUaWVyIHwgV2hhdCBpdCBydW5zIHwgV2FsbCB0aW1lIHwgR2F0ZXMgfAp8LS0tLS0tfC0tLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tfC0tLS0tLS18CnwgKipVbml0KiogfCBgYnVuIHRlc3RgIChkZXRlcm1pbmlzdGljLCB6ZXJvIGV4dGVybmFsIGNhbGxzKSB8IDwycyB8IEV2ZXJ5IGNvbW1pdCB8CnwgKipFdmFscyoqIHwgTExNLWp1ZGdlIG9yIHF1YWxpdHkgZXZhbHMgfCB+NjBzIHwgRGFpbHkgfAp8ICoqSW50ZWdyYXRpb24qKiB8IEUyRSB0ZXN0cyBhZ2FpbnN0IHJlYWwgUG9zdGdyZXMgfCB+NW0gfCBQcmUtc2hpcCArIG5pZ2h0bHkgfAp8ICoqU3lzdGVtIGhlYWx0aCoqIHwgRGlzayAvIG1lbW9yeSAvIENQVSAvIHNlcnZpY2UgbGl2ZW5lc3MgfCA8MTBzIHwgRGFpbHkgfA=="
+          "table:ai-discretion:fCBUaWVyIHwgV2hhdCBpdCBydW5zIHwgV2FsbCB0aW1lIHwgR2F0ZXMgfAp8LS0tLS0tfC0tLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tfC0tLS0tLS18CnwgVW5pdCB8IGBidW4gdGVzdGAgKGRldGVybWluaXN0aWMsIHplcm8gZXh0ZXJuYWwgY2FsbHMpIHwgPDJzIHwgRXZlcnkgY29tbWl0IHwKfCBFdmFscyB8IExMTS1qdWRnZSBvciBxdWFsaXR5IGV2YWxzIHwgfjYwcyB8IERhaWx5IHwKfCBJbnRlZ3JhdGlvbiB8IEUyRSB0ZXN0cyBhZ2FpbnN0IHJlYWwgUG9zdGdyZXMgfCB+NW0gfCBQcmUtc2hpcCArIG5pZ2h0bHkgfAp8IFN5c3RlbSBoZWFsdGggfCBEaXNrIC8gbWVtb3J5IC8gQ1BVIC8gc2VydmljZSBsaXZlbmVzcyB8IDwxMHMgfCBEYWlseSB8"
         ],
         "role" : "inert"
       },
       {
         "executes" : false,
         "heading" : "Daily run protocol",
-        "line" : 115,
+        "line" : 127,
         "lines" : [
           "When the cron fires (or the user asks), do ALL of this:",
-          "codeblock:bash:YnVuIHRlc3QgMj4mMQ==",
           "Parse: total passed, total failed, total skipped, file-level results",
-          "codeblock:bash:IyBBZGFwdCB0byB0aGUgcHJvamVjdCdzIGV2YWwgY29uZmlnCmJ1biB0ZXN0IC0tZmlsdGVyIGV2YWwgMj4mMQ==",
+          "codeblock:bash:YnVuIHRlc3QgMj4mMQ==",
           "Parse: same format. Note any flakes (tests that fail due to API",
           "timeouts, not code bugs)",
+          "codeblock:bash:IyBBZGFwdCB0byB0aGUgcHJvamVjdCdzIGV2YWwgY29uZmlnCmJ1biB0ZXN0IC0tZmlsdGVyIGV2YWwgMj4mMQ==",
           "Disk \/ memory \/ CPU",
           "gbrain: `gbrain doctor --fast --json`",
           "Database connection (if applicable)",
           "Critical files exist (CLAUDE.md, AGENTS.md, etc.)",
-          "codeblock:bash:IyBXaGF0IGNoYW5nZWQgc2luY2UgbGFzdCB0ZXN0IHJ1bj8KZ2l0IGxvZyAtLW9uZWxpbmUgLS1zaW5jZT0iMjQgaG91cnMgYWdvIg==",
-          "For each failing test:",
           "Check if the test itself was modified recently (test change, not",
           "regression)",
           "Check if the code it tests was modified recently (possible",
           "regression)",
           "Check if it's a known flake (API timeout, service down)",
           "Check if a dependency was updated (gbrain, bun, etc.)",
-          "table:decision:fCBDbGFzc2lmaWNhdGlvbiB8IE1hcmtlciB8IEFjdGlvbiB8CnwtLS0tLS0tLS0tLS0tLS18LS0tLS0tLS18LS0tLS0tLS18CnwgKipSRUdSRVNTSU9OKiog4oCUIGNvZGUgY2hhbmdlZCwgdGVzdCBicm9rZSB8IPCflLQgfCBGbGFnIHdpdGggdGhlIGNvbW1pdCB0aGF0IGJyb2tlIGl0IHwKfCAqKlNUQUxFKiog4oCUIHRlc3QgZXhwZWN0cyBvbGQgYmVoYXZpb3I7IGNvZGUgaXMgY29ycmVjdCB8IPCfn6EgfCBGaXggdGhlIHRlc3QsIG5vdCB0aGUgY29kZSB8CnwgKipGTEFLRSoqIOKAlCBBUEkgdGltZW91dCwgc2VydmljZSBkb3duLCBMTE0gdmFyaWFuY2UgfCDimqDvuI8gfCBOb3RlLCBkb24ndCBhbGFybTsgcmV0cnkgb25jZSB8CnwgKipORVcqKiDigJQgdGVzdCB3YXMganVzdCBhZGRlZCBhbmQgaXNuJ3QgcGFzc2luZyB5ZXQgfCDwn5+iIHwgQ2hlY2sgaWYgaW50ZW50aW9uYWwgfAp8ICoqSU5GUkEqKiDigJQgY29udGFpbmVyIHJlc3RhcnQgd2lwZWQgc3RhdGUgfCDwn5ugIHwgUnVuIGJvb3RzdHJhcCwgcmV0ZXN0IHw=",
+          "codeblock:bash:IyBXaGF0IGNoYW5nZWQgc2luY2UgbGFzdCB0ZXN0IHJ1bj8KZ2l0IGxvZyAtLW9uZWxpbmUgLS1zaW5jZT0iMjQgaG91cnMgYWdvIg==",
+          "For each failing test:",
+          "table:ai-discretion:fCBDbGFzc2lmaWNhdGlvbiB8IE1hcmtlciB8IEFjdGlvbiB8CnwtLS0tLS0tLS0tLS0tLS18LS0tLS0tLS18LS0tLS0tLS18CnwgUkVHUkVTU0lPTiDigJQgY29kZSBjaGFuZ2VkLCB0ZXN0IGJyb2tlIHwg8J+UtCB8IEZsYWcgd2l0aCB0aGUgY29tbWl0IHRoYXQgYnJva2UgaXQgfAp8IFNUQUxFIOKAlCB0ZXN0IGV4cGVjdHMgb2xkIGJlaGF2aW9yOyBjb2RlIGlzIGNvcnJlY3QgfCDwn5+hIHwgRml4IHRoZSB0ZXN0LCBub3QgdGhlIGNvZGUgfAp8IEZMQUtFIOKAlCBBUEkgdGltZW91dCwgc2VydmljZSBkb3duLCBMTE0gdmFyaWFuY2UgfCDimqDvuI8gfCBOb3RlLCBkb24ndCBhbGFybTsgcmV0cnkgb25jZSB8CnwgTkVXIOKAlCB0ZXN0IHdhcyBqdXN0IGFkZGVkIGFuZCBpc24ndCBwYXNzaW5nIHlldCB8IPCfn6IgfCBDaGVjayBpZiBpbnRlbnRpb25hbCB8CnwgSU5GUkEg4oCUIGNvbnRhaW5lciByZXN0YXJ0IHdpcGVkIHN0YXRlIHwg8J+boCB8IFJ1biBib290c3RyYXAsIHJldGVzdCB8",
           "codeblock:plain:8J+nqiBEYWlseSBUZXN0cyDigJQgWVlZWS1NTS1ERAoKVW5pdDogICBYL1kgcGFzc2VkIChaIHNraXBwZWQpCkV2YWxzOiAgWC9ZIHBhc3NlZApTeXN0ZW06IFtoZWFsdGggc3VtbWFyeV0KClJFR1JFU1NJT05TOgogIPCflLQgPHRlc3QtbmFtZT46IGJyb2tlIGJ5IGNvbW1pdCA8c2hhPiAiPGNvbW1pdCBtZXNzYWdlPiIKClNUQUxFIFRFU1RTOgogIPCfn6EgPHRlc3QtbmFtZT46IGV4cGVjdHMgWCBidXQgY29kZSBub3cgZG9lcyBZIChjb21taXQgPHNoYT4pCgpGTEFLRVM6CiAg4pqg77iPIDx0ZXN0LW5hbWU+OiB0aW1lb3V0IChyZXRyeSBwYXNzZWQpCgrinIUgQUxMIENMRUFSICAod2hlbiBhcHBsaWNhYmxlKQ==",
+          "use judgment to follow the 7. Auto-fix protocol guidance:",
           "**DO auto-fix:**",
           "Test expects an old file path after a rename → update the test",
           "Test expects an old version string → update",
@@ -381,10 +377,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "State (regression history)",
-        "line" : 210,
+        "line" : 236,
         "lines" : [
+          "use judgment to follow the State (regression history) guidance:",
           "Track results in `~\/.gbrain\/test-state.json` for trend tracking:",
           "codeblock:json:ewogICJsYXN0UnVuIjogIjIwMjYtMDQtMTZUMTM6Mzc6MDBaIiwKICAidW5pdCI6IHsgInBhc3NlZCI6IDEyNjIsICJmYWlsZWQiOiAzMSwgInNraXBwZWQiOiA4IH0sCiAgImV2YWxzIjogeyAicGFzc2VkIjogMTcsICJmYWlsZWQiOiAwIH0sCiAgInN5c3RlbSI6IHsgImRvY3RvciI6ICJvayIsICJnYnJhaW4iOiAiMC4yNS4xIiB9LAogICJmYWlsdXJlSGlzdG9yeSI6IFsKICAgIHsgInRlc3QiOiAiPG5hbWU+IiwgInNpbmNlIjogIjIwMjYtMDQtMTQiLCAiY2xhc3NpZmljYXRpb24iOiAic3RhbGUiIH0KICBdCn0=",
           "This enables:",
@@ -392,13 +389,14 @@
           "Flake detection (same test fails intermittently)",
           "Regression velocity (how fast do we break things after changes?)"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 232,
+        "line" : 259,
         "lines" : [
+          "use judgment to follow the Anti-Patterns guidance:",
           "❌ Skipping conformance validation after adding a new skill",
           "❌ Adding skills to `manifest.json` without adding to RESOLVER.md",
           "❌ Treating every red test as a regression. Classify first; many are",
@@ -407,13 +405,14 @@
           "❌ Auto-\"fixing\" a security test failure",
           "❌ Reporting \"all clear\" without actually running system health checks"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
-        "line" : 243,
+        "line" : 271,
         "lines" : [
+          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
           "Output written under the directories listed in `writes_to:` (when applicable)",
@@ -421,12 +420,12 @@
           "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
           "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 254,
+        "line" : 283,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -473,68 +472,72 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 631
+      "meridian_line" : 50,
+      "swift_line" : 602
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 641
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 646
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 685
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 690
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 734
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 773
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 807
+      "swift_line" : 778
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 812
+      "swift_line" : 817
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 851
+      "swift_line" : 822
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 856
+      "swift_line" : 861
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 895
+      "swift_line" : 866
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 900
+      "swift_line" : 905
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 939
+      "swift_line" : 910
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 944
+      "swift_line" : 949
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 954
     }
   ],
   "tools_used" : [
@@ -547,6 +550,19 @@
         {
           "kind" : "Input",
           "name" : "input"
+        }
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "`skills\/manifest.json` lists every skill directory\n`skills\/RESOLVER.md` references every skill in the manifest\n`openclaw.plugin.json` `skills[]` round-trips with both\nNo MECE violations (duplicate triggers across skills)\nEvery skill directory has a `SKILL.md` file\nEvery `SKILL.md` has valid YAML frontmatter (`name`, `description`)\nEvery `SKILL.md` has required sections per\n`test\/skills-conformance.test.ts`\nWalk skills directory. List all subdirs containing `SKILL.md`\nParse YAML, check required fields\nCheck for the required headings\nCheck manifest. Every skill dir must be in `manifest.json`\nEvery manifest skill must have a RESOLVER row\nRESOLVER trigger ↔ frontmatter triggers\nReport results\nuse judgment to follow the When to use guidance:\nDaily test cron fires\nUser asks \"run the tests\" \/ \"how are the tests\" \/ \"what's broken\"\nAfter significant code changes (often via cross-modal-review)\nAfter container restart (bootstrap)\nWhen something seems off and you want to verify system health\nuse judgment to follow the State (regression history) guidance:\nTrack results in `~\/.gbrain\/test-state.json` for trend tracking:\ncodeblock:json:ewogICJsYXN0UnVuIjogIjIwMjYtMDQtMTZUMTM6Mzc6MDBaIiwKICAidW5pdCI6IHsgInBhc3NlZCI6IDEyNjIsICJmYWlsZWQiOiAzMSwgInNraXBwZWQiOiA4IH0sCiAgImV2YWxzIjogeyAicGFzc2VkIjogMTcsICJmYWlsZWQiOiAwIH0sCiAgInN5c3RlbSI6IHsgImRvY3RvciI6ICJvayIsICJnYnJhaW4iOiAiMC4yNS4xIiB9LAogICJmYWlsdXJlSGlzdG9yeSI6IFsKICAgIHsgInRlc3QiOiAiPG5hbWU+IiwgInNpbmNlIjogIjIwMjYtMDQtMTQiLCAiY2xhc3NpZmljYXRpb24iOiAic3RhbGUiIH0KICBdCn0=\nThis enables:\nTrend tracking (are we getting better or worse?)\nFlake detection (same test fails intermittently)\nRegression velocity (how fast do we break things after changes?)\nuse judgment to follow the Anti-Patterns guidance:\n❌ Skipping conformance validation after adding a new skill\n❌ Adding skills to `manifest.json` without adding to RESOLVER.md\n❌ Treating every red test as a regression. Classify first; many are\nstale or flaky\n❌ Auto-un-skipping a test without understanding why it was skipped\n❌ Auto-\"fixing\" a security test failure\n❌ Reporting \"all clear\" without actually running system health checks\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test",
+          "line" : 50,
+          "scoped_tools" : [
+            "page.list",
+            "page.search",
+            "shell.run"
+          ],
+          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "testing a input",

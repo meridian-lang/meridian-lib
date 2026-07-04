@@ -12,12 +12,12 @@ triggers:
 - "restock short products"
 - "inventory below reorder point"
 
-## Workflow (( role: procedure ))
+## Workflow
 fetch short products.
 Check: any short products.
 for each product:
   create a purchase order for the product.
 Publish: "replenishment purchase orders raised".
 
-## Guarantees (( role: invariants ))
+## Guarantees
 make sure all products have a sku.

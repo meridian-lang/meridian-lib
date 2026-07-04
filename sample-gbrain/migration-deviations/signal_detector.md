@@ -2,9 +2,9 @@
 
 - Original: `signal-detector/SKILL.md`
 - Ported: `signal_detector.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 88%
-- Lines: 113 -> 113 (+13 / -13)
+- Tier: 2 (light edits)
+- Similarity: 81%
+- Lines: 113 -> 128 (+30 / -15)
 
 ## Frontmatter
 - Added: (none)
@@ -12,6 +12,7 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - preamble-blockquoted
 - command-hole-rewritten
 - inert-section-added
@@ -19,38 +20,26 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L13 `Contract`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L32 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L34 `Phase 1: Idea/Observation Detection (PRIMARY)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L46 `Phase 2: Entity Detection (SECONDARY)`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L61 `Phase 3: Signal Logging`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L69 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L74 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L82 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L83 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L97 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
-- Sections: 8/8 inert (100% inert ratio)
-- Operational inert: 4
+- Sections inert total: 2/8 (25% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: operational-procedure=4, reference-documentation=2, template=1, tools-metadata=1
-- Judgment: 0 blocks, 0 lines
+- Inert categories: template=1, tools-metadata=1
+- Judgment: 6 blocks, 0 lines
 
 ### Inert section details
-- L13 `Contract`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L32 `Phases`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L34 `Phase 1: Idea/Observation Detection (PRIMARY)`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L46 `Phase 2: Entity Detection (SECONDARY)`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L61 `Phase 3: Signal Logging`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L69 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L74 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L82 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L83 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L97 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/signal-detector/SKILL.md
 +++ skills/signal_detector.meri
-@@ -24,16 +24,16 @@
+@@ -24,16 +24,17 @@
  
  # Signal Detector — Ambient Brain Capture
  
@@ -70,44 +59,65 @@ These sections were made non-executable in the port and should be reviewed as mi
 +> intellectual capital. Entities are bookkeeping. Both compound over time.
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
++use judgment to follow the Contract guidance:
  
  This skill guarantees:
  - Fires on every message (no exceptions unless purely operational)
-@@ -52,9 +52,9 @@
- 3. Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`
+@@ -53,8 +54,10 @@
  4. An unlinked mention is a broken brain.
  
--## Phases
-+## Phases (( inert, role: procedure ))
+ ## Phases
++use judgment to follow the Phases guidance:
  
--### Phase 1: Idea/Observation Detection (PRIMARY)
-+### Phase 1: Idea/Observation Detection (PRIMARY) (( inert, role: procedure ))
+ ### Phase 1: Idea/Observation Detection (PRIMARY)
++use judgment to follow the Phase 1: Idea/Observation Detection (PRIMARY) guidance:
  
  When the user expresses a novel thought, observation, thesis, or framework:
  - If it's the user's **original thinking** (they generated it) → create/update `originals/{slug}`
-@@ -66,7 +66,7 @@
- **Cross-linking (MANDATORY):** Every original MUST link to related people, companies,
+@@ -67,34 +70,46 @@
  meetings, and concepts. An original without cross-links is a dead original.
  
--### Phase 2: Entity Detection (SECONDARY)
-+### Phase 2: Entity Detection (SECONDARY) (( inert, role: procedure ))
+ ### Phase 2: Entity Detection (SECONDARY)
++use judgment to follow the Phase 2: Entity Detection (SECONDARY) guidance:
  
  1. Extract entity mentions (people, companies, media titles)
- 2. For each entity:
-@@ -81,7 +81,7 @@
+-2. For each entity:
+-   - `gbrain search "name"` — does a page exist?
+    - If NO page → check notability. If notable, create page with enrichment.
+    - If page exists but THIN → trigger enrich
+    - If page exists and RICH → no action
+-3. For new FACTS with specific dates → call `gbrain timeline-add <slug> <date> "<summary>"`
+-
+ **Auto-link (v0.10.1):** When you write/update an originals or ideas page that
+ references a person or company, the auto-link post-hook on `put_page`
  automatically creates the link from the new page to that entity. You don't
  need to call `gbrain link` manually. Timeline entries still need explicit calls.
  
--### Phase 3: Signal Logging
-+### Phase 3: Signal Logging (( inert, role: procedure ))
++
++#### Phase 2: Entity Detection (SECONDARY) — steps
++
++2. For each entity:
++   - `gbrain search "name"` — does a page exist?
++
++#### Phase 2: Entity Detection (SECONDARY) — steps 2
++
++3. For new FACTS with specific dates → call `gbrain timeline-add <slug> <date> "<summary>"`
++
+ ### Phase 3: Signal Logging
++use judgment to follow the Phase 3: Signal Logging guidance:
  
  Always log a one-line summary:
++This makes the ambient capture loop debuggable.
++
++
++#### Phase 3: Signal Logging — steps
++
  - `Signals: 0 ideas, 0 entities, 0 facts (skipped: operational)`
-@@ -89,12 +89,12 @@
+ - `Signals: 1 idea (captured → originals/x), 2 entities (enriched → people/y, companies/z)`
  
- This makes the ambient capture loop debuggable.
- 
+-This makes the ambient capture loop debuggable.
+-
 -## Output Format
 +## Output Format (( inert, role: template ))
  
@@ -115,7 +125,8 @@ These sections were made non-executable in the port and should be reviewed as mi
  The output is brain pages created/updated and the signal log line.
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++use judgment to follow the Anti-Patterns guidance:
  
  - Blocking the main response to wait for signal detection to complete
  - Paraphrasing the user's original thinking instead of capturing exact phrasing

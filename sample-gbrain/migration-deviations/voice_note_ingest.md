@@ -2,9 +2,9 @@
 
 - Original: `voice-note-ingest/SKILL.md`
 - Ported: `voice_note_ingest.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 92%
-- Lines: 201 -> 201 (+16 / -16)
+- Tier: 2 (light edits)
+- Similarity: 82%
+- Lines: 201 -> 232 (+55 / -24)
 
 ## Frontmatter
 - Added: (none)
@@ -12,65 +12,57 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - inert-section-added
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L10 `Iron Law`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L20 `When to invoke`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
-- L27 `The pipeline`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L45 `Decision tree (where the content goes)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L78 `Brain page format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L124 `Citation format`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L136 `Naming convention`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L142 `Bulk vs. single`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L147 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L157 `Related skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L165 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
-- L176 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L32 `The pipeline`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L101 `Brain page format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L147 `Citation format`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L207 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections: 12/12 inert (100% inert ratio)
-- Operational inert: 2
+- Sections inert total: 6/11 (55% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-procedure=1, reference-documentation=8, template=2
-- Judgment: 0 blocks, 0 lines
+- Inert categories: reference-documentation=4, template=2
+- Judgment: 4 blocks, 0 lines
 
 ### Inert section details
-- L10 `Iron Law`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L20 `When to invoke`: operational-procedure — Marked or derived as applicability, but inert suppresses execution.
-- L27 `The pipeline`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L45 `Decision tree (where the content goes)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L78 `Brain page format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L124 `Citation format`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L136 `Naming convention`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L142 `Bulk vs. single`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L147 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L157 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L165 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
-- L176 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L32 `The pipeline`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L50 `Decision tree (where the content goes)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L101 `Brain page format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L147 `Citation format`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L165 `Bulk vs. single`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L207 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/voice-note-ingest/SKILL.md
 +++ skills/voice_note_ingest.meri
-@@ -29,7 +29,7 @@
- > **Convention:** see [_brain-filing-rules.md](../_brain-filing-rules.md) for
+@@ -30,23 +30,28 @@
  > the filing decision protocol.
  
--## Iron Law
-+## Iron Law (( inert ))
+ ## Iron Law
++use judgment to follow the Iron Law guidance:
  
  The user's **exact words** are the insight. Never paraphrase. Never clean
  up. The vivid, unpolished, stream-of-consciousness phrasing captures
-@@ -39,14 +39,14 @@
+ something that cleaned-up prose does not. Preserve it in block quotes.
+ The Analysis section can interpret; the transcript section is sacred.
+ 
++
++### Iron Law — steps
++
  - ✅ `"The ambition-to-lifespan ratio has never been more fucked"`
  - ❌ `User noted the tension between ambition and mortality`
  
 -## When to invoke
-+## When to invoke (( inert, role: applicability ))
++## When to invoke (( role: procedure ))
++use judgment to follow the When to invoke guidance:
  
  The user sends an audio or voice message via any channel (Telegram, voice
  memo upload, openclaw audio attachment). The host agent typically provides
@@ -82,7 +74,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```
  1. STORE       → Upload original audio to gbrain storage backend
-@@ -64,7 +64,7 @@
+@@ -64,38 +69,56 @@
                   (Iron Law per conventions/quality.md).
  ```
  
@@ -91,43 +83,71 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Apply in order. First match wins. If multiple categories apply, file to
  the primary directory and cross-link to the others.
-@@ -97,7 +97,7 @@
+ 
+ 1. **Original idea, observation, or thesis** — the user is expressing a
+    novel thought, framework, or connection THEY generated.
+-   → `originals/<slug>.md`. Use the user's vivid language for the slug.
+-
+ 2. **About a world concept they encountered** — a framework or model
+    someone else created that the user is referencing.
+-   → `concepts/<slug>.md`.
+-
+ 3. **About a specific person** — new information, opinion, or observation
+    about someone.
+-   → Update `people/<person>.md` timeline.
+-
+ 4. **About a specific company** — new info about a company.
+-   → Update `companies/<company>.md` timeline.
+-
+ 5. **A product or business idea** — something that could be built.
+-   → `ideas/<slug>.md`.
+-
+ 6. **A personal reflection** — therapy-adjacent, emotional, identity.
+-   → Append to appropriate `personal/<slug>.md`.
+-
+-7. **None of the above / random thought / doesn't fit cleanly** —
+-   → `voice-notes/YYYY-MM-DD-<slug>.md` (catch-all).
+-
+ **Multiple categories?** Create the primary page, then cross-link to all
  others. If the voice note covers a person AND a novel idea, create the
  originals/ page AND update the person's timeline.
++
++
++### Decision tree (where the content goes) — steps
++
++   → `originals/<slug>.md`. Use the user's vivid language for the slug.
++
++
++### Decision tree (where the content goes) — steps 2
++
++   → `concepts/<slug>.md`.
++
++
++### Decision tree (where the content goes) — steps 3
++
++   → Update `people/<person>.md` timeline.
++
++
++### Decision tree (where the content goes) — steps 4
++
++   → Update `companies/<company>.md` timeline.
++
++
++### Decision tree (where the content goes) — steps 5
++
++   → `ideas/<slug>.md`.
++
++
++### Decision tree (where the content goes) — steps 6
++
++   → Append to appropriate `personal/<slug>.md`.
++
++7. None of the above / random thought / doesn't fit cleanly —
++   → `voice-notes/YYYY-MM-DD-<slug>.md` (catch-all).
  
--## Brain page format
-+## Brain page format (( inert, role: template ))
+ ## Brain page format
  
- For ALL voice-note-derived pages, include this skeleton:
- 
-@@ -120,30 +120,30 @@
- 
- > Executive summary of what was said and why it matters.
- 
--## User's Words
-+## User's Words (( inert ))
- 
- > "Exact transcript, verbatim, preserving every word, hesitation, and verbal
- > tic. This is the primary source material. Do not edit."
- 
- 🔊 [Audio]([gbrain storage URL or relative path])
- 
--## Analysis
-+## Analysis (( inert ))
- 
- [What this means, why it matters, connections to other thinking. The
- analysis is the agent's interpretation; the transcript above is sacred.]
- 
--## See Also
-+## See Also (( inert ))
- 
- - [Related brain pages with relative links]
- 
- ---
- 
--## Timeline
-+## Timeline (( inert ))
- 
+@@ -143,7 +166,7 @@
  - **YYYY-MM-DD** | voice note from <channel> — [Brief description]
  ```
  
@@ -136,14 +156,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```
  [Source: voice note, <channel>, YYYY-MM-DD]
-@@ -155,18 +155,18 @@
- [Source: voice note, <channel>, YYYY-MM-DD HH:MM PT]
- ```
- 
--## Naming convention
-+## Naming convention (( inert ))
- 
- - Audio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,
+@@ -161,12 +184,16 @@
    `2026-04-13-rick-rubin-creative-philosophy.ogg`)
  - Brain pages: match the slug of the destination directory.
  
@@ -151,32 +164,40 @@ These sections were made non-executable in the port and should be reviewed as mi
 +## Bulk vs. single (( inert ))
  
  This skill handles ONE voice note at a time. Each is its own ingest cycle.
++
++### Bulk vs. single — steps
++
  No batching.
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++use judgment to follow the Anti-Patterns guidance:
  
  - ❌ **Paraphrasing the transcript.** The exact words are the signal.
  - ❌ **Cleaning up hesitations or filler words** ("um", "like", "you
-@@ -176,7 +176,7 @@
+@@ -176,7 +203,10 @@
  - ❌ **Skipping the audio storage step.** Always upload the original; the
    brain page has a `🔊 [Audio]` link back to it.
  
 -## Related skills
-+## Related skills (( inert ))
++## Related skills (( inert, role: procedure ))
++
++
++### Related skills — steps
  
  - `skills/signal-detector/SKILL.md` — same exact-phrasing pattern for
    text-channel idea capture
-@@ -184,7 +184,7 @@
+@@ -184,7 +214,8 @@
  - `skills/conventions/quality.md` — citation + back-link rules
  
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
++use judgment to follow the Contract guidance:
  
  This skill guarantees:
  
-@@ -195,7 +195,7 @@
+@@ -195,7 +226,7 @@
  
  The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  

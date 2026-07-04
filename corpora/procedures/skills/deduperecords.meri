@@ -8,17 +8,26 @@ triggers:
 
 # Dedupe Records
 
-## Use this when
+## Use this when (( role: procedure ))
+use judgment to follow the Use this when guidance:
 - "dedupe records"
 - "duplicate rows detected"
 
-## Procedure (( role: procedure ))
-fetch duplicate records.
+## Procedure
+use judgment to follow the Procedure guidance:
 Check: any duplicate records.
+
+### Procedure — steps
+
+fetch duplicate records.
+
+### Procedure — steps 2
+
 for each record whose status is "duplicate":
   mark the record canonical.
   purge the record.
 Emit: "duplicate record pass complete".
 
-## Postconditions (( role: invariants ))
+## Postconditions (( role: procedure ))
+use judgment to follow the Postconditions guidance:
 make sure no records whose status is "duplicate".

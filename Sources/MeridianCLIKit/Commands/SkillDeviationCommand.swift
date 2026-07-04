@@ -235,7 +235,7 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         out.append("- Tier 2 (light edits): \(tier2)")
         out.append("- Tier 3 (structural rewrite): \(tier3)")
         out.append("- Average similarity: \(percent(avg))")
-        out.append("- Sections: \(inertSections)/\(totalSections) inert (avg inert ratio \(percent(avgInertRatio)))")
+        out.append("- Sections inert total: \(inertSections)/\(totalSections) (avg total-inert ratio \(percent(avgInertRatio)); includes intentional docs/templates/tools metadata)")
         out.append("- Inert deviations: \(inertDeviations)")
         out.append("- Operational inert: \(operationalInertSections)")
         out.append("- Unclassified inert: \(unclassifiedInertSections)")

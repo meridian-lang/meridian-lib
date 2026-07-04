@@ -17,7 +17,8 @@ mutating: true
 
 # Skill Creator
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 - New skill follows conformance standard (frontmatter + required sections)
@@ -26,9 +27,9 @@ This skill guarantees:
 - RESOLVER.md updated with routing entry
 - Skill passes conformance tests (`bun test test/skills-conformance.test.ts`)
 
-## Phases (( inert, role: procedure ))
+## Phases
+use judgment to follow the Phases guidance:
 
-1. **Identify the gap.** What capability is missing? What user intent has no skill?
 2. **MECE check.** Review `skills/manifest.json` and `skills/RESOLVER.md`. Does any existing skill already cover this? If so, extend it instead of creating a new one.
 3. **Create SKILL.md.** Use this template:
 
@@ -49,31 +50,39 @@ mutating: {true|false}
 
 # {Skill Title}
 
-## Contract (( inert, role: invariants ))
+## Contract
 {What this skill guarantees — 3-5 bullet points}
 
-## Phases (( inert, role: procedure ))
+## Phases
 {Numbered workflow steps}
 
-## Output Format (( inert, role: template ))
+## Output Format
 {What good output looks like}
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns
 {What NOT to do — 3-5 items}
 
-## Tools Used (( inert, role: tools ))
+## Tools Used
 {GBrain operations used, with descriptions}
 ```
 
-4. **Add to manifest.** Update `skills/manifest.json` with name, path, description.
-5. **Add to resolver.** Update `skills/RESOLVER.md` with routing entry in the appropriate category.
-6. **Verify.** Run `bun test test/skills-conformance.test.ts` to confirm the new skill passes.
+
+### Phases — steps
+
+1. What capability is missing? What user intent has no skill?
+
+### Phases — steps 2
+
+4. Add to manifest. Update `skills/manifest.json` with name, path, description.
+5. Add to resolver. Update `skills/RESOLVER.md` with routing entry in the appropriate category.
+6. Verify. Run `bun test test/skills-conformance.test.ts` to confirm the new skill passes.
 
 ## Output Format (( inert, role: template ))
 
 New `skills/{name}/SKILL.md` file + updated manifest + updated resolver.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - Creating a skill that overlaps with an existing one (violates MECE)
 - Skipping the MECE check against existing skills

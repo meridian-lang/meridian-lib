@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -599,6 +599,16 @@ public struct TestingInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "TestingInput", parameters: [:])
 
+        // L50
+        let __meridianProseResults_L50 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.list", "page.search", "shell.run"],
+            guidance: "`skills/manifest.json` lists every skill directory\n`skills/RESOLVER.md` references every skill in the manifest\n`openclaw.plugin.json` `skills[]` round-trips with both\nNo MECE violations (duplicate triggers across skills)\nEvery skill directory has a `SKILL.md` file\nEvery `SKILL.md` has valid YAML frontmatter (`name`, `description`)\nEvery `SKILL.md` has required sections per\n`test/skills-conformance.test.ts`\nWalk skills directory. List all subdirs containing `SKILL.md`\nParse YAML, check required fields\nCheck for the required headings\nCheck manifest. Every skill dir must be in `manifest.json`\nEvery manifest skill must have a RESOLVER row\nRESOLVER trigger ↔ frontmatter triggers\nReport results\nuse judgment to follow the When to use guidance:\nDaily test cron fires\nUser asks \"run the tests\" / \"how are the tests\" / \"what's broken\"\nAfter significant code changes (often via cross-modal-review)\nAfter container restart (bootstrap)\nWhen something seems off and you want to verify system health\nuse judgment to follow the State (regression history) guidance:\nTrack results in `~/.gbrain/test-state.json` for trend tracking:\ncodeblock:json:ewogICJsYXN0UnVuIjogIjIwMjYtMDQtMTZUMTM6Mzc6MDBaIiwKICAidW5pdCI6IHsgInBhc3NlZCI6IDEyNjIsICJmYWlsZWQiOiAzMSwgInNraXBwZWQiOiA4IH0sCiAgImV2YWxzIjogeyAicGFzc2VkIjogMTcsICJmYWlsZWQiOiAwIH0sCiAgInN5c3RlbSI6IHsgImRvY3RvciI6ICJvayIsICJnYnJhaW4iOiAiMC4yNS4xIiB9LAogICJmYWlsdXJlSGlzdG9yeSI6IFsKICAgIHsgInRlc3QiOiAiPG5hbWU+IiwgInNpbmNlIjogIjIwMjYtMDQtMTQiLCAiY2xhc3NpZmljYXRpb24iOiAic3RhbGUiIH0KICBdCn0=\nThis enables:\nTrend tracking (are we getting better or worse?)\nFlake detection (same test fails intermittently)\nRegression velocity (how fast do we break things after changes?)\nuse judgment to follow the Anti-Patterns guidance:\n❌ Skipping conformance validation after adding a new skill\n❌ Adding skills to `manifest.json` without adding to RESOLVER.md\n❌ Treating every red test as a regression. Classify first; many are\nstale or flaky\n❌ Auto-un-skipping a test without understanding why it was skipped\n❌ Auto-\"fixing\" a security test failure\n❌ Reporting \"all clear\" without actually running system health checks\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        )
+        for (__key, __value) in __meridianProseResults_L50 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

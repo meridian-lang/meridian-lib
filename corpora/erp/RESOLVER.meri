@@ -1,14 +1,13 @@
----
-name: erp resolver
-description: Route a synthetic ERP operator request to a skill id.
-parameters: trigger phrase
-vocabulary: erp.merconfig
-rulebook: erp.merrules
----
-
 # ERP Resolver
 
-## Tables
+> Routes an ERP operator request to the synthetic ERP skill that owns it.
+
+## Dispatch table (( inert ))
+
+
+### Dispatch table — steps
+
+!!! table (( ai-discretion ))
 | trigger phrase | skill |
 | --- | --- |
 | process open orders | placeorder |
@@ -21,6 +20,7 @@ rulebook: erp.merrules
 | month-end close | monthendclose |
 
 ## Workflow
-bind selected skill = the skill corresponding to the trigger phrase trigger phrase in the table.
-emit erp.dispatch with skill = selected skill.
-complete.
+use judgment to follow the Workflow guidance:
+
+Look up the skill corresponding to the trigger phrase and emit the selected
+skill id.

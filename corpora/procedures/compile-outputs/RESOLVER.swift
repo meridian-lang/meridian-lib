@@ -269,26 +269,15 @@ public struct TriggerPhrase: TriggerPhraseKind {
 }
 
 
-public struct ProceduresResolverTriggerPhrase: MeridianWorkflow {
+public struct Entry: MeridianWorkflow {
     public let runtime: Runtime
-    public let triggerPhrase: TriggerPhrase
 
-    public static let skillMetadata: [String: String] = [
-        "name": "procedures resolver",
-        "description": "Route a synthetic DBA request to a procedure skill id.",
-        "parameters": "trigger phrase",
-        "vocabulary": "procedures.merconfig",
-        "rulebook": "procedures.merrules",
-    ]
-
-    public init(runtime: Runtime, triggerPhrase: TriggerPhrase) {
+    public init(runtime: Runtime) {
         self.runtime = runtime
-        self.triggerPhrase = triggerPhrase
     }
 
     public func run() async throws -> WorkflowResult {
         var state = State()
-        state.bind("triggerPhrase", triggerPhrase)
         let __meridianResumeContext = await runtime.consumeResumeContext()
         if let __meridianResumeContext {
             state.restore(from: __meridianResumeContext.restoredState)
@@ -299,23 +288,28 @@ public struct ProceduresResolverTriggerPhrase: MeridianWorkflow {
             if target == label { __meridianResumeTarget = nil }
             return false
         }
-        await runtime.workflowStarted(workflowName: "ProceduresResolverTriggerPhrase", parameters: [:])
+        await runtime.workflowStarted(workflowName: "Entry", parameters: [:])
 
-        // L12
-        state.bind("table", Value.list([.record(["triggerPhrase": .string("reconcile ledger"), "skill": .string("reconcileledger")]), .record(["triggerPhrase": .string("aging report"), "skill": .string("agingreport")]), .record(["triggerPhrase": .string("dedupe records"), "skill": .string("deduperecords")]), .record(["triggerPhrase": .string("cascade close"), "skill": .string("cascadeclose")]), .record(["triggerPhrase": .string("rebuild lagging indexes"), "skill": .string("rebuildindex")]), .record(["triggerPhrase": .string("validate constraints"), "skill": .string("validateconstraints")]), .record(["triggerPhrase": .string("purge expired records"), "skill": .string("purgeexpired")]), .record(["triggerPhrase": .string("settle ready batches"), "skill": .string("settlebatch")])]))
-        // L24
-        state.bind("selectedSkill", try ({ () throws -> Value? in guard let __rows = state.get("table")?.asList else { throw ToolError.implementation(code: "table.lookup_miss", message: "table table is not bound", cause: nil) }; for __row in __rows { if MeridianComparison.eq(__row.member("triggerPhraseTrigger"), state.get("phrase")) { return __row.member("skill") } }; throw ToolError.implementation(code: "table.lookup_miss", message: "no row in table where triggerPhraseTrigger matches", cause: nil) })())
-        if __meridianShouldRun("progress:0.2:L25:C0") {
-            // L25
-            try await runtime.emit(
-                event: "procedure.dispatch",
-                payload: [
-                    "skill": state.get("selectedSkill") ?? .null,
-                ]
-            )
-            try await runtime.checkpoint(label: "progress:0.2:L25:C0", state: state.snapshot())
+        // L11
+        let __meridianProseResults_L11 = try await runtime.executeProsePlan(
+            prose: "Decide which case below applies and carry out its action:\n- when trigger phrase is reconcile ledger, reconcileledger\n- when trigger phrase is aging report, agingreport\n- when trigger phrase is dedupe records, deduperecords\n- when trigger phrase is cascade close, cascadeclose\n- when trigger phrase is rebuild lagging indexes, rebuildindex\n- when trigger phrase is validate constraints, validateconstraints\n- when trigger phrase is purge expired records, purgeexpired\n- when trigger phrase is settle ready batches, settlebatch",
+            snapshot: state.snapshot(),
+            scopedTools: ["audit_row.list", "batch.list", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "record.list", "record.mark_canonical", "record.purge"]
+        )
+        for (__key, __value) in __meridianProseResults_L11 {
+            state.bind(__key, __value)
         }
-        // L26
+        // L23
+        let __meridianProseResults_L23 = try await runtime.executeProsePlan(
+            prose: "follow the Workflow guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["audit_row.list", "batch.list", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "record.list", "record.mark_canonical", "record.purge"],
+            guidance: "Look up the skill corresponding to the trigger phrase and emit the selected\nskill id"
+        )
+        for (__key, __value) in __meridianProseResults_L23 {
+            state.bind(__key, __value)
+        }
+
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
     }

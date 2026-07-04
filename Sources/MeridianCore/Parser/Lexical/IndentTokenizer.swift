@@ -39,6 +39,35 @@ func decodeShellCommand(_ words: String) -> String? {
     return decodeBase64Body(String(words.dropFirst(shellCommandSentinelPrefix.count)))
 }
 
+// MARK: - Tool fence sentinel
+
+/// Private-use-area prefix that marks a `PhraseInvocationAST.words` value as a
+/// verbatim fenced code block routed to a **configured, non-shell** tool
+/// (`=== language ===` `Fence tool mapping:` — e.g. ```` ```python ```` →
+/// `interpreter.run`). Lowers to a plain `invoke <tool> with code = "…"`: the
+/// whole fence body as one literal string argument, deliberately without the
+/// shell command's `{…}` command-hole interpolation (that richness is
+/// specific to `shell.run`; this is "plain invoke," per the general-abilities
+/// plan item). The body is base64-encoded for the same reason the shell
+/// sentinel is: arbitrary code text — quotes, backslashes, newlines — must
+/// not round-trip through the expression parser's string-literal syntax.
+/// Format: `\u{E000}toolfence:<toolID>:<base64-body>`. Decoded in
+/// `ASTToIR.lowerPhraseInvocation`.
+let toolFenceSentinelPrefix = "\u{E000}toolfence:"
+
+func encodeToolFenceCommand(toolID: String, body: String) -> String {
+    toolFenceSentinelPrefix + toolID + ":" + Data(body.utf8).base64EncodedString()
+}
+
+func decodeToolFenceCommand(_ words: String) -> (toolID: String, body: String)? {
+    guard words.hasPrefix(toolFenceSentinelPrefix) else { return nil }
+    let rest = String(words.dropFirst(toolFenceSentinelPrefix.count))
+    guard let colon = rest.firstIndex(of: ":") else { return nil }
+    let toolID = String(rest[rest.startIndex ..< colon])
+    guard let body = decodeBase64Body(String(rest[rest.index(after: colon)...])) else { return nil }
+    return (toolID, body)
+}
+
 // MARK: - Table sentinel
 
 /// Private-use-area prefix that marks a synthetic SourceLine produced by

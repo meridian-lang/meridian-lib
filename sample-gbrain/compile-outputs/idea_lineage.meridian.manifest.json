@@ -110,7 +110,7 @@
         "text" : "What this is not"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 66,
         "text" : "Contract"
@@ -118,67 +118,67 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 79,
+        "line" : 80,
         "text" : "Phases"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 81,
+        "line" : 83,
         "text" : "Phase 1: Resolve the idea target"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 94,
+        "line" : 97,
         "text" : "Phase 2: Gather evidence"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 113,
+        "line" : 117,
         "text" : "Phase 3: Classify lineage moments"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 134,
+        "line" : 139,
         "text" : "Phase 4: Synthesize the lineage"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 140,
+        "line" : 146,
         "text" : "Phase 5: Suggest optional next action"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 152,
+        "line" : 159,
         "text" : "Output Format"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 182,
+        "line" : 189,
         "text" : "Quality Rules"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 195,
+        "line" : 203,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 206,
+        "line" : 215,
         "text" : "Related Skills and Operations"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 214,
+        "line" : 223,
         "text" : "Tools Used"
       },
       {
@@ -202,19 +202,19 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 68,
+        "line" : 69,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 115,
+        "line" : 120,
         "text" : "Classify evidence into these buckets"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 154,
+        "line" : 161,
         "text" : "Use this shape for normal answers"
       }
     ],
@@ -255,10 +255,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 66,
         "lines" : [
+          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "A single-idea scope is preserved. Broad corpus or \"map my concepts\" prompts",
           "route to `skills\/concept-synthesis\/SKILL.md` instead",
@@ -269,22 +270,23 @@
           "temporal evolution",
           "The default mode is read-only and does not mutate brain pages"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phases",
-        "line" : 79,
+        "line" : 80,
         "lines" : [
-
+          "use judgment to follow the Phases guidance:"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 1: Resolve the idea target",
-        "line" : 81,
+        "line" : 83,
         "lines" : [
+          "use judgment to follow the Phase 1: Resolve the idea target guidance:",
           "Restate the idea in one sentence",
           "Search for exact phrase variants with `search`",
           "Run one semantic `query` for the natural-language version",
@@ -298,10 +300,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 2: Gather evidence",
-        "line" : 94,
+        "line" : 97,
         "lines" : [
+          "use judgment to follow the Phase 2: Gather evidence guidance:",
           "Collect enough evidence to support or reject each output bucket:",
           "Search chunks with dates and source slugs",
           "Full pages via `get_page` for the top relevant concept, note, transcript,",
@@ -320,10 +323,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 3: Classify lineage moments",
-        "line" : 113,
+        "line" : 117,
         "lines" : [
+          "use judgment to follow the Phase 3: Classify lineage moments guidance:",
           "Classify evidence into these buckets:",
           "**First mention** - earliest dated evidence where the idea appears",
           "**Best articulation** - the clearest or most complete expression, not",
@@ -344,10 +348,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 4: Synthesize the lineage",
-        "line" : 134,
+        "line" : 139,
         "lines" : [
+          "use judgment to follow the Phase 4: Synthesize the lineage guidance:",
           "Write the answer in the output format below. Keep the synthesis proportional to",
           "the evidence. Do not overfit a smooth evolution if the evidence is sparse,",
           "messy, or contradictory"
@@ -355,10 +360,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 5: Suggest optional next action",
-        "line" : 140,
+        "line" : 146,
         "lines" : [
+          "use judgment to follow the Phase 5: Suggest optional next action guidance:",
           "If useful, offer one concrete follow-up:",
           "Save the lineage as a brain page",
           "Run broad `concept-synthesis` if the user actually wants the whole concept",
@@ -373,20 +379,21 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 152,
+        "line" : 159,
         "lines" : [
           "Use this shape for normal answers:",
-          "codeblock:markdown:IyMgQ3VycmVudCBMaXZlIFZlcnNpb24gKCggaW5lcnQgKSkKWzEtMyBzZW50ZW5jZXMuIEluY2x1ZGUgY29uZmlkZW5jZTogaGlnaCAvIG1lZGl1bSAvIGxvdy5dCgojIyBMaW5lYWdlCi0gRmlyc3QgbWVudGlvbjogW2RhdGVdIC0gW2NsYWltXSAoW3NvdXJjZS1pZDpzbHVnXSwgInNob3J0IHF1b3RlIikKLSBCZXN0IGFydGljdWxhdGlvbjogW2RhdGVdIC0gW2NsYWltXSAoW3NvdXJjZS1pZDpzbHVnXSwgInNob3J0IHF1b3RlIikKLSBUdXJuaW5nIHBvaW50OiBbZGF0ZV0gLSBbd2hhdCBjaGFuZ2VkXSAoW3NvdXJjZS1pZDpzbHVnXSkKCiMjIFJldmVyc2FscyBhbmQgQ29udHJhZGljdGlvbnMKLSBSZXZlcnNhbDogW3doYXQgY2hhbmdlZCwgd2l0aCBiZWZvcmUvYWZ0ZXIgZXZpZGVuY2VdCi0gQ29udHJhZGljdGlvbjogW3doYXQgY29uZmxpY3RzLCBvciAiTm8gY2xlYXIgZXZpZGVuY2UgZm91bmQiXQoKIyMgQWJhbmRvbmVkIEJyYW5jaGVzCi0gW2JyYW5jaF0gLSBbd2h5IGl0IGFwcGVhcnMgYWJhbmRvbmVkLCB3aXRoIGV2aWRlbmNlXQoKIyMgUmVsYXRlZCBDb25jZXB0cwotIFtjb25jZXB0IHNsdWcgb3IgdGl0bGVdIC0gW3JlbGF0aW9uc2hpcF0KCiMjIEV2aWRlbmNlIEdhcHMgKCggaW5lcnQgKSkKLSBbYnVja2V0IG9yIGNsYWltXSAtIFt3aGF0IHdhcyBjaGVja2VkIGFuZCB3aGF0IGlzIG1pc3Npbmdd",
+          "codeblock:markdown:IyMgQ3VycmVudCBMaXZlIFZlcnNpb24KWzEtMyBzZW50ZW5jZXMuIEluY2x1ZGUgY29uZmlkZW5jZTogaGlnaCAvIG1lZGl1bSAvIGxvdy5dCgojIyBMaW5lYWdlCi0gRmlyc3QgbWVudGlvbjogW2RhdGVdIC0gW2NsYWltXSAoW3NvdXJjZS1pZDpzbHVnXSwgInNob3J0IHF1b3RlIikKLSBCZXN0IGFydGljdWxhdGlvbjogW2RhdGVdIC0gW2NsYWltXSAoW3NvdXJjZS1pZDpzbHVnXSwgInNob3J0IHF1b3RlIikKLSBUdXJuaW5nIHBvaW50OiBbZGF0ZV0gLSBbd2hhdCBjaGFuZ2VkXSAoW3NvdXJjZS1pZDpzbHVnXSkKCiMjIFJldmVyc2FscyBhbmQgQ29udHJhZGljdGlvbnMKLSBSZXZlcnNhbDogW3doYXQgY2hhbmdlZCwgd2l0aCBiZWZvcmUvYWZ0ZXIgZXZpZGVuY2VdCi0gQ29udHJhZGljdGlvbjogW3doYXQgY29uZmxpY3RzLCBvciAiTm8gY2xlYXIgZXZpZGVuY2UgZm91bmQiXQoKIyMgQWJhbmRvbmVkIEJyYW5jaGVzCi0gW2JyYW5jaF0gLSBbd2h5IGl0IGFwcGVhcnMgYWJhbmRvbmVkLCB3aXRoIGV2aWRlbmNlXQoKIyMgUmVsYXRlZCBDb25jZXB0cwotIFtjb25jZXB0IHNsdWcgb3IgdGl0bGVdIC0gW3JlbGF0aW9uc2hpcF0KCiMjIEV2aWRlbmNlIEdhcHMKLSBbYnVja2V0IG9yIGNsYWltXSAtIFt3aGF0IHdhcyBjaGVja2VkIGFuZCB3aGF0IGlzIG1pc3Npbmdd",
           "For short answers, collapse sections, but keep the same distinctions. Always",
           "cite the source for each non-gap claim"
         ],
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Quality Rules",
-        "line" : 182,
+        "line" : 189,
         "lines" : [
+          "use judgment to follow the Quality Rules guidance:",
           "Quote exact text when naming first mention or best articulation",
           "Include dates when the source has dates. If no date is available, say",
           "\"undated\" rather than guessing",
@@ -398,13 +405,14 @@
           "undated page, or a fuzzy semantic match",
           "Preserve source ids in citations when search or page payloads include them"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 195,
+        "line" : 203,
         "lines" : [
+          "use judgment to follow the Anti-Patterns guidance:",
           "Running `concept-synthesis` for a single-idea question",
           "Presenting an entity's MRR, ARR, role, or status trajectory as conceptual",
           "lineage without explaining the distinction",
@@ -414,12 +422,12 @@
           "Using real names, companies, funds, or fork-specific examples in bundled",
           "fixtures or documentation"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Related Skills and Operations",
-        "line" : 206,
+        "line" : 215,
         "lines" : [
           "`skills\/concept-synthesis\/SKILL.md` - broad mutating concept-map synthesis",
           "`skills\/query\/SKILL.md` - general brain search and cited answers",
@@ -427,12 +435,12 @@
           "`find_trajectory` - structured typed-fact and event timelines for entities",
           "`find_contradictions` - cached suspected contradiction findings"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 214,
+        "line" : 223,
         "lines" : [
           "`search` - keyword search for exact phrase variants and dated mentions",
           "`query` - semantic search for conceptual matches",
@@ -485,68 +493,72 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 631
+      "meridian_line" : 67,
+      "swift_line" : 602
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 641
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 646
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 685
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 690
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 734
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 773
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 807
+      "swift_line" : 778
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 812
+      "swift_line" : 817
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 851
+      "swift_line" : 822
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 856
+      "swift_line" : 861
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 895
+      "swift_line" : 866
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 900
+      "swift_line" : 905
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 939
+      "swift_line" : 910
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 944
+      "swift_line" : 949
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 954
     }
   ],
   "tools_used" : [
@@ -559,6 +571,20 @@
         {
           "kind" : "Input",
           "name" : "input"
+        }
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "This skill guarantees:\nA single-idea scope is preserved. Broad corpus or \"map my concepts\" prompts\nroute to `skills\/concept-synthesis\/SKILL.md` instead\nEvery lineage claim cites existing brain evidence: page slug, source id when\npresent, date, and short quote or snippet\nMissing evidence is labeled as a gap, not patched with plausible narrative\nContradictions, reversals, and abandoned branches are separated from normal\ntemporal evolution\nThe default mode is read-only and does not mutate brain pages\nuse judgment to follow the Phases guidance:\nuse judgment to follow the Phase 1: Resolve the idea target guidance:\nRestate the idea in one sentence\nSearch for exact phrase variants with `search`\nRun one semantic `query` for the natural-language version\nCheck `list_pages` for concept pages when the idea has an obvious concept\nslug or title\nIf results point to an entity\/metric\/status trajectory rather than a concept,\nhand off to `find_trajectory` or the normal query\/think trajectory path\nIf multiple distinct ideas share the same phrase, ask the user to choose the\nintended one before synthesizing\nuse judgment to follow the Phase 2: Gather evidence guidance:\nCollect enough evidence to support or reject each output bucket:\nSearch chunks with dates and source slugs\nFull pages via `get_page` for the top relevant concept, note, transcript,\nmeeting, article, or project pages\nRelated concept pages through backlinks, `related` frontmatter, or repeated\nco-occurrence in search results\nTakes via `takes_search` when the idea appears as a belief, bet, hunch, or\nattributed claim\nCached contradiction findings via `find_contradictions` when the user asks\nabout inconsistency or the search results show obvious conflict\n`find_trajectory` only when the evidence is entity\/attribute-shaped, such as\na role\/status\/metric evolution that is relevant to the idea's story\nPrefer fewer high-quality sources over a long unsorted pile. Read full pages\nwhen snippets imply a lineage milestone\nuse judgment to follow the Phase 3: Classify lineage moments guidance:\nClassify evidence into these buckets:\n**First mention** - earliest dated evidence where the idea appears\n**Best articulation** - the clearest or most complete expression, not\nnecessarily the newest\n**Current live version** - the most recent high-authority version that still\nappears active\n**Reversals** - places where the user's stance changed direction\n**Contradictions** - claims that cannot both be true at the same time or\nunder the same assumptions. Distinguish these from legitimate temporal\nsupersession\n**Abandoned branches** - promising variants that appear and then disappear,\nlose support, or are explicitly rejected\n**Related concepts** - nearby ideas that shaped or inherited part of the\noriginal idea\nWhen a bucket has no evidence, write \"No clear evidence found\" with a brief note\nabout what was checked\nuse judgment to follow the Phase 4: Synthesize the lineage guidance:\nWrite the answer in the output format below. Keep the synthesis proportional to\nthe evidence. Do not overfit a smooth evolution if the evidence is sparse,\nmessy, or contradictory\nuse judgment to follow the Phase 5: Suggest optional next action guidance:\nIf useful, offer one concrete follow-up:\nSave the lineage as a brain page\nRun broad `concept-synthesis` if the user actually wants the whole concept\nmap refreshed\nRun or inspect trajectory data if the idea turned out to depend on structured\nentity facts\nRun a contradiction probe only when stale cached findings are insufficient\nand the user explicitly wants that heavier pass\nuse judgment to follow the Quality Rules guidance:\nQuote exact text when naming first mention or best articulation\nInclude dates when the source has dates. If no date is available, say\n\"undated\" rather than guessing\nTreat the user's direct statements as highest authority for the user's own\ncurrent view\nTreat holder-attributed takes as beliefs by that holder, not automatically\nas facts about the world or the brain owner\nMark confidence low when evidence comes from a single weak snippet, an\nundated page, or a fuzzy semantic match\nPreserve source ids in citations when search or page payloads include them\nuse judgment to follow the Anti-Patterns guidance:\nRunning `concept-synthesis` for a single-idea question\nPresenting an entity's MRR, ARR, role, or status trajectory as conceptual\nlineage without explaining the distinction\nTreating normal temporal evolution as contradiction\nInventing abandoned branches because the story would be more interesting\nSaving or rewriting brain pages without explicit user instruction\nUsing real names, companies, funds, or fork-specific examples in bundled\nfixtures or documentation\n`skills\/concept-synthesis\/SKILL.md` - broad mutating concept-map synthesis\n`skills\/query\/SKILL.md` - general brain search and cited answers\n`skills\/brain-ops\/SKILL.md` - source attribution and brain-first behavior\n`find_trajectory` - structured typed-fact and event timelines for entities\n`find_contradictions` - cached suspected contradiction findings",
+          "line" : 67,
+          "scoped_tools" : [
+            "page.get",
+            "page.list",
+            "page.search",
+            "shell.run"
+          ],
+          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "idea-lineage a input",

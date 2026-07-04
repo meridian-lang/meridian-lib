@@ -8,16 +8,18 @@ triggers:
 
 # Cancel Order
 
-## When this applies (( inert, role: applicability ))
+## When this applies (( role: procedure ))
+use judgment to follow the When this applies guidance:
 - "cancel blocked orders"
 - "void ERP orders"
 
-## Workflow (( role: procedure ))
+## Workflow
 fetch open orders.
 Check: any orders whose status is "blocked".
 for each order whose status is "blocked":
   cancel the order.
 Publish: "blocked orders cancelled".
 
-## Controls (( inert, role: invariants ))
+## Controls (( role: procedure ))
+use judgment to follow the Controls guidance:
 An already fulfilled order must not be cancelled by this runbook.

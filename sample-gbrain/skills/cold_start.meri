@@ -47,7 +47,8 @@ writes_to:
 > every future interaction smarter. This skill sequences the highest-leverage data
 > sources to get you from zero to useful in one session.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 - Every import phase is gated on user consent (ask-user pattern) before proceeding.
 - **Google/social API access goes through ClawVisor.** The agent never holds raw OAuth
@@ -61,7 +62,8 @@ writes_to:
   can resume.
 - Entity detection and cross-linking run on every import, not as a separate pass.
 
-## Prerequisites (( inert, role: applicability ))
+## Prerequisites (( role: procedure ))
+use judgment to follow the Prerequisites guidance:
 
 - GBrain installed and initialized (`gbrain doctor --json` all green)
 - Brain repo cloned and synced
@@ -69,8 +71,12 @@ writes_to:
 
 ## The Priority Stack (( inert ))
 
-Data sources ranked by **information density × ease of import**:
 
+### The Priority Stack — steps
+
+> Data sources ranked by **information density × ease of import**:
+
+!!! table (( ai-discretion ))
 | Priority | Source | Why | Time | Pages Created |
 |----------|--------|-----|------|---------------|
 | 1 | Existing markdown/Obsidian | Highest density — it's already structured | 5 min | 100s-1000s |
@@ -82,7 +88,8 @@ Data sources ranked by **information density × ease of import**:
 | 7 | File archives (Dropbox/Drive/local) | Historical documents, old writing, photos | 30+ min | varies |
 | 8 | Meeting transcripts (Circleback/etc.) | Deep relationship context from recorded calls | 20 min | 10-50 |
 
-## Phase 0: ClawVisor Setup (Required for API Access) (( inert, role: procedure ))
+## Phase 0: ClawVisor Setup (Required for API Access)
+use judgment to follow the Phase 0: ClawVisor Setup (Required for API Access) guidance:
 
 > **Safety boundary:** An AI agent with raw OAuth tokens to your Gmail, Calendar,
 > and Contacts is an uncontrolled attack surface. One prompt injection, one
@@ -105,24 +112,30 @@ them at request time, enforces policies, and logs everything.
 **Setup (15 min):**
 1. Sign up at [app.clawvisor.com](https://app.clawvisor.com)
 2. Create an agent in the dashboard, copy the agent token
-3. Set environment variables:
-   ```bash
-   gbrain config set clawvisor_url "https://app.clawvisor.com"
-   gbrain config set clawvisor_agent_token "<token>"
-   ```
 4. Activate Google services (Gmail, Calendar, Contacts) in the dashboard
 5. Create a standing task with expansive scope:
    > "Full brain bootstrapping: read emails, calendar events, and contacts to
    > populate knowledge base. List, read, and search across all connected accounts."
-6. Save the standing task ID:
-   ```bash
-   gbrain config set clawvisor_task_id "<task_id>"
-   ```
-
 **Critical scoping rule:** Be expansive in task purposes. "Email triage" gets
 rejected by intent verification. "Full executive assistant email management
 including inbox triage, searching by any criteria, reading emails, tracking
 threads" works. The intent model uses the purpose to judge each request.
+
+
+### Phase 0: ClawVisor Setup (Required for API Access) — steps
+
+> 3. Set environment variables:
+   ```bash
+   gbrain config set clawvisor_url "https://app.clawvisor.com"
+   gbrain config set clawvisor_agent_token "<token>"
+   ```
+
+### Phase 0: ClawVisor Setup (Required for API Access) — steps 2
+
+> 6. Save the standing task ID:
+   ```bash
+   gbrain config set clawvisor_task_id "<task_id>"
+   ```
 
 ### If the user declines ClawVisor (( inert ))
 
@@ -144,7 +157,8 @@ Tell the user:
 tokens is a security liability. The skill should not teach agents to store
 credentials they shouldn't have.
 
-## Phase 1: Existing Markdown / Obsidian Import (( inert, role: procedure ))
+## Phase 1: Existing Markdown / Obsidian Import
+use judgment to follow the Phase 1: Existing Markdown / Obsidian Import guidance:
 
 **The highest-leverage first import.** If the user already has a notes system, this
 is hundreds or thousands of structured pages ready to go.
@@ -190,7 +204,8 @@ gbrain search "<topic from the imported data>"
 > echo '{"phase_1_complete": true, "pages_imported": N}' > ~/.gbrain/cold-start-state.json
 > ````
 
-## Phase 2: Google Contacts → People Pages (( inert, role: procedure ))
+## Phase 2: Google Contacts → People Pages
+use judgment to follow the Phase 2: Google Contacts → People Pages guidance:
 
 **Seeds the people/ directory.** Every person in your contacts becomes a brain page
 with name, email, phone, company, and notes. This is the foundation that all other
@@ -216,24 +231,35 @@ curl -s -H "Authorization: Bearer $GOOGLE_TOKEN" \
 
 ### Processing rules (( inert ))
 
-For each contact:
 1. **Filter out noise** — skip contacts with no name, no email, or that are clearly
    automated (noreply@, no-reply@, support@, notifications@)
-2. **Check brain first** — `gbrain search "name"` to avoid duplicates
 3. **Create people/ page** with:
    - Name, email(s), phone(s), company, title
-   - Source attribution: `[Source: Google Contacts, YYYY-MM-DD]`
    - Any notes from the contact as initial context
 4. **Link to company** — if the contact has an organization, create/update the
    company page and link the person to it
 
-### Quality gate (( inert ))
+
+#### Processing rules — steps
+
+For each contact:
+
+#### Processing rules — steps 2
+
+2. Check brain first — `gbrain search "name"` to avoid duplicates
+
+#### Processing rules — steps 3
+
+   - Source attribution: `[Source: Google Contacts, YYYY-MM-DD]`
+### Quality gate (( role: procedure ))
+use judgment to follow the Quality gate guidance:
 
 After importing 5 contacts, pause and show the user a sample page. Ask:
 > "Here's what a contact page looks like. Want me to continue with the rest, or
 > adjust the format first?"
 
-## Phase 3: Google Calendar (Last 90 Days) (( inert, role: procedure ))
+## Phase 3: Google Calendar (Last 90 Days)
+use judgment to follow the Phase 3: Google Calendar (Last 90 Days) guidance:
 
 **Meeting history with attendee context.** Calendar events reveal who the user meets
 with, how often, and in what context. Combined with contacts, this builds a rich
@@ -265,7 +291,8 @@ brain/daily/calendar/
 │   └── YYYY-MM-DD.md            ← daily event log
 ```
 
-### Entity enrichment (( inert ))
+### Entity enrichment
+use judgment to follow the Entity enrichment guidance:
 
 For each event with attendees:
 1. Look up each attendee in the brain (they should exist from Phase 2)
@@ -273,7 +300,8 @@ For each event with attendees:
 3. If an attendee has no brain page and appears in 3+ events, create one
 4. Link attendees who appear in the same meeting
 
-## Phase 4: Gmail (Recent Threads) (( inert, role: procedure ))
+## Phase 4: Gmail (Recent Threads)
+use judgment to follow the Phase 4: Gmail (Recent Threads) guidance:
 
 **Relationship context and active threads.** Email reveals organizational
 relationships, ongoing conversations, and communication patterns.
@@ -287,7 +315,8 @@ Don't import every email. Import the **signal**:
 3. **Threads with 3+ replies** — active conversations worth tracking
 4. **Emails from people already in the brain** — enrichment, not cold import
 
-### Processing (( inert ))
+### Processing
+use judgment to follow the Processing guidance:
 
 For each email thread:
 1. **Entity detection** — extract people, companies mentioned
@@ -295,7 +324,8 @@ For each email thread:
 3. **Create meeting pages** — if the email is a meeting summary or follow-up
 4. **Skip noise** — newsletters, automated notifications, marketing
 
-### Filtering rules (( inert ))
+### Filtering rules
+use judgment to follow the Filtering rules guidance:
 
 **Auto-skip (never import):**
 - noreply@, no-reply@, notifications@, support@, mailer-daemon@
@@ -308,19 +338,21 @@ For each email thread:
 - Starred/flagged emails
 - Emails the user sent (their words are highest-value signal)
 
-## Phase 5: Conversation Exports (ChatGPT / Claude / Perplexity) (( inert, role: procedure ))
+## Phase 5: Conversation Exports (ChatGPT / Claude / Perplexity)
+use judgment to follow the Phase 5: Conversation Exports (ChatGPT / Claude / Perplexity) guidance:
 
 **Your thinking, captured.** AI conversation exports reveal what the user
 was researching, building, and thinking about. This is original thinking
 preserved in dialog form.
 
-### Supported formats (( inert ))
+### Supported formats
 
-- ChatGPT: Settings → Data Controls → Export → `conversations.json`
-- Claude: Download from claude.ai conversation history
-- Perplexity: Export from settings
+- **ChatGPT:** Settings → Data Controls → Export → `conversations.json`
+- **Claude:** Download from claude.ai conversation history
+- **Perplexity:** Export from settings
 
-### Processing (( inert ))
+### Processing
+use judgment to follow the Processing guidance:
 
 For each conversation:
 1. **Assess significance** (1-5 scale):
@@ -339,7 +371,8 @@ For each conversation:
 
 Only import conversations rated 3+. The brain is for signal, not noise.
 
-## Phase 6: X/Twitter Archive (( inert, role: procedure ))
+## Phase 6: X/Twitter Archive
+use judgment to follow the Phase 6: X/Twitter Archive guidance:
 
 **Your public positions and engagement patterns.** Twitter reveals what the user
 thinks, who they engage with, and what ideas they're developing publicly.
@@ -361,15 +394,16 @@ brain/media/x/{handle}/
 └── bookmarks/                   ← saved/bookmarked content
 ```
 
-### Processing (( inert ))
+### Processing
 
-- Original tweets → capture with full context, extract entities
-- Quote tweets → capture the user's commentary + the source tweet
-- Threads → reconstruct as a single narrative
-- Bookmarks → high-signal curation, import with tags
-- Likes — low signal, skip unless the user wants them
+- **Original tweets** → capture with full context, extract entities
+- **Quote tweets** → capture the user's commentary + the source tweet
+- **Threads** → reconstruct as a single narrative
+- **Bookmarks** → high-signal curation, import with tags
+- **Likes** — low signal, skip unless the user wants them
 
-## Phase 7: File Archives (( inert, role: procedure ))
+## Phase 7: File Archives
+use judgment to follow the Phase 7: File Archives guidance:
 
 **Historical documents, old writing, photos with metadata.** This is the long tail —
 less structured but potentially very high value (old journals, letters, early writing).
@@ -393,40 +427,29 @@ Delegate to the `archive-crawler` skill. It handles:
 - Email archives (PST, mbox, EML, Google Takeout)
 - Data exports (LinkedIn, Facebook, etc.)
 
-## Phase 8: Meeting Transcripts (( inert, role: procedure ))
+## Phase 8: Meeting Transcripts
+use judgment to follow the Phase 8: Meeting Transcripts guidance:
 
-**Deep relationship context from recorded calls.** If the user has a meeting
-recording service (Circleback, Otter, Fireflies, Read.ai), import recent
-transcripts.
-
-Delegate to `meeting-ingestion` skill. Key rules:
 - Always pull the **complete transcript**, not just the AI summary
 - Entity propagation is MANDATORY — every attendee gets a timeline update
 - A meeting is NOT fully ingested until all entity pages are updated
 
+
+### Phase 8: Meeting Transcripts — steps
+
+If the user has a meeting
+recording service (Circleback, Otter, Fireflies, Read.ai), import recent
+transcripts.
+
+Delegate to `meeting-ingestion` skill. Key rules:
 ## Post-Bootstrap Checklist (( inert ))
 
 After completing available phases:
-
-1. **Verify brain health:**
-   ```bash
-   gbrain doctor --json
-   gbrain stats
-   ```
-
-2. **Test retrieval:**
-   ```bash
-   gbrain query "who do I meet with most often?"
-   gbrain query "what am I working on?"
-   gbrain search "<person from contacts>"
-   ```
 
 3. **Set up live sync** (if not already):
    - Calendar: daily cron
    - Email: periodic sweep (4-8 hours)
    - X: daily ingest
-   - Brain repo: `gbrain sync --repo <path>` every 5-30 minutes
-
 4. **Track state:**
    ```json
    // ~/.gbrain/cold-start-state.json
@@ -449,7 +472,29 @@ After completing available phases:
    > - The **executive-assistant** pattern handles email triage
    > - Say 'enrich [person]' to deep-dive any contact"
 
-## Anti-Patterns (( inert, role: prohibitions ))
+
+### Post-Bootstrap Checklist — steps
+
+> 1. **Verify brain health:**
+   ```bash
+   gbrain doctor --json
+   gbrain stats
+   ```
+
+> 2. **Test retrieval:**
+   ```bash
+   gbrain query "who do I meet with most often?"
+   gbrain query "what am I working on?"
+   gbrain search "<person from contacts>"
+   ```
+
+
+### Post-Bootstrap Checklist — steps 2
+
+   - Brain repo: `gbrain sync --repo <path>` every 5-30 minutes
+
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - **Giving the agent raw OAuth tokens.** This is the #1 anti-pattern. An agent with
   raw Gmail/Calendar tokens is an uncontrolled attack surface — one prompt injection
@@ -466,16 +511,20 @@ After completing available phases:
 - **Creating people pages for automated senders.** Sentry, GitHub notifications,
   newsletter platforms are not people. Filter by the rules in Phase 4.
 
-## Resume Protocol (( inert ))
+## Resume Protocol
+use judgment to follow the Resume Protocol guidance:
 
-If the session is interrupted:
-
-1. Read `~/.gbrain/cold-start-state.json`
 2. Skip completed phases
 3. Resume from `next_phase`
 4. The user doesn't have to repeat credential setup or re-import completed sources
 
-## Output Format (( inert, role: template ))
+
+### Resume Protocol — steps
+
+> If the session is interrupted:
+
+1. Read `~/.gbrain/cold-start-state.json`
+## Output Format
 
 After each phase:
 

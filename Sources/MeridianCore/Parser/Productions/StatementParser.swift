@@ -402,6 +402,14 @@ public struct StatementParser {
             return (.wait(choice.statement), choice.consumed)
         }
 
+        // Fallback chain (Phase 2 idiom): `try the following in order until
+        // one succeeds:` + an ordered list of steps → an N-deep `recover`
+        // nesting (each step's handler is "try the next step").
+        if let chain = try parseFallbackChain(lines, at: i, file: file) {
+            trace.log(.statement, "L\(line.number) -> fallbackChain")
+            return (chain.statement, chain.consumed)
+        }
+
         // "emit {eventID} with ..." (possibly multi-line payload)
         if lower.hasPrefix(statement.emitPrefix) {
             let (emitStmt, extra) = try parseEmit(lines, at: i)
@@ -414,6 +422,16 @@ public struct StatementParser {
             let (cond, consumed) = try parseConditional(lines, at: i, file: file)
             trace.log(.statement, "L\(line.number) -> conditional")
             return (.conditional(cond), consumed)
+        }
+        // Guarded fence (Phase 2 idiom): "If {condition}, run:" immediately
+        // followed by a fenced shell code-block wraps the block's `shell.run`
+        // invokes in a `branch`. SKILL.md bodies are flat (the fence is never
+        // indented under the header), so this is a 2-line structural
+        // production rather than `parseConditional`'s indented-body form.
+        if lower.hasPrefix(statement.ifPrefix),
+           let guardedFence = try parseGuardedFence(lines, at: i) {
+            trace.log(.statement, "L\(line.number) -> guardedFence")
+            return (.conditional(guardedFence.statement), guardedFence.consumed)
         }
         // Single-line branch: `if {condition}, {action} [, otherwise {action}].`
         // The comma after the condition already delimits it, so the indented
@@ -601,6 +619,14 @@ public struct StatementParser {
             return shellStatements
         }
 
+        // Non-shell fence with a configured `=== language ===` `Fence tool
+        // mapping:` entry (e.g. ```python → interpreter.run) lowers to a
+        // single plain `invoke` of that tool — the general-abilities
+        // extension for non-shell skill repos.
+        if let toolStatements = toolFenceStatements(line) {
+            return toolStatements
+        }
+
         // Inline backticked literal command on its own line, e.g. `gbrain publish`.
         if let inlineShell = inlineBacktickedCommand(line) {
             return [inlineShell]
@@ -680,14 +706,24 @@ public struct StatementParser {
             if isBlock { goal = String(goal.dropLast()).trimmingCharacters(in: .whitespaces) }
             var consumed = 1
             var proseText = goal
+            var guidance: String?
             if isBlock {
                 let body = collectBody()
                 consumed += body.consumed - 1
                 if !body.text.isEmpty {
-                    proseText = ([goal] + body.text).filter { !$0.isEmpty }.joined(separator: "\n")
+                    // `…follow the <heading> guidance:` collects a whole
+                    // leftover inert-narrative body verbatim (Phase 1 §3/§4).
+                    // Keep the dispatch goal short in `text` and carry that
+                    // narrative separately as planner context, rather than
+                    // folding it into one prose blob.
+                    if collectUntilNextHeading {
+                        guidance = body.text.joined(separator: "\n")
+                    } else {
+                        proseText = ([goal] + body.text).filter { !$0.isEmpty }.joined(separator: "\n")
+                    }
                 }
             }
-            return (.proseStep(ProseStepAST(text: proseText, sourceLine: line.number, dispatch: .discretion)), consumed)
+            return (.proseStep(ProseStepAST(text: proseText, sourceLine: line.number, dispatch: .discretion, guidance: guidance)), consumed)
         }
 
         // `with discretion:` block.
@@ -859,6 +895,25 @@ public struct StatementParser {
                 sourceLine: line.number
             ))
         }
+    }
+
+    /// Expand a fenced code block whose language matches a configured
+    /// `=== language ===` `Fence tool mapping:` entry into a single plain
+    /// `invoke <tool> with code = "…"` — the whole fence body as one literal
+    /// string argument, deliberately without the shell command's `{…}`
+    /// command-hole interpolation (that richness is `shell.run`-specific; see
+    /// `toolFenceSentinelPrefix`'s doc comment). Checked only when the
+    /// language is *not* a shell dialect — those keep the richer
+    /// `shellBlockStatements` per-line-invoke treatment regardless of any
+    /// mapping entry. Returns `nil` when the line isn't a code-block sentinel
+    /// or the language has no configured mapping.
+    private func toolFenceStatements(_ line: SourceLine) -> [StatementAST]? {
+        guard let (lang, body) = decodeCodeBlockSentinel(line.text) else { return nil }
+        guard !lexicon.isShellFence(lang), let toolID = lexicon.fenceTool(for: lang) else { return nil }
+        return [.phraseInvocation(PhraseInvocationAST(
+            words: encodeToolFenceCommand(toolID: toolID, body: body),
+            sourceLine: line.number
+        ))]
     }
 
     /// Expand a collapsed Markdown table sentinel into statements per its mode.
@@ -1374,6 +1429,17 @@ public struct StatementParser {
             }
         }
 
+        // Any comma still in `work` at this point is not the sorted-by
+        // direction comma (already consumed in step 1) — it is an
+        // unrecognized trailing clause, e.g. a participial aside ("each
+        // one, checking for inline citations"). Bound the noun to the text
+        // before it rather than folding punctuation into the generated
+        // identifier, which would produce an invalid Swift variable name
+        // downstream (a bare comma is parsed as a tuple-pattern separator).
+        if let comma = work.range(of: ",") {
+            work = String(work[..<comma.lowerBound]).trimmingCharacters(in: .whitespaces)
+        }
+
         return (work.trimmingCharacters(in: .whitespaces), ref.isEmpty ? nil : ref)
     }
 
@@ -1735,6 +1801,32 @@ public struct StatementParser {
         ), consumed)
     }
 
+    /// Guarded fence: `If <cond>, run:` (or a `guardedFenceIntroducers`
+    /// synonym) followed — skipping blank/comment lines — by a fenced shell
+    /// code-block. Returns nil when the header doesn't end in a guarded-fence
+    /// marker, or the next content line isn't a shell fence, so the caller's
+    /// existing comma-terminated `if …,` / inline-conditional checks still
+    /// apply to every other `if` shape.
+    private func parseGuardedFence(_ lines: [SourceLine], at i: Int) throws
+        -> (statement: ConditionalStatementAST, consumed: Int)? {
+        let line = lines[i]
+        let t = line.statement
+        let lower = t.lowercased()
+        guard let suffix = lexicon.guardedFenceIntroducers.first(where: { lower.hasSuffix($0) }) else { return nil }
+
+        let condText = String(t.dropFirst(lexicon.grammar.statement.ifPrefix.count).dropLast(suffix.count))
+            .trimmingCharacters(in: .whitespaces)
+        guard !condText.isEmpty else { return nil }
+
+        var j = i + 1
+        while j < lines.count, lines[j].isEmpty || lines[j].isComment { j += 1 }
+        guard j < lines.count, let shellStmts = shellBlockStatements(lines[j]), !shellStmts.isEmpty else { return nil }
+
+        let condition = parseDecisionPredicate(condText)
+        let thenBlock = ASTBlock(statements: shellStmts, sourceLine: lines[j].number)
+        return (ConditionalStatementAST(condition: condition, thenBlock: thenBlock, sourceLine: line.number), j - i + 1)
+    }
+
     /// Single-line branch `if <cond>, <then> [, otherwise <else>].`. The
     /// condition/then split is the first top-level comma (outside quotes) that
     /// does not introduce an Oxford `and`/`or` continuation; an optional top-level
@@ -1970,6 +2062,69 @@ public struct StatementParser {
         let placeholder = StatementAST.phraseInvocation(
             PhraseInvocationAST(words: "__recover_placeholder__", sourceLine: line.number))
         return (RecoverStatementAST(pattern: pattern, handler: handlerBlock, attached: placeholder, sourceLine: line.number), consumed)
+    }
+
+    /// Fallback chain: a `fallbackChainIntroducers` lead-in (`try the
+    /// following in order until one succeeds:`) followed by an
+    /// ordered/bulleted list of steps. SKILL.md list items are conventionally
+    /// flush with (not indented under) their lead-in line, so — matching the
+    /// existing frontmatter block-sequence convention
+    /// (`MeridianParser`'s `next.listMarker != nil, next.indent >= l.indent`)
+    /// — a step is collected while it carries a list marker at an indent no
+    /// shallower than the lead-in; the tokenizer has already stripped the
+    /// marker itself from `.text`/`.statement`. Each item is parsed as a
+    /// single statement, then chained via `chainRecover` so step N's
+    /// `recover from any:` handler is step N+1 — nesting the existing 1-deep
+    /// `recover` shape N-deep rather than inventing a new IR node. Requires
+    /// at least two steps and every step to parse as a real statement;
+    /// otherwise returns nil so the caller's generic phrase-invocation
+    /// handling still applies.
+    private func parseFallbackChain(_ lines: [SourceLine], at i: Int, file: String) throws
+        -> (statement: StatementAST, consumed: Int)? {
+        let line = lines[i]
+        let t = line.statement.trimmingCharacters(in: .whitespaces)
+        guard lexicon.fallbackChainIntroducers.contains(where: { t.lowercased() == $0 }) else { return nil }
+
+        let parentIndent = line.indent
+        var stepLines: [SourceLine] = []
+        var j = i + 1
+        while j < lines.count {
+            let l = lines[j]
+            if l.isEmpty || l.isComment { j += 1; continue }
+            guard l.listMarker != nil, l.indent >= parentIndent else { break }
+            stepLines.append(l)
+            j += 1
+        }
+        guard stepLines.count > 1 else { return nil }
+
+        // Route each step through the full single-line production pipeline
+        // (`parseBlock`, not the lower-level `parseStatement`) so backticked
+        // commands go through `parseInlineChain`'s
+        // `inlineBacktickedCommand`/`embeddedBacktickedCommand` detectors —
+        // the same path an equivalent top-level line would take.
+        var steps: [StatementAST] = []
+        for stepLine in stepLines {
+            let stepBlock = try parseBlock([stepLine], file: file)
+            guard stepBlock.statements.count == 1 else { return nil }
+            steps.append(stepBlock.statements[0])
+        }
+
+        return (chainRecover(steps, sourceLine: line.number), j - i)
+    }
+
+    /// Builds `steps[0]` guarded by a `recover from any:` whose handler is the
+    /// same chain over the remaining steps, recursively — the last step is
+    /// returned bare (no handler: it is the final fallback, nothing left to
+    /// try after it fails).
+    private func chainRecover(_ steps: [StatementAST], sourceLine: Int) -> StatementAST {
+        guard steps.count > 1 else { return steps[0] }
+        let handlerStatement = chainRecover(Array(steps.dropFirst()), sourceLine: sourceLine)
+        return .recover(RecoverStatementAST(
+            pattern: .any,
+            handler: ASTBlock(statements: [handlerStatement], sourceLine: sourceLine),
+            attached: steps[0],
+            sourceLine: sourceLine
+        ))
     }
 
     // MARK: - Multi-line phrase invocation collector

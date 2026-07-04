@@ -3,45 +3,55 @@
 - Original: `month_end_close/SKILL.md`
 - Ported: `monthendclose.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 96%
-- Lines: 24 -> 24 (+1 / -1)
+- Similarity: 90%
+- Lines: 24 -> 25 (+3 / -2)
 
 ## Frontmatter
 - Added: (none)
 - Removed: (none)
 
 ## Categories
+- section-marker-added
 - shell-block-routed
 - inert-section-added
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L4 `When this applies`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
+- L15 `Accounting notes`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
-- Sections: 2/3 inert (67% inert ratio)
-- Operational inert: 1
+- Sections inert total: 1/3 (33% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: operational-procedure=1, reference-documentation=1
-- Judgment: 0 blocks, 0 lines
+- Inert categories: reference-documentation=1
+- Judgment: 1 blocks, 0 lines
 
 ### Inert section details
-- L4 `When this applies`: operational-procedure — Marked or derived as applicability, but inert suppresses execution.
-- L14 `Accounting notes`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L15 `Accounting notes`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
 ```diff
 --- original-skills/month_end_close/SKILL.md
 +++ skills/monthendclose.meri
-@@ -8,7 +8,7 @@
+@@ -8,7 +8,8 @@
  
  # Month End Close
  
 -## When this applies
-+## When this applies (( inert, role: applicability ))
++## When this applies (( role: procedure ))
++use judgment to follow the When this applies guidance:
  - "month-end close"
  - "close accounting period"
+ 
+@@ -18,7 +19,7 @@
+ close the accounting period.
+ Publish: "accounting period closed".
+ 
+-## Accounting notes
++## Accounting notes (( inert ))
+ The real-world phrase "soft close" is intentionally left as documentation; the
+ compiled behavior uses an explicit period-close tool.
  
 ```

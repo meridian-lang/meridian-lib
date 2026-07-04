@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -601,6 +601,16 @@ public struct BrainOpsInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "BrainOpsInput", parameters: [:])
 
+        // L38
+        let __meridianProseResults_L38 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["add_link", "add_timeline_entry", "get_backlinks", "get_page", "link.add", "link.backlinks", "page.get", "page.search", "publish", "put_page", "query", "search", "shell.run", "sync_brain", "timeline.add"],
+            guidance: "This skill guarantees:\nBrain is checked BEFORE any external API call (brain-first lookup)\nEvery inbound signal triggers the READ → ENRICH → WRITE loop\nEvery outbound response checks brain for relevant context\nSource attribution on every fact written (inline `[Source: ...]` citations)\nUser's direct statements are highest-authority data\nBack-links maintained on every brain write (Iron Law)\nuse judgment to follow the Iron Law: Back-Linking (MANDATORY) guidance:\nEvery mention of a person or company with a brain page MUST create a back-link\nFROM that entity's page TO the page mentioning them. An unlinked mention is a\nbroken brain. See `skills/conventions/quality.md` for format\nuse judgment to follow the Phases guidance:\nuse judgment to follow the Phase 1: Brain-First Lookup (MANDATORY) guidance:\nCheck backlinks: who references this entity?\nCheck timeline: recent events involving this entity\nThe brain almost always has something. External APIs fill gaps, not start from scratch\n`gbrain search \"name\"` — keyword search for existing pages\n`gbrain query \"natural question about name\"` — hybrid search for context\n`gbrain get <slug>` — if you know the slug, read the full page\nuse judgment to follow the Phase 2: On Every Inbound Signal (READ → ENRICH → WRITE) guidance:\nEvery message, meeting, email, or conversation that references a person or company:\n**Detect entities** — people, companies, deals mentioned\n**Load brain pages** — read existing pages for context before responding\n**Identify new information** — what does this signal tell us that the page doesn't know?\n**Write it back** — update the brain page with new info + timeline entry + source citation\n**Create if missing** — if notable and no page exists, create via enrich skill\n**User's direct statements are the highest-value data source.** Write them to brain\npages immediately with attribution `[Source: User, YYYY-MM-DD]`\nuse judgment to follow the Phase 2.5: Structured Graph Updates (automatic) guidance:\nEvery `put_page` call automatically extracts entity references and writes them\n(refs no longer in the page text) are removed in the same call. This is\n\"auto-link\" reconciliation\nNo manual `add_link` calls needed for ordinary page writes\nInferred link types: `attended` (meeting -> person), `works_at`, `invested_in`,\n`founded`, `advises`, `source` (frontmatter), `mentions` (default)\nThe `put_page` MCP response includes `auto_links: { created, removed, errors }`\nso the agent can verify outcomes\nTimeline entries with specific dates still need explicit `gbrain timeline-add`\n(or batch via `gbrain extract timeline --source db`)\nuse judgment to follow the Phase 3: On Every Outbound Response (READ → PULL → RESPOND) guidance:\n**Pull context** — use compiled truth + recent timeline\n**Respond with context** — the brain makes every answer better\nDon't answer from general knowledge when a brain page exists\nCheck the brain — read relevant pages\nuse judgment to follow the Phase 4: Ambient Enrichment guidance:\nThis is not a special mode. This is the default. Everything the user says is an\ningest event\nPerson mentioned → check brain, create/enrich if needed (spawn background)\nCompany mentioned → same\nLink shared → ingest it (delegate to idea-ingest)\nData shared → delegate to appropriate skill\n**Rules:**\nNever interrupt the conversation to do enrichment\nSpawn sub-agents for anything that would slow down the response\nNever announce \"I'm enriching the brain\" — just do it silently\nuse judgment to follow the Cross-source citation format (v0.18.0+) guidance:\nRules:\nThe key is `sources.id` (immutable), never `sources.name` (mutable display)\nSingle-source brains still write `[default:slug]` OR may omit the prefix\nfor backward compat\nEvery page payload returned by `search`, `query`, `get_page`, `list_pages`\ncarries `source_id` — always use it when citing, never guess\nWhen a brain has multiple sources (wiki, gstack, yc-media, etc.), every\ncitation MUST include the source id: `[source-id:slug]`. Example:\nIf a search result has `source_id: \"gstack\"` and `slug: \"plans/foo\"`,\nthe citation is `[gstack:plans/foo]`. That's the whole rule\nuse judgment to follow the Anti-Patterns guidance:\nAnswering questions about people/companies without checking the brain first\nUsing external APIs before checking the brain\nWriting facts without inline `[Source: ...]` citations\nBlocking the response to do enrichment\nOverwriting user's direct statements with lower-authority sources\nCreating brain pages for non-notable entities"
+        )
+        for (__key, __value) in __meridianProseResults_L38 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

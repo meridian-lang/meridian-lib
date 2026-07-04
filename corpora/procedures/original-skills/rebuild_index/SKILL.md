@@ -12,12 +12,12 @@ triggers:
 - "rebuild lagging indexes"
 - "index job stale"
 
-## Procedure (( role: procedure ))
+## Procedure
 fetch lagging index jobs.
 Check: any lagging index jobs.
 for each index job:
   rebuild the index job.
 Emit: "lagging index jobs rebuilt".
 
-## Assertions (( role: invariants ))
+## Assertions
 make sure all index jobs have a name.

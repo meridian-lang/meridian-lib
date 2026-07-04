@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -599,6 +599,16 @@ public struct RepoArchitectureInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "RepoArchitectureInput", parameters: [:])
 
+        // L24
+        let __meridianProseResults_L24 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.list", "page.search", "shell.run"],
+            guidance: "This skill guarantees:\nEvery new page is filed by primary subject (not format, not source)\nThe decision protocol is followed for ambiguous cases\nCommon misfiling patterns are caught\nuse judgment to follow the Phases guidance:\n**Identify the primary subject.** What would you search for to find this page?\n**Walk the decision tree:**\nAbout a person → `people/{name-slug}.md`\nAbout a company → `companies/{name-slug}.md`\nA reusable concept/framework → `concepts/{slug}.md`\nAn original idea → `originals/{slug}.md`\nA meeting → `meetings/{slug}.md`\nMedia content → `media/{type}/{slug}.md`\nRaw data import → `sources/{slug}.md`\n**Cross-link.** Link from related directories\n**Check notability.** See `skills/conventions/quality.md` notability gate\nuse judgment to follow the Anti-Patterns guidance:\nFiling by format (\"it's a PDF so it goes in sources/\")\nFiling by source (\"it came from email so it goes in sources/\")\nCreating pages without checking if one already exists\nUsing `sources/` for anything except raw data dumps"
+        )
+        for (__key, __value) in __meridianProseResults_L24 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

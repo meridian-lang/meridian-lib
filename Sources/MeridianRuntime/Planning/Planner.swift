@@ -9,17 +9,23 @@ public struct PlanContext: Sendable {
     public let snapshot: StateSnapshot
     public let tools: [ToolSchema]
     public let maxActions: Int
+    /// Optional extra planner context distinct from `prose` — e.g. a migrated
+    /// section's inert narrative, carried verbatim alongside the dispatch
+    /// goal. `nil` when the step carries no separate narrative.
+    public let guidance: String?
 
     public init(
         prose: String,
         snapshot: StateSnapshot,
         tools: [ToolSchema],
-        maxActions: Int = 32
+        maxActions: Int = 32,
+        guidance: String? = nil
     ) {
         self.prose = prose
         self.snapshot = snapshot
         self.tools = tools
         self.maxActions = maxActions
+        self.guidance = guidance
     }
 }
 

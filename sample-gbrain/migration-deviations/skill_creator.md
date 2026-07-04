@@ -3,8 +3,8 @@
 - Original: `skill-creator/SKILL.md`
 - Ported: `skill_creator.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 89%
-- Lines: 83 -> 83 (+9 / -9)
+- Similarity: 87%
+- Lines: 83 -> 92 (+16 / -7)
 
 ## Frontmatter
 - Added: (none)
@@ -12,88 +12,75 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - inert-section-added
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L4 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
-- L13 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L56 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L60 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L64 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections: 4/4 inert (100% inert ratio)
-- Operational inert: 2
+- Sections inert total: 1/4 (25% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-procedure=1, reference-documentation=1, template=1
-- Judgment: 0 blocks, 0 lines
+- Inert categories: template=1
+- Judgment: 3 blocks, 0 lines
 
 ### Inert section details
-- L4 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
-- L13 `Phases`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L56 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L60 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L64 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/skill-creator/SKILL.md
 +++ skills/skill_creator.meri
-@@ -17,7 +17,7 @@
+@@ -17,7 +17,8 @@
  
  # Skill Creator
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
++use judgment to follow the Contract guidance:
  
  This skill guarantees:
  - New skill follows conformance standard (frontmatter + required sections)
-@@ -26,7 +26,7 @@
- - RESOLVER.md updated with routing entry
+@@ -27,8 +28,8 @@
  - Skill passes conformance tests (`bun test test/skills-conformance.test.ts`)
  
--## Phases
-+## Phases (( inert, role: procedure ))
+ ## Phases
++use judgment to follow the Phases guidance:
  
- 1. **Identify the gap.** What capability is missing? What user intent has no skill?
+-1. **Identify the gap.** What capability is missing? What user intent has no skill?
  2. **MECE check.** Review `skills/manifest.json` and `skills/RESOLVER.md`. Does any existing skill already cover this? If so, extend it instead of creating a new one.
-@@ -49,19 +49,19 @@
+ 3. **Create SKILL.md.** Use this template:
  
- # {Skill Title}
- 
--## Contract
-+## Contract (( inert, role: invariants ))
- {What this skill guarantees — 3-5 bullet points}
- 
--## Phases
-+## Phases (( inert, role: procedure ))
- {Numbered workflow steps}
- 
--## Output Format
-+## Output Format (( inert, role: template ))
- {What good output looks like}
- 
--## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
- {What NOT to do — 3-5 items}
- 
--## Tools Used
-+## Tools Used (( inert, role: tools ))
+@@ -65,15 +66,23 @@
  {GBrain operations used, with descriptions}
  ```
  
-@@ -69,11 +69,11 @@
- 5. **Add to resolver.** Update `skills/RESOLVER.md` with routing entry in the appropriate category.
- 6. **Verify.** Run `bun test test/skills-conformance.test.ts` to confirm the new skill passes.
+-4. **Add to manifest.** Update `skills/manifest.json` with name, path, description.
+-5. **Add to resolver.** Update `skills/RESOLVER.md` with routing entry in the appropriate category.
+-6. **Verify.** Run `bun test test/skills-conformance.test.ts` to confirm the new skill passes.
  
 -## Output Format
++### Phases — steps
++
++1. What capability is missing? What user intent has no skill?
++
++### Phases — steps 2
++
++4. Add to manifest. Update `skills/manifest.json` with name, path, description.
++5. Add to resolver. Update `skills/RESOLVER.md` with routing entry in the appropriate category.
++6. Verify. Run `bun test test/skills-conformance.test.ts` to confirm the new skill passes.
++
 +## Output Format (( inert, role: template ))
  
  New `skills/{name}/SKILL.md` file + updated manifest + updated resolver.
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++use judgment to follow the Anti-Patterns guidance:
  
  - Creating a skill that overlaps with an existing one (violates MECE)
  - Skipping the MECE check against existing skills

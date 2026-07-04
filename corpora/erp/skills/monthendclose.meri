@@ -8,11 +8,12 @@ triggers:
 
 # Month End Close
 
-## When this applies (( inert, role: applicability ))
+## When this applies (( role: procedure ))
+use judgment to follow the When this applies guidance:
 - "month-end close"
 - "close accounting period"
 
-## Close sequence (( role: procedure ))
+## Close sequence
 fetch unpaid invoices.
 Check: no invoices whose balance is more than 0.
 close the accounting period.

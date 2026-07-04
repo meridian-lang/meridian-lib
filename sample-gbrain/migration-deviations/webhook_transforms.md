@@ -2,9 +2,9 @@
 
 - Original: `webhook-transforms/SKILL.md`
 - Ported: `webhook_transforms.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 90%
-- Lines: 84 -> 84 (+8 / -8)
+- Tier: 2 (light edits)
+- Similarity: 81%
+- Lines: 84 -> 96 (+23 / -11)
 
 ## Frontmatter
 - Added: (none)
@@ -12,68 +12,89 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - inert-section-added
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L4 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
-- L13 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L36 `Example Transforms`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L38 `SMS Received`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L44 `Meeting Completed`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L50 `Social Mention`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L56 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L61 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L49 `SMS Received`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L55 `Meeting Completed`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L61 `Social Mention`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L67 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections: 8/8 inert (100% inert ratio)
-- Operational inert: 2
+- Sections inert total: 4/7 (57% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-procedure=1, reference-documentation=5, template=1
-- Judgment: 0 blocks, 0 lines
+- Inert categories: reference-documentation=3, template=1
+- Judgment: 3 blocks, 0 lines
 
 ### Inert section details
-- L4 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
-- L13 `Phases`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L36 `Example Transforms`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L38 `SMS Received`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L44 `Meeting Completed`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L50 `Social Mention`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L56 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L61 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L49 `SMS Received`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L55 `Meeting Completed`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L61 `Social Mention`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L67 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/webhook-transforms/SKILL.md
 +++ skills/webhook_transforms.meri
-@@ -18,7 +18,7 @@
+@@ -18,7 +18,8 @@
  
  # Webhook Transforms
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
++use judgment to follow the Contract guidance:
  
  This skill guarantees:
  - External events are transformed into brain pages with proper citations
-@@ -27,7 +27,7 @@
- - Input sanitization: no raw HTML/script passes to brain pages
+@@ -28,10 +29,10 @@
  - Error handling: transform failure logs raw payload, retries once
  
--## Phases
-+## Phases (( inert, role: procedure ))
+ ## Phases
++use judgment to follow the Phases guidance:
  
  1. **Define transform.** Map event schema to brain page format:
     - Input: raw webhook payload (JSON)
-@@ -50,32 +50,32 @@
+-   - Output: brain page content (markdown) + metadata (slug, type, citations)
+    - Must sanitize: strip HTML tags, escape script content
+ 
+ 2. **Register webhook URL.** Provide the external service with the webhook endpoint.
+@@ -39,43 +40,54 @@
+ 3. **On event received:**
+    - Parse payload
+    - Run transform function
+-   - Write brain page via `gbrain put`
+    - Extract entities, run enrichment
+    - Add timeline entries to mentioned entities
+-   - Sync: `gbrain sync`
+-
+ 4. **Error handling:**
+    - If transform throws: log raw payload to `_dead-letter/{timestamp}.md`
+    - Surface error type to agent
     - Retry once
     - Don't lose events
  
 -## Example Transforms
-+## Example Transforms (( inert ))
  
 -### SMS Received
++### Phases — steps
++
++   - Output: brain page content (markdown) + metadata (slug, type, citations)
++
++### Phases — steps 2
++
++   - Write brain page via `gbrain put`
++
++### Phases — steps 3
++
++   - Sync: `gbrain sync`
++
++## Example Transforms (( inert ))
++
 +### SMS Received (( inert ))
  ```
  Input: {from: "+1555...", body: "Meeting moved to 3pm", timestamp: "..."}
@@ -101,7 +122,8 @@ These sections were made non-executable in the port and should be reviewed as mi
  → {brain_page_path}"
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++use judgment to follow the Anti-Patterns guidance:
  
  - Passing raw HTML/script to brain pages (XSS risk)
  - Silently dropping events when transform fails (use dead-letter queue)

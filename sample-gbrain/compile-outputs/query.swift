@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -599,6 +599,26 @@ public struct QueryInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "QueryInput", parameters: [:])
 
+        if __meridianShouldRun("progress:0.0:L47:C0") {
+            // L47
+            try await runtime.assert((((state.get("answer"))?.asList ?? []).allSatisfy { __e in MeridianComparison.eq(__e, state.get("groundedInBrainContent(noHallucination)") ?? .null) }), message: "Expected Every answer is grounded in brain content (no hallucination)")
+            try await runtime.checkpoint(label: "progress:0.0:L47:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L48:C0") {
+            // L48
+            try await runtime.assert((((state.get("claim"))?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("citationTracingBackToASpecificPageSlug")) }), message: "Expected Every claim has a citation tracing back to a specific page slug")
+            try await runtime.checkpoint(label: "progress:0.1:L48:C0", state: state.snapshot())
+        }
+        // L37
+        let __meridianProseResults_L37 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["get_backlinks", "get_page", "get_timeline", "link.backlinks", "list_pages", "page.get", "page.list", "page.search", "query", "search", "shell.run", "traverse_graph"],
+            guidance: "Gaps are flagged explicitly (\"the brain doesn't have information on X\")\nSource precedence is respected (user statements > compiled truth > timeline > external)\nConflicting sources are noted with both citations\nuse judgment to follow the Phases guidance:\n**Decompose the question** into search strategies:\nKeyword search for specific names, dates, terms\nSemantic query for conceptual questions\nStructured queries (list by type, backlinks) for relational questions\n**Execute searches:**\nKeyword search gbrain for FTS matches (search)\nHybrid search gbrain for semantic+keyword with expansion (query)\nList pages in gbrain by type or check backlinks for structural queries\n**Read top results.** Read the top 3-5 pages from gbrain to get full context\n**Synthesize answer** with citations. Every claim traces back to a specific page slug\n**Flag gaps.** If the brain doesn't have info, say \"the brain doesn't have information on X\" rather than hallucinating\nuse judgment to follow the Anti-Patterns guidance:\nAnswering from general knowledge when the brain has relevant content\nHallucinating facts not in the brain\nSilently picking one source when sources conflict\nLoading full pages when search chunks are sufficient\nIgnoring source precedence (user statements are highest authority)\nuse judgment to follow the Quality Rules guidance:\nNever hallucinate. Only answer from brain content\nCite sources: \"According to concepts/do-things-that-dont-scale...\"\nFlag stale results: if a search result shows [STALE], note that the info may be outdated\nFor \"who\" questions, use backlinks and typed links to find connections\nFor \"what happened\" questions, use timeline entries\nFor \"what do we know\" questions, read compiled_truth directly\nuse judgment to follow the Token-Budget Awareness guidance:\nSearch returns **chunks**, not full pages. Read the excerpts first before deciding\nwhether to load a full page\n`gbrain search` / `gbrain query` return ranked chunks with context snippets\nThese are often enough to answer the question directly\nOnly use `gbrain get <slug>` to load the full page when a chunk confirms the\npage is relevant and you need more context (e.g., compiled truth, timeline)\n**\"Tell me about X\"** -- get the full page (the user wants the complete picture)\n**\"Did anyone mention Y?\"** -- search results are enough (the user wants a yes/no with evidence)\n`gbrain graph-query <slug> --type <link_type> --depth N --direction in|out|both`\n`--direction in` answers \"who points to X?\" (e.g., who works at company X)\n`--direction out` answers \"what does X point to?\" (default)\n`--depth N` controls multi-hop traversal (default 5)\n\"Who works at Acme?\" → `gbrain graph-query companies/acme --type works_at --direction in`\n\"Who attended Demo Day W26?\" → `gbrain graph-query meetings/demo-day-w26 --type attended --direction out`\n\"What companies has Emily advised?\" → `gbrain graph-query people/emily --type advises --direction out`\n\"Who has Alice met (via meetings)?\" → `gbrain graph-query people/alice --type attended --depth 2`\nCombine with `gbrain query` for queries that need BOTH semantic similarity AND\ngraph structure. Search results are ranked with a small backlink boost so well-\nconnected entities surface higher\nRun `gbrain doctor --json` to check index health"
+        )
+        for (__key, __value) in __meridianProseResults_L37 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

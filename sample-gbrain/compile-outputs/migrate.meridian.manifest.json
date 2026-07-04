@@ -98,7 +98,7 @@
     "name" : "migrate",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 21,
         "text" : "Contract"
@@ -106,127 +106,153 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 29,
+        "line" : 30,
         "text" : "Supported Sources"
       },
       {
         "kind" : "procedure",
+        "level" : 3,
+        "line" : 33,
+        "text" : "Supported Sources — steps"
+      },
+      {
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 41,
+        "line" : 46,
         "text" : "Phases"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 50,
+        "line" : 55,
         "text" : "Obsidian Migration"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 69,
+        "text" : "Obsidian Migration — steps"
+      },
+      {
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 70,
+        "line" : 78,
         "text" : "Notion Migration"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 78,
+        "line" : 86,
         "text" : "CSV Migration"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 93,
+        "text" : "CSV Migration — steps"
+      },
+      {
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 86,
+        "line" : 97,
         "text" : "Verification"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 95,
+        "line" : 107,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 102,
+        "line" : 115,
         "text" : "Output Format"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 128,
+        "line" : 141,
         "text" : "Tools Used"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 65,
+        "line" : 63,
         "text" : "Obsidian-specific"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 72,
+        "line" : 80,
         "text" : "Export from Notion"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 88,
+        "line" : 100,
         "text" : "After any migration"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 93,
+        "line" : 105,
         "text" : "Test search"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 21,
         "lines" : [
+          "use judgment to follow the Contract guidance:",
           "Source data is never modified or deleted; migration is additive only",
           "Every migrated page is verified round-trip: written to gbrain, read back, spot-checked",
           "Cross-references from the source system (wikilinks, block refs, tags) are converted to gbrain equivalents",
           "Migration is tested on a sample (5-10 files) before bulk execution",
           "Post-migration health check confirms page count, link integrity, and embedding coverage"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Supported Sources",
-        "line" : 29,
+        "line" : 30,
         "lines" : [
-          "table:decision:fCBTb3VyY2UgfCBGb3JtYXQgfCBTdHJhdGVneSB8CnwtLS0tLS0tLXwtLS0tLS0tLXwtLS0tLS0tLS0tfAp8IE9ic2lkaWFuIHwgTWFya2Rvd24gKyBgW1t3aWtpbGlua3NdXWAgfCBEaXJlY3QgaW1wb3J0LCBjb252ZXJ0IHdpa2lsaW5rcyB0byBnYnJhaW4gbGlua3MgfAp8IE5vdGlvbiB8IEV4cG9ydGVkIG1hcmtkb3duIG9yIENTViB8IFBhcnNlIE5vdGlvbidzIGV4cG9ydCBzdHJ1Y3R1cmUgfAp8IExvZ3NlcSB8IE1hcmtkb3duIHdpdGggYCgoYmxvY2sgcmVmcykpYCB8IENvbnZlcnQgYmxvY2sgcmVmcyB0byBwYWdlIGxpbmtzIHwKfCBQbGFpbiBtYXJrZG93biB8IEFueSAubWQgZGlyZWN0b3J5IHwgSW1wb3J0IGRpcmVjdG9yeSBpbnRvIGdicmFpbiBkaXJlY3RseSB8CnwgQ1NWIHwgVGFidWxhciBkYXRhIHwgTWFwIGNvbHVtbnMgdG8gZnJvbnRtYXR0ZXIgZmllbGRzIHwKfCBKU09OIHwgU3RydWN0dXJlZCBkYXRhIHwgTWFwIGtleXMgdG8gcGFnZSBmaWVsZHMgfAp8IFJvYW0gfCBKU09OIGV4cG9ydCB8IENvbnZlcnQgYmxvY2sgc3RydWN0dXJlIHRvIHBhZ2VzIHw="
+
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
-        "heading" : "Phases",
-        "line" : 41,
+        "executes" : true,
+        "heading" : "Supported Sources — steps",
+        "line" : 33,
         "lines" : [
-          "Assess the source. What format? How many files? What structure?",
-          "Plan the mapping. How do source fields map to gbrain fields (type, title, tags, compiled_truth, timeline)?",
-          "Test with a sample. Import 5-10 files, verify by reading them back from gbrain and exporting",
-          "Bulk import. Import the full directory into gbrain",
-          "Verify. Check gbrain health and statistics, spot-check pages",
-          "Build links. Extract cross-references from content and create typed links in gbrain"
+          "table:ai-discretion:fCBTb3VyY2UgfCBGb3JtYXQgfCBTdHJhdGVneSB8CnwtLS0tLS0tLXwtLS0tLS0tLXwtLS0tLS0tLS0tfAp8IE9ic2lkaWFuIHwgTWFya2Rvd24gKyBgW1t3aWtpbGlua3NdXWAgfCBEaXJlY3QgaW1wb3J0LCBjb252ZXJ0IHdpa2lsaW5rcyB0byBnYnJhaW4gbGlua3MgfAp8IE5vdGlvbiB8IEV4cG9ydGVkIG1hcmtkb3duIG9yIENTViB8IFBhcnNlIE5vdGlvbidzIGV4cG9ydCBzdHJ1Y3R1cmUgfAp8IExvZ3NlcSB8IE1hcmtkb3duIHdpdGggYCgoYmxvY2sgcmVmcykpYCB8IENvbnZlcnQgYmxvY2sgcmVmcyB0byBwYWdlIGxpbmtzIHwKfCBQbGFpbiBtYXJrZG93biB8IEFueSAubWQgZGlyZWN0b3J5IHwgSW1wb3J0IGRpcmVjdG9yeSBpbnRvIGdicmFpbiBkaXJlY3RseSB8CnwgQ1NWIHwgVGFidWxhciBkYXRhIHwgTWFwIGNvbHVtbnMgdG8gZnJvbnRtYXR0ZXIgZmllbGRzIHwKfCBKU09OIHwgU3RydWN0dXJlZCBkYXRhIHwgTWFwIGtleXMgdG8gcGFnZSBmaWVsZHMgfAp8IFJvYW0gfCBKU09OIGV4cG9ydCB8IENvbnZlcnQgYmxvY2sgc3RydWN0dXJlIHRvIHBhZ2VzIHw="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 46,
+        "lines" : [
+          "What format? How many files? What structure?",
+          "How do source fields map to gbrain fields (type, title, tags, compiled_truth, timeline)?",
+          "Import 5-10 files, verify by reading them back from gbrain and exporting",
+          "Import the full directory into gbrain",
+          "Check gbrain health and statistics, spot-check pages",
+          "Extract cross-references from content and create typed links in gbrain"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Obsidian Migration",
-        "line" : 50,
+        "line" : 55,
         "lines" : [
           "Import the vault directory into gbrain (Obsidian vaults are markdown directories)",
-          "Wire the graph with native wikilink support (v0.12.1+):",
-          "codeblock:bash:Z2JyYWluIGV4dHJhY3QgbGlua3MgLS1zb3VyY2UgZGIgLS1kcnktcnVuIHwgaGVhZCAtMjAgICAgIyBwcmV2aWV3CmdicmFpbiBleHRyYWN0IGxpbmtzIC0tc291cmNlIGRiICAgICAgICAgICAgICAgICAgICAgICAgICMgY29tbWl0",
           "`extract links` natively parses `[[relative\/path]]` and `[[relative\/path|Display Text]]`",
           "alongside standard `[text](page.md)` markdown syntax. Ancestor-search resolution handles",
           "wiki KBs where authors omit one or more leading `..\/` prefixes. The `.md` suffix is",
@@ -239,9 +265,18 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
+        "heading" : "Obsidian Migration — steps",
+        "line" : 69,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
         "heading" : "Notion Migration",
-        "line" : 70,
+        "line" : 78,
         "lines" : [
           "Export from Notion: Settings > Export > Markdown & CSV",
           "Notion exports nested directories with UUIDs in filenames",
@@ -249,15 +284,13 @@
           "Map Notion's database properties to frontmatter",
           "Import the cleaned directory into gbrain"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "CSV Migration",
-        "line" : 78,
+        "line" : 86,
         "lines" : [
-          "For tabular data (e.g., CRM exports, contact lists):",
-          "For each row in the CSV, create a page with column values as frontmatter",
           "Use a designated column as the slug (e.g., name)",
           "Use another column as compiled_truth (e.g., notes)",
           "Store each page in gbrain"
@@ -265,10 +298,20 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
-        "heading" : "Verification",
-        "line" : 86,
+        "executes" : true,
+        "heading" : "CSV Migration — steps",
+        "line" : 93,
         "lines" : [
+          "For each row in the CSV, create a page with column values as frontmatter"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Verification",
+        "line" : 97,
+        "lines" : [
+          "use judgment to follow the Verification guidance:",
           "After any migration:",
           "Check gbrain statistics to verify page count matches source",
           "Check gbrain health for orphans and missing embeddings",
@@ -276,24 +319,25 @@
           "Spot-check 5-10 pages by reading them from gbrain",
           "Test search: search gbrain for \"someone you know is in the data\""
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 95,
+        "line" : 107,
         "lines" : [
+          "use judgment to follow the Anti-Patterns guidance:",
           "**Bulk import without sample test.** Never import the full dataset before verifying with 5-10 files. The cost of cleaning up hundreds of bad pages is enormous",
           "**Destroying source data.** Migration is additive. Never modify, move, or delete the source files",
           "**Ignoring cross-references.** Wikilinks, block refs, and tags from the source system must be converted to gbrain equivalents. Dropping them loses the knowledge graph",
           "**Skipping verification.** A migration without post-import health check, page count comparison, and spot-check reads is incomplete"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 102,
+        "line" : 115,
         "lines" : [
           "codeblock:plain:TUlHUkFUSU9OIFJFUE9SVCAtLSBbc291cmNlXSAtPiBHQnJhaW4KPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CgpTb3VyY2U6IFtmb3JtYXRdIChbZmlsZSBjb3VudF0gZmlsZXMsIFtzaXplXSkKTWFwcGluZzogW2ZpZWxkIG1hcHBpbmcgc3VtbWFyeV0KClNhbXBsZSBUZXN0IChOIGZpbGVzKToKLSBJbXBvcnRlZDogTi9OCi0gUm91bmQtdHJpcCB2ZXJpZmllZDogTi9OCi0gQ3Jvc3MtcmVmcyBjb252ZXJ0ZWQ6IE4KCkJ1bGsgSW1wb3J0OgotIFRvdGFsIGltcG9ydGVkOiBOCi0gU2tpcHBlZCAoZHVwbGljYXRlcy9lcnJvcnMpOiBOCi0gTGlua3MgY3JlYXRlZDogTgotIFRhZ3MgbWlncmF0ZWQ6IE4KClZlcmlmaWNhdGlvbjoKLSBQYWdlIGNvdW50IG1hdGNoOiBbeWVzL25vXQotIEhlYWx0aCBjaGVjazogW3Bhc3MvZmFpbF0KLSBTZWFyY2ggdGVzdDogW3F1ZXJ5XSAtPiBbcmVzdWx0IGNvdW50XSBoaXRz"
         ],
@@ -302,7 +346,7 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 128,
+        "line" : 141,
         "lines" : [
           "Store\/update pages in gbrain (put_page)",
           "Read pages from gbrain (get_page)",
@@ -354,28 +398,32 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 630
+      "meridian_line" : 22,
+      "swift_line" : 601
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 635
+      "swift_line" : 640
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 674
+      "swift_line" : 645
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 679
+      "swift_line" : 684
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 718
+      "swift_line" : 689
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 723
+      "swift_line" : 728
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 733
     }
   ],
   "tools_used" : [
@@ -394,6 +442,27 @@
         {
           "kind" : "Input",
           "name" : "input"
+        }
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "Source data is never modified or deleted; migration is additive only\nEvery migrated page is verified round-trip: written to gbrain, read back, spot-checked\nCross-references from the source system (wikilinks, block refs, tags) are converted to gbrain equivalents\nMigration is tested on a sample (5-10 files) before bulk execution\nPost-migration health check confirms page count, link integrity, and embedding coverage\ntable:ai-discretion:fCBTb3VyY2UgfCBGb3JtYXQgfCBTdHJhdGVneSB8CnwtLS0tLS0tLXwtLS0tLS0tLXwtLS0tLS0tLS0tfAp8IE9ic2lkaWFuIHwgTWFya2Rvd24gKyBgW1t3aWtpbGlua3NdXWAgfCBEaXJlY3QgaW1wb3J0LCBjb252ZXJ0IHdpa2lsaW5rcyB0byBnYnJhaW4gbGlua3MgfAp8IE5vdGlvbiB8IEV4cG9ydGVkIG1hcmtkb3duIG9yIENTViB8IFBhcnNlIE5vdGlvbidzIGV4cG9ydCBzdHJ1Y3R1cmUgfAp8IExvZ3NlcSB8IE1hcmtkb3duIHdpdGggYCgoYmxvY2sgcmVmcykpYCB8IENvbnZlcnQgYmxvY2sgcmVmcyB0byBwYWdlIGxpbmtzIHwKfCBQbGFpbiBtYXJrZG93biB8IEFueSAubWQgZGlyZWN0b3J5IHwgSW1wb3J0IGRpcmVjdG9yeSBpbnRvIGdicmFpbiBkaXJlY3RseSB8CnwgQ1NWIHwgVGFidWxhciBkYXRhIHwgTWFwIGNvbHVtbnMgdG8gZnJvbnRtYXR0ZXIgZmllbGRzIHwKfCBKU09OIHwgU3RydWN0dXJlZCBkYXRhIHwgTWFwIGtleXMgdG8gcGFnZSBmaWVsZHMgfAp8IFJvYW0gfCBKU09OIGV4cG9ydCB8IENvbnZlcnQgYmxvY2sgc3RydWN0dXJlIHRvIHBhZ2VzIHw=\nWhat format? How many files? What structure?\nHow do source fields map to gbrain fields (type, title, tags, compiled_truth, timeline)?\nImport 5-10 files, verify by reading them back from gbrain and exporting\nImport the full directory into gbrain\nCheck gbrain health and statistics, spot-check pages\nExtract cross-references from content and create typed links in gbrain\nExport from Notion: Settings > Export > Markdown & CSV\nNotion exports nested directories with UUIDs in filenames\nStrip UUIDs from filenames for clean slugs\nMap Notion's database properties to frontmatter\nImport the cleaned directory into gbrain\nFor each row in the CSV, create a page with column values as frontmatter\nuse judgment to follow the Verification guidance:\nAfter any migration:\nCheck gbrain statistics to verify page count matches source\nCheck gbrain health for orphans and missing embeddings\nExport pages from gbrain for round-trip verification\nSpot-check 5-10 pages by reading them from gbrain\nTest search: search gbrain for \"someone you know is in the data\"\nuse judgment to follow the Anti-Patterns guidance:\n**Bulk import without sample test.** Never import the full dataset before verifying with 5-10 files. The cost of cleaning up hundreds of bad pages is enormous\n**Destroying source data.** Migration is additive. Never modify, move, or delete the source files\n**Ignoring cross-references.** Wikilinks, block refs, and tags from the source system must be converted to gbrain equivalents. Dropping them loses the knowledge graph\n**Skipping verification.** A migration without post-import health check, page count comparison, and spot-check reads is incomplete",
+          "line" : 22,
+          "scoped_tools" : [
+            "add_link",
+            "add_tag",
+            "get_health",
+            "get_page",
+            "get_stats",
+            "link.add",
+            "page.search",
+            "publish",
+            "put_page",
+            "query",
+            "shell.run"
+          ],
+          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "migrate a input",

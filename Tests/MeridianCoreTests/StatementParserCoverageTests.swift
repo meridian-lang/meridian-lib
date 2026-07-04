@@ -304,7 +304,7 @@ struct StatementParserCoverageTests {
         #expect(step.text.contains("First requirement spans a continuation line"))
     }
 
-    @Test("generated guidance judgment collects until next heading")
+    @Test("generated guidance judgment collects until next heading, into the guidance field")
     func generatedGuidanceCollectsUntilHeading() throws {
         let block = try parse("""
         use judgment to follow the Install guidance:
@@ -318,7 +318,11 @@ struct StatementParserCoverageTests {
         guard case .proseStep(let step) = block.statements.first else {
             Issue.record("expected prose step"); return
         }
-        #expect(step.text.contains("item: validate inputs"))
+        // The collected narrative is carried separately as `guidance`, not
+        // folded into the dispatch goal `text` (ProseStepAST.guidance).
+        #expect(step.guidance?.contains("item: validate inputs") == true)
+        #expect(!step.text.contains("item: validate inputs"))
+        #expect(step.text == "follow the Install guidance")
     }
 
     @Test("shell block flushes trailing continuation")
@@ -332,5 +336,89 @@ struct StatementParserCoverageTests {
             Issue.record("expected shell phrase"); return
         }
         #expect(decodeShellCommand(phrase.words) == "gbrain doctor")
+    }
+
+    @Test("guarded fence: if <cond>, run: + shell fence wraps in a branch")
+    func guardedFenceWrapsShellFenceInBranch() throws {
+        let block = try parse("""
+        if the health check fails, run:
+        ```bash
+        gbrain doctor --repair
+        ```
+        """)
+        guard case .conditional(let cond) = block.statements.first else {
+            Issue.record("expected conditional"); return
+        }
+        guard case .phraseInvocation(let phrase) = cond.thenBlock.statements.first else {
+            Issue.record("expected shell phrase inside then-block"); return
+        }
+        #expect(decodeShellCommand(phrase.words) == "gbrain doctor --repair")
+        #expect(cond.elseBlock == nil)
+    }
+
+    @Test("guarded fence tolerates a blank line before the fence")
+    func guardedFenceSkipsBlankBeforeFence() throws {
+        let block = try parse("""
+        if the health check fails, run:
+
+        ```bash
+        gbrain doctor --repair
+        ```
+        """)
+        guard case .conditional(let cond) = block.statements.first else {
+            Issue.record("expected conditional"); return
+        }
+        #expect(cond.thenBlock.statements.count == 1)
+    }
+
+    @Test("if <cond>, run: without a following fence falls back to inline conditional")
+    func ifRunWithoutFenceFallsBackToInlineConditional() throws {
+        let block = try parse("if the build fails, run the report.")
+        guard case .conditional(let cond) = block.statements.first else {
+            Issue.record("expected conditional"); return
+        }
+        guard case .phraseInvocation = cond.thenBlock.statements.first else {
+            Issue.record("expected inline phrase invocation"); return
+        }
+    }
+
+    @Test("fallback chain: try the following in order until one succeeds, nests recover N deep")
+    func fallbackChainNestsRecover() throws {
+        let block = try parse("""
+        try the following in order until one succeeds:
+        1. Run `gbrain doctor`.
+        2. Run `gbrain doctor --repair`.
+        3. Run `gbrain reset`.
+        """)
+        guard case .recover(let outer) = block.statements.first else {
+            Issue.record("expected top-level recover"); return
+        }
+        guard case .phraseInvocation(let first) = outer.attached else {
+            Issue.record("expected first step as attached statement"); return
+        }
+        #expect(decodeShellCommand(first.words) == "gbrain doctor")
+
+        guard case .recover(let middle) = outer.handler.statements.first else {
+            Issue.record("expected nested recover as the handler"); return
+        }
+        guard case .phraseInvocation(let second) = middle.attached else {
+            Issue.record("expected second step as attached statement"); return
+        }
+        #expect(decodeShellCommand(second.words) == "gbrain doctor --repair")
+
+        guard case .phraseInvocation(let third) = middle.handler.statements.first else {
+            Issue.record("expected third (final) step bare, with no further recover"); return
+        }
+        #expect(decodeShellCommand(third.words) == "gbrain reset")
+    }
+
+    @Test("fallback chain requires at least two steps")
+    func fallbackChainRequiresMultipleSteps() throws {
+        let block = try parse("""
+        try the following in order until one succeeds:
+        1. Run `gbrain doctor`.
+        """)
+        guard case .recover = block.statements.first else { return }
+        Issue.record("single-step list should not be chained into a recover")
     }
 }

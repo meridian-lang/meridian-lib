@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -600,41 +600,15 @@ public struct ArticleEnrichmentInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ArticleEnrichmentInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L131:C0") {
-            // L131
-            // — creates the raw article pages this skill enriches
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("skills/media-ingest/SKILL.md"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.0:L131:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L132:C0") {
-            // L132
-            // — link/article ingestion with author people-page enforcement
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("skills/idea-ingest/SKILL.md"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L132:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L133:C0") {
-            // L133
-            // — citation + back-link rules
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("skills/conventions/quality.md"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L133:C0", state: state.snapshot())
+        // L30
+        let __meridianProseResults_L30 = try await runtime.executeProsePlan(
+            prose: "follow the What this does guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            guidance: "Takes an article brain page that's a wall of raw extracted text and rewrites\nit as a structured page with:\n**Executive Summary** — 2-3 sentences, the ONE thing worth remembering\n**Why It Matters** — connects to the user's specific projects + interests\n(read from brain context, not assumed)\n**Quotable Lines** — 3-5 VERBATIM quotes worth referencing in essays\n**Key Insights** — actual insights, not topic labels\n**Surprising or Counterintuitive** — what makes this content unique\n**See Also** — standard markdown links to related brain pages\nRaw source content is preserved in a collapsed `<details>` section so the\noriginal is never lost\nuse judgment to follow the When to invoke guidance:\nNew article page lands in the brain via media-ingest with `needs_enrichment: true`\nExisting article page is a wall of text under a `## Content` header with\nno synthesis\nUser says a brain page is useless, boring, or a dump\nAn LLM-judge brain-quality eval fails on quotability or actionability for\nan article page\ncodeblock:bash:IyAxLiBGaW5kIGNhbmRpZGF0ZSBwYWdlcwpnYnJhaW4gcXVlcnkgIm5lZWRzX2VucmljaG1lbnQ6IHRydWUgdHlwZTphcnRpY2xlIiAtLWxpbWl0IDUwCgojIDIuIEZvciBlYWNoIGNhbmRpZGF0ZSwgcmVhZCB0aGUgcGFnZQpnYnJhaW4gZ2V0IG1lZGlhL2FydGljbGVzLzxzbHVnPgoKIyAzLiBFbnJpY2ggdmlhIHRoZSBhZ2VudCdzIExMTSAoU29ubmV0IGJ5IGRlZmF1bHQ7IE9wdXMgZm9yIGhpZ2gtdmFsdWUpCiMgICAgVGhlIGFnZW50IHJlYWRzIHRoZSByYXcgY29udGVudCArIGJyYWluIGNvbnRleHQgKyB3cml0ZXMgdGhlIHN0cnVjdHVyZWQgcGFnZS4KCiMgNC4gV3JpdGUgdGhlIGVucmljaGVkIHBhZ2UKIyAgICBVc2UgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbiB3aXRoIHRoZSBuZXcgc3RydWN0dXJlZCBtYXJrZG93biBib2R5LgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzCiMgICAgRm9yIGV2ZXJ5IHBlcnNvbi9jb21wYW55IG1lbnRpb25lZCwgYWRkIGEgdGltZWxpbmUgYmFjay1saW5rLg==\n✅ `## Executive Summary` (2-3 sentences)\n✅ `## Quotable Lines` with ≥3 verbatim quotes (literal quotes, not paraphrase)\n✅ `## Key Insights` with ≥3 bullets (insights, not topic labels)\ntable:ai-discretion:fCBNb2RlbCB8IFVzZSB3aGVuIHwgUXVvdGUgYWNjdXJhY3kgfAp8LS0tLS0tLXwtLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgU29ubmV0IChkZWZhdWx0KSB8IEJ1bGsgZW5yaWNobWVudCwgbW9zdCBhcnRpY2xlcyB8IEdvb2Qg4oCUIG9jY2FzaW9uYWxseSBwYXJhcGhyYXNlcyB8CnwgT3B1cyB8IEhpZ2gtdmFsdWUgY29udGVudCwgb3JpZ2luYWwtdGhpbmtpbmcgcGllY2VzLCBsb25ncmVhZHMgfCBFeGNlbGxlbnQg4oCUIHJlc3BlY3RzICJ2ZXJiYXRpbSIgaW5zdHJ1Y3Rpb24gfA==\nNEVER use `[[wiki-links]]` — they don't render on GitHub\nuse judgment to follow the Anti-Patterns guidance:\n❌ Paraphrasing quotes (\"the author argues that…\"). Quotes are verbatim\nor they're not quotes\n❌ Generic \"Why It Matters\" (\"this is important because innovation\")\nTie to specific brain context or remove the section\n❌ Inventing topic labels and calling them insights. An insight is a\nthing the article says that you didn't already know\n❌ Discarding the raw source. Always wrap it in `<details>`\n❌ Re-enriching non-idempotently — check the `needs_enrichment` flag in\nfrontmatter; skip if already false\n`skills/media-ingest/SKILL.md` — creates the raw article pages this skill enriches\n`skills/idea-ingest/SKILL.md` — link/article ingestion with author people-page enforcement\n`skills/conventions/quality.md` — citation + back-link rules\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        )
+        for (__key, __value) in __meridianProseResults_L30 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

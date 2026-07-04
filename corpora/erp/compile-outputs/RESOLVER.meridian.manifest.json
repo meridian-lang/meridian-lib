@@ -93,47 +93,57 @@
     }
   ],
   "meridian_skill" : {
-    "description" : "Route a synthetic ERP operator request to a skill id.",
-    "name" : "erp resolver",
     "outline" : [
       {
-        "kind" : "tables",
+        "kind" : "inert",
         "level" : 2,
-        "line" : 11,
-        "text" : "Tables"
+        "line" : 5,
+        "text" : "Dispatch table"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 8,
+        "text" : "Dispatch table — steps"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 23,
+        "line" : 22,
         "text" : "Workflow"
       }
     ],
-    "parameters" : "trigger phrase",
-    "rulebook" : "erp.merrules",
     "sections" : [
       {
-        "executes" : true,
-        "heading" : "Tables",
-        "line" : 11,
+        "executes" : false,
+        "heading" : "Dispatch table",
+        "line" : 5,
         "lines" : [
-          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHByb2Nlc3Mgb3BlbiBvcmRlcnMgfCBwbGFjZW9yZGVyIHwKfCBmdWxmaWxsIEVSUCBvcmRlcnMgfCBmdWxmaWxsb3JkZXIgfAp8IHJ1biBpbnZvaWNlcyB8IGludm9pY2VydW4gfAp8IHJ1biBkdW5uaW5nIHwgZHVubmluZyB8CnwgcmVzdG9jayBzaG9ydCBwcm9kdWN0cyB8IHJlc3RvY2sgfAp8IHJlY2VpdmUgaW5ib3VuZCBzaGlwbWVudCB8IHJlY2VpdmVzaGlwbWVudCB8CnwgY2FuY2VsIGJsb2NrZWQgb3JkZXJzIHwgY2FuY2Vsb3JkZXIgfAp8IG1vbnRoLWVuZCBjbG9zZSB8IG1vbnRoZW5kY2xvc2UgfA=="
+
         ],
-        "role" : "tables"
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Dispatch table — steps",
+        "line" : 8,
+        "lines" : [
+          "table:ai-discretion:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHByb2Nlc3Mgb3BlbiBvcmRlcnMgfCBwbGFjZW9yZGVyIHwKfCBmdWxmaWxsIEVSUCBvcmRlcnMgfCBmdWxmaWxsb3JkZXIgfAp8IHJ1biBpbnZvaWNlcyB8IGludm9pY2VydW4gfAp8IHJ1biBkdW5uaW5nIHwgZHVubmluZyB8CnwgcmVzdG9jayBzaG9ydCBwcm9kdWN0cyB8IHJlc3RvY2sgfAp8IHJlY2VpdmUgaW5ib3VuZCBzaGlwbWVudCB8IHJlY2VpdmVzaGlwbWVudCB8CnwgY2FuY2VsIGJsb2NrZWQgb3JkZXJzIHwgY2FuY2Vsb3JkZXIgfAp8IG1vbnRoLWVuZCBjbG9zZSB8IG1vbnRoZW5kY2xvc2UgfA=="
+        ],
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Workflow",
-        "line" : 23,
+        "line" : 22,
         "lines" : [
-          "bind selected skill = the skill corresponding to the trigger phrase trigger phrase in the table",
-          "emit erp.dispatch with skill = selected skill",
-          "complete"
+          "use judgment to follow the Workflow guidance:",
+          "Look up the skill corresponding to the trigger phrase and emit the selected",
+          "skill id"
         ],
         "role" : "procedure"
       }
-    ],
-    "vocabulary" : "erp.merconfig"
+    ]
   },
   "meridian_verbs" : [
     {
@@ -171,20 +181,12 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 12,
-      "swift_line" : 407
+      "meridian_line" : 11,
+      "swift_line" : 396
     },
     {
-      "meridian_line" : 24,
-      "swift_line" : 409
-    },
-    {
-      "meridian_line" : 25,
-      "swift_line" : 412
-    },
-    {
-      "meridian_line" : 26,
-      "swift_line" : 421
+      "meridian_line" : 23,
+      "swift_line" : 405
     }
   ],
   "tools_used" : [
@@ -194,13 +196,47 @@
     {
       "mode" : "strict",
       "parameters" : [
+
+      ],
+      "prose_steps" : [
         {
-          "kind" : "TriggerPhrase",
-          "name" : "triggerPhrase"
+          "dispatch_mode" : "plan_then_execute",
+          "line" : 11,
+          "scoped_tools" : [
+            "inventory.reserve",
+            "invoice.create",
+            "invoice.list",
+            "order.cancel",
+            "order.list",
+            "payment.collect",
+            "period.close",
+            "product.list",
+            "purchase_order.create",
+            "shipment.create"
+          ],
+          "text" : "Decide which case below applies and carry out its action:\n- when trigger phrase is process open orders, placeorder\n- when trigger phrase is fulfill ERP orders, fulfillorder\n- when trigger phrase is run invoices, invoicerun\n- when trigger phrase is run dunning, dunning\n- when trigger phrase is restock short products, restock\n- when trigger phrase is receive inbound shipment, receiveshipment\n- when trigger phrase is cancel blocked orders, cancelorder\n- when trigger phrase is month-end close, monthendclose"
+        },
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "Look up the skill corresponding to the trigger phrase and emit the selected\nskill id",
+          "line" : 23,
+          "scoped_tools" : [
+            "inventory.reserve",
+            "invoice.create",
+            "invoice.list",
+            "order.cancel",
+            "order.list",
+            "payment.collect",
+            "period.close",
+            "product.list",
+            "purchase_order.create",
+            "shipment.create"
+          ],
+          "text" : "follow the Workflow guidance"
         }
       ],
-      "source_name" : "erp resolver a trigger phrase",
-      "swift_struct" : "ErpResolverTriggerPhrase"
+      "source_name" : "entry",
+      "swift_struct" : "Entry"
     }
   ]
 }

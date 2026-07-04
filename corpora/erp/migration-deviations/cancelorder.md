@@ -3,45 +3,45 @@
 - Original: `cancel_order/SKILL.md`
 - Ported: `cancelorder.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 96%
-- Lines: 24 -> 24 (+1 / -1)
+- Similarity: 88%
+- Lines: 24 -> 26 (+4 / -2)
 
 ## Frontmatter
 - Added: (none)
 - Removed: (none)
 
 ## Categories
+- section-marker-added
 - shell-block-routed
-- inert-section-added
-
-## Inert deviations
-
-These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L4 `When this applies`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
 
 ## Metrics
-- Sections: 2/3 inert (67% inert ratio)
-- Operational inert: 2
+- Sections inert total: 0/3 (0% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-procedure=1
-- Judgment: 0 blocks, 0 lines
-
-### Inert section details
-- L4 `When this applies`: operational-procedure — Marked or derived as applicability, but inert suppresses execution.
-- L15 `Controls`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
+- Judgment: 2 blocks, 0 lines
 
 ## Unified diff
 
 ```diff
 --- original-skills/cancel_order/SKILL.md
 +++ skills/cancelorder.meri
-@@ -8,7 +8,7 @@
+@@ -8,7 +8,8 @@
  
  # Cancel Order
  
 -## When this applies
-+## When this applies (( inert, role: applicability ))
++## When this applies (( role: procedure ))
++use judgment to follow the When this applies guidance:
  - "cancel blocked orders"
  - "void ERP orders"
+ 
+@@ -19,6 +20,7 @@
+   cancel the order.
+ Publish: "blocked orders cancelled".
+ 
+-## Controls
++## Controls (( role: procedure ))
++use judgment to follow the Controls guidance:
+ An already fulfilled order must not be cancelled by this runbook.
  
 ```

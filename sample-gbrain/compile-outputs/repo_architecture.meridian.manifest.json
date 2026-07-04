@@ -98,7 +98,7 @@
     "name" : "repo-architecture",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 23,
         "text" : "Contract"
@@ -106,52 +106,54 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 30,
+        "line" : 31,
         "text" : "Phases"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 44,
+        "line" : 46,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 48,
+        "line" : 50,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 25,
+        "line" : 26,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 46,
+        "line" : 48,
         "text" : "Advisory"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 23,
         "lines" : [
+          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Every new page is filed by primary subject (not format, not source)",
           "The decision protocol is followed for ambiguous cases",
           "Common misfiling patterns are caught"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phases",
-        "line" : 30,
+        "line" : 31,
         "lines" : [
+          "use judgment to follow the Phases guidance:",
           "**Identify the primary subject.** What would you search for to find this page?",
           "**Walk the decision tree:**",
           "About a person → `people\/{name-slug}.md`",
@@ -169,23 +171,24 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 44,
+        "line" : 46,
         "lines" : [
           "Advisory: \"File this at `{type}\/{slug}.md` because the primary subject is {reason}.\""
         ],
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 48,
+        "line" : 50,
         "lines" : [
+          "use judgment to follow the Anti-Patterns guidance:",
           "Filing by format (\"it's a PDF so it goes in sources\/\")",
           "Filing by source (\"it came from email so it goes in sources\/\")",
           "Creating pages without checking if one already exists",
           "Using `sources\/` for anything except raw data dumps"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "tools" : "search\nget_page\nlist_pages",
@@ -228,36 +231,40 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 631
+      "meridian_line" : 24,
+      "swift_line" : 602
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 641
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 646
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 685
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 690
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 734
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 773
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 778
     }
   ],
   "tools_used" : [
@@ -270,6 +277,20 @@
         {
           "kind" : "Input",
           "name" : "input"
+        }
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "This skill guarantees:\nEvery new page is filed by primary subject (not format, not source)\nThe decision protocol is followed for ambiguous cases\nCommon misfiling patterns are caught\nuse judgment to follow the Phases guidance:\n**Identify the primary subject.** What would you search for to find this page?\n**Walk the decision tree:**\nAbout a person → `people\/{name-slug}.md`\nAbout a company → `companies\/{name-slug}.md`\nA reusable concept\/framework → `concepts\/{slug}.md`\nAn original idea → `originals\/{slug}.md`\nA meeting → `meetings\/{slug}.md`\nMedia content → `media\/{type}\/{slug}.md`\nRaw data import → `sources\/{slug}.md`\n**Cross-link.** Link from related directories\n**Check notability.** See `skills\/conventions\/quality.md` notability gate\nuse judgment to follow the Anti-Patterns guidance:\nFiling by format (\"it's a PDF so it goes in sources\/\")\nFiling by source (\"it came from email so it goes in sources\/\")\nCreating pages without checking if one already exists\nUsing `sources\/` for anything except raw data dumps",
+          "line" : 24,
+          "scoped_tools" : [
+            "page.get",
+            "page.list",
+            "page.search",
+            "shell.run"
+          ],
+          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "repo-architecture a input",

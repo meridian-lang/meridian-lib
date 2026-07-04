@@ -8,7 +8,8 @@ triggers:
 
 # Aging Report
 
-## Invocation
+## Invocation (( role: procedure ))
+use judgment to follow the Invocation guidance:
 - "aging report"
 - "stale record report"
 
@@ -18,8 +19,8 @@ triggers:
 | stale | review |
 | duplicate | merge |
 
-## Procedure (( role: procedure ))
-fetch stale records.
+## Procedure
+use judgment to follow the Procedure guidance:
 Check: any stale records.
 bind aging report =
   ```
@@ -27,6 +28,13 @@ bind aging report =
   [for each row in table]- {{ row.bucket }} -> {{ row.action }}
   [end for]
   ```
+
+### Procedure — steps
+
+fetch stale records.
+
+### Procedure — steps 2
+
 Emit: aging report.
 
 ## Trace shape (( inert, role: template ))

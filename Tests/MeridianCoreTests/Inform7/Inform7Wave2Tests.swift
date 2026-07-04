@@ -81,6 +81,22 @@ struct BooleanCompositionTests {
         #expect(ops.count == 2)
     }
 
+    @Test("two Oxford commas in one expression are both normalized (regression: replaceOutsideQuotes index-space crash)")
+    func doubleCommaTolerance() {
+        // A prior `replaceOutsideQuotes` bug scanned a throwaway `String`
+        // copy of the remaining substring but subscripted the original
+        // substring with the resulting range — the two index spaces only
+        // happened to line up for a single match. A second Oxford-comma join
+        // in the same string (a second loop iteration, working from a
+        // suffix slice) tripped a String.Index range trap. See
+        // SkillMigratorMarkingTests for the migrator-level repro (a `##
+        // Contract` narrative paragraph with two ", and" lists).
+        guard case .logical(.and, let ops) = parse("a is 1, and b is 2, and c is 3") else {
+            Issue.record("expected and"); return
+        }
+        #expect(ops.count == 3)
+    }
+
     @Test("and/or markers inside quoted strings are not split")
     func quotedNotSplit() {
         // The only top-level operator is the trailing `and`.

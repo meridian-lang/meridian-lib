@@ -296,71 +296,15 @@ public struct DedupeRecords: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "DedupeRecords", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L24:C0") {
-            // L24
-            try await runtime.assert(((((state.get("records"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("duplicate"))) }).isEmpty), message: "Expected no records whose status is \"duplicate\"")
-            try await runtime.checkpoint(label: "progress:0.0:L24:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L45:C0") {
-            // L45
-            let records = try await runtime.invoke(
-                tool: "recordList",
-                args: [
-                    "status": .string("duplicate"),
-                ]
-            )
-            state.bind("records", records)
-
-            try await runtime.checkpoint(label: "progress:0.1:L45:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L17:C0") {
-            // L17
-            try await runtime.assert((!(((state.get("records"))?.asList ?? []).filter { __e in (meridianDef_Record_duplicate(__e)) }).isEmpty), message: "Expected any duplicate records")
-            try await runtime.checkpoint(label: "progress:0.2:L17:C0", state: state.snapshot())
-        }
-        // L18
-        let __meridianSrc_0_3 = (state.get("records")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("duplicate"))) }
-        for (__meridianLoopIndex_0_3, record) in __meridianSrc_0_3.enumerated() {
-            let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
-            if __meridianShouldRun(__meridianLoopLabel_0_3) {
-            state.bind("record", record)
-                if __meridianShouldRun("progress:0.3.body.0:L63:C0") {
-                    // L63
-                    let recordCanonical = try await runtime.invoke(
-                        tool: "record.mark_canonical",
-                        args: [
-                            "record": state.get("record") ?? .null,
-                        ]
-                    )
-                    state.bind("recordCanonical", recordCanonical)
-
-                    try await runtime.checkpoint(label: "progress:0.3.body.0:L63:C0", state: state.snapshot())
-                }
-                if __meridianShouldRun("progress:0.3.body.1:L69:C0") {
-                    // L69
-                    let record = try await runtime.invoke(
-                        tool: "record.purge",
-                        args: [
-                            "record": state.get("record") ?? .null,
-                        ]
-                    )
-                    state.bind("record", record)
-
-                    try await runtime.checkpoint(label: "progress:0.3.body.1:L69:C0", state: state.snapshot())
-                }
-                try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
-            }
-        }
-
-        if __meridianShouldRun("progress:0.4:L21:C0") {
-            // L21
-            try await runtime.emit(
-                event: "procedure.report",
-                payload: [
-                    "message": .string("duplicate record pass complete"),
-                ]
-            )
-            try await runtime.checkpoint(label: "progress:0.4:L21:C0", state: state.snapshot())
+        // L12
+        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
+            prose: "follow the Use this when guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["audit_row.list", "batch.list", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "record.list", "record.mark_canonical", "record.purge"],
+            guidance: "\"dedupe records\"\n\"duplicate rows detected\"\nuse judgment to follow the Procedure guidance:\nCheck: any duplicate records\nfetch duplicate records\nfor each record whose status is \"duplicate\":\nmark the record canonical\npurge the record\nEmit: \"duplicate record pass complete\"\nuse judgment to follow the Postconditions guidance:\nmake sure no records whose status is \"duplicate\""
+        )
+        for (__key, __value) in __meridianProseResults_L12 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

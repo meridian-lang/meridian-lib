@@ -39,7 +39,8 @@ writes_to:
 
 > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 - Every ingested media item has a brain page with analysis (not just a transcript dump)
@@ -52,10 +53,15 @@ This skill guarantees:
 
 Every mention of a person or company with a brain page MUST create a back-link.
 
-## Phases (( inert, role: procedure ))
+## Phases
+use judgment to follow the Phases guidance:
 
 ### Phase 1: Identify format and fetch (( inert, role: procedure ))
 
+
+#### Phase 1: Identify format and fetch — steps
+
+!!! table (( ai-discretion ))
 | Format | Action |
 |--------|--------|
 | YouTube/video URL | Fetch transcript (Whisper, transcription service, or captions) |
@@ -65,11 +71,12 @@ Every mention of a person or company with a brain page MUST create a back-link.
 | Screenshot/image | OCR via vision model, extract text and entities |
 | GitHub repo | Clone, read README + key files, summarize architecture |
 
-### Phase 2: Upload raw source (( inert, role: procedure ))
+### Phase 2: Upload raw source
 
 Save the original file for provenance: `gbrain files upload-raw <file> --page <slug>`
 
-### Phase 3: Create brain page (( inert, role: procedure ))
+### Phase 3: Create brain page
+use judgment to follow the Phase 3: Create brain page guidance:
 
 File by primary subject (not format). Use this template:
 
@@ -80,30 +87,37 @@ File by primary subject (not format). Use this template:
 **Format:** {video/audio/PDF/book/screenshot/repo}
 **Created:** {date}
 
-## Summary (( inert ))
+## Summary
 {Key points, not a transcript dump}
 
-## Key Segments / Highlights (( inert ))
+## Key Segments / Highlights
 {For video/audio: timestamped highlights. For books: chapter summaries.}
 
-## People Mentioned (( inert ))
+## People Mentioned
 {List with links to brain pages}
 
-## Companies Mentioned (( inert ))
+## Companies Mentioned
 {List with links to brain pages}
 ```
 
-### Phase 4: Entity extraction and propagation (( inert, role: procedure ))
+### Phase 4: Entity extraction and propagation
+use judgment to follow the Phase 4: Entity extraction and propagation guidance:
 
-For every person and company mentioned:
-1. Check brain for existing page
 2. Create/enrich if needed (delegate to enrich skill)
-3. Add back-link from entity page to this media page
 4. Add timeline entry on entity page
 
 A media item is NOT fully ingested until entity propagation is complete.
 
-### Phase 5: Sync (( inert, role: procedure ))
+
+#### Phase 4: Entity extraction and propagation — steps
+
+For every person and company mentioned:
+1. Check brain for existing page
+
+#### Phase 4: Entity extraction and propagation — steps 2
+
+3. Add back-link from entity page to this media page
+### Phase 5: Sync
 
 `gbrain sync` to update the index.
 
@@ -112,7 +126,8 @@ A media item is NOT fully ingested until entity propagation is complete.
 Brain page created with summary, highlights, and entity cross-links. Report to user:
 "Ingested {title}: {N} entities detected, {N} pages updated."
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - Dumping raw transcripts without analysis
 - Skipping entity extraction ("I'll do that separately")

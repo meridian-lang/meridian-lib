@@ -3,8 +3,8 @@
 - Original: `concept-synthesis/SKILL.md`
 - Ported: `concept_synthesis.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 89%
-- Lines: 256 -> 256 (+29 / -29)
+- Similarity: 92%
+- Lines: 256 -> 265 (+25 / -16)
 
 ## Frontmatter
 - Added: (none)
@@ -12,6 +12,7 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - inert-section-added
 
 ## Inert deviations
@@ -19,43 +20,30 @@
 These sections were made non-executable in the port and should be reviewed as migration deviations:
 - L10 `What this solves`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 - L23 `Architecture`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L57 `Invocation`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
-- L80 `Output: concept page format (post-synthesis)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L82 `T1 Canon — full synthesis`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L129 `T3 / T4 — stub only (no LLM synthesis)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L147 `Output: cluster map at concepts/README.md`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L178 `Quality gates`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L180 `Dedup quality`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L185 `Tier quality`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L192 `Synthesis quality`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L198 `Cron integration`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L208 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L226 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
-- L237 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L85 `T1 Canon — full synthesis`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L132 `T3 / T4 — stub only (no LLM synthesis)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L150 `Output: cluster map at concepts/README.md`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L189 `Tier quality`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L205 `Cron integration`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L246 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections: 15/16 inert (94% inert ratio)
-- Operational inert: 2
+- Sections inert total: 9/14 (64% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-content=1, reference-documentation=12, template=1
-- Judgment: 0 blocks, 0 lines
+- Inert categories: reference-documentation=8, template=1
+- Judgment: 3 blocks, 0 lines
 
 ### Inert section details
 - L10 `What this solves`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L23 `Architecture`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L57 `Invocation`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
-- L80 `Output: concept page format (post-synthesis)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L82 `T1 Canon — full synthesis`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L129 `T3 / T4 — stub only (no LLM synthesis)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L147 `Output: cluster map at concepts/README.md`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L178 `Quality gates`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L180 `Dedup quality`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L185 `Tier quality`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L192 `Synthesis quality`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L198 `Cron integration`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L208 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L226 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
-- L237 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L85 `T1 Canon — full synthesis`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L132 `T3 / T4 — stub only (no LLM synthesis)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L150 `Output: cluster map at concepts/README.md`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L189 `Tier quality`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L196 `Synthesis quality`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L205 `Cron integration`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L246 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
@@ -80,16 +68,19 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```
  Phase 1: Dedup + merge (deterministic)
-@@ -70,7 +70,7 @@
+@@ -70,7 +70,10 @@
      └── Identify idea genealogies (concept A → evolved into concept B)
  ```
  
 -## Invocation
 +## Invocation (( inert ))
++
++
++### Invocation — steps (( inert ))
  
  The skill is markdown agent instructions. The agent uses gbrain's
  existing operations + LLM passes:
-@@ -93,9 +93,9 @@
+@@ -93,9 +96,9 @@
  #    and writes concepts/README.md with the full intellectual map.
  ```
  
@@ -102,39 +93,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```markdown
  ---
-@@ -116,17 +116,17 @@
- 
- **Tier 1 — Canon** | 18 mentions across 8 months
- 
--## Synthesis
-+## Synthesis (( inert ))
- 
- [2-4 paragraph narrative tracing how the idea evolved, what it means in
- the user's worldview, why it matters. Third-person analytical voice.]
- 
--## Best Articulation
-+## Best Articulation (( inert ))
- 
- > "Verbatim quote from a source — the most precise or highest-engagement
- > expression of this idea." — [Date](source-url)
- 
--## Evolution
-+## Evolution (( inert ))
- 
- | Period | Expression | Signal |
- |--------|-----------|--------|
-@@ -135,14 +135,14 @@
- | YYYY-MM | "Peak form" | Cleanest expression |
- 
- ## Related Concepts
--- [sibling concept](sibling-concept.md) — relationship description
--- [sibling concept](sibling-concept.md) — relationship description
--
--## Timeline
-+- sibling concept — relationship description
-+- sibling concept — relationship description
-+
-+## Timeline (( inert ))
+@@ -142,7 +145,7 @@
  [Full timeline with deduped entries, quotes, source links]
  ```
  
@@ -143,7 +102,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```markdown
  ---
-@@ -160,28 +160,28 @@
+@@ -160,7 +163,7 @@
  > "Quote from the source" — [Date](URL)
  ```
  
@@ -152,42 +111,13 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```markdown
  # Intellectual Universe
- 
--## Canon (T1) — N concepts
-+## Canon (T1) — N concepts (( inert ))
- The permanent intellectual fingerprint. Ideas that recur across years.
- 
- ### [Cluster Name]
--- [concept-slug](concept-slug.md) — one-line characterization
-+- concept-slug — one-line characterization
- - ...
- 
- ### [Other Cluster]
- - ...
- 
--## Developing (T2) — N concepts
-+## Developing (T2) — N concepts (( inert ))
- Sharpening. Might become canon.
- 
--## Speculative (T3) — N concepts
-+## Speculative (T3) — N concepts (( inert ))
- Testing in public.
- 
--## Stats
-+## Stats (( inert ))
- - Total concepts: N
- - T1 Canon: N
- - T2 Developing: N
-@@ -191,27 +191,27 @@
- - Latest source: YYYY-MM-DD
+@@ -192,26 +195,30 @@
  ```
  
--## Quality gates
--
--### Dedup quality
-+## Quality gates (( inert ))
-+
-+### Dedup quality (( inert ))
+ ## Quality gates
++use judgment to follow the Quality gates guidance:
+ 
+ ### Dedup quality
  - No two concept pages should be "the same idea in different words."
  - Aliases preserved in frontmatter for search.
  - Run `gbrain query "type:concept"` and spot-check the count reduction.
@@ -204,33 +134,40 @@ These sections were made non-executable in the port and should be reviewed as mi
 +### Synthesis quality (( inert ))
  - Captures evolution, not just repetition.
  - Uses verbatim quotes, not paraphrase.
++- Does NOT hallucinate sources or dates.
++
++
++#### Synthesis quality — steps
++
  - Links to related concepts (markdown links, not wiki-links).
- - Does NOT hallucinate sources or dates.
- 
+-- Does NOT hallucinate sources or dates.
+-
 -## Cron integration
 +## Cron integration (( inert ))
  
  This is heavy work. Run on a cadence, not on every signal:
  
-@@ -221,7 +221,7 @@
+@@ -221,7 +228,8 @@
  - Manual trigger for a full re-synthesis when the corpus shifts
    significantly.
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++use judgment to follow the Anti-Patterns guidance:
  
  - ❌ Running synthesis on T3/T4 — wastes API budget on ideas that may
    never sharpen.
-@@ -239,7 +239,7 @@
+@@ -239,7 +247,8 @@
  - `skills/idea-ingest/SKILL.md` — same for links / articles
  
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
++use judgment to follow the Contract guidance:
  
  This skill guarantees:
  
-@@ -250,7 +250,7 @@
+@@ -250,7 +259,7 @@
  
  The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  

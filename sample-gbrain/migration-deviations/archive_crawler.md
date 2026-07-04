@@ -4,7 +4,7 @@
 - Ported: `archive_crawler.meri`
 - Tier: 1 (near-verbatim)
 - Similarity: 88%
-- Lines: 321 -> 321 (+38 / -38)
+- Lines: 321 -> 346 (+52 / -27)
 
 ## Frontmatter
 - Added: (none)
@@ -12,6 +12,7 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - inert-section-added
 
 ## Inert deviations
@@ -19,53 +20,29 @@
 These sections were made non-executable in the port and should be reviewed as migration deviations:
 - L12 `Safety gate (REQUIRED, no exceptions)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 - L43 `What this is`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L52 `Concepts`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L54 `Source`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
-- L63 `Manifest`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L75 `Gold filter`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
-- L89 `Protocol`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L91 `Phase 1: Inventory`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L105 `Phase 2: Crawl`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L118 `Phase 3: Ingest`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L163 `File-type handlers`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L165 `Plain text / HTML / Markdown`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L168 ``.mbox` (email archives)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L212 ``.zip` / `.tar` / `.tar.gz``: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L216 `Images`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L221 `Manifest template`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L268 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L281 `Related skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L290 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
-- L301 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L181 `Plain text / HTML / Markdown`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L184 ``.mbox` (email archives)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L228 ``.zip` / `.tar` / `.tar.gz``: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L232 `Images`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L237 `Manifest template`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L326 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections: 20/22 inert (91% inert ratio)
-- Operational inert: 7
+- Sections inert total: 8/19 (42% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-content=2, operational-procedure=4, reference-documentation=12, template=1
-- Judgment: 0 blocks, 0 lines
+- Inert categories: reference-documentation=7, template=1
+- Judgment: 9 blocks, 0 lines
 
 ### Inert section details
 - L12 `Safety gate (REQUIRED, no exceptions)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L43 `What this is`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L52 `Concepts`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L54 `Source`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
-- L63 `Manifest`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L75 `Gold filter`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
-- L89 `Protocol`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L91 `Phase 1: Inventory`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L105 `Phase 2: Crawl`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L118 `Phase 3: Ingest`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L163 `File-type handlers`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L165 `Plain text / HTML / Markdown`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L168 ``.mbox` (email archives)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L212 ``.zip` / `.tar` / `.tar.gz``: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L216 `Images`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L221 `Manifest template`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L268 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L281 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L290 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
-- L301 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L181 `Plain text / HTML / Markdown`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L184 ``.mbox` (email archives)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L228 ``.zip` / `.tar` / `.tar.gz``: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L232 `Images`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L237 `Manifest template`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L326 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
@@ -90,84 +67,102 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Generic engine for exploring any tree of personal content within an
  explicit allow-list. Works on local mounts, Dropbox API targets,
-@@ -66,9 +66,9 @@
+@@ -66,18 +66,23 @@
  it interactively for review. Skips noise (system files, configs, binary
  blobs).
  
 -## Concepts
--
--### Source
 +## Concepts (( inert ))
-+
-+### Source (( inert ))
+ 
+ ### Source
++use judgment to follow the Source guidance:
  
  A source is any tree of files to explore. Sources have:
  
-@@ -77,7 +77,7 @@
- - **manifest**: a brain page tracking progress at
+ - **type**: `local` | `dropbox` | `backblaze` | `gmail-takeout` | `mbox` | `pst`
+ - **root**: filesystem path, Dropbox path, B2 prefix, mbox path
+-- **manifest**: a brain page tracking progress at
++
++#### Source — steps
++
++- manifest: a brain page tracking progress at
    `projects/<archive-slug>/STATUS.md`
  
--### Manifest
-+### Manifest (( inert ))
+ ### Manifest
++use judgment to follow the Manifest guidance:
  
  Every archive exploration gets a manifest brain page that tracks:
  
-@@ -89,7 +89,7 @@
+@@ -89,10 +94,14 @@
  4. **Priority queue** — what to explore next, ranked
  5. **Session log** — timestamped record of what was shown per session
  
 -### Gold filter
+-
+-Before showing anything to the user, apply the gold filter:
+-
 +### Gold filter (( inert ))
- 
- Before showing anything to the user, apply the gold filter:
- 
-@@ -103,9 +103,9 @@
- | Origin stories (first versions of things that became important) | |
++
++
++#### Gold filter — steps
++
++> Before showing anything to the user, apply the gold filter:
++
++!!! table (( ai-discretion ))
+ | Keep (show) | Skip (note existence, don't show) |
+ |-------------|-----------------------------------|
+ | Personal writing (journals, letters, reflections, essays) | System files, configs, package.json, node_modules |
+@@ -104,8 +113,10 @@
  | Emotional content (anger, love, grief, discovery) | |
  
--## Protocol
--
--### Phase 1: Inventory
-+## Protocol (( inert, role: procedure ))
-+
-+### Phase 1: Inventory (( inert, role: procedure ))
+ ## Protocol
++use judgment to follow the Protocol guidance:
+ 
+ ### Phase 1: Inventory
++use judgment to follow the Phase 1: Inventory guidance:
  
  When pointed at a new source:
  
-@@ -119,7 +119,7 @@
- 6. **Present to user** — show the map and proposed order. Let them
+@@ -120,6 +131,7 @@
     override.
  
--### Phase 2: Crawl
-+### Phase 2: Crawl (( inert, role: procedure ))
+ ### Phase 2: Crawl
++use judgment to follow the Phase 2: Crawl guidance:
  
  Work through folders in priority order:
  
-@@ -132,7 +132,7 @@
- 5. **Update manifest** — mark item status after each interaction.
+@@ -133,13 +145,8 @@
  6. **Never re-show** — check the manifest before presenting anything.
  
--### Phase 3: Ingest
-+### Phase 3: Ingest (( inert, role: procedure ))
+ ### Phase 3: Ingest
+-
+-When an item is worth keeping, file it by **primary subject** per
+-`_brain-filing-rules.md`:
+-
+-- User's own writing / ideas / origin-story content → `originals/<slug>.md`
+-- Reflections / personal-life content → `personal/<slug>.md`
+-- Product / business ideas → `ideas/<slug>.md`
++use judgment to follow the Phase 3: Ingest guidance:
++
+ - Letters or threads about a specific person → `people/<person>/timeline`
+   back-link plus the letter at `personal/<slug>.md` or `originals/<slug>.md`
  
- When an item is worth keeping, file it by **primary subject** per
- `_brain-filing-rules.md`:
-@@ -168,7 +168,7 @@
- 
- **User's reaction:** [exact quote, no paraphrasing]
- 
--## Context
-+## Context (( inert ))
- 
- [Cross-links to people, concepts, projects.]
- 
-@@ -177,12 +177,12 @@
+@@ -177,12 +184,21 @@
  [Raw source material below the line — full text]
  ```
  
 -## File-type handlers
 -
 -### Plain text / HTML / Markdown
++
++#### Phase 3: Ingest — steps
++
++> When an item is worth keeping, file it by **primary subject** per
++> `_brain-filing-rules.md`:
++
++- User's own writing / ideas / origin-story content → `originals/<slug>.md`
++- Reflections / personal-life content → `personal/<slug>.md`
++- Product / business ideas → `ideas/<slug>.md`
 +## File-type handlers (( inert ))
 +
 +### Plain text / HTML / Markdown (( inert ))
@@ -178,7 +173,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```python
  import mailbox
-@@ -226,16 +226,16 @@
+@@ -226,16 +242,16 @@
  readpst -o /tmp/pst-output /path/to/file.pst
  ```
  
@@ -198,80 +193,44 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```markdown
  ---
-@@ -250,39 +250,39 @@
- # [Archive Name] — Ingestion Status
- 
- ## Source
--- **Type:** [local|dropbox|...]
--- **Allow-listed paths:** [from gbrain.yml]
--- **Total files:** [N]
--- **Total size:** [X GB]
--- **Date range:** [earliest] — [latest]
--
--## Inventory
--
--### [Folder 1]
-+- Type: [local|dropbox|...]
-+- Allow-listed paths: [from gbrain.yml]
-+- Total files: [N]
-+- Total size: [X GB]
-+- Date range: [earliest] — [latest]
-+
-+## Inventory (( inert ))
-+
-+### [Folder 1] (( inert ))
- | Item | Type | Size | Status | Reaction |
- |------|------|------|--------|----------|
- | file1.txt | text | 2KB | ✅ ingested | 🔥 "exact quote" |
- | file2.doc | doc | 15KB | ⏭️ skip | — |
- | file3.html | html | 4KB | ⬜ unseen | — |
- 
--### [Folder 2]
-+### [Folder 2] (( inert ))
- ...
- 
--## Priority Queue
-+## Priority Queue (( inert ))
- 1. [Highest priority — why]
- 2. [Next — why]
- ...
- 
--## Session Log
--
--### YYYY-MM-DD — [Session topic]
-+## Session Log (( inert ))
-+
-+### YYYY-MM-DD — [Session topic] (( inert ))
- - Reviewed: [list]
- - Reactions: [exact quotes]
- - Ingested: [brain pages created]
+@@ -282,7 +298,8 @@
  - Next: [what's queued]
  ```
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++use judgment to follow the Anti-Patterns guidance:
  
  - ❌ Running without `archive-crawler.scan_paths:` set. Hard refusal.
    This is the safety contract — never bypass.
-@@ -295,7 +295,7 @@
- - ❌ Skipping back-links when content references people / companies who
+@@ -296,15 +313,23 @@
    have brain pages. Iron Law per conventions/quality.md.
  
--## Related skills
-+## Related skills (( inert ))
+ ## Related skills
++use judgment to follow the Related skills guidance:
++
++- `skills/idea-ingest/SKILL.md` — single-link-or-article ingest with
++  the same primary-subject filing rule
++
++### Related skills — steps
  
  - `skills/voice-note-ingest/SKILL.md` — same exact-phrasing pattern for
    audio capture
-@@ -304,7 +304,7 @@
+-- `skills/idea-ingest/SKILL.md` — single-link-or-article ingest with
+-  the same primary-subject filing rule
++
++### Related skills — steps 2
++
  - `skills/conventions/quality.md` — citations, back-links, voice
  
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
++use judgment to follow the Contract guidance:
  
  This skill guarantees:
  
-@@ -315,7 +315,7 @@
+@@ -315,7 +340,7 @@
  
  The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  

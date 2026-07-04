@@ -93,7 +93,7 @@
     "name" : "validate constraints",
     "outline" : [
       {
-        "kind" : "applicability",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 11,
         "text" : "Invocation"
@@ -101,25 +101,25 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 15,
+        "line" : 16,
         "text" : "Procedure"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 20,
+        "line" : 21,
         "text" : "Constraints"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 17,
+        "line" : 18,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 18,
+        "line" : 19,
         "text" : "Emit"
       }
     ],
@@ -129,15 +129,16 @@
         "heading" : "Invocation",
         "line" : 11,
         "lines" : [
+          "use judgment to follow the Invocation guidance:",
           "\"validate constraints\"",
           "\"constraint violated\""
         ],
-        "role" : "applicability"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Procedure",
-        "line" : 15,
+        "line" : 16,
         "lines" : [
           "fetch violated constraints",
           "Check: no constraints whose status is \"violated\"",
@@ -146,13 +147,14 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Constraints",
-        "line" : 20,
+        "line" : 21,
         "lines" : [
+          "use judgment to follow the Constraints guidance:",
           "Constraint prose remains documentation; the executable guard is in the procedure"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       }
     ],
     "triggers" : "\"validate constraints\"\n\"constraint violated\""
@@ -186,32 +188,24 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 48,
-      "swift_line" : 300
-    },
-    {
-      "meridian_line" : 17,
-      "swift_line" : 312
-    },
-    {
-      "meridian_line" : 18,
-      "swift_line" : 317
+      "meridian_line" : 12,
+      "swift_line" : 299
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 354
+      "swift_line" : 337
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 359
+      "swift_line" : 342
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 397
+      "swift_line" : 380
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 402
+      "swift_line" : 385
     }
   ],
   "tools_used" : [
@@ -222,6 +216,26 @@
       "mode" : "strict",
       "parameters" : [
 
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "\"validate constraints\"\n\"constraint violated\"\nfetch violated constraints\nCheck: no constraints whose status is \"violated\"\nEmit: \"constraints validated\"\nuse judgment to follow the Constraints guidance:\nConstraint prose remains documentation; the executable guard is in the procedure",
+          "line" : 12,
+          "scoped_tools" : [
+            "audit_row.list",
+            "batch.list",
+            "batch.settle",
+            "constraint.list",
+            "index.list",
+            "index.rebuild",
+            "ledger.reconcile",
+            "record.list",
+            "record.mark_canonical",
+            "record.purge"
+          ],
+          "text" : "follow the Invocation guidance"
+        }
       ],
       "source_name" : "validate constraints",
       "swift_struct" : "ValidateConstraints"

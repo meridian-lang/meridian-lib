@@ -63,7 +63,8 @@ Canonical examples:
 - Not a writing mode by default: do not write a lineage page unless the user
   explicitly asks for a saved artifact after seeing the read-only answer.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 
@@ -76,9 +77,11 @@ This skill guarantees:
   temporal evolution.
 - The default mode is read-only and does not mutate brain pages.
 
-## Phases (( inert, role: procedure ))
+## Phases
+use judgment to follow the Phases guidance:
 
-### Phase 1: Resolve the idea target (( inert, role: procedure ))
+### Phase 1: Resolve the idea target
+use judgment to follow the Phase 1: Resolve the idea target guidance:
 
 1. Restate the idea in one sentence.
 2. Search for exact phrase variants with `search`.
@@ -91,7 +94,8 @@ This skill guarantees:
 If multiple distinct ideas share the same phrase, ask the user to choose the
 intended one before synthesizing.
 
-### Phase 2: Gather evidence (( inert, role: procedure ))
+### Phase 2: Gather evidence
+use judgment to follow the Phase 2: Gather evidence guidance:
 
 Collect enough evidence to support or reject each output bucket:
 
@@ -110,7 +114,8 @@ Collect enough evidence to support or reject each output bucket:
 Prefer fewer high-quality sources over a long unsorted pile. Read full pages
 when snippets imply a lineage milestone.
 
-### Phase 3: Classify lineage moments (( inert, role: procedure ))
+### Phase 3: Classify lineage moments
+use judgment to follow the Phase 3: Classify lineage moments guidance:
 
 Classify evidence into these buckets:
 
@@ -131,13 +136,15 @@ Classify evidence into these buckets:
 When a bucket has no evidence, write "No clear evidence found" with a brief note
 about what was checked.
 
-### Phase 4: Synthesize the lineage (( inert, role: procedure ))
+### Phase 4: Synthesize the lineage
+use judgment to follow the Phase 4: Synthesize the lineage guidance:
 
 Write the answer in the output format below. Keep the synthesis proportional to
 the evidence. Do not overfit a smooth evolution if the evidence is sparse,
 messy, or contradictory.
 
-### Phase 5: Suggest optional next action (( inert, role: procedure ))
+### Phase 5: Suggest optional next action
+use judgment to follow the Phase 5: Suggest optional next action guidance:
 
 If useful, offer one concrete follow-up:
 
@@ -154,7 +161,7 @@ If useful, offer one concrete follow-up:
 Use this shape for normal answers:
 
 ```markdown
-## Current Live Version (( inert ))
+## Current Live Version
 [1-3 sentences. Include confidence: high / medium / low.]
 
 ## Lineage
@@ -172,14 +179,15 @@ Use this shape for normal answers:
 ## Related Concepts
 - [concept slug or title] - [relationship]
 
-## Evidence Gaps (( inert ))
+## Evidence Gaps
 - [bucket or claim] - [what was checked and what is missing]
 ```
 
 For short answers, collapse sections, but keep the same distinctions. Always
 cite the source for each non-gap claim.
 
-## Quality Rules (( inert, role: invariants ))
+## Quality Rules (( role: procedure ))
+use judgment to follow the Quality Rules guidance:
 
 - Quote exact text when naming first mention or best articulation.
 - Include dates when the source has dates. If no date is available, say
@@ -192,7 +200,8 @@ cite the source for each non-gap claim.
   undated page, or a fuzzy semantic match.
 - Preserve source ids in citations when search or page payloads include them.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - Running `concept-synthesis` for a single-idea question.
 - Presenting an entity's MRR, ARR, role, or status trajectory as conceptual
@@ -203,7 +212,7 @@ cite the source for each non-gap claim.
 - Using real names, companies, funds, or fork-specific examples in bundled
   fixtures or documentation.
 
-## Related Skills and Operations (( inert ))
+## Related Skills and Operations
 
 - `skills/concept-synthesis/SKILL.md` - broad mutating concept-map synthesis.
 - `skills/query/SKILL.md` - general brain search and cited answers.

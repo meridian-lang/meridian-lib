@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -600,41 +600,15 @@ public struct ConceptSynthesisInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ConceptSynthesisInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L237:C0") {
-            // L237
-            // — creates raw concept stubs from text channels
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("skills/signal-detector/SKILL.md"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.0:L237:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L238:C0") {
-            // L238
-            // — same for audio channels
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("skills/voice-note-ingest/SKILL.md"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L238:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L239:C0") {
-            // L239
-            // — same for links / articles
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("skills/idea-ingest/SKILL.md"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L239:C0", state: state.snapshot())
+        // L198
+        let __meridianProseResults_L198 = try await runtime.executeProsePlan(
+            prose: "follow the Quality gates guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            guidance: "No two concept pages should be \"the same idea in different words.\"\nAliases preserved in frontmatter for search\nRun `gbrain query \"type:concept\"` and spot-check the count reduction\nuse judgment to follow the Anti-Patterns guidance:\n❌ Running synthesis on T3/T4 — wastes API budget on ideas that may\nnever sharpen\n❌ Hallucinating quotes or dates. The timeline must be verifiable\nagainst existing brain pages\n❌ Generic cluster names (\"Various Topics\"). If you can't name the\ncluster, the cluster isn't real\n❌ Re-synthesizing already-synthesized T1s without new source material\nIdempotency-respect\n`skills/signal-detector/SKILL.md` — creates raw concept stubs from text channels\n`skills/voice-note-ingest/SKILL.md` — same for audio channels\n`skills/idea-ingest/SKILL.md` — same for links / articles\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        )
+        for (__key, __value) in __meridianProseResults_L198 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

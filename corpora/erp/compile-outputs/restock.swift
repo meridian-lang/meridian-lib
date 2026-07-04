@@ -399,58 +399,15 @@ public struct Restock: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "Restock", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L23:C0") {
-            // L23
-            try await runtime.assert((((state.get("products"))?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("sku")) }), message: "Expected all products have a sku")
-            try await runtime.checkpoint(label: "progress:0.0:L23:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L55:C0") {
-            // L55
-            let products = try await runtime.invoke(
-                tool: "productList",
-                args: [
-                    "status": .string("short"),
-                ]
-            )
-            state.bind("products", products)
-
-            try await runtime.checkpoint(label: "progress:0.1:L55:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L17:C0") {
-            // L17
-            try await runtime.assert((!(((state.get("products"))?.asList ?? []).filter { __e in (meridianDef_Product_short(__e)) }).isEmpty), message: "Expected any short products")
-            try await runtime.checkpoint(label: "progress:0.2:L17:C0", state: state.snapshot())
-        }
-        // L18
-        for (__meridianLoopIndex_0_3, product) in (state.get("products")?.asList ?? []).enumerated() {
-            let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
-            if __meridianShouldRun(__meridianLoopLabel_0_3) {
-            state.bind("product", product)
-                if __meridianShouldRun("progress:0.3.body.0:L70:C0") {
-                    // L70
-                    let purchaseOrder = try await runtime.invoke(
-                        tool: "purchaseOrderCreate",
-                        args: [
-                            "product": state.get("product") ?? .null,
-                        ]
-                    )
-                    state.bind("purchaseOrder", purchaseOrder)
-
-                    try await runtime.checkpoint(label: "progress:0.3.body.0:L70:C0", state: state.snapshot())
-                }
-                try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
-            }
-        }
-
-        if __meridianShouldRun("progress:0.4:L20:C0") {
-            // L20
-            try await runtime.emit(
-                event: "erp.report",
-                payload: [
-                    "message": .string("replenishment purchase orders raised"),
-                ]
-            )
-            try await runtime.checkpoint(label: "progress:0.4:L20:C0", state: state.snapshot())
+        // L12
+        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
+            prose: "follow the Use this when guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["inventory.reserve", "invoice.create", "invoice.list", "order.cancel", "order.list", "payment.collect", "period.close", "product.list", "purchase_order.create", "shipment.create"],
+            guidance: "\"restock short products\"\n\"inventory below reorder point\"\nuse judgment to follow the Workflow guidance:\nCheck: any short products\nfetch short products\nfor each product:\ncreate a purchase order for the product\nPublish: \"replenishment purchase orders raised\"\nuse judgment to follow the Guarantees guidance:\nmake sure all products have a sku"
+        )
+        for (__key, __value) in __meridianProseResults_L12 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

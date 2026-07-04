@@ -31,7 +31,8 @@ writes_to:
 
 > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 - Every ingested item has a brain page with genuine analysis (not just a summary)
@@ -46,23 +47,15 @@ This skill guarantees:
 Every mention of a person or company with a brain page MUST create a back-link.
 Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`
 
-## Phases (( inert, role: procedure ))
+## Phases
+use judgment to follow the Phases guidance:
 
 1. **Fetch the content.** Use appropriate tools for the content type (web fetch for articles, API for tweets, PDF reader for documents).
 
-2. **Upload raw source.** Save the fetched content for provenance: `gbrain files upload-raw <file> --page <slug>`
-
 3. **Identify the author — MANDATORY people page.** Anyone whose thinking is worth ingesting is worth tracking.
-   - Search brain for existing author page
    - If no page → CREATE ONE with compiled truth + timeline format
    - If page exists → update timeline with this new publication
    - Cross-link both directions
-
-4. **Save to brain.** File by PRIMARY SUBJECT (read `skills/_brain-filing-rules.md`):
-   - About a person → `people/`
-   - About a company → `companies/`
-   - A reusable framework → `concepts/`
-   - Raw data dump → `sources/`
 
 5. **Analyze for the user.** Reply with analysis that connects the content to what the brain knows. Think about:
    - Active projects — is this relevant?
@@ -70,7 +63,28 @@ Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`
    - Connections — does this involve known people/companies?
    - Don't just summarize. Tell the user things they wouldn't have noticed.
 
-6. **Sync.** `gbrain sync` to update the index.
+
+### Phases — steps
+
+2. Upload raw source. Save the fetched content for provenance: `gbrain files upload-raw <file> --page <slug>`
+
+
+### Phases — steps 2
+
+   - Search brain for existing author page
+
+### Phases — steps 3
+
+4. Save to brain. File by PRIMARY SUBJECT (read `skills/_brain-filing-rules.md`):
+   - About a person → `people/`
+   - About a company → `companies/`
+   - A reusable framework → `concepts/`
+   - Raw data dump → `sources/`
+
+
+### Phases — steps 4
+
+6. Sync. `gbrain sync` to update the index.
 
 ## Output Format
 
@@ -82,20 +96,21 @@ Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`
 **Published:** {date}
 **Ingested:** {date}
 
-## Context (( inert ))
+## Context
 {Why this matters now, connected to brain knowledge}
 
-## Summary (( inert ))
+## Summary
 {3-5 bullet core arguments}
 
-## Key Data / Claims (( inert ))
+## Key Data / Claims
 {Specific facts, numbers, quotes}
 
-## Analysis (( inert ))
+## Analysis
 {How this connects to existing brain knowledge. What's new. What contradicts.}
 ```
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - Just summarizing without connecting to brain knowledge
 - Filing everything in `sources/` (sources is for raw data dumps only)

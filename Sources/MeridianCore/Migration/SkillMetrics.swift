@@ -48,14 +48,21 @@ public struct SkillMetrics: Sendable, Equatable {
         public var role: String
         public var category: InertCategory
         public var reason: String
+        /// Raw body lines of the section (between this heading and the next),
+        /// fences included verbatim. Empty by default for source compatibility;
+        /// populated by `analyze(_:rulebook:)` so tooling (the inert-yield
+        /// analyzer) can re-probe the section's actual content without
+        /// re-walking headings itself.
+        public var body: [String]
 
         public init(heading: String, line: Int, role: String,
-                    category: InertCategory, reason: String) {
+                    category: InertCategory, reason: String, body: [String] = []) {
             self.heading = heading
             self.line = line
             self.role = role
             self.category = category
             self.reason = reason
+            self.body = body
         }
     }
 
@@ -113,10 +120,46 @@ public struct SkillMetrics: Sendable, Equatable {
             if inFence { continue }
 
             if let heading = headingText(trimmed) {
-                total += 1
-                if !sectionExecutes(heading, rulebook: rulebook) { inert += 1 }
+                // A migrator-generated split-sibling heading (AGENTS.md Phase 1
+                // item 3, `SkillMigrator.splitHeadingSeparator`) is a rendering
+                // detail of its parent section, not an independent section the
+                // original ever had — counting it would spuriously inflate
+                // `totalSections` relative to the original and dilute the inert
+                // ratio. It is still walked (for body-boundary slicing) but not
+                // tallied.
                 let end = nextHeadingIndex(after: idx, in: lines)
-                sections.append((heading, idx + 1, Array(lines[(idx + 1)..<end])))
+                let body = Array(lines[(idx + 1)..<end])
+                // A heading whose own body (before the next heading, at any
+                // depth) is blank is a pure structural container for nested
+                // child headings — e.g. `## Phases` immediately followed by
+                // `### Phase 1: ...`. It owns no content of its own, so
+                // nothing is suppressed by marking it inert; tallying it
+                // (or worse, a spurious `operationalProcedure` `inertDetails`
+                // entry, since a `role: procedure` marker with an empty body
+                // still resolves to that category) would inflate both the
+                // inert ratio and `operationalInertSections` for content that
+                // was never dropped — the real content lives in, and is
+                // already tallied via, its child headings.
+                let ownsContent = body.contains { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+                if !heading.contains(SkillMigrator.splitHeadingSeparator), ownsContent {
+                    total += 1
+                    let clean = SkillSectionRole.parseMarker(from: heading).cleanHeading
+                    if !sectionExecutes(heading, rulebook: rulebook),
+                       !bodyIsJudgmentWrapped(body, heading: clean) {
+                        inert += 1
+                    }
+                    // Only a non-generated heading gets an `inertDetails`
+                    // entry too — a split-sibling heading (`— steps N`) is a
+                    // rendering detail of its parent, not an independent
+                    // section (same exclusion as `total`/`inert` above, one
+                    // line up). Without this, a sibling with a synthetic
+                    // heading text no rulebook/builtin role recognizes would
+                    // leak into `inertDetails` as a spurious `unclassified`
+                    // entry — inflating `operationalInertSections` /
+                    // `unclassifiedInertSections` even though it was already
+                    // excluded from `inertSections` above.
+                    sections.append((heading, idx + 1, body))
+                }
             }
             if isJudgmentHeader(trimmed) {
                 blocks += 1
@@ -159,6 +202,11 @@ public struct SkillMetrics: Sendable, Equatable {
         guard !decision.executes else { return nil }
 
         let clean = parsed.cleanHeading
+        // A `use judgment to follow the <heading> guidance:` opener means the
+        // migrator already routed this section to the planner — not silent
+        // inert residue. Count it under `judgmentBlocks`, not operational inert.
+        guard !bodyIsJudgmentWrapped(body, heading: clean) else { return nil }
+
         let category: InertCategory
         let reason: String
         if decision.recordedRole == SkillSectionRole.template.rawValue
@@ -196,7 +244,7 @@ public struct SkillMetrics: Sendable, Equatable {
         }
 
         return InertSection(heading: clean, line: line, role: decision.recordedRole,
-                            category: category, reason: reason)
+                            category: category, reason: reason, body: body)
     }
 
     private static func nextHeadingIndex(after idx: Int, in lines: [String]) -> Int {
@@ -262,6 +310,16 @@ public struct SkillMetrics: Sendable, Equatable {
             let t = line.trimmingCharacters(in: .whitespaces).lowercased()
             return t.hasPrefix(">") || t.contains("example:") || t.contains("for reference")
         }
+    }
+
+    /// True when the section body's first content line is the exact judgment
+    /// wrap the migrator emits for `heading` (mirrors `SkillMigrator.bodyIsJudgmentWrapped`).
+    private static func bodyIsJudgmentWrapped(_ body: [String], heading: String) -> Bool {
+        guard let first = body.first(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) else {
+            return false
+        }
+        return first.trimmingCharacters(in: .whitespaces)
+            == "use judgment to follow the \(heading) guidance:"
     }
 
     // MARK: - Judgment

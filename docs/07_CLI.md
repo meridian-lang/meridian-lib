@@ -600,21 +600,50 @@ migrator (`Sources/MeridianCore/Migration/SkillMigrator.swift`) **injects no
 frontmatter** — section semantics activate structurally on the `##`/`###`
 headings (there is no `skill: true` flag), and `vocabulary:`/`rulebook:` are
 autodiscovered beside the input by the CLI. It runs one deterministic marking
-pass: pre-heading preamble is blockquoted (`> …`), and an authoritative
-`(( … ))` marker is appended to every heading that would not otherwise resolve
-to an executable role — prose Contract/Guarantees/Invariants →
-`(( inert, role: invariants ))`, Anti-Patterns/Avoid →
-`(( inert, role: prohibitions ))`, an unrecognized heading whose body is only
-shell fences → `(( role: procedure ))`, every other unrecognized heading →
-`(( inert ))`. Recognized procedure/applicability/negative/template headings are
-left unmarked. The pass is idempotent and does **not** strip `skill: true` (a
-one-time corpus edit, not a reusable transform). It then strict-compiles the
-candidate. **LLM proposes, compiler disposes:** a migration is only "successful"
-when the emitted `.meri` passes the same strict compile as a hand-authored file,
-so a migrated skill can never silently call an LLM at runtime. Anything the
-marking pass cannot classify deterministically (e.g. a heading with mixed prose
-and steps, or a non-checkable invariant left under a procedure heading) is
-surfaced as a located compile error for the author — or the LLM-repair seam — to
+pass, backed by the real `SymbolTable`/lexicon/rulebook built from those
+vocabularies (not shape heuristics), so a line only counts as prose if it
+actually fails to trial-lower:
+
+1. **Per-line classification.** Every body line is trial-parsed and lowered:
+   `executable` (compiles as-is), `checkable` (a predicate), `annotation
+   label` (a `:`-terminated line immediately before a command/fence),
+   `normative narrative` (a must/never/always-shaped contract), or
+   `documentation`.
+2. **Automatic mixed-section split.** A heading whose body mixes narrative and
+   executable content is split: the narrative stays under the original
+   heading (marked `(( inert ))`), and each contiguous executable run moves to
+   a generated sibling heading (`### <heading> — steps`, `— steps 2`, …)
+   routed to `procedure` via a rulebook `SectionAlias`. Below a low-content
+   threshold (fewer than 3 executable lines *and* under 25% of the section),
+   splitting is skipped in favor of routing the whole section (see next
+   point) — splitting two commands out of twenty prose lines produces worse
+   output than one judgment block.
+3. **Explicit AI routing for fuzzy content** (on by default; see
+   `--no-route-fuzzy`): a checklist/table whose items don't trial-lower
+   becomes `!!! checklist (( ai-autonomy ))` / `!!! table (( ai-discretion ))`;
+   a below-threshold section with no executable content becomes `use judgment
+   to follow the <heading> guidance:`. These are author-visible markers in the
+   emitted `.meri` — nothing calls an LLM unless explicitly marked.
+4. **Marker fallback.** Anything left over gets the authoritative `(( … ))`
+   marker: prose Contract/Guarantees/Invariants → `(( inert, role:
+   invariants ))`, Anti-Patterns/Avoid → `(( inert, role: prohibitions ))`, an
+   unrecognized heading whose body is only shell fences → `(( role:
+   procedure ))`, every other unrecognized heading → `(( inert ))`. Recognized
+   procedure/applicability/negative/template headings are left unmarked.
+
+Normative-narrative lines that don't trial-lower and aren't split out are
+never silently dropped: they are listed in the migration report as
+`unmined-contract` lines (see `--report` below) — a nonzero count is a signal
+that a phrase needs authoring, an assertion needs rewriting, or the content
+needs explicit AI routing. The pass is idempotent (generated split headings and
+judgment-wrap bodies are recognized and never re-split/re-wrapped) and does
+**not** strip `skill: true` (a one-time corpus edit, not a reusable transform).
+It then strict-compiles the candidate. **LLM proposes, compiler disposes:** a
+migration is only "successful" when the emitted `.meri` passes the same strict
+compile as a hand-authored file, so a migrated skill can never silently call an
+LLM at runtime. Anything the marking pass cannot classify deterministically
+(e.g. a non-checkable invariant left under a procedure heading) is surfaced as
+a located compile error for the author — or the LLM-repair seam — to
 restructure.
 
 ```
@@ -636,8 +665,9 @@ meridian migrate-skill <input> [options]
 | `--rulebook <path>` | `brain.merrules` | Frontmatter `rulebook:` value to inject when absent. **Repeatable.** |
 | `--llm <provider>` | none | Enable bounded LLM-assisted repair (no provider is wired in the default build; the flag reserves the seam). |
 | `--max-repair <N>` | `0` | Maximum repair rounds. `0` = deterministic-only. |
-| `--report <path>` | none | Write a per-skill migration report (`compiles`, added keys, repair attempts, edit count, line delta). |
-| `--batch` | false | Treat `<input>` as a directory; migrate every `SKILL.md` and emit a coverage matrix. |
+| `--route-fuzzy` / `--no-route-fuzzy` | on | Explicitly AI-route fuzzy checklists/tables/judgment-worthy prose (`!!! checklist (( ai-autonomy ))` / `!!! table (( ai-discretion ))` / `use judgment to …:`) instead of leaving them `(( inert ))`. `--no-route-fuzzy` reproduces the pre-routing marking behavior. |
+| `--report <path>` | none | Write a per-skill migration report (`compiles`, added keys, repair attempts, edit count, line delta, unmined-contract count + lines). |
+| `--batch` | false | Treat `<input>` as a directory; migrate every `SKILL.md` and emit a coverage matrix (adds an `unmined` column and total). |
 | `--force` | false | Overwrite an existing output file. |
 | `--trace <categories>` | (none) | Enable `ParserTrace` output; migration-specific logging is under the `skill` category |
 | `--trace-file <path>` | stderr | Write trace output to a file instead of stderr |
@@ -720,6 +750,15 @@ Categories name exactly what `migrate-skill`'s marking pass did:
 | `section-marker-added` | the port introduced `(( … ))` heading markers |
 | `shell-block-routed` | a pure-shell heading became `(( role: procedure ))` |
 | `preamble-blockquoted` | the port blockquoted pre-heading prose |
+| `inert-section-added` | a heading not already inert in the original went inert in the port |
+
+`inert-section-added` (and the accompanying "Inert deviations" report section)
+excludes a migrator-generated split family as a unit: neither a generated
+`— steps` sibling heading nor the original heading it was split from is
+flagged, since the section's operational content was preserved in the split
+sibling rather than lost (`SkillMetrics.analyze` applies the same exclusion to
+`totalSections`/`inertSections`, so a split never spuriously dilutes the inert
+ratio either).
 
 The unified diff is fenced as ` ```diff ` with `--- <original>` / `+++ <ported>`
 file headers and standard `@@ -aStart,aCount +bStart,bCount @@` hunk headers

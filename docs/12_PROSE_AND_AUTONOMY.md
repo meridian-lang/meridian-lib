@@ -59,6 +59,28 @@ of them a silent fallthrough:
 All three lower to the same `ProseStepAST → ProseStepIR`; (2) and (3) carry an
 explicit dispatch, so they are valid in **any** workflow.
 
+### Optional guidance: extra planner context distinct from the goal
+
+`ProseStepAST`/`ProseStepIR` carry an optional `guidance: String?` alongside
+`text`. `text` stays the short dispatch goal; `guidance`, when present, is
+extra narrative context handed to the planner without being folded into that
+goal. The one producer today is the `use judgment to follow the <heading>
+guidance:` migrator idiom (below): it collects the section's leftover
+narrative verbatim into `guidance` rather than concatenating it onto `text`.
+Ordinary `use judgment to <goal>:` / `with discretion:` / `with autonomy …:`
+blocks with an indented instruction body still fold that body into `text`
+unchanged — `guidance` is specifically for narrative context that a section's
+migrator-generated judgment step inherited from its own (otherwise-inert)
+documentation, not a second copy of the instructions themselves.
+
+`guidance` threads end to end with no new IR primitive (same primitive,
+richer payload): `SwiftEmitter.emitProseStep` emits it as a trailing
+`guidance: "…"` argument on `runtime.executeProsePlan`/
+`executeAutonomousLoop`; `PlanContext.guidance` / `ActContext.guidance` carry
+it into `Planner`/`ActPlanner` implementations; `ManifestEmitter` records it
+per workflow under `prose_steps[].guidance` so it is auditable from the
+`.meridian.manifest.json` without reading the generated Swift.
+
 ### Fuzzy tables and checklists → the planner
 
 A decision table whose condition cells are *intent descriptions* (not checkable

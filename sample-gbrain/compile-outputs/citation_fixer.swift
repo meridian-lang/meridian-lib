@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -599,82 +599,15 @@ public struct CitationFixerInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "CitationFixerInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L132:C0") {
-            // L132
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("for f in $(find . -name \"*.md\" -not -path \"./node_modules/*\"); do"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.0:L132:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L132:C0") {
-            // L132
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("refs=$(grep -ci \"tweet\\|posted\\|x post\\|RT\\|retweet\\|said on X\" \"$f\")"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L132:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L132:C0") {
-            // L132
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("links=$(grep -c \"x.com/.*/status/\" \"$f\")"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L132:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.3:L132:C0") {
-            // L132
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("if [ \"$refs\" -gt 2 ] && [ \"$links\" -eq 0 ]; then"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.3:L132:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.4:L132:C0") {
-            // L132
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("echo \"$f\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.4:L132:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.5:L132:C0") {
-            // L132
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("fi"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.5:L132:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.6:L132:C0") {
-            // L132
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("done"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.6:L132:C0", state: state.snapshot())
+        // L32
+        let __meridianProseResults_L32 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.list", "page.search", "publish", "shell.run"],
+            guidance: "This skill guarantees:\nEvery brain page is scanned for citation compliance\nMissing citations are flagged with specific location\nMalformed citations are fixed to match the standard format\n**(v0.25.1)** Tweet / post references without URLs are resolved via\nX API and patched with deterministic `https://x.com/<handle>/status/<id>`\nlinks\nResults reported with counts (scanned, fixed, remaining)\nuse judgment to follow the Phases guidance:\n**Identify issues:**\nFacts without any citation\nCitations missing date\nCitations missing source type\nCitations with wrong format\n**(v0.25.1) Resolve tweet references** via the X API integration\n**Report results.** Count: pages scanned, citations found, issues\nfixed, tweets resolved, remaining gaps\nList pages and read each one, checking for inline\n`[Source: ...]` citations\nRewrite malformed citations to match\n`conventions/quality.md`\nFor each broken tweet reference, follow this chain. The actual API call\ngoes through whatever X integration the host has configured (typical\nshape: a recipe under `recipes/x-api/` with handle / search-all\nendpoints)\ncodeblock:bash:IyBQYWdlcyBtZW50aW9uaW5nIHR3ZWV0cyBidXQgd2l0aCBubyB4LmNvbSBsaW5rcwpmb3IgZiBpbiAkKGZpbmQgLiAtbmFtZSAiKi5tZCIgLW5vdCAtcGF0aCAiLi9ub2RlX21vZHVsZXMvKiIpOyBkbwogIHJlZnM9JChncmVwIC1jaSAidHdlZXRcfHBvc3RlZFx8eCBwb3N0XHxSVFx8cmV0d2VldFx8c2FpZCBvbiBYIiAiJGYiKQogIGxpbmtzPSQoZ3JlcCAtYyAieC5jb20vLiovc3RhdHVzLyIgIiRmIikKICBpZiBbICIkcmVmcyIgLWd0IDIgXSAmJiBbICIkbGlua3MiIC1lcSAwIF07IHRoZW4KICAgIGVjaG8gIiRmIgogIGZpCmRvbmU=\nuse judgment to follow the Anti-Patterns guidance:\n❌ Inventing citations for facts that have no source. Flag them\n❌ Removing facts that lack citations (flag them; don't delete)\n❌ Fixing citations without reading the full page context\n❌ Batch-fixing without checking quality on a sample first\n(see `conventions/test-before-bulk.md`)\n❌ Composing tweet URLs by guessing the tweet id. Always go through\nthe X API; deterministic links only\nIf running as a recurring batch, track state in a small JSON file under\n`~/.gbrain/citation-fixer-state.json`:"
+        )
+        for (__key, __value) in __meridianProseResults_L32 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

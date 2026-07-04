@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -599,6 +599,16 @@ public struct ReportsInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ReportsInput", parameters: [:])
 
+        // L22
+        let __meridianProseResults_L22 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.search", "publish", "shell.run"],
+            guidance: "This skill guarantees:\nReports saved with timestamped filenames and frontmatter\nKeyword routing: query → report category mapping\nLatest report loadable by category name\nReports are searchable via gbrain search/query\nuse judgment to follow the Phases guidance:\n**Save report.** Write to `reports/{category}/{YYYY-MM-DD-HHMM}.md` with frontmatter:\ncodeblock:yaml:LS0tCnRpdGxlOiB7cmVwb3J0IHRpdGxlfQp0eXBlOiByZXBvcnQKY2F0ZWdvcnk6IHtjYXRlZ29yeSBuYW1lfQpkYXRlOiB7WVlZWS1NTS1ERH0KdGltZToge0hIOk1NIFBUfQotLS0=\n**Load latest.** Given a category, find the most recent report file\n**Keyword routing.** Map common queries to report categories:\n\"email\" / \"inbox\" → ea-inbox-sweep\n\"social\" / \"mentions\" → social-mentions\n\"briefing\" / \"morning\" → morning-briefing\n\"meeting\" → meeting-sync\nCustom mappings configurable\nuse judgment to follow the Anti-Patterns guidance:\nSaving reports without frontmatter (makes them unsearchable)\nUsing inconsistent category names across runs\nLoading all reports when only the latest is needed\nNot routing by keyword (forcing exact category name)"
+        )
+        for (__key, __value) in __meridianProseResults_L22 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

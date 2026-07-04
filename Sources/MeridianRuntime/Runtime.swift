@@ -174,6 +174,7 @@ public actor Runtime {
         snapshot: StateSnapshot,
         scopedTools: [String],
         maxActions: Int = 32,
+        guidance: String? = nil,
         sourceRange: SourceRange? = nil
     ) async throws -> [String: Value] {
         try await enforcePlanningInputLimits(prose: prose, sourceRange: sourceRange)
@@ -185,7 +186,8 @@ public actor Runtime {
             prose: prose,
             snapshot: snapshot,
             tools: schemas,
-            maxActions: actionLimit
+            maxActions: actionLimit,
+            guidance: guidance
         )
 
         await emit(event: Event(
@@ -251,6 +253,7 @@ public actor Runtime {
         replanAfterFailures: Int = 3,
         until: (@Sendable (StateSnapshot) -> Bool)? = nil,
         unless: (@Sendable (StateSnapshot) -> Bool)? = nil,
+        guidance: String? = nil,
         sourceRange: SourceRange? = nil
     ) async throws -> [String: Value] {
         try await enforcePlanningInputLimits(prose: prose, sourceRange: sourceRange)
@@ -290,7 +293,8 @@ public actor Runtime {
                 snapshot: currentSnapshot,
                 tools: schemas,
                 observations: observations,
-                remainingSteps: maxSteps - step
+                remainingSteps: maxSteps - step,
+                guidance: guidance
             )
             let proposal = try await actPlanner.act(context)
 
@@ -335,7 +339,8 @@ public actor Runtime {
                             prose: prose,
                             snapshot: makeSnapshot(from: loopValues),
                             tools: schemas,
-                            maxActions: max(1, maxSteps - step - 1)
+                            maxActions: max(1, maxSteps - step - 1),
+                            guidance: guidance
                         ))
                         try await enforceProposalLimits(proposal, sourceRange: sourceRange)
                         guard proposal.actions.count <= max(1, maxSteps - step - 1) else {

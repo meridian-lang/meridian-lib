@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -601,6 +601,16 @@ public struct SignalDetectorInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SignalDetectorInput", parameters: [:])
 
+        // L37
+        let __meridianProseResults_L37 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["add_link", "add_timeline_entry", "get_page", "link.add", "page.get", "page.search", "publish", "put_page", "query", "search", "shell.run", "timeline.add"],
+            guidance: "This skill guarantees:\nFires on every message (no exceptions unless purely operational)\nRuns in parallel (spawned, never blocks main response)\nCaptures ideas with the user's EXACT phrasing (no paraphrasing)\nDetects entity mentions and creates/enriches brain pages\nLogs a one-line summary of what was captured\nBack-links all entity mentions (Iron Law)\nCitations on every fact written\nEvery time this skill creates or updates a brain page that mentions a person or company:\nCheck if that person/company has a brain page\nIf yes → add a back-link FROM their page TO the page you just created/updated\nFormat: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`\nAn unlinked mention is a broken brain\nuse judgment to follow the Phases guidance:\nuse judgment to follow the Phase 1: Idea/Observation Detection (PRIMARY) guidance:\nWhen the user expresses a novel thought, observation, thesis, or framework:\nIf it's the user's **original thinking** (they generated it) → create/update `originals/{slug}`\nIf it's a **world concept** they're referencing → create/update `concepts/{slug}`\nIf it's a **product or business idea** → create/update `ideas/{slug}`\n**Capture exact phrasing.** The user's language IS the insight. Don't paraphrase\n**Cross-linking (MANDATORY):** Every original MUST link to related people, companies,\nmeetings, and concepts. An original without cross-links is a dead original\nuse judgment to follow the Phase 2: Entity Detection (SECONDARY) guidance:\nExtract entity mentions (people, companies, media titles)\nIf NO page → check notability. If notable, create page with enrichment\nIf page exists but THIN → trigger enrich\nIf page exists and RICH → no action\n**Auto-link (v0.10.1):** When you write/update an originals or ideas page that\nreferences a person or company, the auto-link post-hook on `put_page`\nautomatically creates the link from the new page to that entity. You don't\nneed to call `gbrain link` manually. Timeline entries still need explicit calls\nFor each entity:\n`gbrain search \"name\"` — does a page exist?\nFor new FACTS with specific dates → call `gbrain timeline-add <slug> <date> \"<summary>\"`\nuse judgment to follow the Phase 3: Signal Logging guidance:\nAlways log a one-line summary:\nThis makes the ambient capture loop debuggable\n`Signals: 0 ideas, 0 entities, 0 facts (skipped: operational)`\n`Signals: 1 idea (captured → originals/x), 2 entities (enriched → people/y, companies/z)`\nuse judgment to follow the Anti-Patterns guidance:\nBlocking the main response to wait for signal detection to complete\nParaphrasing the user's original thinking instead of capturing exact phrasing\nCreating pages for non-notable entities (one-off mentions)\nSkipping back-links after creating/updating pages\nRunning on purely operational messages (\"ok\", \"thanks\", \"do it\")"
+        )
+        for (__key, __value) in __meridianProseResults_L37 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -597,82 +597,15 @@ public struct CaptureInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "CaptureInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L50:C0") {
-            // L50
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain capture \"the thought I want to remember\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.0:L50:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L50:C0") {
-            // L50
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain capture --file ./notes/today.md"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L50:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L50:C0") {
-            // L50
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("echo \"from a pipe\" | gbrain capture --stdin"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L50:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.3:L50:C0") {
-            // L50
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain capture \"...\" --slug daily/2026-05-21"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.3:L50:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.4:L50:C0") {
-            // L50
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain capture \"...\" --type idea --source voice-whisper"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.4:L50:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.5:L50:C0") {
-            // L50
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain capture \"...\" --quiet          # script-friendly: prints just the slug"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.5:L50:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.6:L50:C0") {
-            // L50
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain capture \"...\" --json           # structured output for agents"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.6:L50:C0", state: state.snapshot())
+        // L23
+        let __meridianProseResults_L23 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            guidance: "**Input:** the content to save (inline arg, `--file PATH`, or `--stdin`)\n**Output:** a page in the brain DB AND a markdown file on disk under\n`<sync.repo_path>/<slug>.md`. Receipt printed to stdout\n**Side effect:** the page becomes immediately queryable via `gbrain query`,\n`gbrain search`, or any MCP-bound agent\n**Idempotency:** same content → same `inbox/YYYY-MM-DD-<hash8>` slug. The\ndaemon's 24h content-hash dedup catches re-captures\n**Trust:** all captures via this skill are local-CLI trust (`remote: false`)\nUntrusted webhook ingestion goes through `POST /ingest`, not this verb\nuse judgment to follow the When to invoke guidance:\n\"Capture this thought\" / \"save this\" / \"drop this into my brain\" / \"remember this\"\nThe user pastes content and asks to keep it\nAfter a meeting summary, a research note, or any synthesis that should land as a brain page\ncodeblock:bash:Z2JyYWluIGNhcHR1cmUgInRoZSB0aG91Z2h0IEkgd2FudCB0byByZW1lbWJlciIKZ2JyYWluIGNhcHR1cmUgLS1maWxlIC4vbm90ZXMvdG9kYXkubWQKZWNobyAiZnJvbSBhIHBpcGUiIHwgZ2JyYWluIGNhcHR1cmUgLS1zdGRpbgpnYnJhaW4gY2FwdHVyZSAiLi4uIiAtLXNsdWcgZGFpbHkvMjAyNi0wNS0yMQpnYnJhaW4gY2FwdHVyZSAiLi4uIiAtLXR5cGUgaWRlYSAtLXNvdXJjZSB2b2ljZS13aGlzcGVyCmdicmFpbiBjYXB0dXJlICIuLi4iIC0tcXVpZXQgICAgICAgICAgIyBzY3JpcHQtZnJpZW5kbHk6IHByaW50cyBqdXN0IHRoZSBzbHVnCmdicmFpbiBjYXB0dXJlICIuLi4iIC0tanNvbiAgICAgICAgICAgIyBzdHJ1Y3R1cmVkIG91dHB1dCBmb3IgYWdlbnRz\n**Slug:** `inbox/YYYY-MM-DD-<hash8>` (stable for same content; the daemon's 24h dedup catches re-captures)\n**Type:** `note` (override with `--type idea` etc.)\n**Frontmatter stamps:** `captured_via: capture-cli`, `captured_at: <ISO>`\n**Title:** first non-empty line of the body, capped at 80 chars\nuse judgment to follow the Anti-Patterns guidance:\n**Don't reach for `gbrain put`.** That's the old per-page primitive that\ndoesn't know about default slug generation, content-type heuristics, or\nthe receipt block. `capture` is the human-facing wrapper\n**Don't pre-format the content yourself with frontmatter if you don't need to.**\nCapture wraps plain prose in sensible frontmatter (type + title +\ncaptured_via + captured_at). The body becomes `# Title\\n\\n<your prose>`\n**Don't pass secrets as inline content.** Inline args land in shell\nhistory. Use `--file` or `--stdin` instead\nMeeting transcripts → `skills/meeting-ingestion/SKILL.md` (attendee enrichment)"
+        )
+        for (__key, __value) in __meridianProseResults_L23 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

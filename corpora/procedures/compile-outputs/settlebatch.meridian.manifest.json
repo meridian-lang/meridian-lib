@@ -93,7 +93,7 @@
     "name" : "settle batch",
     "outline" : [
       {
-        "kind" : "applicability",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 11,
         "text" : "Invocation"
@@ -101,25 +101,25 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 15,
+        "line" : 16,
         "text" : "Batch body"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 22,
+        "line" : 23,
         "text" : "Postconditions"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 17,
+        "line" : 18,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 20,
+        "line" : 21,
         "text" : "Emit"
       }
     ],
@@ -129,15 +129,16 @@
         "heading" : "Invocation",
         "line" : 11,
         "lines" : [
+          "use judgment to follow the Invocation guidance:",
           "\"settle ready batches\"",
           "\"batch settlement\""
         ],
-        "role" : "applicability"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Batch body",
-        "line" : 15,
+        "line" : 16,
         "lines" : [
           "fetch ready batches",
           "Check: all batches have a name",
@@ -150,11 +151,12 @@
       {
         "executes" : true,
         "heading" : "Postconditions",
-        "line" : 22,
+        "line" : 23,
         "lines" : [
+          "use judgment to follow the Postconditions guidance:",
           "make sure no batches whose status is \"failed\""
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       }
     ],
     "triggers" : "\"settle ready batches\"\n\"batch settlement\""
@@ -188,44 +190,24 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 23,
-      "swift_line" : 300
-    },
-    {
-      "meridian_line" : 39,
-      "swift_line" : 305
-    },
-    {
-      "meridian_line" : 17,
-      "swift_line" : 317
-    },
-    {
-      "meridian_line" : 18,
-      "swift_line" : 321
-    },
-    {
-      "meridian_line" : 19,
-      "swift_line" : 327
-    },
-    {
-      "meridian_line" : 20,
-      "swift_line" : 336
+      "meridian_line" : 12,
+      "swift_line" : 299
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 373
+      "swift_line" : 337
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 378
+      "swift_line" : 342
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 416
+      "swift_line" : 380
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 421
+      "swift_line" : 385
     }
   ],
   "tools_used" : [
@@ -236,6 +218,26 @@
       "mode" : "strict",
       "parameters" : [
 
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "\"settle ready batches\"\n\"batch settlement\"\nfetch ready batches\nCheck: all batches have a name\nfor each batch:\nsettle the batch\nEmit: \"ready batches settled\"\nuse judgment to follow the Postconditions guidance:\nmake sure no batches whose status is \"failed\"",
+          "line" : 12,
+          "scoped_tools" : [
+            "audit_row.list",
+            "batch.list",
+            "batch.settle",
+            "constraint.list",
+            "index.list",
+            "index.rebuild",
+            "ledger.reconcile",
+            "record.list",
+            "record.mark_canonical",
+            "record.purge"
+          ],
+          "text" : "follow the Invocation guidance"
+        }
       ],
       "source_name" : "settle batch",
       "swift_struct" : "SettleBatch"

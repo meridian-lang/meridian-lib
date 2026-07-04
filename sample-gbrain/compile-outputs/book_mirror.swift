@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -600,6 +600,16 @@ public struct BookMirrorInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "BookMirrorInput", parameters: [:])
 
+        // L30
+        let __meridianProseResults_L30 = try await runtime.executeProsePlan(
+            prose: "follow the What this does guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            guidance: "This is NOT a generic book summary. The right column is the value: it makes\nthe book read like a therapist who knows the reader is leaving notes in the\nmargins. If the user wants a flat summary instead, route them to a different\nskill\nGiven a book (EPUB or PDF), produce a brain page where every chapter is\nsummarized in detail on the left and mirrored back to the reader's actual life\non the right, using their own words, situations, people, and patterns from\nthe brain. Output is a brain page at `media/books/<slug>-personalized.md`\nThe CLI submits N read-only subagent jobs (one per chapter). Each subagent\nhas `allowed_tools: ['get_page', 'search']` only. They CANNOT call\nput_page or any mutating op. They produce markdown analysis via their\nfinal message\nThis means untrusted EPUB/PDF content cannot prompt-inject any\n`people/*` page. The trust narrowing happens at the tool allowlist,\nnot at the slug-prefix layer\ncodeblock:bash:IyBVc2VyLXN1cHBsaWVkIHBhdGgKbHMgcGF0aC90by9ib29rLmVwdWIKbHMgcGF0aC90by9ib29rLnBkZgoKIyBPciBhbHJlYWR5IGluIHRoZSBicmFpbiByZXBvIChyZWNvbW1lbmRlZCBmb3IgdHJhY2tpbmcpCmxzICRCUkFJTl9ESVIvbWVkaWEvYm9va3Mv\nGoal: one `.txt` file per chapter under a temp directory. The agent has\nshell + python access; the CLI is downstream of this and takes the\nextracted directory as input\ncodeblock:bash:Z2JyYWluIGJvb2stbWlycm9yIFwKICAtLWNoYXB0ZXJzLWRpciAiJFdPUksvY2hhcHRlcnMiIFwKICAtLWNvbnRleHQtZmlsZSAiJENPTlRFWFQiIFwKICAtLXNsdWcgIiRTTFVHIiBcCiAgLS10aXRsZSAiQm9vayBUaXRsZSBHb2VzIEhlcmUiIFwKICAtLWF1dGhvciAiQXV0aG9yIE5hbWUiIFwKICAtLW1vZGVsIGNsYXVkZS1vcHVzLTQtNw==\nReads each child's `job.result` (the markdown analysis text)\nuse judgment to follow the Cost gate guidance:\nThe CLI refuses to spend in a non-TTY context without `--yes`. CI / scripted\ninvocations must pass `--yes` explicitly. TTY users get a `[y/N]` prompt\nbefore submission\nAfter the brain page is written, render to PDF using `skills/brain-pdf`:\ncodeblock:bash:Z2JyYWluIHB1dF9wYWdlICAjIGFscmVhZHkgZG9uZSBieSB0aGUgQ0xJOyBub3RoaW5nIHRvIGFkZCBoZXJlCiMgVGhlbiBpbnZva2UgYnJhaW4tcGRmOgojIChzZWUgc2tpbGxzL2JyYWluLXBkZi9TS0lMTC5tZCBmb3IgdGhlIG1ha2UtcGRmIGludm9jYXRpb24p\nFor every person the right column references with a brain page, add a\nback-link from `people/<slug>` to the new `media/books/<slug>-personalized`\npage (per `conventions/quality.md` Iron Law)\nuse judgment to follow the Anti-patterns (do not do these) guidance:\n❌ **Skimming chapters.** Standing instruction: preserve detail\n❌ **Generic right column.** \"This might apply if you've ever felt…\" →\nkill on sight\n❌ **Factual errors about the reader's life.** Always fact-check after\nassembly\n❌ **Giving the subagent put_page access.** Trust contract is read-only;\nthe CLI does the writing\n❌ **Forcing connections.** If a chapter doesn't apply, say so plainly\n❌ **Sycophancy or moralizing in the right column.** No \"you should…\",\nno \"consider…\", no \"perhaps it's time to…\"\n❌ **Truncating the LEFT column.** The book's actual content needs to\nsurvive\nBook file exists locally (path known)\nChapter texts under `$WORK/chapters/*.txt` with sane word counts\nContext pack at `$WORK/context.md` is dense\n`gbrain book-mirror --chapters-dir … --context-file … --slug … --title …` returned exit 0\n`media/books/<slug>-personalized.md` exists in the brain\nFact-check pass complete (no errors against USER.md or other source-of-truth pages)\nCross-links added from referenced people/companies\nOptional: PDF rendered via brain-pdf and delivered\n`skills/brain-pdf/SKILL.md` — render the personalized page to PDF\n`skills/strategic-reading/SKILL.md` — read a book through a specific\nproblem-lens instead of personalizing to the whole reader\n`skills/article-enrichment/SKILL.md` — same shape applied to articles\nrather than books\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test\nuse judgment to follow the Anti-Patterns guidance:\nThe full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing"
+        )
+        for (__key, __value) in __meridianProseResults_L30 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

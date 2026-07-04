@@ -93,7 +93,7 @@
     "name" : "aging report",
     "outline" : [
       {
-        "kind" : "applicability",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 11,
         "text" : "Invocation"
@@ -101,31 +101,43 @@
       {
         "kind" : "tables",
         "level" : 2,
-        "line" : 15,
+        "line" : 16,
         "text" : "Tables"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 21,
+        "line" : 22,
         "text" : "Procedure"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 32,
+        "text" : "Procedure — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 36,
+        "text" : "Procedure — steps 2"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 32,
+        "line" : 40,
         "text" : "Trace shape"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 23,
+        "line" : 24,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 30,
+        "line" : 38,
         "text" : "Emit"
       }
     ],
@@ -135,15 +147,16 @@
         "heading" : "Invocation",
         "line" : 11,
         "lines" : [
+          "use judgment to follow the Invocation guidance:",
           "\"aging report\"",
           "\"stale record report\""
         ],
-        "role" : "applicability"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Tables",
-        "line" : 15,
+        "line" : 16,
         "lines" : [
           "table:decision:fCBidWNrZXQgfCBhY3Rpb24gfAp8IC0tLSB8IC0tLSB8Cnwgc3RhbGUgfCByZXZpZXcgfAp8IGR1cGxpY2F0ZSB8IG1lcmdlIHw="
         ],
@@ -152,12 +165,29 @@
       {
         "executes" : true,
         "heading" : "Procedure",
-        "line" : 21,
+        "line" : 22,
         "lines" : [
-          "fetch stale records",
+          "use judgment to follow the Procedure guidance:",
           "Check: any stale records",
           "bind aging report =",
-          "codeblock:plain:YWdpbmc6Cltmb3IgZWFjaCByb3cgaW4gdGFibGVdLSB7eyByb3cuYnVja2V0IH19IC0+IHt7IHJvdy5hY3Rpb24gfX0KW2VuZCBmb3Jd",
+          "codeblock:plain:YWdpbmc6Cltmb3IgZWFjaCByb3cgaW4gdGFibGVdLSB7eyByb3cuYnVja2V0IH19IC0+IHt7IHJvdy5hY3Rpb24gfX0KW2VuZCBmb3Jd"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Procedure — steps",
+        "line" : 32,
+        "lines" : [
+          "fetch stale records"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Procedure — steps 2",
+        "line" : 36,
+        "lines" : [
           "Emit: aging report"
         ],
         "role" : "procedure"
@@ -165,7 +195,7 @@
       {
         "executes" : false,
         "heading" : "Trace shape",
-        "line" : 32,
+        "line" : 40,
         "lines" : [
           "One row per aging bucket, followed by the deterministic action"
         ],
@@ -203,40 +233,24 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 16,
+      "meridian_line" : 12,
       "swift_line" : 299
     },
     {
-      "meridian_line" : 42,
-      "swift_line" : 302
-    },
-    {
-      "meridian_line" : 23,
-      "swift_line" : 314
-    },
-    {
-      "meridian_line" : 24,
-      "swift_line" : 318
-    },
-    {
-      "meridian_line" : 30,
-      "swift_line" : 321
+      "meridian_line" : 1,
+      "swift_line" : 337
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 358
+      "swift_line" : 342
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 363
+      "swift_line" : 380
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 401
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 406
+      "swift_line" : 385
     }
   ],
   "tools_used" : [
@@ -247,6 +261,26 @@
       "mode" : "strict",
       "parameters" : [
 
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "\"aging report\"\n\"stale record report\"\ntable:data:fCBidWNrZXQgfCBhY3Rpb24gfAp8IC0tLSB8IC0tLSB8Cnwgc3RhbGUgfCByZXZpZXcgfAp8IGR1cGxpY2F0ZSB8IG1lcmdlIHw=\nuse judgment to follow the Procedure guidance:\nCheck: any stale records\nbind aging report =\ncodeblock:plain:YWdpbmc6Cltmb3IgZWFjaCByb3cgaW4gdGFibGVdLSB7eyByb3cuYnVja2V0IH19IC0+IHt7IHJvdy5hY3Rpb24gfX0KW2VuZCBmb3Jd\nfetch stale records\nEmit: aging report",
+          "line" : 12,
+          "scoped_tools" : [
+            "audit_row.list",
+            "batch.list",
+            "batch.settle",
+            "constraint.list",
+            "index.list",
+            "index.rebuild",
+            "ledger.reconcile",
+            "record.list",
+            "record.mark_canonical",
+            "record.purge"
+          ],
+          "text" : "follow the Invocation guidance"
+        }
       ],
       "source_name" : "aging report",
       "swift_struct" : "AgingReport"

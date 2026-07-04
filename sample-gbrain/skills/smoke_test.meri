@@ -21,7 +21,8 @@ mutating: true
 
 > Run `gbrain smoke-test` or `bash scripts/smoke-test.sh` after any container restart.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 - 8 core tests verify gbrain + OpenClaw health after restart
@@ -32,6 +33,10 @@ This skill guarantees:
 
 ## Built-in Tests (( inert ))
 
+
+### Built-in Tests — steps
+
+!!! table (( ai-discretion ))
 | # | Test | Auto-Fix |
 |---|------|----------|
 | 1 | Bun runtime | Install from bun.sh |
@@ -43,7 +48,8 @@ This skill guarantees:
 | 7 | Embedding API key | — (check .env) |
 | 8 | Brain repo exists | — |
 
-## Usage (( inert ))
+## Usage
+use judgment to follow the Usage guidance:
 
 ### CLI
 ```bash
@@ -55,7 +61,7 @@ gbrain smoke-test
 bash scripts/smoke-test.sh
 ```
 
-### From OpenClaw bootstrap (( inert ))
+### From OpenClaw bootstrap
 Add to your `ensure-services.sh` or equivalent:
 ```bash
 bash /path/to/gbrain/scripts/smoke-test.sh >> /tmp/bootstrap.log 2>&1
@@ -68,6 +74,15 @@ exec: bash /data/gbrain/scripts/smoke-test.sh
 
 ## Adding Custom Tests (( inert ))
 
+Rules:
+- Exit 0 = pass, non-zero = fail
+- Filename becomes the test name (e.g. `check-redis` from `check-redis.sh`)
+- Keep tests fast (< 10s each)
+- Tests run in alphabetical order
+
+
+### Adding Custom Tests — steps
+
 Create executable scripts in `~/.gbrain/smoke-tests.d/`:
 
 ```bash
@@ -76,13 +91,7 @@ Create executable scripts in `~/.gbrain/smoke-tests.d/`:
 redis-cli ping | grep -q PONG
 ```
 
-Rules:
-- Exit 0 = pass, non-zero = fail
-- Filename becomes the test name (e.g. `check-redis` from `check-redis.sh`)
-- Keep tests fast (< 10s each)
-- Tests run in alphabetical order
-
-## Adding Built-in Tests (( inert ))
+## Adding Built-in Tests
 
 Edit `scripts/smoke-test.sh`. Follow this pattern:
 
@@ -102,7 +111,8 @@ else
 fi
 ```
 
-### Design rules: (( inert ))
+### Design rules:
+use judgment to follow the Design rules: guidance:
 1. **Test first** — never fix without confirming broken
 2. **Re-test after fix** — verify the fix worked
 3. **Timeout everything** — `timeout N` on any command that could hang
@@ -112,6 +122,10 @@ fi
 
 ## Environment Variables (( inert ))
 
+
+### Environment Variables — steps
+
+!!! table (( ai-discretion ))
 | Var | Default | Description |
 |-----|---------|-------------|
 | `GBRAIN_SMOKE_LOG` | `/tmp/gbrain-smoke-test.log` | Log file path |
@@ -122,19 +136,24 @@ fi
 
 ## Known Issues & Their Auto-Fixes (( inert ))
 
-### Codex Zod core.cjs Missing (discovered 2026-04-23) (( inert ))
-- **Symptom:** `Cannot find module './core.cjs'` → all Codex ACP sessions fail
-- **Cause:** Zod v4 npm package ships without `core.cjs` in some installs
-- **Auto-fix:** `npm install zod@4 --force` in the codex extension's zod dir
+### Codex Zod core.cjs Missing (discovered 2026-04-23)
+use judgment to follow the Codex Zod core.cjs Missing (discovered 2026-04-23) guidance:
 - **Persistence:** Does NOT survive container restart (gateway reinstalls deps)
 - This is why smoke tests must run on every restart
 
+
+#### Codex Zod core.cjs Missing (discovered 2026-04-23) — steps
+
+- Symptom: `Cannot find module './core.cjs'` → all Codex ACP sessions fail
+- Cause: Zod v4 npm package ships without `core.cjs` in some installs
+- Auto-fix: `npm install zod@4 --force` in the codex extension's zod dir
 ### GBrain Worker Auth Failure (( inert ))
 - **Symptom:** Worker can't connect to DB
 - **Cause:** `GBRAIN_DATABASE_URL` not propagated to worker subprocess
 - **Auto-fix:** Script explicitly passes both `DATABASE_URL` and `GBRAIN_DATABASE_URL`
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - ❌ Running smoke tests on every chat turn. Once per container restart (or
   on user request) is plenty. The script is cheap but it's not free.

@@ -381,6 +381,11 @@ public struct ProseStepIR: Sendable {
     public let dispatchMode: ProseDispatchMode
     public let autonomy: AutonomyConfigIR?
     public let sourceRange: SourceRange
+    /// Optional planner context distinct from `text`'s dispatch goal — e.g. a
+    /// migrated section's inert narrative, carried verbatim so the planner
+    /// sees the original documentation behind a judgment step. Same
+    /// primitive, richer payload: no new IR was added for this.
+    public let guidance: String?
 
     public init(
         text: String,
@@ -388,7 +393,8 @@ public struct ProseStepIR: Sendable {
         snapshotKeys: [String] = [],
         dispatchMode: ProseDispatchMode,
         autonomy: AutonomyConfigIR? = nil,
-        sourceRange: SourceRange = .unknown
+        sourceRange: SourceRange = .unknown,
+        guidance: String? = nil
     ) {
         self.text = text
         self.scopedTools = scopedTools
@@ -396,6 +402,7 @@ public struct ProseStepIR: Sendable {
         self.dispatchMode = dispatchMode
         self.autonomy = autonomy
         self.sourceRange = sourceRange
+        self.guidance = guidance
     }
 }
 

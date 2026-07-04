@@ -18,7 +18,8 @@ mutating: true
 
 # Reports Skill
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 - Reports saved with timestamped filenames and frontmatter
@@ -26,7 +27,8 @@ This skill guarantees:
 - Latest report loadable by category name
 - Reports are searchable via gbrain search/query
 
-## Phases (( inert, role: procedure ))
+## Phases
+use judgment to follow the Phases guidance:
 
 1. **Save report.** Write to `reports/{category}/{YYYY-MM-DD-HHMM}.md` with frontmatter:
    ```yaml
@@ -51,7 +53,8 @@ This skill guarantees:
 Saved: `reports/{category}/{YYYY-MM-DD-HHMM}.md`
 Loaded: full report content with metadata.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - Saving reports without frontmatter (makes them unsearchable)
 - Using inconsistent category names across runs

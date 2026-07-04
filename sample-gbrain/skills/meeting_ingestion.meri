@@ -29,7 +29,8 @@ writes_to:
 
 > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 - Meeting page created with attendees, summary, key decisions, action items
@@ -44,9 +45,11 @@ This skill guarantees:
 Every attendee and company mentioned MUST get a back-link from their page to
 the meeting page. An unlinked mention is a broken brain.
 
-## Phases (( inert, role: procedure ))
+## Phases
+use judgment to follow the Phases guidance:
 
-### Phase 1: Parse the transcript (( inert, role: procedure ))
+### Phase 1: Parse the transcript
+use judgment to follow the Phase 1: Parse the transcript guidance:
 
 Extract from the transcript:
 - Attendees (names, roles if available)
@@ -56,7 +59,8 @@ Extract from the transcript:
 - Action items with owners
 - Companies and projects mentioned
 
-### Phase 2: Create meeting page (( inert, role: procedure ))
+### Phase 2: Create meeting page
+use judgment to follow the Phase 2: Create meeting page guidance:
 
 ```markdown
 # {Meeting Title} — {Date}
@@ -65,35 +69,42 @@ Extract from the transcript:
 **Date:** {YYYY-MM-DD}
 **Duration:** {if available}
 
-## Summary (( inert ))
+## Summary
 {3-5 bullet key outcomes}
 
-## Key Decisions (( inert ))
+## Key Decisions
 {Decisions with context}
 
-## Action Items (( inert ))
+## Action Items
 {Tasks with owners and deadlines}
 
-## Discussion Notes (( inert ))
+## Discussion Notes
 {Structured notes by topic}
 ```
 
-### Phase 3: Attendee enrichment (MANDATORY) (( inert, role: procedure ))
+### Phase 3: Attendee enrichment (MANDATORY)
+use judgment to follow the Phase 3: Attendee enrichment (MANDATORY) guidance:
 
-For EACH attendee:
 1. `gbrain search "{name}"` — does a people page exist?
 2. If NO → create via enrich skill (this is mandatory, not optional)
 3. If YES → update compiled truth with meeting context
-4. Add timeline entry on the person's page:
-   `gbrain timeline-add <person-slug> <date> "Attended <meeting-title>"`
-
 **Note (v0.10.1):** Once the meeting page is written via `gbrain put`, the
 auto-link post-hook automatically creates `attended` links from the meeting
 to each attendee whose page is referenced as `[Name](people/slug)`. You don't
 need to call `gbrain link` for attendees. You DO still need `gbrain timeline-add`
 for dated events (auto-link only handles links, not timeline entries).
 
-### Phase 4: Entity propagation (MANDATORY) (( inert, role: procedure ))
+
+#### Phase 3: Attendee enrichment (MANDATORY) — steps
+
+For EACH attendee:
+
+#### Phase 3: Attendee enrichment (MANDATORY) — steps 2
+
+> 4. Add timeline entry on the person's page:
+   `gbrain timeline-add <person-slug> <date> "Attended <meeting-title>"`
+
+### Phase 4: Entity propagation (MANDATORY)
 
 For each company, project, or concept discussed:
 1. Check brain for existing page
@@ -101,12 +112,13 @@ For each company, project, or concept discussed:
 3. Add timeline entry referencing the meeting
 4. Back-link from entity page to meeting page
 
-### Phase 5: Timeline merge (( inert, role: procedure ))
+### Phase 5: Timeline merge
+use judgment to follow the Phase 5: Timeline merge guidance:
 
 The same event appears on ALL mentioned entities' timelines. If Alice met Bob at
 Acme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page.
 
-### Phase 6: Sync (( inert, role: procedure ))
+### Phase 6: Sync
 
 `gbrain sync` to update the index.
 
@@ -115,7 +127,8 @@ Acme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page.
 Meeting page created. Report: "Meeting ingested: {N} attendees enriched, {N} entities
 updated, {N} action items captured."
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - Creating the meeting page without enriching attendees
 - Skipping entity propagation ("I'll do that later")

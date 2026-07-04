@@ -98,7 +98,7 @@
     "name" : "daily-task-manager",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 23,
         "text" : "Contract"
@@ -106,46 +106,59 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 32,
+        "line" : 33,
         "text" : "Phases"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 43,
+        "text" : "Phases — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 47,
+        "text" : "Phases — steps 2"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 43,
+        "line" : 51,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 64,
+        "line" : 72,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 25,
+        "line" : 26,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 27,
+        "line" : 28,
         "text" : "Task lifecycle"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 28,
+        "line" : 29,
         "text" : "Priority levels"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 23,
         "lines" : [
+          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Tasks stored as a brain page (`ops\/tasks.md`) with structured format",
           "Task lifecycle: add → in-progress → complete | defer",
@@ -153,45 +166,63 @@
           "Completed tasks archived with completion date",
           "Deferred tasks carry forward with reason"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phases",
-        "line" : 32,
+        "line" : 33,
         "lines" : [
-          "**Load current tasks.** `gbrain get ops\/tasks` — read the task list",
+          "use judgment to follow the Phases guidance:",
           "**Execute the requested action:**",
           "**Add:** Append task with priority, description, due date. Add timeline entry",
           "**Complete:** Mark as done, move to completed section with date",
           "**Defer:** Move to next day\/week with reason",
           "**Remove:** Delete from list (rare, prefer complete or defer)",
-          "**Review:** Display all active tasks by priority",
-          "**Save.** `gbrain put ops\/tasks` — write updated task list"
+          "**Review:** Display all active tasks by priority"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases — steps",
+        "line" : 43,
+        "lines" : [
+          "Load current tasks. `gbrain get ops\/tasks` — read the task list"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases — steps 2",
+        "line" : 47,
+        "lines" : [
+          "Save. `gbrain put ops\/tasks` — write updated task list"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 43,
+        "line" : 51,
         "lines" : [
-          "codeblock:markdown:IyBUYXNrcwoKIyMgUDAg4oCUIFVyZ2VudAotIFsgXSB7dGFzayBkZXNjcmlwdGlvbn0gKGR1ZToge2RhdGV9KQoKIyMgUDEg4oCUIFRvZGF5Ci0gWyBdIHt0YXNrIGRlc2NyaXB0aW9ufQoKIyMgUDIg4oCUIFRoaXMgV2VlawotIFsgXSB7dGFzayBkZXNjcmlwdGlvbn0KCiMjIFAzIOKAlCBCYWNrbG9nCi0gWyBdIHt0YXNrIGRlc2NyaXB0aW9ufQoKIyMgQ29tcGxldGVkICgoIGluZXJ0ICkpCi0gW3hdIHt0YXNrfSAoY29tcGxldGVkOiB7ZGF0ZX0p"
+          "codeblock:markdown:IyBUYXNrcwoKIyMgUDAg4oCUIFVyZ2VudAotIFsgXSB7dGFzayBkZXNjcmlwdGlvbn0gKGR1ZToge2RhdGV9KQoKIyMgUDEg4oCUIFRvZGF5Ci0gWyBdIHt0YXNrIGRlc2NyaXB0aW9ufQoKIyMgUDIg4oCUIFRoaXMgV2VlawotIFsgXSB7dGFzayBkZXNjcmlwdGlvbn0KCiMjIFAzIOKAlCBCYWNrbG9nCi0gWyBdIHt0YXNrIGRlc2NyaXB0aW9ufQoKIyMgQ29tcGxldGVkCi0gW3hdIHt0YXNrfSAoY29tcGxldGVkOiB7ZGF0ZX0p"
         ],
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 64,
+        "line" : 72,
         "lines" : [
+          "use judgment to follow the Anti-Patterns guidance:",
           "Adding tasks without a priority level",
           "Completing tasks without recording the completion date",
           "Deferring tasks without a reason",
           "Letting the task list grow unbounded (review weekly)",
           "Storing tasks outside the brain (they should be searchable)"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "tools" : "search\nget_page\nput_page\nadd_timeline_entry",
@@ -234,44 +265,48 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 631
+      "meridian_line" : 24,
+      "swift_line" : 602
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 641
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 646
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 685
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 690
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 734
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 773
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 807
+      "swift_line" : 778
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 812
+      "swift_line" : 817
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 822
     }
   ],
   "tools_used" : [
@@ -284,6 +319,21 @@
         {
           "kind" : "Input",
           "name" : "input"
+        }
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "This skill guarantees:\nTasks stored as a brain page (`ops\/tasks.md`) with structured format\nTask lifecycle: add → in-progress → complete | defer\nPriority levels: P0 (urgent), P1 (today), P2 (this week), P3 (backlog)\nCompleted tasks archived with completion date\nDeferred tasks carry forward with reason\nuse judgment to follow the Phases guidance:\n**Execute the requested action:**\n**Add:** Append task with priority, description, due date. Add timeline entry\n**Complete:** Mark as done, move to completed section with date\n**Defer:** Move to next day\/week with reason\n**Remove:** Delete from list (rare, prefer complete or defer)\n**Review:** Display all active tasks by priority\nLoad current tasks. `gbrain get ops\/tasks` — read the task list\nSave. `gbrain put ops\/tasks` — write updated task list\nuse judgment to follow the Anti-Patterns guidance:\nAdding tasks without a priority level\nCompleting tasks without recording the completion date\nDeferring tasks without a reason\nLetting the task list grow unbounded (review weekly)\nStoring tasks outside the brain (they should be searchable)",
+          "line" : 24,
+          "scoped_tools" : [
+            "page.get",
+            "page.search",
+            "publish",
+            "shell.run",
+            "timeline.add"
+          ],
+          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "daily-task-manager a input",

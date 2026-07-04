@@ -12,12 +12,12 @@ triggers:
 - "cancel blocked orders"
 - "void ERP orders"
 
-## Workflow (( role: procedure ))
+## Workflow
 fetch open orders.
 Check: any orders whose status is "blocked".
 for each order whose status is "blocked":
   cancel the order.
 Publish: "blocked orders cancelled".
 
-## Controls (( inert, role: invariants ))
+## Controls
 An already fulfilled order must not be cancelled by this runbook.

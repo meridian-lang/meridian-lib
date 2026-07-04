@@ -324,6 +324,27 @@ struct SkillSurfaceEveryEachTests {
             Issue.record("Expected pullRequests collection")
         }
     }
+
+    @Test("a trailing unrecognized clause after a comma does not leak into the loop variable name")
+    func eachWithTrailingCommaClauseIsBounded() throws {
+        let block = try parse("list pages and read each one, checking for inline citations.")
+
+        guard case .iteration(let iter) = block.statements.first,
+              case .forEach(let variable, let collection) = iter.mode else {
+            Issue.record("Expected forEach iteration")
+            return
+        }
+        // The comma is not a "sorted by" direction separator here, so it
+        // must bound the noun phrase rather than being folded into the
+        // generated identifier (a raw comma there breaks the emitted
+        // Swift `for (i, <var>) in ...` pattern).
+        #expect(variable == "one")
+        if case .identifierRef(let name) = collection {
+            #expect(name == "ones")
+        } else {
+            Issue.record("Expected ones collection")
+        }
+    }
 }
 
 @Suite("SKILL-style surface — implicit result binding")

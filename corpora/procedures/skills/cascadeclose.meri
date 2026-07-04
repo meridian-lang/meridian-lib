@@ -8,14 +8,22 @@ triggers:
 
 # Cascade Close
 
-## Invocation
+## Invocation (( role: procedure ))
+use judgment to follow the Invocation guidance:
 - "cascade close"
 - "orphaned audit rows"
 
-## Transaction body (( role: procedure ))
+## Transaction body
+use judgment to follow the Transaction body guidance:
+Check: any orphaned audit rows.
+
+### Transaction body — steps
+
 SQL: `psql -c "select key,table_name from audit_rows where status='orphaned'" --csv` to snapshot orphaned audit rows.
 fetch orphaned audit rows.
-Check: any orphaned audit rows.
+
+### Transaction body — steps 2
+
 Emit: "orphaned audit rows recorded for deterministic close".
 
 ## DBA notes (( inert ))

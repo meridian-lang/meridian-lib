@@ -8,11 +8,12 @@ triggers:
 
 # Receive Shipment
 
-## When this applies (( inert, role: applicability ))
+## When this applies (( role: procedure ))
+use judgment to follow the When this applies guidance:
 - "receive inbound shipment"
 - "shipment received"
 
-## Workflow (( role: procedure ))
+## Workflow
 Step: `ofbiz warehouse receive --today --json` to snapshot inbound manifests.
 Publish: "warehouse receiving manifest captured".
 

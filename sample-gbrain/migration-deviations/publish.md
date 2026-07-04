@@ -2,9 +2,9 @@
 
 - Original: `publish/SKILL.md`
 - Ported: `publish.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 89%
-- Lines: 173 -> 173 (+19 / -19)
+- Tier: 2 (light edits)
+- Similarity: 81%
+- Lines: 173 -> 189 (+42 / -26)
 
 ## Frontmatter
 - Added: (none)
@@ -12,56 +12,42 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - preamble-blockquoted
 - inert-section-added
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L12 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
-- L20 `When to Publish`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L27 `Default: ALWAYS ENCRYPT`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L54 `What Gets Stripped`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L69 `Sharing Workflows`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L71 `Option A: Local file (simplest)`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
-- L79 `Option B: Upload to cloud storage`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
-- L94 `Option C: Static hosting (Render, Netlify, S3)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L107 `Password Protection Details`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L120 `Updating a Published Page`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
-- L129 `Revoking Access`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L134 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L141 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L156 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L28 `Default: ALWAYS ENCRYPT`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L105 `Option C: Static hosting (Render, Netlify, S3)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L144 `Revoking Access`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L157 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L172 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
-- Sections: 14/16 inert (88% inert ratio)
-- Operational inert: 4
+- Sections inert total: 8/14 (57% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-content=3, reference-documentation=8, template=1, tools-metadata=1
-- Judgment: 0 blocks, 0 lines
+- Inert categories: reference-documentation=6, template=1, tools-metadata=1
+- Judgment: 3 blocks, 0 lines
 
 ### Inert section details
-- L12 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
-- L20 `When to Publish`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L27 `Default: ALWAYS ENCRYPT`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L54 `What Gets Stripped`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L69 `Sharing Workflows`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L71 `Option A: Local file (simplest)`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
-- L79 `Option B: Upload to cloud storage`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
-- L94 `Option C: Static hosting (Render, Netlify, S3)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L107 `Password Protection Details`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L120 `Updating a Published Page`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
-- L129 `Revoking Access`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L134 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L141 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L156 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L28 `Default: ALWAYS ENCRYPT`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L76 `Option A: Local file (simplest)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L87 `Option B: Upload to cloud storage`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L105 `Option C: Static hosting (Render, Netlify, S3)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L132 `Updating a Published Page`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L144 `Revoking Access`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L157 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L172 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/publish/SKILL.md
 +++ skills/publish.meri
-@@ -13,15 +13,15 @@
+@@ -13,15 +13,16 @@
  
  # Publish Skill
  
@@ -80,19 +66,12 @@ These sections were made non-executable in the port and should be reviewed as mi
 +> for the architecture philosophy.
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
++use judgment to follow the Contract guidance:
  
  - Published HTML is fully self-contained: no external dependencies, no server needed.
  - All private metadata (frontmatter, source citations, confirmation numbers, brain cross-links, timeline) is stripped before publishing.
-@@ -29,14 +29,14 @@
- - Default is always encrypted unless the user explicitly requests "open", "no password", or "public".
- - External URLs (`https://...`) are preserved; only internal brain paths are stripped.
- 
--## When to Publish
-+## When to Publish (( inert ))
- 
- - User asks to share a brain page, create a shareable link, or says "give me a page"
- - User wants to send a deal memo, person briefing, or research to someone external
+@@ -36,7 +37,7 @@
  - User asks to publish a data room analysis or trip plan
  - Any time brain content needs to leave the brain without exposing the whole system
  
@@ -101,67 +80,98 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Brain content is private. Default to password-protected unless the user explicitly
  says "open", "no password", or "public".
-@@ -63,7 +63,7 @@
+@@ -63,32 +64,44 @@
  gbrain publish brain/companies/acme.md --out /tmp/acme-share.html
  ```
  
 -## What Gets Stripped
 +## What Gets Stripped (( inert ))
  
- The publish command automatically removes all private/internal data:
+-The publish command automatically removes all private/internal data:
  
-@@ -78,9 +78,9 @@
++### What Gets Stripped — steps
++
++> The publish command automatically removes all private/internal data:
++
++!!! table (( ai-discretion ))
+ | Stripped | Example | Why |
+ |---------|---------|-----|
+ | YAML frontmatter | `title:`, `type:`, `tags:` | Internal metadata |
+ | `[Source: ...]` citations | All formats | Provenance is internal |
+ | Confirmation numbers | `ABC123DEF` -> "on file" | PII/booking data |
+-| Brain cross-links | `[Jane](../people/jane.md)` -> `Jane` | Internal paths |
++| Brain cross-links | `Jane` -> `Jane` | Internal paths |
+ | Timeline section | Everything below `---` / `## Timeline` | Raw evidence log |
+ | "See also" lines | Internal references | Brain navigation |
  
- **Preserved:** external URLs (`https://...`), all other content.
+-**Preserved:** external URLs (`https://...`), all other content.
++Preserved: external URLs (`https://...`), all other content.
  
 -## Sharing Workflows
 +## Sharing Workflows (( inert ))
  
 -### Option A: Local file (simplest)
 +### Option A: Local file (simplest) (( inert ))
++
++Share the HTML file via email, Slack, Airdrop. Share the password separately.
++
++
++#### Option A: Local file (simplest) — steps
  
  ```bash
  gbrain publish brain/people/jane-doe.md --password --out ~/Desktop/jane-briefing.html
-@@ -88,7 +88,7 @@
+ ```
  
- Share the HTML file via email, Slack, Airdrop. Share the password separately.
+-Share the HTML file via email, Slack, Airdrop. Share the password separately.
++### Option B: Upload to cloud storage (( inert ))
  
 -### Option B: Upload to cloud storage
-+### Option B: Upload to cloud storage (( inert ))
++Share the signed URL + password. URL expires in 1 hour. Re-generate as needed.
++
++
++#### Option B: Upload to cloud storage — steps
  
  ```bash
  # Publish locally first
-@@ -103,7 +103,7 @@
+@@ -101,9 +114,7 @@
+ gbrain files signed-url shares/acme/acme.html
+ ```
  
- Share the signed URL + password. URL expires in 1 hour. Re-generate as needed.
- 
+-Share the signed URL + password. URL expires in 1 hour. Re-generate as needed.
+-
 -### Option C: Static hosting (Render, Netlify, S3)
 +### Option C: Static hosting (Render, Netlify, S3) (( inert ))
  
  Upload the HTML file to any static hosting service. The file is self-contained,
  no server logic needed. Password-protected files work entirely client-side via
-@@ -116,7 +116,7 @@
- # Upload to a GitHub Gist or Pages repo
+@@ -117,6 +128,7 @@
  ```
  
--## Password Protection Details
-+## Password Protection Details (( inert ))
+ ## Password Protection Details
++use judgment to follow the Password Protection Details guidance:
  
  - **Algorithm:** AES-256-GCM
  - **Key derivation:** PBKDF2 with 100K iterations, SHA-256
-@@ -129,7 +129,7 @@
+@@ -129,21 +141,25 @@
  When encrypted, the published HTML contains ONLY ciphertext. The plaintext is
  not present anywhere in the file.
  
 -## Updating a Published Page
 +## Updating a Published Page (( inert ))
  
- Re-run the publish command with the same output path:
+-Re-run the publish command with the same output path:
++Same file, same URL (if hosted), updated content.
++
++
++### Updating a Published Page — steps
++
++> Re-run the publish command with the same output path:
  ```bash
-@@ -138,12 +138,12 @@
+ gbrain publish brain/companies/acme.md --password "same-password" --out shares/acme.html
+ ```
  
- Same file, same URL (if hosted), updated content.
- 
+-Same file, same URL (if hosted), updated content.
+-
 -## Revoking Access
 +## Revoking Access (( inert ))
  
@@ -169,11 +179,12 @@ These sections were made non-executable in the port and should be reviewed as mi
  If using static hosting, remove the file from the host.
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++use judgment to follow the Anti-Patterns guidance:
  
  - **Publishing without encryption.** Brain content is private. Default to password-protected unless the user explicitly says "open", "no password", or "public".
  - **Sharing password and URL in the same channel.** Always share the password via a different channel than the URL for security.
-@@ -165,7 +165,7 @@
+@@ -165,7 +181,7 @@
  Share the password via: [a different channel]
  ```
  

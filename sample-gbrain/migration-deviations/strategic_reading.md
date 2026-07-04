@@ -3,8 +3,8 @@
 - Original: `strategic-reading/SKILL.md`
 - Ported: `strategic_reading.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 90%
-- Lines: 189 -> 189 (+18 / -18)
+- Similarity: 89%
+- Lines: 189 -> 201 (+28 / -16)
 
 ## Frontmatter
 - Added: (none)
@@ -12,67 +12,67 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - inert-section-added
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L12 `What this is`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L27 `Inputs`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L35 `Output`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L39 `Brain page structure`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L83 `Process`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L118 `Quality bar`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L131 `What this skill is NOT`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L140 `Related skills`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L149 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
-- L160 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L164 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L30 `Inputs`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L38 `Output`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L42 `Brain page structure`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L122 `Quality bar`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L171 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections: 11/11 inert (100% inert ratio)
-- Operational inert: 2
+- Sections inert total: 7/10 (70% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-procedure=1, reference-documentation=7, template=2
-- Judgment: 0 blocks, 0 lines
+- Inert categories: reference-documentation=5, template=2
+- Judgment: 3 blocks, 0 lines
 
 ### Inert section details
 - L12 `What this is`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L27 `Inputs`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L35 `Output`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L39 `Brain page structure`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L83 `Process`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L118 `Quality bar`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L131 `What this skill is NOT`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L140 `Related skills`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L149 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
-- L160 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L164 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L30 `Inputs`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L38 `Output`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L42 `Brain page structure`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L122 `Quality bar`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L135 `What this skill is NOT`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L171 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/strategic-reading/SKILL.md
 +++ skills/strategic_reading.meri
-@@ -31,7 +31,7 @@
+@@ -31,10 +31,8 @@
  > output files by primary subject (concepts/ for general strategy, projects/
  > for problem-tied playbooks).
  
 -## What this is
+-
+-Take a large text PLUS a specific strategic problem, produce analysis that
+-maps the text's insights onto the problem. This is not book summarization.
 +## What this is (( inert ))
++
+ This is reading with a mission.
  
- Take a large text PLUS a specific strategic problem, produce analysis that
- maps the text's insights onto the problem. This is not book summarization.
-@@ -46,7 +46,7 @@
+ Where `book-mirror` personalizes a book to the reader's whole life,
+@@ -46,7 +44,12 @@
  maps the book's playbook onto the situation with counter-tactics and a
  short/medium/long-term playbook.
  
 -## Inputs
++
++### What this is — steps (( inert ))
++
++Take a large text PLUS a specific strategic problem, produce analysis that
++maps the text's insights onto the problem. This is not book summarization.
 +## Inputs (( inert ))
  
  1. **Source text** — book (EPUB/PDF), article, transcript, historical case
     study, any large document.
-@@ -54,11 +54,11 @@
+@@ -54,11 +57,11 @@
     lens of the text. The user describes this explicitly or it's obvious
     from context.
  
@@ -86,59 +86,15 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```markdown
  # [Source Title] — Applied to [Problem]
-@@ -66,43 +66,43 @@
- > One-paragraph executive summary: how the source maps to the situation,
- > the key insight, the bottom line.
- 
--## The Core Parallel
-+## The Core Parallel (( inert ))
- How the source's central dynamic maps onto the user's situation.
- 
--## Chapter / Section Triage
-+## Chapter / Section Triage (( inert ))
- For each major section of the source:
- - 2-3 sentence summary of what it says
- - Relevance to the problem: HIGH / MEDIUM / LOW
- - One directly applicable quote (if any)
- 
--## The Source's Playbook
-+## The Source's Playbook (( inert ))
- The author's framework, tactics, or strategies — organized as:
- - What the protagonist DID (tactics)
- - What WORKED and why
- - What FAILED and why
- - What OPPONENTS did that was effective
- 
--## Counter-Tactics
-+## Counter-Tactics (( inert ))
- Specific moves from the source that map to the user's situation:
- - What to DO (with source evidence)
- - What to AVOID (with source evidence)
- - What to WATCH FOR (warning signs from the source)
- 
--## Applied Playbook
-+## Applied Playbook (( inert ))
- The synthesis — actionable recommendations:
- - **Short-term** (this week / this month)
- - **Medium-term** (this quarter)
- - **Long-term** (this year+)
- 
--## Key Quotes
-+## Key Quotes (( inert ))
- Direct quotes from the source that are devastatingly relevant.
- Maximum 5-10. Quality over quantity.
- 
--## See Also
-+## See Also (( inert ))
- Links to relevant brain pages (related concepts, related projects).
+@@ -103,6 +106,7 @@
  ```
  
--## Process
-+## Process (( inert, role: procedure ))
+ ## Process
++use judgment to follow the Process guidance:
  
  ```
  Phase 1: Ingest the source
-@@ -137,7 +137,7 @@
+@@ -137,7 +141,7 @@
    └── Optional: render to PDF via skills/brain-pdf.
  ```
  
@@ -147,34 +103,45 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - **Every recommendation must cite the source.** Don't say "go direct to
    the mayor" — say "go direct to the mayor, because when the protagonist
-@@ -150,7 +150,7 @@
+@@ -150,16 +154,22 @@
  - **Short/medium/long-term breakdown is mandatory.** The user needs to
    know what to do tomorrow AND what to do this year.
  
 -## What this skill is NOT
 +## What this skill is NOT (( inert ))
++
++- Not academic literary analysis. No one cares about literary merit —
++  only strategic application.
++
++
++### What this skill is NOT — steps
  
  - Not a book summary tool. Use a different skill (or `book-mirror` for
    personalized analysis) for general summaries.
-@@ -159,7 +159,7 @@
- - Not academic literary analysis. No one cares about literary merit —
-   only strategic application.
- 
+ - Not a research tool. Use `perplexity-research` for finding new
+   information about a topic.
+-- Not academic literary analysis. No one cares about literary merit —
+-  only strategic application.
+-
 -## Related skills
-+## Related skills (( inert ))
++## Related skills (( inert, role: procedure ))
++
++
++### Related skills — steps
  
  - `skills/book-mirror/SKILL.md` — book personalized to whole life (vs
    problem)
-@@ -168,7 +168,7 @@
+@@ -168,7 +178,8 @@
  - `skills/conventions/quality.md` — citation + back-link rules
  
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
++use judgment to follow the Contract guidance:
  
  This skill guarantees:
  
-@@ -179,11 +179,11 @@
+@@ -179,11 +190,12 @@
  
  The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  
@@ -184,7 +151,8 @@ These sections were made non-executable in the port and should be reviewed as mi
  The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++use judgment to follow the Anti-Patterns guidance:
  
  The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing.
  

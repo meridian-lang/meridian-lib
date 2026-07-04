@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -600,6 +600,16 @@ public struct VoiceNoteIngestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "VoiceNoteIngestInput", parameters: [:])
 
+        // L33
+        let __meridianProseResults_L33 = try await runtime.executeProsePlan(
+            prose: "follow the Iron Law guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            guidance: "The user's **exact words** are the insight. Never paraphrase. Never clean\nup. The vivid, unpolished, stream-of-consciousness phrasing captures\nsomething that cleaned-up prose does not. Preserve it in block quotes\nThe Analysis section can interpret; the transcript section is sacred\n✅ `\"The ambition-to-lifespan ratio has never been more fucked\"`\n❌ `User noted the tension between ambition and mortality`\nuse judgment to follow the When to invoke guidance:\nThe user sends an audio or voice message via any channel (Telegram, voice\nmemo upload, openclaw audio attachment). The host agent typically provides\nthe transcript text. If not, transcribe via `gbrain transcription` (Groq\nWhisper by default; OpenAI fallback for audio > 25MB segmented via ffmpeg)\nNone of the above / random thought / doesn't fit cleanly —\n→ `voice-notes/YYYY-MM-DD-<slug>.md` (catch-all)\nAudio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,\n`2026-04-13-rick-rubin-creative-philosophy.ogg`)\nBrain pages: match the slug of the destination directory\nNo batching\nuse judgment to follow the Anti-Patterns guidance:\n❌ **Paraphrasing the transcript.** The exact words are the signal\n❌ **Cleaning up hesitations or filler words** (\"um\", \"like\", \"you\nknow\"). The texture matters.\n❌ **Creating a page with no entity cross-links** when people/companies\nwere mentioned. Iron Law fail\n❌ **Skipping the audio storage step.** Always upload the original; the\nbrain page has a `🔊 [Audio]` link back to it\n`skills/signal-detector/SKILL.md` — same exact-phrasing pattern for\ntext-channel idea capture\n`skills/idea-ingest/SKILL.md` — for typed-text idea ingestion\n`skills/conventions/quality.md` — citation + back-link rules\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        )
+        for (__key, __value) in __meridianProseResults_L33 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

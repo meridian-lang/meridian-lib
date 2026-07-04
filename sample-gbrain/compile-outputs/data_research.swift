@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -599,6 +599,16 @@ public struct DataResearchInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "DataResearchInput", parameters: [:])
 
+        // L35
+        let __meridianProseResults_L35 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["link.add", "page.get", "page.search", "publish", "shell.run", "timeline.add"],
+            guidance: "One skill for any email-to-structured-data pipeline. The only differences\nbetween tracking investor updates, expenses, and company metrics\nare the **search queries**, **extraction schemas**, and **tracker page format**\nAll three use the same 7-phase pipeline with parameterized recipes\nuse judgment to follow the When to Use guidance:\nUser wants to track structured data from email, web, or API sources\nUser says \"research\", \"track\", \"extract from email\", \"build a tracker\"\nUser mentions investor updates, donations, company metrics, filings\nUser wants to set up recurring data collection (with cron recipe)\nuse judgment to follow the Phases guidance:\nuse judgment to follow the Phase 1: Define Research Recipe guidance:\nAsk the user what they want to track. Either:\nPick a built-in recipe: investor-updates, expense-tracker, company-updates\nDefine a custom recipe with: source queries, classification rules, extraction schema,\ntracker page path, tracker format\nRecipes are YAML files at `~/.gbrain/recipes/{name}.yaml`. Use `gbrain research init`\nuse judgment to follow the Phase 2: Search Sources guidance:\nBrain first (maybe we already have this data). Then:\n**Email** via credential gateway: windowed queries (quarterly, monthly if truncated)\n**Web** via search: public filings, press releases, regulatory data\n**APIs**: any structured data source the recipe defines\n**Attachments**: PDF extraction, HTML stripping\nuse judgment to follow the Phase 3: Classify guidance:\nDeterministic first (regex patterns from recipe), LLM fallback\nLog every LLM fallback for future regex improvement (fail-improve loop)\nSkip marketing, newsletters, noise based on recipe's classification rules\nuse judgment to follow the Phase 4: Extract Structured Data guidance:\n**EXTRACTION INTEGRITY RULE:**\nSave raw source immediately (before any extraction)\nExtract fields using deterministic regex first, LLM fallback\nWhen summarizing batch results: **re-read from saved files**\nNever trust LLM working memory after batch processing\nThis prevents a known hallucination bug where batch-processed amounts were\n13/13 wrong from LLM working memory while saved files were correct\n`put_raw_data` for email bodies, API responses\n`file_upload` for PDF attachments, documents\nCreate `.redirect.yaml` pointers for large files in storage\nEvery tracker entry must link back to its raw source\nuse judgment to follow the Phase 6: Deduplicate guidance:\nBefore adding to tracker:\nExact match (same key fields) → skip\nFuzzy match (same entity + date + similar amount within tolerance) → flag for review\nDifferent amount for same entity+date → add with note (could be correction)\nParse existing tracker page (markdown table)\nAppend new entries in correct section (grouped by year/quarter/entity)\nCompute running totals\nBacklink every mentioned entity (person → people/ page, company → companies/ page)\nUses enrichment service for entity pages\nThree example recipes ship with GBrain (see `~/.gbrain/recipes/`):\n**investor-updates** — extract MRR, ARR, growth, burn, runway, headcount from investor update emails\n**expense-tracker** — extract amounts, recipients, platforms from receipt emails (subscriptions, services, recurring charges)\n**company-updates** — extract revenue, users, key metrics from portfolio company update emails\nuse judgment to follow the Anti-Patterns guidance:\nTrusting LLM working memory for amounts after batch processing (use extraction integrity rule)\nCreating tracker entries without raw source links\nRunning without deduplication (leads to double-counted entries)\nHardcoding source-specific patterns in the pipeline code (use recipes)\nReferences `skills/conventions/quality.md` for citation and back-linking rules"
+        )
+        for (__key, __value) in __meridianProseResults_L35 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

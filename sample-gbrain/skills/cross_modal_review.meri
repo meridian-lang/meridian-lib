@@ -34,7 +34,8 @@ mutating: false
 > for ad-hoc second opinions; use `gbrain eval cross-modal` for the
 > skillify Phase 3 quality gate. The two are complementary, not redundant.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 
@@ -45,7 +46,8 @@ This skill guarantees:
 - Refusal from one model triggers a silent switch to the next in chain.
 - The user always makes the final decision (user sovereignty).
 
-## When to invoke (v0.25.1 gating) (( inert ))
+## When to invoke (v0.25.1 gating)
+use judgment to follow the When to invoke (v0.25.1 gating) guidance:
 
 Invoke this skill when:
 
@@ -69,7 +71,8 @@ Do NOT invoke for:
 - Routine cron output or heartbeat operations
 - Git commit / push of already-reviewed work
 
-## Phases (( inert, role: procedure ))
+## Phases
+use judgment to follow the Phases guidance:
 
 1. **Capture the work product.** The brain page, analysis, code diff,
    or decision to be reviewed.
@@ -85,10 +88,14 @@ Do NOT invoke for:
 
 ## Code-review handoff (v0.25.1 extension) (( inert ))
 
+
+### Code-review handoff (v0.25.1 extension) — steps
+
 For diff review specifically, gstack ships a `/codex` skill that wraps
 the OpenAI Codex CLI. Two modes:
 
-### Codex Review (( inert ))
+### Codex Review
+use judgment to follow the Codex Review guidance:
 
 Independent diff review from a different AI system. The user invokes
 `/codex review` (gstack-shipped); cross-modal-review's job is to
@@ -127,14 +134,17 @@ and recommended mitigations.
 
 ## Refusal routing (( inert ))
 
-If the primary review model refuses:
-
-1. Switch silently to the next model in the chain (see
-   `conventions/cross-modal.yaml`).
 2. Don't show the refusal to the user.
 3. Don't announce the switch.
 4. If ALL models in the chain refuse, escalate to the user.
 
+
+### Refusal routing — steps
+
+> If the primary review model refuses:
+
+1. Switch silently to the next model in the chain (see
+   `conventions/cross-modal.yaml`).
 ## Output format (( inert, role: template ))
 
 ### Standard review (( inert ))
@@ -173,7 +183,8 @@ This applies even when the reviewer is correct. Cross-model consensus
 is a strong signal — present it as such — but the user makes the
 decision.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - ❌ Auto-applying reviewer suggestions without user approval
 - ❌ Showing model refusals to the user
@@ -182,7 +193,10 @@ decision.
 - ❌ Code-reviewing trivial changes (typos, formatting)
 - ❌ Running code review without git-diff context
 
-## Related skills (( inert ))
+## Related skills (( inert, role: procedure ))
+
+
+### Related skills — steps
 
 - gstack `/codex` — the actual Codex CLI wrapper this skill hands off
   to for diff-review mode. Cross-modal-review knows WHEN to invoke;

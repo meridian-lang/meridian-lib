@@ -32,12 +32,12 @@ A timeline entry is a kind of event.
 A report is a kind of artifact.
 A job is a kind of process.
 A task is a kind of process.
-A signal is a kind of signal.
+A signal is a kind of thing.
 A transcript is a kind of artifact.
 A webhook event is a kind of event.
 A schema pack is a kind of thing.
 A recipe is a kind of thing.
-A verdict is a kind of verdict.
+A verdict is a kind of thing.
 A query is a kind of thing.
 A brain is a kind of system.
 An entity is a kind of thing.

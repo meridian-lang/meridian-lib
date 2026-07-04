@@ -8,16 +8,18 @@ triggers:
 
 # Settle Batch
 
-## Invocation
+## Invocation (( role: procedure ))
+use judgment to follow the Invocation guidance:
 - "settle ready batches"
 - "batch settlement"
 
-## Batch body (( role: procedure ))
+## Batch body
 fetch ready batches.
 Check: all batches have a name.
 for each batch:
   settle the batch.
 Emit: "ready batches settled".
 
-## Postconditions (( role: invariants ))
+## Postconditions (( role: procedure ))
+use judgment to follow the Postconditions guidance:
 make sure no batches whose status is "failed".

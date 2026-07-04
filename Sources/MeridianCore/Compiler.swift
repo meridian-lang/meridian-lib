@@ -169,6 +169,45 @@ public struct Compiler {
         }
     }
 
+    /// Real vocabulary/rulebook knowledge for a `.meri` source, without
+    /// running parse/lower/emit. This is the same `bootstrap` phase
+    /// `compileWithManifest` uses, exposed for authoring-time tooling that
+    /// needs a genuine `SymbolTable`/`EnglishLexicon`/`Rulebook`/`RewriteEngine`
+    /// (the migrator's marking pass, the inert-yield analyzer) instead of
+    /// re-deriving vocabulary knowledge from shape heuristics. Domain
+    /// vocabulary declared inline via `## Domain` sections in `source` is
+    /// harvested exactly as it would be for a real compile.
+    public struct KnowledgeContext {
+        public let symbols: SymbolTable
+        public let lexicon: EnglishLexicon
+        public let rulebook: Rulebook
+        public let rewriteEngine: RewriteEngine?
+    }
+
+    /// See `KnowledgeContext`. Throws the same diagnostics a real compile's
+    /// bootstrap phase would (duplicate vocab/rulebook names, malformed
+    /// `.merconfig`/`.merrules`).
+    public func knowledge(
+        forSource source: String,
+        sourceFile: String,
+        vocabularies: [VocabularyInput],
+        rulebooks: [RulebookInput] = []
+    ) throws -> KnowledgeContext {
+        let trace = options.trace
+        let engine = DiagnosticEngine(trace: trace)
+        let ctx = try bootstrap(
+            meridianSources: [(source, sourceFile)],
+            vocabularies: vocabularies,
+            rulebooks: rulebooks,
+            trace: trace,
+            engine: engine,
+            duplicateRulebookHelp: "Each `--rulebook` / frontmatter `rulebook:` entry must have a unique name.",
+            duplicateVocabularyHelp: "Each `--vocabulary` / frontmatter `vocabulary:` entry must have a unique name."
+        )
+        return KnowledgeContext(symbols: ctx.symbols, lexicon: ctx.lexicon,
+                                rulebook: ctx.rulebook, rewriteEngine: ctx.rewriteEngine)
+    }
+
     private struct BootstrapContext {
         let config: MerConfigFile
         let lexicon: EnglishLexicon
@@ -260,7 +299,8 @@ public struct Compiler {
             conditionHeaderSynonyms: config.languageSynonyms.conditionHeaderSynonyms,
             actionHeaderSynonyms: config.languageSynonyms.actionHeaderSynonyms,
             wildcardSynonyms: config.languageSynonyms.wildcardSynonyms,
-            shellFenceSynonyms: config.languageSynonyms.shellFenceSynonyms
+            shellFenceSynonyms: config.languageSynonyms.shellFenceSynonyms,
+            fenceToolSynonyms: config.languageSynonyms.fenceToolMapping
         ) }
 
         let symbolsFile = vocabularies.first?.file ?? "config.merconfig"

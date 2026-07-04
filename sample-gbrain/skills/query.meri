@@ -33,16 +33,21 @@ mutating: false
 
 > Answer questions using the brain's knowledge with 3-layer search and synthesis.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
-This skill guarantees:
-- Every answer is grounded in brain content (no hallucination)
-- Every claim has a citation tracing back to a specific page slug
 - Gaps are flagged explicitly ("the brain doesn't have information on X")
 - Source precedence is respected (user statements > compiled truth > timeline > external)
 - Conflicting sources are noted with both citations
 
-## Phases (( inert, role: procedure ))
+
+### Contract — steps
+
+> This skill guarantees:
+- Every answer is grounded in brain content (no hallucination)
+- Every claim has a citation tracing back to a specific page slug
+## Phases
+use judgment to follow the Phases guidance:
 
 1. **Decompose the question** into search strategies:
    - Keyword search for specific names, dates, terms
@@ -56,7 +61,8 @@ This skill guarantees:
 4. **Synthesize answer** with citations. Every claim traces back to a specific page slug.
 5. **Flag gaps.** If the brain doesn't have info, say "the brain doesn't have information on X" rather than hallucinating.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - Answering from general knowledge when the brain has relevant content
 - Hallucinating facts not in the brain
@@ -64,7 +70,7 @@ This skill guarantees:
 - Loading full pages when search chunks are sufficient
 - Ignoring source precedence (user statements are highest authority)
 
-## Output Format (( inert, role: template ))
+## Output Format
 
 Answers should include:
 - Direct response to the question
@@ -72,7 +78,8 @@ Answers should include:
 - Gap flags: "The brain doesn't have information on X"
 - Conflict notes when sources disagree
 
-## Quality Rules (( inert, role: invariants ))
+## Quality Rules (( role: procedure ))
+use judgment to follow the Quality Rules guidance:
 
 - Never hallucinate. Only answer from brain content.
 - Cite sources: "According to concepts/do-things-that-dont-scale..."
@@ -81,7 +88,8 @@ Answers should include:
 - For "what happened" questions, use timeline entries
 - For "what do we know" questions, read compiled_truth directly
 
-## Token-Budget Awareness (( inert ))
+## Token-Budget Awareness
+use judgment to follow the Token-Budget Awareness guidance:
 
 Search returns **chunks**, not full pages. Read the excerpts first before deciding
 whether to load a full page.
@@ -115,17 +123,23 @@ When referencing brain pages in your answer, propagate inline citations:
 
 ## Graph Traversal (v0.10.1+) (( inert ))
 
-For relationship questions ("who knows who at X?", "connections between A and B",
-"who works at Acme?", "who attended the standup?"), use the graph layer instead
-of full-text search:
+- Available link types: `attended`, `works_at`, `invested_in`, `founded`, `advises`, `mentions`, `source`
+
+### Graph Traversal (v0.10.1+) — steps
+
+> For relationship questions ("who knows who at X?", "connections between A and B",
+> "who works at Acme?", "who attended the standup?"), use the graph layer instead
+> of full-text search:
 
 - `gbrain graph-query <slug> --type <link_type> --depth N --direction in|out|both`
-- Available link types: `attended`, `works_at`, `invested_in`, `founded`, `advises`, `mentions`, `source`
+
+### Graph Traversal (v0.10.1+) — steps 2
+
 - `--direction in` answers "who points to X?" (e.g., who works at company X)
 - `--direction out` answers "what does X point to?" (default)
 - `--depth N` controls multi-hop traversal (default 5)
 
-Examples:
+> Examples:
 - "Who works at Acme?" → `gbrain graph-query companies/acme --type works_at --direction in`
 - "Who attended Demo Day W26?" → `gbrain graph-query meetings/demo-day-w26 --type attended --direction out`
 - "What companies has Emily advised?" → `gbrain graph-query people/emily --type advises --direction out`
@@ -137,13 +151,16 @@ connected entities surface higher.
 
 ## Search Quality Awareness (( inert ))
 
-If search results seem off (wrong results, missing known pages, irrelevant hits):
-- Run `gbrain doctor --json` to check index health
 - Check embedding coverage -- partial embeddings degrade hybrid search
 - Compare keyword search (`gbrain search`) vs hybrid search (`gbrain query`)
   for the same query to isolate whether the issue is embedding-related
 - Report search quality issues in the maintain workflow (see maintain skill)
 
+
+### Search Quality Awareness — steps
+
+> If search results seem off (wrong results, missing known pages, irrelevant hits):
+- Run `gbrain doctor --json` to check index health
 ## Tools Used
 
 - Keyword search gbrain (search)

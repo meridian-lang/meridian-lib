@@ -98,7 +98,7 @@
     "name" : "smoke-test",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 24,
         "text" : "Contract"
@@ -106,112 +106,149 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 33,
+        "line" : 34,
         "text" : "Built-in Tests"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 37,
+        "text" : "Built-in Tests — steps"
+      },
+      {
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 46,
+        "line" : 51,
         "text" : "Usage"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 48,
+        "line" : 54,
         "text" : "CLI"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 53,
+        "line" : 59,
         "text" : "Direct"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 58,
+        "line" : 64,
         "text" : "From OpenClaw bootstrap"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 64,
+        "line" : 70,
         "text" : "From an agent"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 69,
+        "line" : 75,
         "text" : "Adding Custom Tests"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 84,
+        "text" : "Adding Custom Tests — steps"
+      },
+      {
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 85,
+        "line" : 94,
         "text" : "Adding Built-in Tests"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 105,
+        "line" : 114,
         "text" : "Design rules:"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 113,
+        "line" : 123,
         "text" : "Environment Variables"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 126,
+        "text" : "Environment Variables — steps"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 123,
+        "line" : 137,
         "text" : "Known Issues & Their Auto-Fixes"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 125,
+        "line" : 139,
         "text" : "Codex Zod core.cjs Missing (discovered 2026-04-23)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 132,
+        "line" : 150,
         "text" : "GBrain Worker Auth Failure"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 137,
+        "line" : 155,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 153,
+        "line" : 172,
         "text" : "Output Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 26,
+        "line" : 27,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 79,
+        "line" : 77,
         "text" : "Rules"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 147,
+        "text" : "Symptom"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 148,
+        "text" : "Cause"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 149,
+        "text" : "Auto-fix"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 24,
         "lines" : [
+          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "8 core tests verify gbrain + OpenClaw health after restart",
           "Known failures are auto-fixed before reporting",
@@ -219,21 +256,12 @@
           "Results logged to `\/tmp\/gbrain-smoke-test.log`",
           "Exit code = number of unfixed failures (0 = all pass)"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Built-in Tests",
-        "line" : 33,
-        "lines" : [
-          "table:decision:fCAjIHwgVGVzdCB8IEF1dG8tRml4IHwKfC0tLXwtLS0tLS18LS0tLS0tLS0tLXwKfCAxIHwgQnVuIHJ1bnRpbWUgfCBJbnN0YWxsIGZyb20gYnVuLnNoIHwKfCAyIHwgR0JyYWluIENMSSBsb2FkcyB8IFJlaW5zdGFsbCBkZXBzIHwKfCAzIHwgR0JyYWluIGRhdGFiYXNlIChkb2N0b3IpIHwg4oCUIHwKfCA0IHwgR0JyYWluIHdvcmtlciBwcm9jZXNzIHwgU3RhcnQgd29ya2VyIHwKfCA1IHwgT3BlbkNsYXcgQ29kZXggcGx1Z2luIChab2QgQ0pTKSB8IGBucG0gaW5zdGFsbCB6b2RANCAtLWZvcmNlYCB8CnwgNiB8IE9wZW5DbGF3IGdhdGV3YXkgfCDigJQgKG1heSBub3QgYmUgc3RhcnRlZCB5ZXQpIHwKfCA3IHwgRW1iZWRkaW5nIEFQSSBrZXkgfCDigJQgKGNoZWNrIC5lbnYpIHwKfCA4IHwgQnJhaW4gcmVwbyBleGlzdHMgfCDigJQgfA=="
-        ],
-        "role" : "inert"
-      },
-      {
-        "executes" : false,
-        "heading" : "Usage",
-        "line" : 46,
+        "line" : 34,
         "lines" : [
 
         ],
@@ -241,8 +269,26 @@
       },
       {
         "executes" : true,
+        "heading" : "Built-in Tests — steps",
+        "line" : 37,
+        "lines" : [
+          "table:ai-discretion:fCAjIHwgVGVzdCB8IEF1dG8tRml4IHwKfC0tLXwtLS0tLS18LS0tLS0tLS0tLXwKfCAxIHwgQnVuIHJ1bnRpbWUgfCBJbnN0YWxsIGZyb20gYnVuLnNoIHwKfCAyIHwgR0JyYWluIENMSSBsb2FkcyB8IFJlaW5zdGFsbCBkZXBzIHwKfCAzIHwgR0JyYWluIGRhdGFiYXNlIChkb2N0b3IpIHwg4oCUIHwKfCA0IHwgR0JyYWluIHdvcmtlciBwcm9jZXNzIHwgU3RhcnQgd29ya2VyIHwKfCA1IHwgT3BlbkNsYXcgQ29kZXggcGx1Z2luIChab2QgQ0pTKSB8IGBucG0gaW5zdGFsbCB6b2RANCAtLWZvcmNlYCB8CnwgNiB8IE9wZW5DbGF3IGdhdGV3YXkgfCDigJQgKG1heSBub3QgYmUgc3RhcnRlZCB5ZXQpIHwKfCA3IHwgRW1iZWRkaW5nIEFQSSBrZXkgfCDigJQgKGNoZWNrIC5lbnYpIHwKfCA4IHwgQnJhaW4gcmVwbyBleGlzdHMgfCDigJQgfA=="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Usage",
+        "line" : 51,
+        "lines" : [
+          "use judgment to follow the Usage guidance:"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
         "heading" : "CLI",
-        "line" : 48,
+        "line" : 54,
         "lines" : [
           "codeblock:bash:Z2JyYWluIHNtb2tlLXRlc3Q="
         ],
@@ -251,26 +297,26 @@
       {
         "executes" : true,
         "heading" : "Direct",
-        "line" : 53,
+        "line" : 59,
         "lines" : [
           "codeblock:bash:YmFzaCBzY3JpcHRzL3Ntb2tlLXRlc3Quc2g="
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "From OpenClaw bootstrap",
-        "line" : 58,
+        "line" : 64,
         "lines" : [
           "Add to your `ensure-services.sh` or equivalent:",
           "codeblock:bash:YmFzaCAvcGF0aC90by9nYnJhaW4vc2NyaXB0cy9zbW9rZS10ZXN0LnNoID4+IC90bXAvYm9vdHN0cmFwLmxvZyAyPiYx"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "From an agent",
-        "line" : 64,
+        "line" : 70,
         "lines" : [
           "codeblock:plain:ZXhlYzogYmFzaCAvZGF0YS9nYnJhaW4vc2NyaXB0cy9zbW9rZS10ZXN0LnNo"
         ],
@@ -279,10 +325,8 @@
       {
         "executes" : false,
         "heading" : "Adding Custom Tests",
-        "line" : 69,
+        "line" : 75,
         "lines" : [
-          "Create executable scripts in `~\/.gbrain\/smoke-tests.d\/`:",
-          "codeblock:bash:IyB+Ly5nYnJhaW4vc21va2UtdGVzdHMuZC9jaGVjay1yZWRpcy5zaAojIS9iaW4vYmFzaApyZWRpcy1jbGkgcGluZyB8IGdyZXAgLXEgUE9ORw==",
           "Rules:",
           "Exit 0 = pass, non-zero = fail",
           "Filename becomes the test name (e.g. `check-redis` from `check-redis.sh`)",
@@ -292,20 +336,31 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
+        "heading" : "Adding Custom Tests — steps",
+        "line" : 84,
+        "lines" : [
+          "Create executable scripts in `~\/.gbrain\/smoke-tests.d\/`:",
+          "codeblock:bash:IyB+Ly5nYnJhaW4vc21va2UtdGVzdHMuZC9jaGVjay1yZWRpcy5zaAojIS9iaW4vYmFzaApyZWRpcy1jbGkgcGluZyB8IGdyZXAgLXEgUE9ORw=="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
         "heading" : "Adding Built-in Tests",
-        "line" : 85,
+        "line" : 94,
         "lines" : [
           "Edit `scripts\/smoke-test.sh`. Follow this pattern:",
           "codeblock:bash:IyDilIDilIAgTi4gW1NlcnZpY2UgTmFtZV0g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACmlmIFt0ZXN0IGNvbmRpdGlvbl07IHRoZW4KICBwYXNzICJbU2VydmljZSBOYW1lXSIKZWxzZQogICMgQXV0by1maXggYXR0ZW1wdAogIFtmaXggY29tbWFuZF0KICBpZiBbcmUtdGVzdCBjb25kaXRpb25dOyB0aGVuCiAgICBmaXhlZCAiW1doYXQgd2FzIGZpeGVkXSIKICAgIHBhc3MgIltTZXJ2aWNlIE5hbWVdIChhZnRlciBmaXgpIgogIGVsc2UKICAgIGZhaWwgIltTZXJ2aWNlIE5hbWVdIOKAlCBbZXJyb3IgZGV0YWlsXSIKICBmaQpmaQ=="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Design rules:",
-        "line" : 105,
+        "line" : 114,
         "lines" : [
+          "use judgment to follow the Design rules: guidance:",
           "**Test first** — never fix without confirming broken",
           "**Re-test after fix** — verify the fix worked",
           "**Timeout everything** — `timeout N` on any command that could hang",
@@ -313,20 +368,11 @@
           "**Idempotent fixes** — safe to run repeatedly",
           "**Skip gracefully** — `skip()` when a prerequisite is missing, don't fail"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Environment Variables",
-        "line" : 113,
-        "lines" : [
-          "table:decision:fCBWYXIgfCBEZWZhdWx0IHwgRGVzY3JpcHRpb24gfAp8LS0tLS18LS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18CnwgYEdCUkFJTl9TTU9LRV9MT0dgIHwgYC90bXAvZ2JyYWluLXNtb2tlLXRlc3QubG9nYCB8IExvZyBmaWxlIHBhdGggfAp8IGBHQlJBSU5fRElSX09WRVJSSURFYCB8IChhdXRvLWRldGVjdCkgfCBGb3JjZSBnYnJhaW4gaW5zdGFsbCBwYXRoIHwKfCBgR0JSQUlOX0RBVEFCQVNFX1VSTGAgfCAoZnJvbSAuZW52KSB8IERhdGFiYXNlIGNvbm5lY3Rpb24gVVJMIHwKfCBgT1BFTkNMQVdfR0FURVdBWV9QT1JUYCB8IGAxODc4OWAgfCBHYXRld2F5IHBvcnQgdG8gdGVzdCB8CnwgYEdCUkFJTl9CUkFJTl9QQVRIYCB8IGAvZGF0YS9icmFpbmAgfCBCcmFpbiByZXBvIHBhdGggfA=="
-        ],
-        "role" : "inert"
-      },
-      {
-        "executes" : false,
-        "heading" : "Known Issues & Their Auto-Fixes",
         "line" : 123,
         "lines" : [
 
@@ -334,22 +380,41 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
-        "heading" : "Codex Zod core.cjs Missing (discovered 2026-04-23)",
-        "line" : 125,
+        "executes" : true,
+        "heading" : "Environment Variables — steps",
+        "line" : 126,
         "lines" : [
-          "**Symptom:** `Cannot find module '.\/core.cjs'` → all Codex ACP sessions fail",
-          "**Cause:** Zod v4 npm package ships without `core.cjs` in some installs",
-          "**Auto-fix:** `npm install zod@4 --force` in the codex extension's zod dir",
-          "**Persistence:** Does NOT survive container restart (gateway reinstalls deps)",
-          "This is why smoke tests must run on every restart"
+          "table:ai-discretion:fCBWYXIgfCBEZWZhdWx0IHwgRGVzY3JpcHRpb24gfAp8LS0tLS18LS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18CnwgYEdCUkFJTl9TTU9LRV9MT0dgIHwgYC90bXAvZ2JyYWluLXNtb2tlLXRlc3QubG9nYCB8IExvZyBmaWxlIHBhdGggfAp8IGBHQlJBSU5fRElSX09WRVJSSURFYCB8IChhdXRvLWRldGVjdCkgfCBGb3JjZSBnYnJhaW4gaW5zdGFsbCBwYXRoIHwKfCBgR0JSQUlOX0RBVEFCQVNFX1VSTGAgfCAoZnJvbSAuZW52KSB8IERhdGFiYXNlIGNvbm5lY3Rpb24gVVJMIHwKfCBgT1BFTkNMQVdfR0FURVdBWV9QT1JUYCB8IGAxODc4OWAgfCBHYXRld2F5IHBvcnQgdG8gdGVzdCB8CnwgYEdCUkFJTl9CUkFJTl9QQVRIYCB8IGAvZGF0YS9icmFpbmAgfCBCcmFpbiByZXBvIHBhdGggfA=="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Known Issues & Their Auto-Fixes",
+        "line" : 137,
+        "lines" : [
+
         ],
         "role" : "inert"
       },
       {
+        "executes" : true,
+        "heading" : "Codex Zod core.cjs Missing (discovered 2026-04-23)",
+        "line" : 139,
+        "lines" : [
+          "use judgment to follow the Codex Zod core.cjs Missing (discovered 2026-04-23) guidance:",
+          "**Persistence:** Does NOT survive container restart (gateway reinstalls deps)",
+          "This is why smoke tests must run on every restart",
+          "Symptom: `Cannot find module '.\/core.cjs'` → all Codex ACP sessions fail",
+          "Cause: Zod v4 npm package ships without `core.cjs` in some installs",
+          "Auto-fix: `npm install zod@4 --force` in the codex extension's zod dir"
+        ],
+        "role" : "procedure"
+      },
+      {
         "executes" : false,
         "heading" : "GBrain Worker Auth Failure",
-        "line" : 132,
+        "line" : 150,
         "lines" : [
           "**Symptom:** Worker can't connect to DB",
           "**Cause:** `GBRAIN_DATABASE_URL` not propagated to worker subprocess",
@@ -358,10 +423,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 137,
+        "line" : 155,
         "lines" : [
+          "use judgment to follow the Anti-Patterns guidance:",
           "❌ Running smoke tests on every chat turn. Once per container restart (or",
           "on user request) is plenty. The script is cheap but it's not free",
           "❌ Writing a user drop-in without `timeout N` around any command that",
@@ -376,12 +442,12 @@
           "(`GBRAIN_DATABASE_URL`, `HOME`, etc.) so the script travels across",
           "container rebuilds"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 153,
+        "line" : 172,
         "lines" : [
           "The script writes a one-line status per check to stdout (✅\/❌\/🔧\/⏭️) plus a",
           "final summary line: `Results: N\/M passed, F auto-fixed, S skipped`. A",
@@ -432,60 +498,56 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 49,
-      "swift_line" : 602
-    },
-    {
-      "meridian_line" : 54,
-      "swift_line" : 613
+      "meridian_line" : 25,
+      "swift_line" : 601
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 652
+      "swift_line" : 640
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 657
+      "swift_line" : 645
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 696
+      "swift_line" : 684
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 701
+      "swift_line" : 689
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 740
+      "swift_line" : 728
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 745
+      "swift_line" : 733
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 784
+      "swift_line" : 772
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 789
+      "swift_line" : 777
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 828
+      "swift_line" : 816
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 833
+      "swift_line" : 821
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 872
+      "swift_line" : 860
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 877
+      "swift_line" : 865
     }
   ],
   "tools_used" : [
@@ -498,6 +560,35 @@
         {
           "kind" : "Input",
           "name" : "input"
+        }
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "This skill guarantees:\n8 core tests verify gbrain + OpenClaw health after restart\nKnown failures are auto-fixed before reporting\nUser-extensible via `~\/.gbrain\/smoke-tests.d\/*.sh` drop-in scripts\nResults logged to `\/tmp\/gbrain-smoke-test.log`\nExit code = number of unfixed failures (0 = all pass)\ntable:ai-discretion:fCAjIHwgVGVzdCB8IEF1dG8tRml4IHwKfC0tLXwtLS0tLS18LS0tLS0tLS0tLXwKfCAxIHwgQnVuIHJ1bnRpbWUgfCBJbnN0YWxsIGZyb20gYnVuLnNoIHwKfCAyIHwgR0JyYWluIENMSSBsb2FkcyB8IFJlaW5zdGFsbCBkZXBzIHwKfCAzIHwgR0JyYWluIGRhdGFiYXNlIChkb2N0b3IpIHwg4oCUIHwKfCA0IHwgR0JyYWluIHdvcmtlciBwcm9jZXNzIHwgU3RhcnQgd29ya2VyIHwKfCA1IHwgT3BlbkNsYXcgQ29kZXggcGx1Z2luIChab2QgQ0pTKSB8IGBucG0gaW5zdGFsbCB6b2RANCAtLWZvcmNlYCB8CnwgNiB8IE9wZW5DbGF3IGdhdGV3YXkgfCDigJQgKG1heSBub3QgYmUgc3RhcnRlZCB5ZXQpIHwKfCA3IHwgRW1iZWRkaW5nIEFQSSBrZXkgfCDigJQgKGNoZWNrIC5lbnYpIHwKfCA4IHwgQnJhaW4gcmVwbyBleGlzdHMgfCDigJQgfA==\nuse judgment to follow the Usage guidance:\ncodeblock:bash:Z2JyYWluIHNtb2tlLXRlc3Q=\ncodeblock:bash:YmFzaCBzY3JpcHRzL3Ntb2tlLXRlc3Quc2g=\nAdd to your `ensure-services.sh` or equivalent:\ncodeblock:bash:YmFzaCAvcGF0aC90by9nYnJhaW4vc2NyaXB0cy9zbW9rZS10ZXN0LnNoID4+IC90bXAvYm9vdHN0cmFwLmxvZyAyPiYx\nCreate executable scripts in `~\/.gbrain\/smoke-tests.d\/`:\ncodeblock:bash:IyB+Ly5nYnJhaW4vc21va2UtdGVzdHMuZC9jaGVjay1yZWRpcy5zaAojIS9iaW4vYmFzaApyZWRpcy1jbGkgcGluZyB8IGdyZXAgLXEgUE9ORw==\nEdit `scripts\/smoke-test.sh`. Follow this pattern:\ncodeblock:bash:IyDilIDilIAgTi4gW1NlcnZpY2UgTmFtZV0g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACmlmIFt0ZXN0IGNvbmRpdGlvbl07IHRoZW4KICBwYXNzICJbU2VydmljZSBOYW1lXSIKZWxzZQogICMgQXV0by1maXggYXR0ZW1wdAogIFtmaXggY29tbWFuZF0KICBpZiBbcmUtdGVzdCBjb25kaXRpb25dOyB0aGVuCiAgICBmaXhlZCAiW1doYXQgd2FzIGZpeGVkXSIKICAgIHBhc3MgIltTZXJ2aWNlIE5hbWVdIChhZnRlciBmaXgpIgogIGVsc2UKICAgIGZhaWwgIltTZXJ2aWNlIE5hbWVdIOKAlCBbZXJyb3IgZGV0YWlsXSIKICBmaQpmaQ==\nuse judgment to follow the Design rules: guidance:\n**Test first** — never fix without confirming broken\n**Re-test after fix** — verify the fix worked\n**Timeout everything** — `timeout N` on any command that could hang\n**Use helpers** — `pass()`, `fail()`, `fixed()`, `skip()`\n**Idempotent fixes** — safe to run repeatedly\n**Skip gracefully** — `skip()` when a prerequisite is missing, don't fail\ntable:ai-discretion:fCBWYXIgfCBEZWZhdWx0IHwgRGVzY3JpcHRpb24gfAp8LS0tLS18LS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18CnwgYEdCUkFJTl9TTU9LRV9MT0dgIHwgYC90bXAvZ2JyYWluLXNtb2tlLXRlc3QubG9nYCB8IExvZyBmaWxlIHBhdGggfAp8IGBHQlJBSU5fRElSX09WRVJSSURFYCB8IChhdXRvLWRldGVjdCkgfCBGb3JjZSBnYnJhaW4gaW5zdGFsbCBwYXRoIHwKfCBgR0JSQUlOX0RBVEFCQVNFX1VSTGAgfCAoZnJvbSAuZW52KSB8IERhdGFiYXNlIGNvbm5lY3Rpb24gVVJMIHwKfCBgT1BFTkNMQVdfR0FURVdBWV9QT1JUYCB8IGAxODc4OWAgfCBHYXRld2F5IHBvcnQgdG8gdGVzdCB8CnwgYEdCUkFJTl9CUkFJTl9QQVRIYCB8IGAvZGF0YS9icmFpbmAgfCBCcmFpbiByZXBvIHBhdGggfA==\nuse judgment to follow the Codex Zod core.cjs Missing (discovered 2026-04-23) guidance:\n**Persistence:** Does NOT survive container restart (gateway reinstalls deps)\nThis is why smoke tests must run on every restart\nSymptom: `Cannot find module '.\/core.cjs'` → all Codex ACP sessions fail\nCause: Zod v4 npm package ships without `core.cjs` in some installs\nAuto-fix: `npm install zod@4 --force` in the codex extension's zod dir\nuse judgment to follow the Anti-Patterns guidance:\n❌ Running smoke tests on every chat turn. Once per container restart (or\non user request) is plenty. The script is cheap but it's not free\n❌ Writing a user drop-in without `timeout N` around any command that\ncould hang. A single hung drop-in stalls every subsequent run\n❌ Auto-fixing without confirming the check is actually broken first\nThe `pass → fail-detected → fix → re-test` loop is the contract; fixes\nthat skip the re-test can report success on a still-broken state\n❌ Treating `skip` as `fail`. Missing prerequisites (no OpenClaw installed,\nno brain repo configured) are skips, not failures. Exit code = count of\nreal failures, not skipped checks\n❌ Hardcoding paths in a user drop-in. Read env vars\n(`GBRAIN_DATABASE_URL`, `HOME`, etc.) so the script travels across\ncontainer rebuilds",
+          "line" : 25,
+          "scoped_tools" : [
+            "assess.notability",
+            "capture",
+            "enrich",
+            "health.get",
+            "jobs.status",
+            "jobs.submit",
+            "link.add",
+            "link.backlinks",
+            "makePDF",
+            "page.create",
+            "page.get",
+            "page.list",
+            "page.search",
+            "page.update",
+            "publish",
+            "recall",
+            "research",
+            "timeline.add",
+            "verify"
+          ],
+          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "smoke-test a input",

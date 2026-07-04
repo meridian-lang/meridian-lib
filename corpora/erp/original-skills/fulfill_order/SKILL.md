@@ -12,12 +12,12 @@ triggers:
 - "fulfill ERP orders"
 - "release shipments"
 
-## Operator notes (( inert ))
+## Operator notes
 Warehouse operators say "release the shipment" rather than "invoke the
 fulfillment workflow." This skill keeps that vocabulary while compiling to
 declared tool calls.
 
-## Workflow (( role: procedure ))
+## Workflow
 Step: `ofbiz shipment --pending --json` to capture pending warehouse work.
 fetch open orders.
 Check: all orders have a number.
@@ -26,5 +26,5 @@ for each order:
   ship the order.
 Publish: "shipment release queue drained".
 
-## Checks (( inert, role: invariants ))
+## Checks
 Every released order should already have inventory reserved.

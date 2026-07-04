@@ -18,7 +18,7 @@ triggers:
 | unpaid | collections |
 | fulfilled | archive |
 
-## Workflow (( role: procedure ))
+## Workflow
 fetch open orders.
 for each order:
   create an invoice for the order.
@@ -32,5 +32,5 @@ bind invoice receipt =
   ```
 emit erp.invoice_receipt with body = invoice receipt.
 
-## Report shape (( inert, role: template ))
+## Report shape
 The receipt groups invoice states by downstream queue.

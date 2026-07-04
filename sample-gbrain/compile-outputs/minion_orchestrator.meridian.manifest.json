@@ -98,7 +98,7 @@
     "name" : "minion-orchestrator",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 47,
         "text" : "Contract"
@@ -106,148 +106,179 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 67,
+        "line" : 68,
         "text" : "Route the Request: Shell Job vs Subagent"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 74,
+        "text" : "Route the Request: Shell Job vs Subagent — steps"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 82,
+        "line" : 87,
         "text" : "Shell Jobs (Deterministic Scripts)"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 87,
+        "line" : 92,
         "text" : "Preconditions (read before submitting your first shell job)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 110,
+        "line" : 122,
         "text" : "Submit (CLI, operator or autopilot)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 135,
+        "line" : 147,
         "text" : "Monitor (agents or operator)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 149,
+        "line" : 164,
         "text" : "Control (MCP-callable)"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 161,
+        "line" : 176,
         "text" : "Subagent Jobs (LLM Orchestration)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 171,
+        "line" : 186,
         "text" : "Phase 1: Submit"
       },
       {
         "kind" : "procedure",
+        "level" : 3,
+        "line" : 216,
+        "text" : "Phase 1: Submit — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 226,
+        "text" : "Phase 1: Submit — steps 2"
+      },
+      {
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 208,
+        "line" : 230,
         "text" : "Phase 2: Monitor"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 220,
+        "line" : 243,
         "text" : "Phase 3: Steer"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 232,
+        "line" : 256,
         "text" : "Phase 4: Lifecycle"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 244,
+        "line" : 269,
         "text" : "Phase 5: Review Results"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 278,
+        "text" : "Phase 5: Review Results — steps"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 253,
+        "line" : 282,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 283,
+        "line" : 312,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 291,
+        "line" : 321,
         "text" : "Tools Used"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 50,
+        "line" : 51,
         "text" : "This single skill handles two lanes"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 54,
+        "line" : 55,
         "text" : "When to route to Minions"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 60,
+        "line" : 61,
         "text" : "Guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 115,
+        "line" : 119,
+        "text" : "Verify setup"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 127,
         "text" : "Command string form"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 218,
+        "line" : 241,
         "text" : "Progress includes"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 250,
+        "line" : 276,
         "text" : "Token accounting"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 255,
+        "line" : 284,
         "text" : "When reporting job status to the user"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 265,
+        "line" : 294,
         "text" : "When reporting completion"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 47,
         "lines" : [
+          "use judgment to follow the Contract guidance:",
           "Minions is a Postgres-native job queue for durable, observable background work",
           "This single skill handles two lanes:",
           "Deterministic shell jobs (`gbrain jobs submit shell ...`)",
@@ -264,23 +295,31 @@
           "Jobs can be paused, resumed, or cancelled at any time",
           "Parent-child DAGs with configurable failure policies"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Route the Request: Shell Job vs Subagent",
-        "line" : 67,
+        "line" : 68,
         "lines" : [
-          "table:decision:fCBDb25kaXRpb24gfCBBY3Rpb24gfAp8LS0tfC0tLXwKfCBVc2VyIGFza3MgZm9yIGRldGVybWluaXN0aWMgY29tbWFuZC9zY3JpcHQgcnVuIHwgU2hlbGwgam9iIChDTEk6IGBnYnJhaW4gam9icyBzdWJtaXQgc2hlbGwgLi4uYCkgfAp8IFVzZXIgYXNrcyB0byAicnVuIGluIG1pbmlvbnMiICsgZXhwbGljaXQgY29tbWFuZC9hcmd2IHwgU2hlbGwgam9iIChDTEksIGAtLXBhcmFtc2Agd2l0aCBgY21kYCBvciBgYXJndmApIHwKfCBVc2VyIGFza3MgZm9yIHJlc2VhcmNoL3JlYXNvbmluZy9pdGVyYXRpdmUgYWdlbnQgfCBTdWJhZ2VudCBqb2IgKENMSTogYGdicmFpbiBhZ2VudCBydW5gKSB8CnwgVXNlciBhc2tzIHRvIHN0ZWVyL3BhdXNlL3Jlc3VtZSBhbiBhZ2VudCB8IFN1YmFnZW50IGpvYiBsaWZlY3ljbGUgdG9vbHMgKE1DUC1jYWxsYWJsZSkgfAp8IFNpbmdsZSBzaW1wbGUgb3BlcmF0aW9uIHVuZGVyIH4zMHMgfCBDb25zaWRlciBpbmxpbmUgZXhlY3V0aW9uIGZpcnN0IHwKfCBOZWVkcyByZXN0YXJ0IGR1cmFiaWxpdHkvb2JzZXJ2YWJpbGl0eSB8IFN1Ym1pdCBhcyBNaW5pb24gam9iIHwKfCBQYXJhbGxlbCB3b3JrICgyKyBzdHJlYW1zKSB8IGBnYnJhaW4gYWdlbnQgcnVuIC0tZmFub3V0LW1hbmlmZXN0YCBvciBwYXJlbnQgKyBjaGlsZCBzdWJhZ2VudHMgfA==",
           "If intent is ambiguous, ask one clarification:",
           "\"Do you want a deterministic shell command job, or an LLM agent job?\""
         ],
         "role" : "inert"
       },
       {
+        "executes" : true,
+        "heading" : "Route the Request: Shell Job vs Subagent — steps",
+        "line" : 74,
+        "lines" : [
+          "table:ai-discretion:fCBDb25kaXRpb24gfCBBY3Rpb24gfAp8LS0tfC0tLXwKfCBVc2VyIGFza3MgZm9yIGRldGVybWluaXN0aWMgY29tbWFuZC9zY3JpcHQgcnVuIHwgU2hlbGwgam9iIChDTEk6IGBnYnJhaW4gam9icyBzdWJtaXQgc2hlbGwgLi4uYCkgfAp8IFVzZXIgYXNrcyB0byAicnVuIGluIG1pbmlvbnMiICsgZXhwbGljaXQgY29tbWFuZC9hcmd2IHwgU2hlbGwgam9iIChDTEksIGAtLXBhcmFtc2Agd2l0aCBgY21kYCBvciBgYXJndmApIHwKfCBVc2VyIGFza3MgZm9yIHJlc2VhcmNoL3JlYXNvbmluZy9pdGVyYXRpdmUgYWdlbnQgfCBTdWJhZ2VudCBqb2IgKENMSTogYGdicmFpbiBhZ2VudCBydW5gKSB8CnwgVXNlciBhc2tzIHRvIHN0ZWVyL3BhdXNlL3Jlc3VtZSBhbiBhZ2VudCB8IFN1YmFnZW50IGpvYiBsaWZlY3ljbGUgdG9vbHMgKE1DUC1jYWxsYWJsZSkgfAp8IFNpbmdsZSBzaW1wbGUgb3BlcmF0aW9uIHVuZGVyIH4zMHMgfCBDb25zaWRlciBpbmxpbmUgZXhlY3V0aW9uIGZpcnN0IHwKfCBOZWVkcyByZXN0YXJ0IGR1cmFiaWxpdHkvb2JzZXJ2YWJpbGl0eSB8IFN1Ym1pdCBhcyBNaW5pb24gam9iIHwKfCBQYXJhbGxlbCB3b3JrICgyKyBzdHJlYW1zKSB8IGBnYnJhaW4gYWdlbnQgcnVuIC0tZmFub3V0LW1hbmlmZXN0YCBvciBwYXJlbnQgKyBjaGlsZCBzdWJhZ2VudHMgfA=="
+        ],
+        "role" : "procedure"
+      },
+      {
         "executes" : false,
         "heading" : "Shell Jobs (Deterministic Scripts)",
-        "line" : 82,
+        "line" : 87,
         "lines" : [
           "Use for reproducible command execution, ETL steps, cron work, and scriptable",
           "tasks where no LLM reasoning loop is needed"
@@ -288,37 +327,37 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Preconditions (read before submitting your first shell job)",
-        "line" : 87,
+        "line" : 92,
         "lines" : [
+          "use judgment to follow the Preconditions (read before submitting your first shell job) guidance:",
           "**`GBRAIN_ALLOW_SHELL_JOBS=1` must be set on the worker environment.**",
           "Without it, the shell handler refuses to register and submissions sit in",
           "`waiting` silently. Gate lives in `src\/core\/minions\/handlers\/shell.ts`",
           "**Security:** flipping `GBRAIN_ALLOW_SHELL_JOBS=1` authorizes arbitrary",
           "command execution on the worker. On a shared queue, this is a remote code",
           "execution surface. Treat as privileged infrastructure authorization",
-          "**Execution mode — pick one:**",
-          "**Postgres + daemon:** `gbrain jobs work` runs a persistent worker that",
-          "claims and executes jobs from the queue",
-          "**PGLite + --follow:** `gbrain jobs submit ... --follow` runs inline",
-          "The daemon mode is not available on PGLite (exclusive file lock). See",
-          "`docs\/guides\/minions-shell-jobs.md`",
           "**MCP boundary:** shell-job submission is CLI-only. `submit_job name=\"shell\"`",
           "over MCP throws an `OperationError` with code `permission_denied` (\"'shell'",
           "jobs cannot be submitted over MCP\") because `shell` is in `PROTECTED_JOB_NAMES`.",
           "Agents CAN observe shell jobs via `get_job` \/ `list_jobs` \/ `get_job_progress`",
           "(not protected), but cannot submit them. Operator or autopilot submits;",
           "agent observes",
-          "**Verify setup:** after configuration, run `gbrain jobs stats` (CLI) to",
+          "Postgres + daemon: `gbrain jobs work` runs a persistent worker that",
+          "claims and executes jobs from the queue",
+          "PGLite + --follow: `gbrain jobs submit ... --follow` runs inline",
+          "The daemon mode is not available on PGLite (exclusive file lock). See",
+          "`docs\/guides\/minions-shell-jobs.md`",
+          "Verify setup: after configuration, run `gbrain jobs stats` (CLI) to",
           "confirm the worker is registered and consuming the queue"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Submit (CLI, operator or autopilot)",
-        "line" : 110,
+        "line" : 122,
         "lines" : [
           "Shell jobs take their command via `--params` as a JSON object with `cmd` (string)",
           "or `argv` (array), plus `cwd` and optional `env`",
@@ -338,7 +377,7 @@
       {
         "executes" : false,
         "heading" : "Monitor (agents or operator)",
-        "line" : 135,
+        "line" : 147,
         "lines" : [
           "These operations are MCP-callable and safe for agent use:",
           "codeblock:plain:bGlzdF9qb2JzIC0tbmFtZSBzaGVsbCAtLXN0YXR1cyBhY3RpdmUKZ2V0X2pvYiBJRApnZXRfam9iX3Byb2dyZXNzIElE",
@@ -351,7 +390,7 @@
       {
         "executes" : false,
         "heading" : "Control (MCP-callable)",
-        "line" : 149,
+        "line" : 164,
         "lines" : [
           "codeblock:plain:Y2FuY2VsX2pvYiBpZD1JRApyZXBsYXlfam9iIGlkPUlE",
           "`replay_job` is not protected — only shell *submission* is. Agents can",
@@ -363,7 +402,7 @@
       {
         "executes" : false,
         "heading" : "Subagent Jobs (LLM Orchestration)",
-        "line" : 161,
+        "line" : 176,
         "lines" : [
           "Use for open-ended reasoning, tool-using research, and fan-out synthesis",
           "**User-facing entrypoint:** `gbrain agent run <prompt>` is the canonical way",
@@ -374,10 +413,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 1: Submit",
-        "line" : 171,
+        "line" : 186,
         "lines" : [
+          "use judgment to follow the Phase 1: Submit guidance:",
           "codeblock:plain:Z2JyYWluIGFnZW50IHJ1biAiUmVzZWFyY2ggQWNtZSBDb3JwIHJldmVudWUiIC0tdG9vbHMgInNlYXJjaCxxdWVyeSI=",
           "`--tools` accepts a comma-separated subset of `BRAIN_TOOL_ALLOWLIST` (see",
           "`src\/core\/minions\/tools\/brain-allowlist.ts`): `query`, `search`, `get_page`,",
@@ -391,15 +431,7 @@
           "and claims AFTER every child terminates. See",
           "`src\/core\/minions\/handlers\/subagent.ts` and",
           "`src\/core\/minions\/handlers\/subagent-aggregator.ts`",
-          "Flags (from `src\/commands\/agent.ts`):",
-          "`--subagent-def <name>` — named subagent definition",
-          "`--model <id>` — override model",
-          "`--max-turns <N>` — cap the LLM loop",
-          "`--tools <csv>` — allow-listed brain tools (see above)",
-          "`--timeout-ms <N>` — hard timeout per job",
-          "`--fanout-manifest <file>` — N children + 1 aggregator",
           "`--follow` \/ `--no-follow` — stream logs + wait (default on TTY)",
-          "`--detach` — submit and return immediately",
           "Queue\/priority\/retry tuning is not exposed by `gbrain agent run`; submit the",
           "raw `subagent` handler via `gbrain jobs submit` (requires CLI trust) if you",
           "need those knobs"
@@ -407,20 +439,46 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
-        "heading" : "Phase 2: Monitor",
-        "line" : 208,
+        "executes" : true,
+        "heading" : "Phase 1: Submit — steps",
+        "line" : 216,
         "lines" : [
+          "Flags (from `src\/commands\/agent.ts`):",
+          "`--subagent-def <name>` — named subagent definition",
+          "`--model <id>` — override model",
+          "`--max-turns <N>` — cap the LLM loop",
+          "`--tools <csv>` — allow-listed brain tools (see above)",
+          "`--timeout-ms <N>` — hard timeout per job",
+          "`--fanout-manifest <file>` — N children + 1 aggregator"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 1: Submit — steps 2",
+        "line" : 226,
+        "lines" : [
+          "`--detach` — submit and return immediately"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 2: Monitor",
+        "line" : 230,
+        "lines" : [
+          "use judgment to follow the Phase 2: Monitor guidance:",
           "codeblock:plain:bGlzdF9qb2JzIC0tc3RhdHVzIGFjdGl2ZSAgICAgICAgICAjIE1DUCDigJQgd2hhdCdzIHJ1bm5pbmc\/CmdldF9qb2IgSUQgICAgICAgICAgICAgICAgICAgICAgICAgIyBNQ1Ag4oCUIGZ1bGwgZGV0YWlscyArIGxvZ3MgKyB0b2tlbnMKZ2V0X2pvYl9wcm9ncmVzcyBJRCAgICAgICAgICAgICAgICAjIE1DUCDigJQgc3RydWN0dXJlZCBwcm9ncmVzcyBzbmFwc2hvdApnYnJhaW4gam9icyBzdGF0cyAgICAgICAgICAgICAgICAgICMgQ0xJIOKAlCBxdWV1ZSBoZWFsdGggZGFzaGJvYXJkCmdicmFpbiBhZ2VudCBsb2dzIElEIC0tZm9sbG93ICAgICAgIyBDTEkg4oCUIHN0cmVhbWluZyB0cmFuc2NyaXB0ICsgaGVhcnRiZWF0",
           "Progress includes: step count, total steps, message, token usage, last tool called"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 3: Steer",
-        "line" : 220,
+        "line" : 243,
         "lines" : [
+          "use judgment to follow the Phase 3: Steer guidance:",
           "Send a message to redirect a running agent:",
           "codeblock:plain:c2VuZF9qb2JfbWVzc2FnZSBpZD1JRCBwYXlsb2FkPXsiZGlyZWN0aXZlIjoiZm9jdXMgb24gcmV2ZW51ZSwgc2tpcCBoZWFkY291bnQifQ==",
           "The agent handler reads inbox messages on each iteration and injects them as",
@@ -430,22 +488,32 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 4: Lifecycle",
-        "line" : 232,
+        "line" : 256,
         "lines" : [
+          "use judgment to follow the Phase 4: Lifecycle guidance:",
           "codeblock:plain:cGF1c2Vfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICAjIGZyZWV6ZSB3aXRob3V0IGxvc2luZyBzdGF0ZQpyZXN1bWVfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgcGljayB1cCB3aGVyZSBpdCBsZWZ0IG9mZgpjYW5jZWxfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgaGFyZCBzdG9wCnJlcGxheV9qb2IgaWQ9SUQgICAgICAgICAgICAgICAgICAgIyByZS1ydW4gd2l0aCBzYW1lIG9yIG1vZGlmaWVkIHBhcmFtcwpyZXBsYXlfam9iIGlkPUlEIGRhdGFfb3ZlcnJpZGVzPXsiZGVwdGgiOiJkZWVwIn0gICMgcmVwbGF5IHdpdGggY2hhbmdlcw==",
           "All lifecycle ops are MCP-callable"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 5: Review Results",
-        "line" : 244,
+        "line" : 269,
         "lines" : [
+          "use judgment to follow the Phase 5: Review Results guidance:",
           "codeblock:plain:Z2V0X2pvYiBJRCAgICAgICAgICAgICAgICAgICAgICAgICAjIHJlc3VsdCwgdG9rZW4gY291bnRzLCB0cmFuc2NyaXB0",
-          "Token accounting: every job tracks `tokens_input`, `tokens_output`, `tokens_cache_read`",
+          "Token accounting: every job tracks `tokens_input`, `tokens_output`, `tokens_cache_read`"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 5: Review Results — steps",
+        "line" : 278,
+        "lines" : [
           "Child tokens roll up to parent automatically on completion"
         ],
         "role" : "procedure"
@@ -453,7 +521,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 253,
+        "line" : 282,
         "lines" : [
           "When reporting job status to the user:",
           "codeblock:plain:Sm9iICNJRCAobmFtZSkg4oCUIHN0YXR1cwpQcm9ncmVzczogc3RlcC90b3RhbCDigJQgbGFzdCBhY3Rpb24KVG9rZW5zOiBpbnB1dF9jb3VudCBpbiAvIG91dHB1dF9jb3VudCBvdXQgKCsgY2FjaGVfcmVhZCBjYWNoZWQpClJ1bnRpbWU6IFhzCkNoaWxkcmVuOiBOIHBlbmRpbmcsIE0gY29tcGxldGVk",
@@ -465,22 +533,23 @@
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 283,
+        "line" : 312,
         "lines" : [
+          "use judgment to follow the Anti-Patterns guidance:",
           "Don't spawn a Minion for a single search query (use search tool directly)",
           "Don't fire-and-forget without checking results",
           "Don't spawn > 5 concurrent agents without checking `gbrain jobs stats` first",
           "For subagent work, don't use `sessions_spawn` with `runtime: \"subagent\"` when Minions is available (use `gbrain agent run` instead)",
           "Don't poll `get_job` in a tight loop (use `get_job_progress` for lightweight checks)"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 291,
+        "line" : 321,
         "lines" : [
           "Submit a background job — `submit_job` (MCP, non-protected names only; shell jobs are CLI-only, subagent jobs via `gbrain agent run`)",
           "Get job details — `get_job` (MCP)",
@@ -536,172 +605,176 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 631
+      "meridian_line" : 48,
+      "swift_line" : 602
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 641
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 646
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 685
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 690
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 734
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 773
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 807
+      "swift_line" : 778
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 812
+      "swift_line" : 817
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 851
+      "swift_line" : 822
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 856
+      "swift_line" : 861
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 895
+      "swift_line" : 866
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 900
+      "swift_line" : 905
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 939
+      "swift_line" : 910
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 944
+      "swift_line" : 949
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 983
+      "swift_line" : 954
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 988
+      "swift_line" : 993
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1027
+      "swift_line" : 998
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1032
+      "swift_line" : 1037
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1071
+      "swift_line" : 1042
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1076
+      "swift_line" : 1081
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1115
+      "swift_line" : 1086
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1120
+      "swift_line" : 1125
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1159
+      "swift_line" : 1130
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1164
+      "swift_line" : 1169
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1203
+      "swift_line" : 1174
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1208
+      "swift_line" : 1213
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1247
+      "swift_line" : 1218
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1252
+      "swift_line" : 1257
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1291
+      "swift_line" : 1262
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1296
+      "swift_line" : 1301
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1335
+      "swift_line" : 1306
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1340
+      "swift_line" : 1345
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1379
+      "swift_line" : 1350
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1384
+      "swift_line" : 1389
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1423
+      "swift_line" : 1394
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1428
+      "swift_line" : 1433
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1467
+      "swift_line" : 1438
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1472
+      "swift_line" : 1477
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1511
+      "swift_line" : 1482
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1516
+      "swift_line" : 1521
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1526
     }
   ],
   "tools_used" : [
@@ -714,6 +787,20 @@
         {
           "kind" : "Input",
           "name" : "input"
+        }
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "Minions is a Postgres-native job queue for durable, observable background work\nThis single skill handles two lanes:\nDeterministic shell jobs (`gbrain jobs submit shell ...`)\nLLM subagent jobs (`gbrain agent run ...`)\nWhen to route to Minions: durable, observable work that must survive restarts,\nfan out across many parallel tasks, or persist across sessions. Routing policy\nis defined in `skills\/conventions\/subagent-routing.md` — the project default is\n`pain_triggered` (native subagents first, Minions after specific pain signals\nfire); Mode A (all-through-Minions) is opt-in\nGuarantees:\nJobs survive gateway restart (Postgres-backed)\nEvery job has structured progress, token accounting, and session transcripts\nRunning agents can be steered mid-flight via inbox messages\nJobs can be paused, resumed, or cancelled at any time\nParent-child DAGs with configurable failure policies\ntable:ai-discretion:fCBDb25kaXRpb24gfCBBY3Rpb24gfAp8LS0tfC0tLXwKfCBVc2VyIGFza3MgZm9yIGRldGVybWluaXN0aWMgY29tbWFuZC9zY3JpcHQgcnVuIHwgU2hlbGwgam9iIChDTEk6IGBnYnJhaW4gam9icyBzdWJtaXQgc2hlbGwgLi4uYCkgfAp8IFVzZXIgYXNrcyB0byAicnVuIGluIG1pbmlvbnMiICsgZXhwbGljaXQgY29tbWFuZC9hcmd2IHwgU2hlbGwgam9iIChDTEksIGAtLXBhcmFtc2Agd2l0aCBgY21kYCBvciBgYXJndmApIHwKfCBVc2VyIGFza3MgZm9yIHJlc2VhcmNoL3JlYXNvbmluZy9pdGVyYXRpdmUgYWdlbnQgfCBTdWJhZ2VudCBqb2IgKENMSTogYGdicmFpbiBhZ2VudCBydW5gKSB8CnwgVXNlciBhc2tzIHRvIHN0ZWVyL3BhdXNlL3Jlc3VtZSBhbiBhZ2VudCB8IFN1YmFnZW50IGpvYiBsaWZlY3ljbGUgdG9vbHMgKE1DUC1jYWxsYWJsZSkgfAp8IFNpbmdsZSBzaW1wbGUgb3BlcmF0aW9uIHVuZGVyIH4zMHMgfCBDb25zaWRlciBpbmxpbmUgZXhlY3V0aW9uIGZpcnN0IHwKfCBOZWVkcyByZXN0YXJ0IGR1cmFiaWxpdHkvb2JzZXJ2YWJpbGl0eSB8IFN1Ym1pdCBhcyBNaW5pb24gam9iIHwKfCBQYXJhbGxlbCB3b3JrICgyKyBzdHJlYW1zKSB8IGBnYnJhaW4gYWdlbnQgcnVuIC0tZmFub3V0LW1hbmlmZXN0YCBvciBwYXJlbnQgKyBjaGlsZCBzdWJhZ2VudHMgfA==\nuse judgment to follow the Preconditions (read before submitting your first shell job) guidance:\n**`GBRAIN_ALLOW_SHELL_JOBS=1` must be set on the worker environment.**\nWithout it, the shell handler refuses to register and submissions sit in\n`waiting` silently. Gate lives in `src\/core\/minions\/handlers\/shell.ts`\n**Security:** flipping `GBRAIN_ALLOW_SHELL_JOBS=1` authorizes arbitrary\ncommand execution on the worker. On a shared queue, this is a remote code\nexecution surface. Treat as privileged infrastructure authorization\n**MCP boundary:** shell-job submission is CLI-only. `submit_job name=\"shell\"`\nover MCP throws an `OperationError` with code `permission_denied` (\"'shell'\njobs cannot be submitted over MCP\") because `shell` is in `PROTECTED_JOB_NAMES`.\nAgents CAN observe shell jobs via `get_job` \/ `list_jobs` \/ `get_job_progress`\n(not protected), but cannot submit them. Operator or autopilot submits;\nagent observes\nPostgres + daemon: `gbrain jobs work` runs a persistent worker that\nclaims and executes jobs from the queue\nPGLite + --follow: `gbrain jobs submit ... --follow` runs inline\nThe daemon mode is not available on PGLite (exclusive file lock). See\n`docs\/guides\/minions-shell-jobs.md`\nVerify setup: after configuration, run `gbrain jobs stats` (CLI) to\nconfirm the worker is registered and consuming the queue\nuse judgment to follow the Phase 1: Submit guidance:\ncodeblock:plain:Z2JyYWluIGFnZW50IHJ1biAiUmVzZWFyY2ggQWNtZSBDb3JwIHJldmVudWUiIC0tdG9vbHMgInNlYXJjaCxxdWVyeSI=\n`--tools` accepts a comma-separated subset of `BRAIN_TOOL_ALLOWLIST` (see\n`src\/core\/minions\/tools\/brain-allowlist.ts`): `query`, `search`, `get_page`,\n`list_pages`, `file_list`, `file_url`, `get_backlinks`, `traverse_graph`,\n`resolve_slugs`, `get_ingest_log`, `put_page`. Anything outside the allow-list\nis rejected at submit time with `allowed_tools references unknown tool`\nFor parallel work with a fan-out manifest:\ncodeblock:plain:Z2JyYWluIGFnZW50IHJ1biAtLWZhbm91dC1tYW5pZmVzdCBjb21wYW5pZXMuanNvbg==\nThe manifest describes N children + 1 aggregator. Each child runs\n`name=\"subagent\"` under the hood; the aggregator runs `name=\"subagent_aggregator\"`\nand claims AFTER every child terminates. See\n`src\/core\/minions\/handlers\/subagent.ts` and\n`src\/core\/minions\/handlers\/subagent-aggregator.ts`\n`--follow` \/ `--no-follow` — stream logs + wait (default on TTY)\nQueue\/priority\/retry tuning is not exposed by `gbrain agent run`; submit the\nraw `subagent` handler via `gbrain jobs submit` (requires CLI trust) if you\nneed those knobs\nFlags (from `src\/commands\/agent.ts`):\n`--subagent-def <name>` — named subagent definition\n`--model <id>` — override model\n`--max-turns <N>` — cap the LLM loop\n`--tools <csv>` — allow-listed brain tools (see above)\n`--timeout-ms <N>` — hard timeout per job\n`--fanout-manifest <file>` — N children + 1 aggregator\n`--detach` — submit and return immediately\nuse judgment to follow the Phase 2: Monitor guidance:\ncodeblock:plain:bGlzdF9qb2JzIC0tc3RhdHVzIGFjdGl2ZSAgICAgICAgICAjIE1DUCDigJQgd2hhdCdzIHJ1bm5pbmc\/CmdldF9qb2IgSUQgICAgICAgICAgICAgICAgICAgICAgICAgIyBNQ1Ag4oCUIGZ1bGwgZGV0YWlscyArIGxvZ3MgKyB0b2tlbnMKZ2V0X2pvYl9wcm9ncmVzcyBJRCAgICAgICAgICAgICAgICAjIE1DUCDigJQgc3RydWN0dXJlZCBwcm9ncmVzcyBzbmFwc2hvdApnYnJhaW4gam9icyBzdGF0cyAgICAgICAgICAgICAgICAgICMgQ0xJIOKAlCBxdWV1ZSBoZWFsdGggZGFzaGJvYXJkCmdicmFpbiBhZ2VudCBsb2dzIElEIC0tZm9sbG93ICAgICAgIyBDTEkg4oCUIHN0cmVhbWluZyB0cmFuc2NyaXB0ICsgaGVhcnRiZWF0\nProgress includes: step count, total steps, message, token usage, last tool called\nuse judgment to follow the Phase 3: Steer guidance:\nSend a message to redirect a running agent:\ncodeblock:plain:c2VuZF9qb2JfbWVzc2FnZSBpZD1JRCBwYXlsb2FkPXsiZGlyZWN0aXZlIjoiZm9jdXMgb24gcmV2ZW51ZSwgc2tpcCBoZWFkY291bnQifQ==\nThe agent handler reads inbox messages on each iteration and injects them as\ncontext. Messages are acknowledged (read receipts tracked)\nOnly the parent job or admin can send messages (sender validation)\nuse judgment to follow the Phase 4: Lifecycle guidance:\ncodeblock:plain:cGF1c2Vfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICAjIGZyZWV6ZSB3aXRob3V0IGxvc2luZyBzdGF0ZQpyZXN1bWVfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgcGljayB1cCB3aGVyZSBpdCBsZWZ0IG9mZgpjYW5jZWxfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgaGFyZCBzdG9wCnJlcGxheV9qb2IgaWQ9SUQgICAgICAgICAgICAgICAgICAgIyByZS1ydW4gd2l0aCBzYW1lIG9yIG1vZGlmaWVkIHBhcmFtcwpyZXBsYXlfam9iIGlkPUlEIGRhdGFfb3ZlcnJpZGVzPXsiZGVwdGgiOiJkZWVwIn0gICMgcmVwbGF5IHdpdGggY2hhbmdlcw==\nAll lifecycle ops are MCP-callable\nuse judgment to follow the Phase 5: Review Results guidance:\ncodeblock:plain:Z2V0X2pvYiBJRCAgICAgICAgICAgICAgICAgICAgICAgICAjIHJlc3VsdCwgdG9rZW4gY291bnRzLCB0cmFuc2NyaXB0\nToken accounting: every job tracks `tokens_input`, `tokens_output`, `tokens_cache_read`\nChild tokens roll up to parent automatically on completion\nuse judgment to follow the Anti-Patterns guidance:\nDon't spawn a Minion for a single search query (use search tool directly)\nDon't fire-and-forget without checking results\nDon't spawn > 5 concurrent agents without checking `gbrain jobs stats` first\nFor subagent work, don't use `sessions_spawn` with `runtime: \"subagent\"` when Minions is available (use `gbrain agent run` instead)\nDon't poll `get_job` in a tight loop (use `get_job_progress` for lightweight checks)",
+          "line" : 48,
+          "scoped_tools" : [
+            "jobs.status",
+            "jobs.submit",
+            "page.list",
+            "shell.run"
+          ],
+          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "minion-orchestrator a input",

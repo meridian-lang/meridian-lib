@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -600,137 +600,15 @@ public struct ArchiveCrawlerInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ArchiveCrawlerInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L204:C0") {
-            // L204
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("python3 -c \""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.0:L204:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L204:C0") {
-            // L204
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("import zipfile, xml.etree.ElementTree as ET"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L204:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L204:C0") {
-            // L204
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("with zipfile.ZipFile('/path/to/file.docx') as z:"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L204:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.3:L204:C0") {
-            // L204
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("tree = ET.parse(z.open('word/document.xml'))"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.3:L204:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.4:L204:C0") {
-            // L204
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("print(''.join(t.text or '' for t in tree.iter('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t')))"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.4:L204:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.5:L204:C0") {
-            // L204
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.5:L204:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.6:L204:C0") {
-            // L204
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("antiword /path/to/file.doc 2>/dev/null || catdoc /path/to/file.doc 2>/dev/null"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.6:L204:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.7:L219:C0") {
-            // L219
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("python3 -c \""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.7:L219:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.8:L219:C0") {
-            // L219
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("with open('/path/to/file.pst', 'rb') as f:"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.8:L219:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.9:L219:C0") {
-            // L219
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("print('Valid PST' if f.read(4) == b'!BDN' else 'CORRUPT/NULL')"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.9:L219:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.10:L219:C0") {
-            // L219
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.10:L219:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.11:L219:C0") {
-            // L219
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("readpst -o /tmp/pst-output /path/to/file.pst"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.11:L219:C0", state: state.snapshot())
+        // L72
+        let __meridianProseResults_L72 = try await runtime.executeProsePlan(
+            prose: "follow the Source guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            guidance: "A source is any tree of files to explore. Sources have:\n**type**: `local` | `dropbox` | `backblaze` | `gmail-takeout` | `mbox` | `pst`\n**root**: filesystem path, Dropbox path, B2 prefix, mbox path\nmanifest: a brain page tracking progress at\n`projects/<archive-slug>/STATUS.md`\nuse judgment to follow the Manifest guidance:\nEvery archive exploration gets a manifest brain page that tracks:\n**Tree inventory** — folders / files / sizes / types\n**Triage status** — each item: `⬜ unseen` / `👀 reviewed` /\n`✅ ingested` / `⏭️ skip` / `🔥 high-signal`\n**User reactions** — exact quotes when they react (per\nconventions/quality.md exact-phrasing rule)\n**Priority queue** — what to explore next, ranked\n**Session log** — timestamped record of what was shown per session\nuse judgment to follow the Protocol guidance:\nuse judgment to follow the Phase 1: Inventory guidance:\nWhen pointed at a new source:\n**Confirm scan_paths is set** (safety gate). Exit if not\n**Map the tree** — list folders + files + sizes + date ranges\n**Classify folders** — group by likely content type (writing, email,\ncode, photos, docs, system)\n**Create manifest** — write `projects/<archive-slug>/STATUS.md` with\nthe full inventory\n**Propose priority queue** — rank folders by likely gold density\n**Present to user** — show the map and proposed order. Let them\noverride\nuse judgment to follow the Phase 2: Crawl guidance:\nWork through folders in priority order:\n**Read before showing** — open each candidate file, apply the gold\nfilter, skip noise\n**Show one at a time** — present gold items individually for review\n**Capture exact reaction** — track the user's response in the\nmanifest using their exact words (per conventions/quality.md)\n**Ingest if worth keeping** — create a brain page immediately\n**Update manifest** — mark item status after each interaction\n**Never re-show** — check the manifest before presenting anything\nuse judgment to follow the Phase 3: Ingest guidance:\nLetters or threads about a specific person → `people/<person>/timeline`\nback-link plus the letter at `personal/<slug>.md` or `originals/<slug>.md`\n**The skill is schema-generic.** It does NOT bake in any specific\nera-folder structure (e.g., `originals/archive/` for pre-2003,\n`originals/yc-era/` for post-2019, etc.). The user's filing rules from\n`_brain-filing-rules.json` are read at runtime; the agent decides per-page\nwhere content lands within those sanctioned directories\nBrain page format:\ncodeblock:markdown:LS0tCnRpdGxlOiAiW1RpdGxlIG9yIGZpcnN0IGxpbmVdIgp0eXBlOiBvcmlnaW5hbApzb3VyY2VfdHlwZTogIltsb2NhbHxkcm9wYm94fGJhY2tibGF6ZXxnbWFpbC10YWtlb3V0fG1ib3h8cHN0XSIKc291cmNlX3BhdGg6ICJbcGF0aCB3aXRoaW4gdGhlIGFsbG93LWxpc3RlZCBzY2FuX3BhdGhzXSIKZGF0ZTogIllZWVktTU0tREQiICAjIGRhdGUgZnJvbSB0aGUgZmlsZSBtZXRhZGF0YSBvciBjb250ZW50CnBlb3BsZTogWyJwZXJzb24tMSIsICJwZXJzb24tMiJdCnRhZ3M6IFsidGFnLTEiLCAidGFnLTIiXQotLS0KCiMgW1RpdGxlXQoKW1N1bW1hcnk6IHdoYXQgaXQgaXMsIHdoZW4gaXQncyBmcm9tLCB3aHkgaXQgbWF0dGVyc10KCioqVXNlcidzIHJlYWN0aW9uOioqIFtleGFjdCBxdW90ZSwgbm8gcGFyYXBocmFzaW5nXQoKIyMgQ29udGV4dAoKW0Nyb3NzLWxpbmtzIHRvIHBlb3BsZSwgY29uY2VwdHMsIHByb2plY3RzLl0KCi0tLQoKW1JhdyBzb3VyY2UgbWF0ZXJpYWwgYmVsb3cgdGhlIGxpbmUg4oCUIGZ1bGwgdGV4dF0=\nUser's own writing / ideas / origin-story content → `originals/<slug>.md`\nReflections / personal-life content → `personal/<slug>.md`\nProduct / business ideas → `ideas/<slug>.md`\ncodeblock:bash:IyAuZG9jeCAobW9kZXJuKQpweXRob24zIC1jICIKaW1wb3J0IHppcGZpbGUsIHhtbC5ldHJlZS5FbGVtZW50VHJlZSBhcyBFVAp3aXRoIHppcGZpbGUuWmlwRmlsZSgnL3BhdGgvdG8vZmlsZS5kb2N4JykgYXMgejoKICAgIHRyZWUgPSBFVC5wYXJzZSh6Lm9wZW4oJ3dvcmQvZG9jdW1lbnQueG1sJykpCiAgICBwcmludCgnJy5qb2luKHQudGV4dCBvciAnJyBmb3IgdCBpbiB0cmVlLml0ZXIoJ3todHRwOi8vc2NoZW1hcy5vcGVueG1sZm9ybWF0cy5vcmcvd29yZHByb2Nlc3NpbmdtbC8yMDA2L21haW59dCcpKSkKIgoKIyAuZG9jIChsZWdhY3ksIHJlcXVpcmVzIGFudGl3b3JkIG9yIGNhdGRvYykKYW50aXdvcmQgL3BhdGgvdG8vZmlsZS5kb2MgMj4vZGV2L251bGwgfHwgY2F0ZG9jIC9wYXRoL3RvL2ZpbGUuZG9jIDI+L2Rldi9udWxs\ncodeblock:bash:IyBWYWxpZGF0ZSBmaXJzdDsgbWFueSBQU1RzIGFyZSBudWxsIGJ5dGVzCnB5dGhvbjMgLWMgIgp3aXRoIG9wZW4oJy9wYXRoL3RvL2ZpbGUucHN0JywgJ3JiJykgYXMgZjoKICAgIHByaW50KCdWYWxpZCBQU1QnIGlmIGYucmVhZCg0KSA9PSBiJyFCRE4nIGVsc2UgJ0NPUlJVUFQvTlVMTCcpCiIKIyBJZiB2YWxpZDoKcmVhZHBzdCAtbyAvdG1wL3BzdC1vdXRwdXQgL3BhdGgvdG8vZmlsZS5wc3Q=\nuse judgment to follow the Anti-Patterns guidance:\n❌ Running without `archive-crawler.scan_paths:` set. Hard refusal\nThis is the safety contract — never bypass\n❌ Hardcoding era-specific filing paths (e.g., `originals/archive/`,\n`originals/yc-era/`). Read filing rules at runtime instead\n❌ Re-showing items already marked in the manifest. The user's time\nis the scarcest resource\n❌ Paraphrasing reactions. Exact words only\n❌ Wrapping found content in lessons or takeaways. Let stories breathe\n❌ Skipping back-links when content references people / companies who\nhave brain pages. Iron Law per conventions/quality.md\nuse judgment to follow the Related skills guidance:\n`skills/idea-ingest/SKILL.md` — single-link-or-article ingest with\nthe same primary-subject filing rule\n`skills/voice-note-ingest/SKILL.md` — same exact-phrasing pattern for\naudio capture\n`skills/conventions/quality.md` — citations, back-links, voice\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        )
+        for (__key, __value) in __meridianProseResults_L72 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

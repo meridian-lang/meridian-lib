@@ -251,7 +251,7 @@ public final class SymbolTable: @unchecked Sendable {
         }
         trace.log(.phraseMatch, "tokens=\(invWords)  firstWord=\"\(firstWord)\"")
 
-        var best: (score: Int, phrase: PhraseDefinition)? = nil
+        var candidates: [(score: Int, phrase: PhraseDefinition)] = []
         for phrase in phrases {
             // The first word of the invocation must appear in this phrase's literal keywords.
             // This prevents e.g. "reject… insufficient_credit" (contains "credit") from
@@ -267,21 +267,44 @@ public final class SymbolTable: @unchecked Sendable {
 
             let score = phraseMatchScore(invWords, pattern: phrase.pattern)
             trace.log(.phraseMatch, "  candidate @L\(phrase.sourceLine) score=\(score) literals=\(patternFirstWords.sorted())")
-            if score > (best?.score ?? -1) {
-                best = (score, phrase)
-            }
+            guard score > 0 else { continue }
+            candidates.append((score, phrase))
         }
-        guard let winner = best, winner.score > 0 else {
+        guard !candidates.isEmpty else {
             trace.log(.phraseMatch, "no match")
             return nil
         }
-        trace.log(.phraseMatch, "winner @L\(winner.phrase.sourceLine) score=\(winner.score)")
+        // Highest score first; `sorted` is stable, so ties keep vocabulary
+        // declaration order (matches the old single-`best` behaviour).
+        let ranked = candidates.sorted { $0.score > $1.score }
 
-        let args = extractArgs(invocation, pattern: winner.phrase.pattern)
-        for (k, v) in args {
-            trace.log(.phraseExtractArgs, "  arg[\(k)] = \(v.traceDescription(detail: .compact))")
+        // A low-confidence candidate (e.g. matching on a single shared literal
+        // like "update") can still win the score race yet have no real params
+        // left in the invocation text to fill its slots — `extractArgs` then
+        // returns `.malformed` placeholders for those (Wave-3 leaves them
+        // empty rather than guessing). Accepting that candidate would lower to
+        // a bogus invoke whose failure only surfaces downstream as a confusing
+        // `MER1005 empty expression` with no connection to the real cause: a
+        // phrase match that should never have won. Skip any candidate whose
+        // extraction leaves a parameter malformed and fall through to the
+        // next-best; if every candidate does, correctly report "no match" so
+        // the caller's normal unresolved-phrase path (clear diagnostic or
+        // `_unresolved` placeholder) takes over instead.
+        for candidate in ranked {
+            let args = extractArgs(invocation, pattern: candidate.phrase.pattern)
+            let hasMalformedArg = args.values.contains { if case .malformed = $0 { return true } else { return false } }
+            guard !hasMalformedArg else {
+                trace.log(.phraseMatch, "  reject @L\(candidate.phrase.sourceLine) score=\(candidate.score) (malformed argument)")
+                continue
+            }
+            trace.log(.phraseMatch, "winner @L\(candidate.phrase.sourceLine) score=\(candidate.score)")
+            for (k, v) in args {
+                trace.log(.phraseExtractArgs, "  arg[\(k)] = \(v.traceDescription(detail: .compact))")
+            }
+            return (candidate.phrase, args)
         }
-        return (winner.phrase, args)
+        trace.log(.phraseMatch, "no match (every candidate left a malformed argument)")
+        return nil
     }
 
     private func phraseMatchScore(_ invWords: [String], pattern: PhrasePattern) -> Int {

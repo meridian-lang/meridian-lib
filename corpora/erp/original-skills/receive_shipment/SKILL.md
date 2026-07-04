@@ -12,10 +12,10 @@ triggers:
 - "receive inbound shipment"
 - "shipment received"
 
-## Workflow (( role: procedure ))
+## Workflow
 Step: `ofbiz warehouse receive --today --json` to snapshot inbound manifests.
 Publish: "warehouse receiving manifest captured".
 
-## Human notes (( inert ))
+## Human notes
 Inbound receiving is intentionally shell-backed in this synthetic corpus because
 the source system exposes a manifest command rather than a first-class API call.

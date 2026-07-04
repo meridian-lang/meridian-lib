@@ -93,7 +93,7 @@
     "name" : "rebuild index",
     "outline" : [
       {
-        "kind" : "applicability",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 11,
         "text" : "Use this when"
@@ -101,25 +101,37 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 15,
+        "line" : 16,
         "text" : "Procedure"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 20,
+        "text" : "Procedure — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 24,
+        "text" : "Procedure — steps 2"
+      },
+      {
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 22,
+        "line" : 30,
         "text" : "Assertions"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 17,
+        "line" : 18,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 20,
+        "line" : 28,
         "text" : "Emit"
       }
     ],
@@ -129,18 +141,36 @@
         "heading" : "Use this when",
         "line" : 11,
         "lines" : [
+          "use judgment to follow the Use this when guidance:",
           "\"rebuild lagging indexes\"",
           "\"index job stale\""
         ],
-        "role" : "applicability"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Procedure",
-        "line" : 15,
+        "line" : 16,
         "lines" : [
-          "fetch lagging index jobs",
-          "Check: any lagging index jobs",
+          "use judgment to follow the Procedure guidance:",
+          "Check: any lagging index jobs"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Procedure — steps",
+        "line" : 20,
+        "lines" : [
+          "fetch lagging index jobs"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Procedure — steps 2",
+        "line" : 24,
+        "lines" : [
           "for each index job:",
           "rebuild the index job",
           "Emit: \"lagging index jobs rebuilt\""
@@ -150,11 +180,12 @@
       {
         "executes" : true,
         "heading" : "Assertions",
-        "line" : 22,
+        "line" : 30,
         "lines" : [
+          "use judgment to follow the Assertions guidance:",
           "make sure all index jobs have a name"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       }
     ],
     "triggers" : "\"rebuild lagging indexes\"\n\"index job stale\""
@@ -188,28 +219,16 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 23,
-      "swift_line" : 300
+      "meridian_line" : 12,
+      "swift_line" : 299
     },
     {
-      "meridian_line" : 54,
-      "swift_line" : 305
+      "meridian_line" : 1,
+      "swift_line" : 337
     },
     {
-      "meridian_line" : 17,
-      "swift_line" : 317
-    },
-    {
-      "meridian_line" : 18,
-      "swift_line" : 321
-    },
-    {
-      "meridian_line" : 66,
-      "swift_line" : 327
-    },
-    {
-      "meridian_line" : 20,
-      "swift_line" : 343
+      "meridian_line" : 1,
+      "swift_line" : 342
     },
     {
       "meridian_line" : 1,
@@ -218,14 +237,6 @@
     {
       "meridian_line" : 1,
       "swift_line" : 385
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 423
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 428
     }
   ],
   "tools_used" : [
@@ -236,6 +247,26 @@
       "mode" : "strict",
       "parameters" : [
 
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "\"rebuild lagging indexes\"\n\"index job stale\"\nuse judgment to follow the Procedure guidance:\nCheck: any lagging index jobs\nfetch lagging index jobs\nfor each index job:\nrebuild the index job\nEmit: \"lagging index jobs rebuilt\"\nuse judgment to follow the Assertions guidance:\nmake sure all index jobs have a name",
+          "line" : 12,
+          "scoped_tools" : [
+            "audit_row.list",
+            "batch.list",
+            "batch.settle",
+            "constraint.list",
+            "index.list",
+            "index.rebuild",
+            "ledger.reconcile",
+            "record.list",
+            "record.mark_canonical",
+            "record.purge"
+          ],
+          "text" : "follow the Use this when guidance"
+        }
       ],
       "source_name" : "rebuild index",
       "swift_struct" : "RebuildIndex"

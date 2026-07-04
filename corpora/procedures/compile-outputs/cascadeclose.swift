@@ -296,44 +296,15 @@ public struct CascadeClose: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "CascadeClose", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L16:C0") {
-            // L16
-            // snapshot orphaned audit rows
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("psql -c \"select key,table_name from audit_rows where status='orphaned'\" --csv"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.0:L16:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L51:C0") {
-            // L51
-            let auditRows = try await runtime.invoke(
-                tool: "auditRowList",
-                args: [
-                    "status": .string("orphaned"),
-                ]
-            )
-            state.bind("auditRows", auditRows)
-
-            try await runtime.checkpoint(label: "progress:0.1:L51:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L18:C0") {
-            // L18
-            try await runtime.assert((!(((state.get("auditRows"))?.asList ?? []).filter { __e in (meridianDef_AuditRow_orphaned(__e)) }).isEmpty), message: "Expected any orphaned audit rows")
-            try await runtime.checkpoint(label: "progress:0.2:L18:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.3:L19:C0") {
-            // L19
-            try await runtime.emit(
-                event: "procedure.report",
-                payload: [
-                    "message": .string("orphaned audit rows recorded for deterministic close"),
-                ]
-            )
-            try await runtime.checkpoint(label: "progress:0.3:L19:C0", state: state.snapshot())
+        // L12
+        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
+            prose: "follow the Invocation guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["audit_row.list", "batch.list", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "record.list", "record.mark_canonical", "record.purge"],
+            guidance: "\"cascade close\"\n\"orphaned audit rows\"\nuse judgment to follow the Transaction body guidance:\nCheck: any orphaned audit rows\nSQL: `psql -c \"select key,table_name from audit_rows where status='orphaned'\" --csv` to snapshot orphaned audit rows\nfetch orphaned audit rows\nEmit: \"orphaned audit rows recorded for deterministic close\""
+        )
+        for (__key, __value) in __meridianProseResults_L12 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

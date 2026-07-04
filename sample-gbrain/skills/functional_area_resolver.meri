@@ -69,6 +69,7 @@ lists all sub-skills it can dispatch to in a `(dispatcher for: ...)` clause.
 ```
 
 ## Why It Works (( inert ))
+use judgment to follow the Why It Works guidance:
 
 The LLM doesn't need one row per sub-skill. It needs:
 1. **Area recognition** — "this is about brain pages" -> Brain & Knowledge
@@ -95,19 +96,27 @@ dispatcher area as expected). Both matter:
 
 ### Training corpus (n=20, 3 seeds × 3 variants × 3 models, LENIENT) (( inert ))
 
+
+#### Training corpus (n=20, 3 seeds × 3 variants × 3 models, LENIENT) — steps
+
+!!! table (( ai-discretion ))
 | Variant | Opus 4.7 | Sonnet 4.6 | Haiku 4.5 | Size |
 |---|---|---|---|---|
 | baseline (270 bullet rows) | 81.7% ± 7.2% | 86.7% ± 7.2% | 73.3% ± 7.2% | 25KB |
-| **functional-areas** (this pattern) | **98.3% ± 7.2%** | **100% ± 0%** | **88.3% ± 7.2%** | **13KB** |
+| functional-areas (this pattern) | 98.3% ± 7.2% | 100% ± 0% | 88.3% ± 7.2% | 13KB |
 | resolver-of-resolvers (no dispatcher clause) | 63.3% ± 14.3% | 41.7% ± 7.2% | 65.0% ± 12.4% | 10KB |
 
 ### Held-out blind corpus (n=5, 3 seeds, LENIENT) (( inert ))
 
+
+#### Held-out blind corpus (n=5, 3 seeds, LENIENT) — steps
+
+!!! table (( ai-discretion ))
 | Variant | Opus 4.7 | Sonnet 4.6 | Haiku 4.5 |
 |---|---|---|---|
 | baseline | 100% ± 0% | 100% ± 0% | 100% ± 0% |
-| **functional-areas** | **100% ± 0%** | **100% ± 0%** | **100% ± 0%** |
-| resolver-of-resolvers | 100% ± 0% | **73.3% ± 28.7%** | 100% ± 0% |
+| functional-areas | 100% ± 0% | 100% ± 0% | 100% ± 0% |
+| resolver-of-resolvers | 100% ± 0% | 73.3% ± 28.7% | 100% ± 0% |
 
 ### What the data shows (( inert ))
 
@@ -121,6 +130,9 @@ dispatcher area as expected). Both matter:
 
 ### Reproduce (( inert ))
 
+
+#### Reproduce — steps
+
 ```bash
 cd evals/functional-area-resolver
 node harness.mjs --model opus    # ~225 LLM calls, ~$1.70 at Opus pricing
@@ -129,10 +141,11 @@ node harness.mjs --model haiku   # ~$0.30
 node rescore.mjs baseline-runs/2026-05-11-opus-4-7.jsonl  # zero-cost re-score
 ```
 
-Receipts (model, prompt_template_hash, fixtures_hash, harness_sha, ts):
+> Receipts (model, prompt_template_hash, fixtures_hash, harness_sha, ts):
 `evals/functional-area-resolver/baseline-runs/2026-05-11-{opus-4-7,sonnet-4-6,haiku-4-5}.jsonl`.
 
-### Methodology caveats (( inert ))
+### Methodology caveats
+use judgment to follow the Methodology caveats guidance:
 
 - **Production prompt matters.** With a naive "return the skill slug" prompt
   (no instruction about `(dispatcher for: ...)`), every compression variant
@@ -150,15 +163,9 @@ Receipts (model, prompt_template_hash, fixtures_hash, harness_sha, ts):
   the harness can't distinguish between "100%" and "95% with one nondeterministic
   miss." Expanding to ≥20 is a v0.33.x follow-up.
 
-### Prior work and citations (( inert ))
+### Prior work and citations
+use judgment to follow the Prior work and citations guidance:
 
-The pattern is a **static-prompt analog of hierarchical agent routing**, a
-2024-2025 research direction:
-
-- **AnyTool** ([arXiv:2402.04253](https://arxiv.org/abs/2402.04253)) showed
-  meta-agent → category-agent → tool-agent hierarchy on 16K APIs beats flat
-  retrieval by +35.4pp. The `(dispatcher for: ...)` clause is the
-  meta-agent's view collapsed into a single LLM pass.
 - **RAG-MCP** ([arXiv:2505.03275](https://arxiv.org/html/2505.03275v1))
   reports 49.2% prompt-token reduction at 3.2× accuracy gain via
   embedding-based pre-retrieval. The token-reduction story matches ours
@@ -169,8 +176,21 @@ The pattern is a **static-prompt analog of hierarchical agent routing**, a
   SKILL.md body loaded on match. This skill applies the same principle at
   the routing-table level, not the per-skill body level.
 
-The 2025-2026 literature has no published benchmark for **static-prompt
-hierarchical routing** (every published hierarchical scheme resolves the
+
+#### Prior work and citations — steps
+
+> The pattern is a **static-prompt analog of hierarchical agent routing**, a
+> 2024-2025 research direction:
+
+- AnyTool (arXiv:2402.04253) showed
+  meta-agent → category-agent → tool-agent hierarchy on 16K APIs beats flat
+  retrieval by +35.4pp. The `(dispatcher for: ...)` clause is the
+  meta-agent's view collapsed into a single LLM pass.
+
+#### Prior work and citations — steps 2
+
+The 2025-2026 literature has no published benchmark for static-prompt
+hierarchical routing (every published hierarchical scheme resolves the
 hierarchy at runtime via a second LLM call). Our finding — that the
 hierarchy can be inlined into a single-LLM-pass dispatcher list and retain
 routing accuracy — is the open contribution. See
@@ -180,7 +200,10 @@ routing accuracy — is the open contribution. See
 
 ### Step 1: Preconditions (( inert ))
 
-Refuse to compress if either gate fails:
+
+#### Step 1: Preconditions — steps
+
+> Refuse to compress if either gate fails:
 - Source routing file is under 12KB (compression overhead exceeds benefit).
 - `git status` shows uncommitted changes to the routing file (the
   compressor's edit would entangle with whatever the user was doing).
@@ -203,13 +226,9 @@ compress that one.
 
 ### Step 3: Identify functional areas (( inert ))
 
-Group skills by domain. Typical areas (adjust per deployment):
-
-- **Brain & Knowledge** — brain-ops as dispatcher
 - **Content Ingestion** — ingest as dispatcher
 - **Calendar & Scheduling** — google-calendar as dispatcher
 - **Email & Comms** — executive-assistant as dispatcher
-- **Research & Investigation** — perplexity-research as dispatcher
 - **X/Twitter & Social** — x-ingest as dispatcher
 - **Places & Travel** — checkin as dispatcher
 - **Product & Building** — acp-coding as dispatcher
@@ -217,7 +236,18 @@ Group skills by domain. Typical areas (adjust per deployment):
 - **Tasks & Logistics** — daily-task-manager as dispatcher
 - **People & Contacts** — google-contacts as dispatcher
 
-### Step 4: Build the area entry format (( inert ))
+
+#### Step 3: Identify functional areas — steps
+
+> Group skills by domain. Typical areas (adjust per deployment):
+
+- Brain & Knowledge — brain-ops as dispatcher
+
+#### Step 3: Identify functional areas — steps 2
+
+- Research & Investigation — perplexity-research as dispatcher
+### Step 4: Build the area entry format
+use judgment to follow the Step 4: Build the area entry format guidance:
 
 Each area entry follows this template:
 
@@ -232,7 +262,8 @@ Rules:
 - Sub-skill list should be comprehensive — this is how the LLM knows what's available
 - The dispatcher skill file should have its own internal routing table
 
-### Step 5: Keep always-on entries separate (( inert ))
+### Step 5: Keep always-on entries separate
+use judgment to follow the Step 5: Keep always-on entries separate guidance:
 
 Gates and always-on entries (acknowledge, multi-user, entity-detector, etc.)
 stay as individual rows — they're checked on every message, not dispatched.
@@ -242,23 +273,45 @@ stay as individual rows — they're checked on every message, not dispatched.
 Run two gates before committing the compressed file. Do NOT commit if either
 fails.
 
-**Gate 1: Structural verification.** Confirms your `routing-eval.jsonl`
+If accuracy on your fixtures drops below 95%, revert and tune the area
+entries before re-running.
+
+The harness uses gbrain's bundled fixture set, so this verifies "did the LLM
+land in the right sub-skill for routing intents the gbrain-bundled fixtures
+cover" — a regression check on shared skills, not a full re-eval of YOUR
+fixture set. For full eval coverage, mirror this skill's
+`fixtures.jsonl` + `fixtures-held-out.jsonl` setup with intents specific
+to your skills.
+
+- Trigger phrases for an area are too narrow (LLM can't recognize intent).
+- Areas were collapsed too aggressively (too few areas — see Anti-Patterns).
+- ASCII `->` vs Unicode `→` mismatch — the harness now accepts both, but
+  earlier versions only matched Unicode. Pin gbrain to v0.32.3.0+.
+
+Common false negatives on the harness eval (NOT bugs in your compression):
+- The gbrain-bundled fixtures target skill names like `enrich`, `query`,
+  `gmail`, `executive-assistant`. If your routing file doesn't expose
+  those skills at all, expect strict-scoring failures on those fixtures.
+
+#### Step 6 (MANDATORY): Verify routing accuracy — steps
+
+Gate 1: Structural verification. Confirms your `routing-eval.jsonl`
 fixtures still resolve to the right skills under the compressed routing file.
-Run from the workspace whose routing file you just edited:
+> Run from the workspace whose routing file you just edited:
 
 ```bash
 gbrain routing-eval --json
 ```
 
-If accuracy on your fixtures drops below 95%, revert and tune the area
-entries before re-running.
 
-**Gate 2: LLM A/B verification on YOUR edited file.** Confirms a frontier
-LLM can still drill into the dispatcher list and reach sub-skills under
-your specific compression. Requires a gbrain repo checkout because the
-harness lives there. Copy your edited routing file into the harness's
-variants directory, then invoke the harness with `--variants` pointing
-at it:
+#### Step 6 (MANDATORY): Verify routing accuracy — steps 2
+
+> **Gate 2: LLM A/B verification on YOUR edited file.** Confirms a frontier
+> LLM can still drill into the dispatcher list and reach sub-skills under
+> your specific compression. Requires a gbrain repo checkout because the
+> harness lives there. Copy your edited routing file into the harness's
+> variants directory, then invoke the harness with `--variants` pointing
+> at it:
 
 ```bash
 # In your agent workspace, identify the routing file you just compressed.
@@ -274,34 +327,28 @@ ANTHROPIC_API_KEY=... node harness.mjs --variants-dir "$TMP" --variants my-edit 
                                        --model opus --parallel 3 --yes
 ```
 
-The harness uses gbrain's bundled fixture set, so this verifies "did the LLM
-land in the right sub-skill for routing intents the gbrain-bundled fixtures
-cover" — a regression check on shared skills, not a full re-eval of YOUR
-fixture set. For full eval coverage, mirror this skill's
-`fixtures.jsonl` + `fixtures-held-out.jsonl` setup with intents specific
-to your skills.
 
-If the lenient (same-area) score on your variant drops below 95%, revert the
-compression and tune. Common causes:
+#### Step 6 (MANDATORY): Verify routing accuracy — steps 3
+
+> If the lenient (same-area) score on your variant drops below 95%, revert the
+> compression and tune. Common causes:
 - A sub-skill was omitted from the `(dispatcher for: ...)` list.
-- Trigger phrases for an area are too narrow (LLM can't recognize intent).
-- Areas were collapsed too aggressively (too few areas — see Anti-Patterns).
-- ASCII `->` vs Unicode `→` mismatch — the harness now accepts both, but
-  earlier versions only matched Unicode. Pin gbrain to v0.32.3.0+.
 
-Common false negatives on the harness eval (NOT bugs in your compression):
-- The gbrain-bundled fixtures target skill names like `enrich`, `query`,
-  `gmail`, `executive-assistant`. If your routing file doesn't expose
-  those skills at all, expect strict-scoring failures on those fixtures.
+#### Step 6 (MANDATORY): Verify routing accuracy — steps 4
+
   Lenient scoring stays accurate for any sub-skill present in your
   `(dispatcher for: ...)` lists.
 
 ### Step 7: Review the diff before committing (( inert ))
 
+
+#### Step 7: Review the diff before committing — steps
+
 Show the user the proposed edit (or the actual git diff) and wait for
 explicit approval before staging. Same convention as `skills/book-mirror/SKILL.md`.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 
@@ -316,7 +363,8 @@ The full behavior contract is documented in the body sections above; this sectio
 
 The compressed routing file follows the area-entry template documented in Step 4 ("Build the area entry format"). Each entry: `- **{Area Name}**: {trigger phrases} -> \`{dispatcher-skill}\` (dispatcher for: {sub-skill list})`. The dispatcher arrow may be either ASCII `->` (default in this template) or Unicode `→` (used in some production deployments); the gbrain harness accepts both.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - **Resolver-of-resolvers with pipe tables.** Tested and failed (see eval
   table). The LLM picks area names from the table instead of drilling into
@@ -331,7 +379,8 @@ The compressed routing file follows the area-entry template documented in Step 4
 - **Too many areas.** Defeats the purpose. If you have 50 areas, just keep
   individual rows.
 
-## Maintenance (( inert ))
+## Maintenance
+use judgment to follow the Maintenance guidance:
 
 When adding a new skill:
 1. Identify its functional area.
@@ -347,7 +396,11 @@ When adding a new functional area:
 ## Changelog (( inert ))
 
 ### v1.0.0 — 2026-05-11 (( inert ))
-- Initial version. Pattern shipped in gbrain v0.32.3.0 with a held-out A/B
-  eval (see `evals/functional-area-resolver/`).
 - Skill renamed from `compress-agents-md` to `functional-area-resolver`
   pre-release; the contribution is the pattern, not the filename.
+
+
+#### v1.0.0 — 2026-05-11 — steps
+
+- Initial version. Pattern shipped in gbrain v0.32.3.0 with a held-out A/B
+  eval (see `evals/functional-area-resolver/`).

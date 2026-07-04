@@ -16,13 +16,15 @@ triggers:
 > output rules. The PDF is a rendering — never the primary artifact. If a
 > PDF exists, the source brain page exists behind it.
 
-## The rule (( inert ))
+## The rule
+use judgment to follow the The rule guidance:
 
 The brain page is ALWAYS the source of truth. The PDF is a rendering of
 it, never a standalone artifact. If a PDF exists somewhere, the brain
 page must exist behind it.
 
-## What this does (( inert ))
+## What this does
+use judgment to follow the What this does guidance:
 
 Renders a brain page (markdown with frontmatter) into a
 publication-quality PDF using the gstack `make-pdf` binary. Output is
@@ -33,9 +35,8 @@ suitable for:
 - Producing a briefing or report with running headers and page numbers
 - Archiving a long-form essay in a portable format
 
-## Prerequisite: gstack make-pdf (( inert ))
-
-This skill depends on the gstack `make-pdf` binary at:
+## Prerequisite: gstack make-pdf
+use judgment to follow the Prerequisite: gstack make-pdf guidance:
 
 ```
 $HOME/.claude/skills/gstack/make-pdf/dist/pdf
@@ -45,14 +46,23 @@ The user must have gstack co-installed. If absent, the skill cannot run.
 A future v0.26+ may bundle a fallback PDF renderer; for v0.25.1 gstack
 is a soft prereq.
 
-Verify it exists before invoking:
+
+### Prerequisite: gstack make-pdf — steps
+
+This skill depends on the gstack `make-pdf` binary at:
+
+
+### Prerequisite: gstack make-pdf — steps 2
+
+> Verify it exists before invoking:
 
 ```bash
 P="$HOME/.claude/skills/gstack/make-pdf/dist/pdf"
 [ -x "$P" ] || { echo "make-pdf not installed; install gstack" >&2; exit 1; }
 ```
 
-## Workflow (( inert, role: procedure ))
+## Workflow
+use judgment to follow the Workflow guidance:
 
 ```
 1. RESOLVE  → Confirm the brain page exists (gbrain get <slug>).
@@ -65,6 +75,12 @@ P="$HOME/.claude/skills/gstack/make-pdf/dist/pdf"
 ```
 
 ## Invocation (( inert ))
+
+`CONTAINER=1` is mandatory in containerized environments — it tells
+Playwright to skip Chromium sandboxing. Harmless on bare-metal.
+
+
+### Invocation — steps
 
 ```bash
 SLUG="path/to/page"
@@ -96,9 +112,6 @@ CONTAINER=1 "$P" generate "$CLEAN" "$OUT"
 echo "Rendered: $OUT"
 ```
 
-`CONTAINER=1` is mandatory in containerized environments — it tells
-Playwright to skip Chromium sandboxing. Harmless on bare-metal.
-
 ## Common patterns
 
 ```bash
@@ -124,10 +137,6 @@ a board or printing as a deliverable).
 
 ## Font requirements (( inert ))
 
-The renderer needs:
-
-- `fonts-liberation` (Helvetica/Arial substitute)
-- `fonts-noto-cjk` (Chinese/Japanese/Korean characters)
 - Minimum body font size: 10pt (page chrome 9pt)
 - Body text: 11pt
 
@@ -135,7 +144,15 @@ If running in an environment without these fonts, install them via the
 host's package manager (`apt install fonts-liberation fonts-noto-cjk` on
 Debian/Ubuntu containers).
 
-## Delivery (( inert ))
+
+### Font requirements — steps
+
+> The renderer needs:
+
+- `fonts-liberation` (Helvetica/Arial substitute)
+- `fonts-noto-cjk` (Chinese/Japanese/Korean characters)
+## Delivery
+use judgment to follow the Delivery guidance:
 
 After rendering, deliver via the agent's preferred channel:
 
@@ -149,7 +166,8 @@ Always include the brain page link in the delivery message so the user
 can also see it on GitHub / locally. The PDF is a rendering; the source
 is the artifact.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - ❌ Generating a PDF without first confirming the brain page exists.
   No source = no PDF.
@@ -161,7 +179,10 @@ is the artifact.
 - ❌ Using raw `MEDIA:` tags for Telegram delivery. Use the `message`
   tool with `filePath`.
 
-## Related skills (( inert ))
+## Related skills (( inert, role: procedure ))
+
+
+### Related skills — steps
 
 - `skills/book-mirror/SKILL.md` — produces a brain page that's a
   natural input to brain-pdf (chapter-by-chapter personalized analysis).
@@ -170,7 +191,8 @@ is the artifact.
   HTML (different rendering target).
 
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 

@@ -73,9 +73,11 @@ struct SwiftEmitterExprCoverageTests {
         #expect(e.emitValueExpr(.superlative(sup)).contains(".first"))
         let rl = IRExpression.recordList(fields: ["a", "b"], rows: [[.literal(.number(1)), .literal(.string("x"))]])
         #expect(e.emitValueExpr(rl).hasPrefix("Value.list(["))
-        // Derived expression (comparison) → wrapped `.init(...)`.
+        // A comparison lowers to a bare `Bool`, not a `Value` — bridged via
+        // `Value.from(_:)` rather than the generic `.init(...)` fallback
+        // (which requires the wrapped expression to already be `Value`-typed).
         let derived = IRExpression.comparison(.literal(.number(1)), .lessThan, .literal(.number(2)))
-        #expect(e.emitValueExpr(derived).hasPrefix(".init("))
+        #expect(e.emitValueExpr(derived).hasPrefix("Value.from("))
     }
 
     @Test("plain-context description / aggregate / superlative / recordList")

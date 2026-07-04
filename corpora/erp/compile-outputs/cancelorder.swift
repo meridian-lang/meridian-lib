@@ -399,47 +399,15 @@ public struct CancelOrder: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "CancelOrder", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L49:C0") {
-            // L49
-            let orders = try await runtime.invoke(
-                tool: "orderList",
-                args: [
-                    "status": .string("open"),
-                ]
-            )
-            state.bind("orders", orders)
-
-            try await runtime.checkpoint(label: "progress:0.0:L49:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L17:C0") {
-            // L17
-            try await runtime.assert((!(((state.get("orders"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("blocked"))) }).isEmpty), message: "Expected any orders whose status is \"blocked\"")
-            try await runtime.checkpoint(label: "progress:0.1:L17:C0", state: state.snapshot())
-        }
-        // L18
-        let __meridianSrc_0_2 = (state.get("orders")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("blocked"))) }
-        for (__meridianLoopIndex_0_2, order) in __meridianSrc_0_2.enumerated() {
-            let __meridianLoopLabel_0_2 = "progress:0.2:iteration:\(__meridianLoopIndex_0_2)"
-            if __meridianShouldRun(__meridianLoopLabel_0_2) {
-            state.bind("order", order)
-                if __meridianShouldRun("progress:0.2.body.0:L19:C0") {
-                    // L19
-                    _ = try await CancelOrder(runtime: runtime).run()
-                    try await runtime.checkpoint(label: "progress:0.2.body.0:L19:C0", state: state.snapshot())
-                }
-                try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
-            }
-        }
-
-        if __meridianShouldRun("progress:0.3:L20:C0") {
-            // L20
-            try await runtime.emit(
-                event: "erp.report",
-                payload: [
-                    "message": .string("blocked orders cancelled"),
-                ]
-            )
-            try await runtime.checkpoint(label: "progress:0.3:L20:C0", state: state.snapshot())
+        // L12
+        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
+            prose: "follow the When this applies guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["inventory.reserve", "invoice.create", "invoice.list", "order.cancel", "order.list", "payment.collect", "period.close", "product.list", "purchase_order.create", "shipment.create"],
+            guidance: "\"cancel blocked orders\"\n\"void ERP orders\"\nfetch open orders\nCheck: any orders whose status is \"blocked\"\nfor each order whose status is \"blocked\":\ncancel the order\nPublish: \"blocked orders cancelled\"\nuse judgment to follow the Controls guidance:\nAn already fulfilled order must not be cancelled by this runbook"
+        )
+        for (__key, __value) in __meridianProseResults_L12 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

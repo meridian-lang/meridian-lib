@@ -59,13 +59,14 @@ public struct ASTToIR {
     /// `proseStep` AST node and an unresolved phrase invocation inside a
     /// discretion/autonomy workflow) share the same scoped-tools and
     /// source-range plumbing; only `text`, `dispatchMode`, and `autonomy` vary.
-    private func makeProseStep(text: String, dispatchMode: ProseDispatchMode, autonomy: AutonomyConfigIR?, line: Int) -> IRPrimitive {
+    private func makeProseStep(text: String, dispatchMode: ProseDispatchMode, autonomy: AutonomyConfigIR?, line: Int, guidance: String? = nil) -> IRPrimitive {
         .proseStep(ProseStepIR(
             text: text,
             scopedTools: effectiveScopedTools,
             dispatchMode: dispatchMode,
             autonomy: autonomy,
-            sourceRange: sourceRange(line)
+            sourceRange: sourceRange(line),
+            guidance: guidance
         ))
     }
 
@@ -686,7 +687,7 @@ public struct ASTToIR {
                     s.sourceLine, code: .proseDisallowed,
                     help: "Mark the workflow `with discretion`/`with autonomy` or wrap the step in `use judgment to …:`.")
             }
-            return [makeProseStep(text: s.text, dispatchMode: mode, autonomy: effectiveAutonomy, line: s.sourceLine)]
+            return [makeProseStep(text: s.text, dispatchMode: mode, autonomy: effectiveAutonomy, line: s.sourceLine, guidance: s.guidance)]
 
         case .modal:
             return []  // handled at block level
@@ -987,6 +988,22 @@ public struct ASTToIR {
             return [.invoke(InvokeIR(
                 toolID: "shell.run",
                 arguments: [InvokeArg("command", commandValue)],
+                comment: s.annotation,
+                sourceRange: sourceRange(s.sourceLine)
+            ))]
+        }
+
+        // General-abilities: a non-shell fence with a configured
+        // `=== language ===` `Fence tool mapping:` entry lowers to a plain
+        // `invoke` — the whole fence body as one literal `code` string
+        // argument, no command-hole interpolation (that is `shell.run`-
+        // specific). Lets non-shell skill repos (e.g. ```python fences) lower
+        // deterministically instead of falling to inert or AI dispatch.
+        if let (toolID, body) = decodeToolFenceCommand(s.words) {
+            trace.log(.phraseInline, "  tool fence → \(toolID)")
+            return [.invoke(InvokeIR(
+                toolID: toolID,
+                arguments: [InvokeArg("code", .literal(.string(body)))],
                 comment: s.annotation,
                 sourceRange: sourceRange(s.sourceLine)
             ))]

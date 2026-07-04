@@ -77,6 +77,11 @@ public enum SkillSectionRole: String, Sendable, CaseIterable, Equatable {
         ("phases", .procedure), ("workflow", .procedure), ("pipeline", .procedure),
         ("protocol", .procedure), ("steps", .procedure), ("process", .procedure),
         ("procedure", .procedure),
+        // General-abilities: non-gbrain skill repos commonly title their
+        // executable body one of these instead of "Phases"/"Steps"/"Workflow".
+        ("instructions", .procedure), ("usage", .procedure),
+        ("quickstart", .procedure), ("quick start", .procedure),
+        ("how it works", .procedure),
         ("when to use", .applicability), ("use when", .applicability),
         ("primary triggers", .applicability), ("when this applies", .applicability),
         ("when to invoke", .applicability), ("when to run", .applicability),

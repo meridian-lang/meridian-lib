@@ -98,7 +98,7 @@
     "name" : "frontmatter-guard",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 24,
         "text" : "Contract"
@@ -106,219 +106,275 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 32,
+        "line" : 33,
         "text" : "Why This Exists"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 39,
+        "text" : "Why This Exists — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 44,
+        "text" : "Why This Exists — steps 2"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 43,
+        "line" : 50,
         "text" : "Validation classes"
       },
       {
         "kind" : "procedure",
+        "level" : 3,
+        "line" : 53,
+        "text" : "Validation classes — steps"
+      },
+      {
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 56,
+        "line" : 67,
         "text" : "Phases"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 58,
+        "line" : 70,
         "text" : "Phase 1: Audit"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 74,
+        "line" : 93,
         "text" : "Phase 2: Validate one path"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 84,
+        "line" : 107,
         "text" : "Phase 3: Fix"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 96,
+        "line" : 126,
         "text" : "Phase 4: Pre-commit hook (optional)"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 106,
+        "line" : 140,
         "text" : "Trigger words"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 115,
+        "line" : 149,
         "text" : "Output rules"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 157,
+        "text" : "Output rules — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 161,
+        "text" : "Output rules — steps 2"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 123,
+        "line" : 164,
         "text" : "Chains with"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 170,
+        "text" : "Chains with — steps"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 129,
+        "line" : 173,
         "text" : "Output Format"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 171,
+        "line" : 215,
         "text" : "Prevention — Writing Valid Frontmatter"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 175,
+        "line" : 219,
         "text" : "YAML arrays (the historical #1 error source)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 202,
+        "line" : 246,
         "text" : "Quoted scalars"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 215,
+        "line" : 259,
         "text" : "When to quote at all"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 222,
+        "line" : 272,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 26,
+        "line" : 27,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 66,
+        "line" : 73,
         "text" : "Reports"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 86,
-        "text" : "When issues are found"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 24,
         "lines" : [
+          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Every brain page is scanned against the eight canonical frontmatter validation classes",
           "Mechanical errors (nested quotes, missing closing `---`, null bytes, slug mismatch) are auto-repairable on demand with `.bak` backups",
           "Validation logic is shared with `gbrain doctor`'s `frontmatter_integrity` subcheck — single source of truth",
           "Reports per source (gbrain is multi-source since v0.18.0); never silently audits the wrong root"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Why This Exists",
-        "line" : 32,
+        "line" : 33,
         "lines" : [
-          "Brain pages pile up over months. Agents write them with malformed frontmatter:",
-          "Missing closing `---` (entity detector bugs)",
           "Unstructured YAML in meeting pages (ingestion bugs)",
           "Slug mismatches (path renames not propagated)",
-          "Null bytes (binary corruption from copy-paste accidents)",
+          "Null bytes (binary corruption from copy-paste accidents)"
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : true,
+        "heading" : "Why This Exists — steps",
+        "line" : 39,
+        "lines" : [
+          "Missing closing `---` (entity detector bugs)"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Why This Exists — steps 2",
+        "line" : 44,
+        "lines" : [
           "Nested double quotes in titles (`title: \"Phil \"Nick\" Last\"`)",
           "Without a guard, these accumulate silently until `gbrain sync` chokes or search returns garbage. The guard makes the failure visible at audit time and trivially fixable"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Validation classes",
-        "line" : 43,
+        "line" : 50,
         "lines" : [
-          "table:decision:fCBDb2RlIHwgTWVhbmluZyB8IEF1dG8tZml4YWJsZT8gfAp8LS0tLS0tfC0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tLS18CnwgYE1JU1NJTkdfT1BFTmAgfCBGaWxlIGRvZXNuJ3Qgc3RhcnQgd2l0aCBgLS0tYCB8IE5vIChuZWVkcyBodW1hbikgfAp8IGBNSVNTSU5HX0NMT1NFYCB8IE5vIGNsb3NpbmcgYC0tLWAgYmVmb3JlIGZpcnN0IGhlYWRpbmcgfCBZZXMgfAp8IGBZQU1MX1BBUlNFYCB8IFlBTUwgZmFpbGVkIHRvIHBhcnNlIHwgU29tZXRpbWVzIChkZXBlbmRzIG9uIGNhdXNlKSB8CnwgYFNMVUdfTUlTTUFUQ0hgIHwgRnJvbnRtYXR0ZXIgYHNsdWc6YCBkaWZmZXJzIGZyb20gcGF0aC1kZXJpdmVkIHNsdWcgfCBZZXMgKHJlbW92ZXMgdGhlIGZpZWxkKSB8CnwgYE5VTExfQllURVNgIHwgQmluYXJ5IGNvcnJ1cHRpb24gKGBceDAwYCkgfCBZZXMgfAp8IGBORVNURURfUVVPVEVTYCB8IGB0aXRsZTogIm91dGVyICJpbm5lciIgb3V0ZXIiYCBzaGFwZSB8IFllcyB8CnwgYE5PTl9TVFJJTkdfRklFTERgIHwgYHRpdGxlYC9gdHlwZWAvYHNsdWdgIGlzIGFuIHVucXVvdGVkIG5vbi1zdHJpbmcgc2NhbGFyIChlLmcuIGB0aXRsZTogMTIzYCwgYHNsdWc6IDIwMjQtMDYtMDFgKSB8IE5vIChxdW90ZSB0aGUgdmFsdWUpIHwKfCBgRU1QVFlfRlJPTlRNQVRURVJgIHwgT3BlbiArIGNsb3NlIHByZXNlbnQgYnV0IG5vdGhpbmcgYmV0d2VlbiB8IE5vIChuZWVkcyBodW1hbikgfA=="
+
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
-        "heading" : "Phases",
-        "line" : 56,
+        "executes" : true,
+        "heading" : "Validation classes — steps",
+        "line" : 53,
         "lines" : [
-
+          "table:ai-discretion:fCBDb2RlIHwgTWVhbmluZyB8IEF1dG8tZml4YWJsZT8gfAp8LS0tLS0tfC0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tLS18CnwgYE1JU1NJTkdfT1BFTmAgfCBGaWxlIGRvZXNuJ3Qgc3RhcnQgd2l0aCBgLS0tYCB8IE5vIChuZWVkcyBodW1hbikgfAp8IGBNSVNTSU5HX0NMT1NFYCB8IE5vIGNsb3NpbmcgYC0tLWAgYmVmb3JlIGZpcnN0IGhlYWRpbmcgfCBZZXMgfAp8IGBZQU1MX1BBUlNFYCB8IFlBTUwgZmFpbGVkIHRvIHBhcnNlIHwgU29tZXRpbWVzIChkZXBlbmRzIG9uIGNhdXNlKSB8CnwgYFNMVUdfTUlTTUFUQ0hgIHwgRnJvbnRtYXR0ZXIgYHNsdWc6YCBkaWZmZXJzIGZyb20gcGF0aC1kZXJpdmVkIHNsdWcgfCBZZXMgKHJlbW92ZXMgdGhlIGZpZWxkKSB8CnwgYE5VTExfQllURVNgIHwgQmluYXJ5IGNvcnJ1cHRpb24gKGBceDAwYCkgfCBZZXMgfAp8IGBORVNURURfUVVPVEVTYCB8IGB0aXRsZTogIm91dGVyICJpbm5lciIgb3V0ZXIiYCBzaGFwZSB8IFllcyB8CnwgYE5PTl9TVFJJTkdfRklFTERgIHwgYHRpdGxlYC9gdHlwZWAvYHNsdWdgIGlzIGFuIHVucXVvdGVkIG5vbi1zdHJpbmcgc2NhbGFyIChlLmcuIGB0aXRsZTogMTIzYCwgYHNsdWc6IDIwMjQtMDYtMDFgKSB8IE5vIChxdW90ZSB0aGUgdmFsdWUpIHwKfCBgRU1QVFlfRlJPTlRNQVRURVJgIHwgT3BlbiArIGNsb3NlIHByZXNlbnQgYnV0IG5vdGhpbmcgYmV0d2VlbiB8IE5vIChuZWVkcyBodW1hbikgfA=="
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
-        "heading" : "Phase 1: Audit",
-        "line" : 58,
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 67,
         "lines" : [
-          "Run a read-only scan across all registered sources (or one with `--source <id>`)",
-          "codeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIGF1ZGl0IC0tanNvbg==",
+          "use judgment to follow the Phases guidance:"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 1: Audit",
+        "line" : 70,
+        "lines" : [
+          "use judgment to follow the Phase 1: Audit guidance:",
           "Reports:",
           "Per-source counts grouped by error code",
-          "Sample of up to 20 affected pages per source",
           "Total count",
           "Scan timestamp",
-          "Output is JSON; agents parse `errors_by_code` and `per_source` to decide next steps"
+          "Output is JSON; agents parse `errors_by_code` and `per_source` to decide next steps",
+          "Run a read-only scan across all registered sources (or one with `--source <id>`)",
+          "codeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIGF1ZGl0IC0tanNvbg==",
+          "Sample of up to 20 affected pages per source"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 2: Validate one path",
-        "line" : 74,
+        "line" : 93,
         "lines" : [
-          "Validate a single file or directory (does not require source registration):",
-          "codeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWpzb24=",
-          "Exit code 0 = clean; 1 = errors found. Use this in CI pipelines or pre-commit hooks"
+          "use judgment to follow the Phase 2: Validate one path guidance:",
+          "Exit code 0 = clean; 1 = errors found. Use this in CI pipelines or pre-commit hooks",
+          "codeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWpzb24="
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 3: Fix",
-        "line" : 84,
+        "line" : 107,
         "lines" : [
-          "When issues are found:",
-          "codeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWZpeA==",
+          "use judgment to follow the Phase 3: Fix guidance:",
           "`--fix` writes `<file>.bak` for every modified file before mutating. The backup is the safety contract — works whether the brain is a git repo or a plain directory",
+          "codeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWZpeA==",
           "`--dry-run` previews without writing. Use this before applying fixes in batch"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 4: Pre-commit hook (optional)",
-        "line" : 96,
+        "line" : 126,
         "lines" : [
-          "For brain repos that ARE git repos, install the pre-commit hook to block malformed pages from being committed in the first place:",
-          "codeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIGluc3RhbGwtaG9vayBbLS1zb3VyY2UgPGlkPl0=",
-          "The hook runs `gbrain frontmatter validate` against staged `.md`\/`.mdx` files. Bypass with `git commit --no-verify`"
+          "use judgment to follow the Phase 4: Pre-commit hook (optional) guidance:",
+          "The hook runs `gbrain frontmatter validate` against staged `.md`\/`.mdx` files. Bypass with `git commit --no-verify`",
+          "codeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIGluc3RhbGwtaG9vayBbLS1zb3VyY2UgPGlkPl0="
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Trigger words",
-        "line" : 106,
+        "line" : 140,
         "lines" : [
           "When the user says any of these, route here:",
           "\"validate frontmatter\"",
@@ -330,33 +386,58 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Output rules",
-        "line" : 115,
+        "line" : 149,
         "lines" : [
-          "Always run `gbrain frontmatter audit --json` first; never assume a brain is clean",
+          "use judgment to follow the Output rules guidance:",
           "Surface counts to the user in plain language; do not dump raw JSON",
-          "For `--fix` operations: state how many files will be modified BEFORE running, then confirm",
           "`SLUG_MISMATCH` fixes remove the frontmatter `slug:` field — gbrain derives slug from path. Mention this when the user's title is intentionally renamed",
           "Never auto-fix `MISSING_OPEN` or `EMPTY_FRONTMATTER` without explicit user input — these usually mean a human author started a page and didn't finish"
         ],
-        "role" : "inert"
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Output rules — steps",
+        "line" : 157,
+        "lines" : [
+          "Always run `gbrain frontmatter audit --json` first; never assume a brain is clean"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Output rules — steps 2",
+        "line" : 161,
+        "lines" : [
+          "For `--fix` operations: state how many files will be modified BEFORE running, then confirm"
+        ],
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Chains with",
-        "line" : 123,
+        "line" : 164,
         "lines" : [
           "`gbrain doctor` — the `frontmatter_integrity` subcheck reports the same counts as `audit`",
-          "`skills\/maintain\/SKILL.md` — broader brain health audit; chain after this skill if other classes of issue are suspected",
           "`skills\/lint\/SKILL.md` (via `gbrain lint`) — overlapping rules for skill-file lint; the `frontmatter-*` rule names in lint output come from this skill's validation surface"
         ],
         "role" : "inert"
       },
       {
+        "executes" : true,
+        "heading" : "Chains with — steps",
+        "line" : 170,
+        "lines" : [
+          "`skills\/maintain\/SKILL.md` — broader brain health audit; chain after this skill if other classes of issue are suspected"
+        ],
+        "role" : "procedure"
+      },
+      {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 129,
+        "line" : 173,
         "lines" : [
           "Audit summary (terse, agent-friendly):",
           "codeblock:plain:RnJvbnRtYXR0ZXIgYXVkaXQg4oCUIDE3IGlzc3VlKHMpIGFjcm9zcyAxIHNvdXJjZShzKQoKW2RlZmF1bHRdIC9Vc2Vycy9tZS9icmFpbgogIDE3IGlzc3VlKHMpCiAgICBNSVNTSU5HX0NMT1NFOiA4CiAgICBORVNURURfUVVPVEVTOiA1CiAgICBOVUxMX0JZVEVTOiA0CiAgc2FtcGxlOgogICAgcGVvcGxlL2phbmUubWQg4oCUIE1JU1NJTkdfQ0xPU0UKICAgIGNvbXBhbmllcy9hY21lLm1kIOKAlCBORVNURURfUVVPVEVTCiAgICAoKyAxMiBtb3JlKQoKRml4IHdpdGg6IGdicmFpbiBmcm9udG1hdHRlciB2YWxpZGF0ZSAvVXNlcnMvbWUvYnJhaW4gLS1maXg=",
@@ -369,7 +450,7 @@
       {
         "executes" : false,
         "heading" : "Prevention — Writing Valid Frontmatter",
-        "line" : 171,
+        "line" : 215,
         "lines" : [
           "**This is the most important section.** Fixing broken frontmatter is good. Not writing broken frontmatter in the first place is better"
         ],
@@ -378,7 +459,7 @@
       {
         "executes" : false,
         "heading" : "YAML arrays (the historical #1 error source)",
-        "line" : 175,
+        "line" : 219,
         "lines" : [
           "codeblock:yaml:IyBDb3JyZWN0OiBzaW5nbGUtcXVvdGVkIFlBTUwgZmxvdyAoY2Fub25pY2FsIGZvcm0gZ2JyYWluIGVtaXRzKQp0YWdzOiBbJ3ljJywgJ3cyMDI1JywgJ2FpJ10KCiMgQ29ycmVjdDogdW5xdW90ZWQgc2NhbGFycyAoZmluZSB3aGVuIHZhbHVlcyBoYXZlIG5vIHNwZWNpYWwgY2hhcnMpCnRhZ3M6IFt5YywgdzIwMjUsIGFpXQoKIyBDb3JyZWN0OiBibG9jayBzdHlsZQp0YWdzOgogIC0geWMKICAtIHcyMDI1CgojIFRvbGVyYXRlZCBwb3N0LXYwLjM3LjUuMCBidXQgbm9uLWNhbm9uaWNhbDogSlNPTi1zdHlsZSBkb3VibGUgcXVvdGVzCnRhZ3M6IFsieWMiLCAidzIwMjUiXQoKIyBCcm9rZW46IG1peGVkIEpTT04gb2JqZWN0cyBhbmQgc3RyaW5ncyAoaW52YWxpZCBZQU1MKQp0YWdzOiBbeyJuYW1lIjogInNwb3J0cyJ9LCAicG9zdGVyb3VzIl0=",
           "**Why this used to break:** before v0.37.5.0, the validator counted unescaped `\"` characters and flagged any line with 3+. A flow sequence like `tags: [\"yc\", \"w2025\"]` has 4 unescaped `\"` by design — it's valid YAML, but the dumb counter flagged it anyway. One brain saw 6,981 of these on a single doctor run. v0.37.5.0 parses suspicious values with `js-yaml.safeLoad` before flagging, so JSON-style arrays no longer trigger NESTED_QUOTES",
@@ -390,7 +471,7 @@
       {
         "executes" : false,
         "heading" : "Quoted scalars",
-        "line" : 202,
+        "line" : 246,
         "lines" : [
           "codeblock:yaml:IyBDb3JyZWN0OiBzaW5nbGUgcXVvdGVzIGZvciB2YWx1ZXMgd2l0aCBzcGVjaWFsIGNoYXJzCnRpdGxlOiAnTXkgIlF1b3RlZCIgVGl0bGUnCgojIENvcnJlY3Q6IGRvdWJsZSBxdW90ZXMgd2hlbiB2YWx1ZSBoYXMgYXBvc3Ryb3BoZXMKdGl0bGU6ICJNZW4ncyBGYXNoaW9uIEd1aWRlIgoKIyBCcm9rZW46IGRvdWJsZSBxdW90ZXMgd3JhcHBpbmcgaW5uZXIgZG91YmxlIHF1b3Rlcwp0aXRsZTogIk15ICJRdW90ZWQiIFRpdGxlIg=="
         ],
@@ -399,27 +480,28 @@
       {
         "executes" : false,
         "heading" : "When to quote at all",
-        "line" : 215,
+        "line" : 259,
         "lines" : [
           "**Unquoted** is fine for simple values: `type: person`, `batch: w2025`",
-          "**Quote** when the value contains `: \" ' # [ ] { } | > & * ! ? ,` or starts with `@`",
           "**Single quotes** are the default safe choice",
-          "**Double quotes** only when the value itself contains apostrophes"
+          "Quote when the value contains `: \" ' # [ ] { } | > & * ! ? ,` or starts with `@`",
+          "Double quotes only when the value itself contains apostrophes"
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 222,
+        "line" : 272,
         "lines" : [
+          "use judgment to follow the Anti-Patterns guidance:",
           "**Don't auto-fix `MISSING_OPEN` or `EMPTY_FRONTMATTER` without user input.** These usually mean a human author started a page and didn't finish — silently inserting `---` markers around an unfinished draft is wrong",
           "**Don't use `--fix` to \"make doctor green\" without reading the audit first.** SLUG_MISMATCH cases are surfaced for manual review specifically because gbrain derives the slug from path. A mismatch usually means the user renamed a file intentionally; auto-removing the slug field is the right outcome only when you've confirmed the rename was deliberate",
           "**Don't skip the `.bak` backups.** The `.bak` is the safety contract for non-git brain repos. If `.bak` files accumulate after a fix run, that's a feature, not a bug — the user can review the diffs and delete the backups when satisfied",
           "**Don't run `audit` on a brain where sources aren't registered.** The CLI returns \"no registered sources to audit\" gracefully, but the migration emits a `skipped: no_sources` phase result. Don't paper over this with a manual path-walk; the right fix is to register the source via `gbrain sources add`",
           "**Don't install the pre-commit hook on non-git brain dirs.** The install-hook command skips them automatically with a one-line note. If you see \"skipped — not a git repo\" and want validation at write time anyway, use the `audit` command on a cron schedule"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "tools" : "exec",
@@ -462,44 +544,48 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 631
+      "meridian_line" : 25,
+      "swift_line" : 602
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 641
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 646
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 685
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 690
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 734
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 773
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 807
+      "swift_line" : 778
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 812
+      "swift_line" : 817
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 822
     }
   ],
   "tools_used" : [
@@ -512,6 +598,35 @@
         {
           "kind" : "Input",
           "name" : "input"
+        }
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "This skill guarantees:\nEvery brain page is scanned against the eight canonical frontmatter validation classes\nMechanical errors (nested quotes, missing closing `---`, null bytes, slug mismatch) are auto-repairable on demand with `.bak` backups\nValidation logic is shared with `gbrain doctor`'s `frontmatter_integrity` subcheck — single source of truth\nReports per source (gbrain is multi-source since v0.18.0); never silently audits the wrong root\nMissing closing `---` (entity detector bugs)\nNested double quotes in titles (`title: \"Phil \"Nick\" Last\"`)\nWithout a guard, these accumulate silently until `gbrain sync` chokes or search returns garbage. The guard makes the failure visible at audit time and trivially fixable\ntable:ai-discretion:fCBDb2RlIHwgTWVhbmluZyB8IEF1dG8tZml4YWJsZT8gfAp8LS0tLS0tfC0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tLS18CnwgYE1JU1NJTkdfT1BFTmAgfCBGaWxlIGRvZXNuJ3Qgc3RhcnQgd2l0aCBgLS0tYCB8IE5vIChuZWVkcyBodW1hbikgfAp8IGBNSVNTSU5HX0NMT1NFYCB8IE5vIGNsb3NpbmcgYC0tLWAgYmVmb3JlIGZpcnN0IGhlYWRpbmcgfCBZZXMgfAp8IGBZQU1MX1BBUlNFYCB8IFlBTUwgZmFpbGVkIHRvIHBhcnNlIHwgU29tZXRpbWVzIChkZXBlbmRzIG9uIGNhdXNlKSB8CnwgYFNMVUdfTUlTTUFUQ0hgIHwgRnJvbnRtYXR0ZXIgYHNsdWc6YCBkaWZmZXJzIGZyb20gcGF0aC1kZXJpdmVkIHNsdWcgfCBZZXMgKHJlbW92ZXMgdGhlIGZpZWxkKSB8CnwgYE5VTExfQllURVNgIHwgQmluYXJ5IGNvcnJ1cHRpb24gKGBceDAwYCkgfCBZZXMgfAp8IGBORVNURURfUVVPVEVTYCB8IGB0aXRsZTogIm91dGVyICJpbm5lciIgb3V0ZXIiYCBzaGFwZSB8IFllcyB8CnwgYE5PTl9TVFJJTkdfRklFTERgIHwgYHRpdGxlYC9gdHlwZWAvYHNsdWdgIGlzIGFuIHVucXVvdGVkIG5vbi1zdHJpbmcgc2NhbGFyIChlLmcuIGB0aXRsZTogMTIzYCwgYHNsdWc6IDIwMjQtMDYtMDFgKSB8IE5vIChxdW90ZSB0aGUgdmFsdWUpIHwKfCBgRU1QVFlfRlJPTlRNQVRURVJgIHwgT3BlbiArIGNsb3NlIHByZXNlbnQgYnV0IG5vdGhpbmcgYmV0d2VlbiB8IE5vIChuZWVkcyBodW1hbikgfA==\nuse judgment to follow the Phases guidance:\nuse judgment to follow the Phase 1: Audit guidance:\nReports:\nPer-source counts grouped by error code\nTotal count\nScan timestamp\nOutput is JSON; agents parse `errors_by_code` and `per_source` to decide next steps\nRun a read-only scan across all registered sources (or one with `--source <id>`)\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIGF1ZGl0IC0tanNvbg==\nSample of up to 20 affected pages per source\nuse judgment to follow the Phase 2: Validate one path guidance:\nExit code 0 = clean; 1 = errors found. Use this in CI pipelines or pre-commit hooks\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWpzb24=\nuse judgment to follow the Phase 3: Fix guidance:\n`--fix` writes `<file>.bak` for every modified file before mutating. The backup is the safety contract — works whether the brain is a git repo or a plain directory\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWZpeA==\n`--dry-run` previews without writing. Use this before applying fixes in batch\nuse judgment to follow the Phase 4: Pre-commit hook (optional) guidance:\nThe hook runs `gbrain frontmatter validate` against staged `.md`\/`.mdx` files. Bypass with `git commit --no-verify`\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIGluc3RhbGwtaG9vayBbLS1zb3VyY2UgPGlkPl0=\nuse judgment to follow the Output rules guidance:\nSurface counts to the user in plain language; do not dump raw JSON\n`SLUG_MISMATCH` fixes remove the frontmatter `slug:` field — gbrain derives slug from path. Mention this when the user's title is intentionally renamed\nNever auto-fix `MISSING_OPEN` or `EMPTY_FRONTMATTER` without explicit user input — these usually mean a human author started a page and didn't finish\nAlways run `gbrain frontmatter audit --json` first; never assume a brain is clean\nFor `--fix` operations: state how many files will be modified BEFORE running, then confirm\n`skills\/maintain\/SKILL.md` — broader brain health audit; chain after this skill if other classes of issue are suspected\nuse judgment to follow the Anti-Patterns guidance:\n**Don't auto-fix `MISSING_OPEN` or `EMPTY_FRONTMATTER` without user input.** These usually mean a human author started a page and didn't finish — silently inserting `---` markers around an unfinished draft is wrong\n**Don't use `--fix` to \"make doctor green\" without reading the audit first.** SLUG_MISMATCH cases are surfaced for manual review specifically because gbrain derives the slug from path. A mismatch usually means the user renamed a file intentionally; auto-removing the slug field is the right outcome only when you've confirmed the rename was deliberate\n**Don't skip the `.bak` backups.** The `.bak` is the safety contract for non-git brain repos. If `.bak` files accumulate after a fix run, that's a feature, not a bug — the user can review the diffs and delete the backups when satisfied\n**Don't run `audit` on a brain where sources aren't registered.** The CLI returns \"no registered sources to audit\" gracefully, but the migration emits a `skipped: no_sources` phase result. Don't paper over this with a manual path-walk; the right fix is to register the source via `gbrain sources add`\n**Don't install the pre-commit hook on non-git brain dirs.** The install-hook command skips them automatically with a one-line note. If you see \"skipped — not a git repo\" and want validation at write time anyway, use the `audit` command on a cron schedule",
+          "line" : 25,
+          "scoped_tools" : [
+            "assess.notability",
+            "capture",
+            "enrich",
+            "health.get",
+            "jobs.status",
+            "jobs.submit",
+            "link.add",
+            "link.backlinks",
+            "makePDF",
+            "page.create",
+            "page.get",
+            "page.list",
+            "page.search",
+            "page.update",
+            "publish",
+            "recall",
+            "research",
+            "timeline.add",
+            "verify"
+          ],
+          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "frontmatter-guard a input",

@@ -173,6 +173,74 @@ struct SkillDeviationTests {
         #expect(md.contains("`Phases`: operational-procedure"))
     }
 
+    @Test("a migrator-generated split-sibling's leftover-narrative parent is not flagged as an inert-section-added deviation")
+    func splitParentNotFlaggedAsNewInertDeviation() {
+        // AGENTS.md Phase 1 items 3 & 7: the parent heading's operational
+        // content was preserved in the generated `— steps` child (routed to
+        // `procedure` via a rulebook alias, so it executes) — its own leftover
+        // narrative going inert is by design, not a migration regression.
+        let original = """
+        ### Lookup sequence
+
+        1. `gbrain search "name"` -- keyword match
+        2. `gbrain get <slug>` -- direct read
+
+        Stop at the first step that resolves.
+        """
+        let ported = """
+        ### Lookup sequence (( inert ))
+
+        Stop at the first step that resolves.
+
+        #### Lookup sequence\(SkillMigrator.splitHeadingSeparator)
+
+        1. `gbrain search "name"` -- keyword match
+        2. `gbrain get <slug>` -- direct read
+        """
+        let r = SkillDeviation.analyze(
+            originalMarkdown: original, portedMeri: ported,
+            originalName: "a", portedName: "b"
+        )
+        #expect(!r.categories.contains("inert-section-added"), Comment(rawValue: "\(r.categories)"))
+        #expect(r.inertSectionDeviations.isEmpty, Comment(rawValue: "\(r.inertSectionDeviations.map(\.heading))"))
+    }
+
+    @Test("a genuinely new inert section next to an unrelated generated split sibling is still flagged")
+    func unrelatedNewInertSectionStillFlaggedNearSplit() {
+        let original = """
+        ### Lookup sequence
+
+        1. `gbrain search "name"` -- keyword match
+        2. `gbrain get <slug>` -- direct read
+
+        Stop at the first step that resolves.
+
+        ### Notes
+
+        Some prose that was live before.
+        """
+        let ported = """
+        ### Lookup sequence (( inert ))
+
+        Stop at the first step that resolves.
+
+        #### Lookup sequence\(SkillMigrator.splitHeadingSeparator)
+
+        1. `gbrain search "name"` -- keyword match
+        2. `gbrain get <slug>` -- direct read
+
+        ### Notes (( inert ))
+
+        Some prose that was live before.
+        """
+        let r = SkillDeviation.analyze(
+            originalMarkdown: original, portedMeri: ported,
+            originalName: "a", portedName: "b"
+        )
+        #expect(r.categories.contains("inert-section-added"))
+        #expect(r.inertSectionDeviations.map(\.heading) == ["Notes"], Comment(rawValue: "\(r.inertSectionDeviations.map(\.heading))"))
+    }
+
     @Test("original explicit inert sections are not counted as new inert deviations")
     func originalExplicitInertSectionNotNewDeviation() {
         let original = """
@@ -336,7 +404,7 @@ struct SkillDeviationTests {
         #expect(r.metrics.inertSections == 1)
         let md = SkillDeviation.renderMarkdown(r, includeDiff: false)
         #expect(md.contains("## Metrics"))
-        #expect(md.contains("1/2 inert"))
+        #expect(md.contains("Sections inert total: 1/2"))
         #expect(md.contains("Operational inert:"))
     }
 }
@@ -482,6 +550,20 @@ struct SkillMetricsTests {
         #expect(categories[.referenceDocumentation] == 1)
     }
 
+    @Test("judgment-wrapped sections are not operational inert residue")
+    func judgmentWrappedExcludedFromOperationalInert() {
+        let src = """
+        ## Controls (( inert ))
+        use judgment to follow the Controls guidance:
+        An already fulfilled order must not be cancelled by this runbook.
+        """
+        let m = SkillMetrics.analyze(src)
+        #expect(m.inertSections == 0)
+        #expect(m.operationalInertSections == 0)
+        #expect(m.inertDetails.isEmpty)
+        #expect(m.judgmentBlocks == 1)
+    }
+
     @Test("inert taxonomy detects executable-shaped and convention-reference residue")
     func inertTaxonomyExecutableShapes() {
         let src = """
@@ -555,6 +637,90 @@ struct SkillMetricsTests {
         """
         let m = SkillMetrics.analyze(src)
         #expect(m.inertDetails.first?.category == .referenceDocumentation)
+    }
+
+    @Test("a migrator-generated split-sibling heading does not inflate totalSections/inertSections")
+    func splitSiblingDoesNotInflateSectionCounts() {
+        // The `— steps` child is a rendering detail of "Lookup sequence", not
+        // an independent section the original file ever had (AGENTS.md Phase
+        // 1 item 7) — it must not count toward `totalSections`, and since it
+        // executes (aliased to `procedure`), it must not count toward `inert`.
+        let src = """
+        ---
+        name: demo
+        ---
+        ### Lookup sequence (( inert ))
+
+        Stop at the first step that resolves.
+
+        #### Lookup sequence\(SkillMigrator.splitHeadingSeparator)
+
+        1. `gbrain search "name"` -- keyword match
+        2. `gbrain get <slug>` -- direct read
+
+        ### Notes (( inert ))
+
+        Some other prose.
+        """
+        let rulebook = Rulebook(sectionRoles: [
+            SectionRoleRule(alias: "lookup sequence\(SkillMigrator.splitHeadingSeparator)", role: .procedure),
+        ])
+        let m = SkillMetrics.analyze(src, rulebook: rulebook)
+        // Only "Lookup sequence" and "Notes" count — the generated sibling does not.
+        #expect(m.totalSections == 2, Comment(rawValue: "\(m.totalSections)"))
+        #expect(m.inertSections == 2, Comment(rawValue: "\(m.inertSections)"))
+    }
+
+    @Test("an unaliased split-sibling heading does not leak into inertDetails as a spurious unclassified entry")
+    func splitSiblingWithoutAliasDoesNotLeakIntoInertDetails() {
+        // Same shape as splitSiblingDoesNotInflateSectionCounts, but with NO
+        // rulebook alias for the generated child — the real-world case when a
+        // deviation report is run standalone (`skill-deviation`, no
+        // `--rulebook`) against a freshly re-migrated candidate. Before this
+        // fix, the sibling was excluded from totalSections/inertSections but
+        // NOT from `inertDetails`, so it leaked in as a synthetic
+        // `unclassified` entry and inflated `operationalInertSections` /
+        // `unclassifiedInertSections` even though it isn't an independent
+        // section at all.
+        let src = """
+        ### Lookup sequence (( inert ))
+
+        Stop at the first step that resolves.
+
+        #### Lookup sequence\(SkillMigrator.splitHeadingSeparator)
+
+        1. `gbrain search "name"` -- keyword match
+        2. `gbrain get <slug>` -- direct read
+        """
+        let m = SkillMetrics.analyze(src)
+        #expect(m.totalSections == 1)
+        #expect(m.inertDetails.count == 1)
+        #expect(m.inertDetails.first?.heading == "Lookup sequence")
+        #expect(m.unclassifiedInertSections == 0)
+    }
+
+    @Test("a heading with only nested children and no body content is not tallied as inert")
+    func emptyBodyContainerHeadingIsNotCounted() {
+        // "## Phases" here owns no lines of its own — every line before the
+        // next heading belongs to "### Sub A". Marking it `(( inert, role:
+        // procedure ))` (the migrator's default for an unsplit container)
+        // must not count it as a section, an inert section, or (worst) an
+        // `operationalProcedure` inertDetails entry, since nothing of its
+        // own was suppressed — the real content is in, and already tallied
+        // via, the child heading.
+        let src = """
+        ## Phases (( inert, role: procedure ))
+
+        ### Sub A (( inert ))
+
+        Some narrative content.
+        """
+        let m = SkillMetrics.analyze(src)
+        #expect(m.totalSections == 1, Comment(rawValue: "\(m.totalSections)"))
+        #expect(m.inertSections == 1, Comment(rawValue: "\(m.inertSections)"))
+        #expect(m.inertDetails.count == 1)
+        #expect(m.inertDetails.first?.heading == "Sub A")
+        #expect(m.operationalInertSections == 0)
     }
 
     @Test("inert taxonomy covers AI markers reference bodies and judgment variants")

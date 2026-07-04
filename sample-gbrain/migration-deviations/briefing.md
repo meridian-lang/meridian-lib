@@ -2,9 +2,9 @@
 
 - Original: `briefing/SKILL.md`
 - Ported: `briefing.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 93%
-- Lines: 153 -> 153 (+10 / -10)
+- Tier: 2 (light edits)
+- Similarity: 76%
+- Lines: 153 -> 180 (+53 / -26)
 
 ## Frontmatter
 - Added: (none)
@@ -12,50 +12,38 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - preamble-blockquoted
 - inert-section-added
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L9 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
-- L17 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L61 `GBrain-Native Context Loading`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L65 `Before a meeting`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L72 `Before an email reply`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L79 `Daily briefing queries`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L87 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L111 `Back-Linking During Briefing`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L117 `Citation in Briefings`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L123 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L131 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L78 `GBrain-Native Context Loading`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L110 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L143 `Citation in Briefings`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L158 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
-- Sections: 11/11 inert (100% inert ratio)
-- Operational inert: 2
+- Sections inert total: 5/9 (56% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-procedure=1, reference-documentation=7, template=1, tools-metadata=1
-- Judgment: 0 blocks, 0 lines
+- Inert categories: reference-documentation=3, template=1, tools-metadata=1
+- Judgment: 3 blocks, 18 lines
 
 ### Inert section details
-- L9 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
-- L17 `Phases`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L61 `GBrain-Native Context Loading`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L65 `Before a meeting`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L72 `Before an email reply`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L79 `Daily briefing queries`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L87 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L111 `Back-Linking During Briefing`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L117 `Citation in Briefings`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L123 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L131 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L78 `GBrain-Native Context Loading`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L89 `Before an email reply`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L110 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L143 `Citation in Briefings`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L158 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/briefing/SKILL.md
 +++ skills/briefing.meri
-@@ -16,12 +16,12 @@
+@@ -16,12 +16,13 @@
  
  # Briefing Skill
  
@@ -66,55 +54,123 @@ These sections were made non-executable in the port and should be reviewed as mi
  > follow `skills/_brain-filing-rules.md`.
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
++use judgment to follow the Contract guidance:
  
  - Every fact in the briefing includes an inline `[Source: slug, updated DATE]` citation.
  - Meeting participants are resolved against the brain; gaps are explicitly flagged.
-@@ -29,7 +29,7 @@
- - The briefing is read-only: no brain pages are created or modified unless the user explicitly requests it.
+@@ -30,16 +31,8 @@
  - Stale alerts surface pages relevant to today's context, not just all stale pages.
  
--## Phases
-+## Phases (( inert, role: procedure ))
+ ## Phases
++use judgment to follow the Phases guidance:
  
- 0. **Hot memory pulse (v0.32).** Before composing anything else, run:
+-0. **Hot memory pulse (v0.32).** Before composing anything else, run:
+-
+-   ```bash
+-   gbrain recall --since-last-run --supersessions --pending --rollup --json
+-   ```
+-
+-   Fold the result into the briefing under a "Brain pulse" section at the top:
+-   1. **Contradictions resolved overnight** — the `--supersessions` output. Lead
+-      with these because they're new corrections to your model of the world.
+    2. **Top mentions** — `top_entities` from `--rollup` (top 5 entity slugs by
+       fact count in the window).
+    3. **New facts since last briefing** — group the `facts` array under each
+@@ -55,25 +48,49 @@
+    may miss the right source. Thin-client installs (`gbrain init --mcp-only`)
+    route through the remote brain transparently.
  
-@@ -73,25 +73,25 @@
+-1. **Today's meetings.** For each meeting on the calendar:
+    - Search gbrain for each participant by name
+    - Read their pages from gbrain for compiled_truth context
+    - Summarize: who they are, recent timeline, relationship to you
+-2. **Active deals.** List deal pages in gbrain filtered to active status:
+-   - Deadlines approaching in the next 7 days
+    - Recent timeline entries (last 7 days)
+-3. **Time-sensitive threads.** Open items from timeline entries:
+-   - Items with deadlines in the next 48 hours
+    - Follow-ups that are overdue
+ 4. **Recent changes.** Pages updated in the last 24 hours:
+    - What changed and why (read timeline entries from gbrain)
+-5. **People in play.** List person pages in gbrain sorted by recency:
+    - Updated in last 7 days
+    - Have high activity (many recent timeline entries)
  6. **Stale alerts.** From gbrain health check:
     - Pages flagged as stale that are relevant to today's meetings
  
 -## GBrain-Native Context Loading
++
++### Phases — steps
++
++> 0. **Hot memory pulse (v0.32).** Before composing anything else, run:
++
++   ```bash
++   gbrain recall --since-last-run --supersessions --pending --rollup --json
++   ```
++
++> Fold the result into the briefing under a "Brain pulse" section at the top:
++   1. Contradictions resolved overnight — the `--supersessions` output. Lead
++      with these because they're new corrections to your model of the world.
++
++### Phases — steps 2
++
++1. For each meeting on the calendar:
++
++### Phases — steps 3
++
++2. List deal pages in gbrain filtered to active status:
++   - Deadlines approaching in the next 7 days
++
++### Phases — steps 4
++
++> 3. **Time-sensitive threads.** Open items from timeline entries:
++   - Items with deadlines in the next 48 hours
++
++### Phases — steps 5
++
++5. List person pages in gbrain sorted by recency:
 +## GBrain-Native Context Loading (( inert ))
  
  Before generating any briefing, load context from gbrain systematically.
  
--### Before a meeting
-+### Before a meeting (( inert ))
- 
- For every attendee on the calendar invite:
- - `gbrain search "<attendee name>"` -- find their brain page
+@@ -84,16 +101,22 @@
  - `gbrain get <slug>` -- load compiled truth, recent timeline, relationship context
  - If no page exists, note the gap ("No brain page for Sarah Chen -- consider enrichment")
  
 -### Before an email reply
 +### Before an email reply (( inert ))
  
- Before drafting or triaging any email:
- - `gbrain search "<sender name>"` -- load sender context
+-Before drafting or triaging any email:
+-- `gbrain search "<sender name>"` -- load sender context
  - Read their compiled truth to understand who they are, what they care about, and
    your relationship history. This turns a cold reply into an informed one.
  
 -### Daily briefing queries
-+### Daily briefing queries (( inert ))
  
- Run these queries to populate the briefing sections:
+-Run these queries to populate the briefing sections:
++#### Before an email reply — steps
++
++> Before drafting or triaging any email:
++- `gbrain search "<sender name>"` -- load sender context
++### Daily briefing queries (( inert ))
++
++
++#### Daily briefing queries — steps
++
++> Run these queries to populate the briefing sections:
  - `gbrain query "active deals status"` -- deal pipeline snapshot
-@@ -123,19 +123,19 @@
+ - `gbrain query "meetings this week"` -- recent meeting pages with insights
+ - `gbrain query "pending commitments follow-ups"` -- open threads and action items
+@@ -123,19 +146,23 @@
  - [name] -- [why they're active]
  ```
  
 -## Back-Linking During Briefing
 +## Back-Linking During Briefing (( inert ))
++
++
++### Back-Linking During Briefing — steps
  
  If the briefing creates or updates any brain pages (e.g., new meeting prep
  pages, updated entity pages), the back-linking iron law applies: every entity
@@ -128,7 +184,8 @@ These sections were made non-executable in the port and should be reviewed as mi
  - This lets the user trace any claim back to the brain page and assess freshness
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++use judgment to follow the Anti-Patterns guidance:
  
  - **Briefing without brain queries.** Never generate a briefing from memory alone; always query gbrain for current data.
  - **Uncited facts.** Every claim must include `[Source: slug, updated DATE]`. A fact without a citation is unverifiable.

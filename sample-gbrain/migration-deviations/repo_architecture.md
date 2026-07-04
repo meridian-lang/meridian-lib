@@ -3,8 +3,8 @@
 - Original: `repo-architecture/SKILL.md`
 - Ported: `repo_architecture.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 93%
-- Lines: 54 -> 54 (+4 / -4)
+- Similarity: 92%
+- Lines: 54 -> 57 (+6 / -3)
 
 ## Frontmatter
 - Added: (none)
@@ -12,52 +12,48 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - inert-section-added
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L6 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
-- L13 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L27 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L31 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L29 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections: 4/4 inert (100% inert ratio)
-- Operational inert: 2
+- Sections inert total: 1/4 (25% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-procedure=1, reference-documentation=1, template=1
-- Judgment: 0 blocks, 0 lines
+- Inert categories: template=1
+- Judgment: 3 blocks, 0 lines
 
 ### Inert section details
-- L6 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
-- L13 `Phases`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L27 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L31 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L29 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/repo-architecture/SKILL.md
 +++ skills/repo_architecture.meri
-@@ -20,14 +20,14 @@
+@@ -20,7 +20,8 @@
  
  > **Full filing rules:** See `skills/_brain-filing-rules.md`
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
++use judgment to follow the Contract guidance:
  
  This skill guarantees:
  - Every new page is filed by primary subject (not format, not source)
- - The decision protocol is followed for ambiguous cases
+@@ -28,6 +29,7 @@
  - Common misfiling patterns are caught
  
--## Phases
-+## Phases (( inert, role: procedure ))
+ ## Phases
++use judgment to follow the Phases guidance:
  
  1. **Identify the primary subject.** What would you search for to find this page?
  2. **Walk the decision tree:**
-@@ -41,11 +41,11 @@
+@@ -41,11 +43,12 @@
  3. **Cross-link.** Link from related directories.
  4. **Check notability.** See `skills/conventions/quality.md` notability gate.
  
@@ -67,7 +63,8 @@ These sections were made non-executable in the port and should be reviewed as mi
  Advisory: "File this at `{type}/{slug}.md` because the primary subject is {reason}."
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++use judgment to follow the Anti-Patterns guidance:
  
  - Filing by format ("it's a PDF so it goes in sources/")
  - Filing by source ("it came from email so it goes in sources/")

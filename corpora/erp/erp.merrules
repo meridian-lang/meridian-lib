@@ -17,6 +17,9 @@ rule "erp-publish":
   lowers to: emit erp.report with message = {message}.
 
 === sections ===
+section "Workflow — steps" -> procedure
+section "Workflow — steps 2" -> procedure
+section "Dispatch table — steps" -> procedure
 
 section "Workflow", "Close sequence" -> procedure
 section "When this applies", "Use this when", "When operators call this" -> applicability

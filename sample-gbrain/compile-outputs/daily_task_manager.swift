@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -599,6 +599,16 @@ public struct DailyTaskManagerInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "DailyTaskManagerInput", parameters: [:])
 
+        // L24
+        let __meridianProseResults_L24 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.get", "page.search", "publish", "shell.run", "timeline.add"],
+            guidance: "This skill guarantees:\nTasks stored as a brain page (`ops/tasks.md`) with structured format\nTask lifecycle: add → in-progress → complete | defer\nPriority levels: P0 (urgent), P1 (today), P2 (this week), P3 (backlog)\nCompleted tasks archived with completion date\nDeferred tasks carry forward with reason\nuse judgment to follow the Phases guidance:\n**Execute the requested action:**\n**Add:** Append task with priority, description, due date. Add timeline entry\n**Complete:** Mark as done, move to completed section with date\n**Defer:** Move to next day/week with reason\n**Remove:** Delete from list (rare, prefer complete or defer)\n**Review:** Display all active tasks by priority\nLoad current tasks. `gbrain get ops/tasks` — read the task list\nSave. `gbrain put ops/tasks` — write updated task list\nuse judgment to follow the Anti-Patterns guidance:\nAdding tasks without a priority level\nCompleting tasks without recording the completion date\nDeferring tasks without a reason\nLetting the task list grow unbounded (review weekly)\nStoring tasks outside the brain (they should be searchable)"
+        )
+        for (__key, __value) in __meridianProseResults_L24 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

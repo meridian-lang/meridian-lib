@@ -12,12 +12,12 @@ triggers:
 - "settle ready batches"
 - "batch settlement"
 
-## Batch body (( role: procedure ))
+## Batch body
 fetch ready batches.
 Check: all batches have a name.
 for each batch:
   settle the batch.
 Emit: "ready batches settled".
 
-## Postconditions (( role: invariants ))
+## Postconditions
 make sure no batches whose status is "failed".

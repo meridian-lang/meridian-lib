@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -565,15 +565,9 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
-public struct ResolverInput: MeridianWorkflow {
+public struct EntryInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
-
-    public static let skillMetadata: [String: String] = [
-        "name": "resolver",
-        "description": "The skill dispatcher. Routes an inbound request to the skill that owns it. Skills are the implementation; the resolver only selects. When two skills could match, read both — they are designed to chain (for example, ingest then enrich for each entity).",
-        "triggers": "\"which skill\"\n\"route this\"\n\"what skill handles\"",
-    ]
 
     public init(runtime: Runtime, input: Input) {
         self.runtime = runtime
@@ -594,189 +588,658 @@ public struct ResolverInput: MeridianWorkflow {
             return false
         }
         let constants = Constants()
-        await runtime.workflowStarted(workflowName: "ResolverInput", parameters: [:])
+        await runtime.workflowStarted(workflowName: "EntryInput", parameters: [:])
 
-        // L17
-        let __meridianProseResults_L17 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Every inbound request maps to exactly one owning skill, or to a short chain of skills that are designed to compose\n- The resolver only selects; it never performs brain reads or writes itself\n- Always-on detection (signal-detector, brain-ops) runs on every message regardless of routing",
-            snapshot: state.snapshot(),
-            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
-            maxSteps: 32,
-            replanAfterFailures: 3
-        )
-        for (__key, __value) in __meridianProseResults_L17 {
-            state.bind(__key, __value)
-        }
-        // L23
-        state.bind("table", Value.list([.record(["triggerPhrase": .string("capture this"), "skill": .string("capture")]), .record(["triggerPhrase": .string("save this thought"), "skill": .string("capture")]), .record(["triggerPhrase": .string("remember this"), "skill": .string("capture")]), .record(["triggerPhrase": .string("ingest this"), "skill": .string("ingest")]), .record(["triggerPhrase": .string("brain health"), "skill": .string("maintain")]), .record(["triggerPhrase": .string("consolidation"), "skill": .string("maintain")]), .record(["triggerPhrase": .string("cleanup"), "skill": .string("maintain")]), .record(["triggerPhrase": .string("scheduling recurring work"), "skill": .string("cron-scheduler")]), .record(["triggerPhrase": .string("daily preparation"), "skill": .string("daily-task-prep")]), .record(["triggerPhrase": .string("task changes"), "skill": .string("daily-task-manager")])]))
-        // L39
-        do {
-            // L38
-            state.bind("owningSkill", try ({ () throws -> Value? in guard let __rows = state.get("table")?.asList else { throw ToolError.implementation(code: "table.lookup_miss", message: "table table is not bound", cause: nil) }; for __row in __rows { if MeridianComparison.eq(__row.member("triggerPhrase"), state.get("input")) { return __row.member("skill") } }; throw ToolError.implementation(code: "table.lookup_miss", message: "no row in table where triggerPhrase matches", cause: nil) })())
-        } catch let _recoveredError where meridianMatches(_recoveredError, named: "table.lookup_miss") {
-            // L40
-            let __meridianProseResults_L40 = try await runtime.executeProsePlan(
-                prose: "route the request to the owning skill\nRead the request and identify the dominant intent (brain operation, ingestion, maintenance, scheduling, or meta)\nMatch fuzzy intent against the trigger phrases of each skill and select the single owning skill\nWhen two skills could match, select both and order them so their outputs chain (for example, ingest before enrich)\nRead the selected skill file before acting",
-                snapshot: state.snapshot(),
-                scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
-            )
-            for (__key, __value) in __meridianProseResults_L40 {
-                state.bind(__key, __value)
+        // L10
+        if MeridianComparison.eq(state.get("trigger"), .string("Every inbound message (spawn parallel, don't block)")) {
+            if __meridianShouldRun("progress:0.0.then.0:L10:C0") {
+                // L10
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/signal-detector/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.0.then.0:L10:C0", state: state.snapshot())
             }
         }
-        if __meridianShouldRun("progress:0.3:L45:C0") {
-            // L45
-            try await runtime.emit(
-                event: "resolver.route",
-                payload: [
-                    "skill": state.get("owningSkill") ?? .null,
-                ]
-            )
-            try await runtime.checkpoint(label: "progress:0.3:L45:C0", state: state.snapshot())
+
+        // L10
+        if MeridianComparison.eq(state.get("trigger"), .string("Any brain read/write/lookup/citation")) {
+            if __meridianShouldRun("progress:0.1.then.0:L10:C0") {
+                // L10
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/brain-ops/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.1.then.0:L10:C0", state: state.snapshot())
+            }
         }
-        // L76
-        let __meridianProseResults_L76 = try await runtime.executeAutonomousLoop(
-            prose: "Ensure every acceptance criterion below holds, taking corrective action until all of them are satisfied:\n- Routing to more than one skill when a single skill clearly owns the request\n- Performing brain reads or writes inside the resolver instead of delegating\n- Skipping always-on detection because a specific skill matched",
+
+        // L21
+        let __meridianProseResults_L21 = try await runtime.executeProsePlan(
+            prose: "Decide which case below applies and carry out its action:\n- when \"What do we know about\", \"tell me about\", \"search for\", \"who is\", \"background on\", \"notes on\", `skills/query/SKILL.md`\n- when \"Who knows who\", \"relationship between\", \"connections\", \"graph query\", `skills/query/SKILL.md` (use graph-query)\n- when Creating/enriching a person or company page, `skills/enrich/SKILL.md`\n- when Where does a new file go? Filing rules, `skills/repo-architecture/SKILL.md`\n- when \"where does this brain page go\", \"file this in the brain\", \"brain taxonomist\", \"taxonomy check\", \"refile brain page\", \"which directory does this page go\", `skills/brain-taxonomist/SKILL.md`\n- when \"EIIRP\", \"everything in its right place\", \"store this research\", \"put this in the brain\", \"make this re-doable\", \"DRY this up\", \"file all of this\", \"organize all of this work\", \"archive this research thread\", `skills/eiirp/SKILL.md`\n- when Fix broken citations in brain pages, `skills/citation-fixer/SKILL.md`\n- when \"citation audit\", \"check citations\", \"fix citations\", `skills/citation-fixer/SKILL.md` (focused fix). For broader brain health, chain into `skills/maintain/SKILL.md`\n- when \"Research\", \"track\", \"extract from email\", \"investor updates\", \"donations\", `skills/data-research/SKILL.md`\n- when Share a brain page as a link, `skills/publish/SKILL.md`\n- when \"validate frontmatter\", \"check frontmatter\", \"fix frontmatter\", \"frontmatter audit\", \"brain lint\", `skills/frontmatter-guard/SKILL.md`\n- when \"what search mode\", \"is my cache hot\", \"tune my retrieval\", \"compare search modes\", \"clear search overrides\", `gbrain search modes/stats/tune` directly. See `skills/conventions/search-modes.md`\n- when \"eval results\", \"search benchmark\", \"haters-immune methodology\", \"regression check on retrieval\", `gbrain eval run-all` / `gbrain eval compare`. See `docs/eval/SEARCH_MODE_METHODOLOGY.md`",
             snapshot: state.snapshot(),
-            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
-            maxSteps: 32,
-            replanAfterFailures: 3
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
         )
-        for (__key, __value) in __meridianProseResults_L76 {
+        for (__key, __value) in __meridianProseResults_L21 {
             state.bind(__key, __value)
         }
-
-        await runtime.complete(reason: nil)
-        return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
-    }
-}
-
-public struct WhenWhichskillFires: MeridianWorkflow {
-    public let runtime: Runtime
-
-    public init(runtime: Runtime) {
-        self.runtime = runtime
-    }
-
-    public func run() async throws -> WorkflowResult {
-        var state = State()
-        let __meridianResumeContext = await runtime.consumeResumeContext()
-        if let __meridianResumeContext {
-            state.restore(from: __meridianResumeContext.restoredState)
+        // L43
+        let __meridianProseResults_L43 = try await runtime.executeProsePlan(
+            prose: "Decide which case below applies and carry out its action:\n- when \"capture this\", \"save this thought\", \"remember this\", \"drop this in the inbox\", \"save to brain\", `skills/capture/SKILL.md`\n- when User shares a link, article, tweet, or idea, `skills/idea-ingest/SKILL.md`\n- when \"watch this video\", \"process this YouTube link\", \"ingest this PDF\", \"save this podcast\", \"process this book\", \"summarize this book\", \"PDF book\", \"ingest it into my brain\", \"what's in this screenshot\", \"check out this repo\", `skills/media-ingest/SKILL.md`\n- when Meeting transcript received, `skills/meeting-ingestion/SKILL.md`\n- when Generic \"ingest this\" (auto-routes to above), `skills/ingest/SKILL.md`",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L43 {
+            state.bind(__key, __value)
         }
-        var __meridianResumeTarget = __meridianResumeContext?.lastCheckpointLabel
-        func __meridianShouldRun(_ label: String) -> Bool {
-            guard let target = __meridianResumeTarget else { return true }
-            if target == label { __meridianResumeTarget = nil }
-            return false
+        // L57
+        let __meridianProseResults_L57 = try await runtime.executeProsePlan(
+            prose: "Decide which case below applies and carry out its action:\n- when \"Brainstorm\", \"I have an idea\", \"office hours\", GStack: office-hours\n- when \"Review this plan\", \"CEO review\", \"poke holes\", GStack: ceo-review\n- when \"Debug\", \"fix\", \"broken\", \"investigate\", GStack: investigate\n- when \"Retro\", \"what shipped\", \"retrospective\", GStack: retro",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L57 {
+            state.bind(__key, __value)
         }
-        let constants = Constants()
-        await runtime.workflowStarted(workflowName: "WhenWhichskillFires", parameters: [:])
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("Task add/remove/complete/defer/review")) {
+            if __meridianShouldRun("progress:0.5.then.0:L72:C0") {
+                // L72
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/daily-task-manager/SKILL.md"),
+                    ]
+                )
 
-        if __meridianShouldRun("progress:0.0:L1:C0") {
-            // L1
-            try await runtime.wait(.event("whichSkill", matching: nil))
-            try await runtime.checkpoint(label: "progress:0.0:L1:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.5.then.0:L72:C0", state: state.snapshot())
+            }
         }
-        if __meridianShouldRun("progress:0.1:L1:C0") {
-            // L1
-            try await runtime.emit(
-                event: "trigger.whichSkill.fired",
-                payload: [
-                    "kind": .string("keyword"),
-                    "spec": .string("which skill"),
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("Morning prep, meeting context, day planning")) {
+            if __meridianShouldRun("progress:0.6.then.0:L72:C0") {
+                // L72
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/daily-task-prep/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.6.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("Daily briefing, \"what's happening today\"")) {
+            if __meridianShouldRun("progress:0.7.then.0:L72:C0") {
+                // L72
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/briefing/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.7.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("Cron scheduling, quiet hours, job staggering")) {
+            if __meridianShouldRun("progress:0.8.then.0:L72:C0") {
+                // L72
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/cron-scheduler/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.8.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("Save or load reports")) {
+            if __meridianShouldRun("progress:0.9.then.0:L72:C0") {
+                // L72
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/reports/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.9.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("Create a skill")) {
+            if __meridianShouldRun("progress:0.10.then.0:L72:C0") {
+                // L72
+                // "improve this skill",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/skill-creator/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.10.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("Skillify this")) {
+            if __meridianShouldRun("progress:0.11.then.0:L72:C0") {
+                // L72
+                // "is this a skill?", "make this proper",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/skillify/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.11.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("Compress my resolver")) {
+            if __meridianShouldRun("progress:0.12.then.0:L72:C0") {
+                // L72
+                // "AGENTS.md too large", "RESOLVER.md too big", "functional area dispatcher", "shrink routing table",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/functional-area-resolver/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.12.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("\"Is gbrain healthy?\", morning health check, skillpack-check")) {
+            if __meridianShouldRun("progress:0.13.then.0:L72:C0") {
+                // L72
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/skillpack-check/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.13.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("harvest this skill into gbrain")) {
+            if __meridianShouldRun("progress:0.14.then.0:L72:C0") {
+                // L72
+                // "publish this skill to gbrain", "lift this skill upstream", "share this skill with other gbrain clients", "promote my skill to gbrain",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/skillpack-harvest/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.14.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("Post-restart health + auto-fix, \"did the container restart break anything\", smoke test")) {
+            if __meridianShouldRun("progress:0.15.then.0:L72:C0") {
+                // L72
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/smoke-test/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.15.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("Cross-modal review, second opinion")) {
+            if __meridianShouldRun("progress:0.16.then.0:L72:C0") {
+                // L72
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/cross-modal-review/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.16.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("\"Validate skills\", skill health check")) {
+            if __meridianShouldRun("progress:0.17.then.0:L72:C0") {
+                // L72
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/testing/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.17.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("Webhook setup, external event processing")) {
+            if __meridianShouldRun("progress:0.18.then.0:L72:C0") {
+                // L72
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/webhook-transforms/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.18.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("Spawn agent")) {
+            if __meridianShouldRun("progress:0.19.then.0:L72:C0") {
+                // L72
+                // "background task", "parallel tasks", "steer agent", "pause/resume agent", "gbrain jobs submit", "submit a gbrain job", "submit a shell job", "shell job",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/minion-orchestrator/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.19.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L72
+        if MeridianComparison.eq(state.get("trigger"), .string("present options")) {
+            if __meridianShouldRun("progress:0.20.then.0:L72:C0") {
+                // L72
+                // "ask before proceeding", "choice gate", "user decision",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/ask-user/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.20.then.0:L72:C0", state: state.snapshot())
+            }
+        }
+
+        // L97
+        let __meridianProseResults_L97 = try await runtime.executeProsePlan(
+            prose: "Decide which case below applies and carry out its action:\n- when \"Set up GBrain\", first boot, `skills/setup/SKILL.md`\n- when \"Now what?\", \"fill my brain\", \"cold start\", \"bootstrap\", \"import my data\", \"what should I import first\", `skills/cold-start/SKILL.md`\n- when \"Migrate from Obsidian/Notion/Logseq\", `skills/migrate/SKILL.md`\n- when Brain health check, maintenance run, `skills/maintain/SKILL.md`\n- when \"Extract links\", \"build link graph\", \"populate timeline\", `skills/maintain/SKILL.md` (extraction sections)\n- when \"Run dream\", \"process today's session\", \"synthesize my conversations\", \"consolidate yesterday's conversations\", \"what patterns did you see\", \"did the dream cycle run\", `skills/maintain/SKILL.md` (dream cycle section)\n- when \"Brain health\", \"what features am I missing\", \"brain score\", Run `gbrain features --json`\n- when \"Set up autopilot\", \"run brain maintenance\", \"keep brain updated\", Run `gbrain autopilot --install --repo ~/brain`\n- when \"Upgrade gbrain\", \"update gbrain\", \"gbrain update available\", `UPGRADE_AVAILABLE`, \"is gbrain up to date\", `skills/gbrain-upgrade/SKILL.md`\n- when Agent identity, \"who am I\", customize agent, `skills/soul-audit/SKILL.md`\n- when \"Populate links\", \"extract links\", \"backfill graph\", `skills/maintain/SKILL.md` (graph population phase)\n- when \"Populate timeline\", \"extract timeline entries\", `skills/maintain/SKILL.md` (graph population phase)",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
+        )
+        for (__key, __value) in __meridianProseResults_L97 {
+            state.bind(__key, __value)
+        }
+        // L117
+        if MeridianComparison.eq(state.get("trigger"), .string("Non-owner sends a message")) {
+            if __meridianShouldRun("progress:0.22.then.0:L117:C0") {
+                // L117
+                // Check  before responding
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("ACCESS_POLICY.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.22.then.0:L117:C0", state: state.snapshot())
+            }
+        }
+
+        // L117
+        if MeridianComparison.eq(state.get("trigger"), .string("Agent needs to know its identity/vibe")) {
+            if __meridianShouldRun("progress:0.23.then.0:L117:C0") {
+                // L117
+                // Read
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("SOUL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.23.then.0:L117:C0", state: state.snapshot())
+            }
+        }
+
+        // L117
+        if MeridianComparison.eq(state.get("trigger"), .string("Agent needs user context")) {
+            if __meridianShouldRun("progress:0.24.then.0:L117:C0") {
+                // L117
+                // Read
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("USER.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.24.then.0:L117:C0", state: state.snapshot())
+            }
+        }
+
+        // L117
+        if MeridianComparison.eq(state.get("trigger"), .string("Operational cadence (what to check and when)")) {
+            if __meridianShouldRun("progress:0.25.then.0:L117:C0") {
+                // L117
+                // Read
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("HEARTBEAT.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.25.then.0:L117:C0", state: state.snapshot())
+            }
+        }
+
+        if __meridianShouldRun("progress:0.26:L143:C0") {
+            // L143
+            // — citations, back-links, notability gate
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/conventions/quality.md"),
                 ]
             )
-            try await runtime.checkpoint(label: "progress:0.1:L1:C0", state: state.snapshot())
+
+            try await runtime.checkpoint(label: "progress:0.26:L143:C0", state: state.snapshot())
         }
-
-        await runtime.complete(reason: nil)
-        return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
-    }
-}
-
-public struct WhenRoutethisFires: MeridianWorkflow {
-    public let runtime: Runtime
-
-    public init(runtime: Runtime) {
-        self.runtime = runtime
-    }
-
-    public func run() async throws -> WorkflowResult {
-        var state = State()
-        let __meridianResumeContext = await runtime.consumeResumeContext()
-        if let __meridianResumeContext {
-            state.restore(from: __meridianResumeContext.restoredState)
-        }
-        var __meridianResumeTarget = __meridianResumeContext?.lastCheckpointLabel
-        func __meridianShouldRun(_ label: String) -> Bool {
-            guard let target = __meridianResumeTarget else { return true }
-            if target == label { __meridianResumeTarget = nil }
-            return false
-        }
-        let constants = Constants()
-        await runtime.workflowStarted(workflowName: "WhenRoutethisFires", parameters: [:])
-
-        if __meridianShouldRun("progress:0.0:L1:C0") {
-            // L1
-            try await runtime.wait(.event("routeThis", matching: nil))
-            try await runtime.checkpoint(label: "progress:0.0:L1:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L1:C0") {
-            // L1
-            try await runtime.emit(
-                event: "trigger.routeThis.fired",
-                payload: [
-                    "kind": .string("keyword"),
-                    "spec": .string("route this"),
+        if __meridianShouldRun("progress:0.27:L144:C0") {
+            // L144
+            // — check brain before external APIs
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/conventions/brain-first.md"),
                 ]
             )
-            try await runtime.checkpoint(label: "progress:0.1:L1:C0", state: state.snapshot())
+
+            try await runtime.checkpoint(label: "progress:0.27:L144:C0", state: state.snapshot())
         }
-
-        await runtime.complete(reason: nil)
-        return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
-    }
-}
-
-public struct WhenWhatskillhandlesFires: MeridianWorkflow {
-    public let runtime: Runtime
-
-    public init(runtime: Runtime) {
-        self.runtime = runtime
-    }
-
-    public func run() async throws -> WorkflowResult {
-        var state = State()
-        let __meridianResumeContext = await runtime.consumeResumeContext()
-        if let __meridianResumeContext {
-            state.restore(from: __meridianResumeContext.restoredState)
-        }
-        var __meridianResumeTarget = __meridianResumeContext?.lastCheckpointLabel
-        func __meridianShouldRun(_ label: String) -> Bool {
-            guard let target = __meridianResumeTarget else { return true }
-            if target == label { __meridianResumeTarget = nil }
-            return false
-        }
-        let constants = Constants()
-        await runtime.workflowStarted(workflowName: "WhenWhatskillhandlesFires", parameters: [:])
-
-        if __meridianShouldRun("progress:0.0:L1:C0") {
-            // L1
-            try await runtime.wait(.event("whatSkillHandles", matching: nil))
-            try await runtime.checkpoint(label: "progress:0.0:L1:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L1:C0") {
-            // L1
-            try await runtime.emit(
-                event: "trigger.whatSkillHandles.fired",
-                payload: [
-                    "kind": .string("keyword"),
-                    "spec": .string("what skill handles"),
+        if __meridianShouldRun("progress:0.28:L145:C0") {
+            // L145
+            // — which brain (DB) and which source (repo) to target; cross-brain federation is latent-space only
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/conventions/brain-routing.md"),
                 ]
             )
-            try await runtime.checkpoint(label: "progress:0.1:L1:C0", state: state.snapshot())
+
+            try await runtime.checkpoint(label: "progress:0.28:L145:C0", state: state.snapshot())
         }
+        if __meridianShouldRun("progress:0.29:L149:C0") {
+            // L149
+            // — when to use Minions vs inline work
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/conventions/subagent-routing.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.29:L149:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.30:L150:C0") {
+            // L150
+            // — choice-gate pattern for human input at decision points
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/ask-user/SKILL.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.30:L150:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.31:L151:C0") {
+            // L151
+            // — where files go
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/_brain-filing-rules.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.31:L151:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.32:L152:C0") {
+            // L152
+            // — output quality standards
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/_output-rules.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.32:L152:C0", state: state.snapshot())
+        }
+        // L159
+        if MeridianComparison.eq(state.get("trigger"), .string("personalized version of this book")) {
+            if __meridianShouldRun("progress:0.33.then.0:L159:C0") {
+                // L159
+                // "mirror this book", "two-column book analysis", "apply this book to my life", "how does this book apply to me",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/book-mirror/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.33.then.0:L159:C0", state: state.snapshot())
+            }
+        }
+
+        // L159
+        if MeridianComparison.eq(state.get("trigger"), .string("enrich this article")) {
+            if __meridianShouldRun("progress:0.34.then.0:L159:C0") {
+                // L159
+                // "enrich brain pages", "batch enrich", "make brain pages useful",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/article-enrichment/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.34.then.0:L159:C0", state: state.snapshot())
+            }
+        }
+
+        // L159
+        if MeridianComparison.eq(state.get("trigger"), .string("strategic reading")) {
+            if __meridianShouldRun("progress:0.35.then.0:L159:C0") {
+                // L159
+                // "read this through the lens of", "apply this to my problem", "what can I learn from this about", "extract a playbook from",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/strategic-reading/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.35.then.0:L159:C0", state: state.snapshot())
+            }
+        }
+
+        // L159
+        if MeridianComparison.eq(state.get("trigger"), .string("concept synthesis")) {
+            if __meridianShouldRun("progress:0.36.then.0:L159:C0") {
+                // L159
+                // "synthesize my concepts", "find patterns across my notes", "build my intellectual map", "trace idea evolution",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/concept-synthesis/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.36.then.0:L159:C0", state: state.snapshot())
+            }
+        }
+
+        // L159
+        if MeridianComparison.eq(state.get("trigger"), .string("idea lineage")) {
+            if __meridianShouldRun("progress:0.37.then.0:L159:C0") {
+                // L159
+                // "trace the lineage of this idea", "how my thinking about", "how has my thinking about", "what is my current version of", "show reversals in my thinking about", "where did this idea come from",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/idea-lineage/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.37.then.0:L159:C0", state: state.snapshot())
+            }
+        }
+
+        // L159
+        if MeridianComparison.eq(state.get("trigger"), .string("perplexity research")) {
+            if __meridianShouldRun("progress:0.38.then.0:L159:C0") {
+                // L159
+                // "what's new about", "current state of", "web research", "what changed about",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/perplexity-research/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.38.then.0:L159:C0", state: state.snapshot())
+            }
+        }
+
+        // L159
+        if MeridianComparison.eq(state.get("trigger"), .string("crawl my archive")) {
+            if __meridianShouldRun("progress:0.39.then.0:L159:C0") {
+                // L159
+                // "find gold in my archive", "archive crawler", "scan my dropbox for", "mine my old files for",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/archive-crawler/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.39.then.0:L159:C0", state: state.snapshot())
+            }
+        }
+
+        // L159
+        if MeridianComparison.eq(state.get("trigger"), .string("verify this academic claim")) {
+            if __meridianShouldRun("progress:0.40.then.0:L159:C0") {
+                // L159
+                // "check this study", "academic verify", "validate citation", "is this study real",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/academic-verify/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.40.then.0:L159:C0", state: state.snapshot())
+            }
+        }
+
+        // L159
+        if MeridianComparison.eq(state.get("trigger"), .string("make pdf from brain")) {
+            if __meridianShouldRun("progress:0.41.then.0:L159:C0") {
+                // L159
+                // "brain pdf", "convert brain page to pdf", "publish this page as pdf", "export brain page",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/brain-pdf/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.41.then.0:L159:C0", state: state.snapshot())
+            }
+        }
+
+        // L159
+        if MeridianComparison.eq(state.get("trigger"), .string("voice note")) {
+            if __meridianShouldRun("progress:0.42.then.0:L159:C0") {
+                // L159
+                // "ingest this voice memo", "transcribe and file", "voice note ingest", "save this audio note",
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/voice-note-ingest/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.42.then.0:L159:C0", state: state.snapshot())
+            }
+        }
+
+        // L159
+        if MeridianComparison.eq(state.get("trigger"), .string("\"add a page type\", \"add a type to my schema\", \"schema author\", \"schema mutate\", \"schema pack add\", \"my brain has untyped pages\", \"propose new types from my corpus\", \"backfill page types\", \"evolve my schema\", \"researcher type\", \"make X an expert type\" (dispatcher for: gbrain schema active/list/show/validate/graph/lint/stats/explain/use/downgrade/reload/init/fork/edit/diff/add-type/remove-type/update-type/add-alias/remove-alias/add-prefix/remove-prefix/add-link-type/remove-link-type/set-extractable/set-expert-routing/detect/suggest/review-candidates/review-orphans/sync)")) {
+            if __meridianShouldRun("progress:0.43.then.0:L159:C0") {
+                // L159
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/schema-author/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.43.then.0:L159:C0", state: state.snapshot())
+            }
+        }
+
+        // L159
+        if MeridianComparison.eq(state.get("trigger"), .string("\"unify my types\", \"migrate to gbrain-base-v2\", \"94 types to 14\", \"apply canonical taxonomy\", \"clean up my page types\", \"pack upgrade\", \"shrink type proliferation\", \"consolidate page types\", \"retype pages to canonical\" (dispatcher for: gbrain onboard --check, gbrain onboard --check --explain, gbrain jobs submit unify-types, gbrain pages restore)")) {
+            if __meridianShouldRun("progress:0.44.then.0:L159:C0") {
+                // L159
+                _ = try await runtime.invoke(
+                    tool: "shell.run",
+                    args: [
+                        "command": .string("skills/schema-unify/SKILL.md"),
+                    ]
+                )
+
+                try await runtime.checkpoint(label: "progress:0.44.then.0:L159:C0", state: state.snapshot())
+            }
+        }
+
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

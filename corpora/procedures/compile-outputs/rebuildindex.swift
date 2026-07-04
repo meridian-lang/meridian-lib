@@ -296,58 +296,15 @@ public struct RebuildIndex: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "RebuildIndex", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L23:C0") {
-            // L23
-            try await runtime.assert((((state.get("indexJobs"))?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(state.get("indexJob")?.member("name")) }), message: "Expected all index jobs have a name")
-            try await runtime.checkpoint(label: "progress:0.0:L23:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L54:C0") {
-            // L54
-            let indexJobs = try await runtime.invoke(
-                tool: "indexList",
-                args: [
-                    "status": .string("lagging"),
-                ]
-            )
-            state.bind("indexJobs", indexJobs)
-
-            try await runtime.checkpoint(label: "progress:0.1:L54:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L17:C0") {
-            // L17
-            try await runtime.assert((!(((state.get("indexJobs"))?.asList ?? []).filter { __e in (meridianDef_IndexJob_lagging(__e)) }).isEmpty), message: "Expected any lagging index jobs")
-            try await runtime.checkpoint(label: "progress:0.2:L17:C0", state: state.snapshot())
-        }
-        // L18
-        for (__meridianLoopIndex_0_3, indexJob) in (state.get("indexjobs")?.asList ?? []).enumerated() {
-            let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
-            if __meridianShouldRun(__meridianLoopLabel_0_3) {
-            state.bind("indexJob", indexJob)
-                if __meridianShouldRun("progress:0.3.body.0:L66:C0") {
-                    // L66
-                    let job = try await runtime.invoke(
-                        tool: "indexRebuild",
-                        args: [
-                            "index job": state.get("indexJob") ?? .null,
-                        ]
-                    )
-                    state.bind("job", job)
-
-                    try await runtime.checkpoint(label: "progress:0.3.body.0:L66:C0", state: state.snapshot())
-                }
-                try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
-            }
-        }
-
-        if __meridianShouldRun("progress:0.4:L20:C0") {
-            // L20
-            try await runtime.emit(
-                event: "procedure.report",
-                payload: [
-                    "message": .string("lagging index jobs rebuilt"),
-                ]
-            )
-            try await runtime.checkpoint(label: "progress:0.4:L20:C0", state: state.snapshot())
+        // L12
+        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
+            prose: "follow the Use this when guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["audit_row.list", "batch.list", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "record.list", "record.mark_canonical", "record.purge"],
+            guidance: "\"rebuild lagging indexes\"\n\"index job stale\"\nuse judgment to follow the Procedure guidance:\nCheck: any lagging index jobs\nfetch lagging index jobs\nfor each index job:\nrebuild the index job\nEmit: \"lagging index jobs rebuilt\"\nuse judgment to follow the Assertions guidance:\nmake sure all index jobs have a name"
+        )
+        for (__key, __value) in __meridianProseResults_L12 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

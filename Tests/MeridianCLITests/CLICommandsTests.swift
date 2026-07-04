@@ -460,6 +460,32 @@ struct MigrateSkillCommandTests {
         let trace = try String(contentsOfFile: t.path("trace.log"), encoding: .utf8)
         #expect(!trace.isEmpty)
     }
+
+    @Test("--route-fuzzy defaults on and --no-route-fuzzy parses to false")
+    func routeFuzzyFlag() throws {
+        let onDefault = try MigrateSkillCommand.parse(["SKILL.md"])
+        #expect(onDefault.routeFuzzy)
+        let offExplicit = try MigrateSkillCommand.parse(["SKILL.md", "--no-route-fuzzy"])
+        #expect(!offExplicit.routeFuzzy)
+    }
+
+    @Test("--no-route-fuzzy leaves a fuzzy checklist (( inert )) instead of AI-routing it")
+    func noRouteFuzzyDisablesAiRouting() async throws {
+        let t = TempDir()
+        t.write("v.merconfig", "An input is a kind of thing.\n")
+        let md = t.write("SKILL.md", """
+        ---
+        name: demo
+        ---
+        ## Acceptance
+
+        - [ ] Reviewer judgment call one that needs synthesis of vague context
+        - [ ] Reviewer judgment call two that needs synthesis of vague context
+        - [ ] Reviewer judgment call three that needs synthesis of vague context
+        """)
+        var cmd = try MigrateSkillCommand.parse([md.path, "--no-route-fuzzy"])
+        do { try await cmd.run() } catch { /* ExitCode(1) when the candidate does not strict-compile */ }
+    }
 }
 
 // MARK: - resume

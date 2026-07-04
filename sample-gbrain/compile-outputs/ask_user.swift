@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -598,6 +598,23 @@ public struct AskUserInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "AskUserInput", parameters: [:])
 
+        // L62
+        if MeridianComparison.gt(state.get("time-criticalOperationsWhereDelayCosts"), state.get("wrongChoice")) {
+            // L62
+            await runtime.complete(reason: nil)
+            return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+        }
+
+        // L20
+        let __meridianProseResults_L20 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            guidance: "Present 2-4 options (no more — decision paralysis kicks in past 4)\nAlways include an escape hatch (Skip, Cancel, or \"none of these\")\nStop the turn immediately after presenting choices. No follow-up tool calls,\nno preemptive action, no default-and-proceed\nThe user's response triggers the next turn. Acknowledge briefly, then branch\nOne question per message — never stack multiple choice gates\nSelf-explanatory option labels: action verb plus brief qualifier, not \"Option 1\"\nuse judgment to follow the When To Use guidance:\nAmbiguous requests with multiple valid interpretations\nDestructive operations (bulk deletes, overwrites)\nFiling/routing decisions (\"where should this go?\")\nPriority triage (\"which should I do first?\")\nCold-start phase gates (\"ready for the next import source?\")\nAny fork where the wrong default wastes significant work\nuse judgment to follow the When NOT To Use guidance:\nClear, unambiguous instructions → just do it\nLow-stakes decisions → pick the best option and mention it\nWhen the user has already expressed a preference\nuse judgment to follow the Constraints guidance:\n**2-4 options max.** More than 4 creates decision paralysis\n**Labels must be self-explanatory.** The user shouldn't need to re-read context\n**Always include an escape hatch.** At minimum: \"Skip\" or \"Cancel\" as the last option\n**One question per message.** Never stack multiple choice gates\nuse judgment to follow the How To Gate (CRITICAL) guidance:\nAfter presenting choices, **you MUST stop your turn.** Do not:\n❌ Continue with \"while you decide, I'll start on...\"\n❌ Pick a default and proceed\n❌ Send follow-up messages before the user responds\n❌ Make assumptions about which option they'll pick\nInstead:\n✅ End your message with a brief note that you're waiting\n✅ Stop. Full stop. No more tool calls\nFormat: `Action verb — brief qualifier`\n✅ \"Merge — combine with existing page\"\n✅ \"Create new — separate meeting page\"\n❌ \"Option 1\"\n❌ \"Click here to merge the content into the existing brain page\"\nuse judgment to follow the Integration With Other Skills guidance:\nThis pattern is used by:\n**cold-start** — phase gates for each import source\n**ingest** — routing decisions for ambiguous content\n**enrich** — merge vs create decisions for entity pages\n**brain-ops** — filing location decisions\n**meeting-ingestion** — where to file meeting notes\n**archive-crawler** — scan vs full ingestion gate\nWhen building a new skill that needs user input at a decision point,\nreference this pattern rather than inventing a new one\nuse judgment to follow the Anti-Patterns guidance:\n**Continuing the turn after presenting choices.** \"While you decide, I'll start on...\"\ndefeats the gate. Stop. Wait. The whole point is that the user controls what happens next\n**Picking a default and proceeding silently.** If the question matters enough to ask,\nit matters enough to wait. Silent defaults erode trust the next time you do ask\n**More than 4 options.** Decision paralysis is real. Group, summarize, or split into\nstaged questions instead\n**No escape hatch.** Every choice gate must let the user decline. \"None of these\"\n/ \"Skip\" / \"Cancel\" is mandatory\n**Stacking multiple choice gates in one message.** The user can only answer one\nquestion per turn. Multi-question gates either get half-answered or dropped entirely\n**Cryptic option labels.** \"Option 1\" forces re-reading the context. \"Merge into\nexisting page\" is self-explanatory.\n**Asking about low-stakes decisions.** If the wrong answer costs nothing, just pick\nthe best option and mention it. Reserve gates for forks where rework is expensive"
+        )
+        for (__key, __value) in __meridianProseResults_L20 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

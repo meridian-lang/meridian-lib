@@ -3,8 +3,8 @@
 - Original: `idea-lineage/SKILL.md`
 - Ported: `idea_lineage.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 92%
-- Lines: 223 -> 223 (+17 / -17)
+- Similarity: 95%
+- Lines: 223 -> 232 (+16 / -7)
 
 ## Frontmatter
 - Added: (none)
@@ -12,6 +12,7 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - inert-section-added
 
 ## Inert deviations
@@ -19,41 +20,21 @@
 These sections were made non-executable in the port and should be reviewed as migration deviations:
 - L11 `What this solves`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 - L28 `What this is not`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L39 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
-- L52 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L54 `Phase 1: Resolve the idea target`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L67 `Phase 2: Gather evidence`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L86 `Phase 3: Classify lineage moments`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L107 `Phase 4: Synthesize the lineage`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L113 `Phase 5: Suggest optional next action`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L125 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L155 `Quality Rules`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
-- L168 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L179 `Related Skills and Operations`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L187 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L132 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L196 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
-- Sections: 14/14 inert (100% inert ratio)
-- Operational inert: 8
+- Sections inert total: 4/14 (29% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: normative-contract=2, operational-procedure=6, reference-documentation=4, template=1, tools-metadata=1
-- Judgment: 0 blocks, 0 lines
+- Inert categories: reference-documentation=2, template=1, tools-metadata=1
+- Judgment: 9 blocks, 0 lines
 
 ### Inert section details
 - L11 `What this solves`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 - L28 `What this is not`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L39 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
-- L52 `Phases`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L54 `Phase 1: Resolve the idea target`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L67 `Phase 2: Gather evidence`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L86 `Phase 3: Classify lineage moments`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L107 `Phase 4: Synthesize the lineage`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L113 `Phase 5: Suggest optional next action`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L125 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L155 `Quality Rules`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
-- L168 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L179 `Related Skills and Operations`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L187 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L132 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L196 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
@@ -78,63 +59,59 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - Not `concept-synthesis`: that skill deduplicates many concept stubs, tiers
    them, writes concept pages, and builds a broad intellectual map.
-@@ -63,7 +63,7 @@
+@@ -63,7 +63,8 @@
  - Not a writing mode by default: do not write a lineage page unless the user
    explicitly asks for a saved artifact after seeing the read-only answer.
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
++use judgment to follow the Contract guidance:
  
  This skill guarantees:
  
-@@ -76,9 +76,9 @@
-   temporal evolution.
+@@ -77,8 +78,10 @@
  - The default mode is read-only and does not mutate brain pages.
  
--## Phases
--
--### Phase 1: Resolve the idea target
-+## Phases (( inert, role: procedure ))
-+
-+### Phase 1: Resolve the idea target (( inert, role: procedure ))
+ ## Phases
++use judgment to follow the Phases guidance:
+ 
+ ### Phase 1: Resolve the idea target
++use judgment to follow the Phase 1: Resolve the idea target guidance:
  
  1. Restate the idea in one sentence.
  2. Search for exact phrase variants with `search`.
-@@ -91,7 +91,7 @@
- If multiple distinct ideas share the same phrase, ask the user to choose the
+@@ -92,6 +95,7 @@
  intended one before synthesizing.
  
--### Phase 2: Gather evidence
-+### Phase 2: Gather evidence (( inert, role: procedure ))
+ ### Phase 2: Gather evidence
++use judgment to follow the Phase 2: Gather evidence guidance:
  
  Collect enough evidence to support or reject each output bucket:
  
-@@ -110,7 +110,7 @@
- Prefer fewer high-quality sources over a long unsorted pile. Read full pages
+@@ -111,6 +115,7 @@
  when snippets imply a lineage milestone.
  
--### Phase 3: Classify lineage moments
-+### Phase 3: Classify lineage moments (( inert, role: procedure ))
+ ### Phase 3: Classify lineage moments
++use judgment to follow the Phase 3: Classify lineage moments guidance:
  
  Classify evidence into these buckets:
  
-@@ -131,13 +131,13 @@
- When a bucket has no evidence, write "No clear evidence found" with a brief note
+@@ -132,12 +137,14 @@
  about what was checked.
  
--### Phase 4: Synthesize the lineage
-+### Phase 4: Synthesize the lineage (( inert, role: procedure ))
+ ### Phase 4: Synthesize the lineage
++use judgment to follow the Phase 4: Synthesize the lineage guidance:
  
  Write the answer in the output format below. Keep the synthesis proportional to
  the evidence. Do not overfit a smooth evolution if the evidence is sparse,
  messy, or contradictory.
  
--### Phase 5: Suggest optional next action
-+### Phase 5: Suggest optional next action (( inert, role: procedure ))
+ ### Phase 5: Suggest optional next action
++use judgment to follow the Phase 5: Suggest optional next action guidance:
  
  If useful, offer one concrete follow-up:
  
-@@ -149,12 +149,12 @@
+@@ -149,7 +156,7 @@
  - Run a contradiction probe only when stale cached findings are insufficient
    and the user explicitly wants that heavier pass.
  
@@ -143,48 +120,27 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Use this shape for normal answers:
  
- ```markdown
--## Current Live Version
-+## Current Live Version (( inert ))
- [1-3 sentences. Include confidence: high / medium / low.]
- 
- ## Lineage
-@@ -172,14 +172,14 @@
- ## Related Concepts
- - [concept slug or title] - [relationship]
- 
--## Evidence Gaps
-+## Evidence Gaps (( inert ))
- - [bucket or claim] - [what was checked and what is missing]
- ```
- 
+@@ -179,7 +186,8 @@
  For short answers, collapse sections, but keep the same distinctions. Always
  cite the source for each non-gap claim.
  
 -## Quality Rules
-+## Quality Rules (( inert, role: invariants ))
++## Quality Rules (( role: procedure ))
++use judgment to follow the Quality Rules guidance:
  
  - Quote exact text when naming first mention or best articulation.
  - Include dates when the source has dates. If no date is available, say
-@@ -192,7 +192,7 @@
+@@ -192,7 +200,8 @@
    undated page, or a fuzzy semantic match.
  - Preserve source ids in citations when search or page payloads include them.
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++use judgment to follow the Anti-Patterns guidance:
  
  - Running `concept-synthesis` for a single-idea question.
  - Presenting an entity's MRR, ARR, role, or status trajectory as conceptual
-@@ -203,7 +203,7 @@
- - Using real names, companies, funds, or fork-specific examples in bundled
-   fixtures or documentation.
- 
--## Related Skills and Operations
-+## Related Skills and Operations (( inert ))
- 
- - `skills/concept-synthesis/SKILL.md` - broad mutating concept-map synthesis.
- - `skills/query/SKILL.md` - general brain search and cited answers.
-@@ -211,7 +211,7 @@
+@@ -211,7 +220,7 @@
  - `find_trajectory` - structured typed-fact and event timelines for entities.
  - `find_contradictions` - cached suspected contradiction findings.
  

@@ -20,14 +20,16 @@ mutating: false
 
 > **Full filing rules:** See `skills/_brain-filing-rules.md`
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 - Every new page is filed by primary subject (not format, not source)
 - The decision protocol is followed for ambiguous cases
 - Common misfiling patterns are caught
 
-## Phases (( inert, role: procedure ))
+## Phases
+use judgment to follow the Phases guidance:
 
 1. **Identify the primary subject.** What would you search for to find this page?
 2. **Walk the decision tree:**
@@ -45,7 +47,8 @@ This skill guarantees:
 
 Advisory: "File this at `{type}/{slug}.md` because the primary subject is {reason}."
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - Filing by format ("it's a PDF so it goes in sources/")
 - Filing by source ("it came from email so it goes in sources/")

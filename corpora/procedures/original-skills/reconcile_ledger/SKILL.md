@@ -12,11 +12,11 @@ triggers:
 - "reconcile ledger"
 - "settle ledger batches"
 
-## DBA notes (( inert ))
+## DBA notes
 The operator starts from a SQL snapshot and then lets Meridian drive only the
 declared deterministic settlement tools.
 
-## Procedure (( role: procedure ))
+## Procedure
 SQL: `psql -c "select id,status from ledger_batch where status='ready'" --csv` to snapshot ready batches.
 fetch ready batches.
 Check: all batches have a name.
@@ -24,8 +24,8 @@ for each batch:
   settle the batch.
 Emit: "ledger batches reconciled".
 
-## Assertions (( role: invariants ))
+## Assertions
 no batches whose status is "failed".
 
-## Output (( inert, role: template ))
+## Output
 The DBA expects a short reconciliation receipt and a list of settled batch ids.

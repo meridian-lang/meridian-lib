@@ -16,6 +16,7 @@ struct MeridianCLI: AsyncParsableCommand {
             PreviewSkillCommand.self,
             MigrateSkillCommand.self,
             SkillDeviationCommand.self,
+            InertYieldCommand.self,
             CheckCommand.self,
             FormatCommand.self,
             DocsCommand.self,

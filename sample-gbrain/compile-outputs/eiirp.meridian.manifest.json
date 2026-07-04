@@ -100,225 +100,243 @@
     "name" : "skillify reason: \"skillify is the meta-skill for turning a feature into a tested skill. EIIRP calls skillify when Phase 5 identifies a reusable pattern.\"",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 71,
         "text" : "Contract"
       },
       {
-        "kind" : "applicability",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 89,
+        "line" : 90,
         "text" : "When to Use"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 98,
+        "line" : 100,
         "text" : "Phase 1: INVENTORY — What did we produce?"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 102,
+        "line" : 105,
         "text" : "Knowledge outputs"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 111,
+        "line" : 114,
         "text" : "Capability outputs"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 131,
+        "line" : 134,
         "text" : "Phase 2: TAXONOMY — Where does each piece go?"
       },
       {
         "kind" : "procedure",
-        "level" : 2,
-        "line" : 159,
-        "text" : "Phase 3: SCHEMA CHECK — Does the active pack cover this content?"
+        "level" : 3,
+        "line" : 155,
+        "text" : "Phase 2: TAXONOMY — Where does each piece go? — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 165,
+        "text" : "Phase 2: TAXONOMY — Where does each piece go? — steps 2"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 189,
+        "line" : 169,
+        "text" : "Phase 3: SCHEMA CHECK — Does the active pack cover this content?"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 183,
+        "text" : "Phase 3: SCHEMA CHECK — Does the active pack cover this content? — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 202,
+        "text" : "Phase 3: SCHEMA CHECK — Does the active pack cover this content? — steps 2"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 206,
         "text" : "Phase 4: FILE — Create enriched brain pages"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 193,
+        "line" : 210,
         "text" : "4a. Primary research page"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 202,
+        "line" : 220,
         "text" : "4b. Entity pages (people, companies)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 208,
+        "line" : 226,
         "text" : "4c. Commit and verify"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 212,
+        "line" : 233,
         "text" : "Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 216,
+        "line" : 238,
         "text" : "5a. New pattern identification"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 239,
+        "line" : 267,
         "text" : "5b. Existing skill audit"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 247,
+        "line" : 276,
         "text" : "5c. Present the plan"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 268,
+        "line" : 300,
         "text" : "Phase 6: CHECK_RESOLVABLE — Verify everything routes"
       },
       {
         "kind" : "procedure",
+        "level" : 3,
+        "line" : 303,
+        "text" : "Phase 6: CHECK_RESOLVABLE — Verify everything routes — steps"
+      },
+      {
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 288,
+        "line" : 324,
         "text" : "Phase 7: REPORT — Summary"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 315,
+        "line" : 352,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 345,
+        "line" : 382,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 364,
+        "line" : 402,
         "text" : "Hard Rules"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 366,
+        "line" : 405,
         "text" : "Knowledge domain"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 373,
+        "line" : 413,
         "text" : "Capability domain"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 379,
+        "line" : 419,
         "text" : "Meta"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 383,
+        "line" : 423,
         "text" : "Changelog"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 385,
+        "line" : 425,
         "text" : "v1.0.0 — gbrain v0.39.0.0"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 120,
+        "line" : 123,
         "text" : "Produce a manifest"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 148,
+        "line" : 167,
         "text" : "Output"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 182,
-        "text" : "If schema needs change"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 191,
+        "line" : 208,
         "text" : "For each item in the filing plan"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 203,
+        "line" : 221,
         "text" : "For each entity mentioned"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 205,
+        "line" : 223,
         "text" : "If exists"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 206,
+        "line" : 224,
         "text" : "If not"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 218,
+        "line" : 240,
         "text" : "Ask"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 266,
+        "line" : 257,
+        "text" : "For each identified pattern"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 298,
         "text" : "On approval"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 270,
-        "text" : "After all filing and skillification"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 279,
-        "text" : "Confirm"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 341,
+        "line" : 378,
         "text" : "Always machine-readable"
       }
     ],
@@ -326,10 +344,11 @@
     "reason" : "\"brain-taxonomist classifies individual pages at write time (the filing GATE). EIIRP orchestrates the full post-work LIFECYCLE — inventory + taxonomy + schema + skillify + verify.\"",
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 71,
         "lines" : [
+          "use judgment to follow the Contract guidance:",
           "After any significant work, EIIRP organizes ALL outputs across two domains:",
           "**Knowledge domain (brain):**",
           "Every piece of knowledge lands in the correct brain location",
@@ -343,13 +362,14 @@
           "**The meta-guarantee:** Nothing produced during significant work lives only in chat",
           "Knowledge → brain. Patterns → skills. Everything in its right place"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "When to Use",
-        "line" : 89,
+        "line" : 90,
         "lines" : [
+          "use judgment to follow the When to Use guidance:",
           "After completing a deep research thread",
           "After building something new (code, pipeline, workflow)",
           "After a multi-source analysis that produced significant findings",
@@ -357,13 +377,14 @@
           "When a work session produced both knowledge AND new capabilities",
           "When you notice skill overlap, duplication, or gaps"
         ],
-        "role" : "applicability"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 1: INVENTORY — What did we produce?",
-        "line" : 98,
+        "line" : 100,
         "lines" : [
+          "use judgment to follow the Phase 1: INVENTORY — What did we produce? guidance:",
           "Scan the current session\/thread and identify ALL outputs across both domains"
         ],
         "role" : "procedure"
@@ -371,7 +392,7 @@
       {
         "executes" : false,
         "heading" : "Knowledge outputs",
-        "line" : 102,
+        "line" : 105,
         "lines" : [
           "codeblock:plain:4pahIFByaW1hcnkgZmluZGluZ3MgKHRoZSBzeW50aGVzaXMpCuKWoSBTb3VyY2UgZG9jdW1lbnRzIChVUkxzLCBQREZzLCBhcnRpY2xlcywgdHdlZXRzKQrilqEgRW50aXR5IG1lbnRpb25zIChwZW9wbGUsIGNvbXBhbmllcywgb3JnYW5pemF0aW9ucywgcGxhY2VzKQrilqEgQ29uY2VwdHMvZnJhbWV3b3JrcyAocmV1c2FibGUgbWVudGFsIG1vZGVscykK4pahIERhdGEgYXJ0aWZhY3RzIChzdHJ1Y3R1cmVkIGRhdGEsIHRpbWVsaW5lcywgc3RhdGlzdGljcyk="
         ],
@@ -380,48 +401,58 @@
       {
         "executes" : false,
         "heading" : "Capability outputs",
-        "line" : 111,
+        "line" : 114,
         "lines" : [
           "codeblock:plain:4pahIE5ldyBza2lsbHMgY3JlYXRlZCBvciBtb2RpZmllZArilqEgU2NyaXB0cy9jb2RlIHdyaXR0ZW4gKHNob3VsZCB0aGV5IGJlIGluIGxpYi8gb3Igc2NyaXB0cy8\/KQrilqEgTWV0aG9kb2xvZ3kgdXNlZCAoc2VhcmNoIHBhdHRlcm5zLCBzb3VyY2UgY2hhaW5zLCB2ZXJpZmljYXRpb24gc3RlcHMpCuKWoSBXb3JrZmxvd3MgdGhhdCBjb3VsZCBiZSBhdXRvbWF0ZWQgKGNyb24sIHBpcGVsaW5lLCB3ZWJob29rKQrilqEgUGF0dGVybnMgdGhhdCB3aWxsIHJlY3VyICjihpIgY2FuZGlkYXRlIGZvciBza2lsbGlmaWNhdGlvbik=",
           "Produce a manifest:",
-          "codeblock:markdown:IyMgRUlJUlAgTWFuaWZlc3QgKCggaW5lcnQgKSkKLSBUb3BpYzogW3RvcGljXQotIERhdGU6IFtkYXRlXQotIEtub3dsZWRnZSBvdXRwdXRzOiBbY291bnRdIChzb3VyY2VzLCBlbnRpdGllcywgY29uY2VwdHMpCi0gQ2FwYWJpbGl0eSBvdXRwdXRzOiBbY291bnRdIChza2lsbHMsIHNjcmlwdHMsIHBhdHRlcm5zKQotIFJldXNhYmxlIG1ldGhvZG9sb2d5OiBbeWVzL25vIOKAlCBkZXNjcmliZSBpZiB5ZXNd"
+          "codeblock:markdown:IyMgRUlJUlAgTWFuaWZlc3QKLSBUb3BpYzogW3RvcGljXQotIERhdGU6IFtkYXRlXQotIEtub3dsZWRnZSBvdXRwdXRzOiBbY291bnRdIChzb3VyY2VzLCBlbnRpdGllcywgY29uY2VwdHMpCi0gQ2FwYWJpbGl0eSBvdXRwdXRzOiBbY291bnRdIChza2lsbHMsIHNjcmlwdHMsIHBhdHRlcm5zKQotIFJldXNhYmxlIG1ldGhvZG9sb2d5OiBbeWVzL25vIOKAlCBkZXNjcmliZSBpZiB5ZXNd"
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 2: TAXONOMY — Where does each piece go?",
-        "line" : 131,
+        "line" : 134,
         "lines" : [
-          "**Read the active schema pack first** (the single source of truth for",
-          "filing decisions in v0.39+):",
-          "codeblock:bash:Z2JyYWluIHNjaGVtYSBzaG93IC0tanNvbg==",
+          "use judgment to follow the Phase 2: TAXONOMY — Where does each piece go? guidance:",
           "The pack's `page_types[]` lists every directory the brain accepts plus",
           "the primitive each maps to. Walk it for each output and pick the directory",
           "whose `path_prefixes` matches the content's primary subject",
           "If `brain-taxonomist` is installed, INVOKE IT for ambiguous cases. It runs",
           "the same decision protocol against the active pack and gives you a single",
           "recommended filing path with reasoning",
-          "Output: a filing plan table:",
           "codeblock:plain:fCBDb250ZW50IHwgQnJhaW4gcGF0aCB8IEFjdGlvbiB8CnwtLS0tLS0tLS18LS0tLS0tLS0tLS18LS0tLS0tLS18CnwgUHJpbWFyeSByZXNlYXJjaCB8IHJlZmVyZW5jZS8uLi4vcGFnZS5tZCB8IENSRUFURSB8CnwgUGVyc29uIFggfCBwZW9wbGUveC1zbHVnLm1kIHwgQ1JFQVRFIHwKfCBQZXJzb24gWSB8IHBlb3BsZS95LXNsdWcubWQgfCBVUERBVEUgKGFscmVhZHkgZXhpc3RzKSB8CnwgLi4uIHwgLi4uIHwgLi4uIHw="
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
-        "heading" : "Phase 3: SCHEMA CHECK — Does the active pack cover this content?",
-        "line" : 159,
+        "executes" : true,
+        "heading" : "Phase 2: TAXONOMY — Where does each piece go? — steps",
+        "line" : 155,
         "lines" : [
-          "This is where EIIRP closes the schema-derivation loop. If the work",
-          "produced content that doesn't fit any existing `page_types`, propose",
-          "adding a new type via the v0.39 cathedral:",
-          "codeblock:bash:IyBXaGF0J3MgZW1lcmdpbmcgaW4gdGhlIGJyYWluIHRoYXQgdGhlIGFjdGl2ZSBwYWNrIGRvZXNuJ3QgY292ZXI\/CmdicmFpbiBzY2hlbWEgZGV0ZWN0IC0tanNvbgoKIyBMTE0tcmVmaW5lZCBzdWdnZXN0aW9ucyAoaGV1cmlzdGljIHdoZW4gbm8gQVBJIGtleSBzZXQpLgpnYnJhaW4gc2NoZW1hIHN1Z2dlc3QgLS1qc29uCgojIFJldmlldyB3aGF0J3MgcGVuZGluZzsgcHJvbW90ZSBvciBpZ25vcmUgZWFjaCBjYW5kaWRhdGUuCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1qc29uCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1hcHBseSA8cHJlZml4LW9yLXR5cGUtbmFtZT4=",
+          "codeblock:bash:Z2JyYWluIHNjaGVtYSBzaG93IC0tanNvbg=="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 2: TAXONOMY — Where does each piece go? — steps 2",
+        "line" : 165,
+        "lines" : [
+          "Output: a filing plan table:"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 3: SCHEMA CHECK — Does the active pack cover this content?",
+        "line" : 169,
+        "lines" : [
+          "use judgment to follow the Phase 3: SCHEMA CHECK — Does the active pack cover this content? guidance:",
           "**Confidence floor (codex finding #9):** when `gbrain schema suggest`",
           "returns confidence < 0.6 on a proposed type, DO NOT auto-apply. Surface",
           "the suggestion to the user and let them choose. The schema-cathedral",
           "ships the primitives; EIIRP enforces the human-in-the-loop gate",
-          "If schema needs change:",
-          "Propose the addition to the user before running `review-candidates --apply`",
           "Document the change in the commit message of the next sync",
           "The schema-pack engine writes the delta to",
           "`~\/.gbrain\/schema-pack-deltas\/` — review and merge into the active",
@@ -430,19 +461,38 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
+        "heading" : "Phase 3: SCHEMA CHECK — Does the active pack cover this content? — steps",
+        "line" : 183,
+        "lines" : [
+          "codeblock:bash:IyBXaGF0J3MgZW1lcmdpbmcgaW4gdGhlIGJyYWluIHRoYXQgdGhlIGFjdGl2ZSBwYWNrIGRvZXNuJ3QgY292ZXI\/CmdicmFpbiBzY2hlbWEgZGV0ZWN0IC0tanNvbgoKIyBMTE0tcmVmaW5lZCBzdWdnZXN0aW9ucyAoaGV1cmlzdGljIHdoZW4gbm8gQVBJIGtleSBzZXQpLgpnYnJhaW4gc2NoZW1hIHN1Z2dlc3QgLS1qc29uCgojIFJldmlldyB3aGF0J3MgcGVuZGluZzsgcHJvbW90ZSBvciBpZ25vcmUgZWFjaCBjYW5kaWRhdGUuCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1qc29uCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1hcHBseSA8cHJlZml4LW9yLXR5cGUtbmFtZT4="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 3: SCHEMA CHECK — Does the active pack cover this content? — steps 2",
+        "line" : 202,
+        "lines" : [
+          "Propose the addition to the user before running `review-candidates --apply`"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
         "heading" : "Phase 4: FILE — Create enriched brain pages",
-        "line" : 189,
+        "line" : 206,
         "lines" : [
           "For each item in the filing plan:"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "4a. Primary research page",
-        "line" : 193,
+        "line" : 210,
         "lines" : [
+          "use judgment to follow the 4a. Primary research page guidance:",
           "Use the brain page template. MUST include:",
           "Proper frontmatter (`type`, `title`, `date`, `tags`, sources)",
           "**State** section — current status\/key findings",
@@ -451,24 +501,24 @@
           "**Entity links** — backlinks to all related brain pages",
           "**See Also** — related concepts, reference pages"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "4b. Entity pages (people, companies)",
-        "line" : 202,
+        "line" : 220,
         "lines" : [
           "For each entity mentioned:",
           "Check if a brain page exists (`gbrain search \"<name>\"` or `gbrain get_page people\/<slug>`)",
           "If exists: update State, append Timeline entry citing this research",
           "If not: create with enrichment"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "4c. Commit and verify",
-        "line" : 208,
+        "line" : 226,
         "lines" : [
           "After ALL pages are written, run `gbrain sync` (or commit + push in the",
           "brain repo). Verify every link resolves"
@@ -476,10 +526,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities",
-        "line" : 212,
+        "line" : 233,
         "lines" : [
+          "use judgment to follow the Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities guidance:",
           "This phase operates on the SKILL graph, not just the research"
         ],
         "role" : "procedure"
@@ -487,7 +538,7 @@
       {
         "executes" : false,
         "heading" : "5a. New pattern identification",
-        "line" : 216,
+        "line" : 238,
         "lines" : [
           "Ask: did this work reveal REPEATABLE patterns that will recur?",
           "**Indicators of a reusable pattern:**",
@@ -496,37 +547,36 @@
           "You wrote code that could be parameterized for different inputs",
           "The output format is generalizable",
           "The user is likely to ask for similar work on a different topic",
-          "**For each identified pattern:**",
-          "Identify the composable pieces (DRY, MECE):",
-          "Shared logic → `lib\/` (not copy-pasted into skills)",
           "Search methodology → skill or lib function",
           "Output template → brain template or skill phase",
           "Filing logic → already covered by brain-taxonomist + active pack",
-          "DRY check via the v0.19 resolver:",
-          "codeblock:bash:Z2JyYWluIGNoZWNrLXJlc29sdmFibGU=",
-          "Look for overlapping triggers or unreachable skills"
+          "Look for overlapping triggers or unreachable skills",
+          "For each identified pattern:",
+          "Shared logic → `lib\/` (not copy-pasted into skills)",
+          "codeblock:bash:Z2JyYWluIGNoZWNrLXJlc29sdmFibGU="
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "5b. Existing skill audit",
-        "line" : 239,
+        "line" : 267,
         "lines" : [
+          "use judgment to follow the 5b. Existing skill audit guidance:",
           "For ALL skills used or touched during this work, check:",
           "Were any skills BYPASSED? (did you do something manually that a skill should handle?)",
           "Are there skills that OVERLAP with what you just did? (merge candidates)",
           "Is shared code copy-pasted between skills? (extract to `lib\/`)",
           "**The MECE question:** If someone asked for this exact work again tomorrow on a different topic, which skills would they invoke? Is the path clear and unambiguous? If not, fix the routing"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "5c. Present the plan",
-        "line" : 247,
+        "line" : 276,
         "lines" : [
-          "codeblock:plain:IyMgU2tpbGwgR3JhcGggQ2hhbmdlcyAoKCBpbmVydCApKQoKIyMjIE5ldyBza2lsbHMgdG8gY3JlYXRlCjEuIFtza2lsbC1uYW1lXSDigJQgW3doYXQgaXQgZG9lc10KICAgLSBEUlkgY2hlY2s6IFtjbGVhbiAvIG92ZXJsYXBzIHdpdGggWF0KICAgLSBSZWNvbW1lbmRhdGlvbjogW2NyZWF0ZSAvIG1lcmdlIGludG8gWF0KCiMjIyBFeGlzdGluZyBza2lsbHMgdG8gdXBkYXRlCjEuIFtza2lsbC1uYW1lXSDigJQgW3doYXQgY2hhbmdlZCwgd2h5XQoKIyMjIENvZGUgdG8gZXh0cmFjdCB0byBsaWIvCjEuIGxpYi9bbmFtZV0udHMg4oCUIFt3aGF0IGl0IGRvZXMsIHdoaWNoIHNraWxscyB1c2UgaXRdCgojIyMgU2tpbGxzIHRvIG1lcmdlIG9yIGRlcHJlY2F0ZSAoKCBpbmVydCApKQoxLiAqKltza2lsbC1BXSArIFtza2lsbC1CXSoqIOKGkiBbbWVyZ2VkLXNraWxsXSDigJQgW3doeV0=",
+          "codeblock:plain:IyMgU2tpbGwgR3JhcGggQ2hhbmdlcwoKIyMjIE5ldyBza2lsbHMgdG8gY3JlYXRlCjEuICoqW3NraWxsLW5hbWVdKiog4oCUIFt3aGF0IGl0IGRvZXNdCiAgIC0gRFJZIGNoZWNrOiBbY2xlYW4gLyBvdmVybGFwcyB3aXRoIFhdCiAgIC0gUmVjb21tZW5kYXRpb246IFtjcmVhdGUgLyBtZXJnZSBpbnRvIFhdCgojIyMgRXhpc3Rpbmcgc2tpbGxzIHRvIHVwZGF0ZQoxLiAqKltza2lsbC1uYW1lXSoqIOKAlCBbd2hhdCBjaGFuZ2VkLCB3aHldCgojIyMgQ29kZSB0byBleHRyYWN0IHRvIGxpYi8KMS4gKipsaWIvW25hbWVdLnRzKiog4oCUIFt3aGF0IGl0IGRvZXMsIHdoaWNoIHNraWxscyB1c2UgaXRdCgojIyMgU2tpbGxzIHRvIG1lcmdlIG9yIGRlcHJlY2F0ZQoxLiAqKltza2lsbC1BXSArIFtza2lsbC1CXSoqIOKGkiBbbWVyZ2VkLXNraWxsXSDigJQgW3doeV0=",
           "On approval: invoke `\/skillify` for each new\/modified skill"
         ],
         "role" : "inert"
@@ -534,37 +584,39 @@
       {
         "executes" : false,
         "heading" : "Phase 6: CHECK_RESOLVABLE — Verify everything routes",
-        "line" : 268,
+        "line" : 300,
         "lines" : [
-          "After all filing and skillification:",
-          "codeblock:bash:Z2JyYWluIGNoZWNrLXJlc29sdmFibGUgICAgICAgICAgICAgICAgICAgICAgICAgIyByb3V0aW5nLXRhYmxlIHJlYWNoYWJpbGl0eQpnYnJhaW4gZG9jdG9yIC0tanNvbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIGhlYWx0aCBzdXJmYWNlCmdicmFpbiBzZWFyY2ggIjx0b3BpYyBrZXl3b3Jkcz4iICAgICAgICAgICAgICAgICMgYnJhaW4gcGFnZXMgZmluZGFibGUKZ2JyYWluIG9ycGhhbnMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBhbnkgcGFnZXMgd2l0aG91dCBpbmJvdW5kIGxpbmtzPw==",
-          "Confirm:",
-          "All brain pages have proper frontmatter against active schema pack",
-          "All entity pages are cross-linked",
-          "Any new skills have routing entries in `skills\/RESOLVER.md`",
-          "No DRY violations (no duplicated logic across skills)",
-          "No MECE violations (no ambiguous routing between skills)",
-          "Active schema pack updated if new content types emerged",
-          "`gbrain doctor` reports `schema_pack_consistency: ok`"
+
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
-        "heading" : "Phase 7: REPORT — Summary",
-        "line" : 288,
+        "executes" : true,
+        "heading" : "Phase 6: CHECK_RESOLVABLE — Verify everything routes — steps",
+        "line" : 303,
         "lines" : [
-          "codeblock:markdown:IyMgRUlJUlAgQ29tcGxldGU6IFtUb3BpY10gKCggaW5lcnQgKSkKCiMjIyBCcmFpbiBwYWdlcyBjcmVhdGVkL3VwZGF0ZWQKLSBbcGF0aF0g4oCUIFtkZXNjcmlwdGlvbl0KLSAuLi4KCiMjIyBFbnRpdHkgcGFnZXMKLSBbcGF0aF0g4oCUIFtjcmVhdGVkL3VwZGF0ZWRdCi0gLi4uCgojIyMgU2NoZW1hIGNoYW5nZXMKLSBbbm9uZSAvIGRlc2NyaXB0aW9uIG9mIGNoYW5nZXMgKyB3aGljaCBwYWNrIGRlbHRhIGZpbGVdCgojIyMgU2tpbGxzIGlkZW50aWZpZWQKLSBbc2tpbGwtbmFtZV0g4oCUIFtzdGF0dXM6IGNyZWF0ZWQgLyBtZXJnZWQgLyBkZWZlcnJlZF0KLSAuLi4KCiMjIyBSZXNvbHZlciBzdGF0dXMgKCggaW5lcnQgKSkKLSBEUlkgY2hlY2s6IFtjbGVhbl0KLSBNRUNFIGF1ZGl0OiBbY2xlYW5dCi0gQWN0aXZlIHBhY2s6IFtuYW1lXSB2W3ZlcnNpb25dCi0gc2NoZW1hX3BhY2tfY29uc2lzdGVuY3k6IFtvayAvIHdhcm4g4oCUIHBjdCB1bnR5cGVkXQ=="
+          "codeblock:bash:Z2JyYWluIGNoZWNrLXJlc29sdmFibGUgICAgICAgICAgICAgICAgICAgICAgICAgIyByb3V0aW5nLXRhYmxlIHJlYWNoYWJpbGl0eQpnYnJhaW4gZG9jdG9yIC0tanNvbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIGhlYWx0aCBzdXJmYWNlCmdicmFpbiBzZWFyY2ggIjx0b3BpYyBrZXl3b3Jkcz4iICAgICAgICAgICAgICAgICMgYnJhaW4gcGFnZXMgZmluZGFibGUKZ2JyYWluIG9ycGhhbnMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBhbnkgcGFnZXMgd2l0aG91dCBpbmJvdW5kIGxpbmtzPw==",
+          "checklist:ai-autonomy:QWxsIGJyYWluIHBhZ2VzIGhhdmUgcHJvcGVyIGZyb250bWF0dGVyIGFnYWluc3QgYWN0aXZlIHNjaGVtYSBwYWNrCkFsbCBlbnRpdHkgcGFnZXMgYXJlIGNyb3NzLWxpbmtlZApBbnkgbmV3IHNraWxscyBoYXZlIHJvdXRpbmcgZW50cmllcyBpbiBgc2tpbGxzL1JFU09MVkVSLm1kYApObyBEUlkgdmlvbGF0aW9ucyAobm8gZHVwbGljYXRlZCBsb2dpYyBhY3Jvc3Mgc2tpbGxzKQpObyBNRUNFIHZpb2xhdGlvbnMgKG5vIGFtYmlndW91cyByb3V0aW5nIGJldHdlZW4gc2tpbGxzKQpBY3RpdmUgc2NoZW1hIHBhY2sgdXBkYXRlZCBpZiBuZXcgY29udGVudCB0eXBlcyBlbWVyZ2VkCmBnYnJhaW4gZG9jdG9yYCByZXBvcnRzIGBzY2hlbWFfcGFja19jb25zaXN0ZW5jeTogb2tg"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 7: REPORT — Summary",
+        "line" : 324,
+        "lines" : [
+          "use judgment to follow the Phase 7: REPORT — Summary guidance:",
+          "codeblock:markdown:IyMgRUlJUlAgQ29tcGxldGU6IFtUb3BpY10KCiMjIyBCcmFpbiBwYWdlcyBjcmVhdGVkL3VwZGF0ZWQKLSBbcGF0aF0g4oCUIFtkZXNjcmlwdGlvbl0KLSAuLi4KCiMjIyBFbnRpdHkgcGFnZXMKLSBbcGF0aF0g4oCUIFtjcmVhdGVkL3VwZGF0ZWRdCi0gLi4uCgojIyMgU2NoZW1hIGNoYW5nZXMKLSBbbm9uZSAvIGRlc2NyaXB0aW9uIG9mIGNoYW5nZXMgKyB3aGljaCBwYWNrIGRlbHRhIGZpbGVdCgojIyMgU2tpbGxzIGlkZW50aWZpZWQKLSBbc2tpbGwtbmFtZV0g4oCUIFtzdGF0dXM6IGNyZWF0ZWQgLyBtZXJnZWQgLyBkZWZlcnJlZF0KLSAuLi4KCiMjIyBSZXNvbHZlciBzdGF0dXMKLSBEUlkgY2hlY2s6IFtjbGVhbl0KLSBNRUNFIGF1ZGl0OiBbY2xlYW5dCi0gQWN0aXZlIHBhY2s6IFtuYW1lXSB2W3ZlcnNpb25dCi0gc2NoZW1hX3BhY2tfY29uc2lzdGVuY3k6IFtvayAvIHdhcm4g4oCUIHBjdCB1bnR5cGVkXQ=="
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 315,
+        "line" : 352,
         "lines" : [
           "EIIRP produces a single Phase 7 report block. Plain markdown:",
-          "codeblock:markdown:IyMgRUlJUlAgQ29tcGxldGU6IFt0b3BpY10gKCggaW5lcnQgKSkKCiMjIyBCcmFpbiBwYWdlcyBjcmVhdGVkL3VwZGF0ZWQKLSBbcGF0aF0g4oCUIFtkZXNjcmlwdGlvbl0KCiMjIyBFbnRpdHkgcGFnZXMKLSBbcGF0aF0g4oCUIFtjcmVhdGVkfHVwZGF0ZWRdCgojIyMgU2NoZW1hIGNoYW5nZXMKLSBbbm9uZSB8IGRlc2NyaXB0aW9uIG9mIGNoYW5nZXMgKyB3aGljaCBwYWNrIGRlbHRhIGZpbGVdCgojIyMgU2tpbGxzIGlkZW50aWZpZWQKLSBbc2tpbGwtbmFtZV0g4oCUIFtzdGF0dXM6IGNyZWF0ZWR8bWVyZ2VkfGRlZmVycmVkXQoKIyMjIFJlc29sdmVyIHN0YXR1cyAoKCBpbmVydCApKQotIERSWSBjaGVjazogW2NsZWFufE4gdmlvbGF0aW9uc10KLSBNRUNFIGF1ZGl0OiBbY2xlYW58TiBvdmVybGFwc10KLSBBY3RpdmUgcGFjazogW25hbWVdIHZbdmVyc2lvbl0KLSBzY2hlbWFfcGFja19jb25zaXN0ZW5jeTogW29rfHdhcm4g4oCUIE4lIHVudHlwZWRd",
+          "codeblock:markdown:IyMgRUlJUlAgQ29tcGxldGU6IFt0b3BpY10KCiMjIyBCcmFpbiBwYWdlcyBjcmVhdGVkL3VwZGF0ZWQKLSBbcGF0aF0g4oCUIFtkZXNjcmlwdGlvbl0KCiMjIyBFbnRpdHkgcGFnZXMKLSBbcGF0aF0g4oCUIFtjcmVhdGVkfHVwZGF0ZWRdCgojIyMgU2NoZW1hIGNoYW5nZXMKLSBbbm9uZSB8IGRlc2NyaXB0aW9uIG9mIGNoYW5nZXMgKyB3aGljaCBwYWNrIGRlbHRhIGZpbGVdCgojIyMgU2tpbGxzIGlkZW50aWZpZWQKLSBbc2tpbGwtbmFtZV0g4oCUIFtzdGF0dXM6IGNyZWF0ZWR8bWVyZ2VkfGRlZmVycmVkXQoKIyMjIFJlc29sdmVyIHN0YXR1cwotIERSWSBjaGVjazogW2NsZWFufE4gdmlvbGF0aW9uc10KLSBNRUNFIGF1ZGl0OiBbY2xlYW58TiBvdmVybGFwc10KLSBBY3RpdmUgcGFjazogW25hbWVdIHZbdmVyc2lvbl0KLSBzY2hlbWFfcGFja19jb25zaXN0ZW5jeTogW29rfHdhcm4g4oCUIE4lIHVudHlwZWRd",
           "Always machine-readable: stable section headers + bullet-per-item. The",
           "report doubles as a sync checkpoint for downstream skills (skillpack-check",
           "reads it; doctor cross-references the pack version)"
@@ -572,10 +624,11 @@
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 345,
+        "line" : 382,
         "lines" : [
+          "use judgment to follow the Anti-Patterns guidance:",
           "**Hardcoding directory tables in EIIRP's logic.** Every filing decision",
           "reads `gbrain schema show --json`. Users on `gbrain-recommended` AND",
           "custom packs MUST get the right behavior automatically. Pinned by D9",
@@ -593,34 +646,35 @@
           "**Treating non-English sources as secondary citations.** Multilingual",
           "sources are first-class"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Hard Rules",
-        "line" : 364,
+        "line" : 402,
         "lines" : [
-
+          "use judgment to follow the Hard Rules guidance:"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Knowledge domain",
-        "line" : 366,
+        "line" : 405,
         "lines" : [
+          "use judgment to follow the Knowledge domain guidance:",
           "**Never leave research only in chat.** If it took >10 minutes to produce, it gets a brain page",
           "**Every source gets a citation.** No \"according to reports\" without a URL",
           "**Entity pages get updated, not just created.** If a brain page exists, UPDATE it",
           "**Schema changes require confirmation.** The active pack is load-bearing",
           "**Multilingual sources are first-class.** Never treat non-English sources as secondary"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Capability domain",
-        "line" : 373,
+        "line" : 413,
         "lines" : [
           "**DRY is sacred.** If the same logic appears in two skills, extract it to `lib\/`",
           "**MECE is sacred.** Every trigger phrase routes to exactly one skill",
@@ -630,19 +684,19 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Meta",
-        "line" : 379,
+        "line" : 419,
         "lines" : [
           "**EIIRP is idempotent.** Running it twice on the same work should produce no changes the second time",
           "**EIIRP consumes the active schema pack as data.** Never hard-code directory tables in EIIRP's logic — read from `gbrain schema show --json` so users who picked `gbrain-recommended` OR custom packs get the right behavior automatically"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Changelog",
-        "line" : 383,
+        "line" : 423,
         "lines" : [
 
         ],
@@ -651,7 +705,7 @@
       {
         "executes" : false,
         "heading" : "v1.0.0 — gbrain v0.39.0.0",
-        "line" : 385,
+        "line" : 425,
         "lines" : [
           "Initial port from upstream OpenClaw. Genericized — no references to",
           "private fork names per CLAUDE.md privacy rules",
@@ -708,132 +762,136 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 639
+      "meridian_line" : 72,
+      "swift_line" : 610
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 644
+      "swift_line" : 649
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 683
+      "swift_line" : 654
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 688
+      "swift_line" : 693
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 727
+      "swift_line" : 698
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 732
+      "swift_line" : 737
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 771
+      "swift_line" : 742
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 776
+      "swift_line" : 781
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 815
+      "swift_line" : 786
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 820
+      "swift_line" : 825
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 859
+      "swift_line" : 830
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 864
+      "swift_line" : 869
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 903
+      "swift_line" : 874
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 908
+      "swift_line" : 913
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 947
+      "swift_line" : 918
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 952
+      "swift_line" : 957
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 991
+      "swift_line" : 962
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 996
+      "swift_line" : 1001
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1035
+      "swift_line" : 1006
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1040
+      "swift_line" : 1045
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1079
+      "swift_line" : 1050
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1084
+      "swift_line" : 1089
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1123
+      "swift_line" : 1094
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1128
+      "swift_line" : 1133
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1167
+      "swift_line" : 1138
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1172
+      "swift_line" : 1177
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1211
+      "swift_line" : 1182
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1216
+      "swift_line" : 1221
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1255
+      "swift_line" : 1226
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1260
+      "swift_line" : 1265
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1299
+      "swift_line" : 1270
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1304
+      "swift_line" : 1309
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1314
     }
   ],
   "tools_used" : [
@@ -846,6 +904,22 @@
         {
           "kind" : "Input",
           "name" : "input"
+        }
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "After any significant work, EIIRP organizes ALL outputs across two domains:\n**Knowledge domain (brain):**\nEvery piece of knowledge lands in the correct brain location\nAll sources are cited and linked\nThe active schema pack is updated if a new content type emerged\nEntity pages created\/updated with cross-links\n**Capability domain (skills):**\nEvery reusable pattern becomes a composable skill\nExisting skills are audited for DRY violations\nSkill graph is MECE — no gaps, no overlaps, no ambiguous routing\n**The meta-guarantee:** Nothing produced during significant work lives only in chat\nKnowledge → brain. Patterns → skills. Everything in its right place\nuse judgment to follow the When to Use guidance:\nAfter completing a deep research thread\nAfter building something new (code, pipeline, workflow)\nAfter a multi-source analysis that produced significant findings\nWhen the user says \"EIIRP\", \"organize this\", \"DRY this up\", \"make this re-doable\"\nWhen a work session produced both knowledge AND new capabilities\nWhen you notice skill overlap, duplication, or gaps\nuse judgment to follow the Phase 1: INVENTORY — What did we produce? guidance:\nScan the current session\/thread and identify ALL outputs across both domains\nuse judgment to follow the Phase 2: TAXONOMY — Where does each piece go? guidance:\nThe pack's `page_types[]` lists every directory the brain accepts plus\nthe primitive each maps to. Walk it for each output and pick the directory\nwhose `path_prefixes` matches the content's primary subject\nIf `brain-taxonomist` is installed, INVOKE IT for ambiguous cases. It runs\nthe same decision protocol against the active pack and gives you a single\nrecommended filing path with reasoning\ncodeblock:plain:fCBDb250ZW50IHwgQnJhaW4gcGF0aCB8IEFjdGlvbiB8CnwtLS0tLS0tLS18LS0tLS0tLS0tLS18LS0tLS0tLS18CnwgUHJpbWFyeSByZXNlYXJjaCB8IHJlZmVyZW5jZS8uLi4vcGFnZS5tZCB8IENSRUFURSB8CnwgUGVyc29uIFggfCBwZW9wbGUveC1zbHVnLm1kIHwgQ1JFQVRFIHwKfCBQZXJzb24gWSB8IHBlb3BsZS95LXNsdWcubWQgfCBVUERBVEUgKGFscmVhZHkgZXhpc3RzKSB8CnwgLi4uIHwgLi4uIHwgLi4uIHw=\ncodeblock:bash:Z2JyYWluIHNjaGVtYSBzaG93IC0tanNvbg==\nOutput: a filing plan table:\nuse judgment to follow the Phase 3: SCHEMA CHECK — Does the active pack cover this content? guidance:\n**Confidence floor (codex finding #9):** when `gbrain schema suggest`\nreturns confidence < 0.6 on a proposed type, DO NOT auto-apply. Surface\nthe suggestion to the user and let them choose. The schema-cathedral\nships the primitives; EIIRP enforces the human-in-the-loop gate\nDocument the change in the commit message of the next sync\nThe schema-pack engine writes the delta to\n`~\/.gbrain\/schema-pack-deltas\/` — review and merge into the active\npack via `gbrain schema edit` (or hand-edit the YAML)\ncodeblock:bash:IyBXaGF0J3MgZW1lcmdpbmcgaW4gdGhlIGJyYWluIHRoYXQgdGhlIGFjdGl2ZSBwYWNrIGRvZXNuJ3QgY292ZXI\/CmdicmFpbiBzY2hlbWEgZGV0ZWN0IC0tanNvbgoKIyBMTE0tcmVmaW5lZCBzdWdnZXN0aW9ucyAoaGV1cmlzdGljIHdoZW4gbm8gQVBJIGtleSBzZXQpLgpnYnJhaW4gc2NoZW1hIHN1Z2dlc3QgLS1qc29uCgojIFJldmlldyB3aGF0J3MgcGVuZGluZzsgcHJvbW90ZSBvciBpZ25vcmUgZWFjaCBjYW5kaWRhdGUuCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1qc29uCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1hcHBseSA8cHJlZml4LW9yLXR5cGUtbmFtZT4=\nPropose the addition to the user before running `review-candidates --apply`\nFor each item in the filing plan:\nuse judgment to follow the 4a. Primary research page guidance:\nUse the brain page template. MUST include:\nProper frontmatter (`type`, `title`, `date`, `tags`, sources)\n**State** section — current status\/key findings\n**Sources** section — every source with URL, author, date, language\n**Timeline** section — chronological development\n**Entity links** — backlinks to all related brain pages\n**See Also** — related concepts, reference pages\nFor each entity mentioned:\nCheck if a brain page exists (`gbrain search \"<name>\"` or `gbrain get_page people\/<slug>`)\nIf exists: update State, append Timeline entry citing this research\nIf not: create with enrichment\nuse judgment to follow the Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities guidance:\nThis phase operates on the SKILL graph, not just the research\nuse judgment to follow the 5b. Existing skill audit guidance:\nFor ALL skills used or touched during this work, check:\nWere any skills BYPASSED? (did you do something manually that a skill should handle?)\nAre there skills that OVERLAP with what you just did? (merge candidates)\nIs shared code copy-pasted between skills? (extract to `lib\/`)\n**The MECE question:** If someone asked for this exact work again tomorrow on a different topic, which skills would they invoke? Is the path clear and unambiguous? If not, fix the routing\ncodeblock:bash:Z2JyYWluIGNoZWNrLXJlc29sdmFibGUgICAgICAgICAgICAgICAgICAgICAgICAgIyByb3V0aW5nLXRhYmxlIHJlYWNoYWJpbGl0eQpnYnJhaW4gZG9jdG9yIC0tanNvbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIGhlYWx0aCBzdXJmYWNlCmdicmFpbiBzZWFyY2ggIjx0b3BpYyBrZXl3b3Jkcz4iICAgICAgICAgICAgICAgICMgYnJhaW4gcGFnZXMgZmluZGFibGUKZ2JyYWluIG9ycGhhbnMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBhbnkgcGFnZXMgd2l0aG91dCBpbmJvdW5kIGxpbmtzPw==\nchecklist:ai-autonomy:QWxsIGJyYWluIHBhZ2VzIGhhdmUgcHJvcGVyIGZyb250bWF0dGVyIGFnYWluc3QgYWN0aXZlIHNjaGVtYSBwYWNrCkFsbCBlbnRpdHkgcGFnZXMgYXJlIGNyb3NzLWxpbmtlZApBbnkgbmV3IHNraWxscyBoYXZlIHJvdXRpbmcgZW50cmllcyBpbiBgc2tpbGxzL1JFU09MVkVSLm1kYApObyBEUlkgdmlvbGF0aW9ucyAobm8gZHVwbGljYXRlZCBsb2dpYyBhY3Jvc3Mgc2tpbGxzKQpObyBNRUNFIHZpb2xhdGlvbnMgKG5vIGFtYmlndW91cyByb3V0aW5nIGJldHdlZW4gc2tpbGxzKQpBY3RpdmUgc2NoZW1hIHBhY2sgdXBkYXRlZCBpZiBuZXcgY29udGVudCB0eXBlcyBlbWVyZ2VkCmBnYnJhaW4gZG9jdG9yYCByZXBvcnRzIGBzY2hlbWFfcGFja19jb25zaXN0ZW5jeTogb2tg\nuse judgment to follow the Phase 7: REPORT — Summary guidance:\ncodeblock:markdown:IyMgRUlJUlAgQ29tcGxldGU6IFtUb3BpY10KCiMjIyBCcmFpbiBwYWdlcyBjcmVhdGVkL3VwZGF0ZWQKLSBbcGF0aF0g4oCUIFtkZXNjcmlwdGlvbl0KLSAuLi4KCiMjIyBFbnRpdHkgcGFnZXMKLSBbcGF0aF0g4oCUIFtjcmVhdGVkL3VwZGF0ZWRdCi0gLi4uCgojIyMgU2NoZW1hIGNoYW5nZXMKLSBbbm9uZSAvIGRlc2NyaXB0aW9uIG9mIGNoYW5nZXMgKyB3aGljaCBwYWNrIGRlbHRhIGZpbGVdCgojIyMgU2tpbGxzIGlkZW50aWZpZWQKLSBbc2tpbGwtbmFtZV0g4oCUIFtzdGF0dXM6IGNyZWF0ZWQgLyBtZXJnZWQgLyBkZWZlcnJlZF0KLSAuLi4KCiMjIyBSZXNvbHZlciBzdGF0dXMKLSBEUlkgY2hlY2s6IFtjbGVhbl0KLSBNRUNFIGF1ZGl0OiBbY2xlYW5dCi0gQWN0aXZlIHBhY2s6IFtuYW1lXSB2W3ZlcnNpb25dCi0gc2NoZW1hX3BhY2tfY29uc2lzdGVuY3k6IFtvayAvIHdhcm4g4oCUIHBjdCB1bnR5cGVkXQ==\nuse judgment to follow the Anti-Patterns guidance:\n**Hardcoding directory tables in EIIRP's logic.** Every filing decision\nreads `gbrain schema show --json`. Users on `gbrain-recommended` AND\ncustom packs MUST get the right behavior automatically. Pinned by D9\nfrom \/plan-eng-review\n**Auto-applying low-confidence schema suggestions.** Confidence < 0.6\nfrom `gbrain schema suggest` is \"manual review required\" per codex\nfinding #9. EIIRP surfaces it; the user accepts\n**Skipping Phase 5 SKILL GRAPH AUDIT because \"this was a one-off.\"**\nIf the work took >10 minutes, the methodology is probably reusable\nAudit anyway; defer the skillify decision to the user\n**Filing synthesis output by topic alone.** Synthesis pages tied to a\nsingle source + reader are sui generis; they file under\n`media\/<format>\/<slug>-personalized.md`. See _brain-filing-rules.md\n\"Sanctioned exception\" section\n**Treating non-English sources as secondary citations.** Multilingual\nsources are first-class\nuse judgment to follow the Hard Rules guidance:\nuse judgment to follow the Knowledge domain guidance:\n**Never leave research only in chat.** If it took >10 minutes to produce, it gets a brain page\n**Every source gets a citation.** No \"according to reports\" without a URL\n**Entity pages get updated, not just created.** If a brain page exists, UPDATE it\n**Schema changes require confirmation.** The active pack is load-bearing\n**Multilingual sources are first-class.** Never treat non-English sources as secondary\n**EIIRP is idempotent.** Running it twice on the same work should produce no changes the second time\n**EIIRP consumes the active schema pack as data.** Never hard-code directory tables in EIIRP's logic — read from `gbrain schema show --json` so users who picked `gbrain-recommended` OR custom packs get the right behavior automatically",
+          "line" : 72,
+          "scoped_tools" : [
+            "link.add",
+            "page.get",
+            "page.search",
+            "publish",
+            "shell.run",
+            "timeline.add"
+          ],
+          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "eiirp a input",

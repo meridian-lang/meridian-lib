@@ -372,26 +372,15 @@ public struct TriggerPhrase: TriggerPhraseKind {
 }
 
 
-public struct ErpResolverTriggerPhrase: MeridianWorkflow {
+public struct Entry: MeridianWorkflow {
     public let runtime: Runtime
-    public let triggerPhrase: TriggerPhrase
 
-    public static let skillMetadata: [String: String] = [
-        "name": "erp resolver",
-        "description": "Route a synthetic ERP operator request to a skill id.",
-        "parameters": "trigger phrase",
-        "vocabulary": "erp.merconfig",
-        "rulebook": "erp.merrules",
-    ]
-
-    public init(runtime: Runtime, triggerPhrase: TriggerPhrase) {
+    public init(runtime: Runtime) {
         self.runtime = runtime
-        self.triggerPhrase = triggerPhrase
     }
 
     public func run() async throws -> WorkflowResult {
         var state = State()
-        state.bind("triggerPhrase", triggerPhrase)
         let __meridianResumeContext = await runtime.consumeResumeContext()
         if let __meridianResumeContext {
             state.restore(from: __meridianResumeContext.restoredState)
@@ -402,23 +391,28 @@ public struct ErpResolverTriggerPhrase: MeridianWorkflow {
             if target == label { __meridianResumeTarget = nil }
             return false
         }
-        await runtime.workflowStarted(workflowName: "ErpResolverTriggerPhrase", parameters: [:])
+        await runtime.workflowStarted(workflowName: "Entry", parameters: [:])
 
-        // L12
-        state.bind("table", Value.list([.record(["triggerPhrase": .string("process open orders"), "skill": .string("placeorder")]), .record(["triggerPhrase": .string("fulfill ERP orders"), "skill": .string("fulfillorder")]), .record(["triggerPhrase": .string("run invoices"), "skill": .string("invoicerun")]), .record(["triggerPhrase": .string("run dunning"), "skill": .string("dunning")]), .record(["triggerPhrase": .string("restock short products"), "skill": .string("restock")]), .record(["triggerPhrase": .string("receive inbound shipment"), "skill": .string("receiveshipment")]), .record(["triggerPhrase": .string("cancel blocked orders"), "skill": .string("cancelorder")]), .record(["triggerPhrase": .string("month-end close"), "skill": .string("monthendclose")])]))
-        // L24
-        state.bind("selectedSkill", try ({ () throws -> Value? in guard let __rows = state.get("table")?.asList else { throw ToolError.implementation(code: "table.lookup_miss", message: "table table is not bound", cause: nil) }; for __row in __rows { if MeridianComparison.eq(__row.member("triggerPhraseTrigger"), state.get("phrase")) { return __row.member("skill") } }; throw ToolError.implementation(code: "table.lookup_miss", message: "no row in table where triggerPhraseTrigger matches", cause: nil) })())
-        if __meridianShouldRun("progress:0.2:L25:C0") {
-            // L25
-            try await runtime.emit(
-                event: "erp.dispatch",
-                payload: [
-                    "skill": state.get("selectedSkill") ?? .null,
-                ]
-            )
-            try await runtime.checkpoint(label: "progress:0.2:L25:C0", state: state.snapshot())
+        // L11
+        let __meridianProseResults_L11 = try await runtime.executeProsePlan(
+            prose: "Decide which case below applies and carry out its action:\n- when trigger phrase is process open orders, placeorder\n- when trigger phrase is fulfill ERP orders, fulfillorder\n- when trigger phrase is run invoices, invoicerun\n- when trigger phrase is run dunning, dunning\n- when trigger phrase is restock short products, restock\n- when trigger phrase is receive inbound shipment, receiveshipment\n- when trigger phrase is cancel blocked orders, cancelorder\n- when trigger phrase is month-end close, monthendclose",
+            snapshot: state.snapshot(),
+            scopedTools: ["inventory.reserve", "invoice.create", "invoice.list", "order.cancel", "order.list", "payment.collect", "period.close", "product.list", "purchase_order.create", "shipment.create"]
+        )
+        for (__key, __value) in __meridianProseResults_L11 {
+            state.bind(__key, __value)
         }
-        // L26
+        // L23
+        let __meridianProseResults_L23 = try await runtime.executeProsePlan(
+            prose: "follow the Workflow guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["inventory.reserve", "invoice.create", "invoice.list", "order.cancel", "order.list", "payment.collect", "period.close", "product.list", "purchase_order.create", "shipment.create"],
+            guidance: "Look up the skill corresponding to the trigger phrase and emit the selected\nskill id"
+        )
+        for (__key, __value) in __meridianProseResults_L23 {
+            state.bind(__key, __value)
+        }
+
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
     }

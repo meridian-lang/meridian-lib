@@ -91,7 +91,8 @@ public struct SkillDeviation {
         let metrics = SkillMetrics.analyze(portedMeri, rulebook: rulebook)
         let inertDeviations = inertSectionDeviations(
             originalMarkdown: originalMarkdown,
-            metrics: metrics
+            metrics: metrics,
+            portedMeri: portedMeri
         )
 
         var categories = detectCategories(
@@ -169,7 +170,7 @@ public struct SkillDeviation {
         out.append("")
         out.append("## Metrics")
         let m = r.metrics
-        out.append("- Sections: \(m.inertSections)/\(m.totalSections) inert (\(percent(m.inertRatio)) inert ratio)")
+        out.append("- Sections inert total: \(m.inertSections)/\(m.totalSections) (\(percent(m.inertRatio)) total inert; includes intentional docs/templates/tools metadata)")
         out.append("- Operational inert: \(m.operationalInertSections)")
         out.append("- Unclassified inert: \(m.unclassifiedInertSections)")
         if !m.inertCategoryCounts.isEmpty {
@@ -205,12 +206,46 @@ public struct SkillDeviation {
 
     private static func inertSectionDeviations(
         originalMarkdown: String,
-        metrics: SkillMetrics
+        metrics: SkillMetrics,
+        portedMeri: String
     ) -> [SkillMetrics.InertSection] {
         let originalInert = originalExplicitInertHeadings(originalMarkdown)
+        let splitFamily = generatedSplitFamilyHeadings(portedMeri)
         return metrics.inertDetails.filter { detail in
             !originalInert.contains(normalizeHeading(detail.heading))
+                && !splitFamily.contains(normalizeHeading(detail.heading))
         }
+    }
+
+    /// Headings in `portedMeri` that belong to a migrator-generated split
+    /// family (`SkillMigrator.splitHeadingSeparator`, AGENTS.md Phase 1 item
+    /// 3): both the generated sibling(s) themselves and the original heading
+    /// they were split from. Paired back to the source heading per the same
+    /// rule as `SkillMetrics.analyze`'s section-count fix, so this whole
+    /// family isn't flagged as a migration regression — the split's
+    /// operational content was preserved (routed to `procedure` via a
+    /// rulebook `SectionAlias`), not lost, and a sibling can still look
+    /// nominally "inert" here if the caller didn't also supply that rulebook.
+    /// Consecutive siblings (`— steps`, `— steps 2`, …) all attribute back to
+    /// the nearest non-generated heading above them.
+    private static func generatedSplitFamilyHeadings(_ portedMeri: String) -> Set<String> {
+        var out: Set<String> = []
+        var lastRealHeading: String?
+        var inFence = false
+        for raw in bodyLines(of: portedMeri) {
+            let trimmed = raw.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("```") { inFence.toggle(); continue }
+            if inFence { continue }
+            guard let heading = SkillMarkdownShape.headingText(trimmed) else { continue }
+            let clean = SkillSectionRole.parseMarker(from: heading).cleanHeading
+            if clean.contains(SkillMigrator.splitHeadingSeparator) {
+                out.insert(normalizeHeading(clean))
+                if let parent = lastRealHeading { out.insert(normalizeHeading(parent)) }
+            } else {
+                lastRealHeading = clean
+            }
+        }
+        return out
     }
 
     private static func originalExplicitInertHeadings(_ source: String) -> Set<String> {

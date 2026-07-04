@@ -8,7 +8,8 @@ triggers:
 
 # Invoice Run
 
-## When this applies (( inert, role: applicability ))
+## When this applies (( role: procedure ))
+use judgment to follow the When this applies guidance:
 - "run invoices"
 - "billing batch"
 
@@ -18,11 +19,8 @@ triggers:
 | unpaid | collections |
 | fulfilled | archive |
 
-## Workflow (( role: procedure ))
-fetch open orders.
-for each order:
-  create an invoice for the order.
-bind selected queue = the queue corresponding to the status "unpaid" in the table.
+## Workflow
+use judgment to follow the Workflow guidance:
 bind invoice receipt =
   ```
   invoice-routing:
@@ -30,6 +28,16 @@ bind invoice receipt =
   [end for]
   selected: {{ selected queue }}
   ```
+
+### Workflow — steps
+
+fetch open orders.
+for each order:
+  create an invoice for the order.
+bind selected queue = the queue corresponding to the status "unpaid" in the table.
+
+### Workflow — steps 2
+
 emit erp.invoice_receipt with body = invoice receipt.
 
 ## Report shape (( inert, role: template ))

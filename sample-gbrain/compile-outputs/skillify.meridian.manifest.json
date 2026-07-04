@@ -98,7 +98,7 @@
     "name" : "skillify",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 33,
         "text" : "Contract"
@@ -106,139 +106,139 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 40,
+        "line" : 41,
         "text" : "The Checklist"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 56,
+        "line" : 57,
         "text" : "Phase 0: Should This Be a Skill?"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 65,
+        "line" : 67,
         "text" : "Phase 1: Audit"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 73,
+        "line" : 76,
         "text" : "Phase 2: Write SKILL.md + Code (items 1-2)"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 75,
+        "line" : 79,
         "text" : "SKILL.md frontmatter template (copy-paste):"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 98,
+        "line" : 106,
         "text" : "Phase 3: Cross-Modal Eval (item 3) — THE QUALITY GATE"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 100,
+        "line" : 109,
         "text" : "Why this comes before tests"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 105,
+        "line" : 114,
         "text" : "Step 1: Pick a representative input"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 111,
+        "line" : 120,
         "text" : "Step 2: Run the skill, capture output"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 116,
+        "line" : 125,
         "text" : "Step 3: Run the eval gate"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 154,
+        "line" : 171,
         "text" : "Step 4: Cycle until you pass (≤3 cycles)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 179,
+        "line" : 196,
         "text" : "Cycles + cost guardrails"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 188,
+        "line" : 208,
         "text" : "Provider configuration"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 201,
+        "line" : 224,
         "text" : "Cost expectations"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 208,
+        "line" : 234,
         "text" : "Skip cross-modal eval when:"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 213,
+        "line" : 239,
         "text" : "Phase 4: Tests (items 4-6)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 221,
+        "line" : 248,
         "text" : "Phase 5: Resolver + Check-Resolvable (items 7-9)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 231,
+        "line" : 259,
         "text" : "Phase 6: E2E + Brain Filing (items 10-11)"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 236,
+        "line" : 264,
         "text" : "Phase 7: Verify"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 246,
+        "line" : 274,
         "text" : "Worked Example: Skillifying a \"summarize-pr\" Feature"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 265,
+        "line" : 293,
         "text" : "Quality Gates"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 278,
+        "line" : 307,
         "text" : "Output Format"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 299,
+        "line" : 328,
         "text" : "Anti-Patterns"
       },
       {
@@ -250,73 +250,81 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 94,
+        "line" : 99,
         "text" : "Body must include"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 197,
+        "line" : 170,
+        "text" : "Inconclusive"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 210,
         "text" : "Or set env vars"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 224,
+        "line" : 252,
         "text" : "Resolver eval"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 225,
+        "line" : 253,
         "text" : "Check-resolvable"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 233,
+        "line" : 261,
         "text" : "E2E smoke"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 234,
+        "line" : 262,
         "text" : "Brain filing"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 267,
+        "line" : 296,
         "text" : "NOT properly skilled until"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 33,
         "lines" : [
+          "use judgment to follow the Contract guidance:",
           "A feature is \"properly skilled\" when all 11 checklist items pass. Item 3",
           "(cross-modal eval) is informational in v1.1.0 — it does not gate the",
           "skillpack-check audit, but a missing or stale receipt is surfaced so the",
           "user knows where the gate stands"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "The Checklist",
-        "line" : 40,
+        "line" : 41,
         "lines" : [
           "codeblock:plain:4pahIDEuICBTS0lMTC5tZCAgICAgICAgICAg4oCUIHNraWxsIGZpbGUgd2l0aCBmcm9udG1hdHRlciArIGNvbnRyYWN0ICsgcGhhc2VzCuKWoSAyLiAgQ29kZSAgICAgICAgICAgICAgIOKAlCBkZXRlcm1pbmlzdGljIHNjcmlwdCBpZiBhcHBsaWNhYmxlCuKWoSAzLiAgQ3Jvc3MtbW9kYWwgZXZhbCAgIOKAlCAzIGZyb250aWVyIG1vZGVscyBmcm9tIDMgcHJvdmlkZXJzOyBpbmZvcm1hdGlvbmFsCuKWoSA0LiAgVW5pdCB0ZXN0cyAgICAgICAgIOKAlCBjb3ZlciBldmVyeSBicmFuY2ggb2YgZGV0ZXJtaW5pc3RpYyBsb2dpYwrilqEgNS4gIEludGVncmF0aW9uIHRlc3RzICDigJQgZXhlcmNpc2UgbGl2ZSBlbmRwb2ludHMK4pahIDYuICBMTE0gZXZhbHMgICAgICAgICAg4oCUIHF1YWxpdHkvY29ycmVjdG5lc3MgY2FzZXMgZm9yIExMTS1pbnZvbHZpbmcgc3RlcHMK4pahIDcuICBSZXNvbHZlciB0cmlnZ2VyICAg4oCUIGVudHJ5IGluIHNraWxscy9SRVNPTFZFUi5tZCB3aXRoIHJlYWwgdXNlciB0cmlnZ2VyIHBocmFzZXMK4pahIDguICBSZXNvbHZlciBldmFsICAgICAg4oCUIHRlc3QgdGhhdCB0cmlnZ2VycyByb3V0ZSB0byB0aGlzIHNraWxsCuKWoSA5LiAgQ2hlY2stcmVzb2x2YWJsZSAgIOKAlCBEUlkgKyBNRUNFIGF1ZGl0LCBubyBvcnBoYW5zCuKWoSAxMC4gRTJFIHRlc3QgICAgICAgICAgIOKAlCBzbW9rZSB0ZXN0OiB0cmlnZ2VyIOKGkiBzaWRlIGVmZmVjdArilqEgMTEuIEJyYWluIGZpbGluZyAgICAgICDigJQgaWYgaXQgd3JpdGVzIHBhZ2VzLCBlbnRyeSBpbiBicmFpbi9SRVNPTFZFUi5tZA=="
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 0: Should This Be a Skill?",
-        "line" : 56,
+        "line" : 57,
         "lines" : [
+          "use judgment to follow the Phase 0: Should This Be a Skill? guidance:",
           "Before skillifying, check:",
           "Will this be invoked 2+ times? (One-off work ≠ skill)",
           "Is there >20 lines of logic? (Trivial helpers don't need full infrastructure)",
@@ -326,47 +334,49 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 1: Audit",
-        "line" : 65,
+        "line" : 67,
         "lines" : [
+          "use judgment to follow the Phase 1: Audit guidance:",
           "codeblock:plain:RmVhdHVyZTogW25hbWVdCkNvZGU6IFtwYXRoXQpNaXNzaW5nIGl0ZW1zOiBbY2hlY2sgZWFjaCBvZiB0aGUgMTFd"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 2: Write SKILL.md + Code (items 1-2)",
-        "line" : 73,
+        "line" : 76,
         "lines" : [
-
+          "use judgment to follow the Phase 2: Write SKILL.md + Code (items 1-2) guidance:"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "SKILL.md frontmatter template (copy-paste):",
-        "line" : 75,
+        "line" : 79,
         "lines" : [
+          "use judgment to follow the SKILL.md frontmatter template (copy-paste): guidance:",
           "codeblock:yaml:LS0tCm5hbWU6IG15LXNraWxsCnZlcnNpb246IDEuMC4wCmRlc2NyaXB0aW9uOiB8CiAgT25lIHBhcmFncmFwaC4gV2hhdCBpdCBkb2VzLCB3aGVuIHRvIHVzZSBpdC4KdHJpZ2dlcnM6CiAgLSAidHJpZ2dlciBwaHJhc2UgdXNlcnMgYWN0dWFsbHkgc2F5IgogIC0gImFub3RoZXIgcmVhbCB0cmlnZ2VyIgp0b29sczoKICAtIGV4ZWMKICAtIHJlYWQKICAtIHdyaXRlCm11dGF0aW5nOiBmYWxzZSAgIyB0cnVlIGlmIGl0IHdyaXRlcyB0byBicmFpbi9kaXNrCi0tLQ==",
           "Body must include: **Contract** (what it guarantees), **Phases** (step-by-step), **Output Format** (what it produces)",
           "Extract deterministic code into `scripts\/*.ts`"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 3: Cross-Modal Eval (item 3) — THE QUALITY GATE",
-        "line" : 98,
+        "line" : 106,
         "lines" : [
-
+          "use judgment to follow the Phase 3: Cross-Modal Eval (item 3) — THE QUALITY GATE guidance:"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Why this comes before tests",
-        "line" : 100,
+        "line" : 109,
         "lines" : [
           "Tests lock in behavior. If the behavior is mediocre, tests lock in mediocrity",
           "Cross-modal eval proves the quality bar FIRST, then tests cement it"
@@ -376,7 +386,7 @@
       {
         "executes" : false,
         "heading" : "Step 1: Pick a representative input",
-        "line" : 105,
+        "line" : 114,
         "lines" : [
           "Choose the input that exercises the skill's hardest documented use case. If",
           "unsure: use the primary trigger example from SKILL.md, or the most complex",
@@ -387,7 +397,7 @@
       {
         "executes" : false,
         "heading" : "Step 2: Run the skill, capture output",
-        "line" : 111,
+        "line" : 120,
         "lines" : [
           "Run the skill on the representative input. The OUTPUT FILE is what gets",
           "evaluated"
@@ -395,19 +405,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Step 3: Run the eval gate",
-        "line" : 116,
+        "line" : 125,
         "lines" : [
-          "codeblock:bash:Z2JyYWluIGV2YWwgY3Jvc3MtbW9kYWwgXAogIC0tdGFzayAiV2hhdCB0aGlzIHNraWxsIGlzIHN1cHBvc2VkIHRvIGFjY29tcGxpc2giIFwKICAtLW91dHB1dCBza2lsbHMvPHNsdWc+L1NLSUxMLm1k",
-          "The command runs 3 frontier models from 3 different providers in parallel,",
-          "scores the OUTPUT against the TASK on 5 documented dimensions, and writes a",
-          "receipt under `~\/.gbrain\/.gbrain\/eval-receipts\/<slug>-<sha8>.json` (the",
-          "sha-8 binds the receipt to the current SKILL.md content — re-running after",
-          "edits writes a new receipt)",
-          "**Default models** (override per slot via `--slot-a-model`, `--slot-b-model`,",
-          "`--slot-c-model`):",
-          "table:decision:fCBTbG90IHwgRGVmYXVsdCB8IFByb3ZpZGVyIHwKfC0tLS0tLXwtLS0tLS0tLS18LS0tLS0tLS0tLXwKfCBBIHwgYG9wZW5haTpncHQtNG9gIHwgT3BlbkFJIHwKfCBCIHwgYGFudGhyb3BpYzpjbGF1ZGUtb3B1cy00LTdgIHwgQW50aHJvcGljIHwKfCBDIHwgYGdvb2dsZTpnZW1pbmktMS41LXByb2AgfCBHb29nbGUgfA==",
+          "use judgment to follow the Step 3: Run the eval gate guidance:",
           "**These MUST be frontier models from DIFFERENT providers.** Using a single",
           "provider's family or budget models defeats the purpose — different families",
           "have less correlated blind spots. Refresh the list when a new model",
@@ -415,17 +417,24 @@
           "**Pass criteria (BOTH must be true):**",
           "Every dimension's mean across successful models ≥ 7",
           "No single model scored any dimension < 5 (the floor)",
-          "**Inconclusive:** fewer than 2 of 3 models returned parseable scores",
           "Receipt is still written (forensics) but the gate is not authoritative",
           "Exit code 2; CI wrappers should treat this as \"did not run cleanly\", not",
-          "\"failed quality gate\""
+          "\"failed quality gate\"",
+          "codeblock:bash:Z2JyYWluIGV2YWwgY3Jvc3MtbW9kYWwgXAogIC0tdGFzayAiV2hhdCB0aGlzIHNraWxsIGlzIHN1cHBvc2VkIHRvIGFjY29tcGxpc2giIFwKICAtLW91dHB1dCBza2lsbHMvPHNsdWc+L1NLSUxMLm1k",
+          "The command runs 3 frontier models from 3 different providers in parallel,",
+          "scores the OUTPUT against the TASK on 5 documented dimensions, and writes a",
+          "receipt under `~\/.gbrain\/.gbrain\/eval-receipts\/<slug>-<sha8>.json` (the",
+          "sha-8 binds the receipt to the current SKILL.md content — re-running after",
+          "edits writes a new receipt)",
+          "table:ai-discretion:fCBTbG90IHwgRGVmYXVsdCB8IFByb3ZpZGVyIHwKfC0tLS0tLXwtLS0tLS0tLS18LS0tLS0tLS0tLXwKfCBBIHwgYG9wZW5haTpncHQtNG9gIHwgT3BlbkFJIHwKfCBCIHwgYGFudGhyb3BpYzpjbGF1ZGUtb3B1cy00LTdgIHwgQW50aHJvcGljIHwKfCBDIHwgYGdvb2dsZTpnZW1pbmktMS41LXByb2AgfCBHb29nbGUgfA==",
+          "Inconclusive: fewer than 2 of 3 models returned parseable scores"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Step 4: Cycle until you pass (≤3 cycles)",
-        "line" : 154,
+        "line" : 171,
         "lines" : [
           "codeblock:plain:Q1lDTEUgMToKICBFdmFsIOKGkiBzY29yZXMgKyB0b3AgMTAgaW1wcm92ZW1lbnRzCiAgSUYgcGFzczog4oaSIGRvbmUsIHdyaXRlIHRlc3RzCiAgRUxTRToKICAgIEFwcGx5IHRvcCAxMCBpbXByb3ZlbWVudHMgdG8gdGhlIGFjdHVhbCBmaWxlCiAgICBMb2c6IHdoaWNoIGltcHJvdmVtZW50cyBhcHBsaWVkLCB3aGF0IGNoYW5nZWQKCkNZQ0xFIDI6CiAgUmUtZXZhbCB0aGUgRklYRUQgb3V0cHV0IChzYW1lIDMgbW9kZWxzLCBzYW1lIGRpbWVuc2lvbnMpCiAgQ29tcGFyZTogYmVmb3JlL2FmdGVyIHNjb3JlcyBwZXIgZGltZW5zaW9uICh0cmFjayBkZWx0YSkKICBJRiBwYXNzOiDihpIgZG9uZSwgd3JpdGUgdGVzdHMKICBFTFNFOiBhcHBseSByZW1haW5pbmcgaW1wcm92ZW1lbnRzICsgbmV3IG9uZXMKCkNZQ0xFIDMgKGZpbmFsKToKICBSZS1ldmFsCiAgSUYgcGFzczog4oaSIHNoaXAKICBFTFNFOiDihpIgc2hpcCB3aXRoIEtOT1dOX0dBUFMgc2VjdGlvbiBsaXN0aW5nOgogICAgLSBXaGljaCBkaW1lbnNpb25zIGFyZSBzdGlsbCBiZWxvdyA3CiAgICAtIFdoaWNoIGltcHJvdmVtZW50cyBjb3VsZG4ndCBiZSByZXNvbHZlZAogICAgLSBXaHkgKGUuZy4sICJ3b3VsZCByZXF1aXJlIGFyY2hpdGVjdHVyYWwgY2hhbmdlIik="
         ],
@@ -434,7 +443,7 @@
       {
         "executes" : false,
         "heading" : "Cycles + cost guardrails",
-        "line" : 179,
+        "line" : 196,
         "lines" : [
           "Default `--cycles 3` in TTY, `--cycles 1` in non-TTY (limits scripted",
           "bulk spend in CI loops)",
@@ -448,20 +457,19 @@
       {
         "executes" : false,
         "heading" : "Provider configuration",
-        "line" : 188,
+        "line" : 208,
         "lines" : [
-          "Models resolve through the gbrain AI gateway. Configure once with:",
-          "codeblock:bash:Z2JyYWluIHByb3ZpZGVycyB0ZXN0ICAgICMgc2VlIHdoYXQncyBjb25maWd1cmVkCmdicmFpbiBjb25maWcgICAgICAgICAgICAjIHNldCBrZXlz",
           "Or set env vars: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`,",
           "`GOOGLE_GENERATIVE_AI_API_KEY`, `TOGETHER_API_KEY`, etc. The gateway reads",
-          "from `~\/.gbrain\/config.json` plus `process.env`"
+          "from `~\/.gbrain\/config.json` plus `process.env`",
+          "codeblock:bash:Z2JyYWluIHByb3ZpZGVycyB0ZXN0ICAgICMgc2VlIHdoYXQncyBjb25maWd1cmVkCmdicmFpbiBjb25maWcgICAgICAgICAgICAjIHNldCBrZXlz"
         ],
         "role" : "inert"
       },
       {
         "executes" : false,
         "heading" : "Cost expectations",
-        "line" : 201,
+        "line" : 224,
         "lines" : [
           "3 cycles × 3 models = 9 frontier calls max per run. With Opus-class +",
           "GPT-4o-class + Gemini-1.5-Pro, expect $1–3 per full run on default",
@@ -473,7 +481,7 @@
       {
         "executes" : false,
         "heading" : "Skip cross-modal eval when:",
-        "line" : 208,
+        "line" : 234,
         "lines" : [
           "Output is < 200 tokens (trivial — not worth 9 API calls)",
           "The skill is a thin wrapper around a single API call (one cycle is enough)"
@@ -481,10 +489,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 4: Tests (items 4-6)",
-        "line" : 213,
+        "line" : 239,
         "lines" : [
+          "use judgment to follow the Phase 4: Tests (items 4-6) guidance:",
           "NOW that eval has proven quality, write tests that lock it in:",
           "**Unit tests** — every branch of deterministic logic. Mock external calls",
           "**Integration tests** — hit real endpoints. Catch bugs mocks hide",
@@ -493,10 +502,11 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 5: Resolver + Check-Resolvable (items 7-9)",
-        "line" : 221,
+        "line" : 248,
         "lines" : [
+          "use judgment to follow the Phase 5: Resolver + Check-Resolvable (items 7-9) guidance:",
           "Add to skills\/RESOLVER.md with trigger phrases users ACTUALLY type",
           "Resolver eval: feed triggers, assert correct routing",
           "Check-resolvable:",
@@ -508,9 +518,9 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phase 6: E2E + Brain Filing (items 10-11)",
-        "line" : 231,
+        "line" : 259,
         "lines" : [
           "E2E smoke: full pipeline from trigger to side effect",
           "Brain filing: add to brain\/RESOLVER.md if the skill writes brain pages"
@@ -520,7 +530,7 @@
       {
         "executes" : true,
         "heading" : "Phase 7: Verify",
-        "line" : 236,
+        "line" : 264,
         "lines" : [
           "codeblock:bash:YnVuIHRlc3QgdGVzdC88c2tpbGw+LnRlc3QudHMgICAgICAgICAgICAgICAgICAgICMgdW5pdCB0ZXN0cwpnYnJhaW4gc2tpbGxpZnkgY2hlY2sgc2tpbGxzLzxzbHVnPi9zY3JpcHRzLzxzbHVnPi5tanMgLS1qc29uIHwgXAogIGpxICcuW10gfCAuaXRlbXNbXSB8IHNlbGVjdCgubmFtZSB8IGNvbnRhaW5zKCJDcm9zcy1tb2RhbCIpKScKbHMgfi8uZ2JyYWluLy5nYnJhaW4vZXZhbC1yZWNlaXB0cy8gICAgICAgICAgICAgICMgcmVjZWlwdCBsYW5kZWQKZ2JyYWluIGNoZWNrLXJlc29sdmFibGUgLS1qc29uIHwganEgLm9rICAgICAgICAgICMgcmVzb2x2ZXIgY2xlYW4="
         ],
@@ -529,17 +539,18 @@
       {
         "executes" : false,
         "heading" : "Worked Example: Skillifying a \"summarize-pr\" Feature",
-        "line" : 246,
+        "line" : 274,
         "lines" : [
           "codeblock:plain:UGhhc2UgMDogWWVzIOKAlCBpbnZva2VkIHdlZWtseSwgNTArIGxpbmVzLCBjbGVhciB0cmlnZ2VyICJzdW1tYXJpemUgdGhpcyBQUiIKUGhhc2UgMTogQXVkaXQg4oaSIFNLSUxMLm1kIG1pc3NpbmcsIG5vIHRlc3RzLCBubyByZXNvbHZlciBlbnRyeS4gU2NvcmU6IDEvMTEKUGhhc2UgMjogV3JpdGUgU0tJTEwubWQgKyBleHRyYWN0IHNjcmlwdCB0byBzY3JpcHRzL3N1bW1hcml6ZS1wci50cwpQaGFzZSAzOiBDcm9zcy1tb2RhbCBldmFsIGN5Y2xlIDEg4oaSCiAgR1BULTRvOiBnb2FsPTYsIGRlcHRoPTUsIHNwZWNpZmljaXR5PTQg4oaSICJtaXNzZXMgZmlsZS1sZXZlbCBkaWZmcyIKICBPcHVzIDQuNzogZ29hbD03LCBkZXB0aD02LCBzcGVjaWZpY2l0eT01IOKGkiAibm8gdGVzdCBwbGFuIGluIHN1bW1hcnkiCiAgR2VtaW5pIDEuNSBQcm86IGdvYWw9NiwgZGVwdGg9NSwgc3BlY2lmaWNpdHk9NSDihpIgInRlbXBsYXRlIGZlZWxzIGdlbmVyaWMiCiAgQWdncmVnYXRlOiBnb2FsPTYuMyBGQUlMLCBkZXB0aD01LjMgRkFJTAogIFRvcCBpbXByb3ZlbWVudHM6IGFkZCBmaWxlLWxldmVsIGNoYW5nZXMsIGluY2x1ZGUgdGVzdCBwbGFuLCB1c2UgUFIgY29udGV4dAogIOKGkiBBcHBseSBmaXhlcyDihpIgQ3ljbGUgMjogZ29hbD04LCBkZXB0aD03LjUsIHNwZWNpZmljaXR5PTcg4oaSIFBBU1MKUGhhc2UgNDogV3JpdGUgMTIgdW5pdCB0ZXN0cyBsb2NraW5nIGluIHRoZSBpbXByb3ZlZCBiZWhhdmlvcgpQaGFzZSA1OiBBZGQgInN1bW1hcml6ZSB0aGlzIFBSIiB0cmlnZ2VyIHRvIHNraWxscy9SRVNPTFZFUi5tZApQaGFzZSA2OiBFMkUgdGVzdDogZmVlZCBhIHJlYWwgUFIgVVJMIOKGkiB2ZXJpZnkgYnJhaW4gcGFnZSBjcmVhdGVkClBoYXNlIDc6IEFsbCBncmVlbi4gU2NvcmU6IDExLzEx"
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Quality Gates",
-        "line" : 265,
+        "line" : 293,
         "lines" : [
+          "use judgment to follow the Quality Gates guidance:",
           "NOT properly skilled until:",
           "All required items pass (1-2, 4-10; 11 only when applicable)",
           "Cross-modal eval (item 3) has a current receipt OR is explicitly waived",
@@ -550,12 +561,12 @@
           "Check-resolvable shows no orphans, overlaps, or DRY violations",
           "Brain filing if applicable"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 278,
+        "line" : 307,
         "lines" : [
           "Skillify produces three durable artifacts per skill:",
           "**The skill tree on disk.** `skills\/<slug>\/SKILL.md`, `scripts\/<slug>.mjs`,",
@@ -577,10 +588,11 @@
         "role" : "template"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 299,
+        "line" : 328,
         "lines" : [
+          "use judgment to follow the Anti-Patterns guidance:",
           "❌ Writing tests before cross-modal eval (locks in mediocrity)",
           "❌ Using budget models for eval (C student grading A student)",
           "❌ Using a single provider's family for all 3 slots (correlated blind spots)",
@@ -592,7 +604,7 @@
           "❌ Two skills doing the same thing (merge or kill one)",
           "❌ Running cross-modal eval on trivial outputs (< 200 tokens, not worth 9 API calls)"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "tools" : "exec\nread\nwrite",
@@ -635,68 +647,56 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 238,
-      "swift_line" : 603
-    },
-    {
-      "meridian_line" : 238,
-      "swift_line" : 614
-    },
-    {
-      "meridian_line" : 238,
-      "swift_line" : 625
-    },
-    {
-      "meridian_line" : 238,
-      "swift_line" : 636
+      "meridian_line" : 34,
+      "swift_line" : 602
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 641
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 646
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 685
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 690
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 734
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 807
+      "swift_line" : 773
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 812
+      "swift_line" : 778
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 851
+      "swift_line" : 817
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 856
+      "swift_line" : 822
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 895
+      "swift_line" : 861
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 900
+      "swift_line" : 866
     }
   ],
   "tools_used" : [
@@ -709,6 +709,35 @@
         {
           "kind" : "Input",
           "name" : "input"
+        }
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "A feature is \"properly skilled\" when all 11 checklist items pass. Item 3\n(cross-modal eval) is informational in v1.1.0 — it does not gate the\nskillpack-check audit, but a missing or stale receipt is surfaced so the\nuser knows where the gate stands\nuse judgment to follow the Phase 0: Should This Be a Skill? guidance:\nBefore skillifying, check:\nWill this be invoked 2+ times? (One-off work ≠ skill)\nIs there >20 lines of logic? (Trivial helpers don't need full infrastructure)\nDoes it have a clear trigger phrase a user would actually say?\nIf no to all three, it's a script, not a skill. Move on\nuse judgment to follow the Phase 1: Audit guidance:\ncodeblock:plain:RmVhdHVyZTogW25hbWVdCkNvZGU6IFtwYXRoXQpNaXNzaW5nIGl0ZW1zOiBbY2hlY2sgZWFjaCBvZiB0aGUgMTFd\nuse judgment to follow the Phase 2: Write SKILL.md + Code (items 1-2) guidance:\nuse judgment to follow the SKILL.md frontmatter template (copy-paste): guidance:\ncodeblock:yaml:LS0tCm5hbWU6IG15LXNraWxsCnZlcnNpb246IDEuMC4wCmRlc2NyaXB0aW9uOiB8CiAgT25lIHBhcmFncmFwaC4gV2hhdCBpdCBkb2VzLCB3aGVuIHRvIHVzZSBpdC4KdHJpZ2dlcnM6CiAgLSAidHJpZ2dlciBwaHJhc2UgdXNlcnMgYWN0dWFsbHkgc2F5IgogIC0gImFub3RoZXIgcmVhbCB0cmlnZ2VyIgp0b29sczoKICAtIGV4ZWMKICAtIHJlYWQKICAtIHdyaXRlCm11dGF0aW5nOiBmYWxzZSAgIyB0cnVlIGlmIGl0IHdyaXRlcyB0byBicmFpbi9kaXNrCi0tLQ==\nBody must include: **Contract** (what it guarantees), **Phases** (step-by-step), **Output Format** (what it produces)\nExtract deterministic code into `scripts\/*.ts`\nuse judgment to follow the Phase 3: Cross-Modal Eval (item 3) — THE QUALITY GATE guidance:\nuse judgment to follow the Step 3: Run the eval gate guidance:\n**These MUST be frontier models from DIFFERENT providers.** Using a single\nprovider's family or budget models defeats the purpose — different families\nhave less correlated blind spots. Refresh the list when a new model\ngeneration ships\n**Pass criteria (BOTH must be true):**\nEvery dimension's mean across successful models ≥ 7\nNo single model scored any dimension < 5 (the floor)\nReceipt is still written (forensics) but the gate is not authoritative\nExit code 2; CI wrappers should treat this as \"did not run cleanly\", not\n\"failed quality gate\"\ncodeblock:bash:Z2JyYWluIGV2YWwgY3Jvc3MtbW9kYWwgXAogIC0tdGFzayAiV2hhdCB0aGlzIHNraWxsIGlzIHN1cHBvc2VkIHRvIGFjY29tcGxpc2giIFwKICAtLW91dHB1dCBza2lsbHMvPHNsdWc+L1NLSUxMLm1k\nThe command runs 3 frontier models from 3 different providers in parallel,\nscores the OUTPUT against the TASK on 5 documented dimensions, and writes a\nreceipt under `~\/.gbrain\/.gbrain\/eval-receipts\/<slug>-<sha8>.json` (the\nsha-8 binds the receipt to the current SKILL.md content — re-running after\nedits writes a new receipt)\ntable:ai-discretion:fCBTbG90IHwgRGVmYXVsdCB8IFByb3ZpZGVyIHwKfC0tLS0tLXwtLS0tLS0tLS18LS0tLS0tLS0tLXwKfCBBIHwgYG9wZW5haTpncHQtNG9gIHwgT3BlbkFJIHwKfCBCIHwgYGFudGhyb3BpYzpjbGF1ZGUtb3B1cy00LTdgIHwgQW50aHJvcGljIHwKfCBDIHwgYGdvb2dsZTpnZW1pbmktMS41LXByb2AgfCBHb29nbGUgfA==\nInconclusive: fewer than 2 of 3 models returned parseable scores\nuse judgment to follow the Phase 4: Tests (items 4-6) guidance:\nNOW that eval has proven quality, write tests that lock it in:\n**Unit tests** — every branch of deterministic logic. Mock external calls\n**Integration tests** — hit real endpoints. Catch bugs mocks hide\n**LLM evals** — quality\/correctness for LLM steps. Lighter than cross-modal eval — test specific behaviors\nuse judgment to follow the Phase 5: Resolver + Check-Resolvable (items 7-9) guidance:\nAdd to skills\/RESOLVER.md with trigger phrases users ACTUALLY type\nResolver eval: feed triggers, assert correct routing\nCheck-resolvable:\nSkill reachable from skills\/RESOLVER.md (not orphaned)\nNo MECE overlap with other skills\nNo DRY violations (shared logic in lib\/, not copy-pasted)\nNo ambiguous trigger routing\nE2E smoke: full pipeline from trigger to side effect\nBrain filing: add to brain\/RESOLVER.md if the skill writes brain pages\ncodeblock:bash:YnVuIHRlc3QgdGVzdC88c2tpbGw+LnRlc3QudHMgICAgICAgICAgICAgICAgICAgICMgdW5pdCB0ZXN0cwpnYnJhaW4gc2tpbGxpZnkgY2hlY2sgc2tpbGxzLzxzbHVnPi9zY3JpcHRzLzxzbHVnPi5tanMgLS1qc29uIHwgXAogIGpxICcuW10gfCAuaXRlbXNbXSB8IHNlbGVjdCgubmFtZSB8IGNvbnRhaW5zKCJDcm9zcy1tb2RhbCIpKScKbHMgfi8uZ2JyYWluLy5nYnJhaW4vZXZhbC1yZWNlaXB0cy8gICAgICAgICAgICAgICMgcmVjZWlwdCBsYW5kZWQKZ2JyYWluIGNoZWNrLXJlc29sdmFibGUgLS1qc29uIHwganEgLm9rICAgICAgICAgICMgcmVzb2x2ZXIgY2xlYW4=\nuse judgment to follow the Quality Gates guidance:\nNOT properly skilled until:\nAll required items pass (1-2, 4-10; 11 only when applicable)\nCross-modal eval (item 3) has a current receipt OR is explicitly waived\nwith rationale (item 3 is informational; not blocking, but a missing\nreceipt is visible in the audit)\nAll tests pass (unit + integration + LLM evals)\nResolver entry exists with real trigger phrases\nCheck-resolvable shows no orphans, overlaps, or DRY violations\nBrain filing if applicable\nuse judgment to follow the Anti-Patterns guidance:\n❌ Writing tests before cross-modal eval (locks in mediocrity)\n❌ Using budget models for eval (C student grading A student)\n❌ Using a single provider's family for all 3 slots (correlated blind spots)\n❌ Skipping eval \"because the output looks fine\" (your judgment isn't 3 models)\n❌ Eval without fix cycle (vanity metrics)\n❌ Code with no SKILL.md (invisible to resolver)\n❌ Tests that reimplement production code (masks real bugs)\n❌ Resolver entry with internal jargon (must mirror real user language)\n❌ Two skills doing the same thing (merge or kill one)\n❌ Running cross-modal eval on trivial outputs (< 200 tokens, not worth 9 API calls)",
+          "line" : 34,
+          "scoped_tools" : [
+            "assess.notability",
+            "capture",
+            "enrich",
+            "health.get",
+            "jobs.status",
+            "jobs.submit",
+            "link.add",
+            "link.backlinks",
+            "makePDF",
+            "page.create",
+            "page.get",
+            "page.list",
+            "page.search",
+            "page.update",
+            "publish",
+            "recall",
+            "research",
+            "timeline.add",
+            "verify"
+          ],
+          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "skillify a input",

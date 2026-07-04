@@ -18,7 +18,7 @@ triggers:
 | stale | review |
 | duplicate | merge |
 
-## Procedure (( role: procedure ))
+## Procedure
 fetch stale records.
 Check: any stale records.
 bind aging report =
@@ -29,5 +29,5 @@ bind aging report =
   ```
 Emit: aging report.
 
-## Trace shape (( inert, role: template ))
+## Trace shape
 One row per aging bucket, followed by the deterministic action.

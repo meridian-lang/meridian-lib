@@ -98,7 +98,7 @@
     "name" : "cron-scheduler",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 23,
         "text" : "Contract"
@@ -106,100 +106,101 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 32,
+        "line" : 33,
         "text" : "Phases"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 45,
+        "line" : 47,
         "text" : "Idempotency Requirement"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 52,
+        "line" : 55,
         "text" : "Output Format"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 56,
+        "line" : 59,
         "text" : "Multi-source brains: use `sync --all`, not per-source entries"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 84,
+        "line" : 87,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 25,
+        "line" : 26,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 26,
+        "line" : 27,
         "text" : "Schedule staggering"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 27,
+        "line" : 28,
         "text" : "Quiet hours gating"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 28,
+        "line" : 29,
         "text" : "Thin job prompts"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 29,
+        "line" : 30,
         "text" : "Idempotency"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 30,
+        "line" : 31,
         "text" : "Results saved as reports"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 36,
+        "line" : 38,
         "text" : "Slots"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 39,
+        "line" : 41,
         "text" : "Override"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 40,
+        "line" : 42,
         "text" : "During quiet hours"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 47,
+        "line" : 50,
         "text" : "Every cron job MUST be idempotent"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 23,
         "lines" : [
+          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Schedule staggering: max 1 job per 5-minute slot, no collisions",
           "Quiet hours gating: timezone-aware, with user-awake override",
@@ -207,13 +208,14 @@
           "Idempotency: jobs can run twice without duplicate side effects",
           "Results saved as reports: `reports\/{job-name}\/{YYYY-MM-DD-HHMM}.md`"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phases",
-        "line" : 32,
+        "line" : 33,
         "lines" : [
+          "use judgment to follow the Phases guidance:",
           "**Define job.** Name, schedule (cron expression), skill to run, timeout",
           "**Validate schedule.** Check no collision with existing jobs (5-minute offset rule)",
           "Slots: :05, :10, :15, :20, :25, :30, :35, :40, :45, :50",
@@ -228,21 +230,22 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Idempotency Requirement",
-        "line" : 45,
+        "line" : 47,
         "lines" : [
+          "use judgment to follow the Idempotency Requirement guidance:",
           "Every cron job MUST be idempotent:",
           "Running the same job twice produces the same result (no duplicate pages, no duplicate timeline entries)",
           "Use checkpoint state files to track progress and resume interrupted runs",
           "Check for existing output before creating new output"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 52,
+        "line" : 55,
         "lines" : [
           "Job configuration saved. Report: \"Job '{name}' scheduled at {cron expression}. Next run: {time}.\""
         ],
@@ -251,7 +254,7 @@
       {
         "executes" : false,
         "heading" : "Multi-source brains: use `sync --all`, not per-source entries",
-        "line" : 56,
+        "line" : 59,
         "lines" : [
           "When the brain has 2+ active sources (anything `gbrain sources list` shows",
           "with a non-null `local_path` that isn't archived), use one consolidated",
@@ -275,10 +278,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 84,
+        "line" : 87,
         "lines" : [
+          "use judgment to follow the Anti-Patterns guidance:",
           "Scheduling jobs at the same minute (:00 for everything)",
           "Inline 3000-word prompts in cron jobs (use skill file references)",
           "Running cron jobs without testing on 3-5 items first",
@@ -288,7 +292,7 @@
           "`gbrain sync --all --parallel N --workers N` would replace them with",
           "one line that auto-picks-up future sources"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       }
     ],
     "tools" : "search\nget_page\nput_page",
@@ -331,36 +335,40 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 631
+      "meridian_line" : 24,
+      "swift_line" : 602
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 641
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 646
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 685
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 690
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 734
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 773
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 778
     }
   ],
   "tools_used" : [
@@ -373,6 +381,20 @@
         {
           "kind" : "Input",
           "name" : "input"
+        }
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "This skill guarantees:\nSchedule staggering: max 1 job per 5-minute slot, no collisions\nQuiet hours gating: timezone-aware, with user-awake override\nThin job prompts: jobs say \"Read skills\/X\/SKILL.md and run it\" (no inline 3000-word prompts)\nIdempotency: jobs can run twice without duplicate side effects\nResults saved as reports: `reports\/{job-name}\/{YYYY-MM-DD-HHMM}.md`\nuse judgment to follow the Phases guidance:\n**Define job.** Name, schedule (cron expression), skill to run, timeout\n**Validate schedule.** Check no collision with existing jobs (5-minute offset rule)\nSlots: :05, :10, :15, :20, :25, :30, :35, :40, :45, :50\nIf collision detected, suggest the next available slot\n**Check quiet hours.** Default: 11 PM - 8 AM local time\nOverride: user-awake flag (if user is active, quiet hours suspended)\nDuring quiet hours: save output to held queue\nMorning contact releases the backlog\n**Register with host scheduler.** OpenClaw cron, Railway cron, crontab, or process manager. **Each registered entry should execute via Minions, not `agentTurn`.** See `skills\/conventions\/cron-via-minions.md` for the rewrite pattern (PGLite uses `--follow`, Postgres uses fire-and-forget + `--idempotency-key` on the cycle slot). GBrain's v0.11.0 migration auto-rewrites entries for built-in handlers; host-specific handlers need a code-level registration per `docs\/guides\/plugin-handlers.md`\n**Write thin prompt.** Job prompt is one line: \"Read skills\/{name}\/SKILL.md and run it.\"\nuse judgment to follow the Idempotency Requirement guidance:\nEvery cron job MUST be idempotent:\nRunning the same job twice produces the same result (no duplicate pages, no duplicate timeline entries)\nUse checkpoint state files to track progress and resume interrupted runs\nCheck for existing output before creating new output\nuse judgment to follow the Anti-Patterns guidance:\nScheduling jobs at the same minute (:00 for everything)\nInline 3000-word prompts in cron jobs (use skill file references)\nRunning cron jobs without testing on 3-5 items first\nJobs that produce different output on re-run (not idempotent)\nSending notifications during quiet hours (save to held queue instead)\nSeparate per-source `gbrain sync --source <id>` cron entries when\n`gbrain sync --all --parallel N --workers N` would replace them with\none line that auto-picks-up future sources",
+          "line" : 24,
+          "scoped_tools" : [
+            "page.get",
+            "page.search",
+            "publish",
+            "shell.run"
+          ],
+          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "cron-scheduler a input",

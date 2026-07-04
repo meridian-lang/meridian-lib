@@ -20,7 +20,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L3 `Overview`: reference-documentation - Reference documentation, rationale, examples, or changelog.
 
 ## Metrics
-- Sections: 1/1 inert (100% inert ratio)
+- Sections inert total: 1/1 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert categories: reference-documentation=1

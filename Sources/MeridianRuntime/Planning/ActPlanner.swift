@@ -10,19 +10,24 @@ public struct ActContext: Sendable {
     public let tools: [ToolSchema]
     public let observations: [ObservationTurn]
     public let remainingSteps: Int
+    /// Optional extra planner context distinct from `prose` — see
+    /// `PlanContext.guidance`.
+    public let guidance: String?
 
     public init(
         prose: String,
         snapshot: StateSnapshot,
         tools: [ToolSchema],
         observations: [ObservationTurn] = [],
-        remainingSteps: Int
+        remainingSteps: Int,
+        guidance: String? = nil
     ) {
         self.prose = prose
         self.snapshot = snapshot
         self.tools = tools
         self.observations = observations
         self.remainingSteps = remainingSteps
+        self.guidance = guidance
     }
 }
 

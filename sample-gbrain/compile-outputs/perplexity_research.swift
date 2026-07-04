@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -600,6 +600,21 @@ public struct PerplexityResearchInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "PerplexityResearchInput", parameters: [:])
 
+        if __meridianShouldRun("progress:0.0:L189:C0") {
+            // L189
+            try await runtime.assert(!(MeridianComparison.isNotEmpty(state.get("(❌DiscardingCitations.EveryClaimInTheOutputMust.URL)"))), message: "Expected not (❌ Discarding citations. Every claim in the output must have a URL)")
+            try await runtime.checkpoint(label: "progress:0.0:L189:C0", state: state.snapshot())
+        }
+        // L31
+        let __meridianProseResults_L31 = try await runtime.executeProsePlan(
+            prose: "follow the What this does guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            guidance: "Combines existing brain knowledge with Perplexity's web search. The\nagent sends brain context about a topic into a Perplexity query;\nPerplexity searches + reads + synthesizes multiple pages with citations,\nfocused on what's NEW relative to the supplied context\n**The key insight:** Perplexity doesn't just search — it reads and\nsynthesizes with citations. By sending brain context in the\ninstructions, it knows what you already know, so it surfaces the delta\ninstead of repeating settled fact\ntable:ai-discretion:fCBOZWVkIHwgVXNlIHwKfC0tLS0tLXwtLS0tLXwKfCBEZWVwIHJlc2VhcmNoIHdpdGggY2l0YXRpb25zIHwgVGhpcyBza2lsbCDigJQgUGVycGxleGl0eSArIE9wdXMgfAp8IFF1aWNrIFVSTCBjb250ZW50IHwgYHdlYl9mZXRjaGAgfAp8IEJyYWluLW9ubHkgbG9va3VwIHwgYGdicmFpbiBxdWVyeWAgLyBgZ2JyYWluIHNlYXJjaGAgfAp8IFJlYWwtdGltZSBzb2NpYWwgbW9uaXRvcmluZyB8IGV4dGVybmFsIFggLyBzb2NpYWwtbWVkaWEgY29sbGVjdG9ycyB8CnwgU3RydWN0dXJlZCBkYXRhIGxvb2t1cCBhZ2FpbnN0IGEgdHJhY2tlciB8IGBza2lsbHMvZGF0YS1yZXNlYXJjaC9TS0lMTC5tZGAgfA==\nThe skill is markdown agent instructions; the agent uses Perplexity's\nAPI directly (or a host-provided `perplexity` CLI if installed):\ncodeblock:bash:IyAxLiBQdWxsIGJyYWluIGNvbnRleHQKZ2JyYWluIGdldCA8c2x1Zz4gICAgICAgICAgICAgICAgICAgICMgb3IKZ2JyYWluIHF1ZXJ5ICI8dG9waWMga2V5d29yZHM+IgoKIyAyLiBDb21wb3NlIHRoZSBQZXJwbGV4aXR5IHF1ZXJ5IHdpdGggYnJhaW4gY29udGV4dCBpbmxpbmU6CiMgICAgIiIiCiMgICAgVG9waWM6IDx0b3BpYz4KIyAgICBCcmFpbiBjb250ZXh0ICh3aGF0IHdlIGFscmVhZHkga25vdyk6IDxlbWJlZGRlZCBnYnJhaW4gY29udGVudD4KIyAgICBGaW5kOiB3aGF0J3MgTkVXIHNpbmNlIDIwMjYtTU0tREQgdGhhdCB0aGUgYnJhaW4gZG9lc24ndCByZWZsZWN0LgojICAgIENpdGUgZXZlcnkgY2xhaW0uCiMgICAgIiIiCgojIDMuIENhbGwgUGVycGxleGl0eSBBUEkgb3IgdGhlIGhvc3QncyBwZXJwbGV4aXR5IGJpbmFyeToKIyAgICBjdXJsIGh0dHBzOi8vYXBpLnBlcnBsZXhpdHkuYWkvY2hhdC9jb21wbGV0aW9ucyBcCiMgICAgICAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICRQRVJQTEVYSVRZX0FQSV9LRVkiIFwKIyAgICAgIC1IICJDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24iIFwKIyAgICAgIC1kICd7Im1vZGVsIjogInNvbmFyLXBybyIsICJtZXNzYWdlcyI6IFt7InJvbGUiOiJ1c2VyIiwiY29udGVudCI6Ii4uLiJ9XX0nCgojIDQuIFdyaXRlIHRoZSBzdHJ1Y3R1cmVkIHJlc2VhcmNoIHBhZ2UgdmlhIHB1dF9wYWdlOgpnYnJhaW4gcHV0X3BhZ2UgcmVzZWFyY2gvPHNsdWc+ICAgICAgIyB2aWEgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzIG1lbnRpb25lZCAocGVvcGxlLCBjb21wYW5pZXMpIHBlciBJcm9uIExhdy4=\ntable:ai-discretion:fCBNb2RlbCB8IENvc3QgLyBxdWVyeSB8IFVzZSB3aGVuIHwKfC0tLS0tLS18LS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tfAp8IFBlcnBsZXhpdHkgc29uYXItcHJvIHwgflwkMC4wNCB8IERlZXAgYW5hbHlzaXMsIGVudGl0eSBlbnJpY2htZW50LCBkZWFsIHJlc2VhcmNoIHwKfCBQZXJwbGV4aXR5IHNvbmFyIHwgflwkMC4wMDcgfCBRdWljayBsb29rdXBzLCBidWxrIG1vbml0b3JpbmcsIGJyaWVmaW5nIHBpcGVsaW5lcyB8\nDefault to sonar-pro. Drop to sonar for bulk / cron contexts where cost\nmatters more than depth\nuse judgment to follow the Deal / company monitoring (cron) guidance:\nFor each active item under `deals/` or `companies/`:\ncodeblock:bash:IyBXZWVrbHk6IHB1bGwgcmVjZW50IG5ld3MgcGVyIGNvbXBhbnk7IGZsYWcgY2hhbmdlcyBmb3IgcmV2aWV3Lg==\nuse judgment to follow the Anti-Patterns guidance:\n❌ Sending NO brain context. Then it's just a search — use `web_fetch`\ninstead\n❌ Truncating the brain context. The whole point is \"knows what you\nknow.\" Send dense context.\n❌ Skipping the cross-link step when entities are mentioned. Iron Law\n`PERPLEXITY_API_KEY` set in the agent's environment (or in\n`~/.gbrain/.env`)\nOptional: install Perplexity's official CLI for richer streaming output\n`skills/academic-verify/SKILL.md` — wraps perplexity-research for\ncitation-verified academic claim checking\n`skills/enrich/SKILL.md` — calls perplexity-research as part of the\nentity-enrichment loop\n`skills/data-research/SKILL.md` — structured-data trackers (different\nshape: parameterized YAML recipes, not free-form research)\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        )
+        for (__key, __value) in __meridianProseResults_L31 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

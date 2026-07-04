@@ -93,7 +93,7 @@
     "name" : "reconcile ledger",
     "outline" : [
       {
-        "kind" : "applicability",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 11,
         "text" : "Invocation"
@@ -101,43 +101,43 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 15,
+        "line" : 16,
         "text" : "DBA notes"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 19,
+        "line" : 20,
         "text" : "Procedure"
       },
       {
         "kind" : "invariants",
         "level" : 2,
-        "line" : 27,
+        "line" : 28,
         "text" : "Assertions"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 30,
+        "line" : 31,
         "text" : "Output"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 20,
+        "line" : 21,
         "text" : "SQL"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 22,
+        "line" : 23,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 25,
+        "line" : 26,
         "text" : "Emit"
       }
     ],
@@ -147,15 +147,16 @@
         "heading" : "Invocation",
         "line" : 11,
         "lines" : [
+          "use judgment to follow the Invocation guidance:",
           "\"reconcile ledger\"",
           "\"settle ledger batches\""
         ],
-        "role" : "applicability"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "DBA notes",
-        "line" : 15,
+        "line" : 16,
         "lines" : [
           "The operator starts from a SQL snapshot and then lets Meridian drive only the",
           "declared deterministic settlement tools"
@@ -165,7 +166,7 @@
       {
         "executes" : true,
         "heading" : "Procedure",
-        "line" : 19,
+        "line" : 20,
         "lines" : [
           "SQL: `psql -c \"select id,status from ledger_batch where status='ready'\" --csv` to snapshot ready batches",
           "fetch ready batches",
@@ -179,7 +180,7 @@
       {
         "executes" : true,
         "heading" : "Assertions",
-        "line" : 27,
+        "line" : 28,
         "lines" : [
           "no batches whose status is \"failed\""
         ],
@@ -188,7 +189,7 @@
       {
         "executes" : false,
         "heading" : "Output",
-        "line" : 30,
+        "line" : 31,
         "lines" : [
           "The DBA expects a short reconciliation receipt and a list of settled batch ids"
         ],
@@ -226,48 +227,28 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 28,
+      "meridian_line" : 29,
       "swift_line" : 300
     },
     {
-      "meridian_line" : 20,
-      "swift_line" : 305
-    },
-    {
-      "meridian_line" : 39,
-      "swift_line" : 317
-    },
-    {
-      "meridian_line" : 22,
-      "swift_line" : 329
-    },
-    {
-      "meridian_line" : 23,
-      "swift_line" : 333
-    },
-    {
-      "meridian_line" : 60,
-      "swift_line" : 339
-    },
-    {
-      "meridian_line" : 25,
-      "swift_line" : 355
+      "meridian_line" : 12,
+      "swift_line" : 304
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 392
+      "swift_line" : 342
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 397
+      "swift_line" : 347
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 435
+      "swift_line" : 385
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 440
+      "swift_line" : 390
     }
   ],
   "tools_used" : [
@@ -278,6 +259,26 @@
       "mode" : "strict",
       "parameters" : [
 
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "\"reconcile ledger\"\n\"settle ledger batches\"\nSQL: `psql -c \"select id,status from ledger_batch where status='ready'\" --csv` to snapshot ready batches\nfetch ready batches\nCheck: all batches have a name\nfor each batch:\nsettle the batch\nEmit: \"ledger batches reconciled\"",
+          "line" : 12,
+          "scoped_tools" : [
+            "audit_row.list",
+            "batch.list",
+            "batch.settle",
+            "constraint.list",
+            "index.list",
+            "index.rebuild",
+            "ledger.reconcile",
+            "record.list",
+            "record.mark_canonical",
+            "record.purge"
+          ],
+          "text" : "follow the Invocation guidance"
+        }
       ],
       "source_name" : "reconcile ledger",
       "swift_struct" : "ReconcileLedger"

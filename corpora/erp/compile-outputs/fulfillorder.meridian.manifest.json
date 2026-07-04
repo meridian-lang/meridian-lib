@@ -97,7 +97,7 @@
     "name" : "fulfill order",
     "outline" : [
       {
-        "kind" : "applicability",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 11,
         "text" : "When this applies"
@@ -105,55 +105,56 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 15,
+        "line" : 16,
         "text" : "Operator notes"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 20,
+        "line" : 21,
         "text" : "Workflow"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 29,
+        "line" : 30,
         "text" : "Checks"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 21,
+        "line" : 22,
         "text" : "Step"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 23,
+        "line" : 24,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 27,
+        "line" : 28,
         "text" : "Publish"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "When this applies",
         "line" : 11,
         "lines" : [
+          "use judgment to follow the When this applies guidance:",
           "\"fulfill ERP orders\"",
           "\"release shipments\""
         ],
-        "role" : "applicability"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Operator notes",
-        "line" : 15,
+        "line" : 16,
         "lines" : [
           "Warehouse operators say \"release the shipment\" rather than \"invoke the",
           "fulfillment workflow.\" This skill keeps that vocabulary while compiling to",
@@ -164,7 +165,7 @@
       {
         "executes" : true,
         "heading" : "Workflow",
-        "line" : 20,
+        "line" : 21,
         "lines" : [
           "Step: `ofbiz shipment --pending --json` to capture pending warehouse work",
           "fetch open orders",
@@ -177,13 +178,14 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Checks",
-        "line" : 29,
+        "line" : 30,
         "lines" : [
+          "use judgment to follow the Checks guidance:",
           "Every released order should already have inventory reserved"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       }
     ],
     "triggers" : "\"fulfill ERP orders\"\n\"release shipments\""
@@ -224,48 +226,24 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 21,
-      "swift_line" : 403
-    },
-    {
-      "meridian_line" : 49,
-      "swift_line" : 415
-    },
-    {
-      "meridian_line" : 23,
-      "swift_line" : 427
-    },
-    {
-      "meridian_line" : 24,
-      "swift_line" : 431
-    },
-    {
-      "meridian_line" : 58,
-      "swift_line" : 437
-    },
-    {
-      "meridian_line" : 67,
-      "swift_line" : 449
-    },
-    {
-      "meridian_line" : 27,
-      "swift_line" : 465
+      "meridian_line" : 12,
+      "swift_line" : 402
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 502
+      "swift_line" : 440
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 507
+      "swift_line" : 445
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 545
+      "swift_line" : 483
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 550
+      "swift_line" : 488
     }
   ],
   "tools_used" : [
@@ -276,6 +254,26 @@
       "mode" : "strict",
       "parameters" : [
 
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "\"fulfill ERP orders\"\n\"release shipments\"\nStep: `ofbiz shipment --pending --json` to capture pending warehouse work\nfetch open orders\nCheck: all orders have a number\nfor each order:\nreserve inventory for the order\nship the order\nPublish: \"shipment release queue drained\"\nuse judgment to follow the Checks guidance:\nEvery released order should already have inventory reserved",
+          "line" : 12,
+          "scoped_tools" : [
+            "inventory.reserve",
+            "invoice.create",
+            "invoice.list",
+            "order.cancel",
+            "order.list",
+            "payment.collect",
+            "period.close",
+            "product.list",
+            "purchase_order.create",
+            "shipment.create"
+          ],
+          "text" : "follow the When this applies guidance"
+        }
       ],
       "source_name" : "fulfill order",
       "swift_struct" : "FulfillOrder"

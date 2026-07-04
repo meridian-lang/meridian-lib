@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -601,6 +601,16 @@ public struct FunctionalAreaResolverInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "FunctionalAreaResolverInput", parameters: [:])
 
+        // L148
+        let __meridianProseResults_L148 = try await runtime.executeProsePlan(
+            prose: "follow the Methodology caveats guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            guidance: "**Production prompt matters.** With a naive \"return the skill slug\" prompt\n(no instruction about `(dispatcher for: ...)`), every compression variant\ncollapses to ~30-60% on Opus. The dispatcher-aware prompt is in\n`evals/functional-area-resolver/harness-runner.ts:PROMPT_TEMPLATE`. Use it\nas the template for your agent's harness; without it, compression breaks\n**Training corpus and variants were authored by the same release.** Held-out\ncorpus was written before the variants and never adjusted; this mitigates\nbut does not eliminate overfitting\n**Confidence intervals via t-distribution across n=3 seeded repeats.** Hold the\nn=3 lower-bound: high CIs mean the underlying sample is noisy\n**Single-vendor result.** All three models are Anthropic. Cross-vendor\nverification (Gemini, GPT) is a v0.33.x follow-up\n**Held-out blind set is small (n=5).** Saturated at 100% across most cells —\nthe harness can't distinguish between \"100%\" and \"95% with one nondeterministic\nmiss.\" Expanding to ≥20 is a v0.33.x follow-up.\nuse judgment to follow the Prior work and citations guidance:\n**RAG-MCP** ([arXiv:2505.03275](https://arxiv.org/html/2505.03275v1))\nreports 49.2% prompt-token reduction at 3.2× accuracy gain via\nembedding-based pre-retrieval. The token-reduction story matches ours\n(48% smaller), via a different mechanism (RAG vs static dispatcher)\n**Anthropic Agent Skills**\n([engineering blog](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills))\npromotes progressive disclosure: frontmatter (~80 tokens) always loaded,\nSKILL.md body loaded on match. This skill applies the same principle at\nthe routing-table level, not the per-skill body level\nAnyTool (arXiv:2402.04253) showed\nmeta-agent → category-agent → tool-agent hierarchy on 16K APIs beats flat\nretrieval by +35.4pp. The `(dispatcher for: ...)` clause is the\nmeta-agent's view collapsed into a single LLM pass\nThe 2025-2026 literature has no published benchmark for static-prompt\nhierarchical routing (every published hierarchical scheme resolves the\nhierarchy at runtime via a second LLM call). Our finding — that the\nhierarchy can be inlined into a single-LLM-pass dispatcher list and retain\nrouting accuracy — is the open contribution. See\n`evals/functional-area-resolver/README.md` for methodology details\nuse judgment to follow the Step 4: Build the area entry format guidance:\nEach area entry follows this template:\ncodeblock:plain:LSAqKntBcmVhIE5hbWV9Kio6IHtjb21tYS1zZXBhcmF0ZWQgdHJpZ2dlciBwaHJhc2VzfSAtPiBge2Rpc3BhdGNoZXItc2tpbGx9YAogIChkaXNwYXRjaGVyIGZvcjoge2NvbW1hLXNlcGFyYXRlZCBzdWItc2tpbGwgbmFtZXN9KQ==\nRules:\nTrigger phrases should be broad enough to catch intent (\"brain pages, enrich,\nsearch, filing, citations, book analysis\")\nSub-skill list should be comprehensive — this is how the LLM knows what's available\nThe dispatcher skill file should have its own internal routing table\nuse judgment to follow the Step 5: Keep always-on entries separate guidance:\nGates and always-on entries (acknowledge, multi-user, entity-detector, etc.)\nstay as individual rows — they're checked on every message, not dispatched\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nCompression is only performed when the preconditions in Step 1 pass (file ≥12KB AND clean working tree, or `--force`)\nThe mandatory verification gate in Step 6 fires on the user's edited file, not on sample variants. The user runs `gbrain routing-eval --json` AND the gbrain-repo harness (`node harness.mjs --variants-dir <tmp> --variants my-edit`) before committing the compressed file\nPrivacy contract preserved: no fork-specific filesystem path literals (server-side brain home, OpenClaw fork home) leak into the compressed output\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test\nuse judgment to follow the Anti-Patterns guidance:\n**Resolver-of-resolvers with pipe tables.** Tested and failed (see eval\ntable). The LLM picks area names from the table instead of drilling into\nsub-skills\n**Removing sub-skill names.** Without the `(dispatcher for: ...)` list,\nthe LLM can't route to specific sub-skills. The list is the routing signal\n**Too few areas.** Collapsing to <5 areas makes each area too broad\n12-15 areas is the sweet spot\n**Too many areas.** Defeats the purpose. If you have 50 areas, just keep\nindividual rows\nuse judgment to follow the Maintenance guidance:\nWhen adding a new skill:\nIdentify its functional area\nAdd the skill name to that area's `(dispatcher for: ...)` list\nUpdate the area's skill file with routing detail\nRun the routing eval (Step 6) to verify\nWhen adding a new functional area:\nCreate the dispatcher skill with internal routing\nAdd the area entry to the routing file\nRun the routing eval (Step 6) to verify"
+        )
+        for (__key, __value) in __meridianProseResults_L148 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

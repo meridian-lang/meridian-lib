@@ -12,7 +12,7 @@ triggers:
 - "run dunning"
 - "collect overdue invoices"
 
-## Workflow (( role: procedure ))
+## Workflow
 Step: `ofbiz accounting dunning --dry-run --json` to snapshot overdue accounts.
 fetch unpaid invoices.
 Check: any unpaid invoices.
@@ -20,5 +20,5 @@ for each invoice:
   collect payment for the invoice.
 Publish: "dunning collection pass complete".
 
-## Controls (( inert, role: invariants ))
+## Controls
 Do not contact customers whose account is under manual review.

@@ -279,9 +279,33 @@ public struct ManifestEmitter {
                 "mode": wf.mode == .strict ? "strict" : "lenient"
             ]
             d["parameters"] = wf.parameters.map { ["name": $0.name, "kind": $0.kind.name] }
+            let proseSteps = IRWalker.flatPrimitives(wf.body).compactMap { prim -> [String: Any]? in
+                guard case .proseStep(let ir) = prim else { return nil }
+                return proseStepEntry(ir)
+            }
+            if !proseSteps.isEmpty {
+                d["prose_steps"] = proseSteps
+            }
             return d
         }
         return dict
+    }
+
+    /// Records a judgment/discretion/autonomy step so a `.meridian.manifest.json`
+    /// reader can audit exactly what is AI-routed and why — including
+    /// `guidance`, the section narrative a migrated judgment step carries as
+    /// extra planner context (see `ProseStepIR.guidance`).
+    private func proseStepEntry(_ ir: ProseStepIR) -> [String: Any] {
+        var d: [String: Any] = [
+            "text": ir.text,
+            "dispatch_mode": ir.dispatchMode == .autonomousLoop ? "autonomous_loop" : "plan_then_execute",
+            "scoped_tools": ir.scopedTools,
+            "line": ir.sourceRange.startLine
+        ]
+        if let guidance = ir.guidance {
+            d["guidance"] = guidance
+        }
+        return d
     }
 
     private func outlineEntry(_ entry: HeadingEntry, roleByLine: [Int: String]) -> [String: Any] {

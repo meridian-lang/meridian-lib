@@ -296,36 +296,15 @@ public struct AgingReport: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "AgingReport", parameters: [:])
 
-        // L16
-        state.bind("table", Value.list([.record(["bucket": .string("stale"), "action": .string("review")]), .record(["bucket": .string("duplicate"), "action": .string("merge")])]))
-        if __meridianShouldRun("progress:0.1:L42:C0") {
-            // L42
-            let records = try await runtime.invoke(
-                tool: "recordList",
-                args: [
-                    "status": .string("stale"),
-                ]
-            )
-            state.bind("records", records)
-
-            try await runtime.checkpoint(label: "progress:0.1:L42:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L23:C0") {
-            // L23
-            try await runtime.assert((!(((state.get("records"))?.asList ?? []).filter { __e in (meridianDef_Record_stale(__e)) }).isEmpty), message: "Expected any stale records")
-            try await runtime.checkpoint(label: "progress:0.2:L23:C0", state: state.snapshot())
-        }
-        // L24
-        state.bind("agingReport", ("aging:\n" + ({ () -> String in var __out = ""; for __item in ((state.get("table"))?.asList ?? []) { __out += "- " + meridianStringify(__item.member("bucket") ?? .null) + " -> " + meridianStringify(__item.member("action") ?? .null) + "\n" }; return __out })()))
-        if __meridianShouldRun("progress:0.4:L30:C0") {
-            // L30
-            try await runtime.emit(
-                event: "procedure.report",
-                payload: [
-                    "message": state.get("agingReport") ?? .null,
-                ]
-            )
-            try await runtime.checkpoint(label: "progress:0.4:L30:C0", state: state.snapshot())
+        // L12
+        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
+            prose: "follow the Invocation guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["audit_row.list", "batch.list", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "record.list", "record.mark_canonical", "record.purge"],
+            guidance: "\"aging report\"\n\"stale record report\"\ntable:data:fCBidWNrZXQgfCBhY3Rpb24gfAp8IC0tLSB8IC0tLSB8Cnwgc3RhbGUgfCByZXZpZXcgfAp8IGR1cGxpY2F0ZSB8IG1lcmdlIHw=\nuse judgment to follow the Procedure guidance:\nCheck: any stale records\nbind aging report =\ncodeblock:plain:YWdpbmc6Cltmb3IgZWFjaCByb3cgaW4gdGFibGVdLSB7eyByb3cuYnVja2V0IH19IC0+IHt7IHJvdy5hY3Rpb24gfX0KW2VuZCBmb3Jd\nfetch stale records\nEmit: aging report"
+        )
+        for (__key, __value) in __meridianProseResults_L12 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

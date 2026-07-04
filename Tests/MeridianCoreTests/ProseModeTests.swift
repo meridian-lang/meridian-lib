@@ -52,4 +52,69 @@ struct ProseModeTests {
         #expect(out.contains("runtime.executeProsePlan"))
         #expect(out.contains("github.comment"))
     }
+
+    @Test("ProseStepIR.guidance emits an escaped guidance: argument (plan-then-execute)")
+    func proseStepGuidanceCodegenPlanThenExecute() throws {
+        let workflow = IRWorkflow(
+            name: "Demo",
+            parameters: [],
+            body: IRBlock(statements: [
+                .proseStep(ProseStepIR(
+                    text: "follow the install guidance",
+                    scopedTools: ["shell.run"],
+                    dispatchMode: .planThenExecute,
+                    guidance: "Run \"gbrain doctor\" first."
+                ))
+            ])
+        )
+
+        let out = SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        #expect(out.contains("runtime.executeProsePlan"))
+        #expect(out.contains("scopedTools: [\"shell.run\"],"))
+        #expect(out.contains("guidance: \"Run \\\"gbrain doctor\\\" first.\""))
+    }
+
+    @Test("ProseStepIR.guidance emits after autonomy config args (autonomous loop)")
+    func proseStepGuidanceCodegenAutonomousLoop() throws {
+        let workflow = IRWorkflow(
+            name: "Demo",
+            parameters: [],
+            body: IRBlock(statements: [
+                .proseStep(ProseStepIR(
+                    text: "follow the repair guidance",
+                    dispatchMode: .autonomousLoop,
+                    autonomy: AutonomyConfigIR(),
+                    guidance: "Repair every missing back-link."
+                ))
+            ])
+        )
+
+        let out = SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        #expect(out.contains("runtime.executeAutonomousLoop"))
+        #expect(out.contains("replanAfterFailures: 3,"))
+        #expect(out.contains("guidance: \"Repair every missing back-link.\""))
+    }
+
+    @Test("use judgment to follow the <heading> guidance: threads AST guidance through IR and codegen")
+    func judgmentFollowGuidanceThreadsThroughFullPipeline() throws {
+        let symbols = SymbolTable()
+        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        To run diagnostics:
+          use judgment to follow the Diagnostics guidance:
+            Check the golden path first.
+
+            Then check the fallback path.
+        """)
+
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+        guard case .proseStep(let step) = workflows[0].body.statements.first else {
+            Issue.record("Expected ProseStepIR")
+            return
+        }
+        #expect(step.text == "follow the Diagnostics guidance")
+        #expect(step.guidance == "Check the golden path first\nThen check the fallback path")
+
+        let out = SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: workflows)
+        #expect(out.contains("guidance: \"Check the golden path first\\nThen check the fallback path\""))
+    }
 }

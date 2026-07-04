@@ -8,16 +8,24 @@ triggers:
 
 # Purge Expired
 
-## Use this when
+## Use this when (( role: procedure ))
+use judgment to follow the Use this when guidance:
 - "purge expired records"
 - "retention cleanup"
 
-## Procedure (( role: procedure ))
-fetch stale records.
+## Procedure
+use judgment to follow the Procedure guidance:
 Check: any stale records.
+
+### Procedure — steps
+
+fetch stale records.
+
+### Procedure — steps 2
+
 for each the first 100 records whose status is "stale" sorted by updated at, oldest first:
   purge the record.
-recover from any:
+> recover from any:
   Emit: "expired record purge failed".
 Emit: "expired records purged".
 

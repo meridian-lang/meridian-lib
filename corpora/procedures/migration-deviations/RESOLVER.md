@@ -3,57 +3,50 @@
 - Original: `RESOLVER.md`
 - Ported: `RESOLVER.meri`
 - Tier: 2 (light edits)
-- Similarity: 57%
-- Lines: 22 -> 27 (+13 / -8)
+- Similarity: 82%
+- Lines: 22 -> 27 (+7 / -2)
 
 ## Frontmatter
-- Added: `description`, `name`, `parameters`, `rulebook`, `vocabulary`
+- Added: (none)
 - Removed: (none)
 
 ## Categories
-- frontmatter-injected
+- section-marker-added
+- preamble-blockquoted
 
 ## Metrics
-- Sections: 0/2 inert (0% inert ratio)
+- Sections inert total: 0/1 (0% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Judgment: 0 blocks, 0 lines
+- Judgment: 1 blocks, 0 lines
 
 ## Unified diff
 
 ```diff
 --- original-skills/RESOLVER.md
 +++ RESOLVER.meri
-@@ -1,9 +1,14 @@
-+---
-+name: procedures resolver
-+description: Route a synthetic DBA request to a procedure skill id.
-+parameters: trigger phrase
-+vocabulary: procedures.merconfig
-+rulebook: procedures.merrules
-+---
-+
+@@ -1,9 +1,13 @@
  # Procedures Resolver
  
 -Routes a DBA request to the deterministic stored-procedure skill that owns it.
--
++> Routes a DBA request to the deterministic stored-procedure skill that owns it.
+ 
 -## Dispatch table
--
-+## Tables
++## Dispatch table (( inert ))
+ 
++
++### Dispatch table — steps
++
++!!! table (( ai-discretion ))
  | trigger phrase | skill |
  | --- | --- |
  | reconcile ledger | reconcileledger |
-@@ -15,8 +20,8 @@
- | purge expired records | purgeexpired |
+@@ -16,6 +20,7 @@
  | settle ready batches | settlebatch |
  
--## Workflow
-+## Procedure
-+bind selected skill = the skill corresponding to the trigger phrase trigger phrase in the table.
-+emit procedure.dispatch with skill = selected skill.
-+complete.
+ ## Workflow
++use judgment to follow the Workflow guidance:
  
--Look up the skill corresponding to the trigger phrase and emit the selected
--skill id.
--
+ Look up the skill corresponding to the trigger phrase and emit the selected
+ skill id.
 ```

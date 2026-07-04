@@ -72,6 +72,9 @@ Phase 4: Cluster + map (LLM)
 
 ## Invocation (( inert ))
 
+
+### Invocation — steps (( inert ))
+
 The skill is markdown agent instructions. The agent uses gbrain's
 existing operations + LLM passes:
 
@@ -116,17 +119,17 @@ related: ["sibling-concept-1", "sibling-concept-2"]
 
 **Tier 1 — Canon** | 18 mentions across 8 months
 
-## Synthesis (( inert ))
+## Synthesis
 
 [2-4 paragraph narrative tracing how the idea evolved, what it means in
 the user's worldview, why it matters. Third-person analytical voice.]
 
-## Best Articulation (( inert ))
+## Best Articulation
 
 > "Verbatim quote from a source — the most precise or highest-engagement
 > expression of this idea." — [Date](source-url)
 
-## Evolution (( inert ))
+## Evolution
 
 | Period | Expression | Signal |
 |--------|-----------|--------|
@@ -135,10 +138,10 @@ the user's worldview, why it matters. Third-person analytical voice.]
 | YYYY-MM | "Peak form" | Cleanest expression |
 
 ## Related Concepts
-- sibling concept — relationship description
-- sibling concept — relationship description
+- [sibling concept](sibling-concept.md) — relationship description
+- [sibling concept](sibling-concept.md) — relationship description
 
-## Timeline (( inert ))
+## Timeline
 [Full timeline with deduped entries, quotes, source links]
 ```
 
@@ -165,23 +168,23 @@ mention_count: 1
 ```markdown
 # Intellectual Universe
 
-## Canon (T1) — N concepts (( inert ))
+## Canon (T1) — N concepts
 The permanent intellectual fingerprint. Ideas that recur across years.
 
 ### [Cluster Name]
-- concept-slug — one-line characterization
+- [concept-slug](concept-slug.md) — one-line characterization
 - ...
 
 ### [Other Cluster]
 - ...
 
-## Developing (T2) — N concepts (( inert ))
+## Developing (T2) — N concepts
 Sharpening. Might become canon.
 
-## Speculative (T3) — N concepts (( inert ))
+## Speculative (T3) — N concepts
 Testing in public.
 
-## Stats (( inert ))
+## Stats
 - Total concepts: N
 - T1 Canon: N
 - T2 Developing: N
@@ -191,9 +194,10 @@ Testing in public.
 - Latest source: YYYY-MM-DD
 ```
 
-## Quality gates (( inert ))
+## Quality gates
+use judgment to follow the Quality gates guidance:
 
-### Dedup quality (( inert ))
+### Dedup quality
 - No two concept pages should be "the same idea in different words."
 - Aliases preserved in frontmatter for search.
 - Run `gbrain query "type:concept"` and spot-check the count reduction.
@@ -208,9 +212,12 @@ Testing in public.
 ### Synthesis quality (( inert ))
 - Captures evolution, not just repetition.
 - Uses verbatim quotes, not paraphrase.
-- Links to related concepts (markdown links, not wiki-links).
 - Does NOT hallucinate sources or dates.
 
+
+#### Synthesis quality — steps
+
+- Links to related concepts (markdown links, not wiki-links).
 ## Cron integration (( inert ))
 
 This is heavy work. Run on a cadence, not on every signal:
@@ -221,7 +228,8 @@ This is heavy work. Run on a cadence, not on every signal:
 - Manual trigger for a full re-synthesis when the corpus shifts
   significantly.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - ❌ Running synthesis on T3/T4 — wastes API budget on ideas that may
   never sharpen.
@@ -239,7 +247,8 @@ This is heavy work. Run on a cadence, not on every signal:
 - `skills/idea-ingest/SKILL.md` — same for links / articles
 
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 

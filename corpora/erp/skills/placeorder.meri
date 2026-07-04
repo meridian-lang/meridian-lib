@@ -8,7 +8,8 @@ triggers:
 
 # Place Order
 
-## When this applies (( inert, role: applicability ))
+## When this applies (( role: procedure ))
+use judgment to follow the When this applies guidance:
 - "process open orders"
 - "place customer orders"
 
@@ -16,7 +17,7 @@ triggers:
 The source system is an OFBiz-like ERP. Operators think in queues, invoices, and
 shipments rather than compiler primitives.
 
-## Workflow (( role: procedure ))
+## Workflow
 Step: `ofbiz order-check --queue open --json` to snapshot the open order queue.
 fetch open orders.
 Check: all orders have a number.
@@ -28,7 +29,8 @@ for each order:
   ship the order.
 Publish: "open order queue processed".
 
-## Checks (( inert, role: invariants ))
+## Checks (( role: procedure ))
+use judgment to follow the Checks guidance:
 No blocked order may pass reservation or shipment release.
 
 ## Output (( inert, role: template ))

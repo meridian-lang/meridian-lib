@@ -4,7 +4,7 @@
 - Ported: `reports.meri`
 - Tier: 1 (near-verbatim)
 - Similarity: 93%
-- Lines: 60 -> 60 (+4 / -4)
+- Lines: 60 -> 63 (+6 / -3)
 
 ## Frontmatter
 - Added: (none)
@@ -12,53 +12,48 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - inert-section-added
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L4 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
-- L12 `Phases`: operational-procedure - Marked or derived as procedure, but inert suppresses execution.
-- L32 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L37 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L34 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections: 4/4 inert (100% inert ratio)
-- Operational inert: 2
+- Sections inert total: 1/4 (25% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-procedure=1, reference-documentation=1, template=1
-- Judgment: 0 blocks, 0 lines
+- Inert categories: template=1
+- Judgment: 3 blocks, 0 lines
 
 ### Inert section details
-- L4 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
-- L12 `Phases`: operational-procedure — Marked or derived as procedure, but inert suppresses execution.
-- L32 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L37 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L34 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/reports/SKILL.md
 +++ skills/reports.meri
-@@ -18,7 +18,7 @@
+@@ -18,7 +18,8 @@
  
  # Reports Skill
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
++use judgment to follow the Contract guidance:
  
  This skill guarantees:
  - Reports saved with timestamped filenames and frontmatter
-@@ -26,7 +26,7 @@
- - Latest report loadable by category name
+@@ -27,6 +28,7 @@
  - Reports are searchable via gbrain search/query
  
--## Phases
-+## Phases (( inert, role: procedure ))
+ ## Phases
++use judgment to follow the Phases guidance:
  
  1. **Save report.** Write to `reports/{category}/{YYYY-MM-DD-HHMM}.md` with frontmatter:
     ```yaml
-@@ -46,12 +46,12 @@
+@@ -46,12 +48,13 @@
     - "meeting" → meeting-sync
     - Custom mappings configurable
  
@@ -69,7 +64,8 @@ These sections were made non-executable in the port and should be reviewed as mi
  Loaded: full report content with metadata.
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++use judgment to follow the Anti-Patterns guidance:
  
  - Saving reports without frontmatter (makes them unsearchable)
  - Using inconsistent category names across runs

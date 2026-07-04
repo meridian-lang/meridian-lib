@@ -26,7 +26,8 @@ writes_to:
 > personalized one-of-one synthesis output uses the sanctioned
 > `media/articles/<slug>-personalized.md` exception.
 
-## What this does (( inert ))
+## What this does
+use judgment to follow the What this does guidance:
 
 Takes an article brain page that's a wall of raw extracted text and rewrites
 it as a structured page with:
@@ -42,7 +43,8 @@ it as a structured page with:
 Raw source content is preserved in a collapsed `<details>` section so the
 original is never lost.
 
-## When to invoke (( inert, role: applicability ))
+## When to invoke (( role: procedure ))
+use judgment to follow the When to invoke guidance:
 
 - New article page lands in the brain via media-ingest with `needs_enrichment: true`
 - Existing article page is a wall of text under a `## Content` header with
@@ -66,9 +68,12 @@ original is never lost.
 
 ## Invocation (( inert ))
 
-The skill itself is markdown instructions to the agent. It does NOT ship a
-deterministic CLI command in v0.25.1. The agent uses gbrain's existing
-operations:
+
+### Invocation — steps
+
+> The skill itself is markdown instructions to the agent. It does NOT ship a
+> deterministic CLI command in v0.25.1. The agent uses gbrain's existing
+> operations:
 
 ```bash
 # 1. Find candidate pages
@@ -89,32 +94,43 @@ gbrain get media/articles/<slug>
 
 ## Quality bar (( inert ))
 
-An enriched page passes if it has:
-
-- ✅ `## Executive Summary` (2-3 sentences)
-- ✅ `## Quotable Lines` with ≥3 verbatim quotes (literal quotes, not paraphrase)
-- ✅ `## Key Insights` with ≥3 bullets (insights, not topic labels)
 - ✅ `## Why It Matters` connecting to specific brain context (not generic)
 - ✅ `## See Also` with standard markdown links (NOT `[[wiki-links]]`)
 - ✅ `<details>` block preserving the raw source content
 
-## Model selection (( inert ))
 
-| Model | Use when | Quote accuracy |
-|-------|----------|----------------|
-| **Sonnet** (default) | Bulk enrichment, most articles | Good — occasionally paraphrases |
-| **Opus** | High-value content, original-thinking pieces, longreads | Excellent — respects "verbatim" instruction |
+### Quality bar — steps
+
+> An enriched page passes if it has:
+
+- ✅ `## Executive Summary` (2-3 sentences)
+- ✅ `## Quotable Lines` with ≥3 verbatim quotes (literal quotes, not paraphrase)
+- ✅ `## Key Insights` with ≥3 bullets (insights, not topic labels)
+## Model selection (( inert ))
 
 Rule: for bulk enrichment, do a Sonnet draft pass and spot-check 5 with
 the LLM-judge brain-quality eval. If quotes are paraphrased, switch to
 Opus for that batch.
 
+
+### Model selection — steps
+
+!!! table (( ai-discretion ))
+| Model | Use when | Quote accuracy |
+|-------|----------|----------------|
+| Sonnet (default) | Bulk enrichment, most articles | Good — occasionally paraphrases |
+| Opus | High-value content, original-thinking pieces, longreads | Excellent — respects "verbatim" instruction |
+
 ## Link convention (( inert ))
 
 All cross-references use standard markdown links: `[Title](relative/path.md)`.
+
+### Link convention — steps
+
 NEVER use `[[wiki-links]]` — they don't render on GitHub.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - ❌ Paraphrasing quotes ("the author argues that…"). Quotes are verbatim
   or they're not quotes.
@@ -133,7 +149,8 @@ NEVER use `[[wiki-links]]` — they don't render on GitHub.
 - `skills/conventions/quality.md` — citation + back-link rules
 
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 

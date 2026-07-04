@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -597,49 +597,15 @@ public struct BrainPdfInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "BrainPdfInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L104:C0") {
-            // L104
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("brain-pdf <slug>"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.0:L104:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L104:C0") {
-            // L104
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("CONTAINER=1 \"$P\" generate --watermark DRAFT \"$CLEAN\" \"$OUT\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L104:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L104:C0") {
-            // L104
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("CONTAINER=1 \"$P\" generate --cover --toc \"$CLEAN\" \"$OUT\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L104:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.3:L104:C0") {
-            // L104
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("CONTAINER=1 \"$P\" generate --title \"Custom Title\" --author \"Custom Author\" \"$CLEAN\" \"$OUT\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.3:L104:C0", state: state.snapshot())
+        // L20
+        let __meridianProseResults_L20 = try await runtime.executeProsePlan(
+            prose: "follow the The rule guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
+            guidance: "The brain page is ALWAYS the source of truth. The PDF is a rendering of\nit, never a standalone artifact. If a PDF exists somewhere, the brain\npage must exist behind it\nuse judgment to follow the What this does guidance:\nRenders a brain page (markdown with frontmatter) into a\npublication-quality PDF using the gstack `make-pdf` binary. Output is\nsuitable for:\nSharing a personalized book mirror via email or Telegram\nDelivering a strategic-reading playbook as a clean read\nProducing a briefing or report with running headers and page numbers\nArchiving a long-form essay in a portable format\nuse judgment to follow the Prerequisite: gstack make-pdf guidance:\ncodeblock:plain:JEhPTUUvLmNsYXVkZS9za2lsbHMvZ3N0YWNrL21ha2UtcGRmL2Rpc3QvcGRm\nThe user must have gstack co-installed. If absent, the skill cannot run\nA future v0.26+ may bundle a fallback PDF renderer; for v0.25.1 gstack\nis a soft prereq\nThis skill depends on the gstack `make-pdf` binary at:\ncodeblock:bash:UD0iJEhPTUUvLmNsYXVkZS9za2lsbHMvZ3N0YWNrL21ha2UtcGRmL2Rpc3QvcGRmIgpbIC14ICIkUCIgXSB8fCB7IGVjaG8gIm1ha2UtcGRmIG5vdCBpbnN0YWxsZWQ7IGluc3RhbGwgZ3N0YWNrIiA+JjI7IGV4aXQgMTsgfQ==\nuse judgment to follow the Workflow guidance:\ncodeblock:plain:MS4gUkVTT0xWRSAg4oaSIENvbmZpcm0gdGhlIGJyYWluIHBhZ2UgZXhpc3RzIChnYnJhaW4gZ2V0IDxzbHVnPikuCjIuIFNUUklQICAgIOKGkiBSZW1vdmUgWUFNTCBmcm9udG1hdHRlciDigJQgdGhlIHJlbmRlcmVyIHdvdWxkIG90aGVyd2lzZQogICAgICAgICAgICAgIGR1bXAgaXQgYXMgYSBmdWxsIHBhZ2Ugb2YgcmF3IG1ldGFkYXRhIHRleHQuCjMuIFJFTkRFUiAgIOKGkiBJbnZva2UgbWFrZS1wZGYgd2l0aCBzYW5lIGRlZmF1bHRzIChubyAtLWNvdmVyLCBubyAtLXRvYykuCjQuIERFTElWRVIgIOKGkiBIYW5kIHRoZSBQREYgdG8gdGhlIHJlcXVlc3RlciB2aWEgdGhlIGFnZW50J3MgcHJlZmVycmVkCiAgICAgICAgICAgICAgY2hhbm5lbCAoZG8gbm90IHVzZSByYXcgYE1FRElBOmAgdGFncyBvbiBUZWxlZ3JhbSDigJQKICAgICAgICAgICAgICB0aGV5IGZhaWwgc2lsZW50bHkpLg==\ncodeblock:bash:U0xVRz0icGF0aC90by9wYWdlIgpQPSIkSE9NRS8uY2xhdWRlL3NraWxscy9nc3RhY2svbWFrZS1wZGYvZGlzdC9wZGYiCgojIDEuIENvbmZpcm0gdGhlIHBhZ2UgZXhpc3RzLgpnYnJhaW4gZ2V0ICIkU0xVRyIgPiAvZGV2L251bGwgfHwgeyBlY2hvICJQYWdlICRTTFVHIG5vdCBmb3VuZCIgPiYyOyBleGl0IDE7IH0KCiMgMi4gR2V0IHRoZSByYXcgbWFya2Rvd24uIFR3byBwYXRoczogcmVhZCBmcm9tIHRoZSBicmFpbiByZXBvIChpZiB1c2VyCiMgICAgc3luY3MgbG9jYWxseSkgT1IgYXNrIGdicmFpbiBmb3IgdGhlIGJvZHkgdmlhIHRoZSBBUEkuCkJSQUlOX0RJUj0kKGdicmFpbiBjb25maWcgZ2V0IHN5bmMucmVwb19wYXRoIDI+L2Rldi9udWxsIHx8IGVjaG8pCmlmIFsgLW4gIiRCUkFJTl9ESVIiIF0gJiYgWyAtZiAiJEJSQUlOX0RJUi8kU0xVRy5tZCIgXTsgdGhlbgogIFJBVz0iJEJSQUlOX0RJUi8kU0xVRy5tZCIKZWxzZQogIFJBVz0kKG1rdGVtcCAvdG1wL2JyYWluLXBhZ2UtWFhYWFhYLm1kKQogIGdicmFpbiBnZXQgIiRTTFVHIiAtLXJhdyA+ICIkUkFXIiAgICMgd2hhdGV2ZXIgZmxhZyBleHBvc2VzIHJhdyBib2R5CmZpCgojIDMuIFN0cmlwIFlBTUwgZnJvbnRtYXR0ZXIg4oCUIHNlZDogc2tpcCB0aGUgb3BlbmluZyAnLS0tJyB0aHJvdWdoIHRoZQojICAgIGNsb3NpbmcgJy0tLScgKGxpbmVzIDEuLk4pLCB0aGVuIGtlZXAgZXZlcnl0aGluZyBhZnRlci4KQ0xFQU49JChta3RlbXAgL3RtcC9icmFpbi1wYWdlLWNsZWFuLVhYWFhYWC5tZCkKc2VkICcxey9eLS0tJC8hcX07IC9eLS0tJC8sL14tLS0kL2QnICIkUkFXIiA+ICIkQ0xFQU4iCgojIDQuIFJlbmRlci4gTk8gLS1jb3ZlciwgTk8gLS10b2MgYnkgZGVmYXVsdCDigJQgdGhleSBsb29rIGNvcnBvcmF0ZQojICAgIGFuZCB3YXN0ZSBzcGFjZS4gQWRkIHRoZW0gb25seSBpZiBleHBsaWNpdGx5IHJlcXVlc3RlZC4KT1VUPSIvdG1wLyQoYmFzZW5hbWUgIiRTTFVHIikucGRmIgpDT05UQUlORVI9MSAiJFAiIGdlbmVyYXRlICIkQ0xFQU4iICIkT1VUIgoKZWNobyAiUmVuZGVyZWQ6ICRPVVQi\ncodeblock:bash:IyBEZWZhdWx0IOKAlCBjbGVhbiBQREYsIG5vIGNvdmVyLCBubyBUT0MKYnJhaW4tcGRmIDxzbHVnPgoKIyBEcmFmdCB3YXRlcm1hcmsgZm9yIGluLXByb2dyZXNzIHdvcmsKQ09OVEFJTkVSPTEgIiRQIiBnZW5lcmF0ZSAtLXdhdGVybWFyayBEUkFGVCAiJENMRUFOIiAiJE9VVCIKCiMgT3B0aW9uYWwgY292ZXIgKyBUT0MgaWYgdGhlIHVzZXIgZXhwbGljaXRseSBhc2tzCkNPTlRBSU5FUj0xICIkUCIgZ2VuZXJhdGUgLS1jb3ZlciAtLXRvYyAiJENMRUFOIiAiJE9VVCIKCiMgQ3VzdG9tIHRpdGxlICsgYXV0aG9yIG92ZXJyaWRlIChvdGhlcndpc2UgcHVsbGVkIGZyb20gZnJvbnRtYXR0ZXIpCkNPTlRBSU5FUj0xICIkUCIgZ2VuZXJhdGUgLS10aXRsZSAiQ3VzdG9tIFRpdGxlIiAtLWF1dGhvciAiQ3VzdG9tIEF1dGhvciIgIiRDTEVBTiIgIiRPVVQi\n`fonts-liberation` (Helvetica/Arial substitute)\n`fonts-noto-cjk` (Chinese/Japanese/Korean characters)\nuse judgment to follow the Delivery guidance:\nAfter rendering, deliver via the agent's preferred channel:\n**Telegram:** use the `message` tool with `filePath=\"/tmp/<slug>.pdf\"`\nattachment. NEVER use raw `MEDIA:` tags — they fail silently\n**Email:** attach via the host's email tool\n**Direct file response:** print the PDF path; the user can pull it\nmanually\nAlways include the brain page link in the delivery message so the user\ncan also see it on GitHub / locally. The PDF is a rendering; the source\nis the artifact\nuse judgment to follow the Anti-Patterns guidance:\n❌ Generating a PDF without first confirming the brain page exists\nNo source = no PDF\n❌ Skipping the frontmatter strip. The renderer dumps frontmatter as\nraw text on the first page; ugly\n❌ Skipping emoji sanitization. Emoji that don't map to the rendering\nfont show up as `□` boxes\n❌ Adding `--cover` or `--toc` by default. Off unless asked\n❌ Using raw `MEDIA:` tags for Telegram delivery. Use the `message`\ntool with `filePath`\n`skills/book-mirror/SKILL.md` — produces a brain page that's a\nnatural input to brain-pdf (chapter-by-chapter personalized analysis)\n`skills/strategic-reading/SKILL.md` — same shape, problem-lens variant\n`skills/publish/SKILL.md` — share brain pages as password-protected\nHTML (different rendering target)\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        )
+        for (__key, __value) in __meridianProseResults_L20 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

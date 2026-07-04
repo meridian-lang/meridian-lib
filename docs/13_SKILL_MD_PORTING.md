@@ -139,6 +139,20 @@ surface" for the grammar.
   = "<verbatim>"`. Surrounding prose becomes the source annotation. Multi-line
   blocks lower to one invoke per command line. This is a deterministic `invoke`
   (never an LLM) and avoids pre-declaring ~80 CLI verbs.
+- **Non-shell fence → tool (general-abilities, opt-in):** a domain's
+  `.merconfig` `=== language ===` section can declare a `Fence tool mapping:`
+  block (e.g. `python = interpreter.run`) so a fenced code block in that
+  language lowers deterministically to one plain `invoke <tool> with code =
+  "<whole fence body>"` instead of falling to inert or an AI-routed judgment
+  step. This is the non-gbrain-repo analogue of the bash/sh/shell fence
+  handling above — useful for skill repos whose procedures are Python/Node
+  scripts rather than shell commands. See `EnglishLexicon.fenceToolMapping`.
+- **Procedure heading synonyms (general-abilities):** besides
+  `Phases`/`Workflow`/`Pipeline`/`Protocol`/`Steps`/`Process`/`Procedure`/
+  `Phase N:`, the builtin `=== sections ===` alias table also recognizes
+  `Instructions`, `Usage`, `Quickstart`/`Quick Start`, and `How It Works` as
+  the `.procedure` role — common headings in non-gbrain `SKILL.md` repos. See
+  `Rulebook.builtinSectionAliases`.
 - **Choice-gate:** `ask the user to choose between "A", "B", or "C".` and the
   Markdown option-list form (`ask the user to choose between:` followed by
   indented numbered/bulleted/quoted options) emit `ask.choice` + `wait`
@@ -225,7 +239,11 @@ and the compiled Swift for each `.meri` under `sample-gbrain/compile-outputs/`
 ## Common porting fixes (from the corpus)
 
 These are the recurring edits applied while porting the corpus. They are all
-within the budget above.
+within the budget above. Fixes 7 and 12–14 (mixed-section splitting and fuzzy
+AI-routing) are now mechanized by `meridian migrate-skill`'s marking pass by
+default — read them as the shape reference / manual fallback rather than a
+by-hand checklist; run the migrator first and only intervene where its
+deterministic thresholds don't fit a specific section.
 
 1. **Prose `## Phases` → `use judgment to …:`.** A numbered-prose procedure that
    describes judgment ("Decompose the question…", "Synthesize an answer…") is
@@ -253,6 +271,15 @@ within the budget above.
    structurally checkable comparison, or mark the section
    `(( inert, role: invariants ))`; a non-checkable invariant item is a hard error.
 7. **Adding executable logic to a documentation section → split, don't comment.**
+   **`meridian migrate-skill` does this automatically now** (see 07_CLI.md
+   §"Automatic mixed-section split"): a heading whose body mixes narrative and
+   executable lines is split into the narrative under the original `(( inert ))`
+   heading and a generated `— steps` sibling carrying just the executable run,
+   aliased to `procedure`. What follows is the manual fallback — apply it by
+   hand only when the automatic split under- or over-splits a given section (the
+   threshold heuristic is deliberately conservative) or you are hand-authoring
+   rather than running the migrator.
+
    A `role` section makes **every** non-blank, non-comment line a live statement
    that must lower, so you cannot simply flip an `(( inert ))` heading to
    `(( role: procedure ))` while keeping its descriptive paragraph — that prose
@@ -350,8 +377,16 @@ within the budget above.
     whose backticked token has spaces and so isn't a bare tool id) — is genuine
     documentation; keep that one `(( inert ))`.
 
-12. **Fuzzy tables/checklists are AI steps, not inert.** A decision table whose
-    condition cells are *intent descriptions* (not checkable comparisons) and an
+12. **Fuzzy tables/checklists are AI steps, not inert.** **`meridian
+    migrate-skill` routes these automatically** (on by default; `--no-route-fuzzy`
+    to disable): a checklist/table block that doesn't trial-lower gets the
+    `!!! checklist (( ai-autonomy ))` / `!!! table (( ai-discretion ))` marker
+    prepended for you, and a below-split-threshold section with no executable
+    content becomes a `use judgment to follow the <heading> guidance:` wrap
+    instead of going `(( inert ))`. What follows is the manual shape reference —
+    apply it by hand when hand-authoring or adjusting an automatically-routed
+    block. A decision table whose condition cells are *intent descriptions*
+    (not checkable comparisons) and an
     acceptance checklist whose items are *not structurally checkable* are still
     part of the workflow — they just need judgment. Route them to the planner via
     the two AI modes instead of dropping them with `(( inert ))`:
@@ -383,7 +418,16 @@ within the budget above.
     or contains executable Markdown surfaces but is still suppressed. Fix it by
     removing the marker, adding a section alias, splitting mixed prose, lowering
     deterministic lines, or explicitly routing fuzzy work with
-    `ai-discretion` / `ai-autonomy`.
+    `ai-discretion` / `ai-autonomy`. `migrate-skill`'s marking pass now does the
+    split/route steps for you; a residual operational-inert section after
+    migration means either the split threshold didn't trigger (fewer than 3
+    executable lines and under 25% of the section — wrap it in
+    `use judgment to follow the <heading> guidance:` by hand, or lower the
+    threshold case-by-case) or the content needs a `brain.merconfig` phrase
+    authored before it will trial-lower. The migration report's
+    `unmined-contract` line count is the leading indicator: a normative
+    (must/never/always-shaped) line that didn't lower and wasn't split out is
+    listed there rather than silently disappearing into `(( inert ))` prose.
 
 14. **`Contract` / `Anti-Patterns` are executable or explicitly AI-routed.**
     When every line is checkable, leave the section live so invariant/prohibition

@@ -399,54 +399,15 @@ public struct InvoiceRun: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "InvoiceRun", parameters: [:])
 
-        // L16
-        state.bind("table", Value.list([.record(["status": .string("unpaid"), "queue": .string("collections")]), .record(["status": .string("fulfilled"), "queue": .string("archive")])]))
-        if __meridianShouldRun("progress:0.1:L49:C0") {
-            // L49
-            let orders = try await runtime.invoke(
-                tool: "orderList",
-                args: [
-                    "status": .string("open"),
-                ]
-            )
-            state.bind("orders", orders)
-
-            try await runtime.checkpoint(label: "progress:0.1:L49:C0", state: state.snapshot())
-        }
-        // L23
-        for (__meridianLoopIndex_0_2, order) in (state.get("orders")?.asList ?? []).enumerated() {
-            let __meridianLoopLabel_0_2 = "progress:0.2:iteration:\(__meridianLoopIndex_0_2)"
-            if __meridianShouldRun(__meridianLoopLabel_0_2) {
-            state.bind("order", order)
-                if __meridianShouldRun("progress:0.2.body.0:L61:C0") {
-                    // L61
-                    let invoice = try await runtime.invoke(
-                        tool: "invoiceCreate",
-                        args: [
-                            "order": state.get("order") ?? .null,
-                        ]
-                    )
-                    state.bind("invoice", invoice)
-
-                    try await runtime.checkpoint(label: "progress:0.2.body.0:L61:C0", state: state.snapshot())
-                }
-                try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
-            }
-        }
-
-        // L25
-        state.bind("selectedQueue", try ({ () throws -> Value? in guard let __rows = state.get("table")?.asList else { throw ToolError.implementation(code: "table.lookup_miss", message: "table table is not bound", cause: nil) }; for __row in __rows { if MeridianComparison.eq(__row.member("status"), .string("unpaid")) { return __row.member("queue") } }; throw ToolError.implementation(code: "table.lookup_miss", message: "no row in table where status matches", cause: nil) })())
-        // L26
-        state.bind("invoiceReceipt", ("invoice-routing:\n" + ({ () -> String in var __out = ""; for __item in ((state.get("table"))?.asList ?? []) { __out += "- " + meridianStringify(__item.member("status") ?? .null) + " -> " + meridianStringify(__item.member("queue") ?? .null) + "\n" }; return __out })() + "\nselected: " + meridianStringify(state.get("selectedQueue") ?? .null)))
-        if __meridianShouldRun("progress:0.5:L33:C0") {
-            // L33
-            try await runtime.emit(
-                event: "erp.invoice_receipt",
-                payload: [
-                    "body": state.get("invoiceReceipt") ?? .null,
-                ]
-            )
-            try await runtime.checkpoint(label: "progress:0.5:L33:C0", state: state.snapshot())
+        // L12
+        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
+            prose: "follow the When this applies guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["inventory.reserve", "invoice.create", "invoice.list", "order.cancel", "order.list", "payment.collect", "period.close", "product.list", "purchase_order.create", "shipment.create"],
+            guidance: "\"run invoices\"\n\"billing batch\"\ntable:data:fCBzdGF0dXMgfCBxdWV1ZSB8CnwgLS0tIHwgLS0tIHwKfCB1bnBhaWQgfCBjb2xsZWN0aW9ucyB8CnwgZnVsZmlsbGVkIHwgYXJjaGl2ZSB8\nuse judgment to follow the Workflow guidance:\nbind invoice receipt =\ncodeblock:plain:aW52b2ljZS1yb3V0aW5nOgpbZm9yIGVhY2ggcm93IGluIHRhYmxlXS0ge3sgcm93LnN0YXR1cyB9fSAtPiB7eyByb3cucXVldWUgfX0KW2VuZCBmb3JdCnNlbGVjdGVkOiB7eyBzZWxlY3RlZCBxdWV1ZSB9fQ==\nfetch open orders\nfor each order:\ncreate an invoice for the order\nbind selected queue = the queue corresponding to the status \"unpaid\" in the table\nemit erp.invoice_receipt with body = invoice receipt"
+        )
+        for (__key, __value) in __meridianProseResults_L12 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

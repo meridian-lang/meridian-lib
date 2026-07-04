@@ -28,7 +28,8 @@ mutating: true
 > **Output rule:** all links MUST be deterministic (built from API data,
 > not composed by LLM). See [_output-rules.md](../_output-rules.md).
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 
@@ -40,23 +41,33 @@ This skill guarantees:
   links.
 - Results reported with counts (scanned, fixed, remaining).
 
-## Phases (( inert, role: procedure ))
+## Phases
+use judgment to follow the Phases guidance:
 
-1. **Scan pages.** List pages and read each one, checking for inline
-   `[Source: ...]` citations.
 2. **Identify issues:**
    - Facts without any citation
    - Citations missing date
    - Citations missing source type
    - Citations with wrong format
-   - **(v0.25.1)** Tweet references without `x.com` URLs
-3. **Fix format issues.** Rewrite malformed citations to match
-   `conventions/quality.md`.
 4. **(v0.25.1) Resolve tweet references** via the X API integration.
 5. **Report results.** Count: pages scanned, citations found, issues
    fixed, tweets resolved, remaining gaps.
 
+
+### Phases — steps
+
+1. List pages and read each one, checking for inline
+   `[Source: ...]` citations.
+
+### Phases — steps 2
+
+   - (v0.25.1) Tweet references without `x.com` URLs
+3. Rewrite malformed citations to match
+   `conventions/quality.md`.
 ## Tweet resolution pipeline (v0.25.1 extension) (( inert ))
+
+
+### Tweet resolution pipeline (v0.25.1 extension) — steps
 
 For each broken tweet reference, follow this chain. The actual API call
 goes through whatever X integration the host has configured (typical
@@ -104,6 +115,9 @@ Once a candidate is found:
 - Confirm the text matches the quoted fragment.
 - Pull the tweet id, author handle, engagement metrics (likes / RTs /
   impressions).
+
+#### Step 4: Verify and extract metadata — steps
+
 - Construct the URL: `https://x.com/<handle>/status/<tweet_id>`.
 
 ### Step 5: Patch the brain page (( inert ))
@@ -167,7 +181,8 @@ Tweet links resolved: N
 Remaining gaps:       N (pages with uncitable facts)
 ```
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - ❌ Inventing citations for facts that have no source. Flag them.
 - ❌ Removing facts that lack citations (flag them; don't delete).
@@ -188,9 +203,6 @@ This skill can be called:
 
 ## Metrics (( inert ))
 
-If running as a recurring batch, track state in a small JSON file under
-`~/.gbrain/citation-fixer-state.json`:
-
 ```json
 {
   "last_run": "2026-04-15T...",
@@ -202,6 +214,12 @@ If running as a recurring batch, track state in a small JSON file under
 }
 ```
 
+
+
+### Metrics — steps
+
+If running as a recurring batch, track state in a small JSON file under
+`~/.gbrain/citation-fixer-state.json`:
 
 ## Output Format (( inert, role: template ))
 

@@ -33,8 +33,6 @@ brain_first: exempt
 
 ## What this is (( inert ))
 
-Take a large text PLUS a specific strategic problem, produce analysis that
-maps the text's insights onto the problem. This is not book summarization.
 This is reading with a mission.
 
 Where `book-mirror` personalizes a book to the reader's whole life,
@@ -46,6 +44,11 @@ specific gatekeeper-vs-incumbent fight, producing a tactical analysis that
 maps the book's playbook onto the situation with counter-tactics and a
 short/medium/long-term playbook.
 
+
+### What this is — steps (( inert ))
+
+Take a large text PLUS a specific strategic problem, produce analysis that
+maps the text's insights onto the problem. This is not book summarization.
 ## Inputs (( inert ))
 
 1. **Source text** — book (EPUB/PDF), article, transcript, historical case
@@ -66,43 +69,44 @@ The brain page is the artifact. PDF is a rendering, never primary.
 > One-paragraph executive summary: how the source maps to the situation,
 > the key insight, the bottom line.
 
-## The Core Parallel (( inert ))
+## The Core Parallel
 How the source's central dynamic maps onto the user's situation.
 
-## Chapter / Section Triage (( inert ))
+## Chapter / Section Triage
 For each major section of the source:
 - 2-3 sentence summary of what it says
 - Relevance to the problem: HIGH / MEDIUM / LOW
 - One directly applicable quote (if any)
 
-## The Source's Playbook (( inert ))
+## The Source's Playbook
 The author's framework, tactics, or strategies — organized as:
 - What the protagonist DID (tactics)
 - What WORKED and why
 - What FAILED and why
 - What OPPONENTS did that was effective
 
-## Counter-Tactics (( inert ))
+## Counter-Tactics
 Specific moves from the source that map to the user's situation:
 - What to DO (with source evidence)
 - What to AVOID (with source evidence)
 - What to WATCH FOR (warning signs from the source)
 
-## Applied Playbook (( inert ))
+## Applied Playbook
 The synthesis — actionable recommendations:
 - **Short-term** (this week / this month)
 - **Medium-term** (this quarter)
 - **Long-term** (this year+)
 
-## Key Quotes (( inert ))
+## Key Quotes
 Direct quotes from the source that are devastatingly relevant.
 Maximum 5-10. Quality over quantity.
 
-## See Also (( inert ))
+## See Also
 Links to relevant brain pages (related concepts, related projects).
 ```
 
-## Process (( inert, role: procedure ))
+## Process
+use judgment to follow the Process guidance:
 
 ```
 Phase 1: Ingest the source
@@ -152,14 +156,20 @@ Phase 5: Write and deliver
 
 ## What this skill is NOT (( inert ))
 
+- Not academic literary analysis. No one cares about literary merit —
+  only strategic application.
+
+
+### What this skill is NOT — steps
+
 - Not a book summary tool. Use a different skill (or `book-mirror` for
   personalized analysis) for general summaries.
 - Not a research tool. Use `perplexity-research` for finding new
   information about a topic.
-- Not academic literary analysis. No one cares about literary merit —
-  only strategic application.
+## Related skills (( inert, role: procedure ))
 
-## Related skills (( inert ))
+
+### Related skills — steps
 
 - `skills/book-mirror/SKILL.md` — book personalized to whole life (vs
   problem)
@@ -168,7 +178,8 @@ Phase 5: Write and deliver
 - `skills/conventions/quality.md` — citation + back-link rules
 
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 
@@ -183,6 +194,7 @@ The full behavior contract is documented in the body sections above; this sectio
 
 The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing.

@@ -899,13 +899,14 @@ public struct MerConfigParser {
         var actionHeaderSynonyms: [String] = []
         var wildcardSynonyms: [String] = []
         var shellFenceSynonyms: [String] = []
+        var fenceToolMapping: [String: String] = [:]
 
         enum Mode {
             case none, comparison, duration, assertion
             case empty, filled, pastWindow, futureWindow, timestampAlias
             case aggregate, superlative, sortBy, ascending, descending
             case possessive, anaphora
-            case conditionHeader, actionHeader, wildcard, shellFence
+            case conditionHeader, actionHeader, wildcard, shellFence, fenceTool
         }
         var mode: Mode = .none
 
@@ -937,6 +938,7 @@ public struct MerConfigParser {
             ("wildcard synonym", .wildcard),
             ("shell-fence synonym", .shellFence),
             ("shell fence synonym", .shellFence),
+            ("fence tool mapping", .fenceTool),
         ]
 
         for line in content {
@@ -974,7 +976,7 @@ public struct MerConfigParser {
             case .actionHeader:  if !marker.isEmpty { actionHeaderSynonyms.append(marker) };   continue
             case .wildcard:      if !t.isEmpty { wildcardSynonyms.append(t) };                 continue
             case .shellFence:    if !marker.isEmpty { shellFenceSynonyms.append(marker) };     continue
-            case .comparison, .duration, .aggregate, .superlative, .none:
+            case .comparison, .duration, .aggregate, .superlative, .fenceTool, .none:
                 break  // keyed `key = value` blocks handled below
             }
 
@@ -1002,6 +1004,12 @@ public struct MerConfigParser {
                 if let dir = SuperlativeDirection(rawValue: value) {
                     superlativeSynonyms[key] = dir
                 }
+            case .fenceTool:
+                // "python = interpreter.run" — value keeps its original case
+                // (a tool ID), unlike the lower-cased comparison/aggregate/
+                // superlative values above.
+                let toolID = String(t[eqRange.upperBound...]).trimmingCharacters(in: .whitespaces)
+                if !toolID.isEmpty { fenceToolMapping[key] = toolID }
             default:
                 break
             }
@@ -1026,7 +1034,8 @@ public struct MerConfigParser {
                                 conditionHeaderSynonyms: conditionHeaderSynonyms,
                                 actionHeaderSynonyms: actionHeaderSynonyms,
                                 wildcardSynonyms: wildcardSynonyms,
-                                shellFenceSynonyms: shellFenceSynonyms)
+                                shellFenceSynonyms: shellFenceSynonyms,
+                                fenceToolMapping: fenceToolMapping)
     }
 
     /// Resolve a human-readable operator description to a `ComparisonOpAST`.

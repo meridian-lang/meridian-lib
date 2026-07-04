@@ -12,7 +12,7 @@ triggers:
 - "purge expired records"
 - "retention cleanup"
 
-## Procedure (( role: procedure ))
+## Procedure
 fetch stale records.
 Check: any stale records.
 for each the first 100 records whose status is "stale" sorted by updated at, oldest first:
@@ -21,5 +21,5 @@ recover from any:
   Emit: "expired record purge failed".
 Emit: "expired records purged".
 
-## Operator notes (( inert ))
+## Operator notes
 The limit of 100 mirrors a stored procedure batch size and keeps replay bounded.

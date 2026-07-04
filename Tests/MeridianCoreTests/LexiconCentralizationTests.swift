@@ -213,6 +213,103 @@ struct ShellFenceLexiconTests {
     }
 }
 
+@Suite("Fence tool mapping — general-abilities extension")
+struct FenceToolMappingLexiconTests {
+
+    @Test("default lexicon has no fence tool mapping")
+    func defaultsAreEmpty() {
+        #expect(EnglishLexicon.default.fenceTool(for: "python") == nil)
+    }
+
+    @Test("=== language === Fence tool mapping populates a non-shell fence lookup")
+    func authorExtends() {
+        let merged = EnglishLexicon.default.merging(
+            comparisonSynonyms: [],
+            durationSynonyms: [:],
+            fenceToolSynonyms: ["Python": "interpreter.run", "node": "interpreter.runJS"]
+        )
+        #expect(merged.fenceTool(for: "python") == "interpreter.run") // key lower-cased on merge
+        #expect(merged.fenceTool(for: "PYTHON") == "interpreter.run") // lookup is case-insensitive too
+        #expect(merged.fenceTool(for: "node") == "interpreter.runJS") // tool ID keeps its original case
+        #expect(merged.fenceTool(for: "ruby") == nil)
+        // A shell dialect stays shell-classified even if a domain (oddly)
+        // also maps it — isShellFence takes precedence at call sites.
+        #expect(merged.isShellFence("bash"))
+    }
+
+    @Test("author-supplied mapping overrides a same-key default on merge")
+    func authorOverrides() {
+        let base = EnglishLexicon.default.merging(
+            comparisonSynonyms: [],
+            durationSynonyms: [:],
+            fenceToolSynonyms: ["python": "interpreter.run"]
+        )
+        let overridden = base.merging(
+            comparisonSynonyms: [],
+            durationSynonyms: [:],
+            fenceToolSynonyms: ["python": "custom.pythonRunner"]
+        )
+        #expect(overridden.fenceTool(for: "python") == "custom.pythonRunner")
+    }
+
+    @Test("a ```python fence with a configured mapping lowers to one plain invoke, end to end")
+    func toolFenceLowersToPlainInvoke() throws {
+        let lexicon = EnglishLexicon.default.merging(
+            comparisonSynonyms: [],
+            durationSynonyms: [:],
+            fenceToolSynonyms: ["python": "interpreter.run"]
+        )
+        let symbols = SymbolTable()
+        let ast = try MeridianParser(symbols: symbols, trace: .silent(), lexicon: lexicon).parse("""
+        To score, with discretion:
+          ```python
+          print("hi")
+          x = 1 + 1
+          ```
+        """, file: "test.meridian")
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), lexicon: lexicon).lower(ast)
+        guard case .invoke(let invoke) = workflows[0].body.statements.first else {
+            Issue.record("expected a single invoke, got \(workflows[0].body.statements.first as Any)")
+            return
+        }
+        #expect(invoke.toolID == "interpreter.run")
+        guard case .literal(.string(let code)) = invoke.arguments.first?.value else {
+            Issue.record("expected a literal code argument"); return
+        }
+        #expect(code == "print(\"hi\")\nx = 1 + 1")
+        #expect(invoke.arguments.first?.key == "code")
+
+        // Emitted Swift wraps the whole multi-line body as one escaped
+        // string argument to the configured tool — a plain invoke, no
+        // per-line splitting and no shell-style {…} hole interpolation.
+        let out = SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: workflows)
+        #expect(out.contains("tool: \"interpreter.run\""))
+        #expect(out.contains("\"code\": .string(\"print(\\\"hi\\\")\\nx = 1 + 1\")"))
+    }
+
+    @Test("a fenced language with no configured mapping is rejected, not silently misrouted")
+    func unmappedNonShellFenceIsRejected() throws {
+        let lexicon = EnglishLexicon.default.merging(
+            comparisonSynonyms: [],
+            durationSynonyms: [:],
+            fenceToolSynonyms: ["python": "interpreter.run"]
+        )
+        let symbols = SymbolTable()
+        // ```ruby has no mapping entry, so it is not a code-block sentinel
+        // this production recognizes. Pre-existing "orphaned fenced code
+        // block" diagnostic behavior — it must not be misrouted to
+        // interpreter.run just because *some* mapping exists.
+        #expect(throws: (any Error).self) {
+            _ = try MeridianParser(symbols: symbols, trace: .silent(), lexicon: lexicon).parse("""
+            To score, with discretion:
+              ```ruby
+              puts "hi"
+              ```
+            """, file: "test.meridian")
+        }
+    }
+}
+
 @Suite("Rulebook — === triggers === family")
 struct TriggerRulebookTests {
 
@@ -302,6 +399,15 @@ struct SectionAliasDataTests {
         #expect(SkillSectionRole.builtinRole(forHeading: "Verification Checklist") == .invariants)
         #expect(SkillSectionRole.builtinRole(forHeading: "Output Format") == .template)
         #expect(SkillSectionRole.builtinRole(forHeading: "Tools Used") == .tools)
+    }
+
+    @Test("general-abilities: non-gbrain procedure heading synonyms resolve to procedure")
+    func generalAbilitiesProcedureSynonyms() {
+        #expect(SkillSectionRole.builtinRole(forHeading: "Instructions") == .procedure)
+        #expect(SkillSectionRole.builtinRole(forHeading: "Usage") == .procedure)
+        #expect(SkillSectionRole.builtinRole(forHeading: "Quickstart") == .procedure)
+        #expect(SkillSectionRole.builtinRole(forHeading: "Quick Start") == .procedure)
+        #expect(SkillSectionRole.builtinRole(forHeading: "How It Works") == .procedure)
     }
 
     @Test("open-ended numbered-phase heading is still procedure")

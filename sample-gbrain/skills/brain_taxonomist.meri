@@ -27,7 +27,8 @@ mutating: false
 
 **Drift function:** Periodic scan for pages that have outgrown their current location.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 - Every new page is filed at the path determined by the ACTIVE schema pack — never against a hardcoded directory table baked into this skill.
@@ -38,8 +39,13 @@ This skill guarantees:
 
 ## Critical: this skill reads the ACTIVE schema pack as data (( inert ))
 
-`brain-taxonomist` has NO hardcoded directory table. Every decision is
-driven by `gbrain schema show --json`. This means:
+This is the single-source-of-truth principle (D9 from the v0.39 plan-eng-review).
+
+
+### Critical: this skill reads the ACTIVE schema pack as data — steps
+
+> `brain-taxonomist` has NO hardcoded directory table. Every decision is
+> driven by `gbrain schema show --json`. This means:
 - A user who runs `gbrain schema use gbrain-recommended` gets the full
   recommended directory set (deal, meeting, concept, project, source,
   daily, personal, civic, original, place, trip, conversation, writing,
@@ -48,8 +54,6 @@ driven by `gbrain schema show --json`. This means:
   filing recommendations based on THEIR taxonomy, not gbrain's defaults.
 - Per-source overrides (tier 3 in the 7-tier resolution chain) are honored
   when `--source <id>` is passed to brain-taxonomist.
-
-This is the single-source-of-truth principle (D9 from the v0.39 plan-eng-review).
 
 ## When to Consult (MANDATORY) (( inert ))
 
@@ -68,25 +72,32 @@ You do NOT need to consult for:
 
 ### Step 1: Identify primary subject type (( inert ))
 
-Walk these questions in order:
-1. Is the primary subject a NAMED PERSON? → person-typed directory
-2. Is the primary subject a NAMED ORGANIZATION? → company-typed directory
-3. Is it about a TIME-BOUNDED EVENT (meeting, deal, trip)? → temporal-typed directory
-4. Is it a REUSABLE MENTAL MODEL? → concept-typed directory
-5. Is it RAW MEDIA (article, video, book, PDF)? → media-typed directory
-6. Is it BULK SOURCE DATA? → source-typed directory
 7. None of the above → consult EIIRP Phase 3 for schema-pack candidate creation.
 
-### Step 2: Look up the directory for that type in the active pack (( inert ))
 
-```bash
-gbrain schema show --json | jq '.page_types[] | select(.primitive == "entity")'
-```
+#### Step 1: Identify primary subject type — steps
+
+> Walk these questions in order:
+use judgment to weigh each question below:
+  1. Is the primary subject a NAMED PERSON? → person-typed directory
+  2. Is the primary subject a NAMED ORGANIZATION? → company-typed directory
+  3. Is it about a TIME-BOUNDED EVENT (meeting, deal, trip)? → temporal-typed directory
+  4. Is it a REUSABLE MENTAL MODEL? → concept-typed directory
+  5. Is it RAW MEDIA (article, video, book, PDF)? → media-typed directory
+  6. Is it BULK SOURCE DATA? → source-typed directory
+### Step 2: Look up the directory for that type in the active pack (( inert ))
 
 Each `page_types[]` entry has a `path_prefixes:` array. The first prefix
 is the canonical path. If multiple types match (e.g. both `person` and
 `founder` exist in the pack with `expert_routing: true`), prefer the more
 specific one (the one with the more specific path prefix).
+
+
+#### Step 2: Look up the directory for that type in the active pack — steps
+
+```bash
+gbrain schema show --json | jq '.page_types[] | select(.primitive == "entity")'
+```
 
 ### Step 3: For books — determine sub-category (( inert ))
 
@@ -96,7 +107,7 @@ media-and-society, family-and-divorce, heritage, science, fiction,
 biography, arts-and-design. If your active pack has a different scheme,
 walk it from `gbrain schema show --json` instead of hardcoding here.
 
-### Step 4: Construct the slug (( inert ))
+### Step 4: Construct the slug
 
 - kebab-case, descriptive
 - no author name unless disambiguation is needed
@@ -104,16 +115,20 @@ walk it from `gbrain schema show --json` instead of hardcoding here.
 
 ### Step 5: Validate before writing (( inert ))
 
+If the active pack doesn't have a type for what you're trying to file,
+DON'T pick the closest-fitting one. Instead, signal to EIIRP that a new
+type is needed and let the schema-pack cathedral handle the proposal flow.
+
+
+#### Step 5: Validate before writing — steps
+
+!!! checklist (( ai-autonomy ))
 - [ ] Path follows the active pack's `page_types[].path_prefixes`
 - [ ] Slug is kebab-case, descriptive
 - [ ] Frontmatter includes `type:` matching one of the pack's `page_types[].name`
 - [ ] Cross-links to related pages are included
 
-If the active pack doesn't have a type for what you're trying to file,
-DON'T pick the closest-fitting one. Instead, signal to EIIRP that a new
-type is needed and let the schema-pack cathedral handle the proposal flow.
-
-## Integration with Other Skills (( inert ))
+## Integration with Other Skills
 
 - `eiirp` — calls this skill as Phase 2 TAXONOMY for every output in its inventory.
 - `ingest` — article/media ingestion consults brain-taxonomist for filing.
@@ -122,6 +137,12 @@ type is needed and let the schema-pack cathedral handle the proposal flow.
 
 ## Periodic Drift Detection (( inert ))
 
+When `schema_pack_consistency` warns at >10% untyped, run the EIIRP
+Phase 3 SCHEMA CHECK flow to surface candidate types via `schema detect`.
+
+
+### Periodic Drift Detection — steps
+
 ```bash
 # What pages have no type matching the active pack?
 gbrain schema review-orphans --json
@@ -129,9 +150,6 @@ gbrain schema review-orphans --json
 # What's the overall health?
 gbrain doctor --json | jq '.checks[] | select(.name == "schema_pack_consistency")'
 ```
-
-When `schema_pack_consistency` warns at >10% untyped, run the EIIRP
-Phase 3 SCHEMA CHECK flow to surface candidate types via `schema detect`.
 
 ## Output Format (( inert, role: template ))
 
@@ -158,7 +176,8 @@ When the active pack has NO matching type, signal to EIIRP Phase 3
 `gbrain schema review-candidates`.
 ```
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - **Hardcoded directory table in this skill.** Every decision goes through
   `gbrain schema show --json`. v0.39+ broke the old hardcoded table on
@@ -173,7 +192,8 @@ When the active pack has NO matching type, signal to EIIRP Phase 3
   Even high-confidence suggestions need user approval — this skill is a
   GATE, not an automator.
 
-## Hard Rules (( inert, role: invariants ))
+## Hard Rules (( role: procedure ))
+use judgment to follow the Hard Rules guidance:
 
 - **Never hardcode a directory table in this skill.** Every decision goes
   through `gbrain schema show --json`. The active pack is canonical.
@@ -188,8 +208,14 @@ When the active pack has NO matching type, signal to EIIRP Phase 3
 ### v1.0.0 — gbrain v0.39.0.0 (( inert ))
 - Initial port from upstream OpenClaw. Genericized — no references to
   private fork names per CLAUDE.md privacy rules.
-- Hardcoded directory table REMOVED. Every decision now reads the active
-  schema pack via `gbrain schema show --json`. Single source of truth.
 - Book taxonomy moved from skill-text to the `gbrain-recommended` pack's
   media/books/ branch (see `src/core/schema-pack/base/gbrain-recommended.yaml`).
+
+#### v1.0.0 — gbrain v0.39.0.0 — steps
+
+- Hardcoded directory table REMOVED. Every decision now reads the active
+  schema pack via `gbrain schema show --json`. Single source of truth.
+
+#### v1.0.0 — gbrain v0.39.0.0 — steps 2
+
 - `--source <id>` propagation documented for multi-brain users (Persona B).

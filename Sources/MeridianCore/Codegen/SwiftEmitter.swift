@@ -457,31 +457,32 @@ public struct SwiftEmitter {
         let tools = ir.scopedTools.map { "\"\(escapeSwiftString($0))\"" }.joined(separator: ", ")
         let call = ir.dispatchMode == .autonomousLoop ? "executeAutonomousLoop" : "executeProsePlan"
         let config = ir.autonomy ?? AutonomyConfigIR()
+        let hasGuidance = ir.guidance != nil
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
             "\(ctx.s)let \(resultName) = try await runtime.\(call)("
             "\(ctx.s)    prose: \"\(escapeSwiftString(ir.text))\","
             "\(ctx.s)    snapshot: state.snapshot(),"
             if ir.dispatchMode == .planThenExecute {
-                "\(ctx.s)    scopedTools: [\(tools)]"
+                "\(ctx.s)    scopedTools: [\(tools)]\(hasGuidance ? "," : "")"
             } else {
                 "\(ctx.s)    scopedTools: [\(tools)],"
                 "\(ctx.s)    maxSteps: \(config.maxSteps),"
-                if config.until == nil && config.unless == nil {
-                    "\(ctx.s)    replanAfterFailures: \(config.replanAfterFailures)"
-                } else {
-                    "\(ctx.s)    replanAfterFailures: \(config.replanAfterFailures),"
-                }
+                let noUntilUnless = config.until == nil && config.unless == nil
+                "\(ctx.s)    replanAfterFailures: \(config.replanAfterFailures)\((!noUntilUnless || hasGuidance) ? "," : "")"
                 if let until = config.until {
-                    for line in emitAutonomyPredicate(name: "until", expr: until, ctx: ctx, includeComma: config.unless != nil) {
+                    for line in emitAutonomyPredicate(name: "until", expr: until, ctx: ctx, includeComma: config.unless != nil || hasGuidance) {
                         line
                     }
                 }
                 if let unless = config.unless {
-                    for line in emitAutonomyPredicate(name: "unless", expr: unless, ctx: ctx, includeComma: false) {
+                    for line in emitAutonomyPredicate(name: "unless", expr: unless, ctx: ctx, includeComma: hasGuidance) {
                         line
                     }
                 }
+            }
+            if let guidance = ir.guidance {
+                "\(ctx.s)    guidance: \"\(escapeSwiftString(guidance))\""
             }
             "\(ctx.s))"
             "\(ctx.s)for (__key, __value) in \(resultName) {"
@@ -1120,6 +1121,12 @@ public struct SwiftEmitter {
             return emitRecordList(fields: fields, rows: rows)
         case .tableLookup(let table, let keyColumn, let key, let valueColumn):
             return "(\(emitTableLookup(table: table, keyColumn: keyColumn, key: key, valueColumn: valueColumn)) ?? .null)"
+        case .comparison, .logical, .definitionPredicate, .quantified:
+            // These all lower to a bare Swift `Bool`, not a `Value` — bridge
+            // through the same `Value.from(_:)` used for constants/instances
+            // rather than the generic `.init(...)` fallback (which requires
+            // the wrapped expression to already be `Value`-typed).
+            return "Value.from(\(emitExpr(expr)))"
         default:
             // For derived expressions we rely on the runtime `Value(...)` init,
             // wrapping the bare emission so it survives Swift type-checking.

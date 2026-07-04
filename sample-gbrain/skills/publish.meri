@@ -21,7 +21,8 @@ mutating: false
 > how to use it. See [Thin Harness, Fat Skills](https://x.com/garrytan/status/2042925773300908103)
 > for the architecture philosophy.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 - Published HTML is fully self-contained: no external dependencies, no server needed.
 - All private metadata (frontmatter, source citations, confirmation numbers, brain cross-links, timeline) is stripped before publishing.
@@ -29,7 +30,7 @@ mutating: false
 - Default is always encrypted unless the user explicitly requests "open", "no password", or "public".
 - External URLs (`https://...`) are preserved; only internal brain paths are stripped.
 
-## When to Publish (( inert ))
+## When to Publish
 
 - User asks to share a brain page, create a shareable link, or says "give me a page"
 - User wants to send a deal memo, person briefing, or research to someone external
@@ -65,30 +66,42 @@ gbrain publish brain/companies/acme.md --out /tmp/acme-share.html
 
 ## What Gets Stripped (( inert ))
 
-The publish command automatically removes all private/internal data:
 
+### What Gets Stripped — steps
+
+> The publish command automatically removes all private/internal data:
+
+!!! table (( ai-discretion ))
 | Stripped | Example | Why |
 |---------|---------|-----|
 | YAML frontmatter | `title:`, `type:`, `tags:` | Internal metadata |
 | `[Source: ...]` citations | All formats | Provenance is internal |
 | Confirmation numbers | `ABC123DEF` -> "on file" | PII/booking data |
-| Brain cross-links | `[Jane](../people/jane.md)` -> `Jane` | Internal paths |
+| Brain cross-links | `Jane` -> `Jane` | Internal paths |
 | Timeline section | Everything below `---` / `## Timeline` | Raw evidence log |
 | "See also" lines | Internal references | Brain navigation |
 
-**Preserved:** external URLs (`https://...`), all other content.
+Preserved: external URLs (`https://...`), all other content.
 
 ## Sharing Workflows (( inert ))
 
 ### Option A: Local file (simplest) (( inert ))
 
+Share the HTML file via email, Slack, Airdrop. Share the password separately.
+
+
+#### Option A: Local file (simplest) — steps
+
 ```bash
 gbrain publish brain/people/jane-doe.md --password --out ~/Desktop/jane-briefing.html
 ```
 
-Share the HTML file via email, Slack, Airdrop. Share the password separately.
-
 ### Option B: Upload to cloud storage (( inert ))
+
+Share the signed URL + password. URL expires in 1 hour. Re-generate as needed.
+
+
+#### Option B: Upload to cloud storage — steps
 
 ```bash
 # Publish locally first
@@ -100,8 +113,6 @@ gbrain files upload /tmp/acme.html --page shares/acme
 # Get a signed URL (1-hour expiry)
 gbrain files signed-url shares/acme/acme.html
 ```
-
-Share the signed URL + password. URL expires in 1 hour. Re-generate as needed.
 
 ### Option C: Static hosting (Render, Netlify, S3) (( inert ))
 
@@ -116,7 +127,8 @@ gbrain publish brain/trips/japan-2026.md --out trip.html
 # Upload to a GitHub Gist or Pages repo
 ```
 
-## Password Protection Details (( inert ))
+## Password Protection Details
+use judgment to follow the Password Protection Details guidance:
 
 - **Algorithm:** AES-256-GCM
 - **Key derivation:** PBKDF2 with 100K iterations, SHA-256
@@ -131,19 +143,23 @@ not present anywhere in the file.
 
 ## Updating a Published Page (( inert ))
 
-Re-run the publish command with the same output path:
+Same file, same URL (if hosted), updated content.
+
+
+### Updating a Published Page — steps
+
+> Re-run the publish command with the same output path:
 ```bash
 gbrain publish brain/companies/acme.md --password "same-password" --out shares/acme.html
 ```
-
-Same file, same URL (if hosted), updated content.
 
 ## Revoking Access (( inert ))
 
 Delete the file. If using signed URLs, the URL expires automatically (1 hour).
 If using static hosting, remove the file from the host.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - **Publishing without encryption.** Brain content is private. Default to password-protected unless the user explicitly says "open", "no password", or "public".
 - **Sharing password and URL in the same channel.** Always share the password via a different channel than the URL for security.

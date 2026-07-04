@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -601,206 +601,15 @@ public struct ColdStartInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ColdStartInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L154:C0") {
-            // L154
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("echo \"=== Markdown Repository Discovery ===\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.0:L154:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L154:C0") {
-            // L154
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("for dir in /data/* ~/git/* ~/Documents/* ~/notes/* ~/obsidian/* 2>/dev/null; do"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L154:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L154:C0") {
-            // L154
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("if [ -d \"$dir\" ]; then"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L154:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.3:L154:C0") {
-            // L154
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("md_count=$(find \"$dir\" -name \"*.md\" -not -path \"*/node_modules/*\" -not -path \"*/.git/*\" -not -path \"*/.obsidian/*\" 2>/dev/null | wc -l | tr -d ' ')"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.3:L154:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.4:L154:C0") {
-            // L154
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("if [ \"$md_count\" -gt 5 ]; then"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.4:L154:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.5:L154:C0") {
-            // L154
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("total_size=$(du -sh \"$dir\" 2>/dev/null | cut -f1)"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.5:L154:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.6:L154:C0") {
-            // L154
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("echo \"  $dir ($total_size, $md_count .md files)\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.6:L154:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.7:L154:C0") {
-            // L154
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("fi"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.7:L154:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.8:L154:C0") {
-            // L154
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("fi"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.8:L154:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.9:L154:C0") {
-            // L154
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("done"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.9:L154:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.10:L170:C0") {
-            // L170
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain migrate --from obsidian --path /path/to/vault"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.10:L170:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.11:L170:C0") {
-            // L170
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain import /path/to/dir --no-embed --workers 4"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.11:L170:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.12:L170:C0") {
-            // L170
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain stats"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.12:L170:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.13:L170:C0") {
-            // L170
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain search \"<topic from the imported data>\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.13:L170:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.14:L184:C0") {
-            // L184
-            // Run link extraction
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain extract links --source db"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.14:L184:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.15:L185:C0") {
-            // L185
-            // Run timeline extraction
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain extract timeline --source db"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.15:L185:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.16:L186:C0") {
-            // L186
-            // Start embeddings:  (runs in background)
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain embed --stale"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.16:L186:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.17:L212:C0") {
-            // L212
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("curl -s -H \"Authorization: Bearer $GOOGLE_TOKEN\" \"https://people.googleapis.com/v1/people/me/connections?personFields=names,emailAddresses,phoneNumbers,organizations,biographies&pageSize=1000\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.17:L212:C0", state: state.snapshot())
+        // L51
+        let __meridianProseResults_L51 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["add_link", "add_timeline_entry", "get_page", "link.add", "page.get", "page.search", "publish", "put_page", "query", "search", "shell.run", "sync_brain", "timeline.add"],
+            guidance: "Every import phase is gated on user consent (ask-user pattern) before proceeding\n**Google/social API access goes through ClawVisor.** The agent never holds raw OAuth\ntokens or API keys. This is a safety requirement, not a preference. ClawVisor vaults\ncredentials, enforces task-scoped authorization, logs every API call, and requires\nhuman approval for destructive operations. If the user doesn't want ClawVisor, the\nonly safe alternative is offline file exports (Google Takeout, Twitter archive download)\nEach phase is independently valuable — the user can stop after any phase and still\nhave a useful brain\nProgress is tracked in `~/.gbrain/cold-start-state.json` so interrupted sessions\ncan resume\nEntity detection and cross-linking run on every import, not as a separate pass\nuse judgment to follow the Prerequisites guidance:\nGBrain installed and initialized (`gbrain doctor --json` all green)\nBrain repo cloned and synced\nAgent has terminal access and can run `gbrain` CLI commands\ntable:ai-discretion:fCBQcmlvcml0eSB8IFNvdXJjZSB8IFdoeSB8IFRpbWUgfCBQYWdlcyBDcmVhdGVkIHwKfC0tLS0tLS0tLS18LS0tLS0tLS18LS0tLS18LS0tLS0tfC0tLS0tLS0tLS0tLS0tLXwKfCAxIHwgRXhpc3RpbmcgbWFya2Rvd24vT2JzaWRpYW4gfCBIaWdoZXN0IGRlbnNpdHkg4oCUIGl0J3MgYWxyZWFkeSBzdHJ1Y3R1cmVkIHwgNSBtaW4gfCAxMDBzLTEwMDBzIHwKfCAyIHwgR29vZ2xlIENvbnRhY3RzIHwgU2VlZHMgdGhlIHBlb3BsZS8gZGlyZWN0b3J5IOKAlCBuYW1lcywgZW1haWxzLCBjb21wYW5pZXMgfCAxMCBtaW4gfCA1MC01MDAgfAp8IDMgfCBHb29nbGUgQ2FsZW5kYXIgKDkwIGRheXMpIHwgTWVldGluZyBoaXN0b3J5IHdpdGggYXR0ZW5kZWUgY29udGV4dCB8IDE1IG1pbiB8IDMwLTkwIHwKfCA0IHwgR21haWwgKHJlY2VudCB0aHJlYWRzKSB8IFJlbGF0aW9uc2hpcCBjb250ZXh0LCBhY3RpdmUgdGhyZWFkcywgb3JnIGNoYXJ0IHNpZ25hbHMgfCAyMCBtaW4gfCA1MC0yMDAgfAp8IDUgfCBDb252ZXJzYXRpb25zIChDaGF0R1BUL0NsYXVkZSBleHBvcnRzKSB8IFlvdXIgdGhpbmtpbmcsIHF1ZXN0aW9ucywgbWVudGFsIG1vZGVscyB8IDE1IG1pbiB8IDEwLTEwMCB8CnwgNiB8IFgvVHdpdHRlciBhcmNoaXZlIHwgWW91ciBwdWJsaWMgcG9zaXRpb25zLCB0YWtlcywgZW5nYWdlbWVudCBwYXR0ZXJucyB8IDIwIG1pbiB8IDMwLTM2NSB8CnwgNyB8IEZpbGUgYXJjaGl2ZXMgKERyb3Bib3gvRHJpdmUvbG9jYWwpIHwgSGlzdG9yaWNhbCBkb2N1bWVudHMsIG9sZCB3cml0aW5nLCBwaG90b3MgfCAzMCsgbWluIHwgdmFyaWVzIHwKfCA4IHwgTWVldGluZyB0cmFuc2NyaXB0cyAoQ2lyY2xlYmFjay9ldGMuKSB8IERlZXAgcmVsYXRpb25zaGlwIGNvbnRleHQgZnJvbSByZWNvcmRlZCBjYWxscyB8IDIwIG1pbiB8IDEwLTUwIHw=\nuse judgment to follow the Phase 0: ClawVisor Setup (Required for API Access) guidance:\n[ClawVisor](https://clawvisor.com) is a credential gateway that sits between the\nagent and your APIs. The agent never sees your credentials — ClawVisor injects\nthem at request time, enforces policies, and logs everything\n**What ClawVisor gives you:**\n**Credential vaulting** — agent sees shadow tokens, never real secrets\n**Task-scoped authorization** — each workflow declares exactly what it needs\n**Audit trail** — every API call logged with metadata (who, what, when)\n**Human approval gates** — destructive operations (send email, modify calendar)\nrequire your explicit approval\n**Multi-service** — Gmail, Calendar, Contacts, Drive, GitHub, iMessage from one gateway\n**Revocation** — disable the agent's access in one click, no token rotation needed\n**Setup (15 min):**\nSign up at [app.clawvisor.com](https://app.clawvisor.com)\nCreate an agent in the dashboard, copy the agent token\nActivate Google services (Gmail, Calendar, Contacts) in the dashboard\nCreate a standing task with expansive scope:\n**Critical scoping rule:** Be expansive in task purposes. \"Email triage\" gets\nrejected by intent verification. \"Full executive assistant email management\nincluding inbox triage, searching by any criteria, reading emails, tracking\nthreads\" works. The intent model uses the purpose to judge each request.\nuse judgment to follow the Phase 1: Existing Markdown / Obsidian Import guidance:\n**The highest-leverage first import.** If the user already has a notes system, this\nis hundreds or thousands of structured pages ready to go\ncodeblock:bash:ZWNobyAiPT09IE1hcmtkb3duIFJlcG9zaXRvcnkgRGlzY292ZXJ5ID09PSIKZm9yIGRpciBpbiAvZGF0YS8qIH4vZ2l0Lyogfi9Eb2N1bWVudHMvKiB+L25vdGVzLyogfi9vYnNpZGlhbi8qIDI+L2Rldi9udWxsOyBkbwogIGlmIFsgLWQgIiRkaXIiIF07IHRoZW4KICAgIG1kX2NvdW50PSQoZmluZCAiJGRpciIgLW5hbWUgIioubWQiIC1ub3QgLXBhdGggIiovbm9kZV9tb2R1bGVzLyoiIFwKICAgICAgLW5vdCAtcGF0aCAiKi8uZ2l0LyoiIC1ub3QgLXBhdGggIiovLm9ic2lkaWFuLyoiIDI+L2Rldi9udWxsIHwgd2MgLWwgfCB0ciAtZCAnICcpCiAgICBpZiBbICIkbWRfY291bnQiIC1ndCA1IF07IHRoZW4KICAgICAgdG90YWxfc2l6ZT0kKGR1IC1zaCAiJGRpciIgMj4vZGV2L251bGwgfCBjdXQgLWYxKQogICAgICBlY2hvICIgICRkaXIgKCR0b3RhbF9zaXplLCAkbWRfY291bnQgLm1kIGZpbGVzKSIKICAgIGZpCiAgZmkKZG9uZQ==\ncodeblock:bash:IyBGb3IgT2JzaWRpYW4gdmF1bHRzLCB1c2UgdGhlIG1pZ3JhdGUgc2tpbGwgZm9yIHByb3BlciB3aWtpbGluayBoYW5kbGluZwpnYnJhaW4gbWlncmF0ZSAtLWZyb20gb2JzaWRpYW4gLS1wYXRoIC9wYXRoL3RvL3ZhdWx0CgojIEZvciBwbGFpbiBtYXJrZG93biBkaXJlY3RvcmllcwpnYnJhaW4gaW1wb3J0IC9wYXRoL3RvL2RpciAtLW5vLWVtYmVkIC0td29ya2VycyA0CgojIFZlcmlmeQpnYnJhaW4gc3RhdHMKZ2JyYWluIHNlYXJjaCAiPHRvcGljIGZyb20gdGhlIGltcG9ydGVkIGRhdGE+Ig==\nRun link extraction: `gbrain extract links --source db`\nRun timeline extraction: `gbrain extract timeline --source db`\nStart embeddings: `gbrain embed --stale` (runs in background)\nuse judgment to follow the Phase 2: Google Contacts → People Pages guidance:\n**Seeds the people/ directory.** Every person in your contacts becomes a brain page\nwith name, email, phone, company, and notes. This is the foundation that all other\nimports build on — when Gmail references \"john@acme.com\", the brain already knows\nwho John is\ncodeblock:bash:Y3VybCAtcyAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICRHT09HTEVfVE9LRU4iIFwKICAiaHR0cHM6Ly9wZW9wbGUuZ29vZ2xlYXBpcy5jb20vdjEvcGVvcGxlL21lL2Nvbm5lY3Rpb25zP3BlcnNvbkZpZWxkcz1uYW1lcyxlbWFpbEFkZHJlc3NlcyxwaG9uZU51bWJlcnMsb3JnYW5pemF0aW9ucyxiaW9ncmFwaGllcyZwYWdlU2l6ZT0xMDAwIg==\nuse judgment to follow the Quality gate guidance:\nAfter importing 5 contacts, pause and show the user a sample page. Ask:\nuse judgment to follow the Phase 3: Google Calendar (Last 90 Days) guidance:\n**Meeting history with attendee context.** Calendar events reveal who the user meets\nwith, how often, and in what context. Combined with contacts, this builds a rich\nrelationship map\nuse judgment to follow the Entity enrichment guidance:\nFor each event with attendees:\nLook up each attendee in the brain (they should exist from Phase 2)\nAdd a timeline entry to their page: met at [event title] on [date]\nIf an attendee has no brain page and appears in 3+ events, create one\nLink attendees who appear in the same meeting\nuse judgment to follow the Phase 4: Gmail (Recent Threads) guidance:\n**Relationship context and active threads.** Email reveals organizational\nrelationships, ongoing conversations, and communication patterns\nuse judgment to follow the Processing guidance:\nFor each email thread:\n**Entity detection** — extract people, companies mentioned\n**Update people pages** — add communication context to timeline\n**Create meeting pages** — if the email is a meeting summary or follow-up\n**Skip noise** — newsletters, automated notifications, marketing\nuse judgment to follow the Filtering rules guidance:\n**Auto-skip (never import):**\nnoreply@, no-reply@, notifications@, support@, mailer-daemon@\nUnsubscribe-heavy senders (marketing)\nGitHub/Jira/Linear notification emails\nCalendar invites (already captured in Phase 3)\n**Always import:**\nDirect emails from people in the brain\nStarred/flagged emails\nEmails the user sent (their words are highest-value signal)\nuse judgment to follow the Phase 5: Conversation Exports (ChatGPT / Claude / Perplexity) guidance:\n**Your thinking, captured.** AI conversation exports reveal what the user\nwas researching, building, and thinking about. This is original thinking\npreserved in dialog form\n**ChatGPT:** Settings → Data Controls → Export → `conversations.json`\n**Claude:** Download from claude.ai conversation history\n**Perplexity:** Export from settings\nuse judgment to follow the Processing guidance:\nFor each conversation:\n**Assess significance** (1-5 scale):\n1 = Pure utility (how-tos, quick lookups) → skip or minimal page\n2 = Minor context → 1-paragraph note\n3 = Notable (reveals interests, building something) → full page\n4 = Important (deep personal processing, strategic thinking) → rich page\n5 = Defining (identity work, breakthrough insights) → full treatment\n**Extract entities** — people, companies, concepts discussed\n**Capture original thinking** — the user's exact phrasing is the signal\nNever paraphrase\n**File by primary subject** — not in a \"conversations/\" dump. A conversation\nabout a person goes to people/, about a concept goes to concepts/, etc\nuse judgment to follow the Phase 6: X/Twitter Archive guidance:\n**Your public positions and engagement patterns.** Twitter reveals what the user\nthinks, who they engage with, and what ideas they're developing publicly\n**Original tweets** → capture with full context, extract entities\n**Quote tweets** → capture the user's commentary + the source tweet\n**Threads** → reconstruct as a single narrative\n**Bookmarks** → high-signal curation, import with tags\n**Likes** — low signal, skip unless the user wants them\nuse judgment to follow the Phase 7: File Archives guidance:\n**Historical documents, old writing, photos with metadata.** This is the long tail —\nless structured but potentially very high value (old journals, letters, early writing)\nDelegate to the `archive-crawler` skill. It handles:\nCrawling directory structures\nFiltering for high-value content (user's own writing, not installers)\nText extraction from PDFs, images (OCR), documents\nEntity extraction and brain page creation\n**Supported sources:**\nLocal directories (Dropbox sync folder, Google Drive, old hard drives)\nCloud storage (Backblaze B2, S3) via mounted paths\nEmail archives (PST, mbox, EML, Google Takeout)\nData exports (LinkedIn, Facebook, etc.)\nuse judgment to follow the Phase 8: Meeting Transcripts guidance:\nAlways pull the **complete transcript**, not just the AI summary\nEntity propagation is MANDATORY — every attendee gets a timeline update\nA meeting is NOT fully ingested until all entity pages are updated\nIf the user has a meeting\nrecording service (Circleback, Otter, Fireflies, Read.ai), import recent\ntranscripts\nDelegate to `meeting-ingestion` skill. Key rules:\nuse judgment to follow the Anti-Patterns guidance:\n**Giving the agent raw OAuth tokens.** This is the #1 anti-pattern. An agent with\nraw Gmail/Calendar tokens is an uncontrolled attack surface — one prompt injection\nand your entire Google account is exposed. Use ClawVisor. If the user declines\nClawVisor, skip to offline imports. Never offer direct OAuth as a fallback\n**Bulk importing everything without filtering.** The brain is for signal, not noise\nFilter out automated senders, marketing emails, utility conversations\n**Importing without entity cross-linking.** Every import should detect entities and\nupdate existing brain pages. Isolated imports don't compound\n**Not gating on user consent.** Every phase should be presented as a choice. The user\nmay not want their DMs or therapy conversations imported\n**Importing everything at significance 1.** Not every conversation is worth a brain\npage. Use the significance scale and skip utility content\n**Creating people pages for automated senders.** Sentry, GitHub notifications,\nnewsletter platforms are not people. Filter by the rules in Phase 4\nuse judgment to follow the Resume Protocol guidance:\nSkip completed phases\nResume from `next_phase`\nThe user doesn't have to repeat credential setup or re-import completed sources\nRead `~/.gbrain/cold-start-state.json`"
+        )
+        for (__key, __value) in __meridianProseResults_L51 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

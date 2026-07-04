@@ -48,7 +48,8 @@ The output is a brain page under `concepts/<claim-slug>.md` that records
 the claim, the trace, and the verdict — so future references to the
 same claim can re-use the verified analysis.
 
-## When to use this (( inert, role: applicability ))
+## When to use this (( role: procedure ))
+use judgment to follow the When to use this guidance:
 
 - A book quotes a study and you want to confirm it's real and not
   miscited
@@ -62,6 +63,9 @@ same claim can re-use the verified analysis.
 ## What this skill is NOT (( inert ))
 
 - Not adversarial / oppo work. The point is rigor, not takedown.
+
+### What this skill is NOT — steps
+
 - Not generic web research — use `perplexity-research` directly for
   open-ended topic exploration.
 - Not a brain-only lookup — that's `gbrain query`.
@@ -125,11 +129,11 @@ brain_context_slugs: ["pages cited as context"]
 
 > One-line: the verdict + the bottom-line reason.
 
-## The Claim (( inert ))
+## The Claim
 
 > Exact quote, exactly as stated, with source attribution.
 
-## Trace (( inert ))
+## Trace
 
 | Step | Finding | Source |
 |------|---------|--------|
@@ -139,17 +143,17 @@ brain_context_slugs: ["pages cited as context"]
 | Independent replication | [Replication studies and their results] | [URL] |
 | Critical citations | [Papers that critique this work] | [URL] |
 
-## Verdict (( inert ))
+## Verdict
 
 [Verified / Partially verified / Unverifiable / Misattributed / Retracted]
 
 [1-2 paragraphs explaining WHY the verdict, with specific evidence.]
 
-## Caveats (( inert ))
+## Caveats
 
 [Honest limits: what we couldn't verify, what would change the verdict.]
 
-## See Also (( inert ))
+## See Also
 
 - Original paper: [Title](DOI URL)
 - Authors' brain pages: [Author 1](people/author-1.md), ...
@@ -158,6 +162,10 @@ brain_context_slugs: ["pages cited as context"]
 
 ## Useful databases (the agent uses these via perplexity-research) (( inert ))
 
+
+### Useful databases (the agent uses these via perplexity-research) — steps
+
+!!! table (( ai-discretion ))
 | Database | What it has | URL pattern |
 |----------|-------------|-------------|
 | Retraction Watch | Retractions, corrections, expressions of concern | retractionwatch.com/?s=NAME |
@@ -167,7 +175,8 @@ brain_context_slugs: ["pages cited as context"]
 | OpenAlex | Open citation data, institutional affiliations | api.openalex.org |
 | Many Labs | Replication results for social psychology | osf.io/wx7ck/ |
 
-## Standards (the rigor bar) (( inert ))
+## Standards (the rigor bar)
+use judgment to follow the Standards (the rigor bar) guidance:
 
 - **Verified** — only when the underlying paper exists, raw data is
   public OR an independent lab has confirmed the result, and the citing
@@ -188,7 +197,8 @@ Never claim a problem without evidence. The verification document
 itself is the artifact — if the claim holds up, say so plainly. If it
 doesn't, the trace speaks for itself.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - ❌ Skipping the brain-first lookup. Re-doing verification we've
   already done is wasted Perplexity spend.
@@ -200,7 +210,10 @@ doesn't, the trace speaks for itself.
 - ❌ Stating "Unverifiable" when you simply didn't look hard enough.
   The verdict is on the source, not on your search effort.
 
-## Related skills (( inert ))
+## Related skills (( inert, role: procedure ))
+
+
+### Related skills — steps
 
 - `skills/perplexity-research/SKILL.md` — the actual web-search engine
   this skill routes through (D7/α: pure routing, no new infrastructure)
@@ -209,7 +222,8 @@ doesn't, the trace speaks for itself.
 - `skills/conventions/quality.md` — citation + back-link rules
 
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 

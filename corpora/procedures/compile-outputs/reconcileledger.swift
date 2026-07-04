@@ -296,70 +296,20 @@ public struct ReconcileLedger: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "ReconcileLedger", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L28:C0") {
-            // L28
+        if __meridianShouldRun("progress:0.0:L29:C0") {
+            // L29
             try await runtime.assert(((((state.get("batches"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("failed"))) }).isEmpty), message: "Expected no batches whose status is \"failed\"")
-            try await runtime.checkpoint(label: "progress:0.0:L28:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.0:L29:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.1:L20:C0") {
-            // L20
-            // snapshot ready batches
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("psql -c \"select id,status from ledger_batch where status='ready'\" --csv"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L20:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L39:C0") {
-            // L39
-            let batches = try await runtime.invoke(
-                tool: "batchList",
-                args: [
-                    "status": .string("ready"),
-                ]
-            )
-            state.bind("batches", batches)
-
-            try await runtime.checkpoint(label: "progress:0.2:L39:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.3:L22:C0") {
-            // L22
-            try await runtime.assert((((state.get("batches"))?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("name")) }), message: "Expected all batches have a name")
-            try await runtime.checkpoint(label: "progress:0.3:L22:C0", state: state.snapshot())
-        }
-        // L23
-        for (__meridianLoopIndex_0_4, batch) in (state.get("batches")?.asList ?? []).enumerated() {
-            let __meridianLoopLabel_0_4 = "progress:0.4:iteration:\(__meridianLoopIndex_0_4)"
-            if __meridianShouldRun(__meridianLoopLabel_0_4) {
-            state.bind("batch", batch)
-                if __meridianShouldRun("progress:0.4.body.0:L60:C0") {
-                    // L60
-                    let settlement = try await runtime.invoke(
-                        tool: "batchSettle",
-                        args: [
-                            "batch": state.get("batch") ?? .null,
-                        ]
-                    )
-                    state.bind("settlement", settlement)
-
-                    try await runtime.checkpoint(label: "progress:0.4.body.0:L60:C0", state: state.snapshot())
-                }
-                try await runtime.checkpoint(label: __meridianLoopLabel_0_4, state: state.snapshot())
-            }
-        }
-
-        if __meridianShouldRun("progress:0.5:L25:C0") {
-            // L25
-            try await runtime.emit(
-                event: "procedure.report",
-                payload: [
-                    "message": .string("ledger batches reconciled"),
-                ]
-            )
-            try await runtime.checkpoint(label: "progress:0.5:L25:C0", state: state.snapshot())
+        // L12
+        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
+            prose: "follow the Invocation guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["audit_row.list", "batch.list", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "record.list", "record.mark_canonical", "record.purge"],
+            guidance: "\"reconcile ledger\"\n\"settle ledger batches\"\nSQL: `psql -c \"select id,status from ledger_batch where status='ready'\" --csv` to snapshot ready batches\nfetch ready batches\nCheck: all batches have a name\nfor each batch:\nsettle the batch\nEmit: \"ledger batches reconciled\""
+        )
+        for (__key, __value) in __meridianProseResults_L12 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

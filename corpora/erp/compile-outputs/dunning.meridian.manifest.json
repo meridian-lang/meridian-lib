@@ -97,7 +97,7 @@
     "name" : "dunning",
     "outline" : [
       {
-        "kind" : "applicability",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 11,
         "text" : "When operators call this"
@@ -105,20 +105,26 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 15,
+        "line" : 16,
         "text" : "Workflow"
       },
       {
-        "kind" : "invariants",
-        "level" : 2,
-        "line" : 23,
-        "text" : "Controls"
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 20,
+        "text" : "Workflow — steps"
       },
       {
-        "kind" : "topic",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 16,
-        "text" : "Step"
+        "line" : 25,
+        "text" : "Workflow — steps 2"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 31,
+        "text" : "Controls"
       },
       {
         "kind" : "topic",
@@ -129,7 +135,13 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 21,
+        "line" : 22,
+        "text" : "Step"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 29,
         "text" : "Publish"
       }
     ],
@@ -139,19 +151,37 @@
         "heading" : "When operators call this",
         "line" : 11,
         "lines" : [
+          "use judgment to follow the When operators call this guidance:",
           "\"run dunning\"",
           "\"collect overdue invoices\""
         ],
-        "role" : "applicability"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Workflow",
-        "line" : 15,
+        "line" : 16,
+        "lines" : [
+          "use judgment to follow the Workflow guidance:",
+          "Check: any unpaid invoices"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 20,
         "lines" : [
           "Step: `ofbiz accounting dunning --dry-run --json` to snapshot overdue accounts",
-          "fetch unpaid invoices",
-          "Check: any unpaid invoices",
+          "fetch unpaid invoices"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 25,
+        "lines" : [
           "for each invoice:",
           "collect payment for the invoice",
           "Publish: \"dunning collection pass complete\""
@@ -159,13 +189,14 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Controls",
-        "line" : 23,
+        "line" : 31,
         "lines" : [
+          "use judgment to follow the Controls guidance:",
           "Do not contact customers whose account is under manual review"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       }
     ],
     "triggers" : "\"run dunning\"\n\"collect overdue invoices\""
@@ -206,44 +237,24 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 16,
-      "swift_line" : 403
-    },
-    {
-      "meridian_line" : 52,
-      "swift_line" : 415
-    },
-    {
-      "meridian_line" : 18,
-      "swift_line" : 427
-    },
-    {
-      "meridian_line" : 19,
-      "swift_line" : 431
-    },
-    {
-      "meridian_line" : 64,
-      "swift_line" : 437
-    },
-    {
-      "meridian_line" : 21,
-      "swift_line" : 453
+      "meridian_line" : 12,
+      "swift_line" : 402
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 490
+      "swift_line" : 440
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 495
+      "swift_line" : 445
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 533
+      "swift_line" : 483
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 538
+      "swift_line" : 488
     }
   ],
   "tools_used" : [
@@ -254,6 +265,26 @@
       "mode" : "strict",
       "parameters" : [
 
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "\"run dunning\"\n\"collect overdue invoices\"\nuse judgment to follow the Workflow guidance:\nCheck: any unpaid invoices\nStep: `ofbiz accounting dunning --dry-run --json` to snapshot overdue accounts\nfetch unpaid invoices\nfor each invoice:\ncollect payment for the invoice\nPublish: \"dunning collection pass complete\"\nuse judgment to follow the Controls guidance:\nDo not contact customers whose account is under manual review",
+          "line" : 12,
+          "scoped_tools" : [
+            "inventory.reserve",
+            "invoice.create",
+            "invoice.list",
+            "order.cancel",
+            "order.list",
+            "payment.collect",
+            "period.close",
+            "product.list",
+            "purchase_order.create",
+            "shipment.create"
+          ],
+          "text" : "follow the When operators call this guidance"
+        }
       ],
       "source_name" : "dunning",
       "swift_struct" : "Dunning"

@@ -54,6 +54,8 @@ struct MerConfigLanguageSectionTests {
           ANY
         Shell-fence synonyms:
           fish
+        Fence tool mapping:
+          python = interpreter.run
         timestamp = lastTouchedAt
         """
         let cfg = try parse(src)
@@ -82,6 +84,7 @@ struct MerConfigLanguageSectionTests {
         // Wildcard captures the original (non-lowercased) token.
         #expect(syn.wildcardSynonyms.contains("ANY"))
         #expect(syn.shellFenceSynonyms.contains("fish"))
+        #expect(syn.fenceToolMapping["python"] == "interpreter.run")
         #expect(syn.timestampProperty == "lastTouchedAt")
     }
 

@@ -12,7 +12,7 @@ triggers:
 - "dedupe records"
 - "duplicate rows detected"
 
-## Procedure (( role: procedure ))
+## Procedure
 fetch duplicate records.
 Check: any duplicate records.
 for each record whose status is "duplicate":
@@ -20,5 +20,5 @@ for each record whose status is "duplicate":
   purge the record.
 Emit: "duplicate record pass complete".
 
-## Postconditions (( role: invariants ))
+## Postconditions
 make sure no records whose status is "duplicate".

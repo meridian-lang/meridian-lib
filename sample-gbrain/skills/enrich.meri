@@ -30,7 +30,8 @@ writes_to:
 
 > Enrich person and company pages from external sources. Scale effort to importance.
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 - Every enriched page has compiled truth (State section) with inline citations
@@ -53,7 +54,8 @@ A brain page should read like an intelligence dossier, not a LinkedIn scrape.
 Facts are table stakes. Texture is the value -- what do they believe, what are
 they building, what makes them tick, where are they headed.
 
-## Citation Requirements (MANDATORY) (( inert ))
+## Citation Requirements (MANDATORY)
+use judgment to follow the Citation Requirements (MANDATORY) guidance:
 
 > **Convention:** see `skills/conventions/quality.md` for citation formats and source precedence.
 
@@ -61,14 +63,15 @@ When sources conflict, note the contradiction with both citations.
 
 ## When To Enrich (( inert ))
 
-### Primary triggers (( inert, role: applicability ))
+### Primary triggers (( role: procedure ))
+use judgment to follow the Primary triggers guidance:
 - User mentions an entity in conversation
 - Entity appears in a meeting transcript or email
 - New contact appears with significant context
 - Entity makes news or has a major event
 - Any ingest pipeline encounters a notable entity
 
-### Do NOT enrich (( inert ))
+### Do NOT enrich
 - Random mentions with no relationship signal
 - Bot/spam accounts
 - Entities with no substantive connection to the user's work
@@ -78,6 +81,10 @@ When sources conflict, note the contradiction with both citations.
 
 Scale enrichment to importance. Don't waste API calls on low-value entities.
 
+
+### Enrichment Tiers — steps
+
+!!! table (( ai-discretion ))
 | Tier | Who | Effort | Sources |
 |------|-----|--------|---------|
 | 1 (key) | Inner circle, close collaborators, key contacts | Full pipeline | All available APIs + deep web research |
@@ -90,7 +97,7 @@ Scale enrichment to importance. Don't waste API calls on low-value entities.
 
 Extract people, companies, concepts from the incoming signal.
 
-### Step 2: Check brain state (( inert ))
+### Step 2: Check brain state
 
 For each entity:
 - `gbrain search "name"` -- does a page already exist?
@@ -99,8 +106,12 @@ For each entity:
 
 ### Step 3: Extract signal from source (( inert ))
 
-Don't just capture facts. Capture texture:
 
+#### Step 3: Extract signal from source — steps
+
+> Don't just capture facts. Capture texture:
+
+!!! table (( ai-discretion ))
 | Signal Type | What to Extract |
 |-------------|----------------|
 | Opinions, beliefs | What They Believe section |
@@ -111,7 +122,8 @@ Don't just capture facts. Capture texture:
 | Ascending, plateauing, pivoting? | Trajectory section |
 | Role, company, funding, location | State section (hard facts) |
 
-### Step 4: External data source lookups (( inert ))
+### Step 4: External data source lookups
+use judgment to follow the Step 4: External data source lookups guidance:
 
 Priority order -- stop when you have enough signal for the entity's tier.
 
@@ -201,42 +213,42 @@ location:
 > 1-paragraph executive summary: HOW do you know them, WHY do they matter,
 > what's the current state of the relationship.
 
-## State (( inert ))
+## State
 Role, company, key context. Hard facts only.
 
-## What They Believe (( inert ))
+## What They Believe
 Ideology, first principles, worldview. What hills do they die on?
 
-## What They're Building (( inert ))
+## What They're Building
 Current projects, recent launches, what they're focused on.
 
-## What Motivates Them (( inert ))
+## What Motivates Them
 Ambition, career arc, what drives them.
 
-## Hobby Horses (( inert ))
+## Hobby Horses
 Topics they return to obsessively. Recurring themes in their work/posts.
 
-## Assessment (( inert ))
+## Assessment
 Your read on this person. Strengths, gaps, trajectory.
 
-## Trajectory (( inert ))
+## Trajectory
 Ascending, plateauing, pivoting, declining? Where are they headed?
 
-## Relationship (( inert ))
+## Relationship
 History of interactions, shared context, relationship quality.
 
-## Contact (( inert ))
+## Contact
 Email, social handles, preferred communication channel.
 
-## Network (( inert ))
+## Network
 Key connections, mutual contacts, organizational relationships.
 
-## Open Threads (( inert ))
+## Open Threads
 Active conversations, pending items, things to follow up on.
 
 ---
 
-## Timeline (( inert ))
+## Timeline
 Reverse chronological. Every entry has a date and [Source: ...] citation.
 - **YYYY-MM-DD** | Event description [Source: ...]
 ```
@@ -256,19 +268,20 @@ tags: []
 
 > 1-paragraph executive summary.
 
-## State (( inert ))
+## State
 What they do, stage, key people, key metrics, your connection.
 
-## Open Threads (( inert ))
+## Open Threads
 Active items, pending decisions, things to track.
 
 ---
 
-## Timeline (( inert ))
+## Timeline
 - **YYYY-MM-DD** | Event description [Source: ...]
 ```
 
-### Step 7: Cross-reference (( inert ))
+### Step 7: Cross-reference
+use judgment to follow the Step 7: Cross-reference guidance:
 
 - Update company pages from person enrichment (and vice versa)
 - Update related project/deal pages if relevant context surfaced
@@ -281,16 +294,16 @@ from this enrichment), not on creating links. Verify via the `auto_links`
 field in the put_page response (`{ created, removed, errors }`).
 Timeline entries still need explicit `gbrain timeline-add` calls.
 
-## Bulk Enrichment Rules (( inert ))
+## Bulk Enrichment Rules
 
-- Test on 3-5 entities first. Read actual output. Check quality.
+- **Test on 3-5 entities first.** Read actual output. Check quality.
 - Only proceed to bulk after test shots pass your quality bar.
 - 3+ entities from one source -> batch process or spawn sub-agent
 - Throttle API calls. Respect rate limits.
 - Commit every 5-10 entities during bulk runs.
 - Save a report after bulk enrichment (see Report Storage below).
 
-## Validation Rules (( inert ))
+## Validation Rules
 
 - Connection count < 20 on LinkedIn = likely wrong person, skip
 - Name mismatch between brain and API = skip, flag for review
@@ -309,7 +322,8 @@ After enrichment sweeps, save a report:
 
 This creates an audit trail for brain enrichment over time.
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - Creating stub pages with no content
 - Enriching without checking brain first

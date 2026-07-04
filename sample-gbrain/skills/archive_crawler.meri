@@ -68,16 +68,21 @@ blobs).
 
 ## Concepts (( inert ))
 
-### Source (( inert ))
+### Source
+use judgment to follow the Source guidance:
 
 A source is any tree of files to explore. Sources have:
 
 - **type**: `local` | `dropbox` | `backblaze` | `gmail-takeout` | `mbox` | `pst`
 - **root**: filesystem path, Dropbox path, B2 prefix, mbox path
-- **manifest**: a brain page tracking progress at
+
+#### Source — steps
+
+- manifest: a brain page tracking progress at
   `projects/<archive-slug>/STATUS.md`
 
-### Manifest (( inert ))
+### Manifest
+use judgment to follow the Manifest guidance:
 
 Every archive exploration gets a manifest brain page that tracks:
 
@@ -91,8 +96,12 @@ Every archive exploration gets a manifest brain page that tracks:
 
 ### Gold filter (( inert ))
 
-Before showing anything to the user, apply the gold filter:
 
+#### Gold filter — steps
+
+> Before showing anything to the user, apply the gold filter:
+
+!!! table (( ai-discretion ))
 | Keep (show) | Skip (note existence, don't show) |
 |-------------|-----------------------------------|
 | Personal writing (journals, letters, reflections, essays) | System files, configs, package.json, node_modules |
@@ -103,9 +112,11 @@ Before showing anything to the user, apply the gold filter:
 | Origin stories (first versions of things that became important) | |
 | Emotional content (anger, love, grief, discovery) | |
 
-## Protocol (( inert, role: procedure ))
+## Protocol
+use judgment to follow the Protocol guidance:
 
-### Phase 1: Inventory (( inert, role: procedure ))
+### Phase 1: Inventory
+use judgment to follow the Phase 1: Inventory guidance:
 
 When pointed at a new source:
 
@@ -119,7 +130,8 @@ When pointed at a new source:
 6. **Present to user** — show the map and proposed order. Let them
    override.
 
-### Phase 2: Crawl (( inert, role: procedure ))
+### Phase 2: Crawl
+use judgment to follow the Phase 2: Crawl guidance:
 
 Work through folders in priority order:
 
@@ -132,14 +144,9 @@ Work through folders in priority order:
 5. **Update manifest** — mark item status after each interaction.
 6. **Never re-show** — check the manifest before presenting anything.
 
-### Phase 3: Ingest (( inert, role: procedure ))
+### Phase 3: Ingest
+use judgment to follow the Phase 3: Ingest guidance:
 
-When an item is worth keeping, file it by **primary subject** per
-`_brain-filing-rules.md`:
-
-- User's own writing / ideas / origin-story content → `originals/<slug>.md`
-- Reflections / personal-life content → `personal/<slug>.md`
-- Product / business ideas → `ideas/<slug>.md`
 - Letters or threads about a specific person → `people/<person>/timeline`
   back-link plus the letter at `personal/<slug>.md` or `originals/<slug>.md`
 
@@ -168,7 +175,7 @@ tags: ["tag-1", "tag-2"]
 
 **User's reaction:** [exact quote, no paraphrasing]
 
-## Context (( inert ))
+## Context
 
 [Cross-links to people, concepts, projects.]
 
@@ -177,6 +184,15 @@ tags: ["tag-1", "tag-2"]
 [Raw source material below the line — full text]
 ```
 
+
+#### Phase 3: Ingest — steps
+
+> When an item is worth keeping, file it by **primary subject** per
+> `_brain-filing-rules.md`:
+
+- User's own writing / ideas / origin-story content → `originals/<slug>.md`
+- Reflections / personal-life content → `personal/<slug>.md`
+- Product / business ideas → `ideas/<slug>.md`
 ## File-type handlers (( inert ))
 
 ### Plain text / HTML / Markdown (( inert ))
@@ -250,39 +266,40 @@ scan_paths: ["paths from gbrain.yml"]
 # [Archive Name] — Ingestion Status
 
 ## Source
-- Type: [local|dropbox|...]
-- Allow-listed paths: [from gbrain.yml]
-- Total files: [N]
-- Total size: [X GB]
-- Date range: [earliest] — [latest]
+- **Type:** [local|dropbox|...]
+- **Allow-listed paths:** [from gbrain.yml]
+- **Total files:** [N]
+- **Total size:** [X GB]
+- **Date range:** [earliest] — [latest]
 
-## Inventory (( inert ))
+## Inventory
 
-### [Folder 1] (( inert ))
+### [Folder 1]
 | Item | Type | Size | Status | Reaction |
 |------|------|------|--------|----------|
 | file1.txt | text | 2KB | ✅ ingested | 🔥 "exact quote" |
 | file2.doc | doc | 15KB | ⏭️ skip | — |
 | file3.html | html | 4KB | ⬜ unseen | — |
 
-### [Folder 2] (( inert ))
+### [Folder 2]
 ...
 
-## Priority Queue (( inert ))
+## Priority Queue
 1. [Highest priority — why]
 2. [Next — why]
 ...
 
-## Session Log (( inert ))
+## Session Log
 
-### YYYY-MM-DD — [Session topic] (( inert ))
+### YYYY-MM-DD — [Session topic]
 - Reviewed: [list]
 - Reactions: [exact quotes]
 - Ingested: [brain pages created]
 - Next: [what's queued]
 ```
 
-## Anti-Patterns (( inert, role: prohibitions ))
+## Anti-Patterns (( role: procedure ))
+use judgment to follow the Anti-Patterns guidance:
 
 - ❌ Running without `archive-crawler.scan_paths:` set. Hard refusal.
   This is the safety contract — never bypass.
@@ -295,16 +312,24 @@ scan_paths: ["paths from gbrain.yml"]
 - ❌ Skipping back-links when content references people / companies who
   have brain pages. Iron Law per conventions/quality.md.
 
-## Related skills (( inert ))
+## Related skills
+use judgment to follow the Related skills guidance:
+
+- `skills/idea-ingest/SKILL.md` — single-link-or-article ingest with
+  the same primary-subject filing rule
+
+### Related skills — steps
 
 - `skills/voice-note-ingest/SKILL.md` — same exact-phrasing pattern for
   audio capture
-- `skills/idea-ingest/SKILL.md` — single-link-or-article ingest with
-  the same primary-subject filing rule
+
+### Related skills — steps 2
+
 - `skills/conventions/quality.md` — citations, back-links, voice
 
 
-## Contract (( inert, role: invariants ))
+## Contract (( role: procedure ))
+use judgment to follow the Contract guidance:
 
 This skill guarantees:
 

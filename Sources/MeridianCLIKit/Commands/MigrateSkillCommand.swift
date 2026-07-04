@@ -39,6 +39,10 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Overwrite an existing output file.")
     var force: Bool = false
 
+    @Flag(name: .long, inversion: .prefixedNo,
+          help: "Explicitly AI-route fuzzy checklists/tables/judgment-worthy prose (!!! checklist / !!! table / \"use judgment to …:\") instead of leaving them (( inert )). On by default; pass --no-route-fuzzy for a byte-for-byte-with-today comparison.")
+    var routeFuzzy: Bool = true
+
     @Option(name: .long,
             help: "Activate parser/lowering trace categories (comma-separated). Examples: skill, lowering, all. Silent by default.")
     var trace: String?
@@ -64,7 +68,7 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
             compiler: Compiler(options: .init(trace: traceInstance)),
             vocabularies: vocabularies,
             rulebooks: rulebooks,
-            options: .init(maxRepair: maxRepair),
+            options: .init(maxRepair: maxRepair, routeFuzzy: routeFuzzy),
             repair: repairClosure(),
             trace: traceInstance
         )
@@ -92,6 +96,10 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
             print(result.compiledOK ? "✓ \(outURL.path)" : "✗ \(outURL.path) (does not strict-compile)")
         } else {
             print(result.meriSource)
+        }
+
+        if !result.report.unminedContracts.isEmpty {
+            print("⚠ \(result.report.unminedContracts.count) unmined-contract line(s) — see report for detail.")
         }
 
         try persistSectionAliases(result.sectionAliases, to: rulebookTarget)
@@ -123,17 +131,19 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
 
         var failures = 0
         var allAliases: [SkillMigrator.SectionAlias] = []
+        var totalUnminedContracts = 0
         for file in skillFiles {
             let markdown = try String(contentsOf: file, encoding: .utf8)
             let stem = SkillDeviation.meriStem(forSkillAt: file)
             let result = try await migrator.migrate(markdown, file: "\(stem).meri")
             rows.append((stem, result))
             allAliases.append(contentsOf: result.sectionAliases)
+            totalUnminedContracts += result.report.unminedContracts.count
             if !result.compiledOK { failures += 1 }
             if let outDir {
                 try writeMeri(result.meriSource, to: outDir.appendingPathComponent("\(stem).meri"))
             }
-            print("\(result.compiledOK ? "✓" : "✗") \(stem)  edits=\(result.report.editCount) repairs=\(result.report.repairAttempts)")
+            print("\(result.compiledOK ? "✓" : "✗") \(stem)  edits=\(result.report.editCount) repairs=\(result.report.repairAttempts) unmined=\(result.report.unminedContracts.count)")
         }
 
         try persistSectionAliases(allAliases, to: rulebookTarget)
@@ -144,7 +154,7 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
             print("✓ coverage matrix → \(report)")
         }
 
-        print("Migrated \(rows.count) skills, \(rows.count - failures) compile, \(failures) failing.")
+        print("Migrated \(rows.count) skills, \(rows.count - failures) compile, \(failures) failing, \(totalUnminedContracts) unmined-contract line(s) total.")
         if failures > 0 { throw ExitCode(1) }
     }
 
@@ -311,25 +321,31 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
             "added frontmatter keys: \(r.addedFrontmatterKeys.joined(separator: ", "))",
             "repair attempts: \(r.repairAttempts)",
             "edit count: \(r.editCount)",
-            "lines: \(r.originalLineCount) → \(r.resultLineCount)"
+            "lines: \(r.originalLineCount) → \(r.resultLineCount)",
+            "unmined contracts: \(r.unminedContracts.count)"
         ]
         if !r.diagnostics.isEmpty {
             lines.append("diagnostics:")
             lines.append(contentsOf: r.diagnostics.map { "  - \($0)" })
         }
+        if !r.unminedContracts.isEmpty {
+            lines.append("unmined-contract lines:")
+            lines.append(contentsOf: r.unminedContracts.map { "  - \($0)" })
+        }
         return lines.joined(separator: "\n") + "\n"
     }
 
     private func coverageMatrix(rows: [(stem: String, result: SkillMigrator.Result)]) -> String {
-        var out = ["| skill | compiles | edits | repairs | added keys |",
-                   "|---|---|---|---|---|"]
+        var out = ["| skill | compiles | edits | repairs | unmined | added keys |",
+                   "|---|---|---|---|---|---|"]
         for row in rows {
             let r = row.result.report
-            out.append("| \(row.stem) | \(r.compiledOK ? "✓" : "✗") | \(r.editCount) | \(r.repairAttempts) | \(r.addedFrontmatterKeys.joined(separator: " ")) |")
+            out.append("| \(row.stem) | \(r.compiledOK ? "✓" : "✗") | \(r.editCount) | \(r.repairAttempts) | \(r.unminedContracts.count) | \(r.addedFrontmatterKeys.joined(separator: " ")) |")
         }
         let ok = rows.filter { $0.result.compiledOK }.count
+        let unmined = rows.reduce(0) { $0 + $1.result.report.unminedContracts.count }
         out.append("")
-        out.append("Total: \(rows.count), compiling: \(ok), failing: \(rows.count - ok)")
+        out.append("Total: \(rows.count), compiling: \(ok), failing: \(rows.count - ok), unmined-contract lines: \(unmined)")
         return out.joined(separator: "\n") + "\n"
     }
 }

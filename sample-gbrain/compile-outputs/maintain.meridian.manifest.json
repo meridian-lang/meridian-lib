@@ -98,7 +98,7 @@
     "name" : "maintain",
     "outline" : [
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 42,
         "text" : "Contract"
@@ -106,199 +106,205 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 51,
+        "line" : 52,
         "text" : "Phases"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 53,
+        "line" : 55,
         "text" : "Autonomous path (v0.36.4.0) — when you want to reach a target score"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 79,
+        "line" : 90,
         "text" : "Manual path"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 84,
+        "line" : 98,
         "text" : "Stale pages"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 89,
+        "line" : 106,
         "text" : "Orphan pages"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 94,
+        "line" : 111,
         "text" : "Dead links"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 98,
+        "line" : 115,
         "text" : "Missing cross-references"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 102,
+        "line" : 119,
         "text" : "Link graph extraction"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 110,
+        "line" : 130,
         "text" : "Timeline extraction"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 116,
+        "line" : 139,
         "text" : "Dream cycle (v0.23): synthesize + patterns"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 193,
+        "line" : 232,
         "text" : "Autopilot check"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 207,
+        "line" : 252,
         "text" : "Fix a half-migrated install"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 227,
+        "line" : 276,
         "text" : "Back-link enforcement"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 235,
+        "line" : 285,
         "text" : "Filing rule violations"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 243,
+        "line" : 296,
         "text" : "Citation audit"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 250,
+        "line" : 304,
         "text" : "Tag consistency"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 254,
+        "line" : 308,
         "text" : "Graph population (v0.10.3+)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 282,
+        "line" : 342,
         "text" : "Embedding freshness"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 288,
+        "line" : 351,
         "text" : "Security (RLS verification)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 292,
+        "line" : 355,
         "text" : "Schema health"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 297,
+        "line" : 363,
         "text" : "File storage health"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 3,
-        "line" : 305,
+        "line" : 377,
         "text" : "Open threads"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 309,
+        "line" : 382,
         "text" : "Benchmark Testing"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 328,
+        "line" : 402,
         "text" : "Heartbeat Integration"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 333,
+        "line" : 407,
         "text" : "On every heartbeat (hourly or per-session)"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 339,
+        "line" : 416,
         "text" : "Weekly maintenance"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 347,
+        "line" : 427,
         "text" : "Daily verification"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 352,
+        "line" : 435,
         "text" : "Stale compiled truth detection"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 358,
+        "line" : 441,
         "text" : "Report Storage"
       },
       {
-        "kind" : "invariants",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 452,
+        "text" : "Report Storage — steps"
+      },
+      {
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 370,
+        "line" : 456,
         "text" : "Quality Rules"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 376,
+        "line" : 463,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 387,
+        "line" : 475,
         "text" : "Output Format"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 420,
+        "line" : 508,
         "text" : "Tools Used"
       },
       {
@@ -310,94 +316,95 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 44,
+        "line" : 45,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 87,
+        "line" : 104,
         "text" : "For each stale page"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 91,
+        "line" : 108,
         "text" : "Review orphans"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 143,
-        "text" : "Cross-reference compulsively"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 144,
+        "line" : 165,
         "text" : "Slug discipline"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 191,
+        "line" : 198,
+        "text" : "Cross-reference compulsively"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 202,
+        "text" : "Cooldown"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 230,
         "text" : "Note"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 194,
-        "text" : "Verify autopilot is running"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 225,
+        "line" : 274,
         "text" : "Full troubleshooting guide"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 232,
+        "line" : 282,
         "text" : "Fix"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 233,
+        "line" : 283,
         "text" : "Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 286,
+        "line" : 349,
         "text" : "Then check progress"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 303,
+        "line" : 375,
         "text" : "If storage backend is configured"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 322,
+        "line" : 396,
         "text" : "When to run benchmarks"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 349,
+        "line" : 432,
         "text" : "Verify sync is running"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract",
         "line" : 42,
         "lines" : [
+          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "All health dimensions are checked (stale, orphan, dead links, cross-refs, backlinks, citations, filing, tags)",
           "Each issue found has a specific fix action",
@@ -405,55 +412,53 @@
           "Citation format is validated against the standard",
           "Results are reported with counts per dimension"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Phases",
-        "line" : 51,
+        "line" : 52,
         "lines" : [
-
+          "use judgment to follow the Phases guidance:"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Autonomous path (v0.36.4.0) — when you want to reach a target score",
-        "line" : 53,
+        "line" : 55,
         "lines" : [
-          "If the user asks \"get my brain to 90\/100\" or \"fix what's broken\", prefer the",
-          "one-command loop over walking each dimension by hand:",
-          "codeblock:bash:Z2JyYWluIGRvY3RvciAtLXJlbWVkaWF0aW9uLXBsYW4gLS1qc29uICAgICAgICAgICAgICAjIHByZXZpZXcgd2hhdCB3b3VsZCBydW4KZ2JyYWluIGRvY3RvciAtLXJlbWVkaWF0ZSAtLXllcyAtLXRhcmdldC1zY29yZSA5MCAtLW1heC11c2QgNQ==",
           "`--remediation-plan` prints a dependency-ordered list (sync before extract,",
           "embed after consolidate, etc.) with per-step `est_seconds` and `est_usd_cost`",
           "`--remediate` walks the plan, submitting each step as a Minion job, re-checking",
           "score between every step. `--max-usd N` is a hard cost cap — submission refuses",
           "when the plan would exceed the cap (prevents synthesize loops from burning",
           "Anthropic credits unattended)",
+          "Use the per-dimension walk below (Phase 2 onward) when:",
+          "The user explicitly asks for a dimension-by-dimension audit",
+          "A specific dimension needs manual judgment that the auto path skips",
+          "codeblock:bash:Z2JyYWluIGRvY3RvciAtLXJlbWVkaWF0aW9uLXBsYW4gLS1qc29uICAgICAgICAgICAgICAjIHByZXZpZXcgd2hhdCB3b3VsZCBydW4KZ2JyYWluIGRvY3RvciAtLXJlbWVkaWF0ZSAtLXllcyAtLXRhcmdldC1zY29yZSA5MCAtLW1heC11c2QgNQ==",
           "When the target score is unreachable for the brain (empty brain with no entity",
           "pages → `graph_coverage` caps at 70; unconfigured embedding key → caps at 60),",
           "the command bails with a list of what's missing rather than looping",
-          "Use the per-dimension walk below (Phase 2 onward) when:",
-          "The user explicitly asks for a dimension-by-dimension audit",
-          "You're investigating why score is stuck below `--remediate`'s ceiling",
-          "A specific dimension needs manual judgment that the auto path skips"
+          "You're investigating why score is stuck below `--remediate`'s ceiling"
         ],
         "role" : "inert"
       },
       {
         "executes" : false,
         "heading" : "Manual path",
-        "line" : 79,
+        "line" : 90,
         "lines" : [
-          "**Run health check.** Check gbrain health to get the dashboard",
-          "**Check each dimension:**"
+          "**Check each dimension:**",
+          "Check gbrain health to get the dashboard"
         ],
         "role" : "inert"
       },
       {
         "executes" : false,
         "heading" : "Stale pages",
-        "line" : 84,
+        "line" : 98,
         "lines" : [
           "Pages where compiled_truth is older than the latest timeline entry. The assessment hasn't been updated to reflect recent evidence",
           "Check the health output for stale page count",
@@ -464,7 +469,7 @@
       {
         "executes" : false,
         "heading" : "Orphan pages",
-        "line" : 89,
+        "line" : 106,
         "lines" : [
           "Pages with zero inbound links. Nobody references them",
           "Review orphans: are they genuinely isolated or just missing links?",
@@ -475,7 +480,7 @@
       {
         "executes" : false,
         "heading" : "Dead links",
-        "line" : 94,
+        "line" : 111,
         "lines" : [
           "Links pointing to pages that don't exist",
           "Remove dead links in gbrain"
@@ -485,7 +490,7 @@
       {
         "executes" : false,
         "heading" : "Missing cross-references",
-        "line" : 98,
+        "line" : 115,
         "lines" : [
           "Pages that mention entity names but don't have formal links",
           "Read compiled_truth from gbrain, extract entity mentions, create links in gbrain"
@@ -495,31 +500,29 @@
       {
         "executes" : false,
         "heading" : "Link graph extraction",
-        "line" : 102,
+        "line" : 119,
         "lines" : [
-          "If link_count is 0 or low relative to page_count, run batch extraction:",
-          "codeblock:bash:Z2JyYWluIGV4dHJhY3QgbGlua3MgLS1kaXIgfi9icmFpbg==",
           "This scans all markdown files for entity references, See Also sections, and",
-          "frontmatter fields, then creates typed links in the database"
+          "frontmatter fields, then creates typed links in the database",
+          "codeblock:bash:Z2JyYWluIGV4dHJhY3QgbGlua3MgLS1kaXIgfi9icmFpbg=="
         ],
         "role" : "inert"
       },
       {
         "executes" : false,
         "heading" : "Timeline extraction",
-        "line" : 110,
+        "line" : 130,
         "lines" : [
-          "If timeline_entry_count is 0, extract structured timeline from markdown:",
           "codeblock:bash:Z2JyYWluIGV4dHJhY3QgdGltZWxpbmUgLS1kaXIgfi9icmFpbg=="
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Dream cycle (v0.23): synthesize + patterns",
-        "line" : 116,
+        "line" : 139,
         "lines" : [
-          "`gbrain dream` runs the full 8-phase maintenance cycle:",
+          "use judgment to follow the Dream cycle (v0.23): synthesize + patterns guidance:",
           "codeblock:plain:bGludCAtPiBiYWNrbGlua3MgLT4gc3luYyAtPiBzeW50aGVzaXplIC0+IGV4dHJhY3QgLT4gcGF0dGVybnMgLT4gZW1iZWQgLT4gb3JwaGFucw==",
           "The two new phases consolidate yesterday's conversations into long-term memory:",
           "**Synthesize phase:** reads transcripts from `dream.synthesize.session_corpus_dir`,",
@@ -537,7 +540,6 @@
           "(default 3) reflections support a pattern",
           "**Quality bar (Iron Law for synthesis):**",
           "Quote the user verbatim. Do not paraphrase memorable phrasings",
-          "Cross-reference compulsively: every new page MUST have at least one wikilink",
           "Slug discipline: lowercase alphanumeric and hyphens only. NO underscores, NO file extensions",
           "Edited transcripts produce NEW slugs (content-hash suffix changes) — never silently overwrite",
           "**Trust boundary (`allowed_slug_prefixes`):** the synthesis subagent runs with an",
@@ -551,35 +553,33 @@
           "(default `[\"medical\", \"therapy\"]`) filters out transcripts before any LLM call",
           "Each entry is auto-wrapped as a word-boundary regex (e.g. `medical` matches",
           "\"medical advice\" but NOT \"comedical\"). Power users may pass full regex",
-          "**Cooldown:** the cycle's spend cap. `dream.synthesize.cooldown_hours` (default",
           "12) means at most ~2 synthesize runs per day under autopilot. The completion",
           "timestamp is stored in `dream.synthesize.last_completion_ts` and is written",
           "ONLY on successful runs (not on skipped\/failed). Explicit `--input` \/",
           "`--date` \/ `--from` \/ `--to` invocations bypass cooldown",
-          "**`--dry-run` semantics:** runs the cheap Haiku significance filter (caches",
-          "verdicts) but skips the Sonnet synthesis pass. NOT zero LLM calls",
-          "**Configure synthesize on a fresh brain:**",
-          "codeblock:bash:Z2JyYWluIGNvbmZpZyBzZXQgZHJlYW0uc3ludGhlc2l6ZS5zZXNzaW9uX2NvcnB1c19kaXIgL3BhdGgvdG8vdHJhbnNjcmlwdHMKZ2JyYWluIGNvbmZpZyBzZXQgZHJlYW0uc3ludGhlc2l6ZS5lbmFibGVkIHRydWUKZ2JyYWluIGRyZWFtIC0tcGhhc2Ugc3ludGhlc2l6ZSAtLWRyeS1ydW4gLS1qc29uICAgIyBwcmV2aWV3CmdicmFpbiBkcmVhbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgZnVsbCA4LXBoYXNlIGN5Y2xl",
-          "**Invocation patterns:**",
-          "codeblock:bash:Z2JyYWluIGRyZWFtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBmdWxsIGN5Y2xlCmdicmFpbiBkcmVhbSAtLXBoYXNlIHN5bnRoZXNpemUgICAgICAgICAgICAgICAgICAgICAgICMganVzdCBzeW50aGVzaXplCmdicmFpbiBkcmVhbSAtLXBoYXNlIHBhdHRlcm5zICAgICAgICAgICAgICAgICAgICAgICAgICMganVzdCBwYXR0ZXJucwpnYnJhaW4gZHJlYW0gLS1pbnB1dCB+L3RyYW5zY3JpcHRzLzIwMjYtMDQtMjUudHh0ICAgICAjIGFkLWhvYyBvbmUgdHJhbnNjcmlwdApnYnJhaW4gZHJlYW0gLS1mcm9tIDIwMjYtMDQtMDEgLS10byAyMDI2LTA0LTI1ICAgICAgICAjIGJhY2tmaWxsIHJhbmdlCmdicmFpbiBkcmVhbSAtLWpzb24gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgQ3ljbGVSZXBvcnQgSlNPTg==",
           "**Auto-commit deferred to v1.1:** v1 writes files to `brain_dir` but does NOT",
           "`git add` \/ `commit` \/ `push`. Either commit yourself or let `gbrain autopilot`",
           "handle it",
           "Parses `- **YYYY-MM-DD** | Source — Summary` and `### YYYY-MM-DD — Title` formats",
+          "`gbrain dream` runs the full 8-phase maintenance cycle:",
+          "Cross-reference compulsively: every new page MUST have at least one wikilink",
+          "Cooldown: the cycle's spend cap. `dream.synthesize.cooldown_hours` (default",
+          "`--dry-run` semantics: runs the cheap Haiku significance filter (caches",
+          "verdicts) but skips the Sonnet synthesis pass. NOT zero LLM calls",
+          "codeblock:bash:Z2JyYWluIGNvbmZpZyBzZXQgZHJlYW0uc3ludGhlc2l6ZS5zZXNzaW9uX2NvcnB1c19kaXIgL3BhdGgvdG8vdHJhbnNjcmlwdHMKZ2JyYWluIGNvbmZpZyBzZXQgZHJlYW0uc3ludGhlc2l6ZS5lbmFibGVkIHRydWUKZ2JyYWluIGRyZWFtIC0tcGhhc2Ugc3ludGhlc2l6ZSAtLWRyeS1ydW4gLS1qc29uICAgIyBwcmV2aWV3CmdicmFpbiBkcmVhbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgZnVsbCA4LXBoYXNlIGN5Y2xl",
+          "codeblock:bash:Z2JyYWluIGRyZWFtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBmdWxsIGN5Y2xlCmdicmFpbiBkcmVhbSAtLXBoYXNlIHN5bnRoZXNpemUgICAgICAgICAgICAgICAgICAgICAgICMganVzdCBzeW50aGVzaXplCmdicmFpbiBkcmVhbSAtLXBoYXNlIHBhdHRlcm5zICAgICAgICAgICAgICAgICAgICAgICAgICMganVzdCBwYXR0ZXJucwpnYnJhaW4gZHJlYW0gLS1pbnB1dCB+L3RyYW5zY3JpcHRzLzIwMjYtMDQtMjUudHh0ICAgICAjIGFkLWhvYyBvbmUgdHJhbnNjcmlwdApnYnJhaW4gZHJlYW0gLS1mcm9tIDIwMjYtMDQtMDEgLS10byAyMDI2LTA0LTI1ICAgICAgICAjIGJhY2tmaWxsIHJhbmdlCmdicmFpbiBkcmVhbSAtLWpzb24gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgQ3ljbGVSZXBvcnQgSlNPTg==",
           "Note: extracted entries improve structured queries (`gbrain timeline`), not vector search"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Autopilot check",
-        "line" : 193,
+        "line" : 232,
         "lines" : [
-          "Verify autopilot is running:",
-          "codeblock:bash:Z2JyYWluIGF1dG9waWxvdCAtLXN0YXR1cw==",
-          "If not running, install it:",
-          "codeblock:bash:Z2JyYWluIGF1dG9waWxvdCAtLWluc3RhbGwgLS1yZXBvIH4vYnJhaW4=",
           "Autopilot runs sync, extract, and embed in a continuous loop with adaptive scheduling",
+          "codeblock:bash:Z2JyYWluIGF1dG9waWxvdCAtLXN0YXR1cw==",
+          "codeblock:bash:Z2JyYWluIGF1dG9waWxvdCAtLWluc3RhbGwgLS1yZXBvIH4vYnJhaW4=",
           "In v0.11.1+, autopilot dispatches each cycle as a single `autopilot-cycle`",
           "Minion job and supervises the worker child — one install step gives you",
           "sync + extract + embed + backlinks + durable job processing"
@@ -587,10 +587,11 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Fix a half-migrated install",
-        "line" : 207,
+        "line" : 252,
         "lines" : [
+          "use judgment to follow the Fix a half-migrated install guidance:",
           "A v0.11.0 install where the migration skill never fired leaves Minions",
           "partially set up: schema is applied, but `~\/.gbrain\/preferences.json`",
           "doesn't exist, autopilot runs inline, host manifests still reference",
@@ -598,13 +599,14 @@
           "codeblock:bash:IyBDaGVjayBtaWdyYXRpb24gc3RhdHVzCmdicmFpbiBhcHBseS1taWdyYXRpb25zIC0tbGlzdAoKIyBBcHBseSBwZW5kaW5nIG1pZ3JhdGlvbnMgKGlkZW1wb3RlbnQ7IHNhZmUgb24gaGVhbHRoeSBpbnN0YWxscykKZ2JyYWluIGFwcGx5LW1pZ3JhdGlvbnMgLS15ZXMKCiMgSWYgaG9zdC1zcGVjaWZpYyBoYW5kbGVycyBhcmUgZmxhZ2dlZCBpbiB+Ly5nYnJhaW4vbWlncmF0aW9ucy9wZW5kaW5nLWhvc3Qtd29yay5qc29ubDoKIyB3YWxrIHRoZW0gcGVyIHNraWxscy9taWdyYXRpb25zL3YwLjExLjAubWQgKyBkb2NzL2d1aWRlcy9wbHVnaW4taGFuZGxlcnMubWQsCiMgc2hpcCBoYW5kbGVyIHJlZ2lzdHJhdGlvbnMgaW4gdGhlIGhvc3QgcmVwbywgdGhlbiByZS1ydW4gYXBwbHktbWlncmF0aW9ucy4=",
           "Full troubleshooting guide: `docs\/guides\/minions-fix.md`"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Back-link enforcement",
-        "line" : 227,
+        "line" : 276,
         "lines" : [
+          "use judgment to follow the Back-link enforcement guidance:",
           "Check that the back-linking iron law is being followed:",
           "For each recently updated page, check if entities mentioned in it have",
           "corresponding back-links FROM those entity pages",
@@ -612,39 +614,40 @@
           "Fix: add the missing back-link to the entity's Timeline or See Also section",
           "Format: `- **YYYY-MM-DD** | Referenced in [page title](path) -- brief context`"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Filing rule violations",
-        "line" : 235,
+        "line" : 285,
         "lines" : [
+          "Flag misfiled pages for review or re-filing",
           "Check for common misfiling patterns (see `skills\/_brain-filing-rules.md`):",
           "Content with clear primary subjects filed in `sources\/` instead of the",
           "appropriate directory (people\/, companies\/, concepts\/, etc.)",
           "Use gbrain search to find pages in `sources\/` that reference specific",
-          "people, companies, or concepts -- these may be misfiled",
-          "Flag misfiled pages for review or re-filing"
+          "people, companies, or concepts -- these may be misfiled"
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Citation audit",
-        "line" : 243,
+        "line" : 296,
         "lines" : [
+          "use judgment to follow the Citation audit guidance:",
           "Spot-check pages for missing `[Source: ...]` citations:",
           "Read 5-10 recently updated pages",
           "Check that compiled truth (above the line) has inline citations",
           "Check that timeline entries have source attribution",
           "Flag pages where facts appear without provenance"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Tag consistency",
-        "line" : 250,
+        "line" : 304,
         "lines" : [
           "Inconsistent tagging (e.g., \"vc\" vs \"venture-capital\", \"ai\" vs \"artificial-intelligence\")",
           "Standardize to the most common variant using gbrain tag operations"
@@ -654,7 +657,7 @@
       {
         "executes" : false,
         "heading" : "Graph population (v0.10.3+)",
-        "line" : 254,
+        "line" : 308,
         "lines" : [
           "The `links` and `timeline_entries` tables are the structured graph layer",
           "Populate them periodically or after major imports:",
@@ -663,50 +666,49 @@
           "and infers relationship types (`attended`, `works_at`, `invested_in`, `founded`,",
           "`advises`, `mentions`, `source`). Idempotent. Use `--source fs --dir <brain>`",
           "if you have a markdown checkout to walk instead",
-          "`gbrain extract timeline --source db` — backfill structured timeline entries",
-          "Parses `- **YYYY-MM-DD** | summary` lines from page content. Idempotent (DB",
-          "UNIQUE constraint)",
-          "`gbrain extract all --source db` — both in one run",
-          "`gbrain graph-query <slug> --depth 2` — verify connectivity (use any well-known",
-          "entity slug as a probe)",
           "`gbrain stats` — verify `link_count > 0` and `timeline_entry_count > 0` after extraction",
           "`gbrain health` — review `link_coverage` and `timeline_coverage` percentages",
           "on entity pages (person\/company). Below 50% means more extraction is needed",
-          "Available link types (use with `gbrain graph-query --type`):",
           "`attended`, `works_at`, `invested_in`, `founded`, `advises`, `mentions`, `source`",
           "Going forward, every `gbrain put` call auto-creates and reconciles links via the",
           "auto-link post-hook (default on; disable: `gbrain config set auto_link false`)",
           "So link-extract is mostly a one-time backfill. timeline-extract should be re-run",
-          "after bulk imports or content edits that add new dated entries"
+          "after bulk imports or content edits that add new dated entries",
+          "`gbrain extract timeline --source db` — backfill structured timeline entries",
+          "Parses `- YYYY-MM-DD | summary` lines from page content. Idempotent (DB",
+          "UNIQUE constraint)",
+          "`gbrain extract all --source db` — both in one run",
+          "`gbrain graph-query <slug> --depth 2` — verify connectivity (use any well-known",
+          "entity slug as a probe)",
+          "Available link types (use with `gbrain graph-query --type`):"
         ],
         "role" : "inert"
       },
       {
         "executes" : false,
         "heading" : "Embedding freshness",
-        "line" : 282,
+        "line" : 342,
         "lines" : [
           "Chunks without embeddings, or chunks embedded with an old model",
-          "For large embedding refreshes (>1000 chunks), use nohup:",
           "`nohup gbrain embed refresh > \/tmp\/gbrain-embed.log 2>&1 &`",
           "Then check progress: `tail -1 \/tmp\/gbrain-embed.log`"
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Security (RLS verification)",
-        "line" : 288,
+        "line" : 351,
         "lines" : [
           "Run `gbrain doctor --json` and check the RLS status",
           "All tables should show RLS enabled. If not, run `gbrain init` again"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Schema health",
-        "line" : 292,
+        "line" : 355,
         "lines" : [
           "Check that the schema version is up to date. `gbrain doctor --json` reports",
           "the current version vs expected. If behind, `gbrain init` runs migrations",
@@ -717,32 +719,33 @@
       {
         "executes" : false,
         "heading" : "File storage health",
-        "line" : 297,
+        "line" : 363,
         "lines" : [
-          "Check the integrity of stored files and redirect pointers:",
+          "Check for large binary files (>= 100 MB) still in git that should be in cloud storage",
           "Run `gbrain files verify` to check all DB records have valid data",
           "Run `gbrain files status` to see migration state (local, mirrored, redirected)",
           "Check for orphan `.redirect.yaml` pointers that reference missing storage files",
-          "Check for large binary files (>= 100 MB) still in git that should be in cloud storage",
           "If storage backend is configured: verify redirect pointers resolve (download test)"
         ],
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Open threads",
-        "line" : 305,
+        "line" : 377,
         "lines" : [
+          "use judgment to follow the Open threads guidance:",
           "Timeline items older than 30 days with unresolved action items",
           "Flag for review"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Benchmark Testing",
-        "line" : 309,
+        "line" : 382,
         "lines" : [
+          "use judgment to follow the Benchmark Testing guidance:",
           "Periodically verify search quality hasn't regressed. Run a battery of test",
           "queries across difficulty tiers:",
           "**Tier 1 (entity lookup):** known names -- should always resolve",
@@ -757,12 +760,12 @@
           "After embedding regeneration",
           "Monthly to track quality drift"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Heartbeat Integration",
-        "line" : 328,
+        "line" : 402,
         "lines" : [
           "For production agents running on a schedule, integrate gbrain health checks into",
           "your operational heartbeat"
@@ -772,7 +775,7 @@
       {
         "executes" : false,
         "heading" : "On every heartbeat (hourly or per-session)",
-        "line" : 333,
+        "line" : 407,
         "lines" : [
           "Run `gbrain doctor --json` and check for degradation. Report any failing checks",
           "staleness"
@@ -782,7 +785,7 @@
       {
         "executes" : false,
         "heading" : "Weekly maintenance",
-        "line" : 339,
+        "line" : 416,
         "lines" : [
           "Run `gbrain embed --stale` to refresh embeddings for pages that have changed since",
           "their last embedding. For large brains (>5000 pages), run this with nohup:",
@@ -793,7 +796,7 @@
       {
         "executes" : false,
         "heading" : "Daily verification",
-        "line" : 347,
+        "line" : 427,
         "lines" : [
           "Verify sync is running: check `gbrain stats` and confirm `last_sync` is within",
           "the last 24 hours. If sync has stopped, the brain is drifting from the repo"
@@ -803,7 +806,7 @@
       {
         "executes" : false,
         "heading" : "Stale compiled truth detection",
-        "line" : 352,
+        "line" : 435,
         "lines" : [
           "Flag pages where compiled truth is >30 days old but the timeline has recent entries",
           "This means new evidence exists that hasn't been synthesized. These pages need a",
@@ -814,10 +817,8 @@
       {
         "executes" : false,
         "heading" : "Report Storage",
-        "line" : 358,
+        "line" : 441,
         "lines" : [
-          "After maintenance runs, save a report:",
-          "Health check results (before\/after scores for each dimension)",
           "Back-link violations found and fixed",
           "Filing rule violations found",
           "Citation gaps flagged",
@@ -828,21 +829,32 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
-        "heading" : "Quality Rules",
-        "line" : 370,
+        "executes" : true,
+        "heading" : "Report Storage — steps",
+        "line" : 452,
         "lines" : [
+          "Health check results (before\/after scores for each dimension)"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Quality Rules",
+        "line" : 456,
+        "lines" : [
+          "use judgment to follow the Quality Rules guidance:",
           "Never delete pages without confirmation",
           "Log all changes via timeline entries",
           "Check gbrain health before and after to show improvement"
         ],
-        "role" : "invariants"
+        "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns",
-        "line" : 376,
+        "line" : 463,
         "lines" : [
+          "use judgment to follow the Anti-Patterns guidance:",
           "Fixing pages without reading them first -- you must understand context before editing",
           "Silently skipping dimensions -- every dimension must be checked and reported, even if clean",
           "Deleting orphan pages without checking if they should be linked instead",
@@ -852,22 +864,22 @@
           "Rewriting compiled truth without reading the full timeline first",
           "Removing tags without checking if other pages use the same tag consistently"
         ],
-        "role" : "prohibitions"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 387,
+        "line" : 475,
         "lines" : [
           "The maintenance report follows this structure:",
-          "codeblock:plain:IyMgQnJhaW4gSGVhbHRoIFJlcG9ydCDigJQgWVlZWS1NTS1ERCAoKCBpbmVydCApKQoKfCBEaW1lbnNpb24gICAgICAgICAgIHwgSXNzdWVzIEZvdW5kIHwgRml4ZWQgfCBSZW1haW5pbmcgfAp8LS0tLS0tLS0tLS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tfC0tLS0tLS18LS0tLS0tLS0tLS18CnwgU3RhbGUgcGFnZXMgICAgICAgICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKfCBPcnBoYW4gcGFnZXMgICAgICAgICB8IE4gICAgICAgICAgIHwgTiAgICAgfCBOICAgICAgICAgfAp8IERlYWQgbGlua3MgICAgICAgICAgIHwgTiAgICAgICAgICAgfCBOICAgICB8IE4gICAgICAgICB8CnwgTWlzc2luZyBjcm9zcy1yZWZzICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKfCBCYWNrLWxpbmsgdmlvbGF0aW9ucyB8IE4gICAgICAgICAgIHwgTiAgICAgfCBOICAgICAgICAgfAp8IENpdGF0aW9uIGdhcHMgICAgICAgIHwgTiAgICAgICAgICAgfCBOICAgICB8IE4gICAgICAgICB8CnwgRmlsaW5nIHZpb2xhdGlvbnMgICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKfCBUYWcgaW5jb25zaXN0ZW5jaWVzICB8IE4gICAgICAgICAgIHwgTiAgICAgfCBOICAgICAgICAgfAp8IEVtYmVkZGluZyBzdGFsZW5lc3MgIHwgTiAgICAgICAgICAgfCBOICAgICB8IE4gICAgICAgICB8CnwgU2VjdXJpdHkgKFJMUykgICAgICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKfCBTY2hlbWEgaGVhbHRoICAgICAgICB8IE4gICAgICAgICAgIHwgTiAgICAgfCBOICAgICAgICAgfAp8IEZpbGUgc3RvcmFnZSAgICAgICAgIHwgTiAgICAgICAgICAgfCBOICAgICB8IE4gICAgICAgICB8CnwgT3BlbiB0aHJlYWRzICAgICAgICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKCiMjIyBEZXRhaWxzICgoIGluZXJ0ICkpCltQZXItZGltZW5zaW9uIGJyZWFrZG93biB3aXRoIHNwZWNpZmljIHBhZ2VzIGFuZCBhY3Rpb25zIHRha2VuXQoKIyMjIEJlbmNobWFyayBSZXN1bHRzIChpZiBydW4pICgoIGluZXJ0ICkpCltUaWVyIDEtNCBxdWVyeSByZXN1bHRzIHdpdGggcGFzcy9mYWlsXQoKIyMjIE91dHN0YW5kaW5nIElzc3VlcyAoKCBpbmVydCApKQpbSXRlbXMgcmVxdWlyaW5nIHVzZXIgYXR0ZW50aW9uIG9yIGNvbmZpcm1hdGlvbl0="
+          "codeblock:plain:IyMgQnJhaW4gSGVhbHRoIFJlcG9ydCDigJQgWVlZWS1NTS1ERAoKfCBEaW1lbnNpb24gICAgICAgICAgIHwgSXNzdWVzIEZvdW5kIHwgRml4ZWQgfCBSZW1haW5pbmcgfAp8LS0tLS0tLS0tLS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tfC0tLS0tLS18LS0tLS0tLS0tLS18CnwgU3RhbGUgcGFnZXMgICAgICAgICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKfCBPcnBoYW4gcGFnZXMgICAgICAgICB8IE4gICAgICAgICAgIHwgTiAgICAgfCBOICAgICAgICAgfAp8IERlYWQgbGlua3MgICAgICAgICAgIHwgTiAgICAgICAgICAgfCBOICAgICB8IE4gICAgICAgICB8CnwgTWlzc2luZyBjcm9zcy1yZWZzICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKfCBCYWNrLWxpbmsgdmlvbGF0aW9ucyB8IE4gICAgICAgICAgIHwgTiAgICAgfCBOICAgICAgICAgfAp8IENpdGF0aW9uIGdhcHMgICAgICAgIHwgTiAgICAgICAgICAgfCBOICAgICB8IE4gICAgICAgICB8CnwgRmlsaW5nIHZpb2xhdGlvbnMgICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKfCBUYWcgaW5jb25zaXN0ZW5jaWVzICB8IE4gICAgICAgICAgIHwgTiAgICAgfCBOICAgICAgICAgfAp8IEVtYmVkZGluZyBzdGFsZW5lc3MgIHwgTiAgICAgICAgICAgfCBOICAgICB8IE4gICAgICAgICB8CnwgU2VjdXJpdHkgKFJMUykgICAgICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKfCBTY2hlbWEgaGVhbHRoICAgICAgICB8IE4gICAgICAgICAgIHwgTiAgICAgfCBOICAgICAgICAgfAp8IEZpbGUgc3RvcmFnZSAgICAgICAgIHwgTiAgICAgICAgICAgfCBOICAgICB8IE4gICAgICAgICB8CnwgT3BlbiB0aHJlYWRzICAgICAgICAgfCBOICAgICAgICAgICB8IE4gICAgIHwgTiAgICAgICAgIHwKCiMjIyBEZXRhaWxzCltQZXItZGltZW5zaW9uIGJyZWFrZG93biB3aXRoIHNwZWNpZmljIHBhZ2VzIGFuZCBhY3Rpb25zIHRha2VuXQoKIyMjIEJlbmNobWFyayBSZXN1bHRzIChpZiBydW4pCltUaWVyIDEtNCBxdWVyeSByZXN1bHRzIHdpdGggcGFzcy9mYWlsXQoKIyMjIE91dHN0YW5kaW5nIElzc3VlcwpbSXRlbXMgcmVxdWlyaW5nIHVzZXIgYXR0ZW50aW9uIG9yIGNvbmZpcm1hdGlvbl0="
         ],
         "role" : "template"
       },
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 420,
+        "line" : 508,
         "lines" : [
           "Check gbrain health (get_health)",
           "List pages in gbrain with filters (list_pages)",
@@ -922,148 +934,152 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 1,
-      "swift_line" : 631
+      "meridian_line" : 43,
+      "swift_line" : 602
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 641
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 646
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 685
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 690
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 734
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 773
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 807
+      "swift_line" : 778
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 812
+      "swift_line" : 817
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 851
+      "swift_line" : 822
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 856
+      "swift_line" : 861
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 895
+      "swift_line" : 866
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 900
+      "swift_line" : 905
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 939
+      "swift_line" : 910
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 944
+      "swift_line" : 949
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 983
+      "swift_line" : 954
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 988
+      "swift_line" : 993
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1027
+      "swift_line" : 998
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1032
+      "swift_line" : 1037
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1071
+      "swift_line" : 1042
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1076
+      "swift_line" : 1081
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1115
+      "swift_line" : 1086
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1120
+      "swift_line" : 1125
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1159
+      "swift_line" : 1130
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1164
+      "swift_line" : 1169
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1203
+      "swift_line" : 1174
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1208
+      "swift_line" : 1213
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1247
+      "swift_line" : 1218
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1252
+      "swift_line" : 1257
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1291
+      "swift_line" : 1262
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1296
+      "swift_line" : 1301
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1335
+      "swift_line" : 1306
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1340
+      "swift_line" : 1345
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1379
+      "swift_line" : 1350
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1384
+      "swift_line" : 1389
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1394
     }
   ],
   "tools_used" : [
@@ -1084,6 +1100,33 @@
         {
           "kind" : "Input",
           "name" : "input"
+        }
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "This skill guarantees:\nAll health dimensions are checked (stale, orphan, dead links, cross-refs, backlinks, citations, filing, tags)\nEach issue found has a specific fix action\nBack-link iron law is enforced\nCitation format is validated against the standard\nResults are reported with counts per dimension\nuse judgment to follow the Phases guidance:\nuse judgment to follow the Dream cycle (v0.23): synthesize + patterns guidance:\ncodeblock:plain:bGludCAtPiBiYWNrbGlua3MgLT4gc3luYyAtPiBzeW50aGVzaXplIC0+IGV4dHJhY3QgLT4gcGF0dGVybnMgLT4gZW1iZWQgLT4gb3JwaGFucw==\nThe two new phases consolidate yesterday's conversations into long-term memory:\n**Synthesize phase:** reads transcripts from `dream.synthesize.session_corpus_dir`,\nruns a cheap Haiku verdict (cached in `dream_verdicts`) to filter routine\nops sessions, then fans out one Sonnet subagent per worth-processing\ntranscript. Each subagent writes reflections (`wiki\/personal\/reflections\/...`),\noriginals (`wiki\/originals\/ideas\/...`), and people timeline entries. The\norchestrator collects the slugs from `subagent_tool_executions` (NOT\n`pages.updated_at` — that would pick up unrelated writes) and reverse-renders\neach new page from DB → markdown on disk\n**Patterns phase:** runs after `extract` (so the graph state is fresh)\nReads recent reflections within `dream.patterns.lookback_days` (default 30),\nruns a single Sonnet pass to surface recurring themes, and writes pattern\npages to `wiki\/personal\/patterns\/<theme>` when ≥`dream.patterns.min_evidence`\n(default 3) reflections support a pattern\n**Quality bar (Iron Law for synthesis):**\nQuote the user verbatim. Do not paraphrase memorable phrasings\nSlug discipline: lowercase alphanumeric and hyphens only. NO underscores, NO file extensions\nEdited transcripts produce NEW slugs (content-hash suffix changes) — never silently overwrite\n**Trust boundary (`allowed_slug_prefixes`):** the synthesis subagent runs with an\nexplicit allow-list of write paths sourced from `_brain-filing-rules.json`'s\n`dream_synthesize_paths.globs`. Even on prompt-injection success, the subagent\ncannot write outside that list. Trust comes from PROTECTED_JOB_NAMES — MCP\ncannot submit subagent jobs at all. Editing the JSON is the only way to add\na new directory the synthesizer can write to\n**Idempotency + privacy:** transcripts are keyed by `(file_path, content_hash)`,\nso re-running on the same content is a no-op. `dream.synthesize.exclude_patterns`\n(default `[\"medical\", \"therapy\"]`) filters out transcripts before any LLM call\nEach entry is auto-wrapped as a word-boundary regex (e.g. `medical` matches\n\"medical advice\" but NOT \"comedical\"). Power users may pass full regex\n12) means at most ~2 synthesize runs per day under autopilot. The completion\ntimestamp is stored in `dream.synthesize.last_completion_ts` and is written\nONLY on successful runs (not on skipped\/failed). Explicit `--input` \/\n`--date` \/ `--from` \/ `--to` invocations bypass cooldown\n**Auto-commit deferred to v1.1:** v1 writes files to `brain_dir` but does NOT\n`git add` \/ `commit` \/ `push`. Either commit yourself or let `gbrain autopilot`\nhandle it\nParses `- **YYYY-MM-DD** | Source — Summary` and `### YYYY-MM-DD — Title` formats\n`gbrain dream` runs the full 8-phase maintenance cycle:\nCross-reference compulsively: every new page MUST have at least one wikilink\nCooldown: the cycle's spend cap. `dream.synthesize.cooldown_hours` (default\n`--dry-run` semantics: runs the cheap Haiku significance filter (caches\nverdicts) but skips the Sonnet synthesis pass. NOT zero LLM calls\ncodeblock:bash:Z2JyYWluIGNvbmZpZyBzZXQgZHJlYW0uc3ludGhlc2l6ZS5zZXNzaW9uX2NvcnB1c19kaXIgL3BhdGgvdG8vdHJhbnNjcmlwdHMKZ2JyYWluIGNvbmZpZyBzZXQgZHJlYW0uc3ludGhlc2l6ZS5lbmFibGVkIHRydWUKZ2JyYWluIGRyZWFtIC0tcGhhc2Ugc3ludGhlc2l6ZSAtLWRyeS1ydW4gLS1qc29uICAgIyBwcmV2aWV3CmdicmFpbiBkcmVhbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgZnVsbCA4LXBoYXNlIGN5Y2xl\ncodeblock:bash:Z2JyYWluIGRyZWFtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBmdWxsIGN5Y2xlCmdicmFpbiBkcmVhbSAtLXBoYXNlIHN5bnRoZXNpemUgICAgICAgICAgICAgICAgICAgICAgICMganVzdCBzeW50aGVzaXplCmdicmFpbiBkcmVhbSAtLXBoYXNlIHBhdHRlcm5zICAgICAgICAgICAgICAgICAgICAgICAgICMganVzdCBwYXR0ZXJucwpnYnJhaW4gZHJlYW0gLS1pbnB1dCB+L3RyYW5zY3JpcHRzLzIwMjYtMDQtMjUudHh0ICAgICAjIGFkLWhvYyBvbmUgdHJhbnNjcmlwdApnYnJhaW4gZHJlYW0gLS1mcm9tIDIwMjYtMDQtMDEgLS10byAyMDI2LTA0LTI1ICAgICAgICAjIGJhY2tmaWxsIHJhbmdlCmdicmFpbiBkcmVhbSAtLWpzb24gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgQ3ljbGVSZXBvcnQgSlNPTg==\nNote: extracted entries improve structured queries (`gbrain timeline`), not vector search\nuse judgment to follow the Fix a half-migrated install guidance:\nA v0.11.0 install where the migration skill never fired leaves Minions\npartially set up: schema is applied, but `~\/.gbrain\/preferences.json`\ndoesn't exist, autopilot runs inline, host manifests still reference\n`agentTurn`. Repair:\ncodeblock:bash:IyBDaGVjayBtaWdyYXRpb24gc3RhdHVzCmdicmFpbiBhcHBseS1taWdyYXRpb25zIC0tbGlzdAoKIyBBcHBseSBwZW5kaW5nIG1pZ3JhdGlvbnMgKGlkZW1wb3RlbnQ7IHNhZmUgb24gaGVhbHRoeSBpbnN0YWxscykKZ2JyYWluIGFwcGx5LW1pZ3JhdGlvbnMgLS15ZXMKCiMgSWYgaG9zdC1zcGVjaWZpYyBoYW5kbGVycyBhcmUgZmxhZ2dlZCBpbiB+Ly5nYnJhaW4vbWlncmF0aW9ucy9wZW5kaW5nLWhvc3Qtd29yay5qc29ubDoKIyB3YWxrIHRoZW0gcGVyIHNraWxscy9taWdyYXRpb25zL3YwLjExLjAubWQgKyBkb2NzL2d1aWRlcy9wbHVnaW4taGFuZGxlcnMubWQsCiMgc2hpcCBoYW5kbGVyIHJlZ2lzdHJhdGlvbnMgaW4gdGhlIGhvc3QgcmVwbywgdGhlbiByZS1ydW4gYXBwbHktbWlncmF0aW9ucy4=\nFull troubleshooting guide: `docs\/guides\/minions-fix.md`\nuse judgment to follow the Back-link enforcement guidance:\nCheck that the back-linking iron law is being followed:\nFor each recently updated page, check if entities mentioned in it have\ncorresponding back-links FROM those entity pages\nA mention without a back-link is a broken brain\nFix: add the missing back-link to the entity's Timeline or See Also section\nFormat: `- **YYYY-MM-DD** | Referenced in [page title](path) -- brief context`\nuse judgment to follow the Citation audit guidance:\nSpot-check pages for missing `[Source: ...]` citations:\nRead 5-10 recently updated pages\nCheck that compiled truth (above the line) has inline citations\nCheck that timeline entries have source attribution\nFlag pages where facts appear without provenance\nRun `gbrain doctor --json` and check the RLS status\nAll tables should show RLS enabled. If not, run `gbrain init` again\nuse judgment to follow the Open threads guidance:\nTimeline items older than 30 days with unresolved action items\nFlag for review\nuse judgment to follow the Benchmark Testing guidance:\nPeriodically verify search quality hasn't regressed. Run a battery of test\nqueries across difficulty tiers:\n**Tier 1 (entity lookup):** known names -- should always resolve\n**Tier 2 (topic recall):** concepts, topics -- keyword search should handle\n**Tier 3 (semantic):** queries with no exact keyword match -- needs embeddings\n**Tier 4 (cross-domain):** relational\/connection queries -- only semantic handles\nCompare results from `gbrain search` (keyword) vs `gbrain query` (hybrid)\nQuality matters more than speed (2.5s right > 200ms wrong)\nWhen to run benchmarks:\nAfter major brain imports or re-imports\nAfter gbrain version upgrades\nAfter embedding regeneration\nMonthly to track quality drift\nHealth check results (before\/after scores for each dimension)\nuse judgment to follow the Quality Rules guidance:\nNever delete pages without confirmation\nLog all changes via timeline entries\nCheck gbrain health before and after to show improvement\nuse judgment to follow the Anti-Patterns guidance:\nFixing pages without reading them first -- you must understand context before editing\nSilently skipping dimensions -- every dimension must be checked and reported, even if clean\nDeleting orphan pages without checking if they should be linked instead\nRunning embedding refresh during peak usage hours\nBatch-fixing back-links without verifying the relationship is real\nMarking a dimension \"clean\" without actually querying it\nRewriting compiled truth without reading the full timeline first\nRemoving tags without checking if other pages use the same tag consistently",
+          "line" : 43,
+          "scoped_tools" : [
+            "add_link",
+            "add_tag",
+            "get_backlinks",
+            "get_health",
+            "get_page",
+            "get_timeline",
+            "health.get",
+            "link.add",
+            "link.backlinks",
+            "list_pages",
+            "page.get",
+            "page.list",
+            "page.search",
+            "publish",
+            "remove_link",
+            "remove_tag",
+            "shell.run"
+          ],
+          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "maintain a input",

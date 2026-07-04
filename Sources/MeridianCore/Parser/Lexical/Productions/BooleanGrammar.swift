@@ -248,13 +248,23 @@ struct BooleanGrammar {
     }
 
     private func replaceOutsideQuotes(_ s: String, find: String, with replace: String) -> String {
+        // `remaining` must stay a `String` (not a `Substring`) rebuilt fresh
+        // each iteration: `r` is computed by `rangeOfMarker(_:in:)` against
+        // whichever value is passed as `in:`, so its indices are only valid
+        // for that exact `String` instance. A prior version scanned
+        // `String(remaining)` (a throwaway copy with its own index space) but
+        // then subscripted the original `remaining` `Substring` with `r` —
+        // valid by accident on the first match (a whole-string `Substring`
+        // happens to share its base's indices), but on a second match
+        // `remaining` is itself a suffix slice, so `r`'s indices (relative to
+        // yet another fresh copy) no longer line up with it and the
+        // subscript traps ("Range requires lowerBound <= upperBound"). Two
+        // Oxford-comma joins in one sentence is enough to hit this.
         var result = ""
-        var remaining = Substring(s)
-        while let r = QuoteAwareScanner.rangeOfMarker(find, in: String(remaining)) {
-            let head = remaining[remaining.startIndex..<r.lowerBound]
-            result += head + replace
-            let consumed = String(remaining).distance(from: String(remaining).startIndex, to: r.upperBound)
-            remaining = remaining[remaining.index(remaining.startIndex, offsetBy: consumed)...]
+        var remaining = s
+        while let r = QuoteAwareScanner.rangeOfMarker(find, in: remaining) {
+            result += remaining[remaining.startIndex..<r.lowerBound] + replace
+            remaining = String(remaining[r.upperBound...])
         }
         result += remaining
         return result

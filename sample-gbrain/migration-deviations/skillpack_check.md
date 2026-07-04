@@ -2,9 +2,9 @@
 
 - Original: `skillpack-check/SKILL.md`
 - Ported: `skillpack_check.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 92%
-- Lines: 133 -> 133 (+11 / -11)
+- Tier: 2 (light edits)
+- Similarity: 76%
+- Lines: 133 -> 154 (+45 / -24)
 
 ## Frontmatter
 - Added: (none)
@@ -12,40 +12,29 @@
 
 ## Categories
 - section-marker-added
+- shell-block-routed
 - inert-section-added
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L4 `Contract`: normative-contract - Normative invariants prose needs mining into assertions or explicit AI routing.
-- L19 `When to run`: operational-procedure - Marked or derived as applicability, but inert suppresses execution.
-- L27 `What to do with the output`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L29 `Happy path (`healthy: true`)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L33 `Action needed (`healthy: false`)`: operational-content - Body contains command, table, checklist, or explicit AI-routing surface.
-- L54 `Determine failure (`exit 2`)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L63 `Output format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L87 `Anti-Patterns`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L97 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L103 `Related`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L31 `Happy path (`healthy: true`)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L74 `Output format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L112 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections: 10/10 inert (100% inert ratio)
-- Operational inert: 3
+- Sections inert total: 5/8 (62% total inert; includes intentional docs/templates/tools metadata)
+- Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: normative-contract=1, operational-content=1, operational-procedure=1, reference-documentation=5, template=2
-- Judgment: 0 blocks, 0 lines
+- Inert categories: reference-documentation=3, template=2
+- Judgment: 3 blocks, 0 lines
 
 ### Inert section details
-- L4 `Contract`: normative-contract — Normative invariants prose needs mining into assertions or explicit AI routing.
-- L19 `When to run`: operational-procedure — Marked or derived as applicability, but inert suppresses execution.
-- L27 `What to do with the output`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L29 `Happy path (`healthy: true`)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L33 `Action needed (`healthy: false`)`: operational-content — Body contains command, table, checklist, or explicit AI-routing surface.
-- L54 `Determine failure (`exit 2`)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L63 `Output format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L87 `Anti-Patterns`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L97 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L103 `Related`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L31 `Happy path (`healthy: true`)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L35 `Action needed (`healthy: false`)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L74 `Output format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L112 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L118 `Related`: reference-documentation — Reference documentation, rationale, examples, or changelog.
 
 ## Unified diff
 
@@ -63,25 +52,27 @@ These sections were made non-executable in the port and should be reviewed as mi
    can see at a glance whether the skillpack needs attention.
  
    Use when the user asks "is gbrain healthy?", when a cron fires a morning
-@@ -23,7 +23,7 @@
+@@ -23,7 +23,8 @@
  
  # Skillpack Check
  
 -## Contract
-+## Contract (( inert, role: invariants ))
++## Contract (( role: procedure ))
++use judgment to follow the Contract guidance:
  
  Running `gbrain skillpack-check` returns a JSON report with:
  
-@@ -38,7 +38,7 @@
+@@ -38,7 +39,8 @@
  - `1` — action needed. Read `actions[]` and execute.
  - `2` — could not determine (binary crash or missing subcommand). Investigate.
  
 -## When to run
-+## When to run (( inert, role: applicability ))
++## When to run (( role: procedure ))
++use judgment to follow the When to run guidance:
  
  - **Daily cron** (e.g. your OpenClaw's `morning-briefing`): `gbrain skillpack-check --quiet`.
    Exit code alone tells you if anything is wrong; surface a one-liner in the
-@@ -46,13 +46,13 @@
+@@ -46,15 +48,24 @@
  - **On demand**: `gbrain skillpack-check` for the full JSON when debugging.
  - **In a CI pipeline**: same pattern — exit code gates, JSON is the evidence.
  
@@ -96,31 +87,73 @@ These sections were made non-executable in the port and should be reviewed as mi
 -### Action needed (`healthy: false`)
 +### Action needed (`healthy: false`) (( inert ))
  
- The `actions[]` array contains the commands to run, in order. Execute them:
+-The `actions[]` array contains the commands to run, in order. Execute them:
++  Run this (it's idempotent). If it exits `status: "partial"`, the host has
++  non-builtin cron handlers that need plugin registration — follow
++  `skills/migrations/v0.11.0.md`.
++- Free-text action (no `Run:` prefix in the source message) — agent judgment
++  needed. Quote it in the report for the user.
++
++
++#### Action needed (`healthy: false`) — steps
++
++> The `actions[]` array contains the commands to run, in order. Execute them:
  
-@@ -73,7 +73,7 @@
- - Free-text action (no `Run:` prefix in the source message) — agent judgment
-   needed. Quote it in the report for the user.
+ ```bash
+ for cmd in $(echo "$REPORT" | jq -r '.actions[]'); do
+@@ -62,21 +73,21 @@
+ done
+ ```
  
--### Determine failure (`exit 2`)
+-Common `actions[]` entries and what they mean:
++> Common `actions[]` entries and what they mean:
+ 
+ - `gbrain apply-migrations --yes` — A migration is pending or half-finished.
+-  Run this (it's idempotent). If it exits `status: "partial"`, the host has
+-  non-builtin cron handlers that need plugin registration — follow
+-  `skills/migrations/v0.11.0.md`.
++
++#### Action needed (`healthy: false`) — steps 2
++
+ - `gbrain embed --stale` — Embeddings are stale.
+ - `gbrain check-backlinks --fix` — Dead links or missing back-links.
+-- Free-text action (no `Run:` prefix in the source message) — agent judgment
+-  needed. Quote it in the report for the user.
 +### Determine failure (`exit 2`) (( inert ))
  
- Treat as urgent. Probably means the gbrain binary is missing from `$PATH` or
- a required subcommand crashed. Check:
-@@ -106,7 +106,7 @@
+-### Determine failure (`exit 2`)
+ 
+-Treat as urgent. Probably means the gbrain binary is missing from `$PATH` or
+-a required subcommand crashed. Check:
++#### Determine failure (`exit 2`) — steps
++
++> Treat as urgent. Probably means the gbrain binary is missing from `$PATH` or
++> a required subcommand crashed. Check:
+ 
+ 1. `which gbrain` returns a path
+ 2. `gbrain --version` exits 0
+@@ -106,28 +117,38 @@
  }
  ```
  
 -## Anti-Patterns
-+## Anti-Patterns (( inert, role: prohibitions ))
++## Anti-Patterns (( role: procedure ))
++use judgment to follow the Anti-Patterns guidance:
  
  - ❌ Running without `--quiet` in a cron that emails its output — you'll get
    the full JSON blob in every daily email. Use `--quiet` in crons.
-@@ -116,13 +116,13 @@
+-- ❌ Ignoring exit code 2. A crashed doctor is worse than a failing check
+-  because you don't even know what's wrong.
+ - ❌ Running on every chat turn. Once per hour (or on user request) is plenty.
  - ❌ Treating warnings as failures. Only `fail` status needs action;
    `warn` is informational.
  
 -## Output Format
++
++### Anti-Patterns — steps (( inert ))
++
++- ❌ Ignoring exit code 2. A crashed doctor is worse than a failing check
++  because you don't even know what's wrong.
 +## Output Format (( inert, role: template ))
  
  The skill itself doesn't write files; it reports the CLI output verbatim to
@@ -129,7 +162,20 @@ These sections were made non-executable in the port and should be reviewed as mi
  
 -## Related
 +## Related (( inert ))
++
++- `skills/migrations/v0.11.0.md` — the host-agent instruction manual for
++  resolving `pending-host-work.jsonl` items.
++
++### Related — steps
  
  - `gbrain doctor` — the underlying filesystem + DB check. skillpack-check
    composes this.
+ - `gbrain apply-migrations --list` — the migration status view.
+-- `skills/migrations/v0.11.0.md` — the host-agent instruction manual for
+-  resolving `pending-host-work.jsonl` items.
++
++### Related — steps 2
++
+ - `docs/guides/minions-fix.md` — troubleshooting a half-migrated install.
+ 
 ```

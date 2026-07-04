@@ -20,6 +20,19 @@ struct ProseRuntimeTests {
         }
     }
 
+    private struct GuidanceCapturingPlanner: Planner {
+        let captured: CapturedGuidance
+        func plan(_ context: PlanContext) async throws -> PlanProposal {
+            await captured.set(context.guidance)
+            return PlanProposal(actions: [])
+        }
+    }
+
+    private actor CapturedGuidance {
+        private(set) var value: String?
+        func set(_ v: String?) { value = v }
+    }
+
     @Test("executeProsePlan routes proposed actions through registered tools")
     func executeProsePlan() async throws {
         let registry = ToolRegistry()
@@ -48,5 +61,26 @@ struct ProseRuntimeTests {
                 scopedTools: ["demo.tool"]
             )
         }
+    }
+
+    @Test("executeProsePlan threads guidance into PlanContext; nil when omitted")
+    func executeProsePlanThreadsGuidance() async throws {
+        let captured = CapturedGuidance()
+        let runtime = Runtime(toolRegistry: ToolRegistry(), observer: InMemoryObserver(), planner: GuidanceCapturingPlanner(captured: captured))
+
+        _ = try await runtime.executeProsePlan(
+            prose: "do useful work",
+            snapshot: State().snapshot(),
+            scopedTools: [],
+            guidance: "carry this section's narrative"
+        )
+        #expect(await captured.value == "carry this section's narrative")
+
+        _ = try await runtime.executeProsePlan(
+            prose: "do useful work",
+            snapshot: State().snapshot(),
+            scopedTools: []
+        )
+        #expect(await captured.value == nil)
     }
 }

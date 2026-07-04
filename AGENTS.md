@@ -247,6 +247,24 @@ swift scripts/strict-compile-report.swift
 swift scripts/strict-compile-report.swift --root corpora/erp --vocab corpora/erp/erp.merconfig --rulebook corpora/erp/erp.merrules
 ```
 
+When batch re-migrating `SKILL.md` sources into `.meri`, use the shared script
+instead of hand-written `migrate-skill` invocations:
+
+```bash
+swift scripts/generate-migration.swift --corpus gbrain
+swift scripts/generate-migration.swift --corpus erp
+swift scripts/generate-migration.swift --corpus procedures
+```
+
+It runs `migrate-skill <root>/original-skills --out <root>/skills --batch
+--force` (plus a separate single-file `migrate-skill` call for
+`<root>/original-skills/RESOLVER.md` → `<root>/RESOLVER.meri`, since
+`RESOLVER.md` is never named `SKILL.md` so `--batch` never discovers it on its
+own). New section-role aliases the migrator derives are appended straight to
+`<root>`'s primary `.merrules`, matching `migrate-skill`'s own persistence
+behavior — re-running this script is idempotent. After migrating, regenerate
+`compile-outputs` and `migration-deviations` (below) before running the gates.
+
 When regenerating committed compile outputs, use the shared script instead of
 hand-written loops:
 
@@ -268,9 +286,15 @@ swift scripts/generate-deviations.swift --corpus procedures
 ```
 
 It runs `skill-deviation --batch --index` for `sample-gbrain`, `corpora/erp`,
-and `corpora/procedures`. Original `SKILL.md` sources remain immutable
-baselines; regenerate reports from the current originals and ported `.meri`
-files rather than editing originals to improve metrics.
+and `corpora/procedures`, then prints each corpus's generated `## Summary`
+block (the deviation index proper — tiers, similarity, inert/operational-inert/
+unclassified counts) *and* a per-file operational-inert breakdown (worst
+offenders first, parsed from the `## Per-skill` table) to stdout, so a run of
+the script is itself the actionable worklist for driving operational-inert
+toward zero — not just a confirmation that some file got written. Original
+`SKILL.md` sources remain immutable baselines; regenerate reports from the
+current originals and ported `.meri` files rather than editing originals to
+improve metrics.
 Do not skip the coverage gate for substantive production changes; it enforces
 the per-file coverage floors documented under `docs/coverage/`.
 If a change affects generated artifacts, regenerate and include the matching

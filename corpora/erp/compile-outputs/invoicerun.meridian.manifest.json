@@ -97,7 +97,7 @@
     "name" : "invoice run",
     "outline" : [
       {
-        "kind" : "applicability",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 11,
         "text" : "When this applies"
@@ -105,37 +105,50 @@
       {
         "kind" : "tables",
         "level" : 2,
-        "line" : 15,
+        "line" : 16,
         "text" : "Tables"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 21,
+        "line" : 22,
         "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 32,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 39,
+        "text" : "Workflow — steps 2"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 35,
+        "line" : 43,
         "text" : "Report shape"
       }
     ],
     "sections" : [
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "When this applies",
         "line" : 11,
         "lines" : [
+          "use judgment to follow the When this applies guidance:",
           "\"run invoices\"",
           "\"billing batch\""
         ],
-        "role" : "applicability"
+        "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Tables",
-        "line" : 15,
+        "line" : 16,
         "lines" : [
           "table:decision:fCBzdGF0dXMgfCBxdWV1ZSB8CnwgLS0tIHwgLS0tIHwKfCB1bnBhaWQgfCBjb2xsZWN0aW9ucyB8CnwgZnVsZmlsbGVkIHwgYXJjaGl2ZSB8"
         ],
@@ -144,14 +157,31 @@
       {
         "executes" : true,
         "heading" : "Workflow",
-        "line" : 21,
+        "line" : 22,
+        "lines" : [
+          "use judgment to follow the Workflow guidance:",
+          "bind invoice receipt =",
+          "codeblock:plain:aW52b2ljZS1yb3V0aW5nOgpbZm9yIGVhY2ggcm93IGluIHRhYmxlXS0ge3sgcm93LnN0YXR1cyB9fSAtPiB7eyByb3cucXVldWUgfX0KW2VuZCBmb3JdCnNlbGVjdGVkOiB7eyBzZWxlY3RlZCBxdWV1ZSB9fQ=="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 32,
         "lines" : [
           "fetch open orders",
           "for each order:",
           "create an invoice for the order",
-          "bind selected queue = the queue corresponding to the status \"unpaid\" in the table",
-          "bind invoice receipt =",
-          "codeblock:plain:aW52b2ljZS1yb3V0aW5nOgpbZm9yIGVhY2ggcm93IGluIHRhYmxlXS0ge3sgcm93LnN0YXR1cyB9fSAtPiB7eyByb3cucXVldWUgfX0KW2VuZCBmb3JdCnNlbGVjdGVkOiB7eyBzZWxlY3RlZCBxdWV1ZSB9fQ==",
+          "bind selected queue = the queue corresponding to the status \"unpaid\" in the table"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 39,
+        "lines" : [
           "emit erp.invoice_receipt with body = invoice receipt"
         ],
         "role" : "procedure"
@@ -159,7 +189,7 @@
       {
         "executes" : false,
         "heading" : "Report shape",
-        "line" : 35,
+        "line" : 43,
         "lines" : [
           "The receipt groups invoice states by downstream queue"
         ],
@@ -204,48 +234,24 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 16,
+      "meridian_line" : 12,
       "swift_line" : 402
     },
     {
-      "meridian_line" : 49,
-      "swift_line" : 405
-    },
-    {
-      "meridian_line" : 23,
-      "swift_line" : 416
-    },
-    {
-      "meridian_line" : 61,
-      "swift_line" : 422
-    },
-    {
-      "meridian_line" : 25,
-      "swift_line" : 437
-    },
-    {
-      "meridian_line" : 26,
-      "swift_line" : 439
-    },
-    {
-      "meridian_line" : 33,
-      "swift_line" : 442
+      "meridian_line" : 1,
+      "swift_line" : 440
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 479
+      "swift_line" : 445
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 484
+      "swift_line" : 483
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 522
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 527
+      "swift_line" : 488
     }
   ],
   "tools_used" : [
@@ -256,6 +262,26 @@
       "mode" : "strict",
       "parameters" : [
 
+      ],
+      "prose_steps" : [
+        {
+          "dispatch_mode" : "plan_then_execute",
+          "guidance" : "\"run invoices\"\n\"billing batch\"\ntable:data:fCBzdGF0dXMgfCBxdWV1ZSB8CnwgLS0tIHwgLS0tIHwKfCB1bnBhaWQgfCBjb2xsZWN0aW9ucyB8CnwgZnVsZmlsbGVkIHwgYXJjaGl2ZSB8\nuse judgment to follow the Workflow guidance:\nbind invoice receipt =\ncodeblock:plain:aW52b2ljZS1yb3V0aW5nOgpbZm9yIGVhY2ggcm93IGluIHRhYmxlXS0ge3sgcm93LnN0YXR1cyB9fSAtPiB7eyByb3cucXVldWUgfX0KW2VuZCBmb3JdCnNlbGVjdGVkOiB7eyBzZWxlY3RlZCBxdWV1ZSB9fQ==\nfetch open orders\nfor each order:\ncreate an invoice for the order\nbind selected queue = the queue corresponding to the status \"unpaid\" in the table\nemit erp.invoice_receipt with body = invoice receipt",
+          "line" : 12,
+          "scoped_tools" : [
+            "inventory.reserve",
+            "invoice.create",
+            "invoice.list",
+            "order.cancel",
+            "order.list",
+            "payment.collect",
+            "period.close",
+            "product.list",
+            "purchase_order.create",
+            "shipment.create"
+          ],
+          "text" : "follow the When this applies guidance"
+        }
       ],
       "source_name" : "invoice run",
       "swift_struct" : "InvoiceRun"

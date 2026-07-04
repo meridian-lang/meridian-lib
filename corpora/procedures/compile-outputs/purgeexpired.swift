@@ -296,69 +296,15 @@ public struct PurgeExpired: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "PurgeExpired", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L42:C0") {
-            // L42
-            let records = try await runtime.invoke(
-                tool: "recordList",
-                args: [
-                    "status": .string("stale"),
-                ]
-            )
-            state.bind("records", records)
-
-            try await runtime.checkpoint(label: "progress:0.0:L42:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L17:C0") {
-            // L17
-            try await runtime.assert((!(((state.get("records"))?.asList ?? []).filter { __e in (meridianDef_Record_stale(__e)) }).isEmpty), message: "Expected any stale records")
-            try await runtime.checkpoint(label: "progress:0.1:L17:C0", state: state.snapshot())
-        }
-        // L20
-        do {
-            // L18
-            let __meridianSrc_0_2_do_0 = (state.get("records")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("stale"))) }.sorted { __a, __b in MeridianComparison.orderedBefore(__a.member("updatedAt"), __b.member("updatedAt"), ascending: true) }
-            let __meridianSrc_0_2_do_0Refined = Array(__meridianSrc_0_2_do_0.prefix(100))
-            for (__meridianLoopIndex_0_2_do_0, record) in __meridianSrc_0_2_do_0Refined.enumerated() {
-                let __meridianLoopLabel_0_2_do_0 = "progress:0.2.do.0:iteration:\(__meridianLoopIndex_0_2_do_0)"
-                if __meridianShouldRun(__meridianLoopLabel_0_2_do_0) {
-                state.bind("record", record)
-                    if __meridianShouldRun("progress:0.2.do.0.body.0:L69:C0") {
-                        // L69
-                        let record = try await runtime.invoke(
-                            tool: "record.purge",
-                            args: [
-                                "record": state.get("record") ?? .null,
-                            ]
-                        )
-                        state.bind("record", record)
-
-                        try await runtime.checkpoint(label: "progress:0.2.do.0.body.0:L69:C0", state: state.snapshot())
-                    }
-                    try await runtime.checkpoint(label: __meridianLoopLabel_0_2_do_0, state: state.snapshot())
-                }
-            }
-
-        } catch let _recoveredError {
-            if __meridianShouldRun("progress:0.2.catch.0:L21:C0") {
-                // L21
-                try await runtime.emit(
-                    event: "procedure.report",
-                    payload: [
-                        "message": .string("expired record purge failed"),
-                    ]
-                )
-                try await runtime.checkpoint(label: "progress:0.2.catch.0:L21:C0", state: state.snapshot())
-            }
-        }
-        if __meridianShouldRun("progress:0.3:L22:C0") {
-            // L22
-            try await runtime.emit(
-                event: "procedure.report",
-                payload: [
-                    "message": .string("expired records purged"),
-                ]
-            )
-            try await runtime.checkpoint(label: "progress:0.3:L22:C0", state: state.snapshot())
+        // L12
+        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
+            prose: "follow the Use this when guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["audit_row.list", "batch.list", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "record.list", "record.mark_canonical", "record.purge"],
+            guidance: "\"purge expired records\"\n\"retention cleanup\"\nuse judgment to follow the Procedure guidance:\nCheck: any stale records\nfetch stale records\nfor each the first 100 records whose status is \"stale\" sorted by updated at, oldest first:\npurge the record\nEmit: \"expired record purge failed\"\nEmit: \"expired records purged\""
+        )
+        for (__key, __value) in __meridianProseResults_L12 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

@@ -33,6 +33,12 @@ public struct LanguageSynonyms: Sendable {
     /// Extra fence info-string tags treated as shell-command blocks
     /// (`=== language ===` `Shell fence synonyms:` — e.g. `fish`, `pwsh`, `nu`).
     public let shellFenceSynonyms: [String]
+    /// Non-shell fence info-string tag → tool ID (`=== language ===` `Fence
+    /// tool mapping:` — e.g. `python = interpreter.run`). Lets a non-shell
+    /// skill repo lower a fenced code block deterministically to a configured
+    /// tool instead of falling to inert or AI dispatch. See
+    /// `EnglishLexicon.fenceToolMapping`.
+    public let fenceToolMapping: [String: String]
     public init(comparisonSynonyms: [(String, ComparisonOpAST)] = [],
                 durationSynonyms: [String: TimeUnitAST] = [:],
                 assertionSynonyms: [String] = [],
@@ -52,7 +58,8 @@ public struct LanguageSynonyms: Sendable {
                 conditionHeaderSynonyms: [String] = [],
                 actionHeaderSynonyms: [String] = [],
                 wildcardSynonyms: [String] = [],
-                shellFenceSynonyms: [String] = []) {
+                shellFenceSynonyms: [String] = [],
+                fenceToolMapping: [String: String] = [:]) {
         self.comparisonSynonyms = comparisonSynonyms
         self.durationSynonyms = durationSynonyms
         self.assertionSynonyms = assertionSynonyms
@@ -73,6 +80,7 @@ public struct LanguageSynonyms: Sendable {
         self.actionHeaderSynonyms = actionHeaderSynonyms
         self.wildcardSynonyms = wildcardSynonyms
         self.shellFenceSynonyms = shellFenceSynonyms
+        self.fenceToolMapping = fenceToolMapping
     }
 }
 
@@ -122,7 +130,8 @@ public struct MerConfigFile: Sendable {
             conditionHeaderSynonyms: languageSynonyms.conditionHeaderSynonyms + other.languageSynonyms.conditionHeaderSynonyms,
             actionHeaderSynonyms: languageSynonyms.actionHeaderSynonyms + other.languageSynonyms.actionHeaderSynonyms,
             wildcardSynonyms: languageSynonyms.wildcardSynonyms + other.languageSynonyms.wildcardSynonyms,
-            shellFenceSynonyms: languageSynonyms.shellFenceSynonyms + other.languageSynonyms.shellFenceSynonyms
+            shellFenceSynonyms: languageSynonyms.shellFenceSynonyms + other.languageSynonyms.shellFenceSynonyms,
+            fenceToolMapping: languageSynonyms.fenceToolMapping.merging(other.languageSynonyms.fenceToolMapping) { _, new in new }
         )
         return MerConfigFile(
             vocabulary: vocabulary + other.vocabulary,
@@ -804,14 +813,23 @@ public struct ProseStepAST: Sendable {
     public let dispatch: ProseDispatchAST?
     /// Autonomy configuration when `dispatch == .autonomy`.
     public let autonomy: AutonomyConfigAST?
+    /// Section narrative carried alongside `text` as extra planner context —
+    /// distinct from the dispatch goal itself. Populated by the
+    /// `use judgment to follow the <heading> guidance:` migrator idiom, which
+    /// collects a whole leftover inert-narrative body verbatim; `nil` for
+    /// ordinary judgment/discretion/autonomy steps (same primitive, richer
+    /// payload — see AGENTS.md's primitive verdict for `ProseStepIR`).
+    public let guidance: String?
 
     public init(text: String, sourceLine: Int = 0,
                 dispatch: ProseDispatchAST? = nil,
-                autonomy: AutonomyConfigAST? = nil) {
+                autonomy: AutonomyConfigAST? = nil,
+                guidance: String? = nil) {
         self.text = text
         self.sourceLine = sourceLine
         self.dispatch = dispatch
         self.autonomy = autonomy
+        self.guidance = guidance
     }
 }
 

@@ -434,6 +434,52 @@ struct ManifestEmitterTests {
         let json = try ManifestEmitter().emit(input)
         #expect(json.contains("high value threshold") || json.contains("constants"))
     }
+
+    @Test("records prose_steps with guidance so a judgment step's narrative context is auditable")
+    func recordsProseStepGuidance() throws {
+        let wf = IRWorkflow(
+            name: "run diagnostics",
+            parameters: [],
+            body: IRBlock(statements: [
+                .proseStep(ProseStepIR(
+                    text: "follow the Diagnostics guidance",
+                    scopedTools: ["shell.run"],
+                    dispatchMode: .planThenExecute,
+                    guidance: "Check the golden path first."
+                ))
+            ])
+        )
+        let json = try ManifestEmitter().emit(ManifestEmitter.Input(workflows: [wf]))
+        let parsed = try JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any]
+        let workflows = parsed?["workflows"] as? [[String: Any]]
+        let proseSteps = workflows?.first?["prose_steps"] as? [[String: Any]]
+        #expect(proseSteps?.count == 1)
+        #expect(proseSteps?.first?["dispatch_mode"] as? String == "plan_then_execute")
+        #expect(proseSteps?.first?["guidance"] as? String == "Check the golden path first.")
+        #expect((proseSteps?.first?["scoped_tools"] as? [String])?.contains("shell.run") == true)
+    }
+
+    @Test("omits prose_steps key for workflows with no prose steps, and guidance key when absent")
+    func omitsProseStepsWhenAbsent() throws {
+        let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: []))
+        let json = try ManifestEmitter().emit(ManifestEmitter.Input(workflows: [wf]))
+        let parsed = try JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any]
+        let workflows = parsed?["workflows"] as? [[String: Any]]
+        #expect(workflows?.first?["prose_steps"] == nil)
+
+        let wfWithoutGuidance = IRWorkflow(
+            name: "test2",
+            parameters: [],
+            body: IRBlock(statements: [
+                .proseStep(ProseStepIR(text: "decide", dispatchMode: .planThenExecute))
+            ])
+        )
+        let json2 = try ManifestEmitter().emit(ManifestEmitter.Input(workflows: [wfWithoutGuidance]))
+        let parsed2 = try JSONSerialization.jsonObject(with: Data(json2.utf8)) as? [String: Any]
+        let workflows2 = parsed2?["workflows"] as? [[String: Any]]
+        let proseSteps2 = workflows2?.first?["prose_steps"] as? [[String: Any]]
+        #expect(proseSteps2?.first?["guidance"] == nil)
+    }
 }
 
 // MARK: - Newline / formatting tests

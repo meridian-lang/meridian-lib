@@ -1,14 +1,13 @@
----
-name: procedures resolver
-description: Route a synthetic DBA request to a procedure skill id.
-parameters: trigger phrase
-vocabulary: procedures.merconfig
-rulebook: procedures.merrules
----
-
 # Procedures Resolver
 
-## Tables
+> Routes a DBA request to the deterministic stored-procedure skill that owns it.
+
+## Dispatch table (( inert ))
+
+
+### Dispatch table — steps
+
+!!! table (( ai-discretion ))
 | trigger phrase | skill |
 | --- | --- |
 | reconcile ledger | reconcileledger |
@@ -20,7 +19,8 @@ rulebook: procedures.merrules
 | purge expired records | purgeexpired |
 | settle ready batches | settlebatch |
 
-## Procedure
-bind selected skill = the skill corresponding to the trigger phrase trigger phrase in the table.
-emit procedure.dispatch with skill = selected skill.
-complete.
+## Workflow
+use judgment to follow the Workflow guidance:
+
+Look up the skill corresponding to the trigger phrase and emit the selected
+skill id.

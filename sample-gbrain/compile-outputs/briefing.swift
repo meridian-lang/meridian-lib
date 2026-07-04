@@ -357,7 +357,7 @@ public struct Task: MeridianProcess {
     }
 }
 
-public protocol SignalKind: MeridianSignal {
+public protocol SignalKind: MeridianThing {
     var name: String { get }
     var phrasing: String { get }
     var tier: SignalTier { get }
@@ -422,7 +422,7 @@ public struct Recipe: MeridianThing {
     }
 }
 
-public protocol VerdictKind: MeridianVerdict {
+public protocol VerdictKind: MeridianThing {
     var status: VerdictStatus { get }
 }
 
@@ -598,6 +598,16 @@ public struct BriefingInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "BriefingInput", parameters: [:])
 
+        // L25
+        let __meridianProseResults_L25 = try await runtime.executeProsePlan(
+            prose: "follow the Contract guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["get_health", "get_page", "get_timeline", "list_pages", "page.get", "page.list", "page.search", "query", "shell.run"],
+            guidance: "Every fact in the briefing includes an inline `[Source: slug, updated DATE]` citation\nMeeting participants are resolved against the brain; gaps are explicitly flagged\nActive deals and action items include deadlines and recency context\nThe briefing is read-only: no brain pages are created or modified unless the user explicitly requests it\nStale alerts surface pages relevant to today's context, not just all stale pages\nuse judgment to follow the Phases guidance:\n**Top mentions** — `top_entities` from `--rollup` (top 5 entity slugs by\nfact count in the window)\n**New facts since last briefing** — group the `facts` array under each\nentity from the rollup; include `kind`, `notability`, and `confidence`\n**Pending consolidation footer** — when `pending_consolidation_count > 0`,\nnote `N facts await dream-cycle consolidation` so the operator can decide\nwhether to run `gbrain dream` before reading further\nThe `--since-last-run` flag advances `~/.gbrain/recall-cursors/<source>.json`\nso the next briefing picks up exactly where this one left off. If you're\nrunning this as a cron job, pass `--source <slug>` or set `GBRAIN_SOURCE`\nexplicitly — cron doesn't start in your repo-root cwd, so dotfile resolution\nmay miss the right source. Thin-client installs (`gbrain init --mcp-only`)\nroute through the remote brain transparently\nSearch gbrain for each participant by name\nRead their pages from gbrain for compiled_truth context\nSummarize: who they are, recent timeline, relationship to you\nRecent timeline entries (last 7 days)\nFollow-ups that are overdue\n**Recent changes.** Pages updated in the last 24 hours:\nWhat changed and why (read timeline entries from gbrain)\nUpdated in last 7 days\nHave high activity (many recent timeline entries)\n**Stale alerts.** From gbrain health check:\nPages flagged as stale that are relevant to today's meetings\nFor each meeting on the calendar:\nList deal pages in gbrain filtered to active status:\nDeadlines approaching in the next 7 days\nList person pages in gbrain sorted by recency:\nFor every attendee on the calendar invite:\n`gbrain search \"<attendee name>\"` -- find their brain page\n`gbrain get <slug>` -- load compiled truth, recent timeline, relationship context\nIf no page exists, note the gap (\"No brain page for Sarah Chen -- consider enrichment\")\nIf the briefing creates or updates any brain pages (e.g., new meeting prep\npages, updated entity pages), the back-linking iron law applies: every entity\nmentioned must have a back-link from their page. See `skills/_brain-filing-rules.md`\nuse judgment to follow the Anti-Patterns guidance:\n**Briefing without brain queries.** Never generate a briefing from memory alone; always query gbrain for current data\n**Uncited facts.** Every claim must include `[Source: slug, updated DATE]`. A fact without a citation is unverifiable\n**Stale context presented as current.** If a page hasn't been updated in 30+ days, flag the staleness explicitly rather than presenting it as fresh\n**Modifying brain pages unprompted.** The briefing is read-only by default. Do not create or update pages unless the user explicitly requests it\n**Ignoring coverage gaps.** When a meeting participant has no brain page, say so. Silence about gaps hides ignorance"
+        )
+        for (__key, __value) in __meridianProseResults_L25 {
+            state.bind(__key, __value)
+        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

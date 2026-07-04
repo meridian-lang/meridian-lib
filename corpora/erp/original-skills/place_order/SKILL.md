@@ -12,11 +12,11 @@ triggers:
 - "process open orders"
 - "place customer orders"
 
-## Operator notes (( inert ))
+## Operator notes
 The source system is an OFBiz-like ERP. Operators think in queues, invoices, and
 shipments rather than compiler primitives.
 
-## Workflow (( role: procedure ))
+## Workflow
 Step: `ofbiz order-check --queue open --json` to snapshot the open order queue.
 fetch open orders.
 Check: all orders have a number.
@@ -28,9 +28,9 @@ for each order:
   ship the order.
 Publish: "open order queue processed".
 
-## Checks (( inert, role: invariants ))
+## Checks
 No blocked order may pass reservation or shipment release.
 
-## Output (( inert, role: template ))
+## Output
 The operator expects a queue receipt with processed order numbers and shipment
 references.

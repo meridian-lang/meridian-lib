@@ -14,13 +14,18 @@
 
 === desugar ===
 
-# `If X -> Y` / `If X then Y` arrow conditionals (single-line action).
+# `If X -> Y` arrow conditional (single-line action). Anchored on the
+# distinctive "->" token, which never collides with prose. There is
+# deliberately no bare "If X then Y" variant: "then" is the ordinary English
+# sequencing word ("check the gate first, then create") far more often than
+# a conditional pivot, and the engine's holes are plain substring search —
+# a bare-"then" rule greedily matches the FIRST "then" in the line, including
+# one embedded inside an unrelated parenthetical aside, and mangles the
+# statement (confirmed against the corpus: zero genuine single-line "If X
+# then Y" conditionals exist; every "If ... then ..." line in gbrain uses
+# "then" as a sequencer, not a pivot).
 rule "arrow-conditional":
   match: If {condition} -> {action}
-  rewrite: {action} only when {condition}.
-
-rule "arrow-conditional-then":
-  match: If {condition} then {action}
   rewrite: {action} only when {condition}.
 
 # `Report:`/`Output:` lines become a deterministic skill.report emit.
@@ -56,6 +61,355 @@ rule "checklist-box":
   rewrite: make sure {item}.
 
 === sections ===
+section "Cross-source citation format (v0.18.0+)" -> procedure
+section "Prerequisite: gstack make-pdf" -> procedure
+section "Output rules" -> procedure
+section "Prior work and citations" -> procedure
+section "mode = auto" -> procedure
+section "mode = notify (default)" -> procedure
+section "Raw Source Preservation" -> procedure
+section "Dream cycle (v0.23): synthesize + patterns" -> procedure
+section "Fix a half-migrated install" -> procedure
+section "Preconditions (read before submitting your first shell job)" -> procedure
+section "Starting a benchmark from the skill itself (the common case)" -> procedure
+section "SKILL.md frontmatter template (copy-paste):" -> procedure
+section "Step 3: Run the eval gate" -> procedure
+section "Bypass: `--no-lint`" -> procedure
+section "Codex Zod core.cjs Missing (discovered 2026-04-23)" -> procedure
+section "Always-on (every message) — steps" -> procedure
+section "Brain operations — steps" -> procedure
+section "Content & media ingestion — steps" -> procedure
+section "Thinking skills (from GStack) — steps" -> procedure
+section "Operational — steps" -> procedure
+section "Setup & migration — steps" -> procedure
+section "Identity & access (always-on) — steps" -> procedure
+section "Disambiguation rules — steps" -> procedure
+section "Conventions (cross-cutting) — steps" -> procedure
+section "Conventions (cross-cutting) — steps 2" -> procedure
+section "Uncategorized — steps" -> procedure
+section "What this skill is NOT — steps" -> procedure
+section "Useful databases (the agent uses these via perplexity-research) — steps" -> procedure
+section "Related skills — steps" -> procedure
+section "Source — steps" -> procedure
+section "Gold filter — steps" -> procedure
+section "Phase 3: Ingest — steps" -> procedure
+section "Related skills — steps 2" -> procedure
+section "Invocation — steps" -> procedure
+section "Quality bar — steps" -> procedure
+section "Model selection — steps" -> procedure
+section "Link convention — steps" -> procedure
+section "When NOT To Use — steps" -> negative-applicability
+section "What this does — steps" -> procedure
+section "Trust contract (read this before running) — steps" -> procedure
+section "Trust contract (read this before running) — steps 2" -> procedure
+section "1. Acquiring the book — steps" -> procedure
+section "2. Text extraction — steps" -> procedure
+section "EPUB — steps" -> procedure
+section "EPUB — steps 2" -> procedure
+section "PDF — steps" -> procedure
+section "Quality check — steps" -> procedure
+section "Quality check — steps 2" -> procedure
+section "What to pull — steps" -> procedure
+section "What to pull — steps 2" -> procedure
+section "Assemble a context pack — steps" -> procedure
+section "4. Analysis: invoke `gbrain book-mirror` — steps" -> procedure
+section "4. Analysis: invoke `gbrain book-mirror` — steps 2" -> procedure
+section "4. Analysis: invoke `gbrain book-mirror` — steps 3" -> procedure
+section "6. Fact-check and cross-link — steps" -> procedure
+section "Prerequisite: gstack make-pdf — steps" -> procedure
+section "Prerequisite: gstack make-pdf — steps 2" -> procedure
+section "Font requirements — steps" -> procedure
+section "Critical: this skill reads the ACTIVE schema pack as data — steps" -> procedure
+section "Step 1: Identify primary subject type — steps" -> procedure
+section "Step 2: Look up the directory for that type in the active pack — steps" -> procedure
+section "Step 5: Validate before writing — steps" -> procedure
+section "Periodic Drift Detection — steps" -> procedure
+section "v1.0.0 — gbrain v0.39.0.0 — steps" -> procedure
+section "v1.0.0 — gbrain v0.39.0.0 — steps 2" -> procedure
+section "Phases — steps" -> procedure
+section "Phases — steps 2" -> procedure
+section "Phases — steps 3" -> procedure
+section "Phases — steps 4" -> procedure
+section "Phases — steps 5" -> procedure
+section "Before an email reply — steps" -> procedure
+section "Daily briefing queries — steps" -> procedure
+section "Back-Linking During Briefing — steps" -> procedure
+section "Anti-Patterns — steps" -> prohibitions
+section "Anti-Patterns — steps 2" -> prohibitions
+section "When NOT to use this skill — steps" -> procedure
+section "Tweet resolution pipeline (v0.25.1 extension) — steps" -> procedure
+section "Step 4: Verify and extract metadata — steps" -> procedure
+section "Metrics — steps" -> procedure
+section "The Priority Stack — steps" -> procedure
+section "Phase 0: ClawVisor Setup (Required for API Access) — steps" -> procedure
+section "Phase 0: ClawVisor Setup (Required for API Access) — steps 2" -> procedure
+section "Processing rules — steps" -> procedure
+section "Processing rules — steps 2" -> procedure
+section "Processing rules — steps 3" -> procedure
+section "Phase 8: Meeting Transcripts — steps" -> procedure
+section "Post-Bootstrap Checklist — steps" -> procedure
+section "Post-Bootstrap Checklist — steps 2" -> procedure
+section "Resume Protocol — steps" -> procedure
+section "Synthesis quality — steps" -> procedure
+section "Code-review handoff (v0.25.1 extension) — steps" -> procedure
+section "Refusal routing — steps" -> procedure
+section "Phase 2: TAXONOMY — Where does each piece go? — steps" -> procedure
+section "Phase 2: TAXONOMY — Where does each piece go? — steps 2" -> procedure
+section "Phase 3: SCHEMA CHECK — Does the active pack cover this content? — steps" -> procedure
+section "Phase 3: SCHEMA CHECK — Does the active pack cover this content? — steps 2" -> procedure
+section "4c. Commit and verify — steps" -> procedure
+section "5a. New pattern identification — steps" -> procedure
+section "5a. New pattern identification — steps 2" -> procedure
+section "5c. Present the plan — steps" -> procedure
+section "Phase 6: CHECK_RESOLVABLE — Verify everything routes — steps" -> procedure
+section "Enrichment Tiers — steps" -> procedure
+section "Step 3: Extract signal from source — steps" -> procedure
+section "Why This Exists — steps" -> procedure
+section "Why This Exists — steps 2" -> procedure
+section "Validation classes — steps" -> procedure
+section "Phase 1: Audit — steps" -> procedure
+section "Phase 1: Audit — steps 2" -> procedure
+section "Phase 2: Validate one path — steps" -> procedure
+section "Phase 3: Fix — steps" -> procedure
+section "Phase 3: Fix — steps 2" -> procedure
+section "Phase 4: Pre-commit hook (optional) — steps" -> procedure
+section "Output rules — steps" -> procedure
+section "Output rules — steps 2" -> procedure
+section "Chains with — steps" -> procedure
+section "When to quote at all — steps" -> procedure
+section "When to quote at all — steps 2" -> procedure
+section "Training corpus (n=20, 3 seeds × 3 variants × 3 models, LENIENT) — steps" -> procedure
+section "Held-out blind corpus (n=5, 3 seeds, LENIENT) — steps" -> procedure
+section "Reproduce — steps" -> procedure
+section "Prior work and citations — steps" -> procedure
+section "Prior work and citations — steps 2" -> procedure
+section "Step 1: Preconditions — steps" -> procedure
+section "Step 3: Identify functional areas — steps" -> procedure
+section "Step 3: Identify functional areas — steps 2" -> procedure
+section "Step 6 (MANDATORY): Verify routing accuracy — steps" -> procedure
+section "Step 6 (MANDATORY): Verify routing accuracy — steps 2" -> procedure
+section "Step 6 (MANDATORY): Verify routing accuracy — steps 3" -> procedure
+section "Step 6 (MANDATORY): Verify routing accuracy — steps 4" -> procedure
+section "Step 7: Review the diff before committing — steps" -> procedure
+section "v1.0.0 — 2026-05-11 — steps" -> procedure
+section "When to run — steps" -> applicability
+section "mode = auto — steps" -> procedure
+section "mode = notify (default) — steps" -> procedure
+section "mode = notify (default) — steps 2" -> procedure
+section "mode = notify (default) — steps 3" -> procedure
+section "Protocol — steps" -> procedure
+section "Media Workflows — steps" -> procedure
+section "Raw Source Preservation — steps" -> procedure
+section "Raw Source Preservation — steps 2" -> procedure
+section "Raw Source Preservation — steps 3" -> procedure
+section "Autonomous path (v0.36.4.0) — when you want to reach a target score — steps" -> procedure
+section "Autonomous path (v0.36.4.0) — when you want to reach a target score — steps 2" -> procedure
+section "Autonomous path (v0.36.4.0) — when you want to reach a target score — steps 3" -> procedure
+section "Manual path — steps" -> procedure
+section "Stale pages — steps" -> procedure
+section "Link graph extraction — steps" -> procedure
+section "Timeline extraction — steps" -> procedure
+section "Dream cycle (v0.23): synthesize + patterns — steps" -> procedure
+section "Dream cycle (v0.23): synthesize + patterns — steps 2" -> procedure
+section "Dream cycle (v0.23): synthesize + patterns — steps 3" -> procedure
+section "Dream cycle (v0.23): synthesize + patterns — steps 4" -> procedure
+section "Dream cycle (v0.23): synthesize + patterns — steps 5" -> procedure
+section "Autopilot check — steps" -> procedure
+section "Autopilot check — steps 2" -> procedure
+section "Fix a half-migrated install — steps" -> procedure
+section "Filing rule violations — steps" -> procedure
+section "Graph population (v0.10.3+) — steps" -> procedure
+section "Graph population (v0.10.3+) — steps 2" -> procedure
+section "Embedding freshness — steps" -> procedure
+section "Schema health — steps" -> procedure
+section "File storage health — steps" -> procedure
+section "File storage health — steps 2" -> procedure
+section "On every heartbeat (hourly or per-session) — steps" -> procedure
+section "Weekly maintenance — steps" -> procedure
+section "Daily verification — steps" -> procedure
+section "Report Storage — steps" -> procedure
+section "Phase 1: Identify format and fetch — steps" -> procedure
+section "Phase 4: Entity extraction and propagation — steps" -> procedure
+section "Phase 4: Entity extraction and propagation — steps 2" -> procedure
+section "Phase 3: Attendee enrichment (MANDATORY) — steps" -> procedure
+section "Phase 3: Attendee enrichment (MANDATORY) — steps 2" -> procedure
+section "Supported Sources — steps" -> procedure
+section "Obsidian Migration — steps" -> procedure
+section "CSV Migration — steps" -> procedure
+section "Route the Request: Shell Job vs Subagent — steps" -> procedure
+section "Preconditions (read before submitting your first shell job) — steps" -> procedure
+section "Preconditions (read before submitting your first shell job) — steps 2" -> procedure
+section "Monitor (agents or operator) — steps" -> procedure
+section "Phase 1: Submit — steps" -> procedure
+section "Phase 1: Submit — steps 2" -> procedure
+section "Phase 5: Review Results — steps" -> procedure
+section "When to use this vs other tools — steps" -> procedure
+section "Models — steps" -> procedure
+section "Entity enrichment — steps" -> procedure
+section "What Gets Stripped — steps" -> procedure
+section "Option A: Local file (simplest) — steps" -> procedure
+section "Option B: Upload to cloud storage — steps" -> procedure
+section "Updating a Published Page — steps" -> procedure
+section "Contract — steps" -> invariants
+section "Graph Traversal (v0.10.1+) — steps" -> procedure
+section "Graph Traversal (v0.10.1+) — steps 2" -> procedure
+section "Search Quality Awareness — steps" -> procedure
+section "Non-goals (use these other skills instead) — steps" -> procedure
+section "Phase 1 — Brain (know which pack is active) — steps" -> procedure
+section "Outputs — steps" -> procedure
+section "Phase 1: Discovery — steps" -> procedure
+section "Phase 1: Discovery — steps 2" -> procedure
+section "Phase 2: Preview — steps" -> procedure
+section "Phase 3: Apply — steps" -> procedure
+section "Phase 3: Apply — steps 2" -> procedure
+section "Phase 3: Apply — steps 3" -> procedure
+section "Phase 4: Verify — steps" -> procedure
+section "Phase 4: Verify — steps 2" -> procedure
+section "Phase 5: Post-migration — steps" -> procedure
+section "Rollback — steps" -> procedure
+section "Rollback — steps 2" -> procedure
+section "How GBrain connects — steps" -> procedure
+section "Available init options — steps" -> procedure
+section "Phase A.5: Choose Topology (run BEFORE Phase A) — steps" -> procedure
+section "If the user picks 2 (cross-machine thin client) — steps" -> procedure
+section "If the user picks 2 (cross-machine thin client) — steps 2" -> procedure
+section "If the user picks 2 (cross-machine thin client) — steps 3" -> procedure
+section "If the user picks 3 (split-engine per-worktree) — steps" -> procedure
+section "If the user picks 3 (split-engine per-worktree) — steps 2" -> procedure
+section "Phase A: Supabase Setup (recommended) — steps" -> procedure
+section "Phase B: BYO Postgres (alternative) — steps" -> procedure
+section "Phase C: First Import — steps" -> procedure
+section "Phase C: First Import — steps 2" -> procedure
+section "Phase C: First Import — steps 3" -> procedure
+section "Phase C.5: One-step autopilot + Minions install (v0.11.1+) — steps" -> procedure
+section "Phase C.5: One-step autopilot + Minions install (v0.11.1+) — steps 2" -> procedure
+section "Phase C.5: One-step autopilot + Minions install (v0.11.1+) — steps 3" -> procedure
+section "BEFORE (grep) vs AFTER (gbrain) — steps" -> procedure
+section "Lookup sequence (MANDATORY for every entity question) — steps" -> procedure
+section "Sync-after-write rule — steps" -> procedure
+section "Sync-after-write rule — steps 2" -> procedure
+section "gbrain vs memory_search — steps" -> procedure
+section "Phase E: Load the Production Agent Guide — steps" -> procedure
+section "Phase E: Load the Production Agent Guide — steps 2" -> procedure
+section "Phase F: Health Check — steps" -> procedure
+section "Error Recovery — steps" -> procedure
+section "Phase G: Auto-Update Check (if not already configured) — steps" -> procedure
+section "Phase H: Live Sync Setup (MUST ADD) — steps" -> procedure
+section "Phase H: Live Sync Setup (MUST ADD) — steps 2" -> procedure
+section "Phase H: Live Sync Setup (MUST ADD) — steps 3" -> procedure
+section "Phase J: Cold Start — Populate Your Brain (AUTOMATIC) — steps" -> procedure
+section "Schema State Tracking — steps" -> procedure
+section "Schema State Tracking — steps 2" -> procedure
+section "Phase 2: Entity Detection (SECONDARY) — steps" -> procedure
+section "Phase 2: Entity Detection (SECONDARY) — steps 2" -> procedure
+section "Phase 3: Signal Logging — steps" -> procedure
+section "Starting a benchmark from the skill itself (the common case) — steps" -> procedure
+section "Starting a benchmark from the skill itself (the common case) — steps 2" -> procedure
+section "Decision tree — steps" -> procedure
+section "SKILL.md frontmatter template (copy-paste): — steps" -> procedure
+section "Step 3: Run the eval gate — steps" -> procedure
+section "Step 3: Run the eval gate — steps 2" -> procedure
+section "Cycles + cost guardrails — steps" -> procedure
+section "Provider configuration — steps" -> procedure
+section "Cost expectations — steps" -> procedure
+section "Action needed (`healthy: false`) — steps" -> procedure
+section "Action needed (`healthy: false`) — steps 2" -> procedure
+section "Determine failure (`exit 2`) — steps" -> procedure
+section "Related — steps" -> procedure
+section "Related — steps 2" -> procedure
+section "Preconditions — steps" -> applicability
+section "Phase 2 — Dry-run + privacy-lint preview — steps" -> procedure
+section "Phase 3 — Genericization checklist (the editorial pass) — steps" -> procedure
+section "Phase 3 — Genericization checklist (the editorial pass) — steps 2" -> procedure
+section "Phase 3 — Genericization checklist (the editorial pass) — steps 3" -> procedure
+section "Phase 4 — Real harvest — steps" -> procedure
+section "Phase 4 — Real harvest — steps 2" -> procedure
+section "Phase 5 — Verify in gbrain — steps" -> procedure
+section "Bypass: `--no-lint` — steps" -> procedure
+section "Files this skill touches — steps" -> procedure
+section "Built-in Tests — steps" -> procedure
+section "Adding Custom Tests — steps" -> procedure
+section "Environment Variables — steps" -> procedure
+section "Codex Zod core.cjs Missing (discovered 2026-04-23) — steps" -> procedure
+section "Default Mode (Skip Soul-Audit) — steps" -> procedure
+section "What this is — steps" -> procedure
+section "Automation — steps" -> procedure
+section "Test tiers — steps" -> procedure
+section "1. Run unit tests — steps" -> procedure
+section "2. Run evals (if the project has an evals config) — steps" -> procedure
+section "4. Git diff analysis (CRITICAL — regression intelligence) — steps" -> procedure
+section "5. Classify each failure — steps" -> procedure
+section "Iron Law — steps" -> procedure
+section "Decision tree (where the content goes) — steps" -> procedure
+section "Decision tree (where the content goes) — steps 2" -> procedure
+section "Decision tree (where the content goes) — steps 3" -> procedure
+section "Decision tree (where the content goes) — steps 4" -> procedure
+section "Decision tree (where the content goes) — steps 5" -> procedure
+section "Decision tree (where the content goes) — steps 6" -> procedure
+section "Bulk vs. single — steps" -> procedure
+section "Phase 1: Brain-First Lookup (MANDATORY) — steps" -> procedure
+section "Phase 3: On Every Outbound Response (READ → PULL → RESPOND) — steps" -> procedure
+section "Cross-source citation format (v0.18.0+) — steps" -> procedure
+section "Cross-source citation format (v0.18.0+) — steps 2" -> procedure
+section "Idempotency Requirement" -> procedure
+section "Methodology caveats" -> procedure
+section "Password Protection Details" -> procedure
+section "Self-upgrade marker protocol (inject into AGENTS.md)" -> procedure
+section "Quality Gates" -> procedure
+section "Standards (the rigor bar)" -> procedure
+section "Manifest" -> procedure
+section "What this does" -> procedure
+section "How To Gate (CRITICAL)" -> procedure
+section "Button/option labels" -> procedure
+section "Cost gate" -> procedure
+section "5. PDF (optional)" -> procedure
+section "Anti-patterns (do not do these)" -> procedure
+section "Output checklist" -> procedure
+section "Iron Law: Back-Linking (MANDATORY)" -> procedure
+section "The rule" -> procedure
+section "Delivery" -> procedure
+section "Before a meeting" -> procedure
+section "Entity enrichment" -> procedure
+section "Filtering rules" -> procedure
+section "When to invoke (v0.25.1 gating)" -> procedure
+section "Codex Review" -> procedure
+section "Built-In Recipes" -> procedure
+section "Conventions" -> procedure
+section "4a. Primary research page" -> procedure
+section "4b. Entity pages (people, companies)" -> procedure
+section "5b. Existing skill audit" -> procedure
+section "Knowledge domain" -> procedure
+section "Meta" -> procedure
+section "Step 2: Check brain state" -> procedure
+section "Step 4: External data source lookups" -> procedure
+section "Step 7: Cross-reference" -> procedure
+section "Why It Works" -> procedure
+section "Step 4: Build the area entry format" -> procedure
+section "Step 5: Keep always-on entries separate" -> procedure
+section "Maintenance" -> procedure
+section "Citation Requirements (MANDATORY)" -> procedure
+section "What to capture from the user's own thinking" -> procedure
+section "Videos & Podcasts" -> procedure
+section "Meeting Transcripts" -> procedure
+section "Social Media Content" -> procedure
+section "Back-link enforcement" -> procedure
+section "Citation audit" -> procedure
+section "Security (RLS verification)" -> procedure
+section "Benchmark Testing" -> procedure
+section "People Mentioned" -> procedure
+section "Deal / company monitoring (cron)" -> procedure
+section "Environment" -> procedure
+section "Token-Budget Awareness" -> procedure
+section "Why Supabase" -> procedure
+section "gbrain self-upgrade" -> procedure
+section "Iron Law" -> procedure
+section "From OpenClaw bootstrap" -> procedure
+section "Adding Built-in Tests" -> procedure
+section "Design rules:" -> procedure
+section "Chapter / Section Triage" -> procedure
+section "Naming convention" -> procedure
+section "7. Auto-fix protocol" -> procedure
+section "State (regression history)" -> procedure
 section "Source" -> procedure
 section "Related skills" -> procedure
 section "Constraints" -> procedure

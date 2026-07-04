@@ -37,7 +37,7 @@ let package = Package(
         .package(url: "https://github.com/modelhike/pegex.git", branch: "main"),
 
         // ModelHike — StringTemplate and codegen utilities for SwiftEmitter
-        .package(url: "https://github.com/modelhike/modelhike-lib", branch: "main"),
+        .package(path: "../modelhike"),
 
         // CLI argument parsing
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.5.0"),
@@ -72,7 +72,7 @@ let package = Package(
                 .product(name: "Parsing", package: "swift-parsing"),
                 .product(name: "PegexBuilder", package: "pegex"),
                 .product(name: "Collections", package: "swift-collections"),
-                .product(name: "ModelHike", package: "modelhike-lib")
+                .product(name: "ModelHike", package: "ModelHike")
             ],
             path: "Sources/MeridianCore"
         ),

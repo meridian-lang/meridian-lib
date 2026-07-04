@@ -61,6 +61,34 @@ public struct EnglishLexicon: Sendable {
     /// a `=== language ===` `Assertion synonyms:` block.
     public let assertionMarkers: [String]
 
+    /// Whole-word cue vocabulary marking a sentence as normative-narrative
+    /// (a "contract" statement in AGENTS.md §15's sense — must/never/always,
+    /// or "every X must …") rather than plain documentation. Used only by
+    /// `TrialLowering`'s per-line classifier (`SkillMigrator`'s marking pass)
+    /// to decide whether an unlowerable line is a mined-or-flagged
+    /// normative claim (`unmined-contract`) instead of silently-inert prose.
+    /// Not yet threaded through `=== language ===` (a narrow, low-frequency
+    /// classification signal); promote to a `LanguageSynonyms` field the same
+    /// way `assertionSynonyms` was if a domain needs to rename these.
+    public let normativeCueWords: Set<String>
+
+    /// Trailing markers that turn an `if <cond>` header into a **guarded
+    /// fence**: `if <cond>, run:` immediately followed by a fenced shell
+    /// code-block wraps that block's `shell.run` invokes in a `branch` — no
+    /// new IR, just a structural production over two adjacent lines (SKILL.md
+    /// bodies are flat, so the fence is never indented under the header).
+    /// Ordered longest-first. Not yet threaded through `=== language ===`
+    /// (promote alongside `normativeCueWords` if a domain needs to rename
+    /// these).
+    public let guardedFenceIntroducers: [String]
+
+    /// Lead-in lines that introduce a **fallback chain**: an ordered list of
+    /// steps where each step recovers into the next on failure, lowering to a
+    /// nested `recover` chain (no new IR — the existing `attached`/`handler`
+    /// shape, just built N-deep instead of 1-deep). Not yet threaded through
+    /// `=== language ===` (promote alongside `normativeCueWords` if needed).
+    public let fallbackChainIntroducers: [String]
+
     /// The element property a temporal iteration clause (`within the last`/`in
     /// the next`) resolves `updated`/`created`-style references to. Default
     /// `updatedAt`; override via a `=== language ===` `timestamp:` entry.
@@ -147,6 +175,22 @@ public struct EnglishLexicon: Sendable {
         shellFenceLanguages.contains(lang.lowercased())
     }
 
+    /// Fence info-string tag (lower-cased) → tool ID, for **non-shell**
+    /// languages a domain wants lowered deterministically instead of falling
+    /// to inert/AI dispatch — e.g. ```` ```python ```` → `interpreter.run`.
+    /// Empty by default (opt-in only); populated via `=== language ===`
+    /// `Fence tool mapping:` (`MerConfigParser.parseLanguageSection` →
+    /// `LanguageSynonyms.fenceToolMapping`). Checked only when
+    /// `isShellFence(_:)` is false — shell dialects keep their `shell.run` +
+    /// command-hole-interpolation treatment regardless of any mapping entry.
+    public let fenceToolMapping: [String: String]
+
+    /// The configured tool ID for a fence language tag, or `nil` when no
+    /// `Fence tool mapping:` entry matches. Lower-cases the tag before lookup.
+    public func fenceTool(for lang: String) -> String? {
+        fenceToolMapping[lang.lowercased()]
+    }
+
     public init(
         articles: Set<String>,
         parameterArticles: Set<String> = ["a", "an"],
@@ -158,6 +202,12 @@ public struct EnglishLexicon: Sendable {
         durationUnits: [String: TimeUnitAST],
         toolStopwords: Set<String>,
         assertionMarkers: [String] = ["make sure", "ensure", "assert"],
+        normativeCueWords: Set<String> = ["must", "never", "always"],
+        guardedFenceIntroducers: [String] = [", run:", ", execute:"],
+        fallbackChainIntroducers: [String] = [
+            "try the following in order until one succeeds:",
+            "try each of the following until one works:",
+        ],
         timestampProperty: String = "updatedAt",
         grammar: FixedGrammar = .default,
         emptyMarkers: [String] = [" has no ", " have no "],
@@ -186,7 +236,8 @@ public struct EnglishLexicon: Sendable {
         ],
         tableActionHeaders: Set<String> = ["action", "then", "do", "result"],
         tableWildcardTokens: Set<String> = ["*", "-", "\u{2014}", "\u{2013}", "any"],
-        shellFenceLanguages: Set<String> = MeridianCore.shellFenceLanguages
+        shellFenceLanguages: Set<String> = MeridianCore.shellFenceLanguages,
+        fenceToolMapping: [String: String] = [:]
     ) {
         self.articles = articles
         self.parameterArticles = parameterArticles
@@ -198,6 +249,9 @@ public struct EnglishLexicon: Sendable {
         self.durationUnits = durationUnits
         self.toolStopwords = toolStopwords
         self.assertionMarkers = assertionMarkers
+        self.normativeCueWords = normativeCueWords
+        self.guardedFenceIntroducers = guardedFenceIntroducers
+        self.fallbackChainIntroducers = fallbackChainIntroducers
         self.timestampProperty = timestampProperty
         self.grammar = grammar
         self.emptyMarkers = emptyMarkers
@@ -215,6 +269,7 @@ public struct EnglishLexicon: Sendable {
         self.tableActionHeaders = tableActionHeaders
         self.tableWildcardTokens = tableWildcardTokens
         self.shellFenceLanguages = shellFenceLanguages
+        self.fenceToolMapping = fenceToolMapping
     }
 
     /// Default English surface used when no custom lexicon is supplied.
@@ -496,7 +551,8 @@ public struct EnglishLexicon: Sendable {
         conditionHeaderSynonyms: [String] = [],
         actionHeaderSynonyms: [String] = [],
         wildcardSynonyms: [String] = [],
-        shellFenceSynonyms: [String] = []
+        shellFenceSynonyms: [String] = [],
+        fenceToolSynonyms: [String: String] = [:]
     ) -> EnglishLexicon {
         let mergedComparisons = comparisonSynonyms + comparisonMarkers
         var mergedDuration = durationUnits
@@ -516,6 +572,9 @@ public struct EnglishLexicon: Sendable {
         var mergedSuperlatives = superlativeGradables
         for (k, v) in superlativeSynonyms { mergedSuperlatives[k.lowercased()] = v }
 
+        var mergedFenceTools = fenceToolMapping
+        for (k, v) in fenceToolSynonyms { mergedFenceTools[k.lowercased()] = v }
+
         return EnglishLexicon(
             articles: articles,
             parameterArticles: parameterArticles,
@@ -527,6 +586,9 @@ public struct EnglishLexicon: Sendable {
             durationUnits: mergedDuration,
             toolStopwords: toolStopwords,
             assertionMarkers: mergedAssertions,
+            normativeCueWords: normativeCueWords,
+            guardedFenceIntroducers: guardedFenceIntroducers,
+            fallbackChainIntroducers: fallbackChainIntroducers,
             timestampProperty: timestampProperty ?? self.timestampProperty,
             grammar: grammar,
             emptyMarkers: emptySynonyms.map { " \($0.lowercased()) " } + emptyMarkers,
@@ -543,7 +605,8 @@ public struct EnglishLexicon: Sendable {
             tableConditionHeaders: tableConditionHeaders.union(conditionHeaderSynonyms.map { $0.lowercased() }),
             tableActionHeaders: tableActionHeaders.union(actionHeaderSynonyms.map { $0.lowercased() }),
             tableWildcardTokens: tableWildcardTokens.union(wildcardSynonyms.map { $0.lowercased() }),
-            shellFenceLanguages: shellFenceLanguages.union(shellFenceSynonyms.map { $0.lowercased() })
+            shellFenceLanguages: shellFenceLanguages.union(shellFenceSynonyms.map { $0.lowercased() }),
+            fenceToolMapping: mergedFenceTools
         )
     }
 }
