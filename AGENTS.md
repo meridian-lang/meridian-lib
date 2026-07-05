@@ -201,8 +201,8 @@ terminators.
 
 ### Dependencies
 
-- `modelhike` (local, `../modelhike`) — `StringTemplate` for codegen.
-- `pegex` (local, `../pegex`) — `PegexBuilder` grammar DSL.
+- `pegex` (remote, `https://github.com/modelhike/pegex.git`) — `PegexBuilder` grammar DSL.
+- Vendored `StringTemplate` (`Sources/MeridianCore/modelhike-vendored/`) — codegen builder DSL (formerly from `modelhike`).
 - Do not add new remote dependencies without explicit user approval.
 
 ### Spec documents
@@ -399,31 +399,18 @@ as string boundaries splits arguments at possessives. Double-quote only.
 `Sendable` conformance is required because `Constants` is used from async
 `run()` methods. Omitting it causes Swift concurrency warnings or errors.
 
-### 10. `StringTemplate.toString(separator:)` and `flatten()`
+### 10. Vendored `StringTemplate` powers codegen
 
-These two methods were added to `modelhike`'s `StringTemplate` by the user.
-They are used in `SwiftEmitter.emitFile`. If `modelhike` is updated or
-replaced, ensure these methods exist. Their implementations:
+`SwiftEmitter` uses the vendored `StringTemplate` builder in
+`Sources/MeridianCore/modelhike-vendored/`. `emitFile` calls
+`toString(separator: "\n")`, which recursively flattens nested templates.
 
-```swift
-public func toString(separator: String) -> String {
-    flatten().joined(separator: separator)
-}
+### 11. `StringConvertibleBuilder` must stay `public`
 
-public func flatten() -> [String] {
-    items.flatMap { item -> [String] in
-        if let nested = item as? StringTemplate { return nested.flatten() }
-        return [item.toString()]
-    }
-}
-```
-
-### 11. `StringConvertibleBuilder` must be `public typealias`
-
-`modelhike/Sources/_Common_/Extensions/StringConvertible.swift` must declare
+The vendored `StringConvertible.swift` declares
 `public typealias StringConvertibleBuilder = ResultBuilder<StringConvertible>`.
 Without `public`, the result-builder attribute is unavailable across module
-boundaries. This was a manual user fix; do not revert.
+boundaries.
 
 ### 12. "Compiles" means Meridian emitted Swift *source* — not that it `swiftc`s
 

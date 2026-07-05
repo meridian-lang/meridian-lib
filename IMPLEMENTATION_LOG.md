@@ -1725,3 +1725,29 @@ multi-run-verified measurements, not a single lucky run.
 - **Region coverage:** RuntimeExecutor **95.77%** (floor **95.00**);
   MigrateSkillCommand **95.27%** (floor **95.00**).
 - Full suite: **1687 tests** pass; `scripts/coverage.swift --gate` pass.
+
+### 2026-07-05 — DECISION: vendor modelhike StringTemplate; drop external dependency
+
+- Removed `../modelhike` from `Package.swift`; MeridianCore no longer links
+  `ModelHike`.
+- Vendored the codegen-only subset under
+  `Sources/MeridianCore/modelhike-vendored/`:
+  `StringConvertible`, `ResultBuilder`, `Template`, `Script`, `StringTemplate`
+  (+ `TabChar`).
+- Dropped `import ModelHike` from `SwiftEmitter.swift` and `DomainEmitter.swift`;
+  types resolve in-module from the vendored folder.
+- Updated `AGENTS.md` dependencies + pitfalls and `.cursor/rules/codegen.mdc`.
+- Validation: `swift build` + `swift test` (**1687 tests**) pass.
+
+### 2026-07-05 — DECISION: vendor modelhike StringTemplate; drop external dependency
+
+- Removed `../modelhike` from `Package.swift`; MeridianCore no longer links
+  `ModelHike`.
+- Vendored the codegen-only subset under
+  `Sources/MeridianCore/modelhike-vendored/`:
+  `StringConvertible`, `ResultBuilder`, `Template`, `Script`, `StringTemplate`
+  (+ `TabChar`).
+- Dropped `import ModelHike` from `SwiftEmitter.swift` and `DomainEmitter.swift`;
+  types resolve in-module from the vendored folder.
+- Updated `AGENTS.md` dependencies + pitfalls and `.cursor/rules/codegen.mdc`.
+- Validation: `swift build` + `swift test` (**1687 tests**) pass.

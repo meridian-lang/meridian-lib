@@ -1,5 +1,4 @@
 import Foundation
-import ModelHike
 
 // MARK: - DomainEmitter
 //

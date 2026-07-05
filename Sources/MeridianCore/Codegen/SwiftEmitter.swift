@@ -1,10 +1,9 @@
 import Foundation
 import MeridianRuntime
-import ModelHike
 
 // MARK: - SwiftEmitter
 //
-// Lowers an IRWorkflow to Swift source using StringTemplate from ModelHike.
+// Lowers an IRWorkflow to Swift source using vendored StringTemplate.
 // Each emit* function returns a StringTemplate whose builder body mirrors
 // the structure of the Swift code it produces — easy to read and diff.
 //

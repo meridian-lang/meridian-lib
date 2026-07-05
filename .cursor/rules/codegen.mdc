@@ -8,7 +8,7 @@ alwaysApply: false
 
 ### `SwiftEmitter`
 
-- Uses `StringTemplate` (result-builder DSL from `modelhike`).
+- Uses vendored `StringTemplate` (`Sources/MeridianCore/modelhike-vendored/`).
 - Each `emit*` method returns a `StringTemplate`.
 - Top-level: `emitFile(…).toString(separator: "\n")`.
 - `Ctx` carries indent depth. `.s` is the current indent string. `.in(1)` is
