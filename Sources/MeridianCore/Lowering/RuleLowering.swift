@@ -404,12 +404,7 @@ public struct RuleAnalyzer {
                 return .comparison(lhs, .equal, rhs)
             }
         }
-        // Fallback: split on first space.
-        let property = parts[0]
-        let value = parts.dropFirst().joined(separator: " ")
-        let lhs = ExpressionAST.propertyAccess(.identifierRef(subject), property)
-        let rhs = exprParser.parse(value)
-        return .comparison(lhs, .equal, rhs)
+        return nil
     }
 
     private func stripLeadingCopula(_ marker: String) -> String {

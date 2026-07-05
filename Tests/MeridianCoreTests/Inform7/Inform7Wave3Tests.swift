@@ -550,6 +550,78 @@ struct DescriptionTests3C {
         #expect(rendered.contains("did you mean"), Comment(rawValue: rendered))
     }
 
+    // --- relation-backed quantification (relation-backed emptiness route) ---
+    //
+    // Relations have no bare-noun surface of their own (they are only named by
+    // a verb), so `X has no <relation>` cannot resolve which relation is meant.
+    // The closed-grammar way to express a relation-backed condition — including
+    // relation-backed emptiness — is a quantifier over a description restricted
+    // by the same `that <verb> …` / `<participle> by …` relative clause already
+    // used by `let`/aggregate/superlative descriptions (3B/3C).
+
+    @Test("a `that`-clause restricts a quantified description via a declared relation")
+    func quantifierThatClauseParses() throws {
+        let sym = try wave3Symbols()
+        guard case .quantified(let q) = ExpressionParser(symbols: sym, trace: .silent())
+            .parse("no pages that mention the entity") else {
+            Issue.record("expected quantifier"); return
+        }
+        #expect(q.kind == .none)
+        #expect(q.description.verbClauses.count == 1)
+        #expect(q.description.verbClauses[0].verbForm == "mention")
+        #expect(q.description.verbClauses[0].elementIsSubject == true)
+    }
+
+    @Test("a passive `by`-clause restricts a quantified description via a declared relation")
+    func quantifierPassiveClauseParses() throws {
+        let sym = try wave3Symbols()
+        guard case .quantified(let q) = ExpressionParser(symbols: sym, trace: .silent())
+            .parse("any pages owned by the user") else {
+            Issue.record("expected quantifier"); return
+        }
+        #expect(q.kind == .any)
+        #expect(q.description.verbClauses.count == 1)
+        #expect(q.description.verbClauses[0].verbForm == "owned")
+        #expect(q.description.verbClauses[0].elementIsSubject == false)
+    }
+
+    @Test("`no <kind> that <verb> …` over a property-backed relation lowers to an emptiness-shaped quantifier")
+    func relationBackedEmptinessLowers() throws {
+        let out = try wave3Compile("""
+        ---
+        name: audit
+        parameters: user
+        vocabulary: w3.merconfig
+        ---
+        To audit content for a user:
+          bind pages = invoke list pages with owner = the user's id.
+          if no pages owned by the user,
+            complete with reason "orphaned".
+        """)
+        #expect(out.contains("MeridianComparison.identifies(__e.member(\"owner\")"), Comment(rawValue: out))
+        #expect(out.contains(".isEmpty)"), Comment(rawValue: out))
+    }
+
+    @Test("a tool-backed relation clause inside a quantifier is a sourced hard error directing the author to bind first")
+    func quantifierToolBackedClauseRejected() throws {
+        let caught = #expect(throws: CompilerError.self) {
+            _ = try wave3Compile("""
+            ---
+            name: audit
+            parameters: entity
+            vocabulary: w3.merconfig
+            ---
+            To audit an entity:
+              if no pages that mention the entity,
+                complete with reason "orphaned".
+            """)
+        }
+        let err = try #require(caught)
+        let diag = try #require(err.diagnostics.first)
+        #expect(diag.code == .toolBackedInlineDisallowed, Comment(rawValue: "\(diag.code)"))
+        #expect(diag.message.contains("bind"), Comment(rawValue: diag.message))
+    }
+
     @Test("tool-backed scalar navigation in a let hoists a single fetch invoke")
     func toolBackedScalarNavHoists() throws {
         let out = try wave3Compile("""

@@ -38,6 +38,7 @@ template directly.
 | `MER2009` | unknown allow-fallbacks kind | nameResolution | guided |
 | `MER2010` | unknown trace category | nameResolution | guided |
 | `MER2011` | missing phrase argument | nameResolution | guided |
+| `MER2012` | unknown template formatter | nameResolution | guided |
 | `MER3005` | invalid relation backing | other | recommended |
 | `MER3016` | unlowerable rule predicate | other | recommended |
 

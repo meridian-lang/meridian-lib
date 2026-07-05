@@ -41,6 +41,19 @@ struct DiagnosticTests {
         #expect(d.notes.count == 1)
     }
 
+    @Test("unresolved with many candidates lists a ranked top subset")
+    func unresolvedManyCandidates() {
+        let many = (1...20).map { "candidate\($0)" }
+        let d = Diagnostic.unresolved(.unknownTool, target: "zzzzzzzzzz",
+                                      among: many, range: range(), noun: "tool")
+        #expect(d.suggestions.isEmpty)
+        guard let note = d.notes.first?.message else {
+            Issue.record("expected candidate-list note"); return
+        }
+        #expect(note.contains("total"))
+        #expect(note.contains("candidate"))
+    }
+
     // MARK: The guard test that makes "always-on" load-bearing (D-DX-4)
 
     @Test("every nameResolution code yields a suggestion or candidate-list note")

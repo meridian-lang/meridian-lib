@@ -1458,6 +1458,13 @@ public struct SwiftEmitter {
             ""
             "// B7: Runtime helper for {{ expr }} interpolation in fenced code blocks."
             "private func meridianStringify(_ v: Value) -> String { v.scalarDescription }"
+            // The case labels below MUST cover exactly `FormatterRegistry.available`
+            // (\(FormatterRegistry.available.joined(separator: ", "))) — that registry
+            // is the single source of truth `ASTToIR`/`RuleInjector` validate a
+            // `{{ expr as a <formatter> }}` formatter name against at compile time,
+            // so an unrecognized name is already a sourced MER2012 error before this
+            // generated helper ever runs; `default: break` only guards a value/
+            // formatter type mismatch (e.g. `as a integer` on a non-number).
             "private func meridianFormat(_ v: Value, as formatter: String) -> String {"
             "    switch formatter.lowercased() {"
             "    case \"integer\":"

@@ -1,0 +1,51 @@
+name: Wave 4A — declarative domain English
+description: ```
+A `## Domain` section declares a kind lattice (`A deal is a kind of page.`)
+with property inheritance flattened onto the subkind's struct, plus a `can
+be`/`usually` enum property. Checkable-adjective definitions are registered
+globally (the documented global-adjective simplification — see
+IMPLEMENTATION_LOG.md and docs/16_EXPRESSIVENESS_REPORT.md), so a definition
+written against the parent kind (`page`) still applies when tested against a
+subkind (`deal`) instance.
+
+Uses `expect_swift_contains`/`expect_swift_not_contains` rather than the IR
+assertions (`expect_workflow_count` etc.) — those route `MeridianTestRunner`
+through its own standalone `MeridianParser`/`ASTToIR` re-parse, which does not
+replicate `Compiler.compile`'s `## Domain` inline-vocabulary pre-harvest, so an
+in-source-only kind lattice needs the plain compile path this spec already
+exercises.
+```
+tags: inform7, wave4, domain, codegen
+
+source_inline: ```
+---
+name: audit
+parameters: deal
+---
+
+## Domain
+A page is a kind of thing.
+A page has a title, which is a String.
+A page can be archived or live.
+A page is usually live.
+
+A deal is a kind of page.
+A deal has an amount, which is Money.
+
+Definition: a page is notable if its title is not empty.
+
+## Phases
+if the deal is notable,
+  complete with reason "ok".
+complete with reason "not notable".
+```
+
+expect_compile: pass
+expect_swift_not_contains: _unresolved
+expect_swift_contains: public struct AuditDeal: MeridianWorkflow
+expect_swift_contains: public enum PagePageState: String, Hashable, Codable, Sendable
+expect_swift_contains: public protocol DealKind: PageKind
+expect_swift_contains: public struct Deal: DealKind
+expect_swift_contains: public var title: String
+expect_swift_contains: public var amount: Money
+expect_swift_contains: meridianDef_Page_notable(state.get("deal"))

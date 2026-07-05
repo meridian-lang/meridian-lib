@@ -266,13 +266,9 @@ public struct SkillMigrator {
     }
 
     private func describe(_ error: any Error) -> String {
-        if let compilerError = error as? CompilerError {
-            switch compilerError {
-            case .semanticError(let message, let range):
-                return "L\(range.startLine): \(message)"
-            default:
-                return String(describing: compilerError)
-            }
+        if let compilerError = error as? CompilerError,
+           let first = compilerError.diagnostics.first {
+            return "L\(first.primaryRange.startLine): \(first.message)"
         }
         return String(describing: error)
     }

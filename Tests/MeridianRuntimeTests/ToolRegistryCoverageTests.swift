@@ -105,4 +105,61 @@ struct ToolRegistryCoverageTests {
             _ = try await reg.dispatch(tool: "mcp", args: ["method": .string("ping")])
         }
     }
+
+    @Test("MCPSpec endpoint initializer and injected MCP client dispatch")
+    func mcpEndpointSpecWithStubClient() async throws {
+        struct StubMCP: MCPClient {
+            func call(method: String, params: Value, transport: MCPTransport) async throws -> Value {
+                .record(["method": .string(method), "via": .string("stub")])
+            }
+        }
+        let reg = ToolRegistry(mcpClient: StubMCP())
+        await reg.register(tool: "mcp", .mcp(MCPSpec(endpoint: "http://unused.example/mcp")))
+        let result = try await reg.dispatch(tool: "mcp", args: [
+            "method": .string("tools/list"),
+            "params": .record([:]),
+        ])
+        guard case .record(let dict) = result else {
+            Issue.record("expected record result")
+            return
+        }
+        #expect(dict["method"] == .string("tools/list"))
+        #expect(dict["via"] == .string("stub"))
+    }
+
+    @Test("subprocess dispatch accepts an args list when the template is empty")
+    func subprocessArgsList() async throws {
+        let reg = ToolRegistry()
+        await reg.register(tool: "echo", .subprocess(SubprocessSpec(binary: "echo")))
+        let result = try await reg.dispatch(tool: "echo", args: [
+            "args": .list([.string("from-list")])
+        ])
+        if case .record(let r) = result, case .string(let out)? = r["stdout"] {
+            #expect(out.contains("from-list"))
+        } else {
+            Issue.record("expected stdout record")
+        }
+    }
+
+    @Test("DefaultMCPClient rejects the dynamic transport sentinel")
+    func defaultMCPClientRejectsDynamic() async {
+        let client = DefaultMCPClient()
+        do {
+            _ = try await client.call(method: "ping", params: .null, transport: .dynamic)
+            Issue.record("expected throw")
+        } catch let ToolError.argumentCoercion(field, _, _) {
+            #expect(field == "transport")
+        } catch {
+            Issue.record("unexpected error \(error)")
+        }
+    }
+
+    @Test("redactAll policy is surfaced by lookup")
+    func redactAllPolicy() async {
+        let reg = ToolRegistry()
+        await reg.register(tool: "secret", .closure { _ in .null }, redactionPolicy: .redactAll)
+        if case .redactAll = await reg.redactionPolicy(for: "secret") {} else {
+            Issue.record("expected redactAll")
+        }
+    }
 }

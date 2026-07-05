@@ -1450,6 +1450,7 @@ public struct ASTToIR {
                         body: try lowerInterpolationSegments(b, scope: scope.map { $0.union([v]) }, line: line)
                     )
                 case .formatted(let e, let f):
+                    try validateFormatter(f, line: line)
                     return .formatted(try lowerExpr(e, scope: scope, line: line), formatter: f)
                 }
             }
@@ -1502,9 +1503,28 @@ public struct ASTToIR {
                     body: try lowerInterpolationSegments(b, scope: scope.map { $0.union([v]) }, line: line)
                 )
             case .formatted(let e, let f):
+                try validateFormatter(f, line: line)
                 return .formatted(try lowerExpr(e, scope: scope, line: line), formatter: f)
             }
         }
+    }
+
+    /// B7: `{{ expr as a <formatter> }}` names one formatter from the closed
+    /// `FormatterRegistry`. Validated once, here, at lowering time — the only
+    /// place a `.formatted` interpolation segment is turned into IR — so
+    /// codegen (`SwiftEmitter.meridianFormat`) never has to silently no-op on
+    /// an unrecognized formatter string.
+    private func validateFormatter(_ formatter: String, line: Int) throws {
+        guard !FormatterRegistry.isValid(formatter) else { return }
+        throw CompilerError.diagnostics([
+            Diagnostic.unresolved(
+                .unknownTemplateFormatter,
+                target: formatter,
+                among: FormatterRegistry.available,
+                range: sourceRange(line),
+                noun: "template formatter",
+                help: "Available formatters: \(FormatterRegistry.available.joined(separator: ", ")).")
+        ])
     }
 
     /// Lower a comparison. Handles three special shapes before the generic
@@ -1704,7 +1724,16 @@ public struct ASTToIR {
                 help: "Bind the collection with `let`/`bind` first, then quantify over the bound name.")
         }
 
-        var filters: [IRExpression] = []
+        // 3B: a `that <verb> …` / `<participle> by …` relative clause
+        // restricts the quantified collection through a declared relation —
+        // the closed-grammar route for relation-backed conditions (`no pages
+        // that mention the entity`), since relations have no bare-noun surface
+        // form of their own. Quantifiers evaluate as a pure boolean expression
+        // with no prelude slot, so a tool-backed clause here is rejected with
+        // the same "bind it first" guidance used for inline verb tests.
+        let (clauseFilters, _) = try lowerVerbClauses(
+            q.description.verbClauses, elementVar: elementVar, allowToolFetch: false, scope: nil, line: 0)
+        var filters = clauseFilters
         for adj in q.description.adjectives {
             filters.append(try resolveAdjectiveFilter(
                 adjective: adj, subject: .identifierRef(name: elementVar), sourceLine: 0))
@@ -2022,24 +2051,22 @@ public struct ASTToIR {
 
     struct DescriptionPlan { let ir: DescriptionIR; let prelude: [IRPrimitive] }
 
-    /// 3C: lower a description to a fetch-once + filter + sort + take plan. A
-    /// single tool-backed verb clause becomes the source (a hoisted `invoke`,
-    /// returned in `prelude`); property-backed clauses, adjectives, and `whose`
-    /// become element-context filters. `allowToolFetch` is false in value/condition
-    /// positions that cannot host the `await` fetch.
-    private func lowerDescriptionPlan(_ d: DescriptionAST, allowToolFetch: Bool,
-                                      scope: Set<String>? = nil, line: Int) throws -> DescriptionPlan {
-        let noun = d.noun.trimmingCharacters(in: .whitespaces)
-        guard !noun.isEmpty else {
-            throw semanticError("description is missing a collection noun.", line)
-        }
-        let elementVar = lexicon.singularize(noun.lowercased())
-
-        var prelude: [IRPrimitive] = []
+    /// 3B/3C shared: lower a description's relation verb clauses against
+    /// `elementVar`. A property-backed clause becomes an element-scoped
+    /// `identifies` filter. A tool-backed clause is returned via `toolSource`
+    /// when `allowToolFetch` — the caller hoists it into a fetch-once
+    /// `prelude` (as `lowerDescriptionPlan` does). Quantifiers evaluate as a
+    /// pure boolean expression with no prelude slot, so they pass
+    /// `allowToolFetch: false` and get the same sourced "bind it first"
+    /// guidance used everywhere else a tool-backed relation is referenced
+    /// inline (`lowerVerbPredicate`, `lowerScalarTraversalPlan`).
+    private func lowerVerbClauses(_ clauses: [VerbClauseAST], elementVar: String, allowToolFetch: Bool,
+                                  scope: Set<String>?, line: Int) throws
+        -> (filters: [IRExpression],
+            toolSource: (verbForm: String, toolID: String, operandKey: String, operand: IRExpression)?) {
         var filters: [IRExpression] = []
         var toolSource: (verbForm: String, toolID: String, operandKey: String, operand: IRExpression)? = nil
-
-        for clause in d.verbClauses {
+        for clause in clauses {
             guard let resolved = symbols.resolveVerbForm(clause.verbForm) else {
                 throw unknownVerbError(clause.verbForm, line: line,
                                        extraHelp: "Description verb clauses resolve the same verb table as inline verb tests.")
@@ -2053,6 +2080,12 @@ public struct ASTToIR {
             try validateOperandScope(operandIR, scope: scope, role: "relation operand", line: line)
             switch backing {
             case .tool(let toolID):
+                guard allowToolFetch else {
+                    throw semanticError(
+                        "a tool-backed relation (`\(clause.verbForm)`) cannot be filtered inline here; bind the filtered set first — e.g. `let matches be \(elementVar)s that \(clause.verbForm) …`, then use `matches`.",
+                        line, code: .toolBackedInlineDisallowed,
+                        help: "Quantifiers and descriptions over tool-backed relations must be bound in statement position before use in an expression.")
+                }
                 guard toolSource == nil else {
                     throw semanticError("a description may use at most one tool-backed relation clause.", line)
                 }
@@ -2068,15 +2101,32 @@ public struct ASTToIR {
                     .identifies, operandIR))
             }
         }
+        return (filters, toolSource)
+    }
+
+    /// 3C: lower a description to a fetch-once + filter + sort + take plan. A
+    /// single tool-backed verb clause becomes the source (a hoisted `invoke`,
+    /// returned in `prelude`); property-backed clauses, adjectives, and `whose`
+    /// become element-context filters. `allowToolFetch` is false in value/condition
+    /// positions that cannot host the `await` fetch.
+    private func lowerDescriptionPlan(_ d: DescriptionAST, allowToolFetch: Bool,
+                                      scope: Set<String>? = nil, line: Int) throws -> DescriptionPlan {
+        let noun = d.noun.trimmingCharacters(in: .whitespaces)
+        guard !noun.isEmpty else {
+            throw semanticError("description is missing a collection noun.", line)
+        }
+        let elementVar = lexicon.singularize(noun.lowercased())
+
+        var prelude: [IRPrimitive] = []
+        let (clauseFilters, toolSource) = try lowerVerbClauses(
+            d.verbClauses, elementVar: elementVar, allowToolFetch: allowToolFetch, scope: scope, line: line)
+        var filters = clauseFilters
 
         let collection: IRExpression
+        // `lowerVerbClauses` already rejects a tool-backed clause when
+        // `allowToolFetch` is false, so `toolSource` is only ever non-nil here
+        // when a hoisted prelude fetch is legal.
         if let src = toolSource {
-            guard allowToolFetch else {
-                throw semanticError(
-                    "a tool-backed relation (`\(src.verbForm)`) must be bound before use — e.g. `let matches be \(noun) that \(src.verbForm) …`, then read `matches`.",
-                    line, code: .toolBackedInlineDisallowed,
-                    help: "Descriptions over tool-backed relations must be bound in statement position before use in an expression.")
-            }
             let synth = "__rel\(camelCase(noun).prefix(1).uppercased())\(camelCase(noun).dropFirst())"
             prelude.append(.invoke(InvokeIR(
                 toolID: src.toolID,

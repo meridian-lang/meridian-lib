@@ -1065,7 +1065,11 @@ sourced error ("bind the result first, then quantify over it").
 - **Property-backed emptiness:** `X has no <property>` → empty; `X has a/an/some
   <property>` → non-empty; `X is empty` / `X is not empty` over the subject
   itself. These lower through `MeridianComparison.isEmpty` / `isNotEmpty`.
-  Relation-backed emptiness is deferred to Wave 3.
+  A relation has no bare-noun surface of its own (only a conjugated verb), so
+  a **relation-backed** emptiness condition is expressed as a `none`-kind
+  quantifier restricted by a relative clause instead — see "Inform 7-tier
+  relational layer (Wave 3)" below (e.g. `no pages owned by the user`,
+  `no pages that mention the entity`).
 
 ### Inform 7-tier relational layer (Wave 3)
 
@@ -1163,6 +1167,22 @@ expression is a sourced error.
 
 **`let <name> be <value>.`** is syntactic sugar for `bind <name> = <value>.`
 (introduced for readable relational binds).
+
+**Relation-backed emptiness.** A relation has no bare-noun surface of its own
+(only a conjugated verb), so `X has no <relation>` cannot resolve which
+relation is meant — a relation-backed emptiness condition is instead written
+as a `no`-kind quantifier restricted by the same relative clause used above:
+
+```
+if no pages owned by the user, ...          # passive (object gap)
+if no pages that mention the entity, ...    # relative clause (subject gap)
+```
+
+A property-backed clause lowers straight to `MeridianComparison.isEmpty` over
+the filtered description (no tool call); a tool-backed clause inside a
+quantifier is rejected with a sourced "bind it first" diagnostic, since
+quantifiers evaluate as a pure boolean expression with no prelude slot for an
+`await` fetch.
 
 ### Explicit judgment markers
 

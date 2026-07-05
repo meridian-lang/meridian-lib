@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import MeridianCore
 
@@ -51,6 +52,72 @@ struct NonterminalScreeningTests {
         #expect(result.screenedCandidateCount > 0)
         #expect(result.unscreenedSeconds >= 0)
         #expect(result.screenedSeconds >= 0)
+    }
+
+    // MARK: - Wave 5B acceptance: corpus-scale screened/unscreened differential
+    //
+    // `NonterminalScreen` is a pure pre-filter optimization: it must never
+    // change what a production parses to, only skip productions it can prove
+    // have no chance of matching. `parserEquivalence` above checks exactly one
+    // hand-picked sentence; this harness feeds every line of every real skill
+    // file across `sample-gbrain`, `corpora/erp`, `corpora/procedures`, and
+    // `examples` (thousands of lines spanning comparisons, quantifiers,
+    // descriptions, relations, temporal windows, templates, and tables) through
+    // both a screened and an unscreened `ExpressionParser` and asserts their
+    // parsed trees are byte-identical. Lines that aren't expression-shaped at
+    // all still parse to *some* AST (often `.identifierRef`/`.malformed`); the
+    // guarantee under test is that both modes agree on every line, not that
+    // every line is a "real" expression.
+    @Test("screening is a no-op differential across the full corpus of real skill files")
+    func corpusScaleScreeningDifferential() throws {
+        let lines = try Self.corpusLines()
+        #expect(lines.count > 2000, Comment(rawValue: "expected a corpus-scale line count, got \(lines.count)"))
+
+        let screened = ExpressionParser(symbols: nil, trace: .silent(), lexicon: .default, useScreen: true)
+        let unscreened = ExpressionParser(symbols: nil, trace: .silent(), lexicon: .default, useScreen: false)
+
+        var mismatches: [String] = []
+        for (source, text) in lines {
+            let a = screened.parse(text).traceDescription(detail: .verbose)
+            let b = unscreened.parse(text).traceDescription(detail: .verbose)
+            if a != b {
+                mismatches.append("\(source): \"\(text)\"\n    screened:   \(a)\n    unscreened: \(b)")
+                if mismatches.count >= 20 { break }   // bounded — the count above proves scale
+            }
+        }
+        #expect(mismatches.isEmpty,
+                Comment(rawValue: "screened/unscreened parse diverged on \(mismatches.count)+ line(s):\n"
+                    + mismatches.joined(separator: "\n")))
+    }
+
+    /// Every non-blank, non-fence line of every `.meri`/`.meridian` file under
+    /// `sample-gbrain`, `corpora/{erp,procedures}`, and `examples` (excluding
+    /// generated `compile-outputs`), paired with a `"<relative path>:<line>"`
+    /// label for failure reporting.
+    private static func corpusLines() throws -> [(source: String, text: String)] {
+        let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+        let dirs = ["sample-gbrain", "corpora/erp", "corpora/procedures", "examples"]
+        let fm = FileManager.default
+        var result: [(String, String)] = []
+
+        for dir in dirs {
+            let dirURL = root.appendingPathComponent(dir)
+            guard let enumerator = fm.enumerator(
+                at: dirURL, includingPropertiesForKeys: nil,
+                options: [.skipsHiddenFiles]) else { continue }
+            for case let fileURL as URL in enumerator {
+                guard ["meri", "meridian"].contains(fileURL.pathExtension) else { continue }
+                guard !fileURL.path.contains("/compile-outputs/") else { continue }
+                guard let text = try? String(contentsOf: fileURL, encoding: .utf8) else { continue }
+                let rel = fileURL.path.hasPrefix(root.path) ? String(fileURL.path.dropFirst(root.path.count + 1)) : fileURL.path
+                for (i, line) in text.components(separatedBy: .newlines).enumerated() {
+                    let trimmed = line.trimmingCharacters(in: .whitespaces)
+                    guard !trimmed.isEmpty, trimmed != "```", trimmed != "---" else { continue }
+                    result.append(("\(rel):\(i + 1)", trimmed))
+                }
+            }
+        }
+        return result
     }
 
     @Test("screen keeps no-anchor productions eligible")

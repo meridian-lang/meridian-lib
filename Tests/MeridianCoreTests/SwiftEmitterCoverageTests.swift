@@ -107,6 +107,189 @@ struct SwiftEmitterExprCoverageTests {
         let inner = QuantifierIR(kind: .any, description: DescriptionIR(collection: .propertyAccess(.identifierRef(name: "item"), propertyName: "tags"), elementVar: "t"))
         #expect(q(.quantified(inner)).count > 0)
     }
+
+    @Test("quantifier `all` with filters but no body emits non-empty check")
+    func quantifierAllWithoutBody() {
+        let desc = DescriptionIR(
+            collection: .identifierRef(name: "pages"),
+            elementVar: "page",
+            filters: [.comparison(
+                .propertyAccess(.identifierRef(name: "page"), propertyName: "status"),
+                .equal,
+                .literal(.string("open"))
+            )]
+        )
+        let q = QuantifierIR(kind: .all, description: desc, body: nil)
+        #expect(e.emitExpr(.quantified(q)).contains("isEmpty"))
+    }
+
+    @Test("value-context tableLookup and env-var use the Value bridges")
+    func valueContextTableLookupAndEnv() {
+        let lookup = IRExpression.tableLookup(
+            table: "prices",
+            keyColumn: "sku",
+            key: .literal(.string("A1")),
+            valueColumn: "price"
+        )
+        #expect(e.emitValueExpr(lookup).contains("?? .null"))
+        #expect(e.emitValueExpr(.envVar(name: "HOME")).contains("ProcessInfo"))
+    }
+
+    @Test("interpolation with shell-escaped holes uses meridianShellQuote")
+    func shellEscapedInterpolation() {
+        let segs: [IRInterpolationSegment] = [
+            .literal("curl "),
+            .shellEscapedExpression(.identifierRef(name: "host")),
+        ]
+        #expect(e.emitValueExpr(.interpolatedString(segs)).contains("meridianShellQuote"))
+    }
+
+    @Test("definition helper reads the loop variable from the closure parameter")
+    func elementValueExprLoopVar() {
+        let def = LoweredDefinition(
+            functionName: "meridianDef_Page_stale",
+            subjectVar: "page",
+            body: .comparison(
+                .identifierRef(name: "page"),
+                .equal,
+                .literal(.string("open"))
+            )
+        )
+        let out = e.emitFile(workflows: [], definitions: [def])
+        #expect(out.contains("__subject"))
+        #expect(out.contains("meridianDef_Page_stale"))
+    }
+
+    @Test("workflow invoke coerces Value-typed property arguments to the target kind")
+    func workflowCallArgCoercion() {
+        let domain = SwiftEmitter.DomainDecl(
+            kinds: [
+                .init(name: "order", parent: "thing", ownProperties: [], inheritedProperties: []),
+            ],
+            enumerations: []
+        )
+        let callee = IRWorkflow(
+            name: "target",
+            parameters: [IRParameter(name: "order", kind: KindRef("Order"))],
+            body: IRBlock(statements: [.complete(CompleteIR(reason: nil))]),
+            explicitStructName: "Target"
+        )
+        let caller = IRWorkflow(
+            name: "caller",
+            parameters: [],
+            body: IRBlock(statements: [
+                .invoke(InvokeIR(
+                    toolID: "workflow:Target",
+                    arguments: [
+                        InvokeArg("order", .propertyAccess(.identifierRef(name: "scratch"), propertyName: "nestedOrder")),
+                    ],
+                    sourceRange: .init(file: "t.meridian", line: 2, column: 1)
+                )),
+            ])
+        )
+        let out = SwiftEmitter(options: .init(emitSourceLineComments: false))
+            .emitFile(workflows: [callee, caller], domainDecl: domain)
+        #expect(out.contains("coerce(to: Order.self)"))
+    }
+
+    @Test("workflow invoke coerces bare identifier arguments to typed kinds")
+    func workflowCallIdentifierCoercion() {
+        let domain = SwiftEmitter.DomainDecl(
+            kinds: [.init(name: "order", parent: "thing", ownProperties: [], inheritedProperties: [])],
+            enumerations: []
+        )
+        let callee = IRWorkflow(
+            name: "target",
+            parameters: [IRParameter(name: "order", kind: KindRef("Order"))],
+            body: IRBlock(statements: [.complete(CompleteIR(reason: nil))]),
+            explicitStructName: "Target"
+        )
+        let caller = IRWorkflow(
+            name: "caller",
+            parameters: [],
+            body: IRBlock(statements: [
+                .invoke(InvokeIR(
+                    toolID: "workflow:Target",
+                    arguments: [InvokeArg("order", .identifierRef(name: "scratch"))],
+                    sourceRange: .init(file: "t.meridian", line: 2, column: 1)
+                )),
+            ])
+        )
+        let out = SwiftEmitter(options: .init(emitSourceLineComments: false))
+            .emitFile(workflows: [callee, caller], domainDecl: domain)
+        #expect(out.contains("Value.from(scratch).coerce(to: Order.self)"))
+    }
+
+    @Test("value-context invocation uses the Value.init fallback")
+    func valueContextInvocationFallback() {
+        let inv = InvokeIR(toolID: "demo.tool", arguments: [])
+        #expect(SwiftEmitter().emitValueExpr(.invocation(inv)).hasPrefix(".init("))
+    }
+
+    @Test("definition helpers read the loop variable as a Value operand")
+    func elementValueExprUsesLoopVariableOperand() {
+        let def = LoweredDefinition(
+            functionName: "meridianDef_Page_open",
+            subjectVar: "page",
+            body: .comparison(
+                .propertyAccess(.identifierRef(name: "page"), propertyName: "status"),
+                .equal,
+                .identifierRef(name: "page")
+            )
+        )
+        let out = SwiftEmitter().emitFile(workflows: [], definitions: [def])
+        #expect(out.contains("__subject"))
+        #expect(out.contains("meridianDef_Page_open"))
+    }
+
+    @Test("nested for-each interpolation segments inside a loop body are dropped")
+    func nestedForEachInterpolationInLoopBody() {
+        let segs: [IRInterpolationSegment] = [
+            .forEach(
+                variable: "item",
+                collection: .identifierRef(name: "items"),
+                body: [
+                    .forEach(
+                        variable: "nested",
+                        collection: .identifierRef(name: "subs"),
+                        body: [.literal("x")]
+                    ),
+                ]
+            ),
+        ]
+        #expect(SwiftEmitter().emitValueExpr(.interpolatedString(segs)).contains("for __item in"))
+    }
+
+    @Test("loop interpolation conditionals lower non-comparison predicates via emitExpr")
+    func loopInterpolationConditionalLogical() {
+        let segs: [IRInterpolationSegment] = [
+            .forEach(
+                variable: "item",
+                collection: .identifierRef(name: "items"),
+                body: [
+                    .conditional(
+                        condition: .logical(.not, [.literal(.boolean(true))]),
+                        then: [.literal("yes")],
+                        otherwise: [.literal("no")]
+                    ),
+                ]
+            ),
+        ]
+        let out = SwiftEmitter().emitValueExpr(.interpolatedString(segs))
+        #expect(out.contains("if "))
+        #expect(out.contains("else"))
+    }
+}
+
+@Suite("SwiftEmitter — Ctx helpers")
+struct SwiftEmitterCtxCoverageTests {
+    @Test("Ctx.withTyped unions extra typed identifier names")
+    func withTypedMergesNames() {
+        let ctx = Ctx(depth: 0, options: .init(), typedIdentifiers: ["order"])
+            .withTyped(["customer"])
+        #expect(ctx.typedIdentifiers.contains("order"))
+        #expect(ctx.typedIdentifiers.contains("customer"))
+    }
 }
 
 @Suite("SwiftEmitter — block constructs via emitFile")

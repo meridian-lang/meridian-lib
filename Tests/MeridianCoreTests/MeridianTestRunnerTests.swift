@@ -410,9 +410,62 @@ struct MeridianTestRunnerTests {
             Issue.record("expected loadSpec to throw")
         } catch let MeridianTestRunner.SpecError.missingRequiredKey(key, _) {
             #expect(key.contains("source"))
+            #expect(MeridianTestRunner.SpecError.missingRequiredKey(key, file: url.lastPathComponent).description.contains("missing"))
         } catch {
             Issue.record("wrong error: \(error)")
         }
+    }
+
+    @Test("loadSpec rejects invalid expect_error_line, primitive_count, and workflow_mode values")
+    func invalidAssertionValueErrors() {
+        for raw in [
+            "source: w\nexpect_compile: fail\nexpect_error_line: not-int",
+            "source: w\nexpect_primitive_count: bogus",
+            "source: w\nexpect_workflow_mode: OnlyOneToken",
+        ] {
+            #expect(throws: (any Error).self) { _ = try load(raw) }
+        }
+    }
+
+    @Test("loadSpec parses trace: all and skips non key lines")
+    func traceAllAndNonKeyLines() throws {
+        let raw = """
+        this line has no colon key
+        source: w.meridian
+        trace: all
+        name: Renamed
+        """
+        let spec = try load(raw)
+        #expect(spec.displayName == "Renamed")
+        #expect(spec.traceCategories.count == ParserTrace.Category.allCases.count)
+    }
+
+    @Test("ParseError description returns the message")
+    func parseErrorDescription() {
+        let err = SpecParser.ParseError(message: "boom")
+        #expect(err.description == "boom")
+    }
+
+    @Test("loadSpec reads vocab from an on-disk path")
+    func readsVocabFromPath() throws {
+        let dir = try makeTempDir()
+        let vocabURL = dir.appendingPathComponent("mini.merconfig")
+        try "Kind: order is a thing.\n".write(to: vocabURL, atomically: true, encoding: .utf8)
+        let specURL = dir.appendingPathComponent("with-vocab.meridian.test")
+        try "source: w.meridian\nvocab: mini.merconfig".write(to: specURL, atomically: true, encoding: .utf8)
+        let spec = try MeridianTestRunner().loadSpec(specURL)
+        if case .path(let p) = spec.vocab.first { #expect(p == "mini.merconfig") }
+        else { Issue.record("expected path vocab") }
+    }
+
+    @Test("loadSpec rejects unknown expect_compile values")
+    func unknownExpectCompile() {
+        #expect(throws: (any Error).self) { _ = try load("source: w\nexpect_compile: maybe") }
+    }
+
+    @Test("loadSpec rejects unknown expect_error_kind values")
+    func unknownExpectErrorKind() {
+        #expect(throws: (any Error).self) { _ = try load("source: w\nexpect_compile: fail\nexpect_error_kind: bogus") }
     }
 
     // MARK: - Discovery

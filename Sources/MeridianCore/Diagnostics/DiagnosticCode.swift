@@ -191,6 +191,11 @@ extension DiagnosticCode {
         explanation: "A workflow-call phrase's declared parameter did not match any extracted argument (by name, kind, or a common spacing/case variant). The generated call would be missing a required initializer argument.",
         kind: .nameResolution, decision: DecisionRef("D-DX-2"))
 
+    public static let unknownTemplateFormatter = DiagnosticCode(
+        id: "MER2012", title: "unknown template formatter",
+        explanation: "A `{{ expr as a <formatter> }}` template interpolation named a formatter outside the closed set `FormatterRegistry` defines (`integer`, `decimal(N)`, `short date`, `long date`).",
+        kind: .nameResolution)
+
     // MARK: MER3xxx — semantics
 
     public static let phraseInlineDepthExceeded = DiagnosticCode(
@@ -319,6 +324,7 @@ extension DiagnosticCode {
         .unresolvedPhrase, .unknownTool, .unknownKind, .unknownProperty,
         .unknownVocabulary, .unknownRulebook, .unknownAdjective, .unknownVerb,
         .unknownFallbackKind, .unknownTraceCategory, .missingPhraseArgument,
+        .unknownTemplateFormatter,
         .phraseInlineDepthExceeded, .definitionRecursion, .duplicateDeclaration,
         .duplicateName, .relationBackingInvalid, .unattachedRule,
         .unresolvedTriggerAction, .toolBackedInlineDisallowed,

@@ -222,10 +222,7 @@ struct RuleInjector {
             let newStatements = try workflow.body.statements.map { stmt -> IRPrimitive in
                 guard case .assert(let assertIR) = stmt else { return stmt }
                 var softened: [IRExpression] = []
-                for perm in permissions {
-                    guard case .permission(let kind, let filter, let allowedAction, let conditions, _, let sourceLine, _) = perm else {
-                        continue
-                    }
+                for case .permission(let kind, let filter, let allowedAction, let conditions, _, let sourceLine, _) in permissions {
                     guard permissionMatches(actorKind: kind, allowedAction: allowedAction, workflow: workflow) else { continue }
                     let sr = SourceRange(file: sourceFile, line: sourceLine, column: 0)
                     var parts: [IRExpression] = []
@@ -545,6 +542,17 @@ struct RuleInjector {
                 collection: try lowerExprSimple(c, sourceRange: sourceRange),
                 body: try b.map { try lowerInterpolationSegmentSimple($0, sourceRange: sourceRange) })
         case .formatted(let e, let f):
+            guard FormatterRegistry.isValid(f) else {
+                throw CompilerError.diagnostics([
+                    Diagnostic.unresolved(
+                        .unknownTemplateFormatter,
+                        target: f,
+                        among: FormatterRegistry.available,
+                        range: sourceRange,
+                        noun: "template formatter",
+                        help: "Available formatters: \(FormatterRegistry.available.joined(separator: ", ")).")
+                ])
+            }
             return .formatted(try lowerExprSimple(e, sourceRange: sourceRange), formatter: f)
         }
     }

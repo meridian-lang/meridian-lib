@@ -177,15 +177,22 @@ if let html = htmlDir {
 }
 
 // MARK: - Report
+//
+// Use `llvm-cov export` (JSON) rather than `llvm-cov report` (fixed-width text
+// table). The plain-text table is whitespace-delimited, and this checkout's
+// path (e.g. a folder literally containing a space, such as a duplicated
+// workspace copy) can make llvm-cov's reported file column itself contain a
+// space — silently corrupting every downstream column of that row. JSON has
+// no such ambiguity.
 
-let report = run(llvmCov, ["report", binary, "-instr-profile", profdata,
-                           "-ignore-filename-regex=\(ignoreRegex)"])
+let report = run(llvmCov, ["export", binary, "-instr-profile", profdata,
+                           "-ignore-filename-regex=\(ignoreRegex)", "-summary-only"])
 if report.status != 0 {
-    FileHandle.standardError.write(Data("llvm-cov report failed:\n\(report.out)\n".utf8))
+    FileHandle.standardError.write(Data("llvm-cov export failed:\n\(report.out)\n".utf8))
     exit(1)
 }
 
-// MARK: - Parse the per-file table
+// MARK: - Parse the per-file summaries
 
 struct FileCov {
     let file: String
@@ -194,26 +201,52 @@ struct FileCov {
     let missedRegions: Int
 }
 
-func parsePercent(_ s: String) -> Double? {
-    guard s.hasSuffix("%") else { return nil }
-    return Double(s.dropLast())
+func percent(_ summary: [String: Any]?, _ key: String) -> Double {
+    ((summary?[key] as? [String: Any])?["percent"] as? Double) ?? 0
+}
+func count(_ summary: [String: Any]?, _ key: String, _ field: String) -> Int {
+    (((summary?[key] as? [String: Any])?[field] as? NSNumber)?.intValue) ?? 0
+}
+
+/// Path *component* (not just prefix) starting with "Meridian" — scopes rows
+/// to this repo's own modules regardless of how much leading directory
+/// structure (compilation directory, parent folder name, etc.) llvm-cov
+/// resolved into the absolute path.
+func isInScopeModule(_ path: String) -> Bool {
+    path.components(separatedBy: "/").contains { $0.hasPrefix("Meridian") }
+}
+
+/// Trim the absolute path down to "MeridianCore/Foo/Bar.swift" for display
+/// and for substring matching against coverage-exclusions.md.
+func displayPath(_ path: String) -> String {
+    let parts = path.components(separatedBy: "/")
+    guard let idx = parts.firstIndex(where: { $0.hasPrefix("Meridian") }) else { return path }
+    return parts[idx...].joined(separator: "/")
+}
+
+guard let jsonData = report.out.data(using: .utf8),
+      let json = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any],
+      let dataArr = json["data"] as? [[String: Any]],
+      let first = dataArr.first,
+      let filesArr = first["files"] as? [[String: Any]]
+else {
+    FileHandle.standardError.write(Data("failed to parse llvm-cov export JSON\n".utf8))
+    exit(1)
 }
 
 var rows: [FileCov] = []
-for line in report.out.components(separatedBy: "\n") {
-    let trimmed = line.trimmingCharacters(in: .whitespaces)
-    guard trimmed.hasPrefix("Meridian") else { continue }   // in-scope module rows only
-    let tokens = trimmed.split(whereSeparator: { $0 == " " }).map(String.init)
-    guard tokens.count >= 10 else { continue }
-    let file = tokens[0]
-    // Columns: file regions missed cover% functions missed executed% lines missed cover% ...
-    let percents = tokens.compactMap { parsePercent($0) }
-    guard percents.count >= 3 else { continue }
-    let regionPct = percents[0]
-    let linePct = percents[2]
-    let missedRegions = Int(tokens[2]) ?? 0
-    rows.append(FileCov(file: file, regionPct: regionPct, linePct: linePct, missedRegions: missedRegions))
+for entry in filesArr {
+    guard let filename = entry["filename"] as? String, isInScopeModule(filename) else { continue }
+    let summary = entry["summary"] as? [String: Any]
+    rows.append(FileCov(
+        file: displayPath(filename),
+        regionPct: percent(summary, "regions"),
+        linePct: percent(summary, "lines"),
+        missedRegions: count(summary, "regions", "notcovered")
+    ))
 }
+
+let totalsSummary = first["totals"] as? [String: Any]
 
 // MARK: - Gate evaluation
 
@@ -253,10 +286,11 @@ for r in sorted {
         + lpad(pct(r.linePct), 8) + " " + lpad(String(r.missedRegions), 8) + "\n"
 }
 
-// TOTAL line straight from llvm-cov.
-if let total = report.out.components(separatedBy: "\n").first(where: { $0.hasPrefix("TOTAL") }) {
-    out += "\n" + total + "\n"
-}
+// TOTAL line, straight from llvm-cov's aggregate totals (all in-scope files
+// surviving -ignore-filename-regex, not just the Meridian*-scoped rows above).
+out += "\n" + pad("TOTAL", 58) + " " + lpad(pct(percent(totalsSummary, "regions")), 8) + " "
+    + lpad(pct(percent(totalsSummary, "lines")), 8) + " "
+    + lpad(String(count(totalsSummary, "regions", "notcovered")), 8) + "\n"
 
 print(out)
 

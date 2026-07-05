@@ -96,4 +96,33 @@ struct TraceTreeRendererCoverageTests {
         #expect(out.contains("http.get"))
         #expect(out.contains("@a.meridian:3"))
     }
+
+    @Test("numeric and boolean payload values stringify in labels")
+    func numericPayloadLabels() {
+        let events: [RE] = [
+            ev("workflow.started", ["workflowName": "W"]),
+            ev("iterate.iteration", ["index": 3], seq: 1),
+            ev("branch.taken", ["into": "then", "condition": true], seq: 2),
+            ev("wait.resume", ["duration_ms": 2.5], seq: 3),
+            ev("workflow.completed", ["reason": "ok", "duration_ms": NSNumber(value: 9)], seq: 4),
+        ]
+        let out = TraceTreeRenderer(options: .init(showSourceRanges: false, showTimings: true)).render(events: events)
+        #expect(out.contains("#3"))
+        #expect(out.contains("(1)"))
+        #expect(out.contains("→ 2.5ms"))
+        #expect(out.contains("9ms)"))
+        #expect(!out.contains("@"))
+    }
+
+    @Test("invoke.end without duration omits the timing suffix")
+    func invokeEndWithoutDuration() {
+        let events: [RE] = [
+            ev("workflow.started", ["workflowName": "W"]),
+            ev("invoke.end", [:], seq: 1),
+            ev("workflow.completed", ["reason": "ok"], seq: 2),
+        ]
+        let out = TraceTreeRenderer().render(events: events)
+        #expect(out.contains("↳ ok"))
+        #expect(!out.contains("→"))
+    }
 }

@@ -114,6 +114,32 @@ No planner or fuzzy parsing is involved.
 - The proxy corpora intentionally prefer closed rulebook syntax over fuzzy prose.
   When an idiom is not deterministic, it is either documented as inert or
   rewritten to a supported form in the deviation report.
+- **Checkable adjectives are global, not kind-scoped (documented deviation).**
+  `Definition: a <kind> is <adjective> if …` registers the adjective under a
+  single global, uniqueness-checked namespace (`ASTToIR.registerDefinitions` /
+  `SymbolTable.definition(forAdjective:)`); resolution does not check the
+  subject's declared kind or walk the domain lattice. A page-defined adjective
+  therefore applies to any subkind (e.g. `deal`) automatically, by globality —
+  the practical inheritance behavior the corpora need — but this is **not**
+  literal kind-scoped most-specific resolution: two unrelated kinds can never
+  define the same adjective name, even if a real per-kind model would allow
+  shadowing. This is an intentional, confirmed simplification (kept because
+  none of the three corpora need per-kind adjective shadowing, and reworking
+  resolution would conflict with the global-uniqueness invariant for a
+  low-value edge case). Property inheritance is unaffected — properties are
+  already flattened per-kind in `DomainEmitter.buildDomainDecl`.
+- **Relation-backed emptiness has no bare-noun surface (by design, not a
+  gap).** `X has no <property>` lowers straight to `MeridianComparison.isEmpty`
+  because a property name is unambiguous. A *relation* has no bare-noun
+  surface of its own — only a conjugated verb — so `X has no <relation-noun>`
+  cannot resolve which relation is meant without a verb. The closed-grammar
+  route for a relation-backed emptiness condition is a `none`-kind quantifier
+  restricted by a `that <verb> …` / `<participle> by …` relative clause (e.g.
+  `no pages owned by the user`), which reuses the same verb-clause resolution
+  as descriptions/aggregates/superlatives (see `Inform7Wave3Tests
+  .relationBackedEmptinessLowers`). Tool-backed relation clauses inside a
+  quantifier are rejected with a sourced "bind it first" diagnostic, matching
+  every other inline tool-backed relation use.
 
 ## Reproduction
 

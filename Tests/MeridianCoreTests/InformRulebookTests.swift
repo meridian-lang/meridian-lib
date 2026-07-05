@@ -22,6 +22,18 @@ struct InformRulebookTests {
         #expect(parsed[3].outcome == .success)
     }
 
+    @Test("same-phase rules keep source order via the sourceLine tiebreak")
+    func sortsSamePhaseBySourceLine() {
+        let rules = [
+            RuleAST(text: "before taking inventory: prepare the second list; continue.", sourceLine: 9),
+            RuleAST(text: "before taking inventory: prepare the first list; continue.", sourceLine: 2)
+        ]
+
+        let parsed = InformRulebookParser().parse(rules)
+        #expect(parsed.map(\.sourceLine) == [2, 9])
+        #expect(parsed.allSatisfy { $0.phase == .before })
+    }
+
     @Test("non-rulebook rules are ignored by clean-room parser")
     func ignoresOtherRules() {
         let parsed = InformRulebookParser().parse([

@@ -1,0 +1,17 @@
+---
+name: report
+---
+
+## Tables
+| skill | score (Number) |
+| --- | --- |
+| briefing | 10 |
+
+## Phases
+bind report body =
+  ```
+  [for each row in table]{{ row.skill }}: {{ row.score as a integer }} ({{ row.score as a decimal(2) }})[end for]
+  [if true]{{ now as a short date }} / {{ now as a long date }}[otherwise]none[end if]
+  ```
+emit template.report with body = report body.
+complete.

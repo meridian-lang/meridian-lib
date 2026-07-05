@@ -58,6 +58,8 @@ extension DiagnosticCode {
         .init(.unknownFallbackKind, status: .active, emitters: ["Compiler.swift"]),
         .init(.unknownTraceCategory, status: .active, emitters: ["ParserTrace.swift", "CLISupport.swift"]),
         .init(.missingPhraseArgument, status: .active, emitters: ["ASTToIR.swift:lowerPhraseInvocation"]),
+        .init(.unknownTemplateFormatter, status: .active,
+              emitters: ["ASTToIR.swift:validateFormatter", "RuleInjector.swift:lowerInterpolationSegmentSimple"]),
 
         // MER3xxx — semantics
         .init(.phraseInlineDepthExceeded, status: .active, emitters: ["ASTToIR.swift"]),

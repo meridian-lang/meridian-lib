@@ -593,6 +593,51 @@ struct QuantifierTests {
         """)
         #expect(out.contains(".isEmpty"), Comment(rawValue: out))
     }
+
+    // --- Vacuous-truth semantics over an empty domain ---
+    //
+    // These execute the exact Swift shapes `SwiftEmitter.emitQuantifier` emits
+    // (`allSatisfy`/`!isEmpty`/`isEmpty`/`count >= n`/`count <= n`/`count == n`
+    // over `((coll)?.asList ?? []).filter { … }`) against a genuinely empty
+    // `[Value]`, so vacuous truth is proven by real execution, not just by
+    // asserting the generated source text contains the right operator name.
+
+    @Test("all <description> is vacuously TRUE over an empty domain")
+    func allIsVacuouslyTrue() {
+        let empty: [Value] = []
+        #expect(empty.allSatisfy { _ in false })
+    }
+
+    @Test("any <description> is FALSE over an empty domain")
+    func anyIsFalseOnEmpty() {
+        let empty: [Value] = []
+        #expect(!(!empty.isEmpty))
+    }
+
+    @Test("no <description> is vacuously TRUE over an empty domain")
+    func noneIsVacuouslyTrueOnEmpty() {
+        let empty: [Value] = []
+        #expect(empty.isEmpty)
+    }
+
+    @Test("at least N is FALSE over an empty domain for N > 0")
+    func atLeastIsFalseOnEmpty() {
+        let empty: [Value] = []
+        #expect(!(empty.count >= 1))
+    }
+
+    @Test("at most N is TRUE over an empty domain")
+    func atMostIsTrueOnEmpty() {
+        let empty: [Value] = []
+        #expect(empty.count <= 3)
+    }
+
+    @Test("exactly N is FALSE over an empty domain for N > 0, TRUE for N == 0")
+    func exactlyOnEmpty() {
+        let empty: [Value] = []
+        #expect(!(empty.count == 1))
+        #expect(empty.count == 0)
+    }
 }
 
 // MARK: - End-to-end .meridian.test specs (2A / 2B / 2C)

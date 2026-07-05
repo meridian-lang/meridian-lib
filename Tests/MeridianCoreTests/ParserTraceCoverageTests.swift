@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import MeridianCore
 
@@ -87,5 +88,48 @@ struct ParserTraceCoverageTests {
         #expect(!ParserTrace.Category.phraseMatch.summary.isEmpty)
         #expect(ParserTrace.Category.phraseMatch.groups.contains("phrase"))
         #expect(ParserTrace.Category.lowering.groups == ["lowering"])
+    }
+
+    @Test("stderr and stdout sinks accept log lines without crashing")
+    func stdioSinks() {
+        let t = ParserTrace()
+        t.disableAll()
+        t.enable([.lowering])
+        t.sink = .stderr
+        t.log(.lowering, "stderr probe")
+        t.sink = .stdout
+        t.log(.lowering, "stdout probe")
+    }
+
+    @Test("file sink writes via atomic fallback when the handle cannot open")
+    func fileSinkAtomicFallback() throws {
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("meridian-trace-\(UUID().uuidString).log")
+        let t = ParserTrace()
+        t.disableAll()
+        t.enable([.lowering])
+        t.sink = .file(url)
+        t.log(.lowering, "file probe")
+        let content = try String(contentsOf: url, encoding: .utf8)
+        #expect(content.contains("file probe"))
+        try? FileManager.default.removeItem(at: url)
+    }
+
+    @Test("sink getter/setter round-trips custom sinks")
+    func sinkRoundTrip() {
+        final class CaptureBox: @unchecked Sendable {
+            var lines: [String] = []
+        }
+        let box = CaptureBox()
+        let t = ParserTrace()
+        t.sink = .custom { box.lines.append($0) }
+        #expect({
+            if case .custom = t.sink { return true }
+            return false
+        }())
+        t.disableAll()
+        t.enable([.lowering])
+        t.log(.lowering, "custom")
+        #expect(box.lines.contains { $0.contains("custom") })
     }
 }

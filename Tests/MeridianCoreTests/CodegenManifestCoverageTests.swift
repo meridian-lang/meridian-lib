@@ -8,7 +8,12 @@ struct ManifestEmitterCoverageTests {
 
     @Test("emit covers instance properties, rule entries, and skill sections")
     func fullInput() throws {
-        let wf = IRWorkflow(name: "do a thing", parameters: [], body: IRBlock(statements: [.complete(CompleteIR())]))
+        let wf = IRWorkflow(
+            name: "do a thing", parameters: [],
+            body: IRBlock(statements: [
+                .proseStep(ProseStepIR(text: "decide what to do", dispatchMode: .planThenExecute)),
+                .complete(CompleteIR()),
+            ]))
         let inst = ManifestEmitter.InstanceManifestEntry(
             name: "stripe",
             kind: "PaymentProcessor",
@@ -34,6 +39,7 @@ struct ManifestEmitterCoverageTests {
         #expect(json.contains("meridian_rules"))
         #expect(json.contains("\"precondition\""))
         #expect(json.contains("\"line\""))
+        #expect(json.contains("\"plan_then_execute\""))
     }
 }
 

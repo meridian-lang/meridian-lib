@@ -1,0 +1,16 @@
+name: Wave 4C — unknown template formatter is a sourced compile error
+description: ```
+`{{ expr as a <formatter> }}` only accepts a formatter from the closed
+`FormatterRegistry` set. A name outside that set (e.g. `percentage`) is a
+hard MER2012 compile error naming the available formatters, not a silent
+codegen no-op. The source is an external file (not `source_inline`) because
+its fenced template body itself uses `\`\`\`` delimiters, which would
+collide with `source_inline`'s own fence-closing rule.
+```
+tags: inform7, wave4, templates, formatters, error
+
+source: wave4_4c_templates_unknown_formatter.meridian
+
+expect_compile: fail
+expect_error_kind: semantic
+expect_error_contains: percentage

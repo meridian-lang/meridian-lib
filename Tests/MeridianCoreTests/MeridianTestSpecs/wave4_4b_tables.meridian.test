@@ -1,0 +1,35 @@
+name: Wave 4B — declarative tables (incl. lookup-miss recovery)
+description: ```
+An unmarked `## Tables` Markdown table defaults to a data binding (a bound
+list of records). `the <col> corresponding to the <col> "<key>" in the
+table` lowers to a linear lookup that throws `table.lookup_miss` on a miss;
+`recover from "table.lookup_miss":` (Phase 5 recovery) catches exactly that
+throw via `meridianMatches(_:named:)`.
+```
+tags: inform7, wave4, tables, codegen
+
+source_inline: ```
+---
+name: route
+---
+
+## Tables
+| trigger phrase | skill |
+| --- | --- |
+| daily briefing | briefing |
+
+## Phases
+bind chosen skill = the skill corresponding to the trigger phrase "unknown request" in the table.
+recover from "table.lookup_miss":
+    complete with reason "no route".
+complete with reason "routed".
+```
+
+expect_compile: pass
+expect_no_unresolved:
+expect_workflow_count: 1
+expect_workflow_named: Route
+expect_swift_contains: state.bind("table", Value.list
+expect_swift_contains: throw ToolError.implementation(code: "table.lookup_miss"
+expect_swift_contains: catch let _recoveredError where meridianMatches(_recoveredError, named: "table.lookup_miss")
+expect_swift_contains: reason: "no route"

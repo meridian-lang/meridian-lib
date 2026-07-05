@@ -24,6 +24,20 @@ struct AutonomyModeTests {
         #expect(hyphenated.maxSteps == 5)
     }
 
+    @Test("a clause with nothing but whitespace before the next boundary marker is dropped, not blank-parsed")
+    func emptyClauseTextIsDropped() {
+        // Two spaces between "until" and "unless" leave nothing but
+        // whitespace for the `until` clause once the next boundary marker is
+        // found — `clause(_:)` must trim that to empty and return `nil`
+        // rather than handing `parseExpression` a blank string.
+        let config = AutonomyConfigAST.parse(
+            "until  unless blocked",
+            parseExpression: { ExpressionParser(trace: .silent()).parse($0) }
+        )
+        #expect(config.until == nil)
+        #expect(config.unless != nil)
+    }
+
     @Test("autonomy workflow header records stop and replan clauses")
     func parsesAutonomyHeader() throws {
         let ast = try MeridianParser(symbols: SymbolTable(), trace: .silent()).parse("""

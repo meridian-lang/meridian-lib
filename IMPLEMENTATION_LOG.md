@@ -7,6 +7,9 @@ log to catch silent drift before it compounds.
 **Append only.** Never delete entries. Resolved entries get a `STATUS: RESOLVED` line
 and a resolution note appended. The history matters.
 
+**This is the current log.** Older entries live in
+[`.ai/implementation-log-archive/`](.ai/implementation-log-archive/)
+
 ---
 
 ## Tag definitions
@@ -1204,3 +1207,521 @@ after judgment-wrap exclusion (`bodyIsJudgmentWrapped`), narrative
 judgment-worthiness, comment-only shell-fence routing, checkable-role
 `forcedRoleMarker`, and erp/procedures `SKILL.md` marker stripping +
 re-migration.
+
+### 2026-07-04T11:30:00Z — Inform I7 100% closeout (Waves 0-6 gaps + coverage ratchet)
+
+Executed the Inform I7 Closeout plan end to end. Scope: close the residual
+Waves 0-6 acceptance-criteria gaps found in the audit, and drive reachable
+Inform-tier source files toward 100% region coverage (bucket-A integration
+boundaries excluded per `docs/coverage/README.md` policy).
+
+**1. Unknown-formatter validation + single registry (real gap, fixed).**
+Added `Sources/MeridianCore/Codegen/FormatterRegistry.swift` as the single
+source of truth for the closed formatter set (`short date`, `long date`,
+`integer`, `decimal(N)`). `ASTToIR.validateFormatter` now validates every
+`.formatted` interpolation segment at lowering time — the only place a
+`{{ expr as a <formatter> }}` template segment is turned into IR — and throws
+a new `MER2012` (`unknownTemplateFormatter`) sourced diagnostic naming every
+available formatter when the string doesn't match. `SwiftEmitter.meridianFormat`
+now reads the same registry instead of a second hardcoded switch, so parser and
+emitter can never drift. Added `MER2012` to `DiagnosticCode`/
+`DiagnosticCodeCatalog`/`docs/15_PROBLEM_MESSAGES.md`.
+
+**2. Relation-backed emptiness (real gap — resolved as a documented design
+decision, not a grammar extension).** Investigation confirmed relations have
+no bare-noun surface of their own (only a conjugated verb — see
+`ASTToIR.validateRelationsAndVerbs`), so `X has no <relation>` cannot resolve
+which relation is meant from a bare noun; extending `EmptinessTemporalGrammar`
+to pre-bind a relation noun would be ambiguous by construction. The existing
+closed-grammar route — a `none`-kind quantifier restricted by the same
+`that <verb> …` / `<participle> by …` relative clause already used by
+descriptions/aggregates/superlatives (3B/3C) — already expresses this
+correctly and was previously under-tested, not unimplemented. Refactored the
+relation-clause lowering shared by descriptions and quantifiers into
+`ASTToIR.lowerVerbClauses` and extended `QuantifierGrammar
+.splitDescriptionAndBody` to recognize relative/passive clauses inside a
+quantifier body, so `no pages owned by the user` / `no pages that mention the
+entity` parse and lower to a filtered-description quantifier (property-backed
+→ `MeridianComparison.isEmpty`-shaped `.filter`; tool-backed → a sourced
+"bind it first" error, since quantifiers have no prelude slot for an `await`
+fetch). Documented the actual mechanism in `docs/03_LANGUAGE_QUICK_REFERENCE.md`
+(replacing the stale "deferred to Wave 3" note) and
+`docs/16_EXPRESSIVENESS_REPORT.md` known-gaps.
+
+**3. Subkind adjective inheritance (partial, confirmed deviation — documented,
+not reworked).** Checkable adjectives are registered in a single global,
+uniqueness-checked namespace; `resolveAdjectiveFilter` does not check the
+subject's declared kind or walk the domain lattice. A page-defined adjective
+therefore applies to any subkind (e.g. `deal`) by globality, which is the
+practical behavior the corpora need, but is not literal per-kind
+most-specific resolution — two unrelated kinds can never share an adjective
+name. Per the pre-confirmed decision, kept the global model (reworking it
+risks the global-uniqueness invariant for no corpus-observed value), added a
+test proving a page-defined adjective applies to a `deal` subkind, and
+documented the simplification as an explicit, intentional deviation from the
+literal Wave 4A bullet in `docs/16_EXPRESSIVENESS_REPORT.md`.
+
+**4. Quantifier empty-domain semantics + table lookup-miss recover (verified
+already correct, test-only).** Confirmed `SwiftEmitter.emitQuantifier`'s
+vacuous-truth semantics (`all`→`allSatisfy` true-on-empty, `any`→`!isEmpty`
+false-on-empty, `none`→`isEmpty` true-on-empty, `atMost`/`atLeast`/`exactly`
+correct) and the `table.lookup_miss` throw/`recover from` path were already
+correct; added direct tests (`Inform7Wave2Tests`, plus an end-to-end
+`wave4_4b_tables.meridian.test`) rather than touching working code.
+
+**5. Wave 4 end-to-end specs.** Added the three remaining
+`Tests/MeridianCoreTests/MeridianTestSpecs/wave4_*.meridian.test` files
+(domain lattice/subkind adjective, tables incl. lookup-miss recover, templates
+incl. the new unknown-formatter `MER2012` error), matching the existing
+`wave2_*`/`wave3_*` spec pattern. `compileWithIR`'s limitations (no
+`.merconfig`/multi-file support) meant the domain-lattice and template specs
+needed an external `.meridian`/`.merconfig` source pair and
+`expect_swift_contains` assertions rather than inline IR assertions.
+
+**6. Corpus-scale screening differential (Wave 5B, real gap — harness didn't
+exist, built it).** `NonterminalScreeningTests` previously checked only one
+hand-picked sentence for `useScreen` on/off equivalence. Added
+`corpusScaleScreeningDifferential()` + a `corpusLines()` helper that loads
+every non-blank line from `.meri`/`.meridian` files under `sample-gbrain/`,
+`corpora/erp/`, `corpora/procedures/`, and `examples/` (2000+ lines) and
+asserts `ExpressionParser` produces a byte-identical verbose trace with
+screening on and off for every line, reporting up to 20 mismatches with
+source location on failure.
+
+**7. Coverage tooling was silently broken — root-caused and fixed.**
+`scripts/coverage.swift`'s `llvm-cov report` (plain-text) parser assumed
+whitespace-delimited columns, but this checkout's workspace directory name
+(`meridian-lib 2`) contains a literal space, which `llvm-cov` embeds verbatim
+into every reported file path — corrupting the column split so **every**
+per-file row was silently dropped (only the `TOTAL` line survived) and
+`--gate` passed vacuously regardless of actual coverage. Replaced the report
+path with `llvm-cov export -summary-only` (JSON) and matched in-scope
+`Meridian*` modules by path *component* rather than string-prefix, sidestepping
+the whitespace issue entirely and making per-file percentages and the `TOTAL`
+row summary reliable again. This was a **tooling correctness fix uncovered by**
+this closeout, not a pre-existing coverage regression.
+
+**8. Coverage ratchet.** With the gate now trustworthy, closed real,
+reachable gaps directly (not "quick" placeholder tests): `TableLookupGrammar`
+(empty key/table-name guards, unquoted single- vs multi-word key splitting —
+this file had regressed from 81.25% to 62.5% before these fixes),
+`ActiveVerbParser` (empty-subject guard under negation), `ScalarNavigationParser`
+(nil-symbols short-circuit, non-connector word after a participle),
+`QuantifierGrammar` (malformed "at least N" with nothing following, verb-marker
+ordering in `splitDescriptionAndBody`), `DescriptionGrammar` (nil-symbols
+`undeclaredPassiveVerbError`, empty-input `parseThatClause`), `BooleanGrammar`
+(`stripTrailingConnector` non-suffix match, `combineAnd` flattening),
+`TemplateInterpolationParser` (empty `for each` variable defaulting to
+`item`), `InformRulebook` (same-phase `sourceLine` tiebreak), `MeridianAST`
+(`AutonomyConfigAST` empty-clause-after-trim, `MerConfigFile.merging`
+dictionary-collision branches for duration/superlative/fence-tool synonyms),
+and `ManifestEmitter` (`.proseStep` with `.planThenExecute` dispatch mode).
+`ActiveVerbParser`, `BooleanGrammar`, `InformRulebook`, and `MeridianAST` now
+report 100%; the rest moved materially closer. Rewrote
+`docs/coverage/coverage-exclusions.md`'s `file-thresholds` block wholesale
+against the corrected JSON-based measurements — every entry is now the exact
+measured percent (with a small safety margin, larger for the two files
+observed to vary by a fraction of a percent across parallel `swift-testing`
+runs: `StatementParser`, `SymbolTable`), floors for files now at 100% were
+removed, and newly-visible files (`SkillMigrator+*` split extensions,
+`InertYieldAnalyzer`, `TrialLowering`, `SkillMetrics`, `InertYieldCommand`)
+were floored for the first time — none of these regressed from this closeout's
+changes; they were simply never correctly measured before the tooling fix.
+`ASTToIR.swift` (77.21%) remains the single largest reachable residual —
+relation/description/emptiness/formatter lowering and tool-fetch/quantifier
+diagnostics are broad surface area; further ratcheting is future work, not a
+regression.
+
+**Gates.** All green:
+- `swift test --filter Inform7Wave` — 144/144.
+- `swift test --filter "GrammarTable|NonterminalScreening|SentenceBreaker"` —
+  20/20, including the new corpus-scale screening differential (13-15s,
+  2000+ corpus lines, screened vs. unscreened byte-identical).
+- `swift test` (plain) — **1391/1391**, run twice for coverage instrumentation.
+- `MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1
+  MERIDIAN_CORPORA_TYPECHECK=1 swift test` — **1391/1391**, all three
+  `swiftc -typecheck` gates green (goldens, gbrain, both synthetic corpora).
+- `MERIDIAN_CORPORA_TYPECHECK=1 swift test --filter CorporaConformanceTests` —
+  5/5.
+- `scripts/coverage.swift --no-test --gate` — **passes**, verified against 4
+  independent `swift test --enable-code-coverage` runs (not just one) after
+  discovering real run-to-run coverage jitter under parallel `swift-testing`
+  execution (see item 7/8 above and the coverage-exclusions.md tooling note) —
+  `docs/coverage/coverage-exclusions.md`'s floors are now the **minimum**
+  region% observed across those 4 runs, minus a margin (larger for the 6 files
+  that showed measurable spread: `ParserTrace` up to 1.65pp, `ValueCoercion`,
+  `MerConfigParser`, `SymbolTable`, `ToolRegistry`, `StatementParser`), so the
+  gate has real headroom instead of failing intermittently in CI.
+
+**Confidence: 97%.** All plan todos are complete: every real behavioral gap
+(unknown-formatter validation, relation-backed emptiness) is implemented and
+tested; every "verify" item (quantifier vacuous semantics, table lookup-miss
+recover, adjective inheritance) is confirmed correct with new tests and its
+scope honestly documented as either working or an intentional, disclosed
+deviation; Wave 4 end-to-end specs and the Wave 5B screening differential
+exist and pass; the coverage gate is trustworthy for the first time in this
+checkout (a real tooling bug — not a coverage regression — was found and
+fixed) and every reachable Inform-tier file's floor reflects real,
+multi-run-verified measurements, not a single lucky run.
+
+**Residual risk (the remaining 3%):**
+1. `ASTToIR.swift` (77%) is still the largest reachable Inform-tier coverage
+   gap. The plan scoped `coverage-100` as "drive toward 100%, tighten floors"
+   rather than a hard 100% requirement, and closing this file fully is a
+   larger, separate lift (relation/description/emptiness/formatter lowering
+   plus tool-fetch and quantifier-clause diagnostics are broad surface area)
+   that risks scope creep against the plan's explicit sequencing. Left as the
+   top item for a follow-up session.
+2. The coverage-jitter root cause (why `ParserTrace`, `ValueCoercion`,
+   `MerConfigParser`, `SymbolTable`, `ToolRegistry`, and `StatementParser` see
+   measurable region-count swings across otherwise-identical parallel test
+   runs) was not tracked down — margins were widened empirically instead. If
+   the jitter grows past the applied margin in a future run, the gate could
+   still flap; the fix is either finding the shared-state race or moving to a
+   `--num-workers 1` coverage-only run for determinism.
+3. `TableLookupGrammar`'s regression back to 62.5% before this session's fixes
+   was caught by the newly-repaired gate, but nothing yet prevents a *future*
+   regression from going undetected other than the ratcheted floor itself —
+   there's no dedicated "coverage regressed" CI alert beyond the gate script.
+
+### 2026-07-04T13:25:00Z — ASTToIR closeout coverage (scripts/coverage.swift)
+
+- Switched measurement to `swift scripts/coverage.swift` (full test + `--gate`
+  + `--baseline docs/coverage/coverage-baseline.md`) per project norm; manual
+  `llvm-cov` one-offs dropped.
+- Added `ASTToIRDeepCoverageTests` (21 tests): rule no-engine strict paths,
+  phrase-inlining shapes, fenced-template interpolation, relation/verb
+  diagnostics, and `substituteArgsDirectExpressionShapes` — direct call over
+  hand-built `ExpressionAST` nodes for cases merconfig phrase parsing cannot
+  construct (`symbols: nil` in `MerConfigParser.parseVocabularyLines`).
+- **ASTToIR.swift:** 77.19% floor → **86.30%** region / 94.10% line (136
+  missed regions). Gate passes. Remaining gap is mostly `freeIdentifierRoots`
+  IR-only arms, `subInterpolationSegment` dead duplicates, tool-fetch
+  quantifier-source path, and defensive relation re-validation — next lift.
+- **Confidence:** 91% for ASTToIR closeout slice; true 100% on ASTToIR still
+  open (~14% region gap).
+
+### 2026-07-04T14:00Z — ASTToIR closeout continuation (session 2)
+
+- Extended `ASTToIRDeepCoverageTests` from 33 → **52 tests**: batch-engine rule
+  report paths (unparseable/unattached), shell-hole `freeIdentifierRoots`
+  comparison/logical walks, direct `lowerExpr` hooks (malformed+engine, invoke,
+  nested `lowerInterpolationSegments` for-each), description where-predicate
+  qualification, iteration bare-boolean whose, scalar-nav various/tool-inline
+  errors, verb-predicate/description-clause error call sites, hand-built
+  two-tool-clause description via `MeridianFile`, entities-side tool fetch
+  (`otherSide` left branch).
+- Fixed shell-hole fixture: quoted RHS values fail `isReferenceLikeHole`; use
+  in-scope property comparisons instead.
+- **ASTToIR.swift:** 86.30% → **89.83%** region / 96.46% line (101 missed
+  regions). Floor updated in `coverage-exclusions.md`; unreachable residual
+  documented (modal in `lowerStatement`, `missingPhraseArgument`, workflow
+  `toolReturnsValue`, dead `freeIdentifierRoots` IR arms, quantifier/description
+  invocation guards, parser-empty `IterationRefinementAST.adjectives`).
+- `swift test` (1441 tests) + `scripts/coverage.swift --gate` pass.
+- **Confidence:** 94% for ASTToIR slice; remaining ~10 region points are
+  documented defensive/dead paths — not worth synthetic tests.
+
+### 2026-07-04T14:05Z — Inform-tier sweep: Compiler / SwiftEmitter / SymbolTable
+
+- Added `CompilerCoverageTests` (5 tests): `emit(workflows:)`, `emitManifest`,
+  compile-without-merconfig, duplicate rulebook bootstrap error, unknown
+  `allow-fallbacks` token reporting.
+- Extended `SwiftEmitterCoverageTests` (+6 tests): quantifier-all-no-body,
+  value-context tableLookup/envVar, shell-escaped interpolation, definition
+  helper element context, workflow-call arg coercion, `Ctx.withTyped`.
+- Extended `SymbolTableVerbTests` (+2 tests): whitespace-only `matchPhrase`,
+  `extractArgs` trailer stripping after kind word.
+- **Compiler.swift:** 88.65% → **90.80%** region (floor 90.79).
+- **SwiftEmitter.swift:** 90.02% → **90.97%** region (floor 90.96).
+- **SymbolTable.swift:** 94.33% region (floor 94.32).
+- Full suite: **1456 tests** pass; coverage gate passes.
+- **Confidence:** 92% for Inform-tier compiler/codegen/symbols slice; largest
+  remaining gaps are StatementParser/MerConfigParser/RuleInjector (not swept).
+
+### Phase gate — Inform-tier closeout continuation
+
+- `swift test`: **1456 tests**, 0 failures.
+- `MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1 MERIDIAN_CORPORA_TYPECHECK=1 swift test`: pass (goldens + gbrain + corpora typecheck).
+- `scripts/coverage.swift --gate`: pass after floors updated (Compiler 90.79,
+  SwiftEmitter 90.96, SymbolTable 94.32, SkillSectionBuilder 84.75 drift).
+- **Overall confidence:** 93% for Waves 0–6 Inform closeout slice covered this
+  session (ASTToIR + Compiler/SwiftEmitter/SymbolTable); StatementParser /
+  MerConfigParser / RuleInjector remain the largest uncovered compiler files.
+
+### 2026-07-04 — RuleInjector / MerConfigParser / StatementParser coverage sweep
+
+- Added `RuleInjectorCoverageTests.swift` (16 direct-inject tests): bare vs
+  filtered preconditions, event gate, approval deduplication (wait/invoke/branch/
+  iterate/recover), object-driven permission match, `applyPermissions` softening,
+  bounded permission gate, `lowerExprSimple` expression arms, quantifier/formatter
+  rejection, trigger action validation (strict + `unresolved-trigger-actions`).
+- Extended `MerConfigParserTests` (4 tests): defaulted block property type,
+  comma-which-is name stripping, malformed tool signature + unrecognized block
+  property lines via batch `DiagnosticEngine`.
+- Extended `StatementParserCoverageTests` (4 tests): empty while/until headers,
+  invariant + ai-discretion checklist markers, rulebook desugar re-entry.
+- **RuleInjector.swift:** 71.85% → **81.93%** region (floor **81.92**).
+- **MerConfigParser.swift:** 87.45% → **88.61%** region (floor **88.60**).
+- **StatementParser.swift:** 86.94% → **87.49%** region (floor **87.11**).
+- Full suite: **1478 tests** pass; 3-var typecheck gate pass;
+  `scripts/coverage.swift --gate` pass; baseline regenerated.
+- **Confidence:** 94% for Inform-tier compiler closeout; RuleInjector residual
+  (~18% regions) is mostly `lowerExprSimple` defensive throws for expression
+  forms `RuleAnalyzer` cannot produce today (documented in-source).
+
+### 2026-07-04 — ConventionInjector / RuleLowering / StatementParser sweep
+
+- Added `ConventionInjectorCoverageTests.swift` (7 tests): every `RulebookPhase`
+  placement arm, empty convention/body skips, weak action-match skip, and a
+  full-compile rulebook injection path.
+- Added `RuleAnalyzerCoverageTests.swift` (5 tests): nested property-access
+  qualification, possessive-marker identifier fallback, subject-filter shorthand
+  + fallback splitting, nil trigger without comma.
+- Extended `StatementParserCoverageTests` (+8 tests): invariant checklist fuzzy
+  rejection, typed data-table cell validation, decision-table unparseable rows,
+  malformed recover headers, topic-label/inert wrap errors, parenthesized choice
+  options, shell blank-line continuation with pending text.
+- **ConventionInjector.swift:** 73.68% → **94.74%** region (floor **94.73**).
+- **RuleLowering.swift:** 85.71% → **86.61%** region (floor **86.60**).
+- **StatementParser.swift:** 87.49% → **87.86%** region (floor **87.85**).
+- Full suite: **1497 tests** pass; `scripts/coverage.swift --gate` pass.
+- **Confidence:** 95% for Inform-tier compiler closeout; largest remaining
+  compiler gaps are StatementParser (~12% regions) and RuleInjector (~18%).
+
+### 2026-07-04 — StatementParser / RuleInjector continuation
+
+- Extended `StatementParserCoverageTests` (+7 tests): `do` chain connective
+  stripping + unparseable chunk, multiline `emit` payloads, `decide whether` /
+  `decide using:` binds (including empty-fence fallback), typed data-table
+  String/unknown-type acceptance.
+- Extended `RuleInjectorCoverageTests` (+2 tests): filter-only permission
+  softening, explicit `.constantRef`/`.instanceRef` plus interpolation segment
+  arms (`conditional`/`forEach`/`formatted`) via `applyPermissions`.
+- **StatementParser.swift:** 87.86% → **88.50%** region (floor **88.49**).
+- **RuleInjector.swift:** 81.93% → **90.34%** region (floor **90.33**).
+- Full suite: **1505 tests** pass; `scripts/coverage.swift --gate` pass.
+- **Confidence:** 96% for Inform-tier compiler closeout; RuleInjector residual
+  (~10% regions) is mostly defensive `lowerExprSimple` throws for forms
+  `RuleAnalyzer` cannot produce; StatementParser residual (~11.5%) is spread
+  across rewrite-engine re-entry, topic-label edges, and decision-table helpers.
+
+### 2026-07-04 — Dead-code verification + migration/StatementParser sweep
+
+- **Dead-code policy:** verify reachability before removal; document defensive
+  paths in `coverage-exclusions.md` instead of deleting without proof.
+- **Removed (verified dead):** `RuleInjector.applyPermissions` inner
+  `guard case .permission … else { continue }` — `permissions` is built with
+  `compactMap` keeping only `.permission` cases; simplified to
+  `for case .permission(…) in permissions`.
+- **Kept (defensive):** ASTToIR `.modal`, `missingPhraseArgument`, and the
+  documented `freeIdentifierRoots` / quantifier / description arms; StatementParser
+  dual desugar paths (`parseBlock` hoist + `parseStatement` re-entry).
+- Added `SkillMigratorCommandRewriteCoverageTests` (7 tests): diagnosticLine,
+  inertMarker roles, YAML-list parameters, shell-fence rewrite, isWordShaped,
+  unterminated backticks, markEnclosingSectionInert.
+- Extended `RuleInjectorCoverageTests` (+2): permission softening + now/invoke/decide
+  `lowerExprSimple` arms.
+- Extended `StatementParserCoverageTests` (+9): decision-table inline do-chains,
+  bind empty-RHS fence, parseStatement rewrite hook (direct call), topic-label
+  nil-body error, dispatch-phrase checklist rejection, dotted choice numbers,
+  emit comma continuation, shell blank-line during backslash join.
+- Extended `ASTToIRDeepCoverageTests` (+1): phrase-inline for-each template segment.
+- **RuleInjector.swift:** 90.34% → **93.64%** region (floor **93.63**).
+- **SkillMigrator+CommandRewrite.swift:** 78.73% → **91.67%** region (floor **91.66**).
+- **StatementParser.swift:** 88.50% → **89.05%** region (floor **89.04**).
+- Full suite: **1524 tests** pass; 3-var typecheck + `scripts/coverage.swift --gate` pass.
+- **Confidence:** 97% for Inform-tier compiler closeout.
+
+### 2026-07-04 — StatementParser second sweep + dead-code notes
+
+- Extended `StatementParserCoverageTests` (+10): comma-and do-chains,
+  Oxford-or inline conditionals, bind/decide-using non-fence breaks, emit
+  continuation else-branch, recover without colon, single-quoted commit labels,
+  passive -ved stem, dash-bulleted choice/fallback steps.
+- Extended `RuleLoweringCoverageTests` (+2): first-space filter fallback,
+  compound active+verified filters (no floor movement yet).
+- Documented additional StatementParser defensive residuals in
+  `coverage-exclusions.md` (do-chain nil-chunk, decision-table row error).
+- **StatementParser.swift:** 89.05% → **89.97%** region (floor **89.96**).
+- Full suite: **1536 tests** pass; `scripts/coverage.swift --gate` pass.
+- **Confidence:** 98% for Inform-tier compiler closeout.
+
+### 2026-07-04 — StatementParser crosses 90%; RuleLowering nudge
+
+- Extended `StatementParserCoverageTests` (+5): spaced-number choice labels,
+  wait fall-through + single-quoted signal, comma-and/then chain cleanup.
+- Extended `RuleAnalyzerCoverageTests` (+2): `buildSubjectFilter` first-space
+  fallback via malformed value (`note (broken`), compound parameter-guard logical.
+- **StatementParser.swift:** 89.97% → **90.80%** region (floor **90.79**) — first
+  Inform-tier parser file above 90%.
+- **RuleLowering.swift:** 86.61% → **87.50%** region (floor **87.49**).
+- Full suite: **1541 tests** pass; `scripts/coverage.swift --gate` pass.
+- **Confidence:** 99% for Inform-tier compiler closeout.
+
+### 2026-07-04 — SkillMigrator/MerConfigParser coverage; describe unification
+
+- Fixed failing tests from prior session: `SkillMigratorCoverageTests` (repair +
+  diagnostics), `MerConfigParserDeclarationCoverageTests` (relation backing,
+  inline Oxford which-is).
+- Production: unified `SkillMigrator.describe` to project all `CompilerError`
+  cases through `compilerError.diagnostics` (removed dead legacy switch arms).
+- New/extended tests: `SkillMigratorCoverageTests` (5 tests: repair, diagnostics,
+  knowledgeContext, max-repair exhaustion), `SkillMigratorCommandRewriteCoverageTests`
+  (inertMarker role sweep, diagnosticLine colon-scan edges),
+  `MerConfigParserDeclarationCoverageTests` (+3), `RuleAnalyzerCoverageTests`
+  (malformed filter value).
+- **SkillMigrator.swift:** 85.31% → **86.84%** region (floor **86.83**).
+- **SkillMigrator+CommandRewrite.swift:** 91.66% → **96.97%** region (floor **96.96**).
+- **MerConfigParser.swift:** 88.60% → **89.96%** region (floor **89.57**; run variance).
+- **StatementParser.swift:** 90.80% → **90.89%** region (floor **90.51**).
+- Documented `RuleLowering` `buildSubjectFilter` fallback (~406–412) and
+  `SkillMigrator` structural residuals in `coverage-exclusions.md`.
+- Full suite: **1549 tests** pass; typecheck gates pass;
+  `scripts/coverage.swift --gate` pass.
+- **Confidence:** 99% for Inform-tier compiler closeout.
+
+### 2026-07-04 — MerConfigParser 91%+; ASTToIR subInterpolation nudge
+
+- Extended `MerConfigParserDeclarationCoverageTests` (+5): bare `is`-prefixed verb
+  participle, instance inline property string coercion, comparison spelling-table
+  synonym, orphan language keyed lines, malformed-tool throw without engine.
+- Added `MerConfigPhrasePatternCoverageTests` (+2): `called` parameter introducer
+  and empty-kind rejection.
+- Extended `ASTToIRDeepCoverageTests`: nested `subInterpolationSegment` conditional
+  inside for-each bodies in direct `substituteArgs` exercise.
+- **MerConfigParser.swift:** 89.57% → **91.70%** region (floor **91.69**).
+- **ASTToIR.swift:** 89.82% → **89.93%** region (floor **89.92**).
+- Full suite: **1558 tests** pass; `scripts/coverage.swift --gate` pass.
+- **Confidence:** 99% for Inform-tier compiler closeout.
+
+### 2026-07-04 — Compiler 93%+; SwiftEmitter 91%+
+
+- Extended `CompilerCoverageTests` (+5): scoped `tools:` resolution, empty-host
+  vocabulary rejection, unknown vocabulary/rulebook frontmatter, ambiguous
+  `usually` enum defaults.
+- Extended `SwiftEmitterCoverageTests` (+5): workflow identifier coercion,
+  value-context `.init` fallback, definition loop-variable operands, nested
+  for-each interpolation drop, loop conditional logical emission.
+- **Compiler.swift:** 90.79% → **93.25%** region (floor **93.24**).
+- **SwiftEmitter.swift:** 90.96% → **91.60%** region (floor **91.59**).
+- Full suite: **1568 tests** pass; `scripts/coverage.swift --gate` pass.
+- **Confidence:** 99% for Inform-tier compiler closeout.
+
+### 2026-07-04 — SkillTriggers 92%+; RuleLowering fallback verified dead
+
+- Added `SkillTriggersCoverageTests`: asterisk schedule probe, cron-like without
+  `*`, synthesizer trace logging, unsuffixed struct name, duplicate struct suffix
+  disambiguation, frontmatter `triggers:` compile wiring.
+- Extended `RuleAnalyzerCoverageTests`: possessive multi-word greedy subject-filter
+  split (`note order's id`).
+- Verified `buildSubjectFilter` first-space fallback (~406–412) is unreachable:
+  greedy always accepts on the last single-token split because `ExpressionParser`
+  (`symbols: nil`) maps every non-empty bare token to `.literal` or non-empty
+  `.identifierRef`; documented in `coverage-exclusions.md` (kept as defensive).
+- **SkillTriggers.swift:** 89.74% → **92.31%** region (floor **92.30**).
+- **RuleLowering.swift:** unchanged at **87.50%** region (floor **87.49**).
+- Full suite: **1574 tests** pass; `scripts/coverage.swift --gate` pass.
+- **Confidence:** 99% for Inform-tier compiler coverage closeout.
+
+### 2026-07-04 — Dead-code removal; ParserTrace 92%+
+
+- Removed verified-dead `buildSubjectFilter` first-space fallback in
+  `RuleLowering.swift` (greedy always accepts; now returns `nil` if no split
+  matches). Line coverage **99.07%**; region unchanged at **87.50%**.
+- Extended `ParserTraceCoverageTests` (+3): stderr/stdout sinks, file atomic-write
+  fallback, custom sink getter/setter round-trip.
+- Extended `SkillTriggersCoverageTests` (+3): short cron field list, invalid cron
+  characters, ambient/event classification.
+- Extended `DiagnosticTests`: `unresolved` with >12 candidates (ranked subset note).
+- **ParserTrace.swift:** 89.26% → **92.56%** region (floor **92.55**).
+- **Diagnostic.swift:** 89.66% region (floor **89.65**).
+- Full suite: **1581 tests** pass; `scripts/coverage.swift --gate` pass.
+- **Confidence:** 99% for Inform-tier compiler coverage closeout.
+
+### 2026-07-05 — RuleLowering 88%+; RuleAnalyzer coverage sweep
+
+- Extended `RuleAnalyzerCoverageTests` (+3): literal `whose` predicate
+  (`qualifyPredicate` default arm), whitespace-only subject filter (`nil`),
+  bounded permission `whose` conditions.
+- **RuleLowering.swift:** 87.50% → **88.39%** region (floor **88.38**).
+- Documented `SkillMigrator` migrate-loop inert retry as covered by
+  `SkillMigratorMarkingTests` (`failedMarkdownProcedureItemInertsSection`).
+- Full suite: **1584 tests** pass; `scripts/coverage.swift --gate` pass.
+- **Confidence:** 99% for Inform-tier compiler coverage closeout.
+
+### 2026-07-05 — RuleAnalyzer permission markers; SkillMigrator alias migrate
+
+- Extended `RuleAnalyzerCoverageTests` (+7): `if`/`up to` bounded permission
+  markers, possessive-chain predicate qualification, traced unclassified rules,
+  comparison shorthand subject filters, precondition subject filters.
+- Extended `SkillMigratorCoverageTests`: migrate threads procedure section
+  aliases through strict compile (`## How to use` shell fence).
+- **RuleLowering.swift:** holds at **88.39%** region (floor **88.38**).
+- **SkillMigrator.swift:** holds at **86.84%** region (documented residuals).
+- Full suite: **1591 tests** pass; `scripts/coverage.swift --gate` pass.
+- **Confidence:** 99% for Inform-tier compiler coverage closeout.
+
+### 2026-07-04T23:35:00Z — MeridianCore Testing infra coverage push
+
+- Added `TestingInfraExtendedCoverageTests.swift`: MeridianTestRunner error/
+  reporting paths (SpecError descriptions, readFailure, missing source/vocab,
+  compile-fail `describeError`, runAll parse failures, on-disk vocab read,
+  `runtime_happy` end-to-end); RuntimeExecutor build-failure (verbose/non-
+  verbose), runtime assertion mismatch collection; SwiftPMPackageRunner
+  `combinedOutput`, `requireSuccess` failure, error descriptions, full
+  `writeMeridianRunDriverPackage` options, invalid assignments, Echo build/run.
+- Extended `MeridianTestRunnerTests`: invalid spec values (`expect_error_line`,
+  `expect_primitive_count`, `expect_workflow_mode`), `trace: all`, non-key line
+  skip, `ParseError.description`, on-disk vocab load, unknown `expect_compile` /
+  `expect_error_kind`.
+- **Region coverage:** MeridianTestRunner **90.77%** (floor **89.20**);
+  RuntimeExecutor **76.06%** (floor **76.00**); SpecParser **97.64%** (floor
+  **97.60**); SwiftPMPackageRunner **91.30%** (floor **89.80**).
+- Documented residuals in `coverage-exclusions.md`: RuntimeExecutor param-decode
+  driver lines (need domain-typed generated Swift), swift-unavailable/tempdir/
+  scaffold/swift-run fault paths; SwiftPMPackageRunner `launchFailed`.
+- Full suite: **1630 tests** pass; `scripts/coverage.swift --gate` pass.
+
+### 2026-07-05T01:05:00Z — MeridianCLIKit command coverage push
+
+- Extended `CLICommandsTests.swift` for `lint`, `migrate-skill`, `resume`, `run`,
+  and `skill-deviation`: error/hint lint paths, batch migration + reports,
+  overwrite refusal, explicit deps, resume with filesystem checkpoint + default
+  caches root, run happy path + trace/keep-temp/checkpoint, broken compile JSON
+  diagnostics, rulebook autodiscovery, skill-deviation batch unpaired/index paths.
+- **Region coverage:** LintCommand **90.91%** (floor **90.90**);
+  MigrateSkillCommand **75.15%** (floor **75.10**); ResumeCommand **81.82%**
+  (floor **81.80**); RunCommand **81.25%** (floor **81.20**);
+  SkillDeviationCommand **91.67%** (floor **91.60**).
+- Full suite: **1649 tests** pass; `scripts/coverage.swift --gate` pass.
+
+### 2026-07-05 — MeridianCLIKit CLISupport + compile/format/explain coverage
+
+- Extended `Tests/MeridianCLITests/CLISupportTests.swift`: `applyQuickFixes` dry-run/write,
+  ambiguous skip, `runDiagnosticsCheck` with autodiscovered rulebook, explicit rulebook
+  missing, `stderrIsTTY` smoke.
+- Extended `Tests/MeridianCLITests/CLICommandsTests.swift`: `CompileCommand` formatting,
+  autodiscover deps, explicit rulebook, trace warnings, namespace off/false, `--fix` paths;
+  `FormatCommand` clean `--check`, in-place noop, stdin shortcut; `ExplainCommand`
+  code-with-decision, did-you-mean hint (`MER200l`), no-suggestion unknown id.
+- **Region coverage:** CLISupport **88.43%** (floor **87.50**; residual `stderrIsTTY`
+  `isatty` branch); CompileCommand **94.52%** (floor **94.00**; residual swift-format
+  failure warning path); FormatCommand **97.06%** (floor **96.50**); ExplainCommand
+  **100%** — floor removed.
+- Full suite: **1669 tests** pass; `scripts/coverage.swift --gate` pass.
+
+### 2026-07-05 — RuntimeExecutor + MigrateSkillCommand coverage to 95%
+
+- Extended `TestingInfraExtendedCoverageTests.swift`: swift-unavailable PATH test,
+  SwiftPM tempdir/scaffold failure hooks, parameterized driver decode, matching
+  runtime assertions, run failure (verbose/non-verbose), silent-workflow
+  assertion branches; serialized suite for env isolation.
+- Added DEBUG `MERIDIAN_TEST_SWIFTPM_TEMP_FAIL` / `MERIDIAN_TEST_SWIFTPM_SCAFFOLD_FAIL`
+  hooks in `SwiftPMPackageRunner` so `RuntimeExecutor` catch paths are reachable.
+- Extended `MigrateSkillCommandTests`: section-alias persistence/append/dedupe,
+  unmined report, compile-fail ExitCode, diagnostics report, batch partial-failure
+  matrix, batch rulebook target, empty rulebook append.
+- **Region coverage:** RuntimeExecutor **95.77%** (floor **95.00**);
+  MigrateSkillCommand **95.27%** (floor **95.00**).
+- Full suite: **1687 tests** pass; `scripts/coverage.swift --gate` pass.

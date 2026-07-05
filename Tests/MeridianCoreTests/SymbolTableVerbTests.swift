@@ -44,4 +44,26 @@ struct SymbolTableVerbTests {
         let s = try symbols()
         #expect(s.tool(named: "archivePage") != nil)
     }
+
+    @Test("matchPhrase on whitespace-only input returns nil")
+    func emptyInvocationNoMatch() throws {
+        let s = try symbols()
+        #expect(s.matchPhrase("   ") == nil)
+    }
+
+    @Test("extractArgs strips trailing punctuation after the kind word")
+    func extractArgsStripsTrailers() throws {
+        let s = try symbols()
+        let pattern = PhrasePattern(segments: [
+            .literal("archive "),
+            .parameter(PhraseParameterAST(name: "page", kind: "page")),
+        ])
+        s.registerWorkflowPhrase(pattern: pattern, structName: "ArchivePage", sourceLine: 1, sourceFile: "t.merconfig")
+        let (_, args) = try #require(s.matchPhrase("archive the page,"))
+        if case .identifierRef(let name) = args["page"] {
+            #expect(name.lowercased().contains("page"))
+        } else {
+            Issue.record("expected identifierRef for page argument")
+        }
+    }
 }

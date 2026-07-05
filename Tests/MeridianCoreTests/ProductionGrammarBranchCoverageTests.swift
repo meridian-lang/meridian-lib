@@ -64,6 +64,16 @@ struct ProductionGrammarBranchCoverageTests {
         #expect(p.parse("a is 1 and b is 2 or either c is 3 or d is 4").traceDescription(detail: .verbose).contains("malformed("))
         #expect(!p.parse("neither either a is 1 or b is 2").traceDescription(detail: .verbose).isEmpty)
         #expect(!p.parse("xeither either a is 1 or b is 2").traceDescription(detail: .verbose).isEmpty)
+
+        // stripTrailingConnector's non-suffix branch: "and" appears at the top
+        // level of the prefix but not at its trailing edge.
+        #expect(p.parse("a is 1 and b is 2 either c is 3 or d is 4")
+            .traceDescription(detail: .verbose).contains("logical(and") == true)
+        // combineAnd's flattening branch: the recursively-parsed prefix is
+        // already a `.logical(.and, …)`, so joining the either-clause must
+        // append to it rather than nest a new pair.
+        let flattened = p.parse("a is 1 and b is 2 and either c is 3 or d is 4").traceDescription(detail: .verbose)
+        #expect(flattened.components(separatedBy: "logical(and").count == 2, Comment(rawValue: flattened))
     }
 
     @Test("literal keyword validation covers false branches")
@@ -89,6 +99,23 @@ struct ProductionGrammarBranchCoverageTests {
         #expect(lookup.parse("the corresponding to the sku \"SKU\" in the table") == nil)
         #expect(lookup.parse("the price corresponding to the \"SKU\" in the table") == nil)
         #expect(lookup.parse("the price corresponding to sku in the table") == nil)
+        // Nothing between "corresponding to the" and "in the" — empty key phrase.
+        #expect(lookup.parse("the price corresponding to the in the table") == nil)
+        // Nothing after "in the" — empty table name.
+        #expect(lookup.parse("the price corresponding to the sku \"SKU\" in the ") == nil)
+        // Unquoted single-word key — splitKeyPhrase's no-quote branch with count <= 1,
+        // yielding an empty key column, rejected by the keyColumn/keyText guard.
+        #expect(lookup.parse("the price corresponding to the sku in the table") == nil)
+        // Unquoted multi-word key — splitKeyPhrase's no-quote branch takes the
+        // last word as the key and the rest as the column name.
+        let unquoted = lookup.parse("the price corresponding to the order id 42 in the orders table")
+        guard case .tableLookup(let table, let keyColumn, _, let valueColumn) = unquoted else {
+            Issue.record("expected a tableLookup AST for an unquoted multi-word key")
+            return
+        }
+        #expect(table == "orders table")
+        #expect(keyColumn == "order id")
+        #expect(valueColumn == "price")
     }
 
     @Test("aggregate and superlative malformed branches")
@@ -130,6 +157,21 @@ struct ProductionGrammarBranchCoverageTests {
         #expect(grammar.parse("at most many pages") == nil)
         #expect(grammar.parse("exactly many pages") == nil)
         #expect(grammar.parse("some whosever pages")?.traceDescription(detail: .verbose).contains("quant(any") == true)
+
+        // matchDeterminer's `at least/most/exactly N` branch: nothing follows
+        // the number, so the remainder is empty — falls through to the
+        // "missing a description" malformed path.
+        #expect(grammar.parse("at least 3")?.traceDescription(detail: .verbose).contains("malformed(") == true)
+
+        // splitDescriptionAndBody's earliest-marker scan: a later-iterated
+        // marker (" is ") occurring *before* an earlier-iterated one
+        // (" have ") must win, exercising the `r.lowerBound < earliest!.lowerBound`
+        // comparison (not just the `earliest == nil` first-hit case).
+        if case .quantified(let q)? = grammar.parse("all pages is active and deals have status") {
+            #expect(q.description.noun == "pages")
+        } else {
+            Issue.record("expected a quantified AST for an out-of-order body-verb match")
+        }
     }
 
     @Test("description branches for ascending sorts, bare plurals, and object-gap clauses")
@@ -152,6 +194,14 @@ struct ProductionGrammarBranchCoverageTests {
         #expect(grammar.undeclaredPassiveVerbError("pages frobnicate by the user") == nil)
         #expect(grammar.undeclaredPassiveVerbError("pages owned by the user") == nil)
         #expect(grammar.undeclaredPassiveVerbError("page frobnicated by the user") == nil)
+        // nil symbols short-circuits undeclaredPassiveVerbError to nil.
+        #expect(DescriptionGrammar(lexicon: .default, symbols: nil, atom: atom, recurse: parser().parse)
+            .undeclaredPassiveVerbError("pages frobnicated by the user") == nil)
+        // parseThatClause's own empty-words guard (reachable directly; the
+        // full `grammar.parse("pages that")` path never gets an all-
+        // whitespace clause body since the relative-clause marker itself
+        // consumes the trailing text).
+        #expect(grammar.parseThatClause("   ", symbols: symbols) == nil)
     }
 
     @Test("dynamic verb and scalar-navigation guard branches")
@@ -163,6 +213,21 @@ struct ProductionGrammarBranchCoverageTests {
         #expect(p.parse("the user owns to the page").traceDescription(detail: .verbose).contains("verb("))
         #expect(p.parse("the widget assigned to the user").traceDescription(detail: .verbose) == "id(widget assigned to the user)")
         #expect(p.parse("the foo task assigned to").traceDescription(detail: .verbose) == "id(foo task assigned to)")
+
+        // ActiveVerbParser: a negation contraction directly before the matched
+        // verb at idx==1 drives subjectEnd to 0, yielding an empty subject —
+        // the guard must reject it (continue scanning) rather than emit a
+        // predicate with no subject.
+        let av = ActiveVerbParser(lexicon: .default, symbols: symbols, atom: atom)
+        #expect(av.parse("doesn't owns the page") == nil)
+
+        // ScalarNavigationParser: nil symbols short-circuits to nil, and a
+        // resolved past-participle verb followed by a non-connector word
+        // (neither "to" nor "by") must fall through (continue), not match.
+        let scalarNoSymbols = ScalarNavigationParser(lexicon: .default, symbols: nil, atom: atom)
+        #expect(scalarNoSymbols.parse("the foo task assigned to the user") == nil)
+        let scalar = ScalarNavigationParser(lexicon: .default, symbols: symbols, atom: atom)
+        #expect(scalar.parse("the foo task assigned oddly here") == nil)
     }
 
     @Test("possessive base resolution covers constants and instances")
@@ -185,6 +250,12 @@ struct ProductionGrammarBranchCoverageTests {
         #expect(!p.parseInterpolationSegments("[for each rows]x[end for]").isEmpty)
         #expect(!p.parseInterpolationSegments("{{ x as a }}").isEmpty)
         #expect(p.parseInterpolationSegments("{{ }}").isEmpty)
+        // splitForEachHeader: an " in " marker with nothing before it (an
+        // extra space right after "each") leaves an empty variable name,
+        // which must default to "item" rather than binding an empty name.
+        let segs = p.parseInterpolationSegments("[for each  in rows]x[end for]")
+        #expect(segs.contains { if case .forEach(let v, _, _) = $0 { return v == "item" }; return false },
+                Comment(rawValue: "\(segs)"))
     }
 
     @Test("code-block sentinel branches collapse literal-only interpolation and malformed sentinels")

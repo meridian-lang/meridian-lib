@@ -289,4 +289,137 @@ struct Inform7Wave4TemplateTests {
         #expect(out.contains("for __item in"), Comment(rawValue: out))
         #expect(out.contains("meridianFormat(__item.member(\"score\") ?? .null, as: \"integer\")"), Comment(rawValue: out))
     }
+
+    // --- FormatterRegistry: single source of truth for the closed formatter set ---
+
+    @Test("FormatterRegistry accepts every fixed name and any decimal(N)")
+    func registryAcceptsKnownFormatters() {
+        #expect(FormatterRegistry.isValid("integer"))
+        #expect(FormatterRegistry.isValid("Integer"))          // case-insensitive
+        #expect(FormatterRegistry.isValid("short date"))
+        #expect(FormatterRegistry.isValid("long date"))
+        #expect(FormatterRegistry.isValid("decimal(0)"))
+        #expect(FormatterRegistry.isValid("decimal(2)"))
+        #expect(FormatterRegistry.isValid("DECIMAL(3)"))
+    }
+
+    @Test("FormatterRegistry rejects unknown names and malformed decimal(...)")
+    func registryRejectsUnknown() {
+        #expect(!FormatterRegistry.isValid("shortdate"))
+        #expect(!FormatterRegistry.isValid("percentage"))
+        #expect(!FormatterRegistry.isValid("decimal()"))
+        #expect(!FormatterRegistry.isValid("decimal(abc)"))
+        #expect(!FormatterRegistry.isValid("decimal(2"))
+        #expect(!FormatterRegistry.isValid(""))
+    }
+
+    @Test("an unknown formatter in a fenced template is a sourced MER2012 error naming the available formatters")
+    func unknownFormatterIsHardError() throws {
+        let caught = #expect(throws: CompilerError.self) {
+            _ = try Compiler(options: .init(trace: .silent())).compile(
+                meridianSource: """
+                ---
+                name: template source
+                ---
+
+                ## Phases
+                bind report body =
+                  ```
+                  {{ 5 as a percentage }}
+                  ```
+                emit template.report with body = report body.
+                complete.
+                """,
+                meridianFile: "template-source.meri",
+                vocabularies: [])
+        }
+        let err = try #require(caught)
+        let diag = try #require(err.diagnostics.first)
+        #expect(diag.code == .unknownTemplateFormatter, Comment(rawValue: "\(diag.code)"))
+        #expect(diag.message.contains("percentage"), Comment(rawValue: diag.message))
+        #expect(!diag.suggestions.isEmpty || !diag.notes.isEmpty, Comment(rawValue: "\(diag)"))
+    }
+
+    @Test("a near-miss formatter typo suggests the nearest declared name")
+    func formatterTypoSuggestsNearest() throws {
+        let caught = #expect(throws: CompilerError.self) {
+            _ = try Compiler(options: .init(trace: .silent())).compile(
+                meridianSource: """
+                ---
+                name: template source
+                ---
+
+                ## Phases
+                bind report body =
+                  ```
+                  {{ 5 as a integr }}
+                  ```
+                emit template.report with body = report body.
+                complete.
+                """,
+                meridianFile: "template-source.meri",
+                vocabularies: [])
+        }
+        let err = try #require(caught)
+        let rendered = (err.diagnostics.first?.suggestions ?? []).map(\.rationale).joined()
+        #expect(rendered.contains("integer"), Comment(rawValue: rendered))
+    }
+
+    @Test("short date, long date, and decimal(N) formatters all compile cleanly")
+    func validFormattersCompile() throws {
+        let out = try Compiler(options: .init(trace: .silent())).compile(
+            meridianSource: """
+            ---
+            name: template source
+            ---
+
+            ## Phases
+            bind report body =
+              ```
+              {{ now as a short date }} {{ now as a long date }} {{ 5 as a decimal(2) }}
+              ```
+            emit template.report with body = report body.
+            complete.
+            """,
+            meridianFile: "template-source.meri",
+            vocabularies: [])
+        #expect(out.contains("as: \"short date\""), Comment(rawValue: out))
+        #expect(out.contains("as: \"long date\""), Comment(rawValue: out))
+        #expect(out.contains("as: \"decimal(2)\""), Comment(rawValue: out))
+    }
+}
+
+// MARK: - End-to-end .meridian.test specs (4A / 4B / 4C)
+
+@Suite("Wave 4 — .meridian.test specs")
+struct Wave4SpecTests {
+
+    /// `Tests/MeridianCoreTests/Inform7/Inform7Wave4Tests.swift`
+    ///  → `Tests/MeridianCoreTests/MeridianTestSpecs`.
+    private func specURL(_ file: String) -> URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()   // Inform7
+            .deletingLastPathComponent()   // MeridianCoreTests
+            .appendingPathComponent("MeridianTestSpecs")
+            .appendingPathComponent(file)
+    }
+
+    @Test("each Wave 4 spec compiles and satisfies its assertions",
+          arguments: [
+            "wave4_4a_domain.meridian.test",
+            "wave4_4b_tables.meridian.test",
+            "wave4_4c_templates.meridian.test",
+            "wave4_4c_templates_unknown_formatter.meridian.test",
+          ])
+    func specPasses(_ file: String) throws {
+        let spec = try MeridianTestRunner().loadSpec(specURL(file))
+        switch MeridianTestRunner().run(spec) {
+        case .success:
+            break
+        case .failure(let reasons):
+            Issue.record(Comment(rawValue: "\(file) failed:\n\(reasons.joined(separator: "\n"))"))
+        case .skipped(let reason):
+            Issue.record(Comment(rawValue: "\(file) was skipped: \(reason ?? "")"))
+        }
+    }
 }

@@ -61,6 +61,12 @@ public final class SwiftPMPackageRunner {
     }
 
     public static func temporary(prefix: String = "meridian-swiftpm") throws -> SwiftPMPackageRunner {
+        #if DEBUG
+        if ProcessInfo.processInfo.environment["MERIDIAN_TEST_SWIFTPM_TEMP_FAIL"] != nil {
+            throw NSError(domain: "MeridianTest", code: 1,
+                          userInfo: [NSLocalizedDescriptionKey: "simulated tempdir failure"])
+        }
+        #endif
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent("\(prefix)-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
@@ -68,6 +74,12 @@ public final class SwiftPMPackageRunner {
     }
 
     public func writePackage(manifest: String, files: [SourceFile]) throws {
+        #if DEBUG
+        if ProcessInfo.processInfo.environment["MERIDIAN_TEST_SWIFTPM_SCAFFOLD_FAIL"] != nil {
+            throw NSError(domain: "MeridianTest", code: 1,
+                          userInfo: [NSLocalizedDescriptionKey: "simulated scaffold failure"])
+        }
+        #endif
         try writeFile("Package.swift", contents: manifest)
         for file in files {
             try writeFile(file.relativePath, contents: file.contents)

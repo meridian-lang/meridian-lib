@@ -1,0 +1,22 @@
+name: Wave 4C — text substitutions (formatters, conditional, loop)
+description: ```
+A fenced `bind … = \`\`\` … \`\`\`` template body composes a `[for each]`
+loop, an `[if]`/`[otherwise]` conditional, and `{{ expr as a <formatter> }}`
+interpolations against every formatter `FormatterRegistry` recognizes
+(`integer`, `decimal(N)`, `short date`, `long date`). The source is an
+external file (not `source_inline`) because its fenced template body itself
+uses `\`\`\`` delimiters, which would collide with `source_inline`'s own
+fence-closing rule.
+```
+tags: inform7, wave4, templates, formatters, codegen
+
+source: wave4_4c_templates.meridian
+
+expect_compile: pass
+expect_swift_not_contains: _unresolved
+expect_swift_contains: for __item in
+expect_swift_contains: meridianFormat(__item.member("score") ?? .null, as: "integer")
+expect_swift_contains: meridianFormat(__item.member("score") ?? .null, as: "decimal(2)")
+expect_swift_contains: meridianFormat(.date(Date()), as: "short date")
+expect_swift_contains: meridianFormat(.date(Date()), as: "long date")
+expect_swift_contains: private func meridianFormat

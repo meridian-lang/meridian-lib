@@ -23,7 +23,7 @@ struct QuantifierGrammar {
             return .malformed("quantifier \"\(s)\" is missing a description (e.g. `all pages`).")
         }
 
-        let (descText, whereText, bodyText) = splitDescriptionAndBody(rest)
+        let (descText, whereText, verbClause, bodyText) = splitDescriptionAndBody(rest)
         guard !descText.trimmingCharacters(in: .whitespaces).isEmpty else {
             return .malformed("quantifier \"\(s)\" has no collection noun.")
         }
@@ -37,7 +37,8 @@ struct QuantifierGrammar {
             let elementVar = lexicon.singularize(noun.lowercased())
             body = recurse(elementVar + " " + normalizeQuantBody(b))
         }
-        let desc = DescriptionAST(noun: noun, adjectives: adjectives, wherePredicate: wherePred)
+        let desc = DescriptionAST(noun: noun, adjectives: adjectives, wherePredicate: wherePred,
+                                  verbClauses: verbClause.map { [$0] } ?? [])
         return .quantified(QuantifierAST(kind: kind, description: desc, body: body))
     }
 
@@ -66,15 +67,35 @@ struct QuantifierGrammar {
         return nil
     }
 
-    /// Split a quantifier remainder into (descriptionText, whereText, bodyText).
-    /// `whose …` introduces a where-predicate; a copular/possessive verb
-    /// (`have`/`has`/`are`/`is`/`contain`/`include`) introduces a per-element
-    /// body (kept verbatim from the verb onward).
-    private func splitDescriptionAndBody(_ s: String) -> (desc: String, whereText: String?, body: String?) {
+    /// Split a quantifier remainder into (descriptionText, whereText,
+    /// verbClause, bodyText). `whose …` introduces a where-predicate; a `that
+    /// <verb> …` relative clause or trailing `<participle> by <operand>`
+    /// passive clause (3B, shared with `DescriptionGrammar`) restricts the
+    /// description via a declared relation instead — this is how relation-
+    /// backed conditions are expressed over a quantified collection (`no
+    /// pages that mention the entity`, `any tasks assigned to the user`); a
+    /// copular/possessive verb (`have`/`has`/`are`/`is`/`contain`/`include`)
+    /// introduces a per-element body (kept verbatim from the verb onward).
+    /// A `that`/`by` marker that does not resolve to a declared verb form is
+    /// NOT an error here — it falls through so plain body/bare text
+    /// containing those words still parses as before.
+    private func splitDescriptionAndBody(_ s: String) -> (desc: String, whereText: String?, verbClause: VerbClauseAST?, body: String?) {
         if let wr = whoseMarkerRange(in: s) {
             let desc = String(s[s.startIndex..<wr.lowerBound]).trimmingCharacters(in: .whitespaces)
             let cond = String(s[wr.upperBound...]).trimmingCharacters(in: .whitespaces)
-            return (desc, cond, nil)
+            return (desc, cond, nil, nil)
+        }
+        if let sym = description.symbols {
+            if let tr = lexicon.grammar.relativeClauseMarkers.lazy
+                .compactMap({ QuoteAwareScanner.rangeOfMarker($0, in: s, caseInsensitive: true) }).first,
+               let vc = description.parseThatClause(String(s[tr.upperBound...]), symbols: sym) {
+                let desc = String(s[s.startIndex..<tr.lowerBound]).trimmingCharacters(in: .whitespaces)
+                return (desc, nil, vc, nil)
+            }
+            var descPart = s
+            if let vc = description.parsePassiveClauseSuffix(&descPart, symbols: sym) {
+                return (descPart, nil, vc, nil)
+            }
         }
         var earliest: Range<String.Index>?
         for v in lexicon.grammar.quantifierBodyVerbs {
@@ -85,9 +106,9 @@ struct QuantifierGrammar {
         if let r = earliest {
             let desc = String(s[s.startIndex..<r.lowerBound]).trimmingCharacters(in: .whitespaces)
             let body = String(s[r.lowerBound...]).trimmingCharacters(in: .whitespaces)
-            return (desc, nil, body)
+            return (desc, nil, nil, body)
         }
-        return (s.trimmingCharacters(in: .whitespaces), nil, nil)
+        return (s.trimmingCharacters(in: .whitespaces), nil, nil, nil)
     }
 
     /// Normalise a plural quantifier body verb to its singular element form so

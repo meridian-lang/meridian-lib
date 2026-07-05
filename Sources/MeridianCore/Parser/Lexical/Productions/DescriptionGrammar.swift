@@ -127,8 +127,10 @@ struct DescriptionGrammar {
 
     /// Parse a `that …` relative clause into a verb clause. Subject-gap
     /// (`that mention the entity`) has the verb first; object-gap (`that the
-    /// user owns`) has the verb last.
-    private func parseThatClause(_ raw: String, symbols sym: SymbolTable) -> VerbClauseAST? {
+    /// user owns`) has the verb last. Shared with `QuantifierGrammar`, which
+    /// restricts a quantified description with the same relative-clause shape
+    /// (`no pages that mention the entity`).
+    func parseThatClause(_ raw: String, symbols sym: SymbolTable) -> VerbClauseAST? {
         let words = raw.trimmingCharacters(in: .whitespaces).split(separator: " ").map(String.init)
         guard !words.isEmpty else { return nil }
         if let r = sym.resolveVerbForm(words[0].lowercased()), r.role != .pastParticiple {
@@ -158,7 +160,8 @@ struct DescriptionGrammar {
 
     /// Detect a trailing passive clause `<participle> by <operand>` on
     /// `descPart`, removing it and returning the verb clause (element = object).
-    private func parsePassiveClauseSuffix(_ descPart: inout String, symbols sym: SymbolTable) -> VerbClauseAST? {
+    /// Shared with `QuantifierGrammar` (`no tasks assigned by the user`).
+    func parsePassiveClauseSuffix(_ descPart: inout String, symbols sym: SymbolTable) -> VerbClauseAST? {
         guard let (hw, operand) = splitByClause(descPart) else { return nil }
         guard let last = hw.last,
               let r = sym.resolveVerbForm(last.lowercased()), r.role == .pastParticiple,

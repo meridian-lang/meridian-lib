@@ -143,6 +143,26 @@ struct Phase4MultiVocab {
         }
     }
 
+    @Test("merging LanguageSynonyms dictionaries prefers the other side on key collision")
+    func languageSynonymDictMergeConflictsPreferOther() {
+        let base = MerConfigFile(languageSynonyms: LanguageSynonyms(
+            durationSynonyms: ["tick": .second],
+            superlativeSynonyms: ["biggest": .largest],
+            fenceToolMapping: ["python": "python.run"]
+        ))
+        let overlay = MerConfigFile(languageSynonyms: LanguageSynonyms(
+            durationSynonyms: ["tick": .minute],
+            superlativeSynonyms: ["biggest": .smallest],
+            fenceToolMapping: ["python": "interpreter.run"]
+        ))
+
+        let merged = base.merging(overlay)
+
+        #expect(merged.languageSynonyms.durationSynonyms["tick"] == .minute)
+        #expect(merged.languageSynonyms.superlativeSynonyms["biggest"] == .smallest)
+        #expect(merged.languageSynonyms.fenceToolMapping["python"] == "interpreter.run")
+    }
+
     @Test("duplicate vocabulary name (same logical import) is rejected")
     func duplicateVocabNameFails() {
         let vocabs: [Compiler.VocabularyInput] = [

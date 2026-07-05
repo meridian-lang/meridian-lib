@@ -1,0 +1,11 @@
+---
+name: report
+---
+
+## Phases
+bind report body =
+  ```
+  {{ 5 as a percentage }}
+  ```
+emit template.report with body = report body.
+complete.

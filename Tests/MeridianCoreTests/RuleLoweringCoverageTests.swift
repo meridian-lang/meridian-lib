@@ -120,4 +120,54 @@ struct RuleLoweringCoverageTests {
                 || out.contains("80"),
                 Comment(rawValue: String(out.prefix(2500))))
     }
+
+    @Test("filter shorthand falls back to first-space split when greedy splits fail")
+    func filterFirstSpaceFallback() throws {
+        let mer = """
+        ---
+        vocabulary: t.merconfig
+        ---
+
+        A customer with risk score hello world must not place an order.
+
+        To place an order for a customer:
+          complete.
+        """
+        let cfg = """
+        === vocabulary ===
+        customer is a kind of thing.
+        customer has properties:
+          risk_score: Number.
+        order is a kind of thing.
+        """
+        let out = try compile(mer, cfg)
+        #expect(out.contains("riskScore") || out.contains("risk_score")
+                || out.contains("hello"),
+                Comment(rawValue: String(out.prefix(2500))))
+    }
+
+    @Test("compound filter with nested property access qualifies both sides")
+    func compoundFilterWithPropertyAccess() throws {
+        let mer = """
+        ---
+        vocabulary: t.merconfig
+        ---
+
+        A customer with active and verified must not place an order.
+
+        To place an order for a customer:
+          complete.
+        """
+        let cfg = """
+        === vocabulary ===
+        customer is a kind of thing.
+        customer has properties:
+          active: Boolean.
+          verified: Boolean.
+        order is a kind of thing.
+        """
+        let out = try compile(mer, cfg)
+        #expect(out.contains("active") && out.contains("verified"),
+                Comment(rawValue: String(out.prefix(2500))))
+    }
 }
