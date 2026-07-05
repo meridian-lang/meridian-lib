@@ -97,45 +97,45 @@
     "name" : "restock",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "applicability",
         "level" : 2,
         "line" : 11,
         "text" : "Use this when"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 16,
+        "line" : 15,
         "text" : "Workflow"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 20,
+        "line" : 18,
         "text" : "Workflow — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 24,
+        "line" : 22,
         "text" : "Workflow — steps 2"
       },
       {
-        "kind" : "procedure",
+        "kind" : "invariants",
         "level" : 2,
-        "line" : 30,
+        "line" : 28,
         "text" : "Guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 18,
+        "line" : 16,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 28,
+        "line" : 26,
         "text" : "Publish"
       }
     ],
@@ -145,26 +145,24 @@
         "heading" : "Use this when",
         "line" : 11,
         "lines" : [
-          "use judgment to follow the Use this when guidance:",
           "\"restock short products\"",
           "\"inventory below reorder point\""
         ],
-        "role" : "procedure"
+        "role" : "applicability"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Workflow",
-        "line" : 16,
+        "line" : 15,
         "lines" : [
-          "use judgment to follow the Workflow guidance:",
           "Check: any short products"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Workflow — steps",
-        "line" : 20,
+        "line" : 18,
         "lines" : [
           "fetch short products"
         ],
@@ -173,7 +171,7 @@
       {
         "executes" : true,
         "heading" : "Workflow — steps 2",
-        "line" : 24,
+        "line" : 22,
         "lines" : [
           "for each product:",
           "create a purchase order for the product",
@@ -184,12 +182,11 @@
       {
         "executes" : true,
         "heading" : "Guarantees",
-        "line" : 30,
+        "line" : 28,
         "lines" : [
-          "use judgment to follow the Guarantees guidance:",
           "make sure all products have a sku"
         ],
-        "role" : "procedure"
+        "role" : "invariants"
       }
     ],
     "triggers" : "\"restock short products\"\n\"inventory below reorder point\""
@@ -230,16 +227,28 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 12,
-      "swift_line" : 402
+      "meridian_line" : 29,
+      "swift_line" : 403
+    },
+    {
+      "meridian_line" : 55,
+      "swift_line" : 408
+    },
+    {
+      "meridian_line" : 24,
+      "swift_line" : 419
+    },
+    {
+      "meridian_line" : 70,
+      "swift_line" : 425
+    },
+    {
+      "meridian_line" : 26,
+      "swift_line" : 441
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 440
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 445
+      "swift_line" : 478
     },
     {
       "meridian_line" : 1,
@@ -247,7 +256,11 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 488
+      "swift_line" : 521
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 526
     }
   ],
   "tools_used" : [
@@ -258,26 +271,6 @@
       "mode" : "strict",
       "parameters" : [
 
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "\"restock short products\"\n\"inventory below reorder point\"\nuse judgment to follow the Workflow guidance:\nCheck: any short products\nfetch short products\nfor each product:\ncreate a purchase order for the product\nPublish: \"replenishment purchase orders raised\"\nuse judgment to follow the Guarantees guidance:\nmake sure all products have a sku",
-          "line" : 12,
-          "scoped_tools" : [
-            "inventory.reserve",
-            "invoice.create",
-            "invoice.list",
-            "order.cancel",
-            "order.list",
-            "payment.collect",
-            "period.close",
-            "product.list",
-            "purchase_order.create",
-            "shipment.create"
-          ],
-          "text" : "follow the Use this when guidance"
-        }
       ],
       "source_name" : "restock",
       "swift_struct" : "Restock"

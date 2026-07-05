@@ -54,8 +54,10 @@ extension SkillMigrator {
     ///      `decision table` block).
     ///   3. Any question is not checkable (needs entity/semantic judgment,
     ///      e.g. brain_taxonomist's "Is the primary subject a NAMED PERSON?")
-    ///      → the whole list is fuzzy; route to `!!! table (( ai-discretion ))`
-    ///      rather than fake determinism.
+    ///      and the block carries an AI-inference cue (P1 category 2) → the
+    ///      whole list is wrapped in `use judgment to …:` rather than faked
+    ///      determinism. With no inference cue, the list is a category-4
+    ///      reword error (`.errorOperational`) — never a silent AI wrap.
     /// Returns nil when the block doesn't parse as a question-arrow list at
     /// all (defensive; the caller only invokes this once `isQuestionArrowList`
     /// already confirmed every line parses).
@@ -70,7 +72,9 @@ extension SkillMigrator {
         }
         let allCheckable = items.allSatisfy { trial.isCheckableCondition(predicateText($0.question)) }
         guard allCheckable else {
-            guard options.routeFuzzy else { return (.documentation, nil) }
+            guard trial.hasInferenceCue(block.rawLines.joined(separator: "\n")) else {
+                return (.errorOperational, nil)
+            }
             // Not a Markdown table, so `!!! table (( ai-discretion ))` (which
             // requires a real `|`-delimited table) doesn't apply — wrap in the
             // generic `use judgment to …:` block instead, indenting the raw
@@ -80,7 +84,7 @@ extension SkillMigrator {
             // alone.
             let goal = "use judgment to weigh each question below:"
             let indented = block.rawLines.map { "  " + $0.trimmingCharacters(in: .whitespaces) }
-            return (.exec, [goal] + indented)
+            return (.aiInference, [goal] + indented)
         }
 
         let allRhsAreStatements = items.allSatisfy { trial.lowersAsStatement($0.rhs) }

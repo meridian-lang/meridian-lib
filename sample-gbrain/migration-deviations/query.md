@@ -3,8 +3,8 @@
 - Original: `query/SKILL.md`
 - Ported: `query.meri`
 - Tier: 2 (light edits)
-- Similarity: 84%
-- Lines: 156 -> 173 (+35 / -18)
+- Similarity: 74%
+- Lines: 156 -> 190 (+62 / -28)
 
 ## Frontmatter
 - Added: (none)
@@ -12,39 +12,43 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 - preamble-blockquoted
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L43 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L74 `Source precedence`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L86 `Citation in Answers`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L134 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L36 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L44 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L151 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
-- Sections inert total: 6/11 (55% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 11/11 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: reference-documentation=4, template=1, tools-metadata=1
-- Judgment: 5 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=9, template=1, tools-metadata=1
+- Judgment: 4 blocks, 0 lines
 
 ### Inert section details
-- L43 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L74 `Source precedence`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L86 `Citation in Answers`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L94 `Graph Traversal (v0.10.1+)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L122 `Search Quality Awareness`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L134 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L6 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L18 `Phases`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L36 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L44 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L52 `Quality Rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L64 `Token-Budget Awareness`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L83 `Source precedence`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L99 `Citation in Answers`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L111 `Graph Traversal (v0.10.1+)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L139 `Search Quality Awareness`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L151 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/query/SKILL.md
 +++ skills/query.meri
-@@ -31,18 +31,23 @@
+@@ -31,18 +31,21 @@
  
  # Query Skill
  
@@ -52,8 +56,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 +> Answer questions using the brain's knowledge with 3-layer search and synthesis.
  
 -## Contract
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
 -This skill guarantees:
 -- Every answer is grounded in brain content (no hallucination)
@@ -62,69 +65,110 @@ These sections were made non-executable in the port and should be reviewed as mi
  - Source precedence is respected (user statements > compiled truth > timeline > external)
  - Conflicting sources are noted with both citations
  
+-## Phases
 +
 +### Contract — steps
 +
 +> This skill guarantees:
 +- Every answer is grounded in brain content (no hallucination)
 +- Every claim has a citation tracing back to a specific page slug
- ## Phases
-+use judgment to follow the Phases guidance:
++## Phases (( role: reference ))
  
  1. **Decompose the question** into search strategies:
     - Keyword search for specific names, dates, terms
-@@ -56,7 +61,8 @@
- 4. **Synthesize answer** with citations. Every claim traces back to a specific page slug.
+@@ -53,10 +56,14 @@
+    - Hybrid search gbrain for semantic+keyword with expansion (query)
+    - List pages in gbrain by type or check backlinks for structural queries
+ 3. **Read top results.** Read the top 3-5 pages from gbrain to get full context.
+-4. **Synthesize answer** with citations. Every claim traces back to a specific page slug.
  5. **Flag gaps.** If the brain doesn't have info, say "the brain doesn't have information on X" rather than hallucinating.
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
++
++### Phases — steps
++
++use judgment to follow the Phases — steps guidance:
++4. **Synthesize answer** with citations. Every claim traces back to a specific page slug.
++## Anti-Patterns (( role: reference ))
  
  - Answering from general knowledge when the brain has relevant content
  - Hallucinating facts not in the brain
-@@ -72,7 +78,8 @@
+@@ -72,60 +79,84 @@
  - Gap flags: "The brain doesn't have information on X"
  - Conflict notes when sources disagree
  
 -## Quality Rules
-+## Quality Rules (( role: procedure ))
-+use judgment to follow the Quality Rules guidance:
++## Quality Rules (( role: reference ))
  
- - Never hallucinate. Only answer from brain content.
+-- Never hallucinate. Only answer from brain content.
  - Cite sources: "According to concepts/do-things-that-dont-scale..."
-@@ -82,6 +89,7 @@
+ - Flag stale results: if a search result shows [STALE], note that the info may be outdated
+ - For "who" questions, use backlinks and typed links to find connections
+ - For "what happened" questions, use timeline entries
  - For "what do we know" questions, read compiled_truth directly
  
- ## Token-Budget Awareness
-+use judgment to follow the Token-Budget Awareness guidance:
+-## Token-Budget Awareness
  
++### Quality Rules — steps (( role: reference ))
++
++- Never hallucinate. Only answer from brain content.
++## Token-Budget Awareness (( role: reference ))
++
++- `gbrain search` / `gbrain query` return ranked chunks with context snippets.
++  These are often enough to answer the question directly.
++- **"Tell me about X"** -- get the full page (the user wants the complete picture).
++- **"Did anyone mention Y?"** -- search results are enough (the user wants a yes/no with evidence).
++
++
++### Token-Budget Awareness — steps
++
++use judgment to follow the Token-Budget Awareness — steps guidance:
  Search returns **chunks**, not full pages. Read the excerpts first before deciding
  whether to load a full page.
-@@ -93,7 +101,7 @@
- - **"Tell me about X"** -- get the full page (the user wants the complete picture).
- - **"Did anyone mention Y?"** -- search results are enough (the user wants a yes/no with evidence).
  
+-- `gbrain search` / `gbrain query` return ranked chunks with context snippets.
+-  These are often enough to answer the question directly.
++
++### Token-Budget Awareness — steps 2
++
+ - Only use `gbrain get <slug>` to load the full page when a chunk confirms the
+   page is relevant and you need more context (e.g., compiled truth, timeline).
+-- **"Tell me about X"** -- get the full page (the user wants the complete picture).
+-- **"Did anyone mention Y?"** -- search results are enough (the user wants a yes/no with evidence).
+-
 -### Source precedence
-+### Source precedence (( inert ))
++### Source precedence (( role: reference ))
  
  When multiple sources provide conflicting information, follow this precedence:
  
-@@ -105,7 +113,7 @@
+ 1. **User's direct statements** (highest authority -- what the user told you directly)
+-2. **Compiled truth** (the brain's synthesized, cited understanding)
+ 3. **Timeline entries** (raw evidence, reverse-chronological)
+ 4. **External sources** (web search, API enrichment -- lowest authority)
+ 
  When sources conflict, note the contradiction with both citations. Don't silently
  pick one.
  
 -## Citation in Answers
-+## Citation in Answers (( inert ))
++
++### Source precedence — steps
++
++use judgment to follow the Source precedence — steps guidance:
++2. **Compiled truth** (the brain's synthesized, cited understanding)
++## Citation in Answers (( role: reference ))
  
  When referencing brain pages in your answer, propagate inline citations:
  - Cite the page: "According to [Source: people/jane-doe, compiled truth]..."
-@@ -113,19 +121,25 @@
+ - When brain pages have inline `[Source: ...]` citations, propagate them so
    the user can trace facts to their origin
++
++### Citation in Answers — steps
++
++use judgment to follow the Citation in Answers — steps guidance:
  - When you synthesize across multiple pages, cite all sources
  
 -## Graph Traversal (v0.10.1+)
-+## Graph Traversal (v0.10.1+) (( inert ))
++## Graph Traversal (v0.10.1+) (( role: reference ))
  
 -For relationship questions ("who knows who at X?", "connections between A and B",
 -"who works at Acme?", "who attended the standup?"), use the graph layer instead
@@ -151,12 +195,12 @@ These sections were made non-executable in the port and should be reviewed as mi
  - "Who works at Acme?" → `gbrain graph-query companies/acme --type works_at --direction in`
  - "Who attended Demo Day W26?" → `gbrain graph-query meetings/demo-day-w26 --type attended --direction out`
  - "What companies has Emily advised?" → `gbrain graph-query people/emily --type advises --direction out`
-@@ -135,15 +149,18 @@
+@@ -135,15 +166,18 @@
  graph structure. Search results are ranked with a small backlink boost so well-
  connected entities surface higher.
  
 -## Search Quality Awareness
-+## Search Quality Awareness (( inert ))
++## Search Quality Awareness (( role: reference ))
  
 -If search results seem off (wrong results, missing known pages, irrelevant hits):
 -- Run `gbrain doctor --json` to check index health

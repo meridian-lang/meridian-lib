@@ -598,15 +598,254 @@ public struct SmokeTestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SmokeTestInput", parameters: [:])
 
-        // L25
-        let __meridianProseResults_L25 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
-            guidance: "This skill guarantees:\n8 core tests verify gbrain + OpenClaw health after restart\nKnown failures are auto-fixed before reporting\nUser-extensible via `~/.gbrain/smoke-tests.d/*.sh` drop-in scripts\nResults logged to `/tmp/gbrain-smoke-test.log`\nExit code = number of unfixed failures (0 = all pass)\ntable:ai-discretion:fCAjIHwgVGVzdCB8IEF1dG8tRml4IHwKfC0tLXwtLS0tLS18LS0tLS0tLS0tLXwKfCAxIHwgQnVuIHJ1bnRpbWUgfCBJbnN0YWxsIGZyb20gYnVuLnNoIHwKfCAyIHwgR0JyYWluIENMSSBsb2FkcyB8IFJlaW5zdGFsbCBkZXBzIHwKfCAzIHwgR0JyYWluIGRhdGFiYXNlIChkb2N0b3IpIHwg4oCUIHwKfCA0IHwgR0JyYWluIHdvcmtlciBwcm9jZXNzIHwgU3RhcnQgd29ya2VyIHwKfCA1IHwgT3BlbkNsYXcgQ29kZXggcGx1Z2luIChab2QgQ0pTKSB8IGBucG0gaW5zdGFsbCB6b2RANCAtLWZvcmNlYCB8CnwgNiB8IE9wZW5DbGF3IGdhdGV3YXkgfCDigJQgKG1heSBub3QgYmUgc3RhcnRlZCB5ZXQpIHwKfCA3IHwgRW1iZWRkaW5nIEFQSSBrZXkgfCDigJQgKGNoZWNrIC5lbnYpIHwKfCA4IHwgQnJhaW4gcmVwbyBleGlzdHMgfCDigJQgfA==\nuse judgment to follow the Usage guidance:\ncodeblock:bash:Z2JyYWluIHNtb2tlLXRlc3Q=\ncodeblock:bash:YmFzaCBzY3JpcHRzL3Ntb2tlLXRlc3Quc2g=\nAdd to your `ensure-services.sh` or equivalent:\ncodeblock:bash:YmFzaCAvcGF0aC90by9nYnJhaW4vc2NyaXB0cy9zbW9rZS10ZXN0LnNoID4+IC90bXAvYm9vdHN0cmFwLmxvZyAyPiYx\nCreate executable scripts in `~/.gbrain/smoke-tests.d/`:\ncodeblock:bash:IyB+Ly5nYnJhaW4vc21va2UtdGVzdHMuZC9jaGVjay1yZWRpcy5zaAojIS9iaW4vYmFzaApyZWRpcy1jbGkgcGluZyB8IGdyZXAgLXEgUE9ORw==\nEdit `scripts/smoke-test.sh`. Follow this pattern:\ncodeblock:bash:IyDilIDilIAgTi4gW1NlcnZpY2UgTmFtZV0g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACmlmIFt0ZXN0IGNvbmRpdGlvbl07IHRoZW4KICBwYXNzICJbU2VydmljZSBOYW1lXSIKZWxzZQogICMgQXV0by1maXggYXR0ZW1wdAogIFtmaXggY29tbWFuZF0KICBpZiBbcmUtdGVzdCBjb25kaXRpb25dOyB0aGVuCiAgICBmaXhlZCAiW1doYXQgd2FzIGZpeGVkXSIKICAgIHBhc3MgIltTZXJ2aWNlIE5hbWVdIChhZnRlciBmaXgpIgogIGVsc2UKICAgIGZhaWwgIltTZXJ2aWNlIE5hbWVdIOKAlCBbZXJyb3IgZGV0YWlsXSIKICBmaQpmaQ==\nuse judgment to follow the Design rules: guidance:\n**Test first** — never fix without confirming broken\n**Re-test after fix** — verify the fix worked\n**Timeout everything** — `timeout N` on any command that could hang\n**Use helpers** — `pass()`, `fail()`, `fixed()`, `skip()`\n**Idempotent fixes** — safe to run repeatedly\n**Skip gracefully** — `skip()` when a prerequisite is missing, don't fail\ntable:ai-discretion:fCBWYXIgfCBEZWZhdWx0IHwgRGVzY3JpcHRpb24gfAp8LS0tLS18LS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18CnwgYEdCUkFJTl9TTU9LRV9MT0dgIHwgYC90bXAvZ2JyYWluLXNtb2tlLXRlc3QubG9nYCB8IExvZyBmaWxlIHBhdGggfAp8IGBHQlJBSU5fRElSX09WRVJSSURFYCB8IChhdXRvLWRldGVjdCkgfCBGb3JjZSBnYnJhaW4gaW5zdGFsbCBwYXRoIHwKfCBgR0JSQUlOX0RBVEFCQVNFX1VSTGAgfCAoZnJvbSAuZW52KSB8IERhdGFiYXNlIGNvbm5lY3Rpb24gVVJMIHwKfCBgT1BFTkNMQVdfR0FURVdBWV9QT1JUYCB8IGAxODc4OWAgfCBHYXRld2F5IHBvcnQgdG8gdGVzdCB8CnwgYEdCUkFJTl9CUkFJTl9QQVRIYCB8IGAvZGF0YS9icmFpbmAgfCBCcmFpbiByZXBvIHBhdGggfA==\nuse judgment to follow the Codex Zod core.cjs Missing (discovered 2026-04-23) guidance:\n**Persistence:** Does NOT survive container restart (gateway reinstalls deps)\nThis is why smoke tests must run on every restart\nSymptom: `Cannot find module './core.cjs'` → all Codex ACP sessions fail\nCause: Zod v4 npm package ships without `core.cjs` in some installs\nAuto-fix: `npm install zod@4 --force` in the codex extension's zod dir\nuse judgment to follow the Anti-Patterns guidance:\n❌ Running smoke tests on every chat turn. Once per container restart (or\non user request) is plenty. The script is cheap but it's not free\n❌ Writing a user drop-in without `timeout N` around any command that\ncould hang. A single hung drop-in stalls every subsequent run\n❌ Auto-fixing without confirming the check is actually broken first\nThe `pass → fail-detected → fix → re-test` loop is the contract; fixes\nthat skip the re-test can report success on a still-broken state\n❌ Treating `skip` as `fail`. Missing prerequisites (no OpenClaw installed,\nno brain repo configured) are skips, not failures. Exit code = count of\nreal failures, not skipped checks\n❌ Hardcoding paths in a user drop-in. Read env vars\n(`GBRAIN_DATABASE_URL`, `HOME`, etc.) so the script travels across\ncontainer rebuilds"
-        )
-        for (__key, __value) in __meridianProseResults_L25 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L52:C0") {
+            // L52
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain smoke-test"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L52:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L57:C0") {
+            // L57
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("bash scripts/smoke-test.sh"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L57:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L62:C0") {
+            // L62
+            // Add to your  or equivalent
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("ensure-services.sh"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L62:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L63:C0") {
+            // L63
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("bash /path/to/gbrain/scripts/smoke-test.sh >> /tmp/bootstrap.log 2>&1"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.3:L63:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.4:L83:C0") {
+            // L83
+            // Create executable scripts in
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("~/.gbrain/smoke-tests.d/"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.4:L83:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.5:L85:C0") {
+            // L85
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("redis-cli ping | grep -q PONG"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.5:L85:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.6:L93:C0") {
+            // L93
+            // Edit . Follow this pattern
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("scripts/smoke-test.sh"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.6:L93:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.7:L95:C0") {
+            // L95
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("if [test condition]; then"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.7:L95:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.8:L95:C0") {
+            // L95
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("pass \"[Service Name]\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.8:L95:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.9:L95:C0") {
+            // L95
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("else"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.9:L95:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.10:L95:C0") {
+            // L95
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("[fix command]"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.10:L95:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.11:L95:C0") {
+            // L95
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("if [re-test condition]; then"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.11:L95:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.12:L95:C0") {
+            // L95
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("fixed \"[What was fixed]\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.12:L95:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.13:L95:C0") {
+            // L95
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("pass \"[Service Name] (after fix)\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.13:L95:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.14:L95:C0") {
+            // L95
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("else"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.14:L95:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.15:L95:C0") {
+            // L95
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("fail \"[Service Name] — [error detail]\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.15:L95:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.16:L95:C0") {
+            // L95
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("fi"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.16:L95:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.17:L95:C0") {
+            // L95
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("fi"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.17:L95:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.18:L124:C0") {
+            // L124
+            // Timeout everything —  on any command that could hang
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("timeout N"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.18:L124:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.19:L145:C0") {
+            // L145
+            // Symptom:  → all Codex ACP sessions fail
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("Cannot find module './core.cjs'"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.19:L145:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.20:L146:C0") {
+            // L146
+            // Cause: Zod v4 npm package ships without  in some installs
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("core.cjs"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.20:L146:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.21:L147:C0") {
+            // L147
+            // Auto-fix:  in the codex extension's zod dir
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("npm install zod@4 --force"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.21:L147:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

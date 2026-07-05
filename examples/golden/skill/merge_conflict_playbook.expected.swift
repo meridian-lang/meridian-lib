@@ -798,7 +798,7 @@ public struct MergeConflictPlaybookPullRequest: MeridianWorkflow {
             }
             if __meridianShouldRun("progress:0.2.then.2:L162:C0") {
                 let ciStatus = try await runtime.invoke(
-                    tool: "getCiStatus",
+                    tool: "getCIStatus",
                     args: [
                         "pr": state.get("pullRequest.number") ?? .null,
                     ]

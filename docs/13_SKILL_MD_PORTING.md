@@ -24,14 +24,47 @@ zero `_unresolved` placeholders. The regression gate is
 
 ## The governing principle
 
-**Strict determinism — nothing calls an LLM unless explicitly marked.** No
-prose, section, idiom, trigger, or guard ever auto-invokes the planner. The only
-paths to the LLM are author-written markers: `with discretion` / `with autonomy`
+**Strict determinism — nothing calls an LLM unless explicitly cued.** No prose,
+section, idiom, trigger, or guard ever auto-invokes the planner. The only paths
+to the LLM are author-written markers: `with discretion` / `with autonomy`
 (workflow or section header) and the inline `use judgment to <goal>:` block (all
-lower to `ProseStepIR`). Everything else compiles to deterministic IR or is a
-hard error. An unmarked, unresolved imperative step is a coded `MER2001`
-diagnostic (with a did-you-mean against the declared phrases) — it never
-silently degrades to an LLM call.
+lower to `ProseStepIR`), plus the migrator's cue-gated `!!! checklist
+(( ai-autonomy ))` / `!!! table (( ai-discretion ))`. Everything else compiles
+to deterministic IR or is a hard error. An unmarked, unresolved imperative step
+is a coded `MER2001` diagnostic (with a did-you-mean against the declared
+phrases) — it never silently degrades to an LLM call.
+
+**P1 — every content unit is one of four things, never a silent fifth.** The
+migrator (and the `InertYieldAnalyzer` measurement tooling it shares an oracle
+with) classifies every section/block into exactly one bucket:
+
+1. **Lowerable** — it trial-lowers as-is (a statement, a checkable predicate, a
+   command/fence, a checklist/table item). No marker needed.
+2. **AI-inference, cue-gated** — it does not lower, but carries an
+   `EnglishLexicon.inferenceCueWords` cue (a cognitive verb: analyse,
+   understand, decide, weigh, synthesize, …). Routed to `use judgment to …:` /
+   `!!! checklist (( ai-autonomy ))` / `!!! table (( ai-discretion ))`. This is
+   the **only** signal that may reach the planner — a normative cue alone
+   (must/never/always) never does.
+3. **Documentary (`reference`)** — no operational or inference signal at all:
+   rationale, examples, external references, formatting templates, changelog.
+   Marked `(( role: reference ))`.
+4. **Operational, no cue — a hard error, not a marker.** Content that reads as
+   a contract (an `EnglishLexicon.normativeCueWords` cue, or sits under a
+   heading that already asserts a checkable/procedure role) but doesn't itself
+   lower and carries no inference cue is left for the **real compiler** to
+   reject with a precise reword diagnostic. Never silently filed as
+   documentation, never silently auto-wrapped in judgment. `--route-fuzzy`
+   (`meridian migrate-skill`) is the only opt-in escape hatch, and it still
+   marks the result `(( role: reference ))` (and reports it), rather than
+   inventing a fifth silent category.
+
+The migrator **never emits `(( inert ))`** — bucket 3 above always renders as
+`(( role: reference ))` (or `(( role: template ))` / `(( role: tools ))` /
+`(( role: convention-ref ))` for their specific closed shapes). Hand-authoring
+may still use plain `(( inert ))` (the compiler accepts it as a synonym), but a
+migrated file containing one is a porting bug, flagged by
+`skill-deviation`'s `inertMarkerCount`.
 
 ---
 
@@ -45,19 +78,23 @@ Per skill, the required edits are bounded to:
    `skill: true` flag.)
 2. **Prefer, in order:** (a) a heading that already resolves to a recognized
    role; (b) a `=== sections ===` rulebook alias for an organizational heading;
-   (c) an explicit marker on the existing heading — `(( inert ))` for narrative
-   documentation or templates, `(( inert, role: invariants ))` /
-   `(( inert, role: prohibitions ))` only when the prose is not structurally
-   checkable, or `(( role: <R> ))` to force a role inline.
-3. **As needed:** wrap genuine judgment lines in `use judgment to …:` /
-   mark a phase `with discretion:`.
-4. **Rarely (structural rewrite):** split a MIXED prose+steps section into an
-   `(( inert ))` heading + a recognized procedure heading; rephrase an imperative
-   step that is too freeform for the grammar; rephrase a fuzzy applicability
-   condition into a checkable predicate.
+   (c) an explicit marker on the existing heading — `(( role: reference ))` for
+   narrative documentation or templates, or `(( role: <R> ))` to force a role
+   inline. Never reach for `(( role: invariants/prohibitions ))` as a way to
+   quiet non-checkable prose — a checkable-role heading with no checkable
+   content and no inference cue is a hard error (P1 category 4), by design.
+3. **As needed:** wrap genuine judgment lines (an inference cue is present) in
+   `use judgment to …:` / mark a phase `with discretion:`.
+4. **Rarely (structural rewrite):** split a MIXED prose+steps section into a
+   `(( role: reference ))` heading + a recognized procedure heading; rephrase an
+   imperative step that is too freeform for the grammar; rephrase a fuzzy
+   applicability condition into a checkable predicate; reword a cue-less
+   operational sentence so either it lowers directly or it gains a genuine
+   inference cue.
 
 `meridian migrate-skill` injects no frontmatter and applies (1)–(2) wherever it
-can; the strict compile surfaces the residue (3)–(4) as located errors.
+can; the strict compile surfaces the residue (3)–(4) as located errors (or
+`--route-fuzzy` reports them as a nonfatal skip for exploratory batch runs).
 
 > **The migrator adds section titles to the rulebook for you.** When the marking
 > pass meets an unrecognized **executable-only** heading (a section whose body is
@@ -77,8 +114,10 @@ can; the strict compile surfaces the residue (3)–(4) as located errors.
 > in-file markers. List formatting is not proof of documentation: `**bold**`,
 > `__emphasis__`, and `[label](url)` are normalized away before strict compile
 > gets a chance to lower the item. Mixed prose paragraphs plus procedure items
-> still get `(( inert ))`; split them structurally before making the executable
-> part live.
+> get split automatically (see "Automatic mixed-section split" in
+> [07_CLI.md](07_CLI.md#meridian-migrate-skill)): the narrative stays under the
+> original heading marked `(( role: reference ))`, and the executable/AI-
+> inference run(s) move to generated `— steps` sibling heading(s).
 
 > **`(( role: procedure ))` is redundant on a recognized procedure heading —
 > don't add it.** `procedure` is the *implicit* role for any heading whose text
@@ -116,12 +155,12 @@ A gbrain skill is YAML frontmatter + Markdown sections. The mapping that makes
 | `## Phases` / `## Protocol` | executable procedure (deterministic statements) |
 | `## When To Use` | deterministic applicability (dispatch predicates + checkable preconditions) |
 | `## When NOT To Use` / `### Do NOT …` | negative applicability (soft-skip guards + negative dispatch predicates) |
-| `## Anti-Patterns` | `must not` where checkable; narrative ones stay inert |
+| `## Anti-Patterns` | `must not` where checkable; a genuinely non-checkable, cue-less item is a hard error, not free documentation |
 | `## Output Format` | result template (fenced literal + `{{ }}`) |
-| Philosophy / rationale / examples | inert outline / manifest metadata — no edit needed |
+| Philosophy / rationale / examples | `(( role: reference ))` outline / manifest metadata — no edit needed |
 
-Pre-heading narrative (text before the first `##`) is **inert** when the file
-has headings, so SKILL preambles need no edits.
+Pre-heading narrative (text before the first `##`) is blockquoted (non-
+executable) when the file has headings, so SKILL preambles need no edits.
 
 ---
 
@@ -258,39 +297,46 @@ deterministic thresholds don't fit a specific section.
 4. **Ambiguous anaphora → spell out the referent.** "connect it to the brain" →
    "connect the content to the brain". The anaphora resolver runs on judgment
    headers and procedure text; an unresolvable pronoun is a hard error.
-5. **Pure-narrative file → keep it heading-less, or mark the heading inert.** A
-   file with no `##`/`###` headings stays a flat-procedure document (each line
-   must still lower). To document narrative, put it under an explicit
-   `## Overview (( inert ))` heading — an unmarked, unrecognized heading with
-   content is a hard error, and content before the first heading is too (move it
-   under a heading or make it a `#`/`>` comment). **`migrate-skill` adds this
-   heading automatically** when the source has no `##`/`###` sections and the
-   body reads as markdown narrative (bullets, emphasis, topic labels, …) rather
-   than an executable flat procedure.
+5. **Pure-narrative file → keep it heading-less, or mark the heading
+   `reference`.** A file with no `##`/`###` headings stays a flat-procedure
+   document (each line must still lower). To document narrative, put it under
+   an explicit `## Overview (( role: reference ))` heading — an unmarked,
+   unrecognized heading with content is a hard error, and content before the
+   first heading is too (move it under a heading or make it a `#`/`>`
+   comment). **`migrate-skill` adds this heading automatically** when the
+   source has no `##`/`###` sections and the body reads as markdown narrative
+   (bullets, emphasis, topic labels, …) rather than an executable flat
+   procedure.
 6. **Loose anaphora-prone paragraphs under `## Contract`.** Each item must be a
-   structurally checkable comparison, or mark the section
-   `(( inert, role: invariants ))`; a non-checkable invariant item is a hard error.
+   structurally checkable comparison, or carry a genuine
+   `EnglishLexicon.inferenceCueWords` cue (routed to judgment); a non-checkable,
+   cue-less invariant item is a **hard error** (P1 category 4) — reword it into
+   a checkable predicate, or add a real inference cue if it genuinely needs
+   judgment. It is never silently marked `(( role: invariants ))`-and-inert;
+   that role only stays clean when every line is checkable.
 7. **Adding executable logic to a documentation section → split, don't comment.**
    **`meridian migrate-skill` does this automatically now** (see 07_CLI.md
    §"Automatic mixed-section split"): a heading whose body mixes narrative and
-   executable lines is split into the narrative under the original `(( inert ))`
-   heading and a generated `— steps` sibling carrying just the executable run,
-   aliased to `procedure`. What follows is the manual fallback — apply it by
-   hand only when the automatic split under- or over-splits a given section (the
-   threshold heuristic is deliberately conservative) or you are hand-authoring
-   rather than running the migrator.
+   executable/AI-inference lines is split into the narrative under the original
+   `(( role: reference ))` heading (only when real leftover content remains)
+   and a generated `— steps` sibling carrying just the executable/AI-inference
+   run, aliased to `procedure`. There is no minimum-content threshold — every
+   lowerable or AI-inference segment survives as its own child. What follows is
+   the manual fallback — apply it by hand only when you are hand-authoring
+   rather than running the migrator, or the automatic split's boundaries don't
+   fit a specific section.
 
    A `role` section makes **every** non-blank, non-comment line a live statement
-   that must lower, so you cannot simply flip an `(( inert ))` heading to
-   `(( role: procedure ))` while keeping its descriptive paragraph — that prose
-   now errors as an unresolved phrase. The **correct** fix is a structural split
-   (edit-budget item 4): keep the narrative in its `(( inert ))` section verbatim
-   (it stays real, visible documentation) and add a **separate** sibling/child
-   heading whose body is **only** executable statements. Example (`briefing.meri`
-   back-linking):
+   that must lower, so you cannot simply flip an `(( role: reference ))` heading
+   to `(( role: procedure ))` while keeping its descriptive paragraph — that
+   prose now errors as an unresolved phrase. The **correct** fix is a structural
+   split (edit-budget item 4): keep the narrative in its `(( role: reference ))`
+   section verbatim (it stays real, visible documentation) and add a
+   **separate** sibling/child heading whose body is **only** executable
+   statements. Example (`briefing.meri` back-linking):
 
    ```
-   ## Back-Linking During Briefing (( inert ))
+   ## Back-Linking During Briefing (( role: reference ))
 
    If the briefing creates or updates any brain pages, the back-linking iron
    law applies: every entity the page mentions must have a back-link from their
@@ -303,9 +349,10 @@ deterministic thresholds don't fit a specific section.
      if the entity does not link to the input, add a back-link from the entity to the input.
    ```
 
-   The procedure section contains zero prose; the documentation stays inert and
-   uncommented. (A `###` child re-resolves its own role, so it can sit under an
-   inert `##` parent; for sections already at `###`, add a sibling `###`.)
+   The procedure section contains zero prose; the documentation stays
+   non-executable and uncommented. (A `###` child re-resolves its own role, so
+   it can sit under a reference `##` parent; for sections already at `###`, add
+   a sibling `###`.)
 
    Note how the procedure preserves the narrative's **load-bearing qualifier**:
    the prose says "a mention *without* a back-link is a broken brain; fix the
@@ -320,9 +367,10 @@ deterministic thresholds don't fit a specific section.
    > executed. That hides a real requirement behind a comment and is the one place
    > the "no silent drops" guarantee can't protect you (the drop is author-chosen
    > via `>`, not compiler-rejected). A `role` section's body must be exclusively
-   > executable statements; everything else belongs in an `(( inert ))` section.
-8. **Narrative encodes executable *contracts* — mine it before inerting.** This
-   is the most-missed step. SKILL.md prose rarely just *describes*; it usually
+   > executable statements; everything else belongs in an `(( role: reference ))`
+   > section.
+8. **Narrative encodes executable *contracts* — mine it before marking `reference`.**
+   This is the most-missed step. SKILL.md prose rarely just *describes*; it usually
    states **conditions on execution** that the language can lower:
 
    | Narrative shape | Lower it as | Example |
@@ -335,11 +383,15 @@ deterministic thresholds don't fit a specific section.
    The back-linking iron law is the canonical case: "every entity the page
    mentions must have a back-link" reads like documentation but is a
    **post-condition**. Lowering it (the guarded loop *establishes* it; an
-   `assert`/`make sure` can *verify* it) captures intent the inert prose would
-   have thrown away. **Before you mark any normative sentence `(( inert ))`, ask:
-   is this a post-condition, precondition, invariant, or guard?** If yes, lower
-   it — inert is only for genuinely non-executable material (rationale, examples,
-   external references, formatting templates).
+   `assert`/`make sure` can *verify* it) captures intent the reference prose
+   would have thrown away. **Before you mark any normative sentence
+   `(( role: reference ))`, ask: is this a post-condition, precondition,
+   invariant, or guard?** If yes, lower it — `reference` is only for genuinely
+   non-executable material (rationale, examples, external references,
+   formatting templates). If it's normative-shaped (a `must`/`never`/`always`
+   cue) but you can't lower it and it has no genuine inference cue, it is a
+   **hard error** to reword, not free documentation (P1 category 4) —
+   `(( role: reference ))` may never be used to silence it.
 
    > `assert`, `ensure`, and `make sure` are aliases for the same invariant
    > statement; a domain can add more introducers via a `=== language ===`
@@ -352,8 +404,8 @@ deterministic thresholds don't fit a specific section.
    |---|---|---|
    | A **decision table** (conditions → action) | leave as a table (decision is the default) | last column / `action` header is the action; cells become `header is value` predicates |
    | A **data/lookup table** (rows of values) | `!!! table (( data table[: <name>] ))` above it | binds a record list; iterate with `for each row in <name>` |
-   | A table that's genuinely reference-only | `!!! table (( inert ))` above it | the only place a table is inert (tables have no heading to mark) |
-   | An **acceptance checklist** (`- [ ] …`) | leave as a task list | each item is an invariant `assert`; a non-checkable item is a hard error → rephrase or inert |
+   | A table that's genuinely reference-only | `!!! table (( inert ))` above it | the only place a table is inert (tables have no heading to carry a `(( role: reference ))` marker instead) |
+   | An **acceptance checklist** (`- [ ] …`) | leave as a task list | each item is an invariant `assert`; a non-checkable item with no inference cue is a hard error → rephrase, or route via `!!! checklist (( ai-autonomy ))` if it genuinely needs judgment |
    | An **output-format rule** (`every emitted X …`) | `every emitted <noun> <predicate>` | generalized beyond regex to any checkable predicate |
 
    A `!!!` marker that is not directly above a table, an unknown block kind, or
@@ -366,30 +418,36 @@ deterministic thresholds don't fit a specific section.
     (`edge count`, not `link count`). This is why `brain.merconfig`'s health
     report uses `edge count` / `timeline count`.
 
-11. **`## Tools Used` is metadata, not inert.** A `## Tools Used` (or `Tools`,
-    `Tools Required`, `Required Tools`) section whose bullets each name a tool id
-    is the recognized `.tools` role — it mines the ids into the workflow's
-    `scopedTools` and the manifest `tools_used`. Do **not** mark it `(( inert ))`.
-    Two bullet forms are accepted (keep whichever reads better, no reformatting):
-    `<description> (<tool_id>)` and the leading-backtick `` `<tool_id>` — <description>``
-    (any separator). A bullet matching neither — including a section that is
-    actually a **CLI command reference** (``` `gbrain init …` -- create brain ```,
-    whose backticked token has spaces and so isn't a bare tool id) — is genuine
-    documentation; keep that one `(( inert ))`.
+11. **`## Tools Used` is metadata, not reference.** A `## Tools Used` (or
+    `Tools`, `Tools Required`, `Required Tools`) section whose bullets each name
+    a tool id is the recognized `.tools` role — it mines the ids into the
+    workflow's `scopedTools` and the manifest `tools_used`. Do **not** mark it
+    `(( role: reference ))`. Two bullet forms are accepted (keep whichever reads
+    better, no reformatting): `<description> (<tool_id>)` and the
+    leading-backtick `` `<tool_id>` — <description>`` (any separator). A bullet
+    matching neither — including a section that is actually a **CLI command
+    reference** (``` `gbrain init …` -- create brain ```, whose backticked token
+    has spaces and so isn't a bare tool id) — is genuine documentation; keep
+    that one `(( role: reference ))`.
 
-12. **Fuzzy tables/checklists are AI steps, not inert.** **`meridian
-    migrate-skill` routes these automatically** (on by default; `--no-route-fuzzy`
-    to disable): a checklist/table block that doesn't trial-lower gets the
-    `!!! checklist (( ai-autonomy ))` / `!!! table (( ai-discretion ))` marker
-    prepended for you, and a below-split-threshold section with no executable
-    content becomes a `use judgment to follow the <heading> guidance:` wrap
-    instead of going `(( inert ))`. What follows is the manual shape reference —
-    apply it by hand when hand-authoring or adjusting an automatically-routed
-    block. A decision table whose condition cells are *intent descriptions*
-    (not checkable comparisons) and an
-    acceptance checklist whose items are *not structurally checkable* are still
-    part of the workflow — they just need judgment. Route them to the planner via
-    the two AI modes instead of dropping them with `(( inert ))`:
+12. **Fuzzy tables/checklists are AI steps only when they carry an inference
+    cue — otherwise they're a reword error, never reference.** **`meridian
+    migrate-skill` routes the cue-gated case automatically**: a checklist/table
+    block that doesn't trial-lower AND carries an `inferenceCueWords` cue gets
+    the `!!! checklist (( ai-autonomy ))` / `!!! table (( ai-discretion ))`
+    marker prepended for you, and a section with no executable content but an
+    inference cue becomes a `use judgment to follow the <heading> guidance:`
+    wrap. A cue-less non-lowerable checklist/table is instead left for the real
+    compiler to reject (P1 category 4) — pass `--route-fuzzy` to downgrade that
+    to a reported, nonfatal `(( role: reference ))` skip for exploratory batch
+    runs, or reword the block so it either lowers or gains a genuine cue. What
+    follows is the manual shape reference — apply it by hand when
+    hand-authoring or adjusting an automatically-routed block. A decision table
+    whose condition cells are *intent descriptions* (not checkable comparisons)
+    and an acceptance checklist whose items are *not structurally checkable*
+    are still part of the workflow — if they genuinely need judgment (an
+    inference cue is present or the cell text says so), route them to the
+    planner via the two AI modes instead of leaving them as an error:
 
     | Fuzzy shape | Mark it | Lowers to | The planner gets |
     |---|---|---|---|
@@ -400,40 +458,47 @@ deterministic thresholds don't fit a specific section.
     `ProseStepAST` dispatch), so it is valid in any workflow and runs through the
     existing planner / scope / checkpoint machinery — no new IR. The section the
     block sits under must be **executable** (a recognized `procedure`-role
-    heading, or aliased in `=== sections ===`), since an `(( inert ))` section
-    suppresses the whole body. Prefer `(( inert ))` for a table/checklist *only*
-    when it is genuine reference material the workflow never acts on (benchmark
-    evidence, a lookup the procedure never consults, a CLI reference). Decide:
-    **does the workflow act on this?** Yes + deterministic → decision/data table
-    or invariant checklist; yes + fuzzy → `ai-discretion` / `ai-autonomy`; no →
-    `inert`. Worked example: `eiirp`'s `### Confirm` acceptance checklist was
-    `(( inert ))`; it is now `!!! checklist (( ai-autonomy ))`, so the seven
-    criteria become an autonomous loop that closes the workflow.
+    heading, or aliased in `=== sections ===`), since a `(( role: reference ))`
+    section suppresses the whole body. Reserve `(( inert ))`/`(( role: reference
+    ))` for a table/checklist *only* when it is genuine reference material the
+    workflow never acts on (benchmark evidence, a lookup the procedure never
+    consults, a CLI reference). Decide: **does the workflow act on this?** Yes +
+    deterministic → decision/data table or invariant checklist; yes + fuzzy +
+    genuine inference cue → `ai-discretion` / `ai-autonomy`; yes + fuzzy + no
+    cue → reword it (hard error, not a free pass); no → `reference`. Worked
+    example: `eiirp`'s `### Confirm` acceptance checklist used to be marked
+    inert; it is now `!!! checklist (( ai-autonomy ))`, so the seven criteria
+    become an autonomous loop that closes the workflow.
 
-13. **Operational inert must go to zero.** The deviation index reports
-    `Operational inert`, `Unclassified inert`, and an inert-category breakdown;
-    per-file reports list every inert heading with its category and reason.
-    Treat both `unclassified` and `operational inert` as porting bugs.
-    Operational inert means a section is procedure-shaped, checkable/normative,
-    or contains executable Markdown surfaces but is still suppressed. Fix it by
-    removing the marker, adding a section alias, splitting mixed prose, lowering
-    deterministic lines, or explicitly routing fuzzy work with
-    `ai-discretion` / `ai-autonomy`. `migrate-skill`'s marking pass now does the
-    split/route steps for you; a residual operational-inert section after
-    migration means either the split threshold didn't trigger (fewer than 3
-    executable lines and under 25% of the section — wrap it in
-    `use judgment to follow the <heading> guidance:` by hand, or lower the
-    threshold case-by-case) or the content needs a `brain.merconfig` phrase
-    authored before it will trial-lower. The migration report's
+13. **Operational inert must go to zero — and now it structurally can't
+    silently recur.** The deviation index reports `Operational inert`,
+    `Unclassified inert`, an inert-category breakdown, and `inertMarkerCount`
+    (literal `(( inert ))` markers — the migrator never writes one, so a
+    nonzero count in a migrated file is itself a bug); per-file reports list
+    every non-executable heading with its category and reason. Treat
+    `unclassified`, `operational inert`, and any nonzero `inertMarkerCount` as
+    porting bugs. Operational inert means a section is procedure-shaped,
+    checkable/normative, or contains executable Markdown surfaces but is still
+    suppressed — under P1 this should no longer happen, because a cue-less
+    operational body is left unmarked/aliased for the real compiler to reject
+    rather than marked `(( role: reference ))`. Fix a residual instance by
+    adding a section alias, splitting mixed prose, lowering deterministic
+    lines, routing genuinely judgment-worthy work with `ai-discretion` /
+    `ai-autonomy` (only if an inference cue is present), or authoring the
+    `brain.merconfig` phrase the content needs before it will trial-lower. The
+    migration report's
     `unmined-contract` line count is the leading indicator: a normative
     (must/never/always-shaped) line that didn't lower and wasn't split out is
-    listed there rather than silently disappearing into `(( inert ))` prose.
+    listed there rather than silently disappearing into reference prose.
 
-14. **`Contract` / `Anti-Patterns` are executable or explicitly AI-routed.**
-    When every line is checkable, leave the section live so invariant/prohibition
-    lowering can produce assertions. When the contract is fuzzy or mixed, do not
-    leave it `(( inert, role: invariants/prohibitions ))`; make it an executable
-    procedure section and route the checklist to the planner:
+14. **`Contract` / `Anti-Patterns` are executable, explicitly AI-routed, or a
+    reword error — never silently reference.** When every line is checkable,
+    leave the section live so invariant/prohibition lowering can produce
+    assertions. When the contract is fuzzy or mixed but carries a genuine
+    inference cue, make it an executable procedure section and route the
+    checklist to the planner. When it's fuzzy or mixed with **no** inference
+    cue, it is a hard error (P1 category 4) to reword — never mark it
+    `(( role: reference ))` to make the error go away:
 
     ```meri
     ## Contract (( role: procedure ))
@@ -451,12 +516,13 @@ deterministic thresholds don't fit a specific section.
 
 ## Worked example (`signal-detector`)
 
-Rename → add `vocabulary` + `rulebook`. `## Contract` prose bullets are marked
-`(( inert, role: invariants ))`; `## Phases` steps compile (`gbrain search "name"` → `shell.run` invoke;
-`If NO page → … If page exists → trigger enrich` → branch + cross-skill call);
-the one true-judgment line ("assess notability") gets
-`use judgment to decide if the entity is notable:`. Net: ~3 added lines + 1
-marker.
+Rename → add `vocabulary` + `rulebook`. `## Contract`'s narrative guarantee
+bullets are marked `(( role: reference ))`, with its structurally executable
+sub-content split into a `— steps` sibling; `## Phases` steps compile
+(`gbrain search "name"` → `shell.run` invoke; `If NO page → … If page exists →
+trigger enrich` → branch + cross-skill call); the one true-judgment line
+("assess notability") gets `use judgment to decide if the entity is
+notable:`. Net: ~3 added lines + 1 marker.
 
 ---
 

@@ -29,38 +29,34 @@ struct SkillMigratorMarkingTests {
         try migrator(vocabularies: vocabularies).markSections(source).aliases
     }
 
-    @Test("a Contract heading with zero checkable/normative signal is judgment-wrapped, not silently inert")
-    func contractInert() throws {
-        let out = try Self.mark("""
+    @Test("a Contract heading with zero checkable/normative/inference signal is left unmarked for the real compiler to reject (P1 category 4)")
+    func contractOperationalErrorLeftUnmarked() throws {
+        let source = """
         # Title
 
         ## Contract
 
         This skill guarantees a thing.
-        """)
-        // "Contract" already asserts an invariants role — with no checkable
-        // predicate and no unmined normative cue words, that absence of
-        // signal is itself the judgment signal (AGENTS.md §15), not evidence
-        // the guarantee is genuinely inert. The heading carries an explicit
-        // `(( role: procedure ))` marker (not a clean heading + rulebook
-        // alias): the checkable-role body builder (invariants here) has no
-        // case for a `use judgment to follow …:` prose step, and a marker is
-        // authoritative over any rulebook alias for the same heading text
-        // (unlike an alias, which can lose to a same-heading corpus-wide
-        // alias — see `SkillMigrator.SplitPlan.forcedRoleMarker`).
-        #expect(out.contains("use judgment to follow the Contract guidance:"), Comment(rawValue: out))
-        #expect(out.contains("## Contract (( role: procedure ))"), Comment(rawValue: out))
+        """
+        // No checkable predicate and no `inferenceCueWords` cue — but
+        // "Contract" already asserts an invariants role, so the absence of
+        // signal is not free documentation (P1 category 4: operational/
+        // normative signal with no inference cue is a reword error, never a
+        // silent judgment-wrap or reference escape). The migrator leaves the
+        // heading and body exactly as authored; `SkillSectionBuilder.
+        // assertLine` raises its own precise `uncheckablePredicate`
+        // diagnostic when this is strict-compiled.
+        #expect(try Self.mark(source) == source)
     }
 
-    @Test("an Anti-Patterns heading with zero checkable/normative signal is judgment-wrapped, not silently inert")
-    func antiPatternsInert() throws {
-        let out = try Self.mark("""
+    @Test("an Anti-Patterns heading with zero checkable/normative/inference signal is left unmarked for the real compiler to reject (P1 category 4)")
+    func antiPatternsOperationalErrorLeftUnmarked() throws {
+        let source = """
         ## Anti-Patterns
 
         - Don't do the bad thing.
-        """)
-        #expect(out.contains("use judgment to follow the Anti-Patterns guidance:"), Comment(rawValue: out))
-        #expect(out.contains("## Anti-Patterns (( role: procedure ))"), Comment(rawValue: out))
+        """
+        #expect(try Self.mark(source) == source)
     }
 
     @Test("checkable Contract and Anti-Patterns remain executable")
@@ -80,16 +76,28 @@ struct SkillMigratorMarkingTests {
         #expect(!out.contains("## Anti-Patterns (("), Comment(rawValue: out))
     }
 
-    @Test("mixed prose keeps Contract inert even with checkable bullets")
-    func mixedContractStillInert() throws {
-        let out = try Self.mark("""
+    @Test("mixed prose splits Contract into a clean parent and an executable invariants child (annotation label attaches to the checkable bullet)")
+    func mixedContractSplits() throws {
+        let source = """
         ## Contract
 
         This skill guarantees:
         - the page count is at least 1
-        """)
-        #expect(out.contains("## Contract (( inert, role: invariants ))"),
-                Comment(rawValue: out))
+        """
+        let out = try Self.mark(source)
+        let separator = SkillMigrator.splitHeadingSeparator
+        // The colon-terminated label attaches to the checkable bullet it
+        // introduces, so nothing is left over under the parent — it stays
+        // completely clean rather than carrying a `(( role: reference ))`
+        // marker for zero leftover content.
+        #expect(out.contains("## Contract\n"), Comment(rawValue: out))
+        #expect(!out.contains("## Contract (("), Comment(rawValue: out))
+        #expect(out.contains("### Contract\(separator)"), Comment(rawValue: out))
+        #expect(out.contains("> This skill guarantees:"), Comment(rawValue: out))
+        #expect(out.contains("- the page count is at least 1"), Comment(rawValue: out))
+        #expect(try Self.aliases(source) == [
+            SkillMigrator.SectionAlias(heading: "Contract\(separator)", role: .invariants),
+        ])
     }
 
     @Test("an unrecognized pure-shell heading is routed to a procedure rulebook alias, not an inline marker")
@@ -112,8 +120,8 @@ struct SkillMigratorMarkingTests {
                 Comment(rawValue: "\(aliases)"))
     }
 
-    @Test("a comment-only shell fence is judgment-routed guidance, not deterministic shell or plain inert")
-    func commentOnlyShellFenceRoutesToJudgment() throws {
+    @Test("a comment-only shell fence with no inference cue is an operational-error split, not an auto-judgment-wrap")
+    func commentOnlyShellFenceRoutesToOperationalError() throws {
         let source = """
         ## Deal / company monitoring (cron)
 
@@ -124,15 +132,20 @@ struct SkillMigratorMarkingTests {
         ```
         """
         let out = try Self.mark(source)
+        let separator = SkillMigrator.splitHeadingSeparator
+        // Neither the colon lead-in nor the fence's comment text carries an
+        // `inferenceCueWords` cue, so P1 forbids auto-wrapping it in
+        // judgment. It is instead pulled into its own executable-error
+        // child (aliased to `.procedure`), left for the real compiler to
+        // raise its own precise reword diagnostic.
         #expect(out.contains("## Deal / company monitoring (cron)\n"), Comment(rawValue: out))
-        #expect(!out.contains("## Deal / company monitoring (cron) (( inert"),
-                Comment(rawValue: out))
-        #expect(out.contains("use judgment to follow the Deal / company monitoring (cron) guidance:"),
-                Comment(rawValue: out))
-        #expect(!out.contains("Deal / company monitoring (cron)\(SkillMigrator.splitHeadingSeparator)"),
-                Comment(rawValue: out))
+        #expect(!out.contains("## Deal / company monitoring (cron) (("), Comment(rawValue: out))
+        #expect(!out.contains("use judgment"), Comment(rawValue: out))
+        #expect(out.contains("### Deal / company monitoring (cron)\(separator)"), Comment(rawValue: out))
+        #expect(out.contains("For each active item under `deals/` or `companies/`:"), Comment(rawValue: out))
+        #expect(out.contains("# Weekly: pull recent news per company; flag changes for review."), Comment(rawValue: out))
         #expect(try Self.aliases(source) == [
-            SkillMigrator.SectionAlias(heading: "Deal / company monitoring (cron)", role: .procedure),
+            SkillMigrator.SectionAlias(heading: "Deal / company monitoring (cron)\(separator)", role: .procedure),
         ])
     }
 
@@ -150,15 +163,19 @@ struct SkillMigratorMarkingTests {
         #expect(try Self.aliases(source) == [SkillMigrator.SectionAlias(heading: "Post import", role: .procedure)])
     }
 
-    @Test("an unrecognized mixed prose and command section stays inert")
-    func mixedCommandProseStaysInert() throws {
+    @Test("an unrecognized mixed prose and command section splits into a reference-marked parent and an executable command child")
+    func mixedCommandProseSplits() throws {
         let out = try Self.mark("""
         ## Post import
 
         Run the cleanup commands below.
         - `gbrain extract links --source db`
         """)
-        #expect(out.contains("## Post import (( inert ))"), Comment(rawValue: out))
+        let separator = SkillMigrator.splitHeadingSeparator
+        #expect(out.contains("## Post import (( role: reference ))"), Comment(rawValue: out))
+        #expect(out.contains("Run the cleanup commands below."), Comment(rawValue: out))
+        #expect(out.contains("### Post import\(separator)"), Comment(rawValue: out))
+        #expect(out.contains("gbrain extract links --source db"), Comment(rawValue: out))
     }
 
     @Test("choice-only unknown heading is routed to procedure")
@@ -195,8 +212,8 @@ struct SkillMigratorMarkingTests {
         #expect(try Self.aliases(source) == [SkillMigrator.SectionAlias(heading: "Decision table", role: .procedure)])
     }
 
-    @Test("non-shell fenced prose keeps unknown heading inert")
-    func nonShellFenceStaysInert() throws {
+    @Test("non-shell fenced prose marks unknown heading as reference documentation")
+    func nonShellFenceStaysReference() throws {
         let out = try Self.mark("""
         ## Example output
 
@@ -204,7 +221,7 @@ struct SkillMigratorMarkingTests {
         # Report
         ```
         """)
-        #expect(out.contains("## Example output (( inert ))"), Comment(rawValue: out))
+        #expect(out.contains("## Example output (( role: reference ))"), Comment(rawValue: out))
     }
 
     @Test("general-abilities: a non-shell fence with a configured Fence tool mapping is routed to procedure")
@@ -225,8 +242,8 @@ struct SkillMigratorMarkingTests {
         #expect(!out.contains("## Example output (("), Comment(rawValue: out))
     }
 
-    @Test("a fence in an unmapped language still stays inert even with a mapping configured for another language")
-    func unmappedLanguageFenceStaysInertDespiteOtherMapping() throws {
+    @Test("a fence in an unmapped language still stays reference even with a mapping configured for another language")
+    func unmappedLanguageFenceStaysReferenceDespiteOtherMapping() throws {
         let voc = Compiler.VocabularyInput(name: "test", file: "test.merconfig", source: """
         === language ===
         Fence tool mapping:
@@ -239,11 +256,21 @@ struct SkillMigratorMarkingTests {
         # Report
         ```
         """, vocabularies: [voc])
-        #expect(out.contains("## Example output (( inert ))"), Comment(rawValue: out))
+        #expect(out.contains("## Example output (( role: reference ))"), Comment(rawValue: out))
     }
 
-    @Test("explicit inert block marker keeps unknown heading inert")
-    func inertBlockMarkerStaysInert() throws {
+    @Test("an explicit in-body inert table marker does not gate the parent heading; the split still separates it from its table (known scope boundary)")
+    func explicitInertTableMarkerBodyNoLongerGatesHeading() throws {
+        // Unlike a heading-level `(( inert ))` marker (still respected
+        // verbatim by strict compile as hand-authored input), an in-body
+        // `!!! table (( inert ))` marker is not specially recognized by the
+        // split scanner — it is ordinary narrative that happens to precede a
+        // table block. The table has no checkable/inference signal, so it
+        // becomes its own operational-error child (left for the real
+        // compiler), and the marker line stays behind as leftover narrative,
+        // which is why the parent gets `(( role: reference ))` rather than
+        // the table itself being respected as inert. Nothing is silently
+        // dropped — both halves of the content are preserved, just split.
         let out = try Self.mark("""
         ## Reference table
 
@@ -252,7 +279,11 @@ struct SkillMigratorMarkingTests {
         |---|---|
         | a | b |
         """)
-        #expect(out.contains("## Reference table (( inert ))"), Comment(rawValue: out))
+        let separator = SkillMigrator.splitHeadingSeparator
+        #expect(out.contains("## Reference table (( role: reference ))"), Comment(rawValue: out))
+        #expect(out.contains("!!! table (( inert ))"), Comment(rawValue: out))
+        #expect(out.contains("### Reference table\(separator)"), Comment(rawValue: out))
+        #expect(out.contains("| item | note |"), Comment(rawValue: out))
     }
 
     @Test("numbered command item with parenthesis marker is routed to procedure")
@@ -282,22 +313,35 @@ struct SkillMigratorMarkingTests {
         #expect(try Self.aliases(source) == [SkillMigrator.SectionAlias(heading: "Setup steps", role: .procedure)])
     }
 
-    @Test("failed Markdown procedure item marks the whole recognized section inert")
-    func failedMarkdownProcedureItemInertsSection() async throws {
-        let result = try await Self.migrator().migrate("""
+    @Test("a Phases section with no checkable/cue signal hard-fails to compile by default; routeFuzzy rescues it to (( role: reference ))")
+    func failedMarkdownProcedureItemHardErrorsByDefault() async throws {
+        let source = """
         ## Phases
 
         1. Load calendar. Check today's meetings.
         2. Compile prep briefing.
-        """)
+        """
+        // Matches `SkillMigrator.Options`'s own default: no escape hatch, so
+        // an operational Phases section with zero checkable/AI-inference
+        // signal is left exactly as authored by the marking pass, and the
+        // real compiler raises its own precise diagnostic — a hard error,
+        // never a silently downgraded reference section.
+        let strict = try await SkillMigrator(compiler: Compiler(options: .init(trace: .silent())), vocabularies: [],
+                                             options: .init(routeFuzzy: false)).migrate(source)
+        #expect(!strict.compiledOK, Comment(rawValue: strict.meriSource))
 
+        // With the routeFuzzy escape hatch enabled (this suite's test
+        // default), the compile-retry loop rescues the section to
+        // `(( role: reference ))` so exploratory batch runs still produce a
+        // compiling file.
+        let result = try await Self.migrator().migrate(source)
         #expect(result.compiledOK)
-        #expect(result.meriSource.contains("## Phases (( inert, role: procedure ))"),
+        #expect(result.meriSource.contains("## Phases (( role: reference ))"),
                 Comment(rawValue: result.meriSource))
     }
 
-    @Test("failed Markdown item under unknown heading marks that section inert")
-    func failedUnknownMarkdownItemInertsSection() async throws {
+    @Test("an unrecognized heading with no checkable/cue signal is marked reference documentation directly (no retry needed)")
+    func failedUnknownMarkdownItemMarksReference() async throws {
         let result = try await Self.migrator().migrate("""
         ## Related skills
 
@@ -306,7 +350,7 @@ struct SkillMigratorMarkingTests {
         """)
 
         #expect(result.compiledOK)
-        #expect(result.meriSource.contains("## Related skills (( inert ))"),
+        #expect(result.meriSource.contains("## Related skills (( role: reference ))"),
                 Comment(rawValue: result.meriSource))
     }
 
@@ -323,6 +367,96 @@ struct SkillMigratorMarkingTests {
         #expect(out.contains("- Review output"), Comment(rawValue: out))
     }
 
+    @Test("a Domain heading is a recognized non-executable role and stays untouched")
+    func domainHeadingLeftUnmarked() throws {
+        let source = """
+        ## Domain
+
+        A Widget has a name and a price.
+        """
+        #expect(try Self.mark(source) == source)
+    }
+
+    @Test("a When Not To Use heading with fully checkable content remains executable")
+    func negativeApplicabilityCheckableRemainsExecutable() throws {
+        let out = try Self.mark("""
+        ## When Not To Use
+
+        - the request type is "internal"
+        """)
+        #expect(out.contains("## When Not To Use\n"), Comment(rawValue: out))
+        #expect(!out.contains("## When Not To Use (("), Comment(rawValue: out))
+    }
+
+    @Test("a checkable-role heading with a question-arrow list body under checkableOnly falls to the fuzzy-table/error-operational cue gate")
+    func checkableRoleQuestionArrowListRoutesThroughCueGate() throws {
+        let outWithCue = try Self.mark("""
+        ## Contract
+
+        1. Is this ambiguous enough that we must decide it manually? -> escalate to a human
+        2. Is the context missing enough that we must decide it manually? -> escalate to a human
+        """)
+        #expect(outWithCue.contains("!!! table (( ai-discretion ))") || outWithCue.contains("use judgment"),
+                Comment(rawValue: outWithCue))
+
+        let outWithoutCue = try Self.mark("""
+        ## Contract
+
+        1. Is the sky a nice color today for a picnic? -> escalate to a human
+        2. Is the grass a nice color today for a picnic? -> escalate to a human
+        """, routeFuzzy: false)
+        #expect(outWithoutCue.contains("## Contract\n"), Comment(rawValue: outWithoutCue))
+        #expect(!outWithoutCue.contains("## Contract (("), Comment(rawValue: outWithoutCue))
+    }
+
+    @Test("executableFenceContent: a degenerate single-line fence (no payload) is not executable")
+    func executableFenceContentDegenerateSingleLine() {
+        let content = SkillMigrator.executableFenceContent(["```bash"])
+        #expect(!content.hasExecutableLine)
+        #expect(content.commentText.isEmpty)
+    }
+
+    @Test("executableFenceContent: a shebang line makes the fence executable even with only comments otherwise")
+    func executableFenceContentShebangIsExecutable() {
+        let content = SkillMigrator.executableFenceContent([
+            "```bash",
+            "#!/usr/bin/env bash",
+            "# just a comment",
+            "```",
+        ])
+        #expect(content.hasExecutableLine)
+    }
+
+    @Test("heading-less body with no leading title inserts Overview right at the first body line")
+    func headinglessNoLeadingTitleInsertsAtFirstLine() throws {
+        let out = try Self.mark("""
+        This skill has no title heading at all, just narrative.
+        """)
+        #expect(out.hasPrefix("## Overview (( role: reference ))"), Comment(rawValue: out))
+        #expect(out.contains("This skill has no title heading at all"), Comment(rawValue: out))
+    }
+
+    @Test("heading-less body with a non-fuzzy (checkable) task-list item does not trigger the overview wrap")
+    func headinglessCheckableTaskListItemNotWrapped() throws {
+        let source = """
+        # Title
+
+        - [ ] the request type is "internal"
+        """
+        let out = try Self.mark(source)
+        #expect(!out.contains("## Overview (( role: reference ))"), Comment(rawValue: out))
+    }
+
+    @Test("heading-less body with a fuzzy task-list item triggers the overview wrap")
+    func headinglessFuzzyTaskListItemWrapped() throws {
+        let out = try Self.mark("""
+        # Title
+
+        - [ ] the output is reasonable
+        """)
+        #expect(out.contains("## Overview (( role: reference ))"), Comment(rawValue: out))
+    }
+
     @Test("aliasRulebook renders a === sections === input for the chosen aliases")
     func aliasRulebookRendered() {
         let books = SkillMigrator.aliasRulebook(
@@ -333,14 +467,14 @@ struct SkillMigratorMarkingTests {
         #expect(SkillMigrator.aliasRulebook([]).isEmpty)
     }
 
-    @Test("an unrecognized narrative heading is marked inert")
-    func narrativeInert() throws {
+    @Test("an unrecognized narrative heading is marked reference documentation")
+    func narrativeReference() throws {
         let out = try Self.mark("""
         ## Background
 
         Some descriptive prose about the design.
         """)
-        #expect(out.contains("## Background (( inert ))"), Comment(rawValue: out))
+        #expect(out.contains("## Background (( role: reference ))"), Comment(rawValue: out))
     }
 
     @Test("heading-less fuzzy condition line triggers overview wrap")
@@ -350,10 +484,10 @@ struct SkillMigratorMarkingTests {
 
         the report is notable
         """)
-        #expect(out.contains("## Overview (( inert ))"), Comment(rawValue: out))
+        #expect(out.contains("## Overview (( role: reference ))"), Comment(rawValue: out))
     }
 
-    @Test("heading-less narrative SKILL is wrapped under Overview (( inert ))")
+    @Test("heading-less narrative SKILL is wrapped under Overview (( role: reference ))")
     func headinglessNarrativeWrappedInOverview() throws {
         let source = """
         # Deprecated
@@ -363,12 +497,12 @@ struct SkillMigratorMarkingTests {
         - Keep this note as documentation.
         """
         let out = try Self.mark(source)
-        #expect(out.contains("## Overview (( inert ))"), Comment(rawValue: out))
+        #expect(out.contains("## Overview (( role: reference ))"), Comment(rawValue: out))
         #expect(out.contains("This skill moved elsewhere."), Comment(rawValue: out))
         #expect(out.contains("- Keep this note as documentation."), Comment(rawValue: out))
     }
 
-    @Test("install-style deprecation stub is wrapped under Overview (( inert ))")
+    @Test("install-style deprecation stub is wrapped under Overview (( role: reference ))")
     func installDeprecationStubWrapped() throws {
         let source = """
         # Install GBrain (Deprecated)
@@ -381,7 +515,7 @@ struct SkillMigratorMarkingTests {
         """
         let out = try Self.mark(source)
         #expect(out.contains("# Install GBrain (Deprecated)"), Comment(rawValue: out))
-        #expect(out.contains("## Overview (( inert ))"), Comment(rawValue: out))
+        #expect(out.contains("## Overview (( role: reference ))"), Comment(rawValue: out))
         #expect(out.contains("Auto-provision Supabase"), Comment(rawValue: out))
     }
 
@@ -411,17 +545,17 @@ struct SkillMigratorMarkingTests {
 
         - Keep this note as documentation.
         """)
-        #expect(cap.lines().contains { $0.contains("Overview (( inert ))") })
+        #expect(cap.lines().contains { $0.contains("Overview (( role: reference ))") })
     }
 
-    @Test("narrative Tools Used command bullets are marked inert")
-    func narrativeToolsUsedInert() throws {
+    @Test("narrative Tools Used command bullets are marked role: tools")
+    func narrativeToolsUsedMarked() throws {
         let out = try Self.mark("""
         ## Tools Used
 
         - `gbrain publish` -- deterministic HTML generation
         """)
-        #expect(out.contains("## Tools Used (( inert, role: tools ))"), Comment(rawValue: out))
+        #expect(out.contains("## Tools Used (( role: tools ))"), Comment(rawValue: out))
     }
 
     @Test("valid Tools Used bullets remain live")
@@ -436,9 +570,9 @@ struct SkillMigratorMarkingTests {
         #expect(!out.contains("## Tools Used ("), Comment(rawValue: out))
     }
 
-    @Test("a narrative procedure heading with zero executable signal is judgment-wrapped, not silently inert")
-    func recognizedNarrativeHeadingsBecomeInert() throws {
-        let out = try Self.mark("""
+    @Test("a narrative procedure/applicability heading with zero checkable/inference signal is left unmarked (P1 category 4), not auto-judgment-wrapped")
+    func recognizedNarrativeHeadingsLeftUnmarked() throws {
+        let source = """
         ## Phases
 
         do the thing.
@@ -446,21 +580,12 @@ struct SkillMigratorMarkingTests {
         ## When to invoke
 
         - "trigger phrase"
-        """)
-        // "Phases" already asserts it is a procedure — zero exec signal there
-        // is the judgment signal itself (AGENTS.md §16 / Phase 1 item 4), not
-        // evidence the section is genuinely inert.
-        #expect(out.contains("use judgment to follow the Phases guidance:"), Comment(rawValue: out))
-        #expect(!out.contains("## Phases (( inert"), Comment(rawValue: out))
-        // "When to invoke" is a recognized applicability heading; a bare
-        // trigger-phrase bullet is neither checkable nor normative, so the
-        // same zero-signal-is-the-signal rule applies (AGENTS.md §15) — it is
-        // judgment-wrapped rather than left plainly inert. Like Contract/
-        // Anti-Patterns above, the checkable-role (applicability) body
-        // builder has no prose-step case, so the heading carries an explicit
-        // `(( role: procedure ))` marker rather than a clean heading + alias.
-        #expect(out.contains("use judgment to follow the When to invoke guidance:"), Comment(rawValue: out))
-        #expect(out.contains("## When to invoke (( role: procedure ))"), Comment(rawValue: out))
+        """
+        // Neither body carries an `inferenceCueWords` cue, so P1 forbids
+        // auto-wrapping either heading in judgment even though both already
+        // assert an operational role (procedure / applicability). Both are
+        // left exactly as authored for the real per-line builder to reject.
+        #expect(try Self.mark(source) == source)
     }
 
     @Test("recognized lowerable procedure / applicability headings are left unmarked")
@@ -482,15 +607,14 @@ struct SkillMigratorMarkingTests {
         #expect(!out.contains("## When to invoke ("), Comment(rawValue: out))
     }
 
-    @Test("Phase N: narrative heading is recognized as procedure and judgment-wrapped, not silently inert")
-    func phasePrefixNarrativeInert() throws {
-        let out = try Self.mark("""
+    @Test("Phase N: narrative heading is recognized as procedure and left unmarked (P1 category 4), not auto-judgment-wrapped")
+    func phasePrefixNarrativeLeftUnmarked() throws {
+        let source = """
         ## Phase 1: Inventory
 
         do the inventory.
-        """)
-        #expect(out.contains("use judgment to follow the Phase 1: Inventory guidance:"), Comment(rawValue: out))
-        #expect(!out.contains("## Phase 1: Inventory (( inert"), Comment(rawValue: out))
+        """
+        #expect(try Self.mark(source) == source)
     }
 
     @Test("pre-heading preamble content is blockquoted; comments/blanks are not")
@@ -580,8 +704,8 @@ struct SkillMigratorMarkingTests {
         """
     )
 
-    @Test("a plain-statement procedure line with no vocabulary is judgment-wrapped, not silently inert (baseline, symbols: nil today)")
-    func plainStatementInertWithoutVocab() throws {
+    @Test("a plain-statement procedure line with no vocabulary is left unmarked (P1 category 4), not auto-judgment-wrapped; an empty unrecognized heading is marked reference")
+    func plainStatementLeftUnmarkedWithoutVocab() throws {
         let out = try Self.mark("""
         ## Setup
 
@@ -590,11 +714,15 @@ struct SkillMigratorMarkingTests {
         Validate the order.
         """)
         // With no vocabulary threaded in, "Validate the order." can't
-        // trial-lower — but "Steps" already asserts it is a procedure, so
-        // the zero-exec-signal body still routes to judgment rather than a
-        // plain inert marker (AGENTS.md §16 / Phase 1 item 4).
-        #expect(out.contains("use judgment to follow the Steps guidance:"), Comment(rawValue: out))
-        #expect(!out.contains("## Steps (( inert"), Comment(rawValue: out))
+        // trial-lower and carries no inference cue — "Steps" already
+        // asserts it is a procedure, so P1 category 4 applies: left exactly
+        // as authored for the real compiler to reject, never auto-wrapped.
+        #expect(!out.contains("use judgment"), Comment(rawValue: out))
+        #expect(!out.contains("## Steps (("), Comment(rawValue: out))
+        #expect(out.contains("## Steps\n\nValidate the order."), Comment(rawValue: out))
+        // "Setup" has no body at all (unrecognized heading, no signal
+        // whatsoever) — genuinely documentary, marked reference directly.
+        #expect(out.contains("## Setup (( role: reference ))"), Comment(rawValue: out))
     }
 
     @Test("a plain-statement procedure line trial-lowers and stays unmarked once real vocabulary is threaded in")
@@ -635,8 +763,8 @@ struct SkillMigratorMarkingTests {
         #expect(!out.contains("## Steps (( inert"), Comment(rawValue: out))
     }
 
-    @Test("below the split threshold, a mixed section routes to a judgment-wrap instead of splitting (fuzzy routing on)")
-    func belowThresholdRoutesToJudgmentWrap() throws {
+    @Test("a small mixed section still splits — P1 removed the old minimum-size threshold; every lowerable segment always gets its own child")
+    func smallMixedSectionAlwaysSplits() throws {
         let body = """
         ## Steps
 
@@ -651,43 +779,41 @@ struct SkillMigratorMarkingTests {
         Validate the order.
         """
         let out = try Self.mark(body, vocabularies: [Self.orderVocab])
-        // No inert marker — the section is executable via the judgment wrap.
-        #expect(out.contains("## Steps\n"), Comment(rawValue: out))
+        let separator = SkillMigrator.splitHeadingSeparator
         #expect(!out.contains("(( inert"), Comment(rawValue: out))
-        #expect(out.contains("use judgment to follow the Steps guidance:"), Comment(rawValue: out))
+        #expect(!out.contains("use judgment"), Comment(rawValue: out))
+        #expect(out.contains("## Steps (( role: reference ))"), Comment(rawValue: out))
         #expect(out.contains("This phase exists to keep orders tidy over the long run."), Comment(rawValue: out))
-        #expect(out.contains("Validate the order."), Comment(rawValue: out))
-        #expect(!out.contains(SkillMigrator.splitHeadingSeparator), Comment(rawValue: out))
+        #expect(out.contains("### Steps\(separator)"), Comment(rawValue: out))
+        let childIdx = out.range(of: "### Steps\(separator)")!.lowerBound
+        #expect(out[childIdx...].contains("Validate the order."), Comment(rawValue: out))
+        #expect(!out[childIdx...].contains("This phase exists"), Comment(rawValue: out))
 
-        // Idempotent: running again does not nest a second judgment wrap.
+        // Idempotent: running again does not re-split or double-mark.
         let again = try Self.mark(out, vocabularies: [Self.orderVocab])
         #expect(again == out, Comment(rawValue: again))
     }
 
-    @Test("below the split threshold with fuzzy routing disabled, a mixed section stays whole and plainly inert (opt-out)")
-    func belowThresholdStaysWholeInertWithRouteFuzzyOff() throws {
-        let out = try Self.mark("""
+    @Test("routeFuzzy no longer affects the deterministic marking pass — it only gates the compile-retry rescue fallback")
+    func routeFuzzyDoesNotAffectMarking() throws {
+        // See `SkillMigratorCommandRewriteCoverageTests.markSectionReference`
+        // for the retry-rescue behavior this flag now exclusively controls.
+        let source = """
         ## Steps
 
         This phase exists to keep orders tidy over the long run.
 
-        It runs on a slow cadence and touches many different systems.
-
-        Most of the time nothing needs to change at all.
-
-        Occasionally a manual review catches something worth fixing.
-
         Validate the order.
-        """, vocabularies: [Self.orderVocab], routeFuzzy: false)
-        #expect(out.contains("## Steps (( inert, role: procedure ))"), Comment(rawValue: out))
-        #expect(!out.contains("use judgment to follow"), Comment(rawValue: out))
-        #expect(!out.contains(SkillMigrator.splitHeadingSeparator), Comment(rawValue: out))
+        """
+        let on = try Self.mark(source, vocabularies: [Self.orderVocab], routeFuzzy: true)
+        let off = try Self.mark(source, vocabularies: [Self.orderVocab], routeFuzzy: false)
+        #expect(on == off, Comment(rawValue: "routeFuzzy true:\n\(on)\n\nrouteFuzzy false:\n\(off)"))
     }
 
     // MARK: - AGENTS.md Phase 1 item 3: automatic mixed-section split
 
-    @Test("above the split threshold, a mixed section splits: leftover narrative under the parent is judgment-wrapped (not plain inert), the executable run becomes a child heading")
-    func aboveThresholdSplits() throws {
+    @Test("a mixed section splits: leftover narrative under the parent is marked (( role: reference )) (not plain inert or judgment), the executable run becomes a child heading")
+    func mixedSectionSplits() throws {
         let out = try Self.mark("""
         ## Steps
 
@@ -695,15 +821,13 @@ struct SkillMigratorMarkingTests {
 
         Validate the order.
         """, vocabularies: [Self.orderVocab])
-        // "Steps" is already a recognized `.procedure` heading (roleAlreadyAsserted),
-        // so the leftover narrative left behind by the split gets the same
-        // zero-deterministic-signal-is-the-judgment-signal treatment as a
-        // whole-section judgment-wrap (AGENTS.md §15/§16), rather than sitting
-        // under the parent as silent `(( inert ))` prose — no forced marker is
-        // needed since `.procedure` already accepts a `use judgment …:` prose step.
+        // The leftover narrative carries no inference cue, so it is not
+        // judgment-wrapped (P1 forbids that); it stays under the parent,
+        // which needs an explicit `(( role: reference ))` marker since it
+        // has real leftover content (not just blank/comment filler).
         #expect(!out.contains("(( inert"), Comment(rawValue: out))
-        #expect(out.contains("## Steps\n"), Comment(rawValue: out))
-        #expect(out.contains("use judgment to follow the Steps guidance:"), Comment(rawValue: out))
+        #expect(!out.contains("use judgment"), Comment(rawValue: out))
+        #expect(out.contains("## Steps (( role: reference ))"), Comment(rawValue: out))
         #expect(out.contains("This phase exists to keep orders tidy."), Comment(rawValue: out))
         #expect(out.contains("### Steps\(SkillMigrator.splitHeadingSeparator)"), Comment(rawValue: out))
         #expect(out.contains("Validate the order."), Comment(rawValue: out))
@@ -829,12 +953,12 @@ struct SkillMigratorMarkingTests {
     @Test("setup's Lookup sequence: a numbered command list + trailing narrative splits, commands intact and in order")
     func setupLookupSequenceSplits() throws {
         // sample-gbrain/original-skills/setup/SKILL.md, "### Lookup sequence".
-        // This is an unrecognized (custom) heading, so its leftover narrative
-        // gets the generic "(( inert ))" marker, not a role-specific one. Step
-        // 4's shape (a stray word between the backtick command and its " -- "
-        // annotation) falls outside today's annotated-command grammar, so it
-        // stays narrative alongside the closing note — split correctly moves
-        // ONLY the three cleanly-shaped commands, and drops nothing.
+        // This is an unrecognized (custom) heading with substantive leftover
+        // narrative, so it gets `(( role: reference ))`. Step 4's shape (a
+        // stray word between the backtick command and its " -- " annotation)
+        // falls outside today's annotated-command grammar, so it stays
+        // narrative alongside the closing note — split correctly moves ONLY
+        // the three cleanly-shaped commands, and drops nothing.
         let out = try Self.mark("""
         ### Lookup sequence (MANDATORY for every entity question)
 
@@ -846,12 +970,12 @@ struct SkillMigratorMarkingTests {
         Stop at the first step that gives you what you need. Most lookups resolve at step 1.
         """)
         let separator = SkillMigrator.splitHeadingSeparator
-        #expect(out.contains("### Lookup sequence (MANDATORY for every entity question) (( inert ))"),
+        #expect(out.contains("### Lookup sequence (MANDATORY for every entity question) (( role: reference ))"),
                 Comment(rawValue: out))
         #expect(out.contains("Stop at the first step that gives you what you need."), Comment(rawValue: out))
         #expect(out.contains(#"4. `grep` fallback"#), Comment(rawValue: out))
-        #expect(out.contains("#### Lookup sequence (MANDATORY for every entity question)\(separator)"), Comment(rawValue: out))
-        let childIdx = out.range(of: "#### Lookup sequence (MANDATORY for every entity question)\(separator)")!.lowerBound
+        #expect(out.contains("### Lookup sequence (MANDATORY for every entity question)\(separator)"), Comment(rawValue: out))
+        let childIdx = out.range(of: "### Lookup sequence (MANDATORY for every entity question)\(separator)")!.lowerBound
         let child = String(out[childIdx...])
         #expect(child.contains(#"1. `gbrain search "name"`"#), Comment(rawValue: out))
         #expect(child.contains(#"3. `gbrain get <slug>`"#), Comment(rawValue: out))
@@ -862,7 +986,7 @@ struct SkillMigratorMarkingTests {
         #expect(!child.contains("`grep` fallback"), Comment(rawValue: out))
     }
 
-    @Test("briefing's Phases: a numbered procedure list with a trailing note splits cleanly")
+    @Test("briefing's Phases: a numbered procedure list with a normative trailing note splits with the note folded into the executable child, not left as parent narrative")
     func briefingPhasesSplits() throws {
         // Representative of sample-gbrain/original-skills/briefing/SKILL.md's
         // "## Phases" shape: numbered steps, each a backticked/annotated
@@ -877,15 +1001,19 @@ struct SkillMigratorMarkingTests {
         These phases always run in order; never skip ahead to render.
         """)
         let separator = SkillMigrator.splitHeadingSeparator
-        // The closing note ("never skip ahead to render") is a real ordering
-        // constraint, not filler — the leftover narrative under the parent
-        // heading is judgment-wrapped rather than left as plain inert prose
-        // (AGENTS.md §15/§16), same as any other `.procedure` heading whose
-        // split leaves substantive leftover narrative behind.
+        // The closing note carries a normative cue ("never") with no
+        // checkable shape and no inference cue — P1 category 4 pulls it
+        // into the SAME executable run as the commands (left for the real
+        // compiler), rather than leaving it as separate parent narrative.
+        // Nothing is left over under the parent, so it stays completely
+        // clean (no marker at all).
         #expect(!out.contains("(( inert"), Comment(rawValue: out))
-        #expect(out.contains("use judgment to follow the Phases guidance:"), Comment(rawValue: out))
+        #expect(!out.contains("use judgment"), Comment(rawValue: out))
+        #expect(out.contains("## Phases\n"), Comment(rawValue: out))
+        #expect(!out.contains("## Phases (("), Comment(rawValue: out))
         #expect(out.contains("### Phases\(separator)"), Comment(rawValue: out))
-        #expect(out.contains("These phases always run in order"), Comment(rawValue: out))
+        let childIdx = out.range(of: "### Phases\(separator)")!.lowerBound
+        #expect(out[childIdx...].contains("These phases always run in order"), Comment(rawValue: out))
     }
 
     @Test("maintain's Link graph extraction: an annotation-label + shell fence splits via the ratio threshold, not the count threshold")
@@ -904,10 +1032,10 @@ struct SkillMigratorMarkingTests {
         frontmatter fields, then creates typed links in the database.
         """)
         let separator = SkillMigrator.splitHeadingSeparator
-        #expect(out.contains("### Link graph extraction (( inert ))"), Comment(rawValue: out))
+        #expect(out.contains("### Link graph extraction (( role: reference ))"), Comment(rawValue: out))
         #expect(out.contains("This scans all markdown files"), Comment(rawValue: out))
-        #expect(out.contains("#### Link graph extraction\(separator)"), Comment(rawValue: out))
-        let childIdx = out.range(of: "#### Link graph extraction\(separator)")!.lowerBound
+        #expect(out.contains("### Link graph extraction\(separator)"), Comment(rawValue: out))
+        let childIdx = out.range(of: "### Link graph extraction\(separator)")!.lowerBound
         let child = String(out[childIdx...])
         // The annotation label travels with its fence into the generated child.
         #expect(child.contains("run batch extraction:"), Comment(rawValue: out))
@@ -915,14 +1043,15 @@ struct SkillMigratorMarkingTests {
         #expect(!child.contains("This scans all markdown files"), Comment(rawValue: out))
     }
 
-    @Test("brain_taxonomist's Step 1: a fuzzy question-arrow decision list routes to a judgment wrap (case 3 of the three-way lowering)")
-    func brainTaxonomistStep1RoutesToJudgmentWrap() throws {
+    @Test("brain_taxonomist's Step 1: a cue-less fuzzy question-arrow decision list is an operational-error split (case 3 of the four-way lowering), not an auto-judgment-wrap")
+    func brainTaxonomistStep1RoutesToOperationalError() throws {
         // sample-gbrain/original-skills/brain-taxonomist/SKILL.md, "### Step 1":
         // a question-arrow decision list whose questions are phrased in
         // question word-order ("Is X a Y?"), which the classifier does not
-        // read as a checkable predicate (needs entity/semantic judgment) —
-        // the honest outcome per the Phase 2 design is case 3: route to an
-        // explicit AI decision step, not fake determinism.
+        // read as a checkable predicate. Under P1, with no
+        // `inferenceCueWords` cue present in the text, this is NOT
+        // auto-wrapped in judgment — it is left as its own executable-error
+        // child, verbatim, for the real compiler to reject.
         let step1 = try Self.mark("""
         ### Step 1: Identify primary subject type
 
@@ -932,9 +1061,13 @@ struct SkillMigratorMarkingTests {
         3. Is it about a TIME-BOUNDED EVENT (meeting, deal, trip)? → temporal-typed directory
         """)
         let separator = SkillMigrator.splitHeadingSeparator
-        #expect(step1.contains("### Step 1: Identify primary subject type (( inert ))"), Comment(rawValue: step1))
-        #expect(step1.contains("#### Step 1: Identify primary subject type\(separator)"), Comment(rawValue: step1))
-        #expect(step1.contains("use judgment to weigh each question below:"), Comment(rawValue: step1))
+        // Everything moved into the child (no leftover narrative), so the
+        // parent stays completely clean — no marker at all.
+        #expect(!step1.contains("(( inert"), Comment(rawValue: step1))
+        #expect(!step1.contains("use judgment"), Comment(rawValue: step1))
+        #expect(step1.contains("### Step 1: Identify primary subject type\n"), Comment(rawValue: step1))
+        #expect(!step1.contains("### Step 1: Identify primary subject type (("), Comment(rawValue: step1))
+        #expect(step1.contains("### Step 1: Identify primary subject type\(separator)"), Comment(rawValue: step1))
         #expect(step1.contains("Is the primary subject a NAMED PERSON? → person-typed directory"), Comment(rawValue: step1))
     }
 
@@ -950,7 +1083,7 @@ struct SkillMigratorMarkingTests {
         2. the queue depth is greater than 100? -> page the on call engineer
         """, vocabularies: [Self.decisionVocab])
         let separator = SkillMigrator.splitHeadingSeparator
-        #expect(out.contains("#### Response\(separator)"), Comment(rawValue: out))
+        #expect(out.contains("### Response\(separator)"), Comment(rawValue: out))
         #expect(out.contains(#"restart the service only when the health status is "down"."#), Comment(rawValue: out))
         #expect(out.contains("page the on call engineer only when the queue depth is greater than 100."), Comment(rawValue: out))
         #expect(!out.contains("use judgment"), Comment(rawValue: out))
@@ -967,7 +1100,7 @@ struct SkillMigratorMarkingTests {
         2. the subject type is "organization"? -> company-typed directory
         """)
         let separator = SkillMigrator.splitHeadingSeparator
-        #expect(out.contains("#### Response\(separator)"), Comment(rawValue: out))
+        #expect(out.contains("### Response\(separator)"), Comment(rawValue: out))
         #expect(out.contains(#"let the directory be "person-typed directory" only when the subject type is "person"."#), Comment(rawValue: out))
         #expect(out.contains(#"let the directory be "company-typed directory" only when the subject type is "organization"."#), Comment(rawValue: out))
     }
@@ -981,6 +1114,72 @@ struct SkillMigratorMarkingTests {
         2. the subject type is "organization"? -> company-typed directory
         """)
         #expect(out.contains(#"let the category be "person-typed directory" only when the subject type is "person"."#), Comment(rawValue: out))
+    }
+
+    @Test("question-arrow case 3: a non-checkable question with a genuine inference cue wraps the whole list in judgment, not a decision-table binding")
+    func questionArrowCase3WrapsInJudgmentWhenCueIsPresent() throws {
+        let out = try Self.mark("""
+        ### Response
+
+        1. Is this case ambiguous enough that we must decide it manually? -> escalate to a human
+        2. Is the context missing enough that we must decide it manually? -> escalate to a human
+        """)
+        let separator = SkillMigrator.splitHeadingSeparator
+        #expect(out.contains("### Response\(separator)"), Comment(rawValue: out))
+        #expect(out.contains("use judgment to weigh each question below:"), Comment(rawValue: out))
+        #expect(out.contains("Is this case ambiguous enough that we must decide it manually? -> escalate to a human"), Comment(rawValue: out))
+        #expect(!out.contains(#"let the category be"#), Comment(rawValue: out))
+    }
+
+    @Test("question-arrow case 3: a non-checkable question with no inference cue is a category-4 reword error, not a silent judgment wrap")
+    func questionArrowCase3IsHardErrorWithoutCue() throws {
+        let out = try Self.mark("""
+        ### Response
+
+        1. Is the sky a nice color today for a picnic? -> escalate to a human
+        2. Is the grass a nice color today for a picnic? -> escalate to a human
+        """, routeFuzzy: false)
+        #expect(!out.contains("use judgment"), Comment(rawValue: out))
+        #expect(!out.contains(#"let the category be"#), Comment(rawValue: out))
+    }
+
+    // MARK: - `sectionIsExecutableOnly` marker run-tracking
+
+    @Test("sectionIsExecutableOnly: a `!!! table` run followed by a plain lowerable line clears the pending-table marker and keeps checking")
+    func executableOnlyTableMarkerRunEndsAndContinues() throws {
+        let m = Self.migrator()
+        let knowledge = try m.knowledgeContext()
+        let body: ArraySlice<String> = [
+            "!!! table",
+            "| a | b |",
+            "| - | - |",
+            "Make sure the order is valid.",
+        ][...]
+        #expect(m.sectionIsExecutableOnly(body, knowledge: knowledge))
+    }
+
+    @Test("sectionIsExecutableOnly: a `!!! checklist` run followed by a plain lowerable line clears the pending-checklist marker and keeps checking")
+    func executableOnlyChecklistMarkerRunEndsAndContinues() throws {
+        let m = Self.migrator()
+        let knowledge = try m.knowledgeContext()
+        let body: ArraySlice<String> = [
+            "!!! checklist",
+            "- [ ] the order is valid",
+            "Make sure the order is valid.",
+        ][...]
+        #expect(m.sectionIsExecutableOnly(body, knowledge: knowledge))
+    }
+
+    @Test("sectionIsExecutableOnly: a `!!! checklist` run with a non-lowerable line inside the run is not executable-only")
+    func executableOnlyChecklistRunWithFuzzyLineFails() throws {
+        let m = Self.migrator()
+        let knowledge = try m.knowledgeContext()
+        let body: ArraySlice<String> = [
+            "!!! checklist",
+            "- [ ] the order is valid",
+            "This paragraph is narrative prose that never lowers as anything.",
+        ][...]
+        #expect(!m.sectionIsExecutableOnly(body, knowledge: knowledge))
     }
 
     @Test("a full question-arrow candidate strict-compiles end to end via migrate() for all three cases")
@@ -1014,21 +1213,6 @@ struct SkillMigratorMarkingTests {
         #expect(case3.compiledOK, Comment(rawValue: case3.meriSource + "\n\n" + case3.report.diagnostics.joined(separator: "\n")))
     }
 
-    @Test("question-arrow protocol with fuzzy routing disabled leaves case 3 lists plainly inert (opt-out parity)")
-    func questionArrowCase3RespectsRouteFuzzyOff() throws {
-        let out = try Self.mark("""
-        ### Step 1: Identify primary subject type
-
-        Walk these questions in order:
-        1. Is the primary subject a NAMED PERSON? → person-typed directory
-        2. Is the primary subject a NAMED ORGANIZATION? → company-typed directory
-        3. Is it about a TIME-BOUNDED EVENT (meeting, deal, trip)? → temporal-typed directory
-        """, routeFuzzy: false)
-        #expect(out.contains("### Step 1: Identify primary subject type (( inert ))"), Comment(rawValue: out))
-        #expect(!out.contains("use judgment"), Comment(rawValue: out))
-        #expect(!out.contains(SkillMigrator.splitHeadingSeparator), Comment(rawValue: out))
-    }
-
     static let decisionVocab = Compiler.VocabularyInput(
         name: "decision", file: "decision.merconfig",
         source: """
@@ -1059,44 +1243,33 @@ struct SkillMigratorMarkingTests {
         Prefer flagging schema gaps over guessing the closest-fitting type.
         """)
         let separator = SkillMigrator.splitHeadingSeparator
-        #expect(out.contains("### Step 5: Validate before writing (( inert ))"), Comment(rawValue: out))
-        #expect(out.contains("#### Step 5: Validate before writing\(separator)"), Comment(rawValue: out))
-        let childIdx = out.range(of: "#### Step 5: Validate before writing\(separator)")!.lowerBound
+        // Neither the checklist items nor the closing note ("Prefer
+        // flagging...") carry an `inferenceCueWords` cue, so P1 forbids the
+        // old auto-`!!! checklist (( ai-autonomy ))` wrap — the checklist
+        // becomes a plain operational-error child (left for the real
+        // compiler), and the closing narrative stays behind as leftover
+        // parent narrative (so the parent needs `(( role: reference ))`).
+        #expect(!out.contains("!!! checklist"), Comment(rawValue: out))
+        #expect(out.contains("### Step 5: Validate before writing (( role: reference ))"), Comment(rawValue: out))
+        #expect(out.contains("Prefer flagging schema gaps"), Comment(rawValue: out))
+        #expect(out.contains("### Step 5: Validate before writing\(separator)"), Comment(rawValue: out))
+        let childIdx = out.range(of: "### Step 5: Validate before writing\(separator)")!.lowerBound
         let child = String(out[childIdx...])
-        #expect(child.contains("!!! checklist (( ai-autonomy ))"), Comment(rawValue: out))
         #expect(child.contains("- [ ] Path follows the active pack's path_prefixes"), Comment(rawValue: out))
         #expect(child.contains("- [ ] Cross-links to related pages are included"), Comment(rawValue: out))
-        // The marker directly precedes the checklist — no blank line between.
-        let markerRange = child.range(of: "!!! checklist (( ai-autonomy ))")!
-        let afterMarker = child[markerRange.upperBound...].trimmingCharacters(in: .whitespacesAndNewlines)
-        #expect(afterMarker.hasPrefix("- [ ] Path follows"), Comment(rawValue: out))
         #expect(!child.contains("Prefer flagging schema gaps"), Comment(rawValue: out))
-
-        // With fuzzy routing disabled, the checklist stays inert (opt-out parity).
-        let optOut = try Self.mark("""
-        ### Step 5: Validate before writing
-
-        - [ ] Path follows the active pack's path_prefixes
-        - [ ] Slug is kebab-case, descriptive
-        - [ ] Cross-links to related pages are included
-
-        Prefer flagging schema gaps over guessing the closest-fitting type.
-        """, routeFuzzy: false)
-        #expect(optOut.contains("### Step 5: Validate before writing (( inert ))"), Comment(rawValue: optOut))
-        #expect(!optOut.contains("!!! checklist"), Comment(rawValue: optOut))
-        #expect(!optOut.contains(SkillMigrator.splitHeadingSeparator), Comment(rawValue: optOut))
     }
 
-    @Test("testing's Test tiers: a fuzzy Markdown table is AI-routed via ai-discretion instead of staying inert")
+    @Test("testing's Test tiers: a fuzzy Markdown table containing an inference cue (\"judge\") is AI-routed via ai-discretion")
     func testingTierTableRoutesToAiDiscretionTable() throws {
         // sample-gbrain/original-skills/testing/SKILL.md, "### Test tiers": a
         // Markdown table whose cells are descriptive, not checkable — doesn't
-        // trial-lower as a decision/data table, so route-fuzzy wraps it in
-        // `!!! table (( ai-discretion ))` rather than dropping it inert. (This
-        // is deliberately conservative: a table that's genuine reference
-        // material the workflow never acts on is a Phase 3 pilot-review call,
-        // not a marking-pass heuristic — over-routing is reversible, silently
-        // staying inert was the bug.)
+        // trial-lower as a decision/data table. Its "LLM-judge" cell carries
+        // the `inferenceCueWords` cue "judge", so it is AI-routed via
+        // `!!! table (( ai-discretion ))` rather than left as a plain
+        // operational-error child. Without that cue this would be
+        // `.errorOperational` instead (see `brainTaxonomistStep5…` above) —
+        // P1 never auto-wraps cue-less content in judgment.
         let out = try Self.mark("""
         ### Test tiers
 
@@ -1106,26 +1279,92 @@ struct SkillMigratorMarkingTests {
         | **Evals** | LLM-judge or quality evals | ~60s | Daily |
         """)
         let separator = SkillMigrator.splitHeadingSeparator
-        #expect(out.contains("### Test tiers (( inert ))"), Comment(rawValue: out))
-        #expect(out.contains("#### Test tiers\(separator)"), Comment(rawValue: out))
-        let childIdx = out.range(of: "#### Test tiers\(separator)")!.lowerBound
+        #expect(out.contains("### Test tiers\n"), Comment(rawValue: out))
+        #expect(!out.contains("### Test tiers (("), Comment(rawValue: out))
+        #expect(out.contains("### Test tiers\(separator)"), Comment(rawValue: out))
+        let childIdx = out.range(of: "### Test tiers\(separator)")!.lowerBound
         let child = String(out[childIdx...])
         #expect(child.contains("!!! table (( ai-discretion ))"), Comment(rawValue: out))
         #expect(child.contains("| Tier | What it runs | Wall time | Gates |"), Comment(rawValue: out))
         #expect(child.contains("| Evals | LLM-judge or quality evals | ~60s | Daily |"), Comment(rawValue: out))
+    }
 
-        // Opt-out parity: with fuzzy routing disabled, the table stays inert.
-        let optOut = try Self.mark("""
-        ### Test tiers
+    // MARK: - `decision(forHeading:)` idempotency / unmined-contract branches
 
-        | Tier | What it runs | Wall time | Gates |
-        |------|--------------|-----------|-------|
-        | **Unit** | `bun test` (deterministic, zero external calls) | <2s | Every commit |
-        | **Evals** | LLM-judge or quality evals | ~60s | Daily |
-        """, routeFuzzy: false)
-        #expect(optOut.contains("### Test tiers (( inert ))"), Comment(rawValue: optOut))
-        #expect(!optOut.contains("!!! table"), Comment(rawValue: optOut))
-        #expect(!optOut.contains(SkillMigrator.splitHeadingSeparator), Comment(rawValue: optOut))
+    @Test("a recognized-procedure heading whose body is already judgment-wrapped is idempotently left unmarked")
+    func procedureHeadingAlreadyJudgmentWrappedIsIdempotent() throws {
+        let source = """
+        ## Phases
+
+        use judgment to follow the Phases guidance:
+          weigh the tradeoffs before choosing a path.
+        """
+        #expect(try Self.mark(source) == source)
+    }
+
+    @Test("a rulebook-aliased-procedure heading that already carries the generated split suffix is left unmarked, not re-split")
+    func procedureHeadingWithSplitSuffixIsLeftUnmarked() throws {
+        let heading = "My Heading\(SkillMigrator.splitHeadingSeparator)"
+        let rulebook = RulebookInput(name: "r", file: "r.merrules", source: """
+        === sections ===
+        section "\(heading)" -> procedure
+        """)
+        let source = """
+        ## \(heading)
+
+        do the thing.
+        """
+        #expect(try Self.mark(source, rulebooks: [rulebook]) == source)
+    }
+
+    @Test("an unrecognized heading whose body is already judgment-wrapped is idempotently aliased to procedure")
+    func unrecognizedHeadingAlreadyJudgmentWrappedIsIdempotent() throws {
+        let source = """
+        ## Odd Corner
+
+        use judgment to follow the Odd Corner guidance:
+          weigh the tradeoffs before choosing a path.
+        """
+        #expect(try Self.mark(source) == source)
+        #expect(try Self.aliases(source) == [SkillMigrator.SectionAlias(heading: "Odd Corner", role: .procedure)])
+    }
+
+    @Test("a checkable-role heading whose body is already judgment-wrapped is idempotently left unmarked")
+    func checkableRoleHeadingAlreadyJudgmentWrappedIsIdempotent() throws {
+        let source = """
+        ## Contract
+
+        use judgment to follow the Contract guidance:
+          weigh the tradeoffs before choosing a path.
+        """
+        #expect(try Self.mark(source) == source)
+    }
+
+    @Test("a rulebook-aliased checkable-role heading that already carries the generated split suffix is left unmarked, not re-split")
+    func checkableRoleHeadingWithSplitSuffixIsLeftUnmarked() throws {
+        let heading = "Contract\(SkillMigrator.splitHeadingSeparator)"
+        let rulebook = RulebookInput(name: "r", file: "r.merrules", source: """
+        === sections ===
+        section "\(heading)" -> invariants
+        """)
+        let source = """
+        ## \(heading)
+
+        guarantees prose.
+        """
+        #expect(try Self.mark(source, rulebooks: [rulebook]) == source)
+    }
+
+    @Test("an unrecognized heading whose only content is an unmined normative contract (no checkable/cue signal) is aliased to procedure, not marked as documentation")
+    func unrecognizedHeadingWithUnminedContractAliasedToProcedure() async throws {
+        let result = try await Self.migrator().migrate("""
+        ## Random Section
+
+        Authors must never delete original SKILL.md files.
+        """)
+        #expect(!result.meriSource.contains("## Random Section (("), Comment(rawValue: result.meriSource))
+        #expect(result.report.unminedContracts.contains { $0.contains("must never delete original") },
+                Comment(rawValue: "\(result.report.unminedContracts)"))
     }
 
     // MARK: - AGENTS.md Phase 1 item 5: sectionIsTemplateBody leading-label tolerance
@@ -1186,25 +1425,26 @@ struct SkillMigratorMarkingTests {
         An enriched company page contains:
         - Frontmatter with type and tags
         """)
-        #expect(out.contains("## Output Format (( inert, role: template ))"), Comment(rawValue: out))
+        #expect(out.contains("## Output Format (( role: template ))"), Comment(rawValue: out))
     }
 
-    @Test("a heading whose text already carries the generated split suffix is never split again")
+    @Test("a heading whose text already carries the generated split suffix is never re-split or marked")
     func headingWithSplitSuffixIsNeverReSplit() throws {
         // Simulates re-scanning a generated child heading whose body no longer
         // proves fully executable (e.g. the vocabulary that made it lower is
         // unavailable) — the recognizable-suffix guard must prevent minting a
-        // nested "… — steps — steps" grandchild; it falls back to plain inert.
-        let out = try Self.mark("""
+        // nested "… — steps — steps" grandchild. Both `.procedure` and `.none`
+        // decision branches return `.leaveUnmarked` outright for any heading
+        // already containing the split suffix, so the whole document is left
+        // byte-for-byte untouched.
+        let source = """
         ## Steps\(SkillMigrator.splitHeadingSeparator)
 
         This phase exists to keep orders tidy.
 
         Validate the order.
-        """)
-        #expect(!out.contains("\(SkillMigrator.splitHeadingSeparator)\(SkillMigrator.splitHeadingSeparator)"),
-                Comment(rawValue: out))
-        #expect(out.contains("## Steps\(SkillMigrator.splitHeadingSeparator) (( inert ))"), Comment(rawValue: out))
+        """
+        #expect(try Self.mark(source) == source)
     }
 
     // MARK: - Phase 2 idiom: bold-label step tolerance
@@ -1260,5 +1500,186 @@ struct SkillMigratorMarkingTests {
         """)
         #expect(!out.contains("(( inert"), Comment(rawValue: out))
         #expect(out.contains("1. Run the health check before every deploy."), Comment(rawValue: out))
+    }
+
+    // MARK: - `headinglessOverviewInsertIndex` / `headinglessBodyNeedsInertOverview`
+
+    @Test("a heading-less body with a leading blank line before its title still inserts Overview right after the title")
+    func headinglessLeadingBlankLineBeforeTitle() throws {
+        let source = "\n# Title\n\nthe report is notable\n"
+        let out = try Self.mark(source)
+        #expect(out.contains("## Overview (( role: reference ))"), Comment(rawValue: out))
+        #expect(out.contains("the report is notable"), Comment(rawValue: out))
+    }
+
+    @Test("a heading-less body with a bare list-marker line (nothing after it) is skipped, not misread as content")
+    func headinglessBareListMarkerLineIsSkipped() throws {
+        let out = try Self.mark("""
+        # Title
+
+        -
+        the report is notable
+        """)
+        #expect(out.contains("## Overview (( role: reference ))"), Comment(rawValue: out))
+    }
+
+    @Test("a heading-less body whose only checkable task-list item is preceded by a fuzzy line does not early-return before evaluating it")
+    func headinglessMixedFuzzyThenCheckableTaskList() throws {
+        // The leading fuzzy sentence alone already proves the body needs the
+        // inert overview wrap (`sectionIsExecutableOnly` fails first because
+        // that sentence never lowers), so `headinglessBodyNeedsInertOverview`
+        // is reached and must walk past a later checkable (non-fuzzy)
+        // task-list item without misclassifying it as the reason to wrap.
+        let out = try Self.mark("""
+        # Title
+
+        The report is notable and worth reviewing closely.
+
+        - [ ] the request type is "internal"
+        """)
+        #expect(out.contains("## Overview (( role: reference ))"), Comment(rawValue: out))
+    }
+
+    // MARK: - `lineHasMarkdownNarrativeMarkers` (via `sectionIsExecutableOnly`)
+
+    @Test("sectionIsExecutableOnly: a marker-only numbered line (nothing after it) normalizes to empty and is skipped, not misread as content")
+    func executableOnlyMarkerOnlyLineIsSkipped() throws {
+        let m = Self.migrator()
+        let knowledge = try m.knowledgeContext()
+        let body: ArraySlice<String> = [
+            "1.",
+            "- [ ] the page count is at least 1",
+        ][...]
+        #expect(m.sectionIsExecutableOnly(body, knowledge: knowledge))
+    }
+
+    @Test("sectionIsExecutableOnly: a non-fuzzy Markdown list item ending in a colon is rejected as a narrative marker, not silently accepted")
+    func executableOnlyListItemEndingInColonIsRejected() throws {
+        let m = Self.migrator()
+        let knowledge = try m.knowledgeContext()
+        let body: ArraySlice<String> = [
+            "- the page count is at least 1:",
+        ][...]
+        #expect(!m.sectionIsExecutableOnly(body, knowledge: knowledge))
+    }
+
+    // MARK: - `headinglessBodyNeedsInertOverview` direct branch coverage
+
+    @Test("headinglessBodyNeedsInertOverview: a comment line, a marker-only list item, and a checkable task-list item are all skipped without triggering the wrap")
+    func headinglessBodyNeedsInertOverviewSkipsCommentMarkerAndCheckableItem() throws {
+        let m = Self.migrator()
+        let knowledge = try m.knowledgeContext()
+        let body: ArraySlice<String> = [
+            "> a blockquote aside",
+            "1.",
+            "- [ ] the request type is \"internal\"",
+        ][...]
+        #expect(!m.headinglessBodyNeedsInertOverview(body, knowledge: knowledge))
+    }
+
+    // MARK: - `bodyRestatesConvention`
+
+    @Test("bodyRestatesConvention: a fenced code block inside the body does not break convention-restatement detection")
+    func bodyRestatesConventionSkipsFencedContent() throws {
+        let rulebook = RulebookInput(name: "conv", file: "conv.merrules", source: """
+        === conventions ===
+        after filing a page:
+          always include a citation.
+        """)
+        let m = Self.migrator(rulebooks: [rulebook])
+        let body: ArraySlice<String> = [
+            "```text",
+            "irrelevant fenced example",
+            "```",
+            "> a blockquote aside",
+            "Always include a citation.",
+        ][...]
+        #expect(try m.bodyRestatesConvention(body))
+    }
+
+    // MARK: - `parseQuestionArrowLine` / `classifyQuestionArrowList`
+
+    @Test("parseQuestionArrowLine: a question with no arrow marker after it is not a question-arrow line")
+    func parseQuestionArrowLineNoArrowReturnsNil() {
+        let m = Self.migrator()
+        #expect(m.parseQuestionArrowLine("Is this ready? just a follow-up sentence") == nil)
+    }
+
+    @Test("parseQuestionArrowLine: an arrow with an empty rhs is not a question-arrow line")
+    func parseQuestionArrowLineEmptyRhsReturnsNil() {
+        let m = Self.migrator()
+        #expect(m.parseQuestionArrowLine("Is this ready? ->") == nil)
+    }
+
+    @Test("classifyQuestionArrowList: a block whose lines don't all parse as question-arrow items is documentation (defensive; real callers pre-filter)")
+    func classifyQuestionArrowListMixedBlockIsDocumentation() throws {
+        let m = Self.migrator()
+        let knowledge = try m.knowledgeContext()
+        let block = SkillMigrator.SplitBlock(
+            rawLines: ["Is this ready? -> yes", "not a question-arrow line at all"],
+            normalizedText: "", isFence: false, isShellFence: false, isQuestionArrowList: true)
+        let (kind, override) = m.classifyQuestionArrowList(block, precedingBlock: nil, trial: TrialLowering(knowledge: knowledge))
+        #expect(kind == .documentation)
+        #expect(override == nil)
+    }
+
+    // MARK: - `splitPlan` single-line table/question-arrow fallthrough
+
+    @Test("splitPlan: a comment-only shell fence whose comment carries an inference cue is AI-routed, not left as an operational error")
+    func splitPlanGuidanceOnlyFenceWithInferenceCueIsAiInference() throws {
+        let m = Self.migrator()
+        let knowledge = try m.knowledgeContext()
+        let body: ArraySlice<String> = [
+            "```bash",
+            "# assess the situation before proceeding",
+            "```",
+        ][...]
+        let plan = m.splitPlan(for: body, knowledge: knowledge)
+        #expect(plan.executableSegments.contains { $0.kind == .aiInference })
+        let rendered = m.renderSplitPlan(plan, headingHashes: "##", headingText: "Guidance")
+        #expect(rendered.contains("use judgment to follow the Guidance — steps guidance:"))
+    }
+
+    @Test("splitPlan: a lone pipe-delimited line whose next line is a bare single `|` still fails the >= 2-row table check")
+    func splitPlanLoneTableRowFallsThrough() throws {
+        let m = Self.migrator()
+        let knowledge = try m.knowledgeContext()
+        // The second line ("|") also has matching prefix/suffix `|`, but at
+        // length 1 fails the table-continuation guard's `count > 1` half —
+        // the lookahead scan stops after zero continuation rows, so the
+        // block never reaches the >= 2-row threshold either.
+        let body: ArraySlice<String> = ["| just one row |", "|"][...]
+        let plan = m.splitPlan(for: body, knowledge: knowledge)
+        #expect(plan.narrativeLines.contains("| just one row |"), Comment(rawValue: "\(plan)"))
+    }
+
+    @Test("splitPlan: a lone question-arrow line followed by a non-question-arrow line is not treated as a question-arrow block")
+    func splitPlanLoneQuestionArrowFallsThrough() throws {
+        let m = Self.migrator()
+        let knowledge = try m.knowledgeContext()
+        // The scan looks one line ahead, finds it doesn't parse as a
+        // question-arrow item, and stops — leaving only one item, below the
+        // >= 2-item threshold for a dedicated question-arrow block.
+        let body: ArraySlice<String> = ["Is this ready? -> yes", "Plain narrative filler content that never lowers as anything."][...]
+        let plan = m.splitPlan(for: body, knowledge: knowledge)
+        // Falling below the >= 2-item threshold merges the line into the
+        // ordinary hard-wrap paragraph scan instead, where it joins the
+        // next line as one cue-less operational-error unit (never a
+        // dedicated question-arrow block).
+        #expect(plan.executableSegments.contains { $0.lines.contains("Is this ready? -> yes") }, Comment(rawValue: "\(plan)"))
+        #expect(plan.unminedContracts.contains { $0.contains("Is this ready? -> yes") }, Comment(rawValue: "\(plan)"))
+    }
+
+    @Test("executableFenceContent: an unclosed fence (no closing backtick line) still scans its full payload")
+    func executableFenceContentUnclosedFenceScansFullPayload() {
+        let content = SkillMigrator.executableFenceContent(["```bash", "gbrain stats"])
+        #expect(content.hasExecutableLine)
+    }
+
+    @Test("executableFenceContent: a blank line inside the fence payload is skipped")
+    func executableFenceContentSkipsBlankPayloadLine() {
+        let content = SkillMigrator.executableFenceContent(["```bash", "", "# just a comment", "```"])
+        #expect(!content.hasExecutableLine)
+        #expect(content.commentText == "just a comment")
     }
 }

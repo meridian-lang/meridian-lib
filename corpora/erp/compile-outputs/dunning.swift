@@ -399,15 +399,60 @@ public struct Dunning: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "Dunning", parameters: [:])
 
-        // L12
-        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
-            prose: "follow the When operators call this guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["inventory.reserve", "invoice.create", "invoice.list", "order.cancel", "order.list", "payment.collect", "period.close", "product.list", "purchase_order.create", "shipment.create"],
-            guidance: "\"run dunning\"\n\"collect overdue invoices\"\nuse judgment to follow the Workflow guidance:\nCheck: any unpaid invoices\nStep: `ofbiz accounting dunning --dry-run --json` to snapshot overdue accounts\nfetch unpaid invoices\nfor each invoice:\ncollect payment for the invoice\nPublish: \"dunning collection pass complete\"\nuse judgment to follow the Controls guidance:\nDo not contact customers whose account is under manual review"
-        )
-        for (__key, __value) in __meridianProseResults_L12 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L20:C0") {
+            // L20
+            // snapshot overdue accounts
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("ofbiz accounting dunning --dry-run --json"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L20:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L52:C0") {
+            // L52
+            let invoices = try await runtime.invoke(
+                tool: "invoice.list",
+                args: [
+                    "status": .string("unpaid"),
+                ]
+            )
+            state.bind("invoices", invoices)
+
+            try await runtime.checkpoint(label: "progress:0.1:L52:C0", state: state.snapshot())
+        }
+        // L25
+        for (__meridianLoopIndex_0_2, invoice) in (state.get("invoices")?.asList ?? []).enumerated() {
+            let __meridianLoopLabel_0_2 = "progress:0.2:iteration:\(__meridianLoopIndex_0_2)"
+            if __meridianShouldRun(__meridianLoopLabel_0_2) {
+            state.bind("invoice", invoice)
+                if __meridianShouldRun("progress:0.2.body.0:L64:C0") {
+                    // L64
+                    let payment = try await runtime.invoke(
+                        tool: "payment.collect",
+                        args: [
+                            "invoice": state.get("invoice") ?? .null,
+                        ]
+                    )
+                    state.bind("payment", payment)
+
+                    try await runtime.checkpoint(label: "progress:0.2.body.0:L64:C0", state: state.snapshot())
+                }
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
+            }
+        }
+
+        if __meridianShouldRun("progress:0.3:L27:C0") {
+            // L27
+            try await runtime.emit(
+                event: "erp.report",
+                payload: [
+                    "message": .string("dunning collection pass complete"),
+                ]
+            )
+            try await runtime.checkpoint(label: "progress:0.3:L27:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

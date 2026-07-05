@@ -20,8 +20,7 @@ mutating: false
 
 # Daily Task Prep
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 This skill guarantees:
 - Calendar/meetings for today are loaded with brain context per attendee
@@ -29,7 +28,7 @@ This skill guarantees:
 - Active tasks reviewed with priority ordering
 - Prep briefing is actionable (not just informational)
 
-## Phases
+## Phases (( role: reference ))
 
 1. Check today's meetings. For each: load attendee brain pages, recent timeline, open threads.
 2. Search brain for yesterday's timeline entries. Flag anything unresolved.
@@ -55,8 +54,7 @@ Prep: {what to know before this meeting}
 - {task with priority}
 ```
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 - Listing meetings without loading attendee context from brain
 - Ignoring yesterday's unresolved threads

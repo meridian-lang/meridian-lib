@@ -98,121 +98,144 @@
     "name" : "article-enrichment",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 29,
         "text" : "What this does"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 43,
+        "text" : "What this does — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 46,
+        "line" : 48,
         "text" : "When to invoke"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 55,
+        "text" : "When to invoke — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 56,
+        "line" : 61,
         "text" : "The pipeline"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 69,
+        "line" : 74,
         "text" : "Invocation"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 72,
+        "line" : 77,
         "text" : "Invocation — steps"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 95,
+        "line" : 100,
         "text" : "Quality bar"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 102,
+        "line" : 107,
         "text" : "Quality bar — steps"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 109,
+        "line" : 114,
         "text" : "Model selection"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 116,
+        "line" : 117,
         "text" : "Model selection — steps"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 125,
+        "text" : "Model selection — steps 2"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 124,
+        "line" : 132,
         "text" : "Link convention"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 128,
+        "line" : 136,
         "text" : "Link convention — steps"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 132,
+        "line" : 140,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "procedure",
-        "level" : 2,
-        "line" : 145,
-        "text" : "Related skills"
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 152,
+        "text" : "Anti-Patterns — steps"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 152,
+        "line" : 155,
+        "text" : "Related skills"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 162,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 164,
+        "line" : 173,
         "text" : "Output Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 111,
+        "line" : 128,
         "text" : "Rule"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 155,
+        "line" : 164,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 160,
+        "line" : 169,
         "text" : "Privacy contract preserved"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "What this does",
         "line" : 29,
         "lines" : [
-          "use judgment to follow the What this does guidance:",
           "Takes an article brain page that's a wall of raw extracted text and rewrites",
           "it as a structured page with:",
           "**Executive Summary** — 2-3 sentences, the ONE thing worth remembering",
@@ -221,22 +244,38 @@
           "**Quotable Lines** — 3-5 VERBATIM quotes worth referencing in essays",
           "**Key Insights** — actual insights, not topic labels",
           "**Surprising or Counterintuitive** — what makes this content unique",
-          "**See Also** — standard markdown links to related brain pages",
+          "**See Also** — standard markdown links to related brain pages"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "What this does — steps",
+        "line" : 43,
+        "lines" : [
           "Raw source content is preserved in a collapsed `<details>` section so the",
           "original is never lost"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "When to invoke",
-        "line" : 46,
+        "line" : 48,
         "lines" : [
-          "use judgment to follow the When to invoke guidance:",
           "New article page lands in the brain via media-ingest with `needs_enrichment: true`",
           "Existing article page is a wall of text under a `## Content` header with",
           "no synthesis",
-          "User says a brain page is useless, boring, or a dump",
+          "User says a brain page is useless, boring, or a dump"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke — steps",
+        "line" : 55,
+        "lines" : [
+          "use judgment to follow the When to invoke — steps guidance:",
           "An LLM-judge brain-quality eval fails on quotability or actionability for",
           "an article page"
         ],
@@ -245,16 +284,16 @@
       {
         "executes" : false,
         "heading" : "The pipeline",
-        "line" : 56,
+        "line" : 61,
         "lines" : [
           "codeblock:plain:MS4gUkVBRCAgICAgIOKGkiBPcGVuIHRoZSBhcnRpY2xlIGJyYWluIHBhZ2U7IHBhcnNlIGZyb250bWF0dGVyICsgYm9keS4KMi4gU0NBTiAgICAgIOKGkiBMb29rIGZvciAjIyBDb250ZW50IChyYXcgZHVtcCkgYW5kIGFic2VuY2Ugb2YgIyMgRXhlY3V0aXZlIFN1bW1hcnkuCjMuIENPTlRFWFQgICDihpIgZ2JyYWluIHF1ZXJ5IHRoZSBhcnRpY2xlJ3Mga2V5IGVudGl0aWVzIHRvIGdyb3VuZCAiV2h5IEl0IE1hdHRlcnMiLgo0LiBFTlJJQ0ggICAg4oaSIFNvbm5ldCAoZGVmYXVsdCkgb3IgT3B1cyAoZm9yIGhpZ2gtdmFsdWUgY29udGVudCkgcmVzdHJ1Y3R1cmVzLgo1LiBXUklURSAgICAg4oaSIFJlcGxhY2UgIyMgQ29udGVudCB3aXRoIHRoZSBzdHJ1Y3R1cmVkIHNlY3Rpb25zOyBwcmVzZXJ2ZSByYXcKICAgICAgICAgICAgICAgc291cmNlIGluIDxkZXRhaWxzPjsgY2xlYXIgbmVlZHNfZW5yaWNobWVudCBpbiBmcm9udG1hdHRlci4KNi4gQ1JPU1MtTElOS+KGkiBBZGQgYmFjay1saW5rcyBmcm9tIHJlZmVyZW5jZWQgcGVvcGxlL2NvbXBhbmllcyBwYWdlcwogICAgICAgICAgICAgICAoSXJvbiBMYXcgcGVyIGNvbnZlbnRpb25zL3F1YWxpdHkubWQpLg=="
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Invocation",
-        "line" : 69,
+        "line" : 74,
         "lines" : [
 
         ],
@@ -263,7 +302,7 @@
       {
         "executes" : true,
         "heading" : "Invocation — steps",
-        "line" : 72,
+        "line" : 77,
         "lines" : [
           "codeblock:bash:IyAxLiBGaW5kIGNhbmRpZGF0ZSBwYWdlcwpnYnJhaW4gcXVlcnkgIm5lZWRzX2VucmljaG1lbnQ6IHRydWUgdHlwZTphcnRpY2xlIiAtLWxpbWl0IDUwCgojIDIuIEZvciBlYWNoIGNhbmRpZGF0ZSwgcmVhZCB0aGUgcGFnZQpnYnJhaW4gZ2V0IG1lZGlhL2FydGljbGVzLzxzbHVnPgoKIyAzLiBFbnJpY2ggdmlhIHRoZSBhZ2VudCdzIExMTSAoU29ubmV0IGJ5IGRlZmF1bHQ7IE9wdXMgZm9yIGhpZ2gtdmFsdWUpCiMgICAgVGhlIGFnZW50IHJlYWRzIHRoZSByYXcgY29udGVudCArIGJyYWluIGNvbnRleHQgKyB3cml0ZXMgdGhlIHN0cnVjdHVyZWQgcGFnZS4KCiMgNC4gV3JpdGUgdGhlIGVucmljaGVkIHBhZ2UKIyAgICBVc2UgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbiB3aXRoIHRoZSBuZXcgc3RydWN0dXJlZCBtYXJrZG93biBib2R5LgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzCiMgICAgRm9yIGV2ZXJ5IHBlcnNvbi9jb21wYW55IG1lbnRpb25lZCwgYWRkIGEgdGltZWxpbmUgYmFjay1saW5rLg=="
         ],
@@ -272,18 +311,18 @@
       {
         "executes" : false,
         "heading" : "Quality bar",
-        "line" : 95,
+        "line" : 100,
         "lines" : [
           "✅ `## Why It Matters` connecting to specific brain context (not generic)",
           "✅ `## See Also` with standard markdown links (NOT `[[wiki-links]]`)",
           "✅ `<details>` block preserving the raw source content"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Quality bar — steps",
-        "line" : 102,
+        "line" : 107,
         "lines" : [
           "✅ `## Executive Summary` (2-3 sentences)",
           "✅ `## Quotable Lines` with ≥3 verbatim quotes (literal quotes, not paraphrase)",
@@ -294,63 +333,80 @@
       {
         "executes" : false,
         "heading" : "Model selection",
-        "line" : 109,
+        "line" : 114,
         "lines" : [
-          "Rule: for bulk enrichment, do a Sonnet draft pass and spot-check 5 with",
-          "the LLM-judge brain-quality eval. If quotes are paraphrased, switch to",
-          "Opus for that batch"
+
         ],
         "role" : "inert"
       },
       {
         "executes" : true,
         "heading" : "Model selection — steps",
-        "line" : 116,
+        "line" : 117,
         "lines" : [
-          "table:ai-discretion:fCBNb2RlbCB8IFVzZSB3aGVuIHwgUXVvdGUgYWNjdXJhY3kgfAp8LS0tLS0tLXwtLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgU29ubmV0IChkZWZhdWx0KSB8IEJ1bGsgZW5yaWNobWVudCwgbW9zdCBhcnRpY2xlcyB8IEdvb2Qg4oCUIG9jY2FzaW9uYWxseSBwYXJhcGhyYXNlcyB8CnwgT3B1cyB8IEhpZ2gtdmFsdWUgY29udGVudCwgb3JpZ2luYWwtdGhpbmtpbmcgcGllY2VzLCBsb25ncmVhZHMgfCBFeGNlbGxlbnQg4oCUIHJlc3BlY3RzICJ2ZXJiYXRpbSIgaW5zdHJ1Y3Rpb24gfA=="
+          "table:decision:fCBNb2RlbCB8IFVzZSB3aGVuIHwgUXVvdGUgYWNjdXJhY3kgfAp8LS0tLS0tLXwtLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgU29ubmV0IChkZWZhdWx0KSB8IEJ1bGsgZW5yaWNobWVudCwgbW9zdCBhcnRpY2xlcyB8IEdvb2Qg4oCUIG9jY2FzaW9uYWxseSBwYXJhcGhyYXNlcyB8CnwgT3B1cyB8IEhpZ2gtdmFsdWUgY29udGVudCwgb3JpZ2luYWwtdGhpbmtpbmcgcGllY2VzLCBsb25ncmVhZHMgfCBFeGNlbGxlbnQg4oCUIHJlc3BlY3RzICJ2ZXJiYXRpbSIgaW5zdHJ1Y3Rpb24gfA=="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Model selection — steps 2",
+        "line" : 125,
+        "lines" : [
+          "use judgment to follow the Model selection — steps 2 guidance:",
+          "Rule: for bulk enrichment, do a Sonnet draft pass and spot-check 5 with",
+          "the LLM-judge brain-quality eval. If quotes are paraphrased, switch to",
+          "Opus for that batch"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Link convention",
-        "line" : 124,
+        "line" : 132,
         "lines" : [
           "All cross-references use standard markdown links: `[Title](relative\/path.md)`"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Link convention — steps",
-        "line" : 128,
+        "line" : 136,
         "lines" : [
           "NEVER use `[[wiki-links]]` — they don't render on GitHub"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 132,
+        "line" : 140,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "❌ Paraphrasing quotes (\"the author argues that…\"). Quotes are verbatim",
           "or they're not quotes",
           "❌ Generic \"Why It Matters\" (\"this is important because innovation\")",
           "Tie to specific brain context or remove the section",
           "❌ Inventing topic labels and calling them insights. An insight is a",
           "thing the article says that you didn't already know",
-          "❌ Discarding the raw source. Always wrap it in `<details>`",
           "❌ Re-enriching non-idempotently — check the `needs_enrichment` flag in",
           "frontmatter; skip if already false"
         ],
-        "role" : "procedure"
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 152,
+        "lines" : [
+          "❌ Discarding the raw source. Always wrap it in `<details>`"
+        ],
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Related skills",
-        "line" : 145,
+        "line" : 155,
         "lines" : [
           "`skills\/media-ingest\/SKILL.md` — creates the raw article pages this skill enriches",
           "`skills\/idea-ingest\/SKILL.md` — link\/article ingestion with author people-page enforcement",
@@ -359,11 +415,10 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
-        "line" : 152,
+        "line" : 162,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
           "Output written under the directories listed in `writes_to:` (when applicable)",
@@ -371,12 +426,12 @@
           "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
           "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 164,
+        "line" : 173,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -424,7 +479,7 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 30,
+      "meridian_line" : 57,
       "swift_line" : 603
     },
     {
@@ -499,8 +554,8 @@
       "prose_steps" : [
         {
           "dispatch_mode" : "plan_then_execute",
-          "guidance" : "Takes an article brain page that's a wall of raw extracted text and rewrites\nit as a structured page with:\n**Executive Summary** — 2-3 sentences, the ONE thing worth remembering\n**Why It Matters** — connects to the user's specific projects + interests\n(read from brain context, not assumed)\n**Quotable Lines** — 3-5 VERBATIM quotes worth referencing in essays\n**Key Insights** — actual insights, not topic labels\n**Surprising or Counterintuitive** — what makes this content unique\n**See Also** — standard markdown links to related brain pages\nRaw source content is preserved in a collapsed `<details>` section so the\noriginal is never lost\nuse judgment to follow the When to invoke guidance:\nNew article page lands in the brain via media-ingest with `needs_enrichment: true`\nExisting article page is a wall of text under a `## Content` header with\nno synthesis\nUser says a brain page is useless, boring, or a dump\nAn LLM-judge brain-quality eval fails on quotability or actionability for\nan article page\ncodeblock:bash:IyAxLiBGaW5kIGNhbmRpZGF0ZSBwYWdlcwpnYnJhaW4gcXVlcnkgIm5lZWRzX2VucmljaG1lbnQ6IHRydWUgdHlwZTphcnRpY2xlIiAtLWxpbWl0IDUwCgojIDIuIEZvciBlYWNoIGNhbmRpZGF0ZSwgcmVhZCB0aGUgcGFnZQpnYnJhaW4gZ2V0IG1lZGlhL2FydGljbGVzLzxzbHVnPgoKIyAzLiBFbnJpY2ggdmlhIHRoZSBhZ2VudCdzIExMTSAoU29ubmV0IGJ5IGRlZmF1bHQ7IE9wdXMgZm9yIGhpZ2gtdmFsdWUpCiMgICAgVGhlIGFnZW50IHJlYWRzIHRoZSByYXcgY29udGVudCArIGJyYWluIGNvbnRleHQgKyB3cml0ZXMgdGhlIHN0cnVjdHVyZWQgcGFnZS4KCiMgNC4gV3JpdGUgdGhlIGVucmljaGVkIHBhZ2UKIyAgICBVc2UgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbiB3aXRoIHRoZSBuZXcgc3RydWN0dXJlZCBtYXJrZG93biBib2R5LgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzCiMgICAgRm9yIGV2ZXJ5IHBlcnNvbi9jb21wYW55IG1lbnRpb25lZCwgYWRkIGEgdGltZWxpbmUgYmFjay1saW5rLg==\n✅ `## Executive Summary` (2-3 sentences)\n✅ `## Quotable Lines` with ≥3 verbatim quotes (literal quotes, not paraphrase)\n✅ `## Key Insights` with ≥3 bullets (insights, not topic labels)\ntable:ai-discretion:fCBNb2RlbCB8IFVzZSB3aGVuIHwgUXVvdGUgYWNjdXJhY3kgfAp8LS0tLS0tLXwtLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgU29ubmV0IChkZWZhdWx0KSB8IEJ1bGsgZW5yaWNobWVudCwgbW9zdCBhcnRpY2xlcyB8IEdvb2Qg4oCUIG9jY2FzaW9uYWxseSBwYXJhcGhyYXNlcyB8CnwgT3B1cyB8IEhpZ2gtdmFsdWUgY29udGVudCwgb3JpZ2luYWwtdGhpbmtpbmcgcGllY2VzLCBsb25ncmVhZHMgfCBFeGNlbGxlbnQg4oCUIHJlc3BlY3RzICJ2ZXJiYXRpbSIgaW5zdHJ1Y3Rpb24gfA==\nNEVER use `[[wiki-links]]` — they don't render on GitHub\nuse judgment to follow the Anti-Patterns guidance:\n❌ Paraphrasing quotes (\"the author argues that…\"). Quotes are verbatim\nor they're not quotes\n❌ Generic \"Why It Matters\" (\"this is important because innovation\")\nTie to specific brain context or remove the section\n❌ Inventing topic labels and calling them insights. An insight is a\nthing the article says that you didn't already know\n❌ Discarding the raw source. Always wrap it in `<details>`\n❌ Re-enriching non-idempotently — check the `needs_enrichment` flag in\nfrontmatter; skip if already false\n`skills\/media-ingest\/SKILL.md` — creates the raw article pages this skill enriches\n`skills\/idea-ingest\/SKILL.md` — link\/article ingestion with author people-page enforcement\n`skills\/conventions\/quality.md` — citation + back-link rules\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test",
-          "line" : 30,
+          "guidance" : "An LLM-judge brain-quality eval fails on quotability or actionability for\nan article page\ncodeblock:bash:IyAxLiBGaW5kIGNhbmRpZGF0ZSBwYWdlcwpnYnJhaW4gcXVlcnkgIm5lZWRzX2VucmljaG1lbnQ6IHRydWUgdHlwZTphcnRpY2xlIiAtLWxpbWl0IDUwCgojIDIuIEZvciBlYWNoIGNhbmRpZGF0ZSwgcmVhZCB0aGUgcGFnZQpnYnJhaW4gZ2V0IG1lZGlhL2FydGljbGVzLzxzbHVnPgoKIyAzLiBFbnJpY2ggdmlhIHRoZSBhZ2VudCdzIExMTSAoU29ubmV0IGJ5IGRlZmF1bHQ7IE9wdXMgZm9yIGhpZ2gtdmFsdWUpCiMgICAgVGhlIGFnZW50IHJlYWRzIHRoZSByYXcgY29udGVudCArIGJyYWluIGNvbnRleHQgKyB3cml0ZXMgdGhlIHN0cnVjdHVyZWQgcGFnZS4KCiMgNC4gV3JpdGUgdGhlIGVucmljaGVkIHBhZ2UKIyAgICBVc2UgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbiB3aXRoIHRoZSBuZXcgc3RydWN0dXJlZCBtYXJrZG93biBib2R5LgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzCiMgICAgRm9yIGV2ZXJ5IHBlcnNvbi9jb21wYW55IG1lbnRpb25lZCwgYWRkIGEgdGltZWxpbmUgYmFjay1saW5rLg==\n✅ `## Executive Summary` (2-3 sentences)\n✅ `## Quotable Lines` with ≥3 verbatim quotes (literal quotes, not paraphrase)\n✅ `## Key Insights` with ≥3 bullets (insights, not topic labels)\ntable:decision:fCBNb2RlbCB8IFVzZSB3aGVuIHwgUXVvdGUgYWNjdXJhY3kgfAp8LS0tLS0tLXwtLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgU29ubmV0IChkZWZhdWx0KSB8IEJ1bGsgZW5yaWNobWVudCwgbW9zdCBhcnRpY2xlcyB8IEdvb2Qg4oCUIG9jY2FzaW9uYWxseSBwYXJhcGhyYXNlcyB8CnwgT3B1cyB8IEhpZ2gtdmFsdWUgY29udGVudCwgb3JpZ2luYWwtdGhpbmtpbmcgcGllY2VzLCBsb25ncmVhZHMgfCBFeGNlbGxlbnQg4oCUIHJlc3BlY3RzICJ2ZXJiYXRpbSIgaW5zdHJ1Y3Rpb24gfA==\nuse judgment to follow the Model selection — steps 2 guidance:\nRule: for bulk enrichment, do a Sonnet draft pass and spot-check 5 with\nthe LLM-judge brain-quality eval. If quotes are paraphrased, switch to\nOpus for that batch\nNEVER use `[[wiki-links]]` — they don't render on GitHub\n`skills\/media-ingest\/SKILL.md` — creates the raw article pages this skill enriches\n`skills\/idea-ingest\/SKILL.md` — link\/article ingestion with author people-page enforcement\n`skills\/conventions\/quality.md` — citation + back-link rules",
+          "line" : 57,
           "scoped_tools" : [
             "assess.notability",
             "capture",
@@ -522,7 +577,7 @@
             "timeline.add",
             "verify"
           ],
-          "text" : "follow the What this does guidance"
+          "text" : "follow the When to invoke — steps guidance"
         }
       ],
       "source_name" : "article-enrichment a input",

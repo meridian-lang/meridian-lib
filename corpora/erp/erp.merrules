@@ -17,6 +17,7 @@ rule "erp-publish":
   lowers to: emit erp.report with message = {message}.
 
 === sections ===
+section "Controls — steps" -> invariants
 section "Workflow — steps" -> procedure
 section "Workflow — steps 2" -> procedure
 section "Dispatch table — steps" -> procedure

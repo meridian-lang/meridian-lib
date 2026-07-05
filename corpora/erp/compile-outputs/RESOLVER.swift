@@ -393,25 +393,6 @@ public struct Entry: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "Entry", parameters: [:])
 
-        // L11
-        let __meridianProseResults_L11 = try await runtime.executeProsePlan(
-            prose: "Decide which case below applies and carry out its action:\n- when trigger phrase is process open orders, placeorder\n- when trigger phrase is fulfill ERP orders, fulfillorder\n- when trigger phrase is run invoices, invoicerun\n- when trigger phrase is run dunning, dunning\n- when trigger phrase is restock short products, restock\n- when trigger phrase is receive inbound shipment, receiveshipment\n- when trigger phrase is cancel blocked orders, cancelorder\n- when trigger phrase is month-end close, monthendclose",
-            snapshot: state.snapshot(),
-            scopedTools: ["inventory.reserve", "invoice.create", "invoice.list", "order.cancel", "order.list", "payment.collect", "period.close", "product.list", "purchase_order.create", "shipment.create"]
-        )
-        for (__key, __value) in __meridianProseResults_L11 {
-            state.bind(__key, __value)
-        }
-        // L23
-        let __meridianProseResults_L23 = try await runtime.executeProsePlan(
-            prose: "follow the Workflow guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["inventory.reserve", "invoice.create", "invoice.list", "order.cancel", "order.list", "payment.collect", "period.close", "product.list", "purchase_order.create", "shipment.create"],
-            guidance: "Look up the skill corresponding to the trigger phrase and emit the selected\nskill id"
-        )
-        for (__key, __value) in __meridianProseResults_L23 {
-            state.bind(__key, __value)
-        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

@@ -93,45 +93,45 @@
     "name" : "dedupe records",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "applicability",
         "level" : 2,
         "line" : 11,
         "text" : "Use this when"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 16,
+        "line" : 15,
         "text" : "Procedure"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 20,
+        "line" : 18,
         "text" : "Procedure — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 24,
+        "line" : 22,
         "text" : "Procedure — steps 2"
       },
       {
-        "kind" : "procedure",
+        "kind" : "invariants",
         "level" : 2,
-        "line" : 31,
+        "line" : 29,
         "text" : "Postconditions"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 18,
+        "line" : 16,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 29,
+        "line" : 27,
         "text" : "Emit"
       }
     ],
@@ -141,26 +141,24 @@
         "heading" : "Use this when",
         "line" : 11,
         "lines" : [
-          "use judgment to follow the Use this when guidance:",
           "\"dedupe records\"",
           "\"duplicate rows detected\""
         ],
-        "role" : "procedure"
+        "role" : "applicability"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Procedure",
-        "line" : 16,
+        "line" : 15,
         "lines" : [
-          "use judgment to follow the Procedure guidance:",
           "Check: any duplicate records"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Procedure — steps",
-        "line" : 20,
+        "line" : 18,
         "lines" : [
           "fetch duplicate records"
         ],
@@ -169,7 +167,7 @@
       {
         "executes" : true,
         "heading" : "Procedure — steps 2",
-        "line" : 24,
+        "line" : 22,
         "lines" : [
           "for each record whose status is \"duplicate\":",
           "mark the record canonical",
@@ -181,12 +179,11 @@
       {
         "executes" : true,
         "heading" : "Postconditions",
-        "line" : 31,
+        "line" : 29,
         "lines" : [
-          "use judgment to follow the Postconditions guidance:",
           "make sure no records whose status is \"duplicate\""
         ],
-        "role" : "procedure"
+        "role" : "invariants"
       }
     ],
     "triggers" : "\"dedupe records\"\n\"duplicate rows detected\""
@@ -220,24 +217,44 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 12,
-      "swift_line" : 299
+      "meridian_line" : 30,
+      "swift_line" : 300
+    },
+    {
+      "meridian_line" : 45,
+      "swift_line" : 305
+    },
+    {
+      "meridian_line" : 24,
+      "swift_line" : 316
+    },
+    {
+      "meridian_line" : 63,
+      "swift_line" : 323
+    },
+    {
+      "meridian_line" : 69,
+      "swift_line" : 335
+    },
+    {
+      "meridian_line" : 27,
+      "swift_line" : 351
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 337
+      "swift_line" : 388
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 342
+      "swift_line" : 393
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 380
+      "swift_line" : 431
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 385
+      "swift_line" : 436
     }
   ],
   "tools_used" : [
@@ -248,26 +265,6 @@
       "mode" : "strict",
       "parameters" : [
 
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "\"dedupe records\"\n\"duplicate rows detected\"\nuse judgment to follow the Procedure guidance:\nCheck: any duplicate records\nfetch duplicate records\nfor each record whose status is \"duplicate\":\nmark the record canonical\npurge the record\nEmit: \"duplicate record pass complete\"\nuse judgment to follow the Postconditions guidance:\nmake sure no records whose status is \"duplicate\"",
-          "line" : 12,
-          "scoped_tools" : [
-            "audit_row.list",
-            "batch.list",
-            "batch.settle",
-            "constraint.list",
-            "index.list",
-            "index.rebuild",
-            "ledger.reconcile",
-            "record.list",
-            "record.mark_canonical",
-            "record.purge"
-          ],
-          "text" : "follow the Use this when guidance"
-        }
       ],
       "source_name" : "dedupe records",
       "swift_struct" : "DedupeRecords"

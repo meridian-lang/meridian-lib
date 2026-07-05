@@ -620,37 +620,10 @@ public struct EntryInput: MeridianWorkflow {
             }
         }
 
-        // L21
-        let __meridianProseResults_L21 = try await runtime.executeProsePlan(
-            prose: "Decide which case below applies and carry out its action:\n- when \"What do we know about\", \"tell me about\", \"search for\", \"who is\", \"background on\", \"notes on\", `skills/query/SKILL.md`\n- when \"Who knows who\", \"relationship between\", \"connections\", \"graph query\", `skills/query/SKILL.md` (use graph-query)\n- when Creating/enriching a person or company page, `skills/enrich/SKILL.md`\n- when Where does a new file go? Filing rules, `skills/repo-architecture/SKILL.md`\n- when \"where does this brain page go\", \"file this in the brain\", \"brain taxonomist\", \"taxonomy check\", \"refile brain page\", \"which directory does this page go\", `skills/brain-taxonomist/SKILL.md`\n- when \"EIIRP\", \"everything in its right place\", \"store this research\", \"put this in the brain\", \"make this re-doable\", \"DRY this up\", \"file all of this\", \"organize all of this work\", \"archive this research thread\", `skills/eiirp/SKILL.md`\n- when Fix broken citations in brain pages, `skills/citation-fixer/SKILL.md`\n- when \"citation audit\", \"check citations\", \"fix citations\", `skills/citation-fixer/SKILL.md` (focused fix). For broader brain health, chain into `skills/maintain/SKILL.md`\n- when \"Research\", \"track\", \"extract from email\", \"investor updates\", \"donations\", `skills/data-research/SKILL.md`\n- when Share a brain page as a link, `skills/publish/SKILL.md`\n- when \"validate frontmatter\", \"check frontmatter\", \"fix frontmatter\", \"frontmatter audit\", \"brain lint\", `skills/frontmatter-guard/SKILL.md`\n- when \"what search mode\", \"is my cache hot\", \"tune my retrieval\", \"compare search modes\", \"clear search overrides\", `gbrain search modes/stats/tune` directly. See `skills/conventions/search-modes.md`\n- when \"eval results\", \"search benchmark\", \"haters-immune methodology\", \"regression check on retrieval\", `gbrain eval run-all` / `gbrain eval compare`. See `docs/eval/SEARCH_MODE_METHODOLOGY.md`",
-            snapshot: state.snapshot(),
-            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
-        )
-        for (__key, __value) in __meridianProseResults_L21 {
-            state.bind(__key, __value)
-        }
-        // L43
-        let __meridianProseResults_L43 = try await runtime.executeProsePlan(
-            prose: "Decide which case below applies and carry out its action:\n- when \"capture this\", \"save this thought\", \"remember this\", \"drop this in the inbox\", \"save to brain\", `skills/capture/SKILL.md`\n- when User shares a link, article, tweet, or idea, `skills/idea-ingest/SKILL.md`\n- when \"watch this video\", \"process this YouTube link\", \"ingest this PDF\", \"save this podcast\", \"process this book\", \"summarize this book\", \"PDF book\", \"ingest it into my brain\", \"what's in this screenshot\", \"check out this repo\", `skills/media-ingest/SKILL.md`\n- when Meeting transcript received, `skills/meeting-ingestion/SKILL.md`\n- when Generic \"ingest this\" (auto-routes to above), `skills/ingest/SKILL.md`",
-            snapshot: state.snapshot(),
-            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
-        )
-        for (__key, __value) in __meridianProseResults_L43 {
-            state.bind(__key, __value)
-        }
-        // L57
-        let __meridianProseResults_L57 = try await runtime.executeProsePlan(
-            prose: "Decide which case below applies and carry out its action:\n- when \"Brainstorm\", \"I have an idea\", \"office hours\", GStack: office-hours\n- when \"Review this plan\", \"CEO review\", \"poke holes\", GStack: ceo-review\n- when \"Debug\", \"fix\", \"broken\", \"investigate\", GStack: investigate\n- when \"Retro\", \"what shipped\", \"retrospective\", GStack: retro",
-            snapshot: state.snapshot(),
-            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
-        )
-        for (__key, __value) in __meridianProseResults_L57 {
-            state.bind(__key, __value)
-        }
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("Task add/remove/complete/defer/review")) {
-            if __meridianShouldRun("progress:0.5.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.2.then.0:L69:C0") {
+                // L69
                 _ = try await runtime.invoke(
                     tool: "shell.run",
                     args: [
@@ -658,14 +631,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.5.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.2.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("Morning prep, meeting context, day planning")) {
-            if __meridianShouldRun("progress:0.6.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.3.then.0:L69:C0") {
+                // L69
                 _ = try await runtime.invoke(
                     tool: "shell.run",
                     args: [
@@ -673,14 +646,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.6.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.3.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("Daily briefing, \"what's happening today\"")) {
-            if __meridianShouldRun("progress:0.7.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.4.then.0:L69:C0") {
+                // L69
                 _ = try await runtime.invoke(
                     tool: "shell.run",
                     args: [
@@ -688,14 +661,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.7.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.4.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("Cron scheduling, quiet hours, job staggering")) {
-            if __meridianShouldRun("progress:0.8.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.5.then.0:L69:C0") {
+                // L69
                 _ = try await runtime.invoke(
                     tool: "shell.run",
                     args: [
@@ -703,14 +676,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.8.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.5.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("Save or load reports")) {
-            if __meridianShouldRun("progress:0.9.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.6.then.0:L69:C0") {
+                // L69
                 _ = try await runtime.invoke(
                     tool: "shell.run",
                     args: [
@@ -718,14 +691,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.9.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.6.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("Create a skill")) {
-            if __meridianShouldRun("progress:0.10.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.7.then.0:L69:C0") {
+                // L69
                 // "improve this skill",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -734,14 +707,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.10.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.7.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("Skillify this")) {
-            if __meridianShouldRun("progress:0.11.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.8.then.0:L69:C0") {
+                // L69
                 // "is this a skill?", "make this proper",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -750,14 +723,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.11.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.8.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("Compress my resolver")) {
-            if __meridianShouldRun("progress:0.12.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.9.then.0:L69:C0") {
+                // L69
                 // "AGENTS.md too large", "RESOLVER.md too big", "functional area dispatcher", "shrink routing table",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -766,14 +739,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.12.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.9.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("\"Is gbrain healthy?\", morning health check, skillpack-check")) {
-            if __meridianShouldRun("progress:0.13.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.10.then.0:L69:C0") {
+                // L69
                 _ = try await runtime.invoke(
                     tool: "shell.run",
                     args: [
@@ -781,14 +754,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.13.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.10.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("harvest this skill into gbrain")) {
-            if __meridianShouldRun("progress:0.14.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.11.then.0:L69:C0") {
+                // L69
                 // "publish this skill to gbrain", "lift this skill upstream", "share this skill with other gbrain clients", "promote my skill to gbrain",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -797,14 +770,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.14.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.11.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("Post-restart health + auto-fix, \"did the container restart break anything\", smoke test")) {
-            if __meridianShouldRun("progress:0.15.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.12.then.0:L69:C0") {
+                // L69
                 _ = try await runtime.invoke(
                     tool: "shell.run",
                     args: [
@@ -812,14 +785,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.15.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.12.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("Cross-modal review, second opinion")) {
-            if __meridianShouldRun("progress:0.16.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.13.then.0:L69:C0") {
+                // L69
                 _ = try await runtime.invoke(
                     tool: "shell.run",
                     args: [
@@ -827,14 +800,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.16.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.13.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("\"Validate skills\", skill health check")) {
-            if __meridianShouldRun("progress:0.17.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.14.then.0:L69:C0") {
+                // L69
                 _ = try await runtime.invoke(
                     tool: "shell.run",
                     args: [
@@ -842,14 +815,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.17.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.14.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("Webhook setup, external event processing")) {
-            if __meridianShouldRun("progress:0.18.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.15.then.0:L69:C0") {
+                // L69
                 _ = try await runtime.invoke(
                     tool: "shell.run",
                     args: [
@@ -857,14 +830,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.18.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.15.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("Spawn agent")) {
-            if __meridianShouldRun("progress:0.19.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.16.then.0:L69:C0") {
+                // L69
                 // "background task", "parallel tasks", "steer agent", "pause/resume agent", "gbrain jobs submit", "submit a gbrain job", "submit a shell job", "shell job",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -873,14 +846,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.19.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.16.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L72
+        // L69
         if MeridianComparison.eq(state.get("trigger"), .string("present options")) {
-            if __meridianShouldRun("progress:0.20.then.0:L72:C0") {
-                // L72
+            if __meridianShouldRun("progress:0.17.then.0:L69:C0") {
+                // L69
                 // "ask before proceeding", "choice gate", "user decision",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -889,23 +862,23 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.20.then.0:L72:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.17.then.0:L69:C0", state: state.snapshot())
             }
         }
 
-        // L97
-        let __meridianProseResults_L97 = try await runtime.executeProsePlan(
+        // L94
+        let __meridianProseResults_L94 = try await runtime.executeProsePlan(
             prose: "Decide which case below applies and carry out its action:\n- when \"Set up GBrain\", first boot, `skills/setup/SKILL.md`\n- when \"Now what?\", \"fill my brain\", \"cold start\", \"bootstrap\", \"import my data\", \"what should I import first\", `skills/cold-start/SKILL.md`\n- when \"Migrate from Obsidian/Notion/Logseq\", `skills/migrate/SKILL.md`\n- when Brain health check, maintenance run, `skills/maintain/SKILL.md`\n- when \"Extract links\", \"build link graph\", \"populate timeline\", `skills/maintain/SKILL.md` (extraction sections)\n- when \"Run dream\", \"process today's session\", \"synthesize my conversations\", \"consolidate yesterday's conversations\", \"what patterns did you see\", \"did the dream cycle run\", `skills/maintain/SKILL.md` (dream cycle section)\n- when \"Brain health\", \"what features am I missing\", \"brain score\", Run `gbrain features --json`\n- when \"Set up autopilot\", \"run brain maintenance\", \"keep brain updated\", Run `gbrain autopilot --install --repo ~/brain`\n- when \"Upgrade gbrain\", \"update gbrain\", \"gbrain update available\", `UPGRADE_AVAILABLE`, \"is gbrain up to date\", `skills/gbrain-upgrade/SKILL.md`\n- when Agent identity, \"who am I\", customize agent, `skills/soul-audit/SKILL.md`\n- when \"Populate links\", \"extract links\", \"backfill graph\", `skills/maintain/SKILL.md` (graph population phase)\n- when \"Populate timeline\", \"extract timeline entries\", `skills/maintain/SKILL.md` (graph population phase)",
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"]
         )
-        for (__key, __value) in __meridianProseResults_L97 {
+        for (__key, __value) in __meridianProseResults_L94 {
             state.bind(__key, __value)
         }
-        // L117
+        // L114
         if MeridianComparison.eq(state.get("trigger"), .string("Non-owner sends a message")) {
-            if __meridianShouldRun("progress:0.22.then.0:L117:C0") {
-                // L117
+            if __meridianShouldRun("progress:0.19.then.0:L114:C0") {
+                // L114
                 // Check  before responding
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -914,14 +887,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.22.then.0:L117:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.19.then.0:L114:C0", state: state.snapshot())
             }
         }
 
-        // L117
+        // L114
         if MeridianComparison.eq(state.get("trigger"), .string("Agent needs to know its identity/vibe")) {
-            if __meridianShouldRun("progress:0.23.then.0:L117:C0") {
-                // L117
+            if __meridianShouldRun("progress:0.20.then.0:L114:C0") {
+                // L114
                 // Read
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -930,14 +903,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.23.then.0:L117:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.20.then.0:L114:C0", state: state.snapshot())
             }
         }
 
-        // L117
+        // L114
         if MeridianComparison.eq(state.get("trigger"), .string("Agent needs user context")) {
-            if __meridianShouldRun("progress:0.24.then.0:L117:C0") {
-                // L117
+            if __meridianShouldRun("progress:0.21.then.0:L114:C0") {
+                // L114
                 // Read
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -946,14 +919,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.24.then.0:L117:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.21.then.0:L114:C0", state: state.snapshot())
             }
         }
 
-        // L117
+        // L114
         if MeridianComparison.eq(state.get("trigger"), .string("Operational cadence (what to check and when)")) {
-            if __meridianShouldRun("progress:0.25.then.0:L117:C0") {
-                // L117
+            if __meridianShouldRun("progress:0.22.then.0:L114:C0") {
+                // L114
                 // Read
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -962,12 +935,12 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.25.then.0:L117:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.22.then.0:L114:C0", state: state.snapshot())
             }
         }
 
-        if __meridianShouldRun("progress:0.26:L143:C0") {
-            // L143
+        if __meridianShouldRun("progress:0.23:L140:C0") {
+            // L140
             // — citations, back-links, notability gate
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -976,10 +949,10 @@ public struct EntryInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.26:L143:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.23:L140:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.27:L144:C0") {
-            // L144
+        if __meridianShouldRun("progress:0.24:L141:C0") {
+            // L141
             // — check brain before external APIs
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -988,10 +961,10 @@ public struct EntryInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.27:L144:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.24:L141:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.28:L145:C0") {
-            // L145
+        if __meridianShouldRun("progress:0.25:L142:C0") {
+            // L142
             // — which brain (DB) and which source (repo) to target; cross-brain federation is latent-space only
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -1000,10 +973,10 @@ public struct EntryInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.28:L145:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.25:L142:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.29:L149:C0") {
-            // L149
+        if __meridianShouldRun("progress:0.26:L146:C0") {
+            // L146
             // — when to use Minions vs inline work
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -1012,10 +985,10 @@ public struct EntryInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.29:L149:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.26:L146:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.30:L150:C0") {
-            // L150
+        if __meridianShouldRun("progress:0.27:L147:C0") {
+            // L147
             // — choice-gate pattern for human input at decision points
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -1024,10 +997,10 @@ public struct EntryInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.30:L150:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.27:L147:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.31:L151:C0") {
-            // L151
+        if __meridianShouldRun("progress:0.28:L148:C0") {
+            // L148
             // — where files go
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -1036,10 +1009,10 @@ public struct EntryInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.31:L151:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.28:L148:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.32:L152:C0") {
-            // L152
+        if __meridianShouldRun("progress:0.29:L149:C0") {
+            // L149
             // — output quality standards
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -1048,12 +1021,12 @@ public struct EntryInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.32:L152:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.29:L149:C0", state: state.snapshot())
         }
-        // L159
+        // L156
         if MeridianComparison.eq(state.get("trigger"), .string("personalized version of this book")) {
-            if __meridianShouldRun("progress:0.33.then.0:L159:C0") {
-                // L159
+            if __meridianShouldRun("progress:0.30.then.0:L156:C0") {
+                // L156
                 // "mirror this book", "two-column book analysis", "apply this book to my life", "how does this book apply to me",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -1062,14 +1035,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.33.then.0:L159:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.30.then.0:L156:C0", state: state.snapshot())
             }
         }
 
-        // L159
+        // L156
         if MeridianComparison.eq(state.get("trigger"), .string("enrich this article")) {
-            if __meridianShouldRun("progress:0.34.then.0:L159:C0") {
-                // L159
+            if __meridianShouldRun("progress:0.31.then.0:L156:C0") {
+                // L156
                 // "enrich brain pages", "batch enrich", "make brain pages useful",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -1078,14 +1051,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.34.then.0:L159:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.31.then.0:L156:C0", state: state.snapshot())
             }
         }
 
-        // L159
+        // L156
         if MeridianComparison.eq(state.get("trigger"), .string("strategic reading")) {
-            if __meridianShouldRun("progress:0.35.then.0:L159:C0") {
-                // L159
+            if __meridianShouldRun("progress:0.32.then.0:L156:C0") {
+                // L156
                 // "read this through the lens of", "apply this to my problem", "what can I learn from this about", "extract a playbook from",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -1094,14 +1067,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.35.then.0:L159:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.32.then.0:L156:C0", state: state.snapshot())
             }
         }
 
-        // L159
+        // L156
         if MeridianComparison.eq(state.get("trigger"), .string("concept synthesis")) {
-            if __meridianShouldRun("progress:0.36.then.0:L159:C0") {
-                // L159
+            if __meridianShouldRun("progress:0.33.then.0:L156:C0") {
+                // L156
                 // "synthesize my concepts", "find patterns across my notes", "build my intellectual map", "trace idea evolution",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -1110,14 +1083,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.36.then.0:L159:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.33.then.0:L156:C0", state: state.snapshot())
             }
         }
 
-        // L159
+        // L156
         if MeridianComparison.eq(state.get("trigger"), .string("idea lineage")) {
-            if __meridianShouldRun("progress:0.37.then.0:L159:C0") {
-                // L159
+            if __meridianShouldRun("progress:0.34.then.0:L156:C0") {
+                // L156
                 // "trace the lineage of this idea", "how my thinking about", "how has my thinking about", "what is my current version of", "show reversals in my thinking about", "where did this idea come from",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -1126,14 +1099,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.37.then.0:L159:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.34.then.0:L156:C0", state: state.snapshot())
             }
         }
 
-        // L159
+        // L156
         if MeridianComparison.eq(state.get("trigger"), .string("perplexity research")) {
-            if __meridianShouldRun("progress:0.38.then.0:L159:C0") {
-                // L159
+            if __meridianShouldRun("progress:0.35.then.0:L156:C0") {
+                // L156
                 // "what's new about", "current state of", "web research", "what changed about",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -1142,14 +1115,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.38.then.0:L159:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.35.then.0:L156:C0", state: state.snapshot())
             }
         }
 
-        // L159
+        // L156
         if MeridianComparison.eq(state.get("trigger"), .string("crawl my archive")) {
-            if __meridianShouldRun("progress:0.39.then.0:L159:C0") {
-                // L159
+            if __meridianShouldRun("progress:0.36.then.0:L156:C0") {
+                // L156
                 // "find gold in my archive", "archive crawler", "scan my dropbox for", "mine my old files for",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -1158,14 +1131,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.39.then.0:L159:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.36.then.0:L156:C0", state: state.snapshot())
             }
         }
 
-        // L159
+        // L156
         if MeridianComparison.eq(state.get("trigger"), .string("verify this academic claim")) {
-            if __meridianShouldRun("progress:0.40.then.0:L159:C0") {
-                // L159
+            if __meridianShouldRun("progress:0.37.then.0:L156:C0") {
+                // L156
                 // "check this study", "academic verify", "validate citation", "is this study real",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -1174,14 +1147,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.40.then.0:L159:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.37.then.0:L156:C0", state: state.snapshot())
             }
         }
 
-        // L159
+        // L156
         if MeridianComparison.eq(state.get("trigger"), .string("make pdf from brain")) {
-            if __meridianShouldRun("progress:0.41.then.0:L159:C0") {
-                // L159
+            if __meridianShouldRun("progress:0.38.then.0:L156:C0") {
+                // L156
                 // "brain pdf", "convert brain page to pdf", "publish this page as pdf", "export brain page",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -1190,14 +1163,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.41.then.0:L159:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.38.then.0:L156:C0", state: state.snapshot())
             }
         }
 
-        // L159
+        // L156
         if MeridianComparison.eq(state.get("trigger"), .string("voice note")) {
-            if __meridianShouldRun("progress:0.42.then.0:L159:C0") {
-                // L159
+            if __meridianShouldRun("progress:0.39.then.0:L156:C0") {
+                // L156
                 // "ingest this voice memo", "transcribe and file", "voice note ingest", "save this audio note",
                 _ = try await runtime.invoke(
                     tool: "shell.run",
@@ -1206,14 +1179,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.42.then.0:L159:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.39.then.0:L156:C0", state: state.snapshot())
             }
         }
 
-        // L159
+        // L156
         if MeridianComparison.eq(state.get("trigger"), .string("\"add a page type\", \"add a type to my schema\", \"schema author\", \"schema mutate\", \"schema pack add\", \"my brain has untyped pages\", \"propose new types from my corpus\", \"backfill page types\", \"evolve my schema\", \"researcher type\", \"make X an expert type\" (dispatcher for: gbrain schema active/list/show/validate/graph/lint/stats/explain/use/downgrade/reload/init/fork/edit/diff/add-type/remove-type/update-type/add-alias/remove-alias/add-prefix/remove-prefix/add-link-type/remove-link-type/set-extractable/set-expert-routing/detect/suggest/review-candidates/review-orphans/sync)")) {
-            if __meridianShouldRun("progress:0.43.then.0:L159:C0") {
-                // L159
+            if __meridianShouldRun("progress:0.40.then.0:L156:C0") {
+                // L156
                 _ = try await runtime.invoke(
                     tool: "shell.run",
                     args: [
@@ -1221,14 +1194,14 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.43.then.0:L159:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.40.then.0:L156:C0", state: state.snapshot())
             }
         }
 
-        // L159
+        // L156
         if MeridianComparison.eq(state.get("trigger"), .string("\"unify my types\", \"migrate to gbrain-base-v2\", \"94 types to 14\", \"apply canonical taxonomy\", \"clean up my page types\", \"pack upgrade\", \"shrink type proliferation\", \"consolidate page types\", \"retype pages to canonical\" (dispatcher for: gbrain onboard --check, gbrain onboard --check --explain, gbrain jobs submit unify-types, gbrain pages restore)")) {
-            if __meridianShouldRun("progress:0.44.then.0:L159:C0") {
-                // L159
+            if __meridianShouldRun("progress:0.41.then.0:L156:C0") {
+                // L156
                 _ = try await runtime.invoke(
                     tool: "shell.run",
                     args: [
@@ -1236,7 +1209,7 @@ public struct EntryInput: MeridianWorkflow {
                     ]
                 )
 
-                try await runtime.checkpoint(label: "progress:0.44.then.0:L159:C0", state: state.snapshot())
+                try await runtime.checkpoint(label: "progress:0.41.then.0:L156:C0", state: state.snapshot())
             }
         }
 

@@ -109,6 +109,39 @@ Before lowering, `ASTToIR.lower(_ file:)` calls
 makes all workflows resolvable as phrase invocations within other workflows
 (and themselves), enabling self-recursion.
 
+### `matchPhrase`'s implicit-fill retry must not self-match the lowering workflow
+
+`SymbolTable.matchPhrase`/`matchPhraseDirect` take an `excludingStructName:
+String?` parameter. `ASTToIR.lowerWorkflow` passes its own `owningStructName`
+through `defaultParam` down the block/statement lowering chain specifically so
+the **low-confidence single-parameter implicit-fill retry** (not the primary,
+fully-literal match) can exclude the currently-lowering workflow from its own
+candidate set. Without this, a leftover non-lowerable narrative line inside a
+single-parameter workflow can spuriously self-match via manufactured literal
+overlap (the retry's appended connector + the workflow's own parameter kind),
+silently emitting a nonsense recursive self-invocation instead of the correct
+`MER2001 unresolved phrase` diagnostic. An explicit, fully-literal
+self-recursive call is unaffected — it still resolves via the primary match,
+which this exclusion does not touch.
+
+### `SkillSectionRole.reference` — the non-executable role `(( inert ))` maps to
+
+`SkillSectionRole` (`Sources/MeridianCore/Rulebook/Rulebook.swift`) has a
+`.reference` case — the role `(( role: reference ))` resolves to, and what
+`(( inert ))`/`(( inert, role: … ))` are synonyms of via
+`SectionRoleResolver.decide`. It is a **non-executable** role (`executes ==
+false`), so both of the section-role model's two hand-written, non-`default`
+exhaustive switches must carry it in their non-executable arm:
+`SkillSectionRole.isExecutable` (`Rulebook.swift`) and `SkillSectionBuilder
+.build`'s `switch role` (`Sources/MeridianCore/Parser/Skill/
+SkillSectionBuilder.swift`, the `.template, .domain, .tools, .conventionRef,
+.reference, .inert` arm). Adding any future non-executable role must extend
+both switches — the compiler will refuse to build otherwise, which is the
+point: there is no `default:` escape hatch on either switch. Migrator-side
+classification logic (which role to *assign*) lives in
+`Sources/MeridianCore/Migration/SkillMigrator+{SplitPlan,Marking}.swift`, out
+of this file's glob — see `docs/13_SKILL_MD_PORTING.md` for that policy.
+
 ---
 
 # IR primitives reference

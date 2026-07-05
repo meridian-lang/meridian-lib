@@ -3,8 +3,8 @@
 - Original: `webhook-transforms/SKILL.md`
 - Ported: `webhook_transforms.meri`
 - Tier: 2 (light edits)
-- Similarity: 81%
-- Lines: 84 -> 96 (+23 / -11)
+- Similarity: 79%
+- Lines: 84 -> 93 (+23 / -14)
 
 ## Frontmatter
 - Added: (none)
@@ -12,58 +12,63 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L49 `SMS Received`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L55 `Meeting Completed`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L61 `Social Mention`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L67 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L4 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L47 `SMS Received`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L53 `Meeting Completed`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L59 `Social Mention`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L65 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L70 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
-- Sections inert total: 4/7 (57% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 7/7 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: reference-documentation=3, template=1
-- Judgment: 3 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=6, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L49 `SMS Received`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L55 `Meeting Completed`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L61 `Social Mention`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L67 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L4 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L13 `Phases`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L47 `SMS Received`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L53 `Meeting Completed`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L59 `Social Mention`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L65 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L70 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/webhook-transforms/SKILL.md
 +++ skills/webhook_transforms.meri
-@@ -18,7 +18,8 @@
+@@ -18,7 +18,7 @@
  
  # Webhook Transforms
  
 -## Contract
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
  This skill guarantees:
  - External events are transformed into brain pages with proper citations
-@@ -28,10 +29,10 @@
+@@ -27,55 +27,64 @@
+ - Input sanitization: no raw HTML/script passes to brain pages
  - Error handling: transform failure logs raw payload, retries once
  
- ## Phases
-+use judgment to follow the Phases guidance:
+-## Phases
++## Phases (( role: reference ))
  
  1. **Define transform.** Map event schema to brain page format:
     - Input: raw webhook payload (JSON)
 -   - Output: brain page content (markdown) + metadata (slug, type, citations)
-    - Must sanitize: strip HTML tags, escape script content
- 
+-   - Must sanitize: strip HTML tags, escape script content
+-
  2. **Register webhook URL.** Provide the external service with the webhook endpoint.
-@@ -39,43 +40,54 @@
+ 
  3. **On event received:**
     - Parse payload
     - Run transform function
@@ -84,6 +89,8 @@ These sections were made non-executable in the port and should be reviewed as mi
 +### Phases — steps
 +
 +   - Output: brain page content (markdown) + metadata (slug, type, citations)
++   - Must sanitize: strip HTML tags, escape script content
++
 +
 +### Phases — steps 2
 +
@@ -93,37 +100,36 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
 +   - Sync: `gbrain sync`
 +
-+## Example Transforms (( inert ))
++## Example Transforms (( role: reference ))
 +
-+### SMS Received (( inert ))
++### SMS Received (( role: reference ))
  ```
  Input: {from: "+1555...", body: "Meeting moved to 3pm", timestamp: "..."}
  Output: Timeline entry on sender's brain page + task update if action item detected
  ```
  
 -### Meeting Completed
-+### Meeting Completed (( inert ))
++### Meeting Completed (( role: reference ))
  ```
  Input: {title: "Weekly sync", attendees: [...], transcript: "...", summary: "..."}
  Output: Delegate to meeting-ingestion skill
  ```
  
 -### Social Mention
-+### Social Mention (( inert ))
++### Social Mention (( role: reference ))
  ```
  Input: {platform: "twitter", author: "@handle", text: "...", url: "..."}
  Output: Brain page in media/ + entity extraction + backlinks
  ```
  
 -## Output Format
-+## Output Format (( inert, role: template ))
++## Output Format (( role: template ))
  
  Event transformed and written to brain. Report: "Webhook: {event_type} from {source}
  → {brain_page_path}"
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
++## Anti-Patterns (( role: reference ))
  
  - Passing raw HTML/script to brain pages (XSS risk)
  - Silently dropping events when transform fails (use dead-letter queue)

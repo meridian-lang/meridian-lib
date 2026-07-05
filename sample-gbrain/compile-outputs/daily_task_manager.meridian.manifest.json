@@ -98,95 +98,119 @@
     "name" : "daily-task-manager",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 23,
         "text" : "Contract"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 31,
+        "text" : "Contract — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 33,
+        "line" : 36,
         "text" : "Phases"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 43,
+        "line" : 44,
         "text" : "Phases — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 47,
+        "line" : 48,
         "text" : "Phases — steps 2"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 53,
+        "text" : "Phases — steps 3"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 51,
+        "line" : 57,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 72,
+        "line" : 78,
         "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 86,
+        "text" : "Anti-Patterns — steps"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 26,
+        "line" : 25,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 28,
+        "line" : 27,
         "text" : "Task lifecycle"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 29,
+        "line" : 28,
         "text" : "Priority levels"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 23,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Tasks stored as a brain page (`ops\/tasks.md`) with structured format",
           "Task lifecycle: add → in-progress → complete | defer",
           "Priority levels: P0 (urgent), P1 (today), P2 (this week), P3 (backlog)",
-          "Completed tasks archived with completion date",
-          "Deferred tasks carry forward with reason"
+          "Completed tasks archived with completion date"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
-        "heading" : "Phases",
-        "line" : 33,
+        "executes" : false,
+        "heading" : "Contract — steps",
+        "line" : 31,
         "lines" : [
-          "use judgment to follow the Phases guidance:",
+          "use judgment to follow the Contract — steps guidance:",
+          "Deferred tasks carry forward with reason"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phases",
+        "line" : 36,
+        "lines" : [
           "**Execute the requested action:**",
           "**Add:** Append task with priority, description, due date. Add timeline entry",
           "**Complete:** Mark as done, move to completed section with date",
-          "**Defer:** Move to next day\/week with reason",
           "**Remove:** Delete from list (rare, prefer complete or defer)",
           "**Review:** Display all active tasks by priority"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Phases — steps",
-        "line" : 43,
+        "line" : 44,
         "lines" : [
           "Load current tasks. `gbrain get ops\/tasks` — read the task list"
         ],
@@ -195,7 +219,17 @@
       {
         "executes" : true,
         "heading" : "Phases — steps 2",
-        "line" : 47,
+        "line" : 48,
+        "lines" : [
+          "use judgment to follow the Phases — steps 2 guidance:",
+          "**Defer:** Move to next day\/week with reason"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases — steps 3",
+        "line" : 53,
         "lines" : [
           "Save. `gbrain put ops\/tasks` — write updated task list"
         ],
@@ -204,25 +238,33 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 51,
+        "line" : 57,
         "lines" : [
           "codeblock:markdown:IyBUYXNrcwoKIyMgUDAg4oCUIFVyZ2VudAotIFsgXSB7dGFzayBkZXNjcmlwdGlvbn0gKGR1ZToge2RhdGV9KQoKIyMgUDEg4oCUIFRvZGF5Ci0gWyBdIHt0YXNrIGRlc2NyaXB0aW9ufQoKIyMgUDIg4oCUIFRoaXMgV2VlawotIFsgXSB7dGFzayBkZXNjcmlwdGlvbn0KCiMjIFAzIOKAlCBCYWNrbG9nCi0gWyBdIHt0YXNrIGRlc2NyaXB0aW9ufQoKIyMgQ29tcGxldGVkCi0gW3hdIHt0YXNrfSAoY29tcGxldGVkOiB7ZGF0ZX0p"
         ],
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 72,
+        "line" : 78,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "Adding tasks without a priority level",
           "Completing tasks without recording the completion date",
-          "Deferring tasks without a reason",
           "Letting the task list grow unbounded (review weekly)",
           "Storing tasks outside the brain (they should be searchable)"
         ],
-        "role" : "procedure"
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 86,
+        "lines" : [
+          "use judgment to follow the Anti-Patterns — steps guidance:",
+          "Deferring tasks without a reason"
+        ],
+        "role" : "reference"
       }
     ],
     "tools" : "search\nget_page\nput_page\nadd_timeline_entry",
@@ -265,48 +307,52 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 24,
-      "swift_line" : 602
+      "meridian_line" : 46,
+      "swift_line" : 603
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 614
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 641
+      "swift_line" : 653
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 646
+      "swift_line" : 658
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 685
+      "swift_line" : 697
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 702
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 741
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 746
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 773
+      "swift_line" : 785
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 790
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 817
+      "swift_line" : 829
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 822
+      "swift_line" : 834
     }
   ],
   "tools_used" : [
@@ -324,8 +370,8 @@
       "prose_steps" : [
         {
           "dispatch_mode" : "plan_then_execute",
-          "guidance" : "This skill guarantees:\nTasks stored as a brain page (`ops\/tasks.md`) with structured format\nTask lifecycle: add → in-progress → complete | defer\nPriority levels: P0 (urgent), P1 (today), P2 (this week), P3 (backlog)\nCompleted tasks archived with completion date\nDeferred tasks carry forward with reason\nuse judgment to follow the Phases guidance:\n**Execute the requested action:**\n**Add:** Append task with priority, description, due date. Add timeline entry\n**Complete:** Mark as done, move to completed section with date\n**Defer:** Move to next day\/week with reason\n**Remove:** Delete from list (rare, prefer complete or defer)\n**Review:** Display all active tasks by priority\nLoad current tasks. `gbrain get ops\/tasks` — read the task list\nSave. `gbrain put ops\/tasks` — write updated task list\nuse judgment to follow the Anti-Patterns guidance:\nAdding tasks without a priority level\nCompleting tasks without recording the completion date\nDeferring tasks without a reason\nLetting the task list grow unbounded (review weekly)\nStoring tasks outside the brain (they should be searchable)",
-          "line" : 24,
+          "guidance" : "**Defer:** Move to next day\/week with reason\nSave. `gbrain put ops\/tasks` — write updated task list",
+          "line" : 50,
           "scoped_tools" : [
             "page.get",
             "page.search",
@@ -333,7 +379,7 @@
             "shell.run",
             "timeline.add"
           ],
-          "text" : "follow the Contract guidance"
+          "text" : "follow the Phases — steps 2 guidance"
         }
       ],
       "source_name" : "daily-task-manager a input",

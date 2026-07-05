@@ -599,16 +599,6 @@ public struct CronSchedulerInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "CronSchedulerInput", parameters: [:])
 
-        // L24
-        let __meridianProseResults_L24 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.get", "page.search", "publish", "shell.run"],
-            guidance: "This skill guarantees:\nSchedule staggering: max 1 job per 5-minute slot, no collisions\nQuiet hours gating: timezone-aware, with user-awake override\nThin job prompts: jobs say \"Read skills/X/SKILL.md and run it\" (no inline 3000-word prompts)\nIdempotency: jobs can run twice without duplicate side effects\nResults saved as reports: `reports/{job-name}/{YYYY-MM-DD-HHMM}.md`\nuse judgment to follow the Phases guidance:\n**Define job.** Name, schedule (cron expression), skill to run, timeout\n**Validate schedule.** Check no collision with existing jobs (5-minute offset rule)\nSlots: :05, :10, :15, :20, :25, :30, :35, :40, :45, :50\nIf collision detected, suggest the next available slot\n**Check quiet hours.** Default: 11 PM - 8 AM local time\nOverride: user-awake flag (if user is active, quiet hours suspended)\nDuring quiet hours: save output to held queue\nMorning contact releases the backlog\n**Register with host scheduler.** OpenClaw cron, Railway cron, crontab, or process manager. **Each registered entry should execute via Minions, not `agentTurn`.** See `skills/conventions/cron-via-minions.md` for the rewrite pattern (PGLite uses `--follow`, Postgres uses fire-and-forget + `--idempotency-key` on the cycle slot). GBrain's v0.11.0 migration auto-rewrites entries for built-in handlers; host-specific handlers need a code-level registration per `docs/guides/plugin-handlers.md`\n**Write thin prompt.** Job prompt is one line: \"Read skills/{name}/SKILL.md and run it.\"\nuse judgment to follow the Idempotency Requirement guidance:\nEvery cron job MUST be idempotent:\nRunning the same job twice produces the same result (no duplicate pages, no duplicate timeline entries)\nUse checkpoint state files to track progress and resume interrupted runs\nCheck for existing output before creating new output\nuse judgment to follow the Anti-Patterns guidance:\nScheduling jobs at the same minute (:00 for everything)\nInline 3000-word prompts in cron jobs (use skill file references)\nRunning cron jobs without testing on 3-5 items first\nJobs that produce different output on re-run (not idempotent)\nSending notifications during quiet hours (save to held queue instead)\nSeparate per-source `gbrain sync --source <id>` cron entries when\n`gbrain sync --all --parallel N --workers N` would replace them with\none line that auto-picks-up future sources"
-        )
-        for (__key, __value) in __meridianProseResults_L24 {
-            state.bind(__key, __value)
-        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

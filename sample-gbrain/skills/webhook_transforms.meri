@@ -18,8 +18,7 @@ mutating: true
 
 # Webhook Transforms
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 This skill guarantees:
 - External events are transformed into brain pages with proper citations
@@ -28,13 +27,10 @@ This skill guarantees:
 - Input sanitization: no raw HTML/script passes to brain pages
 - Error handling: transform failure logs raw payload, retries once
 
-## Phases
-use judgment to follow the Phases guidance:
+## Phases (( role: reference ))
 
 1. **Define transform.** Map event schema to brain page format:
    - Input: raw webhook payload (JSON)
-   - Must sanitize: strip HTML tags, escape script content
-
 2. **Register webhook URL.** Provide the external service with the webhook endpoint.
 
 3. **On event received:**
@@ -52,6 +48,8 @@ use judgment to follow the Phases guidance:
 ### Phases — steps
 
    - Output: brain page content (markdown) + metadata (slug, type, citations)
+   - Must sanitize: strip HTML tags, escape script content
+
 
 ### Phases — steps 2
 
@@ -61,33 +59,32 @@ use judgment to follow the Phases guidance:
 
    - Sync: `gbrain sync`
 
-## Example Transforms (( inert ))
+## Example Transforms (( role: reference ))
 
-### SMS Received (( inert ))
+### SMS Received (( role: reference ))
 ```
 Input: {from: "+1555...", body: "Meeting moved to 3pm", timestamp: "..."}
 Output: Timeline entry on sender's brain page + task update if action item detected
 ```
 
-### Meeting Completed (( inert ))
+### Meeting Completed (( role: reference ))
 ```
 Input: {title: "Weekly sync", attendees: [...], transcript: "...", summary: "..."}
 Output: Delegate to meeting-ingestion skill
 ```
 
-### Social Mention (( inert ))
+### Social Mention (( role: reference ))
 ```
 Input: {platform: "twitter", author: "@handle", text: "...", url: "..."}
 Output: Brain page in media/ + entity extraction + backlinks
 ```
 
-## Output Format (( inert, role: template ))
+## Output Format (( role: template ))
 
 Event transformed and written to brain. Report: "Webhook: {event_type} from {source}
 → {brain_page_path}"
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 - Passing raw HTML/script to brain pages (XSS risk)
 - Silently dropping events when transform fails (use dead-letter queue)

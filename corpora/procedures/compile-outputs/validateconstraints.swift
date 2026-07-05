@@ -296,15 +296,32 @@ public struct ValidateConstraints: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "ValidateConstraints", parameters: [:])
 
-        // L12
-        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
-            prose: "follow the Invocation guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["audit_row.list", "batch.list", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "record.list", "record.mark_canonical", "record.purge"],
-            guidance: "\"validate constraints\"\n\"constraint violated\"\nfetch violated constraints\nCheck: no constraints whose status is \"violated\"\nEmit: \"constraints validated\"\nuse judgment to follow the Constraints guidance:\nConstraint prose remains documentation; the executable guard is in the procedure"
-        )
-        for (__key, __value) in __meridianProseResults_L12 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L48:C0") {
+            // L48
+            let constraints = try await runtime.invoke(
+                tool: "constraint.list",
+                args: [
+                    "status": .string("violated"),
+                ]
+            )
+            state.bind("constraints", constraints)
+
+            try await runtime.checkpoint(label: "progress:0.0:L48:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L17:C0") {
+            // L17
+            try await runtime.assert(((((state.get("constraints"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("violated"))) }).isEmpty), message: "Expected no constraints whose status is \"violated\"")
+            try await runtime.checkpoint(label: "progress:0.1:L17:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L18:C0") {
+            // L18
+            try await runtime.emit(
+                event: "procedure.report",
+                payload: [
+                    "message": .string("constraints validated"),
+                ]
+            )
+            try await runtime.checkpoint(label: "progress:0.2:L18:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

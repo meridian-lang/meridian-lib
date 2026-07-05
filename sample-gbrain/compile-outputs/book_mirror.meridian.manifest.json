@@ -98,270 +98,341 @@
     "name" : "book-mirror",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 29,
         "text" : "What this does"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 38,
+        "line" : 37,
         "text" : "What this does — steps"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 45,
+        "line" : 44,
         "text" : "Trust contract (read this before running)"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 54,
+        "line" : 53,
         "text" : "Trust contract (read this before running) — steps"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 63,
+        "line" : 62,
         "text" : "Trust contract (read this before running) — steps 2"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 69,
+        "line" : 68,
         "text" : "The pipeline"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 81,
+        "line" : 80,
         "text" : "1. Acquiring the book"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 87,
+        "line" : 86,
         "text" : "1. Acquiring the book — steps"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 102,
+        "line" : 101,
         "text" : "2. Text extraction"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 104,
+        "text" : "2. Text extraction — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 110,
+        "text" : "EPUB"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 115,
+        "text" : "EPUB — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 142,
+        "text" : "EPUB — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 149,
+        "text" : "PDF"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 105,
-        "text" : "2. Text extraction — steps"
+        "line" : 157,
+        "text" : "PDF — steps"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 111,
-        "text" : "EPUB"
-      },
-      {
-        "kind" : "inert",
-        "level" : 3,
-        "line" : 150,
-        "text" : "PDF"
-      },
-      {
-        "kind" : "inert",
-        "level" : 3,
-        "line" : 164,
+        "line" : 163,
         "text" : "Quality check"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 170,
+        "text" : "Quality check — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 175,
+        "text" : "Quality check — steps 2"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 181,
+        "line" : 180,
         "text" : "3. Context gathering"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 186,
+        "line" : 185,
         "text" : "What to pull"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 210,
+        "line" : 200,
+        "text" : "What to pull — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 205,
+        "text" : "What to pull — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 209,
         "text" : "Assemble a context pack"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 214,
+        "text" : "Assemble a context pack — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 244,
+        "line" : 243,
         "text" : "4. Analysis: invoke `gbrain book-mirror`"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 260,
+        "line" : 259,
         "text" : "4. Analysis: invoke `gbrain book-mirror` — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 273,
+        "line" : 272,
         "text" : "4. Analysis: invoke `gbrain book-mirror` — steps 2"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 277,
+        "line" : 276,
         "text" : "4. Analysis: invoke `gbrain book-mirror` — steps 3"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 282,
+        "line" : 281,
         "text" : "Model: Opus by default"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 289,
+        "line" : 284,
+        "text" : "Model: Opus by default — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 292,
         "text" : "Cost gate"
       },
       {
         "kind" : "procedure",
+        "level" : 3,
+        "line" : 295,
+        "text" : "Cost gate — steps"
+      },
+      {
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 296,
+        "line" : 301,
         "text" : "5. PDF (optional)"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 306,
+        "line" : 311,
         "text" : "6. Fact-check and cross-link"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 322,
+        "line" : 327,
         "text" : "6. Fact-check and cross-link — steps"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 330,
+        "line" : 335,
         "text" : "Quality bar (the bar)"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 351,
+        "line" : 356,
         "text" : "Anti-patterns (do not do these)"
       },
       {
         "kind" : "procedure",
-        "level" : 2,
-        "line" : 367,
-        "text" : "Output checklist"
+        "level" : 3,
+        "line" : 368,
+        "text" : "Anti-patterns (do not do these) — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 373,
+        "text" : "Anti-patterns (do not do these) — steps 2"
       },
       {
         "kind" : "procedure",
         "level" : 2,
         "line" : 378,
+        "text" : "Output checklist"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 389,
         "text" : "Related skills"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 381,
+        "line" : 392,
         "text" : "Related skills — steps"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 390,
+        "line" : 401,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 402,
+        "line" : 412,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 406,
+        "line" : 416,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 107,
+        "line" : 106,
         "text" : "Goal"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 173,
+        "line" : 172,
         "text" : "For each chapter file"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 246,
+        "line" : 245,
         "text" : "The CLI"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 376,
+        "line" : 387,
         "text" : "Optional"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 393,
+        "line" : 403,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 398,
+        "line" : 408,
         "text" : "Privacy contract preserved"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "What this does",
         "line" : 29,
         "lines" : [
-          "use judgment to follow the What this does guidance:",
           "This is NOT a generic book summary. The right column is the value: it makes",
           "the book read like a therapist who knows the reader is leaving notes in the",
           "margins. If the user wants a flat summary instead, route them to a different",
           "skill"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "What this does — steps",
-        "line" : 38,
+        "line" : 37,
         "lines" : [
           "Given a book (EPUB or PDF), produce a brain page where every chapter is",
           "summarized in detail on the left and mirrored back to the reader's actual life",
           "on the right, using their own words, situations, people, and patterns from",
           "the brain. Output is a brain page at `media\/books\/<slug>-personalized.md`"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Trust contract (read this before running)",
-        "line" : 45,
+        "line" : 44,
         "lines" : [
           "book-mirror runs as a CLI command (`gbrain book-mirror`), NOT as a pure",
           "markdown skill that the agent dispatches via tools. The CLI is the trusted",
@@ -369,54 +440,54 @@
           "The CLI reads each child's `job.result`, assembles the final",
           "two-column page, and writes it via a single operator-trust `put_page`"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Trust contract (read this before running) — steps",
-        "line" : 54,
+        "line" : 53,
         "lines" : [
           "The CLI submits N read-only subagent jobs (one per chapter). Each subagent",
           "has `allowed_tools: ['get_page', 'search']` only. They CANNOT call",
           "put_page or any mutating op. They produce markdown analysis via their",
           "final message"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Trust contract (read this before running) — steps 2",
-        "line" : 63,
+        "line" : 62,
         "lines" : [
           "This means untrusted EPUB\/PDF content cannot prompt-inject any",
           "`people\/*` page. The trust narrowing happens at the tool allowlist,",
           "not at the slug-prefix layer"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "The pipeline",
-        "line" : 69,
+        "line" : 68,
         "lines" : [
           "codeblock:plain:MS4gQUNRVUlSRSAgIOKGkiBVc2VyIGhhcyB0aGUgRVBVQi9QREYgbG9jYWxseSAobWFudWFsOyBib29rLWFjcXVpc2l0aW9uIGlzCiAgICAgICAgICAgICAgIG5vdCBjdXJyZW50bHkgc2hpcHBlZCDigJQgc2VlICJBY3F1aXJpbmcgdGhlIGJvb2siIGJlbG93KS4KMi4gRVhUUkFDVCAgIOKGkiBQdWxsIGNoYXB0ZXIgdGV4dCBmcm9tIEVQVUIvUERGIGludG8gb25lIC50eHQgcGVyIGNoYXB0ZXIuCjMuIENPTlRFWFQgICDihpIgR2F0aGVyIGV2ZXJ5dGhpbmcgdGhlIGJyYWluIGtub3dzIGFib3V0IHRoZSByZWFkZXIuCjQuIEFOQUxZWkUgICDihpIgYGdicmFpbiBib29rLW1pcnJvcmAgZmFucyBvdXQgTiByZWFkLW9ubHkgc3ViYWdlbnRzLgo1LiBBU1NFTUJMRSAg4oaSIENMSSByZWFkcyBlYWNoIGNoaWxkIHJlc3VsdCBhbmQgd3JpdGVzIG9uZSBwdXRfcGFnZS4KNi4gUERGICAgICAgIOKGkiBPcHRpb25hbDogcmVuZGVyIHZpYSBza2lsbHMvYnJhaW4tcGRmIGZvciBkZWxpdmVyeS4="
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "1. Acquiring the book",
-        "line" : 81,
+        "line" : 80,
         "lines" : [
           "Resolve `$BRAIN_DIR` from the gbrain config (`gbrain config get sync.repo_path`)",
           "or accept it from the user"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "1. Acquiring the book — steps",
-        "line" : 87,
+        "line" : 86,
         "lines" : [
           "codeblock:bash:IyBVc2VyLXN1cHBsaWVkIHBhdGgKbHMgcGF0aC90by9ib29rLmVwdWIKbHMgcGF0aC90by9ib29rLnBkZgoKIyBPciBhbHJlYWR5IGluIHRoZSBicmFpbiByZXBvIChyZWNvbW1lbmRlZCBmb3IgdHJhY2tpbmcpCmxzICRCUkFJTl9ESVIvbWVkaWEvYm9va3Mv"
         ],
@@ -425,78 +496,118 @@
       {
         "executes" : false,
         "heading" : "2. Text extraction",
-        "line" : 102,
+        "line" : 101,
         "lines" : [
 
         ],
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "2. Text extraction — steps",
-        "line" : 105,
+        "line" : 104,
         "lines" : [
           "Goal: one `.txt` file per chapter under a temp directory. The agent has",
           "shell + python access; the CLI is downstream of this and takes the",
           "extracted directory as input"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "EPUB",
-        "line" : 111,
+        "line" : 110,
         "lines" : [
-          "If `bs4` is missing: `pip3 install beautifulsoup4 lxml`",
-          "codeblock:bash:U0xVRz0idGhpcy1ib29rIiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBrZWJhYi1jYXNlCldPUks9IiQobWt0ZW1wIC1kKS8kU0xVRyIKbWtkaXIgLXAgIiRXT1JLL2NoYXB0ZXJzIgp1bnppcCAtbyBwYXRoL3RvL2Jvb2suZXB1YiAtZCAiJFdPUksvdW5wYWNrZWQiCgojIEZpbmQgY29udGVudCBmaWxlcyAoWEhUTUwvSFRNTCksIHNvcnRlZCAoY2hhcHRlciBvcmRlciA9IHNvcnQgb3JkZXIpCmZpbmQgIiRXT1JLL3VucGFja2VkIiAtbmFtZSAiKi54aHRtbCIgLW8gLW5hbWUgIiouaHRtbCIgfCBzb3J0ID4gIiRXT1JLL2ZpbGVzLnR4dCIKCiMgU3RyaXAgSFRNTCB0byB0ZXh0IHBlciBjaGFwdGVyCnB5dGhvbjMgLSA8PCdQWScKZnJvbSBiczQgaW1wb3J0IEJlYXV0aWZ1bFNvdXAKaW1wb3J0IG9zLCBzeXMKd29yayA9IG9zLmVudmlyb25bJ1dPUksnXQpmaWxlcyA9IG9wZW4oZid7d29ya30vZmlsZXMudHh0JykucmVhZCgpLnNwbGl0bGluZXMoKQpmb3IgaSwgcGF0aCBpbiBlbnVtZXJhdGUoZmlsZXMsIDEpOgogICAgaHRtbCA9IG9wZW4ocGF0aCwgZW5jb2Rpbmc9J3V0Zi04JywgZXJyb3JzPSdyZXBsYWNlJykucmVhZCgpCiAgICB0ZXh0ID0gQmVhdXRpZnVsU291cChodG1sLCAnaHRtbC5wYXJzZXInKS5nZXRfdGV4dCgnXG4nKQogICAgdGV4dCA9ICdcbicuam9pbihsaW5lLnN0cmlwKCkgZm9yIGxpbmUgaW4gdGV4dC5zcGxpdGxpbmVzKCkgaWYgbGluZS5zdHJpcCgpKQogICAgd2l0aCBvcGVuKGYne3dvcmt9L2NoYXB0ZXJzL3tpOjAyZH0udHh0JywgJ3cnKSBhcyBmOgogICAgICAgIGYud3JpdGUodGV4dCkKUFk=",
+          "If `bs4` is missing: `pip3 install beautifulsoup4 lxml`"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "EPUB — steps",
+        "line" : 115,
+        "lines" : [
+          "codeblock:bash:U0xVRz0idGhpcy1ib29rIiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBrZWJhYi1jYXNlCldPUks9IiQobWt0ZW1wIC1kKS8kU0xVRyIKbWtkaXIgLXAgIiRXT1JLL2NoYXB0ZXJzIgp1bnppcCAtbyBwYXRoL3RvL2Jvb2suZXB1YiAtZCAiJFdPUksvdW5wYWNrZWQiCgojIEZpbmQgY29udGVudCBmaWxlcyAoWEhUTUwvSFRNTCksIHNvcnRlZCAoY2hhcHRlciBvcmRlciA9IHNvcnQgb3JkZXIpCmZpbmQgIiRXT1JLL3VucGFja2VkIiAtbmFtZSAiKi54aHRtbCIgLW8gLW5hbWUgIiouaHRtbCIgfCBzb3J0ID4gIiRXT1JLL2ZpbGVzLnR4dCIKCiMgU3RyaXAgSFRNTCB0byB0ZXh0IHBlciBjaGFwdGVyCnB5dGhvbjMgLSA8PCdQWScKZnJvbSBiczQgaW1wb3J0IEJlYXV0aWZ1bFNvdXAKaW1wb3J0IG9zLCBzeXMKd29yayA9IG9zLmVudmlyb25bJ1dPUksnXQpmaWxlcyA9IG9wZW4oZid7d29ya30vZmlsZXMudHh0JykucmVhZCgpLnNwbGl0bGluZXMoKQpmb3IgaSwgcGF0aCBpbiBlbnVtZXJhdGUoZmlsZXMsIDEpOgogICAgaHRtbCA9IG9wZW4ocGF0aCwgZW5jb2Rpbmc9J3V0Zi04JywgZXJyb3JzPSdyZXBsYWNlJykucmVhZCgpCiAgICB0ZXh0ID0gQmVhdXRpZnVsU291cChodG1sLCAnaHRtbC5wYXJzZXInKS5nZXRfdGV4dCgnXG4nKQogICAgdGV4dCA9ICdcbicuam9pbihsaW5lLnN0cmlwKCkgZm9yIGxpbmUgaW4gdGV4dC5zcGxpdGxpbmVzKCkgaWYgbGluZS5zdHJpcCgpKQogICAgd2l0aCBvcGVuKGYne3dvcmt9L2NoYXB0ZXJzL3tpOjAyZH0udHh0JywgJ3cnKSBhcyBmOgogICAgICAgIGYud3JpdGUodGV4dCkKUFk="
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "EPUB — steps 2",
+        "line" : 142,
+        "lines" : [
           "Inspect the chapter files to identify which are real chapters vs front",
           "matter (TOC, copyright, acknowledgments). Often the EPUB ships one file",
           "per chapter; sometimes multiple chapters per file. Use",
           "`head -5 \"$WORK\/chapters\/\"*.txt` to spot-check"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "PDF",
-        "line" : 150,
+        "line" : 149,
         "lines" : [
           "Then split by chapter heading (look for \"Chapter N\", \"CHAPTER N\", or",
           "all-caps title lines) using `awk` or `python`. If the PDF is a scan with",
           "no embedded text, fall back to OCR via `skills\/brain-pdf` or another",
-          "vision tool",
+          "vision tool"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "PDF — steps",
+        "line" : 157,
+        "lines" : [
           "codeblock:bash:cGRmdG90ZXh0IC1sYXlvdXQgcGF0aC90by9ib29rLnBkZiAiJFdPUksvZnVsbC50eHQi"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Quality check",
-        "line" : 164,
+        "line" : 163,
         "lines" : [
           "Word count > 1500 (typical chapter range 2k–8k words)",
           "No HTML tags",
-          "Paragraphs preserved with `\\n\\n`",
-          "For each chapter file:",
+          "Paragraphs preserved with `\\n\\n`"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Quality check — steps",
+        "line" : 170,
+        "lines" : [
+          "For each chapter file:"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Quality check — steps 2",
+        "line" : 175,
+        "lines" : [
           "Save a `chapters\/INDEX.md` mapping chapter number → title → file → word",
           "count for reference"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "3. Context gathering",
-        "line" : 181,
+        "line" : 180,
         "lines" : [
           "This is the most critical step. The right column is only as good as the",
           "context fed to each chapter subagent"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "What to pull",
-        "line" : 186,
+        "line" : 185,
         "lines" : [
           "**Templates: USER.md and SOUL.md** if the user maintains them",
           "(gbrain ships templates at `templates\/USER.md` and `templates\/SOUL.md`;",
@@ -508,28 +619,52 @@
           "business book",
           "`gbrain query \"shame\"`, `gbrain query \"anger\"` for a psychology book",
           "**Standing patterns** — anything in the user's reflections or",
-          "originals that's been recurring",
+          "originals that's been recurring"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "What to pull — steps",
+        "line" : 200,
+        "lines" : [
           "Recent daily memory — last 14 days of brain pages under",
-          "`wiki\/personal\/reflections\/` or wherever the user files daily notes",
+          "`wiki\/personal\/reflections\/` or wherever the user files daily notes"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "What to pull — steps 2",
+        "line" : 205,
+        "lines" : [
           "Brain pages for relevant entities — `gbrain query \"<name>\"` for",
           "people who will likely come up"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Assemble a context pack",
-        "line" : 210,
+        "line" : 209,
         "lines" : [
-          "Make this dense. It's read by every chapter subagent",
+          "Make this dense. It's read by every chapter subagent"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Assemble a context pack — steps",
+        "line" : 214,
+        "lines" : [
           "codeblock:bash:Q09OVEVYVD0iJFdPUksvY29udGV4dC5tZCIKewogIGVjaG8gIiMjIFVTRVIubWQgKGlmIGFueSkiCiAgWyAtZiAiJEJSQUlOX0RJUi9VU0VSLm1kIiBdICYmIGNhdCAiJEJSQUlOX0RJUi9VU0VSLm1kIgogIGVjaG8KICBlY2hvICIjIyBTT1VMLm1kIChpZiBhbnkpIgogIFsgLWYgIiRCUkFJTl9ESVIvU09VTC5tZCIgXSAmJiBjYXQgIiRCUkFJTl9ESVIvU09VTC5tZCIKICBlY2hvCiAgZWNobyAiIyMgUmVjZW50IHJlZmxlY3Rpb25zIChsYXN0IDE0IGRheXMpIgogICMgUHVsbCByZWNlbnQgZGFpbHkgcmVmbGVjdGlvbnMg4oCUIGFkYXB0IHRvIHRoZSB1c2VyJ3MgZmlsaW5nIHNjaGVtZQogICMgLi4uCiAgZWNobwogIGVjaG8gIiMjIFRvcGljLXJlbGV2YW50IGJyYWluIHBhZ2VzIgogICMgZ2JyYWluIHF1ZXJ5IHRoZSBib29rJ3Mga2V5IHRoZW1lcywgZW1iZWQgdG9wIHJlc3VsdHMKICAjIC4uLgogIGVjaG8KICBlY2hvICIjIyBUaGVtZXMgJiBjcnV4ZXMiCiAgIyBBIDEtcGFnZSBzdW1tYXJ5LCB3cml0dGVuIGJ5IHRoZSBhZ2VudCwgY2FsbGluZyBvdXQ6CiAgIyAtIFdoYXQncyBjdXJyZW50bHkgYWN0aXZlIGluIHRoZSB1c2VyJ3MgbGlmZSB0aGF0IHRoaXMgYm9vayBpbnRlcnNlY3RzCiAgIyAtIFNwZWNpZmljIHF1b3RlcyBmcm9tIHRoZSB1c2VyIHRoYXQgbWFwIHRvIGJvb2sgdGhlbWVzCiAgIyAtIFBlb3BsZSBhbmQgZGF0ZXMgdGhhdCBzaG91bGQgYXBwZWFyIGluIHRoZSByaWdodCBjb2x1bW4KfSA+ICIkQ09OVEVYVCI="
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "4. Analysis: invoke `gbrain book-mirror`",
-        "line" : 244,
+        "line" : 243,
         "lines" : [
           "The CLI:",
           "Validates inputs and loads chapter files",
@@ -543,12 +678,12 @@
           "keys (`book-mirror:<slug>:ch-<N>`) deduplicate completed chapters at the",
           "queue level, so retry is cheap"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "4. Analysis: invoke `gbrain book-mirror` — steps",
-        "line" : 260,
+        "line" : 259,
         "lines" : [
           "codeblock:bash:Z2JyYWluIGJvb2stbWlycm9yIFwKICAtLWNoYXB0ZXJzLWRpciAiJFdPUksvY2hhcHRlcnMiIFwKICAtLWNvbnRleHQtZmlsZSAiJENPTlRFWFQiIFwKICAtLXNsdWcgIiRTTFVHIiBcCiAgLS10aXRsZSAiQm9vayBUaXRsZSBHb2VzIEhlcmUiIFwKICAtLWF1dGhvciAiQXV0aG9yIE5hbWUiIFwKICAtLW1vZGVsIGNsYXVkZS1vcHVzLTQtNw=="
         ],
@@ -557,7 +692,7 @@
       {
         "executes" : true,
         "heading" : "4. Analysis: invoke `gbrain book-mirror` — steps 2",
-        "line" : 273,
+        "line" : 272,
         "lines" : [
           "Reads each child's `job.result` (the markdown analysis text)"
         ],
@@ -566,7 +701,7 @@
       {
         "executes" : true,
         "heading" : "4. Analysis: invoke `gbrain book-mirror` — steps 3",
-        "line" : 277,
+        "line" : 276,
         "lines" : [
 
         ],
@@ -575,21 +710,39 @@
       {
         "executes" : false,
         "heading" : "Model: Opus by default",
-        "line" : 282,
+        "line" : 281,
         "lines" : [
-          "The default model is `claude-opus-4-7`. Sonnet works (use ``--model",
-          "claude-sonnet-4-6``) but the right-column quality drops noticeably — the",
-          "texture that makes the analysis read like a therapist who knows the user",
-          "needs Opus-grade reasoning"
+
         ],
         "role" : "inert"
       },
       {
         "executes" : true,
-        "heading" : "Cost gate",
-        "line" : 289,
+        "heading" : "Model: Opus by default — steps",
+        "line" : 284,
         "lines" : [
-          "use judgment to follow the Cost gate guidance:",
+          "use judgment to follow the Model: Opus by default — steps guidance:",
+          "The default model is `claude-opus-4-7`. Sonnet works (use ``--model",
+          "claude-sonnet-4-6``) but the right-column quality drops noticeably — the",
+          "texture that makes the analysis read like a therapist who knows the user",
+          "needs Opus-grade reasoning"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Cost gate",
+        "line" : 292,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Cost gate — steps",
+        "line" : 295,
+        "lines" : [
           "The CLI refuses to spend in a non-TTY context without `--yes`. CI \/ scripted",
           "invocations must pass `--yes` explicitly. TTY users get a `[y\/N]` prompt",
           "before submission"
@@ -599,7 +752,7 @@
       {
         "executes" : true,
         "heading" : "5. PDF (optional)",
-        "line" : 296,
+        "line" : 301,
         "lines" : [
           "After the brain page is written, render to PDF using `skills\/brain-pdf`:",
           "codeblock:bash:Z2JyYWluIHB1dF9wYWdlICAjIGFscmVhZHkgZG9uZSBieSB0aGUgQ0xJOyBub3RoaW5nIHRvIGFkZCBoZXJlCiMgVGhlbiBpbnZva2UgYnJhaW4tcGRmOgojIChzZWUgc2tpbGxzL2JyYWluLXBkZi9TS0lMTC5tZCBmb3IgdGhlIG1ha2UtcGRmIGludm9jYXRpb24p"
@@ -609,7 +762,7 @@
       {
         "executes" : false,
         "heading" : "6. Fact-check and cross-link",
-        "line" : 306,
+        "line" : 311,
         "lines" : [
           "After the page lands, run a fact-check pass on factual claims about the",
           "reader (parents, siblings, marriage history, jobs, heritage). Common error",
@@ -622,12 +775,12 @@
           "If you can't verify a claim, remove it. Better to lose texture than to",
           "introduce a falsehood"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "6. Fact-check and cross-link — steps",
-        "line" : 322,
+        "line" : 327,
         "lines" : [
           "For every person the right column references with a brain page, add a",
           "back-link from `people\/<slug>` to the new `media\/books\/<slug>-personalized`",
@@ -638,7 +791,7 @@
       {
         "executes" : false,
         "heading" : "Quality bar (the bar)",
-        "line" : 330,
+        "line" : 335,
         "lines" : [
           "The **left column** should:",
           "Preserve the author's actual stories, statistics, frameworks, examples",
@@ -655,33 +808,49 @@
           "the reader's actual life rather than a generic profile, and honest about",
           "where the book's framing breaks down for this specific reader"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-patterns (do not do these)",
-        "line" : 351,
+        "line" : 356,
         "lines" : [
-          "use judgment to follow the Anti-patterns (do not do these) guidance:",
           "❌ **Skimming chapters.** Standing instruction: preserve detail",
           "❌ **Generic right column.** \"This might apply if you've ever felt…\" →",
           "kill on sight",
-          "❌ **Factual errors about the reader's life.** Always fact-check after",
-          "assembly",
           "❌ **Giving the subagent put_page access.** Trust contract is read-only;",
           "the CLI does the writing",
           "❌ **Forcing connections.** If a chapter doesn't apply, say so plainly",
-          "❌ **Sycophancy or moralizing in the right column.** No \"you should…\",",
-          "no \"consider…\", no \"perhaps it's time to…\"",
           "❌ **Truncating the LEFT column.** The book's actual content needs to",
           "survive"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Anti-patterns (do not do these) — steps",
+        "line" : 368,
+        "lines" : [
+          "❌ Factual errors about the reader's life. Always fact-check after",
+          "assembly"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Anti-patterns (do not do these) — steps 2",
+        "line" : 373,
+        "lines" : [
+          "use judgment to follow the Anti-patterns (do not do these) — steps 2 guidance:",
+          "❌ **Sycophancy or moralizing in the right column.** No \"you should…\",",
+          "no \"consider…\", no \"perhaps it's time to…\""
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Output checklist",
-        "line" : 367,
+        "line" : 378,
         "lines" : [
           "Book file exists locally (path known)",
           "Chapter texts under `$WORK\/chapters\/*.txt` with sane word counts",
@@ -695,9 +864,9 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Related skills",
-        "line" : 378,
+        "line" : 389,
         "lines" : [
 
         ],
@@ -706,7 +875,7 @@
       {
         "executes" : true,
         "heading" : "Related skills — steps",
-        "line" : 381,
+        "line" : 392,
         "lines" : [
           "`skills\/brain-pdf\/SKILL.md` — render the personalized page to PDF",
           "`skills\/strategic-reading\/SKILL.md` — read a book through a specific",
@@ -717,11 +886,10 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
-        "line" : 390,
+        "line" : 401,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
           "Output written under the directories listed in `writes_to:` (when applicable)",
@@ -729,26 +897,25 @@
           "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
           "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 402,
+        "line" : 412,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 406,
+        "line" : 416,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       }
     ],
     "triggers" : "\"personalized version of this book\"\n\"mirror this book\"\n\"two-column book analysis\"\n\"apply this book to my life\"\n\"how does this book apply to me\"",
@@ -792,48 +959,132 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 30,
-      "swift_line" : 603
+      "meridian_line" : 92,
+      "swift_line" : 604
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 642
+      "meridian_line" : 92,
+      "swift_line" : 615
     },
     {
-      "meridian_line" : 1,
+      "meridian_line" : 92,
+      "swift_line" : 626
+    },
+    {
+      "meridian_line" : 159,
+      "swift_line" : 637
+    },
+    {
+      "meridian_line" : 172,
       "swift_line" : 647
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 686
+      "meridian_line" : 218,
+      "swift_line" : 657
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 668
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 679
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 690
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 701
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 712
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 723
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 734
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 745
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 756
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 767
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 778
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 789
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 800
+    },
+    {
+      "meridian_line" : 261,
+      "swift_line" : 811
+    },
+    {
+      "meridian_line" : 274,
+      "swift_line" : 822
+    },
+    {
+      "meridian_line" : 286,
+      "swift_line" : 833
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 691
+      "swift_line" : 872
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 730
+      "swift_line" : 877
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 735
+      "swift_line" : 916
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 774
+      "swift_line" : 921
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 779
+      "swift_line" : 960
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 818
+      "swift_line" : 965
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 823
+      "swift_line" : 1004
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1009
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1048
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1053
     }
   ],
   "tools_used" : [
@@ -851,8 +1102,8 @@
       "prose_steps" : [
         {
           "dispatch_mode" : "plan_then_execute",
-          "guidance" : "This is NOT a generic book summary. The right column is the value: it makes\nthe book read like a therapist who knows the reader is leaving notes in the\nmargins. If the user wants a flat summary instead, route them to a different\nskill\nGiven a book (EPUB or PDF), produce a brain page where every chapter is\nsummarized in detail on the left and mirrored back to the reader's actual life\non the right, using their own words, situations, people, and patterns from\nthe brain. Output is a brain page at `media\/books\/<slug>-personalized.md`\nThe CLI submits N read-only subagent jobs (one per chapter). Each subagent\nhas `allowed_tools: ['get_page', 'search']` only. They CANNOT call\nput_page or any mutating op. They produce markdown analysis via their\nfinal message\nThis means untrusted EPUB\/PDF content cannot prompt-inject any\n`people\/*` page. The trust narrowing happens at the tool allowlist,\nnot at the slug-prefix layer\ncodeblock:bash:IyBVc2VyLXN1cHBsaWVkIHBhdGgKbHMgcGF0aC90by9ib29rLmVwdWIKbHMgcGF0aC90by9ib29rLnBkZgoKIyBPciBhbHJlYWR5IGluIHRoZSBicmFpbiByZXBvIChyZWNvbW1lbmRlZCBmb3IgdHJhY2tpbmcpCmxzICRCUkFJTl9ESVIvbWVkaWEvYm9va3Mv\nGoal: one `.txt` file per chapter under a temp directory. The agent has\nshell + python access; the CLI is downstream of this and takes the\nextracted directory as input\ncodeblock:bash:Z2JyYWluIGJvb2stbWlycm9yIFwKICAtLWNoYXB0ZXJzLWRpciAiJFdPUksvY2hhcHRlcnMiIFwKICAtLWNvbnRleHQtZmlsZSAiJENPTlRFWFQiIFwKICAtLXNsdWcgIiRTTFVHIiBcCiAgLS10aXRsZSAiQm9vayBUaXRsZSBHb2VzIEhlcmUiIFwKICAtLWF1dGhvciAiQXV0aG9yIE5hbWUiIFwKICAtLW1vZGVsIGNsYXVkZS1vcHVzLTQtNw==\nReads each child's `job.result` (the markdown analysis text)\nuse judgment to follow the Cost gate guidance:\nThe CLI refuses to spend in a non-TTY context without `--yes`. CI \/ scripted\ninvocations must pass `--yes` explicitly. TTY users get a `[y\/N]` prompt\nbefore submission\nAfter the brain page is written, render to PDF using `skills\/brain-pdf`:\ncodeblock:bash:Z2JyYWluIHB1dF9wYWdlICAjIGFscmVhZHkgZG9uZSBieSB0aGUgQ0xJOyBub3RoaW5nIHRvIGFkZCBoZXJlCiMgVGhlbiBpbnZva2UgYnJhaW4tcGRmOgojIChzZWUgc2tpbGxzL2JyYWluLXBkZi9TS0lMTC5tZCBmb3IgdGhlIG1ha2UtcGRmIGludm9jYXRpb24p\nFor every person the right column references with a brain page, add a\nback-link from `people\/<slug>` to the new `media\/books\/<slug>-personalized`\npage (per `conventions\/quality.md` Iron Law)\nuse judgment to follow the Anti-patterns (do not do these) guidance:\n❌ **Skimming chapters.** Standing instruction: preserve detail\n❌ **Generic right column.** \"This might apply if you've ever felt…\" →\nkill on sight\n❌ **Factual errors about the reader's life.** Always fact-check after\nassembly\n❌ **Giving the subagent put_page access.** Trust contract is read-only;\nthe CLI does the writing\n❌ **Forcing connections.** If a chapter doesn't apply, say so plainly\n❌ **Sycophancy or moralizing in the right column.** No \"you should…\",\nno \"consider…\", no \"perhaps it's time to…\"\n❌ **Truncating the LEFT column.** The book's actual content needs to\nsurvive\nBook file exists locally (path known)\nChapter texts under `$WORK\/chapters\/*.txt` with sane word counts\nContext pack at `$WORK\/context.md` is dense\n`gbrain book-mirror --chapters-dir … --context-file … --slug … --title …` returned exit 0\n`media\/books\/<slug>-personalized.md` exists in the brain\nFact-check pass complete (no errors against USER.md or other source-of-truth pages)\nCross-links added from referenced people\/companies\nOptional: PDF rendered via brain-pdf and delivered\n`skills\/brain-pdf\/SKILL.md` — render the personalized page to PDF\n`skills\/strategic-reading\/SKILL.md` — read a book through a specific\nproblem-lens instead of personalizing to the whole reader\n`skills\/article-enrichment\/SKILL.md` — same shape applied to articles\nrather than books\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test\nuse judgment to follow the Anti-Patterns guidance:\nThe full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing",
-          "line" : 30,
+          "guidance" : "The default model is `claude-opus-4-7`. Sonnet works (use ``--model\nclaude-sonnet-4-6``) but the right-column quality drops noticeably — the\ntexture that makes the analysis read like a therapist who knows the user\nneeds Opus-grade reasoning\nThe CLI refuses to spend in a non-TTY context without `--yes`. CI \/ scripted\ninvocations must pass `--yes` explicitly. TTY users get a `[y\/N]` prompt\nbefore submission\nAfter the brain page is written, render to PDF using `skills\/brain-pdf`:\ncodeblock:bash:Z2JyYWluIHB1dF9wYWdlICAjIGFscmVhZHkgZG9uZSBieSB0aGUgQ0xJOyBub3RoaW5nIHRvIGFkZCBoZXJlCiMgVGhlbiBpbnZva2UgYnJhaW4tcGRmOgojIChzZWUgc2tpbGxzL2JyYWluLXBkZi9TS0lMTC5tZCBmb3IgdGhlIG1ha2UtcGRmIGludm9jYXRpb24p\nFor every person the right column references with a brain page, add a\nback-link from `people\/<slug>` to the new `media\/books\/<slug>-personalized`\npage (per `conventions\/quality.md` Iron Law)\n❌ Factual errors about the reader's life. Always fact-check after\nassembly\nuse judgment to follow the Anti-patterns (do not do these) — steps 2 guidance:\n❌ **Sycophancy or moralizing in the right column.** No \"you should…\",\nno \"consider…\", no \"perhaps it's time to…\"\nBook file exists locally (path known)\nChapter texts under `$WORK\/chapters\/*.txt` with sane word counts\nContext pack at `$WORK\/context.md` is dense\n`gbrain book-mirror --chapters-dir … --context-file … --slug … --title …` returned exit 0\n`media\/books\/<slug>-personalized.md` exists in the brain\nFact-check pass complete (no errors against USER.md or other source-of-truth pages)\nCross-links added from referenced people\/companies\nOptional: PDF rendered via brain-pdf and delivered\n`skills\/brain-pdf\/SKILL.md` — render the personalized page to PDF\n`skills\/strategic-reading\/SKILL.md` — read a book through a specific\nproblem-lens instead of personalizing to the whole reader\n`skills\/article-enrichment\/SKILL.md` — same shape applied to articles\nrather than books",
+          "line" : 286,
           "scoped_tools" : [
             "assess.notability",
             "capture",
@@ -874,7 +1125,7 @@
             "timeline.add",
             "verify"
           ],
-          "text" : "follow the What this does guidance"
+          "text" : "follow the Model: Opus by default — steps guidance"
         }
       ],
       "source_name" : "book-mirror a input",

@@ -11,6 +11,16 @@ public struct LanguageSynonyms: Sendable {
     /// (`=== language ===` `Assertion synonyms:` block). Merged ahead of the
     /// lexicon defaults (`make sure` / `ensure` / `assert`).
     public let assertionSynonyms: [String]
+    /// Extra operational/normative cue words (`=== language ===`
+    /// `Normative-cue synonyms:` block) — see `EnglishLexicon.normativeCueWords`.
+    public let normativeCueSynonyms: [String]
+    /// Extra AI-inference cue words (`=== language ===` `Inference-cue
+    /// synonyms:` block) — see `EnglishLexicon.inferenceCueWords`.
+    public let inferenceCueSynonyms: [String]
+    /// Extra documentary heading/body words (`=== language ===`
+    /// `Reference-heading synonyms:` block) — see
+    /// `EnglishLexicon.referenceHeadingWords`.
+    public let referenceHeadingSynonyms: [String]
     /// Optional override for the temporal-iteration timestamp property
     /// (`=== language ===` `timestamp:` entry). `nil` keeps the lexicon default.
     public let timestampProperty: String?
@@ -42,6 +52,9 @@ public struct LanguageSynonyms: Sendable {
     public init(comparisonSynonyms: [(String, ComparisonOpAST)] = [],
                 durationSynonyms: [String: TimeUnitAST] = [:],
                 assertionSynonyms: [String] = [],
+                normativeCueSynonyms: [String] = [],
+                inferenceCueSynonyms: [String] = [],
+                referenceHeadingSynonyms: [String] = [],
                 timestampProperty: String? = nil,
                 emptySynonyms: [String] = [],
                 filledSynonyms: [String] = [],
@@ -63,6 +76,9 @@ public struct LanguageSynonyms: Sendable {
         self.comparisonSynonyms = comparisonSynonyms
         self.durationSynonyms = durationSynonyms
         self.assertionSynonyms = assertionSynonyms
+        self.normativeCueSynonyms = normativeCueSynonyms
+        self.inferenceCueSynonyms = inferenceCueSynonyms
+        self.referenceHeadingSynonyms = referenceHeadingSynonyms
         self.timestampProperty = timestampProperty
         self.emptySynonyms = emptySynonyms
         self.filledSynonyms = filledSynonyms
@@ -114,6 +130,9 @@ public struct MerConfigFile: Sendable {
             comparisonSynonyms: languageSynonyms.comparisonSynonyms + other.languageSynonyms.comparisonSynonyms,
             durationSynonyms: languageSynonyms.durationSynonyms.merging(other.languageSynonyms.durationSynonyms) { _, new in new },
             assertionSynonyms: languageSynonyms.assertionSynonyms + other.languageSynonyms.assertionSynonyms,
+            normativeCueSynonyms: languageSynonyms.normativeCueSynonyms + other.languageSynonyms.normativeCueSynonyms,
+            inferenceCueSynonyms: languageSynonyms.inferenceCueSynonyms + other.languageSynonyms.inferenceCueSynonyms,
+            referenceHeadingSynonyms: languageSynonyms.referenceHeadingSynonyms + other.languageSynonyms.referenceHeadingSynonyms,
             timestampProperty: other.languageSynonyms.timestampProperty ?? languageSynonyms.timestampProperty,
             emptySynonyms: languageSynonyms.emptySynonyms + other.languageSynonyms.emptySynonyms,
             filledSynonyms: languageSynonyms.filledSynonyms + other.languageSynonyms.filledSynonyms,

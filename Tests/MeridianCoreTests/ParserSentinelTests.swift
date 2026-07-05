@@ -16,6 +16,7 @@ struct TableModeTests {
         #expect(TableMode.parse(payload: "ai-discretion") == .aiDiscretion)
         #expect(TableMode.parse(payload: "ai autonomy") == .aiAutonomy)
         #expect(TableMode.parse(payload: "nonsense") == nil)
+        #expect(TableMode.parse(payload: "data table:") == .data(name: nil))
     }
 
     @Test("sentinelToken round-trips through fromSentinel for every case")
@@ -89,6 +90,118 @@ struct IndentTokenizerSentinelTests {
         #expect(err?.contains("must immediately precede") == true)
     }
 
+    @Test("a blank line between a !!! table marker and its table is tolerated")
+    func tableMarkerToleratesBlankLineBeforeTable() {
+        let lines = tokenize("""
+        !!! table (( data table: people ))
+
+        | name | age |
+        | --- | --- |
+        | bob | 30 |
+        """)
+        let decoded = lines.compactMap { decodeTableSentinel($0.text) }.first
+        #expect(decoded?.mode == .data(name: "people"))
+    }
+
+    @Test("an unrecognized !!! table mode payload emits a deferred marker error naming the valid options")
+    func unknownTableModeIsMarkerError() {
+        let lines = tokenize("""
+        !!! table (( nonsense-mode ))
+        | name | age |
+        | --- | --- |
+        | bob | 30 |
+        """)
+        let err = lines.compactMap { decodeMarkerError($0.text) }.first
+        #expect(err?.contains("unknown table mode") == true, Comment(rawValue: err ?? "nil"))
+        #expect(err?.contains("ai-discretion") == true, Comment(rawValue: err ?? "nil"))
+    }
+
+    @Test("a blank line inside a checklist run followed by more checklist items continues the same run")
+    func checklistToleratesBlankLineBetweenItems() {
+        let lines = tokenize("""
+        !!! checklist (( ai-autonomy ))
+        - [ ] do thing one
+
+        - [ ] do thing two
+        """)
+        let decoded = lines.compactMap { decodeChecklistSentinel($0.text) }.first
+        let items = decoded?.body.components(separatedBy: "\n").filter { !$0.isEmpty } ?? []
+        #expect(items.count == 2, Comment(rawValue: "\(String(describing: decoded))"))
+    }
+
+    @Test("a checklist run ends at trailing non-checklist content that follows a terminal blank line")
+    func checklistRunEndsAtTrailingContent() {
+        let lines = tokenize("""
+        !!! checklist (( ai-autonomy ))
+        - [ ] do thing one
+
+        Some unrelated trailing paragraph.
+        """)
+        let decoded = lines.compactMap { decodeChecklistSentinel($0.text) }.first
+        let items = decoded?.body.components(separatedBy: "\n").filter { !$0.isEmpty } ?? []
+        #expect(items == ["do thing one"], Comment(rawValue: "\(String(describing: decoded))"))
+        #expect(lines.contains { $0.text.contains("Some unrelated trailing paragraph") })
+    }
+
+    @Test("a bare `!!! table` marker with no payload defaults to a decision table")
+    func bareTableMarkerDefaultsDecision() {
+        let lines = tokenize("""
+        !!! table
+        | name | age |
+        | --- | --- |
+        | bob | 30 |
+        """)
+        let decoded = lines.compactMap { decodeTableSentinel($0.text) }.first
+        #expect(decoded?.mode == .decision)
+    }
+
+    @Test("a bare `!!! checklist` marker with no payload defaults to an invariant checklist")
+    func bareChecklistMarkerDefaultsInvariant() {
+        let lines = tokenize("""
+        !!! checklist
+        - [ ] do the thing
+        """)
+        let decoded = lines.compactMap { decodeChecklistSentinel($0.text) }.first
+        #expect(decoded?.mode == .invariant)
+    }
+
+    @Test("a dangling `!!! checklist` marker at end of file emits a task-list-specific error")
+    func danglingChecklistMarkerAtEOF() {
+        let lines = tokenize("""
+        Some paragraph.
+        !!! checklist (( ai-autonomy ))
+        """)
+        let err = lines.compactMap { decodeMarkerError($0.text) }.first
+        #expect(err?.contains("task list") == true, Comment(rawValue: err ?? "nil"))
+    }
+
+    @Test("a checklist run tolerates two consecutive blank lines between items")
+    func checklistToleratesTwoBlankLinesBetweenItems() {
+        let lines = tokenize("""
+        !!! checklist (( ai-autonomy ))
+        - [ ] do thing one
+
+
+        - [ ] do thing two
+        """)
+        let decoded = lines.compactMap { decodeChecklistSentinel($0.text) }.first
+        let items = decoded?.body.components(separatedBy: "\n").filter { !$0.isEmpty } ?? []
+        #expect(items.count == 2, Comment(rawValue: "\(String(describing: decoded))"))
+    }
+
+    @Test("a tab character contributes two columns to computed indent")
+    func tabIndentCountsAsTwoSpaces() {
+        let lines = tokenize("order has properties:\n\tlegacy_id.")
+        #expect(lines.last?.indent == 2)
+    }
+
+    @Test("a fenced code block dedents a tab-indented body line by its tab-indented opening fence")
+    func fenceDedentStripsLeadingTab() {
+        let lines = tokenize("    ```\n\tX\n    ```")
+        let decoded = lines.compactMap { decodeCodeBlockSentinel($0.text) }.first
+        #expect(decoded?.body == "X", Comment(rawValue: "\(String(describing: decoded))"))
+    }
+
     @Test("a marked checklist collapses to a checklist sentinel")
     func checklistSentinel() {
         let lines = tokenize("""
@@ -135,6 +248,40 @@ struct IndentTokenizerSentinelTests {
     }
 }
 
+@Suite("IndentTokenizer — tokenize-category trace messages")
+struct IndentTokenizerTraceTests {
+    @Test("every tokenize decision point that logs a message actually fires it")
+    func tokenizeTraceMessagesFire() {
+        let cap = ParserTrace.capturing(categories: [.tokenize])
+        let source = """
+        !!! table (( data table: people ))
+        | name | age |
+        | --- | --- |
+        | bob | 30 |
+
+        !!! checklist (( ai-autonomy ))
+        - [ ] do the thing
+
+        !!! not-a-real-marker
+
+        | x | y |
+        | --- | --- |
+        | 1 | 2 |
+
+        ```swift
+        let x = 1
+        ```
+        """
+        _ = IndentTokenizer().tokenize(source, trace: cap.trace)
+        let lines = cap.lines()
+        #expect(lines.contains { $0.contains("block marker → table") })
+        #expect(lines.contains { $0.contains("block marker → checklist") })
+        #expect(lines.contains { $0.contains("invalid block marker") })
+        #expect(lines.contains { $0.contains("collapsed decision table") })
+        #expect(lines.contains { $0.contains("collapsed `swift` fence") })
+    }
+}
+
 @Suite("sentinel base64 decode")
 struct SentinelDecodeTests {
     @Test("invalid base64 returns nil; valid round-trips")
@@ -142,5 +289,20 @@ struct SentinelDecodeTests {
         #expect(decodeBase64Body("!!!not base64!!!") == nil)
         let b64 = Data("hello".utf8).base64EncodedString()
         #expect(decodeBase64Body(b64) == "hello")
+    }
+
+    @Test("each sentinel decoder rejects a payload with no colon separator")
+    func decodersRejectMissingColon() {
+        #expect(decodeToolFenceCommand("\u{E000}toolfence:noColonHere") == nil)
+        #expect(decodeTableSentinel("\u{E000}table:noColonHere") == nil)
+        #expect(decodeChecklistSentinel("\u{E000}checklist:noColonHere") == nil)
+        #expect(decodeCodeBlockSentinel("\u{E000}codeblock:noColonHere") == nil)
+    }
+
+    @Test("each sentinel decoder rejects a payload with invalid base64 after the colon")
+    func decodersRejectInvalidBase64() {
+        #expect(decodeToolFenceCommand("\u{E000}toolfence:python:not base64!!!") == nil)
+        #expect(decodeTableSentinel("\u{E000}table:decision:not base64!!!") == nil)
+        #expect(decodeChecklistSentinel("\u{E000}checklist:invariant:not base64!!!") == nil)
     }
 }

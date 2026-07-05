@@ -138,7 +138,7 @@ for corpus in selected {
         "--rulebook", corpus.rulebook,
         "--report", "\(corpus.skillsOut)/../migration-report.md",
     ]
-    if !options.routeFuzzy { args.append("--no-route-fuzzy") }
+    args.append(options.routeFuzzy ? "--route-fuzzy" : "--no-route-fuzzy")
     let result = run("/usr/bin/env", args)
     print(result.output.trimmingCharacters(in: .newlines))
     if result.status != 0 {
@@ -154,7 +154,7 @@ for corpus in selected {
         "--vocab", corpus.vocab,
         "--rulebook", corpus.rulebook,
     ]
-    if !options.routeFuzzy { resolverArgs.append("--no-route-fuzzy") }
+    resolverArgs.append(options.routeFuzzy ? "--route-fuzzy" : "--no-route-fuzzy")
     let resolverResult = run("/usr/bin/env", resolverArgs)
     print(resolverResult.output.trimmingCharacters(in: .newlines))
     if resolverResult.status != 0 {

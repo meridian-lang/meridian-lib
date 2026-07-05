@@ -5,164 +5,113 @@ extension SkillMigrator {
     enum MarkDecision {
         /// Recognized role — leave the heading clean, no marker, no alias.
         case leaveUnmarked
-        /// Append an inline `(( … ))` marker (inert / invariants / prohibitions /
-        /// convention-ref — non-executable or role-restating prose).
+        /// Append an inline `(( … ))` marker (`reference` / `template` /
+        /// `tools` / `convention-ref` — non-executable documentation/metadata;
+        /// never `inert` — the migrator does not emit that keyword).
         case inline(String)
         /// Route to a closed role via a rulebook `=== sections ===` alias instead
         /// of an inline `(( role: … ))` marker. Used for unrecognized *executable*
-        /// headings (a pure-shell section), so the heading stays clean and the
-        /// role lives as reusable rulebook data.
+        /// headings (a pure-shell section, or a section whose only content is a
+        /// cue-less operational line left for the real compiler to reject), so
+        /// the heading stays clean and the role lives as reusable rulebook data.
         case alias(SkillSectionRole)
-        /// Automatic mixed-section split (AGENTS.md Phase 1 item 3): narrative
-        /// stays under the original heading with `marker`; each contiguous
-        /// executable run in `plan` becomes a generated child heading routed to
-        /// `procedure` via a `SectionAlias`.
-        case split(marker: String, plan: SplitPlan)
+        /// Automatic mixed-section split (P1 four-way classification): narrative
+        /// stays under the original heading with a `(( role: reference ))`
+        /// marker (only when it carries real leftover content); each
+        /// contiguous executable/AI-inference run in `plan` becomes a generated
+        /// child heading routed to `procedure` (or `plan.execSegmentRole`) via a
+        /// `SectionAlias`.
+        case split(plan: SplitPlan)
     }
 
-    /// One contiguous executable run pulled out of a mixed section body by
-    /// `splitPlan`, in original line order.
+    /// One contiguous executable-or-AI-inference run pulled out of a mixed
+    /// section body by `splitPlan`, in original line order.
     struct SplitSegment: Sendable, Equatable {
+        /// Whether this segment's body renders as raw (already-lowerable or
+        /// deliberately-left-for-the-compiler-to-reject) statements, or as a
+        /// `use judgment to follow …:` wrap (an AI-inference-cue run).
+        enum Kind: Sendable, Equatable { case exec, aiInference }
         let lines: [String]
+        var kind: Kind = .exec
     }
 
-    /// The narrative/executable bucketing of one section body. `unminedContracts`
-    /// are normative-narrative lines (AGENTS.md §15 cue shapes) that did not
-    /// themselves trial-lower and were not split out — per Phase 1 item 3 these
-    /// are reported, never silently dropped into generic inert prose.
+    /// The narrative/executable/AI-inference bucketing of one section body —
+    /// the P1 four-way classification (lower / judgment-if-inference-cue /
+    /// reference / reword-error), applied per contiguous run. `unminedContracts`
+    /// are operational/normative-cue lines (P1 category 4) that did not
+    /// themselves trial-lower and carried no AI-inference cue: never silently
+    /// dropped into documentation, they are pulled into their own executable
+    /// segment (or, for a whole/leftover body, left role-open) so the REAL
+    /// compiler processes them and raises its own precise reword diagnostic
+    /// (`uncheckablePredicate` / `unresolvedPhrase`).
     struct SplitPlan: Sendable, Equatable {
         var narrativeLines: [String]
         var executableSegments: [SplitSegment]
         var unminedContracts: [String]
         var executableUnitCount: Int
         var contentUnitCount: Int
-        /// Set by `splitPlanApplyingThreshold` when `executableSegments` was
-        /// cleared (no split) but real exec/normative signal existed — worth
-        /// routing the whole leftover body through `use judgment to follow the
-        /// <heading> guidance:` (AGENTS.md Phase 1 items 3 & 4) rather than a
-        /// plain `(( inert ))` marker. False when the body is genuinely inert
-        /// (zero exec signal, zero unmined contracts).
-        var judgmentWorthy: Bool = false
-        /// True when a judgment-wrap path (either `judgmentWorthy` whole-
-        /// section, or `narrativeJudgmentWorthy` leftover-narrative-beside-
-        /// split-children) additionally needs a `procedure` `SectionAlias`
-        /// for the original heading (it was not already a recognized role)
-        /// — the judgment statement makes the section's body executable, so
-        /// an unrecognized heading with content must resolve.
-        var needsProcedureAlias: Bool = false
-        /// The role each generated `<heading> — steps[ N]` executable-segment
-        /// sibling should be aliased to. Defaults to `.procedure` (correct for
-        /// a `.procedure`-role split and for an unrecognized (`.none`) heading,
-        /// where any executable content becomes generic procedure by
-        /// definition). `checkableRoleDecision` overrides this to its own role
-        /// (invariants/prohibitions/applicability/negativeApplicability): a
-        /// bullet split *out* of e.g. `## Contract` because it trial-lowered
-        /// as a checkable predicate is a predicate, not a procedure step —
-        /// aliasing it to `.procedure` hands it to the generic statement
-        /// builder, which parses a bare (non-`make sure`-prefixed) predicate
-        /// bullet as an implicit action/phrase invocation instead of an
-        /// assertion, and can misresolve it into a bogus tool call (e.g.
-        /// "Brain is checked BEFORE any external API call" → invoke
-        /// `searchBrain`) that only surfaces as an opaque `MER2002 unknown
-        /// tool`, far from its real cause.
+        /// Set when `executableSegments` is empty, there is no AI-inference
+        /// cue, but the body carries operational/normative signal (a
+        /// `normativeCueWords` cue, or the heading itself already asserts a
+        /// checkable/procedure role) that cannot be silently filed as
+        /// documentation. The caller leaves the heading role-open (or aliases
+        /// it to `.procedure`) instead of marking it, so strict compile
+        /// raises its own precise "reword this" diagnostic (P1 category 4) —
+        /// no migrator-side judgment-wrap, no migrator-side marker.
+        var operationalErrorWorthy: Bool = false
+        /// The role each generated `<heading> — steps[ N]` *exec-kind*
+        /// executable-segment sibling should be aliased to. Defaults to
+        /// `.procedure` (correct for a `.procedure`-role split and for an
+        /// unrecognized (`.none`) heading, where any executable content
+        /// becomes generic procedure by definition). `checkableRoleDecision`
+        /// overrides this to its own role (invariants/prohibitions/
+        /// applicability/negativeApplicability). AI-inference-kind segments
+        /// are always aliased to `.procedure` regardless of this value (their
+        /// body is a `use judgment to …:` statement, which only the generic
+        /// procedure builder — not the checkable-role builder — can parse).
         var execSegmentRole: SkillSectionRole = .procedure
-        /// When set, the judgment-wrap path (no exec segments, `judgmentWorthy`)
-        /// renders this literal inline marker on the heading instead of leaving
-        /// it clean + routing via a rulebook `SectionAlias`. Needed for a
-        /// heading whose text is a *recognized checkable role* (Contract →
-        /// invariants, Anti-Patterns → prohibitions, …): `SkillSectionBuilder`'s
-        /// invariants/prohibitions/applicability/negativeApplicability body
-        /// builder only accepts per-line checkable predicates (MER1010 on a
-        /// `use judgment to follow …:` line), so escaping to the generic
-        /// procedure builder is required — but a `SectionAlias` cannot do that
-        /// reliably here, because a corpus rulebook commonly already declares
-        /// its OWN `section "<Heading>" -> <role>` synonym line for this exact
-        /// heading text (to add author-facing synonyms like "Avoid"/"Pitfalls"
-        /// alongside the builtin "Anti-Patterns"), and `Rulebook.role(forHeading:)`
-        /// resolves by first match, so a later per-file alias can never win
-        /// against an earlier corpus-wide one for the same heading text. An
-        /// explicit `(( … ))` marker on the heading itself is authoritative
-        /// over ANY rulebook alias (`SectionRoleResolver.decide` checks the
-        /// marker first, unconditionally) and needs no rulebook cooperation.
-        var forcedRoleMarker: String? = nil
-        /// True when `executableSegments` is non-empty (the split proceeds)
-        /// *and* the leftover `narrativeLines` left under the parent heading
-        /// itself has real signal worth routing through `use judgment to
-        /// follow the <heading> guidance:` rather than sitting under the
-        /// parent's plain inert marker as silent documentation. A `## Phase N:
-        /// …` parent whose real steps got extracted into a `— steps` child
-        /// commonly still carries its own normative/conditional narrative
-        /// (e.g. "If the `pack_upgrade_available` finding is `ok`, there's no
-        /// successor — done.") that deserves the same "zero-deterministic-
-        /// signal-is-the-judgment-signal" treatment as a heading with no
-        /// executable segments at all (AGENTS.md §15/§16) — the two cases
-        /// (whole-section judgment-wrap vs. leftover-narrative judgment-wrap)
-        /// share this criterion, just applied to a different slice of the
-        /// body. Same-role-widths as `judgmentWorthy`'s
-        /// `roleAlreadyAsserted || !unminedContracts.isEmpty` test.
-        var narrativeJudgmentWorthy: Bool = false
     }
 
     /// Fixed, recognizable suffix for a generated split sibling heading
     /// (`<heading> — steps`, `<heading> — steps 2`, …). Load-bearing for
     /// idempotency: a heading containing this suffix is never re-split.
     static let splitHeadingSeparator = " — steps"
-    /// Compute the section's `splitPlan`, then apply the split threshold
-    /// (AGENTS.md Phase 1 item 3: at least 3 executable units, or at least 25%
-    /// of content units — otherwise splitting two commands out of twenty prose
-    /// lines would produce worse output than keeping the section whole). Below
-    /// threshold, `executableSegments` is cleared and, when real exec/normative
-    /// signal existed, `judgmentWorthy` is set so the renderer wraps the
-    /// leftover body in `use judgment to follow the <heading> guidance:`
-    /// (AGENTS.md Phase 1 item 4) instead of a plain `(( inert ))` marker —
-    /// `--no-route-fuzzy` opts back into the plain marker. `unminedContracts`
-    /// is always preserved either way, so a normative-narrative line that
-    /// fails to lower is reported even when nothing else routes it.
+
+    /// Compute the section's `splitPlan`, then decide the whole-section (no
+    /// exec/AI-inference content at all) outcome per P1: operational/normative
+    /// signal (`roleAlreadyAsserted`, or an unmined-contract line) is left for
+    /// the real compiler to reject; otherwise the body is genuinely documentary
+    /// (the caller marks it `(( role: reference ))`).
+    ///
+    /// The split threshold that used to discard small executable segments
+    /// below a minimum count/ratio has been removed (P1): every lowerable or
+    /// AI-inference segment always survives as its own child section.
     ///
     /// - roleAlreadyAsserted: the heading itself is a recognized built-in role
     ///   synonym (`.procedure`, a `Phase N:` prefix, or one of the checkable
-    ///   roles — `.invariants`/`.prohibitions`/`.applicability`/
-    ///   `.negativeApplicability`). A body with zero executable lines and
-    ///   zero unmined contracts (e.g. "Ask: ... Generate: ...", an interview
-    ///   script with no `must`/`never` cue words; or "This skill guarantees a
-    ///   thing." with no checkable predicate) is still fuzzy actionable
-    ///   content, not genuinely inert documentation — the heading is already
-    ///   asserting "this is a procedure/contract/applicability gate", so the
-    ///   absence of deterministic signal is itself the judgment signal.
-    ///   Without this, such a section fell through to a plain
-    ///   `(( inert, role: … ))` with no judgment wrapper, silently
-    ///   suppressing its guidance.
+    ///   roles). A body with zero executable lines, zero AI-inference cue, and
+    ///   zero unmined contracts is still not automatically "documentary" when
+    ///   the heading itself already asserts an operational contract — the
+    ///   absence of deterministic signal under an explicit "this is a
+    ///   procedure/contract/applicability gate" heading is itself the
+    ///   operational-error signal, not a free pass to documentation.
     func splitPlanApplyingThreshold(_ body: ArraySlice<String>, knowledge: Compiler.KnowledgeContext,
                                             roleAlreadyAsserted: Bool = false, checkableOnly: Bool = false) -> SplitPlan {
         var plan = splitPlan(for: body, knowledge: knowledge, checkableOnly: checkableOnly)
         guard !plan.executableSegments.isEmpty else {
-            plan.judgmentWorthy = roleAlreadyAsserted || !plan.unminedContracts.isEmpty
-            return plan
-        }
-        let ratio = plan.contentUnitCount > 0
-            ? Double(plan.executableUnitCount) / Double(plan.contentUnitCount) : 0
-        guard plan.executableUnitCount < 3 && ratio < 0.25 else {
-            // The split is kept (real exec content justified it). Any
-            // leftover narrative left under the *parent* heading gets the
-            // same judgment-worthiness test `judgmentWorthy` applies to a
-            // whole-section judgment-wrap — it just wasn't split out because
-            // it isn't itself checkable/statement-shaped, not because it
-            // lacks signal.
-            if hasSubstantiveContent(plan.narrativeLines) {
-                plan.narrativeJudgmentWorthy = roleAlreadyAsserted || !plan.unminedContracts.isEmpty
+            if roleAlreadyAsserted || !plan.unminedContracts.isEmpty {
+                plan.operationalErrorWorthy = true
             }
             return plan
         }
-        plan.judgmentWorthy = true
-        plan.executableSegments = []
         return plan
     }
 
     /// True iff `lines` has at least one line that is not blank, a Markdown
     /// comment (`>`), or a heading (`#`) — i.e. real prose/content, not just
-    /// structural filler. Used to gate `narrativeJudgmentWorthy`: an empty or
-    /// filler-only leftover shouldn't get a `use judgment to follow …:` line
-    /// with nothing meaningful under it.
+    /// structural filler. Used to decide whether a split's leftover parent
+    /// narrative needs an explicit `(( role: reference ))` marker (non-empty)
+    /// or can stay clean (empty/filler-only).
     func hasSubstantiveContent(_ lines: [String]) -> Bool {
         lines.contains { raw in
             let t = raw.trimmingCharacters(in: .whitespaces)
@@ -212,7 +161,7 @@ extension SkillMigrator {
         return ExecutableFenceContent(hasExecutableLine: hasExecutableLine,
                                       commentText: comments.joined(separator: " "))
     }
-    // MARK: - Automatic mixed-section split (AGENTS.md Phase 1 item 3)
+    // MARK: - Automatic mixed-section split (P1 four-way classification)
 
     /// One raw-line block of a section body: a fenced code block, a contiguous
     /// Markdown table, or a contiguous task-list run is one atomic block
@@ -232,39 +181,54 @@ extension SkillMigrator {
         /// Such a fence is operational guidance, but it is not a deterministic
         /// command block: lowering it as shell would either do nothing or
         /// preserve only comments. The migrator routes the surrounding section
-        /// through judgment instead of leaving it inert or pretending it is
-        /// strict executable code.
+        /// through judgment (if cued) or leaves it for a real reword error.
         var isGuidanceOnlyExecutableFence: Bool = false
         var isTable: Bool = false
         var isChecklist: Bool = false
         /// A contiguous run of `<question>? -> <rhs>` list items (Phase 2's
         /// question-arrow decision protocol).
         var isQuestionArrowList: Bool = false
-        /// When set, an `.exec`-classified block renders these lines instead
-        /// of `rawLines` — used by the question-arrow protocol's case 1/2
-        /// desugar, whose output (`<rhs> only when <cond>.` /
-        /// `let the <name> be "<rhs>" only when <cond>.`) is not the original
-        /// Markdown text.
+        /// When set, an `.exec`/`.aiInference`-classified block renders these
+        /// lines instead of `rawLines` — used by the question-arrow
+        /// protocol's case 1/2 desugar, whose output (`<rhs> only when
+        /// <cond>.` / `let the <name> be "<rhs>" only when <cond>.`) is not
+        /// the original Markdown text, and by its case-3 judgment wrap.
         var execRenderOverride: [String]? = nil
     }
 
     enum SplitKind: Equatable {
-        case blank, comment, exec, unminedNormative, documentation
+        case blank, comment, exec, documentation
+        /// Non-lowerable content that carries an `inferenceCueWords` cue — the
+        /// ONLY P1 category-2 signal. Rendered as its own `use judgment to
+        /// follow …:` sibling segment.
+        case aiInference
+        /// Non-lowerable content with no inference cue but real operational/
+        /// normative signal (P1 category 4) — pulled into its own executable
+        /// segment (or left role-open at the whole-section level) so the real
+        /// compiler raises a precise reword diagnostic. Never silently
+        /// dropped into documentation and never auto-wrapped in judgment.
+        case errorOperational
         /// A Markdown table whose condition cells are fuzzy (didn't trial-lower
-        /// as a decision/data table) — AI-routed via `!!! table (( ai-discretion ))`
-        /// instead of staying inert (AGENTS.md Phase 1 item 4, docs/13 fix 12).
+        /// as a decision/data table) AND whose text carries an inference cue —
+        /// AI-routed via `!!! table (( ai-discretion ))`. A cue-less
+        /// non-checkable table is `.errorOperational` instead (P1: tables and
+        /// checklists are gated identically — no auto-emitted AI marker).
         case fuzzyTable
-        /// A task-list run with at least one non-structurally-checkable item —
-        /// AI-routed via `!!! checklist (( ai-autonomy ))` (same rationale).
+        /// A task-list run with at least one non-structurally-checkable item
+        /// AND an inference cue — AI-routed via `!!! checklist (( ai-autonomy
+        /// ))`. Cue-less → `.errorOperational` (see `.fuzzyTable`).
         case fuzzyChecklist
     }
 
     /// Scan a section body into atomic blocks, classify each with the same
     /// trial-lowering oracle used by `sectionIsExecutableOnly`, then bucket
-    /// contiguous runs into narrative (stays under the original heading) vs.
-    /// executable (becomes a generated child heading). An annotation label
-    /// (a line ending `:` immediately before an executable block) attaches to
-    /// the run it introduces, per the deterministic split precedence.
+    /// contiguous runs into narrative (stays under the original heading),
+    /// AI-inference (becomes its own judgment-wrapped child), or executable
+    /// (becomes a generated child heading, verbatim — either because it
+    /// lowers, or because it is deliberately left for the real compiler to
+    /// reject). An annotation label (a line ending `:` immediately before an
+    /// executable/AI-inference block) attaches to the run it introduces, per
+    /// the deterministic split precedence.
     func splitPlan(for body: ArraySlice<String>, knowledge: Compiler.KnowledgeContext,
                            checkableOnly: Bool = false) -> SplitPlan {
         let trial = TrialLowering(knowledge: knowledge)
@@ -354,15 +318,7 @@ extension SkillMigrator {
             // block until a line that does end its sentence, a blank line,
             // or a line that starts a new structural element (heading,
             // fence, table, checklist, question-arrow, or a fresh list
-            // item). Without this, per-line classification chops one
-            // logical sentence into alternating narrative/exec fragments
-            // whenever an intermediate wrapped line happens to contain a
-            // backtick-flanked command name (e.g. setup's "If the user
-            // picks 2" numbered items — see IMPLEMENTATION_LOG.md Phase 3).
-            // A blank starting line is never grown (it has no "sentence" to
-            // continue, and must stay its own neutral block — otherwise it
-            // would swallow the next real line, e.g. a `deciding the
-            // <name>:` lead-in immediately preceding a question-arrow list).
+            // item). A blank starting line is never grown.
             if t.isEmpty {
                 blocks.append(SplitBlock(rawLines: [raw], normalizedText: t, isFence: false, isShellFence: false))
                 i = body.index(after: i)
@@ -397,14 +353,18 @@ extension SkillMigrator {
         }
 
         // Step 2: classify each block. An indexed loop (not `.map`) because the
-        // question-arrow protocol's case 1/2 output must be stashed on the
-        // block itself (`execRenderOverride`) for Step 4 to render.
+        // question-arrow protocol's output must be stashed on the block itself
+        // (`execRenderOverride`) for Step 4 to render.
         var kinds: [SplitKind] = Array(repeating: .documentation, count: blocks.count)
         for idx in blocks.indices {
             let block = blocks[idx]
             if block.isFence {
                 if block.isShellFence || block.isToolFence {
-                    kinds[idx] = block.isGuidanceOnlyExecutableFence ? .unminedNormative : .exec
+                    if block.isGuidanceOnlyExecutableFence {
+                        kinds[idx] = trial.hasInferenceCue(block.normalizedText) ? .aiInference : .errorOperational
+                    } else {
+                        kinds[idx] = .exec
+                    }
                 } else {
                     kinds[idx] = .documentation
                 }
@@ -413,25 +373,32 @@ extension SkillMigrator {
             if block.isTable {
                 // A data table can't be represented as one `make sure {cond}.`
                 // predicate, so under `checkableOnly` it never qualifies as
-                // `.exec` — same rationale as the plain-line restriction above.
+                // `.exec` — same rationale as the plain-line restriction below.
                 let joined = block.rawLines.joined(separator: "\n")
-                kinds[idx] = (!checkableOnly && trial.lowersAsStatement(joined)) ? .exec : (options.routeFuzzy ? .fuzzyTable : .documentation)
+                if !checkableOnly && trial.lowersAsStatement(joined) {
+                    kinds[idx] = .exec
+                } else {
+                    kinds[idx] = trial.hasInferenceCue(joined) ? .fuzzyTable : .errorOperational
+                }
                 continue
             }
             if block.isChecklist {
                 let joined = block.rawLines.joined(separator: "\n")
-                kinds[idx] = (!checkableOnly && trial.lowersAsStatement(joined)) ? .exec : (options.routeFuzzy ? .fuzzyChecklist : .documentation)
+                if !checkableOnly && trial.lowersAsStatement(joined) {
+                    kinds[idx] = .exec
+                } else {
+                    kinds[idx] = trial.hasInferenceCue(joined) ? .fuzzyChecklist : .errorOperational
+                }
                 continue
             }
             if block.isQuestionArrowList {
-                // None of `classifyQuestionArrowList`'s three outcomes (a
-                // desugared `<action> only when <question>.`, a decision-table
-                // row, or a judgment-wrap) is a bare checkable predicate, so
-                // under `checkableOnly` this block is never `.exec` either —
-                // it goes through the same fuzzy/documentation fallback as an
-                // unrecognized table.
+                // None of `classifyQuestionArrowList`'s outcomes is a bare
+                // checkable predicate, so under `checkableOnly` this block
+                // falls to the same cue-gated fallback as an unrecognized
+                // table.
                 guard !checkableOnly else {
-                    kinds[idx] = options.routeFuzzy ? .fuzzyTable : .documentation
+                    let joined = block.rawLines.joined(separator: "\n")
+                    kinds[idx] = trial.hasInferenceCue(joined) ? .fuzzyTable : .errorOperational
                     continue
                 }
                 let precedingBlock = idx > 0 ? blocks[idx - 1] : nil
@@ -455,68 +422,56 @@ extension SkillMigrator {
             // checkable role's `make sure {cond}.` item — so it must not
             // auto-qualify as `.exec` here. Likewise `lowersAsStatement`'s
             // broader "any statement" fallback (actions included) is skipped:
-            // only `isCheckableCondition` may produce `.exec`, so every
-            // segment this plan hands to `execSegmentRole` is guaranteed
-            // checkable (see AGENTS.md pitfall on `searchBrain`-style
-            // misrouting of a bare predicate bullet through the generic
-            // procedure builder).
+            // only `isCheckableCondition` may produce `.exec`.
             if !checkableOnly, isWholeLineBacktickedCommand(stripped) || isChoiceGateLine(stripped) { kinds[idx] = .exec; continue }
             if trial.isCheckableCondition(stripped) { kinds[idx] = .exec; continue }
             if !checkableOnly, trial.lowersAsStatement(stripped) { kinds[idx] = .exec; continue }
-            if trial.isNormativeNarrative(stripped) { kinds[idx] = .unminedNormative; continue }
+            // P1: the ONLY gate that may route non-lowerable content to an AI
+            // marker is an inference cue. A normative cue with no inference
+            // cue is an operational reword error, never silent documentation.
+            if trial.hasInferenceCue(stripped) { kinds[idx] = .aiInference; continue }
+            if trial.isNormativeNarrative(stripped) { kinds[idx] = .errorOperational; continue }
             kinds[idx] = .documentation
         }
 
         // A colon lead-in immediately before a guidance-only executable fence
         // (possibly separated by blank lines) is part of that guidance, even if
         // the broad trial-lowering probe can parse it as a skeletal loop header.
-        // Splitting only the lead-in into a `— steps` child would leave the
-        // comment-only fence under the parent judgment block and create a fake
-        // deterministic child with no real action.
+        // It inherits the fence's own cue-gated classification, so both travel
+        // together into the same child.
         for idx in blocks.indices where idx > blocks.startIndex && blocks[idx].isGuidanceOnlyExecutableFence {
             guard let prevIdx = stride(from: idx - 1, through: 0, by: -1).first(where: {
                 kinds[$0] != .blank && kinds[$0] != .comment
             }) else { continue }
             let normalized = normalizeMarkdownLineForLowering(stripMarkdownListMarker(blocks[prevIdx].normalizedText))
             if normalized.hasSuffix(":") {
-                kinds[prevIdx] = .unminedNormative
+                kinds[prevIdx] = kinds[idx]
             }
         }
 
         // Step 3: annotation-label look-ahead — a trailing-colon documentation
-        // line immediately before an executable (or AI-routed) block joins
-        // that block's run.
+        // line immediately before an executable/AI-inference (or AI-routed)
+        // block joins that block's run.
         func isExecLike(_ kind: SplitKind) -> Bool {
-            kind == .exec || kind == .fuzzyTable || kind == .fuzzyChecklist
+            kind == .exec || kind == .fuzzyTable || kind == .fuzzyChecklist || kind == .errorOperational
+        }
+        func joinsRun(_ kind: SplitKind) -> Bool {
+            isExecLike(kind) || kind == .aiInference
         }
         for idx in blocks.indices {
             guard kinds[idx] == .documentation else { continue }
             // Check the markdown-normalized form (bold/emphasis/list-marker
             // stripped), not the raw text: a label like "**Run init on this
             // machine:**" ends its *raw* line in `**`, not `:` — the colon
-            // is inside the bold span. Using the same normalization Step 2
-            // already computed for classification keeps this lookahead
-            // consistent with what actually got trial-lowered.
+            // is inside the bold span.
             let normalized = normalizeMarkdownLineForLowering(stripMarkdownListMarker(blocks[idx].normalizedText))
             guard normalized.hasSuffix(":") else { continue }
             guard let nextIdx = ((idx + 1)..<blocks.count).first(where: { kinds[$0] != .blank && kinds[$0] != .comment }) else { continue }
-            guard isExecLike(kinds[nextIdx]) else { continue }
-            kinds[idx] = .exec
-            // Render as a comment, not a raw statement line. The label is
-            // free-standing narrative on its OWN line (unlike the single-line
-            // `Run `cmd` to <purpose>` idiom, where the purpose is folded into
-            // the command's own canonical rewrite) — StatementParser has no
-            // production that takes an arbitrary "<sentence>:" line followed
-            // by a SEPARATE command/fence/AI-block and treats the sentence as
-            // that block's annotation; fed through verbatim it is just an
-            // unparseable (or, worse, accidentally phrase-matching-with-
-            // garbage-args) statement of its own. Comment-prefixing keeps the
-            // label visible as context immediately above the block it
-            // introduces while dropping it from the IR — safe here because,
-            // unlike AGENTS.md #14's normative-contract case, a label is
-            // descriptive lead-in prose, never the sole carrier of an
-            // enforceable requirement (an AI-routed block's own criteria rows
-            // and a real command's own semantics carry that either way).
+            guard joinsRun(kinds[nextIdx]) else { continue }
+            kinds[idx] = kinds[nextIdx] == .aiInference ? .aiInference : .exec
+            // Render as a comment, not a raw statement line — the label is
+            // free-standing narrative on its OWN line, not itself an
+            // enforceable requirement.
             blocks[idx].execRenderOverride = blocks[idx].rawLines.map { line in
                 let trimmed = line.trimmingCharacters(in: .whitespaces)
                 return trimmed.isEmpty ? line : "> \(trimmed)"
@@ -525,9 +480,13 @@ extension SkillMigrator {
 
         // Step 4: bucket contiguous runs. Blank/comment blocks are neutral —
         // they attach to whichever bucket is open when they're encountered.
-        enum Bucket { case narrative, exec }
+        // Three buckets: narrative (stays under the parent), exec (raw —
+        // lowerable or deliberately left for the real compiler to reject),
+        // aiInference (its own `use judgment to follow …:` sibling).
+        enum Bucket: Equatable { case narrative, exec, aiInference }
         func bucket(for kind: SplitKind) -> Bucket {
-            isExecLike(kind) ? .exec : .narrative
+            if kind == .aiInference { return .aiInference }
+            return isExecLike(kind) ? .exec : .narrative
         }
 
         var narrativeLines: [String] = []
@@ -537,13 +496,17 @@ extension SkillMigrator {
         var contentUnitCount = 0
 
         var pendingNeutral: [String] = []
-        var pendingExec: [String] = []
+        var pendingSegment: [String] = []
         var currentBucket: Bucket?
 
-        func flushExec() {
-            guard !pendingExec.isEmpty else { return }
-            executableSegments.append(SplitSegment(lines: pendingExec))
-            pendingExec = []
+        func flushSegment() {
+            guard currentBucket == .exec || currentBucket == .aiInference, !pendingSegment.isEmpty else {
+                pendingSegment = []
+                return
+            }
+            executableSegments.append(SplitSegment(lines: pendingSegment,
+                                                    kind: currentBucket == .aiInference ? .aiInference : .exec))
+            pendingSegment = []
         }
 
         for (idx, block) in blocks.enumerated() {
@@ -553,42 +516,53 @@ extension SkillMigrator {
                 continue
             }
             contentUnitCount += 1
-            if kind == .unminedNormative { unminedContracts.append(block.normalizedText) }
+            if kind == .errorOperational { unminedContracts.append(block.normalizedText) }
 
             let target = bucket(for: kind)
-            if target == .exec { executableUnitCount += 1 }
+            if target != .narrative { executableUnitCount += 1 }
 
             if target != currentBucket {
                 // Bucket switch: the neutral lines seen since the last real
                 // content stay with the bucket that is ENDING (trailing
                 // whitespace of the previous run), not the one starting.
-                if currentBucket == .exec { pendingExec.append(contentsOf: pendingNeutral) }
-                else { narrativeLines.append(contentsOf: pendingNeutral) }
+                if currentBucket == .exec || currentBucket == .aiInference {
+                    pendingSegment.append(contentsOf: pendingNeutral)
+                } else {
+                    narrativeLines.append(contentsOf: pendingNeutral)
+                }
                 pendingNeutral = []
-                if currentBucket == .exec { flushExec() }
+                flushSegment()
                 currentBucket = target
             } else {
-                if target == .exec { pendingExec.append(contentsOf: pendingNeutral) }
-                else { narrativeLines.append(contentsOf: pendingNeutral) }
+                if target == .exec || target == .aiInference {
+                    pendingSegment.append(contentsOf: pendingNeutral)
+                } else {
+                    narrativeLines.append(contentsOf: pendingNeutral)
+                }
                 pendingNeutral = []
             }
 
             if target == .exec {
                 // The explicit AI-routing marker travels immediately above the
-                // block it's routing (no blank line between), per docs/13
-                // fix 12's syntax — never silently dropped into a plain exec run.
-                if kind == .fuzzyTable { pendingExec.append("!!! table (( ai-discretion ))") }
-                else if kind == .fuzzyChecklist { pendingExec.append("!!! checklist (( ai-autonomy ))") }
-                pendingExec.append(contentsOf: block.execRenderOverride ?? block.rawLines)
+                // block it's routing (no blank line between), per docs/13's
+                // syntax — never silently dropped into a plain exec run.
+                if kind == .fuzzyTable { pendingSegment.append("!!! table (( ai-discretion ))") }
+                else if kind == .fuzzyChecklist { pendingSegment.append("!!! checklist (( ai-autonomy ))") }
+                pendingSegment.append(contentsOf: block.execRenderOverride ?? block.rawLines)
+            } else if target == .aiInference {
+                pendingSegment.append(contentsOf: block.execRenderOverride ?? block.rawLines)
             } else {
                 narrativeLines.append(contentsOf: block.rawLines)
             }
         }
         // Trailing neutral lines (blank/comment at the very end of the body)
         // attach to whichever bucket was last open.
-        if currentBucket == .exec { pendingExec.append(contentsOf: pendingNeutral) }
-        else { narrativeLines.append(contentsOf: pendingNeutral) }
-        flushExec()
+        if currentBucket == .exec || currentBucket == .aiInference {
+            pendingSegment.append(contentsOf: pendingNeutral)
+        } else {
+            narrativeLines.append(contentsOf: pendingNeutral)
+        }
+        flushSegment()
 
         return SplitPlan(narrativeLines: narrativeLines, executableSegments: executableSegments,
                          unminedContracts: unminedContracts, executableUnitCount: executableUnitCount,
@@ -596,53 +570,41 @@ extension SkillMigrator {
     }
 
     /// Render a `SplitPlan` as replacement lines for the original heading's
-    /// `idx..<end` range: the original heading (now marked inert with
-    /// `marker`) followed by its leftover narrative, then one generated child
-    /// heading per executable segment (`<heading> — steps`, `— steps 2`, …).
-    /// When the plan has no executable segments, either:
-    ///   - `judgmentWorthy` (real signal, just below the split threshold) and
-    ///     fuzzy-routing is enabled: the heading is left role-bearing (no inert
-    ///     marker) and its body opens with `use judgment to follow the
-    ///     <heading> guidance:`, which collects `originalBody` verbatim into
-    ///     `ProseStepAST.guidance` (Phase 2's separate planner-context field,
-    ///     not the dispatch goal in `text`) rather than the prose text
-    ///     (AGENTS.md Phase 1 items 3 & 4); or
-    ///   - otherwise: falls back to `originalBody` verbatim under the plain
-    ///     inert `marker` — byte-identical to the pre-split-era marking.
-    func renderSplitPlan(_ plan: SplitPlan, headingHashes: String, headingText: String,
-                                 marker: String, originalBody: [String], routeFuzzy: Bool) -> [String] {
-        guard !plan.executableSegments.isEmpty else {
-            if routeFuzzy && plan.judgmentWorthy {
-                let headingLine = plan.forcedRoleMarker.map { "\(headingHashes) \(headingText) \($0)" }
-                    ?? "\(headingHashes) \(headingText)"
-                var out: [String] = [headingLine]
-                out.append("use judgment to follow the \(headingText) guidance:")
-                out.append(contentsOf: originalBody)
-                return out
-            }
-            var out: [String] = ["\(headingHashes) \(headingText) \(marker)"]
-            out.append(contentsOf: originalBody)
-            return out
-        }
+    /// `idx..<end` range: the original heading followed by its leftover
+    /// narrative, then one generated child heading per executable/AI-inference
+    /// segment (`<heading> — steps`, `— steps 2`, …).
+    func renderSplitPlan(_ plan: SplitPlan, headingHashes: String, headingText: String) -> [String] {
         var out: [String] = []
-        if routeFuzzy && plan.narrativeJudgmentWorthy {
-            let headingLine = plan.forcedRoleMarker.map { "\(headingHashes) \(headingText) \($0)" }
-                ?? "\(headingHashes) \(headingText)"
-            out.append(headingLine)
-            out.append("use judgment to follow the \(headingText) guidance:")
+        if hasSubstantiveContent(plan.narrativeLines) {
+            out.append("\(headingHashes) \(headingText) (( role: reference ))")
         } else {
-            out.append("\(headingHashes) \(headingText) \(marker)")
+            out.append("\(headingHashes) \(headingText)")
         }
         out.append(contentsOf: plan.narrativeLines)
-        let childHashes = headingHashes + "#"
+        // Cap the child heading depth at `###` — `IndentTokenizer` only
+        // recognizes `##`/`###` as heading levels (`markHeadingOrList`), so a
+        // `####` line from a deeper parent silently reads back as a markdown
+        // comment, not a heading: the "child" body would merge right back
+        // into the parent's own content and never resolve independently. The
+        // universal-sections model is flat regardless of nesting depth (every
+        // heading is its own independent section — `SkillSectionBuilder.
+        // splitSections`), so a same-level sibling is exactly as valid as a
+        // deeper child; capping loses no structure.
+        let childHashes = headingHashes.count >= 3 ? headingHashes : headingHashes + "#"
         for (i, segment) in plan.executableSegments.enumerated() {
             let suffix = i == 0 ? "" : " \(i + 1)"
-            var segLines = segment.lines
-            normalizeMarkdownFormattingForLowering(&segLines, segLines.indices)
+            let childHeadingText = "\(headingText)\(Self.splitHeadingSeparator)\(suffix)"
             out.append("")
-            out.append("\(childHashes) \(headingText)\(Self.splitHeadingSeparator)\(suffix)")
+            out.append("\(childHashes) \(childHeadingText)")
             out.append("")
-            out.append(contentsOf: segLines)
+            if segment.kind == .aiInference {
+                out.append("use judgment to follow the \(childHeadingText) guidance:")
+                out.append(contentsOf: segment.lines)
+            } else {
+                var segLines = segment.lines
+                normalizeMarkdownFormattingForLowering(&segLines, segLines.indices)
+                out.append(contentsOf: segLines)
+            }
         }
         return out
     }

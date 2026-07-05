@@ -63,7 +63,8 @@ public struct SkillDeviation {
         portedName: String,
         originalDiffPath: String? = nil,
         portedDiffPath: String? = nil,
-        rulebook: Rulebook = .empty
+        rulebook: Rulebook = .empty,
+        lexicon: EnglishLexicon = .default
     ) -> DeviationReport {
         let originalLines = originalMarkdown.components(separatedBy: "\n")
         let portedLines = portedMeri.components(separatedBy: "\n")
@@ -88,7 +89,7 @@ public struct SkillDeviation {
             .filter { normalizeValue(origFM[$0] ?? "") != normalizeValue(portFM[$0] ?? "") }
             .sorted()
 
-        let metrics = SkillMetrics.analyze(portedMeri, rulebook: rulebook)
+        let metrics = SkillMetrics.analyze(portedMeri, rulebook: rulebook, lexicon: lexicon)
         let inertDeviations = inertSectionDeviations(
             originalMarkdown: originalMarkdown,
             metrics: metrics,
@@ -100,7 +101,7 @@ public struct SkillDeviation {
             frontmatterAdded: fmAdded
         )
         if !inertDeviations.isEmpty {
-            categories.append("inert-section-added")
+            categories.append("doc-section-marked")
         }
 
         return DeviationReport(
@@ -173,6 +174,7 @@ public struct SkillDeviation {
         out.append("- Sections inert total: \(m.inertSections)/\(m.totalSections) (\(percent(m.inertRatio)) total inert; includes intentional docs/templates/tools metadata)")
         out.append("- Operational inert: \(m.operationalInertSections)")
         out.append("- Unclassified inert: \(m.unclassifiedInertSections)")
+        out.append("- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): \(m.inertMarkerCount)")
         if !m.inertCategoryCounts.isEmpty {
             let categoryText = m.inertCategoryCounts
                 .map { "\($0.category.rawValue)=\($0.count)" }

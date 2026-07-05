@@ -70,7 +70,7 @@ narrative verbatim into `guidance` rather than concatenating it onto `text`.
 Ordinary `use judgment to <goal>:` / `with discretion:` / `with autonomy …:`
 blocks with an indented instruction body still fold that body into `text`
 unchanged — `guidance` is specifically for narrative context that a section's
-migrator-generated judgment step inherited from its own (otherwise-inert)
+migrator-generated judgment step inherited from its own (otherwise-`reference`)
 documentation, not a second copy of the instructions themselves.
 
 `guidance` threads end to end with no new IR primitive (same primitive,
@@ -85,8 +85,10 @@ per workflow under `prose_steps[].guidance` so it is auditable from the
 
 A decision table whose condition cells are *intent descriptions* (not checkable
 comparisons) and an acceptance checklist whose items are *not structurally
-checkable* are workflow steps that need judgment — not documentation. Instead of
-marking them `(( inert ))`, route them:
+checkable* are workflow steps that need judgment — not documentation, when they
+genuinely carry an inference cue. Instead of marking them `(( role: reference
+))`, route them (a cue-less fuzzy table/checklist is a reword error, not a free
+pass to either judgment or reference — see `docs/13_SKILL_MD_PORTING.md` P1):
 
 ```meridian
 ## Route the request
@@ -115,7 +117,8 @@ marking them `(( inert ))`, route them:
 
 The criteria/rules are embedded **verbatim** in the prose step text, so the
 planner has the full ruleset as its goal context. The enclosing section must be
-executable (an `(( inert ))` section still suppresses the whole body). See
+executable (a `(( role: reference ))` — or hand-authored `(( inert ))` —
+section still suppresses the whole body). See
 [03_LANGUAGE_QUICK_REFERENCE.md](03_LANGUAGE_QUICK_REFERENCE.md) for the marker
 grammar and [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) rule 12 for the
 "does the workflow act on this?" porting heuristic.

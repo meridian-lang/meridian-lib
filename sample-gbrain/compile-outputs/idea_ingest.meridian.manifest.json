@@ -98,91 +98,131 @@
     "name" : "idea-ingest",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 34,
         "text" : "Contract"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 47,
+        "text" : "Contract — steps"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 3,
+        "line" : 51,
+        "text" : "Contract — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 55,
+        "text" : "Contract — steps 3"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 50,
+        "line" : 58,
         "text" : "Phases"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 67,
+        "line" : 74,
         "text" : "Phases — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 72,
+        "line" : 79,
         "text" : "Phases — steps 2"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 76,
+        "line" : 83,
         "text" : "Phases — steps 3"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 85,
+        "line" : 92,
         "text" : "Phases — steps 4"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 89,
+        "line" : 96,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 112,
+        "line" : 119,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 37,
+        "line" : 36,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 48,
+        "line" : 44,
         "text" : "Format"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 34,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Every ingested item has a brain page with genuine analysis (not just a summary)",
-          "The author gets a people page (MANDATORY for anyone whose thinking is worth ingesting)",
           "Cross-links created bidirectionally (source ↔ author, source ↔ mentioned entities)",
           "Raw source preserved for provenance via `gbrain files upload-raw`",
-          "Every fact has an inline `[Source: ...]` citation",
           "Filing follows primary subject rules (not format-based)",
-          "Every mention of a person or company with a brain page MUST create a back-link",
           "Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`"
         ],
-        "role" : "procedure"
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract — steps",
+        "line" : 47,
+        "lines" : [
+          "The author gets a people page (MANDATORY for anyone whose thinking is worth ingesting)"
+        ],
+        "role" : "reference"
       },
       {
         "executes" : true,
-        "heading" : "Phases",
-        "line" : 50,
+        "heading" : "Contract — steps 2",
+        "line" : 51,
         "lines" : [
-          "use judgment to follow the Phases guidance:",
+          "Every fact has an inline `[Source: ...]` citation"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract — steps 3",
+        "line" : 55,
+        "lines" : [
+          "Every mention of a person or company with a brain page MUST create a back-link"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phases",
+        "line" : 58,
+        "lines" : [
           "**Fetch the content.** Use appropriate tools for the content type (web fetch for articles, API for tweets, PDF reader for documents)",
           "**Identify the author — MANDATORY people page.** Anyone whose thinking is worth ingesting is worth tracking",
           "If no page → CREATE ONE with compiled truth + timeline format",
@@ -194,12 +234,12 @@
           "Connections — does this involve known people\/companies?",
           "Don't just summarize. Tell the user things they wouldn't have noticed"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Phases — steps",
-        "line" : 67,
+        "line" : 74,
         "lines" : [
           "Upload raw source. Save the fetched content for provenance: `gbrain files upload-raw <file> --page <slug>`"
         ],
@@ -208,7 +248,7 @@
       {
         "executes" : true,
         "heading" : "Phases — steps 2",
-        "line" : 72,
+        "line" : 79,
         "lines" : [
 
         ],
@@ -217,7 +257,7 @@
       {
         "executes" : true,
         "heading" : "Phases — steps 3",
-        "line" : 76,
+        "line" : 83,
         "lines" : [
           "Save to brain. File by PRIMARY SUBJECT (read `skills\/_brain-filing-rules.md`):",
           "About a person → `people\/`",
@@ -230,7 +270,7 @@
       {
         "executes" : true,
         "heading" : "Phases — steps 4",
-        "line" : 85,
+        "line" : 92,
         "lines" : [
           "Sync. `gbrain sync` to update the index"
         ],
@@ -239,25 +279,24 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 89,
+        "line" : 96,
         "lines" : [
           "codeblock:markdown:IyB7VGl0bGV9IOKAlCB7QXV0aG9yfQoKKipTb3VyY2U6Kioge1VSTH0KKipBdXRob3I6Kioge0F1dGhvcn0sIHtyb2xlfQoqKlB1Ymxpc2hlZDoqKiB7ZGF0ZX0KKipJbmdlc3RlZDoqKiB7ZGF0ZX0KCiMjIENvbnRleHQKe1doeSB0aGlzIG1hdHRlcnMgbm93LCBjb25uZWN0ZWQgdG8gYnJhaW4ga25vd2xlZGdlfQoKIyMgU3VtbWFyeQp7My01IGJ1bGxldCBjb3JlIGFyZ3VtZW50c30KCiMjIEtleSBEYXRhIC8gQ2xhaW1zCntTcGVjaWZpYyBmYWN0cywgbnVtYmVycywgcXVvdGVzfQoKIyMgQW5hbHlzaXMKe0hvdyB0aGlzIGNvbm5lY3RzIHRvIGV4aXN0aW5nIGJyYWluIGtub3dsZWRnZS4gV2hhdCdzIG5ldy4gV2hhdCBjb250cmFkaWN0cy59"
         ],
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 112,
+        "line" : 119,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "Just summarizing without connecting to brain knowledge",
           "Filing everything in `sources\/` (sources is for raw data dumps only)",
           "Skipping the author people page",
           "Not cross-linking to mentioned entities",
           "Ingesting without checking brain first for existing coverage"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       }
     ],
     "tools" : "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry\nfile_upload",
@@ -302,48 +341,76 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 35,
-      "swift_line" : 604
+      "meridian_line" : 53,
+      "swift_line" : 605
+    },
+    {
+      "meridian_line" : 76,
+      "swift_line" : 617
+    },
+    {
+      "meridian_line" : 85,
+      "swift_line" : 629
+    },
+    {
+      "meridian_line" : 86,
+      "swift_line" : 641
+    },
+    {
+      "meridian_line" : 87,
+      "swift_line" : 653
+    },
+    {
+      "meridian_line" : 88,
+      "swift_line" : 665
+    },
+    {
+      "meridian_line" : 89,
+      "swift_line" : 677
+    },
+    {
+      "meridian_line" : 94,
+      "swift_line" : 689
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 643
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 648
+      "swift_line" : 734
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 687
+      "swift_line" : 773
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 692
+      "swift_line" : 778
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 731
+      "swift_line" : 817
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 736
+      "swift_line" : 822
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 775
+      "swift_line" : 861
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 780
+      "swift_line" : 866
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 819
+      "swift_line" : 905
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 824
+      "swift_line" : 910
     }
   ],
   "tools_used" : [
@@ -356,22 +423,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "This skill guarantees:\nEvery ingested item has a brain page with genuine analysis (not just a summary)\nThe author gets a people page (MANDATORY for anyone whose thinking is worth ingesting)\nCross-links created bidirectionally (source ↔ author, source ↔ mentioned entities)\nRaw source preserved for provenance via `gbrain files upload-raw`\nEvery fact has an inline `[Source: ...]` citation\nFiling follows primary subject rules (not format-based)\nEvery mention of a person or company with a brain page MUST create a back-link\nFormat: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`\nuse judgment to follow the Phases guidance:\n**Fetch the content.** Use appropriate tools for the content type (web fetch for articles, API for tweets, PDF reader for documents)\n**Identify the author — MANDATORY people page.** Anyone whose thinking is worth ingesting is worth tracking\nIf no page → CREATE ONE with compiled truth + timeline format\nIf page exists → update timeline with this new publication\nCross-link both directions\n**Analyze for the user.** Reply with analysis that connects the content to what the brain knows. Think about:\nActive projects — is this relevant?\nContradictions — does this challenge existing brain knowledge?\nConnections — does this involve known people\/companies?\nDon't just summarize. Tell the user things they wouldn't have noticed\nUpload raw source. Save the fetched content for provenance: `gbrain files upload-raw <file> --page <slug>`\nSave to brain. File by PRIMARY SUBJECT (read `skills\/_brain-filing-rules.md`):\nAbout a person → `people\/`\nAbout a company → `companies\/`\nA reusable framework → `concepts\/`\nRaw data dump → `sources\/`\nSync. `gbrain sync` to update the index\nuse judgment to follow the Anti-Patterns guidance:\nJust summarizing without connecting to brain knowledge\nFiling everything in `sources\/` (sources is for raw data dumps only)\nSkipping the author people page\nNot cross-linking to mentioned entities\nIngesting without checking brain first for existing coverage",
-          "line" : 35,
-          "scoped_tools" : [
-            "link.add",
-            "page.get",
-            "page.search",
-            "publish",
-            "shell.run",
-            "timeline.add"
-          ],
-          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "idea-ingest a input",

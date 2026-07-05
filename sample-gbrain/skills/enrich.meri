@@ -30,8 +30,7 @@ writes_to:
 
 > Enrich person and company pages from external sources. Scale effort to importance.
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 This skill guarantees:
 - Every enriched page has compiled truth (State section) with inline citations
@@ -44,74 +43,73 @@ This skill guarantees:
 
 > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
 
+
+### Contract — steps (( role: reference ))
+
 Every mention of a person or company with a brain page MUST create a back-link
 FROM that entity's page TO the page mentioning them. An unlinked mention is a
 broken brain. See `skills/_brain-filing-rules.md` for format.
 
-## Philosophy (( inert ))
+## Philosophy (( role: reference ))
 
 A brain page should read like an intelligence dossier, not a LinkedIn scrape.
 Facts are table stakes. Texture is the value -- what do they believe, what are
 they building, what makes them tick, where are they headed.
 
-## Citation Requirements (MANDATORY)
-use judgment to follow the Citation Requirements (MANDATORY) guidance:
+## Citation Requirements (MANDATORY) (( role: reference ))
 
 > **Convention:** see `skills/conventions/quality.md` for citation formats and source precedence.
 
 When sources conflict, note the contradiction with both citations.
 
-## When To Enrich (( inert ))
+## When To Enrich (( role: reference ))
 
-### Primary triggers (( role: procedure ))
-use judgment to follow the Primary triggers guidance:
+### Primary triggers (( role: reference ))
 - User mentions an entity in conversation
 - Entity appears in a meeting transcript or email
 - New contact appears with significant context
 - Entity makes news or has a major event
 - Any ingest pipeline encounters a notable entity
 
-### Do NOT enrich
+### Do NOT enrich (( role: reference ))
 - Random mentions with no relationship signal
 - Bot/spam accounts
 - Entities with no substantive connection to the user's work
 - Same page enriched within the past week (unless new signal warrants it)
 
-## Enrichment Tiers (( inert ))
+## Enrichment Tiers (( role: reference ))
 
 Scale enrichment to importance. Don't waste API calls on low-value entities.
 
 
-### Enrichment Tiers — steps
+### Enrichment Tiers — steps (( role: reference ))
 
-!!! table (( ai-discretion ))
 | Tier | Who | Effort | Sources |
 |------|-----|--------|---------|
 | 1 (key) | Inner circle, close collaborators, key contacts | Full pipeline | All available APIs + deep web research |
 | 2 (notable) | Occasional interactions, industry figures | Moderate | Web research + social + brain cross-ref |
 | 3 (minor) | Worth tracking, not critical | Light | Brain cross-ref + social lookup if handle known |
 
-## The Enrichment Protocol (7 Steps) (( inert ))
+## The Enrichment Protocol (7 Steps) (( role: reference ))
 
-### Step 1: Identify entities (( inert ))
+### Step 1: Identify entities (( role: reference ))
 
 Extract people, companies, concepts from the incoming signal.
 
-### Step 2: Check brain state
+### Step 2: Check brain state (( role: reference ))
 
 For each entity:
 - `gbrain search "name"` -- does a page already exist?
 - **If yes:** UPDATE path (add new signal, update compiled truth if material)
 - **If no:** CREATE path (check notability gate first, then create)
 
-### Step 3: Extract signal from source (( inert ))
+### Step 3: Extract signal from source
 
 
-#### Step 3: Extract signal from source — steps
+### Step 3: Extract signal from source — steps (( role: reference ))
 
 > Don't just capture facts. Capture texture:
 
-!!! table (( ai-discretion ))
 | Signal Type | What to Extract |
 |-------------|----------------|
 | Opinions, beliefs | What They Believe section |
@@ -122,12 +120,10 @@ For each entity:
 | Ascending, plateauing, pivoting? | Trajectory section |
 | Role, company, funding, location | State section (hard facts) |
 
-### Step 4: External data source lookups
-use judgment to follow the Step 4: External data source lookups guidance:
+### Step 4: External data source lookups (( role: reference ))
 
 Priority order -- stop when you have enough signal for the entity's tier.
 
-**4a. Brain cross-reference (always, all tiers)**
 - `gbrain search "name"` and `gbrain query "what do we know about name"`
 - Check related pages: company pages for person enrichment and vice versa
 - This is free and often the richest source
@@ -148,6 +144,13 @@ Priority order -- stop when you have enough signal for the entity's tier.
 **4e. Company enrichment APIs (Tier 1)**
 - Company data, financials, headcount, key hires, recent news
 
+
+### Step 4: External data source lookups — steps (( role: reference ))
+
+4a. Brain cross-reference (always, all tiers)
+
+### Step 4: External data source lookups — steps 2 (( role: reference ))
+
 | Data Need | Example Sources | Tier |
 |-----------|----------------|------|
 | Web research | Perplexity, Brave, Exa | 1-2 |
@@ -157,7 +160,7 @@ Priority order -- stop when you have enough signal for the entity's tier.
 | Social media | Platform APIs, web scraping | 1-3 |
 | Meeting history | Calendar/meeting transcript tools | 1-2 |
 
-### Step 5: Save raw data (preserves provenance) (( inert ))
+### Step 5: Save raw data (preserves provenance) (( role: reference ))
 
 Store raw API responses via `put_raw_data` in gbrain:
 ```json
@@ -172,7 +175,7 @@ Store raw API responses via `put_raw_data` in gbrain:
 Raw data preserves provenance. If the compiled truth is ever questioned,
 the raw data shows exactly what the API returned.
 
-### Step 6: Write to brain (( inert ))
+### Step 6: Write to brain (( role: reference ))
 
 #### CREATE path
 
@@ -191,7 +194,7 @@ the raw data shows exactly what the API returned.
 4. Flag contradictions between new signal and existing compiled truth
 5. Don't overwrite user-written assessments with API boilerplate
 
-#### Person page template (( inert ))
+#### Person page template (( role: reference ))
 
 ```markdown
 ---
@@ -253,7 +256,7 @@ Reverse chronological. Every entry has a date and [Source: ...] citation.
 - **YYYY-MM-DD** | Event description [Source: ...]
 ```
 
-#### Company page template (( inert ))
+#### Company page template (( role: reference ))
 
 ```markdown
 ---
@@ -280,8 +283,7 @@ Active items, pending decisions, things to track.
 - **YYYY-MM-DD** | Event description [Source: ...]
 ```
 
-### Step 7: Cross-reference
-use judgment to follow the Step 7: Cross-reference guidance:
+### Step 7: Cross-reference (( role: reference ))
 
 - Update company pages from person enrichment (and vice versa)
 - Update related project/deal pages if relevant context surfaced
@@ -292,9 +294,12 @@ use judgment to follow the Step 7: Cross-reference guidance:
 cross-references (updating related pages' compiled truth with new signal
 from this enrichment), not on creating links. Verify via the `auto_links`
 field in the put_page response (`{ created, removed, errors }`).
+
+### Step 7: Cross-reference — steps
+
 Timeline entries still need explicit `gbrain timeline-add` calls.
 
-## Bulk Enrichment Rules
+## Bulk Enrichment Rules (( role: reference ))
 
 - **Test on 3-5 entities first.** Read actual output. Check quality.
 - Only proceed to bulk after test shots pass your quality bar.
@@ -303,7 +308,7 @@ Timeline entries still need explicit `gbrain timeline-add` calls.
 - Commit every 5-10 entities during bulk runs.
 - Save a report after bulk enrichment (see Report Storage below).
 
-## Validation Rules
+## Validation Rules (( role: reference ))
 
 - Connection count < 20 on LinkedIn = likely wrong person, skip
 - Name mismatch between brain and API = skip, flag for review
@@ -311,7 +316,7 @@ Timeline entries still need explicit `gbrain timeline-add` calls.
 - Don't overwrite user-written assessments with API boilerplate
 - When in doubt: save raw data but don't update brain page
 
-## Report Storage (( inert ))
+## Report Storage (( role: reference ))
 
 After enrichment sweeps, save a report:
 - Number of entities processed
@@ -322,15 +327,14 @@ After enrichment sweeps, save a report:
 
 This creates an audit trail for brain enrichment over time.
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 - Creating stub pages with no content
 - Enriching without checking brain first
 - Overwriting user's direct statements with API data
 - Creating pages for non-notable entities
 
-## Output Format (( inert, role: template ))
+## Output Format (( role: template ))
 
 An enriched person page contains:
 - **Frontmatter** with type, tags, company, relationship, and contact fields

@@ -599,15 +599,86 @@ public struct SkillpackCheckInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SkillpackCheckInput", parameters: [:])
 
-        // L27
-        let __meridianProseResults_L27 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
-            guidance: "Running `gbrain skillpack-check` returns a JSON report with:\n**`healthy`** (bool): true if no action needed\n**`summary`** (string): one-line summary safe to quote in a briefing\n**`actions`** (string[]): every remediation command. If non-empty, run them\n**`doctor`**: full `gbrain doctor --fast --json` output (filesystem checks)\n**`migrations`**: applied/pending/partial counts from `apply-migrations --list`\nExit code:\n`0` — healthy, nothing to do\n`1` — action needed. Read `actions[]` and execute\n`2` — could not determine (binary crash or missing subcommand). Investigate\nuse judgment to follow the When to run guidance:\n**Daily cron** (e.g. your OpenClaw's `morning-briefing`): `gbrain skillpack-check --quiet`\nExit code alone tells you if anything is wrong; surface a one-liner in the\nbriefing only when exit != 0. No JSON noise in happy-path briefings\n**On demand**: `gbrain skillpack-check` for the full JSON when debugging\n**In a CI pipeline**: same pattern — exit code gates, JSON is the evidence\nuse judgment to follow the Anti-Patterns guidance:\n❌ Running without `--quiet` in a cron that emails its output — you'll get\nthe full JSON blob in every daily email. Use `--quiet` in crons\n❌ Running on every chat turn. Once per hour (or on user request) is plenty\n❌ Treating warnings as failures. Only `fail` status needs action;\n`warn` is informational\n`gbrain doctor` — the underlying filesystem + DB check. skillpack-check\ncomposes this\n`gbrain apply-migrations --list` — the migration status view\n`docs/guides/minions-fix.md` — troubleshooting a half-migrated install"
-        )
-        for (__key, __value) in __meridianProseResults_L27 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L72:C0") {
+            // L72
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("for cmd in $(echo \"$REPORT\" | jq -r '.actions[]'); do"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L72:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L72:C0") {
+            // L72
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("eval \"$cmd\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L72:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L72:C0") {
+            // L72
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("done"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L72:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L80:C0") {
+            // L80
+            // — A migration is pending or half-finished
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain apply-migrations --yes"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.3:L80:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.4:L84:C0") {
+            // L84
+            // — Embeddings are stale
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain embed --stale"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.4:L84:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.5:L85:C0") {
+            // L85
+            // — Dead links or missing back-links
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain check-backlinks --fix"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.5:L85:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.6:L154:C0") {
+            // L154
+            // — troubleshooting a half-migrated install
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("docs/guides/minions-fix.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.6:L154:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

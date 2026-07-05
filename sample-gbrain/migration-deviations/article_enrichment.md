@@ -3,8 +3,8 @@
 - Original: `article-enrichment/SKILL.md`
 - Ported: `article_enrichment.meri`
 - Tier: 2 (light edits)
-- Similarity: 81%
-- Lines: 150 -> 167 (+39 / -22)
+- Similarity: 80%
+- Lines: 150 -> 176 (+45 / -19)
 
 ## Frontmatter
 - Added: (none)
@@ -12,67 +12,79 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L39 `The pipeline`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L147 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L44 `The pipeline`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L145 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L156 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections inert total: 5/10 (50% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 8/9 (89% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: reference-documentation=4, template=1
-- Judgment: 4 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=7, template=1
+- Judgment: 2 blocks, 0 lines
 
 ### Inert section details
-- L39 `The pipeline`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L78 `Quality bar`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L92 `Model selection`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L107 `Link convention`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L147 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L12 `What this does`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L31 `When to invoke`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L44 `The pipeline`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L83 `Quality bar`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L115 `Link convention`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L123 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L145 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L156 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/article-enrichment/SKILL.md
 +++ skills/article_enrichment.meri
-@@ -27,6 +27,7 @@
+@@ -26,7 +26,7 @@
+ > personalized one-of-one synthesis output uses the sanctioned
  > `media/articles/<slug>-personalized.md` exception.
  
- ## What this does
-+use judgment to follow the What this does guidance:
+-## What this does
++## What this does (( role: reference ))
  
  Takes an article brain page that's a wall of raw extracted text and rewrites
  it as a structured page with:
-@@ -42,7 +43,8 @@
+@@ -39,19 +39,26 @@
+ - **Surprising or Counterintuitive** — what makes this content unique
+ - **See Also** — standard markdown links to related brain pages
+ 
++
++### What this does — steps (( role: reference ))
++
  Raw source content is preserved in a collapsed `<details>` section so the
  original is never lost.
  
 -## When to invoke
-+## When to invoke (( role: procedure ))
-+use judgment to follow the When to invoke guidance:
++## When to invoke (( role: reference ))
  
  - New article page lands in the brain via media-ingest with `needs_enrichment: true`
  - Existing article page is a wall of text under a `## Content` header with
-@@ -51,7 +53,7 @@
+   no synthesis
+ - User says a brain page is useless, boring, or a dump
++
++### When to invoke — steps
++
++use judgment to follow the When to invoke — steps guidance:
  - An LLM-judge brain-quality eval fails on quotability or actionability for
    an article page
  
 -## The pipeline
-+## The pipeline (( inert ))
++## The pipeline (( role: reference ))
  
  ```
  1. READ      → Open the article brain page; parse frontmatter + body.
-@@ -64,11 +66,14 @@
-                (Iron Law per conventions/quality.md).
- ```
+@@ -66,9 +73,12 @@
  
--## Invocation
-+## Invocation (( inert ))
+ ## Invocation
  
 -The skill itself is markdown instructions to the agent. It does NOT ship a
 -deterministic CLI command in v0.25.1. The agent uses gbrain's existing
@@ -86,12 +98,12 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```bash
  # 1. Find candidate pages
-@@ -87,34 +92,45 @@
+@@ -87,34 +97,47 @@
  #    For every person/company mentioned, add a timeline back-link.
  ```
  
 -## Quality bar
-+## Quality bar (( inert ))
++## Quality bar (( role: reference ))
  
 -An enriched page passes if it has:
 +- ✅ `## Why It Matters` connecting to specific brain context (not generic)
@@ -109,30 +121,29 @@ These sections were made non-executable in the port and should be reviewed as mi
 -- ✅ `## Why It Matters` connecting to specific brain context (not generic)
 -- ✅ `## See Also` with standard markdown links (NOT `[[wiki-links]]`)
 -- ✅ `<details>` block preserving the raw source content
--
++## Model selection
+ 
 -## Model selection
--
--| Model | Use when | Quote accuracy |
--|-------|----------|----------------|
++
++### Model selection — steps
+ 
+ | Model | Use when | Quote accuracy |
+ |-------|----------|----------------|
 -| **Sonnet** (default) | Bulk enrichment, most articles | Good — occasionally paraphrases |
 -| **Opus** | High-value content, original-thinking pieces, longreads | Excellent — respects "verbatim" instruction |
-+## Model selection (( inert ))
++| Sonnet (default) | Bulk enrichment, most articles | Good — occasionally paraphrases |
++| Opus | High-value content, original-thinking pieces, longreads | Excellent — respects "verbatim" instruction |
  
++
++### Model selection — steps 2
++
++use judgment to follow the Model selection — steps 2 guidance:
  Rule: for bulk enrichment, do a Sonnet draft pass and spot-check 5 with
  the LLM-judge brain-quality eval. If quotes are paraphrased, switch to
  Opus for that batch.
  
 -## Link convention
-+
-+### Model selection — steps
-+
-+!!! table (( ai-discretion ))
-+| Model | Use when | Quote accuracy |
-+|-------|----------|----------------|
-+| Sonnet (default) | Bulk enrichment, most articles | Good — occasionally paraphrases |
-+| Opus | High-value content, original-thinking pieces, longreads | Excellent — respects "verbatim" instruction |
-+
-+## Link convention (( inert ))
++## Link convention (( role: reference ))
  
  All cross-references use standard markdown links: `[Title](relative/path.md)`.
 +
@@ -141,27 +152,40 @@ These sections were made non-executable in the port and should be reviewed as mi
  NEVER use `[[wiki-links]]` — they don't render on GitHub.
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
++## Anti-Patterns (( role: reference ))
  
  - ❌ Paraphrasing quotes ("the author argues that…"). Quotes are verbatim
    or they're not quotes.
-@@ -133,7 +149,8 @@
+@@ -122,10 +145,13 @@
+   Tie to specific brain context or remove the section.
+ - ❌ Inventing topic labels and calling them insights. An insight is a
+   thing the article says that you didn't already know.
+-- ❌ Discarding the raw source. Always wrap it in `<details>`.
+ - ❌ Re-enriching non-idempotently — check the `needs_enrichment` flag in
+   frontmatter; skip if already false.
+ 
++
++### Anti-Patterns — steps (( role: reference ))
++
++- ❌ Discarding the raw source. Always wrap it in `<details>`.
+ ## Related skills
+ 
+ - `skills/media-ingest/SKILL.md` — creates the raw article pages this skill enriches
+@@ -133,7 +159,7 @@
  - `skills/conventions/quality.md` — citation + back-link rules
  
  
 -## Contract
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
  This skill guarantees:
  
-@@ -144,7 +161,7 @@
+@@ -144,7 +170,7 @@
  
  The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  
 -## Output Format
-+## Output Format (( inert, role: template ))
++## Output Format (( role: template ))
  
  The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
  

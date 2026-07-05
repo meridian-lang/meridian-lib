@@ -21,23 +21,25 @@ mutating: false
 > how to use it. See [Thin Harness, Fat Skills](https://x.com/garrytan/status/2042925773300908103)
 > for the architecture philosophy.
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 - Published HTML is fully self-contained: no external dependencies, no server needed.
 - All private metadata (frontmatter, source citations, confirmation numbers, brain cross-links, timeline) is stripped before publishing.
-- Password protection uses AES-256-GCM with PBKDF2 key derivation; plaintext never appears in the encrypted HTML file.
-- Default is always encrypted unless the user explicitly requests "open", "no password", or "public".
 - External URLs (`https://...`) are preserved; only internal brain paths are stripped.
 
-## When to Publish
+
+### Contract — steps (( role: reference ))
+
+- Password protection uses AES-256-GCM with PBKDF2 key derivation; plaintext never appears in the encrypted HTML file.
+- Default is always encrypted unless the user explicitly requests "open", "no password", or "public".
+## When to Publish (( role: reference ))
 
 - User asks to share a brain page, create a shareable link, or says "give me a page"
 - User wants to send a deal memo, person briefing, or research to someone external
 - User asks to publish a data room analysis or trip plan
 - Any time brain content needs to leave the brain without exposing the whole system
 
-## Default: ALWAYS ENCRYPT (( inert ))
+## Default: ALWAYS ENCRYPT (( role: reference ))
 
 Brain content is private. Default to password-protected unless the user explicitly
 says "open", "no password", or "public".
@@ -64,14 +66,13 @@ gbrain publish brain/companies/acme.md --password --title "Acme -- Deal Analysis
 gbrain publish brain/companies/acme.md --out /tmp/acme-share.html
 ```
 
-## What Gets Stripped (( inert ))
+## What Gets Stripped
 
 
-### What Gets Stripped — steps
+### What Gets Stripped — steps (( role: reference ))
 
 > The publish command automatically removes all private/internal data:
 
-!!! table (( ai-discretion ))
 | Stripped | Example | Why |
 |---------|---------|-----|
 | YAML frontmatter | `title:`, `type:`, `tags:` | Internal metadata |
@@ -83,25 +84,25 @@ gbrain publish brain/companies/acme.md --out /tmp/acme-share.html
 
 Preserved: external URLs (`https://...`), all other content.
 
-## Sharing Workflows (( inert ))
+## Sharing Workflows (( role: reference ))
 
-### Option A: Local file (simplest) (( inert ))
+### Option A: Local file (simplest) (( role: reference ))
 
 Share the HTML file via email, Slack, Airdrop. Share the password separately.
 
 
-#### Option A: Local file (simplest) — steps
+### Option A: Local file (simplest) — steps
 
 ```bash
 gbrain publish brain/people/jane-doe.md --password --out ~/Desktop/jane-briefing.html
 ```
 
-### Option B: Upload to cloud storage (( inert ))
+### Option B: Upload to cloud storage (( role: reference ))
 
 Share the signed URL + password. URL expires in 1 hour. Re-generate as needed.
 
 
-#### Option B: Upload to cloud storage — steps
+### Option B: Upload to cloud storage — steps
 
 ```bash
 # Publish locally first
@@ -114,7 +115,7 @@ gbrain files upload /tmp/acme.html --page shares/acme
 gbrain files signed-url shares/acme/acme.html
 ```
 
-### Option C: Static hosting (Render, Netlify, S3) (( inert ))
+### Option C: Static hosting (Render, Netlify, S3) (( role: reference ))
 
 Upload the HTML file to any static hosting service. The file is self-contained,
 no server logic needed. Password-protected files work entirely client-side via
@@ -127,8 +128,7 @@ gbrain publish brain/trips/japan-2026.md --out trip.html
 # Upload to a GitHub Gist or Pages repo
 ```
 
-## Password Protection Details
-use judgment to follow the Password Protection Details guidance:
+## Password Protection Details (( role: reference ))
 
 - **Algorithm:** AES-256-GCM
 - **Key derivation:** PBKDF2 with 100K iterations, SHA-256
@@ -138,10 +138,13 @@ use judgment to follow the Password Protection Details guidance:
 - **No server auth needed** -- the HTML file is self-contained
 - **"Remember on this device"** -- saves password in localStorage
 
+
+### Password Protection Details — steps (( role: reference ))
+
 When encrypted, the published HTML contains ONLY ciphertext. The plaintext is
 not present anywhere in the file.
 
-## Updating a Published Page (( inert ))
+## Updating a Published Page (( role: reference ))
 
 Same file, same URL (if hosted), updated content.
 
@@ -153,18 +156,23 @@ Same file, same URL (if hosted), updated content.
 gbrain publish brain/companies/acme.md --password "same-password" --out shares/acme.html
 ```
 
-## Revoking Access (( inert ))
+## Revoking Access (( role: reference ))
 
 Delete the file. If using signed URLs, the URL expires automatically (1 hour).
 If using static hosting, remove the file from the host.
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 - **Publishing without encryption.** Brain content is private. Default to password-protected unless the user explicitly says "open", "no password", or "public".
-- **Sharing password and URL in the same channel.** Always share the password via a different channel than the URL for security.
 - **Assuming the user wants raw markdown.** The publish command produces beautiful HTML. Don't copy-paste markdown when `gbrain publish` exists.
-- **Including internal metadata.** Never manually share content that contains frontmatter, source citations, or timeline sections. Let the publish command strip it.
+
+### Anti-Patterns — steps (( role: reference ))
+
+- Always share the password via a different channel than the URL for security.
+
+### Anti-Patterns — steps 2 (( role: reference ))
+
+- Never manually share content that contains frontmatter, source citations, or timeline sections. Let the publish command strip it.
 
 ## Output Format
 
@@ -181,7 +189,7 @@ Share the file via: [email / Slack / Airdrop / cloud upload]
 Share the password via: [a different channel]
 ```
 
-## Tools Used (( inert, role: tools ))
+## Tools Used (( role: tools ))
 
 - `gbrain publish` -- deterministic HTML generation (no LLM calls)
 - `gbrain files upload` -- upload to cloud storage (optional)

@@ -99,55 +99,73 @@
     "name" : "functional-area-resolver",
     "outline" : [
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 39,
         "text" : "Problem"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 45,
         "text" : "Solution: Functional-Area Dispatchers"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
         "line" : 50,
         "text" : "Before (270 rows, 25KB)"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
         "line" : 62,
         "text" : "After (13 rows, 13KB)"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 71,
         "text" : "Why It Works"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 81,
+        "text" : "Why It Works — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 82,
+        "line" : 84,
         "text" : "A\/B Eval Results"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 97,
+        "line" : 99,
         "text" : "Training corpus (n=20, 3 seeds × 3 variants × 3 models, LENIENT)"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 102,
+        "text" : "Training corpus (n=20, 3 seeds × 3 variants × 3 models, LENIENT) — steps"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 109,
+        "line" : 110,
         "text" : "Held-out blind corpus (n=5, 3 seeds, LENIENT)"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 113,
+        "text" : "Held-out blind corpus (n=5, 3 seeds, LENIENT) — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 3,
         "line" : 121,
         "text" : "What the data shows"
@@ -161,115 +179,223 @@
       {
         "kind" : "procedure",
         "level" : 3,
+        "line" : 134,
+        "text" : "Reproduce — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
         "line" : 147,
         "text" : "Methodology caveats"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 166,
+        "line" : 163,
+        "text" : "Methodology caveats — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 168,
         "text" : "Prior work and citations"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 175,
+        "text" : "Prior work and citations — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 185,
+        "text" : "Prior work and citations — steps 2"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 199,
+        "line" : 200,
         "text" : "How To Compress"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 201,
+        "line" : 202,
         "text" : "Step 1: Preconditions"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 213,
+        "line" : 205,
+        "text" : "Step 1: Preconditions — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 214,
         "text" : "Step 2: When to compress which file"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 227,
+        "line" : 228,
         "text" : "Step 3: Identify functional areas"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 249,
+        "line" : 241,
+        "text" : "Step 3: Identify functional areas — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 247,
+        "text" : "Step 3: Identify functional areas — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 250,
         "text" : "Step 4: Build the area entry format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
         "line" : 265,
+        "text" : "Step 4: Build the area entry format — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 268,
         "text" : "Step 5: Keep always-on entries separate"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
         "line" : 271,
+        "text" : "Step 5: Keep always-on entries separate — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 276,
         "text" : "Step 6 (MANDATORY): Verify routing accuracy"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 342,
-        "text" : "Step 7: Review the diff before committing"
+        "line" : 301,
+        "text" : "Step 6 (MANDATORY): Verify routing accuracy — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 312,
+        "text" : "Step 6 (MANDATORY): Verify routing accuracy — steps 2"
       },
       {
         "kind" : "procedure",
-        "level" : 2,
+        "level" : 3,
+        "line" : 336,
+        "text" : "Step 6 (MANDATORY): Verify routing accuracy — steps 3"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 342,
+        "text" : "Step 6 (MANDATORY): Verify routing accuracy — steps 4"
+      },
+      {
+        "kind" : "inert",
+        "level" : 3,
+        "line" : 347,
+        "text" : "Step 7: Review the diff before committing"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
         "line" : 350,
+        "text" : "Step 7: Review the diff before committing — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 355,
         "text" : "Contract"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 366,
+        "text" : "Contract — steps"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 362,
+        "line" : 369,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 366,
+        "line" : 373,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 382,
+        "line" : 388,
         "text" : "Maintenance"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 401,
+        "text" : "Maintenance — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 396,
+        "line" : 404,
         "text" : "Changelog"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 398,
+        "line" : 406,
         "text" : "v1.0.0 — 2026-05-11"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 411,
+        "text" : "v1.0.0 — 2026-05-11 — steps"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 91,
+        "line" : 93,
         "text" : "STRICT measures"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 92,
+        "line" : 94,
         "text" : "LENIENT measures"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 220,
+        "line" : 207,
+        "text" : "Refuse to compress if either gate fails"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 221,
         "text" : "Both are fat"
       },
       {
@@ -287,31 +413,31 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 298,
+        "line" : 303,
         "text" : "Gate 1"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 353,
+        "line" : 357,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 358,
+        "line" : 361,
         "text" : "Privacy contract preserved"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 385,
+        "line" : 390,
         "text" : "When adding a new skill"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 391,
+        "line" : 395,
         "text" : "When adding a new functional area"
       }
     ],
@@ -326,7 +452,7 @@
           "gets its own row (trigger -> skill path). At ~200+ skills this hits 25-30KB,",
           "eating context budget that should go to actual work"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -336,7 +462,7 @@
           "Replace N rows per area with **one entry per functional area**. Each entry",
           "lists all sub-skills it can dispatch to in a `(dispatcher for: ...)` clause"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -345,7 +471,7 @@
         "lines" : [
           "codeblock:plain:LSBDcmVhdGluZy9lbnJpY2hpbmcgYSBwZXJzb24gb3IgY29tcGFueSBwYWdlIC0+IGBlbnJpY2hgCi0gRml4IGJyb2tlbiBjaXRhdGlvbnMgaW4gYnJhaW4gcGFnZXMgLT4gYGNpdGF0aW9uLWZpeGVyYAotIFB1Ymxpc2gvc2hhcmUgYSBicmFpbiBwYWdlIGFzIGxpbmsgLT4gYGJyYWluLXB1Ymxpc2hgCi0gR2VuZXJhdGUgUERGIGZyb20gYnJhaW4gcGFnZSAtPiBgYnJhaW4tcGRmYAotIFJlYWQgYSBib29rIHRocm91Z2ggbGVucyBvZiBhIHByb2JsZW0gLT4gYHN0cmF0ZWdpYy1yZWFkaW5nYAotIFBlcnNvbmFsaXplZCBib29rIGFuYWx5c2lzIC0+IGBib29rLW1pcnJvcmAKLSBCcmFpbiBpbnRlZ3JpdHkgLT4gYGJyYWluLWxpYnJhcmlhbmAKLi4u"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -354,27 +480,34 @@
         "lines" : [
           "codeblock:plain:LSAqKkJyYWluICYga25vd2xlZGdlKio6IGNyZWF0ZS9lbnJpY2gvc2VhcmNoL2V4cG9ydCBicmFpbiBwYWdlcywgZmlsaW5nLAogIGNpdGF0aW9ucywgcHVibGlzaGluZywgYm9vayBhbmFseXNpcywgc3RyYXRlZ2ljIHJlYWRpbmcsIGNvbmNlcHQgc3ludGhlc2lzLAogIGFyY2hpdmUgbWluaW5nIC0+IGBicmFpbi1vcHNgIChkaXNwYXRjaGVyIGZvcjogZW5yaWNoLCBxdWVyeSwgYnJhaW4tcGRmLAogIGJyYWluLXB1Ymxpc2gsIGJyYWluLWV4cG9ydCwgYnJhaW4tbGlicmFyaWFuLCBjaXRhdGlvbi1maXhlciwgYm9vay1taXJyb3IsCiAgc3RyYXRlZ2ljLXJlYWRpbmcsIGNvbmNlcHQtc3ludGhlc2lzLCBhcmNoaXZlLWNyYXdsZXIsIC4uLik="
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Why It Works",
         "line" : 71,
         "lines" : [
-          "use judgment to follow the Why It Works guidance:",
           "The LLM doesn't need one row per sub-skill. It needs:",
           "**Area recognition** — \"this is about brain pages\" -> Brain & Knowledge",
-          "**Sub-skill visibility** — the `(dispatcher for: ...)` list shows what's available",
           "**The skill file itself** — once the LLM reads `brain-ops\/SKILL.md`, it has full routing detail",
           "This is a **two-layer dispatch**: routing file routes to the area, the area",
           "skill routes to the specific sub-skill. Each layer does one job well"
         ],
-        "role" : "inert"
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Why It Works — steps",
+        "line" : 81,
+        "lines" : [
+          "Sub-skill visibility — the `(dispatcher for: ...)` list shows what's available"
+        ],
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "A\/B Eval Results",
-        "line" : 82,
+        "line" : 84,
         "lines" : [
           "Three resolver architectures tested across three Anthropic frontier models",
           "(Opus 4.7, Sonnet 4.6, Haiku 4.5) on real production AGENTS.md content,",
@@ -388,25 +521,43 @@
           "production behavior — an agent that lands in `gmail` for an email intent",
           "succeeds even if the resolver entry said `executive-assistant`"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Training corpus (n=20, 3 seeds × 3 variants × 3 models, LENIENT)",
-        "line" : 97,
+        "line" : 99,
         "lines" : [
-          "table:ai-discretion:fCBWYXJpYW50IHwgT3B1cyA0LjcgfCBTb25uZXQgNC42IHwgSGFpa3UgNC41IHwgU2l6ZSB8CnwtLS18LS0tfC0tLXwtLS18LS0tfAp8IGJhc2VsaW5lICgyNzAgYnVsbGV0IHJvd3MpIHwgODEuNyUgwrEgNy4yJSB8IDg2LjclIMKxIDcuMiUgfCA3My4zJSDCsSA3LjIlIHwgMjVLQiB8CnwgZnVuY3Rpb25hbC1hcmVhcyAodGhpcyBwYXR0ZXJuKSB8IDk4LjMlIMKxIDcuMiUgfCAxMDAlIMKxIDAlIHwgODguMyUgwrEgNy4yJSB8IDEzS0IgfAp8IHJlc29sdmVyLW9mLXJlc29sdmVycyAobm8gZGlzcGF0Y2hlciBjbGF1c2UpIHwgNjMuMyUgwrEgMTQuMyUgfCA0MS43JSDCsSA3LjIlIHwgNjUuMCUgwrEgMTIuNCUgfCAxMEtCIHw="
+
         ],
         "role" : "inert"
       },
       {
         "executes" : false,
-        "heading" : "Held-out blind corpus (n=5, 3 seeds, LENIENT)",
-        "line" : 109,
+        "heading" : "Training corpus (n=20, 3 seeds × 3 variants × 3 models, LENIENT) — steps",
+        "line" : 102,
         "lines" : [
-          "table:ai-discretion:fCBWYXJpYW50IHwgT3B1cyA0LjcgfCBTb25uZXQgNC42IHwgSGFpa3UgNC41IHwKfC0tLXwtLS18LS0tfC0tLXwKfCBiYXNlbGluZSB8IDEwMCUgwrEgMCUgfCAxMDAlIMKxIDAlIHwgMTAwJSDCsSAwJSB8CnwgZnVuY3Rpb25hbC1hcmVhcyB8IDEwMCUgwrEgMCUgfCAxMDAlIMKxIDAlIHwgMTAwJSDCsSAwJSB8CnwgcmVzb2x2ZXItb2YtcmVzb2x2ZXJzIHwgMTAwJSDCsSAwJSB8IDczLjMlIMKxIDI4LjclIHwgMTAwJSDCsSAwJSB8"
+          "table:decision:fCBWYXJpYW50IHwgT3B1cyA0LjcgfCBTb25uZXQgNC42IHwgSGFpa3UgNC41IHwgU2l6ZSB8CnwtLS18LS0tfC0tLXwtLS18LS0tfAp8IGJhc2VsaW5lICgyNzAgYnVsbGV0IHJvd3MpIHwgODEuNyUgwrEgNy4yJSB8IDg2LjclIMKxIDcuMiUgfCA3My4zJSDCsSA3LjIlIHwgMjVLQiB8CnwgZnVuY3Rpb25hbC1hcmVhcyAodGhpcyBwYXR0ZXJuKSB8IDk4LjMlIMKxIDcuMiUgfCAxMDAlIMKxIDAlIHwgODguMyUgwrEgNy4yJSB8IDEzS0IgfAp8IHJlc29sdmVyLW9mLXJlc29sdmVycyAobm8gZGlzcGF0Y2hlciBjbGF1c2UpIHwgNjMuMyUgwrEgMTQuMyUgfCA0MS43JSDCsSA3LjIlIHwgNjUuMCUgwrEgMTIuNCUgfCAxMEtCIHw="
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Held-out blind corpus (n=5, 3 seeds, LENIENT)",
+        "line" : 110,
+        "lines" : [
+
         ],
         "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Held-out blind corpus (n=5, 3 seeds, LENIENT) — steps",
+        "line" : 113,
+        "lines" : [
+          "table:decision:fCBWYXJpYW50IHwgT3B1cyA0LjcgfCBTb25uZXQgNC42IHwgSGFpa3UgNC41IHwKfC0tLXwtLS18LS0tfC0tLXwKfCBiYXNlbGluZSB8IDEwMCUgwrEgMCUgfCAxMDAlIMKxIDAlIHwgMTAwJSDCsSAwJSB8CnwgZnVuY3Rpb25hbC1hcmVhcyB8IDEwMCUgwrEgMCUgfCAxMDAlIMKxIDAlIHwgMTAwJSDCsSAwJSB8CnwgcmVzb2x2ZXItb2YtcmVzb2x2ZXJzIHwgMTAwJSDCsSAwJSB8IDczLjMlIMKxIDI4LjclIHwgMTAwJSDCsSAwJSB8"
+        ],
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -418,32 +569,37 @@
           "**The pattern works because the LLM can drill into the dispatcher list.** Most \"STRICT failures\" are the LLM picking a more-specific sub-skill (`gmail` instead of `executive-assistant`). That's the pattern working as designed. STRICT scoring under-counts; LENIENT scoring reflects production agent behavior",
           "**The pattern's value scales with model tier.** Compression gain (functional-areas vs baseline, training, LENIENT) is +17pp on Opus, +13pp on Sonnet, +15pp on Haiku. Sonnet shows the cleanest separation between functional-areas and resolver-of-resolvers (100% vs 41.7%) — model capacity affects how much the dispatcher signal matters"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Reproduce",
         "line" : 131,
         "lines" : [
-          "codeblock:bash:Y2QgZXZhbHMvZnVuY3Rpb25hbC1hcmVhLXJlc29sdmVyCm5vZGUgaGFybmVzcy5tanMgLS1tb2RlbCBvcHVzICAgICMgfjIyNSBMTE0gY2FsbHMsIH4kMS43MCBhdCBPcHVzIHByaWNpbmcKbm9kZSBoYXJuZXNzLm1qcyAtLW1vZGVsIHNvbm5ldCAgIyB+JDEuMDAKbm9kZSBoYXJuZXNzLm1qcyAtLW1vZGVsIGhhaWt1ICAgIyB+JDAuMzAKbm9kZSByZXNjb3JlLm1qcyBiYXNlbGluZS1ydW5zLzIwMjYtMDUtMTEtb3B1cy00LTcuanNvbmwgICMgemVyby1jb3N0IHJlLXNjb3Jl",
-          "`evals\/functional-area-resolver\/baseline-runs\/2026-05-11-{opus-4-7,sonnet-4-6,haiku-4-5}.jsonl`"
+
         ],
         "role" : "inert"
       },
       {
         "executes" : true,
+        "heading" : "Reproduce — steps",
+        "line" : 134,
+        "lines" : [
+          "codeblock:bash:Y2QgZXZhbHMvZnVuY3Rpb25hbC1hcmVhLXJlc29sdmVyCm5vZGUgaGFybmVzcy5tanMgLS1tb2RlbCBvcHVzICAgICMgfjIyNSBMTE0gY2FsbHMsIH4kMS43MCBhdCBPcHVzIHByaWNpbmcKbm9kZSBoYXJuZXNzLm1qcyAtLW1vZGVsIHNvbm5ldCAgIyB+JDEuMDAKbm9kZSBoYXJuZXNzLm1qcyAtLW1vZGVsIGhhaWt1ICAgIyB+JDAuMzAKbm9kZSByZXNjb3JlLm1qcyBiYXNlbGluZS1ydW5zLzIwMjYtMDUtMTEtb3B1cy00LTcuanNvbmwgICMgemVyby1jb3N0IHJlLXNjb3Jl",
+          "`evals\/functional-area-resolver\/baseline-runs\/2026-05-11-{opus-4-7,sonnet-4-6,haiku-4-5}.jsonl`"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
         "heading" : "Methodology caveats",
         "line" : 147,
         "lines" : [
-          "use judgment to follow the Methodology caveats guidance:",
           "**Production prompt matters.** With a naive \"return the skill slug\" prompt",
           "(no instruction about `(dispatcher for: ...)`), every compression variant",
           "collapses to ~30-60% on Opus. The dispatcher-aware prompt is in",
           "`evals\/functional-area-resolver\/harness-runner.ts:PROMPT_TEMPLATE`. Use it",
           "as the template for your agent's harness; without it, compression breaks",
-          "**Training corpus and variants were authored by the same release.** Held-out",
-          "corpus was written before the variants and never adjusted; this mitigates",
-          "but does not eliminate overfitting",
           "**Confidence intervals via t-distribution across n=3 seeded repeats.** Hold the",
           "n=3 lower-bound: high CIs mean the underlying sample is noisy",
           "**Single-vendor result.** All three models are Anthropic. Cross-vendor",
@@ -452,27 +608,53 @@
           "the harness can't distinguish between \"100%\" and \"95% with one nondeterministic",
           "miss.\" Expanding to ≥20 is a v0.33.x follow-up."
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
-        "heading" : "Prior work and citations",
-        "line" : 166,
+        "executes" : false,
+        "heading" : "Methodology caveats — steps",
+        "line" : 163,
         "lines" : [
-          "use judgment to follow the Prior work and citations guidance:",
+          "Held-out",
+          "corpus was written before the variants and never adjusted; this mitigates",
+          "but does not eliminate overfitting"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Prior work and citations",
+        "line" : 168,
+        "lines" : [
           "**RAG-MCP** ([arXiv:2505.03275](https:\/\/arxiv.org\/html\/2505.03275v1))",
           "reports 49.2% prompt-token reduction at 3.2× accuracy gain via",
           "embedding-based pre-retrieval. The token-reduction story matches ours",
-          "(48% smaller), via a different mechanism (RAG vs static dispatcher)",
-          "**Anthropic Agent Skills**",
-          "([engineering blog](https:\/\/www.anthropic.com\/engineering\/equipping-agents-for-the-real-world-with-agent-skills))",
-          "promotes progressive disclosure: frontmatter (~80 tokens) always loaded,",
-          "SKILL.md body loaded on match. This skill applies the same principle at",
-          "the routing-table level, not the per-skill body level",
+          "(48% smaller), via a different mechanism (RAG vs static dispatcher)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Prior work and citations — steps",
+        "line" : 175,
+        "lines" : [
           "AnyTool (arXiv:2402.04253) showed",
           "meta-agent → category-agent → tool-agent hierarchy on 16K APIs beats flat",
           "retrieval by +35.4pp. The `(dispatcher for: ...)` clause is the",
-          "meta-agent's view collapsed into a single LLM pass",
+          "meta-agent's view collapsed into a single LLM pass"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Prior work and citations — steps 2",
+        "line" : 185,
+        "lines" : [
+          "Anthropic Agent Skills",
+          "(engineering blog)",
+          "promotes progressive disclosure: frontmatter (~80 tokens) always loaded,",
+          "SKILL.md body loaded on match. This skill applies the same principle at",
+          "the routing-table level, not the per-skill body level",
           "The 2025-2026 literature has no published benchmark for static-prompt",
           "hierarchical routing (every published hierarchical scheme resolves the",
           "hierarchy at runtime via a second LLM call). Our finding — that the",
@@ -480,12 +662,21 @@
           "routing accuracy — is the open contribution. See",
           "`evals\/functional-area-resolver\/README.md` for methodology details"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "How To Compress",
-        "line" : 199,
+        "line" : 200,
+        "lines" : [
+
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Step 1: Preconditions",
+        "line" : 202,
         "lines" : [
 
         ],
@@ -493,20 +684,21 @@
       },
       {
         "executes" : false,
-        "heading" : "Step 1: Preconditions",
-        "line" : 201,
+        "heading" : "Step 1: Preconditions — steps",
+        "line" : 205,
         "lines" : [
+          "Refuse to compress if either gate fails:",
           "Source routing file is under 12KB (compression overhead exceeds benefit)",
           "`git status` shows uncommitted changes to the routing file (the",
           "compressor's edit would entangle with whatever the user was doing)",
           "If a user wants to override either gate, they ask explicitly with `--force`"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Step 2: When to compress which file",
-        "line" : 213,
+        "line" : 214,
         "lines" : [
           "GBrain workspaces often have TWO routing files merged at runtime (per",
           "`src\/core\/check-resolvable.ts` v0.31.7): `skills\/RESOLVER.md` and a sibling",
@@ -518,12 +710,12 @@
           "If the deployment uses only one routing file, this section is a no-op —",
           "compress that one"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Step 3: Identify functional areas",
-        "line" : 227,
+        "line" : 228,
         "lines" : [
           "**Content Ingestion** — ingest as dispatcher",
           "**Calendar & Scheduling** — google-calendar as dispatcher",
@@ -533,43 +725,74 @@
           "**Product & Building** — acp-coding as dispatcher",
           "**Infrastructure** — healthcheck as dispatcher",
           "**Tasks & Logistics** — daily-task-manager as dispatcher",
-          "**People & Contacts** — google-contacts as dispatcher",
-          "Brain & Knowledge — brain-ops as dispatcher",
-          "Research & Investigation — perplexity-research as dispatcher"
+          "**People & Contacts** — google-contacts as dispatcher"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
-        "heading" : "Step 4: Build the area entry format",
-        "line" : 249,
+        "heading" : "Step 3: Identify functional areas — steps",
+        "line" : 241,
         "lines" : [
-          "use judgment to follow the Step 4: Build the area entry format guidance:",
-          "Each area entry follows this template:",
-          "codeblock:plain:LSAqKntBcmVhIE5hbWV9Kio6IHtjb21tYS1zZXBhcmF0ZWQgdHJpZ2dlciBwaHJhc2VzfSAtPiBge2Rpc3BhdGNoZXItc2tpbGx9YAogIChkaXNwYXRjaGVyIGZvcjoge2NvbW1hLXNlcGFyYXRlZCBzdWItc2tpbGwgbmFtZXN9KQ==",
-          "Rules:",
-          "Trigger phrases should be broad enough to catch intent (\"brain pages, enrich,",
-          "search, filing, citations, book analysis\")",
-          "Sub-skill list should be comprehensive — this is how the LLM knows what's available",
-          "The dispatcher skill file should have its own internal routing table"
+          "Brain & Knowledge — brain-ops as dispatcher"
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
-        "heading" : "Step 5: Keep always-on entries separate",
-        "line" : 265,
+        "heading" : "Step 3: Identify functional areas — steps 2",
+        "line" : 247,
         "lines" : [
-          "use judgment to follow the Step 5: Keep always-on entries separate guidance:",
-          "Gates and always-on entries (acknowledge, multi-user, entity-detector, etc.)",
-          "stay as individual rows — they're checked on every message, not dispatched"
+          "Research & Investigation — perplexity-research as dispatcher"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
-        "heading" : "Step 6 (MANDATORY): Verify routing accuracy",
+        "heading" : "Step 4: Build the area entry format",
+        "line" : 250,
+        "lines" : [
+          "Each area entry follows this template:",
+          "codeblock:plain:LSAqKntBcmVhIE5hbWV9Kio6IHtjb21tYS1zZXBhcmF0ZWQgdHJpZ2dlciBwaHJhc2VzfSAtPiBge2Rpc3BhdGNoZXItc2tpbGx9YAogIChkaXNwYXRjaGVyIGZvcjoge2NvbW1hLXNlcGFyYXRlZCBzdWItc2tpbGwgbmFtZXN9KQ==",
+          "Rules:",
+          "Trigger phrases should be broad enough to catch intent (\"brain pages, enrich,",
+          "search, filing, citations, book analysis\")",
+          "The dispatcher skill file should have its own internal routing table"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Step 4: Build the area entry format — steps",
+        "line" : 265,
+        "lines" : [
+          "Sub-skill list should be comprehensive — this is how the LLM knows what's available"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Step 5: Keep always-on entries separate",
+        "line" : 268,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Step 5: Keep always-on entries separate — steps",
         "line" : 271,
+        "lines" : [
+          "Gates and always-on entries (acknowledge, multi-user, entity-detector, etc.)",
+          "stay as individual rows — they're checked on every message, not dispatched"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Step 6 (MANDATORY): Verify routing accuracy",
+        "line" : 276,
         "lines" : [
           "Run two gates before committing the compressed file. Do NOT commit if either",
           "fails",
@@ -587,91 +810,58 @@
           "Common false negatives on the harness eval (NOT bugs in your compression):",
           "The gbrain-bundled fixtures target skill names like `enrich`, `query`,",
           "`gmail`, `executive-assistant`. If your routing file doesn't expose",
-          "those skills at all, expect strict-scoring failures on those fixtures",
+          "those skills at all, expect strict-scoring failures on those fixtures"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Step 6 (MANDATORY): Verify routing accuracy — steps",
+        "line" : 301,
+        "lines" : [
           "Gate 1: Structural verification. Confirms your `routing-eval.jsonl`",
           "fixtures still resolve to the right skills under the compressed routing file",
-          "codeblock:bash:Z2JyYWluIHJvdXRpbmctZXZhbCAtLWpzb24=",
-          "codeblock:bash:IyBJbiB5b3VyIGFnZW50IHdvcmtzcGFjZSwgaWRlbnRpZnkgdGhlIHJvdXRpbmcgZmlsZSB5b3UganVzdCBjb21wcmVzc2VkLgpFRElURUQ9L3BhdGgvdG8veW91ci9BR0VOVFMubWQgICAgICAgIyBvciBza2lsbHMvUkVTT0xWRVIubWQsIHdoaWNoZXZlciB5b3UgZWRpdGVkCgojIEluIHlvdXIgZ2JyYWluIHJlcG8gY2hlY2tvdXQ6CmNkIC9wYXRoL3RvL2dicmFpbi9ldmFscy9mdW5jdGlvbmFsLWFyZWEtcmVzb2x2ZXIKVE1QPSQobWt0ZW1wIC1kKS92YXJpYW50cyAmJiBta2RpciAtcCAiJFRNUCIKY3AgIiRFRElURUQiICIkVE1QL215LWVkaXQubWQiCgojIFJ1biB0aGUgaGFybmVzcyBhZ2FpbnN0IHlvdXIgZmlsZSAoc2VxdWVudGlhbCwgfjc1IGNhbGxzIMOXICQwLjAwNzYg4omIICQwLjU3IG9uIE9wdXMpLgpBTlRIUk9QSUNfQVBJX0tFWT0uLi4gbm9kZSBoYXJuZXNzLm1qcyAtLXZhcmlhbnRzLWRpciAiJFRNUCIgLS12YXJpYW50cyBteS1lZGl0IFwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS1tb2RlbCBvcHVzIC0tcGFyYWxsZWwgMyAtLXllcw==",
-          "A sub-skill was omitted from the `(dispatcher for: ...)` list",
-          "Lenient scoring stays accurate for any sub-skill present in your",
-          "`(dispatcher for: ...)` lists"
+          "codeblock:bash:Z2JyYWluIHJvdXRpbmctZXZhbCAtLWpzb24="
         ],
-        "role" : "inert"
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Step 6 (MANDATORY): Verify routing accuracy — steps 2",
+        "line" : 312,
+        "lines" : [
+          "Confirms a frontier",
+          "LLM can still drill into the dispatcher list and reach sub-skills under",
+          "your specific compression. Requires a gbrain repo checkout because the",
+          "harness lives there. Copy your edited routing file into the harness's",
+          "variants directory, then invoke the harness with `--variants` pointing",
+          "at it:",
+          "codeblock:bash:IyBJbiB5b3VyIGFnZW50IHdvcmtzcGFjZSwgaWRlbnRpZnkgdGhlIHJvdXRpbmcgZmlsZSB5b3UganVzdCBjb21wcmVzc2VkLgpFRElURUQ9L3BhdGgvdG8veW91ci9BR0VOVFMubWQgICAgICAgIyBvciBza2lsbHMvUkVTT0xWRVIubWQsIHdoaWNoZXZlciB5b3UgZWRpdGVkCgojIEluIHlvdXIgZ2JyYWluIHJlcG8gY2hlY2tvdXQ6CmNkIC9wYXRoL3RvL2dicmFpbi9ldmFscy9mdW5jdGlvbmFsLWFyZWEtcmVzb2x2ZXIKVE1QPSQobWt0ZW1wIC1kKS92YXJpYW50cyAmJiBta2RpciAtcCAiJFRNUCIKY3AgIiRFRElURUQiICIkVE1QL215LWVkaXQubWQiCgojIFJ1biB0aGUgaGFybmVzcyBhZ2FpbnN0IHlvdXIgZmlsZSAoc2VxdWVudGlhbCwgfjc1IGNhbGxzIMOXICQwLjAwNzYg4omIICQwLjU3IG9uIE9wdXMpLgpBTlRIUk9QSUNfQVBJX0tFWT0uLi4gbm9kZSBoYXJuZXNzLm1qcyAtLXZhcmlhbnRzLWRpciAiJFRNUCIgLS12YXJpYW50cyBteS1lZGl0IFwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS1tb2RlbCBvcHVzIC0tcGFyYWxsZWwgMyAtLXllcw=="
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Step 6 (MANDATORY): Verify routing accuracy — steps 3",
+        "line" : 336,
+        "lines" : [
+          "A sub-skill was omitted from the `(dispatcher for: ...)` list"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Step 6 (MANDATORY): Verify routing accuracy — steps 4",
+        "line" : 342,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Step 7: Review the diff before committing",
-        "line" : 342,
-        "lines" : [
-          "Show the user the proposed edit (or the actual git diff) and wait for",
-          "explicit approval before staging. Same convention as `skills\/book-mirror\/SKILL.md`"
-        ],
-        "role" : "inert"
-      },
-      {
-        "executes" : true,
-        "heading" : "Contract",
-        "line" : 350,
-        "lines" : [
-          "use judgment to follow the Contract guidance:",
-          "This skill guarantees:",
-          "Routing matches the canonical triggers in the frontmatter",
-          "Compression is only performed when the preconditions in Step 1 pass (file ≥12KB AND clean working tree, or `--force`)",
-          "The mandatory verification gate in Step 6 fires on the user's edited file, not on sample variants. The user runs `gbrain routing-eval --json` AND the gbrain-repo harness (`node harness.mjs --variants-dir <tmp> --variants my-edit`) before committing the compressed file",
-          "Privacy contract preserved: no fork-specific filesystem path literals (server-side brain home, OpenClaw fork home) leak into the compressed output",
-          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : false,
-        "heading" : "Output Format",
-        "line" : 362,
-        "lines" : [
-          "The compressed routing file follows the area-entry template documented in Step 4 (\"Build the area entry format\"). Each entry: `- **{Area Name}**: {trigger phrases} -> \\`{dispatcher-skill}\\` (dispatcher for: {sub-skill list})`. The dispatcher arrow may be either ASCII `->` (default in this template) or Unicode `→` (used in some production deployments); the gbrain harness accepts both"
-        ],
-        "role" : "template"
-      },
-      {
-        "executes" : true,
-        "heading" : "Anti-Patterns",
-        "line" : 366,
-        "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
-          "**Resolver-of-resolvers with pipe tables.** Tested and failed (see eval",
-          "table). The LLM picks area names from the table instead of drilling into",
-          "sub-skills",
-          "**Removing sub-skill names.** Without the `(dispatcher for: ...)` list,",
-          "the LLM can't route to specific sub-skills. The list is the routing signal",
-          "**Too few areas.** Collapsing to <5 areas makes each area too broad",
-          "12-15 areas is the sweet spot",
-          "**Too many areas.** Defeats the purpose. If you have 50 areas, just keep",
-          "individual rows"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Maintenance",
-        "line" : 382,
-        "lines" : [
-          "use judgment to follow the Maintenance guidance:",
-          "When adding a new skill:",
-          "Identify its functional area",
-          "Add the skill name to that area's `(dispatcher for: ...)` list",
-          "Update the area's skill file with routing detail",
-          "Run the routing eval (Step 6) to verify",
-          "When adding a new functional area:",
-          "Create the dispatcher skill with internal routing",
-          "Add the area entry to the routing file",
-          "Run the routing eval (Step 6) to verify"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : false,
-        "heading" : "Changelog",
-        "line" : 396,
+        "line" : 347,
         "lines" : [
 
         ],
@@ -679,15 +869,115 @@
       },
       {
         "executes" : false,
+        "heading" : "Step 7: Review the diff before committing — steps",
+        "line" : 350,
+        "lines" : [
+          "Show the user the proposed edit (or the actual git diff) and wait for",
+          "explicit approval before staging. Same convention as `skills\/book-mirror\/SKILL.md`"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 355,
+        "lines" : [
+          "This skill guarantees:",
+          "Routing matches the canonical triggers in the frontmatter",
+          "Compression is only performed when the preconditions in Step 1 pass (file ≥12KB AND clean working tree, or `--force`)",
+          "Privacy contract preserved: no fork-specific filesystem path literals (server-side brain home, OpenClaw fork home) leak into the compressed output",
+          "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract — steps",
+        "line" : 366,
+        "lines" : [
+          "The mandatory verification gate in Step 6 fires on the user's edited file, not on sample variants. The user runs `gbrain routing-eval --json` AND the gbrain-repo harness (`node harness.mjs --variants-dir <tmp> --variants my-edit`) before committing the compressed file"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Output Format",
+        "line" : 369,
+        "lines" : [
+          "The compressed routing file follows the area-entry template documented in Step 4 (\"Build the area entry format\"). Each entry: `- **{Area Name}**: {trigger phrases} -> \\`{dispatcher-skill}\\` (dispatcher for: {sub-skill list})`. The dispatcher arrow may be either ASCII `->` (default in this template) or Unicode `→` (used in some production deployments); the gbrain harness accepts both"
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 373,
+        "lines" : [
+          "Tested and failed (see eval",
+          "table). The LLM picks area names from the table instead of drilling into",
+          "sub-skills",
+          "Removing sub-skill names. Without the `(dispatcher for: ...)` list,",
+          "the LLM can't route to specific sub-skills. The list is the routing signal",
+          "Collapsing to <5 areas makes each area too broad",
+          "12-15 areas is the sweet spot",
+          "Defeats the purpose. If you have 50 areas, just keep",
+          "individual rows"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Maintenance",
+        "line" : 388,
+        "lines" : [
+          "When adding a new skill:",
+          "Identify its functional area",
+          "Update the area's skill file with routing detail",
+          "Run the routing eval (Step 6) to verify",
+          "When adding a new functional area:",
+          "Create the dispatcher skill with internal routing",
+          "Add the area entry to the routing file",
+          "Run the routing eval (Step 6) to verify"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Maintenance — steps",
+        "line" : 401,
+        "lines" : [
+          "Add the skill name to that area's `(dispatcher for: ...)` list"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Changelog",
+        "line" : 404,
+        "lines" : [
+
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
         "heading" : "v1.0.0 — 2026-05-11",
-        "line" : 398,
+        "line" : 406,
         "lines" : [
           "Skill renamed from `compress-agents-md` to `functional-area-resolver`",
-          "pre-release; the contribution is the pattern, not the filename",
+          "pre-release; the contribution is the pattern, not the filename"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "v1.0.0 — 2026-05-11 — steps",
+        "line" : 411,
+        "lines" : [
           "Initial version. Pattern shipped in gbrain v0.32.3.0 with a held-out A\/B",
           "eval (see `evals\/functional-area-resolver\/`)"
         ],
-        "role" : "inert"
+        "role" : "reference"
       }
     ],
     "tools" : "exec\nread\nwrite\nedit",
@@ -730,104 +1020,144 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 148,
-      "swift_line" : 604
+      "meridian_line" : 83,
+      "swift_line" : 605
+    },
+    {
+      "meridian_line" : 136,
+      "swift_line" : 617
+    },
+    {
+      "meridian_line" : 136,
+      "swift_line" : 628
+    },
+    {
+      "meridian_line" : 136,
+      "swift_line" : 639
+    },
+    {
+      "meridian_line" : 136,
+      "swift_line" : 650
+    },
+    {
+      "meridian_line" : 136,
+      "swift_line" : 661
+    },
+    {
+      "meridian_line" : 145,
+      "swift_line" : 672
+    },
+    {
+      "meridian_line" : 118,
+      "swift_line" : 683
+    },
+    {
+      "meridian_line" : 145,
+      "swift_line" : 695
+    },
+    {
+      "meridian_line" : 340,
+      "swift_line" : 707
+    },
+    {
+      "meridian_line" : 403,
+      "swift_line" : 719
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 643
+      "swift_line" : 759
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 648
+      "swift_line" : 764
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 687
+      "swift_line" : 803
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 692
+      "swift_line" : 808
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 731
+      "swift_line" : 847
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 736
+      "swift_line" : 852
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 775
+      "swift_line" : 891
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 780
+      "swift_line" : 896
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 819
+      "swift_line" : 935
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 824
+      "swift_line" : 940
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 863
+      "swift_line" : 979
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 868
+      "swift_line" : 984
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 907
+      "swift_line" : 1023
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 912
+      "swift_line" : 1028
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 951
+      "swift_line" : 1067
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 956
+      "swift_line" : 1072
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 995
+      "swift_line" : 1111
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1000
+      "swift_line" : 1116
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1039
+      "swift_line" : 1155
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1044
+      "swift_line" : 1160
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1083
+      "swift_line" : 1199
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1088
+      "swift_line" : 1204
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1127
+      "swift_line" : 1243
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1132
+      "swift_line" : 1248
     }
   ],
   "tools_used" : [
@@ -840,35 +1170,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "**Production prompt matters.** With a naive \"return the skill slug\" prompt\n(no instruction about `(dispatcher for: ...)`), every compression variant\ncollapses to ~30-60% on Opus. The dispatcher-aware prompt is in\n`evals\/functional-area-resolver\/harness-runner.ts:PROMPT_TEMPLATE`. Use it\nas the template for your agent's harness; without it, compression breaks\n**Training corpus and variants were authored by the same release.** Held-out\ncorpus was written before the variants and never adjusted; this mitigates\nbut does not eliminate overfitting\n**Confidence intervals via t-distribution across n=3 seeded repeats.** Hold the\nn=3 lower-bound: high CIs mean the underlying sample is noisy\n**Single-vendor result.** All three models are Anthropic. Cross-vendor\nverification (Gemini, GPT) is a v0.33.x follow-up\n**Held-out blind set is small (n=5).** Saturated at 100% across most cells —\nthe harness can't distinguish between \"100%\" and \"95% with one nondeterministic\nmiss.\" Expanding to ≥20 is a v0.33.x follow-up.\nuse judgment to follow the Prior work and citations guidance:\n**RAG-MCP** ([arXiv:2505.03275](https:\/\/arxiv.org\/html\/2505.03275v1))\nreports 49.2% prompt-token reduction at 3.2× accuracy gain via\nembedding-based pre-retrieval. The token-reduction story matches ours\n(48% smaller), via a different mechanism (RAG vs static dispatcher)\n**Anthropic Agent Skills**\n([engineering blog](https:\/\/www.anthropic.com\/engineering\/equipping-agents-for-the-real-world-with-agent-skills))\npromotes progressive disclosure: frontmatter (~80 tokens) always loaded,\nSKILL.md body loaded on match. This skill applies the same principle at\nthe routing-table level, not the per-skill body level\nAnyTool (arXiv:2402.04253) showed\nmeta-agent → category-agent → tool-agent hierarchy on 16K APIs beats flat\nretrieval by +35.4pp. The `(dispatcher for: ...)` clause is the\nmeta-agent's view collapsed into a single LLM pass\nThe 2025-2026 literature has no published benchmark for static-prompt\nhierarchical routing (every published hierarchical scheme resolves the\nhierarchy at runtime via a second LLM call). Our finding — that the\nhierarchy can be inlined into a single-LLM-pass dispatcher list and retain\nrouting accuracy — is the open contribution. See\n`evals\/functional-area-resolver\/README.md` for methodology details\nuse judgment to follow the Step 4: Build the area entry format guidance:\nEach area entry follows this template:\ncodeblock:plain:LSAqKntBcmVhIE5hbWV9Kio6IHtjb21tYS1zZXBhcmF0ZWQgdHJpZ2dlciBwaHJhc2VzfSAtPiBge2Rpc3BhdGNoZXItc2tpbGx9YAogIChkaXNwYXRjaGVyIGZvcjoge2NvbW1hLXNlcGFyYXRlZCBzdWItc2tpbGwgbmFtZXN9KQ==\nRules:\nTrigger phrases should be broad enough to catch intent (\"brain pages, enrich,\nsearch, filing, citations, book analysis\")\nSub-skill list should be comprehensive — this is how the LLM knows what's available\nThe dispatcher skill file should have its own internal routing table\nuse judgment to follow the Step 5: Keep always-on entries separate guidance:\nGates and always-on entries (acknowledge, multi-user, entity-detector, etc.)\nstay as individual rows — they're checked on every message, not dispatched\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nCompression is only performed when the preconditions in Step 1 pass (file ≥12KB AND clean working tree, or `--force`)\nThe mandatory verification gate in Step 6 fires on the user's edited file, not on sample variants. The user runs `gbrain routing-eval --json` AND the gbrain-repo harness (`node harness.mjs --variants-dir <tmp> --variants my-edit`) before committing the compressed file\nPrivacy contract preserved: no fork-specific filesystem path literals (server-side brain home, OpenClaw fork home) leak into the compressed output\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test\nuse judgment to follow the Anti-Patterns guidance:\n**Resolver-of-resolvers with pipe tables.** Tested and failed (see eval\ntable). The LLM picks area names from the table instead of drilling into\nsub-skills\n**Removing sub-skill names.** Without the `(dispatcher for: ...)` list,\nthe LLM can't route to specific sub-skills. The list is the routing signal\n**Too few areas.** Collapsing to <5 areas makes each area too broad\n12-15 areas is the sweet spot\n**Too many areas.** Defeats the purpose. If you have 50 areas, just keep\nindividual rows\nuse judgment to follow the Maintenance guidance:\nWhen adding a new skill:\nIdentify its functional area\nAdd the skill name to that area's `(dispatcher for: ...)` list\nUpdate the area's skill file with routing detail\nRun the routing eval (Step 6) to verify\nWhen adding a new functional area:\nCreate the dispatcher skill with internal routing\nAdd the area entry to the routing file\nRun the routing eval (Step 6) to verify",
-          "line" : 148,
-          "scoped_tools" : [
-            "assess.notability",
-            "capture",
-            "enrich",
-            "health.get",
-            "jobs.status",
-            "jobs.submit",
-            "link.add",
-            "link.backlinks",
-            "makePDF",
-            "page.create",
-            "page.get",
-            "page.list",
-            "page.search",
-            "page.update",
-            "publish",
-            "recall",
-            "research",
-            "timeline.add",
-            "verify"
-          ],
-          "text" : "follow the Methodology caveats guidance"
         }
       ],
       "source_name" : "functional-area-resolver a input",

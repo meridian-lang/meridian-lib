@@ -145,7 +145,7 @@ struct SkillSectionBuilder {
                     try applyApplicability(group, negated: false, prelude: &prelude, dispatch: &dispatch)
                 case .negativeApplicability:
                     try applyApplicability(group, negated: true, prelude: &prelude, dispatch: &negativeDispatch)
-                case .template, .domain, .tools, .conventionRef, .inert:
+                case .template, .domain, .tools, .conventionRef, .reference, .inert:
                     // Non-executable roles never have executes == true.
                     break
                 }

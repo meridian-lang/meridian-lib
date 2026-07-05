@@ -104,135 +104,153 @@
         "text" : "What this does"
       },
       {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 33,
+        "text" : "What this does — steps"
+      },
+      {
         "kind" : "inert",
         "level" : 2,
-        "line" : 43,
+        "line" : 46,
         "text" : "When to use this vs other tools"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 46,
+        "line" : 49,
         "text" : "When to use this vs other tools — steps"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 57,
+        "line" : 59,
         "text" : "Output structure"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 95,
+        "line" : 97,
         "text" : "Invocation"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 98,
+        "line" : 100,
         "text" : "Invocation — steps"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 128,
+        "line" : 130,
         "text" : "Models"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 131,
+        "line" : 133,
         "text" : "Models — steps"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 142,
+        "line" : 143,
         "text" : "Integration patterns"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 144,
+        "line" : 145,
         "text" : "Entity enrichment"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 158,
-        "text" : "Deal \/ company monitoring (cron)"
-      },
-      {
-        "kind" : "inert",
-        "level" : 3,
-        "line" : 167,
-        "text" : "Morning briefing"
-      },
-      {
-        "kind" : "inert",
-        "level" : 2,
-        "line" : 172,
-        "text" : "Recency filter"
+        "line" : 148,
+        "text" : "Entity enrichment — steps"
       },
       {
         "kind" : "procedure",
+        "level" : 3,
+        "line" : 159,
+        "text" : "Deal \/ company monitoring (cron)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 162,
+        "text" : "Deal \/ company monitoring (cron) — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 170,
+        "text" : "Morning briefing"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 177,
+        "line" : 175,
+        "text" : "Recency filter"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 180,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "prohibitions",
         "level" : 3,
-        "line" : 187,
+        "line" : 189,
         "text" : "Anti-Patterns — steps"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 190,
+        "line" : 192,
         "text" : "Environment"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 196,
+        "line" : 198,
         "text" : "Related skills"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 199,
+        "line" : 201,
         "text" : "Related skills — steps"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 209,
+        "line" : 211,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 221,
+        "line" : 222,
         "text" : "Output Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 194,
+        "line" : 196,
         "text" : "Optional"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 212,
+        "line" : 213,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 217,
+        "line" : 218,
         "text" : "Privacy contract preserved"
       }
     ],
@@ -242,7 +260,16 @@
         "heading" : "What this does",
         "line" : 30,
         "lines" : [
-          "use judgment to follow the What this does guidance:",
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "What this does — steps",
+        "line" : 33,
+        "lines" : [
+          "use judgment to follow the What this does — steps guidance:",
           "Combines existing brain knowledge with Perplexity's web search. The",
           "agent sends brain context about a topic into a Perplexity query;",
           "Perplexity searches + reads + synthesizes multiple pages with citations,",
@@ -257,7 +284,7 @@
       {
         "executes" : false,
         "heading" : "When to use this vs other tools",
-        "line" : 43,
+        "line" : 46,
         "lines" : [
 
         ],
@@ -266,16 +293,16 @@
       {
         "executes" : true,
         "heading" : "When to use this vs other tools — steps",
-        "line" : 46,
+        "line" : 49,
         "lines" : [
-          "table:ai-discretion:fCBOZWVkIHwgVXNlIHwKfC0tLS0tLXwtLS0tLXwKfCBEZWVwIHJlc2VhcmNoIHdpdGggY2l0YXRpb25zIHwgVGhpcyBza2lsbCDigJQgUGVycGxleGl0eSArIE9wdXMgfAp8IFF1aWNrIFVSTCBjb250ZW50IHwgYHdlYl9mZXRjaGAgfAp8IEJyYWluLW9ubHkgbG9va3VwIHwgYGdicmFpbiBxdWVyeWAgLyBgZ2JyYWluIHNlYXJjaGAgfAp8IFJlYWwtdGltZSBzb2NpYWwgbW9uaXRvcmluZyB8IGV4dGVybmFsIFggLyBzb2NpYWwtbWVkaWEgY29sbGVjdG9ycyB8CnwgU3RydWN0dXJlZCBkYXRhIGxvb2t1cCBhZ2FpbnN0IGEgdHJhY2tlciB8IGBza2lsbHMvZGF0YS1yZXNlYXJjaC9TS0lMTC5tZGAgfA=="
+          "table:decision:fCBOZWVkIHwgVXNlIHwKfC0tLS0tLXwtLS0tLXwKfCBEZWVwIHJlc2VhcmNoIHdpdGggY2l0YXRpb25zIHwgVGhpcyBza2lsbCDigJQgUGVycGxleGl0eSArIE9wdXMgfAp8IFF1aWNrIFVSTCBjb250ZW50IHwgYHdlYl9mZXRjaGAgfAp8IEJyYWluLW9ubHkgbG9va3VwIHwgYGdicmFpbiBxdWVyeWAgLyBgZ2JyYWluIHNlYXJjaGAgfAp8IFJlYWwtdGltZSBzb2NpYWwgbW9uaXRvcmluZyB8IGV4dGVybmFsIFggLyBzb2NpYWwtbWVkaWEgY29sbGVjdG9ycyB8CnwgU3RydWN0dXJlZCBkYXRhIGxvb2t1cCBhZ2FpbnN0IGEgdHJhY2tlciB8IGBza2lsbHMvZGF0YS1yZXNlYXJjaC9TS0lMTC5tZGAgfA=="
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Output structure",
-        "line" : 57,
+        "line" : 59,
         "lines" : [
           "The research output lands as a brain page under `research\/<slug>.md` with",
           "this structure:",
@@ -286,7 +313,7 @@
       {
         "executes" : false,
         "heading" : "Invocation",
-        "line" : 95,
+        "line" : 97,
         "lines" : [
 
         ],
@@ -295,7 +322,7 @@
       {
         "executes" : true,
         "heading" : "Invocation — steps",
-        "line" : 98,
+        "line" : 100,
         "lines" : [
           "The skill is markdown agent instructions; the agent uses Perplexity's",
           "API directly (or a host-provided `perplexity` CLI if installed):",
@@ -306,7 +333,7 @@
       {
         "executes" : false,
         "heading" : "Models",
-        "line" : 128,
+        "line" : 130,
         "lines" : [
 
         ],
@@ -315,9 +342,9 @@
       {
         "executes" : true,
         "heading" : "Models — steps",
-        "line" : 131,
+        "line" : 133,
         "lines" : [
-          "table:ai-discretion:fCBNb2RlbCB8IENvc3QgLyBxdWVyeSB8IFVzZSB3aGVuIHwKfC0tLS0tLS18LS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tfAp8IFBlcnBsZXhpdHkgc29uYXItcHJvIHwgflwkMC4wNCB8IERlZXAgYW5hbHlzaXMsIGVudGl0eSBlbnJpY2htZW50LCBkZWFsIHJlc2VhcmNoIHwKfCBQZXJwbGV4aXR5IHNvbmFyIHwgflwkMC4wMDcgfCBRdWljayBsb29rdXBzLCBidWxrIG1vbml0b3JpbmcsIGJyaWVmaW5nIHBpcGVsaW5lcyB8",
+          "table:decision:fCBNb2RlbCB8IENvc3QgLyBxdWVyeSB8IFVzZSB3aGVuIHwKfC0tLS0tLS18LS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tfAp8IFBlcnBsZXhpdHkgc29uYXItcHJvIHwgflwkMC4wNCB8IERlZXAgYW5hbHlzaXMsIGVudGl0eSBlbnJpY2htZW50LCBkZWFsIHJlc2VhcmNoIHwKfCBQZXJwbGV4aXR5IHNvbmFyIHwgflwkMC4wMDcgfCBRdWljayBsb29rdXBzLCBidWxrIG1vbml0b3JpbmcsIGJyaWVmaW5nIHBpcGVsaW5lcyB8",
           "Default to sonar-pro. Drop to sonar for bulk \/ cron contexts where cost",
           "matters more than depth"
         ],
@@ -326,16 +353,25 @@
       {
         "executes" : false,
         "heading" : "Integration patterns",
-        "line" : 142,
+        "line" : 143,
         "lines" : [
 
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Entity enrichment",
-        "line" : 144,
+        "line" : 145,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Entity enrichment — steps",
+        "line" : 148,
         "lines" : [
           "Called by `skills\/enrich\/SKILL.md` when an entity page (person, company)",
           "needs current web context:",
@@ -346,9 +382,17 @@
       {
         "executes" : true,
         "heading" : "Deal \/ company monitoring (cron)",
-        "line" : 158,
+        "line" : 159,
         "lines" : [
-          "use judgment to follow the Deal \/ company monitoring (cron) guidance:",
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Deal \/ company monitoring (cron) — steps",
+        "line" : 162,
+        "lines" : [
           "For each active item under `deals\/` or `companies\/`:",
           "codeblock:bash:IyBXZWVrbHk6IHB1bGwgcmVjZW50IG5ld3MgcGVyIGNvbXBhbnk7IGZsYWcgY2hhbmdlcyBmb3IgcmV2aWV3Lg=="
         ],
@@ -357,41 +401,40 @@
       {
         "executes" : false,
         "heading" : "Morning briefing",
-        "line" : 167,
+        "line" : 170,
         "lines" : [
           "Replace raw `web_fetch` calls in briefing pipelines with this skill so",
           "the agent doesn't re-narrate already-known facts"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Recency filter",
-        "line" : 172,
+        "line" : 175,
         "lines" : [
           "Pass `recency_filter` to Perplexity: `hour | day | week | month`. Useful",
           "for news-cycle topics; omit for evergreen research"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 177,
+        "line" : 180,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "❌ Sending NO brain context. Then it's just a search — use `web_fetch`",
           "instead",
           "❌ Truncating the brain context. The whole point is \"knows what you",
           "know.\" Send dense context.",
           "❌ Skipping the cross-link step when entities are mentioned. Iron Law"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Anti-Patterns — steps",
-        "line" : 187,
+        "line" : 189,
         "lines" : [
           "❌ Discarding citations. Every claim in the output must have a URL"
         ],
@@ -400,7 +443,7 @@
       {
         "executes" : true,
         "heading" : "Environment",
-        "line" : 190,
+        "line" : 192,
         "lines" : [
           "`PERPLEXITY_API_KEY` set in the agent's environment (or in",
           "`~\/.gbrain\/.env`)",
@@ -409,9 +452,9 @@
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Related skills",
-        "line" : 196,
+        "line" : 198,
         "lines" : [
 
         ],
@@ -420,7 +463,7 @@
       {
         "executes" : true,
         "heading" : "Related skills — steps",
-        "line" : 199,
+        "line" : 201,
         "lines" : [
           "`skills\/academic-verify\/SKILL.md` — wraps perplexity-research for",
           "citation-verified academic claim checking",
@@ -432,11 +475,10 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
-        "line" : 209,
+        "line" : 211,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
           "Output written under the directories listed in `writes_to:` (when applicable)",
@@ -444,12 +486,12 @@
           "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
           "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 221,
+        "line" : 222,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -497,11 +539,11 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 189,
+      "meridian_line" : 191,
       "swift_line" : 604
     },
     {
-      "meridian_line" : 31,
+      "meridian_line" : 35,
       "swift_line" : 608
     },
     {
@@ -576,8 +618,8 @@
       "prose_steps" : [
         {
           "dispatch_mode" : "plan_then_execute",
-          "guidance" : "Combines existing brain knowledge with Perplexity's web search. The\nagent sends brain context about a topic into a Perplexity query;\nPerplexity searches + reads + synthesizes multiple pages with citations,\nfocused on what's NEW relative to the supplied context\n**The key insight:** Perplexity doesn't just search — it reads and\nsynthesizes with citations. By sending brain context in the\ninstructions, it knows what you already know, so it surfaces the delta\ninstead of repeating settled fact\ntable:ai-discretion:fCBOZWVkIHwgVXNlIHwKfC0tLS0tLXwtLS0tLXwKfCBEZWVwIHJlc2VhcmNoIHdpdGggY2l0YXRpb25zIHwgVGhpcyBza2lsbCDigJQgUGVycGxleGl0eSArIE9wdXMgfAp8IFF1aWNrIFVSTCBjb250ZW50IHwgYHdlYl9mZXRjaGAgfAp8IEJyYWluLW9ubHkgbG9va3VwIHwgYGdicmFpbiBxdWVyeWAgLyBgZ2JyYWluIHNlYXJjaGAgfAp8IFJlYWwtdGltZSBzb2NpYWwgbW9uaXRvcmluZyB8IGV4dGVybmFsIFggLyBzb2NpYWwtbWVkaWEgY29sbGVjdG9ycyB8CnwgU3RydWN0dXJlZCBkYXRhIGxvb2t1cCBhZ2FpbnN0IGEgdHJhY2tlciB8IGBza2lsbHMvZGF0YS1yZXNlYXJjaC9TS0lMTC5tZGAgfA==\nThe skill is markdown agent instructions; the agent uses Perplexity's\nAPI directly (or a host-provided `perplexity` CLI if installed):\ncodeblock:bash:IyAxLiBQdWxsIGJyYWluIGNvbnRleHQKZ2JyYWluIGdldCA8c2x1Zz4gICAgICAgICAgICAgICAgICAgICMgb3IKZ2JyYWluIHF1ZXJ5ICI8dG9waWMga2V5d29yZHM+IgoKIyAyLiBDb21wb3NlIHRoZSBQZXJwbGV4aXR5IHF1ZXJ5IHdpdGggYnJhaW4gY29udGV4dCBpbmxpbmU6CiMgICAgIiIiCiMgICAgVG9waWM6IDx0b3BpYz4KIyAgICBCcmFpbiBjb250ZXh0ICh3aGF0IHdlIGFscmVhZHkga25vdyk6IDxlbWJlZGRlZCBnYnJhaW4gY29udGVudD4KIyAgICBGaW5kOiB3aGF0J3MgTkVXIHNpbmNlIDIwMjYtTU0tREQgdGhhdCB0aGUgYnJhaW4gZG9lc24ndCByZWZsZWN0LgojICAgIENpdGUgZXZlcnkgY2xhaW0uCiMgICAgIiIiCgojIDMuIENhbGwgUGVycGxleGl0eSBBUEkgb3IgdGhlIGhvc3QncyBwZXJwbGV4aXR5IGJpbmFyeToKIyAgICBjdXJsIGh0dHBzOi8vYXBpLnBlcnBsZXhpdHkuYWkvY2hhdC9jb21wbGV0aW9ucyBcCiMgICAgICAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICRQRVJQTEVYSVRZX0FQSV9LRVkiIFwKIyAgICAgIC1IICJDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24iIFwKIyAgICAgIC1kICd7Im1vZGVsIjogInNvbmFyLXBybyIsICJtZXNzYWdlcyI6IFt7InJvbGUiOiJ1c2VyIiwiY29udGVudCI6Ii4uLiJ9XX0nCgojIDQuIFdyaXRlIHRoZSBzdHJ1Y3R1cmVkIHJlc2VhcmNoIHBhZ2UgdmlhIHB1dF9wYWdlOgpnYnJhaW4gcHV0X3BhZ2UgcmVzZWFyY2gvPHNsdWc+ICAgICAgIyB2aWEgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzIG1lbnRpb25lZCAocGVvcGxlLCBjb21wYW5pZXMpIHBlciBJcm9uIExhdy4=\ntable:ai-discretion:fCBNb2RlbCB8IENvc3QgLyBxdWVyeSB8IFVzZSB3aGVuIHwKfC0tLS0tLS18LS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tfAp8IFBlcnBsZXhpdHkgc29uYXItcHJvIHwgflwkMC4wNCB8IERlZXAgYW5hbHlzaXMsIGVudGl0eSBlbnJpY2htZW50LCBkZWFsIHJlc2VhcmNoIHwKfCBQZXJwbGV4aXR5IHNvbmFyIHwgflwkMC4wMDcgfCBRdWljayBsb29rdXBzLCBidWxrIG1vbml0b3JpbmcsIGJyaWVmaW5nIHBpcGVsaW5lcyB8\nDefault to sonar-pro. Drop to sonar for bulk \/ cron contexts where cost\nmatters more than depth\nuse judgment to follow the Deal \/ company monitoring (cron) guidance:\nFor each active item under `deals\/` or `companies\/`:\ncodeblock:bash:IyBXZWVrbHk6IHB1bGwgcmVjZW50IG5ld3MgcGVyIGNvbXBhbnk7IGZsYWcgY2hhbmdlcyBmb3IgcmV2aWV3Lg==\nuse judgment to follow the Anti-Patterns guidance:\n❌ Sending NO brain context. Then it's just a search — use `web_fetch`\ninstead\n❌ Truncating the brain context. The whole point is \"knows what you\nknow.\" Send dense context.\n❌ Skipping the cross-link step when entities are mentioned. Iron Law\n`PERPLEXITY_API_KEY` set in the agent's environment (or in\n`~\/.gbrain\/.env`)\nOptional: install Perplexity's official CLI for richer streaming output\n`skills\/academic-verify\/SKILL.md` — wraps perplexity-research for\ncitation-verified academic claim checking\n`skills\/enrich\/SKILL.md` — calls perplexity-research as part of the\nentity-enrichment loop\n`skills\/data-research\/SKILL.md` — structured-data trackers (different\nshape: parameterized YAML recipes, not free-form research)\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test",
-          "line" : 31,
+          "guidance" : "Combines existing brain knowledge with Perplexity's web search. The\nagent sends brain context about a topic into a Perplexity query;\nPerplexity searches + reads + synthesizes multiple pages with citations,\nfocused on what's NEW relative to the supplied context\n**The key insight:** Perplexity doesn't just search — it reads and\nsynthesizes with citations. By sending brain context in the\ninstructions, it knows what you already know, so it surfaces the delta\ninstead of repeating settled fact\ntable:decision:fCBOZWVkIHwgVXNlIHwKfC0tLS0tLXwtLS0tLXwKfCBEZWVwIHJlc2VhcmNoIHdpdGggY2l0YXRpb25zIHwgVGhpcyBza2lsbCDigJQgUGVycGxleGl0eSArIE9wdXMgfAp8IFF1aWNrIFVSTCBjb250ZW50IHwgYHdlYl9mZXRjaGAgfAp8IEJyYWluLW9ubHkgbG9va3VwIHwgYGdicmFpbiBxdWVyeWAgLyBgZ2JyYWluIHNlYXJjaGAgfAp8IFJlYWwtdGltZSBzb2NpYWwgbW9uaXRvcmluZyB8IGV4dGVybmFsIFggLyBzb2NpYWwtbWVkaWEgY29sbGVjdG9ycyB8CnwgU3RydWN0dXJlZCBkYXRhIGxvb2t1cCBhZ2FpbnN0IGEgdHJhY2tlciB8IGBza2lsbHMvZGF0YS1yZXNlYXJjaC9TS0lMTC5tZGAgfA==\nThe skill is markdown agent instructions; the agent uses Perplexity's\nAPI directly (or a host-provided `perplexity` CLI if installed):\ncodeblock:bash:IyAxLiBQdWxsIGJyYWluIGNvbnRleHQKZ2JyYWluIGdldCA8c2x1Zz4gICAgICAgICAgICAgICAgICAgICMgb3IKZ2JyYWluIHF1ZXJ5ICI8dG9waWMga2V5d29yZHM+IgoKIyAyLiBDb21wb3NlIHRoZSBQZXJwbGV4aXR5IHF1ZXJ5IHdpdGggYnJhaW4gY29udGV4dCBpbmxpbmU6CiMgICAgIiIiCiMgICAgVG9waWM6IDx0b3BpYz4KIyAgICBCcmFpbiBjb250ZXh0ICh3aGF0IHdlIGFscmVhZHkga25vdyk6IDxlbWJlZGRlZCBnYnJhaW4gY29udGVudD4KIyAgICBGaW5kOiB3aGF0J3MgTkVXIHNpbmNlIDIwMjYtTU0tREQgdGhhdCB0aGUgYnJhaW4gZG9lc24ndCByZWZsZWN0LgojICAgIENpdGUgZXZlcnkgY2xhaW0uCiMgICAgIiIiCgojIDMuIENhbGwgUGVycGxleGl0eSBBUEkgb3IgdGhlIGhvc3QncyBwZXJwbGV4aXR5IGJpbmFyeToKIyAgICBjdXJsIGh0dHBzOi8vYXBpLnBlcnBsZXhpdHkuYWkvY2hhdC9jb21wbGV0aW9ucyBcCiMgICAgICAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICRQRVJQTEVYSVRZX0FQSV9LRVkiIFwKIyAgICAgIC1IICJDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24iIFwKIyAgICAgIC1kICd7Im1vZGVsIjogInNvbmFyLXBybyIsICJtZXNzYWdlcyI6IFt7InJvbGUiOiJ1c2VyIiwiY29udGVudCI6Ii4uLiJ9XX0nCgojIDQuIFdyaXRlIHRoZSBzdHJ1Y3R1cmVkIHJlc2VhcmNoIHBhZ2UgdmlhIHB1dF9wYWdlOgpnYnJhaW4gcHV0X3BhZ2UgcmVzZWFyY2gvPHNsdWc+ICAgICAgIyB2aWEgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzIG1lbnRpb25lZCAocGVvcGxlLCBjb21wYW5pZXMpIHBlciBJcm9uIExhdy4=\ntable:decision:fCBNb2RlbCB8IENvc3QgLyBxdWVyeSB8IFVzZSB3aGVuIHwKfC0tLS0tLS18LS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tfAp8IFBlcnBsZXhpdHkgc29uYXItcHJvIHwgflwkMC4wNCB8IERlZXAgYW5hbHlzaXMsIGVudGl0eSBlbnJpY2htZW50LCBkZWFsIHJlc2VhcmNoIHwKfCBQZXJwbGV4aXR5IHNvbmFyIHwgflwkMC4wMDcgfCBRdWljayBsb29rdXBzLCBidWxrIG1vbml0b3JpbmcsIGJyaWVmaW5nIHBpcGVsaW5lcyB8\nDefault to sonar-pro. Drop to sonar for bulk \/ cron contexts where cost\nmatters more than depth\nCalled by `skills\/enrich\/SKILL.md` when an entity page (person, company)\nneeds current web context:\ncodeblock:bash:QlJBSU49JChnYnJhaW4gZ2V0IHBlb3BsZS88c2x1Zz4gMj4vZGV2L251bGwpCiMgU2VuZCA8c2x1Zz4ncyBwYWdlIGNvbnRlbnQgYXMgYnJhaW5fY29udGV4dCB0byBQZXJwbGV4aXR5LCBnZXQgY3VycmVudAojIG5ld3MgLyByb2xlIC8gY29udGV4dCwgdGhlbiB1cGRhdGUgdGhlIGJyYWluIHBhZ2Ugd2l0aCB3aGF0J3MgbmV3Lg==\nFor each active item under `deals\/` or `companies\/`:\ncodeblock:bash:IyBXZWVrbHk6IHB1bGwgcmVjZW50IG5ld3MgcGVyIGNvbXBhbnk7IGZsYWcgY2hhbmdlcyBmb3IgcmV2aWV3Lg==\n`PERPLEXITY_API_KEY` set in the agent's environment (or in\n`~\/.gbrain\/.env`)\nOptional: install Perplexity's official CLI for richer streaming output\n`skills\/academic-verify\/SKILL.md` — wraps perplexity-research for\ncitation-verified academic claim checking\n`skills\/enrich\/SKILL.md` — calls perplexity-research as part of the\nentity-enrichment loop\n`skills\/data-research\/SKILL.md` — structured-data trackers (different\nshape: parameterized YAML recipes, not free-form research)",
+          "line" : 35,
           "scoped_tools" : [
             "assess.notability",
             "capture",
@@ -599,7 +641,7 @@
             "timeline.add",
             "verify"
           ],
-          "text" : "follow the What this does guidance"
+          "text" : "follow the What this does — steps guidance"
         }
       ],
       "source_name" : "perplexity-research a input",

@@ -2,9 +2,9 @@
 
 - Original: `citation-fixer/SKILL.md`
 - Ported: `citation_fixer.meri`
-- Tier: 1 (near-verbatim)
+- Tier: 2 (light edits)
 - Similarity: 85%
-- Lines: 209 -> 227 (+41 / -23)
+- Lines: 209 -> 227 (+42 / -24)
 
 ## Frontmatter
 - Added: (none)
@@ -12,42 +12,46 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L56 `Step 1: Identify broken references`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L67 `Step 2: Extract searchable content`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L75 `Step 3: Search for the actual tweet`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L102 `Step 5: Patch the brain page`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L119 `Batch mode`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L136 `Priority order`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L143 `Rate limiting`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L151 `Output format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L174 `Integration`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L10 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L54 `Step 1: Identify broken references`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L65 `Step 2: Extract searchable content`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L73 `Step 3: Search for the actual tweet`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L100 `Step 5: Patch the brain page`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L117 `Batch mode`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L134 `Priority order`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L141 `Rate limiting`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L149 `Output format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L174 `Integration`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L203 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections inert total: 12/16 (75% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 15/16 (94% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: reference-documentation=10, template=2
-- Judgment: 3 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=13, template=2
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L56 `Step 1: Identify broken references`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L67 `Step 2: Extract searchable content`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L75 `Step 3: Search for the actual tweet`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L90 `Step 4: Verify and extract metadata`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L102 `Step 5: Patch the brain page`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L119 `Batch mode`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L136 `Priority order`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L143 `Rate limiting`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L151 `Output format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L174 `Integration`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L183 `Metrics`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L10 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L22 `Phases`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L54 `Step 1: Identify broken references`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L65 `Step 2: Extract searchable content`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L73 `Step 3: Search for the actual tweet`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L88 `Step 4: Verify and extract metadata`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L100 `Step 5: Patch the brain page`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L117 `Batch mode`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L134 `Priority order`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L141 `Rate limiting`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L149 `Output format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L161 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L174 `Integration`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L183 `Metrics`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L203 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
@@ -55,24 +59,29 @@ These sections were made non-executable in the port and should be reviewed as mi
 ```diff
 --- original-skills/citation-fixer/SKILL.md
 +++ skills/citation_fixer.meri
-@@ -28,7 +28,8 @@
+@@ -28,42 +28,51 @@
  > **Output rule:** all links MUST be deterministic (built from API data,
  > not composed by LLM). See [_output-rules.md](../_output-rules.md).
  
 -## Contract
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
  This skill guarantees:
  
-@@ -41,29 +42,39 @@
+ - Every brain page is scanned for citation compliance.
+ - Missing citations are flagged with specific location.
+ - Malformed citations are fixed to match the standard format.
+-- **(v0.25.1)** Tweet / post references without URLs are resolved via
++- (v0.25.1) Tweet / post references without URLs are resolved via
+   X API and patched with deterministic `https://x.com/<handle>/status/<id>`
+   links.
  - Results reported with counts (scanned, fixed, remaining).
  
- ## Phases
+-## Phases
 -
 -1. **Scan pages.** List pages and read each one, checking for inline
 -   `[Source: ...]` citations.
-+use judgment to follow the Phases guidance:
++## Phases (( role: reference ))
 +
  2. **Identify issues:**
     - Facts without any citation
@@ -86,22 +95,21 @@ These sections were made non-executable in the port and should be reviewed as mi
  5. **Report results.** Count: pages scanned, citations found, issues
     fixed, tweets resolved, remaining gaps.
  
--## Tweet resolution pipeline (v0.25.1 extension)
 +
 +### Phases — steps
 +
 +1. List pages and read each one, checking for inline
 +   `[Source: ...]` citations.
 +
-+### Phases — steps 2
++### Phases — steps 2 (( role: reference ))
 +
 +   - (v0.25.1) Tweet references without `x.com` URLs
 +3. Rewrite malformed citations to match
 +   `conventions/quality.md`.
-+## Tweet resolution pipeline (v0.25.1 extension) (( inert ))
+ ## Tweet resolution pipeline (v0.25.1 extension)
 +
 +
-+### Tweet resolution pipeline (v0.25.1 extension) — steps
++### Tweet resolution pipeline (v0.25.1 extension) — steps (( role: reference ))
  
  For each broken tweet reference, follow this chain. The actual API call
  goes through whatever X integration the host has configured (typical
@@ -109,34 +117,34 @@ These sections were made non-executable in the port and should be reviewed as mi
  endpoints).
  
 -### Step 1: Identify broken references
-+### Step 1: Identify broken references (( inert ))
++### Step 1: Identify broken references (( role: reference ))
  
  Scan the page for patterns that indicate tweet references without URLs:
  
-@@ -74,7 +85,7 @@
+@@ -74,7 +83,7 @@
  - Has `[Source: ... X/Twitter ...]` without an `x.com` URL
  - References engagement metrics (likes, impressions) without a link
  
 -### Step 2: Extract searchable content
-+### Step 2: Extract searchable content (( inert ))
++### Step 2: Extract searchable content (( role: reference ))
  
  From each broken reference, extract:
  
-@@ -82,7 +93,7 @@
+@@ -82,7 +91,7 @@
  - The **quoted text** (if available)
  - The **approximate date** (often present in surrounding timeline entries)
  
 -### Step 3: Search for the actual tweet
-+### Step 3: Search for the actual tweet (( inert ))
++### Step 3: Search for the actual tweet (( role: reference ))
  
  Use the host's X API integration. Query patterns:
  
-@@ -97,16 +108,19 @@
+@@ -97,16 +106,19 @@
  "<exact quote>" -is:retweet
  ```
  
 -### Step 4: Verify and extract metadata
-+### Step 4: Verify and extract metadata (( inert ))
++### Step 4: Verify and extract metadata (( role: reference ))
  
  Once a candidate is found:
  
@@ -144,30 +152,30 @@ These sections were made non-executable in the port and should be reviewed as mi
  - Pull the tweet id, author handle, engagement metrics (likes / RTs /
    impressions).
 +
-+#### Step 4: Verify and extract metadata — steps
++### Step 4: Verify and extract metadata — steps
 +
  - Construct the URL: `https://x.com/<handle>/status/<tweet_id>`.
  
 -### Step 5: Patch the brain page
-+### Step 5: Patch the brain page (( inert ))
++### Step 5: Patch the brain page (( role: reference ))
  
  Replace the broken citation with a proper one:
  
-@@ -123,7 +137,7 @@
+@@ -123,7 +135,7 @@
  [Source: [X/<handle>, YYYY-MM-DD](https://x.com/<handle>/status/<tweet_id>)]
  ```
  
 -## Batch mode
-+## Batch mode (( inert ))
++## Batch mode (( role: reference ))
  
  When sweeping many pages:
  
-@@ -140,14 +154,14 @@
+@@ -140,14 +152,14 @@
  done
  ```
  
 -### Priority order
-+### Priority order (( inert ))
++### Priority order (( role: reference ))
  
  1. Recently created / updated pages — fresh broken refs are easiest to
     resolve while context is fresh.
@@ -175,26 +183,30 @@ These sections were made non-executable in the port and should be reviewed as mi
  3. Everything else — bulk cleanup over time.
  
 -### Rate limiting
-+### Rate limiting (( inert ))
++### Rate limiting (( role: reference ))
  
  - X API: respect the host's tier limits; don't hammer.
  - Target ~50 pages per batch run.
-@@ -167,7 +181,8 @@
+@@ -167,17 +179,20 @@
  Remaining gaps:       N (pages with uncitable facts)
  ```
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
++## Anti-Patterns (( role: reference ))
  
  - ❌ Inventing citations for facts that have no source. Flag them.
  - ❌ Removing facts that lack citations (flag them; don't delete).
-@@ -177,7 +192,7 @@
+ - ❌ Fixing citations without reading the full page context.
+ - ❌ Batch-fixing without checking quality on a sample first
+   (see `conventions/test-before-bulk.md`).
++
++### Anti-Patterns — steps (( role: reference ))
++
  - ❌ Composing tweet URLs by guessing the tweet id. Always go through
    the X API; deterministic links only.
  
 -## Integration
-+## Integration (( inert ))
++## Integration (( role: reference ))
  
  This skill can be called:
  
@@ -206,7 +218,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 -
 -If running as a recurring batch, track state in a small JSON file under
 -`~/.gbrain/citation-fixer-state.json`:
-+## Metrics (( inert ))
++## Metrics (( role: reference ))
  
  ```json
  {
@@ -216,12 +228,12 @@ These sections were made non-executable in the port and should be reviewed as mi
  
 -## Output Format
 +
-+### Metrics — steps
++### Metrics — steps (( role: reference ))
 +
 +If running as a recurring batch, track state in a small JSON file under
 +`~/.gbrain/citation-fixer-state.json`:
 +
-+## Output Format (( inert, role: template ))
++## Output Format (( role: template ))
  
  The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
  

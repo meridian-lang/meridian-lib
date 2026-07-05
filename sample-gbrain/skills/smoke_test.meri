@@ -21,8 +21,7 @@ mutating: true
 
 > Run `gbrain smoke-test` or `bash scripts/smoke-test.sh` after any container restart.
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 This skill guarantees:
 - 8 core tests verify gbrain + OpenClaw health after restart
@@ -31,12 +30,11 @@ This skill guarantees:
 - Results logged to `/tmp/gbrain-smoke-test.log`
 - Exit code = number of unfixed failures (0 = all pass)
 
-## Built-in Tests (( inert ))
+## Built-in Tests
 
 
-### Built-in Tests — steps
+### Built-in Tests — steps (( role: reference ))
 
-!!! table (( ai-discretion ))
 | # | Test | Auto-Fix |
 |---|------|----------|
 | 1 | Bun runtime | Install from bun.sh |
@@ -49,7 +47,6 @@ This skill guarantees:
 | 8 | Brain repo exists | — |
 
 ## Usage
-use judgment to follow the Usage guidance:
 
 ### CLI
 ```bash
@@ -67,12 +64,12 @@ Add to your `ensure-services.sh` or equivalent:
 bash /path/to/gbrain/scripts/smoke-test.sh >> /tmp/bootstrap.log 2>&1
 ```
 
-### From an agent (( inert ))
+### From an agent (( role: reference ))
 ```
 exec: bash /data/gbrain/scripts/smoke-test.sh
 ```
 
-## Adding Custom Tests (( inert ))
+## Adding Custom Tests (( role: reference ))
 
 Rules:
 - Exit 0 = pass, non-zero = fail
@@ -111,21 +108,25 @@ else
 fi
 ```
 
-### Design rules:
-use judgment to follow the Design rules: guidance:
-1. **Test first** — never fix without confirming broken
+### Design rules: (( role: reference ))
 2. **Re-test after fix** — verify the fix worked
-3. **Timeout everything** — `timeout N` on any command that could hang
 4. **Use helpers** — `pass()`, `fail()`, `fixed()`, `skip()`
 5. **Idempotent fixes** — safe to run repeatedly
 6. **Skip gracefully** — `skip()` when a prerequisite is missing, don't fail
 
-## Environment Variables (( inert ))
+
+### Design rules: — steps (( role: reference ))
+
+1. Test first — never fix without confirming broken
+
+### Design rules: — steps 2
+
+3. Timeout everything — `timeout N` on any command that could hang
+## Environment Variables
 
 
-### Environment Variables — steps
+### Environment Variables — steps (( role: reference ))
 
-!!! table (( ai-discretion ))
 | Var | Default | Description |
 |-----|---------|-------------|
 | `GBRAIN_SMOKE_LOG` | `/tmp/gbrain-smoke-test.log` | Log file path |
@@ -134,26 +135,27 @@ use judgment to follow the Design rules: guidance:
 | `OPENCLAW_GATEWAY_PORT` | `18789` | Gateway port to test |
 | `GBRAIN_BRAIN_PATH` | `/data/brain` | Brain repo path |
 
-## Known Issues & Their Auto-Fixes (( inert ))
+## Known Issues & Their Auto-Fixes (( role: reference ))
 
-### Codex Zod core.cjs Missing (discovered 2026-04-23)
-use judgment to follow the Codex Zod core.cjs Missing (discovered 2026-04-23) guidance:
+### Codex Zod core.cjs Missing (discovered 2026-04-23) (( role: reference ))
 - **Persistence:** Does NOT survive container restart (gateway reinstalls deps)
-- This is why smoke tests must run on every restart
 
-
-#### Codex Zod core.cjs Missing (discovered 2026-04-23) — steps
+### Codex Zod core.cjs Missing (discovered 2026-04-23) — steps
 
 - Symptom: `Cannot find module './core.cjs'` → all Codex ACP sessions fail
 - Cause: Zod v4 npm package ships without `core.cjs` in some installs
 - Auto-fix: `npm install zod@4 --force` in the codex extension's zod dir
-### GBrain Worker Auth Failure (( inert ))
+
+### Codex Zod core.cjs Missing (discovered 2026-04-23) — steps 2 (( role: reference ))
+
+- This is why smoke tests must run on every restart
+
+### GBrain Worker Auth Failure (( role: reference ))
 - **Symptom:** Worker can't connect to DB
 - **Cause:** `GBRAIN_DATABASE_URL` not propagated to worker subprocess
 - **Auto-fix:** Script explicitly passes both `DATABASE_URL` and `GBRAIN_DATABASE_URL`
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 - ❌ Running smoke tests on every chat turn. Once per container restart (or
   on user request) is plenty. The script is cheap but it's not free.
@@ -169,7 +171,7 @@ use judgment to follow the Anti-Patterns guidance:
   (`GBRAIN_DATABASE_URL`, `HOME`, etc.) so the script travels across
   container rebuilds.
 
-## Output Format (( inert, role: template ))
+## Output Format (( role: template ))
 
 The script writes a one-line status per check to stdout (✅/❌/🔧/⏭️) plus a
 final summary line: `Results: N/M passed, F auto-fixed, S skipped`. A

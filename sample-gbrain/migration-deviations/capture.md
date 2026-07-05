@@ -3,8 +3,8 @@
 - Original: `capture/SKILL.md`
 - Ported: `capture.meri`
 - Tier: 2 (light edits)
-- Similarity: 80%
-- Lines: 106 -> 118 (+28 / -16)
+- Similarity: 77%
+- Lines: 106 -> 115 (+30 / -21)
 
 ## Frontmatter
 - Added: (none)
@@ -12,34 +12,39 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 - preamble-blockquoted
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L29 `What it does`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L56 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L9 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L27 `What it does`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L47 `Defaults`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L54 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections inert total: 3/8 (38% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 6/8 (75% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: reference-documentation=2, template=1
-- Judgment: 3 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=5, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L29 `What it does`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L56 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L94 `When NOT to use this skill`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L9 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L27 `What it does`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L47 `Defaults`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L54 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L70 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L91 `When NOT to use this skill`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/capture/SKILL.md
 +++ skills/capture.meri
-@@ -14,12 +14,13 @@
+@@ -14,21 +14,21 @@
  
  # capture — the single ingestion entrypoint
  
@@ -53,44 +58,56 @@ These sections were made non-executable in the port and should be reviewed as mi
 +> handles both local and thin-client installs the same way.
  
 -## Contract
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
- - **Input:** the content to save (inline arg, `--file PATH`, or `--stdin`).
- - **Output:** a page in the brain DB AND a markdown file on disk under
-@@ -31,13 +32,14 @@
- - **Trust:** all captures via this skill are local-CLI trust (`remote: false`).
+-- **Input:** the content to save (inline arg, `--file PATH`, or `--stdin`).
+-- **Output:** a page in the brain DB AND a markdown file on disk under
++- Input: the content to save (inline arg, `--file PATH`, or `--stdin`).
++- Output: a page in the brain DB AND a markdown file on disk under
+   `<sync.repo_path>/<slug>.md`. Receipt printed to stdout.
+-- **Side effect:** the page becomes immediately queryable via `gbrain query`,
++- Side effect: the page becomes immediately queryable via `gbrain query`,
+   `gbrain search`, or any MCP-bound agent.
+-- **Idempotency:** same content → same `inbox/YYYY-MM-DD-<hash8>` slug. The
++- Idempotency: same content → same `inbox/YYYY-MM-DD-<hash8>` slug. The
+   daemon's 24h content-hash dedup catches re-captures.
+-- **Trust:** all captures via this skill are local-CLI trust (`remote: false`).
++- Trust: all captures via this skill are local-CLI trust (`remote: false`).
    Untrusted webhook ingestion goes through `POST /ingest`, not this verb.
  
--## When to invoke
-+## When to invoke (( role: procedure ))
-+use judgment to follow the When to invoke guidance:
- 
- - "Capture this thought" / "save this" / "drop this into my brain" / "remember this"
+ ## When to invoke
+@@ -37,7 +37,7 @@
  - The user pastes content and asks to keep it
  - After a meeting summary, a research note, or any synthesis that should land as a brain page
  
 -## What it does
-+## What it does (( inert ))
++## What it does (( role: reference ))
  
  `gbrain capture` resolves to a `put_page` call (local) or a remote MCP call
  (thin-client). Either way the page lands in the DB AND on disk in one move
-@@ -64,7 +66,7 @@
+@@ -57,14 +57,14 @@
+ gbrain capture "..." --json           # structured output for agents
+ ```
+ 
+-## Defaults
++## Defaults (( role: reference ))
+ 
+ - **Slug:** `inbox/YYYY-MM-DD-<hash8>` (stable for same content; the daemon's 24h dedup catches re-captures).
+ - **Type:** `note` (override with `--type idea` etc.).
  - **Frontmatter stamps:** `captured_via: capture-cli`, `captured_at: <ISO>`.
  - **Title:** first non-empty line of the body, capped at 80 chars.
  
 -## Output Format
-+## Output Format (( inert, role: template ))
++## Output Format (( role: template ))
  
  Default prints a 5-line receipt:
  
-@@ -80,27 +82,37 @@
+@@ -80,27 +80,36 @@
  `--quiet` prints only the slug (use for `SLUG=$(gbrain capture "..." --quiet)`).
  `--json` prints structured output for downstream tools.
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
++## Anti-Patterns (( role: reference ))
  
  - **Don't reach for `gbrain put`.** That's the old per-page primitive that
    doesn't know about default slug generation, content-type heuristics, or
@@ -107,7 +124,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
 -## When NOT to use this skill
 +
-+### Anti-Patterns — steps (( inert ))
++### Anti-Patterns — steps (( role: reference ))
 +
 +- Don't try to bulk-import dozens of files by looping over `gbrain capture`.
 +  That's what `gbrain sync` (or `gbrain import`) is for. Capture is for
@@ -116,7 +133,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 +### Anti-Patterns — steps 2
 +
 +  Pass `--file PATH` if you already have a fully-formatted markdown file.
-+## When NOT to use this skill (( inert ))
++## When NOT to use this skill (( role: reference ))
  
  - Bulk ingestion of many files → `skills/media-ingest/SKILL.md` or `gbrain sync` instead
  - Article/link with author + publication metadata → `skills/idea-ingest/SKILL.md` (it knows to build the people page)

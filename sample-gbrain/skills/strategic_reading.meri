@@ -31,13 +31,9 @@ brain_first: exempt
 > output files by primary subject (concepts/ for general strategy, projects/
 > for problem-tied playbooks).
 
-## What this is (( inert ))
+## What this is (( role: reference ))
 
 This is reading with a mission.
-
-Where `book-mirror` personalizes a book to the reader's whole life,
-`strategic-reading` personalizes it to ONE current problem. Same shape
-(extract → analyze → mirror), different lens.
 
 **Canonical example:** a power-dynamics history book read against a
 specific gatekeeper-vs-incumbent fight, producing a tactical analysis that
@@ -45,23 +41,35 @@ maps the book's playbook onto the situation with counter-tactics and a
 short/medium/long-term playbook.
 
 
-### What this is — steps (( inert ))
+### What this is — steps (( role: reference ))
 
 Take a large text PLUS a specific strategic problem, produce analysis that
 maps the text's insights onto the problem. This is not book summarization.
-## Inputs (( inert ))
+
+### What this is — steps 2
+
+use judgment to follow the What this is — steps 2 guidance:
+Where `book-mirror` personalizes a book to the reader's whole life,
+`strategic-reading` personalizes it to ONE current problem. Same shape
+(extract → analyze → mirror), different lens.
+
+## Inputs (( role: reference ))
 
 1. **Source text** — book (EPUB/PDF), article, transcript, historical case
    study, any large document.
+
+### Inputs — steps
+
+use judgment to follow the Inputs — steps guidance:
 2. **Strategic problem** — the specific situation to analyze through the
    lens of the text. The user describes this explicitly or it's obvious
    from context.
 
-## Output (( inert, role: template ))
+## Output (( role: template ))
 
 The brain page is the artifact. PDF is a rendering, never primary.
 
-### Brain page structure (( inert ))
+### Brain page structure (( role: reference ))
 
 ```markdown
 # [Source Title] — Applied to [Problem]
@@ -106,7 +114,6 @@ Links to relevant brain pages (related concepts, related projects).
 ```
 
 ## Process
-use judgment to follow the Process guidance:
 
 ```
 Phase 1: Ingest the source
@@ -141,12 +148,8 @@ Phase 5: Write and deliver
   └── Optional: render to PDF via skills/brain-pdf.
 ```
 
-## Quality bar (( inert ))
+## Quality bar (( role: reference ))
 
-- **Every recommendation must cite the source.** Don't say "go direct to
-  the mayor" — say "go direct to the mayor, because when the protagonist
-  refused to be intimidated by a resignation threat (Ch 48), the bluff
-  that worked on five mayors finally failed."
 - **Direct quotes are mandatory.** The source's own words carry more
   weight than paraphrase.
 - **The analysis must be actionable.** Not "this is interesting" but "do
@@ -154,7 +157,14 @@ Phase 5: Write and deliver
 - **Short/medium/long-term breakdown is mandatory.** The user needs to
   know what to do tomorrow AND what to do this year.
 
-## What this skill is NOT (( inert ))
+
+### Quality bar — steps
+
+- Don't say "go direct to
+  the mayor" — say "go direct to the mayor, because when the protagonist
+  refused to be intimidated by a resignation threat (Ch 48), the bluff
+  that worked on five mayors finally failed."
+## What this skill is NOT (( role: reference ))
 
 - Not academic literary analysis. No one cares about literary merit —
   only strategic application.
@@ -166,7 +176,7 @@ Phase 5: Write and deliver
   personalized analysis) for general summaries.
 - Not a research tool. Use `perplexity-research` for finding new
   information about a topic.
-## Related skills (( inert, role: procedure ))
+## Related skills
 
 
 ### Related skills — steps
@@ -178,8 +188,7 @@ Phase 5: Write and deliver
 - `skills/conventions/quality.md` — citation + back-link rules
 
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 This skill guarantees:
 
@@ -190,11 +199,10 @@ This skill guarantees:
 
 The full behavior contract is documented in the body sections above; this section exists for the conformance test.
 
-## Output Format (( inert, role: template ))
+## Output Format (( role: template ))
 
 The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing.

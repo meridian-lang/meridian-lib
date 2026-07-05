@@ -3,8 +3,8 @@
 - Original: `migrate/SKILL.md`
 - Ported: `migrate.meri`
 - Tier: 2 (light edits)
-- Similarity: 81%
-- Lines: 137 -> 150 (+34 / -21)
+- Similarity: 75%
+- Lines: 137 -> 155 (+46 / -28)
 
 ## Frontmatter
 - Added: (none)
@@ -12,35 +12,42 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 - preamble-blockquoted
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L100 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L126 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L32 `Phases`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L64 `Notion Migration`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L105 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L131 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
-- Sections inert total: 4/9 (44% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 9/9 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: reference-documentation=2, template=1, tools-metadata=1
-- Judgment: 3 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=7, template=1, tools-metadata=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L40 `Obsidian Migration`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L71 `CSV Migration`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L100 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L126 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L6 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L32 `Phases`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L41 `Obsidian Migration`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L64 `Notion Migration`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L72 `CSV Migration`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L83 `Verification`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L95 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L105 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L131 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/migrate/SKILL.md
 +++ skills/migrate.meri
-@@ -16,9 +16,10 @@
+@@ -16,17 +16,23 @@
  
  # Migrate Skill
  
@@ -48,28 +55,31 @@ These sections were made non-executable in the port and should be reviewed as mi
 +> Universal migration from any wiki, note tool, or brain system into GBrain.
  
 -## Contract
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
- - Source data is never modified or deleted; migration is additive only.
+-- Source data is never modified or deleted; migration is additive only.
  - Every migrated page is verified round-trip: written to gbrain, read back, spot-checked.
-@@ -26,8 +27,12 @@
+ - Cross-references from the source system (wikilinks, block refs, tags) are converted to gbrain equivalents.
  - Migration is tested on a sample (5-10 files) before bulk execution.
  - Post-migration health check confirms page count, link integrity, and embedding coverage.
  
--## Supported Sources
-+## Supported Sources (( inert ))
++
++### Contract — steps (( role: reference ))
++
++- Source data is never modified or deleted; migration is additive only.
+ ## Supported Sources
++
++
++### Supported Sources — steps (( role: reference ))
  
-+
-+### Supported Sources — steps
-+
-+!!! table (( ai-discretion ))
  | Source | Format | Strategy |
  |--------|--------|----------|
- | Obsidian | Markdown + `[[wikilinks]]` | Direct import, convert wikilinks to gbrain links |
-@@ -40,23 +45,16 @@
+@@ -38,25 +44,18 @@
+ | JSON | Structured data | Map keys to page fields |
+ | Roam | JSON export | Convert block structure to pages |
  
- ## Phases
+-## Phases
++## Phases (( role: reference ))
  
 -1. **Assess the source.** What format? How many files? What structure?
 -2. **Plan the mapping.** How do source fields map to gbrain fields (type, title, tags, compiled_truth, timeline)?
@@ -85,7 +95,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 +6. Extract cross-references from content and create typed links in gbrain.
  
 -## Obsidian Migration
-+## Obsidian Migration (( inert ))
++## Obsidian Migration (( role: reference ))
  
  1. Import the vault directory into gbrain (Obsidian vaults are markdown directories)
 -2. Wire the graph with native wikilink support (v0.12.1+):
@@ -98,10 +108,11 @@ These sections were made non-executable in the port and should be reviewed as mi
     `extract links` natively parses `[[relative/path]]` and `[[relative/path|Display Text]]`
     alongside standard `[text](page.md)` markdown syntax. Ancestor-search resolution handles
     wiki KBs where authors omit one or more leading `../` prefixes. The `.md` suffix is
-@@ -67,6 +65,16 @@
+@@ -67,7 +66,17 @@
  - Frontmatter properties map to gbrain frontmatter
  - Attachments (images, PDFs) are noted but handled separately via file storage
  
+-## Notion Migration
 +
 +### Obsidian Migration — steps
 +
@@ -112,15 +123,16 @@ These sections were made non-executable in the port and should be reviewed as mi
 +   gbrain extract links --source db                         # commit
 +   ```
 +
- ## Notion Migration
++## Notion Migration (( role: reference ))
  
  1. Export from Notion: Settings > Export > Markdown & CSV
-@@ -75,15 +83,19 @@
+ 2. Notion exports nested directories with UUIDs in filenames
+@@ -75,30 +84,39 @@
  4. Map Notion's database properties to frontmatter
  5. Import the cleaned directory into gbrain
  
 -## CSV Migration
-+## CSV Migration (( inert ))
++## CSV Migration (( role: reference ))
  
 -For tabular data (e.g., CRM exports, contact lists):
 -1. For each row in the CSV, create a page with column values as frontmatter
@@ -128,24 +140,40 @@ These sections were made non-executable in the port and should be reviewed as mi
  3. Use another column as compiled_truth (e.g., notes)
  4. Store each page in gbrain
  
+-## Verification
 +
 +### CSV Migration — steps
 +
 +> For tabular data (e.g., CRM exports, contact lists):
 +1. For each row in the CSV, create a page with column values as frontmatter
- ## Verification
-+use judgment to follow the Verification guidance:
++## Verification (( role: reference ))
  
  After any migration:
  1. Check gbrain statistics to verify page count matches source
-@@ -92,7 +104,8 @@
+-2. Check gbrain health for orphans and missing embeddings
+ 3. Export pages from gbrain for round-trip verification
  4. Spot-check 5-10 pages by reading them from gbrain
  5. Test search: search gbrain for "someone you know is in the data"
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
  
- - **Bulk import without sample test.** Never import the full dataset before verifying with 5-10 files. The cost of cleaning up hundreds of bad pages is enormous.
- - **Destroying source data.** Migration is additive. Never modify, move, or delete the source files.
+-- **Bulk import without sample test.** Never import the full dataset before verifying with 5-10 files. The cost of cleaning up hundreds of bad pages is enormous.
+-- **Destroying source data.** Migration is additive. Never modify, move, or delete the source files.
+-- **Ignoring cross-references.** Wikilinks, block refs, and tags from the source system must be converted to gbrain equivalents. Dropping them loses the knowledge graph.
++### Verification — steps
++
++2. Check gbrain health for orphans and missing embeddings
++## Anti-Patterns (( role: reference ))
++
+ - **Skipping verification.** A migration without post-import health check, page count comparison, and spot-check reads is incomplete.
+ 
++
++### Anti-Patterns — steps (( role: reference ))
++
++- Never import the full dataset before verifying with 5-10 files. The cost of cleaning up hundreds of bad pages is enormous.
++- Migration is additive. Never modify, move, or delete the source files.
++- Wikilinks, block refs, and tags from the source system must be converted to gbrain equivalents. Dropping them loses the knowledge graph.
+ ## Output Format
+ 
+ ```
 ```

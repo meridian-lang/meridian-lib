@@ -98,6 +98,23 @@ struct DurationParsingTests {
         #expect(u == .week)
     }
 
+    @Test("merging lowercases and unions normative-cue, inference-cue, and reference-heading synonyms")
+    func mergingUnionsCueAndReferenceHeadingWords() {
+        let merged = EnglishLexicon.default.merging(
+            comparisonSynonyms: [],
+            durationSynonyms: [:],
+            normativeCueSynonyms: ["Must Always"],
+            inferenceCueSynonyms: ["Exercise Judgment"],
+            referenceHeadingSynonyms: ["Background"]
+        )
+        #expect(merged.normativeCueWords.contains("must always"))
+        #expect(merged.inferenceCueWords.contains("exercise judgment"))
+        #expect(merged.referenceHeadingWords.contains("background"))
+        // Defaults are preserved, not replaced.
+        #expect(merged.inferenceCueWords.isSuperset(of: EnglishLexicon.default.inferenceCueWords))
+        #expect(merged.referenceHeadingWords.isSuperset(of: EnglishLexicon.default.referenceHeadingWords))
+    }
+
     @Test("non-numeric returns nil")
     func nonNumeric() {
         #expect(EnglishLexicon.default.parseDuration("many hours") == nil)

@@ -8,13 +8,11 @@ triggers:
 
 # Purge Expired
 
-## Use this when (( role: procedure ))
-use judgment to follow the Use this when guidance:
+## Use this when
 - "purge expired records"
 - "retention cleanup"
 
-## Procedure
-use judgment to follow the Procedure guidance:
+## Procedure (( role: reference ))
 Check: any stale records.
 
 ### Procedure — steps
@@ -29,5 +27,5 @@ for each the first 100 records whose status is "stale" sorted by updated at, old
   Emit: "expired record purge failed".
 Emit: "expired records purged".
 
-## Operator notes (( inert ))
+## Operator notes (( role: reference ))
 The limit of 100 mirrors a stored procedure batch size and keeps replay bounded.

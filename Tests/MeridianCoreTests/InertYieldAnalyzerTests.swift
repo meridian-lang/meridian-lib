@@ -100,6 +100,63 @@ struct InertYieldAnalyzerTests {
         #expect(phil.overall == .doc, Comment(rawValue: "\(phil)"))
     }
 
+    @Test("a non-executable fenced code block line displays its decoded language and first body line")
+    func codeBlockLineDisplaysDecodedSentinel() throws {
+        let source = """
+        ## Notes (( inert ))
+
+        ```python
+        print("hi")
+        ```
+
+        Some narrative line that also does not lower.
+        """
+        let result = try Self.analyzer().analyze(source, file: "probe.meri")
+        let notes = try require(result.sections.first { $0.heading == "Notes" })
+        let codeLine = try require(notes.lines.first { $0.text.hasPrefix("```python") })
+        #expect(codeLine.text.contains("print(\"hi\")"), Comment(rawValue: "\(notes)"))
+        #expect(codeLine.text.hasSuffix("…```"), Comment(rawValue: "\(notes)"))
+    }
+
+    @Test("a per-line failure with an inference cue is bucketed as judgment even when it also reads as fuzzy")
+    func fuzzyLineWithInferenceCueIsJudgmentBucket() throws {
+        let source = """
+        ## Contract (( inert, role: invariants ))
+
+        The reviewer must decide whether the tone is sound.
+        """
+        let result = try Self.analyzer().analyze(source, file: "probe.meri")
+        let contract = try require(result.sections.first { $0.heading == "Contract" })
+        let line = try require(contract.lines.first)
+        #expect(line.p1Bucket == .judgment, Comment(rawValue: "\(contract)"))
+    }
+
+    @Test("a section with no content lines at all aggregates to doc, not a crash")
+    func contentlessSectionAggregatesToDoc() throws {
+        let source = """
+        ## Contract (( inert, role: invariants ))
+
+        > just a blockquote comment, no content
+        """
+        let result = try Self.analyzer().analyze(source, file: "probe.meri")
+        let contract = try require(result.sections.first { $0.heading == "Contract" })
+        #expect(contract.overall == .doc, Comment(rawValue: "\(contract)"))
+        #expect(contract.lines.isEmpty)
+    }
+
+    @Test("a normative-cue line with no inference cue is bucketed as error")
+    func normativeNarrativeWithoutInferenceCueIsErrorBucket() throws {
+        let source = """
+        ## Contract (( inert, role: invariants ))
+
+        The system must log every request.
+        """
+        let result = try Self.analyzer().analyze(source, file: "probe.meri")
+        let contract = try require(result.sections.first { $0.heading == "Contract" })
+        let line = try require(contract.lines.first)
+        #expect(line.p1Bucket == .error, Comment(rawValue: "\(contract)"))
+    }
+
     @Test("a file with no inert sections yields no sections")
     func noInertSectionsYieldsEmpty() throws {
         let source = """

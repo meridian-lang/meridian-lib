@@ -600,14 +600,244 @@ public struct BookMirrorInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "BookMirrorInput", parameters: [:])
 
-        // L30
-        let __meridianProseResults_L30 = try await runtime.executeProsePlan(
-            prose: "follow the What this does guidance",
+        if __meridianShouldRun("progress:0.0:L92:C0") {
+            // L92
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("ls path/to/book.epub"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L92:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L92:C0") {
+            // L92
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("ls path/to/book.pdf"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L92:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L92:C0") {
+            // L92
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("ls $BRAIN_DIR/media/books/"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L92:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L159:C0") {
+            // L159
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("pdftotext -layout path/to/book.pdf \"$WORK/full.txt\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.3:L159:C0", state: state.snapshot())
+        }
+        // L172
+        for (__meridianLoopIndex_0_4, chapterFile) in (state.get("chapterfiles")?.asList ?? []).enumerated() {
+            let __meridianLoopLabel_0_4 = "progress:0.4:iteration:\(__meridianLoopIndex_0_4)"
+            if __meridianShouldRun(__meridianLoopLabel_0_4) {
+            state.bind("chapterFile", chapterFile)
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_4, state: state.snapshot())
+            }
+        }
+
+        if __meridianShouldRun("progress:0.5:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("CONTEXT=\"$WORK/context.md\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.5:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.6:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("{"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.6:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.7:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo \"## USER.md (if any)\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.7:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.8:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("[ -f \"$BRAIN_DIR/USER.md\" ] && cat \"$BRAIN_DIR/USER.md\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.8:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.9:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.9:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.10:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo \"## SOUL.md (if any)\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.10:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.11:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("[ -f \"$BRAIN_DIR/SOUL.md\" ] && cat \"$BRAIN_DIR/SOUL.md\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.11:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.12:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.12:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.13:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo \"## Recent reflections (last 14 days)\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.13:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.14:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.14:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.15:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo \"## Topic-relevant brain pages\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.15:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.16:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.16:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.17:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo \"## Themes & cruxes\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.17:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.18:L218:C0") {
+            // L218
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("} > \"$CONTEXT\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.18:L218:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.19:L261:C0") {
+            // L261
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain book-mirror --chapters-dir \"$WORK/chapters\" --context-file \"$CONTEXT\" --slug \"$SLUG\" --title \"Book Title Goes Here\" --author \"Author Name\" --model claude-opus-4-7"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.19:L261:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.20:L274:C0") {
+            // L274
+            // Reads each child's  (the markdown analysis text)
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("job.result"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.20:L274:C0", state: state.snapshot())
+        }
+        // L286
+        let __meridianProseResults_L286 = try await runtime.executeProsePlan(
+            prose: "follow the Model: Opus by default — steps guidance",
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
-            guidance: "This is NOT a generic book summary. The right column is the value: it makes\nthe book read like a therapist who knows the reader is leaving notes in the\nmargins. If the user wants a flat summary instead, route them to a different\nskill\nGiven a book (EPUB or PDF), produce a brain page where every chapter is\nsummarized in detail on the left and mirrored back to the reader's actual life\non the right, using their own words, situations, people, and patterns from\nthe brain. Output is a brain page at `media/books/<slug>-personalized.md`\nThe CLI submits N read-only subagent jobs (one per chapter). Each subagent\nhas `allowed_tools: ['get_page', 'search']` only. They CANNOT call\nput_page or any mutating op. They produce markdown analysis via their\nfinal message\nThis means untrusted EPUB/PDF content cannot prompt-inject any\n`people/*` page. The trust narrowing happens at the tool allowlist,\nnot at the slug-prefix layer\ncodeblock:bash:IyBVc2VyLXN1cHBsaWVkIHBhdGgKbHMgcGF0aC90by9ib29rLmVwdWIKbHMgcGF0aC90by9ib29rLnBkZgoKIyBPciBhbHJlYWR5IGluIHRoZSBicmFpbiByZXBvIChyZWNvbW1lbmRlZCBmb3IgdHJhY2tpbmcpCmxzICRCUkFJTl9ESVIvbWVkaWEvYm9va3Mv\nGoal: one `.txt` file per chapter under a temp directory. The agent has\nshell + python access; the CLI is downstream of this and takes the\nextracted directory as input\ncodeblock:bash:Z2JyYWluIGJvb2stbWlycm9yIFwKICAtLWNoYXB0ZXJzLWRpciAiJFdPUksvY2hhcHRlcnMiIFwKICAtLWNvbnRleHQtZmlsZSAiJENPTlRFWFQiIFwKICAtLXNsdWcgIiRTTFVHIiBcCiAgLS10aXRsZSAiQm9vayBUaXRsZSBHb2VzIEhlcmUiIFwKICAtLWF1dGhvciAiQXV0aG9yIE5hbWUiIFwKICAtLW1vZGVsIGNsYXVkZS1vcHVzLTQtNw==\nReads each child's `job.result` (the markdown analysis text)\nuse judgment to follow the Cost gate guidance:\nThe CLI refuses to spend in a non-TTY context without `--yes`. CI / scripted\ninvocations must pass `--yes` explicitly. TTY users get a `[y/N]` prompt\nbefore submission\nAfter the brain page is written, render to PDF using `skills/brain-pdf`:\ncodeblock:bash:Z2JyYWluIHB1dF9wYWdlICAjIGFscmVhZHkgZG9uZSBieSB0aGUgQ0xJOyBub3RoaW5nIHRvIGFkZCBoZXJlCiMgVGhlbiBpbnZva2UgYnJhaW4tcGRmOgojIChzZWUgc2tpbGxzL2JyYWluLXBkZi9TS0lMTC5tZCBmb3IgdGhlIG1ha2UtcGRmIGludm9jYXRpb24p\nFor every person the right column references with a brain page, add a\nback-link from `people/<slug>` to the new `media/books/<slug>-personalized`\npage (per `conventions/quality.md` Iron Law)\nuse judgment to follow the Anti-patterns (do not do these) guidance:\n❌ **Skimming chapters.** Standing instruction: preserve detail\n❌ **Generic right column.** \"This might apply if you've ever felt…\" →\nkill on sight\n❌ **Factual errors about the reader's life.** Always fact-check after\nassembly\n❌ **Giving the subagent put_page access.** Trust contract is read-only;\nthe CLI does the writing\n❌ **Forcing connections.** If a chapter doesn't apply, say so plainly\n❌ **Sycophancy or moralizing in the right column.** No \"you should…\",\nno \"consider…\", no \"perhaps it's time to…\"\n❌ **Truncating the LEFT column.** The book's actual content needs to\nsurvive\nBook file exists locally (path known)\nChapter texts under `$WORK/chapters/*.txt` with sane word counts\nContext pack at `$WORK/context.md` is dense\n`gbrain book-mirror --chapters-dir … --context-file … --slug … --title …` returned exit 0\n`media/books/<slug>-personalized.md` exists in the brain\nFact-check pass complete (no errors against USER.md or other source-of-truth pages)\nCross-links added from referenced people/companies\nOptional: PDF rendered via brain-pdf and delivered\n`skills/brain-pdf/SKILL.md` — render the personalized page to PDF\n`skills/strategic-reading/SKILL.md` — read a book through a specific\nproblem-lens instead of personalizing to the whole reader\n`skills/article-enrichment/SKILL.md` — same shape applied to articles\nrather than books\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test\nuse judgment to follow the Anti-Patterns guidance:\nThe full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing"
+            guidance: "The default model is `claude-opus-4-7`. Sonnet works (use ``--model\nclaude-sonnet-4-6``) but the right-column quality drops noticeably — the\ntexture that makes the analysis read like a therapist who knows the user\nneeds Opus-grade reasoning\nThe CLI refuses to spend in a non-TTY context without `--yes`. CI / scripted\ninvocations must pass `--yes` explicitly. TTY users get a `[y/N]` prompt\nbefore submission\nAfter the brain page is written, render to PDF using `skills/brain-pdf`:\ncodeblock:bash:Z2JyYWluIHB1dF9wYWdlICAjIGFscmVhZHkgZG9uZSBieSB0aGUgQ0xJOyBub3RoaW5nIHRvIGFkZCBoZXJlCiMgVGhlbiBpbnZva2UgYnJhaW4tcGRmOgojIChzZWUgc2tpbGxzL2JyYWluLXBkZi9TS0lMTC5tZCBmb3IgdGhlIG1ha2UtcGRmIGludm9jYXRpb24p\nFor every person the right column references with a brain page, add a\nback-link from `people/<slug>` to the new `media/books/<slug>-personalized`\npage (per `conventions/quality.md` Iron Law)\n❌ Factual errors about the reader's life. Always fact-check after\nassembly\nuse judgment to follow the Anti-patterns (do not do these) — steps 2 guidance:\n❌ **Sycophancy or moralizing in the right column.** No \"you should…\",\nno \"consider…\", no \"perhaps it's time to…\"\nBook file exists locally (path known)\nChapter texts under `$WORK/chapters/*.txt` with sane word counts\nContext pack at `$WORK/context.md` is dense\n`gbrain book-mirror --chapters-dir … --context-file … --slug … --title …` returned exit 0\n`media/books/<slug>-personalized.md` exists in the brain\nFact-check pass complete (no errors against USER.md or other source-of-truth pages)\nCross-links added from referenced people/companies\nOptional: PDF rendered via brain-pdf and delivered\n`skills/brain-pdf/SKILL.md` — render the personalized page to PDF\n`skills/strategic-reading/SKILL.md` — read a book through a specific\nproblem-lens instead of personalizing to the whole reader\n`skills/article-enrichment/SKILL.md` — same shape applied to articles\nrather than books"
         )
-        for (__key, __value) in __meridianProseResults_L30 {
+        for (__key, __value) in __meridianProseResults_L286 {
             state.bind(__key, __value)
         }
 

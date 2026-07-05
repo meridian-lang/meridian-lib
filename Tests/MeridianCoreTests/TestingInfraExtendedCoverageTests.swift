@@ -166,16 +166,6 @@ struct MeridianTestRunnerExtendedCoverageTests {
         }
     }
 
-    @Test("runtime_happy spec drives the subprocess executor success path")
-    func runtimeHappyEndToEnd() throws {
-        let specURL = URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent()
-            .appendingPathComponent("MeridianTestSpecs/runtime_happy.meridian.test")
-        let spec = try MeridianTestRunner().loadSpec(specURL)
-        if case .failure(let reasons) = MeridianTestRunner().run(spec) {
-            Issue.record("runtime_happy failed: \(reasons.joined(separator: "; "))")
-        }
-    }
 }
 
 // MARK: - RuntimeExecutor gaps
@@ -197,6 +187,23 @@ struct RuntimeExecutorExtendedCoverageTests {
         }
         Issue.record("repo root not found")
         return current
+    }
+
+    // Lives in this `.serialized` suite (not the plain MeridianTestRunner suite
+    // above) because it drives a real RuntimeExecutor subprocess run: the other
+    // tests below fault-inject via *global* env vars (setenv/PATH), and Swift
+    // Testing parallelizes across suites by default, so an end-to-end happy-path
+    // run sharing a suite with those fault-injection tests would intermittently
+    // observe an unrelated test's transient env mutation mid-run.
+    @Test("runtime_happy spec drives the subprocess executor success path")
+    func runtimeHappyEndToEnd() throws {
+        let specURL = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .appendingPathComponent("MeridianTestSpecs/runtime_happy.meridian.test")
+        let spec = try MeridianTestRunner().loadSpec(specURL)
+        if case .failure(let reasons) = MeridianTestRunner().run(spec) {
+            Issue.record("runtime_happy failed: \(reasons.joined(separator: "; "))")
+        }
     }
 
     private func compileMinimalRunWorkflow() throws -> (swift: String, workflow: IRWorkflow) {
@@ -280,6 +287,58 @@ struct RuntimeExecutorExtendedCoverageTests {
             repoRoot: meridianRepoRoot()
         )
         #expect(failures == ["expect_run requires swift toolchain on PATH"])
+    }
+
+    @Test("swift --version non-zero exit is treated as unavailable")
+    func swiftVersionNonZero() throws {
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("fake-swift-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let swiftScript = dir.appendingPathComponent("swift")
+        try "#!/bin/sh\nexit 1\n".write(to: swiftScript, atomically: true, encoding: .utf8)
+        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: swiftScript.path)
+
+        let originalPath = getenv("PATH").map { String(cString: $0) } ?? ""
+        setenv("PATH", "\(dir.path):\(originalPath)", 1)
+        defer { setenv("PATH", originalPath, 1) }
+
+        let failures = RuntimeExecutor(verbose: false).run(
+            spec: .init(),
+            swiftSource: "",
+            workflows: [IRWorkflow(name: "run", parameters: [], body: IRBlock(statements: [.complete(CompleteIR())]))],
+            repoRoot: meridianRepoRoot()
+        )
+        #expect(failures == ["expect_run requires swift toolchain on PATH"])
+    }
+
+    @Test("explicit workflow name missing from compiled output is reported")
+    func workflowNotFound() {
+        let workflow = IRWorkflow(
+            name: "run",
+            parameters: [],
+            body: IRBlock(statements: [.complete(CompleteIR())]),
+            explicitStructName: "RunWorkflow"
+        )
+        let failures = RuntimeExecutor(verbose: false).run(
+            spec: .init(workflowName: "MissingWorkflow"),
+            swiftSource: "",
+            workflows: [workflow],
+            repoRoot: meridianRepoRoot()
+        )
+        #expect(failures.contains { $0.contains("workflow 'MissingWorkflow' not found") })
+        #expect(failures.contains { $0.contains("RunWorkflow") })
+    }
+
+    @Test("empty compiled workflow list is reported")
+    func noWorkflowsInOutput() {
+        let failures = RuntimeExecutor(verbose: false).run(
+            spec: .init(),
+            swiftSource: "",
+            workflows: [],
+            repoRoot: meridianRepoRoot()
+        )
+        #expect(failures == ["no workflows in compiled output to run"])
     }
 
     @Test("tempdir creation failure surfaces a clear message")

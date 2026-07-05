@@ -3,8 +3,8 @@
 - Original: `voice-note-ingest/SKILL.md`
 - Ported: `voice_note_ingest.meri`
 - Tier: 2 (light edits)
-- Similarity: 82%
-- Lines: 201 -> 232 (+55 / -24)
+- Similarity: 81%
+- Lines: 201 -> 238 (+61 / -24)
 
 ## Frontmatter
 - Added: (none)
@@ -12,74 +12,77 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L32 `The pipeline`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L101 `Brain page format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L147 `Citation format`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L207 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L37 `The pipeline`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L106 `Brain page format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L152 `Citation format`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L202 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L213 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections inert total: 6/11 (55% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 8/10 (80% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: reference-documentation=4, template=2
-- Judgment: 4 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=6, template=2
+- Judgment: 1 blocks, 0 lines
 
 ### Inert section details
-- L32 `The pipeline`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L50 `Decision tree (where the content goes)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L101 `Brain page format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L147 `Citation format`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L165 `Bulk vs. single`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L207 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L37 `The pipeline`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L55 `Decision tree (where the content goes)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L106 `Brain page format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L152 `Citation format`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L170 `Bulk vs. single`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L178 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L202 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L213 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/voice-note-ingest/SKILL.md
 +++ skills/voice_note_ingest.meri
-@@ -30,23 +30,28 @@
- > the filing decision protocol.
+@@ -31,10 +31,20 @@
  
  ## Iron Law
-+use judgment to follow the Iron Law guidance:
  
- The user's **exact words** are the insight. Never paraphrase. Never clean
+-The user's **exact words** are the insight. Never paraphrase. Never clean
++
++### Iron Law — steps (( role: reference ))
++
++The user's exact words are the insight. Never paraphrase. Never clean
  up. The vivid, unpolished, stream-of-consciousness phrasing captures
  something that cleaned-up prose does not. Preserve it in block quotes.
++
++### Iron Law — steps 2
++
++use judgment to follow the Iron Law — steps 2 guidance:
  The Analysis section can interpret; the transcript section is sacred.
++
++
++### Iron Law — steps 3
  
-+
-+### Iron Law — steps
-+
  - ✅ `"The ambition-to-lifespan ratio has never been more fucked"`
  - ❌ `User noted the tension between ambition and mortality`
- 
--## When to invoke
-+## When to invoke (( role: procedure ))
-+use judgment to follow the When to invoke guidance:
- 
- The user sends an audio or voice message via any channel (Telegram, voice
- memo upload, openclaw audio attachment). The host agent typically provides
+@@ -46,7 +56,7 @@
  the transcript text. If not, transcribe via `gbrain transcription` (Groq
  Whisper by default; OpenAI fallback for audio > 25MB segmented via ffmpeg).
  
 -## The pipeline
-+## The pipeline (( inert ))
++## The pipeline (( role: reference ))
  
  ```
  1. STORE       → Upload original audio to gbrain storage backend
-@@ -64,38 +69,56 @@
+@@ -64,38 +74,56 @@
                   (Iron Law per conventions/quality.md).
  ```
  
 -## Decision tree (where the content goes)
-+## Decision tree (where the content goes) (( inert ))
++## Decision tree (where the content goes) (( role: reference ))
  
  Apply in order. First match wins. If multiple categories apply, file to
  the primary directory and cross-link to the others.
@@ -147,21 +150,21 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ## Brain page format
  
-@@ -143,7 +166,7 @@
+@@ -143,7 +171,7 @@
  - **YYYY-MM-DD** | voice note from <channel> — [Brief description]
  ```
  
 -## Citation format
-+## Citation format (( inert ))
++## Citation format (( role: reference ))
  
  ```
  [Source: voice note, <channel>, YYYY-MM-DD]
-@@ -161,12 +184,16 @@
+@@ -161,22 +189,31 @@
    `2026-04-13-rick-rubin-creative-philosophy.ogg`)
  - Brain pages: match the slug of the destination directory.
  
 -## Bulk vs. single
-+## Bulk vs. single (( inert ))
++## Bulk vs. single (( role: reference ))
  
  This skill handles ONE voice note at a time. Each is its own ingest cycle.
 +
@@ -170,39 +173,42 @@ These sections were made non-executable in the port and should be reviewed as mi
  No batching.
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
++## Anti-Patterns (( role: reference ))
  
  - ❌ **Paraphrasing the transcript.** The exact words are the signal.
  - ❌ **Cleaning up hesitations or filler words** ("um", "like", "you
-@@ -176,7 +203,10 @@
- - ❌ **Skipping the audio storage step.** Always upload the original; the
+   know"). The texture matters.
+ - ❌ **Creating a page with no entity cross-links** when people/companies
+   were mentioned. Iron Law fail.
+-- ❌ **Skipping the audio storage step.** Always upload the original; the
++
++### Anti-Patterns — steps (( role: reference ))
++
++- ❌ Skipping the audio storage step. Always upload the original; the
    brain page has a `🔊 [Audio]` link back to it.
  
--## Related skills
-+## Related skills (( inert, role: procedure ))
+ ## Related skills
 +
 +
 +### Related skills — steps
  
  - `skills/signal-detector/SKILL.md` — same exact-phrasing pattern for
    text-channel idea capture
-@@ -184,7 +214,8 @@
+@@ -184,7 +221,7 @@
  - `skills/conventions/quality.md` — citation + back-link rules
  
  
 -## Contract
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
  This skill guarantees:
  
-@@ -195,7 +226,7 @@
+@@ -195,7 +232,7 @@
  
  The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  
 -## Output Format
-+## Output Format (( inert, role: template ))
++## Output Format (( role: template ))
  
  The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
  

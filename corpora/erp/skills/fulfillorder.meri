@@ -8,12 +8,11 @@ triggers:
 
 # Fulfill Order
 
-## When this applies (( role: procedure ))
-use judgment to follow the When this applies guidance:
+## When this applies
 - "fulfill ERP orders"
 - "release shipments"
 
-## Operator notes (( inert ))
+## Operator notes (( role: reference ))
 Warehouse operators say "release the shipment" rather than "invoke the
 fulfillment workflow." This skill keeps that vocabulary while compiling to
 declared tool calls.
@@ -27,6 +26,5 @@ for each order:
   ship the order.
 Publish: "shipment release queue drained".
 
-## Checks (( role: procedure ))
-use judgment to follow the Checks guidance:
+## Checks (( role: reference ))
 Every released order should already have inventory reserved.

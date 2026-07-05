@@ -12,22 +12,23 @@
 
 ## Categories
 - section-marker-added
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L3 `Overview`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L3 `Overview`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
 - Sections inert total: 1/1 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=1
 - Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L3 `Overview`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L3 `Overview`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
@@ -37,7 +38,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 @@ -1,4 +1,6 @@
  # Install GBrain (Deprecated)
 +
-+## Overview (( inert ))
++## Overview (( role: reference ))
  
  This skill has been replaced by the **setup** skill. See `skills/setup/SKILL.md`.
  

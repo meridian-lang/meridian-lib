@@ -98,19 +98,19 @@
     "name" : "schema-unify",
     "outline" : [
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 35,
         "text" : "brain_first: exempt"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 39,
         "text" : "When this skill fires"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 46,
         "text" : "Mental model (one paragraph)"
@@ -122,153 +122,231 @@
         "text" : "Workflow"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 53,
+        "line" : 52,
         "text" : "Phase 1: Discovery"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 78,
+        "line" : 59,
+        "text" : "Phase 1: Discovery — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 68,
+        "text" : "Phase 1: Discovery — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 76,
         "text" : "Phase 2: Preview"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 98,
+        "line" : 86,
+        "text" : "Phase 2: Preview — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 95,
         "text" : "Phase 3: Apply"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 108,
+        "text" : "Phase 3: Apply — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 137,
+        "line" : 125,
+        "text" : "Phase 3: Apply — steps 2"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 129,
+        "text" : "Phase 3: Apply — steps 3"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 133,
         "text" : "Phase 4: Verify"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 157,
+        "line" : 140,
+        "text" : "Phase 4: Verify — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 148,
+        "text" : "Phase 4: Verify — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 152,
         "text" : "Phase 5: Post-migration"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 157,
+        "text" : "Phase 5: Post-migration — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 167,
+        "line" : 161,
         "text" : "Rollback"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 175,
+        "line" : 169,
         "text" : "Rollback — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 180,
+        "line" : 174,
         "text" : "Rollback — steps 2"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 194,
+        "line" : 188,
         "text" : "Anti-patterns"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 195,
+        "text" : "Anti-patterns — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 199,
+        "text" : "Anti-patterns — steps 2"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 203,
+        "line" : 202,
         "text" : "Decision tree"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 226,
+        "line" : 225,
         "text" : "Contract"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 250,
+        "line" : 248,
         "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 255,
+        "text" : "Anti-Patterns — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 260,
+        "text" : "Anti-Patterns — steps 2"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 260,
+        "line" : 263,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 288,
+        "line" : 291,
         "text" : "Reference"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 56,
+        "line" : 54,
         "text" : "Expected"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 106,
+        "line" : 100,
         "text" : "Apply phases"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 140,
+        "line" : 135,
         "text" : "Expected"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 229,
+        "line" : 227,
         "text" : "Inputs"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 234,
+        "line" : 232,
         "text" : "Outputs"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 240,
+        "line" : 238,
         "text" : "Side effects"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 245,
+        "line" : 243,
         "text" : "Failure modes"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 272,
+        "line" : 275,
         "text" : "Final celebration summary to stderr"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 291,
+        "line" : 294,
         "text" : "Architecture"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 292,
+        "line" : 295,
         "text" : "Pack-upgrade mechanism"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 293,
+        "line" : 296,
         "text" : "Issue"
       }
     ],
@@ -280,7 +358,7 @@
         "lines" : [
           "This skill is ABOUT the brain's shape — it can't depend on the brain it's reshaping. No `gbrain search` lookup first; jump straight to onboard"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -292,7 +370,7 @@
           "A `dangling_aliases` finding surfaces (post-unify GC)",
           "An agent ingesting from a custom pack wants to consult the v2 taxonomy as a reference"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -301,54 +379,74 @@
         "lines" : [
           "A production gbrain brain accreted **94 distinct `pages.type` values** over years of ingestion: tweet \/ tweet-thread \/ tweet-bundle \/ tweet-single \/ media\/x-tweet\/bundle \/ tweet-stub all coexisting; 5.5K concept-redirect pages; atom-partner-link pages that should be links; civic \/ framework \/ insight \/ memo \/ anecdote one-offs. The cure: collapse to **15 canonical types** (person, company, media, tweet, social-digest, analysis, atom, concept, source, deal, email, slack, writing, project, note) with subtypes\/format\/origin pushed to frontmatter, alias-rows for redirects, real link-rows for edge-shaped pages, and a catch-all that bins long-tail unknowns to `note` with `frontmatter.legacy_type = <original>` for rollback"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Workflow",
         "line" : 50,
         "lines" : [
-          "use judgment to follow the Workflow guidance:"
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 1: Discovery",
+        "line" : 52,
+        "lines" : [
+          "Expected: `gbrain-base@1.0.0+<sha>`. If you see `gbrain-base-v2@...`, the brain is already on v2 — skip the migration",
+          "Look for the `pack_upgrade_available` finding. If it's `ok`, there's no successor declared for the active pack — done"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 1: Discovery — steps",
+        "line" : 59,
+        "lines" : [
+          "Confirm the brain is actually on `gbrain-base` (not already on v2)",
+          "codeblock:bash:Z2JyYWluIHNjaGVtYSBhY3RpdmUgLS1qc29uIHwganEgLXIgJy5pZGVudGl0eSc="
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
-        "heading" : "Phase 1: Discovery",
-        "line" : 53,
+        "heading" : "Phase 1: Discovery — steps 2",
+        "line" : 68,
         "lines" : [
-          "use judgment to follow the Phase 1: Discovery guidance:",
-          "Expected: `gbrain-base@1.0.0+<sha>`. If you see `gbrain-base-v2@...`, the brain is already on v2 — skip the migration",
-          "Look for the `pack_upgrade_available` finding. If it's `ok`, there's no successor declared for the active pack — done",
-          "Confirm the brain is actually on `gbrain-base` (not already on v2)",
-          "codeblock:bash:Z2JyYWluIHNjaGVtYSBhY3RpdmUgLS1qc29uIHwganEgLXIgJy5pZGVudGl0eSc=",
           "codeblock:bash:Z2JyYWluIG9uYm9hcmQgLS1jaGVjaw=="
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 2: Preview",
-        "line" : 78,
+        "line" : 76,
         "lines" : [
-          "use judgment to follow the Phase 2: Preview guidance:",
           "How many pages would retype per cluster (tweets, articles, companies, etc.)",
           "How many concept-redirect pages would become alias rows",
           "How many edge-shaped pages would convert to real links",
           "The synthesized catch-all rules for unknown types",
-          "Review the output. If the proposed changes look wrong, **don't** proceed — file an issue or write a custom pack with adjusted mapping_rules",
+          "Review the output. If the proposed changes look wrong, **don't** proceed — file an issue or write a custom pack with adjusted mapping_rules"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 2: Preview — steps",
+        "line" : 86,
+        "lines" : [
           "codeblock:bash:Z2JyYWluIG9uYm9hcmQgLS1jaGVjayAtLWV4cGxhaW4=",
           "This invokes the `unify-types` handler in dry-run mode and prints:"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 3: Apply",
-        "line" : 98,
+        "line" : 95,
         "lines" : [
-          "use judgment to follow the Phase 3: Apply guidance:",
-          "The handler is PROTECTED (manual_only per D17) — autopilot will never auto-fire it. Submit explicitly:",
           "On a 186K-page brain expect ~10 minutes. The handler runs:",
           "Preflight (validate target pack has `mapping_rules:`)",
           "Stats snapshot (pre-state for celebration summary)",
@@ -358,36 +456,83 @@
           "Page-to-link rules (atom-partner-link, symlink)",
           "Page-to-alias rules (concept-redirect)",
           "Final sync (untyped rows by path-prefix)",
-          "**Flip active pack** to gbrain-base-v2 (D13)",
+          "**Flip active pack** to gbrain-base-v2 (D13)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 3: Apply — steps",
+        "line" : 108,
+        "lines" : [
+          "The handler is PROTECTED (manual_only per D17) — autopilot will never auto-fire it. Submit explicitly:",
           "codeblock:bash:Z2JyYWluIGpvYnMgc3VibWl0IHVuaWZ5LXR5cGVzIFwKICAtLWFsbG93LXByb3RlY3RlZCBcCiAgLS1wYXJhbXMgJ3sidGFyZ2V0X3BhY2siOiJnYnJhaW4tYmFzZS12MiJ9Jw==",
-          "codeblock:bash:Z2JyYWluIGpvYnMgZm9sbG93IDxqb2JfaWQ+",
-          "Acquire `gbrain-unify` db-lock (60min TTL)",
+          "codeblock:bash:Z2JyYWluIGpvYnMgZm9sbG93IDxqb2JfaWQ+"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 3: Apply — steps 2",
+        "line" : 125,
+        "lines" : [
+          "Acquire `gbrain-unify` db-lock (60min TTL)"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 3: Apply — steps 3",
+        "line" : 129,
+        "lines" : [
           "Verify + celebration summary"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 4: Verify",
-        "line" : 137,
+        "line" : 133,
         "lines" : [
-          "use judgment to follow the Phase 4: Verify guidance:",
           "Expected:",
           "`pack_upgrade_available` → `ok` (active pack is now v2)",
           "`type_proliferation` → `ok` (≤16 distinct typed values)",
-          "`dangling_aliases` → `ok` (slug_aliases all point at active canonicals)",
-          "codeblock:bash:Z2JyYWluIG9uYm9hcmQgLS1jaGVjawpnYnJhaW4gc2NoZW1hIHN0YXRz",
-          "`gbrain schema stats` shows ≤16 distinct types"
+          "`dangling_aliases` → `ok` (slug_aliases all point at active canonicals)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 4: Verify — steps",
+        "line" : 140,
+        "lines" : [
+          "codeblock:bash:Z2JyYWluIG9uYm9hcmQgLS1jaGVjawpnYnJhaW4gc2NoZW1hIHN0YXRz"
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
+        "heading" : "Phase 4: Verify — steps 2",
+        "line" : 148,
+        "lines" : [
+          "`gbrain schema stats` shows ≤16 distinct types"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
         "heading" : "Phase 5: Post-migration",
+        "line" : 152,
+        "lines" : [
+          "Anything that used `--type article` keeps working post-unify if your CLI calls go through the `expandTypeFilter` helper (it expands `article` to `media+subtype=article` automatically). Direct SQL against `pages.type` needs updating to the canonical types"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 5: Post-migration — steps",
         "line" : 157,
         "lines" : [
-          "use judgment to follow the Phase 5: Post-migration guidance:",
-          "Anything that used `--type article` keeps working post-unify if your CLI calls go through the `expandTypeFilter` helper (it expands `article` to `media+subtype=article` automatically). Direct SQL against `pages.type` needs updating to the canonical types",
           "Search queries get a small ranking signal: pages reached via `slug_aliases` (canonicals of one or more aliases) get a 1.05x boost. Visible via `gbrain search --explain`"
         ],
         "role" : "procedure"
@@ -395,16 +540,16 @@
       {
         "executes" : false,
         "heading" : "Rollback",
-        "line" : 167,
+        "line" : 161,
         "lines" : [
           "codeblock:sql:VVBEQVRFIHBhZ2VzIFNFVCB0eXBlID0gZnJvbnRtYXR0ZXItPj4nbGVnYWN5X3R5cGUnCldIRVJFIHNvdXJjZV9pZCA9ICdkZWZhdWx0JyBBTkQgZnJvbnRtYXR0ZXItPj4nbGVnYWN5X3R5cGUnIElTIE5PVCBOVUxMOw=="
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Rollback — steps",
-        "line" : 175,
+        "line" : 169,
         "lines" : [
           "Every retyped page preserves `frontmatter.legacy_type = <original>` per D8. Restore types via:"
         ],
@@ -413,7 +558,7 @@
       {
         "executes" : true,
         "heading" : "Rollback — steps 2",
-        "line" : 180,
+        "line" : 174,
         "lines" : [
           "codeblock:bash:Z2JyYWluIHBhZ2VzIHJlc3RvcmUgPHNsdWc+",
           "codeblock:bash:Z2JyYWluIHNjaGVtYSB1c2UgZ2JyYWluLWJhc2U="
@@ -421,34 +566,48 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-patterns",
-        "line" : 194,
+        "line" : 188,
         "lines" : [
-          "use judgment to follow the Anti-patterns guidance:",
-          "**Don't run unify-types under autopilot.** It's manual_only by design. Autopilot remediation should never silently change your taxonomy",
           "**Don't expect mapping_rules to cover every legacy type explicitly.** Use the catch-all (`*unknown*`) for the long tail. Pages get retyped to `note` with `legacy_type` preserved",
           "**Don't rewrite body-text wikilinks.** D15: the slug_aliases table IS the resolver. `[[old-redirect-slug]]` keeps working via `engine.resolveSlugWithAlias` short-circuit",
-          "**Don't bypass the dry-run.** Always run `--explain` before applying. The trust delta is real",
           "**Don't run two unify jobs concurrently.** The `gbrain-unify` db-lock serializes them; the second submission rejects with \"already in progress.\""
         ],
-        "role" : "procedure"
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-patterns — steps",
+        "line" : 195,
+        "lines" : [
+          "It's manual_only by design. Autopilot remediation should never silently change your taxonomy"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-patterns — steps 2",
+        "line" : 199,
+        "lines" : [
+          "Don't bypass the dry-run. Always run `--explain` before applying. The trust delta is real"
+        ],
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Decision tree",
-        "line" : 203,
+        "line" : 202,
         "lines" : [
           "codeblock:plain:QWN0aXZlIHBhY2sgYWxyZWFkeSBnYnJhaW4tYmFzZS12Mj8KICDihpIgU2tpcCBtaWdyYXRpb24uCgpDdXN0b20gcGFjayB3aXRoIG93biBtYXBwaW5nX3J1bGVzPwogIOKGkiBSdW4gLS1jaGVjayAtLWV4cGxhaW4gdG8gc2VlIGlmIHlvdXIgcGFjayBkZWNsYXJlcyBtaWdyYXRpb25fZnJvbQogICAgZm9yIHRoZSBhY3RpdmUgcGFjay4gSWYgeWVzLCB0YXJnZXRfcGFjayA9IHlvdXIgcGFjayBuYW1lLgoKQnJhaW4gaGFzIG1hbnkgY3VzdG9tIHR5cGVzIG5vdCBjb3ZlcmVkIGJ5IGdicmFpbi1iYXNlLXYyIG1hcHBpbmdfcnVsZXM\/CiAg4oaSIFRoZSBjYXRjaC1hbGwgcmV0eXBlIGJpbmRzIHRoZW0gdG8gYG5vdGVgIHdpdGggbGVnYWN5X3R5cGUgcHJlc2VydmVkLgogICAgUmV2aWV3IGJ5IGluc3BlY3RpbmcgZnJvbnRtYXR0ZXIubGVnYWN5X3R5cGUgYWZ0ZXIgdGhlIG1pZ3JhdGlvbi4KCkZlZGVyYXRlZCBicmFpbiAobXVsdGlwbGUgc291cmNlcyk\/CiAg4oaSIEFkZCAtLXBhcmFtcyBzb3VyY2VfaWQgdG8gc2NvcGUgdGhlIG1pZ3JhdGlvbiBwZXItc291cmNlLiBFYWNoCiAgICBzb3VyY2UgY2FuIGJlIG1pZ3JhdGVkIGluZGVwZW5kZW50bHkuCgpXb3JyaWVkIGFib3V0IGEgc3BlY2lmaWMgY2x1c3RlcidzIG1hcHBpbmc\/CiAg4oaSIEZvcmsgZ2JyYWluLWJhc2UtdjIgKGBnYnJhaW4gc2NoZW1hIGZvcmsgZ2JyYWluLWJhc2UtdjIgbXktcGFja2ApLAogICAgZWRpdCBtYXBwaW5nX3J1bGVzIGluIHlvdXIgZm9yaywgdGhlbiB0YXJnZXQgdGhlIGZvcmsu"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
-        "line" : 226,
+        "line" : 225,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "Inputs:",
           "A brain on `gbrain-base` (or any pack with `migration_from: gbrain-base-v2`)",
           "Write access to submit a PROTECTED Minion handler (`--allow-protected`)",
@@ -467,27 +626,41 @@
           "Catch-all retype excludes `page_to_link` + `page_to_alias` source types (caught in E2E pre-merge)",
           "Phase failures abort the run before `active_pack_flipped`; partial state restorable via op_checkpoint resume"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 250,
+        "line" : 248,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
-          "DON'T:",
-          "Submit `unify-types` directly via the MCP `submit_job` op without `--allow-protected`. PROTECTED handlers require trusted local callers; remote MCP rejection is the intentional trust boundary",
           "Edit `mapping_rules` in `gbrain-base-v2.yaml` to skip clusters you don't trust. Fork the pack instead (`gbrain schema fork`) so the source-of-truth migration stays consistent across brains",
-          "Run `unify-types` from inside an autopilot tick. The check is `manual_only` per D17 — autopilot deliberately never auto-fires it because pack upgrades are one-time consenting taxonomy decisions",
           "Hard-delete soft-deleted source pages before the 72h restore window. Use `gbrain pages restore <slug>` first if rollback is needed",
           "Assume `frontmatter.legacy_type` survives every roundtrip. The marker is canonical for the immediate post-migration window; downstream re-imports may overwrite it"
         ],
-        "role" : "procedure"
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 255,
+        "lines" : [
+          "Submit `unify-types` directly via the MCP `submit_job` op without `--allow-protected`. PROTECTED handlers require trusted local callers; remote MCP rejection is the intentional trust boundary"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps 2",
+        "line" : 260,
+        "lines" : [
+          "Run `unify-types` from inside an autopilot tick. The check is `manual_only` per D17 — autopilot deliberately never auto-fires it because pack upgrades are one-time consenting taxonomy decisions"
+        ],
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 260,
+        "line" : 263,
         "lines" : [
           "Per phase, the handler emits to stderr:",
           "codeblock:plain:W3VuaWZ5LXR5cGVzXSBwaGFzZT1yZXR5cGUtZXhwbGljaXQgYXBwbGllZD1OIHNraXBwZWQ9TSAgY29zdD1VU0QgIHR0bD1OcwpbdW5pZnktdHlwZXNdIHBoYXNlPXJldHlwZS1jYXRjaC1hbGwgYXBwbGllZD1OClt1bmlmeS10eXBlc10gcGhhc2U9cGFnZS10by1saW5rIGNvbnZlcnRlZD1OIHBhZ2VzIHNvZnQtZGVsZXRlZApbdW5pZnktdHlwZXNdIHBoYXNlPXBhZ2UtdG8tYWxpYXMgYWxpYXNlZD1OIHBhZ2VzIHNvZnQtZGVsZXRlZApbdW5pZnktdHlwZXNdIHBoYXNlPXN5bmMgcmVzaWR1YWw9TgpbdW5pZnktdHlwZXNdIGFjdGl2ZV9wYWNrIGZsaXBwZWQgZnJvbSBnYnJhaW4tYmFzZSB0byBnYnJhaW4tYmFzZS12Mg==",
@@ -498,16 +671,16 @@
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Reference",
-        "line" : 288,
+        "line" : 291,
         "lines" : [
           "Plan + decisions: `~\/.claude\/plans\/system-instruction-you-are-working-transient-elephant.md`",
           "Architecture: `docs\/architecture\/type-taxonomy.md`",
           "Pack-upgrade mechanism: `docs\/architecture\/pack-upgrade-mechanism.md`",
           "Issue: https:\/\/github.com\/garrytan\/gbrain\/issues\/1479"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       }
     ],
     "tools" : "gbrain onboard --check\ngbrain onboard --check --explain\ngbrain onboard --check --json\ngbrain jobs submit unify-types\ngbrain jobs follow\ngbrain schema active\ngbrain schema use\ngbrain schema stats\ngbrain pages restore\nmcp:run_onboard",
@@ -549,88 +722,140 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 51,
-      "swift_line" : 601
+      "meridian_line" : 61,
+      "swift_line" : 602
+    },
+    {
+      "meridian_line" : 63,
+      "swift_line" : 614
+    },
+    {
+      "meridian_line" : 72,
+      "swift_line" : 625
+    },
+    {
+      "meridian_line" : 90,
+      "swift_line" : 636
+    },
+    {
+      "meridian_line" : 94,
+      "swift_line" : 647
+    },
+    {
+      "meridian_line" : 127,
+      "swift_line" : 659
+    },
+    {
+      "meridian_line" : 148,
+      "swift_line" : 671
+    },
+    {
+      "meridian_line" : 142,
+      "swift_line" : 683
+    },
+    {
+      "meridian_line" : 142,
+      "swift_line" : 694
+    },
+    {
+      "meridian_line" : 150,
+      "swift_line" : 705
+    },
+    {
+      "meridian_line" : 118,
+      "swift_line" : 717
+    },
+    {
+      "meridian_line" : 171,
+      "swift_line" : 729
+    },
+    {
+      "meridian_line" : 178,
+      "swift_line" : 741
+    },
+    {
+      "meridian_line" : 184,
+      "swift_line" : 752
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 640
+      "swift_line" : 791
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 645
+      "swift_line" : 796
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 684
+      "swift_line" : 835
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 689
+      "swift_line" : 840
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 728
+      "swift_line" : 879
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 733
+      "swift_line" : 884
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 772
+      "swift_line" : 923
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 777
+      "swift_line" : 928
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 816
+      "swift_line" : 967
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 821
+      "swift_line" : 972
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 860
+      "swift_line" : 1011
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 865
+      "swift_line" : 1016
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 904
+      "swift_line" : 1055
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 909
+      "swift_line" : 1060
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 948
+      "swift_line" : 1099
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 953
+      "swift_line" : 1104
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 992
+      "swift_line" : 1143
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 997
+      "swift_line" : 1148
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1036
+      "swift_line" : 1187
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1041
+      "swift_line" : 1192
     }
   ],
   "tools_used" : [
@@ -643,19 +868,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "use judgment to follow the Phase 1: Discovery guidance:\nExpected: `gbrain-base@1.0.0+<sha>`. If you see `gbrain-base-v2@...`, the brain is already on v2 — skip the migration\nLook for the `pack_upgrade_available` finding. If it's `ok`, there's no successor declared for the active pack — done\nConfirm the brain is actually on `gbrain-base` (not already on v2)\ncodeblock:bash:Z2JyYWluIHNjaGVtYSBhY3RpdmUgLS1qc29uIHwganEgLXIgJy5pZGVudGl0eSc=\ncodeblock:bash:Z2JyYWluIG9uYm9hcmQgLS1jaGVjaw==\nuse judgment to follow the Phase 2: Preview guidance:\nHow many pages would retype per cluster (tweets, articles, companies, etc.)\nHow many concept-redirect pages would become alias rows\nHow many edge-shaped pages would convert to real links\nThe synthesized catch-all rules for unknown types\nReview the output. If the proposed changes look wrong, **don't** proceed — file an issue or write a custom pack with adjusted mapping_rules\ncodeblock:bash:Z2JyYWluIG9uYm9hcmQgLS1jaGVjayAtLWV4cGxhaW4=\nThis invokes the `unify-types` handler in dry-run mode and prints:\nuse judgment to follow the Phase 3: Apply guidance:\nThe handler is PROTECTED (manual_only per D17) — autopilot will never auto-fire it. Submit explicitly:\nOn a 186K-page brain expect ~10 minutes. The handler runs:\nPreflight (validate target pack has `mapping_rules:`)\nStats snapshot (pre-state for celebration summary)\nApply phases:\nExplicit retype rules (tweets, articles, companies, etc.)\nCatch-all retype (unknown types → note with legacy_type)\nPage-to-link rules (atom-partner-link, symlink)\nPage-to-alias rules (concept-redirect)\nFinal sync (untyped rows by path-prefix)\n**Flip active pack** to gbrain-base-v2 (D13)\ncodeblock:bash:Z2JyYWluIGpvYnMgc3VibWl0IHVuaWZ5LXR5cGVzIFwKICAtLWFsbG93LXByb3RlY3RlZCBcCiAgLS1wYXJhbXMgJ3sidGFyZ2V0X3BhY2siOiJnYnJhaW4tYmFzZS12MiJ9Jw==\ncodeblock:bash:Z2JyYWluIGpvYnMgZm9sbG93IDxqb2JfaWQ+\nAcquire `gbrain-unify` db-lock (60min TTL)\nVerify + celebration summary\nuse judgment to follow the Phase 4: Verify guidance:\nExpected:\n`pack_upgrade_available` → `ok` (active pack is now v2)\n`type_proliferation` → `ok` (≤16 distinct typed values)\n`dangling_aliases` → `ok` (slug_aliases all point at active canonicals)\ncodeblock:bash:Z2JyYWluIG9uYm9hcmQgLS1jaGVjawpnYnJhaW4gc2NoZW1hIHN0YXRz\n`gbrain schema stats` shows ≤16 distinct types\nuse judgment to follow the Phase 5: Post-migration guidance:\nAnything that used `--type article` keeps working post-unify if your CLI calls go through the `expandTypeFilter` helper (it expands `article` to `media+subtype=article` automatically). Direct SQL against `pages.type` needs updating to the canonical types\nSearch queries get a small ranking signal: pages reached via `slug_aliases` (canonicals of one or more aliases) get a 1.05x boost. Visible via `gbrain search --explain`\nEvery retyped page preserves `frontmatter.legacy_type = <original>` per D8. Restore types via:\ncodeblock:bash:Z2JyYWluIHBhZ2VzIHJlc3RvcmUgPHNsdWc+\ncodeblock:bash:Z2JyYWluIHNjaGVtYSB1c2UgZ2JyYWluLWJhc2U=\nuse judgment to follow the Anti-patterns guidance:\n**Don't run unify-types under autopilot.** It's manual_only by design. Autopilot remediation should never silently change your taxonomy\n**Don't expect mapping_rules to cover every legacy type explicitly.** Use the catch-all (`*unknown*`) for the long tail. Pages get retyped to `note` with `legacy_type` preserved\n**Don't rewrite body-text wikilinks.** D15: the slug_aliases table IS the resolver. `[[old-redirect-slug]]` keeps working via `engine.resolveSlugWithAlias` short-circuit\n**Don't bypass the dry-run.** Always run `--explain` before applying. The trust delta is real\n**Don't run two unify jobs concurrently.** The `gbrain-unify` db-lock serializes them; the second submission rejects with \"already in progress.\"\nuse judgment to follow the Contract guidance:\nInputs:\nA brain on `gbrain-base` (or any pack with `migration_from: gbrain-base-v2`)\nWrite access to submit a PROTECTED Minion handler (`--allow-protected`)\n~10 min wallclock on a 186K-page brain\nOutputs:\nPages retyped to canonical types with `frontmatter.legacy_type` preserved (per-page rollback signal)\n`slug_aliases` rows for concept-redirect pages (alias table IS the resolver — no link rewrite)\nReal `links` rows for edge-shaped pages (`atom-partner-link`, `symlink`, etc.)\nActive pack flipped to `gbrain-base-v2` atomically at end of successful run\nSide effects:\nSource pages soft-deleted with 72h restore TTL (`gbrain pages restore <slug>`)\nOne-time cache invalidation on KNOBS_HASH_VERSION bump (5→6); self-healing in `cache.ttl_seconds`\nQuery-time `--type X` alias-expands via `expandTypeFilter` (D14 back-compat)\nFailure modes:\nConcurrent submission rejected by the `gbrain-unify` db-lock; second call exits gracefully\nCatch-all retype excludes `page_to_link` + `page_to_alias` source types (caught in E2E pre-merge)\nPhase failures abort the run before `active_pack_flipped`; partial state restorable via op_checkpoint resume\nuse judgment to follow the Anti-Patterns guidance:\nDON'T:\nSubmit `unify-types` directly via the MCP `submit_job` op without `--allow-protected`. PROTECTED handlers require trusted local callers; remote MCP rejection is the intentional trust boundary\nEdit `mapping_rules` in `gbrain-base-v2.yaml` to skip clusters you don't trust. Fork the pack instead (`gbrain schema fork`) so the source-of-truth migration stays consistent across brains\nRun `unify-types` from inside an autopilot tick. The check is `manual_only` per D17 — autopilot deliberately never auto-fires it because pack upgrades are one-time consenting taxonomy decisions\nHard-delete soft-deleted source pages before the 72h restore window. Use `gbrain pages restore <slug>` first if rollback is needed\nAssume `frontmatter.legacy_type` survives every roundtrip. The marker is canonical for the immediate post-migration window; downstream re-imports may overwrite it\nPlan + decisions: `~\/.claude\/plans\/system-instruction-you-are-working-transient-elephant.md`\nArchitecture: `docs\/architecture\/type-taxonomy.md`\nPack-upgrade mechanism: `docs\/architecture\/pack-upgrade-mechanism.md`\nIssue: https:\/\/github.com\/garrytan\/gbrain\/issues\/1479",
-          "line" : 51,
-          "scoped_tools" : [
-            "jobs.submit",
-            "page.list",
-            "shell.run"
-          ],
-          "text" : "follow the Workflow guidance"
         }
       ],
       "source_name" : "schema-unify a input",

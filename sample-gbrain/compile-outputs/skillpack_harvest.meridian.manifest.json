@@ -98,157 +98,228 @@
     "name" : "skillpack-harvest",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 39,
         "text" : "Contract"
       },
       {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 56,
+        "text" : "Contract — steps"
+      },
+      {
         "kind" : "template",
         "level" : 2,
-        "line" : 59,
+        "line" : 61,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 75,
+        "line" : 77,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "procedure",
-        "level" : 2,
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 88,
+        "text" : "Anti-Patterns — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
         "line" : 94,
+        "text" : "Anti-Patterns — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 100,
+        "text" : "Anti-Patterns — steps 3"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 106,
         "text" : "When to invoke"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 107,
+        "line" : 118,
         "text" : "Preconditions"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 118,
+        "line" : 128,
         "text" : "Preconditions — steps"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 125,
+        "line" : 135,
         "text" : "Workflow"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 128,
+        "line" : 137,
         "text" : "Phase 1 — Plan"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 139,
+        "line" : 145,
+        "text" : "Phase 1 — Plan — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 150,
         "text" : "Phase 2 — Dry-run + privacy-lint preview"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 162,
+        "line" : 164,
+        "text" : "Phase 2 — Dry-run + privacy-lint preview — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 172,
         "text" : "Phase 3 — Genericization checklist (the editorial pass)"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 201,
+        "text" : "Phase 3 — Genericization checklist (the editorial pass) — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 212,
+        "line" : 208,
+        "text" : "Phase 3 — Genericization checklist (the editorial pass) — steps 2"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 213,
+        "text" : "Phase 3 — Genericization checklist (the editorial pass) — steps 3"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 221,
         "text" : "Phase 4 — Real harvest"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 242,
+        "line" : 237,
+        "text" : "Phase 4 — Real harvest — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 246,
+        "text" : "Phase 4 — Real harvest — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 250,
         "text" : "Phase 5 — Verify in gbrain"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 259,
+        "line" : 256,
+        "text" : "Phase 5 — Verify in gbrain — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 266,
         "text" : "Phase 6 — Downstream announcement (optional)"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 267,
+        "line" : 273,
         "text" : "Bypass: `--no-lint`"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 279,
+        "line" : 280,
         "text" : "Bypass: `--no-lint` — steps"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 291,
+        "text" : "Bypass: `--no-lint` — steps 2"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 289,
+        "line" : 297,
         "text" : "What harvest does NOT do"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 300,
+        "line" : 308,
         "text" : "Files this skill touches"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 309,
+        "line" : 317,
         "text" : "Files this skill touches — steps"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 102,
+        "line" : 113,
         "text" : "Do NOT invoke when"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 131,
-        "text" : "Ask the user"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 142,
+        "line" : 152,
         "text" : "The output shows"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 215,
+        "line" : 223,
         "text" : "Default behavior"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 220,
+        "line" : 228,
         "text" : "Outcomes"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 258,
+        "line" : 265,
         "text" : "Review the diff"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 39,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "A harvest is \"properly done\" when:",
           "The host skill is mature (used in production, recent routing-eval",
           "cases pass)",
@@ -260,16 +331,24 @@
           "`bun test test\/skills-conformance.test.ts` passes on the new",
           "`skills\/<slug>\/SKILL.md`",
           "The user has reviewed the diff in gbrain and explicitly approved",
-          "the commit",
+          "the commit"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract — steps",
+        "line" : 56,
+        "lines" : [
           "If any of these is incomplete, the skill is NOT yet harvested — the",
           "files may sit in gbrain's working tree, but they're not landed"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 59,
+        "line" : 61,
         "lines" : [
           "This skill produces three artifacts in gbrain's working tree:",
           "`skills\/<harvested-slug>\/SKILL.md` (and any sibling files like",
@@ -286,35 +365,59 @@
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 75,
+        "line" : 77,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
-          "**Skipping the dry-run.** Always preview first. Files land in",
-          "gbrain's working tree; cleanup is a `git checkout` away, but you",
-          "shouldn't need to",
           "**Trusting the linter alone.** The default regex set catches the",
           "common cases. It doesn't catch every proper noun. Phase 3 (the",
           "editorial pass) is the primary defense",
-          "**Harvesting `--no-lint` without justification.** The lint exists",
-          "for a reason. If you bypass it, document why in the commit",
           "**Harvesting a skill that's still in flux.** Wait until the host",
           "version stabilizes. Otherwise you'll harvest, then re-harvest,",
           "then re-harvest, and that churns gbrain's bundle for no benefit",
           "**Moving files instead of copying.** Harvest is a copy. The host",
-          "retains its skill. Don't `rm -rf` the source after harvesting",
+          "retains its skill. Don't `rm -rf` the source after harvesting"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 88,
+        "lines" : [
+          "Always preview first. Files land in",
+          "gbrain's working tree; cleanup is a `git checkout` away, but you",
+          "shouldn't need to"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps 2",
+        "line" : 94,
+        "lines" : [
+          "use judgment to follow the Anti-Patterns — steps 2 guidance:",
+          "**Harvesting `--no-lint` without justification.** The lint exists",
+          "for a reason. If you bypass it, document why in the commit"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps 3",
+        "line" : 100,
+        "lines" : [
+          "use judgment to follow the Anti-Patterns — steps 3 guidance:",
           "**Harvesting batch (multiple skills at once).** Not supported, and",
           "for good reason — the editorial review per skill is real work"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "When to invoke",
-        "line" : 94,
+        "line" : 106,
         "lines" : [
-          "use judgment to follow the When to invoke guidance:",
           "The user developed a skill in their host fork (Wintermute, Neuromancer,",
           "Zion, etc.) and wants other gbrain clients to be able to use it",
           "A skill has proven itself in production and is ready to generalize",
@@ -324,63 +427,67 @@
           "The skill references private content that can't be generalized",
           "The user just wants to share a one-off draft (use a gist instead)"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Preconditions",
-        "line" : 107,
+        "line" : 118,
         "lines" : [
-          "use judgment to follow the Preconditions guidance:",
           "**The skill is generalizable.** Strip-test in your head: replace",
           "every fork-specific name. Does it still make sense as a skill?",
           "**The user owns the gbrain checkout.** The harvest writes into",
           "gbrain's working tree. They'll review and commit. Don't harvest",
           "into a checkout the user doesn't intend to commit from"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Preconditions — steps",
-        "line" : 118,
+        "line" : 128,
         "lines" : [
           "The skill is mature. Recent `routing-eval.jsonl` cases pass; the",
           "skill has been used in production at least a few times"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Workflow",
-        "line" : 125,
+        "line" : 135,
         "lines" : [
-          "use judgment to follow the Workflow guidance:"
+
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 1 — Plan",
-        "line" : 128,
+        "line" : 137,
         "lines" : [
-          "use judgment to follow the Phase 1 — Plan guidance:",
-          "Ask the user:",
-          "What slug should the harvested skill have? (Slugs must be kebab-case,",
-          "globally unique in the gbrain bundle.)",
           "Which host repo is the source? (Path to repo root, not to the skill",
           "directory — e.g. `~\/git\/wintermute`, not `~\/git\/wintermute\/skills\/foo`.)",
           "Should paired source files come along? (Check the host SKILL.md's",
           "frontmatter `sources:` array.)"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
-        "heading" : "Phase 2 — Dry-run + privacy-lint preview",
-        "line" : 139,
+        "executes" : false,
+        "heading" : "Phase 1 — Plan — steps",
+        "line" : 145,
         "lines" : [
-          "use judgment to follow the Phase 2 — Dry-run + privacy-lint preview guidance:",
+          "What slug should the harvested skill have? (Slugs must be kebab-case,",
+          "globally unique in the gbrain bundle.)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 2 — Dry-run + privacy-lint preview",
+        "line" : 150,
+        "lines" : [
           "The output shows:",
           "Which files would land in gbrain's tree",
           "Whether paired sources are included",
@@ -389,18 +496,25 @@
           "Do **not** skip the dry-run. The privacy linter only runs on a real",
           "harvest, but the dry-run preview lets you see the files before they",
           "land. Spot-check the SKILL.md and any paired source for things the",
-          "linter might miss (proper nouns, internal project names, etc.)",
+          "linter might miss (proper nouns, internal project names, etc.)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 2 — Dry-run + privacy-lint preview — steps",
+        "line" : 164,
+        "lines" : [
           "Run the CLI with `--dry-run`:",
           "codeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290PiAtLWRyeS1ydW4="
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 3 — Genericization checklist (the editorial pass)",
-        "line" : 162,
+        "line" : 172,
         "lines" : [
-          "use judgment to follow the Phase 3 — Genericization checklist (the editorial pass) guidance:",
           "**Fork-specific names → generic phrasing**",
           "`Wintermute` → `your OpenClaw` (or `OpenClaw deployment`)",
           "`Neuromancer`, `Zion`, `<personal-fork-name>` → same treatment",
@@ -421,26 +535,44 @@
           "**Code comments + log strings**",
           "If a paired source is going to be harvested, walk it for the",
           "same private-pattern leaks. Comments are the most common",
-          "hiding spot",
+          "hiding spot"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 3 — Genericization checklist (the editorial pass) — steps",
+        "line" : 201,
+        "lines" : [
           "Before running the real harvest, walk the host's `skills\/<slug>\/`",
           "files and apply this checklist. If anything matches, edit the host",
-          "file FIRST, then run harvest",
-          "Email addresses → strip entirely OR use `example@example.com`",
-          "Internal Slack channels → `#some-channel` or strip",
-          "Mentions of `<host-repo>\/docs\/...` files → either lift the doc",
-          "into gbrain OR replace with a generic placeholder explanation",
-          "Mentions of `<host-repo>\/skills\/<other-fork-only-skill>` → either",
-          "decide to harvest that one too, or replace with a generic",
-          "pattern reference"
+          "file FIRST, then run harvest"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 3 — Genericization checklist (the editorial pass) — steps 2",
+        "line" : 208,
+        "lines" : [
+
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
-        "heading" : "Phase 4 — Real harvest",
-        "line" : 212,
+        "heading" : "Phase 3 — Genericization checklist (the editorial pass) — steps 3",
+        "line" : 213,
         "lines" : [
-          "use judgment to follow the Phase 4 — Real harvest guidance:",
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 4 — Real harvest",
+        "line" : 221,
+        "lines" : [
           "Default behavior:",
           "Path-confinement + symlink rejection at file copy",
           "Privacy linter runs against `~\/.gbrain\/harvest-private-patterns.txt`",
@@ -452,20 +584,43 @@
           "scrub the host file, retry",
           "`slug_collision` — gbrain already has a skill at that slug. Either",
           "use a different slug, or pass `--overwrite-local` if you really",
-          "mean to replace",
-          "codeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290Pg==",
-          "`openclaw.plugin.json` updated to add the slug, sorted"
+          "mean to replace"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 4 — Real harvest — steps",
+        "line" : 237,
+        "lines" : [
+          "codeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290Pg=="
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
-        "heading" : "Phase 5 — Verify in gbrain",
-        "line" : 242,
+        "heading" : "Phase 4 — Real harvest — steps 2",
+        "line" : 246,
         "lines" : [
-          "use judgment to follow the Phase 5 — Verify in gbrain guidance:",
+          "`openclaw.plugin.json` updated to add the slug, sorted"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 5 — Verify in gbrain",
+        "line" : 250,
+        "lines" : [
           "Commit the additions in gbrain (do NOT commit any leftover files",
-          "in the host repo — harvest is a copy, not a move)",
+          "in the host repo — harvest is a copy, not a move)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 5 — Verify in gbrain — steps",
+        "line" : 256,
+        "lines" : [
           "`bun test test\/skills-conformance.test.ts` — confirms the new",
           "SKILL.md meets the frontmatter contract",
           "`gbrain skillpack check --strict` — confirms no drift between",
@@ -473,52 +628,58 @@
           "`gbrain skillpack list` — confirms the slug shows up in the bundle",
           "Review the diff: `cd <gbrainRoot> && git diff -- skills\/<slug>\/`"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 6 — Downstream announcement (optional)",
-        "line" : 259,
+        "line" : 266,
         "lines" : [
-          "use judgment to follow the Phase 6 — Downstream announcement (optional) guidance:",
           "If other gbrain clients should pick up the new skill:",
           "Note it in `CHANGELOG.md` under \"Skills added\" for the next release",
           "Tag the user \/ contributor in the PR if the skill came from",
           "someone outside the core team"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Bypass: `--no-lint`",
-        "line" : 267,
+        "line" : 273,
         "lines" : [
-          "use judgment to follow the Bypass: `--no-lint` guidance:",
           "**Document the bypass in the commit message.** Future maintainers",
           "should be able to see WHY the lint was bypassed (e.g. \"Wintermute",
-          "appears in a citation, not a real reference — verified manually\").",
-          "Never bypass the linter on a casual basis. The whole point of the",
-          "default-on lint is that real names occasionally slip through the",
-          "editorial pass"
+          "appears in a citation, not a real reference — verified manually\")."
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Bypass: `--no-lint` — steps",
-        "line" : 279,
+        "line" : 280,
         "lines" : [
           "The privacy linter is the safety net. The editorial pass is the",
           "primary defense. If you've completed Phase 3 thoroughly and the",
           "linter is still firing on a false positive, use `--no-lint`:",
           "codeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290PiAtLW5vLWxpbnQ="
         ],
-        "role" : "procedure"
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Bypass: `--no-lint` — steps 2",
+        "line" : 291,
+        "lines" : [
+          "Never bypass the linter on a casual basis. The whole point of the",
+          "default-on lint is that real names occasionally slip through the",
+          "editorial pass"
+        ],
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "What harvest does NOT do",
-        "line" : 289,
+        "line" : 297,
         "lines" : [
           "It does NOT move files (it copies). The host's `skills\/<slug>\/`",
           "stays in place",
@@ -529,12 +690,12 @@
           "It does NOT support `--all` (no batch harvest). One skill at a",
           "time keeps the editorial review tractable"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Files this skill touches",
-        "line" : 300,
+        "line" : 308,
         "lines" : [
           "gbrain's mirror path for declared paired sources",
           "(e.g. `src\/commands\/<slug>.ts` if the host SKILL.md declares it",
@@ -542,17 +703,17 @@
           "gbrain's `openclaw.plugin.json` — adds the slug to `skills:`",
           "array, sorted alphabetically"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Files this skill touches — steps",
-        "line" : 309,
+        "line" : 317,
         "lines" : [
           "gbrain's `skills\/<slug>\/` — every file in the host skill dir",
           "(copy)"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       }
     ],
     "triggers" : "\"harvest this skill\"\n\"harvest my skill\"\n\"publish this skill to gbrain\"\n\"lift this skill\"\n\"share this skill\"\n\"promote this skill\"\n\"promote my skill\"\n\"skill upstream\"\n\"into the gbrain core\"\n\"gbrain bundle\"",
@@ -596,88 +757,100 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 40,
-      "swift_line" : 603
+      "meridian_line" : 166,
+      "swift_line" : 604
+    },
+    {
+      "meridian_line" : 168,
+      "swift_line" : 616
+    },
+    {
+      "meridian_line" : 241,
+      "swift_line" : 627
+    },
+    {
+      "meridian_line" : 248,
+      "swift_line" : 638
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 642
+      "swift_line" : 678
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 647
+      "swift_line" : 683
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 686
+      "swift_line" : 722
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 691
+      "swift_line" : 727
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 730
+      "swift_line" : 766
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 735
+      "swift_line" : 771
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 774
+      "swift_line" : 810
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 779
+      "swift_line" : 815
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 818
+      "swift_line" : 854
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 823
+      "swift_line" : 859
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 862
+      "swift_line" : 898
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 867
+      "swift_line" : 903
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 906
+      "swift_line" : 942
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 911
+      "swift_line" : 947
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 950
+      "swift_line" : 986
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 955
+      "swift_line" : 991
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 994
+      "swift_line" : 1030
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 999
+      "swift_line" : 1035
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1038
+      "swift_line" : 1074
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1043
+      "swift_line" : 1079
     }
   ],
   "tools_used" : [
@@ -690,35 +863,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "A harvest is \"properly done\" when:\nThe host skill is mature (used in production, recent routing-eval\ncases pass)\nThe editorial genericization in Phase 3 has scrubbed every\nfork-specific reference (names, real entities, internal channels)\n`gbrain skillpack harvest --dry-run` previewed the file set\nThe real `gbrain skillpack harvest <slug> --from <host>` succeeded\nwith `status: harvested` (no privacy-lint hits)\n`bun test test\/skills-conformance.test.ts` passes on the new\n`skills\/<slug>\/SKILL.md`\nThe user has reviewed the diff in gbrain and explicitly approved\nthe commit\nIf any of these is incomplete, the skill is NOT yet harvested — the\nfiles may sit in gbrain's working tree, but they're not landed\nuse judgment to follow the Anti-Patterns guidance:\n**Skipping the dry-run.** Always preview first. Files land in\ngbrain's working tree; cleanup is a `git checkout` away, but you\nshouldn't need to\n**Trusting the linter alone.** The default regex set catches the\ncommon cases. It doesn't catch every proper noun. Phase 3 (the\neditorial pass) is the primary defense\n**Harvesting `--no-lint` without justification.** The lint exists\nfor a reason. If you bypass it, document why in the commit\n**Harvesting a skill that's still in flux.** Wait until the host\nversion stabilizes. Otherwise you'll harvest, then re-harvest,\nthen re-harvest, and that churns gbrain's bundle for no benefit\n**Moving files instead of copying.** Harvest is a copy. The host\nretains its skill. Don't `rm -rf` the source after harvesting\n**Harvesting batch (multiple skills at once).** Not supported, and\nfor good reason — the editorial review per skill is real work\nuse judgment to follow the When to invoke guidance:\nThe user developed a skill in their host fork (Wintermute, Neuromancer,\nZion, etc.) and wants other gbrain clients to be able to use it\nA skill has proven itself in production and is ready to generalize\nThe user explicitly asks to \"harvest\" or \"publish\" a skill upstream\nDo NOT invoke when:\nThe skill is still in flux locally — let it stabilize first\nThe skill references private content that can't be generalized\nThe user just wants to share a one-off draft (use a gist instead)\nuse judgment to follow the Preconditions guidance:\n**The skill is generalizable.** Strip-test in your head: replace\nevery fork-specific name. Does it still make sense as a skill?\n**The user owns the gbrain checkout.** The harvest writes into\ngbrain's working tree. They'll review and commit. Don't harvest\ninto a checkout the user doesn't intend to commit from\nuse judgment to follow the Workflow guidance:\nuse judgment to follow the Phase 1 — Plan guidance:\nAsk the user:\nWhat slug should the harvested skill have? (Slugs must be kebab-case,\nglobally unique in the gbrain bundle.)\nWhich host repo is the source? (Path to repo root, not to the skill\ndirectory — e.g. `~\/git\/wintermute`, not `~\/git\/wintermute\/skills\/foo`.)\nShould paired source files come along? (Check the host SKILL.md's\nfrontmatter `sources:` array.)\nuse judgment to follow the Phase 2 — Dry-run + privacy-lint preview guidance:\nThe output shows:\nWhich files would land in gbrain's tree\nWhether paired sources are included\n(Implicit) The skill's frontmatter triggers — read them and check\nthey generalize\nDo **not** skip the dry-run. The privacy linter only runs on a real\nharvest, but the dry-run preview lets you see the files before they\nland. Spot-check the SKILL.md and any paired source for things the\nlinter might miss (proper nouns, internal project names, etc.)\nRun the CLI with `--dry-run`:\ncodeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290PiAtLWRyeS1ydW4=\nuse judgment to follow the Phase 3 — Genericization checklist (the editorial pass) guidance:\n**Fork-specific names → generic phrasing**\n`Wintermute` → `your OpenClaw` (or `OpenClaw deployment`)\n`Neuromancer`, `Zion`, `<personal-fork-name>` → same treatment\nPersonal first names (`garry`, `jane`, etc.) → `the user` \/\n`you` \/ a generic placeholder\n**Real entities → placeholders**\nReal people, companies, deals, funds → placeholder slugs\n(`alice-example`, `acme-example`, `fund-a`, etc.)\nSpecific tracker IDs \/ Linear ticket numbers → strip\n**Fork-specific conventions → references**\n**Triggers array generalizes**\nRead every entry in frontmatter `triggers:`. None should\nreference the user's name, fork name, or internal tools\n\"Have garry sign off on it\" → \"have the user sign off on it\"\n**routing-eval.jsonl examples are scrubbed**\nOpen `skills\/<slug>\/routing-eval.jsonl`. Every `intent` field\ngets the same scrub as `triggers:`\n**Code comments + log strings**\nIf a paired source is going to be harvested, walk it for the\nsame private-pattern leaks. Comments are the most common\nhiding spot\nBefore running the real harvest, walk the host's `skills\/<slug>\/`\nfiles and apply this checklist. If anything matches, edit the host\nfile FIRST, then run harvest\nEmail addresses → strip entirely OR use `example@example.com`\nInternal Slack channels → `#some-channel` or strip\nMentions of `<host-repo>\/docs\/...` files → either lift the doc\ninto gbrain OR replace with a generic placeholder explanation\nMentions of `<host-repo>\/skills\/<other-fork-only-skill>` → either\ndecide to harvest that one too, or replace with a generic\npattern reference\nuse judgment to follow the Phase 4 — Real harvest guidance:\nDefault behavior:\nPath-confinement + symlink rejection at file copy\nPrivacy linter runs against `~\/.gbrain\/harvest-private-patterns.txt`\n(plus built-in defaults: `\\bWintermute\\b`, email, Slack channels)\nOn any match → rollback (delete the harvested files) + exit non-zero\nOutcomes:\n`harvested` — success, manifest updated, files in gbrain's tree\n`lint_failed` — privacy linter caught something. Go back to Phase 3,\nscrub the host file, retry\n`slug_collision` — gbrain already has a skill at that slug. Either\nuse a different slug, or pass `--overwrite-local` if you really\nmean to replace\ncodeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290Pg==\n`openclaw.plugin.json` updated to add the slug, sorted\nuse judgment to follow the Phase 5 — Verify in gbrain guidance:\nCommit the additions in gbrain (do NOT commit any leftover files\nin the host repo — harvest is a copy, not a move)\n`bun test test\/skills-conformance.test.ts` — confirms the new\nSKILL.md meets the frontmatter contract\n`gbrain skillpack check --strict` — confirms no drift between\nbundle and gbrain's own checkout\n`gbrain skillpack list` — confirms the slug shows up in the bundle\nReview the diff: `cd <gbrainRoot> && git diff -- skills\/<slug>\/`\nuse judgment to follow the Phase 6 — Downstream announcement (optional) guidance:\nIf other gbrain clients should pick up the new skill:\nNote it in `CHANGELOG.md` under \"Skills added\" for the next release\nTag the user \/ contributor in the PR if the skill came from\nsomeone outside the core team\nuse judgment to follow the Bypass: `--no-lint` guidance:\n**Document the bypass in the commit message.** Future maintainers\nshould be able to see WHY the lint was bypassed (e.g. \"Wintermute\nappears in a citation, not a real reference — verified manually\").\nNever bypass the linter on a casual basis. The whole point of the\ndefault-on lint is that real names occasionally slip through the\neditorial pass\nThe privacy linter is the safety net. The editorial pass is the\nprimary defense. If you've completed Phase 3 thoroughly and the\nlinter is still firing on a false positive, use `--no-lint`:\ncodeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290PiAtLW5vLWxpbnQ=\ngbrain's `skills\/<slug>\/` — every file in the host skill dir\n(copy)",
-          "line" : 40,
-          "scoped_tools" : [
-            "assess.notability",
-            "capture",
-            "enrich",
-            "health.get",
-            "jobs.status",
-            "jobs.submit",
-            "link.add",
-            "link.backlinks",
-            "makePDF",
-            "page.create",
-            "page.get",
-            "page.list",
-            "page.search",
-            "page.update",
-            "publish",
-            "recall",
-            "research",
-            "timeline.add",
-            "verify"
-          ],
-          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "skillpack-harvest a input",

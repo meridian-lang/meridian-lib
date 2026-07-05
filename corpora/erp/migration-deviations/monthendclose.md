@@ -3,8 +3,8 @@
 - Original: `month_end_close/SKILL.md`
 - Ported: `monthendclose.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 90%
-- Lines: 24 -> 25 (+3 / -2)
+- Similarity: 96%
+- Lines: 24 -> 24 (+1 / -1)
 
 ## Frontmatter
 - Added: (none)
@@ -12,45 +12,35 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L15 `Accounting notes`: reference-documentation - Reference documentation, rationale, examples, or changelog.
+- L14 `Accounting notes`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
 - Sections inert total: 1/3 (33% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=1
-- Judgment: 1 blocks, 0 lines
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L15 `Accounting notes`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L14 `Accounting notes`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/month_end_close/SKILL.md
 +++ skills/monthendclose.meri
-@@ -8,7 +8,8 @@
- 
- # Month End Close
- 
--## When this applies
-+## When this applies (( role: procedure ))
-+use judgment to follow the When this applies guidance:
- - "month-end close"
- - "close accounting period"
- 
-@@ -18,7 +19,7 @@
+@@ -18,7 +18,7 @@
  close the accounting period.
  Publish: "accounting period closed".
  
 -## Accounting notes
-+## Accounting notes (( inert ))
++## Accounting notes (( role: reference ))
  The real-world phrase "soft close" is intentionally left as documentation; the
  compiled behavior uses an explicit period-close tool.
  

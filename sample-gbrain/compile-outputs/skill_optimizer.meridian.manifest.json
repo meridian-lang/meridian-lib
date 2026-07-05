@@ -99,75 +99,123 @@
     "name" : "skill-optimizer",
     "outline" : [
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 22,
         "text" : "When to invoke this skill"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 29,
         "text" : "Iron Law"
       },
       {
-        "kind" : "inert",
-        "level" : 2,
-        "line" : 48,
-        "text" : "The pipeline"
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 34,
+        "text" : "Iron Law — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 39,
+        "text" : "Iron Law — steps 2"
       },
       {
         "kind" : "procedure",
+        "level" : 3,
+        "line" : 49,
+        "text" : "Iron Law — steps 3"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 75,
+        "line" : 57,
+        "text" : "The pipeline"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 84,
         "text" : "Starting a benchmark from the skill itself (the common case)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 121,
+        "line" : 109,
         "text" : "Starting a benchmark from the skill itself (the common case) — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 129,
+        "line" : 117,
         "text" : "Starting a benchmark from the skill itself (the common case) — steps 2"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 126,
+        "text" : "Starting a benchmark from the skill itself (the common case) — steps 3"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 137,
+        "text" : "Starting a benchmark from the skill itself (the common case) — steps 4"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 145,
+        "text" : "Starting a benchmark from the skill itself (the common case) — steps 5"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 133,
+        "line" : 152,
         "text" : "Decision tree"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 136,
+        "line" : 155,
         "text" : "Decision tree — steps"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 150,
+        "line" : 169,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 161,
+        "line" : 180,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 189,
+        "text" : "Anti-Patterns — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 197,
+        "text" : "Anti-Patterns — steps 2"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 180,
+        "line" : 205,
         "text" : "Contract"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 198,
+        "line" : 222,
         "text" : "Related skills"
       },
       {
@@ -188,25 +236,49 @@
           "Bootstrap a benchmark file for a new skill",
           "Re-tune a skill after switching target models"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Iron Law",
         "line" : 29,
         "lines" : [
-          "use judgment to follow the Iron Law guidance:",
-          "**Validation gating is MANDATORY.** Every candidate must clear median-of-3",
-          "+ epsilon=0.05 margin against the sel-set before SKILL.md gets rewritten",
           "**Frontmatter mutation is FORBIDDEN.** The optimizer only edits the body",
-          "Routing surface (`triggers:`, `brain_first:`) stays invariant",
-          "**Bundled skills require explicit opt-in AND an independent held-out set.**",
+          "Routing surface (`triggers:`, `brain_first:`) stays invariant"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Iron Law — steps",
+        "line" : 34,
+        "lines" : [
+          "Every candidate must clear median-of-3",
+          "+ epsilon=0.05 margin against the sel-set before SKILL.md gets rewritten"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Iron Law — steps 2",
+        "line" : 39,
+        "lines" : [
+          "Bundled skills require explicit opt-in AND an independent held-out set",
           "Skills shipping with gbrain cannot be auto-mutated. To rewrite one in place",
           "the user passes BOTH `--allow-mutate-bundled` AND `--held-out <path>` with",
           "at least 5 benchmark-disjoint tasks; without the held-out set the run",
           "hard-refuses (exit 2). Drop `--allow-mutate-bundled` (or pass `--no-mutate`,",
           "the default for the dream-cycle phase) to write proposed.md for review",
-          "instead — no held-out needed for review-only output",
+          "instead — no held-out needed for review-only output"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Iron Law — steps 3",
+        "line" : 49,
+        "lines" : [
+          "use judgment to follow the Iron Law — steps 3 guidance:",
           "**Bootstrap output requires human review.** Both `--bootstrap-from-skill`",
           "and `--bootstrap-from-routing` write a sentinel; you must review + STRENGTHEN",
           "the generated judges, delete the sentinel, and re-run with",
@@ -217,44 +289,25 @@
       {
         "executes" : false,
         "heading" : "The pipeline",
-        "line" : 48,
+        "line" : 57,
         "lines" : [
           "codeblock:plain:Z2JyYWluIHNraWxsb3B0IDxza2lsbC1uYW1lPiBbZmxhZ3NdCiAg4pSCCiAg4pSc4pSA4pSAIFByZS1mbGlnaHQgZ2F0ZXMKICDilIIgICAgIOKUnOKUgOKUgCB3b3JraW5nIHRyZWUgY2xlYW4gKG9yIC0tZm9yY2UpCiAg4pSCICAgICDilJzilIDilIAgYmVuY2htYXJrIHZhbGlkICsgRF9zZWwgPj0gNSAoRDE3KQogIOKUgiAgICAg4pSc4pSA4pSAIGNvc3QgcHJlZmxpZ2h0IChEMykg4oCUIHJlZnVzZXMgb3ZlciAtLW1heC1jb3N0LXVzZAogIOKUgiAgICAg4pSU4pSA4pSAIHBlci1za2lsbCBEQiBsb2NrIChEMTQpCiAg4pSCCiAg4pSc4pSA4pSAIEJhc2VsaW5lIGV2YWwgb24gRF9zZWwgKHNldHMgYmVzdF9zZWxfc2NvcmUpCiAg4pSCCiAg4pSc4pSA4pSAIGZvciBlcG9jaCBpbiAxLi5OOgogIOKUgiAgICAgZm9yIHN0ZXAgaW4gMS4uc3RlcHNfcGVyX2Vwb2NoOgogIOKUgiAgICAgICDilJzilIDilIAgZm9yd2FyZCBwYXNzOiByb2xsb3V0cyBvbiBEX3RyYWluIGJhdGNoCiAg4pSCICAgICAgIOKUnOKUgOKUgCBiYWNrd2FyZCBwYXNzOiByZWZsZWN0IMOXIDIgKGZhaWx1cmVzICsgc3VjY2Vzc2VzIHBlciBENykKICDilIIgICAgICAg4pSc4pSA4pSAIHJhbmsgKyBjbGlwIHZpYSBMUiBjb3NpbmUgc2NoZWR1bGUKICDilIIgICAgICAg4pSc4pSA4pSAIGFwcGx5IGVkaXRzIChib2R5LW9ubHkgcGVyIEQ1LCB0YWdnZWQgcmVzdWx0IHBlciBEOSkKICDilIIgICAgICAg4pSc4pSA4pSAIHZhbGlkYXRpb24gZ2F0ZTogbWVkaWFuLW9mLTMgKyBlcHNpbG9uPTAuMDUgKEQxMikKICDilIIgICAgICAg4pSU4pSA4pSAIGlmIGFjY2VwdDogY29tbWl0IHZpYSBEOCBoaXN0b3J5LWludGVudC1maXJzdAogIOKUgiAgICAg4pSCCiAg4pSCICAgICDilJTilIDilIAgc2xvdyB1cGRhdGUgKEQ2KSBpZiBubyBpbXByb3ZlbWVudCB0aGlzIGVwb2NoCiAg4pSCCiAg4pSU4pSA4pSAIEZpbmFsIHRlc3QgZXZhbCBvbiBEX3Rlc3Qg4oaSIHJ1biByZWNlaXB0"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Starting a benchmark from the skill itself (the common case)",
-        "line" : 75,
+        "line" : 84,
         "lines" : [
-          "use judgment to follow the Starting a benchmark from the skill itself (the common case) guidance:",
           "**Generate the starter.** Run:",
           "codeblock:plain:Z2JyYWluIHNraWxsb3B0IFggLS1ib290c3RyYXAtZnJvbS1za2lsbA==",
-          "One LLM call reads `skills\/X\/SKILL.md`, infers what the skill produces and what",
-          "\"good\" looks like, and writes ~15 tasks (each with rule judges) to",
-          "`skills\/X\/skillopt-benchmark.jsonl` plus a `# BOOTSTRAP_PENDING_REVIEW`",
-          "sentinel. No `routing-eval.jsonl` is needed. Tune the count with",
-          "`--bootstrap-tasks N` (max 50)",
           "**Review AND STRENGTHEN the judges.** This is YOUR job and it is load-bearing",
-          "The generated rule checks are weak drafts — the model tends to emit generic",
-          "`contains`, loose `max_chars`, or invented headings. Read each task, fix soft",
-          "checks, add the must-haves the skill actually requires (real section names,",
-          "real length ceilings, `min_citations` where sources are expected,",
-          "`tool_called`\/`tool_not_called` for tools the skill genuinely uses). A thin",
-          "benchmark optimizes for a thin definition of quality — do not rubber-stamp",
           "codeblock:plain:Z2JyYWluIHNraWxsb3B0IFggLS1ib290c3RyYXAtcmV2aWV3ZWQgLS1zcGxpdCAxOjE6MQ==",
-          "The 1:1:1 split is REQUIRED for a 15-task starter — the default `4:1:5` makes",
-          "the validation set `floor(15\/10)=1`, below the `D_sel >= 5` floor, and the",
-          "optimizer refuses with `d_sel_too_small`. (4:1:5 needs ~50 tasks.) Add",
-          "`--dry-run` first to preview cost",
           "Benchmark line shape (what the generator writes, one per line):",
           "codeblock:plain:eyJ0YXNrX2lkIjoieC0wMDEiLCJ0YXNrIjoiPHVzZXIgcHJvbXB0PiIsImp1ZGdlIjp7ImtpbmQiOiJydWxlIiwiY2hlY2tzIjpbeyJvcCI6Im1heF9jaGFycyIsImFyZyI6MTgwMH0seyJvcCI6ImNvbnRhaW5zIiwiYXJnIjoiYWdlbmRhIn1dfX0=",
           "Rule-check vocabulary you'll strengthen with: `contains`, `regex`,",
           "`section_present`, `max_chars`, `min_citations`, `tool_called`, `tool_not_called`",
-          "Rule judges are deterministic and free, but shallow for skills whose quality is",
-          "sequencing, privacy, refusal boundaries, or file placement — for those, hand-add",
-          "richer checks (or an `llm` judge) during review",
           "**Fallback — author freehand.** If the generated starter is poor (rare, but",
           "possible for very behavior-shaped skills), discard it and write the JSONL",
           "yourself: read the SKILL.md, write ~15 realistic tasks covering the boring middle,",
@@ -262,12 +315,12 @@
           "`--split 1:1:1`. The human walkthrough lives at",
           "`docs\/tutorials\/improving-skills-with-skillopt.md`"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Starting a benchmark from the skill itself (the common case) — steps",
-        "line" : 121,
+        "line" : 109,
         "lines" : [
           "The user will NOT hand-write a benchmark, and you shouldn't start from a blank",
           "file either. When the user says \"make skill X better\" and",
@@ -279,7 +332,21 @@
       {
         "executes" : true,
         "heading" : "Starting a benchmark from the skill itself (the common case) — steps 2",
-        "line" : 129,
+        "line" : 117,
+        "lines" : [
+          "use judgment to follow the Starting a benchmark from the skill itself (the common case) — steps 2 guidance:",
+          "One LLM call reads `skills\/X\/SKILL.md`, infers what the skill produces and what",
+          "\"good\" looks like, and writes ~15 tasks (each with rule judges) to",
+          "`skills\/X\/skillopt-benchmark.jsonl` plus a `# BOOTSTRAP_PENDING_REVIEW`",
+          "sentinel. No `routing-eval.jsonl` is needed. Tune the count with",
+          "`--bootstrap-tasks N` (max 50)"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Starting a benchmark from the skill itself (the common case) — steps 3",
+        "line" : 126,
         "lines" : [
           "Delete the sentinel line (`# BOOTSTRAP_PENDING_REVIEW`, the last line)",
           "Run the optimizer with `--split 1:1:1`:"
@@ -287,9 +354,30 @@
         "role" : "procedure"
       },
       {
+        "executes" : true,
+        "heading" : "Starting a benchmark from the skill itself (the common case) — steps 4",
+        "line" : 137,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Starting a benchmark from the skill itself (the common case) — steps 5",
+        "line" : 145,
+        "lines" : [
+          "use judgment to follow the Starting a benchmark from the skill itself (the common case) — steps 5 guidance:",
+          "Rule judges are deterministic and free, but shallow for skills whose quality is",
+          "sequencing, privacy, refusal boundaries, or file placement — for those, hand-add",
+          "richer checks (or an `llm` judge) during review"
+        ],
+        "role" : "procedure"
+      },
+      {
         "executes" : false,
         "heading" : "Decision tree",
-        "line" : 133,
+        "line" : 152,
         "lines" : [
 
         ],
@@ -298,7 +386,7 @@
       {
         "executes" : true,
         "heading" : "Decision tree — steps",
-        "line" : 136,
+        "line" : 155,
         "lines" : [
           "table:ai-discretion:fCBTaXR1YXRpb24gfCBBY3Rpb24gfAp8LS0tfC0tLXwKfCBTa2lsbCBoYXMgbm8gYmVuY2htYXJrIHwgYGdicmFpbiBza2lsbG9wdCBmb28gLS1ib290c3RyYXAtZnJvbS1za2lsbGAg4oaSIHJldmlldyArIHN0cmVuZ3RoZW4gdGhlIGp1ZGdlcyDihpIgZGVsZXRlIHNlbnRpbmVsIOKGkiBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLWJvb3RzdHJhcC1yZXZpZXdlZCAtLXNwbGl0IDE6MToxYCAoc2VlIHNlY3Rpb24gYWJvdmUpIHwKfCBTa2lsbCBoYXMgYSBgcm91dGluZy1ldmFsLmpzb25sYCBhbmQgeW91IHdhbnQgYSBoZWFkIHN0YXJ0IHwgYGdicmFpbiBza2lsbG9wdCBmb28gLS1ib290c3RyYXAtZnJvbS1yb3V0aW5nYCDihpIgcmV2aWV3IHRoZSBnZW5lcmF0ZWQgdGFza3Mg4oaSIGAtLWJvb3RzdHJhcC1yZXZpZXdlZGAgKHJvdXRpbmcgdGFza3MgdGVzdCBkaXNwYXRjaDsgdGlnaHRlbiB0aGVtIGludG8gcXVhbGl0eSB0YXNrcyBiZWZvcmUgdHJ1c3RpbmcpIHwKfCBJdGVyYXRpbmcgb24gYW4gZXhpc3Rpbmcgc2tpbGwgfCBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLWJlbmNobWFyayBza2lsbHMvZm9vL3NraWxsb3B0LWJlbmNobWFyay5qc29ubGAgfAp8IENvc3RseSBydW4sIHdhbnQgcHJldmlldyB8IEFkZCBgLS1kcnktcnVuYCB8CnwgQnVuZGxlZCBza2lsbCAoc2tpbGxzLyBpbiBnYnJhaW4gcmVwbykgfCBEZWZhdWx0IHdyaXRlcyBwcm9wb3NlZC5tZDsgdG8gY29tbWl0IGluIHBsYWNlIGFkZCBgLS1hbGxvdy1tdXRhdGUtYnVuZGxlZGAgQU5EIGAtLWhlbGQtb3V0IDxwYXRoPmAgKD49NSBiZW5jaG1hcmstZGlzam9pbnQgdGFza3MpIOKAlCBlbHNlIGl0IGhhcmQtcmVmdXNlcyB8CnwgV2FudCB0byByZXZpZXcgY2hhbmdlcyBiZWZvcmUgYXBwbHlpbmcgfCBBZGQgYC0tbm8tbXV0YXRlYCAod3JpdGVzIHByb3Bvc2VkLm1kLCBubyBoZWxkLW91dCBuZWVkZWQpIHwKfCBHdWFyZCBhZ2FpbnN0IGJlbmNobWFyayBvdmVyZml0dGluZyB8IEFkZCBgLS1oZWxkLW91dCA8cGF0aD5gIOKAlCBhIGNhbmRpZGF0ZSB0aGF0IGJlYXRzIHRoZSBiZW5jaG1hcmsgYnV0IHJlZ3Jlc3NlcyBvbiB0aGUgaGVsZC1vdXQgc2V0IGlzIHJlZnVzZWQgfAp8IE1pZC1ydW4gY3Jhc2ggfCBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLXJlc3VtZSA8cnVuLWlkPmAgfA=="
         ],
@@ -307,7 +395,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 150,
+        "line" : 169,
         "lines" : [
           "When invoked, this skill produces:",
           "Updated `skills\/<name>\/SKILL.md` (when mutation is allowed)",
@@ -320,44 +408,59 @@
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 161,
+        "line" : 180,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "**Don't bypass the validation gate.** The median-of-3 + epsilon=0.05 is",
           "load-bearing; without it, the optimizer accepts noise as improvement",
-          "**Don't optimize bundled skills without `--allow-mutate-bundled` AND",
-          "`--held-out`.** They ship with gbrain and are load-bearing for downstream",
-          "agents. In-place mutation requires both flags (held-out >=5 benchmark-disjoint",
-          "tasks); without the held-out set the run hard-refuses and points you at",
-          "proposed.md",
-          "**Don't use bootstrap output without strengthening it.** Both",
-          "`--bootstrap-from-skill` and `--bootstrap-from-routing` have the optimizer",
-          "model invent success criteria — generic and weak by default. Review and",
-          "tighten the judges before SkillOpt optimizes against them, or it trains the",
-          "skill toward benchmark artifacts instead of real quality",
           "**Don't skip `--split 1:1:1` on a ~15-task starter.** The default `4:1:5`",
           "split drops the validation set below the `D_sel >= 5` floor and the run",
           "aborts with `d_sel_too_small`"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
-        "heading" : "Contract",
-        "line" : 180,
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 189,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
+          "Don't optimize bundled skills without `--allow-mutate-bundled` AND",
+          "`--held-out`. They ship with gbrain and are load-bearing for downstream",
+          "agents. In-place mutation requires both flags (held-out >=5 benchmark-disjoint",
+          "tasks); without the held-out set the run hard-refuses and points you at",
+          "proposed.md"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps 2",
+        "line" : 197,
+        "lines" : [
+          "use judgment to follow the Anti-Patterns — steps 2 guidance:",
+          "**Don't use bootstrap output without strengthening it.** Both",
+          "`--bootstrap-from-skill` and `--bootstrap-from-routing` have the optimizer",
+          "model invent success criteria — generic and weak by default. Review and",
+          "tighten the judges before SkillOpt optimizes against them, or it trains the",
+          "skill toward benchmark artifacts instead of real quality"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 205,
+        "lines" : [
           "`runSkillOpt(opts)` returns:",
           "codeblock:plain:ewogIG91dGNvbWU6ICdhY2NlcHRlZCcgfCAnbm9faW1wcm92ZW1lbnQnIHwgJ2Fib3J0ZWQnIHwgJ2Vycm9yZWQnLAogIHJlY2VpcHQ6IHsKICAgIHJ1bl9pZCwgc2tpbGxfc2hhOCwgYmVuY2htYXJrX3NoYTgsIG1vZGVscywgY29zdCwKICAgIGJhc2VsaW5lX3NlbF9zY29yZSwgYmVzdF9zZWxfc2NvcmUsICAgLy8gcmVhbCBtZWFzdXJlZCBiYXNlbGluZSAobm8gbG9uZ2VyIGhhcmRjb2RlZCAwKQogICAgYmFzZWxpbmVfdGVzdF9zY29yZSwgdGVzdF9zY29yZSwgICAgICAvLyBmaW5hbCBoZWxkLW91dCB0ZXN0LXNwbGl0IGV2YWwKICB9LAogIGZpbmFsVGV4dDogc3RyaW5nLAogIG11dGF0ZWRTa2lsbEZpbGU6IGJvb2xlYW4sCiAgcHJvcG9zZWRQYXRoPzogc3RyaW5nCn0="
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Related skills",
-        "line" : 198,
+        "line" : 222,
         "lines" : [
           "`skillify` — scaffolds a new skill (use BEFORE skillopt)",
           "`skillpack-check` — audits skill conformance (item 13 surfaces skillopt status)",
@@ -405,7 +508,7 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 30,
+      "meridian_line" : 51,
       "swift_line" : 602
     },
     {
@@ -464,8 +567,8 @@
       "prose_steps" : [
         {
           "dispatch_mode" : "plan_then_execute",
-          "guidance" : "**Validation gating is MANDATORY.** Every candidate must clear median-of-3\n+ epsilon=0.05 margin against the sel-set before SKILL.md gets rewritten\n**Frontmatter mutation is FORBIDDEN.** The optimizer only edits the body\nRouting surface (`triggers:`, `brain_first:`) stays invariant\n**Bundled skills require explicit opt-in AND an independent held-out set.**\nSkills shipping with gbrain cannot be auto-mutated. To rewrite one in place\nthe user passes BOTH `--allow-mutate-bundled` AND `--held-out <path>` with\nat least 5 benchmark-disjoint tasks; without the held-out set the run\nhard-refuses (exit 2). Drop `--allow-mutate-bundled` (or pass `--no-mutate`,\nthe default for the dream-cycle phase) to write proposed.md for review\ninstead — no held-out needed for review-only output\n**Bootstrap output requires human review.** Both `--bootstrap-from-skill`\nand `--bootstrap-from-routing` write a sentinel; you must review + STRENGTHEN\nthe generated judges, delete the sentinel, and re-run with\n`--bootstrap-reviewed` before optimization can use the file\nuse judgment to follow the Starting a benchmark from the skill itself (the common case) guidance:\n**Generate the starter.** Run:\ncodeblock:plain:Z2JyYWluIHNraWxsb3B0IFggLS1ib290c3RyYXAtZnJvbS1za2lsbA==\nOne LLM call reads `skills\/X\/SKILL.md`, infers what the skill produces and what\n\"good\" looks like, and writes ~15 tasks (each with rule judges) to\n`skills\/X\/skillopt-benchmark.jsonl` plus a `# BOOTSTRAP_PENDING_REVIEW`\nsentinel. No `routing-eval.jsonl` is needed. Tune the count with\n`--bootstrap-tasks N` (max 50)\n**Review AND STRENGTHEN the judges.** This is YOUR job and it is load-bearing\nThe generated rule checks are weak drafts — the model tends to emit generic\n`contains`, loose `max_chars`, or invented headings. Read each task, fix soft\nchecks, add the must-haves the skill actually requires (real section names,\nreal length ceilings, `min_citations` where sources are expected,\n`tool_called`\/`tool_not_called` for tools the skill genuinely uses). A thin\nbenchmark optimizes for a thin definition of quality — do not rubber-stamp\ncodeblock:plain:Z2JyYWluIHNraWxsb3B0IFggLS1ib290c3RyYXAtcmV2aWV3ZWQgLS1zcGxpdCAxOjE6MQ==\nThe 1:1:1 split is REQUIRED for a 15-task starter — the default `4:1:5` makes\nthe validation set `floor(15\/10)=1`, below the `D_sel >= 5` floor, and the\noptimizer refuses with `d_sel_too_small`. (4:1:5 needs ~50 tasks.) Add\n`--dry-run` first to preview cost\nBenchmark line shape (what the generator writes, one per line):\ncodeblock:plain:eyJ0YXNrX2lkIjoieC0wMDEiLCJ0YXNrIjoiPHVzZXIgcHJvbXB0PiIsImp1ZGdlIjp7ImtpbmQiOiJydWxlIiwiY2hlY2tzIjpbeyJvcCI6Im1heF9jaGFycyIsImFyZyI6MTgwMH0seyJvcCI6ImNvbnRhaW5zIiwiYXJnIjoiYWdlbmRhIn1dfX0=\nRule-check vocabulary you'll strengthen with: `contains`, `regex`,\n`section_present`, `max_chars`, `min_citations`, `tool_called`, `tool_not_called`\nRule judges are deterministic and free, but shallow for skills whose quality is\nsequencing, privacy, refusal boundaries, or file placement — for those, hand-add\nricher checks (or an `llm` judge) during review\n**Fallback — author freehand.** If the generated starter is poor (rare, but\npossible for very behavior-shaped skills), discard it and write the JSONL\nyourself: read the SKILL.md, write ~15 realistic tasks covering the boring middle,\nattach >=2 rule checks each, save to `skills\/X\/skillopt-benchmark.jsonl`, run with\n`--split 1:1:1`. The human walkthrough lives at\n`docs\/tutorials\/improving-skills-with-skillopt.md`\nThe user will NOT hand-write a benchmark, and you shouldn't start from a blank\nfile either. When the user says \"make skill X better\" and\n`skills\/X\/skillopt-benchmark.jsonl` doesn't exist, generate a starter from the\nSKILL.md directly:\nDelete the sentinel line (`# BOOTSTRAP_PENDING_REVIEW`, the last line)\nRun the optimizer with `--split 1:1:1`:\ntable:ai-discretion:fCBTaXR1YXRpb24gfCBBY3Rpb24gfAp8LS0tfC0tLXwKfCBTa2lsbCBoYXMgbm8gYmVuY2htYXJrIHwgYGdicmFpbiBza2lsbG9wdCBmb28gLS1ib290c3RyYXAtZnJvbS1za2lsbGAg4oaSIHJldmlldyArIHN0cmVuZ3RoZW4gdGhlIGp1ZGdlcyDihpIgZGVsZXRlIHNlbnRpbmVsIOKGkiBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLWJvb3RzdHJhcC1yZXZpZXdlZCAtLXNwbGl0IDE6MToxYCAoc2VlIHNlY3Rpb24gYWJvdmUpIHwKfCBTa2lsbCBoYXMgYSBgcm91dGluZy1ldmFsLmpzb25sYCBhbmQgeW91IHdhbnQgYSBoZWFkIHN0YXJ0IHwgYGdicmFpbiBza2lsbG9wdCBmb28gLS1ib290c3RyYXAtZnJvbS1yb3V0aW5nYCDihpIgcmV2aWV3IHRoZSBnZW5lcmF0ZWQgdGFza3Mg4oaSIGAtLWJvb3RzdHJhcC1yZXZpZXdlZGAgKHJvdXRpbmcgdGFza3MgdGVzdCBkaXNwYXRjaDsgdGlnaHRlbiB0aGVtIGludG8gcXVhbGl0eSB0YXNrcyBiZWZvcmUgdHJ1c3RpbmcpIHwKfCBJdGVyYXRpbmcgb24gYW4gZXhpc3Rpbmcgc2tpbGwgfCBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLWJlbmNobWFyayBza2lsbHMvZm9vL3NraWxsb3B0LWJlbmNobWFyay5qc29ubGAgfAp8IENvc3RseSBydW4sIHdhbnQgcHJldmlldyB8IEFkZCBgLS1kcnktcnVuYCB8CnwgQnVuZGxlZCBza2lsbCAoc2tpbGxzLyBpbiBnYnJhaW4gcmVwbykgfCBEZWZhdWx0IHdyaXRlcyBwcm9wb3NlZC5tZDsgdG8gY29tbWl0IGluIHBsYWNlIGFkZCBgLS1hbGxvdy1tdXRhdGUtYnVuZGxlZGAgQU5EIGAtLWhlbGQtb3V0IDxwYXRoPmAgKD49NSBiZW5jaG1hcmstZGlzam9pbnQgdGFza3MpIOKAlCBlbHNlIGl0IGhhcmQtcmVmdXNlcyB8CnwgV2FudCB0byByZXZpZXcgY2hhbmdlcyBiZWZvcmUgYXBwbHlpbmcgfCBBZGQgYC0tbm8tbXV0YXRlYCAod3JpdGVzIHByb3Bvc2VkLm1kLCBubyBoZWxkLW91dCBuZWVkZWQpIHwKfCBHdWFyZCBhZ2FpbnN0IGJlbmNobWFyayBvdmVyZml0dGluZyB8IEFkZCBgLS1oZWxkLW91dCA8cGF0aD5gIOKAlCBhIGNhbmRpZGF0ZSB0aGF0IGJlYXRzIHRoZSBiZW5jaG1hcmsgYnV0IHJlZ3Jlc3NlcyBvbiB0aGUgaGVsZC1vdXQgc2V0IGlzIHJlZnVzZWQgfAp8IE1pZC1ydW4gY3Jhc2ggfCBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLXJlc3VtZSA8cnVuLWlkPmAgfA==\nuse judgment to follow the Anti-Patterns guidance:\n**Don't bypass the validation gate.** The median-of-3 + epsilon=0.05 is\nload-bearing; without it, the optimizer accepts noise as improvement\n**Don't optimize bundled skills without `--allow-mutate-bundled` AND\n`--held-out`.** They ship with gbrain and are load-bearing for downstream\nagents. In-place mutation requires both flags (held-out >=5 benchmark-disjoint\ntasks); without the held-out set the run hard-refuses and points you at\nproposed.md\n**Don't use bootstrap output without strengthening it.** Both\n`--bootstrap-from-skill` and `--bootstrap-from-routing` have the optimizer\nmodel invent success criteria — generic and weak by default. Review and\ntighten the judges before SkillOpt optimizes against them, or it trains the\nskill toward benchmark artifacts instead of real quality\n**Don't skip `--split 1:1:1` on a ~15-task starter.** The default `4:1:5`\nsplit drops the validation set below the `D_sel >= 5` floor and the run\naborts with `d_sel_too_small`\nuse judgment to follow the Contract guidance:\n`runSkillOpt(opts)` returns:\ncodeblock:plain:ewogIG91dGNvbWU6ICdhY2NlcHRlZCcgfCAnbm9faW1wcm92ZW1lbnQnIHwgJ2Fib3J0ZWQnIHwgJ2Vycm9yZWQnLAogIHJlY2VpcHQ6IHsKICAgIHJ1bl9pZCwgc2tpbGxfc2hhOCwgYmVuY2htYXJrX3NoYTgsIG1vZGVscywgY29zdCwKICAgIGJhc2VsaW5lX3NlbF9zY29yZSwgYmVzdF9zZWxfc2NvcmUsICAgLy8gcmVhbCBtZWFzdXJlZCBiYXNlbGluZSAobm8gbG9uZ2VyIGhhcmRjb2RlZCAwKQogICAgYmFzZWxpbmVfdGVzdF9zY29yZSwgdGVzdF9zY29yZSwgICAgICAvLyBmaW5hbCBoZWxkLW91dCB0ZXN0LXNwbGl0IGV2YWwKICB9LAogIGZpbmFsVGV4dDogc3RyaW5nLAogIG11dGF0ZWRTa2lsbEZpbGU6IGJvb2xlYW4sCiAgcHJvcG9zZWRQYXRoPzogc3RyaW5nCn0=\n`skillify` — scaffolds a new skill (use BEFORE skillopt)\n`skillpack-check` — audits skill conformance (item 13 surfaces skillopt status)\n`conventions\/quality.md` — output quality standards skillopt enforces via judges",
-          "line" : 30,
+          "guidance" : "**Bootstrap output requires human review.** Both `--bootstrap-from-skill`\nand `--bootstrap-from-routing` write a sentinel; you must review + STRENGTHEN\nthe generated judges, delete the sentinel, and re-run with\n`--bootstrap-reviewed` before optimization can use the file\nThe user will NOT hand-write a benchmark, and you shouldn't start from a blank\nfile either. When the user says \"make skill X better\" and\n`skills\/X\/skillopt-benchmark.jsonl` doesn't exist, generate a starter from the\nSKILL.md directly:\nuse judgment to follow the Starting a benchmark from the skill itself (the common case) — steps 2 guidance:\nOne LLM call reads `skills\/X\/SKILL.md`, infers what the skill produces and what\n\"good\" looks like, and writes ~15 tasks (each with rule judges) to\n`skills\/X\/skillopt-benchmark.jsonl` plus a `# BOOTSTRAP_PENDING_REVIEW`\nsentinel. No `routing-eval.jsonl` is needed. Tune the count with\n`--bootstrap-tasks N` (max 50)\nDelete the sentinel line (`# BOOTSTRAP_PENDING_REVIEW`, the last line)\nRun the optimizer with `--split 1:1:1`:\nuse judgment to follow the Starting a benchmark from the skill itself (the common case) — steps 5 guidance:\nRule judges are deterministic and free, but shallow for skills whose quality is\nsequencing, privacy, refusal boundaries, or file placement — for those, hand-add\nricher checks (or an `llm` judge) during review\ntable:ai-discretion:fCBTaXR1YXRpb24gfCBBY3Rpb24gfAp8LS0tfC0tLXwKfCBTa2lsbCBoYXMgbm8gYmVuY2htYXJrIHwgYGdicmFpbiBza2lsbG9wdCBmb28gLS1ib290c3RyYXAtZnJvbS1za2lsbGAg4oaSIHJldmlldyArIHN0cmVuZ3RoZW4gdGhlIGp1ZGdlcyDihpIgZGVsZXRlIHNlbnRpbmVsIOKGkiBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLWJvb3RzdHJhcC1yZXZpZXdlZCAtLXNwbGl0IDE6MToxYCAoc2VlIHNlY3Rpb24gYWJvdmUpIHwKfCBTa2lsbCBoYXMgYSBgcm91dGluZy1ldmFsLmpzb25sYCBhbmQgeW91IHdhbnQgYSBoZWFkIHN0YXJ0IHwgYGdicmFpbiBza2lsbG9wdCBmb28gLS1ib290c3RyYXAtZnJvbS1yb3V0aW5nYCDihpIgcmV2aWV3IHRoZSBnZW5lcmF0ZWQgdGFza3Mg4oaSIGAtLWJvb3RzdHJhcC1yZXZpZXdlZGAgKHJvdXRpbmcgdGFza3MgdGVzdCBkaXNwYXRjaDsgdGlnaHRlbiB0aGVtIGludG8gcXVhbGl0eSB0YXNrcyBiZWZvcmUgdHJ1c3RpbmcpIHwKfCBJdGVyYXRpbmcgb24gYW4gZXhpc3Rpbmcgc2tpbGwgfCBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLWJlbmNobWFyayBza2lsbHMvZm9vL3NraWxsb3B0LWJlbmNobWFyay5qc29ubGAgfAp8IENvc3RseSBydW4sIHdhbnQgcHJldmlldyB8IEFkZCBgLS1kcnktcnVuYCB8CnwgQnVuZGxlZCBza2lsbCAoc2tpbGxzLyBpbiBnYnJhaW4gcmVwbykgfCBEZWZhdWx0IHdyaXRlcyBwcm9wb3NlZC5tZDsgdG8gY29tbWl0IGluIHBsYWNlIGFkZCBgLS1hbGxvdy1tdXRhdGUtYnVuZGxlZGAgQU5EIGAtLWhlbGQtb3V0IDxwYXRoPmAgKD49NSBiZW5jaG1hcmstZGlzam9pbnQgdGFza3MpIOKAlCBlbHNlIGl0IGhhcmQtcmVmdXNlcyB8CnwgV2FudCB0byByZXZpZXcgY2hhbmdlcyBiZWZvcmUgYXBwbHlpbmcgfCBBZGQgYC0tbm8tbXV0YXRlYCAod3JpdGVzIHByb3Bvc2VkLm1kLCBubyBoZWxkLW91dCBuZWVkZWQpIHwKfCBHdWFyZCBhZ2FpbnN0IGJlbmNobWFyayBvdmVyZml0dGluZyB8IEFkZCBgLS1oZWxkLW91dCA8cGF0aD5gIOKAlCBhIGNhbmRpZGF0ZSB0aGF0IGJlYXRzIHRoZSBiZW5jaG1hcmsgYnV0IHJlZ3Jlc3NlcyBvbiB0aGUgaGVsZC1vdXQgc2V0IGlzIHJlZnVzZWQgfAp8IE1pZC1ydW4gY3Jhc2ggfCBgZ2JyYWluIHNraWxsb3B0IGZvbyAtLXJlc3VtZSA8cnVuLWlkPmAgfA==\n`skillify` — scaffolds a new skill (use BEFORE skillopt)\n`skillpack-check` — audits skill conformance (item 13 surfaces skillopt status)\n`conventions\/quality.md` — output quality standards skillopt enforces via judges",
+          "line" : 51,
           "scoped_tools" : [
             "assess.notability",
             "capture",
@@ -487,7 +590,7 @@
             "timeline.add",
             "verify"
           ],
-          "text" : "follow the Iron Law guidance"
+          "text" : "follow the Iron Law — steps 3 guidance"
         }
       ],
       "source_name" : "skill-optimizer a input",

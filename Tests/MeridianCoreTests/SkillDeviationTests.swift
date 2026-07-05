@@ -166,14 +166,14 @@ struct SkillDeviationTests {
             originalName: "a",
             portedName: "b"
         )
-        #expect(r.categories.contains("inert-section-added"))
+        #expect(r.categories.contains("doc-section-marked"))
         #expect(r.inertSectionDeviations.map(\.heading) == ["Phases"])
         let md = SkillDeviation.renderMarkdown(r, includeDiff: false)
         #expect(md.contains("## Inert deviations"))
         #expect(md.contains("`Phases`: operational-procedure"))
     }
 
-    @Test("a migrator-generated split-sibling's leftover-narrative parent is not flagged as an inert-section-added deviation")
+    @Test("a migrator-generated split-sibling's leftover-narrative parent is not flagged as an doc-section-marked deviation")
     func splitParentNotFlaggedAsNewInertDeviation() {
         // AGENTS.md Phase 1 items 3 & 7: the parent heading's operational
         // content was preserved in the generated `— steps` child (routed to
@@ -201,7 +201,7 @@ struct SkillDeviationTests {
             originalMarkdown: original, portedMeri: ported,
             originalName: "a", portedName: "b"
         )
-        #expect(!r.categories.contains("inert-section-added"), Comment(rawValue: "\(r.categories)"))
+        #expect(!r.categories.contains("doc-section-marked"), Comment(rawValue: "\(r.categories)"))
         #expect(r.inertSectionDeviations.isEmpty, Comment(rawValue: "\(r.inertSectionDeviations.map(\.heading))"))
     }
 
@@ -237,7 +237,7 @@ struct SkillDeviationTests {
             originalMarkdown: original, portedMeri: ported,
             originalName: "a", portedName: "b"
         )
-        #expect(r.categories.contains("inert-section-added"))
+        #expect(r.categories.contains("doc-section-marked"))
         #expect(r.inertSectionDeviations.map(\.heading) == ["Notes"], Comment(rawValue: "\(r.inertSectionDeviations.map(\.heading))"))
     }
 
@@ -259,7 +259,7 @@ struct SkillDeviationTests {
             originalName: "a",
             portedName: "b"
         )
-        #expect(!r.categories.contains("inert-section-added"))
+        #expect(!r.categories.contains("doc-section-marked"))
         #expect(r.inertSectionDeviations.isEmpty)
     }
 
@@ -564,6 +564,37 @@ struct SkillMetricsTests {
         #expect(m.judgmentBlocks == 1)
     }
 
+    @Test("an explicit `role: reference` marker categorizes as reference documentation")
+    func explicitReferenceRoleMarkerCategorizesAsReference() {
+        let src = """
+        ## Aside (( inert, role: reference ))
+
+        Some standalone commentary that would not otherwise look reference-like.
+        """
+        let m = SkillMetrics.analyze(src)
+        #expect(m.inertDetails.first?.category == .referenceDocumentation)
+        #expect(m.inertDetails.first?.role == "reference")
+    }
+
+    @Test("a non-shell fence followed by executable content still finds the trailing checklist")
+    func nonShellFenceFollowedByExecutableContent() {
+        // Not "only" a non-shell fence (a checklist follows), so
+        // `looksReferenceLike` doesn't short-circuit and `bodyHasExecutableShape`
+        // must walk past the fence's open/body/close (toggling `inFence`) to
+        // reach the trailing checklist item.
+        let src = """
+        ## Diagnostics Playground (( inert ))
+
+        ```python
+        print("hi")
+        ```
+
+        - [ ] the diagnostic report is reviewed
+        """
+        let m = SkillMetrics.analyze(src)
+        #expect(m.inertDetails.first?.category == .operationalContent)
+    }
+
     @Test("inert taxonomy detects executable-shaped and convention-reference residue")
     func inertTaxonomyExecutableShapes() {
         let src = """
@@ -694,9 +725,16 @@ struct SkillMetricsTests {
         """
         let m = SkillMetrics.analyze(src)
         #expect(m.totalSections == 1)
-        #expect(m.inertDetails.count == 1)
+        // "Lookup sequence" carries a bare `(( inert ))` marker over plain
+        // narrative with no reference signal — under the stricter P1 policy
+        // (§5: never launder genuinely uncategorized inert content into
+        // reference-documentation) this now correctly surfaces as
+        // `unclassified`/operational, registering in the residual-error
+        // tail. The important structural assertion here is unchanged: the
+        // unaliased split-sibling produces no SECOND, spurious entry.
+        #expect(m.inertDetails.count == 1, Comment(rawValue: "\(m.inertDetails)"))
         #expect(m.inertDetails.first?.heading == "Lookup sequence")
-        #expect(m.unclassifiedInertSections == 0)
+        #expect(m.unclassifiedInertSections == 1, Comment(rawValue: "\(m.inertDetails)"))
     }
 
     @Test("a heading with only nested children and no body content is not tallied as inert")
@@ -720,7 +758,13 @@ struct SkillMetricsTests {
         #expect(m.inertSections == 1, Comment(rawValue: "\(m.inertSections)"))
         #expect(m.inertDetails.count == 1)
         #expect(m.inertDetails.first?.heading == "Sub A")
-        #expect(m.operationalInertSections == 0)
+        // "Sub A" carries a bare `(( inert ))` marker over plain narrative
+        // with no reference signal — under the stricter P1 policy this
+        // correctly surfaces as `unclassified`/operational rather than being
+        // laundered into reference-documentation (§5). The structural point
+        // of this test — that the content-less "Phases" container is not
+        // itself tallied as a section/inert/operational entry — is untouched.
+        #expect(m.operationalInertSections == 1, Comment(rawValue: "\(m.inertDetails)"))
     }
 
     @Test("inert taxonomy covers AI markers reference bodies and judgment variants")

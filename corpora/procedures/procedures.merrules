@@ -17,6 +17,7 @@ rule "procedure-emit":
   lowers to: emit procedure.report with message = {message}.
 
 === sections ===
+section "DBA notes — steps" -> procedure
 section "Procedure — steps" -> procedure
 section "Procedure — steps 2" -> procedure
 section "Transaction body — steps" -> procedure

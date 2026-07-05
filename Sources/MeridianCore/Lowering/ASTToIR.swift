@@ -310,7 +310,18 @@ public struct ASTToIR {
         defer { trace.pop(token) }
         let parameters = phraseParameters(ast.pattern)
         let mode: ExecutionMode = modeFromBlock(ast.body)
-        let defaultParam = ast.pattern.parameters.count == 1 ? ast.pattern.parameters[0] : nil
+        let owningStructName = IRWorkflow.structName(from: ast.pattern.displayText, lexicon: lexicon)
+        // Pairing the single default parameter with its OWNING workflow's
+        // struct name lets `matchPhrase`'s low-confidence implicit-fill retry
+        // (below) refuse to resolve back to the workflow currently being
+        // lowered — see `SymbolTable.matchPhrase`'s `excludingStructName`.
+        // Without this, a leftover unmined narrative line anywhere in a
+        // single-parameter workflow's own body can spuriously self-match via
+        // the implicit fill (any shared word with the workflow's own trigger
+        // text is enough), producing a nonsense recursive self-invocation
+        // instead of the intended `unresolvedPhrase` diagnostic.
+        let defaultParam: (parameter: PhraseParameterAST, owningStructName: String)? =
+            ast.pattern.parameters.count == 1 ? (ast.pattern.parameters[0], owningStructName) : nil
         let autonomyConfig = try ast.autonomy.map(lowerAutonomyConfig)
         let proseDispatchMode: ProseDispatchMode? = ast.autonomy != nil
             ? .autonomousLoop
@@ -330,7 +341,6 @@ public struct ASTToIR {
             autonomyConfig: autonomyConfig,
             scope: initialScope
         )
-        let derivedStructName = IRWorkflow.structName(from: ast.pattern.displayText, lexicon: lexicon)
         return IRWorkflow(
             name: ast.pattern.displayText,
             parameters: parameters,
@@ -338,7 +348,7 @@ public struct ASTToIR {
             mode: mode,
             sourceFile: ast.sourceFile.isEmpty ? sourceFile : ast.sourceFile,
             sourceRange: sourceRange(ast.sourceLine),
-            explicitStructName: derivedStructName
+            explicitStructName: owningStructName
         )
     }
 
@@ -367,7 +377,7 @@ public struct ASTToIR {
         _ block: ASTBlock,
         mode: ExecutionMode,
         depth: Int,
-        defaultParam: PhraseParameterAST? = nil,
+        defaultParam: (parameter: PhraseParameterAST, owningStructName: String)? = nil,
         proseDispatchMode: ProseDispatchMode? = nil,
         autonomyConfig: AutonomyConfigIR? = nil,
         scope: Set<String> = []
@@ -544,7 +554,7 @@ public struct ASTToIR {
         _ stmt: StatementAST,
         mode: ExecutionMode,
         depth: Int,
-        defaultParam: PhraseParameterAST? = nil,
+        defaultParam: (parameter: PhraseParameterAST, owningStructName: String)? = nil,
         proseDispatchMode: ProseDispatchMode? = nil,
         autonomyConfig: AutonomyConfigIR? = nil,
         scope: Set<String> = []
@@ -700,7 +710,7 @@ public struct ASTToIR {
         _ s: RecoverStatementAST,
         mode: ExecutionMode,
         depth: Int,
-        defaultParam: PhraseParameterAST? = nil,
+        defaultParam: (parameter: PhraseParameterAST, owningStructName: String)? = nil,
         proseDispatchMode: ProseDispatchMode? = nil,
         autonomyConfig: AutonomyConfigIR? = nil,
         scope: Set<String> = []
@@ -958,7 +968,7 @@ public struct ASTToIR {
         _ s: PhraseInvocationAST,
         mode: ExecutionMode,
         depth: Int,
-        defaultParam: PhraseParameterAST? = nil,
+        defaultParam: (parameter: PhraseParameterAST, owningStructName: String)? = nil,
         proseDispatchMode: ProseDispatchMode? = nil,
         autonomyConfig: AutonomyConfigIR? = nil,
         scope: Set<String> = []
@@ -1036,7 +1046,8 @@ public struct ASTToIR {
 
         guard let (phrase, args) = symbols.matchPhrase(
             s.words,
-            defaultParam: defaultParam
+            defaultParam: defaultParam?.parameter,
+            excludingStructName: defaultParam?.owningStructName
         ) else {
             if fallbackPolicy.allows(.unresolvedPhrases) {
                 trace.log(.phraseInline, "  UNRESOLVED — emitting placeholder (allow-fallbacks: unresolved-phrases)")
@@ -1169,7 +1180,7 @@ public struct ASTToIR {
         args: [String: ExpressionAST],
         mode: ExecutionMode,
         depth: Int,
-        defaultParam: PhraseParameterAST? = nil,
+        defaultParam: (parameter: PhraseParameterAST, owningStructName: String)? = nil,
         proseDispatchMode: ProseDispatchMode? = nil,
         autonomyConfig: AutonomyConfigIR? = nil
     ) throws -> [IRPrimitive] {
@@ -1385,7 +1396,7 @@ public struct ASTToIR {
             if let engine { engine.report(diag) }
             throw CompilerError.diagnostics([diag])
         case .quantified(let q):
-            return try lowerQuantifier(q)
+            return try lowerQuantifier(q, line: line)
         case .literal(let lit):
             return .literal(lowerLiteral(lit))
         case .identifierRef(let name):
@@ -1706,21 +1717,21 @@ public struct ASTToIR {
 
     // MARK: - 2C. Quantifier lowering
 
-    private func lowerQuantifier(_ q: QuantifierAST) throws -> IRExpression {
+    private func lowerQuantifier(_ q: QuantifierAST, line: Int) throws -> IRExpression {
         let noun = q.description.noun.trimmingCharacters(in: .whitespaces)
         guard !noun.isEmpty else {
-            throw semanticError("quantifier is missing a collection noun.", 0, code: .quantifierSemantic,
+            throw semanticError("quantifier is missing a collection noun.", line, code: .quantifierSemantic,
                                 help: "Write `every/all/no … <plural>` with a collection noun.")
         }
         let elementVar = lexicon.singularize(noun.lowercased())
 
         // Source: a bound collection identifier, fetched once. Invocations are
         // rejected so the collection isn't re-evaluated per reducer.
-        let collection = try lowerExpr(.identifierRef(noun))
+        let collection = try lowerExpr(.identifierRef(noun), line: line)
         if case .invocation = collection {
             throw semanticError(
                 "quantifier source must be a bound collection name (a parameter or earlier bind), not a tool call.",
-                0, code: .quantifierSemantic,
+                line, code: .quantifierSemantic,
                 help: "Bind the collection with `let`/`bind` first, then quantify over the bound name.")
         }
 
@@ -1732,21 +1743,21 @@ public struct ASTToIR {
         // with no prelude slot, so a tool-backed clause here is rejected with
         // the same "bind it first" guidance used for inline verb tests.
         let (clauseFilters, _) = try lowerVerbClauses(
-            q.description.verbClauses, elementVar: elementVar, allowToolFetch: false, scope: nil, line: 0)
+            q.description.verbClauses, elementVar: elementVar, allowToolFetch: false, scope: nil, line: line)
         var filters = clauseFilters
         for adj in q.description.adjectives {
             filters.append(try resolveAdjectiveFilter(
-                adjective: adj, subject: .identifierRef(name: elementVar), sourceLine: 0))
+                adjective: adj, subject: .identifierRef(name: elementVar), sourceLine: line))
         }
         if let wherePred = q.description.wherePredicate {
-            filters.append(qualifyToLoopVar(try lowerExpr(wherePred), loopVar: elementVar))
+            filters.append(qualifyToLoopVar(try lowerExpr(wherePred, line: line), loopVar: elementVar))
         }
 
-        let body = try q.body.map { qualifyToLoopVar(try lowerExpr($0), loopVar: elementVar) }
+        let body = try q.body.map { qualifyToLoopVar(try lowerExpr($0, line: line), loopVar: elementVar) }
         if case .all = q.kind, body == nil, filters.isEmpty {
             throw semanticError(
                 "`all <description>` needs a body (e.g. `all pages have a summary`) or a `whose`/adjective restriction.",
-                0, code: .quantifierSemantic,
+                line, code: .quantifierSemantic,
                 help: "Add a `whose` clause, adjective filter, or body predicate after the collection.")
         }
 

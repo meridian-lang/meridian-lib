@@ -168,6 +168,41 @@ public struct InertYieldCommand: AsyncParsableCommand {
                 out.append("  \(count)x  \(phrase)")
             }
         }
+
+        out.append("")
+        out.append(renderP1Histogram(operational))
+        return out.joined(separator: "\n")
+    }
+
+    /// The "Eliminate `(( inert ))`" plan §0 deliverable: a cue-gated P1
+    /// bucket histogram over every currently-inert operational line, sizing
+    /// the residual-error tail *before* the migrator changes to actually emit
+    /// these outcomes. Non-operational sections (template/tools/convention-
+    /// ref/reference-doc) are excluded — they are already correctly
+    /// non-executable and contribute no signal to the P1 policy.
+    static func renderP1Histogram(_ operational: [InertYieldAnalyzer.SectionYield]) -> String {
+        var counts: [InertYieldAnalyzer.P1Bucket: Int] = [:]
+        var lowersAsIsSections = 0
+        for section in operational {
+            if section.overall == .lowersAsIs {
+                lowersAsIsSections += 1
+                continue
+            }
+            for line in section.lines {
+                counts[line.p1Bucket, default: 0] += 1
+            }
+        }
+        var out: [String] = ["=== P1 bucket histogram (Phase 0 spike; operational sections only) ==="]
+        out.append("  lower (whole-section lowers as-is): \(lowersAsIsSections) section(s)")
+        for bucket in InertYieldAnalyzer.P1Bucket.allCases {
+            out.append("  \(bucket.rawValue): \(counts[bucket, default: 0]) line(s)")
+        }
+        let total = counts.values.reduce(0, +)
+        let errorCount = counts[.error, default: 0]
+        if total > 0 {
+            let pct = Double(errorCount) / Double(total) * 100
+            out.append(String(format: "  residual-error tail: %d/%d line(s) (%.1f%%)", errorCount, total, pct))
+        }
         return out.joined(separator: "\n")
     }
 

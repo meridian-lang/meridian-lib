@@ -599,16 +599,6 @@ public struct WebhookTransformsInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WebhookTransformsInput", parameters: [:])
 
-        // L22
-        let __meridianProseResults_L22 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.search", "publish", "shell.run", "timeline.add"],
-            guidance: "This skill guarantees:\nExternal events are transformed into brain pages with proper citations\nRaw payloads are preserved (dead-letter queue if transform fails)\nEntity extraction runs on every transformed event\nInput sanitization: no raw HTML/script passes to brain pages\nError handling: transform failure logs raw payload, retries once\nuse judgment to follow the Phases guidance:\n**Define transform.** Map event schema to brain page format:\nInput: raw webhook payload (JSON)\nMust sanitize: strip HTML tags, escape script content\n**Register webhook URL.** Provide the external service with the webhook endpoint\n**On event received:**\nParse payload\nRun transform function\nExtract entities, run enrichment\nAdd timeline entries to mentioned entities\n**Error handling:**\nIf transform throws: log raw payload to `_dead-letter/{timestamp}.md`\nSurface error type to agent\nRetry once\nDon't lose events\nuse judgment to follow the Anti-Patterns guidance:\nPassing raw HTML/script to brain pages (XSS risk)\nSilently dropping events when transform fails (use dead-letter queue)\nProcessing webhooks without entity extraction\nNot sanitizing external input before brain writes"
-        )
-        for (__key, __value) in __meridianProseResults_L22 {
-            state.bind(__key, __value)
-        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

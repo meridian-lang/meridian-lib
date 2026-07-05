@@ -3,8 +3,8 @@
 - Original: `cold-start/SKILL.md`
 - Ported: `cold_start.meri`
 - Tier: 2 (light edits)
-- Similarity: 82%
-- Lines: 507 -> 556 (+118 / -69)
+- Similarity: 74%
+- Lines: 507 -> 575 (+173 / -105)
 
 ## Frontmatter
 - Added: (none)
@@ -12,51 +12,64 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 - preamble-blockquoted
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L101 `If the user declines ClawVisor`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L176 `Via ClawVisor`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L229 `Fetch events`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L244 `Brain structure`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L270 `Strategy: Smart sampling, not bulk import`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L331 `Quality rule`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L341 `Data sources`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L348 `Brain structure`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L488 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L508 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L28 `Prerequisites`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L110 `If the user declines ClawVisor`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L183 `Via ClawVisor`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L222 `Quality gate`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L234 `Fetch events`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L249 `Brain structure`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L276 `Strategy: Smart sampling, not bulk import`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L352 `Quality rule`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L361 `Data sources`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L368 `Brain structure`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L507 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L527 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
-- Sections inert total: 12/36 (33% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 23/36 (64% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: reference-documentation=10, template=1, tools-metadata=1
-- Judgment: 18 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=21, template=1, tools-metadata=1
+- Judgment: 2 blocks, 0 lines
 
 ### Inert section details
-- L101 `If the user declines ClawVisor`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L176 `Via ClawVisor`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L193 `Processing rules`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L229 `Fetch events`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L244 `Brain structure`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L270 `Strategy: Smart sampling, not bulk import`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L331 `Quality rule`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L341 `Data sources`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L348 `Brain structure`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L406 `Post-Bootstrap Checklist`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L488 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L508 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L11 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L28 `Prerequisites`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L52 `Phase 0: ClawVisor Setup (Required for API Access)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L110 `If the user declines ClawVisor`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L183 `Via ClawVisor`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L200 `Processing rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L222 `Quality gate`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L234 `Fetch events`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L249 `Brain structure`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L260 `Entity enrichment`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L276 `Strategy: Smart sampling, not bulk import`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L285 `Processing`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L296 `Filtering rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L327 `Processing`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L352 `Quality rule`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L361 `Data sources`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L368 `Brain structure`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L410 `Phase 8: Meeting Transcripts`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L424 `Post-Bootstrap Checklist`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L475 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L495 `Resume Protocol`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L507 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L527 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/cold-start/SKILL.md
 +++ skills/cold_start.meri
-@@ -40,14 +40,15 @@
+@@ -40,28 +40,31 @@
  
  # Cold Start — Day-One Brain Bootstrapping
  
@@ -75,47 +88,70 @@ These sections were made non-executable in the port and should be reviewed as mi
 +> every future interaction smarter. This skill sequences the highest-leverage data
 +> sources to get you from zero to useful in one session.
 +
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
  - Every import phase is gated on user consent (ask-user pattern) before proceeding.
- - **Google/social API access goes through ClawVisor.** The agent never holds raw OAuth
-@@ -61,16 +62,21 @@
+-- **Google/social API access goes through ClawVisor.** The agent never holds raw OAuth
+-  tokens or API keys. This is a safety requirement, not a preference. ClawVisor vaults
+-  credentials, enforces task-scoped authorization, logs every API call, and requires
+-  human approval for destructive operations. If the user doesn't want ClawVisor, the
+-  only safe alternative is offline file exports (Google Takeout, Twitter archive download).
+ - Each phase is independently valuable — the user can stop after any phase and still
+   have a useful brain.
+ - Progress is tracked in `~/.gbrain/cold-start-state.json` so interrupted sessions
    can resume.
  - Entity detection and cross-linking run on every import, not as a separate pass.
  
 -## Prerequisites
-+## Prerequisites (( role: procedure ))
-+use judgment to follow the Prerequisites guidance:
++
++### Contract — steps (( role: reference ))
++
++- The agent never holds raw OAuth
++  tokens or API keys. This is a safety requirement, not a preference. ClawVisor vaults
++  credentials, enforces task-scoped authorization, logs every API call, and requires
++  human approval for destructive operations. If the user doesn't want ClawVisor, the
++  only safe alternative is offline file exports (Google Takeout, Twitter archive download).
++## Prerequisites (( role: reference ))
  
  - GBrain installed and initialized (`gbrain doctor --json` all green)
  - Brain repo cloned and synced
- - Agent has terminal access and can run `gbrain` CLI commands
+@@ -69,7 +72,10 @@
  
--## The Priority Stack
--
+ ## The Priority Stack
+ 
 -Data sources ranked by **information density × ease of import**:
--
-+## The Priority Stack (( inert ))
 +
-+
-+### The Priority Stack — steps
++### The Priority Stack — steps (( role: reference ))
 +
 +> Data sources ranked by **information density × ease of import**:
-+
-+!!! table (( ai-discretion ))
+ 
  | Priority | Source | Why | Time | Pages Created |
  |----------|--------|-----|------|---------------|
- | 1 | Existing markdown/Obsidian | Highest density — it's already structured | 5 min | 100s-1000s |
-@@ -83,6 +89,7 @@
+@@ -82,49 +88,65 @@
+ | 7 | File archives (Dropbox/Drive/local) | Historical documents, old writing, photos | 30+ min | varies |
  | 8 | Meeting transcripts (Circleback/etc.) | Deep relationship context from recorded calls | 20 min | 10-50 |
  
- ## Phase 0: ClawVisor Setup (Required for API Access)
-+use judgment to follow the Phase 0: ClawVisor Setup (Required for API Access) guidance:
+-## Phase 0: ClawVisor Setup (Required for API Access)
++## Phase 0: ClawVisor Setup (Required for API Access) (( role: reference ))
  
  > **Safety boundary:** An AI agent with raw OAuth tokens to your Gmail, Calendar,
  > and Contacts is an uncontrolled attack surface. One prompt injection, one
-@@ -105,26 +112,32 @@
+ > malicious tool call, and your entire Google account is exposed. ClawVisor
+ > eliminates this risk class entirely.
+ 
+-[ClawVisor](https://clawvisor.com) is a credential gateway that sits between the
+-agent and your APIs. The agent never sees your credentials — ClawVisor injects
+-them at request time, enforces policies, and logs everything.
+-
+-**What ClawVisor gives you:**
+-- **Credential vaulting** — agent sees shadow tokens, never real secrets
+ - **Task-scoped authorization** — each workflow declares exactly what it needs
+ - **Audit trail** — every API call logged with metadata (who, what, when)
+-- **Human approval gates** — destructive operations (send email, modify calendar)
+-  require your explicit approval
+ - **Multi-service** — Gmail, Calendar, Contacts, Drive, GitHub, iMessage from one gateway
+ - **Revocation** — disable the agent's access in one click, no token rotation needed
+ 
  **Setup (15 min):**
  1. Sign up at [app.clawvisor.com](https://app.clawvisor.com)
  2. Create an agent in the dashboard, copy the agent token
@@ -124,13 +160,22 @@ These sections were made non-executable in the port and should be reviewed as mi
 +5. Create a standing task with expansive scope:
 +   > "Full brain bootstrapping: read emails, calendar events, and contacts to
 +   > populate knowledge base. List, read, and search across all connected accounts."
-+**Critical scoping rule:** Be expansive in task purposes. "Email triage" gets
-+rejected by intent verification. "Full executive assistant email management
-+including inbox triage, searching by any criteria, reading emails, tracking
-+threads" works. The intent model uses the purpose to judge each request.
 +
++### Phase 0: ClawVisor Setup (Required for API Access) — steps (( role: reference ))
 +
-+### Phase 0: ClawVisor Setup (Required for API Access) — steps
++ClawVisor is a credential gateway that sits between the
++agent and your APIs. The agent never sees your credentials — ClawVisor injects
++them at request time, enforces policies, and logs everything.
++
++> **What ClawVisor gives you:**
++- Credential vaulting — agent sees shadow tokens, never real secrets
++
++### Phase 0: ClawVisor Setup (Required for API Access) — steps 2 (( role: reference ))
++
++- Human approval gates — destructive operations (send email, modify calendar)
++  require your explicit approval
++
++### Phase 0: ClawVisor Setup (Required for API Access) — steps 3
 +
 +> 3. Set environment variables:
     ```bash
@@ -143,32 +188,37 @@ These sections were made non-executable in the port and should be reviewed as mi
 -   > populate knowledge base. List, read, and search across all connected accounts."
 -6. Save the standing task ID:
 +
-+### Phase 0: ClawVisor Setup (Required for API Access) — steps 2
++### Phase 0: ClawVisor Setup (Required for API Access) — steps 4
 +
 +> 6. Save the standing task ID:
     ```bash
     gbrain config set clawvisor_task_id "<task_id>"
     ```
  
--**Critical scoping rule:** Be expansive in task purposes. "Email triage" gets
--rejected by intent verification. "Full executive assistant email management
--including inbox triage, searching by any criteria, reading emails, tracking
--threads" works. The intent model uses the purpose to judge each request.
--
++
++### Phase 0: ClawVisor Setup (Required for API Access) — steps 5
++
++use judgment to follow the Phase 0: ClawVisor Setup (Required for API Access) — steps 5 guidance:
+ **Critical scoping rule:** Be expansive in task purposes. "Email triage" gets
+ rejected by intent verification. "Full executive assistant email management
+ including inbox triage, searching by any criteria, reading emails, tracking
+ threads" works. The intent model uses the purpose to judge each request.
+ 
 -### If the user declines ClawVisor
-+### If the user declines ClawVisor (( inert ))
++### If the user declines ClawVisor (( role: reference ))
  
  Do NOT fall back to direct OAuth. Instead, skip Phases 2-4 (Contacts, Calendar,
  Gmail) and proceed with offline-only imports:
-@@ -145,6 +158,7 @@
- credentials they shouldn't have.
+@@ -146,7 +168,7 @@
  
  ## Phase 1: Existing Markdown / Obsidian Import
-+use judgment to follow the Phase 1: Existing Markdown / Obsidian Import guidance:
  
- **The highest-leverage first import.** If the user already has a notes system, this
+-**The highest-leverage first import.** If the user already has a notes system, this
++If the user already has a notes system, this
  is hundreds or thousands of structured pages ready to go.
-@@ -186,18 +200,19 @@
+ 
+ ### Discovery
+@@ -186,18 +208,18 @@
  - Start embeddings: `gbrain embed --stale` (runs in background)
  
  > **Track progress:**
@@ -179,26 +229,26 @@ These sections were made non-executable in the port and should be reviewed as mi
 +> ````
  
  ## Phase 2: Google Contacts → People Pages
-+use judgment to follow the Phase 2: Google Contacts → People Pages guidance:
  
- **Seeds the people/ directory.** Every person in your contacts becomes a brain page
+-**Seeds the people/ directory.** Every person in your contacts becomes a brain page
++Every person in your contacts becomes a brain page
  with name, email, phone, company, and notes. This is the foundation that all other
  imports build on — when Gmail references "john@acme.com", the brain already knows
  who John is.
  
 -### Via ClawVisor
-+### Via ClawVisor (( inert ))
++### Via ClawVisor (( role: reference ))
  
  ```javascript
  // Fetch all contacts
-@@ -214,32 +229,43 @@
+@@ -214,20 +236,29 @@
    "https://people.googleapis.com/v1/people/me/connections?personFields=names,emailAddresses,phoneNumbers,organizations,biographies&pageSize=1000"
  ```
  
 -### Processing rules
 -
 -For each contact:
-+### Processing rules (( inert ))
++### Processing rules (( role: reference ))
 +
  1. **Filter out noise** — skip contacts with no name, no email, or that are clearly
     automated (noreply@, no-reply@, support@, notifications@)
@@ -212,116 +262,169 @@ These sections were made non-executable in the port and should be reviewed as mi
  
 -### Quality gate
 +
-+#### Processing rules — steps
++### Processing rules — steps
 +
 +For each contact:
 +
-+#### Processing rules — steps 2
++### Processing rules — steps 2
 +
 +2. Check brain first — `gbrain search "name"` to avoid duplicates
 +
-+#### Processing rules — steps 3
++### Processing rules — steps 3
 +
 +   - Source attribution: `[Source: Google Contacts, YYYY-MM-DD]`
-+### Quality gate (( role: procedure ))
-+use judgment to follow the Quality gate guidance:
++### Quality gate (( role: reference ))
  
  After importing 5 contacts, pause and show the user a sample page. Ask:
  > "Here's what a contact page looks like. Want me to continue with the rest, or
- > adjust the format first?"
+@@ -235,11 +266,11 @@
  
  ## Phase 3: Google Calendar (Last 90 Days)
-+use judgment to follow the Phase 3: Google Calendar (Last 90 Days) guidance:
  
- **Meeting history with attendee context.** Calendar events reveal who the user meets
+-**Meeting history with attendee context.** Calendar events reveal who the user meets
++Calendar events reveal who the user meets
  with, how often, and in what context. Combined with contacts, this builds a rich
  relationship map.
  
 -### Fetch events
-+### Fetch events (( inert ))
++### Fetch events (( role: reference ))
  
  ```javascript
  // Via ClawVisor — query ALL calendar accounts
-@@ -254,7 +280,7 @@
+@@ -254,7 +285,7 @@
  }
  ```
  
 -### Brain structure
-+### Brain structure (( inert ))
++### Brain structure (( role: reference ))
  
  Follow the three-tier calendar architecture:
  ```
-@@ -266,6 +292,7 @@
+@@ -265,20 +296,23 @@
+ │   └── YYYY-MM-DD.md            ← daily event log
  ```
  
- ### Entity enrichment
-+use judgment to follow the Entity enrichment guidance:
- 
- For each event with attendees:
+-### Entity enrichment
+-
+-For each event with attendees:
++### Entity enrichment (( role: reference ))
++
  1. Look up each attendee in the brain (they should exist from Phase 2)
-@@ -274,11 +301,12 @@
+ 2. Add a timeline entry to their page: met at [event title] on [date]
+ 3. If an attendee has no brain page and appears in 3+ events, create one
  4. Link attendees who appear in the same meeting
  
++
++### Entity enrichment — steps
++
++For each event with attendees:
  ## Phase 4: Gmail (Recent Threads)
-+use judgment to follow the Phase 4: Gmail (Recent Threads) guidance:
  
- **Relationship context and active threads.** Email reveals organizational
+-**Relationship context and active threads.** Email reveals organizational
++Email reveals organizational
  relationships, ongoing conversations, and communication patterns.
  
 -### Strategy: Smart sampling, not bulk import
-+### Strategy: Smart sampling, not bulk import (( inert ))
++### Strategy: Smart sampling, not bulk import (( role: reference ))
  
  Don't import every email. Import the **signal**:
  
-@@ -288,6 +316,7 @@
+@@ -287,30 +321,39 @@
+ 3. **Threads with 3+ replies** — active conversations worth tracking
  4. **Emails from people already in the brain** — enrichment, not cold import
  
- ### Processing
-+use judgment to follow the Processing guidance:
- 
- For each email thread:
+-### Processing
+-
+-For each email thread:
++### Processing (( role: reference ))
++
  1. **Entity detection** — extract people, companies mentioned
-@@ -296,6 +325,7 @@
+ 2. **Update people pages** — add communication context to timeline
+ 3. **Create meeting pages** — if the email is a meeting summary or follow-up
  4. **Skip noise** — newsletters, automated notifications, marketing
  
- ### Filtering rules
-+use judgment to follow the Filtering rules guidance:
- 
- **Auto-skip (never import):**
+-### Filtering rules
+-
+-**Auto-skip (never import):**
++
++### Processing — steps
++
++For each email thread:
++### Filtering rules (( role: reference ))
++
  - noreply@, no-reply@, notifications@, support@, mailer-daemon@
-@@ -309,6 +339,7 @@
+ - Unsubscribe-heavy senders (marketing)
+ - GitHub/Jira/Linear notification emails
+ - Calendar invites (already captured in Phase 3)
+ 
+-**Always import:**
+ - Direct emails from people in the brain
+ - Starred/flagged emails
  - Emails the user sent (their words are highest-value signal)
  
++
++### Filtering rules — steps
++
++Auto-skip (never import):
++
++### Filtering rules — steps 2
++
++Always import:
  ## Phase 5: Conversation Exports (ChatGPT / Claude / Perplexity)
-+use judgment to follow the Phase 5: Conversation Exports (ChatGPT / Claude / Perplexity) guidance:
  
- **Your thinking, captured.** AI conversation exports reveal what the user
+-**Your thinking, captured.** AI conversation exports reveal what the user
++AI conversation exports reveal what the user
  was researching, building, and thinking about. This is original thinking
-@@ -321,6 +352,7 @@
+ preserved in dialog form.
+ 
+@@ -320,38 +363,48 @@
+ - **Claude:** Download from claude.ai conversation history
  - **Perplexity:** Export from settings
  
- ### Processing
-+use judgment to follow the Processing guidance:
- 
- For each conversation:
- 1. **Assess significance** (1-5 scale):
-@@ -335,23 +367,24 @@
+-### Processing
+-
+-For each conversation:
+-1. **Assess significance** (1-5 scale):
++### Processing (( role: reference ))
++
+    - 1 = Pure utility (how-tos, quick lookups) → skip or minimal page
+    - 2 = Minor context → 1-paragraph note
+    - 3 = Notable (reveals interests, building something) → full page
+    - 4 = Important (deep personal processing, strategic thinking) → rich page
+    - 5 = Defining (identity work, breakthrough insights) → full treatment
+ 2. **Extract entities** — people, companies, concepts discussed
+-3. **Capture original thinking** — the user's exact phrasing is the signal.
+-   Never paraphrase.
  4. **File by primary subject** — not in a "conversations/" dump. A conversation
     about a person goes to people/, about a concept goes to concepts/, etc.
  
 -### Quality rule
-+### Quality rule (( inert ))
++
++### Processing — steps
++
++For each conversation:
++
++### Processing — steps 2
++
++use judgment to follow the Processing — steps 2 guidance:
++1. **Assess significance** (1-5 scale):
++
++### Processing — steps 3
++
++3. Capture original thinking — the user's exact phrasing is the signal.
++   Never paraphrase.
++### Quality rule (( role: reference ))
  
  Only import conversations rated 3+. The brain is for signal, not noise.
  
  ## Phase 6: X/Twitter Archive
-+use judgment to follow the Phase 6: X/Twitter Archive guidance:
  
- **Your public positions and engagement patterns.** Twitter reveals what the user
+-**Your public positions and engagement patterns.** Twitter reveals what the user
++Twitter reveals what the user
  thinks, who they engage with, and what ideas they're developing publicly.
  
 -### Data sources
-+### Data sources (( inert ))
++### Data sources (( role: reference ))
  
  1. **Twitter data export** (Settings → Your Account → Download Archive)
     - Contains all tweets, likes, DMs, bookmarks
@@ -329,19 +432,20 @@ These sections were made non-executable in the port and should be reviewed as mi
  3. **Bookmarks** — curated signal, high value
  
 -### Brain structure
-+### Brain structure (( inert ))
++### Brain structure (( role: reference ))
  
  ```
  brain/media/x/{handle}/
-@@ -370,6 +403,7 @@
- - **Likes** — low signal, skip unless the user wants them
+@@ -371,7 +424,7 @@
  
  ## Phase 7: File Archives
-+use judgment to follow the Phase 7: File Archives guidance:
  
- **Historical documents, old writing, photos with metadata.** This is the long tail —
+-**Historical documents, old writing, photos with metadata.** This is the long tail —
++This is the long tail —
  less structured but potentially very high value (old journals, letters, early writing).
-@@ -382,9 +416,9 @@
+ 
+ Delegate to the `archive-crawler` skill. It handles:
+@@ -382,51 +435,39 @@
  
  > **Safety gate:** Archive crawling can be slow and create many pages. Always start
  > with a scan-only pass:
@@ -352,33 +456,35 @@ These sections were made non-executable in the port and should be reviewed as mi
 +> ````
  > Show the user the manifest before proceeding with full ingestion.
  
- **Supported sources:**
-@@ -394,39 +428,28 @@
+-**Supported sources:**
++Supported sources:
+ - Local directories (Dropbox sync folder, Google Drive, old hard drives)
+ - Cloud storage (Backblaze B2, S3) via mounted paths
+ - Email archives (PST, mbox, EML, Google Takeout)
  - Data exports (LinkedIn, Facebook, etc.)
  
- ## Phase 8: Meeting Transcripts
+-## Phase 8: Meeting Transcripts
 -
 -**Deep relationship context from recorded calls.** If the user has a meeting
--recording service (Circleback, Otter, Fireflies, Read.ai), import recent
--transcripts.
--
--Delegate to `meeting-ingestion` skill. Key rules:
-+use judgment to follow the Phase 8: Meeting Transcripts guidance:
++## Phase 8: Meeting Transcripts (( role: reference ))
 +
- - Always pull the **complete transcript**, not just the AI summary
- - Entity propagation is MANDATORY — every attendee gets a timeline update
- - A meeting is NOT fully ingested until all entity pages are updated
- 
--## Post-Bootstrap Checklist
++- A meeting is NOT fully ingested until all entity pages are updated
++
 +
 +### Phase 8: Meeting Transcripts — steps
 +
 +If the user has a meeting
-+recording service (Circleback, Otter, Fireflies, Read.ai), import recent
-+transcripts.
-+
-+Delegate to `meeting-ingestion` skill. Key rules:
-+## Post-Bootstrap Checklist (( inert ))
+ recording service (Circleback, Otter, Fireflies, Read.ai), import recent
+ transcripts.
+ 
+ Delegate to `meeting-ingestion` skill. Key rules:
+-- Always pull the **complete transcript**, not just the AI summary
++- Always pull the complete transcript, not just the AI summary
+ - Entity propagation is MANDATORY — every attendee gets a timeline update
+-- A meeting is NOT fully ingested until all entity pages are updated
+-
+-## Post-Bootstrap Checklist
++## Post-Bootstrap Checklist (( role: reference ))
  
  After completing available phases:
 -
@@ -404,11 +510,16 @@ These sections were made non-executable in the port and should be reviewed as mi
  4. **Track state:**
     ```json
     // ~/.gbrain/cold-start-state.json
-@@ -449,7 +472,29 @@
+@@ -449,12 +490,29 @@
     > - The **executive-assistant** pattern handles email triage
     > - Say 'enrich [person]' to deep-dive any contact"
  
 -## Anti-Patterns
+-
+-- **Giving the agent raw OAuth tokens.** This is the #1 anti-pattern. An agent with
+-  raw Gmail/Calendar tokens is an uncontrolled attack surface — one prompt injection
+-  and your entire Google account is exposed. Use ClawVisor. If the user declines
+-  ClawVisor, skip to offline imports. Never offer direct OAuth as a fallback.
 +
 +### Post-Bootstrap Checklist — steps
 +
@@ -430,20 +541,28 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
 +   - Brain repo: `gbrain sync --repo <path>` every 5-30 minutes
 +
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
- 
- - **Giving the agent raw OAuth tokens.** This is the #1 anti-pattern. An agent with
-   raw Gmail/Calendar tokens is an uncontrolled attack surface — one prompt injection
-@@ -467,14 +512,18 @@
++## Anti-Patterns (( role: reference ))
++
+ - **Bulk importing everything without filtering.** The brain is for signal, not noise.
+   Filter out automated senders, marketing emails, utility conversations.
+ - **Importing without entity cross-linking.** Every import should detect entities and
+@@ -466,15 +524,25 @@
+ - **Creating people pages for automated senders.** Sentry, GitHub notifications,
    newsletter platforms are not people. Filter by the rules in Phase 4.
  
- ## Resume Protocol
+-## Resume Protocol
 -
 -If the session is interrupted:
 -
 -1. Read `~/.gbrain/cold-start-state.json`
-+use judgment to follow the Resume Protocol guidance:
++
++### Anti-Patterns — steps (( role: reference ))
++
++- This is the #1 anti-pattern. An agent with
++  raw Gmail/Calendar tokens is an uncontrolled attack surface — one prompt injection
++  and your entire Google account is exposed. Use ClawVisor. If the user declines
++  ClawVisor, skip to offline imports. Never offer direct OAuth as a fallback.
++## Resume Protocol (( role: reference ))
 +
  2. Skip completed phases
  3. Resume from `next_phase`

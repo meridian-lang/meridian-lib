@@ -97,7 +97,7 @@
     "name" : "month end close",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "applicability",
         "level" : 2,
         "line" : 11,
         "text" : "When this applies"
@@ -105,25 +105,25 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 16,
+        "line" : 15,
         "text" : "Close sequence"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 22,
+        "line" : 21,
         "text" : "Accounting notes"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 18,
+        "line" : 17,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 20,
+        "line" : 19,
         "text" : "Publish"
       }
     ],
@@ -133,16 +133,15 @@
         "heading" : "When this applies",
         "line" : 11,
         "lines" : [
-          "use judgment to follow the When this applies guidance:",
           "\"month-end close\"",
           "\"close accounting period\""
         ],
-        "role" : "procedure"
+        "role" : "applicability"
       },
       {
         "executes" : true,
         "heading" : "Close sequence",
-        "line" : 16,
+        "line" : 15,
         "lines" : [
           "fetch unpaid invoices",
           "Check: no invoices whose balance is more than 0",
@@ -154,12 +153,12 @@
       {
         "executes" : false,
         "heading" : "Accounting notes",
-        "line" : 22,
+        "line" : 21,
         "lines" : [
           "The real-world phrase \"soft close\" is intentionally left as documentation; the",
           "compiled behavior uses an explicit period-close tool"
         ],
-        "role" : "inert"
+        "role" : "reference"
       }
     ],
     "triggers" : "\"month-end close\"\n\"close accounting period\""
@@ -200,24 +199,36 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 12,
-      "swift_line" : 402
+      "meridian_line" : 52,
+      "swift_line" : 403
+    },
+    {
+      "meridian_line" : 17,
+      "swift_line" : 415
+    },
+    {
+      "meridian_line" : 76,
+      "swift_line" : 420
+    },
+    {
+      "meridian_line" : 19,
+      "swift_line" : 427
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 440
+      "swift_line" : 464
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 445
+      "swift_line" : 469
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 483
+      "swift_line" : 507
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 488
+      "swift_line" : 512
     }
   ],
   "tools_used" : [
@@ -228,26 +239,6 @@
       "mode" : "strict",
       "parameters" : [
 
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "\"month-end close\"\n\"close accounting period\"\nfetch unpaid invoices\nCheck: no invoices whose balance is more than 0\nclose the accounting period\nPublish: \"accounting period closed\"",
-          "line" : 12,
-          "scoped_tools" : [
-            "inventory.reserve",
-            "invoice.create",
-            "invoice.list",
-            "order.cancel",
-            "order.list",
-            "payment.collect",
-            "period.close",
-            "product.list",
-            "purchase_order.create",
-            "shipment.create"
-          ],
-          "text" : "follow the When this applies guidance"
-        }
       ],
       "source_name" : "month end close",
       "swift_struct" : "MonthEndClose"

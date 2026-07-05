@@ -26,8 +26,7 @@ writes_to:
 > for the lookup chain (brain → search → external) the context-gathering
 > phase follows.
 
-## What this does
-use judgment to follow the What this does guidance:
+## What this does (( role: reference ))
 
 This is NOT a generic book summary. The right column is the value: it makes
 the book read like a therapist who knows the reader is leaving notes in the
@@ -35,14 +34,14 @@ margins. If the user wants a flat summary instead, route them to a different
 skill.
 
 
-### What this does — steps
+### What this does — steps (( role: reference ))
 
 Given a book (EPUB or PDF), produce a brain page where every chapter is
 summarized in detail on the left and mirrored back to the reader's actual life
 on the right, using their own words, situations, people, and patterns from
 the brain. Output is a brain page at `media/books/<slug>-personalized.md`.
 
-## Trust contract (read this before running) (( inert ))
+## Trust contract (read this before running) (( role: reference ))
 
 book-mirror runs as a CLI command (`gbrain book-mirror`), NOT as a pure
 markdown skill that the agent dispatches via tools. The CLI is the trusted
@@ -51,7 +50,7 @@ runtime; the skill is the orchestration prose around it.
 - The CLI reads each child's `job.result`, assembles the final
   two-column page, and writes it via a single operator-trust `put_page`.
 
-### Trust contract (read this before running) — steps
+### Trust contract (read this before running) — steps (( role: reference ))
 
 > What this means for the agent:
 
@@ -60,13 +59,13 @@ runtime; the skill is the orchestration prose around it.
   put_page or any mutating op. They produce markdown analysis via their
   final message.
 
-### Trust contract (read this before running) — steps 2
+### Trust contract (read this before running) — steps 2 (( role: reference ))
 
 - This means untrusted EPUB/PDF content cannot prompt-inject any
   `people/*` page. The trust narrowing happens at the tool allowlist,
   not at the slug-prefix layer.
 
-## The pipeline (( inert ))
+## The pipeline (( role: reference ))
 
 ```
 1. ACQUIRE   → User has the EPUB/PDF locally (manual; book-acquisition is
@@ -78,7 +77,7 @@ runtime; the skill is the orchestration prose around it.
 6. PDF       → Optional: render via skills/brain-pdf for delivery.
 ```
 
-## 1. Acquiring the book (( inert ))
+## 1. Acquiring the book (( role: reference ))
 
 Resolve `$BRAIN_DIR` from the gbrain config (`gbrain config get sync.repo_path`)
 or accept it from the user.
@@ -99,21 +98,21 @@ ls path/to/book.pdf
 ls $BRAIN_DIR/media/books/
 ```
 
-## 2. Text extraction (( inert ))
+## 2. Text extraction
 
 
-### 2. Text extraction — steps
+### 2. Text extraction — steps (( role: reference ))
 
 Goal: one `.txt` file per chapter under a temp directory. The agent has
 shell + python access; the CLI is downstream of this and takes the
 extracted directory as input.
 
-### EPUB (( inert ))
+### EPUB (( role: reference ))
 
 If `bs4` is missing: `pip3 install beautifulsoup4 lxml`.
 
 
-#### EPUB — steps
+### EPUB — steps (( role: reference ))
 
 ```bash
 SLUG="this-book"                                # kebab-case
@@ -140,14 +139,14 @@ PY
 ```
 
 
-#### EPUB — steps 2
+### EPUB — steps 2 (( role: reference ))
 
 Inspect the chapter files to identify which are real chapters vs front
 matter (TOC, copyright, acknowledgments). Often the EPUB ships one file
 per chapter; sometimes multiple chapters per file. Use
 `head -5 "$WORK/chapters/"*.txt` to spot-check.
 
-### PDF (( inert ))
+### PDF (( role: reference ))
 
 Then split by chapter heading (look for "Chapter N", "CHAPTER N", or
 all-caps title lines) using `awk` or `python`. If the PDF is a scan with
@@ -155,35 +154,35 @@ no embedded text, fall back to OCR via `skills/brain-pdf` or another
 vision tool.
 
 
-#### PDF — steps
+### PDF — steps
 
 ```bash
 pdftotext -layout path/to/book.pdf "$WORK/full.txt"
 ```
 
-### Quality check (( inert ))
+### Quality check (( role: reference ))
 
 - Word count > 1500 (typical chapter range 2k–8k words).
 - No HTML tags.
 - Paragraphs preserved with `\n\n`.
 
 
-#### Quality check — steps
+### Quality check — steps
 
 For each chapter file:
 
 
-#### Quality check — steps 2
+### Quality check — steps 2 (( role: reference ))
 
 Save a `chapters/INDEX.md` mapping chapter number → title → file → word
 count for reference.
 
-## 3. Context gathering (( inert ))
+## 3. Context gathering (( role: reference ))
 
 This is the most critical step. The right column is only as good as the
 context fed to each chapter subagent.
 
-### What to pull (( inert ))
+### What to pull (( role: reference ))
 
 1. **Templates: USER.md and SOUL.md** if the user maintains them
    (gbrain ships templates at `templates/USER.md` and `templates/SOUL.md`;
@@ -198,21 +197,21 @@ context fed to each chapter subagent.
    originals that's been recurring.
 
 
-#### What to pull — steps
+### What to pull — steps (( role: reference ))
 
 2. Recent daily memory — last 14 days of brain pages under
    `wiki/personal/reflections/` or wherever the user files daily notes.
 
-#### What to pull — steps 2
+### What to pull — steps 2 (( role: reference ))
 
 4. Brain pages for relevant entities — `gbrain query "<name>"` for
    people who will likely come up.
-### Assemble a context pack (( inert ))
+### Assemble a context pack (( role: reference ))
 
 Make this dense. It's read by every chapter subagent.
 
 
-#### Assemble a context pack — steps
+### Assemble a context pack — steps
 
 > Write everything to a single file the CLI can read:
 
@@ -241,7 +240,7 @@ CONTEXT="$WORK/context.md"
 } > "$CONTEXT"
 ```
 
-## 4. Analysis: invoke `gbrain book-mirror` (( inert ))
+## 4. Analysis: invoke `gbrain book-mirror` (( role: reference ))
 
 The CLI:
 
@@ -279,15 +278,21 @@ gbrain book-mirror \
 > - Reports a JSON envelope on stdout:
   `{"slug": "...", "chapters_total": N, "chapters_completed": N, "chapters_failed": 0}`.
 
-### Model: Opus by default (( inert ))
+### Model: Opus by default
 
+
+### Model: Opus by default — steps
+
+use judgment to follow the Model: Opus by default — steps guidance:
 The default model is `claude-opus-4-7`. Sonnet works (use ``--model
 claude-sonnet-4-6``) but the right-column quality drops noticeably — the
 texture that makes the analysis read like a therapist who knows the user
 needs Opus-grade reasoning.
 
 ### Cost gate
-use judgment to follow the Cost gate guidance:
+
+
+### Cost gate — steps
 
 The CLI refuses to spend in a non-TTY context without `--yes`. CI / scripted
 invocations must pass `--yes` explicitly. TTY users get a `[y/N]` prompt
@@ -303,7 +308,7 @@ gbrain put_page  # already done by the CLI; nothing to add here
 # (see skills/brain-pdf/SKILL.md for the make-pdf invocation)
 ```
 
-## 6. Fact-check and cross-link (( inert ))
+## 6. Fact-check and cross-link (( role: reference ))
 
 After the page lands, run a fact-check pass on factual claims about the
 reader (parents, siblings, marriage history, jobs, heritage). Common error
@@ -327,7 +332,7 @@ introduce a falsehood.
   back-link from `people/<slug>` to the new `media/books/<slug>-personalized`
   page (per `conventions/quality.md` Iron Law).
 
-## Quality bar (the bar) (( inert ))
+## Quality bar (the bar) (( role: reference ))
 
 The **left column** should:
 
@@ -348,22 +353,28 @@ The **whole document** should feel like one coherent voice, calibrated to
 the reader's actual life rather than a generic profile, and honest about
 where the book's framing breaks down for this specific reader.
 
-## Anti-patterns (do not do these)
-use judgment to follow the Anti-patterns (do not do these) guidance:
+## Anti-patterns (do not do these) (( role: reference ))
 
 - ❌ **Skimming chapters.** Standing instruction: preserve detail.
 - ❌ **Generic right column.** "This might apply if you've ever felt…" →
   kill on sight.
-- ❌ **Factual errors about the reader's life.** Always fact-check after
-  assembly.
 - ❌ **Giving the subagent put_page access.** Trust contract is read-only;
   the CLI does the writing.
 - ❌ **Forcing connections.** If a chapter doesn't apply, say so plainly.
-- ❌ **Sycophancy or moralizing in the right column.** No "you should…",
-  no "consider…", no "perhaps it's time to…".
 - ❌ **Truncating the LEFT column.** The book's actual content needs to
   survive.
 
+
+### Anti-patterns (do not do these) — steps
+
+- ❌ Factual errors about the reader's life. Always fact-check after
+  assembly.
+
+### Anti-patterns (do not do these) — steps 2
+
+use judgment to follow the Anti-patterns (do not do these) — steps 2 guidance:
+- ❌ **Sycophancy or moralizing in the right column.** No "you should…",
+  no "consider…", no "perhaps it's time to…".
 ## Output checklist
 
 - [ ] Book file exists locally (path known).
@@ -375,7 +386,7 @@ use judgment to follow the Anti-patterns (do not do these) guidance:
 - [ ] Cross-links added from referenced people/companies.
 - [ ] Optional: PDF rendered via brain-pdf and delivered.
 
-## Related skills (( inert, role: procedure ))
+## Related skills
 
 
 ### Related skills — steps
@@ -387,8 +398,7 @@ use judgment to follow the Anti-patterns (do not do these) guidance:
   rather than books.
 
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 This skill guarantees:
 
@@ -399,11 +409,10 @@ This skill guarantees:
 
 The full behavior contract is documented in the body sections above; this section exists for the conformance test.
 
-## Output Format (( inert, role: template ))
+## Output Format (( role: template ))
 
 The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing.

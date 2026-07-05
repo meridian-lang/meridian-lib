@@ -39,8 +39,7 @@ writes_to:
 
 > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 This skill guarantees:
 - Every ingested media item has a brain page with analysis (not just a transcript dump)
@@ -51,17 +50,18 @@ This skill guarantees:
 
 > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
 
+
+### Contract — steps (( role: reference ))
+
 Every mention of a person or company with a brain page MUST create a back-link.
 
 ## Phases
-use judgment to follow the Phases guidance:
 
-### Phase 1: Identify format and fetch (( inert, role: procedure ))
+### Phase 1: Identify format and fetch
 
 
-#### Phase 1: Identify format and fetch — steps
+### Phase 1: Identify format and fetch — steps (( role: reference ))
 
-!!! table (( ai-discretion ))
 | Format | Action |
 |--------|--------|
 | YouTube/video URL | Fetch transcript (Whisper, transcription service, or captions) |
@@ -75,8 +75,7 @@ use judgment to follow the Phases guidance:
 
 Save the original file for provenance: `gbrain files upload-raw <file> --page <slug>`
 
-### Phase 3: Create brain page
-use judgment to follow the Phase 3: Create brain page guidance:
+### Phase 3: Create brain page (( role: reference ))
 
 File by primary subject (not format). Use this template:
 
@@ -100,8 +99,7 @@ File by primary subject (not format). Use this template:
 {List with links to brain pages}
 ```
 
-### Phase 4: Entity extraction and propagation
-use judgment to follow the Phase 4: Entity extraction and propagation guidance:
+### Phase 4: Entity extraction and propagation (( role: reference ))
 
 2. Create/enrich if needed (delegate to enrich skill)
 4. Add timeline entry on entity page
@@ -109,28 +107,31 @@ use judgment to follow the Phase 4: Entity extraction and propagation guidance:
 A media item is NOT fully ingested until entity propagation is complete.
 
 
-#### Phase 4: Entity extraction and propagation — steps
+### Phase 4: Entity extraction and propagation — steps
 
 For every person and company mentioned:
 1. Check brain for existing page
 
-#### Phase 4: Entity extraction and propagation — steps 2
+### Phase 4: Entity extraction and propagation — steps 2
 
 3. Add back-link from entity page to this media page
 ### Phase 5: Sync
 
 `gbrain sync` to update the index.
 
-## Output Format (( inert, role: template ))
+## Output Format (( role: template ))
 
 Brain page created with summary, highlights, and entity cross-links. Report to user:
 "Ingested {title}: {N} entities detected, {N} pages updated."
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 - Dumping raw transcripts without analysis
 - Skipping entity extraction ("I'll do that separately")
-- Filing **raw ingest** by format (all videos in `media/videos/`) instead of by subject. Note: format-prefixed paths under `media/<format>/<slug>` ARE sanctioned for **synthesized one-of-one output** like book-mirror's `media/books/<slug>-personalized.md`. The anti-pattern is for raw ingest, not for sui generis synthesis. See `skills/_brain-filing-rules.md` "Sanctioned exception: synthesis output is sui generis."
 - Not preserving raw source files
 - Creating stub pages without meaningful content
+
+
+### Anti-Patterns — steps
+
+- Filing raw ingest by format (all videos in `media/videos/`) instead of by subject. Note: format-prefixed paths under `media/<format>/<slug>` ARE sanctioned for synthesized one-of-one output like book-mirror's `media/books/<slug>-personalized.md`. The anti-pattern is for raw ingest, not for sui generis synthesis. See `skills/_brain-filing-rules.md` "Sanctioned exception: synthesis output is sui generis."

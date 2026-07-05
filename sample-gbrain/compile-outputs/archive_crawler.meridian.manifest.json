@@ -98,40 +98,58 @@
     "name" : "archive-crawler",
     "outline" : [
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 29,
         "text" : "Safety gate (REQUIRED, no exceptions)"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 56,
+        "text" : "Safety gate (REQUIRED, no exceptions) — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 60,
+        "line" : 63,
         "text" : "What this is"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 69,
+        "line" : 72,
         "text" : "Concepts"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 71,
+        "line" : 74,
         "text" : "Source"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 84,
+        "line" : 81,
+        "text" : "Source — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 86,
         "text" : "Manifest"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 97,
+        "line" : 98,
         "text" : "Gold filter"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 101,
+        "text" : "Gold filter — steps"
       },
       {
         "kind" : "procedure",
@@ -140,111 +158,153 @@
         "text" : "Protocol"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 118,
+        "line" : 117,
         "text" : "Phase 1: Inventory"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 133,
+        "line" : 130,
+        "text" : "Phase 1: Inventory — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 134,
         "text" : "Phase 2: Crawl"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 147,
+        "line" : 144,
+        "text" : "Phase 2: Crawl — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 149,
+        "text" : "Phase 2: Crawl — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 153,
         "text" : "Phase 3: Ingest"
       },
       {
-        "kind" : "inert",
-        "level" : 2,
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 187,
+        "text" : "Phase 3: Ingest — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
         "line" : 196,
+        "text" : "Phase 3: Ingest — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 205,
         "text" : "File-type handlers"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 198,
+        "line" : 207,
         "text" : "Plain text \/ HTML \/ Markdown"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 201,
+        "line" : 210,
         "text" : "`.mbox` (email archives)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 218,
+        "line" : 227,
         "text" : "`.doc` \/ `.docx`"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 233,
+        "line" : 242,
         "text" : "`.pst` (Outlook archives)"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 245,
+        "line" : 254,
         "text" : "`.zip` \/ `.tar` \/ `.tar.gz`"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 249,
+        "line" : 258,
         "text" : "Images"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 254,
+        "line" : 263,
         "text" : "Manifest template"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 301,
+        "line" : 310,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "procedure",
+        "kind" : "prohibitions",
+        "level" : 3,
+        "line" : 321,
+        "text" : "Anti-Patterns — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 325,
+        "text" : "Anti-Patterns — steps 2"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 315,
+        "line" : 329,
         "text" : "Related skills"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 321,
+        "line" : 334,
         "text" : "Related skills — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 326,
+        "line" : 339,
         "text" : "Related skills — steps 2"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 331,
+        "line" : 344,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 343,
+        "line" : 355,
         "text" : "Output Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 121,
+        "line" : 119,
         "text" : "When pointed at a new source"
       },
       {
@@ -256,19 +316,19 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 159,
+        "line" : 158,
         "text" : "Brain page format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 334,
+        "line" : 346,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 339,
+        "line" : 351,
         "text" : "Privacy contract preserved"
       }
     ],
@@ -278,22 +338,30 @@
         "heading" : "Safety gate (REQUIRED, no exceptions)",
         "line" : 29,
         "lines" : [
-          "archive-crawler refuses to run unless `archive-crawler.scan_paths:` is",
-          "explicitly set in `gbrain.yml`. This is a deliberate safety fence against",
-          "the agent over-scoping a scan and ingesting sensitive content (tax PDFs,",
-          "medical records, credentials)",
           "codeblock:yaml:IyBnYnJhaW4ueW1sIOKAlCB0aGUgYWxsb3ctbGlzdCBpcyBtYW5kYXRvcnkKYXJjaGl2ZS1jcmF3bGVyOgogIHNjYW5fcGF0aHM6CiAgICAtIH4vRG9jdW1lbnRzL3dyaXRpbmcvCiAgICAtIH4vRHJvcGJveC9BcmNoaXZlLwogICAgLSAvbW50L2JhY2t1cC9vbGQtbGV0dGVycy8KICAjIE9wdGlvbmFsIGRlbnktbGlzdCBpbnNpZGUgdGhlIGFsbG93LWxpc3Q6CiAgIyBkZW55X3BhdGhzOgogICMgICAtIH4vRG9jdW1lbnRzL2ZpbmFuY2VzLwogICMgICAtIH4vRG9jdW1lbnRzL21lZGljYWwv",
           "If `scan_paths` is empty or missing, the skill exits with:",
           "codeblock:plain:YXJjaGl2ZS1jcmF3bGVyOiByZWZ1c2luZyB0byBydW4uIE5vIGBhcmNoaXZlLWNyYXdsZXIuc2Nhbl9wYXRoczpgIGFsbG93LWxpc3QKaW4gZ2JyYWluLnltbC4gQWRkIGV4cGxpY2l0IHBhdGhzIHRoZSBhZ2VudCBpcyBwZXJtaXR0ZWQgdG8gc2NhbiwgdGhlbiByZS1ydW4uClRoaXMgaXMgYSBzYWZldHkgZmVuY2Ug4oCUIHRoZSBhZ2VudCB3aWxsIG5vdCBpbmZlciB3aGF0J3Mgc2FmZSB0byByZWFkLg==",
           "This contract is enforced by `src\/core\/storage-config.ts` (mirrors the",
           "`db_tracked` \/ `db_only` allow-list pattern from v0.22.11 storage tiering)"
         ],
-        "role" : "inert"
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Safety gate (REQUIRED, no exceptions) — steps",
+        "line" : 56,
+        "lines" : [
+          "archive-crawler refuses to run unless `archive-crawler.scan_paths:` is",
+          "explicitly set in `gbrain.yml`. This is a deliberate safety fence against",
+          "the agent over-scoping a scan and ingesting sensitive content (tax PDFs,",
+          "medical records, credentials)"
+        ],
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "What this is",
-        "line" : 60,
+        "line" : 63,
         "lines" : [
           "Generic engine for exploring any tree of personal content within an",
           "explicit allow-list. Works on local mounts, Dropbox API targets,",
@@ -302,37 +370,43 @@
           "it interactively for review. Skips noise (system files, configs, binary",
           "blobs)"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Concepts",
-        "line" : 69,
+        "line" : 72,
         "lines" : [
 
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Source",
-        "line" : 71,
+        "line" : 74,
         "lines" : [
-          "use judgment to follow the Source guidance:",
           "A source is any tree of files to explore. Sources have:",
           "**type**: `local` | `dropbox` | `backblaze` | `gmail-takeout` | `mbox` | `pst`",
-          "**root**: filesystem path, Dropbox path, B2 prefix, mbox path",
+          "**root**: filesystem path, Dropbox path, B2 prefix, mbox path"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Source — steps",
+        "line" : 81,
+        "lines" : [
           "manifest: a brain page tracking progress at",
           "`projects\/<archive-slug>\/STATUS.md`"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Manifest",
-        "line" : 84,
+        "line" : 86,
         "lines" : [
-          "use judgment to follow the Manifest guidance:",
           "Every archive exploration gets a manifest brain page that tracks:",
           "**Tree inventory** — folders \/ files \/ sizes \/ types",
           "**Triage status** — each item: `⬜ unseen` \/ `👀 reviewed` \/",
@@ -342,88 +416,12 @@
           "**Priority queue** — what to explore next, ranked",
           "**Session log** — timestamped record of what was shown per session"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Gold filter",
-        "line" : 97,
-        "lines" : [
-          "table:ai-discretion:fCBLZWVwIChzaG93KSB8IFNraXAgKG5vdGUgZXhpc3RlbmNlLCBkb24ndCBzaG93KSB8CnwtLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tfAp8IFBlcnNvbmFsIHdyaXRpbmcgKGpvdXJuYWxzLCBsZXR0ZXJzLCByZWZsZWN0aW9ucywgZXNzYXlzKSB8IFN5c3RlbSBmaWxlcywgY29uZmlncywgcGFja2FnZS5qc29uLCBub2RlX21vZHVsZXMgfAp8IENvbnZlcnNhdGlvbnMgKElNIGxvZ3MsIGVtYWlsIHRocmVhZHMgd2l0aCBzdWJzdGFuY2UpIHwgQmluYXJ5IGJsb2JzIChpbWFnZXMgLyB2aWRlbykgfAp8IElkZWFzLCB0aGVzZXMsIGZyYW1ld29ya3MgfCBSZWNlaXB0cywgaW52b2ljZXMsIHRheCBkb2NzIHwKfCBSZWxhdGlvbnNoaXAgbWF0ZXJpYWwgKGxldHRlcnMgdG8gLyBmcm9tIHBlb3BsZSB3aG8gbWF0dGVyKSB8IFNwYW0sIG5ld3NsZXR0ZXJzLCBtYWlsaW5nLWxpc3QgYnVsayB8CnwgQ3JlYXRpdmUgd29yayAocG9ldHJ5LCBzdG9yaWVzLCBjb2RlIHdpdGggc291bCkgfCBDb3JydXB0ZWQgLyBudWxsIGZpbGVzIHwKfCBPcmlnaW4gc3RvcmllcyAoZmlyc3QgdmVyc2lvbnMgb2YgdGhpbmdzIHRoYXQgYmVjYW1lIGltcG9ydGFudCkgfCB8CnwgRW1vdGlvbmFsIGNvbnRlbnQgKGFuZ2VyLCBsb3ZlLCBncmllZiwgZGlzY292ZXJ5KSB8IHw="
-        ],
-        "role" : "inert"
-      },
-      {
-        "executes" : true,
-        "heading" : "Protocol",
-        "line" : 115,
-        "lines" : [
-          "use judgment to follow the Protocol guidance:"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Phase 1: Inventory",
-        "line" : 118,
-        "lines" : [
-          "use judgment to follow the Phase 1: Inventory guidance:",
-          "When pointed at a new source:",
-          "**Confirm scan_paths is set** (safety gate). Exit if not",
-          "**Map the tree** — list folders + files + sizes + date ranges",
-          "**Classify folders** — group by likely content type (writing, email,",
-          "code, photos, docs, system)",
-          "**Create manifest** — write `projects\/<archive-slug>\/STATUS.md` with",
-          "the full inventory",
-          "**Propose priority queue** — rank folders by likely gold density",
-          "**Present to user** — show the map and proposed order. Let them",
-          "override"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Phase 2: Crawl",
-        "line" : 133,
-        "lines" : [
-          "use judgment to follow the Phase 2: Crawl guidance:",
-          "Work through folders in priority order:",
-          "**Read before showing** — open each candidate file, apply the gold",
-          "filter, skip noise",
-          "**Show one at a time** — present gold items individually for review",
-          "**Capture exact reaction** — track the user's response in the",
-          "manifest using their exact words (per conventions\/quality.md)",
-          "**Ingest if worth keeping** — create a brain page immediately",
-          "**Update manifest** — mark item status after each interaction",
-          "**Never re-show** — check the manifest before presenting anything"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Phase 3: Ingest",
-        "line" : 147,
-        "lines" : [
-          "use judgment to follow the Phase 3: Ingest guidance:",
-          "Letters or threads about a specific person → `people\/<person>\/timeline`",
-          "back-link plus the letter at `personal\/<slug>.md` or `originals\/<slug>.md`",
-          "**The skill is schema-generic.** It does NOT bake in any specific",
-          "era-folder structure (e.g., `originals\/archive\/` for pre-2003,",
-          "`originals\/yc-era\/` for post-2019, etc.). The user's filing rules from",
-          "`_brain-filing-rules.json` are read at runtime; the agent decides per-page",
-          "where content lands within those sanctioned directories",
-          "Brain page format:",
-          "codeblock:markdown:LS0tCnRpdGxlOiAiW1RpdGxlIG9yIGZpcnN0IGxpbmVdIgp0eXBlOiBvcmlnaW5hbApzb3VyY2VfdHlwZTogIltsb2NhbHxkcm9wYm94fGJhY2tibGF6ZXxnbWFpbC10YWtlb3V0fG1ib3h8cHN0XSIKc291cmNlX3BhdGg6ICJbcGF0aCB3aXRoaW4gdGhlIGFsbG93LWxpc3RlZCBzY2FuX3BhdGhzXSIKZGF0ZTogIllZWVktTU0tREQiICAjIGRhdGUgZnJvbSB0aGUgZmlsZSBtZXRhZGF0YSBvciBjb250ZW50CnBlb3BsZTogWyJwZXJzb24tMSIsICJwZXJzb24tMiJdCnRhZ3M6IFsidGFnLTEiLCAidGFnLTIiXQotLS0KCiMgW1RpdGxlXQoKW1N1bW1hcnk6IHdoYXQgaXQgaXMsIHdoZW4gaXQncyBmcm9tLCB3aHkgaXQgbWF0dGVyc10KCioqVXNlcidzIHJlYWN0aW9uOioqIFtleGFjdCBxdW90ZSwgbm8gcGFyYXBocmFzaW5nXQoKIyMgQ29udGV4dAoKW0Nyb3NzLWxpbmtzIHRvIHBlb3BsZSwgY29uY2VwdHMsIHByb2plY3RzLl0KCi0tLQoKW1JhdyBzb3VyY2UgbWF0ZXJpYWwgYmVsb3cgdGhlIGxpbmUg4oCUIGZ1bGwgdGV4dF0=",
-          "User's own writing \/ ideas \/ origin-story content → `originals\/<slug>.md`",
-          "Reflections \/ personal-life content → `personal\/<slug>.md`",
-          "Product \/ business ideas → `ideas\/<slug>.md`"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : false,
-        "heading" : "File-type handlers",
-        "line" : 196,
+        "line" : 98,
         "lines" : [
 
         ],
@@ -431,26 +429,149 @@
       },
       {
         "executes" : false,
+        "heading" : "Gold filter — steps",
+        "line" : 101,
+        "lines" : [
+          "table:decision:fCBLZWVwIChzaG93KSB8IFNraXAgKG5vdGUgZXhpc3RlbmNlLCBkb24ndCBzaG93KSB8CnwtLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tfAp8IFBlcnNvbmFsIHdyaXRpbmcgKGpvdXJuYWxzLCBsZXR0ZXJzLCByZWZsZWN0aW9ucywgZXNzYXlzKSB8IFN5c3RlbSBmaWxlcywgY29uZmlncywgcGFja2FnZS5qc29uLCBub2RlX21vZHVsZXMgfAp8IENvbnZlcnNhdGlvbnMgKElNIGxvZ3MsIGVtYWlsIHRocmVhZHMgd2l0aCBzdWJzdGFuY2UpIHwgQmluYXJ5IGJsb2JzIChpbWFnZXMgLyB2aWRlbykgfAp8IElkZWFzLCB0aGVzZXMsIGZyYW1ld29ya3MgfCBSZWNlaXB0cywgaW52b2ljZXMsIHRheCBkb2NzIHwKfCBSZWxhdGlvbnNoaXAgbWF0ZXJpYWwgKGxldHRlcnMgdG8gLyBmcm9tIHBlb3BsZSB3aG8gbWF0dGVyKSB8IFNwYW0sIG5ld3NsZXR0ZXJzLCBtYWlsaW5nLWxpc3QgYnVsayB8CnwgQ3JlYXRpdmUgd29yayAocG9ldHJ5LCBzdG9yaWVzLCBjb2RlIHdpdGggc291bCkgfCBDb3JydXB0ZWQgLyBudWxsIGZpbGVzIHwKfCBPcmlnaW4gc3RvcmllcyAoZmlyc3QgdmVyc2lvbnMgb2YgdGhpbmdzIHRoYXQgYmVjYW1lIGltcG9ydGFudCkgfCB8CnwgRW1vdGlvbmFsIGNvbnRlbnQgKGFuZ2VyLCBsb3ZlLCBncmllZiwgZGlzY292ZXJ5KSB8IHw="
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Protocol",
+        "line" : 115,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 1: Inventory",
+        "line" : 117,
+        "lines" : [
+          "When pointed at a new source:",
+          "**Confirm scan_paths is set** (safety gate). Exit if not",
+          "**Map the tree** — list folders + files + sizes + date ranges",
+          "**Classify folders** — group by likely content type (writing, email,",
+          "code, photos, docs, system)",
+          "**Propose priority queue** — rank folders by likely gold density",
+          "**Present to user** — show the map and proposed order. Let them",
+          "override"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 1: Inventory — steps",
+        "line" : 130,
+        "lines" : [
+          "Create manifest — write `projects\/<archive-slug>\/STATUS.md` with",
+          "the full inventory"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 2: Crawl",
+        "line" : 134,
+        "lines" : [
+          "Work through folders in priority order:",
+          "**Read before showing** — open each candidate file, apply the gold",
+          "filter, skip noise",
+          "**Show one at a time** — present gold items individually for review",
+          "**Ingest if worth keeping** — create a brain page immediately",
+          "**Update manifest** — mark item status after each interaction"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 2: Crawl — steps",
+        "line" : 144,
+        "lines" : [
+          "Capture exact reaction — track the user's response in the",
+          "manifest using their exact words (per conventions\/quality.md)"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 2: Crawl — steps 2",
+        "line" : 149,
+        "lines" : [
+          "Never re-show — check the manifest before presenting anything"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 3: Ingest",
+        "line" : 153,
+        "lines" : [
+          "Letters or threads about a specific person → `people\/<person>\/timeline`",
+          "back-link plus the letter at `personal\/<slug>.md` or `originals\/<slug>.md`",
+          "Brain page format:",
+          "codeblock:markdown:LS0tCnRpdGxlOiAiW1RpdGxlIG9yIGZpcnN0IGxpbmVdIgp0eXBlOiBvcmlnaW5hbApzb3VyY2VfdHlwZTogIltsb2NhbHxkcm9wYm94fGJhY2tibGF6ZXxnbWFpbC10YWtlb3V0fG1ib3h8cHN0XSIKc291cmNlX3BhdGg6ICJbcGF0aCB3aXRoaW4gdGhlIGFsbG93LWxpc3RlZCBzY2FuX3BhdGhzXSIKZGF0ZTogIllZWVktTU0tREQiICAjIGRhdGUgZnJvbSB0aGUgZmlsZSBtZXRhZGF0YSBvciBjb250ZW50CnBlb3BsZTogWyJwZXJzb24tMSIsICJwZXJzb24tMiJdCnRhZ3M6IFsidGFnLTEiLCAidGFnLTIiXQotLS0KCiMgW1RpdGxlXQoKW1N1bW1hcnk6IHdoYXQgaXQgaXMsIHdoZW4gaXQncyBmcm9tLCB3aHkgaXQgbWF0dGVyc10KCioqVXNlcidzIHJlYWN0aW9uOioqIFtleGFjdCBxdW90ZSwgbm8gcGFyYXBocmFzaW5nXQoKIyMgQ29udGV4dAoKW0Nyb3NzLWxpbmtzIHRvIHBlb3BsZSwgY29uY2VwdHMsIHByb2plY3RzLl0KCi0tLQoKW1JhdyBzb3VyY2UgbWF0ZXJpYWwgYmVsb3cgdGhlIGxpbmUg4oCUIGZ1bGwgdGV4dF0="
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 3: Ingest — steps",
+        "line" : 187,
+        "lines" : [
+          "User's own writing \/ ideas \/ origin-story content → `originals\/<slug>.md`",
+          "Reflections \/ personal-life content → `personal\/<slug>.md`",
+          "Product \/ business ideas → `ideas\/<slug>.md`"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 3: Ingest — steps 2",
+        "line" : 196,
+        "lines" : [
+          "use judgment to follow the Phase 3: Ingest — steps 2 guidance:",
+          "**The skill is schema-generic.** It does NOT bake in any specific",
+          "era-folder structure (e.g., `originals\/archive\/` for pre-2003,",
+          "`originals\/yc-era\/` for post-2019, etc.). The user's filing rules from",
+          "`_brain-filing-rules.json` are read at runtime; the agent decides per-page",
+          "where content lands within those sanctioned directories"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "File-type handlers",
+        "line" : 205,
+        "lines" : [
+
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
         "heading" : "Plain text \/ HTML \/ Markdown",
-        "line" : 198,
+        "line" : 207,
         "lines" : [
           "Read directly. Strip HTML tags for display"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "`.mbox` (email archives)",
-        "line" : 201,
+        "line" : 210,
         "lines" : [
           "codeblock:python:aW1wb3J0IG1haWxib3gKbWJveCA9IG1haWxib3gubWJveCgnL3BhdGgvdG8vZmlsZS5tYm94JykKZm9yIG1zZyBpbiBtYm94OgogICAgYm9keSA9ICcnCiAgICBpZiBtc2cuaXNfbXVsdGlwYXJ0KCk6CiAgICAgICAgZm9yIHBhcnQgaW4gbXNnLndhbGsoKToKICAgICAgICAgICAgaWYgcGFydC5nZXRfY29udGVudF90eXBlKCkgPT0gJ3RleHQvcGxhaW4nOgogICAgICAgICAgICAgICAgYm9keSA9IHBhcnQuZ2V0X3BheWxvYWQoZGVjb2RlPVRydWUpLmRlY29kZSgndXRmLTgnLCBlcnJvcnM9J3JlcGxhY2UnKQogICAgICAgICAgICAgICAgYnJlYWsKICAgIGVsc2U6CiAgICAgICAgYm9keSA9IG1zZy5nZXRfcGF5bG9hZChkZWNvZGU9VHJ1ZSkuZGVjb2RlKCd1dGYtOCcsIGVycm9ycz0ncmVwbGFjZScpCiAgICAjIEFwcGx5IGdvbGQgZmlsdGVy"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "`.doc` \/ `.docx`",
-        "line" : 218,
+        "line" : 227,
         "lines" : [
           "codeblock:bash:IyAuZG9jeCAobW9kZXJuKQpweXRob24zIC1jICIKaW1wb3J0IHppcGZpbGUsIHhtbC5ldHJlZS5FbGVtZW50VHJlZSBhcyBFVAp3aXRoIHppcGZpbGUuWmlwRmlsZSgnL3BhdGgvdG8vZmlsZS5kb2N4JykgYXMgejoKICAgIHRyZWUgPSBFVC5wYXJzZSh6Lm9wZW4oJ3dvcmQvZG9jdW1lbnQueG1sJykpCiAgICBwcmludCgnJy5qb2luKHQudGV4dCBvciAnJyBmb3IgdCBpbiB0cmVlLml0ZXIoJ3todHRwOi8vc2NoZW1hcy5vcGVueG1sZm9ybWF0cy5vcmcvd29yZHByb2Nlc3NpbmdtbC8yMDA2L21haW59dCcpKSkKIgoKIyAuZG9jIChsZWdhY3ksIHJlcXVpcmVzIGFudGl3b3JkIG9yIGNhdGRvYykKYW50aXdvcmQgL3BhdGgvdG8vZmlsZS5kb2MgMj4vZGV2L251bGwgfHwgY2F0ZG9jIC9wYXRoL3RvL2ZpbGUuZG9jIDI+L2Rldi9udWxs"
         ],
@@ -459,7 +580,7 @@
       {
         "executes" : true,
         "heading" : "`.pst` (Outlook archives)",
-        "line" : 233,
+        "line" : 242,
         "lines" : [
           "codeblock:bash:IyBWYWxpZGF0ZSBmaXJzdDsgbWFueSBQU1RzIGFyZSBudWxsIGJ5dGVzCnB5dGhvbjMgLWMgIgp3aXRoIG9wZW4oJy9wYXRoL3RvL2ZpbGUucHN0JywgJ3JiJykgYXMgZjoKICAgIHByaW50KCdWYWxpZCBQU1QnIGlmIGYucmVhZCg0KSA9PSBiJyFCRE4nIGVsc2UgJ0NPUlJVUFQvTlVMTCcpCiIKIyBJZiB2YWxpZDoKcmVhZHBzdCAtbyAvdG1wL3BzdC1vdXRwdXQgL3BhdGgvdG8vZmlsZS5wc3Q="
         ],
@@ -468,65 +589,79 @@
       {
         "executes" : false,
         "heading" : "`.zip` \/ `.tar` \/ `.tar.gz`",
-        "line" : 245,
+        "line" : 254,
         "lines" : [
           "Extract to a temp dir, then recurse through the extracted tree"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Images",
-        "line" : 249,
+        "line" : 258,
         "lines" : [
           "Note existence + metadata (filename, size, date). Don't show unless the",
           "user asks. Flag scans \/ portraits as potentially personal"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Manifest template",
-        "line" : 254,
+        "line" : 263,
         "lines" : [
           "codeblock:markdown:LS0tCnRpdGxlOiAiW0FyY2hpdmUgTmFtZV0g4oCUIEluZ2VzdGlvbiBTdGF0dXMiCnR5cGU6IHByb2plY3QKY3JlYXRlZDogWVlZWS1NTS1ERAp1cGRhdGVkOiBZWVlZLU1NLURECnNvdXJjZV90eXBlOiAiW2xvY2FsfGRyb3Bib3h8Li4uXSIKc2Nhbl9wYXRoczogWyJwYXRocyBmcm9tIGdicmFpbi55bWwiXQotLS0KCiMgW0FyY2hpdmUgTmFtZV0g4oCUIEluZ2VzdGlvbiBTdGF0dXMKCiMjIFNvdXJjZQotICoqVHlwZToqKiBbbG9jYWx8ZHJvcGJveHwuLi5dCi0gKipBbGxvdy1saXN0ZWQgcGF0aHM6KiogW2Zyb20gZ2JyYWluLnltbF0KLSAqKlRvdGFsIGZpbGVzOioqIFtOXQotICoqVG90YWwgc2l6ZToqKiBbWCBHQl0KLSAqKkRhdGUgcmFuZ2U6KiogW2VhcmxpZXN0XSDigJQgW2xhdGVzdF0KCiMjIEludmVudG9yeQoKIyMjIFtGb2xkZXIgMV0KfCBJdGVtIHwgVHlwZSB8IFNpemUgfCBTdGF0dXMgfCBSZWFjdGlvbiB8CnwtLS0tLS18LS0tLS0tfC0tLS0tLXwtLS0tLS0tLXwtLS0tLS0tLS0tfAp8IGZpbGUxLnR4dCB8IHRleHQgfCAyS0IgfCDinIUgaW5nZXN0ZWQgfCDwn5SlICJleGFjdCBxdW90ZSIgfAp8IGZpbGUyLmRvYyB8IGRvYyB8IDE1S0IgfCDij63vuI8gc2tpcCB8IOKAlCB8CnwgZmlsZTMuaHRtbCB8IGh0bWwgfCA0S0IgfCDirJwgdW5zZWVuIHwg4oCUIHwKCiMjIyBbRm9sZGVyIDJdCi4uLgoKIyMgUHJpb3JpdHkgUXVldWUKMS4gW0hpZ2hlc3QgcHJpb3JpdHkg4oCUIHdoeV0KMi4gW05leHQg4oCUIHdoeV0KLi4uCgojIyBTZXNzaW9uIExvZwoKIyMjIFlZWVktTU0tREQg4oCUIFtTZXNzaW9uIHRvcGljXQotIFJldmlld2VkOiBbbGlzdF0KLSBSZWFjdGlvbnM6IFtleGFjdCBxdW90ZXNdCi0gSW5nZXN0ZWQ6IFticmFpbiBwYWdlcyBjcmVhdGVkXQotIE5leHQ6IFt3aGF0J3MgcXVldWVkXQ=="
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 301,
+        "line" : 310,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "❌ Running without `archive-crawler.scan_paths:` set. Hard refusal",
-          "This is the safety contract — never bypass",
           "❌ Hardcoding era-specific filing paths (e.g., `originals\/archive\/`,",
           "`originals\/yc-era\/`). Read filing rules at runtime instead",
-          "❌ Re-showing items already marked in the manifest. The user's time",
-          "is the scarcest resource",
           "❌ Paraphrasing reactions. Exact words only",
           "❌ Wrapping found content in lessons or takeaways. Let stories breathe",
           "❌ Skipping back-links when content references people \/ companies who",
           "have brain pages. Iron Law per conventions\/quality.md"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
-        "heading" : "Related skills",
-        "line" : 315,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 321,
         "lines" : [
-          "use judgment to follow the Related skills guidance:",
+
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps 2",
+        "line" : 325,
+        "lines" : [
+          "❌ Re-showing items already marked in the manifest. The user's time",
+          "is the scarcest resource"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Related skills",
+        "line" : 329,
+        "lines" : [
           "`skills\/idea-ingest\/SKILL.md` — single-link-or-article ingest with",
           "the same primary-subject filing rule"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Related skills — steps",
-        "line" : 321,
+        "line" : 334,
         "lines" : [
           "`skills\/voice-note-ingest\/SKILL.md` — same exact-phrasing pattern for",
           "audio capture"
@@ -536,18 +671,17 @@
       {
         "executes" : true,
         "heading" : "Related skills — steps 2",
-        "line" : 326,
+        "line" : 339,
         "lines" : [
           "`skills\/conventions\/quality.md` — citations, back-links, voice"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
-        "line" : 331,
+        "line" : 344,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
           "Output written under the directories listed in `writes_to:` (when applicable)",
@@ -555,12 +689,12 @@
           "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
           "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 343,
+        "line" : 355,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -608,48 +742,64 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 72,
-      "swift_line" : 603
+      "meridian_line" : 136,
+      "swift_line" : 604
+    },
+    {
+      "meridian_line" : 192,
+      "swift_line" : 616
+    },
+    {
+      "meridian_line" : 193,
+      "swift_line" : 628
+    },
+    {
+      "meridian_line" : 194,
+      "swift_line" : 640
+    },
+    {
+      "meridian_line" : 198,
+      "swift_line" : 651
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 642
+      "swift_line" : 690
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 647
+      "swift_line" : 695
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 686
+      "swift_line" : 734
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 691
+      "swift_line" : 739
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 730
+      "swift_line" : 778
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 735
+      "swift_line" : 783
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 774
+      "swift_line" : 822
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 779
+      "swift_line" : 827
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 818
+      "swift_line" : 866
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 823
+      "swift_line" : 871
     }
   ],
   "tools_used" : [
@@ -667,8 +817,8 @@
       "prose_steps" : [
         {
           "dispatch_mode" : "plan_then_execute",
-          "guidance" : "A source is any tree of files to explore. Sources have:\n**type**: `local` | `dropbox` | `backblaze` | `gmail-takeout` | `mbox` | `pst`\n**root**: filesystem path, Dropbox path, B2 prefix, mbox path\nmanifest: a brain page tracking progress at\n`projects\/<archive-slug>\/STATUS.md`\nuse judgment to follow the Manifest guidance:\nEvery archive exploration gets a manifest brain page that tracks:\n**Tree inventory** — folders \/ files \/ sizes \/ types\n**Triage status** — each item: `⬜ unseen` \/ `👀 reviewed` \/\n`✅ ingested` \/ `⏭️ skip` \/ `🔥 high-signal`\n**User reactions** — exact quotes when they react (per\nconventions\/quality.md exact-phrasing rule)\n**Priority queue** — what to explore next, ranked\n**Session log** — timestamped record of what was shown per session\nuse judgment to follow the Protocol guidance:\nuse judgment to follow the Phase 1: Inventory guidance:\nWhen pointed at a new source:\n**Confirm scan_paths is set** (safety gate). Exit if not\n**Map the tree** — list folders + files + sizes + date ranges\n**Classify folders** — group by likely content type (writing, email,\ncode, photos, docs, system)\n**Create manifest** — write `projects\/<archive-slug>\/STATUS.md` with\nthe full inventory\n**Propose priority queue** — rank folders by likely gold density\n**Present to user** — show the map and proposed order. Let them\noverride\nuse judgment to follow the Phase 2: Crawl guidance:\nWork through folders in priority order:\n**Read before showing** — open each candidate file, apply the gold\nfilter, skip noise\n**Show one at a time** — present gold items individually for review\n**Capture exact reaction** — track the user's response in the\nmanifest using their exact words (per conventions\/quality.md)\n**Ingest if worth keeping** — create a brain page immediately\n**Update manifest** — mark item status after each interaction\n**Never re-show** — check the manifest before presenting anything\nuse judgment to follow the Phase 3: Ingest guidance:\nLetters or threads about a specific person → `people\/<person>\/timeline`\nback-link plus the letter at `personal\/<slug>.md` or `originals\/<slug>.md`\n**The skill is schema-generic.** It does NOT bake in any specific\nera-folder structure (e.g., `originals\/archive\/` for pre-2003,\n`originals\/yc-era\/` for post-2019, etc.). The user's filing rules from\n`_brain-filing-rules.json` are read at runtime; the agent decides per-page\nwhere content lands within those sanctioned directories\nBrain page format:\ncodeblock:markdown:LS0tCnRpdGxlOiAiW1RpdGxlIG9yIGZpcnN0IGxpbmVdIgp0eXBlOiBvcmlnaW5hbApzb3VyY2VfdHlwZTogIltsb2NhbHxkcm9wYm94fGJhY2tibGF6ZXxnbWFpbC10YWtlb3V0fG1ib3h8cHN0XSIKc291cmNlX3BhdGg6ICJbcGF0aCB3aXRoaW4gdGhlIGFsbG93LWxpc3RlZCBzY2FuX3BhdGhzXSIKZGF0ZTogIllZWVktTU0tREQiICAjIGRhdGUgZnJvbSB0aGUgZmlsZSBtZXRhZGF0YSBvciBjb250ZW50CnBlb3BsZTogWyJwZXJzb24tMSIsICJwZXJzb24tMiJdCnRhZ3M6IFsidGFnLTEiLCAidGFnLTIiXQotLS0KCiMgW1RpdGxlXQoKW1N1bW1hcnk6IHdoYXQgaXQgaXMsIHdoZW4gaXQncyBmcm9tLCB3aHkgaXQgbWF0dGVyc10KCioqVXNlcidzIHJlYWN0aW9uOioqIFtleGFjdCBxdW90ZSwgbm8gcGFyYXBocmFzaW5nXQoKIyMgQ29udGV4dAoKW0Nyb3NzLWxpbmtzIHRvIHBlb3BsZSwgY29uY2VwdHMsIHByb2plY3RzLl0KCi0tLQoKW1JhdyBzb3VyY2UgbWF0ZXJpYWwgYmVsb3cgdGhlIGxpbmUg4oCUIGZ1bGwgdGV4dF0=\nUser's own writing \/ ideas \/ origin-story content → `originals\/<slug>.md`\nReflections \/ personal-life content → `personal\/<slug>.md`\nProduct \/ business ideas → `ideas\/<slug>.md`\ncodeblock:bash:IyAuZG9jeCAobW9kZXJuKQpweXRob24zIC1jICIKaW1wb3J0IHppcGZpbGUsIHhtbC5ldHJlZS5FbGVtZW50VHJlZSBhcyBFVAp3aXRoIHppcGZpbGUuWmlwRmlsZSgnL3BhdGgvdG8vZmlsZS5kb2N4JykgYXMgejoKICAgIHRyZWUgPSBFVC5wYXJzZSh6Lm9wZW4oJ3dvcmQvZG9jdW1lbnQueG1sJykpCiAgICBwcmludCgnJy5qb2luKHQudGV4dCBvciAnJyBmb3IgdCBpbiB0cmVlLml0ZXIoJ3todHRwOi8vc2NoZW1hcy5vcGVueG1sZm9ybWF0cy5vcmcvd29yZHByb2Nlc3NpbmdtbC8yMDA2L21haW59dCcpKSkKIgoKIyAuZG9jIChsZWdhY3ksIHJlcXVpcmVzIGFudGl3b3JkIG9yIGNhdGRvYykKYW50aXdvcmQgL3BhdGgvdG8vZmlsZS5kb2MgMj4vZGV2L251bGwgfHwgY2F0ZG9jIC9wYXRoL3RvL2ZpbGUuZG9jIDI+L2Rldi9udWxs\ncodeblock:bash:IyBWYWxpZGF0ZSBmaXJzdDsgbWFueSBQU1RzIGFyZSBudWxsIGJ5dGVzCnB5dGhvbjMgLWMgIgp3aXRoIG9wZW4oJy9wYXRoL3RvL2ZpbGUucHN0JywgJ3JiJykgYXMgZjoKICAgIHByaW50KCdWYWxpZCBQU1QnIGlmIGYucmVhZCg0KSA9PSBiJyFCRE4nIGVsc2UgJ0NPUlJVUFQvTlVMTCcpCiIKIyBJZiB2YWxpZDoKcmVhZHBzdCAtbyAvdG1wL3BzdC1vdXRwdXQgL3BhdGgvdG8vZmlsZS5wc3Q=\nuse judgment to follow the Anti-Patterns guidance:\n❌ Running without `archive-crawler.scan_paths:` set. Hard refusal\nThis is the safety contract — never bypass\n❌ Hardcoding era-specific filing paths (e.g., `originals\/archive\/`,\n`originals\/yc-era\/`). Read filing rules at runtime instead\n❌ Re-showing items already marked in the manifest. The user's time\nis the scarcest resource\n❌ Paraphrasing reactions. Exact words only\n❌ Wrapping found content in lessons or takeaways. Let stories breathe\n❌ Skipping back-links when content references people \/ companies who\nhave brain pages. Iron Law per conventions\/quality.md\nuse judgment to follow the Related skills guidance:\n`skills\/idea-ingest\/SKILL.md` — single-link-or-article ingest with\nthe same primary-subject filing rule\n`skills\/voice-note-ingest\/SKILL.md` — same exact-phrasing pattern for\naudio capture\n`skills\/conventions\/quality.md` — citations, back-links, voice\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test",
-          "line" : 72,
+          "guidance" : "**The skill is schema-generic.** It does NOT bake in any specific\nera-folder structure (e.g., `originals\/archive\/` for pre-2003,\n`originals\/yc-era\/` for post-2019, etc.). The user's filing rules from\n`_brain-filing-rules.json` are read at runtime; the agent decides per-page\nwhere content lands within those sanctioned directories\ncodeblock:bash:IyAuZG9jeCAobW9kZXJuKQpweXRob24zIC1jICIKaW1wb3J0IHppcGZpbGUsIHhtbC5ldHJlZS5FbGVtZW50VHJlZSBhcyBFVAp3aXRoIHppcGZpbGUuWmlwRmlsZSgnL3BhdGgvdG8vZmlsZS5kb2N4JykgYXMgejoKICAgIHRyZWUgPSBFVC5wYXJzZSh6Lm9wZW4oJ3dvcmQvZG9jdW1lbnQueG1sJykpCiAgICBwcmludCgnJy5qb2luKHQudGV4dCBvciAnJyBmb3IgdCBpbiB0cmVlLml0ZXIoJ3todHRwOi8vc2NoZW1hcy5vcGVueG1sZm9ybWF0cy5vcmcvd29yZHByb2Nlc3NpbmdtbC8yMDA2L21haW59dCcpKSkKIgoKIyAuZG9jIChsZWdhY3ksIHJlcXVpcmVzIGFudGl3b3JkIG9yIGNhdGRvYykKYW50aXdvcmQgL3BhdGgvdG8vZmlsZS5kb2MgMj4vZGV2L251bGwgfHwgY2F0ZG9jIC9wYXRoL3RvL2ZpbGUuZG9jIDI+L2Rldi9udWxs\ncodeblock:bash:IyBWYWxpZGF0ZSBmaXJzdDsgbWFueSBQU1RzIGFyZSBudWxsIGJ5dGVzCnB5dGhvbjMgLWMgIgp3aXRoIG9wZW4oJy9wYXRoL3RvL2ZpbGUucHN0JywgJ3JiJykgYXMgZjoKICAgIHByaW50KCdWYWxpZCBQU1QnIGlmIGYucmVhZCg0KSA9PSBiJyFCRE4nIGVsc2UgJ0NPUlJVUFQvTlVMTCcpCiIKIyBJZiB2YWxpZDoKcmVhZHBzdCAtbyAvdG1wL3BzdC1vdXRwdXQgL3BhdGgvdG8vZmlsZS5wc3Q=\n`skills\/voice-note-ingest\/SKILL.md` — same exact-phrasing pattern for\naudio capture\n`skills\/conventions\/quality.md` — citations, back-links, voice",
+          "line" : 198,
           "scoped_tools" : [
             "assess.notability",
             "capture",
@@ -690,7 +840,7 @@
             "timeline.add",
             "verify"
           ],
-          "text" : "follow the Source guidance"
+          "text" : "follow the Phase 3: Ingest — steps 2 guidance"
         }
       ],
       "source_name" : "archive-crawler a input",

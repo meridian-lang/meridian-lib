@@ -97,15 +97,15 @@
         "text" : "Dispatch table"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
         "line" : 8,
         "text" : "Dispatch table — steps"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 22,
+        "line" : 21,
         "text" : "Workflow"
       }
     ],
@@ -120,24 +120,23 @@
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Dispatch table — steps",
         "line" : 8,
         "lines" : [
-          "table:ai-discretion:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHJlY29uY2lsZSBsZWRnZXIgfCByZWNvbmNpbGVsZWRnZXIgfAp8IGFnaW5nIHJlcG9ydCB8IGFnaW5ncmVwb3J0IHwKfCBkZWR1cGUgcmVjb3JkcyB8IGRlZHVwZXJlY29yZHMgfAp8IGNhc2NhZGUgY2xvc2UgfCBjYXNjYWRlY2xvc2UgfAp8IHJlYnVpbGQgbGFnZ2luZyBpbmRleGVzIHwgcmVidWlsZGluZGV4IHwKfCB2YWxpZGF0ZSBjb25zdHJhaW50cyB8IHZhbGlkYXRlY29uc3RyYWludHMgfAp8IHB1cmdlIGV4cGlyZWQgcmVjb3JkcyB8IHB1cmdlZXhwaXJlZCB8Cnwgc2V0dGxlIHJlYWR5IGJhdGNoZXMgfCBzZXR0bGViYXRjaCB8"
+          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHJlY29uY2lsZSBsZWRnZXIgfCByZWNvbmNpbGVsZWRnZXIgfAp8IGFnaW5nIHJlcG9ydCB8IGFnaW5ncmVwb3J0IHwKfCBkZWR1cGUgcmVjb3JkcyB8IGRlZHVwZXJlY29yZHMgfAp8IGNhc2NhZGUgY2xvc2UgfCBjYXNjYWRlY2xvc2UgfAp8IHJlYnVpbGQgbGFnZ2luZyBpbmRleGVzIHwgcmVidWlsZGluZGV4IHwKfCB2YWxpZGF0ZSBjb25zdHJhaW50cyB8IHZhbGlkYXRlY29uc3RyYWludHMgfAp8IHB1cmdlIGV4cGlyZWQgcmVjb3JkcyB8IHB1cmdlZXhwaXJlZCB8Cnwgc2V0dGxlIHJlYWR5IGJhdGNoZXMgfCBzZXR0bGViYXRjaCB8"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Workflow",
-        "line" : 22,
+        "line" : 21,
         "lines" : [
-          "use judgment to follow the Workflow guidance:",
           "Look up the skill corresponding to the trigger phrase and emit the selected",
           "skill id"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       }
     ]
   },
@@ -169,14 +168,7 @@
     "procedures.merconfig"
   ],
   "source_map" : [
-    {
-      "meridian_line" : 11,
-      "swift_line" : 293
-    },
-    {
-      "meridian_line" : 23,
-      "swift_line" : 302
-    }
+
   ],
   "tools_used" : [
 
@@ -186,43 +178,6 @@
       "mode" : "strict",
       "parameters" : [
 
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "line" : 11,
-          "scoped_tools" : [
-            "audit_row.list",
-            "batch.list",
-            "batch.settle",
-            "constraint.list",
-            "index.list",
-            "index.rebuild",
-            "ledger.reconcile",
-            "record.list",
-            "record.mark_canonical",
-            "record.purge"
-          ],
-          "text" : "Decide which case below applies and carry out its action:\n- when trigger phrase is reconcile ledger, reconcileledger\n- when trigger phrase is aging report, agingreport\n- when trigger phrase is dedupe records, deduperecords\n- when trigger phrase is cascade close, cascadeclose\n- when trigger phrase is rebuild lagging indexes, rebuildindex\n- when trigger phrase is validate constraints, validateconstraints\n- when trigger phrase is purge expired records, purgeexpired\n- when trigger phrase is settle ready batches, settlebatch"
-        },
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "Look up the skill corresponding to the trigger phrase and emit the selected\nskill id",
-          "line" : 23,
-          "scoped_tools" : [
-            "audit_row.list",
-            "batch.list",
-            "batch.settle",
-            "constraint.list",
-            "index.list",
-            "index.rebuild",
-            "ledger.reconcile",
-            "record.list",
-            "record.mark_canonical",
-            "record.purge"
-          ],
-          "text" : "follow the Workflow guidance"
-        }
       ],
       "source_name" : "entry",
       "swift_struct" : "Entry"

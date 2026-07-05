@@ -28,8 +28,11 @@ writes_to:
 > the delta between brain knowledge and current web state.
 
 ## What this does
-use judgment to follow the What this does guidance:
 
+
+### What this does — steps
+
+use judgment to follow the What this does — steps guidance:
 Combines existing brain knowledge with Perplexity's web search. The
 agent sends brain context about a topic into a Perplexity query;
 Perplexity searches + reads + synthesizes multiple pages with citations,
@@ -40,12 +43,11 @@ synthesizes with citations. By sending brain context in the
 instructions, it knows what you already know, so it surfaces the delta
 instead of repeating settled fact.
 
-## When to use this vs other tools (( inert ))
+## When to use this vs other tools
 
 
 ### When to use this vs other tools — steps
 
-!!! table (( ai-discretion ))
 | Need | Use |
 |------|-----|
 | Deep research with citations | This skill — Perplexity + Opus |
@@ -54,7 +56,7 @@ instead of repeating settled fact.
 | Real-time social monitoring | external X / social-media collectors |
 | Structured data lookup against a tracker | `skills/data-research/SKILL.md` |
 
-## Output structure (( inert, role: template ))
+## Output structure (( role: template ))
 
 The research output lands as a brain page under `research/<slug>.md` with
 this structure:
@@ -92,7 +94,7 @@ Each item: which page, what to add or change, source URL.
 - ...
 ```
 
-## Invocation (( inert ))
+## Invocation
 
 
 ### Invocation — steps
@@ -125,12 +127,11 @@ gbrain put_page research/<slug>      # via the put_page operation
 # 5. Cross-link entities mentioned (people, companies) per Iron Law.
 ```
 
-## Models (( inert ))
+## Models
 
 
 ### Models — steps
 
-!!! table (( ai-discretion ))
 | Model | Cost / query | Use when |
 |-------|-------------|----------|
 | Perplexity sonar-pro | ~\$0.04 | Deep analysis, entity enrichment, deal research |
@@ -139,12 +140,12 @@ gbrain put_page research/<slug>      # via the put_page operation
 Default to sonar-pro. Drop to sonar for bulk / cron contexts where cost
 matters more than depth.
 
-## Integration patterns (( inert ))
+## Integration patterns (( role: reference ))
 
-### Entity enrichment (( inert, role: procedure ))
+### Entity enrichment
 
 
-#### Entity enrichment — steps
+### Entity enrichment — steps
 
 Called by `skills/enrich/SKILL.md` when an entity page (person, company)
 needs current web context:
@@ -156,7 +157,9 @@ BRAIN=$(gbrain get people/<slug> 2>/dev/null)
 ```
 
 ### Deal / company monitoring (cron)
-use judgment to follow the Deal / company monitoring (cron) guidance:
+
+
+### Deal / company monitoring (cron) — steps
 
 For each active item under `deals/` or `companies/`:
 
@@ -164,18 +167,17 @@ For each active item under `deals/` or `companies/`:
 # Weekly: pull recent news per company; flag changes for review.
 ```
 
-### Morning briefing (( inert ))
+### Morning briefing (( role: reference ))
 
 Replace raw `web_fetch` calls in briefing pipelines with this skill so
 the agent doesn't re-narrate already-known facts.
 
-## Recency filter (( inert ))
+## Recency filter (( role: reference ))
 
 Pass `recency_filter` to Perplexity: `hour | day | week | month`. Useful
 for news-cycle topics; omit for evergreen research.
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 - ❌ Sending NO brain context. Then it's just a search — use `web_fetch`
   instead.
@@ -193,7 +195,7 @@ use judgment to follow the Anti-Patterns guidance:
   `~/.gbrain/.env`).
 - Optional: install Perplexity's official CLI for richer streaming output.
 
-## Related skills (( inert, role: procedure ))
+## Related skills
 
 
 ### Related skills — steps
@@ -206,8 +208,7 @@ use judgment to follow the Anti-Patterns guidance:
   shape: parameterized YAML recipes, not free-form research)
 
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 This skill guarantees:
 
@@ -218,6 +219,6 @@ This skill guarantees:
 
 The full behavior contract is documented in the body sections above; this section exists for the conformance test.
 
-## Output Format (( inert, role: template ))
+## Output Format (( role: template ))
 
 The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).

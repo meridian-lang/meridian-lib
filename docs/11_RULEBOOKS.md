@@ -178,7 +178,8 @@ The closed role set (exhaustive `switch`, no `default:`):
 | `negative-applicability` | Negative guards: checkable conditions → soft-skip `if <cond>, complete.`; literal phrases → negative dispatch predicates. |
 | `prohibitions` | `must not` asserts where structurally checkable. |
 | `template` | Declared result template (fenced literal + `{{ }}` interpolation). |
-| `inert` | Outline / manifest metadata only — no executable lowering. |
+| `reference` | Outline / manifest metadata only — no executable lowering. The preferred non-executable-documentation role; `meridian migrate-skill` emits `(( role: reference ))` for genuinely documentary content and never emits `inert`. |
+| `inert` | Same as `reference` (a hand-authorable synonym kept for backward compatibility) — Outline / manifest metadata only, no executable lowering. |
 
 An **unmarked** heading with no rulebook alias resolves to its built-in default
 (`SkillSectionRole.builtinRole(forHeading:)`, which also recognizes the
@@ -188,12 +189,28 @@ single table, also exposed as the `Rulebook.defaultSections` rulebook) — so th
 defaults and author `=== sections ===` extensions share one representation.
 Resolution precedence is `rulebook alias ?? builtin`. A heading that
 resolves to nothing **and has content** is a hard `semanticError` — there is no
-silent `inert` fallback. The author then adds a `=== sections ===` alias here,
-forces a role inline with `(( role: <R> ))`, or marks it `(( inert ))`. Section
-semantics activate **structurally** on the presence of a `##`/`###` heading;
-there is no `skill: true` flag. `=== sections ===` aliases are the sanctioned,
-data-only path for organizational/applicability headings — see
-`sample-gbrain/brain.merrules` and `examples/skill/skill.merrules`.
+silent `reference`/`inert` fallback. The author then adds a `=== sections ===`
+alias here, forces a role inline with `(( role: <R> ))`, or marks it
+`(( role: reference ))`. Section semantics activate **structurally** on the
+presence of a `##`/`###` heading; there is no `skill: true` flag.
+`=== sections ===` aliases are the sanctioned, data-only path for
+organizational/applicability headings — see `sample-gbrain/brain.merrules` and
+`examples/skill/skill.merrules`.
+
+### `meridian migrate-skill`'s classification vocabulary
+
+`SkillMigrator` (the `.meri`-porting engine behind `meridian migrate-skill`)
+never emits `(( inert ))`: every non-lowerable block resolves to lower /
+`use judgment …` (if an inference cue is present) / `(( role: reference ))`
+(if documentary) / a hard reword error (otherwise). Three `=== language ===`
+sub-blocks tune this classification — `Inference-cue synonyms:`,
+`Normative-cue synonyms:`, and `Reference-heading synonyms:` — each wired
+through the same `EnglishLexicon` recipe as the categories above (Family 1's
+opening design-rule callout applies equally here). Full defaults and the
+worked `=== language ===` example live in
+[03_LANGUAGE_QUICK_REFERENCE.md](03_LANGUAGE_QUICK_REFERENCE.md#skillmigrator-classification-synonyms-p1-four-way-policy);
+the end-to-end porting policy lives in
+[13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md).
 
 ### Fuzzy conditions are a hard error
 

@@ -93,51 +93,57 @@
     "name" : "cascade close",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "applicability",
         "level" : 2,
         "line" : 11,
         "text" : "Invocation"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 16,
+        "line" : 15,
         "text" : "Transaction body"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 20,
+        "line" : 18,
         "text" : "Transaction body — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 25,
+        "line" : 23,
         "text" : "Transaction body — steps 2"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 29,
+        "line" : 27,
         "text" : "DBA notes"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 29,
+        "text" : "DBA notes — steps"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 18,
+        "line" : 16,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 22,
+        "line" : 20,
         "text" : "SQL"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 27,
+        "line" : 25,
         "text" : "Emit"
       }
     ],
@@ -147,26 +153,24 @@
         "heading" : "Invocation",
         "line" : 11,
         "lines" : [
-          "use judgment to follow the Invocation guidance:",
           "\"cascade close\"",
           "\"orphaned audit rows\""
         ],
-        "role" : "procedure"
+        "role" : "applicability"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Transaction body",
-        "line" : 16,
+        "line" : 15,
         "lines" : [
-          "use judgment to follow the Transaction body guidance:",
           "Check: any orphaned audit rows"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Transaction body — steps",
-        "line" : 20,
+        "line" : 18,
         "lines" : [
           "SQL: `psql -c \"select key,table_name from audit_rows where status='orphaned'\" --csv` to snapshot orphaned audit rows",
           "fetch orphaned audit rows"
@@ -176,7 +180,7 @@
       {
         "executes" : true,
         "heading" : "Transaction body — steps 2",
-        "line" : 25,
+        "line" : 23,
         "lines" : [
           "Emit: \"orphaned audit rows recorded for deterministic close\""
         ],
@@ -185,12 +189,21 @@
       {
         "executes" : false,
         "heading" : "DBA notes",
+        "line" : 27,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "DBA notes — steps",
         "line" : 29,
         "lines" : [
           "The source system owns physical cascade delete; Meridian records the deterministic",
           "audit close and refuses to invent a hidden datastore"
         ],
-        "role" : "inert"
+        "role" : "reference"
       }
     ],
     "triggers" : "\"cascade close\"\n\"orphaned audit rows\""
@@ -224,24 +237,32 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 12,
-      "swift_line" : 299
+      "meridian_line" : 20,
+      "swift_line" : 300
+    },
+    {
+      "meridian_line" : 51,
+      "swift_line" : 312
+    },
+    {
+      "meridian_line" : 25,
+      "swift_line" : 324
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 337
+      "swift_line" : 361
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 342
+      "swift_line" : 366
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 380
+      "swift_line" : 404
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 385
+      "swift_line" : 409
     }
   ],
   "tools_used" : [
@@ -252,26 +273,6 @@
       "mode" : "strict",
       "parameters" : [
 
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "\"cascade close\"\n\"orphaned audit rows\"\nuse judgment to follow the Transaction body guidance:\nCheck: any orphaned audit rows\nSQL: `psql -c \"select key,table_name from audit_rows where status='orphaned'\" --csv` to snapshot orphaned audit rows\nfetch orphaned audit rows\nEmit: \"orphaned audit rows recorded for deterministic close\"",
-          "line" : 12,
-          "scoped_tools" : [
-            "audit_row.list",
-            "batch.list",
-            "batch.settle",
-            "constraint.list",
-            "index.list",
-            "index.rebuild",
-            "ledger.reconcile",
-            "record.list",
-            "record.mark_canonical",
-            "record.purge"
-          ],
-          "text" : "follow the Invocation guidance"
-        }
       ],
       "source_name" : "cascade close",
       "swift_struct" : "CascadeClose"

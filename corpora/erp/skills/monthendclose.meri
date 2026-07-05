@@ -8,8 +8,7 @@ triggers:
 
 # Month End Close
 
-## When this applies (( role: procedure ))
-use judgment to follow the When this applies guidance:
+## When this applies
 - "month-end close"
 - "close accounting period"
 
@@ -19,6 +18,6 @@ Check: no invoices whose balance is more than 0.
 close the accounting period.
 Publish: "accounting period closed".
 
-## Accounting notes (( inert ))
+## Accounting notes (( role: reference ))
 The real-world phrase "soft close" is intentionally left as documentation; the
 compiled behavior uses an explicit period-close tool.

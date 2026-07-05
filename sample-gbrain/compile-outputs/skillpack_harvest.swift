@@ -600,15 +600,51 @@ public struct SkillpackHarvestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SkillpackHarvestInput", parameters: [:])
 
-        // L40
-        let __meridianProseResults_L40 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
-            guidance: "A harvest is \"properly done\" when:\nThe host skill is mature (used in production, recent routing-eval\ncases pass)\nThe editorial genericization in Phase 3 has scrubbed every\nfork-specific reference (names, real entities, internal channels)\n`gbrain skillpack harvest --dry-run` previewed the file set\nThe real `gbrain skillpack harvest <slug> --from <host>` succeeded\nwith `status: harvested` (no privacy-lint hits)\n`bun test test/skills-conformance.test.ts` passes on the new\n`skills/<slug>/SKILL.md`\nThe user has reviewed the diff in gbrain and explicitly approved\nthe commit\nIf any of these is incomplete, the skill is NOT yet harvested — the\nfiles may sit in gbrain's working tree, but they're not landed\nuse judgment to follow the Anti-Patterns guidance:\n**Skipping the dry-run.** Always preview first. Files land in\ngbrain's working tree; cleanup is a `git checkout` away, but you\nshouldn't need to\n**Trusting the linter alone.** The default regex set catches the\ncommon cases. It doesn't catch every proper noun. Phase 3 (the\neditorial pass) is the primary defense\n**Harvesting `--no-lint` without justification.** The lint exists\nfor a reason. If you bypass it, document why in the commit\n**Harvesting a skill that's still in flux.** Wait until the host\nversion stabilizes. Otherwise you'll harvest, then re-harvest,\nthen re-harvest, and that churns gbrain's bundle for no benefit\n**Moving files instead of copying.** Harvest is a copy. The host\nretains its skill. Don't `rm -rf` the source after harvesting\n**Harvesting batch (multiple skills at once).** Not supported, and\nfor good reason — the editorial review per skill is real work\nuse judgment to follow the When to invoke guidance:\nThe user developed a skill in their host fork (Wintermute, Neuromancer,\nZion, etc.) and wants other gbrain clients to be able to use it\nA skill has proven itself in production and is ready to generalize\nThe user explicitly asks to \"harvest\" or \"publish\" a skill upstream\nDo NOT invoke when:\nThe skill is still in flux locally — let it stabilize first\nThe skill references private content that can't be generalized\nThe user just wants to share a one-off draft (use a gist instead)\nuse judgment to follow the Preconditions guidance:\n**The skill is generalizable.** Strip-test in your head: replace\nevery fork-specific name. Does it still make sense as a skill?\n**The user owns the gbrain checkout.** The harvest writes into\ngbrain's working tree. They'll review and commit. Don't harvest\ninto a checkout the user doesn't intend to commit from\nuse judgment to follow the Workflow guidance:\nuse judgment to follow the Phase 1 — Plan guidance:\nAsk the user:\nWhat slug should the harvested skill have? (Slugs must be kebab-case,\nglobally unique in the gbrain bundle.)\nWhich host repo is the source? (Path to repo root, not to the skill\ndirectory — e.g. `~/git/wintermute`, not `~/git/wintermute/skills/foo`.)\nShould paired source files come along? (Check the host SKILL.md's\nfrontmatter `sources:` array.)\nuse judgment to follow the Phase 2 — Dry-run + privacy-lint preview guidance:\nThe output shows:\nWhich files would land in gbrain's tree\nWhether paired sources are included\n(Implicit) The skill's frontmatter triggers — read them and check\nthey generalize\nDo **not** skip the dry-run. The privacy linter only runs on a real\nharvest, but the dry-run preview lets you see the files before they\nland. Spot-check the SKILL.md and any paired source for things the\nlinter might miss (proper nouns, internal project names, etc.)\nRun the CLI with `--dry-run`:\ncodeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290PiAtLWRyeS1ydW4=\nuse judgment to follow the Phase 3 — Genericization checklist (the editorial pass) guidance:\n**Fork-specific names → generic phrasing**\n`Wintermute` → `your OpenClaw` (or `OpenClaw deployment`)\n`Neuromancer`, `Zion`, `<personal-fork-name>` → same treatment\nPersonal first names (`garry`, `jane`, etc.) → `the user` /\n`you` / a generic placeholder\n**Real entities → placeholders**\nReal people, companies, deals, funds → placeholder slugs\n(`alice-example`, `acme-example`, `fund-a`, etc.)\nSpecific tracker IDs / Linear ticket numbers → strip\n**Fork-specific conventions → references**\n**Triggers array generalizes**\nRead every entry in frontmatter `triggers:`. None should\nreference the user's name, fork name, or internal tools\n\"Have garry sign off on it\" → \"have the user sign off on it\"\n**routing-eval.jsonl examples are scrubbed**\nOpen `skills/<slug>/routing-eval.jsonl`. Every `intent` field\ngets the same scrub as `triggers:`\n**Code comments + log strings**\nIf a paired source is going to be harvested, walk it for the\nsame private-pattern leaks. Comments are the most common\nhiding spot\nBefore running the real harvest, walk the host's `skills/<slug>/`\nfiles and apply this checklist. If anything matches, edit the host\nfile FIRST, then run harvest\nEmail addresses → strip entirely OR use `example@example.com`\nInternal Slack channels → `#some-channel` or strip\nMentions of `<host-repo>/docs/...` files → either lift the doc\ninto gbrain OR replace with a generic placeholder explanation\nMentions of `<host-repo>/skills/<other-fork-only-skill>` → either\ndecide to harvest that one too, or replace with a generic\npattern reference\nuse judgment to follow the Phase 4 — Real harvest guidance:\nDefault behavior:\nPath-confinement + symlink rejection at file copy\nPrivacy linter runs against `~/.gbrain/harvest-private-patterns.txt`\n(plus built-in defaults: `\\bWintermute\\b`, email, Slack channels)\nOn any match → rollback (delete the harvested files) + exit non-zero\nOutcomes:\n`harvested` — success, manifest updated, files in gbrain's tree\n`lint_failed` — privacy linter caught something. Go back to Phase 3,\nscrub the host file, retry\n`slug_collision` — gbrain already has a skill at that slug. Either\nuse a different slug, or pass `--overwrite-local` if you really\nmean to replace\ncodeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290Pg==\n`openclaw.plugin.json` updated to add the slug, sorted\nuse judgment to follow the Phase 5 — Verify in gbrain guidance:\nCommit the additions in gbrain (do NOT commit any leftover files\nin the host repo — harvest is a copy, not a move)\n`bun test test/skills-conformance.test.ts` — confirms the new\nSKILL.md meets the frontmatter contract\n`gbrain skillpack check --strict` — confirms no drift between\nbundle and gbrain's own checkout\n`gbrain skillpack list` — confirms the slug shows up in the bundle\nReview the diff: `cd <gbrainRoot> && git diff -- skills/<slug>/`\nuse judgment to follow the Phase 6 — Downstream announcement (optional) guidance:\nIf other gbrain clients should pick up the new skill:\nNote it in `CHANGELOG.md` under \"Skills added\" for the next release\nTag the user / contributor in the PR if the skill came from\nsomeone outside the core team\nuse judgment to follow the Bypass: `--no-lint` guidance:\n**Document the bypass in the commit message.** Future maintainers\nshould be able to see WHY the lint was bypassed (e.g. \"Wintermute\nappears in a citation, not a real reference — verified manually\").\nNever bypass the linter on a casual basis. The whole point of the\ndefault-on lint is that real names occasionally slip through the\neditorial pass\nThe privacy linter is the safety net. The editorial pass is the\nprimary defense. If you've completed Phase 3 thoroughly and the\nlinter is still firing on a false positive, use `--no-lint`:\ncodeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290PiAtLW5vLWxpbnQ=\ngbrain's `skills/<slug>/` — every file in the host skill dir\n(copy)"
-        )
-        for (__key, __value) in __meridianProseResults_L40 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L166:C0") {
+            // L166
+            // Run the CLI with
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("--dry-run"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L166:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L168:C0") {
+            // L168
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain skillpack harvest <slug> --from <host-repo-root> --dry-run"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L168:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L241:C0") {
+            // L241
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain skillpack harvest <slug> --from <host-repo-root>"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L241:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L248:C0") {
+            // L248
+            // updated to add the slug, sorted
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("openclaw.plugin.json"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.3:L248:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

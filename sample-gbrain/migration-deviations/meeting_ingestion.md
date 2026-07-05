@@ -3,8 +3,8 @@
 - Original: `meeting-ingestion/SKILL.md`
 - Ported: `meeting_ingestion.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 90%
-- Lines: 125 -> 138 (+20 / -7)
+- Similarity: 85%
+- Lines: 125 -> 137 (+25 / -13)
 
 ## Frontmatter
 - Added: (none)
@@ -12,67 +12,86 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L26 `Phase 1: Parse the transcript`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L36 `Phase 2: Create meeting page`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L82 `Phase 4: Entity propagation (MANDATORY)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L90 `Phase 5: Timeline merge`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L99 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L104 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
-- Sections inert total: 1/10 (10% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 8/9 (89% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: template=1
-- Judgment: 7 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=7, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
+- L6 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L26 `Phase 1: Parse the transcript`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L36 `Phase 2: Create meeting page`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L58 `Phase 3: Attendee enrichment (MANDATORY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L82 `Phase 4: Entity propagation (MANDATORY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L90 `Phase 5: Timeline merge`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L99 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L104 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/meeting-ingestion/SKILL.md
 +++ skills/meeting_ingestion.meri
-@@ -29,7 +29,8 @@
+@@ -29,7 +29,7 @@
  
  > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.
  
 -## Contract
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
  This skill guarantees:
  - Meeting page created with attendees, summary, key decisions, action items
-@@ -45,8 +46,10 @@
+@@ -41,12 +41,15 @@
+ 
+ > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
+ 
++
++### Contract — steps (( role: reference ))
++
+ Every attendee and company mentioned MUST get a back-link from their page to
  the meeting page. An unlinked mention is a broken brain.
  
  ## Phases
-+use judgment to follow the Phases guidance:
  
- ### Phase 1: Parse the transcript
-+use judgment to follow the Phase 1: Parse the transcript guidance:
+-### Phase 1: Parse the transcript
++### Phase 1: Parse the transcript (( role: reference ))
  
  Extract from the transcript:
  - Attendees (names, roles if available)
-@@ -57,6 +60,7 @@
+@@ -56,7 +59,7 @@
+ - Action items with owners
  - Companies and projects mentioned
  
- ### Phase 2: Create meeting page
-+use judgment to follow the Phase 2: Create meeting page guidance:
+-### Phase 2: Create meeting page
++### Phase 2: Create meeting page (( role: reference ))
  
  ```markdown
  # {Meeting Title} — {Date}
-@@ -79,19 +83,26 @@
+@@ -78,22 +81,31 @@
+ {Structured notes by topic}
  ```
  
- ### Phase 3: Attendee enrichment (MANDATORY)
-+use judgment to follow the Phase 3: Attendee enrichment (MANDATORY) guidance:
+-### Phase 3: Attendee enrichment (MANDATORY)
++### Phase 3: Attendee enrichment (MANDATORY) (( role: reference ))
  
 -For EACH attendee:
  1. `gbrain search "{name}"` — does a people page exist?
- 2. If NO → create via enrich skill (this is mandatory, not optional)
+-2. If NO → create via enrich skill (this is mandatory, not optional)
  3. If YES → update compiled truth with meeting context
 -4. Add timeline entry on the person's page:
 -   `gbrain timeline-add <person-slug> <date> "Attended <meeting-title>"`
@@ -82,40 +101,47 @@ These sections were made non-executable in the port and should be reviewed as mi
  to each attendee whose page is referenced as `[Name](people/slug)`. You don't
  need to call `gbrain link` for attendees. You DO still need `gbrain timeline-add`
  for dated events (auto-link only handles links, not timeline entries).
+ 
+-### Phase 4: Entity propagation (MANDATORY)
 +
-+
-+#### Phase 3: Attendee enrichment (MANDATORY) — steps
++### Phase 3: Attendee enrichment (MANDATORY) — steps
 +
 +For EACH attendee:
 +
-+#### Phase 3: Attendee enrichment (MANDATORY) — steps 2
++### Phase 3: Attendee enrichment (MANDATORY) — steps 2 (( role: reference ))
++
++2. If NO → create via enrich skill (this is mandatory, not optional)
++
++### Phase 3: Attendee enrichment (MANDATORY) — steps 3
 +
 +> 4. Add timeline entry on the person's page:
 +   `gbrain timeline-add <person-slug> <date> "Attended <meeting-title>"`
++
++### Phase 4: Entity propagation (MANDATORY) (( role: reference ))
  
- ### Phase 4: Entity propagation (MANDATORY)
- 
-@@ -102,6 +113,7 @@
+ For each company, project, or concept discussed:
+ 1. Check brain for existing page
+@@ -101,7 +113,7 @@
+ 3. Add timeline entry referencing the meeting
  4. Back-link from entity page to meeting page
  
- ### Phase 5: Timeline merge
-+use judgment to follow the Phase 5: Timeline merge guidance:
+-### Phase 5: Timeline merge
++### Phase 5: Timeline merge (( role: reference ))
  
  The same event appears on ALL mentioned entities' timelines. If Alice met Bob at
  Acme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page.
-@@ -110,12 +122,13 @@
+@@ -110,12 +122,12 @@
  
  `gbrain sync` to update the index.
  
 -## Output Format
-+## Output Format (( inert, role: template ))
++## Output Format (( role: template ))
  
  Meeting page created. Report: "Meeting ingested: {N} attendees enriched, {N} entities
  updated, {N} action items captured."
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
++## Anti-Patterns (( role: reference ))
  
  - Creating the meeting page without enriching attendees
  - Skipping entity propagation ("I'll do that later")

@@ -8,8 +8,7 @@ triggers:
 
 # Validate Constraints
 
-## Invocation (( role: procedure ))
-use judgment to follow the Invocation guidance:
+## Invocation
 - "validate constraints"
 - "constraint violated"
 
@@ -18,6 +17,5 @@ fetch violated constraints.
 Check: no constraints whose status is "violated".
 Emit: "constraints validated".
 
-## Constraints (( role: procedure ))
-use judgment to follow the Constraints guidance:
+## Constraints (( role: reference ))
 Constraint prose remains documentation; the executable guard is in the procedure.

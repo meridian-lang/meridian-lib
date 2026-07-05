@@ -33,12 +33,10 @@ writes_to:
 > Original thinking is AT LEAST as valuable as entity extraction. Ideas are the
 > intellectual capital. Entities are bookkeeping. Both compound over time.
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 This skill guarantees:
 - Fires on every message (no exceptions unless purely operational)
-- Runs in parallel (spawned, never blocks main response)
 - Captures ideas with the user's EXACT phrasing (no paraphrasing)
 - Detects entity mentions and creates/enriches brain pages
 - Logs a one-line summary of what was captured
@@ -47,30 +45,37 @@ This skill guarantees:
 
 > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
 
-Every time this skill creates or updates a brain page that mentions a person or company:
-1. Check if that person/company has a brain page
 2. If yes → add a back-link FROM their page TO the page you just created/updated
 3. Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`
 4. An unlinked mention is a broken brain.
 
-## Phases
-use judgment to follow the Phases guidance:
 
-### Phase 1: Idea/Observation Detection (PRIMARY)
-use judgment to follow the Phase 1: Idea/Observation Detection (PRIMARY) guidance:
+### Contract — steps (( role: reference ))
+
+- Runs in parallel (spawned, never blocks main response)
+
+### Contract — steps 2
+
+> Every time this skill creates or updates a brain page that mentions a person or company:
+1. Check if that person/company has a brain page
+## Phases
+
+### Phase 1: Idea/Observation Detection (PRIMARY) (( role: reference ))
 
 When the user expresses a novel thought, observation, thesis, or framework:
 - If it's the user's **original thinking** (they generated it) → create/update `originals/{slug}`
 - If it's a **world concept** they're referencing → create/update `concepts/{slug}`
 - If it's a **product or business idea** → create/update `ideas/{slug}`
 
-**Capture exact phrasing.** The user's language IS the insight. Don't paraphrase.
 
-**Cross-linking (MANDATORY):** Every original MUST link to related people, companies,
+### Phase 1: Idea/Observation Detection (PRIMARY) — steps (( role: reference ))
+
+The user's language IS the insight. Don't paraphrase.
+
+Cross-linking (MANDATORY): Every original MUST link to related people, companies,
 meetings, and concepts. An original without cross-links is a dead original.
 
-### Phase 2: Entity Detection (SECONDARY)
-use judgment to follow the Phase 2: Entity Detection (SECONDARY) guidance:
+### Phase 2: Entity Detection (SECONDARY) (( role: reference ))
 
 1. Extract entity mentions (people, companies, media titles)
    - If NO page → check notability. If notable, create page with enrichment.
@@ -82,34 +87,32 @@ automatically creates the link from the new page to that entity. You don't
 need to call `gbrain link` manually. Timeline entries still need explicit calls.
 
 
-#### Phase 2: Entity Detection (SECONDARY) — steps
+### Phase 2: Entity Detection (SECONDARY) — steps
 
 2. For each entity:
    - `gbrain search "name"` — does a page exist?
 
-#### Phase 2: Entity Detection (SECONDARY) — steps 2
+### Phase 2: Entity Detection (SECONDARY) — steps 2
 
 3. For new FACTS with specific dates → call `gbrain timeline-add <slug> <date> "<summary>"`
 
-### Phase 3: Signal Logging
-use judgment to follow the Phase 3: Signal Logging guidance:
+### Phase 3: Signal Logging (( role: reference ))
 
-Always log a one-line summary:
 This makes the ambient capture loop debuggable.
 
 
-#### Phase 3: Signal Logging — steps
+### Phase 3: Signal Logging — steps (( role: reference ))
 
+Always log a one-line summary:
 - `Signals: 0 ideas, 0 entities, 0 facts (skipped: operational)`
 - `Signals: 1 idea (captured → originals/x), 2 entities (enriched → people/y, companies/z)`
 
-## Output Format (( inert, role: template ))
+## Output Format (( role: template ))
 
 No visible output to the user. This skill runs silently in the background.
 The output is brain pages created/updated and the signal log line.
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 - Blocking the main response to wait for signal detection to complete
 - Paraphrasing the user's original thinking instead of capturing exact phrasing

@@ -68,27 +68,25 @@ distinct_from:
 
 > *"Everything in its right place"* — Radiohead, Kid A
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 After any significant work, EIIRP organizes ALL outputs across two domains:
 
-**Knowledge domain (brain):**
+Knowledge domain (brain):
 1. Every piece of knowledge lands in the correct brain location.
 2. All sources are cited and linked.
 3. The active schema pack is updated if a new content type emerged.
 4. Entity pages created/updated with cross-links.
 
-**Capability domain (skills):**
+Capability domain (skills):
 5. Every reusable pattern becomes a composable skill.
 6. Existing skills are audited for DRY violations.
 7. Skill graph is MECE — no gaps, no overlaps, no ambiguous routing.
 
-**The meta-guarantee:** Nothing produced during significant work lives only in chat.
+The meta-guarantee: Nothing produced during significant work lives only in chat.
 Knowledge → brain. Patterns → skills. Everything in its right place.
 
-## When to Use (( role: procedure ))
-use judgment to follow the When to Use guidance:
+## When to Use
 
 - After completing a deep research thread.
 - After building something new (code, pipeline, workflow).
@@ -97,12 +95,11 @@ use judgment to follow the When to Use guidance:
 - When a work session produced both knowledge AND new capabilities.
 - When you notice skill overlap, duplication, or gaps.
 
-## Phase 1: INVENTORY — What did we produce?
-use judgment to follow the Phase 1: INVENTORY — What did we produce? guidance:
+## Phase 1: INVENTORY — What did we produce? (( role: reference ))
 
 Scan the current session/thread and identify ALL outputs across both domains.
 
-### Knowledge outputs (( inert ))
+### Knowledge outputs (( role: reference ))
 ```
 □ Primary findings (the synthesis)
 □ Source documents (URLs, PDFs, articles, tweets)
@@ -111,7 +108,7 @@ Scan the current session/thread and identify ALL outputs across both domains.
 □ Data artifacts (structured data, timelines, statistics)
 ```
 
-### Capability outputs (( inert ))
+### Capability outputs (( role: reference ))
 ```
 □ New skills created or modified
 □ Scripts/code written (should they be in lib/ or scripts/?)
@@ -131,16 +128,11 @@ Produce a manifest:
 - Reusable methodology: [yes/no — describe if yes]
 ```
 
-## Phase 2: TAXONOMY — Where does each piece go?
-use judgment to follow the Phase 2: TAXONOMY — Where does each piece go? guidance:
+## Phase 2: TAXONOMY — Where does each piece go? (( role: reference ))
 
 The pack's `page_types[]` lists every directory the brain accepts plus
 the primitive each maps to. Walk it for each output and pick the directory
 whose `path_prefixes` matches the content's primary subject.
-
-If `brain-taxonomist` is installed, INVOKE IT for ambiguous cases. It runs
-the same decision protocol against the active pack and gives you a single
-recommended filing path with reasoning.
 
 ```
 | Content | Brain path | Action |
@@ -164,10 +156,17 @@ gbrain schema show --json
 
 ### Phase 2: TAXONOMY — Where does each piece go? — steps 2
 
+use judgment to follow the Phase 2: TAXONOMY — Where does each piece go? — steps 2 guidance:
+If `brain-taxonomist` is installed, INVOKE IT for ambiguous cases. It runs
+the same decision protocol against the active pack and gives you a single
+recommended filing path with reasoning.
+
+
+### Phase 2: TAXONOMY — Where does each piece go? — steps 3
+
 Output: a filing plan table:
 
-## Phase 3: SCHEMA CHECK — Does the active pack cover this content?
-use judgment to follow the Phase 3: SCHEMA CHECK — Does the active pack cover this content? guidance:
+## Phase 3: SCHEMA CHECK — Does the active pack cover this content? (( role: reference ))
 
 **Confidence floor (codex finding #9):** when `gbrain schema suggest`
 returns confidence < 0.6 on a proposed type, DO NOT auto-apply. Surface
@@ -207,9 +206,7 @@ gbrain schema review-candidates --apply <prefix-or-type-name>
 
 For each item in the filing plan:
 
-### 4a. Primary research page
-use judgment to follow the 4a. Primary research page guidance:
-Use the brain page template. MUST include:
+### 4a. Primary research page (( role: reference ))
 - Proper frontmatter (`type`, `title`, `date`, `tags`, sources)
 - **State** section — current status/key findings
 - **Sources** section — every source with URL, author, date, language
@@ -217,25 +214,28 @@ Use the brain page template. MUST include:
 - **Entity links** — backlinks to all related brain pages
 - **See Also** — related concepts, reference pages
 
+
+### 4a. Primary research page — steps
+
+Use the brain page template. MUST include:
 ### 4b. Entity pages (people, companies)
 For each entity mentioned:
 - Check if a brain page exists (`gbrain search "<name>"` or `gbrain get_page people/<slug>`).
 - If exists: update State, append Timeline entry citing this research.
 - If not: create with enrichment.
 
-### 4c. Commit and verify (( inert ))
+### 4c. Commit and verify
 
-#### 4c. Commit and verify — steps
+### 4c. Commit and verify — steps
 
 After ALL pages are written, run `gbrain sync` (or commit + push in the
 brain repo). Verify every link resolves.
 
 ## Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities
-use judgment to follow the Phase 5: SKILL GRAPH AUDIT — DRY + MECE on capabilities guidance:
 
 This phase operates on the SKILL graph, not just the research.
 
-### 5a. New pattern identification (( inert ))
+### 5a. New pattern identification (( role: reference ))
 
 Ask: did this work reveal REPEATABLE patterns that will recur?
 
@@ -252,28 +252,30 @@ Ask: did this work reveal REPEATABLE patterns that will recur?
    Look for overlapping triggers or unreachable skills.
 
 
-#### 5a. New pattern identification — steps
+### 5a. New pattern identification — steps
 
 For each identified pattern:
 > 1. Identify the composable pieces (DRY, MECE):
    - Shared logic → `lib/` (not copy-pasted into skills)
 
-#### 5a. New pattern identification — steps 2
+### 5a. New pattern identification — steps 2
 
 > 2. DRY check via the v0.19 resolver:
    ```bash
    gbrain check-resolvable
    ```
-### 5b. Existing skill audit
-use judgment to follow the 5b. Existing skill audit guidance:
+### 5b. Existing skill audit (( role: reference ))
 For ALL skills used or touched during this work, check:
 1. Were any skills BYPASSED? (did you do something manually that a skill should handle?)
 2. Are there skills that OVERLAP with what you just did? (merge candidates)
-3. Is shared code copy-pasted between skills? (extract to `lib/`)
-
 **The MECE question:** If someone asked for this exact work again tomorrow on a different topic, which skills would they invoke? Is the path clear and unambiguous? If not, fix the routing.
 
-### 5c. Present the plan (( inert ))
+
+### 5b. Existing skill audit — steps
+
+3. Is shared code copy-pasted between skills? (extract to `lib/`)
+
+### 5c. Present the plan (( role: reference ))
 ```
 ## Skill Graph Changes
 
@@ -293,11 +295,11 @@ For ALL skills used or touched during this work, check:
 ```
 
 
-#### 5c. Present the plan — steps
+### 5c. Present the plan — steps
 
 On approval: invoke `/skillify` for each new/modified skill.
 
-## Phase 6: CHECK_RESOLVABLE — Verify everything routes (( inert, role: procedure ))
+## Phase 6: CHECK_RESOLVABLE — Verify everything routes
 
 
 ### Phase 6: CHECK_RESOLVABLE — Verify everything routes — steps
@@ -312,7 +314,6 @@ gbrain orphans                                  # any pages without inbound link
 ```
 
 > Confirm:
-!!! checklist (( ai-autonomy ))
 - [ ] All brain pages have proper frontmatter against active schema pack
 - [ ] All entity pages are cross-linked
 - [ ] Any new skills have routing entries in `skills/RESOLVER.md`
@@ -322,7 +323,6 @@ gbrain orphans                                  # any pages without inbound link
 - [ ] `gbrain doctor` reports `schema_pack_consistency: ok`
 
 ## Phase 7: REPORT — Summary
-use judgment to follow the Phase 7: REPORT — Summary guidance:
 
 ```markdown
 ## EIIRP Complete: [Topic]
@@ -349,7 +349,7 @@ use judgment to follow the Phase 7: REPORT — Summary guidance:
 - schema_pack_consistency: [ok / warn — pct untyped]
 ```
 
-## Output Format (( inert, role: template ))
+## Output Format (( role: template ))
 
 EIIRP produces a single Phase 7 report block. Plain markdown:
 
@@ -379,16 +379,8 @@ Always machine-readable: stable section headers + bullet-per-item. The
 report doubles as a sync checkpoint for downstream skills (skillpack-check
 reads it; doctor cross-references the pack version).
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
-- **Hardcoding directory tables in EIIRP's logic.** Every filing decision
-  reads `gbrain schema show --json`. Users on `gbrain-recommended` AND
-  custom packs MUST get the right behavior automatically. Pinned by D9
-  from /plan-eng-review.
-- **Auto-applying low-confidence schema suggestions.** Confidence < 0.6
-  from `gbrain schema suggest` is "manual review required" per codex
-  finding #9. EIIRP surfaces it; the user accepts.
 - **Skipping Phase 5 SKILL GRAPH AUDIT because "this was a one-off."**
   If the work took >10 minutes, the methodology is probably reusable.
   Audit anyway; defer the skillify decision to the user.
@@ -399,18 +391,29 @@ use judgment to follow the Anti-Patterns guidance:
 - **Treating non-English sources as secondary citations.** Multilingual
   sources are first-class.
 
-## Hard Rules (( role: procedure ))
-use judgment to follow the Hard Rules guidance:
 
-### Knowledge domain
-use judgment to follow the Knowledge domain guidance:
+### Anti-Patterns — steps (( role: reference ))
+
+- Every filing decision
+  reads `gbrain schema show --json`. Users on `gbrain-recommended` AND
+  custom packs MUST get the right behavior automatically. Pinned by D9
+  from /plan-eng-review.
+- Confidence < 0.6
+  from `gbrain schema suggest` is "manual review required" per codex
+  finding #9. EIIRP surfaces it; the user accepts.
+## Hard Rules
+
+### Knowledge domain (( role: reference ))
 - **Never leave research only in chat.** If it took >10 minutes to produce, it gets a brain page.
 - **Every source gets a citation.** No "according to reports" without a URL.
 - **Entity pages get updated, not just created.** If a brain page exists, UPDATE it.
 - **Schema changes require confirmation.** The active pack is load-bearing.
-- **Multilingual sources are first-class.** Never treat non-English sources as secondary.
 
-### Capability domain (( inert ))
+### Knowledge domain — steps
+
+- Never treat non-English sources as secondary.
+
+### Capability domain (( role: reference ))
 - **DRY is sacred.** If the same logic appears in two skills, extract it to `lib/`.
 - **MECE is sacred.** Every trigger phrase routes to exactly one skill.
 - **Composability over monoliths.** Small skills that compose > one giant skill that does everything.
@@ -420,9 +423,9 @@ use judgment to follow the Knowledge domain guidance:
 - **EIIRP is idempotent.** Running it twice on the same work should produce no changes the second time.
 - **EIIRP consumes the active schema pack as data.** Never hard-code directory tables in EIIRP's logic — read from `gbrain schema show --json` so users who picked `gbrain-recommended` OR custom packs get the right behavior automatically.
 
-## Changelog (( inert ))
+## Changelog (( role: reference ))
 
-### v1.0.0 — gbrain v0.39.0.0 (( inert ))
+### v1.0.0 — gbrain v0.39.0.0 (( role: reference ))
 - Initial port from upstream OpenClaw. Genericized — no references to
   private fork names per CLAUDE.md privacy rules.
 - Phase 3 SCHEMA CHECK rewritten to consume the v0.39 cathedral CLI
@@ -431,7 +434,7 @@ use judgment to follow the Knowledge domain guidance:
 - Phase 5 SKILL GRAPH AUDIT calls `gbrain check-resolvable` instead of
   upstream `scripts/skill-dry-check.mjs`.
 
-#### v1.0.0 — gbrain v0.39.0.0 — steps
+### v1.0.0 — gbrain v0.39.0.0 — steps
 
 - Phase 6 verification uses `gbrain doctor`'s schema_pack_consistency
   check (T7) for the persistent surface.

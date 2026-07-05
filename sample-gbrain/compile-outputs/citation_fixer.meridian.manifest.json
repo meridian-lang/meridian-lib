@@ -98,121 +98,133 @@
     "name" : "citation-fixer",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 31,
         "text" : "Contract"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 44,
+        "line" : 43,
         "text" : "Phases"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 57,
+        "line" : 55,
         "text" : "Phases — steps"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 62,
+        "line" : 60,
         "text" : "Phases — steps 2"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 67,
+        "line" : 65,
         "text" : "Tweet resolution pipeline (v0.25.1 extension)"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 68,
+        "text" : "Tweet resolution pipeline (v0.25.1 extension) — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 75,
+        "text" : "Step 1: Identify broken references"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 86,
+        "text" : "Step 2: Extract searchable content"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 94,
+        "text" : "Step 3: Search for the actual tweet"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 109,
+        "text" : "Step 4: Verify and extract metadata"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 70,
-        "text" : "Tweet resolution pipeline (v0.25.1 extension) — steps"
+        "line" : 117,
+        "text" : "Step 4: Verify and extract metadata — steps"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 77,
-        "text" : "Step 1: Identify broken references"
-      },
-      {
-        "kind" : "inert",
-        "level" : 3,
-        "line" : 88,
-        "text" : "Step 2: Extract searchable content"
-      },
-      {
-        "kind" : "inert",
-        "level" : 3,
-        "line" : 96,
-        "text" : "Step 3: Search for the actual tweet"
-      },
-      {
-        "kind" : "inert",
-        "level" : 3,
-        "line" : 111,
-        "text" : "Step 4: Verify and extract metadata"
-      },
-      {
-        "kind" : "inert",
-        "level" : 3,
-        "line" : 123,
+        "line" : 121,
         "text" : "Step 5: Patch the brain page"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 140,
+        "line" : 138,
         "text" : "Batch mode"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 144,
+        "line" : 142,
         "text" : "Find candidate pages"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 157,
+        "line" : 155,
         "text" : "Priority order"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 164,
+        "line" : 162,
         "text" : "Rate limiting"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 172,
+        "line" : 170,
         "text" : "Output format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 184,
+        "line" : 182,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 190,
+        "text" : "Anti-Patterns — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
         "line" : 195,
         "text" : "Integration"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 204,
         "text" : "Metrics"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
         "line" : 219,
         "text" : "Metrics — steps"
@@ -226,31 +238,31 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 34,
+        "line" : 33,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 113,
+        "line" : 111,
         "text" : "Once a candidate is found"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 121,
+        "line" : 119,
         "text" : "Construct the URL"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 142,
+        "line" : 140,
         "text" : "When sweeping many pages"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 166,
+        "line" : 164,
         "text" : "X API"
       },
       {
@@ -262,28 +274,26 @@
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 31,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Every brain page is scanned for citation compliance",
           "Missing citations are flagged with specific location",
           "Malformed citations are fixed to match the standard format",
-          "**(v0.25.1)** Tweet \/ post references without URLs are resolved via",
+          "(v0.25.1) Tweet \/ post references without URLs are resolved via",
           "X API and patched with deterministic `https:\/\/x.com\/<handle>\/status\/<id>`",
           "links",
           "Results reported with counts (scanned, fixed, remaining)"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phases",
-        "line" : 44,
+        "line" : 43,
         "lines" : [
-          "use judgment to follow the Phases guidance:",
           "**Identify issues:**",
           "Facts without any citation",
           "Citations missing date",
@@ -293,12 +303,12 @@
           "**Report results.** Count: pages scanned, citations found, issues",
           "fixed, tweets resolved, remaining gaps"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Phases — steps",
-        "line" : 57,
+        "line" : 55,
         "lines" : [
           "List pages and read each one, checking for inline",
           "`[Source: ...]` citations"
@@ -306,40 +316,40 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phases — steps 2",
-        "line" : 62,
+        "line" : 60,
         "lines" : [
           "Rewrite malformed citations to match",
           "`conventions\/quality.md`"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Tweet resolution pipeline (v0.25.1 extension)",
-        "line" : 67,
+        "line" : 65,
         "lines" : [
 
         ],
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Tweet resolution pipeline (v0.25.1 extension) — steps",
-        "line" : 70,
+        "line" : 68,
         "lines" : [
           "For each broken tweet reference, follow this chain. The actual API call",
           "goes through whatever X integration the host has configured (typical",
           "shape: a recipe under `recipes\/x-api\/` with handle \/ search-all",
           "endpoints)"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Step 1: Identify broken references",
-        "line" : 77,
+        "line" : 75,
         "lines" : [
           "Scan the page for patterns that indicate tweet references without URLs:",
           "Contains words like `tweeted`, `posted`, `said on X`, `RT`, `retweet`,",
@@ -349,47 +359,55 @@
           "Has `[Source: ... X\/Twitter ...]` without an `x.com` URL",
           "References engagement metrics (likes, impressions) without a link"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Step 2: Extract searchable content",
-        "line" : 88,
+        "line" : 86,
         "lines" : [
           "From each broken reference, extract:",
           "The **handle** (if mentioned: `@<username>`)",
           "The **quoted text** (if available)",
           "The **approximate date** (often present in surrounding timeline entries)"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Step 3: Search for the actual tweet",
-        "line" : 96,
+        "line" : 94,
         "lines" : [
           "Use the host's X API integration. Query patterns:",
           "codeblock:plain:IyBIYW5kbGUgKyBxdW90ZWQgdGV4dDoKZnJvbTo8aGFuZGxlPiAiPGV4YWN0IHF1b3RlIGZyYWdtZW50PiIKCiMgUXVvdGVkIHRleHQgb25seToKIjxleGFjdCBxdW90ZSBmcmFnbWVudD4iCgojIE9yaWdpbmFsIG9mIGEgcmV0d2VldDoKIjxleGFjdCBxdW90ZT4iIC1pczpyZXR3ZWV0"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Step 4: Verify and extract metadata",
-        "line" : 111,
+        "line" : 109,
         "lines" : [
           "Once a candidate is found:",
           "Confirm the text matches the quoted fragment",
           "Pull the tweet id, author handle, engagement metrics (likes \/ RTs \/",
-          "impressions)",
+          "impressions)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Step 4: Verify and extract metadata — steps",
+        "line" : 117,
+        "lines" : [
           "Construct the URL: `https:\/\/x.com\/<handle>\/status\/<tweet_id>`"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Step 5: Patch the brain page",
-        "line" : 123,
+        "line" : 121,
         "lines" : [
           "Replace the broken citation with a proper one:",
           "**Before:**",
@@ -397,21 +415,21 @@
           "**After:**",
           "codeblock:plain:IjxmdWxsIHZlcmlmaWVkIHF1b3RlPiIg4oCUIDxOPiBsaWtlcywgPE4+IFJUcywgPE4+IGltcHJlc3Npb25zCltTb3VyY2U6IFtYLzxoYW5kbGU+LCBZWVlZLU1NLUREXShodHRwczovL3guY29tLzxoYW5kbGU+L3N0YXR1cy88dHdlZXRfaWQ+KV0="
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Batch mode",
-        "line" : 140,
+        "line" : 138,
         "lines" : [
           "When sweeping many pages:"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Find candidate pages",
-        "line" : 144,
+        "line" : 142,
         "lines" : [
           "codeblock:bash:IyBQYWdlcyBtZW50aW9uaW5nIHR3ZWV0cyBidXQgd2l0aCBubyB4LmNvbSBsaW5rcwpmb3IgZiBpbiAkKGZpbmQgLiAtbmFtZSAiKi5tZCIgLW5vdCAtcGF0aCAiLi9ub2RlX21vZHVsZXMvKiIpOyBkbwogIHJlZnM9JChncmVwIC1jaSAidHdlZXRcfHBvc3RlZFx8eCBwb3N0XHxSVFx8cmV0d2VldFx8c2FpZCBvbiBYIiAiJGYiKQogIGxpbmtzPSQoZ3JlcCAtYyAieC5jb20vLiovc3RhdHVzLyIgIiRmIikKICBpZiBbICIkcmVmcyIgLWd0IDIgXSAmJiBbICIkbGlua3MiIC1lcSAwIF07IHRoZW4KICAgIGVjaG8gIiRmIgogIGZpCmRvbmU="
         ],
@@ -420,19 +438,19 @@
       {
         "executes" : false,
         "heading" : "Priority order",
-        "line" : 157,
+        "line" : 155,
         "lines" : [
           "Recently created \/ updated pages — fresh broken refs are easiest to",
           "resolve while context is fresh",
           "High-traffic pages (frequent reads \/ writes from other skills)",
           "Everything else — bulk cleanup over time"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Rate limiting",
-        "line" : 164,
+        "line" : 162,
         "lines" : [
           "X API: respect the host's tier limits; don't hammer",
           "Target ~50 pages per batch run",
@@ -440,32 +458,39 @@
           "Batch-commit every 10-20 pages so a partial failure doesn't lose",
           "progress"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output format",
-        "line" : 172,
+        "line" : 170,
         "lines" : [
           "codeblock:plain:Q2l0YXRpb24gQXVkaXQgUmVwb3J0Cj09PT09PT09PT09PT09PT09PT09PQpQYWdlcyBzY2FubmVkOiAgICAgICAgTgpDaXRhdGlvbnMgZm91bmQ6ICAgICAgTgpJc3N1ZXMgZml4ZWQ6ICAgICAgICAgTgpUd2VldCBsaW5rcyByZXNvbHZlZDogTgpSZW1haW5pbmcgZ2FwczogICAgICAgTiAocGFnZXMgd2l0aCB1bmNpdGFibGUgZmFjdHMp"
         ],
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 184,
+        "line" : 182,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "❌ Inventing citations for facts that have no source. Flag them",
           "❌ Removing facts that lack citations (flag them; don't delete)",
           "❌ Fixing citations without reading the full page context",
           "❌ Batch-fixing without checking quality on a sample first",
-          "(see `conventions\/test-before-bulk.md`)",
+          "(see `conventions\/test-before-bulk.md`)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 190,
+        "lines" : [
           "❌ Composing tweet URLs by guessing the tweet id. Always go through",
           "the X API; deterministic links only"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -478,7 +503,7 @@
           "**By other skills** — `enrich` or `media-ingest` can call citation-fixer",
           "before commit to validate output"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -487,17 +512,17 @@
         "lines" : [
           "codeblock:json:ewogICJsYXN0X3J1biI6ICIyMDI2LTA0LTE1VC4uLiIsCiAgInBhZ2VzX3NjYW5uZWQiOiAwLAogICJjaXRhdGlvbnNfZml4ZWQiOiAwLAogICJ0d2VldF9saW5rc19yZXNvbHZlZCI6IDAsCiAgImNpdGF0aW9uc191bnJlc29sdmFibGUiOiAwLAogICJwYWdlc19yZW1haW5pbmciOiAxNDI0Cn0="
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Metrics — steps",
         "line" : 219,
         "lines" : [
           "If running as a recurring batch, track state in a small JSON file under",
           "`~\/.gbrain\/citation-fixer-state.json`:"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -549,48 +574,88 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 32,
+      "meridian_line" : 57,
       "swift_line" : 602
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 641
+      "meridian_line" : 157,
+      "swift_line" : 608
+    },
+    {
+      "meridian_line" : 58,
+      "swift_line" : 624
+    },
+    {
+      "meridian_line" : 119,
+      "swift_line" : 636
+    },
+    {
+      "meridian_line" : 144,
+      "swift_line" : 648
+    },
+    {
+      "meridian_line" : 144,
+      "swift_line" : 659
+    },
+    {
+      "meridian_line" : 144,
+      "swift_line" : 670
+    },
+    {
+      "meridian_line" : 144,
+      "swift_line" : 681
+    },
+    {
+      "meridian_line" : 144,
+      "swift_line" : 692
+    },
+    {
+      "meridian_line" : 144,
+      "swift_line" : 703
+    },
+    {
+      "meridian_line" : 144,
+      "swift_line" : 714
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 646
+      "swift_line" : 753
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 685
+      "swift_line" : 758
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 797
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 802
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 841
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 773
+      "swift_line" : 846
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 885
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 817
+      "swift_line" : 890
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 822
+      "swift_line" : 929
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 934
     }
   ],
   "tools_used" : [
@@ -603,21 +668,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "This skill guarantees:\nEvery brain page is scanned for citation compliance\nMissing citations are flagged with specific location\nMalformed citations are fixed to match the standard format\n**(v0.25.1)** Tweet \/ post references without URLs are resolved via\nX API and patched with deterministic `https:\/\/x.com\/<handle>\/status\/<id>`\nlinks\nResults reported with counts (scanned, fixed, remaining)\nuse judgment to follow the Phases guidance:\n**Identify issues:**\nFacts without any citation\nCitations missing date\nCitations missing source type\nCitations with wrong format\n**(v0.25.1) Resolve tweet references** via the X API integration\n**Report results.** Count: pages scanned, citations found, issues\nfixed, tweets resolved, remaining gaps\nList pages and read each one, checking for inline\n`[Source: ...]` citations\nRewrite malformed citations to match\n`conventions\/quality.md`\nFor each broken tweet reference, follow this chain. The actual API call\ngoes through whatever X integration the host has configured (typical\nshape: a recipe under `recipes\/x-api\/` with handle \/ search-all\nendpoints)\ncodeblock:bash:IyBQYWdlcyBtZW50aW9uaW5nIHR3ZWV0cyBidXQgd2l0aCBubyB4LmNvbSBsaW5rcwpmb3IgZiBpbiAkKGZpbmQgLiAtbmFtZSAiKi5tZCIgLW5vdCAtcGF0aCAiLi9ub2RlX21vZHVsZXMvKiIpOyBkbwogIHJlZnM9JChncmVwIC1jaSAidHdlZXRcfHBvc3RlZFx8eCBwb3N0XHxSVFx8cmV0d2VldFx8c2FpZCBvbiBYIiAiJGYiKQogIGxpbmtzPSQoZ3JlcCAtYyAieC5jb20vLiovc3RhdHVzLyIgIiRmIikKICBpZiBbICIkcmVmcyIgLWd0IDIgXSAmJiBbICIkbGlua3MiIC1lcSAwIF07IHRoZW4KICAgIGVjaG8gIiRmIgogIGZpCmRvbmU=\nuse judgment to follow the Anti-Patterns guidance:\n❌ Inventing citations for facts that have no source. Flag them\n❌ Removing facts that lack citations (flag them; don't delete)\n❌ Fixing citations without reading the full page context\n❌ Batch-fixing without checking quality on a sample first\n(see `conventions\/test-before-bulk.md`)\n❌ Composing tweet URLs by guessing the tweet id. Always go through\nthe X API; deterministic links only\nIf running as a recurring batch, track state in a small JSON file under\n`~\/.gbrain\/citation-fixer-state.json`:",
-          "line" : 32,
-          "scoped_tools" : [
-            "page.get",
-            "page.list",
-            "page.search",
-            "publish",
-            "shell.run"
-          ],
-          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "citation-fixer a input",

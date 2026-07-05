@@ -18,17 +18,20 @@ struct SkillMigratorCommandRewriteCoverageTests {
         #expect(m.diagnosticLine("x:12:") == nil)
     }
 
-    @Test("inertMarker picks role-specific markers for recognized headings")
-    func inertMarkerRoles() {
-        let m = migrator()
-        #expect(m.inertMarker(forHeading: "Invariants").contains("role: invariants"))
-        #expect(m.inertMarker(forHeading: "Protocol").contains("role: procedure"))
-        #expect(m.inertMarker(forHeading: "Anti-Patterns").contains("role: prohibitions"))
-        #expect(m.inertMarker(forHeading: "When to use").contains("role: applicability"))
-        #expect(m.inertMarker(forHeading: "When not to use").contains("role: negative-applicability"))
-        #expect(m.inertMarker(forHeading: "Output Format").contains("role: template"))
-        #expect(m.inertMarker(forHeading: "Tools").contains("role: tools"))
-        #expect(m.inertMarker(forHeading: "Random Notes") == "(( inert ))")
+    @Test("markEnclosingSectionReference always stamps (( role: reference )), regardless of heading")
+    func referenceRescueMarkerIsUniform() {
+        let m = SkillMigrator(compiler: Compiler(options: .init(fallbackPolicy: .lenient)),
+                              vocabularies: [], options: .init(routeFuzzy: true))
+        for heading in ["Invariants", "Protocol", "Anti-Patterns", "When to use",
+                        "When not to use", "Output Format", "Tools", "Random Notes"] {
+            let src = "## \(heading)\ndo something that does not lower."
+            let out = m.markEnclosingSectionReference(forDiagnostic: "L2: unparseable", in: src)
+            guard let marked = out else {
+                Issue.record("expected reference marking for \(heading)"); continue
+            }
+            #expect(marked.contains("(( role: reference ))"))
+            #expect(!marked.contains("(( inert"))
+        }
     }
 
     @Test("frontmatter parameters in YAML list form build the rewrite scope")
@@ -62,17 +65,57 @@ struct SkillMigratorCommandRewriteCoverageTests {
         #expect(!out.contains("<slug>"))
     }
 
-    @Test("markEnclosingSectionInert stamps the nearest heading")
-    func markSectionInert() {
+    @Test("markEnclosingSectionReference stamps the nearest heading, only when routeFuzzy is on")
+    func markSectionReference() {
         let src = """
         ## Protocol
         do something that does not lower.
         """
-        let out = migrator().markEnclosingSectionInert(forDiagnostic: "L2: unparseable", in: src)
+        // Default migrator() has routeFuzzy off (P1 policy: category-4 is a
+        // hard error unless the caller opts into the escape hatch).
+        #expect(migrator().markEnclosingSectionReference(forDiagnostic: "L2: unparseable", in: src) == nil)
+
+        let routed = SkillMigrator(compiler: Compiler(options: .init(fallbackPolicy: .lenient)),
+                                   vocabularies: [], options: .init(routeFuzzy: true))
+        let out = routed.markEnclosingSectionReference(forDiagnostic: "L2: unparseable", in: src)
         guard let marked = out else {
-            Issue.record("expected inert marking"); return
+            Issue.record("expected reference marking"); return
         }
-        #expect(marked.contains("(( inert"))
+        #expect(marked.contains("(( role: reference ))"))
+    }
+
+    @Test("markEnclosingSectionReference returns nil when the diagnostic carries no parseable line number, even with routeFuzzy on")
+    func markSectionReferenceNilWithoutParseableLine() {
+        let routed = SkillMigrator(compiler: Compiler(options: .init(fallbackPolicy: .lenient)),
+                                   vocabularies: [], options: .init(routeFuzzy: true))
+        let src = """
+        ## Protocol
+        do something that does not lower.
+        """
+        #expect(routed.markEnclosingSectionReference(forDiagnostic: "no line number here", in: src) == nil)
+    }
+
+    @Test("diagnosticLine falls through to the colon scan when an L-prefix has no digits")
+    func diagnosticLineFallsThroughWhenLPrefixHasNoDigits() {
+        let m = migrator()
+        #expect(m.diagnosticLine("Lxyz") == nil)
+        #expect(m.diagnosticLine("Lxyz t.meridian:7:2: error") == 7)
+    }
+
+    @Test("rewriteAnglePlaceholders leaves a string with no `<` untouched")
+    func rewriteAnglePlaceholdersNoAngleBracket() {
+        let m = migrator()
+        #expect(m.rewriteAnglePlaceholders("gbrain stats", scope: ["slug"]) == "gbrain stats")
+    }
+
+    @Test("rewriteAnglePlaceholders treats a nested `<` before the closing `>` as unresolved, not a placeholder")
+    func rewriteAnglePlaceholdersNestedAngleBracket() {
+        let m = migrator()
+        let out = m.rewriteAnglePlaceholders("<slug <nested>>", scope: ["slug", "nested"])
+        // The outer `<slug ` never sees its own `>` before hitting a fresh
+        // `<`, so it is left verbatim; only the inner `<nested>` resolves.
+        #expect(out.contains("{nested}"), Comment(rawValue: out))
+        #expect(out.contains("<slug"), Comment(rawValue: out))
     }
 
     @Test("isWordShaped rejects punctuation-only placeholder names")

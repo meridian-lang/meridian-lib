@@ -97,7 +97,7 @@
     "name" : "invoice run",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "applicability",
         "level" : 2,
         "line" : 11,
         "text" : "When this applies"
@@ -105,31 +105,31 @@
       {
         "kind" : "tables",
         "level" : 2,
-        "line" : 16,
+        "line" : 15,
         "text" : "Tables"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 22,
+        "line" : 21,
         "text" : "Workflow"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 32,
+        "line" : 30,
         "text" : "Workflow — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 39,
+        "line" : 37,
         "text" : "Workflow — steps 2"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 43,
+        "line" : 41,
         "text" : "Report shape"
       }
     ],
@@ -139,36 +139,34 @@
         "heading" : "When this applies",
         "line" : 11,
         "lines" : [
-          "use judgment to follow the When this applies guidance:",
           "\"run invoices\"",
           "\"billing batch\""
         ],
-        "role" : "procedure"
+        "role" : "applicability"
       },
       {
         "executes" : true,
         "heading" : "Tables",
-        "line" : 16,
+        "line" : 15,
         "lines" : [
           "table:decision:fCBzdGF0dXMgfCBxdWV1ZSB8CnwgLS0tIHwgLS0tIHwKfCB1bnBhaWQgfCBjb2xsZWN0aW9ucyB8CnwgZnVsZmlsbGVkIHwgYXJjaGl2ZSB8"
         ],
         "role" : "tables"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Workflow",
-        "line" : 22,
+        "line" : 21,
         "lines" : [
-          "use judgment to follow the Workflow guidance:",
           "bind invoice receipt =",
           "codeblock:plain:aW52b2ljZS1yb3V0aW5nOgpbZm9yIGVhY2ggcm93IGluIHRhYmxlXS0ge3sgcm93LnN0YXR1cyB9fSAtPiB7eyByb3cucXVldWUgfX0KW2VuZCBmb3JdCnNlbGVjdGVkOiB7eyBzZWxlY3RlZCBxdWV1ZSB9fQ=="
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Workflow — steps",
-        "line" : 32,
+        "line" : 30,
         "lines" : [
           "fetch open orders",
           "for each order:",
@@ -180,7 +178,7 @@
       {
         "executes" : true,
         "heading" : "Workflow — steps 2",
-        "line" : 39,
+        "line" : 37,
         "lines" : [
           "emit erp.invoice_receipt with body = invoice receipt"
         ],
@@ -189,7 +187,7 @@
       {
         "executes" : false,
         "heading" : "Report shape",
-        "line" : 43,
+        "line" : 41,
         "lines" : [
           "The receipt groups invoice states by downstream queue"
         ],
@@ -234,24 +232,44 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 12,
+      "meridian_line" : 16,
       "swift_line" : 402
     },
     {
-      "meridian_line" : 1,
+      "meridian_line" : 49,
+      "swift_line" : 405
+    },
+    {
+      "meridian_line" : 33,
+      "swift_line" : 416
+    },
+    {
+      "meridian_line" : 61,
+      "swift_line" : 422
+    },
+    {
+      "meridian_line" : 35,
+      "swift_line" : 437
+    },
+    {
+      "meridian_line" : 39,
       "swift_line" : 440
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 445
+      "swift_line" : 477
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 483
+      "swift_line" : 482
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 488
+      "swift_line" : 520
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 525
     }
   ],
   "tools_used" : [
@@ -262,26 +280,6 @@
       "mode" : "strict",
       "parameters" : [
 
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "\"run invoices\"\n\"billing batch\"\ntable:data:fCBzdGF0dXMgfCBxdWV1ZSB8CnwgLS0tIHwgLS0tIHwKfCB1bnBhaWQgfCBjb2xsZWN0aW9ucyB8CnwgZnVsZmlsbGVkIHwgYXJjaGl2ZSB8\nuse judgment to follow the Workflow guidance:\nbind invoice receipt =\ncodeblock:plain:aW52b2ljZS1yb3V0aW5nOgpbZm9yIGVhY2ggcm93IGluIHRhYmxlXS0ge3sgcm93LnN0YXR1cyB9fSAtPiB7eyByb3cucXVldWUgfX0KW2VuZCBmb3JdCnNlbGVjdGVkOiB7eyBzZWxlY3RlZCBxdWV1ZSB9fQ==\nfetch open orders\nfor each order:\ncreate an invoice for the order\nbind selected queue = the queue corresponding to the status \"unpaid\" in the table\nemit erp.invoice_receipt with body = invoice receipt",
-          "line" : 12,
-          "scoped_tools" : [
-            "inventory.reserve",
-            "invoice.create",
-            "invoice.list",
-            "order.cancel",
-            "order.list",
-            "payment.collect",
-            "period.close",
-            "product.list",
-            "purchase_order.create",
-            "shipment.create"
-          ],
-          "text" : "follow the When this applies guidance"
-        }
       ],
       "source_name" : "invoice run",
       "swift_struct" : "InvoiceRun"

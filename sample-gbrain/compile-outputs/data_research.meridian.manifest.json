@@ -98,87 +98,93 @@
     "name" : "data-research",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 34,
         "text" : "Contract"
       },
       {
-        "kind" : "procedure",
+        "kind" : "applicability",
         "level" : 2,
-        "line" : 42,
+        "line" : 41,
         "text" : "When to Use"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 50,
+        "line" : 48,
         "text" : "Phases"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 53,
+        "line" : 50,
         "text" : "Phase 1: Define Research Recipe"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 64,
+        "line" : 60,
         "text" : "Phase 2: Search Sources"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 73,
+        "line" : 68,
         "text" : "Phase 3: Classify"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 80,
+        "line" : 74,
         "text" : "Phase 4: Extract Structured Data"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 92,
+        "line" : 84,
+        "text" : "Phase 4: Extract Structured Data — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 88,
         "text" : "Phase 5: Archive Raw Sources"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 99,
+        "line" : 95,
         "text" : "Phase 6: Deduplicate"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 107,
+        "line" : 102,
         "text" : "Phase 7: Update Canonical Tracker + Backlink"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 115,
+        "line" : 110,
         "text" : "Built-In Recipes"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 123,
+        "line" : 118,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 131,
+        "line" : 125,
         "text" : "Output Format"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 145,
+        "line" : 139,
         "text" : "Conventions"
       },
       {
@@ -190,149 +196,174 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 57,
+        "line" : 53,
         "text" : "Pick a built-in recipe"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 58,
+        "line" : 54,
         "text" : "Define a custom recipe with"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 86,
+        "line" : 63,
+        "text" : "Email via credential gateway"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 64,
+        "text" : "Web via search"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 65,
+        "text" : "APIs"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 66,
+        "text" : "Attachments"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 79,
         "text" : "When summarizing batch results"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 102,
+        "line" : 97,
         "text" : "Before adding to tracker"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 34,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "One skill for any email-to-structured-data pipeline. The only differences",
           "between tracking investor updates, expenses, and company metrics",
-          "are the **search queries**, **extraction schemas**, and **tracker page format**",
+          "are the search queries, extraction schemas, and tracker page format",
           "All three use the same 7-phase pipeline with parameterized recipes"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "When to Use",
-        "line" : 42,
+        "line" : 41,
         "lines" : [
-          "use judgment to follow the When to Use guidance:",
           "User wants to track structured data from email, web, or API sources",
           "User says \"research\", \"track\", \"extract from email\", \"build a tracker\"",
           "User mentions investor updates, donations, company metrics, filings",
           "User wants to set up recurring data collection (with cron recipe)"
         ],
-        "role" : "procedure"
+        "role" : "applicability"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 50,
+        "line" : 48,
         "lines" : [
-          "use judgment to follow the Phases guidance:"
+
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 1: Define Research Recipe",
-        "line" : 53,
+        "line" : 50,
         "lines" : [
-          "use judgment to follow the Phase 1: Define Research Recipe guidance:",
           "Ask the user what they want to track. Either:",
           "Pick a built-in recipe: investor-updates, expense-tracker, company-updates",
           "Define a custom recipe with: source queries, classification rules, extraction schema,",
           "tracker page path, tracker format",
           "Recipes are YAML files at `~\/.gbrain\/recipes\/{name}.yaml`. Use `gbrain research init`"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 2: Search Sources",
-        "line" : 64,
+        "line" : 60,
         "lines" : [
-          "use judgment to follow the Phase 2: Search Sources guidance:",
           "Brain first (maybe we already have this data). Then:",
-          "**Email** via credential gateway: windowed queries (quarterly, monthly if truncated)",
-          "**Web** via search: public filings, press releases, regulatory data",
-          "**APIs**: any structured data source the recipe defines",
-          "**Attachments**: PDF extraction, HTML stripping"
+          "Email via credential gateway: windowed queries (quarterly, monthly if truncated)",
+          "Web via search: public filings, press releases, regulatory data",
+          "APIs: any structured data source the recipe defines",
+          "Attachments: PDF extraction, HTML stripping"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 3: Classify",
-        "line" : 73,
+        "line" : 68,
         "lines" : [
-          "use judgment to follow the Phase 3: Classify guidance:",
           "Deterministic first (regex patterns from recipe), LLM fallback",
           "Log every LLM fallback for future regex improvement (fail-improve loop)",
           "Skip marketing, newsletters, noise based on recipe's classification rules"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 4: Extract Structured Data",
-        "line" : 80,
+        "line" : 74,
         "lines" : [
-          "use judgment to follow the Phase 4: Extract Structured Data guidance:",
           "**EXTRACTION INTEGRITY RULE:**",
           "Save raw source immediately (before any extraction)",
           "Extract fields using deterministic regex first, LLM fallback",
           "When summarizing batch results: **re-read from saved files**",
-          "Never trust LLM working memory after batch processing",
           "This prevents a known hallucination bug where batch-processed amounts were",
           "13\/13 wrong from LLM working memory while saved files were correct"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
+        "heading" : "Phase 4: Extract Structured Data — steps",
+        "line" : 84,
+        "lines" : [
+          "Never trust LLM working memory after batch processing"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
         "heading" : "Phase 5: Archive Raw Sources",
-        "line" : 92,
+        "line" : 88,
         "lines" : [
           "`put_raw_data` for email bodies, API responses",
           "`file_upload` for PDF attachments, documents",
           "Create `.redirect.yaml` pointers for large files in storage",
           "Every tracker entry must link back to its raw source"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 6: Deduplicate",
-        "line" : 99,
+        "line" : 95,
         "lines" : [
-          "use judgment to follow the Phase 6: Deduplicate guidance:",
           "Before adding to tracker:",
           "Exact match (same key fields) → skip",
           "Fuzzy match (same entity + date + similar amount within tolerance) → flag for review",
           "Different amount for same entity+date → add with note (could be correction)"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 7: Update Canonical Tracker + Backlink",
-        "line" : 107,
+        "line" : 102,
         "lines" : [
           "Parse existing tracker page (markdown table)",
           "Append new entries in correct section (grouped by year\/quarter\/entity)",
@@ -340,37 +371,36 @@
           "Backlink every mentioned entity (person → people\/ page, company → companies\/ page)",
           "Uses enrichment service for entity pages"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Built-In Recipes",
-        "line" : 115,
+        "line" : 110,
         "lines" : [
           "Three example recipes ship with GBrain (see `~\/.gbrain\/recipes\/`):",
           "**investor-updates** — extract MRR, ARR, growth, burn, runway, headcount from investor update emails",
           "**expense-tracker** — extract amounts, recipients, platforms from receipt emails (subscriptions, services, recurring charges)",
           "**company-updates** — extract revenue, users, key metrics from portfolio company update emails"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 123,
+        "line" : 118,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "Trusting LLM working memory for amounts after batch processing (use extraction integrity rule)",
           "Creating tracker entries without raw source links",
           "Running without deduplication (leads to double-counted entries)",
           "Hardcoding source-specific patterns in the pipeline code (use recipes)"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 131,
+        "line" : 125,
         "lines" : [
           "Brain page at the recipe's `tracker_page` path with markdown tables:",
           "codeblock:markdown:IyMjIDIwMjYKCnwgRGF0ZSB8IENvbXBhbnkgfCBNUlIgfCBBUlIgfCBHcm93dGggfCBTdGF0dXMgfAp8LS0tLS0tfC0tLS0tLS0tLXwtLS0tLXwtLS0tLXwtLS0tLS0tLXwtLS0tLS0tLXwKfCAyMDI2LTA0LTAxIHwgRXhhbXBsZSBDbyB8ICQxODhLIHwgJDIuM00gfCArMTQuNyUgTW9NIHwgW1NvdXJjZV0obGluaykgfA==",
@@ -381,7 +411,7 @@
       {
         "executes" : true,
         "heading" : "Conventions",
-        "line" : 145,
+        "line" : 139,
         "lines" : [
           "References `skills\/conventions\/quality.md` for citation and back-linking rules"
         ],
@@ -428,64 +458,64 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 35,
-      "swift_line" : 602
+      "meridian_line" : 141,
+      "swift_line" : 603
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 641
+      "swift_line" : 643
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 646
+      "swift_line" : 648
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 685
+      "swift_line" : 687
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 692
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 731
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 736
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 773
+      "swift_line" : 775
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 780
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 817
+      "swift_line" : 819
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 822
+      "swift_line" : 824
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 861
+      "swift_line" : 863
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 866
+      "swift_line" : 868
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 905
+      "swift_line" : 907
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 910
+      "swift_line" : 912
     }
   ],
   "tools_used" : [
@@ -498,22 +528,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "One skill for any email-to-structured-data pipeline. The only differences\nbetween tracking investor updates, expenses, and company metrics\nare the **search queries**, **extraction schemas**, and **tracker page format**\nAll three use the same 7-phase pipeline with parameterized recipes\nuse judgment to follow the When to Use guidance:\nUser wants to track structured data from email, web, or API sources\nUser says \"research\", \"track\", \"extract from email\", \"build a tracker\"\nUser mentions investor updates, donations, company metrics, filings\nUser wants to set up recurring data collection (with cron recipe)\nuse judgment to follow the Phases guidance:\nuse judgment to follow the Phase 1: Define Research Recipe guidance:\nAsk the user what they want to track. Either:\nPick a built-in recipe: investor-updates, expense-tracker, company-updates\nDefine a custom recipe with: source queries, classification rules, extraction schema,\ntracker page path, tracker format\nRecipes are YAML files at `~\/.gbrain\/recipes\/{name}.yaml`. Use `gbrain research init`\nuse judgment to follow the Phase 2: Search Sources guidance:\nBrain first (maybe we already have this data). Then:\n**Email** via credential gateway: windowed queries (quarterly, monthly if truncated)\n**Web** via search: public filings, press releases, regulatory data\n**APIs**: any structured data source the recipe defines\n**Attachments**: PDF extraction, HTML stripping\nuse judgment to follow the Phase 3: Classify guidance:\nDeterministic first (regex patterns from recipe), LLM fallback\nLog every LLM fallback for future regex improvement (fail-improve loop)\nSkip marketing, newsletters, noise based on recipe's classification rules\nuse judgment to follow the Phase 4: Extract Structured Data guidance:\n**EXTRACTION INTEGRITY RULE:**\nSave raw source immediately (before any extraction)\nExtract fields using deterministic regex first, LLM fallback\nWhen summarizing batch results: **re-read from saved files**\nNever trust LLM working memory after batch processing\nThis prevents a known hallucination bug where batch-processed amounts were\n13\/13 wrong from LLM working memory while saved files were correct\n`put_raw_data` for email bodies, API responses\n`file_upload` for PDF attachments, documents\nCreate `.redirect.yaml` pointers for large files in storage\nEvery tracker entry must link back to its raw source\nuse judgment to follow the Phase 6: Deduplicate guidance:\nBefore adding to tracker:\nExact match (same key fields) → skip\nFuzzy match (same entity + date + similar amount within tolerance) → flag for review\nDifferent amount for same entity+date → add with note (could be correction)\nParse existing tracker page (markdown table)\nAppend new entries in correct section (grouped by year\/quarter\/entity)\nCompute running totals\nBacklink every mentioned entity (person → people\/ page, company → companies\/ page)\nUses enrichment service for entity pages\nThree example recipes ship with GBrain (see `~\/.gbrain\/recipes\/`):\n**investor-updates** — extract MRR, ARR, growth, burn, runway, headcount from investor update emails\n**expense-tracker** — extract amounts, recipients, platforms from receipt emails (subscriptions, services, recurring charges)\n**company-updates** — extract revenue, users, key metrics from portfolio company update emails\nuse judgment to follow the Anti-Patterns guidance:\nTrusting LLM working memory for amounts after batch processing (use extraction integrity rule)\nCreating tracker entries without raw source links\nRunning without deduplication (leads to double-counted entries)\nHardcoding source-specific patterns in the pipeline code (use recipes)\nReferences `skills\/conventions\/quality.md` for citation and back-linking rules",
-          "line" : 35,
-          "scoped_tools" : [
-            "link.add",
-            "page.get",
-            "page.search",
-            "publish",
-            "shell.run",
-            "timeline.add"
-          ],
-          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "data-research a input",

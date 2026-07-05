@@ -3,8 +3,8 @@
 - Original: `restock/SKILL.md`
 - Ported: `restock.meri`
 - Tier: 2 (light edits)
-- Similarity: 74%
-- Lines: 24 -> 33 (+12 / -3)
+- Similarity: 81%
+- Lines: 24 -> 30 (+8 / -2)
 
 ## Frontmatter
 - Added: (none)
@@ -12,31 +12,29 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 
 ## Metrics
-- Sections inert total: 0/3 (0% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 1/3 (33% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Judgment: 3 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=1
+- Judgment: 0 blocks, 0 lines
+
+### Inert section details
+- L8 `Workflow`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/restock/SKILL.md
 +++ skills/restock.meri
-@@ -8,17 +8,26 @@
- 
- # Restock
- 
--## Use this when
-+## Use this when (( role: procedure ))
-+use judgment to follow the Use this when guidance:
+@@ -12,9 +12,15 @@
  - "restock short products"
  - "inventory below reorder point"
  
- ## Workflow
-+use judgment to follow the Workflow guidance:
+-## Workflow
++## Workflow (( role: reference ))
 +Check: any short products.
 +
 +### Workflow — steps
@@ -49,10 +47,4 @@
  for each product:
    create a purchase order for the product.
  Publish: "replenishment purchase orders raised".
- 
--## Guarantees
-+## Guarantees (( role: procedure ))
-+use judgment to follow the Guarantees guidance:
- make sure all products have a sku.
- 
 ```

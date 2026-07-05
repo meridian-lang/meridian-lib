@@ -98,95 +98,100 @@
     "name" : "skill-creator",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 20,
         "text" : "Contract"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 28,
+        "text" : "Contract — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 30,
+        "line" : 32,
         "text" : "Phases"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 70,
+        "line" : 71,
         "text" : "Phases — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 74,
+        "line" : 75,
         "text" : "Phases — steps 2"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 80,
+        "line" : 81,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 84,
+        "line" : 85,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 23,
-        "text" : "This skill guarantees"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 25,
+        "line" : 22,
         "text" : "MECE check"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 20,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
-          "This skill guarantees:",
-          "New skill follows conformance standard (frontmatter + required sections)",
           "MECE check: no overlap with existing skills' triggers",
           "Manifest.json updated",
           "RESOLVER.md updated with routing entry",
           "Skill passes conformance tests (`bun test test\/skills-conformance.test.ts`)"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
-        "heading" : "Phases",
-        "line" : 30,
+        "executes" : false,
+        "heading" : "Contract — steps",
+        "line" : 28,
         "lines" : [
-          "use judgment to follow the Phases guidance:",
+          "New skill follows conformance standard (frontmatter + required sections)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phases",
+        "line" : 32,
+        "lines" : [
           "**MECE check.** Review `skills\/manifest.json` and `skills\/RESOLVER.md`. Does any existing skill already cover this? If so, extend it instead of creating a new one",
           "**Create SKILL.md.** Use this template:",
           "codeblock:yaml:LS0tCm5hbWU6IHtza2lsbC1uYW1lfQp2ZXJzaW9uOiAxLjAuMApkZXNjcmlwdGlvbjogfAogIHtPbmUgcGFyYWdyYXBoIGRlc2NyaWJpbmcgd2hhdCB0aGUgc2tpbGwgZG9lcyBhbmQgd2hlbiB0byB1c2UgaXQufQp0cmlnZ2VyczoKICAtICJ7dHJpZ2dlciBwaHJhc2UgMX0iCiAgLSAie3RyaWdnZXIgcGhyYXNlIDJ9Igp0b29sczoKICAtIHt0b29sMX0KICAtIHt0b29sMn0KbXV0YXRpbmc6IHt0cnVlfGZhbHNlfQotLS0KCiMge1NraWxsIFRpdGxlfQoKIyMgQ29udHJhY3QKe1doYXQgdGhpcyBza2lsbCBndWFyYW50ZWVzIOKAlCAzLTUgYnVsbGV0IHBvaW50c30KCiMjIFBoYXNlcwp7TnVtYmVyZWQgd29ya2Zsb3cgc3RlcHN9CgojIyBPdXRwdXQgRm9ybWF0CntXaGF0IGdvb2Qgb3V0cHV0IGxvb2tzIGxpa2V9CgojIyBBbnRpLVBhdHRlcm5zCntXaGF0IE5PVCB0byBkbyDigJQgMy01IGl0ZW1zfQoKIyMgVG9vbHMgVXNlZAp7R0JyYWluIG9wZXJhdGlvbnMgdXNlZCwgd2l0aCBkZXNjcmlwdGlvbnN9"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phases — steps",
-        "line" : 70,
+        "line" : 71,
         "lines" : [
           "What capability is missing? What user intent has no skill?"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Phases — steps 2",
-        "line" : 74,
+        "line" : 75,
         "lines" : [
           "Add to manifest. Update `skills\/manifest.json` with name, path, description",
           "Add to resolver. Update `skills\/RESOLVER.md` with routing entry in the appropriate category",
@@ -197,25 +202,24 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 80,
+        "line" : 81,
         "lines" : [
           "New `skills\/{name}\/SKILL.md` file + updated manifest + updated resolver"
         ],
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 84,
+        "line" : 85,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "Creating a skill that overlaps with an existing one (violates MECE)",
           "Skipping the MECE check against existing skills",
           "Creating a skill without triggers in frontmatter",
           "Not updating manifest.json and RESOLVER.md",
           "Creating a skill without an Anti-Patterns section"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       }
     ],
     "tools" : "search\nlist_pages",
@@ -258,32 +262,40 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 21,
-      "swift_line" : 602
+      "meridian_line" : 77,
+      "swift_line" : 603
+    },
+    {
+      "meridian_line" : 78,
+      "swift_line" : 615
+    },
+    {
+      "meridian_line" : 79,
+      "swift_line" : 627
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 641
+      "swift_line" : 667
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 646
+      "swift_line" : 672
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 685
+      "swift_line" : 711
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 716
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 755
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 760
     }
   ],
   "tools_used" : [
@@ -296,19 +308,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "This skill guarantees:\nNew skill follows conformance standard (frontmatter + required sections)\nMECE check: no overlap with existing skills' triggers\nManifest.json updated\nRESOLVER.md updated with routing entry\nSkill passes conformance tests (`bun test test\/skills-conformance.test.ts`)\nuse judgment to follow the Phases guidance:\n**MECE check.** Review `skills\/manifest.json` and `skills\/RESOLVER.md`. Does any existing skill already cover this? If so, extend it instead of creating a new one\n**Create SKILL.md.** Use this template:\ncodeblock:yaml:LS0tCm5hbWU6IHtza2lsbC1uYW1lfQp2ZXJzaW9uOiAxLjAuMApkZXNjcmlwdGlvbjogfAogIHtPbmUgcGFyYWdyYXBoIGRlc2NyaWJpbmcgd2hhdCB0aGUgc2tpbGwgZG9lcyBhbmQgd2hlbiB0byB1c2UgaXQufQp0cmlnZ2VyczoKICAtICJ7dHJpZ2dlciBwaHJhc2UgMX0iCiAgLSAie3RyaWdnZXIgcGhyYXNlIDJ9Igp0b29sczoKICAtIHt0b29sMX0KICAtIHt0b29sMn0KbXV0YXRpbmc6IHt0cnVlfGZhbHNlfQotLS0KCiMge1NraWxsIFRpdGxlfQoKIyMgQ29udHJhY3QKe1doYXQgdGhpcyBza2lsbCBndWFyYW50ZWVzIOKAlCAzLTUgYnVsbGV0IHBvaW50c30KCiMjIFBoYXNlcwp7TnVtYmVyZWQgd29ya2Zsb3cgc3RlcHN9CgojIyBPdXRwdXQgRm9ybWF0CntXaGF0IGdvb2Qgb3V0cHV0IGxvb2tzIGxpa2V9CgojIyBBbnRpLVBhdHRlcm5zCntXaGF0IE5PVCB0byBkbyDigJQgMy01IGl0ZW1zfQoKIyMgVG9vbHMgVXNlZAp7R0JyYWluIG9wZXJhdGlvbnMgdXNlZCwgd2l0aCBkZXNjcmlwdGlvbnN9\nWhat capability is missing? What user intent has no skill?\nAdd to manifest. Update `skills\/manifest.json` with name, path, description\nAdd to resolver. Update `skills\/RESOLVER.md` with routing entry in the appropriate category\nVerify. Run `bun test test\/skills-conformance.test.ts` to confirm the new skill passes\nuse judgment to follow the Anti-Patterns guidance:\nCreating a skill that overlaps with an existing one (violates MECE)\nSkipping the MECE check against existing skills\nCreating a skill without triggers in frontmatter\nNot updating manifest.json and RESOLVER.md\nCreating a skill without an Anti-Patterns section",
-          "line" : 21,
-          "scoped_tools" : [
-            "page.list",
-            "page.search",
-            "shell.run"
-          ],
-          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "skill-creator a input",

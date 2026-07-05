@@ -50,18 +50,13 @@ extension SkillMigrator {
                     normalizeMarkdownFormattingForLowering(&lines, (idx + 1)..<end)
                 }
                 aliases.append(SectionAlias(heading: m.text, role: role))
-            case .split(let marker, let plan):
-                let replacement = renderSplitPlan(plan, headingHashes: m.hashes, headingText: m.text,
-                                                  marker: marker, originalBody: Array(body),
-                                                  routeFuzzy: options.routeFuzzy)
+            case .split(let plan):
+                let replacement = renderSplitPlan(plan, headingHashes: m.hashes, headingText: m.text)
                 splitEdits.append(SplitEdit(range: idx..<end, replacement: replacement))
-                for i in plan.executableSegments.indices {
+                for (i, segment) in plan.executableSegments.enumerated() {
                     let suffix = i == 0 ? "" : " \(i + 1)"
-                    aliases.append(SectionAlias(heading: "\(m.text)\(Self.splitHeadingSeparator)\(suffix)", role: plan.execSegmentRole))
-                }
-                if options.routeFuzzy, plan.needsProcedureAlias,
-                   (plan.executableSegments.isEmpty && plan.judgmentWorthy) || plan.narrativeJudgmentWorthy {
-                    aliases.append(SectionAlias(heading: m.text, role: .procedure))
+                    let role = segment.kind == .aiInference ? SkillSectionRole.procedure : plan.execSegmentRole
+                    aliases.append(SectionAlias(heading: "\(m.text)\(Self.splitHeadingSeparator)\(suffix)", role: role))
                 }
                 unminedContracts.append(contentsOf: plan.unminedContracts)
             }
@@ -101,8 +96,8 @@ extension SkillMigrator {
         }
 
         let insertAt = headinglessOverviewInsertIndex(lines, bodyStart: bodyStart)
-        trace.log(.skill, "heading-less narrative: insert ## Overview (( inert )) at L\(insertAt + 1)")
-        lines.insert("## Overview (( inert ))", at: insertAt)
+        trace.log(.skill, "heading-less narrative: insert ## Overview (( role: reference )) at L\(insertAt + 1)")
+        lines.insert("## Overview (( role: reference ))", at: insertAt)
         if insertAt + 1 < lines.count,
            !lines[insertAt + 1].trimmingCharacters(in: .whitespaces).isEmpty {
             lines.insert("", at: insertAt + 1)
@@ -226,71 +221,77 @@ extension SkillMigrator {
                           knowledge: Compiler.KnowledgeContext, rulebook: Rulebook) throws -> MarkDecision {
         switch derivedRole(forHeading: heading, rulebook: rulebook) {
         case .invariants:
-            return checkableRoleDecision(heading: heading, body: body, knowledge: knowledge, role: .invariants, marker: "(( inert, role: invariants ))")
+            return checkableRoleDecision(heading: heading, body: body, knowledge: knowledge, role: .invariants)
         case .prohibitions:
-            return checkableRoleDecision(heading: heading, body: body, knowledge: knowledge, role: .prohibitions, marker: "(( inert, role: prohibitions ))")
+            return checkableRoleDecision(heading: heading, body: body, knowledge: knowledge, role: .prohibitions)
         case .applicability:
-            return checkableRoleDecision(heading: heading, body: body, knowledge: knowledge, role: .applicability, marker: "(( inert, role: applicability ))")
+            return checkableRoleDecision(heading: heading, body: body, knowledge: knowledge, role: .applicability)
         case .negativeApplicability:
-            return checkableRoleDecision(heading: heading, body: body, knowledge: knowledge, role: .negativeApplicability, marker: "(( inert, role: negative-applicability ))")
+            return checkableRoleDecision(heading: heading, body: body, knowledge: knowledge, role: .negativeApplicability)
         case .procedure:
             if sectionIsExecutableOnly(body, knowledge: knowledge) { return .leaveUnmarked }
             if bodyIsJudgmentWrapped(heading: heading, body: body) { return .leaveUnmarked }
-            let marker = "(( inert, role: procedure ))"
-            if heading.contains(Self.splitHeadingSeparator) { return .inline(marker) }
-            return .split(marker: marker, plan: splitPlanApplyingThreshold(body, knowledge: knowledge, roleAlreadyAsserted: true))
+            if heading.contains(Self.splitHeadingSeparator) { return .leaveUnmarked }
+            let plan = splitPlanApplyingThreshold(body, knowledge: knowledge, roleAlreadyAsserted: true)
+            if plan.executableSegments.isEmpty {
+                // No exec/AI-inference content at all: an operational-error
+                // body is simply left unmarked so the real compiler processes
+                // it and raises its own reword diagnostic; a genuinely
+                // cue-less/signal-less body becomes `reference` documentation.
+                if plan.operationalErrorWorthy { return .leaveUnmarked }
+                return .inline("(( role: reference ))")
+            }
+            return .split(plan: plan)
         case .template:
-            return sectionIsTemplateBody(body) ? .leaveUnmarked : .inline("(( inert, role: template ))")
+            return sectionIsTemplateBody(body) ? .leaveUnmarked : .inline("(( role: template ))")
         case .tools:
-            return sectionIsToolListBody(body) ? .leaveUnmarked : .inline("(( inert, role: tools ))")
+            return sectionIsToolListBody(body) ? .leaveUnmarked : .inline("(( role: tools ))")
         case .some:
             // Domain / tables sections are already declarative metadata with
             // closed parsers; leave them to their role-specific handlers.
             return .leaveUnmarked
         case .none:
             // 1D: a section whose body verbatim restates an external rulebook
-            // convention is recorded as `convention-ref` (inert metadata) rather
-            // than generic inert prose.
-            if try bodyRestatesConvention(body) { return .inline("(( inert, role: convention-ref ))") }
+            // convention is recorded as `convention-ref` (non-executable
+            // metadata) rather than generic documentation.
+            if try bodyRestatesConvention(body) { return .inline("(( role: convention-ref ))") }
             // An unrecognized *executable* heading is routed to
             // `procedure` via a rulebook alias — preferred over an inline marker
-            // (see AGENTS.md §16 / docs/13). Other unknowns stay inert prose,
-            // unless enough of the body is executable to be worth splitting.
+            // (see docs/13). Other unknowns are classified per P1.
             if sectionIsExecutableOnly(body, knowledge: knowledge) { return .alias(.procedure) }
             if bodyIsJudgmentWrapped(heading: heading, body: body) { return .alias(.procedure) }
-            let marker = "(( inert ))"
-            if heading.contains(Self.splitHeadingSeparator) { return .inline(marker) }
-            var plan = splitPlanApplyingThreshold(body, knowledge: knowledge)
-            // Unlike a recognized `procedure`-role heading, this heading has no
-            // existing role — if either judgment-wrap path fires (whole-section,
-            // or leftover-narrative-beside-split-children), its body becomes
-            // executable and the heading itself needs a `procedure` alias to
-            // resolve (AGENTS.md Phase 1 item 4).
-            if options.routeFuzzy && (plan.judgmentWorthy || plan.narrativeJudgmentWorthy) {
-                plan.needsProcedureAlias = true
+            if heading.contains(Self.splitHeadingSeparator) { return .leaveUnmarked }
+            let plan = splitPlanApplyingThreshold(body, knowledge: knowledge)
+            if plan.executableSegments.isEmpty {
+                if plan.operationalErrorWorthy {
+                    // No cue at all, but real operational/normative signal:
+                    // alias to `.procedure` and leave the body untouched so
+                    // the real compiler raises its own precise reword
+                    // diagnostic (P1 category 4) — no migrator-side marker.
+                    return .alias(.procedure)
+                }
+                // Genuinely documentary, no signal at all.
+                return .inline("(( role: reference ))")
             }
-            return .split(marker: marker, plan: plan)
+            return .split(plan: plan)
         }
     }
 
     /// `invariants`/`prohibitions`/`applicability`/`negativeApplicability`
-    /// share one shape: a fully checkable body stays clean; otherwise, rather
-    /// than the old binary "any non-checkable line makes the whole section
-    /// plain inert" rule, apply the same split-mixed-content/judgment-wrap
-    /// treatment `.procedure` gets (AGENTS.md §15 — a `## Contract` heading
-    /// explicitly asserting guarantees, or `## Anti-Patterns` explicitly
-    /// asserting prohibitions, is itself the judgment signal when nothing
-    /// deterministically lowers, exactly like a `## Phases` heading with no
-    /// executable lines). A checkable bullet mixed into otherwise-narrative
-    /// prose (e.g. "This skill guarantees:\n- the page count is at least 1")
-    /// is split out into an executable child heading instead of dragging the
-    /// whole section down to plain inert.
+    /// share one shape: a fully checkable body stays clean. Otherwise, apply
+    /// the P1 four-way split: checkable lines lower as their own child;
+    /// AI-inference-cue lines become their own judgment-wrapped child;
+    /// anything else is left for the real per-line checkable-role builder to
+    /// reject with its own precise `uncheckablePredicate` diagnostic — a
+    /// `## Contract` heading explicitly asserting guarantees, or
+    /// `## Anti-Patterns` explicitly asserting prohibitions, with content that
+    /// is neither checkable nor AI-cued is not free documentation; it is a
+    /// reword error (P1 category 4), never a silent inert/reference escape.
     func checkableRoleDecision(heading: String, body: ArraySlice<String>,
-                                       knowledge: Compiler.KnowledgeContext, role: SkillSectionRole,
-                                       marker: String) -> MarkDecision {
+                                       knowledge: Compiler.KnowledgeContext, role: SkillSectionRole) -> MarkDecision {
         if sectionIsCheckableRoleBody(body, knowledge: knowledge) { return .leaveUnmarked }
         if bodyIsJudgmentWrapped(heading: heading, body: body) { return .leaveUnmarked }
-        if heading.contains(Self.splitHeadingSeparator) { return .inline(marker) }
+        if heading.contains(Self.splitHeadingSeparator) { return .leaveUnmarked }
         // `checkableOnly: true` restricts the split's own `.exec` classification
         // to `isCheckableCondition` — no `lowersAsStatement`/backtick-command/
         // choice-gate fallback — so every segment this produces is guaranteed
@@ -298,37 +299,25 @@ extension SkillMigrator {
         // below) routes it to.
         var plan = splitPlanApplyingThreshold(body, knowledge: knowledge, roleAlreadyAsserted: true, checkableOnly: true)
         plan.execSegmentRole = role
-        // Unlike `.procedure`, these roles' *natural* body builder
-        // (`SkillSectionBuilder`'s invariants/prohibitions/applicability
-        // path) only accepts per-line checkable predicates or full
-        // inertness — it has no case for a `use judgment to follow …:`
-        // prose step (that idiom is a generic-statement production, valid
-        // under `.procedure`'s body builder but not this one; MER1010 "is
-        // not a structurally checkable predicate" otherwise). So the
-        // below-threshold judgment-wrap path must force the heading onto
-        // the generic procedure builder via an explicit inline marker (see
-        // `SplitPlan.forcedRoleMarker`), not a `SectionAlias` — a rulebook
-        // alias for this exact heading text may already exist corpus-wide
-        // (e.g. a curated "Anti-Patterns"/"Avoid"/"Pitfalls" synonym line)
-        // and would win the first-match lookup over anything this one
-        // section tries to add.
-        // The forced marker is needed by either judgment-wrap shape:
-        // whole-section (`judgmentWorthy`, no split) or leftover-narrative-
-        // beside-split-children (`narrativeJudgmentWorthy`) — both put a
-        // `use judgment to follow …:` prose step directly under *this*
-        // heading, which the checkable-role builder can't parse.
-        if options.routeFuzzy && (plan.judgmentWorthy || plan.narrativeJudgmentWorthy) {
-            plan.forcedRoleMarker = "(( role: procedure ))"
+        if plan.executableSegments.isEmpty {
+            if plan.operationalErrorWorthy {
+                // No inference cue: leave the heading exactly as its natural
+                // checkable role. `SkillSectionBuilder.assertLine` already
+                // throws a precise `uncheckablePredicate` naming the exact
+                // reword needed for the first non-checkable line — no
+                // migrator-side marker, no silent judgment-wrap.
+                return .leaveUnmarked
+            }
+            // No signal at all despite the role heading: genuinely documentary.
+            return .inline("(( role: reference ))")
         }
-        return .split(marker: marker, plan: plan)
+        return .split(plan: plan)
     }
 
     /// True when `body`'s first content line is already the exact judgment
-    /// wrap this migrator would generate for `heading` — the idempotency
-    /// guard for the below-threshold judgment-wrap path (mirrors
-    /// `splitHeadingSeparator`'s guard for generated split children): re-
-    /// running the marking pass on an already-wrapped section must be a no-op,
-    /// not a second, nested `use judgment to …:` line.
+    /// wrap this migrator generates for an AI-inference section. Re-running
+    /// the marking pass on an already-wrapped section must be a no-op, not a
+    /// second, nested `use judgment to …:` line.
     func bodyIsJudgmentWrapped(heading: String, body: ArraySlice<String>) -> Bool {
         guard let first = body.first(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) else { return false }
         return first.trimmingCharacters(in: .whitespaces) == "use judgment to follow the \(heading) guidance:"

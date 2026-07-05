@@ -20,16 +20,14 @@ mutating: false
 
 > **Full filing rules:** See `skills/_brain-filing-rules.md`
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 This skill guarantees:
 - Every new page is filed by primary subject (not format, not source)
 - The decision protocol is followed for ambiguous cases
 - Common misfiling patterns are caught
 
-## Phases
-use judgment to follow the Phases guidance:
+## Phases (( role: reference ))
 
 1. **Identify the primary subject.** What would you search for to find this page?
 2. **Walk the decision tree:**
@@ -41,14 +39,16 @@ use judgment to follow the Phases guidance:
    - Media content → `media/{type}/{slug}.md`
    - Raw data import → `sources/{slug}.md`
 3. **Cross-link.** Link from related directories.
-4. **Check notability.** See `skills/conventions/quality.md` notability gate.
 
-## Output Format (( inert, role: template ))
+### Phases — steps
+
+4. Check notability. See `skills/conventions/quality.md` notability gate.
+
+## Output Format (( role: template ))
 
 Advisory: "File this at `{type}/{slug}.md` because the primary subject is {reason}."
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 - Filing by format ("it's a PDF so it goes in sources/")
 - Filing by source ("it came from email so it goes in sources/")

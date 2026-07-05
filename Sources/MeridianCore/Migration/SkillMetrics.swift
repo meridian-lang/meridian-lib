@@ -102,7 +102,18 @@ public struct SkillMetrics: Sendable, Equatable {
             .sorted { $0.category < $1.category }
     }
 
-    public static func analyze(_ source: String, rulebook: Rulebook = .empty) -> SkillMetrics {
+    /// Sections whose recorded role is the literal `inert` keyword — the
+    /// "Eliminate `(( inert ))`" plan's dedicated violation signal (§5),
+    /// independent of `InertCategory`. The migrator never emits `inert`
+    /// (it emits `reference`/`template`/`tools`/`convention-ref` or lowers/
+    /// errors instead), so any nonzero count here is a hand-authored or
+    /// stale marker a corpus should not carry.
+    public var inertMarkerCount: Int {
+        inertDetails.filter { $0.role == SkillSectionRole.inert.rawValue }.count
+    }
+
+    public static func analyze(_ source: String, rulebook: Rulebook = .empty,
+                               lexicon: EnglishLexicon = .default) -> SkillMetrics {
         let lines = bodyLines(of: source)
         var total = 0
         var inert = 0
@@ -167,7 +178,8 @@ public struct SkillMetrics: Sendable, Equatable {
             }
         }
         let details = sections.compactMap { section -> InertSection? in
-            inertSectionDetail(heading: section.heading, line: section.line, body: section.body, rulebook: rulebook)
+            inertSectionDetail(heading: section.heading, line: section.line, body: section.body,
+                              rulebook: rulebook, lexicon: lexicon)
         }
         return SkillMetrics(totalSections: total, inertSections: inert,
                             judgmentBlocks: blocks, judgmentLines: jLines,
@@ -194,7 +206,8 @@ public struct SkillMetrics: Sendable, Equatable {
         return SectionRoleResolver.decide(marker: parsed.marker, derivedRole: derived).executes
     }
 
-    private static func inertSectionDetail(heading: String, line: Int, body: [String], rulebook: Rulebook) -> InertSection? {
+    private static func inertSectionDetail(heading: String, line: Int, body: [String],
+                                           rulebook: Rulebook, lexicon: EnglishLexicon) -> InertSection? {
         let parsed = SkillSectionRole.parseMarker(from: heading)
         let derived = rulebook.role(forHeading: parsed.cleanHeading)
             ?? SkillSectionRole.builtinRole(forHeading: parsed.cleanHeading)
@@ -209,7 +222,10 @@ public struct SkillMetrics: Sendable, Equatable {
 
         let category: InertCategory
         let reason: String
-        if decision.recordedRole == SkillSectionRole.template.rawValue
+        if decision.recordedRole == SkillSectionRole.reference.rawValue {
+            category = .referenceDocumentation
+            reason = "Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal."
+        } else if decision.recordedRole == SkillSectionRole.template.rawValue
                     || SkillSectionRole.builtinRole(forHeading: clean) == .template {
             category = .template
             reason = "Template/output shape is metadata unless explicit output assertions are authored."
@@ -220,7 +236,7 @@ public struct SkillMetrics: Sendable, Equatable {
         } else if decision.recordedRole == SkillSectionRole.conventionRef.rawValue {
             category = .conventionReference
             reason = "External convention is recorded here; executable behavior belongs in the rulebook."
-        } else if looksReferenceLike(clean, body: body) {
+        } else if looksReferenceLike(clean, body: body, lexicon: lexicon) {
             category = .referenceDocumentation
             reason = "Reference documentation, rationale, examples, or changelog."
         } else if decision.recordedRole == SkillSectionRole.procedure.rawValue
@@ -235,10 +251,13 @@ public struct SkillMetrics: Sendable, Equatable {
                     || decision.recordedRole == SkillSectionRole.prohibitions.rawValue {
             category = .normativeContract
             reason = "Normative \(decision.recordedRole) prose needs mining into assertions or explicit AI routing."
-        } else if decision.resolved || looksReferenceLike(clean, body: body) {
-            category = .referenceDocumentation
-            reason = "Reference documentation, rationale, examples, or changelog."
         } else {
+            // No `decision.resolved` fallback to reference here (§5): a bare
+            // `(( inert ))` (or an unresolved heading) that matched none of
+            // the categories above is genuinely uncategorized, not laundered
+            // into reference-documentation. It surfaces as `unclassified`
+            // (operational) so it registers in the residual-error tail
+            // instead of silently passing as legitimate documentation.
             category = .unclassified
             reason = "No executable role or known documentation category was recognized."
         }
@@ -294,22 +313,62 @@ public struct SkillMetrics: Sendable, Equatable {
         SkillMarkdownShape.wholeLineBacktickedCommand(trimmed)
     }
 
-    private static func looksReferenceLike(_ heading: String, body: [String]) -> Bool {
+    /// Word list de-hardcoded to `EnglishLexicon.referenceHeadingWords` (§5 /
+    /// P2): the documentary-heading discriminator is corpus-tunable via
+    /// `=== language ===` `Reference-heading synonym:` rather than a fixed
+    /// literal list in this file.
+    private static func looksReferenceLike(_ heading: String, body: [String], lexicon: EnglishLexicon) -> Bool {
         let lower = heading.lowercased()
-        let referenceWords = [
-            "what", "why", "philosophy", "example", "examples", "format",
-            "changelog", "related", "reference", "background", "overview",
-            "notes", "caveats", "prior work", "methodology", "template",
-            "guide", "guidance", "tutorial", "vision", "options", "available",
-            "semantics", "invocation patterns", "tracking", "state", "vs",
-            "cycle", "patterns", "quality bar", "trust boundary", "idempotency",
-            "privacy", "cooldown"
-        ]
-        if referenceWords.contains(where: { lower.contains($0) }) { return true }
+        if lexicon.referenceHeadingWords.contains(where: { lower.contains($0) }) { return true }
+        if bodyIsOnlyNonShellFence(body) { return true }
+        if bodyIsOnlyNonCommandBacktickSpans(body) { return true }
         return body.contains { line in
             let t = line.trimmingCharacters(in: .whitespaces).lowercased()
             return t.hasPrefix(">") || t.contains("example:") || t.contains("for reference")
         }
+    }
+
+    /// True when a body's only non-blank content is inline backtick-quoted
+    /// spans that are not real commands (`wholeLineBacktickedCommand` is
+    /// false — a bare single word/token, or an unterminated span, not a
+    /// runnable command with arguments) — e.g. a body listing `` `Page` ``,
+    /// `` `unfinished` `` as terminology, not commands to execute.
+    private static func bodyIsOnlyNonCommandBacktickSpans(_ body: [String]) -> Bool {
+        var sawContent = false
+        for raw in body {
+            let trimmed = raw.trimmingCharacters(in: .whitespaces)
+            if trimmed.isEmpty { continue }
+            guard trimmed.hasPrefix("`"), !wholeLineBacktickedCommand(trimmed) else { return false }
+            sawContent = true
+        }
+        return sawContent
+    }
+
+    /// True when a body's only real content is one or more fenced code blocks
+    /// that are not shell-executable (a JSON/markdown data-shape sample,
+    /// etc.) — such a body can never lower or execute regardless of what the
+    /// heading is called, so it is reference-like independent of
+    /// `referenceHeadingWords`. Mirrors the migrator's own `SplitBlock`
+    /// classification, where a non-shell/non-tool fence is `.documentation`.
+    private static func bodyIsOnlyNonShellFence(_ body: [String]) -> Bool {
+        var inFence = false
+        var sawFence = false
+        for raw in body {
+            let trimmed = raw.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("```") {
+                if !inFence {
+                    let lang = String(trimmed.dropFirst(3)).trimmingCharacters(in: .whitespaces).lowercased()
+                    if isShellFence(lang) { return false }
+                    sawFence = true
+                }
+                inFence.toggle()
+                continue
+            }
+            if inFence { continue }
+            if trimmed.isEmpty { continue }
+            return false
+        }
+        return sawFence
     }
 
     /// True when the section body's first content line is the exact judgment

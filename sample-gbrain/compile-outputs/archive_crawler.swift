@@ -600,14 +600,62 @@ public struct ArchiveCrawlerInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ArchiveCrawlerInput", parameters: [:])
 
-        // L72
-        let __meridianProseResults_L72 = try await runtime.executeProsePlan(
-            prose: "follow the Source guidance",
+        if __meridianShouldRun("progress:0.0:L136:C0") {
+            // L136
+            let captured = try await runtime.invoke(
+                tool: "capture",
+                args: [
+                    "note": state.get("exactReaction—TrackTheUser.responseInTheManifestUsingTheirExactWords(perConventions/quality.md)") ?? .null,
+                ]
+            )
+            state.bind("captured", captured)
+
+            try await runtime.checkpoint(label: "progress:0.0:L136:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L192:C0") {
+            // L192
+            // User's own writing / ideas / origin-story content →
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("originals/<slug>.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L192:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L193:C0") {
+            // L193
+            // Reflections / personal-life content →
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("personal/<slug>.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L193:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L194:C0") {
+            // L194
+            // Product / business ideas →
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("ideas/<slug>.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.3:L194:C0", state: state.snapshot())
+        }
+        // L198
+        let __meridianProseResults_L198 = try await runtime.executeProsePlan(
+            prose: "follow the Phase 3: Ingest — steps 2 guidance",
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
-            guidance: "A source is any tree of files to explore. Sources have:\n**type**: `local` | `dropbox` | `backblaze` | `gmail-takeout` | `mbox` | `pst`\n**root**: filesystem path, Dropbox path, B2 prefix, mbox path\nmanifest: a brain page tracking progress at\n`projects/<archive-slug>/STATUS.md`\nuse judgment to follow the Manifest guidance:\nEvery archive exploration gets a manifest brain page that tracks:\n**Tree inventory** — folders / files / sizes / types\n**Triage status** — each item: `⬜ unseen` / `👀 reviewed` /\n`✅ ingested` / `⏭️ skip` / `🔥 high-signal`\n**User reactions** — exact quotes when they react (per\nconventions/quality.md exact-phrasing rule)\n**Priority queue** — what to explore next, ranked\n**Session log** — timestamped record of what was shown per session\nuse judgment to follow the Protocol guidance:\nuse judgment to follow the Phase 1: Inventory guidance:\nWhen pointed at a new source:\n**Confirm scan_paths is set** (safety gate). Exit if not\n**Map the tree** — list folders + files + sizes + date ranges\n**Classify folders** — group by likely content type (writing, email,\ncode, photos, docs, system)\n**Create manifest** — write `projects/<archive-slug>/STATUS.md` with\nthe full inventory\n**Propose priority queue** — rank folders by likely gold density\n**Present to user** — show the map and proposed order. Let them\noverride\nuse judgment to follow the Phase 2: Crawl guidance:\nWork through folders in priority order:\n**Read before showing** — open each candidate file, apply the gold\nfilter, skip noise\n**Show one at a time** — present gold items individually for review\n**Capture exact reaction** — track the user's response in the\nmanifest using their exact words (per conventions/quality.md)\n**Ingest if worth keeping** — create a brain page immediately\n**Update manifest** — mark item status after each interaction\n**Never re-show** — check the manifest before presenting anything\nuse judgment to follow the Phase 3: Ingest guidance:\nLetters or threads about a specific person → `people/<person>/timeline`\nback-link plus the letter at `personal/<slug>.md` or `originals/<slug>.md`\n**The skill is schema-generic.** It does NOT bake in any specific\nera-folder structure (e.g., `originals/archive/` for pre-2003,\n`originals/yc-era/` for post-2019, etc.). The user's filing rules from\n`_brain-filing-rules.json` are read at runtime; the agent decides per-page\nwhere content lands within those sanctioned directories\nBrain page format:\ncodeblock:markdown:LS0tCnRpdGxlOiAiW1RpdGxlIG9yIGZpcnN0IGxpbmVdIgp0eXBlOiBvcmlnaW5hbApzb3VyY2VfdHlwZTogIltsb2NhbHxkcm9wYm94fGJhY2tibGF6ZXxnbWFpbC10YWtlb3V0fG1ib3h8cHN0XSIKc291cmNlX3BhdGg6ICJbcGF0aCB3aXRoaW4gdGhlIGFsbG93LWxpc3RlZCBzY2FuX3BhdGhzXSIKZGF0ZTogIllZWVktTU0tREQiICAjIGRhdGUgZnJvbSB0aGUgZmlsZSBtZXRhZGF0YSBvciBjb250ZW50CnBlb3BsZTogWyJwZXJzb24tMSIsICJwZXJzb24tMiJdCnRhZ3M6IFsidGFnLTEiLCAidGFnLTIiXQotLS0KCiMgW1RpdGxlXQoKW1N1bW1hcnk6IHdoYXQgaXQgaXMsIHdoZW4gaXQncyBmcm9tLCB3aHkgaXQgbWF0dGVyc10KCioqVXNlcidzIHJlYWN0aW9uOioqIFtleGFjdCBxdW90ZSwgbm8gcGFyYXBocmFzaW5nXQoKIyMgQ29udGV4dAoKW0Nyb3NzLWxpbmtzIHRvIHBlb3BsZSwgY29uY2VwdHMsIHByb2plY3RzLl0KCi0tLQoKW1JhdyBzb3VyY2UgbWF0ZXJpYWwgYmVsb3cgdGhlIGxpbmUg4oCUIGZ1bGwgdGV4dF0=\nUser's own writing / ideas / origin-story content → `originals/<slug>.md`\nReflections / personal-life content → `personal/<slug>.md`\nProduct / business ideas → `ideas/<slug>.md`\ncodeblock:bash:IyAuZG9jeCAobW9kZXJuKQpweXRob24zIC1jICIKaW1wb3J0IHppcGZpbGUsIHhtbC5ldHJlZS5FbGVtZW50VHJlZSBhcyBFVAp3aXRoIHppcGZpbGUuWmlwRmlsZSgnL3BhdGgvdG8vZmlsZS5kb2N4JykgYXMgejoKICAgIHRyZWUgPSBFVC5wYXJzZSh6Lm9wZW4oJ3dvcmQvZG9jdW1lbnQueG1sJykpCiAgICBwcmludCgnJy5qb2luKHQudGV4dCBvciAnJyBmb3IgdCBpbiB0cmVlLml0ZXIoJ3todHRwOi8vc2NoZW1hcy5vcGVueG1sZm9ybWF0cy5vcmcvd29yZHByb2Nlc3NpbmdtbC8yMDA2L21haW59dCcpKSkKIgoKIyAuZG9jIChsZWdhY3ksIHJlcXVpcmVzIGFudGl3b3JkIG9yIGNhdGRvYykKYW50aXdvcmQgL3BhdGgvdG8vZmlsZS5kb2MgMj4vZGV2L251bGwgfHwgY2F0ZG9jIC9wYXRoL3RvL2ZpbGUuZG9jIDI+L2Rldi9udWxs\ncodeblock:bash:IyBWYWxpZGF0ZSBmaXJzdDsgbWFueSBQU1RzIGFyZSBudWxsIGJ5dGVzCnB5dGhvbjMgLWMgIgp3aXRoIG9wZW4oJy9wYXRoL3RvL2ZpbGUucHN0JywgJ3JiJykgYXMgZjoKICAgIHByaW50KCdWYWxpZCBQU1QnIGlmIGYucmVhZCg0KSA9PSBiJyFCRE4nIGVsc2UgJ0NPUlJVUFQvTlVMTCcpCiIKIyBJZiB2YWxpZDoKcmVhZHBzdCAtbyAvdG1wL3BzdC1vdXRwdXQgL3BhdGgvdG8vZmlsZS5wc3Q=\nuse judgment to follow the Anti-Patterns guidance:\n❌ Running without `archive-crawler.scan_paths:` set. Hard refusal\nThis is the safety contract — never bypass\n❌ Hardcoding era-specific filing paths (e.g., `originals/archive/`,\n`originals/yc-era/`). Read filing rules at runtime instead\n❌ Re-showing items already marked in the manifest. The user's time\nis the scarcest resource\n❌ Paraphrasing reactions. Exact words only\n❌ Wrapping found content in lessons or takeaways. Let stories breathe\n❌ Skipping back-links when content references people / companies who\nhave brain pages. Iron Law per conventions/quality.md\nuse judgment to follow the Related skills guidance:\n`skills/idea-ingest/SKILL.md` — single-link-or-article ingest with\nthe same primary-subject filing rule\n`skills/voice-note-ingest/SKILL.md` — same exact-phrasing pattern for\naudio capture\n`skills/conventions/quality.md` — citations, back-links, voice\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test"
+            guidance: "**The skill is schema-generic.** It does NOT bake in any specific\nera-folder structure (e.g., `originals/archive/` for pre-2003,\n`originals/yc-era/` for post-2019, etc.). The user's filing rules from\n`_brain-filing-rules.json` are read at runtime; the agent decides per-page\nwhere content lands within those sanctioned directories\ncodeblock:bash:IyAuZG9jeCAobW9kZXJuKQpweXRob24zIC1jICIKaW1wb3J0IHppcGZpbGUsIHhtbC5ldHJlZS5FbGVtZW50VHJlZSBhcyBFVAp3aXRoIHppcGZpbGUuWmlwRmlsZSgnL3BhdGgvdG8vZmlsZS5kb2N4JykgYXMgejoKICAgIHRyZWUgPSBFVC5wYXJzZSh6Lm9wZW4oJ3dvcmQvZG9jdW1lbnQueG1sJykpCiAgICBwcmludCgnJy5qb2luKHQudGV4dCBvciAnJyBmb3IgdCBpbiB0cmVlLml0ZXIoJ3todHRwOi8vc2NoZW1hcy5vcGVueG1sZm9ybWF0cy5vcmcvd29yZHByb2Nlc3NpbmdtbC8yMDA2L21haW59dCcpKSkKIgoKIyAuZG9jIChsZWdhY3ksIHJlcXVpcmVzIGFudGl3b3JkIG9yIGNhdGRvYykKYW50aXdvcmQgL3BhdGgvdG8vZmlsZS5kb2MgMj4vZGV2L251bGwgfHwgY2F0ZG9jIC9wYXRoL3RvL2ZpbGUuZG9jIDI+L2Rldi9udWxs\ncodeblock:bash:IyBWYWxpZGF0ZSBmaXJzdDsgbWFueSBQU1RzIGFyZSBudWxsIGJ5dGVzCnB5dGhvbjMgLWMgIgp3aXRoIG9wZW4oJy9wYXRoL3RvL2ZpbGUucHN0JywgJ3JiJykgYXMgZjoKICAgIHByaW50KCdWYWxpZCBQU1QnIGlmIGYucmVhZCg0KSA9PSBiJyFCRE4nIGVsc2UgJ0NPUlJVUFQvTlVMTCcpCiIKIyBJZiB2YWxpZDoKcmVhZHBzdCAtbyAvdG1wL3BzdC1vdXRwdXQgL3BhdGgvdG8vZmlsZS5wc3Q=\n`skills/voice-note-ingest/SKILL.md` — same exact-phrasing pattern for\naudio capture\n`skills/conventions/quality.md` — citations, back-links, voice"
         )
-        for (__key, __value) in __meridianProseResults_L72 {
+        for (__key, __value) in __meridianProseResults_L198 {
             state.bind(__key, __value)
         }
 

@@ -598,15 +598,437 @@ public struct SetupInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SetupInput", parameters: [:])
 
-        // L21
-        let __meridianProseResults_L21 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
+        if __meridianShouldRun("progress:0.0:L30:C0") {
+            // L30
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("bun add github:garrytan/gbrain"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L30:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L211:C0") {
+            // L211
+            // Verify
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain doctor --json"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L211:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L225:C0") {
+            // L225
+            // Run
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain init --non-interactive --url \"<connection_string>\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L225:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L226:C0") {
+            // L226
+            // Verify
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain doctor --json"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.3:L226:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.4:L254:C0") {
+            // L254
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo \"=== GBrain Environment Discovery ===\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.4:L254:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.5:L254:C0") {
+            // L254
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("for dir in /data/* ~/git/* ~/Documents/* 2>/dev/null; do"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.5:L254:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.6:L254:C0") {
+            // L254
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("if [ -d \"$dir/.git\" ]; then"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.6:L254:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.7:L254:C0") {
+            // L254
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("md_count=$(find \"$dir\" -name \"*.md\" -not -path \"*/node_modules/*\" -not -path \"*/.git/*\" 2>/dev/null | wc -l | tr -d ' ')"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.7:L254:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.8:L254:C0") {
+            // L254
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("if [ \"$md_count\" -gt 10 ]; then"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.8:L254:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.9:L254:C0") {
+            // L254
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("total_size=$(du -sh \"$dir\" 2>/dev/null | cut -f1)"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.9:L254:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.10:L254:C0") {
+            // L254
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo \"  $dir ($total_size, $md_count .md files)\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.10:L254:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.11:L254:C0") {
+            // L254
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("fi"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.11:L254:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.12:L254:C0") {
+            // L254
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("fi"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.12:L254:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.13:L254:C0") {
+            // L254
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("done"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.13:L254:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.14:L254:C0") {
+            // L254
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("echo \"=== Discovery Complete ===\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.14:L254:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.15:L270:C0") {
+            // L270
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("nohup gbrain import <dir> --no-embed --workers 4 > /tmp/gbrain-import.log 2>&1 &"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.15:L270:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.16:L273:C0") {
+            // L273
+            // Then check progress
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("tail -1 /tmp/gbrain-import.log"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.16:L273:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.17:L276:C0") {
+            // L276
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain import <dir> --no-embed"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.17:L276:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.18:L281:C0") {
+            // L281
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain search \"<topic from the imported data>\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.18:L281:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.19:L341:C0") {
+            // L341
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain apply-migrations --yes       # applies any pending migrations; idempotent on healthy installs"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.19:L341:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.20:L341:C0") {
+            // L341
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain autopilot --install          # supervises itself + forks the Minions worker; env-aware"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.20:L341:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.21:L346:C0") {
+            // L346
+            // What  does
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain autopilot --install"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.21:L346:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.22:L348:C0") {
+            // L348
+            // On macOS: writes a launchd plist at
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("~/Library/LaunchAgents/com.gbrain.autopilot.plist"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.22:L348:C0", state: state.snapshot())
+        }
+        // L373
+        let __meridianProseResults_L373 = try await runtime.executeProsePlan(
+            prose: "Decide which case below applies and carry out its action:\n- when Task is Find a person, Before (grep) is `grep -r \"Pedro\" brain/`, `gbrain search \"Pedro\"`\n- when Task is Understand a topic, Before (grep) is `grep -rl \"deal\" brain/ \\, head -5 && cat ...`\n- when Task is Read a known page, Before (grep) is `cat brain/people/pedro.md`, `gbrain get people/pedro`\n- when Task is Find connections, Before (grep) is `grep -rl \"Brex\" brain/ \\, xargs grep \"Pedro\"`",
             snapshot: state.snapshot(),
-            scopedTools: ["health.get", "page.get", "page.search", "publish", "shell.run"],
-            guidance: "Setup completes with a working brain verified by `gbrain doctor --json` (all checks OK)\nThe brain-first lookup protocol is injected into the project's AGENTS.md or equivalent\nLive sync is configured and verified (a test change pushed and found via search)\nSchema state is tracked in `~/.gbrain/update-state.json` so future upgrades know what the user adopted or declined\nNo Supabase anon key is requested; GBrain uses only the database connection string\ncodeblock:bash:YnVuIGFkZCBnaXRodWI6Z2Fycnl0YW4vZ2JyYWlu\nGBrain connects directly to Postgres over the wire protocol. NOT through the\nSupabase REST API. You need the database connection string (a `postgresql://` URI),\nnot the project URL or anon key. The password is embedded in the connection string\nuse judgment to follow the Why Supabase guidance:\nSupabase gives you managed Postgres + pgvector (vector search built in) for $25/mo:\n8GB database + 100GB storage on Pro tier\nNo server to manage, automatic backups, dashboard for debugging\npgvector pre-installed, just works\nAlternative: any Postgres with pgvector extension (self-hosted, Neon, Railway, etc.)\nuse judgment to follow the Prerequisites guidance:\nA Supabase account (Pro tier recommended, $25/mo) OR any Postgres with pgvector\nAn OpenAI API key (for semantic search embeddings, ~$4-5 for 7,500 pages)\nA git-backed markdown knowledge base (or start fresh)\n`gbrain init --supabase` -- interactive wizard (prompts for connection string)\n`gbrain init --url <connection_string>` -- direct, no prompts\n`gbrain init --non-interactive --url <connection_string>` -- for scripts/agents\n`gbrain doctor --json` -- health check after init\nGBrain supports three deployment shapes. Pick the right one before installing,\nbecause picking wrong creates contention or duplicate work that's painful to\nunwind. Read `docs/architecture/topologies.md` for the full picture; the short\nversion:\nAsk the user this BEFORE running `gbrain init`:\nuse judgment to follow the Phase A: Supabase Setup (recommended) guidance:\nGuide the user through creating a Supabase project:\n\"Go to https://supabase.com and sign up or log in.\"\n\"Click 'New Project' in the top left.\"\nName: `gbrain`\nRegion: pick the one closest to you\nDatabase password: generate a strong one and save it\n\"Wait about 2 minutes for the project to initialize.\"\n\"Find the connection string: click **Connect** in the top navigation bar,\nthen **Connection String** > **Transaction pooler**, and copy the string\n(port 6543).\"\n**OpenClaw/Hermes agent instructions:** Store the Supabase access token in your persistent\nenv as `SUPABASE_ACCESS_TOKEN`. gbrain doesn't store it, you need it for future\n`gbrain doctor` runs. Generate at: https://supabase.com/dashboard/account/tokens\nVerify: `gbrain doctor --json`\nuse judgment to follow the Phase B: BYO Postgres (alternative) guidance:\nIf the user already has Postgres with pgvector:\nGet the connection string from the user\nIf the connection fails with ECONNREFUSED and the URL contains `supabase.co`,\nthe user probably pasted the direct connection (IPv6 only). Guide them to the\nTransaction pooler string instead (see Phase A step 4)\nRun: `gbrain init --non-interactive --url \"<connection_string>\"`\nVerify: `gbrain doctor --json`\nuse judgment to follow the Phase C: First Import guidance:\n**Discover markdown repos.** Scan the environment for git repos with markdown content\nThis is the magical moment: the user sees search finding things grep couldn't\n**Start embeddings.** Refresh stale embeddings (runs in background). Keyword\nsearch works NOW, semantic search improves as embeddings complete\n**Backfill the knowledge graph.** Populate typed links and structured timeline\nfrom the imported pages. Auto-link maintains both going forward, but historical\npages need a one-time backfill\nSkip if Phase C imported zero pages (auto-link handles new writes)\n**Offer file migration.** If the repo has binary files (.raw/ directories with\nimages, PDFs, audio):\nIf no markdown repos are found, create a starter brain with a few template pages\n(a person page, a company page, a concept page) from docs/GBRAIN_RECOMMENDED_SCHEMA.md\ncodeblock:bash:ZWNobyAiPT09IEdCcmFpbiBFbnZpcm9ubWVudCBEaXNjb3ZlcnkgPT09Igpmb3IgZGlyIGluIC9kYXRhLyogfi9naXQvKiB+L0RvY3VtZW50cy8qIDI+L2Rldi9udWxsOyBkbwogIGlmIFsgLWQgIiRkaXIvLmdpdCIgXTsgdGhlbgogICAgbWRfY291bnQ9JChmaW5kICIkZGlyIiAtbmFtZSAiKi5tZCIgLW5vdCAtcGF0aCAiKi9ub2RlX21vZHVsZXMvKiIgLW5vdCAtcGF0aCAiKi8uZ2l0LyoiIDI+L2Rldi9udWxsIHwgd2MgLWwgfCB0ciAtZCAnICcpCiAgICBpZiBbICIkbWRfY291bnQiIC1ndCAxMCBdOyB0aGVuCiAgICAgIHRvdGFsX3NpemU9JChkdSAtc2ggIiRkaXIiIDI+L2Rldi9udWxsIHwgY3V0IC1mMSkKICAgICAgZWNobyAiICAkZGlyICgkdG90YWxfc2l6ZSwgJG1kX2NvdW50IC5tZCBmaWxlcykiCiAgICBmaQogIGZpCmRvbmUKZWNobyAiPT09IERpc2NvdmVyeSBDb21wbGV0ZSA9PT0i\ncodeblock:bash:bm9odXAgZ2JyYWluIGltcG9ydCA8ZGlyPiAtLW5vLWVtYmVkIC0td29ya2VycyA0ID4gL3RtcC9nYnJhaW4taW1wb3J0LmxvZyAyPiYxICY=\nThen check progress: `tail -1 /tmp/gbrain-import.log`\ncodeblock:bash:Z2JyYWluIGltcG9ydCA8ZGlyPiAtLW5vLWVtYmVk\ncodeblock:bash:Z2JyYWluIHNlYXJjaCAiPHRvcGljIGZyb20gdGhlIGltcG9ydGVkIGRhdGE+Ig==\nuse judgment to follow the Phase C.5: One-step autopilot + Minions install (v0.11.1+) guidance:\nOn **Linux with systemd**: writes `~/.config/systemd/user/gbrain-autopilot.service`\nwith `Restart=on-failure`\nAuto-injects into OpenClaw's `hooks/bootstrap/ensure-services.sh` if\ndetected (use `--no-inject` to opt out)\nOn **Linux without systemd**: installs a crontab entry (every 5 min)\nOn PGLite, autopilot runs inline (PGLite's exclusive file lock blocks a\nseparate worker process). Everything else still works\nIf `apply-migrations` prints \"N host-specific items need your agent's\nattention,\" read `~/.gbrain/migrations/pending-host-work.jsonl` + walk\n`skills/migrations/v0.11.0.md` + `docs/guides/plugin-handlers.md` to\nregister host-specific handlers. Re-run `apply-migrations` after each\nbatch\ncodeblock:bash:Z2JyYWluIGFwcGx5LW1pZ3JhdGlvbnMgLS15ZXMgICAgICAgIyBhcHBsaWVzIGFueSBwZW5kaW5nIG1pZ3JhdGlvbnM7IGlkZW1wb3RlbnQgb24gaGVhbHRoeSBpbnN0YWxscwpnYnJhaW4gYXV0b3BpbG90IC0taW5zdGFsbCAgICAgICAgICAjIHN1cGVydmlzZXMgaXRzZWxmICsgZm9ya3MgdGhlIE1pbmlvbnMgd29ya2VyOyBlbnYtYXdhcmU=\nWhat `gbrain autopilot --install` does:\nOn macOS: writes a launchd plist at `~/Library/LaunchAgents/com.gbrain.autopilot.plist`\nOn ephemeral containers (Render / Railway / Fly / Docker): writes\n`~/.gbrain/start-autopilot.sh` and prints the one-line your agent's\nbootstrap should source to launch autopilot on every container start\nAutopilot then supervises the Minions worker as a child process. Users get\nsync + extract + embed + backlinks + durable Postgres-backed job processing\nfrom ONE install step. No separate `gbrain jobs work` daemon to manage\nuse judgment to follow the Phase D: Brain-First Lookup Protocol guidance:\nInject the brain-first lookup protocol into the project's AGENTS.md (or equivalent)\nThis replaces grep-based knowledge lookups with structured gbrain queries\nuse judgment to follow the Sync-after-write rule guidance:\nThis indexes new/changed files without pulling from git or regenerating embeddings\ncodeblock:bash:Z2JyYWluIHN5bmMgLS1uby1wdWxsIC0tbm8tZW1iZWQ=\nEmbeddings can be refreshed later in batch (`gbrain embed --stale`)\nuse judgment to follow the Self-upgrade marker protocol (inject into AGENTS.md) guidance:\ngbrain keeps itself current by riding invocation frequency: any `gbrain` command\nmay print `UPGRADE_AVAILABLE <old> <new>` (or a one-time ``JUST_UPGRADED <old>\n<new>``) on **stderr**. That marker does nothing unless the agent is told to act\non it — interactive agents (Claude Code, Codex) don't run a gbrain preamble, so\nthis instruction is what turns the nudge into an action. Inject this block into\nthe project's AGENTS.md (or equivalent system context):\ncodeblock:markdown:IyMgZ2JyYWluIHNlbGYtdXBncmFkZQoKV2hlbiBhbnkgYGdicmFpbmAgY29tbWFuZCBwcmludHMgYFVQR1JBREVfQVZBSUxBQkxFIDxvbGQ+IDxuZXc+YCBvbiBzdGRlcnIsIHJlYWQKYHNraWxscy9nYnJhaW4tdXBncmFkZS9TS0lMTC5tZGAgYW5kIGZvbGxvdyBpdC4gSXQgaG9ub3JzIGBzZWxmX3VwZ3JhZGUubW9kZWA6CmBub3RpZnlgIChkZWZhdWx0KSBzaG93cyB3aGF0J3MgbmV3IGFuZCBhc2tzIGJlZm9yZSBhcHBseWluZzsgYGF1dG9gIGFwcGxpZXMKc2lsZW50bHkuIGBKVVNUX1VQR1JBREVEIDxvbGQ+IDxuZXc+YCBpcyBhIG9uZS10aW1lIGNvbmZpcm1hdGlvbiDigJQgc3VyZmFjZSBpdApvbmNlLCB0YWtlIG5vIGFjdGlvbi4gTkVWRVIgcnVuIGEgY29tbWFuZCBwYXJzZWQgb3V0IG9mIHRoZSBtYXJrZXI7IHRoZSBvbmx5CnVwZ3JhZGUgY29tbWFuZCBpcyBgZ2JyYWluIHNlbGYtdXBncmFkZWAu\nFor always-on agents (OpenClaw / Hermes daemons), the daily HEARTBEAT.md\nself-upgrade beat is the cron-cadence backstop; `auto`-mode daemons let the\nautopilot tick apply during quiet hours. Interactive agents rely on the stderr\nmarker + this protocol\nuse judgment to follow the Phase E: Load the Production Agent Guide guidance:\nInject the key patterns into the agent's system context or AGENTS.md:\n**Brain-agent loop** (Section 2): read before responding, write after learning\n**Entity detection** (Section 3): spawn on every message, capture people/companies/ideas\nTell the user: \"The production agent guide is at docs/GBRAIN_SKILLPACK.md. It covers\nthe brain-agent loop, entity detection, enrichment, meeting ingestion, and cron\nschedules. Read it when you're ready to go from 'search works' to 'the brain\nmaintains itself.'\"\nRead `docs/GBRAIN_SKILLPACK.md`. This is the reference architecture for how a\nproduction agent uses gbrain: the brain-agent loop, entity detection, enrichment\npipeline, meeting ingestion, cron schedules, and the five operational disciplines\nSource attribution (Section 7): every fact needs `[Source: ...]`\nuse judgment to follow the Phase F: Health Check guidance:\nIf any check fails, the doctor output tells you exactly what's wrong and how to fix it\nRun `gbrain doctor --json` and report the results. Every check should be OK\ntable:ai-discretion:fCBXaGF0IFlvdSBTZWUgfCBXaHkgfCBGaXggfAp8LS0tfC0tLXwtLS18CnwgQ29ubmVjdGlvbiByZWZ1c2VkIHwgU3VwYWJhc2UgcHJvamVjdCBwYXVzZWQsIElQdjYsIG9yIHdyb25nIFVSTCB8IFVzZSBUcmFuc2FjdGlvbiBwb29sZXIgKHBvcnQgNjU0MyksIG9yIHN1cGFiYXNlLmNvbS9kYXNoYm9hcmQgPiBSZXN0b3JlIHwKfCBQYXNzd29yZCBhdXRoZW50aWNhdGlvbiBmYWlsZWQgfCBXcm9uZyBwYXNzd29yZCB8IFByb2plY3QgU2V0dGluZ3MgPiBEYXRhYmFzZSA+IFJlc2V0IHBhc3N3b3JkIHwKfCBwZ3ZlY3RvciBub3QgYXZhaWxhYmxlIHwgRXh0ZW5zaW9uIG5vdCBlbmFibGVkIHwgUnVuIGBDUkVBVEUgRVhURU5TSU9OIHZlY3RvcjtgIGluIFNRTCBFZGl0b3IgfAp8IE9wZW5BSSBrZXkgaW52YWxpZCB8IEV4cGlyZWQgb3Igd3Jvbmcga2V5IHwgcGxhdGZvcm0ub3BlbmFpLmNvbS9hcGkta2V5cyA+IENyZWF0ZSBuZXcgfAp8IE5vIHBhZ2VzIGZvdW5kIHwgUXVlcnkgYmVmb3JlIGltcG9ydCB8IEltcG9ydCBmaWxlcyBpbnRvIGdicmFpbiBmaXJzdCB8CnwgUkxTIG5vdCBlbmFibGVkIHwgU2VjdXJpdHkgZ2FwIHwgUnVuIGBnYnJhaW4gaW5pdGAgYWdhaW4gKGF1dG8tZW5hYmxlcyBSTFMpIHw=\nuse judgment to follow the Phase G: Auto-Update Check (if not already configured) guidance:\nIf the user's install did NOT include setting up auto-update checks (e.g., they\nused the manual install path or an older version of the OpenClaw/Hermes paste), offer it:\nRegister daily cron (see GBRAIN_SKILLPACK.md Section 17)\nIf already configured or user declines, skip\nTest: `gbrain check-update --json`\nuse judgment to follow the Phase H: Live Sync Setup (MUST ADD) guidance:\nThe brain repo is the source of truth. If sync doesn't run automatically, the\nvector DB falls behind and gbrain returns stale answers. This phase is not optional\n**Check the connection first.** GBrain is tuned for the Supabase **Transaction\npooler** (port 6543): it auto-disables prepared statements there and routes\nmigrations, DDL, and sync transactions to a separate direct connection. That\nderived direct connection (`db.<ref>.supabase.co:5432`) is IPv6-only, so on an\nIPv4-only host, reads work but sync silently skips pages. Fix by making the\ndirect connection reachable: set `GBRAIN_DIRECT_DATABASE_URL` to the **Session\npooler** string (port 5432 on the `pooler.supabase.com` host, IPv4), or enable\nSupabase's IPv4 add-on\n**Set up automatic sync.** Choose the approach that fits your environment:\n**Webhook or git hook**: if available in your environment\nIf page count is way too low, the direct connection is unreachable on IPv4 and\nsync is silently skipping pages (see point 1)\nPush a test change and confirm it appears in `gbrain search`\n**Chain sync + embed.** Always run both: ``gbrain sync --repo <path> && gbrain\nembed --stale`. For small syncs, embeddings are generated inline. The `embed\n--stale`` is a safety net for any stale chunks\nTell the user: \"Live sync is configured. The brain will stay current automatically.\nI'll verify it's working in the next phase.\"\nRead `docs/GBRAIN_SKILLPACK.md` Section 18 for the full reference. Key points:\nuse judgment to follow the Phase I: Full Verification guidance:\nRun the full verification runbook to confirm the entire installation is working\nRead `docs/GBRAIN_VERIFY.md`\nExecute each check in order\nReport results to the user\nFix any failures before declaring setup complete\nEvery check in the runbook should pass. The most important one is check 4 (live\nsync actually works): push a change, wait for sync, search for the corrected text\n\"Sync ran\" is not the same as \"sync worked.\"\nTell the user: \"I've verified the full GBrain installation. Here's the status of\neach check: [list results]. Everything is working / [specific item] needs attention.\"\nIf already configured or user declines, skip\nuse judgment to follow the Phase J: Cold Start — Populate Your Brain (AUTOMATIC) guidance:\nSetup is done. The brain works. But it's empty. **This is the most important\nmoment** — an empty brain is useless. Transition directly to the cold-start\nskill to fill it with the user's actual data\n**Do not end setup without offering cold-start.** The user just invested 15+\nminutes in setup. The payoff is seeing their brain come alive with their own\ndata. Stopping here is like installing a phone and never adding contacts\nPresent this immediately after verification passes:\ncodeblock:json:eyJkZWZlcnJlZCI6IHRydWUsICJkZWZlcnJlZF9hdCI6ICJJU08tdGltZXN0YW1wIiwgInBoYXNlc19jb21wbGV0ZWQiOiBbXX0=\n→ Tell them: \"You can run cold-start anytime by asking me to 'fill my brain'\nor 'cold start'.\"\n→ Load and execute `skills/cold-start/SKILL.md` immediately. Do not\njust print a reference — actually run the cold-start skill\n→ Record in `~/.gbrain/cold-start-state.json`:\nAfter presenting the recommended directories (Phase C/E) and the user selects which\nones to create, write `~/.gbrain/update-state.json` recording:\n`schema_choices.adopted`: directories the user created\n`schema_choices.declined`: directories the user explicitly skipped\n`schema_choices.custom`: directories the user added that aren't in the recommended schema\nuse judgment to follow the Anti-Patterns guidance:\n**Ending setup without offering cold-start.** An empty brain is useless. Phase J (cold-start) is where setup pays off. Always present the \"Ready to populate?\" prompt after verification. Skipping this is like installing an app and never logging in\n**Asking for the Supabase anon key.** GBrain connects directly to Postgres over the wire protocol, not through the REST API. Only the database connection string is needed\n**Skipping live sync setup.** If sync doesn't run automatically, the vector DB falls behind and search returns stale answers. Phase H is not optional\n**Declaring setup complete without verification.** \"The command ran\" is not the same as \"it worked.\" Push a test change, wait for sync, search for the corrected text\n**Leaving the direct connection unreachable on IPv4.** GBrain uses the Transaction pooler (port 6543) for reads and a derived direct connection (`db.<ref>.supabase.co:5432`, IPv6-only) for migrations, DDL, and sync transactions. On an IPv4-only host, reads work but sync silently skips pages. Set `GBRAIN_DIRECT_DATABASE_URL` to the Session pooler string (port 5432, IPv4), or enable the IPv4 add-on\n**Importing without proving search.** The magical moment is the user seeing search find things grep couldn't. Don't skip it"
+            scopedTools: ["health.get", "page.get", "page.search", "publish", "shell.run"]
         )
-        for (__key, __value) in __meridianProseResults_L21 {
+        for (__key, __value) in __meridianProseResults_L373 {
             state.bind(__key, __value)
+        }
+        if __meridianShouldRun("progress:0.24:L389:C0") {
+            // L389
+            // keyword match, fast, works without embeddings
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain search \"name\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.24:L389:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.25:L390:C0") {
+            // L390
+            // hybrid search, needs embeddings
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain query \"what do we know about name\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.25:L390:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.26:L391:C0") {
+            // L391
+            // direct page read when you know the slug from steps 1-2
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain get <slug>"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.26:L391:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.27:L401:C0") {
+            // L401
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain sync --no-pull --no-embed"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.27:L401:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.28:L408:C0") {
+            // L408
+            // Embeddings can be refreshed later in batch ()
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain embed --stale"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.28:L408:C0", state: state.snapshot())
+        }
+        // L419
+        let __meridianProseResults_L419 = try await runtime.executeProsePlan(
+            prose: "Decide which case below applies and carry out its action:\n- when Layer is gbrain, What it stores is World knowledge: people, companies, deals, meetings, concepts, media, \"Who is Pedro?\", \"What happened at the board meeting?\"\n- when Layer is memory_search, What it stores is Agent operational state: preferences, decisions, session context, \"How does the user like formatting?\", \"What did we decide about X?\"",
+            snapshot: state.snapshot(),
+            scopedTools: ["health.get", "page.get", "page.search", "publish", "shell.run"]
+        )
+        for (__key, __value) in __meridianProseResults_L419 {
+            state.bind(__key, __value)
+        }
+        if __meridianShouldRun("progress:0.30:L473:C0") {
+            // L473
+            // Source attribution (Section 7): every fact needs
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("[Source: ...]"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.30:L473:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.31:L483:C0") {
+            // L483
+            // Run  and report the results. Every check should be OK
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain doctor --json"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.31:L483:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.32:L518:C0") {
+            // L518
+            // Test
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain check-update --json"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.32:L518:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.33:L546:C0") {
+            // L546
+            // Read  Section 18 for the full reference. Key points
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("docs/GBRAIN_SKILLPACK.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.33:L546:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.34:L588:C0") {
+            // L588
+            // Read
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("docs/GBRAIN_VERIFY.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.34:L588:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.35:L642:C0") {
+            // L642
+            // : directories the user created
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("schema_choices.adopted"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.35:L642:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.36:L643:C0") {
+            // L643
+            // : directories the user explicitly skipped
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("schema_choices.declined"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.36:L643:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.37:L644:C0") {
+            // L644
+            // : directories the user added that aren't in the recommended schema
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("schema_choices.custom"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.37:L644:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

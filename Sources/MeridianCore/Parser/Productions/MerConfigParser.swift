@@ -53,17 +53,37 @@ public struct MerConfigParser {
             sectionRanges.append((name, currentLines))
         }
 
+        // Pre-parse `=== tools ===` regardless of its position in the file:
+        // a `To …:` phrase body in `=== vocabulary ===` lowers its `invoke
+        // <tool display words>` calls to a tool-name resolution *at parse
+        // time* (`parseVocabularyLines` → `StatementParser.buildInvokeExpr`),
+        // so if tools were only known after vocabulary was parsed (the file's
+        // natural top-to-bottom order — vocabulary conventionally precedes
+        // tools), every such phrase would silently fall back to methodizing
+        // the raw invocation words (`"get health"` → `getHealth`) instead of
+        // matching the declared `health.get` tool, baking a wrong tool ID
+        // into the AST that no later pass re-resolves. Building tools first
+        // and handing a tools-only bootstrap SymbolTable into vocabulary
+        // parsing fixes resolution without perturbing file order or any
+        // other symbol category (kinds/relations/etc. are irrelevant to
+        // `invoke` resolution and stay absent from this bootstrap table).
+        for toolsRange in sectionRanges where toolsRange.name == "tools" {
+            tools += try parseToolsSection(toolsRange.lines, file: file)
+        }
+        let toolsBootstrap = SymbolTable.build(
+            from: MerConfigFile(tools: tools), sourceFile: file, trace: trace, lexicon: lexicon)
+
         for (section, body) in sectionRanges {
             trace.log(.merconfig, "section === \(section) === (\(body.filter(\.isContent).count) lines)")
             switch section {
             case "vocabulary":
-                vocabulary += try parseVocabularyLines(body, file: file)
+                vocabulary += try parseVocabularyLines(body, file: file, toolsBootstrap: toolsBootstrap)
             case "constants":
                 constants += parseConstantsSection(body)
             case "instances":
                 instances += parseInstancesSection(body)
             case "tools":
-                tools += try parseToolsSection(body, file: file)
+                break  // pre-parsed above (`toolsBootstrap`), before vocabulary
             case "language":
                 languageSynonyms = parseLanguageSection(body)
             default:
@@ -109,7 +129,8 @@ public struct MerConfigParser {
 
     // MARK: - Vocabulary section
 
-    func parseVocabularyLines(_ lines: [SourceLine], file: String) throws -> [VocabularyStatement] {
+    func parseVocabularyLines(_ lines: [SourceLine], file: String,
+                              toolsBootstrap: SymbolTable? = nil) throws -> [VocabularyStatement] {
         var results: [VocabularyStatement] = []
         var i = 0
         let content = lines.filter(\.isContent)
@@ -142,7 +163,7 @@ public struct MerConfigParser {
                         if l.indent > headerIndent { bodyLines.append(l); k += 1 }
                         else { break }
                     }
-                    let body = try StatementParser(symbols: nil, trace: trace, lexicon: lexicon).parseBlock(bodyLines, file: file)
+                    let body = try StatementParser(symbols: toolsBootstrap, trace: trace, lexicon: lexicon).parseBlock(bodyLines, file: file)
                     results.append(.phrase(PhraseDefinition(
                         pattern: pattern, body: body,
                         sourceLine: line.number, sourceFile: file
@@ -344,7 +365,13 @@ public struct MerConfigParser {
         let merconfig = lexicon.grammar.merconfig
         if lower.hasPrefix(merconfig.kindPrefix),
            let range = t.range(of: merconfig.isMarker, options: [.caseInsensitive]) {
-            let rawName = String(t[t.index(t.startIndex, offsetBy: merconfig.kindPrefix.count)..<range.lowerBound])
+            let prefixEnd = t.index(t.startIndex, offsetBy: merconfig.kindPrefix.count)
+            // The `isMarker`'s own leading space can overlap the prefix's
+            // trailing space on a degenerate name (`"kind is a widget"`),
+            // putting `prefixEnd` past `range.lowerBound`. Treat that as "no
+            // name" rather than slicing an inverted range.
+            guard prefixEnd <= range.lowerBound else { return nil }
+            let rawName = String(t[prefixEnd..<range.lowerBound])
                 .trimmingCharacters(in: .whitespaces)
             let rawParent = String(t[range.upperBound...]).trimmingCharacters(in: .whitespaces)
             let parent = lexicon.stripLeadingArticle(rawParent)
@@ -882,6 +909,9 @@ public struct MerConfigParser {
         var comparisonSynonyms: [(String, ComparisonOpAST)] = []
         var durationSynonyms: [String: TimeUnitAST] = [:]
         var assertionSynonyms: [String] = []
+        var normativeCueSynonyms: [String] = []
+        var inferenceCueSynonyms: [String] = []
+        var referenceHeadingSynonyms: [String] = []
         var timestampProperty: String? = nil
         var emptySynonyms: [String] = []
         var filledSynonyms: [String] = []
@@ -903,6 +933,7 @@ public struct MerConfigParser {
 
         enum Mode {
             case none, comparison, duration, assertion
+            case normativeCue, inferenceCue, referenceHeading
             case empty, filled, pastWindow, futureWindow, timestampAlias
             case aggregate, superlative, sortBy, ascending, descending
             case possessive, anaphora
@@ -916,6 +947,12 @@ public struct MerConfigParser {
             ("comparison synonym", .comparison),
             ("duration synonym", .duration),
             ("assertion synonym", .assertion),
+            ("normative-cue synonym", .normativeCue),
+            ("normative cue synonym", .normativeCue),
+            ("inference-cue synonym", .inferenceCue),
+            ("inference cue synonym", .inferenceCue),
+            ("reference-heading synonym", .referenceHeading),
+            ("reference heading synonym", .referenceHeading),
             ("empty synonym", .empty),
             ("filled synonym", .filled),
             ("past-window synonym", .pastWindow),
@@ -962,6 +999,9 @@ public struct MerConfigParser {
             let marker = lower
             switch mode {
             case .assertion:     if !marker.isEmpty { assertionSynonyms.append(marker) };     continue
+            case .normativeCue:  if !marker.isEmpty { normativeCueSynonyms.append(marker) };  continue
+            case .inferenceCue:  if !marker.isEmpty { inferenceCueSynonyms.append(marker) };  continue
+            case .referenceHeading: if !marker.isEmpty { referenceHeadingSynonyms.append(marker) }; continue
             case .empty:         if !marker.isEmpty { emptySynonyms.append(marker) };         continue
             case .filled:        if !marker.isEmpty { filledSynonyms.append(marker) };        continue
             case .pastWindow:    if !marker.isEmpty { pastWindowSynonyms.append(marker) };    continue
@@ -1018,6 +1058,9 @@ public struct MerConfigParser {
         return LanguageSynonyms(comparisonSynonyms: comparisonSynonyms,
                                 durationSynonyms: durationSynonyms,
                                 assertionSynonyms: assertionSynonyms,
+                                normativeCueSynonyms: normativeCueSynonyms,
+                                inferenceCueSynonyms: inferenceCueSynonyms,
+                                referenceHeadingSynonyms: referenceHeadingSynonyms,
                                 timestampProperty: timestampProperty,
                                 emptySynonyms: emptySynonyms,
                                 filledSynonyms: filledSynonyms,

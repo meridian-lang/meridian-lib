@@ -3,8 +3,8 @@
 - Original: `book-mirror/SKILL.md`
 - Ported: `book_mirror.meri`
 - Tier: 2 (light edits)
-- Similarity: 75%
-- Lines: 351 -> 410 (+125 / -66)
+- Similarity: 73%
+- Lines: 351 -> 419 (+137 / -69)
 
 ## Frontmatter
 - Added: (none)
@@ -12,51 +12,56 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L54 `The pipeline`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L166 `3. Context gathering`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L267 `Model: Opus by default`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L315 `Quality bar (the bar)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L387 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L53 `The pipeline`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L165 `3. Context gathering`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L320 `Quality bar (the bar)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L386 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L397 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L401 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
-- Sections inert total: 14/21 (67% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 17/19 (89% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: reference-documentation=13, template=1
-- Judgment: 5 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=16, template=1
+- Judgment: 2 blocks, 0 lines
 
 ### Inert section details
-- L30 `Trust contract (read this before running)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L54 `The pipeline`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L66 `1. Acquiring the book`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L96 `EPUB`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L135 `PDF`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L149 `Quality check`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L166 `3. Context gathering`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L171 `What to pull`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L195 `Assemble a context pack`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L229 `4. Analysis: invoke `gbrain book-mirror``: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L267 `Model: Opus by default`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L291 `6. Fact-check and cross-link`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L315 `Quality bar (the bar)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L387 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L14 `What this does`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L29 `Trust contract (read this before running)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L53 `The pipeline`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L65 `1. Acquiring the book`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L95 `EPUB`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L134 `PDF`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L148 `Quality check`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L165 `3. Context gathering`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L170 `What to pull`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L194 `Assemble a context pack`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L228 `4. Analysis: invoke `gbrain book-mirror``: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L296 `6. Fact-check and cross-link`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L320 `Quality bar (the bar)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L341 `Anti-patterns (do not do these)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L386 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L397 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L401 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/book-mirror/SKILL.md
 +++ skills/book_mirror.meri
-@@ -27,36 +27,46 @@
+@@ -26,37 +26,46 @@
+ > for the lookup chain (brain → search → external) the context-gathering
  > phase follows.
  
- ## What this does
-+use judgment to follow the What this does guidance:
+-## What this does
++## What this does (( role: reference ))
 +
 +This is NOT a generic book summary. The right column is the value: it makes
 +the book read like a therapist who knows the reader is leaving notes in the
@@ -64,7 +69,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 +skill.
 +
 +
-+### What this does — steps
++### What this does — steps (( role: reference ))
  
  Given a book (EPUB or PDF), produce a brain page where every chapter is
  summarized in detail on the left and mirrored back to the reader's actual life
@@ -77,7 +82,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 -skill.
 -
 -## Trust contract (read this before running)
-+## Trust contract (read this before running) (( inert ))
++## Trust contract (read this before running) (( role: reference ))
  
  book-mirror runs as a CLI command (`gbrain book-mirror`), NOT as a pure
  markdown skill that the agent dispatches via tools. The CLI is the trusted
@@ -87,7 +92,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 +- The CLI reads each child's `job.result`, assembles the final
 +  two-column page, and writes it via a single operator-trust `put_page`.
 +
-+### Trust contract (read this before running) — steps
++### Trust contract (read this before running) — steps (( role: reference ))
 +
 +> What this means for the agent:
  
@@ -98,18 +103,18 @@ These sections were made non-executable in the port and should be reviewed as mi
 -- The CLI reads each child's `job.result`, assembles the final
 -  two-column page, and writes it via a single operator-trust `put_page`.
 +
-+### Trust contract (read this before running) — steps 2
++### Trust contract (read this before running) — steps 2 (( role: reference ))
 +
  - This means untrusted EPUB/PDF content cannot prompt-inject any
    `people/*` page. The trust narrowing happens at the tool allowlist,
    not at the slug-prefix layer.
  
 -## The pipeline
-+## The pipeline (( inert ))
++## The pipeline (( role: reference ))
  
  ```
  1. ACQUIRE   → User has the EPUB/PDF locally (manual; book-acquisition is
-@@ -68,11 +78,17 @@
+@@ -68,11 +77,17 @@
  6. PDF       → Optional: render via skills/brain-pdf for delivery.
  ```
  
@@ -118,7 +123,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 -book-acquisition (legal-grey-area downloader) was deliberately not shipped
 -in this skill wave. The user drops the EPUB/PDF manually. Common paths the
 -user might use:
-+## 1. Acquiring the book (( inert ))
++## 1. Acquiring the book (( role: reference ))
 +
 +Resolve `$BRAIN_DIR` from the gbrain config (`gbrain config get sync.repo_path`)
 +or accept it from the user.
@@ -132,40 +137,39 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```bash
  # User-supplied path
-@@ -83,16 +99,21 @@
+@@ -83,16 +98,21 @@
  ls $BRAIN_DIR/media/books/
  ```
  
 -Resolve `$BRAIN_DIR` from the gbrain config (`gbrain config get sync.repo_path`)
 -or accept it from the user.
 -
--## 2. Text extraction
-+## 2. Text extraction (( inert ))
+ ## 2. Text extraction
 +
 +
-+### 2. Text extraction — steps
++### 2. Text extraction — steps (( role: reference ))
  
  Goal: one `.txt` file per chapter under a temp directory. The agent has
  shell + python access; the CLI is downstream of this and takes the
  extracted directory as input.
  
 -### EPUB
-+### EPUB (( inert ))
++### EPUB (( role: reference ))
 +
 +If `bs4` is missing: `pip3 install beautifulsoup4 lxml`.
 +
 +
-+#### EPUB — steps
++### EPUB — steps (( role: reference ))
  
  ```bash
  SLUG="this-book"                                # kebab-case
-@@ -118,61 +139,82 @@
+@@ -118,61 +138,82 @@
  PY
  ```
  
 -If `bs4` is missing: `pip3 install beautifulsoup4 lxml`.
 +
-+#### EPUB — steps 2
++### EPUB — steps 2 (( role: reference ))
  
  Inspect the chapter files to identify which are real chapters vs front
  matter (TOC, copyright, acknowledgments). Often the EPUB ships one file
@@ -177,7 +181,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 -```bash
 -pdftotext -layout path/to/book.pdf "$WORK/full.txt"
 -```
-+### PDF (( inert ))
++### PDF (( role: reference ))
  
  Then split by chapter heading (look for "Chapter N", "CHAPTER N", or
  all-caps title lines) using `awk` or `python`. If the PDF is a scan with
@@ -188,37 +192,37 @@ These sections were made non-executable in the port and should be reviewed as mi
 -
 -For each chapter file:
 +
-+#### PDF — steps
++### PDF — steps
 +
 +```bash
 +pdftotext -layout path/to/book.pdf "$WORK/full.txt"
 +```
 +
-+### Quality check (( inert ))
++### Quality check (( role: reference ))
  
  - Word count > 1500 (typical chapter range 2k–8k words).
  - No HTML tags.
  - Paragraphs preserved with `\n\n`.
  
 +
-+#### Quality check — steps
++### Quality check — steps
 +
 +For each chapter file:
 +
 +
-+#### Quality check — steps 2
++### Quality check — steps 2 (( role: reference ))
 +
  Save a `chapters/INDEX.md` mapping chapter number → title → file → word
  count for reference.
  
 -## 3. Context gathering
-+## 3. Context gathering (( inert ))
++## 3. Context gathering (( role: reference ))
  
  This is the most critical step. The right column is only as good as the
  context fed to each chapter subagent.
  
 -### What to pull
-+### What to pull (( inert ))
++### What to pull (( role: reference ))
  
  1. **Templates: USER.md and SOUL.md** if the user maintains them
     (gbrain ships templates at `templates/USER.md` and `templates/SOUL.md`;
@@ -240,34 +244,34 @@ These sections were made non-executable in the port and should be reviewed as mi
 -
 -Write everything to a single file the CLI can read:
 +
-+#### What to pull — steps
++### What to pull — steps (( role: reference ))
 +
 +2. Recent daily memory — last 14 days of brain pages under
 +   `wiki/personal/reflections/` or wherever the user files daily notes.
 +
-+#### What to pull — steps 2
++### What to pull — steps 2 (( role: reference ))
 +
 +4. Brain pages for relevant entities — `gbrain query "<name>"` for
 +   people who will likely come up.
-+### Assemble a context pack (( inert ))
++### Assemble a context pack (( role: reference ))
 +
 +Make this dense. It's read by every chapter subagent.
 +
 +
-+#### Assemble a context pack — steps
++### Assemble a context pack — steps
 +
 +> Write everything to a single file the CLI can read:
  
  ```bash
  CONTEXT="$WORK/context.md"
-@@ -199,9 +241,23 @@
+@@ -199,9 +240,23 @@
  } > "$CONTEXT"
  ```
  
 -Make this dense. It's read by every chapter subagent.
 -
 -## 4. Analysis: invoke `gbrain book-mirror`
-+## 4. Analysis: invoke `gbrain book-mirror` (( inert ))
++## 4. Analysis: invoke `gbrain book-mirror` (( role: reference ))
 +
 +The CLI:
 +
@@ -287,7 +291,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```bash
  gbrain book-mirror \
-@@ -213,31 +269,25 @@
+@@ -213,31 +268,31 @@
    --model claude-opus-4-7
  ```
  
@@ -315,32 +319,36 @@ These sections were made non-executable in the port and should be reviewed as mi
 -keys (`book-mirror:<slug>:ch-<N>`) deduplicate completed chapters at the
 -queue level, so retry is cheap.
 -
--### Model: Opus by default
--
+ ### Model: Opus by default
+ 
 -The default model is `claude-opus-4-7`. Sonnet works (use `--model
 -claude-sonnet-4-6`) but the right-column quality drops noticeably — the
-+### Model: Opus by default (( inert ))
 +
++### Model: Opus by default — steps
++
++use judgment to follow the Model: Opus by default — steps guidance:
 +The default model is `claude-opus-4-7`. Sonnet works (use ``--model
 +claude-sonnet-4-6``) but the right-column quality drops noticeably — the
  texture that makes the analysis read like a therapist who knows the user
  needs Opus-grade reasoning.
  
  ### Cost gate
-+use judgment to follow the Cost gate guidance:
++
++
++### Cost gate — steps
  
  The CLI refuses to spend in a non-TTY context without `--yes`. CI / scripted
  invocations must pass `--yes` explicitly. TTY users get a `[y/N]` prompt
-@@ -253,7 +303,7 @@
+@@ -253,7 +308,7 @@
  # (see skills/brain-pdf/SKILL.md for the make-pdf invocation)
  ```
  
 -## 6. Fact-check and cross-link
-+## 6. Fact-check and cross-link (( inert ))
++## 6. Fact-check and cross-link (( role: reference ))
  
  After the page lands, run a fact-check pass on factual claims about the
  reader (parents, siblings, marriage history, jobs, heritage). Common error
-@@ -268,13 +318,16 @@
+@@ -268,13 +323,16 @@
  If you can't verify a claim, remove it. Better to lose texture than to
  introduce a falsehood.
  
@@ -355,52 +363,75 @@ These sections were made non-executable in the port and should be reviewed as mi
    page (per `conventions/quality.md` Iron Law).
  
 -## Quality bar (the bar)
-+## Quality bar (the bar) (( inert ))
++## Quality bar (the bar) (( role: reference ))
  
  The **left column** should:
  
-@@ -296,6 +349,7 @@
+@@ -295,21 +353,28 @@
+ the reader's actual life rather than a generic profile, and honest about
  where the book's framing breaks down for this specific reader.
  
- ## Anti-patterns (do not do these)
-+use judgment to follow the Anti-patterns (do not do these) guidance:
+-## Anti-patterns (do not do these)
++## Anti-patterns (do not do these) (( role: reference ))
  
  - ❌ **Skimming chapters.** Standing instruction: preserve detail.
  - ❌ **Generic right column.** "This might apply if you've ever felt…" →
-@@ -321,7 +375,10 @@
- - [ ] Cross-links added from referenced people/companies.
- - [ ] Optional: PDF rendered via brain-pdf and delivered.
- 
--## Related skills
-+## Related skills (( inert, role: procedure ))
+   kill on sight.
+-- ❌ **Factual errors about the reader's life.** Always fact-check after
+-  assembly.
+ - ❌ **Giving the subagent put_page access.** Trust contract is read-only;
+   the CLI does the writing.
+ - ❌ **Forcing connections.** If a chapter doesn't apply, say so plainly.
++- ❌ **Truncating the LEFT column.** The book's actual content needs to
++  survive.
 +
++
++### Anti-patterns (do not do these) — steps
++
++- ❌ Factual errors about the reader's life. Always fact-check after
++  assembly.
++
++### Anti-patterns (do not do these) — steps 2
++
++use judgment to follow the Anti-patterns (do not do these) — steps 2 guidance:
+ - ❌ **Sycophancy or moralizing in the right column.** No "you should…",
+   no "consider…", no "perhaps it's time to…".
+-- ❌ **Truncating the LEFT column.** The book's actual content needs to
+-  survive.
+-
+ ## Output checklist
+ 
+ - [ ] Book file exists locally (path known).
+@@ -323,6 +388,9 @@
+ 
+ ## Related skills
+ 
 +
 +### Related skills — steps
- 
++
  - `skills/brain-pdf/SKILL.md` — render the personalized page to PDF.
  - `skills/strategic-reading/SKILL.md` — read a book through a specific
-@@ -330,7 +387,8 @@
+   problem-lens instead of personalizing to the whole reader.
+@@ -330,7 +398,7 @@
    rather than books.
  
  
 -## Contract
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
  This skill guarantees:
  
-@@ -341,11 +399,12 @@
+@@ -341,11 +409,11 @@
  
  The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  
 -## Output Format
-+## Output Format (( inert, role: template ))
++## Output Format (( role: template ))
  
  The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
++## Anti-Patterns (( role: reference ))
  
  The full anti-pattern list is in the body sections above; this header exists for the conformance test if the body uses a different casing.
  

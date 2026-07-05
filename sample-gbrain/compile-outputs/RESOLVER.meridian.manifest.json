@@ -113,7 +113,7 @@
         "text" : "Brain operations"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
         "line" : 18,
         "text" : "Brain operations — steps"
@@ -121,109 +121,109 @@
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 37,
+        "line" : 36,
         "text" : "Content & media ingestion"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 40,
+        "line" : 39,
         "text" : "Content & media ingestion — steps"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 51,
+        "line" : 49,
         "text" : "Thinking skills (from GStack)"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 54,
+        "line" : 52,
         "text" : "Thinking skills (from GStack) — steps"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 67,
+        "line" : 64,
         "text" : "Operational"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 70,
+        "line" : 67,
         "text" : "Operational — steps"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 91,
+        "line" : 88,
         "text" : "Setup & migration"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 94,
+        "line" : 91,
         "text" : "Setup & migration — steps"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 112,
+        "line" : 109,
         "text" : "Identity & access (always-on)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 115,
+        "line" : 112,
         "text" : "Identity & access (always-on) — steps"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 124,
+        "line" : 121,
         "text" : "Disambiguation rules"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 131,
+        "line" : 128,
         "text" : "Disambiguation rules — steps"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 136,
+        "line" : 133,
         "text" : "Conventions (cross-cutting)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 140,
+        "line" : 137,
         "text" : "Conventions (cross-cutting) — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 147,
+        "line" : 144,
         "text" : "Conventions (cross-cutting) — steps 2"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 154,
+        "line" : 151,
         "text" : "Uncategorized"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 157,
+        "line" : 154,
         "text" : "Uncategorized — steps"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 126,
+        "line" : 123,
         "text" : "When multiple skills could match"
       }
     ],
@@ -256,54 +256,54 @@
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Brain operations — steps",
         "line" : 18,
         "lines" : [
-          "table:ai-discretion:fCBUcmlnZ2VyIHwgU2tpbGwgfAp8LS0tLS0tLS0tfC0tLS0tLS18CnwgIldoYXQgZG8gd2Uga25vdyBhYm91dCIsICJ0ZWxsIG1lIGFib3V0IiwgInNlYXJjaCBmb3IiLCAid2hvIGlzIiwgImJhY2tncm91bmQgb24iLCAibm90ZXMgb24iIHwgYHNraWxscy9xdWVyeS9TS0lMTC5tZGAgfAp8ICJXaG8ga25vd3Mgd2hvIiwgInJlbGF0aW9uc2hpcCBiZXR3ZWVuIiwgImNvbm5lY3Rpb25zIiwgImdyYXBoIHF1ZXJ5IiB8IGBza2lsbHMvcXVlcnkvU0tJTEwubWRgICh1c2UgZ3JhcGgtcXVlcnkpIHwKfCBDcmVhdGluZy9lbnJpY2hpbmcgYSBwZXJzb24gb3IgY29tcGFueSBwYWdlIHwgYHNraWxscy9lbnJpY2gvU0tJTEwubWRgIHwKfCBXaGVyZSBkb2VzIGEgbmV3IGZpbGUgZ28\/IEZpbGluZyBydWxlcyB8IGBza2lsbHMvcmVwby1hcmNoaXRlY3R1cmUvU0tJTEwubWRgIHwKfCAid2hlcmUgZG9lcyB0aGlzIGJyYWluIHBhZ2UgZ28iLCAiZmlsZSB0aGlzIGluIHRoZSBicmFpbiIsICJicmFpbiB0YXhvbm9taXN0IiwgInRheG9ub215IGNoZWNrIiwgInJlZmlsZSBicmFpbiBwYWdlIiwgIndoaWNoIGRpcmVjdG9yeSBkb2VzIHRoaXMgcGFnZSBnbyIgfCBgc2tpbGxzL2JyYWluLXRheG9ub21pc3QvU0tJTEwubWRgIHwKfCAiRUlJUlAiLCAiZXZlcnl0aGluZyBpbiBpdHMgcmlnaHQgcGxhY2UiLCAic3RvcmUgdGhpcyByZXNlYXJjaCIsICJwdXQgdGhpcyBpbiB0aGUgYnJhaW4iLCAibWFrZSB0aGlzIHJlLWRvYWJsZSIsICJEUlkgdGhpcyB1cCIsICJmaWxlIGFsbCBvZiB0aGlzIiwgIm9yZ2FuaXplIGFsbCBvZiB0aGlzIHdvcmsiLCAiYXJjaGl2ZSB0aGlzIHJlc2VhcmNoIHRocmVhZCIgfCBgc2tpbGxzL2VpaXJwL1NLSUxMLm1kYCB8CnwgRml4IGJyb2tlbiBjaXRhdGlvbnMgaW4gYnJhaW4gcGFnZXMgfCBgc2tpbGxzL2NpdGF0aW9uLWZpeGVyL1NLSUxMLm1kYCB8CnwgImNpdGF0aW9uIGF1ZGl0IiwgImNoZWNrIGNpdGF0aW9ucyIsICJmaXggY2l0YXRpb25zIiB8IGBza2lsbHMvY2l0YXRpb24tZml4ZXIvU0tJTEwubWRgIChmb2N1c2VkIGZpeCkuIEZvciBicm9hZGVyIGJyYWluIGhlYWx0aCwgY2hhaW4gaW50byBgc2tpbGxzL21haW50YWluL1NLSUxMLm1kYCB8CnwgIlJlc2VhcmNoIiwgInRyYWNrIiwgImV4dHJhY3QgZnJvbSBlbWFpbCIsICJpbnZlc3RvciB1cGRhdGVzIiwgImRvbmF0aW9ucyIgfCBgc2tpbGxzL2RhdGEtcmVzZWFyY2gvU0tJTEwubWRgIHwKfCBTaGFyZSBhIGJyYWluIHBhZ2UgYXMgYSBsaW5rIHwgYHNraWxscy9wdWJsaXNoL1NLSUxMLm1kYCB8CnwgInZhbGlkYXRlIGZyb250bWF0dGVyIiwgImNoZWNrIGZyb250bWF0dGVyIiwgImZpeCBmcm9udG1hdHRlciIsICJmcm9udG1hdHRlciBhdWRpdCIsICJicmFpbiBsaW50IiB8IGBza2lsbHMvZnJvbnRtYXR0ZXItZ3VhcmQvU0tJTEwubWRgIHwKfCAid2hhdCBzZWFyY2ggbW9kZSIsICJpcyBteSBjYWNoZSBob3QiLCAidHVuZSBteSByZXRyaWV2YWwiLCAiY29tcGFyZSBzZWFyY2ggbW9kZXMiLCAiY2xlYXIgc2VhcmNoIG92ZXJyaWRlcyIgfCBgZ2JyYWluIHNlYXJjaCBtb2Rlcy9zdGF0cy90dW5lYCBkaXJlY3RseS4gU2VlIGBza2lsbHMvY29udmVudGlvbnMvc2VhcmNoLW1vZGVzLm1kYCB8CnwgImV2YWwgcmVzdWx0cyIsICJzZWFyY2ggYmVuY2htYXJrIiwgImhhdGVycy1pbW11bmUgbWV0aG9kb2xvZ3kiLCAicmVncmVzc2lvbiBjaGVjayBvbiByZXRyaWV2YWwiIHwgYGdicmFpbiBldmFsIHJ1bi1hbGxgIC8gYGdicmFpbiBldmFsIGNvbXBhcmVgLiBTZWUgYGRvY3MvZXZhbC9TRUFSQ0hfTU9ERV9NRVRIT0RPTE9HWS5tZGAgfA=="
+          "table:decision:fCBUcmlnZ2VyIHwgU2tpbGwgfAp8LS0tLS0tLS0tfC0tLS0tLS18CnwgIldoYXQgZG8gd2Uga25vdyBhYm91dCIsICJ0ZWxsIG1lIGFib3V0IiwgInNlYXJjaCBmb3IiLCAid2hvIGlzIiwgImJhY2tncm91bmQgb24iLCAibm90ZXMgb24iIHwgYHNraWxscy9xdWVyeS9TS0lMTC5tZGAgfAp8ICJXaG8ga25vd3Mgd2hvIiwgInJlbGF0aW9uc2hpcCBiZXR3ZWVuIiwgImNvbm5lY3Rpb25zIiwgImdyYXBoIHF1ZXJ5IiB8IGBza2lsbHMvcXVlcnkvU0tJTEwubWRgICh1c2UgZ3JhcGgtcXVlcnkpIHwKfCBDcmVhdGluZy9lbnJpY2hpbmcgYSBwZXJzb24gb3IgY29tcGFueSBwYWdlIHwgYHNraWxscy9lbnJpY2gvU0tJTEwubWRgIHwKfCBXaGVyZSBkb2VzIGEgbmV3IGZpbGUgZ28\/IEZpbGluZyBydWxlcyB8IGBza2lsbHMvcmVwby1hcmNoaXRlY3R1cmUvU0tJTEwubWRgIHwKfCAid2hlcmUgZG9lcyB0aGlzIGJyYWluIHBhZ2UgZ28iLCAiZmlsZSB0aGlzIGluIHRoZSBicmFpbiIsICJicmFpbiB0YXhvbm9taXN0IiwgInRheG9ub215IGNoZWNrIiwgInJlZmlsZSBicmFpbiBwYWdlIiwgIndoaWNoIGRpcmVjdG9yeSBkb2VzIHRoaXMgcGFnZSBnbyIgfCBgc2tpbGxzL2JyYWluLXRheG9ub21pc3QvU0tJTEwubWRgIHwKfCAiRUlJUlAiLCAiZXZlcnl0aGluZyBpbiBpdHMgcmlnaHQgcGxhY2UiLCAic3RvcmUgdGhpcyByZXNlYXJjaCIsICJwdXQgdGhpcyBpbiB0aGUgYnJhaW4iLCAibWFrZSB0aGlzIHJlLWRvYWJsZSIsICJEUlkgdGhpcyB1cCIsICJmaWxlIGFsbCBvZiB0aGlzIiwgIm9yZ2FuaXplIGFsbCBvZiB0aGlzIHdvcmsiLCAiYXJjaGl2ZSB0aGlzIHJlc2VhcmNoIHRocmVhZCIgfCBgc2tpbGxzL2VpaXJwL1NLSUxMLm1kYCB8CnwgRml4IGJyb2tlbiBjaXRhdGlvbnMgaW4gYnJhaW4gcGFnZXMgfCBgc2tpbGxzL2NpdGF0aW9uLWZpeGVyL1NLSUxMLm1kYCB8CnwgImNpdGF0aW9uIGF1ZGl0IiwgImNoZWNrIGNpdGF0aW9ucyIsICJmaXggY2l0YXRpb25zIiB8IGBza2lsbHMvY2l0YXRpb24tZml4ZXIvU0tJTEwubWRgIChmb2N1c2VkIGZpeCkuIEZvciBicm9hZGVyIGJyYWluIGhlYWx0aCwgY2hhaW4gaW50byBgc2tpbGxzL21haW50YWluL1NLSUxMLm1kYCB8CnwgIlJlc2VhcmNoIiwgInRyYWNrIiwgImV4dHJhY3QgZnJvbSBlbWFpbCIsICJpbnZlc3RvciB1cGRhdGVzIiwgImRvbmF0aW9ucyIgfCBgc2tpbGxzL2RhdGEtcmVzZWFyY2gvU0tJTEwubWRgIHwKfCBTaGFyZSBhIGJyYWluIHBhZ2UgYXMgYSBsaW5rIHwgYHNraWxscy9wdWJsaXNoL1NLSUxMLm1kYCB8CnwgInZhbGlkYXRlIGZyb250bWF0dGVyIiwgImNoZWNrIGZyb250bWF0dGVyIiwgImZpeCBmcm9udG1hdHRlciIsICJmcm9udG1hdHRlciBhdWRpdCIsICJicmFpbiBsaW50IiB8IGBza2lsbHMvZnJvbnRtYXR0ZXItZ3VhcmQvU0tJTEwubWRgIHwKfCAid2hhdCBzZWFyY2ggbW9kZSIsICJpcyBteSBjYWNoZSBob3QiLCAidHVuZSBteSByZXRyaWV2YWwiLCAiY29tcGFyZSBzZWFyY2ggbW9kZXMiLCAiY2xlYXIgc2VhcmNoIG92ZXJyaWRlcyIgfCBgZ2JyYWluIHNlYXJjaCBtb2Rlcy9zdGF0cy90dW5lYCBkaXJlY3RseS4gU2VlIGBza2lsbHMvY29udmVudGlvbnMvc2VhcmNoLW1vZGVzLm1kYCB8CnwgImV2YWwgcmVzdWx0cyIsICJzZWFyY2ggYmVuY2htYXJrIiwgImhhdGVycy1pbW11bmUgbWV0aG9kb2xvZ3kiLCAicmVncmVzc2lvbiBjaGVjayBvbiByZXRyaWV2YWwiIHwgYGdicmFpbiBldmFsIHJ1bi1hbGxgIC8gYGdicmFpbiBldmFsIGNvbXBhcmVgLiBTZWUgYGRvY3MvZXZhbC9TRUFSQ0hfTU9ERV9NRVRIT0RPTE9HWS5tZGAgfA=="
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Content & media ingestion",
-        "line" : 37,
+        "line" : 36,
         "lines" : [
 
         ],
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Content & media ingestion — steps",
-        "line" : 40,
+        "line" : 39,
         "lines" : [
-          "table:ai-discretion:fCBUcmlnZ2VyIHwgU2tpbGwgfAp8LS0tLS0tLS0tfC0tLS0tLS18CnwgImNhcHR1cmUgdGhpcyIsICJzYXZlIHRoaXMgdGhvdWdodCIsICJyZW1lbWJlciB0aGlzIiwgImRyb3AgdGhpcyBpbiB0aGUgaW5ib3giLCAic2F2ZSB0byBicmFpbiIgfCBgc2tpbGxzL2NhcHR1cmUvU0tJTEwubWRgIHwKfCBVc2VyIHNoYXJlcyBhIGxpbmssIGFydGljbGUsIHR3ZWV0LCBvciBpZGVhIHwgYHNraWxscy9pZGVhLWluZ2VzdC9TS0lMTC5tZGAgfAp8ICJ3YXRjaCB0aGlzIHZpZGVvIiwgInByb2Nlc3MgdGhpcyBZb3VUdWJlIGxpbmsiLCAiaW5nZXN0IHRoaXMgUERGIiwgInNhdmUgdGhpcyBwb2RjYXN0IiwgInByb2Nlc3MgdGhpcyBib29rIiwgInN1bW1hcml6ZSB0aGlzIGJvb2siLCAiUERGIGJvb2siLCAiaW5nZXN0IGl0IGludG8gbXkgYnJhaW4iLCAid2hhdCdzIGluIHRoaXMgc2NyZWVuc2hvdCIsICJjaGVjayBvdXQgdGhpcyByZXBvIiB8IGBza2lsbHMvbWVkaWEtaW5nZXN0L1NLSUxMLm1kYCB8CnwgTWVldGluZyB0cmFuc2NyaXB0IHJlY2VpdmVkIHwgYHNraWxscy9tZWV0aW5nLWluZ2VzdGlvbi9TS0lMTC5tZGAgfAp8IEdlbmVyaWMgImluZ2VzdCB0aGlzIiAoYXV0by1yb3V0ZXMgdG8gYWJvdmUpIHwgYHNraWxscy9pbmdlc3QvU0tJTEwubWRgIHw="
+          "table:decision:fCBUcmlnZ2VyIHwgU2tpbGwgfAp8LS0tLS0tLS0tfC0tLS0tLS18CnwgImNhcHR1cmUgdGhpcyIsICJzYXZlIHRoaXMgdGhvdWdodCIsICJyZW1lbWJlciB0aGlzIiwgImRyb3AgdGhpcyBpbiB0aGUgaW5ib3giLCAic2F2ZSB0byBicmFpbiIgfCBgc2tpbGxzL2NhcHR1cmUvU0tJTEwubWRgIHwKfCBVc2VyIHNoYXJlcyBhIGxpbmssIGFydGljbGUsIHR3ZWV0LCBvciBpZGVhIHwgYHNraWxscy9pZGVhLWluZ2VzdC9TS0lMTC5tZGAgfAp8ICJ3YXRjaCB0aGlzIHZpZGVvIiwgInByb2Nlc3MgdGhpcyBZb3VUdWJlIGxpbmsiLCAiaW5nZXN0IHRoaXMgUERGIiwgInNhdmUgdGhpcyBwb2RjYXN0IiwgInByb2Nlc3MgdGhpcyBib29rIiwgInN1bW1hcml6ZSB0aGlzIGJvb2siLCAiUERGIGJvb2siLCAiaW5nZXN0IGl0IGludG8gbXkgYnJhaW4iLCAid2hhdCdzIGluIHRoaXMgc2NyZWVuc2hvdCIsICJjaGVjayBvdXQgdGhpcyByZXBvIiB8IGBza2lsbHMvbWVkaWEtaW5nZXN0L1NLSUxMLm1kYCB8CnwgTWVldGluZyB0cmFuc2NyaXB0IHJlY2VpdmVkIHwgYHNraWxscy9tZWV0aW5nLWluZ2VzdGlvbi9TS0lMTC5tZGAgfAp8IEdlbmVyaWMgImluZ2VzdCB0aGlzIiAoYXV0by1yb3V0ZXMgdG8gYWJvdmUpIHwgYHNraWxscy9pbmdlc3QvU0tJTEwubWRgIHw="
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Thinking skills (from GStack)",
-        "line" : 51,
+        "line" : 49,
         "lines" : [
 
         ],
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Thinking skills (from GStack) — steps",
-        "line" : 54,
+        "line" : 52,
         "lines" : [
-          "table:ai-discretion:fCBUcmlnZ2VyIHwgU2tpbGwgfAp8LS0tLS0tLS0tfC0tLS0tLS18CnwgIkJyYWluc3Rvcm0iLCAiSSBoYXZlIGFuIGlkZWEiLCAib2ZmaWNlIGhvdXJzIiB8IEdTdGFjazogb2ZmaWNlLWhvdXJzIHwKfCAiUmV2aWV3IHRoaXMgcGxhbiIsICJDRU8gcmV2aWV3IiwgInBva2UgaG9sZXMiIHwgR1N0YWNrOiBjZW8tcmV2aWV3IHwKfCAiRGVidWciLCAiZml4IiwgImJyb2tlbiIsICJpbnZlc3RpZ2F0ZSIgfCBHU3RhY2s6IGludmVzdGlnYXRlIHwKfCAiUmV0cm8iLCAid2hhdCBzaGlwcGVkIiwgInJldHJvc3BlY3RpdmUiIHwgR1N0YWNrOiByZXRybyB8"
+          "table:decision:fCBUcmlnZ2VyIHwgU2tpbGwgfAp8LS0tLS0tLS0tfC0tLS0tLS18CnwgIkJyYWluc3Rvcm0iLCAiSSBoYXZlIGFuIGlkZWEiLCAib2ZmaWNlIGhvdXJzIiB8IEdTdGFjazogb2ZmaWNlLWhvdXJzIHwKfCAiUmV2aWV3IHRoaXMgcGxhbiIsICJDRU8gcmV2aWV3IiwgInBva2UgaG9sZXMiIHwgR1N0YWNrOiBjZW8tcmV2aWV3IHwKfCAiRGVidWciLCAiZml4IiwgImJyb2tlbiIsICJpbnZlc3RpZ2F0ZSIgfCBHU3RhY2s6IGludmVzdGlnYXRlIHwKfCAiUmV0cm8iLCAid2hhdCBzaGlwcGVkIiwgInJldHJvc3BlY3RpdmUiIHwgR1N0YWNrOiByZXRybyB8"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Operational",
-        "line" : 67,
+        "line" : 64,
         "lines" : [
 
         ],
@@ -312,7 +312,7 @@
       {
         "executes" : true,
         "heading" : "Operational — steps",
-        "line" : 70,
+        "line" : 67,
         "lines" : [
           "table:decision:fCBUcmlnZ2VyIHwgU2tpbGwgfAp8LS0tLS0tLS0tfC0tLS0tLS18CnwgVGFzayBhZGQvcmVtb3ZlL2NvbXBsZXRlL2RlZmVyL3JldmlldyB8IGBza2lsbHMvZGFpbHktdGFzay1tYW5hZ2VyL1NLSUxMLm1kYCB8CnwgTW9ybmluZyBwcmVwLCBtZWV0aW5nIGNvbnRleHQsIGRheSBwbGFubmluZyB8IGBza2lsbHMvZGFpbHktdGFzay1wcmVwL1NLSUxMLm1kYCB8CnwgRGFpbHkgYnJpZWZpbmcsICJ3aGF0J3MgaGFwcGVuaW5nIHRvZGF5IiB8IGBza2lsbHMvYnJpZWZpbmcvU0tJTEwubWRgIHwKfCBDcm9uIHNjaGVkdWxpbmcsIHF1aWV0IGhvdXJzLCBqb2Igc3RhZ2dlcmluZyB8IGBza2lsbHMvY3Jvbi1zY2hlZHVsZXIvU0tJTEwubWRgIHwKfCBTYXZlIG9yIGxvYWQgcmVwb3J0cyB8IGBza2lsbHMvcmVwb3J0cy9TS0lMTC5tZGAgfAp8ICJDcmVhdGUgYSBza2lsbCIsICJpbXByb3ZlIHRoaXMgc2tpbGwiIHwgYHNraWxscy9za2lsbC1jcmVhdG9yL1NLSUxMLm1kYCB8CnwgIlNraWxsaWZ5IHRoaXMiLCAiaXMgdGhpcyBhIHNraWxsPyIsICJtYWtlIHRoaXMgcHJvcGVyIiB8IGBza2lsbHMvc2tpbGxpZnkvU0tJTEwubWRgIHwKfCAiQ29tcHJlc3MgbXkgcmVzb2x2ZXIiLCAiQUdFTlRTLm1kIHRvbyBsYXJnZSIsICJSRVNPTFZFUi5tZCB0b28gYmlnIiwgImZ1bmN0aW9uYWwgYXJlYSBkaXNwYXRjaGVyIiwgInNocmluayByb3V0aW5nIHRhYmxlIiB8IGBza2lsbHMvZnVuY3Rpb25hbC1hcmVhLXJlc29sdmVyL1NLSUxMLm1kYCB8CnwgIklzIGdicmFpbiBoZWFsdGh5PyIsIG1vcm5pbmcgaGVhbHRoIGNoZWNrLCBza2lsbHBhY2stY2hlY2sgfCBgc2tpbGxzL3NraWxscGFjay1jaGVjay9TS0lMTC5tZGAgfAp8ICJoYXJ2ZXN0IHRoaXMgc2tpbGwgaW50byBnYnJhaW4iLCAicHVibGlzaCB0aGlzIHNraWxsIHRvIGdicmFpbiIsICJsaWZ0IHRoaXMgc2tpbGwgdXBzdHJlYW0iLCAic2hhcmUgdGhpcyBza2lsbCB3aXRoIG90aGVyIGdicmFpbiBjbGllbnRzIiwgInByb21vdGUgbXkgc2tpbGwgdG8gZ2JyYWluIiB8IGBza2lsbHMvc2tpbGxwYWNrLWhhcnZlc3QvU0tJTEwubWRgIHwKfCBQb3N0LXJlc3RhcnQgaGVhbHRoICsgYXV0by1maXgsICJkaWQgdGhlIGNvbnRhaW5lciByZXN0YXJ0IGJyZWFrIGFueXRoaW5nIiwgc21va2UgdGVzdCB8IGBza2lsbHMvc21va2UtdGVzdC9TS0lMTC5tZGAgfAp8IENyb3NzLW1vZGFsIHJldmlldywgc2Vjb25kIG9waW5pb24gfCBgc2tpbGxzL2Nyb3NzLW1vZGFsLXJldmlldy9TS0lMTC5tZGAgfAp8ICJWYWxpZGF0ZSBza2lsbHMiLCBza2lsbCBoZWFsdGggY2hlY2sgfCBgc2tpbGxzL3Rlc3RpbmcvU0tJTEwubWRgIHwKfCBXZWJob29rIHNldHVwLCBleHRlcm5hbCBldmVudCBwcm9jZXNzaW5nIHwgYHNraWxscy93ZWJob29rLXRyYW5zZm9ybXMvU0tJTEwubWRgIHwKfCAiU3Bhd24gYWdlbnQiLCAiYmFja2dyb3VuZCB0YXNrIiwgInBhcmFsbGVsIHRhc2tzIiwgInN0ZWVyIGFnZW50IiwgInBhdXNlL3Jlc3VtZSBhZ2VudCIsICJnYnJhaW4gam9icyBzdWJtaXQiLCAic3VibWl0IGEgZ2JyYWluIGpvYiIsICJzdWJtaXQgYSBzaGVsbCBqb2IiLCAic2hlbGwgam9iIiB8IGBza2lsbHMvbWluaW9uLW9yY2hlc3RyYXRvci9TS0lMTC5tZGAgfAp8ICJwcmVzZW50IG9wdGlvbnMiLCAiYXNrIGJlZm9yZSBwcm9jZWVkaW5nIiwgImNob2ljZSBnYXRlIiwgInVzZXIgZGVjaXNpb24iIHwgYHNraWxscy9hc2stdXNlci9TS0lMTC5tZGAgfA=="
         ],
@@ -321,7 +321,7 @@
       {
         "executes" : false,
         "heading" : "Setup & migration",
-        "line" : 91,
+        "line" : 88,
         "lines" : [
 
         ],
@@ -330,7 +330,7 @@
       {
         "executes" : true,
         "heading" : "Setup & migration — steps",
-        "line" : 94,
+        "line" : 91,
         "lines" : [
           "table:ai-discretion:fCBUcmlnZ2VyIHwgU2tpbGwgfAp8LS0tLS0tLS0tfC0tLS0tLS18CnwgIlNldCB1cCBHQnJhaW4iLCBmaXJzdCBib290IHwgYHNraWxscy9zZXR1cC9TS0lMTC5tZGAgfAp8ICJOb3cgd2hhdD8iLCAiZmlsbCBteSBicmFpbiIsICJjb2xkIHN0YXJ0IiwgImJvb3RzdHJhcCIsICJpbXBvcnQgbXkgZGF0YSIsICJ3aGF0IHNob3VsZCBJIGltcG9ydCBmaXJzdCIgfCBgc2tpbGxzL2NvbGQtc3RhcnQvU0tJTEwubWRgIHwKfCAiTWlncmF0ZSBmcm9tIE9ic2lkaWFuL05vdGlvbi9Mb2dzZXEiIHwgYHNraWxscy9taWdyYXRlL1NLSUxMLm1kYCB8CnwgQnJhaW4gaGVhbHRoIGNoZWNrLCBtYWludGVuYW5jZSBydW4gfCBgc2tpbGxzL21haW50YWluL1NLSUxMLm1kYCB8CnwgIkV4dHJhY3QgbGlua3MiLCAiYnVpbGQgbGluayBncmFwaCIsICJwb3B1bGF0ZSB0aW1lbGluZSIgfCBgc2tpbGxzL21haW50YWluL1NLSUxMLm1kYCAoZXh0cmFjdGlvbiBzZWN0aW9ucykgfAp8ICJSdW4gZHJlYW0iLCAicHJvY2VzcyB0b2RheSdzIHNlc3Npb24iLCAic3ludGhlc2l6ZSBteSBjb252ZXJzYXRpb25zIiwgImNvbnNvbGlkYXRlIHllc3RlcmRheSdzIGNvbnZlcnNhdGlvbnMiLCAid2hhdCBwYXR0ZXJucyBkaWQgeW91IHNlZSIsICJkaWQgdGhlIGRyZWFtIGN5Y2xlIHJ1biIgfCBgc2tpbGxzL21haW50YWluL1NLSUxMLm1kYCAoZHJlYW0gY3ljbGUgc2VjdGlvbikgfAp8ICJCcmFpbiBoZWFsdGgiLCAid2hhdCBmZWF0dXJlcyBhbSBJIG1pc3NpbmciLCAiYnJhaW4gc2NvcmUiIHwgUnVuIGBnYnJhaW4gZmVhdHVyZXMgLS1qc29uYCB8CnwgIlNldCB1cCBhdXRvcGlsb3QiLCAicnVuIGJyYWluIG1haW50ZW5hbmNlIiwgImtlZXAgYnJhaW4gdXBkYXRlZCIgfCBSdW4gYGdicmFpbiBhdXRvcGlsb3QgLS1pbnN0YWxsIC0tcmVwbyB+L2JyYWluYCB8CnwgIlVwZ3JhZGUgZ2JyYWluIiwgInVwZGF0ZSBnYnJhaW4iLCAiZ2JyYWluIHVwZGF0ZSBhdmFpbGFibGUiLCBgVVBHUkFERV9BVkFJTEFCTEVgLCAiaXMgZ2JyYWluIHVwIHRvIGRhdGUiIHwgYHNraWxscy9nYnJhaW4tdXBncmFkZS9TS0lMTC5tZGAgfAp8IEFnZW50IGlkZW50aXR5LCAid2hvIGFtIEkiLCBjdXN0b21pemUgYWdlbnQgfCBgc2tpbGxzL3NvdWwtYXVkaXQvU0tJTEwubWRgIHwKfCAiUG9wdWxhdGUgbGlua3MiLCAiZXh0cmFjdCBsaW5rcyIsICJiYWNrZmlsbCBncmFwaCIgfCBgc2tpbGxzL21haW50YWluL1NLSUxMLm1kYCAoZ3JhcGggcG9wdWxhdGlvbiBwaGFzZSkgfAp8ICJQb3B1bGF0ZSB0aW1lbGluZSIsICJleHRyYWN0IHRpbWVsaW5lIGVudHJpZXMiIHwgYHNraWxscy9tYWludGFpbi9TS0lMTC5tZGAgKGdyYXBoIHBvcHVsYXRpb24gcGhhc2UpIHw="
         ],
@@ -339,7 +339,7 @@
       {
         "executes" : false,
         "heading" : "Identity & access (always-on)",
-        "line" : 112,
+        "line" : 109,
         "lines" : [
 
         ],
@@ -348,7 +348,7 @@
       {
         "executes" : true,
         "heading" : "Identity & access (always-on) — steps",
-        "line" : 115,
+        "line" : 112,
         "lines" : [
           "table:decision:fCBUcmlnZ2VyIHwgU2tpbGwgfAp8LS0tLS0tLS0tfC0tLS0tLS18CnwgTm9uLW93bmVyIHNlbmRzIGEgbWVzc2FnZSB8IENoZWNrIGBBQ0NFU1NfUE9MSUNZLm1kYCBiZWZvcmUgcmVzcG9uZGluZyB8CnwgQWdlbnQgbmVlZHMgdG8ga25vdyBpdHMgaWRlbnRpdHkvdmliZSB8IFJlYWQgYFNPVUwubWRgIHwKfCBBZ2VudCBuZWVkcyB1c2VyIGNvbnRleHQgfCBSZWFkIGBVU0VSLm1kYCB8CnwgT3BlcmF0aW9uYWwgY2FkZW5jZSAod2hhdCB0byBjaGVjayBhbmQgd2hlbikgfCBSZWFkIGBIRUFSVEJFQVQubWRgIHw="
         ],
@@ -357,38 +357,38 @@
       {
         "executes" : false,
         "heading" : "Disambiguation rules",
-        "line" : 124,
+        "line" : 121,
         "lines" : [
           "When multiple skills could match:",
           "Prefer the most specific skill (meeting-ingestion over ingest)",
           "If the user mentions a URL, route by content type (link → idea-ingest, video → media-ingest)",
           "If the user mentions a person\/company, check if enrich or query fits better"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Disambiguation rules — steps",
-        "line" : 131,
+        "line" : 128,
         "lines" : [
           "Chaining is explicit in each skill's Phases section",
           "When in doubt, ask the user (see `skills\/ask-user\/SKILL.md` for the choice-gate pattern)"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Conventions (cross-cutting)",
-        "line" : 136,
+        "line" : 133,
         "lines" : [
           "`skills\/conventions\/schema-evolution.md` — when to add a type vs alias vs prefix (read before `schema-author`)"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Conventions (cross-cutting) — steps",
-        "line" : 140,
+        "line" : 137,
         "lines" : [
           "`skills\/conventions\/quality.md` — citations, back-links, notability gate",
           "`skills\/conventions\/brain-first.md` — check brain before external APIs",
@@ -399,7 +399,7 @@
       {
         "executes" : true,
         "heading" : "Conventions (cross-cutting) — steps 2",
-        "line" : 147,
+        "line" : 144,
         "lines" : [
           "`skills\/conventions\/subagent-routing.md` — when to use Minions vs inline work",
           "`skills\/ask-user\/SKILL.md` — choice-gate pattern for human input at decision points",
@@ -411,7 +411,7 @@
       {
         "executes" : false,
         "heading" : "Uncategorized",
-        "line" : 154,
+        "line" : 151,
         "lines" : [
 
         ],
@@ -420,7 +420,7 @@
       {
         "executes" : true,
         "heading" : "Uncategorized — steps",
-        "line" : 157,
+        "line" : 154,
         "lines" : [
           "table:decision:fCBUcmlnZ2VyIHwgU2tpbGwgfAp8LS0tLS0tLS0tfC0tLS0tLS18CnwgInBlcnNvbmFsaXplZCB2ZXJzaW9uIG9mIHRoaXMgYm9vayIsICJtaXJyb3IgdGhpcyBib29rIiwgInR3by1jb2x1bW4gYm9vayBhbmFseXNpcyIsICJhcHBseSB0aGlzIGJvb2sgdG8gbXkgbGlmZSIsICJob3cgZG9lcyB0aGlzIGJvb2sgYXBwbHkgdG8gbWUiIHwgYHNraWxscy9ib29rLW1pcnJvci9TS0lMTC5tZGAgfAp8ICJlbnJpY2ggdGhpcyBhcnRpY2xlIiwgImVucmljaCBicmFpbiBwYWdlcyIsICJiYXRjaCBlbnJpY2giLCAibWFrZSBicmFpbiBwYWdlcyB1c2VmdWwiIHwgYHNraWxscy9hcnRpY2xlLWVucmljaG1lbnQvU0tJTEwubWRgIHwKfCAic3RyYXRlZ2ljIHJlYWRpbmciLCAicmVhZCB0aGlzIHRocm91Z2ggdGhlIGxlbnMgb2YiLCAiYXBwbHkgdGhpcyB0byBteSBwcm9ibGVtIiwgIndoYXQgY2FuIEkgbGVhcm4gZnJvbSB0aGlzIGFib3V0IiwgImV4dHJhY3QgYSBwbGF5Ym9vayBmcm9tIiB8IGBza2lsbHMvc3RyYXRlZ2ljLXJlYWRpbmcvU0tJTEwubWRgIHwKfCAiY29uY2VwdCBzeW50aGVzaXMiLCAic3ludGhlc2l6ZSBteSBjb25jZXB0cyIsICJmaW5kIHBhdHRlcm5zIGFjcm9zcyBteSBub3RlcyIsICJidWlsZCBteSBpbnRlbGxlY3R1YWwgbWFwIiwgInRyYWNlIGlkZWEgZXZvbHV0aW9uIiB8IGBza2lsbHMvY29uY2VwdC1zeW50aGVzaXMvU0tJTEwubWRgIHwKfCAiaWRlYSBsaW5lYWdlIiwgInRyYWNlIHRoZSBsaW5lYWdlIG9mIHRoaXMgaWRlYSIsICJob3cgbXkgdGhpbmtpbmcgYWJvdXQiLCAiaG93IGhhcyBteSB0aGlua2luZyBhYm91dCIsICJ3aGF0IGlzIG15IGN1cnJlbnQgdmVyc2lvbiBvZiIsICJzaG93IHJldmVyc2FscyBpbiBteSB0aGlua2luZyBhYm91dCIsICJ3aGVyZSBkaWQgdGhpcyBpZGVhIGNvbWUgZnJvbSIgfCBgc2tpbGxzL2lkZWEtbGluZWFnZS9TS0lMTC5tZGAgfAp8ICJwZXJwbGV4aXR5IHJlc2VhcmNoIiwgIndoYXQncyBuZXcgYWJvdXQiLCAiY3VycmVudCBzdGF0ZSBvZiIsICJ3ZWIgcmVzZWFyY2giLCAid2hhdCBjaGFuZ2VkIGFib3V0IiB8IGBza2lsbHMvcGVycGxleGl0eS1yZXNlYXJjaC9TS0lMTC5tZGAgfAp8ICJjcmF3bCBteSBhcmNoaXZlIiwgImZpbmQgZ29sZCBpbiBteSBhcmNoaXZlIiwgImFyY2hpdmUgY3Jhd2xlciIsICJzY2FuIG15IGRyb3Bib3ggZm9yIiwgIm1pbmUgbXkgb2xkIGZpbGVzIGZvciIgfCBgc2tpbGxzL2FyY2hpdmUtY3Jhd2xlci9TS0lMTC5tZGAgfAp8ICJ2ZXJpZnkgdGhpcyBhY2FkZW1pYyBjbGFpbSIsICJjaGVjayB0aGlzIHN0dWR5IiwgImFjYWRlbWljIHZlcmlmeSIsICJ2YWxpZGF0ZSBjaXRhdGlvbiIsICJpcyB0aGlzIHN0dWR5IHJlYWwiIHwgYHNraWxscy9hY2FkZW1pYy12ZXJpZnkvU0tJTEwubWRgIHwKfCAibWFrZSBwZGYgZnJvbSBicmFpbiIsICJicmFpbiBwZGYiLCAiY29udmVydCBicmFpbiBwYWdlIHRvIHBkZiIsICJwdWJsaXNoIHRoaXMgcGFnZSBhcyBwZGYiLCAiZXhwb3J0IGJyYWluIHBhZ2UiIHwgYHNraWxscy9icmFpbi1wZGYvU0tJTEwubWRgIHwKfCAidm9pY2Ugbm90ZSIsICJpbmdlc3QgdGhpcyB2b2ljZSBtZW1vIiwgInRyYW5zY3JpYmUgYW5kIGZpbGUiLCAidm9pY2Ugbm90ZSBpbmdlc3QiLCAic2F2ZSB0aGlzIGF1ZGlvIG5vdGUiIHwgYHNraWxscy92b2ljZS1ub3RlLWluZ2VzdC9TS0lMTC5tZGAgfAp8ICJhZGQgYSBwYWdlIHR5cGUiLCAiYWRkIGEgdHlwZSB0byBteSBzY2hlbWEiLCAic2NoZW1hIGF1dGhvciIsICJzY2hlbWEgbXV0YXRlIiwgInNjaGVtYSBwYWNrIGFkZCIsICJteSBicmFpbiBoYXMgdW50eXBlZCBwYWdlcyIsICJwcm9wb3NlIG5ldyB0eXBlcyBmcm9tIG15IGNvcnB1cyIsICJiYWNrZmlsbCBwYWdlIHR5cGVzIiwgImV2b2x2ZSBteSBzY2hlbWEiLCAicmVzZWFyY2hlciB0eXBlIiwgIm1ha2UgWCBhbiBleHBlcnQgdHlwZSIgKGRpc3BhdGNoZXIgZm9yOiBnYnJhaW4gc2NoZW1hIGFjdGl2ZS9saXN0L3Nob3cvdmFsaWRhdGUvZ3JhcGgvbGludC9zdGF0cy9leHBsYWluL3VzZS9kb3duZ3JhZGUvcmVsb2FkL2luaXQvZm9yay9lZGl0L2RpZmYvYWRkLXR5cGUvcmVtb3ZlLXR5cGUvdXBkYXRlLXR5cGUvYWRkLWFsaWFzL3JlbW92ZS1hbGlhcy9hZGQtcHJlZml4L3JlbW92ZS1wcmVmaXgvYWRkLWxpbmstdHlwZS9yZW1vdmUtbGluay10eXBlL3NldC1leHRyYWN0YWJsZS9zZXQtZXhwZXJ0LXJvdXRpbmcvZGV0ZWN0L3N1Z2dlc3QvcmV2aWV3LWNhbmRpZGF0ZXMvcmV2aWV3LW9ycGhhbnMvc3luYykgfCBgc2tpbGxzL3NjaGVtYS1hdXRob3IvU0tJTEwubWRgIHwKfCAidW5pZnkgbXkgdHlwZXMiLCAibWlncmF0ZSB0byBnYnJhaW4tYmFzZS12MiIsICI5NCB0eXBlcyB0byAxNCIsICJhcHBseSBjYW5vbmljYWwgdGF4b25vbXkiLCAiY2xlYW4gdXAgbXkgcGFnZSB0eXBlcyIsICJwYWNrIHVwZ3JhZGUiLCAic2hyaW5rIHR5cGUgcHJvbGlmZXJhdGlvbiIsICJjb25zb2xpZGF0ZSBwYWdlIHR5cGVzIiwgInJldHlwZSBwYWdlcyB0byBjYW5vbmljYWwiIChkaXNwYXRjaGVyIGZvcjogZ2JyYWluIG9uYm9hcmQgLS1jaGVjaywgZ2JyYWluIG9uYm9hcmQgLS1jaGVjayAtLWV4cGxhaW4sIGdicmFpbiBqb2JzIHN1Ym1pdCB1bmlmeS10eXBlcywgZ2JyYWluIHBhZ2VzIHJlc3RvcmUpIHwgYHNraWxscy9zY2hlbWEtdW5pZnkvU0tJTEwubWRgIHw="
         ],
@@ -480,304 +480,292 @@
       "swift_line" : 611
     },
     {
-      "meridian_line" : 21,
+      "meridian_line" : 69,
       "swift_line" : 623
     },
     {
-      "meridian_line" : 43,
-      "swift_line" : 632
+      "meridian_line" : 69,
+      "swift_line" : 626
     },
     {
-      "meridian_line" : 57,
+      "meridian_line" : 69,
+      "swift_line" : 638
+    },
+    {
+      "meridian_line" : 69,
       "swift_line" : 641
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 650
-    },
-    {
-      "meridian_line" : 72,
+      "meridian_line" : 69,
       "swift_line" : 653
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 665
+      "meridian_line" : 69,
+      "swift_line" : 656
     },
     {
-      "meridian_line" : 72,
+      "meridian_line" : 69,
       "swift_line" : 668
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 680
+      "meridian_line" : 69,
+      "swift_line" : 671
     },
     {
-      "meridian_line" : 72,
+      "meridian_line" : 69,
       "swift_line" : 683
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 695
+      "meridian_line" : 69,
+      "swift_line" : 686
     },
     {
-      "meridian_line" : 72,
+      "meridian_line" : 69,
       "swift_line" : 698
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 710
+      "meridian_line" : 69,
+      "swift_line" : 701
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 713
+      "meridian_line" : 69,
+      "swift_line" : 714
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 725
+      "meridian_line" : 69,
+      "swift_line" : 717
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 728
+      "meridian_line" : 69,
+      "swift_line" : 730
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 741
+      "meridian_line" : 69,
+      "swift_line" : 733
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 744
+      "meridian_line" : 69,
+      "swift_line" : 746
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 757
+      "meridian_line" : 69,
+      "swift_line" : 749
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 760
+      "meridian_line" : 69,
+      "swift_line" : 761
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 773
+      "meridian_line" : 69,
+      "swift_line" : 764
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 776
+      "meridian_line" : 69,
+      "swift_line" : 777
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 788
+      "meridian_line" : 69,
+      "swift_line" : 780
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 791
+      "meridian_line" : 69,
+      "swift_line" : 792
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 804
+      "meridian_line" : 69,
+      "swift_line" : 795
     },
     {
-      "meridian_line" : 72,
+      "meridian_line" : 69,
       "swift_line" : 807
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 819
+      "meridian_line" : 69,
+      "swift_line" : 810
     },
     {
-      "meridian_line" : 72,
+      "meridian_line" : 69,
       "swift_line" : 822
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 834
+      "meridian_line" : 69,
+      "swift_line" : 825
     },
     {
-      "meridian_line" : 72,
+      "meridian_line" : 69,
       "swift_line" : 837
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 849
+      "meridian_line" : 69,
+      "swift_line" : 840
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 852
+      "meridian_line" : 69,
+      "swift_line" : 853
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 864
+      "meridian_line" : 69,
+      "swift_line" : 856
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 867
+      "meridian_line" : 94,
+      "swift_line" : 869
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 880
+      "meridian_line" : 114,
+      "swift_line" : 878
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 883
+      "meridian_line" : 114,
+      "swift_line" : 881
     },
     {
-      "meridian_line" : 97,
-      "swift_line" : 896
+      "meridian_line" : 114,
+      "swift_line" : 894
     },
     {
-      "meridian_line" : 117,
-      "swift_line" : 905
+      "meridian_line" : 114,
+      "swift_line" : 897
     },
     {
-      "meridian_line" : 117,
-      "swift_line" : 908
+      "meridian_line" : 114,
+      "swift_line" : 910
     },
     {
-      "meridian_line" : 117,
-      "swift_line" : 921
+      "meridian_line" : 114,
+      "swift_line" : 913
     },
     {
-      "meridian_line" : 117,
-      "swift_line" : 924
+      "meridian_line" : 114,
+      "swift_line" : 926
     },
     {
-      "meridian_line" : 117,
-      "swift_line" : 937
+      "meridian_line" : 114,
+      "swift_line" : 929
     },
     {
-      "meridian_line" : 117,
-      "swift_line" : 940
+      "meridian_line" : 140,
+      "swift_line" : 943
     },
     {
-      "meridian_line" : 117,
-      "swift_line" : 953
+      "meridian_line" : 141,
+      "swift_line" : 955
     },
     {
-      "meridian_line" : 117,
-      "swift_line" : 956
+      "meridian_line" : 142,
+      "swift_line" : 967
     },
     {
-      "meridian_line" : 143,
-      "swift_line" : 970
+      "meridian_line" : 146,
+      "swift_line" : 979
     },
     {
-      "meridian_line" : 144,
-      "swift_line" : 982
+      "meridian_line" : 147,
+      "swift_line" : 991
     },
     {
-      "meridian_line" : 145,
-      "swift_line" : 994
+      "meridian_line" : 148,
+      "swift_line" : 1003
     },
     {
       "meridian_line" : 149,
-      "swift_line" : 1006
+      "swift_line" : 1015
     },
     {
-      "meridian_line" : 150,
-      "swift_line" : 1018
+      "meridian_line" : 156,
+      "swift_line" : 1026
     },
     {
-      "meridian_line" : 151,
-      "swift_line" : 1030
+      "meridian_line" : 156,
+      "swift_line" : 1029
     },
     {
-      "meridian_line" : 152,
+      "meridian_line" : 156,
       "swift_line" : 1042
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1053
+      "meridian_line" : 156,
+      "swift_line" : 1045
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1056
+      "meridian_line" : 156,
+      "swift_line" : 1058
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1069
+      "meridian_line" : 156,
+      "swift_line" : 1061
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1072
+      "meridian_line" : 156,
+      "swift_line" : 1074
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1085
+      "meridian_line" : 156,
+      "swift_line" : 1077
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1088
+      "meridian_line" : 156,
+      "swift_line" : 1090
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1101
+      "meridian_line" : 156,
+      "swift_line" : 1093
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1104
+      "meridian_line" : 156,
+      "swift_line" : 1106
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1117
+      "meridian_line" : 156,
+      "swift_line" : 1109
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1120
+      "meridian_line" : 156,
+      "swift_line" : 1122
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1133
+      "meridian_line" : 156,
+      "swift_line" : 1125
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1136
+      "meridian_line" : 156,
+      "swift_line" : 1138
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1149
+      "meridian_line" : 156,
+      "swift_line" : 1141
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1152
+      "meridian_line" : 156,
+      "swift_line" : 1154
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1165
+      "meridian_line" : 156,
+      "swift_line" : 1157
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1168
+      "meridian_line" : 156,
+      "swift_line" : 1170
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1181
+      "meridian_line" : 156,
+      "swift_line" : 1173
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1184
+      "meridian_line" : 156,
+      "swift_line" : 1186
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1197
+      "meridian_line" : 156,
+      "swift_line" : 1189
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1200
+      "meridian_line" : 156,
+      "swift_line" : 1201
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 1213
-    },
-    {
-      "meridian_line" : 159,
-      "swift_line" : 1216
-    },
-    {
-      "meridian_line" : 159,
-      "swift_line" : 1228
-    },
-    {
-      "meridian_line" : 159,
-      "swift_line" : 1231
+      "meridian_line" : 156,
+      "swift_line" : 1204
     }
   ],
   "tools_used" : [
@@ -795,85 +783,7 @@
       "prose_steps" : [
         {
           "dispatch_mode" : "plan_then_execute",
-          "line" : 21,
-          "scoped_tools" : [
-            "assess.notability",
-            "capture",
-            "enrich",
-            "health.get",
-            "jobs.status",
-            "jobs.submit",
-            "link.add",
-            "link.backlinks",
-            "makePDF",
-            "page.create",
-            "page.get",
-            "page.list",
-            "page.search",
-            "page.update",
-            "publish",
-            "recall",
-            "research",
-            "timeline.add",
-            "verify"
-          ],
-          "text" : "Decide which case below applies and carry out its action:\n- when \"What do we know about\", \"tell me about\", \"search for\", \"who is\", \"background on\", \"notes on\", `skills\/query\/SKILL.md`\n- when \"Who knows who\", \"relationship between\", \"connections\", \"graph query\", `skills\/query\/SKILL.md` (use graph-query)\n- when Creating\/enriching a person or company page, `skills\/enrich\/SKILL.md`\n- when Where does a new file go? Filing rules, `skills\/repo-architecture\/SKILL.md`\n- when \"where does this brain page go\", \"file this in the brain\", \"brain taxonomist\", \"taxonomy check\", \"refile brain page\", \"which directory does this page go\", `skills\/brain-taxonomist\/SKILL.md`\n- when \"EIIRP\", \"everything in its right place\", \"store this research\", \"put this in the brain\", \"make this re-doable\", \"DRY this up\", \"file all of this\", \"organize all of this work\", \"archive this research thread\", `skills\/eiirp\/SKILL.md`\n- when Fix broken citations in brain pages, `skills\/citation-fixer\/SKILL.md`\n- when \"citation audit\", \"check citations\", \"fix citations\", `skills\/citation-fixer\/SKILL.md` (focused fix). For broader brain health, chain into `skills\/maintain\/SKILL.md`\n- when \"Research\", \"track\", \"extract from email\", \"investor updates\", \"donations\", `skills\/data-research\/SKILL.md`\n- when Share a brain page as a link, `skills\/publish\/SKILL.md`\n- when \"validate frontmatter\", \"check frontmatter\", \"fix frontmatter\", \"frontmatter audit\", \"brain lint\", `skills\/frontmatter-guard\/SKILL.md`\n- when \"what search mode\", \"is my cache hot\", \"tune my retrieval\", \"compare search modes\", \"clear search overrides\", `gbrain search modes\/stats\/tune` directly. See `skills\/conventions\/search-modes.md`\n- when \"eval results\", \"search benchmark\", \"haters-immune methodology\", \"regression check on retrieval\", `gbrain eval run-all` \/ `gbrain eval compare`. See `docs\/eval\/SEARCH_MODE_METHODOLOGY.md`"
-        },
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "line" : 43,
-          "scoped_tools" : [
-            "assess.notability",
-            "capture",
-            "enrich",
-            "health.get",
-            "jobs.status",
-            "jobs.submit",
-            "link.add",
-            "link.backlinks",
-            "makePDF",
-            "page.create",
-            "page.get",
-            "page.list",
-            "page.search",
-            "page.update",
-            "publish",
-            "recall",
-            "research",
-            "timeline.add",
-            "verify"
-          ],
-          "text" : "Decide which case below applies and carry out its action:\n- when \"capture this\", \"save this thought\", \"remember this\", \"drop this in the inbox\", \"save to brain\", `skills\/capture\/SKILL.md`\n- when User shares a link, article, tweet, or idea, `skills\/idea-ingest\/SKILL.md`\n- when \"watch this video\", \"process this YouTube link\", \"ingest this PDF\", \"save this podcast\", \"process this book\", \"summarize this book\", \"PDF book\", \"ingest it into my brain\", \"what's in this screenshot\", \"check out this repo\", `skills\/media-ingest\/SKILL.md`\n- when Meeting transcript received, `skills\/meeting-ingestion\/SKILL.md`\n- when Generic \"ingest this\" (auto-routes to above), `skills\/ingest\/SKILL.md`"
-        },
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "line" : 57,
-          "scoped_tools" : [
-            "assess.notability",
-            "capture",
-            "enrich",
-            "health.get",
-            "jobs.status",
-            "jobs.submit",
-            "link.add",
-            "link.backlinks",
-            "makePDF",
-            "page.create",
-            "page.get",
-            "page.list",
-            "page.search",
-            "page.update",
-            "publish",
-            "recall",
-            "research",
-            "timeline.add",
-            "verify"
-          ],
-          "text" : "Decide which case below applies and carry out its action:\n- when \"Brainstorm\", \"I have an idea\", \"office hours\", GStack: office-hours\n- when \"Review this plan\", \"CEO review\", \"poke holes\", GStack: ceo-review\n- when \"Debug\", \"fix\", \"broken\", \"investigate\", GStack: investigate\n- when \"Retro\", \"what shipped\", \"retrospective\", GStack: retro"
-        },
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "line" : 97,
+          "line" : 94,
           "scoped_tools" : [
             "assess.notability",
             "capture",

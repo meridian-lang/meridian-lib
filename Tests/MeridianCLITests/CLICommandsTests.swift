@@ -279,6 +279,11 @@ struct CheckVerifyCommandTests {
 
 @Suite("CLI command — lint")
 struct LintCommandTests {
+    @Test("lint command exposes a public empty initializer for ArgumentParser")
+    func emptyInitializer() {
+        _ = LintCommand()
+    }
+
     @Test("lint runs over a real .meridian file")
     func lintRuns() throws {
         let cmd = try LintCommand.parse([ex("examples/order_processing.meridian")])
@@ -603,7 +608,7 @@ struct SkillDeviationCommandTests {
         let readme = try String(contentsOf: reports.appendingPathComponent("README.md"), encoding: .utf8)
         #expect(readme.contains("Inert deviations:"), Comment(rawValue: readme))
         #expect(readme.contains("Operational inert:"), Comment(rawValue: readme))
-        #expect(readme.contains("inert-section-added"), Comment(rawValue: readme))
+        #expect(readme.contains("doc-section-marked"), Comment(rawValue: readme))
         #expect(readme.contains("operational inert"), Comment(rawValue: readme))
     }
 
@@ -705,15 +710,15 @@ struct MigrateSkillCommandTests {
         #expect(!trace.isEmpty)
     }
 
-    @Test("--route-fuzzy defaults on and --no-route-fuzzy parses to false")
+    @Test("--route-fuzzy defaults off (P1 hard-error-by-default policy) and --route-fuzzy parses to true")
     func routeFuzzyFlag() throws {
         let onDefault = try MigrateSkillCommand.parse(["SKILL.md"])
-        #expect(onDefault.routeFuzzy)
-        let offExplicit = try MigrateSkillCommand.parse(["SKILL.md", "--no-route-fuzzy"])
-        #expect(!offExplicit.routeFuzzy)
+        #expect(!onDefault.routeFuzzy)
+        let onExplicit = try MigrateSkillCommand.parse(["SKILL.md", "--route-fuzzy"])
+        #expect(onExplicit.routeFuzzy)
     }
 
-    @Test("--no-route-fuzzy leaves a fuzzy checklist (( inert )) instead of AI-routing it")
+    @Test("--no-route-fuzzy leaves a fuzzy checklist as its own operational-error child instead of rescuing a compile failure to reference")
     func noRouteFuzzyDisablesAiRouting() async throws {
         let t = TempDir()
         t.write("v.merconfig", "An input is a kind of thing.\n")
@@ -924,7 +929,10 @@ struct MigrateSkillCommandTests {
         let cmd = try MigrateSkillCommand.parse([
             md.path, "--out", t.path("demo.meri"), "--report", t.path("report.txt"), "--force"
         ])
-        try await cmd.run()
+        // No checkable/inference signal under "Phases" is a hard migration
+        // error by default (P1 category 4) — `runSingle` writes the report
+        // (with its diagnostics) before throwing `ExitCode(1)`.
+        do { try await cmd.run() } catch { /* ExitCode(1): expected, compile fails */ }
         let report = try String(contentsOfFile: t.path("report.txt"), encoding: .utf8)
         #expect(report.contains("diagnostics:"))
         #expect(report.contains("L"))

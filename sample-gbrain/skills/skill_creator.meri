@@ -17,18 +17,19 @@ mutating: true
 
 # Skill Creator
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
-This skill guarantees:
-- New skill follows conformance standard (frontmatter + required sections)
 - MECE check: no overlap with existing skills' triggers
 - Manifest.json updated
 - RESOLVER.md updated with routing entry
 - Skill passes conformance tests (`bun test test/skills-conformance.test.ts`)
 
-## Phases
-use judgment to follow the Phases guidance:
+
+### Contract — steps (( role: reference ))
+
+> This skill guarantees:
+- New skill follows conformance standard (frontmatter + required sections)
+## Phases (( role: reference ))
 
 2. **MECE check.** Review `skills/manifest.json` and `skills/RESOLVER.md`. Does any existing skill already cover this? If so, extend it instead of creating a new one.
 3. **Create SKILL.md.** Use this template:
@@ -67,7 +68,7 @@ mutating: {true|false}
 ```
 
 
-### Phases — steps
+### Phases — steps (( role: reference ))
 
 1. What capability is missing? What user intent has no skill?
 
@@ -77,12 +78,11 @@ mutating: {true|false}
 5. Add to resolver. Update `skills/RESOLVER.md` with routing entry in the appropriate category.
 6. Verify. Run `bun test test/skills-conformance.test.ts` to confirm the new skill passes.
 
-## Output Format (( inert, role: template ))
+## Output Format (( role: template ))
 
 New `skills/{name}/SKILL.md` file + updated manifest + updated resolver.
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 - Creating a skill that overlaps with an existing one (violates MECE)
 - Skipping the MECE check against existing skills

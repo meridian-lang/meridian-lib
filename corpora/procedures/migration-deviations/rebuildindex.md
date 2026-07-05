@@ -3,8 +3,8 @@
 - Original: `rebuild_index/SKILL.md`
 - Ported: `rebuildindex.meri`
 - Tier: 2 (light edits)
-- Similarity: 74%
-- Lines: 24 -> 33 (+12 / -3)
+- Similarity: 81%
+- Lines: 24 -> 30 (+8 / -2)
 
 ## Frontmatter
 - Added: (none)
@@ -12,31 +12,29 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 
 ## Metrics
-- Sections inert total: 0/3 (0% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 1/3 (33% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Judgment: 3 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=1
+- Judgment: 0 blocks, 0 lines
+
+### Inert section details
+- L8 `Procedure`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/rebuild_index/SKILL.md
 +++ skills/rebuildindex.meri
-@@ -8,17 +8,26 @@
- 
- # Rebuild Index
- 
--## Use this when
-+## Use this when (( role: procedure ))
-+use judgment to follow the Use this when guidance:
+@@ -12,9 +12,15 @@
  - "rebuild lagging indexes"
  - "index job stale"
  
- ## Procedure
-+use judgment to follow the Procedure guidance:
+-## Procedure
++## Procedure (( role: reference ))
 +Check: any lagging index jobs.
 +
 +### Procedure — steps
@@ -49,10 +47,4 @@
  for each index job:
    rebuild the index job.
  Emit: "lagging index jobs rebuilt".
- 
--## Assertions
-+## Assertions (( role: procedure ))
-+use judgment to follow the Assertions guidance:
- make sure all index jobs have a name.
- 
 ```

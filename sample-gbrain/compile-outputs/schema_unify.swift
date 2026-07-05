@@ -598,15 +598,166 @@ public struct SchemaUnifyInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SchemaUnifyInput", parameters: [:])
 
-        // L51
-        let __meridianProseResults_L51 = try await runtime.executeProsePlan(
-            prose: "follow the Workflow guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["jobs.submit", "page.list", "shell.run"],
-            guidance: "use judgment to follow the Phase 1: Discovery guidance:\nExpected: `gbrain-base@1.0.0+<sha>`. If you see `gbrain-base-v2@...`, the brain is already on v2 — skip the migration\nLook for the `pack_upgrade_available` finding. If it's `ok`, there's no successor declared for the active pack — done\nConfirm the brain is actually on `gbrain-base` (not already on v2)\ncodeblock:bash:Z2JyYWluIHNjaGVtYSBhY3RpdmUgLS1qc29uIHwganEgLXIgJy5pZGVudGl0eSc=\ncodeblock:bash:Z2JyYWluIG9uYm9hcmQgLS1jaGVjaw==\nuse judgment to follow the Phase 2: Preview guidance:\nHow many pages would retype per cluster (tweets, articles, companies, etc.)\nHow many concept-redirect pages would become alias rows\nHow many edge-shaped pages would convert to real links\nThe synthesized catch-all rules for unknown types\nReview the output. If the proposed changes look wrong, **don't** proceed — file an issue or write a custom pack with adjusted mapping_rules\ncodeblock:bash:Z2JyYWluIG9uYm9hcmQgLS1jaGVjayAtLWV4cGxhaW4=\nThis invokes the `unify-types` handler in dry-run mode and prints:\nuse judgment to follow the Phase 3: Apply guidance:\nThe handler is PROTECTED (manual_only per D17) — autopilot will never auto-fire it. Submit explicitly:\nOn a 186K-page brain expect ~10 minutes. The handler runs:\nPreflight (validate target pack has `mapping_rules:`)\nStats snapshot (pre-state for celebration summary)\nApply phases:\nExplicit retype rules (tweets, articles, companies, etc.)\nCatch-all retype (unknown types → note with legacy_type)\nPage-to-link rules (atom-partner-link, symlink)\nPage-to-alias rules (concept-redirect)\nFinal sync (untyped rows by path-prefix)\n**Flip active pack** to gbrain-base-v2 (D13)\ncodeblock:bash:Z2JyYWluIGpvYnMgc3VibWl0IHVuaWZ5LXR5cGVzIFwKICAtLWFsbG93LXByb3RlY3RlZCBcCiAgLS1wYXJhbXMgJ3sidGFyZ2V0X3BhY2siOiJnYnJhaW4tYmFzZS12MiJ9Jw==\ncodeblock:bash:Z2JyYWluIGpvYnMgZm9sbG93IDxqb2JfaWQ+\nAcquire `gbrain-unify` db-lock (60min TTL)\nVerify + celebration summary\nuse judgment to follow the Phase 4: Verify guidance:\nExpected:\n`pack_upgrade_available` → `ok` (active pack is now v2)\n`type_proliferation` → `ok` (≤16 distinct typed values)\n`dangling_aliases` → `ok` (slug_aliases all point at active canonicals)\ncodeblock:bash:Z2JyYWluIG9uYm9hcmQgLS1jaGVjawpnYnJhaW4gc2NoZW1hIHN0YXRz\n`gbrain schema stats` shows ≤16 distinct types\nuse judgment to follow the Phase 5: Post-migration guidance:\nAnything that used `--type article` keeps working post-unify if your CLI calls go through the `expandTypeFilter` helper (it expands `article` to `media+subtype=article` automatically). Direct SQL against `pages.type` needs updating to the canonical types\nSearch queries get a small ranking signal: pages reached via `slug_aliases` (canonicals of one or more aliases) get a 1.05x boost. Visible via `gbrain search --explain`\nEvery retyped page preserves `frontmatter.legacy_type = <original>` per D8. Restore types via:\ncodeblock:bash:Z2JyYWluIHBhZ2VzIHJlc3RvcmUgPHNsdWc+\ncodeblock:bash:Z2JyYWluIHNjaGVtYSB1c2UgZ2JyYWluLWJhc2U=\nuse judgment to follow the Anti-patterns guidance:\n**Don't run unify-types under autopilot.** It's manual_only by design. Autopilot remediation should never silently change your taxonomy\n**Don't expect mapping_rules to cover every legacy type explicitly.** Use the catch-all (`*unknown*`) for the long tail. Pages get retyped to `note` with `legacy_type` preserved\n**Don't rewrite body-text wikilinks.** D15: the slug_aliases table IS the resolver. `[[old-redirect-slug]]` keeps working via `engine.resolveSlugWithAlias` short-circuit\n**Don't bypass the dry-run.** Always run `--explain` before applying. The trust delta is real\n**Don't run two unify jobs concurrently.** The `gbrain-unify` db-lock serializes them; the second submission rejects with \"already in progress.\"\nuse judgment to follow the Contract guidance:\nInputs:\nA brain on `gbrain-base` (or any pack with `migration_from: gbrain-base-v2`)\nWrite access to submit a PROTECTED Minion handler (`--allow-protected`)\n~10 min wallclock on a 186K-page brain\nOutputs:\nPages retyped to canonical types with `frontmatter.legacy_type` preserved (per-page rollback signal)\n`slug_aliases` rows for concept-redirect pages (alias table IS the resolver — no link rewrite)\nReal `links` rows for edge-shaped pages (`atom-partner-link`, `symlink`, etc.)\nActive pack flipped to `gbrain-base-v2` atomically at end of successful run\nSide effects:\nSource pages soft-deleted with 72h restore TTL (`gbrain pages restore <slug>`)\nOne-time cache invalidation on KNOBS_HASH_VERSION bump (5→6); self-healing in `cache.ttl_seconds`\nQuery-time `--type X` alias-expands via `expandTypeFilter` (D14 back-compat)\nFailure modes:\nConcurrent submission rejected by the `gbrain-unify` db-lock; second call exits gracefully\nCatch-all retype excludes `page_to_link` + `page_to_alias` source types (caught in E2E pre-merge)\nPhase failures abort the run before `active_pack_flipped`; partial state restorable via op_checkpoint resume\nuse judgment to follow the Anti-Patterns guidance:\nDON'T:\nSubmit `unify-types` directly via the MCP `submit_job` op without `--allow-protected`. PROTECTED handlers require trusted local callers; remote MCP rejection is the intentional trust boundary\nEdit `mapping_rules` in `gbrain-base-v2.yaml` to skip clusters you don't trust. Fork the pack instead (`gbrain schema fork`) so the source-of-truth migration stays consistent across brains\nRun `unify-types` from inside an autopilot tick. The check is `manual_only` per D17 — autopilot deliberately never auto-fires it because pack upgrades are one-time consenting taxonomy decisions\nHard-delete soft-deleted source pages before the 72h restore window. Use `gbrain pages restore <slug>` first if rollback is needed\nAssume `frontmatter.legacy_type` survives every roundtrip. The marker is canonical for the immediate post-migration window; downstream re-imports may overwrite it\nPlan + decisions: `~/.claude/plans/system-instruction-you-are-working-transient-elephant.md`\nArchitecture: `docs/architecture/type-taxonomy.md`\nPack-upgrade mechanism: `docs/architecture/pack-upgrade-mechanism.md`\nIssue: https://github.com/garrytan/gbrain/issues/1479"
-        )
-        for (__key, __value) in __meridianProseResults_L51 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L61:C0") {
+            // L61
+            // Confirm the brain is actually on  (not already on v2)
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain-base"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L61:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L63:C0") {
+            // L63
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain schema active --json | jq -r '.identity'"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L63:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L72:C0") {
+            // L72
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain onboard --check"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L72:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L90:C0") {
+            // L90
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain onboard --check --explain"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.3:L90:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.4:L94:C0") {
+            // L94
+            // This invokes the  handler in dry-run mode and prints
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("unify-types"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.4:L94:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.5:L127:C0") {
+            // L127
+            // Acquire  db-lock (60min TTL)
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain-unify"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.5:L127:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.6:L148:C0") {
+            // L148
+            let verdict = try await runtime.invoke(
+                tool: "verify",
+                args: [
+                    "claim": state.get("+CelebrationSummary") ?? .null,
+                ]
+            )
+            state.bind("verdict", verdict)
+
+            try await runtime.checkpoint(label: "progress:0.6:L148:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.7:L142:C0") {
+            // L142
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain onboard --check"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.7:L142:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.8:L142:C0") {
+            // L142
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain schema stats"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.8:L142:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.9:L150:C0") {
+            // L150
+            // shows ≤16 distinct types
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain schema stats"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.9:L150:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.10:L118:C0") {
+            // L118
+            let results = try await runtime.invoke(
+                tool: "page.search",
+                args: [
+                    "query": state.get("search--explain`") ?? .null,
+                ]
+            )
+            state.bind("results", results)
+
+            try await runtime.checkpoint(label: "progress:0.10:L118:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.11:L171:C0") {
+            // L171
+            // Every retyped page preserves  per D8. Restore types via
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("frontmatter.legacy_type = <original>"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.11:L171:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.12:L178:C0") {
+            // L178
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain pages restore <slug>"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.12:L178:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.13:L184:C0") {
+            // L184
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain schema use gbrain-base"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.13:L184:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

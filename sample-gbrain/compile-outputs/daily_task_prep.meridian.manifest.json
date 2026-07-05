@@ -98,83 +98,81 @@
     "name" : "daily-task-prep",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 23,
         "text" : "Contract"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 32,
+        "line" : 31,
         "text" : "Phases"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 39,
+        "line" : 38,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 58,
+        "line" : 57,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 26,
+        "line" : 25,
         "text" : "This skill guarantees"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 23,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Calendar\/meetings for today are loaded with brain context per attendee",
           "Open threads from yesterday are surfaced",
           "Active tasks reviewed with priority ordering",
           "Prep briefing is actionable (not just informational)"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phases",
-        "line" : 32,
+        "line" : 31,
         "lines" : [
           "Check today's meetings. For each: load attendee brain pages, recent timeline, open threads",
           "Search brain for yesterday's timeline entries. Flag anything unresolved",
           "Review active tasks. Load `ops\/tasks` from brain. Surface P0 and P1 items",
           "Per-meeting context cards + open threads + task priorities"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 39,
+        "line" : 38,
         "lines" : [
           "codeblock:plain:TW9ybmluZyBQcmVwIOKAlCB7ZGF0ZX0KPT09PT09PT09PT09PT09PT09PT09PQpNZWV0aW5ncyB0b2RheToge059CgojIyB7TWVldGluZyAxIHRpdGxlfSBhdCB7dGltZX0KQXR0ZW5kZWVzOiB7bmFtZXMgd2l0aCBicmFpbiBjb250ZXh0fQpDb250ZXh0OiB7cmVjZW50IGludGVyYWN0aW9ucywgb3BlbiB0aHJlYWRzfQpQcmVwOiB7d2hhdCB0byBrbm93IGJlZm9yZSB0aGlzIG1lZXRpbmd9CgojIyBPcGVuIFRocmVhZHMKLSB7dGhyZWFkIGZyb20geWVzdGVyZGF5LCB3aXRoIGNvbnRleHR9CgojIyBUYXNrcyAoUDAtUDEpCi0ge3Rhc2sgd2l0aCBwcmlvcml0eX0="
         ],
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 58,
+        "line" : 57,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "Listing meetings without loading attendee context from brain",
           "Ignoring yesterday's unresolved threads",
           "Presenting tasks without priority ordering"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       }
     ],
     "tools" : "search\nquery\nget_page\nlist_pages\nget_timeline",
@@ -217,40 +215,36 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 24,
-      "swift_line" : 602
+      "meridian_line" : 1,
+      "swift_line" : 631
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 641
+      "swift_line" : 636
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 646
+      "swift_line" : 675
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 685
+      "swift_line" : 680
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 719
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 724
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 763
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 773
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 768
     }
   ],
   "tools_used" : [
@@ -263,20 +257,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "This skill guarantees:\nCalendar\/meetings for today are loaded with brain context per attendee\nOpen threads from yesterday are surfaced\nActive tasks reviewed with priority ordering\nPrep briefing is actionable (not just informational)\nCheck today's meetings. For each: load attendee brain pages, recent timeline, open threads\nSearch brain for yesterday's timeline entries. Flag anything unresolved\nReview active tasks. Load `ops\/tasks` from brain. Surface P0 and P1 items\nPer-meeting context cards + open threads + task priorities\nuse judgment to follow the Anti-Patterns guidance:\nListing meetings without loading attendee context from brain\nIgnoring yesterday's unresolved threads\nPresenting tasks without priority ordering",
-          "line" : 24,
-          "scoped_tools" : [
-            "page.get",
-            "page.list",
-            "page.search",
-            "shell.run"
-          ],
-          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "daily-task-prep a input",

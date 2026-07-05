@@ -98,91 +98,95 @@
     "name" : "reports",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 21,
         "text" : "Contract"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 30,
+        "line" : 29,
         "text" : "Phases"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 51,
+        "line" : 49,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 56,
+        "line" : 54,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 24,
+        "line" : 23,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 26,
+        "line" : 25,
         "text" : "Keyword routing"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 53,
+        "line" : 42,
+        "text" : "Map common queries to report categories"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 51,
         "text" : "Saved"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 54,
+        "line" : 52,
         "text" : "Loaded"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 21,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Reports saved with timestamped filenames and frontmatter",
           "Keyword routing: query → report category mapping",
           "Latest report loadable by category name",
           "Reports are searchable via gbrain search\/query"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phases",
-        "line" : 30,
+        "line" : 29,
         "lines" : [
-          "use judgment to follow the Phases guidance:",
-          "**Save report.** Write to `reports\/{category}\/{YYYY-MM-DD-HHMM}.md` with frontmatter:",
+          "Save report. Write to `reports\/{category}\/{YYYY-MM-DD-HHMM}.md` with frontmatter:",
           "codeblock:yaml:LS0tCnRpdGxlOiB7cmVwb3J0IHRpdGxlfQp0eXBlOiByZXBvcnQKY2F0ZWdvcnk6IHtjYXRlZ29yeSBuYW1lfQpkYXRlOiB7WVlZWS1NTS1ERH0KdGltZToge0hIOk1NIFBUfQotLS0=",
-          "**Load latest.** Given a category, find the most recent report file",
-          "**Keyword routing.** Map common queries to report categories:",
+          "Given a category, find the most recent report file",
+          "Map common queries to report categories:",
           "\"email\" \/ \"inbox\" → ea-inbox-sweep",
           "\"social\" \/ \"mentions\" → social-mentions",
           "\"briefing\" \/ \"morning\" → morning-briefing",
           "\"meeting\" → meeting-sync",
           "Custom mappings configurable"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 51,
+        "line" : 49,
         "lines" : [
           "Saved: `reports\/{category}\/{YYYY-MM-DD-HHMM}.md`",
           "Loaded: full report content with metadata"
@@ -190,17 +194,16 @@
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 56,
+        "line" : 54,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "Saving reports without frontmatter (makes them unsearchable)",
           "Using inconsistent category names across runs",
           "Loading all reports when only the latest is needed",
           "Not routing by keyword (forcing exact category name)"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       }
     ],
     "tools" : "get_page\nput_page\nsearch",
@@ -243,40 +246,36 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 22,
-      "swift_line" : 602
+      "meridian_line" : 1,
+      "swift_line" : 631
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 641
+      "swift_line" : 636
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 646
+      "swift_line" : 675
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 685
+      "swift_line" : 680
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 719
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 724
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 763
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 773
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 768
     }
   ],
   "tools_used" : [
@@ -289,20 +288,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "This skill guarantees:\nReports saved with timestamped filenames and frontmatter\nKeyword routing: query → report category mapping\nLatest report loadable by category name\nReports are searchable via gbrain search\/query\nuse judgment to follow the Phases guidance:\n**Save report.** Write to `reports\/{category}\/{YYYY-MM-DD-HHMM}.md` with frontmatter:\ncodeblock:yaml:LS0tCnRpdGxlOiB7cmVwb3J0IHRpdGxlfQp0eXBlOiByZXBvcnQKY2F0ZWdvcnk6IHtjYXRlZ29yeSBuYW1lfQpkYXRlOiB7WVlZWS1NTS1ERH0KdGltZToge0hIOk1NIFBUfQotLS0=\n**Load latest.** Given a category, find the most recent report file\n**Keyword routing.** Map common queries to report categories:\n\"email\" \/ \"inbox\" → ea-inbox-sweep\n\"social\" \/ \"mentions\" → social-mentions\n\"briefing\" \/ \"morning\" → morning-briefing\n\"meeting\" → meeting-sync\nCustom mappings configurable\nuse judgment to follow the Anti-Patterns guidance:\nSaving reports without frontmatter (makes them unsearchable)\nUsing inconsistent category names across runs\nLoading all reports when only the latest is needed\nNot routing by keyword (forcing exact category name)",
-          "line" : 22,
-          "scoped_tools" : [
-            "page.get",
-            "page.search",
-            "publish",
-            "shell.run"
-          ],
-          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "reports a input",

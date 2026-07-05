@@ -3,8 +3,8 @@
 - Original: `media-ingest/SKILL.md`
 - Ported: `media_ingest.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 88%
-- Lines: 122 -> 137 (+23 / -8)
+- Similarity: 86%
+- Lines: 122 -> 137 (+25 / -10)
 
 ## Frontmatter
 - Added: (none)
@@ -12,31 +12,36 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 - preamble-blockquoted
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L90 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L44 `Phase 3: Create brain page`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L88 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections inert total: 1/8 (12% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 5/7 (71% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: template=1
-- Judgment: 5 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=4, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L90 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L8 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L44 `Phase 3: Create brain page`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L68 `Phase 4: Entity extraction and propagation`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L88 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L93 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/media-ingest/SKILL.md
 +++ skills/media_ingest.meri
-@@ -35,11 +35,12 @@
+@@ -35,11 +35,11 @@
  
  # Media Ingest Skill
  
@@ -46,40 +51,43 @@ These sections were made non-executable in the port and should be reviewed as mi
  > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.
  
 -## Contract
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
  This skill guarantees:
  - Every ingested media item has a brain page with analysis (not just a transcript dump)
-@@ -53,9 +54,14 @@
+@@ -50,11 +50,17 @@
+ 
+ > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
+ 
++
++### Contract — steps (( role: reference ))
++
  Every mention of a person or company with a brain page MUST create a back-link.
  
  ## Phases
-+use judgment to follow the Phases guidance:
  
--### Phase 1: Identify format and fetch
-+### Phase 1: Identify format and fetch (( inert, role: procedure ))
+ ### Phase 1: Identify format and fetch
++
++
++### Phase 1: Identify format and fetch — steps (( role: reference ))
  
-+
-+#### Phase 1: Identify format and fetch — steps
-+
-+!!! table (( ai-discretion ))
  | Format | Action |
  |--------|--------|
- | YouTube/video URL | Fetch transcript (Whisper, transcription service, or captions) |
-@@ -70,6 +76,7 @@
+@@ -69,7 +75,7 @@
+ 
  Save the original file for provenance: `gbrain files upload-raw <file> --page <slug>`
  
- ### Phase 3: Create brain page
-+use judgment to follow the Phase 3: Create brain page guidance:
+-### Phase 3: Create brain page
++### Phase 3: Create brain page (( role: reference ))
  
  File by primary subject (not format). Use this template:
  
-@@ -94,25 +101,33 @@
+@@ -93,30 +99,39 @@
+ {List with links to brain pages}
  ```
  
- ### Phase 4: Entity extraction and propagation
-+use judgment to follow the Phase 4: Entity extraction and propagation guidance:
+-### Phase 4: Entity extraction and propagation
++### Phase 4: Entity extraction and propagation (( role: reference ))
  
 -For every person and company mentioned:
 -1. Check brain for existing page
@@ -90,12 +98,12 @@ These sections were made non-executable in the port and should be reviewed as mi
  A media item is NOT fully ingested until entity propagation is complete.
  
 +
-+#### Phase 4: Entity extraction and propagation — steps
++### Phase 4: Entity extraction and propagation — steps
 +
 +For every person and company mentioned:
 +1. Check brain for existing page
 +
-+#### Phase 4: Entity extraction and propagation — steps 2
++### Phase 4: Entity extraction and propagation — steps 2
 +
 +3. Add back-link from entity page to this media page
  ### Phase 5: Sync
@@ -103,15 +111,22 @@ These sections were made non-executable in the port and should be reviewed as mi
  `gbrain sync` to update the index.
  
 -## Output Format
-+## Output Format (( inert, role: template ))
++## Output Format (( role: template ))
  
  Brain page created with summary, highlights, and entity cross-links. Report to user:
  "Ingested {title}: {N} entities detected, {N} pages updated."
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
++## Anti-Patterns (( role: reference ))
  
  - Dumping raw transcripts without analysis
  - Skipping entity extraction ("I'll do that separately")
+-- Filing **raw ingest** by format (all videos in `media/videos/`) instead of by subject. Note: format-prefixed paths under `media/<format>/<slug>` ARE sanctioned for **synthesized one-of-one output** like book-mirror's `media/books/<slug>-personalized.md`. The anti-pattern is for raw ingest, not for sui generis synthesis. See `skills/_brain-filing-rules.md` "Sanctioned exception: synthesis output is sui generis."
+ - Not preserving raw source files
+ - Creating stub pages without meaningful content
+ 
++
++### Anti-Patterns — steps
++
++- Filing raw ingest by format (all videos in `media/videos/`) instead of by subject. Note: format-prefixed paths under `media/<format>/<slug>` ARE sanctioned for synthesized one-of-one output like book-mirror's `media/books/<slug>-personalized.md`. The anti-pattern is for raw ingest, not for sui generis synthesis. See `skills/_brain-filing-rules.md` "Sanctioned exception: synthesis output is sui generis."
 ```

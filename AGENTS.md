@@ -163,6 +163,17 @@ instead:
    both `Compiler.compile` overloads into `lexicon.merging(...)`.
 4. Read it via the threaded `lexicon` parameter at the call site.
 
+**A Swift default on the lexicon is necessary but not sufficient — "lexicon
+default ≠ extensible."** Step 1 alone just moves a hardcoded list from a
+`Parser`/`Lowering` file into `EnglishLexicon.swift`; it is still hardcoded
+from an author's point of view until steps 2–4 wire it through the full
+`=== language ===` recipe end-to-end. Treat a category as done only once a
+`.merconfig` can add to it without a Meridian recompile. `inferenceCueWords`,
+`normativeCueWords`, and `referenceHeadingWords` (the `SkillMigrator`
+classification vocabulary — see pitfall #15 and `docs/13_SKILL_MD_PORTING.md`)
+are current reference examples of the complete recipe, alongside
+`assertionMarkers`.
+
 **Where the line is.** Two categories, two rules:
 
 - **Extensible vocabulary** — articles, prepositions, copulas, comparison
@@ -439,15 +450,18 @@ unconditionally (otherwise: duplicate `id`).
 
 A section with an executable role (`(( role: procedure ))`, `(( role: invariants ))`,
 …) makes **every** non-blank, non-comment line a live statement that must lower.
-So you cannot flip an `(( inert ))` documentation heading to a role and keep its
-narrative paragraph — that prose errors as an unresolved phrase. The **correct**
-fix is a structural split: keep the narrative in its `(( inert ))` section
-(verbatim, uncommented — it stays real documentation) and add a **separate**
-sibling/child heading whose body is **only** executable statements. A `###` child
-re-resolves its own role under an inert `##` parent; for sections already at
-`###`, add a sibling `###`. The gbrain back-linking conversions
-(`briefing` `### Enforce back-links`, `maintain` `### Repair missing back-links` /
-`### Create missing cross-references`) follow this shape.
+So you cannot flip an `(( role: reference ))` documentation heading to a role and
+keep its narrative paragraph — that prose errors as an unresolved phrase. The
+**correct** fix is a structural split: keep the narrative in its
+`(( role: reference ))` section (verbatim, uncommented — it stays real
+documentation) and add a **separate** sibling/child heading whose body is
+**only** executable statements. A `###` child re-resolves its own role under a
+`reference` `##` parent; for sections already at `###`, add a sibling `###`.
+`meridian migrate-skill` performs this split automatically now (see
+`docs/13_SKILL_MD_PORTING.md` §"Common porting fixes" item 7); the gbrain
+back-linking conversions (`briefing` `### Enforce back-links`, `maintain`
+`### Repair missing back-links` / `### Create missing cross-references`) follow
+this shape as the manual-fallback worked example.
 
 **ANTI-PATTERN — do NOT blockquote the prose to silence the error.** Prefixing the
 narrative with `>` (so `IndentTokenizer` treats it as a comment) is lossy: a
@@ -457,7 +471,7 @@ executed. That hides a real requirement behind a comment and is the one place th
 you, because the drop is author-chosen via `>` rather than compiler-rejected. Full
 guidance: `docs/13_SKILL_MD_PORTING.md` §"Common porting fixes" item 7.
 
-### 15. Narrative encodes executable contracts — mine it before marking inert
+### 15. Narrative encodes executable contracts — mine it, route it, or let it hard-error; never auto-wrap or inert it
 
 The most-missed porting step (and the deeper lesson behind §14): SKILL.md prose
 rarely *only* describes — it usually states **conditions on execution** the
@@ -469,13 +483,39 @@ applies" is an **applicability guard** (a branch). A qualifier like "fix the
 *missing* one" makes an action **conditional**, not unconditional (the
 back-linking loop is `if the entity does not link …`, never a bare `add`).
 
-**Before marking any normative sentence `(( inert ))`, classify it: post-
-condition, precondition, invariant, or guard? If it's any of those, lower it.**
-`(( inert ))` is only for genuinely non-executable material — rationale,
-examples, external references, formatting templates. `assert`/`ensure`/`make
-sure` are aliases (extensible via `=== language ===` `Assertion synonyms:`); pick
-the one closest to the source wording. Full guidance + the contract-shape table:
-`docs/13_SKILL_MD_PORTING.md` §"Common porting fixes" item 8.
+**`SkillMigrator` resolves every non-lowerable content unit through a fixed
+four-way precedence — never a fuzzy auto-wrap, never a blanket `inert`:**
+
+1. **Lowerable** → lower it (unmarked, or split into a `— steps` child).
+2. **Not lowerable, but carries an `EnglishLexicon.inferenceCueWords` cognitive-verb
+   cue** (`analyse`/`decide`/`assess`/`evaluate`/…) → the **only** case that may
+   emit an AI marker: `use judgment to …:` / `ai-discretion` / `ai-autonomy`.
+3. **Not lowerable, no inference cue, genuinely documentary** (rationale,
+   examples, external references, formatting templates) → `(( role: reference ))`
+   — never `(( inert ))`; the migrator does not emit that keyword.
+4. **Not lowerable, no inference cue, but normative/operational** (an
+   `EnglishLexicon.normativeCueWords` cue — `must`/`never`/`always`/`require*`/
+   `refuse*`/…, or a role heading that already asserts a checkable contract) →
+   **left unmarked** so the real compiler raises its own precise
+   `uncheckablePredicate`/`unresolvedPhrase` error naming the reword needed.
+   This is an **intentional hard error** (P3), not a bug: re-migration can now
+   fail by design, and the fix is to reword the line or add a genuine
+   inference-cue verb if AI judgment really is intended — never to silently
+   file it as `reference` or wrap it in judgment.
+
+**Before marking any normative sentence `(( role: reference ))`, classify it:
+post-condition, precondition, invariant, or guard? If it's any of those, lower
+it (or, failing that, let category 4 catch it — don't paper over it).**
+`assert`/`ensure`/`make sure` are aliases (extensible via `=== language ===`
+`Assertion synonyms:`); pick the one closest to the source wording.
+`(( inert ))` remains valid, compiler-accepted hand-authored syntax (a synonym
+of `(( role: reference ))`) — but a bare `(( inert ))` surviving in a
+*migrator-generated* file is a deviation-report violation
+(`SkillMetrics.inertMarkerCount`), since the migrator itself never emits it.
+Full guidance + the contract-shape table + the four-way precedence:
+`docs/13_SKILL_MD_PORTING.md` §"Common porting fixes" items 7–8; the
+`=== language ===` recipe for the three classification categories:
+`docs/03_LANGUAGE_QUICK_REFERENCE.md` §"SkillMigrator classification synonyms".
 
 ### 16. `(( role: procedure ))` is redundant on a recognized procedure heading
 

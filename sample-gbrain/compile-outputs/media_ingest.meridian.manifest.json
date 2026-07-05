@@ -98,22 +98,34 @@
     "name" : "media-ingest",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 42,
         "text" : "Contract"
       },
       {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 54,
+        "text" : "Contract — steps"
+      },
+      {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 56,
+        "line" : 58,
         "text" : "Phases"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 59,
+        "line" : 60,
         "text" : "Phase 1: Identify format and fetch"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 63,
+        "text" : "Phase 1: Identify format and fetch — steps"
       },
       {
         "kind" : "procedure",
@@ -122,45 +134,63 @@
         "text" : "Phase 2: Upload raw source"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
         "line" : 78,
         "text" : "Phase 3: Create brain page"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 103,
+        "line" : 102,
         "text" : "Phase 4: Entity extraction and propagation"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 120,
+        "line" : 110,
+        "text" : "Phase 4: Entity extraction and propagation — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 115,
+        "text" : "Phase 4: Entity extraction and propagation — steps 2"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 118,
         "text" : "Phase 5: Sync"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 124,
+        "line" : 122,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 129,
+        "line" : 127,
         "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 3,
+        "line" : 135,
+        "text" : "Anti-Patterns — steps"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 45,
+        "line" : 44,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 48,
+        "line" : 47,
         "text" : "Entity extraction"
       },
       {
@@ -172,44 +202,60 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 114,
+        "line" : 112,
         "text" : "For every person and company mentioned"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 42,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Every ingested media item has a brain page with analysis (not just a transcript dump)",
           "Transcripts (video\/audio) saved in raw and human-readable formats",
           "Entity extraction: every person and company mentioned gets back-linked",
           "Raw source files preserved via `gbrain files upload-raw`",
-          "Filing by primary subject, not by media format",
+          "Filing by primary subject, not by media format"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract — steps",
+        "line" : 54,
+        "lines" : [
           "Every mention of a person or company with a brain page MUST create a back-link"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phases",
+        "line" : 58,
+        "lines" : [
+
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
-        "heading" : "Phases",
-        "line" : 56,
+        "heading" : "Phase 1: Identify format and fetch",
+        "line" : 60,
         "lines" : [
-          "use judgment to follow the Phases guidance:"
+
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
-        "heading" : "Phase 1: Identify format and fetch",
-        "line" : 59,
+        "heading" : "Phase 1: Identify format and fetch — steps",
+        "line" : 63,
         "lines" : [
-          "table:ai-discretion:fCBGb3JtYXQgfCBBY3Rpb24gfAp8LS0tLS0tLS18LS0tLS0tLS18CnwgWW91VHViZS92aWRlbyBVUkwgfCBGZXRjaCB0cmFuc2NyaXB0IChXaGlzcGVyLCB0cmFuc2NyaXB0aW9uIHNlcnZpY2UsIG9yIGNhcHRpb25zKSB8CnwgQXVkaW8gZmlsZSB8IFRyYW5zY3JpYmUgd2l0aCBhdmFpbGFibGUgU1RUIHNlcnZpY2UgfAp8IFBERiB8IEV4dHJhY3QgdGV4dCAoT0NSIGlmIG5lZWRlZCkgfAp8IEJvb2sgUERGIHwgRXh0cmFjdCB0ZXh0LCBpZGVudGlmeSBjaGFwdGVycy9zZWN0aW9ucyB8CnwgU2NyZWVuc2hvdC9pbWFnZSB8IE9DUiB2aWEgdmlzaW9uIG1vZGVsLCBleHRyYWN0IHRleHQgYW5kIGVudGl0aWVzIHwKfCBHaXRIdWIgcmVwbyB8IENsb25lLCByZWFkIFJFQURNRSArIGtleSBmaWxlcywgc3VtbWFyaXplIGFyY2hpdGVjdHVyZSB8"
+          "table:decision:fCBGb3JtYXQgfCBBY3Rpb24gfAp8LS0tLS0tLS18LS0tLS0tLS18CnwgWW91VHViZS92aWRlbyBVUkwgfCBGZXRjaCB0cmFuc2NyaXB0IChXaGlzcGVyLCB0cmFuc2NyaXB0aW9uIHNlcnZpY2UsIG9yIGNhcHRpb25zKSB8CnwgQXVkaW8gZmlsZSB8IFRyYW5zY3JpYmUgd2l0aCBhdmFpbGFibGUgU1RUIHNlcnZpY2UgfAp8IFBERiB8IEV4dHJhY3QgdGV4dCAoT0NSIGlmIG5lZWRlZCkgfAp8IEJvb2sgUERGIHwgRXh0cmFjdCB0ZXh0LCBpZGVudGlmeSBjaGFwdGVycy9zZWN0aW9ucyB8CnwgU2NyZWVuc2hvdC9pbWFnZSB8IE9DUiB2aWEgdmlzaW9uIG1vZGVsLCBleHRyYWN0IHRleHQgYW5kIGVudGl0aWVzIHwKfCBHaXRIdWIgcmVwbyB8IENsb25lLCByZWFkIFJFQURNRSArIGtleSBmaWxlcywgc3VtbWFyaXplIGFyY2hpdGVjdHVyZSB8"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
@@ -221,27 +267,41 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 3: Create brain page",
         "line" : 78,
         "lines" : [
-          "use judgment to follow the Phase 3: Create brain page guidance:",
           "File by primary subject (not format). Use this template:",
           "codeblock:markdown:IyB7VGl0bGV9CgoqKlNvdXJjZToqKiB7VVJMIG9yIGZpbGUgcGF0aH0KKipGb3JtYXQ6Kioge3ZpZGVvL2F1ZGlvL1BERi9ib29rL3NjcmVlbnNob3QvcmVwb30KKipDcmVhdGVkOioqIHtkYXRlfQoKIyMgU3VtbWFyeQp7S2V5IHBvaW50cywgbm90IGEgdHJhbnNjcmlwdCBkdW1wfQoKIyMgS2V5IFNlZ21lbnRzIC8gSGlnaGxpZ2h0cwp7Rm9yIHZpZGVvL2F1ZGlvOiB0aW1lc3RhbXBlZCBoaWdobGlnaHRzLiBGb3IgYm9va3M6IGNoYXB0ZXIgc3VtbWFyaWVzLn0KCiMjIFBlb3BsZSBNZW50aW9uZWQKe0xpc3Qgd2l0aCBsaW5rcyB0byBicmFpbiBwYWdlc30KCiMjIENvbXBhbmllcyBNZW50aW9uZWQKe0xpc3Qgd2l0aCBsaW5rcyB0byBicmFpbiBwYWdlc30="
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 4: Entity extraction and propagation",
+        "line" : 102,
+        "lines" : [
+          "Create\/enrich if needed (delegate to enrich skill)",
+          "Add timeline entry on entity page",
+          "A media item is NOT fully ingested until entity propagation is complete"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 4: Entity extraction and propagation — steps",
+        "line" : 110,
+        "lines" : [
+          "For every person and company mentioned:",
+          "Check brain for existing page"
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
-        "heading" : "Phase 4: Entity extraction and propagation",
-        "line" : 103,
+        "heading" : "Phase 4: Entity extraction and propagation — steps 2",
+        "line" : 115,
         "lines" : [
-          "use judgment to follow the Phase 4: Entity extraction and propagation guidance:",
-          "Create\/enrich if needed (delegate to enrich skill)",
-          "Add timeline entry on entity page",
-          "A media item is NOT fully ingested until entity propagation is complete",
-          "For every person and company mentioned:",
-          "Check brain for existing page",
           "Add back-link from entity page to this media page"
         ],
         "role" : "procedure"
@@ -249,7 +309,7 @@
       {
         "executes" : true,
         "heading" : "Phase 5: Sync",
-        "line" : 120,
+        "line" : 118,
         "lines" : [
           "`gbrain sync` to update the index"
         ],
@@ -258,7 +318,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 124,
+        "line" : 122,
         "lines" : [
           "Brain page created with summary, highlights, and entity cross-links. Report to user:",
           "\"Ingested {title}: {N} entities detected, {N} pages updated.\""
@@ -266,18 +326,25 @@
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 129,
+        "line" : 127,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "Dumping raw transcripts without analysis",
           "Skipping entity extraction (\"I'll do that separately\")",
-          "Filing **raw ingest** by format (all videos in `media\/videos\/`) instead of by subject. Note: format-prefixed paths under `media\/<format>\/<slug>` ARE sanctioned for **synthesized one-of-one output** like book-mirror's `media\/books\/<slug>-personalized.md`. The anti-pattern is for raw ingest, not for sui generis synthesis. See `skills\/_brain-filing-rules.md` \"Sanctioned exception: synthesis output is sui generis.\"",
           "Not preserving raw source files",
           "Creating stub pages without meaningful content"
         ],
-        "role" : "procedure"
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 135,
+        "lines" : [
+          "Filing raw ingest by format (all videos in `media\/videos\/`) instead of by subject. Note: format-prefixed paths under `media\/<format>\/<slug>` ARE sanctioned for synthesized one-of-one output like book-mirror's `media\/books\/<slug>-personalized.md`. The anti-pattern is for raw ingest, not for sui generis synthesis. See `skills\/_brain-filing-rules.md` \"Sanctioned exception: synthesis output is sui generis.\""
+        ],
+        "role" : "prohibitions"
       }
     ],
     "tools" : "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry\nfile_upload",
@@ -322,88 +389,108 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 43,
-      "swift_line" : 604
+      "meridian_line" : 137,
+      "swift_line" : 605
+    },
+    {
+      "meridian_line" : 76,
+      "swift_line" : 610
+    },
+    {
+      "meridian_line" : 112,
+      "swift_line" : 621
+    },
+    {
+      "meridian_line" : 154,
+      "swift_line" : 631
+    },
+    {
+      "meridian_line" : 133,
+      "swift_line" : 638
+    },
+    {
+      "meridian_line" : 120,
+      "swift_line" : 651
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 643
+      "swift_line" : 691
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 648
+      "swift_line" : 696
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 687
+      "swift_line" : 735
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 692
+      "swift_line" : 740
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 731
+      "swift_line" : 779
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 736
+      "swift_line" : 784
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 775
+      "swift_line" : 823
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 780
+      "swift_line" : 828
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 819
+      "swift_line" : 867
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 824
+      "swift_line" : 872
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 863
+      "swift_line" : 911
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 868
+      "swift_line" : 916
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 907
+      "swift_line" : 955
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 912
+      "swift_line" : 960
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 951
+      "swift_line" : 999
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 956
+      "swift_line" : 1004
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 995
+      "swift_line" : 1043
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1000
+      "swift_line" : 1048
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1039
+      "swift_line" : 1087
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1044
+      "swift_line" : 1092
     }
   ],
   "tools_used" : [
@@ -416,22 +503,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "This skill guarantees:\nEvery ingested media item has a brain page with analysis (not just a transcript dump)\nTranscripts (video\/audio) saved in raw and human-readable formats\nEntity extraction: every person and company mentioned gets back-linked\nRaw source files preserved via `gbrain files upload-raw`\nFiling by primary subject, not by media format\nEvery mention of a person or company with a brain page MUST create a back-link\nuse judgment to follow the Phases guidance:\nSave the original file for provenance: `gbrain files upload-raw <file> --page <slug>`\nuse judgment to follow the Phase 3: Create brain page guidance:\nFile by primary subject (not format). Use this template:\ncodeblock:markdown:IyB7VGl0bGV9CgoqKlNvdXJjZToqKiB7VVJMIG9yIGZpbGUgcGF0aH0KKipGb3JtYXQ6Kioge3ZpZGVvL2F1ZGlvL1BERi9ib29rL3NjcmVlbnNob3QvcmVwb30KKipDcmVhdGVkOioqIHtkYXRlfQoKIyMgU3VtbWFyeQp7S2V5IHBvaW50cywgbm90IGEgdHJhbnNjcmlwdCBkdW1wfQoKIyMgS2V5IFNlZ21lbnRzIC8gSGlnaGxpZ2h0cwp7Rm9yIHZpZGVvL2F1ZGlvOiB0aW1lc3RhbXBlZCBoaWdobGlnaHRzLiBGb3IgYm9va3M6IGNoYXB0ZXIgc3VtbWFyaWVzLn0KCiMjIFBlb3BsZSBNZW50aW9uZWQKe0xpc3Qgd2l0aCBsaW5rcyB0byBicmFpbiBwYWdlc30KCiMjIENvbXBhbmllcyBNZW50aW9uZWQKe0xpc3Qgd2l0aCBsaW5rcyB0byBicmFpbiBwYWdlc30=\nuse judgment to follow the Phase 4: Entity extraction and propagation guidance:\nCreate\/enrich if needed (delegate to enrich skill)\nAdd timeline entry on entity page\nA media item is NOT fully ingested until entity propagation is complete\nFor every person and company mentioned:\nCheck brain for existing page\nAdd back-link from entity page to this media page\n`gbrain sync` to update the index\nuse judgment to follow the Anti-Patterns guidance:\nDumping raw transcripts without analysis\nSkipping entity extraction (\"I'll do that separately\")\nFiling **raw ingest** by format (all videos in `media\/videos\/`) instead of by subject. Note: format-prefixed paths under `media\/<format>\/<slug>` ARE sanctioned for **synthesized one-of-one output** like book-mirror's `media\/books\/<slug>-personalized.md`. The anti-pattern is for raw ingest, not for sui generis synthesis. See `skills\/_brain-filing-rules.md` \"Sanctioned exception: synthesis output is sui generis.\"\nNot preserving raw source files\nCreating stub pages without meaningful content",
-          "line" : 43,
-          "scoped_tools" : [
-            "link.add",
-            "page.get",
-            "page.search",
-            "publish",
-            "shell.run",
-            "timeline.add"
-          ],
-          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "media-ingest a input",

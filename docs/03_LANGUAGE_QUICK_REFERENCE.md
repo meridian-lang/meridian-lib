@@ -709,6 +709,53 @@ table-header sets (`Condition header synonyms:` / `Action header synonyms:` /
 tags treated as deterministic `shell.run` blocks — e.g. `fish`, `pwsh`, `nu` —
 on top of the default `bash`/`sh`/`shell`/`console`/`zsh`).
 
+### `SkillMigrator` classification synonyms (P1 four-way policy)
+
+Three more `=== language ===` sub-blocks tune how `meridian migrate-skill`
+classifies a non-lowerable line or block into judgment / reference / hard
+error (see [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) for the full
+policy). Like every other category above, a Swift default is not sufficient —
+these are wired through the complete `EnglishLexicon` → `LanguageSynonyms` →
+`MerConfigParser.parseLanguageSection` → `MerConfigFile`/`Compiler.compile`
+recipe (AGENTS.md §3), so a corpus tunes classification entirely through its
+own `.merconfig`, never a Meridian recompile:
+
+```
+=== language ===
+Inference-cue synonyms:
+  triage
+  prioritize
+Normative-cue synonyms:
+  shall
+  is required to
+Reference-heading synonyms:
+  glossary
+  faq
+```
+
+- **`Inference-cue synonyms:`** extends `EnglishLexicon.inferenceCueWords`
+  (default: `analyse`/`analyze`, `assess`, `evaluate`, `judge`, `decide`,
+  `determine`, `interpret`, `consider`, `reason`, `infer`, `diagnose`,
+  `critique`, `synthesize`, `understand`). A whole-word, case-insensitive hit
+  on a non-lowerable line is the **only** signal that may route it to
+  `use judgment to …:` / `ai-discretion` / `ai-autonomy`. A lowerable line
+  that happens to contain one of these words still lowers normally —
+  lowerability is always tested first.
+- **`Normative-cue synonyms:`** extends `EnglishLexicon.normativeCueWords`
+  (default: `must`, `never`, `always`, plus refusal/requirement cues such as
+  `refuse*`/`require*`/`forbidden`/`mandatory`). A hit marks a non-lowerable,
+  cue-less line as an **operational contract**, not documentation — the
+  migrator leaves it unmarked so the real compiler raises its own precise
+  `uncheckablePredicate`/`unresolvedPhrase` diagnostic naming the reword
+  needed, rather than silently filing it as `reference` or wrapping it in
+  judgment.
+- **`Reference-heading synonyms:`** extends
+  `EnglishLexicon.referenceHeadingWords` — heading words (`overview`,
+  `rationale`, `background`, `example`, …) that mark a section as documentary
+  when its body has neither a lowerable statement nor an inference/normative
+  cue. Such a section gets `(( role: reference ))`, never `(( inert ))` — the
+  migrator does not emit that keyword.
+
 **Where the line is — extensible vs. fixed.** Synonym categories above are
 *domain-renamable* and live in `EnglishLexicon`. The closed **grammar skeleton**
 — relativizers, the prose/idiom introducers (`with discretion`, `with autonomy`,
@@ -873,7 +920,8 @@ section body lowers:
 | `negative-applicability` (When NOT To Use, Do NOT Use) | soft-skip guards / negative dispatch predicates |
 | `prohibitions` (Anti-Patterns) | `must not` where checkable |
 | `template` (Output Format, Output Structure) | result template (non-executable) |
-| `inert` (explicit `(( inert ))` marker) | manifest/outline metadata, runs nothing |
+| `reference` (explicit `(( role: reference ))` marker) | manifest/outline metadata, runs nothing — the preferred non-executable-documentation marker |
+| `inert` (explicit `(( inert ))` marker) | manifest/outline metadata, runs nothing — a hand-authorable synonym of `reference`; `meridian migrate-skill` never emits it (see [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md)) |
 
 **No silent drops — three hard errors.** The strict builder never discards
 content:
@@ -884,12 +932,16 @@ content:
    `> **Convention:** …` asides may sit above the first heading.
 2. **An unrecognized heading with content** (no marker, no alias) is a
    `semanticError`: rename it to a recognized role, add a `=== sections ===`
-   alias, force a role with `(( role: <R> ))`, or mark it `(( inert ))`.
+   alias, force a role with `(( role: <R> ))`, or mark it
+   `(( role: reference ))` (or the hand-authorable `(( inert ))` synonym).
 3. **A non-checkable `Contract`/`Anti-Patterns` item** (prose, not a structural
    comparison or quantifier) is a `semanticError`. Rephrase it as a comparison,
    quantifier, or `make sure …` / `ensure …` assertion, or mark the
    section `(( inert, role: invariants ))` / `(( inert, role: prohibitions ))`
-   to keep it as labelled documentation.
+   to keep it as labelled documentation. (`meridian migrate-skill` never emits
+   this marker itself — a cue-less non-checkable item is left for this exact
+   `semanticError` to catch, naming the reword needed; see
+   [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md).)
 
 **Fuzzy applicability = hard error.** An applicability condition that is neither
 a literal dispatch phrase nor structurally checkable (e.g. "the request is
@@ -932,9 +984,10 @@ against the declared phrases — see
 
 ### Inform 7-tier surface (Wave 1)
 
-Four deterministic forms that let a gbrain `SKILL.md` port with fewer inert
-sections and shorter judgment blocks. All are closed grammars — an ambiguity is
-a sourced error, never a guess — and none add an IR primitive.
+Four deterministic forms that let a gbrain `SKILL.md` port with fewer
+`(( role: reference ))` sections and shorter judgment blocks. All are closed
+grammars — an ambiguity is a sourced error, never a guess — and none add an IR
+primitive.
 
 **Command annotation (1A).** A trailing ` -- <note>` *outside* backticks is
 stripped and carried as a source comment above the emitted `shell.run`:
@@ -980,7 +1033,8 @@ scoped-tool set and the manifest `tools_used`. **Two bullet forms are accepted**
 ```
 
 A bullet matching neither form (e.g. a backticked CLI command whose token
-contains spaces) is a hard error — such a section should stay `(( inert ))`.
+contains spaces) is a hard error — such a section should stay
+`(( role: reference ))` (or the hand-authorable `(( inert ))` synonym).
 An invariant of the form `every emitted <noun> matches pattern "<regex>"`
 lowers to an `AssertIR` over `meridianRegexMatches`.
 

@@ -2,12 +2,11 @@
 
 > Routes a DBA request to the deterministic stored-procedure skill that owns it.
 
-## Dispatch table (( inert ))
+## Dispatch table
 
 
-### Dispatch table — steps
+### Dispatch table — steps (( role: reference ))
 
-!!! table (( ai-discretion ))
 | trigger phrase | skill |
 | --- | --- |
 | reconcile ledger | reconcileledger |
@@ -19,8 +18,7 @@
 | purge expired records | purgeexpired |
 | settle ready batches | settlebatch |
 
-## Workflow
-use judgment to follow the Workflow guidance:
+## Workflow (( role: reference ))
 
 Look up the skill corresponding to the trigger phrase and emit the selected
 skill id.

@@ -601,15 +601,63 @@ public struct MediaIngestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "MediaIngestInput", parameters: [:])
 
-        // L43
-        let __meridianProseResults_L43 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["link.add", "page.get", "page.search", "publish", "shell.run", "timeline.add"],
-            guidance: "This skill guarantees:\nEvery ingested media item has a brain page with analysis (not just a transcript dump)\nTranscripts (video/audio) saved in raw and human-readable formats\nEntity extraction: every person and company mentioned gets back-linked\nRaw source files preserved via `gbrain files upload-raw`\nFiling by primary subject, not by media format\nEvery mention of a person or company with a brain page MUST create a back-link\nuse judgment to follow the Phases guidance:\nSave the original file for provenance: `gbrain files upload-raw <file> --page <slug>`\nuse judgment to follow the Phase 3: Create brain page guidance:\nFile by primary subject (not format). Use this template:\ncodeblock:markdown:IyB7VGl0bGV9CgoqKlNvdXJjZToqKiB7VVJMIG9yIGZpbGUgcGF0aH0KKipGb3JtYXQ6Kioge3ZpZGVvL2F1ZGlvL1BERi9ib29rL3NjcmVlbnNob3QvcmVwb30KKipDcmVhdGVkOioqIHtkYXRlfQoKIyMgU3VtbWFyeQp7S2V5IHBvaW50cywgbm90IGEgdHJhbnNjcmlwdCBkdW1wfQoKIyMgS2V5IFNlZ21lbnRzIC8gSGlnaGxpZ2h0cwp7Rm9yIHZpZGVvL2F1ZGlvOiB0aW1lc3RhbXBlZCBoaWdobGlnaHRzLiBGb3IgYm9va3M6IGNoYXB0ZXIgc3VtbWFyaWVzLn0KCiMjIFBlb3BsZSBNZW50aW9uZWQKe0xpc3Qgd2l0aCBsaW5rcyB0byBicmFpbiBwYWdlc30KCiMjIENvbXBhbmllcyBNZW50aW9uZWQKe0xpc3Qgd2l0aCBsaW5rcyB0byBicmFpbiBwYWdlc30=\nuse judgment to follow the Phase 4: Entity extraction and propagation guidance:\nCreate/enrich if needed (delegate to enrich skill)\nAdd timeline entry on entity page\nA media item is NOT fully ingested until entity propagation is complete\nFor every person and company mentioned:\nCheck brain for existing page\nAdd back-link from entity page to this media page\n`gbrain sync` to update the index\nuse judgment to follow the Anti-Patterns guidance:\nDumping raw transcripts without analysis\nSkipping entity extraction (\"I'll do that separately\")\nFiling **raw ingest** by format (all videos in `media/videos/`) instead of by subject. Note: format-prefixed paths under `media/<format>/<slug>` ARE sanctioned for **synthesized one-of-one output** like book-mirror's `media/books/<slug>-personalized.md`. The anti-pattern is for raw ingest, not for sui generis synthesis. See `skills/_brain-filing-rules.md` \"Sanctioned exception: synthesis output is sui generis.\"\nNot preserving raw source files\nCreating stub pages without meaningful content"
-        )
-        for (__key, __value) in __meridianProseResults_L43 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L137:C0") {
+            // L137
+            try await runtime.assert(!(MeridianComparison.eq(state.get("(filingRawIngestByFormat(allVideosIn`media/videos/`)InsteadOfBySubject.Note:Format-prefixedPathsUnder`media/<format>/<slug>`AreSanctionedForSynthesizedOne-of-oneOutputLikeBook-mirror.`media/books/<slug>-personalized.md`.TheAnti-pattern"), state.get("forRawIngest,NotForSuiGenerisSynthesis.See`skills/Brain-filing-rules.md`\"sanctionedException:SynthesisOutputIsSuiGeneris.\")"))), message: "Expected not (Filing raw ingest by format (all videos in `media/videos/`) instead of by subject. Note: format-prefixed paths under `media/<format>/<slug>` ARE sanctioned for synthesized one-of-one output like book-mirror's `media/books/<slug>-personalized.md`. The anti-pattern is for raw ingest, not for sui generis synthesis. See `skills/_brain-filing-rules.md` \"Sanctioned exception: synthesis output is sui generis.\")")
+            try await runtime.checkpoint(label: "progress:0.0:L137:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L76:C0") {
+            // L76
+            // Save the original file for provenance
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain files upload-raw <file> --page <slug>"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L76:C0", state: state.snapshot())
+        }
+        // L112
+        for (__meridianLoopIndex_0_2, personAndCompanyMentioned) in (state.get("personandcompanymentioneds")?.asList ?? []).enumerated() {
+            let __meridianLoopLabel_0_2 = "progress:0.2:iteration:\(__meridianLoopIndex_0_2)"
+            if __meridianShouldRun(__meridianLoopLabel_0_2) {
+            state.bind("personAndCompanyMentioned", personAndCompanyMentioned)
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
+            }
+        }
+
+        if __meridianShouldRun("progress:0.3:L154:C0") {
+            // L154
+            let health = try await runtime.invoke(tool: "health.get", args: [:])
+            state.bind("health", health)
+
+            try await runtime.checkpoint(label: "progress:0.3:L154:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.4:L133:C0") {
+            // L133
+            let link = try await runtime.invoke(
+                tool: "link.add",
+                args: [
+                    "entity page": state.get("entityPage") ?? .null,
+                    "this media page": state.get("thisMediaPage") ?? .null,
+                ]
+            )
+            state.bind("link", link)
+
+            try await runtime.checkpoint(label: "progress:0.4:L133:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.5:L120:C0") {
+            // L120
+            // to update the index
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain sync"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.5:L120:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

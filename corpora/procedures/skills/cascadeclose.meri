@@ -8,13 +8,11 @@ triggers:
 
 # Cascade Close
 
-## Invocation (( role: procedure ))
-use judgment to follow the Invocation guidance:
+## Invocation
 - "cascade close"
 - "orphaned audit rows"
 
-## Transaction body
-use judgment to follow the Transaction body guidance:
+## Transaction body (( role: reference ))
 Check: any orphaned audit rows.
 
 ### Transaction body — steps
@@ -26,6 +24,9 @@ fetch orphaned audit rows.
 
 Emit: "orphaned audit rows recorded for deterministic close".
 
-## DBA notes (( inert ))
+## DBA notes
+
+### DBA notes — steps (( role: reference ))
+
 The source system owns physical cascade delete; Meridian records the deterministic
 audit close and refuses to invent a hidden datastore.

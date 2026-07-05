@@ -598,15 +598,126 @@ public struct PublishInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "PublishInput", parameters: [:])
 
-        // L25
-        let __meridianProseResults_L25 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.get", "page.search", "shell.run"],
-            guidance: "Published HTML is fully self-contained: no external dependencies, no server needed\nAll private metadata (frontmatter, source citations, confirmation numbers, brain cross-links, timeline) is stripped before publishing\nPassword protection uses AES-256-GCM with PBKDF2 key derivation; plaintext never appears in the encrypted HTML file\nDefault is always encrypted unless the user explicitly requests \"open\", \"no password\", or \"public\"\nExternal URLs (`https://...`) are preserved; only internal brain paths are stripped\nUser asks to share a brain page, create a shareable link, or says \"give me a page\"\nUser wants to send a deal memo, person briefing, or research to someone external\nUser asks to publish a data room analysis or trip plan\nAny time brain content needs to leave the brain without exposing the whole system\ncodeblock:bash:IyBCYXNpYyBwdWJsaXNoIChvdXRwdXRzIGxvY2FsIEhUTUwgZmlsZSkKZ2JyYWluIHB1Ymxpc2ggYnJhaW4vY29tcGFuaWVzL2FjbWUubWQKCiMgUGFzc3dvcmQgcHJvdGVjdGVkIChhdXRvLWdlbmVyYXRlIHBhc3N3b3JkKQpnYnJhaW4gcHVibGlzaCBicmFpbi9jb21wYW5pZXMvYWNtZS5tZCAtLXBhc3N3b3JkCgojIFBhc3N3b3JkIHByb3RlY3RlZCAoc3BlY2lmaWMgcGFzc3dvcmQpCmdicmFpbiBwdWJsaXNoIGJyYWluL2NvbXBhbmllcy9hY21lLm1kIC0tcGFzc3dvcmQgInNlY3JldDEyMyIKCiMgQ3VzdG9tIHRpdGxlCmdicmFpbiBwdWJsaXNoIGJyYWluL2NvbXBhbmllcy9hY21lLm1kIC0tcGFzc3dvcmQgLS10aXRsZSAiQWNtZSAtLSBEZWFsIEFuYWx5c2lzIgoKIyBDdXN0b20gb3V0cHV0IHBhdGgKZ2JyYWluIHB1Ymxpc2ggYnJhaW4vY29tcGFuaWVzL2FjbWUubWQgLS1vdXQgL3RtcC9hY21lLXNoYXJlLmh0bWw=\ntable:ai-discretion:fCBTdHJpcHBlZCB8IEV4YW1wbGUgfCBXaHkgfAp8LS0tLS0tLS0tfC0tLS0tLS0tLXwtLS0tLXwKfCBZQU1MIGZyb250bWF0dGVyIHwgYHRpdGxlOmAsIGB0eXBlOmAsIGB0YWdzOmAgfCBJbnRlcm5hbCBtZXRhZGF0YSB8CnwgYFtTb3VyY2U6IC4uLl1gIGNpdGF0aW9ucyB8IEFsbCBmb3JtYXRzIHwgUHJvdmVuYW5jZSBpcyBpbnRlcm5hbCB8CnwgQ29uZmlybWF0aW9uIG51bWJlcnMgfCBgQUJDMTIzREVGYCAtPiAib24gZmlsZSIgfCBQSUkvYm9va2luZyBkYXRhIHwKfCBCcmFpbiBjcm9zcy1saW5rcyB8IGBKYW5lYCAtPiBgSmFuZWAgfCBJbnRlcm5hbCBwYXRocyB8CnwgVGltZWxpbmUgc2VjdGlvbiB8IEV2ZXJ5dGhpbmcgYmVsb3cgYC0tLWAgLyBgIyMgVGltZWxpbmVgIHwgUmF3IGV2aWRlbmNlIGxvZyB8CnwgIlNlZSBhbHNvIiBsaW5lcyB8IEludGVybmFsIHJlZmVyZW5jZXMgfCBCcmFpbiBuYXZpZ2F0aW9uIHw=\nPreserved: external URLs (`https://...`), all other content\ncodeblock:bash:Z2JyYWluIHB1Ymxpc2ggYnJhaW4vdHJpcHMvamFwYW4tMjAyNi5tZCAtLW91dCB0cmlwLmh0bWwKIyBVcGxvYWQgdG8gYSBHaXRIdWIgR2lzdCBvciBQYWdlcyByZXBv\nuse judgment to follow the Password Protection Details guidance:\n**Algorithm:** AES-256-GCM\n**Key derivation:** PBKDF2 with 100K iterations, SHA-256\n**Salt:** Random 16 bytes per encryption\n**IV:** Random 12 bytes per encryption\n**Decryption:** Client-side via Web Crypto API (SubtleCrypto)\n**No server auth needed** -- the HTML file is self-contained\n**\"Remember on this device\"** -- saves password in localStorage\nWhen encrypted, the published HTML contains ONLY ciphertext. The plaintext is\nnot present anywhere in the file\ncodeblock:bash:Z2JyYWluIHB1Ymxpc2ggYnJhaW4vY29tcGFuaWVzL2FjbWUubWQgLS1wYXNzd29yZCAic2FtZS1wYXNzd29yZCIgLS1vdXQgc2hhcmVzL2FjbWUuaHRtbA==\nuse judgment to follow the Anti-Patterns guidance:\n**Publishing without encryption.** Brain content is private. Default to password-protected unless the user explicitly says \"open\", \"no password\", or \"public\"\n**Sharing password and URL in the same channel.** Always share the password via a different channel than the URL for security\n**Assuming the user wants raw markdown.** The publish command produces beautiful HTML. Don't copy-paste markdown when `gbrain publish` exists\n**Including internal metadata.** Never manually share content that contains frontmatter, source citations, or timeline sections. Let the publish command strip it"
-        )
-        for (__key, __value) in __meridianProseResults_L25 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L52:C0") {
+            // L52
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain publish brain/companies/acme.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L52:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L52:C0") {
+            // L52
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain publish brain/companies/acme.md --password"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L52:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L52:C0") {
+            // L52
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain publish brain/companies/acme.md --password \"secret123\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L52:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L52:C0") {
+            // L52
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain publish brain/companies/acme.md --password --title \"Acme -- Deal Analysis\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.3:L52:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.4:L52:C0") {
+            // L52
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain publish brain/companies/acme.md --out /tmp/acme-share.html"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.4:L52:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.5:L96:C0") {
+            // L96
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain publish brain/people/jane-doe.md --password --out ~/Desktop/jane-briefing.html"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.5:L96:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.6:L107:C0") {
+            // L107
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain publish brain/companies/acme.md --password \"secret\" --out /tmp/acme.html"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.6:L107:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.7:L107:C0") {
+            // L107
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain files upload /tmp/acme.html --page shares/acme"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.7:L107:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.8:L107:C0") {
+            // L107
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain files signed-url shares/acme/acme.html"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.8:L107:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.9:L126:C0") {
+            // L126
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain publish brain/trips/japan-2026.md --out trip.html"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.9:L126:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.10:L155:C0") {
+            // L155
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain publish brain/companies/acme.md --password \"same-password\" --out shares/acme.html"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.10:L155:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

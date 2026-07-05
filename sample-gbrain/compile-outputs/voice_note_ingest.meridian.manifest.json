@@ -104,153 +104,171 @@
         "text" : "Iron Law"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 41,
+        "line" : 35,
         "text" : "Iron Law — steps"
       },
       {
         "kind" : "procedure",
+        "level" : 3,
+        "line" : 41,
+        "text" : "Iron Law — steps 2"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 47,
+        "text" : "Iron Law — steps 3"
+      },
+      {
+        "kind" : "applicability",
         "level" : 2,
-        "line" : 46,
+        "line" : 52,
         "text" : "When to invoke"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 54,
+        "line" : 59,
         "text" : "The pipeline"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 72,
+        "line" : 77,
         "text" : "Decision tree (where the content goes)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 91,
+        "line" : 96,
         "text" : "Decision tree (where the content goes) — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 96,
+        "line" : 101,
         "text" : "Decision tree (where the content goes) — steps 2"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 101,
+        "line" : 106,
         "text" : "Decision tree (where the content goes) — steps 3"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 106,
+        "line" : 111,
         "text" : "Decision tree (where the content goes) — steps 4"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 111,
+        "line" : 116,
         "text" : "Decision tree (where the content goes) — steps 5"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 116,
+        "line" : 121,
         "text" : "Decision tree (where the content goes) — steps 6"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 123,
+        "line" : 128,
         "text" : "Brain page format"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 169,
+        "line" : 174,
         "text" : "Citation format"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 181,
+        "line" : 186,
         "text" : "Naming convention"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 187,
+        "line" : 192,
         "text" : "Bulk vs. single"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 191,
+        "line" : 196,
         "text" : "Bulk vs. single — steps"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 195,
+        "line" : 200,
         "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 208,
+        "text" : "Anti-Patterns — steps"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 206,
+        "line" : 213,
         "text" : "Related skills"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 209,
+        "line" : 216,
         "text" : "Related skills — steps"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 217,
+        "line" : 224,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 229,
+        "line" : 235,
         "text" : "Output Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 175,
+        "line" : 180,
         "text" : "Include timestamps when available"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 183,
+        "line" : 188,
         "text" : "Audio files"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 185,
+        "line" : 190,
         "text" : "Brain pages"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 220,
+        "line" : 226,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 225,
+        "line" : 231,
         "text" : "Privacy contract preserved"
       }
     ],
@@ -260,18 +278,35 @@
         "heading" : "Iron Law",
         "line" : 32,
         "lines" : [
-          "use judgment to follow the Iron Law guidance:",
-          "The user's **exact words** are the insight. Never paraphrase. Never clean",
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Iron Law — steps",
+        "line" : 35,
+        "lines" : [
+          "The user's exact words are the insight. Never paraphrase. Never clean",
           "up. The vivid, unpolished, stream-of-consciousness phrasing captures",
-          "something that cleaned-up prose does not. Preserve it in block quotes",
+          "something that cleaned-up prose does not. Preserve it in block quotes"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Iron Law — steps 2",
+        "line" : 41,
+        "lines" : [
+          "use judgment to follow the Iron Law — steps 2 guidance:",
           "The Analysis section can interpret; the transcript section is sacred"
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
-        "heading" : "Iron Law — steps",
-        "line" : 41,
+        "heading" : "Iron Law — steps 3",
+        "line" : 47,
         "lines" : [
           "✅ `\"The ambition-to-lifespan ratio has never been more fucked\"`",
           "❌ `User noted the tension between ambition and mortality`"
@@ -281,29 +316,28 @@
       {
         "executes" : true,
         "heading" : "When to invoke",
-        "line" : 46,
+        "line" : 52,
         "lines" : [
-          "use judgment to follow the When to invoke guidance:",
           "The user sends an audio or voice message via any channel (Telegram, voice",
           "memo upload, openclaw audio attachment). The host agent typically provides",
           "the transcript text. If not, transcribe via `gbrain transcription` (Groq",
           "Whisper by default; OpenAI fallback for audio > 25MB segmented via ffmpeg)"
         ],
-        "role" : "procedure"
+        "role" : "applicability"
       },
       {
         "executes" : false,
         "heading" : "The pipeline",
-        "line" : 54,
+        "line" : 59,
         "lines" : [
           "codeblock:plain:MS4gU1RPUkUgICAgICAg4oaSIFVwbG9hZCBvcmlnaW5hbCBhdWRpbyB0byBnYnJhaW4gc3RvcmFnZSBiYWNrZW5kCiAgICAgICAgICAgICAgICAgKFMzIC8gU3VwYWJhc2UgU3RvcmFnZSAvIGxvY2FsIOKAlCBwbHVnZ2FibGUgcGVyCiAgICAgICAgICAgICAgICAgc3JjL2NvcmUvc3RvcmFnZS50cykuCjIuIFRSQU5TQ1JJQkUgIOKGkiBVc2UgdGhlIGFnZW50LXByb3ZpZGVkIHRyYW5zY3JpcHQgdmVyYmF0aW0sIE9SIGNhbGwKICAgICAgICAgICAgICAgICBnYnJhaW4gdHJhbnNjcmlwdGlvbiBpZiBubyB0cmFuc2NyaXB0IHdhcyBzdXBwbGllZC4KMy4gUk9VVEUgICAgICAg4oaSIEFwcGx5IHRoZSBkZWNpc2lvbiB0cmVlIChiZWxvdykgdG8gZmluZCB0aGUgcmlnaHQKICAgICAgICAgICAgICAgICBkZXN0aW5hdGlvbiBkaXJlY3RvcnkuCjQuIFdSSVRFICAgICAgIOKGkiBDcmVhdGUgLyB1cGRhdGUgdGhlIGRlc3RpbmF0aW9uIGJyYWluIHBhZ2U7IHByZXNlcnZlIHRoZQogICAgICAgICAgICAgICAgIHZlcmJhdGltIHRyYW5zY3JpcHQgaW4gYSBibG9jay1xdW90ZWQgIlVzZXIncyBXb3JkcyIKICAgICAgICAgICAgICAgICBzZWN0aW9uLgo1LiBDUk9TUy1MSU5LICDihpIgRm9yIGV2ZXJ5IGVudGl0eSBtZW50aW9uZWQgKHBlcnNvbiwgY29tcGFueSksIGFkZCBhCiAgICAgICAgICAgICAgICAgdGltZWxpbmUgYmFjay1saW5rIGZyb20gVEhFSVIgYnJhaW4gcGFnZSB0byBUSElTIG9uZQogICAgICAgICAgICAgICAgIChJcm9uIExhdyBwZXIgY29udmVudGlvbnMvcXVhbGl0eS5tZCku"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Decision tree (where the content goes)",
-        "line" : 72,
+        "line" : 77,
         "lines" : [
           "Apply in order. First match wins. If multiple categories apply, file to",
           "the primary directory and cross-link to the others",
@@ -320,20 +354,11 @@
           "others. If the voice note covers a person AND a novel idea, create the",
           "originals\/ page AND update the person's timeline"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Decision tree (where the content goes) — steps",
-        "line" : 91,
-        "lines" : [
-
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Decision tree (where the content goes) — steps 2",
         "line" : 96,
         "lines" : [
 
@@ -342,7 +367,7 @@
       },
       {
         "executes" : true,
-        "heading" : "Decision tree (where the content goes) — steps 3",
+        "heading" : "Decision tree (where the content goes) — steps 2",
         "line" : 101,
         "lines" : [
 
@@ -351,7 +376,7 @@
       },
       {
         "executes" : true,
-        "heading" : "Decision tree (where the content goes) — steps 4",
+        "heading" : "Decision tree (where the content goes) — steps 3",
         "line" : 106,
         "lines" : [
 
@@ -360,7 +385,7 @@
       },
       {
         "executes" : true,
-        "heading" : "Decision tree (where the content goes) — steps 5",
+        "heading" : "Decision tree (where the content goes) — steps 4",
         "line" : 111,
         "lines" : [
 
@@ -369,8 +394,17 @@
       },
       {
         "executes" : true,
-        "heading" : "Decision tree (where the content goes) — steps 6",
+        "heading" : "Decision tree (where the content goes) — steps 5",
         "line" : 116,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Decision tree (where the content goes) — steps 6",
+        "line" : 121,
         "lines" : [
           "None of the above \/ random thought \/ doesn't fit cleanly —",
           "→ `voice-notes\/YYYY-MM-DD-<slug>.md` (catch-all)"
@@ -380,7 +414,7 @@
       {
         "executes" : false,
         "heading" : "Brain page format",
-        "line" : 123,
+        "line" : 128,
         "lines" : [
           "For ALL voice-note-derived pages, include this skeleton:",
           "codeblock:markdown:LS0tCnRpdGxlOiAiW1RpdGxlIGRlcml2ZWQgZnJvbSBjb250ZW50XSIKdHlwZTogW29yaWdpbmFsIHwgY29uY2VwdCB8IHZvaWNlLW5vdGUgfCAuLi5dCmNyZWF0ZWQ6IFlZWVktTU0tREQKdXBkYXRlZDogWVlZWS1NTS1ERAp0YWdzOiBbdm9pY2Utbm90ZSwgcmVsZXZhbnQtdGFnc10Kc291cmNlczoKICB2b2ljZS1ub3RlOgogICAgdHlwZTogdm9pY2Vfbm90ZQogICAgc3RvcmFnZV9wYXRoOiAiW2dicmFpbiBzdG9yYWdlIFVSTCBvciByZWxhdGl2ZSBwYXRoXSIKICAgIGFjcXVpcmVkOiBZWVlZLU1NLURECiAgICBhY3F1aXJlZF92aWE6ICJ2b2ljZSBub3RlIGZyb20gPGNoYW5uZWw+IgotLS0KCiMgVGl0bGUKCj4gRXhlY3V0aXZlIHN1bW1hcnkgb2Ygd2hhdCB3YXMgc2FpZCBhbmQgd2h5IGl0IG1hdHRlcnMuCgojIyBVc2VyJ3MgV29yZHMKCj4gIkV4YWN0IHRyYW5zY3JpcHQsIHZlcmJhdGltLCBwcmVzZXJ2aW5nIGV2ZXJ5IHdvcmQsIGhlc2l0YXRpb24sIGFuZCB2ZXJiYWwKPiB0aWMuIFRoaXMgaXMgdGhlIHByaW1hcnkgc291cmNlIG1hdGVyaWFsLiBEbyBub3QgZWRpdC4iCgrwn5SKIFtBdWRpb10oW2dicmFpbiBzdG9yYWdlIFVSTCBvciByZWxhdGl2ZSBwYXRoXSkKCiMjIEFuYWx5c2lzCgpbV2hhdCB0aGlzIG1lYW5zLCB3aHkgaXQgbWF0dGVycywgY29ubmVjdGlvbnMgdG8gb3RoZXIgdGhpbmtpbmcuIFRoZQphbmFseXNpcyBpcyB0aGUgYWdlbnQncyBpbnRlcnByZXRhdGlvbjsgdGhlIHRyYW5zY3JpcHQgYWJvdmUgaXMgc2FjcmVkLl0KCiMjIFNlZSBBbHNvCgotIFtSZWxhdGVkIGJyYWluIHBhZ2VzIHdpdGggcmVsYXRpdmUgbGlua3NdCgotLS0KCiMjIFRpbWVsaW5lCgotICoqWVlZWS1NTS1ERCoqIHwgdm9pY2Ugbm90ZSBmcm9tIDxjaGFubmVsPiDigJQgW0JyaWVmIGRlc2NyaXB0aW9uXQ=="
@@ -390,18 +424,18 @@
       {
         "executes" : false,
         "heading" : "Citation format",
-        "line" : 169,
+        "line" : 174,
         "lines" : [
           "codeblock:plain:W1NvdXJjZTogdm9pY2Ugbm90ZSwgPGNoYW5uZWw+LCBZWVlZLU1NLUREXQ==",
           "Include timestamps when available:",
           "codeblock:plain:W1NvdXJjZTogdm9pY2Ugbm90ZSwgPGNoYW5uZWw+LCBZWVlZLU1NLUREIEhIOk1NIFBUXQ=="
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Naming convention",
-        "line" : 181,
+        "line" : 186,
         "lines" : [
           "Audio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,",
           "`2026-04-13-rick-rubin-creative-philosophy.ogg`)",
@@ -412,41 +446,48 @@
       {
         "executes" : false,
         "heading" : "Bulk vs. single",
-        "line" : 187,
+        "line" : 192,
         "lines" : [
           "This skill handles ONE voice note at a time. Each is its own ingest cycle"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Bulk vs. single — steps",
-        "line" : 191,
+        "line" : 196,
         "lines" : [
           "No batching"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 195,
+        "line" : 200,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "❌ **Paraphrasing the transcript.** The exact words are the signal",
           "❌ **Cleaning up hesitations or filler words** (\"um\", \"like\", \"you",
           "know\"). The texture matters.",
           "❌ **Creating a page with no entity cross-links** when people\/companies",
-          "were mentioned. Iron Law fail",
-          "❌ **Skipping the audio storage step.** Always upload the original; the",
-          "brain page has a `🔊 [Audio]` link back to it"
+          "were mentioned. Iron Law fail"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 208,
+        "lines" : [
+          "❌ Skipping the audio storage step. Always upload the original; the",
+          "brain page has a `🔊 [Audio]` link back to it"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
         "heading" : "Related skills",
-        "line" : 206,
+        "line" : 213,
         "lines" : [
 
         ],
@@ -455,7 +496,7 @@
       {
         "executes" : true,
         "heading" : "Related skills — steps",
-        "line" : 209,
+        "line" : 216,
         "lines" : [
           "`skills\/signal-detector\/SKILL.md` — same exact-phrasing pattern for",
           "text-channel idea capture",
@@ -465,11 +506,10 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
-        "line" : 217,
+        "line" : 224,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
           "Output written under the directories listed in `writes_to:` (when applicable)",
@@ -477,12 +517,12 @@
           "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
           "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 229,
+        "line" : 235,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -530,7 +570,7 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 33,
+      "meridian_line" : 43,
       "swift_line" : 603
     },
     {
@@ -597,8 +637,8 @@
       "prose_steps" : [
         {
           "dispatch_mode" : "plan_then_execute",
-          "guidance" : "The user's **exact words** are the insight. Never paraphrase. Never clean\nup. The vivid, unpolished, stream-of-consciousness phrasing captures\nsomething that cleaned-up prose does not. Preserve it in block quotes\nThe Analysis section can interpret; the transcript section is sacred\n✅ `\"The ambition-to-lifespan ratio has never been more fucked\"`\n❌ `User noted the tension between ambition and mortality`\nuse judgment to follow the When to invoke guidance:\nThe user sends an audio or voice message via any channel (Telegram, voice\nmemo upload, openclaw audio attachment). The host agent typically provides\nthe transcript text. If not, transcribe via `gbrain transcription` (Groq\nWhisper by default; OpenAI fallback for audio > 25MB segmented via ffmpeg)\nNone of the above \/ random thought \/ doesn't fit cleanly —\n→ `voice-notes\/YYYY-MM-DD-<slug>.md` (catch-all)\nAudio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,\n`2026-04-13-rick-rubin-creative-philosophy.ogg`)\nBrain pages: match the slug of the destination directory\nNo batching\nuse judgment to follow the Anti-Patterns guidance:\n❌ **Paraphrasing the transcript.** The exact words are the signal\n❌ **Cleaning up hesitations or filler words** (\"um\", \"like\", \"you\nknow\"). The texture matters.\n❌ **Creating a page with no entity cross-links** when people\/companies\nwere mentioned. Iron Law fail\n❌ **Skipping the audio storage step.** Always upload the original; the\nbrain page has a `🔊 [Audio]` link back to it\n`skills\/signal-detector\/SKILL.md` — same exact-phrasing pattern for\ntext-channel idea capture\n`skills\/idea-ingest\/SKILL.md` — for typed-text idea ingestion\n`skills\/conventions\/quality.md` — citation + back-link rules\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test",
-          "line" : 33,
+          "guidance" : "The Analysis section can interpret; the transcript section is sacred\n✅ `\"The ambition-to-lifespan ratio has never been more fucked\"`\n❌ `User noted the tension between ambition and mortality`\nNone of the above \/ random thought \/ doesn't fit cleanly —\n→ `voice-notes\/YYYY-MM-DD-<slug>.md` (catch-all)\nAudio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,\n`2026-04-13-rick-rubin-creative-philosophy.ogg`)\nBrain pages: match the slug of the destination directory\nNo batching\n`skills\/signal-detector\/SKILL.md` — same exact-phrasing pattern for\ntext-channel idea capture\n`skills\/idea-ingest\/SKILL.md` — for typed-text idea ingestion\n`skills\/conventions\/quality.md` — citation + back-link rules",
+          "line" : 43,
           "scoped_tools" : [
             "assess.notability",
             "capture",
@@ -620,7 +660,7 @@
             "timeline.add",
             "verify"
           ],
-          "text" : "follow the Iron Law guidance"
+          "text" : "follow the Iron Law — steps 2 guidance"
         }
       ],
       "source_name" : "voice-note-ingest a input",

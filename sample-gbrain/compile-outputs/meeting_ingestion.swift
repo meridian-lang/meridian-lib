@@ -601,15 +601,26 @@ public struct MeetingIngestionInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "MeetingIngestionInput", parameters: [:])
 
-        // L33
-        let __meridianProseResults_L33 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["link.add", "page.get", "page.search", "publish", "shell.run", "timeline.add"],
-            guidance: "This skill guarantees:\nMeeting page created with attendees, summary, key decisions, action items\nEVERY attendee gets a people page (created or updated)\nEVERY company discussed gets entity propagation\nTimeline entries on ALL mentioned entities (timeline merge)\nMeeting is NOT fully ingested until enrich runs for every entity\nBack-links created bidirectionally\nEvery attendee and company mentioned MUST get a back-link from their page to\nthe meeting page. An unlinked mention is a broken brain\nuse judgment to follow the Phases guidance:\nuse judgment to follow the Phase 1: Parse the transcript guidance:\nExtract from the transcript:\nAttendees (names, roles if available)\nDate, time, duration\nKey topics discussed\nDecisions made\nAction items with owners\nCompanies and projects mentioned\nuse judgment to follow the Phase 2: Create meeting page guidance:\ncodeblock:markdown:IyB7TWVldGluZyBUaXRsZX0g4oCUIHtEYXRlfQoKKipBdHRlbmRlZXM6Kioge2xpc3Qgd2l0aCBsaW5rcyB0byBwZW9wbGUgcGFnZXN9CioqRGF0ZToqKiB7WVlZWS1NTS1ERH0KKipEdXJhdGlvbjoqKiB7aWYgYXZhaWxhYmxlfQoKIyMgU3VtbWFyeQp7My01IGJ1bGxldCBrZXkgb3V0Y29tZXN9CgojIyBLZXkgRGVjaXNpb25zCntEZWNpc2lvbnMgd2l0aCBjb250ZXh0fQoKIyMgQWN0aW9uIEl0ZW1zCntUYXNrcyB3aXRoIG93bmVycyBhbmQgZGVhZGxpbmVzfQoKIyMgRGlzY3Vzc2lvbiBOb3Rlcwp7U3RydWN0dXJlZCBub3RlcyBieSB0b3BpY30=\nuse judgment to follow the Phase 3: Attendee enrichment (MANDATORY) guidance:\n`gbrain search \"{name}\"` — does a people page exist?\nIf NO → create via enrich skill (this is mandatory, not optional)\nIf YES → update compiled truth with meeting context\n**Note (v0.10.1):** Once the meeting page is written via `gbrain put`, the\nauto-link post-hook automatically creates `attended` links from the meeting\nneed to call `gbrain link` for attendees. You DO still need `gbrain timeline-add`\nfor dated events (auto-link only handles links, not timeline entries)\nFor EACH attendee:\n`gbrain timeline-add <person-slug> <date> \"Attended <meeting-title>\"`\nFor each company, project, or concept discussed:\nCheck brain for existing page\nCreate/update as needed\nAdd timeline entry referencing the meeting\nBack-link from entity page to meeting page\nuse judgment to follow the Phase 5: Timeline merge guidance:\nThe same event appears on ALL mentioned entities' timelines. If Alice met Bob at\nAcme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page\n`gbrain sync` to update the index\nuse judgment to follow the Anti-Patterns guidance:\nCreating the meeting page without enriching attendees\nSkipping entity propagation (\"I'll do that later\")\nNot merging timelines across all mentioned entities\nCreating attendee stubs without meaningful content\nFiling meeting pages without cross-linking to all participants"
-        )
-        for (__key, __value) in __meridianProseResults_L33 {
-            state.bind(__key, __value)
+        // L97
+        for (__meridianLoopIndex_0_0, attendee) in (state.get("attendees")?.asList ?? []).enumerated() {
+            let __meridianLoopLabel_0_0 = "progress:0.0:iteration:\(__meridianLoopIndex_0_0)"
+            if __meridianShouldRun(__meridianLoopLabel_0_0) {
+            state.bind("attendee", attendee)
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_0, state: state.snapshot())
+            }
+        }
+
+        if __meridianShouldRun("progress:0.1:L123:C0") {
+            // L123
+            // to update the index
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain sync"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L123:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

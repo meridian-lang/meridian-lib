@@ -98,97 +98,132 @@
     "name" : "skillpack-check",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 26,
         "text" : "Contract"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 40,
+        "text" : "Contract — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 42,
+        "line" : 45,
         "text" : "When to run"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 51,
+        "line" : 53,
         "text" : "What to do with the output"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 53,
+        "line" : 55,
         "text" : "Happy path (`healthy: true`)"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 57,
+        "line" : 59,
         "text" : "Action needed (`healthy: false`)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 68,
+        "text" : "Action needed (`healthy: false`) — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 82,
+        "text" : "Action needed (`healthy: false`) — steps 2"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 84,
+        "line" : 86,
         "text" : "Determine failure (`exit 2`)"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 89,
+        "text" : "Determine failure (`exit 2`) — steps"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 96,
+        "line" : 98,
         "text" : "Output format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 120,
+        "line" : 122,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 130,
+        "line" : 131,
         "text" : "Anti-Patterns — steps"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 134,
+        "line" : 135,
         "text" : "Output Format"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 140,
+        "line" : 141,
         "text" : "Related"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 145,
+        "line" : 146,
         "text" : "Related — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 151,
+        "line" : 152,
         "text" : "Related — steps 2"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 37,
+        "line" : 36,
         "text" : "Exit code"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 50,
+        "text" : "On demand"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 51,
+        "text" : "In a CI pipeline"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 26,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "Running `gbrain skillpack-check` returns a JSON report with:",
           "**`healthy`** (bool): true if no action needed",
           "**`summary`** (string): one-line summary safe to quote in a briefing",
@@ -197,29 +232,85 @@
           "**`migrations`**: applied\/pending\/partial counts from `apply-migrations --list`",
           "Exit code:",
           "`0` — healthy, nothing to do",
-          "`1` — action needed. Read `actions[]` and execute",
+          "`1` — action needed. Read `actions[]` and execute"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract — steps",
+        "line" : 40,
+        "lines" : [
+          "use judgment to follow the Contract — steps guidance:",
           "`2` — could not determine (binary crash or missing subcommand). Investigate"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "When to run",
+        "line" : 45,
+        "lines" : [
+          "Daily cron (e.g. your OpenClaw's `morning-briefing`): `gbrain skillpack-check --quiet`",
+          "Exit code alone tells you if anything is wrong; surface a one-liner in the",
+          "briefing only when exit != 0. No JSON noise in happy-path briefings",
+          "On demand: `gbrain skillpack-check` for the full JSON when debugging",
+          "In a CI pipeline: same pattern — exit code gates, JSON is the evidence"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "What to do with the output",
+        "line" : 53,
+        "lines" : [
+
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Happy path (`healthy: true`)",
+        "line" : 55,
+        "lines" : [
+          "Surface the summary in the agent's output only if asked. Nothing else"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Action needed (`healthy: false`)",
+        "line" : 59,
+        "lines" : [
+          "Free-text action (no `Run:` prefix in the source message) — agent judgment",
+          "needed. Quote it in the report for the user"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Action needed (`healthy: false`) — steps",
+        "line" : 68,
+        "lines" : [
+          "codeblock:bash:Zm9yIGNtZCBpbiAkKGVjaG8gIiRSRVBPUlQiIHwganEgLXIgJy5hY3Rpb25zW10nKTsgZG8KICBldmFsICIkY21kIgpkb25l",
+          "`gbrain apply-migrations --yes` — A migration is pending or half-finished"
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
-        "heading" : "When to run",
-        "line" : 42,
+        "heading" : "Action needed (`healthy: false`) — steps 2",
+        "line" : 82,
         "lines" : [
-          "use judgment to follow the When to run guidance:",
-          "**Daily cron** (e.g. your OpenClaw's `morning-briefing`): `gbrain skillpack-check --quiet`",
-          "Exit code alone tells you if anything is wrong; surface a one-liner in the",
-          "briefing only when exit != 0. No JSON noise in happy-path briefings",
-          "**On demand**: `gbrain skillpack-check` for the full JSON when debugging",
-          "**In a CI pipeline**: same pattern — exit code gates, JSON is the evidence"
+          "`gbrain embed --stale` — Embeddings are stale",
+          "`gbrain check-backlinks --fix` — Dead links or missing back-links"
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
-        "heading" : "What to do with the output",
-        "line" : 51,
+        "heading" : "Determine failure (`exit 2`)",
+        "line" : 86,
         "lines" : [
 
         ],
@@ -227,75 +318,53 @@
       },
       {
         "executes" : false,
-        "heading" : "Happy path (`healthy: true`)",
-        "line" : 53,
+        "heading" : "Determine failure (`exit 2`) — steps",
+        "line" : 89,
         "lines" : [
-          "Surface the summary in the agent's output only if asked. Nothing else"
-        ],
-        "role" : "inert"
-      },
-      {
-        "executes" : false,
-        "heading" : "Action needed (`healthy: false`)",
-        "line" : 57,
-        "lines" : [
-          "Free-text action (no `Run:` prefix in the source message) — agent judgment",
-          "needed. Quote it in the report for the user",
-          "codeblock:bash:Zm9yIGNtZCBpbiAkKGVjaG8gIiRSRVBPUlQiIHwganEgLXIgJy5hY3Rpb25zW10nKTsgZG8KICBldmFsICIkY21kIgpkb25l",
-          "`gbrain apply-migrations --yes` — A migration is pending or half-finished",
-          "`gbrain embed --stale` — Embeddings are stale",
-          "`gbrain check-backlinks --fix` — Dead links or missing back-links"
-        ],
-        "role" : "inert"
-      },
-      {
-        "executes" : false,
-        "heading" : "Determine failure (`exit 2`)",
-        "line" : 84,
-        "lines" : [
+          "Treat as urgent. Probably means the gbrain binary is missing from `$PATH` or",
+          "a required subcommand crashed. Check:",
           "`which gbrain` returns a path",
           "`gbrain --version` exits 0",
           "`~\/.gbrain\/` is accessible"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output format",
-        "line" : 96,
+        "line" : 98,
         "lines" : [
           "codeblock:json:ewogICJ2ZXJzaW9uIjogIjAuMTEuMSIsCiAgInRzIjogIjIwMjYtMDQtMThUMTI6MzQ6NTYuNzg5WiIsCiAgImhlYWx0aHkiOiBmYWxzZSwKICAic3VtbWFyeSI6ICJnYnJhaW4gc2tpbGxwYWNrIG5lZWRzIGF0dGVudGlvbjogMSBhY3Rpb24ocykg4oCUIGdicmFpbiBhcHBseS1taWdyYXRpb25zIC0teWVzIiwKICAiYWN0aW9ucyI6IFsiZ2JyYWluIGFwcGx5LW1pZ3JhdGlvbnMgLS15ZXMiXSwKICAiZG9jdG9yIjogewogICAgImV4aXRfY29kZSI6IDEsCiAgICAiY2hlY2tzIjogWwogICAgICB7ICJuYW1lIjogIm1pbmlvbnNfbWlncmF0aW9uIiwgInN0YXR1cyI6ICJmYWlsIiwgIm1lc3NhZ2UiOiAiTUlOSU9OUyBIQUxGLUlOU1RBTExFRCAocGFydGlhbCBtaWdyYXRpb246IDAuMTEuMCkuIFJ1bjogZ2JyYWluIGFwcGx5LW1pZ3JhdGlvbnMgLS15ZXMiIH0KICAgIF0KICB9LAogICJtaWdyYXRpb25zIjogewogICAgImFwcGxpZWRfY291bnQiOiAwLAogICAgInBlbmRpbmdfY291bnQiOiAwLAogICAgInBhcnRpYWxfY291bnQiOiAxLAogICAgInN0ZG91dCI6ICIuLi4iCiAgfQp9"
         ],
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 120,
+        "line" : 122,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "❌ Running without `--quiet` in a cron that emails its output — you'll get",
           "the full JSON blob in every daily email. Use `--quiet` in crons",
           "❌ Running on every chat turn. Once per hour (or on user request) is plenty",
           "❌ Treating warnings as failures. Only `fail` status needs action;",
           "`warn` is informational"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Anti-Patterns — steps",
-        "line" : 130,
+        "line" : 131,
         "lines" : [
           "❌ Ignoring exit code 2. A crashed doctor is worse than a failing check",
           "because you don't even know what's wrong"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 134,
+        "line" : 135,
         "lines" : [
           "The skill itself doesn't write files; it reports the CLI output verbatim to",
           "the user (or to the agent's briefing pipeline). One-line summary first,",
@@ -306,28 +375,28 @@
       {
         "executes" : false,
         "heading" : "Related",
-        "line" : 140,
+        "line" : 141,
         "lines" : [
           "`skills\/migrations\/v0.11.0.md` — the host-agent instruction manual for",
           "resolving `pending-host-work.jsonl` items"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Related — steps",
-        "line" : 145,
+        "line" : 146,
         "lines" : [
           "`gbrain doctor` — the underlying filesystem + DB check. skillpack-check",
           "composes this",
           "`gbrain apply-migrations --list` — the migration status view"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Related — steps 2",
-        "line" : 151,
+        "line" : 152,
         "lines" : [
           "`docs\/guides\/minions-fix.md` — troubleshooting a half-migrated install"
         ],
@@ -374,48 +443,72 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 27,
-      "swift_line" : 602
+      "meridian_line" : 72,
+      "swift_line" : 603
+    },
+    {
+      "meridian_line" : 72,
+      "swift_line" : 614
+    },
+    {
+      "meridian_line" : 72,
+      "swift_line" : 625
+    },
+    {
+      "meridian_line" : 80,
+      "swift_line" : 636
+    },
+    {
+      "meridian_line" : 84,
+      "swift_line" : 648
+    },
+    {
+      "meridian_line" : 85,
+      "swift_line" : 660
+    },
+    {
+      "meridian_line" : 154,
+      "swift_line" : 672
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 641
+      "swift_line" : 712
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 646
+      "swift_line" : 717
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 685
+      "swift_line" : 756
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 761
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 800
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 805
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 773
+      "swift_line" : 844
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 849
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 817
+      "swift_line" : 888
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 822
+      "swift_line" : 893
     }
   ],
   "tools_used" : [
@@ -428,35 +521,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "Running `gbrain skillpack-check` returns a JSON report with:\n**`healthy`** (bool): true if no action needed\n**`summary`** (string): one-line summary safe to quote in a briefing\n**`actions`** (string[]): every remediation command. If non-empty, run them\n**`doctor`**: full `gbrain doctor --fast --json` output (filesystem checks)\n**`migrations`**: applied\/pending\/partial counts from `apply-migrations --list`\nExit code:\n`0` — healthy, nothing to do\n`1` — action needed. Read `actions[]` and execute\n`2` — could not determine (binary crash or missing subcommand). Investigate\nuse judgment to follow the When to run guidance:\n**Daily cron** (e.g. your OpenClaw's `morning-briefing`): `gbrain skillpack-check --quiet`\nExit code alone tells you if anything is wrong; surface a one-liner in the\nbriefing only when exit != 0. No JSON noise in happy-path briefings\n**On demand**: `gbrain skillpack-check` for the full JSON when debugging\n**In a CI pipeline**: same pattern — exit code gates, JSON is the evidence\nuse judgment to follow the Anti-Patterns guidance:\n❌ Running without `--quiet` in a cron that emails its output — you'll get\nthe full JSON blob in every daily email. Use `--quiet` in crons\n❌ Running on every chat turn. Once per hour (or on user request) is plenty\n❌ Treating warnings as failures. Only `fail` status needs action;\n`warn` is informational\n`gbrain doctor` — the underlying filesystem + DB check. skillpack-check\ncomposes this\n`gbrain apply-migrations --list` — the migration status view\n`docs\/guides\/minions-fix.md` — troubleshooting a half-migrated install",
-          "line" : 27,
-          "scoped_tools" : [
-            "assess.notability",
-            "capture",
-            "enrich",
-            "health.get",
-            "jobs.status",
-            "jobs.submit",
-            "link.add",
-            "link.backlinks",
-            "makePDF",
-            "page.create",
-            "page.get",
-            "page.list",
-            "page.search",
-            "page.update",
-            "publish",
-            "recall",
-            "research",
-            "timeline.add",
-            "verify"
-          ],
-          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "skillpack-check a input",

@@ -764,7 +764,7 @@ public struct PolicyGuardedAutonomyPullRequest: MeridianWorkflow {
         }
         if __meridianShouldRun("progress:0.1:L162:C0") {
             let ciStatus = try await runtime.invoke(
-                tool: "getCiStatus",
+                tool: "getCIStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ]

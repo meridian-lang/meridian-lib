@@ -3,8 +3,8 @@
 - Original: `idea-ingest/SKILL.md`
 - Ported: `idea_ingest.meri`
 - Tier: 2 (light edits)
-- Similarity: 83%
-- Lines: 105 -> 120 (+27 / -12)
+- Similarity: 77%
+- Lines: 105 -> 126 (+37 / -16)
 
 ## Frontmatter
 - Added: (none)
@@ -12,44 +12,67 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L61 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L68 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L91 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
-- Sections inert total: 1/4 (25% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 4/4 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: template=1
-- Judgment: 3 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=3, template=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L61 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L6 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L30 `Phases`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L68 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L91 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/idea-ingest/SKILL.md
 +++ skills/idea_ingest.meri
-@@ -31,7 +31,8 @@
+@@ -31,38 +31,38 @@
  
  > **Filing rule:** Read `skills/_brain-filing-rules.md` before creating any new page.
  
 -## Contract
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
  This skill guarantees:
  - Every ingested item has a brain page with genuine analysis (not just a summary)
-@@ -47,22 +48,14 @@
+-- The author gets a people page (MANDATORY for anyone whose thinking is worth ingesting)
+ - Cross-links created bidirectionally (source ↔ author, source ↔ mentioned entities)
+ - Raw source preserved for provenance via `gbrain files upload-raw`
+-- Every fact has an inline `[Source: ...]` citation
+ - Filing follows primary subject rules (not format-based)
+ 
+ > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
+ 
+-Every mention of a person or company with a brain page MUST create a back-link.
  Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`
  
- ## Phases
-+use judgment to follow the Phases guidance:
+-## Phases
++
++### Contract — steps (( role: reference ))
++
++- The author gets a people page (MANDATORY for anyone whose thinking is worth ingesting)
++
++### Contract — steps 2
++
++- Every fact has an inline `[Source: ...]` citation
++
++### Contract — steps 3 (( role: reference ))
++
++Every mention of a person or company with a brain page MUST create a back-link.
++## Phases (( role: reference ))
  
  1. **Fetch the content.** Use appropriate tools for the content type (web fetch for articles, API for tweets, PDF reader for documents).
  
@@ -69,7 +92,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  5. **Analyze for the user.** Reply with analysis that connects the content to what the brain knows. Think about:
     - Active projects — is this relevant?
-@@ -70,7 +63,28 @@
+@@ -70,7 +70,28 @@
     - Connections — does this involve known people/companies?
     - Don't just summarize. Tell the user things they wouldn't have noticed.
  
@@ -99,13 +122,12 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ## Output Format
  
-@@ -95,7 +109,8 @@
+@@ -95,7 +116,7 @@
  {How this connects to existing brain knowledge. What's new. What contradicts.}
  ```
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
++## Anti-Patterns (( role: reference ))
  
  - Just summarizing without connecting to brain knowledge
  - Filing everything in `sources/` (sources is for raw data dumps only)

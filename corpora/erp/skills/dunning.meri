@@ -8,13 +8,11 @@ triggers:
 
 # Dunning
 
-## When operators call this (( role: procedure ))
-use judgment to follow the When operators call this guidance:
+## When operators call this
 - "run dunning"
 - "collect overdue invoices"
 
-## Workflow
-use judgment to follow the Workflow guidance:
+## Workflow (( role: reference ))
 Check: any unpaid invoices.
 
 ### Workflow — steps
@@ -28,6 +26,5 @@ for each invoice:
   collect payment for the invoice.
 Publish: "dunning collection pass complete".
 
-## Controls (( role: procedure ))
-use judgment to follow the Controls guidance:
+## Controls (( role: reference ))
 Do not contact customers whose account is under manual review.

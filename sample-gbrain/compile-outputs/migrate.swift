@@ -598,15 +598,21 @@ public struct MigrateInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "MigrateInput", parameters: [:])
 
-        // L22
-        let __meridianProseResults_L22 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["add_link", "add_tag", "get_health", "get_page", "get_stats", "link.add", "page.search", "publish", "put_page", "query", "shell.run"],
-            guidance: "Source data is never modified or deleted; migration is additive only\nEvery migrated page is verified round-trip: written to gbrain, read back, spot-checked\nCross-references from the source system (wikilinks, block refs, tags) are converted to gbrain equivalents\nMigration is tested on a sample (5-10 files) before bulk execution\nPost-migration health check confirms page count, link integrity, and embedding coverage\ntable:ai-discretion:fCBTb3VyY2UgfCBGb3JtYXQgfCBTdHJhdGVneSB8CnwtLS0tLS0tLXwtLS0tLS0tLXwtLS0tLS0tLS0tfAp8IE9ic2lkaWFuIHwgTWFya2Rvd24gKyBgW1t3aWtpbGlua3NdXWAgfCBEaXJlY3QgaW1wb3J0LCBjb252ZXJ0IHdpa2lsaW5rcyB0byBnYnJhaW4gbGlua3MgfAp8IE5vdGlvbiB8IEV4cG9ydGVkIG1hcmtkb3duIG9yIENTViB8IFBhcnNlIE5vdGlvbidzIGV4cG9ydCBzdHJ1Y3R1cmUgfAp8IExvZ3NlcSB8IE1hcmtkb3duIHdpdGggYCgoYmxvY2sgcmVmcykpYCB8IENvbnZlcnQgYmxvY2sgcmVmcyB0byBwYWdlIGxpbmtzIHwKfCBQbGFpbiBtYXJrZG93biB8IEFueSAubWQgZGlyZWN0b3J5IHwgSW1wb3J0IGRpcmVjdG9yeSBpbnRvIGdicmFpbiBkaXJlY3RseSB8CnwgQ1NWIHwgVGFidWxhciBkYXRhIHwgTWFwIGNvbHVtbnMgdG8gZnJvbnRtYXR0ZXIgZmllbGRzIHwKfCBKU09OIHwgU3RydWN0dXJlZCBkYXRhIHwgTWFwIGtleXMgdG8gcGFnZSBmaWVsZHMgfAp8IFJvYW0gfCBKU09OIGV4cG9ydCB8IENvbnZlcnQgYmxvY2sgc3RydWN0dXJlIHRvIHBhZ2VzIHw=\nWhat format? How many files? What structure?\nHow do source fields map to gbrain fields (type, title, tags, compiled_truth, timeline)?\nImport 5-10 files, verify by reading them back from gbrain and exporting\nImport the full directory into gbrain\nCheck gbrain health and statistics, spot-check pages\nExtract cross-references from content and create typed links in gbrain\nExport from Notion: Settings > Export > Markdown & CSV\nNotion exports nested directories with UUIDs in filenames\nStrip UUIDs from filenames for clean slugs\nMap Notion's database properties to frontmatter\nImport the cleaned directory into gbrain\nFor each row in the CSV, create a page with column values as frontmatter\nuse judgment to follow the Verification guidance:\nAfter any migration:\nCheck gbrain statistics to verify page count matches source\nCheck gbrain health for orphans and missing embeddings\nExport pages from gbrain for round-trip verification\nSpot-check 5-10 pages by reading them from gbrain\nTest search: search gbrain for \"someone you know is in the data\"\nuse judgment to follow the Anti-Patterns guidance:\n**Bulk import without sample test.** Never import the full dataset before verifying with 5-10 files. The cost of cleaning up hundreds of bad pages is enormous\n**Destroying source data.** Migration is additive. Never modify, move, or delete the source files\n**Ignoring cross-references.** Wikilinks, block refs, and tags from the source system must be converted to gbrain equivalents. Dropping them loses the knowledge graph\n**Skipping verification.** A migration without post-import health check, page count comparison, and spot-check reads is incomplete"
-        )
-        for (__key, __value) in __meridianProseResults_L22 {
-            state.bind(__key, __value)
+        // L97
+        for (__meridianLoopIndex_0_0, row) in (state.get("csv")?.asList ?? []).enumerated() {
+            let __meridianLoopLabel_0_0 = "progress:0.0:iteration:\(__meridianLoopIndex_0_0)"
+            if __meridianShouldRun(__meridianLoopLabel_0_0) {
+            state.bind("row", row)
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_0, state: state.snapshot())
+            }
+        }
+
+        if __meridianShouldRun("progress:0.1:L154:C0") {
+            // L154
+            let health = try await runtime.invoke(tool: "health.get", args: [:])
+            state.bind("health", health)
+
+            try await runtime.checkpoint(label: "progress:0.1:L154:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

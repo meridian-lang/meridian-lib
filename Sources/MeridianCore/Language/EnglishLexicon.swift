@@ -61,16 +61,37 @@ public struct EnglishLexicon: Sendable {
     /// a `=== language ===` `Assertion synonyms:` block.
     public let assertionMarkers: [String]
 
-    /// Whole-word cue vocabulary marking a sentence as normative-narrative
-    /// (a "contract" statement in AGENTS.md §15's sense — must/never/always,
-    /// or "every X must …") rather than plain documentation. Used only by
+    /// Whole-word cue vocabulary marking a sentence as an operational/
+    /// normative contract (must/never/always, refusal/requirement language)
+    /// rather than plain documentation or AI-inference prose. Used by
     /// `TrialLowering`'s per-line classifier (`SkillMigrator`'s marking pass)
-    /// to decide whether an unlowerable line is a mined-or-flagged
-    /// normative claim (`unmined-contract`) instead of silently-inert prose.
-    /// Not yet threaded through `=== language ===` (a narrow, low-frequency
-    /// classification signal); promote to a `LanguageSynonyms` field the same
-    /// way `assertionSynonyms` was if a domain needs to rename these.
+    /// to decide whether an unlowerable line states a requirement that must
+    /// be reworded into something checkable — a hard "reword or clarify"
+    /// error (P1 category 4) — as opposed to genuinely-inert documentation
+    /// or an AI-inference cue (see `inferenceCueWords`). Extend via
+    /// `=== language ===` `Normative-cue synonyms:`.
     public let normativeCueWords: Set<String>
+
+    /// Whole-word cue vocabulary marking a sentence as needing genuine AI
+    /// inference/judgment — cognitive verbs (analyse, decide, assess, …)
+    /// signalling the agent must *think*, not mechanically act. This is the
+    /// ONLY signal that permits the migrator to emit any AI marker
+    /// (`use judgment to …:`, `with autonomy`, `!!! table (( ai-discretion
+    /// ))`, `!!! checklist (( ai-autonomy ))`) for content that failed to
+    /// lower deterministically. A line is tested for lowerability first, so
+    /// a lowerable phrase that happens to contain a cue word (e.g. "analyze
+    /// the report") still lowers — the cue only classifies content that
+    /// already failed to lower. Extend via `=== language ===`
+    /// `Inference-cue synonyms:`.
+    public let inferenceCueWords: Set<String>
+
+    /// Heading/body substrings that mark a non-lowerable, cue-less section as
+    /// genuinely documentary (rationale, examples, changelog, background,
+    /// reference material) rather than an operational reword error. Used by
+    /// `SkillMetrics.classifyInert`'s `looksReferenceLike` and by the
+    /// migrator's whole-section decision. Extend via `=== language ===`
+    /// `Reference-heading synonyms:`.
+    public let referenceHeadingWords: Set<String>
 
     /// Trailing markers that turn an `if <cond>` header into a **guarded
     /// fence**: `if <cond>, run:` immediately followed by a fenced shell
@@ -202,7 +223,37 @@ public struct EnglishLexicon: Sendable {
         durationUnits: [String: TimeUnitAST],
         toolStopwords: Set<String>,
         assertionMarkers: [String] = ["make sure", "ensure", "assert"],
-        normativeCueWords: Set<String> = ["must", "never", "always"],
+        normativeCueWords: Set<String> = [
+            "must", "never", "always",
+            "refuse", "refuses", "refused", "refusing",
+            "require", "requires", "required", "requiring",
+            "forbidden", "mandatory",
+        ],
+        inferenceCueWords: Set<String> = [
+            "analyse", "analyze", "analyzes", "analyses", "analyzing", "analysing",
+            "assess", "assesses", "assessing",
+            "evaluate", "evaluates", "evaluating",
+            "judge", "judges", "judging",
+            "decide", "decides", "deciding",
+            "determine", "determines", "determining",
+            "interpret", "interprets", "interpreting",
+            "consider", "considers", "considering",
+            "reason", "reasons", "reasoning",
+            "infer", "infers", "inferring",
+            "diagnose", "diagnoses", "diagnosing",
+            "critique", "critiques", "critiquing",
+            "synthesize", "synthesizes", "synthesizing", "synthesise", "synthesising",
+            "understand", "understands", "understanding",
+        ],
+        referenceHeadingWords: Set<String> = [
+            "what", "why", "philosophy", "example", "examples", "format",
+            "changelog", "related", "reference", "background", "overview",
+            "notes", "caveats", "prior work", "methodology", "template",
+            "guide", "guidance", "tutorial", "vision", "options", "available",
+            "semantics", "invocation patterns", "tracking", "state", "vs",
+            "cycle", "patterns", "quality bar", "trust boundary", "idempotency",
+            "privacy", "cooldown",
+        ],
         guardedFenceIntroducers: [String] = [", run:", ", execute:"],
         fallbackChainIntroducers: [String] = [
             "try the following in order until one succeeds:",
@@ -250,6 +301,8 @@ public struct EnglishLexicon: Sendable {
         self.toolStopwords = toolStopwords
         self.assertionMarkers = assertionMarkers
         self.normativeCueWords = normativeCueWords
+        self.inferenceCueWords = inferenceCueWords
+        self.referenceHeadingWords = referenceHeadingWords
         self.guardedFenceIntroducers = guardedFenceIntroducers
         self.fallbackChainIntroducers = fallbackChainIntroducers
         self.timestampProperty = timestampProperty
@@ -535,6 +588,9 @@ public struct EnglishLexicon: Sendable {
         comparisonSynonyms: [(String, ComparisonOpAST)],
         durationSynonyms: [String: TimeUnitAST],
         assertionSynonyms: [String] = [],
+        normativeCueSynonyms: [String] = [],
+        inferenceCueSynonyms: [String] = [],
+        referenceHeadingSynonyms: [String] = [],
         timestampProperty: String? = nil,
         emptySynonyms: [String] = [],
         filledSynonyms: [String] = [],
@@ -586,7 +642,9 @@ public struct EnglishLexicon: Sendable {
             durationUnits: mergedDuration,
             toolStopwords: toolStopwords,
             assertionMarkers: mergedAssertions,
-            normativeCueWords: normativeCueWords,
+            normativeCueWords: normativeCueWords.union(normativeCueSynonyms.map { $0.lowercased() }),
+            inferenceCueWords: inferenceCueWords.union(inferenceCueSynonyms.map { $0.lowercased() }),
+            referenceHeadingWords: referenceHeadingWords.union(referenceHeadingSynonyms.map { $0.lowercased() }),
             guardedFenceIntroducers: guardedFenceIntroducers,
             fallbackChainIntroducers: fallbackChainIntroducers,
             timestampProperty: timestampProperty ?? self.timestampProperty,

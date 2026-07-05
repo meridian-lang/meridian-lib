@@ -97,113 +97,141 @@
     "name" : "capture",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 22,
         "text" : "Contract"
       },
       {
-        "kind" : "procedure",
+        "kind" : "applicability",
         "level" : 2,
-        "line" : 35,
+        "line" : 34,
         "text" : "When to invoke"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 42,
+        "line" : 40,
         "text" : "What it does"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 50,
+        "line" : 48,
         "text" : "How to use"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 62,
+        "line" : 60,
         "text" : "Defaults"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 69,
+        "line" : 67,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 85,
+        "line" : 83,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 98,
+        "line" : 95,
         "text" : "Anti-Patterns — steps"
       },
       {
         "kind" : "prohibitions",
         "level" : 3,
-        "line" : 104,
+        "line" : 101,
         "text" : "Anti-Patterns — steps 2"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 107,
+        "line" : 104,
         "text" : "When NOT to use this skill"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 115,
+        "line" : 112,
         "text" : "When NOT to use this skill — steps"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 71,
+        "line" : 24,
+        "text" : "Input"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 25,
+        "text" : "Output"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 27,
+        "text" : "Side effect"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 29,
+        "text" : "Idempotency"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 31,
+        "text" : "Trust"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 69,
         "text" : "Default prints a 5-line receipt"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 22,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
-          "**Input:** the content to save (inline arg, `--file PATH`, or `--stdin`)",
-          "**Output:** a page in the brain DB AND a markdown file on disk under",
+          "Input: the content to save (inline arg, `--file PATH`, or `--stdin`)",
+          "Output: a page in the brain DB AND a markdown file on disk under",
           "`<sync.repo_path>\/<slug>.md`. Receipt printed to stdout",
-          "**Side effect:** the page becomes immediately queryable via `gbrain query`,",
+          "Side effect: the page becomes immediately queryable via `gbrain query`,",
           "`gbrain search`, or any MCP-bound agent",
-          "**Idempotency:** same content → same `inbox\/YYYY-MM-DD-<hash8>` slug. The",
+          "Idempotency: same content → same `inbox\/YYYY-MM-DD-<hash8>` slug. The",
           "daemon's 24h content-hash dedup catches re-captures",
-          "**Trust:** all captures via this skill are local-CLI trust (`remote: false`)",
+          "Trust: all captures via this skill are local-CLI trust (`remote: false`)",
           "Untrusted webhook ingestion goes through `POST \/ingest`, not this verb"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "When to invoke",
-        "line" : 35,
+        "line" : 34,
         "lines" : [
-          "use judgment to follow the When to invoke guidance:",
           "\"Capture this thought\" \/ \"save this\" \/ \"drop this into my brain\" \/ \"remember this\"",
           "The user pastes content and asks to keep it",
           "After a meeting summary, a research note, or any synthesis that should land as a brain page"
         ],
-        "role" : "procedure"
+        "role" : "applicability"
       },
       {
         "executes" : false,
         "heading" : "What it does",
-        "line" : 42,
+        "line" : 40,
         "lines" : [
           "`gbrain capture` resolves to a `put_page` call (local) or a remote MCP call",
           "(thin-client). Either way the page lands in the DB AND on disk in one move",
@@ -211,33 +239,33 @@
           "`inbox\/YYYY-MM-DD-<hash8>` so captures cluster in a predictable triage",
           "location"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "How to use",
-        "line" : 50,
+        "line" : 48,
         "lines" : [
           "codeblock:bash:Z2JyYWluIGNhcHR1cmUgInRoZSB0aG91Z2h0IEkgd2FudCB0byByZW1lbWJlciIKZ2JyYWluIGNhcHR1cmUgLS1maWxlIC4vbm90ZXMvdG9kYXkubWQKZWNobyAiZnJvbSBhIHBpcGUiIHwgZ2JyYWluIGNhcHR1cmUgLS1zdGRpbgpnYnJhaW4gY2FwdHVyZSAiLi4uIiAtLXNsdWcgZGFpbHkvMjAyNi0wNS0yMQpnYnJhaW4gY2FwdHVyZSAiLi4uIiAtLXR5cGUgaWRlYSAtLXNvdXJjZSB2b2ljZS13aGlzcGVyCmdicmFpbiBjYXB0dXJlICIuLi4iIC0tcXVpZXQgICAgICAgICAgIyBzY3JpcHQtZnJpZW5kbHk6IHByaW50cyBqdXN0IHRoZSBzbHVnCmdicmFpbiBjYXB0dXJlICIuLi4iIC0tanNvbiAgICAgICAgICAgIyBzdHJ1Y3R1cmVkIG91dHB1dCBmb3IgYWdlbnRz"
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Defaults",
-        "line" : 62,
+        "line" : 60,
         "lines" : [
           "**Slug:** `inbox\/YYYY-MM-DD-<hash8>` (stable for same content; the daemon's 24h dedup catches re-captures)",
           "**Type:** `note` (override with `--type idea` etc.)",
           "**Frontmatter stamps:** `captured_via: capture-cli`, `captured_at: <ISO>`",
           "**Title:** first non-empty line of the body, capped at 80 chars"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 69,
+        "line" : 67,
         "lines" : [
           "Default prints a 5-line receipt:",
           "codeblock:plain:Y2FwdHVyZWQ6CiAgc2x1ZzogICAgICAgICAgaW5ib3gvMjAyNi0wNS0yMS1hYmNkZWYxMgogIHN0YXR1czogICAgICAgIGNyZWF0ZWRfb3JfdXBkYXRlZAogIGNvbnRlbnRfaGFzaDogIGYzYTdiOWMwZDFlMmYzYTTigKYKICBmaWxlOiAgICAgICAgICAvVXNlcnMveW91L2JyYWluL2luYm94LzIwMjYtMDUtMjEtYWJjZGVmMTIubWQKICBjYXB0dXJlZF9hdDogICAyMDI2LTA1LTIxVDA0OjE1OjAwLjAwMFo=",
@@ -247,11 +275,10 @@
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 85,
+        "line" : 83,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "**Don't reach for `gbrain put`.** That's the old per-page primitive that",
           "doesn't know about default slug generation, content-type heuristics, or",
           "the receipt block. `capture` is the human-facing wrapper",
@@ -261,23 +288,23 @@
           "**Don't pass secrets as inline content.** Inline args land in shell",
           "history. Use `--file` or `--stdin` instead"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Anti-Patterns — steps",
-        "line" : 98,
+        "line" : 95,
         "lines" : [
           "Don't try to bulk-import dozens of files by looping over `gbrain capture`",
           "That's what `gbrain sync` (or `gbrain import`) is for. Capture is for",
           "single thoughts, single notes, single transcripts"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Anti-Patterns — steps 2",
-        "line" : 104,
+        "line" : 101,
         "lines" : [
 
         ],
@@ -286,19 +313,19 @@
       {
         "executes" : false,
         "heading" : "When NOT to use this skill",
-        "line" : 107,
+        "line" : 104,
         "lines" : [
           "Bulk ingestion of many files → `skills\/media-ingest\/SKILL.md` or `gbrain sync` instead",
           "Article\/link with author + publication metadata → `skills\/idea-ingest\/SKILL.md` (it knows to build the people page)",
           "This skill is for the simple \"I have a thought, save it\" case. Specialized",
           "ingestion paths handle their own slugging + cross-referencing"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "When NOT to use this skill — steps",
-        "line" : 115,
+        "line" : 112,
         "lines" : [
           "Meeting transcripts → `skills\/meeting-ingestion\/SKILL.md` (attendee enrichment)"
         ],
@@ -344,56 +371,84 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 23,
-      "swift_line" : 600
+      "meridian_line" : 50,
+      "swift_line" : 601
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 612
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 623
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 634
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 645
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 656
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 667
+    },
+    {
+      "meridian_line" : 114,
+      "swift_line" : 678
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 639
+      "swift_line" : 718
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 644
+      "swift_line" : 723
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 683
+      "swift_line" : 762
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 688
+      "swift_line" : 767
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 727
+      "swift_line" : 806
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 732
+      "swift_line" : 811
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 771
+      "swift_line" : 850
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 776
+      "swift_line" : 855
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 815
+      "swift_line" : 894
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 820
+      "swift_line" : 899
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 859
+      "swift_line" : 938
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 864
+      "swift_line" : 943
     }
   ],
   "tools_used" : [
@@ -406,35 +461,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "**Input:** the content to save (inline arg, `--file PATH`, or `--stdin`)\n**Output:** a page in the brain DB AND a markdown file on disk under\n`<sync.repo_path>\/<slug>.md`. Receipt printed to stdout\n**Side effect:** the page becomes immediately queryable via `gbrain query`,\n`gbrain search`, or any MCP-bound agent\n**Idempotency:** same content → same `inbox\/YYYY-MM-DD-<hash8>` slug. The\ndaemon's 24h content-hash dedup catches re-captures\n**Trust:** all captures via this skill are local-CLI trust (`remote: false`)\nUntrusted webhook ingestion goes through `POST \/ingest`, not this verb\nuse judgment to follow the When to invoke guidance:\n\"Capture this thought\" \/ \"save this\" \/ \"drop this into my brain\" \/ \"remember this\"\nThe user pastes content and asks to keep it\nAfter a meeting summary, a research note, or any synthesis that should land as a brain page\ncodeblock:bash:Z2JyYWluIGNhcHR1cmUgInRoZSB0aG91Z2h0IEkgd2FudCB0byByZW1lbWJlciIKZ2JyYWluIGNhcHR1cmUgLS1maWxlIC4vbm90ZXMvdG9kYXkubWQKZWNobyAiZnJvbSBhIHBpcGUiIHwgZ2JyYWluIGNhcHR1cmUgLS1zdGRpbgpnYnJhaW4gY2FwdHVyZSAiLi4uIiAtLXNsdWcgZGFpbHkvMjAyNi0wNS0yMQpnYnJhaW4gY2FwdHVyZSAiLi4uIiAtLXR5cGUgaWRlYSAtLXNvdXJjZSB2b2ljZS13aGlzcGVyCmdicmFpbiBjYXB0dXJlICIuLi4iIC0tcXVpZXQgICAgICAgICAgIyBzY3JpcHQtZnJpZW5kbHk6IHByaW50cyBqdXN0IHRoZSBzbHVnCmdicmFpbiBjYXB0dXJlICIuLi4iIC0tanNvbiAgICAgICAgICAgIyBzdHJ1Y3R1cmVkIG91dHB1dCBmb3IgYWdlbnRz\n**Slug:** `inbox\/YYYY-MM-DD-<hash8>` (stable for same content; the daemon's 24h dedup catches re-captures)\n**Type:** `note` (override with `--type idea` etc.)\n**Frontmatter stamps:** `captured_via: capture-cli`, `captured_at: <ISO>`\n**Title:** first non-empty line of the body, capped at 80 chars\nuse judgment to follow the Anti-Patterns guidance:\n**Don't reach for `gbrain put`.** That's the old per-page primitive that\ndoesn't know about default slug generation, content-type heuristics, or\nthe receipt block. `capture` is the human-facing wrapper\n**Don't pre-format the content yourself with frontmatter if you don't need to.**\nCapture wraps plain prose in sensible frontmatter (type + title +\ncaptured_via + captured_at). The body becomes `# Title\\n\\n<your prose>`\n**Don't pass secrets as inline content.** Inline args land in shell\nhistory. Use `--file` or `--stdin` instead\nMeeting transcripts → `skills\/meeting-ingestion\/SKILL.md` (attendee enrichment)",
-          "line" : 23,
-          "scoped_tools" : [
-            "assess.notability",
-            "capture",
-            "enrich",
-            "health.get",
-            "jobs.status",
-            "jobs.submit",
-            "link.add",
-            "link.backlinks",
-            "makePDF",
-            "page.create",
-            "page.get",
-            "page.list",
-            "page.search",
-            "page.update",
-            "publish",
-            "recall",
-            "research",
-            "timeline.add",
-            "verify"
-          ],
-          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "capture a input",

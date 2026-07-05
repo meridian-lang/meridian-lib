@@ -8,12 +8,11 @@ triggers:
 
 # Reconcile Ledger
 
-## Invocation (( role: procedure ))
-use judgment to follow the Invocation guidance:
+## Invocation
 - "reconcile ledger"
 - "settle ledger batches"
 
-## DBA notes (( inert ))
+## DBA notes (( role: reference ))
 The operator starts from a SQL snapshot and then lets Meridian drive only the
 declared deterministic settlement tools.
 
@@ -28,5 +27,5 @@ Emit: "ledger batches reconciled".
 ## Assertions
 no batches whose status is "failed".
 
-## Output (( inert, role: template ))
+## Output (( role: template ))
 The DBA expects a short reconciliation receipt and a list of settled batch ids.

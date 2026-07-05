@@ -227,7 +227,8 @@ public final class SymbolTable: @unchecked Sendable {
     /// pattern's literal text, then scores by keyword overlap.
     public func matchPhrase(
         _ invocation: String,
-        defaultParam: PhraseParameterAST? = nil
+        defaultParam: PhraseParameterAST? = nil,
+        excludingStructName: String? = nil
     ) -> (phrase: PhraseDefinition, args: [String: ExpressionAST])? {
         if let direct = matchPhraseDirect(invocation) {
             return direct
@@ -235,11 +236,22 @@ public final class SymbolTable: @unchecked Sendable {
         guard let defaultParam else { return nil }
         let filled = "\(invocation)\(lexicon.grammar.implicitParamFillConnector)\(defaultParam.kind)"
         trace.log(.phraseMatch, "phrase.match.implicit-fill: \"\(invocation)\" → \"\(filled)\"")
-        return matchPhraseDirect(filled)
+        // The implicit-fill retry manufactures extra literal overlap (the
+        // appended connector + the workflow's own parameter kind), which can
+        // trivially self-match the workflow currently being lowered on ANY
+        // leftover line that shares even one word with its own trigger text
+        // — a false "success" that silently produces a nonsense recursive
+        // self-invocation instead of the real `unresolvedPhrase` diagnostic a
+        // genuinely non-lowerable line should raise. Exclude that one
+        // candidate from this low-confidence retry only; an explicit, fully
+        // literal self-recursive call still resolves via the direct match
+        // above, which requires real specificity and isn't excluded.
+        return matchPhraseDirect(filled, excludingStructName: excludingStructName)
     }
 
     private func matchPhraseDirect(
-        _ invocation: String
+        _ invocation: String,
+        excludingStructName: String? = nil
     ) -> (phrase: PhraseDefinition, args: [String: ExpressionAST])? {
         let token = trace.push(.phraseMatch, "matchPhrase: \"\(invocation)\"")
         defer { trace.pop(token) }
@@ -253,6 +265,10 @@ public final class SymbolTable: @unchecked Sendable {
 
         var candidates: [(score: Int, phrase: PhraseDefinition)] = []
         for phrase in phrases {
+            if let excludingStructName, phrase.workflowStructName == excludingStructName {
+                trace.log(.phraseMatch, "  skip @L\(phrase.sourceLine) (excluded: self-referential implicit fill)")
+                continue
+            }
             // The first word of the invocation must appear in this phrase's literal keywords.
             // This prevents e.g. "reject… insufficient_credit" (contains "credit") from
             // accidentally matching "check the credit" (starts with "check", not "reject").

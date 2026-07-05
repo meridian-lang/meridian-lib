@@ -296,15 +296,66 @@ public struct DedupeRecords: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "DedupeRecords", parameters: [:])
 
-        // L12
-        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
-            prose: "follow the Use this when guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["audit_row.list", "batch.list", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "record.list", "record.mark_canonical", "record.purge"],
-            guidance: "\"dedupe records\"\n\"duplicate rows detected\"\nuse judgment to follow the Procedure guidance:\nCheck: any duplicate records\nfetch duplicate records\nfor each record whose status is \"duplicate\":\nmark the record canonical\npurge the record\nEmit: \"duplicate record pass complete\"\nuse judgment to follow the Postconditions guidance:\nmake sure no records whose status is \"duplicate\""
-        )
-        for (__key, __value) in __meridianProseResults_L12 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L30:C0") {
+            // L30
+            try await runtime.assert(((((state.get("records"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("duplicate"))) }).isEmpty), message: "Expected no records whose status is \"duplicate\"")
+            try await runtime.checkpoint(label: "progress:0.0:L30:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L45:C0") {
+            // L45
+            let records = try await runtime.invoke(
+                tool: "record.list",
+                args: [
+                    "status": .string("duplicate"),
+                ]
+            )
+            state.bind("records", records)
+
+            try await runtime.checkpoint(label: "progress:0.1:L45:C0", state: state.snapshot())
+        }
+        // L24
+        let __meridianSrc_0_2 = (state.get("records")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("duplicate"))) }
+        for (__meridianLoopIndex_0_2, record) in __meridianSrc_0_2.enumerated() {
+            let __meridianLoopLabel_0_2 = "progress:0.2:iteration:\(__meridianLoopIndex_0_2)"
+            if __meridianShouldRun(__meridianLoopLabel_0_2) {
+            state.bind("record", record)
+                if __meridianShouldRun("progress:0.2.body.0:L63:C0") {
+                    // L63
+                    let recordCanonical = try await runtime.invoke(
+                        tool: "record.mark_canonical",
+                        args: [
+                            "record": state.get("record") ?? .null,
+                        ]
+                    )
+                    state.bind("recordCanonical", recordCanonical)
+
+                    try await runtime.checkpoint(label: "progress:0.2.body.0:L63:C0", state: state.snapshot())
+                }
+                if __meridianShouldRun("progress:0.2.body.1:L69:C0") {
+                    // L69
+                    let record = try await runtime.invoke(
+                        tool: "record.purge",
+                        args: [
+                            "record": state.get("record") ?? .null,
+                        ]
+                    )
+                    state.bind("record", record)
+
+                    try await runtime.checkpoint(label: "progress:0.2.body.1:L69:C0", state: state.snapshot())
+                }
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
+            }
+        }
+
+        if __meridianShouldRun("progress:0.3:L27:C0") {
+            // L27
+            try await runtime.emit(
+                event: "procedure.report",
+                payload: [
+                    "message": .string("duplicate record pass complete"),
+                ]
+            )
+            try await runtime.checkpoint(label: "progress:0.3:L27:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

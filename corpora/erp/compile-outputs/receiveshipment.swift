@@ -399,15 +399,27 @@ public struct ReceiveShipment: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "ReceiveShipment", parameters: [:])
 
-        // L12
-        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
-            prose: "follow the When this applies guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["inventory.reserve", "invoice.create", "invoice.list", "order.cancel", "order.list", "payment.collect", "period.close", "product.list", "purchase_order.create", "shipment.create"],
-            guidance: "\"receive inbound shipment\"\n\"shipment received\"\nStep: `ofbiz warehouse receive --today --json` to snapshot inbound manifests\nPublish: \"warehouse receiving manifest captured\""
-        )
-        for (__key, __value) in __meridianProseResults_L12 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L16:C0") {
+            // L16
+            // snapshot inbound manifests
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("ofbiz warehouse receive --today --json"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L16:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L17:C0") {
+            // L17
+            try await runtime.emit(
+                event: "erp.report",
+                payload: [
+                    "message": .string("warehouse receiving manifest captured"),
+                ]
+            )
+            try await runtime.checkpoint(label: "progress:0.1:L17:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

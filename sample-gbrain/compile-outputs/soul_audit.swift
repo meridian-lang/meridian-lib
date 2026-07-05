@@ -599,15 +599,53 @@ public struct SoulAuditInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SoulAuditInput", parameters: [:])
 
-        // L28
-        let __meridianProseResults_L28 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["publish", "shell.run"],
-            guidance: "This skill guarantees:\nSOUL.md generated from user's description of agent identity, vibe, mission\nUSER.md generated from user's self-description (role, projects, key people)\nACCESS_POLICY.md generated with configurable access tiers\nHEARTBEAT.md generated with operational cadence the user chooses\nEach phase is independent and re-runnable\nDefault mode (skip soul-audit): installs minimal templates from `templates/`\nuse judgment to follow the Phases guidance:\nuse judgment to follow the Phase 1: Identity Interview guidance:\nAsk: \"What is this agent to you? Research partner? Executive assistant? Thinking partner? All of the above?\"\nGenerate: SOUL.md identity section\nuse judgment to follow the Phase 2: Vibe Calibration guidance:\nShow 3-4 communication style examples:\n**Formal:** \"I've prepared a comprehensive analysis of the situation...\"\n**Direct:** \"Here's what's happening. Three things matter.\"\n**Technical:** \"The root cause is in the connection pooling. Here's the fix.\"\n**Casual:** \"Yeah so basically the thing is broken because X. Easy fix.\"\nAsk which feels right. Generate: SOUL.md vibe + communication style sections\nuse judgment to follow the Phase 3: Mission Mapping guidance:\nAsk: \"What are your top 3-5 goals? What are you trying to accomplish?\"\nGenerate: SOUL.md mission + operating principles sections\nuse judgment to follow the Phase 4: User Profile guidance:\nAsk: \"Tell me about yourself. What do you do? What are you working on? Who are the key people in your world?\"\nGenerate: USER.md with role, projects, key people, communication preferences\nuse judgment to follow the Phase 5: Boundaries guidance:\nAsk: \"Who should have access to your brain? Are there people who should see some but not all? Anyone to keep out entirely?\"\nGenerate: ACCESS_POLICY.md with 4 tiers (Full/Work/Family/None)\nuse judgment to follow the Phase 6: Operational Cadence guidance:\nAsk: \"How often should the agent check in? Morning briefing? End of day summary? What recurring jobs do you want?\"\nGenerate: HEARTBEAT.md with operational cadence\nInstall `templates/SOUL.md.template` as SOUL.md (minimal: \"knowledge-first agent with persistent memory\")\nInstall `templates/USER.md.template` as USER.md (auto-populate name/email from git config)\nInstall `templates/ACCESS_POLICY.md.template` as ACCESS_POLICY.md (owner-only access)\nInstall `templates/HEARTBEAT.md.template` as HEARTBEAT.md (default cadence)\nuse judgment to follow the Anti-Patterns guidance:\nShipping pre-filled SOUL.md or USER.md content (privacy violation)\nMaking soul-audit mandatory on first boot (high friction, optional is better)\nAsking all 6 phases in one go (overwhelming, each is independent)\nNot offering to re-run individual phases"
-        )
-        for (__key, __value) in __meridianProseResults_L28 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L73:C0") {
+            // L73
+            // Install  as SOUL.md (minimal: "knowledge-first agent with persistent memory")
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("templates/SOUL.md.template"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L73:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L74:C0") {
+            // L74
+            // Install  as USER.md (auto-populate name/email from git config)
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("templates/USER.md.template"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L74:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L75:C0") {
+            // L75
+            // Install  as ACCESS_POLICY.md (owner-only access)
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("templates/ACCESS_POLICY.md.template"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L75:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L76:C0") {
+            // L76
+            // Install  as HEARTBEAT.md (default cadence)
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("templates/HEARTBEAT.md.template"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.3:L76:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

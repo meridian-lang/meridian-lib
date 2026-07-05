@@ -491,16 +491,16 @@ struct ConventionRestatementTests {
         ## Citation Policy
         Always include a citation.
         """).markdown
-        #expect(out.contains("(( inert, role: convention-ref ))"))
+        #expect(out.contains("(( role: convention-ref ))"))
     }
 
-    @Test("a section that does not restate a convention is plain inert")
-    func nonRestatementInert() throws {
+    @Test("a section that does not restate a convention is marked reference documentation")
+    func nonRestatementReference() throws {
         let out = try migrator(rulebook).markSections("""
         ## Random Notes
         This text matches no convention at all.
         """).markdown
-        #expect(out.contains("(( inert ))"))
+        #expect(out.contains("(( role: reference ))"))
         #expect(!out.contains("convention-ref"))
     }
 

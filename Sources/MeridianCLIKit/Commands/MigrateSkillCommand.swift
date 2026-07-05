@@ -40,8 +40,8 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
     var force: Bool = false
 
     @Flag(name: .long, inversion: .prefixedNo,
-          help: "Explicitly AI-route fuzzy checklists/tables/judgment-worthy prose (!!! checklist / !!! table / \"use judgment to …:\") instead of leaving them (( inert )). On by default; pass --no-route-fuzzy for a byte-for-byte-with-today comparison.")
-    var routeFuzzy: Bool = true
+          help: "Downgrade a non-lowerable, no-inference-cue operational section (P1 category 4) from a hard migration error to a reported-but-nonfatal skip, marking it (( role: reference )) and retrying. Off by default, matching the policy that cue-less operational content is a reword error; pass --route-fuzzy for exploratory batch runs where some residual is expected.")
+    var routeFuzzy: Bool = false
 
     @Option(name: .long,
             help: "Activate parser/lowering trace categories (comma-separated). Examples: skill, lowering, all. Silent by default.")
@@ -100,6 +100,9 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
 
         if !result.report.unminedContracts.isEmpty {
             print("⚠ \(result.report.unminedContracts.count) unmined-contract line(s) — see report for detail.")
+        }
+        if !result.compiledOK, let diag = result.report.diagnostics.last {
+            print("  \(diag)")
         }
 
         try persistSectionAliases(result.sectionAliases, to: rulebookTarget)

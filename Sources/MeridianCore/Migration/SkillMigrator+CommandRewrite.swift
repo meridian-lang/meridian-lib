@@ -37,11 +37,17 @@ extension SkillMigrator {
         return out.joined(separator: "\n")
     }
 
-    /// If strict compile proves that a Markdown item inside a section cannot
-    /// lower, keep the all-or-nothing section contract by marking the enclosing
-    /// section inert and retrying. Original `SKILL.md` stays untouched; this only
-    /// edits the generated `.meri` candidate.
-    func markEnclosingSectionInert(forDiagnostic diagnostic: String, in source: String) -> String? {
+    /// Category-4 rescue for `--route-fuzzy` (default off): when strict compile
+    /// proves a Markdown item inside a section cannot lower, and the caller has
+    /// opted into downgrading hard errors to a reported-but-nonfatal skip for
+    /// exploratory runs, mark the enclosing section `(( role: reference ))`
+    /// (fully non-executable — never `(( inert ))`) and retry. With
+    /// `routeFuzzy` off (the default), this rescue never runs and the
+    /// diagnostic surfaces as a hard migration failure per P1 category 4.
+    /// Original `SKILL.md` stays untouched; this only edits the generated
+    /// `.meri` candidate.
+    func markEnclosingSectionReference(forDiagnostic diagnostic: String, in source: String) -> String? {
+        guard options.routeFuzzy else { return nil }
         guard let line = diagnosticLine(diagnostic) else { return nil }
         var lines = source.components(separatedBy: "\n")
         let target = max(0, min(line - 1, lines.count - 1))
@@ -59,7 +65,7 @@ extension SkillMigrator {
             return nil
         }
 
-        lines[idx] = "\(heading.hashes) \(heading.text) \(inertMarker(forHeading: heading.text))"
+        lines[idx] = "\(heading.hashes) \(heading.text) (( role: reference ))"
         return lines.joined(separator: "\n")
     }
 
@@ -91,27 +97,6 @@ extension SkillMigrator {
             i = afterLine
         }
         return nil
-    }
-
-    func inertMarker(forHeading heading: String) -> String {
-        switch SkillSectionRole.builtinRole(forHeading: heading) {
-        case .invariants:
-            return "(( inert, role: invariants ))"
-        case .prohibitions:
-            return "(( inert, role: prohibitions ))"
-        case .applicability:
-            return "(( inert, role: applicability ))"
-        case .negativeApplicability:
-            return "(( inert, role: negative-applicability ))"
-        case .procedure:
-            return "(( inert, role: procedure ))"
-        case .template:
-            return "(( inert, role: template ))"
-        case .tools:
-            return "(( inert, role: tools ))"
-        case .some, .none:
-            return "(( inert ))"
-        }
     }
 
     /// Frontmatter `parameters:` names (inline comma list or `- ` items) plus the

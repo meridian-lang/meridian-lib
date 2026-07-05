@@ -4,6 +4,22 @@ Wave 6 closes the Inform-7-tier expressiveness program by validating Meridian
 against three corpus families and reporting the result in measurement terms,
 not marketing terms.
 
+> **Superseded terminology note (2026-07-05, "Eliminate `(( inert ))`"
+> closeout):** the migrator described in this report used `(( inert ))` /
+> `(( inert, role: … ))` as its non-executable marker and judgment-routed a
+> section's leftover body unconditionally once it fell below a split
+> threshold. Both have since changed: the migrator now emits
+> `(( role: reference ))` (never `(( inert ))`) for genuinely documentary
+> content, routes to AI judgment only when an `EnglishLexicon.inferenceCueWords`
+> cue is present, treats cue-less operational/normative content as a hard
+> compile error rather than free documentation or an auto-judgment-wrap, and
+> has no minimum-content split threshold. The "Sections inert" / "Inert
+> ratio" / "Judgment" numbers below are a point-in-time Wave 6 snapshot under
+> the *old* policy — see `docs/13_SKILL_MD_PORTING.md` for the current model
+> and `IMPLEMENTATION_LOG.md` for the re-migration numbers under the new one
+> (all three corpora: zero `(( inert ))`, zero operational/unclassified
+> inert).
+
 ## Corpus Status
 
 | Corpus | Status | Scope |

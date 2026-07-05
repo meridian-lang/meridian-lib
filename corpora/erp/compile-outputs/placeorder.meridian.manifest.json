@@ -97,40 +97,46 @@
     "name" : "place order",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "applicability",
         "level" : 2,
         "line" : 11,
         "text" : "When this applies"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 16,
+        "line" : 15,
         "text" : "Operator notes"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 20,
+        "line" : 19,
         "text" : "Workflow"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 32,
+        "line" : 31,
         "text" : "Checks"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 36,
+        "line" : 34,
         "text" : "Output"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 21,
+        "line" : 20,
         "text" : "Step"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 22,
+        "text" : "Check"
       },
       {
         "kind" : "topic",
@@ -141,13 +147,7 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 24,
-        "text" : "Check"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 30,
+        "line" : 29,
         "text" : "Publish"
       }
     ],
@@ -157,26 +157,25 @@
         "heading" : "When this applies",
         "line" : 11,
         "lines" : [
-          "use judgment to follow the When this applies guidance:",
           "\"process open orders\"",
           "\"place customer orders\""
         ],
-        "role" : "procedure"
+        "role" : "applicability"
       },
       {
         "executes" : false,
         "heading" : "Operator notes",
-        "line" : 16,
+        "line" : 15,
         "lines" : [
           "The source system is an OFBiz-like ERP. Operators think in queues, invoices, and",
           "shipments rather than compiler primitives"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Workflow",
-        "line" : 20,
+        "line" : 19,
         "lines" : [
           "Step: `ofbiz order-check --queue open --json` to snapshot the open order queue",
           "fetch open orders",
@@ -192,19 +191,18 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Checks",
-        "line" : 32,
+        "line" : 31,
         "lines" : [
-          "use judgment to follow the Checks guidance:",
           "No blocked order may pass reservation or shipment release"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output",
-        "line" : 36,
+        "line" : 34,
         "lines" : [
           "The operator expects a queue receipt with processed order numbers and shipment",
           "references"
@@ -250,24 +248,60 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 12,
-      "swift_line" : 402
+      "meridian_line" : 20,
+      "swift_line" : 403
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 415
+    },
+    {
+      "meridian_line" : 22,
+      "swift_line" : 427
+    },
+    {
+      "meridian_line" : 23,
+      "swift_line" : 432
+    },
+    {
+      "meridian_line" : 24,
+      "swift_line" : 436
+    },
+    {
+      "meridian_line" : 58,
+      "swift_line" : 442
+    },
+    {
+      "meridian_line" : 61,
+      "swift_line" : 454
+    },
+    {
+      "meridian_line" : 64,
+      "swift_line" : 466
+    },
+    {
+      "meridian_line" : 67,
+      "swift_line" : 478
+    },
+    {
+      "meridian_line" : 29,
+      "swift_line" : 494
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 440
+      "swift_line" : 531
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 445
+      "swift_line" : 536
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 483
+      "swift_line" : 574
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 488
+      "swift_line" : 579
     }
   ],
   "tools_used" : [
@@ -278,26 +312,6 @@
       "mode" : "strict",
       "parameters" : [
 
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "\"process open orders\"\n\"place customer orders\"\nStep: `ofbiz order-check --queue open --json` to snapshot the open order queue\nfetch open orders\nCheck: all orders have a number\nCheck: no orders whose status is \"blocked\"\nfor each order:\nreserve inventory for the order\ncreate an invoice for the order\ncollect payment for the invoice\nship the order\nPublish: \"open order queue processed\"\nuse judgment to follow the Checks guidance:\nNo blocked order may pass reservation or shipment release",
-          "line" : 12,
-          "scoped_tools" : [
-            "inventory.reserve",
-            "invoice.create",
-            "invoice.list",
-            "order.cancel",
-            "order.list",
-            "payment.collect",
-            "period.close",
-            "product.list",
-            "purchase_order.create",
-            "shipment.create"
-          ],
-          "text" : "follow the When this applies guidance"
-        }
       ],
       "source_name" : "place order",
       "swift_struct" : "PlaceOrder"

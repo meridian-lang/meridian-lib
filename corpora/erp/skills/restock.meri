@@ -8,13 +8,11 @@ triggers:
 
 # Restock
 
-## Use this when (( role: procedure ))
-use judgment to follow the Use this when guidance:
+## Use this when
 - "restock short products"
 - "inventory below reorder point"
 
-## Workflow
-use judgment to follow the Workflow guidance:
+## Workflow (( role: reference ))
 Check: any short products.
 
 ### Workflow — steps
@@ -27,6 +25,5 @@ for each product:
   create a purchase order for the product.
 Publish: "replenishment purchase orders raised".
 
-## Guarantees (( role: procedure ))
-use judgment to follow the Guarantees guidance:
+## Guarantees
 make sure all products have a sku.

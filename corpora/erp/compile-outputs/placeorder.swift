@@ -399,15 +399,106 @@ public struct PlaceOrder: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "PlaceOrder", parameters: [:])
 
-        // L12
-        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
-            prose: "follow the When this applies guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["inventory.reserve", "invoice.create", "invoice.list", "order.cancel", "order.list", "payment.collect", "period.close", "product.list", "purchase_order.create", "shipment.create"],
-            guidance: "\"process open orders\"\n\"place customer orders\"\nStep: `ofbiz order-check --queue open --json` to snapshot the open order queue\nfetch open orders\nCheck: all orders have a number\nCheck: no orders whose status is \"blocked\"\nfor each order:\nreserve inventory for the order\ncreate an invoice for the order\ncollect payment for the invoice\nship the order\nPublish: \"open order queue processed\"\nuse judgment to follow the Checks guidance:\nNo blocked order may pass reservation or shipment release"
-        )
-        for (__key, __value) in __meridianProseResults_L12 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L20:C0") {
+            // L20
+            // snapshot the open order queue
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("ofbiz order-check --queue open --json"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L20:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L49:C0") {
+            // L49
+            let orders = try await runtime.invoke(
+                tool: "order.list",
+                args: [
+                    "status": .string("open"),
+                ]
+            )
+            state.bind("orders", orders)
+
+            try await runtime.checkpoint(label: "progress:0.1:L49:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L22:C0") {
+            // L22
+            try await runtime.assert((((state.get("orders"))?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("number")) }), message: "Expected all orders have a number")
+            try await runtime.checkpoint(label: "progress:0.2:L22:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L23:C0") {
+            // L23
+            try await runtime.assert(((((state.get("orders"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("blocked"))) }).isEmpty), message: "Expected no orders whose status is \"blocked\"")
+            try await runtime.checkpoint(label: "progress:0.3:L23:C0", state: state.snapshot())
+        }
+        // L24
+        for (__meridianLoopIndex_0_4, order) in (state.get("orders")?.asList ?? []).enumerated() {
+            let __meridianLoopLabel_0_4 = "progress:0.4:iteration:\(__meridianLoopIndex_0_4)"
+            if __meridianShouldRun(__meridianLoopLabel_0_4) {
+            state.bind("order", order)
+                if __meridianShouldRun("progress:0.4.body.0:L58:C0") {
+                    // L58
+                    let inventory = try await runtime.invoke(
+                        tool: "inventory.reserve",
+                        args: [
+                            "order": state.get("order") ?? .null,
+                        ]
+                    )
+                    state.bind("inventory", inventory)
+
+                    try await runtime.checkpoint(label: "progress:0.4.body.0:L58:C0", state: state.snapshot())
+                }
+                if __meridianShouldRun("progress:0.4.body.1:L61:C0") {
+                    // L61
+                    let invoice = try await runtime.invoke(
+                        tool: "invoice.create",
+                        args: [
+                            "order": state.get("order") ?? .null,
+                        ]
+                    )
+                    state.bind("invoice", invoice)
+
+                    try await runtime.checkpoint(label: "progress:0.4.body.1:L61:C0", state: state.snapshot())
+                }
+                if __meridianShouldRun("progress:0.4.body.2:L64:C0") {
+                    // L64
+                    let payment = try await runtime.invoke(
+                        tool: "payment.collect",
+                        args: [
+                            "invoice": state.get("invoice") ?? .null,
+                        ]
+                    )
+                    state.bind("payment", payment)
+
+                    try await runtime.checkpoint(label: "progress:0.4.body.2:L64:C0", state: state.snapshot())
+                }
+                if __meridianShouldRun("progress:0.4.body.3:L67:C0") {
+                    // L67
+                    let shipment = try await runtime.invoke(
+                        tool: "shipment.create",
+                        args: [
+                            "order": state.get("order") ?? .null,
+                        ]
+                    )
+                    state.bind("shipment", shipment)
+
+                    try await runtime.checkpoint(label: "progress:0.4.body.3:L67:C0", state: state.snapshot())
+                }
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_4, state: state.snapshot())
+            }
+        }
+
+        if __meridianShouldRun("progress:0.5:L29:C0") {
+            // L29
+            try await runtime.emit(
+                event: "erp.report",
+                payload: [
+                    "message": .string("open order queue processed"),
+                ]
+            )
+            try await runtime.checkpoint(label: "progress:0.5:L29:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

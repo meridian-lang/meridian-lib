@@ -98,7 +98,7 @@
     "name" : "soul-audit",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 27,
         "text" : "Contract"
@@ -106,149 +106,178 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 38,
+        "line" : 37,
         "text" : "Phases"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 41,
+        "line" : 39,
         "text" : "Phase 1: Identity Interview"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 46,
+        "line" : 43,
         "text" : "Phase 2: Vibe Calibration"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 55,
+        "line" : 51,
         "text" : "Phase 3: Mission Mapping"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 60,
+        "line" : 55,
         "text" : "Phase 4: User Profile"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 65,
+        "line" : 59,
         "text" : "Phase 5: Boundaries"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 70,
+        "line" : 63,
         "text" : "Phase 6: Operational Cadence"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 75,
+        "line" : 67,
         "text" : "Default Mode (Skip Soul-Audit)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 78,
+        "line" : 70,
         "text" : "Default Mode (Skip Soul-Audit) — steps"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 86,
+        "line" : 78,
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 91,
+        "line" : 83,
         "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 90,
+        "text" : "Anti-Patterns — steps"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 30,
+        "line" : 29,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 43,
+        "line" : 40,
         "text" : "Ask"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 41,
+        "text" : "Generate"
       },
       {
         "kind" : "topic",
         "level" : 3,
         "line" : 44,
-        "text" : "Generate"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 48,
         "text" : "Show 3-4 communication style examples"
       },
       {
         "kind" : "topic",
         "level" : 3,
+        "line" : 45,
+        "text" : "Formal"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 46,
+        "text" : "Direct"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 47,
+        "text" : "Technical"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 48,
+        "text" : "Casual"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 52,
+        "text" : "Ask"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 53,
+        "text" : "Generate"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 56,
+        "text" : "Ask"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
         "line" : 57,
-        "text" : "Ask"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 58,
         "text" : "Generate"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 62,
+        "line" : 60,
         "text" : "Ask"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 63,
+        "line" : 61,
         "text" : "Generate"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 67,
+        "line" : 64,
         "text" : "Ask"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 68,
-        "text" : "Generate"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 72,
-        "text" : "Ask"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 73,
+        "line" : 65,
         "text" : "Generate"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 27,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "SOUL.md generated from user's description of agent identity, vibe, mission",
           "USER.md generated from user's self-description (role, projects, key people)",
@@ -257,91 +286,85 @@
           "Each phase is independent and re-runnable",
           "Default mode (skip soul-audit): installs minimal templates from `templates\/`"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 38,
+        "line" : 37,
         "lines" : [
-          "use judgment to follow the Phases guidance:"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Phase 1: Identity Interview",
-        "line" : 41,
-        "lines" : [
-          "use judgment to follow the Phase 1: Identity Interview guidance:",
-          "Ask: \"What is this agent to you? Research partner? Executive assistant? Thinking partner? All of the above?\"",
-          "Generate: SOUL.md identity section"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Phase 2: Vibe Calibration",
-        "line" : 46,
-        "lines" : [
-          "use judgment to follow the Phase 2: Vibe Calibration guidance:",
-          "Show 3-4 communication style examples:",
-          "**Formal:** \"I've prepared a comprehensive analysis of the situation...\"",
-          "**Direct:** \"Here's what's happening. Three things matter.\"",
-          "**Technical:** \"The root cause is in the connection pooling. Here's the fix.\"",
-          "**Casual:** \"Yeah so basically the thing is broken because X. Easy fix.\"",
-          "Ask which feels right. Generate: SOUL.md vibe + communication style sections"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Phase 3: Mission Mapping",
-        "line" : 55,
-        "lines" : [
-          "use judgment to follow the Phase 3: Mission Mapping guidance:",
-          "Ask: \"What are your top 3-5 goals? What are you trying to accomplish?\"",
-          "Generate: SOUL.md mission + operating principles sections"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Phase 4: User Profile",
-        "line" : 60,
-        "lines" : [
-          "use judgment to follow the Phase 4: User Profile guidance:",
-          "Ask: \"Tell me about yourself. What do you do? What are you working on? Who are the key people in your world?\"",
-          "Generate: USER.md with role, projects, key people, communication preferences"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Phase 5: Boundaries",
-        "line" : 65,
-        "lines" : [
-          "use judgment to follow the Phase 5: Boundaries guidance:",
-          "Ask: \"Who should have access to your brain? Are there people who should see some but not all? Anyone to keep out entirely?\"",
-          "Generate: ACCESS_POLICY.md with 4 tiers (Full\/Work\/Family\/None)"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Phase 6: Operational Cadence",
-        "line" : 70,
-        "lines" : [
-          "use judgment to follow the Phase 6: Operational Cadence guidance:",
-          "Ask: \"How often should the agent check in? Morning briefing? End of day summary? What recurring jobs do you want?\"",
-          "Generate: HEARTBEAT.md with operational cadence"
+
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
+        "heading" : "Phase 1: Identity Interview",
+        "line" : 39,
+        "lines" : [
+          "Ask: \"What is this agent to you? Research partner? Executive assistant? Thinking partner? All of the above?\"",
+          "Generate: SOUL.md identity section"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 2: Vibe Calibration",
+        "line" : 43,
+        "lines" : [
+          "Show 3-4 communication style examples:",
+          "Formal: \"I've prepared a comprehensive analysis of the situation...\"",
+          "Direct: \"Here's what's happening. Three things matter.\"",
+          "Technical: \"The root cause is in the connection pooling. Here's the fix.\"",
+          "Casual: \"Yeah so basically the thing is broken because X. Easy fix.\"",
+          "Ask which feels right. Generate: SOUL.md vibe + communication style sections"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 3: Mission Mapping",
+        "line" : 51,
+        "lines" : [
+          "Ask: \"What are your top 3-5 goals? What are you trying to accomplish?\"",
+          "Generate: SOUL.md mission + operating principles sections"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 4: User Profile",
+        "line" : 55,
+        "lines" : [
+          "Ask: \"Tell me about yourself. What do you do? What are you working on? Who are the key people in your world?\"",
+          "Generate: USER.md with role, projects, key people, communication preferences"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 5: Boundaries",
+        "line" : 59,
+        "lines" : [
+          "Ask: \"Who should have access to your brain? Are there people who should see some but not all? Anyone to keep out entirely?\"",
+          "Generate: ACCESS_POLICY.md with 4 tiers (Full\/Work\/Family\/None)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 6: Operational Cadence",
+        "line" : 63,
+        "lines" : [
+          "Ask: \"How often should the agent check in? Morning briefing? End of day summary? What recurring jobs do you want?\"",
+          "Generate: HEARTBEAT.md with operational cadence"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
         "heading" : "Default Mode (Skip Soul-Audit)",
-        "line" : 75,
+        "line" : 67,
         "lines" : [
 
         ],
@@ -350,7 +373,7 @@
       {
         "executes" : true,
         "heading" : "Default Mode (Skip Soul-Audit) — steps",
-        "line" : 78,
+        "line" : 70,
         "lines" : [
           "Install `templates\/SOUL.md.template` as SOUL.md (minimal: \"knowledge-first agent with persistent memory\")",
           "Install `templates\/USER.md.template` as USER.md (auto-populate name\/email from git config)",
@@ -362,7 +385,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 86,
+        "line" : 78,
         "lines" : [
           "Four files generated\/updated. Report: \"Soul audit complete: SOUL.md, USER.md,",
           "ACCESS_POLICY.md, HEARTBEAT.md created. Re-run any phase anytime to update.\""
@@ -370,17 +393,24 @@
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 91,
+        "line" : 83,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "Shipping pre-filled SOUL.md or USER.md content (privacy violation)",
-          "Making soul-audit mandatory on first boot (high friction, optional is better)",
           "Asking all 6 phases in one go (overwhelming, each is independent)",
           "Not offering to re-run individual phases"
         ],
-        "role" : "procedure"
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 90,
+        "lines" : [
+          "Making soul-audit mandatory on first boot (high friction, optional is better)"
+        ],
+        "role" : "reference"
       }
     ],
     "tools" : "put_page",
@@ -423,48 +453,60 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 28,
-      "swift_line" : 602
+      "meridian_line" : 73,
+      "swift_line" : 603
+    },
+    {
+      "meridian_line" : 74,
+      "swift_line" : 615
+    },
+    {
+      "meridian_line" : 75,
+      "swift_line" : 627
+    },
+    {
+      "meridian_line" : 76,
+      "swift_line" : 639
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 641
+      "swift_line" : 679
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 646
+      "swift_line" : 684
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 685
+      "swift_line" : 723
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 728
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 767
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 772
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 773
+      "swift_line" : 811
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 816
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 817
+      "swift_line" : 855
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 822
+      "swift_line" : 860
     }
   ],
   "tools_used" : [
@@ -477,18 +519,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "This skill guarantees:\nSOUL.md generated from user's description of agent identity, vibe, mission\nUSER.md generated from user's self-description (role, projects, key people)\nACCESS_POLICY.md generated with configurable access tiers\nHEARTBEAT.md generated with operational cadence the user chooses\nEach phase is independent and re-runnable\nDefault mode (skip soul-audit): installs minimal templates from `templates\/`\nuse judgment to follow the Phases guidance:\nuse judgment to follow the Phase 1: Identity Interview guidance:\nAsk: \"What is this agent to you? Research partner? Executive assistant? Thinking partner? All of the above?\"\nGenerate: SOUL.md identity section\nuse judgment to follow the Phase 2: Vibe Calibration guidance:\nShow 3-4 communication style examples:\n**Formal:** \"I've prepared a comprehensive analysis of the situation...\"\n**Direct:** \"Here's what's happening. Three things matter.\"\n**Technical:** \"The root cause is in the connection pooling. Here's the fix.\"\n**Casual:** \"Yeah so basically the thing is broken because X. Easy fix.\"\nAsk which feels right. Generate: SOUL.md vibe + communication style sections\nuse judgment to follow the Phase 3: Mission Mapping guidance:\nAsk: \"What are your top 3-5 goals? What are you trying to accomplish?\"\nGenerate: SOUL.md mission + operating principles sections\nuse judgment to follow the Phase 4: User Profile guidance:\nAsk: \"Tell me about yourself. What do you do? What are you working on? Who are the key people in your world?\"\nGenerate: USER.md with role, projects, key people, communication preferences\nuse judgment to follow the Phase 5: Boundaries guidance:\nAsk: \"Who should have access to your brain? Are there people who should see some but not all? Anyone to keep out entirely?\"\nGenerate: ACCESS_POLICY.md with 4 tiers (Full\/Work\/Family\/None)\nuse judgment to follow the Phase 6: Operational Cadence guidance:\nAsk: \"How often should the agent check in? Morning briefing? End of day summary? What recurring jobs do you want?\"\nGenerate: HEARTBEAT.md with operational cadence\nInstall `templates\/SOUL.md.template` as SOUL.md (minimal: \"knowledge-first agent with persistent memory\")\nInstall `templates\/USER.md.template` as USER.md (auto-populate name\/email from git config)\nInstall `templates\/ACCESS_POLICY.md.template` as ACCESS_POLICY.md (owner-only access)\nInstall `templates\/HEARTBEAT.md.template` as HEARTBEAT.md (default cadence)\nuse judgment to follow the Anti-Patterns guidance:\nShipping pre-filled SOUL.md or USER.md content (privacy violation)\nMaking soul-audit mandatory on first boot (high friction, optional is better)\nAsking all 6 phases in one go (overwhelming, each is independent)\nNot offering to re-run individual phases",
-          "line" : 28,
-          "scoped_tools" : [
-            "publish",
-            "shell.run"
-          ],
-          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "soul-audit a input",

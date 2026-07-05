@@ -98,99 +98,111 @@
     "name" : "academic-verify",
     "outline" : [
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 28,
         "text" : "What this is"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 51,
         "text" : "When to use this"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 63,
+        "line" : 62,
         "text" : "What this skill is NOT"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 67,
+        "line" : 66,
         "text" : "What this skill is NOT — steps"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 73,
+        "line" : 72,
         "text" : "How it works (D7\/α: pure routing through perplexity-research)"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 117,
+        "line" : 116,
         "text" : "Output: brain page format"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 163,
+        "line" : 162,
         "text" : "Useful databases (the agent uses these via perplexity-research)"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 166,
+        "line" : 165,
         "text" : "Useful databases (the agent uses these via perplexity-research) — steps"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 178,
+        "line" : 176,
         "text" : "Standards (the rigor bar)"
       },
       {
         "kind" : "procedure",
+        "level" : 3,
+        "line" : 190,
+        "text" : "Standards (the rigor bar) — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 198,
+        "text" : "Standards (the rigor bar) — steps 2"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 200,
+        "line" : 204,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 213,
+        "line" : 216,
         "text" : "Related skills"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 216,
+        "line" : 219,
         "text" : "Related skills — steps"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 225,
+        "line" : 228,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 237,
+        "line" : 239,
         "text" : "Output Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 228,
+        "line" : 230,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 233,
+        "line" : 235,
         "text" : "Privacy contract preserved"
       }
     ],
@@ -215,14 +227,13 @@
           "the claim, the trace, and the verdict — so future references to the",
           "same claim can re-use the verified analysis"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "When to use this",
         "line" : 51,
         "lines" : [
-          "use judgment to follow the When to use this guidance:",
           "A book quotes a study and you want to confirm it's real and not",
           "miscited",
           "An article makes a quantified claim (\"X reduced Y by 40%\") that you",
@@ -232,32 +243,32 @@
           "You're updating a brain page that cites a research claim and you want",
           "to record the verification status alongside"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "What this skill is NOT",
-        "line" : 63,
+        "line" : 62,
         "lines" : [
           "Not adversarial \/ oppo work. The point is rigor, not takedown"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "What this skill is NOT — steps",
-        "line" : 67,
+        "line" : 66,
         "lines" : [
           "Not generic web research — use `perplexity-research` directly for",
           "open-ended topic exploration",
           "Not a brain-only lookup — that's `gbrain query`"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "How it works (D7\/α: pure routing through perplexity-research)",
-        "line" : 73,
+        "line" : 72,
         "lines" : [
           "academic-verify is a thin orchestrator. The actual web search is done",
           "by [perplexity-research](..\/perplexity-research\/SKILL.md). academic-verify's",
@@ -266,41 +277,40 @@
           "into a verdict-shaped brain page",
           "codeblock:plain:U3RlcCAxOiBTY29wZSB0aGUgY2xhaW0KICBQaW4gZG93biBFWEFDVExZIHdoYXQncyBiZWluZyBjbGFpbWVkOgogICAg4oCiIFF1b3RlOiB3aG8gc2FpZCB3aGF0PwogICAg4oCiIFNvdXJjZTogd2hpY2ggcGFwZXIgLyBkYXRhc2V0IC8gc3VydmV5PwogICAg4oCiIE51bWJlcjogd2hhdCBzcGVjaWZpYyBxdWFudGl0eSBpcyBjbGFpbWVkPwogICAg4oCiIFBlcmlvZDogb3ZlciB3aGF0IHRpbWUgcmFuZ2U\/CgpTdGVwIDI6IEJyYWluLWZpcnN0IGxvb2t1cAogIGdicmFpbiBxdWVyeSAiPHBhcGVyIHRpdGxlPiBPUiA8YXV0aG9yIG5hbWU+IE9SIDxjbGFpbSBrZXl3b3Jkcz4iCiAgSWYgdGhlIGJyYWluIGhhcyBwcmlvciB2ZXJpZmljYXRpb24gb2YgdGhpcyBjbGFpbSwgcmV1c2UgaXQuCgpTdGVwIDM6IEludm9rZSBwZXJwbGV4aXR5LXJlc2VhcmNoIHdpdGggY2l0YXRpb24tbW9kZSBwcm9tcHQKICBTZW5kIHRoZSBjbGFpbSArIGJyYWluIGNvbnRleHQgdG8gcGVycGxleGl0eS1yZXNlYXJjaCB3aXRoIGEgcHJvbXB0CiAgdGhhdCBleHBsaWNpdGx5IGFza3MgZm9yOgogICAg4oCiIE9yaWdpbmFsIHB1YmxpY2F0aW9uICh0aXRsZSwgYXV0aG9ycywgam91cm5hbCwgeWVhciwgRE9JKQogICAg4oCiIE1ldGhvZG9sb2d5IHNlY3Rpb24gc3VtbWFyeQogICAg4oCiIFJhdyBkYXRhIGF2YWlsYWJpbGl0eSAocHVibGljIHJlcG8\/IHByb3ByaWV0YXJ5PykKICAgIOKAoiBJbmRlcGVuZGVudCByZXBsaWNhdGlvbiBzdGF0dXMgKFJldHJhY3Rpb24gV2F0Y2ggLyBQdWJQZWVyIGhpdHMpCiAgICDigKIgQ2l0YXRpb25zIG9mIHRoZSBwYXBlciB0aGF0IGNyaXRpcXVlIG9yIGNvbnRleHR1YWxpemUgaXQKClN0ZXAgNDogRm9ybWF0IHRoZSB2ZXJkaWN0CiAgV3JpdGUgdGhlIHJlc3VsdCB0byBjb25jZXB0cy88Y2xhaW0tc2x1Zz4ubWQuIFRoZSB2ZXJkaWN0IGlzIG9uZSBvZjoKICAgIOKAoiBWZXJpZmllZCDigJQgY2xhaW0gaXMgYWNjdXJhdGU7IHJhdyBkYXRhIGF2YWlsYWJsZTsgcmVwbGljYXRpb24gZXhpc3RzCiAgICDigKIgUGFydGlhbGx5IHZlcmlmaWVkIOKAlCBjbGFpbSBjb3JyZWN0IG9uIHRoZSB1bmRlcmx5aW5nIHBhcGVyIGJ1dAogICAgICBtZXRob2RvbG9neSBoYXMga25vd24gbGltaXRzOyByZWNvcmQgbGltaXRzIGV4cGxpY2l0bHkKICAgIOKAoiBVbnZlcmlmaWFibGUg4oCUIG5vIHB1YmxpYyBkYXRhLCBubyByZXBsaWNhdGlvbjsgbm90IGVub3VnaCB0byBhY3QKICAgIOKAoiBNaXNhdHRyaWJ1dGVkIOKAlCB0aGUgY2xhaW0gY2l0ZXMgYSBwYXBlciBidXQgdGhlIHBhcGVyIGRvZXNuJ3Qgc2F5IHRoYXQKICAgIOKAoiBSZXRyYWN0ZWQgLyBkaXNwdXRlZCDigJQgcGFwZXIgaGFzIGtub3duIHJldHJhY3Rpb24gb3IKICAgICAgd2VsbC1kb2N1bWVudGVkIGNyaXRpcXVlCgpTdGVwIDU6IENyb3NzLWxpbmsgdG8gb3JpZ2luYWwgc291cmNlcwogIEFkZCB0aGUgcGFwZXIgYXV0aG9ycyB0byBwZW9wbGUvIGlmIHRoZXkgaGF2ZSBicmFpbiBwYWdlcywgb3IgY3JlYXRlCiAgb25lIGlmIG5vdGFibGUuIElyb24gTGF3IHBlciBjb252ZW50aW9ucy9xdWFsaXR5Lm1kLg=="
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output: brain page format",
-        "line" : 117,
+        "line" : 116,
         "lines" : [
           "codeblock:markdown:LS0tCnRpdGxlOiAiW0NsYWltIHN1bW1hcnldIOKAlCBWZXJpZmllZCIKdHlwZTogcmVzZWFyY2gKZGF0ZTogWVlZWS1NTS1ERAp2ZXJkaWN0OiAidmVyaWZpZWR8cGFydGlhbHx1bnZlcmlmaWFibGV8bWlzYXR0cmlidXRlZHxyZXRyYWN0ZWQiCmJyYWluX2NvbnRleHRfc2x1Z3M6IFsicGFnZXMgY2l0ZWQgYXMgY29udGV4dCJdCi0tLQoKIyBbQ2xhaW0gc3VtbWFyeV0g4oCUIFZlcmlmaWVkCgo+IE9uZS1saW5lOiB0aGUgdmVyZGljdCArIHRoZSBib3R0b20tbGluZSByZWFzb24uCgojIyBUaGUgQ2xhaW0KCj4gRXhhY3QgcXVvdGUsIGV4YWN0bHkgYXMgc3RhdGVkLCB3aXRoIHNvdXJjZSBhdHRyaWJ1dGlvbi4KCiMjIFRyYWNlCgp8IFN0ZXAgfCBGaW5kaW5nIHwgU291cmNlIHwKfC0tLS0tLXwtLS0tLS0tLS18LS0tLS0tLS18CnwgT3JpZ2luYWwgcHVibGljYXRpb24gfCBbVGl0bGUsIGF1dGhvcnMsIHllYXIsIERPSV0gfCBbVVJMXSB8CnwgTWV0aG9kb2xvZ3kgfCBbMS1saW5lIHN1bW1hcnk7IGZsYWcgb2J2aW91cyBsaW1pdHNdIHwgW1VSTF0gfAp8IFJhdyBkYXRhIHwgW1B1YmxpYyByZXBvIC8gcHJvcHJpZXRhcnkgLyBhdmFpbGFibGUtb24tcmVxdWVzdF0gfCBbVVJMXSB8CnwgSW5kZXBlbmRlbnQgcmVwbGljYXRpb24gfCBbUmVwbGljYXRpb24gc3R1ZGllcyBhbmQgdGhlaXIgcmVzdWx0c10gfCBbVVJMXSB8CnwgQ3JpdGljYWwgY2l0YXRpb25zIHwgW1BhcGVycyB0aGF0IGNyaXRpcXVlIHRoaXMgd29ya10gfCBbVVJMXSB8CgojIyBWZXJkaWN0CgpbVmVyaWZpZWQgLyBQYXJ0aWFsbHkgdmVyaWZpZWQgLyBVbnZlcmlmaWFibGUgLyBNaXNhdHRyaWJ1dGVkIC8gUmV0cmFjdGVkXQoKWzEtMiBwYXJhZ3JhcGhzIGV4cGxhaW5pbmcgV0hZIHRoZSB2ZXJkaWN0LCB3aXRoIHNwZWNpZmljIGV2aWRlbmNlLl0KCiMjIENhdmVhdHMKCltIb25lc3QgbGltaXRzOiB3aGF0IHdlIGNvdWxkbid0IHZlcmlmeSwgd2hhdCB3b3VsZCBjaGFuZ2UgdGhlIHZlcmRpY3QuXQoKIyMgU2VlIEFsc28KCi0gT3JpZ2luYWwgcGFwZXI6IFtUaXRsZV0oRE9JIFVSTCkKLSBBdXRob3JzJyBicmFpbiBwYWdlczogW0F1dGhvciAxXShwZW9wbGUvYXV0aG9yLTEubWQpLCAuLi4KLSBSZWxhdGVkIGNsYWltcyAodmVyaWZpZWQgb3Igb3RoZXJ3aXNlKTogWy4uLl0="
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Useful databases (the agent uses these via perplexity-research)",
-        "line" : 163,
+        "line" : 162,
         "lines" : [
 
         ],
         "role" : "inert"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Useful databases (the agent uses these via perplexity-research) — steps",
-        "line" : 166,
+        "line" : 165,
         "lines" : [
-          "table:ai-discretion:fCBEYXRhYmFzZSB8IFdoYXQgaXQgaGFzIHwgVVJMIHBhdHRlcm4gfAp8LS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18CnwgUmV0cmFjdGlvbiBXYXRjaCB8IFJldHJhY3Rpb25zLCBjb3JyZWN0aW9ucywgZXhwcmVzc2lvbnMgb2YgY29uY2VybiB8IHJldHJhY3Rpb253YXRjaC5jb20vP3M9TkFNRSB8CnwgUHViUGVlciB8IEFub255bW91cyBwb3N0LXB1YmxpY2F0aW9uIHBlZXIgcmV2aWV3IHwgcHVicGVlci5jb20vc2VhcmNoP3E9TkFNRSB8CnwgT1NGIHwgUHJlLXJlZ2lzdHJhdGlvbnMsIG9wZW4gZGF0YSwgb3BlbiBtYXRlcmlhbHMgfCBvc2YuaW8vc2VhcmNoLz9xPVFVRVJZIHwKfCBTZW1hbnRpYyBTY2hvbGFyIHwgQ2l0YXRpb24gYW5hbHlzaXMsIHBhcGVyIG1ldGFkYXRhIHwgYXBpLnNlbWFudGljc2Nob2xhci5vcmcgfAp8IE9wZW5BbGV4IHwgT3BlbiBjaXRhdGlvbiBkYXRhLCBpbnN0aXR1dGlvbmFsIGFmZmlsaWF0aW9ucyB8IGFwaS5vcGVuYWxleC5vcmcgfAp8IE1hbnkgTGFicyB8IFJlcGxpY2F0aW9uIHJlc3VsdHMgZm9yIHNvY2lhbCBwc3ljaG9sb2d5IHwgb3NmLmlvL3d4N2NrLyB8"
+          "table:decision:fCBEYXRhYmFzZSB8IFdoYXQgaXQgaGFzIHwgVVJMIHBhdHRlcm4gfAp8LS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18CnwgUmV0cmFjdGlvbiBXYXRjaCB8IFJldHJhY3Rpb25zLCBjb3JyZWN0aW9ucywgZXhwcmVzc2lvbnMgb2YgY29uY2VybiB8IHJldHJhY3Rpb253YXRjaC5jb20vP3M9TkFNRSB8CnwgUHViUGVlciB8IEFub255bW91cyBwb3N0LXB1YmxpY2F0aW9uIHBlZXIgcmV2aWV3IHwgcHVicGVlci5jb20vc2VhcmNoP3E9TkFNRSB8CnwgT1NGIHwgUHJlLXJlZ2lzdHJhdGlvbnMsIG9wZW4gZGF0YSwgb3BlbiBtYXRlcmlhbHMgfCBvc2YuaW8vc2VhcmNoLz9xPVFVRVJZIHwKfCBTZW1hbnRpYyBTY2hvbGFyIHwgQ2l0YXRpb24gYW5hbHlzaXMsIHBhcGVyIG1ldGFkYXRhIHwgYXBpLnNlbWFudGljc2Nob2xhci5vcmcgfAp8IE9wZW5BbGV4IHwgT3BlbiBjaXRhdGlvbiBkYXRhLCBpbnN0aXR1dGlvbmFsIGFmZmlsaWF0aW9ucyB8IGFwaS5vcGVuYWxleC5vcmcgfAp8IE1hbnkgTGFicyB8IFJlcGxpY2F0aW9uIHJlc3VsdHMgZm9yIHNvY2lhbCBwc3ljaG9sb2d5IHwgb3NmLmlvL3d4N2NrLyB8"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Standards (the rigor bar)",
-        "line" : 178,
+        "line" : 176,
         "lines" : [
-          "use judgment to follow the Standards (the rigor bar) guidance:",
           "**Verified** — only when the underlying paper exists, raw data is",
           "public OR an independent lab has confirmed the result, and the citing",
           "source represents the claim accurately",
@@ -311,10 +321,27 @@
           "data, no replication has been done, no independent confirmation",
           "exists. Not the same as \"wrong\" — say \"we couldn't verify.\"",
           "**Misattributed** — the citation points to a paper, but the paper",
-          "doesn't actually say what the citation claims. Common in policy briefs",
+          "doesn't actually say what the citation claims. Common in policy briefs"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Standards (the rigor bar) — steps",
+        "line" : 190,
+        "lines" : [
+          "use judgment to follow the Standards (the rigor bar) — steps guidance:",
           "**Retracted \/ disputed** — paper has been retracted, has a major",
           "expression-of-concern, or has well-documented critique that",
-          "contradicts the headline finding",
+          "contradicts the headline finding"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Standards (the rigor bar) — steps 2",
+        "line" : 198,
+        "lines" : [
           "Never claim a problem without evidence. The verification document",
           "itself is the artifact — if the claim holds up, say so plainly. If it",
           "doesn't, the trace speaks for itself"
@@ -322,11 +349,10 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 200,
+        "line" : 204,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "❌ Skipping the brain-first lookup. Re-doing verification we've",
           "already done is wasted Perplexity spend",
           "❌ Bypassing perplexity-research and inventing the lookup. The",
@@ -337,12 +363,12 @@
           "❌ Stating \"Unverifiable\" when you simply didn't look hard enough",
           "The verdict is on the source, not on your search effort"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Related skills",
-        "line" : 213,
+        "line" : 216,
         "lines" : [
 
         ],
@@ -351,7 +377,7 @@
       {
         "executes" : true,
         "heading" : "Related skills — steps",
-        "line" : 216,
+        "line" : 219,
         "lines" : [
           "`skills\/perplexity-research\/SKILL.md` — the actual web-search engine",
           "this skill routes through (D7\/α: pure routing, no new infrastructure)",
@@ -362,11 +388,10 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
-        "line" : 225,
+        "line" : 228,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
           "Output written under the directories listed in `writes_to:` (when applicable)",
@@ -374,12 +399,12 @@
           "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
           "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 237,
+        "line" : 239,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -427,7 +452,7 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 52,
+      "meridian_line" : 192,
       "swift_line" : 603
     },
     {
@@ -494,8 +519,8 @@
       "prose_steps" : [
         {
           "dispatch_mode" : "plan_then_execute",
-          "guidance" : "A book quotes a study and you want to confirm it's real and not\nmiscited\nAn article makes a quantified claim (\"X reduced Y by 40%\") that you\nwant traced to the source data\nYou're writing something that depends on a piece of research and you\nwant to verify the underlying paper holds up\nYou're updating a brain page that cites a research claim and you want\nto record the verification status alongside\nNot generic web research — use `perplexity-research` directly for\nopen-ended topic exploration\nNot a brain-only lookup — that's `gbrain query`\ntable:ai-discretion:fCBEYXRhYmFzZSB8IFdoYXQgaXQgaGFzIHwgVVJMIHBhdHRlcm4gfAp8LS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18CnwgUmV0cmFjdGlvbiBXYXRjaCB8IFJldHJhY3Rpb25zLCBjb3JyZWN0aW9ucywgZXhwcmVzc2lvbnMgb2YgY29uY2VybiB8IHJldHJhY3Rpb253YXRjaC5jb20vP3M9TkFNRSB8CnwgUHViUGVlciB8IEFub255bW91cyBwb3N0LXB1YmxpY2F0aW9uIHBlZXIgcmV2aWV3IHwgcHVicGVlci5jb20vc2VhcmNoP3E9TkFNRSB8CnwgT1NGIHwgUHJlLXJlZ2lzdHJhdGlvbnMsIG9wZW4gZGF0YSwgb3BlbiBtYXRlcmlhbHMgfCBvc2YuaW8vc2VhcmNoLz9xPVFVRVJZIHwKfCBTZW1hbnRpYyBTY2hvbGFyIHwgQ2l0YXRpb24gYW5hbHlzaXMsIHBhcGVyIG1ldGFkYXRhIHwgYXBpLnNlbWFudGljc2Nob2xhci5vcmcgfAp8IE9wZW5BbGV4IHwgT3BlbiBjaXRhdGlvbiBkYXRhLCBpbnN0aXR1dGlvbmFsIGFmZmlsaWF0aW9ucyB8IGFwaS5vcGVuYWxleC5vcmcgfAp8IE1hbnkgTGFicyB8IFJlcGxpY2F0aW9uIHJlc3VsdHMgZm9yIHNvY2lhbCBwc3ljaG9sb2d5IHwgb3NmLmlvL3d4N2NrLyB8\nuse judgment to follow the Standards (the rigor bar) guidance:\n**Verified** — only when the underlying paper exists, raw data is\npublic OR an independent lab has confirmed the result, and the citing\nsource represents the claim accurately\n**Partial** — paper is real and findings stand, but the citation\ncontext oversells (e.g., \"X causes Y\" when the paper shows\ncorrelation, or \"all studies find X\" when it's one underpowered study)\n**Unverifiable** — the underlying number can't be traced to source\ndata, no replication has been done, no independent confirmation\nexists. Not the same as \"wrong\" — say \"we couldn't verify.\"\n**Misattributed** — the citation points to a paper, but the paper\ndoesn't actually say what the citation claims. Common in policy briefs\n**Retracted \/ disputed** — paper has been retracted, has a major\nexpression-of-concern, or has well-documented critique that\ncontradicts the headline finding\nNever claim a problem without evidence. The verification document\nitself is the artifact — if the claim holds up, say so plainly. If it\ndoesn't, the trace speaks for itself\nuse judgment to follow the Anti-Patterns guidance:\n❌ Skipping the brain-first lookup. Re-doing verification we've\nalready done is wasted Perplexity spend\n❌ Bypassing perplexity-research and inventing the lookup. The\ncitations from Perplexity are the evidence — without them, the\nverdict is just opinion\n❌ Stating \"Verified\" without confirming raw data availability\nReplication trumps any single paper\n❌ Stating \"Unverifiable\" when you simply didn't look hard enough\nThe verdict is on the source, not on your search effort\n`skills\/perplexity-research\/SKILL.md` — the actual web-search engine\nthis skill routes through (D7\/α: pure routing, no new infrastructure)\n`skills\/citation-fixer\/SKILL.md` — fixes citation FORMATTING; this\nskill checks whether the cited claim is true\n`skills\/conventions\/quality.md` — citation + back-link rules\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test",
-          "line" : 52,
+          "guidance" : "**Retracted \/ disputed** — paper has been retracted, has a major\nexpression-of-concern, or has well-documented critique that\ncontradicts the headline finding\nNever claim a problem without evidence. The verification document\nitself is the artifact — if the claim holds up, say so plainly. If it\ndoesn't, the trace speaks for itself\n`skills\/perplexity-research\/SKILL.md` — the actual web-search engine\nthis skill routes through (D7\/α: pure routing, no new infrastructure)\n`skills\/citation-fixer\/SKILL.md` — fixes citation FORMATTING; this\nskill checks whether the cited claim is true\n`skills\/conventions\/quality.md` — citation + back-link rules",
+          "line" : 192,
           "scoped_tools" : [
             "assess.notability",
             "capture",
@@ -517,7 +542,7 @@
             "timeline.add",
             "verify"
           ],
-          "text" : "follow the When to use this guidance"
+          "text" : "follow the Standards (the rigor bar) — steps guidance"
         }
       ],
       "source_name" : "academic-verify a input",

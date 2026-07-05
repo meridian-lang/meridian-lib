@@ -60,7 +60,148 @@ rule "checklist-box":
   match: □ {item}
   rewrite: make sure {item}.
 
+# "X refuses to run unless Y" is a precondition in disguise (a deliberate
+# safety fence a skill states in the negative). Generic structural pattern —
+# not corpus-specific — cited in the "Eliminate `(( inert ))`" plan §4 as the
+# canonical example of a P1 category-4 operational line worth mechanizing
+# rather than leaving as a reword error. `{subject}` is captured but unused
+# in the rewrite (the precondition itself carries the actor implicitly).
+rule "refuses-unless-precondition":
+  match: {subject} refuses to run unless {condition}.
+  rewrite: complete unless {condition}.
+
 === sections ===
+section "Standards (the rigor bar) — steps" -> procedure
+section "Standards (the rigor bar) — steps 2" -> procedure
+section "Safety gate (REQUIRED, no exceptions) — steps" -> procedure
+section "Phase 1: Inventory — steps" -> procedure
+section "Phase 2: Crawl — steps" -> procedure
+section "Phase 2: Crawl — steps 2" -> procedure
+section "When to invoke — steps" -> procedure
+section "Model selection — steps 2" -> procedure
+section "Context block — steps" -> procedure
+section "Model: Opus by default — steps" -> procedure
+section "Cost gate — steps" -> procedure
+section "Anti-patterns (do not do these) — steps" -> procedure
+section "Anti-patterns (do not do these) — steps 2" -> procedure
+section "Iron Law: Back-Linking (MANDATORY) — steps" -> procedure
+section "Phase 1: Brain-First Lookup (MANDATORY) — steps 2" -> procedure
+section "Phase 2.5: Structured Graph Updates (automatic) — steps" -> procedure
+section "Phase 4: Ambient Enrichment — steps" -> procedure
+section "Phase 4: Ambient Enrichment — steps 2" -> procedure
+section "The rule — steps" -> procedure
+section "Prerequisite: gstack make-pdf — steps 3" -> procedure
+section "Delivery — steps" -> procedure
+section "Delivery — steps 2" -> procedure
+section "Purpose — steps" -> procedure
+section "Hard Rules — steps" -> invariants
+section "Hard Rules — steps 2" -> invariants
+section "Phases — steps 6" -> procedure
+section "Before an email reply — steps 2" -> procedure
+section "Citation in Briefings — steps" -> procedure
+section "Phase 0: ClawVisor Setup (Required for API Access) — steps 3" -> procedure
+section "Phase 0: ClawVisor Setup (Required for API Access) — steps 4" -> procedure
+section "Phase 0: ClawVisor Setup (Required for API Access) — steps 5" -> procedure
+section "Processing — steps" -> procedure
+section "Filtering rules — steps" -> procedure
+section "Filtering rules — steps 2" -> procedure
+section "Processing — steps 2" -> procedure
+section "Processing — steps 3" -> procedure
+section "Idempotency Requirement — steps" -> procedure
+section "Multi-source brains: use `sync --all`, not per-source entries — steps" -> procedure
+section "When to invoke (v0.25.1 gating) — steps" -> procedure
+section "Codex Review — steps" -> procedure
+section "Codex Review — steps 2" -> procedure
+section "Refusal routing — steps 2" -> procedure
+section "Phase 4: Extract Structured Data — steps" -> procedure
+section "Phase 2: TAXONOMY — Where does each piece go? — steps 3" -> procedure
+section "4a. Primary research page — steps" -> procedure
+section "5b. Existing skill audit — steps" -> procedure
+section "Knowledge domain — steps" -> procedure
+section "Step 4: External data source lookups — steps" -> procedure
+section "Step 4: External data source lookups — steps 2" -> procedure
+section "Step 7: Cross-reference — steps" -> procedure
+section "Phase 1: Audit — steps 3" -> procedure
+section "Output rules — steps 3" -> procedure
+section "Why It Works — steps" -> procedure
+section "Methodology caveats — steps" -> procedure
+section "Step 4: Build the area entry format — steps" -> procedure
+section "Step 5: Keep always-on entries separate — steps" -> procedure
+section "Maintenance — steps" -> procedure
+section "mode = notify (default) — steps 4" -> procedure
+section "Contract — steps 3" -> invariants
+section "What this solves — steps" -> procedure
+section "Phase 1: Resolve the idea target — steps" -> procedure
+section "Phase 1: Resolve the idea target — steps 2" -> procedure
+section "Phase 2: Gather evidence — steps" -> procedure
+section "Phase 3: Classify lineage moments — steps" -> procedure
+section "Phase 5: Suggest optional next action — steps" -> procedure
+section "What to capture from the user's own thinking — steps" -> procedure
+section "What to capture from the user's own thinking — steps 2" -> procedure
+section "Articles & Web Content — steps" -> procedure
+section "Videos & Podcasts — steps" -> procedure
+section "Videos & Podcasts — steps 2" -> procedure
+section "Screenshots & Images — steps" -> procedure
+section "Meeting Transcripts — steps" -> procedure
+section "Meeting Transcripts — steps 2" -> procedure
+section "Social Media Content — steps" -> procedure
+section "Quality Rules — steps" -> invariants
+section "Quality Rules — steps 2" -> procedure
+section "Autonomous path (v0.36.4.0) — when you want to reach a target score — steps 4" -> procedure
+section "Dream cycle (v0.23): synthesize + patterns — steps 6" -> procedure
+section "Dream cycle (v0.23): synthesize + patterns — steps 7" -> procedure
+section "Dream cycle (v0.23): synthesize + patterns — steps 8" -> procedure
+section "Dream cycle (v0.23): synthesize + patterns — steps 9" -> procedure
+section "Dream cycle (v0.23): synthesize + patterns — steps 10" -> procedure
+section "Dream cycle (v0.23): synthesize + patterns — steps 11" -> procedure
+section "Back-link enforcement — steps" -> procedure
+section "Citation audit — steps" -> procedure
+section "Graph population (v0.10.3+) — steps 3" -> procedure
+section "Benchmark Testing — steps" -> procedure
+section "Benchmark Testing — steps 2" -> procedure
+section "Report Storage — steps 2" -> procedure
+section "Phase 3: Attendee enrichment (MANDATORY) — steps 3" -> procedure
+section "Verification — steps" -> procedure
+section "Shell Jobs (Deterministic Scripts) — steps" -> procedure
+section "Preconditions (read before submitting your first shell job) — steps 3" -> procedure
+section "Subagent Jobs (LLM Orchestration) — steps" -> procedure
+section "Subagent Jobs (LLM Orchestration) — steps 2" -> procedure
+section "Deal / company monitoring (cron) — steps" -> procedure
+section "Password Protection Details — steps" -> procedure
+section "Token-Budget Awareness — steps" -> procedure
+section "Token-Budget Awareness — steps 2" -> procedure
+section "Source precedence — steps" -> procedure
+section "Citation in Answers — steps" -> procedure
+section "Phase 2 — Assess (what does the current pack cover?) — steps" -> procedure
+section "Phase 5 — Sync (backfill existing pages with the new types) — steps" -> procedure
+section "Self-upgrade marker protocol (inject into AGENTS.md) — steps" -> procedure
+section "Phase H: Live Sync Setup (MUST ADD) — steps 4" -> procedure
+section "Phase I: Full Verification — steps" -> procedure
+section "Phase J: Cold Start — Populate Your Brain (AUTOMATIC) — steps 2" -> procedure
+section "Phase 1: Idea/Observation Detection (PRIMARY) — steps" -> procedure
+section "Iron Law — steps 2" -> procedure
+section "Iron Law — steps 3" -> procedure
+section "Starting a benchmark from the skill itself (the common case) — steps 3" -> procedure
+section "Starting a benchmark from the skill itself (the common case) — steps 4" -> procedure
+section "Starting a benchmark from the skill itself (the common case) — steps 5" -> procedure
+section "Step 3: Run the eval gate — steps 3" -> procedure
+section "Quality Gates — steps" -> procedure
+section "Phase 1 — Plan — steps" -> procedure
+section "Bypass: `--no-lint` — steps 2" -> procedure
+section "Design rules: — steps" -> procedure
+section "Design rules: — steps 2" -> procedure
+section "Codex Zod core.cjs Missing (discovered 2026-04-23) — steps 2" -> procedure
+section "What this is — steps 2" -> procedure
+section "Inputs — steps" -> procedure
+section "7. Auto-fix protocol — steps" -> procedure
+section "7. Auto-fix protocol — steps 2" -> procedure
+section "State (regression history) — steps" -> procedure
+section "Phase 3: Ingest — steps 2" -> procedure
+section "Contract — steps 2" -> invariants
+section "Constraints — steps" -> procedure
+section "How To Gate (CRITICAL) — steps" -> procedure
+section "How To Gate (CRITICAL) — steps 2" -> procedure
+section "Anti-Patterns — steps 3" -> prohibitions
 section "Cross-source citation format (v0.18.0+)" -> procedure
 section "Prerequisite: gstack make-pdf" -> procedure
 section "Output rules" -> procedure

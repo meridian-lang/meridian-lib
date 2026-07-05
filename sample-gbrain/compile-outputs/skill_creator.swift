@@ -599,15 +599,41 @@ public struct SkillCreatorInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SkillCreatorInput", parameters: [:])
 
-        // L21
-        let __meridianProseResults_L21 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.list", "page.search", "shell.run"],
-            guidance: "This skill guarantees:\nNew skill follows conformance standard (frontmatter + required sections)\nMECE check: no overlap with existing skills' triggers\nManifest.json updated\nRESOLVER.md updated with routing entry\nSkill passes conformance tests (`bun test test/skills-conformance.test.ts`)\nuse judgment to follow the Phases guidance:\n**MECE check.** Review `skills/manifest.json` and `skills/RESOLVER.md`. Does any existing skill already cover this? If so, extend it instead of creating a new one\n**Create SKILL.md.** Use this template:\ncodeblock:yaml:LS0tCm5hbWU6IHtza2lsbC1uYW1lfQp2ZXJzaW9uOiAxLjAuMApkZXNjcmlwdGlvbjogfAogIHtPbmUgcGFyYWdyYXBoIGRlc2NyaWJpbmcgd2hhdCB0aGUgc2tpbGwgZG9lcyBhbmQgd2hlbiB0byB1c2UgaXQufQp0cmlnZ2VyczoKICAtICJ7dHJpZ2dlciBwaHJhc2UgMX0iCiAgLSAie3RyaWdnZXIgcGhyYXNlIDJ9Igp0b29sczoKICAtIHt0b29sMX0KICAtIHt0b29sMn0KbXV0YXRpbmc6IHt0cnVlfGZhbHNlfQotLS0KCiMge1NraWxsIFRpdGxlfQoKIyMgQ29udHJhY3QKe1doYXQgdGhpcyBza2lsbCBndWFyYW50ZWVzIOKAlCAzLTUgYnVsbGV0IHBvaW50c30KCiMjIFBoYXNlcwp7TnVtYmVyZWQgd29ya2Zsb3cgc3RlcHN9CgojIyBPdXRwdXQgRm9ybWF0CntXaGF0IGdvb2Qgb3V0cHV0IGxvb2tzIGxpa2V9CgojIyBBbnRpLVBhdHRlcm5zCntXaGF0IE5PVCB0byBkbyDigJQgMy01IGl0ZW1zfQoKIyMgVG9vbHMgVXNlZAp7R0JyYWluIG9wZXJhdGlvbnMgdXNlZCwgd2l0aCBkZXNjcmlwdGlvbnN9\nWhat capability is missing? What user intent has no skill?\nAdd to manifest. Update `skills/manifest.json` with name, path, description\nAdd to resolver. Update `skills/RESOLVER.md` with routing entry in the appropriate category\nVerify. Run `bun test test/skills-conformance.test.ts` to confirm the new skill passes\nuse judgment to follow the Anti-Patterns guidance:\nCreating a skill that overlaps with an existing one (violates MECE)\nSkipping the MECE check against existing skills\nCreating a skill without triggers in frontmatter\nNot updating manifest.json and RESOLVER.md\nCreating a skill without an Anti-Patterns section"
-        )
-        for (__key, __value) in __meridianProseResults_L21 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L77:C0") {
+            // L77
+            // Add to manifest. Update  with name, path, description
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/manifest.json"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L77:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L78:C0") {
+            // L78
+            // Add to resolver. Update  with routing entry in the appropriate category
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/RESOLVER.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L78:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L79:C0") {
+            // L79
+            // Verify. Run  to confirm the new skill passes
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("bun test test/skills-conformance.test.ts"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L79:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

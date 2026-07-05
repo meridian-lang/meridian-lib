@@ -80,6 +80,15 @@ struct TrialLowering {
         return words.contains { knowledge.lexicon.normativeCueWords.contains(String($0)) }
     }
 
+    /// Whole-word (case-insensitive) match against `EnglishLexicon.inferenceCueWords`
+    /// — the ONLY signal that permits routing non-lowerable content to an AI
+    /// marker (judgment/autonomy/`ai-discretion`/`ai-autonomy`). See P1 in the
+    /// "Eliminate `(( inert ))`" plan / `docs/13_SKILL_MD_PORTING.md`.
+    func hasInferenceCue(_ text: String) -> Bool {
+        let words = text.lowercased().split(whereSeparator: { !$0.isLetter && !$0.isNumber })
+        return words.contains { knowledge.lexicon.inferenceCueWords.contains(String($0)) }
+    }
+
     /// Classify one already-presentation-normalized line, given whether it is
     /// a whole-line command/fence (callers already know this from the
     /// surrounding markdown scan) and whether the immediately-following line

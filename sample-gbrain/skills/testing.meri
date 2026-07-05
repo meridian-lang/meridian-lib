@@ -28,7 +28,7 @@ mutating: false
 > the test-before-bulk pattern; this skill enforces it across the project's
 > own test suite.
 
-## Two modes (( inert ))
+## Two modes (( role: reference ))
 
 This skill has two related but distinct modes:
 
@@ -44,10 +44,9 @@ This skill has two related but distinct modes:
 
 Pick the mode by trigger.
 
-## Mode 1: Skill conformance validation (( inert ))
+## Mode 1: Skill conformance validation (( role: reference ))
 
-### Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+### Contract (( role: reference ))
 
 - `skills/manifest.json` lists every skill directory
 - `skills/RESOLVER.md` references every skill in the manifest
@@ -55,7 +54,7 @@ use judgment to follow the Contract guidance:
 - No MECE violations (duplicate triggers across skills)
 
 
-#### Contract — steps
+### Contract — steps (( role: reference ))
 
 > This mode guarantees:
 
@@ -63,7 +62,7 @@ use judgment to follow the Contract guidance:
 - Every `SKILL.md` has valid YAML frontmatter (`name`, `description`)
 - Every `SKILL.md` has required sections per
   `test/skills-conformance.test.ts`
-### Phases
+### Phases (( role: reference ))
 
 1. Walk skills directory. List all subdirs containing `SKILL.md`.
 2. Parse YAML, check required fields.
@@ -73,12 +72,12 @@ use judgment to follow the Contract guidance:
 6. RESOLVER trigger ↔ frontmatter triggers.
 7. Report results.
 
-### Automation (( inert ))
+### Automation (( role: reference ))
 
 The CI-gated check is the package.json `test` script.
 
 
-#### Automation — steps
+### Automation — steps
 
 ```bash
 bun test test/skills-conformance.test.ts test/resolver.test.ts
@@ -100,10 +99,9 @@ Issues:
 - <skill>: <issue>
 ```
 
-## Mode 2: Project test-suite health (v0.25.1) (( inert ))
+## Mode 2: Project test-suite health (v0.25.1) (( role: reference ))
 
-### When to use (( role: procedure ))
-use judgment to follow the When to use guidance:
+### When to use (( role: reference ))
 
 - Daily test cron fires
 - User asks "run the tests" / "how are the tests" / "what's broken"
@@ -111,10 +109,10 @@ use judgment to follow the When to use guidance:
 - After container restart (bootstrap)
 - When something seems off and you want to verify system health
 
-### Test tiers (( inert ))
+### Test tiers
 
 
-#### Test tiers — steps
+### Test tiers — steps
 
 !!! table (( ai-discretion ))
 | Tier | What it runs | Wall time | Gates |
@@ -124,28 +122,28 @@ use judgment to follow the When to use guidance:
 | Integration | E2E tests against real Postgres | ~5m | Pre-ship + nightly |
 | System health | Disk / memory / CPU / service liveness | <10s | Daily |
 
-### Daily run protocol (( inert ))
+### Daily run protocol (( role: reference ))
 
 When the cron fires (or the user asks), do ALL of this:
 
-#### 1. Run unit tests (( inert ))
+#### 1. Run unit tests (( role: reference ))
 
 Parse: total passed, total failed, total skipped, file-level results.
 
 
-##### 1. Run unit tests — steps
+#### 1. Run unit tests — steps
 
 ```bash
 bun test 2>&1
 ```
 
-#### 2. Run evals (if the project has an evals config) (( inert ))
+#### 2. Run evals (if the project has an evals config) (( role: reference ))
 
 Parse: same format. Note any flakes (tests that fail due to API
 timeouts, not code bugs).
 
 
-##### 2. Run evals (if the project has an evals config) — steps
+#### 2. Run evals (if the project has an evals config) — steps
 
 ```bash
 # Adapt to the project's eval config
@@ -159,7 +157,7 @@ bun test --filter eval 2>&1
 - Database connection (if applicable)
 - Critical files exist (CLAUDE.md, AGENTS.md, etc.)
 
-#### 4. Git diff analysis (CRITICAL — regression intelligence) (( inert ))
+#### 4. Git diff analysis (CRITICAL — regression intelligence) (( role: reference ))
 
 1. Check if the test itself was modified recently (test change, not
    regression).
@@ -169,7 +167,7 @@ bun test --filter eval 2>&1
 4. Check if a dependency was updated (gbrain, bun, etc.).
 
 
-##### 4. Git diff analysis (CRITICAL — regression intelligence) — steps
+#### 4. Git diff analysis (CRITICAL — regression intelligence) — steps
 
 ```bash
 # What changed since last test run?
@@ -178,12 +176,11 @@ git log --oneline --since="24 hours ago"
 
 For each failing test:
 
-#### 5. Classify each failure (( inert ))
+#### 5. Classify each failure
 
 
-##### 5. Classify each failure — steps
+#### 5. Classify each failure — steps
 
-!!! table (( ai-discretion ))
 | Classification | Marker | Action |
 |---------------|--------|--------|
 | REGRESSION — code changed, test broke | 🔴 | Flag with the commit that broke it |
@@ -192,7 +189,7 @@ For each failing test:
 | NEW — test was just added and isn't passing yet | 🟢 | Check if intentional |
 | INFRA — container restart wiped state | 🛠 | Run bootstrap, retest |
 
-#### 6. Report format (( inert ))
+#### 6. Report format (( role: reference ))
 
 ```
 🧪 Daily Tests — YYYY-MM-DD
@@ -213,8 +210,7 @@ FLAKES:
 ✅ ALL CLEAR  (when applicable)
 ```
 
-#### 7. Auto-fix protocol
-use judgment to follow the 7. Auto-fix protocol guidance:
+#### 7. Auto-fix protocol (( role: reference ))
 
 **DO auto-fix:**
 
@@ -227,16 +223,20 @@ use judgment to follow the 7. Auto-fix protocol guidance:
 
 - Test expects behavior A but code now does B → ASK first. Maybe the
   test is right and the code has a bug.
-- Security test failing → ALWAYS escalate, never auto-fix.
-- Test was skipped with a TODO → don't un-skip without understanding why.
-
 When uncertain: check the commit message that changed the code, check
 if there's a related PR or conversation, ask the user if still unclear.
 
-### State (regression history)
-use judgment to follow the State (regression history) guidance:
 
-Track results in `~/.gbrain/test-state.json` for trend tracking:
+#### 7. Auto-fix protocol — steps
+
+- Security test failing → ALWAYS escalate, never auto-fix.
+
+#### 7. Auto-fix protocol — steps 2
+
+use judgment to follow the 7. Auto-fix protocol — steps 2 guidance:
+- Test was skipped with a TODO → don't un-skip without understanding why.
+
+### State (regression history) (( role: reference ))
 
 ```json
 {
@@ -256,20 +256,27 @@ This enables:
 - Flake detection (same test fails intermittently)
 - Regression velocity (how fast do we break things after changes?)
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+
+### State (regression history) — steps
+
+Track results in `~/.gbrain/test-state.json` for trend tracking:
+
+## Anti-Patterns (( role: reference ))
 
 - ❌ Skipping conformance validation after adding a new skill
 - ❌ Adding skills to `manifest.json` without adding to RESOLVER.md
 - ❌ Treating every red test as a regression. Classify first; many are
   stale or flaky.
-- ❌ Auto-un-skipping a test without understanding why it was skipped
 - ❌ Auto-"fixing" a security test failure
 - ❌ Reporting "all clear" without actually running system health checks
 
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+
+### Anti-Patterns — steps (( role: reference ))
+
+use judgment to follow the Anti-Patterns — steps guidance:
+- ❌ Auto-un-skipping a test without understanding why it was skipped
+## Contract (( role: reference ))
 
 This skill guarantees:
 
@@ -280,6 +287,6 @@ This skill guarantees:
 
 The full behavior contract is documented in the body sections above; this section exists for the conformance test.
 
-## Output Format (( inert, role: template ))
+## Output Format (( role: template ))
 
 The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).

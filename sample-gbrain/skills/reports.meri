@@ -18,8 +18,7 @@ mutating: true
 
 # Reports Skill
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 This skill guarantees:
 - Reports saved with timestamped filenames and frontmatter
@@ -27,10 +26,9 @@ This skill guarantees:
 - Latest report loadable by category name
 - Reports are searchable via gbrain search/query
 
-## Phases
-use judgment to follow the Phases guidance:
+## Phases (( role: reference ))
 
-1. **Save report.** Write to `reports/{category}/{YYYY-MM-DD-HHMM}.md` with frontmatter:
+1. Save report. Write to `reports/{category}/{YYYY-MM-DD-HHMM}.md` with frontmatter:
    ```yaml
    ---
    title: {report title}
@@ -40,21 +38,20 @@ use judgment to follow the Phases guidance:
    time: {HH:MM PT}
    ---
    ```
-2. **Load latest.** Given a category, find the most recent report file.
-3. **Keyword routing.** Map common queries to report categories:
+2. Given a category, find the most recent report file.
+3. Map common queries to report categories:
    - "email" / "inbox" → ea-inbox-sweep
    - "social" / "mentions" → social-mentions
    - "briefing" / "morning" → morning-briefing
    - "meeting" → meeting-sync
    - Custom mappings configurable
 
-## Output Format (( inert, role: template ))
+## Output Format (( role: template ))
 
 Saved: `reports/{category}/{YYYY-MM-DD-HHMM}.md`
 Loaded: full report content with metadata.
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 - Saving reports without frontmatter (makes them unsearchable)
 - Using inconsistent category names across runs

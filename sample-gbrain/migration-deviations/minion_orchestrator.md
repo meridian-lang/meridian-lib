@@ -2,9 +2,9 @@
 
 - Original: `minion-orchestrator/SKILL.md`
 - Ported: `minion_orchestrator.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 87%
-- Lines: 303 -> 333 (+56 / -26)
+- Tier: 2 (light edits)
+- Similarity: 83%
+- Lines: 303 -> 342 (+73 / -34)
 
 ## Frontmatter
 - Added: (none)
@@ -12,58 +12,79 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L44 `Shell Jobs (Deterministic Scripts)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L79 `Submit (CLI, operator or autopilot)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L121 `Control (MCP-callable)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L133 `Subagent Jobs (LLM Orchestration)`: reference-documentation - Reference documentation, rationale, examples, or changelog.
-- L239 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L278 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L87 `Submit (CLI, operator or autopilot)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L129 `Control (MCP-callable)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L249 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L279 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L287 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
-- Sections inert total: 8/16 (50% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 11/14 (79% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: reference-documentation=6, template=1, tools-metadata=1
-- Judgment: 8 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=9, template=1, tools-metadata=1
+- Judgment: 2 blocks, 0 lines
 
 ### Inert section details
-- L25 `Route the Request: Shell Job vs Subagent`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L44 `Shell Jobs (Deterministic Scripts)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L79 `Submit (CLI, operator or autopilot)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L104 `Monitor (agents or operator)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L121 `Control (MCP-callable)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L133 `Subagent Jobs (LLM Orchestration)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L239 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L278 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L4 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L27 `Route the Request: Shell Job vs Subagent`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L55 `Preconditions (read before submitting your first shell job)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L87 `Submit (CLI, operator or autopilot)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L112 `Monitor (agents or operator)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L129 `Control (MCP-callable)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L158 `Phase 1: Submit`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L237 `Phase 5: Review Results`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L249 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L279 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L287 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/minion-orchestrator/SKILL.md
 +++ skills/minion_orchestrator.meri
-@@ -44,7 +44,8 @@
+@@ -44,18 +44,12 @@
  
  # Minion Orchestrator
  
 -## Contract
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
  Minions is a Postgres-native job queue for durable, observable background work.
  This single skill handles two lanes:
-@@ -64,8 +65,15 @@
+ - Deterministic shell jobs (`gbrain jobs submit shell ...`)
+ - LLM subagent jobs (`gbrain agent run ...`)
+-
+-When to route to Minions: durable, observable work that must survive restarts,
+-fan out across many parallel tasks, or persist across sessions. Routing policy
+-is defined in `skills/conventions/subagent-routing.md` — the project default is
+-`pain_triggered` (native subagents first, Minions after specific pain signals
+-fire); Mode A (all-through-Minions) is opt-in.
+ 
+ Guarantees:
+ - Jobs survive gateway restart (Postgres-backed)
+@@ -64,8 +58,24 @@
  - Jobs can be paused, resumed, or cancelled at any time
  - Parent-child DAGs with configurable failure policies
  
 -## Route the Request: Shell Job vs Subagent
 -
-+## Route the Request: Shell Job vs Subagent (( inert ))
++
++### Contract — steps (( role: reference ))
++
++When to route to Minions: durable, observable work that must survive restarts,
++fan out across many parallel tasks, or persist across sessions. Routing policy
++is defined in `skills/conventions/subagent-routing.md` — the project default is
++`pain_triggered` (native subagents first, Minions after specific pain signals
++fire); Mode A (all-through-Minions) is opt-in.
++
++## Route the Request: Shell Job vs Subagent (( role: reference ))
 +
 +If intent is ambiguous, ask one clarification:
 +"Do you want a deterministic shell command job, or an LLM agent job?"
@@ -75,25 +96,29 @@ These sections were made non-executable in the port and should be reviewed as mi
  | Condition | Action |
  |---|---|
  | User asks for deterministic command/script run | Shell job (CLI: `gbrain jobs submit shell ...`) |
-@@ -76,15 +84,13 @@
+@@ -76,38 +86,48 @@
  | Needs restart durability/observability | Submit as Minion job |
  | Parallel work (2+ streams) | `gbrain agent run --fanout-manifest` or parent + child subagents |
  
 -If intent is ambiguous, ask one clarification:
 -"Do you want a deterministic shell command job, or an LLM agent job?"
 -
--## Shell Jobs (Deterministic Scripts)
-+## Shell Jobs (Deterministic Scripts) (( inert ))
+ ## Shell Jobs (Deterministic Scripts)
  
++
++### Shell Jobs (Deterministic Scripts) — steps
++
++use judgment to follow the Shell Jobs (Deterministic Scripts) — steps guidance:
  Use for reproducible command execution, ETL steps, cron work, and scriptable
  tasks where no LLM reasoning loop is needed.
  
- ### Preconditions (read before submitting your first shell job)
-+use judgment to follow the Preconditions (read before submitting your first shell job) guidance:
- 
- - **`GBRAIN_ALLOW_SHELL_JOBS=1` must be set on the worker environment.**
-   Without it, the shell handler refuses to register and submissions sit in
-@@ -92,22 +98,28 @@
+-### Preconditions (read before submitting your first shell job)
+-
+-- **`GBRAIN_ALLOW_SHELL_JOBS=1` must be set on the worker environment.**
+-  Without it, the shell handler refuses to register and submissions sit in
+-  `waiting` silently. Gate lives in `src/core/minions/handlers/shell.ts`.
++### Preconditions (read before submitting your first shell job) (( role: reference ))
++
  - **Security:** flipping `GBRAIN_ALLOW_SHELL_JOBS=1` authorizes arbitrary
    command execution on the worker. On a shared queue, this is a remote code
    execution surface. Treat as privileged infrastructure authorization.
@@ -111,7 +136,13 @@ These sections were made non-executable in the port and should be reviewed as mi
    agent observes.
 -- **Verify setup:** after configuration, run `gbrain jobs stats` (CLI) to
 +
-+#### Preconditions (read before submitting your first shell job) — steps
++### Preconditions (read before submitting your first shell job) — steps
++
++- `GBRAIN_ALLOW_SHELL_JOBS=1` must be set on the worker environment.
++  Without it, the shell handler refuses to register and submissions sit in
++  `waiting` silently. Gate lives in `src/core/minions/handlers/shell.ts`.
++
++### Preconditions (read before submitting your first shell job) — steps 2
 +
 +> - **Execution mode — pick one:**
 +  - Postgres + daemon: `gbrain jobs work` runs a persistent worker that
@@ -120,74 +151,78 @@ These sections were made non-executable in the port and should be reviewed as mi
 +    The daemon mode is not available on PGLite (exclusive file lock). See
 +    `docs/guides/minions-shell-jobs.md`.
 +
-+#### Preconditions (read before submitting your first shell job) — steps 2
++### Preconditions (read before submitting your first shell job) — steps 3
 +
 +- Verify setup: after configuration, run `gbrain jobs stats` (CLI) to
    confirm the worker is registered and consuming the queue.
  
 -### Submit (CLI, operator or autopilot)
-+### Submit (CLI, operator or autopilot) (( inert ))
++### Submit (CLI, operator or autopilot) (( role: reference ))
  
  Shell jobs take their command via `--params` as a JSON object with `cmd` (string)
  or `argv` (array), plus `cwd` and optional `env`.
-@@ -132,7 +144,7 @@
+@@ -132,7 +152,7 @@
  `--backoff-delay`, `--backoff-jitter`, `--timeout-ms`, `--idempotency-key`,
  `--dry-run`.
  
 -### Monitor (agents or operator)
-+### Monitor (agents or operator) (( inert ))
++### Monitor (agents or operator) (( role: reference ))
  
  These operations are MCP-callable and safe for agent use:
  
-@@ -142,11 +154,14 @@
+@@ -142,11 +162,14 @@
  get_job_progress ID
  ```
  
 +
-+#### Monitor (agents or operator) — steps
++### Monitor (agents or operator) — steps
 +
  Check structured result fields (exit code, stdout/stderr tails, attempts,
  timings) from `get_job`. Use `gbrain jobs stats` (CLI) for worker/queue
  health dashboard.
  
 -### Control (MCP-callable)
-+### Control (MCP-callable) (( inert ))
++### Control (MCP-callable) (( role: reference ))
  
  ```
  cancel_job id=ID
-@@ -158,7 +173,7 @@
+@@ -160,15 +183,22 @@
  
- Use idempotency keys for recurring shell workloads to avoid duplicate runs.
+ ## Subagent Jobs (LLM Orchestration)
  
--## Subagent Jobs (LLM Orchestration)
-+## Subagent Jobs (LLM Orchestration) (( inert ))
- 
++
++### Subagent Jobs (LLM Orchestration) — steps
++
++use judgment to follow the Subagent Jobs (LLM Orchestration) — steps guidance:
  Use for open-ended reasoning, tool-using research, and fan-out synthesis.
  
-@@ -169,6 +184,7 @@
+-**User-facing entrypoint:** `gbrain agent run <prompt>` is the canonical way
++
++### Subagent Jobs (LLM Orchestration) — steps 2
++
++User-facing entrypoint: `gbrain agent run <prompt>` is the canonical way
+ to submit subagent work. It handles the elevated-trust plumbing — `subagent`
+ and `subagent_aggregator` are both in `PROTECTED_JOB_NAMES`, so direct MCP
+ submission requires `{allowProtectedSubmit: true}`, which `gbrain agent run`
  supplies.
  
- ## Phase 1: Submit
-+use judgment to follow the Phase 1: Submit guidance:
+-## Phase 1: Submit
++## Phase 1: Submit (( role: reference ))
  
  ```
  gbrain agent run "Research Acme Corp revenue" --tools "search,query"
-@@ -190,6 +206,14 @@
+@@ -190,6 +220,10 @@
  and claims AFTER every child terminates. See
  `src/core/minions/handlers/subagent.ts` and
  `src/core/minions/handlers/subagent-aggregator.ts`.
 +
 +- `--follow` / `--no-follow` — stream logs + wait (default on TTY)
-+Queue/priority/retry tuning is not exposed by `gbrain agent run`; submit the
-+raw `subagent` handler via `gbrain jobs submit` (requires CLI trust) if you
-+need those knobs.
-+
 +
 +### Phase 1: Submit — steps
  
  Flags (from `src/commands/agent.ts`):
  - `--subagent-def <name>` — named subagent definition
-@@ -198,14 +222,13 @@
+@@ -198,7 +232,9 @@
  - `--tools <csv>` — allow-listed brain tools (see above)
  - `--timeout-ms <N>` — hard timeout per job
  - `--fanout-manifest <file>` — N children + 1 aggregator
@@ -197,36 +232,13 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
  - `--detach` — submit and return immediately
  
--Queue/priority/retry tuning is not exposed by `gbrain agent run`; submit the
--raw `subagent` handler via `gbrain jobs submit` (requires CLI trust) if you
--need those knobs.
--
- ## Phase 2: Monitor
-+use judgment to follow the Phase 2: Monitor guidance:
+ Queue/priority/retry tuning is not exposed by `gbrain agent run`; submit the
+@@ -241,16 +277,19 @@
  
- ```
- list_jobs --status active          # MCP — what's running?
-@@ -218,6 +241,7 @@
- Progress includes: step count, total steps, message, token usage, last tool called.
- 
- ## Phase 3: Steer
-+use judgment to follow the Phase 3: Steer guidance:
- 
- Send a message to redirect a running agent:
- ```
-@@ -230,6 +254,7 @@
- Only the parent job or admin can send messages (sender validation).
- 
- ## Phase 4: Lifecycle
-+use judgment to follow the Phase 4: Lifecycle guidance:
- 
- ```
- pause_job id=ID                    # freeze without losing state
-@@ -242,15 +267,19 @@
  All lifecycle ops are MCP-callable.
  
- ## Phase 5: Review Results
-+use judgment to follow the Phase 5: Review Results guidance:
+-## Phase 5: Review Results
++## Phase 5: Review Results (( role: reference ))
  
  ```
  get_job ID                         # result, token counts, transcript
@@ -239,26 +251,25 @@ These sections were made non-executable in the port and should be reviewed as mi
  Child tokens roll up to parent automatically on completion.
  
 -## Output Format
-+## Output Format (( inert, role: template ))
++## Output Format (( role: template ))
  
  When reporting job status to the user:
  
-@@ -280,7 +309,8 @@
+@@ -280,7 +319,7 @@
  Total tokens so far: 4.3k
  ```
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
++## Anti-Patterns (( role: reference ))
  
  - Don't spawn a Minion for a single search query (use search tool directly)
  - Don't fire-and-forget without checking results
-@@ -288,7 +318,7 @@
+@@ -288,7 +327,7 @@
  - For subagent work, don't use `sessions_spawn` with `runtime: "subagent"` when Minions is available (use `gbrain agent run` instead)
  - Don't poll `get_job` in a tight loop (use `get_job_progress` for lightweight checks)
  
 -## Tools Used
-+## Tools Used (( inert, role: tools ))
++## Tools Used (( role: tools ))
  
  - Submit a background job — `submit_job` (MCP, non-protected names only; shell jobs are CLI-only, subagent jobs via `gbrain agent run`)
  - Get job details — `get_job` (MCP)

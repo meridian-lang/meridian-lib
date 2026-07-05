@@ -41,18 +41,37 @@ public struct InertYieldAnalyzer {
         case doc
     }
 
+    /// The "Eliminate `(( inert ))`" plan's P1 four-way outcome, applied
+    /// read-only to each non-lowering line so the corpus-wide residual can be
+    /// sized *before* the migrator is changed to actually emit these
+    /// outcomes. Precedence mirrors `SkillMigrator+SplitPlan.swift`'s real
+    /// classification: lowerable lines are `.lower`; a non-lowering line with
+    /// an `inferenceCueWords` hit is `.judgment` (the only gate that may ever
+    /// route to an AI marker); otherwise a `normativeCueWords` hit makes it
+    /// `.error` (operational content with no cue — a reword target);
+    /// everything else defaults to `.reference` (documentary).
+    public enum P1Bucket: String, Sendable, Equatable, CaseIterable {
+        case lower
+        case judgment
+        case reference
+        case error
+    }
+
     public struct LineYield: Sendable, Equatable {
         public let line: Int
         public let text: String
         public let yield: Yield
         /// The exact unresolved-phrase text, present only for `.needsPhrase`.
         public let unresolvedPhrase: String?
+        /// P1 bucket this line would fall into under the cue-gated policy.
+        public let p1Bucket: P1Bucket
 
-        public init(line: Int, text: String, yield: Yield, unresolvedPhrase: String? = nil) {
+        public init(line: Int, text: String, yield: Yield, unresolvedPhrase: String? = nil, p1Bucket: P1Bucket = .lower) {
             self.line = line
             self.text = text
             self.yield = yield
             self.unresolvedPhrase = unresolvedPhrase
+            self.p1Bucket = p1Bucket
         }
     }
 
@@ -154,23 +173,34 @@ public struct InertYieldAnalyzer {
     private func perLineYields(_ tokenized: [SourceLine], startLine: Int,
                                knowledge: Compiler.KnowledgeContext) -> [LineYield] {
         var out: [LineYield] = []
+        let trial = TrialLowering(knowledge: knowledge)
         for line in tokenized where line.isContent && line.headingLevel == nil {
             let absoluteLine = startLine + line.number
             let text = displayText(for: line)
             switch probe([line], knowledge: knowledge) {
             case .success:
-                out.append(LineYield(line: absoluteLine, text: text, yield: .lowersAsIs))
+                out.append(LineYield(line: absoluteLine, text: text, yield: .lowersAsIs, p1Bucket: .lower))
             case .failure(let diagnostics):
+                let bucket = p1Bucket(for: text, trial: trial)
                 if let phrase = unresolvedPhraseTarget(in: diagnostics) {
-                    out.append(LineYield(line: absoluteLine, text: text, yield: .needsPhrase, unresolvedPhrase: phrase))
+                    out.append(LineYield(line: absoluteLine, text: text, yield: .needsPhrase, unresolvedPhrase: phrase, p1Bucket: bucket))
                 } else if looksLikeCondition(text, knowledge: knowledge) {
-                    out.append(LineYield(line: absoluteLine, text: text, yield: .fuzzy))
+                    out.append(LineYield(line: absoluteLine, text: text, yield: .fuzzy, p1Bucket: bucket))
                 } else {
-                    out.append(LineYield(line: absoluteLine, text: text, yield: .doc))
+                    out.append(LineYield(line: absoluteLine, text: text, yield: .doc, p1Bucket: bucket))
                 }
             }
         }
         return out
+    }
+
+    /// P1 precedence for a line that failed to lower (categories 2-4; category
+    /// 1 — `.lower` — is only ever assigned on the `.success` probe branch
+    /// above, since a line reaching here already failed to lower).
+    private func p1Bucket(for text: String, trial: TrialLowering) -> P1Bucket {
+        if trial.hasInferenceCue(text) { return .judgment }
+        if trial.isNormativeNarrative(text) { return .error }
+        return .reference
     }
 
     private func displayText(for line: SourceLine) -> String {

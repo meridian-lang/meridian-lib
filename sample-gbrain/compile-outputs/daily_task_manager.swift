@@ -599,14 +599,26 @@ public struct DailyTaskManagerInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "DailyTaskManagerInput", parameters: [:])
 
-        // L24
-        let __meridianProseResults_L24 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
+        if __meridianShouldRun("progress:0.0:L46:C0") {
+            // L46
+            // Load current tasks.  — read the task list
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain get ops/tasks"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L46:C0", state: state.snapshot())
+        }
+        // L50
+        let __meridianProseResults_L50 = try await runtime.executeProsePlan(
+            prose: "follow the Phases — steps 2 guidance",
             snapshot: state.snapshot(),
             scopedTools: ["page.get", "page.search", "publish", "shell.run", "timeline.add"],
-            guidance: "This skill guarantees:\nTasks stored as a brain page (`ops/tasks.md`) with structured format\nTask lifecycle: add → in-progress → complete | defer\nPriority levels: P0 (urgent), P1 (today), P2 (this week), P3 (backlog)\nCompleted tasks archived with completion date\nDeferred tasks carry forward with reason\nuse judgment to follow the Phases guidance:\n**Execute the requested action:**\n**Add:** Append task with priority, description, due date. Add timeline entry\n**Complete:** Mark as done, move to completed section with date\n**Defer:** Move to next day/week with reason\n**Remove:** Delete from list (rare, prefer complete or defer)\n**Review:** Display all active tasks by priority\nLoad current tasks. `gbrain get ops/tasks` — read the task list\nSave. `gbrain put ops/tasks` — write updated task list\nuse judgment to follow the Anti-Patterns guidance:\nAdding tasks without a priority level\nCompleting tasks without recording the completion date\nDeferring tasks without a reason\nLetting the task list grow unbounded (review weekly)\nStoring tasks outside the brain (they should be searchable)"
+            guidance: "**Defer:** Move to next day/week with reason\nSave. `gbrain put ops/tasks` — write updated task list"
         )
-        for (__key, __value) in __meridianProseResults_L24 {
+        for (__key, __value) in __meridianProseResults_L50 {
             state.bind(__key, __value)
         }
 

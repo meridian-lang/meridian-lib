@@ -66,4 +66,103 @@ struct SymbolTableVerbTests {
             Issue.record("expected identifierRef for page argument")
         }
     }
+
+    @Test("propertyNames returns an empty set for a kind with no declared properties")
+    func propertyNamesUnknownKindIsEmpty() throws {
+        let s = try symbols()
+        #expect(s.propertyNames(of: "no-such-kind").isEmpty)
+    }
+
+    @Test("build backfills an empty phrase sourceFile from the config's own sourceFile")
+    func buildBackfillsPhraseSourceFile() {
+        let pattern = PhrasePattern(segments: [.literal("greet")])
+        let phrase = PhraseDefinition(pattern: pattern, body: ASTBlock(statements: [], sourceLine: 1))
+        #expect(phrase.sourceFile.isEmpty)
+        let cfg = MerConfigFile(vocabulary: [.phrase(phrase)])
+        let table = SymbolTable.build(from: cfg, sourceFile: "backfilled.merconfig", trace: .silent())
+        #expect(table.phrases.first?.sourceFile == "backfilled.merconfig")
+    }
+
+    @Test("tool(fromWords:) rejects an all-stopword invocation before scoring any candidate")
+    func toolFromWordsRejectsStopwordOnlyInput() throws {
+        let s = try symbols()
+        #expect(s.tool(fromWords: "") == nil)
+        #expect(s.tool(fromWords: lexiconStopwordPhrase(s)) == nil)
+    }
+
+    private func lexiconStopwordPhrase(_ s: SymbolTable) -> String {
+        s.lexicon.toolStopwords.sorted().prefix(3).joined(separator: " ")
+    }
+
+    @Test("matchPhraseDirect traces 'no significant words' for a stopword-only invocation")
+    func matchPhraseTracesNoSignificantWords() throws {
+        let s = try symbols()
+        let cap = ParserTrace.capturing(categories: [.phraseMatch])
+        s.trace = cap.trace
+        #expect(s.matchPhrase("   ") == nil)
+        #expect(cap.lines().contains { $0.contains("no significant words") })
+    }
+
+    @Test("matchPhrase traces the implicit-fill retry when the direct match fails")
+    func matchPhraseTracesImplicitFillRetry() throws {
+        let s = try symbols()
+        let cap = ParserTrace.capturing(categories: [.phraseMatch])
+        s.trace = cap.trace
+        let defaultParam = PhraseParameterAST(name: "page", kind: "page")
+        _ = s.matchPhrase("totally unrelated gibberish", defaultParam: defaultParam)
+        #expect(cap.lines().contains { $0.contains("phrase.match.implicit-fill") })
+    }
+
+    @Test("matchPhraseDirect traces skipping a candidate excluded by structName during the implicit-fill retry")
+    func matchPhraseDirectTracesExcludedCandidate() throws {
+        let s = try symbols()
+        let pattern = PhrasePattern(segments: [
+            .literal("greet "),
+            .parameter(PhraseParameterAST(name: "user", kind: "user")),
+        ])
+        s.registerWorkflowPhrase(pattern: pattern, structName: "GreetUser", sourceLine: 1, sourceFile: "t.merconfig")
+        let cap = ParserTrace.capturing(categories: [.phraseMatch])
+        s.trace = cap.trace
+        // The direct match on the raw invocation misses (no shared literal
+        // with "greet"), so `matchPhrase` falls through to the implicit-fill
+        // retry, which is the only call that receives `excludingStructName`.
+        let defaultParam = PhraseParameterAST(name: "user", kind: "user")
+        let result = s.matchPhrase("totally unrelated gibberish", defaultParam: defaultParam, excludingStructName: "GreetUser")
+        #expect(result == nil)
+        #expect(cap.lines().contains { $0.contains("excluded: self-referential implicit fill") })
+    }
+
+    @Test("matchPhraseDirect traces and rejects a candidate whose only extractable argument is malformed")
+    func matchPhraseDirectRejectsMalformedArgument() throws {
+        let s = try symbols()
+        let pattern = PhrasePattern(segments: [
+            .literal("archive "),
+            .parameter(PhraseParameterAST(name: "page", kind: "page")),
+        ])
+        s.registerWorkflowPhrase(pattern: pattern, structName: "ArchivePage", sourceLine: 1, sourceFile: "t.merconfig")
+        let cap = ParserTrace.capturing(categories: [.phraseMatch])
+        s.trace = cap.trace
+        // Nothing follows the literal, so the parameter's raw arg text is
+        // empty and `ExpressionParser.parseAtom` yields `.malformed`.
+        let result = s.matchPhrase("archive")
+        #expect(result == nil)
+        let lines = cap.lines()
+        #expect(lines.contains { $0.contains("reject") && $0.contains("malformed argument") })
+        #expect(lines.contains { $0.contains("no match (every candidate left a malformed argument)") })
+    }
+
+    @Test("extractArgs traces a literal word that is absent from the remaining invocation text")
+    func extractArgsTracesMissingLiteralWord() throws {
+        let s = try symbols()
+        let pattern = PhrasePattern(segments: [
+            .literal("archive the "),
+            .parameter(PhraseParameterAST(name: "page", kind: "page")),
+        ])
+        s.registerWorkflowPhrase(pattern: pattern, structName: "ArchiveThePage", sourceLine: 1, sourceFile: "t.merconfig")
+        let cap = ParserTrace.capturing(categories: [.phraseExtractArgs])
+        s.trace = cap.trace
+        // "the" is a pattern literal word but never appears in the invocation.
+        _ = s.matchPhrase("archive page1")
+        #expect(cap.lines().contains { $0.contains("literal word \"the\" NOT FOUND") })
+    }
 }

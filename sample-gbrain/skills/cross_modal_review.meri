@@ -34,20 +34,24 @@ mutating: false
 > for ad-hoc second opinions; use `gbrain eval cross-modal` for the
 > skillify Phase 3 quality gate. The two are complementary, not redundant.
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 This skill guarantees:
 
 - Work product is reviewed by a different model before finalizing.
-- The review is graded against the originating skill's Contract section
-  (what was promised), not vibes.
 - Agreement and disagreement are reported transparently.
 - Refusal from one model triggers a silent switch to the next in chain.
+
+### Contract — steps (( role: reference ))
+
+- The review is graded against the originating skill's Contract section
+  (what was promised), not vibes.
+
+### Contract — steps 2 (( role: reference ))
+
 - The user always makes the final decision (user sovereignty).
 
-## When to invoke (v0.25.1 gating)
-use judgment to follow the When to invoke (v0.25.1 gating) guidance:
+## When to invoke (v0.25.1 gating) (( role: reference ))
 
 Invoke this skill when:
 
@@ -61,9 +65,6 @@ Invoke this skill when:
   or bulk writes (see [conventions/test-before-bulk.md](../conventions/test-before-bulk.md)).
 - **Skill creation / modification** — new or rewritten skills that
   affect operational behavior.
-- **Brain-page quality concerns** — when brain writes need validation
-  against the originating skill's Contract.
-
 Do NOT invoke for:
 
 - Simple memory writes or brain-page updates
@@ -71,8 +72,13 @@ Do NOT invoke for:
 - Routine cron output or heartbeat operations
 - Git commit / push of already-reviewed work
 
-## Phases
-use judgment to follow the Phases guidance:
+
+### When to invoke (v0.25.1 gating) — steps
+
+- Brain-page quality concerns — when brain writes need validation
+  against the originating skill's Contract.
+
+## Phases (( role: reference ))
 
 1. **Capture the work product.** The brain page, analysis, code diff,
    or decision to be reviewed.
@@ -81,12 +87,19 @@ use judgment to follow the Phases guidance:
 3. **Spawn review model.** Send the work + Contract to a different
    model. Use [conventions/model-routing.md](../conventions/model-routing.md)
    for model selection.
-4. **Grade.** Model evaluates: did the output follow the Contract?
    Pass / fail with specific citations.
-5. **Report.** Present agreement / disagreement to the user. Never
+
+### Phases — steps
+
+use judgment to follow the Phases — steps guidance:
+4. **Grade.** Model evaluates: did the output follow the Contract?
+
+### Phases — steps 2
+
+5. Present agreement / disagreement to the user. Never
    auto-apply the reviewer's suggestions.
 
-## Code-review handoff (v0.25.1 extension) (( inert ))
+## Code-review handoff (v0.25.1 extension)
 
 
 ### Code-review handoff (v0.25.1 extension) — steps
@@ -94,14 +107,12 @@ use judgment to follow the Phases guidance:
 For diff review specifically, gstack ships a `/codex` skill that wraps
 the OpenAI Codex CLI. Two modes:
 
-### Codex Review
-use judgment to follow the Codex Review guidance:
+### Codex Review (( role: reference ))
 
 Independent diff review from a different AI system. The user invokes
 `/codex review` (gstack-shipped); cross-modal-review's job is to
 RECOGNIZE when this is the right tool and recommend it explicitly.
 
-**When to recommend `/codex review`:**
 - After a substantive diff lands and before merge
 - When the user wants a second opinion that's NOT another Claude
 
@@ -120,10 +131,18 @@ CROSS-MODEL ANALYSIS:
   Agreement:     X% (N/M findings overlap)
 ```
 
+
+### Codex Review — steps
+
+When to recommend `/codex review`:
+
+### Codex Review — steps 2
+
+use judgment to follow the Codex Review — steps 2 guidance:
 User decides what to act on. Cross-model agreement is signal, not
 permission.
 
-### Adversarial Challenge (( inert ))
+### Adversarial Challenge (( role: reference ))
 
 Same shape, different prompt. Used on security-sensitive changes:
 the reviewer is asked to find injection vectors, race conditions,
@@ -132,22 +151,25 @@ auth bypasses, data leaks, privilege escalation paths.
 Output adds an exploitability rating (CRITICAL / HIGH / MEDIUM / LOW)
 and recommended mitigations.
 
-## Refusal routing (( inert ))
+## Refusal routing (( role: reference ))
 
 2. Don't show the refusal to the user.
 3. Don't announce the switch.
-4. If ALL models in the chain refuse, escalate to the user.
-
 
 ### Refusal routing — steps
 
-> If the primary review model refuses:
+If the primary review model refuses:
 
 1. Switch silently to the next model in the chain (see
    `conventions/cross-modal.yaml`).
-## Output format (( inert, role: template ))
 
-### Standard review (( inert ))
+### Refusal routing — steps 2
+
+4. If ALL models in the chain refuse, escalate to the user.
+
+## Output format (( role: template ))
+
+### Standard review (( role: reference ))
 
 ```
 Cross-Modal Review
@@ -162,7 +184,7 @@ Findings:
 Agreement with primary: {X}%
 ```
 
-### Code review (( inert ))
+### Code review (( role: reference ))
 
 ```
 Cross-Modal Review (code)
@@ -174,7 +196,7 @@ Lines changed:  +N / -N
 {mode-specific output above}
 ```
 
-## User-sovereignty rule (Iron Law) (( inert ))
+## User-sovereignty rule (Iron Law) (( role: reference ))
 
 Reviewer findings are INFORMATIONAL until the user explicitly approves
 each one. Do NOT incorporate reviewer recommendations into the work
@@ -183,8 +205,7 @@ This applies even when the reviewer is correct. Cross-model consensus
 is a strong signal — present it as such — but the user makes the
 decision.
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 - ❌ Auto-applying reviewer suggestions without user approval
 - ❌ Showing model refusals to the user
@@ -193,7 +214,7 @@ use judgment to follow the Anti-Patterns guidance:
 - ❌ Code-reviewing trivial changes (typos, formatting)
 - ❌ Running code review without git-diff context
 
-## Related skills (( inert, role: procedure ))
+## Related skills
 
 
 ### Related skills — steps
@@ -206,6 +227,6 @@ use judgment to follow the Anti-Patterns guidance:
 - `skills/conventions/cross-modal.yaml` — review pairs + refusal routing
 
 
-## Output Format (( inert, role: template ))
+## Output Format (( role: template ))
 
 The skill's output shape is documented inline in the body sections above (see "Output", "Brain page format", or equivalent). The literal section header here exists for the conformance test (`test/skills-conformance.test.ts`).

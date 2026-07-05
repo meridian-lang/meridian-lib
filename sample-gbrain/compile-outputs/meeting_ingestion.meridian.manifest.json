@@ -98,45 +98,69 @@
     "name" : "meeting-ingestion",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 32,
         "text" : "Contract"
       },
       {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 45,
+        "text" : "Contract — steps"
+      },
+      {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 48,
+        "line" : 50,
         "text" : "Phases"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 51,
+        "line" : 52,
         "text" : "Phase 1: Parse the transcript"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
         "line" : 62,
         "text" : "Phase 2: Create meeting page"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 85,
+        "line" : 84,
         "text" : "Phase 3: Attendee enrichment (MANDATORY)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 107,
-        "text" : "Phase 4: Entity propagation (MANDATORY)"
+        "line" : 95,
+        "text" : "Phase 3: Attendee enrichment (MANDATORY) — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 99,
+        "text" : "Phase 3: Attendee enrichment (MANDATORY) — steps 2"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 115,
+        "line" : 103,
+        "text" : "Phase 3: Attendee enrichment (MANDATORY) — steps 3"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 108,
+        "text" : "Phase 4: Entity propagation (MANDATORY)"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 116,
         "text" : "Phase 5: Timeline merge"
       },
       {
@@ -152,7 +176,7 @@
         "text" : "Output Format"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 130,
         "text" : "Anti-Patterns"
@@ -160,7 +184,7 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 35,
+        "line" : 34,
         "text" : "This skill guarantees"
       },
       {
@@ -172,44 +196,50 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 100,
+        "line" : 97,
         "text" : "For EACH attendee"
       }
     ],
     "sections" : [
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
         "line" : 32,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Meeting page created with attendees, summary, key decisions, action items",
           "EVERY attendee gets a people page (created or updated)",
           "EVERY company discussed gets entity propagation",
           "Timeline entries on ALL mentioned entities (timeline merge)",
           "Meeting is NOT fully ingested until enrich runs for every entity",
-          "Back-links created bidirectionally",
+          "Back-links created bidirectionally"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Contract — steps",
+        "line" : 45,
+        "lines" : [
           "Every attendee and company mentioned MUST get a back-link from their page to",
           "the meeting page. An unlinked mention is a broken brain"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 48,
+        "line" : 50,
         "lines" : [
-          "use judgment to follow the Phases guidance:"
+
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 1: Parse the transcript",
-        "line" : 51,
+        "line" : 52,
         "lines" : [
-          "use judgment to follow the Phase 1: Parse the transcript guidance:",
           "Extract from the transcript:",
           "Attendees (names, roles if available)",
           "Date, time, duration",
@@ -218,40 +248,62 @@
           "Action items with owners",
           "Companies and projects mentioned"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 2: Create meeting page",
         "line" : 62,
         "lines" : [
-          "use judgment to follow the Phase 2: Create meeting page guidance:",
           "codeblock:markdown:IyB7TWVldGluZyBUaXRsZX0g4oCUIHtEYXRlfQoKKipBdHRlbmRlZXM6Kioge2xpc3Qgd2l0aCBsaW5rcyB0byBwZW9wbGUgcGFnZXN9CioqRGF0ZToqKiB7WVlZWS1NTS1ERH0KKipEdXJhdGlvbjoqKiB7aWYgYXZhaWxhYmxlfQoKIyMgU3VtbWFyeQp7My01IGJ1bGxldCBrZXkgb3V0Y29tZXN9CgojIyBLZXkgRGVjaXNpb25zCntEZWNpc2lvbnMgd2l0aCBjb250ZXh0fQoKIyMgQWN0aW9uIEl0ZW1zCntUYXNrcyB3aXRoIG93bmVycyBhbmQgZGVhZGxpbmVzfQoKIyMgRGlzY3Vzc2lvbiBOb3Rlcwp7U3RydWN0dXJlZCBub3RlcyBieSB0b3BpY30="
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 3: Attendee enrichment (MANDATORY)",
-        "line" : 85,
+        "line" : 84,
         "lines" : [
-          "use judgment to follow the Phase 3: Attendee enrichment (MANDATORY) guidance:",
           "`gbrain search \"{name}\"` — does a people page exist?",
-          "If NO → create via enrich skill (this is mandatory, not optional)",
           "If YES → update compiled truth with meeting context",
           "**Note (v0.10.1):** Once the meeting page is written via `gbrain put`, the",
           "auto-link post-hook automatically creates `attended` links from the meeting",
           "need to call `gbrain link` for attendees. You DO still need `gbrain timeline-add`",
-          "for dated events (auto-link only handles links, not timeline entries)",
-          "For EACH attendee:",
-          "`gbrain timeline-add <person-slug> <date> \"Attended <meeting-title>\"`"
+          "for dated events (auto-link only handles links, not timeline entries)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Phase 3: Attendee enrichment (MANDATORY) — steps",
+        "line" : 95,
+        "lines" : [
+          "For EACH attendee:"
         ],
         "role" : "procedure"
       },
       {
+        "executes" : false,
+        "heading" : "Phase 3: Attendee enrichment (MANDATORY) — steps 2",
+        "line" : 99,
+        "lines" : [
+          "If NO → create via enrich skill (this is mandatory, not optional)"
+        ],
+        "role" : "reference"
+      },
+      {
         "executes" : true,
+        "heading" : "Phase 3: Attendee enrichment (MANDATORY) — steps 3",
+        "line" : 103,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
         "heading" : "Phase 4: Entity propagation (MANDATORY)",
-        "line" : 107,
+        "line" : 108,
         "lines" : [
           "For each company, project, or concept discussed:",
           "Check brain for existing page",
@@ -259,18 +311,17 @@
           "Add timeline entry referencing the meeting",
           "Back-link from entity page to meeting page"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 5: Timeline merge",
-        "line" : 115,
+        "line" : 116,
         "lines" : [
-          "use judgment to follow the Phase 5: Timeline merge guidance:",
           "The same event appears on ALL mentioned entities' timelines. If Alice met Bob at",
           "Acme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
@@ -292,18 +343,17 @@
         "role" : "template"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
         "line" : 130,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
           "Creating the meeting page without enriching attendees",
           "Skipping entity propagation (\"I'll do that later\")",
           "Not merging timelines across all mentioned entities",
           "Creating attendee stubs without meaningful content",
           "Filing meeting pages without cross-linking to all participants"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       }
     ],
     "tools" : "search\nquery\nget_page\nput_page\nadd_link\nadd_timeline_entry",
@@ -348,40 +398,44 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 33,
+      "meridian_line" : 97,
       "swift_line" : 604
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 643
+      "meridian_line" : 123,
+      "swift_line" : 614
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 648
+      "swift_line" : 654
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 687
+      "swift_line" : 659
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 692
+      "swift_line" : 698
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 731
+      "swift_line" : 703
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 736
+      "swift_line" : 742
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 775
+      "swift_line" : 747
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 780
+      "swift_line" : 786
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 791
     }
   ],
   "tools_used" : [
@@ -394,22 +448,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "This skill guarantees:\nMeeting page created with attendees, summary, key decisions, action items\nEVERY attendee gets a people page (created or updated)\nEVERY company discussed gets entity propagation\nTimeline entries on ALL mentioned entities (timeline merge)\nMeeting is NOT fully ingested until enrich runs for every entity\nBack-links created bidirectionally\nEvery attendee and company mentioned MUST get a back-link from their page to\nthe meeting page. An unlinked mention is a broken brain\nuse judgment to follow the Phases guidance:\nuse judgment to follow the Phase 1: Parse the transcript guidance:\nExtract from the transcript:\nAttendees (names, roles if available)\nDate, time, duration\nKey topics discussed\nDecisions made\nAction items with owners\nCompanies and projects mentioned\nuse judgment to follow the Phase 2: Create meeting page guidance:\ncodeblock:markdown:IyB7TWVldGluZyBUaXRsZX0g4oCUIHtEYXRlfQoKKipBdHRlbmRlZXM6Kioge2xpc3Qgd2l0aCBsaW5rcyB0byBwZW9wbGUgcGFnZXN9CioqRGF0ZToqKiB7WVlZWS1NTS1ERH0KKipEdXJhdGlvbjoqKiB7aWYgYXZhaWxhYmxlfQoKIyMgU3VtbWFyeQp7My01IGJ1bGxldCBrZXkgb3V0Y29tZXN9CgojIyBLZXkgRGVjaXNpb25zCntEZWNpc2lvbnMgd2l0aCBjb250ZXh0fQoKIyMgQWN0aW9uIEl0ZW1zCntUYXNrcyB3aXRoIG93bmVycyBhbmQgZGVhZGxpbmVzfQoKIyMgRGlzY3Vzc2lvbiBOb3Rlcwp7U3RydWN0dXJlZCBub3RlcyBieSB0b3BpY30=\nuse judgment to follow the Phase 3: Attendee enrichment (MANDATORY) guidance:\n`gbrain search \"{name}\"` — does a people page exist?\nIf NO → create via enrich skill (this is mandatory, not optional)\nIf YES → update compiled truth with meeting context\n**Note (v0.10.1):** Once the meeting page is written via `gbrain put`, the\nauto-link post-hook automatically creates `attended` links from the meeting\nneed to call `gbrain link` for attendees. You DO still need `gbrain timeline-add`\nfor dated events (auto-link only handles links, not timeline entries)\nFor EACH attendee:\n`gbrain timeline-add <person-slug> <date> \"Attended <meeting-title>\"`\nFor each company, project, or concept discussed:\nCheck brain for existing page\nCreate\/update as needed\nAdd timeline entry referencing the meeting\nBack-link from entity page to meeting page\nuse judgment to follow the Phase 5: Timeline merge guidance:\nThe same event appears on ALL mentioned entities' timelines. If Alice met Bob at\nAcme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page\n`gbrain sync` to update the index\nuse judgment to follow the Anti-Patterns guidance:\nCreating the meeting page without enriching attendees\nSkipping entity propagation (\"I'll do that later\")\nNot merging timelines across all mentioned entities\nCreating attendee stubs without meaningful content\nFiling meeting pages without cross-linking to all participants",
-          "line" : 33,
-          "scoped_tools" : [
-            "link.add",
-            "page.get",
-            "page.search",
-            "publish",
-            "shell.run",
-            "timeline.add"
-          ],
-          "text" : "follow the Contract guidance"
         }
       ],
       "source_name" : "meeting-ingestion a input",

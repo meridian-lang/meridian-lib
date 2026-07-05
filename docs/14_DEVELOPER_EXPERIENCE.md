@@ -288,7 +288,7 @@ role:
 
 - blank lines and comment / blockquote-comment lines (`>`)
 - inert table/checklist sentinels (`!!! table (( inert ))`, `!!! checklist (( inert ))`)
-- inert/template/domain section bodies routed as non-executable
+- `reference`/`inert`/template/domain section bodies routed as non-executable
 - pure outline/topic labels with no statement body (`Comments:` with empty rest)
 - workflow headers in sectioned skill docs that read as prose (not `to …:`)
 

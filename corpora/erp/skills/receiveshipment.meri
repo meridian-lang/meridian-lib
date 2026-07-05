@@ -8,8 +8,7 @@ triggers:
 
 # Receive Shipment
 
-## When this applies (( role: procedure ))
-use judgment to follow the When this applies guidance:
+## When this applies
 - "receive inbound shipment"
 - "shipment received"
 
@@ -17,6 +16,6 @@ use judgment to follow the When this applies guidance:
 Step: `ofbiz warehouse receive --today --json` to snapshot inbound manifests.
 Publish: "warehouse receiving manifest captured".
 
-## Human notes (( inert ))
+## Human notes (( role: reference ))
 Inbound receiving is intentionally shell-backed in this synthetic corpus because
 the source system exposes a manifest command rather than a first-class API call.

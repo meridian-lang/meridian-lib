@@ -599,15 +599,71 @@ public struct SkillifyInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SkillifyInput", parameters: [:])
 
-        // L34
-        let __meridianProseResults_L34 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
-            guidance: "A feature is \"properly skilled\" when all 11 checklist items pass. Item 3\n(cross-modal eval) is informational in v1.1.0 — it does not gate the\nskillpack-check audit, but a missing or stale receipt is surfaced so the\nuser knows where the gate stands\nuse judgment to follow the Phase 0: Should This Be a Skill? guidance:\nBefore skillifying, check:\nWill this be invoked 2+ times? (One-off work ≠ skill)\nIs there >20 lines of logic? (Trivial helpers don't need full infrastructure)\nDoes it have a clear trigger phrase a user would actually say?\nIf no to all three, it's a script, not a skill. Move on\nuse judgment to follow the Phase 1: Audit guidance:\ncodeblock:plain:RmVhdHVyZTogW25hbWVdCkNvZGU6IFtwYXRoXQpNaXNzaW5nIGl0ZW1zOiBbY2hlY2sgZWFjaCBvZiB0aGUgMTFd\nuse judgment to follow the Phase 2: Write SKILL.md + Code (items 1-2) guidance:\nuse judgment to follow the SKILL.md frontmatter template (copy-paste): guidance:\ncodeblock:yaml:LS0tCm5hbWU6IG15LXNraWxsCnZlcnNpb246IDEuMC4wCmRlc2NyaXB0aW9uOiB8CiAgT25lIHBhcmFncmFwaC4gV2hhdCBpdCBkb2VzLCB3aGVuIHRvIHVzZSBpdC4KdHJpZ2dlcnM6CiAgLSAidHJpZ2dlciBwaHJhc2UgdXNlcnMgYWN0dWFsbHkgc2F5IgogIC0gImFub3RoZXIgcmVhbCB0cmlnZ2VyIgp0b29sczoKICAtIGV4ZWMKICAtIHJlYWQKICAtIHdyaXRlCm11dGF0aW5nOiBmYWxzZSAgIyB0cnVlIGlmIGl0IHdyaXRlcyB0byBicmFpbi9kaXNrCi0tLQ==\nBody must include: **Contract** (what it guarantees), **Phases** (step-by-step), **Output Format** (what it produces)\nExtract deterministic code into `scripts/*.ts`\nuse judgment to follow the Phase 3: Cross-Modal Eval (item 3) — THE QUALITY GATE guidance:\nuse judgment to follow the Step 3: Run the eval gate guidance:\n**These MUST be frontier models from DIFFERENT providers.** Using a single\nprovider's family or budget models defeats the purpose — different families\nhave less correlated blind spots. Refresh the list when a new model\ngeneration ships\n**Pass criteria (BOTH must be true):**\nEvery dimension's mean across successful models ≥ 7\nNo single model scored any dimension < 5 (the floor)\nReceipt is still written (forensics) but the gate is not authoritative\nExit code 2; CI wrappers should treat this as \"did not run cleanly\", not\n\"failed quality gate\"\ncodeblock:bash:Z2JyYWluIGV2YWwgY3Jvc3MtbW9kYWwgXAogIC0tdGFzayAiV2hhdCB0aGlzIHNraWxsIGlzIHN1cHBvc2VkIHRvIGFjY29tcGxpc2giIFwKICAtLW91dHB1dCBza2lsbHMvPHNsdWc+L1NLSUxMLm1k\nThe command runs 3 frontier models from 3 different providers in parallel,\nscores the OUTPUT against the TASK on 5 documented dimensions, and writes a\nreceipt under `~/.gbrain/.gbrain/eval-receipts/<slug>-<sha8>.json` (the\nsha-8 binds the receipt to the current SKILL.md content — re-running after\nedits writes a new receipt)\ntable:ai-discretion:fCBTbG90IHwgRGVmYXVsdCB8IFByb3ZpZGVyIHwKfC0tLS0tLXwtLS0tLS0tLS18LS0tLS0tLS0tLXwKfCBBIHwgYG9wZW5haTpncHQtNG9gIHwgT3BlbkFJIHwKfCBCIHwgYGFudGhyb3BpYzpjbGF1ZGUtb3B1cy00LTdgIHwgQW50aHJvcGljIHwKfCBDIHwgYGdvb2dsZTpnZW1pbmktMS41LXByb2AgfCBHb29nbGUgfA==\nInconclusive: fewer than 2 of 3 models returned parseable scores\nuse judgment to follow the Phase 4: Tests (items 4-6) guidance:\nNOW that eval has proven quality, write tests that lock it in:\n**Unit tests** — every branch of deterministic logic. Mock external calls\n**Integration tests** — hit real endpoints. Catch bugs mocks hide\n**LLM evals** — quality/correctness for LLM steps. Lighter than cross-modal eval — test specific behaviors\nuse judgment to follow the Phase 5: Resolver + Check-Resolvable (items 7-9) guidance:\nAdd to skills/RESOLVER.md with trigger phrases users ACTUALLY type\nResolver eval: feed triggers, assert correct routing\nCheck-resolvable:\nSkill reachable from skills/RESOLVER.md (not orphaned)\nNo MECE overlap with other skills\nNo DRY violations (shared logic in lib/, not copy-pasted)\nNo ambiguous trigger routing\nE2E smoke: full pipeline from trigger to side effect\nBrain filing: add to brain/RESOLVER.md if the skill writes brain pages\ncodeblock:bash:YnVuIHRlc3QgdGVzdC88c2tpbGw+LnRlc3QudHMgICAgICAgICAgICAgICAgICAgICMgdW5pdCB0ZXN0cwpnYnJhaW4gc2tpbGxpZnkgY2hlY2sgc2tpbGxzLzxzbHVnPi9zY3JpcHRzLzxzbHVnPi5tanMgLS1qc29uIHwgXAogIGpxICcuW10gfCAuaXRlbXNbXSB8IHNlbGVjdCgubmFtZSB8IGNvbnRhaW5zKCJDcm9zcy1tb2RhbCIpKScKbHMgfi8uZ2JyYWluLy5nYnJhaW4vZXZhbC1yZWNlaXB0cy8gICAgICAgICAgICAgICMgcmVjZWlwdCBsYW5kZWQKZ2JyYWluIGNoZWNrLXJlc29sdmFibGUgLS1qc29uIHwganEgLm9rICAgICAgICAgICMgcmVzb2x2ZXIgY2xlYW4=\nuse judgment to follow the Quality Gates guidance:\nNOT properly skilled until:\nAll required items pass (1-2, 4-10; 11 only when applicable)\nCross-modal eval (item 3) has a current receipt OR is explicitly waived\nwith rationale (item 3 is informational; not blocking, but a missing\nreceipt is visible in the audit)\nAll tests pass (unit + integration + LLM evals)\nResolver entry exists with real trigger phrases\nCheck-resolvable shows no orphans, overlaps, or DRY violations\nBrain filing if applicable\nuse judgment to follow the Anti-Patterns guidance:\n❌ Writing tests before cross-modal eval (locks in mediocrity)\n❌ Using budget models for eval (C student grading A student)\n❌ Using a single provider's family for all 3 slots (correlated blind spots)\n❌ Skipping eval \"because the output looks fine\" (your judgment isn't 3 models)\n❌ Eval without fix cycle (vanity metrics)\n❌ Code with no SKILL.md (invisible to resolver)\n❌ Tests that reimplement production code (masks real bugs)\n❌ Resolver entry with internal jargon (must mirror real user language)\n❌ Two skills doing the same thing (merge or kill one)\n❌ Running cross-modal eval on trivial outputs (< 200 tokens, not worth 9 API calls)"
-        )
-        for (__key, __value) in __meridianProseResults_L34 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L214:C0") {
+            // L214
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain providers test    # see what's configured"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L214:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L214:C0") {
+            // L214
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain config            # set keys"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L214:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L259:C0") {
+            // L259
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("bun test test/<skill>.test.ts                    # unit tests"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L259:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L259:C0") {
+            // L259
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain skillify check skills/<slug>/scripts/<slug>.mjs --json | jq '.[] | .items[] | select(.name | contains(\"Cross-modal\"))'"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.3:L259:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.4:L259:C0") {
+            // L259
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("ls ~/.gbrain/.gbrain/eval-receipts/              # receipt landed"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.4:L259:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.5:L259:C0") {
+            // L259
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain check-resolvable --json | jq .ok          # resolver clean"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.5:L259:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

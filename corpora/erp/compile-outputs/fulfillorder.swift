@@ -399,15 +399,77 @@ public struct FulfillOrder: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "FulfillOrder", parameters: [:])
 
-        // L12
-        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
-            prose: "follow the When this applies guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["inventory.reserve", "invoice.create", "invoice.list", "order.cancel", "order.list", "payment.collect", "period.close", "product.list", "purchase_order.create", "shipment.create"],
-            guidance: "\"fulfill ERP orders\"\n\"release shipments\"\nStep: `ofbiz shipment --pending --json` to capture pending warehouse work\nfetch open orders\nCheck: all orders have a number\nfor each order:\nreserve inventory for the order\nship the order\nPublish: \"shipment release queue drained\"\nuse judgment to follow the Checks guidance:\nEvery released order should already have inventory reserved"
-        )
-        for (__key, __value) in __meridianProseResults_L12 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L21:C0") {
+            // L21
+            // capture pending warehouse work
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("ofbiz shipment --pending --json"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L21:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L49:C0") {
+            // L49
+            let orders = try await runtime.invoke(
+                tool: "order.list",
+                args: [
+                    "status": .string("open"),
+                ]
+            )
+            state.bind("orders", orders)
+
+            try await runtime.checkpoint(label: "progress:0.1:L49:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L23:C0") {
+            // L23
+            try await runtime.assert((((state.get("orders"))?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("number")) }), message: "Expected all orders have a number")
+            try await runtime.checkpoint(label: "progress:0.2:L23:C0", state: state.snapshot())
+        }
+        // L24
+        for (__meridianLoopIndex_0_3, order) in (state.get("orders")?.asList ?? []).enumerated() {
+            let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
+            if __meridianShouldRun(__meridianLoopLabel_0_3) {
+            state.bind("order", order)
+                if __meridianShouldRun("progress:0.3.body.0:L58:C0") {
+                    // L58
+                    let inventory = try await runtime.invoke(
+                        tool: "inventory.reserve",
+                        args: [
+                            "order": state.get("order") ?? .null,
+                        ]
+                    )
+                    state.bind("inventory", inventory)
+
+                    try await runtime.checkpoint(label: "progress:0.3.body.0:L58:C0", state: state.snapshot())
+                }
+                if __meridianShouldRun("progress:0.3.body.1:L67:C0") {
+                    // L67
+                    let shipment = try await runtime.invoke(
+                        tool: "shipment.create",
+                        args: [
+                            "order": state.get("order") ?? .null,
+                        ]
+                    )
+                    state.bind("shipment", shipment)
+
+                    try await runtime.checkpoint(label: "progress:0.3.body.1:L67:C0", state: state.snapshot())
+                }
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
+            }
+        }
+
+        if __meridianShouldRun("progress:0.4:L27:C0") {
+            // L27
+            try await runtime.emit(
+                event: "erp.report",
+                payload: [
+                    "message": .string("shipment release queue drained"),
+                ]
+            )
+            try await runtime.checkpoint(label: "progress:0.4:L27:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

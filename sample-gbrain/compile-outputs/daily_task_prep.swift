@@ -599,16 +599,6 @@ public struct DailyTaskPrepInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "DailyTaskPrepInput", parameters: [:])
 
-        // L24
-        let __meridianProseResults_L24 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["page.get", "page.list", "page.search", "shell.run"],
-            guidance: "This skill guarantees:\nCalendar/meetings for today are loaded with brain context per attendee\nOpen threads from yesterday are surfaced\nActive tasks reviewed with priority ordering\nPrep briefing is actionable (not just informational)\nCheck today's meetings. For each: load attendee brain pages, recent timeline, open threads\nSearch brain for yesterday's timeline entries. Flag anything unresolved\nReview active tasks. Load `ops/tasks` from brain. Surface P0 and P1 items\nPer-meeting context cards + open threads + task priorities\nuse judgment to follow the Anti-Patterns guidance:\nListing meetings without loading attendee context from brain\nIgnoring yesterday's unresolved threads\nPresenting tasks without priority ordering"
-        )
-        for (__key, __value) in __meridianProseResults_L24 {
-            state.bind(__key, __value)
-        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

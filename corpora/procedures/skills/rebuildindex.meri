@@ -8,13 +8,11 @@ triggers:
 
 # Rebuild Index
 
-## Use this when (( role: procedure ))
-use judgment to follow the Use this when guidance:
+## Use this when
 - "rebuild lagging indexes"
 - "index job stale"
 
-## Procedure
-use judgment to follow the Procedure guidance:
+## Procedure (( role: reference ))
 Check: any lagging index jobs.
 
 ### Procedure — steps
@@ -27,6 +25,5 @@ for each index job:
   rebuild the index job.
 Emit: "lagging index jobs rebuilt".
 
-## Assertions (( role: procedure ))
-use judgment to follow the Assertions guidance:
+## Assertions
 make sure all index jobs have a name.

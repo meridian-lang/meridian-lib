@@ -98,13 +98,13 @@
     "name" : "concept-synthesis",
     "outline" : [
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 26,
         "text" : "What this solves"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 39,
         "text" : "Architecture"
@@ -116,31 +116,31 @@
         "text" : "Invocation"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
         "line" : 76,
         "text" : "Invocation — steps"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 99,
         "text" : "Output: concept page format (post-synthesis)"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
         "line" : 101,
         "text" : "T1 Canon — full synthesis"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
         "line" : 148,
         "text" : "T3 \/ T4 — stub only (no LLM synthesis)"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 166,
         "text" : "Output: cluster map at concepts\/README.md"
@@ -152,63 +152,81 @@
         "text" : "Quality gates"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 200,
+        "line" : 199,
         "text" : "Dedup quality"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 205,
+        "line" : 204,
         "text" : "Tier quality"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 212,
+        "line" : 211,
         "text" : "Synthesis quality"
       },
       {
-        "kind" : "inert",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 217,
+        "text" : "Synthesis quality — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 221,
+        "line" : 220,
         "text" : "Cron integration"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 231,
+        "line" : 230,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "procedure",
-        "level" : 2,
-        "line" : 243,
-        "text" : "Related skills"
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 237,
+        "text" : "Anti-Patterns — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 244,
+        "text" : "Anti-Patterns — steps 2"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 250,
+        "line" : 248,
+        "text" : "Related skills"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 255,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 262,
+        "line" : 266,
         "text" : "Output Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 253,
+        "line" : 257,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 258,
+        "line" : 262,
         "text" : "Privacy contract preserved"
       }
     ],
@@ -227,7 +245,7 @@
           "No clustering — related ideas aren't linked",
           "This skill transforms that raw material into a curated intellectual map"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -236,7 +254,7 @@
         "lines" : [
           "codeblock:plain:UGhhc2UgMTogRGVkdXAgKyBtZXJnZSAoZGV0ZXJtaW5pc3RpYykKICBOIHN0dWJzIOKGkiB+Ti80IGNhbm9uaWNhbCBjb25jZXB0cwogICAg4pSc4pSA4pSAIEphY2NhcmQgZGVkdXAgKHdvcmQtb3ZlcmxhcCBvbiB0aXRsZXMgKyBmaXJzdC1wYXJhZ3JhcGgpCiAgICDilJzilIDilIAgU3Vic3RyaW5nIGRlZHVwICgiZm91bmRlciBtb2RlIiB2cyAiZm91bmRlciBtb2RlIHZzIG1hbmFnZXIgbW9kZSIpCiAgICDilJzilIDilIAgU2VtYW50aWMgZGVkdXAgKExMTTogImFyZSB0aGVzZSB0aGUgc2FtZSBpZGVhPyIpCiAgICDilJTilIDilIAgTWVyZ2UgdGltZWxpbmVzICsgYWxpYXNlcyBmcm9tIGR1cGxpY2F0ZXMgaW50byB0aGUgY2Fub25pY2FsIHBhZ2UKClBoYXNlIDI6IFNjb3JlICsgdGllciAoZGV0ZXJtaW5pc3RpYyArIGhldXJpc3RpYykKICBFYWNoIGNhbm9uaWNhbCBjb25jZXB0IOKGkiBzY29yZWQgYW5kIHRpZXJlZAogICAg4pSc4pSA4pSAIEZyZXF1ZW5jeTogZGlzdGluY3Qgc291cmNlcyByZWZlcmVuY2luZyB0aGlzIGNvbmNlcHQKICAgIOKUnOKUgOKUgCBUaW1lc3BhbjogZmlyc3QgbWVudGlvbiDihpIgbGFzdCBtZW50aW9uIGluIGRheXMKICAgIOKUnOKUgOKUgCBCcmVhZHRoOiBkaXN0aW5jdCBtb250aHMgaXQgYXBwZWFycyBpbgogICAg4pSc4pSA4pSAIEVuZ2FnZW1lbnQ6IGF2ZyBlbmdhZ2VtZW50IG9uIGNvbmNlcHQtYmVhcmluZyBzb3VyY2VzIChpZiBhdmFpbGFibGUpCiAgICDilJTilIDilIAgVGllcjogVDEgQ2Fub24gfCBUMiBEZXZlbG9waW5nIHwgVDMgU3BlY3VsYXRpdmUgfCBUNCBSaWZmCgpQaGFzZSAzOiBTeW50aGVzaXplIChMTE0sIFQxK1QyIG9ubHkpCiAgVDEgKyBUMiBjb25jZXB0cyDihpIgcmljaCBzeW50aGVzaXMKICAgIOKUnOKUgOKUgCBFdm9sdXRpb24gbmFycmF0aXZlOiBob3cgdGhlIGlkZWEgc2hhcnBlbmVkIG92ZXIgdGltZQogICAg4pSc4pSA4pSAIEJlc3QgYXJ0aWN1bGF0aW9uOiBoaWdoZXN0LWVuZ2FnZW1lbnQgb3IgbW9zdCBwcmVjaXNlIHF1b3RlCiAgICDilJzilIDilIAgUmVsYXRlZCBjb25jZXB0czogY3Jvc3MtbGlua3MgdG8gb3RoZXIgY29uY2VwdHMKICAgIOKUnOKUgOKUgCBDb250ZXh0OiB3aGF0IHdhcyBoYXBwZW5pbmcgd2hlbiB0aGlzIGlkZWEgZW1lcmdlZCAvIGV2b2x2ZWQKICAgIOKUlOKUgOKUgCBDb3VudGVyLXBvc2l0aW9uczogd2hhdCB0aGlzIGlkZWEgYXJndWVzIGFnYWluc3QKClBoYXNlIDQ6IENsdXN0ZXIgKyBtYXAgKExMTSkKICBBbGwgdGllcmVkIGNvbmNlcHRzIOKGkiBpbnRlbGxlY3R1YWwgY2x1c3RlcnMKICAgIOKUnOKUgOKUgCBHcm91cCByZWxhdGVkIGNvbmNlcHRzIGludG8gZG9tYWlucyAoYXV0by1uYW1lZCB2aWEgTExNKQogICAg4pSc4pSA4pSAIEdlbmVyYXRlIGNsdXN0ZXIgc3VtbWFyeSBwYWdlcwogICAg4pSc4pSA4pSAIEJ1aWxkIGEgbWFzdGVyIGNvbmNlcHRzL1JFQURNRS5tZCB3aXRoIHRoZSBmdWxsIG1hcAogICAg4pSU4pSA4pSAIElkZW50aWZ5IGlkZWEgZ2VuZWFsb2dpZXMgKGNvbmNlcHQgQSDihpIgZXZvbHZlZCBpbnRvIGNvbmNlcHQgQik="
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -256,7 +274,7 @@
           "existing operations + LLM passes:",
           "codeblock:bash:IyAxLiBMaXN0IGFsbCBjb25jZXB0IHBhZ2VzCmdicmFpbiBxdWVyeSAidHlwZTpjb25jZXB0IiAtLWxpbWl0IDEwMDAwIC0tanNvbgoKIyAyLiBQaGFzZSAxIGRlZHVwIOKAlCBhZ2VudCBhcHBsaWVzIEphY2NhcmQgKyBzdWJzdHJpbmcgbG9jYWxseSwKIyAgICB0aGVuIExMTSBwYXNzZXMgdG8gaWRlbnRpZnkgc2VtYW50aWMgZHVwbGljYXRlcy4KCiMgMy4gUGhhc2UgMiB0aWVyIOKAlCBhZ2VudCBzY29yZXMgZWFjaCBjYW5vbmljYWwgY29uY2VwdCBiYXNlZCBvbgojICAgIGZyZXF1ZW5jeSAvIHRpbWVzcGFuIC8gYnJlYWR0aCBhbmQgd3JpdGVzIHRpZXIgaW50byBmcm9udG1hdHRlci4KCiMgNC4gUGhhc2UgMyBzeW50aGVzaXMg4oCUIGZvciBlYWNoIFQxL1QyLCBhZ2VudCByZWFkcyB0aGUgdGltZWxpbmUKIyAgICArIGFzc29jaWF0ZWQgc291cmNlIHBhZ2VzIGFuZCB3cml0ZXMgYSBzeW50aGVzaXMgc2VjdGlvbgojICAgIG9udG8gdGhlIGNvbmNlcHQgcGFnZSB2aWEgcHV0X3BhZ2UuCgojIDUuIFBoYXNlIDQgY2x1c3RlcmluZyDigJQgYWdlbnQgcmVhZHMgdGhlIHRpZXJlZCBjb25jZXB0IGxpc3QKIyAgICBhbmQgd3JpdGVzIGNvbmNlcHRzL1JFQURNRS5tZCB3aXRoIHRoZSBmdWxsIGludGVsbGVjdHVhbCBtYXAu"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -265,7 +283,7 @@
         "lines" : [
 
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -274,7 +292,7 @@
         "lines" : [
           "codeblock:markdown:LS0tCnRpdGxlOiAiY29uY2VwdCBuYW1lIgp0eXBlOiBjb25jZXB0CnRpZXI6IDEKdGllcl9sYWJlbDogIkNhbm9uIgptZW50aW9uX2NvdW50OiAxOApkaXN0aW5jdF9tb250aHM6IDgKZmlyc3RfbWVudGlvbjogIllZWVktTU0tREQiCmxhc3RfbWVudGlvbjogIllZWVktTU0tREQiCmNvbXBvc2l0ZV9zY29yZTogNzguNAphbGlhc2VzOiBbImFsdGVybmF0ZSBwaHJhc2luZyAxIiwgImFsdGVybmF0ZSBwaHJhc2luZyAyIl0KcmVsYXRlZDogWyJzaWJsaW5nLWNvbmNlcHQtMSIsICJzaWJsaW5nLWNvbmNlcHQtMiJdCi0tLQoKIyBjb25jZXB0IG5hbWUKCioqVGllciAxIOKAlCBDYW5vbioqIHwgMTggbWVudGlvbnMgYWNyb3NzIDggbW9udGhzCgojIyBTeW50aGVzaXMKClsyLTQgcGFyYWdyYXBoIG5hcnJhdGl2ZSB0cmFjaW5nIGhvdyB0aGUgaWRlYSBldm9sdmVkLCB3aGF0IGl0IG1lYW5zIGluCnRoZSB1c2VyJ3Mgd29ybGR2aWV3LCB3aHkgaXQgbWF0dGVycy4gVGhpcmQtcGVyc29uIGFuYWx5dGljYWwgdm9pY2UuXQoKIyMgQmVzdCBBcnRpY3VsYXRpb24KCj4gIlZlcmJhdGltIHF1b3RlIGZyb20gYSBzb3VyY2Ug4oCUIHRoZSBtb3N0IHByZWNpc2Ugb3IgaGlnaGVzdC1lbmdhZ2VtZW50Cj4gZXhwcmVzc2lvbiBvZiB0aGlzIGlkZWEuIiDigJQgW0RhdGVdKHNvdXJjZS11cmwpCgojIyBFdm9sdXRpb24KCnwgUGVyaW9kIHwgRXhwcmVzc2lvbiB8IFNpZ25hbCB8CnwtLS0tLS0tLXwtLS0tLS0tLS0tLXwtLS0tLS0tLXwKfCBZWVlZLU1NIHwgIkZpcnN0IGFydGljdWxhdGlvbiIgfCBGaXJzdCB1c2Ug4oCUIGFzcGlyYXRpb24gZnJhbWUgfAp8IFlZWVktTU0gfCAiU2hhcnBlbmluZyIgfCBBbnRpLXBhdHRlcm4gZW1lcmdlcyB8CnwgWVlZWS1NTSB8ICJQZWFrIGZvcm0iIHwgQ2xlYW5lc3QgZXhwcmVzc2lvbiB8CgojIyBSZWxhdGVkIENvbmNlcHRzCi0gW3NpYmxpbmcgY29uY2VwdF0oc2libGluZy1jb25jZXB0Lm1kKSDigJQgcmVsYXRpb25zaGlwIGRlc2NyaXB0aW9uCi0gW3NpYmxpbmcgY29uY2VwdF0oc2libGluZy1jb25jZXB0Lm1kKSDigJQgcmVsYXRpb25zaGlwIGRlc2NyaXB0aW9uCgojIyBUaW1lbGluZQpbRnVsbCB0aW1lbGluZSB3aXRoIGRlZHVwZWQgZW50cmllcywgcXVvdGVzLCBzb3VyY2UgbGlua3Nd"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -283,7 +301,7 @@
         "lines" : [
           "codeblock:markdown:LS0tCnRpdGxlOiAiY29uY2VwdCBuYW1lIgp0eXBlOiBjb25jZXB0CnRpZXI6IDQKdGllcl9sYWJlbDogIlJpZmYiCm1lbnRpb25fY291bnQ6IDEKLS0tCgojIGNvbmNlcHQgbmFtZQoKKipUaWVyIDQg4oCUIFJpZmYqKiB8IDEgbWVudGlvbgoKPiAiUXVvdGUgZnJvbSB0aGUgc291cmNlIiDigJQgW0RhdGVdKFVSTCk="
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -292,32 +310,32 @@
         "lines" : [
           "codeblock:markdown:IyBJbnRlbGxlY3R1YWwgVW5pdmVyc2UKCiMjIENhbm9uIChUMSkg4oCUIE4gY29uY2VwdHMKVGhlIHBlcm1hbmVudCBpbnRlbGxlY3R1YWwgZmluZ2VycHJpbnQuIElkZWFzIHRoYXQgcmVjdXIgYWNyb3NzIHllYXJzLgoKIyMjIFtDbHVzdGVyIE5hbWVdCi0gW2NvbmNlcHQtc2x1Z10oY29uY2VwdC1zbHVnLm1kKSDigJQgb25lLWxpbmUgY2hhcmFjdGVyaXphdGlvbgotIC4uLgoKIyMjIFtPdGhlciBDbHVzdGVyXQotIC4uLgoKIyMgRGV2ZWxvcGluZyAoVDIpIOKAlCBOIGNvbmNlcHRzClNoYXJwZW5pbmcuIE1pZ2h0IGJlY29tZSBjYW5vbi4KCiMjIFNwZWN1bGF0aXZlIChUMykg4oCUIE4gY29uY2VwdHMKVGVzdGluZyBpbiBwdWJsaWMuCgojIyBTdGF0cwotIFRvdGFsIGNvbmNlcHRzOiBOCi0gVDEgQ2Fub246IE4KLSBUMiBEZXZlbG9waW5nOiBOCi0gVDMgU3BlY3VsYXRpdmU6IE4KLSBUNCBSaWZmOiBOCi0gRWFybGllc3Qgc291cmNlOiBZWVlZLU1NLURECi0gTGF0ZXN0IHNvdXJjZTogWVlZWS1NTS1ERA=="
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Quality gates",
         "line" : 197,
         "lines" : [
-          "use judgment to follow the Quality gates guidance:"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Dedup quality",
-        "line" : 200,
-        "lines" : [
-          "No two concept pages should be \"the same idea in different words.\"",
-          "Aliases preserved in frontmatter for search",
-          "Run `gbrain query \"type:concept\"` and spot-check the count reduction"
+
         ],
         "role" : "procedure"
       },
       {
         "executes" : false,
+        "heading" : "Dedup quality",
+        "line" : 199,
+        "lines" : [
+          "No two concept pages should be \"the same idea in different words.\"",
+          "Aliases preserved in frontmatter for search",
+          "Run `gbrain query \"type:concept\"` and spot-check the count reduction"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
         "heading" : "Tier quality",
-        "line" : 205,
+        "line" : 204,
         "lines" : [
           "T1 should feel like \"yes, that IS one of my recurring frameworks\" —",
           "recognizable, recurring, sharp",
@@ -325,24 +343,32 @@
           "No concept should be T1 with < 4 months span or < 6 mentions",
           "No concept should be T4 with > 3 months span"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Synthesis quality",
-        "line" : 212,
+        "line" : 211,
         "lines" : [
           "Captures evolution, not just repetition",
           "Uses verbatim quotes, not paraphrase",
-          "Does NOT hallucinate sources or dates",
+          "Does NOT hallucinate sources or dates"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Synthesis quality — steps",
+        "line" : 217,
+        "lines" : [
           "Links to related concepts (markdown links, not wiki-links)"
         ],
-        "role" : "inert"
+        "role" : "procedure"
       },
       {
         "executes" : false,
         "heading" : "Cron integration",
-        "line" : 221,
+        "line" : 220,
         "lines" : [
           "This is heavy work. Run on a cadence, not on every signal:",
           "After a major ingestion batch completes (signal-detector burst, archive",
@@ -351,29 +377,45 @@
           "Manual trigger for a full re-synthesis when the corpus shifts",
           "significantly"
         ],
-        "role" : "inert"
+        "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 231,
+        "line" : 230,
         "lines" : [
-          "use judgment to follow the Anti-Patterns guidance:",
+          "❌ Generic cluster names (\"Various Topics\"). If you can't name the",
+          "cluster, the cluster isn't real",
+          "Idempotency-respect"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 237,
+        "lines" : [
           "❌ Running synthesis on T3\/T4 — wastes API budget on ideas that may",
           "never sharpen",
           "❌ Hallucinating quotes or dates. The timeline must be verifiable",
-          "against existing brain pages",
-          "❌ Generic cluster names (\"Various Topics\"). If you can't name the",
-          "cluster, the cluster isn't real",
-          "❌ Re-synthesizing already-synthesized T1s without new source material",
-          "Idempotency-respect"
+          "against existing brain pages"
         ],
-        "role" : "procedure"
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps 2",
+        "line" : 244,
+        "lines" : [
+          "use judgment to follow the Anti-Patterns — steps 2 guidance:",
+          "❌ Re-synthesizing already-synthesized T1s without new source material"
+        ],
+        "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Related skills",
-        "line" : 243,
+        "line" : 248,
         "lines" : [
           "`skills\/signal-detector\/SKILL.md` — creates raw concept stubs from text channels",
           "`skills\/voice-note-ingest\/SKILL.md` — same for audio channels",
@@ -382,11 +424,10 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Contract",
-        "line" : 250,
+        "line" : 255,
         "lines" : [
-          "use judgment to follow the Contract guidance:",
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
           "Output written under the directories listed in `writes_to:` (when applicable)",
@@ -394,12 +435,12 @@
           "Privacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references",
           "The full behavior contract is documented in the body sections above; this section exists for the conformance test"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 262,
+        "line" : 266,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -447,56 +488,68 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 198,
-      "swift_line" : 603
+      "meridian_line" : 160,
+      "swift_line" : 604
+    },
+    {
+      "meridian_line" : 250,
+      "swift_line" : 616
+    },
+    {
+      "meridian_line" : 251,
+      "swift_line" : 628
+    },
+    {
+      "meridian_line" : 252,
+      "swift_line" : 640
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 642
+      "swift_line" : 680
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 647
+      "swift_line" : 685
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 686
+      "swift_line" : 724
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 691
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 730
+      "swift_line" : 768
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 735
+      "swift_line" : 773
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 774
+      "swift_line" : 812
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 779
+      "swift_line" : 817
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 818
+      "swift_line" : 856
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 823
+      "swift_line" : 861
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 862
+      "swift_line" : 900
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 867
+      "swift_line" : 905
     }
   ],
   "tools_used" : [
@@ -509,35 +562,6 @@
         {
           "kind" : "Input",
           "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "No two concept pages should be \"the same idea in different words.\"\nAliases preserved in frontmatter for search\nRun `gbrain query \"type:concept\"` and spot-check the count reduction\nuse judgment to follow the Anti-Patterns guidance:\n❌ Running synthesis on T3\/T4 — wastes API budget on ideas that may\nnever sharpen\n❌ Hallucinating quotes or dates. The timeline must be verifiable\nagainst existing brain pages\n❌ Generic cluster names (\"Various Topics\"). If you can't name the\ncluster, the cluster isn't real\n❌ Re-synthesizing already-synthesized T1s without new source material\nIdempotency-respect\n`skills\/signal-detector\/SKILL.md` — creates raw concept stubs from text channels\n`skills\/voice-note-ingest\/SKILL.md` — same for audio channels\n`skills\/idea-ingest\/SKILL.md` — same for links \/ articles\nuse judgment to follow the Contract guidance:\nThis skill guarantees:\nRouting matches the canonical triggers in the frontmatter\nOutput written under the directories listed in `writes_to:` (when applicable)\nConventions referenced (`quality.md`, `brain-first.md`, `_brain-filing-rules.md`) are followed\nPrivacy contract preserved: no real names, no fork-specific filesystem path literals, no upstream-fork references\nThe full behavior contract is documented in the body sections above; this section exists for the conformance test",
-          "line" : 198,
-          "scoped_tools" : [
-            "assess.notability",
-            "capture",
-            "enrich",
-            "health.get",
-            "jobs.status",
-            "jobs.submit",
-            "link.add",
-            "link.backlinks",
-            "makePDF",
-            "page.create",
-            "page.get",
-            "page.list",
-            "page.search",
-            "page.update",
-            "publish",
-            "recall",
-            "research",
-            "timeline.add",
-            "verify"
-          ],
-          "text" : "follow the Quality gates guidance"
         }
       ],
       "source_name" : "concept-synthesis a input",

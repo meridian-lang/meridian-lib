@@ -93,6 +93,42 @@ test binary can shift a `Sources/` file's ratio a fraction in either direction �
 always re-baseline after changing the test set and set floors from the fresh run.
 Full guide: [`docs/coverage/README.md`](docs/coverage/README.md).
 
+### `SkillMigrator` marking-pass tests (P1 four-way classification)
+
+`SkillMigratorMarkingTests.swift` covers the cue-gated marking policy — when
+adding a section-classification test, assert the *specific* outcome, not just
+"it compiles":
+
+- **Lower**: the section body must survive unmarked with its statements intact
+  (no marker added at all).
+- **Judgment** (only with a genuine `EnglishLexicon.inferenceCueWords` hit):
+  assert the exact `use judgment to follow the <heading> guidance:` wrap and
+  that the verbatim body is collected into `ProseStepAST.guidance`, not
+  re-parsed as statements.
+- **Reference**: assert `(( role: reference ))` is the emitted marker —
+  **never** assert `(( inert ))` for anything the migrator itself produces;
+  a bare `(( inert ))` in migrator output is a regression (see
+  `SkillMetrics.inertMarkerCount`, target 0).
+- **Hard error** (a normative-cue line, or a checkable-role heading with a
+  non-checkable/cue-less item): assert the section is left **unmarked** and
+  that strict-compiling the result throws `uncheckablePredicate` /
+  `unresolvedPhrase` — not that the migrator itself raises a bespoke code.
+- Idempotency: re-running the marking pass on already-marked output must be a
+  no-op (the `hasSuffix("))")` / `bodyIsJudgmentWrapped` guards) — assert a
+  second pass produces byte-identical output.
+- `--route-fuzzy` tests (`SkillMigrator.Options(routeFuzzy: true)`): assert it
+  downgrades category-4 to a reported, nonfatal `(( role: reference ))` skip
+  — default (`false`, the CLI default too) must still hard-error.
+
+`SkillDeviationTests.swift`: when a fixture's `.meri` is genuinely
+non-lowerable-and-documentary, expect `referenceDocumentation`/`doc-section-
+marked`, not the old `inert-section-added` label (renamed). `unclassifiedInertSections`/
+`operationalInertSections` should only be nonzero for genuinely ambiguous or
+hand-authored-and-stale fixtures — the P1 rewrite tightened `classifyInert`'s
+catch-all (dropped the `decision.resolved` disjunct in `looksReferenceLike`)
+specifically so a bare `(( inert ))` can no longer be silently laundered into
+`referenceDocumentation`.
+
 ### Phase 3 forcing function
 
 `Tests/MeridianCoreTests/Phase3ForcingFunction.swift` — 8 tests that compile

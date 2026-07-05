@@ -601,15 +601,101 @@ public struct IdeaIngestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "IdeaIngestInput", parameters: [:])
 
-        // L35
-        let __meridianProseResults_L35 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["link.add", "page.get", "page.search", "publish", "shell.run", "timeline.add"],
-            guidance: "This skill guarantees:\nEvery ingested item has a brain page with genuine analysis (not just a summary)\nThe author gets a people page (MANDATORY for anyone whose thinking is worth ingesting)\nCross-links created bidirectionally (source ↔ author, source ↔ mentioned entities)\nRaw source preserved for provenance via `gbrain files upload-raw`\nEvery fact has an inline `[Source: ...]` citation\nFiling follows primary subject rules (not format-based)\nEvery mention of a person or company with a brain page MUST create a back-link\nFormat: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`\nuse judgment to follow the Phases guidance:\n**Fetch the content.** Use appropriate tools for the content type (web fetch for articles, API for tweets, PDF reader for documents)\n**Identify the author — MANDATORY people page.** Anyone whose thinking is worth ingesting is worth tracking\nIf no page → CREATE ONE with compiled truth + timeline format\nIf page exists → update timeline with this new publication\nCross-link both directions\n**Analyze for the user.** Reply with analysis that connects the content to what the brain knows. Think about:\nActive projects — is this relevant?\nContradictions — does this challenge existing brain knowledge?\nConnections — does this involve known people/companies?\nDon't just summarize. Tell the user things they wouldn't have noticed\nUpload raw source. Save the fetched content for provenance: `gbrain files upload-raw <file> --page <slug>`\nSave to brain. File by PRIMARY SUBJECT (read `skills/_brain-filing-rules.md`):\nAbout a person → `people/`\nAbout a company → `companies/`\nA reusable framework → `concepts/`\nRaw data dump → `sources/`\nSync. `gbrain sync` to update the index\nuse judgment to follow the Anti-Patterns guidance:\nJust summarizing without connecting to brain knowledge\nFiling everything in `sources/` (sources is for raw data dumps only)\nSkipping the author people page\nNot cross-linking to mentioned entities\nIngesting without checking brain first for existing coverage"
-        )
-        for (__key, __value) in __meridianProseResults_L35 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L53:C0") {
+            // L53
+            // make sure Every fact has an inline  citation
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("[Source: ...]"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L53:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L76:C0") {
+            // L76
+            // Upload raw source. Save the fetched content for provenance
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain files upload-raw <file> --page <slug>"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L76:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L85:C0") {
+            // L85
+            // Save to brain. File by PRIMARY SUBJECT (read )
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("skills/_brain-filing-rules.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L85:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L86:C0") {
+            // L86
+            // About a person →
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("people/"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.3:L86:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.4:L87:C0") {
+            // L87
+            // About a company →
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("companies/"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.4:L87:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.5:L88:C0") {
+            // L88
+            // A reusable framework →
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("concepts/"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.5:L88:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.6:L89:C0") {
+            // L89
+            // Raw data dump →
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("sources/"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.6:L89:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.7:L94:C0") {
+            // L94
+            // Sync.  to update the index
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain sync"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.7:L94:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

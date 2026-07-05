@@ -97,7 +97,7 @@
     "name" : "receive shipment",
     "outline" : [
       {
-        "kind" : "procedure",
+        "kind" : "applicability",
         "level" : 2,
         "line" : 11,
         "text" : "When this applies"
@@ -105,25 +105,25 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 16,
+        "line" : 15,
         "text" : "Workflow"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
-        "line" : 20,
+        "line" : 19,
         "text" : "Human notes"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 17,
+        "line" : 16,
         "text" : "Step"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 18,
+        "line" : 17,
         "text" : "Publish"
       }
     ],
@@ -133,16 +133,15 @@
         "heading" : "When this applies",
         "line" : 11,
         "lines" : [
-          "use judgment to follow the When this applies guidance:",
           "\"receive inbound shipment\"",
           "\"shipment received\""
         ],
-        "role" : "procedure"
+        "role" : "applicability"
       },
       {
         "executes" : true,
         "heading" : "Workflow",
-        "line" : 16,
+        "line" : 15,
         "lines" : [
           "Step: `ofbiz warehouse receive --today --json` to snapshot inbound manifests",
           "Publish: \"warehouse receiving manifest captured\""
@@ -152,12 +151,12 @@
       {
         "executes" : false,
         "heading" : "Human notes",
-        "line" : 20,
+        "line" : 19,
         "lines" : [
           "Inbound receiving is intentionally shell-backed in this synthetic corpus because",
           "the source system exposes a manifest command rather than a first-class API call"
         ],
-        "role" : "inert"
+        "role" : "reference"
       }
     ],
     "triggers" : "\"receive inbound shipment\"\n\"shipment received\""
@@ -198,24 +197,28 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 12,
-      "swift_line" : 402
+      "meridian_line" : 16,
+      "swift_line" : 403
+    },
+    {
+      "meridian_line" : 17,
+      "swift_line" : 415
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 440
+      "swift_line" : 452
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 445
+      "swift_line" : 457
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 483
+      "swift_line" : 495
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 488
+      "swift_line" : 500
     }
   ],
   "tools_used" : [
@@ -226,26 +229,6 @@
       "mode" : "strict",
       "parameters" : [
 
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "\"receive inbound shipment\"\n\"shipment received\"\nStep: `ofbiz warehouse receive --today --json` to snapshot inbound manifests\nPublish: \"warehouse receiving manifest captured\"",
-          "line" : 12,
-          "scoped_tools" : [
-            "inventory.reserve",
-            "invoice.create",
-            "invoice.list",
-            "order.cancel",
-            "order.list",
-            "payment.collect",
-            "period.close",
-            "product.list",
-            "purchase_order.create",
-            "shipment.create"
-          ],
-          "text" : "follow the When this applies guidance"
-        }
       ],
       "source_name" : "receive shipment",
       "swift_struct" : "ReceiveShipment"

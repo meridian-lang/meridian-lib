@@ -3,8 +3,8 @@
 - Original: `dunning/SKILL.md`
 - Ported: `dunning.meri`
 - Tier: 2 (light edits)
-- Similarity: 75%
-- Lines: 25 -> 34 (+12 / -3)
+- Similarity: 79%
+- Lines: 25 -> 31 (+9 / -3)
 
 ## Frontmatter
 - Added: (none)
@@ -12,31 +12,36 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
+- doc-section-marked
+
+## Inert deviations
+
+These sections were made non-executable in the port and should be reviewed as migration deviations:
+- L22 `Controls`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
-- Sections inert total: 0/3 (0% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 2/3 (67% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Judgment: 3 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=2
+- Judgment: 0 blocks, 0 lines
+
+### Inert section details
+- L8 `Workflow`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L22 `Controls`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/dunning/SKILL.md
 +++ skills/dunning.meri
-@@ -8,18 +8,27 @@
- 
- # Dunning
- 
--## When operators call this
-+## When operators call this (( role: procedure ))
-+use judgment to follow the When operators call this guidance:
+@@ -12,14 +12,20 @@
  - "run dunning"
  - "collect overdue invoices"
  
- ## Workflow
-+use judgment to follow the Workflow guidance:
+-## Workflow
++## Workflow (( role: reference ))
 +Check: any unpaid invoices.
 +
 +### Workflow — steps
@@ -52,8 +57,7 @@
  Publish: "dunning collection pass complete".
  
 -## Controls
-+## Controls (( role: procedure ))
-+use judgment to follow the Controls guidance:
++## Controls (( role: reference ))
  Do not contact customers whose account is under manual review.
  
 ```

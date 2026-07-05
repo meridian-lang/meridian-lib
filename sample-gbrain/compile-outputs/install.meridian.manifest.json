@@ -95,7 +95,7 @@
   "meridian_skill" : {
     "outline" : [
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 3,
         "text" : "Overview"
@@ -120,7 +120,7 @@
           "AGENTS.md auto-injection (upgrade-safe)",
           "First import and health verification"
         ],
-        "role" : "inert"
+        "role" : "reference"
       }
     ]
   },

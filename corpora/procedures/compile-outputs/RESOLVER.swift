@@ -290,25 +290,6 @@ public struct Entry: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "Entry", parameters: [:])
 
-        // L11
-        let __meridianProseResults_L11 = try await runtime.executeProsePlan(
-            prose: "Decide which case below applies and carry out its action:\n- when trigger phrase is reconcile ledger, reconcileledger\n- when trigger phrase is aging report, agingreport\n- when trigger phrase is dedupe records, deduperecords\n- when trigger phrase is cascade close, cascadeclose\n- when trigger phrase is rebuild lagging indexes, rebuildindex\n- when trigger phrase is validate constraints, validateconstraints\n- when trigger phrase is purge expired records, purgeexpired\n- when trigger phrase is settle ready batches, settlebatch",
-            snapshot: state.snapshot(),
-            scopedTools: ["audit_row.list", "batch.list", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "record.list", "record.mark_canonical", "record.purge"]
-        )
-        for (__key, __value) in __meridianProseResults_L11 {
-            state.bind(__key, __value)
-        }
-        // L23
-        let __meridianProseResults_L23 = try await runtime.executeProsePlan(
-            prose: "follow the Workflow guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["audit_row.list", "batch.list", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "record.list", "record.mark_canonical", "record.purge"],
-            guidance: "Look up the skill corresponding to the trigger phrase and emit the selected\nskill id"
-        )
-        for (__key, __value) in __meridianProseResults_L23 {
-            state.bind(__key, __value)
-        }
 
         await runtime.complete(reason: nil)
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)

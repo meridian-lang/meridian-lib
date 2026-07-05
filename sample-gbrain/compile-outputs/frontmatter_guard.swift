@@ -599,14 +599,73 @@ public struct FrontmatterGuardInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "FrontmatterGuardInput", parameters: [:])
 
-        // L25
-        let __meridianProseResults_L25 = try await runtime.executeProsePlan(
-            prose: "follow the Contract guidance",
+        if __meridianShouldRun("progress:0.0:L44:C0") {
+            // L44
+            // Missing closing  (entity detector bugs)
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("---"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L44:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L48:C0") {
+            // L48
+            // Nested double quotes in titles ()
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("title: \"Phil \"Nick\" Last\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.1:L48:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L50:C0") {
+            // L50
+            // Without a guard, these accumulate silently until  chokes or search returns garbage. The guard makes the failure visible at audit time and trivially fixable
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain sync"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.2:L50:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L80:C0") {
+            // L80
+            // Run a read-only scan across all registered sources (or one with )
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("--source <id>"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.3:L80:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.4:L82:C0") {
+            // L82
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain frontmatter audit --json"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.4:L82:C0", state: state.snapshot())
+        }
+        // L93
+        let __meridianProseResults_L93 = try await runtime.executeProsePlan(
+            prose: "follow the Phase 1: Audit — steps 3 guidance",
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
-            guidance: "This skill guarantees:\nEvery brain page is scanned against the eight canonical frontmatter validation classes\nMechanical errors (nested quotes, missing closing `---`, null bytes, slug mismatch) are auto-repairable on demand with `.bak` backups\nValidation logic is shared with `gbrain doctor`'s `frontmatter_integrity` subcheck — single source of truth\nReports per source (gbrain is multi-source since v0.18.0); never silently audits the wrong root\nMissing closing `---` (entity detector bugs)\nNested double quotes in titles (`title: \"Phil \"Nick\" Last\"`)\nWithout a guard, these accumulate silently until `gbrain sync` chokes or search returns garbage. The guard makes the failure visible at audit time and trivially fixable\ntable:ai-discretion:fCBDb2RlIHwgTWVhbmluZyB8IEF1dG8tZml4YWJsZT8gfAp8LS0tLS0tfC0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tLS18CnwgYE1JU1NJTkdfT1BFTmAgfCBGaWxlIGRvZXNuJ3Qgc3RhcnQgd2l0aCBgLS0tYCB8IE5vIChuZWVkcyBodW1hbikgfAp8IGBNSVNTSU5HX0NMT1NFYCB8IE5vIGNsb3NpbmcgYC0tLWAgYmVmb3JlIGZpcnN0IGhlYWRpbmcgfCBZZXMgfAp8IGBZQU1MX1BBUlNFYCB8IFlBTUwgZmFpbGVkIHRvIHBhcnNlIHwgU29tZXRpbWVzIChkZXBlbmRzIG9uIGNhdXNlKSB8CnwgYFNMVUdfTUlTTUFUQ0hgIHwgRnJvbnRtYXR0ZXIgYHNsdWc6YCBkaWZmZXJzIGZyb20gcGF0aC1kZXJpdmVkIHNsdWcgfCBZZXMgKHJlbW92ZXMgdGhlIGZpZWxkKSB8CnwgYE5VTExfQllURVNgIHwgQmluYXJ5IGNvcnJ1cHRpb24gKGBceDAwYCkgfCBZZXMgfAp8IGBORVNURURfUVVPVEVTYCB8IGB0aXRsZTogIm91dGVyICJpbm5lciIgb3V0ZXIiYCBzaGFwZSB8IFllcyB8CnwgYE5PTl9TVFJJTkdfRklFTERgIHwgYHRpdGxlYC9gdHlwZWAvYHNsdWdgIGlzIGFuIHVucXVvdGVkIG5vbi1zdHJpbmcgc2NhbGFyIChlLmcuIGB0aXRsZTogMTIzYCwgYHNsdWc6IDIwMjQtMDYtMDFgKSB8IE5vIChxdW90ZSB0aGUgdmFsdWUpIHwKfCBgRU1QVFlfRlJPTlRNQVRURVJgIHwgT3BlbiArIGNsb3NlIHByZXNlbnQgYnV0IG5vdGhpbmcgYmV0d2VlbiB8IE5vIChuZWVkcyBodW1hbikgfA==\nuse judgment to follow the Phases guidance:\nuse judgment to follow the Phase 1: Audit guidance:\nReports:\nPer-source counts grouped by error code\nTotal count\nScan timestamp\nOutput is JSON; agents parse `errors_by_code` and `per_source` to decide next steps\nRun a read-only scan across all registered sources (or one with `--source <id>`)\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIGF1ZGl0IC0tanNvbg==\nSample of up to 20 affected pages per source\nuse judgment to follow the Phase 2: Validate one path guidance:\nExit code 0 = clean; 1 = errors found. Use this in CI pipelines or pre-commit hooks\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWpzb24=\nuse judgment to follow the Phase 3: Fix guidance:\n`--fix` writes `<file>.bak` for every modified file before mutating. The backup is the safety contract — works whether the brain is a git repo or a plain directory\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWZpeA==\n`--dry-run` previews without writing. Use this before applying fixes in batch\nuse judgment to follow the Phase 4: Pre-commit hook (optional) guidance:\nThe hook runs `gbrain frontmatter validate` against staged `.md`/`.mdx` files. Bypass with `git commit --no-verify`\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIGluc3RhbGwtaG9vayBbLS1zb3VyY2UgPGlkPl0=\nuse judgment to follow the Output rules guidance:\nSurface counts to the user in plain language; do not dump raw JSON\n`SLUG_MISMATCH` fixes remove the frontmatter `slug:` field — gbrain derives slug from path. Mention this when the user's title is intentionally renamed\nNever auto-fix `MISSING_OPEN` or `EMPTY_FRONTMATTER` without explicit user input — these usually mean a human author started a page and didn't finish\nAlways run `gbrain frontmatter audit --json` first; never assume a brain is clean\nFor `--fix` operations: state how many files will be modified BEFORE running, then confirm\n`skills/maintain/SKILL.md` — broader brain health audit; chain after this skill if other classes of issue are suspected\nuse judgment to follow the Anti-Patterns guidance:\n**Don't auto-fix `MISSING_OPEN` or `EMPTY_FRONTMATTER` without user input.** These usually mean a human author started a page and didn't finish — silently inserting `---` markers around an unfinished draft is wrong\n**Don't use `--fix` to \"make doctor green\" without reading the audit first.** SLUG_MISMATCH cases are surfaced for manual review specifically because gbrain derives the slug from path. A mismatch usually means the user renamed a file intentionally; auto-removing the slug field is the right outcome only when you've confirmed the rename was deliberate\n**Don't skip the `.bak` backups.** The `.bak` is the safety contract for non-git brain repos. If `.bak` files accumulate after a fix run, that's a feature, not a bug — the user can review the diffs and delete the backups when satisfied\n**Don't run `audit` on a brain where sources aren't registered.** The CLI returns \"no registered sources to audit\" gracefully, but the migration emits a `skipped: no_sources` phase result. Don't paper over this with a manual path-walk; the right fix is to register the source via `gbrain sources add`\n**Don't install the pre-commit hook on non-git brain dirs.** The install-hook command skips them automatically with a one-line note. If you see \"skipped — not a git repo\" and want validation at write time anyway, use the `audit` command on a cron schedule"
+            guidance: "Output is JSON; agents parse `errors_by_code` and `per_source` to decide next steps\nValidate a single file or directory (does not require source registration):\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWpzb24=\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWZpeA==\n`--dry-run` previews without writing. Use this before applying fixes in batch\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIGluc3RhbGwtaG9vayBbLS1zb3VyY2UgPGlkPl0=\nAlways run `gbrain frontmatter audit --json` first; never assume a brain is clean\nFor `--fix` operations: state how many files will be modified BEFORE running, then confirm\nNever auto-fix `MISSING_OPEN` or `EMPTY_FRONTMATTER` without explicit user input — these usually mean a human author started a page and didn't finish\n`skills/maintain/SKILL.md` — broader brain health audit; chain after this skill if other classes of issue are suspected\nQuote when the value contains `: \" ' # [ ] { } | > & * ! ? ,` or starts with `@`\nDouble quotes only when the value itself contains apostrophes"
         )
-        for (__key, __value) in __meridianProseResults_L25 {
+        for (__key, __value) in __meridianProseResults_L93 {
             state.bind(__key, __value)
         }
 

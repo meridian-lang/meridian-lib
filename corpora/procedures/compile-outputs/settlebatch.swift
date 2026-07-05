@@ -296,15 +296,51 @@ public struct SettleBatch: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "SettleBatch", parameters: [:])
 
-        // L12
-        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
-            prose: "follow the Invocation guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["audit_row.list", "batch.list", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "record.list", "record.mark_canonical", "record.purge"],
-            guidance: "\"settle ready batches\"\n\"batch settlement\"\nfetch ready batches\nCheck: all batches have a name\nfor each batch:\nsettle the batch\nEmit: \"ready batches settled\"\nuse judgment to follow the Postconditions guidance:\nmake sure no batches whose status is \"failed\""
-        )
-        for (__key, __value) in __meridianProseResults_L12 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L23:C0") {
+            // L23
+            try await runtime.assert(((((state.get("batches"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("failed"))) }).isEmpty), message: "Expected no batches whose status is \"failed\"")
+            try await runtime.checkpoint(label: "progress:0.0:L23:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L39:C0") {
+            // L39
+            let batches = try await runtime.invoke(
+                tool: "batch.list",
+                args: [
+                    "status": .string("ready"),
+                ]
+            )
+            state.bind("batches", batches)
+
+            try await runtime.checkpoint(label: "progress:0.1:L39:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L17:C0") {
+            // L17
+            try await runtime.assert((((state.get("batches"))?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("name")) }), message: "Expected all batches have a name")
+            try await runtime.checkpoint(label: "progress:0.2:L17:C0", state: state.snapshot())
+        }
+        // L18
+        for (__meridianLoopIndex_0_3, batch) in (state.get("batches")?.asList ?? []).enumerated() {
+            let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
+            if __meridianShouldRun(__meridianLoopLabel_0_3) {
+            state.bind("batch", batch)
+                if __meridianShouldRun("progress:0.3.body.0:L19:C0") {
+                    // L19
+                    _ = try await SettleBatch(runtime: runtime).run()
+                    try await runtime.checkpoint(label: "progress:0.3.body.0:L19:C0", state: state.snapshot())
+                }
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
+            }
+        }
+
+        if __meridianShouldRun("progress:0.4:L20:C0") {
+            // L20
+            try await runtime.emit(
+                event: "procedure.report",
+                payload: [
+                    "message": .string("ready batches settled"),
+                ]
+            )
+            try await runtime.checkpoint(label: "progress:0.4:L20:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

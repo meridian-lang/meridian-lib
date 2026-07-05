@@ -8,14 +8,17 @@ import Foundation
 //   1. Deterministic transform — the marking pass. It injects no frontmatter
 //      (section semantics activate structurally on any `##`/`###` heading, and
 //      the CLI autodiscovers `.merconfig`/`.merrules`), but it blockquotes
-//      pre-heading preamble and appends an authoritative `(( … ))` marker to
-//      every heading that would not otherwise resolve to an executable role
-//      (prose Contract/Anti-Patterns → inert-with-role, executable unknown →
-//      a reusable `procedure` section alias, other unknown → `(( inert ))`).
+//      pre-heading preamble and classifies every heading per the P1 four-way
+//      precedence (lower / AI-inference-cue judgment / documentary `reference`
+//      / cue-less operational error — see AGENTS.md §6 item 15 and
+//      `docs/13_SKILL_MD_PORTING.md`): prose Contract/Anti-Patterns → role-
+//      typed non-executable or split by cue, executable unknown → a reusable
+//      `procedure` section alias, other unknown, non-lowerable, documentary →
+//      `(( role: reference ))`. The migrator never emits `(( inert ))`.
 //      Markdown list items are normalized and tried as executable candidates
-//      rather than inerted because they contain bullets, bold text, or links.
-//      It does NOT strip `skill: true` (a one-time corpus edit). See
-//      `deterministicTransform`.
+//      rather than marked non-executable because they contain bullets, bold
+//      text, or links. It does NOT strip `skill: true` (a one-time corpus
+//      edit). See `deterministicTransform`.
 //   2. Strict compile — run the candidate through `Compiler` exactly like a
 //      hand-authored file.
 //   3. Bounded repair — when compilation fails AND a repair closure is
@@ -36,16 +39,17 @@ public struct SkillMigrator {
     public struct Options: Sendable {
         /// Maximum repair rounds (0 = deterministic-only).
         public var maxRepair: Int
-        /// Explicitly route fuzzy actionable content — checklists/tables whose
-        /// items aren't structurally checkable, and judgment-shaped prose left
-        /// over below the split threshold — to the planner via `!!! checklist
-        /// (( ai-autonomy ))` / `!!! table (( ai-discretion ))` / `use judgment
-        /// to …:` markers (AGENTS.md Phase 1 item 4), instead of leaving them
-        /// `(( inert ))`. On by default; `--no-route-fuzzy` on `migrate-skill`
-        /// disables it for a byte-for-byte-with-today comparison.
+        /// Downgrades a P1 category-4 failure (non-lowerable, no inference
+        /// cue, operational/normative content) from a hard migration error to
+        /// a reported-but-nonfatal skip: the offending section is marked
+        /// `(( role: reference ))` (never `(( inert ))`) and the strict
+        /// compile retries. Off by default, matching the P1 policy that
+        /// cue-less operational content is a hard reword error; `--route-fuzzy`
+        /// on `migrate-skill` opts into the escape hatch for exploratory batch
+        /// runs where some residual is expected.
         public var routeFuzzy: Bool
 
-        public init(maxRepair: Int = 0, routeFuzzy: Bool = true) {
+        public init(maxRepair: Int = 0, routeFuzzy: Bool = false) {
             self.maxRepair = maxRepair
             self.routeFuzzy = routeFuzzy
         }
@@ -155,8 +159,8 @@ public struct SkillMigrator {
                 let diag = describe(error)
                 diagnostics.append(diag)
                 trace.log(.skill, "migrate \"\(file)\": attempt \(attempts) failed — \(diag)")
-                if let revised = markEnclosingSectionInert(forDiagnostic: diag, in: candidate) {
-                    trace.log(.skill, "migrate \"\(file)\": marking failed section inert and retrying strict compile")
+                if let revised = markEnclosingSectionReference(forDiagnostic: diag, in: candidate) {
+                    trace.log(.skill, "migrate \"\(file)\": marking failed section (( role: reference )) and retrying strict compile")
                     candidate = revised
                     continue
                 }
@@ -199,33 +203,42 @@ public struct SkillMigrator {
     ///      heading is prefixed with `> ` (a markdown blockquote, treated as a
     ///      comment by the tokenizer), so it doesn't trip the "content before
     ///      the first heading" hard error.
-    ///   2. **Mark headings** — append an authoritative `(( … ))` marker to each
-    ///      heading that would otherwise not resolve to an executable role:
-    ///        • Contract/Guarantees/Invariants → `(( inert, role: invariants ))`
-    ///          (the gbrain corpus states these as prose, not checkable predicates)
-    ///        • Anti-Patterns/Avoid/Pitfalls   → `(( inert, role: prohibitions ))`
+    ///   2. **Classify headings per P1** — apply the fixed four-way precedence
+    ///      (lower → AI-inference-cue judgment → documentary `reference` →
+    ///      cue-less operational error) to each heading that would otherwise
+    ///      not resolve to an executable role:
+    ///        • Contract/Guarantees/Invariants → checkable lines lower/split;
+    ///          non-checkable lines with an inference cue → judgment; with no
+    ///          cue → left to `SkillSectionBuilder`'s own `uncheckablePredicate`
+    ///          error (never auto-marked non-executable)
+    ///        • Anti-Patterns/Avoid/Pitfalls → same treatment under `role:
+    ///          prohibitions`
     ///        • a recognized procedure/applicability/negative/template heading
-    ///          → left unmarked only when its body is structurally lowerable;
-    ///          narrative bodies stay inert with the heading's semantic role
-    ///          preserved where useful
+    ///          → left unmarked when its body is structurally lowerable or
+    ///          judgment-wrapped; a purely documentary body is marked
+    ///          `(( role: reference ))`
     ///        • an unrecognized heading whose body is *only* executable
     ///          candidates (shell fences, command spans, choice gates, checkable
     ///          task-list items, or list items normalized from Markdown)
     ///          → a `procedure` section alias
-    ///        • every other unrecognized heading → `(( inert ))`
+    ///        • every other unrecognized, non-lowerable, non-cued heading with
+    ///          real operational content → a `procedure` alias, left for the
+    ///          real compiler to raise its own reword diagnostic; genuinely
+    ///          documentary content → `(( role: reference ))`
     ///   3. **Heading-less narrative** — when a document has no `##`/`###`
     ///      headings and the body is prose narrative rather than an executable
-    ///      flat procedure/list, wrap the body under `## Overview (( inert ))`.
-    ///      Plain phrase-only documents and all-list Markdown procedures are
-    ///      left for strict compile after inline presentation is normalized.
+    ///      flat procedure/list, wrap the body under
+    ///      `## Overview (( role: reference ))`. Plain phrase-only documents
+    ///      and all-list Markdown procedures are left for strict compile after
+    ///      inline presentation is normalized.
     ///
     /// Idempotent (an already-marked heading is left untouched) and
     /// frontmatter-preserving. It does NOT strip `skill: true` — that is a
     /// one-time corpus edit, not a reusable transform. Role recognition uses the
     /// built-in alias table (`SkillSectionRole.builtinRole`); idiosyncratic
-    /// organizational headings get `(( inert ))` and are the author's residue to
-    /// resolve (split into a procedure section, alias in the rulebook, or keep
-    /// inert). `addedKeys` is always empty — the pass adds no frontmatter.
+    /// organizational headings with no lowerable/cued/documentary content are
+    /// the author's residue to resolve via reword, not a silently emitted
+    /// marker. `addedKeys` is always empty — the pass adds no frontmatter.
     func deterministicTransform(_ markdown: String) throws
         -> (source: String, addedKeys: [String], aliases: [SectionAlias], unminedContracts: [String]) {
         let (marked, aliases, unminedContracts) = try markSections(markdown)

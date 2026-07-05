@@ -45,13 +45,15 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         guard fm.fileExists(atPath: origURL.path) else { throw ValidationError("Original not found: \(original)") }
         guard fm.fileExists(atPath: portURL.path) else { throw ValidationError("Ported file not found: \(ported)") }
         let rulebook = try loadRulebook(beside: portURL)
+        let lexicon = try loadLexicon(beside: portURL)
 
         let report = SkillDeviation.analyze(
             originalMarkdown: try String(contentsOf: origURL, encoding: .utf8),
             portedMeri: try String(contentsOf: portURL, encoding: .utf8),
             originalName: origURL.lastPathComponent,
             portedName: portURL.lastPathComponent,
-            rulebook: rulebook
+            rulebook: rulebook,
+            lexicon: lexicon
         )
         let markdown = SkillDeviation.renderMarkdown(report, includeDiff: !noDiff)
 
@@ -100,7 +102,9 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
 
         let outDir = out.map { URL(fileURLWithPath: $0).standardized }
         if let outDir { try fm.createDirectory(at: outDir, withIntermediateDirectories: true) }
-        let rulebook = try loadRulebook(beside: portDir.appendingPathComponent("placeholder.meri"))
+        let placeholder = portDir.appendingPathComponent("placeholder.meri")
+        let rulebook = try loadRulebook(beside: placeholder)
+        let lexicon = try loadLexicon(beside: placeholder)
 
         var rows: [SkillDeviation.DeviationReport] = []
         var unpairedOriginals: [String] = []
@@ -123,7 +127,8 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
                 portedName: meriURL.lastPathComponent,
                 originalDiffPath: "\(origDir.lastPathComponent)/\(origRel)",
                 portedDiffPath: displayName(meriURL, base: portDir),
-                rulebook: rulebook
+                rulebook: rulebook,
+                lexicon: lexicon
             )
             rows.append(report)
             let reportStem = meriURL.deletingPathExtension().lastPathComponent
@@ -201,6 +206,30 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         return merged
     }
 
+    /// Real `EnglishLexicon` merged with every discovered `.merconfig`'s
+    /// `=== language ===` synonyms (`normativeCueWords`/`inferenceCueWords`/
+    /// `referenceHeadingWords`, per P2) — the same corpus-tuned vocabulary
+    /// `SkillMetrics.analyze`'s reference/operational discrimination (§5)
+    /// needs, rather than the conservative built-in default.
+    private func loadLexicon(beside inputURL: URL) throws -> EnglishLexicon {
+        let urls = try DependencyDiscovery.resolveMerconfigs(explicit: [], beside: inputURL)
+        guard !urls.isEmpty else { return .default }
+        let parser = MerConfigParser()
+        var merged = MerConfigFile()
+        for url in urls {
+            let source = try String(contentsOf: url, encoding: .utf8)
+            merged = merged.merging(try parser.parse(source, file: url.lastPathComponent))
+        }
+        return EnglishLexicon.default.merging(
+            comparisonSynonyms: merged.languageSynonyms.comparisonSynonyms,
+            durationSynonyms: merged.languageSynonyms.durationSynonyms,
+            assertionSynonyms: merged.languageSynonyms.assertionSynonyms,
+            normativeCueSynonyms: merged.languageSynonyms.normativeCueSynonyms,
+            inferenceCueSynonyms: merged.languageSynonyms.inferenceCueSynonyms,
+            referenceHeadingSynonyms: merged.languageSynonyms.referenceHeadingSynonyms
+        )
+    }
+
     // MARK: - Index
 
     private func buildIndex(
@@ -223,6 +252,7 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         let inertSections = rows.reduce(0) { $0 + $1.metrics.inertSections }
         let operationalInertSections = rows.reduce(0) { $0 + $1.metrics.operationalInertSections }
         let unclassifiedInertSections = rows.reduce(0) { $0 + $1.metrics.unclassifiedInertSections }
+        let inertMarkers = rows.reduce(0) { $0 + $1.metrics.inertMarkerCount }
         let inertDeviations = rows.reduce(0) { $0 + $1.inertSectionDeviations.count }
         let totalJudgmentBlocks = rows.reduce(0) { $0 + $1.metrics.judgmentBlocks }
         let totalJudgmentLines = rows.reduce(0) { $0 + $1.metrics.judgmentLines }
@@ -239,6 +269,7 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         out.append("- Inert deviations: \(inertDeviations)")
         out.append("- Operational inert: \(operationalInertSections)")
         out.append("- Unclassified inert: \(unclassifiedInertSections)")
+        out.append("- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): \(inertMarkers)")
         if !categoryCounts.isEmpty {
             out.append("- Inert categories: " + categoryCounts.map { "\($0.category.rawValue)=\($0.count)" }.joined(separator: ", "))
         }

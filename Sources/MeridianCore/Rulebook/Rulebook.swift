@@ -45,17 +45,28 @@ public enum SkillSectionRole: String, Sendable, CaseIterable, Equatable {
     /// A section whose body restates an external rulebook convention verbatim
     /// (`(( inert, role: convention-ref ))`). Non-executable metadata.
     case conventionRef = "convention-ref"
+    /// Genuinely documentary content — rationale, examples, changelog,
+    /// background, related links — that carries neither lowerable content
+    /// nor an AI-inference cue (`(( role: reference ))`). Non-executable
+    /// metadata. The migrator emits this in place of a bare `(( inert ))`;
+    /// `(( inert ))` itself remains a valid hand-authored marker but the
+    /// migrator never emits it (see AGENTS.md §6 pitfall on cue-gated
+    /// marking).
+    case reference
     /// Anything else (Philosophy, examples, prose rationale) → inert metadata.
+    /// Hand-authored only — the migrator never emits this marker; it emits
+    /// `reference`/`template`/`tools`/`convention-ref` instead.
     case inert
 
     /// True for roles whose lowered body runs (asserts, preconditions,
     /// procedure). False for documentation/metadata roles (`template`/`tools`/
-    /// `convention-ref`/`inert`) whose content is recorded but never executed.
+    /// `convention-ref`/`reference`/`inert`) whose content is recorded but
+    /// never executed.
     public var isExecutable: Bool {
         switch self {
         case .invariants, .procedure, .applicability, .negativeApplicability, .prohibitions, .tables:
             return true
-        case .template, .domain, .tools, .conventionRef, .inert:
+        case .template, .domain, .tools, .conventionRef, .reference, .inert:
             return false
         }
     }

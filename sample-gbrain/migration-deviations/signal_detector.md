@@ -3,8 +3,8 @@
 - Original: `signal-detector/SKILL.md`
 - Ported: `signal_detector.meri`
 - Tier: 2 (light edits)
-- Similarity: 81%
-- Lines: 113 -> 128 (+30 / -15)
+- Similarity: 74%
+- Lines: 113 -> 131 (+41 / -23)
 
 ## Frontmatter
 - Added: (none)
@@ -12,34 +12,40 @@
 
 ## Categories
 - section-marker-added
-- shell-block-routed
 - preamble-blockquoted
 - command-hole-rewritten
-- inert-section-added
+- doc-section-marked
 
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L83 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L97 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L87 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L92 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L100 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
-- Sections inert total: 2/8 (25% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 7/7 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
-- Inert categories: template=1, tools-metadata=1
-- Judgment: 6 blocks, 0 lines
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
+- Inert categories: reference-documentation=5, template=1, tools-metadata=1
+- Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L83 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L97 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L13 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L40 `Phase 1: Idea/Observation Detection (PRIMARY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L55 `Phase 2: Entity Detection (SECONDARY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L76 `Phase 3: Signal Logging`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L87 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L92 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L100 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/signal-detector/SKILL.md
 +++ skills/signal_detector.meri
-@@ -24,16 +24,17 @@
+@@ -24,20 +24,19 @@
  
  # Signal Detector — Ambient Brain Capture
  
@@ -59,27 +65,55 @@ These sections were made non-executable in the port and should be reviewed as mi
 +> intellectual capital. Entities are bookkeeping. Both compound over time.
  
 -## Contract
-+## Contract (( role: procedure ))
-+use judgment to follow the Contract guidance:
++## Contract (( role: reference ))
  
  This skill guarantees:
  - Fires on every message (no exceptions unless purely operational)
-@@ -53,8 +54,10 @@
+-- Runs in parallel (spawned, never blocks main response)
+ - Captures ideas with the user's EXACT phrasing (no paraphrasing)
+ - Detects entity mentions and creates/enriches brain pages
+ - Logs a one-line summary of what was captured
+@@ -46,55 +45,74 @@
+ 
+ > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
+ 
+-Every time this skill creates or updates a brain page that mentions a person or company:
+-1. Check if that person/company has a brain page
+ 2. If yes → add a back-link FROM their page TO the page you just created/updated
+ 3. Format: `- **YYYY-MM-DD** | Referenced in [page title](path) — brief context`
  4. An unlinked mention is a broken brain.
  
++
++### Contract — steps (( role: reference ))
++
++- Runs in parallel (spawned, never blocks main response)
++
++### Contract — steps 2
++
++> Every time this skill creates or updates a brain page that mentions a person or company:
++1. Check if that person/company has a brain page
  ## Phases
-+use judgment to follow the Phases guidance:
  
- ### Phase 1: Idea/Observation Detection (PRIMARY)
-+use judgment to follow the Phase 1: Idea/Observation Detection (PRIMARY) guidance:
+-### Phase 1: Idea/Observation Detection (PRIMARY)
++### Phase 1: Idea/Observation Detection (PRIMARY) (( role: reference ))
  
  When the user expresses a novel thought, observation, thesis, or framework:
  - If it's the user's **original thinking** (they generated it) → create/update `originals/{slug}`
-@@ -67,34 +70,46 @@
+ - If it's a **world concept** they're referencing → create/update `concepts/{slug}`
+ - If it's a **product or business idea** → create/update `ideas/{slug}`
+ 
+-**Capture exact phrasing.** The user's language IS the insight. Don't paraphrase.
+ 
+-**Cross-linking (MANDATORY):** Every original MUST link to related people, companies,
++### Phase 1: Idea/Observation Detection (PRIMARY) — steps (( role: reference ))
++
++The user's language IS the insight. Don't paraphrase.
++
++Cross-linking (MANDATORY): Every original MUST link to related people, companies,
  meetings, and concepts. An original without cross-links is a dead original.
  
- ### Phase 2: Entity Detection (SECONDARY)
-+use judgment to follow the Phase 2: Entity Detection (SECONDARY) guidance:
+-### Phase 2: Entity Detection (SECONDARY)
++### Phase 2: Entity Detection (SECONDARY) (( role: reference ))
  
  1. Extract entity mentions (people, companies, media titles)
 -2. For each entity:
@@ -94,39 +128,38 @@ These sections were made non-executable in the port and should be reviewed as mi
  automatically creates the link from the new page to that entity. You don't
  need to call `gbrain link` manually. Timeline entries still need explicit calls.
  
+-### Phase 3: Signal Logging
 +
-+#### Phase 2: Entity Detection (SECONDARY) — steps
++### Phase 2: Entity Detection (SECONDARY) — steps
 +
 +2. For each entity:
 +   - `gbrain search "name"` — does a page exist?
 +
-+#### Phase 2: Entity Detection (SECONDARY) — steps 2
++### Phase 2: Entity Detection (SECONDARY) — steps 2
 +
 +3. For new FACTS with specific dates → call `gbrain timeline-add <slug> <date> "<summary>"`
 +
- ### Phase 3: Signal Logging
-+use judgment to follow the Phase 3: Signal Logging guidance:
- 
- Always log a one-line summary:
++### Phase 3: Signal Logging (( role: reference ))
++
 +This makes the ambient capture loop debuggable.
 +
 +
-+#### Phase 3: Signal Logging — steps
-+
++### Phase 3: Signal Logging — steps (( role: reference ))
+ 
+ Always log a one-line summary:
  - `Signals: 0 ideas, 0 entities, 0 facts (skipped: operational)`
  - `Signals: 1 idea (captured → originals/x), 2 entities (enriched → people/y, companies/z)`
  
 -This makes the ambient capture loop debuggable.
 -
 -## Output Format
-+## Output Format (( inert, role: template ))
++## Output Format (( role: template ))
  
  No visible output to the user. This skill runs silently in the background.
  The output is brain pages created/updated and the signal log line.
  
 -## Anti-Patterns
-+## Anti-Patterns (( role: procedure ))
-+use judgment to follow the Anti-Patterns guidance:
++## Anti-Patterns (( role: reference ))
  
  - Blocking the main response to wait for signal detection to complete
  - Paraphrasing the user's original thinking instead of capturing exact phrasing

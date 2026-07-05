@@ -32,33 +32,31 @@ triggers:
 
 > This skill is the playbook for that migration.
 
-## brain_first: exempt (( inert ))
+## brain_first: exempt (( role: reference ))
 
 This skill is ABOUT the brain's shape — it can't depend on the brain it's reshaping. No `gbrain search` lookup first; jump straight to onboard.
 
-## When this skill fires (( inert ))
+## When this skill fires (( role: reference ))
 
 - Agent runs `gbrain onboard --check` and sees `pack_upgrade_available` or `type_proliferation` warnings
 - User asks "what is the canonical taxonomy / how do I clean up my page types / migrate to v2"
 - A `dangling_aliases` finding surfaces (post-unify GC)
 - An agent ingesting from a custom pack wants to consult the v2 taxonomy as a reference
 
-## Mental model (one paragraph) (( inert ))
+## Mental model (one paragraph) (( role: reference ))
 
 A production gbrain brain accreted **94 distinct `pages.type` values** over years of ingestion: tweet / tweet-thread / tweet-bundle / tweet-single / media/x-tweet/bundle / tweet-stub all coexisting; 5.5K concept-redirect pages; atom-partner-link pages that should be links; civic / framework / insight / memo / anecdote one-offs. The cure: collapse to **15 canonical types** (person, company, media, tweet, social-digest, analysis, atom, concept, source, deal, email, slack, writing, project, note) with subtypes/format/origin pushed to frontmatter, alias-rows for redirects, real link-rows for edge-shaped pages, and a catch-all that bins long-tail unknowns to `note` with `frontmatter.legacy_type = <original>` for rollback.
 
 ## Workflow
-use judgment to follow the Workflow guidance:
 
-### Phase 1: Discovery
-use judgment to follow the Phase 1: Discovery guidance:
+### Phase 1: Discovery (( role: reference ))
 
 Expected: `gbrain-base@1.0.0+<sha>`. If you see `gbrain-base-v2@...`, the brain is already on v2 — skip the migration.
 
 Look for the `pack_upgrade_available` finding. If it's `ok`, there's no successor declared for the active pack — done.
 
 
-#### Phase 1: Discovery — steps
+### Phase 1: Discovery — steps
 
 Confirm the brain is actually on `gbrain-base` (not already on v2).
 
@@ -67,7 +65,7 @@ gbrain schema active --json | jq -r '.identity'
 ```
 
 
-#### Phase 1: Discovery — steps 2
+### Phase 1: Discovery — steps 2
 
 > Then run onboard to see what would change:
 
@@ -75,8 +73,7 @@ gbrain schema active --json | jq -r '.identity'
 gbrain onboard --check
 ```
 
-### Phase 2: Preview
-use judgment to follow the Phase 2: Preview guidance:
+### Phase 2: Preview (( role: reference ))
 
 - How many pages would retype per cluster (tweets, articles, companies, etc.)
 - How many concept-redirect pages would become alias rows
@@ -86,7 +83,7 @@ use judgment to follow the Phase 2: Preview guidance:
 Review the output. If the proposed changes look wrong, **don't** proceed — file an issue or write a custom pack with adjusted mapping_rules.
 
 
-#### Phase 2: Preview — steps
+### Phase 2: Preview — steps
 
 > Run the per-cluster narrative:
 
@@ -95,10 +92,7 @@ gbrain onboard --check --explain
 ```
 
 This invokes the `unify-types` handler in dry-run mode and prints:
-### Phase 3: Apply
-use judgment to follow the Phase 3: Apply guidance:
-
-The handler is PROTECTED (manual_only per D17) — autopilot will never auto-fire it. Submit explicitly:
+### Phase 3: Apply (( role: reference ))
 
 On a 186K-page brain expect ~10 minutes. The handler runs:
 1. Preflight (validate target pack has `mapping_rules:`)
@@ -111,7 +105,9 @@ On a 186K-page brain expect ~10 minutes. The handler runs:
 5. Final sync (untyped rows by path-prefix)
 6. **Flip active pack** to gbrain-base-v2 (D13)
 
-#### Phase 3: Apply — steps
+### Phase 3: Apply — steps (( role: reference ))
+
+The handler is PROTECTED (manual_only per D17) — autopilot will never auto-fire it. Submit explicitly:
 
 ```bash
 gbrain jobs submit unify-types \
@@ -126,23 +122,22 @@ gbrain jobs follow <job_id>
 ```
 
 
-#### Phase 3: Apply — steps 2
+### Phase 3: Apply — steps 2
 
 3. Acquire `gbrain-unify` db-lock (60min TTL)
 
-#### Phase 3: Apply — steps 3
+### Phase 3: Apply — steps 3
 
 7. Verify + celebration summary
 
-### Phase 4: Verify
-use judgment to follow the Phase 4: Verify guidance:
+### Phase 4: Verify (( role: reference ))
 
 Expected:
 - `pack_upgrade_available` → `ok` (active pack is now v2)
 - `type_proliferation` → `ok` (≤16 distinct typed values)
 - `dangling_aliases` → `ok` (slug_aliases all point at active canonicals)
 
-#### Phase 4: Verify — steps
+### Phase 4: Verify — steps
 
 ```bash
 gbrain onboard --check
@@ -150,21 +145,20 @@ gbrain schema stats
 ```
 
 
-#### Phase 4: Verify — steps 2
+### Phase 4: Verify — steps 2
 
 - `gbrain schema stats` shows ≤16 distinct types
 
-### Phase 5: Post-migration
-use judgment to follow the Phase 5: Post-migration guidance:
+### Phase 5: Post-migration (( role: reference ))
 
 Anything that used `--type article` keeps working post-unify if your CLI calls go through the `expandTypeFilter` helper (it expands `article` to `media+subtype=article` automatically). Direct SQL against `pages.type` needs updating to the canonical types.
 
 
-#### Phase 5: Post-migration — steps
+### Phase 5: Post-migration — steps
 
 Search queries get a small ranking signal: pages reached via `slug_aliases` (canonicals of one or more aliases) get a 1.05x boost. Visible via `gbrain search --explain`.
 
-## Rollback (( inert ))
+## Rollback (( role: reference ))
 
 ```sql
 UPDATE pages SET type = frontmatter->>'legacy_type'
@@ -191,16 +185,21 @@ gbrain pages restore <slug>
 gbrain schema use gbrain-base
 ```
 
-## Anti-patterns (( role: procedure ))
-use judgment to follow the Anti-patterns guidance:
+## Anti-patterns (( role: reference ))
 
-- **Don't run unify-types under autopilot.** It's manual_only by design. Autopilot remediation should never silently change your taxonomy.
 - **Don't expect mapping_rules to cover every legacy type explicitly.** Use the catch-all (`*unknown*`) for the long tail. Pages get retyped to `note` with `legacy_type` preserved.
 - **Don't rewrite body-text wikilinks.** D15: the slug_aliases table IS the resolver. `[[old-redirect-slug]]` keeps working via `engine.resolveSlugWithAlias` short-circuit.
-- **Don't bypass the dry-run.** Always run `--explain` before applying. The trust delta is real.
 - **Don't run two unify jobs concurrently.** The `gbrain-unify` db-lock serializes them; the second submission rejects with "already in progress."
 
-## Decision tree (( inert ))
+
+### Anti-patterns — steps (( role: reference ))
+
+- It's manual_only by design. Autopilot remediation should never silently change your taxonomy.
+
+### Anti-patterns — steps 2 (( role: reference ))
+
+- Don't bypass the dry-run. Always run `--explain` before applying. The trust delta is real.
+## Decision tree (( role: reference ))
 
 ```
 Active pack already gbrain-base-v2?
@@ -223,8 +222,7 @@ Worried about a specific cluster's mapping?
     edit mapping_rules in your fork, then target the fork.
 ```
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 Inputs:
 - A brain on `gbrain-base` (or any pack with `migration_from: gbrain-base-v2`).
@@ -247,17 +245,22 @@ Failure modes:
 - Catch-all retype excludes `page_to_link` + `page_to_alias` source types (caught in E2E pre-merge).
 - Phase failures abort the run before `active_pack_flipped`; partial state restorable via op_checkpoint resume.
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
-DON'T:
-- Submit `unify-types` directly via the MCP `submit_job` op without `--allow-protected`. PROTECTED handlers require trusted local callers; remote MCP rejection is the intentional trust boundary.
 - Edit `mapping_rules` in `gbrain-base-v2.yaml` to skip clusters you don't trust. Fork the pack instead (`gbrain schema fork`) so the source-of-truth migration stays consistent across brains.
-- Run `unify-types` from inside an autopilot tick. The check is `manual_only` per D17 — autopilot deliberately never auto-fires it because pack upgrades are one-time consenting taxonomy decisions.
 - Hard-delete soft-deleted source pages before the 72h restore window. Use `gbrain pages restore <slug>` first if rollback is needed.
 - Assume `frontmatter.legacy_type` survives every roundtrip. The marker is canonical for the immediate post-migration window; downstream re-imports may overwrite it.
 
-## Output Format (( inert, role: template ))
+
+### Anti-Patterns — steps (( role: reference ))
+
+> DON'T:
+- Submit `unify-types` directly via the MCP `submit_job` op without `--allow-protected`. PROTECTED handlers require trusted local callers; remote MCP rejection is the intentional trust boundary.
+
+### Anti-Patterns — steps 2 (( role: reference ))
+
+- Run `unify-types` from inside an autopilot tick. The check is `manual_only` per D17 — autopilot deliberately never auto-fires it because pack upgrades are one-time consenting taxonomy decisions.
+## Output Format (( role: template ))
 
 Per phase, the handler emits to stderr:
 ```
@@ -285,7 +288,7 @@ Final celebration summary to stderr:
 
 JSON output (`gbrain jobs follow <id> --json`) returns the structured `UnifyTypesResult` shape with `per_phase`, `pack_identity_after`, `active_pack_flipped`.
 
-## Reference
+## Reference (( role: reference ))
 
 - Plan + decisions: `~/.claude/plans/system-instruction-you-are-working-transient-elephant.md`
 - Architecture: `docs/architecture/type-taxonomy.md`

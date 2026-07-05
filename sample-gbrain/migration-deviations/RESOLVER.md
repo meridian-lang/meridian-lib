@@ -2,9 +2,9 @@
 
 - Original: `RESOLVER.md`
 - Ported: `RESOLVER.meri`
-- Tier: 2 (light edits)
-- Similarity: 80%
-- Lines: 136 -> 173 (+50 / -13)
+- Tier: 1 (near-verbatim)
+- Similarity: 86%
+- Lines: 136 -> 170 (+39 / -5)
 
 ## Frontmatter
 - Added: (none)
@@ -18,91 +18,75 @@
 - Sections inert total: 2/2 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
+- Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=2
 - Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L124 `Disambiguation rules`: reference-documentation — Reference documentation, rationale, examples, or changelog.
-- L136 `Conventions (cross-cutting)`: reference-documentation — Reference documentation, rationale, examples, or changelog.
+- L121 `Disambiguation rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L133 `Conventions (cross-cutting)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/RESOLVER.md
 +++ RESOLVER.meri
-@@ -1,16 +1,23 @@
+@@ -1,8 +1,11 @@
  # GBrain Skill Resolver
  
 -This is the dispatcher. Skills are the implementation. **Read the skill file before acting.** If two skills could match, read both. They are designed to chain (e.g., ingest then enrich for each entity).
 +> This is the dispatcher. Skills are the implementation. **Read the skill file before acting.** If two skills could match, read both. They are designed to chain (e.g., ingest then enrich for each entity).
  
--## Always-on (every message)
-+## Always-on (every message) (( inert ))
+ ## Always-on (every message)
 +
 +
 +### Always-on (every message) — steps
  
  | Trigger | Skill |
  |---------|-------|
- | Every inbound message (spawn parallel, don't block) | `skills/signal-detector/SKILL.md` |
+@@ -10,6 +13,9 @@
  | Any brain read/write/lookup/citation | `skills/brain-ops/SKILL.md` |
  
--## Brain operations
-+## Brain operations (( inert ))
+ ## Brain operations
++
++
++### Brain operations — steps (( role: reference ))
  
-+
-+### Brain operations — steps
-+
-+!!! table (( ai-discretion ))
  | Trigger | Skill |
  |---------|-------|
- | "What do we know about", "tell me about", "search for", "who is", "background on", "notes on" | `skills/query/SKILL.md` |
-@@ -27,8 +34,12 @@
- | "what search mode", "is my cache hot", "tune my retrieval", "compare search modes", "clear search overrides" | `gbrain search modes/stats/tune` directly. See `skills/conventions/search-modes.md` |
- | "eval results", "search benchmark", "haters-immune methodology", "regression check on retrieval" | `gbrain eval run-all` / `gbrain eval compare`. See `docs/eval/SEARCH_MODE_METHODOLOGY.md` |
+@@ -29,6 +35,9 @@
  
--## Content & media ingestion
-+## Content & media ingestion (( inert ))
+ ## Content & media ingestion
  
 +
-+### Content & media ingestion — steps
++### Content & media ingestion — steps (( role: reference ))
 +
-+!!! table (( ai-discretion ))
  | Trigger | Skill |
  |---------|-------|
  | "capture this", "save this thought", "remember this", "drop this in the inbox", "save to brain" | `skills/capture/SKILL.md` |
-@@ -37,8 +48,12 @@
- | Meeting transcript received | `skills/meeting-ingestion/SKILL.md` |
+@@ -38,6 +47,9 @@
  | Generic "ingest this" (auto-routes to above) | `skills/ingest/SKILL.md` |
  
--## Thinking skills (from GStack)
-+## Thinking skills (from GStack) (( inert ))
+ ## Thinking skills (from GStack)
++
++
++### Thinking skills (from GStack) — steps (( role: reference ))
  
-+
-+### Thinking skills (from GStack) — steps
-+
-+!!! table (( ai-discretion ))
  | Trigger | Skill |
  |---------|-------|
- | "Brainstorm", "I have an idea", "office hours" | GStack: office-hours |
-@@ -49,7 +64,10 @@
- > These skills come from GStack. If GStack is installed, the agent reads them directly.
+@@ -50,6 +62,9 @@
  > If not, brain-only mode still works (brain skills function without thinking skills).
  
--## Operational
-+## Operational (( inert ))
+ ## Operational
 +
 +
 +### Operational — steps
  
  | Trigger | Skill |
  |---------|-------|
-@@ -70,8 +88,12 @@
- | "Spawn agent", "background task", "parallel tasks", "steer agent", "pause/resume agent", "gbrain jobs submit", "submit a gbrain job", "submit a shell job", "shell job" | `skills/minion-orchestrator/SKILL.md` |
- | "present options", "ask before proceeding", "choice gate", "user decision" | `skills/ask-user/SKILL.md` |
+@@ -72,6 +87,10 @@
  
--## Setup & migration
-+## Setup & migration (( inert ))
+ ## Setup & migration
  
 +
 +### Setup & migration — steps
@@ -111,37 +95,35 @@
  | Trigger | Skill |
  |---------|-------|
  | "Set up GBrain", first boot | `skills/setup/SKILL.md` |
-@@ -87,7 +109,10 @@
- | "Populate links", "extract links", "backfill graph" | `skills/maintain/SKILL.md` (graph population phase) |
- | "Populate timeline", "extract timeline entries" | `skills/maintain/SKILL.md` (graph population phase) |
+@@ -89,6 +108,9 @@
  
--## Identity & access (always-on)
-+## Identity & access (always-on) (( inert ))
-+
+ ## Identity & access (always-on)
+ 
 +
 +### Identity & access (always-on) — steps
- 
++
  | Trigger | Skill |
  |---------|-------|
-@@ -96,28 +121,40 @@
+ | Non-owner sends a message | Check `ACCESS_POLICY.md` before responding |
+@@ -96,28 +118,40 @@
  | Agent needs user context | Read `USER.md` |
  | Operational cadence (what to check and when) | Read `HEARTBEAT.md` |
  
 -## Disambiguation rules
-+## Disambiguation rules (( inert ))
++## Disambiguation rules (( role: reference ))
  
  When multiple skills could match:
  1. Prefer the most specific skill (meeting-ingestion over ingest)
  2. If the user mentions a URL, route by content type (link → idea-ingest, video → media-ingest)
  3. If the user mentions a person/company, check if enrich or query fits better
 +
-+### Disambiguation rules — steps (( inert ))
++### Disambiguation rules — steps (( role: reference ))
 +
  4. Chaining is explicit in each skill's Phases section
  5. When in doubt, ask the user (see `skills/ask-user/SKILL.md` for the choice-gate pattern)
  
 -## Conventions (cross-cutting)
-+## Conventions (cross-cutting) (( inert ))
++## Conventions (cross-cutting) (( role: reference ))
  
 -These apply to ALL brain-writing skills:
 +- `skills/conventions/schema-evolution.md` — when to add a type vs alias vs prefix (read before `schema-author`)
@@ -161,8 +143,7 @@
  - `skills/_brain-filing-rules.md` — where files go
  - `skills/_output-rules.md` — output quality standards
  
--## Uncategorized
-+## Uncategorized (( inert ))
+ ## Uncategorized
 +
 +
 +### Uncategorized — steps

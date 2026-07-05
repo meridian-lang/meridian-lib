@@ -8,8 +8,7 @@ triggers:
 
 # Invoice Run
 
-## When this applies (( role: procedure ))
-use judgment to follow the When this applies guidance:
+## When this applies
 - "run invoices"
 - "billing batch"
 
@@ -19,8 +18,7 @@ use judgment to follow the When this applies guidance:
 | unpaid | collections |
 | fulfilled | archive |
 
-## Workflow
-use judgment to follow the Workflow guidance:
+## Workflow (( role: reference ))
 bind invoice receipt =
   ```
   invoice-routing:
@@ -40,5 +38,5 @@ bind selected queue = the queue corresponding to the status "unpaid" in the tabl
 
 emit erp.invoice_receipt with body = invoice receipt.
 
-## Report shape (( inert, role: template ))
+## Report shape (( role: template ))
 The receipt groups invoice states by downstream queue.

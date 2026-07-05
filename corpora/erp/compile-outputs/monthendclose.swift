@@ -399,15 +399,39 @@ public struct MonthEndClose: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "MonthEndClose", parameters: [:])
 
-        // L12
-        let __meridianProseResults_L12 = try await runtime.executeProsePlan(
-            prose: "follow the When this applies guidance",
-            snapshot: state.snapshot(),
-            scopedTools: ["inventory.reserve", "invoice.create", "invoice.list", "order.cancel", "order.list", "payment.collect", "period.close", "product.list", "purchase_order.create", "shipment.create"],
-            guidance: "\"month-end close\"\n\"close accounting period\"\nfetch unpaid invoices\nCheck: no invoices whose balance is more than 0\nclose the accounting period\nPublish: \"accounting period closed\""
-        )
-        for (__key, __value) in __meridianProseResults_L12 {
-            state.bind(__key, __value)
+        if __meridianShouldRun("progress:0.0:L52:C0") {
+            // L52
+            let invoices = try await runtime.invoke(
+                tool: "invoice.list",
+                args: [
+                    "status": .string("unpaid"),
+                ]
+            )
+            state.bind("invoices", invoices)
+
+            try await runtime.checkpoint(label: "progress:0.0:L52:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L17:C0") {
+            // L17
+            try await runtime.assert(((((state.get("invoices"))?.asList ?? []).filter { __e in (MeridianComparison.gt(__e.member("balance"), .number(Decimal(0)))) }).isEmpty), message: "Expected no invoices whose balance is more than 0")
+            try await runtime.checkpoint(label: "progress:0.1:L17:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L76:C0") {
+            // L76
+            let accountingPeriod = try await runtime.invoke(tool: "period.close", args: [:])
+            state.bind("accountingPeriod", accountingPeriod)
+
+            try await runtime.checkpoint(label: "progress:0.2:L76:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L19:C0") {
+            // L19
+            try await runtime.emit(
+                event: "erp.report",
+                payload: [
+                    "message": .string("accounting period closed"),
+                ]
+            )
+            try await runtime.checkpoint(label: "progress:0.3:L19:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

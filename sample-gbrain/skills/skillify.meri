@@ -30,15 +30,14 @@ mutating: true
 > dimension list *before* tests cement behavior. Use `/cross-modal-review`
 > for ad-hoc second opinions; use Phase 3 here when skillifying a feature.
 
-## Contract (( role: procedure ))
-use judgment to follow the Contract guidance:
+## Contract (( role: reference ))
 
 A feature is "properly skilled" when all 11 checklist items pass. Item 3
 (cross-modal eval) is informational in v1.1.0 — it does not gate the
 skillpack-check audit, but a missing or stale receipt is surfaced so the
 user knows where the gate stands.
 
-## The Checklist (( inert ))
+## The Checklist (( role: reference ))
 
 ```
 □ 1.  SKILL.md           — skill file with frontmatter + contract + phases
@@ -54,8 +53,7 @@ user knows where the gate stands.
 □ 11. Brain filing       — if it writes pages, entry in brain/RESOLVER.md
 ```
 
-## Phase 0: Should This Be a Skill?
-use judgment to follow the Phase 0: Should This Be a Skill? guidance:
+## Phase 0: Should This Be a Skill? (( role: reference ))
 
 Before skillifying, check:
 - Will this be invoked 2+ times? (One-off work ≠ skill)
@@ -64,8 +62,7 @@ Before skillifying, check:
 
 If no to all three, it's a script, not a skill. Move on.
 
-## Phase 1: Audit
-use judgment to follow the Phase 1: Audit guidance:
+## Phase 1: Audit (( role: reference ))
 
 ```
 Feature: [name]
@@ -74,10 +71,8 @@ Missing items: [check each of the 11]
 ```
 
 ## Phase 2: Write SKILL.md + Code (items 1-2)
-use judgment to follow the Phase 2: Write SKILL.md + Code (items 1-2) guidance:
 
-### SKILL.md frontmatter template (copy-paste):
-use judgment to follow the SKILL.md frontmatter template (copy-paste): guidance:
+### SKILL.md frontmatter template (copy-paste): (( role: reference ))
 
 ```yaml
 ---
@@ -96,41 +91,37 @@ mutating: false  # true if it writes to brain/disk
 ---
 ```
 
-Body must include: **Contract** (what it guarantees), **Phases** (step-by-step), **Output Format** (what it produces).
 
+### SKILL.md frontmatter template (copy-paste): — steps (( role: reference ))
 
-#### SKILL.md frontmatter template (copy-paste): — steps
+Body must include: Contract (what it guarantees), Phases (step-by-step), Output Format (what it produces).
 
 Extract deterministic code into `scripts/*.ts`.
 
 ## Phase 3: Cross-Modal Eval (item 3) — THE QUALITY GATE
-use judgment to follow the Phase 3: Cross-Modal Eval (item 3) — THE QUALITY GATE guidance:
 
-### Why this comes before tests (( inert ))
+### Why this comes before tests (( role: reference ))
 
 Tests lock in behavior. If the behavior is mediocre, tests lock in mediocrity.
 Cross-modal eval proves the quality bar FIRST, then tests cement it.
 
-### Step 1: Pick a representative input (( inert ))
+### Step 1: Pick a representative input (( role: reference ))
 
 Choose the input that exercises the skill's hardest documented use case. If
 unsure: use the primary trigger example from SKILL.md, or the most complex
 real-world input from the last 7 days of memory files.
 
-### Step 2: Run the skill, capture output (( inert ))
+### Step 2: Run the skill, capture output (( role: reference ))
 
 Run the skill on the representative input. The OUTPUT FILE is what gets
 evaluated.
 
-### Step 3: Run the eval gate
-use judgment to follow the Step 3: Run the eval gate guidance:
+### Step 3: Run the eval gate (( role: reference ))
 
 **These MUST be frontier models from DIFFERENT providers.** Using a single
 provider's family or budget models defeats the purpose — different families
 have less correlated blind spots. Refresh the list when a new model
 generation ships.
-
-**Pass criteria (BOTH must be true):**
 
 1. Every dimension's mean across successful models ≥ 7.
 2. No single model scored any dimension < 5 (the floor).
@@ -140,7 +131,7 @@ Exit code 2; CI wrappers should treat this as "did not run cleanly", not
 "failed quality gate".
 
 
-#### Step 3: Run the eval gate — steps
+### Step 3: Run the eval gate — steps (( role: reference ))
 
 ```bash
 gbrain eval cross-modal \
@@ -157,7 +148,6 @@ edits writes a new receipt).
 > **Default models** (override per slot via `--slot-a-model`, `--slot-b-model`,
 > `--slot-c-model`):
 
-!!! table (( ai-discretion ))
 | Slot | Default | Provider |
 |------|---------|----------|
 | A | `openai:gpt-4o` | OpenAI |
@@ -165,10 +155,15 @@ edits writes a new receipt).
 | C | `google:gemini-1.5-pro` | Google |
 
 
-#### Step 3: Run the eval gate — steps 2
+### Step 3: Run the eval gate — steps 2 (( role: reference ))
+
+Pass criteria (BOTH must be true):
+
+
+### Step 3: Run the eval gate — steps 3 (( role: reference ))
 
 Inconclusive: fewer than 2 of 3 models returned parseable scores.
-### Step 4: Cycle until you pass (≤3 cycles) (( inert ))
+### Step 4: Cycle until you pass (≤3 cycles) (( role: reference ))
 
 ```
 CYCLE 1:
@@ -193,26 +188,26 @@ CYCLE 3 (final):
     - Why (e.g., "would require architectural change")
 ```
 
-### Cycles + cost guardrails (( inert ))
+### Cycles + cost guardrails (( role: reference ))
 
 - Default `--cycles 3` in TTY, `--cycles 1` in non-TTY (limits scripted
   bulk spend in CI loops).
 
-#### Cycles + cost guardrails — steps
+### Cycles + cost guardrails — steps (( role: reference ))
 
 - The command prints an estimated max-cost-per-cycle from a small pricing
   constant before each run. Real cost varies with prompt size; treat the
   estimate as a ceiling for default `--max-tokens 4000`.
 - A `--budget-usd N` hard cap is a v0.27.x follow-up TODO.
 
-### Provider configuration (( inert ))
+### Provider configuration (( role: reference ))
 
 Or set env vars: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`,
 `GOOGLE_GENERATIVE_AI_API_KEY`, `TOGETHER_API_KEY`, etc. The gateway reads
 from `~/.gbrain/config.json` plus `process.env`.
 
 
-#### Provider configuration — steps
+### Provider configuration — steps
 
 > Models resolve through the gbrain AI gateway. Configure once with:
 
@@ -221,32 +216,30 @@ gbrain providers test    # see what's configured
 gbrain config            # set keys
 ```
 
-### Cost expectations (( inert ))
+### Cost expectations
 
 
-#### Cost expectations — steps
+### Cost expectations — steps (( role: reference ))
 
 3 cycles × 3 models = 9 frontier calls max per run. With Opus-class +
 GPT-4o-class + Gemini-1.5-Pro, expect $1–3 per full run on default
 `--max-tokens 4000`. Receipts include the per-call model identifiers so
 you can audit retroactively.
 
-### Skip cross-modal eval when: (( inert ))
+### Skip cross-modal eval when: (( role: reference ))
 
 - Output is < 200 tokens (trivial — not worth 9 API calls).
 - The skill is a thin wrapper around a single API call (one cycle is enough).
 
-## Phase 4: Tests (items 4-6)
-use judgment to follow the Phase 4: Tests (items 4-6) guidance:
+## Phase 4: Tests (items 4-6) (( role: reference ))
 
 NOW that eval has proven quality, write tests that lock it in:
 
-**Unit tests** — every branch of deterministic logic. Mock external calls.
-**Integration tests** — hit real endpoints. Catch bugs mocks hide.
-**LLM evals** — quality/correctness for LLM steps. Lighter than cross-modal eval — test specific behaviors.
+Unit tests — every branch of deterministic logic. Mock external calls.
+Integration tests — hit real endpoints. Catch bugs mocks hide.
+LLM evals — quality/correctness for LLM steps. Lighter than cross-modal eval — test specific behaviors.
 
-## Phase 5: Resolver + Check-Resolvable (items 7-9)
-use judgment to follow the Phase 5: Resolver + Check-Resolvable (items 7-9) guidance:
+## Phase 5: Resolver + Check-Resolvable (items 7-9) (( role: reference ))
 
 1. Add to skills/RESOLVER.md with trigger phrases users ACTUALLY type
 2. Resolver eval: feed triggers, assert correct routing
@@ -256,7 +249,7 @@ use judgment to follow the Phase 5: Resolver + Check-Resolvable (items 7-9) guid
    - No DRY violations (shared logic in lib/, not copy-pasted)
    - No ambiguous trigger routing
 
-## Phase 6: E2E + Brain Filing (items 10-11)
+## Phase 6: E2E + Brain Filing (items 10-11) (( role: reference ))
 
 - E2E smoke: full pipeline from trigger to side effect
 - Brain filing: add to brain/RESOLVER.md if the skill writes brain pages
@@ -271,7 +264,7 @@ ls ~/.gbrain/.gbrain/eval-receipts/              # receipt landed
 gbrain check-resolvable --json | jq .ok          # resolver clean
 ```
 
-## Worked Example: Skillifying a "summarize-pr" Feature (( inert ))
+## Worked Example: Skillifying a "summarize-pr" Feature (( role: reference ))
 
 ```
 Phase 0: Yes — invoked weekly, 50+ lines, clear trigger "summarize this PR"
@@ -290,21 +283,23 @@ Phase 6: E2E test: feed a real PR URL → verify brain page created
 Phase 7: All green. Score: 11/11
 ```
 
-## Quality Gates
-use judgment to follow the Quality Gates guidance:
+## Quality Gates (( role: reference ))
 
-NOT properly skilled until:
-
-- All required items pass (1-2, 4-10; 11 only when applicable).
-- Cross-modal eval (item 3) has a current receipt OR is explicitly waived
-  with rationale (item 3 is informational; not blocking, but a missing
-  receipt is visible in the audit).
 - All tests pass (unit + integration + LLM evals).
 - Resolver entry exists with real trigger phrases.
 - Check-resolvable shows no orphans, overlaps, or DRY violations.
 - Brain filing if applicable.
 
-## Output Format (( inert, role: template ))
+
+### Quality Gates — steps (( role: reference ))
+
+> NOT properly skilled until:
+
+- All required items pass (1-2, 4-10; 11 only when applicable).
+- Cross-modal eval (item 3) has a current receipt OR is explicitly waived
+  with rationale (item 3 is informational; not blocking, but a missing
+  receipt is visible in the audit).
+## Output Format (( role: template ))
 
 Skillify produces three durable artifacts per skill:
 
@@ -325,8 +320,7 @@ JSON output (`gbrain skillify check --json`) includes the same fields plus
 the per-item detail string, so agents can route on the structured envelope
 without parsing prose.
 
-## Anti-Patterns (( role: procedure ))
-use judgment to follow the Anti-Patterns guidance:
+## Anti-Patterns (( role: reference ))
 
 - ❌ Writing tests before cross-modal eval (locks in mediocrity)
 - ❌ Using budget models for eval (C student grading A student)
@@ -335,6 +329,10 @@ use judgment to follow the Anti-Patterns guidance:
 - ❌ Eval without fix cycle (vanity metrics)
 - ❌ Code with no SKILL.md (invisible to resolver)
 - ❌ Tests that reimplement production code (masks real bugs)
-- ❌ Resolver entry with internal jargon (must mirror real user language)
 - ❌ Two skills doing the same thing (merge or kill one)
 - ❌ Running cross-modal eval on trivial outputs (< 200 tokens, not worth 9 API calls)
+
+
+### Anti-Patterns — steps (( role: reference ))
+
+- ❌ Resolver entry with internal jargon (must mirror real user language)
