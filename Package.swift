@@ -206,6 +206,19 @@ let package = Package(
             name: "CorporaTests",
             dependencies: ["MeridianCore", "MeridianRuntime"],
             path: "Tests/CorporaTests"
+        ),
+
+        // MARK: - MeridianSlowIntegrationTests — tests that spawn a *live external
+        // process* (a real `swift build`/`swift run` through a temporary SwiftPM
+        // package, or a subprocess-executing test spec). These dominate wall-clock
+        // time (minutes, not seconds) versus every other in-process test target.
+        // Kept as a separate target so `swift test --skip MeridianSlowIntegrationTests`
+        // gives a fast inner loop; the full local gate (and CI) still runs it via
+        // plain `swift test`. See Tests/README.md.
+        .testTarget(
+            name: "MeridianSlowIntegrationTests",
+            dependencies: ["MeridianCLIKit", "MeridianCore", "MeridianRuntime", "MeridianTestKit"],
+            path: "Tests/MeridianSlowIntegrationTests"
         )
     ],
     swiftLanguageModes: [.v6]

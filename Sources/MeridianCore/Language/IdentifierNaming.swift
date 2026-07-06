@@ -77,9 +77,10 @@ public enum IdentifierNaming {
     }
 
     /// camelCase preserving each word's existing case, splitting on
-    /// space/underscore (`"order ID"` → `"orderID"`). Bind/result naming.
+    /// space/underscore/hyphen (`"order ID"` → `"orderID"`,
+    /// `"webhook-transform"` → `"webhookTransform"`). Bind/result naming.
     static func camelPreservingCase(_ raw: String) -> String {
-        convert(raw, separators: spaceAndUnderscore, casing: .camel)
+        convert(raw, separators: spaceUnderscoreHyphen, casing: .camel)
     }
 
     /// PascalCase, splitting on spaces only, lower-casing each word's tail
@@ -88,10 +89,11 @@ public enum IdentifierNaming {
         convert(raw, separators: spaceOnly, casing: .pascal, lowercaseWordRest: true)
     }
 
-    /// PascalCase, splitting on space/underscore, lower-casing each word's tail
-    /// (`"validation result"` → `"ValidationResult"`). Domain/type naming.
+    /// PascalCase, splitting on space/underscore/hyphen, lower-casing each
+    /// word's tail (`"validation result"` → `"ValidationResult"`,
+    /// `"webhook-transform"` → `"WebhookTransform"`). Domain/type naming.
     static func pascalCase(_ raw: String) -> String {
-        convert(raw, separators: spaceAndUnderscore, casing: .pascal, lowercaseWordRest: true)
+        convert(raw, separators: spaceUnderscoreHyphen, casing: .pascal, lowercaseWordRest: true)
     }
 
     /// PascalCase, splitting on space/underscore/hyphen while preserving each

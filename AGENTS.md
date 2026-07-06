@@ -245,6 +245,15 @@ MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1 MERIDIAN_CORPORA_TYPECHE
 scripts/coverage.swift --gate
 ```
 
+`scripts/coverage.swift` skips the slow, real-external-process
+`MeridianSlowIntegrationTests` target by default (its coverage lands on files
+that already carry permanent bucket-A floors), so prefer the plain, faster
+`--gate` above. Use `scripts/coverage.swift --full --gate` instead only when
+the session touched `RunCommand`, `TestCommand`, `RuntimeExecutor`,
+`SwiftPMPackageRunner`, or another file whose reachable branches only that
+target exercises — plain `--gate` cannot accurately enforce those specific
+floors.
+
 If the change affects generated Swift, codegen, domain emission, migration, or
 the gbrain corpus, do not skip the typecheck env vars; they are the only gates
 that feed generated output to `swiftc`. Changes that affect corpus migration,
@@ -311,7 +320,11 @@ the per-file coverage floors documented under `docs/coverage/`.
 If a change affects generated artifacts, regenerate and include the matching
 outputs in the change set (goldens, `sample-gbrain/compile-outputs/`,
 `sample-gbrain/migration-deviations/`, coverage baselines/floors) instead of
-leaving stale snapshots.
+leaving stale snapshots. Regenerating `docs/coverage/coverage-baseline.md` /
+adjusting `docs/coverage/coverage-exclusions.md` floors is its own separate,
+occasional maintenance flow — always `--full` (see
+[`docs/coverage/README.md`](docs/coverage/README.md) "Commands", flow 3) —
+not something the routine `--gate` check above triggers or needs.
 If any gate cannot be run, say exactly why and record the residual risk in the
 final response and `IMPLEMENTATION_LOG.md`.
 

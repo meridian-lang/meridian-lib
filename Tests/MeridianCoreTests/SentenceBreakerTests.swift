@@ -59,4 +59,22 @@ struct SentenceBreakerTests {
         _ = SentenceBreaker().statementText(from: "emit note with body = \"done.\"", trace: cap.trace)
         #expect(cap.lines().isEmpty)
     }
+
+    @Test("an unterminated quote/backtick that runs through the final period never re-enters .normal, so the FSM falls through its loop without trimming")
+    func unterminatedQuoteFallsThroughLoop() {
+        // The line ends in "." (passes the `guard line.last == "."` at the
+        // top), but the opening `"` is never closed, so `state` is still
+        // `.inDoubleQuote` — not `.normal` — by the time the scan reaches the
+        // last character. The early-return branch inside the loop
+        // (`state == .normal`) never fires, the `while` exhausts every
+        // character, and `shouldTrimTerminatingPeriod` falls through to its
+        // final `return false`.
+        let unterminatedQuote = "\"broken quote."
+        #expect(SentenceBreaker().shouldTrimTerminatingPeriod(unterminatedQuote) == false)
+        #expect(SentenceBreaker().statementText(from: unterminatedQuote) == unterminatedQuote)
+
+        let unterminatedBacktick = "`broken code."
+        #expect(SentenceBreaker().shouldTrimTerminatingPeriod(unterminatedBacktick) == false)
+        #expect(SentenceBreaker().statementText(from: unterminatedBacktick) == unterminatedBacktick)
+    }
 }

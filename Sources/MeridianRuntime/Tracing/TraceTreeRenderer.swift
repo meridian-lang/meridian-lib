@@ -6,9 +6,11 @@ import Foundation
 //
 //   ▶ ProcessOrder  (run_id=… 12 events 81ms)
 //     ├─ invoke validateOrder        →  4ms
-//     ├─ branch [valid → then]
-//     │  ├─ invoke chargePayment     → 12ms
-//     │  └─ emit   order.charged
+//     ├─ iterate over items
+//     │  ├─ · #0
+//     │  │  ├─ invoke chargePayment  → 12ms
+//     │  │  └─ emit   order.charged
+//     │  └─ ↳ done
 //     └─ complete
 //
 // Pure: takes events in, returns a String. No process/file IO. The CLI's
@@ -18,8 +20,16 @@ import Foundation
 //   1. **One line per IR statement**, so the tree mirrors the workflow source
 //      a developer wrote. invoke / emit / branch / iterate / wait /
 //      complete each get their own row.
-//   2. **Children indent under their parent.** branch/iterate produce
-//      nested rows; everything else is a sibling of the surrounding block.
+//   2. **Children indent under their parent — for blocks with a paired
+//      start/end marker in the event stream.** `iterate.start`/`iterate.end`
+//      are explicitly paired, so a loop's body (and any loop nested inside
+//      it) renders as indented children via the `Frame` stack in
+//      `renderRun`. `branch.taken` has no matching "branch ended" `EventKind`
+//      — a branch is a single instantaneous decision event, not a
+//      start/end pair — so a branch's body still renders flat, as siblings
+//      of the decision, not as its children. Adding real nesting for branch
+//      bodies would need a new paired event (and the codegen wiring to emit
+//      it), which is a separate, larger change than this renderer.
 //   3. **Right-aligned timing where it matters.** invoke → duration_ms.
 //      assert/emit/etc. don't get a duration column unless the event
 //      itself carries one.
@@ -127,6 +137,11 @@ public struct TraceTreeRenderer {
 
     // MARK: - Private rendering
 
+    /// A pushed block scope. `isLast` mirrors whether the frame's own opening
+    /// row (`iterate.start`) was itself the last row at its enclosing depth —
+    /// that decides whether the continuation guide drawn under it should keep
+    /// a vertical bar (more siblings follow once the block closes) or go
+    /// blank (nothing follows).
     private struct Frame {
         let label: String
         let isLast: Bool
@@ -140,25 +155,54 @@ public struct TraceTreeRenderer {
         var pending: [RawEvent] = events
         // Drop the workflowStarted event — it's the header line.
         if first.kind == "workflow.started" { pending.removeFirst() }
+        guard !pending.isEmpty else { return }
 
-        // Block stack: when we see a branch.taken with `into = "then"|"else"`
-        // we push a frame; when we see workflowCompleted we pop. We don't
-        // emit explicit "branch end" events, so the renderer infers
-        // termination from the next event's depth (parent matches).
+        // Depth per row. `iterate.start`/`iterate.end` are the only markers
+        // explicitly paired in the event stream (see the file-header note on
+        // why `branch.taken` can't be nested this way), so they're the only
+        // construct that can push/pop reliably here. `iterate.end` itself is
+        // computed at the *inner* depth (still nested) so it renders as the
+        // loop's final child, then the depth pops for whatever follows.
+        var depths: [Int] = []
+        var depth = 0
+        for ev in pending {
+            depths.append(depth)
+            switch ev.kind {
+            case "iterate.start": depth += 1
+            case "iterate.end": if depth > 0 { depth -= 1 }
+            default: break
+            }
+        }
+
+        stack.removeAll()
         for (i, ev) in pending.enumerated() {
-            let isLast = (i == pending.count - 1)
-            renderRow(ev, isLast: isLast, into: &lines)
+            let isLastAtLevel = (i == pending.count - 1) || depths[i + 1] < depths[i]
+            renderRow(ev, isLast: isLastAtLevel, stack: stack, into: &lines)
+            switch ev.kind {
+            case "iterate.start":
+                stack.append(Frame(label: labelFor(ev), isLast: isLastAtLevel))
+            case "iterate.end":
+                if !stack.isEmpty { stack.removeLast() }
+            default:
+                break
+            }
         }
     }
 
-    private func renderRow(_ ev: RawEvent, isLast: Bool, into lines: inout [String]) {
+    private func renderRow(_ ev: RawEvent, isLast: Bool, stack: [Frame], into lines: inout [String]) {
         let glyph = isLast ? endGlyph : midGlyph
         let label = labelFor(ev)
         let timing = options.showTimings ? timingSuffix(ev) : ""
         let source = options.showSourceRanges ? sourceSuffix(ev) : ""
-        // Single-level indent; nested-block indentation lives in a future pass
-        // when branch/iterate scopes carry an explicit close marker.
-        lines.append("  \(glyph) \(label)\(timing)\(source)")
+        lines.append("  \(ancestorGuide(stack))\(glyph) \(label)\(timing)\(source)")
+    }
+
+    /// Two columns of guide per open ancestor frame: a continuation bar when
+    /// the ancestor still has siblings coming after its block closes, blank
+    /// otherwise.
+    private func ancestorGuide(_ stack: [Frame]) -> String {
+        let bar = options.unicodeGlyphs ? "│  " : "|  "
+        return stack.map { $0.isLast ? "   " : bar }.joined()
     }
 
     private func labelFor(_ ev: RawEvent) -> String {

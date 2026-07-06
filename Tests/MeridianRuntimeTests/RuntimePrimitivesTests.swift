@@ -63,6 +63,51 @@ struct ClockTests {
     }
 }
 
+@Suite("Runtime.wait(.duration, timeout:)")
+struct WaitDurationTimeoutTests {
+
+    @Test("a timeout shorter than the wait duration throws MeridianRuntimeError.timeout")
+    func timeoutShorterThanDurationThrows() async throws {
+        let clock = TestClock()
+        let runtime = Runtime(toolRegistry: ToolRegistry(), clock: clock)
+        let task = Task {
+            try await runtime.wait(.duration(.seconds(10)), timeout: .seconds(2))
+        }
+        try await Task.sleep(for: .milliseconds(20))
+        await clock.advance(by: .seconds(2))
+
+        var threwTimeout = false
+        do {
+            try await task.value
+        } catch let err as MeridianRuntimeError {
+            if case .timeout = err { threwTimeout = true }
+        }
+        #expect(threwTimeout)
+    }
+
+    @Test("a timeout longer than the wait duration lets the wait complete normally")
+    func timeoutLongerThanDurationSucceeds() async throws {
+        let clock = TestClock()
+        let runtime = Runtime(toolRegistry: ToolRegistry(), clock: clock)
+        let task = Task {
+            try await runtime.wait(.duration(.seconds(2)), timeout: .seconds(10))
+        }
+        try await Task.sleep(for: .milliseconds(20))
+        await clock.advance(by: .seconds(2))
+        try await task.value   // resolves without throwing
+    }
+
+    @Test("no timeout sleeps for the full duration")
+    func noTimeoutSleepsFullDuration() async throws {
+        let clock = TestClock()
+        let runtime = Runtime(toolRegistry: ToolRegistry(), clock: clock)
+        let task = Task { try await runtime.wait(.duration(.seconds(3))) }
+        try await Task.sleep(for: .milliseconds(20))
+        await clock.advance(by: .seconds(3))
+        try await task.value
+    }
+}
+
 @Suite("LLMProvider value types")
 struct LLMProviderTests {
     @Test("request and response carry their fields")

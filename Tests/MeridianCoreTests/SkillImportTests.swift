@@ -37,4 +37,34 @@ struct SkillImportTests {
         #expect(a.thenBlock.statements.count == b.thenBlock.statements.count)
         #expect(String(describing: a.condition) == String(describing: b.condition))
     }
+
+    @Test("preview preserves frontmatter wrapper and imports only meridian or plain fences")
+    func previewFenceFilteringAndFrontmatter() {
+        let out = SkillMarkdownImporter(trace: .silent()).preview("""
+        # Demo
+        Intro paragraph.
+
+        ```meridian
+        To helper:
+          complete.
+        ```
+
+        ```python
+        print("ignored")
+        ```
+
+        ```
+        To plain helper:
+          complete.
+        ```
+        """, name: "demo skill")
+
+        #expect(out.hasPrefix("---\nname: demo skill\ndescription: Imported from SKILL.md preview.\n---"),
+                Comment(rawValue: out))
+        #expect(out.contains("- Intro paragraph."), Comment(rawValue: out))
+        #expect(out.contains("To helper:"), Comment(rawValue: out))
+        #expect(out.contains("To plain helper:"), Comment(rawValue: out))
+        #expect(!out.contains("print(\"ignored\")"), Comment(rawValue: out))
+        #expect(!out.contains("# Demo"), Comment(rawValue: out))
+    }
 }

@@ -133,6 +133,75 @@ struct RuntimeTests {
         #expect(value == .string("localhost"))
     }
 
+    @Test("resolveInstanceProperty resolves an env-var-backed property from the process environment")
+    func resolveInstancePropertyEnvVar() async throws {
+        setenv("MERIDIAN_RUNTIME_TESTS_API_KEY", "sk-test-123", 1)
+        defer { unsetenv("MERIDIAN_RUNTIME_TESTS_API_KEY") }
+        let registry = ToolRegistry()
+        let instances = InstanceRegistry.Builder()
+            .register(kind: "server", name: "s1", properties: [
+                "apiKey": .envVar("MERIDIAN_RUNTIME_TESTS_API_KEY")
+            ])
+            .build()
+        let runtime = Runtime(toolRegistry: registry, instanceRegistry: instances)
+        let handle = try await runtime.instance("s1")
+        let value = try await runtime.resolveInstanceProperty(handle, "apiKey")
+        #expect(value == .string("sk-test-123"))
+    }
+
+    @Test("resolveInstanceProperty resolves an unset env var as an empty string")
+    func resolveInstancePropertyUnsetEnvVar() async throws {
+        let registry = ToolRegistry()
+        let instances = InstanceRegistry.Builder()
+            .register(kind: "server", name: "s1", properties: [
+                "apiKey": .envVar("MERIDIAN_RUNTIME_TESTS_DEFINITELY_UNSET")
+            ])
+            .build()
+        let runtime = Runtime(toolRegistry: registry, instanceRegistry: instances)
+        let handle = try await runtime.instance("s1")
+        let value = try await runtime.resolveInstanceProperty(handle, "apiKey")
+        #expect(value == .string(""))
+    }
+
+    @Test("resolveInstanceProperty throws instanceNotFound for an unknown property")
+    func resolveInstancePropertyUnknownProperty() async throws {
+        let registry = ToolRegistry()
+        let instances = InstanceRegistry.Builder()
+            .register(kind: "server", name: "s1", properties: [
+                "host": .literal(.string("localhost"))
+            ])
+            .build()
+        let runtime = Runtime(toolRegistry: registry, instanceRegistry: instances)
+        let handle = try await runtime.instance("s1")
+        await #expect(throws: MeridianRuntimeError.self) {
+            _ = try await runtime.resolveInstanceProperty(handle, "missing")
+        }
+    }
+
+    // MARK: - Cancellation / resume context clearing
+
+    @Test("clearResumeContext discards any active resume context")
+    func clearResumeContextDiscards() async throws {
+        let cp = InMemoryCheckpointer()
+        let snapshot = StateSnapshot(bindings: ["v": AnyCodable(.string("restored"))])
+        try await cp.write(Checkpoint(
+            runID: "r-clear", sequence: 1, timestamp: Date(),
+            label: "after_commit", stateSnapshot: snapshot, sourceRange: nil
+        ))
+        let runtime = Runtime(toolRegistry: ToolRegistry(), checkpointer: cp, runID: "r-clear")
+        _ = try await runtime.prepareResume(runID: "r-clear")
+        #expect(await runtime.activeResumeContext() != nil)
+        await runtime.clearResumeContext()
+        #expect(await runtime.activeResumeContext() == nil)
+    }
+
+    @Test("cancel(runID:) does not throw and isCancelled remains a stable nonisolated read")
+    func cancelAndIsCancelled() async throws {
+        let runtime = await makeRuntime()
+        await runtime.cancel(runID: "r-test")
+        #expect(runtime.isCancelled() == false)
+    }
+
     // MARK: - Assert (Phase 5)
 
     @Test("assert(true) emits assertPassed")

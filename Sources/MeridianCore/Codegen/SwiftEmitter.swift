@@ -83,8 +83,9 @@ public struct SwiftEmitter {
         var paramTypes: [String: [(name: String, kind: String)]] = [:]
         for wf in workflows {
             paramTypes[wf.structName] = wf.parameters.map { p in
-                let resolved = declaredKinds.contains(p.kind.name) ? p.kind.name : "Value"
-                return (p.name, resolved)
+                let swiftKind = naturalToPascal(p.kind.name)
+                let resolved = declaredKinds.contains(swiftKind) ? swiftKind : "Value"
+                return (IdentifierNaming.camelPreservingCase(p.name), resolved)
             }
         }
         let namespace = options.namespaceEnum
@@ -164,8 +165,8 @@ public struct SwiftEmitter {
         // back to `Value` and aren't considered typed.
         let typedParams = Set(
             workflow.parameters
-                .filter { declaredKinds.isEmpty || declaredKinds.contains($0.kind.name) }
-                .map { $0.name }
+                .filter { declaredKinds.isEmpty || declaredKinds.contains(naturalToPascal($0.kind.name)) }
+                .map { IdentifierNaming.camelPreservingCase($0.name) }
         )
         let ctx = Ctx(
             depth: 0,
@@ -174,12 +175,23 @@ public struct SwiftEmitter {
             typedIdentifiers: typedParams
         )
         func resolveKind(_ k: String) -> String {
-            declaredKinds.isEmpty || declaredKinds.contains(k) ? k : "Value"
+            let swiftKind = naturalToPascal(k)
+            return declaredKinds.isEmpty || declaredKinds.contains(swiftKind) ? swiftKind : "Value"
         }
-        let paramDecls  = workflow.parameters.map { "    public let \($0.name): \(resolveKind($0.kind.name))" }
-        let initParams  = (["runtime: Runtime"] + workflow.parameters.map { "\($0.name): \(resolveKind($0.kind.name))" }).joined(separator: ", ")
-        let initAssigns = workflow.parameters.map { "        self.\($0.name) = \($0.name)" }
-        let stateBinds  = workflow.parameters.map { "        state.bind(\"\($0.name)\", \($0.name))" }
+        let paramDecls = workflow.parameters.map {
+            "    public let \(IdentifierNaming.camelPreservingCase($0.name)): \(resolveKind($0.kind.name))"
+        }
+        let initParams = (["runtime: Runtime"] + workflow.parameters.map {
+            "\(IdentifierNaming.camelPreservingCase($0.name)): \(resolveKind($0.kind.name))"
+        }).joined(separator: ", ")
+        let initAssigns = workflow.parameters.map {
+            let name = IdentifierNaming.camelPreservingCase($0.name)
+            return "        self.\(name) = \(name)"
+        }
+        let stateBinds = workflow.parameters.map {
+            let name = IdentifierNaming.camelPreservingCase($0.name)
+            return "        state.bind(\"\($0.name)\", \(name))"
+        }
 
         return StringTemplate {
             "public struct \(workflow.structName): MeridianWorkflow {"
@@ -1531,7 +1543,7 @@ public struct SwiftEmitter {
     /// does (`"pull request"` → `"PullRequest"`). Used to compare param kinds
     /// against the declared domain kinds when deciding whether to emit a typed
     /// init param or fall back to `Value`.
-    func naturalToPascal(_ s: String) -> String { IdentifierNaming.pascalCaseFromSpaces(s) }
+    func naturalToPascal(_ s: String) -> String { IdentifierNaming.pascalCase(s) }
 
 }
 

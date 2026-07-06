@@ -1,5 +1,6 @@
 import Testing
 @testable import MeridianRuntime
+import MeridianTestKit
 
 @Suite("Autonomy runtime executor")
 struct AutonomyRuntimeTests {
@@ -8,6 +9,14 @@ struct AutonomyRuntimeTests {
         func act(_ context: ActContext) async throws -> ActProposal {
             context.observations.isEmpty
                 ? .action(ProposedAction(toolID: "demo.tool", arguments: ["x": .string("ok")], resultBinding: "value"))
+                : .done(reason: "done")
+        }
+    }
+
+    private struct FailOnceActPlanner: ActPlanner {
+        func act(_ context: ActContext) async throws -> ActProposal {
+            context.observations.isEmpty
+                ? .action(ProposedAction(toolID: "flaky.tool", resultBinding: "attempt"))
                 : .done(reason: "done")
         }
     }
@@ -102,5 +111,33 @@ struct AutonomyRuntimeTests {
         )
 
         #expect(await planner.calls == 0)
+    }
+
+    @Test("a tool failure past the replan threshold falls back to the Planner and continues")
+    func replanAfterConsecutiveFailuresRecovers() async throws {
+        let registry = ToolRegistry()
+        await registry.register(tool: "flaky.tool", .closure { _ in
+            throw ToolError.implementation(code: "boom", message: "always fails", cause: nil)
+        })
+        await registry.register(tool: "fallback.tool", .closure { _ in .string("recovered-value") })
+        let replanner = ScriptedPlanner([
+            PlanProposal(actions: [ProposedAction(toolID: "fallback.tool", resultBinding: "recovered")])
+        ])
+        let runtime = Runtime(
+            toolRegistry: registry,
+            observer: InMemoryObserver(),
+            planner: replanner,
+            actPlanner: FailOnceActPlanner()
+        )
+
+        let results = try await runtime.executeAutonomousLoop(
+            prose: "fix it",
+            snapshot: State().snapshot(),
+            scopedTools: ["flaky.tool", "fallback.tool"],
+            maxSteps: 4,
+            replanAfterFailures: 1
+        )
+
+        #expect(results["recovered"] == .string("recovered-value"))
     }
 }

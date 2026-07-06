@@ -125,4 +125,108 @@ struct TraceTreeRendererCoverageTests {
         #expect(out.contains("↳ ok"))
         #expect(!out.contains("→"))
     }
+
+    // MARK: - Frame stack: iterate nesting
+
+    @Test("a single iterate block indents its body one level and closes with an end glyph")
+    func iterateBodyIndented() {
+        let events: [RE] = [
+            ev("workflow.started", ["workflowName": "W"]),
+            ev("iterate.start", ["over": "items"], seq: 1),
+            ev("iterate.iteration", ["index": 0], seq: 2),
+            ev("invoke.start", ["tool": "charge"], seq: 3),
+            ev("iterate.end", [:], seq: 4),
+            ev("workflow.completed", ["reason": "ok"], seq: 5),
+        ]
+        let out = TraceTreeRenderer().render(events: events)
+        let lines = out.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+
+        // The loop header itself is not indented (top-level sibling of `complete`).
+        #expect(lines.contains { $0.contains("├─") && $0.contains("iterate") && !$0.contains("│") })
+        // Body rows (iteration, invoke) are indented one level under the loop.
+        #expect(lines.contains { $0.contains("│  ├─") && $0.contains("#0") })
+        #expect(lines.contains { $0.contains("│  ├─") && $0.contains("invoke") })
+        // The closing marker renders as the loop's last (nested) child, with
+        // an end glyph, not as a flat sibling of the loop header.
+        #expect(lines.contains { $0.contains("│  └─") && $0.contains("↳ done") })
+        // `complete` returns to the top level after the loop closes.
+        #expect(lines.contains { $0.contains("└─") && $0.contains("complete") && !$0.contains("│") })
+    }
+
+    @Test("a loop nested inside another loop indents two levels deep")
+    func nestedIterateTwoLevels() {
+        let events: [RE] = [
+            ev("workflow.started", ["workflowName": "W"]),
+            ev("iterate.start", ["over": "orders"], seq: 1),
+            ev("iterate.start", ["over": "lineItems"], seq: 2),
+            ev("invoke.start", ["tool": "priceLine"], seq: 3),
+            ev("iterate.end", [:], seq: 4),
+            ev("iterate.end", [:], seq: 5),
+            ev("workflow.completed", ["reason": "ok"], seq: 6),
+        ]
+        let out = TraceTreeRenderer().render(events: events)
+        let lines = out.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+
+        #expect(lines.contains { $0.contains("orders") && $0.contains("iterate") && !$0.contains("│") })
+        #expect(lines.contains { $0.contains("│  ├─") && $0.contains("lineItems") })
+        #expect(lines.contains { $0.contains("│  │  ├─") && $0.contains("invoke") })
+        // Inner loop's own close is nested two levels; outer loop's close one level.
+        #expect(lines.contains { $0.contains("│  │  └─") && $0.contains("↳ done") })
+        #expect(lines.contains { $0.contains("│  └─") && $0.contains("↳ done") && !$0.contains("│  │") })
+    }
+
+    @Test("an event after a closed loop returns to the outer indent level")
+    func afterLoopReturnsToOuterLevel() {
+        let events: [RE] = [
+            ev("workflow.started", ["workflowName": "W"]),
+            ev("iterate.start", ["over": "items"], seq: 1),
+            ev("invoke.start", ["tool": "t"], seq: 2),
+            ev("iterate.end", [:], seq: 3),
+            ev("emit", ["event": "done.emitting"], seq: 4),
+            ev("workflow.completed", ["reason": "ok"], seq: 5),
+        ]
+        let out = TraceTreeRenderer().render(events: events)
+        let lines = out.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+        #expect(lines.contains { $0.contains("emit") && $0.contains("done.emitting") && !$0.contains("│") })
+    }
+
+    @Test("an unmatched iterate.end (no open frame) does not underflow the stack")
+    func unmatchedIterateEndIsSafe() {
+        let events: [RE] = [
+            ev("workflow.started", ["workflowName": "W"]),
+            ev("iterate.end", [:], seq: 1),
+            ev("workflow.completed", ["reason": "ok"], seq: 2),
+        ]
+        let out = TraceTreeRenderer().render(events: events)
+        #expect(out.contains("↳ done"))
+        #expect(out.contains("complete"))
+    }
+
+    @Test("branch.taken still renders flat, as a sibling of its body, not a nested parent")
+    func branchStaysFlat() {
+        let events: [RE] = [
+            ev("workflow.started", ["workflowName": "W"]),
+            ev("branch.taken", ["into": "then", "condition": "valid"], seq: 1),
+            ev("invoke.start", ["tool": "charge"], seq: 2),
+            ev("workflow.completed", ["reason": "ok"], seq: 3),
+        ]
+        let out = TraceTreeRenderer().render(events: events)
+        let lines = out.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+        #expect(lines.contains { $0.contains("branch") && !$0.contains("│") })
+        #expect(lines.contains { $0.contains("invoke") && !$0.contains("│") })
+    }
+
+    @Test("ASCII glyph mode draws the ancestor guide with `|` instead of `│`")
+    func asciiAncestorGuide() {
+        let events: [RE] = [
+            ev("workflow.started", ["workflowName": "W"]),
+            ev("iterate.start", ["over": "items"], seq: 1),
+            ev("invoke.start", ["tool": "t"], seq: 2),
+            ev("iterate.end", [:], seq: 3),
+            ev("workflow.completed", ["reason": "ok"], seq: 4),
+        ]
+        let out = TraceTreeRenderer(options: .init(unicodeGlyphs: false)).render(events: events)
+        #expect(!out.contains("│"))
+        #expect(out.contains("|  |-") || out.contains("|  \\-"))
+    }
 }

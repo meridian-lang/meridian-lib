@@ -23,6 +23,12 @@ MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1 MERIDIAN_CORPORA_TYPECHE
 scripts/coverage.swift --gate
 ```
 
+Use `scripts/coverage.swift --full --gate` instead when the session touched a
+file whose reachable branches only `MeridianSlowIntegrationTests` exercises
+(`RuntimeExecutor`, `SwiftPMPackageRunner`, the CLI `run`/`test` commands) —
+otherwise the plain, faster `--gate` is sufficient and correctly enforces
+every other floor. See "Fast inner loop vs. the full gate" below.
+
 The typecheck env vars are required for changes that affect generated Swift,
 codegen, domain emission, migration, or any committed corpus. They are the only
 gates that feed generated output to `swiftc`. For changes scoped to the Wave 6
@@ -41,6 +47,24 @@ swift test --filter Phase3ForcingFunction
 swift test --filter SwiftEmitterTests
 swift test --filter ParserTraceTests
 ```
+
+### Fast inner loop vs. the full gate
+
+`Tests/MeridianSlowIntegrationTests` holds every suite that spawns a *live
+external process* — a real `swift build`/`swift run` through a temporary
+SwiftPM package (`RuntimeExecutor`, `SwiftPMPackageRunner`, the CLI `run`/`test`
+subcommands) — because these dominate wall-clock time (minutes, not seconds)
+versus everything else, which is in-process and fast. For a quick inner loop
+while iterating, skip that target:
+
+```bash
+swift test --skip MeridianSlowIntegrationTests
+```
+
+Plain `swift test` (no `--skip`) still runs everything and is what the major
+implementation gate and CI use — never skip this target when running the full
+gate below, since it's the only place `RuntimeExecutor`/`SwiftPMPackageRunner`/
+CLI `run`+`test` get exercised end-to-end.
 
 ### Wave 5 parser tests
 
@@ -81,9 +105,30 @@ build, LLM provider) is exempt from 100% and keeps a permanent relaxed floor;
 target, ratcheted up as tests land and removed once the file hits 100%. Run/enforce:
 
 ```bash
-scripts/coverage.swift --gate            # build + test + enforce
+scripts/coverage.swift --gate            # fast suite (skips MeridianSlowIntegrationTests) + enforce
+scripts/coverage.swift --full --gate     # also runs MeridianSlowIntegrationTests
 scripts/coverage.swift --no-test --gate  # enforce, reusing existing .profdata
 ```
+
+`scripts/coverage.swift` skips `MeridianSlowIntegrationTests` by default (it
+passes `swift test --skip MeridianSlowIntegrationTests` internally) since that
+target's live-external-process suites dominate the script's runtime and their
+coverage lands on files that already carry permanent bucket-A floors. Pass
+`--full` when you need an accurate reading that depends on that target — e.g.
+after editing `RuntimeExecutor`, `SwiftPMPackageRunner`, or the CLI
+`run`/`test` commands.
+
+Regenerating `docs/coverage/coverage-baseline.md` / adjusting
+`coverage-exclusions.md` floors is a **third, separate flow** — occasional
+maintenance, not something the two gate commands above trigger. Always
+`--full` there too, since a fast-only baseline understates the six
+slow-test-dependent files and invites a bad floor edit:
+
+```bash
+scripts/coverage.swift --full --baseline docs/coverage/coverage-baseline.md
+```
+
+Full breakdown of all three flows: [`docs/coverage/README.md`](../../docs/coverage/README.md) "Commands".
 
 To raise coverage: find unexecuted lines with `xcrun llvm-cov show … | rg '\|\s+0\|'`,
 add a direct unit test (construct IR/context and call the emitter/evaluator —

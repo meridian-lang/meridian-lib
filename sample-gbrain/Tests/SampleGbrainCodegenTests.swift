@@ -70,6 +70,31 @@ struct SampleGbrainCodegenTests {
                 Comment(rawValue: "Malformed generated Swift:\n" + failures.joined(separator: "\n")))
     }
 
+    @Test("webhook_transforms committed output matches fresh namespaced emission")
+    func webhookTransformsCommittedOutputIsFresh() throws {
+        let root = SampleGbrainConformanceTests.sampleRoot()
+        let skill = root.appendingPathComponent("skills/webhook_transforms.meri")
+        let committed = try String(
+            contentsOf: root.appendingPathComponent("compile-outputs/webhook_transforms.swift"),
+            encoding: .utf8
+        )
+        let source = try String(contentsOf: skill, encoding: .utf8)
+        let fresh = try Compiler(options: .init(
+            emitterOptions: .init(namespaceEnum: Self.namespace(for: skill)),
+            trace: .silent()
+        )).compile(
+            meridianSource: source,
+            meridianFile: skill.lastPathComponent,
+            vocabularies: [SampleGbrainConformanceTests.vocab()],
+            rulebooks: [SampleGbrainConformanceTests.rulebook()]
+        )
+
+        #expect(committed == fresh, Comment(rawValue: "webhook_transforms.swift is stale"))
+        #expect(fresh.contains("enum WebhookTransforms"), Comment(rawValue: fresh))
+        #expect(fresh.contains("struct WebhookTransformsInput"), Comment(rawValue: fresh))
+        #expect(!fresh.contains("Webhook-transforms"), Comment(rawValue: fresh))
+    }
+
     /// A minimal Swift string-literal lexer. Returns the 1-based line numbers on
     /// which a single-line `"…"` literal opened but the physical line ended
     /// before its closing quote. Triple-quoted (`"""`) literals, line comments

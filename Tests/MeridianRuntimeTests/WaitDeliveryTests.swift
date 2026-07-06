@@ -219,4 +219,79 @@ struct EventWaitTests {
         await runtime.deliverEvent(rightPayload)
         try await waitTask.value
     }
+
+    @Test("a non-matching internal emit leaves the event waiter registered")
+    func nonMatchingInternalEmitLeavesWaiterRegistered() async throws {
+        let runtime = makeRuntime()
+        let waitTask = Task { try await runtime.wait(.event("order.shipped", matching: nil)) }
+        try await Task.sleep(for: .milliseconds(10))
+
+        // The runtime emitting an unrelated domain event should not wake the waiter.
+        try await runtime.emit(event: "order.created", payload: [:])
+        try await Task.sleep(for: .milliseconds(10))
+        #expect(!waitTask.isCancelled, "waiter should still be parked after a non-matching internal emit")
+
+        try await runtime.emit(event: "order.shipped", payload: [:])
+        try await waitTask.value
+    }
+}
+
+// MARK: - Choice wait tests
+
+@Suite("wait(.choice) — delivery")
+struct ChoiceWaitTests {
+
+    @Test("deliverChoice wakes a waiting workflow; consumeChoiceSelection reads and clears it")
+    func choiceDeliverWakesAndConsumeClears() async throws {
+        let observer = InMemoryObserver()
+        let runtime = makeRuntime(observer: observer)
+
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask { try await runtime.wait(.choice(prompt: "Pick one", options: ["a", "b"])) }
+            group.addTask {
+                try await Task.sleep(for: .milliseconds(10))
+                await runtime.deliverChoice("b")
+            }
+            try await group.waitForAll()
+        }
+
+        let selection = await runtime.consumeChoiceSelection()
+        #expect(selection == "b")
+        let clearedAfterConsume = await runtime.consumeChoiceSelection()
+        #expect(clearedAfterConsume == "")
+
+        let startEvent = await observer.events.first { $0.kind == .waitStart }
+        #expect(startEvent?.payload["kind"] == .string("choice"))
+        #expect(startEvent?.payload["prompt"] == .string("Pick one"))
+        #expect(startEvent?.payload["options"] == .list([.string("a"), .string("b")]))
+    }
+
+    @Test("deliverChoice with no waiter still records the selection for a later read")
+    func choiceDroppedStillRecordsSelection() async {
+        let runtime = makeRuntime()
+        await runtime.deliverChoice("solo")
+        let selection = await runtime.consumeChoiceSelection()
+        #expect(selection == "solo")
+    }
+
+    @Test("consumeChoiceSelection with no prior delivery returns an empty string")
+    func consumeWithNoDeliveryIsEmpty() async {
+        let runtime = makeRuntime()
+        #expect(await runtime.consumeChoiceSelection() == "")
+    }
+
+    @Test("two sequential choice deliveries each wake exactly one waiter, FIFO")
+    func choiceTwoDeliveriesFIFO() async throws {
+        let runtime = makeRuntime()
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask { try await runtime.wait(.choice(prompt: "p", options: ["x", "y"])) }
+            group.addTask { try await runtime.wait(.choice(prompt: "p", options: ["x", "y"])) }
+            group.addTask {
+                try await Task.sleep(for: .milliseconds(20))
+                await runtime.deliverChoice("x")
+                await runtime.deliverChoice("y")
+            }
+            try await group.waitForAll()
+        }
+    }
 }

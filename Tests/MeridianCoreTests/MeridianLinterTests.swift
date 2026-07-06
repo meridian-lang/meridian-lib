@@ -23,4 +23,23 @@ struct MeridianLinterTests {
         let infixMaybe = MeridianLinter().lint(source: "resolve maybe the comment.")
         #expect(infixMaybe.contains { $0.hint?.contains("discretion") == true })
     }
+
+    @Test("linter ignores headings and keeps only the four most recent bind referents")
+    func headingAndReferentWindow() {
+        let diagnostics = MeridianLinter().lint(source: """
+        ## Notes
+        it is only documentation.
+        bind first = "1".
+        bind second = "2".
+        bind third = "3".
+        bind fourth = "4".
+        bind fifth = "5".
+        resolve it.
+        """)
+
+        #expect(diagnostics.contains { $0.line == 2 && $0.severity == "error" })
+        #expect(diagnostics.contains { $0.line == 8 && $0.severity == "error" })
+        #expect(!diagnostics.contains { $0.line == 1 })
+    }
+
 }

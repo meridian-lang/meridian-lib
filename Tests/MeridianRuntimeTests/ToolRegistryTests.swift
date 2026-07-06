@@ -255,6 +255,312 @@ struct ToolRegistryTests {
         }
         #expect(dict["pong"] == .boolean(true))
     }
+
+    @Test("mcp.call over HTTP forwards custom headers and rejects a malformed URL")
+    func mcpHTTPHeadersAndMalformedURL() async throws {
+        let server = try await JSONRPCServer.start(responseBody: #"{"jsonrpc":"2.0","id":1,"result":{"pong":true}}"#)
+        defer { server.cancel() }
+
+        let registry = ToolRegistry()
+        await registry.register(tool: "mcp.call", .mcp(MCPSpec()))
+        let result = try await registry.dispatch(tool: "mcp.call", args: [
+            "transport": .string("http"),
+            "url": .string(server.url),
+            "headers": .record(["X-MCP-Test": .string("yes")]),
+            "method": .string("ping"),
+            "params": .record([:])
+        ])
+        guard case .record(let dict) = result else {
+            Issue.record("Expected MCP record result")
+            return
+        }
+        #expect(dict["pong"] == .boolean(true))
+
+        do {
+            _ = try await registry.dispatch(tool: "mcp.call", args: [
+                "transport": .string("http"),
+                "url": .string("not a url"),
+                "method": .string("ping"),
+                "params": .record([:])
+            ])
+            Issue.record("Expected malformed MCP URL to throw")
+        } catch let MeridianRuntimeError.toolError(.argumentCoercion(field, _, _), _) {
+            #expect(field == "url")
+        } catch {
+            Issue.record("unexpected error \(error)")
+        }
+    }
+
+    @Test("mcp.call over HTTP surfaces a non-2xx status as an http ToolError")
+    func mcpHTTPNon2xxStatusThrows() async throws {
+        let server = try await JSONRPCServer.start(responseBody: "not found", statusLine: "404 Not Found")
+        defer { server.cancel() }
+
+        let registry = ToolRegistry()
+        await registry.register(tool: "mcp.call", .mcp(MCPSpec()))
+        do {
+            _ = try await registry.dispatch(tool: "mcp.call", args: [
+                "transport": .string("http"),
+                "url": .string(server.url),
+                "method": .string("ping"),
+                "params": .record([:])
+            ])
+            Issue.record("Expected non-2xx status to throw")
+        } catch let MeridianRuntimeError.toolError(.http(statusCode, body), _) {
+            #expect(statusCode == 404)
+            #expect(body == "not found")
+        } catch {
+            Issue.record("unexpected error \(error)")
+        }
+    }
+
+    @Test("mcp.call over stdio surfaces a non-zero exit as a subprocess ToolError")
+    func mcpStdioNonZeroExitThrows() async throws {
+        let registry = ToolRegistry()
+        await registry.register(tool: "mcp.call", .mcp(MCPSpec()))
+        do {
+            _ = try await registry.dispatch(tool: "mcp.call", args: [
+                "transport": .string("stdio"),
+                "binary": .string("/bin/sh"),
+                "arguments": .list([.string("-c"), .string("exit 9")]),
+                "method": .string("ping"),
+                "params": .record([:])
+            ])
+            Issue.record("Expected non-zero exit to throw")
+        } catch let MeridianRuntimeError.toolError(.subprocess(err), _) {
+            #expect(err.exitCode == 9)
+        } catch {
+            Issue.record("unexpected error \(error)")
+        }
+    }
+
+    @Test("mcp.call over stdio rejects a response that decodes to something other than a JSON object")
+    func mcpStdioNonObjectResponseThrows() async throws {
+        let registry = ToolRegistry()
+        await registry.register(tool: "mcp.call", .mcp(MCPSpec()))
+        do {
+            _ = try await registry.dispatch(tool: "mcp.call", args: [
+                "transport": .string("stdio"),
+                "binary": .string("/bin/sh"),
+                "arguments": .list([.string("-c"), .string("cat >/dev/null; printf '[1,2,3]'")]),
+                "method": .string("ping"),
+                "params": .record([:])
+            ])
+            Issue.record("Expected a non-object JSON-RPC response to throw")
+        } catch let MeridianRuntimeError.toolError(.mcp(err), _) {
+            #expect(err.code == "mcp.decode")
+        } catch {
+            Issue.record("unexpected error \(error)")
+        }
+    }
+
+    @Test("mcp.call over stdio falls back to decoding the whole payload when there's no `result` key")
+    func mcpStdioFallsBackToWholePayloadWithoutResultKey() async throws {
+        let registry = ToolRegistry()
+        await registry.register(tool: "mcp.call", .mcp(MCPSpec()))
+        let result = try await registry.dispatch(tool: "mcp.call", args: [
+            "transport": .string("stdio"),
+            "binary": .string("/bin/sh"),
+            "arguments": .list([
+                .string("-c"),
+                // Use an id other than 0/1: `NSNumber`/`CFBoolean` can be
+                // indistinguishable at the ObjC-bridging layer for those two
+                // values, which would make `valueFromJSONObject` legitimately
+                // (if confusingly) decode them as `.boolean` instead of
+                // `.number` — a pre-existing Foundation quirk, not something
+                // this test is meant to exercise.
+                .string(#"cat >/dev/null; printf '{"jsonrpc":"2.0","id":42}'"#)
+            ]),
+            "method": .string("ping"),
+            "params": .record([:])
+        ])
+        guard case .record(let dict) = result else {
+            Issue.record("Expected MCP record result")
+            return
+        }
+        #expect(dict["jsonrpc"] == .string("2.0"))
+        #expect(dict["id"] == .number(42))
+    }
+
+    @Test("a non-ToolError thrown by an injected MCPClient is wrapped as a generic mcp.transport error")
+    func mcpGenericErrorIsWrappedAsMcpTransport() async throws {
+        struct BoomError: Error {}
+        struct ThrowingMCP: MCPClient {
+            func call(method: String, params: Value, transport: MCPTransport) async throws -> Value {
+                throw BoomError()
+            }
+        }
+        let registry = ToolRegistry(mcpClient: ThrowingMCP())
+        await registry.register(tool: "mcp", .mcp(MCPSpec(endpoint: "http://unused.example/mcp")))
+        do {
+            _ = try await registry.dispatch(tool: "mcp", args: ["method": .string("ping")])
+            Issue.record("Expected the generic error to be wrapped")
+        } catch let MeridianRuntimeError.toolError(.implementation(code, _, _), _) {
+            #expect(code == "mcp.transport")
+        } catch {
+            Issue.record("unexpected error \(error)")
+        }
+    }
+
+    @Test("mcp.call's dynamic transport rejects a transport string that isn't http or stdio")
+    func mcpDynamicTransportRejectsUnknownTransport() async throws {
+        let registry = ToolRegistry()
+        await registry.register(tool: "mcp.call", .mcp(MCPSpec()))
+        do {
+            _ = try await registry.dispatch(tool: "mcp.call", args: [
+                "transport": .string("carrier-pigeon"),
+                "method": .string("ping"),
+                "params": .record([:])
+            ])
+            Issue.record("Expected an unknown transport string to throw")
+        } catch let MeridianRuntimeError.toolError(.argumentCoercion(field, _, actual), _) {
+            #expect(field == "transport")
+            #expect(actual == "carrier-pigeon")
+        } catch {
+            Issue.record("unexpected error \(error)")
+        }
+    }
+
+    @Test("http tool times out against an unresponsive server, racing the real network task")
+    func httpTimeoutRacesRealRequest() async throws {
+        let server = try await JSONRPCServer.startUnresponsive()
+        defer { server.cancel() }
+
+        let registry = ToolRegistry()
+        await registry.register(tool: "http", .http(HTTPSpec(url: server.url, timeout: .milliseconds(50))))
+        do {
+            _ = try await registry.dispatch(tool: "http", args: [:])
+            Issue.record("Expected the timeout race to throw")
+        } catch let MeridianRuntimeError.toolError(.timeout, _) {
+            // expected
+        } catch {
+            Issue.record("unexpected error \(error)")
+        }
+    }
+
+    @Test("mcp.call over HTTP times out against an unresponsive server, racing the real network task")
+    func mcpHTTPTimeoutRacesRealRequest() async throws {
+        let server = try await JSONRPCServer.startUnresponsive()
+        defer { server.cancel() }
+
+        let registry = ToolRegistry()
+        await registry.register(tool: "mcp.call", .mcp(MCPSpec()))
+        do {
+            _ = try await registry.dispatch(tool: "mcp.call", args: [
+                "transport": .string("http"),
+                "url": .string(server.url),
+                "timeout": .number(0.05),
+                "method": .string("ping"),
+                "params": .record([:])
+            ])
+            Issue.record("Expected the timeout race to throw")
+        } catch let MeridianRuntimeError.toolError(.timeout, _) {
+            // expected
+        } catch {
+            Issue.record("unexpected error \(error)")
+        }
+    }
+
+    @Test("a subprocess that fails to launch (unknown binary) is wrapped as a generic subprocess.error")
+    func subprocessLaunchFailureIsWrappedAsGenericError() async throws {
+        let registry = ToolRegistry()
+        await registry.register(tool: "ghost", .subprocess(SubprocessSpec(binary: "/definitely/does/not/exist/binary")))
+        do {
+            _ = try await registry.dispatch(tool: "ghost", args: [:])
+            Issue.record("Expected the launch failure to throw")
+        } catch let MeridianRuntimeError.toolError(.implementation(code, _, _), _) {
+            #expect(code == "subprocess.error")
+        } catch {
+            Issue.record("unexpected error \(error)")
+        }
+    }
+
+    @Test("http tool surfaces a non-2xx status as an http ToolError, with the body attached")
+    func httpNon2xxStatusThrows() async throws {
+        let server = try await JSONRPCServer.start(responseBody: #"{"error":"nope"}"#, statusLine: "500 Internal Server Error")
+        defer { server.cancel() }
+
+        let registry = ToolRegistry()
+        await registry.register(tool: "http", .http(HTTPSpec(url: server.url)))
+        do {
+            _ = try await registry.dispatch(tool: "http", args: [:])
+            Issue.record("Expected non-2xx status to throw")
+        } catch let MeridianRuntimeError.toolError(.http(statusCode, body), _) {
+            #expect(statusCode == 500)
+            #expect(body.contains("nope"))
+        } catch {
+            Issue.record("unexpected error \(error)")
+        }
+    }
+
+    @Test("http tool merges per-call header args (a record) into the request")
+    func httpPerCallHeaderArgsAndStringBody() async throws {
+        let server = try await JSONRPCServer.start(responseBody: #"{"ok":true}"#)
+        defer { server.cancel() }
+
+        let registry = ToolRegistry()
+        await registry.register(tool: "http", .http(HTTPSpec(url: server.url)))
+        // A plain string body exercises `httpBody(from:)`'s `.string` arm
+        // directly, instead of the JSON-encodable-object fallback.
+        let result = try await registry.dispatch(tool: "http", args: [
+            "headers": .record(["X-Per-Call": .string("value")]),
+            "body": .string("raw text body")
+        ])
+        guard case .record(let dict) = result else {
+            Issue.record("Expected HTTP record result")
+            return
+        }
+        #expect(dict["status"] == .number(200))
+    }
+
+    @Test("mcp.call over HTTP surfaces a JSON-RPC `error` object as an mcp ToolError")
+    func mcpHTTPErrorObjectThrows() async throws {
+        let server = try await JSONRPCServer.start(
+            responseBody: #"{"jsonrpc":"2.0","id":1,"error":{"code":-32601,"message":"Method not found"}}"#
+        )
+        defer { server.cancel() }
+
+        let registry = ToolRegistry()
+        await registry.register(tool: "mcp.call", .mcp(MCPSpec()))
+        do {
+            _ = try await registry.dispatch(tool: "mcp.call", args: [
+                "transport": .string("http"),
+                "url": .string(server.url),
+                "method": .string("missing.method"),
+                "params": .record([:])
+            ])
+            Issue.record("Expected the JSON-RPC error object to throw")
+        } catch let MeridianRuntimeError.toolError(.mcp(err), _) {
+            #expect(err.code == "-32601")
+            #expect(err.message == "Method not found")
+        } catch {
+            Issue.record("unexpected error \(error)")
+        }
+    }
+
+    @Test("mcp.call over HTTP decodes nested lists/booleans/null in the JSON-RPC result")
+    func mcpHTTPResultWithNestedListsAndBooleansAndNull() async throws {
+        let server = try await JSONRPCServer.start(
+            responseBody: #"{"jsonrpc":"2.0","id":1,"result":{"flags":[true,false],"missing":null,"count":3}}"#
+        )
+        defer { server.cancel() }
+
+        let registry = ToolRegistry()
+        await registry.register(tool: "mcp.call", .mcp(MCPSpec()))
+        let result = try await registry.dispatch(tool: "mcp.call", args: [
+            "transport": .string("http"),
+            "url": .string(server.url),
+            "method": .string("query"),
+            "params": .record([:])
+        ])
+        guard case .record(let dict) = result else {
+            Issue.record("Expected MCP record result")
+            return
+        }
+        #expect(dict["flags"] == .list([.boolean(true), .boolean(false)]))
+        #expect(dict["missing"] == .null)
+        #expect(dict["count"] == .number(3))
+    }
 }
 
 private final class JSONRPCServer: @unchecked Sendable {
@@ -266,13 +572,13 @@ private final class JSONRPCServer: @unchecked Sendable {
         self.url = "http://127.0.0.1:\(port)"
     }
 
-    static func start(responseBody: String) async throws -> JSONRPCServer {
+    static func start(responseBody: String, statusLine: String = "200 OK") async throws -> JSONRPCServer {
         let listener = try NWListener(using: .tcp, on: .any)
         listener.newConnectionHandler = { connection in
             connection.start(queue: .global())
             connection.receive(minimumIncompleteLength: 1, maximumLength: 64 * 1024) { _, _, _, _ in
                 let response = """
-                HTTP/1.1 200 OK\r
+                HTTP/1.1 \(statusLine)\r
                 Content-Type: application/json\r
                 Content-Length: \(responseBody.utf8.count)\r
                 Connection: close\r
@@ -283,6 +589,39 @@ private final class JSONRPCServer: @unchecked Sendable {
                     connection.cancel()
                 })
             }
+        }
+
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+            listener.stateUpdateHandler = { state in
+                switch state {
+                case .ready:
+                    continuation.resume()
+                case .failed(let error):
+                    continuation.resume(throwing: error)
+                default:
+                    break
+                }
+            }
+            listener.start(queue: .global())
+        }
+
+        guard let port = listener.port?.rawValue else {
+            throw ToolError.implementation(code: "test.server", message: "listener did not expose a port", cause: nil)
+        }
+        return JSONRPCServer(listener: listener, port: port)
+    }
+
+    /// A listener that accepts the TCP connection but never writes a
+    /// response, so any client racing a short timeout against it always
+    /// loses — deterministically exercising the timeout arm without a real,
+    /// flaky network dependency.
+    static func startUnresponsive() async throws -> JSONRPCServer {
+        let listener = try NWListener(using: .tcp, on: .any)
+        listener.newConnectionHandler = { connection in
+            connection.start(queue: .global())
+            // Keep reading so the connection doesn't reset before the client
+            // gives up on its own timeout.
+            connection.receive(minimumIncompleteLength: 1, maximumLength: 64 * 1024) { _, _, _, _ in }
         }
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in

@@ -64,18 +64,52 @@ success paths require a live toolchain / server / subprocess:
 - `Testing/RuntimeExecutor`, `Testing/SwiftPMPackageRunner` — scaffold and
   `swift build` / `swift run` a temp SwiftPM package. Early-return and
   pure-string portions are covered; the build/run subprocess tail is not.
-- `Tools/ToolRegistry` — HTTP / MCP / subprocess dispatch needs a live endpoint.
-  Registration, schema, closure, and error-wrapping paths are covered.
-- `Planning/PlanExecutor`, `Planning/ActPlanner`, `Planning/Planner`,
-  `MockPlanning` — the LLM planning loop requires a provider; value-type and
-  policy paths are covered.
+- `Tools/ToolRegistry` — the real success/error paths for HTTP, MCP-over-HTTP,
+  and MCP-over-stdio dispatch are covered against a real (loopback, in-process,
+  non-flaky) `NWListener` test server and real `/bin/sh` subprocesses — see
+  `Tests/MeridianRuntimeTests/ToolRegistryTests.swift`'s `JSONRPCServer` helper
+  — including non-2xx statuses, JSON-RPC `error` objects, malformed URLs,
+  unknown transports, non-zero exits, non-UTF8/non-object decode failures, the
+  generic (non-`ToolError`) catch-all wrapping for each of the three dispatch
+  kinds (via an injected throwing `MCPClient` stub and an unlaunchable
+  subprocess binary), and the timeout race itself (via a server that accepts
+  the connection but never responds, raced against a short timeout — still
+  deterministic, since the unresponsive side can never win). What's left needs
+  a genuinely live, uncontrolled endpoint or a real inter-process signal race:
+  `Process.interrupt()`'s second-stage escalation after `terminate()` doesn't
+  land within its grace window, and a handful of `guard`s that URLSession
+  itself makes unreachable in practice (a non-HTTP `URLResponse` for an http(s)
+  URL, a `TaskGroup` producing no result with two live child tasks, a
+  `Value.jsonEncodableObject` that isn't JSON-serializable — every `Value` case
+  maps to a JSON-safe primitive).
+- `MockPlanning` — residual is the unused `MockPlanner(proposals:)` convenience
+  init, a test-helper affordance rather than a live integration boundary.
+  (`Planning/ActPlanner` and `Planning/Planner` reached 100% and `Planning/
+  PlanExecutor` is at 98%+ — the planning *protocols* and argument-validation
+  logic are fully reachable in-process; only the live LLM-provider round trip
+  itself, `Planning/LLMProvider`, is a real bucket-A boundary, and that file is
+  already at 100% for its reachable value-type surface.)
 
 **(B) Reachable residual — defensive guards, `preconditionFailure`s, dead
 "future-pass" code, and a few hard-to-trigger error branches** (e.g.
 `WholeWordRegex`'s constant-pattern `preconditionFailure` — the codebase's single
-sanctioned unreachable arm for that construct — `TraceTreeRenderer`'s
-not-yet-wired nested-block `Frame` stack, golden write-failure arms). These floors
-should be ratcheted toward 100 as tests land.
+sanctioned unreachable arm for that construct — golden write-failure arms).
+These floors should be ratcheted toward 100 as tests land.
+
+`TraceTreeRenderer`'s `Frame` stack used to be exactly this kind of dead
+residual: it was threaded through `renderRun` but never pushed or popped, so
+the "children indent under their parent" rule in the file-header comment was
+aspirational for every event kind. It's now wired for `iterate.start`/
+`iterate.end` — the only two `EventKind`s that are explicitly paired in the
+event stream — so loop bodies (and loops nested inside loops) render as real
+indented children, with tests covering one- and two-level nesting, the
+return-to-outer-level case, and an unmatched `iterate.end`. `branch.taken`
+still renders flat: there is no paired "branch ended" `EventKind`, since a
+branch is a single instantaneous decision event rather than a start/end pair,
+so nesting its body would need a new event kind plus the codegen wiring to
+emit it — a separate, larger change than this renderer. That's the one
+remaining, *structural* (not merely untested) reason `branch.taken` doesn't
+nest, and it's the source of this file's residual floor below.
 
 **Tooling note (Inform I7 closeout, 2026-07-04):** `scripts/coverage.swift`'s
 per-file row parser was silently broken in this checkout — the report path
@@ -119,27 +153,33 @@ tighter values as targeted branch tests land.
 ```file-thresholds
 # path-substring                                            = min-region-percent
 # StringConvertible / ResultBuilder / StringTemplate: small vendored
-# `modelhike` codegen-templating helpers (AGENTS.md pitfalls #10/#11), unrelated
-# to this closeout — newly discovered in scope once the coverage-gate parser
-# fix (Inform I7 closeout, below) started reading real per-file rows again.
-# Pre-existing gap, not introduced by this session; floored at observed.
-MeridianCore/modelhike-vendored/StringTemplate.swift         = 37.00
-MeridianCore/modelhike-vendored/StringConvertible.swift      = 49.00
-MeridianCore/modelhike-vendored/ResultBuilder.swift          = 64.00
-MeridianCLIKit/CLISupport.swift                              = 87.50
-MeridianCLIKit/Commands/CompileCommand.swift                 = 94.00
+# `modelhike` codegen-templating helpers (AGENTS.md pitfalls #10/#11) all
+# reached 100% via Tests/MeridianCoreTests/VendoredTemplateHelpersTests.swift,
+# which calls every @resultBuilder arm and initializer directly (bypassing
+# `@StringConvertibleBuilder` sugar where the compiler's own overload
+# resolution would otherwise never select a given overload, e.g. `buildBlock`'s
+# non-variadic/T-variadic arms are dead through the DSL because
+# `buildExpression` pre-wraps every statement into `[T]` first) — no floor
+# entry needed; removed from this table (previously 37.00 / 49.00 / 64.00).
+MeridianCLIKit/CLISupport.swift                              = 88.40
+MeridianCLIKit/Commands/CompileCommand.swift                 = 94.50
 MeridianCLIKit/Commands/DecisionsCommand.swift               = 97.24
 MeridianCLIKit/Commands/DocsCommand.swift                    = 94.39
-MeridianCLIKit/Commands/FormatCommand.swift                  = 96.50
-# InertYieldCommand: `run()` prints/reads real files end-to-end; no test drives
-# it in-process yet. Newly floored — see the tooling note above.
-MeridianCLIKit/Commands/InertYieldCommand.swift              = 0.00
+MeridianCLIKit/Commands/FormatCommand.swift                  = 97.00
+# InertYieldCommand: raised in the test-quality pass after focused CLI tests for
+# single-file, batch summary, validation errors, and pure summary rendering.
+# Residual is stdout/stderr formatting tails and filesystem/process boundary
+# behavior that is intentionally covered only through command-level tests.
+MeridianCLIKit/Commands/InertYieldCommand.swift              = 85.80
 MeridianCLIKit/Commands/LintCommand.swift                    = 90.90
-MeridianCLIKit/Commands/MigrateSkillCommand.swift            = 95.00
-MeridianCLIKit/Commands/ResumeCommand.swift                  = 81.80
-MeridianCLIKit/Commands/RunCommand.swift                     = 81.20
-# RunCommand: residual is empty-workflow selection, named-workflow match arm,
-# and findRepoRoot parent-walk failure when Package.swift cannot be located.
+MeridianCLIKit/Commands/MigrateSkillCommand.swift            = 95.30
+# ResumeCommand: now at 100% — floor removed (coverage-closeout, 2026-07-06).
+# RunCommand: raised to 84.30 (observed 84.38%) after the CLI `run`/`test`
+# coverage-quality pass. Residual is empty-workflow selection, named-workflow
+# match arm, and findRepoRoot parent-walk failure when Package.swift cannot be
+# located — this is a bucket-A file (spawns a real `swift build`/`swift run`);
+# see Tests/MeridianSlowIntegrationTests/CLIRunAndTestCommandSlowTests.swift.
+MeridianCLIKit/Commands/RunCommand.swift                     = 84.30
 MeridianCLIKit/Commands/SkillDeviationCommand.swift          = 89.51
 MeridianCLIKit/Commands/TestCommand.swift                    = 81.34
 MeridianCLIKit/Commands/TraceRenderCommand.swift             = 84.95
@@ -165,10 +205,11 @@ MeridianCore/Diagnostics/DiagnosticRenderer.swift            = 96.10
 MeridianCore/Diagnostics/ParserTrace.swift                   = 92.55
 MeridianCore/Docs/MerconfigDocsRenderer.swift                = 91.08
 # EnglishLexicon: grammar is reference-backed after Phase 2/3 to avoid task-stack
-# copies; residual branches are defensive synonym/default merge edges. Lowered
-# for the new inferenceCueWords/referenceHeadingWords `=== language ===` merge
-# arms added in the "Eliminate `(( inert ))`" closeout (2026-07-05).
-MeridianCore/Language/EnglishLexicon.swift                   = 95.80
+# copies; residual branches are defensive synonym/default merge edges. Raised
+# to 97.90 (observed 97.99%) after direct tests for the inferenceCueWords/
+# referenceHeadingWords `=== language ===` merge arms added in the "Eliminate
+# `(( inert ))`" closeout (2026-07-05).
+MeridianCore/Language/EnglishLexicon.swift                   = 97.90
 # WholeWordRegex: the single `else { preconditionFailure }` arm is unreachable —
 # the pattern always comes from NSRegularExpression.escapedPattern, so it can
 # only fail on a Foundation bug (and `!` is banned by house rules). Permanent.
@@ -310,8 +351,12 @@ MeridianCore/Migration/SkillMigrator+SplitPlan.swift         = 94.96
 # `markEnclosingSectionReference` retry path (failed Markdown procedure items).
 # Residual: `while true` closing brace (~174) is structurally unreachable;
 # `describe` non-CompilerError tail (~273) needs a non-`CompilerError` throw.
-MeridianCore/Migration/SkillMigrator.swift                   = 86.83
-MeridianCore/Migration/TrialLowering.swift                   = 89.95
+# Raised to 92.00 (observed 92.11%) after the coverage-quality pass.
+MeridianCore/Migration/SkillMigrator.swift                   = 92.00
+# TrialLowering: raised to 93.10 (observed 93.18%) after the coverage-quality
+# pass; residual is trial-lowering error/fallback branches not yet directly
+# targeted.
+MeridianCore/Migration/TrialLowering.swift                   = 93.10
 # Per-production expression grammar (Wave 5): these files replaced the
 # monolithic expression parser. Most reached 100% this closeout (branch-level
 # direct tests); the handful below have a documented unreachable residual —
@@ -336,7 +381,7 @@ MeridianCore/Parser/Lexical/Productions/TemplateInterpolationParser.swift = 96.4
 # via the public API (see AGENTS.md pitfall #17 for the mask-correctness
 # invariant this depends on).
 MeridianCore/Grammar/NonterminalScreen.swift                 = 95.29
-MeridianCore/Parser/Lexical/HeaderFolder.swift               = 94.44
+# HeaderFolder.swift now at 100% — floor removed (coverage-closeout, 2026-07-06).
 # IndentTokenizer.swift now at 100% — floor removed (coverage-closeout,
 # 2026-07-05: bang-marker bare/dangling-EOF arms, multi-blank-line checklist
 # continuation, tab-indent leadingSpaces/dedent branches, and tokenize-category
@@ -370,27 +415,34 @@ MeridianCore/Parser/Lexical/HeaderFolder.swift               = 94.44
 # below a 98.50 floor under the gate's exact `regionPct + 1e-9 < req` compare —
 # not a regression, a display-rounding correction (coverage-closeout, 2026-07-05).
 MeridianCore/Parser/Productions/MerConfigParser.swift        = 98.49
-MeridianCore/Parser/Productions/MeridianParser.swift         = 95.07
-# StatementParser: observed 90.80%-90.89% across runs after spaced-number choice
+# MeridianParser: raised to 95.50 (observed 95.61%) after the coverage-quality
+# pass.
+MeridianCore/Parser/Productions/MeridianParser.swift         = 95.50
+# StatementParser: observed 90.80%-90.98% across runs after spaced-number choice
 # labels, wait fall-through/single-quoted signal, comma-and/then chain cleanup,
-# and related parser-edge tests. Documented defensive residual (do not remove
-# without proof): `parseStatement` desugar re-entry (~271–278); `collectChoiceOptions`
-# early `break` (~804); `do … and …` unparseable-chunk error (~657–661) when a
-# chunk returns nil from `parseStatement` only (sentinel prefixes); decision-table
-# row error (~936–940) when a row yields nil from both parsers.
-MeridianCore/Parser/Productions/StatementParser.swift        = 90.51
-MeridianCore/Parser/Productions/TableParser.swift            = 87.07
+# and related parser-edge tests. Floor kept below the observed range's low end
+# (not at 91.00, which the observed range never actually clears — a prior
+# mismatch between this floor and the documented observed range caused
+# gate flakiness; fixed 2026-07-06). Documented defensive residual (do not
+# remove without proof): `parseStatement` desugar re-entry (~271–278);
+# `collectChoiceOptions` early `break` (~804); `do … and …` unparseable-chunk
+# error (~657–661) when a chunk returns nil from `parseStatement` only
+# (sentinel prefixes); decision-table row error (~936–940) when a row yields
+# nil from both parsers.
+MeridianCore/Parser/Productions/StatementParser.swift        = 90.70
+# TableParser: raised to 88.00 (observed 88.12%) after the coverage-quality pass.
+MeridianCore/Parser/Productions/TableParser.swift            = 88.00
 # ConditionClassifier: raw gbrain migration now marks narrative recognized
 # sections inert before compile, so corpus tests intentionally exercise fewer
 # fuzzy applicability/procedure condition branches.
 MeridianCore/Parser/Skill/ConditionClassifier.swift          = 97.82
-MeridianCore/Parser/Skill/SectionRoleResolver.swift          = 88.83
+MeridianCore/Parser/Skill/SectionRoleResolver.swift          = 88.85
 # SkillSectionBuilder: section-role strictness and AI-discretion branches are
-# covered through corpus tests; residual future/error paths remain reachable but
-# sparse.
-MeridianCore/Parser/Skill/SkillSectionBuilder.swift          = 84.75
+# covered through corpus and focused section-role tests; residual future/error
+# paths remain reachable but sparse.
+MeridianCore/Parser/Skill/SkillSectionBuilder.swift          = 86.50
 MeridianCore/Rulebook/Rulebook.swift                         = 96.50
-MeridianCore/Rulebook/RulebookParser.swift                   = 85.87
+MeridianCore/Rulebook/RulebookParser.swift                   = 88.80
 # SymbolTable: raised after direct tests for propertyNames' unknown-kind
 # fallback, build's phrase-sourceFile backfill, tool(fromWords:)'s empty-token
 # guard, and matchPhrase/matchPhraseDirect/extractArgs trace-message
@@ -410,10 +462,13 @@ MeridianCore/Rulebook/RulebookParser.swift                   = 85.87
 #     call site (`extractArgs`'s `.parameter` switch arm) always passes a
 #     `.parameter` segment as `seg`, so the `.literal`-vs-`.literal` match arm
 #     never fires.
-MeridianCore/Symbols/SymbolTable.swift                       = 97.00
+# SymbolTable: raised to 98.30 (observed 98.48%) after the coverage-quality pass.
+MeridianCore/Symbols/SymbolTable.swift                       = 98.30
 MeridianCore/Testing/Assertions.swift                        = 81.59
 # IRWalker.swift now at 100% — floor removed.
-MeridianCore/Testing/MeridianTestRunner.swift                = 89.20
+# MeridianTestRunner: raised to 90.60 (observed 90.77%) after the
+# coverage-quality pass.
+MeridianCore/Testing/MeridianTestRunner.swift                = 90.60
 # RuntimeExecutor: raised to 95.77% (coverage-closeout, 2026-07-05) after direct
 # tests for: swift --version non-zero exit, explicit workflow-name miss, empty
 # workflow list, and moving `runtime_happy` into the `.serialized` suite so
@@ -423,10 +478,13 @@ MeridianCore/Testing/RuntimeExecutor.swift                   = 95.77
 # SpecParser: residual is partial branch coverage on tokenize/buildSpec paths
 # with no uncovered lines after the extended parser tests.
 MeridianCore/Testing/SpecParser.swift                        = 97.60
-# SwiftPMPackageRunner: residual is Process.launchFailed (fault injection) and
-# the empty-assignment guard in parseAssignments; build/run subprocess paths are
-# now covered by the Echo package integration test.
-MeridianCore/Testing/SwiftPMPackageRunner.swift              = 89.80
+# SwiftPMPackageRunner: raised to 91.80 (observed 92.00% with
+# MeridianSlowIntegrationTests included via `--full`). Residual is
+# Process.launchFailed (fault injection) and the empty-assignment guard in
+# parseAssignments; build/run subprocess paths are covered by the Echo package
+# integration test in Tests/MeridianSlowIntegrationTests/. Bucket-A: a real
+# `swift build`/`swift run` toolchain invocation.
+MeridianCore/Testing/SwiftPMPackageRunner.swift              = 91.80
 # Checkpointer: FilesystemCheckpointer's fd-open failure arms (fsync/lock when
 # open(2) fails) and the cachesDirectory default init are the residual — disk
 # fault injection, an integration boundary.
@@ -435,21 +493,43 @@ MeridianRuntime/Comparison/Comparison.swift                  = 99.19
 # Observer: JSONSerialization failure fallback (line ~94) is unreachable for the
 # always-serializable dict; the rest needs real file I/O fault paths.
 MeridianRuntime/Events/Observer.swift                        = 92.80
-MeridianRuntime/Planning/ActPlanner.swift                    = 74.95
-MeridianRuntime/Planning/PlanExecutor.swift                  = 42.25
-MeridianRuntime/Planning/Planner.swift                       = 79.95
-MeridianRuntime/Runtime.swift                                = 83.35
+# ActPlanner.swift / Planner.swift now at 100% — floors removed (coverage-
+# quality pass, 2026-07-06: both are just protocol + context value-type
+# declarations, fully reachable in-process).
+# PlanExecutor: raised to 97.90 (observed 98.08%) after direct tests for
+# argument validation, missing/unexpected arguments, and type mismatches
+# (coverage-quality pass, 2026-07-06). This is deterministic argument-
+# validation logic, not an LLM-provider integration boundary — residual is a
+# handful of defensive branch-only gaps.
+MeridianRuntime/Planning/PlanExecutor.swift                  = 97.90
+# Runtime: raised to 94.50 (observed 94.74%) after direct tests for the
+# autonomy replan-after-failures loop, wait(.duration) timeout races,
+# wait(.choice) delivery/FIFO ordering, a non-matching internal `emit` leaving
+# an event waiter registered, resolveInstanceProperty (env-var/unset-env-var/
+# unknown-property), clearResumeContext, and cancel/isCancelled (coverage-
+# quality pass, 2026-07-06). Residual is deep integration-shaped edges (e.g.
+# checkpoint/resume fault paths) not yet directly targeted.
+MeridianRuntime/Runtime.swift                                = 94.50
 MeridianRuntime/State/State.swift                            = 95.50
-# ToolRegistry: observed 74.89%-75.34% across 3 runs (in addition to the
-# bucket-A HTTP/MCP/subprocess dispatch tail above); floor carries extra margin.
-MeridianRuntime/Tools/ToolRegistry.swift                     = 72.88
-MeridianRuntime/Tracing/TraceTreeRenderer.swift              = 81.91
+# ToolRegistry: raised to 91.00 (observed 91.32%) after adding a real
+# (non-flaky, loopback) test server + injected-stub-based coverage of the
+# HTTP/MCP/subprocess success, error, and generic-catch-all paths described
+# in the (A) note above. Residual is the timeout-escalation SIGINT fallback
+# and a few genuinely unreachable-in-practice URLSession/TaskGroup guards.
+MeridianRuntime/Tools/ToolRegistry.swift                     = 91.00
+# TraceTreeRenderer: raised to 83.60 (observed 83.67%) after wiring the
+# `Frame` stack for real `iterate` nesting (see the (B) note above). Residual
+# is the structural branch-nesting gap: `branch.taken` has no paired "branch
+# ended" EventKind, so its body can't nest without a new event kind + codegen
+# wiring, which is out of scope for this renderer.
+MeridianRuntime/Tracing/TraceTreeRenderer.swift              = 83.60
 # ValueCoercion: the baseline residual regions are unreachable cast-fail arms —
 # after a runtime type-guard (`if T.self == Date.self`) the `as? T` conditional
 # cast can never fail, but Swift requires the fail-branch syntactically (T is
-# generic). Also observed 96.43%-97.32% across 3 runs (date-coercion branches
-# appear timing-sensitive), so the floor carries extra margin on top of that.
-MeridianRuntime/Value/ValueCoercion.swift                    = 94.42
+# generic). Raised to 96.40 (observed 96.43%-97.32% across runs; date-coercion
+# branches appear timing-sensitive), so the floor still carries margin below
+# the low end of that observed range.
+MeridianRuntime/Value/ValueCoercion.swift                    = 96.40
 # EventAssertions: residual is the unreachable JSONSerialization re-encode
 # failure fallback (the dict is always serializable).
 MeridianTestKit/EventAssertions.swift                        = 93.49

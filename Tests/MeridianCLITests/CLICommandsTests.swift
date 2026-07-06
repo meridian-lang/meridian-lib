@@ -508,36 +508,10 @@ struct DecisionsCommandTests {
 
 // MARK: - test
 
-@Suite("CLI command — test")
-struct TestSubcommandTests {
-    @Test("no specs found throws ExitCode(1)")
-    func noSpecs() throws {
-        let t = TempDir()
-        let cmd = try TestCommand.parse([t.url.path])
-        #expect(throws: (any Error).self) { try cmd.run() }
-    }
-
-    @Test("runs a single copied spec (success or failure both exercise the body)")
-    func singleSpec() throws {
-        let t = TempDir()
-        let spec = ex("Tests/MeridianCoreTests/MeridianTestSpecs/runtime_happy.meridian.test")
-        let body = try String(contentsOfFile: spec, encoding: .utf8)
-        t.write("runtime_happy.meridian.test", body)
-        let cmd = try TestCommand.parse([t.url.path, "--verbose"])
-        do { try cmd.run() } catch { /* ExitCode(1) if the spec fails in isolation */ }
-    }
-
-    @Test("tag filter can skip a copied spec")
-    func tagFilteredSpecSkips() throws {
-        let t = TempDir()
-        let spec = ex("Tests/MeridianCoreTests/MeridianTestSpecs/compile_only.meridian.test")
-        t.write("compile_only.meridian.test", try String(contentsOfFile: spec, encoding: .utf8))
-        t.write("order_processing.meridian", try String(contentsOfFile: ex("Tests/MeridianCoreTests/MeridianTestSpecs/order_processing.meridian"), encoding: .utf8))
-        t.write("ecommerce.merconfig", try String(contentsOfFile: ex("Tests/MeridianCoreTests/MeridianTestSpecs/ecommerce.merconfig"), encoding: .utf8))
-        let cmd = try TestCommand.parse([t.url.path, "--tag", "does-not-match"])
-        try cmd.run()
-    }
-}
+// NOTE: "CLI command — test" (TestSubcommandTests) moved to
+// Tests/MeridianSlowIntegrationTests/CLIRunAndTestCommandSlowTests.swift — it
+// drives a real subprocess-executing test spec. See the target comment in
+// Package.swift.
 
 // MARK: - trace render
 
@@ -1031,71 +1005,7 @@ struct ResumeCommandTests {
     }
 }
 
-// MARK: - run
-
-@Suite("CLI command — run")
-struct RunCommandTests {
-    @Test("missing input throws before any SwiftPM work")
-    func missing() async throws {
-        let cmd = try RunCommand.parse(["/definitely/missing.meridian"])
-        await #expect(throws: (any Error).self) { try await cmd.run() }
-    }
-
-    @Test("broken source surfaces compiler diagnostics and exits non-zero")
-    func brokenSource() async throws {
-        let t = TempDir()
-        let bad = t.write("bad.meridian", "to do a thing:\n    frobnicate the wibble\n")
-        let cmd = try RunCommand.parse([
-            bad.path, "--output", t.url.path, "--diagnostics-format", "json"
-        ])
-        await #expect(throws: (any Error).self) { try await cmd.run() }
-    }
-
-    @Test("unknown workflow name is rejected after compile")
-    func unknownWorkflow() async throws {
-        let t = TempDir()
-        let cmd = try RunCommand.parse([
-            ex("examples/order_processing.meridian"),
-            "--merconfig", ex("examples/ecommerce.merconfig"),
-            "--output", t.url.path,
-            "--workflow", "DefinitelyNotAWorkflow"
-        ])
-        await #expect(throws: (any Error).self) { try await cmd.run() }
-    }
-
-    @Test("compiles and runs a minimal workflow end-to-end")
-    func minimalHappyPath() async throws {
-        let t = TempDir()
-        let mer = t.write("minimal.meridian", "To run:\n  complete.\n")
-        let cmd = try RunCommand.parse([mer.path, "--output", t.url.path])
-        try await cmd.run()
-        #expect(FileManager.default.fileExists(atPath: t.path("minimal.swift")))
-        #expect(FileManager.default.fileExists(atPath: t.path("minimal.meridian.manifest.json")))
-    }
-
-    @Test("autodiscovers a rulebook beside the meridian file")
-    func withAutodiscoveredRulebook() async throws {
-        let t = TempDir()
-        t.write("local.merrules", "")
-        let mer = t.write("flow.meridian", "To run:\n  complete.\n")
-        let cmd = try RunCommand.parse([mer.path, "--output", t.url.path])
-        try await cmd.run()
-    }
-
-    @Test("run with trace, checkpoint root, and keep-temp")
-    func runWithOptions() async throws {
-        let t = TempDir()
-        let mer = t.write("flow.meridian", "To run:\n  complete.\n")
-        let cmd = try RunCommand.parse([
-            mer.path,
-            "--output", t.url.path,
-            "--run-id", "cli-cov-run",
-            "--trace", "phrase",
-            "--trace-file", t.path("trace.log"),
-            "--checkpoint-root", t.path("checkpoints"),
-            "--keep-temp"
-        ])
-        try await cmd.run()
-        #expect(FileManager.default.fileExists(atPath: t.path("trace.log")))
-    }
-}
+// NOTE: "CLI command — run" (RunCommandTests) moved to
+// Tests/MeridianSlowIntegrationTests/CLIRunAndTestCommandSlowTests.swift — it
+// compiles then spawns a real `swift build`/`swift run` through a temporary
+// SwiftPM package. See the target comment in Package.swift.

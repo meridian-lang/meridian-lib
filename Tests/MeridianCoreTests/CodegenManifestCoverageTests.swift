@@ -41,6 +41,50 @@ struct ManifestEmitterCoverageTests {
         #expect(json.contains("\"line\""))
         #expect(json.contains("\"plan_then_execute\""))
     }
+
+    @Test("compileWithManifest carries metadata, sections, tools, and deterministic JSON")
+    func compileWithManifestCompleteSkillSchema() throws {
+        let compiler = Compiler(options: .init(
+            emitterOptions: .init(includeTimestamp: false, emitSourceLineComments: false),
+            trace: .silent()
+        ))
+        let result = try compiler.compileWithManifest(
+            meridianSource: """
+            ---
+            name: manifest probe
+            description: Checks the manifest carrier.
+            ---
+            ## Tools Used
+            - Shell command runner (shell.run)
+
+            ## Steps
+            complete.
+
+            ## Notes (( role: reference ))
+            Documentation that must stay visible.
+            """,
+            meridianFile: "manifest.meri",
+            vocabularies: [],
+            rulebooks: []
+        )
+
+        #expect(result.manifest.toolsUsed == ["shell.run"])
+        #expect(result.manifest.skillSections.map(\.heading).contains("Steps"))
+        #expect(result.manifest.skillSections.map(\.heading).contains("Notes"))
+        #expect(result.manifest.skillSections.contains { $0.heading == "Notes" && !$0.executes })
+
+        let first = try compiler.emitManifest(result.manifest)
+        let second = try compiler.emitManifest(result.manifest)
+        #expect(first == second)
+
+        let data = try #require(first.data(using: .utf8))
+        let json = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let skill = try #require(json["meridian_skill"] as? [String: Any])
+        let sections = try #require(skill["sections"] as? [[String: Any]])
+        #expect(skill["name"] as? String == "manifest probe")
+        #expect(skill["description"] as? String == "Checks the manifest carrier.")
+        #expect(sections.contains { $0["heading"] as? String == "Notes" && $0["executes"] as? Bool == false })
+    }
 }
 
 @Suite("DomainEmitter — unrecognized parent falls back to MeridianThing")

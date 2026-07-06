@@ -82,8 +82,15 @@ of the normal test workflow.
 `scripts/coverage.swift` runs:
 
 1. **`swift test --enable-code-coverage`** — produces an instrumented test
-   binary and a merged profile. Skip with `--no-test` to reuse the previous
-   run's profile data (fast, when you only changed the exclusions file).
+   binary and a merged profile. Skips the slow, real-external-process
+   `MeridianSlowIntegrationTests` target by default (`--skip
+   MeridianSlowIntegrationTests`) since its coverage lands almost entirely on
+   files already carrying permanent bucket-A floors; pass `--full` to also run
+   it when you need an accurate reading for those files (e.g. after editing
+   `RuntimeExecutor`, `SwiftPMPackageRunner`, or the CLI `run`/`test`
+   commands), or before regenerating the committed baseline/exclusions. Skip
+   the whole test run with `--no-test` to reuse the previous run's profile
+   data (fast, when you only changed the exclusions file).
 2. **Locate artifacts** under `.build/`: the merged
    `…/codecov/default.profdata` and the instrumented
    `meridianPackageTests.xctest` binary.
@@ -105,6 +112,12 @@ file.
 
 ## Commands
 
+These are three **separate flows** with different cadences — don't reach for
+the slow one by default. Pick the first row that applies; only fall through to
+the next when the file you touched requires it.
+
+### 1. Day-to-day fast gate (every session, cheap)
+
 ```bash
 # Build + test, then print the report (report-only, never fails)
 scripts/coverage.swift
@@ -115,21 +128,56 @@ scripts/coverage.swift --no-test
 # ENFORCE: exit 1 if any non-excluded file is below its floor
 scripts/coverage.swift --no-test --gate
 
-# Build + test + enforce, in one shot
+# Build + test + enforce, in one shot (fast suite only) — this is the default
+# gate command referenced by AGENTS.md, Tests/README.md, and testing.mdc.
 scripts/coverage.swift --gate
 
 # Override the global floor (applies to files without a per-file entry)
 scripts/coverage.swift --threshold 95
 
-# Write the report to a file (regenerate the committed baseline)
-scripts/coverage.swift --baseline docs/coverage/coverage-baseline.md
-
 # Emit a clickable HTML drill-down (great for finding red lines)
 scripts/coverage.swift --html .coverage-html
 ```
 
-The enforced check is `scripts/coverage.swift --gate` (or
-`--no-test --gate` after a normal coverage-enabled `swift test`).
+### 2. Full gate (rare, only for slow-test-dependent files)
+
+Only reach for `--full` when the session touched a file whose reachable
+branches only `MeridianSlowIntegrationTests` exercises (`RunCommand`,
+`TestCommand`, `RuntimeExecutor`, `SwiftPMPackageRunner`, …) and you need an
+accurate gate reading for *that specific file*. This reruns the whole slow
+suite (real `swift build`/`swift run` subprocesses) — expect several minutes,
+not seconds.
+
+```bash
+scripts/coverage.swift --full --gate
+```
+
+### 3. Baseline/exclusion regeneration (maintenance-only, always full)
+
+This is **not** part of routine gate-checking — it's a separate, occasional
+task you run only when reconciling `coverage-exclusions.md` floors against
+reality (e.g. after wiring up new tests, or during a coverage closeout pass),
+never as a side effect of an ordinary `--gate` check. Always use `--full` here
+so every file's number — including the six slow-test-dependent ones — is
+accurate before it's committed; a fast-only baseline would understate those
+files' real coverage and invite a bad floor edit.
+
+```bash
+scripts/coverage.swift --full --baseline docs/coverage/coverage-baseline.md
+```
+
+If you already ran `scripts/coverage.swift --full --gate` earlier in the same
+session, its `.profdata` is still on disk — regenerating the baseline from it
+is then cheap, since `--no-test` always reuses whatever profile is already
+there instead of re-running the suite:
+
+```bash
+scripts/coverage.swift --no-test --baseline docs/coverage/coverage-baseline.md
+```
+
+Only do this if you're sure that on-disk profile came from a `--full` run —
+`--no-test` has no way to tell which suite produced it, so a stale fast-only
+profile silently understates the six slow-test-dependent files again.
 
 ---
 
@@ -238,8 +286,8 @@ At the lock point (see `IMPLEMENTATION_LOG.md` → "2026-06-14 — Coverage lock
 - The remainder carry documented floors in the two buckets above.
 - The gate is **green**.
 
-Regenerate the live numbers any time with `scripts/coverage.swift --baseline
-docs/coverage/coverage-baseline.md`.
+Regenerate the live numbers any time with `scripts/coverage.swift --full
+--baseline docs/coverage/coverage-baseline.md`.
 
 ---
 
@@ -286,8 +334,8 @@ Use Swift Testing throughout (`@Test`, `@Suite`, `#expect`) — never XCTest.
 ### 3. Re-baseline and tighten the floor
 
 ```bash
-   scripts/coverage.swift --baseline docs/coverage/coverage-baseline.md   # full run
-   scripts/coverage.swift --no-test --gate                                # confirm still green
+   scripts/coverage.swift --full --baseline docs/coverage/coverage-baseline.md   # full run
+   scripts/coverage.swift --no-test --gate                                       # confirm still green
 ```
 
 Edit `coverage-exclusions.md` so each improved file's floor matches its new
@@ -332,7 +380,9 @@ target — raise them as you add tests.
 `llvm-cov show … | rg '\|\s+0\|'` recipe above.
 
 **Does this run in CI?** There's no separate CI workflow file. The gate is the
-Swift script; run `scripts/coverage.swift --gate` wherever you run `swift test`.
+Swift script; run `scripts/coverage.swift --gate` wherever you run
+`swift test`. Add `--full` only when the change touched a file whose
+reachable branches only `MeridianSlowIntegrationTests` exercises.
 
 ---
 

@@ -3,7 +3,8 @@
 // Meridian coverage tool. Swift shebang script (no shell scripts in this repo).
 //
 // Pipeline:
-//   1. (optionally) run `swift test --enable-code-coverage`
+//   1. (optionally) run `swift test --enable-code-coverage`, skipping the slow
+//      MeridianSlowIntegrationTests target by default (see --full below)
 //   2. locate the instrumented test binary + merged .profdata under .build/
 //   3. run `xcrun llvm-cov report`, scoped to the in-scope Sources/Meridian* modules
 //      (always excluding .build/, /Tests/, /SampleDemoFlows/, /checkouts/)
@@ -12,12 +13,25 @@
 //      required region coverage.
 //
 // Usage:
-//   scripts/coverage.swift                 build+test, then report (report-only)
+//   scripts/coverage.swift                 build+test (fast suite only), then report
+//   scripts/coverage.swift --full          also run MeridianSlowIntegrationTests
 //   scripts/coverage.swift --no-test       reuse existing .profdata
 //   scripts/coverage.swift --gate          fail if any non-excluded file < threshold
 //   scripts/coverage.swift --threshold 95  override the global region threshold (default 100)
 //   scripts/coverage.swift --baseline docs/coverage/coverage-baseline.md   write the report
 //   scripts/coverage.swift --html .coverage-html            emit an HTML drill-down
+//
+// --full vs. the default: `Tests/MeridianSlowIntegrationTests` spawns *live
+// external processes* (real `swift build`/`swift run` through a temporary
+// SwiftPM package, subprocess-executing CLI `run`/`test`) and dominates
+// wall-clock time. Its coverage lands almost entirely on the bucket-A
+// integration-boundary files already carrying permanent relaxed floors in
+// coverage-exclusions.md (RuntimeExecutor, SwiftPMPackageRunner,
+// CLIKit RunCommand/TestCommand) — day-to-day coverage runs don't need it.
+// Pass --full when you've changed one of those files (or any other file
+// whose reachable branches only that target exercises) and need an accurate
+// reading before adjusting its floor, or before regenerating the committed
+// baseline/exclusions for a full closeout.
 //
 // The exclusions file (docs/coverage/coverage-exclusions.md) is the single,
 // reviewed source of truth for what is allowed to be uncovered. See that file
@@ -60,6 +74,7 @@ func which(_ tool: String) -> String {
 // MARK: - Arguments
 
 var doTest = true
+var full = false
 var gate = false
 var globalThreshold = 100.0
 var baselinePath: String? = nil
@@ -69,12 +84,13 @@ var it = CommandLine.arguments.dropFirst().makeIterator()
 while let a = it.next() {
     switch a {
     case "--no-test": doTest = false
+    case "--full": full = true
     case "--gate": gate = true
     case "--threshold": if let v = it.next(), let d = Double(v) { globalThreshold = d }
     case "--baseline": baselinePath = it.next()
     case "--html": htmlDir = it.next()
     case "-h", "--help":
-        print("usage: scripts/coverage.swift [--no-test] [--gate] [--threshold N] [--baseline FILE] [--html DIR]")
+        print("usage: scripts/coverage.swift [--no-test] [--full] [--gate] [--threshold N] [--baseline FILE] [--html DIR]")
         exit(0)
     default:
         FileHandle.standardError.write(Data("unknown argument: \(a)\n".utf8))
@@ -130,8 +146,12 @@ let exclusions = loadExclusions()
 // MARK: - Run tests
 
 if doTest {
-    print("==> swift test --enable-code-coverage")
-    let r = run("/usr/bin/env", ["swift", "test", "--enable-code-coverage"], capture: false)
+    var testArgs = ["swift", "test", "--enable-code-coverage"]
+    if !full {
+        testArgs += ["--skip", "MeridianSlowIntegrationTests"]
+    }
+    print("==> " + testArgs.joined(separator: " "))
+    let r = run("/usr/bin/env", testArgs, capture: false)
     if r.status != 0 {
         FileHandle.standardError.write(Data("swift test failed (status \(r.status))\n".utf8))
         exit(r.status == 0 ? 1 : r.status)
