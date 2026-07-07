@@ -58,8 +58,9 @@ struct EmptinessTemporalGrammar {
     private func parseTemporal(_ s: String) -> ExpressionAST? {
         for (marker, op) in lexicon.temporalWindowMarkers {
             if let r = markerRange(marker, in: s) {
-                let before = stripTrailingTemporalCopula(
-                    String(s[s.startIndex..<r.lowerBound]).trimmingCharacters(in: .whitespaces))
+                let rawBefore = String(s[s.startIndex..<r.lowerBound]).trimmingCharacters(in: .whitespaces)
+                let (unnegated, isNegated) = stripTrailingNegation(rawBefore)
+                let before = stripTrailingTemporalCopula(unnegated)
                 let after = String(s[r.upperBound...]).trimmingCharacters(in: .whitespaces)
                 guard let dur = parseLeadingDuration(after) else { return nil }
                 let lt = before.lowercased()
@@ -69,10 +70,24 @@ struct EmptinessTemporalGrammar {
                 } else {
                     lhs = atom(before)
                 }
-                return .comparison(lhs, op, .literal(.duration(dur.0, dur.1)))
+                let window = ExpressionAST.comparison(lhs, op, .literal(.duration(dur.0, dur.1)))
+                return isNegated ? .logical(.not, [window]) : window
             }
         }
         return nil
+    }
+
+    /// Strip a trailing bare `" not"` (from `"<subject> is not"`) so the copula
+    /// strip below still finds its bare `"is"` suffix, and report whether a
+    /// negation was present. `"its rotated at is not within the last 90
+    /// days"` must negate the whole window comparison — `.notEqual`-style
+    /// property renaming (`"rotated at is not"` as a literal property name)
+    /// would silently misparse instead of raising, since `atom(_:)` never
+    /// validates the property exists until codegen.
+    private func stripTrailingNegation(_ s: String) -> (String, Bool) {
+        let lower = s.lowercased()
+        guard lower != "not", lower.hasSuffix(" not") else { return (s, false) }
+        return (String(s.dropLast(4)).trimmingCharacters(in: .whitespaces), true)
     }
 
     private func stripTrailingTemporalCopula(_ s: String) -> String {

@@ -3,8 +3,8 @@
 - Original: `receive_shipment/SKILL.md`
 - Ported: `receiveshipment.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 95%
-- Lines: 22 -> 22 (+1 / -1)
+- Similarity: 96%
+- Lines: 23 -> 23 (+1 / -1)
 
 ## Frontmatter
 - Added: (none)
@@ -17,7 +17,7 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L12 `Human notes`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L13 `Human notes`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
 - Sections inert total: 1/3 (33% total inert; includes intentional docs/templates/tools metadata)
@@ -28,15 +28,15 @@ These sections were made non-executable in the port and should be reviewed as mi
 - Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L12 `Human notes`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L13 `Human notes`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/receive_shipment/SKILL.md
 +++ skills/receiveshipment.meri
-@@ -16,7 +16,7 @@
- Step: `ofbiz warehouse receive --today --json` to snapshot inbound manifests.
+@@ -17,7 +17,7 @@
+ wait for signal "manifest_confirmed".
  Publish: "warehouse receiving manifest captured".
  
 -## Human notes

@@ -67,9 +67,9 @@ Generate: HEARTBEAT.md with operational cadence.
 ## Default Mode (Skip Soul-Audit)
 
 
-### Default Mode (Skip Soul-Audit) — steps
+### Default Mode (Skip Soul-Audit) — steps (( role: reference ))
 
-> If the user skips soul-audit on first boot:
+If the user skips soul-audit on first boot:
 - Install `templates/SOUL.md.template` as SOUL.md (minimal: "knowledge-first agent with persistent memory")
 - Install `templates/USER.md.template` as USER.md (auto-populate name/email from git config)
 - Install `templates/ACCESS_POLICY.md.template` as ACCESS_POLICY.md (owner-only access)

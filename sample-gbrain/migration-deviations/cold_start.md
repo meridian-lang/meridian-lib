@@ -3,8 +3,8 @@
 - Original: `cold-start/SKILL.md`
 - Ported: `cold_start.meri`
 - Tier: 2 (light edits)
-- Similarity: 74%
-- Lines: 507 -> 575 (+173 / -105)
+- Similarity: 75%
+- Lines: 507 -> 568 (+166 / -105)
 
 ## Frontmatter
 - Added: (none)
@@ -18,18 +18,18 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L28 `Prerequisites`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L110 `If the user declines ClawVisor`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L183 `Via ClawVisor`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L222 `Quality gate`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L234 `Fetch events`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L249 `Brain structure`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L276 `Strategy: Smart sampling, not bulk import`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L352 `Quality rule`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L361 `Data sources`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L368 `Brain structure`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L507 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L527 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L24 `Prerequisites`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L106 `If the user declines ClawVisor`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L179 `Via ClawVisor`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L218 `Quality gate`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L230 `Fetch events`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L245 `Brain structure`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L272 `Strategy: Smart sampling, not bulk import`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L348 `Quality rule`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L357 `Data sources`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L364 `Brain structure`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L500 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L520 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections inert total: 23/36 (64% total inert; includes intentional docs/templates/tools metadata)
@@ -41,35 +41,35 @@ These sections were made non-executable in the port and should be reviewed as mi
 
 ### Inert section details
 - L11 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L28 `Prerequisites`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L52 `Phase 0: ClawVisor Setup (Required for API Access)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L110 `If the user declines ClawVisor`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L183 `Via ClawVisor`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L200 `Processing rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L222 `Quality gate`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L234 `Fetch events`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L249 `Brain structure`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L260 `Entity enrichment`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L276 `Strategy: Smart sampling, not bulk import`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L285 `Processing`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L296 `Filtering rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L327 `Processing`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L352 `Quality rule`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L361 `Data sources`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L368 `Brain structure`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L410 `Phase 8: Meeting Transcripts`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L424 `Post-Bootstrap Checklist`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L475 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L495 `Resume Protocol`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L507 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L527 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L24 `Prerequisites`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L48 `Phase 0: ClawVisor Setup (Required for API Access)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L106 `If the user declines ClawVisor`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L179 `Via ClawVisor`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L196 `Processing rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L218 `Quality gate`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L230 `Fetch events`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L245 `Brain structure`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L256 `Entity enrichment`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L272 `Strategy: Smart sampling, not bulk import`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L281 `Processing`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L292 `Filtering rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L323 `Processing`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L348 `Quality rule`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L357 `Data sources`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L364 `Brain structure`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L406 `Phase 8: Meeting Transcripts`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L420 `Post-Bootstrap Checklist`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L471 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L488 `Resume Protocol`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L500 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L520 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/cold-start/SKILL.md
 +++ skills/cold_start.meri
-@@ -40,28 +40,31 @@
+@@ -40,28 +40,27 @@
  
  # Cold Start — Day-One Brain Bootstrapping
  
@@ -106,16 +106,12 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
 +### Contract — steps (( role: reference ))
 +
-+- The agent never holds raw OAuth
-+  tokens or API keys. This is a safety requirement, not a preference. ClawVisor vaults
-+  credentials, enforces task-scoped authorization, logs every API call, and requires
-+  human approval for destructive operations. If the user doesn't want ClawVisor, the
-+  only safe alternative is offline file exports (Google Takeout, Twitter archive download).
++- The agent never holds raw OAuth tokens or API keys. This is a safety requirement, not a preference. ClawVisor vaults credentials, enforces task-scoped authorization, logs every API call, and requires human approval for destructive operations. If the user doesn't want ClawVisor, the only safe alternative is offline file exports (Google Takeout, Twitter archive download).
 +## Prerequisites (( role: reference ))
  
  - GBrain installed and initialized (`gbrain doctor --json` all green)
  - Brain repo cloned and synced
-@@ -69,7 +72,10 @@
+@@ -69,7 +68,10 @@
  
  ## The Priority Stack
  
@@ -127,7 +123,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  | Priority | Source | Why | Time | Pages Created |
  |----------|--------|-----|------|---------------|
-@@ -82,49 +88,65 @@
+@@ -82,49 +84,65 @@
  | 7 | File archives (Dropbox/Drive/local) | Historical documents, old writing, photos | 30+ min | varies |
  | 8 | Meeting transcripts (Circleback/etc.) | Deep relationship context from recorded calls | 20 min | 10-50 |
  
@@ -209,7 +205,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Do NOT fall back to direct OAuth. Instead, skip Phases 2-4 (Contacts, Calendar,
  Gmail) and proceed with offline-only imports:
-@@ -146,7 +168,7 @@
+@@ -146,7 +164,7 @@
  
  ## Phase 1: Existing Markdown / Obsidian Import
  
@@ -218,7 +214,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  is hundreds or thousands of structured pages ready to go.
  
  ### Discovery
-@@ -186,18 +208,18 @@
+@@ -186,18 +204,18 @@
  - Start embeddings: `gbrain embed --stale` (runs in background)
  
  > **Track progress:**
@@ -241,7 +237,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```javascript
  // Fetch all contacts
-@@ -214,20 +236,29 @@
+@@ -214,20 +232,29 @@
    "https://people.googleapis.com/v1/people/me/connections?personFields=names,emailAddresses,phoneNumbers,organizations,biographies&pageSize=1000"
  ```
  
@@ -277,7 +273,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  After importing 5 contacts, pause and show the user a sample page. Ask:
  > "Here's what a contact page looks like. Want me to continue with the rest, or
-@@ -235,11 +266,11 @@
+@@ -235,11 +262,11 @@
  
  ## Phase 3: Google Calendar (Last 90 Days)
  
@@ -291,7 +287,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```javascript
  // Via ClawVisor — query ALL calendar accounts
-@@ -254,7 +285,7 @@
+@@ -254,7 +281,7 @@
  }
  ```
  
@@ -300,7 +296,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Follow the three-tier calendar architecture:
  ```
-@@ -265,20 +296,23 @@
+@@ -265,20 +292,23 @@
  │   └── YYYY-MM-DD.md            ← daily event log
  ```
  
@@ -329,7 +325,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Don't import every email. Import the **signal**:
  
-@@ -287,30 +321,39 @@
+@@ -287,30 +317,39 @@
  3. **Threads with 3+ replies** — active conversations worth tracking
  4. **Emails from people already in the brain** — enrichment, not cold import
  
@@ -377,7 +373,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  was researching, building, and thinking about. This is original thinking
  preserved in dialog form.
  
-@@ -320,38 +363,48 @@
+@@ -320,38 +359,48 @@
  - **Claude:** Download from claude.ai conversation history
  - **Perplexity:** Export from settings
  
@@ -436,7 +432,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```
  brain/media/x/{handle}/
-@@ -371,7 +424,7 @@
+@@ -371,7 +420,7 @@
  
  ## Phase 7: File Archives
  
@@ -445,7 +441,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  less structured but potentially very high value (old journals, letters, early writing).
  
  Delegate to the `archive-crawler` skill. It handles:
-@@ -382,51 +435,39 @@
+@@ -382,51 +431,39 @@
  
  > **Safety gate:** Archive crawling can be slow and create many pages. Always start
  > with a scan-only pass:
@@ -510,7 +506,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  4. **Track state:**
     ```json
     // ~/.gbrain/cold-start-state.json
-@@ -449,12 +490,29 @@
+@@ -449,12 +486,29 @@
     > - The **executive-assistant** pattern handles email triage
     > - Say 'enrich [person]' to deep-dive any contact"
  
@@ -546,7 +542,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  - **Bulk importing everything without filtering.** The brain is for signal, not noise.
    Filter out automated senders, marketing emails, utility conversations.
  - **Importing without entity cross-linking.** Every import should detect entities and
-@@ -466,15 +524,25 @@
+@@ -466,15 +520,22 @@
  - **Creating people pages for automated senders.** Sentry, GitHub notifications,
    newsletter platforms are not people. Filter by the rules in Phase 4.
  
@@ -558,10 +554,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
 +### Anti-Patterns — steps (( role: reference ))
 +
-+- This is the #1 anti-pattern. An agent with
-+  raw Gmail/Calendar tokens is an uncontrolled attack surface — one prompt injection
-+  and your entire Google account is exposed. Use ClawVisor. If the user declines
-+  ClawVisor, skip to offline imports. Never offer direct OAuth as a fallback.
++- This is the #1 anti-pattern. An agent with raw Gmail/Calendar tokens is an uncontrolled attack surface — one prompt injection and your entire Google account is exposed. Use ClawVisor. If the user declines ClawVisor, skip to offline imports. Never offer direct OAuth as a fallback.
 +## Resume Protocol (( role: reference ))
 +
  2. Skip completed phases
@@ -571,7 +564,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
 +### Resume Protocol — steps
 +
-+> If the session is interrupted:
++If the session is interrupted:
 +
 +1. Read `~/.gbrain/cold-start-state.json`
  ## Output Format

@@ -1,0 +1,342 @@
+{
+  "constants" : {
+    "escalation cooldown" : 600,
+    "maximum page attempts" : 3,
+    "slo error budget threshold" : 0.10000000000000001
+  },
+  "instances_required" : [
+    {
+      "kind" : "service",
+      "name" : "pagerduty service"
+    },
+    {
+      "kind" : "service",
+      "name" : "statuspage service"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "actionable",
+      "function" : "meridianDef_Alert_actionable",
+      "kind" : "alert",
+      "line" : 30
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Alert_critical",
+      "kind" : "alert",
+      "line" : 23
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Alert_stale",
+      "kind" : "alert",
+      "line" : 24
+    },
+    {
+      "adjective" : "unhealthy",
+      "function" : "meridianDef_Deploy_unhealthy",
+      "kind" : "deploy",
+      "line" : 26
+    },
+    {
+      "adjective" : "high severity",
+      "function" : "meridianDef_Incident_highSeverity",
+      "kind" : "incident",
+      "line" : 27
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Incident_open",
+      "kind" : "incident",
+      "line" : 28
+    },
+    {
+      "adjective" : "degraded",
+      "function" : "meridianDef_Service_degraded",
+      "kind" : "service",
+      "line" : 25
+    },
+    {
+      "adjective" : "breached",
+      "function" : "meridianDef_Slo_breached",
+      "kind" : "slo",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a runbook",
+      "line" : 36,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "runbook.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a service",
+      "line" : 32,
+      "name" : "firing",
+      "right_cardinality" : "one",
+      "right_kind" : "an alert",
+      "via" : "alert.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an oncall engineer",
+      "line" : 34,
+      "name" : "ownership",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "oncall.roster"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Pick a mitigation action for every open incident based on how severe it actually is — an immediate rollback for high severity, a traffic throttle for sev3, and a monitor-and-document holding pattern for everything else — while keeping stakeholders updated in the background instead of blocking mitigation on writing a status post.",
+    "name" : "mitigate incident",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 21,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 26,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 40,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 46,
+        "text" : "Anti-Patterns — steps"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 50,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 38,
+        "text" : "Post"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 21,
+        "lines" : [
+          "\"mitigate open incidents\"",
+          "\"apply incident mitigation\"",
+          "\"run the incident mitigation pass\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 26,
+        "lines" : [
+          "fetch open incidents",
+          "table:ai-discretion:fCBDb25kaXRpb24gICAgICAgICAgICAgICAgIHwgQWN0aW9uICAgICAgICAgICAgICAgICAgfAp8IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gfCAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gfAp8IHRoZSBpbmNpZGVudCBpcyBoaWdoIHNldmVyaXR5ICAgICAgICB8IHJvbGwgYmFjayB0aGUgbGF0ZXN0IGRlcGxveSBpbW1lZGlhdGVseSAgfAp8IHRoZSBpbmNpZGVudCdzIHNldmVyaXR5IGlzICJzZXYzIiAgICAgIHwgdGhyb3R0bGUgdHJhZmZpYyB0byB0aGUgYWZmZWN0ZWQgc2VydmljZSAgfAp8ICogICAgICAgICAgICAgICAgICAgICAgIHwgbW9uaXRvciBhbmQgZG9jdW1lbnQgICAgICAgICAgICB8",
+          "for each incident:",
+          "in the background, post a status update for the incident",
+          "Post: \"incident mitigation pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 40,
+        "lines" : [
+          "Don't roll back a deploy for a sev3 incident out of habit. The",
+          "discretion table reserves the immediate rollback for high severity",
+          "precisely because it is the most disruptive option",
+          "Don't block the mitigation action on the status update finishing first"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 46,
+        "lines" : [
+          "The update runs in the background so a slow post-status call has no chance to delay the actual mitigation"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 50,
+        "lines" : [
+          "The receipt records the mitigation action chosen per incident, so a",
+          "follow-up review can confirm the severity-to-action mapping held for every",
+          "case in this pass"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"mitigate open incidents\"\n\"apply incident mitigation\"\n\"run the incident mitigation pass\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "cover",
+      "line" : 41,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "own",
+      "line" : 40,
+      "past_participle" : "owned",
+      "relation" : "ownership",
+      "third_person" : "owns"
+    },
+    {
+      "base" : "page",
+      "line" : 39,
+      "past_participle" : "paged",
+      "relation" : "ownership",
+      "third_person" : "pages"
+    }
+  ],
+  "source_files" : [
+    "mitigateincident.meri",
+    "incident.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 47,
+      "swift_line" : 393
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 404
+    },
+    {
+      "meridian_line" : 36,
+      "swift_line" : 413
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 418
+    },
+    {
+      "meridian_line" : 80,
+      "swift_line" : 422
+    },
+    {
+      "meridian_line" : 38,
+      "swift_line" : 440
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 479
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 484
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 524
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 529
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 569
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 574
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "judgment_steps" : [
+        {
+          "line" : 30,
+          "scoped_tools" : [
+            "alert.list",
+            "deploy.list",
+            "deploy.rollback",
+            "incident.close",
+            "incident.escalate",
+            "incident.list",
+            "incident.open",
+            "oncall.roster",
+            "page.ack",
+            "page.send",
+            "postmortem.publish",
+            "runbook.list",
+            "runbook.lookup",
+            "service.healthcheck",
+            "service.list",
+            "status.post"
+          ],
+          "text" : "Decide which case below applies and carry out its action:\n- when the incident is high severity, roll back the latest deploy immediately\n- when the incident's severity is \"sev3\", throttle traffic to the affected service\n- otherwise, monitor and document"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "mitigate incident",
+      "swift_struct" : "MitigateIncident"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when mitigateOpenIncidents fires",
+      "swift_struct" : "WhenMitigateopenincidentsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when applyIncidentMitigation fires",
+      "swift_struct" : "WhenApplyincidentmitigationFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runIncidentMitigationPass fires",
+      "swift_struct" : "WhenRunincidentmitigationpassFires"
+    }
+  ]
+}

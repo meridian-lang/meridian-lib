@@ -1,0 +1,48 @@
+---
+name: schema evolution
+description: Check whether a dataset's evolved schema is still backward compatible before loading it, and hold anything that isn't for a human to review instead of loading a breaking change into the warehouse.
+triggers:
+  - "check schema evolution"
+  - "validate schema compatibility"
+  - "run schema compatibility check"
+---
+
+# Schema Evolution
+
+An upstream producer renaming or retyping a column is invisible until it
+breaks a downstream query — usually the query, not the load, because a
+naive extract-load path will happily load an incompatible schema and let
+the incompatibility surface three steps later. This skill puts the
+compatibility check where it belongs: before the load, not after. A
+compatible schema loads immediately; an incompatible one gets held, with a
+note explaining why, rather than silently landing in the warehouse.
+
+## When to invoke
+- "check schema evolution"
+- "validate schema compatibility"
+- "run schema compatibility check"
+
+## Workflow
+fetch datasets.
+for each dataset:
+  validate the schema for the dataset.
+  if the schema is compatible,
+    load the dataset into the warehouse sink,
+  otherwise,
+    Note: "schema incompatible, dataset held for manual review".
+Emit: "schema evolution pass complete".
+
+## Anti-Patterns
+- Don't load an incompatible schema "just this once" to unblock a
+  downstream consumer. That's exactly the load that breaks the consumer's
+  query the next time it runs.
+- Don't skip this check for datasets you already ran through `extract load`
+  today. A schema can drift between the extract and the load if the
+  producer redeploys in between.
+
+## Guarantees
+make sure no datasets whose status is "stale".
+
+## Report shape
+The receipt states which datasets loaded cleanly and which were held for
+manual review because of an incompatible schema.

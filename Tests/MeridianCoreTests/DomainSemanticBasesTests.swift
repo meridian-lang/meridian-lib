@@ -219,4 +219,90 @@ struct DomainSemanticBasesTests {
         #expect(swift.contains("public protocol DraftPullRequestKind: PullRequestKind {"))
         #expect(swift.contains("public struct DraftPullRequest: DraftPullRequestKind {"))
     }
+
+    // MARK: - Property-name override across a kind chain
+
+    /// Regression: a descendant kind re-declaring an ancestor's property name
+    /// (`"A clinician has a name…" / "A nurse has a name…"`) must override,
+    /// not duplicate, that property — `Compiler.buildDomainDecl` used to
+    /// flatten `inheritedProperties + ownProperties` with no dedup, so the
+    /// struct got two `public var name` stored properties, an "invalid
+    /// redeclaration" `swiftc` error (shipped broken in
+    /// `corpora/clinical/*`; see IMPLEMENTATION_LOG.md).
+    @Test("a kind re-declaring an ancestor's property name overrides it once, not twice")
+    func descendantPropertyOverrideDedupes() throws {
+        let cfg = """
+        === vocabulary ===
+        A clinician is a kind of role.
+        A nurse is a kind of clinician.
+        A clinician has a name and a role.
+        A nurse has a name and a dose count.
+
+        === tools ===
+        """
+        let mer = """
+        ---
+        name: override probe
+        vocabulary: probe.merconfig
+        ---
+        To probe a nurse:
+          complete.
+        """
+        let opts = Compiler.Options(
+            emitterOptions: SwiftEmitter.Options(includeTimestamp: false, emitSourceLineComments: false)
+        )
+        let swift = try Compiler(options: opts).compile(
+            meridianSource: mer,
+            meridianFile: "probe.meridian",
+            merconfigSource: cfg,
+            merconfigFile: "probe.merconfig"
+        )
+        guard let structBody = swift.range(of: "public struct Nurse: NurseKind {").map({ swift[$0.upperBound...] }),
+              let closeBrace = structBody.range(of: "\n}") else {
+            Issue.record("Expected a Nurse struct in generated Swift")
+            return
+        }
+        let body = String(structBody[..<closeBrace.lowerBound])
+        let nameOccurrences = body.components(separatedBy: "public var name:").count - 1
+        #expect(nameOccurrences == 1, Comment(rawValue: "expected exactly one `name` property, got \(nameOccurrences) in:\n\(body)"))
+        #expect(body.contains("public var role:"))
+        #expect(body.contains("public var doseCount:"))
+    }
+
+    // MARK: - Reserved-identifier type names
+
+    /// Regression: a kind whose PascalCase name collides with `Protocol`/
+    /// `Type` must not be emitted as a bare nested type member — Swift's
+    /// postfix `X.Protocol`/`X.Type` metatype syntax takes over the parse at
+    /// any use site (shipped broken as `corpora/clinical`'s
+    /// `A protocol is a kind of artifact.`; see IMPLEMENTATION_LOG.md).
+    @Test("a kind named exactly \"protocol\" or \"type\" gets a disambiguated struct name")
+    func reservedTypeNameGetsDisambiguated() throws {
+        let cfg = """
+        === vocabulary ===
+        A protocol is a kind of thing.
+        A protocol has a version, which is a String.
+
+        === tools ===
+        """
+        let mer = """
+        ---
+        name: reserved probe
+        vocabulary: probe.merconfig
+        ---
+        To probe a protocol:
+          complete.
+        """
+        let opts = Compiler.Options(
+            emitterOptions: SwiftEmitter.Options(includeTimestamp: false, emitSourceLineComments: false)
+        )
+        let swift = try Compiler(options: opts).compile(
+            meridianSource: mer,
+            meridianFile: "probe.meridian",
+            merconfigSource: cfg,
+            merconfigFile: "probe.merconfig"
+        )
+        #expect(swift.contains("public struct ProtocolValue: "))
+        #expect(!swift.contains("public struct Protocol:"))
+    }
 }

@@ -27,7 +27,7 @@ struct ReachableCoverageTailTests {
                                body: IRBlock(statements: [.commit(CommitIR(label: "c"))]))),
             .assert(AssertIR(condition: .literal(.boolean(true)))),
             .complete(CompleteIR(reason: "done")),
-            .proseStep(ProseStepIR(text: "judge", dispatchMode: .autonomousLoop)),
+            .aiAutonomy(AIAutonomyIR(text: "judge")),
             .recover(RecoverIR(pattern: .anyError,
                                handler: IRBlock(statements: []),
                                attachedTo: IRBlock(statements: []))),
@@ -42,7 +42,7 @@ struct ReachableCoverageTailTests {
         #expect(IRWalker.count(kind: .assert, in: wf) == 1)
         #expect(IRWalker.count(kind: .commit, in: wf) == 1)        // inside the iterate body
         #expect(IRWalker.count(kind: .complete, in: wf) == 1)
-        #expect(IRWalker.count(kind: .proseStep, in: wf) == 1)
+        #expect(IRWalker.count(kind: .aiAutonomy, in: wf) == 1)
         #expect(IRWalker.count(kind: .recover, in: wf) == 1)
         #expect(IRWalker.count(kind: .simultaneously, in: wf) == 1)
         // emit + invoke live in the branch then-block → recursion reached them.

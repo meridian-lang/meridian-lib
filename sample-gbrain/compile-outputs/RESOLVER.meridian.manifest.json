@@ -773,16 +773,8 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
           "line" : 94,
           "scoped_tools" : [
             "assess.notability",
@@ -806,6 +798,13 @@
             "verify"
           ],
           "text" : "Decide which case below applies and carry out its action:\n- when \"Set up GBrain\", first boot, `skills\/setup\/SKILL.md`\n- when \"Now what?\", \"fill my brain\", \"cold start\", \"bootstrap\", \"import my data\", \"what should I import first\", `skills\/cold-start\/SKILL.md`\n- when \"Migrate from Obsidian\/Notion\/Logseq\", `skills\/migrate\/SKILL.md`\n- when Brain health check, maintenance run, `skills\/maintain\/SKILL.md`\n- when \"Extract links\", \"build link graph\", \"populate timeline\", `skills\/maintain\/SKILL.md` (extraction sections)\n- when \"Run dream\", \"process today's session\", \"synthesize my conversations\", \"consolidate yesterday's conversations\", \"what patterns did you see\", \"did the dream cycle run\", `skills\/maintain\/SKILL.md` (dream cycle section)\n- when \"Brain health\", \"what features am I missing\", \"brain score\", Run `gbrain features --json`\n- when \"Set up autopilot\", \"run brain maintenance\", \"keep brain updated\", Run `gbrain autopilot --install --repo ~\/brain`\n- when \"Upgrade gbrain\", \"update gbrain\", \"gbrain update available\", `UPGRADE_AVAILABLE`, \"is gbrain up to date\", `skills\/gbrain-upgrade\/SKILL.md`\n- when Agent identity, \"who am I\", customize agent, `skills\/soul-audit\/SKILL.md`\n- when \"Populate links\", \"extract links\", \"backfill graph\", `skills\/maintain\/SKILL.md` (graph population phase)\n- when \"Populate timeline\", \"extract timeline entries\", `skills\/maintain\/SKILL.md` (graph population phase)"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "entry a input",

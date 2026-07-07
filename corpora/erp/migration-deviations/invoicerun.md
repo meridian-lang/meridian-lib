@@ -3,8 +3,8 @@
 - Original: `invoice_run/SKILL.md`
 - Ported: `invoicerun.meri`
 - Tier: 2 (light edits)
-- Similarity: 78%
-- Lines: 37 -> 43 (+12 / -6)
+- Similarity: 79%
+- Lines: 39 -> 45 (+12 / -6)
 
 ## Frontmatter
 - Added: (none)
@@ -17,7 +17,7 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L34 `Report shape`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L36 `Report shape`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections inert total: 2/4 (50% total inert; includes intentional docs/templates/tools metadata)
@@ -29,7 +29,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 
 ### Inert section details
 - L14 `Workflow`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L34 `Report shape`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L36 `Report shape`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
@@ -46,12 +46,12 @@ These sections were made non-executable in the port and should be reviewed as mi
 -  create an invoice for the order.
 -bind selected queue = the queue corresponding to the status "unpaid" in the table.
 +## Workflow (( role: reference ))
+ let high value count be the number of high value orders.
  bind invoice receipt =
    ```
-   invoice-routing:
-@@ -30,8 +26,18 @@
-   [end for]
+@@ -32,8 +28,18 @@
    selected: {{ selected queue }}
+   high value orders: {{ high value count }}
    ```
 +
 +### Workflow — steps
@@ -67,6 +67,6 @@ These sections were made non-executable in the port and should be reviewed as mi
  
 -## Report shape
 +## Report shape (( role: template ))
- The receipt groups invoice states by downstream queue.
+ The receipt groups invoice states by downstream queue and reports the high-value order count.
  
 ```

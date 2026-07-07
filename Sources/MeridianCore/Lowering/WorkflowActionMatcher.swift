@@ -24,7 +24,7 @@ enum WorkflowActionMatcher {
         var workflowStems = stemSet(workflow.name)
         if scope == .nameAndParameters {
             for p in workflow.parameters {
-                workflowStems.formUnion(stemSet(p.kind.name))
+                workflowStems.formUnion(stemSet(IdentifierNaming.decamelize(p.kind.name)))
             }
         }
         return actionStems.intersection(workflowStems).count

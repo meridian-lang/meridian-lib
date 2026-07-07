@@ -1,0 +1,377 @@
+{
+  "constants" : {
+    "batch size threshold" : 100000,
+    "freshness sla" : 86400,
+    "retry budget" : 3
+  },
+  "instances_required" : [
+    {
+      "kind" : "sink",
+      "name" : "warehouse sink"
+    },
+    {
+      "kind" : "source",
+      "name" : "object store source"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Dataset_critical",
+      "kind" : "dataset",
+      "line" : 28
+    },
+    {
+      "adjective" : "high volume",
+      "function" : "meridianDef_Dataset_highVolume",
+      "kind" : "dataset",
+      "line" : 27
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Dataset_stale",
+      "kind" : "dataset",
+      "line" : 21
+    },
+    {
+      "adjective" : "backfilled",
+      "function" : "meridianDef_Partition_backfilled",
+      "kind" : "partition",
+      "line" : 23
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_PipelineRun_failed",
+      "kind" : "pipeline run",
+      "line" : 22
+    },
+    {
+      "adjective" : "passing",
+      "function" : "meridianDef_QualityCheck_passing",
+      "kind" : "quality check",
+      "line" : 24
+    },
+    {
+      "adjective" : "compatible",
+      "function" : "meridianDef_Schema_compatible",
+      "kind" : "schema",
+      "line" : 26
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Watermark_fresh",
+      "kind" : "watermark",
+      "line" : 25
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a pipeline run",
+      "line" : 34,
+      "name" : "derivation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "transform"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a source",
+      "line" : 30,
+      "name" : "extraction",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "extract"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a dataset",
+      "line" : 32,
+      "name" : "loading",
+      "right_cardinality" : "one",
+      "right_kind" : "a sink",
+      "via" : "load"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Run the data-quality checks for every dataset due this pass and render a single green\/red receipt instead of leaving the results scattered across individual check logs. This is the skill a downstream consumer should check before trusting a dataset, not the individual quality-check tool.",
+    "name" : "quality gate",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 19,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "tables",
+        "level" : 2,
+        "line" : 24,
+        "text" : "Tables"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 31,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 39,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 46,
+        "text" : "Workflow — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 52,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 59,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 62,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 50,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 19,
+        "lines" : [
+          "\"run quality gate\"",
+          "\"check data quality\"",
+          "\"run the quality gate pass\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Tables",
+        "line" : 24,
+        "lines" : [
+          "table:data=thresholds:fCBuYW1lIHwgZmxvb3IgfAp8IC0tLS0gfCAtLS0tLSB8CnwgaGlnaCB8IDEwMCAgIHwKfCBsb3cgIHwgMCAgICAgfA=="
+        ],
+        "role" : "tables"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow",
+        "line" : 31,
+        "lines" : [
+          "bind quality report =",
+          "codeblock:plain:cXVhbGl0eS1nYXRlOgpbaWYgcGFzc2luZyBjb3VudCBpcyBtb3JlIHRoYW4gMF1zdGF0dXM6IGdyZWVuW290aGVyd2lzZV1zdGF0dXM6IHJlZFtlbmQgaWZdCnBhc3NpbmcgY2hlY2tzOiB7eyBwYXNzaW5nIGNvdW50IH19"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 39,
+        "lines" : [
+          "fetch datasets",
+          "for each dataset:",
+          "run quality checks on the dataset",
+          "let passing count be the number of quality checks whose status is \"passed\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 46,
+        "lines" : [
+          "emit etl.quality_report with body = quality report",
+          "the passing count is at least 0",
+          "Emit: \"quality gate pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 52,
+        "lines" : [
+          "Don't treat a green gate as a guarantee that every dataset passed —",
+          "it only means at least one check passed. Read the passing count, not",
+          "just the color, before trusting a batch wholesale",
+          "Don't skip the gate for a habitually passing dataset. The thresholds",
+          "table exists to catch the one run that finally breaks the streak"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 59,
+        "lines" : [
+          "every emitted quality report contains \"quality-gate\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 62,
+        "lines" : [
+          "The receipt opens with `quality-gate:`, reports `green` or `red`, and states",
+          "the passing-check count for this pass"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"run quality gate\"\n\"check data quality\"\n\"run the quality gate pass\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "derive",
+      "line" : 39,
+      "past_participle" : "derived",
+      "relation" : "derivation",
+      "third_person" : "derives"
+    },
+    {
+      "base" : "extract",
+      "line" : 37,
+      "past_participle" : "extracted",
+      "relation" : "extraction",
+      "third_person" : "extracts"
+    },
+    {
+      "base" : "load",
+      "line" : 38,
+      "past_participle" : "loaded",
+      "relation" : "loading",
+      "third_person" : "loads"
+    }
+  ],
+  "source_files" : [
+    "qualitygate.meri",
+    "etl.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 60,
+      "swift_line" : 362
+    },
+    {
+      "meridian_line" : 26,
+      "swift_line" : 366
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 369
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 375
+    },
+    {
+      "meridian_line" : 72,
+      "swift_line" : 381
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 396
+    },
+    {
+      "meridian_line" : 48,
+      "swift_line" : 399
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 409
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 414
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 453
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 458
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 498
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 503
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 543
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 548
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "quality gate",
+      "swift_struct" : "QualityGate"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runQualityGate fires",
+      "swift_struct" : "WhenRunqualitygateFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when checkDataQuality fires",
+      "swift_struct" : "WhenCheckdataqualityFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runQualityGatePass fires",
+      "swift_struct" : "WhenRunqualitygatepassFires"
+    }
+  ]
+}

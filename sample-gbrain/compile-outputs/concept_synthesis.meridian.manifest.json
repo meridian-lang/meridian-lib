@@ -196,37 +196,37 @@
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 244,
+        "line" : 242,
         "text" : "Anti-Patterns — steps 2"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 248,
+        "line" : 246,
         "text" : "Related skills"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 255,
+        "line" : 253,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 266,
+        "line" : 264,
         "text" : "Output Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 257,
+        "line" : 255,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 262,
+        "line" : 260,
         "text" : "Privacy contract preserved"
       }
     ],
@@ -395,17 +395,15 @@
         "heading" : "Anti-Patterns — steps",
         "line" : 237,
         "lines" : [
-          "❌ Running synthesis on T3\/T4 — wastes API budget on ideas that may",
-          "never sharpen",
-          "❌ Hallucinating quotes or dates. The timeline must be verifiable",
-          "against existing brain pages"
+          "❌ Running synthesis on T3\/T4 — wastes API budget on ideas that may never sharpen",
+          "❌ Hallucinating quotes or dates. The timeline must be verifiable against existing brain pages"
         ],
         "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Anti-Patterns — steps 2",
-        "line" : 244,
+        "line" : 242,
         "lines" : [
           "use judgment to follow the Anti-Patterns — steps 2 guidance:",
           "❌ Re-synthesizing already-synthesized T1s without new source material"
@@ -415,7 +413,7 @@
       {
         "executes" : true,
         "heading" : "Related skills",
-        "line" : 248,
+        "line" : 246,
         "lines" : [
           "`skills\/signal-detector\/SKILL.md` — creates raw concept stubs from text channels",
           "`skills\/voice-note-ingest\/SKILL.md` — same for audio channels",
@@ -426,7 +424,7 @@
       {
         "executes" : false,
         "heading" : "Contract",
-        "line" : 255,
+        "line" : 253,
         "lines" : [
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
@@ -440,7 +438,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 266,
+        "line" : 264,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -492,15 +490,15 @@
       "swift_line" : 604
     },
     {
-      "meridian_line" : 250,
+      "meridian_line" : 248,
       "swift_line" : 616
     },
     {
-      "meridian_line" : 251,
+      "meridian_line" : 249,
       "swift_line" : 628
     },
     {
-      "meridian_line" : 252,
+      "meridian_line" : 250,
       "swift_line" : 640
     },
     {

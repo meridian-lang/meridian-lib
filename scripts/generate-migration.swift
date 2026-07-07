@@ -43,6 +43,42 @@ let corpora = [
         resolverOriginal: "corpora/procedures/original-skills/RESOLVER.md",
         resolverOut: "corpora/procedures/RESOLVER.meri"
     ),
+    Corpus(
+        id: "incident",
+        originals: "corpora/incident/original-skills",
+        vocab: "corpora/incident/incident.merconfig",
+        rulebook: "corpora/incident/incident.merrules",
+        skillsOut: "corpora/incident/skills",
+        resolverOriginal: "corpora/incident/original-skills/RESOLVER.md",
+        resolverOut: "corpora/incident/RESOLVER.meri"
+    ),
+    Corpus(
+        id: "etl",
+        originals: "corpora/etl/original-skills",
+        vocab: "corpora/etl/etl.merconfig",
+        rulebook: "corpora/etl/etl.merrules",
+        skillsOut: "corpora/etl/skills",
+        resolverOriginal: "corpora/etl/original-skills/RESOLVER.md",
+        resolverOut: "corpora/etl/RESOLVER.meri"
+    ),
+    Corpus(
+        id: "governance",
+        originals: "corpora/governance/original-skills",
+        vocab: "corpora/governance/governance.merconfig",
+        rulebook: "corpora/governance/governance.merrules",
+        skillsOut: "corpora/governance/skills",
+        resolverOriginal: "corpora/governance/original-skills/RESOLVER.md",
+        resolverOut: "corpora/governance/RESOLVER.meri"
+    ),
+    Corpus(
+        id: "clinical",
+        originals: "corpora/clinical/original-skills",
+        vocab: "corpora/clinical/clinical.merconfig",
+        rulebook: "corpora/clinical/clinical.merrules",
+        skillsOut: "corpora/clinical/skills",
+        resolverOriginal: "corpora/clinical/original-skills/RESOLVER.md",
+        resolverOut: "corpora/clinical/RESOLVER.meri"
+    ),
 ]
 
 struct Options {
@@ -52,7 +88,7 @@ struct Options {
 
 func usage() -> String {
     """
-    usage: swift scripts/generate-migration.swift [--corpus gbrain|erp|procedures|all] [--no-route-fuzzy]
+    usage: swift scripts/generate-migration.swift [--corpus gbrain|erp|procedures|incident|etl|governance|clinical|all] [--no-route-fuzzy]
 
     Batch re-migrates <root>/original-skills/**/SKILL.md into <root>/skills/*.meri
     (AGENTS.md Phase 3, "batch re-migrate the remaining skills") using:

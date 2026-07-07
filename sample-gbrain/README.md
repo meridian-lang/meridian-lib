@@ -123,7 +123,7 @@ documentation: `(( inert ))` (narrative), `(( inert, role: invariants ))` /
 shell-block routing. Every section — executable or not — is recorded into the
 manifest's `meridian_skill.sections`, so nothing is silently dropped. Steps that
 legitimately need judgment must be marked explicitly (`use judgment to …:`),
-which lowers to a `ProseStepIR`.
+which lowers to an `AIJudgmentIR` (or `AIAutonomyIR` under `with autonomy`).
 
 `RESOLVER.meri` is the dispatcher: it routes an inbound request to the skill
 that owns it (skills are the implementation; the resolver only selects).

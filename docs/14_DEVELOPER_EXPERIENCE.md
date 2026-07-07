@@ -150,7 +150,7 @@ long-form entry (and the linked decision). This table mirrors
 | MER3003 | duplicate declaration | — |
 | MER3004 | duplicate name | — |
 | MER3005 | invalid relation backing | — |
-| MER3006 | unattached rule | D-DX-2 |
+| MER3006 | unattached rule | D-DX-6 |
 | MER3007 | unresolved trigger action | D-DX-2 |
 | MER3008 | tool-backed expression must be a statement | — |
 | MER3010 | ambiguous entry workflow | — |

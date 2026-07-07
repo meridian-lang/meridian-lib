@@ -189,8 +189,7 @@ Remaining gaps:       N (pages with uncitable facts)
 
 ### Anti-Patterns — steps (( role: reference ))
 
-- ❌ Composing tweet URLs by guessing the tweet id. Always go through
-  the X API; deterministic links only.
+- ❌ Composing tweet URLs by guessing the tweet id. Always go through the X API; deterministic links only.
 
 ## Integration (( role: reference ))
 

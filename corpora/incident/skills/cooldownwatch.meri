@@ -1,0 +1,51 @@
+---
+name: cooldown watch
+description: Keep a recently-fired alert in a watch loop through its escalation cooldown window before letting it re-page, so a flapping alert doesn't page the same engineer three times in fifteen minutes for what's really one ongoing incident.
+triggers:
+  - "watch alert cooldown"
+  - "run cooldown watch"
+  - "run the alert cooldown pass"
+---
+
+# Cooldown Watch
+
+> An alert that flaps — firing, clearing, firing again — can page the same
+> engineer over and over for what's genuinely a single unresolved condition.
+> This skill exists to smooth that out: it acknowledges each firing alert
+> that isn't already stale, then holds for a fixed cooldown window before
+> anything is allowed to re-page. The cooldown isn't about ignoring the
+> alert; it's about giving the underlying condition a chance to actually
+> clear before treating another firing as a new event.
+
+## When to invoke
+- "watch alert cooldown"
+- "run cooldown watch"
+- "run the alert cooldown pass"
+
+## Workflow
+fetch firing alerts.
+Check: any alerts whose status is "firing".
+while any alerts whose status is "firing",
+  for each alert whose status is "firing":
+    acknowledge the alert unless the alert is stale.
+wait 10 minutes.
+Post: "cooldown watch pass complete".
+
+## Anti-Patterns (( role: reference ))
+- Don't acknowledge a stale alert just to clear it from the firing list.
+  A stale alert usually means the underlying signal is unreliable, not
+  resolved — acknowledging it hides that distinction.
+
+### Anti-Patterns — steps
+
+use judgment to follow the Anti-Patterns — steps guidance:
+- Don't shorten the cooldown window to make the receipt look cleaner
+  faster. The window exists so a genuinely flapping alert gets time to
+  settle before this skill decides it's done.
+
+## Guarantees
+make sure no alerts whose fired at is within the last 15 minutes and whose status is "firing".
+
+## Report shape (( role: template ))
+The receipt confirms no alert both fired within the cooldown window and is
+still firing by the time the pass completes.

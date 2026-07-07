@@ -4,7 +4,7 @@
 - Ported: `skillpack_check.meri`
 - Tier: 2 (light edits)
 - Similarity: 75%
-- Lines: 133 -> 155 (+47 / -25)
+- Lines: 133 -> 154 (+46 / -25)
 
 ## Frontmatter
 - Added: (none)
@@ -20,7 +20,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L23 `When to run`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L33 `Happy path (`healthy: true`)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L76 `Output format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L113 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L112 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections inert total: 8/8 (100% total inert; includes intentional docs/templates/tools metadata)
@@ -37,8 +37,8 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L37 `Action needed (`healthy: false`)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L76 `Output format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 - L100 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L113 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L119 `Related`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L112 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L118 `Related`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
@@ -138,7 +138,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Treat as urgent. Probably means the gbrain binary is missing from `$PATH` or
  a required subcommand crashed. Check:
-@@ -106,28 +119,37 @@
+@@ -106,28 +119,36 @@
  }
  ```
  
@@ -155,10 +155,9 @@ These sections were made non-executable in the port and should be reviewed as mi
  
 -## Output Format
 +
-+### Anti-Patterns — steps (( role: reference ))
++### Anti-Patterns — steps
 +
-+- ❌ Ignoring exit code 2. A crashed doctor is worse than a failing check
-+  because you don't even know what's wrong.
++- ❌ Ignoring exit code 2. A crashed doctor is worse than a failing check because you don't even know what's wrong.
 +## Output Format (( role: template ))
  
  The skill itself doesn't write files; it reports the CLI output verbatim to

@@ -144,7 +144,26 @@ enum ExpressionParserGoldenCorpus {
     /// everywhere else, so it correctly produces
     /// `logical(or, [(id(a) greaterOrEqual 5), (id(b) equal 1)])` instead —
     /// this one case is expected to differ post-rewrite.
-    static let deliberateDivergences: Set<String> = ["either-or-masking-edge-case"]
+    ///
+    /// `whose`: the pre-rewrite `ComparisonGrammar`/its predecessor split
+    /// `pages whose status is "draft"` on the *only* ` is ` it could find —
+    /// which sat inside the unclosed `whose` clause — producing the frozen
+    /// baseline `(desc(pages) equal "draft")`: a comparison of the bare
+    /// description "pages" (the `whose status` predicate silently reduced to
+    /// a truthy existence check on `status`) against the literal `"draft"`.
+    /// That is a real bug, not a style choice: it shipped as
+    /// `state.bind("sev1Count", Decimal(count) == "sev1")` in
+    /// `corpora/incident/compile-outputs/postmortemrender.swift` — Swift that
+    /// does not even type-check (`Decimal` has no `==` overload for `String`).
+    /// The fix (`ComparisonGrammar` now refuses to split on a marker at or
+    /// after a top-level `whose`, since a `whose` clause runs to the end of
+    /// its phrase and owns any `is` inside it) makes this phrase fall through
+    /// to `atom`/`description`, which parses the `whose` clause correctly —
+    /// hence the new `desc(pages)` (the `whose status is "draft"` predicate is
+    /// attached but not rendered at this trace depth, matching every other
+    /// `whose`-bearing case in this corpus, e.g. `quantifier-none-whose`).
+    /// See IMPLEMENTATION_LOG.md for the full root-cause writeup.
+    static let deliberateDivergences: Set<String> = ["either-or-masking-edge-case", "whose"]
 
     static func symbolTable(for kind: Case.Symbols) throws -> SymbolTable? {
         switch kind {

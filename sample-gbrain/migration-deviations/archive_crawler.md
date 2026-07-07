@@ -4,7 +4,7 @@
 - Ported: `archive_crawler.meri`
 - Tier: 2 (light edits)
 - Similarity: 80%
-- Lines: 321 -> 358 (+88 / -51)
+- Lines: 321 -> 357 (+87 / -51)
 
 ## Frontmatter
 - Added: (none)
@@ -24,8 +24,8 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L237 ``.zip` / `.tar` / `.tar.gz``: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L241 `Images`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L246 `Manifest template`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L327 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L338 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L326 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L337 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections inert total: 16/18 (89% total inert; includes intentional docs/templates/tools metadata)
@@ -49,9 +49,9 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L241 `Images`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L246 `Manifest template`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L293 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L312 `Related skills`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L327 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L338 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L311 `Related skills`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L326 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L337 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
@@ -205,10 +205,10 @@ These sections were made non-executable in the port and should be reviewed as mi
 -
 -### Plain text / HTML / Markdown
 +
-+### Phase 3: Ingest — steps
++### Phase 3: Ingest — steps (( role: reference ))
 +
-+> When an item is worth keeping, file it by **primary subject** per
-+> `_brain-filing-rules.md`:
++When an item is worth keeping, file it by primary subject per
++`_brain-filing-rules.md`:
 +
 +- User's own writing / ideas / origin-story content → `originals/<slug>.md`
 +- Reflections / personal-life content → `personal/<slug>.md`
@@ -253,7 +253,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```markdown
  ---
-@@ -282,29 +307,41 @@
+@@ -282,29 +307,40 @@
  - Next: [what's queued]
  ```
  
@@ -277,10 +277,9 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
 +  This is the safety contract — never bypass.
 +
-+### Anti-Patterns — steps 2 (( role: reference ))
++### Anti-Patterns — steps 2
 +
-+- ❌ Re-showing items already marked in the manifest. The user's time
-+  is the scarcest resource.
++- ❌ Re-showing items already marked in the manifest. The user's time is the scarcest resource.
 +## Related skills (( role: reference ))
 +
 +- `skills/idea-ingest/SKILL.md` — single-link-or-article ingest with
@@ -303,7 +302,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  This skill guarantees:
  
-@@ -315,7 +352,7 @@
+@@ -315,7 +351,7 @@
  
  The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  

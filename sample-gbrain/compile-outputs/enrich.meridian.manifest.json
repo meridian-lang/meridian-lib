@@ -112,151 +112,157 @@
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 53,
+        "line" : 51,
         "text" : "Philosophy"
       },
       {
-        "kind" : "reference",
+        "kind" : "procedure",
         "level" : 2,
-        "line" : 59,
+        "line" : 57,
         "text" : "Citation Requirements (MANDATORY)"
       },
       {
         "kind" : "reference",
+        "level" : 3,
+        "line" : 62,
+        "text" : "Citation Requirements (MANDATORY) — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 65,
+        "line" : 66,
         "text" : "When To Enrich"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 67,
+        "line" : 68,
         "text" : "Primary triggers"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 74,
+        "line" : 75,
         "text" : "Do NOT enrich"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 80,
+        "line" : 81,
         "text" : "Enrichment Tiers"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 85,
+        "line" : 86,
         "text" : "Enrichment Tiers — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 93,
+        "line" : 94,
         "text" : "The Enrichment Protocol (7 Steps)"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 95,
+        "line" : 96,
         "text" : "Step 1: Identify entities"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 99,
+        "line" : 100,
         "text" : "Step 2: Check brain state"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 106,
+        "line" : 107,
         "text" : "Step 3: Extract signal from source"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 109,
+        "line" : 110,
         "text" : "Step 3: Extract signal from source — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 123,
+        "line" : 124,
         "text" : "Step 4: External data source lookups"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 148,
+        "line" : 149,
         "text" : "Step 4: External data source lookups — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 152,
+        "line" : 153,
         "text" : "Step 4: External data source lookups — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 163,
+        "line" : 164,
         "text" : "Step 5: Save raw data (preserves provenance)"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 178,
+        "line" : 179,
         "text" : "Step 6: Write to brain"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 286,
+        "line" : 287,
         "text" : "Step 7: Cross-reference"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 298,
+        "line" : 299,
         "text" : "Step 7: Cross-reference — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 302,
+        "line" : 303,
         "text" : "Bulk Enrichment Rules"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 311,
+        "line" : 312,
         "text" : "Validation Rules"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 319,
+        "line" : 320,
         "text" : "Report Storage"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 330,
+        "line" : 331,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 337,
+        "line" : 338,
         "text" : "Output Format"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 358,
+        "line" : 359,
         "text" : "Tools Used"
       },
       {
@@ -280,31 +286,31 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 101,
+        "line" : 102,
         "text" : "For each entity"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 128,
+        "line" : 129,
         "text" : "Check related pages"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 317,
+        "line" : 318,
         "text" : "When in doubt"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 339,
+        "line" : 340,
         "text" : "An enriched person page contains"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 349,
+        "line" : 350,
         "text" : "An enriched company page contains"
       }
     ],
@@ -328,16 +334,14 @@
         "heading" : "Contract — steps",
         "line" : 47,
         "lines" : [
-          "Every mention of a person or company with a brain page MUST create a back-link",
-          "FROM that entity's page TO the page mentioning them. An unlinked mention is a",
-          "broken brain. See `skills\/_brain-filing-rules.md` for format"
+          "Every mention of a person or company with a brain page MUST create a back-link FROM that entity's page TO the page mentioning them. An unlinked mention is a broken brain. See `skills\/_brain-filing-rules.md` for format"
         ],
         "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Philosophy",
-        "line" : 53,
+        "line" : 51,
         "lines" : [
           "A brain page should read like an intelligence dossier, not a LinkedIn scrape",
           "Facts are table stakes. Texture is the value -- what do they believe, what are",
@@ -346,9 +350,18 @@
         "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Citation Requirements (MANDATORY)",
-        "line" : 59,
+        "line" : 57,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Citation Requirements (MANDATORY) — steps",
+        "line" : 62,
         "lines" : [
           "When sources conflict, note the contradiction with both citations"
         ],
@@ -357,7 +370,7 @@
       {
         "executes" : false,
         "heading" : "When To Enrich",
-        "line" : 65,
+        "line" : 66,
         "lines" : [
 
         ],
@@ -366,7 +379,7 @@
       {
         "executes" : false,
         "heading" : "Primary triggers",
-        "line" : 67,
+        "line" : 68,
         "lines" : [
           "User mentions an entity in conversation",
           "Entity appears in a meeting transcript or email",
@@ -379,7 +392,7 @@
       {
         "executes" : false,
         "heading" : "Do NOT enrich",
-        "line" : 74,
+        "line" : 75,
         "lines" : [
           "Random mentions with no relationship signal",
           "Bot\/spam accounts",
@@ -391,7 +404,7 @@
       {
         "executes" : false,
         "heading" : "Enrichment Tiers",
-        "line" : 80,
+        "line" : 81,
         "lines" : [
           "Scale enrichment to importance. Don't waste API calls on low-value entities"
         ],
@@ -400,7 +413,7 @@
       {
         "executes" : false,
         "heading" : "Enrichment Tiers — steps",
-        "line" : 85,
+        "line" : 86,
         "lines" : [
           "table:decision:fCBUaWVyIHwgV2hvIHwgRWZmb3J0IHwgU291cmNlcyB8CnwtLS0tLS18LS0tLS18LS0tLS0tLS18LS0tLS0tLS0tfAp8IDEgKGtleSkgfCBJbm5lciBjaXJjbGUsIGNsb3NlIGNvbGxhYm9yYXRvcnMsIGtleSBjb250YWN0cyB8IEZ1bGwgcGlwZWxpbmUgfCBBbGwgYXZhaWxhYmxlIEFQSXMgKyBkZWVwIHdlYiByZXNlYXJjaCB8CnwgMiAobm90YWJsZSkgfCBPY2Nhc2lvbmFsIGludGVyYWN0aW9ucywgaW5kdXN0cnkgZmlndXJlcyB8IE1vZGVyYXRlIHwgV2ViIHJlc2VhcmNoICsgc29jaWFsICsgYnJhaW4gY3Jvc3MtcmVmIHwKfCAzIChtaW5vcikgfCBXb3J0aCB0cmFja2luZywgbm90IGNyaXRpY2FsIHwgTGlnaHQgfCBCcmFpbiBjcm9zcy1yZWYgKyBzb2NpYWwgbG9va3VwIGlmIGhhbmRsZSBrbm93biB8"
         ],
@@ -409,7 +422,7 @@
       {
         "executes" : false,
         "heading" : "The Enrichment Protocol (7 Steps)",
-        "line" : 93,
+        "line" : 94,
         "lines" : [
 
         ],
@@ -418,7 +431,7 @@
       {
         "executes" : false,
         "heading" : "Step 1: Identify entities",
-        "line" : 95,
+        "line" : 96,
         "lines" : [
           "Extract people, companies, concepts from the incoming signal"
         ],
@@ -427,7 +440,7 @@
       {
         "executes" : false,
         "heading" : "Step 2: Check brain state",
-        "line" : 99,
+        "line" : 100,
         "lines" : [
           "For each entity:",
           "`gbrain search \"name\"` -- does a page already exist?",
@@ -439,7 +452,7 @@
       {
         "executes" : false,
         "heading" : "Step 3: Extract signal from source",
-        "line" : 106,
+        "line" : 107,
         "lines" : [
 
         ],
@@ -448,7 +461,7 @@
       {
         "executes" : false,
         "heading" : "Step 3: Extract signal from source — steps",
-        "line" : 109,
+        "line" : 110,
         "lines" : [
           "table:decision:fCBTaWduYWwgVHlwZSB8IFdoYXQgdG8gRXh0cmFjdCB8CnwtLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgT3BpbmlvbnMsIGJlbGllZnMgfCBXaGF0IFRoZXkgQmVsaWV2ZSBzZWN0aW9uIHwKfCBDdXJyZW50IHByb2plY3RzLCBmZWF0dXJlcyBzaGlwcGVkIHwgV2hhdCBUaGV5J3JlIEJ1aWxkaW5nIHNlY3Rpb24gfAp8IEFtYml0aW9uLCBjYXJlZXIgYXJjLCBtb3RpdmF0aW9uIHwgV2hhdCBNb3RpdmF0ZXMgVGhlbSBzZWN0aW9uIHwKfCBUb3BpY3MgdGhleSByZXR1cm4gdG8gb2JzZXNzaXZlbHkgfCBIb2JieSBIb3JzZXMgc2VjdGlvbiB8CnwgV2hvIHRoZXkgYW1wbGlmeSwgYXJndWUgd2l0aCwgcmVzcGVjdCB8IE5ldHdvcmsgLyBSZWxhdGlvbnNoaXBzIHwKfCBBc2NlbmRpbmcsIHBsYXRlYXVpbmcsIHBpdm90aW5nPyB8IFRyYWplY3Rvcnkgc2VjdGlvbiB8CnwgUm9sZSwgY29tcGFueSwgZnVuZGluZywgbG9jYXRpb24gfCBTdGF0ZSBzZWN0aW9uIChoYXJkIGZhY3RzKSB8"
         ],
@@ -457,7 +470,7 @@
       {
         "executes" : false,
         "heading" : "Step 4: External data source lookups",
-        "line" : 123,
+        "line" : 124,
         "lines" : [
           "Priority order -- stop when you have enough signal for the entity's tier",
           "`gbrain search \"name\"` and `gbrain query \"what do we know about name\"`",
@@ -481,7 +494,7 @@
       {
         "executes" : false,
         "heading" : "Step 4: External data source lookups — steps",
-        "line" : 148,
+        "line" : 149,
         "lines" : [
           "4a. Brain cross-reference (always, all tiers)"
         ],
@@ -490,7 +503,7 @@
       {
         "executes" : false,
         "heading" : "Step 4: External data source lookups — steps 2",
-        "line" : 152,
+        "line" : 153,
         "lines" : [
           "table:decision:fCBEYXRhIE5lZWQgfCBFeGFtcGxlIFNvdXJjZXMgfCBUaWVyIHwKfC0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18LS0tLS0tfAp8IFdlYiByZXNlYXJjaCB8IFBlcnBsZXhpdHksIEJyYXZlLCBFeGEgfCAxLTIgfAp8IExpbmtlZEluIC8gY2FyZWVyIHwgQ3J1c3RkYXRhLCBQcm94eWN1cmwsIFBlb3BsZSBEYXRhIExhYnMgfCAxIHwKfCBDYXJlZXIgaGlzdG9yeSB8IEhhcHBlbnN0YW5jZSwgTGlua2VkSW4gfCAxIHwKfCBGdW5kaW5nIC8gY29tcGFueSBkYXRhIHwgQ3J1bmNoYmFzZSwgUGl0Y2hCb29rLCBDbGVhcmJpdCB8IDEgfAp8IFNvY2lhbCBtZWRpYSB8IFBsYXRmb3JtIEFQSXMsIHdlYiBzY3JhcGluZyB8IDEtMyB8CnwgTWVldGluZyBoaXN0b3J5IHwgQ2FsZW5kYXIvbWVldGluZyB0cmFuc2NyaXB0IHRvb2xzIHwgMS0yIHw="
         ],
@@ -499,7 +512,7 @@
       {
         "executes" : false,
         "heading" : "Step 5: Save raw data (preserves provenance)",
-        "line" : 163,
+        "line" : 164,
         "lines" : [
           "Store raw API responses via `put_raw_data` in gbrain:",
           "codeblock:json:ewogICJzb3VyY2UiOiAiY3J1c3RkYXRhIiwKICAiZmV0Y2hlZF9hdCI6ICIyMDI2LTA0LTExVC4uLiIsCiAgInF1ZXJ5IjogImphbmUgZG9lIiwKICAiZGF0YSI6IHsgLi4uIH0KfQ==",
@@ -511,7 +524,7 @@
       {
         "executes" : false,
         "heading" : "Step 6: Write to brain",
-        "line" : 178,
+        "line" : 179,
         "lines" : [
           "Check notability gate (see `skills\/_brain-filing-rules.md`)",
           "Check filing rules -- where does this entity go?",
@@ -532,7 +545,7 @@
       {
         "executes" : false,
         "heading" : "Step 7: Cross-reference",
-        "line" : 286,
+        "line" : 287,
         "lines" : [
           "Update company pages from person enrichment (and vice versa)",
           "Update related project\/deal pages if relevant context surfaced",
@@ -548,7 +561,7 @@
       {
         "executes" : true,
         "heading" : "Step 7: Cross-reference — steps",
-        "line" : 298,
+        "line" : 299,
         "lines" : [
           "Timeline entries still need explicit `gbrain timeline-add` calls"
         ],
@@ -557,7 +570,7 @@
       {
         "executes" : false,
         "heading" : "Bulk Enrichment Rules",
-        "line" : 302,
+        "line" : 303,
         "lines" : [
           "**Test on 3-5 entities first.** Read actual output. Check quality",
           "Only proceed to bulk after test shots pass your quality bar",
@@ -571,7 +584,7 @@
       {
         "executes" : false,
         "heading" : "Validation Rules",
-        "line" : 311,
+        "line" : 312,
         "lines" : [
           "Connection count < 20 on LinkedIn = likely wrong person, skip",
           "Name mismatch between brain and API = skip, flag for review",
@@ -584,7 +597,7 @@
       {
         "executes" : false,
         "heading" : "Report Storage",
-        "line" : 319,
+        "line" : 320,
         "lines" : [
           "After enrichment sweeps, save a report:",
           "Number of entities processed",
@@ -599,7 +612,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 330,
+        "line" : 331,
         "lines" : [
           "Creating stub pages with no content",
           "Enriching without checking brain first",
@@ -611,7 +624,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 337,
+        "line" : 338,
         "lines" : [
           "An enriched person page contains:",
           "**Frontmatter** with type, tags, company, relationship, and contact fields",
@@ -635,7 +648,7 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 358,
+        "line" : 359,
         "lines" : [
           "Read a page from gbrain (get_page)",
           "Store\/update a page in gbrain (put_page)",
@@ -691,7 +704,7 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 300,
+      "meridian_line" : 301,
       "swift_line" : 605
     },
     {

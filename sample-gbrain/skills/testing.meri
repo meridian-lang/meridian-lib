@@ -54,15 +54,14 @@ Pick the mode by trigger.
 - No MECE violations (duplicate triggers across skills)
 
 
-### Contract — steps (( role: reference ))
+### Contract — steps
 
 > This mode guarantees:
 
 - Every skill directory has a `SKILL.md` file
 - Every `SKILL.md` has valid YAML frontmatter (`name`, `description`)
-- Every `SKILL.md` has required sections per
-  `test/skills-conformance.test.ts`
-### Phases (( role: reference ))
+- Every `SKILL.md` has required sections per `test/skills-conformance.test.ts`
+### Phases
 
 1. Walk skills directory. List all subdirs containing `SKILL.md`.
 2. Parse YAML, check required fields.
@@ -101,7 +100,7 @@ Issues:
 
 ## Mode 2: Project test-suite health (v0.25.1) (( role: reference ))
 
-### When to use (( role: reference ))
+### When to use
 
 - Daily test cron fires
 - User asks "run the tests" / "how are the tests" / "what's broken"
@@ -122,7 +121,10 @@ Issues:
 | Integration | E2E tests against real Postgres | ~5m | Pre-ship + nightly |
 | System health | Disk / memory / CPU / service liveness | <10s | Daily |
 
-### Daily run protocol (( role: reference ))
+### Daily run protocol
+
+
+### Daily run protocol — steps
 
 When the cron fires (or the user asks), do ALL of this:
 
@@ -223,9 +225,6 @@ FLAKES:
 
 - Test expects behavior A but code now does B → ASK first. Maybe the
   test is right and the code has a bug.
-When uncertain: check the commit message that changed the code, check
-if there's a related PR or conversation, ask the user if still unclear.
-
 
 #### 7. Auto-fix protocol — steps
 
@@ -235,6 +234,12 @@ if there's a related PR or conversation, ask the user if still unclear.
 
 use judgment to follow the 7. Auto-fix protocol — steps 2 guidance:
 - Test was skipped with a TODO → don't un-skip without understanding why.
+
+
+#### 7. Auto-fix protocol — steps 3
+
+When uncertain: check the commit message that changed the code, check
+if there's a related PR or conversation, ask the user if still unclear.
 
 ### State (regression history) (( role: reference ))
 

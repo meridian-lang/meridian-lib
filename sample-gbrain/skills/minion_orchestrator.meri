@@ -59,13 +59,9 @@ Guarantees:
 - Parent-child DAGs with configurable failure policies
 
 
-### Contract — steps (( role: reference ))
+### Contract — steps
 
-When to route to Minions: durable, observable work that must survive restarts,
-fan out across many parallel tasks, or persist across sessions. Routing policy
-is defined in `skills/conventions/subagent-routing.md` — the project default is
-`pain_triggered` (native subagents first, Minions after specific pain signals
-fire); Mode A (all-through-Minions) is opt-in.
+When to route to Minions: durable, observable work that must survive restarts, fan out across many parallel tasks, or persist across sessions. Routing policy is defined in `skills/conventions/subagent-routing.md` — the project default is `pain_triggered` (native subagents first, Minions after specific pain signals fire); Mode A (all-through-Minions) is opt-in.
 
 ## Route the Request: Shell Job vs Subagent (( role: reference ))
 

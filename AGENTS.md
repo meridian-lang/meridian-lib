@@ -69,7 +69,8 @@ let out = try Compiler(options: opts).compile(
 - `Sources/MeridianRuntime/` — runtime used by generated Swift (`Runtime/`
   actor, `Value/`, `State/`, `Comparison/`, `Protocol/`, `Domain/`).
 - `Sources/MeridianCore/` — the compiler: `Compiler.swift` (entry point),
-  `AST/`, `IR/IRTypes.swift` (12 IR primitives), `Parser/` (`Lexical/`,
+  `AST/`, `IR/IRTypes.swift` (13 IR primitives, incl. the split
+  `aiJudgment`/`aiAutonomy` AI-inference pair), `Parser/` (`Lexical/`,
   `Productions/`), `Symbols/`, `Lowering/ASTToIR.swift`, `Codegen/`
   (`SwiftEmitter.swift`, `ManifestEmitter.swift`, `DomainEmitter`),
   `Diagnostics/` (`ParserTrace.swift`, diagnostic engine), `Language/`
@@ -82,8 +83,12 @@ let out = try Compiler(options: opts).compile(
 - `Tests/MeridianCoreTests/`, `Tests/MeridianRuntimeTests/`,
   `sample-gbrain/Tests/` — test targets.
 - `examples/` — `.merconfig` / `.meridian` samples + `golden/`.
-- `corpora/` — Wave 6 validation corpora: `erp/` and `procedures/` synthetic
-  proxy corpora (originals, strict ports, compile outputs, deviation indexes).
+- `corpora/` — Wave 6 validation corpora: `erp/`, `procedures/`, `incident/`,
+  `etl/`, `governance/`, and `clinical/` synthetic proxy corpora (originals,
+  strict ports, compile outputs, deviation indexes). `governance/` and
+  `clinical/` also carry a flat `rules/*.meridian` fixture (top-of-file
+  Phase-8 rule sugar, retained as flat-path regression coverage alongside the
+  in-section rule firing both corpora otherwise use).
 - `docs/` — numbered docs (`01_OVERVIEW` … `15_DECISIONS`, `coverage/`).
 - `meridian-handoff/docs/` — **read-only** original spec (blueprint, language,
   IR, codegen, runtime API, build plan, decisions).
@@ -257,8 +262,10 @@ floors.
 If the change affects generated Swift, codegen, domain emission, migration, or
 the gbrain corpus, do not skip the typecheck env vars; they are the only gates
 that feed generated output to `swiftc`. Changes that affect corpus migration,
-rulebooks, or generated Swift for `corpora/erp` / `corpora/procedures` must also
-run `MERIDIAN_CORPORA_TYPECHECK=1 swift test --filter CorporaConformanceTests`.
+rulebooks, or generated Swift for `corpora/erp` / `corpora/procedures` /
+`corpora/incident` / `corpora/etl` / `corpora/governance` / `corpora/clinical`
+must also run `MERIDIAN_CORPORA_TYPECHECK=1 swift test --filter
+CorporaConformanceTests`.
 When diagnosing strict-compile failures across any corpus ports, use the
 readable reporter instead of an inline shell loop:
 
@@ -274,6 +281,10 @@ instead of hand-written `migrate-skill` invocations:
 swift scripts/generate-migration.swift --corpus gbrain
 swift scripts/generate-migration.swift --corpus erp
 swift scripts/generate-migration.swift --corpus procedures
+swift scripts/generate-migration.swift --corpus incident
+swift scripts/generate-migration.swift --corpus etl
+swift scripts/generate-migration.swift --corpus governance
+swift scripts/generate-migration.swift --corpus clinical
 ```
 
 It runs `migrate-skill <root>/original-skills --out <root>/skills --batch
@@ -292,6 +303,10 @@ hand-written loops:
 swift scripts/generate-compile-outputs.swift --corpus gbrain
 swift scripts/generate-compile-outputs.swift --corpus erp
 swift scripts/generate-compile-outputs.swift --corpus procedures
+swift scripts/generate-compile-outputs.swift --corpus incident
+swift scripts/generate-compile-outputs.swift --corpus etl
+swift scripts/generate-compile-outputs.swift --corpus governance
+swift scripts/generate-compile-outputs.swift --corpus clinical
 ```
 
 It cleans each selected `<root>/compile-outputs/` directory and recompiles
@@ -303,10 +318,15 @@ hand-written loops:
 swift scripts/generate-deviations.swift --corpus gbrain
 swift scripts/generate-deviations.swift --corpus erp
 swift scripts/generate-deviations.swift --corpus procedures
+swift scripts/generate-deviations.swift --corpus incident
+swift scripts/generate-deviations.swift --corpus etl
+swift scripts/generate-deviations.swift --corpus governance
+swift scripts/generate-deviations.swift --corpus clinical
 ```
 
 It runs `skill-deviation --batch --index` for `sample-gbrain`, `corpora/erp`,
-and `corpora/procedures`, then prints each corpus's generated `## Summary`
+`corpora/procedures`, `corpora/incident`, `corpora/etl`, `corpora/governance`,
+and `corpora/clinical`, then prints each corpus's generated `## Summary`
 block (the deviation index proper — tiers, similarity, inert/operational-inert/
 unclassified counts) *and* a per-file operational-inert breakdown (worst
 offenders first, parsed from the `## Per-skill` table) to stdout, so a run of
@@ -350,7 +370,7 @@ convention changes, update its rule file, not this handbook.
 
 | Rule file | Covers | Attaches when editing |
 |---|---|---|
-| `compiler-internals.mdc` | `matchPhrase`/lowering/parsing invariants + the 12 IR primitives & `IRExpression` cases | `Sources/MeridianCore/{Parser,Lowering,Symbols,IR}/**` |
+| `compiler-internals.mdc` | `matchPhrase`/lowering/parsing invariants + the 13 IR primitives & `IRExpression` cases | `Sources/MeridianCore/{Parser,Lowering,Symbols,IR}/**` |
 | `codegen.mdc` | `SwiftEmitter` escaping, namespacing, `emitValueExpr`, comparison emission, struct conventions | `Sources/MeridianCore/Codegen/**` |
 | `runtime.mdc` | `Value` enum, `State.get` keys, `Runtime.init`, `Observer`/`Event` naming, sync helpers | `Sources/MeridianRuntime/**` |
 | `tracing.mdc` | `ParserTrace` categories, `MERIDIAN_TRACE`, thread safety, the `trace` parameter convention | `Sources/MeridianCore/Diagnostics/**` |
@@ -562,6 +582,16 @@ Never build a partial production mask by dropping missing anchors. A partial
 mask under-represents real trigger words and can wrongly screen out valid
 expressions. This previously broke quantifiers when some determiners
 (`every`/`any`/`no`/…) were not represented in the first 64 anchors.
+
+### 18. Authoring a new corpus: see `corpora/GENERATING_A_CORPUS.md`
+
+Adding a new `corpora/<name>/` corpus (vocabulary + rulebook + natural-
+language `SKILL.md` skills ported through `migrate-skill`) has its own
+playbook and a "Known gotchas" section (context-blind `normativeCueWords`
+matching, `if`/`otherwise` + judgment fragmentation, rule-attachment
+phrasings that silently don't attach, unsupported negative temporal
+definitions) — read `corpora/GENERATING_A_CORPUS.md` before starting one
+rather than rediscovering these corpus-by-corpus.
 
 ---
 

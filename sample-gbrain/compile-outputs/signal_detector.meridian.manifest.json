@@ -130,55 +130,61 @@
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 71,
+        "line" : 70,
         "text" : "Phase 1: Idea\/Observation Detection (PRIMARY) — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 78,
+        "line" : 74,
+        "text" : "Phase 1: Idea\/Observation Detection (PRIMARY) — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 81,
         "text" : "Phase 2: Entity Detection (SECONDARY)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 90,
+        "line" : 93,
         "text" : "Phase 2: Entity Detection (SECONDARY) — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 95,
+        "line" : 98,
         "text" : "Phase 2: Entity Detection (SECONDARY) — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 99,
+        "line" : 102,
         "text" : "Phase 3: Signal Logging"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 104,
+        "line" : 107,
         "text" : "Phase 3: Signal Logging — steps"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 110,
+        "line" : 113,
         "text" : "Output Format"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 115,
+        "line" : 118,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 123,
+        "line" : 126,
         "text" : "Tools Used"
       },
       {
@@ -196,13 +202,13 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 92,
+        "line" : 95,
         "text" : "For each entity"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 106,
+        "line" : 109,
         "text" : "Always log a one-line summary"
       }
     ],
@@ -257,7 +263,6 @@
         "heading" : "Phase 1: Idea\/Observation Detection (PRIMARY)",
         "line" : 63,
         "lines" : [
-          "When the user expresses a novel thought, observation, thesis, or framework:",
           "If it's the user's **original thinking** (they generated it) → create\/update `originals\/{slug}`",
           "If it's a **world concept** they're referencing → create\/update `concepts\/{slug}`",
           "If it's a **product or business idea** → create\/update `ideas\/{slug}`"
@@ -267,7 +272,16 @@
       {
         "executes" : false,
         "heading" : "Phase 1: Idea\/Observation Detection (PRIMARY) — steps",
-        "line" : 71,
+        "line" : 70,
+        "lines" : [
+          "When the user expresses a novel thought, observation, thesis, or framework:"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Phase 1: Idea\/Observation Detection (PRIMARY) — steps 2",
+        "line" : 74,
         "lines" : [
           "The user's language IS the insight. Don't paraphrase",
           "Cross-linking (MANDATORY): Every original MUST link to related people, companies,",
@@ -278,7 +292,7 @@
       {
         "executes" : false,
         "heading" : "Phase 2: Entity Detection (SECONDARY)",
-        "line" : 78,
+        "line" : 81,
         "lines" : [
           "Extract entity mentions (people, companies, media titles)",
           "If NO page → check notability. If notable, create page with enrichment",
@@ -294,7 +308,7 @@
       {
         "executes" : true,
         "heading" : "Phase 2: Entity Detection (SECONDARY) — steps",
-        "line" : 90,
+        "line" : 93,
         "lines" : [
           "For each entity:",
           "`gbrain search \"name\"` — does a page exist?"
@@ -304,7 +318,7 @@
       {
         "executes" : true,
         "heading" : "Phase 2: Entity Detection (SECONDARY) — steps 2",
-        "line" : 95,
+        "line" : 98,
         "lines" : [
           "For new FACTS with specific dates → call `gbrain timeline-add <slug> <date> \"<summary>\"`"
         ],
@@ -313,7 +327,7 @@
       {
         "executes" : false,
         "heading" : "Phase 3: Signal Logging",
-        "line" : 99,
+        "line" : 102,
         "lines" : [
           "This makes the ambient capture loop debuggable"
         ],
@@ -322,7 +336,7 @@
       {
         "executes" : false,
         "heading" : "Phase 3: Signal Logging — steps",
-        "line" : 104,
+        "line" : 107,
         "lines" : [
           "Always log a one-line summary:",
           "`Signals: 0 ideas, 0 entities, 0 facts (skipped: operational)`",
@@ -333,7 +347,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 110,
+        "line" : 113,
         "lines" : [
           "No visible output to the user. This skill runs silently in the background",
           "The output is brain pages created\/updated and the signal log line"
@@ -343,7 +357,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 115,
+        "line" : 118,
         "lines" : [
           "Blocking the main response to wait for signal detection to complete",
           "Paraphrasing the user's original thinking instead of capturing exact phrasing",
@@ -356,7 +370,7 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 123,
+        "line" : 126,
         "lines" : [
           "`search` — check if entity page exists",
           "`query` — semantic search for related context",
@@ -414,15 +428,15 @@
       "swift_line" : 605
     },
     {
-      "meridian_line" : 92,
+      "meridian_line" : 95,
       "swift_line" : 609
     },
     {
-      "meridian_line" : 93,
+      "meridian_line" : 96,
       "swift_line" : 615
     },
     {
-      "meridian_line" : 97,
+      "meridian_line" : 100,
       "swift_line" : 631
     },
     {

@@ -4,7 +4,7 @@
 - Ported: `monthendclose.meri`
 - Tier: 1 (near-verbatim)
 - Similarity: 96%
-- Lines: 24 -> 24 (+1 / -1)
+- Lines: 26 -> 26 (+1 / -1)
 
 ## Frontmatter
 - Added: (none)
@@ -17,7 +17,7 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L14 `Accounting notes`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L16 `Accounting notes`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
 - Sections inert total: 1/3 (33% total inert; includes intentional docs/templates/tools metadata)
@@ -28,14 +28,14 @@ These sections were made non-executable in the port and should be reviewed as mi
 - Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L14 `Accounting notes`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L16 `Accounting notes`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/month_end_close/SKILL.md
 +++ skills/monthendclose.meri
-@@ -18,7 +18,7 @@
+@@ -20,7 +20,7 @@
  close the accounting period.
  Publish: "accounting period closed".
  

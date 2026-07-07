@@ -294,49 +294,49 @@
       {
         "kind" : "invariants",
         "level" : 2,
-        "line" : 404,
+        "line" : 399,
         "text" : "Hard Rules"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 406,
+        "line" : 401,
         "text" : "Knowledge domain"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 412,
+        "line" : 407,
         "text" : "Knowledge domain — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 416,
+        "line" : 411,
         "text" : "Capability domain"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 422,
+        "line" : 417,
         "text" : "Meta"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 426,
+        "line" : 421,
         "text" : "Changelog"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 428,
+        "line" : 423,
         "text" : "v1.0.0 — gbrain v0.39.0.0"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 437,
+        "line" : 432,
         "text" : "v1.0.0 — gbrain v0.39.0.0 — steps"
       },
       {
@@ -356,6 +356,12 @@
         "level" : 3,
         "line" : 167,
         "text" : "Output"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 203,
+        "text" : "If schema needs change"
       },
       {
         "kind" : "topic",
@@ -544,6 +550,7 @@
         "heading" : "Phase 3: SCHEMA CHECK — Does the active pack cover this content? — steps 2",
         "line" : 201,
         "lines" : [
+          "If schema needs change:",
           "Propose the addition to the user before running `review-candidates --apply`"
         ],
         "role" : "procedure"
@@ -766,20 +773,15 @@
         "heading" : "Anti-Patterns — steps",
         "line" : 395,
         "lines" : [
-          "Every filing decision",
-          "reads `gbrain schema show --json`. Users on `gbrain-recommended` AND",
-          "custom packs MUST get the right behavior automatically. Pinned by D9",
-          "from \/plan-eng-review",
-          "Confidence < 0.6",
-          "from `gbrain schema suggest` is \"manual review required\" per codex",
-          "finding #9. EIIRP surfaces it; the user accepts"
+          "Hardcoding directory tables in EIIRP's logic. Every filing decision reads `gbrain schema show --json`. Users on `gbrain-recommended` AND custom packs MUST get the right behavior automatically. Pinned by D9 from \/plan-eng-review",
+          "Auto-applying low-confidence schema suggestions. Confidence < 0.6 from `gbrain schema suggest` is \"manual review required\" per codex finding #9. EIIRP surfaces it; the user accepts"
         ],
         "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Hard Rules",
-        "line" : 404,
+        "line" : 399,
         "lines" : [
 
         ],
@@ -788,7 +790,7 @@
       {
         "executes" : false,
         "heading" : "Knowledge domain",
-        "line" : 406,
+        "line" : 401,
         "lines" : [
           "**Never leave research only in chat.** If it took >10 minutes to produce, it gets a brain page",
           "**Every source gets a citation.** No \"according to reports\" without a URL",
@@ -800,7 +802,7 @@
       {
         "executes" : true,
         "heading" : "Knowledge domain — steps",
-        "line" : 412,
+        "line" : 407,
         "lines" : [
           "Never treat non-English sources as secondary"
         ],
@@ -809,7 +811,7 @@
       {
         "executes" : false,
         "heading" : "Capability domain",
-        "line" : 416,
+        "line" : 411,
         "lines" : [
           "**DRY is sacred.** If the same logic appears in two skills, extract it to `lib\/`",
           "**MECE is sacred.** Every trigger phrase routes to exactly one skill",
@@ -821,7 +823,7 @@
       {
         "executes" : true,
         "heading" : "Meta",
-        "line" : 422,
+        "line" : 417,
         "lines" : [
           "**EIIRP is idempotent.** Running it twice on the same work should produce no changes the second time",
           "**EIIRP consumes the active schema pack as data.** Never hard-code directory tables in EIIRP's logic — read from `gbrain schema show --json` so users who picked `gbrain-recommended` OR custom packs get the right behavior automatically"
@@ -831,7 +833,7 @@
       {
         "executes" : false,
         "heading" : "Changelog",
-        "line" : 426,
+        "line" : 421,
         "lines" : [
 
         ],
@@ -840,7 +842,7 @@
       {
         "executes" : false,
         "heading" : "v1.0.0 — gbrain v0.39.0.0",
-        "line" : 428,
+        "line" : 423,
         "lines" : [
           "Initial port from upstream OpenClaw. Genericized — no references to",
           "private fork names per CLAUDE.md privacy rules",
@@ -855,7 +857,7 @@
       {
         "executes" : true,
         "heading" : "v1.0.0 — gbrain v0.39.0.0 — steps",
-        "line" : 437,
+        "line" : 432,
         "lines" : [
           "Phase 6 verification uses `gbrain doctor`'s schema_pack_consistency",
           "check (T7) for the persistent surface"
@@ -1046,17 +1048,9 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "If `brain-taxonomist` is installed, INVOKE IT for ambiguous cases. It runs\nthe same decision protocol against the active pack and gives you a single\nrecommended filing path with reasoning\nOutput: a filing plan table:\ncodeblock:bash:IyBXaGF0J3MgZW1lcmdpbmcgaW4gdGhlIGJyYWluIHRoYXQgdGhlIGFjdGl2ZSBwYWNrIGRvZXNuJ3QgY292ZXI\/CmdicmFpbiBzY2hlbWEgZGV0ZWN0IC0tanNvbgoKIyBMTE0tcmVmaW5lZCBzdWdnZXN0aW9ucyAoaGV1cmlzdGljIHdoZW4gbm8gQVBJIGtleSBzZXQpLgpnYnJhaW4gc2NoZW1hIHN1Z2dlc3QgLS1qc29uCgojIFJldmlldyB3aGF0J3MgcGVuZGluZzsgcHJvbW90ZSBvciBpZ25vcmUgZWFjaCBjYW5kaWRhdGUuCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1qc29uCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1hcHBseSA8cHJlZml4LW9yLXR5cGUtbmFtZT4=\nPropose the addition to the user before running `review-candidates --apply`\nFor each item in the filing plan:\nUse the brain page template. MUST include:\nFor each entity mentioned:\nCheck if a brain page exists (`gbrain search \"<name>\"` or `gbrain get_page people\/<slug>`)\nIf exists: update State, append Timeline entry citing this research\nIf not: create with enrichment\nAfter ALL pages are written, run `gbrain sync` (or commit + push in the\nbrain repo). Verify every link resolves\nThis phase operates on the SKILL graph, not just the research\nFor each identified pattern:\nShared logic → `lib\/` (not copy-pasted into skills)\nIs shared code copy-pasted between skills? (extract to `lib\/`)\nOn approval: invoke `\/skillify` for each new\/modified skill\ncodeblock:bash:Z2JyYWluIGNoZWNrLXJlc29sdmFibGUgICAgICAgICAgICAgICAgICAgICAgICAgIyByb3V0aW5nLXRhYmxlIHJlYWNoYWJpbGl0eQpnYnJhaW4gZG9jdG9yIC0tanNvbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIGhlYWx0aCBzdXJmYWNlCmdicmFpbiBzZWFyY2ggIjx0b3BpYyBrZXl3b3Jkcz4iICAgICAgICAgICAgICAgICMgYnJhaW4gcGFnZXMgZmluZGFibGUKZ2JyYWluIG9ycGhhbnMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBhbnkgcGFnZXMgd2l0aG91dCBpbmJvdW5kIGxpbmtzPw==\nAll brain pages have proper frontmatter against active schema pack\nAll entity pages are cross-linked\nAny new skills have routing entries in `skills\/RESOLVER.md`\nNo DRY violations (no duplicated logic across skills)\nNo MECE violations (no ambiguous routing between skills)\nActive schema pack updated if new content types emerged\n`gbrain doctor` reports `schema_pack_consistency: ok`\ncodeblock:markdown:IyMgRUlJUlAgQ29tcGxldGU6IFtUb3BpY10KCiMjIyBCcmFpbiBwYWdlcyBjcmVhdGVkL3VwZGF0ZWQKLSBbcGF0aF0g4oCUIFtkZXNjcmlwdGlvbl0KLSAuLi4KCiMjIyBFbnRpdHkgcGFnZXMKLSBbcGF0aF0g4oCUIFtjcmVhdGVkL3VwZGF0ZWRdCi0gLi4uCgojIyMgU2NoZW1hIGNoYW5nZXMKLSBbbm9uZSAvIGRlc2NyaXB0aW9uIG9mIGNoYW5nZXMgKyB3aGljaCBwYWNrIGRlbHRhIGZpbGVdCgojIyMgU2tpbGxzIGlkZW50aWZpZWQKLSBbc2tpbGwtbmFtZV0g4oCUIFtzdGF0dXM6IGNyZWF0ZWQgLyBtZXJnZWQgLyBkZWZlcnJlZF0KLSAuLi4KCiMjIyBSZXNvbHZlciBzdGF0dXMKLSBEUlkgY2hlY2s6IFtjbGVhbl0KLSBNRUNFIGF1ZGl0OiBbY2xlYW5dCi0gQWN0aXZlIHBhY2s6IFtuYW1lXSB2W3ZlcnNpb25dCi0gc2NoZW1hX3BhY2tfY29uc2lzdGVuY3k6IFtvayAvIHdhcm4g4oCUIHBjdCB1bnR5cGVkXQ==\nNever treat non-English sources as secondary\n**EIIRP is idempotent.** Running it twice on the same work should produce no changes the second time\n**EIIRP consumes the active schema pack as data.** Never hard-code directory tables in EIIRP's logic — read from `gbrain schema show --json` so users who picked `gbrain-recommended` OR custom packs get the right behavior automatically\nPhase 6 verification uses `gbrain doctor`'s schema_pack_consistency\ncheck (T7) for the persistent surface",
+          "guidance" : "If `brain-taxonomist` is installed, INVOKE IT for ambiguous cases. It runs\nthe same decision protocol against the active pack and gives you a single\nrecommended filing path with reasoning\nOutput: a filing plan table:\ncodeblock:bash:IyBXaGF0J3MgZW1lcmdpbmcgaW4gdGhlIGJyYWluIHRoYXQgdGhlIGFjdGl2ZSBwYWNrIGRvZXNuJ3QgY292ZXI\/CmdicmFpbiBzY2hlbWEgZGV0ZWN0IC0tanNvbgoKIyBMTE0tcmVmaW5lZCBzdWdnZXN0aW9ucyAoaGV1cmlzdGljIHdoZW4gbm8gQVBJIGtleSBzZXQpLgpnYnJhaW4gc2NoZW1hIHN1Z2dlc3QgLS1qc29uCgojIFJldmlldyB3aGF0J3MgcGVuZGluZzsgcHJvbW90ZSBvciBpZ25vcmUgZWFjaCBjYW5kaWRhdGUuCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1qc29uCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1hcHBseSA8cHJlZml4LW9yLXR5cGUtbmFtZT4=\nIf schema needs change:\nPropose the addition to the user before running `review-candidates --apply`\nFor each item in the filing plan:\nUse the brain page template. MUST include:\nFor each entity mentioned:\nCheck if a brain page exists (`gbrain search \"<name>\"` or `gbrain get_page people\/<slug>`)\nIf exists: update State, append Timeline entry citing this research\nIf not: create with enrichment\nAfter ALL pages are written, run `gbrain sync` (or commit + push in the\nbrain repo). Verify every link resolves\nThis phase operates on the SKILL graph, not just the research\nFor each identified pattern:\nShared logic → `lib\/` (not copy-pasted into skills)\nIs shared code copy-pasted between skills? (extract to `lib\/`)\nOn approval: invoke `\/skillify` for each new\/modified skill\ncodeblock:bash:Z2JyYWluIGNoZWNrLXJlc29sdmFibGUgICAgICAgICAgICAgICAgICAgICAgICAgIyByb3V0aW5nLXRhYmxlIHJlYWNoYWJpbGl0eQpnYnJhaW4gZG9jdG9yIC0tanNvbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIGhlYWx0aCBzdXJmYWNlCmdicmFpbiBzZWFyY2ggIjx0b3BpYyBrZXl3b3Jkcz4iICAgICAgICAgICAgICAgICMgYnJhaW4gcGFnZXMgZmluZGFibGUKZ2JyYWluIG9ycGhhbnMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBhbnkgcGFnZXMgd2l0aG91dCBpbmJvdW5kIGxpbmtzPw==\nAll brain pages have proper frontmatter against active schema pack\nAll entity pages are cross-linked\nAny new skills have routing entries in `skills\/RESOLVER.md`\nNo DRY violations (no duplicated logic across skills)\nNo MECE violations (no ambiguous routing between skills)\nActive schema pack updated if new content types emerged\n`gbrain doctor` reports `schema_pack_consistency: ok`\ncodeblock:markdown:IyMgRUlJUlAgQ29tcGxldGU6IFtUb3BpY10KCiMjIyBCcmFpbiBwYWdlcyBjcmVhdGVkL3VwZGF0ZWQKLSBbcGF0aF0g4oCUIFtkZXNjcmlwdGlvbl0KLSAuLi4KCiMjIyBFbnRpdHkgcGFnZXMKLSBbcGF0aF0g4oCUIFtjcmVhdGVkL3VwZGF0ZWRdCi0gLi4uCgojIyMgU2NoZW1hIGNoYW5nZXMKLSBbbm9uZSAvIGRlc2NyaXB0aW9uIG9mIGNoYW5nZXMgKyB3aGljaCBwYWNrIGRlbHRhIGZpbGVdCgojIyMgU2tpbGxzIGlkZW50aWZpZWQKLSBbc2tpbGwtbmFtZV0g4oCUIFtzdGF0dXM6IGNyZWF0ZWQgLyBtZXJnZWQgLyBkZWZlcnJlZF0KLSAuLi4KCiMjIyBSZXNvbHZlciBzdGF0dXMKLSBEUlkgY2hlY2s6IFtjbGVhbl0KLSBNRUNFIGF1ZGl0OiBbY2xlYW5dCi0gQWN0aXZlIHBhY2s6IFtuYW1lXSB2W3ZlcnNpb25dCi0gc2NoZW1hX3BhY2tfY29uc2lzdGVuY3k6IFtvayAvIHdhcm4g4oCUIHBjdCB1bnR5cGVkXQ==\nNever treat non-English sources as secondary\n**EIIRP is idempotent.** Running it twice on the same work should produce no changes the second time\n**EIIRP consumes the active schema pack as data.** Never hard-code directory tables in EIIRP's logic — read from `gbrain schema show --json` so users who picked `gbrain-recommended` OR custom packs get the right behavior automatically\nPhase 6 verification uses `gbrain doctor`'s schema_pack_consistency\ncheck (T7) for the persistent surface",
           "line" : 159,
           "scoped_tools" : [
             "link.add",
@@ -1067,6 +1061,13 @@
             "timeline.add"
           ],
           "text" : "follow the Phase 2: TAXONOMY — Where does each piece go? — steps 2 guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "eiirp a input",

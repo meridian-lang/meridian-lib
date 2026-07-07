@@ -769,8 +769,16 @@ things*. See AGENTS.md §3.
 
 ## Phase 8 additions — Executable rules (Phase C)
 
-Rules at the top of a `.meridian` file are now lowered to executable IR
-rather than being documentation-only.
+Rules at the top of a `.meridian` file are lowered to executable IR rather
+than being documentation-only. This now applies **inside sectioned (SKILL.md-
+style, heading-bearing) documents too** — a `must not` / `may` [+ bounded
+`up to N`] / `must be … by … before` / `When …, …` sentence fires exactly the
+same way whether it sits at the top of a flat `.meridian` file or inside a
+`##`/`###` executable section (`procedure`, `invariants`, `prohibitions`).
+Prose is opt-in, never inferred: mark the section `(( role: reference ))` /
+`(( inert ))`, or comment the line (`#`/`>`), to keep it as documentation. See
+"gbrain SKILL surface" below for the exact classification precedence and the
+`When …,` = trigger rule.
 
 ### Rule forms
 
@@ -779,8 +787,22 @@ rather than being documentation-only.
 | `A customer with status suspended must not place orders.` | `AssertIR` prepended to matching workflow |
 | `A customer must not place an order whose total amount is more than their credit limit.` | `AssertIR` with two-parameter predicate |
 | `An order … must be approved by an account manager before fulfillment.` | `WaitIR(.approval(…))` prepended |
-| `When an order has been on hold for more than 7 days, escalate the order.` | New synthetic `IRWorkflow` with `WaitIR(.event)` |
+| `When an order is flagged as stale, escalate the order.` | New synthetic `IRWorkflow` with `WaitIR(.event)` |
 | `A customer with status verified may place orders.` | Permission struct entry; softens matching `must not` assertions |
+
+`When <condition>, <action>` always compiles to an external-event stub — the
+condition is never re-evaluated by a scheduler/poller, only matched against a
+host-raised event. Because of that, `<condition>` must be opaque
+externally-raised-event prose (bare equality/passive voice, e.g. `"a refund is
+requested"`, `"an order is flagged as stale"`), not a real checkable
+predicate. A condition that structurally names one (a magnitude/pattern/set
+comparison, an emptiness/temporal-window check, a duration mention, a
+quantifier, a relation traversal, a description, an aggregate, a superlative,
+a table lookup, or a declared-verb predicate — e.g. `"an order has been on
+hold for more than 7 days"`) is rejected with `MER3017` instead of silently
+compiling to an event nobody will ever raise. Rewrite it as an explicit
+workflow guard/assertion the compiler can evaluate directly, or phrase it as
+the external event/signal a host actually raises.
 
 ### `may` rules and permission softening
 
@@ -894,14 +916,30 @@ writes_pages:
 - YAML **sequences** (`- item`) and **block scalars** (`description: |`) are
   parsed in addition to scalar `key: value` lines.
 - `tools:` is the per-skill scoped tool allow-list (replaces the hardcoded
-  all-tools default in `ProseStepIR.scopedTools`).
+  all-tools default in `AIJudgmentIR.scopedTools` / `AIAutonomyIR.scopedTools`).
 - `triggers:` are classified into typed kinds and synthesised into trigger
   workflows (below). All other keys are projected through the typed
   `SkillFrontmatter` and emitted under `meridian_skill` in the manifest.
-- In sectioned documents, narrative sentences that begin with "When …" /
-  "A …" / "An …" are **prose**, not Meridian `When X, do Y` rules. Skill triggers
-  come from frontmatter `triggers:`; cross-cutting behaviour comes from rulebook
-  conventions.
+- **Rule/statement/prose classification precedence, inside an executable
+  section (`procedure`/`invariants`/`prohibitions`):** for each one-line,
+  non-table/checklist/code-block statement group, in order —
+  1. If the section is the guidance body of a `use judgment to follow the …
+     guidance:` step, the line is guidance prose for that step, never a rule
+     or a statement (the judgment step swallows every following same-section
+     line regardless of indentation).
+  2. Otherwise, if the line is rule-shaped (starts with a parameter article
+     `a`/`an`/`the`, or the literal `when `) **and** matches one of the Phase-8
+     rule forms below, it fires as a rule — `must not` / `may` [+ bounded
+     `up to N`] / `must be … by … before` / `When …, …` are **always** trigger
+     rules here, never inline `if`/`unless` conditionals, even in prose-heavy
+     SKILL.md-style writing. Use `if`/`unless`/`only when` for an ordinary
+     inline conditional statement.
+  3. Otherwise it lowers as an ordinary statement per its section's role.
+  `applicability`/`negative-applicability` sections are exempt from step 2 —
+  their bullets are dispatch-phrase fragments (e.g. `When the user says "X"`),
+  not rule sentences, and are always mined as dispatch predicates instead.
+  Skill triggers otherwise come from frontmatter `triggers:`; cross-cutting
+  behaviour comes from rulebook conventions.
 
 ### Section roles (rulebook-driven)
 
@@ -1246,8 +1284,10 @@ use judgment to decide if the entity is notable:
 ```
 
 `use judgment to <goal>:` (and `with discretion` / `with autonomy` on the
-workflow header) lower to `ProseStepIR`. This is the ONLY path prose reaches the
-planner; unmarked freeform prose is a hard error.
+workflow header) lower to `IRPrimitive.aiJudgment(AIJudgmentIR)` (discretion,
+plan-then-execute) or `IRPrimitive.aiAutonomy(AIAutonomyIR)` (autonomy, looping),
+picked by the same `ProseDispatchMode` the AST already carries. This is the
+ONLY path prose reaches the planner; unmarked freeform prose is a hard error.
 
 ### Choice-gate
 
@@ -1308,8 +1348,8 @@ the line **directly above** the table:
 | *(none)* / `!!! table (( decision table ))` | decision | one `if <conds>, <action>.` per row |
 | `!!! table (( data table[: <name>] ))` | data | `bind <name> = <recordList>` (name optional, defaults to `table`) |
 | `!!! table (( iteration table ))` | iteration | reserved (accepted; no statements yet) |
-| `!!! table (( ai-discretion ))` | ai-discretion | a discretion prose step (`ProseStepIR(.planThenExecute)`) — the planner picks the matching row and does its action |
-| `!!! table (( ai-autonomy ))` | ai-autonomy | an autonomy prose step (`ProseStepIR(.autonomousLoop)`) |
+| `!!! table (( ai-discretion ))` | ai-discretion | a discretion step (`IRPrimitive.aiJudgment(AIJudgmentIR)`) — the planner picks the matching row and does its action |
+| `!!! table (( ai-autonomy ))` | ai-autonomy | an autonomy step (`IRPrimitive.aiAutonomy(AIAutonomyIR)`) |
 | `!!! table (( inert ))` | inert | nothing (documentation only) |
 
 **Decision table.** The last column (or one headed `action`/`then`/`do`/`result`)
@@ -1376,8 +1416,8 @@ collapses into one prose step with every criterion embedded as the goal:
 | Marker | Lowers to |
 |---|---|
 | *(none)* / `!!! checklist (( invariant ))` | one `assert` per item (each must be checkable) |
-| `!!! checklist (( ai-autonomy ))` | `ProseStepIR(.autonomousLoop)` — loop, act until every criterion holds |
-| `!!! checklist (( ai-discretion ))` | `ProseStepIR(.planThenExecute)` — verify/resolve the criteria once |
+| `!!! checklist (( ai-autonomy ))` | `IRPrimitive.aiAutonomy(AIAutonomyIR)` — loop, act until every criterion holds |
+| `!!! checklist (( ai-discretion ))` | `IRPrimitive.aiJudgment(AIJudgmentIR)` — verify/resolve the criteria once |
 | `!!! checklist (( inert ))` | nothing (documentation only) |
 
 ```

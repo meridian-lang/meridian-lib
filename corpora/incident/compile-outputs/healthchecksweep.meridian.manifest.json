@@ -1,0 +1,360 @@
+{
+  "constants" : {
+    "escalation cooldown" : 600,
+    "maximum page attempts" : 3,
+    "slo error budget threshold" : 0.10000000000000001
+  },
+  "instances_required" : [
+    {
+      "kind" : "service",
+      "name" : "pagerduty service"
+    },
+    {
+      "kind" : "service",
+      "name" : "statuspage service"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "actionable",
+      "function" : "meridianDef_Alert_actionable",
+      "kind" : "alert",
+      "line" : 30
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Alert_critical",
+      "kind" : "alert",
+      "line" : 23
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Alert_stale",
+      "kind" : "alert",
+      "line" : 24
+    },
+    {
+      "adjective" : "unhealthy",
+      "function" : "meridianDef_Deploy_unhealthy",
+      "kind" : "deploy",
+      "line" : 26
+    },
+    {
+      "adjective" : "high severity",
+      "function" : "meridianDef_Incident_highSeverity",
+      "kind" : "incident",
+      "line" : 27
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Incident_open",
+      "kind" : "incident",
+      "line" : 28
+    },
+    {
+      "adjective" : "degraded",
+      "function" : "meridianDef_Service_degraded",
+      "kind" : "service",
+      "line" : 25
+    },
+    {
+      "adjective" : "breached",
+      "function" : "meridianDef_Slo_breached",
+      "kind" : "slo",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a runbook",
+      "line" : 36,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "runbook.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a service",
+      "line" : 32,
+      "name" : "firing",
+      "right_cardinality" : "one",
+      "right_kind" : "an alert",
+      "via" : "alert.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an oncall engineer",
+      "line" : 34,
+      "name" : "ownership",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "oncall.roster"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Sweep every service's health in parallel with a background runbook refresh, so a healthcheck pass doesn't wait on stale runbook lookups and a runbook refresh doesn't block the healthcheck it's supposed to support.",
+    "name" : "healthcheck sweep",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 20,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 25,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 37,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 45,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 48,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 28,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 34,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 35,
+        "text" : "Post"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 20,
+        "lines" : [
+          "\"sweep service health\"",
+          "\"run healthcheck sweep\"",
+          "\"run the health sweep pass\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 25,
+        "lines" : [
+          "fetch services",
+          "fetch runbooks",
+          "Check: all services have a name",
+          "simultaneously:",
+          "for each service:",
+          "check the health of the service",
+          "for each runbook:",
+          "in the background, look up the runbook for the pagerduty service",
+          "Check: no services whose status is \"degraded\"",
+          "Post: \"healthcheck sweep complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 37,
+        "lines" : [
+          "Don't run the runbook lookups sequentially after the health checks \"to",
+          "keep things simple.\" The two are independent; running them",
+          "simultaneously is what keeps this sweep fast enough to run frequently",
+          "Don't skip the closing degraded check because the individual health",
+          "checks \"already ran.\" The closing check is what turns individual results",
+          "into a pass\/fail verdict for the whole sweep"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 45,
+        "lines" : [
+          "make sure all services have a name"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 48,
+        "lines" : [
+          "The receipt confirms every service is healthy and named, and that the",
+          "runbook refresh completed alongside the sweep rather than after it"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"sweep service health\"\n\"run healthcheck sweep\"\n\"run the health sweep pass\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "cover",
+      "line" : 41,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "own",
+      "line" : 40,
+      "past_participle" : "owned",
+      "relation" : "ownership",
+      "third_person" : "owns"
+    },
+    {
+      "base" : "page",
+      "line" : 39,
+      "past_participle" : "paged",
+      "relation" : "ownership",
+      "third_person" : "pages"
+    }
+  ],
+  "source_files" : [
+    "healthchecksweep.meri",
+    "incident.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 46,
+      "swift_line" : 393
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 398
+    },
+    {
+      "meridian_line" : 53,
+      "swift_line" : 405
+    },
+    {
+      "meridian_line" : 28,
+      "swift_line" : 412
+    },
+    {
+      "meridian_line" : 29,
+      "swift_line" : 416
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 420
+    },
+    {
+      "meridian_line" : 68,
+      "swift_line" : 426
+    },
+    {
+      "meridian_line" : 32,
+      "swift_line" : 444
+    },
+    {
+      "meridian_line" : 33,
+      "swift_line" : 449
+    },
+    {
+      "meridian_line" : 83,
+      "swift_line" : 453
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 475
+    },
+    {
+      "meridian_line" : 35,
+      "swift_line" : 480
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 519
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 524
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 564
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 569
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 609
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 614
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "healthcheck sweep",
+      "swift_struct" : "HealthcheckSweep"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when sweepServiceHealth fires",
+      "swift_struct" : "WhenSweepservicehealthFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runHealthcheckSweep fires",
+      "swift_struct" : "WhenRunhealthchecksweepFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runHealthSweepPass fires",
+      "swift_struct" : "WhenRunhealthsweeppassFires"
+    }
+  ]
+}

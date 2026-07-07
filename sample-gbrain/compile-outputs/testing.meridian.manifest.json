@@ -116,7 +116,7 @@
         "text" : "Contract"
       },
       {
-        "kind" : "reference",
+        "kind" : "invariants",
         "level" : 3,
         "line" : 57,
         "text" : "Contract — steps"
@@ -124,91 +124,175 @@
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 65,
+        "line" : 64,
         "text" : "Phases"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 75,
+        "line" : 74,
         "text" : "Automation"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 80,
+        "line" : 79,
         "text" : "Automation — steps"
       },
       {
         "kind" : "template",
         "level" : 3,
-        "line" : 86,
+        "line" : 85,
         "text" : "Output format"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 102,
+        "line" : 101,
         "text" : "Mode 2: Project test-suite health (v0.25.1)"
       },
       {
-        "kind" : "reference",
+        "kind" : "applicability",
         "level" : 3,
-        "line" : 104,
+        "line" : 103,
         "text" : "When to use"
       },
       {
         "kind" : "inert",
         "level" : 3,
-        "line" : 112,
+        "line" : 111,
         "text" : "Test tiers"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 115,
+        "line" : 114,
         "text" : "Test tiers — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 125,
+        "line" : 124,
         "text" : "Daily run protocol"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 239,
+        "line" : 129,
+        "text" : "1. Run unit tests"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 134,
+        "text" : "1. Run unit tests — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 140,
+        "text" : "2. Run evals (if the project has an evals config)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 146,
+        "text" : "2. Run evals (if the project has an evals config) — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 153,
+        "text" : "3. Run system health checks"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 160,
+        "text" : "4. Git diff analysis (CRITICAL — regression intelligence)"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 170,
+        "text" : "4. Git diff analysis (CRITICAL — regression intelligence) — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 179,
+        "text" : "5. Classify each failure"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 182,
+        "text" : "5. Classify each failure — steps"
+      },
+      {
+        "kind" : "template",
+        "level" : 3,
+        "line" : 192,
+        "text" : "6. Report format"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 213,
+        "text" : "7. Auto-fix protocol"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 227,
+        "text" : "7. Auto-fix protocol — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 231,
+        "text" : "7. Auto-fix protocol — steps 2"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 237,
+        "text" : "7. Auto-fix protocol — steps 3"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 242,
         "text" : "State (regression history)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 260,
+        "line" : 263,
         "text" : "State (regression history) — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 264,
+        "line" : 267,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 275,
+        "line" : 278,
         "text" : "Anti-Patterns — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 279,
+        "line" : 282,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 290,
+        "line" : 293,
         "text" : "Output Format"
       },
       {
@@ -232,25 +316,19 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 226,
-        "text" : "When uncertain"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 253,
+        "line" : 256,
         "text" : "This enables"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 281,
+        "line" : 284,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 286,
+        "line" : 289,
         "text" : "Privacy contract preserved"
       }
     ],
@@ -295,21 +373,20 @@
         "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract — steps",
         "line" : 57,
         "lines" : [
           "Every skill directory has a `SKILL.md` file",
           "Every `SKILL.md` has valid YAML frontmatter (`name`, `description`)",
-          "Every `SKILL.md` has required sections per",
-          "`test\/skills-conformance.test.ts`"
+          "Every `SKILL.md` has required sections per `test\/skills-conformance.test.ts`"
         ],
-        "role" : "reference"
+        "role" : "invariants"
       },
       {
         "executes" : false,
         "heading" : "Phases",
-        "line" : 65,
+        "line" : 64,
         "lines" : [
           "Walk skills directory. List all subdirs containing `SKILL.md`",
           "Parse YAML, check required fields",
@@ -324,7 +401,7 @@
       {
         "executes" : false,
         "heading" : "Automation",
-        "line" : 75,
+        "line" : 74,
         "lines" : [
           "The CI-gated check is the package.json `test` script"
         ],
@@ -333,7 +410,7 @@
       {
         "executes" : true,
         "heading" : "Automation — steps",
-        "line" : 80,
+        "line" : 79,
         "lines" : [
           "codeblock:bash:YnVuIHRlc3QgdGVzdC9za2lsbHMtY29uZm9ybWFuY2UudGVzdC50cyB0ZXN0L3Jlc29sdmVyLnRlc3QudHM="
         ],
@@ -342,7 +419,7 @@
       {
         "executes" : false,
         "heading" : "Output format",
-        "line" : 86,
+        "line" : 85,
         "lines" : [
           "codeblock:plain:U2tpbGwgVmFsaWRhdGlvbiBSZXBvcnQKPT09PT09PT09PT09PT09PT09PT09PT09ClNraWxscyBmb3VuZDogICAgICAgIE4KQ29uZm9ybWFuY2U6ICAgICAgICAgTi9OIHBhc3MKTWFuaWZlc3QgY292ZXJhZ2U6ICAgTi9OClJlc29sdmVyIGNvdmVyYWdlOiAgIE4vTgpSb3VuZC10cmlwOiAgICAgICAgICBOL04KTUVDRSB2aW9sYXRpb25zOiAgICAgTgoKSXNzdWVzOgotIDxza2lsbD46IDxpc3N1ZT4="
         ],
@@ -351,16 +428,16 @@
       {
         "executes" : false,
         "heading" : "Mode 2: Project test-suite health (v0.25.1)",
-        "line" : 102,
+        "line" : 101,
         "lines" : [
 
         ],
         "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "When to use",
-        "line" : 104,
+        "line" : 103,
         "lines" : [
           "Daily test cron fires",
           "User asks \"run the tests\" \/ \"how are the tests\" \/ \"what's broken\"",
@@ -368,12 +445,12 @@
           "After container restart (bootstrap)",
           "When something seems off and you want to verify system health"
         ],
-        "role" : "reference"
+        "role" : "applicability"
       },
       {
         "executes" : false,
         "heading" : "Test tiers",
-        "line" : 112,
+        "line" : 111,
         "lines" : [
 
         ],
@@ -382,7 +459,7 @@
       {
         "executes" : true,
         "heading" : "Test tiers — steps",
-        "line" : 115,
+        "line" : 114,
         "lines" : [
           "table:ai-discretion:fCBUaWVyIHwgV2hhdCBpdCBydW5zIHwgV2FsbCB0aW1lIHwgR2F0ZXMgfAp8LS0tLS0tfC0tLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tfC0tLS0tLS18CnwgVW5pdCB8IGBidW4gdGVzdGAgKGRldGVybWluaXN0aWMsIHplcm8gZXh0ZXJuYWwgY2FsbHMpIHwgPDJzIHwgRXZlcnkgY29tbWl0IHwKfCBFdmFscyB8IExMTS1qdWRnZSBvciBxdWFsaXR5IGV2YWxzIHwgfjYwcyB8IERhaWx5IHwKfCBJbnRlZ3JhdGlvbiB8IEUyRSB0ZXN0cyBhZ2FpbnN0IHJlYWwgUG9zdGdyZXMgfCB+NW0gfCBQcmUtc2hpcCArIG5pZ2h0bHkgfAp8IFN5c3RlbSBoZWFsdGggfCBEaXNrIC8gbWVtb3J5IC8gQ1BVIC8gc2VydmljZSBsaXZlbmVzcyB8IDwxMHMgfCBEYWlseSB8"
         ],
@@ -391,28 +468,118 @@
       {
         "executes" : false,
         "heading" : "Daily run protocol",
-        "line" : 125,
+        "line" : 124,
         "lines" : [
-          "When the cron fires (or the user asks), do ALL of this:",
-          "Parse: total passed, total failed, total skipped, file-level results",
-          "codeblock:bash:YnVuIHRlc3QgMj4mMQ==",
+          "During each daily run (cron fire or user request), do ALL of the",
+          "following steps, in order"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "1. Run unit tests",
+        "line" : 129,
+        "lines" : [
+          "Parse: total passed, total failed, total skipped, file-level results"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "1. Run unit tests — steps",
+        "line" : 134,
+        "lines" : [
+          "codeblock:bash:YnVuIHRlc3QgMj4mMQ=="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "2. Run evals (if the project has an evals config)",
+        "line" : 140,
+        "lines" : [
           "Parse: same format. Note any flakes (tests that fail due to API",
-          "timeouts, not code bugs)",
-          "codeblock:bash:IyBBZGFwdCB0byB0aGUgcHJvamVjdCdzIGV2YWwgY29uZmlnCmJ1biB0ZXN0IC0tZmlsdGVyIGV2YWwgMj4mMQ==",
+          "timeouts, not code bugs)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "2. Run evals (if the project has an evals config) — steps",
+        "line" : 146,
+        "lines" : [
+          "codeblock:bash:IyBBZGFwdCB0byB0aGUgcHJvamVjdCdzIGV2YWwgY29uZmlnCmJ1biB0ZXN0IC0tZmlsdGVyIGV2YWwgMj4mMQ=="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "3. Run system health checks",
+        "line" : 153,
+        "lines" : [
           "Disk \/ memory \/ CPU",
           "gbrain: `gbrain doctor --fast --json`",
           "Database connection (if applicable)",
-          "Critical files exist (CLAUDE.md, AGENTS.md, etc.)",
+          "Critical files exist (CLAUDE.md, AGENTS.md, etc.)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "4. Git diff analysis (CRITICAL — regression intelligence)",
+        "line" : 160,
+        "lines" : [
           "Check if the test itself was modified recently (test change, not",
           "regression)",
-          "Check if the code it tests was modified recently (possible",
+          "Check if the code under test was modified recently (possible",
           "regression)",
-          "Check if it's a known flake (API timeout, service down)",
-          "Check if a dependency was updated (gbrain, bun, etc.)",
+          "Check if the failure is a known flake (API timeout, service down)",
+          "Check if a dependency was updated (gbrain, bun, etc.)"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "4. Git diff analysis (CRITICAL — regression intelligence) — steps",
+        "line" : 170,
+        "lines" : [
           "codeblock:bash:IyBXaGF0IGNoYW5nZWQgc2luY2UgbGFzdCB0ZXN0IHJ1bj8KZ2l0IGxvZyAtLW9uZWxpbmUgLS1zaW5jZT0iMjQgaG91cnMgYWdvIg==",
-          "For each failing test:",
-          "table:decision:fCBDbGFzc2lmaWNhdGlvbiB8IE1hcmtlciB8IEFjdGlvbiB8CnwtLS0tLS0tLS0tLS0tLS18LS0tLS0tLS18LS0tLS0tLS18CnwgUkVHUkVTU0lPTiDigJQgY29kZSBjaGFuZ2VkLCB0ZXN0IGJyb2tlIHwg8J+UtCB8IEZsYWcgd2l0aCB0aGUgY29tbWl0IHRoYXQgYnJva2UgaXQgfAp8IFNUQUxFIOKAlCB0ZXN0IGV4cGVjdHMgb2xkIGJlaGF2aW9yOyBjb2RlIGlzIGNvcnJlY3QgfCDwn5+hIHwgRml4IHRoZSB0ZXN0LCBub3QgdGhlIGNvZGUgfAp8IEZMQUtFIOKAlCBBUEkgdGltZW91dCwgc2VydmljZSBkb3duLCBMTE0gdmFyaWFuY2UgfCDimqDvuI8gfCBOb3RlLCBkb24ndCBhbGFybTsgcmV0cnkgb25jZSB8CnwgTkVXIOKAlCB0ZXN0IHdhcyBqdXN0IGFkZGVkIGFuZCBpc24ndCBwYXNzaW5nIHlldCB8IPCfn6IgfCBDaGVjayBpZiBpbnRlbnRpb25hbCB8CnwgSU5GUkEg4oCUIGNvbnRhaW5lciByZXN0YXJ0IHdpcGVkIHN0YXRlIHwg8J+boCB8IFJ1biBib290c3RyYXAsIHJldGVzdCB8",
-          "codeblock:plain:8J+nqiBEYWlseSBUZXN0cyDigJQgWVlZWS1NTS1ERAoKVW5pdDogICBYL1kgcGFzc2VkIChaIHNraXBwZWQpCkV2YWxzOiAgWC9ZIHBhc3NlZApTeXN0ZW06IFtoZWFsdGggc3VtbWFyeV0KClJFR1JFU1NJT05TOgogIPCflLQgPHRlc3QtbmFtZT46IGJyb2tlIGJ5IGNvbW1pdCA8c2hhPiAiPGNvbW1pdCBtZXNzYWdlPiIKClNUQUxFIFRFU1RTOgogIPCfn6EgPHRlc3QtbmFtZT46IGV4cGVjdHMgWCBidXQgY29kZSBub3cgZG9lcyBZIChjb21taXQgPHNoYT4pCgpGTEFLRVM6CiAg4pqg77iPIDx0ZXN0LW5hbWU+OiB0aW1lb3V0IChyZXRyeSBwYXNzZWQpCgrinIUgQUxMIENMRUFSICAod2hlbiBhcHBsaWNhYmxlKQ==",
+          "For each failing test:"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "5. Classify each failure",
+        "line" : 179,
+        "lines" : [
+
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "5. Classify each failure — steps",
+        "line" : 182,
+        "lines" : [
+          "table:decision:fCBDbGFzc2lmaWNhdGlvbiB8IE1hcmtlciB8IEFjdGlvbiB8CnwtLS0tLS0tLS0tLS0tLS18LS0tLS0tLS18LS0tLS0tLS18CnwgUkVHUkVTU0lPTiDigJQgY29kZSBjaGFuZ2VkLCB0ZXN0IGJyb2tlIHwg8J+UtCB8IEZsYWcgd2l0aCB0aGUgY29tbWl0IHRoYXQgYnJva2UgdGhlIHRlc3QgfAp8IFNUQUxFIOKAlCB0ZXN0IGV4cGVjdHMgb2xkIGJlaGF2aW9yOyBjb2RlIGlzIGNvcnJlY3QgfCDwn5+hIHwgRml4IHRoZSB0ZXN0LCBub3QgdGhlIGNvZGUgfAp8IEZMQUtFIOKAlCBBUEkgdGltZW91dCwgc2VydmljZSBkb3duLCBMTE0gdmFyaWFuY2UgfCDimqDvuI8gfCBOb3RlLCBkb24ndCBhbGFybTsgcmV0cnkgb25jZSB8CnwgTkVXIOKAlCB0ZXN0IHdhcyBqdXN0IGFkZGVkIGFuZCBpc24ndCBwYXNzaW5nIHlldCB8IPCfn6IgfCBDaGVjayBpZiBpbnRlbnRpb25hbCB8CnwgSU5GUkEg4oCUIGNvbnRhaW5lciByZXN0YXJ0IHdpcGVkIHN0YXRlIHwg8J+boCB8IFJ1biBib290c3RyYXAsIHJldGVzdCB8"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "6. Report format",
+        "line" : 192,
+        "lines" : [
+          "codeblock:plain:8J+nqiBEYWlseSBUZXN0cyDigJQgWVlZWS1NTS1ERAoKVW5pdDogICBYL1kgcGFzc2VkIChaIHNraXBwZWQpCkV2YWxzOiAgWC9ZIHBhc3NlZApTeXN0ZW06IFtoZWFsdGggc3VtbWFyeV0KClJFR1JFU1NJT05TOgogIPCflLQgPHRlc3QtbmFtZT46IGJyb2tlIGJ5IGNvbW1pdCA8c2hhPiAiPGNvbW1pdCBtZXNzYWdlPiIKClNUQUxFIFRFU1RTOgogIPCfn6EgPHRlc3QtbmFtZT46IGV4cGVjdHMgWCBidXQgY29kZSBub3cgZG9lcyBZIChjb21taXQgPHNoYT4pCgpGTEFLRVM6CiAg4pqg77iPIDx0ZXN0LW5hbWU+OiB0aW1lb3V0IChyZXRyeSBwYXNzZWQpCgrinIUgQUxMIENMRUFSICAod2hlbiBhcHBsaWNhYmxlKQ=="
+        ],
+        "role" : "template"
+      },
+      {
+        "executes" : false,
+        "heading" : "7. Auto-fix protocol",
+        "line" : 213,
+        "lines" : [
           "**DO auto-fix:**",
           "Test expects an old file path after a rename → update the test",
           "Test expects an old version string → update",
@@ -420,19 +587,43 @@
           "Import path broke because file moved → fix the import",
           "**DO NOT auto-fix:**",
           "Test expects behavior A but code now does B → ASK first. Maybe the",
-          "test is right and the code has a bug",
-          "When uncertain: check the commit message that changed the code, check",
-          "if there's a related PR or conversation, ask the user if still unclear",
-          "Security test failing → ALWAYS escalate, never auto-fix",
-          "use judgment to follow the 7. Auto-fix protocol — steps 2 guidance:",
-          "Test was skipped with a TODO → don't un-skip without understanding why"
+          "test is right and the code has a bug"
         ],
         "role" : "reference"
       },
       {
         "executes" : false,
+        "heading" : "7. Auto-fix protocol — steps",
+        "line" : 227,
+        "lines" : [
+          "Security test failing → ALWAYS escalate, never auto-fix"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "7. Auto-fix protocol — steps 2",
+        "line" : 231,
+        "lines" : [
+          "use judgment to follow the 7. Auto-fix protocol — steps 2 guidance:",
+          "Test was skipped with a TODO → don't un-skip without understanding why"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "7. Auto-fix protocol — steps 3",
+        "line" : 237,
+        "lines" : [
+          "If uncertain, check the commit message that changed the code, check",
+          "if there's a related PR or conversation, and ask the user if still unclear"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
         "heading" : "State (regression history)",
-        "line" : 239,
+        "line" : 242,
         "lines" : [
           "codeblock:json:ewogICJsYXN0UnVuIjogIjIwMjYtMDQtMTZUMTM6Mzc6MDBaIiwKICAidW5pdCI6IHsgInBhc3NlZCI6IDEyNjIsICJmYWlsZWQiOiAzMSwgInNraXBwZWQiOiA4IH0sCiAgImV2YWxzIjogeyAicGFzc2VkIjogMTcsICJmYWlsZWQiOiAwIH0sCiAgInN5c3RlbSI6IHsgImRvY3RvciI6ICJvayIsICJnYnJhaW4iOiAiMC4yNS4xIiB9LAogICJmYWlsdXJlSGlzdG9yeSI6IFsKICAgIHsgInRlc3QiOiAiPG5hbWU+IiwgInNpbmNlIjogIjIwMjYtMDQtMTQiLCAiY2xhc3NpZmljYXRpb24iOiAic3RhbGUiIH0KICBdCn0=",
           "This enables:",
@@ -445,7 +636,7 @@
       {
         "executes" : true,
         "heading" : "State (regression history) — steps",
-        "line" : 260,
+        "line" : 263,
         "lines" : [
           "Track results in `~\/.gbrain\/test-state.json` for trend tracking:"
         ],
@@ -454,7 +645,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 264,
+        "line" : 267,
         "lines" : [
           "❌ Skipping conformance validation after adding a new skill",
           "❌ Adding skills to `manifest.json` without adding to RESOLVER.md",
@@ -468,7 +659,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns — steps",
-        "line" : 275,
+        "line" : 278,
         "lines" : [
           "use judgment to follow the Anti-Patterns — steps guidance:",
           "❌ Auto-un-skipping a test without understanding why it was skipped"
@@ -478,7 +669,7 @@
       {
         "executes" : false,
         "heading" : "Contract",
-        "line" : 279,
+        "line" : 282,
         "lines" : [
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
@@ -492,7 +683,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 290,
+        "line" : 293,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -539,80 +730,108 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 82,
+      "meridian_line" : 61,
       "swift_line" : 603
     },
     {
-      "meridian_line" : 118,
-      "swift_line" : 613
+      "meridian_line" : 62,
+      "swift_line" : 615
     },
     {
-      "meridian_line" : 262,
-      "swift_line" : 623
+      "meridian_line" : 63,
+      "swift_line" : 620
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 663
+      "meridian_line" : 81,
+      "swift_line" : 625
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 668
+      "meridian_line" : 117,
+      "swift_line" : 635
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 707
+      "meridian_line" : 136,
+      "swift_line" : 645
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 712
+      "meridian_line" : 148,
+      "swift_line" : 656
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 751
+      "meridian_line" : 172,
+      "swift_line" : 667
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 756
+      "meridian_line" : 177,
+      "swift_line" : 677
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 795
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 800
+      "meridian_line" : 233,
+      "swift_line" : 686
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 839
+      "swift_line" : 725
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 844
+      "swift_line" : 730
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 883
+      "swift_line" : 769
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 888
+      "swift_line" : 774
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 927
+      "swift_line" : 813
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 932
+      "swift_line" : 818
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 971
+      "swift_line" : 857
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 976
+      "swift_line" : 862
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 901
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 906
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 945
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 950
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 989
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 994
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1033
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1038
     }
   ],
   "tools_used" : [
@@ -620,23 +839,32 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "line" : 118,
+          "line" : 117,
           "scoped_tools" : [
             "page.list",
             "page.search",
             "shell.run"
           ],
           "text" : "Decide which case below applies and carry out its action:\n- when Tier is Unit, What it runs is `bun test` (deterministic, zero external calls), Wall time is <2s, Every commit\n- when Tier is Evals, What it runs is LLM-judge or quality evals, Wall time is ~60s, Daily\n- when Tier is Integration, What it runs is E2E tests against real Postgres, Wall time is ~5m, Pre-ship + nightly\n- when Tier is System health, What it runs is Disk \/ memory \/ CPU \/ service liveness, Wall time is <10s, Daily"
+        },
+        {
+          "guidance" : "Test was skipped with a TODO → don't un-skip without understanding why\nIf uncertain, check the commit message that changed the code, check\nif there's a related PR or conversation, and ask the user if still unclear\nTrack results in `~\/.gbrain\/test-state.json` for trend tracking:",
+          "line" : 233,
+          "scoped_tools" : [
+            "page.list",
+            "page.search",
+            "shell.run"
+          ],
+          "text" : "follow the 7. Auto-fix protocol — steps 2 guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "testing a input",

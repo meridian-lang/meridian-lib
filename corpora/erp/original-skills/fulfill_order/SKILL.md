@@ -23,8 +23,12 @@ fetch open orders.
 Check: all orders have a number.
 for each order:
   reserve inventory for the order.
+  if the order is high value,
+    wait for approval of the order from an account manager,
+  otherwise,
+    make sure the order's total amount is more than 0.
   ship the order.
 Publish: "shipment release queue drained".
 
 ## Checks
-Every released order should already have inventory reserved.
+Every released order has inventory reserved.

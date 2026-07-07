@@ -15,7 +15,7 @@ private func everyPrimitiveWorkflow() -> IRWorkflow {
         .emit(EmitIR(eventID: "order.placed", payload: [EmitField("id", .identifierRef(name: "x"))])),
         .wait(WaitIR(condition: .signal("go"))),
         .commit(CommitIR(label: "cp")),
-        .proseStep(ProseStepIR(text: "decide", dispatchMode: .planThenExecute)),
+        .aiJudgment(AIJudgmentIR(text: "decide")),
         .complete(CompleteIR(reason: "done")),
     ])
     let branch = IRPrimitive.branch(BranchIR(

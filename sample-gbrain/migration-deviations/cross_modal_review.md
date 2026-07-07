@@ -4,7 +4,7 @@
 - Ported: `cross_modal_review.meri`
 - Tier: 2 (light edits)
 - Similarity: 81%
-- Lines: 198 -> 233 (+58 / -23)
+- Lines: 198 -> 232 (+57 / -23)
 
 ## Frontmatter
 - Added: (none)
@@ -17,12 +17,12 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L123 `Adversarial Challenge`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L150 `Standard review`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L165 `Code review`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L177 `User-sovereignty rule (Iron Law)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L186 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L208 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L122 `Adversarial Challenge`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L149 `Standard review`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L164 `Code review`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L176 `User-sovereignty rule (Iron Law)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L185 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L207 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections inert total: 11/11 (100% total inert; includes intentional docs/templates/tools metadata)
@@ -34,23 +34,23 @@ These sections were made non-executable in the port and should be reviewed as mi
 
 ### Inert section details
 - L15 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L32 `When to invoke (v0.25.1 gating)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L59 `Phases`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L88 `Codex Review`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L123 `Adversarial Challenge`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L132 `Refusal routing`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L150 `Standard review`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L165 `Code review`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L177 `User-sovereignty rule (Iron Law)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L186 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L208 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L31 `When to invoke (v0.25.1 gating)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L58 `Phases`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L87 `Codex Review`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L122 `Adversarial Challenge`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L131 `Refusal routing`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L149 `Standard review`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L164 `Code review`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L176 `User-sovereignty rule (Iron Law)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L185 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L207 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/cross-modal-review/SKILL.md
 +++ skills/cross_modal_review.meri
-@@ -34,18 +34,24 @@
+@@ -34,18 +34,23 @@
  > for ad-hoc second opinions; use `gbrain eval cross-modal` for the
  > skillify Phase 3 quality gate. The two are complementary, not redundant.
  
@@ -60,15 +60,14 @@ These sections were made non-executable in the port and should be reviewed as mi
  This skill guarantees:
  
  - Work product is reviewed by a different model before finalizing.
-+- Agreement and disagreement are reported transparently.
-+- Refusal from one model triggers a silent switch to the next in chain.
+-- The review is graded against the originating skill's Contract section
+-  (what was promised), not vibes.
+ - Agreement and disagreement are reported transparently.
+ - Refusal from one model triggers a silent switch to the next in chain.
 +
-+### Contract — steps (( role: reference ))
++### Contract — steps
 +
- - The review is graded against the originating skill's Contract section
-   (what was promised), not vibes.
--- Agreement and disagreement are reported transparently.
--- Refusal from one model triggers a silent switch to the next in chain.
++- The review is graded against the originating skill's Contract section (what was promised), not vibes.
 +
 +### Contract — steps 2 (( role: reference ))
 +
@@ -79,7 +78,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Invoke this skill when:
  
-@@ -59,9 +65,6 @@
+@@ -59,9 +64,6 @@
    or bulk writes (see [conventions/test-before-bulk.md](../conventions/test-before-bulk.md)).
  - **Skill creation / modification** — new or rewritten skills that
    affect operational behavior.
@@ -89,7 +88,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  Do NOT invoke for:
  
  - Simple memory writes or brain-page updates
-@@ -69,7 +72,13 @@
+@@ -69,7 +71,13 @@
  - Routine cron output or heartbeat operations
  - Git commit / push of already-reviewed work
  
@@ -104,7 +103,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  1. **Capture the work product.** The brain page, analysis, code diff,
     or decision to be reviewed.
-@@ -78,23 +87,32 @@
+@@ -78,23 +86,32 @@
  3. **Spawn review model.** Send the work + Contract to a different
     model. Use [conventions/model-routing.md](../conventions/model-routing.md)
     for model selection.
@@ -141,7 +140,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  - After a substantive diff lands and before merge
  - When the user wants a second opinion that's NOT another Claude
  
-@@ -113,10 +131,18 @@
+@@ -113,10 +130,18 @@
    Agreement:     X% (N/M findings overlap)
  ```
  
@@ -161,7 +160,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Same shape, different prompt. Used on security-sensitive changes:
  the reviewer is asked to find injection vectors, race conditions,
-@@ -125,19 +151,25 @@
+@@ -125,19 +150,25 @@
  Output adds an exploitability rating (CRITICAL / HIGH / MEDIUM / LOW)
  and recommended mitigations.
  
@@ -193,7 +192,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```
  Cross-Modal Review
-@@ -152,7 +184,7 @@
+@@ -152,7 +183,7 @@
  Agreement with primary: {X}%
  ```
  
@@ -202,7 +201,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```
  Cross-Modal Review (code)
-@@ -164,7 +196,7 @@
+@@ -164,7 +195,7 @@
  {mode-specific output above}
  ```
  
@@ -211,7 +210,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Reviewer findings are INFORMATIONAL until the user explicitly approves
  each one. Do NOT incorporate reviewer recommendations into the work
-@@ -173,7 +205,7 @@
+@@ -173,7 +204,7 @@
  is a strong signal — present it as such — but the user makes the
  decision.
  
@@ -220,7 +219,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - ❌ Auto-applying reviewer suggestions without user approval
  - ❌ Showing model refusals to the user
-@@ -184,6 +216,9 @@
+@@ -184,6 +215,9 @@
  
  ## Related skills
  
@@ -230,7 +229,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  - gstack `/codex` — the actual Codex CLI wrapper this skill hands off
    to for diff-review mode. Cross-modal-review knows WHEN to invoke;
    /codex knows HOW.
-@@ -192,7 +227,7 @@
+@@ -192,7 +226,7 @@
  - `skills/conventions/cross-modal.yaml` — review pairs + refusal routing
  
  

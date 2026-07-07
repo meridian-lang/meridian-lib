@@ -170,7 +170,7 @@
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "reference",
+        "kind" : "prohibitions",
         "level" : 3,
         "line" : 131,
         "text" : "Anti-Patterns — steps"
@@ -178,25 +178,25 @@
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 135,
+        "line" : 134,
         "text" : "Output Format"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 141,
+        "line" : 140,
         "text" : "Related"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 146,
+        "line" : 145,
         "text" : "Related — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 152,
+        "line" : 151,
         "text" : "Related — steps 2"
       },
       {
@@ -352,19 +352,18 @@
         "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns — steps",
         "line" : 131,
         "lines" : [
-          "❌ Ignoring exit code 2. A crashed doctor is worse than a failing check",
-          "because you don't even know what's wrong"
+          "❌ Ignoring exit code 2. A crashed doctor is worse than a failing check because you don't even know what's wrong"
         ],
-        "role" : "reference"
+        "role" : "prohibitions"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 135,
+        "line" : 134,
         "lines" : [
           "The skill itself doesn't write files; it reports the CLI output verbatim to",
           "the user (or to the agent's briefing pipeline). One-line summary first,",
@@ -375,7 +374,7 @@
       {
         "executes" : false,
         "heading" : "Related",
-        "line" : 141,
+        "line" : 140,
         "lines" : [
           "`skills\/migrations\/v0.11.0.md` — the host-agent instruction manual for",
           "resolving `pending-host-work.jsonl` items"
@@ -385,7 +384,7 @@
       {
         "executes" : false,
         "heading" : "Related — steps",
-        "line" : 146,
+        "line" : 145,
         "lines" : [
           "`gbrain doctor` — the underlying filesystem + DB check. skillpack-check",
           "composes this",
@@ -396,7 +395,7 @@
       {
         "executes" : true,
         "heading" : "Related — steps 2",
-        "line" : 152,
+        "line" : 151,
         "lines" : [
           "`docs\/guides\/minions-fix.md` — troubleshooting a half-migrated install"
         ],
@@ -443,36 +442,36 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 72,
+      "meridian_line" : 133,
       "swift_line" : 603
     },
     {
       "meridian_line" : 72,
-      "swift_line" : 614
+      "swift_line" : 608
     },
     {
       "meridian_line" : 72,
-      "swift_line" : 625
+      "swift_line" : 619
+    },
+    {
+      "meridian_line" : 72,
+      "swift_line" : 630
     },
     {
       "meridian_line" : 80,
-      "swift_line" : 636
+      "swift_line" : 641
     },
     {
       "meridian_line" : 84,
-      "swift_line" : 648
+      "swift_line" : 653
     },
     {
       "meridian_line" : 85,
-      "swift_line" : 660
+      "swift_line" : 665
     },
     {
-      "meridian_line" : 154,
-      "swift_line" : 672
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 712
+      "meridian_line" : 153,
+      "swift_line" : 677
     },
     {
       "meridian_line" : 1,
@@ -480,7 +479,7 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 756
+      "swift_line" : 722
     },
     {
       "meridian_line" : 1,
@@ -488,7 +487,7 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 800
+      "swift_line" : 766
     },
     {
       "meridian_line" : 1,
@@ -496,7 +495,7 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 844
+      "swift_line" : 810
     },
     {
       "meridian_line" : 1,
@@ -504,11 +503,15 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 888
+      "swift_line" : 854
     },
     {
       "meridian_line" : 1,
       "swift_line" : 893
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 898
     }
   ],
   "tools_used" : [

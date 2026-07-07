@@ -112,30 +112,38 @@ whether to load a full page.
   page is relevant and you need more context (e.g., compiled truth, timeline).
 ### Source precedence (( role: reference ))
 
-When multiple sources provide conflicting information, follow this precedence:
-
 1. **User's direct statements** (highest authority -- what the user told you directly)
 3. **Timeline entries** (raw evidence, reverse-chronological)
 4. **External sources** (web search, API enrichment -- lowest authority)
 
-When sources conflict, note the contradiction with both citations. Don't silently
-pick one.
-
 
 ### Source precedence — steps
 
-use judgment to follow the Source precedence — steps guidance:
+When multiple sources provide conflicting information, follow this precedence:
+
+
+### Source precedence — steps 2
+
+use judgment to follow the Source precedence — steps 2 guidance:
 2. **Compiled truth** (the brain's synthesized, cited understanding)
+
+### Source precedence — steps 3
+
+When sources conflict, note the contradiction with both citations. Don't silently
+pick one.
+
 ## Citation in Answers (( role: reference ))
 
-When referencing brain pages in your answer, propagate inline citations:
 - Cite the page: "According to [Source: people/jane-doe, compiled truth]..."
-- When brain pages have inline `[Source: ...]` citations, propagate them so
-  the user can trace facts to their origin
 
 ### Citation in Answers — steps
 
-use judgment to follow the Citation in Answers — steps guidance:
+When referencing brain pages in your answer, propagate inline citations:
+
+### Citation in Answers — steps 2
+
+- When brain pages have inline `[Source: ...]` citations, propagate them so
+  the user can trace facts to their origin
 - When you synthesize across multiple pages, cite all sources
 
 ## Graph Traversal (v0.10.1+) (( role: reference ))
@@ -176,7 +184,7 @@ connected entities surface higher.
 
 ### Search Quality Awareness — steps
 
-> If search results seem off (wrong results, missing known pages, irrelevant hits):
+If search results seem off (wrong results, missing known pages, irrelevant hits):
 - Run `gbrain doctor --json` to check index health
 ## Tools Used
 

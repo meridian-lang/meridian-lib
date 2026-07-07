@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum CrossModalReview {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct CrossModalReviewInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -599,7 +599,12 @@ public struct CrossModalReviewInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "CrossModalReviewInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L118:C0") {
+        if __meridianShouldRun("progress:0.0:L47:C0") {
+            // L47
+            try await runtime.assert(MeridianComparison.eq(state.get("review"), state.get("gradedAgainstTheOriginatingSkill.ContractSection(whatWasPromised),NotVibes")), message: "Expected The review is graded against the originating skill's Contract section (what was promised), not vibes")
+            try await runtime.checkpoint(label: "progress:0.0:L47:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L118:C0") {
             // L118
             let results = try await runtime.invoke(
                 tool: "page.search",
@@ -609,16 +614,16 @@ public struct CrossModalReviewInput: MeridianWorkflow {
             )
             state.bind("results", results)
 
-            try await runtime.checkpoint(label: "progress:0.0:L118:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.1:L118:C0", state: state.snapshot())
         }
-        // L94
-        let __meridianProseResults_L94 = try await runtime.executeProsePlan(
+        // L93
+        let __meridianProseResults_L93 = try await runtime.executeProsePlan(
             prose: "follow the Phases — steps guidance",
             snapshot: state.snapshot(),
             scopedTools: ["page.get", "page.search", "shell.run"],
             guidance: "**Grade.** Model evaluates: did the output follow the Contract?\nPresent agreement / disagreement to the user. Never\nauto-apply the reviewer's suggestions\nFor diff review specifically, gstack ships a `/codex` skill that wraps\nthe OpenAI Codex CLI. Two modes:\nWhen to recommend `/codex review`:\nuse judgment to follow the Codex Review — steps 2 guidance:\nUser decides what to act on. Cross-model agreement is signal, not\npermission\nIf the primary review model refuses:\nSwitch silently to the next model in the chain (see\n`conventions/cross-modal.yaml`)\nIf ALL models in the chain refuse, escalate to the user\ngstack `/codex` — the actual Codex CLI wrapper this skill hands off\nto for diff-review mode. Cross-modal-review knows WHEN to invoke;\n/codex knows HOW\n`skills/testing/SKILL.md` — runs the project test suite; complementary\nsignal for \"is this commit safe to land\"\n`skills/conventions/cross-modal.yaml` — review pairs + refusal routing"
         )
-        for (__key, __value) in __meridianProseResults_L94 {
+        for (__key, __value) in __meridianProseResults_L93 {
             state.bind(__key, __value)
         }
 

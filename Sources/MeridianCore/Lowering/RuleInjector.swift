@@ -129,8 +129,8 @@ struct RuleInjector {
                         }
                     }
 
-                case .trigger:
-                    break  // synthesised separately as new workflows
+                case .trigger, .unsupportedTriggerCondition:
+                    break  // synthesised (or rejected) separately by synthesizeTriggers
 
                 case .permission(let kind, _, let allowedAction, let conditions, let isBounded, let sourceLine, let originalText):
                     // Permissions match by either:
@@ -141,15 +141,22 @@ struct RuleInjector {
                     //     matches a workflow that operates on an order).
                     if permissionMatches(actorKind: kind, allowedAction: allowedAction, workflow: workflow) {
                         if isBounded, let conditions = conditions {
-                            let gateExpr = try lowerExprSimple(
-                                conditions,
-                                sourceRange: SourceRange(file: sourceFile, line: sourceLine, column: 0)
-                            )
+                            let sr = SourceRange(file: sourceFile, line: sourceLine, column: 0)
+                            let gateExpr = try lowerExprSimple(conditions, sourceRange: sr)
+                            guard isPlausibleGateCondition(gateExpr) else {
+                                throw CompilerError.diagnostics([
+                                    Diagnostic.error(
+                                        .unlowerableRulePredicate,
+                                        message: "bounded permission's clause has no comparison to check: \"\(originalText)\"",
+                                        range: sr,
+                                        help: "The clause after \"up to\"/\"whose\"/\"if\" must be a real comparison against a property (e.g. \"whose queue position is at most 3\"), not a bare number or bare value — a bare bound has no meaningful truthiness and would silently gate as always-true instead of actually enforcing the cap.")
+                                ])
+                            }
                             insertGateAtZero = .assert(AssertIR(
                                 condition: gateExpr,
                                 message: "Permission required: \(originalText)",
                                 otherwiseAction: nil,
-                                sourceRange: SourceRange(file: sourceFile, line: sourceLine, column: 0)
+                                sourceRange: sr
                             ))
                         }
                         attached.insert(rIdx)
@@ -184,6 +191,7 @@ struct RuleInjector {
         // a workflow target) goes into unattachedRules for diagnostic surfacing.
         for (rIdx, rule) in rules.enumerated() where !attached.contains(rIdx) {
             if case .trigger = rule { continue }
+            if case .unsupportedTriggerCondition = rule { continue }
             unattachedRules.append((rule, "no workflow matched the rule's action"))
         }
 
@@ -196,15 +204,35 @@ struct RuleInjector {
     func synthesizeTriggers(_ rules: [ParsedRule], sourceFile: String) throws -> [IRWorkflow] {
         var triggers: [IRWorkflow] = []
         for rule in rules {
-            guard case .trigger(let conditionText, let actionText, let sourceLine, _) = rule else { continue }
-            triggers.append(
-                try buildTriggerWorkflow(
-                    conditionText: conditionText,
-                    actionText: actionText,
-                    sourceLine: sourceLine,
-                    sourceFile: sourceFile
+            switch rule {
+            case .trigger(let conditionText, let actionText, let sourceLine, _):
+                triggers.append(
+                    try buildTriggerWorkflow(
+                        conditionText: conditionText,
+                        actionText: actionText,
+                        sourceLine: sourceLine,
+                        sourceFile: sourceFile
+                    )
                 )
-            )
+            case .unsupportedTriggerCondition(let conditionText, _, let sourceLine, let originalText):
+                // See `RuleAnalyzer.isSelfEvaluatingTriggerCondition`: this
+                // condition names a real, checkable predicate that
+                // `buildTriggerWorkflow`'s external-event stub has no
+                // scheduler/poller to re-evaluate — synthesizing it anyway
+                // would silently mint a `trigger.<opaque>.fired` event that
+                // no host ever raises. Always thrown; not gated behind any
+                // `allow-fallbacks` token, matching `MER3016`'s treatment of
+                // other unsupported rule-predicate shapes.
+                throw CompilerError.diagnostics([
+                    Diagnostic.error(
+                        .unsupportedTriggerCondition,
+                        message: "when rule condition is self-evaluating and cannot be compiled as an external trigger: \"\(conditionText)\"",
+                        range: SourceRange(file: sourceFile, line: sourceLine, column: 0),
+                        help: "This `When …, …` rule cannot compile as-is — a `When` trigger only ever compiles to an external-event stub with no scheduler to re-check a self-evaluating condition. Delete this rule line and pick one of two fixes: (1) if the condition is something Meridian can check itself right now (a comparison, duration/age check, quantifier, etc.), move the check into the skill's own `## Workflow` (or `## Rules`) body as a real `if …`/`assert …`/`wait until …` statement — do NOT just swap the word `When` for `wait until` in place, since a bare rule line is not a workflow statement; or (2) if this is meant to react to a real external event, reword \"\(originalText)\" so the condition itself is an opaque event/signal phrase a host raises (e.g. \"a refund is requested\", \"payment clears\") and keep it as a `When …, …` trigger. Worked example (fix 2, renaming a duration check to an opaque event): `When an order has been on hold for more than 7 days, escalate the order.` → `When an order is flagged as stale, escalate the order.` Worked example (fix 1, polling a duration live): `## Workflow` `while any orders whose hold duration is more than 7 days, for each order whose hold duration is more than 7 days: escalate the order. wait 1 hour.` — the same shape as `corpora/incident/skills/cooldownwatch.meri`'s `while any alerts whose status is \"firing\", for each alert …` loop.")
+                ])
+            default:
+                continue
+            }
         }
         return triggers
     }
@@ -222,12 +250,24 @@ struct RuleInjector {
             let newStatements = try workflow.body.statements.map { stmt -> IRPrimitive in
                 guard case .assert(let assertIR) = stmt else { return stmt }
                 var softened: [IRExpression] = []
-                for case .permission(let kind, let filter, let allowedAction, let conditions, _, let sourceLine, _) in permissions {
+                for case .permission(let kind, let filter, let allowedAction, let conditions, _, let sourceLine, let originalText) in permissions {
                     guard permissionMatches(actorKind: kind, allowedAction: allowedAction, workflow: workflow) else { continue }
                     let sr = SourceRange(file: sourceFile, line: sourceLine, column: 0)
                     var parts: [IRExpression] = []
                     if let f = filter { parts.append(try lowerExprSimple(f, sourceRange: sr)) }
-                    if let c = conditions { parts.append(try lowerExprSimple(c, sourceRange: sr)) }
+                    if let c = conditions {
+                        let condExpr = try lowerExprSimple(c, sourceRange: sr)
+                        guard isPlausibleGateCondition(condExpr) else {
+                            throw CompilerError.diagnostics([
+                                Diagnostic.error(
+                                    .unlowerableRulePredicate,
+                                    message: "bounded permission's clause has no comparison to check: \"\(originalText)\"",
+                                    range: sr,
+                                    help: "The clause after \"up to\"/\"whose\"/\"if\" must be a real comparison against a property (e.g. \"whose queue position is at most 3\"), not a bare number or bare value.")
+                            ])
+                        }
+                        parts.append(condExpr)
+                    }
                     if parts.isEmpty { softened.append(.literal(.boolean(true))); continue }
                     softened.append(parts.count == 1 ? parts[0] : .logical(.and, parts))
                 }
@@ -352,7 +392,7 @@ struct RuleInjector {
         let kindStems = Set(tokenize(subjectKind, stopwords: stopwords).flatMap { stems(of: $0) })
         guard !kindStems.isEmpty else { return false }
         for p in workflow.parameters {
-            let paramStems = Set(tokenize(p.kind.name, stopwords: stopwords).flatMap { stems(of: $0) })
+            let paramStems = Set(tokenize(IdentifierNaming.decamelize(p.kind.name), stopwords: stopwords).flatMap { stems(of: $0) })
             if !kindStems.intersection(paramStems).isEmpty { return true }
         }
         return false
@@ -450,6 +490,22 @@ struct RuleInjector {
         )
     }
 
+    /// A bounded permission's clause (`up to N`, `whose …`, `if …`) must lower
+    /// to something with actual truthiness once evaluated — a bare literal
+    /// like `.literal(.number(3))` (from a mis-worded `"up to 3 <plural noun>"`
+    /// with no comparison) is never false, so inserting it directly as a gate
+    /// `assert` would silently compile as an always-true no-op instead of
+    /// enforcing anything. Property access, comparisons, logical combinations,
+    /// invocations, and boolean literals are all legitimate truthiness checks
+    /// (bare property access is the same "assert checks truthiness" convention
+    /// `buildSubjectFilter`'s single-token fallback already relies on); only a
+    /// bare non-boolean literal is rejected.
+    private func isPlausibleGateCondition(_ expr: IRExpression) -> Bool {
+        if case .literal(let lit) = expr, case .boolean = lit { return true }
+        if case .literal = expr { return false }
+        return true
+    }
+
     // MARK: - Simple expression lowering (rule predicates only)
     // Intentionally avoids symbol-table lookups so rule predicates are
     // lowered without side-effects on the symbol table.
@@ -460,14 +516,19 @@ struct RuleInjector {
     /// interpolation, discretion). Quantifiers, relational traversals,
     /// descriptions/aggregates/superlatives, data tables, and parse-error
     /// carriers are NOT silently coerced to `false` (that would make a rule
-    /// silently never fire) — they raise `MER3016` instead. Of these,
-    /// `.quantified`/`.tableLookup`/`.malformed` are reachable today (the
-    /// `RuleAnalyzer`'s `ExpressionParser` has `symbols: nil`, which also
-    /// makes `.description`/`.aggregate`/`.superlative`/`.relationTraversal`/
-    /// `.verbPredicate` unreachable, and `.recordList` is never produced by
-    /// `ExpressionParser.parse` at all) — all nine still raise so a future
-    /// change that makes one of them reachable fails loudly instead of
-    /// reintroducing a silent `false`.
+    /// silently never fire) — they raise `MER3016` instead. `RuleAnalyzer`'s
+    /// `ExpressionParser` now carries the real `SymbolTable` in every
+    /// production call site (see `RuleAnalyzer.init`), so
+    /// `.description`/`.aggregate`/`.superlative`/`.relationTraversal`/
+    /// `.verbPredicate` ARE reachable here — a rule filter/predicate/condition
+    /// shaped like a relation traversal over a declared verb (e.g. "active
+    /// prescriptions include a contraindicated drug") now surfaces as its
+    /// real `ExpressionAST` form instead of degrading to a bare identifier or
+    /// a plausible-looking-but-wrong shorthand comparison (`corpora/
+    /// GENERATING_A_CORPUS.md` gotcha #7). `.recordList` is still never
+    /// produced by `ExpressionParser.parse`. All nine forms still raise so a
+    /// rich shape is recognized and rejected loudly, never silently accepted
+    /// as a meaningless predicate or coerced to `false`.
     private func lowerExprSimple(_ expr: ExpressionAST, sourceRange: SourceRange) throws -> IRExpression {
         switch expr {
         case .literal(let lit):
@@ -481,7 +542,12 @@ struct RuleInjector {
             if symbols.constants[lower] != nil { return .constantRef(name: lower) }
             if symbols.instances[lower] != nil { return .instanceRef(name: lower) }
             if symbols.enumCases.contains(lower) { return .literal(.string(lower)) }
-            return .identifierRef(name: n)
+            // Mirror ASTToIR.lowerExpr: multi-word identifiers (e.g. a rule
+            // subject/object kind like "medication order") become camelCase
+            // so `state.get(...)` reads the same key the workflow bound the
+            // parameter under (`medicationOrder`), not a literal space that
+            // can never match a binding.
+            return .identifierRef(name: IdentifierNaming.camelPreservingCase(lower))
         case .propertyAccess(let b, let p):
             return .propertyAccess(try lowerExprSimple(b, sourceRange: sourceRange), propertyName: p)
         case .comparison(let l, let op, let r):
@@ -520,7 +586,7 @@ struct RuleInjector {
                     .unlowerableRulePredicate,
                     message: "rule predicate uses an expression form a rule body cannot express (\(expr.traceDescription(detail: .compact)))",
                     range: sourceRange,
-                    help: "Rewrite the rule's condition as a direct comparison, boolean combination (and/or/not), property access, or checkable adjective. Quantifiers, relation traversals, descriptions, aggregates, superlatives, and data tables are not supported inside a rule's filter/predicate/conditions.")
+                    help: "If the check can be restated as a direct comparison, boolean combination (and/or/not), property access, or checkable adjective, rewrite the rule's condition that way. Quantifiers, relation traversals, descriptions, aggregates, superlatives, and data tables are permanently unsupported inside a rule's filter/predicate/conditions — this is not a temporary gap. If the check genuinely needs one of those forms, it cannot be expressed as an in-section rule at all: remove this rule line and add an equivalent `if`/`assert …`/`for each` statement to the skill's own `## Workflow` (or `## Rules`) body instead, where the full expression grammar has no restriction. Worked example: `A patient whose active prescriptions include a contraindicated drug must not receive the new order.` (a relation traversal — unsupported here) → `## Workflow` `if any of the patient's active prescriptions is contraindicated: stop with \"cannot administer: contraindicated prescription\".` — the same `if any of … is …` quantifier shape `corpora/clinical/skills/triagepatient.meri` already uses (`if any of the vital signs is critical, escalate the patient.`).")
             ])
         }
     }
@@ -569,6 +635,7 @@ struct RuleInjector {
         case .parameterGuard(_, _, _, let line, _): return (line, "parameterGuard")
         case .precondition(_, _, _, _, let line, _): return (line, "precondition")
         case .trigger(_, _, let line, _): return (line, "trigger")
+        case .unsupportedTriggerCondition(_, _, let line, _): return (line, "unsupportedTriggerCondition")
         case .permission(_, _, _, _, _, let line, _): return (line, "permission")
         }
     }

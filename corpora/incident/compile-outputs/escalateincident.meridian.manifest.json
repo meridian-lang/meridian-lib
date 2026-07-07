@@ -1,0 +1,330 @@
+{
+  "constants" : {
+    "escalation cooldown" : 600,
+    "maximum page attempts" : 3,
+    "slo error budget threshold" : 0.10000000000000001
+  },
+  "instances_required" : [
+    {
+      "kind" : "service",
+      "name" : "pagerduty service"
+    },
+    {
+      "kind" : "service",
+      "name" : "statuspage service"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "actionable",
+      "function" : "meridianDef_Alert_actionable",
+      "kind" : "alert",
+      "line" : 30
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Alert_critical",
+      "kind" : "alert",
+      "line" : 23
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Alert_stale",
+      "kind" : "alert",
+      "line" : 24
+    },
+    {
+      "adjective" : "unhealthy",
+      "function" : "meridianDef_Deploy_unhealthy",
+      "kind" : "deploy",
+      "line" : 26
+    },
+    {
+      "adjective" : "high severity",
+      "function" : "meridianDef_Incident_highSeverity",
+      "kind" : "incident",
+      "line" : 27
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Incident_open",
+      "kind" : "incident",
+      "line" : 28
+    },
+    {
+      "adjective" : "degraded",
+      "function" : "meridianDef_Service_degraded",
+      "kind" : "service",
+      "line" : 25
+    },
+    {
+      "adjective" : "breached",
+      "function" : "meridianDef_Slo_breached",
+      "kind" : "slo",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a runbook",
+      "line" : 36,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "runbook.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a service",
+      "line" : 32,
+      "name" : "firing",
+      "right_cardinality" : "one",
+      "right_kind" : "an alert",
+      "via" : "alert.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an oncall engineer",
+      "line" : 34,
+      "name" : "ownership",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "oncall.roster"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Escalate an open incident the moment a matching alert re-fires for the same service, treating a repeat alert on an already-open incident as proof the first response didn't hold rather than as a duplicate to be dismissed.",
+    "name" : "escalate incident",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 19,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 24,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 32,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 40,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 43,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 26,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 30,
+        "text" : "Post"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 19,
+        "lines" : [
+          "\"escalate open incidents\"",
+          "\"escalate stalled incidents\"",
+          "\"run incident escalation\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 24,
+        "lines" : [
+          "fetch open incidents",
+          "Check: at least 1 incident whose severity is \"sev1\"",
+          "for each incident:",
+          "wait for event alert.fired matching the event's service name equals the incident's service name",
+          "escalate the incident",
+          "Post: \"incident escalation pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 32,
+        "lines" : [
+          "Don't escalate on any re-fired alert regardless of service. The service",
+          "name match exists so an unrelated alert on a different service doesn't",
+          "trigger an escalation for an incident it has nothing to do with",
+          "Don't treat this skill as a substitute for `mitigate incident`",
+          "Escalating raises the incident's visibility; it doesn't apply a",
+          "mitigation on its own"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 40,
+        "lines" : [
+          "make sure at least 0 incidents whose status is \"open\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 43,
+        "lines" : [
+          "The receipt names which incidents were escalated this pass and the",
+          "re-fired alert that triggered each escalation"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"escalate open incidents\"\n\"escalate stalled incidents\"\n\"run incident escalation\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "cover",
+      "line" : 41,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "own",
+      "line" : 40,
+      "past_participle" : "owned",
+      "relation" : "ownership",
+      "third_person" : "owns"
+    },
+    {
+      "base" : "page",
+      "line" : 39,
+      "past_participle" : "paged",
+      "relation" : "ownership",
+      "third_person" : "pages"
+    }
+  ],
+  "source_files" : [
+    "escalateincident.meri",
+    "incident.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 41,
+      "swift_line" : 393
+    },
+    {
+      "meridian_line" : 47,
+      "swift_line" : 398
+    },
+    {
+      "meridian_line" : 26,
+      "swift_line" : 410
+    },
+    {
+      "meridian_line" : 27,
+      "swift_line" : 414
+    },
+    {
+      "meridian_line" : 28,
+      "swift_line" : 420
+    },
+    {
+      "meridian_line" : 29,
+      "swift_line" : 425
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 434
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 473
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 478
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 518
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 523
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 563
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 568
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "escalate incident",
+      "swift_struct" : "EscalateIncident"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when escalateOpenIncidents fires",
+      "swift_struct" : "WhenEscalateopenincidentsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when escalateStalledIncidents fires",
+      "swift_struct" : "WhenEscalatestalledincidentsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runIncidentEscalation fires",
+      "swift_struct" : "WhenRunincidentescalationFires"
+    }
+  ]
+}

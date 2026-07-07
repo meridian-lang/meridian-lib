@@ -166,12 +166,15 @@ mentioned must have a back-link from their page. See `skills/_brain-filing-rules
 
 ## Citation in Briefings (( role: reference ))
 
-When presenting facts from brain pages, include inline citations:
 - "Jane is CTO of Acme [Source: people/jane-doe, updated 2026-04-01]"
 
 ### Citation in Briefings — steps
 
-use judgment to follow the Citation in Briefings — steps guidance:
+When presenting facts from brain pages, include inline citations:
+
+### Citation in Briefings — steps 2
+
+use judgment to follow the Citation in Briefings — steps 2 guidance:
 - This lets the user trace any claim back to the brain page and assess freshness
 
 ## Anti-Patterns (( role: reference ))

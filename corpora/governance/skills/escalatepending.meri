@@ -1,0 +1,42 @@
+---
+name: escalate pending
+description: Escalate any access request that has sat in the pending queue past the review window instead of letting it quietly age out of anyone's attention. Seven days without a reviewer decision is long enough that the requester's manager should know, not just the reviewer.
+triggers:
+  - "escalate pending requests"
+  - "escalate overdue requests"
+---
+
+# Escalate Pending
+
+> A request that's been sitting untouched for a week has already failed the
+> normal review path — waiting for `review requests` to eventually get to it
+> is no longer the right response. This skill's whole job is to catch that
+> failure mode: once a pending request crosses the seven-day mark, it gets
+> escalated automatically rather than waiting on a reviewer who may not know
+> it's there.
+
+## When to invoke
+- "escalate pending requests"
+- "escalate overdue requests"
+
+## Rules
+
+### Rules — steps
+
+When an access request is flagged as overdue, escalate the access request.
+
+## Workflow
+fetch pending access requests.
+wait for event access.reviewed matching status is "granted".
+Emit: "escalate pending pass complete".
+
+## Anti-Patterns (( role: reference ))
+- Don't reset the pending clock by re-submitting the same request under a
+  new identifier just to dodge the escalation window — the seven-day rule
+  exists to surface exactly that kind of stuck request.
+- Don't treat an escalation as a denial. Escalating hands the decision up a
+  level; it doesn't make the decision itself.
+
+## Report shape (( role: template ))
+The receipt names which requests crossed the seven-day threshold this pass
+and confirms whether the escalation event fired.

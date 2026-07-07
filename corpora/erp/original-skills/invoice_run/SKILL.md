@@ -23,14 +23,16 @@ fetch open orders.
 for each order:
   create an invoice for the order.
 bind selected queue = the queue corresponding to the status "unpaid" in the table.
+let high value count be the number of high value orders.
 bind invoice receipt =
   ```
   invoice-routing:
   [for each row in table]- {{ row.status }} -> {{ row.queue }}
   [end for]
   selected: {{ selected queue }}
+  high value orders: {{ high value count }}
   ```
 emit erp.invoice_receipt with body = invoice receipt.
 
 ## Report shape
-The receipt groups invoice states by downstream queue.
+The receipt groups invoice states by downstream queue and reports the high-value order count.

@@ -3,8 +3,8 @@
 - Original: `aging_report/SKILL.md`
 - Ported: `agingreport.meri`
 - Tier: 2 (light edits)
-- Similarity: 84%
-- Lines: 34 -> 40 (+9 / -3)
+- Similarity: 77%
+- Lines: 40 -> 46 (+13 / -7)
 
 ## Frontmatter
 - Added: (none)
@@ -17,7 +17,7 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L31 `Trace shape`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L36 `Trace shape`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections inert total: 2/4 (50% total inert; includes intentional docs/templates/tools metadata)
@@ -29,31 +29,39 @@ These sections were made non-executable in the port and should be reviewed as mi
 
 ### Inert section details
 - L14 `Procedure`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L31 `Trace shape`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L36 `Trace shape`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/aging_report/SKILL.md
 +++ skills/agingreport.meri
-@@ -18,8 +18,7 @@
+@@ -18,12 +18,7 @@
  | stale | review |
  | duplicate | merge |
  
 -## Procedure
 -fetch stale records.
+-Check: any stale records.
+-let stale count be the number of stale records.
+-let oldest record be the oldest stale record.
+-bind selected action = the action corresponding to the bucket "stale" in the table.
 +## Procedure (( role: reference ))
- Check: any stale records.
  bind aging report =
    ```
-@@ -27,8 +26,15 @@
-   [for each row in table]- {{ row.bucket }} -> {{ row.action }}
-   [end for]
+   aging:
+@@ -32,9 +27,20 @@
+   selected action: {{ selected action }}
+   stale count: {{ stale count }}
    ```
 +
 +### Procedure — steps
 +
 +fetch stale records.
++Check: any stale records.
++let stale count be the number of stale records.
++let oldest record be the oldest stale record.
++bind selected action = the action corresponding to the bucket "stale" in the table.
 +
 +### Procedure — steps 2
 +
@@ -61,6 +69,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
 -## Trace shape
 +## Trace shape (( role: template ))
- One row per aging bucket, followed by the deterministic action.
+ One row per aging bucket, followed by the deterministic action, the selected
+ bucket, and the total stale count.
  
 ```

@@ -296,8 +296,14 @@ extension SkillMigrator {
         // to `isCheckableCondition` — no `lowersAsStatement`/backtick-command/
         // choice-gate fallback — so every segment this produces is guaranteed
         // checkable-predicate-shaped, matching what `execSegmentRole` (set
-        // below) routes it to.
-        var plan = splitPlanApplyingThreshold(body, knowledge: knowledge, roleAlreadyAsserted: true, checkableOnly: true)
+        // below) routes it to. `ruleAware` stays on for `invariants`/
+        // `prohibitions` (their bodies are full rule sentences) but is turned
+        // off for `applicability`/`negativeApplicability` (their bodies are
+        // dispatch-phrase fragments a `When …,` trial would false-positive
+        // on — mirrors the compiler-side `SkillSectionBuilder` scoping).
+        let ruleAware = role == .invariants || role == .prohibitions
+        var plan = splitPlanApplyingThreshold(body, knowledge: knowledge, roleAlreadyAsserted: true,
+                                              checkableOnly: true, ruleAware: ruleAware)
         plan.execSegmentRole = role
         if plan.executableSegments.isEmpty {
             if plan.operationalErrorWorthy {

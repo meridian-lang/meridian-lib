@@ -1,0 +1,64 @@
+---
+name: postmortem render
+description: Publish a postmortem for every open incident and roll the sev1 count up into a single impact-tier receipt, so a leadership review can see at a glance whether this batch of incidents was a bad week or a normal one.
+triggers:
+  - "render postmortem"
+  - "publish incident postmortem"
+  - "run the postmortem render pass"
+---
+
+# Postmortem Render
+
+> A postmortem written for a single incident is useful to the team that lived
+> through it; a tier classification across a batch of postmortems is what a
+> leadership review actually reads. This skill publishes a postmortem for
+> every open incident and then rolls the batch up by counting sev1
+> incidents against a floor — enough sev1s and the batch reads as
+> high-impact, otherwise it reads as low.
+
+## When to invoke
+- "render postmortem"
+- "publish incident postmortem"
+- "run the postmortem render pass"
+
+## Tables
+!!! table (( data table: tiers ))
+| name | floor |
+| ---- | ----- |
+| high | 2     |
+| low  | 0     |
+
+## Workflow (( role: reference ))
+bind postmortem report =
+  ```
+  postmortem-summary:
+  [if sev1 count is more than 0]tier: high[otherwise]tier: low[end if]
+  sev1 incidents: {{ sev1 count }}
+  ```
+
+### Workflow — steps
+
+fetch open incidents.
+for each incident:
+  publish a postmortem for the incident.
+let sev1 count be the number of incidents whose severity is "sev1".
+
+### Workflow — steps 2
+
+emit incident.postmortem_report with body = postmortem report.
+Post: "postmortem render pass complete".
+
+## Anti-Patterns (( role: reference ))
+- Don't skip publishing a postmortem for a sev3 incident because the tier
+  only cares about sev1 counts. Every incident this skill fetches gets a
+  postmortem; the tier classification is a summary on top, not a filter.
+- Don't hand-adjust the tier in the rendered report to match what
+  leadership expects to hear. The floor in the tiers table is the honest
+  bar; move the bar in the table if it's genuinely wrong, not in the output.
+
+## Guarantees
+every emitted postmortem report contains "postmortem-summary".
+
+## Report shape (( role: template ))
+The receipt states the impact tier — high or low — and the sev1 incident
+count that tier was computed from.

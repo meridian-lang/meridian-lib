@@ -3,8 +3,8 @@
 - Original: `enrich/SKILL.md`
 - Ported: `enrich.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 90%
-- Lines: 350 -> 368 (+45 / -27)
+- Similarity: 89%
+- Lines: 350 -> 369 (+49 / -30)
 
 ## Frontmatter
 - Added: (none)
@@ -18,50 +18,48 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L26 `Philosophy`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L32 `Citation Requirements (MANDATORY)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L40 `Primary triggers`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L47 `Do NOT enrich`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L68 `Step 1: Identify entities`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L72 `Step 2: Check brain state`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L136 `Step 5: Save raw data (preserves provenance)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L170 `Person page template`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L232 `Company page template`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L275 `Bulk Enrichment Rules`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L284 `Validation Rules`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L292 `Report Storage`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L303 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L310 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L331 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L24 `Philosophy`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L41 `Primary triggers`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L48 `Do NOT enrich`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L69 `Step 1: Identify entities`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L73 `Step 2: Check brain state`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L137 `Step 5: Save raw data (preserves provenance)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L171 `Person page template`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L233 `Company page template`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L276 `Bulk Enrichment Rules`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L285 `Validation Rules`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L293 `Report Storage`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L304 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L311 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L332 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
-- Sections inert total: 19/21 (90% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 18/21 (86% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
-- Inert categories: reference-documentation=17, template=1, tools-metadata=1
+- Inert categories: reference-documentation=16, template=1, tools-metadata=1
 - Judgment: 0 blocks, 0 lines
 
 ### Inert section details
 - L6 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L26 `Philosophy`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L32 `Citation Requirements (MANDATORY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L40 `Primary triggers`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L47 `Do NOT enrich`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L53 `Enrichment Tiers`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L68 `Step 1: Identify entities`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L72 `Step 2: Check brain state`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L96 `Step 4: External data source lookups`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L136 `Step 5: Save raw data (preserves provenance)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L170 `Person page template`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L232 `Company page template`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L259 `Step 7: Cross-reference`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L275 `Bulk Enrichment Rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L284 `Validation Rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L292 `Report Storage`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L303 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L310 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L331 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L24 `Philosophy`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L41 `Primary triggers`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L48 `Do NOT enrich`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L54 `Enrichment Tiers`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L69 `Step 1: Identify entities`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L73 `Step 2: Check brain state`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L97 `Step 4: External data source lookups`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L137 `Step 5: Save raw data (preserves provenance)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L171 `Person page template`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L233 `Company page template`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L260 `Step 7: Cross-reference`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L276 `Bulk Enrichment Rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L285 `Validation Rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L293 `Report Storage`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L304 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L311 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L332 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
@@ -81,29 +79,31 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  This skill guarantees:
  - Every enriched page has compiled truth (State section) with inline citations
-@@ -43,40 +43,46 @@
+@@ -43,11 +43,12 @@
  
  > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
  
+-Every mention of a person or company with a brain page MUST create a back-link
+-FROM that entity's page TO the page mentioning them. An unlinked mention is a
+-broken brain. See `skills/_brain-filing-rules.md` for format.
+-
+-## Philosophy
 +
 +### Contract — steps (( role: reference ))
 +
- Every mention of a person or company with a brain page MUST create a back-link
- FROM that entity's page TO the page mentioning them. An unlinked mention is a
- broken brain. See `skills/_brain-filing-rules.md` for format.
- 
--## Philosophy
++Every mention of a person or company with a brain page MUST create a back-link FROM that entity's page TO the page mentioning them. An unlinked mention is a broken brain. See `skills/_brain-filing-rules.md` for format.
++
 +## Philosophy (( role: reference ))
  
  A brain page should read like an intelligence dossier, not a LinkedIn scrape.
  Facts are table stakes. Texture is the value -- what do they believe, what are
- they building, what makes them tick, where are they headed.
- 
--## Citation Requirements (MANDATORY)
-+## Citation Requirements (MANDATORY) (( role: reference ))
+@@ -57,26 +58,32 @@
  
  > **Convention:** see `skills/conventions/quality.md` for citation formats and source precedence.
  
++
++### Citation Requirements (MANDATORY) — steps (( role: reference ))
++
  When sources conflict, note the contradiction with both citations.
  
 -## When To Enrich
@@ -135,7 +135,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  | Tier | Who | Effort | Sources |
  |------|-----|--------|---------|
-@@ -84,13 +90,13 @@
+@@ -84,13 +91,13 @@
  | 2 (notable) | Occasional interactions, industry figures | Moderate | Web research + social + brain cross-ref |
  | 3 (minor) | Worth tracking, not critical | Light | Brain cross-ref + social lookup if handle known |
  
@@ -153,7 +153,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  For each entity:
  - `gbrain search "name"` -- does a page already exist?
-@@ -99,7 +105,10 @@
+@@ -99,7 +106,10 @@
  
  ### Step 3: Extract signal from source
  
@@ -165,7 +165,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  | Signal Type | What to Extract |
  |-------------|----------------|
-@@ -111,11 +120,10 @@
+@@ -111,11 +121,10 @@
  | Ascending, plateauing, pivoting? | Trajectory section |
  | Role, company, funding, location | State section (hard facts) |
  
@@ -178,7 +178,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  - `gbrain search "name"` and `gbrain query "what do we know about name"`
  - Check related pages: company pages for person enrichment and vice versa
  - This is free and often the richest source
-@@ -135,6 +143,13 @@
+@@ -135,6 +144,13 @@
  
  **4e. Company enrichment APIs (Tier 1)**
  - Company data, financials, headcount, key hires, recent news
@@ -192,7 +192,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  | Data Need | Example Sources | Tier |
  |-----------|----------------|------|
-@@ -145,7 +160,7 @@
+@@ -145,7 +161,7 @@
  | Social media | Platform APIs, web scraping | 1-3 |
  | Meeting history | Calendar/meeting transcript tools | 1-2 |
  
@@ -201,7 +201,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Store raw API responses via `put_raw_data` in gbrain:
  ```json
-@@ -160,7 +175,7 @@
+@@ -160,7 +176,7 @@
  Raw data preserves provenance. If the compiled truth is ever questioned,
  the raw data shows exactly what the API returned.
  
@@ -210,7 +210,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  #### CREATE path
  
-@@ -179,7 +194,7 @@
+@@ -179,7 +195,7 @@
  4. Flag contradictions between new signal and existing compiled truth
  5. Don't overwrite user-written assessments with API boilerplate
  
@@ -219,7 +219,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```markdown
  ---
-@@ -241,7 +256,7 @@
+@@ -241,7 +257,7 @@
  - **YYYY-MM-DD** | Event description [Source: ...]
  ```
  
@@ -228,7 +228,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```markdown
  ---
-@@ -268,7 +283,7 @@
+@@ -268,7 +284,7 @@
  - **YYYY-MM-DD** | Event description [Source: ...]
  ```
  
@@ -237,7 +237,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - Update company pages from person enrichment (and vice versa)
  - Update related project/deal pages if relevant context surfaced
-@@ -279,9 +294,12 @@
+@@ -279,9 +295,12 @@
  cross-references (updating related pages' compiled truth with new signal
  from this enrichment), not on creating links. Verify via the `auto_links`
  field in the put_page response (`{ created, removed, errors }`).
@@ -251,7 +251,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - **Test on 3-5 entities first.** Read actual output. Check quality.
  - Only proceed to bulk after test shots pass your quality bar.
-@@ -290,7 +308,7 @@
+@@ -290,7 +309,7 @@
  - Commit every 5-10 entities during bulk runs.
  - Save a report after bulk enrichment (see Report Storage below).
  
@@ -260,7 +260,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - Connection count < 20 on LinkedIn = likely wrong person, skip
  - Name mismatch between brain and API = skip, flag for review
-@@ -298,7 +316,7 @@
+@@ -298,7 +317,7 @@
  - Don't overwrite user-written assessments with API boilerplate
  - When in doubt: save raw data but don't update brain page
  
@@ -269,7 +269,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  After enrichment sweeps, save a report:
  - Number of entities processed
-@@ -309,14 +327,14 @@
+@@ -309,14 +328,14 @@
  
  This creates an audit trail for brain enrichment over time.
  

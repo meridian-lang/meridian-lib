@@ -214,25 +214,25 @@
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 195,
+        "line" : 194,
         "text" : "Integration"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 204,
+        "line" : 203,
         "text" : "Metrics"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 219,
+        "line" : 218,
         "text" : "Metrics — steps"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 224,
+        "line" : 223,
         "text" : "Output Format"
       },
       {
@@ -268,7 +268,7 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 197,
+        "line" : 196,
         "text" : "This skill can be called"
       }
     ],
@@ -487,15 +487,14 @@
         "heading" : "Anti-Patterns — steps",
         "line" : 190,
         "lines" : [
-          "❌ Composing tweet URLs by guessing the tweet id. Always go through",
-          "the X API; deterministic links only"
+          "❌ Composing tweet URLs by guessing the tweet id. Always go through the X API; deterministic links only"
         ],
         "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Integration",
-        "line" : 195,
+        "line" : 194,
         "lines" : [
           "This skill can be called:",
           "**Manually** — \"fix citations on this page\"",
@@ -508,7 +507,7 @@
       {
         "executes" : false,
         "heading" : "Metrics",
-        "line" : 204,
+        "line" : 203,
         "lines" : [
           "codeblock:json:ewogICJsYXN0X3J1biI6ICIyMDI2LTA0LTE1VC4uLiIsCiAgInBhZ2VzX3NjYW5uZWQiOiAwLAogICJjaXRhdGlvbnNfZml4ZWQiOiAwLAogICJ0d2VldF9saW5rc19yZXNvbHZlZCI6IDAsCiAgImNpdGF0aW9uc191bnJlc29sdmFibGUiOiAwLAogICJwYWdlc19yZW1haW5pbmciOiAxNDI0Cn0="
         ],
@@ -517,7 +516,7 @@
       {
         "executes" : false,
         "heading" : "Metrics — steps",
-        "line" : 219,
+        "line" : 218,
         "lines" : [
           "If running as a recurring batch, track state in a small JSON file under",
           "`~\/.gbrain\/citation-fixer-state.json`:"
@@ -527,7 +526,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 224,
+        "line" : 223,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],

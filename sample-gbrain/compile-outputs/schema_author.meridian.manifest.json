@@ -116,7 +116,7 @@
         "text" : "Convention"
       },
       {
-        "kind" : "reference",
+        "kind" : "applicability",
         "level" : 2,
         "line" : 85,
         "text" : "When to invoke"
@@ -357,7 +357,7 @@
         "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "When to invoke",
         "line" : 85,
         "lines" : [
@@ -371,7 +371,7 @@
           "DON'T invoke for \"where does THIS note go\" (use brain-taxonomist) or",
           "\"who knows about X\" (use expert-routing \/ `gbrain whoknows`)"
         ],
-        "role" : "reference"
+        "role" : "applicability"
       },
       {
         "executes" : false,

@@ -1,0 +1,354 @@
+{
+  "constants" : {
+    "batch size threshold" : 100000,
+    "freshness sla" : 86400,
+    "retry budget" : 3
+  },
+  "instances_required" : [
+    {
+      "kind" : "sink",
+      "name" : "warehouse sink"
+    },
+    {
+      "kind" : "source",
+      "name" : "object store source"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Dataset_critical",
+      "kind" : "dataset",
+      "line" : 28
+    },
+    {
+      "adjective" : "high volume",
+      "function" : "meridianDef_Dataset_highVolume",
+      "kind" : "dataset",
+      "line" : 27
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Dataset_stale",
+      "kind" : "dataset",
+      "line" : 21
+    },
+    {
+      "adjective" : "backfilled",
+      "function" : "meridianDef_Partition_backfilled",
+      "kind" : "partition",
+      "line" : 23
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_PipelineRun_failed",
+      "kind" : "pipeline run",
+      "line" : 22
+    },
+    {
+      "adjective" : "passing",
+      "function" : "meridianDef_QualityCheck_passing",
+      "kind" : "quality check",
+      "line" : 24
+    },
+    {
+      "adjective" : "compatible",
+      "function" : "meridianDef_Schema_compatible",
+      "kind" : "schema",
+      "line" : 26
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Watermark_fresh",
+      "kind" : "watermark",
+      "line" : 25
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a pipeline run",
+      "line" : 34,
+      "name" : "derivation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "transform"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a source",
+      "line" : 30,
+      "name" : "extraction",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "extract"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a dataset",
+      "line" : 32,
+      "name" : "loading",
+      "right_cardinality" : "one",
+      "right_kind" : "a sink",
+      "via" : "load"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Sync each dataset's watermark forward incrementally, retrying until it's actually fresh rather than declaring success after one extraction attempt, and skip a dataset entirely once it's flagged stale rather than syncing data nobody trusts anymore.",
+    "name" : "incremental sync",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 19,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 24,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 28,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 35,
+        "text" : "Workflow — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 39,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 47,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 50,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 31,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 37,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 19,
+        "lines" : [
+          "\"run incremental sync\"",
+          "\"sync dataset watermarks\"",
+          "\"run the watermark sync pass\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow",
+        "line" : 24,
+        "lines" : [
+
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 28,
+        "lines" : [
+          "fetch datasets",
+          "Check: any datasets",
+          "for each dataset:",
+          "read the watermark for the dataset"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 35,
+        "lines" : [
+          "Emit: \"incremental sync pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 39,
+        "lines" : [
+          "Don't call a single extraction \"synced.\" The retry loop exists because",
+          "one extraction call rarely closes the whole gap between the last",
+          "watermark and the current one",
+          "Don't bypass the stale-dataset skip to \"catch it up anyway.\" A stale",
+          "dataset needs `schema evolution` or `dedupe upsert` first, not a",
+          "watermark push that hides the underlying problem"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 47,
+        "lines" : [
+          "make sure no datasets whose status is \"stale\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 50,
+        "lines" : [
+          "The receipt confirms each dataset's watermark is fresh at the end of the",
+          "pass, or names which ones were skipped because they were flagged stale"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"run incremental sync\"\n\"sync dataset watermarks\"\n\"run the watermark sync pass\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "derive",
+      "line" : 39,
+      "past_participle" : "derived",
+      "relation" : "derivation",
+      "third_person" : "derives"
+    },
+    {
+      "base" : "extract",
+      "line" : 37,
+      "past_participle" : "extracted",
+      "relation" : "extraction",
+      "third_person" : "extracts"
+    },
+    {
+      "base" : "load",
+      "line" : 38,
+      "past_participle" : "loaded",
+      "relation" : "loading",
+      "third_person" : "loads"
+    }
+  ],
+  "source_files" : [
+    "incrementalsync.meri",
+    "etl.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 48,
+      "swift_line" : 362
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 367
+    },
+    {
+      "meridian_line" : 31,
+      "swift_line" : 374
+    },
+    {
+      "meridian_line" : 32,
+      "swift_line" : 378
+    },
+    {
+      "meridian_line" : 75,
+      "swift_line" : 384
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 400
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 439
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 444
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 484
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 489
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 529
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 534
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "incremental sync",
+      "swift_struct" : "IncrementalSync"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runIncrementalSync fires",
+      "swift_struct" : "WhenRunincrementalsyncFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when syncDatasetWatermarks fires",
+      "swift_struct" : "WhenSyncdatasetwatermarksFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runWatermarkSyncPass fires",
+      "swift_struct" : "WhenRunwatermarksyncpassFires"
+    }
+  ]
+}

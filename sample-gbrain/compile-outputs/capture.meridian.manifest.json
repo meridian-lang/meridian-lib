@@ -139,7 +139,7 @@
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "reference",
+        "kind" : "prohibitions",
         "level" : 3,
         "line" : 95,
         "text" : "Anti-Patterns — steps"
@@ -147,19 +147,19 @@
       {
         "kind" : "prohibitions",
         "level" : 3,
-        "line" : 101,
+        "line" : 99,
         "text" : "Anti-Patterns — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 104,
+        "line" : 102,
         "text" : "When NOT to use this skill"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 112,
+        "line" : 110,
         "text" : "When NOT to use this skill — steps"
       },
       {
@@ -291,20 +291,18 @@
         "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns — steps",
         "line" : 95,
         "lines" : [
-          "Don't try to bulk-import dozens of files by looping over `gbrain capture`",
-          "That's what `gbrain sync` (or `gbrain import`) is for. Capture is for",
-          "single thoughts, single notes, single transcripts"
+          "Don't try to bulk-import dozens of files by looping over `gbrain capture`. That's what `gbrain sync` (or `gbrain import`) is for. Capture is for single thoughts, single notes, single transcripts"
         ],
-        "role" : "reference"
+        "role" : "prohibitions"
       },
       {
         "executes" : true,
         "heading" : "Anti-Patterns — steps 2",
-        "line" : 101,
+        "line" : 99,
         "lines" : [
 
         ],
@@ -313,7 +311,7 @@
       {
         "executes" : false,
         "heading" : "When NOT to use this skill",
-        "line" : 104,
+        "line" : 102,
         "lines" : [
           "Bulk ingestion of many files → `skills\/media-ingest\/SKILL.md` or `gbrain sync` instead",
           "Article\/link with author + publication metadata → `skills\/idea-ingest\/SKILL.md` (it knows to build the people page)",
@@ -325,7 +323,7 @@
       {
         "executes" : true,
         "heading" : "When NOT to use this skill — steps",
-        "line" : 112,
+        "line" : 110,
         "lines" : [
           "Meeting transcripts → `skills\/meeting-ingestion\/SKILL.md` (attendee enrichment)"
         ],
@@ -371,40 +369,40 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 50,
+      "meridian_line" : 97,
       "swift_line" : 601
     },
     {
       "meridian_line" : 50,
-      "swift_line" : 612
+      "swift_line" : 606
     },
     {
       "meridian_line" : 50,
-      "swift_line" : 623
+      "swift_line" : 617
     },
     {
       "meridian_line" : 50,
-      "swift_line" : 634
+      "swift_line" : 628
     },
     {
       "meridian_line" : 50,
-      "swift_line" : 645
+      "swift_line" : 639
     },
     {
       "meridian_line" : 50,
-      "swift_line" : 656
+      "swift_line" : 650
     },
     {
       "meridian_line" : 50,
-      "swift_line" : 667
+      "swift_line" : 661
     },
     {
-      "meridian_line" : 114,
-      "swift_line" : 678
+      "meridian_line" : 50,
+      "swift_line" : 672
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 718
+      "meridian_line" : 112,
+      "swift_line" : 683
     },
     {
       "meridian_line" : 1,
@@ -412,7 +410,7 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 762
+      "swift_line" : 728
     },
     {
       "meridian_line" : 1,
@@ -420,7 +418,7 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 806
+      "swift_line" : 772
     },
     {
       "meridian_line" : 1,
@@ -428,7 +426,7 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 850
+      "swift_line" : 816
     },
     {
       "meridian_line" : 1,
@@ -436,7 +434,7 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 894
+      "swift_line" : 860
     },
     {
       "meridian_line" : 1,
@@ -444,11 +442,15 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 938
+      "swift_line" : 904
     },
     {
       "meridian_line" : 1,
       "swift_line" : 943
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 948
     }
   ],
   "tools_used" : [

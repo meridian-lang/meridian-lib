@@ -62,10 +62,9 @@ struct SkillExampleCorpusTests {
         #expect(nestedCall?.toolID == "workflow:AutonomouslyStabilizePullRequest")
         let hasAutonomousWorkflow = workflows.contains(where: { workflow in
             workflow.body.statements.contains(where: { primitive in
-                guard case .proseStep(let step) = primitive else { return false }
-                return step.dispatchMode == .autonomousLoop
-                    && step.autonomy?.until != nil
-                    && step.autonomy?.replanAfterFailures == 2
+                guard case .aiAutonomy(let step) = primitive else { return false }
+                return step.autonomy.until != nil
+                    && step.autonomy.replanAfterFailures == 2
             })
         })
         #expect(hasAutonomousWorkflow)
@@ -192,9 +191,8 @@ struct SkillExampleCorpusTests {
         let symbols = try Self.comprehensiveSymbols()
         let workflows = try Self.lower(name: "flaky_ci_stabilizer", ext: "meri", symbols: symbols)
         let autonomyStep = autonomyStep(in: workflows)
-        let step = try #require(autonomyStep, "Expected an autonomous-loop ProseStepIR")
-        #expect(step.dispatchMode == .autonomousLoop)
-        let cfg = try #require(step.autonomy)
+        let step = try #require(autonomyStep, "Expected an autonomous-loop AIAutonomyIR")
+        let cfg = step.autonomy
         #expect(cfg.until != nil, Comment(rawValue: "Expected until predicate"))
         #expect(cfg.unless != nil, Comment(rawValue: "Expected unless predicate"))
         #expect(cfg.replanAfterFailures == 2)
@@ -216,25 +214,23 @@ struct SkillExampleCorpusTests {
         #expect(workflowCalls.count >= 2,
                 Comment(rawValue: "Expected at least 2 workflow handoffs from the deterministic outer gate"))
 
-        // Some sub-workflow must be a discretion plan-then-execute step.
+        // Some sub-workflow must be a discretion judgment step.
         let hasDiscretion = workflows.contains { w in
             w.body.statements.contains { primitive in
-                guard case .proseStep(let step) = primitive else { return false }
-                return step.dispatchMode == .planThenExecute
+                if case .aiJudgment = primitive { return true } else { return false }
             }
         }
-        #expect(hasDiscretion, Comment(rawValue: "Expected at least one discretion ProseStep"))
+        #expect(hasDiscretion, Comment(rawValue: "Expected at least one discretion AIJudgmentIR"))
 
         // Some sub-workflow must be an autonomous loop with until/unless.
         let hasAutonomy = workflows.contains { w in
             w.body.statements.contains { primitive in
-                guard case .proseStep(let step) = primitive else { return false }
-                return step.dispatchMode == .autonomousLoop
-                    && step.autonomy?.until != nil
-                    && step.autonomy?.unless != nil
+                guard case .aiAutonomy(let step) = primitive else { return false }
+                return step.autonomy.until != nil
+                    && step.autonomy.unless != nil
             }
         }
-        #expect(hasAutonomy, Comment(rawValue: "Expected at least one autonomy ProseStep with until + unless"))
+        #expect(hasAutonomy, Comment(rawValue: "Expected at least one AIAutonomyIR with until + unless"))
     }
 
     @Test("dependency_upgrade_sweep keeps inline `do … and …` chain intact")
@@ -288,8 +284,8 @@ struct SkillExampleCorpusTests {
         // Autonomous sub-workflow has unless predicate (abort guard).
         let abortGuarded = workflows.contains { w in
             w.body.statements.contains { primitive in
-                guard case .proseStep(let step) = primitive else { return false }
-                return step.dispatchMode == .autonomousLoop && step.autonomy?.unless != nil
+                guard case .aiAutonomy(let step) = primitive else { return false }
+                return step.autonomy.unless != nil
             }
         }
         #expect(abortGuarded, Comment(rawValue: "Expected autonomy step with unless abort guard"))
@@ -328,14 +324,13 @@ struct SkillExampleCorpusTests {
     func mergeConflictPlaybookShape() throws {
         let symbols = try Self.comprehensiveSymbols()
         let workflows = try Self.lower(name: "merge_conflict_playbook", ext: "meridian", symbols: symbols)
-        // Should have at least one discretion ProseStepIR somewhere.
+        // Should have at least one discretion AIJudgmentIR somewhere.
         let hasDiscretion = workflows.contains { w in
             w.body.statements.contains { primitive in
-                guard case .proseStep(let step) = primitive else { return false }
-                return step.dispatchMode == .planThenExecute
+                if case .aiJudgment = primitive { return true } else { return false }
             }
         }
-        #expect(hasDiscretion, Comment(rawValue: "Expected discretion ProseStep"))
+        #expect(hasDiscretion, Comment(rawValue: "Expected discretion AIJudgmentIR"))
 
         // Plus a branch primitive driving the mechanical sync path.
         let hasBranch = workflows.contains { w in
@@ -416,11 +411,10 @@ struct SkillExampleCorpusTests {
 
     // MARK: - Helpers
 
-    private func autonomyStep(in workflows: [IRWorkflow]) -> ProseStepIR? {
+    private func autonomyStep(in workflows: [IRWorkflow]) -> AIAutonomyIR? {
         for w in workflows {
             for primitive in w.body.statements {
-                if case .proseStep(let step) = primitive,
-                   step.dispatchMode == .autonomousLoop {
+                if case .aiAutonomy(let step) = primitive {
                     return step
                 }
             }

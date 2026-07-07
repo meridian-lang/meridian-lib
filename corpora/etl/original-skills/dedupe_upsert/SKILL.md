@@ -1,0 +1,49 @@
+---
+name: dedupe upsert
+description: Collapse duplicate and drifted datasets into their canonical version, keeping the duplicate count within a tolerance band instead of demanding zero duplicates before it will run. A pipeline with occasional duplicates is normal; a pipeline with a runaway duplicate count is a different problem.
+triggers:
+  - "dedupe datasets"
+  - "run dedupe upsert"
+  - "collapse duplicate datasets"
+---
+
+# Dedupe Upsert
+
+Duplicate and stale datasets accumulate in any pipeline that retries on
+failure or re-ingests from an upstream that occasionally double-sends. This
+skill doesn't treat that as an emergency — it treats it as routine
+maintenance, bounded by how many duplicates are tolerable before something
+upstream needs a harder look. Within that band, it dedupes records in place;
+outside a tolerable state, it leaves a dataset's blocked status alone rather
+than forcing a merge that isn't safe yet.
+
+## When to invoke
+- "dedupe datasets"
+- "run dedupe upsert"
+- "collapse duplicate datasets"
+
+## Workflow
+fetch datasets.
+Check: at most 5 datasets whose status is "duplicate".
+Check: at least 0 datasets whose status is "stale".
+Check: exactly 1 dataset whose status is "canonical".
+for each dataset:
+  if either the dataset is stale or the dataset's status is "duplicate",
+    dedupe records in the dataset,
+  otherwise,
+    make sure the dataset's status is not "is-blocked".
+Emit: "dedupe upsert pass complete".
+
+## Anti-Patterns
+- Don't force a dedupe on a dataset that's flagged `is-blocked`. That flag
+  means something upstream needs attention first; deduping through it
+  papers over the real problem.
+- Don't wait for the duplicate count to hit zero before running this. Zero
+  isn't the bar — staying under the tolerance band is.
+
+## Assertions
+confirm at most 5 datasets whose status is "duplicate".
+
+## Report shape
+The receipt states how many datasets were deduped this pass and confirms
+there is exactly one canonical dataset left standing.

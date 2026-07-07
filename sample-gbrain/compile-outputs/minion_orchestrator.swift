@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum MinionOrchestrator {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct MinionOrchestratorInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -599,23 +599,23 @@ public struct MinionOrchestratorInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "MinionOrchestratorInput", parameters: [:])
 
-        // L79
-        let __meridianProseResults_L79 = try await runtime.executeProsePlan(
+        // L75
+        let __meridianProseResults_L75 = try await runtime.executeProsePlan(
             prose: "Decide which case below applies and carry out its action:\n- when User asks for deterministic command/script run, Shell job (CLI: `gbrain jobs submit shell ...`)\n- when User asks to \"run in minions\" + explicit command/argv, Shell job (CLI, `--params` with `cmd` or `argv`)\n- when User asks for research/reasoning/iterative agent, Subagent job (CLI: `gbrain agent run`)\n- when User asks to steer/pause/resume an agent, Subagent job lifecycle tools (MCP-callable)\n- when Single simple operation under ~30s, Consider inline execution first\n- when Needs restart durability/observability, Submit as Minion job\n- when Parallel work (2+ streams), `gbrain agent run --fanout-manifest` or parent + child subagents",
             snapshot: state.snapshot(),
             scopedTools: ["jobs.status", "jobs.submit", "page.list", "shell.run"]
         )
-        for (__key, __value) in __meridianProseResults_L79 {
+        for (__key, __value) in __meridianProseResults_L75 {
             state.bind(__key, __value)
         }
-        // L94
-        let __meridianProseResults_L94 = try await runtime.executeProsePlan(
+        // L90
+        let __meridianProseResults_L90 = try await runtime.executeProsePlan(
             prose: "follow the Shell Jobs (Deterministic Scripts) — steps guidance",
             snapshot: state.snapshot(),
             scopedTools: ["jobs.status", "jobs.submit", "page.list", "shell.run"],
             guidance: "Use for reproducible command execution, ETL steps, cron work, and scriptable\ntasks where no LLM reasoning loop is needed\n`GBRAIN_ALLOW_SHELL_JOBS=1` must be set on the worker environment\nWithout it, the shell handler refuses to register and submissions sit in\n`waiting` silently. Gate lives in `src/core/minions/handlers/shell.ts`\nVerify setup: after configuration, run `gbrain jobs stats` (CLI) to\nconfirm the worker is registered and consuming the queue\nCheck structured result fields (exit code, stdout/stderr tails, attempts,\ntimings) from `get_job`. Use `gbrain jobs stats` (CLI) for worker/queue\nhealth dashboard\nuse judgment to follow the Subagent Jobs (LLM Orchestration) — steps guidance:\nUse for open-ended reasoning, tool-using research, and fan-out synthesis\nUser-facing entrypoint: `gbrain agent run <prompt>` is the canonical way\nand `subagent_aggregator` are both in `PROTECTED_JOB_NAMES`, so direct MCP\nsubmission requires `{allowProtectedSubmit: true}`, which `gbrain agent run`\nsupplies\nFlags (from `src/commands/agent.ts`):\n`--subagent-def <name>` — named subagent definition\n`--model <id>` — override model\n`--max-turns <N>` — cap the LLM loop\n`--tools <csv>` — allow-listed brain tools (see above)\n`--timeout-ms <N>` — hard timeout per job\n`--fanout-manifest <file>` — N children + 1 aggregator\n`--detach` — submit and return immediately\nQueue/priority/retry tuning is not exposed by `gbrain agent run`; submit the\nraw `subagent` handler via `gbrain jobs submit` (requires CLI trust) if you\nneed those knobs\ncodeblock:plain:bGlzdF9qb2JzIC0tc3RhdHVzIGFjdGl2ZSAgICAgICAgICAjIE1DUCDigJQgd2hhdCdzIHJ1bm5pbmc/CmdldF9qb2IgSUQgICAgICAgICAgICAgICAgICAgICAgICAgIyBNQ1Ag4oCUIGZ1bGwgZGV0YWlscyArIGxvZ3MgKyB0b2tlbnMKZ2V0X2pvYl9wcm9ncmVzcyBJRCAgICAgICAgICAgICAgICAjIE1DUCDigJQgc3RydWN0dXJlZCBwcm9ncmVzcyBzbmFwc2hvdApnYnJhaW4gam9icyBzdGF0cyAgICAgICAgICAgICAgICAgICMgQ0xJIOKAlCBxdWV1ZSBoZWFsdGggZGFzaGJvYXJkCmdicmFpbiBhZ2VudCBsb2dzIElEIC0tZm9sbG93ICAgICAgIyBDTEkg4oCUIHN0cmVhbWluZyB0cmFuc2NyaXB0ICsgaGVhcnRiZWF0\nProgress includes: step count, total steps, message, token usage, last tool called\nSend a message to redirect a running agent:\ncodeblock:plain:c2VuZF9qb2JfbWVzc2FnZSBpZD1JRCBwYXlsb2FkPXsiZGlyZWN0aXZlIjoiZm9jdXMgb24gcmV2ZW51ZSwgc2tpcCBoZWFkY291bnQifQ==\nThe agent handler reads inbox messages on each iteration and injects them as\ncontext. Messages are acknowledged (read receipts tracked)\nOnly the parent job or admin can send messages (sender validation)\ncodeblock:plain:cGF1c2Vfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICAjIGZyZWV6ZSB3aXRob3V0IGxvc2luZyBzdGF0ZQpyZXN1bWVfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgcGljayB1cCB3aGVyZSBpdCBsZWZ0IG9mZgpjYW5jZWxfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgaGFyZCBzdG9wCnJlcGxheV9qb2IgaWQ9SUQgICAgICAgICAgICAgICAgICAgIyByZS1ydW4gd2l0aCBzYW1lIG9yIG1vZGlmaWVkIHBhcmFtcwpyZXBsYXlfam9iIGlkPUlEIGRhdGFfb3ZlcnJpZGVzPXsiZGVwdGgiOiJkZWVwIn0gICMgcmVwbGF5IHdpdGggY2hhbmdlcw==\nAll lifecycle ops are MCP-callable\nChild tokens roll up to parent automatically on completion"
         )
-        for (__key, __value) in __meridianProseResults_L94 {
+        for (__key, __value) in __meridianProseResults_L90 {
             state.bind(__key, __value)
         }
 

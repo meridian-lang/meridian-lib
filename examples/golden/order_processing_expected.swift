@@ -851,7 +851,7 @@ public struct EscalateOrder: MeridianWorkflow {
     }
 }
 
-public struct WhenOrderHasBeen: MeridianWorkflow {
+public struct WhenOrderIs: MeridianWorkflow {
     public let runtime: Runtime
 
     public init(runtime: Runtime) {
@@ -872,18 +872,18 @@ public struct WhenOrderHasBeen: MeridianWorkflow {
         }
         let constants = Constants()
         let instances = Instances()
-        await runtime.workflowStarted(workflowName: "WhenOrderHasBeen", parameters: [:])
+        await runtime.workflowStarted(workflowName: "WhenOrderIs", parameters: [:])
 
         if __meridianShouldRun("progress:0.0:L16:C0") {
-            try await runtime.wait(.event("orderHasBeenHoldMore", matching: nil))
+            try await runtime.wait(.event("orderIsFlaggedAsStale", matching: nil))
             try await runtime.checkpoint(label: "progress:0.0:L16:C0", state: state.snapshot())
         }
         if __meridianShouldRun("progress:0.1:L16:C0") {
             try await runtime.emit(
-                event: "trigger.orderHasBeenHoldMore.fired",
+                event: "trigger.orderIsFlaggedAsStale.fired",
                 payload: [
                     "action": .string("escalate the order to the account manager of the customer who placed the order"),
-                    "condition": .string("an order has been on hold for more than 7 days"),
+                    "condition": .string("an order is flagged as stale"),
                 ]
             )
             try await runtime.checkpoint(label: "progress:0.1:L16:C0", state: state.snapshot())

@@ -17,6 +17,10 @@
 | receive inbound shipment | receiveshipment |
 | cancel blocked orders | cancelorder |
 | month-end close | monthendclose |
+| retry declined payments | paymentretry |
+| approve high value orders | orderapproval |
+| replenish backorders | backorderreplenish |
+| process returns | returnsprocessing |
 
 ## Workflow (( role: reference ))
 

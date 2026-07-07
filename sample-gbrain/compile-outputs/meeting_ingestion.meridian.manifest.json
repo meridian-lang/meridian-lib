@@ -112,73 +112,73 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 50,
+        "line" : 49,
         "text" : "Phases"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 52,
+        "line" : 51,
         "text" : "Phase 1: Parse the transcript"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 62,
+        "line" : 61,
         "text" : "Phase 2: Create meeting page"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 84,
+        "line" : 83,
         "text" : "Phase 3: Attendee enrichment (MANDATORY)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 95,
+        "line" : 94,
         "text" : "Phase 3: Attendee enrichment (MANDATORY) — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 99,
+        "line" : 98,
         "text" : "Phase 3: Attendee enrichment (MANDATORY) — steps 2"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 103,
+        "line" : 102,
         "text" : "Phase 3: Attendee enrichment (MANDATORY) — steps 3"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 108,
+        "line" : 107,
         "text" : "Phase 4: Entity propagation (MANDATORY)"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 116,
+        "line" : 115,
         "text" : "Phase 5: Timeline merge"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 121,
+        "line" : 120,
         "text" : "Phase 6: Sync"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 125,
+        "line" : 124,
         "text" : "Output Format"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 130,
+        "line" : 129,
         "text" : "Anti-Patterns"
       },
       {
@@ -190,13 +190,13 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 54,
+        "line" : 53,
         "text" : "Extract from the transcript"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 97,
+        "line" : 96,
         "text" : "For EACH attendee"
       }
     ],
@@ -221,15 +221,14 @@
         "heading" : "Contract — steps",
         "line" : 45,
         "lines" : [
-          "Every attendee and company mentioned MUST get a back-link from their page to",
-          "the meeting page. An unlinked mention is a broken brain"
+          "Every attendee and company mentioned MUST get a back-link from their page to the meeting page. An unlinked mention is a broken brain"
         ],
         "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Phases",
-        "line" : 50,
+        "line" : 49,
         "lines" : [
 
         ],
@@ -238,7 +237,7 @@
       {
         "executes" : false,
         "heading" : "Phase 1: Parse the transcript",
-        "line" : 52,
+        "line" : 51,
         "lines" : [
           "Extract from the transcript:",
           "Attendees (names, roles if available)",
@@ -253,7 +252,7 @@
       {
         "executes" : false,
         "heading" : "Phase 2: Create meeting page",
-        "line" : 62,
+        "line" : 61,
         "lines" : [
           "codeblock:markdown:IyB7TWVldGluZyBUaXRsZX0g4oCUIHtEYXRlfQoKKipBdHRlbmRlZXM6Kioge2xpc3Qgd2l0aCBsaW5rcyB0byBwZW9wbGUgcGFnZXN9CioqRGF0ZToqKiB7WVlZWS1NTS1ERH0KKipEdXJhdGlvbjoqKiB7aWYgYXZhaWxhYmxlfQoKIyMgU3VtbWFyeQp7My01IGJ1bGxldCBrZXkgb3V0Y29tZXN9CgojIyBLZXkgRGVjaXNpb25zCntEZWNpc2lvbnMgd2l0aCBjb250ZXh0fQoKIyMgQWN0aW9uIEl0ZW1zCntUYXNrcyB3aXRoIG93bmVycyBhbmQgZGVhZGxpbmVzfQoKIyMgRGlzY3Vzc2lvbiBOb3Rlcwp7U3RydWN0dXJlZCBub3RlcyBieSB0b3BpY30="
         ],
@@ -262,7 +261,7 @@
       {
         "executes" : false,
         "heading" : "Phase 3: Attendee enrichment (MANDATORY)",
-        "line" : 84,
+        "line" : 83,
         "lines" : [
           "`gbrain search \"{name}\"` — does a people page exist?",
           "If YES → update compiled truth with meeting context",
@@ -276,7 +275,7 @@
       {
         "executes" : true,
         "heading" : "Phase 3: Attendee enrichment (MANDATORY) — steps",
-        "line" : 95,
+        "line" : 94,
         "lines" : [
           "For EACH attendee:"
         ],
@@ -285,7 +284,7 @@
       {
         "executes" : false,
         "heading" : "Phase 3: Attendee enrichment (MANDATORY) — steps 2",
-        "line" : 99,
+        "line" : 98,
         "lines" : [
           "If NO → create via enrich skill (this is mandatory, not optional)"
         ],
@@ -294,7 +293,7 @@
       {
         "executes" : true,
         "heading" : "Phase 3: Attendee enrichment (MANDATORY) — steps 3",
-        "line" : 103,
+        "line" : 102,
         "lines" : [
 
         ],
@@ -303,7 +302,7 @@
       {
         "executes" : false,
         "heading" : "Phase 4: Entity propagation (MANDATORY)",
-        "line" : 108,
+        "line" : 107,
         "lines" : [
           "For each company, project, or concept discussed:",
           "Check brain for existing page",
@@ -316,7 +315,7 @@
       {
         "executes" : false,
         "heading" : "Phase 5: Timeline merge",
-        "line" : 116,
+        "line" : 115,
         "lines" : [
           "The same event appears on ALL mentioned entities' timelines. If Alice met Bob at",
           "Acme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page"
@@ -326,7 +325,7 @@
       {
         "executes" : true,
         "heading" : "Phase 6: Sync",
-        "line" : 121,
+        "line" : 120,
         "lines" : [
           "`gbrain sync` to update the index"
         ],
@@ -335,7 +334,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 125,
+        "line" : 124,
         "lines" : [
           "Meeting page created. Report: \"Meeting ingested: {N} attendees enriched, {N} entities",
           "updated, {N} action items captured.\""
@@ -345,7 +344,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 130,
+        "line" : 129,
         "lines" : [
           "Creating the meeting page without enriching attendees",
           "Skipping entity propagation (\"I'll do that later\")",
@@ -398,11 +397,11 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 97,
+      "meridian_line" : 96,
       "swift_line" : 604
     },
     {
-      "meridian_line" : 123,
+      "meridian_line" : 122,
       "swift_line" : 614
     },
     {

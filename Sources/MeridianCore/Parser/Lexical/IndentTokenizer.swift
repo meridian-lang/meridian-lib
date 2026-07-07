@@ -166,7 +166,7 @@ public enum BlockKind: String, Sendable, Equatable {
 /// `aiDiscretion` / `aiAutonomy` route a *fuzzy* table (one whose condition
 /// cells are intent descriptions rather than checkable comparisons) to the
 /// planner instead of inerting it: the rows are rendered as a ruleset and handed
-/// to a `ProseStepIR` (`.planThenExecute` / `.autonomousLoop`).
+/// to an AI-routed step (`AIJudgmentIR` for discretion, `AIAutonomyIR` for autonomy).
 public enum TableMode: Sendable, Equatable {
     case decision
     case data(name: String?)

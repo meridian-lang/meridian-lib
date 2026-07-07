@@ -398,7 +398,7 @@
         "text" : "Phase G: Auto-Update Check (if not already configured)"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
         "line" : 515,
         "text" : "Phase G: Auto-Update Check (if not already configured) — steps"
@@ -574,6 +574,12 @@
       {
         "kind" : "topic",
         "level" : 3,
+        "line" : 517,
+        "text" : "If they agree"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
         "line" : 518,
         "text" : "Test"
       },
@@ -594,6 +600,12 @@
         "level" : 3,
         "line" : 580,
         "text" : "Tell the user"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 625,
+        "text" : "If the user says no or wants to stop"
       }
     ],
     "sections" : [
@@ -1173,13 +1185,14 @@
         "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase G: Auto-Update Check (if not already configured) — steps",
         "line" : 515,
         "lines" : [
+          "If they agree:",
           "Test: `gbrain check-update --json`"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -1302,8 +1315,10 @@
         "heading" : "Phase J: Cold Start — Populate Your Brain (AUTOMATIC) — steps 2",
         "line" : 619,
         "lines" : [
+          "If the user says yes (or anything affirmative):",
           "→ Load and execute `skills\/cold-start\/SKILL.md` immediately. Do not",
           "just print a reference — actually run the cold-start skill",
+          "If the user says no or wants to stop:",
           "→ Record in `~\/.gbrain\/cold-start-state.json`:"
         ],
         "role" : "reference"
@@ -1561,52 +1576,48 @@
       "swift_line" : 950
     },
     {
-      "meridian_line" : 518,
+      "meridian_line" : 546,
       "swift_line" : 962
     },
     {
-      "meridian_line" : 546,
+      "meridian_line" : 588,
       "swift_line" : 974
     },
     {
-      "meridian_line" : 588,
+      "meridian_line" : 642,
       "swift_line" : 986
     },
     {
-      "meridian_line" : 642,
+      "meridian_line" : 643,
       "swift_line" : 998
     },
     {
-      "meridian_line" : 643,
+      "meridian_line" : 644,
       "swift_line" : 1010
     },
     {
-      "meridian_line" : 644,
-      "swift_line" : 1022
+      "meridian_line" : 1,
+      "swift_line" : 1050
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1062
+      "swift_line" : 1055
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1067
+      "swift_line" : 1094
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1106
+      "swift_line" : 1099
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1111
+      "swift_line" : 1138
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1150
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 1155
+      "swift_line" : 1143
     }
   ],
   "tools_used" : [
@@ -1614,16 +1625,8 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
           "line" : 373,
           "scoped_tools" : [
             "health.get",
@@ -1635,7 +1638,6 @@
           "text" : "Decide which case below applies and carry out its action:\n- when Task is Find a person, Before (grep) is `grep -r \"Pedro\" brain\/`, `gbrain search \"Pedro\"`\n- when Task is Understand a topic, Before (grep) is `grep -rl \"deal\" brain\/ \\, head -5 && cat ...`\n- when Task is Read a known page, Before (grep) is `cat brain\/people\/pedro.md`, `gbrain get people\/pedro`\n- when Task is Find connections, Before (grep) is `grep -rl \"Brex\" brain\/ \\, xargs grep \"Pedro\"`"
         },
         {
-          "dispatch_mode" : "plan_then_execute",
           "line" : 419,
           "scoped_tools" : [
             "health.get",
@@ -1645,6 +1647,13 @@
             "shell.run"
           ],
           "text" : "Decide which case below applies and carry out its action:\n- when Layer is gbrain, What it stores is World knowledge: people, companies, deals, meetings, concepts, media, \"Who is Pedro?\", \"What happened at the board meeting?\"\n- when Layer is memory_search, What it stores is Agent operational state: preferences, decisions, session context, \"How does the user like formatting?\", \"What did we decide about X?\""
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "setup a input",

@@ -4,7 +4,7 @@
 - Ported: `skillpack_harvest.meri`
 - Tier: 2 (light edits)
 - Similarity: 64%
-- Lines: 270 -> 320 (+130 / -80)
+- Lines: 270 -> 316 (+129 / -83)
 
 ## Frontmatter
 - Added: (none)
@@ -18,10 +18,10 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L35 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L80 `When to invoke`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L240 `Phase 6 — Downstream announcement (optional)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L271 `What harvest does NOT do`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L34 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L77 `When to invoke`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L236 `Phase 6 — Downstream announcement (optional)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L267 `What harvest does NOT do`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
 - Sections inert total: 14/14 (100% total inert; includes intentional docs/templates/tools metadata)
@@ -33,19 +33,19 @@ These sections were made non-executable in the port and should be reviewed as mi
 
 ### Inert section details
 - L13 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L35 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L51 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L80 `When to invoke`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L92 `Preconditions`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L111 `Phase 1 — Plan`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L124 `Phase 2 — Dry-run + privacy-lint preview`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L146 `Phase 3 — Genericization checklist (the editorial pass)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L195 `Phase 4 — Real harvest`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L224 `Phase 5 — Verify in gbrain`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L240 `Phase 6 — Downstream announcement (optional)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L247 `Bypass: `--no-lint``: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L271 `What harvest does NOT do`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L282 `Files this skill touches`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L34 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L50 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L77 `When to invoke`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L89 `Preconditions`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L107 `Phase 1 — Plan`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L120 `Phase 2 — Dry-run + privacy-lint preview`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L142 `Phase 3 — Genericization checklist (the editorial pass)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L191 `Phase 4 — Real harvest`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L220 `Phase 5 — Verify in gbrain`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L236 `Phase 6 — Downstream announcement (optional)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L243 `Bypass: `--no-lint``: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L267 `What harvest does NOT do`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L278 `Files this skill touches`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
@@ -71,22 +71,24 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  A harvest is "properly done" when:
  
-@@ -52,10 +52,13 @@
+@@ -52,10 +52,12 @@
  6. The user has reviewed the diff in gbrain and explicitly approved
     the commit.
  
-+
-+### Contract — steps (( role: reference ))
-+
- If any of these is incomplete, the skill is NOT yet harvested — the
- files may sit in gbrain's working tree, but they're not landed.
- 
+-If any of these is incomplete, the skill is NOT yet harvested — the
+-files may sit in gbrain's working tree, but they're not landed.
+-
 -## Output Format
++
++### Contract — steps
++
++If any of these is incomplete, the skill is NOT yet harvested — the files may sit in gbrain's working tree, but they're not landed.
++
 +## Output Format (( role: template ))
  
  This skill produces three artifacts in gbrain's working tree:
  
-@@ -71,25 +74,36 @@
+@@ -71,25 +73,34 @@
  a list of files written. JSON mode (`--json`) returns the full
  `HarvestResult` shape for machine consumption.
  
@@ -108,11 +110,9 @@ These sections were made non-executable in the port and should be reviewed as mi
  - **Moving files instead of copying.** Harvest is a copy. The host
    retains its skill. Don't `rm -rf` the source after harvesting.
 +
-+### Anti-Patterns — steps (( role: reference ))
++### Anti-Patterns — steps
 +
-+- Always preview first. Files land in
-+  gbrain's working tree; cleanup is a `git checkout` away, but you
-+  shouldn't need to.
++- Skipping the dry-run. Always preview first. Files land in gbrain's working tree; cleanup is a `git checkout` away, but you shouldn't need to.
 +
 +### Anti-Patterns — steps 2 (( role: reference ))
 +
@@ -131,7 +131,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - The user developed a skill in their host fork (Wintermute, Neuromancer,
    Zion, etc.) and wants other gbrain clients to be able to use it
-@@ -101,12 +115,7 @@
+@@ -101,12 +112,7 @@
  - The skill references private content that can't be generalized
  - The user just wants to share a one-off draft (use a gist instead)
  
@@ -145,17 +145,16 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  2. **The skill is generalizable.** Strip-test in your head: replace
     every fork-specific name. Does it still make sense as a skill?
-@@ -115,25 +124,30 @@
+@@ -115,25 +121,29 @@
     gbrain's working tree. They'll review and commit. Don't harvest
     into a checkout the user doesn't intend to commit from.
  
 +
-+### Preconditions — steps (( role: reference ))
++### Preconditions — steps
 +
 +> Before running this skill, confirm:
 +
-+1. The skill is mature. Recent `routing-eval.jsonl` cases pass; the
-+   skill has been used in production at least a few times.
++1. The skill is mature. Recent `routing-eval.jsonl` cases pass; the skill has been used in production at least a few times.
 +
  ## Workflow
  
@@ -188,7 +187,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  The output shows:
  - Which files would land in gbrain's tree
-@@ -146,11 +160,16 @@
+@@ -146,11 +156,16 @@
  land. Spot-check the SKILL.md and any paired source for things the
  linter might miss (proper nouns, internal project names, etc.).
  
@@ -210,7 +209,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  1. **Fork-specific names → generic phrasing**
     - `Wintermute` → `your OpenClaw` (or `OpenClaw deployment`)
-@@ -161,46 +180,51 @@
+@@ -161,46 +176,51 @@
  2. **Real entities → placeholders**
     - Real people, companies, deals, funds → placeholder slugs
       (`alice-example`, `acme-example`, `fund-a`, etc.)
@@ -288,7 +287,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  Outcomes:
  - `harvested` — success, manifest updated, files in gbrain's tree
  - `lint_failed` — privacy linter caught something. Go back to Phase 3,
-@@ -209,9 +233,29 @@
+@@ -209,9 +229,29 @@
    use a different slug, or pass `--overwrite-local` if you really
    mean to replace.
  
@@ -321,7 +320,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  1. `bun test test/skills-conformance.test.ts` — confirms the new
     SKILL.md meets the frontmatter contract.
-@@ -219,17 +263,21 @@
+@@ -219,17 +259,21 @@
     bundle and gbrain's own checkout.
  3. `gbrain skillpack list` — confirms the slug shows up in the bundle.
  4. Review the diff: `cd <gbrainRoot> && git diff -- skills/<slug>/`
@@ -348,7 +347,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  The privacy linter is the safety net. The editorial pass is the
  primary defense. If you've completed Phase 3 thoroughly and the
-@@ -239,15 +287,14 @@
+@@ -239,15 +283,14 @@
  gbrain skillpack harvest <slug> --from <host-repo-root> --no-lint
  ```
  
@@ -367,7 +366,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - It does NOT move files (it copies). The host's `skills/<slug>/`
    stays in place.
-@@ -258,13 +305,16 @@
+@@ -258,13 +301,16 @@
  - It does NOT support `--all` (no batch harvest). One skill at a
    time keeps the editorial review tractable.
  

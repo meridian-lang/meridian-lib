@@ -3,8 +3,8 @@
 - Original: `brain-pdf/SKILL.md`
 - Ported: `brain_pdf.meri`
 - Tier: 2 (light edits)
-- Similarity: 79%
-- Lines: 187 -> 217 (+57 / -27)
+- Similarity: 80%
+- Lines: 187 -> 214 (+54 / -27)
 
 ## Frontmatter
 - Added: (none)
@@ -17,11 +17,11 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L59 `Workflow`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L125 `Defaults: NO cover, NO TOC`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L168 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L192 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L203 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L56 `Workflow`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L122 `Defaults: NO cover, NO TOC`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L165 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L189 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L200 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections inert total: 9/10 (90% total inert; includes intentional docs/templates/tools metadata)
@@ -34,20 +34,20 @@ These sections were made non-executable in the port and should be reviewed as mi
 ### Inert section details
 - L17 `What this does`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L31 `Prerequisite: gstack make-pdf`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L59 `Workflow`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L125 `Defaults: NO cover, NO TOC`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L132 `Font requirements`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L148 `Delivery`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L168 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L192 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L203 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L56 `Workflow`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L122 `Defaults: NO cover, NO TOC`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L129 `Font requirements`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L145 `Delivery`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L165 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L189 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L200 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
 ```diff
 --- original-skills/brain-pdf/SKILL.md
 +++ skills/brain_pdf.meri
-@@ -18,41 +18,56 @@
+@@ -18,41 +18,53 @@
  
  ## The rule
  
@@ -71,8 +71,6 @@ These sections were made non-executable in the port and should be reviewed as mi
  - Archiving a long-form essay in a portable format
  
 -## Prerequisite: gstack make-pdf
--
--This skill depends on the gstack `make-pdf` binary at:
 +
 +### What this does — steps (( role: reference ))
 +
@@ -81,28 +79,27 @@ These sections were made non-executable in the port and should be reviewed as mi
 +suitable for:
 +
 +## Prerequisite: gstack make-pdf (( role: reference ))
++
++```
++$HOME/.claude/skills/gstack/make-pdf/dist/pdf
++```
++
++
++### Prerequisite: gstack make-pdf — steps
  
- ```
- $HOME/.claude/skills/gstack/make-pdf/dist/pdf
- ```
+ This skill depends on the gstack `make-pdf` binary at:
  
--The user must have gstack co-installed. If absent, the skill cannot run.
+-```
+-$HOME/.claude/skills/gstack/make-pdf/dist/pdf
+-```
++
++### Prerequisite: gstack make-pdf — steps 2 (( role: reference ))
+ 
+ The user must have gstack co-installed. If absent, the skill cannot run.
  A future v0.26+ may bundle a fallback PDF renderer; for v0.25.1 gstack
  is a soft prereq.
  
 -Verify it exists before invoking:
-+
-+### Prerequisite: gstack make-pdf — steps
-+
-+This skill depends on the gstack `make-pdf` binary at:
-+
-+
-+### Prerequisite: gstack make-pdf — steps 2 (( role: reference ))
-+
-+The user must have gstack co-installed. If absent, the skill cannot run.
-+
-+### Prerequisite: gstack make-pdf — steps 3
-+
 +> Verify it exists before invoking:
  
  ```bash
@@ -115,7 +112,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```
  1. RESOLVE  → Confirm the brain page exists (gbrain get <slug>).
-@@ -65,6 +80,9 @@
+@@ -65,6 +77,9 @@
  ```
  
  ## Invocation
@@ -125,7 +122,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```bash
  SLUG="path/to/page"
-@@ -115,19 +133,15 @@
+@@ -115,19 +130,15 @@
  CONTAINER=1 "$P" generate --title "Custom Title" --author "Custom Author" "$CLEAN" "$OUT"
  ```
  
@@ -148,7 +145,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  - Minimum body font size: 10pt (page chrome 9pt)
  - Body text: 11pt
  
-@@ -135,21 +149,34 @@
+@@ -135,21 +146,34 @@
  host's package manager (`apt install fonts-liberation fonts-noto-cjk` on
  Debian/Ubuntu containers).
  
@@ -190,7 +187,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - ❌ Generating a PDF without first confirming the brain page exists.
    No source = no PDF.
-@@ -163,6 +190,9 @@
+@@ -163,6 +187,9 @@
  
  ## Related skills
  
@@ -200,7 +197,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  - `skills/book-mirror/SKILL.md` — produces a brain page that's a
    natural input to brain-pdf (chapter-by-chapter personalized analysis).
  - `skills/strategic-reading/SKILL.md` — same shape, problem-lens variant.
-@@ -170,7 +200,7 @@
+@@ -170,7 +197,7 @@
    HTML (different rendering target).
  
  
@@ -209,7 +206,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  This skill guarantees:
  
-@@ -181,7 +211,7 @@
+@@ -181,7 +208,7 @@
  
  The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  

@@ -1,0 +1,168 @@
+=== vocabulary ===
+A dataset is a kind of dataset.
+A source is a kind of storage.
+A sink is a kind of storage.
+A pipeline run is a kind of process.
+A partition is a kind of thing.
+A schema is a kind of thing.
+A quality check is a kind of thing.
+A watermark is a kind of thing.
+
+A dataset has a name, a status, and a row count.
+A source has a name, a status, and a uri.
+A sink has a name, a status, and a uri.
+A pipeline run has a number, a status, a dataset name, and a started at.
+A pipeline run can be running or succeeded or failed, called the run status.
+A partition has a name, a dataset name, a status, and an updated at.
+A schema has a version, a dataset name, and a status.
+A quality check has a name, a dataset name, and a status.
+A watermark has a dataset name, a value, and an updated at.
+
+Definition: a dataset is stale if its status is "stale".
+Definition: a pipeline run is failed if its status is "failed".
+Definition: a partition is backfilled if its status is "backfilled".
+Definition: a quality check is passing if its status is "passed".
+Definition: a watermark is fresh if its updated at is within the last 24 hours.
+Definition: a schema is compatible if its status is "compatible".
+Definition: a dataset is high volume if its row count exceeds the batch size threshold.
+Definition: a dataset is critical if it is stale and it is high volume.
+
+Extraction relates a source to a dataset.
+Extraction is read via the extract tool.
+Loading relates a dataset to a sink.
+Loading is read via the load tool.
+Derivation relates a pipeline run to a dataset.
+Derivation is read via the transform tool.
+
+The verb to extract (it extracts, it is extracted) means the extraction relation.
+The verb to load (it loads, it is loaded) means the loading relation.
+The verb to derive (it derives, it is derived) means the derivation relation.
+
+To fetch datasets:
+  bind datasets = invoke dataset.list.
+
+To fetch stale datasets:
+  bind datasets = invoke dataset.list with status = "stale".
+
+To fetch failed pipeline runs:
+  bind pipeline runs = invoke pipeline.list with status = "failed".
+
+To fetch partitions for a dataset:
+  bind partitions = invoke partition.list with dataset = the dataset.
+
+To extract a dataset from a source:
+  bind dataset = invoke extract with source = the source.
+
+To transform a dataset:
+  invoke transform with dataset = the dataset.
+
+To validate the schema for a dataset:
+  bind schema = invoke schema.validate with dataset = the dataset.
+
+To load a dataset into a sink:
+  invoke load with dataset = the dataset, sink = the sink.
+
+To dedupe records in a dataset:
+  invoke record.dedupe with dataset = the dataset.
+
+To backfill a partition:
+  invoke partition.backfill with partition = the partition.
+
+To run quality checks on a dataset:
+  bind quality check = invoke quality.run with dataset = the dataset.
+
+To read the watermark for a dataset:
+  bind watermark = invoke watermark.read with dataset = the dataset.
+
+To replay a pipeline run:
+  invoke pipeline.replay with run = the pipeline run.
+
+=== constants ===
+
+The freshness sla is 24 hours.
+The batch size threshold is 100000.
+The retry budget is 3.
+
+=== instances ===
+
+There is a sink called warehouse sink:
+  name = "warehouse"
+  status = "active"
+  uri = "s3://warehouse/main"
+
+There is a source called object store source:
+  name = "object-store"
+  status = "active"
+  uri = "s3://raw/landing"
+
+=== language ===
+Comparison synonyms:
+  lags behind = is less than
+  exceeds = is more than
+  matches = is
+Duration synonyms:
+  batch window = 4 hours
+Assertion synonyms:
+  confirm
+  ensure
+
+=== tools ===
+List Datasets
+=============
+-- List datasets, optionally by status.
+~ dataset.list(status: String) : List
+
+List Pipeline Runs
+===================
+-- List pipeline runs by status.
+~ pipeline.list(status: String) : List
+
+List Partitions
+================
+-- List partitions for a dataset.
+~ partition.list(dataset: Dataset) : List
+
+Extract
+=======
+-- Extract a dataset from a source.
+~ extract(source: Source) : Dataset
+
+Transform
+=========
+-- Transform a dataset.
+~ transform(dataset: Dataset) : Boolean
+
+Validate Schema
+===============
+-- Validate the schema for a dataset.
+~ schema.validate(dataset: Dataset) : Schema
+
+Load
+====
+-- Load a dataset into a sink.
+~ load(dataset: Dataset, sink: Sink) : Boolean
+
+Dedupe Records
+==============
+-- Dedupe records in a dataset.
+~ record.dedupe(dataset: Dataset) : Boolean
+
+Backfill Partition
+===================
+-- Backfill a partition.
+~ partition.backfill(partition: Partition) : Boolean
+
+Run Quality Checks
+===================
+-- Run quality checks on a dataset.
+~ quality.run(dataset: Dataset) : QualityCheck
+
+Read Watermark
+==============
+-- Read the watermark for a dataset.
+~ watermark.read(dataset: Dataset) : Watermark
+
+Replay Pipeline Run
+====================
+-- Replay a failed pipeline run.
+~ pipeline.replay(run: PipelineRun) : Boolean

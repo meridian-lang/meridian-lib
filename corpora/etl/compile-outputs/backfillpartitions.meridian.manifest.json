@@ -1,0 +1,326 @@
+{
+  "constants" : {
+    "batch size threshold" : 100000,
+    "freshness sla" : 86400,
+    "retry budget" : 3
+  },
+  "instances_required" : [
+    {
+      "kind" : "sink",
+      "name" : "warehouse sink"
+    },
+    {
+      "kind" : "source",
+      "name" : "object store source"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Dataset_critical",
+      "kind" : "dataset",
+      "line" : 28
+    },
+    {
+      "adjective" : "high volume",
+      "function" : "meridianDef_Dataset_highVolume",
+      "kind" : "dataset",
+      "line" : 27
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Dataset_stale",
+      "kind" : "dataset",
+      "line" : 21
+    },
+    {
+      "adjective" : "backfilled",
+      "function" : "meridianDef_Partition_backfilled",
+      "kind" : "partition",
+      "line" : 23
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_PipelineRun_failed",
+      "kind" : "pipeline run",
+      "line" : 22
+    },
+    {
+      "adjective" : "passing",
+      "function" : "meridianDef_QualityCheck_passing",
+      "kind" : "quality check",
+      "line" : 24
+    },
+    {
+      "adjective" : "compatible",
+      "function" : "meridianDef_Schema_compatible",
+      "kind" : "schema",
+      "line" : 26
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Watermark_fresh",
+      "kind" : "watermark",
+      "line" : 25
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a pipeline run",
+      "line" : 34,
+      "name" : "derivation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "transform"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a source",
+      "line" : 30,
+      "name" : "extraction",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "extract"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a dataset",
+      "line" : 32,
+      "name" : "loading",
+      "right_cardinality" : "one",
+      "right_kind" : "a sink",
+      "via" : "load"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Backfill a dataset's oldest partitions in parallel while quality checks keep running underneath in the background, instead of making a backfill block the pipeline's normal quality cadence for however long it takes.",
+    "name" : "backfill partitions",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 20,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 25,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 36,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 45,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 34,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 20,
+        "lines" : [
+          "\"backfill dataset partitions\"",
+          "\"run partition backfill\"",
+          "\"run the backfill pass\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 25,
+        "lines" : [
+          "fetch datasets",
+          "for each dataset:",
+          "fetch partitions for the dataset",
+          "let oldest partitions be the first 5 partitions sorted by updated at descending",
+          "simultaneously:",
+          "for each partition:",
+          "backfill the partition",
+          "in the background, run quality checks on the dataset",
+          "Emit: \"partition backfill pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 36,
+        "lines" : [
+          "Don't widen the backfill window past the oldest five partitions on a",
+          "whim. A larger batch is a longer-running simultaneous block, which",
+          "competes harder with whatever else the pipeline needs to do at the same",
+          "time",
+          "Don't wait for the background quality check to finish before reporting",
+          "the backfill as complete — it runs in the background precisely so it",
+          "doesn't gate this skill's own completion"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 45,
+        "lines" : [
+          "The receipt calls out the oldest partitions selected for backfill per",
+          "dataset, so an engineer can confirm the right window was chosen without",
+          "re-running the sort themselves"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"backfill dataset partitions\"\n\"run partition backfill\"\n\"run the backfill pass\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "derive",
+      "line" : 39,
+      "past_participle" : "derived",
+      "relation" : "derivation",
+      "third_person" : "derives"
+    },
+    {
+      "base" : "extract",
+      "line" : 37,
+      "past_participle" : "extracted",
+      "relation" : "extraction",
+      "third_person" : "extracts"
+    },
+    {
+      "base" : "load",
+      "line" : 38,
+      "past_participle" : "loaded",
+      "relation" : "loading",
+      "third_person" : "loads"
+    }
+  ],
+  "source_files" : [
+    "backfillpartitions.meri",
+    "etl.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 42,
+      "swift_line" : 362
+    },
+    {
+      "meridian_line" : 27,
+      "swift_line" : 368
+    },
+    {
+      "meridian_line" : 51,
+      "swift_line" : 374
+    },
+    {
+      "meridian_line" : 29,
+      "swift_line" : 385
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 387
+    },
+    {
+      "meridian_line" : 31,
+      "swift_line" : 391
+    },
+    {
+      "meridian_line" : 69,
+      "swift_line" : 397
+    },
+    {
+      "meridian_line" : 33,
+      "swift_line" : 415
+    },
+    {
+      "meridian_line" : 72,
+      "swift_line" : 419
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 441
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 480
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 485
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 525
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 530
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 570
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 575
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "backfill partitions",
+      "swift_struct" : "BackfillPartitions"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when backfillDatasetPartitions fires",
+      "swift_struct" : "WhenBackfilldatasetpartitionsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runPartitionBackfill fires",
+      "swift_struct" : "WhenRunpartitionbackfillFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runBackfillPass fires",
+      "swift_struct" : "WhenRunbackfillpassFires"
+    }
+  ]
+}

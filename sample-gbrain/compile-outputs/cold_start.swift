@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum ColdStart {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct ColdStartInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -601,14 +601,14 @@ public struct ColdStartInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ColdStartInput", parameters: [:])
 
-        // L143
-        let __meridianProseResults_L143 = try await runtime.executeProsePlan(
+        // L139
+        let __meridianProseResults_L139 = try await runtime.executeProsePlan(
             prose: "follow the Phase 0: ClawVisor Setup (Required for API Access) — steps 5 guidance",
             snapshot: state.snapshot(),
             scopedTools: ["add_link", "add_timeline_entry", "get_page", "link.add", "page.get", "page.search", "publish", "put_page", "query", "search", "shell.run", "sync_brain", "timeline.add"],
-            guidance: "**Critical scoping rule:** Be expansive in task purposes. \"Email triage\" gets\nrejected by intent verification. \"Full executive assistant email management\nincluding inbox triage, searching by any criteria, reading emails, tracking\nthreads\" works. The intent model uses the purpose to judge each request.\nIf the user already has a notes system, this\nis hundreds or thousands of structured pages ready to go\ncodeblock:bash:ZWNobyAiPT09IE1hcmtkb3duIFJlcG9zaXRvcnkgRGlzY292ZXJ5ID09PSIKZm9yIGRpciBpbiAvZGF0YS8qIH4vZ2l0Lyogfi9Eb2N1bWVudHMvKiB+L25vdGVzLyogfi9vYnNpZGlhbi8qIDI+L2Rldi9udWxsOyBkbwogIGlmIFsgLWQgIiRkaXIiIF07IHRoZW4KICAgIG1kX2NvdW50PSQoZmluZCAiJGRpciIgLW5hbWUgIioubWQiIC1ub3QgLXBhdGggIiovbm9kZV9tb2R1bGVzLyoiIFwKICAgICAgLW5vdCAtcGF0aCAiKi8uZ2l0LyoiIC1ub3QgLXBhdGggIiovLm9ic2lkaWFuLyoiIDI+L2Rldi9udWxsIHwgd2MgLWwgfCB0ciAtZCAnICcpCiAgICBpZiBbICIkbWRfY291bnQiIC1ndCA1IF07IHRoZW4KICAgICAgdG90YWxfc2l6ZT0kKGR1IC1zaCAiJGRpciIgMj4vZGV2L251bGwgfCBjdXQgLWYxKQogICAgICBlY2hvICIgICRkaXIgKCR0b3RhbF9zaXplLCAkbWRfY291bnQgLm1kIGZpbGVzKSIKICAgIGZpCiAgZmkKZG9uZQ==\ncodeblock:bash:IyBGb3IgT2JzaWRpYW4gdmF1bHRzLCB1c2UgdGhlIG1pZ3JhdGUgc2tpbGwgZm9yIHByb3BlciB3aWtpbGluayBoYW5kbGluZwpnYnJhaW4gbWlncmF0ZSAtLWZyb20gb2JzaWRpYW4gLS1wYXRoIC9wYXRoL3RvL3ZhdWx0CgojIEZvciBwbGFpbiBtYXJrZG93biBkaXJlY3RvcmllcwpnYnJhaW4gaW1wb3J0IC9wYXRoL3RvL2RpciAtLW5vLWVtYmVkIC0td29ya2VycyA0CgojIFZlcmlmeQpnYnJhaW4gc3RhdHMKZ2JyYWluIHNlYXJjaCAiPHRvcGljIGZyb20gdGhlIGltcG9ydGVkIGRhdGE+Ig==\nRun link extraction: `gbrain extract links --source db`\nRun timeline extraction: `gbrain extract timeline --source db`\nStart embeddings: `gbrain embed --stale` (runs in background)\nEvery person in your contacts becomes a brain page\nwith name, email, phone, company, and notes. This is the foundation that all other\nimports build on — when Gmail references \"john@acme.com\", the brain already knows\nwho John is\ncodeblock:bash:Y3VybCAtcyAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICRHT09HTEVfVE9LRU4iIFwKICAiaHR0cHM6Ly9wZW9wbGUuZ29vZ2xlYXBpcy5jb20vdjEvcGVvcGxlL21lL2Nvbm5lY3Rpb25zP3BlcnNvbkZpZWxkcz1uYW1lcyxlbWFpbEFkZHJlc3NlcyxwaG9uZU51bWJlcnMsb3JnYW5pemF0aW9ucyxiaW9ncmFwaGllcyZwYWdlU2l6ZT0xMDAwIg==\nFor each contact:\nCheck brain first — `gbrain search \"name\"` to avoid duplicates\nCalendar events reveal who the user meets\nwith, how often, and in what context. Combined with contacts, this builds a rich\nrelationship map\nFor each event with attendees:\nEmail reveals organizational\nrelationships, ongoing conversations, and communication patterns\nFor each email thread:\nAuto-skip (never import):\nAlways import:\nAI conversation exports reveal what the user\nwas researching, building, and thinking about. This is original thinking\npreserved in dialog form\n**ChatGPT:** Settings → Data Controls → Export → `conversations.json`\n**Claude:** Download from claude.ai conversation history\n**Perplexity:** Export from settings\nFor each conversation:\nuse judgment to follow the Processing — steps 2 guidance:\n**Assess significance** (1-5 scale):\nCapture original thinking — the user's exact phrasing is the signal\nNever paraphrase\nTwitter reveals what the user\nthinks, who they engage with, and what ideas they're developing publicly\n**Original tweets** → capture with full context, extract entities\n**Quote tweets** → capture the user's commentary + the source tweet\n**Threads** → reconstruct as a single narrative\n**Bookmarks** → high-signal curation, import with tags\n**Likes** — low signal, skip unless the user wants them\nThis is the long tail —\nless structured but potentially very high value (old journals, letters, early writing)\nDelegate to the `archive-crawler` skill. It handles:\nCrawling directory structures\nFiltering for high-value content (user's own writing, not installers)\nText extraction from PDFs, images (OCR), documents\nEntity extraction and brain page creation\nSupported sources:\nLocal directories (Dropbox sync folder, Google Drive, old hard drives)\nCloud storage (Backblaze B2, S3) via mounted paths\nEmail archives (PST, mbox, EML, Google Takeout)\nData exports (LinkedIn, Facebook, etc.)\nIf the user has a meeting\nrecording service (Circleback, Otter, Fireflies, Read.ai), import recent\ntranscripts\nDelegate to `meeting-ingestion` skill. Key rules:\nAlways pull the complete transcript, not just the AI summary\nEntity propagation is MANDATORY — every attendee gets a timeline update\nRead `~/.gbrain/cold-start-state.json`"
+            guidance: "**Critical scoping rule:** Be expansive in task purposes. \"Email triage\" gets\nrejected by intent verification. \"Full executive assistant email management\nincluding inbox triage, searching by any criteria, reading emails, tracking\nthreads\" works. The intent model uses the purpose to judge each request.\nIf the user already has a notes system, this\nis hundreds or thousands of structured pages ready to go\ncodeblock:bash:ZWNobyAiPT09IE1hcmtkb3duIFJlcG9zaXRvcnkgRGlzY292ZXJ5ID09PSIKZm9yIGRpciBpbiAvZGF0YS8qIH4vZ2l0Lyogfi9Eb2N1bWVudHMvKiB+L25vdGVzLyogfi9vYnNpZGlhbi8qIDI+L2Rldi9udWxsOyBkbwogIGlmIFsgLWQgIiRkaXIiIF07IHRoZW4KICAgIG1kX2NvdW50PSQoZmluZCAiJGRpciIgLW5hbWUgIioubWQiIC1ub3QgLXBhdGggIiovbm9kZV9tb2R1bGVzLyoiIFwKICAgICAgLW5vdCAtcGF0aCAiKi8uZ2l0LyoiIC1ub3QgLXBhdGggIiovLm9ic2lkaWFuLyoiIDI+L2Rldi9udWxsIHwgd2MgLWwgfCB0ciAtZCAnICcpCiAgICBpZiBbICIkbWRfY291bnQiIC1ndCA1IF07IHRoZW4KICAgICAgdG90YWxfc2l6ZT0kKGR1IC1zaCAiJGRpciIgMj4vZGV2L251bGwgfCBjdXQgLWYxKQogICAgICBlY2hvICIgICRkaXIgKCR0b3RhbF9zaXplLCAkbWRfY291bnQgLm1kIGZpbGVzKSIKICAgIGZpCiAgZmkKZG9uZQ==\ncodeblock:bash:IyBGb3IgT2JzaWRpYW4gdmF1bHRzLCB1c2UgdGhlIG1pZ3JhdGUgc2tpbGwgZm9yIHByb3BlciB3aWtpbGluayBoYW5kbGluZwpnYnJhaW4gbWlncmF0ZSAtLWZyb20gb2JzaWRpYW4gLS1wYXRoIC9wYXRoL3RvL3ZhdWx0CgojIEZvciBwbGFpbiBtYXJrZG93biBkaXJlY3RvcmllcwpnYnJhaW4gaW1wb3J0IC9wYXRoL3RvL2RpciAtLW5vLWVtYmVkIC0td29ya2VycyA0CgojIFZlcmlmeQpnYnJhaW4gc3RhdHMKZ2JyYWluIHNlYXJjaCAiPHRvcGljIGZyb20gdGhlIGltcG9ydGVkIGRhdGE+Ig==\nRun link extraction: `gbrain extract links --source db`\nRun timeline extraction: `gbrain extract timeline --source db`\nStart embeddings: `gbrain embed --stale` (runs in background)\nEvery person in your contacts becomes a brain page\nwith name, email, phone, company, and notes. This is the foundation that all other\nimports build on — when Gmail references \"john@acme.com\", the brain already knows\nwho John is\ncodeblock:bash:Y3VybCAtcyAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICRHT09HTEVfVE9LRU4iIFwKICAiaHR0cHM6Ly9wZW9wbGUuZ29vZ2xlYXBpcy5jb20vdjEvcGVvcGxlL21lL2Nvbm5lY3Rpb25zP3BlcnNvbkZpZWxkcz1uYW1lcyxlbWFpbEFkZHJlc3NlcyxwaG9uZU51bWJlcnMsb3JnYW5pemF0aW9ucyxiaW9ncmFwaGllcyZwYWdlU2l6ZT0xMDAwIg==\nFor each contact:\nCheck brain first — `gbrain search \"name\"` to avoid duplicates\nCalendar events reveal who the user meets\nwith, how often, and in what context. Combined with contacts, this builds a rich\nrelationship map\nFor each event with attendees:\nEmail reveals organizational\nrelationships, ongoing conversations, and communication patterns\nFor each email thread:\nAuto-skip (never import):\nAlways import:\nAI conversation exports reveal what the user\nwas researching, building, and thinking about. This is original thinking\npreserved in dialog form\n**ChatGPT:** Settings → Data Controls → Export → `conversations.json`\n**Claude:** Download from claude.ai conversation history\n**Perplexity:** Export from settings\nFor each conversation:\nuse judgment to follow the Processing — steps 2 guidance:\n**Assess significance** (1-5 scale):\nCapture original thinking — the user's exact phrasing is the signal\nNever paraphrase\nTwitter reveals what the user\nthinks, who they engage with, and what ideas they're developing publicly\n**Original tweets** → capture with full context, extract entities\n**Quote tweets** → capture the user's commentary + the source tweet\n**Threads** → reconstruct as a single narrative\n**Bookmarks** → high-signal curation, import with tags\n**Likes** — low signal, skip unless the user wants them\nThis is the long tail —\nless structured but potentially very high value (old journals, letters, early writing)\nDelegate to the `archive-crawler` skill. It handles:\nCrawling directory structures\nFiltering for high-value content (user's own writing, not installers)\nText extraction from PDFs, images (OCR), documents\nEntity extraction and brain page creation\nSupported sources:\nLocal directories (Dropbox sync folder, Google Drive, old hard drives)\nCloud storage (Backblaze B2, S3) via mounted paths\nEmail archives (PST, mbox, EML, Google Takeout)\nData exports (LinkedIn, Facebook, etc.)\nIf the user has a meeting\nrecording service (Circleback, Otter, Fireflies, Read.ai), import recent\ntranscripts\nDelegate to `meeting-ingestion` skill. Key rules:\nAlways pull the complete transcript, not just the AI summary\nEntity propagation is MANDATORY — every attendee gets a timeline update\nIf the session is interrupted:\nRead `~/.gbrain/cold-start-state.json`"
         )
-        for (__key, __value) in __meridianProseResults_L143 {
+        for (__key, __value) in __meridianProseResults_L139 {
             state.bind(__key, __value)
         }
 

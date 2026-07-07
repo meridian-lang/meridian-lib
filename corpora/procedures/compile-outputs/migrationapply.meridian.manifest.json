@@ -1,0 +1,363 @@
+{
+  "constants" : {
+    "maximum batch size" : 500,
+    "maximum retry count" : 5,
+    "staleness window" : 2592000,
+    "vacuum row threshold" : 1000000
+  },
+  "instances_required" : [
+    {
+      "kind" : "sql endpoint",
+      "name" : "reporting warehouse"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "orphaned",
+      "function" : "meridianDef_AuditRow_orphaned",
+      "kind" : "audit row",
+      "line" : 33
+    },
+    {
+      "adjective" : "finalized",
+      "function" : "meridianDef_Batch_finalized",
+      "kind" : "batch",
+      "line" : 28
+    },
+    {
+      "adjective" : "ready",
+      "function" : "meridianDef_Batch_ready",
+      "kind" : "batch",
+      "line" : 26
+    },
+    {
+      "adjective" : "settled",
+      "function" : "meridianDef_Batch_settled",
+      "kind" : "batch",
+      "line" : 27
+    },
+    {
+      "adjective" : "violated",
+      "function" : "meridianDef_Constraint_violated",
+      "kind" : "constraint",
+      "line" : 32
+    },
+    {
+      "adjective" : "bloated",
+      "function" : "meridianDef_DatabaseTable_bloated",
+      "kind" : "database table",
+      "line" : 37
+    },
+    {
+      "adjective" : "lagging",
+      "function" : "meridianDef_IndexJob_lagging",
+      "kind" : "index job",
+      "line" : 34
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Ledger_open",
+      "kind" : "ledger",
+      "line" : 25
+    },
+    {
+      "adjective" : "applied",
+      "function" : "meridianDef_Migration_applied",
+      "kind" : "migration",
+      "line" : 35
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_Migration_failed",
+      "kind" : "migration",
+      "line" : 36
+    },
+    {
+      "adjective" : "drifted",
+      "function" : "meridianDef_Record_drifted",
+      "kind" : "record",
+      "line" : 31
+    },
+    {
+      "adjective" : "duplicate",
+      "function" : "meridianDef_Record_duplicate",
+      "kind" : "record",
+      "line" : 30
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Record_stale",
+      "kind" : "record",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a migration",
+      "line" : 47,
+      "name" : "application",
+      "right_cardinality" : "one",
+      "right_kind" : "a database table",
+      "via" : "migration.apply"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a ledger",
+      "line" : 45,
+      "name" : "auditing",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "audit_row.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a record",
+      "line" : 43,
+      "name" : "canonicalization",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "record.mark_canonical"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a batch",
+      "line" : 41,
+      "name" : "retrying",
+      "right_cardinality" : "one",
+      "right_kind" : "a ledger",
+      "via" : "batch.retry"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a batch",
+      "line" : 39,
+      "name" : "settlement",
+      "right_cardinality" : "one",
+      "right_kind" : "a ledger",
+      "via" : "batch.settle"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Apply pending schema migrations with rollback on failure and a DBA approval gate.",
+    "name" : "migration apply",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 11,
+        "text" : "When this applies"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 15,
+        "text" : "Procedure"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 17,
+        "text" : "Procedure — steps"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 28,
+        "text" : "Postconditions"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 25,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 26,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When this applies",
+        "line" : 11,
+        "lines" : [
+          "\"apply pending migrations\"",
+          "\"run schema migration\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Procedure",
+        "line" : 15,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Procedure — steps",
+        "line" : 17,
+        "lines" : [
+          "fetch failed migrations",
+          "for each migration:",
+          "wait for approval of the migration from a database administrator",
+          "apply a migration",
+          "recover from migration.failed:",
+          "roll back the migration",
+          "Emit: \"migration rolled back after failure\"",
+          "Emit: \"pending migrations applied\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Postconditions",
+        "line" : 28,
+        "lines" : [
+          "make sure no migrations whose status is \"failed\""
+        ],
+        "role" : "invariants"
+      }
+    ],
+    "triggers" : "\"apply pending migrations\"\n\"run schema migration\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "apply",
+      "line" : 54,
+      "past_participle" : "applied",
+      "relation" : "application",
+      "third_person" : "applies"
+    },
+    {
+      "base" : "audit",
+      "line" : 53,
+      "past_participle" : "audited",
+      "relation" : "auditing",
+      "third_person" : "audits"
+    },
+    {
+      "base" : "canonicalize",
+      "line" : 52,
+      "past_participle" : "canonicalized",
+      "relation" : "canonicalization",
+      "third_person" : "canonicalizes"
+    },
+    {
+      "base" : "retry",
+      "line" : 51,
+      "past_participle" : "retried",
+      "relation" : "retrying",
+      "third_person" : "retries"
+    },
+    {
+      "base" : "settle",
+      "line" : 50,
+      "past_participle" : "settled",
+      "relation" : "settlement",
+      "third_person" : "settles"
+    }
+  ],
+  "source_files" : [
+    "migrationapply.meri",
+    "procedures.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 29,
+      "swift_line" : 433
+    },
+    {
+      "meridian_line" : 78,
+      "swift_line" : 438
+    },
+    {
+      "meridian_line" : 20,
+      "swift_line" : 449
+    },
+    {
+      "meridian_line" : 21,
+      "swift_line" : 455
+    },
+    {
+      "meridian_line" : 23,
+      "swift_line" : 459
+    },
+    {
+      "meridian_line" : 22,
+      "swift_line" : 462
+    },
+    {
+      "meridian_line" : 102,
+      "swift_line" : 468
+    },
+    {
+      "meridian_line" : 25,
+      "swift_line" : 480
+    },
+    {
+      "meridian_line" : 26,
+      "swift_line" : 495
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 534
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 539
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 579
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 584
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "migration apply",
+      "swift_struct" : "MigrationApply"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when applyPendingMigrations fires",
+      "swift_struct" : "WhenApplypendingmigrationsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runSchemaMigration fires",
+      "swift_struct" : "WhenRunschemamigrationFires"
+    }
+  ]
+}

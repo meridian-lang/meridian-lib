@@ -1,6 +1,15 @@
 {
+  "constants" : {
+    "maximum batch size" : 500,
+    "maximum retry count" : 5,
+    "staleness window" : 2592000,
+    "vacuum row threshold" : 1000000
+  },
   "instances_required" : [
-
+    {
+      "kind" : "sql endpoint",
+      "name" : "reporting warehouse"
+    }
   ],
   "kinds_used" : [
 
@@ -10,49 +19,79 @@
       "adjective" : "orphaned",
       "function" : "meridianDef_AuditRow_orphaned",
       "kind" : "audit row",
-      "line" : 24
+      "line" : 33
+    },
+    {
+      "adjective" : "finalized",
+      "function" : "meridianDef_Batch_finalized",
+      "kind" : "batch",
+      "line" : 28
     },
     {
       "adjective" : "ready",
       "function" : "meridianDef_Batch_ready",
       "kind" : "batch",
-      "line" : 19
+      "line" : 26
     },
     {
       "adjective" : "settled",
       "function" : "meridianDef_Batch_settled",
       "kind" : "batch",
-      "line" : 20
+      "line" : 27
     },
     {
       "adjective" : "violated",
       "function" : "meridianDef_Constraint_violated",
       "kind" : "constraint",
-      "line" : 23
+      "line" : 32
+    },
+    {
+      "adjective" : "bloated",
+      "function" : "meridianDef_DatabaseTable_bloated",
+      "kind" : "database table",
+      "line" : 37
     },
     {
       "adjective" : "lagging",
       "function" : "meridianDef_IndexJob_lagging",
       "kind" : "index job",
-      "line" : 25
+      "line" : 34
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Ledger_open",
       "kind" : "ledger",
-      "line" : 18
+      "line" : 25
+    },
+    {
+      "adjective" : "applied",
+      "function" : "meridianDef_Migration_applied",
+      "kind" : "migration",
+      "line" : 35
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_Migration_failed",
+      "kind" : "migration",
+      "line" : 36
+    },
+    {
+      "adjective" : "drifted",
+      "function" : "meridianDef_Record_drifted",
+      "kind" : "record",
+      "line" : 31
     },
     {
       "adjective" : "duplicate",
       "function" : "meridianDef_Record_duplicate",
       "kind" : "record",
-      "line" : 22
+      "line" : 30
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Record_stale",
       "kind" : "record",
-      "line" : 21
+      "line" : 29
     }
   ],
   "meridian_ir_version" : "1.0",
@@ -60,8 +99,18 @@
     {
       "backing" : "tool",
       "left_cardinality" : "one",
+      "left_kind" : "a migration",
+      "line" : 47,
+      "name" : "application",
+      "right_cardinality" : "one",
+      "right_kind" : "a database table",
+      "via" : "migration.apply"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
       "left_kind" : "a ledger",
-      "line" : 31,
+      "line" : 45,
       "name" : "auditing",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -71,7 +120,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a record",
-      "line" : 29,
+      "line" : 43,
       "name" : "canonicalization",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -81,7 +130,17 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a batch",
-      "line" : 27,
+      "line" : 41,
+      "name" : "retrying",
+      "right_cardinality" : "one",
+      "right_kind" : "a ledger",
+      "via" : "batch.retry"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a batch",
+      "line" : 39,
       "name" : "settlement",
       "right_cardinality" : "one",
       "right_kind" : "a ledger",
@@ -89,7 +148,7 @@
     }
   ],
   "meridian_skill" : {
-    "description" : "Render a deterministic report over stale records.",
+    "description" : "Render a deterministic report over stale records, including the oldest offender.",
     "name" : "aging report",
     "outline" : [
       {
@@ -113,31 +172,31 @@
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 30,
+        "line" : 31,
         "text" : "Procedure — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 34,
+        "line" : 39,
         "text" : "Procedure — steps 2"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 38,
+        "line" : 43,
         "text" : "Trace shape"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 22,
+        "line" : 34,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 36,
+        "line" : 41,
         "text" : "Emit"
       }
     ],
@@ -166,25 +225,28 @@
         "heading" : "Procedure",
         "line" : 21,
         "lines" : [
-          "Check: any stale records",
           "bind aging report =",
-          "codeblock:plain:YWdpbmc6Cltmb3IgZWFjaCByb3cgaW4gdGFibGVdLSB7eyByb3cuYnVja2V0IH19IC0+IHt7IHJvdy5hY3Rpb24gfX0KW2VuZCBmb3Jd"
+          "codeblock:plain:YWdpbmc6Cltmb3IgZWFjaCByb3cgaW4gdGFibGVdLSB7eyByb3cuYnVja2V0IH19IC0+IHt7IHJvdy5hY3Rpb24gfX0KW2VuZCBmb3JdCnNlbGVjdGVkIGFjdGlvbjoge3sgc2VsZWN0ZWQgYWN0aW9uIH19CnN0YWxlIGNvdW50OiB7eyBzdGFsZSBjb3VudCB9fQ=="
         ],
         "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Procedure — steps",
-        "line" : 30,
+        "line" : 31,
         "lines" : [
-          "fetch stale records"
+          "fetch stale records",
+          "Check: any stale records",
+          "let stale count be the number of stale records",
+          "let oldest record be the oldest stale record",
+          "bind selected action = the action corresponding to the bucket \"stale\" in the table"
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Procedure — steps 2",
-        "line" : 34,
+        "line" : 39,
         "lines" : [
           "Emit: aging report"
         ],
@@ -193,9 +255,10 @@
       {
         "executes" : false,
         "heading" : "Trace shape",
-        "line" : 38,
+        "line" : 43,
         "lines" : [
-          "One row per aging bucket, followed by the deterministic action"
+          "One row per aging bucket, followed by the deterministic action, the selected",
+          "bucket, and the total stale count"
         ],
         "role" : "template"
       }
@@ -204,22 +267,36 @@
   },
   "meridian_verbs" : [
     {
+      "base" : "apply",
+      "line" : 54,
+      "past_participle" : "applied",
+      "relation" : "application",
+      "third_person" : "applies"
+    },
+    {
       "base" : "audit",
-      "line" : 36,
+      "line" : 53,
       "past_participle" : "audited",
       "relation" : "auditing",
       "third_person" : "audits"
     },
     {
       "base" : "canonicalize",
-      "line" : 35,
+      "line" : 52,
       "past_participle" : "canonicalized",
       "relation" : "canonicalization",
       "third_person" : "canonicalizes"
     },
     {
+      "base" : "retry",
+      "line" : 51,
+      "past_participle" : "retried",
+      "relation" : "retrying",
+      "third_person" : "retries"
+    },
+    {
       "base" : "settle",
-      "line" : 34,
+      "line" : 50,
       "past_participle" : "settled",
       "relation" : "settlement",
       "third_person" : "settles"
@@ -232,31 +309,47 @@
   "source_map" : [
     {
       "meridian_line" : 16,
-      "swift_line" : 299
+      "swift_line" : 432
     },
     {
-      "meridian_line" : 42,
-      "swift_line" : 302
+      "meridian_line" : 63,
+      "swift_line" : 435
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 447
+    },
+    {
+      "meridian_line" : 35,
+      "swift_line" : 451
     },
     {
       "meridian_line" : 36,
-      "swift_line" : 314
+      "swift_line" : 453
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 455
+    },
+    {
+      "meridian_line" : 41,
+      "swift_line" : 458
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 351
+      "swift_line" : 497
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 356
+      "swift_line" : 502
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 394
+      "swift_line" : 542
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 399
+      "swift_line" : 547
     }
   ],
   "tools_used" : [

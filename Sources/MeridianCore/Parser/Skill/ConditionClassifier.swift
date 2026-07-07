@@ -98,14 +98,40 @@ struct ConditionClassifier {
 
     /// True when the text grammatically reads as a *condition* (contains a
     /// copula or comparison marker) — separates fuzzy conditions from
-    /// descriptive dispatch phrases.
+    /// descriptive dispatch phrases. Scans only OUTSIDE double-quoted spans:
+    /// a dispatch phrase that quotes a literal trigger utterance (e.g. `User
+    /// asks "run the tests" / "how are the tests"`) must not be misread as a
+    /// condition just because the quoted trigger text itself happens to
+    /// contain a copula like "are" — the same quote-safety rationale as
+    /// `StatementParser.rangeOfMarkerOutsideQuotes` for comparison markers.
     func readsAsCondition(_ text: String) -> Bool {
-        let lower = " \(text.lowercased()) "
+        let lower = " \(Self.maskDoubleQuotedSpans(text).lowercased()) "
         let conditionCues = lexicon.copulas.union(lexicon.grammar.conditionCueWords)
         if conditionCues.contains(where: { lower.contains(" \($0) ") }) { return true }
         for marker in lexicon.comparisonMarkers.map(\.0) {
             if lower.contains(" \(marker.lowercased()) ") { return true }
         }
         return false
+    }
+
+    /// Replace the contents of every double-quoted span with underscores
+    /// (length-preserving, so no accidental word-boundary merges), leaving
+    /// the quote characters themselves in place. Used to keep surface-word
+    /// scans (copula/comparison-marker detection) from firing on words that
+    /// only appear inside a literal quoted trigger phrase.
+    static func maskDoubleQuotedSpans(_ text: String) -> String {
+        var result = ""
+        var inQuotes = false
+        for ch in text {
+            if ch == "\"" {
+                inQuotes.toggle()
+                result.append(ch)
+            } else if inQuotes {
+                result.append(ch == " " ? " " : "_")
+            } else {
+                result.append(ch)
+            }
+        }
+        return result
     }
 }

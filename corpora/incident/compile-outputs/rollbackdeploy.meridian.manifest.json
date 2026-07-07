@@ -1,0 +1,360 @@
+{
+  "constants" : {
+    "escalation cooldown" : 600,
+    "maximum page attempts" : 3,
+    "slo error budget threshold" : 0.10000000000000001
+  },
+  "instances_required" : [
+    {
+      "kind" : "service",
+      "name" : "pagerduty service"
+    },
+    {
+      "kind" : "service",
+      "name" : "statuspage service"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "actionable",
+      "function" : "meridianDef_Alert_actionable",
+      "kind" : "alert",
+      "line" : 30
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Alert_critical",
+      "kind" : "alert",
+      "line" : 23
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Alert_stale",
+      "kind" : "alert",
+      "line" : 24
+    },
+    {
+      "adjective" : "unhealthy",
+      "function" : "meridianDef_Deploy_unhealthy",
+      "kind" : "deploy",
+      "line" : 26
+    },
+    {
+      "adjective" : "high severity",
+      "function" : "meridianDef_Incident_highSeverity",
+      "kind" : "incident",
+      "line" : 27
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Incident_open",
+      "kind" : "incident",
+      "line" : 28
+    },
+    {
+      "adjective" : "degraded",
+      "function" : "meridianDef_Service_degraded",
+      "kind" : "service",
+      "line" : 25
+    },
+    {
+      "adjective" : "breached",
+      "function" : "meridianDef_Slo_breached",
+      "kind" : "slo",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a runbook",
+      "line" : 36,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "runbook.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a service",
+      "line" : 32,
+      "name" : "firing",
+      "right_cardinality" : "one",
+      "right_kind" : "an alert",
+      "via" : "alert.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an oncall engineer",
+      "line" : 34,
+      "name" : "ownership",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "oncall.roster"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Roll back an unhealthy deploy only after an on-call engineer approves it, then keep retrying the rollback until health actually recovers instead of declaring victory after one rollback attempt.",
+    "name" : "rollback deploy",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 20,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 25,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 29,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 36,
+        "text" : "Workflow — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 42,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 50,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 53,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 32,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 39,
+        "text" : "Note"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 40,
+        "text" : "Post"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 20,
+        "lines" : [
+          "\"roll back unhealthy deploys\"",
+          "\"revert failed deploy\"",
+          "\"run the deploy rollback pass\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow",
+        "line" : 25,
+        "lines" : [
+
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 29,
+        "lines" : [
+          "fetch unhealthy deploys",
+          "Check: any unhealthy deploys",
+          "for each deploy:",
+          "wait for approval of the deploy from an oncall engineer"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 36,
+        "lines" : [
+          "Post: \"deploy rollback pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 42,
+        "lines" : [
+          "Don't skip the approval wait for a deploy that \"obviously needs\" a",
+          "rollback. The approval gate exists so a rollback is a deliberate call,",
+          "not an automatic reflex to any unhealthy reading",
+          "Don't treat one rollback attempt as sufficient. The retry loop exists",
+          "because a rollback can complete without the deploy's health actually",
+          "recovering yet"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 50,
+        "lines" : [
+          "make sure no deploys whose status is \"failed\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 53,
+        "lines" : [
+          "The receipt confirms every unhealthy deploy either recovered after",
+          "rollback or was escalated manually because the rollback itself failed"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"roll back unhealthy deploys\"\n\"revert failed deploy\"\n\"run the deploy rollback pass\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "cover",
+      "line" : 41,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "own",
+      "line" : 40,
+      "past_participle" : "owned",
+      "relation" : "ownership",
+      "third_person" : "owns"
+    },
+    {
+      "base" : "page",
+      "line" : 39,
+      "past_participle" : "paged",
+      "relation" : "ownership",
+      "third_person" : "pages"
+    }
+  ],
+  "source_files" : [
+    "rollbackdeploy.meri",
+    "incident.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 51,
+      "swift_line" : 393
+    },
+    {
+      "meridian_line" : 56,
+      "swift_line" : 398
+    },
+    {
+      "meridian_line" : 32,
+      "swift_line" : 410
+    },
+    {
+      "meridian_line" : 33,
+      "swift_line" : 414
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 420
+    },
+    {
+      "meridian_line" : 40,
+      "swift_line" : 429
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 468
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 473
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 513
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 518
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 558
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 563
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "rollback deploy",
+      "swift_struct" : "RollbackDeploy"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when rollBackUnhealthyDeploys fires",
+      "swift_struct" : "WhenRollbackunhealthydeploysFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when revertFailedDeploy fires",
+      "swift_struct" : "WhenRevertfaileddeployFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runDeployRollbackPass fires",
+      "swift_struct" : "WhenRundeployrollbackpassFires"
+    }
+  ]
+}

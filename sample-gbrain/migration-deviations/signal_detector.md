@@ -3,8 +3,8 @@
 - Original: `signal-detector/SKILL.md`
 - Ported: `signal_detector.meri`
 - Tier: 2 (light edits)
-- Similarity: 74%
-- Lines: 113 -> 131 (+41 / -23)
+- Similarity: 72%
+- Lines: 113 -> 134 (+45 / -24)
 
 ## Frontmatter
 - Added: (none)
@@ -19,9 +19,9 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L87 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L92 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L100 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L90 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L95 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L103 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections inert total: 7/7 (100% total inert; includes intentional docs/templates/tools metadata)
@@ -34,11 +34,11 @@ These sections were made non-executable in the port and should be reviewed as mi
 ### Inert section details
 - L13 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L40 `Phase 1: Idea/Observation Detection (PRIMARY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L55 `Phase 2: Entity Detection (SECONDARY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L76 `Phase 3: Signal Logging`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L87 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L92 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L100 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L58 `Phase 2: Entity Detection (SECONDARY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L79 `Phase 3: Signal Logging`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L90 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L95 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L103 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
@@ -73,7 +73,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  - Captures ideas with the user's EXACT phrasing (no paraphrasing)
  - Detects entity mentions and creates/enriches brain pages
  - Logs a one-line summary of what was captured
-@@ -46,55 +45,74 @@
+@@ -46,55 +45,77 @@
  
  > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
  
@@ -97,7 +97,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 -### Phase 1: Idea/Observation Detection (PRIMARY)
 +### Phase 1: Idea/Observation Detection (PRIMARY) (( role: reference ))
  
- When the user expresses a novel thought, observation, thesis, or framework:
+-When the user expresses a novel thought, observation, thesis, or framework:
  - If it's the user's **original thinking** (they generated it) → create/update `originals/{slug}`
  - If it's a **world concept** they're referencing → create/update `concepts/{slug}`
  - If it's a **product or business idea** → create/update `ideas/{slug}`
@@ -106,6 +106,10 @@ These sections were made non-executable in the port and should be reviewed as mi
  
 -**Cross-linking (MANDATORY):** Every original MUST link to related people, companies,
 +### Phase 1: Idea/Observation Detection (PRIMARY) — steps (( role: reference ))
++
++When the user expresses a novel thought, observation, thesis, or framework:
++
++### Phase 1: Idea/Observation Detection (PRIMARY) — steps 2 (( role: reference ))
 +
 +The user's language IS the insight. Don't paraphrase.
 +

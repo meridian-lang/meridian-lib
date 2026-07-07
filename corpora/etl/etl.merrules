@@ -1,0 +1,32 @@
+=== desugar ===
+
+rule "etl-stage":
+  match: Stage: `{command}` to {purpose}
+  rewrite: `{command}` -- {purpose}.
+
+rule "etl-check":
+  match: Check: {condition}
+  rewrite: make sure {condition}.
+
+rule "etl-note":
+  match: Note: {message}
+  lowers to: emit etl.note with message = {message}.
+
+rule "etl-emit":
+  match: Emit: {message}
+  lowers to: emit etl.report with message = {message}.
+
+=== sections ===
+section "Dispatch table — steps" -> procedure
+section "Anti-Patterns — steps" -> procedure
+section "Replay Routing — steps" -> procedure
+section "Replay Routing — steps 2" -> procedure
+section "Workflow — steps 3" -> procedure
+section "Workflow — steps" -> procedure
+section "Workflow — steps 2" -> procedure
+section "Pipeline — steps" -> procedure
+
+section "Workflow", "Pipeline", "Replay Routing", "Completion" -> procedure
+section "When this applies", "Use this when", "When operators call this" -> applicability
+section "Checks", "Controls", "Guarantees", "Assertions" -> invariants
+section "Output", "Report shape" -> template

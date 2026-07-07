@@ -3,8 +3,8 @@
 - Original: `soul-audit/SKILL.md`
 - Ported: `soul_audit.meri`
 - Tier: 2 (light edits)
-- Similarity: 75%
-- Lines: 86 -> 92 (+25 / -19)
+- Similarity: 76%
+- Lines: 86 -> 92 (+24 / -18)
 
 ## Frontmatter
 - Added: (none)
@@ -70,7 +70,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  This skill guarantees:
  - SOUL.md generated from user's description of agent identity, vibe, mission
-@@ -36,51 +36,57 @@
+@@ -36,35 +36,38 @@
  
  ## Phases
  
@@ -113,14 +113,13 @@ These sections were made non-executable in the port and should be reviewed as mi
  Generate: HEARTBEAT.md with operational cadence.
  
  ## Default Mode (Skip Soul-Audit)
++
++
++### Default Mode (Skip Soul-Audit) — steps (( role: reference ))
  
--If the user skips soul-audit on first boot:
-+
-+### Default Mode (Skip Soul-Audit) — steps
-+
-+> If the user skips soul-audit on first boot:
+ If the user skips soul-audit on first boot:
  - Install `templates/SOUL.md.template` as SOUL.md (minimal: "knowledge-first agent with persistent memory")
- - Install `templates/USER.md.template` as USER.md (auto-populate name/email from git config)
+@@ -72,15 +75,18 @@
  - Install `templates/ACCESS_POLICY.md.template` as ACCESS_POLICY.md (owner-only access)
  - Install `templates/HEARTBEAT.md.template` as HEARTBEAT.md (default cadence)
  

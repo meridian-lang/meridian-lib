@@ -58,10 +58,6 @@ Job configuration saved. Report: "Job '{name}' scheduled at {cron expression}. N
 
 ## Multi-source brains: use `sync --all`, not per-source entries (( role: reference ))
 
-When the brain has 2+ active sources (anything `gbrain sources list` shows
-with a non-null `local_path` that isn't archived), use one consolidated
-cron line instead of N per-source entries.
-
 **Preferred (multi-source)**:
 
 ```cron
@@ -78,6 +74,13 @@ check whenever it detects 2+ active sources. Paste-ready from there.
 
 
 ### Multi-source brains: use `sync --all`, not per-source entries — steps (( role: reference ))
+
+When the brain has 2+ active sources (anything `gbrain sources list` shows
+with a non-null `local_path` that isn't archived), use one consolidated
+cron line instead of N per-source entries.
+
+
+### Multi-source brains: use `sync --all`, not per-source entries — steps 2 (( role: reference ))
 
 Avoid (legacy): separate `gbrain sync --source default` and
 `gbrain sync --source zion-brain` entries staggered by 5 minutes. They

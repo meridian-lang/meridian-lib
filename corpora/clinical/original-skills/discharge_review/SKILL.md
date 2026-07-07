@@ -1,0 +1,59 @@
+---
+name: discharge review
+description: Block a discharge while a hold is active, but let an attending override that hold when their own judgment says the patient is genuinely ready. Use this at the actual discharge decision, not earlier in the stay when a hold first gets placed.
+triggers:
+  - "review discharge"
+  - "discharge patient"
+parameters: patient, clinician
+---
+
+# Discharge Review
+
+A hold on a patient exists because someone with more context than a
+discharge checklist decided the patient wasn't ready yet — a discharge
+that goes through anyway defeats the entire point of placing the hold in
+the first place. This skill enforces that: a held patient is blocked from
+discharge by default, and the only path around it is an attending's own
+override, not a blanket policy exception.
+
+## Contract
+- Input: a patient being considered for discharge and the clinician
+  reviewing it.
+- Output: either a completed discharge, a block on an active hold, or an
+  attending-overridden discharge.
+- Side effect: an override is logged against the attending who made it,
+  distinct from an ordinary discharge with no hold in play.
+
+## When to invoke
+- "review discharge"
+- "discharge patient"
+
+## Rules
+A patient with status "held" must not be discharged.
+A clinician with role "attending" may discharge a patient with an active hold.
+
+## Workflow
+if the patient's status is "held",
+  override a hold on a medication order.
+  Note: "hold overridden by attending, discharge may proceed".
+if not the patient's status is "held",
+  Note: "no active hold, discharge proceeds normally".
+Emit: "discharge review pass complete".
+
+## Anti-Patterns
+- Don't let a nurse or resident override a hold — the override path exists
+  for an attending's own sign-off, not for whoever happens to be at the
+  bedside.
+- Don't treat an override as blanket permission to skip future holds on
+  the same patient. Each hold gets its own review; overriding one doesn't
+  pre-clear the next.
+
+## When NOT to use this skill
+Use `triage patient` earlier in the stay when the question is severity,
+not discharge readiness — a hold decision and a triage decision answer
+different questions at different points in the stay.
+
+## Report shape
+The receipt states whether the discharge went through cleanly, was
+blocked by an active hold, or proceeded only after an attending's
+override.

@@ -1,0 +1,26 @@
+---
+name: migration apply
+description: Apply pending schema migrations with rollback on failure and a DBA approval gate.
+triggers:
+  - "apply pending migrations"
+  - "run schema migration"
+---
+
+# Migration Apply
+
+## When this applies
+- "apply pending migrations"
+- "run schema migration"
+
+## Procedure
+fetch failed migrations.
+for each migration:
+  wait for approval of the migration from a database administrator.
+  apply a migration.
+  recover from migration.failed:
+    roll back the migration.
+    Emit: "migration rolled back after failure".
+Emit: "pending migrations applied".
+
+## Postconditions
+make sure no migrations whose status is "failed".

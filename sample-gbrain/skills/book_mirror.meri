@@ -112,7 +112,7 @@ extracted directory as input.
 If `bs4` is missing: `pip3 install beautifulsoup4 lxml`.
 
 
-### EPUB — steps (( role: reference ))
+### EPUB — steps
 
 ```bash
 SLUG="this-book"                                # kebab-case
@@ -139,7 +139,7 @@ PY
 ```
 
 
-### EPUB — steps 2 (( role: reference ))
+### EPUB — steps 2
 
 Inspect the chapter files to identify which are real chapters vs front
 matter (TOC, copyright, acknowledgments). Often the EPUB ships one file
@@ -172,7 +172,7 @@ pdftotext -layout path/to/book.pdf "$WORK/full.txt"
 For each chapter file:
 
 
-### Quality check — steps 2 (( role: reference ))
+### Quality check — steps 2
 
 Save a `chapters/INDEX.md` mapping chapter number → title → file → word
 count for reference.
@@ -197,12 +197,12 @@ context fed to each chapter subagent.
    originals that's been recurring.
 
 
-### What to pull — steps (( role: reference ))
+### What to pull — steps
 
 2. Recent daily memory — last 14 days of brain pages under
    `wiki/personal/reflections/` or wherever the user files daily notes.
 
-### What to pull — steps 2 (( role: reference ))
+### What to pull — steps 2
 
 4. Brain pages for relevant entities — `gbrain query "<name>"` for
    people who will likely come up.

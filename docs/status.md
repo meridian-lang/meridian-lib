@@ -356,6 +356,16 @@ in `IMPLEMENTATION_LOG.md` for the Phase 5/6 100% completion pass.
 7. **`RuleLoweringTests`** — 10 tests covering all rule shapes, permission
    softening, bounded gates, trigger synthesis, and unrecognised-rule fallback.
 
+**Update (Phase 0B, Corpora Complexity & Coverage Expansion):** rule
+extraction is no longer gated `!hasHeadings`. `SkillSectionBuilder` now mines
+the same rule shapes (`must not` / `may` / `must be … by … before` /
+`When …, …`) out of `procedure`/`invariants`/`prohibitions` sections in
+sectioned (SKILL.md-style) documents too, feeding the same
+`RuleAnalyzer`/`RuleInjector` pipeline. See
+[03_LANGUAGE_QUICK_REFERENCE.md](03_LANGUAGE_QUICK_REFERENCE.md) "gbrain SKILL
+surface" and `IMPLEMENTATION_LOG.md` (2026-07-06) for the classification
+precedence and the gbrain blast-radius fixes this required.
+
 ---
 
 ## Phase G — Expressive SKILL.md surface + gbrain corpus
@@ -385,7 +395,8 @@ in `IMPLEMENTATION_LOG.md` for the Phase 5/6 100% completion pass.
 4. **Command surface** — fenced ` ```bash ` blocks + inline backticked commands
    → `invoke shell.run` (sentinel-carried verbatim).
 5. **Explicit judgment** — `use judgment to <goal>:` + `with discretion` /
-   `with autonomy` → `ProseStepIR`; unmarked prose errors.
+   `with autonomy` → `IRPrimitive.aiJudgment(AIJudgmentIR)` /
+   `.aiAutonomy(AIAutonomyIR)`; unmarked prose errors.
 6. **Triggers + dispatch** — typed `TriggerKind` (keyword/ambient/event/schedule),
    `TriggerClassifier` + `TriggerSynthesizer`, `RESOLVER.meri`.
 7. **Choice-gate** — `ask the user to choose between …` → emit + `WaitConditionIR.choice`
@@ -445,6 +456,21 @@ Confidence: 100% for the synthetic-corpus validation scope. The report is
 explicit that the two new corpora are synthetic proxies, not independent
 maintainer-supplied corpora.
 
+**Later addendum (2026-07-06, "Corpora Complexity & Coverage Expansion"):**
+four more synthetic proxy corpora joined `erp`/`procedures` under `corpora/`
+— `corpora/incident/` (SRE/on-call), `corpora/etl/` (data-pipeline/ETL),
+`corpora/governance/` (access/security-compliance), and `corpora/clinical/`
+(synthetic clinical-safety) — each with the same shape (8 migrated skills +
+`RESOLVER`, vocabulary/rulebook, compile outputs, deviation index).
+`governance` and `clinical` also carry a flat `rules/*.meridian` fixture as
+flat-path regression coverage. This same session reversed the compiler
+behavior this Wave 6 report measured: Phase-8 rule sugar now fires in
+sectioned (heading-bearing) documents too, not just flat files — see
+`docs/15_DECISIONS.md` D-DX-6 and `docs/16_EXPRESSIVENESS_REPORT.md`'s
+"Further update" note. `Tests/CorporaTests/CorporaConformanceTests.swift`
+now covers all six corpora under `MERIDIAN_CORPORA_TYPECHECK=1`. Full
+writeup in `IMPLEMENTATION_LOG.md`.
+
 ---
 
 ## Phase IR — Inert-reduction: executable Markdown + AI-routing
@@ -460,8 +486,8 @@ documentation are now executable or AI-routed:
    `assert`s; `!!! checklist (( <mode> ))` (`ChecklistMode`) selects `invariant`
    / `ai-discretion` / `ai-autonomy` / `inert`.
 3. **AI-routing** — fuzzy tables/checklists route to the planner via
-   `ProseStepIR` (`.planThenExecute` / `.autonomousLoop`), the same path as
-   `use judgment to …:`. See [12_PROSE_AND_AUTONOMY.md](12_PROSE_AND_AUTONOMY.md).
+   `IRPrimitive.aiJudgment(AIJudgmentIR)` / `.aiAutonomy(AIAutonomyIR)`, the same
+   path as `use judgment to …:`. See [12_PROSE_AND_AUTONOMY.md](12_PROSE_AND_AUTONOMY.md).
 4. **`## Tools Used` is active metadata** — both bullet forms
    (`<desc> (<id>)` and `` `<id>` — <desc>``) mine ids into `scopedTools` +
    manifest `tools_used`.

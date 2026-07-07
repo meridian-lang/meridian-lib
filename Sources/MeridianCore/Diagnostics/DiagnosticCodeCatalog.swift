@@ -77,6 +77,7 @@ extension DiagnosticCode {
         .init(.ambiguousAnaphora, status: .active, emitters: ["AnaphoraResolver.swift"]),
         .init(.invalidEnumDefault, status: .active, emitters: ["Compiler.swift:mergeEnumDefaults"]),
         .init(.unlowerableRulePredicate, status: .active, emitters: ["RuleInjector.swift:lowerExprSimple"]),
+        .init(.unsupportedTriggerCondition, status: .active, emitters: ["RuleInjector.swift:synthesizeTriggers"]),
 
         // MER4xxx — codegen
         .init(.codegenError, status: .active, emitters: ["Compiler.swift:codegenError projection"]),

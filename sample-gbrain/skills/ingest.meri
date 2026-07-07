@@ -45,11 +45,9 @@ use judgment to follow the Contract — steps guidance:
 
 ### Contract — steps 2 (( role: reference ))
 
-Every mention of a person or company with a brain page MUST create a back-link
-FROM that entity's page TO the page mentioning them. An unlinked mention is a
-broken brain. See `skills/_brain-filing-rules.md` for format.
+Every mention of a person or company with a brain page MUST create a back-link FROM that entity's page TO the page mentioning them. An unlinked mention is a broken brain. See `skills/_brain-filing-rules.md` for format.
 
-## Citation Requirements (MANDATORY) (( role: reference ))
+## Citation Requirements (MANDATORY)
 
 Every fact written to a brain page must carry an inline `[Source: ...]` citation.
 
@@ -91,7 +89,7 @@ the signal detection loop that makes the brain compound over time.
    to get an answer.
 
 
-### Protocol — steps (( role: reference ))
+### Protocol — steps
 
 2. For each entity detected:
    - `gbrain search "name"` -- does a page already exist?
@@ -104,7 +102,7 @@ the signal detection loop that makes the brain compound over time.
    ```bash
    gbrain sync --no-pull --no-embed
    ```
-### What counts as notable (( role: reference ))
+### What counts as notable
 
 - People the user interacts with or discusses (not random mentions)
 - Companies relevant to the user's work or interests
@@ -120,7 +118,7 @@ the signal detection loop that makes the brain compound over time.
 - Strong reactions to external stimuli (what triggered it and why)
 
 
-### What to capture from the user's own thinking — steps (( role: reference ))
+### What to capture from the user's own thinking — steps
 
 Original thinking is the most valuable signal. Capture exact phrasing -- the user's
 language IS the insight. Don't paraphrase.
@@ -306,8 +304,6 @@ The `.redirect.yaml` pointer format:
 
 ## Test Before Bulk (( role: reference ))
 
-When processing multiple items (batch video ingestion, bulk meeting processing, etc.):
-
 1. **Test on 3-5 items first.** Run in test mode if available.
 2. **Read the actual output.** Is the quality good? Are titles compelling (not
    "This video discusses...")? Are entities extracted and back-linked? Is the
@@ -317,6 +313,11 @@ When processing multiple items (batch video ingestion, bulk meeting processing, 
 
 The marginal cost of testing 3 items first is near zero. The cost of cleaning
 up 100 bad pages is enormous.
+
+
+### Test Before Bulk — steps
+
+When processing multiple items (batch video ingestion, bulk meeting processing, etc.):
 
 ## Quality Rules (( role: reference ))
 

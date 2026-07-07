@@ -3,8 +3,8 @@
 - Original: `query/SKILL.md`
 - Ported: `query.meri`
 - Tier: 2 (light edits)
-- Similarity: 74%
-- Lines: 156 -> 190 (+62 / -28)
+- Similarity: 71%
+- Lines: 156 -> 198 (+72 / -30)
 
 ## Frontmatter
 - Added: (none)
@@ -20,7 +20,7 @@
 These sections were made non-executable in the port and should be reviewed as migration deviations:
 - L36 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L44 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L151 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L159 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections inert total: 11/11 (100% total inert; includes intentional docs/templates/tools metadata)
@@ -28,7 +28,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=9, template=1, tools-metadata=1
-- Judgment: 4 blocks, 0 lines
+- Judgment: 3 blocks, 0 lines
 
 ### Inert section details
 - L6 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
@@ -38,10 +38,10 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L52 `Quality Rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L64 `Token-Budget Awareness`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L83 `Source precedence`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L99 `Citation in Answers`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L111 `Graph Traversal (v0.10.1+)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L139 `Search Quality Awareness`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L151 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L105 `Citation in Answers`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L119 `Graph Traversal (v0.10.1+)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L147 `Search Quality Awareness`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L159 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
@@ -93,7 +93,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - Answering from general knowledge when the brain has relevant content
  - Hallucinating facts not in the brain
-@@ -72,60 +79,84 @@
+@@ -72,60 +79,92 @@
  - Gap flags: "The brain doesn't have information on X"
  - Conflict notes when sources disagree
  
@@ -135,36 +135,46 @@ These sections were made non-executable in the port and should be reviewed as mi
    page is relevant and you need more context (e.g., compiled truth, timeline).
 -- **"Tell me about X"** -- get the full page (the user wants the complete picture).
 -- **"Did anyone mention Y?"** -- search results are enough (the user wants a yes/no with evidence).
--
--### Source precedence
 +### Source precedence (( role: reference ))
+ 
+-### Source precedence
++1. **User's direct statements** (highest authority -- what the user told you directly)
++3. **Timeline entries** (raw evidence, reverse-chronological)
++4. **External sources** (web search, API enrichment -- lowest authority)
++
++
++### Source precedence — steps (( role: reference ))
  
  When multiple sources provide conflicting information, follow this precedence:
  
- 1. **User's direct statements** (highest authority -- what the user told you directly)
--2. **Compiled truth** (the brain's synthesized, cited understanding)
- 3. **Timeline entries** (raw evidence, reverse-chronological)
- 4. **External sources** (web search, API enrichment -- lowest authority)
+-1. **User's direct statements** (highest authority -- what the user told you directly)
++
++### Source precedence — steps 2
++
++use judgment to follow the Source precedence — steps 2 guidance:
+ 2. **Compiled truth** (the brain's synthesized, cited understanding)
+-3. **Timeline entries** (raw evidence, reverse-chronological)
+-4. **External sources** (web search, API enrichment -- lowest authority)
++
++### Source precedence — steps 3 (( role: reference ))
  
  When sources conflict, note the contradiction with both citations. Don't silently
  pick one.
  
 -## Citation in Answers
-+
-+### Source precedence — steps
-+
-+use judgment to follow the Source precedence — steps guidance:
-+2. **Compiled truth** (the brain's synthesized, cited understanding)
 +## Citation in Answers (( role: reference ))
++
++- Cite the page: "According to [Source: people/jane-doe, compiled truth]..."
++
++### Citation in Answers — steps (( role: reference ))
  
  When referencing brain pages in your answer, propagate inline citations:
- - Cite the page: "According to [Source: people/jane-doe, compiled truth]..."
+-- Cite the page: "According to [Source: people/jane-doe, compiled truth]..."
++
++### Citation in Answers — steps 2 (( role: reference ))
++
  - When brain pages have inline `[Source: ...]` citations, propagate them so
    the user can trace facts to their origin
-+
-+### Citation in Answers — steps
-+
-+use judgment to follow the Citation in Answers — steps guidance:
  - When you synthesize across multiple pages, cite all sources
  
 -## Graph Traversal (v0.10.1+)
@@ -195,7 +205,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  - "Who works at Acme?" → `gbrain graph-query companies/acme --type works_at --direction in`
  - "Who attended Demo Day W26?" → `gbrain graph-query meetings/demo-day-w26 --type attended --direction out`
  - "What companies has Emily advised?" → `gbrain graph-query people/emily --type advises --direction out`
-@@ -135,15 +166,18 @@
+@@ -135,15 +174,18 @@
  graph structure. Search results are ranked with a small backlink boost so well-
  connected entities surface higher.
  
@@ -212,7 +222,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
 +### Search Quality Awareness — steps
 +
-+> If search results seem off (wrong results, missing known pages, irrelevant hits):
++If search results seem off (wrong results, missing known pages, irrelevant hits):
 +- Run `gbrain doctor --json` to check index health
  ## Tools Used
  

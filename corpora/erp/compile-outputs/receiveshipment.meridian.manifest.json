@@ -1,52 +1,91 @@
 {
+  "constants" : {
+    "dunning window" : 604800,
+    "high value threshold" : {
+      "amount" : 5000,
+      "currency" : "USD"
+    },
+    "maximum retry count" : 3
+  },
   "instances_required" : [
-
+    {
+      "kind" : "mailer server",
+      "name" : "billing mailer"
+    },
+    {
+      "kind" : "payment processor",
+      "name" : "erp gateway"
+    }
   ],
   "kinds_used" : [
 
   ],
   "meridian_definitions" : [
     {
+      "adjective" : "in good standing",
+      "function" : "meridianDef_Customer_inGoodStanding",
+      "kind" : "customer",
+      "line" : 46
+    },
+    {
       "adjective" : "overdue",
       "function" : "meridianDef_Invoice_overdue",
       "kind" : "invoice",
-      "line" : 30
+      "line" : 42
+    },
+    {
+      "adjective" : "severely overdue",
+      "function" : "meridianDef_Invoice_severelyOverdue",
+      "kind" : "invoice",
+      "line" : 47
     },
     {
       "adjective" : "unpaid",
       "function" : "meridianDef_Invoice_unpaid",
       "kind" : "invoice",
-      "line" : 29
+      "line" : 41
     },
     {
       "adjective" : "blocked",
       "function" : "meridianDef_Order_blocked",
       "kind" : "order",
-      "line" : 27
+      "line" : 38
     },
     {
       "adjective" : "fulfilled",
       "function" : "meridianDef_Order_fulfilled",
       "kind" : "order",
-      "line" : 28
+      "line" : 39
+    },
+    {
+      "adjective" : "high value",
+      "function" : "meridianDef_Order_highValue",
+      "kind" : "order",
+      "line" : 45
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Order_open",
       "kind" : "order",
-      "line" : 26
+      "line" : 37
+    },
+    {
+      "adjective" : "released",
+      "function" : "meridianDef_Order_released",
+      "kind" : "order",
+      "line" : 40
     },
     {
       "adjective" : "short",
       "function" : "meridianDef_Product_short",
       "kind" : "product",
-      "line" : 31
+      "line" : 43
     },
     {
       "adjective" : "pending",
       "function" : "meridianDef_PurchaseOrder_pending",
       "kind" : "purchase order",
-      "line" : 32
+      "line" : 44
     }
   ],
   "meridian_ir_version" : "1.0",
@@ -55,7 +94,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 38,
+      "line" : 53,
       "name" : "collection",
       "right_cardinality" : "one",
       "right_kind" : "a payment",
@@ -64,8 +103,18 @@
     {
       "backing" : "tool",
       "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 57,
+      "name" : "escalation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dunning notice",
+      "via" : "dunning.notify"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 34,
+      "line" : 49,
       "name" : "fulfillment",
       "right_cardinality" : "one",
       "right_kind" : "a shipment",
@@ -75,7 +124,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 36,
+      "line" : 51,
       "name" : "invoicing",
       "right_cardinality" : "one",
       "right_kind" : "an invoice",
@@ -85,7 +134,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a product",
-      "line" : 40,
+      "line" : 55,
       "name" : "replenishment",
       "right_cardinality" : "one",
       "right_kind" : "a purchase order",
@@ -111,7 +160,7 @@
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 19,
+        "line" : 20,
         "text" : "Human notes"
       },
       {
@@ -123,7 +172,7 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 17,
+        "line" : 18,
         "text" : "Publish"
       }
     ],
@@ -144,6 +193,7 @@
         "line" : 15,
         "lines" : [
           "Step: `ofbiz warehouse receive --today --json` to snapshot inbound manifests",
+          "wait for signal \"manifest_confirmed\"",
           "Publish: \"warehouse receiving manifest captured\""
         ],
         "role" : "procedure"
@@ -151,7 +201,7 @@
       {
         "executes" : false,
         "heading" : "Human notes",
-        "line" : 19,
+        "line" : 20,
         "lines" : [
           "Inbound receiving is intentionally shell-backed in this synthetic corpus because",
           "the source system exposes a manifest command rather than a first-class API call"
@@ -164,28 +214,35 @@
   "meridian_verbs" : [
     {
       "base" : "collect",
-      "line" : 45,
+      "line" : 62,
       "past_participle" : "collected",
       "relation" : "collection",
       "third_person" : "collects"
     },
     {
+      "base" : "escalate",
+      "line" : 64,
+      "past_participle" : "escalated",
+      "relation" : "escalation",
+      "third_person" : "escalates"
+    },
+    {
       "base" : "fulfill",
-      "line" : 43,
+      "line" : 60,
       "past_participle" : "fulfilled",
       "relation" : "fulfillment",
       "third_person" : "fulfills"
     },
     {
       "base" : "invoice",
-      "line" : 44,
+      "line" : 61,
       "past_participle" : "invoiced",
       "relation" : "invoicing",
       "third_person" : "invoices"
     },
     {
       "base" : "replenish",
-      "line" : 46,
+      "line" : 63,
       "past_participle" : "replenished",
       "relation" : "replenishment",
       "third_person" : "replenishes"
@@ -198,27 +255,31 @@
   "source_map" : [
     {
       "meridian_line" : 16,
-      "swift_line" : 403
+      "swift_line" : 555
     },
     {
       "meridian_line" : 17,
-      "swift_line" : 415
+      "swift_line" : 567
+    },
+    {
+      "meridian_line" : 18,
+      "swift_line" : 572
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 452
+      "swift_line" : 611
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 457
+      "swift_line" : 616
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 495
+      "swift_line" : 656
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 500
+      "swift_line" : 661
     }
   ],
   "tools_used" : [

@@ -45,49 +45,13 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_AuditRow_orphaned(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("orphaned"))
-}
-
-private func meridianDef_Batch_ready(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("ready"))
-}
-
-private func meridianDef_Batch_settled(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("settled"))
-}
-
-private func meridianDef_Constraint_violated(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("violated"))
-}
-
-private func meridianDef_IndexJob_lagging(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isWithinPast(__subject.member("updatedAt"), Duration.seconds(604800))
-}
-
-private func meridianDef_Ledger_open(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("open"))
-}
-
-private func meridianDef_Record_duplicate(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("duplicate"))
-}
-
-private func meridianDef_Record_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isWithinPast(__subject.member("updatedAt"), Duration.seconds(2592000))
-}
-
 public enum Settlebatch {
 
 // MARK: - Domain types
+
+public enum BatchLifecycle: String, Hashable, Codable, Sendable {
+    case queued, running, settled, failed
+}
 
 public protocol LedgerKind: MeridianStorage {
     var name: String { get }
@@ -119,6 +83,7 @@ public protocol BatchKind: MeridianProcess {
     var status: String { get }
     var ledgerId: String { get }
     var updatedAt: String { get }
+    var lifecycle: BatchLifecycle { get }
 }
 
 public struct Batch: BatchKind {
@@ -127,19 +92,22 @@ public struct Batch: BatchKind {
     public var status: String
     public var ledgerId: String
     public var updatedAt: String
+    public var lifecycle: BatchLifecycle
 
     public init(
         id: String = "",
         name: String = "",
         status: String = "",
         ledgerId: String = "",
-        updatedAt: String = ""
+        updatedAt: String = "",
+        lifecycle: BatchLifecycle = .queued
     ) {
         self.id = id
         self.name = name
         self.status = status
         self.ledgerId = ledgerId
         self.updatedAt = updatedAt
+        self.lifecycle = lifecycle
     }
 }
 
@@ -147,6 +115,7 @@ public protocol RecordKind: MeridianThing {
     var key: String { get }
     var status: String { get }
     var checksum: String { get }
+    var expectedChecksum: String { get }
     var updatedAt: String { get }
 }
 
@@ -155,6 +124,7 @@ public struct Record: RecordKind {
     public var key: String
     public var status: String
     public var checksum: String
+    public var expectedChecksum: String
     public var updatedAt: String
 
     public init(
@@ -162,12 +132,14 @@ public struct Record: RecordKind {
         key: String = "",
         status: String = "",
         checksum: String = "",
+        expectedChecksum: String = "",
         updatedAt: String = ""
     ) {
         self.id = id
         self.key = key
         self.status = status
         self.checksum = checksum
+        self.expectedChecksum = expectedChecksum
         self.updatedAt = updatedAt
     }
 }
@@ -268,13 +240,172 @@ public struct TriggerPhrase: TriggerPhraseKind {
     }
 }
 
+public protocol MigrationKind: MeridianArtifact {
+    var name: String { get }
+    var status: String { get }
+    var appliedAt: String { get }
+}
+
+public struct Migration: MigrationKind {
+    public var id: String
+    public var name: String
+    public var status: String
+    public var appliedAt: String
+
+    public init(
+        id: String = "",
+        name: String = "",
+        status: String = "",
+        appliedAt: String = ""
+    ) {
+        self.id = id
+        self.name = name
+        self.status = status
+        self.appliedAt = appliedAt
+    }
+}
+
+public protocol DatabaseTableKind: MeridianStorage {
+    var name: String { get }
+    var status: String { get }
+    var rowCount: String { get }
+}
+
+public struct DatabaseTable: DatabaseTableKind {
+    public var id: String
+    public var name: String
+    public var status: String
+    public var rowCount: String
+
+    public init(
+        id: String = "",
+        name: String = "",
+        status: String = "",
+        rowCount: String = ""
+    ) {
+        self.id = id
+        self.name = name
+        self.status = status
+        self.rowCount = rowCount
+    }
+}
+
+public protocol SqlEndpointKind: MeridianService {
+    var host: String { get }
+    var port: String { get }
+    var databaseName: String { get }
+}
+
+public struct SqlEndpoint: SqlEndpointKind {
+    public var id: String
+    public var host: String
+    public var port: String
+    public var databaseName: String
+
+    public init(
+        id: String = "",
+        host: String = "",
+        port: String = "",
+        databaseName: String = ""
+    ) {
+        self.id = id
+        self.host = host
+        self.port = port
+        self.databaseName = databaseName
+    }
+}
+
+
+public struct Constants: Sendable {
+    public let maximumBatchSize: Decimal = Decimal(500)
+    public let stalenessWindow: Duration = Duration.seconds(2592000)
+    public let maximumRetryCount: Decimal = Decimal(5)
+    public let vacuumRowThreshold: Decimal = Decimal(1000000)
+}
+
+private static let constants = Constants()
+
+public struct Instances: Sendable {
+    public let reportingWarehouse: Value = .record([
+        "host": .string(ProcessInfo.processInfo.environment["PGHOST"] ?? ""),
+        "port": .number(Decimal(5432)),
+        "databaseName": .string("reporting"),
+    ])
+}
+
+private static let instances = Instances()
+
+private static func meridianDef_AuditRow_orphaned(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("orphaned"))
+}
+
+private static func meridianDef_Batch_finalized(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return (meridianDef_Batch_settled(__subject)) && (MeridianComparison.isNotEmpty(__subject.member("ledgerId")))
+}
+
+private static func meridianDef_Batch_ready(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("ready"))
+}
+
+private static func meridianDef_Batch_settled(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("settled"))
+}
+
+private static func meridianDef_Constraint_violated(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("violated"))
+}
+
+private static func meridianDef_DatabaseTable_bloated(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.gt(__subject.member("rowCount"), Value.from(constants.vacuumRowThreshold))
+}
+
+private static func meridianDef_IndexJob_lagging(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isWithinPast(__subject.member("updatedAt"), Duration.seconds(604800))
+}
+
+private static func meridianDef_Ledger_open(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("open"))
+}
+
+private static func meridianDef_Migration_applied(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("applied"))
+}
+
+private static func meridianDef_Migration_failed(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("failed"))
+}
+
+private static func meridianDef_Record_drifted(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.neq(__subject.member("checksum"), __subject.member("expectedChecksum") ?? .null)
+}
+
+private static func meridianDef_Record_duplicate(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("duplicate"))
+}
+
+private static func meridianDef_Record_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isWithinPast(__subject.member("updatedAt"), Duration.seconds(2592000))
+}
 
 public struct SettleBatch: MeridianWorkflow {
     public let runtime: Runtime
 
     public static let skillMetadata: [String: String] = [
         "name": "settle batch",
-        "description": "Settle every ready batch exactly once.",
+        "description": "Settle every ready batch exactly once, retrying transient failures until they clear.",
         "triggers": "\"settle ready batches\"\n\"batch settlement\"",
     ]
 
@@ -294,15 +425,17 @@ public struct SettleBatch: MeridianWorkflow {
             if target == label { __meridianResumeTarget = nil }
             return false
         }
+        let constants = Constants()
+        let instances = Instances()
         await runtime.workflowStarted(workflowName: "SettleBatch", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L23:C0") {
-            // L23
+        if __meridianShouldRun("progress:0.0:L32:C0") {
+            // L32
             try await runtime.assert(((((state.get("batches"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("failed"))) }).isEmpty), message: "Expected no batches whose status is \"failed\"")
-            try await runtime.checkpoint(label: "progress:0.0:L23:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.0:L32:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.1:L39:C0") {
-            // L39
+        if __meridianShouldRun("progress:0.1:L57:C0") {
+            // L57
             let batches = try await runtime.invoke(
                 tool: "batch.list",
                 args: [
@@ -311,36 +444,40 @@ public struct SettleBatch: MeridianWorkflow {
             )
             state.bind("batches", batches)
 
-            try await runtime.checkpoint(label: "progress:0.1:L39:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.1:L57:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.2:L17:C0") {
-            // L17
+        if __meridianShouldRun("progress:0.2:L23:C0") {
+            // L23
             try await runtime.assert((((state.get("batches"))?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("name")) }), message: "Expected all batches have a name")
-            try await runtime.checkpoint(label: "progress:0.2:L17:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.2:L23:C0", state: state.snapshot())
         }
-        // L18
+        // L24
         for (__meridianLoopIndex_0_3, batch) in (state.get("batches")?.asList ?? []).enumerated() {
             let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
             if __meridianShouldRun(__meridianLoopLabel_0_3) {
             state.bind("batch", batch)
-                if __meridianShouldRun("progress:0.3.body.0:L19:C0") {
-                    // L19
-                    _ = try await SettleBatch(runtime: runtime).run()
-                    try await runtime.checkpoint(label: "progress:0.3.body.0:L19:C0", state: state.snapshot())
+                // L25
+                if !(meridianDef_Batch_finalized(state.get("batch"))) {
+                    if __meridianShouldRun("progress:0.3.body.0.then.0:L25:C0") {
+                        // L25
+                        _ = try await SettleBatch(runtime: runtime).run()
+                        try await runtime.checkpoint(label: "progress:0.3.body.0.then.0:L25:C0", state: state.snapshot())
+                    }
                 }
+
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
 
-        if __meridianShouldRun("progress:0.4:L20:C0") {
-            // L20
+        if __meridianShouldRun("progress:0.4:L29:C0") {
+            // L29
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": .string("ready batches settled"),
                 ]
             )
-            try await runtime.checkpoint(label: "progress:0.4:L20:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.4:L29:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)
@@ -367,6 +504,8 @@ public struct WhenSettlereadybatchesFires: MeridianWorkflow {
             if target == label { __meridianResumeTarget = nil }
             return false
         }
+        let constants = Constants()
+        let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenSettlereadybatchesFires", parameters: [:])
 
         if __meridianShouldRun("progress:0.0:L1:C0") {
@@ -410,6 +549,8 @@ public struct WhenBatchsettlementFires: MeridianWorkflow {
             if target == label { __meridianResumeTarget = nil }
             return false
         }
+        let constants = Constants()
+        let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenBatchsettlementFires", parameters: [:])
 
         if __meridianShouldRun("progress:0.0:L1:C0") {

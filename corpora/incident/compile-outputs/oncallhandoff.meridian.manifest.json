@@ -1,0 +1,325 @@
+{
+  "constants" : {
+    "escalation cooldown" : 600,
+    "maximum page attempts" : 3,
+    "slo error budget threshold" : 0.10000000000000001
+  },
+  "instances_required" : [
+    {
+      "kind" : "service",
+      "name" : "pagerduty service"
+    },
+    {
+      "kind" : "service",
+      "name" : "statuspage service"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "actionable",
+      "function" : "meridianDef_Alert_actionable",
+      "kind" : "alert",
+      "line" : 30
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Alert_critical",
+      "kind" : "alert",
+      "line" : 23
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Alert_stale",
+      "kind" : "alert",
+      "line" : 24
+    },
+    {
+      "adjective" : "unhealthy",
+      "function" : "meridianDef_Deploy_unhealthy",
+      "kind" : "deploy",
+      "line" : 26
+    },
+    {
+      "adjective" : "high severity",
+      "function" : "meridianDef_Incident_highSeverity",
+      "kind" : "incident",
+      "line" : 27
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Incident_open",
+      "kind" : "incident",
+      "line" : 28
+    },
+    {
+      "adjective" : "degraded",
+      "function" : "meridianDef_Service_degraded",
+      "kind" : "service",
+      "line" : 25
+    },
+    {
+      "adjective" : "breached",
+      "function" : "meridianDef_Slo_breached",
+      "kind" : "slo",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a runbook",
+      "line" : 36,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "runbook.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a service",
+      "line" : 32,
+      "name" : "firing",
+      "right_cardinality" : "one",
+      "right_kind" : "an alert",
+      "via" : "alert.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an oncall engineer",
+      "line" : 34,
+      "name" : "ownership",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "oncall.roster"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Give the next on-call engineer a running start at shift change by naming the busiest service and confirming every other service's health first, instead of handing over a shift with nothing but \"good luck, check the dashboard.\"",
+    "name" : "oncall handoff",
+    "outline" : [
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 20,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 29,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 39,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 47,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 32,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 37,
+        "text" : "Post"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "When to invoke",
+        "line" : 20,
+        "lines" : [
+          "\"run oncall handoff\"",
+          "\"prepare shift handoff\"",
+          "\"run the shift handoff pass\"",
+          "Run this at the end of every shift, not just when the outgoing engineer",
+          "remembers to. A handoff that only happens when things are already on fire",
+          "defeats the point"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 29,
+        "lines" : [
+          "fetch services",
+          "fetch open incidents",
+          "Check: any services",
+          "let open incident total be the number of open incidents",
+          "let busiest service be the highest service by open incident count",
+          "for each service:",
+          "check the health of the service",
+          "Post: \"oncall handoff pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 39,
+        "lines" : [
+          "Don't skip the per-service health check because the incident count",
+          "\"looks fine.\" A service can be unhealthy without an open incident yet",
+          "filed against it — the health check is the part that catches that gap",
+          "Don't hand off verbally without running this pass first. The receipt is",
+          "what the incoming engineer can actually act on; a verbal summary is",
+          "whatever the outgoing engineer happened to remember"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 47,
+        "lines" : [
+          "The receipt states the open incident count and calls out the busiest",
+          "service, so the incoming engineer knows exactly where the shift's attention",
+          "is most likely needed first"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"run oncall handoff\"\n\"prepare shift handoff\"\n\"run the shift handoff pass\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "cover",
+      "line" : 41,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "own",
+      "line" : 40,
+      "past_participle" : "owned",
+      "relation" : "ownership",
+      "third_person" : "owns"
+    },
+    {
+      "base" : "page",
+      "line" : 39,
+      "past_participle" : "paged",
+      "relation" : "ownership",
+      "third_person" : "pages"
+    }
+  ],
+  "source_files" : [
+    "oncallhandoff.meri",
+    "incident.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 50,
+      "swift_line" : 393
+    },
+    {
+      "meridian_line" : 47,
+      "swift_line" : 400
+    },
+    {
+      "meridian_line" : 32,
+      "swift_line" : 412
+    },
+    {
+      "meridian_line" : 33,
+      "swift_line" : 416
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 418
+    },
+    {
+      "meridian_line" : 35,
+      "swift_line" : 420
+    },
+    {
+      "meridian_line" : 68,
+      "swift_line" : 426
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 442
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 481
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 486
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 526
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 531
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 571
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 576
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "oncall handoff",
+      "swift_struct" : "OncallHandoff"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runOncallHandoff fires",
+      "swift_struct" : "WhenRunoncallhandoffFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when prepareShiftHandoff fires",
+      "swift_struct" : "WhenPrepareshifthandoffFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runShiftHandoffPass fires",
+      "swift_struct" : "WhenRunshifthandoffpassFires"
+    }
+  ]
+}

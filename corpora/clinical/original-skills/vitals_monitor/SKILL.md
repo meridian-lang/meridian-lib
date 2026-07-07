@@ -1,0 +1,58 @@
+---
+name: vitals monitor
+description: Keep a patient's vital-sign readings fresh by rechecking on a fixed cadence, and escalate the moment the patient goes too long without a genuinely current reading. Use this for the ongoing background watch between triage passes, not for a one-time severity call.
+triggers:
+  - "monitor patient vitals"
+  - "run vitals watch"
+parameters: patient
+---
+
+# Vitals Monitor
+
+A vital sign reading is only as good as how recently it was taken — a
+patient who looked stable four hours ago is not the same as a patient who
+looks stable right now. This skill exists purely to keep that gap small.
+It rechecks the patient's vitals on a fixed cadence and escalates the
+instant the patient goes past the observation window without a fresh
+reading, rather than assuming yesterday's numbers still hold.
+
+## Contract
+- Input: a patient.
+- Output: either a confirmed fresh reading or an escalation for a patient
+  who has gone stale.
+- Side effect: every recheck pass is logged against the patient's chart,
+  whether it finds the patient current or overdue.
+
+## When to invoke
+- "monitor patient vitals"
+- "run vitals watch"
+
+## Rules
+When a patient has been unmonitored for more than 4 hours, escalate the patient.
+
+## Workflow
+until the patient is monitored,
+  wait 15 minutes.
+  read the vital signs for the patient.
+Note: "patient vitals confirmed current".
+Emit: "vitals monitor pass complete".
+
+## Guarantees
+make sure the patient's last observed at is within the last 4 hours.
+
+## Anti-Patterns
+- Don't treat a single fresh reading as the end of the watch — the loop
+  exists because the patient goes stale again after the next observation
+  window, not just once.
+- Don't extend the observation window informally because a unit is short
+  staffed. Escalate on schedule and let the escalation itself trigger the
+  staffing conversation.
+
+## When NOT to use this skill
+Use `triage patient` instead for a single point-in-time severity decision;
+reading freshness over time is a different question than how severe a
+reading is right now.
+
+## Report shape
+The receipt records how many recheck cycles ran before the patient was
+confirmed current, or that the patient was escalated for going stale.

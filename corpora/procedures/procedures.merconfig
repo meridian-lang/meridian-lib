@@ -6,37 +6,58 @@ A constraint is a kind of thing.
 An audit row is a kind of thing.
 An index job is a kind of process.
 A trigger phrase is a kind of thing.
+A migration is a kind of artifact.
+A database table is a kind of storage.
+A sql endpoint is a kind of service.
 
 A ledger has a name, a status, and an updated at.
 A batch has a name, a status, a ledger id, and an updated at.
-A record has a key, a status, a checksum, and an updated at.
+A batch can be queued or running or settled or failed, called the lifecycle.
+A record has a key, a status, a checksum, an expected checksum, and an updated at.
 A constraint has a name, a status, and a table name.
 An audit row has a key, a status, a table name, and an updated at.
 An index job has a name, a status, and an updated at.
 A trigger phrase has a text.
+A migration has a name, a status, and an applied at.
+A database table has a name, a status, and a row count.
+A sql endpoint has a host, a port, and a database name.
 
 Definition: a ledger is open if its status is "open".
 Definition: a batch is ready if its status is "ready".
 Definition: a batch is settled if its status is "settled".
+Definition: a batch is finalized if it is settled and its ledger id is not empty.
 Definition: a record is stale if its updated at is within the last 30 days.
 Definition: a record is duplicate if its status is "duplicate".
+Definition: a record is drifted if its checksum is not its expected checksum.
 Definition: a constraint is violated if its status is "violated".
 Definition: an audit row is orphaned if its status is "orphaned".
 Definition: an index job is lagging if its updated at is within the last 7 days.
+Definition: a migration is applied if its status is "applied".
+Definition: a migration is failed if its status is "failed".
+Definition: a database table is bloated if its row count exceeds the vacuum row threshold.
 
 Settlement relates a batch to a ledger.
 Settlement is read via the batch.settle tool.
+Retrying relates a batch to a ledger.
+Retrying is read via the batch.retry tool.
 Canonicalization relates a record to an audit row.
 Canonicalization is read via the record.mark_canonical tool.
 Auditing relates a ledger to an audit row.
 Auditing is read via the audit_row.list tool.
+Application relates a migration to a database table.
+Application is read via the migration.apply tool.
 
 The verb to settle (it settles, it is settled) means the settlement relation.
+The verb to retry (it retries, it is retried) means the retrying relation.
 The verb to canonicalize (it canonicalizes, it is canonicalized) means the canonicalization relation.
 The verb to audit (it audits, it is audited) means the auditing relation.
+The verb to apply (it applies, it is applied) means the application relation.
 
 To fetch ready batches:
   bind batches = invoke batch.list with status = "ready".
+
+To fetch failed batches:
+  bind batches = invoke batch.list with status = "failed".
 
 To fetch stale records:
   bind records = invoke record.list with status = "stale".
@@ -53,6 +74,12 @@ To fetch orphaned audit rows:
 To fetch lagging index jobs:
   bind index jobs = invoke index.list with status = "lagging".
 
+To fetch failed migrations:
+  bind migrations = invoke migration.list with status = "failed".
+
+To fetch database tables:
+  bind tables = invoke table.list.
+
 To reconcile a ledger:
   bind result = invoke ledger.reconcile with ledger = the ledger.
 
@@ -68,11 +95,52 @@ To rebuild an index job:
 To purge a record:
   invoke record.purge with record = the record.
 
+To apply a migration:
+  invoke migration.apply with migration = the migration.
+
+To roll back a migration:
+  invoke migration.rollback with migration = the migration.
+
+To vacuum a database table:
+  invoke table.vacuum with table = the table.
+
+To compute a checksum for a record:
+  bind checksum = invoke record.checksum with record = the record.
+
+=== constants ===
+
+The maximum batch size is 500.
+The staleness window is 30 days.
+The maximum retry count is 5.
+The vacuum row threshold is 1000000.
+
+=== instances ===
+
+There is a sql endpoint called reporting warehouse:
+  host = $PGHOST
+  port = 5432
+  database name = "reporting"
+
+=== language ===
+Comparison synonyms:
+  drifted from = is not
+  behind = is less than
+Duration synonyms:
+  sprint = 2 weeks
+Assertion synonyms:
+  confirm
+  validate that
+
 === tools ===
 List Batches
 ============
 -- List batches by status.
 ~ batch.list(status: String) : List
+
+Retry Batch
+===========
+-- Retry a failed batch against its ledger.
+~ batch.retry(batch: Batch) : Boolean
 
 List Records
 ============
@@ -118,3 +186,33 @@ Purge Record
 ============
 -- Purge a record.
 ~ record.purge(record: Record) : Boolean
+
+List Migrations
+===============
+-- List migrations by status.
+~ migration.list(status: String) : List
+
+Apply Migration
+===============
+-- Apply a migration to its target table.
+~ migration.apply(migration: Migration) : Boolean
+
+Rollback Migration
+==================
+-- Roll back a migration.
+~ migration.rollback(migration: Migration) : Boolean
+
+List Database Tables
+=====================
+-- List all database tables.
+~ table.list() : List
+
+Vacuum Table
+============
+-- Vacuum a database table.
+~ table.vacuum(table: DatabaseTable) : Boolean
+
+Compute Checksum
+================
+-- Compute a checksum for a record.
+~ record.checksum(record: Record) : String

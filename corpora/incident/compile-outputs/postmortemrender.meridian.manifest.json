@@ -1,0 +1,373 @@
+{
+  "constants" : {
+    "escalation cooldown" : 600,
+    "maximum page attempts" : 3,
+    "slo error budget threshold" : 0.10000000000000001
+  },
+  "instances_required" : [
+    {
+      "kind" : "service",
+      "name" : "pagerduty service"
+    },
+    {
+      "kind" : "service",
+      "name" : "statuspage service"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "actionable",
+      "function" : "meridianDef_Alert_actionable",
+      "kind" : "alert",
+      "line" : 30
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Alert_critical",
+      "kind" : "alert",
+      "line" : 23
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Alert_stale",
+      "kind" : "alert",
+      "line" : 24
+    },
+    {
+      "adjective" : "unhealthy",
+      "function" : "meridianDef_Deploy_unhealthy",
+      "kind" : "deploy",
+      "line" : 26
+    },
+    {
+      "adjective" : "high severity",
+      "function" : "meridianDef_Incident_highSeverity",
+      "kind" : "incident",
+      "line" : 27
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Incident_open",
+      "kind" : "incident",
+      "line" : 28
+    },
+    {
+      "adjective" : "degraded",
+      "function" : "meridianDef_Service_degraded",
+      "kind" : "service",
+      "line" : 25
+    },
+    {
+      "adjective" : "breached",
+      "function" : "meridianDef_Slo_breached",
+      "kind" : "slo",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a runbook",
+      "line" : 36,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "runbook.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a service",
+      "line" : 32,
+      "name" : "firing",
+      "right_cardinality" : "one",
+      "right_kind" : "an alert",
+      "via" : "alert.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an oncall engineer",
+      "line" : 34,
+      "name" : "ownership",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "oncall.roster"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Publish a postmortem for every open incident and roll the sev1 count up into a single impact-tier receipt, so a leadership review can see at a glance whether this batch of incidents was a bad week or a normal one.",
+    "name" : "postmortem render",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 19,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "tables",
+        "level" : 2,
+        "line" : 24,
+        "text" : "Tables"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 31,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 39,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 46,
+        "text" : "Workflow — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 51,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 59,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 62,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 49,
+        "text" : "Post"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 19,
+        "lines" : [
+          "\"render postmortem\"",
+          "\"publish incident postmortem\"",
+          "\"run the postmortem render pass\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Tables",
+        "line" : 24,
+        "lines" : [
+          "table:data=tiers:fCBuYW1lIHwgZmxvb3IgfAp8IC0tLS0gfCAtLS0tLSB8CnwgaGlnaCB8IDIgICAgIHwKfCBsb3cgIHwgMCAgICAgfA=="
+        ],
+        "role" : "tables"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow",
+        "line" : 31,
+        "lines" : [
+          "bind postmortem report =",
+          "codeblock:plain:cG9zdG1vcnRlbS1zdW1tYXJ5OgpbaWYgc2V2MSBjb3VudCBpcyBtb3JlIHRoYW4gMF10aWVyOiBoaWdoW290aGVyd2lzZV10aWVyOiBsb3dbZW5kIGlmXQpzZXYxIGluY2lkZW50czoge3sgc2V2MSBjb3VudCB9fQ=="
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 39,
+        "lines" : [
+          "fetch open incidents",
+          "for each incident:",
+          "publish a postmortem for the incident",
+          "let sev1 count be the number of incidents whose severity is \"sev1\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 46,
+        "lines" : [
+          "emit incident.postmortem_report with body = postmortem report",
+          "Post: \"postmortem render pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 51,
+        "lines" : [
+          "Don't skip publishing a postmortem for a sev3 incident because the tier",
+          "only cares about sev1 counts. Every incident this skill fetches gets a",
+          "postmortem; the tier classification is a summary on top, not a filter",
+          "Don't hand-adjust the tier in the rendered report to match what",
+          "leadership expects to hear. The floor in the tiers table is the honest",
+          "bar; move the bar in the table if it's genuinely wrong, not in the output"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 59,
+        "lines" : [
+          "every emitted postmortem report contains \"postmortem-summary\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 62,
+        "lines" : [
+          "The receipt states the impact tier — high or low — and the sev1 incident",
+          "count that tier was computed from"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"render postmortem\"\n\"publish incident postmortem\"\n\"run the postmortem render pass\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "cover",
+      "line" : 41,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "own",
+      "line" : 40,
+      "past_participle" : "owned",
+      "relation" : "ownership",
+      "third_person" : "owns"
+    },
+    {
+      "base" : "page",
+      "line" : 39,
+      "past_participle" : "paged",
+      "relation" : "ownership",
+      "third_person" : "pages"
+    }
+  ],
+  "source_files" : [
+    "postmortemrender.meri",
+    "incident.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 60,
+      "swift_line" : 393
+    },
+    {
+      "meridian_line" : 26,
+      "swift_line" : 397
+    },
+    {
+      "meridian_line" : 47,
+      "swift_line" : 400
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 411
+    },
+    {
+      "meridian_line" : 86,
+      "swift_line" : 417
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 432
+    },
+    {
+      "meridian_line" : 48,
+      "swift_line" : 435
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 445
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 484
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 489
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 529
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 534
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 574
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 579
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "postmortem render",
+      "swift_struct" : "PostmortemRender"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when renderPostmortem fires",
+      "swift_struct" : "WhenRenderpostmortemFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when publishIncidentPostmortem fires",
+      "swift_struct" : "WhenPublishincidentpostmortemFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runPostmortemRenderPass fires",
+      "swift_struct" : "WhenRunpostmortemrenderpassFires"
+    }
+  ]
+}

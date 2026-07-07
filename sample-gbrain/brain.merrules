@@ -71,6 +71,19 @@ rule "refuses-unless-precondition":
   rewrite: complete unless {condition}.
 
 === sections ===
+section "When this skill fires" -> procedure
+section "Integration With Other Skills — steps" -> procedure
+section "Citation in Briefings — steps 2" -> procedure
+section "Multi-source brains: use `sync --all`, not per-source entries — steps 2" -> procedure
+section "Citation Requirements (MANDATORY) — steps" -> procedure
+section "Trigger words — steps" -> procedure
+section "Test Before Bulk — steps" -> procedure
+section "Source precedence — steps 2" -> procedure
+section "Source precedence — steps 3" -> procedure
+section "Citation in Answers — steps 2" -> procedure
+section "Phase 1: Idea/Observation Detection (PRIMARY) — steps 2" -> procedure
+section "Daily run protocol — steps" -> procedure
+section "7. Auto-fix protocol — steps 3" -> procedure
 section "Standards (the rigor bar) — steps" -> procedure
 section "Standards (the rigor bar) — steps 2" -> procedure
 section "Safety gate (REQUIRED, no exceptions) — steps" -> procedure

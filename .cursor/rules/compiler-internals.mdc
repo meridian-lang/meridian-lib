@@ -1,5 +1,5 @@
 ---
-description: Compiler architecture quick reference (matchPhrase, lowering, parsing invariants) and the 12 IR primitives + IRExpression cases. Read when editing the parser, lowering, symbol table, or IR.
+description: Compiler architecture quick reference (matchPhrase, lowering, parsing invariants) and the 13 IR primitives + IRExpression cases. Read when editing the parser, lowering, symbol table, or IR.
 globs: Sources/MeridianCore/Parser/**/*.swift,Sources/MeridianCore/Lowering/**/*.swift,Sources/MeridianCore/Symbols/**/*.swift,Sources/MeridianCore/IR/**/*.swift
 alwaysApply: false
 ---
@@ -124,6 +124,37 @@ silently emitting a nonsense recursive self-invocation instead of the correct
 self-recursive call is unaffected — it still resolves via the primary match,
 which this exclusion does not touch.
 
+### Rule/statement/prose classification precedence in executable sections
+
+`SkillSectionBuilder.build` classifies each one-line, non-table/checklist/
+code-block statement group inside an **executable** section
+(`procedure`/`invariants`/`prohibitions`) in a fixed order — this is a
+correctness invariant, not a heuristic to tune per-corpus:
+
+1. Inside the guidance body of a `use judgment to follow the … guidance:`
+   step → guidance prose for that step (never a rule or a statement).
+2. Otherwise, if `RuleAnalyzer.classify(RuleAST(text:))` returns non-nil (a
+   real Phase-8 shape: `must not` / `may` [+ bounded `up to N`] / `must be …
+   by … before` / `When …, …`) → extracted into `MeridianFile.rules`, **not**
+   left in the section body. `RuleAnalyzer.classify` is the only detector —
+   never add an ad hoc word-list check (e.g. `hasPrefix("a ")`) at a call
+   site. `applicability`/`negative-applicability` sections are exempt (their
+   bullets are dispatch-phrase fragments, always mined as dispatch
+   predicates).
+3. Otherwise → ordinary statement, lowered per the section's role.
+
+Rules fire identically whether the source is a flat heading-less `.meridian`
+file or a `##`/`###` executable section — the old `!hasHeadings` gate that
+made sectioned documents rule-inert everywhere is gone (Phase 0B, 2026-07).
+Prose opt-out is **markers/comments only**: `(( role: reference ))`,
+`(( inert ))`, and `#`/`>` comment lines — never inferred from content. AI-
+routed steps (`use judgment to …:`, `with discretion`, `with autonomy`,
+`ai-discretion`/`ai-autonomy` markers) are executable, not a prose opt-out.
+Full precedence + examples: `docs/03_LANGUAGE_QUICK_REFERENCE.md` § "gbrain
+SKILL surface"; migrator-side classification of the same source text during
+`SKILL.md` porting is a separate policy — see `AGENTS.md` §6 pitfall #15 and
+`docs/13_SKILL_MD_PORTING.md`.
+
 ### `SkillSectionRole.reference` — the non-executable role `(( inert ))` maps to
 
 `SkillSectionRole` (`Sources/MeridianCore/Rulebook/Rulebook.swift`) has a
@@ -146,7 +177,7 @@ of this file's glob — see `docs/13_SKILL_MD_PORTING.md` for that policy.
 
 # IR primitives reference
 
-All 12 IR primitives live in `Sources/MeridianCore/IR/IRTypes.swift`:
+All 13 IR primitives live in `Sources/MeridianCore/IR/IRTypes.swift`:
 
 | Primitive | Swift type | Key fields |
 |---|---|---|
@@ -161,7 +192,8 @@ All 12 IR primitives live in `Sources/MeridianCore/IR/IRTypes.swift`:
 | `commit` | `CommitIR` | `label: String?` (optional) |
 | `recover` | `RecoverIR` | `pattern: ErrorPattern`, `handler: IRBlock`, `attachedTo: IRBlock` |
 | `simultaneously` | `SimultaneouslyIR` | `branches: [IRBlock]` — parallel execution groups |
-| `proseStep` | `ProseStepIR` | `text: String`, `dispatchMode: ProseDispatchMode`, `autonomy: AutonomyConfigIR?` |
+| `aiJudgment` | `AIJudgmentIR` | `text: String`, `scopedTools: [String]`, `guidance: String?` |
+| `aiAutonomy` | `AIAutonomyIR` | `text: String`, `scopedTools: [String]`, `guidance: String?`, `autonomy: AutonomyConfigIR` |
 
 Key associated enums:
 - `BranchCondition`: `.predicate(IRExpression)` or `.match(IRExpression, [BranchCase])`

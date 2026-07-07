@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum Maintain {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct MaintainInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -604,34 +604,12 @@ public struct MaintainInput: MeridianWorkflow {
             try await runtime.assert(MeridianComparison.isNotEmpty(state.get("eachIssueFound.specificFixAction")), message: "Expected Each issue found has a specific fix action")
             try await runtime.checkpoint(label: "progress:0.0:L53:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.1:L70:C0") {
-            // L70
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain doctor --remediation-plan --json              # preview what would run"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L70:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L70:C0") {
-            // L70
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain doctor --remediate --yes --target-score 90 --max-usd 5"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L70:C0", state: state.snapshot())
-        }
         // L78
         let __meridianProseResults_L78 = try await runtime.executeProsePlan(
             prose: "follow the Autonomous path (v0.36.4.0) — when you want to reach a target score — steps 2 guidance",
             snapshot: state.snapshot(),
             scopedTools: ["add_link", "add_tag", "get_backlinks", "get_health", "get_page", "get_timeline", "health.get", "link.add", "link.backlinks", "list_pages", "page.get", "page.list", "page.search", "publish", "remove_link", "remove_tag", "shell.run"],
-            guidance: "`--remediate` walks the plan, submitting each step as a Minion job, re-checking\nscore between every step. `--max-usd N` is a hard cost cap — submission refuses\nwhen the plan would exceed the cap (prevents synthesize loops from burning\nAnthropic credits unattended)\nWhen the target score is unreachable for the brain (empty brain with no entity\npages → `graph_coverage` caps at 70; unconfigured embedding key → caps at 60),\nthe command bails with a list of what's missing rather than looping\nYou're investigating why score is stuck below `--remediate`'s ceiling\nCheck gbrain health to get the dashboard\nCheck the health output for stale page count\nFor each stale page: read the page from gbrain, review timeline, determine if compiled_truth needs rewriting\ncodeblock:bash:Z2JyYWluIGV4dHJhY3QgbGlua3MgLS1kaXIgfi9icmFpbg==\ncodeblock:bash:Z2JyYWluIGV4dHJhY3QgdGltZWxpbmUgLS1kaXIgfi9icmFpbg==\n`gbrain dream` runs the full 8-phase maintenance cycle:\nuse judgment to follow the Dream cycle (v0.23): synthesize + patterns — steps 2 guidance:\n**Synthesize phase:** reads transcripts from `dream.synthesize.session_corpus_dir`,\nruns a cheap Haiku verdict (cached in `dream_verdicts`) to filter routine\nops sessions, then fans out one Sonnet subagent per worth-processing\ntranscript. Each subagent writes reflections (`wiki/personal/reflections/...`),\noriginals (`wiki/originals/ideas/...`), and people timeline entries. The\norchestrator collects the slugs from `subagent_tool_executions` (NOT\n`pages.updated_at` — that would pick up unrelated writes) and reverse-renders\neach new page from DB → markdown on disk\nCross-reference compulsively: every new page MUST have at least one wikilink\nEdited transcripts produce NEW slugs (content-hash suffix changes) — never silently overwrite\nuse judgment to follow the Dream cycle (v0.23): synthesize + patterns — steps 5 guidance:\n**Trust boundary (`allowed_slug_prefixes`):** the synthesis subagent runs with an\nexplicit allow-list of write paths sourced from `_brain-filing-rules.json`'s\n`dream_synthesize_paths.globs`. Even on prompt-injection success, the subagent\ncannot write outside that list. Trust comes from PROTECTED_JOB_NAMES — MCP\ncannot submit subagent jobs at all. Editing the JSON is the only way to add\na new directory the synthesizer can write to\n**Idempotency + privacy:** transcripts are keyed by `(file_path, content_hash)`,\nso re-running on the same content is a no-op. `dream.synthesize.exclude_patterns`\n(default `[\"medical\", \"therapy\"]`) filters out transcripts before any LLM call\nCooldown: the cycle's spend cap. `dream.synthesize.cooldown_hours` (default\nuse judgment to follow the Dream cycle (v0.23): synthesize + patterns — steps 7 guidance:\n12) means at most ~2 synthesize runs per day under autopilot. The completion\ntimestamp is stored in `dream.synthesize.last_completion_ts` and is written\nONLY on successful runs (not on skipped/failed). Explicit `--input` /\n`--date` / `--from` / `--to` invocations bypass cooldown\n`--dry-run` semantics: runs the cheap Haiku significance filter (caches\nverdicts) but skips the Sonnet synthesis pass. NOT zero LLM calls\nuse judgment to follow the Dream cycle (v0.23): synthesize + patterns — steps 9 guidance:\n**Configure synthesize on a fresh brain:**\ncodeblock:bash:Z2JyYWluIGNvbmZpZyBzZXQgZHJlYW0uc3ludGhlc2l6ZS5zZXNzaW9uX2NvcnB1c19kaXIgL3BhdGgvdG8vdHJhbnNjcmlwdHMKZ2JyYWluIGNvbmZpZyBzZXQgZHJlYW0uc3ludGhlc2l6ZS5lbmFibGVkIHRydWUKZ2JyYWluIGRyZWFtIC0tcGhhc2Ugc3ludGhlc2l6ZSAtLWRyeS1ydW4gLS1qc29uICAgIyBwcmV2aWV3CmdicmFpbiBkcmVhbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgZnVsbCA4LXBoYXNlIGN5Y2xl\ncodeblock:bash:Z2JyYWluIGRyZWFtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBmdWxsIGN5Y2xlCmdicmFpbiBkcmVhbSAtLXBoYXNlIHN5bnRoZXNpemUgICAgICAgICAgICAgICAgICAgICAgICMganVzdCBzeW50aGVzaXplCmdicmFpbiBkcmVhbSAtLXBoYXNlIHBhdHRlcm5zICAgICAgICAgICAgICAgICAgICAgICAgICMganVzdCBwYXR0ZXJucwpnYnJhaW4gZHJlYW0gLS1pbnB1dCB+L3RyYW5zY3JpcHRzLzIwMjYtMDQtMjUudHh0ICAgICAjIGFkLWhvYyBvbmUgdHJhbnNjcmlwdApnYnJhaW4gZHJlYW0gLS1mcm9tIDIwMjYtMDQtMDEgLS10byAyMDI2LTA0LTI1ICAgICAgICAjIGJhY2tmaWxsIHJhbmdlCmdicmFpbiBkcmVhbSAtLWpzb24gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgQ3ljbGVSZXBvcnQgSlNPTg==\nNote: extracted entries improve structured queries (`gbrain timeline`), not vector search\ncodeblock:bash:Z2JyYWluIGF1dG9waWxvdCAtLXN0YXR1cw==\ncodeblock:bash:Z2JyYWluIGF1dG9waWxvdCAtLWluc3RhbGwgLS1yZXBvIH4vYnJhaW4=\nIn v0.11.1+, autopilot dispatches each cycle as a single `autopilot-cycle`\nMinion job and supervises the worker child — one install step gives you\nsync + extract + embed + backlinks + durable job processing\nA v0.11.0 install where the migration skill never fired leaves Minions\npartially set up: schema is applied, but `~/.gbrain/preferences.json`\ndoesn't exist, autopilot runs inline, host manifests still reference\n`agentTurn`. Repair:\ncodeblock:bash:IyBDaGVjayBtaWdyYXRpb24gc3RhdHVzCmdicmFpbiBhcHBseS1taWdyYXRpb25zIC0tbGlzdAoKIyBBcHBseSBwZW5kaW5nIG1pZ3JhdGlvbnMgKGlkZW1wb3RlbnQ7IHNhZmUgb24gaGVhbHRoeSBpbnN0YWxscykKZ2JyYWluIGFwcGx5LW1pZ3JhdGlvbnMgLS15ZXMKCiMgSWYgaG9zdC1zcGVjaWZpYyBoYW5kbGVycyBhcmUgZmxhZ2dlZCBpbiB+Ly5nYnJhaW4vbWlncmF0aW9ucy9wZW5kaW5nLWhvc3Qtd29yay5qc29ubDoKIyB3YWxrIHRoZW0gcGVyIHNraWxscy9taWdyYXRpb25zL3YwLjExLjAubWQgKyBkb2NzL2d1aWRlcy9wbHVnaW4taGFuZGxlcnMubWQsCiMgc2hpcCBoYW5kbGVyIHJlZ2lzdHJhdGlvbnMgaW4gdGhlIGhvc3QgcmVwbywgdGhlbiByZS1ydW4gYXBwbHktbWlncmF0aW9ucy4=\nFull troubleshooting guide: `docs/guides/minions-fix.md`\nFormat: `- YYYY-MM-DD | Referenced in page title -- brief context`\nCheck for common misfiling patterns (see `skills/_brain-filing-rules.md`):\nContent with clear primary subjects filed in `sources/` instead of the\nappropriate directory (people/, companies/, concepts/, etc.)\nUse gbrain search to find pages in `sources/` that reference specific\npeople, companies, or concepts -- these may be misfiled\nSpot-check pages for missing `[Source: ...]` citations:\nuse judgment to follow the Graph population (v0.10.3+) — steps guidance:\n`gbrain extract links --source db` — backfill structured links by walking pages\nfrom the engine. Reads `[Name](people/slug)` / `[Name](companies/slug)` references\nand infers relationship types (`attended`, `works_at`, `invested_in`, `founded`,\n`advises`, `mentions`, `source`). Idempotent. Use `--source fs --dir <brain>`\nif you have a markdown checkout to walk instead\n`gbrain extract timeline --source db` — backfill structured timeline entries\nParses `- YYYY-MM-DD | summary` lines from page content. Idempotent (DB\nUNIQUE constraint)\n`gbrain extract all --source db` — both in one run\n`gbrain graph-query <slug> --depth 2` — verify connectivity (use any well-known\nentity slug as a probe)\nAvailable link types (use with `gbrain graph-query --type`):\nThen check progress: `tail -1 /tmp/gbrain-embed.log`\nRun `gbrain doctor --json` and check the RLS status\nAll tables should show RLS enabled. If not, run `gbrain init` again\nCheck that the schema version is up to date. `gbrain doctor --json` reports\nthe current version vs expected. If behind, `gbrain init` runs migrations\nautomatically\nRun `gbrain files verify` to check all DB records have valid data\nRun `gbrain files status` to see migration state (local, mirrored, redirected)\nCheck for orphan `.redirect.yaml` pointers that reference missing storage files\nIf storage backend is configured: verify redirect pointers resolve (download test)\nTimeline items older than 30 days with unresolved action items\nFlag for review\nTier 1 (entity lookup): known names -- should always resolve\nQuality matters more than speed (2.5s right > 200ms wrong)\nRun `gbrain doctor --json` and check for degradation. Report any failing checks\nstaleness\nRun `gbrain embed --stale` to refresh embeddings for pages that have changed since\ntheir last embedding. For large brains (>5000 pages), run this with nohup:\ncodeblock:bash:bm9odXAgZ2JyYWluIGVtYmVkIC0tc3RhbGUgPiAvdG1wL2dicmFpbi1lbWJlZC5sb2cgMj4mMSAm\nVerify sync is running: check `gbrain stats` and confirm `last_sync` is within\nthe last 24 hours. If sync has stopped, the brain is drifting from the repo\nHealth check results (before/after scores for each dimension)\nOutstanding issues requiring user attention"
+            guidance: "`--remediate` walks the plan, submitting each step as a Minion job, re-checking\nscore between every step. `--max-usd N` is a hard cost cap — submission refuses\nwhen the plan would exceed the cap (prevents synthesize loops from burning\nAnthropic credits unattended)\nWhen the target score is unreachable for the brain (empty brain with no entity\npages → `graph_coverage` caps at 70; unconfigured embedding key → caps at 60),\nthe command bails with a list of what's missing rather than looping\nYou're investigating why score is stuck below `--remediate`'s ceiling\nCheck gbrain health to get the dashboard\nCheck the health output for stale page count\nFor each stale page: read the page from gbrain, review timeline, determine if compiled_truth needs rewriting\nIf link_count is 0 or low relative to page_count, run batch extraction:\ncodeblock:bash:Z2JyYWluIGV4dHJhY3QgbGlua3MgLS1kaXIgfi9icmFpbg==\nIf timeline_entry_count is 0, extract structured timeline from markdown:\ncodeblock:bash:Z2JyYWluIGV4dHJhY3QgdGltZWxpbmUgLS1kaXIgfi9icmFpbg==\n`gbrain dream` runs the full 8-phase maintenance cycle:\nuse judgment to follow the Dream cycle (v0.23): synthesize + patterns — steps 2 guidance:\n**Synthesize phase:** reads transcripts from `dream.synthesize.session_corpus_dir`,\nruns a cheap Haiku verdict (cached in `dream_verdicts`) to filter routine\nops sessions, then fans out one Sonnet subagent per worth-processing\ntranscript. Each subagent writes reflections (`wiki/personal/reflections/...`),\noriginals (`wiki/originals/ideas/...`), and people timeline entries. The\norchestrator collects the slugs from `subagent_tool_executions` (NOT\n`pages.updated_at` — that would pick up unrelated writes) and reverse-renders\neach new page from DB → markdown on disk\nCross-reference compulsively: every new page MUST have at least one wikilink\nEdited transcripts produce NEW slugs (content-hash suffix changes) — never silently overwrite\nuse judgment to follow the Dream cycle (v0.23): synthesize + patterns — steps 5 guidance:\n**Trust boundary (`allowed_slug_prefixes`):** the synthesis subagent runs with an\nexplicit allow-list of write paths sourced from `_brain-filing-rules.json`'s\n`dream_synthesize_paths.globs`. Even on prompt-injection success, the subagent\ncannot write outside that list. Trust comes from PROTECTED_JOB_NAMES — MCP\ncannot submit subagent jobs at all. Editing the JSON is the only way to add\na new directory the synthesizer can write to\n**Idempotency + privacy:** transcripts are keyed by `(file_path, content_hash)`,\nso re-running on the same content is a no-op. `dream.synthesize.exclude_patterns`\n(default `[\"medical\", \"therapy\"]`) filters out transcripts before any LLM call\nCooldown: the cycle's spend cap. `dream.synthesize.cooldown_hours` (default\nuse judgment to follow the Dream cycle (v0.23): synthesize + patterns — steps 7 guidance:\n12) means at most ~2 synthesize runs per day under autopilot. The completion\ntimestamp is stored in `dream.synthesize.last_completion_ts` and is written\nONLY on successful runs (not on skipped/failed). Explicit `--input` /\n`--date` / `--from` / `--to` invocations bypass cooldown\n`--dry-run` semantics: runs the cheap Haiku significance filter (caches\nverdicts) but skips the Sonnet synthesis pass. NOT zero LLM calls\nuse judgment to follow the Dream cycle (v0.23): synthesize + patterns — steps 9 guidance:\n**Configure synthesize on a fresh brain:**\ncodeblock:bash:Z2JyYWluIGNvbmZpZyBzZXQgZHJlYW0uc3ludGhlc2l6ZS5zZXNzaW9uX2NvcnB1c19kaXIgL3BhdGgvdG8vdHJhbnNjcmlwdHMKZ2JyYWluIGNvbmZpZyBzZXQgZHJlYW0uc3ludGhlc2l6ZS5lbmFibGVkIHRydWUKZ2JyYWluIGRyZWFtIC0tcGhhc2Ugc3ludGhlc2l6ZSAtLWRyeS1ydW4gLS1qc29uICAgIyBwcmV2aWV3CmdicmFpbiBkcmVhbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgZnVsbCA4LXBoYXNlIGN5Y2xl\ncodeblock:bash:Z2JyYWluIGRyZWFtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBmdWxsIGN5Y2xlCmdicmFpbiBkcmVhbSAtLXBoYXNlIHN5bnRoZXNpemUgICAgICAgICAgICAgICAgICAgICAgICMganVzdCBzeW50aGVzaXplCmdicmFpbiBkcmVhbSAtLXBoYXNlIHBhdHRlcm5zICAgICAgICAgICAgICAgICAgICAgICAgICMganVzdCBwYXR0ZXJucwpnYnJhaW4gZHJlYW0gLS1pbnB1dCB+L3RyYW5zY3JpcHRzLzIwMjYtMDQtMjUudHh0ICAgICAjIGFkLWhvYyBvbmUgdHJhbnNjcmlwdApnYnJhaW4gZHJlYW0gLS1mcm9tIDIwMjYtMDQtMDEgLS10byAyMDI2LTA0LTI1ICAgICAgICAjIGJhY2tmaWxsIHJhbmdlCmdicmFpbiBkcmVhbSAtLWpzb24gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgQ3ljbGVSZXBvcnQgSlNPTg==\nNote: extracted entries improve structured queries (`gbrain timeline`), not vector search\ncodeblock:bash:Z2JyYWluIGF1dG9waWxvdCAtLXN0YXR1cw==\nIf not running, install it:\ncodeblock:bash:Z2JyYWluIGF1dG9waWxvdCAtLWluc3RhbGwgLS1yZXBvIH4vYnJhaW4=\nIn v0.11.1+, autopilot dispatches each cycle as a single `autopilot-cycle`\nMinion job and supervises the worker child — one install step gives you\nsync + extract + embed + backlinks + durable job processing\nA v0.11.0 install where the migration skill never fired leaves Minions\npartially set up: schema is applied, but `~/.gbrain/preferences.json`\ndoesn't exist, autopilot runs inline, host manifests still reference\n`agentTurn`. Repair:\ncodeblock:bash:IyBDaGVjayBtaWdyYXRpb24gc3RhdHVzCmdicmFpbiBhcHBseS1taWdyYXRpb25zIC0tbGlzdAoKIyBBcHBseSBwZW5kaW5nIG1pZ3JhdGlvbnMgKGlkZW1wb3RlbnQ7IHNhZmUgb24gaGVhbHRoeSBpbnN0YWxscykKZ2JyYWluIGFwcGx5LW1pZ3JhdGlvbnMgLS15ZXMKCiMgSWYgaG9zdC1zcGVjaWZpYyBoYW5kbGVycyBhcmUgZmxhZ2dlZCBpbiB+Ly5nYnJhaW4vbWlncmF0aW9ucy9wZW5kaW5nLWhvc3Qtd29yay5qc29ubDoKIyB3YWxrIHRoZW0gcGVyIHNraWxscy9taWdyYXRpb25zL3YwLjExLjAubWQgKyBkb2NzL2d1aWRlcy9wbHVnaW4taGFuZGxlcnMubWQsCiMgc2hpcCBoYW5kbGVyIHJlZ2lzdHJhdGlvbnMgaW4gdGhlIGhvc3QgcmVwbywgdGhlbiByZS1ydW4gYXBwbHktbWlncmF0aW9ucy4=\nFull troubleshooting guide: `docs/guides/minions-fix.md`\nFormat: `- YYYY-MM-DD | Referenced in page title -- brief context`\nCheck for common misfiling patterns (see `skills/_brain-filing-rules.md`):\nContent with clear primary subjects filed in `sources/` instead of the\nappropriate directory (people/, companies/, concepts/, etc.)\nUse gbrain search to find pages in `sources/` that reference specific\npeople, companies, or concepts -- these may be misfiled\nSpot-check pages for missing `[Source: ...]` citations:\nuse judgment to follow the Graph population (v0.10.3+) — steps guidance:\n`gbrain extract links --source db` — backfill structured links by walking pages\nfrom the engine. Reads `[Name](people/slug)` / `[Name](companies/slug)` references\nand infers relationship types (`attended`, `works_at`, `invested_in`, `founded`,\n`advises`, `mentions`, `source`). Idempotent. Use `--source fs --dir <brain>`\nif you have a markdown checkout to walk instead\n`gbrain extract timeline --source db` — backfill structured timeline entries\nParses `- YYYY-MM-DD | summary` lines from page content. Idempotent (DB\nUNIQUE constraint)\n`gbrain extract all --source db` — both in one run\n`gbrain graph-query <slug> --depth 2` — verify connectivity (use any well-known\nentity slug as a probe)\nAvailable link types (use with `gbrain graph-query --type`):\nThen check progress: `tail -1 /tmp/gbrain-embed.log`\nRun `gbrain doctor --json` and check the RLS status\nAll tables should show RLS enabled. If not, run `gbrain init` again\nCheck that the schema version is up to date. `gbrain doctor --json` reports\nthe current version vs expected. If behind, `gbrain init` runs migrations\nautomatically\nRun `gbrain files verify` to check all DB records have valid data\nRun `gbrain files status` to see migration state (local, mirrored, redirected)\nCheck for orphan `.redirect.yaml` pointers that reference missing storage files\nIf storage backend is configured: verify redirect pointers resolve (download test)\nTimeline items older than 30 days with unresolved action items\nFlag for review\nTier 1 (entity lookup): known names -- should always resolve\nQuality matters more than speed (2.5s right > 200ms wrong)\nRun `gbrain doctor --json` and check for degradation. Report any failing checks\nstaleness\nRun `gbrain embed --stale` to refresh embeddings for pages that have changed since\ntheir last embedding. For large brains (>5000 pages), run this with nohup:\ncodeblock:bash:bm9odXAgZ2JyYWluIGVtYmVkIC0tc3RhbGUgPiAvdG1wL2dicmFpbi1lbWJlZC5sb2cgMj4mMSAm\nVerify sync is running: check `gbrain stats` and confirm `last_sync` is within\nthe last 24 hours. If sync has stopped, the brain is drifting from the repo\nHealth check results (before/after scores for each dimension)\nOutstanding issues requiring user attention"
         )
         for (__key, __value) in __meridianProseResults_L78 {
             state.bind(__key, __value)

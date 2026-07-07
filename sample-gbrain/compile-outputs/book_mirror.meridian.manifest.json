@@ -1092,16 +1092,8 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
           "guidance" : "The default model is `claude-opus-4-7`. Sonnet works (use ``--model\nclaude-sonnet-4-6``) but the right-column quality drops noticeably — the\ntexture that makes the analysis read like a therapist who knows the user\nneeds Opus-grade reasoning\nThe CLI refuses to spend in a non-TTY context without `--yes`. CI \/ scripted\ninvocations must pass `--yes` explicitly. TTY users get a `[y\/N]` prompt\nbefore submission\nAfter the brain page is written, render to PDF using `skills\/brain-pdf`:\ncodeblock:bash:Z2JyYWluIHB1dF9wYWdlICAjIGFscmVhZHkgZG9uZSBieSB0aGUgQ0xJOyBub3RoaW5nIHRvIGFkZCBoZXJlCiMgVGhlbiBpbnZva2UgYnJhaW4tcGRmOgojIChzZWUgc2tpbGxzL2JyYWluLXBkZi9TS0lMTC5tZCBmb3IgdGhlIG1ha2UtcGRmIGludm9jYXRpb24p\nFor every person the right column references with a brain page, add a\nback-link from `people\/<slug>` to the new `media\/books\/<slug>-personalized`\npage (per `conventions\/quality.md` Iron Law)\n❌ Factual errors about the reader's life. Always fact-check after\nassembly\nuse judgment to follow the Anti-patterns (do not do these) — steps 2 guidance:\n❌ **Sycophancy or moralizing in the right column.** No \"you should…\",\nno \"consider…\", no \"perhaps it's time to…\"\nBook file exists locally (path known)\nChapter texts under `$WORK\/chapters\/*.txt` with sane word counts\nContext pack at `$WORK\/context.md` is dense\n`gbrain book-mirror --chapters-dir … --context-file … --slug … --title …` returned exit 0\n`media\/books\/<slug>-personalized.md` exists in the brain\nFact-check pass complete (no errors against USER.md or other source-of-truth pages)\nCross-links added from referenced people\/companies\nOptional: PDF rendered via brain-pdf and delivered\n`skills\/brain-pdf\/SKILL.md` — render the personalized page to PDF\n`skills\/strategic-reading\/SKILL.md` — read a book through a specific\nproblem-lens instead of personalizing to the whole reader\n`skills\/article-enrichment\/SKILL.md` — same shape applied to articles\nrather than books",
           "line" : 286,
           "scoped_tools" : [
@@ -1126,6 +1118,13 @@
             "verify"
           ],
           "text" : "follow the Model: Opus by default — steps guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "book-mirror a input",

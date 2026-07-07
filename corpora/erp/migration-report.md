@@ -1,12 +1,16 @@
 | skill | compiles | edits | repairs | unmined | added keys |
 |---|---|---|---|---|---|
-| cancelorder | ✓ | 0 | 0 | 1 |  |
+| backorderreplenish | ✓ | 0 | 0 | 0 |  |
+| cancelorder | ✓ | 0 | 0 | 0 |  |
 | dunning | ✓ | 0 | 0 | 0 |  |
 | fulfillorder | ✓ | 0 | 0 | 0 |  |
 | invoicerun | ✓ | 0 | 0 | 0 |  |
 | monthendclose | ✓ | 0 | 0 | 0 |  |
+| orderapproval | ✓ | 0 | 0 | 0 |  |
+| paymentretry | ✓ | 0 | 0 | 0 |  |
 | placeorder | ✓ | 0 | 0 | 0 |  |
 | receiveshipment | ✓ | 0 | 0 | 0 |  |
 | restock | ✓ | 0 | 0 | 0 |  |
+| returnsprocessing | ✓ | 0 | 0 | 0 |  |
 
-Total: 8, compiling: 8, failing: 0, unmined-contract lines: 1
+Total: 12, compiling: 12, failing: 0, unmined-contract lines: 0

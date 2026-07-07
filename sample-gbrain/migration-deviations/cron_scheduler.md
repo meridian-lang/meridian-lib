@@ -3,8 +3,8 @@
 - Original: `cron-scheduler/SKILL.md`
 - Ported: `cron_scheduler.meri`
 - Tier: 2 (light edits)
-- Similarity: 80%
-- Lines: 94 -> 100 (+22 / -16)
+- Similarity: 75%
+- Lines: 94 -> 103 (+29 / -20)
 
 ## Frontmatter
 - Added: (none)
@@ -20,7 +20,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L6 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L15 `Phases`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L38 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L73 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L76 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
 - Sections inert total: 6/6 (100% total inert; includes intentional docs/templates/tools metadata)
@@ -36,7 +36,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L28 `Idempotency Requirement`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L38 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 - L42 `Multi-source brains: use `sync --all`, not per-source entries`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L73 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L76 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
@@ -52,7 +52,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  This skill guarantees:
  - Schedule staggering: max 1 job per 5-minute slot, no collisions
-@@ -29,31 +29,34 @@
+@@ -29,35 +29,34 @@
  - Idempotency: jobs can run twice without duplicate side effects
  - Results saved as reports: `reports/{job-name}/{YYYY-MM-DD-HHMM}.md`
  
@@ -93,11 +93,15 @@ These sections were made non-executable in the port and should be reviewed as mi
  Job configuration saved. Report: "Job '{name}' scheduled at {cron expression}. Next run: {time}."
  
 -## Multi-source brains: use `sync --all`, not per-source entries
+-
+-When the brain has 2+ active sources (anything `gbrain sources list` shows
+-with a non-null `local_path` that isn't archived), use one consolidated
+-cron line instead of N per-source entries.
 +## Multi-source brains: use `sync --all`, not per-source entries (( role: reference ))
  
- When the brain has 2+ active sources (anything `gbrain sources list` shows
- with a non-null `local_path` that isn't archived), use one consolidated
-@@ -70,7 +73,13 @@
+ **Preferred (multi-source)**:
+ 
+@@ -70,7 +69,20 @@
  connections during the wave (each per-file worker opens its own
  2-connection pool). Stay under your Postgres `max_connections` setting.
  
@@ -108,11 +112,18 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
 +### Multi-source brains: use `sync --all`, not per-source entries — steps (( role: reference ))
 +
++When the brain has 2+ active sources (anything `gbrain sources list` shows
++with a non-null `local_path` that isn't archived), use one consolidated
++cron line instead of N per-source entries.
++
++
++### Multi-source brains: use `sync --all`, not per-source entries — steps 2 (( role: reference ))
++
 +Avoid (legacy): separate `gbrain sync --source default` and
  `gbrain sync --source zion-brain` entries staggered by 5 minutes. They
  require manual deconfliction every time a new source is added, and a
  slow source can race a fast source on the legacy global `gbrain-sync`
-@@ -78,10 +87,7 @@
+@@ -78,10 +90,7 @@
  per-source cron pattern doesn't benefit from the parallelism that
  `--all --parallel` actually delivers).
  

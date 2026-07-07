@@ -1,0 +1,398 @@
+{
+  "constants" : {
+    "batch size threshold" : 100000,
+    "freshness sla" : 86400,
+    "retry budget" : 3
+  },
+  "instances_required" : [
+    {
+      "kind" : "sink",
+      "name" : "warehouse sink"
+    },
+    {
+      "kind" : "source",
+      "name" : "object store source"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Dataset_critical",
+      "kind" : "dataset",
+      "line" : 28
+    },
+    {
+      "adjective" : "high volume",
+      "function" : "meridianDef_Dataset_highVolume",
+      "kind" : "dataset",
+      "line" : 27
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Dataset_stale",
+      "kind" : "dataset",
+      "line" : 21
+    },
+    {
+      "adjective" : "backfilled",
+      "function" : "meridianDef_Partition_backfilled",
+      "kind" : "partition",
+      "line" : 23
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_PipelineRun_failed",
+      "kind" : "pipeline run",
+      "line" : 22
+    },
+    {
+      "adjective" : "passing",
+      "function" : "meridianDef_QualityCheck_passing",
+      "kind" : "quality check",
+      "line" : 24
+    },
+    {
+      "adjective" : "compatible",
+      "function" : "meridianDef_Schema_compatible",
+      "kind" : "schema",
+      "line" : 26
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Watermark_fresh",
+      "kind" : "watermark",
+      "line" : 25
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a pipeline run",
+      "line" : 34,
+      "name" : "derivation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "transform"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a source",
+      "line" : 30,
+      "name" : "extraction",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "extract"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a dataset",
+      "line" : 32,
+      "name" : "loading",
+      "right_cardinality" : "one",
+      "right_kind" : "a sink",
+      "via" : "load"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Triage failed pipeline runs by replaying the ones whose failure looks transient and routing the rest to judgment for a real remediation call, instead of replaying everything and hoping, or escalating everything and burning an on-call engineer's morning.",
+    "name" : "pipeline triage",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 21,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 26,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 35,
+        "text" : "Replay Routing"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 37,
+        "text" : "Replay Routing — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 46,
+        "text" : "Completion"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 49,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 57,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 47,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 21,
+        "lines" : [
+          "\"triage failed pipelines\"",
+          "\"triage pipeline failures\"",
+          "\"run the pipeline triage pass\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 26,
+        "lines" : [
+          "fetch failed pipeline runs",
+          "table:ai-discretion:fCBDb25kaXRpb24gICAgICAgICAgICAgICB8IEFjdGlvbiAgICAgICAgICAgICB8CnwgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gfCAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIHwKfCB0aGUgcGlwZWxpbmUgcnVuJ3Mgc3RhdHVzIGlzICJmYWlsZWQiICAgfCBlc2NhbGF0ZSB0byB0aGUgcGxhdGZvcm0gdGVhbSAgfAp8ICogICAgICAgICAgICAgICAgICAgICB8IG1vbml0b3IgdGhlIHBpcGVsaW5lIHJ1biAgICAgfA=="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Replay Routing",
+        "line" : 35,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Replay Routing — steps",
+        "line" : 37,
+        "lines" : [
+          "for each pipeline run:",
+          "bind should replay = decide whether the pipeline run's failure looks transient",
+          "if the should replay is true,",
+          "replay the pipeline run",
+          "otherwise,",
+          "use judgment to classify the pipeline run and recommend a remediation, preferring a replay over a full backfill when the failure looks transient"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Completion",
+        "line" : 46,
+        "lines" : [
+          "Emit: \"pipeline triage pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 49,
+        "lines" : [
+          "Don't replay a run just because replaying is cheap. A failure that isn't",
+          "transient will fail the same way again, and now it's failed twice",
+          "instead of once with a clear signal",
+          "Don't route every non-obvious failure straight to a full backfill. The",
+          "judgment call is there to weigh a targeted replay against a backfill,",
+          "not to default to the expensive option"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 57,
+        "lines" : [
+          "The receipt separates replayed pipeline runs from ones routed to judgment,",
+          "so a platform engineer can see the split at a glance instead of reading",
+          "every run's individual outcome"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"triage failed pipelines\"\n\"triage pipeline failures\"\n\"run the pipeline triage pass\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "derive",
+      "line" : 39,
+      "past_participle" : "derived",
+      "relation" : "derivation",
+      "third_person" : "derives"
+    },
+    {
+      "base" : "extract",
+      "line" : 37,
+      "past_participle" : "extracted",
+      "relation" : "extraction",
+      "third_person" : "extracts"
+    },
+    {
+      "base" : "load",
+      "line" : 38,
+      "past_participle" : "loaded",
+      "relation" : "loading",
+      "third_person" : "loads"
+    }
+  ],
+  "source_files" : [
+    "pipelinetriage.meri",
+    "etl.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 48,
+      "swift_line" : 362
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 373
+    },
+    {
+      "meridian_line" : 39,
+      "swift_line" : 382
+    },
+    {
+      "meridian_line" : 40,
+      "swift_line" : 387
+    },
+    {
+      "meridian_line" : 41,
+      "swift_line" : 389
+    },
+    {
+      "meridian_line" : 78,
+      "swift_line" : 392
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 404
+    },
+    {
+      "meridian_line" : 47,
+      "swift_line" : 420
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 459
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 464
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 504
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 509
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 549
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 554
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "judgment_steps" : [
+        {
+          "line" : 30,
+          "scoped_tools" : [
+            "dataset.list",
+            "extract",
+            "load",
+            "partition.backfill",
+            "partition.list",
+            "pipeline.list",
+            "pipeline.replay",
+            "quality.run",
+            "record.dedupe",
+            "schema.validate",
+            "transform",
+            "watermark.read"
+          ],
+          "text" : "Decide which case below applies and carry out its action:\n- when the pipeline run's status is \"failed\", escalate to the platform team\n- otherwise, monitor the pipeline run"
+        },
+        {
+          "line" : 44,
+          "scoped_tools" : [
+            "dataset.list",
+            "extract",
+            "load",
+            "partition.backfill",
+            "partition.list",
+            "pipeline.list",
+            "pipeline.replay",
+            "quality.run",
+            "record.dedupe",
+            "schema.validate",
+            "transform",
+            "watermark.read"
+          ],
+          "text" : "classify the pipeline run and recommend a remediation, preferring a replay over a full backfill when the failure looks transient"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "pipeline triage",
+      "swift_struct" : "PipelineTriage"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when triageFailedPipelines fires",
+      "swift_struct" : "WhenTriagefailedpipelinesFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when triagePipelineFailures fires",
+      "swift_struct" : "WhenTriagepipelinefailuresFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runPipelineTriagePass fires",
+      "swift_struct" : "WhenRunpipelinetriagepassFires"
+    }
+  ]
+}

@@ -1,0 +1,436 @@
+{
+  "constants" : {
+    "dose limit" : 2,
+    "observation window" : 14400,
+    "vitals threshold" : 100
+  },
+  "instances_required" : [
+    {
+      "kind" : "protocol",
+      "name" : "sepsis protocol"
+    },
+    {
+      "kind" : "protocol",
+      "name" : "anticoagulation protocol"
+    }
+  ],
+  "kinds_used" : [
+    "MedicationOrder",
+    "Nurse"
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "granted",
+      "function" : "meridianDef_Consent_granted",
+      "kind" : "consent",
+      "line" : 32
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_MedicationOrder_cleared",
+      "kind" : "medication order",
+      "line" : 29
+    },
+    {
+      "adjective" : "contraindicated",
+      "function" : "meridianDef_MedicationOrder_contraindicated",
+      "kind" : "medication order",
+      "line" : 28
+    },
+    {
+      "adjective" : "high risk",
+      "function" : "meridianDef_Medication_highRisk",
+      "kind" : "medication",
+      "line" : 27
+    },
+    {
+      "adjective" : "active",
+      "function" : "meridianDef_Patient_active",
+      "kind" : "patient",
+      "line" : 33
+    },
+    {
+      "adjective" : "held",
+      "function" : "meridianDef_Patient_held",
+      "kind" : "patient",
+      "line" : 34
+    },
+    {
+      "adjective" : "monitored",
+      "function" : "meridianDef_Patient_monitored",
+      "kind" : "patient",
+      "line" : 30
+    },
+    {
+      "adjective" : "unmonitored",
+      "function" : "meridianDef_Patient_unmonitored",
+      "kind" : "patient",
+      "line" : 31
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_VitalSign_critical",
+      "kind" : "vital sign",
+      "line" : 25
+    },
+    {
+      "adjective" : "stable",
+      "function" : "meridianDef_VitalSign_stable",
+      "kind" : "vital sign",
+      "line" : 26
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a nurse",
+      "line" : 38,
+      "name" : "administration",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "medication.administer"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a protocol",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication",
+      "via" : "protocol.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a clinician",
+      "line" : 36,
+      "name" : "prescription",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "order.list"
+    }
+  ],
+  "meridian_rules" : [
+    {
+      "bounded" : true,
+      "executes" : true,
+      "kind" : "permission",
+      "source" : {
+        "file" : "dosecheck.meri",
+        "line" : 35
+      },
+      "text" : "A nurse may administer medication orders whose dose count is at most 2"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Check a nurse's running dose count for the shift against the daily limit before letting another administration go through, so a busy shift never quietly drifts past the safe number of doses one nurse should be giving. Use this as the shift-total gate, separate from checking whether any single order is itself safe.",
+    "name" : "dose check",
+    "outline" : [
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 20,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 27,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 31,
+        "text" : "Rules"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 33,
+        "text" : "Rules — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 37,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 45,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 53,
+        "text" : "When NOT to use this skill"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 55,
+        "text" : "When NOT to use this skill — steps"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 61,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 21,
+        "text" : "Input"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 22,
+        "text" : "Output"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 24,
+        "text" : "Side effect"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 40,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 42,
+        "text" : "Note"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 43,
+        "text" : "Emit"
+      }
+    ],
+    "parameters" : "nurse, medication order",
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 20,
+        "lines" : [
+          "Input: a nurse and the medication order they are about to give",
+          "Output: either a cleared administration or a routed hand-off to another",
+          "nurse",
+          "Side effect: every check against the limit is logged so a pattern of",
+          "near-limit shifts is visible later, not just the one time it tips over"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 27,
+        "lines" : [
+          "\"check dose count\"",
+          "\"run dose limit check\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Rules",
+        "line" : 31,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Rules — steps",
+        "line" : 33,
+        "lines" : [
+          "A nurse may administer medication orders whose dose count is at most 2"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 37,
+        "lines" : [
+          "if the nurse's dose count is at most the dose limit,",
+          "administer the medication order",
+          "Emit: \"dose check cleared\"",
+          "if the nurse's dose count is more than the dose limit,",
+          "Note: \"dose limit reached for this nurse, hand off to another nurse\"",
+          "Emit: \"dose check pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 45,
+        "lines" : [
+          "Don't round the dose count down \"just this once\" to squeeze in one more",
+          "administration — the limit exists because of fatigue risk, not paperwork,",
+          "and fatigue doesn't round down with it",
+          "Don't hand off to another nurse without logging why; the audit trail is",
+          "what lets a shift lead actually see the pattern instead of one isolated",
+          "hand-off"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill",
+        "line" : 53,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill — steps",
+        "line" : 55,
+        "lines" : [
+          "Use `medication administer` for the actual allergy and risk check on a",
+          "specific order. This skill answers a different question — a running dose",
+          "count for the nurse's whole shift, not the safety of any one order"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 61,
+        "lines" : [
+          "The receipt states the nurse's dose count against the limit and whether",
+          "the administration cleared or was routed to another nurse"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"check dose count\"\n\"run dose limit check\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "administer",
+      "line" : 44,
+      "past_participle" : "administered",
+      "relation" : "administration",
+      "third_person" : "administers"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "prescribe",
+      "line" : 43,
+      "past_participle" : "prescribed",
+      "relation" : "prescription",
+      "third_person" : "prescribes"
+    }
+  ],
+  "source_files" : [
+    "dosecheck.meri",
+    "clinical.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 35,
+      "swift_line" : 421
+    },
+    {
+      "meridian_line" : 38,
+      "swift_line" : 425
+    },
+    {
+      "meridian_line" : 54,
+      "swift_line" : 428
+    },
+    {
+      "meridian_line" : 40,
+      "swift_line" : 440
+    },
+    {
+      "meridian_line" : 41,
+      "swift_line" : 451
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 454
+    },
+    {
+      "meridian_line" : 43,
+      "swift_line" : 466
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 505
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 510
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 550
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 555
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Nurse",
+          "name" : "nurse"
+        },
+        {
+          "kind" : "MedicationOrder",
+          "name" : "medicationOrder"
+        }
+      ],
+      "source_name" : "dose check a nurse a medication order",
+      "swift_struct" : "DoseCheckNurseMedicationOrder"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when checkDoseCount fires",
+      "swift_struct" : "WhenCheckdosecountFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runDoseLimitCheck fires",
+      "swift_struct" : "WhenRundoselimitcheckFires"
+    }
+  ]
+}

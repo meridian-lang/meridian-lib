@@ -1,0 +1,330 @@
+{
+  "constants" : {
+    "credential ttl" : 7776000,
+    "max concurrent grants" : 3,
+    "review window" : 604800
+  },
+  "instances_required" : [
+    {
+      "kind" : "environment",
+      "name" : "identity provider"
+    },
+    {
+      "kind" : "environment",
+      "name" : "audit sink"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_AccessRequest_pending",
+      "kind" : "access request",
+      "line" : 34
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_AccessRequest_stale",
+      "kind" : "access request",
+      "line" : 33
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Credential_fresh",
+      "kind" : "credential",
+      "line" : 32
+    },
+    {
+      "adjective" : "overused",
+      "function" : "meridianDef_Credential_overused",
+      "kind" : "credential",
+      "line" : 31
+    },
+    {
+      "adjective" : "classified",
+      "function" : "meridianDef_Resource_classified",
+      "kind" : "resource",
+      "line" : 27
+    },
+    {
+      "adjective" : "authorized",
+      "function" : "meridianDef_User_authorized",
+      "kind" : "user",
+      "line" : 30
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_User_cleared",
+      "kind" : "user",
+      "line" : 28
+    },
+    {
+      "adjective" : "privileged",
+      "function" : "meridianDef_User_privileged",
+      "kind" : "user",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 36,
+      "name" : "assignment",
+      "right_cardinality" : "one",
+      "right_kind" : "a role",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a policy",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "an environment",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 38,
+      "name" : "grant",
+      "right_cardinality" : "one",
+      "right_kind" : "a resource",
+      "via" : "access.grant"
+    }
+  ],
+  "meridian_rules" : [
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "trigger",
+      "source" : {
+        "file" : "escalatepending.meri",
+        "line" : 26
+      },
+      "text" : "When an access request has been pending for more than 7 days, escalate the access request"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Escalate any access request that has sat in the pending queue past the review window instead of letting it quietly age out of anyone's attention. Seven days without a reviewer decision is long enough that the requester's manager should know, not just the reviewer.",
+    "name" : "escalate pending",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 18,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 22,
+        "text" : "Rules"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 24,
+        "text" : "Rules — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 28,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 33,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 40,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 31,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 18,
+        "lines" : [
+          "\"escalate pending requests\"",
+          "\"escalate overdue requests\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Rules",
+        "line" : 22,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Rules — steps",
+        "line" : 24,
+        "lines" : [
+          "When an access request has been pending for more than 7 days, escalate the access request"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 28,
+        "lines" : [
+          "fetch pending access requests",
+          "wait for event access.reviewed matching status is \"granted\"",
+          "Emit: \"escalate pending pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 33,
+        "lines" : [
+          "Don't reset the pending clock by re-submitting the same request under a",
+          "new identifier just to dodge the escalation window — the seven-day rule",
+          "exists to surface exactly that kind of stuck request",
+          "Don't treat an escalation as a denial. Escalating hands the decision up a",
+          "level; it doesn't make the decision itself"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 40,
+        "lines" : [
+          "The receipt names which requests crossed the seven-day threshold this pass",
+          "and confirms whether the escalation event fired"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"escalate pending requests\"\n\"escalate overdue requests\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "authorize",
+      "line" : 43,
+      "past_participle" : "authorized",
+      "relation" : "assignment",
+      "third_person" : "authorizes"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "grant",
+      "line" : 44,
+      "past_participle" : "granted",
+      "relation" : "grant",
+      "third_person" : "grants"
+    }
+  ],
+  "source_files" : [
+    "escalatepending.meri",
+    "governance.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 48,
+      "swift_line" : 435
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 447
+    },
+    {
+      "meridian_line" : 31,
+      "swift_line" : 452
+    },
+    {
+      "meridian_line" : 26,
+      "swift_line" : 491
+    },
+    {
+      "meridian_line" : 26,
+      "swift_line" : 496
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 536
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 541
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 581
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 586
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "escalate pending",
+      "swift_struct" : "EscalatePending"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when an access request has been pending for more than 7 days",
+      "swift_struct" : "WhenAccessRequestHasBeenPending"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when escalatePendingRequests fires",
+      "swift_struct" : "WhenEscalatependingrequestsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when escalateOverdueRequests fires",
+      "swift_struct" : "WhenEscalateoverduerequestsFires"
+    }
+  ]
+}

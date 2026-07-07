@@ -1,0 +1,57 @@
+---
+name: dose check
+description: Check a nurse's running dose count for the shift against the daily limit before letting another administration go through, so a busy shift never quietly drifts past the safe number of doses one nurse should be giving. Use this as the shift-total gate, separate from checking whether any single order is itself safe.
+triggers:
+  - "check dose count"
+  - "run dose limit check"
+parameters: nurse, medication order
+---
+
+# Dose Check
+
+A single medication order can be perfectly safe on its own and still be the
+one that pushes a nurse's shift total past a sane limit — fatigue from
+giving dose after dose is a real risk on its own, independent of whether
+any individual order has a problem. This skill is the shift-total gate: it
+checks how many doses a nurse has already given against the daily limit,
+and only lets the next administration proceed when there is still room
+under that limit.
+
+## Contract
+- Input: a nurse and the medication order they are about to give.
+- Output: either a cleared administration or a routed hand-off to another
+  nurse.
+- Side effect: every check against the limit is logged so a pattern of
+  near-limit shifts is visible later, not just the one time it tips over.
+
+## When to invoke
+- "check dose count"
+- "run dose limit check"
+
+## Rules
+A nurse may administer medication orders whose dose count is at most 2.
+
+## Workflow
+if the nurse's dose count is at most the dose limit,
+  administer the medication order.
+  Emit: "dose check cleared".
+if the nurse's dose count is more than the dose limit,
+  Note: "dose limit reached for this nurse, hand off to another nurse".
+Emit: "dose check pass complete".
+
+## Anti-Patterns
+- Don't round the dose count down "just this once" to squeeze in one more
+  administration — the limit exists because of fatigue risk, not paperwork,
+  and fatigue doesn't round down with it.
+- Don't hand off to another nurse without logging why; the audit trail is
+  what lets a shift lead actually see the pattern instead of one isolated
+  hand-off.
+
+## When NOT to use this skill
+Use `medication administer` for the actual allergy and risk check on a
+specific order. This skill answers a different question — a running dose
+count for the nurse's whole shift, not the safety of any one order.
+
+## Report shape
+The receipt states the nurse's dose count against the limit and whether
+the administration cleared or was routed to another nurse.

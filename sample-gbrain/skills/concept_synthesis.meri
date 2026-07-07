@@ -236,10 +236,8 @@ This is heavy work. Run on a cadence, not on every signal:
 
 ### Anti-Patterns — steps (( role: reference ))
 
-- ❌ Running synthesis on T3/T4 — wastes API budget on ideas that may
-  never sharpen.
-- ❌ Hallucinating quotes or dates. The timeline must be verifiable
-  against existing brain pages.
+- ❌ Running synthesis on T3/T4 — wastes API budget on ideas that may never sharpen.
+- ❌ Hallucinating quotes or dates. The timeline must be verifiable against existing brain pages.
 
 ### Anti-Patterns — steps 2 (( role: reference ))
 

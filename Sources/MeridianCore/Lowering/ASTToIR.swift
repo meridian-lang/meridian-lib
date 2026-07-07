@@ -54,20 +54,30 @@ public struct ASTToIR {
         self.engine = engine
     }
 
-    /// Effective tool allow-list for a prose/autonomy plan step.
-    /// Build a single prose-step statement. Both prose entry points (an explicit
+    /// Effective tool allow-list for a judgment/autonomy plan step.
+    /// Build a single AI-routed statement. Both AI entry points (an explicit
     /// `proseStep` AST node and an unresolved phrase invocation inside a
     /// discretion/autonomy workflow) share the same scoped-tools and
-    /// source-range plumbing; only `text`, `dispatchMode`, and `autonomy` vary.
-    private func makeProseStep(text: String, dispatchMode: ProseDispatchMode, autonomy: AutonomyConfigIR?, line: Int, guidance: String? = nil) -> IRPrimitive {
-        .proseStep(ProseStepIR(
-            text: text,
-            scopedTools: effectiveScopedTools,
-            dispatchMode: dispatchMode,
-            autonomy: autonomy,
-            sourceRange: sourceRange(line),
-            guidance: guidance
-        ))
+    /// source-range plumbing; only `text`, `dispatchMode`, and `autonomy` vary
+    /// — `dispatchMode` selects which of the two split IR primitives is built.
+    private func makeAIPrimitive(text: String, dispatchMode: ProseDispatchMode, autonomy: AutonomyConfigIR?, line: Int, guidance: String? = nil) -> IRPrimitive {
+        switch dispatchMode {
+        case .planThenExecute:
+            return .aiJudgment(AIJudgmentIR(
+                text: text,
+                scopedTools: effectiveScopedTools,
+                sourceRange: sourceRange(line),
+                guidance: guidance
+            ))
+        case .autonomousLoop:
+            return .aiAutonomy(AIAutonomyIR(
+                text: text,
+                scopedTools: effectiveScopedTools,
+                autonomy: autonomy ?? AutonomyConfigIR(),
+                sourceRange: sourceRange(line),
+                guidance: guidance
+            ))
+        }
     }
 
     private var effectiveScopedTools: [String] {
@@ -122,7 +132,7 @@ public struct ASTToIR {
 
         // C1-C4: Classify and inject rules into lowered workflows.
         if !file.rules.isEmpty {
-            let analyzer = RuleAnalyzer(lexicon: lexicon, trace: trace)
+            let analyzer = RuleAnalyzer(lexicon: lexicon, trace: trace, symbols: symbols)
             let lowerActionClosure: (String, SourceRange) throws -> [IRPrimitive] = { text, range in
                 let invocation = PhraseInvocationAST(words: text, sourceLine: range.startLine)
                 return try self.lowerPhraseInvocation(invocation, mode: .strict, depth: 0)
@@ -290,6 +300,7 @@ public struct ASTToIR {
         case .parameterGuard(_, _, _, let line, let txt):  return "L\(line) [parameterGuard] \(txt)"
         case .precondition(_, _, _, _, let line, let txt): return "L\(line) [precondition] \(txt)"
         case .trigger(_, _, let line, let txt):            return "L\(line) [trigger] \(txt)"
+        case .unsupportedTriggerCondition(_, _, let line, let txt): return "L\(line) [unsupportedTriggerCondition] \(txt)"
         case .permission(_, _, _, _, _, let line, let txt):return "L\(line) [permission] \(txt)"
         }
     }
@@ -300,6 +311,7 @@ public struct ASTToIR {
              .parameterGuard(_, _, _, let line, _),
              .precondition(_, _, _, _, let line, _),
              .trigger(_, _, let line, _),
+             .unsupportedTriggerCondition(_, _, let line, _),
              .permission(_, _, _, _, _, let line, _):
             return line
         }
@@ -697,7 +709,7 @@ public struct ASTToIR {
                     s.sourceLine, code: .proseDisallowed,
                     help: "Mark the workflow `with discretion`/`with autonomy` or wrap the step in `use judgment to …:`.")
             }
-            return [makeProseStep(text: s.text, dispatchMode: mode, autonomy: effectiveAutonomy, line: s.sourceLine, guidance: s.guidance)]
+            return [makeAIPrimitive(text: s.text, dispatchMode: mode, autonomy: effectiveAutonomy, line: s.sourceLine, guidance: s.guidance)]
 
         case .modal:
             return []  // handled at block level
@@ -1041,7 +1053,7 @@ public struct ASTToIR {
         // tool call. Phrase resolution is only consulted in non-prose
         // workflows.
         if let proseDispatchMode {
-            return [makeProseStep(text: s.words, dispatchMode: proseDispatchMode, autonomy: autonomyConfig, line: s.sourceLine)]
+            return [makeAIPrimitive(text: s.words, dispatchMode: proseDispatchMode, autonomy: autonomyConfig, line: s.sourceLine)]
         }
 
         guard let (phrase, args) = symbols.matchPhrase(

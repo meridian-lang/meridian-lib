@@ -1,6 +1,6 @@
 ---
 name: cascade close
-description: Close orphaned audit rows left by upstream cascade deletes.
+description: Close orphaned audit rows left by upstream cascade deletes, bounded to a safe batch size.
 triggers:
   - "cascade close"
   - "orphaned audit rows"
@@ -16,6 +16,7 @@ triggers:
 SQL: `psql -c "select key,table_name from audit_rows where status='orphaned'" --csv` to snapshot orphaned audit rows.
 fetch orphaned audit rows.
 Check: any orphaned audit rows.
+Check: at most 200 orphaned audit rows.
 Emit: "orphaned audit rows recorded for deterministic close".
 
 ## DBA notes

@@ -194,7 +194,7 @@
         "text" : "Phase 3: Ingest"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
         "line" : 187,
         "text" : "Phase 3: Ingest — steps"
@@ -266,7 +266,7 @@
         "text" : "Anti-Patterns — steps"
       },
       {
-        "kind" : "reference",
+        "kind" : "prohibitions",
         "level" : 3,
         "line" : 325,
         "text" : "Anti-Patterns — steps 2"
@@ -274,31 +274,31 @@
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 329,
+        "line" : 328,
         "text" : "Related skills"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 334,
+        "line" : 333,
         "text" : "Related skills — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 339,
+        "line" : 338,
         "text" : "Related skills — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 344,
+        "line" : 343,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 355,
+        "line" : 354,
         "text" : "Output Format"
       },
       {
@@ -322,13 +322,13 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 346,
+        "line" : 345,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 351,
+        "line" : 350,
         "text" : "Privacy contract preserved"
       }
     ],
@@ -517,15 +517,17 @@
         "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 3: Ingest — steps",
         "line" : 187,
         "lines" : [
+          "When an item is worth keeping, file it by primary subject per",
+          "`_brain-filing-rules.md`:",
           "User's own writing \/ ideas \/ origin-story content → `originals\/<slug>.md`",
           "Reflections \/ personal-life content → `personal\/<slug>.md`",
           "Product \/ business ideas → `ideas\/<slug>.md`"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
@@ -639,19 +641,18 @@
         "role" : "prohibitions"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns — steps 2",
         "line" : 325,
         "lines" : [
-          "❌ Re-showing items already marked in the manifest. The user's time",
-          "is the scarcest resource"
+          "❌ Re-showing items already marked in the manifest. The user's time is the scarcest resource"
         ],
-        "role" : "reference"
+        "role" : "prohibitions"
       },
       {
         "executes" : false,
         "heading" : "Related skills",
-        "line" : 329,
+        "line" : 328,
         "lines" : [
           "`skills\/idea-ingest\/SKILL.md` — single-link-or-article ingest with",
           "the same primary-subject filing rule"
@@ -661,7 +662,7 @@
       {
         "executes" : true,
         "heading" : "Related skills — steps",
-        "line" : 334,
+        "line" : 333,
         "lines" : [
           "`skills\/voice-note-ingest\/SKILL.md` — same exact-phrasing pattern for",
           "audio capture"
@@ -671,7 +672,7 @@
       {
         "executes" : true,
         "heading" : "Related skills — steps 2",
-        "line" : 339,
+        "line" : 338,
         "lines" : [
           "`skills\/conventions\/quality.md` — citations, back-links, voice"
         ],
@@ -680,7 +681,7 @@
       {
         "executes" : false,
         "heading" : "Contract",
-        "line" : 344,
+        "line" : 343,
         "lines" : [
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
@@ -694,7 +695,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 355,
+        "line" : 354,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -742,64 +743,56 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 136,
+      "meridian_line" : 327,
       "swift_line" : 604
     },
     {
-      "meridian_line" : 192,
-      "swift_line" : 616
-    },
-    {
-      "meridian_line" : 193,
-      "swift_line" : 628
-    },
-    {
-      "meridian_line" : 194,
-      "swift_line" : 640
+      "meridian_line" : 136,
+      "swift_line" : 609
     },
     {
       "meridian_line" : 198,
-      "swift_line" : 651
+      "swift_line" : 620
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 659
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 695
+      "swift_line" : 664
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 703
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 739
+      "swift_line" : 708
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 747
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 783
+      "swift_line" : 752
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 822
+      "swift_line" : 791
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 827
+      "swift_line" : 796
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 866
+      "swift_line" : 835
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 871
+      "swift_line" : 840
     }
   ],
   "tools_used" : [
@@ -807,16 +800,8 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
           "guidance" : "**The skill is schema-generic.** It does NOT bake in any specific\nera-folder structure (e.g., `originals\/archive\/` for pre-2003,\n`originals\/yc-era\/` for post-2019, etc.). The user's filing rules from\n`_brain-filing-rules.json` are read at runtime; the agent decides per-page\nwhere content lands within those sanctioned directories\ncodeblock:bash:IyAuZG9jeCAobW9kZXJuKQpweXRob24zIC1jICIKaW1wb3J0IHppcGZpbGUsIHhtbC5ldHJlZS5FbGVtZW50VHJlZSBhcyBFVAp3aXRoIHppcGZpbGUuWmlwRmlsZSgnL3BhdGgvdG8vZmlsZS5kb2N4JykgYXMgejoKICAgIHRyZWUgPSBFVC5wYXJzZSh6Lm9wZW4oJ3dvcmQvZG9jdW1lbnQueG1sJykpCiAgICBwcmludCgnJy5qb2luKHQudGV4dCBvciAnJyBmb3IgdCBpbiB0cmVlLml0ZXIoJ3todHRwOi8vc2NoZW1hcy5vcGVueG1sZm9ybWF0cy5vcmcvd29yZHByb2Nlc3NpbmdtbC8yMDA2L21haW59dCcpKSkKIgoKIyAuZG9jIChsZWdhY3ksIHJlcXVpcmVzIGFudGl3b3JkIG9yIGNhdGRvYykKYW50aXdvcmQgL3BhdGgvdG8vZmlsZS5kb2MgMj4vZGV2L251bGwgfHwgY2F0ZG9jIC9wYXRoL3RvL2ZpbGUuZG9jIDI+L2Rldi9udWxs\ncodeblock:bash:IyBWYWxpZGF0ZSBmaXJzdDsgbWFueSBQU1RzIGFyZSBudWxsIGJ5dGVzCnB5dGhvbjMgLWMgIgp3aXRoIG9wZW4oJy9wYXRoL3RvL2ZpbGUucHN0JywgJ3JiJykgYXMgZjoKICAgIHByaW50KCdWYWxpZCBQU1QnIGlmIGYucmVhZCg0KSA9PSBiJyFCRE4nIGVsc2UgJ0NPUlJVUFQvTlVMTCcpCiIKIyBJZiB2YWxpZDoKcmVhZHBzdCAtbyAvdG1wL3BzdC1vdXRwdXQgL3BhdGgvdG8vZmlsZS5wc3Q=\n`skills\/voice-note-ingest\/SKILL.md` — same exact-phrasing pattern for\naudio capture\n`skills\/conventions\/quality.md` — citations, back-links, voice",
           "line" : 198,
           "scoped_tools" : [
@@ -841,6 +826,13 @@
             "verify"
           ],
           "text" : "follow the Phase 3: Ingest — steps 2 guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "archive-crawler a input",

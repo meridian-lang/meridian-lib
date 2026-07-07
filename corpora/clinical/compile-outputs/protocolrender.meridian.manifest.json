@@ -1,0 +1,457 @@
+{
+  "constants" : {
+    "dose limit" : 2,
+    "observation window" : 14400,
+    "vitals threshold" : 100
+  },
+  "instances_required" : [
+    {
+      "kind" : "protocol",
+      "name" : "sepsis protocol"
+    },
+    {
+      "kind" : "protocol",
+      "name" : "anticoagulation protocol"
+    }
+  ],
+  "kinds_used" : [
+    "Medication"
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "granted",
+      "function" : "meridianDef_Consent_granted",
+      "kind" : "consent",
+      "line" : 32
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_MedicationOrder_cleared",
+      "kind" : "medication order",
+      "line" : 29
+    },
+    {
+      "adjective" : "contraindicated",
+      "function" : "meridianDef_MedicationOrder_contraindicated",
+      "kind" : "medication order",
+      "line" : 28
+    },
+    {
+      "adjective" : "high risk",
+      "function" : "meridianDef_Medication_highRisk",
+      "kind" : "medication",
+      "line" : 27
+    },
+    {
+      "adjective" : "active",
+      "function" : "meridianDef_Patient_active",
+      "kind" : "patient",
+      "line" : 33
+    },
+    {
+      "adjective" : "held",
+      "function" : "meridianDef_Patient_held",
+      "kind" : "patient",
+      "line" : 34
+    },
+    {
+      "adjective" : "monitored",
+      "function" : "meridianDef_Patient_monitored",
+      "kind" : "patient",
+      "line" : 30
+    },
+    {
+      "adjective" : "unmonitored",
+      "function" : "meridianDef_Patient_unmonitored",
+      "kind" : "patient",
+      "line" : 31
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_VitalSign_critical",
+      "kind" : "vital sign",
+      "line" : 25
+    },
+    {
+      "adjective" : "stable",
+      "function" : "meridianDef_VitalSign_stable",
+      "kind" : "vital sign",
+      "line" : 26
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a nurse",
+      "line" : 38,
+      "name" : "administration",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "medication.administer"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a protocol",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication",
+      "via" : "protocol.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a clinician",
+      "line" : 36,
+      "name" : "prescription",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "order.list"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Look up the treatment protocol covering a medication and render a one-page summary that states the protocol's dosing tier alongside its own version, so a clinician reaching for a protocol reference gets one number to act on instead of the whole bundle. Use this whenever a medication's protocol needs to be surfaced on its own, not folded into an administration workflow.",
+    "name" : "protocol render",
+    "outline" : [
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 20,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 26,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "tables",
+        "level" : 2,
+        "line" : 30,
+        "text" : "Tables"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 36,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 47,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 54,
+        "text" : "Workflow — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 57,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "prohibitions",
+        "level" : 3,
+        "line" : 62,
+        "text" : "Anti-Patterns — steps"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 65,
+        "text" : "When NOT to use this skill"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 67,
+        "text" : "When NOT to use this skill — steps"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 73,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 76,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 21,
+        "text" : "Input"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 22,
+        "text" : "Output"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 24,
+        "text" : "Side effect"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 44,
+        "text" : "Post"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 56,
+        "text" : "Emit"
+      }
+    ],
+    "parameters" : "medication",
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 20,
+        "lines" : [
+          "Input: a medication",
+          "Output: a rendered protocol summary naming the protocol, its version,",
+          "and the medication's dosing tier",
+          "Side effect: none beyond the rendered summary — this skill only reads"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 26,
+        "lines" : [
+          "\"render protocol\"",
+          "\"look up dosing protocol\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Tables",
+        "line" : 30,
+        "lines" : [
+          "table:decision:fCByaXNrIGxldmVsIHwgbWF4IGRvc2VzIHBlciBkYXkgfAp8IC0tLSB8IC0tLSB8CnwgaGlnaCB8IDEgfAp8IGxvdyB8IDQgfA=="
+        ],
+        "role" : "tables"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow",
+        "line" : 36,
+        "lines" : [
+          "bind protocol summary =",
+          "codeblock:plain:cHJvdG9jb2wtc3VtbWFyeToKcHJvdG9jb2w6IHt7IHByb3RvY29sIG5hbWUgfX0KdmVyc2lvbjoge3sgcHJvdG9jb2wgdmVyc2lvbiB9fQptYXggZG9zZXMgcGVyIGRheToge3sgbWF4IGRvc2VzIH19",
+          "Post: \"protocol render pass complete\""
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 47,
+        "lines" : [
+          "look up the protocol for the medication",
+          "let protocol name be the protocol's name",
+          "let protocol version be the protocol's version",
+          "bind max doses = the max doses per day corresponding to the risk level \"high\" in the table"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 54,
+        "lines" : [
+          "Emit: protocol summary"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 57,
+        "lines" : [
+          "Don't skip rendering the version number alongside the tier. A tier",
+          "without its version is not verifiable against anything"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 62,
+        "lines" : [
+          "Don't quote a dosing tier from memory instead of running this lookup — the whole point of the render is that the table, not a clinician's recollection, is the current source"
+        ],
+        "role" : "prohibitions"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill",
+        "line" : 65,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill — steps",
+        "line" : 67,
+        "lines" : [
+          "Use `medication administer` when the protocol lookup is just one step",
+          "inside actually giving a dose — this skill is the standalone reference",
+          "render, not a step embedded in an administration pass"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 73,
+        "lines" : [
+          "every emitted protocol summary contains \"protocol-summary\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 76,
+        "lines" : [
+          "The receipt names the protocol, its version, and the dosing tier the",
+          "medication's risk level maps to"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"render protocol\"\n\"look up dosing protocol\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "administer",
+      "line" : 44,
+      "past_participle" : "administered",
+      "relation" : "administration",
+      "third_person" : "administers"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "prescribe",
+      "line" : 43,
+      "past_participle" : "prescribed",
+      "relation" : "prescription",
+      "third_person" : "prescribes"
+    }
+  ],
+  "source_files" : [
+    "protocolrender.meri",
+    "clinical.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 64,
+      "swift_line" : 418
+    },
+    {
+      "meridian_line" : 74,
+      "swift_line" : 423
+    },
+    {
+      "meridian_line" : 31,
+      "swift_line" : 427
+    },
+    {
+      "meridian_line" : 66,
+      "swift_line" : 430
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 441
+    },
+    {
+      "meridian_line" : 51,
+      "swift_line" : 443
+    },
+    {
+      "meridian_line" : 52,
+      "swift_line" : 445
+    },
+    {
+      "meridian_line" : 56,
+      "swift_line" : 448
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 487
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 492
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 532
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 537
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Medication",
+          "name" : "medication"
+        }
+      ],
+      "source_name" : "protocol render a medication",
+      "swift_struct" : "ProtocolRenderMedication"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when renderProtocol fires",
+      "swift_struct" : "WhenRenderprotocolFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when lookUpDosingProtocol fires",
+      "swift_struct" : "WhenLookupdosingprotocolFires"
+    }
+  ]
+}

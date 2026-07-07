@@ -360,16 +360,8 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
           "guidance" : "**Defer:** Move to next day\/week with reason\nSave. `gbrain put ops\/tasks` — write updated task list",
           "line" : 50,
           "scoped_tools" : [
@@ -380,6 +372,13 @@
             "timeline.add"
           ],
           "text" : "follow the Phases — steps 2 guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "daily-task-manager a input",

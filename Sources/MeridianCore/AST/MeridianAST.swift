@@ -836,8 +836,8 @@ public struct ProseStepAST: Sendable {
     /// distinct from the dispatch goal itself. Populated by the
     /// `use judgment to follow the <heading> guidance:` migrator idiom, which
     /// collects a whole leftover inert-narrative body verbatim; `nil` for
-    /// ordinary judgment/discretion/autonomy steps (same primitive, richer
-    /// payload — see AGENTS.md's primitive verdict for `ProseStepIR`).
+    /// ordinary judgment/discretion/autonomy steps. Carried on both split IR
+    /// primitives (`AIJudgmentIR`/`AIAutonomyIR`) — no new IR shape needed.
     public let guidance: String?
 
     public init(text: String, sourceLine: Int = 0,

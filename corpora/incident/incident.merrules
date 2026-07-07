@@ -1,0 +1,33 @@
+=== desugar ===
+
+rule "incident-runbook":
+  match: Runbook: `{command}` to {purpose}
+  rewrite: `{command}` -- {purpose}.
+
+rule "incident-check":
+  match: Check: {condition}
+  rewrite: make sure {condition}.
+
+rule "incident-note":
+  match: Note: {message}
+  lowers to: emit incident.note with message = {message}.
+
+rule "incident-post":
+  match: Post: {message}
+  lowers to: emit incident.report with message = {message}.
+
+=== sections ===
+section "Anti-Patterns — steps" -> procedure
+section "Anti-Patterns — steps 2" -> prohibitions
+section "Dispatch table — steps" -> procedure
+section "Workflow — steps 3" -> procedure
+section "Workflow — steps 4" -> procedure
+section "Workflow — steps" -> procedure
+section "Workflow — steps 2" -> procedure
+section "Procedure — steps" -> procedure
+section "Response — steps" -> procedure
+
+section "Workflow", "Response", "Procedure" -> procedure
+section "When this applies", "Use this when", "When operators call this" -> applicability
+section "Checks", "Controls", "Guarantees" -> invariants
+section "Output", "Report shape" -> template

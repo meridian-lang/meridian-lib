@@ -118,367 +118,373 @@
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 52,
+        "line" : 50,
         "text" : "Citation Requirements (MANDATORY)"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 63,
+        "line" : 61,
         "text" : "Phases"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 77,
+        "line" : 75,
         "text" : "Phases — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 80,
+        "line" : 78,
         "text" : "Entity Detection on Every Message"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 85,
+        "line" : 83,
         "text" : "Protocol"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 94,
+        "line" : 92,
         "text" : "Protocol — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 107,
+        "line" : 105,
         "text" : "What counts as notable"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 115,
+        "line" : 113,
         "text" : "What to capture from the user's own thinking"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 123,
+        "line" : 121,
         "text" : "What to capture from the user's own thinking — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 129,
+        "line" : 127,
         "text" : "What to capture from the user's own thinking — steps 2"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 133,
+        "line" : 131,
         "text" : "Media Workflows"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 136,
+        "line" : 134,
         "text" : "Media Workflows — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 141,
+        "line" : 139,
         "text" : "Articles & Web Content"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 155,
+        "line" : 153,
         "text" : "Articles & Web Content — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 161,
+        "line" : 159,
         "text" : "Videos & Podcasts"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 180,
+        "line" : 178,
         "text" : "Videos & Podcasts — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 186,
+        "line" : 184,
         "text" : "Videos & Podcasts — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 191,
+        "line" : 189,
         "text" : "PDFs & Documents"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 204,
+        "line" : 202,
         "text" : "Screenshots & Images"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 215,
+        "line" : 213,
         "text" : "Screenshots & Images — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 220,
+        "line" : 218,
         "text" : "Meeting Transcripts"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 241,
+        "line" : 239,
         "text" : "Meeting Transcripts — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 245,
+        "line" : 243,
         "text" : "Meeting Transcripts — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 249,
+        "line" : 247,
         "text" : "Social Media Content"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 259,
+        "line" : 257,
         "text" : "Social Media Content — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 266,
+        "line" : 264,
         "text" : "Raw Source Preservation"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 286,
+        "line" : 284,
         "text" : "Raw Source Preservation — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 297,
+        "line" : 295,
         "text" : "Raw Source Preservation — steps 2"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 301,
+        "line" : 299,
         "text" : "Raw Source Preservation — steps 3"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 307,
+        "line" : 305,
         "text" : "Test Before Bulk"
       },
       {
         "kind" : "reference",
+        "level" : 3,
+        "line" : 318,
+        "text" : "Test Before Bulk — steps"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 321,
+        "line" : 322,
         "text" : "Quality Rules"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 331,
+        "line" : 332,
         "text" : "Quality Rules — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 335,
+        "line" : 336,
         "text" : "Quality Rules — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 339,
+        "line" : 340,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 345,
+        "line" : 346,
         "text" : "Anti-Patterns — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 350,
+        "line" : 351,
         "text" : "Anti-Patterns — steps 2"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 354,
+        "line" : 355,
         "text" : "Output Format"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 372,
+        "line" : 373,
         "text" : "Tools Used"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 69,
+        "line" : 67,
         "text" : "If exists"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 70,
+        "line" : 68,
         "text" : "If new"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 79,
+        "line" : 77,
         "text" : "For each entity mentioned"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 96,
+        "line" : 94,
         "text" : "For each entity detected"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 98,
+        "line" : 96,
         "text" : "If yes"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 100,
+        "line" : 98,
         "text" : "If no"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 147,
+        "line" : 145,
         "text" : "Extract"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 148,
+        "line" : 146,
         "text" : "Summarize"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 149,
+        "line" : 147,
         "text" : "Extract entities"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 158,
+        "line" : 156,
         "text" : "Analyze for the user"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 183,
+        "line" : 181,
         "text" : "Analyze"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 188,
+        "line" : 186,
         "text" : "HARD RULE"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 198,
+        "line" : 196,
         "text" : "Summarize"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 208,
+        "line" : 206,
         "text" : "If tweet screenshot"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 209,
+        "line" : 207,
         "text" : "If article screenshot"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 247,
+        "line" : 245,
         "text" : "Write to"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 255,
+        "line" : 253,
         "text" : "If images present"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 256,
+        "line" : 254,
         "text" : "Summarize"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 263,
+        "line" : 261,
         "text" : "Write to"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 325,
+        "line" : 326,
         "text" : "Link types"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 326,
+        "line" : 327,
         "text" : "Source attribution"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 327,
+        "line" : 328,
         "text" : "Back-links"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 328,
+        "line" : 329,
         "text" : "Filing"
       }
     ],
@@ -510,16 +516,14 @@
         "heading" : "Contract — steps 2",
         "line" : 46,
         "lines" : [
-          "Every mention of a person or company with a brain page MUST create a back-link",
-          "FROM that entity's page TO the page mentioning them. An unlinked mention is a",
-          "broken brain. See `skills\/_brain-filing-rules.md` for format"
+          "Every mention of a person or company with a brain page MUST create a back-link FROM that entity's page TO the page mentioning them. An unlinked mention is a broken brain. See `skills\/_brain-filing-rules.md` for format"
         ],
         "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Citation Requirements (MANDATORY)",
-        "line" : 52,
+        "line" : 50,
         "lines" : [
           "Every fact written to a brain page must carry an inline `[Source: ...]` citation",
           "**User's statements:** `[Source: User, {context}, YYYY-MM-DD]`",
@@ -534,7 +538,7 @@
       {
         "executes" : false,
         "heading" : "Phases",
-        "line" : 63,
+        "line" : 61,
         "lines" : [
           "**Parse the source.** Extract people, companies, dates, and events from the input",
           "Read the entity's page from gbrain to check if it exists",
@@ -550,7 +554,7 @@
       {
         "executes" : true,
         "heading" : "Phases — steps",
-        "line" : 77,
+        "line" : 75,
         "lines" : [
           "For each entity mentioned:"
         ],
@@ -559,7 +563,7 @@
       {
         "executes" : false,
         "heading" : "Entity Detection on Every Message",
-        "line" : 80,
+        "line" : 78,
         "lines" : [
           "Production agents should detect entity mentions on EVERY inbound message. This is",
           "the signal detection loop that makes the brain compound over time"
@@ -569,7 +573,7 @@
       {
         "executes" : false,
         "heading" : "Protocol",
-        "line" : 85,
+        "line" : 83,
         "lines" : [
           "**Scan the message** for entity mentions: people, companies, concepts, original",
           "thinking. Fire on every message (no exceptions unless purely operational)",
@@ -582,7 +586,7 @@
       {
         "executes" : false,
         "heading" : "Protocol — steps",
-        "line" : 94,
+        "line" : 92,
         "lines" : [
           "For each entity detected:",
           "`gbrain search \"name\"` -- does a page already exist?",
@@ -598,7 +602,7 @@
       {
         "executes" : false,
         "heading" : "What counts as notable",
-        "line" : 107,
+        "line" : 105,
         "lines" : [
           "People the user interacts with or discusses (not random mentions)",
           "Companies relevant to the user's work or interests",
@@ -611,7 +615,7 @@
       {
         "executes" : false,
         "heading" : "What to capture from the user's own thinking",
-        "line" : 115,
+        "line" : 113,
         "lines" : [
           "Novel observations or theses",
           "Frameworks, mental models, heuristics",
@@ -623,7 +627,7 @@
       {
         "executes" : false,
         "heading" : "What to capture from the user's own thinking — steps",
-        "line" : 123,
+        "line" : 121,
         "lines" : [
           "Original thinking is the most valuable signal. Capture exact phrasing -- the user's",
           "language IS the insight. Don't paraphrase"
@@ -633,7 +637,7 @@
       {
         "executes" : true,
         "heading" : "What to capture from the user's own thinking — steps 2",
-        "line" : 129,
+        "line" : 127,
         "lines" : [
           "use judgment to follow the What to capture from the user's own thinking — steps 2 guidance:",
           "Contrarian positions with reasoning"
@@ -643,7 +647,7 @@
       {
         "executes" : false,
         "heading" : "Media Workflows",
-        "line" : 133,
+        "line" : 131,
         "lines" : [
 
         ],
@@ -652,7 +656,7 @@
       {
         "executes" : true,
         "heading" : "Media Workflows — steps",
-        "line" : 136,
+        "line" : 134,
         "lines" : [
           "Content the user encounters should be captured in the brain. File by PRIMARY",
           "SUBJECT, not by format (see `skills\/_brain-filing-rules.md`)"
@@ -662,7 +666,7 @@
       {
         "executes" : false,
         "heading" : "Articles & Web Content",
-        "line" : 141,
+        "line" : 139,
         "lines" : [
           "**Input:** URL shared by user, or article mentioned in conversation",
           "**Process:**",
@@ -679,7 +683,7 @@
       {
         "executes" : true,
         "heading" : "Articles & Web Content — steps",
-        "line" : 155,
+        "line" : 153,
         "lines" : [
           "use judgment to follow the Articles & Web Content — steps guidance:",
           "Analyze for the user: don't just summarize. What's interesting given what you",
@@ -690,7 +694,7 @@
       {
         "executes" : false,
         "heading" : "Videos & Podcasts",
-        "line" : 161,
+        "line" : 159,
         "lines" : [
           "**Input:** URL (YouTube, podcast, etc.) or local audio\/video file",
           "**Process:**",
@@ -711,7 +715,7 @@
       {
         "executes" : true,
         "heading" : "Videos & Podcasts — steps",
-        "line" : 180,
+        "line" : 178,
         "lines" : [
           "use judgment to follow the Videos & Podcasts — steps guidance:",
           "Analyze: executive summary, key ideas, key quotes with speaker attribution,",
@@ -722,7 +726,7 @@
       {
         "executes" : true,
         "heading" : "Videos & Podcasts — steps 2",
-        "line" : 186,
+        "line" : 184,
         "lines" : [
           "HARD RULE: every video\/podcast brain page MUST link to the raw diarized",
           "transcript. A page without transcript links is incomplete"
@@ -732,7 +736,7 @@
       {
         "executes" : false,
         "heading" : "PDFs & Documents",
-        "line" : 191,
+        "line" : 189,
         "lines" : [
           "**Input:** File path or URL",
           "**Process:**",
@@ -748,7 +752,7 @@
       {
         "executes" : false,
         "heading" : "Screenshots & Images",
-        "line" : 204,
+        "line" : 202,
         "lines" : [
           "**Input:** Image file",
           "If tweet screenshot: extract text, author, date, route to social media workflow",
@@ -761,7 +765,7 @@
       {
         "executes" : true,
         "heading" : "Screenshots & Images — steps",
-        "line" : 215,
+        "line" : 213,
         "lines" : [
           "use judgment to follow the Screenshots & Images — steps guidance:",
           "Analyze content (OCR for text-heavy images, description for photos)"
@@ -771,7 +775,7 @@
       {
         "executes" : false,
         "heading" : "Meeting Transcripts",
-        "line" : 220,
+        "line" : 218,
         "lines" : [
           "**Input:** Transcript from meeting recording service, or manual notes",
           "**Process:**",
@@ -794,7 +798,7 @@
       {
         "executes" : true,
         "heading" : "Meeting Transcripts — steps",
-        "line" : 241,
+        "line" : 239,
         "lines" : [
           "Entity propagation (MANDATORY): for each attendee and company discussed:"
         ],
@@ -803,7 +807,7 @@
       {
         "executes" : true,
         "heading" : "Meeting Transcripts — steps 2",
-        "line" : 245,
+        "line" : 243,
         "lines" : [
           "Write to: `meetings\/YYYY-MM-DD-short-description.md`"
         ],
@@ -812,7 +816,7 @@
       {
         "executes" : false,
         "heading" : "Social Media Content",
-        "line" : 249,
+        "line" : 247,
         "lines" : [
           "**Input:** Tweet, thread, or social media post",
           "**Process:**",
@@ -826,7 +830,7 @@
       {
         "executes" : true,
         "heading" : "Social Media Content — steps",
-        "line" : 259,
+        "line" : 257,
         "lines" : [
           "Include direct link to the original post (MANDATORY for citations)",
           "Write to: `media\/x\/` for daily aggregation, or entity-specific directories",
@@ -837,7 +841,7 @@
       {
         "executes" : false,
         "heading" : "Raw Source Preservation",
-        "line" : 266,
+        "line" : 264,
         "lines" : [
           "**>= 100 MB OR media** (video, audio, images): uploaded to cloud storage",
           "via TUS resumable upload, `.redirect.yaml` pointer left in the brain repo",
@@ -849,7 +853,7 @@
       {
         "executes" : true,
         "heading" : "Raw Source Preservation — steps",
-        "line" : 286,
+        "line" : 284,
         "lines" : [
           "Every ingested item must have its raw source preserved for provenance",
           "Use `gbrain files upload-raw` for automatic size routing:",
@@ -861,7 +865,7 @@
       {
         "executes" : true,
         "heading" : "Raw Source Preservation — steps 2",
-        "line" : 297,
+        "line" : 295,
         "lines" : [
           "The `.redirect.yaml` pointer format:"
         ],
@@ -870,7 +874,7 @@
       {
         "executes" : true,
         "heading" : "Raw Source Preservation — steps 3",
-        "line" : 301,
+        "line" : 299,
         "lines" : [
           "`gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing\/sharing",
           "`gbrain files restore <dir>` -- download back to local from cloud storage"
@@ -880,9 +884,8 @@
       {
         "executes" : false,
         "heading" : "Test Before Bulk",
-        "line" : 307,
+        "line" : 305,
         "lines" : [
-          "When processing multiple items (batch video ingestion, bulk meeting processing, etc.):",
           "**Test on 3-5 items first.** Run in test mode if available",
           "**Read the actual output.** Is the quality good? Are titles compelling (not",
           "\"This video discusses...\")? Are entities extracted and back-linked? Is the",
@@ -896,8 +899,17 @@
       },
       {
         "executes" : false,
+        "heading" : "Test Before Bulk — steps",
+        "line" : 318,
+        "lines" : [
+          "When processing multiple items (batch video ingestion, bulk meeting processing, etc.):"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
         "heading" : "Quality Rules",
-        "line" : 321,
+        "line" : 322,
         "lines" : [
           "Timeline entries are reverse-chronological (newest first)",
           "Every person\/company mentioned gets a page if notable (see filing rules)",
@@ -911,7 +923,7 @@
       {
         "executes" : false,
         "heading" : "Quality Rules — steps",
-        "line" : 331,
+        "line" : 332,
         "lines" : [
           "Executive summary in compiled_truth must be updated, not just timeline appended"
         ],
@@ -920,7 +932,7 @@
       {
         "executes" : true,
         "heading" : "Quality Rules — steps 2",
-        "line" : 335,
+        "line" : 336,
         "lines" : [
           "use judgment to follow the Quality Rules — steps 2 guidance:",
           "State section is REWRITTEN, not appended to. Current best understanding only"
@@ -930,7 +942,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 339,
+        "line" : 340,
         "lines" : [
           "**Bulk processing without sample test.** Test on 3-5 items first. Fix quality issues in the approach, not via one-off patches",
           "**Paraphrasing the user's original thinking.** The user's exact language IS the insight. Capture verbatim phrasing for ideas, theses, and frameworks"
@@ -940,7 +952,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns — steps",
-        "line" : 345,
+        "line" : 346,
         "lines" : [
           "use judgment to follow the Anti-Patterns — steps guidance:",
           "**Appending to State sections.** State is rewritten with the current best understanding on every update. Append-only State sections grow stale and contradictory"
@@ -950,7 +962,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns — steps 2",
-        "line" : 350,
+        "line" : 351,
         "lines" : [
           "An unlinked mention is a broken brain. Every entity mentioned must have a back-link from their page to the page mentioning them",
           "Every ingested item must have its raw source preserved. A brain page without provenance is unverifiable"
@@ -960,7 +972,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 354,
+        "line" : 355,
         "lines" : [
           "codeblock:plain:SU5HRVNURUQ6IFt0aXRsZV0KPT09PT09PT09PT09PT09PT09CgpQYWdlOiBbc2x1Z10KVHlwZTogW3BlcnNvbiAvIGNvbXBhbnkgLyBtZWV0aW5nIC8gbWVkaWEgLyBjb25jZXB0XQpTb3VyY2U6IFtzb3VyY2UgZGVzY3JpcHRpb25dCgpFbnRpdGllcyBkZXRlY3RlZDogTgotIFtlbnRpdHldIC0+IFtjcmVhdGVkIC8gdXBkYXRlZF0gKFtzbHVnXSkKCkJhY2stbGlua3MgY3JlYXRlZDogTgpUaW1lbGluZSBlbnRyaWVzOiBOClJhdyBzb3VyY2U6IFtwcmVzZXJ2ZWQgYXQgcGF0aCAvIHVwbG9hZGVkIHRvIGNsb3VkXQ=="
         ],
@@ -969,7 +981,7 @@
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 372,
+        "line" : 373,
         "lines" : [
           "Read a page from gbrain (get_page)",
           "Store\/update a page in gbrain (put_page)",
@@ -1024,11 +1036,11 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 79,
+      "meridian_line" : 77,
       "swift_line" : 603
     },
     {
-      "meridian_line" : 131,
+      "meridian_line" : 129,
       "swift_line" : 612
     },
     {
@@ -1068,18 +1080,10 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
           "guidance" : "Contrarian positions with reasoning\nContent the user encounters should be captured in the brain. File by PRIMARY\nSUBJECT, not by format (see `skills\/_brain-filing-rules.md`)\nuse judgment to follow the Articles & Web Content — steps guidance:\nAnalyze for the user: don't just summarize. What's interesting given what you\nknow about them? Flag connections, contradictions, content opportunities\nuse judgment to follow the Videos & Podcasts — steps guidance:\nAnalyze: executive summary, key ideas, key quotes with speaker attribution,\nnotable stories\/anecdotes, people and companies mentioned\nHARD RULE: every video\/podcast brain page MUST link to the raw diarized\ntranscript. A page without transcript links is incomplete\nuse judgment to follow the Screenshots & Images — steps guidance:\nAnalyze content (OCR for text-heavy images, description for photos)\nEntity propagation (MANDATORY): for each attendee and company discussed:\nWrite to: `meetings\/YYYY-MM-DD-short-description.md`\nInclude direct link to the original post (MANDATORY for citations)\nWrite to: `media\/x\/` for daily aggregation, or entity-specific directories\nif the post is primarily about a person\/company\nEvery ingested item must have its raw source preserved for provenance\nUse `gbrain files upload-raw` for automatic size routing:\ncodeblock:bash:Z2JyYWluIGZpbGVzIHVwbG9hZC1yYXcgPGZpbGU+IC0tcGFnZSA8cGFnZS1zbHVnPiAtLXR5cGUgPHR5cGU+\n< 100 MB text\/PDF: stays in git (brain repo `.raw\/` sidecar directories)\nThe `.redirect.yaml` pointer format:\n`gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing\/sharing\n`gbrain files restore <dir>` -- download back to local from cloud storage\nuse judgment to follow the Quality Rules — steps 2 guidance:\nState section is REWRITTEN, not appended to. Current best understanding only",
-          "line" : 131,
+          "line" : 129,
           "scoped_tools" : [
             "add_link",
             "add_tag",
@@ -1097,6 +1101,13 @@
             "timeline.add"
           ],
           "text" : "follow the What to capture from the user's own thinking — steps 2 guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "ingest a input",

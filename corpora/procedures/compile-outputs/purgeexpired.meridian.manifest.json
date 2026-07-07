@@ -1,6 +1,15 @@
 {
+  "constants" : {
+    "maximum batch size" : 500,
+    "maximum retry count" : 5,
+    "staleness window" : 2592000,
+    "vacuum row threshold" : 1000000
+  },
   "instances_required" : [
-
+    {
+      "kind" : "sql endpoint",
+      "name" : "reporting warehouse"
+    }
   ],
   "kinds_used" : [
 
@@ -10,49 +19,79 @@
       "adjective" : "orphaned",
       "function" : "meridianDef_AuditRow_orphaned",
       "kind" : "audit row",
-      "line" : 24
+      "line" : 33
+    },
+    {
+      "adjective" : "finalized",
+      "function" : "meridianDef_Batch_finalized",
+      "kind" : "batch",
+      "line" : 28
     },
     {
       "adjective" : "ready",
       "function" : "meridianDef_Batch_ready",
       "kind" : "batch",
-      "line" : 19
+      "line" : 26
     },
     {
       "adjective" : "settled",
       "function" : "meridianDef_Batch_settled",
       "kind" : "batch",
-      "line" : 20
+      "line" : 27
     },
     {
       "adjective" : "violated",
       "function" : "meridianDef_Constraint_violated",
       "kind" : "constraint",
-      "line" : 23
+      "line" : 32
+    },
+    {
+      "adjective" : "bloated",
+      "function" : "meridianDef_DatabaseTable_bloated",
+      "kind" : "database table",
+      "line" : 37
     },
     {
       "adjective" : "lagging",
       "function" : "meridianDef_IndexJob_lagging",
       "kind" : "index job",
-      "line" : 25
+      "line" : 34
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Ledger_open",
       "kind" : "ledger",
-      "line" : 18
+      "line" : 25
+    },
+    {
+      "adjective" : "applied",
+      "function" : "meridianDef_Migration_applied",
+      "kind" : "migration",
+      "line" : 35
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_Migration_failed",
+      "kind" : "migration",
+      "line" : 36
+    },
+    {
+      "adjective" : "drifted",
+      "function" : "meridianDef_Record_drifted",
+      "kind" : "record",
+      "line" : 31
     },
     {
       "adjective" : "duplicate",
       "function" : "meridianDef_Record_duplicate",
       "kind" : "record",
-      "line" : 22
+      "line" : 30
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Record_stale",
       "kind" : "record",
-      "line" : 21
+      "line" : 29
     }
   ],
   "meridian_ir_version" : "1.0",
@@ -60,8 +99,18 @@
     {
       "backing" : "tool",
       "left_cardinality" : "one",
+      "left_kind" : "a migration",
+      "line" : 47,
+      "name" : "application",
+      "right_cardinality" : "one",
+      "right_kind" : "a database table",
+      "via" : "migration.apply"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
       "left_kind" : "a ledger",
-      "line" : 31,
+      "line" : 45,
       "name" : "auditing",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -71,7 +120,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a record",
-      "line" : 29,
+      "line" : 43,
       "name" : "canonicalization",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -81,7 +130,17 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a batch",
-      "line" : 27,
+      "line" : 41,
+      "name" : "retrying",
+      "right_cardinality" : "one",
+      "right_kind" : "a ledger",
+      "via" : "batch.retry"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a batch",
+      "line" : 39,
       "name" : "settlement",
       "right_cardinality" : "one",
       "right_kind" : "a ledger",
@@ -89,7 +148,7 @@
     }
   ],
   "meridian_skill" : {
-    "description" : "Purge stale records in bounded deterministic order.",
+    "description" : "Purge stale records in bounded deterministic order, capped at the configured retry count for failures.",
     "name" : "purge expired",
     "outline" : [
       {
@@ -99,7 +158,7 @@
         "text" : "Use this when"
       },
       {
-        "kind" : "reference",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 15,
         "text" : "Procedure"
@@ -107,37 +166,37 @@
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 18,
+        "line" : 17,
         "text" : "Procedure — steps"
-      },
-      {
-        "kind" : "procedure",
-        "level" : 3,
-        "line" : 22,
-        "text" : "Procedure — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 30,
+        "line" : 28,
         "text" : "Operator notes"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 16,
+        "line" : 20,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 27,
+        "line" : 21,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 25,
         "text" : "Emit"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 28,
+        "line" : 26,
         "text" : "Emit"
       }
     ],
@@ -153,30 +212,25 @@
         "role" : "applicability"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Procedure",
         "line" : 15,
         "lines" : [
-          "Check: any stale records"
-        ],
-        "role" : "reference"
-      },
-      {
-        "executes" : true,
-        "heading" : "Procedure — steps",
-        "line" : 18,
-        "lines" : [
-          "fetch stale records"
+
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
-        "heading" : "Procedure — steps 2",
-        "line" : 22,
+        "heading" : "Procedure — steps",
+        "line" : 17,
         "lines" : [
+          "fetch stale records",
+          "Check: any stale records",
+          "Check: at most 500 stale records",
           "for each the first 100 records whose status is \"stale\" sorted by updated at, oldest first:",
           "purge the record",
+          "recover from any:",
           "Emit: \"expired record purge failed\"",
           "Emit: \"expired records purged\""
         ],
@@ -185,7 +239,7 @@
       {
         "executes" : false,
         "heading" : "Operator notes",
-        "line" : 30,
+        "line" : 28,
         "lines" : [
           "The limit of 100 mirrors a stored procedure batch size and keeps replay bounded"
         ],
@@ -196,22 +250,36 @@
   },
   "meridian_verbs" : [
     {
+      "base" : "apply",
+      "line" : 54,
+      "past_participle" : "applied",
+      "relation" : "application",
+      "third_person" : "applies"
+    },
+    {
       "base" : "audit",
-      "line" : 36,
+      "line" : 53,
       "past_participle" : "audited",
       "relation" : "auditing",
       "third_person" : "audits"
     },
     {
       "base" : "canonicalize",
-      "line" : 35,
+      "line" : 52,
       "past_participle" : "canonicalized",
       "relation" : "canonicalization",
       "third_person" : "canonicalizes"
     },
     {
+      "base" : "retry",
+      "line" : 51,
+      "past_participle" : "retried",
+      "relation" : "retrying",
+      "third_person" : "retries"
+    },
+    {
       "base" : "settle",
-      "line" : 34,
+      "line" : 50,
       "past_participle" : "settled",
       "relation" : "settlement",
       "third_person" : "settles"
@@ -223,40 +291,52 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 42,
-      "swift_line" : 300
+      "meridian_line" : 63,
+      "swift_line" : 433
+    },
+    {
+      "meridian_line" : 20,
+      "swift_line" : 445
+    },
+    {
+      "meridian_line" : 21,
+      "swift_line" : 450
     },
     {
       "meridian_line" : 24,
-      "swift_line" : 311
+      "swift_line" : 454
     },
     {
-      "meridian_line" : 69,
-      "swift_line" : 319
+      "meridian_line" : 22,
+      "swift_line" : 456
     },
     {
-      "meridian_line" : 27,
-      "swift_line" : 331
+      "meridian_line" : 96,
+      "swift_line" : 464
     },
     {
-      "meridian_line" : 28,
-      "swift_line" : 345
+      "meridian_line" : 25,
+      "swift_line" : 481
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 382
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 387
+      "meridian_line" : 26,
+      "swift_line" : 492
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 425
+      "swift_line" : 531
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 430
+      "swift_line" : 536
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 576
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 581
     }
   ],
   "tools_used" : [

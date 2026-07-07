@@ -4,7 +4,7 @@
 - Ported: `ask_user.meri`
 - Tier: 2 (light edits)
 - Similarity: 79%
-- Lines: 254 -> 287 (+73 / -40)
+- Lines: 254 -> 288 (+75 / -41)
 
 ## Frontmatter
 - Added: (none)
@@ -28,14 +28,14 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L175 `Cold-start phase gate`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L188 `Filing decision`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L201 `Destructive operation`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L254 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L255 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
-- Sections inert total: 17/19 (89% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 18/19 (95% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
-- Inert categories: reference-documentation=16, template=1
+- Inert categories: reference-documentation=17, template=1
 - Judgment: 3 blocks, 0 lines
 
 ### Inert section details
@@ -54,8 +54,9 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L175 `Cold-start phase gate`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L188 `Filing decision`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L201 `Destructive operation`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L227 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L254 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L214 `Integration With Other Skills`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L230 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L255 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
@@ -252,7 +253,22 @@ These sections were made non-executable in the port and should be reviewed as mi
  ```
  ⚠️ **About to delete 847 stale cache files (2.3 GB)**
  
-@@ -216,24 +239,34 @@
+@@ -203,7 +226,7 @@
+ 4. **Show me the list** — let me review before deciding
+ ```
+ 
+-## Integration With Other Skills
++## Integration With Other Skills (( role: reference ))
+ 
+ This pattern is used by:
+ - **cold-start** — phase gates for each import source
+@@ -213,27 +236,38 @@
+ - **meeting-ingestion** — where to file meeting notes
+ - **archive-crawler** — scan vs full ingestion gate
+ 
++
++### Integration With Other Skills — steps
++
  When building a new skill that needs user input at a decision point,
  reference this pattern rather than inventing a new one.
  
@@ -283,15 +299,13 @@ These sections were made non-executable in the port and should be reviewed as mi
 +- **Continuing the turn after presenting choices.** "While you decide, I'll start on..."
 +  defeats the gate. Stop. Wait. The whole point is that the user controls what happens next.
 +
-+### Anti-Patterns — steps 2 (( role: reference ))
++### Anti-Patterns — steps 2
 +
-+- Every choice gate must let the user decline. "None of these"
-+  / "Skip" / "Cancel" is mandatory.
++- Every choice gate must let the user decline. "None of these" / "Skip" / "Cancel" is mandatory.
 +
-+### Anti-Patterns — steps 3 (( role: reference ))
++### Anti-Patterns — steps 3
 +
-+- "Option 1" forces re-reading the context. "Merge into
-+  existing page" is self-explanatory.
++- "Option 1" forces re-reading the context. "Merge into existing page" is self-explanatory.
 +## Output Format (( role: template ))
  
  The skill's "output" is the choice-gate message itself, structured as:

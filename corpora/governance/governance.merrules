@@ -1,0 +1,33 @@
+=== desugar ===
+
+rule "governance-check":
+  match: Check: {condition}
+  rewrite: make sure {condition}.
+
+rule "governance-note":
+  match: Note: {message}
+  lowers to: emit governance.note with message = {message}.
+
+rule "governance-log":
+  match: Log: {message}
+  lowers to: emit governance.audit with message = {message}.
+
+rule "governance-emit":
+  match: Emit: {message}
+  lowers to: emit governance.report with message = {message}.
+
+=== sections ===
+section "Classification Routing — steps" -> procedure
+section "Contract — steps" -> invariants
+section "Anti-Patterns — steps" -> prohibitions
+section "When NOT to use this skill — steps" -> procedure
+section "Dispatch table — steps" -> procedure
+section "Rules — steps" -> procedure
+section "Workflow — steps" -> procedure
+section "Workflow — steps 2" -> procedure
+section "Workflow — steps 3" -> procedure
+
+section "Workflow", "Procedure", "Rules", "Completion", "Classification Routing" -> procedure
+section "When this applies", "Use this when" -> applicability
+section "Guarantees", "Assertions", "Controls" -> invariants
+section "Output", "Report shape" -> template

@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum ArchiveCrawler {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct ArchiveCrawlerInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -600,7 +600,12 @@ public struct ArchiveCrawlerInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ArchiveCrawlerInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L136:C0") {
+        if __meridianShouldRun("progress:0.0:L327:C0") {
+            // L327
+            try await runtime.assert(!(MeridianComparison.eq(state.get("(❌ReShowingItemsAlreadyMarkedInTheManifest.TheUser.time"), state.get("scarcestResource)"))), message: "Expected not (❌ Re-showing items already marked in the manifest. The user's time is the scarcest resource)")
+            try await runtime.checkpoint(label: "progress:0.0:L327:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L136:C0") {
             // L136
             let captured = try await runtime.invoke(
                 tool: "capture",
@@ -610,43 +615,7 @@ public struct ArchiveCrawlerInput: MeridianWorkflow {
             )
             state.bind("captured", captured)
 
-            try await runtime.checkpoint(label: "progress:0.0:L136:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L192:C0") {
-            // L192
-            // User's own writing / ideas / origin-story content →
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("originals/<slug>.md"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L192:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L193:C0") {
-            // L193
-            // Reflections / personal-life content →
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("personal/<slug>.md"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L193:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.3:L194:C0") {
-            // L194
-            // Product / business ideas →
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("ideas/<slug>.md"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.3:L194:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.1:L136:C0", state: state.snapshot())
         }
         // L198
         let __meridianProseResults_L198 = try await runtime.executeProsePlan(

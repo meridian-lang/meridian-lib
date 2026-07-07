@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum Query {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct QueryInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -614,7 +614,7 @@ public struct QueryInput: MeridianWorkflow {
             prose: "follow the Phases — steps guidance",
             snapshot: state.snapshot(),
             scopedTools: ["get_backlinks", "get_page", "get_timeline", "link.backlinks", "list_pages", "page.get", "page.list", "page.search", "query", "search", "shell.run", "traverse_graph"],
-            guidance: "**Synthesize answer** with citations. Every claim traces back to a specific page slug\nuse judgment to follow the Token-Budget Awareness — steps guidance:\nSearch returns **chunks**, not full pages. Read the excerpts first before deciding\nwhether to load a full page\nOnly use `gbrain get <slug>` to load the full page when a chunk confirms the\npage is relevant and you need more context (e.g., compiled truth, timeline)\nuse judgment to follow the Source precedence — steps guidance:\n**Compiled truth** (the brain's synthesized, cited understanding)\nuse judgment to follow the Citation in Answers — steps guidance:\nWhen you synthesize across multiple pages, cite all sources\n`gbrain graph-query <slug> --type <link_type> --depth N --direction in|out|both`\n`--direction in` answers \"who points to X?\" (e.g., who works at company X)\n`--direction out` answers \"what does X point to?\" (default)\n`--depth N` controls multi-hop traversal (default 5)\n\"Who works at Acme?\" → `gbrain graph-query companies/acme --type works_at --direction in`\n\"Who attended Demo Day W26?\" → `gbrain graph-query meetings/demo-day-w26 --type attended --direction out`\n\"What companies has Emily advised?\" → `gbrain graph-query people/emily --type advises --direction out`\n\"Who has Alice met (via meetings)?\" → `gbrain graph-query people/alice --type attended --depth 2`\nCombine with `gbrain query` for queries that need BOTH semantic similarity AND\ngraph structure. Search results are ranked with a small backlink boost so well-\nconnected entities surface higher\nRun `gbrain doctor --json` to check index health"
+            guidance: "**Synthesize answer** with citations. Every claim traces back to a specific page slug\nuse judgment to follow the Token-Budget Awareness — steps guidance:\nSearch returns **chunks**, not full pages. Read the excerpts first before deciding\nwhether to load a full page\nOnly use `gbrain get <slug>` to load the full page when a chunk confirms the\npage is relevant and you need more context (e.g., compiled truth, timeline)\nuse judgment to follow the Source precedence — steps 2 guidance:\n**Compiled truth** (the brain's synthesized, cited understanding)\n`gbrain graph-query <slug> --type <link_type> --depth N --direction in|out|both`\n`--direction in` answers \"who points to X?\" (e.g., who works at company X)\n`--direction out` answers \"what does X point to?\" (default)\n`--depth N` controls multi-hop traversal (default 5)\n\"Who works at Acme?\" → `gbrain graph-query companies/acme --type works_at --direction in`\n\"Who attended Demo Day W26?\" → `gbrain graph-query meetings/demo-day-w26 --type attended --direction out`\n\"What companies has Emily advised?\" → `gbrain graph-query people/emily --type advises --direction out`\n\"Who has Alice met (via meetings)?\" → `gbrain graph-query people/alice --type attended --depth 2`\nCombine with `gbrain query` for queries that need BOTH semantic similarity AND\ngraph structure. Search results are ranked with a small backlink boost so well-\nconnected entities surface higher\nIf search results seem off (wrong results, missing known pages, irrelevant hits):\nRun `gbrain doctor --json` to check index health"
         )
         for (__key, __value) in __meridianProseResults_L64 {
             state.bind(__key, __value)

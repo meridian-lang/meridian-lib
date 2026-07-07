@@ -3,8 +3,8 @@
 - Original: `skill-optimizer/SKILL.md`
 - Ported: `skill_optimizer.meri`
 - Tier: 2 (light edits)
-- Similarity: 68%
-- Lines: 189 -> 227 (+86 / -48)
+- Similarity: 67%
+- Lines: 189 -> 223 (+85 / -51)
 
 ## Frontmatter
 - Added: (none)
@@ -21,7 +21,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L9 `When to invoke this skill`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L44 `The pipeline`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L156 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L192 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L188 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
 - Sections inert total: 7/8 (88% total inert; includes intentional docs/templates/tools metadata)
@@ -38,7 +38,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L71 `Starting a benchmark from the skill itself (the common case)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L156 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 - L167 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L192 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L188 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
@@ -214,7 +214,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  | Situation | Action |
  |---|---|
  | Skill has no benchmark | `gbrain skillopt foo --bootstrap-from-skill` → review + strengthen the judges → delete sentinel → `gbrain skillopt foo --bootstrap-reviewed --split 1:1:1` (see section above) |
-@@ -146,25 +177,32 @@
+@@ -146,25 +177,28 @@
  - `skills/<name>/skillopt/rejected.json` — bounded LRU of rejected edits
  - `~/.gbrain/audit/skillopt-YYYY-Www.jsonl` — ISO-week-rotated audit trail
  
@@ -225,6 +225,9 @@ These sections were made non-executable in the port and should be reviewed as mi
    load-bearing; without it, the optimizer accepts noise as improvement.
 -- **Don't optimize bundled skills without `--allow-mutate-bundled` AND
 -  `--held-out`.** They ship with gbrain and are load-bearing for downstream
+-  agents. In-place mutation requires both flags (held-out >=5 benchmark-disjoint
+-  tasks); without the held-out set the run hard-refuses and points you at
+-  proposed.md.
 +- **Don't skip `--split 1:1:1` on a ~15-task starter.** The default `4:1:5`
 +  split drops the validation set below the `D_sel >= 5` floor and the run
 +  aborts with `d_sel_too_small`.
@@ -232,11 +235,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
 +### Anti-Patterns — steps (( role: reference ))
 +
-+- Don't optimize bundled skills without `--allow-mutate-bundled` AND
-+  `--held-out`. They ship with gbrain and are load-bearing for downstream
-   agents. In-place mutation requires both flags (held-out >=5 benchmark-disjoint
-   tasks); without the held-out set the run hard-refuses and points you at
-   proposed.md.
++- They ship with gbrain and are load-bearing for downstream agents. In-place mutation requires both flags (held-out >=5 benchmark-disjoint tasks); without the held-out set the run hard-refuses and points you at proposed.md.
 +
 +### Anti-Patterns — steps 2 (( role: reference ))
 +

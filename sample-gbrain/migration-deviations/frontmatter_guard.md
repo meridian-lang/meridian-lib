@@ -3,8 +3,8 @@
 - Original: `frontmatter-guard/SKILL.md`
 - Ported: `frontmatter_guard.meri`
 - Tier: 2 (light edits)
-- Similarity: 70%
-- Lines: 233 -> 285 (+104 / -52)
+- Similarity: 69%
+- Lines: 233 -> 288 (+109 / -54)
 
 ## Frontmatter
 - Added: (none)
@@ -17,12 +17,11 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L122 `Trigger words`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L157 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L199 `Prevention — Writing Valid Frontmatter`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L203 `YAML arrays (the historical #1 error source)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L230 `Quoted scalars`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L256 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L160 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L202 `Prevention — Writing Valid Frontmatter`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L206 `YAML arrays (the historical #1 error source)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L233 `Quoted scalars`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L259 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
 - Sections inert total: 15/15 (100% total inert; includes intentional docs/templates/tools metadata)
@@ -40,14 +39,14 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L91 `Phase 3: Fix`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L109 `Phase 4: Pre-commit hook (optional)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L122 `Trigger words`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L131 `Output rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L148 `Chains with`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L157 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L199 `Prevention — Writing Valid Frontmatter`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L203 `YAML arrays (the historical #1 error source)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L230 `Quoted scalars`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L243 `When to quote at all`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L256 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L134 `Output rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L151 `Chains with`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L160 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L202 `Prevention — Writing Valid Frontmatter`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L206 `YAML arrays (the historical #1 error source)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L233 `Quoted scalars`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L246 `When to quote at all`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L259 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
@@ -146,7 +145,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Validate a single file or directory (does not require source registration):
  
-@@ -79,31 +106,38 @@
+@@ -79,54 +106,76 @@
  gbrain frontmatter validate <path> --json
  ```
  
@@ -193,15 +192,21 @@ These sections were made non-executable in the port and should be reviewed as mi
 -The hook runs `gbrain frontmatter validate` against staged `.md`/`.mdx` files. Bypass with `git commit --no-verify`.
 -
 -## Trigger words
+-
+-When the user says any of these, route here:
 +## Trigger words (( role: reference ))
- 
- When the user says any of these, route here:
++
  - "validate frontmatter"
-@@ -112,21 +146,33 @@
+ - "check frontmatter"
+ - "fix frontmatter"
  - "frontmatter audit"
  - "brain lint"
  
 -## Output rules
++
++### Trigger words — steps (( role: reference ))
++
++When the user says any of these, route here:
 +## Output rules (( role: reference ))
 +
 +- Surface counts to the user in plain language; do not dump raw JSON.
@@ -238,7 +243,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Audit summary (terse, agent-friendly):
  
-@@ -168,11 +214,11 @@
+@@ -168,11 +217,11 @@
  
  `gbrain frontmatter validate <path> --json` returns a similar envelope keyed on per-file results instead of per-source.
  
@@ -252,7 +257,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```yaml
  # Correct: single-quoted YAML flow (canonical form gbrain emits)
-@@ -199,7 +245,7 @@
+@@ -199,7 +248,7 @@
  
  **The classic LLM trap:** code like `tags: [${items.map(t => JSON.stringify(t)).join(', ')}]` produces `tags: ["yc", "w2025"]`. Use single quotes with an apostrophe fallback: `tags: [${items.map(t => t.includes("'") ? JSON.stringify(t) : "'" + t + "'").join(', ')}]`. Or use a YAML library that knows how to emit canonical YAML.
  
@@ -261,7 +266,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```yaml
  # Correct: single quotes for values with special chars
-@@ -212,22 +258,28 @@
+@@ -212,22 +261,28 @@
  title: "My "Quoted" Title"
  ```
  

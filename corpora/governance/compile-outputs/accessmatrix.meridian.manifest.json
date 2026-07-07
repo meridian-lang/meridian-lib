@@ -1,0 +1,369 @@
+{
+  "constants" : {
+    "credential ttl" : 7776000,
+    "max concurrent grants" : 3,
+    "review window" : 604800
+  },
+  "instances_required" : [
+    {
+      "kind" : "environment",
+      "name" : "identity provider"
+    },
+    {
+      "kind" : "environment",
+      "name" : "audit sink"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_AccessRequest_pending",
+      "kind" : "access request",
+      "line" : 34
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_AccessRequest_stale",
+      "kind" : "access request",
+      "line" : 33
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Credential_fresh",
+      "kind" : "credential",
+      "line" : 32
+    },
+    {
+      "adjective" : "overused",
+      "function" : "meridianDef_Credential_overused",
+      "kind" : "credential",
+      "line" : 31
+    },
+    {
+      "adjective" : "classified",
+      "function" : "meridianDef_Resource_classified",
+      "kind" : "resource",
+      "line" : 27
+    },
+    {
+      "adjective" : "authorized",
+      "function" : "meridianDef_User_authorized",
+      "kind" : "user",
+      "line" : 30
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_User_cleared",
+      "kind" : "user",
+      "line" : 28
+    },
+    {
+      "adjective" : "privileged",
+      "function" : "meridianDef_User_privileged",
+      "kind" : "user",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 36,
+      "name" : "assignment",
+      "right_cardinality" : "one",
+      "right_kind" : "a role",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a policy",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "an environment",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 38,
+      "name" : "grant",
+      "right_cardinality" : "one",
+      "right_kind" : "a resource",
+      "via" : "access.grant"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Render the current role-by-classification access matrix as a signed-off audit artifact. Auditors don't want to read the policy engine's rule list; they want a matrix they can eyeball in thirty seconds, so this skill produces exactly that.",
+    "name" : "access matrix",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 20,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "tables",
+        "level" : 2,
+        "line" : 25,
+        "text" : "Tables"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 34,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 42,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 47,
+        "text" : "Workflow — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 53,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 61,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 64,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 51,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 20,
+        "lines" : [
+          "\"render access matrix\"",
+          "\"publish access matrix\"",
+          "\"generate the audit matrix\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Tables",
+        "line" : 25,
+        "lines" : [
+          "table:data=access matrix:fCByb2xlIHwgY2xhc3NpZmljYXRpb24gfCBvdXRjb21lIHwKfCAtLS0tLSB8IC0tLS0tLS0tLS0tLS0tLSB8IC0tLS0tLS0gfAp8IGFkbWluIHwgY2xhc3NpZmllZCAgICAgIHwgYWxsb3cgICB8CnwgYWRtaW4gfCBwdWJsaWMgICAgICAgICAgfCBhbGxvdyAgIHwKfCB1c2VyICB8IGNsYXNzaWZpZWQgICAgICB8IGRlbnkgICAgfAp8IHVzZXIgIHwgcHVibGljICAgICAgICAgIHwgYWxsb3cgICB8"
+        ],
+        "role" : "tables"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow",
+        "line" : 34,
+        "lines" : [
+          "bind matrix report =",
+          "codeblock:plain:YWNjZXNzLW1hdHJpeDoKW2lmIGNsYXNzaWZpZWQgY291bnQgaXMgbW9yZSB0aGFuIDBdc3RhdHVzOiByZXZpZXdlZFtvdGhlcndpc2Vdc3RhdHVzOiBlbXB0eVtlbmQgaWZdCnBlbmRpbmcgcmVxdWVzdHM6IHt7IGNsYXNzaWZpZWQgY291bnQgfX0="
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 42,
+        "lines" : [
+          "fetch pending access requests",
+          "let classified count be the number of access requests whose status is \"pending\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 47,
+        "lines" : [
+          "emit governance.audit with body = matrix report",
+          "the classified count is at least 0",
+          "Emit: \"access matrix pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 53,
+        "lines" : [
+          "Don't hand-edit the rendered matrix to \"fix\" a row that looks wrong",
+          "If the outcome column disagrees with what policy actually grants, the fix",
+          "belongs in the rule, not in the report",
+          "Don't publish the matrix as evidence that the queue is caught up. The",
+          "pending count is diagnostic, not a guarantee — pair it with",
+          "`review requests` if the count is climbing"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 61,
+        "lines" : [
+          "every emitted matrix report contains \"access-matrix\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 64,
+        "lines" : [
+          "The audit artifact opens with `access-matrix:`, states whether the pending",
+          "queue has been reviewed or is empty, and reports the pending-request count",
+          "at render time"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"render access matrix\"\n\"publish access matrix\"\n\"generate the audit matrix\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "authorize",
+      "line" : 43,
+      "past_participle" : "authorized",
+      "relation" : "assignment",
+      "third_person" : "authorizes"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "grant",
+      "line" : 44,
+      "past_participle" : "granted",
+      "relation" : "grant",
+      "third_person" : "grants"
+    }
+  ],
+  "source_files" : [
+    "accessmatrix.meri",
+    "governance.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 62,
+      "swift_line" : 435
+    },
+    {
+      "meridian_line" : 27,
+      "swift_line" : 439
+    },
+    {
+      "meridian_line" : 48,
+      "swift_line" : 442
+    },
+    {
+      "meridian_line" : 45,
+      "swift_line" : 453
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 456
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 466
+    },
+    {
+      "meridian_line" : 51,
+      "swift_line" : 471
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 510
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 515
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 555
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 560
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 600
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 605
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "access matrix",
+      "swift_struct" : "AccessMatrix"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when renderAccessMatrix fires",
+      "swift_struct" : "WhenRenderaccessmatrixFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when publishAccessMatrix fires",
+      "swift_struct" : "WhenPublishaccessmatrixFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when generateAuditMatrix fires",
+      "swift_struct" : "WhenGenerateauditmatrixFires"
+    }
+  ]
+}

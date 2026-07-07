@@ -128,10 +128,9 @@ a required subcommand crashed. Check:
   `warn` is informational.
 
 
-### Anti-Patterns — steps (( role: reference ))
+### Anti-Patterns — steps
 
-- ❌ Ignoring exit code 2. A crashed doctor is worse than a failing check
-  because you don't even know what's wrong.
+- ❌ Ignoring exit code 2. A crashed doctor is worse than a failing check because you don't even know what's wrong.
 ## Output Format (( role: template ))
 
 The skill itself doesn't write files; it reports the CLI output verbatim to

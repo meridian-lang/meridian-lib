@@ -1,52 +1,91 @@
 {
+  "constants" : {
+    "dunning window" : 604800,
+    "high value threshold" : {
+      "amount" : 5000,
+      "currency" : "USD"
+    },
+    "maximum retry count" : 3
+  },
   "instances_required" : [
-
+    {
+      "kind" : "mailer server",
+      "name" : "billing mailer"
+    },
+    {
+      "kind" : "payment processor",
+      "name" : "erp gateway"
+    }
   ],
   "kinds_used" : [
 
   ],
   "meridian_definitions" : [
     {
+      "adjective" : "in good standing",
+      "function" : "meridianDef_Customer_inGoodStanding",
+      "kind" : "customer",
+      "line" : 46
+    },
+    {
       "adjective" : "overdue",
       "function" : "meridianDef_Invoice_overdue",
       "kind" : "invoice",
-      "line" : 30
+      "line" : 42
+    },
+    {
+      "adjective" : "severely overdue",
+      "function" : "meridianDef_Invoice_severelyOverdue",
+      "kind" : "invoice",
+      "line" : 47
     },
     {
       "adjective" : "unpaid",
       "function" : "meridianDef_Invoice_unpaid",
       "kind" : "invoice",
-      "line" : 29
+      "line" : 41
     },
     {
       "adjective" : "blocked",
       "function" : "meridianDef_Order_blocked",
       "kind" : "order",
-      "line" : 27
+      "line" : 38
     },
     {
       "adjective" : "fulfilled",
       "function" : "meridianDef_Order_fulfilled",
       "kind" : "order",
-      "line" : 28
+      "line" : 39
+    },
+    {
+      "adjective" : "high value",
+      "function" : "meridianDef_Order_highValue",
+      "kind" : "order",
+      "line" : 45
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Order_open",
       "kind" : "order",
-      "line" : 26
+      "line" : 37
+    },
+    {
+      "adjective" : "released",
+      "function" : "meridianDef_Order_released",
+      "kind" : "order",
+      "line" : 40
     },
     {
       "adjective" : "short",
       "function" : "meridianDef_Product_short",
       "kind" : "product",
-      "line" : 31
+      "line" : 43
     },
     {
       "adjective" : "pending",
       "function" : "meridianDef_PurchaseOrder_pending",
       "kind" : "purchase order",
-      "line" : 32
+      "line" : 44
     }
   ],
   "meridian_ir_version" : "1.0",
@@ -55,7 +94,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 38,
+      "line" : 53,
       "name" : "collection",
       "right_cardinality" : "one",
       "right_kind" : "a payment",
@@ -64,8 +103,18 @@
     {
       "backing" : "tool",
       "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 57,
+      "name" : "escalation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dunning notice",
+      "via" : "dunning.notify"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 34,
+      "line" : 49,
       "name" : "fulfillment",
       "right_cardinality" : "one",
       "right_kind" : "a shipment",
@@ -75,7 +124,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 36,
+      "line" : 51,
       "name" : "invoicing",
       "right_cardinality" : "one",
       "right_kind" : "an invoice",
@@ -85,7 +134,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a product",
-      "line" : 40,
+      "line" : 55,
       "name" : "replenishment",
       "right_cardinality" : "one",
       "right_kind" : "a purchase order",
@@ -113,12 +162,6 @@
         "level" : 2,
         "line" : 22,
         "text" : "Controls"
-      },
-      {
-        "kind" : "reference",
-        "level" : 3,
-        "line" : 24,
-        "text" : "Controls — steps"
       },
       {
         "kind" : "topic",
@@ -152,28 +195,22 @@
           "fetch open orders",
           "Check: any orders whose status is \"blocked\"",
           "for each order whose status is \"blocked\":",
-          "cancel the order",
+          "cancel the order unless the order is fulfilled",
           "Publish: \"blocked orders cancelled\""
         ],
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Controls",
         "line" : 22,
         "lines" : [
-
+          "An already fulfilled order must not be cancelled by this runbook — already",
+          "enforced above by the workflow's own `unless the order is fulfilled` guard;",
+          "this line documents the guarantee rather than duplicating it as a second,",
+          "separately-attached rule"
         ],
         "role" : "invariants"
-      },
-      {
-        "executes" : false,
-        "heading" : "Controls — steps",
-        "line" : 24,
-        "lines" : [
-          "An already fulfilled order must not be cancelled by this runbook"
-        ],
-        "role" : "reference"
       }
     ],
     "triggers" : "\"cancel blocked orders\"\n\"void ERP orders\""
@@ -181,28 +218,35 @@
   "meridian_verbs" : [
     {
       "base" : "collect",
-      "line" : 45,
+      "line" : 62,
       "past_participle" : "collected",
       "relation" : "collection",
       "third_person" : "collects"
     },
     {
+      "base" : "escalate",
+      "line" : 64,
+      "past_participle" : "escalated",
+      "relation" : "escalation",
+      "third_person" : "escalates"
+    },
+    {
       "base" : "fulfill",
-      "line" : 43,
+      "line" : 60,
       "past_participle" : "fulfilled",
       "relation" : "fulfillment",
       "third_person" : "fulfills"
     },
     {
       "base" : "invoice",
-      "line" : 44,
+      "line" : 61,
       "past_participle" : "invoiced",
       "relation" : "invoicing",
       "third_person" : "invoices"
     },
     {
       "base" : "replenish",
-      "line" : 46,
+      "line" : 63,
       "past_participle" : "replenished",
       "relation" : "replenishment",
       "third_person" : "replenishes"
@@ -214,40 +258,44 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 49,
-      "swift_line" : 403
+      "meridian_line" : 67,
+      "swift_line" : 555
     },
     {
       "meridian_line" : 17,
-      "swift_line" : 415
+      "swift_line" : 567
     },
     {
       "meridian_line" : 18,
-      "swift_line" : 419
+      "swift_line" : 571
     },
     {
       "meridian_line" : 19,
-      "swift_line" : 426
+      "swift_line" : 577
+    },
+    {
+      "meridian_line" : 19,
+      "swift_line" : 580
     },
     {
       "meridian_line" : 20,
-      "swift_line" : 435
+      "swift_line" : 591
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 472
+      "swift_line" : 630
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 477
+      "swift_line" : 635
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 515
+      "swift_line" : 675
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 520
+      "swift_line" : 680
     }
   ],
   "tools_used" : [

@@ -1,52 +1,91 @@
 {
+  "constants" : {
+    "dunning window" : 604800,
+    "high value threshold" : {
+      "amount" : 5000,
+      "currency" : "USD"
+    },
+    "maximum retry count" : 3
+  },
   "instances_required" : [
-
+    {
+      "kind" : "mailer server",
+      "name" : "billing mailer"
+    },
+    {
+      "kind" : "payment processor",
+      "name" : "erp gateway"
+    }
   ],
   "kinds_used" : [
 
   ],
   "meridian_definitions" : [
     {
+      "adjective" : "in good standing",
+      "function" : "meridianDef_Customer_inGoodStanding",
+      "kind" : "customer",
+      "line" : 46
+    },
+    {
       "adjective" : "overdue",
       "function" : "meridianDef_Invoice_overdue",
       "kind" : "invoice",
-      "line" : 30
+      "line" : 42
+    },
+    {
+      "adjective" : "severely overdue",
+      "function" : "meridianDef_Invoice_severelyOverdue",
+      "kind" : "invoice",
+      "line" : 47
     },
     {
       "adjective" : "unpaid",
       "function" : "meridianDef_Invoice_unpaid",
       "kind" : "invoice",
-      "line" : 29
+      "line" : 41
     },
     {
       "adjective" : "blocked",
       "function" : "meridianDef_Order_blocked",
       "kind" : "order",
-      "line" : 27
+      "line" : 38
     },
     {
       "adjective" : "fulfilled",
       "function" : "meridianDef_Order_fulfilled",
       "kind" : "order",
-      "line" : 28
+      "line" : 39
+    },
+    {
+      "adjective" : "high value",
+      "function" : "meridianDef_Order_highValue",
+      "kind" : "order",
+      "line" : 45
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Order_open",
       "kind" : "order",
-      "line" : 26
+      "line" : 37
+    },
+    {
+      "adjective" : "released",
+      "function" : "meridianDef_Order_released",
+      "kind" : "order",
+      "line" : 40
     },
     {
       "adjective" : "short",
       "function" : "meridianDef_Product_short",
       "kind" : "product",
-      "line" : 31
+      "line" : 43
     },
     {
       "adjective" : "pending",
       "function" : "meridianDef_PurchaseOrder_pending",
       "kind" : "purchase order",
-      "line" : 32
+      "line" : 44
     }
   ],
   "meridian_ir_version" : "1.0",
@@ -55,7 +94,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 38,
+      "line" : 53,
       "name" : "collection",
       "right_cardinality" : "one",
       "right_kind" : "a payment",
@@ -64,8 +103,18 @@
     {
       "backing" : "tool",
       "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 57,
+      "name" : "escalation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dunning notice",
+      "via" : "dunning.notify"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 34,
+      "line" : 49,
       "name" : "fulfillment",
       "right_cardinality" : "one",
       "right_kind" : "a shipment",
@@ -75,7 +124,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 36,
+      "line" : 51,
       "name" : "invoicing",
       "right_cardinality" : "one",
       "right_kind" : "an invoice",
@@ -85,7 +134,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a product",
-      "line" : 40,
+      "line" : 55,
       "name" : "replenishment",
       "right_cardinality" : "one",
       "right_kind" : "a purchase order",
@@ -115,27 +164,33 @@
         "text" : "Workflow"
       },
       {
-        "kind" : "reference",
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 22,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "invariants",
         "level" : 2,
-        "line" : 29,
+        "line" : 36,
         "text" : "Checks"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 21,
+        "line" : 24,
         "text" : "Step"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 23,
+        "line" : 26,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 27,
+        "line" : 34,
         "text" : "Publish"
       }
     ],
@@ -166,24 +221,37 @@
         "heading" : "Workflow",
         "line" : 20,
         "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 22,
+        "lines" : [
           "Step: `ofbiz shipment --pending --json` to capture pending warehouse work",
           "fetch open orders",
           "Check: all orders have a number",
           "for each order:",
           "reserve inventory for the order",
+          "if the order is high value,",
+          "wait for approval of the order from an account manager,",
+          "otherwise,",
+          "make sure the order's total amount is more than 0",
           "ship the order",
           "Publish: \"shipment release queue drained\""
         ],
         "role" : "procedure"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Checks",
-        "line" : 29,
+        "line" : 36,
         "lines" : [
-          "Every released order should already have inventory reserved"
+          "Every released order has inventory reserved"
         ],
-        "role" : "reference"
+        "role" : "invariants"
       }
     ],
     "triggers" : "\"fulfill ERP orders\"\n\"release shipments\""
@@ -191,28 +259,35 @@
   "meridian_verbs" : [
     {
       "base" : "collect",
-      "line" : 45,
+      "line" : 62,
       "past_participle" : "collected",
       "relation" : "collection",
       "third_person" : "collects"
     },
     {
+      "base" : "escalate",
+      "line" : 64,
+      "past_participle" : "escalated",
+      "relation" : "escalation",
+      "third_person" : "escalates"
+    },
+    {
       "base" : "fulfill",
-      "line" : 43,
+      "line" : 60,
       "past_participle" : "fulfilled",
       "relation" : "fulfillment",
       "third_person" : "fulfills"
     },
     {
       "base" : "invoice",
-      "line" : 44,
+      "line" : 61,
       "past_participle" : "invoiced",
       "relation" : "invoicing",
       "third_person" : "invoices"
     },
     {
       "base" : "replenish",
-      "line" : 46,
+      "line" : 63,
       "past_participle" : "replenished",
       "relation" : "replenishment",
       "third_person" : "replenishes"
@@ -224,48 +299,64 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 21,
-      "swift_line" : 403
-    },
-    {
-      "meridian_line" : 49,
-      "swift_line" : 415
-    },
-    {
-      "meridian_line" : 23,
-      "swift_line" : 427
+      "meridian_line" : 37,
+      "swift_line" : 555
     },
     {
       "meridian_line" : 24,
-      "swift_line" : 431
-    },
-    {
-      "meridian_line" : 58,
-      "swift_line" : 437
+      "swift_line" : 560
     },
     {
       "meridian_line" : 67,
-      "swift_line" : 449
+      "swift_line" : 572
+    },
+    {
+      "meridian_line" : 26,
+      "swift_line" : 584
     },
     {
       "meridian_line" : 27,
-      "swift_line" : 465
+      "swift_line" : 588
+    },
+    {
+      "meridian_line" : 76,
+      "swift_line" : 594
+    },
+    {
+      "meridian_line" : 29,
+      "swift_line" : 605
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 608
+    },
+    {
+      "meridian_line" : 32,
+      "swift_line" : 614
+    },
+    {
+      "meridian_line" : 85,
+      "swift_line" : 621
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 637
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 502
+      "swift_line" : 676
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 507
+      "swift_line" : 681
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 545
+      "swift_line" : 721
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 550
+      "swift_line" : 726
     }
   ],
   "tools_used" : [

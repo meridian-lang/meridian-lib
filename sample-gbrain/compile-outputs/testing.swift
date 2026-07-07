@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum Testing {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct TestingInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -599,8 +599,30 @@ public struct TestingInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "TestingInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L82:C0") {
-            // L82
+        if __meridianShouldRun("progress:0.0:L61:C0") {
+            // L61
+            // make sure Every skill directory has a  file
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("SKILL.md"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.0:L61:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L62:C0") {
+            // L62
+            try await runtime.assert((((state.get("`skill.md`"))?.asList ?? []).allSatisfy { __e in (__e.member("`skill.md`HasValidYamlFrontmatter(`name`,`description`)") != nil) }), message: "Expected Every `SKILL.md` has valid YAML frontmatter (`name`, `description`)")
+            try await runtime.checkpoint(label: "progress:0.1:L62:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L63:C0") {
+            // L63
+            try await runtime.assert((((state.get("`skill.md`"))?.asList ?? []).allSatisfy { __e in (__e.member("`skill.md`HasRequiredSectionsPer`test/skillsConformance.test.ts`") != nil) }), message: "Expected Every `SKILL.md` has required sections per `test/skills-conformance.test.ts`")
+            try await runtime.checkpoint(label: "progress:0.2:L63:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.3:L81:C0") {
+            // L81
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -608,28 +630,68 @@ public struct TestingInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.0:L82:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.3:L81:C0", state: state.snapshot())
         }
-        // L118
-        let __meridianProseResults_L118 = try await runtime.executeProsePlan(
+        // L117
+        let __meridianProseResults_L117 = try await runtime.executeProsePlan(
             prose: "Decide which case below applies and carry out its action:\n- when Tier is Unit, What it runs is `bun test` (deterministic, zero external calls), Wall time is <2s, Every commit\n- when Tier is Evals, What it runs is LLM-judge or quality evals, Wall time is ~60s, Daily\n- when Tier is Integration, What it runs is E2E tests against real Postgres, Wall time is ~5m, Pre-ship + nightly\n- when Tier is System health, What it runs is Disk / memory / CPU / service liveness, Wall time is <10s, Daily",
             snapshot: state.snapshot(),
             scopedTools: ["page.list", "page.search", "shell.run"]
         )
-        for (__key, __value) in __meridianProseResults_L118 {
+        for (__key, __value) in __meridianProseResults_L117 {
             state.bind(__key, __value)
         }
-        if __meridianShouldRun("progress:0.2:L262:C0") {
-            // L262
-            // Track results in  for trend tracking
+        if __meridianShouldRun("progress:0.5:L136:C0") {
+            // L136
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
-                    "command": .string("~/.gbrain/test-state.json"),
+                    "command": .string("bun test 2>&1"),
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.2:L262:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.5:L136:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.6:L148:C0") {
+            // L148
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("bun test --filter eval 2>&1"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.6:L148:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.7:L172:C0") {
+            // L172
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("git log --oneline --since=\"24 hours ago\""),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.7:L172:C0", state: state.snapshot())
+        }
+        // L177
+        for (__meridianLoopIndex_0_8, failingTest) in (state.get("failingtests")?.asList ?? []).enumerated() {
+            let __meridianLoopLabel_0_8 = "progress:0.8:iteration:\(__meridianLoopIndex_0_8)"
+            if __meridianShouldRun(__meridianLoopLabel_0_8) {
+            state.bind("failingTest", failingTest)
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_8, state: state.snapshot())
+            }
+        }
+
+        // L233
+        let __meridianProseResults_L233 = try await runtime.executeProsePlan(
+            prose: "follow the 7. Auto-fix protocol — steps 2 guidance",
+            snapshot: state.snapshot(),
+            scopedTools: ["page.list", "page.search", "shell.run"],
+            guidance: "Test was skipped with a TODO → don't un-skip without understanding why\nIf uncertain, check the commit message that changed the code, check\nif there's a related PR or conversation, and ask the user if still unclear\nTrack results in `~/.gbrain/test-state.json` for trend tracking:"
+        )
+        for (__key, __value) in __meridianProseResults_L233 {
+            state.bind(__key, __value)
         }
 
         await runtime.complete(reason: nil)

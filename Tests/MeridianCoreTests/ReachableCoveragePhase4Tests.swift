@@ -48,7 +48,7 @@ struct ReachableCoveragePhase4Tests {
 
     @Test("RuleAnalyzer classifies all five rule shapes and rejects others")
     func ruleClassification() {
-        let a = RuleAnalyzer(trace: .silent())
+        let a = RuleAnalyzer(trace: .silent(), symbols: nil)
         func kindOf(_ text: String) -> String {
             guard let r = a.classify(RuleAST(text: text, sourceLine: 1)) else { return "nil" }
             switch r {
@@ -56,6 +56,7 @@ struct ReachableCoveragePhase4Tests {
             case .parameterGuard:  return "parameterGuard"
             case .precondition:    return "precondition"
             case .trigger:         return "trigger"
+            case .unsupportedTriggerCondition: return "unsupportedTriggerCondition"
             case .permission:      return "permission"
             }
         }

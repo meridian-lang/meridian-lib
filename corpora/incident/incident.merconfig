@@ -1,0 +1,198 @@
+=== vocabulary ===
+An alert is a kind of signal.
+A service is a kind of system.
+An incident is a kind of process.
+A deploy is a kind of event.
+A runbook is a kind of artifact.
+An oncall engineer is a kind of role.
+An SLO is a kind of metric.
+A postmortem is a kind of artifact.
+A status update is a kind of event.
+
+An alert has a name, a severity, a status, a service name, and a fired at.
+An alert can be firing or acknowledged or resolved, called the lifecycle.
+A service has a name, a status, an owner, and an open incident count.
+An incident has a number, a severity, a status, a service name, and an opened at.
+A deploy has a version, a status, and a deployed at.
+A runbook has a name, a service name, and a url.
+An oncall engineer has a name and a region.
+An SLO has a name, a target, and a current value.
+A postmortem has an incident number, a status, and a summary.
+A status update has a message and a posted at.
+
+Definition: an alert is critical if its severity is "critical".
+Definition: an alert is stale if its fired at is within the last 15 minutes.
+Definition: a service is degraded if its status is "degraded".
+Definition: a deploy is unhealthy if its status is "failed".
+Definition: an incident is high severity if its severity is "sev1" or its severity is "sev2".
+Definition: an incident is open if its status is "open".
+Definition: an SLO is breached if its current value is less than its target.
+Definition: an alert is actionable if it is critical and its status is not "resolved".
+
+Firing relates a service to an alert.
+Firing is read via the alert.list tool.
+Ownership relates an oncall engineer to a service.
+Ownership is read via the oncall.roster tool.
+Coverage relates a runbook to a service.
+Coverage is read via the runbook.lookup tool.
+
+The verb to page (it pages, it is paged) means the ownership relation.
+The verb to own (it owns, it is owned) means the ownership relation.
+The verb to cover (it covers, it is covered) means the coverage relation.
+
+To fetch firing alerts:
+  bind alerts = invoke alert.list with status = "firing".
+
+To fetch open incidents:
+  bind incidents = invoke incident.list with status = "open".
+
+To fetch services:
+  bind services = invoke service.list.
+
+To fetch runbooks:
+  bind runbooks = invoke runbook.list.
+
+To fetch unhealthy deploys:
+  bind deploys = invoke deploy.list with status = "failed".
+
+To page the oncall engineer for an alert:
+  invoke page.send with alert = the alert.
+
+To acknowledge an alert:
+  invoke page.ack with alert = the alert.
+
+To roll back a deploy:
+  invoke deploy.rollback with deploy = the deploy.
+
+To check the health of a service:
+  invoke service.healthcheck with service = the service.
+
+To open an incident for an alert:
+  bind incident = invoke incident.open with alert = the alert.
+
+To close an incident:
+  invoke incident.close with incident = the incident.
+
+To escalate an incident:
+  invoke incident.escalate with incident = the incident.
+
+To post a status update for an incident:
+  bind status update = invoke status.post with incident = the incident.
+
+To look up the runbook for a service:
+  bind runbook = invoke runbook.lookup with service = the service.
+
+To publish a postmortem for an incident:
+  bind postmortem = invoke postmortem.publish with incident = the incident.
+
+=== constants ===
+
+The slo error budget threshold is 0.1.
+The escalation cooldown is 10 minutes.
+The maximum page attempts is 3.
+
+=== instances ===
+
+There is a service called pagerduty service:
+  name = "pagerduty"
+  status = "active"
+  owner = "sre-platform"
+  open incident count = 0
+
+There is a service called statuspage service:
+  name = "statuspage"
+  status = "active"
+  owner = "sre-platform"
+  open incident count = 0
+
+=== language ===
+Comparison synonyms:
+  breaches = is less than
+  spikes above = is more than
+  matches = is
+Duration synonyms:
+  oncall shift = 8 hours
+Assertion synonyms:
+  confirm
+  guarantee that
+
+=== tools ===
+List Alerts
+===========
+-- List alerts by status.
+~ alert.list(status: String) : List
+
+List Incidents
+==============
+-- List incidents by status.
+~ incident.list(status: String) : List
+
+List Services
+=============
+-- List all services.
+~ service.list() : List
+
+List Runbooks
+=============
+-- List all runbooks.
+~ runbook.list() : List
+
+List Deploys
+============
+-- List deploys by status.
+~ deploy.list(status: String) : List
+
+Send Page
+=========
+-- Page the oncall engineer for an alert.
+~ page.send(alert: Alert) : Boolean
+
+Acknowledge Page
+================
+-- Acknowledge a page for an alert.
+~ page.ack(alert: Alert) : Boolean
+
+Rollback Deploy
+===============
+-- Roll back a deploy.
+~ deploy.rollback(deploy: Deploy) : Boolean
+
+Service Healthcheck
+====================
+-- Check the health of a service.
+~ service.healthcheck(service: Service) : Boolean
+
+Open Incident
+=============
+-- Open an incident for a firing alert.
+~ incident.open(alert: Alert) : Incident
+
+Close Incident
+==============
+-- Close a resolved incident.
+~ incident.close(incident: Incident) : Boolean
+
+Escalate Incident
+=================
+-- Escalate an open incident.
+~ incident.escalate(incident: Incident) : Boolean
+
+Post Status Update
+===================
+-- Post a status update for an incident.
+~ status.post(incident: Incident) : StatusUpdate
+
+Lookup Runbook
+==============
+-- Look up the runbook for a service.
+~ runbook.lookup(service: Service) : Runbook
+
+Publish Postmortem
+==================
+-- Publish a postmortem for a closed incident.
+~ postmortem.publish(incident: Incident) : Postmortem
+
+Oncall Roster
+=============
+-- Look up the oncall engineer covering a service.
+~ oncall.roster(service: Service) : OncallEngineer

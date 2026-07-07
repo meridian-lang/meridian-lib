@@ -1,0 +1,359 @@
+{
+  "constants" : {
+    "dunning window" : 604800,
+    "high value threshold" : {
+      "amount" : 5000,
+      "currency" : "USD"
+    },
+    "maximum retry count" : 3
+  },
+  "instances_required" : [
+    {
+      "kind" : "mailer server",
+      "name" : "billing mailer"
+    },
+    {
+      "kind" : "payment processor",
+      "name" : "erp gateway"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "in good standing",
+      "function" : "meridianDef_Customer_inGoodStanding",
+      "kind" : "customer",
+      "line" : 46
+    },
+    {
+      "adjective" : "overdue",
+      "function" : "meridianDef_Invoice_overdue",
+      "kind" : "invoice",
+      "line" : 42
+    },
+    {
+      "adjective" : "severely overdue",
+      "function" : "meridianDef_Invoice_severelyOverdue",
+      "kind" : "invoice",
+      "line" : 47
+    },
+    {
+      "adjective" : "unpaid",
+      "function" : "meridianDef_Invoice_unpaid",
+      "kind" : "invoice",
+      "line" : 41
+    },
+    {
+      "adjective" : "blocked",
+      "function" : "meridianDef_Order_blocked",
+      "kind" : "order",
+      "line" : 38
+    },
+    {
+      "adjective" : "fulfilled",
+      "function" : "meridianDef_Order_fulfilled",
+      "kind" : "order",
+      "line" : 39
+    },
+    {
+      "adjective" : "high value",
+      "function" : "meridianDef_Order_highValue",
+      "kind" : "order",
+      "line" : 45
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Order_open",
+      "kind" : "order",
+      "line" : 37
+    },
+    {
+      "adjective" : "released",
+      "function" : "meridianDef_Order_released",
+      "kind" : "order",
+      "line" : 40
+    },
+    {
+      "adjective" : "short",
+      "function" : "meridianDef_Product_short",
+      "kind" : "product",
+      "line" : 43
+    },
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_PurchaseOrder_pending",
+      "kind" : "purchase order",
+      "line" : 44
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 53,
+      "name" : "collection",
+      "right_cardinality" : "one",
+      "right_kind" : "a payment",
+      "via" : "payment.collect"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 57,
+      "name" : "escalation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dunning notice",
+      "via" : "dunning.notify"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 49,
+      "name" : "fulfillment",
+      "right_cardinality" : "one",
+      "right_kind" : "a shipment",
+      "via" : "shipment.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 51,
+      "name" : "invoicing",
+      "right_cardinality" : "one",
+      "right_kind" : "an invoice",
+      "via" : "invoice.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a product",
+      "line" : 55,
+      "name" : "replenishment",
+      "right_cardinality" : "one",
+      "right_kind" : "a purchase order",
+      "via" : "purchase_order.create"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Route high-value orders through an account-manager approval gate before shipment.",
+    "name" : "order approval",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 11,
+        "text" : "When this applies"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 15,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 17,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 29,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 26,
+        "text" : "Note"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 27,
+        "text" : "Publish"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When this applies",
+        "line" : 11,
+        "lines" : [
+          "\"approve high value orders\"",
+          "\"route orders for approval\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 15,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 17,
+        "lines" : [
+          "fetch open orders",
+          "for each order whose total amount exceeds the high value threshold:",
+          "wait for approval of the order from an account manager",
+          "ask the user to choose between \"ship\", \"hold\"",
+          "if the choice is \"ship\",",
+          "ship the order,",
+          "otherwise,",
+          "Note: \"order held pending manual review\"",
+          "Publish: \"high value order approval pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 29,
+        "lines" : [
+          "The account manager sees one approval request per high-value order, with a",
+          "ship\/hold decision recorded for each"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"approve high value orders\"\n\"route orders for approval\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "collect",
+      "line" : 62,
+      "past_participle" : "collected",
+      "relation" : "collection",
+      "third_person" : "collects"
+    },
+    {
+      "base" : "escalate",
+      "line" : 64,
+      "past_participle" : "escalated",
+      "relation" : "escalation",
+      "third_person" : "escalates"
+    },
+    {
+      "base" : "fulfill",
+      "line" : 60,
+      "past_participle" : "fulfilled",
+      "relation" : "fulfillment",
+      "third_person" : "fulfills"
+    },
+    {
+      "base" : "invoice",
+      "line" : 61,
+      "past_participle" : "invoiced",
+      "relation" : "invoicing",
+      "third_person" : "invoices"
+    },
+    {
+      "base" : "replenish",
+      "line" : 63,
+      "past_participle" : "replenished",
+      "relation" : "replenishment",
+      "third_person" : "replenishes"
+    }
+  ],
+  "source_files" : [
+    "orderapproval.meri",
+    "erp.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 67,
+      "swift_line" : 555
+    },
+    {
+      "meridian_line" : 20,
+      "swift_line" : 566
+    },
+    {
+      "meridian_line" : 21,
+      "swift_line" : 573
+    },
+    {
+      "meridian_line" : 22,
+      "swift_line" : 578
+    },
+    {
+      "meridian_line" : 22,
+      "swift_line" : 589
+    },
+    {
+      "meridian_line" : 23,
+      "swift_line" : 594
+    },
+    {
+      "meridian_line" : 85,
+      "swift_line" : 597
+    },
+    {
+      "meridian_line" : 26,
+      "swift_line" : 610
+    },
+    {
+      "meridian_line" : 27,
+      "swift_line" : 626
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 665
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 670
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 710
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 715
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "order approval",
+      "swift_struct" : "OrderApproval"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when approveHighValueOrders fires",
+      "swift_struct" : "WhenApprovehighvalueordersFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when routeOrdersApproval fires",
+      "swift_struct" : "WhenRouteordersapprovalFires"
+    }
+  ]
+}

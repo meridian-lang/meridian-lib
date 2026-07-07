@@ -36,13 +36,16 @@ use judgment to follow the Purpose — steps guidance:
 - The decision is reproducible: invoking brain-taxonomist twice on the same content produces the same recommended path.
 - Ambiguous cases surface to the user via `skills/ask-user/` rather than silently picking a default.
 - Per-source overrides via `--source <id>` are honored — multi-brain users (Persona B) get a different recommendation per source if their packs diverge.
-- When no matching `page_types[]` entry exists in the active pack, the skill signals to EIIRP Phase 3 (SCHEMA CHECK) rather than picking the closest-fitting fallback.
 
-
-### Contract — steps (( role: reference ))
+### Contract — steps
 
 > This skill guarantees:
 - Every new page is filed at the path determined by the ACTIVE schema pack — never against a hardcoded directory table baked into this skill.
+
+### Contract — steps 2
+
+- When no matching `page_types[]` entry exists in the active pack, the skill signals to EIIRP Phase 3 (SCHEMA CHECK) rather than picking the closest-fitting fallback.
+
 ## Critical: this skill reads the ACTIVE schema pack as data (( role: reference ))
 
 This is the single-source-of-truth principle (D9 from the v0.39 plan-eng-review).
@@ -139,10 +142,7 @@ type is needed and let the schema-pack cathedral handle the proposal flow.
 - `repo-architecture` — delegates the filing decision to this skill.
 - `book-mirror` — after generating a mirror, files it via brain-taxonomist.
 
-## Periodic Drift Detection (( role: reference ))
-
-When `schema_pack_consistency` warns at >10% untyped, run the EIIRP
-Phase 3 SCHEMA CHECK flow to surface candidate types via `schema detect`.
+## Periodic Drift Detection
 
 
 ### Periodic Drift Detection — steps
@@ -154,6 +154,9 @@ gbrain schema review-orphans --json
 # What's the overall health?
 gbrain doctor --json | jq '.checks[] | select(.name == "schema_pack_consistency")'
 ```
+
+When `schema_pack_consistency` warns at >10% untyped, run the EIIRP
+Phase 3 SCHEMA CHECK flow to surface candidate types via `schema detect`.
 
 ## Output Format (( role: template ))
 
@@ -202,14 +205,11 @@ When the active pack has NO matching type, signal to EIIRP Phase 3
 
 ### Hard Rules — steps (( role: reference ))
 
-- Every decision goes
-  through `gbrain schema show --json`. The active pack is canonical.
+- Never hardcode a directory table in this skill. Every decision goes through `gbrain schema show --json`. The active pack is canonical.
 
 ### Hard Rules — steps 2 (( role: reference ))
 
-- EIIRP's Phase 3 produces suggestions with
-  confidence < 0.6 that brain-taxonomist must surface to the user rather
-  than auto-apply. Don't silently promote a low-confidence schema delta.
+- EIIRP's Phase 3 produces suggestions with confidence < 0.6 that brain-taxonomist must surface to the user rather than auto-apply. Don't silently promote a low-confidence schema delta.
 
 ## Changelog (( role: reference ))
 

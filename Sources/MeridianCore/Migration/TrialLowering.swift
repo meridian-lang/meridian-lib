@@ -114,6 +114,17 @@ struct TrialLowering {
             guard !block.statements.isEmpty else { return .failure([]) }
             let lowerer = ASTToIR(symbols: knowledge.symbols, sourceFile: "<probe>", trace: .silent(),
                                   lexicon: knowledge.lexicon, fallbackPolicy: .strict, rulebook: knowledge.rulebook)
+            // `lowerBlock` alone never runs the top-level `lower(_ file:)` setup
+            // that materializes merconfig-declared adjectives
+            // (`symbols.pendingDefinitions`) into `symbols.definitions` — so a
+            // condition using a real vocabulary adjective (e.g. "any short
+            // products" against `Definition: a product is short if …`) would
+            // spuriously fail to lower here with "unknown adjective", even
+            // though a real compile (which always goes through `lower(_
+            // file:)` first) resolves it fine. Idempotent across repeated probe
+            // calls: `registerDefinitions` treats a same-function-name
+            // re-register as benign.
+            try lowerer.registerDefinitions([])
             _ = try lowerer.lowerBlock(block, mode: .strict, depth: 0)
             return .success
         } catch let error as CompilerError {

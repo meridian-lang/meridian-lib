@@ -1,0 +1,37 @@
+---
+vocabulary: governance.merconfig
+rulebook: governance.merrules
+---
+
+# permissions.meridian
+# Flat-path regression coverage for the Phase-8 rule desugar (top-of-file
+# rules, no headings). The same rule shapes now express in-section inside
+# corpora/governance/skills/*.meri (grantaccess.meri, reviewrequests.meri,
+# escalatepending.meri) — this fixture keeps the original flat path exercised
+# too. See docs/13_SKILL_MD_PORTING.md and AGENTS.md §6 pitfall #15.
+
+# Rules
+
+A user with clearance "denied" must not access classified resources.
+
+A user with role admin may access classified resources.
+
+A reviewer may approve access requests whose queue position is at most 3.
+
+An access request for a classified resource must be approved by a security officer before the grant.
+
+When an access request is flagged as overdue, escalate the access request.
+
+# Workflows
+
+To let a user access a resource:
+  invoke access.grant with user = the user, resource = the resource.
+
+To have a reviewer approve an access request:
+  invoke audit.log with request = the access request.
+
+To grant an access request for a resource:
+  invoke access.grant with user = the access request's requestor, resource = the resource.
+
+To escalate an overdue access request:
+  invoke audit.log with request = the access request.

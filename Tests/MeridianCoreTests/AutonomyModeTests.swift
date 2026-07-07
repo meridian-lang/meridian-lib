@@ -51,7 +51,7 @@ struct AutonomyModeTests {
         #expect(autonomy.unless != nil)
     }
 
-    @Test("unmatched autonomy body lowers to autonomous ProseStepIR")
+    @Test("unmatched autonomy body lowers to autonomous AIAutonomyIR")
     func lowersAutonomyProseStep() throws {
         let symbols = SymbolTable()
         let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
@@ -60,24 +60,22 @@ struct AutonomyModeTests {
         """)
         let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
 
-        guard case .proseStep(let step) = workflows[0].body.statements.first else {
-            Issue.record("Expected autonomous ProseStepIR")
+        guard case .aiAutonomy(let step) = workflows[0].body.statements.first else {
+            Issue.record("Expected autonomous AIAutonomyIR")
             return
         }
-        #expect(step.dispatchMode == .autonomousLoop)
-        #expect(step.autonomy?.replanAfterFailures == 2)
+        #expect(step.autonomy.replanAfterFailures == 2)
     }
 
-    @Test("autonomous ProseStepIR emits executeAutonomousLoop")
+    @Test("AIAutonomyIR emits executeAutonomousLoop")
     func autonomyCodegen() throws {
         let workflow = IRWorkflow(
             name: "Stabilize",
             parameters: [],
             body: IRBlock(statements: [
-                .proseStep(ProseStepIR(
+                .aiAutonomy(AIAutonomyIR(
                     text: "keep fixing",
                     scopedTools: ["ci.fix"],
-                    dispatchMode: .autonomousLoop,
                     autonomy: AutonomyConfigIR(
                         until: .comparison(.identifierRef(name: "done"), .equal, .literal(.boolean(true))),
                         unless: .comparison(.identifierRef(name: "blocked"), .equal, .literal(.boolean(true))),

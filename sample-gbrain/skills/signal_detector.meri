@@ -62,13 +62,16 @@ This skill guarantees:
 
 ### Phase 1: Idea/Observation Detection (PRIMARY) (( role: reference ))
 
-When the user expresses a novel thought, observation, thesis, or framework:
 - If it's the user's **original thinking** (they generated it) → create/update `originals/{slug}`
 - If it's a **world concept** they're referencing → create/update `concepts/{slug}`
 - If it's a **product or business idea** → create/update `ideas/{slug}`
 
 
-### Phase 1: Idea/Observation Detection (PRIMARY) — steps (( role: reference ))
+### Phase 1: Idea/Observation Detection (PRIMARY) — steps
+
+When the user expresses a novel thought, observation, thesis, or framework:
+
+### Phase 1: Idea/Observation Detection (PRIMARY) — steps 2 (( role: reference ))
 
 The user's language IS the insight. Don't paraphrase.
 

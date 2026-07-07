@@ -226,7 +226,7 @@ extension DiagnosticCode {
     public static let unattachedRule = DiagnosticCode(
         id: "MER3006", title: "unattached rule",
         explanation: "A rule parsed cleanly but matched no workflow's action surface. Align the rule's verb with a workflow name/parameter, or set `allow-fallbacks: unattached-rules`.",
-        kind: .other, decision: DecisionRef("D-DX-2"))
+        kind: .other, decision: DecisionRef("D-DX-6"))
 
     public static let unresolvedTriggerAction = DiagnosticCode(
         id: "MER3007", title: "unresolved trigger action",
@@ -270,7 +270,12 @@ extension DiagnosticCode {
 
     public static let unlowerableRulePredicate = DiagnosticCode(
         id: "MER3016", title: "unlowerable rule predicate",
-        explanation: "A rule body's condition used an expression shape (a quantifier, relational traversal, data table, or a parse-error carrier) that a rule predicate cannot express. Rewrite the condition as a direct comparison, boolean combination, or checkable adjective.",
+        explanation: "A rule body's condition used an expression shape (a quantifier, relational traversal, data table, or a parse-error carrier) that a rule predicate cannot express — permanently, by design, not a temporary gap. If the check can be restated as a direct comparison, boolean combination, or checkable adjective, rewrite it that way. Otherwise it cannot be an in-section rule at all: remove the rule line and add an equivalent `if`/`assert …`/`for each` statement to the skill's own `## Workflow` (or `## Rules`) body instead, where the full expression grammar is supported without restriction. Example: `A patient whose active prescriptions include a contraindicated drug must not receive the new order.` → `## Workflow` `if any of the patient's active prescriptions is contraindicated: stop with \"cannot administer: contraindicated prescription\".` (the `if any of … is …` shape already used by `corpora/clinical/skills/triagepatient.meri`).",
+        kind: .other, decision: DecisionRef("D-DX-2"))
+
+    public static let unsupportedTriggerCondition = DiagnosticCode(
+        id: "MER3017", title: "unsupported trigger condition",
+        explanation: "A `when … , do X` trigger's condition named a recognized, checkable predicate (a comparison, emptiness/temporal-window check, duration mention, quantifier, relation traversal, description, aggregate, superlative, table lookup, or declared-verb predicate) rather than opaque externally-raised-event prose. Meridian's `when` trigger compiles to an external-event stub with no scheduler/poller to re-evaluate such a predicate, so it would never actually fire. Delete the rule line and either (1) move the check into the skill's own `## Workflow`/`## Rules` body as a real `if …`/`assert …`/`wait until …` statement, or (2) reword the condition itself as an opaque event/signal a host raises and keep it as a `When …, …` trigger. Example (fix 2): `When an order has been on hold for more than 7 days, escalate the order.` → `When an order is flagged as stale, escalate the order.`",
         kind: .other, decision: DecisionRef("D-DX-2"))
 
     // MARK: MER4xxx — codegen
@@ -330,7 +335,7 @@ extension DiagnosticCode {
         .unresolvedTriggerAction, .toolBackedInlineDisallowed,
         .ambiguousEntryWorkflow, .proseDisallowed, .commandHoleOutOfScope,
         .quantifierSemantic, .ambiguousAnaphora, .invalidEnumDefault,
-        .unlowerableRulePredicate,
+        .unlowerableRulePredicate, .unsupportedTriggerCondition,
         .codegenError,
         .swiftFormatFailed, .vocabularyDeclarationUnrecognized, .rulebookSectionUnknown,
         .unknownMerconfigSection, .malformedRulebookEntry, .unrecognizedBlockProperty,

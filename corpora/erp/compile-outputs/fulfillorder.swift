@@ -45,44 +45,17 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Invoice_overdue(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isWithinPast(__subject.member("dueDate"), Duration.seconds(86400))
-}
-
-private func meridianDef_Invoice_unpaid(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.gt(__subject.member("balance"), .number(Decimal(0)))
-}
-
-private func meridianDef_Order_blocked(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("blocked"))
-}
-
-private func meridianDef_Order_fulfilled(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("fulfilled"))
-}
-
-private func meridianDef_Order_open(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("open"))
-}
-
-private func meridianDef_Product_short(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.lt(__subject.member("quantityOnHand"), __subject.member("reorderPoint") ?? .null)
-}
-
-private func meridianDef_PurchaseOrder_pending(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("pending"))
-}
-
 public enum Fulfillorder {
 
 // MARK: - Domain types
+
+public enum CustomerStatus: String, Hashable, Codable, Sendable {
+    case active, suspended, closed
+}
+
+public enum OrderLifecycle: String, Hashable, Codable, Sendable {
+    case draft, blocked, fulfilled, cancelled
+}
 
 public protocol OrderKind: MeridianThing {
     var number: String { get }
@@ -90,6 +63,7 @@ public protocol OrderKind: MeridianThing {
     var totalAmount: String { get }
     var customerId: String { get }
     var updatedAt: String { get }
+    var lifecycle: OrderLifecycle { get }
 }
 
 public struct Order: OrderKind {
@@ -99,6 +73,7 @@ public struct Order: OrderKind {
     public var totalAmount: String
     public var customerId: String
     public var updatedAt: String
+    public var lifecycle: OrderLifecycle
 
     public init(
         id: String = "",
@@ -106,7 +81,8 @@ public struct Order: OrderKind {
         status: String = "",
         totalAmount: String = "",
         customerId: String = "",
-        updatedAt: String = ""
+        updatedAt: String = "",
+        lifecycle: OrderLifecycle = .draft
     ) {
         self.id = id
         self.number = number
@@ -114,6 +90,7 @@ public struct Order: OrderKind {
         self.totalAmount = totalAmount
         self.customerId = customerId
         self.updatedAt = updatedAt
+        self.lifecycle = lifecycle
     }
 }
 
@@ -145,25 +122,29 @@ public struct OrderItem: OrderItemKind {
 public protocol CustomerKind: MeridianThing {
     var customerId: String { get }
     var name: String { get }
-    var status: String { get }
+    var status: CustomerStatus { get }
+    var creditLimit: Money { get }
 }
 
 public struct Customer: CustomerKind {
     public var id: String
     public var customerId: String
     public var name: String
-    public var status: String
+    public var status: CustomerStatus
+    public var creditLimit: Money
 
     public init(
         id: String = "",
         customerId: String = "",
         name: String = "",
-        status: String = ""
+        status: CustomerStatus = .active,
+        creditLimit: Money = Money(amount: 0, currency: "USD")
     ) {
         self.id = id
         self.customerId = customerId
         self.name = name
         self.status = status
+        self.creditLimit = creditLimit
     }
 }
 
@@ -371,6 +352,175 @@ public struct TriggerPhrase: TriggerPhraseKind {
     }
 }
 
+public protocol AccountManagerKind: MeridianThing {
+    var name: String { get }
+    var region: String { get }
+}
+
+public struct AccountManager: AccountManagerKind {
+    public var id: String
+    public var name: String
+    public var region: String
+
+    public init(
+        id: String = "",
+        name: String = "",
+        region: String = ""
+    ) {
+        self.id = id
+        self.name = name
+        self.region = region
+    }
+}
+
+public protocol DunningNoticeKind: MeridianArtifact {
+    var reference: String { get }
+    var status: String { get }
+    var sentAt: String { get }
+}
+
+public struct DunningNotice: DunningNoticeKind {
+    public var id: String
+    public var reference: String
+    public var status: String
+    public var sentAt: String
+
+    public init(
+        id: String = "",
+        reference: String = "",
+        status: String = "",
+        sentAt: String = ""
+    ) {
+        self.id = id
+        self.reference = reference
+        self.status = status
+        self.sentAt = sentAt
+    }
+}
+
+public protocol MailerServerKind: MeridianSystem {
+    var host: String { get }
+    var port: String { get }
+    var authType: String { get }
+}
+
+public struct MailerServer: MailerServerKind {
+    public var id: String
+    public var host: String
+    public var port: String
+    public var authType: String
+
+    public init(
+        id: String = "",
+        host: String = "",
+        port: String = "",
+        authType: String = ""
+    ) {
+        self.id = id
+        self.host = host
+        self.port = port
+        self.authType = authType
+    }
+}
+
+public protocol PaymentProcessorKind: MeridianService {
+    var apiEndpoint: String { get }
+    var apiKey: String { get }
+}
+
+public struct PaymentProcessor: PaymentProcessorKind {
+    public var id: String
+    public var apiEndpoint: String
+    public var apiKey: String
+
+    public init(
+        id: String = "",
+        apiEndpoint: String = "",
+        apiKey: String = ""
+    ) {
+        self.id = id
+        self.apiEndpoint = apiEndpoint
+        self.apiKey = apiKey
+    }
+}
+
+
+public struct Constants: Sendable {
+    public let highValueThreshold: Money = Money(amount: Decimal(5000), currency: "USD")
+    public let dunningWindow: Duration = Duration.seconds(604800)
+    public let maximumRetryCount: Decimal = Decimal(3)
+}
+
+private static let constants = Constants()
+
+public struct Instances: Sendable {
+    public let billingMailer: Value = .record([
+        "host": .string(ProcessInfo.processInfo.environment["SMTP_HOST"] ?? ""),
+        "port": .number(Decimal(587)),
+        "authType": .string("tls"),
+    ])
+    public let erpGateway: Value = .record([
+        "apiEndpoint": .string("https://payments.example-erp.internal/v1"),
+        "apiKey": .string(ProcessInfo.processInfo.environment["ERP_GATEWAY_API_KEY"] ?? ""),
+    ])
+}
+
+private static let instances = Instances()
+
+private static func meridianDef_Customer_inGoodStanding(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return (MeridianComparison.eq(__subject.member("status"), .string("active"))) && (MeridianComparison.gt(__subject.member("creditLimit"), .number(Decimal(0))))
+}
+
+private static func meridianDef_Invoice_overdue(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isWithinPast(__subject.member("dueDate"), Duration.seconds(86400))
+}
+
+private static func meridianDef_Invoice_severelyOverdue(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return (MeridianComparison.isWithinPast(__subject.member("dueDate"), Duration.seconds(86400))) && (MeridianComparison.gt(__subject.member("balance"), Value.from(constants.highValueThreshold)))
+}
+
+private static func meridianDef_Invoice_unpaid(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.gt(__subject.member("balance"), .number(Decimal(0)))
+}
+
+private static func meridianDef_Order_blocked(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("blocked"))
+}
+
+private static func meridianDef_Order_fulfilled(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("fulfilled"))
+}
+
+private static func meridianDef_Order_highValue(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.gt(__subject.member("totalAmount"), Value.from(constants.highValueThreshold))
+}
+
+private static func meridianDef_Order_open(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("open"))
+}
+
+private static func meridianDef_Order_released(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("fulfilled"))
+}
+
+private static func meridianDef_Product_short(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.lt(__subject.member("quantityOnHand"), __subject.member("reorderPoint") ?? .null)
+}
+
+private static func meridianDef_PurchaseOrder_pending(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("pending"))
+}
 
 public struct FulfillOrder: MeridianWorkflow {
     public let runtime: Runtime
@@ -397,10 +547,17 @@ public struct FulfillOrder: MeridianWorkflow {
             if target == label { __meridianResumeTarget = nil }
             return false
         }
+        let constants = Constants()
+        let instances = Instances()
         await runtime.workflowStarted(workflowName: "FulfillOrder", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L21:C0") {
-            // L21
+        if __meridianShouldRun("progress:0.0:L37:C0") {
+            // L37
+            try await runtime.assert((((state.get("order"))?.asList ?? []).filter { __e in (meridianDef_Order_released(__e)) }.allSatisfy { __e in (__e.member("orderHasInventoryReserved") != nil) }), message: "Expected Every released order has inventory reserved")
+            try await runtime.checkpoint(label: "progress:0.0:L37:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.1:L24:C0") {
+            // L24
             // capture pending warehouse work
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -409,10 +566,10 @@ public struct FulfillOrder: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.0:L21:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.1:L24:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.1:L49:C0") {
-            // L49
+        if __meridianShouldRun("progress:0.2:L67:C0") {
+            // L67
             let orders = try await runtime.invoke(
                 tool: "order.list",
                 args: [
@@ -421,20 +578,20 @@ public struct FulfillOrder: MeridianWorkflow {
             )
             state.bind("orders", orders)
 
-            try await runtime.checkpoint(label: "progress:0.1:L49:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.2:L67:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.2:L23:C0") {
-            // L23
+        if __meridianShouldRun("progress:0.3:L26:C0") {
+            // L26
             try await runtime.assert((((state.get("orders"))?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("number")) }), message: "Expected all orders have a number")
-            try await runtime.checkpoint(label: "progress:0.2:L23:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.3:L26:C0", state: state.snapshot())
         }
-        // L24
-        for (__meridianLoopIndex_0_3, order) in (state.get("orders")?.asList ?? []).enumerated() {
-            let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
-            if __meridianShouldRun(__meridianLoopLabel_0_3) {
+        // L27
+        for (__meridianLoopIndex_0_4, order) in (state.get("orders")?.asList ?? []).enumerated() {
+            let __meridianLoopLabel_0_4 = "progress:0.4:iteration:\(__meridianLoopIndex_0_4)"
+            if __meridianShouldRun(__meridianLoopLabel_0_4) {
             state.bind("order", order)
-                if __meridianShouldRun("progress:0.3.body.0:L58:C0") {
-                    // L58
+                if __meridianShouldRun("progress:0.4.body.0:L76:C0") {
+                    // L76
                     let inventory = try await runtime.invoke(
                         tool: "inventory.reserve",
                         args: [
@@ -443,10 +600,25 @@ public struct FulfillOrder: MeridianWorkflow {
                     )
                     state.bind("inventory", inventory)
 
-                    try await runtime.checkpoint(label: "progress:0.3.body.0:L58:C0", state: state.snapshot())
+                    try await runtime.checkpoint(label: "progress:0.4.body.0:L76:C0", state: state.snapshot())
                 }
-                if __meridianShouldRun("progress:0.3.body.1:L67:C0") {
-                    // L67
+                // L29
+                if meridianDef_Order_highValue(state.get("order")) {
+                    if __meridianShouldRun("progress:0.4.body.1.then.0:L30:C0") {
+                        // L30
+                        try await runtime.wait(.approval(of: state.get("order") ?? .null, by: RoleRef(identifier: "an account manager")))
+                        try await runtime.checkpoint(label: "progress:0.4.body.1.then.0:L30:C0", state: state.snapshot())
+                    }
+                } else {
+                    if __meridianShouldRun("progress:0.4.body.1.else.0:L32:C0") {
+                        // L32
+                        try await runtime.assert(MeridianComparison.gt(state.get("order.totalAmount"), .number(Decimal(0))), message: "Expected the order's total amount is more than 0")
+                        try await runtime.checkpoint(label: "progress:0.4.body.1.else.0:L32:C0", state: state.snapshot())
+                    }
+                }
+
+                if __meridianShouldRun("progress:0.4.body.2:L85:C0") {
+                    // L85
                     let shipment = try await runtime.invoke(
                         tool: "shipment.create",
                         args: [
@@ -455,21 +627,21 @@ public struct FulfillOrder: MeridianWorkflow {
                     )
                     state.bind("shipment", shipment)
 
-                    try await runtime.checkpoint(label: "progress:0.3.body.1:L67:C0", state: state.snapshot())
+                    try await runtime.checkpoint(label: "progress:0.4.body.2:L85:C0", state: state.snapshot())
                 }
-                try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_4, state: state.snapshot())
             }
         }
 
-        if __meridianShouldRun("progress:0.4:L27:C0") {
-            // L27
+        if __meridianShouldRun("progress:0.5:L34:C0") {
+            // L34
             try await runtime.emit(
                 event: "erp.report",
                 payload: [
                     "message": .string("shipment release queue drained"),
                 ]
             )
-            try await runtime.checkpoint(label: "progress:0.4:L27:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.5:L34:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)
@@ -496,6 +668,8 @@ public struct WhenFulfillerpordersFires: MeridianWorkflow {
             if target == label { __meridianResumeTarget = nil }
             return false
         }
+        let constants = Constants()
+        let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenFulfillerpordersFires", parameters: [:])
 
         if __meridianShouldRun("progress:0.0:L1:C0") {
@@ -539,6 +713,8 @@ public struct WhenReleaseshipmentsFires: MeridianWorkflow {
             if target == label { __meridianResumeTarget = nil }
             return false
         }
+        let constants = Constants()
+        let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenReleaseshipmentsFires", parameters: [:])
 
         if __meridianShouldRun("progress:0.0:L1:C0") {

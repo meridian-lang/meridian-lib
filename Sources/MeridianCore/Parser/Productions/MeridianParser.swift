@@ -192,11 +192,17 @@ public struct MeridianParser {
         // A "sectioned document" is any file whose body carries `##`/`###`
         // headings. In such documents narrative sentences routinely begin with
         // "When …" / "A …" / "An …" ("When the user wants to save a thought,
-        // …"). Those are prose, not Meridian `When X, do Y` rules — so we never
-        // extract in-body rules from a sectioned doc. Triggers come from
-        // frontmatter `triggers:`; cross-cutting behaviour from rulebook
-        // conventions. A heading-less `.meridian`/`.meri` file is unaffected
-        // (byte-for-byte flat-procedure behaviour).
+        // …"), so the flat top-level `isRule` heuristic below (which fires on
+        // any leading article) stays off here — it would false-positive on
+        // ordinary prose. Instead, `SkillSectionBuilder` extracts Phase-8
+        // rules from *executable* sections precisely, by trialing each
+        // eligible line against `RuleAnalyzer.classify` (a real rule shape:
+        // `must not`/`may`/`must be … by … before`/`When …,`) rather than a
+        // "starts with a/an/when" guess — so rule sugar fires everywhere
+        // except explicitly non-executable sections (`(( role: reference ))`/
+        // `(( inert ))`) and `#`/`>` comments; prose is opt-in, not inferred.
+        // A heading-less `.meridian`/`.meri` file is unaffected (byte-for-byte
+        // flat-procedure behaviour, using the heuristic below directly).
         let hasHeadings = lines.contains { ($0.headingLevel ?? 0) > 0 }
 
         while i < lines.count {
@@ -342,6 +348,12 @@ public struct MeridianParser {
             dispatchPhrases = built.dispatchPhrases
             negativeDispatchPhrases = built.negativeDispatchPhrases
             toolsUsed = built.toolsUsed
+            // Sectioned rules join any flat top-level rules already collected
+            // above (the two paths are mutually exclusive per file — a
+            // sectioned document's `isRule` gate stays off — but both feed the
+            // same `MeridianFile.rules` carrier so `ASTToIR` classifies and
+            // injects them identically regardless of source shape).
+            rules.append(contentsOf: built.rules)
             let implicitName = implicit.pattern.displayText.lowercased()
             if workflows.contains(where: { $0.pattern.displayText.lowercased() == implicitName }) {
                 throw CompilerError.diagnostics([
@@ -372,6 +384,10 @@ public struct MeridianParser {
         let dispatchPhrases: [String]
         let negativeDispatchPhrases: [String]
         let toolsUsed: [String]
+        /// Phase-8 rules mined from executable sections (empty for a
+        /// heading-less file, where the flat top-level `isRule` check already
+        /// extracted rules before `buildImplicitWorkflow` ever runs).
+        let rules: [RuleAST]
     }
 
     private func buildImplicitWorkflow(
@@ -408,6 +424,7 @@ public struct MeridianParser {
         var dispatchPhrases: [String] = []
         var negativeDispatchPhrases: [String] = []
         var toolsUsed: [String] = []
+        var sectionRules: [RuleAST] = []
         if hasHeadings {
             let builder = SkillSectionBuilder(
                 symbols: symbols, lexicon: lexicon, trace: trace,
@@ -418,6 +435,7 @@ public struct MeridianParser {
             dispatchPhrases = result.dispatchPhrases
             negativeDispatchPhrases = result.negativeDispatchPhrases
             toolsUsed = result.toolsUsed
+            sectionRules = result.rules
         } else {
             effectiveBody = bodyLines
         }
@@ -432,7 +450,8 @@ public struct MeridianParser {
         return BuiltImplicit(workflow: workflow, sections: sections,
                              dispatchPhrases: dispatchPhrases,
                              negativeDispatchPhrases: negativeDispatchPhrases,
-                             toolsUsed: toolsUsed)
+                             toolsUsed: toolsUsed,
+                             rules: sectionRules)
     }
 
     private func frontmatterParameters(_ raw: String?, sourceLine: Int, file: String) throws -> [PhraseParameterAST] {

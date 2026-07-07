@@ -23,8 +23,17 @@ struct CorporaConformanceTests {
         return url
     }
 
+    /// Every corpus under `corpora/<name>/` that has a `skills/` directory of
+    /// migrated `.meri` output. Add a new corpus here (and to
+    /// `expectedFileCount` below) as soon as `generate-migration.swift` has
+    /// produced its `skills/*.meri` — do not leave it out until "later"; a
+    /// corpus outside this list is also outside `everySkillTypechecks`, and a
+    /// `swiftc`-invalid emission can ship silently for as long as it stays
+    /// unlisted (see IMPLEMENTATION_LOG.md's `ComparisonGrammar`/`whose`-clause
+    /// entry — that exact bug shipped in `incident/postmortem_render` while
+    /// this list only covered `erp`/`procedures`).
     static func corpora() throws -> [Corpus] {
-        try ["erp", "procedures"].map { name in
+        try ["erp", "procedures", "incident", "etl", "governance", "clinical"].map { name in
             let root = repoRoot().appendingPathComponent("corpora").appendingPathComponent(name)
             let vocabURL = root.appendingPathComponent("\(name).merconfig")
             let ruleURL = root.appendingPathComponent("\(name).merrules")
@@ -49,11 +58,27 @@ struct CorporaConformanceTests {
         }
     }
 
-    @Test("both synthetic corpora are present and complete")
+    /// Expected `skills/*.meri` + `RESOLVER.meri` file count per corpus. Wave 6
+    /// started every corpus at 8 skills + RESOLVER (9); the Corpora Complexity
+    /// & Coverage Expansion plan grows `erp`/`procedures` to 12 skills +
+    /// RESOLVER (13) as their vocabulary/skill enrichment lands.
+    /// `incident`/`etl`/`governance` are still at the original 8 + RESOLVER
+    /// (9) — bump this when any of them grows further.
+    static let expectedFileCount: [String: Int] = [
+        "erp": 13,
+        "procedures": 13,
+        "incident": 9,
+        "etl": 9,
+        "governance": 9,
+        "clinical": 9,
+    ]
+
+    @Test("every synthetic corpus is present and complete")
     func corporaPresent() throws {
         for corpus in try Self.corpora() {
-            #expect(corpus.files.count == 9,
-                    Comment(rawValue: "\(corpus.name) should have 8 skills + RESOLVER"))
+            let expected = Self.expectedFileCount[corpus.name] ?? 9
+            #expect(corpus.files.count == expected,
+                    Comment(rawValue: "\(corpus.name) should have \(expected - 1) skills + RESOLVER"))
             #expect(FileManager.default.fileExists(atPath: corpus.root.appendingPathComponent("migration-deviations/README.md").path))
             #expect(FileManager.default.fileExists(atPath: corpus.root.appendingPathComponent("compile-outputs").path))
         }
@@ -119,6 +144,47 @@ struct CorporaConformanceTests {
         #expect(verbCount >= 6)
         #expect(tableCount >= 4)
         #expect(quantifierCount >= 10)
+    }
+
+    @Test("flat rules/*.meridian fixtures compile with populated manifest rule entries")
+    func rulesFixturesEmitManifestEntries() throws {
+        var failures: [String] = []
+        var sawBoundedPermission = false
+        var sawAnyFixture = false
+        for corpus in try Self.corpora() {
+            let rulesDir = corpus.root.appendingPathComponent("rules")
+            guard let files = try? FileManager.default.contentsOfDirectory(
+                at: rulesDir, includingPropertiesForKeys: nil
+            ).filter({ $0.pathExtension == "meridian" }), !files.isEmpty else { continue }
+            for file in files.sorted(by: { $0.lastPathComponent < $1.lastPathComponent }) {
+                sawAnyFixture = true
+                do {
+                    let source = try String(contentsOf: file, encoding: .utf8)
+                    let (_, manifest) = try Compiler(options: .init(trace: .silent())).compileWithManifest(
+                        meridianSource: source,
+                        meridianFile: file.lastPathComponent,
+                        vocabularies: [corpus.vocabulary],
+                        rulebooks: [corpus.rulebook]
+                    )
+                    if manifest.rules.isEmpty {
+                        failures.append("\(corpus.name)/\(file.lastPathComponent): manifest.rules is empty")
+                    }
+                    for r in manifest.rules {
+                        if !r.executes {
+                            failures.append("\(corpus.name)/\(file.lastPathComponent): rule did not execute: \(r.text)")
+                        }
+                        if r.bounded { sawBoundedPermission = true }
+                    }
+                } catch {
+                    failures.append("\(corpus.name)/\(file.lastPathComponent): \(error)")
+                }
+            }
+        }
+        #expect(sawAnyFixture, Comment(rawValue: "expected at least one corpora/*/rules/*.meridian fixture"))
+        #expect(failures.isEmpty,
+                Comment(rawValue: "Flat rules fixture manifest failures:\n" + failures.joined(separator: "\n")))
+        #expect(sawBoundedPermission,
+                Comment(rawValue: "expected at least one bounded: true permission rule across rules/*.meridian fixtures"))
     }
 
     @Test("every emitted Swift file has no raw newline inside a single-line string literal")

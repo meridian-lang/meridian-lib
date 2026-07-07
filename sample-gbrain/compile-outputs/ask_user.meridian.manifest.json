@@ -259,39 +259,45 @@
         "text" : "Destructive operation"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 2,
         "line" : 229,
         "text" : "Integration With Other Skills"
       },
       {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 240,
+        "text" : "Integration With Other Skills — steps"
+      },
+      {
         "kind" : "reference",
         "level" : 2,
-        "line" : 242,
+        "line" : 245,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 254,
+        "line" : 257,
         "text" : "Anti-Patterns — steps"
       },
       {
-        "kind" : "reference",
+        "kind" : "prohibitions",
         "level" : 3,
-        "line" : 260,
+        "line" : 263,
         "text" : "Anti-Patterns — steps 2"
       },
       {
-        "kind" : "reference",
+        "kind" : "prohibitions",
         "level" : 3,
-        "line" : 265,
+        "line" : 267,
         "text" : "Anti-Patterns — steps 3"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 269,
+        "line" : 270,
         "text" : "Output Format"
       },
       {
@@ -625,7 +631,7 @@
         "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Integration With Other Skills",
         "line" : 229,
         "lines" : [
@@ -635,7 +641,15 @@
           "**enrich** — merge vs create decisions for entity pages",
           "**brain-ops** — filing location decisions",
           "**meeting-ingestion** — where to file meeting notes",
-          "**archive-crawler** — scan vs full ingestion gate",
+          "**archive-crawler** — scan vs full ingestion gate"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Integration With Other Skills — steps",
+        "line" : 240,
+        "lines" : [
           "When building a new skill that needs user input at a decision point,",
           "reference this pattern rather than inventing a new one"
         ],
@@ -644,7 +658,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 242,
+        "line" : 245,
         "lines" : [
           "**Picking a default and proceeding silently.** If the question matters enough to ask,",
           "it matters enough to wait. Silent defaults erode trust the next time you do ask",
@@ -660,7 +674,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns — steps",
-        "line" : 254,
+        "line" : 257,
         "lines" : [
           "use judgment to follow the Anti-Patterns — steps guidance:",
           "**Continuing the turn after presenting choices.** \"While you decide, I'll start on...\"",
@@ -669,29 +683,27 @@
         "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns — steps 2",
-        "line" : 260,
+        "line" : 263,
         "lines" : [
-          "Every choice gate must let the user decline. \"None of these\"",
-          "\/ \"Skip\" \/ \"Cancel\" is mandatory"
+          "Every choice gate must let the user decline. \"None of these\" \/ \"Skip\" \/ \"Cancel\" is mandatory"
         ],
-        "role" : "reference"
+        "role" : "prohibitions"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns — steps 3",
-        "line" : 265,
+        "line" : 267,
         "lines" : [
-          "\"Option 1\" forces re-reading the context. \"Merge into",
-          "existing page\" is self-explanatory."
+          "\"Option 1\" forces re-reading the context. \"Merge into existing page\" is self-explanatory"
         ],
-        "role" : "reference"
+        "role" : "prohibitions"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 269,
+        "line" : 270,
         "lines" : [
           "The skill's \"output\" is the choice-gate message itself, structured as:",
           "codeblock:plain:e2Vtb2ppLXByZWZpeH0gKip7cXVlc3Rpb259KioKCnsxLTMgbGluZXMgb2YgY29udGV4dH0KCjEuICoqe09wdGlvbiBBIGxhYmVsfSoqIOKAlCB7c2hvcnQgcXVhbGlmaWVyfQoyLiAqKntPcHRpb24gQiBsYWJlbH0qKiDigJQge3Nob3J0IHF1YWxpZmllcn0KMy4gKip7U2tpcCAvIENhbmNlbH0qKiDigJQge3doYXQgc2tpcHBpbmcgbWVhbnN9",
@@ -750,40 +762,48 @@
       "swift_line" : 603
     },
     {
+      "meridian_line" : 265,
+      "swift_line" : 609
+    },
+    {
+      "meridian_line" : 269,
+      "swift_line" : 614
+    },
+    {
       "meridian_line" : 141,
-      "swift_line" : 608
+      "swift_line" : 618
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 647
+      "swift_line" : 657
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 652
+      "swift_line" : 662
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 691
+      "swift_line" : 701
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 696
+      "swift_line" : 706
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 735
+      "swift_line" : 745
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 740
+      "swift_line" : 750
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 779
+      "swift_line" : 789
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 784
+      "swift_line" : 794
     }
   ],
   "tools_used" : [
@@ -791,17 +811,9 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "❌ Continue with \"while you decide, I'll start on...\"\nuse judgment to follow the Context block — steps guidance:\n1-3 lines maximum. The user should understand the decision in under 5 seconds\nFormat: `Action verb — brief qualifier`\n✅ \"Merge — combine with existing page\"\n✅ \"Create new — separate meeting page\"\n❌ \"Option 1\"\n❌ \"Click here to merge the content into the existing brain page\"\nThis pattern is used by:\n**cold-start** — phase gates for each import source\n**ingest** — routing decisions for ambiguous content\n**enrich** — merge vs create decisions for entity pages\n**brain-ops** — filing location decisions\n**meeting-ingestion** — where to file meeting notes\n**archive-crawler** — scan vs full ingestion gate\nWhen building a new skill that needs user input at a decision point,\nreference this pattern rather than inventing a new one",
+          "guidance" : "❌ Continue with \"while you decide, I'll start on...\"\nuse judgment to follow the Context block — steps guidance:\n1-3 lines maximum. The user should understand the decision in under 5 seconds\nFormat: `Action verb — brief qualifier`\n✅ \"Merge — combine with existing page\"\n✅ \"Create new — separate meeting page\"\n❌ \"Option 1\"\n❌ \"Click here to merge the content into the existing brain page\"\nWhen building a new skill that needs user input at a decision point,\nreference this pattern rather than inventing a new one",
           "line" : 141,
           "scoped_tools" : [
             "assess.notability",
@@ -825,6 +837,13 @@
             "verify"
           ],
           "text" : "follow the How To Gate (CRITICAL) — steps 2 guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "ask-user a input",

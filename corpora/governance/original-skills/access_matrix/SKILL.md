@@ -1,0 +1,61 @@
+---
+name: access matrix
+description: Render the current role-by-classification access matrix as a signed-off audit artifact. Auditors don't want to read the policy engine's rule list; they want a matrix they can eyeball in thirty seconds, so this skill produces exactly that.
+triggers:
+  - "render access matrix"
+  - "publish access matrix"
+  - "generate the audit matrix"
+---
+
+# Access Matrix
+
+Every access-governance audit eventually asks the same question: "who can
+see what, and does that match the policy we think we have?" Rather than
+answer that question by reading through every rule in `governance.merrules`,
+this skill renders a single role-by-classification table and pairs it with a
+count of the pending requests waiting behind it. The table is the
+policy-as-declared; the pending count is a signal for whether the matrix is
+stale the moment it's published.
+
+## When to invoke
+- "render access matrix"
+- "publish access matrix"
+- "generate the audit matrix"
+
+## Tables
+!!! table (( data table: access matrix ))
+| role | classification | outcome |
+| ----- | --------------- | ------- |
+| admin | classified      | allow   |
+| admin | public          | allow   |
+| user  | classified      | deny    |
+| user  | public          | allow   |
+
+## Workflow
+fetch pending access requests.
+let classified count be the number of access requests whose status is "pending".
+bind matrix report =
+  ```
+  access-matrix:
+  [if classified count is more than 0]status: reviewed[otherwise]status: empty[end if]
+  pending requests: {{ classified count }}
+  ```
+emit governance.audit with body = matrix report.
+- [ ] the classified count is at least 0
+Emit: "access matrix pass complete".
+
+## Anti-Patterns
+- Don't hand-edit the rendered matrix to "fix" a row that looks wrong.
+  If the outcome column disagrees with what policy actually grants, the fix
+  belongs in the rule, not in the report.
+- Don't publish the matrix as evidence that the queue is caught up. The
+  pending count is diagnostic, not a guarantee — pair it with
+  `review requests` if the count is climbing.
+
+## Guarantees
+every emitted matrix report contains "access-matrix".
+
+## Report shape
+The audit artifact opens with `access-matrix:`, states whether the pending
+queue has been reviewed or is empty, and reports the pending-request count
+at render time.

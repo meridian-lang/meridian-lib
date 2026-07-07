@@ -1,0 +1,32 @@
+=== desugar ===
+
+rule "clinical-check":
+  match: Check: {condition}
+  rewrite: make sure {condition}.
+
+rule "clinical-note":
+  match: Note: {message}
+  lowers to: emit clinical.note with message = {message}.
+
+rule "clinical-log":
+  match: Log: {message}
+  lowers to: emit clinical.audit with message = {message}.
+
+rule "clinical-emit":
+  match: Emit: {message}
+  lowers to: emit clinical.report with message = {message}.
+
+=== sections ===
+section "Dispatch table — steps" -> procedure
+section "Anti-Patterns — steps" -> prohibitions
+section "Contract — steps" -> invariants
+section "When to invoke — steps" -> procedure
+section "Workflow — steps 2" -> procedure
+section "Workflow — steps 3" -> procedure
+section "Workflow — steps" -> procedure
+section "When NOT to use this skill — steps" -> procedure
+section "Rules — steps" -> procedure
+section "Workflow", "Procedure", "Rules" -> procedure
+section "When this applies", "Use this when" -> applicability
+section "Guarantees", "Assertions", "Controls" -> invariants
+section "Output", "Report shape" -> template

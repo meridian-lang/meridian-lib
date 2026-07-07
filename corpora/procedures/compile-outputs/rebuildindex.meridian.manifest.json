@@ -1,6 +1,15 @@
 {
+  "constants" : {
+    "maximum batch size" : 500,
+    "maximum retry count" : 5,
+    "staleness window" : 2592000,
+    "vacuum row threshold" : 1000000
+  },
   "instances_required" : [
-
+    {
+      "kind" : "sql endpoint",
+      "name" : "reporting warehouse"
+    }
   ],
   "kinds_used" : [
 
@@ -10,49 +19,79 @@
       "adjective" : "orphaned",
       "function" : "meridianDef_AuditRow_orphaned",
       "kind" : "audit row",
-      "line" : 24
+      "line" : 33
+    },
+    {
+      "adjective" : "finalized",
+      "function" : "meridianDef_Batch_finalized",
+      "kind" : "batch",
+      "line" : 28
     },
     {
       "adjective" : "ready",
       "function" : "meridianDef_Batch_ready",
       "kind" : "batch",
-      "line" : 19
+      "line" : 26
     },
     {
       "adjective" : "settled",
       "function" : "meridianDef_Batch_settled",
       "kind" : "batch",
-      "line" : 20
+      "line" : 27
     },
     {
       "adjective" : "violated",
       "function" : "meridianDef_Constraint_violated",
       "kind" : "constraint",
-      "line" : 23
+      "line" : 32
+    },
+    {
+      "adjective" : "bloated",
+      "function" : "meridianDef_DatabaseTable_bloated",
+      "kind" : "database table",
+      "line" : 37
     },
     {
       "adjective" : "lagging",
       "function" : "meridianDef_IndexJob_lagging",
       "kind" : "index job",
-      "line" : 25
+      "line" : 34
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Ledger_open",
       "kind" : "ledger",
-      "line" : 18
+      "line" : 25
+    },
+    {
+      "adjective" : "applied",
+      "function" : "meridianDef_Migration_applied",
+      "kind" : "migration",
+      "line" : 35
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_Migration_failed",
+      "kind" : "migration",
+      "line" : 36
+    },
+    {
+      "adjective" : "drifted",
+      "function" : "meridianDef_Record_drifted",
+      "kind" : "record",
+      "line" : 31
     },
     {
       "adjective" : "duplicate",
       "function" : "meridianDef_Record_duplicate",
       "kind" : "record",
-      "line" : 22
+      "line" : 30
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Record_stale",
       "kind" : "record",
-      "line" : 21
+      "line" : 29
     }
   ],
   "meridian_ir_version" : "1.0",
@@ -60,8 +99,18 @@
     {
       "backing" : "tool",
       "left_cardinality" : "one",
+      "left_kind" : "a migration",
+      "line" : 47,
+      "name" : "application",
+      "right_cardinality" : "one",
+      "right_kind" : "a database table",
+      "via" : "migration.apply"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
       "left_kind" : "a ledger",
-      "line" : 31,
+      "line" : 45,
       "name" : "auditing",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -71,7 +120,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a record",
-      "line" : 29,
+      "line" : 43,
       "name" : "canonicalization",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -81,7 +130,17 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a batch",
-      "line" : 27,
+      "line" : 41,
+      "name" : "retrying",
+      "right_cardinality" : "one",
+      "right_kind" : "a ledger",
+      "via" : "batch.retry"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a batch",
+      "line" : 39,
       "name" : "settlement",
       "right_cardinality" : "one",
       "right_kind" : "a ledger",
@@ -89,7 +148,7 @@
     }
   ],
   "meridian_skill" : {
-    "description" : "Rebuild lagging indexes after a deterministic age check.",
+    "description" : "Rebuild lagging indexes after a deterministic age check, requiring a minimum backlog before running.",
     "name" : "rebuild index",
     "outline" : [
       {
@@ -99,39 +158,33 @@
         "text" : "Use this when"
       },
       {
-        "kind" : "reference",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 15,
         "text" : "Procedure"
       },
       {
-        "kind" : "procedure",
-        "level" : 3,
-        "line" : 18,
-        "text" : "Procedure — steps"
-      },
-      {
-        "kind" : "procedure",
-        "level" : 3,
-        "line" : 22,
-        "text" : "Procedure — steps 2"
-      },
-      {
         "kind" : "invariants",
         "level" : 2,
-        "line" : 28,
+        "line" : 23,
         "text" : "Assertions"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 16,
+        "line" : 17,
         "text" : "Check"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 26,
+        "line" : 18,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 21,
         "text" : "Emit"
       }
     ],
@@ -147,28 +200,13 @@
         "role" : "applicability"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Procedure",
         "line" : 15,
         "lines" : [
-          "Check: any lagging index jobs"
-        ],
-        "role" : "reference"
-      },
-      {
-        "executes" : true,
-        "heading" : "Procedure — steps",
-        "line" : 18,
-        "lines" : [
-          "fetch lagging index jobs"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "Procedure — steps 2",
-        "line" : 22,
-        "lines" : [
+          "fetch lagging index jobs",
+          "Check: any lagging index jobs",
+          "Check: at least 1 index job whose status is \"lagging\"",
           "for each index job:",
           "rebuild the index job",
           "Emit: \"lagging index jobs rebuilt\""
@@ -178,9 +216,10 @@
       {
         "executes" : true,
         "heading" : "Assertions",
-        "line" : 28,
+        "line" : 23,
         "lines" : [
-          "make sure all index jobs have a name"
+          "make sure all index jobs have a name",
+          "confirm no index jobs whose status is \"failed\""
         ],
         "role" : "invariants"
       }
@@ -189,22 +228,36 @@
   },
   "meridian_verbs" : [
     {
+      "base" : "apply",
+      "line" : 54,
+      "past_participle" : "applied",
+      "relation" : "application",
+      "third_person" : "applies"
+    },
+    {
       "base" : "audit",
-      "line" : 36,
+      "line" : 53,
       "past_participle" : "audited",
       "relation" : "auditing",
       "third_person" : "audits"
     },
     {
       "base" : "canonicalize",
-      "line" : 35,
+      "line" : 52,
       "past_participle" : "canonicalized",
       "relation" : "canonicalization",
       "third_person" : "canonicalizes"
     },
     {
+      "base" : "retry",
+      "line" : 51,
+      "past_participle" : "retried",
+      "relation" : "retrying",
+      "third_person" : "retries"
+    },
+    {
       "base" : "settle",
-      "line" : 34,
+      "line" : 50,
       "past_participle" : "settled",
       "relation" : "settlement",
       "third_person" : "settles"
@@ -216,40 +269,52 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 29,
-      "swift_line" : 300
-    },
-    {
-      "meridian_line" : 54,
-      "swift_line" : 305
-    },
-    {
       "meridian_line" : 24,
-      "swift_line" : 316
+      "swift_line" : 433
     },
     {
-      "meridian_line" : 66,
-      "swift_line" : 322
+      "meridian_line" : 25,
+      "swift_line" : 438
     },
     {
-      "meridian_line" : 26,
-      "swift_line" : 338
+      "meridian_line" : 75,
+      "swift_line" : 443
+    },
+    {
+      "meridian_line" : 17,
+      "swift_line" : 455
+    },
+    {
+      "meridian_line" : 18,
+      "swift_line" : 460
+    },
+    {
+      "meridian_line" : 19,
+      "swift_line" : 464
+    },
+    {
+      "meridian_line" : 93,
+      "swift_line" : 470
+    },
+    {
+      "meridian_line" : 21,
+      "swift_line" : 486
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 375
+      "swift_line" : 525
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 380
+      "swift_line" : 530
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 418
+      "swift_line" : 570
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 423
+      "swift_line" : 575
     }
   ],
   "tools_used" : [

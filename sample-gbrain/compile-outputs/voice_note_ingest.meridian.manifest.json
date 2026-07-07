@@ -220,25 +220,25 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 213,
+        "line" : 212,
         "text" : "Related skills"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 216,
+        "line" : 215,
         "text" : "Related skills — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 224,
+        "line" : 223,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 235,
+        "line" : 234,
         "text" : "Output Format"
       },
       {
@@ -262,13 +262,13 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 226,
+        "line" : 225,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 231,
+        "line" : 230,
         "text" : "Privacy contract preserved"
       }
     ],
@@ -479,15 +479,14 @@
         "heading" : "Anti-Patterns — steps",
         "line" : 208,
         "lines" : [
-          "❌ Skipping the audio storage step. Always upload the original; the",
-          "brain page has a `🔊 [Audio]` link back to it"
+          "❌ Skipping the audio storage step. Always upload the original; the brain page has a `🔊 [Audio]` link back to it"
         ],
         "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Related skills",
-        "line" : 213,
+        "line" : 212,
         "lines" : [
 
         ],
@@ -496,7 +495,7 @@
       {
         "executes" : true,
         "heading" : "Related skills — steps",
-        "line" : 216,
+        "line" : 215,
         "lines" : [
           "`skills\/signal-detector\/SKILL.md` — same exact-phrasing pattern for",
           "text-channel idea capture",
@@ -508,7 +507,7 @@
       {
         "executes" : false,
         "heading" : "Contract",
-        "line" : 224,
+        "line" : 223,
         "lines" : [
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
@@ -522,7 +521,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 235,
+        "line" : 234,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -627,16 +626,8 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
           "guidance" : "The Analysis section can interpret; the transcript section is sacred\n✅ `\"The ambition-to-lifespan ratio has never been more fucked\"`\n❌ `User noted the tension between ambition and mortality`\nNone of the above \/ random thought \/ doesn't fit cleanly —\n→ `voice-notes\/YYYY-MM-DD-<slug>.md` (catch-all)\nAudio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,\n`2026-04-13-rick-rubin-creative-philosophy.ogg`)\nBrain pages: match the slug of the destination directory\nNo batching\n`skills\/signal-detector\/SKILL.md` — same exact-phrasing pattern for\ntext-channel idea capture\n`skills\/idea-ingest\/SKILL.md` — for typed-text idea ingestion\n`skills\/conventions\/quality.md` — citation + back-link rules",
           "line" : 43,
           "scoped_tools" : [
@@ -661,6 +652,13 @@
             "verify"
           ],
           "text" : "follow the Iron Law — steps 2 guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "voice-note-ingest a input",

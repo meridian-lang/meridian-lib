@@ -14,6 +14,10 @@ Routes an ERP operator request to the synthetic ERP skill that owns it.
 | receive inbound shipment | receiveshipment |
 | cancel blocked orders | cancelorder |
 | month-end close | monthendclose |
+| retry declined payments | paymentretry |
+| approve high value orders | orderapproval |
+| replenish backorders | backorderreplenish |
+| process returns | returnsprocessing |
 
 ## Workflow
 

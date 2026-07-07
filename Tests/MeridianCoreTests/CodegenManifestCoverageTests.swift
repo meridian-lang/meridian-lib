@@ -11,7 +11,7 @@ struct ManifestEmitterCoverageTests {
         let wf = IRWorkflow(
             name: "do a thing", parameters: [],
             body: IRBlock(statements: [
-                .proseStep(ProseStepIR(text: "decide what to do", dispatchMode: .planThenExecute)),
+                .aiJudgment(AIJudgmentIR(text: "decide what to do")),
                 .complete(CompleteIR()),
             ]))
         let inst = ManifestEmitter.InstanceManifestEntry(
@@ -39,7 +39,7 @@ struct ManifestEmitterCoverageTests {
         #expect(json.contains("meridian_rules"))
         #expect(json.contains("\"precondition\""))
         #expect(json.contains("\"line\""))
-        #expect(json.contains("\"plan_then_execute\""))
+        #expect(json.contains("judgment_steps"))
     }
 
     @Test("compileWithManifest carries metadata, sections, tools, and deterministic JSON")
@@ -84,6 +84,44 @@ struct ManifestEmitterCoverageTests {
         #expect(skill["name"] as? String == "manifest probe")
         #expect(skill["description"] as? String == "Checks the manifest carrier.")
         #expect(sections.contains { $0["heading"] as? String == "Notes" && $0["executes"] as? Bool == false })
+    }
+
+    @Test("compileWithManifest populates kinds_used with genuine domain kinds, not synthetic parameter placeholders")
+    func compileWithManifestKindsUsed() throws {
+        let cfg = """
+        === vocabulary ===
+        A widget is a kind of gadget.
+        A widget has a label, which is a String.
+        A crate is a kind of gadget.
+
+        === tools ===
+        """
+        let mer = """
+        ---
+        name: widget probe
+        vocabulary: w.merconfig
+        ---
+        To probe a widget:
+          for each crate:
+            complete.
+
+        A widget with label "broken" must not be probed.
+        """
+        let opts = Compiler.Options(
+            emitterOptions: SwiftEmitter.Options(includeTimestamp: false, emitSourceLineComments: false),
+            trace: .silent()
+        )
+        let result = try Compiler(options: opts).compileWithManifest(
+            meridianSource: mer, meridianFile: "w.meridian",
+            vocabularies: [.init(name: "w.merconfig", file: "w.merconfig", source: cfg)])
+
+        #expect(result.manifest.kindsUsed.contains("Widget"))
+
+        let json = try Compiler(options: opts).emitManifest(result.manifest)
+        let data = try #require(json.data(using: String.Encoding.utf8))
+        let obj = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let kinds = try #require(obj["kinds_used"] as? [String])
+        #expect(kinds.contains("Widget"))
     }
 }
 

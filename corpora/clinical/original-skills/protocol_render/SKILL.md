@@ -1,0 +1,68 @@
+---
+name: protocol render
+description: Look up the treatment protocol covering a medication and render a one-page summary that states the protocol's dosing tier alongside its own version, so a clinician reaching for a protocol reference gets one number to act on instead of the whole bundle. Use this whenever a medication's protocol needs to be surfaced on its own, not folded into an administration workflow.
+triggers:
+  - "render protocol"
+  - "look up dosing protocol"
+parameters: medication
+---
+
+# Protocol Render
+
+Treatment protocols get revised often enough that a clinician reaching for
+one from memory is taking a real risk — bundle versions drift, and a
+tier that was safe two revisions ago might not be the current guidance.
+This skill exists to make the lookup itself the source of truth: it finds
+the protocol covering the medication, checks the medication's risk level
+against a fixed dosing-tier table, and renders both together in one
+receipt so nobody has to reconcile two separate references by hand.
+
+## Contract
+- Input: a medication.
+- Output: a rendered protocol summary naming the protocol, its version,
+  and the medication's dosing tier.
+- Side effect: none beyond the rendered summary — this skill only reads.
+
+## When to invoke
+- "render protocol"
+- "look up dosing protocol"
+
+## Tables
+| risk level | max doses per day |
+| --- | --- |
+| high | 1 |
+| low | 4 |
+
+## Workflow
+look up the protocol for the medication.
+let protocol name be the protocol's name.
+let protocol version be the protocol's version.
+bind max doses = the max doses per day corresponding to the risk level "high" in the table.
+bind protocol summary =
+  ```
+  protocol-summary:
+  protocol: {{ protocol name }}
+  version: {{ protocol version }}
+  max doses per day: {{ max doses }}
+  ```
+Emit: protocol summary.
+Post: "protocol render pass complete".
+
+## Anti-Patterns
+- Don't quote a dosing tier from memory instead of running this lookup —
+  the whole point of the render is that the table, not a clinician's
+  recollection, is the current source.
+- Don't skip rendering the version number alongside the tier. A tier
+  without its version is not verifiable against anything.
+
+## When NOT to use this skill
+Use `medication administer` when the protocol lookup is just one step
+inside actually giving a dose — this skill is the standalone reference
+render, not a step embedded in an administration pass.
+
+## Guarantees
+every emitted protocol summary contains "protocol-summary".
+
+## Report shape
+The receipt names the protocol, its version, and the dosing tier the
+medication's risk level maps to.

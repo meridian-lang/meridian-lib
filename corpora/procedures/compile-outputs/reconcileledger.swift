@@ -45,49 +45,13 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_AuditRow_orphaned(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("orphaned"))
-}
-
-private func meridianDef_Batch_ready(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("ready"))
-}
-
-private func meridianDef_Batch_settled(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("settled"))
-}
-
-private func meridianDef_Constraint_violated(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("violated"))
-}
-
-private func meridianDef_IndexJob_lagging(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isWithinPast(__subject.member("updatedAt"), Duration.seconds(604800))
-}
-
-private func meridianDef_Ledger_open(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("open"))
-}
-
-private func meridianDef_Record_duplicate(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("status"), .string("duplicate"))
-}
-
-private func meridianDef_Record_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isWithinPast(__subject.member("updatedAt"), Duration.seconds(2592000))
-}
-
 public enum Reconcileledger {
 
 // MARK: - Domain types
+
+public enum BatchLifecycle: String, Hashable, Codable, Sendable {
+    case queued, running, settled, failed
+}
 
 public protocol LedgerKind: MeridianStorage {
     var name: String { get }
@@ -119,6 +83,7 @@ public protocol BatchKind: MeridianProcess {
     var status: String { get }
     var ledgerId: String { get }
     var updatedAt: String { get }
+    var lifecycle: BatchLifecycle { get }
 }
 
 public struct Batch: BatchKind {
@@ -127,19 +92,22 @@ public struct Batch: BatchKind {
     public var status: String
     public var ledgerId: String
     public var updatedAt: String
+    public var lifecycle: BatchLifecycle
 
     public init(
         id: String = "",
         name: String = "",
         status: String = "",
         ledgerId: String = "",
-        updatedAt: String = ""
+        updatedAt: String = "",
+        lifecycle: BatchLifecycle = .queued
     ) {
         self.id = id
         self.name = name
         self.status = status
         self.ledgerId = ledgerId
         self.updatedAt = updatedAt
+        self.lifecycle = lifecycle
     }
 }
 
@@ -147,6 +115,7 @@ public protocol RecordKind: MeridianThing {
     var key: String { get }
     var status: String { get }
     var checksum: String { get }
+    var expectedChecksum: String { get }
     var updatedAt: String { get }
 }
 
@@ -155,6 +124,7 @@ public struct Record: RecordKind {
     public var key: String
     public var status: String
     public var checksum: String
+    public var expectedChecksum: String
     public var updatedAt: String
 
     public init(
@@ -162,12 +132,14 @@ public struct Record: RecordKind {
         key: String = "",
         status: String = "",
         checksum: String = "",
+        expectedChecksum: String = "",
         updatedAt: String = ""
     ) {
         self.id = id
         self.key = key
         self.status = status
         self.checksum = checksum
+        self.expectedChecksum = expectedChecksum
         self.updatedAt = updatedAt
     }
 }
@@ -268,13 +240,172 @@ public struct TriggerPhrase: TriggerPhraseKind {
     }
 }
 
+public protocol MigrationKind: MeridianArtifact {
+    var name: String { get }
+    var status: String { get }
+    var appliedAt: String { get }
+}
+
+public struct Migration: MigrationKind {
+    public var id: String
+    public var name: String
+    public var status: String
+    public var appliedAt: String
+
+    public init(
+        id: String = "",
+        name: String = "",
+        status: String = "",
+        appliedAt: String = ""
+    ) {
+        self.id = id
+        self.name = name
+        self.status = status
+        self.appliedAt = appliedAt
+    }
+}
+
+public protocol DatabaseTableKind: MeridianStorage {
+    var name: String { get }
+    var status: String { get }
+    var rowCount: String { get }
+}
+
+public struct DatabaseTable: DatabaseTableKind {
+    public var id: String
+    public var name: String
+    public var status: String
+    public var rowCount: String
+
+    public init(
+        id: String = "",
+        name: String = "",
+        status: String = "",
+        rowCount: String = ""
+    ) {
+        self.id = id
+        self.name = name
+        self.status = status
+        self.rowCount = rowCount
+    }
+}
+
+public protocol SqlEndpointKind: MeridianService {
+    var host: String { get }
+    var port: String { get }
+    var databaseName: String { get }
+}
+
+public struct SqlEndpoint: SqlEndpointKind {
+    public var id: String
+    public var host: String
+    public var port: String
+    public var databaseName: String
+
+    public init(
+        id: String = "",
+        host: String = "",
+        port: String = "",
+        databaseName: String = ""
+    ) {
+        self.id = id
+        self.host = host
+        self.port = port
+        self.databaseName = databaseName
+    }
+}
+
+
+public struct Constants: Sendable {
+    public let maximumBatchSize: Decimal = Decimal(500)
+    public let stalenessWindow: Duration = Duration.seconds(2592000)
+    public let maximumRetryCount: Decimal = Decimal(5)
+    public let vacuumRowThreshold: Decimal = Decimal(1000000)
+}
+
+private static let constants = Constants()
+
+public struct Instances: Sendable {
+    public let reportingWarehouse: Value = .record([
+        "host": .string(ProcessInfo.processInfo.environment["PGHOST"] ?? ""),
+        "port": .number(Decimal(5432)),
+        "databaseName": .string("reporting"),
+    ])
+}
+
+private static let instances = Instances()
+
+private static func meridianDef_AuditRow_orphaned(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("orphaned"))
+}
+
+private static func meridianDef_Batch_finalized(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return (meridianDef_Batch_settled(__subject)) && (MeridianComparison.isNotEmpty(__subject.member("ledgerId")))
+}
+
+private static func meridianDef_Batch_ready(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("ready"))
+}
+
+private static func meridianDef_Batch_settled(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("settled"))
+}
+
+private static func meridianDef_Constraint_violated(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("violated"))
+}
+
+private static func meridianDef_DatabaseTable_bloated(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.gt(__subject.member("rowCount"), Value.from(constants.vacuumRowThreshold))
+}
+
+private static func meridianDef_IndexJob_lagging(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isWithinPast(__subject.member("updatedAt"), Duration.seconds(604800))
+}
+
+private static func meridianDef_Ledger_open(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("open"))
+}
+
+private static func meridianDef_Migration_applied(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("applied"))
+}
+
+private static func meridianDef_Migration_failed(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("failed"))
+}
+
+private static func meridianDef_Record_drifted(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.neq(__subject.member("checksum"), __subject.member("expectedChecksum") ?? .null)
+}
+
+private static func meridianDef_Record_duplicate(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("status"), .string("duplicate"))
+}
+
+private static func meridianDef_Record_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isWithinPast(__subject.member("updatedAt"), Duration.seconds(2592000))
+}
 
 public struct ReconcileLedger: MeridianWorkflow {
     public let runtime: Runtime
 
     public static let skillMetadata: [String: String] = [
         "name": "reconcile ledger",
-        "description": "Reconcile ready ledger batches from a SQL-backed system.",
+        "description": "Reconcile ready ledger batches from a SQL-backed system, skipping already-finalized work and deferring failures.",
         "triggers": "\"reconcile ledger\"\n\"settle ledger batches\"",
     ]
 
@@ -294,15 +425,22 @@ public struct ReconcileLedger: MeridianWorkflow {
             if target == label { __meridianResumeTarget = nil }
             return false
         }
+        let constants = Constants()
+        let instances = Instances()
         await runtime.workflowStarted(workflowName: "ReconcileLedger", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L28:C0") {
-            // L28
+        if __meridianShouldRun("progress:0.0:L37:C0") {
+            // L37
             try await runtime.assert(((((state.get("batches"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("failed"))) }).isEmpty), message: "Expected no batches whose status is \"failed\"")
-            try await runtime.checkpoint(label: "progress:0.0:L28:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.0:L37:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.1:L20:C0") {
-            // L20
+        if __meridianShouldRun("progress:0.1:L38:C0") {
+            // L38
+            try await runtime.assert((((state.get("batches"))?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("ledgerId")) }), message: "Expected all batches have a ledger id")
+            try await runtime.checkpoint(label: "progress:0.1:L38:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.2:L23:C0") {
+            // L23
             // snapshot ready batches
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -311,10 +449,10 @@ public struct ReconcileLedger: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.1:L20:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.2:L23:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.2:L39:C0") {
-            // L39
+        if __meridianShouldRun("progress:0.3:L57:C0") {
+            // L57
             let batches = try await runtime.invoke(
                 tool: "batch.list",
                 args: [
@@ -323,43 +461,77 @@ public struct ReconcileLedger: MeridianWorkflow {
             )
             state.bind("batches", batches)
 
-            try await runtime.checkpoint(label: "progress:0.2:L39:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.3:L57:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.3:L22:C0") {
-            // L22
+        if __meridianShouldRun("progress:0.4:L25:C0") {
+            // L25
             try await runtime.assert((((state.get("batches"))?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("name")) }), message: "Expected all batches have a name")
-            try await runtime.checkpoint(label: "progress:0.3:L22:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.4:L25:C0", state: state.snapshot())
         }
-        // L23
-        for (__meridianLoopIndex_0_4, batch) in (state.get("batches")?.asList ?? []).enumerated() {
-            let __meridianLoopLabel_0_4 = "progress:0.4:iteration:\(__meridianLoopIndex_0_4)"
-            if __meridianShouldRun(__meridianLoopLabel_0_4) {
+        if __meridianShouldRun("progress:0.5:L26:C0") {
+            // L26
+            try await runtime.assert(((((state.get("batches"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("ready"))) }).count <= 50), message: "Expected at most 50 batches whose status is \"ready\"")
+            try await runtime.checkpoint(label: "progress:0.5:L26:C0", state: state.snapshot())
+        }
+        // L27
+        for (__meridianLoopIndex_0_6, batch) in (state.get("batches")?.asList ?? []).enumerated() {
+            let __meridianLoopLabel_0_6 = "progress:0.6:iteration:\(__meridianLoopIndex_0_6)"
+            if __meridianShouldRun(__meridianLoopLabel_0_6) {
             state.bind("batch", batch)
-                if __meridianShouldRun("progress:0.4.body.0:L60:C0") {
-                    // L60
-                    let settlement = try await runtime.invoke(
-                        tool: "batch.settle",
-                        args: [
-                            "batch": state.get("batch") ?? .null,
-                        ]
-                    )
-                    state.bind("settlement", settlement)
+                // L28
+                if meridianDef_Batch_finalized(state.get("batch")) {
+                    if __meridianShouldRun("progress:0.6.body.0.then.0:L29:C0") {
+                        // L29
+                        try await runtime.emit(
+                            event: "procedure.note",
+                            payload: [
+                                "message": .string("batch already finalized, skipping settlement"),
+                            ]
+                        )
+                        try await runtime.checkpoint(label: "progress:0.6.body.0.then.0:L29:C0", state: state.snapshot())
+                    }
+                } else {
+                    // L32
+                    do {
+                        if __meridianShouldRun("progress:0.6.body.0.else.0.do.0:L87:C0") {
+                            // L87
+                            let settlement = try await runtime.invoke(
+                                tool: "batch.settle",
+                                args: [
+                                    "batch": state.get("batch") ?? .null,
+                                ]
+                            )
+                            state.bind("settlement", settlement)
 
-                    try await runtime.checkpoint(label: "progress:0.4.body.0:L60:C0", state: state.snapshot())
+                            try await runtime.checkpoint(label: "progress:0.6.body.0.else.0.do.0:L87:C0", state: state.snapshot())
+                        }
+                    } catch let _recoveredError {
+                        if __meridianShouldRun("progress:0.6.body.0.else.0.catch.0:L33:C0") {
+                            // L33
+                            try await runtime.emit(
+                                event: "procedure.note",
+                                payload: [
+                                    "message": .string("settlement failed, deferring to next reconciliation pass"),
+                                ]
+                            )
+                            try await runtime.checkpoint(label: "progress:0.6.body.0.else.0.catch.0:L33:C0", state: state.snapshot())
+                        }
+                    }
                 }
-                try await runtime.checkpoint(label: __meridianLoopLabel_0_4, state: state.snapshot())
+
+                try await runtime.checkpoint(label: __meridianLoopLabel_0_6, state: state.snapshot())
             }
         }
 
-        if __meridianShouldRun("progress:0.5:L25:C0") {
-            // L25
+        if __meridianShouldRun("progress:0.7:L34:C0") {
+            // L34
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": .string("ledger batches reconciled"),
                 ]
             )
-            try await runtime.checkpoint(label: "progress:0.5:L25:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.7:L34:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)
@@ -386,6 +558,8 @@ public struct WhenReconcileledgerFires: MeridianWorkflow {
             if target == label { __meridianResumeTarget = nil }
             return false
         }
+        let constants = Constants()
+        let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenReconcileledgerFires", parameters: [:])
 
         if __meridianShouldRun("progress:0.0:L1:C0") {
@@ -429,6 +603,8 @@ public struct WhenSettleledgerbatchesFires: MeridianWorkflow {
             if target == label { __meridianResumeTarget = nil }
             return false
         }
+        let constants = Constants()
+        let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenSettleledgerbatchesFires", parameters: [:])
 
         if __meridianShouldRun("progress:0.0:L1:C0") {

@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum FunctionalAreaResolver {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct FunctionalAreaResolverInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -684,7 +684,7 @@ public struct FunctionalAreaResolverInput: MeridianWorkflow {
             let results = try await runtime.invoke(
                 tool: "page.search",
                 args: [
-                    "query": state.get("&Knowledge—Brain-opsAsDispatcher") ?? .null,
+                    "query": state.get("&Knowledge—BrainOpsAsDispatcher") ?? .null,
                 ]
             )
             state.bind("results", results)
@@ -696,26 +696,14 @@ public struct FunctionalAreaResolverInput: MeridianWorkflow {
             let report = try await runtime.invoke(
                 tool: "research",
                 args: [
-                    "topic": state.get("&Investigation—Perplexity-researchAsDispatcher") ?? .null,
+                    "topic": state.get("&Investigation—PerplexityResearchAsDispatcher") ?? .null,
                 ]
             )
             state.bind("report", report)
 
             try await runtime.checkpoint(label: "progress:0.8:L145:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.9:L340:C0") {
-            // L340
-            // A sub-skill was omitted from the  list
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("(dispatcher for: ...)"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.9:L340:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.10:L403:C0") {
+        if __meridianShouldRun("progress:0.9:L403:C0") {
             // L403
             // Add the skill name to that area's  list
             _ = try await runtime.invoke(
@@ -725,7 +713,7 @@ public struct FunctionalAreaResolverInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.10:L403:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.9:L403:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

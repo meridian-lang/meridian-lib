@@ -1,0 +1,451 @@
+{
+  "constants" : {
+    "dose limit" : 2,
+    "observation window" : 14400,
+    "vitals threshold" : 100
+  },
+  "instances_required" : [
+    {
+      "kind" : "protocol",
+      "name" : "sepsis protocol"
+    },
+    {
+      "kind" : "protocol",
+      "name" : "anticoagulation protocol"
+    }
+  ],
+  "kinds_used" : [
+    "Patient"
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "granted",
+      "function" : "meridianDef_Consent_granted",
+      "kind" : "consent",
+      "line" : 32
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_MedicationOrder_cleared",
+      "kind" : "medication order",
+      "line" : 29
+    },
+    {
+      "adjective" : "contraindicated",
+      "function" : "meridianDef_MedicationOrder_contraindicated",
+      "kind" : "medication order",
+      "line" : 28
+    },
+    {
+      "adjective" : "high risk",
+      "function" : "meridianDef_Medication_highRisk",
+      "kind" : "medication",
+      "line" : 27
+    },
+    {
+      "adjective" : "active",
+      "function" : "meridianDef_Patient_active",
+      "kind" : "patient",
+      "line" : 33
+    },
+    {
+      "adjective" : "held",
+      "function" : "meridianDef_Patient_held",
+      "kind" : "patient",
+      "line" : 34
+    },
+    {
+      "adjective" : "monitored",
+      "function" : "meridianDef_Patient_monitored",
+      "kind" : "patient",
+      "line" : 30
+    },
+    {
+      "adjective" : "unmonitored",
+      "function" : "meridianDef_Patient_unmonitored",
+      "kind" : "patient",
+      "line" : 31
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_VitalSign_critical",
+      "kind" : "vital sign",
+      "line" : 25
+    },
+    {
+      "adjective" : "stable",
+      "function" : "meridianDef_VitalSign_stable",
+      "kind" : "vital sign",
+      "line" : 26
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a nurse",
+      "line" : 38,
+      "name" : "administration",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "medication.administer"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a protocol",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication",
+      "via" : "protocol.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a clinician",
+      "line" : 36,
+      "name" : "prescription",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "order.list"
+    }
+  ],
+  "meridian_rules" : [
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "trigger",
+      "source" : {
+        "file" : "vitalsmonitor.meri",
+        "line" : 34
+      },
+      "text" : "When a patient has been unmonitored for more than 4 hours, escalate the patient"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Keep a patient's vital-sign readings fresh by rechecking on a fixed cadence, and escalate the moment the patient goes too long without a genuinely current reading. Use this for the ongoing background watch between triage passes, not for a one-time severity call.",
+    "name" : "vitals monitor",
+    "outline" : [
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 19,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 26,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 30,
+        "text" : "Rules"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 32,
+        "text" : "Rules — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 36,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 43,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 46,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 54,
+        "text" : "When NOT to use this skill"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 56,
+        "text" : "When NOT to use this skill — steps"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 62,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 20,
+        "text" : "Input"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 21,
+        "text" : "Output"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 23,
+        "text" : "Side effect"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 40,
+        "text" : "Note"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 41,
+        "text" : "Emit"
+      }
+    ],
+    "parameters" : "patient",
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 19,
+        "lines" : [
+          "Input: a patient",
+          "Output: either a confirmed fresh reading or an escalation for a patient",
+          "who has gone stale",
+          "Side effect: every recheck pass is logged against the patient's chart,",
+          "whether it finds the patient current or overdue"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 26,
+        "lines" : [
+          "\"monitor patient vitals\"",
+          "\"run vitals watch\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Rules",
+        "line" : 30,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Rules — steps",
+        "line" : 32,
+        "lines" : [
+          "When a patient has been unmonitored for more than 4 hours, escalate the patient"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 36,
+        "lines" : [
+          "until the patient is monitored,",
+          "wait 15 minutes",
+          "read the vital signs for the patient",
+          "Note: \"patient vitals confirmed current\"",
+          "Emit: \"vitals monitor pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 43,
+        "lines" : [
+          "make sure the patient's last observed at is within the last 4 hours"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 46,
+        "lines" : [
+          "Don't treat a single fresh reading as the end of the watch — the loop",
+          "exists because the patient goes stale again after the next observation",
+          "window, not just once",
+          "Don't extend the observation window informally because a unit is short",
+          "staffed. Escalate on schedule and let the escalation itself trigger the",
+          "staffing conversation"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill",
+        "line" : 54,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill — steps",
+        "line" : 56,
+        "lines" : [
+          "Use `triage patient` instead for a single point-in-time severity decision;",
+          "reading freshness over time is a different question than how severe a",
+          "reading is right now"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 62,
+        "lines" : [
+          "The receipt records how many recheck cycles ran before the patient was",
+          "confirmed current, or that the patient was escalated for going stale"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"monitor patient vitals\"\n\"run vitals watch\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "administer",
+      "line" : 44,
+      "past_participle" : "administered",
+      "relation" : "administration",
+      "third_person" : "administers"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "prescribe",
+      "line" : 43,
+      "past_participle" : "prescribed",
+      "relation" : "prescription",
+      "third_person" : "prescribes"
+    }
+  ],
+  "source_files" : [
+    "vitalsmonitor.meri",
+    "clinical.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 44,
+      "swift_line" : 418
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 422
+    },
+    {
+      "meridian_line" : 38,
+      "swift_line" : 429
+    },
+    {
+      "meridian_line" : 60,
+      "swift_line" : 434
+    },
+    {
+      "meridian_line" : 40,
+      "swift_line" : 450
+    },
+    {
+      "meridian_line" : 41,
+      "swift_line" : 460
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 499
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 504
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 544
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 549
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 589
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 594
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Patient",
+          "name" : "patient"
+        }
+      ],
+      "source_name" : "vitals monitor a patient",
+      "swift_struct" : "VitalsMonitorPatient"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when a patient has been unmonitored for more than 4 hours",
+      "swift_struct" : "WhenPatientHasBeenUnmonitored"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when monitorPatientVitals fires",
+      "swift_struct" : "WhenMonitorpatientvitalsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runVitalsWatch fires",
+      "swift_struct" : "WhenRunvitalswatchFires"
+    }
+  ]
+}

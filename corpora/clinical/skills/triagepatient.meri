@@ -1,0 +1,57 @@
+---
+name: triage patient
+description: Read a patient's latest vital signs and decide, in the moment, whether the situation is an immediate escalation or a judgment call that needs a human's triage level. Use this at intake and at every handoff, not only when someone already suspects trouble.
+triggers:
+  - "triage patient"
+  - "run patient triage"
+parameters: patient
+---
+
+# Triage Patient
+
+> Triage is the one place in a ward where being slow is its own kind of
+> mistake — a patient who is quietly deteriorating rarely announces it, and
+> the vitals are usually the first place it shows. This skill pulls the
+> patient's latest vital signs, escalates immediately the moment any one of
+> them crosses its ceiling, and otherwise falls back to a human triage
+> decision rather than guessing at a severity level from thresholds alone.
+
+## Contract (( role: reference ))
+- Input: a patient.
+- Output: either an immediate escalation or a recorded triage level chosen
+  by a clinician.
+- Side effect: an escalation pages the on-call attending on the spot; a
+  triage level gets attached to the patient's chart either way.
+
+## When to invoke
+- "triage patient"
+- "run patient triage"
+
+## Workflow
+read the vital signs for the patient.
+if any of the vital signs is critical,
+  escalate the patient.
+  Emit: "triage patient escalated".
+if not any of the vital signs is critical,
+  use judgment to weigh every vital sign against its own ceiling and recommend a triage level.
+  ask the user to choose between "admit", "observe", "discharge".
+Emit: "triage patient pass complete".
+
+## Anti-Patterns (( role: reference ))
+- Don't wait for a second critical reading to confirm the first — a single
+  vital sign past its ceiling is already the escalation trigger, not a
+  suggestion to recheck first.
+- Don't let the judgment call second-guess a critical vital sign that
+  already fired the escalation branch; the two paths are mutually
+  exclusive by design, not a fallback chain.
+
+## When NOT to use this skill (( role: reference ))
+Use `vitals monitor` instead for the recurring background check that keeps
+watching a patient between triage passes — this skill is a single point-in
+-time decision, not the ongoing watch. Use `medication administer` once a
+triage level has already produced an order that needs to be given.
+
+## Report shape (( role: template ))
+The receipt records which branch fired — an immediate escalation or a
+human-chosen triage level — and the level itself when a human made the
+call.

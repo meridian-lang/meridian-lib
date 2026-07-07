@@ -139,13 +139,16 @@ gbrain frontmatter install-hook [--source <id>]
 
 ## Trigger words (( role: reference ))
 
-When the user says any of these, route here:
 - "validate frontmatter"
 - "check frontmatter"
 - "fix frontmatter"
 - "frontmatter audit"
 - "brain lint"
 
+
+### Trigger words — steps
+
+When the user says any of these, route here:
 ## Output rules (( role: reference ))
 
 - Surface counts to the user in plain language; do not dump raw JSON.

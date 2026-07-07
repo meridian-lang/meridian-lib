@@ -271,6 +271,64 @@ struct RuleInjectorCoverageTests {
         }
     }
 
+    @Test("invariant with a multi-word kind subject attaches, and its predicate identifier is camelCased (not a raw space)")
+    func multiWordKindSubjectAttachesAndCamelCases() throws {
+        // Regression for a sharp edge: a workflow parameter's `KindRef.name`
+        // is always a concatenated Swift type name ("MedicationOrder"), but
+        // a rule's subject/object kind text is space-separated prose
+        // ("medication order") straight out of `parseSubject`/`extractObjectKind`.
+        // `hasParameter`/`actionStemOverlap` must decamelize the kind name
+        // before tokenizing, or a multi-word subject can never match its own
+        // parameter. Separately, `lowerExprSimple` must camelCase a bare
+        // identifier exactly like the main `ASTToIR.lowerExpr` path does, or
+        // the emitted `state.get(...)` key (built from `propertyAccess`'s
+        // base) contains a literal space and can never resolve at runtime.
+        let rules: [ParsedRule] = [
+            .invariant(
+                subjectKind: "medication order",
+                subjectFilter: .comparison(
+                    .propertyAccess(.identifierRef("medication order"), "allergy check"),
+                    .equal,
+                    .literal(.string("conflict"))
+                ),
+                forbiddenActionText: "be administered",
+                sourceLine: 2,
+                originalText: "A medication order with allergy check \"conflict\" must not be administered."
+            )
+        ]
+        let wf = workflow(
+            name: "administer a medication order for a patient by a nurse",
+            params: [("medicationOrder", "MedicationOrder"), ("patient", "Patient"), ("nurse", "Nurse")],
+            body: [.complete(CompleteIR())]
+        )
+        var injector = RuleInjector(symbols: try symbols(), trace: .silent(), sourceFile: "t.meridian")
+        let out = try injector.inject(rules: rules, into: [wf], sourceFile: "t.meridian")
+        #expect(injector.unattachedRules.isEmpty)
+        guard case .assert(let a) = out[0].body.statements.first else {
+            Issue.record("expected an injected assert; rule did not attach"); return
+        }
+        guard case .logical(.not, let inner) = a.condition, case .comparison(let lhs, _, _) = inner.first else {
+            Issue.record("expected a negated comparison condition, got \(a.condition)"); return
+        }
+        guard case .propertyAccess(let base, let prop) = lhs else {
+            Issue.record("expected the comparison LHS to be a property access, got \(lhs)"); return
+        }
+        guard case .identifierRef(let name) = base else {
+            Issue.record("expected the property access base to be a bare identifier, got \(base)"); return
+        }
+        #expect(name == "medicationOrder", "expected a camelCased identifier, got '\(name)' (a raw space can never match a bound state key)")
+        #expect(prop == "allergy check")
+    }
+
+    @Test("IdentifierNaming.decamelize recovers word boundaries from a concatenated KindRef name")
+    func decamelizeRecoversWordBoundaries() {
+        #expect(IdentifierNaming.decamelize("MedicationOrder") == "Medication Order")
+        #expect(IdentifierNaming.decamelize("AccessRequest") == "Access Request")
+        #expect(IdentifierNaming.decamelize("Order") == "Order")
+        #expect(IdentifierNaming.decamelize("SLO") == "SLO")
+        #expect(IdentifierNaming.decamelize("") == "")
+    }
+
     @Test("bounded permission injects a gate assert built from conditions")
     func boundedPermissionGate() throws {
         let rules: [ParsedRule] = [
@@ -360,6 +418,48 @@ struct RuleInjectorCoverageTests {
                     description: DescriptionAST(noun: "orders"),
                     body: .literal(.boolean(true))
                 )),
+                sourceLine: 2,
+                originalText: "stub"
+            )
+        ]
+        let wf = workflow(
+            name: "place an order",
+            params: [("customer", "customer"), ("order", "order")],
+            body: [.complete(CompleteIR())]
+        )
+        #expect(throws: CompilerError.self) {
+            _ = try inject(rules: rules, into: [wf])
+        }
+    }
+
+    /// `lowerExprSimple`'s rejection arm covers eight structurally rich
+    /// `ExpressionAST` shapes a rule body cannot express (see its doc
+    /// comment and `corpora/GENERATING_A_CORPUS.md` gotcha #7). The
+    /// `quantified` case above and the `relationTraversal` end-to-end case
+    /// in `RuleLoweringTests` each exercise one arm through a different
+    /// entry point; this covers the remaining six directly so every arm of
+    /// the switch's rejection branch is actually exercised, not just
+    /// reachable in principle.
+    @Test("lowerExprSimple rejects every other structurally-rich predicate shape",
+          arguments: [
+            ExpressionAST.relationTraversal(.identifierRef("order"), relation: "line items", navKind: "all"),
+            ExpressionAST.description(DescriptionAST(noun: "orders")),
+            ExpressionAST.aggregate(.count, DescriptionAST(noun: "orders")),
+            ExpressionAST.superlative(SuperlativeAST(
+                description: DescriptionAST(noun: "orders"), property: "createdAt", ascending: false)),
+            ExpressionAST.tableLookup(
+                table: "shipping_rates", keyColumn: "region", key: .literal(.string("west")), valueColumn: "rate"),
+            ExpressionAST.verbPredicate(
+                subject: .identifierRef("order"), verb: "contains", object: .identifierRef("contraband")),
+            ExpressionAST.malformed("garbled predicate"),
+            ExpressionAST.recordList(fields: ["a"], rows: [[.literal(.integer(1))]]),
+          ])
+    func lowerExprSimpleRejectsOtherRichShapes(_ predicate: ExpressionAST) throws {
+        let rules: [ParsedRule] = [
+            .parameterGuard(
+                subjectKind: "customer",
+                actionText: "place an order",
+                predicate: predicate,
                 sourceLine: 2,
                 originalText: "stub"
             )

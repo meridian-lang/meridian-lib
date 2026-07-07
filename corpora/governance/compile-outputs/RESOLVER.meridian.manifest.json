@@ -1,0 +1,198 @@
+{
+  "constants" : {
+    "credential ttl" : 7776000,
+    "max concurrent grants" : 3,
+    "review window" : 604800
+  },
+  "instances_required" : [
+    {
+      "kind" : "environment",
+      "name" : "identity provider"
+    },
+    {
+      "kind" : "environment",
+      "name" : "audit sink"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_AccessRequest_pending",
+      "kind" : "access request",
+      "line" : 34
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_AccessRequest_stale",
+      "kind" : "access request",
+      "line" : 33
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Credential_fresh",
+      "kind" : "credential",
+      "line" : 32
+    },
+    {
+      "adjective" : "overused",
+      "function" : "meridianDef_Credential_overused",
+      "kind" : "credential",
+      "line" : 31
+    },
+    {
+      "adjective" : "classified",
+      "function" : "meridianDef_Resource_classified",
+      "kind" : "resource",
+      "line" : 27
+    },
+    {
+      "adjective" : "authorized",
+      "function" : "meridianDef_User_authorized",
+      "kind" : "user",
+      "line" : 30
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_User_cleared",
+      "kind" : "user",
+      "line" : 28
+    },
+    {
+      "adjective" : "privileged",
+      "function" : "meridianDef_User_privileged",
+      "kind" : "user",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 36,
+      "name" : "assignment",
+      "right_cardinality" : "one",
+      "right_kind" : "a role",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a policy",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "an environment",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 38,
+      "name" : "grant",
+      "right_cardinality" : "one",
+      "right_kind" : "a resource",
+      "via" : "access.grant"
+    }
+  ],
+  "meridian_skill" : {
+    "outline" : [
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 5,
+        "text" : "Dispatch table"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 8,
+        "text" : "Dispatch table — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 21,
+        "text" : "Workflow"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Dispatch table",
+        "line" : 5,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Dispatch table — steps",
+        "line" : 8,
+        "lines" : [
+          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IGdyYW50IGFjY2VzcyB8IGdyYW50YWNjZXNzIHwKfCByZXZpZXcgYWNjZXNzIHJlcXVlc3RzIHwgcmV2aWV3cmVxdWVzdHMgfAp8IHJvdGF0ZSBjcmVkZW50aWFscyB8IHJvdGF0ZWNyZWRlbnRpYWxzIHwKfCByZXZva2Ugc3RhbGUgYWNjZXNzIHwgcmV2b2tlc3RhbGVhY2Nlc3MgfAp8IHJlbmRlciBhY2Nlc3MgbWF0cml4IHwgYWNjZXNzbWF0cml4IHwKfCBhdWRpdCBwb2xpY3kgY292ZXJhZ2UgfCBwb2xpY3lhdWRpdCB8CnwgZXNjYWxhdGUgcGVuZGluZyByZXF1ZXN0cyB8IGVzY2FsYXRlcGVuZGluZyB8CnwgY2xhc3NpZnkgcmVzb3VyY2VzIHwgY2xhc3NpZnlyZXNvdXJjZSB8"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow",
+        "line" : 21,
+        "lines" : [
+          "Look up the skill corresponding to the trigger phrase and emit the selected",
+          "skill id"
+        ],
+        "role" : "reference"
+      }
+    ]
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "authorize",
+      "line" : 43,
+      "past_participle" : "authorized",
+      "relation" : "assignment",
+      "third_person" : "authorizes"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "grant",
+      "line" : 44,
+      "past_participle" : "granted",
+      "relation" : "grant",
+      "third_person" : "grants"
+    }
+  ],
+  "source_files" : [
+    "RESOLVER.meri",
+    "governance.merconfig"
+  ],
+  "source_map" : [
+
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "entry",
+      "swift_struct" : "Entry"
+    }
+  ]
+}

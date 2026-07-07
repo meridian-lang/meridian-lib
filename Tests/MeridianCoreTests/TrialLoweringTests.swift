@@ -91,4 +91,33 @@ struct TrialLoweringTests {
         #expect(trial.lowersAsStatement("Validate the order."))
         #expect(!trial.lowersAsStatement(""))
     }
+
+    // A bare `Definition:`-backed adjective quantifier check (e.g. "make sure
+    // any X.") probes through `TrialLowering.probe`'s standalone
+    // `ASTToIR.lowerBlock` call, which never runs the top-level `lower(_
+    // file:)` setup that materializes `symbols.pendingDefinitions` into
+    // `symbols.definitions`. Before the fix this spuriously failed with
+    // "unknown adjective", demoting a real, compiler-lowerable "Check: any
+    // <adjective> <plural>." line to documentation during migration (see
+    // AGENTS.md pitfall — merconfig-declared adjectives must resolve inside
+    // the probe too).
+    static let productVocab = Compiler.VocabularyInput(
+        name: "product", file: "product.merconfig",
+        source: """
+        === vocabulary ===
+        A product is a kind of thing.
+        A product has a quantity on hand, and a reorder point.
+        Definition: a product is short if its quantity on hand is less than its reorder point.
+        """
+    )
+
+    @Test("a checkable quantifier condition over a merconfig-declared adjective trial-lowers")
+    func merconfigAdjectiveQuantifierIsCheckable() throws {
+        let knowledge = try Compiler(options: .init(trace: .silent())).knowledge(
+            forSource: "", sourceFile: "<test>", vocabularies: [Self.productVocab]
+        )
+        let trial = TrialLowering(knowledge: knowledge)
+        #expect(trial.isCheckableCondition("any short products"))
+        #expect(trial.lowersAsStatement("make sure any short products."))
+    }
 }

@@ -1,0 +1,398 @@
+{
+  "constants" : {
+    "dose limit" : 2,
+    "observation window" : 14400,
+    "vitals threshold" : 100
+  },
+  "instances_required" : [
+    {
+      "kind" : "protocol",
+      "name" : "sepsis protocol"
+    },
+    {
+      "kind" : "protocol",
+      "name" : "anticoagulation protocol"
+    }
+  ],
+  "kinds_used" : [
+    "Patient"
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "granted",
+      "function" : "meridianDef_Consent_granted",
+      "kind" : "consent",
+      "line" : 32
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_MedicationOrder_cleared",
+      "kind" : "medication order",
+      "line" : 29
+    },
+    {
+      "adjective" : "contraindicated",
+      "function" : "meridianDef_MedicationOrder_contraindicated",
+      "kind" : "medication order",
+      "line" : 28
+    },
+    {
+      "adjective" : "high risk",
+      "function" : "meridianDef_Medication_highRisk",
+      "kind" : "medication",
+      "line" : 27
+    },
+    {
+      "adjective" : "active",
+      "function" : "meridianDef_Patient_active",
+      "kind" : "patient",
+      "line" : 33
+    },
+    {
+      "adjective" : "held",
+      "function" : "meridianDef_Patient_held",
+      "kind" : "patient",
+      "line" : 34
+    },
+    {
+      "adjective" : "monitored",
+      "function" : "meridianDef_Patient_monitored",
+      "kind" : "patient",
+      "line" : 30
+    },
+    {
+      "adjective" : "unmonitored",
+      "function" : "meridianDef_Patient_unmonitored",
+      "kind" : "patient",
+      "line" : 31
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_VitalSign_critical",
+      "kind" : "vital sign",
+      "line" : 25
+    },
+    {
+      "adjective" : "stable",
+      "function" : "meridianDef_VitalSign_stable",
+      "kind" : "vital sign",
+      "line" : 26
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a nurse",
+      "line" : 38,
+      "name" : "administration",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "medication.administer"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a protocol",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication",
+      "via" : "protocol.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a clinician",
+      "line" : 36,
+      "name" : "prescription",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "order.list"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Read a patient's latest vital signs and decide, in the moment, whether the situation is an immediate escalation or a judgment call that needs a human's triage level. Use this at intake and at every handoff, not only when someone already suspects trouble.",
+    "name" : "triage patient",
+    "outline" : [
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 19,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 26,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 30,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 40,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 48,
+        "text" : "When NOT to use this skill"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 54,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 20,
+        "text" : "Input"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 21,
+        "text" : "Output"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 23,
+        "text" : "Side effect"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 34,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 38,
+        "text" : "Emit"
+      }
+    ],
+    "parameters" : "patient",
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 19,
+        "lines" : [
+          "Input: a patient",
+          "Output: either an immediate escalation or a recorded triage level chosen",
+          "by a clinician",
+          "Side effect: an escalation pages the on-call attending on the spot; a",
+          "triage level gets attached to the patient's chart either way"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 26,
+        "lines" : [
+          "\"triage patient\"",
+          "\"run patient triage\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 30,
+        "lines" : [
+          "read the vital signs for the patient",
+          "if any of the vital signs is critical,",
+          "escalate the patient",
+          "Emit: \"triage patient escalated\"",
+          "if not any of the vital signs is critical,",
+          "use judgment to weigh every vital sign against its own ceiling and recommend a triage level",
+          "ask the user to choose between \"admit\", \"observe\", \"discharge\"",
+          "Emit: \"triage patient pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 40,
+        "lines" : [
+          "Don't wait for a second critical reading to confirm the first — a single",
+          "vital sign past its ceiling is already the escalation trigger, not a",
+          "suggestion to recheck first",
+          "Don't let the judgment call second-guess a critical vital sign that",
+          "already fired the escalation branch; the two paths are mutually",
+          "exclusive by design, not a fallback chain"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill",
+        "line" : 48,
+        "lines" : [
+          "Use `vitals monitor` instead for the recurring background check that keeps",
+          "watching a patient between triage passes — this skill is a single point-in",
+          "-time decision, not the ongoing watch. Use `medication administer` once a",
+          "triage level has already produced an order that needs to be given"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 54,
+        "lines" : [
+          "The receipt records which branch fired — an immediate escalation or a",
+          "human-chosen triage level — and the level itself when a human made the",
+          "call"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"triage patient\"\n\"run patient triage\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "administer",
+      "line" : 44,
+      "past_participle" : "administered",
+      "relation" : "administration",
+      "third_person" : "administers"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "prescribe",
+      "line" : 43,
+      "past_participle" : "prescribed",
+      "relation" : "prescription",
+      "third_person" : "prescribes"
+    }
+  ],
+  "source_files" : [
+    "triagepatient.meri",
+    "clinical.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 60,
+      "swift_line" : 418
+    },
+    {
+      "meridian_line" : 32,
+      "swift_line" : 429
+    },
+    {
+      "meridian_line" : 69,
+      "swift_line" : 432
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 444
+    },
+    {
+      "meridian_line" : 35,
+      "swift_line" : 455
+    },
+    {
+      "meridian_line" : 36,
+      "swift_line" : 457
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 467
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 478
+    },
+    {
+      "meridian_line" : 38,
+      "swift_line" : 486
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 525
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 530
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 570
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 575
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "judgment_steps" : [
+        {
+          "line" : 36,
+          "scoped_tools" : [
+            "allergy.check",
+            "audit.log",
+            "consent.record",
+            "medication.administer",
+            "order.list",
+            "order.override",
+            "patient.escalate",
+            "patient.list",
+            "protocol.lookup",
+            "vitals.read"
+          ],
+          "text" : "weigh every vital sign against its own ceiling and recommend a triage level"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Patient",
+          "name" : "patient"
+        }
+      ],
+      "source_name" : "triage patient a patient",
+      "swift_struct" : "TriagePatientPatient"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when triagePatient fires",
+      "swift_struct" : "WhenTriagepatientFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runPatientTriage fires",
+      "swift_struct" : "WhenRunpatienttriageFires"
+    }
+  ]
+}

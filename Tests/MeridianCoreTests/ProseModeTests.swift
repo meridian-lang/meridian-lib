@@ -4,7 +4,7 @@ import Testing
 @Suite("Prose mode")
 struct ProseModeTests {
 
-    @Test("unmatched line in discretion workflow lowers to ProseStepIR")
+    @Test("unmatched line in discretion workflow lowers to AIJudgmentIR")
     func discretionUnmatchedLineBecomesProseStep() throws {
         let symbols = SymbolTable()
         let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
@@ -13,12 +13,11 @@ struct ProseModeTests {
         """)
 
         let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
-        guard case .proseStep(let step) = workflows[0].body.statements.first else {
-            Issue.record("Expected ProseStepIR")
+        guard case .aiJudgment(let step) = workflows[0].body.statements.first else {
+            Issue.record("Expected AIJudgmentIR")
             return
         }
         #expect(step.text == "inspect the diff and leave only useful comments")
-        #expect(step.dispatchMode == .planThenExecute)
     }
 
     @Test("unmatched line outside discretion still raises a semantic error")
@@ -34,16 +33,15 @@ struct ProseModeTests {
         }
     }
 
-    @Test("ProseStepIR emits runtime executeProsePlan call")
+    @Test("AIJudgmentIR emits runtime executeProsePlan call")
     func proseStepCodegen() throws {
         let workflow = IRWorkflow(
             name: "Demo",
             parameters: [],
             body: IRBlock(statements: [
-                .proseStep(ProseStepIR(
+                .aiJudgment(AIJudgmentIR(
                     text: "inspect the diff",
-                    scopedTools: ["github.comment"],
-                    dispatchMode: .planThenExecute
+                    scopedTools: ["github.comment"]
                 ))
             ])
         )
@@ -53,16 +51,15 @@ struct ProseModeTests {
         #expect(out.contains("github.comment"))
     }
 
-    @Test("ProseStepIR.guidance emits an escaped guidance: argument (plan-then-execute)")
+    @Test("AIJudgmentIR.guidance emits an escaped guidance: argument (plan-then-execute)")
     func proseStepGuidanceCodegenPlanThenExecute() throws {
         let workflow = IRWorkflow(
             name: "Demo",
             parameters: [],
             body: IRBlock(statements: [
-                .proseStep(ProseStepIR(
+                .aiJudgment(AIJudgmentIR(
                     text: "follow the install guidance",
                     scopedTools: ["shell.run"],
-                    dispatchMode: .planThenExecute,
                     guidance: "Run \"gbrain doctor\" first."
                 ))
             ])
@@ -74,15 +71,14 @@ struct ProseModeTests {
         #expect(out.contains("guidance: \"Run \\\"gbrain doctor\\\" first.\""))
     }
 
-    @Test("ProseStepIR.guidance emits after autonomy config args (autonomous loop)")
+    @Test("AIAutonomyIR.guidance emits after autonomy config args (autonomous loop)")
     func proseStepGuidanceCodegenAutonomousLoop() throws {
         let workflow = IRWorkflow(
             name: "Demo",
             parameters: [],
             body: IRBlock(statements: [
-                .proseStep(ProseStepIR(
+                .aiAutonomy(AIAutonomyIR(
                     text: "follow the repair guidance",
-                    dispatchMode: .autonomousLoop,
                     autonomy: AutonomyConfigIR(),
                     guidance: "Repair every missing back-link."
                 ))
@@ -107,8 +103,8 @@ struct ProseModeTests {
         """)
 
         let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
-        guard case .proseStep(let step) = workflows[0].body.statements.first else {
-            Issue.record("Expected ProseStepIR")
+        guard case .aiJudgment(let step) = workflows[0].body.statements.first else {
+            Issue.record("Expected AIJudgmentIR")
             return
         }
         #expect(step.text == "follow the Diagnostics guidance")

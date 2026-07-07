@@ -104,7 +104,7 @@
         "text" : "Contract"
       },
       {
-        "kind" : "reference",
+        "kind" : "invariants",
         "level" : 3,
         "line" : 56,
         "text" : "Contract — steps"
@@ -112,205 +112,205 @@
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 61,
+        "line" : 60,
         "text" : "Output Format"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 77,
+        "line" : 76,
         "text" : "Anti-Patterns"
       },
       {
-        "kind" : "reference",
+        "kind" : "prohibitions",
         "level" : 3,
-        "line" : 88,
+        "line" : 87,
         "text" : "Anti-Patterns — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 94,
+        "line" : 91,
         "text" : "Anti-Patterns — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 100,
+        "line" : 97,
         "text" : "Anti-Patterns — steps 3"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 106,
+        "line" : 103,
         "text" : "When to invoke"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 118,
+        "line" : 115,
         "text" : "Preconditions"
       },
       {
-        "kind" : "reference",
+        "kind" : "applicability",
         "level" : 3,
-        "line" : 128,
+        "line" : 125,
         "text" : "Preconditions — steps"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 135,
+        "line" : 131,
         "text" : "Workflow"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 137,
+        "line" : 133,
         "text" : "Phase 1 — Plan"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 145,
+        "line" : 141,
         "text" : "Phase 1 — Plan — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 150,
+        "line" : 146,
         "text" : "Phase 2 — Dry-run + privacy-lint preview"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 164,
+        "line" : 160,
         "text" : "Phase 2 — Dry-run + privacy-lint preview — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 172,
+        "line" : 168,
         "text" : "Phase 3 — Genericization checklist (the editorial pass)"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 201,
+        "line" : 197,
         "text" : "Phase 3 — Genericization checklist (the editorial pass) — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 208,
+        "line" : 204,
         "text" : "Phase 3 — Genericization checklist (the editorial pass) — steps 2"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 213,
+        "line" : 209,
         "text" : "Phase 3 — Genericization checklist (the editorial pass) — steps 3"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 221,
+        "line" : 217,
         "text" : "Phase 4 — Real harvest"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 237,
+        "line" : 233,
         "text" : "Phase 4 — Real harvest — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 246,
+        "line" : 242,
         "text" : "Phase 4 — Real harvest — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 250,
+        "line" : 246,
         "text" : "Phase 5 — Verify in gbrain"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 256,
+        "line" : 252,
         "text" : "Phase 5 — Verify in gbrain — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 266,
+        "line" : 262,
         "text" : "Phase 6 — Downstream announcement (optional)"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 273,
+        "line" : 269,
         "text" : "Bypass: `--no-lint`"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 280,
+        "line" : 276,
         "text" : "Bypass: `--no-lint` — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 291,
+        "line" : 287,
         "text" : "Bypass: `--no-lint` — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 297,
+        "line" : 293,
         "text" : "What harvest does NOT do"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 308,
+        "line" : 304,
         "text" : "Files this skill touches"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 317,
+        "line" : 313,
         "text" : "Files this skill touches — steps"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 113,
+        "line" : 110,
         "text" : "Do NOT invoke when"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 152,
+        "line" : 148,
         "text" : "The output shows"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 223,
+        "line" : 219,
         "text" : "Default behavior"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 228,
+        "line" : 224,
         "text" : "Outcomes"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 265,
+        "line" : 261,
         "text" : "Review the diff"
       }
     ],
@@ -336,19 +336,18 @@
         "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract — steps",
         "line" : 56,
         "lines" : [
-          "If any of these is incomplete, the skill is NOT yet harvested — the",
-          "files may sit in gbrain's working tree, but they're not landed"
+          "If any of these is incomplete, the skill is NOT yet harvested — the files may sit in gbrain's working tree, but they're not landed"
         ],
-        "role" : "reference"
+        "role" : "invariants"
       },
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 61,
+        "line" : 60,
         "lines" : [
           "This skill produces three artifacts in gbrain's working tree:",
           "`skills\/<harvested-slug>\/SKILL.md` (and any sibling files like",
@@ -367,7 +366,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 77,
+        "line" : 76,
         "lines" : [
           "**Trusting the linter alone.** The default regex set catches the",
           "common cases. It doesn't catch every proper noun. Phase 3 (the",
@@ -381,20 +380,18 @@
         "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Anti-Patterns — steps",
-        "line" : 88,
+        "line" : 87,
         "lines" : [
-          "Always preview first. Files land in",
-          "gbrain's working tree; cleanup is a `git checkout` away, but you",
-          "shouldn't need to"
+          "Skipping the dry-run. Always preview first. Files land in gbrain's working tree; cleanup is a `git checkout` away, but you shouldn't need to"
         ],
-        "role" : "reference"
+        "role" : "prohibitions"
       },
       {
         "executes" : false,
         "heading" : "Anti-Patterns — steps 2",
-        "line" : 94,
+        "line" : 91,
         "lines" : [
           "use judgment to follow the Anti-Patterns — steps 2 guidance:",
           "**Harvesting `--no-lint` without justification.** The lint exists",
@@ -405,7 +402,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns — steps 3",
-        "line" : 100,
+        "line" : 97,
         "lines" : [
           "use judgment to follow the Anti-Patterns — steps 3 guidance:",
           "**Harvesting batch (multiple skills at once).** Not supported, and",
@@ -416,7 +413,7 @@
       {
         "executes" : false,
         "heading" : "When to invoke",
-        "line" : 106,
+        "line" : 103,
         "lines" : [
           "The user developed a skill in their host fork (Wintermute, Neuromancer,",
           "Zion, etc.) and wants other gbrain clients to be able to use it",
@@ -432,7 +429,7 @@
       {
         "executes" : false,
         "heading" : "Preconditions",
-        "line" : 118,
+        "line" : 115,
         "lines" : [
           "**The skill is generalizable.** Strip-test in your head: replace",
           "every fork-specific name. Does it still make sense as a skill?",
@@ -443,19 +440,18 @@
         "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Preconditions — steps",
-        "line" : 128,
+        "line" : 125,
         "lines" : [
-          "The skill is mature. Recent `routing-eval.jsonl` cases pass; the",
-          "skill has been used in production at least a few times"
+          "The skill is mature. Recent `routing-eval.jsonl` cases pass; the skill has been used in production at least a few times"
         ],
-        "role" : "reference"
+        "role" : "applicability"
       },
       {
         "executes" : true,
         "heading" : "Workflow",
-        "line" : 135,
+        "line" : 131,
         "lines" : [
 
         ],
@@ -464,7 +460,7 @@
       {
         "executes" : false,
         "heading" : "Phase 1 — Plan",
-        "line" : 137,
+        "line" : 133,
         "lines" : [
           "Which host repo is the source? (Path to repo root, not to the skill",
           "directory — e.g. `~\/git\/wintermute`, not `~\/git\/wintermute\/skills\/foo`.)",
@@ -476,7 +472,7 @@
       {
         "executes" : false,
         "heading" : "Phase 1 — Plan — steps",
-        "line" : 145,
+        "line" : 141,
         "lines" : [
           "What slug should the harvested skill have? (Slugs must be kebab-case,",
           "globally unique in the gbrain bundle.)"
@@ -486,7 +482,7 @@
       {
         "executes" : false,
         "heading" : "Phase 2 — Dry-run + privacy-lint preview",
-        "line" : 150,
+        "line" : 146,
         "lines" : [
           "The output shows:",
           "Which files would land in gbrain's tree",
@@ -503,7 +499,7 @@
       {
         "executes" : true,
         "heading" : "Phase 2 — Dry-run + privacy-lint preview — steps",
-        "line" : 164,
+        "line" : 160,
         "lines" : [
           "Run the CLI with `--dry-run`:",
           "codeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290PiAtLWRyeS1ydW4="
@@ -513,7 +509,7 @@
       {
         "executes" : false,
         "heading" : "Phase 3 — Genericization checklist (the editorial pass)",
-        "line" : 172,
+        "line" : 168,
         "lines" : [
           "**Fork-specific names → generic phrasing**",
           "`Wintermute` → `your OpenClaw` (or `OpenClaw deployment`)",
@@ -542,7 +538,7 @@
       {
         "executes" : false,
         "heading" : "Phase 3 — Genericization checklist (the editorial pass) — steps",
-        "line" : 201,
+        "line" : 197,
         "lines" : [
           "Before running the real harvest, walk the host's `skills\/<slug>\/`",
           "files and apply this checklist. If anything matches, edit the host",
@@ -553,7 +549,7 @@
       {
         "executes" : true,
         "heading" : "Phase 3 — Genericization checklist (the editorial pass) — steps 2",
-        "line" : 208,
+        "line" : 204,
         "lines" : [
 
         ],
@@ -562,7 +558,7 @@
       {
         "executes" : true,
         "heading" : "Phase 3 — Genericization checklist (the editorial pass) — steps 3",
-        "line" : 213,
+        "line" : 209,
         "lines" : [
 
         ],
@@ -571,7 +567,7 @@
       {
         "executes" : false,
         "heading" : "Phase 4 — Real harvest",
-        "line" : 221,
+        "line" : 217,
         "lines" : [
           "Default behavior:",
           "Path-confinement + symlink rejection at file copy",
@@ -591,7 +587,7 @@
       {
         "executes" : true,
         "heading" : "Phase 4 — Real harvest — steps",
-        "line" : 237,
+        "line" : 233,
         "lines" : [
           "codeblock:bash:Z2JyYWluIHNraWxscGFjayBoYXJ2ZXN0IDxzbHVnPiAtLWZyb20gPGhvc3QtcmVwby1yb290Pg=="
         ],
@@ -600,7 +596,7 @@
       {
         "executes" : true,
         "heading" : "Phase 4 — Real harvest — steps 2",
-        "line" : 246,
+        "line" : 242,
         "lines" : [
           "`openclaw.plugin.json` updated to add the slug, sorted"
         ],
@@ -609,7 +605,7 @@
       {
         "executes" : false,
         "heading" : "Phase 5 — Verify in gbrain",
-        "line" : 250,
+        "line" : 246,
         "lines" : [
           "Commit the additions in gbrain (do NOT commit any leftover files",
           "in the host repo — harvest is a copy, not a move)"
@@ -619,7 +615,7 @@
       {
         "executes" : false,
         "heading" : "Phase 5 — Verify in gbrain — steps",
-        "line" : 256,
+        "line" : 252,
         "lines" : [
           "`bun test test\/skills-conformance.test.ts` — confirms the new",
           "SKILL.md meets the frontmatter contract",
@@ -633,7 +629,7 @@
       {
         "executes" : false,
         "heading" : "Phase 6 — Downstream announcement (optional)",
-        "line" : 266,
+        "line" : 262,
         "lines" : [
           "If other gbrain clients should pick up the new skill:",
           "Note it in `CHANGELOG.md` under \"Skills added\" for the next release",
@@ -645,7 +641,7 @@
       {
         "executes" : false,
         "heading" : "Bypass: `--no-lint`",
-        "line" : 273,
+        "line" : 269,
         "lines" : [
           "**Document the bypass in the commit message.** Future maintainers",
           "should be able to see WHY the lint was bypassed (e.g. \"Wintermute",
@@ -656,7 +652,7 @@
       {
         "executes" : false,
         "heading" : "Bypass: `--no-lint` — steps",
-        "line" : 280,
+        "line" : 276,
         "lines" : [
           "The privacy linter is the safety net. The editorial pass is the",
           "primary defense. If you've completed Phase 3 thoroughly and the",
@@ -668,7 +664,7 @@
       {
         "executes" : false,
         "heading" : "Bypass: `--no-lint` — steps 2",
-        "line" : 291,
+        "line" : 287,
         "lines" : [
           "Never bypass the linter on a casual basis. The whole point of the",
           "default-on lint is that real names occasionally slip through the",
@@ -679,7 +675,7 @@
       {
         "executes" : false,
         "heading" : "What harvest does NOT do",
-        "line" : 297,
+        "line" : 293,
         "lines" : [
           "It does NOT move files (it copies). The host's `skills\/<slug>\/`",
           "stays in place",
@@ -695,7 +691,7 @@
       {
         "executes" : false,
         "heading" : "Files this skill touches",
-        "line" : 308,
+        "line" : 304,
         "lines" : [
           "gbrain's mirror path for declared paired sources",
           "(e.g. `src\/commands\/<slug>.ts` if the host SKILL.md declares it",
@@ -708,7 +704,7 @@
       {
         "executes" : false,
         "heading" : "Files this skill touches — steps",
-        "line" : 317,
+        "line" : 313,
         "lines" : [
           "gbrain's `skills\/<slug>\/` — every file in the host skill dir",
           "(copy)"
@@ -757,100 +753,116 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 166,
+      "meridian_line" : 58,
       "swift_line" : 604
     },
     {
-      "meridian_line" : 168,
-      "swift_line" : 616
+      "meridian_line" : 89,
+      "swift_line" : 609
     },
     {
-      "meridian_line" : 241,
-      "swift_line" : 627
+      "meridian_line" : 129,
+      "swift_line" : 620
     },
     {
-      "meridian_line" : 248,
-      "swift_line" : 638
+      "meridian_line" : 129,
+      "swift_line" : 622
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 678
+      "meridian_line" : 162,
+      "swift_line" : 628
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 683
+      "meridian_line" : 164,
+      "swift_line" : 640
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 722
+      "meridian_line" : 237,
+      "swift_line" : 651
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 727
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 766
+      "meridian_line" : 244,
+      "swift_line" : 662
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 771
+      "swift_line" : 702
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 810
+      "swift_line" : 707
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 815
+      "swift_line" : 746
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 854
+      "swift_line" : 751
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 859
+      "swift_line" : 790
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 898
+      "swift_line" : 795
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 903
+      "swift_line" : 834
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 942
+      "swift_line" : 839
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 947
+      "swift_line" : 878
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 986
+      "swift_line" : 883
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 991
+      "swift_line" : 922
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1030
+      "swift_line" : 927
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1035
+      "swift_line" : 966
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1074
+      "swift_line" : 971
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1079
+      "swift_line" : 1010
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1015
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1054
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1059
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1098
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1103
     }
   ],
   "tools_used" : [

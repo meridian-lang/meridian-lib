@@ -14,6 +14,10 @@ Routes a DBA request to the deterministic stored-procedure skill that owns it.
 | validate constraints | validateconstraints |
 | purge expired records | purgeexpired |
 | settle ready batches | settlebatch |
+| apply pending migrations | migrationapply |
+| vacuum bloated tables | vacuumtables |
+| retry failed batches | retryfailedbatch |
+| checksum audit | checksumaudit |
 
 ## Workflow
 

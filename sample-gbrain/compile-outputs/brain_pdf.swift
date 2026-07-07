@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum BrainPdf {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct BrainPdfInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -597,8 +597,8 @@ public struct BrainPdfInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "BrainPdfInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L54:C0") {
-            // L54
+        if __meridianShouldRun("progress:0.0:L51:C0") {
+            // L51
             // This skill depends on the gstack  binary at
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -607,32 +607,10 @@ public struct BrainPdfInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.0:L54:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.0:L51:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.1:L65:C0") {
-            // L65
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("P=\"$HOME/.claude/skills/gstack/make-pdf/dist/pdf\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.1:L65:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.2:L65:C0") {
-            // L65
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("[ -x \"$P\" ] || { echo \"make-pdf not installed; install gstack\" >&2; exit 1; }"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.2:L65:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.3:L122:C0") {
-            // L122
+        if __meridianShouldRun("progress:0.1:L119:C0") {
+            // L119
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -640,10 +618,10 @@ public struct BrainPdfInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.3:L122:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.1:L119:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.4:L122:C0") {
-            // L122
+        if __meridianShouldRun("progress:0.2:L119:C0") {
+            // L119
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -651,10 +629,10 @@ public struct BrainPdfInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.4:L122:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.2:L119:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.5:L122:C0") {
-            // L122
+        if __meridianShouldRun("progress:0.3:L119:C0") {
+            // L119
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -662,10 +640,10 @@ public struct BrainPdfInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.5:L122:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.3:L119:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.6:L122:C0") {
-            // L122
+        if __meridianShouldRun("progress:0.4:L119:C0") {
+            // L119
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -673,10 +651,10 @@ public struct BrainPdfInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.6:L122:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.4:L119:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.7:L157:C0") {
-            // L157
+        if __meridianShouldRun("progress:0.5:L154:C0") {
+            // L154
             // (Helvetica/Arial substitute)
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -685,10 +663,10 @@ public struct BrainPdfInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.7:L157:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.5:L154:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.8:L158:C0") {
-            // L158
+        if __meridianShouldRun("progress:0.6:L155:C0") {
+            // L155
             // (Chinese/Japanese/Korean characters)
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -697,7 +675,7 @@ public struct BrainPdfInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.8:L158:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.6:L155:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

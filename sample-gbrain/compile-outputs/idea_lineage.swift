@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum IdeaLineage {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct IdeaLineageInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -604,7 +604,7 @@ public struct IdeaLineageInput: MeridianWorkflow {
             prose: "follow the What this solves — steps guidance",
             snapshot: state.snapshot(),
             scopedTools: ["page.get", "page.list", "page.search", "shell.run"],
-            guidance: "Users often want to understand how one idea changed across time: when it first\nappeared, when it became sharp, what it displaced, what it contradicted, and\nwhat version is alive now. That is different from building a whole concept map\nand different from charting an entity's metric trajectory\nSearch for exact phrase variants with `search`\nuse judgment to follow the Phase 1: Resolve the idea target — steps 2 guidance:\nIf multiple distinct ideas share the same phrase, ask the user to choose the\nintended one before synthesizing\n`find_trajectory` only when the evidence is entity/attribute-shaped, such as\na role/status/metric evolution that is relevant to the idea's story\nWhen a bucket has no evidence, write \"No clear evidence found\" with a brief note\nabout what was checked\nWrite the answer in the output format below. Keep the synthesis proportional to\nthe evidence. Do not overfit a smooth evolution if the evidence is sparse,\nmessy, or contradictory\nRun broad `concept-synthesis` if the user actually wants the whole concept\nmap refreshed\n`skills/concept-synthesis/SKILL.md` - broad mutating concept-map synthesis\n`skills/query/SKILL.md` - general brain search and cited answers\n`skills/brain-ops/SKILL.md` - source attribution and brain-first behavior\n`find_trajectory` - structured typed-fact and event timelines for entities\n`find_contradictions` - cached suspected contradiction findings"
+            guidance: "Users often want to understand how one idea changed across time: when it first\nappeared, when it became sharp, what it displaced, what it contradicted, and\nwhat version is alive now. That is different from building a whole concept map\nand different from charting an entity's metric trajectory\nSearch for exact phrase variants with `search`\nuse judgment to follow the Phase 1: Resolve the idea target — steps 2 guidance:\nIf multiple distinct ideas share the same phrase, ask the user to choose the\nintended one before synthesizing\n`find_trajectory` only when the evidence is entity/attribute-shaped, such as\na role/status/metric evolution that is relevant to the idea's story\nWrite the answer in the output format below. Keep the synthesis proportional to\nthe evidence. Do not overfit a smooth evolution if the evidence is sparse,\nmessy, or contradictory\nRun broad `concept-synthesis` if the user actually wants the whole concept\nmap refreshed\n`skills/concept-synthesis/SKILL.md` - broad mutating concept-map synthesis\n`skills/query/SKILL.md` - general brain search and cited answers\n`skills/brain-ops/SKILL.md` - source attribution and brain-first behavior\n`find_trajectory` - structured typed-fact and event timelines for entities\n`find_contradictions` - cached suspected contradiction findings"
         )
         for (__key, __value) in __meridianProseResults_L53 {
             state.bind(__key, __value)

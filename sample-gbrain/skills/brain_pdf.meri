@@ -45,9 +45,6 @@ suitable for:
 $HOME/.claude/skills/gstack/make-pdf/dist/pdf
 ```
 
-A future v0.26+ may bundle a fallback PDF renderer; for v0.25.1 gstack
-is a soft prereq.
-
 
 ### Prerequisite: gstack make-pdf — steps
 
@@ -57,8 +54,8 @@ This skill depends on the gstack `make-pdf` binary at:
 ### Prerequisite: gstack make-pdf — steps 2 (( role: reference ))
 
 The user must have gstack co-installed. If absent, the skill cannot run.
-
-### Prerequisite: gstack make-pdf — steps 3
+A future v0.26+ may bundle a fallback PDF renderer; for v0.25.1 gstack
+is a soft prereq.
 
 > Verify it exists before invoking:
 

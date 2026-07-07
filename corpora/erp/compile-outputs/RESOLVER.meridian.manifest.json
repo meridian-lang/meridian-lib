@@ -1,52 +1,91 @@
 {
+  "constants" : {
+    "dunning window" : 604800,
+    "high value threshold" : {
+      "amount" : 5000,
+      "currency" : "USD"
+    },
+    "maximum retry count" : 3
+  },
   "instances_required" : [
-
+    {
+      "kind" : "mailer server",
+      "name" : "billing mailer"
+    },
+    {
+      "kind" : "payment processor",
+      "name" : "erp gateway"
+    }
   ],
   "kinds_used" : [
 
   ],
   "meridian_definitions" : [
     {
+      "adjective" : "in good standing",
+      "function" : "meridianDef_Customer_inGoodStanding",
+      "kind" : "customer",
+      "line" : 46
+    },
+    {
       "adjective" : "overdue",
       "function" : "meridianDef_Invoice_overdue",
       "kind" : "invoice",
-      "line" : 30
+      "line" : 42
+    },
+    {
+      "adjective" : "severely overdue",
+      "function" : "meridianDef_Invoice_severelyOverdue",
+      "kind" : "invoice",
+      "line" : 47
     },
     {
       "adjective" : "unpaid",
       "function" : "meridianDef_Invoice_unpaid",
       "kind" : "invoice",
-      "line" : 29
+      "line" : 41
     },
     {
       "adjective" : "blocked",
       "function" : "meridianDef_Order_blocked",
       "kind" : "order",
-      "line" : 27
+      "line" : 38
     },
     {
       "adjective" : "fulfilled",
       "function" : "meridianDef_Order_fulfilled",
       "kind" : "order",
-      "line" : 28
+      "line" : 39
+    },
+    {
+      "adjective" : "high value",
+      "function" : "meridianDef_Order_highValue",
+      "kind" : "order",
+      "line" : 45
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Order_open",
       "kind" : "order",
-      "line" : 26
+      "line" : 37
+    },
+    {
+      "adjective" : "released",
+      "function" : "meridianDef_Order_released",
+      "kind" : "order",
+      "line" : 40
     },
     {
       "adjective" : "short",
       "function" : "meridianDef_Product_short",
       "kind" : "product",
-      "line" : 31
+      "line" : 43
     },
     {
       "adjective" : "pending",
       "function" : "meridianDef_PurchaseOrder_pending",
       "kind" : "purchase order",
-      "line" : 32
+      "line" : 44
     }
   ],
   "meridian_ir_version" : "1.0",
@@ -55,7 +94,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 38,
+      "line" : 53,
       "name" : "collection",
       "right_cardinality" : "one",
       "right_kind" : "a payment",
@@ -64,8 +103,18 @@
     {
       "backing" : "tool",
       "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 57,
+      "name" : "escalation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dunning notice",
+      "via" : "dunning.notify"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 34,
+      "line" : 49,
       "name" : "fulfillment",
       "right_cardinality" : "one",
       "right_kind" : "a shipment",
@@ -75,7 +124,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 36,
+      "line" : 51,
       "name" : "invoicing",
       "right_cardinality" : "one",
       "right_kind" : "an invoice",
@@ -85,7 +134,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a product",
-      "line" : 40,
+      "line" : 55,
       "name" : "replenishment",
       "right_cardinality" : "one",
       "right_kind" : "a purchase order",
@@ -109,7 +158,7 @@
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 21,
+        "line" : 25,
         "text" : "Workflow"
       }
     ],
@@ -128,14 +177,14 @@
         "heading" : "Dispatch table — steps",
         "line" : 8,
         "lines" : [
-          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHByb2Nlc3Mgb3BlbiBvcmRlcnMgfCBwbGFjZW9yZGVyIHwKfCBmdWxmaWxsIEVSUCBvcmRlcnMgfCBmdWxmaWxsb3JkZXIgfAp8IHJ1biBpbnZvaWNlcyB8IGludm9pY2VydW4gfAp8IHJ1biBkdW5uaW5nIHwgZHVubmluZyB8CnwgcmVzdG9jayBzaG9ydCBwcm9kdWN0cyB8IHJlc3RvY2sgfAp8IHJlY2VpdmUgaW5ib3VuZCBzaGlwbWVudCB8IHJlY2VpdmVzaGlwbWVudCB8CnwgY2FuY2VsIGJsb2NrZWQgb3JkZXJzIHwgY2FuY2Vsb3JkZXIgfAp8IG1vbnRoLWVuZCBjbG9zZSB8IG1vbnRoZW5kY2xvc2UgfA=="
+          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHByb2Nlc3Mgb3BlbiBvcmRlcnMgfCBwbGFjZW9yZGVyIHwKfCBmdWxmaWxsIEVSUCBvcmRlcnMgfCBmdWxmaWxsb3JkZXIgfAp8IHJ1biBpbnZvaWNlcyB8IGludm9pY2VydW4gfAp8IHJ1biBkdW5uaW5nIHwgZHVubmluZyB8CnwgcmVzdG9jayBzaG9ydCBwcm9kdWN0cyB8IHJlc3RvY2sgfAp8IHJlY2VpdmUgaW5ib3VuZCBzaGlwbWVudCB8IHJlY2VpdmVzaGlwbWVudCB8CnwgY2FuY2VsIGJsb2NrZWQgb3JkZXJzIHwgY2FuY2Vsb3JkZXIgfAp8IG1vbnRoLWVuZCBjbG9zZSB8IG1vbnRoZW5kY2xvc2UgfAp8IHJldHJ5IGRlY2xpbmVkIHBheW1lbnRzIHwgcGF5bWVudHJldHJ5IHwKfCBhcHByb3ZlIGhpZ2ggdmFsdWUgb3JkZXJzIHwgb3JkZXJhcHByb3ZhbCB8CnwgcmVwbGVuaXNoIGJhY2tvcmRlcnMgfCBiYWNrb3JkZXJyZXBsZW5pc2ggfAp8IHByb2Nlc3MgcmV0dXJucyB8IHJldHVybnNwcm9jZXNzaW5nIHw="
         ],
         "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Workflow",
-        "line" : 21,
+        "line" : 25,
         "lines" : [
           "Look up the skill corresponding to the trigger phrase and emit the selected",
           "skill id"
@@ -147,28 +196,35 @@
   "meridian_verbs" : [
     {
       "base" : "collect",
-      "line" : 45,
+      "line" : 62,
       "past_participle" : "collected",
       "relation" : "collection",
       "third_person" : "collects"
     },
     {
+      "base" : "escalate",
+      "line" : 64,
+      "past_participle" : "escalated",
+      "relation" : "escalation",
+      "third_person" : "escalates"
+    },
+    {
       "base" : "fulfill",
-      "line" : 43,
+      "line" : 60,
       "past_participle" : "fulfilled",
       "relation" : "fulfillment",
       "third_person" : "fulfills"
     },
     {
       "base" : "invoice",
-      "line" : 44,
+      "line" : 61,
       "past_participle" : "invoiced",
       "relation" : "invoicing",
       "third_person" : "invoices"
     },
     {
       "base" : "replenish",
-      "line" : 46,
+      "line" : 63,
       "past_participle" : "replenished",
       "relation" : "replenishment",
       "third_person" : "replenishes"

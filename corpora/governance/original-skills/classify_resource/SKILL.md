@@ -1,0 +1,56 @@
+---
+name: classify resource
+description: Classify unclassified resources so downstream access decisions have something to key off of, escalating obviously sensitive cases automatically and routing the genuinely ambiguous ones to judgment rather than guessing. An unclassified resource is a resource `grant access` and `access matrix` can't reason about correctly.
+triggers:
+  - "classify resources"
+  - "classify unclassified resources"
+  - "run the classification sweep"
+---
+
+# Classify Resource
+
+Every access decision this corpus makes — `grant access`'s classified-gate
+check, the `access matrix` render, the coverage thresholds in
+`policy audit` — assumes a resource already knows whether it's classified.
+This skill is where that assumption gets made true. It fetches the pending
+queue, applies a fast discretionary rule for the obvious cases, and for
+anything that isn't obvious, hands the call to judgment rather than
+defaulting a resource to "public" just because nobody decided otherwise.
+
+## When to invoke
+- "classify resources"
+- "classify unclassified resources"
+- "run the classification sweep"
+
+## Workflow
+fetch pending access requests.
+
+!!! table (( ai-discretion ))
+| Condition                          | Action                          |
+| ------------------------------------ | ---------------------------------- |
+| the resource's status is "unclassified" | escalate to the security team    |
+| *                                   | monitor the resource             |
+
+## Classification Routing
+for each access request:
+  bind should classify = decide whether the access request's resource looks sensitive.
+  if the should classify is true,
+    log an audit entry for the access request.
+  otherwise,
+    use judgment to classify the access request and recommend a classification.
+
+## Completion
+Emit: "classify resource pass complete".
+
+## Anti-Patterns
+- Don't default an unclassified resource to "public" to unblock a pending
+  request. Silence isn't a classification decision — either the
+  discretion table catches it or judgment does.
+- Don't skip straight to judgment for every resource "to be safe." The
+  discretion table exists so the obvious cases don't burn a judgment call
+  that the ambiguous cases actually need.
+
+## Report shape
+The receipt notes how many resources were escalated outright versus routed
+to judgment, so a security officer can see whether the ambiguous share is
+growing.

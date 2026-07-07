@@ -1,0 +1,153 @@
+=== vocabulary ===
+A patient is a kind of person.
+A clinician is a kind of role.
+A nurse is a kind of clinician.
+An attending is a kind of clinician.
+A medication is a kind of thing.
+A medication order is a kind of artifact.
+A vital sign is a kind of metric.
+An allergy is a kind of fact.
+A consent is a kind of verdict.
+A protocol is a kind of artifact.
+
+A patient has a name, a status, an mrn, and a last observed at.
+A patient can be active or held or discharged, called the patient status.
+A clinician has a name and a role.
+A nurse has a name and a dose count.
+An attending has a name.
+A medication has a name and a risk level.
+A medication order has a patient id, a medication name, a dose, a status, and an allergy check.
+A vital sign has a name, a value, a ceiling, a patient id, and a recorded at.
+An allergy has a patient id, a medication name, and a severity.
+A consent has a patient id, a status, and a recorded at.
+A protocol has a name and a version.
+
+Definition: a vital sign is critical if its value is more than its ceiling.
+Definition: a vital sign is stable if its value is at most its ceiling.
+Definition: a medication is high risk if its risk level is "high".
+Definition: a medication order is contraindicated if its allergy check is "conflict".
+Definition: a medication order is cleared if its allergy check is "clear".
+Definition: a patient is monitored if its last observed at is within the last 4 hours.
+Definition: a patient is unmonitored if it is not monitored.
+Definition: a consent is granted if its status is "granted".
+Definition: a patient is active if its status is "active".
+Definition: a patient is held if its status is "held".
+
+Prescription relates a clinician to a medication order.
+Prescription is read via the order.list tool.
+Administration relates a nurse to a medication order.
+Administration is read via the medication.administer tool.
+Coverage relates a protocol to a medication.
+Coverage is read via the protocol.lookup tool.
+
+The verb to prescribe (it prescribes, it is prescribed) means the prescription relation.
+The verb to administer (it administers, it is administered) means the administration relation.
+The verb to cover (it covers, it is covered) means the coverage relation.
+
+To fetch pending medication orders:
+  bind medication orders = invoke order.list with status = "pending".
+
+To fetch active patients:
+  bind patients = invoke patient.list with status = "active".
+
+To administer a medication order:
+  invoke medication.administer with order = the medication order.
+
+To check the allergy history for a medication order:
+  bind allergy check = invoke allergy.check with order = the medication order.
+
+To read the vital signs for a patient:
+  bind vital signs = invoke vitals.read with patient = the patient.
+
+To record consent for a patient:
+  bind consent = invoke consent.record with patient = the patient.
+
+To look up the protocol for a medication:
+  bind protocol = invoke protocol.lookup with medication = the medication.
+
+To escalate a patient:
+  invoke patient.escalate with patient = the patient.
+
+To override a hold on a medication order:
+  invoke order.override with order = the medication order.
+
+To log an audit entry for a medication order:
+  invoke audit.log with order = the medication order.
+
+=== constants ===
+
+The dose limit is 2.
+The observation window is 4 hours.
+The vitals threshold is 100.
+
+=== instances ===
+
+There is a protocol called sepsis protocol:
+  name = "sepsis-bundle"
+  version = "3"
+
+There is a protocol called anticoagulation protocol:
+  name = "anticoag-bundle"
+  version = "2"
+
+=== language ===
+Comparison synonyms:
+  exceeds = is more than
+  falls below = is less than
+  matches = is
+Duration synonyms:
+  observation window = 4 hours
+Assertion synonyms:
+  confirm
+  verify that
+
+=== tools ===
+List Medication Orders
+=======================
+-- List medication orders by status.
+~ order.list(status: String) : List
+
+List Patients
+=============
+-- List patients by status.
+~ patient.list(status: String) : List
+
+Administer Medication
+======================
+-- Administer a medication order.
+~ medication.administer(order: MedicationOrder) : Boolean
+
+Check Allergy
+=============
+-- Check the allergy history for a medication order.
+~ allergy.check(order: MedicationOrder) : String
+
+Read Vitals
+===========
+-- Read the vital signs for a patient.
+~ vitals.read(patient: Patient) : List
+
+Record Consent
+===============
+-- Record consent for a patient.
+~ consent.record(patient: Patient) : Consent
+
+Lookup Protocol
+================
+-- Look up the protocol covering a medication.
+~ protocol.lookup(medication: Medication) : Protocol
+
+Escalate Patient
+=================
+-- Escalate an unmonitored or deteriorating patient.
+~ patient.escalate(patient: Patient) : Boolean
+
+Override Order
+===============
+-- Override a hold placed on a medication order.
+~ order.override(order: MedicationOrder) : Boolean
+
+Log Audit Entry
+================
+-- Log an audit entry for a medication order.
+~ audit.log(order: MedicationOrder) : Boolean

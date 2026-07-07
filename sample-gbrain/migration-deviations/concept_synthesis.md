@@ -3,8 +3,8 @@
 - Original: `concept-synthesis/SKILL.md`
 - Ported: `concept_synthesis.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 90%
-- Lines: 256 -> 269 (+33 / -20)
+- Similarity: 89%
+- Lines: 256 -> 267 (+34 / -23)
 
 ## Frontmatter
 - Added: (none)
@@ -25,8 +25,8 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L183 `Dedup quality`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L188 `Tier quality`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L204 `Cron integration`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L239 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L250 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L237 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L248 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections inert total: 12/13 (92% total inert; includes intentional docs/templates/tools metadata)
@@ -47,8 +47,8 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L195 `Synthesis quality`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L204 `Cron integration`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L214 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L239 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L250 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L237 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L248 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
@@ -149,26 +149,27 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  This is heavy work. Run on a cadence, not on every signal:
  
-@@ -221,17 +227,24 @@
+@@ -221,17 +227,22 @@
  - Manual trigger for a full re-synthesis when the corpus shifts
    significantly.
  
 -## Anti-Patterns
+-
+-- ❌ Running synthesis on T3/T4 — wastes API budget on ideas that may
+-  never sharpen.
+-- ❌ Hallucinating quotes or dates. The timeline must be verifiable
+-  against existing brain pages.
 +## Anti-Patterns (( role: reference ))
 +
-+- ❌ Generic cluster names ("Various Topics"). If you can't name the
-+  cluster, the cluster isn't real.
+ - ❌ Generic cluster names ("Various Topics"). If you can't name the
+   cluster, the cluster isn't real.
 +  Idempotency-respect.
 +
 +
 +### Anti-Patterns — steps (( role: reference ))
- 
- - ❌ Running synthesis on T3/T4 — wastes API budget on ideas that may
-   never sharpen.
- - ❌ Hallucinating quotes or dates. The timeline must be verifiable
-   against existing brain pages.
--- ❌ Generic cluster names ("Various Topics"). If you can't name the
--  cluster, the cluster isn't real.
++
++- ❌ Running synthesis on T3/T4 — wastes API budget on ideas that may never sharpen.
++- ❌ Hallucinating quotes or dates. The timeline must be verifiable against existing brain pages.
 +
 +### Anti-Patterns — steps 2 (( role: reference ))
 +
@@ -179,7 +180,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  ## Related skills
  
  - `skills/signal-detector/SKILL.md` — creates raw concept stubs from text channels
-@@ -239,7 +252,7 @@
+@@ -239,7 +250,7 @@
  - `skills/idea-ingest/SKILL.md` — same for links / articles
  
  
@@ -188,7 +189,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  This skill guarantees:
  
-@@ -250,7 +263,7 @@
+@@ -250,7 +261,7 @@
  
  The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  

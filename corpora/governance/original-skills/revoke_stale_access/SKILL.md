@@ -1,0 +1,45 @@
+---
+name: revoke stale access
+description: Sweep granted access requests and pull back any access that outlived its reason for existing. This is the cleanup counterpart to `grant access` — every grant this skill can find and undo is a grant that `grant access` issued and nobody remembered to close out.
+triggers:
+  - "revoke stale access"
+  - "sweep denied access"
+  - "run the access revocation sweep"
+---
+
+# Revoke Stale Access
+
+Access that's still granted long after the reason for it has expired is one
+of the most common findings in any real access audit, and it's rarely
+malicious — it's just leftover. This skill closes that gap: it fetches
+pending access requests, counts how many are sitting in the granted state,
+and revokes them one at a time so the audit trail shows exactly what was
+pulled back and why. Pair it with a regular `review requests` cadence so the
+queue that feeds it doesn't grow faster than this sweep can clear it.
+
+## When to invoke
+- "revoke stale access"
+- "sweep denied access"
+- "run the access revocation sweep"
+
+## Workflow
+fetch pending access requests.
+let revoked count be the number of access requests whose status is "granted".
+for each access request whose status is "granted":
+  revoke the access request.
+Emit: "revoke stale access pass complete".
+
+## Anti-Patterns
+- Don't revoke access in bulk without recording the count first — the
+  `revoked count` line exists so the receipt can say exactly how many
+  grants were pulled back, not just that "some" were.
+- Don't run this sweep as a substitute for `grant access`'s own approval
+  gate. Revocation is a cleanup step; it doesn't retroactively make an
+  ungated grant acceptable.
+
+## Guarantees
+make sure no users whose clearance is "denied" and whose status is "active".
+
+## Report shape
+The receipt states the revoked count for this pass, so a security officer
+can track whether the sweep's workload is trending up or down over time.

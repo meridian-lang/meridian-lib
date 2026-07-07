@@ -207,8 +207,7 @@ No batching.
 
 ### Anti-Patterns — steps (( role: reference ))
 
-- ❌ Skipping the audio storage step. Always upload the original; the
-  brain page has a `🔊 [Audio]` link back to it.
+- ❌ Skipping the audio storage step. Always upload the original; the brain page has a `🔊 [Audio]` link back to it.
 
 ## Related skills
 

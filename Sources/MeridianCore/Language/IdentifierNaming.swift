@@ -92,8 +92,23 @@ public enum IdentifierNaming {
     /// PascalCase, splitting on space/underscore/hyphen, lower-casing each
     /// word's tail (`"validation result"` → `"ValidationResult"`,
     /// `"webhook-transform"` → `"WebhookTransform"`). Domain/type naming.
+    ///
+    /// `Protocol` and `Type` get a `Value` suffix appended (`"protocol"` →
+    /// `"ProtocolValue"`, not bare `"Protocol"`). Both read as perfectly
+    /// ordinary identifiers everywhere *except* as a nested type member,
+    /// where Swift's postfix `X.Protocol` / `X.Type` syntax for a
+    /// protocol-existential/instance metatype takes over the parse —
+    /// "type member must not be named 'Protocol'/'Type'" is a hard compile
+    /// error there. Every caller of `pascalCase` here derives a domain
+    /// kind's generated Swift struct name, which is always emitted as
+    /// exactly that kind of nested type member (`Namespace.Protocol`), so a
+    /// vocabulary noun literally named "protocol" or "type" hits this for
+    /// real, not hypothetically (shipped broken in `corpora/clinical`, which
+    /// declares `A protocol is a kind of artifact.` — see
+    /// IMPLEMENTATION_LOG.md).
     static func pascalCase(_ raw: String) -> String {
-        convert(raw, separators: spaceUnderscoreHyphen, casing: .pascal, lowercaseWordRest: true)
+        let result = convert(raw, separators: spaceUnderscoreHyphen, casing: .pascal, lowercaseWordRest: true)
+        return (result == "Protocol" || result == "Type") ? result + "Value" : result
     }
 
     /// PascalCase, splitting on space/underscore/hyphen while preserving each
@@ -111,6 +126,59 @@ public enum IdentifierNaming {
         let joined = parts.map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined()
         guard let first = joined.first else { return fallback }
         return first.isNumber ? "_" + joined : joined
+    }
+
+    /// Swift reserved words that collide with a bare local-variable/parameter
+    /// identifier (`let protocol = …` is a parse error, not a warning). This
+    /// mirrors `DomainEmitter`'s own private keyword set (kept separate
+    /// rather than merged — that one escapes *enum case* identifiers via
+    /// backticks, a narrower and already-battle-tested call site; changing
+    /// its shared list risks an unrelated regression there for no benefit
+    /// here). Callers needing a *local variable* name that's guaranteed to be
+    /// valid Swift (`SwiftEmitter.emitInvoke`'s `let <resultBinding> = …`)
+    /// use `escapeIfReservedIdentifier` below instead.
+    static let reservedIdentifiers: Set<String> = [
+        "associatedtype", "class", "deinit", "enum", "extension", "fileprivate",
+        "func", "import", "init", "inout", "internal", "let", "open", "operator",
+        "private", "precedencegroup", "protocol", "public", "rethrows", "static",
+        "struct", "subscript", "typealias", "var", "break", "case", "catch",
+        "continue", "default", "defer", "do", "else", "fallthrough", "for",
+        "guard", "if", "in", "repeat", "return", "throw", "switch", "where",
+        "while", "as", "Any", "false", "is", "nil", "self", "Self", "super",
+        "throws", "true", "try",
+    ]
+
+    /// Backtick-escape `identifier` when it's a Swift reserved word, so it's
+    /// safe to emit as a bare `let`/parameter/local-variable name rather than
+    /// a string-literal state key. Natural-language bind names are
+    /// user-chosen nouns (`bind protocol = …`, `bind type = …`) with no
+    /// reason to avoid an English word that happens to also be a Swift
+    /// keyword — the compiler must handle it, not the domain author (shipped
+    /// broken as `let protocol = try await runtime.invoke(…)` in
+    /// `corpora/clinical/protocol_render`; see IMPLEMENTATION_LOG.md).
+    static func escapeIfReservedIdentifier(_ identifier: String) -> String {
+        reservedIdentifiers.contains(identifier) ? "`\(identifier)`" : identifier
+    }
+
+    /// Reverse of `pascalCase`/`pascalCaseFromSpaces`: insert a space before
+    /// every internal uppercase letter that follows a lowercase/digit
+    /// (`"MedicationOrder"` → `"Medication Order"`, `"SLO"` stays `"SLO"`).
+    /// Used to recover word boundaries from a `KindRef.name` (which is always
+    /// stored as a concatenated Swift type name) before token/stem matching —
+    /// `WordStemmer.tokenize` only splits on non-alphanumerics, so a
+    /// multi-word kind name would otherwise collapse into a single token that
+    /// can never intersect with its own space-separated prose form.
+    public static func decamelize(_ raw: String) -> String {
+        var out = ""
+        var previous: Character?
+        for ch in raw {
+            if let prev = previous, ch.isUppercase, (prev.isLowercase || prev.isNumber) {
+                out.append(" ")
+            }
+            out.append(ch)
+            previous = ch
+        }
+        return out
     }
 }
 

@@ -44,7 +44,7 @@ This is NOT a traditional async/await. In an LLM agent, "gating" means:
 3. The user's response triggers the next turn
 4. Read the response and branch accordingly
 
-## When To Use (( role: reference ))
+## When To Use
 
 - Ambiguous requests with multiple valid interpretations
 - Destructive operations (bulk deletes, overwrites)
@@ -117,7 +117,7 @@ clarify(
 - **Labels must be self-explanatory.** The user shouldn't need to re-read context.
 - **Always include an escape hatch.** At minimum: "Skip" or "Cancel" as the last option.
 
-### Constraints — steps (( role: reference ))
+### Constraints — steps
 
 - Never stack multiple choice gates.
 
@@ -132,7 +132,7 @@ Instead:
 - ✅ Stop. Full stop. No more tool calls.
 
 
-### How To Gate (CRITICAL) — steps (( role: reference ))
+### How To Gate (CRITICAL) — steps
 
 After presenting choices, you MUST stop your turn. Do not:
 
@@ -226,7 +226,7 @@ but that takes ~4 hours.
 4. **Show me the list** — let me review before deciding
 ```
 
-## Integration With Other Skills
+## Integration With Other Skills (( role: reference ))
 
 This pattern is used by:
 - **cold-start** — phase gates for each import source
@@ -235,6 +235,9 @@ This pattern is used by:
 - **brain-ops** — filing location decisions
 - **meeting-ingestion** — where to file meeting notes
 - **archive-crawler** — scan vs full ingestion gate
+
+
+### Integration With Other Skills — steps
 
 When building a new skill that needs user input at a decision point,
 reference this pattern rather than inventing a new one.
@@ -257,15 +260,13 @@ use judgment to follow the Anti-Patterns — steps guidance:
 - **Continuing the turn after presenting choices.** "While you decide, I'll start on..."
   defeats the gate. Stop. Wait. The whole point is that the user controls what happens next.
 
-### Anti-Patterns — steps 2 (( role: reference ))
+### Anti-Patterns — steps 2
 
-- Every choice gate must let the user decline. "None of these"
-  / "Skip" / "Cancel" is mandatory.
+- Every choice gate must let the user decline. "None of these" / "Skip" / "Cancel" is mandatory.
 
-### Anti-Patterns — steps 3 (( role: reference ))
+### Anti-Patterns — steps 3
 
-- "Option 1" forces re-reading the context. "Merge into
-  existing page" is self-explanatory.
+- "Option 1" forces re-reading the context. "Merge into existing page" is self-explanatory.
 ## Output Format (( role: template ))
 
 The skill's "output" is the choice-gate message itself, structured as:

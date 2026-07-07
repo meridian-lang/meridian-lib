@@ -3,8 +3,8 @@
 - Original: `capture/SKILL.md`
 - Ported: `capture.meri`
 - Tier: 2 (light edits)
-- Similarity: 77%
-- Lines: 106 -> 115 (+30 / -21)
+- Similarity: 78%
+- Lines: 106 -> 113 (+28 / -21)
 
 ## Frontmatter
 - Added: (none)
@@ -37,7 +37,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L47 `Defaults`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L54 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 - L70 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L91 `When NOT to use this skill`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L89 `When NOT to use this skill`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
@@ -102,7 +102,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Default prints a 5-line receipt:
  
-@@ -80,27 +80,36 @@
+@@ -80,27 +80,34 @@
  `--quiet` prints only the slug (use for `SLUG=$(gbrain capture "..." --quiet)`).
  `--json` prints structured output for downstream tools.
  
@@ -124,11 +124,9 @@ These sections were made non-executable in the port and should be reviewed as mi
  
 -## When NOT to use this skill
 +
-+### Anti-Patterns — steps (( role: reference ))
++### Anti-Patterns — steps
 +
-+- Don't try to bulk-import dozens of files by looping over `gbrain capture`.
-+  That's what `gbrain sync` (or `gbrain import`) is for. Capture is for
-+  single thoughts, single notes, single transcripts.
++- Don't try to bulk-import dozens of files by looping over `gbrain capture`. That's what `gbrain sync` (or `gbrain import`) is for. Capture is for single thoughts, single notes, single transcripts.
 +
 +### Anti-Patterns — steps 2
 +

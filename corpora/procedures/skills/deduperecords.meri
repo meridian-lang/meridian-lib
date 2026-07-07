@@ -1,6 +1,6 @@
 ---
 name: dedupe records
-description: Mark duplicate records canonical and purge duplicate tails.
+description: Mark duplicate or checksum-drifted records canonical and purge duplicate tails.
 triggers:
   - "dedupe records"
   - "duplicate rows detected"
@@ -12,18 +12,19 @@ triggers:
 - "dedupe records"
 - "duplicate rows detected"
 
-## Procedure (( role: reference ))
-Check: any duplicate records.
+## Procedure
 
 ### Procedure — steps
 
 fetch duplicate records.
-
-### Procedure — steps 2
-
+Check: any duplicate records.
 for each record whose status is "duplicate":
-  mark the record canonical.
-  purge the record.
+  compute a checksum for the record.
+  if the record is duplicate and either the record is stale or the record is drifted,
+    mark the record canonical.
+    purge the record,
+  otherwise,
+    Note: "record retained pending manual review".
 Emit: "duplicate record pass complete".
 
 ## Postconditions

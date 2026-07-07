@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum MediaIngest {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct MediaIngestInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -603,7 +603,7 @@ public struct MediaIngestInput: MeridianWorkflow {
 
         if __meridianShouldRun("progress:0.0:L137:C0") {
             // L137
-            try await runtime.assert(!(MeridianComparison.eq(state.get("(filingRawIngestByFormat(allVideosIn`media/videos/`)InsteadOfBySubject.Note:Format-prefixedPathsUnder`media/<format>/<slug>`AreSanctionedForSynthesizedOne-of-oneOutputLikeBook-mirror.`media/books/<slug>-personalized.md`.TheAnti-pattern"), state.get("forRawIngest,NotForSuiGenerisSynthesis.See`skills/Brain-filing-rules.md`\"sanctionedException:SynthesisOutputIsSuiGeneris.\")"))), message: "Expected not (Filing raw ingest by format (all videos in `media/videos/`) instead of by subject. Note: format-prefixed paths under `media/<format>/<slug>` ARE sanctioned for synthesized one-of-one output like book-mirror's `media/books/<slug>-personalized.md`. The anti-pattern is for raw ingest, not for sui generis synthesis. See `skills/_brain-filing-rules.md` \"Sanctioned exception: synthesis output is sui generis.\")")
+            try await runtime.assert(!(MeridianComparison.eq(state.get("(filingRawIngestByFormat(allVideosIn`media/videos/`)InsteadOfBySubject.Note:FormatPrefixedPathsUnder`media/<format>/<slug>`AreSanctionedForSynthesizedOneOfOneOutputLikeBookMirror.`media/books/<slug>Personalized.md`.TheAntiPattern"), state.get("forRawIngest,NotForSuiGenerisSynthesis.See`skills/BrainFilingRules.md`\"sanctionedException:SynthesisOutputIsSuiGeneris.\")"))), message: "Expected not (Filing raw ingest by format (all videos in `media/videos/`) instead of by subject. Note: format-prefixed paths under `media/<format>/<slug>` ARE sanctioned for synthesized one-of-one output like book-mirror's `media/books/<slug>-personalized.md`. The anti-pattern is for raw ingest, not for sui generis synthesis. See `skills/_brain-filing-rules.md` \"Sanctioned exception: synthesis output is sui generis.\")")
             try await runtime.checkpoint(label: "progress:0.0:L137:C0", state: state.snapshot())
         }
         if __meridianShouldRun("progress:0.1:L76:C0") {

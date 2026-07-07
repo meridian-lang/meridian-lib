@@ -5,7 +5,7 @@ import Foundation
 @Suite("Rule Lowering Tests (Phase C)")
 struct RuleLoweringTests {
 
-    let analyzer = RuleAnalyzer()
+    let analyzer = RuleAnalyzer(symbols: nil)
 
     @Test("must not → invariant")
     func mustNotInvariant() {
@@ -53,17 +53,44 @@ struct RuleLoweringTests {
         }
     }
 
-    @Test("when … → trigger")
+    @Test("when … (opaque external event) → trigger")
     func whenTrigger() {
-        let rule = RuleAST(text: "When an order has been on hold for more than 7 days, escalate the order to the account manager of the customer who placed the order.", sourceLine: 14)
+        let rule = RuleAST(text: "When a refund is requested, escalate the order to the account manager of the customer who placed the order.", sourceLine: 14)
         guard let parsed = analyzer.classify(rule) else {
             Issue.record("expected ParsedRule, got nil"); return
         }
         if case .trigger(let cond, let action, _, _) = parsed {
-            #expect(cond.lowercased().contains("order") || cond.lowercased().contains("hold"))
+            #expect(cond.lowercased().contains("refund"))
             #expect(action.lowercased().contains("escalate") || action.lowercased().contains("order"))
         } else {
             Issue.record("expected .trigger, got: \(parsed)")
+        }
+    }
+
+    @Test("when … (self-evaluating duration predicate) → unsupportedTriggerCondition, not a silent event stub")
+    func whenTriggerWithDurationConditionIsRejected() {
+        let rule = RuleAST(text: "When an order has been on hold for more than 7 days, escalate the order to the account manager of the customer who placed the order.", sourceLine: 14)
+        guard let parsed = analyzer.classify(rule) else {
+            Issue.record("expected ParsedRule, got nil"); return
+        }
+        if case .unsupportedTriggerCondition(let cond, let action, _, _) = parsed {
+            #expect(cond.contains("on hold"))
+            #expect(action.lowercased().contains("escalate"))
+        } else {
+            Issue.record("expected .unsupportedTriggerCondition, got: \(parsed)")
+        }
+    }
+
+    @Test("when … (magnitude comparison, non-duration) → unsupportedTriggerCondition")
+    func whenTriggerWithMagnitudeComparisonIsRejected() {
+        let rule = RuleAST(text: "When the order total is more than 1000, notify finance.", sourceLine: 15)
+        guard let parsed = analyzer.classify(rule) else {
+            Issue.record("expected ParsedRule, got nil"); return
+        }
+        if case .unsupportedTriggerCondition = parsed {
+            // expected
+        } else {
+            Issue.record("expected .unsupportedTriggerCondition, got: \(parsed)")
         }
     }
 
@@ -177,13 +204,16 @@ struct RuleLoweringTests {
     func triggerSynthesizesWorkflow() throws {
         // Strict mode: trigger action `notify the customer` resolves to the
         // workflow `To notify a customer:` defined in the .meridian file.
-        // No fallbacks needed.
+        // No fallbacks needed. The condition is opaque externally-raised-event
+        // prose (bare equality/passive voice) — a genuinely self-evaluating
+        // condition like a duration predicate is rejected with MER3017
+        // instead (see `triggerWithSelfEvaluatingConditionIsRejected` below).
         let mer = """
         ---
         vocabulary: test.merconfig
         ---
 
-        When an order has been on hold for more than 7 days, notify the customer.
+        When a refund is requested, notify the customer.
 
         To notify a customer:
           complete.
@@ -205,17 +235,21 @@ struct RuleLoweringTests {
                 Comment(rawValue: "Expected trigger to lower notify-action in:\n\(String(out.prefix(3000)))"))
     }
 
-    @Test("trigger with unresolved action throws by default")
-    func triggerWithUnresolvedActionThrows() {
+    @Test("trigger with a self-evaluating duration condition throws MER3017, not a silent event stub")
+    func triggerWithSelfEvaluatingConditionIsRejected() {
         let mer = """
         ---
         vocabulary: test.merconfig
         ---
 
-        When an order has been on hold for more than 7 days, do something completely unknown.
+        When an order has been on hold for more than 7 days, notify the customer.
+
+        To notify a customer:
+          complete.
         """
         let cfg = """
         === vocabulary ===
+        customer is a kind of thing.
         order is a kind of thing.
         """
         #expect(throws: (any Error).self) {
@@ -223,6 +257,43 @@ struct RuleLoweringTests {
                 meridianSource: mer, meridianFile: "test.meridian",
                 merconfigSource: cfg, merconfigFile: "test.merconfig"
             )
+        }
+        do {
+            _ = try Compiler(options: .init()).compile(
+                meridianSource: mer, meridianFile: "test.meridian",
+                merconfigSource: cfg, merconfigFile: "test.merconfig"
+            )
+            Issue.record("expected compile to throw")
+        } catch let error as CompilerError {
+            #expect(error.diagnostics.contains { $0.code == .unsupportedTriggerCondition })
+        } catch {
+            Issue.record("expected CompilerError, got \(error)")
+        }
+    }
+
+    @Test("trigger with unresolved action throws by default")
+    func triggerWithUnresolvedActionThrows() {
+        let mer = """
+        ---
+        vocabulary: test.merconfig
+        ---
+
+        When a refund is requested, do something completely unknown.
+        """
+        let cfg = """
+        === vocabulary ===
+        order is a kind of thing.
+        """
+        do {
+            _ = try Compiler(options: .init()).compile(
+                meridianSource: mer, meridianFile: "test.meridian",
+                merconfigSource: cfg, merconfigFile: "test.merconfig"
+            )
+            Issue.record("expected compile to throw")
+        } catch let error as CompilerError {
+            #expect(error.diagnostics.contains { $0.code == .unresolvedTriggerAction })
+        } catch {
+            Issue.record("expected CompilerError, got \(error)")
         }
     }
 
@@ -235,7 +306,7 @@ struct RuleLoweringTests {
         vocabulary: test.merconfig
         ---
 
-        When an order has been on hold for more than 7 days, do something completely unknown.
+        When a refund is requested, do something completely unknown.
         """
         let cfg = """
         === vocabulary ===
@@ -250,7 +321,7 @@ struct RuleLoweringTests {
         // event) — but only because the policy allowed the unresolved action
         // check to be skipped. Without the fallback opt-in this would have
         // thrown. Confirm the trigger struct + fan-out emit are present.
-        #expect(out.contains("WhenAnOrder") || out.contains("WhenOrderHas"),
+        #expect(out.contains("WhenRefundIs"),
                 Comment(rawValue: "Expected trigger struct in:\n\(String(out.prefix(3000)))"))
         #expect(out.contains("trigger.") && out.contains(".fired"),
                 Comment(rawValue: "Expected trigger fan-out event in:\n\(String(out.prefix(3000)))"))

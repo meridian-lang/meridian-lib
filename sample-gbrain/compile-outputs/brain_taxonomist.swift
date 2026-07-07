@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum BrainTaxonomist {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct BrainTaxonomistInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -604,7 +604,7 @@ public struct BrainTaxonomistInput: MeridianWorkflow {
             prose: "follow the Purpose — steps guidance",
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
-            guidance: "**Gate function:** Before creating ANY new brain page, consult this skill to determine the correct filing path. This prevents misfiling at write time rather than cleaning up drift after the fact\nA user who runs `gbrain schema use gbrain-recommended` gets the full\nrecommended directory set (deal, meeting, concept, project, source,\ndaily, personal, civic, original, place, trip, conversation, writing,\nplus all gbrain-base types)\nA user who authored a custom pack via `gbrain schema init` + edit gets\nfiling recommendations based on THEIR taxonomy, not gbrain's defaults\nPer-source overrides (tier 3 in the 7-tier resolution chain) are honored\nwhen `--source <id>` is passed to brain-taxonomist\nIs the primary subject a NAMED PERSON? → person-typed directory\nIs the primary subject a NAMED ORGANIZATION? → company-typed directory\nIs it about a TIME-BOUNDED EVENT (meeting, deal, trip)? → temporal-typed directory\nIs it a REUSABLE MENTAL MODEL? → concept-typed directory\nIs it RAW MEDIA (article, video, book, PDF)? → media-typed directory\nIs it BULK SOURCE DATA? → source-typed directory\ncodeblock:bash:Z2JyYWluIHNjaGVtYSBzaG93IC0tanNvbiB8IGpxICcucGFnZV90eXBlc1tdIHwgc2VsZWN0KC5wcmltaXRpdmUgPT0gImVudGl0eSIpJw==\nkebab-case, descriptive\nno author name unless disambiguation is needed\nmatch the canonical path prefix exactly (no leading slash)\nPath follows the active pack's `page_types[].path_prefixes`\nSlug is kebab-case, descriptive\nFrontmatter includes `type:` matching one of the pack's `page_types[].name`\nCross-links to related pages are included\n`eiirp` — calls this skill as Phase 2 TAXONOMY for every output in its inventory\n`ingest` — article/media ingestion consults brain-taxonomist for filing\n`repo-architecture` — delegates the filing decision to this skill\n`book-mirror` — after generating a mirror, files it via brain-taxonomist\ncodeblock:bash:IyBXaGF0IHBhZ2VzIGhhdmUgbm8gdHlwZSBtYXRjaGluZyB0aGUgYWN0aXZlIHBhY2s/CmdicmFpbiBzY2hlbWEgcmV2aWV3LW9ycGhhbnMgLS1qc29uCgojIFdoYXQncyB0aGUgb3ZlcmFsbCBoZWFsdGg/CmdicmFpbiBkb2N0b3IgLS1qc29uIHwganEgJy5jaGVja3NbXSB8IHNlbGVjdCgubmFtZSA9PSAic2NoZW1hX3BhY2tfY29uc2lzdGVuY3kiKSc=\nHardcoded directory table REMOVED. Every decision now reads the active\nschema pack via `gbrain schema show --json`. Single source of truth\n`--source <id>` propagation documented for multi-brain users (Persona B)"
+            guidance: "**Gate function:** Before creating ANY new brain page, consult this skill to determine the correct filing path. This prevents misfiling at write time rather than cleaning up drift after the fact\nA user who runs `gbrain schema use gbrain-recommended` gets the full\nrecommended directory set (deal, meeting, concept, project, source,\ndaily, personal, civic, original, place, trip, conversation, writing,\nplus all gbrain-base types)\nA user who authored a custom pack via `gbrain schema init` + edit gets\nfiling recommendations based on THEIR taxonomy, not gbrain's defaults\nPer-source overrides (tier 3 in the 7-tier resolution chain) are honored\nwhen `--source <id>` is passed to brain-taxonomist\nIs the primary subject a NAMED PERSON? → person-typed directory\nIs the primary subject a NAMED ORGANIZATION? → company-typed directory\nIs it about a TIME-BOUNDED EVENT (meeting, deal, trip)? → temporal-typed directory\nIs it a REUSABLE MENTAL MODEL? → concept-typed directory\nIs it RAW MEDIA (article, video, book, PDF)? → media-typed directory\nIs it BULK SOURCE DATA? → source-typed directory\ncodeblock:bash:Z2JyYWluIHNjaGVtYSBzaG93IC0tanNvbiB8IGpxICcucGFnZV90eXBlc1tdIHwgc2VsZWN0KC5wcmltaXRpdmUgPT0gImVudGl0eSIpJw==\nkebab-case, descriptive\nno author name unless disambiguation is needed\nmatch the canonical path prefix exactly (no leading slash)\nPath follows the active pack's `page_types[].path_prefixes`\nSlug is kebab-case, descriptive\nFrontmatter includes `type:` matching one of the pack's `page_types[].name`\nCross-links to related pages are included\n`eiirp` — calls this skill as Phase 2 TAXONOMY for every output in its inventory\n`ingest` — article/media ingestion consults brain-taxonomist for filing\n`repo-architecture` — delegates the filing decision to this skill\n`book-mirror` — after generating a mirror, files it via brain-taxonomist\nHardcoded directory table REMOVED. Every decision now reads the active\nschema pack via `gbrain schema show --json`. Single source of truth\n`--source <id>` propagation documented for multi-brain users (Persona B)"
         )
         for (__key, __value) in __meridianProseResults_L31 {
             state.bind(__key, __value)

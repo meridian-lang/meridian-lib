@@ -1,0 +1,47 @@
+---
+name: dag orchestrate
+description: Hold a downstream dataset until its upstream dependency actually signals completion, then run the extraction and the quality checks side by side instead of one after the other. This is the DAG-awareness layer that keeps a downstream stage from starting on data its upstream hasn't finished producing.
+triggers:
+  - "orchestrate pipeline dag"
+  - "run dag orchestration"
+  - "run the dag orchestration pass"
+---
+
+# Dag Orchestrate
+
+> A pipeline stage that starts as soon as its own schedule fires — without
+> checking whether its upstream dependency actually finished — is a race
+> condition waiting to be noticed. This skill closes that gap by waiting on
+> the upstream's completion event before doing anything, and waiting on a
+> readiness signal from the orchestrator on top of that as a second gate.
+> Once both gates clear, the extraction and the quality check run
+> simultaneously rather than sequentially, since neither one depends on the
+> other's result.
+
+## When to invoke
+- "orchestrate pipeline dag"
+- "run dag orchestration"
+- "run the dag orchestration pass"
+
+## Workflow
+fetch datasets.
+for each dataset:
+  wait for event upstream.done matching the event's dataset name equals the dataset's name.
+  wait for signal "pipeline.ready".
+  simultaneously:
+    extract a dataset from the object store source.
+    run quality checks on the dataset.
+Emit: "dag orchestration pass complete".
+
+## Anti-Patterns (( role: reference ))
+- Don't remove the `pipeline.ready` wait to shave latency. The upstream
+  completion event only proves the upstream is done; it doesn't prove the
+  orchestrator has cleared this stage to start.
+- Don't run the extraction and the quality check sequentially "to be safe."
+  They're independent once both gates clear — running them one after the
+  other only adds latency without adding safety.
+
+## Report shape (( role: template ))
+The receipt confirms each dataset's upstream signal and downstream
+extraction, so a pipeline engineer can see exactly where a stage was
+waiting versus where it was actually running.

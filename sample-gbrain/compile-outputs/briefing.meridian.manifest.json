@@ -218,33 +218,39 @@
         "text" : "Citation in Briefings"
       },
       {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 171,
+        "text" : "Citation in Briefings — steps"
+      },
+      {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 172,
-        "text" : "Citation in Briefings — steps"
+        "line" : 175,
+        "text" : "Citation in Briefings — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 177,
+        "line" : 180,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 182,
+        "line" : 185,
         "text" : "Anti-Patterns — steps"
       },
       {
-        "kind" : "prohibitions",
+        "kind" : "reference",
         "level" : 3,
-        "line" : 187,
+        "line" : 190,
         "text" : "Anti-Patterns — steps 2"
       },
       {
         "kind" : "tools",
         "level" : 2,
-        "line" : 191,
+        "line" : 194,
         "text" : "Tools Used"
       },
       {
@@ -465,17 +471,25 @@
         "heading" : "Citation in Briefings",
         "line" : 167,
         "lines" : [
-          "When presenting facts from brain pages, include inline citations:",
           "\"Jane is CTO of Acme [Source: people\/jane-doe, updated 2026-04-01]\""
         ],
         "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Citation in Briefings — steps",
-        "line" : 172,
+        "line" : 171,
         "lines" : [
-          "use judgment to follow the Citation in Briefings — steps guidance:",
+          "When presenting facts from brain pages, include inline citations:"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Citation in Briefings — steps 2",
+        "line" : 175,
+        "lines" : [
+          "use judgment to follow the Citation in Briefings — steps 2 guidance:",
           "This lets the user trace any claim back to the brain page and assess freshness"
         ],
         "role" : "procedure"
@@ -483,7 +497,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 177,
+        "line" : 180,
         "lines" : [
           "**Stale context presented as current.** If a page hasn't been updated in 30+ days, flag the staleness explicitly rather than presenting it as fresh",
           "**Modifying brain pages unprompted.** The briefing is read-only by default. Do not create or update pages unless the user explicitly requests it"
@@ -493,7 +507,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns — steps",
-        "line" : 182,
+        "line" : 185,
         "lines" : [
           "Never generate a briefing from memory alone; always query gbrain for current data",
           "Uncited facts. Every claim must include `[Source: slug, updated DATE]`. A fact without a citation is unverifiable"
@@ -501,18 +515,18 @@
         "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Anti-Patterns — steps 2",
-        "line" : 187,
+        "line" : 190,
         "lines" : [
           "When a meeting participant has no brain page, say so. Silence about gaps hides ignorance"
         ],
-        "role" : "prohibitions"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Tools Used",
-        "line" : 191,
+        "line" : 194,
         "lines" : [
           "Search gbrain by name (query)",
           "Read a page from gbrain (get_page)",
@@ -566,12 +580,12 @@
       "swift_line" : 602
     },
     {
-      "meridian_line" : 189,
-      "swift_line" : 614
+      "meridian_line" : 75,
+      "swift_line" : 613
     },
     {
-      "meridian_line" : 75,
-      "swift_line" : 618
+      "meridian_line" : 1,
+      "swift_line" : 652
     },
     {
       "meridian_line" : 1,
@@ -579,7 +593,7 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 662
+      "swift_line" : 696
     },
     {
       "meridian_line" : 1,
@@ -587,15 +601,11 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 706
+      "swift_line" : 740
     },
     {
       "meridian_line" : 1,
       "swift_line" : 745
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 750
     }
   ],
   "tools_used" : [
@@ -607,17 +617,9 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "**Pending consolidation footer** — when `pending_consolidation_count > 0`,\nnote `N facts await dream-cycle consolidation` so the operator can decide\nwhether to run `gbrain dream` before reading further\nFor each meeting on the calendar:\nList deal pages in gbrain filtered to active status:\nDeadlines approaching in the next 7 days\nList person pages in gbrain sorted by recency:\nFor every attendee on the calendar invite:\n`gbrain search \"<attendee name>\"` -- find their brain page\n`gbrain get <slug>` -- load compiled truth, recent timeline, relationship context\nIf no page exists, note the gap (\"No brain page for Sarah Chen -- consider enrichment\")\n`gbrain search \"<sender name>\"` -- load sender context\nuse judgment to follow the Before an email reply — steps 2 guidance:\nRead their compiled truth to understand who they are, what they care about, and\nyour relationship history. This turns a cold reply into an informed one\n`gbrain query \"active deals status\"` -- deal pipeline snapshot\n`gbrain query \"meetings this week\"` -- recent meeting pages with insights\n`gbrain query \"pending commitments follow-ups\"` -- open threads and action items\n`gbrain search --type person --sort updated --limit 10` -- people in play\nIf the briefing creates or updates any brain pages (e.g., new meeting prep\npages, updated entity pages), the back-linking iron law applies: every entity\nmentioned must have a back-link from their page. See `skills\/_brain-filing-rules.md`\nuse judgment to follow the Citation in Briefings — steps guidance:\nThis lets the user trace any claim back to the brain page and assess freshness",
+          "guidance" : "**Pending consolidation footer** — when `pending_consolidation_count > 0`,\nnote `N facts await dream-cycle consolidation` so the operator can decide\nwhether to run `gbrain dream` before reading further\nFor each meeting on the calendar:\nList deal pages in gbrain filtered to active status:\nDeadlines approaching in the next 7 days\nList person pages in gbrain sorted by recency:\nFor every attendee on the calendar invite:\n`gbrain search \"<attendee name>\"` -- find their brain page\n`gbrain get <slug>` -- load compiled truth, recent timeline, relationship context\nIf no page exists, note the gap (\"No brain page for Sarah Chen -- consider enrichment\")\n`gbrain search \"<sender name>\"` -- load sender context\nuse judgment to follow the Before an email reply — steps 2 guidance:\nRead their compiled truth to understand who they are, what they care about, and\nyour relationship history. This turns a cold reply into an informed one\n`gbrain query \"active deals status\"` -- deal pipeline snapshot\n`gbrain query \"meetings this week\"` -- recent meeting pages with insights\n`gbrain query \"pending commitments follow-ups\"` -- open threads and action items\n`gbrain search --type person --sort updated --limit 10` -- people in play\nIf the briefing creates or updates any brain pages (e.g., new meeting prep\npages, updated entity pages), the back-linking iron law applies: every entity\nmentioned must have a back-link from their page. See `skills\/_brain-filing-rules.md`\nuse judgment to follow the Citation in Briefings — steps 2 guidance:\nThis lets the user trace any claim back to the brain page and assess freshness",
           "line" : 75,
           "scoped_tools" : [
             "get_health",
@@ -631,6 +633,13 @@
             "shell.run"
           ],
           "text" : "follow the Phases — steps 2 guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "briefing a input",

@@ -2,9 +2,9 @@
 
 - Original: `purge_expired/SKILL.md`
 - Ported: `purgeexpired.meri`
-- Tier: 2 (light edits)
-- Similarity: 76%
-- Lines: 26 -> 32 (+10 / -4)
+- Tier: 1 (near-verbatim)
+- Similarity: 91%
+- Lines: 27 -> 30 (+4 / -1)
 
 ## Frontmatter
 - Added: (none)
@@ -17,44 +17,35 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L23 `Operator notes`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L21 `Operator notes`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
-- Sections inert total: 2/3 (67% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 1/2 (50% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
-- Inert categories: reference-documentation=2
+- Inert categories: reference-documentation=1
 - Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L8 `Procedure`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L23 `Operator notes`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L21 `Operator notes`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
 ```diff
 --- original-skills/purge_expired/SKILL.md
 +++ skills/purgeexpired.meri
-@@ -12,15 +12,21 @@
- - "purge expired records"
+@@ -13,6 +13,9 @@
  - "retention cleanup"
  
--## Procedure
-+## Procedure (( role: reference ))
-+Check: any stale records.
+ ## Procedure
 +
 +### Procedure — steps
 +
  fetch stale records.
--Check: any stale records.
-+
-+### Procedure — steps 2
-+
- for each the first 100 records whose status is "stale" sorted by updated at, oldest first:
-   purge the record.
--recover from any:
-+> recover from any:
+ Check: any stale records.
+ Check: at most 500 stale records.
+@@ -22,6 +25,6 @@
    Emit: "expired record purge failed".
  Emit: "expired records purged".
  

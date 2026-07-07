@@ -188,11 +188,7 @@ When invoked, this skill produces:
 
 ### Anti-Patterns — steps (( role: reference ))
 
-- Don't optimize bundled skills without `--allow-mutate-bundled` AND
-  `--held-out`. They ship with gbrain and are load-bearing for downstream
-  agents. In-place mutation requires both flags (held-out >=5 benchmark-disjoint
-  tasks); without the held-out set the run hard-refuses and points you at
-  proposed.md.
+- They ship with gbrain and are load-bearing for downstream agents. In-place mutation requires both flags (held-out >=5 benchmark-disjoint tasks); without the held-out set the run hard-refuses and points you at proposed.md.
 
 ### Anti-Patterns — steps 2 (( role: reference ))
 

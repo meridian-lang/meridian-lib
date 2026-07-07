@@ -62,11 +62,11 @@ public struct ProcessOrder: MeridianWorkflow {
                    │  lowered to IR
                    ▼
 ┌──────────────────────────────────────┐
-│  12 IR primitives                    │
+│  13 IR primitives                    │
 │  invoke / bind / branch / emit /     │
 │  wait / iterate / assert / commit /  │
 │  recover / complete / simultaneously │
-│  proseStep                           │
+│  aiJudgment / aiAutonomy             │
 └──────────────────┬───────────────────┘
                    │  emitted as Swift
                    ▼
@@ -121,7 +121,7 @@ non-deterministic. The *compilation* is deterministic.
   conformance. Generated workflow inits are fully typed: `ProcessOrder(runtime:order:customer:)`.
 - **All IR primitives** — invoke, bind/rebind, branch, emit, wait (duration/signal/
   approval/event/choice), iterate, assert, commit, recover, complete,
-  `simultaneously`, and `proseStep`.
+  `simultaneously`, and `aiJudgment`/`aiAutonomy` (discretion vs. autonomy prose).
 - **Replay-safe resume** — generated code automatically consumes a prepared resume
   context, restores state from the latest checkpoint, and skips already-executed
   side effects with stable progress labels.

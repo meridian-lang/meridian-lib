@@ -1,0 +1,48 @@
+---
+name: backfill partitions
+description: Backfill a dataset's oldest partitions in parallel while quality checks keep running underneath in the background, instead of making a backfill block the pipeline's normal quality cadence for however long it takes.
+triggers:
+  - "backfill dataset partitions"
+  - "run partition backfill"
+  - "run the backfill pass"
+---
+
+# Backfill Partitions
+
+> Backfilling old partitions is inherently slow — there can be a lot of them,
+> and each one takes real time to reprocess. What this skill refuses to do is
+> let that slowness stall the rest of the pipeline's quality cadence. It picks
+> the oldest five partitions per dataset, backfills them in parallel, and
+> kicks off the dataset's quality checks in the background at the same time,
+> so a long backfill and an unrelated quality pass aren't competing for the
+> same window.
+
+## When to invoke
+- "backfill dataset partitions"
+- "run partition backfill"
+- "run the backfill pass"
+
+## Workflow
+fetch datasets.
+for each dataset:
+  fetch partitions for the dataset.
+  let oldest partitions be the first 5 partitions sorted by updated at descending.
+  simultaneously:
+    for each partition:
+      backfill the partition.
+    in the background, run quality checks on the dataset.
+Emit: "partition backfill pass complete".
+
+## Anti-Patterns (( role: reference ))
+- Don't widen the backfill window past the oldest five partitions on a
+  whim. A larger batch is a longer-running simultaneous block, which
+  competes harder with whatever else the pipeline needs to do at the same
+  time.
+- Don't wait for the background quality check to finish before reporting
+  the backfill as complete — it runs in the background precisely so it
+  doesn't gate this skill's own completion.
+
+## Report shape (( role: template ))
+The receipt calls out the oldest partitions selected for backfill per
+dataset, so an engineer can confirm the right window was chosen without
+re-running the sort themselves.

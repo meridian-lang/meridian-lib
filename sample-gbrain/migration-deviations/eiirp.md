@@ -4,7 +4,7 @@
 - Ported: `eiirp.meri`
 - Tier: 2 (light edits)
 - Similarity: 78%
-- Lines: 395 -> 441 (+116 / -70)
+- Lines: 395 -> 436 (+111 / -70)
 
 ## Frontmatter
 - Added: (none)
@@ -22,7 +22,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L37 `Knowledge outputs`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L46 `Capability outputs`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L287 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L351 `Capability domain`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L346 `Capability domain`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
 - Sections inert total: 15/21 (71% total inert; includes intentional docs/templates/tools metadata)
@@ -45,9 +45,9 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L213 `5c. Present the plan`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L287 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 - L317 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L341 `Knowledge domain`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L351 `Capability domain`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L363 `v1.0.0 — gbrain v0.39.0.0`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L336 `Knowledge domain`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L346 `Capability domain`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L358 `v1.0.0 — gbrain v0.39.0.0`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
@@ -208,7 +208,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
 +### Phase 3: SCHEMA CHECK — Does the active pack cover this content? — steps 2
 +
-+> If schema needs change:
++If schema needs change:
 +- Propose the addition to the user before running `review-candidates --apply`.
  ## Phase 4: FILE — Create enriched brain pages
  
@@ -352,20 +352,15 @@ These sections were made non-executable in the port and should be reviewed as mi
  - **Skipping Phase 5 SKILL GRAPH AUDIT because "this was a one-off."**
    If the work took >10 minutes, the methodology is probably reusable.
    Audit anyway; defer the skillify decision to the user.
-@@ -361,16 +391,29 @@
+@@ -361,16 +391,24 @@
  - **Treating non-English sources as secondary citations.** Multilingual
    sources are first-class.
  
 +
 +### Anti-Patterns — steps (( role: reference ))
 +
-+- Every filing decision
-+  reads `gbrain schema show --json`. Users on `gbrain-recommended` AND
-+  custom packs MUST get the right behavior automatically. Pinned by D9
-+  from /plan-eng-review.
-+- Confidence < 0.6
-+  from `gbrain schema suggest` is "manual review required" per codex
-+  finding #9. EIIRP surfaces it; the user accepts.
++- Hardcoding directory tables in EIIRP's logic. Every filing decision reads `gbrain schema show --json`. Users on `gbrain-recommended` AND custom packs MUST get the right behavior automatically. Pinned by D9 from /plan-eng-review.
++- Auto-applying low-confidence schema suggestions. Confidence < 0.6 from `gbrain schema suggest` is "manual review required" per codex finding #9. EIIRP surfaces it; the user accepts.
  ## Hard Rules
  
 -### Knowledge domain
@@ -386,7 +381,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  - **DRY is sacred.** If the same logic appears in two skills, extract it to `lib/`.
  - **MECE is sacred.** Every trigger phrase routes to exactly one skill.
  - **Composability over monoliths.** Small skills that compose > one giant skill that does everything.
-@@ -380,9 +423,9 @@
+@@ -380,9 +418,9 @@
  - **EIIRP is idempotent.** Running it twice on the same work should produce no changes the second time.
  - **EIIRP consumes the active schema pack as data.** Never hard-code directory tables in EIIRP's logic — read from `gbrain schema show --json` so users who picked `gbrain-recommended` OR custom packs get the right behavior automatically.
  
@@ -399,7 +394,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  - Initial port from upstream OpenClaw. Genericized — no references to
    private fork names per CLAUDE.md privacy rules.
  - Phase 3 SCHEMA CHECK rewritten to consume the v0.39 cathedral CLI
-@@ -390,6 +433,9 @@
+@@ -390,6 +428,9 @@
    `brain/schema.md`.
  - Phase 5 SKILL GRAPH AUDIT calls `gbrain check-resolvable` instead of
    upstream `scripts/skill-dry-check.mjs`.

@@ -1,0 +1,485 @@
+{
+  "constants" : {
+    "dose limit" : 2,
+    "observation window" : 14400,
+    "vitals threshold" : 100
+  },
+  "instances_required" : [
+    {
+      "kind" : "protocol",
+      "name" : "sepsis protocol"
+    },
+    {
+      "kind" : "protocol",
+      "name" : "anticoagulation protocol"
+    }
+  ],
+  "kinds_used" : [
+    "MedicationOrder",
+    "Nurse",
+    "Patient"
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "granted",
+      "function" : "meridianDef_Consent_granted",
+      "kind" : "consent",
+      "line" : 32
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_MedicationOrder_cleared",
+      "kind" : "medication order",
+      "line" : 29
+    },
+    {
+      "adjective" : "contraindicated",
+      "function" : "meridianDef_MedicationOrder_contraindicated",
+      "kind" : "medication order",
+      "line" : 28
+    },
+    {
+      "adjective" : "high risk",
+      "function" : "meridianDef_Medication_highRisk",
+      "kind" : "medication",
+      "line" : 27
+    },
+    {
+      "adjective" : "active",
+      "function" : "meridianDef_Patient_active",
+      "kind" : "patient",
+      "line" : 33
+    },
+    {
+      "adjective" : "held",
+      "function" : "meridianDef_Patient_held",
+      "kind" : "patient",
+      "line" : 34
+    },
+    {
+      "adjective" : "monitored",
+      "function" : "meridianDef_Patient_monitored",
+      "kind" : "patient",
+      "line" : 30
+    },
+    {
+      "adjective" : "unmonitored",
+      "function" : "meridianDef_Patient_unmonitored",
+      "kind" : "patient",
+      "line" : 31
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_VitalSign_critical",
+      "kind" : "vital sign",
+      "line" : 25
+    },
+    {
+      "adjective" : "stable",
+      "function" : "meridianDef_VitalSign_stable",
+      "kind" : "vital sign",
+      "line" : 26
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a nurse",
+      "line" : 38,
+      "name" : "administration",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "medication.administer"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a protocol",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication",
+      "via" : "protocol.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a clinician",
+      "line" : 36,
+      "name" : "prescription",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "order.list"
+    }
+  ],
+  "meridian_rules" : [
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "invariant",
+      "source" : {
+        "file" : "medicationadminister.meri",
+        "line" : 35
+      },
+      "text" : "A medication order with allergy check \"conflict\" must not be administered"
+    },
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "precondition",
+      "source" : {
+        "file" : "medicationadminister.meri",
+        "line" : 36
+      },
+      "text" : "A high risk medication order must be approved by an attending before administration"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Check a medication order for allergy conflicts and administration risk before a nurse gives the dose, routing anything high-risk through an attending's sign-off instead of letting a busy shift skip the check. Use this whenever a medication order reaches the point of actually being given to a patient.",
+    "name" : "medication administer",
+    "outline" : [
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 20,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 27,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 31,
+        "text" : "Rules"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 33,
+        "text" : "Rules — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 38,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 40,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 52,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 60,
+        "text" : "When NOT to use this skill"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 62,
+        "text" : "When NOT to use this skill — steps"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 70,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 21,
+        "text" : "Input"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 22,
+        "text" : "Output"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 24,
+        "text" : "Side effect"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 46,
+        "text" : "Note"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 48,
+        "text" : "Note"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 50,
+        "text" : "Emit"
+      }
+    ],
+    "parameters" : "medication order, patient, nurse",
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 20,
+        "lines" : [
+          "Input: a patient, the medication order to give, and the nurse giving it",
+          "Output: either a completed administration or a held order pending",
+          "attending approval",
+          "Side effect: every administration attempt is logged, whether it succeeds,",
+          "is blocked by an allergy conflict, or waits on approval"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 27,
+        "lines" : [
+          "\"administer medication\"",
+          "\"give medication order\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Rules",
+        "line" : 31,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Rules — steps",
+        "line" : 33,
+        "lines" : [
+          "A medication order with allergy check \"conflict\" must not be administered",
+          "A high risk medication order must be approved by an attending before administration"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 38,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 40,
+        "lines" : [
+          "check the allergy history for the medication order",
+          "if the medication order is cleared,",
+          "administer the medication order",
+          "recover from medication.administer.failed:",
+          "Note: \"administration failed at the device, hold the dose and notify the attending\",",
+          "otherwise,",
+          "Note: \"allergy conflict found, dose withheld\"",
+          "log an audit entry for the medication order",
+          "Emit: \"medication administer pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 52,
+        "lines" : [
+          "Don't override an allergy conflict because the reaction \"was mild last",
+          "time\" — a documented allergy stays a hard stop regardless of how the last",
+          "exposure went",
+          "Don't administer a high-risk order first and page the attending after;",
+          "the approval gate exists precisely so the sign-off happens before the",
+          "dose, not as paperwork afterward"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill",
+        "line" : 60,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill — steps",
+        "line" : 62,
+        "lines" : [
+          "Use `dose check` instead for a pure shift-total question: how many doses has",
+          "a nurse already given today. That question is about a running count, never",
+          "about whether this particular order is safe to give. Use `consent capture`",
+          "first if the medication order requires patient consent that hasn't been",
+          "recorded yet"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 70,
+        "lines" : [
+          "The receipt records whether the dose was given, blocked by an allergy",
+          "conflict, or parked for attending approval, plus the audit entry reference",
+          "for the attempt"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"administer medication\"\n\"give medication order\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "administer",
+      "line" : 44,
+      "past_participle" : "administered",
+      "relation" : "administration",
+      "third_person" : "administers"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "prescribe",
+      "line" : 43,
+      "past_participle" : "prescribed",
+      "relation" : "prescription",
+      "third_person" : "prescribes"
+    }
+  ],
+  "source_files" : [
+    "medicationadminister.meri",
+    "clinical.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 36,
+      "swift_line" : 424
+    },
+    {
+      "meridian_line" : 35,
+      "swift_line" : 429
+    },
+    {
+      "meridian_line" : 57,
+      "swift_line" : 434
+    },
+    {
+      "meridian_line" : 43,
+      "swift_line" : 445
+    },
+    {
+      "meridian_line" : 45,
+      "swift_line" : 447
+    },
+    {
+      "meridian_line" : 54,
+      "swift_line" : 450
+    },
+    {
+      "meridian_line" : 46,
+      "swift_line" : 463
+    },
+    {
+      "meridian_line" : 48,
+      "swift_line" : 475
+    },
+    {
+      "meridian_line" : 75,
+      "swift_line" : 487
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 499
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 538
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 543
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 583
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 588
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "MedicationOrder",
+          "name" : "medicationOrder"
+        },
+        {
+          "kind" : "Patient",
+          "name" : "patient"
+        },
+        {
+          "kind" : "Nurse",
+          "name" : "nurse"
+        }
+      ],
+      "source_name" : "medication administer a medication order a patient a nurse",
+      "swift_struct" : "MedicationAdministerMedicationOrderPatientNurse"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when administerMedication fires",
+      "swift_struct" : "WhenAdministermedicationFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when giveMedicationOrder fires",
+      "swift_struct" : "WhenGivemedicationorderFires"
+    }
+  ]
+}

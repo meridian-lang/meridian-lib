@@ -1,14 +1,14 @@
 | skill | compiles | edits | repairs | unmined | added keys |
 |---|---|---|---|---|---|
 | academic_verify | ✓ | 0 | 0 | 2 |  |
-| archive_crawler | ✓ | 0 | 0 | 3 |  |
+| archive_crawler | ✗ | 0 | 0 | 3 |  |
 | article_enrichment | ✓ | 0 | 0 | 3 |  |
-| ask_user | ✓ | 0 | 0 | 5 |  |
-| book_mirror | ✓ | 0 | 0 | 2 |  |
+| ask_user | ✗ | 0 | 0 | 5 |  |
+| book_mirror | ✗ | 0 | 0 | 2 |  |
 | brain_ops | ✓ | 0 | 0 | 6 |  |
 | brain_pdf | ✓ | 0 | 0 | 5 |  |
-| brain_taxonomist | ✓ | 0 | 0 | 5 |  |
-| briefing | ✓ | 0 | 0 | 2 |  |
+| brain_taxonomist | ✗ | 0 | 0 | 5 |  |
+| briefing | ✗ | 0 | 0 | 2 |  |
 | capture | ✓ | 0 | 0 | 0 |  |
 | citation_fixer | ✓ | 0 | 0 | 1 |  |
 | cold_start | ✓ | 0 | 0 | 11 |  |
@@ -19,28 +19,28 @@
 | daily_task_prep | ✓ | 0 | 0 | 0 |  |
 | data_research | ✓ | 0 | 0 | 1 |  |
 | eiirp | ✓ | 0 | 0 | 5 |  |
-| enrich | ✓ | 0 | 0 | 5 |  |
-| frontmatter_guard | ✓ | 0 | 0 | 4 |  |
+| enrich | ✗ | 0 | 0 | 5 |  |
+| frontmatter_guard | ✗ | 0 | 0 | 4 |  |
 | functional_area_resolver | ✓ | 0 | 0 | 8 |  |
 | gbrain_upgrade | ✓ | 0 | 0 | 4 |  |
 | idea_ingest | ✓ | 0 | 0 | 2 |  |
-| idea_lineage | ✓ | 0 | 0 | 0 |  |
-| ingest | ✓ | 0 | 0 | 8 |  |
+| idea_lineage | ✗ | 0 | 0 | 0 |  |
+| ingest | ✗ | 0 | 0 | 8 |  |
 | install | ✓ | 0 | 0 | 0 |  |
 | maintain | ✓ | 0 | 0 | 6 |  |
 | media_ingest | ✓ | 0 | 0 | 2 |  |
 | meeting_ingestion | ✓ | 0 | 0 | 2 |  |
 | migrate | ✓ | 0 | 0 | 5 |  |
-| minion_orchestrator | ✓ | 0 | 0 | 4 |  |
+| minion_orchestrator | ✗ | 0 | 0 | 3 |  |
 | perplexity_research | ✓ | 0 | 0 | 4 |  |
 | publish | ✓ | 0 | 0 | 5 |  |
-| query | ✓ | 0 | 0 | 1 |  |
+| query | ✗ | 0 | 0 | 1 |  |
 | repo_architecture | ✓ | 0 | 0 | 0 |  |
 | reports | ✓ | 0 | 0 | 0 |  |
 | schema_author | ✓ | 0 | 0 | 5 |  |
 | schema_unify | ✓ | 0 | 0 | 5 |  |
 | setup | ✓ | 0 | 0 | 8 |  |
-| signal_detector | ✓ | 0 | 0 | 3 |  |
+| signal_detector | ✗ | 0 | 0 | 3 |  |
 | skill_creator | ✓ | 0 | 0 | 1 |  |
 | skill_optimizer | ✓ | 0 | 0 | 5 |  |
 | skillify | ✓ | 0 | 0 | 5 |  |
@@ -49,8 +49,8 @@
 | smoke_test | ✓ | 0 | 0 | 4 |  |
 | soul_audit | ✓ | 0 | 0 | 1 |  |
 | strategic_reading | ✓ | 0 | 0 | 1 |  |
-| testing | ✓ | 0 | 0 | 2 |  |
+| testing | ✗ | 0 | 0 | 2 |  |
 | voice_note_ingest | ✓ | 0 | 0 | 2 |  |
 | webhook_transforms | ✓ | 0 | 0 | 1 |  |
 
-Total: 52, compiling: 52, failing: 0, unmined-contract lines: 165
+Total: 52, compiling: 39, failing: 13, unmined-contract lines: 164

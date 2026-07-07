@@ -1,0 +1,130 @@
+=== vocabulary ===
+A policy is a kind of policy.
+A role is a kind of role.
+A credential is a kind of credential.
+A verdict is a kind of verdict.
+An allowlist entry is a kind of fact.
+A resource is a kind of resource.
+An environment is a kind of environment.
+An access request is a kind of process.
+A user is a kind of person.
+A reviewer is a kind of person.
+A security officer is a kind of person.
+
+A policy has a name, a status, and a version.
+A role has a name and a status.
+A credential has an owner, a status, a rotated at, a use count, and a use limit.
+A verdict has a subject, an outcome, and a decided at.
+An allowlist entry has a user id and a resource name.
+A resource has a name, a classification, and a status.
+An environment has a name and a status.
+An access request has a number, a requestor, a resource name, a status, a requested at, and a queue position.
+An access request can be pending or approved or denied or granted, called the request status.
+A user has a user id, a name, a role, a clearance, and a status.
+A reviewer has a user id and a name.
+A security officer has a user id and a name.
+
+Definition: a resource is classified if its classification is "classified".
+Definition: a user is cleared if its clearance is "granted".
+Definition: a user is privileged if its role is "admin".
+Definition: a user is authorized if it is cleared and it is privileged.
+Definition: a credential is overused if its use count is more than its use limit.
+Definition: a credential is fresh if its rotated at is within the last 90 days.
+Definition: an access request is stale if its requested at is within the last 7 days.
+Definition: an access request is pending if its status is "pending".
+
+Assignment relates a user to a role.
+Assignment is read via the policy.evaluate tool.
+Grant relates a user to a resource.
+Grant is read via the access.grant tool.
+Coverage relates a policy to an environment.
+Coverage is read via the policy.evaluate tool.
+
+The verb to authorize (it authorizes, it is authorized) means the assignment relation.
+The verb to grant (it grants, it is granted) means the grant relation.
+The verb to cover (it covers, it is covered) means the coverage relation.
+
+To fetch pending access requests:
+  bind access requests = invoke request.list with status = "pending".
+
+To fetch active credentials:
+  bind credentials = invoke request.list with status = "active".
+
+To grant access to a resource for a user:
+  invoke access.grant with user = the user, resource = the resource.
+
+To revoke access to a resource for a user:
+  invoke access.revoke with user = the user, resource = the resource.
+
+To revoke an access request:
+  invoke access.revoke with user = the access request's requestor, resource = the access request's resource name.
+
+To rotate a credential:
+  invoke credential.rotate with credential = the credential.
+
+To log an audit entry for an access request:
+  invoke audit.log with request = the access request.
+
+To evaluate the policy for an environment:
+  bind verdict = invoke policy.evaluate with environment = the environment.
+
+To escalate an access request:
+  invoke audit.log with request = the access request.
+
+=== constants ===
+
+The max concurrent grants is 3.
+The credential ttl is 90 days.
+The review window is 7 days.
+
+=== instances ===
+
+There is an environment called identity provider:
+  name = "okta"
+  status = "active"
+
+There is an environment called audit sink:
+  name = "audit-log"
+  status = "active"
+
+=== language ===
+Comparison synonyms:
+  outranks = is more than
+  lacks = is less than
+  matches = is
+Duration synonyms:
+  rotation window = 90 days
+Assertion synonyms:
+  confirm
+  ensure
+
+=== tools ===
+List Access Requests
+=====================
+-- List access requests by status.
+~ request.list(status: String) : List
+
+Grant Access
+============
+-- Grant access to a resource for a user.
+~ access.grant(user: User, resource: Resource) : Boolean
+
+Revoke Access
+=============
+-- Revoke access to a resource for a user.
+~ access.revoke(user: User, resource: Resource) : Boolean
+
+Rotate Credential
+=================
+-- Rotate a credential.
+~ credential.rotate(credential: Credential) : Boolean
+
+Log Audit Entry
+===============
+-- Log an audit entry for an access request.
+~ audit.log(request: AccessRequest) : Boolean
+
+Evaluate Policy
+===============
+-- Evaluate the policy for an environment.
+~ policy.evaluate(environment: Environment) : Verdict

@@ -1,6 +1,6 @@
 ---
 name: purge expired
-description: Purge stale records in bounded deterministic order.
+description: Purge stale records in bounded deterministic order, capped at the configured retry count for failures.
 triggers:
   - "purge expired records"
   - "retention cleanup"
@@ -12,18 +12,16 @@ triggers:
 - "purge expired records"
 - "retention cleanup"
 
-## Procedure (( role: reference ))
-Check: any stale records.
+## Procedure
 
 ### Procedure — steps
 
 fetch stale records.
-
-### Procedure — steps 2
-
+Check: any stale records.
+Check: at most 500 stale records.
 for each the first 100 records whose status is "stale" sorted by updated at, oldest first:
   purge the record.
-> recover from any:
+recover from any:
   Emit: "expired record purge failed".
 Emit: "expired records purged".
 

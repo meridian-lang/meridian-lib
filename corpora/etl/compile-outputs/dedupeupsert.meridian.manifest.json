@@ -1,0 +1,372 @@
+{
+  "constants" : {
+    "batch size threshold" : 100000,
+    "freshness sla" : 86400,
+    "retry budget" : 3
+  },
+  "instances_required" : [
+    {
+      "kind" : "sink",
+      "name" : "warehouse sink"
+    },
+    {
+      "kind" : "source",
+      "name" : "object store source"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Dataset_critical",
+      "kind" : "dataset",
+      "line" : 28
+    },
+    {
+      "adjective" : "high volume",
+      "function" : "meridianDef_Dataset_highVolume",
+      "kind" : "dataset",
+      "line" : 27
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Dataset_stale",
+      "kind" : "dataset",
+      "line" : 21
+    },
+    {
+      "adjective" : "backfilled",
+      "function" : "meridianDef_Partition_backfilled",
+      "kind" : "partition",
+      "line" : 23
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_PipelineRun_failed",
+      "kind" : "pipeline run",
+      "line" : 22
+    },
+    {
+      "adjective" : "passing",
+      "function" : "meridianDef_QualityCheck_passing",
+      "kind" : "quality check",
+      "line" : 24
+    },
+    {
+      "adjective" : "compatible",
+      "function" : "meridianDef_Schema_compatible",
+      "kind" : "schema",
+      "line" : 26
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Watermark_fresh",
+      "kind" : "watermark",
+      "line" : 25
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a pipeline run",
+      "line" : 34,
+      "name" : "derivation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "transform"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a source",
+      "line" : 30,
+      "name" : "extraction",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "extract"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a dataset",
+      "line" : 32,
+      "name" : "loading",
+      "right_cardinality" : "one",
+      "right_kind" : "a sink",
+      "via" : "load"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Collapse duplicate and drifted datasets into their canonical version, keeping the duplicate count within a tolerance band instead of demanding zero duplicates before it will run. A pipeline with occasional duplicates is normal; a pipeline with a runaway duplicate count is a different problem.",
+    "name" : "dedupe upsert",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 20,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 25,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 27,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 40,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 47,
+        "text" : "Assertions"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 50,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 30,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 31,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 32,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 38,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 20,
+        "lines" : [
+          "\"dedupe datasets\"",
+          "\"run dedupe upsert\"",
+          "\"collapse duplicate datasets\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 25,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 27,
+        "lines" : [
+          "fetch datasets",
+          "Check: at most 5 datasets whose status is \"duplicate\"",
+          "Check: at least 0 datasets whose status is \"stale\"",
+          "Check: exactly 1 dataset whose status is \"canonical\"",
+          "for each dataset:",
+          "if either the dataset is stale or the dataset's status is \"duplicate\",",
+          "dedupe records in the dataset,",
+          "otherwise,",
+          "make sure the dataset's status is not \"is-blocked\"",
+          "Emit: \"dedupe upsert pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 40,
+        "lines" : [
+          "Don't force a dedupe on a dataset that's flagged `is-blocked`. That flag",
+          "means something upstream needs attention first; deduping through it",
+          "papers over the real problem",
+          "Don't wait for the duplicate count to hit zero before running this. Zero",
+          "isn't the bar — staying under the tolerance band is"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Assertions",
+        "line" : 47,
+        "lines" : [
+          "confirm at most 5 datasets whose status is \"duplicate\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 50,
+        "lines" : [
+          "The receipt states how many datasets were deduped this pass and confirms",
+          "there is exactly one canonical dataset left standing"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"dedupe datasets\"\n\"run dedupe upsert\"\n\"collapse duplicate datasets\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "derive",
+      "line" : 39,
+      "past_participle" : "derived",
+      "relation" : "derivation",
+      "third_person" : "derives"
+    },
+    {
+      "base" : "extract",
+      "line" : 37,
+      "past_participle" : "extracted",
+      "relation" : "extraction",
+      "third_person" : "extracts"
+    },
+    {
+      "base" : "load",
+      "line" : 38,
+      "past_participle" : "loaded",
+      "relation" : "loading",
+      "third_person" : "loads"
+    }
+  ],
+  "source_files" : [
+    "dedupeupsert.meri",
+    "etl.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 48,
+      "swift_line" : 362
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 367
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 374
+    },
+    {
+      "meridian_line" : 31,
+      "swift_line" : 379
+    },
+    {
+      "meridian_line" : 32,
+      "swift_line" : 384
+    },
+    {
+      "meridian_line" : 33,
+      "swift_line" : 388
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 393
+    },
+    {
+      "meridian_line" : 66,
+      "swift_line" : 396
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 409
+    },
+    {
+      "meridian_line" : 38,
+      "swift_line" : 420
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 459
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 464
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 504
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 509
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 549
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 554
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "dedupe upsert",
+      "swift_struct" : "DedupeUpsert"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when dedupeDatasets fires",
+      "swift_struct" : "WhenDedupedatasetsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runDedupeUpsert fires",
+      "swift_struct" : "WhenRundedupeupsertFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when collapseDuplicateDatasets fires",
+      "swift_struct" : "WhenCollapseduplicatedatasetsFires"
+    }
+  ]
+}

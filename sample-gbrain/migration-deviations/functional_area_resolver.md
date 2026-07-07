@@ -401,10 +401,10 @@ These sections were made non-executable in the port and should be reviewed as mi
 +```
 +
 +
-+### Step 6 (MANDATORY): Verify routing accuracy — steps 3
++### Step 6 (MANDATORY): Verify routing accuracy — steps 3 (( role: reference ))
 +
-+> If the lenient (same-area) score on your variant drops below 95%, revert the
-+> compression and tune. Common causes:
++If the lenient (same-area) score on your variant drops below 95%, revert the
++compression and tune. Common causes:
 +- A sub-skill was omitted from the `(dispatcher for: ...)` list.
 +
 +### Step 6 (MANDATORY): Verify routing accuracy — steps 4

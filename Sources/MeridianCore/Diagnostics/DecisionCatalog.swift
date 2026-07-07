@@ -89,6 +89,7 @@ public enum DecisionCatalog {
                 .diag(.unparseableStatement), .diag(.unparseableRule),
                 .diag(.missingPhraseArgument), .diag(.unattachedRule),
                 .diag(.unresolvedTriggerAction), .diag(.unlowerableRulePredicate),
+                .diag(.unsupportedTriggerCondition),
             ]),
 
         DecisionRecord(
@@ -134,6 +135,24 @@ public enum DecisionCatalog {
                 "`allow-fallbacks: unknown-tools` downgrades per-file for host-provided tools.",
             ],
             seeAlso: [.diag(.unknownTool)]),
+
+        DecisionRecord(
+            id: "D-DX-6",
+            title: "Phase-8 rule sugar fires everywhere executable; sectioned-document prose is opt-in via markers/comments only",
+            rationale: "A single `!hasHeadings` gate used to suppress Phase-8 rule extraction (`must not` / `may` [+ bounded `up to N`] / `must be … by … before` / `When …, …`) in any file with `##`/`###` headings, silently downgrading rule-shaped sentences in SKILL.md-style documents to inert prose with no diagnostic. This reversed a real authoring intent: a governance/clinical skill body that reads `A user without clearance must not access classified resources.` is a rule the author expects enforced, not documentation. Rule extraction now runs identically in flat and sectioned documents; each non-comment line in an executable section is classified in a fixed precedence — guidance-step prose, then `RuleAnalyzer.classify`-positive rule shapes (extracted to `MeridianFile.rules`), then ordinary statements — so prose is never inferred from content, only from an explicit `(( role: reference ))`/`(( inert ))` marker or a `#`/`>` comment line.",
+            alternatives: [
+                "Keep sectioned documents rule-inert and require authors to move obligations into a flat `rules/*.meridian` file — forces an artificial split between a skill's narrative and its enforced contracts, and is exactly the workaround `corpora/governance`/`corpora/clinical` no longer need.",
+                "Infer prose vs. rule from section role alone (e.g. treat every `invariants` section line as a rule) — too coarse; a section can mix a rule-shaped sentence with an ordinary guard statement, and role-based inference would silently misclassify one or the other.",
+            ],
+            consequences: [
+                "A rule-shaped sentence with no matching implicit-workflow parameter/action now raises `unattachedRule` at compile time instead of compiling silently as inert narrative — treated as an authoring signal (fix the skill's frontmatter `parameters:` or the rule wording), not a regression.",
+                "`SkillMigrator`'s four-way classifier treats rule-shaped normative lines as lowerable (category 1) rather than routing them to `(( role: reference ))` or a hard error, so migrated `SKILL.md` sources gain real enforcement instead of documentation-only narrative.",
+                "gbrain/erp/procedures ported `.meri` sources with `When …,`/`may`/`must not` narrative that was never meant to be a rule must be explicitly re-marked `(( role: reference ))`/`(( inert ))` or commented (`#`/`>`) — a one-time, mechanical repair pass across the existing corpora, not an ongoing cost.",
+            ],
+            seeAlso: [
+                .diag(.unattachedRule), .diag(.uncheckablePredicate),
+                .diag(.sectionStructuralError), .diag(.unlowerableRulePredicate),
+            ]),
     ]
 
     public static func lookup(_ id: String) -> DecisionRecord? {

@@ -386,9 +386,16 @@ public struct StatementParser {
             return (.commit(CommitStatementAST(label: label, sourceLine: line.number)), 1)
         }
 
-        // "wait {duration}."
+        // "wait {duration}." — also accepts the comma-continuation form
+        // (`wait for signal "x",` as one step of a still-open if/otherwise
+        // branch) the way `if`/`while`/`until` already do; a trailing comma
+        // left in front of `parseWaitCondition`'s own quote-stripping made
+        // `unquote` see `"x",` (last char is `,`, not `"`) and give up,
+        // leaving the raw quotes in the signal id to reach the emitter
+        // unescaped (`.signal(""x",")`, invalid Swift).
         if lower.hasPrefix(statement.waitPrefix) {
-            let rest = String(t.dropFirst(statement.waitPrefix.count))
+            var rest = String(t.dropFirst(statement.waitPrefix.count))
+            if rest.hasSuffix(",") { rest = String(rest.dropLast()) }
             if let cond = parseWaitCondition(rest) {
                 trace.log(.statement, "L\(line.number) -> wait")
                 return (.wait(WaitStatementAST(condition: cond, sourceLine: line.number)), 1)
@@ -1972,6 +1979,19 @@ public struct StatementParser {
         if s.lowercased().hasPrefix(lexicon.grammar.waitSignalIntroducer) {
             let sig = unquote(String(s.dropFirst(lexicon.grammar.waitSignalIntroducer.count)))
             return .signal(sig)
+        }
+        // "for approval of {subject} from {role}" — subject clause is optional
+        // sugar over the bare `for approval from {role}` form below; must be
+        // checked first since it's the longer, more specific prefix.
+        if s.lowercased().hasPrefix(lexicon.grammar.waitApprovalOfIntroducer) {
+            let rest = String(s.dropFirst(lexicon.grammar.waitApprovalOfIntroducer.count))
+            if let fromRange = rest.range(of: lexicon.grammar.waitApprovalFromMarker, options: .caseInsensitive) {
+                let subjectText = String(rest[rest.startIndex..<fromRange.lowerBound])
+                    .trimmingCharacters(in: .whitespaces)
+                let roleWords = String(rest[fromRange.upperBound...])
+                    .trimmingCharacters(in: .whitespaces)
+                return .approval(subject: exprParser.parse(subjectText), byRole: roleWords)
+            }
         }
         // "for approval from {role}"
         if s.lowercased().hasPrefix(lexicon.grammar.waitApprovalIntroducer) {

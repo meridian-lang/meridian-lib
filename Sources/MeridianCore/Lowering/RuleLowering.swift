@@ -33,6 +33,22 @@ public enum ParsedRule: Sendable {
         sourceLine: Int,
         originalText: String
     )
+    /// A `When <condition>, <action>` rule whose condition structurally
+    /// names a real, checkable predicate (comparison, emptiness/temporal-
+    /// window check, duration mention, quantifier, relation traversal,
+    /// description, aggregate, superlative, table lookup, or declared-verb
+    /// predicate) rather than opaque externally-raised-event prose. `.trigger`
+    /// compiles to an external-event stub with no scheduler/poller to
+    /// re-evaluate such a predicate — see `isSelfEvaluatingTriggerCondition`.
+    /// `RuleInjector.synthesizeTriggers` raises `MER3017` for this case
+    /// instead of silently minting a `trigger.<opaque>.fired` event that
+    /// would never fire.
+    case unsupportedTriggerCondition(
+        conditionText: String,
+        actionText: String,
+        sourceLine: Int,
+        originalText: String
+    )
     case permission(
         subjectKind: String,
         subjectFilter: ExpressionAST?,
@@ -59,13 +75,49 @@ public struct RuleAnalyzer {
     private let exprParser: ExpressionParser
     private let trace: ParserTrace
 
+    /// `symbols` has no default — every caller must decide explicitly.
+    /// Every real pipeline call site (`Compiler.compile`, `ASTToIR.lower`,
+    /// `SkillSectionBuilder`, `SkillMigrator`'s rule-aware classifier hook)
+    /// passes its already-built `SymbolTable`; only synthetic unit tests that
+    /// exercise pure shape-matching pass `nil` explicitly. Without a table,
+    /// `exprParser` can only recognize literals/comparisons/bare identifiers;
+    /// a filter/predicate clause shaped like a relation traversal, quantifier,
+    /// aggregate, superlative, or declared-verb predicate degrades to a bare
+    /// identifier or a naive word-split guess instead of its real
+    /// `ExpressionAST` form — see `buildSubjectFilter`'s use of `exprParser`
+    /// below and `corpora/GENERATING_A_CORPUS.md` gotcha #7. `ExpressionParser`
+    /// only ever reads `symbols` (`kinds`/`resolveVerbForm`/…) to resolve
+    /// lookups during parsing — never mutates it — so sharing the live,
+    /// already-fully-populated table here has no ordering/side-effect risk.
     public init(
         lexicon: EnglishLexicon = .default,
-        trace: ParserTrace = .shared
+        trace: ParserTrace = .shared,
+        symbols: SymbolTable?
     ) {
         self.lexicon = lexicon
         self.trace = trace
-        self.exprParser = ExpressionParser(symbols: nil, trace: trace, lexicon: lexicon)
+        self.exprParser = ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon)
+    }
+
+    /// True when `text` has the shape a genuine Phase-8 rule sentence starts
+    /// with: a leading parameter article ("A"/"An"/"The …") or the `when `
+    /// trigger prefix — the exact same gate `MeridianParser`'s flat
+    /// (heading-less) top-level rule extraction has always used. `classify`
+    /// itself is intentionally loose (`mustNotMarker`/`mayMarker`/`byMarker`
+    /// etc. are unanchored substring matches, so a rule's own subject/action
+    /// clauses can contain the marker anywhere), which makes it unsafe to
+    /// trial against arbitrary narrative — an unrelated sentence merely
+    /// mentioning "may" ("the file may exist outside the indexed brain") can
+    /// spuriously satisfy `classifyPermission`. Callers that trial-classify
+    /// prose outside the flat top-level loop (`SkillSectionBuilder`'s
+    /// sectioned-rule extraction, `SkillMigrator`'s rule-aware classifier
+    /// hook) must gate on this shape check FIRST, exactly like the flat path
+    /// always has, before calling `classify`.
+    public func looksLikeRuleShapedSentence(_ text: String) -> Bool {
+        let t = text.trimmingCharacters(in: .whitespaces)
+        let startsWithParameterArticle = lexicon.findEarliestArticle(t)?
+            .intro.trimmingCharacters(in: .whitespaces).isEmpty == true
+        return startsWithParameterArticle || t.lowercased().hasPrefix(lexicon.grammar.topLevelRulePrefix)
     }
 
     /// Classify a single RuleAST into a typed ParsedRule. Returns nil if the
@@ -119,12 +171,91 @@ public struct RuleAnalyzer {
         var actionText = String(rest[commaRange.upperBound...])
             .trimmingCharacters(in: .whitespaces)
         if actionText.hasSuffix(".") { actionText = String(actionText.dropLast()) }
+        // A blank condition/action (`When , do X.` / `When Y,.`) would still
+        // synthesize a syntactically valid trigger workflow — `buildTriggerWorkflow`
+        // has no non-emptiness check of its own, so a malformed rule like this
+        // would silently mint a garbage `trigger..fired` event name instead of
+        // failing to classify. Returning `nil` here routes it through the same
+        // `MER1004: unparseable rule` path every other malformed rule shape hits.
+        guard !conditionText.isEmpty, !actionText.isEmpty else { return nil }
+        if isSelfEvaluatingTriggerCondition(conditionText) {
+            return .unsupportedTriggerCondition(
+                conditionText: conditionText,
+                actionText: actionText,
+                sourceLine: rule.sourceLine,
+                originalText: rule.text
+            )
+        }
         return .trigger(
             conditionText: conditionText,
             actionText: actionText,
             sourceLine: rule.sourceLine,
             originalText: rule.text
         )
+    }
+
+    /// True when `conditionText` structurally names a real, checkable
+    /// predicate Meridian itself could in principle evaluate over persisted
+    /// state, as opposed to opaque prose describing an externally-raised
+    /// event (`"a refund is requested"`, `"payment clears"`). `When` triggers
+    /// compile to external-event stubs (`RuleInjector.buildTriggerWorkflow`)
+    /// with no scheduler/poller to re-evaluate a self-evaluating predicate,
+    /// so recognizing one here routes the rule to a loud `MER3017` instead of
+    /// silently minting an event nobody will ever raise.
+    ///
+    /// Two independent signals, deliberately conservative (a false negative
+    /// just keeps today's opaque-stub behavior; a false positive would wrongly
+    /// block a legitimate external-event trigger):
+    ///   1. A duration mention (`"7 days"`, `"3 hours"`) anywhere in the
+    ///      condition — the hallmark of an elapsed-time/age check over
+    ///      existing state (`"on hold for more than 7 days"`), which no
+    ///      `.comparison` marker is guaranteed to catch on its own (e.g. a
+    ///      bare `"for 7 days"` with no explicit magnitude word).
+    ///   2. The full symbol-aware `ExpressionParser` recognizing one of the
+    ///      structurally rich shapes: a magnitude/pattern/set comparison, an
+    ///      emptiness/temporal-window check (also surfaced as `.comparison`
+    ///      by `EmptinessTemporalGrammar`), a quantifier, a relation
+    ///      traversal, a description, an aggregate, a superlative, a table
+    ///      lookup, a parse-error carrier, or a declared-verb predicate.
+    ///      Bare equality/inequality (`.equal`/`.notEqual`, from the lexicon's
+    ///      copula-based `"is"`/`"is not"` markers) is deliberately EXCLUDED:
+    ///      it is indistinguishable from idiomatic passive-voice event
+    ///      phrasing (`"a refund is requested"`, `"the order is not
+    ///      shipped"`) and must keep working as an external-event hook.
+    private func isSelfEvaluatingTriggerCondition(_ conditionText: String) -> Bool {
+        if containsDurationMention(conditionText) { return true }
+        return isSelfEvaluatingExpression(exprParser.parse(conditionText))
+    }
+
+    private func isSelfEvaluatingExpression(_ expr: ExpressionAST) -> Bool {
+        switch expr {
+        case .quantified, .relationTraversal, .description, .aggregate, .superlative,
+             .tableLookup, .malformed, .verbPredicate, .recordList:
+            return true
+        case .comparison(_, let op, _):
+            switch op {
+            case .equal, .notEqual: return false
+            default: return true
+            }
+        case .logical(_, let exprs):
+            return exprs.contains { isSelfEvaluatingExpression($0) }
+        default:
+            return false
+        }
+    }
+
+    /// Narrow, lexicon-driven structural check: does `text` contain an
+    /// adjacent "<number> <duration unit>" bigram anywhere (`"7 days"`,
+    /// `"3.5 hours"`)? Independent of `ExpressionParser` dispatch order so a
+    /// duration mention is caught even when no `ComparisonGrammar` marker
+    /// happens to precede it.
+    private func containsDurationMention(_ text: String) -> Bool {
+        let words = text.split(separator: " ").map(String.init)
+        guard words.count >= 2 else { return false }
+        for i in 0..<(words.count - 1) {
+            if lexicon.parseDuration("\(words[i]) \(words[i + 1])") != nil { return true }
+        }
+        return false
     }
 
     // MARK: - Precondition
@@ -263,10 +394,14 @@ public struct RuleAnalyzer {
         var kindWords: [String] = []
         var filterText: String? = nil
         var filterIntroducer: String? = nil
+        var filterIsNegated = false
         let introducers = lexicon.grammar.subjectFilterIntroducers
+        let negatedIntroducers = lexicon.grammar.negatedSubjectFilterIntroducers
         for (i, word) in words.enumerated() {
-            if introducers.contains(word.lowercased()) {
-                filterIntroducer = word.lowercased()
+            let lowerWord = word.lowercased()
+            if introducers.contains(lowerWord) || negatedIntroducers.contains(lowerWord) {
+                filterIntroducer = lowerWord
+                filterIsNegated = negatedIntroducers.contains(lowerWord)
                 let after = words[(i + 1)...].joined(separator: " ")
                 filterText = after.trimmingCharacters(in: .whitespaces)
                 break
@@ -277,7 +412,7 @@ public struct RuleAnalyzer {
         let kind = kindWords.joined(separator: " ").lowercased()
         let filter = filterText.flatMap { ft in
             buildSubjectFilter(introducer: filterIntroducer, filterText: ft, subject: kind)
-        }
+        }.map { filterIsNegated ? ExpressionAST.logical(.not, [$0]) : $0 }
         return (kind, filter, nil)
     }
 
@@ -389,6 +524,73 @@ public struct RuleAnalyzer {
             // Single token — probably just a property name with no value.
             // Lower as `subject.<property>` so the assert checks truthiness.
             return .propertyAccess(.identifierRef(subject), trimmed)
+        }
+
+        // When `exprParser` carries a real symbol table (every non-test call
+        // site — see `RuleAnalyzer.init`), try the FULL grammar on the whole
+        // clause before guessing a shorthand split, but ONLY act on it when it
+        // recognizes one of the exact forms `RuleInjector.lowerExprSimple`
+        // explicitly rejects (`.quantified`/`.malformed`/`.recordList`/
+        // `.tableLookup`/`.verbPredicate`/`.relationTraversal`/`.description`/
+        // `.aggregate`/`.superlative`) — e.g. a clause like "active
+        // prescriptions include a contraindicated drug" (a relation traversal
+        // over a declared verb). Returning that form as-is routes the rule to
+        // a precise, loud `MER3016` naming the actual unsupported construct,
+        // which is strictly better than the shorthand split below silently
+        // producing a syntactically valid but semantically meaningless
+        // predicate (see the guard rail below, and
+        // `corpora/GENERATING_A_CORPUS.md` gotcha #7).
+        //
+        // Every OTHER shape — bare identifier (no structure found), but also
+        // `.comparison`/`.propertyAccess`/`.literal`/etc. — falls through to
+        // the shorthand heuristic unchanged: those shapes are ambiguous with
+        // (or already produced by) the split heuristic itself. For instance
+        // `parseAtom` recognizes bare possessives ("order's id") as a
+        // `.propertyAccess` chain with NO symbol table at all (AGENTS.md
+        // pitfall #3), which would otherwise hijack legitimate shorthand
+        // clauses like "note order's id" (property = "note order's", value =
+        // "id") that the split heuristic is specifically designed to handle.
+        let fullParse = exprParser.parse(trimmed)
+        switch fullParse {
+        case .quantified, .malformed, .recordList, .tableLookup,
+             .verbPredicate, .relationTraversal, .description, .aggregate, .superlative:
+            return fullParse
+        default:
+            break
+        }
+
+        // Guard rail: reachable in two overlapping cases — every unit test
+        // that constructs `RuleAnalyzer(symbols: nil)` builds `exprParser`
+        // with no symbol table at all, so the full-parse attempt above always
+        // bottoms out here; and even a REAL symbol table only recognizes
+        // structure whose kind vocabulary is actually declared, so a relation
+        // traversal naming an undeclared kind ("active prescriptions include a
+        // contraindicated drug" when `drug` isn't a declared kind) also falls
+        // through to a bare identifier above and lands here. Either way there
+        // is no way to confirm a split is real, so refuse to guess rather than
+        // silently accept a plausible-looking-but-wrong one. Two structural
+        // (not vocabulary) signals rule out a genuine short property/value
+        // pair and route the whole rule to a loud `unattachedRule`/MER3006
+        // instead (`nil` here →
+        // `buildSubjectFilter` → `parseSubject` filter=nil → `buildInvariantCondition`
+        // returns nil → the rule is never marked attached):
+        //   1. A mid-clause article ("a"/"an"/"the") — real shorthand values
+        //      are bare enums/numbers/quoted strings ("status suspended",
+        //      "clearance \"denied\""), never articled noun phrases; a clause
+        //      like "active prescriptions include a contraindicated drug"
+        //      (relation traversal) always carries one.
+        //   2. More than a handful of words — every real corpus/test
+        //      shorthand clause is 1-3 words; a longer clause is prose, not a
+        //      terse key-value pair, and greedily splitting it produces an
+        //      `ExpressionAST` shape (`propertyAccess`/`comparison`/
+        //      `identifierRef`) that `RuleInjector.lowerExprSimple` happily
+        //      accepts as-is — i.e. a WRONG predicate that silently compiles
+        //      and enforces nothing meaningful, which is strictly worse than
+        //      today's loud `MER3016` for a quantifier/table it at least
+        //      recognizes as unsupported. See `corpora/GENERATING_A_CORPUS.md`
+        //      gotcha #7.
+        guard parts.count <= 5, !parts.contains(where: { lexicon.articles.contains($0.lowercased()) }) else {
+            return nil
         }
         // Greedy: try longest property first (drop one trailing word at a time).
         for splitAt in stride(from: parts.count - 1, to: 0, by: -1) {

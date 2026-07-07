@@ -498,6 +498,29 @@ public struct Compiler {
                           definitions: loweredDefinitions)
         }
 
+        // C5: Rule manifest entries. Reclassify `ast.rules` independently of
+        // the lowering pass above (whose attach/no-attach bookkeeping is
+        // local to `ASTToIR.lower` and isn't returned) — cheap because
+        // `RuleAnalyzer.classify` is pure pattern matching, no lowering. Every
+        // rule that survives to this point in a successful compile either
+        // classified-and-attached, or was an allowed `unparseable-rules` /
+        // `unattached-rules` fallback drop; the latter is rare enough in
+        // practice (opt-in frontmatter) that we accept reporting it as
+        // `executes: true` here rather than threading attach status out of
+        // the lowerer for this edge case.
+        let ruleAnalyzer = RuleAnalyzer(lexicon: lexicon, trace: trace, symbols: symbols)
+        let ruleManifestEntries: [ManifestEmitter.RuleManifestEntry] = ast.rules.map { raw in
+            guard let parsed = ruleAnalyzer.classify(raw) else {
+                return ManifestEmitter.RuleManifestEntry(
+                    text: raw.text, kind: "unknown", executes: false,
+                    source: .init(file: meridianFile, line: raw.sourceLine))
+            }
+            let (kind, bounded) = Compiler.ruleManifestKind(parsed)
+            return ManifestEmitter.RuleManifestEntry(
+                text: raw.text, kind: kind, executes: true, bounded: bounded,
+                source: .init(file: meridianFile, line: raw.sourceLine))
+        }
+
         // Assemble the COMPLETE manifest Input as part of every compile. The
         // rich data computed here (workflows, outline, recorded sections) is no
         // longer discarded — the host emits the manifest from this Input.
@@ -506,6 +529,16 @@ public struct Compiler {
             workflows: workflows,
             constantsDecl: constantsDecl,
             toolsUsed: ast.toolsUsed,
+            // Every declared vocabulary kind's PascalCase Swift name, used to
+            // filter `IRWalker.allKindNames` down to genuine domain kinds —
+            // some `IRParameter.kind`s are synthetic placeholders derived
+            // straight from an implicit phrase parameter's own text (e.g. a
+            // rule-synthesized workflow's unresolved "reviewer approve"
+            // parameter), never a real vocabulary kind, and SwiftEmitter
+            // already falls back to `Value` for those at codegen time.
+            kindsUsed: IRWalker.allKindNames(in: workflows)
+                .intersection(symbols.kinds.keys.map { IdentifierNaming.pascalCaseFromSpaces($0) })
+                .sorted(),
             instancesRequired: instancesDecl.map { decl in
                 decl.entries.map { e in
                     ManifestEmitter.InstanceManifestEntry(name: e.name, kind: e.kind)
@@ -514,6 +547,7 @@ public struct Compiler {
             sourceMap: Compiler.sourceMap(fromGeneratedSwift: swift),
             metadata: ast.metadata,
             outline: ast.outline,
+            rules: ruleManifestEntries,
             skillSections: ast.skillSections.map {
                 ManifestEmitter.SkillSectionEntry(
                     heading: $0.heading, role: $0.role, executes: $0.executes,
@@ -556,6 +590,19 @@ public struct Compiler {
 
     /// 3A: backed relations rendered for the manifest (`meridian_relations`),
     /// sorted by name. Unbacked legacy relations are omitted.
+    /// C5: Map a classified `ParsedRule` to its manifest `kind` string + the
+    /// `bounded` flag (meaningful only for `.permission`, e.g. "may … up to N").
+    private static func ruleManifestKind(_ rule: ParsedRule) -> (kind: String, bounded: Bool) {
+        switch rule {
+        case .invariant: return ("invariant", false)
+        case .parameterGuard: return ("parameterGuard", false)
+        case .precondition: return ("precondition", false)
+        case .trigger: return ("trigger", false)
+        case .unsupportedTriggerCondition: return ("unsupportedTrigger", false)
+        case .permission(_, _, _, _, let isBounded, _, _): return ("permission", isBounded)
+        }
+    }
+
     private func relationManifestEntries(_ symbols: SymbolTable) -> [ManifestEmitter.RelationManifestEntry] {
         func card(_ c: CardinalityAST) -> String { c == .one ? "one" : "various" }
         return symbols.relations
@@ -829,12 +876,35 @@ public struct Compiler {
         let kindList = kinds.values.sorted { $0.sourceLine < $1.sourceLine }
         let outKinds: [SwiftEmitter.DomainDecl.Kind] = kindList.map { k in
             let inheritedChain = ancestorChain(of: k.name, in: kinds)
-            let inheritedProps = inheritedChain.flatMap { ancestor in
+            // Farthest ancestor first, nearest parent last (matches
+            // `ancestorChain`'s ordering) — so a nearer declaration is a later
+            // element here, which is what "nearest wins" dedup below relies on.
+            let rawInherited = inheritedChain.flatMap { ancestor in
                 (props[ancestor] ?? []).map { propertyToDecl($0, kindName: ancestor, enumByKindProp: enumNameByKindProp) }
             }
             let ownProps = (props[k.name] ?? []).map { propertyToDecl($0, kindName: k.name, enumByKindProp: enumNameByKindProp) }
+            // A kind re-declaring an ancestor's property name — e.g. "A
+            // clinician has a name and a role." / "A nurse has a name and a
+            // dose count." — overrides that property, not duplicates it: the
+            // emitted struct must end up with exactly one stored `name`, not
+            // two (which is an invalid redeclaration in Swift). `ownProps`
+            // always wins over anything inherited; among inherited levels
+            // alone, the nearer ancestor's declaration wins over a farther
+            // one with the same name. Iterate nearest-to-farthest (reversed)
+            // so first-seen == nearest, then reverse back to restore the
+            // farthest-first output ordering the rest of the pipeline expects.
+            let ownNames = Set(ownProps.map { IdentifierNaming.camelPreservingCase($0.name).lowercased() })
+            var seenNames = ownNames
+            var dedupedReversed: [SwiftEmitter.DomainDecl.Property] = []
+            for prop in rawInherited.reversed() {
+                let key = IdentifierNaming.camelPreservingCase(prop.name).lowercased()
+                if seenNames.contains(key) { continue }
+                seenNames.insert(key)
+                dedupedReversed.append(prop)
+            }
+            let inheritedProps = dedupedReversed.reversed()
             return .init(name: k.name, parent: k.parent,
-                         ownProperties: ownProps, inheritedProperties: inheritedProps)
+                         ownProperties: ownProps, inheritedProperties: Array(inheritedProps))
         }
         return SwiftEmitter.DomainDecl(kinds: outKinds, enumerations: enumerations)
     }

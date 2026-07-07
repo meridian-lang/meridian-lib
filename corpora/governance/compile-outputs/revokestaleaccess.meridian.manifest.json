@@ -1,0 +1,319 @@
+{
+  "constants" : {
+    "credential ttl" : 7776000,
+    "max concurrent grants" : 3,
+    "review window" : 604800
+  },
+  "instances_required" : [
+    {
+      "kind" : "environment",
+      "name" : "identity provider"
+    },
+    {
+      "kind" : "environment",
+      "name" : "audit sink"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_AccessRequest_pending",
+      "kind" : "access request",
+      "line" : 34
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_AccessRequest_stale",
+      "kind" : "access request",
+      "line" : 33
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Credential_fresh",
+      "kind" : "credential",
+      "line" : 32
+    },
+    {
+      "adjective" : "overused",
+      "function" : "meridianDef_Credential_overused",
+      "kind" : "credential",
+      "line" : 31
+    },
+    {
+      "adjective" : "classified",
+      "function" : "meridianDef_Resource_classified",
+      "kind" : "resource",
+      "line" : 27
+    },
+    {
+      "adjective" : "authorized",
+      "function" : "meridianDef_User_authorized",
+      "kind" : "user",
+      "line" : 30
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_User_cleared",
+      "kind" : "user",
+      "line" : 28
+    },
+    {
+      "adjective" : "privileged",
+      "function" : "meridianDef_User_privileged",
+      "kind" : "user",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 36,
+      "name" : "assignment",
+      "right_cardinality" : "one",
+      "right_kind" : "a role",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a policy",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "an environment",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 38,
+      "name" : "grant",
+      "right_cardinality" : "one",
+      "right_kind" : "a resource",
+      "via" : "access.grant"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Sweep granted access requests and pull back any access that outlived its reason for existing. This is the cleanup counterpart to `grant access` — every grant this skill can find and undo is a grant that `grant access` issued and nobody remembered to close out.",
+    "name" : "revoke stale access",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 20,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 25,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 32,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 40,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 43,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 30,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 20,
+        "lines" : [
+          "\"revoke stale access\"",
+          "\"sweep denied access\"",
+          "\"run the access revocation sweep\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 25,
+        "lines" : [
+          "fetch pending access requests",
+          "let revoked count be the number of access requests whose status is \"granted\"",
+          "for each access request whose status is \"granted\":",
+          "revoke the access request",
+          "Emit: \"revoke stale access pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 32,
+        "lines" : [
+          "Don't revoke access in bulk without recording the count first — the",
+          "`revoked count` line exists so the receipt can say exactly how many",
+          "grants were pulled back, not just that \"some\" were",
+          "Don't run this sweep as a substitute for `grant access`'s own approval",
+          "gate. Revocation is a cleanup step; it doesn't retroactively make an",
+          "ungated grant acceptable"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 40,
+        "lines" : [
+          "make sure no users whose clearance is \"denied\" and whose status is \"active\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 43,
+        "lines" : [
+          "The receipt states the revoked count for this pass, so a security officer",
+          "can track whether the sweep's workload is trending up or down over time"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"revoke stale access\"\n\"sweep denied access\"\n\"run the access revocation sweep\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "authorize",
+      "line" : 43,
+      "past_participle" : "authorized",
+      "relation" : "assignment",
+      "third_person" : "authorizes"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "grant",
+      "line" : 44,
+      "past_participle" : "granted",
+      "relation" : "grant",
+      "third_person" : "grants"
+    }
+  ],
+  "source_files" : [
+    "revokestaleaccess.meri",
+    "governance.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 41,
+      "swift_line" : 435
+    },
+    {
+      "meridian_line" : 48,
+      "swift_line" : 440
+    },
+    {
+      "meridian_line" : 27,
+      "swift_line" : 451
+    },
+    {
+      "meridian_line" : 28,
+      "swift_line" : 453
+    },
+    {
+      "meridian_line" : 60,
+      "swift_line" : 460
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 477
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 516
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 521
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 561
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 566
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 606
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 611
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "revoke stale access",
+      "swift_struct" : "RevokeStaleAccess"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when revokeStaleAccess fires",
+      "swift_struct" : "WhenRevokestaleaccessFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when sweepDeniedAccess fires",
+      "swift_struct" : "WhenSweepdeniedaccessFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runAccessRevocationSweep fires",
+      "swift_struct" : "WhenRunaccessrevocationsweepFires"
+    }
+  ]
+}

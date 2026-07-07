@@ -10,10 +10,17 @@ A purchase order is a kind of artifact.
 A warehouse is a kind of thing.
 A period is a kind of thing.
 A trigger phrase is a kind of thing.
+An account manager is a kind of person.
+A dunning notice is a kind of artifact.
+A mailer server is a kind of system.
+A payment processor is a kind of service.
 
 An order has a number, a status, a total amount, a customer id, and an updated at.
+An order can be draft or blocked or fulfilled or cancelled, called the lifecycle.
 An order item has a sku, a quantity, and a status.
-A customer has a customer id, a name, and a status.
+A customer has a customer id and a name.
+A customer has a status, which is one of (active, suspended, closed).
+A customer has a credit limit, which is Money.
 An invoice has a number, a status, a balance, a due date, and an updated at.
 A payment has a reference, a status, and an amount.
 A product has a sku, a status, a quantity on hand, a reorder point, and an updated at.
@@ -22,14 +29,22 @@ A purchase order has a number, a status, and an updated at.
 A warehouse has a name and a region.
 A period has a name, a status, and a closed at.
 A trigger phrase has a text.
+An account manager has a name and a region.
+A dunning notice has a reference, a status, and a sent at.
+A mailer server has a host, a port, and an auth type.
+A payment processor has an api endpoint and an api key.
 
 Definition: an order is open if its status is "open".
 Definition: an order is blocked if its status is "blocked".
 Definition: an order is fulfilled if its status is "fulfilled".
+Definition: an order is released if its status is "fulfilled".
 Definition: an invoice is unpaid if its balance is more than 0.
 Definition: an invoice is overdue if its due date is within the last 1 days.
 Definition: a product is short if its quantity on hand is less than its reorder point.
 Definition: a purchase order is pending if its status is "pending".
+Definition: an order is high value if its total amount exceeds the high value threshold.
+Definition: a customer is in good standing if its status is "active" and its credit limit is more than 0.
+Definition: an invoice is severely overdue if its due date is within the last 1 days and its balance exceeds the high value threshold.
 
 Fulfillment relates an order to a shipment.
 Fulfillment is read via the shipment.create tool.
@@ -39,11 +54,14 @@ Collection relates an invoice to a payment.
 Collection is read via the payment.collect tool.
 Replenishment relates a product to a purchase order.
 Replenishment is read via the purchase_order.create tool.
+Escalation relates an invoice to a dunning notice.
+Escalation is read via the dunning.notify tool.
 
 The verb to fulfill (it fulfills, it is fulfilled) means the fulfillment relation.
 The verb to invoice (it invoices, it is invoiced) means the invoicing relation.
 The verb to collect (it collects, it is collected) means the collection relation.
 The verb to replenish (it replenishes, it is replenished) means the replenishment relation.
+The verb to escalate (it escalates, it is escalated) means the escalation relation.
 
 To fetch open orders:
   bind orders = invoke order.list with status = "open".
@@ -74,6 +92,40 @@ To cancel an order:
 
 To close the accounting period:
   invoke period.close.
+
+To escalate an invoice:
+  bind dunning notice = invoke dunning.notify with invoice = the invoice.
+
+To retry payment for an invoice:
+  bind payment = invoke payment.collect with invoice = the invoice.
+
+=== constants ===
+
+The high value threshold is $5000.
+The dunning window is 7 days.
+The maximum retry count is 3.
+
+=== instances ===
+
+There is a mailer server called billing mailer:
+  host = $SMTP_HOST
+  port = 587
+  auth type = "tls"
+
+There is a payment processor called erp gateway:
+  api endpoint = "https://payments.example-erp.internal/v1"
+  api key = $ERP_GATEWAY_API_KEY
+
+=== language ===
+Comparison synonyms:
+  exceeds = is more than
+  under = is less than
+  at least = is greater than or equal to
+Duration synonyms:
+  biweek = 2 weeks
+Assertion synonyms:
+  verify
+  guarantee that
 
 === tools ===
 List Orders
@@ -125,3 +177,8 @@ Close Period
 ============
 -- Close the accounting period.
 ~ period.close() : Boolean
+
+Notify Dunning
+==============
+-- Escalate an overdue invoice to a dunning notice.
+~ dunning.notify(invoice: Invoice) : DunningNotice

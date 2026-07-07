@@ -1,0 +1,29 @@
+---
+name: checksum audit
+description: Audit record checksums for drift, bounding how many drifted or duplicate records are tolerated.
+triggers:
+  - "checksum audit"
+  - "audit record drift"
+---
+
+# Checksum Audit
+
+## When this applies
+- "checksum audit"
+- "audit record drift"
+
+## Procedure
+fetch stale records.
+Check: at most 10 records whose status is "drifted".
+Check: at least 0 records whose status is "duplicate".
+Check: exactly 1 record whose status is "canonical".
+for each record:
+  compute a checksum for the record.
+  if either the record is drifted or the record is duplicate,
+    Note: "record flagged for review",
+  otherwise,
+    make sure the record's status is not "is-blocked".
+Emit: "checksum audit pass complete".
+
+## Assertions
+confirm at most 10 records whose status is "drifted".

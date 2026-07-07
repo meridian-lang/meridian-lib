@@ -1,0 +1,55 @@
+---
+name: rollback deploy
+description: Roll back an unhealthy deploy only after an on-call engineer approves it, then keep retrying the rollback until health actually recovers instead of declaring victory after one rollback attempt.
+triggers:
+  - "roll back unhealthy deploys"
+  - "revert failed deploy"
+  - "run the deploy rollback pass"
+---
+
+# Rollback Deploy
+
+> Rolling back a bad deploy is disruptive enough that it shouldn't happen
+> without a human saying yes first — but once approved, it shouldn't stop at
+> a single attempt either, because a rollback can itself fail to fully
+> restore health on the first try. This skill gates on approval, then loops
+> the rollback until the deploy's health genuinely recovers, and if a
+> rollback attempt itself fails outright, it holds for manual escalation
+> rather than retrying blindly forever.
+
+## When to invoke
+- "roll back unhealthy deploys"
+- "revert failed deploy"
+- "run the deploy rollback pass"
+
+## Workflow (( role: reference ))
+  until it is not the case that the deploy is unhealthy,
+    roll back the deploy.
+
+### Workflow — steps
+
+fetch unhealthy deploys.
+Check: any unhealthy deploys.
+for each deploy:
+  wait for approval of the deploy from an oncall engineer.
+
+### Workflow — steps 2
+
+    recover from deploy.failed:
+      Note: "rollback failed, escalating manually".
+Post: "deploy rollback pass complete".
+
+## Anti-Patterns (( role: reference ))
+- Don't skip the approval wait for a deploy that "obviously needs" a
+  rollback. The approval gate exists so a rollback is a deliberate call,
+  not an automatic reflex to any unhealthy reading.
+- Don't treat one rollback attempt as sufficient. The retry loop exists
+  because a rollback can complete without the deploy's health actually
+  recovering yet.
+
+## Guarantees
+make sure no deploys whose status is "failed".
+
+## Report shape (( role: template ))
+The receipt confirms every unhealthy deploy either recovered after
+rollback or was escalated manually because the rollback itself failed.

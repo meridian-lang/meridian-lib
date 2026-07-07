@@ -1,0 +1,50 @@
+---
+name: healthcheck sweep
+description: Sweep every service's health in parallel with a background runbook refresh, so a healthcheck pass doesn't wait on stale runbook lookups and a runbook refresh doesn't block the healthcheck it's supposed to support.
+triggers:
+  - "sweep service health"
+  - "run healthcheck sweep"
+  - "run the health sweep pass"
+---
+
+# Healthcheck Sweep
+
+Health checks and runbook lookups don't depend on each other, so making one
+wait for the other is wasted latency. This skill fetches every service and
+every runbook, confirms each service is properly named before doing
+anything else, and then runs the health checks and the runbook refresh at
+the same time — the health sweep in the foreground, the runbook lookup in
+the background — before closing with a check that nothing came back
+degraded.
+
+## When to invoke
+- "sweep service health"
+- "run healthcheck sweep"
+- "run the health sweep pass"
+
+## Workflow
+fetch services.
+fetch runbooks.
+Check: all services have a name.
+simultaneously:
+  for each service:
+    check the health of the service.
+  for each runbook:
+    in the background, look up the runbook for the pagerduty service.
+Check: no services whose status is "degraded".
+Post: "healthcheck sweep complete".
+
+## Anti-Patterns
+- Don't run the runbook lookups sequentially after the health checks "to
+  keep things simple." The two are independent; running them
+  simultaneously is what keeps this sweep fast enough to run frequently.
+- Don't skip the closing degraded check because the individual health
+  checks "already ran." The closing check is what turns individual results
+  into a pass/fail verdict for the whole sweep.
+
+## Guarantees
+make sure all services have a name.
+
+## Report shape
+The receipt confirms every service is healthy and named, and that the
+runbook refresh completed alongside the sweep rather than after it.

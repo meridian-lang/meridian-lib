@@ -28,7 +28,8 @@ zero `_unresolved` placeholders. The regression gate is
 section, idiom, trigger, or guard ever auto-invokes the planner. The only paths
 to the LLM are author-written markers: `with discretion` / `with autonomy`
 (workflow or section header) and the inline `use judgment to <goal>:` block (all
-lower to `ProseStepIR`), plus the migrator's cue-gated `!!! checklist
+lower to `IRPrimitive.aiJudgment(AIJudgmentIR)` or `.aiAutonomy(AIAutonomyIR)`,
+per dispatch mode), plus the migrator's cue-gated `!!! checklist
 (( ai-autonomy ))` / `!!! table (( ai-discretion ))`. Everything else compiles
 to deterministic IR or is a hard error. An unmarked, unresolved imperative step
 is a coded `MER2001` diagnostic (with a did-you-mean against the declared
@@ -39,7 +40,13 @@ migrator (and the `InertYieldAnalyzer` measurement tooling it shares an oracle
 with) classifies every section/block into exactly one bucket:
 
 1. **Lowerable** — it trial-lowers as-is (a statement, a checkable predicate, a
-   command/fence, a checklist/table item). No marker needed.
+   command/fence, a checklist/table item, or a Phase-8 rule shape — `must not` /
+   `may` [+ bounded `up to N`] / `must be … by … before` / `When …, …` — inside
+   an `invariants`/`prohibitions` section). No marker needed. Rule-shape
+   detection is gated the same way in the migrator as in the compiler
+   (`RuleAnalyzer.looksLikeRuleShapedSentence` before `classify`), so ordinary
+   narrative that merely contains a rule keyword (e.g. "the file **may** exist
+   outside the indexed brain") is never misfiled as a permission rule.
 2. **AI-inference, cue-gated** — it does not lower, but carries an
    `EnglishLexicon.inferenceCueWords` cue (a cognitive verb: analyse,
    understand, decide, weigh, synthesize, …). Routed to `use judgment to …:` /
@@ -58,6 +65,14 @@ with) classifies every section/block into exactly one bucket:
    (`meridian migrate-skill`) is the only opt-in escape hatch, and it still
    marks the result `(( role: reference ))` (and reports it), rather than
    inventing a fifth silent category.
+
+Bucket 4 is the prose-classification instance of a general pattern —
+reject an unsupported/unrecognized shape loudly instead of silently
+miscategorizing or approximating it — that recurs on the expression-grammar
+side too (rule predicates, `When` trigger conditions). See
+`docs/17_MERIDIAN_PATTERNS.md` §"A restricted sub-language rejects
+unsupported forms loudly instead of approximating them" if you're ever
+tempted to "fix" one of these hard errors by widening what silently passes.
 
 The migrator **never emits `(( inert ))`** — bucket 3 above always renders as
 `(( role: reference ))` (or `(( role: template ))` / `(( role: tools ))` /
@@ -216,8 +231,8 @@ use judgment to decide if the entity is notable:
 ```
 
 `use judgment to <goal>:` (and `with discretion` / `with autonomy` on the
-workflow header) lower to `ProseStepIR` with the per-skill `scopedTools`
-allow-list. This is the ONLY path prose reaches the planner. Most Tier-B/C
+workflow header) lower to `AIJudgmentIR`/`AIAutonomyIR` with the per-skill
+`scopedTools` allow-list. This is the ONLY path prose reaches the planner. Most Tier-B/C
 `## Phases` sections that mix prose with `gbrain` commands are ported by
 splitting the deterministic `gbrain` calls into bash fences and collapsing the
 judgment-heavy steps into one `use judgment to …:` block.
@@ -451,8 +466,8 @@ deterministic thresholds don't fit a specific section.
 
     | Fuzzy shape | Mark it | Lowers to | The planner gets |
     |---|---|---|---|
-    | Decision/routing table (intent → action) | `!!! table (( ai-discretion ))` | `ProseStepIR(.planThenExecute)` | "Decide which case applies and carry out its action: when …, …" (every row embedded) |
-    | Acceptance checklist (`- [ ] all pages cross-linked`) | `!!! checklist (( ai-autonomy ))` above the list | `ProseStepIR(.autonomousLoop)` | "Ensure every acceptance criterion below holds, taking corrective action until all are satisfied: - …" (every item embedded) |
+    | Decision/routing table (intent → action) | `!!! table (( ai-discretion ))` | `IRPrimitive.aiJudgment(AIJudgmentIR)` | "Decide which case applies and carry out its action: when …, …" (every row embedded) |
+    | Acceptance checklist (`- [ ] all pages cross-linked`) | `!!! checklist (( ai-autonomy ))` above the list | `IRPrimitive.aiAutonomy(AIAutonomyIR)` | "Ensure every acceptance criterion below holds, taking corrective action until all are satisfied: - …" (every item embedded) |
 
     This is the **same path** `use judgment to …:` takes (an explicit
     `ProseStepAST` dispatch), so it is valid in any workflow and runs through the
@@ -511,6 +526,60 @@ deterministic thresholds don't fit a specific section.
     Long operational prose that cannot be deterministically lowered should use
     an explicit judgment block, e.g. `use judgment to follow the <heading>
     guidance:`. That form intentionally collects prose until the next heading.
+
+15. **`normativeCueWords` matching is word-level and context-blind — a
+    throwaway "never"/"always" in pure narrative still trips category 4.**
+    (See also `corpora/GENERATING_A_CORPUS.md` §"Known gotchas" #1, which
+    keeps this same example alongside the other corpus-authoring gotchas —
+    `if`/`otherwise` + judgment fragmentation, rule-attachment phrasings that
+    silently don't attach, unsupported negative temporal definitions.)
+    When authoring rich, `sample-gbrain`-style narrative for a `## Contract` /
+    `## Anti-Patterns` / `## When NOT to use this skill` section (a real prose
+    intro, cross-references to sibling skills, etc. — see the governing
+    principle above; this is the *intended* authoring style, not a
+    workaround), every *other* bullet with no cue word joins its siblings and
+    splits cleanly to `(( role: reference ))`. But `EnglishLexicon.
+    normativeCueWords` (`must`/`never`/`always`/`refuse*`/`require*`/
+    `forbidden`/`mandatory`) is a bare substring/word match with no semantic
+    check for whether the sentence is actually asserting a rule. A purely
+    descriptive `## Contract` bullet —
+
+    ```
+    - Side effect: a classified grant is never issued without an approval
+      record; a denial gets logged for the next revoke-stale-access sweep.
+    ```
+
+    — reads as ordinary background prose to a human, but the migrator's P1
+    classifier files it as category 4 ("operational, no cue" — item 8 above)
+    purely because it contains "never", and it surfaces alone as an
+    `unmined-contract` line in `migrate-skill --route-fuzzy`'s report instead
+    of joining its siblings as clean reference prose. The fix is always to
+    reword the sentence so the cue word is gone, e.g.:
+
+    ```
+    - Side effect: a classified grant carries an approval record from the
+      security officer; a denial gets logged for the next revoke-stale-access
+      sweep.
+    ```
+
+    Never "fix" this by adding `(( role: reference ))` to a heading that
+    already resolves that way, and never by wrapping the line in `use
+    judgment to …:` — there is no genuine inference cue here, so that would
+    misroute a deterministic-documentation line to the planner. The same root
+    cause (a sentence that structurally resembles something checkable/
+    normative) also explains a related but distinct diagnostic: a quoted
+    throwaway aside immediately followed by a dangling pronoun — e.g. `Don't
+    do X just because it "always works." The real reason is Y because it's
+    the most disruptive option.` — trips the "ambiguous anaphora" check (item
+    4) instead, because the pronoun right after the closing quote reads as an
+    unresolved referent. Reword to drop the quote or the pronoun (`Don't do X
+    out of habit. The real reason is Y.`), not to restructure the section.
+
+    Both failure modes are reworded-prose fixes to the `original-skills/**/
+    SKILL.md` source, confirmed by re-running `migrate-skill --batch --report`
+    until `unmined-contract line(s)` reads 0 and `skill-deviation --batch
+    --index` reports `Operational inert: 0` — the leading indicators that the
+    richer narrative migrated as intended rather than silently degrading.
 
 ---
 

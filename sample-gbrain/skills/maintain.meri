@@ -62,10 +62,10 @@ Use the per-dimension walk below (Phase 2 onward) when:
 - A specific dimension needs manual judgment that the auto path skips
 
 
-### Autonomous path (v0.36.4.0) — when you want to reach a target score — steps
+### Autonomous path (v0.36.4.0) — when you want to reach a target score — steps (( role: reference ))
 
-> If the user asks "get my brain to 90/100" or "fix what's broken", prefer the
-> one-command loop over walking each dimension by hand:
+If the user asks "get my brain to 90/100" or "fix what's broken", prefer the
+one-command loop over walking each dimension by hand:
 
 ```bash
 gbrain doctor --remediation-plan --json              # preview what would run
@@ -128,7 +128,7 @@ frontmatter fields, then creates typed links in the database.
 
 ### Link graph extraction — steps
 
-> If link_count is 0 or low relative to page_count, run batch extraction:
+If link_count is 0 or low relative to page_count, run batch extraction:
 ```bash
 gbrain extract links --dir ~/brain
 ```
@@ -136,7 +136,7 @@ gbrain extract links --dir ~/brain
 
 ### Timeline extraction — steps
 
-> If timeline_entry_count is 0, extract structured timeline from markdown:
+If timeline_entry_count is 0, extract structured timeline from markdown:
 ```bash
 gbrain extract timeline --dir ~/brain
 ```
@@ -264,7 +264,7 @@ Autopilot runs sync, extract, and embed in a continuous loop with adaptive sched
 ```bash
 gbrain autopilot --status
 ```
-> If not running, install it:
+If not running, install it:
 ```bash
 gbrain autopilot --install --repo ~/brain
 ```

@@ -158,7 +158,7 @@ These sections were made non-executable in the port and should be reviewed as mi
     original idea.
  
 +
-+### Phase 3: Classify lineage moments — steps
++### Phase 3: Classify lineage moments — steps (( role: reference ))
 +
  When a bucket has no evidence, write "No clear evidence found" with a brief note
  about what was checked.

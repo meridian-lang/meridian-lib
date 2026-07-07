@@ -92,11 +92,9 @@ captured:
   history. Use `--file` or `--stdin` instead.
 
 
-### Anti-Patterns — steps (( role: reference ))
+### Anti-Patterns — steps
 
-- Don't try to bulk-import dozens of files by looping over `gbrain capture`.
-  That's what `gbrain sync` (or `gbrain import`) is for. Capture is for
-  single thoughts, single notes, single transcripts.
+- Don't try to bulk-import dozens of files by looping over `gbrain capture`. That's what `gbrain sync` (or `gbrain import`) is for. Capture is for single thoughts, single notes, single transcripts.
 
 ### Anti-Patterns — steps 2
 

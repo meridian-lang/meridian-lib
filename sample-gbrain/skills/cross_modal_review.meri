@@ -42,10 +42,9 @@ This skill guarantees:
 - Agreement and disagreement are reported transparently.
 - Refusal from one model triggers a silent switch to the next in chain.
 
-### Contract — steps (( role: reference ))
+### Contract — steps
 
-- The review is graded against the originating skill's Contract section
-  (what was promised), not vibes.
+- The review is graded against the originating skill's Contract section (what was promised), not vibes.
 
 ### Contract — steps 2 (( role: reference ))
 

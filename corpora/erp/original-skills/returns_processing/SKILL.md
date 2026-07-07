@@ -1,0 +1,31 @@
+---
+name: returns processing
+description: Route returned orders by lifecycle stage and flag invoices returned within the dunning window.
+triggers:
+  - "process returns"
+  - "route returned orders"
+---
+
+# Returns Processing
+
+## When this applies
+- "process returns"
+- "route returned orders"
+
+## Workflow
+fetch open orders.
+fetch unpaid invoices.
+Check: any invoices whose due date is within the last 7 days.
+
+!!! table (( decision table ))
+| lifecycle | action                |
+| --------- | ---------------------- |
+| cancelled | escalate the invoice   |
+| blocked   | escalate the invoice   |
+| *         | ship the order         |
+
+Publish: "returns processing pass complete".
+
+## Report shape
+The receipt separates cancelled and blocked returns (escalated to dunning)
+from orders cleared to ship.

@@ -164,7 +164,7 @@
         "text" : "Phase 3: Classify lineage moments"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
         "line" : 146,
         "text" : "Phase 3: Classify lineage moments — steps"
@@ -412,14 +412,14 @@
         "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Phase 3: Classify lineage moments — steps",
         "line" : 146,
         "lines" : [
           "When a bucket has no evidence, write \"No clear evidence found\" with a brief note",
           "about what was checked"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
@@ -644,17 +644,9 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
-          "guidance" : "Users often want to understand how one idea changed across time: when it first\nappeared, when it became sharp, what it displaced, what it contradicted, and\nwhat version is alive now. That is different from building a whole concept map\nand different from charting an entity's metric trajectory\nSearch for exact phrase variants with `search`\nuse judgment to follow the Phase 1: Resolve the idea target — steps 2 guidance:\nIf multiple distinct ideas share the same phrase, ask the user to choose the\nintended one before synthesizing\n`find_trajectory` only when the evidence is entity\/attribute-shaped, such as\na role\/status\/metric evolution that is relevant to the idea's story\nWhen a bucket has no evidence, write \"No clear evidence found\" with a brief note\nabout what was checked\nWrite the answer in the output format below. Keep the synthesis proportional to\nthe evidence. Do not overfit a smooth evolution if the evidence is sparse,\nmessy, or contradictory\nRun broad `concept-synthesis` if the user actually wants the whole concept\nmap refreshed\n`skills\/concept-synthesis\/SKILL.md` - broad mutating concept-map synthesis\n`skills\/query\/SKILL.md` - general brain search and cited answers\n`skills\/brain-ops\/SKILL.md` - source attribution and brain-first behavior\n`find_trajectory` - structured typed-fact and event timelines for entities\n`find_contradictions` - cached suspected contradiction findings",
+          "guidance" : "Users often want to understand how one idea changed across time: when it first\nappeared, when it became sharp, what it displaced, what it contradicted, and\nwhat version is alive now. That is different from building a whole concept map\nand different from charting an entity's metric trajectory\nSearch for exact phrase variants with `search`\nuse judgment to follow the Phase 1: Resolve the idea target — steps 2 guidance:\nIf multiple distinct ideas share the same phrase, ask the user to choose the\nintended one before synthesizing\n`find_trajectory` only when the evidence is entity\/attribute-shaped, such as\na role\/status\/metric evolution that is relevant to the idea's story\nWrite the answer in the output format below. Keep the synthesis proportional to\nthe evidence. Do not overfit a smooth evolution if the evidence is sparse,\nmessy, or contradictory\nRun broad `concept-synthesis` if the user actually wants the whole concept\nmap refreshed\n`skills\/concept-synthesis\/SKILL.md` - broad mutating concept-map synthesis\n`skills\/query\/SKILL.md` - general brain search and cited answers\n`skills\/brain-ops\/SKILL.md` - source attribution and brain-first behavior\n`find_trajectory` - structured typed-fact and event timelines for entities\n`find_contradictions` - cached suspected contradiction findings",
           "line" : 53,
           "scoped_tools" : [
             "page.get",
@@ -663,6 +655,13 @@
             "shell.run"
           ],
           "text" : "follow the What this solves — steps guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "idea-lineage a input",

@@ -201,6 +201,25 @@ struct SwiftEmitterPrimitiveTests {
         #expect(!out.contains("state.bind"))
     }
 
+    /// Regression: `bind protocol = invoke …` (a natural-language bind name
+    /// that happens to spell a Swift keyword) must not emit a bare
+    /// `let protocol = …` — that's a hard parse error ("keyword 'protocol'
+    /// cannot be used as an identifier here"), not a warning. The
+    /// string-literal state key (`state.bind("protocol", …)`'s first
+    /// argument) is unaffected — only the two places `resultBinding` becomes
+    /// a real Swift identifier need escaping (shipped broken in
+    /// `corpora/clinical/protocol_render`; see IMPLEMENTATION_LOG.md).
+    @Test("invoke with a Swift-keyword bind name backtick-escapes the local variable, not the state key")
+    func invokeWithReservedKeywordBinding() {
+        let ir = InvokeIR(toolID: "protocol.lookup", arguments: [
+            InvokeArg("medication", .identifierRef(name: "medication"))
+        ], resultBinding: "protocol")
+        let out = emitter.emitInvoke(ir, ctx: ctx).toString()
+        #expect(out.contains("let `protocol` = try await runtime.invoke("))
+        #expect(out.contains("state.bind(\"protocol\", `protocol`)"))
+        #expect(!out.contains("let protocol ="))
+    }
+
     @Test("bind emits state.bind")
     func bindEmitsBind() {
         let ir = BindIR(name: "score", expression: .literal(.number(0)))
@@ -435,16 +454,15 @@ struct ManifestEmitterTests {
         #expect(json.contains("high value threshold") || json.contains("constants"))
     }
 
-    @Test("records prose_steps with guidance so a judgment step's narrative context is auditable")
+    @Test("records judgment_steps with guidance so a judgment step's narrative context is auditable")
     func recordsProseStepGuidance() throws {
         let wf = IRWorkflow(
             name: "run diagnostics",
             parameters: [],
             body: IRBlock(statements: [
-                .proseStep(ProseStepIR(
+                .aiJudgment(AIJudgmentIR(
                     text: "follow the Diagnostics guidance",
                     scopedTools: ["shell.run"],
-                    dispatchMode: .planThenExecute,
                     guidance: "Check the golden path first."
                 ))
             ])
@@ -452,33 +470,57 @@ struct ManifestEmitterTests {
         let json = try ManifestEmitter().emit(ManifestEmitter.Input(workflows: [wf]))
         let parsed = try JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any]
         let workflows = parsed?["workflows"] as? [[String: Any]]
-        let proseSteps = workflows?.first?["prose_steps"] as? [[String: Any]]
-        #expect(proseSteps?.count == 1)
-        #expect(proseSteps?.first?["dispatch_mode"] as? String == "plan_then_execute")
-        #expect(proseSteps?.first?["guidance"] as? String == "Check the golden path first.")
-        #expect((proseSteps?.first?["scoped_tools"] as? [String])?.contains("shell.run") == true)
+        let judgmentSteps = workflows?.first?["judgment_steps"] as? [[String: Any]]
+        #expect(judgmentSteps?.count == 1)
+        #expect(judgmentSteps?.first?["guidance"] as? String == "Check the golden path first.")
+        #expect((judgmentSteps?.first?["scoped_tools"] as? [String])?.contains("shell.run") == true)
+        #expect(workflows?.first?["autonomy_steps"] == nil)
     }
 
-    @Test("omits prose_steps key for workflows with no prose steps, and guidance key when absent")
+    @Test("records autonomy_steps with the bounded-loop config so the retry envelope is auditable")
+    func recordsAutonomyStepConfig() throws {
+        let wf = IRWorkflow(
+            name: "stabilize",
+            parameters: [],
+            body: IRBlock(statements: [
+                .aiAutonomy(AIAutonomyIR(
+                    text: "keep fixing",
+                    scopedTools: ["ci.fix"],
+                    autonomy: AutonomyConfigIR(replanAfterFailures: 2, maxSteps: 5)
+                ))
+            ])
+        )
+        let json = try ManifestEmitter().emit(ManifestEmitter.Input(workflows: [wf]))
+        let parsed = try JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any]
+        let workflows = parsed?["workflows"] as? [[String: Any]]
+        let autonomySteps = workflows?.first?["autonomy_steps"] as? [[String: Any]]
+        #expect(autonomySteps?.count == 1)
+        #expect(autonomySteps?.first?["max_steps"] as? Int == 5)
+        #expect(autonomySteps?.first?["replan_after_failures"] as? Int == 2)
+        #expect(workflows?.first?["judgment_steps"] == nil)
+    }
+
+    @Test("omits judgment_steps/autonomy_steps keys when absent, and guidance key when absent")
     func omitsProseStepsWhenAbsent() throws {
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: []))
         let json = try ManifestEmitter().emit(ManifestEmitter.Input(workflows: [wf]))
         let parsed = try JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any]
         let workflows = parsed?["workflows"] as? [[String: Any]]
-        #expect(workflows?.first?["prose_steps"] == nil)
+        #expect(workflows?.first?["judgment_steps"] == nil)
+        #expect(workflows?.first?["autonomy_steps"] == nil)
 
         let wfWithoutGuidance = IRWorkflow(
             name: "test2",
             parameters: [],
             body: IRBlock(statements: [
-                .proseStep(ProseStepIR(text: "decide", dispatchMode: .planThenExecute))
+                .aiJudgment(AIJudgmentIR(text: "decide"))
             ])
         )
         let json2 = try ManifestEmitter().emit(ManifestEmitter.Input(workflows: [wfWithoutGuidance]))
         let parsed2 = try JSONSerialization.jsonObject(with: Data(json2.utf8)) as? [String: Any]
         let workflows2 = parsed2?["workflows"] as? [[String: Any]]
-        let proseSteps2 = workflows2?.first?["prose_steps"] as? [[String: Any]]
-        #expect(proseSteps2?.first?["guidance"] == nil)
+        let judgmentSteps2 = workflows2?.first?["judgment_steps"] as? [[String: Any]]
+        #expect(judgmentSteps2?.first?["guidance"] == nil)
     }
 }
 

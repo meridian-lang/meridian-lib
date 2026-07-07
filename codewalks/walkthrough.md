@@ -30,9 +30,9 @@ primitive end-to-end without re-reading the AGENTS handbook.
 - English-shaped surface. `.meridian` files read like an attentive product
   brief; `.merconfig` files declare the vocabulary (kinds, properties,
   relations, phrases, tools, instances, constants).
-- Eleven IR primitives. `invoke`, `bind`, `branch`, `iterate`, `assert`,
-  `emit`, `wait`, `commit`, `recover`, `simultaneously`, `proseStep`,
-  `complete` — that is the whole language at the IR level.
+- Thirteen IR primitives. `invoke`, `bind`, `branch`, `iterate`, `assert`,
+  `emit`, `wait`, `commit`, `recover`, `simultaneously`, `aiJudgment`,
+  `aiAutonomy`, `complete` — that is the whole language at the IR level.
 - Strict by default. Unresolved phrases and rules raise `CompilerError`s.
   Per-file `allow-fallbacks:` frontmatter opts back into laxer modes.
 - Typed Swift output. Domain kinds become `struct`s conforming to marker
@@ -317,7 +317,8 @@ public indirect enum IRPrimitive: Sendable {
     case commit(CommitIR)
     case recover(RecoverIR)
     case simultaneously(SimultaneouslyIR)
-    case proseStep(ProseStepIR)
+    case aiJudgment(AIJudgmentIR)
+    case aiAutonomy(AIAutonomyIR)
     case complete(CompleteIR)
 }
 ```
@@ -326,8 +327,8 @@ That is the entire computational vocabulary. `invoke` calls a tool, `bind`
 introduces a name, `branch` is `if/else` and pattern match, `iterate` is
 `for/while/until`, `wait` parks until a signal/approval/event, `commit`
 labels a checkpoint, `recover` attaches an error handler, `simultaneously`
-runs branches in parallel, `proseStep` hands off to a planner or autonomy
-loop, and `complete` ends the workflow with a reason. There is no `try`,
+runs branches in parallel, `aiJudgment`/`aiAutonomy` hand off to a planner or
+autonomy loop respectively, and `complete` ends the workflow with a reason. There is no `try`,
 no `catch`, no `defer`, no `throw` — error flow is data, carried by
 `RecoverIR.pattern` and matched at runtime.
 
@@ -891,8 +892,8 @@ bearing comment in `AGENTS.md`.
 
 The single sentence "Discretion/autonomy bodies are never deterministic"
 captures the contract. A workflow declared `, with discretion` lowers
-each body line straight to a `ProseStepIR(.planThenExecute)`; a workflow
-declared `, with autonomy` lowers to `ProseStepIR(.autonomousLoop)`. The
+each body line straight to `IRPrimitive.aiJudgment(AIJudgmentIR)`; a workflow
+declared `, with autonomy` lowers to `IRPrimitive.aiAutonomy(AIAutonomyIR)`. The
 runtime then routes those steps to the planner or autonomy loop instead
 of executing them as deterministic IR. This is enforced unconditionally —
 even if a body line happens to match a phrase, the prose path wins for
@@ -1288,8 +1289,8 @@ against required and typed fields.
 
 ### Planner is the contract for "with discretion"
 
-A workflow declared `, with discretion` lowers each body line to a
-`ProseStepIR(.planThenExecute)`. At runtime, that step calls the
+A workflow declared `, with discretion` lowers each body line to an
+`IRPrimitive.aiJudgment(AIJudgmentIR)`. At runtime, that step calls the
 `Planner.plan(_:)` method with a `PlanContext` describing the prose,
 state snapshot, available tools, and a max-actions budget.
 
@@ -1350,7 +1351,7 @@ supplied argument must match its schema type. A failure produces a typed
 
 ### Autonomy adds replan budgets and goal predicates
 
-`with autonomy` lowers to `ProseStepIR(.autonomousLoop)` carrying an
+`with autonomy` lowers to `IRPrimitive.aiAutonomy(AIAutonomyIR)` carrying an
 `AutonomyConfigIR(until:, unless:, replanAfterFailures:, maxSteps:)`.
 The runtime calls the `ActPlanner` one step at a time, evaluates the
 optional `until` (success stop) and `unless` (abort) predicates against

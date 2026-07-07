@@ -1,52 +1,91 @@
 {
+  "constants" : {
+    "dunning window" : 604800,
+    "high value threshold" : {
+      "amount" : 5000,
+      "currency" : "USD"
+    },
+    "maximum retry count" : 3
+  },
   "instances_required" : [
-
+    {
+      "kind" : "mailer server",
+      "name" : "billing mailer"
+    },
+    {
+      "kind" : "payment processor",
+      "name" : "erp gateway"
+    }
   ],
   "kinds_used" : [
 
   ],
   "meridian_definitions" : [
     {
+      "adjective" : "in good standing",
+      "function" : "meridianDef_Customer_inGoodStanding",
+      "kind" : "customer",
+      "line" : 46
+    },
+    {
       "adjective" : "overdue",
       "function" : "meridianDef_Invoice_overdue",
       "kind" : "invoice",
-      "line" : 30
+      "line" : 42
+    },
+    {
+      "adjective" : "severely overdue",
+      "function" : "meridianDef_Invoice_severelyOverdue",
+      "kind" : "invoice",
+      "line" : 47
     },
     {
       "adjective" : "unpaid",
       "function" : "meridianDef_Invoice_unpaid",
       "kind" : "invoice",
-      "line" : 29
+      "line" : 41
     },
     {
       "adjective" : "blocked",
       "function" : "meridianDef_Order_blocked",
       "kind" : "order",
-      "line" : 27
+      "line" : 38
     },
     {
       "adjective" : "fulfilled",
       "function" : "meridianDef_Order_fulfilled",
       "kind" : "order",
-      "line" : 28
+      "line" : 39
+    },
+    {
+      "adjective" : "high value",
+      "function" : "meridianDef_Order_highValue",
+      "kind" : "order",
+      "line" : 45
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Order_open",
       "kind" : "order",
-      "line" : 26
+      "line" : 37
+    },
+    {
+      "adjective" : "released",
+      "function" : "meridianDef_Order_released",
+      "kind" : "order",
+      "line" : 40
     },
     {
       "adjective" : "short",
       "function" : "meridianDef_Product_short",
       "kind" : "product",
-      "line" : 31
+      "line" : 43
     },
     {
       "adjective" : "pending",
       "function" : "meridianDef_PurchaseOrder_pending",
       "kind" : "purchase order",
-      "line" : 32
+      "line" : 44
     }
   ],
   "meridian_ir_version" : "1.0",
@@ -55,7 +94,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 38,
+      "line" : 53,
       "name" : "collection",
       "right_cardinality" : "one",
       "right_kind" : "a payment",
@@ -64,8 +103,18 @@
     {
       "backing" : "tool",
       "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 57,
+      "name" : "escalation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dunning notice",
+      "via" : "dunning.notify"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 34,
+      "line" : 49,
       "name" : "fulfillment",
       "right_cardinality" : "one",
       "right_kind" : "a shipment",
@@ -75,7 +124,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 36,
+      "line" : 51,
       "name" : "invoicing",
       "right_cardinality" : "one",
       "right_kind" : "an invoice",
@@ -85,7 +134,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a product",
-      "line" : 40,
+      "line" : 55,
       "name" : "replenishment",
       "right_cardinality" : "one",
       "right_kind" : "a purchase order",
@@ -117,19 +166,19 @@
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 30,
+        "line" : 32,
         "text" : "Workflow — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 37,
+        "line" : 39,
         "text" : "Workflow — steps 2"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 41,
+        "line" : 43,
         "text" : "Report shape"
       }
     ],
@@ -158,15 +207,16 @@
         "heading" : "Workflow",
         "line" : 21,
         "lines" : [
+          "let high value count be the number of high value orders",
           "bind invoice receipt =",
-          "codeblock:plain:aW52b2ljZS1yb3V0aW5nOgpbZm9yIGVhY2ggcm93IGluIHRhYmxlXS0ge3sgcm93LnN0YXR1cyB9fSAtPiB7eyByb3cucXVldWUgfX0KW2VuZCBmb3JdCnNlbGVjdGVkOiB7eyBzZWxlY3RlZCBxdWV1ZSB9fQ=="
+          "codeblock:plain:aW52b2ljZS1yb3V0aW5nOgpbZm9yIGVhY2ggcm93IGluIHRhYmxlXS0ge3sgcm93LnN0YXR1cyB9fSAtPiB7eyByb3cucXVldWUgfX0KW2VuZCBmb3JdCnNlbGVjdGVkOiB7eyBzZWxlY3RlZCBxdWV1ZSB9fQpoaWdoIHZhbHVlIG9yZGVyczoge3sgaGlnaCB2YWx1ZSBjb3VudCB9fQ=="
         ],
         "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Workflow — steps",
-        "line" : 30,
+        "line" : 32,
         "lines" : [
           "fetch open orders",
           "for each order:",
@@ -178,7 +228,7 @@
       {
         "executes" : true,
         "heading" : "Workflow — steps 2",
-        "line" : 37,
+        "line" : 39,
         "lines" : [
           "emit erp.invoice_receipt with body = invoice receipt"
         ],
@@ -187,9 +237,9 @@
       {
         "executes" : false,
         "heading" : "Report shape",
-        "line" : 41,
+        "line" : 43,
         "lines" : [
-          "The receipt groups invoice states by downstream queue"
+          "The receipt groups invoice states by downstream queue and reports the high-value order count"
         ],
         "role" : "template"
       }
@@ -199,28 +249,35 @@
   "meridian_verbs" : [
     {
       "base" : "collect",
-      "line" : 45,
+      "line" : 62,
       "past_participle" : "collected",
       "relation" : "collection",
       "third_person" : "collects"
     },
     {
+      "base" : "escalate",
+      "line" : 64,
+      "past_participle" : "escalated",
+      "relation" : "escalation",
+      "third_person" : "escalates"
+    },
+    {
       "base" : "fulfill",
-      "line" : 43,
+      "line" : 60,
       "past_participle" : "fulfilled",
       "relation" : "fulfillment",
       "third_person" : "fulfills"
     },
     {
       "base" : "invoice",
-      "line" : 44,
+      "line" : 61,
       "past_participle" : "invoiced",
       "relation" : "invoicing",
       "third_person" : "invoices"
     },
     {
       "base" : "replenish",
-      "line" : 46,
+      "line" : 63,
       "past_participle" : "replenished",
       "relation" : "replenishment",
       "third_person" : "replenishes"
@@ -233,43 +290,43 @@
   "source_map" : [
     {
       "meridian_line" : 16,
-      "swift_line" : 402
+      "swift_line" : 554
     },
     {
-      "meridian_line" : 49,
-      "swift_line" : 405
-    },
-    {
-      "meridian_line" : 33,
-      "swift_line" : 416
-    },
-    {
-      "meridian_line" : 61,
-      "swift_line" : 422
+      "meridian_line" : 67,
+      "swift_line" : 557
     },
     {
       "meridian_line" : 35,
-      "swift_line" : 437
+      "swift_line" : 568
     },
     {
-      "meridian_line" : 39,
-      "swift_line" : 440
+      "meridian_line" : 79,
+      "swift_line" : 574
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 477
+      "meridian_line" : 37,
+      "swift_line" : 589
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 482
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 520
+      "meridian_line" : 41,
+      "swift_line" : 592
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 525
+      "swift_line" : 631
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 636
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 676
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 681
     }
   ],
   "tools_used" : [

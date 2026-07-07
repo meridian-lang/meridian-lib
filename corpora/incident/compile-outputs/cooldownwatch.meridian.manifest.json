@@ -1,0 +1,383 @@
+{
+  "constants" : {
+    "escalation cooldown" : 600,
+    "maximum page attempts" : 3,
+    "slo error budget threshold" : 0.10000000000000001
+  },
+  "instances_required" : [
+    {
+      "kind" : "service",
+      "name" : "pagerduty service"
+    },
+    {
+      "kind" : "service",
+      "name" : "statuspage service"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "actionable",
+      "function" : "meridianDef_Alert_actionable",
+      "kind" : "alert",
+      "line" : 30
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Alert_critical",
+      "kind" : "alert",
+      "line" : 23
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Alert_stale",
+      "kind" : "alert",
+      "line" : 24
+    },
+    {
+      "adjective" : "unhealthy",
+      "function" : "meridianDef_Deploy_unhealthy",
+      "kind" : "deploy",
+      "line" : 26
+    },
+    {
+      "adjective" : "high severity",
+      "function" : "meridianDef_Incident_highSeverity",
+      "kind" : "incident",
+      "line" : 27
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Incident_open",
+      "kind" : "incident",
+      "line" : 28
+    },
+    {
+      "adjective" : "degraded",
+      "function" : "meridianDef_Service_degraded",
+      "kind" : "service",
+      "line" : 25
+    },
+    {
+      "adjective" : "breached",
+      "function" : "meridianDef_Slo_breached",
+      "kind" : "slo",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a runbook",
+      "line" : 36,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "runbook.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a service",
+      "line" : 32,
+      "name" : "firing",
+      "right_cardinality" : "one",
+      "right_kind" : "an alert",
+      "via" : "alert.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an oncall engineer",
+      "line" : 34,
+      "name" : "ownership",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "oncall.roster"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Keep a recently-fired alert in a watch loop through its escalation cooldown window before letting it re-page, so a flapping alert doesn't page the same engineer three times in fifteen minutes for what's really one ongoing incident.",
+    "name" : "cooldown watch",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 20,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 25,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 34,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 39,
+        "text" : "Anti-Patterns — steps"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 46,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 49,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 27,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 32,
+        "text" : "Post"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 20,
+        "lines" : [
+          "\"watch alert cooldown\"",
+          "\"run cooldown watch\"",
+          "\"run the alert cooldown pass\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 25,
+        "lines" : [
+          "fetch firing alerts",
+          "Check: any alerts whose status is \"firing\"",
+          "while any alerts whose status is \"firing\",",
+          "for each alert whose status is \"firing\":",
+          "acknowledge the alert unless the alert is stale",
+          "wait 10 minutes",
+          "Post: \"cooldown watch pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 34,
+        "lines" : [
+          "Don't acknowledge a stale alert just to clear it from the firing list",
+          "A stale alert usually means the underlying signal is unreliable, not",
+          "resolved — acknowledging it hides that distinction"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 39,
+        "lines" : [
+          "use judgment to follow the Anti-Patterns — steps guidance:",
+          "Don't shorten the cooldown window to make the receipt look cleaner",
+          "faster. The window exists so a genuinely flapping alert gets time to",
+          "settle before this skill decides it's done"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 46,
+        "lines" : [
+          "make sure no alerts whose fired at is within the last 15 minutes and whose status is \"firing\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 49,
+        "lines" : [
+          "The receipt confirms no alert both fired within the cooldown window and is",
+          "still firing by the time the pass completes"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"watch alert cooldown\"\n\"run cooldown watch\"\n\"run the alert cooldown pass\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "cover",
+      "line" : 41,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "own",
+      "line" : 40,
+      "past_participle" : "owned",
+      "relation" : "ownership",
+      "third_person" : "owns"
+    },
+    {
+      "base" : "page",
+      "line" : 39,
+      "past_participle" : "paged",
+      "relation" : "ownership",
+      "third_person" : "pages"
+    }
+  ],
+  "source_files" : [
+    "cooldownwatch.meri",
+    "incident.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 47,
+      "swift_line" : 393
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 398
+    },
+    {
+      "meridian_line" : 27,
+      "swift_line" : 410
+    },
+    {
+      "meridian_line" : 28,
+      "swift_line" : 414
+    },
+    {
+      "meridian_line" : 29,
+      "swift_line" : 420
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 426
+    },
+    {
+      "meridian_line" : 62,
+      "swift_line" : 429
+    },
+    {
+      "meridian_line" : 31,
+      "swift_line" : 451
+    },
+    {
+      "meridian_line" : 32,
+      "swift_line" : 456
+    },
+    {
+      "meridian_line" : 41,
+      "swift_line" : 465
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 505
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 510
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 550
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 555
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 595
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 600
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "judgment_steps" : [
+        {
+          "guidance" : "Don't shorten the cooldown window to make the receipt look cleaner\nfaster. The window exists so a genuinely flapping alert gets time to\nsettle before this skill decides it's done",
+          "line" : 41,
+          "scoped_tools" : [
+            "alert.list",
+            "deploy.list",
+            "deploy.rollback",
+            "incident.close",
+            "incident.escalate",
+            "incident.list",
+            "incident.open",
+            "oncall.roster",
+            "page.ack",
+            "page.send",
+            "postmortem.publish",
+            "runbook.list",
+            "runbook.lookup",
+            "service.healthcheck",
+            "service.list",
+            "status.post"
+          ],
+          "text" : "follow the Anti-Patterns — steps guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "cooldown watch",
+      "swift_struct" : "CooldownWatch"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when watchAlertCooldown fires",
+      "swift_struct" : "WhenWatchalertcooldownFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runCooldownWatch fires",
+      "swift_struct" : "WhenRuncooldownwatchFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runAlertCooldownPass fires",
+      "swift_struct" : "WhenRunalertcooldownpassFires"
+    }
+  ]
+}

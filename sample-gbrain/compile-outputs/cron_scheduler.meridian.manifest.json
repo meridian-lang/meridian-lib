@@ -136,13 +136,19 @@
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 80,
+        "line" : 76,
         "text" : "Multi-source brains: use `sync --all`, not per-source entries — steps"
       },
       {
         "kind" : "reference",
+        "level" : 3,
+        "line" : 83,
+        "text" : "Multi-source brains: use `sync --all`, not per-source entries — steps 2"
+      },
+      {
+        "kind" : "reference",
         "level" : 2,
-        "line" : 90,
+        "line" : 93,
         "text" : "Anti-Patterns"
       },
       {
@@ -285,9 +291,6 @@
         "heading" : "Multi-source brains: use `sync --all`, not per-source entries",
         "line" : 59,
         "lines" : [
-          "When the brain has 2+ active sources (anything `gbrain sources list` shows",
-          "with a non-null `local_path` that isn't archived), use one consolidated",
-          "cron line instead of N per-source entries",
           "**Preferred (multi-source)**:",
           "codeblock:cron:Ki81ICogKiAqICogZ2JyYWluIHN5bmMgLS1hbGwgLS1wYXJhbGxlbCA0IC0td29ya2VycyA0IC0tc2tpcC1mYWlsZWQ=",
           "This replaces N per-source lines AND auto-picks-up future sources without",
@@ -302,7 +305,18 @@
       {
         "executes" : false,
         "heading" : "Multi-source brains: use `sync --all`, not per-source entries — steps",
-        "line" : 80,
+        "line" : 76,
+        "lines" : [
+          "When the brain has 2+ active sources (anything `gbrain sources list` shows",
+          "with a non-null `local_path` that isn't archived), use one consolidated",
+          "cron line instead of N per-source entries"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Multi-source brains: use `sync --all`, not per-source entries — steps 2",
+        "line" : 83,
         "lines" : [
           "Avoid (legacy): separate `gbrain sync --source default` and",
           "`gbrain sync --source zion-brain` entries staggered by 5 minutes. They",
@@ -317,7 +331,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 90,
+        "line" : 93,
         "lines" : [
           "Scheduling jobs at the same minute (:00 for everything)",
           "Inline 3000-word prompts in cron jobs (use skill file references)",

@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum Ingest {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct IngestInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -600,7 +600,7 @@ public struct IngestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "IngestInput", parameters: [:])
 
-        // L79
+        // L77
         for (__meridianLoopIndex_0_0, entityMentioned) in (state.get("entitymentioneds")?.asList ?? []).enumerated() {
             let __meridianLoopLabel_0_0 = "progress:0.0:iteration:\(__meridianLoopIndex_0_0)"
             if __meridianShouldRun(__meridianLoopLabel_0_0) {
@@ -609,14 +609,14 @@ public struct IngestInput: MeridianWorkflow {
             }
         }
 
-        // L131
-        let __meridianProseResults_L131 = try await runtime.executeProsePlan(
+        // L129
+        let __meridianProseResults_L129 = try await runtime.executeProsePlan(
             prose: "follow the What to capture from the user's own thinking — steps 2 guidance",
             snapshot: state.snapshot(),
             scopedTools: ["add_link", "add_tag", "add_timeline_entry", "get_backlinks", "get_page", "get_tags", "link.add", "page.get", "page.search", "publish", "put_page", "put_raw_data", "shell.run", "timeline.add"],
             guidance: "Contrarian positions with reasoning\nContent the user encounters should be captured in the brain. File by PRIMARY\nSUBJECT, not by format (see `skills/_brain-filing-rules.md`)\nuse judgment to follow the Articles & Web Content — steps guidance:\nAnalyze for the user: don't just summarize. What's interesting given what you\nknow about them? Flag connections, contradictions, content opportunities\nuse judgment to follow the Videos & Podcasts — steps guidance:\nAnalyze: executive summary, key ideas, key quotes with speaker attribution,\nnotable stories/anecdotes, people and companies mentioned\nHARD RULE: every video/podcast brain page MUST link to the raw diarized\ntranscript. A page without transcript links is incomplete\nuse judgment to follow the Screenshots & Images — steps guidance:\nAnalyze content (OCR for text-heavy images, description for photos)\nEntity propagation (MANDATORY): for each attendee and company discussed:\nWrite to: `meetings/YYYY-MM-DD-short-description.md`\nInclude direct link to the original post (MANDATORY for citations)\nWrite to: `media/x/` for daily aggregation, or entity-specific directories\nif the post is primarily about a person/company\nEvery ingested item must have its raw source preserved for provenance\nUse `gbrain files upload-raw` for automatic size routing:\ncodeblock:bash:Z2JyYWluIGZpbGVzIHVwbG9hZC1yYXcgPGZpbGU+IC0tcGFnZSA8cGFnZS1zbHVnPiAtLXR5cGUgPHR5cGU+\n< 100 MB text/PDF: stays in git (brain repo `.raw/` sidecar directories)\nThe `.redirect.yaml` pointer format:\n`gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing/sharing\n`gbrain files restore <dir>` -- download back to local from cloud storage\nuse judgment to follow the Quality Rules — steps 2 guidance:\nState section is REWRITTEN, not appended to. Current best understanding only"
         )
-        for (__key, __value) in __meridianProseResults_L131 {
+        for (__key, __value) in __meridianProseResults_L129 {
             state.bind(__key, __value)
         }
 

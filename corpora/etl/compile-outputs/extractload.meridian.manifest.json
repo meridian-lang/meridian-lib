@@ -1,0 +1,401 @@
+{
+  "constants" : {
+    "batch size threshold" : 100000,
+    "freshness sla" : 86400,
+    "retry budget" : 3
+  },
+  "instances_required" : [
+    {
+      "kind" : "sink",
+      "name" : "warehouse sink"
+    },
+    {
+      "kind" : "source",
+      "name" : "object store source"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Dataset_critical",
+      "kind" : "dataset",
+      "line" : 28
+    },
+    {
+      "adjective" : "high volume",
+      "function" : "meridianDef_Dataset_highVolume",
+      "kind" : "dataset",
+      "line" : 27
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Dataset_stale",
+      "kind" : "dataset",
+      "line" : 21
+    },
+    {
+      "adjective" : "backfilled",
+      "function" : "meridianDef_Partition_backfilled",
+      "kind" : "partition",
+      "line" : 23
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_PipelineRun_failed",
+      "kind" : "pipeline run",
+      "line" : 22
+    },
+    {
+      "adjective" : "passing",
+      "function" : "meridianDef_QualityCheck_passing",
+      "kind" : "quality check",
+      "line" : 24
+    },
+    {
+      "adjective" : "compatible",
+      "function" : "meridianDef_Schema_compatible",
+      "kind" : "schema",
+      "line" : 26
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Watermark_fresh",
+      "kind" : "watermark",
+      "line" : 25
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a pipeline run",
+      "line" : 34,
+      "name" : "derivation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "transform"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a source",
+      "line" : 30,
+      "name" : "extraction",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "extract"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a dataset",
+      "line" : 32,
+      "name" : "loading",
+      "right_cardinality" : "one",
+      "right_kind" : "a sink",
+      "via" : "load"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Pull a dataset out of the landing source, validate its schema against what the warehouse expects, and load it in — holding the dataset for replay rather than half-loading it if the sink call fails partway through. This is the plain-vanilla ETL path every other skill in this corpus assumes already ran once.",
+    "name" : "extract load",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 19,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 24,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 26,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 37,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 42,
+        "text" : "Anti-Patterns — steps"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 49,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 52,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 29,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 34,
+        "text" : "Note"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 35,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 19,
+        "lines" : [
+          "\"run extract load\"",
+          "\"extract and load datasets\"",
+          "\"run the extract-load pass\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 24,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 26,
+        "lines" : [
+          "fetch datasets",
+          "Check: all datasets have a name",
+          "extract a dataset from the object store source",
+          "validate the schema for the dataset",
+          "load the dataset into the warehouse sink",
+          "recover from load.failed:",
+          "Note: \"load failed, dataset held for replay\"",
+          "Emit: \"extract load pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 37,
+        "lines" : [
+          "Don't load a dataset before its schema has been validated, even when the",
+          "source is \"usually fine.\" The validation step exists precisely for the",
+          "runs where it isn't"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Anti-Patterns — steps",
+        "line" : 42,
+        "lines" : [
+          "use judgment to follow the Anti-Patterns — steps guidance:",
+          "Don't retry a failed load inline in a tight loop. Hold it for replay —",
+          "`pipeline triage` is the skill that decides whether a failure is worth",
+          "replaying at all"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 49,
+        "lines" : [
+          "make sure all datasets have a name"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 52,
+        "lines" : [
+          "The receipt confirms the load outcome per dataset, and names anything held",
+          "for replay after a failed load call"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"run extract load\"\n\"extract and load datasets\"\n\"run the extract-load pass\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "derive",
+      "line" : 39,
+      "past_participle" : "derived",
+      "relation" : "derivation",
+      "third_person" : "derives"
+    },
+    {
+      "base" : "extract",
+      "line" : 37,
+      "past_participle" : "extracted",
+      "relation" : "extraction",
+      "third_person" : "extracts"
+    },
+    {
+      "base" : "load",
+      "line" : 38,
+      "past_participle" : "loaded",
+      "relation" : "loading",
+      "third_person" : "loads"
+    }
+  ],
+  "source_files" : [
+    "extractload.meri",
+    "etl.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 50,
+      "swift_line" : 362
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 367
+    },
+    {
+      "meridian_line" : 29,
+      "swift_line" : 374
+    },
+    {
+      "meridian_line" : 54,
+      "swift_line" : 379
+    },
+    {
+      "meridian_line" : 60,
+      "swift_line" : 391
+    },
+    {
+      "meridian_line" : 33,
+      "swift_line" : 402
+    },
+    {
+      "meridian_line" : 63,
+      "swift_line" : 405
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 419
+    },
+    {
+      "meridian_line" : 35,
+      "swift_line" : 430
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 439
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 479
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 484
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 524
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 529
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 569
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 574
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "judgment_steps" : [
+        {
+          "guidance" : "Don't retry a failed load inline in a tight loop. Hold it for replay —\n`pipeline triage` is the skill that decides whether a failure is worth\nreplaying at all",
+          "line" : 44,
+          "scoped_tools" : [
+            "dataset.list",
+            "extract",
+            "load",
+            "partition.backfill",
+            "partition.list",
+            "pipeline.list",
+            "pipeline.replay",
+            "quality.run",
+            "record.dedupe",
+            "schema.validate",
+            "transform",
+            "watermark.read"
+          ],
+          "text" : "follow the Anti-Patterns — steps guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "extract load",
+      "swift_struct" : "ExtractLoad"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runExtractLoad fires",
+      "swift_struct" : "WhenRunextractloadFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when extractAndLoadDatasets fires",
+      "swift_struct" : "WhenExtractandloaddatasetsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runExtractLoadPass fires",
+      "swift_struct" : "WhenRunextractloadpassFires"
+    }
+  ]
+}

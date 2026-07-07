@@ -1,0 +1,314 @@
+{
+  "constants" : {
+    "credential ttl" : 7776000,
+    "max concurrent grants" : 3,
+    "review window" : 604800
+  },
+  "instances_required" : [
+    {
+      "kind" : "environment",
+      "name" : "identity provider"
+    },
+    {
+      "kind" : "environment",
+      "name" : "audit sink"
+    }
+  ],
+  "kinds_used" : [
+    "AccessRequest",
+    "Resource"
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_AccessRequest_pending",
+      "kind" : "access request",
+      "line" : 34
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_AccessRequest_stale",
+      "kind" : "access request",
+      "line" : 33
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Credential_fresh",
+      "kind" : "credential",
+      "line" : 32
+    },
+    {
+      "adjective" : "overused",
+      "function" : "meridianDef_Credential_overused",
+      "kind" : "credential",
+      "line" : 31
+    },
+    {
+      "adjective" : "classified",
+      "function" : "meridianDef_Resource_classified",
+      "kind" : "resource",
+      "line" : 27
+    },
+    {
+      "adjective" : "authorized",
+      "function" : "meridianDef_User_authorized",
+      "kind" : "user",
+      "line" : 30
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_User_cleared",
+      "kind" : "user",
+      "line" : 28
+    },
+    {
+      "adjective" : "privileged",
+      "function" : "meridianDef_User_privileged",
+      "kind" : "user",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 36,
+      "name" : "assignment",
+      "right_cardinality" : "one",
+      "right_kind" : "a role",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a policy",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "an environment",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 38,
+      "name" : "grant",
+      "right_cardinality" : "one",
+      "right_kind" : "a resource",
+      "via" : "access.grant"
+    }
+  ],
+  "meridian_rules" : [
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "invariant",
+      "source" : {
+        "file" : "permissions.meridian",
+        "line" : 15
+      },
+      "text" : "A user with clearance \"denied\" must not access classified resources"
+    },
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "permission",
+      "source" : {
+        "file" : "permissions.meridian",
+        "line" : 17
+      },
+      "text" : "A user with role admin may access classified resources"
+    },
+    {
+      "bounded" : true,
+      "executes" : true,
+      "kind" : "permission",
+      "source" : {
+        "file" : "permissions.meridian",
+        "line" : 19
+      },
+      "text" : "A reviewer may approve access requests whose queue position is at most 3"
+    },
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "precondition",
+      "source" : {
+        "file" : "permissions.meridian",
+        "line" : 21
+      },
+      "text" : "An access request for a classified resource must be approved by a security officer before the grant"
+    },
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "trigger",
+      "source" : {
+        "file" : "permissions.meridian",
+        "line" : 23
+      },
+      "text" : "When an access request has been pending for more than 7 days, escalate the access request"
+    }
+  ],
+  "meridian_skill" : {
+    "rulebook" : "governance.merrules",
+    "vocabulary" : "governance.merconfig"
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "authorize",
+      "line" : 43,
+      "past_participle" : "authorized",
+      "relation" : "assignment",
+      "third_person" : "authorizes"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "grant",
+      "line" : 44,
+      "past_participle" : "granted",
+      "relation" : "grant",
+      "third_person" : "grants"
+    }
+  ],
+  "source_files" : [
+    "permissions.meridian",
+    "governance.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 21,
+      "swift_line" : 440
+    },
+    {
+      "meridian_line" : 15,
+      "swift_line" : 445
+    },
+    {
+      "meridian_line" : 28,
+      "swift_line" : 450
+    },
+    {
+      "meridian_line" : 21,
+      "swift_line" : 497
+    },
+    {
+      "meridian_line" : 19,
+      "swift_line" : 502
+    },
+    {
+      "meridian_line" : 31,
+      "swift_line" : 507
+    },
+    {
+      "meridian_line" : 21,
+      "swift_line" : 553
+    },
+    {
+      "meridian_line" : 19,
+      "swift_line" : 558
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 563
+    },
+    {
+      "meridian_line" : 21,
+      "swift_line" : 607
+    },
+    {
+      "meridian_line" : 19,
+      "swift_line" : 612
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 617
+    },
+    {
+      "meridian_line" : 23,
+      "swift_line" : 657
+    },
+    {
+      "meridian_line" : 23,
+      "swift_line" : 662
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "UserAccess",
+          "name" : "userAccess"
+        },
+        {
+          "kind" : "Resource",
+          "name" : "resource"
+        }
+      ],
+      "source_name" : "let a user access a resource",
+      "swift_struct" : "LetUserAccessResource"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "ReviewerApprove",
+          "name" : "reviewerApprove"
+        },
+        {
+          "kind" : "AccessRequest",
+          "name" : "accessRequest"
+        }
+      ],
+      "source_name" : "have a reviewer approve a access request",
+      "swift_struct" : "HaveReviewerApproveAccessRequest"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "AccessRequest",
+          "name" : "accessRequest"
+        },
+        {
+          "kind" : "Resource",
+          "name" : "resource"
+        }
+      ],
+      "source_name" : "grant a access request for a resource",
+      "swift_struct" : "GrantAccessRequest"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "OverdueAccessRequest",
+          "name" : "overdueAccessRequest"
+        }
+      ],
+      "source_name" : "escalate a overdue access request",
+      "swift_struct" : "EscalateOverdueAccessRequest"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when an access request has been pending for more than 7 days",
+      "swift_struct" : "WhenAccessRequestHasBeenPending"
+    }
+  ]
+}

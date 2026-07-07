@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum Capture {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct CaptureInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -597,23 +597,17 @@ public struct CaptureInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "CaptureInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L50:C0") {
-            // L50
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain capture \"the thought I want to remember\""),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.0:L50:C0", state: state.snapshot())
+        if __meridianShouldRun("progress:0.0:L97:C0") {
+            // L97
+            try await runtime.assert(!(MeridianComparison.eq(state.get("(don'tTryToBulkImportDozensOfFilesByLoopingOver`gbrainCapture`.That.what`gbrainSync`(or`gbrainImport`)"), state.get("for.CaptureIsForSingleThoughts,SingleNotes,SingleTranscripts)"))), message: "Expected not (Don't try to bulk-import dozens of files by looping over `gbrain capture`. That's what `gbrain sync` (or `gbrain import`) is for. Capture is for single thoughts, single notes, single transcripts)")
+            try await runtime.checkpoint(label: "progress:0.0:L97:C0", state: state.snapshot())
         }
         if __meridianShouldRun("progress:0.1:L50:C0") {
             // L50
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
-                    "command": .string("gbrain capture --file ./notes/today.md"),
+                    "command": .string("gbrain capture \"the thought I want to remember\""),
                 ]
             )
 
@@ -624,7 +618,7 @@ public struct CaptureInput: MeridianWorkflow {
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
-                    "command": .string("echo \"from a pipe\" | gbrain capture --stdin"),
+                    "command": .string("gbrain capture --file ./notes/today.md"),
                 ]
             )
 
@@ -635,7 +629,7 @@ public struct CaptureInput: MeridianWorkflow {
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
-                    "command": .string("gbrain capture \"...\" --slug daily/2026-05-21"),
+                    "command": .string("echo \"from a pipe\" | gbrain capture --stdin"),
                 ]
             )
 
@@ -646,7 +640,7 @@ public struct CaptureInput: MeridianWorkflow {
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
-                    "command": .string("gbrain capture \"...\" --type idea --source voice-whisper"),
+                    "command": .string("gbrain capture \"...\" --slug daily/2026-05-21"),
                 ]
             )
 
@@ -657,7 +651,7 @@ public struct CaptureInput: MeridianWorkflow {
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
-                    "command": .string("gbrain capture \"...\" --quiet          # script-friendly: prints just the slug"),
+                    "command": .string("gbrain capture \"...\" --type idea --source voice-whisper"),
                 ]
             )
 
@@ -668,14 +662,25 @@ public struct CaptureInput: MeridianWorkflow {
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
-                    "command": .string("gbrain capture \"...\" --json           # structured output for agents"),
+                    "command": .string("gbrain capture \"...\" --quiet          # script-friendly: prints just the slug"),
                 ]
             )
 
             try await runtime.checkpoint(label: "progress:0.6:L50:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.7:L114:C0") {
-            // L114
+        if __meridianShouldRun("progress:0.7:L50:C0") {
+            // L50
+            _ = try await runtime.invoke(
+                tool: "shell.run",
+                args: [
+                    "command": .string("gbrain capture \"...\" --json           # structured output for agents"),
+                ]
+            )
+
+            try await runtime.checkpoint(label: "progress:0.7:L50:C0", state: state.snapshot())
+        }
+        if __meridianShouldRun("progress:0.8:L112:C0") {
+            // L112
             // Meeting transcripts →  (attendee enrichment)
             _ = try await runtime.invoke(
                 tool: "shell.run",
@@ -684,7 +689,7 @@ public struct CaptureInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.7:L114:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.8:L112:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

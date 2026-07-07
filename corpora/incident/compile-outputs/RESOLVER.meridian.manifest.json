@@ -1,0 +1,213 @@
+{
+  "constants" : {
+    "escalation cooldown" : 600,
+    "maximum page attempts" : 3,
+    "slo error budget threshold" : 0.10000000000000001
+  },
+  "instances_required" : [
+    {
+      "kind" : "service",
+      "name" : "pagerduty service"
+    },
+    {
+      "kind" : "service",
+      "name" : "statuspage service"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "actionable",
+      "function" : "meridianDef_Alert_actionable",
+      "kind" : "alert",
+      "line" : 30
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Alert_critical",
+      "kind" : "alert",
+      "line" : 23
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Alert_stale",
+      "kind" : "alert",
+      "line" : 24
+    },
+    {
+      "adjective" : "unhealthy",
+      "function" : "meridianDef_Deploy_unhealthy",
+      "kind" : "deploy",
+      "line" : 26
+    },
+    {
+      "adjective" : "high severity",
+      "function" : "meridianDef_Incident_highSeverity",
+      "kind" : "incident",
+      "line" : 27
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Incident_open",
+      "kind" : "incident",
+      "line" : 28
+    },
+    {
+      "adjective" : "degraded",
+      "function" : "meridianDef_Service_degraded",
+      "kind" : "service",
+      "line" : 25
+    },
+    {
+      "adjective" : "breached",
+      "function" : "meridianDef_Slo_breached",
+      "kind" : "slo",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a runbook",
+      "line" : 36,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "runbook.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a service",
+      "line" : 32,
+      "name" : "firing",
+      "right_cardinality" : "one",
+      "right_kind" : "an alert",
+      "via" : "alert.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an oncall engineer",
+      "line" : 34,
+      "name" : "ownership",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "oncall.roster"
+    }
+  ],
+  "meridian_skill" : {
+    "outline" : [
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 5,
+        "text" : "Dispatch table"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 8,
+        "text" : "Dispatch table — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 21,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 24,
+        "text" : "Workflow — steps"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Dispatch table",
+        "line" : 5,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Dispatch table — steps",
+        "line" : 8,
+        "lines" : [
+          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHRyaWFnZSBmaXJpbmcgYWxlcnRzIHwgdHJpYWdlYWxlcnQgfAp8IHJvbGwgYmFjayB1bmhlYWx0aHkgZGVwbG95cyB8IHJvbGxiYWNrZGVwbG95IHwKfCBzd2VlcCBzZXJ2aWNlIGhlYWx0aCB8IGhlYWx0aGNoZWNrc3dlZXAgfAp8IGVzY2FsYXRlIG9wZW4gaW5jaWRlbnRzIHwgZXNjYWxhdGVpbmNpZGVudCB8CnwgbWl0aWdhdGUgb3BlbiBpbmNpZGVudHMgfCBtaXRpZ2F0ZWluY2lkZW50IHwKfCByZW5kZXIgcG9zdG1vcnRlbSB8IHBvc3Rtb3J0ZW1yZW5kZXIgfAp8IHJ1biBvbmNhbGwgaGFuZG9mZiB8IG9uY2FsbGhhbmRvZmYgfAp8IHdhdGNoIGFsZXJ0IGNvb2xkb3duIHwgY29vbGRvd253YXRjaCB8"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 21,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow — steps",
+        "line" : 24,
+        "lines" : [
+          "Look up the skill corresponding to the trigger phrase and emit the selected",
+          "skill id"
+        ],
+        "role" : "reference"
+      }
+    ]
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "cover",
+      "line" : 41,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "own",
+      "line" : 40,
+      "past_participle" : "owned",
+      "relation" : "ownership",
+      "third_person" : "owns"
+    },
+    {
+      "base" : "page",
+      "line" : 39,
+      "past_participle" : "paged",
+      "relation" : "ownership",
+      "third_person" : "pages"
+    }
+  ],
+  "source_files" : [
+    "RESOLVER.meri",
+    "incident.merconfig"
+  ],
+  "source_map" : [
+
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "entry",
+      "swift_struct" : "Entry"
+    }
+  ]
+}

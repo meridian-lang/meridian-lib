@@ -1,0 +1,26 @@
+---
+name: backorder replenish
+description: Raise replenishment purchase orders for short products, prioritizing the most urgent shortages.
+triggers:
+  - "replenish backorders"
+  - "prioritize short inventory"
+---
+
+# Backorder Replenish
+
+## When this applies
+- "replenish backorders"
+- "prioritize short inventory"
+
+## Workflow
+fetch short products.
+Check: any short products.
+let restock count be the number of short products.
+let neediest product be the largest short product by reorder point.
+for each product:
+  create a purchase order for the product.
+Publish: "backorder replenishment queued".
+
+## Report shape
+The receipt states the restock count and calls out the neediest product by
+reorder point.

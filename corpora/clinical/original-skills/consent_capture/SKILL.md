@@ -1,0 +1,53 @@
+---
+name: consent capture
+description: Record a patient's consent before a procedure proceeds, and hold for a follow-up signal instead of treating a non-answer as a quiet yes. Use this any time a procedure genuinely needs documented consent, not just a courtesy notification.
+triggers:
+  - "capture patient consent"
+  - "record consent"
+parameters: patient
+---
+
+# Consent Capture
+
+A missing consent record is not the same thing as an implied yes, but under
+time pressure it is easy to treat it that way. This skill exists to make
+consent an explicit, recorded step: it asks for consent, and when consent
+isn't granted outright it waits for a real follow-up signal rather than
+assuming the silence resolves itself.
+
+## Contract
+- Input: a patient.
+- Output: either a granted consent record or a parked request waiting on a
+  follow-up signal.
+- Side effect: every consent attempt is recorded on the patient's chart,
+  granted or not.
+
+## When to invoke
+- "capture patient consent"
+- "record consent"
+
+## Workflow
+record consent for the patient.
+if the consent is granted,
+  Emit: "consent captured".
+if not the consent is granted,
+  wait for signal "consent_follow_up".
+  record consent for the patient.
+Emit: "consent capture pass complete".
+
+## Anti-Patterns
+- Don't proceed with the procedure while consent is still unresolved —
+  the follow-up wait exists precisely so a pending consent can't be
+  mistaken for a granted one.
+- Don't log a verbal assurance as a granted consent. Only the recorded
+  consent call counts.
+
+## When NOT to use this skill
+Use `medication administer` on its own for a routine order that doesn't
+carry its own consent requirement — running this skill for every order
+regardless of whether it needs consent just adds a step nobody is
+checking.
+
+## Report shape
+The receipt records whether consent was granted immediately or only after
+a follow-up signal, and when the record was made.

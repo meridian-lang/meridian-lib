@@ -1,0 +1,436 @@
+{
+  "constants" : {
+    "dose limit" : 2,
+    "observation window" : 14400,
+    "vitals threshold" : 100
+  },
+  "instances_required" : [
+    {
+      "kind" : "protocol",
+      "name" : "sepsis protocol"
+    },
+    {
+      "kind" : "protocol",
+      "name" : "anticoagulation protocol"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "granted",
+      "function" : "meridianDef_Consent_granted",
+      "kind" : "consent",
+      "line" : 32
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_MedicationOrder_cleared",
+      "kind" : "medication order",
+      "line" : 29
+    },
+    {
+      "adjective" : "contraindicated",
+      "function" : "meridianDef_MedicationOrder_contraindicated",
+      "kind" : "medication order",
+      "line" : 28
+    },
+    {
+      "adjective" : "high risk",
+      "function" : "meridianDef_Medication_highRisk",
+      "kind" : "medication",
+      "line" : 27
+    },
+    {
+      "adjective" : "active",
+      "function" : "meridianDef_Patient_active",
+      "kind" : "patient",
+      "line" : 33
+    },
+    {
+      "adjective" : "held",
+      "function" : "meridianDef_Patient_held",
+      "kind" : "patient",
+      "line" : 34
+    },
+    {
+      "adjective" : "monitored",
+      "function" : "meridianDef_Patient_monitored",
+      "kind" : "patient",
+      "line" : 30
+    },
+    {
+      "adjective" : "unmonitored",
+      "function" : "meridianDef_Patient_unmonitored",
+      "kind" : "patient",
+      "line" : 31
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_VitalSign_critical",
+      "kind" : "vital sign",
+      "line" : 25
+    },
+    {
+      "adjective" : "stable",
+      "function" : "meridianDef_VitalSign_stable",
+      "kind" : "vital sign",
+      "line" : 26
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a nurse",
+      "line" : 38,
+      "name" : "administration",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "medication.administer"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a protocol",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication",
+      "via" : "protocol.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a clinician",
+      "line" : 36,
+      "name" : "prescription",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "order.list"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Roll the whole active-patient census up into a single handoff receipt at the end of a shift, so the incoming team starts from one number instead of re-deriving the picture from the chart system themselves. Use this at every shift change, not only when the outgoing team feels like something is unusual.",
+    "name" : "shift handoff",
+    "outline" : [
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 18,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 25,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 29,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 39,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 47,
+        "text" : "Workflow — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 50,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 58,
+        "text" : "When NOT to use this skill"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 60,
+        "text" : "When NOT to use this skill — steps"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 65,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 68,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 19,
+        "text" : "Input"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 20,
+        "text" : "Output"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 22,
+        "text" : "Side effect"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 36,
+        "text" : "Post"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 42,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 43,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 49,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 18,
+        "lines" : [
+          "Input: none — this skill reads the full active census itself",
+          "Output: a rendered handoff summary naming the active count and the held",
+          "count",
+          "Side effect: none beyond the rendered summary — this is a read-only",
+          "roll-up"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 25,
+        "lines" : [
+          "\"run shift handoff\"",
+          "\"render shift handoff report\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow",
+        "line" : 29,
+        "lines" : [
+          "bind handoff report =",
+          "codeblock:plain:aGFuZG9mZi1zdW1tYXJ5OgphY3RpdmUgcGF0aWVudHM6IHt7IHBhdGllbnQgY291bnQgfX0KaGVsZCBmb3IgcmV2aWV3OiB7eyBoZWxkIGNvdW50IH19",
+          "Post: \"shift handoff pass complete\""
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 39,
+        "lines" : [
+          "fetch active patients",
+          "Check: at least 1 patient",
+          "Check: at most 50 patients",
+          "let patient count be the number of patients",
+          "let held count be the number of patients whose status is \"held\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 47,
+        "lines" : [
+          "Emit: handoff report"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 50,
+        "lines" : [
+          "Don't skip the handoff on the assumption that the outgoing shift",
+          "mentioned everything verbally. A verbal note doesn't survive a second",
+          "handoff down the line; the rendered receipt does",
+          "Don't let the held count stand in for an actual review of each held",
+          "patient. The number points the incoming team at where to look, nothing",
+          "more"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill",
+        "line" : 58,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill — steps",
+        "line" : 60,
+        "lines" : [
+          "Use `discharge review` for the actual discharge decision on a specific",
+          "held patient. This skill stops at the count"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 65,
+        "lines" : [
+          "make sure at most 50 patients whose status is \"held\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 68,
+        "lines" : [
+          "The receipt states the active census size and how many of those patients",
+          "are currently held, in one line each"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"run shift handoff\"\n\"render shift handoff report\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "administer",
+      "line" : 44,
+      "past_participle" : "administered",
+      "relation" : "administration",
+      "third_person" : "administers"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "prescribe",
+      "line" : 43,
+      "past_participle" : "prescribed",
+      "relation" : "prescription",
+      "third_person" : "prescribes"
+    }
+  ],
+  "source_files" : [
+    "shifthandoff.meri",
+    "clinical.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 66,
+      "swift_line" : 414
+    },
+    {
+      "meridian_line" : 51,
+      "swift_line" : 419
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 431
+    },
+    {
+      "meridian_line" : 43,
+      "swift_line" : 436
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 440
+    },
+    {
+      "meridian_line" : 45,
+      "swift_line" : 442
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 445
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 484
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 489
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 529
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 534
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "shift handoff",
+      "swift_struct" : "ShiftHandoff"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runShiftHandoff fires",
+      "swift_struct" : "WhenRunshifthandoffFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when renderShiftHandoffReport fires",
+      "swift_struct" : "WhenRendershifthandoffreportFires"
+    }
+  ]
+}

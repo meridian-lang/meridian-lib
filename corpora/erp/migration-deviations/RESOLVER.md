@@ -3,8 +3,8 @@
 - Original: `RESOLVER.md`
 - Ported: `RESOLVER.meri`
 - Tier: 1 (near-verbatim)
-- Similarity: 85%
-- Lines: 22 -> 25 (+5 / -2)
+- Similarity: 87%
+- Lines: 26 -> 29 (+5 / -2)
 
 ## Frontmatter
 - Added: (none)
@@ -18,7 +18,7 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L21 `Workflow`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L25 `Workflow`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
 - Sections inert total: 1/1 (100% total inert; includes intentional docs/templates/tools metadata)
@@ -29,7 +29,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - Judgment: 0 blocks, 0 lines
 
 ### Inert section details
-- L21 `Workflow`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L25 `Workflow`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
@@ -49,9 +49,9 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  | trigger phrase | skill |
  | --- | --- |
-@@ -15,7 +18,7 @@
- | cancel blocked orders | cancelorder |
- | month-end close | monthendclose |
+@@ -19,7 +22,7 @@
+ | replenish backorders | backorderreplenish |
+ | process returns | returnsprocessing |
  
 -## Workflow
 +## Workflow (( role: reference ))

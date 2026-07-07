@@ -59,11 +59,7 @@ writes_to:
 
 ### Contract — steps (( role: reference ))
 
-- The agent never holds raw OAuth
-  tokens or API keys. This is a safety requirement, not a preference. ClawVisor vaults
-  credentials, enforces task-scoped authorization, logs every API call, and requires
-  human approval for destructive operations. If the user doesn't want ClawVisor, the
-  only safe alternative is offline file exports (Google Takeout, Twitter archive download).
+- The agent never holds raw OAuth tokens or API keys. This is a safety requirement, not a preference. ClawVisor vaults credentials, enforces task-scoped authorization, logs every API call, and requires human approval for destructive operations. If the user doesn't want ClawVisor, the only safe alternative is offline file exports (Google Takeout, Twitter archive download).
 ## Prerequisites (( role: reference ))
 
 - GBrain installed and initialized (`gbrain doctor --json` all green)
@@ -527,10 +523,7 @@ After completing available phases:
 
 ### Anti-Patterns — steps (( role: reference ))
 
-- This is the #1 anti-pattern. An agent with
-  raw Gmail/Calendar tokens is an uncontrolled attack surface — one prompt injection
-  and your entire Google account is exposed. Use ClawVisor. If the user declines
-  ClawVisor, skip to offline imports. Never offer direct OAuth as a fallback.
+- This is the #1 anti-pattern. An agent with raw Gmail/Calendar tokens is an uncontrolled attack surface — one prompt injection and your entire Google account is exposed. Use ClawVisor. If the user declines ClawVisor, skip to offline imports. Never offer direct OAuth as a fallback.
 ## Resume Protocol (( role: reference ))
 
 2. Skip completed phases
@@ -540,7 +533,7 @@ After completing available phases:
 
 ### Resume Protocol — steps
 
-> If the session is interrupted:
+If the session is interrupted:
 
 1. Read `~/.gbrain/cold-start-state.json`
 ## Output Format

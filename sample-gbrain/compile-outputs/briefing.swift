@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum Briefing {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct BriefingInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -610,17 +610,12 @@ public struct BriefingInput: MeridianWorkflow {
 
             try await runtime.checkpoint(label: "progress:0.0:L34:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.1:L189:C0") {
-            // L189
-            try await runtime.assert(!(MeridianComparison.isEmpty(state.get("(whenAMeetingParticipant.brainPage,SaySo.SilenceAboutGapsHidesIgnorance)"))), message: "Expected not (When a meeting participant has no brain page, say so. Silence about gaps hides ignorance)")
-            try await runtime.checkpoint(label: "progress:0.1:L189:C0", state: state.snapshot())
-        }
         // L75
         let __meridianProseResults_L75 = try await runtime.executeProsePlan(
             prose: "follow the Phases — steps 2 guidance",
             snapshot: state.snapshot(),
             scopedTools: ["get_health", "get_page", "get_timeline", "list_pages", "page.get", "page.list", "page.search", "query", "shell.run"],
-            guidance: "**Pending consolidation footer** — when `pending_consolidation_count > 0`,\nnote `N facts await dream-cycle consolidation` so the operator can decide\nwhether to run `gbrain dream` before reading further\nFor each meeting on the calendar:\nList deal pages in gbrain filtered to active status:\nDeadlines approaching in the next 7 days\nList person pages in gbrain sorted by recency:\nFor every attendee on the calendar invite:\n`gbrain search \"<attendee name>\"` -- find their brain page\n`gbrain get <slug>` -- load compiled truth, recent timeline, relationship context\nIf no page exists, note the gap (\"No brain page for Sarah Chen -- consider enrichment\")\n`gbrain search \"<sender name>\"` -- load sender context\nuse judgment to follow the Before an email reply — steps 2 guidance:\nRead their compiled truth to understand who they are, what they care about, and\nyour relationship history. This turns a cold reply into an informed one\n`gbrain query \"active deals status\"` -- deal pipeline snapshot\n`gbrain query \"meetings this week\"` -- recent meeting pages with insights\n`gbrain query \"pending commitments follow-ups\"` -- open threads and action items\n`gbrain search --type person --sort updated --limit 10` -- people in play\nIf the briefing creates or updates any brain pages (e.g., new meeting prep\npages, updated entity pages), the back-linking iron law applies: every entity\nmentioned must have a back-link from their page. See `skills/_brain-filing-rules.md`\nuse judgment to follow the Citation in Briefings — steps guidance:\nThis lets the user trace any claim back to the brain page and assess freshness"
+            guidance: "**Pending consolidation footer** — when `pending_consolidation_count > 0`,\nnote `N facts await dream-cycle consolidation` so the operator can decide\nwhether to run `gbrain dream` before reading further\nFor each meeting on the calendar:\nList deal pages in gbrain filtered to active status:\nDeadlines approaching in the next 7 days\nList person pages in gbrain sorted by recency:\nFor every attendee on the calendar invite:\n`gbrain search \"<attendee name>\"` -- find their brain page\n`gbrain get <slug>` -- load compiled truth, recent timeline, relationship context\nIf no page exists, note the gap (\"No brain page for Sarah Chen -- consider enrichment\")\n`gbrain search \"<sender name>\"` -- load sender context\nuse judgment to follow the Before an email reply — steps 2 guidance:\nRead their compiled truth to understand who they are, what they care about, and\nyour relationship history. This turns a cold reply into an informed one\n`gbrain query \"active deals status\"` -- deal pipeline snapshot\n`gbrain query \"meetings this week\"` -- recent meeting pages with insights\n`gbrain query \"pending commitments follow-ups\"` -- open threads and action items\n`gbrain search --type person --sort updated --limit 10` -- people in play\nIf the briefing creates or updates any brain pages (e.g., new meeting prep\npages, updated entity pages), the back-linking iron law applies: every entity\nmentioned must have a back-link from their page. See `skills/_brain-filing-rules.md`\nuse judgment to follow the Citation in Briefings — steps 2 guidance:\nThis lets the user trace any claim back to the brain page and assess freshness"
         )
         for (__key, __value) in __meridianProseResults_L75 {
             state.bind(__key, __value)

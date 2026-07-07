@@ -7,7 +7,7 @@ import Foundation
 @Suite("RuleAnalyzer — coverage gaps")
 struct RuleAnalyzerCoverageTests {
 
-    private let analyzer = RuleAnalyzer(trace: .silent())
+    private let analyzer = RuleAnalyzer(trace: .silent(), symbols: nil)
 
     @Test("parameter-guard predicates qualify nested property accesses")
     func parameterGuardQualifiesPropertyAccess() {
@@ -100,6 +100,16 @@ struct RuleAnalyzerCoverageTests {
         #expect(analyzer.classify(rule) == nil)
     }
 
+    @Test("trigger rules with a blank condition or action classify as nil, not a garbage event")
+    func triggerWithBlankConditionOrActionIsNil() {
+        // A leading comma leaves the condition empty; without the
+        // non-emptiness guard, `buildTriggerWorkflow` would happily mint a
+        // `trigger..fired` event from an empty condition instead of this
+        // routing to the real `MER1004: unparseable rule` diagnostic.
+        #expect(analyzer.classify(RuleAST(text: "When , escalate the request.", sourceLine: 10)) == nil)
+        #expect(analyzer.classify(RuleAST(text: "When the request is stale,.", sourceLine: 11)) == nil)
+    }
+
     @Test("subject filters accept possessive multi-word values via greedy split")
     func subjectFilterPossessiveMultiWordValue() {
         let rule = RuleAST(
@@ -122,6 +132,47 @@ struct RuleAnalyzerCoverageTests {
             Issue.record("expected identifier rhs, got \(rhs)"); return
         }
         #expect(value == "id")
+    }
+
+    @Test("with a real symbol table, a relation-traversal subject filter becomes a rejectable verbPredicate, not a silently-wrong shorthand split")
+    func subjectFilterWithSymbolsRecognizesRelationTraversal() throws {
+        // "active prescriptions include a contraindicated drug" is a relation
+        // traversal over the declared `include` verb — 6 words with a
+        // mid-clause article, exactly the gotcha #7 shape. Without a symbol
+        // table (`analyzer`, built with `symbols: nil`), `buildSubjectFilter`
+        // has no way to recognize this and its guard rail correctly declines
+        // (see `subjectFilterFallsBackToFirstTokenPropertySplitting`-style
+        // cases). WITH a symbol table that declares the `include` verb,
+        // `ActiveVerbParser` recognizes the whole clause as a genuine
+        // `.verbPredicate` — a form `RuleInjector.lowerExprSimple` explicitly
+        // rejects with `MER3016` — instead of `buildSubjectFilter` guessing a
+        // meaningless `patient.active_prescriptions_include_a_contraindicated
+        // == drug` comparison that would have silently compiled.
+        let cfg = """
+        === vocabulary ===
+        A patient is a kind of thing.
+        A prescription is a kind of thing.
+        A prescription has a drug, which is a String.
+        Inclusion relates one prescription to one drug.
+        Inclusion is read from the prescription's drug.
+        The verb to include (it includes, it is included) means the inclusion relation.
+        """
+        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
+        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig")
+        let symbolAwareAnalyzer = RuleAnalyzer(trace: .silent(), symbols: symbols)
+        let rule = RuleAST(
+            text: "A patient whose active prescriptions include a contraindicated drug must not receive the new order.",
+            sourceLine: 20
+        )
+        guard let parsed = symbolAwareAnalyzer.classify(rule) else {
+            Issue.record("expected invariant"); return
+        }
+        guard case .invariant(_, let filter, _, _, _) = parsed, let filter else {
+            Issue.record("expected a subject filter"); return
+        }
+        guard case .verbPredicate = filter else {
+            Issue.record("expected a rejectable verbPredicate form, got \(filter)"); return
+        }
     }
 
     @Test("compound parameter guards qualify each property-access arm")
@@ -154,6 +205,28 @@ struct RuleAnalyzerCoverageTests {
         }
         guard case .literal = predicate else {
             Issue.record("expected literal predicate, got \(predicate)"); return
+        }
+    }
+
+    @Test("\"without\" subject filter negates the clause")
+    func withoutSubjectFilterNegates() {
+        let rule = RuleAST(
+            text: "A user without clearance must not access classified resources.",
+            sourceLine: 11
+        )
+        guard let parsed = analyzer.classify(rule) else {
+            Issue.record("expected invariant"); return
+        }
+        guard case .invariant(let kind, let filter, let action, _, _) = parsed else {
+            Issue.record("expected invariant"); return
+        }
+        #expect(kind == "user")
+        #expect(action == "access classified resources")
+        guard case .logical(.not, let inner) = filter else {
+            Issue.record("expected negated filter, got \(String(describing: filter))"); return
+        }
+        guard case .propertyAccess(.identifierRef("user"), "clearance") = inner.first else {
+            Issue.record("expected negated user.clearance property access"); return
         }
     }
 
@@ -257,7 +330,7 @@ struct RuleAnalyzerCoverageTests {
     @Test("unrecognized rules log unclassified and return nil")
     func unclassifiedRuleLogsAndReturnsNil() {
         let cap = ParserTrace.capturing(categories: [.lowering])
-        let traced = RuleAnalyzer(trace: cap.trace)
+        let traced = RuleAnalyzer(trace: cap.trace, symbols: nil)
         let rule = RuleAST(text: "A customer should place orders freely.", sourceLine: 17)
         #expect(traced.classify(rule) == nil)
         #expect(cap.lines().contains { $0.contains("unclassified") })

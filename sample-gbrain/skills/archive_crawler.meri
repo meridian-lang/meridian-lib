@@ -186,8 +186,8 @@ tags: ["tag-1", "tag-2"]
 
 ### Phase 3: Ingest — steps
 
-> When an item is worth keeping, file it by **primary subject** per
-> `_brain-filing-rules.md`:
+When an item is worth keeping, file it by primary subject per
+`_brain-filing-rules.md`:
 
 - User's own writing / ideas / origin-story content → `originals/<slug>.md`
 - Reflections / personal-life content → `personal/<slug>.md`
@@ -322,10 +322,9 @@ scan_paths: ["paths from gbrain.yml"]
 
   This is the safety contract — never bypass.
 
-### Anti-Patterns — steps 2 (( role: reference ))
+### Anti-Patterns — steps 2
 
-- ❌ Re-showing items already marked in the manifest. The user's time
-  is the scarcest resource.
+- ❌ Re-showing items already marked in the manifest. The user's time is the scarcest resource.
 ## Related skills (( role: reference ))
 
 - `skills/idea-ingest/SKILL.md` — single-link-or-article ingest with

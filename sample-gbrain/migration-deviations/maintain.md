@@ -3,8 +3,8 @@
 - Original: `maintain/SKILL.md`
 - Ported: `maintain.meri`
 - Tier: 2 (light edits)
-- Similarity: 65%
-- Lines: 431 -> 567 (+242 / -106)
+- Similarity: 66%
+- Lines: 431 -> 567 (+237 / -101)
 
 ## Frontmatter
 - Added: (none)
@@ -67,7 +67,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 ```diff
 --- original-skills/maintain/SKILL.md
 +++ skills/maintain.meri
-@@ -37,91 +37,142 @@
+@@ -37,20 +37,32 @@
  
  # Maintain Skill
  
@@ -92,9 +92,6 @@ These sections were made non-executable in the port and should be reviewed as mi
  ## Phases
  
 -### Autonomous path (v0.36.4.0) — when you want to reach a target score
--
--If the user asks "get my brain to 90/100" or "fix what's broken", prefer the
--one-command loop over walking each dimension by hand:
 +### Autonomous path (v0.36.4.0) — when you want to reach a target score (( role: reference ))
 +
 +`--remediation-plan` prints a dependency-ordered list (sync before extract,
@@ -104,13 +101,11 @@ These sections were made non-executable in the port and should be reviewed as mi
 +- A specific dimension needs manual judgment that the auto path skips
 +
 +
-+### Autonomous path (v0.36.4.0) — when you want to reach a target score — steps
-+
-+> If the user asks "get my brain to 90/100" or "fix what's broken", prefer the
-+> one-command loop over walking each dimension by hand:
++### Autonomous path (v0.36.4.0) — when you want to reach a target score — steps (( role: reference ))
  
- ```bash
- gbrain doctor --remediation-plan --json              # preview what would run
+ If the user asks "get my brain to 90/100" or "fix what's broken", prefer the
+ one-command loop over walking each dimension by hand:
+@@ -60,68 +72,107 @@
  gbrain doctor --remediate --yes --target-score 90 --max-usd 5
  ```
  
@@ -188,16 +183,15 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
 +### Link graph extraction — steps
 +
-+> If link_count is 0 or low relative to page_count, run batch extraction:
++If link_count is 0 or low relative to page_count, run batch extraction:
 +```bash
 +gbrain extract links --dir ~/brain
 +```
  ### Timeline extraction
--If timeline_entry_count is 0, extract structured timeline from markdown:
 +
 +### Timeline extraction — steps
 +
-+> If timeline_entry_count is 0, extract structured timeline from markdown:
+ If timeline_entry_count is 0, extract structured timeline from markdown:
  ```bash
  gbrain extract timeline --dir ~/brain
  ```
@@ -320,7 +314,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  ```bash
  gbrain dream                                          # full cycle
  gbrain dream --phase synthesize                       # just synthesize
-@@ -184,27 +250,35 @@
+@@ -184,14 +250,17 @@
  gbrain dream --json                                   # CycleReport JSON
  ```
  
@@ -344,8 +338,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  ```bash
  gbrain autopilot --status
  ```
--If not running, install it:
-+> If not running, install it:
+@@ -199,12 +268,17 @@
  ```bash
  gbrain autopilot --install --repo ~/brain
  ```

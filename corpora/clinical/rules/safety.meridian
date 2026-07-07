@@ -1,0 +1,33 @@
+---
+vocabulary: clinical.merconfig
+rulebook: clinical.merrules
+---
+
+# safety.meridian
+# Flat-path regression coverage for the Phase-8 rule desugar (top-of-file
+# rules, no headings). The same rule shapes now express in-section inside
+# corpora/clinical/skills/*.meri (medicationadminister.meri, dosecheck.meri,
+# dischargereview.meri, vitalsmonitor.meri) — this fixture keeps the original
+# flat path exercised too. See docs/13_SKILL_MD_PORTING.md and AGENTS.md §6
+# pitfall #15.
+
+# Rules
+
+A medication order with allergy check "conflict" must not be administered.
+
+A nurse may administer medication orders whose dose count is at most 2.
+
+A high risk medication order must be approved by an attending before administration.
+
+When a patient is flagged as unmonitored, escalate the patient.
+
+# Workflows
+
+To let a nurse administer a medication order:
+  invoke medication.administer with order = the medication order.
+
+To have an attending approve the administration of a medication order:
+  invoke audit.log with order = the medication order.
+
+To escalate an unmonitored patient:
+  invoke patient.escalate with patient = the patient.

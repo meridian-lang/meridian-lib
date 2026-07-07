@@ -1,0 +1,395 @@
+{
+  "constants" : {
+    "credential ttl" : 7776000,
+    "max concurrent grants" : 3,
+    "review window" : 604800
+  },
+  "instances_required" : [
+    {
+      "kind" : "environment",
+      "name" : "identity provider"
+    },
+    {
+      "kind" : "environment",
+      "name" : "audit sink"
+    }
+  ],
+  "kinds_used" : [
+    "AccessRequest",
+    "Reviewer"
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_AccessRequest_pending",
+      "kind" : "access request",
+      "line" : 34
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_AccessRequest_stale",
+      "kind" : "access request",
+      "line" : 33
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Credential_fresh",
+      "kind" : "credential",
+      "line" : 32
+    },
+    {
+      "adjective" : "overused",
+      "function" : "meridianDef_Credential_overused",
+      "kind" : "credential",
+      "line" : 31
+    },
+    {
+      "adjective" : "classified",
+      "function" : "meridianDef_Resource_classified",
+      "kind" : "resource",
+      "line" : 27
+    },
+    {
+      "adjective" : "authorized",
+      "function" : "meridianDef_User_authorized",
+      "kind" : "user",
+      "line" : 30
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_User_cleared",
+      "kind" : "user",
+      "line" : 28
+    },
+    {
+      "adjective" : "privileged",
+      "function" : "meridianDef_User_privileged",
+      "kind" : "user",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 36,
+      "name" : "assignment",
+      "right_cardinality" : "one",
+      "right_kind" : "a role",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a policy",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "an environment",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 38,
+      "name" : "grant",
+      "right_cardinality" : "one",
+      "right_kind" : "a resource",
+      "via" : "access.grant"
+    }
+  ],
+  "meridian_rules" : [
+    {
+      "bounded" : true,
+      "executes" : true,
+      "kind" : "permission",
+      "source" : {
+        "file" : "reviewrequests.meri",
+        "line" : 33
+      },
+      "text" : "A reviewer may approve access requests whose queue position is at most 3"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Surface the front of the pending access-request queue to a human reviewer instead of letting the whole backlog pile up unattended. Bounds each pass to the top of the queue so a reviewer always sees a manageable batch, not the entire backlog at once.",
+    "name" : "review requests",
+    "outline" : [
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 20,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 29,
+        "text" : "Rules"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 31,
+        "text" : "Rules — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 35,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 43,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 51,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 54,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 37,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 38,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 41,
+        "text" : "Emit"
+      }
+    ],
+    "parameters" : "reviewer, access request",
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "When to invoke",
+        "line" : 20,
+        "lines" : [
+          "\"review access requests\"",
+          "\"review pending requests\"",
+          "\"work the request queue\"",
+          "Run this on a recurring cadence (daily is typical) rather than only when",
+          "someone complains that a request is stuck. Catching a growing backlog early",
+          "is the whole point"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Rules",
+        "line" : 29,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Rules — steps",
+        "line" : 31,
+        "lines" : [
+          "A reviewer may approve access requests whose queue position is at most 3"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 35,
+        "lines" : [
+          "fetch pending access requests",
+          "Check: at least 1 pending access request",
+          "Check: at most 20 pending access requests",
+          "for each access request whose queue position is at most 3:",
+          "log an audit entry for the access request",
+          "Emit: \"review requests pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 43,
+        "lines" : [
+          "Don't let a reviewer approve requests out of queue order just because a",
+          "requester is persistent — queue position exists precisely so approval",
+          "isn't first-come-loudest",
+          "Don't treat a passing run as \"the queue is empty.\" A pass only clears the",
+          "front three positions; a still-growing backlog behind them needs its own",
+          "investigation, not another review pass"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 51,
+        "lines" : [
+          "make sure at most 20 access requests whose status is \"pending\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 54,
+        "lines" : [
+          "The receipt lists which access requests were surfaced to the reviewer this",
+          "pass, in queue order, so a reviewer can tell at a glance whether the backlog",
+          "is shrinking or growing"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"review access requests\"\n\"review pending requests\"\n\"work the request queue\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "authorize",
+      "line" : 43,
+      "past_participle" : "authorized",
+      "relation" : "assignment",
+      "third_person" : "authorizes"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "grant",
+      "line" : 44,
+      "past_participle" : "granted",
+      "relation" : "grant",
+      "third_person" : "grants"
+    }
+  ],
+  "source_files" : [
+    "reviewrequests.meri",
+    "governance.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 33,
+      "swift_line" : 442
+    },
+    {
+      "meridian_line" : 52,
+      "swift_line" : 447
+    },
+    {
+      "meridian_line" : 48,
+      "swift_line" : 452
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 464
+    },
+    {
+      "meridian_line" : 38,
+      "swift_line" : 469
+    },
+    {
+      "meridian_line" : 39,
+      "swift_line" : 473
+    },
+    {
+      "meridian_line" : 66,
+      "swift_line" : 480
+    },
+    {
+      "meridian_line" : 41,
+      "swift_line" : 496
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 535
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 540
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 580
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 585
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 625
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 630
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Reviewer",
+          "name" : "reviewer"
+        },
+        {
+          "kind" : "AccessRequest",
+          "name" : "accessRequest"
+        }
+      ],
+      "source_name" : "review requests a reviewer a access request",
+      "swift_struct" : "ReviewRequestsReviewerAccessRequest"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when reviewAccessRequests fires",
+      "swift_struct" : "WhenReviewaccessrequestsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when reviewPendingRequests fires",
+      "swift_struct" : "WhenReviewpendingrequestsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when workRequestQueue fires",
+      "swift_struct" : "WhenWorkrequestqueueFires"
+    }
+  ]
+}

@@ -1,0 +1,385 @@
+{
+  "constants" : {
+    "credential ttl" : 7776000,
+    "max concurrent grants" : 3,
+    "review window" : 604800
+  },
+  "instances_required" : [
+    {
+      "kind" : "environment",
+      "name" : "identity provider"
+    },
+    {
+      "kind" : "environment",
+      "name" : "audit sink"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_AccessRequest_pending",
+      "kind" : "access request",
+      "line" : 34
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_AccessRequest_stale",
+      "kind" : "access request",
+      "line" : 33
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Credential_fresh",
+      "kind" : "credential",
+      "line" : 32
+    },
+    {
+      "adjective" : "overused",
+      "function" : "meridianDef_Credential_overused",
+      "kind" : "credential",
+      "line" : 31
+    },
+    {
+      "adjective" : "classified",
+      "function" : "meridianDef_Resource_classified",
+      "kind" : "resource",
+      "line" : 27
+    },
+    {
+      "adjective" : "authorized",
+      "function" : "meridianDef_User_authorized",
+      "kind" : "user",
+      "line" : 30
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_User_cleared",
+      "kind" : "user",
+      "line" : 28
+    },
+    {
+      "adjective" : "privileged",
+      "function" : "meridianDef_User_privileged",
+      "kind" : "user",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 36,
+      "name" : "assignment",
+      "right_cardinality" : "one",
+      "right_kind" : "a role",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a policy",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "an environment",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 38,
+      "name" : "grant",
+      "right_cardinality" : "one",
+      "right_kind" : "a resource",
+      "via" : "access.grant"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Classify unclassified resources so downstream access decisions have something to key off of, escalating obviously sensitive cases automatically and routing the genuinely ambiguous ones to judgment rather than guessing. An unclassified resource is a resource `grant access` and `access matrix` can't reason about correctly.",
+    "name" : "classify resource",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 20,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 25,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 34,
+        "text" : "Classification Routing"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 36,
+        "text" : "Classification Routing — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 45,
+        "text" : "Completion"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 48,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 56,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 46,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 20,
+        "lines" : [
+          "\"classify resources\"",
+          "\"classify unclassified resources\"",
+          "\"run the classification sweep\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 25,
+        "lines" : [
+          "fetch pending access requests",
+          "table:ai-discretion:fCBDb25kaXRpb24gICAgICAgICAgICAgfCBBY3Rpb24gICAgICAgICAgICAgfAp8IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSB8IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gfAp8IHRoZSByZXNvdXJjZSdzIHN0YXR1cyBpcyAidW5jbGFzc2lmaWVkIiB8IGVzY2FsYXRlIHRvIHRoZSBzZWN1cml0eSB0ZWFtICB8CnwgKiAgICAgICAgICAgICAgICAgIHwgbW9uaXRvciB0aGUgcmVzb3VyY2UgICAgICAgfA=="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Classification Routing",
+        "line" : 34,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Classification Routing — steps",
+        "line" : 36,
+        "lines" : [
+          "for each access request:",
+          "bind should classify = decide whether the access request's resource looks sensitive",
+          "if the should classify is true,",
+          "log an audit entry for the access request",
+          "otherwise,",
+          "use judgment to classify the access request and recommend a classification"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Completion",
+        "line" : 45,
+        "lines" : [
+          "Emit: \"classify resource pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 48,
+        "lines" : [
+          "Don't default an unclassified resource to \"public\" to unblock a pending",
+          "request. Silence isn't a classification decision — either the",
+          "discretion table catches it or judgment does",
+          "Don't skip straight to judgment for every resource \"to be safe.\" The",
+          "discretion table exists so the obvious cases don't burn a judgment call",
+          "that the ambiguous cases actually need"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 56,
+        "lines" : [
+          "The receipt notes how many resources were escalated outright versus routed",
+          "growing"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"classify resources\"\n\"classify unclassified resources\"\n\"run the classification sweep\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "authorize",
+      "line" : 43,
+      "past_participle" : "authorized",
+      "relation" : "assignment",
+      "third_person" : "authorizes"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "grant",
+      "line" : 44,
+      "past_participle" : "granted",
+      "relation" : "grant",
+      "third_person" : "grants"
+    }
+  ],
+  "source_files" : [
+    "classifyresource.meri",
+    "governance.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 48,
+      "swift_line" : 435
+    },
+    {
+      "meridian_line" : 29,
+      "swift_line" : 446
+    },
+    {
+      "meridian_line" : 38,
+      "swift_line" : 455
+    },
+    {
+      "meridian_line" : 39,
+      "swift_line" : 460
+    },
+    {
+      "meridian_line" : 40,
+      "swift_line" : 462
+    },
+    {
+      "meridian_line" : 66,
+      "swift_line" : 465
+    },
+    {
+      "meridian_line" : 43,
+      "swift_line" : 477
+    },
+    {
+      "meridian_line" : 46,
+      "swift_line" : 493
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 532
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 537
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 577
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 582
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 622
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 627
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "judgment_steps" : [
+        {
+          "line" : 29,
+          "scoped_tools" : [
+            "access.grant",
+            "access.revoke",
+            "audit.log",
+            "credential.rotate",
+            "policy.evaluate",
+            "request.list"
+          ],
+          "text" : "Decide which case below applies and carry out its action:\n- when the resource's status is \"unclassified\", escalate to the security team\n- otherwise, monitor the resource"
+        },
+        {
+          "line" : 43,
+          "scoped_tools" : [
+            "access.grant",
+            "access.revoke",
+            "audit.log",
+            "credential.rotate",
+            "policy.evaluate",
+            "request.list"
+          ],
+          "text" : "classify the access request and recommend a classification"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "classify resource",
+      "swift_struct" : "ClassifyResource"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when classifyResources fires",
+      "swift_struct" : "WhenClassifyresourcesFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when classifyUnclassifiedResources fires",
+      "swift_struct" : "WhenClassifyunclassifiedresourcesFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runClassificationSweep fires",
+      "swift_struct" : "WhenRunclassificationsweepFires"
+    }
+  ]
+}

@@ -150,7 +150,7 @@ IMPLEMENTATION_LOG.md         # Append-only decision log
   `with autonomy` asks an `ActPlanner` one step at a time. Runtime validation,
   host policy, and scoped tool execution remain deterministic.
 - **Deterministic compilation** — same source always produces the same Swift.
-- **12 IR primitives** — invoke, bind, rebind, branch, emit, complete, iterate, assert, wait, commit, recover, simultaneously, proseStep.
+- **13 IR primitives** — invoke, bind, rebind, branch, emit, complete, iterate, assert, wait, commit, recover, simultaneously, aiJudgment, aiAutonomy.
 - **Phrase inlining** — vocabulary phrases expand at compile time.
 - **Workflow recursion** — workflows can call themselves or other workflows.
 - **Typed domain** — kinds become typed Swift `struct`s; generated inits are fully typed.

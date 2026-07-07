@@ -3,8 +3,8 @@
 - Original: `voice-note-ingest/SKILL.md`
 - Ported: `voice_note_ingest.meri`
 - Tier: 2 (light edits)
-- Similarity: 81%
-- Lines: 201 -> 238 (+61 / -24)
+- Similarity: 80%
+- Lines: 201 -> 237 (+61 / -25)
 
 ## Frontmatter
 - Added: (none)
@@ -20,8 +20,8 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L37 `The pipeline`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L106 `Brain page format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 - L152 `Citation format`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L202 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L213 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L201 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L212 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections inert total: 8/10 (80% total inert; includes intentional docs/templates/tools metadata)
@@ -38,8 +38,8 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L152 `Citation format`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L170 `Bulk vs. single`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L178 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L202 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L213 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L201 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L212 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
@@ -159,7 +159,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```
  [Source: voice note, <channel>, YYYY-MM-DD]
-@@ -161,22 +189,31 @@
+@@ -161,22 +189,30 @@
    `2026-04-13-rick-rubin-creative-philosophy.ogg`)
  - Brain pages: match the slug of the destination directory.
  
@@ -181,11 +181,11 @@ These sections were made non-executable in the port and should be reviewed as mi
  - ❌ **Creating a page with no entity cross-links** when people/companies
    were mentioned. Iron Law fail.
 -- ❌ **Skipping the audio storage step.** Always upload the original; the
+-  brain page has a `🔊 [Audio]` link back to it.
 +
 +### Anti-Patterns — steps (( role: reference ))
 +
-+- ❌ Skipping the audio storage step. Always upload the original; the
-   brain page has a `🔊 [Audio]` link back to it.
++- ❌ Skipping the audio storage step. Always upload the original; the brain page has a `🔊 [Audio]` link back to it.
  
  ## Related skills
 +
@@ -194,7 +194,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - `skills/signal-detector/SKILL.md` — same exact-phrasing pattern for
    text-channel idea capture
-@@ -184,7 +221,7 @@
+@@ -184,7 +220,7 @@
  - `skills/conventions/quality.md` — citation + back-link rules
  
  
@@ -203,7 +203,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  This skill guarantees:
  
-@@ -195,7 +232,7 @@
+@@ -195,7 +231,7 @@
  
  The full behavior contract is documented in the body sections above; this section exists for the conformance test.
  

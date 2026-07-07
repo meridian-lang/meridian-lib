@@ -3,16 +3,25 @@
 Meridian supports two opt-in prose modes for SKILL.md-shaped workflows.
 
 `with discretion` is plan-then-execute mode. Unmatched English lines in that
-workflow are lowered to `ProseStepIR`; generated Swift calls
-`runtime.executeProsePlan(...)`. The runtime asks a typed `Planner` for a
+workflow are lowered to `IRPrimitive.aiJudgment(AIJudgmentIR)`; generated Swift
+calls `runtime.executeProsePlan(...)`. The runtime asks a typed `Planner` for a
 `PlanProposal`, validates each proposed tool against the scoped tool list, and
 executes the action itself.
 
-`with autonomy` is loop mode. Unmatched English lines are lowered to autonomous
-`ProseStepIR`; generated Swift calls `runtime.executeAutonomousLoop(...)`.
+`with autonomy` is loop mode. Unmatched English lines are lowered to
+`IRPrimitive.aiAutonomy(AIAutonomyIR)`; generated Swift calls
+`runtime.executeAutonomousLoop(...)`.
 The runtime asks an `ActPlanner` for one action per turn, records observations,
 routes every action through the same sealed executor, and can call a `Planner`
 again after repeated failures.
+
+`AIJudgmentIR` and `AIAutonomyIR` are separate IR structs (not one primitive
+distinguishing modes via a `dispatchMode` field) — codegen (`emitAIJudgment` /
+`emitAIAutonomy`), the manifest (`judgment_steps` / `autonomy_steps`, below),
+and any IR-walking code each handle the two modes as distinct cases, so a
+`switch` over `IRPrimitive` cannot forget one. The AST layer still carries
+a single `ProseStepAST` with a `ProseDispatchMode`; `ASTToIR.makeAIPrimitive`
+is the one place that dispatches AST mode → IR case.
 
 Autonomy `until` and `unless` header clauses are enforced by generated
 predicates over the runtime's current `StateSnapshot`. The runtime checks
@@ -56,29 +65,32 @@ of them a silent fallthrough:
 3. A **fuzzy Markdown table or checklist** is routed to the planner with a
    `(( ai-discretion ))` / `(( ai-autonomy ))` marker (below).
 
-All three lower to the same `ProseStepAST → ProseStepIR`; (2) and (3) carry an
-explicit dispatch, so they are valid in **any** workflow.
+All three lower through the same `ProseStepAST`, which `ASTToIR.makeAIPrimitive`
+turns into `IRPrimitive.aiJudgment(AIJudgmentIR)` or `.aiAutonomy(AIAutonomyIR)`
+by dispatch mode; (2) and (3) carry an explicit dispatch, so they are valid in
+**any** workflow.
 
 ### Optional guidance: extra planner context distinct from the goal
 
-`ProseStepAST`/`ProseStepIR` carry an optional `guidance: String?` alongside
-`text`. `text` stays the short dispatch goal; `guidance`, when present, is
-extra narrative context handed to the planner without being folded into that
-goal. The one producer today is the `use judgment to follow the <heading>
-guidance:` migrator idiom (below): it collects the section's leftover
-narrative verbatim into `guidance` rather than concatenating it onto `text`.
-Ordinary `use judgment to <goal>:` / `with discretion:` / `with autonomy …:`
-blocks with an indented instruction body still fold that body into `text`
-unchanged — `guidance` is specifically for narrative context that a section's
-migrator-generated judgment step inherited from its own (otherwise-`reference`)
-documentation, not a second copy of the instructions themselves.
+`ProseStepAST` (and both `AIJudgmentIR`/`AIAutonomyIR`) carry an optional
+`guidance: String?` alongside `text`. `text` stays the short dispatch goal;
+`guidance`, when present, is extra narrative context handed to the planner
+without being folded into that goal. The one producer today is the `use
+judgment to follow the <heading> guidance:` migrator idiom (below): it
+collects the section's leftover narrative verbatim into `guidance` rather than
+concatenating it onto `text`. Ordinary `use judgment to <goal>:` / `with
+discretion:` / `with autonomy …:` blocks with an indented instruction body
+still fold that body into `text` unchanged — `guidance` is specifically for
+narrative context that a section's migrator-generated judgment step inherited
+from its own (otherwise-`reference`) documentation, not a second copy of the
+instructions themselves.
 
-`guidance` threads end to end with no new IR primitive (same primitive,
-richer payload): `SwiftEmitter.emitProseStep` emits it as a trailing
-`guidance: "…"` argument on `runtime.executeProsePlan`/
-`executeAutonomousLoop`; `PlanContext.guidance` / `ActContext.guidance` carry
-it into `Planner`/`ActPlanner` implementations; `ManifestEmitter` records it
-per workflow under `prose_steps[].guidance` so it is auditable from the
+`guidance` threads end to end on both IR cases: `SwiftEmitter.emitAIJudgment` /
+`emitAIAutonomy` each emit it as a trailing `guidance: "…"` argument on
+`runtime.executeProsePlan`/`executeAutonomousLoop`; `PlanContext.guidance` /
+`ActContext.guidance` carry it into `Planner`/`ActPlanner` implementations;
+`ManifestEmitter` records it per workflow under `judgment_steps[].guidance` /
+`autonomy_steps[].guidance` so it is auditable from the
 `.meridian.manifest.json` without reading the generated Swift.
 
 ### Fuzzy tables and checklists → the planner
@@ -108,12 +120,14 @@ pass to either judgment or reference — see `docs/13_SKILL_MD_PORTING.md` P1):
 
 - `!!! table (( ai-discretion ))` → `TableParser.aiDecisionProse` renders the
   rows as a ruleset (`when <conds>, <action>`; a wildcard row → `otherwise, …`)
-  and emits a `.planThenExecute` prose step: the planner picks the matching case
-  and carries out its action. `(( ai-autonomy ))` emits a loop instead.
+  and emits `IRPrimitive.aiJudgment(AIJudgmentIR)`: the planner picks the
+  matching case and carries out its action. `(( ai-autonomy ))` emits
+  `.aiAutonomy(AIAutonomyIR)` (a loop) instead.
 - `!!! checklist (( ai-autonomy ))` → `checklistProse` embeds every criterion as
   the loop goal ("Ensure every acceptance criterion below holds, taking
-  corrective action until all are satisfied: - …") and emits a
-  `.autonomousLoop` prose step. `(( ai-discretion ))` verifies/resolves once.
+  corrective action until all are satisfied: - …") and emits
+  `IRPrimitive.aiAutonomy(AIAutonomyIR)`. `(( ai-discretion ))` verifies/resolves
+  once via `.aiJudgment(AIJudgmentIR)`.
 
 The criteria/rules are embedded **verbatim** in the prose step text, so the
 planner has the full ruleset as its goal context. The enclosing section must be
@@ -160,8 +174,8 @@ A workflow declared `with discretion` or `with autonomy` runs every body line
 through the planner — there is no deterministic fallthrough. Even if a body
 sentence happens to share words with a deterministic vocabulary phrase
 (e.g. "Inspect the failing job…" overlapping with `to inspect the ci status of
-a pull request`), the lowering emits a `ProseStepIR` and the `Planner` /
-`ActPlanner` decides what runtime actions are taken. This is enforced in
+a pull request`), the lowering emits an `aiJudgment`/`aiAutonomy` primitive and
+the `Planner` / `ActPlanner` decides what runtime actions are taken. This is enforced in
 `ASTToIR.lowerPhraseInvocation` and is verified by the
 [`SkillExampleCorpusTests`](../Tests/MeridianCoreTests/SkillExampleCorpusTests.swift)
 suite.

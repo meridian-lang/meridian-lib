@@ -405,14 +405,15 @@ lowering — it never produces a new IR primitive, only ordinary statements:
 |---|---|---|
 | table | `decision` | one `if <conds>, <action>.` per row (re-parsed through the normal grammar → `BranchIR`) |
 | table | `data[: name]` | `bind <name> = recordList(…)` → `IRExpression.recordList` |
-| table | `ai-discretion` / `ai-autonomy` | one `ProseStepAST` (`TableParser.aiDecisionProse` renders rows as `when …, …`) → `ProseStepIR(.planThenExecute / .autonomousLoop)` |
+| table | `ai-discretion` / `ai-autonomy` | one `ProseStepAST` (`TableParser.aiDecisionProse` renders rows as `when …, …`) → `IRPrimitive.aiJudgment(AIJudgmentIR)` / `.aiAutonomy(AIAutonomyIR)` |
 | table | `iteration` / `inert` | nothing (reserved / documentation) |
 | checklist | `invariant` (or unmarked) | one `assert` per item (checkable-or-error via `ConditionClassifier`) → `AssertIR` |
-| checklist | `ai-discretion` / `ai-autonomy` | one `ProseStepAST` embedding every criterion as the goal → `ProseStepIR` |
+| checklist | `ai-discretion` / `ai-autonomy` | one `ProseStepAST` embedding every criterion as the goal → `IRPrimitive.aiJudgment` / `.aiAutonomy` |
 | checklist | `inert` | nothing |
 
-The AI-routed modes take the **same** `ProseStepAST → ProseStepIR` path as
-`use judgment to …:` (an explicit dispatch), so they are valid in any workflow
+The AI-routed modes take the **same** `ProseStepAST →` (`aiJudgment` /
+`aiAutonomy`) path as `use judgment to …:` (an explicit dispatch, via
+`ASTToIR.makeAIPrimitive`), so they are valid in any workflow
 — a fuzzy decision table or acceptance checklist becomes a planner step instead
 of inert documentation. See [12_PROSE_AND_AUTONOMY.md](12_PROSE_AND_AUTONOMY.md).
 

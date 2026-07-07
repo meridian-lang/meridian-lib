@@ -129,139 +129,133 @@
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 52,
+        "line" : 49,
         "text" : "Prerequisite: gstack make-pdf — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 57,
+        "line" : 54,
         "text" : "Prerequisite: gstack make-pdf — steps 2"
-      },
-      {
-        "kind" : "procedure",
-        "level" : 3,
-        "line" : 61,
-        "text" : "Prerequisite: gstack make-pdf — steps 3"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 70,
+        "line" : 67,
         "text" : "Workflow"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 82,
+        "line" : 79,
         "text" : "Invocation"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 85,
+        "line" : 82,
         "text" : "Invocation — steps"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 120,
+        "line" : 117,
         "text" : "Common patterns"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 136,
+        "line" : 133,
         "text" : "Defaults: NO cover, NO TOC"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 143,
+        "line" : 140,
         "text" : "Font requirements"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 153,
+        "line" : 150,
         "text" : "Font requirements — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 159,
+        "line" : 156,
         "text" : "Delivery"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 166,
+        "line" : 163,
         "text" : "Delivery — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 173,
+        "line" : 170,
         "text" : "Delivery — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 179,
+        "line" : 176,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 191,
+        "line" : 188,
         "text" : "Related skills"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 194,
+        "line" : 191,
         "text" : "Related skills — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 203,
+        "line" : 200,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 214,
+        "line" : 211,
         "text" : "Output Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 145,
+        "line" : 142,
         "text" : "Minimum body font size"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 146,
+        "line" : 143,
         "text" : "Body text"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 170,
+        "line" : 167,
         "text" : "Telegram"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 205,
+        "line" : 202,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 210,
+        "line" : 207,
         "text" : "Privacy contract preserved"
       }
     ],
@@ -314,16 +308,14 @@
         "heading" : "Prerequisite: gstack make-pdf",
         "line" : 42,
         "lines" : [
-          "codeblock:plain:JEhPTUUvLmNsYXVkZS9za2lsbHMvZ3N0YWNrL21ha2UtcGRmL2Rpc3QvcGRm",
-          "A future v0.26+ may bundle a fallback PDF renderer; for v0.25.1 gstack",
-          "is a soft prereq"
+          "codeblock:plain:JEhPTUUvLmNsYXVkZS9za2lsbHMvZ3N0YWNrL21ha2UtcGRmL2Rpc3QvcGRm"
         ],
         "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Prerequisite: gstack make-pdf — steps",
-        "line" : 52,
+        "line" : 49,
         "lines" : [
           "This skill depends on the gstack `make-pdf` binary at:"
         ],
@@ -332,25 +324,19 @@
       {
         "executes" : false,
         "heading" : "Prerequisite: gstack make-pdf — steps 2",
-        "line" : 57,
+        "line" : 54,
         "lines" : [
-          "The user must have gstack co-installed. If absent, the skill cannot run"
+          "The user must have gstack co-installed. If absent, the skill cannot run",
+          "A future v0.26+ may bundle a fallback PDF renderer; for v0.25.1 gstack",
+          "is a soft prereq",
+          "codeblock:bash:UD0iJEhPTUUvLmNsYXVkZS9za2lsbHMvZ3N0YWNrL21ha2UtcGRmL2Rpc3QvcGRmIgpbIC14ICIkUCIgXSB8fCB7IGVjaG8gIm1ha2UtcGRmIG5vdCBpbnN0YWxsZWQ7IGluc3RhbGwgZ3N0YWNrIiA+JjI7IGV4aXQgMTsgfQ=="
         ],
         "role" : "reference"
       },
       {
-        "executes" : true,
-        "heading" : "Prerequisite: gstack make-pdf — steps 3",
-        "line" : 61,
-        "lines" : [
-          "codeblock:bash:UD0iJEhPTUUvLmNsYXVkZS9za2lsbHMvZ3N0YWNrL21ha2UtcGRmL2Rpc3QvcGRmIgpbIC14ICIkUCIgXSB8fCB7IGVjaG8gIm1ha2UtcGRmIG5vdCBpbnN0YWxsZWQ7IGluc3RhbGwgZ3N0YWNrIiA+JjI7IGV4aXQgMTsgfQ=="
-        ],
-        "role" : "procedure"
-      },
-      {
         "executes" : false,
         "heading" : "Workflow",
-        "line" : 70,
+        "line" : 67,
         "lines" : [
           "codeblock:plain:MS4gUkVTT0xWRSAg4oaSIENvbmZpcm0gdGhlIGJyYWluIHBhZ2UgZXhpc3RzIChnYnJhaW4gZ2V0IDxzbHVnPikuCjIuIFNUUklQICAgIOKGkiBSZW1vdmUgWUFNTCBmcm9udG1hdHRlciDigJQgdGhlIHJlbmRlcmVyIHdvdWxkIG90aGVyd2lzZQogICAgICAgICAgICAgIGR1bXAgaXQgYXMgYSBmdWxsIHBhZ2Ugb2YgcmF3IG1ldGFkYXRhIHRleHQuCjMuIFJFTkRFUiAgIOKGkiBJbnZva2UgbWFrZS1wZGYgd2l0aCBzYW5lIGRlZmF1bHRzIChubyAtLWNvdmVyLCBubyAtLXRvYykuCjQuIERFTElWRVIgIOKGkiBIYW5kIHRoZSBQREYgdG8gdGhlIHJlcXVlc3RlciB2aWEgdGhlIGFnZW50J3MgcHJlZmVycmVkCiAgICAgICAgICAgICAgY2hhbm5lbCAoZG8gbm90IHVzZSByYXcgYE1FRElBOmAgdGFncyBvbiBUZWxlZ3JhbSDigJQKICAgICAgICAgICAgICB0aGV5IGZhaWwgc2lsZW50bHkpLg=="
         ],
@@ -359,7 +345,7 @@
       {
         "executes" : false,
         "heading" : "Invocation",
-        "line" : 82,
+        "line" : 79,
         "lines" : [
 
         ],
@@ -368,7 +354,7 @@
       {
         "executes" : false,
         "heading" : "Invocation — steps",
-        "line" : 85,
+        "line" : 82,
         "lines" : [
           "codeblock:bash:U0xVRz0icGF0aC90by9wYWdlIgpQPSIkSE9NRS8uY2xhdWRlL3NraWxscy9nc3RhY2svbWFrZS1wZGYvZGlzdC9wZGYiCgojIDEuIENvbmZpcm0gdGhlIHBhZ2UgZXhpc3RzLgpnYnJhaW4gZ2V0ICIkU0xVRyIgPiAvZGV2L251bGwgfHwgeyBlY2hvICJQYWdlICRTTFVHIG5vdCBmb3VuZCIgPiYyOyBleGl0IDE7IH0KCiMgMi4gR2V0IHRoZSByYXcgbWFya2Rvd24uIFR3byBwYXRoczogcmVhZCBmcm9tIHRoZSBicmFpbiByZXBvIChpZiB1c2VyCiMgICAgc3luY3MgbG9jYWxseSkgT1IgYXNrIGdicmFpbiBmb3IgdGhlIGJvZHkgdmlhIHRoZSBBUEkuCkJSQUlOX0RJUj0kKGdicmFpbiBjb25maWcgZ2V0IHN5bmMucmVwb19wYXRoIDI+L2Rldi9udWxsIHx8IGVjaG8pCmlmIFsgLW4gIiRCUkFJTl9ESVIiIF0gJiYgWyAtZiAiJEJSQUlOX0RJUi8kU0xVRy5tZCIgXTsgdGhlbgogIFJBVz0iJEJSQUlOX0RJUi8kU0xVRy5tZCIKZWxzZQogIFJBVz0kKG1rdGVtcCAvdG1wL2JyYWluLXBhZ2UtWFhYWFhYLm1kKQogIGdicmFpbiBnZXQgIiRTTFVHIiAtLXJhdyA+ICIkUkFXIiAgICMgd2hhdGV2ZXIgZmxhZyBleHBvc2VzIHJhdyBib2R5CmZpCgojIDMuIFN0cmlwIFlBTUwgZnJvbnRtYXR0ZXIg4oCUIHNlZDogc2tpcCB0aGUgb3BlbmluZyAnLS0tJyB0aHJvdWdoIHRoZQojICAgIGNsb3NpbmcgJy0tLScgKGxpbmVzIDEuLk4pLCB0aGVuIGtlZXAgZXZlcnl0aGluZyBhZnRlci4KQ0xFQU49JChta3RlbXAgL3RtcC9icmFpbi1wYWdlLWNsZWFuLVhYWFhYWC5tZCkKc2VkICcxey9eLS0tJC8hcX07IC9eLS0tJC8sL14tLS0kL2QnICIkUkFXIiA+ICIkQ0xFQU4iCgojIDQuIFJlbmRlci4gTk8gLS1jb3ZlciwgTk8gLS10b2MgYnkgZGVmYXVsdCDigJQgdGhleSBsb29rIGNvcnBvcmF0ZQojICAgIGFuZCB3YXN0ZSBzcGFjZS4gQWRkIHRoZW0gb25seSBpZiBleHBsaWNpdGx5IHJlcXVlc3RlZC4KT1VUPSIvdG1wLyQoYmFzZW5hbWUgIiRTTFVHIikucGRmIgpDT05UQUlORVI9MSAiJFAiIGdlbmVyYXRlICIkQ0xFQU4iICIkT1VUIgoKZWNobyAiUmVuZGVyZWQ6ICRPVVQi",
           "`CONTAINER=1` is mandatory in containerized environments — it tells",
@@ -379,7 +365,7 @@
       {
         "executes" : true,
         "heading" : "Common patterns",
-        "line" : 120,
+        "line" : 117,
         "lines" : [
           "codeblock:bash:IyBEZWZhdWx0IOKAlCBjbGVhbiBQREYsIG5vIGNvdmVyLCBubyBUT0MKYnJhaW4tcGRmIDxzbHVnPgoKIyBEcmFmdCB3YXRlcm1hcmsgZm9yIGluLXByb2dyZXNzIHdvcmsKQ09OVEFJTkVSPTEgIiRQIiBnZW5lcmF0ZSAtLXdhdGVybWFyayBEUkFGVCAiJENMRUFOIiAiJE9VVCIKCiMgT3B0aW9uYWwgY292ZXIgKyBUT0MgaWYgdGhlIHVzZXIgZXhwbGljaXRseSBhc2tzCkNPTlRBSU5FUj0xICIkUCIgZ2VuZXJhdGUgLS1jb3ZlciAtLXRvYyAiJENMRUFOIiAiJE9VVCIKCiMgQ3VzdG9tIHRpdGxlICsgYXV0aG9yIG92ZXJyaWRlIChvdGhlcndpc2UgcHVsbGVkIGZyb20gZnJvbnRtYXR0ZXIpCkNPTlRBSU5FUj0xICIkUCIgZ2VuZXJhdGUgLS10aXRsZSAiQ3VzdG9tIFRpdGxlIiAtLWF1dGhvciAiQ3VzdG9tIEF1dGhvciIgIiRDTEVBTiIgIiRPVVQi"
         ],
@@ -388,7 +374,7 @@
       {
         "executes" : false,
         "heading" : "Defaults: NO cover, NO TOC",
-        "line" : 136,
+        "line" : 133,
         "lines" : [
           "These flags are off by default because they look corporate and waste",
           "space on most personal-knowledge content. Only add them when the user",
@@ -400,7 +386,7 @@
       {
         "executes" : false,
         "heading" : "Font requirements",
-        "line" : 143,
+        "line" : 140,
         "lines" : [
           "Minimum body font size: 10pt (page chrome 9pt)",
           "Body text: 11pt",
@@ -413,7 +399,7 @@
       {
         "executes" : true,
         "heading" : "Font requirements — steps",
-        "line" : 153,
+        "line" : 150,
         "lines" : [
           "`fonts-liberation` (Helvetica\/Arial substitute)",
           "`fonts-noto-cjk` (Chinese\/Japanese\/Korean characters)"
@@ -423,7 +409,7 @@
       {
         "executes" : false,
         "heading" : "Delivery",
-        "line" : 159,
+        "line" : 156,
         "lines" : [
           "**Email:** attach via the host's email tool",
           "**Direct file response:** print the PDF path; the user can pull it",
@@ -434,7 +420,7 @@
       {
         "executes" : false,
         "heading" : "Delivery — steps",
-        "line" : 166,
+        "line" : 163,
         "lines" : [
           "Telegram: use the `message` tool with `filePath=\"\/tmp\/<slug>.pdf\"`",
           "attachment. NEVER use raw `MEDIA:` tags — they fail silently"
@@ -444,7 +430,7 @@
       {
         "executes" : false,
         "heading" : "Delivery — steps 2",
-        "line" : 173,
+        "line" : 170,
         "lines" : [
           "Always include the brain page link in the delivery message so the user",
           "can also see it on GitHub \/ locally. The PDF is a rendering; the source",
@@ -455,7 +441,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 179,
+        "line" : 176,
         "lines" : [
           "❌ Generating a PDF without first confirming the brain page exists",
           "No source = no PDF",
@@ -472,7 +458,7 @@
       {
         "executes" : true,
         "heading" : "Related skills",
-        "line" : 191,
+        "line" : 188,
         "lines" : [
 
         ],
@@ -481,7 +467,7 @@
       {
         "executes" : false,
         "heading" : "Related skills — steps",
-        "line" : 194,
+        "line" : 191,
         "lines" : [
           "`skills\/book-mirror\/SKILL.md` — produces a brain page that's a",
           "natural input to brain-pdf (chapter-by-chapter personalized analysis)",
@@ -494,7 +480,7 @@
       {
         "executes" : false,
         "heading" : "Contract",
-        "line" : 203,
+        "line" : 200,
         "lines" : [
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
@@ -508,7 +494,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 214,
+        "line" : 211,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -554,80 +540,72 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 54,
+      "meridian_line" : 51,
       "swift_line" : 601
     },
     {
-      "meridian_line" : 65,
+      "meridian_line" : 119,
       "swift_line" : 613
     },
     {
-      "meridian_line" : 65,
+      "meridian_line" : 119,
       "swift_line" : 624
     },
     {
-      "meridian_line" : 122,
+      "meridian_line" : 119,
       "swift_line" : 635
     },
     {
-      "meridian_line" : 122,
+      "meridian_line" : 119,
       "swift_line" : 646
     },
     {
-      "meridian_line" : 122,
+      "meridian_line" : 154,
       "swift_line" : 657
     },
     {
-      "meridian_line" : 122,
-      "swift_line" : 668
-    },
-    {
-      "meridian_line" : 157,
-      "swift_line" : 679
-    },
-    {
-      "meridian_line" : 158,
-      "swift_line" : 691
+      "meridian_line" : 155,
+      "swift_line" : 669
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 731
+      "swift_line" : 709
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 736
+      "swift_line" : 714
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 775
+      "swift_line" : 753
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 780
+      "swift_line" : 758
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 819
+      "swift_line" : 797
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 824
+      "swift_line" : 802
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 863
+      "swift_line" : 841
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 868
+      "swift_line" : 846
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 907
+      "swift_line" : 885
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 912
+      "swift_line" : 890
     }
   ],
   "tools_used" : [

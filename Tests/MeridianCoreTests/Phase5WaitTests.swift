@@ -37,6 +37,27 @@ struct WaitSourceParseTests {
         #expect(name == "manual_review_complete")
     }
 
+    /// Regression: `wait for signal "x",` — the comma-continuation form used
+    /// for a step inside a still-open `if`/`otherwise` branch (every sibling
+    /// production — `if`/`while`/`until` — already strips a trailing `,`
+    /// before parsing its own body; `wait` didn't). Without stripping, the raw
+    /// trailing `,` defeats `unquote`'s `hasSuffix("\"")` check, leaving the
+    /// signal name still wrapped in its original quote characters — which
+    /// then hit the emitter unescaped and produced invalid Swift (shipped
+    /// broken in `incident/triage_alert`; see IMPLEMENTATION_LOG.md).
+    @Test("wait for signal with trailing comma still parses a clean signal name")
+    func waitSignalWithTrailingComma() throws {
+        let src = "wait for signal \"alert.acknowledged\",\n"
+        let lines = IndentTokenizer().tokenize(src, file: "t.meridian")
+        let block = try StatementParser(symbols: nil).parseBlock(lines.filter(\.isContent))
+        guard case .wait(let w) = block.statements.first,
+              case .signal(let name) = w.condition else {
+            Issue.record("Expected a parsed wait(.signal(...))")
+            return
+        }
+        #expect(name == "alert.acknowledged")
+    }
+
     @Test("wait for approval from parses approval with role")
     func waitApproval() throws {
         let w = try parseWait("wait for approval from the account manager")

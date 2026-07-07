@@ -1,0 +1,369 @@
+{
+  "constants" : {
+    "credential ttl" : 7776000,
+    "max concurrent grants" : 3,
+    "review window" : 604800
+  },
+  "instances_required" : [
+    {
+      "kind" : "environment",
+      "name" : "identity provider"
+    },
+    {
+      "kind" : "environment",
+      "name" : "audit sink"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_AccessRequest_pending",
+      "kind" : "access request",
+      "line" : 34
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_AccessRequest_stale",
+      "kind" : "access request",
+      "line" : 33
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Credential_fresh",
+      "kind" : "credential",
+      "line" : 32
+    },
+    {
+      "adjective" : "overused",
+      "function" : "meridianDef_Credential_overused",
+      "kind" : "credential",
+      "line" : 31
+    },
+    {
+      "adjective" : "classified",
+      "function" : "meridianDef_Resource_classified",
+      "kind" : "resource",
+      "line" : 27
+    },
+    {
+      "adjective" : "authorized",
+      "function" : "meridianDef_User_authorized",
+      "kind" : "user",
+      "line" : 30
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_User_cleared",
+      "kind" : "user",
+      "line" : 28
+    },
+    {
+      "adjective" : "privileged",
+      "function" : "meridianDef_User_privileged",
+      "kind" : "user",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 36,
+      "name" : "assignment",
+      "right_cardinality" : "one",
+      "right_kind" : "a role",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a policy",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "an environment",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 38,
+      "name" : "grant",
+      "right_cardinality" : "one",
+      "right_kind" : "a resource",
+      "via" : "access.grant"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Evaluate whether policy coverage across environments meets the minimum bar an auditor expects, and render a receipt that says so in plain terms. Production and staging don't need the same number of policies in force — this skill knows that and checks each environment against its own threshold.",
+    "name" : "policy audit",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 20,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "tables",
+        "level" : 2,
+        "line" : 25,
+        "text" : "Tables"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 32,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 40,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 46,
+        "text" : "Workflow — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 51,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 59,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 62,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 49,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 20,
+        "lines" : [
+          "\"audit policy coverage\"",
+          "\"run policy audit\"",
+          "\"check policy coverage\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Tables",
+        "line" : 25,
+        "lines" : [
+          "table:data=coverage thresholds:fCBlbnZpcm9ubWVudCB8IG1pbmltdW0gcG9saWNpZXMgfAp8IC0tLS0tLS0tLS0tIHwgLS0tLS0tLS0tLS0tLS0tLS0gfAp8IHByb2R1Y3Rpb24gIHwgMyAgICAgICAgICAgICAgICAgIHwKfCBzdGFnaW5nICAgICB8IDEgICAgICAgICAgICAgICAgICB8"
+        ],
+        "role" : "tables"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow",
+        "line" : 32,
+        "lines" : [
+          "bind audit report =",
+          "codeblock:plain:cG9saWN5LWF1ZGl0OgpbaWYgZXZhbHVhdGVkIGNvdW50IGlzIG1vcmUgdGhhbiAwXXN0YXR1czogY292ZXJlZFtvdGhlcndpc2Vdc3RhdHVzOiB1bmNvdmVyZWRbZW5kIGlmXQplbnZpcm9ubWVudHMgZXZhbHVhdGVkOiB7eyBldmFsdWF0ZWQgY291bnQgfX0="
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 40,
+        "lines" : [
+          "evaluate the policy for the identity provider",
+          "evaluate the policy for the audit sink",
+          "let evaluated count be the number of environments whose status is \"active\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 46,
+        "lines" : [
+          "emit governance.report with body = audit report",
+          "Emit: \"policy audit pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 51,
+        "lines" : [
+          "Don't apply the production threshold to a staging environment just",
+          "because it's \"close enough\" — the coverage thresholds table exists so",
+          "each environment is judged against its own stakes",
+          "Don't treat a \"covered\" status as permanent. Policies get deprecated and",
+          "environments get added; re-run the audit rather than trusting last",
+          "quarter's receipt"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 59,
+        "lines" : [
+          "every emitted audit report contains \"policy-audit\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 62,
+        "lines" : [
+          "The receipt opens with `policy-audit:`, reports whether coverage is",
+          "`covered` or `uncovered`, and states how many environments were evaluated in",
+          "this pass"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"audit policy coverage\"\n\"run policy audit\"\n\"check policy coverage\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "authorize",
+      "line" : 43,
+      "past_participle" : "authorized",
+      "relation" : "assignment",
+      "third_person" : "authorizes"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "grant",
+      "line" : 44,
+      "past_participle" : "granted",
+      "relation" : "grant",
+      "third_person" : "grants"
+    }
+  ],
+  "source_files" : [
+    "policyaudit.meri",
+    "governance.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 60,
+      "swift_line" : 435
+    },
+    {
+      "meridian_line" : 27,
+      "swift_line" : 439
+    },
+    {
+      "meridian_line" : 69,
+      "swift_line" : 442
+    },
+    {
+      "meridian_line" : 69,
+      "swift_line" : 454
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 465
+    },
+    {
+      "meridian_line" : 48,
+      "swift_line" : 468
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 478
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 517
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 522
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 562
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 567
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 607
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 612
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "policy audit",
+      "swift_struct" : "PolicyAudit"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when auditPolicyCoverage fires",
+      "swift_struct" : "WhenAuditpolicycoverageFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runPolicyAudit fires",
+      "swift_struct" : "WhenRunpolicyauditFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when checkPolicyCoverage fires",
+      "swift_struct" : "WhenCheckpolicycoverageFires"
+    }
+  ]
+}

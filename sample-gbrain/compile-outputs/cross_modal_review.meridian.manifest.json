@@ -104,7 +104,7 @@
         "text" : "Contract"
       },
       {
-        "kind" : "reference",
+        "kind" : "invariants",
         "level" : 3,
         "line" : 45,
         "text" : "Contract — steps"
@@ -112,139 +112,139 @@
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 50,
+        "line" : 49,
         "text" : "Contract — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 54,
+        "line" : 53,
         "text" : "When to invoke (v0.25.1 gating)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 76,
+        "line" : 75,
         "text" : "When to invoke (v0.25.1 gating) — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 81,
+        "line" : 80,
         "text" : "Phases"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 92,
+        "line" : 91,
         "text" : "Phases — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 97,
+        "line" : 96,
         "text" : "Phases — steps 2"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 102,
+        "line" : 101,
         "text" : "Code-review handoff (v0.25.1 extension)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 105,
+        "line" : 104,
         "text" : "Code-review handoff (v0.25.1 extension) — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 110,
+        "line" : 109,
         "text" : "Codex Review"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 135,
+        "line" : 134,
         "text" : "Codex Review — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 139,
+        "line" : 138,
         "text" : "Codex Review — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 145,
+        "line" : 144,
         "text" : "Adversarial Challenge"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 154,
+        "line" : 153,
         "text" : "Refusal routing"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 159,
+        "line" : 158,
         "text" : "Refusal routing — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 166,
+        "line" : 165,
         "text" : "Refusal routing — steps 2"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 170,
+        "line" : 169,
         "text" : "Output format"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 172,
+        "line" : 171,
         "text" : "Standard review"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 187,
+        "line" : 186,
         "text" : "Code review"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 199,
+        "line" : 198,
         "text" : "User-sovereignty rule (Iron Law)"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 208,
+        "line" : 207,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 217,
+        "line" : 216,
         "text" : "Related skills"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 220,
+        "line" : 219,
         "text" : "Related skills — steps"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 230,
+        "line" : 229,
         "text" : "Output Format"
       },
       {
@@ -256,19 +256,19 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 56,
+        "line" : 55,
         "text" : "Invoke this skill when"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 68,
+        "line" : 67,
         "text" : "Do NOT invoke for"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 161,
+        "line" : 160,
         "text" : "If the primary review model refuses"
       }
     ],
@@ -286,19 +286,18 @@
         "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Contract — steps",
         "line" : 45,
         "lines" : [
-          "The review is graded against the originating skill's Contract section",
-          "(what was promised), not vibes"
+          "The review is graded against the originating skill's Contract section (what was promised), not vibes"
         ],
-        "role" : "reference"
+        "role" : "invariants"
       },
       {
         "executes" : false,
         "heading" : "Contract — steps 2",
-        "line" : 50,
+        "line" : 49,
         "lines" : [
           "The user always makes the final decision (user sovereignty)"
         ],
@@ -307,7 +306,7 @@
       {
         "executes" : false,
         "heading" : "When to invoke (v0.25.1 gating)",
-        "line" : 54,
+        "line" : 53,
         "lines" : [
           "Invoke this skill when:",
           "**Significant code changes** — any commit touching 5+ files or 100+",
@@ -331,7 +330,7 @@
       {
         "executes" : true,
         "heading" : "When to invoke (v0.25.1 gating) — steps",
-        "line" : 76,
+        "line" : 75,
         "lines" : [
           "Brain-page quality concerns — when brain writes need validation",
           "against the originating skill's Contract"
@@ -341,7 +340,7 @@
       {
         "executes" : false,
         "heading" : "Phases",
-        "line" : 81,
+        "line" : 80,
         "lines" : [
           "**Capture the work product.** The brain page, analysis, code diff,",
           "or decision to be reviewed",
@@ -357,7 +356,7 @@
       {
         "executes" : true,
         "heading" : "Phases — steps",
-        "line" : 92,
+        "line" : 91,
         "lines" : [
           "use judgment to follow the Phases — steps guidance:",
           "**Grade.** Model evaluates: did the output follow the Contract?"
@@ -367,7 +366,7 @@
       {
         "executes" : true,
         "heading" : "Phases — steps 2",
-        "line" : 97,
+        "line" : 96,
         "lines" : [
           "Present agreement \/ disagreement to the user. Never",
           "auto-apply the reviewer's suggestions"
@@ -377,7 +376,7 @@
       {
         "executes" : false,
         "heading" : "Code-review handoff (v0.25.1 extension)",
-        "line" : 102,
+        "line" : 101,
         "lines" : [
 
         ],
@@ -386,7 +385,7 @@
       {
         "executes" : true,
         "heading" : "Code-review handoff (v0.25.1 extension) — steps",
-        "line" : 105,
+        "line" : 104,
         "lines" : [
           "For diff review specifically, gstack ships a `\/codex` skill that wraps",
           "the OpenAI Codex CLI. Two modes:"
@@ -396,7 +395,7 @@
       {
         "executes" : false,
         "heading" : "Codex Review",
-        "line" : 110,
+        "line" : 109,
         "lines" : [
           "Independent diff review from a different AI system. The user invokes",
           "`\/codex review` (gstack-shipped); cross-modal-review's job is to",
@@ -411,7 +410,7 @@
       {
         "executes" : true,
         "heading" : "Codex Review — steps",
-        "line" : 135,
+        "line" : 134,
         "lines" : [
           "When to recommend `\/codex review`:"
         ],
@@ -420,7 +419,7 @@
       {
         "executes" : true,
         "heading" : "Codex Review — steps 2",
-        "line" : 139,
+        "line" : 138,
         "lines" : [
           "use judgment to follow the Codex Review — steps 2 guidance:",
           "User decides what to act on. Cross-model agreement is signal, not",
@@ -431,7 +430,7 @@
       {
         "executes" : false,
         "heading" : "Adversarial Challenge",
-        "line" : 145,
+        "line" : 144,
         "lines" : [
           "Same shape, different prompt. Used on security-sensitive changes:",
           "the reviewer is asked to find injection vectors, race conditions,",
@@ -444,7 +443,7 @@
       {
         "executes" : false,
         "heading" : "Refusal routing",
-        "line" : 154,
+        "line" : 153,
         "lines" : [
           "Don't show the refusal to the user",
           "Don't announce the switch"
@@ -454,7 +453,7 @@
       {
         "executes" : true,
         "heading" : "Refusal routing — steps",
-        "line" : 159,
+        "line" : 158,
         "lines" : [
           "If the primary review model refuses:",
           "Switch silently to the next model in the chain (see",
@@ -465,7 +464,7 @@
       {
         "executes" : true,
         "heading" : "Refusal routing — steps 2",
-        "line" : 166,
+        "line" : 165,
         "lines" : [
           "If ALL models in the chain refuse, escalate to the user"
         ],
@@ -474,7 +473,7 @@
       {
         "executes" : false,
         "heading" : "Output format",
-        "line" : 170,
+        "line" : 169,
         "lines" : [
 
         ],
@@ -483,7 +482,7 @@
       {
         "executes" : false,
         "heading" : "Standard review",
-        "line" : 172,
+        "line" : 171,
         "lines" : [
           "codeblock:plain:Q3Jvc3MtTW9kYWwgUmV2aWV3Cj09PT09PT09PT09PT09PT09PQpSZXZpZXdlcjogIHttb2RlbCBuYW1lfQpDb250cmFjdDogIHtvcmlnaW5hdGluZyBza2lsbH0KVmVyZGljdDogICBQQVNTIHwgSVNTVUVTIEZPVU5ECgpGaW5kaW5nczoKLSB7ZmluZGluZyB3aXRoIGV2aWRlbmNlfQoKQWdyZWVtZW50IHdpdGggcHJpbWFyeToge1h9JQ=="
         ],
@@ -492,7 +491,7 @@
       {
         "executes" : false,
         "heading" : "Code review",
-        "line" : 187,
+        "line" : 186,
         "lines" : [
           "codeblock:plain:Q3Jvc3MtTW9kYWwgUmV2aWV3IChjb2RlKQo9PT09PT09PT09PT09PT09PT09PT09PT09PQpNb2RlOiAgICAgICAgICAgQ29kZXggUmV2aWV3IHwgQWR2ZXJzYXJpYWwgQ2hhbGxlbmdlCkZpbGVzIGNoYW5nZWQ6ICBOCkxpbmVzIGNoYW5nZWQ6ICArTiAvIC1OCgp7bW9kZS1zcGVjaWZpYyBvdXRwdXQgYWJvdmV9"
         ],
@@ -501,7 +500,7 @@
       {
         "executes" : false,
         "heading" : "User-sovereignty rule (Iron Law)",
-        "line" : 199,
+        "line" : 198,
         "lines" : [
           "Reviewer findings are INFORMATIONAL until the user explicitly approves",
           "each one. Do NOT incorporate reviewer recommendations into the work",
@@ -515,7 +514,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 208,
+        "line" : 207,
         "lines" : [
           "❌ Auto-applying reviewer suggestions without user approval",
           "❌ Showing model refusals to the user",
@@ -529,7 +528,7 @@
       {
         "executes" : true,
         "heading" : "Related skills",
-        "line" : 217,
+        "line" : 216,
         "lines" : [
 
         ],
@@ -538,7 +537,7 @@
       {
         "executes" : true,
         "heading" : "Related skills — steps",
-        "line" : 220,
+        "line" : 219,
         "lines" : [
           "gstack `\/codex` — the actual Codex CLI wrapper this skill hands off",
           "to for diff-review mode. Cross-modal-review knows WHEN to invoke;",
@@ -552,7 +551,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 230,
+        "line" : 229,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -599,16 +598,16 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 118,
+      "meridian_line" : 47,
       "swift_line" : 603
     },
     {
-      "meridian_line" : 94,
-      "swift_line" : 614
+      "meridian_line" : 118,
+      "swift_line" : 608
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 653
+      "meridian_line" : 93,
+      "swift_line" : 619
     },
     {
       "meridian_line" : 1,
@@ -616,7 +615,7 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 697
+      "swift_line" : 663
     },
     {
       "meridian_line" : 1,
@@ -624,7 +623,7 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 741
+      "swift_line" : 707
     },
     {
       "meridian_line" : 1,
@@ -632,7 +631,7 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 785
+      "swift_line" : 751
     },
     {
       "meridian_line" : 1,
@@ -640,7 +639,7 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 829
+      "swift_line" : 795
     },
     {
       "meridian_line" : 1,
@@ -648,11 +647,15 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 873
+      "swift_line" : 839
     },
     {
       "meridian_line" : 1,
       "swift_line" : 878
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 883
     }
   ],
   "tools_used" : [
@@ -660,24 +663,23 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
           "guidance" : "**Grade.** Model evaluates: did the output follow the Contract?\nPresent agreement \/ disagreement to the user. Never\nauto-apply the reviewer's suggestions\nFor diff review specifically, gstack ships a `\/codex` skill that wraps\nthe OpenAI Codex CLI. Two modes:\nWhen to recommend `\/codex review`:\nuse judgment to follow the Codex Review — steps 2 guidance:\nUser decides what to act on. Cross-model agreement is signal, not\npermission\nIf the primary review model refuses:\nSwitch silently to the next model in the chain (see\n`conventions\/cross-modal.yaml`)\nIf ALL models in the chain refuse, escalate to the user\ngstack `\/codex` — the actual Codex CLI wrapper this skill hands off\nto for diff-review mode. Cross-modal-review knows WHEN to invoke;\n\/codex knows HOW\n`skills\/testing\/SKILL.md` — runs the project test suite; complementary\nsignal for \"is this commit safe to land\"\n`skills\/conventions\/cross-modal.yaml` — review pairs + refusal routing",
-          "line" : 94,
+          "line" : 93,
           "scoped_tools" : [
             "page.get",
             "page.search",
             "shell.run"
           ],
           "text" : "follow the Phases — steps guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "cross-modal-review a input",

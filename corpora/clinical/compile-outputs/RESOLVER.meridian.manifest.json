@@ -1,0 +1,225 @@
+{
+  "constants" : {
+    "dose limit" : 2,
+    "observation window" : 14400,
+    "vitals threshold" : 100
+  },
+  "instances_required" : [
+    {
+      "kind" : "protocol",
+      "name" : "sepsis protocol"
+    },
+    {
+      "kind" : "protocol",
+      "name" : "anticoagulation protocol"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "granted",
+      "function" : "meridianDef_Consent_granted",
+      "kind" : "consent",
+      "line" : 32
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_MedicationOrder_cleared",
+      "kind" : "medication order",
+      "line" : 29
+    },
+    {
+      "adjective" : "contraindicated",
+      "function" : "meridianDef_MedicationOrder_contraindicated",
+      "kind" : "medication order",
+      "line" : 28
+    },
+    {
+      "adjective" : "high risk",
+      "function" : "meridianDef_Medication_highRisk",
+      "kind" : "medication",
+      "line" : 27
+    },
+    {
+      "adjective" : "active",
+      "function" : "meridianDef_Patient_active",
+      "kind" : "patient",
+      "line" : 33
+    },
+    {
+      "adjective" : "held",
+      "function" : "meridianDef_Patient_held",
+      "kind" : "patient",
+      "line" : 34
+    },
+    {
+      "adjective" : "monitored",
+      "function" : "meridianDef_Patient_monitored",
+      "kind" : "patient",
+      "line" : 30
+    },
+    {
+      "adjective" : "unmonitored",
+      "function" : "meridianDef_Patient_unmonitored",
+      "kind" : "patient",
+      "line" : 31
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_VitalSign_critical",
+      "kind" : "vital sign",
+      "line" : 25
+    },
+    {
+      "adjective" : "stable",
+      "function" : "meridianDef_VitalSign_stable",
+      "kind" : "vital sign",
+      "line" : 26
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a nurse",
+      "line" : 38,
+      "name" : "administration",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "medication.administer"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a protocol",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication",
+      "via" : "protocol.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a clinician",
+      "line" : 36,
+      "name" : "prescription",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "order.list"
+    }
+  ],
+  "meridian_skill" : {
+    "outline" : [
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 5,
+        "text" : "Dispatch table"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 8,
+        "text" : "Dispatch table — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 21,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 24,
+        "text" : "Workflow — steps"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Dispatch table",
+        "line" : 5,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Dispatch table — steps",
+        "line" : 8,
+        "lines" : [
+          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IGNhcHR1cmUgcGF0aWVudCBjb25zZW50IHwgY29uc2VudGNhcHR1cmUgfAp8IHJldmlldyBkaXNjaGFyZ2UgfCBkaXNjaGFyZ2VyZXZpZXcgfAp8IGNoZWNrIGRvc2UgY291bnQgfCBkb3NlY2hlY2sgfAp8IGFkbWluaXN0ZXIgbWVkaWNhdGlvbiB8IG1lZGljYXRpb25hZG1pbmlzdGVyIHwKfCByZW5kZXIgcHJvdG9jb2wgfCBwcm90b2NvbHJlbmRlciB8CnwgcnVuIHNoaWZ0IGhhbmRvZmYgfCBzaGlmdGhhbmRvZmYgfAp8IHRyaWFnZSBwYXRpZW50IHwgdHJpYWdlcGF0aWVudCB8CnwgbW9uaXRvciBwYXRpZW50IHZpdGFscyB8IHZpdGFsc21vbml0b3IgfA=="
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 21,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow — steps",
+        "line" : 24,
+        "lines" : [
+          "Look up the skill corresponding to the trigger phrase and emit the selected",
+          "skill id"
+        ],
+        "role" : "reference"
+      }
+    ]
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "administer",
+      "line" : 44,
+      "past_participle" : "administered",
+      "relation" : "administration",
+      "third_person" : "administers"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "prescribe",
+      "line" : 43,
+      "past_participle" : "prescribed",
+      "relation" : "prescription",
+      "third_person" : "prescribes"
+    }
+  ],
+  "source_files" : [
+    "RESOLVER.meri",
+    "clinical.merconfig"
+  ],
+  "source_map" : [
+
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "entry",
+      "swift_struct" : "Entry"
+    }
+  ]
+}

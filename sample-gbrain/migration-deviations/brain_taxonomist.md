@@ -4,7 +4,7 @@
 - Ported: `brain_taxonomist.meri`
 - Tier: 2 (light edits)
 - Similarity: 67%
-- Lines: 196 -> 230 (+88 / -54)
+- Lines: 196 -> 230 (+87 / -53)
 
 ## Frontmatter
 - Added: (none)
@@ -17,32 +17,31 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L44 `When to Consult (MANDATORY)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L87 `Step 3: For books — determine sub-category`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L138 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L163 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L47 `When to Consult (MANDATORY)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L90 `Step 3: For books — determine sub-category`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L141 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L166 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
-- Sections inert total: 13/15 (87% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 12/14 (86% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
-- Inert categories: reference-documentation=12, template=1
+- Inert categories: reference-documentation=11, template=1
 - Judgment: 1 blocks, 0 lines
 
 ### Inert section details
 - L4 `Purpose`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L14 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L26 `Critical: this skill reads the ACTIVE schema pack as data`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L44 `When to Consult (MANDATORY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L59 `Step 1: Identify primary subject type`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L73 `Step 2: Look up the directory for that type in the active pack`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L87 `Step 3: For books — determine sub-category`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L101 `Step 5: Validate before writing`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L122 `Periodic Drift Detection`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L138 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L163 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L178 `Hard Rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L29 `Critical: this skill reads the ACTIVE schema pack as data`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L47 `When to Consult (MANDATORY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L62 `Step 1: Identify primary subject type`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L76 `Step 2: Look up the directory for that type in the active pack`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L90 `Step 3: For books — determine sub-category`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L104 `Step 5: Validate before writing`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L141 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L166 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L181 `Hard Rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L196 `v1.0.0 — gbrain v0.39.0.0`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
@@ -50,7 +49,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 ```diff
 --- original-skills/brain-taxonomist/SKILL.md
 +++ skills/brain_taxonomist.meri
-@@ -21,25 +21,37 @@
+@@ -21,25 +21,40 @@
  
  # brain-taxonomist
  
@@ -77,17 +76,20 @@ These sections were made non-executable in the port and should be reviewed as mi
  - The decision is reproducible: invoking brain-taxonomist twice on the same content produces the same recommended path.
  - Ambiguous cases surface to the user via `skills/ask-user/` rather than silently picking a default.
  - Per-source overrides via `--source <id>` are honored — multi-brain users (Persona B) get a different recommendation per source if their packs diverge.
++
++### Contract — steps (( role: reference ))
++
++> This skill guarantees:
++- Every new page is filed at the path determined by the ACTIVE schema pack — never against a hardcoded directory table baked into this skill.
++
++### Contract — steps 2 (( role: reference ))
++
  - When no matching `page_types[]` entry exists in the active pack, the skill signals to EIIRP Phase 3 (SCHEMA CHECK) rather than picking the closest-fitting fallback.
  
 -## Critical: this skill reads the ACTIVE schema pack as data
 -
 -`brain-taxonomist` has NO hardcoded directory table. Every decision is
 -driven by `gbrain schema show --json`. This means:
-+
-+### Contract — steps (( role: reference ))
-+
-+> This skill guarantees:
-+- Every new page is filed at the path determined by the ACTIVE schema pack — never against a hardcoded directory table baked into this skill.
 +## Critical: this skill reads the ACTIVE schema pack as data (( role: reference ))
 +
 +This is the single-source-of-truth principle (D9 from the v0.39 plan-eng-review).
@@ -100,7 +102,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  - A user who runs `gbrain schema use gbrain-recommended` gets the full
    recommended directory set (deal, meeting, concept, project, source,
    daily, personal, civic, original, place, trip, conversation, writing,
-@@ -49,9 +61,7 @@
+@@ -49,9 +64,7 @@
  - Per-source overrides (tier 3 in the 7-tier resolution chain) are honored
    when `--source <id>` is passed to brain-taxonomist.
  
@@ -111,7 +113,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Run the taxonomist check before writing to the brain in these cases:
  
-@@ -64,31 +74,37 @@
+@@ -64,31 +77,37 @@
  - Appending to a Timeline section
  - Meeting entity propagation to existing pages
  
@@ -162,7 +164,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  The `gbrain-recommended` pack treats books as `media/books/<category>/<slug>.md`
  where category is one of: psychology, philosophy, spirituality, business,
-@@ -102,17 +118,20 @@
+@@ -102,17 +121,20 @@
  - no author name unless disambiguation is needed
  - match the canonical path prefix exactly (no leading slash)
  
@@ -188,34 +190,26 @@ These sections were made non-executable in the port and should be reviewed as mi
  ## Integration with Other Skills
  
  - `eiirp` — calls this skill as Phase 2 TAXONOMY for every output in its inventory.
-@@ -120,7 +139,13 @@
- - `repo-architecture` — delegates the filing decision to this skill.
- - `book-mirror` — after generating a mirror, files it via brain-taxonomist.
+@@ -122,6 +144,9 @@
  
--## Periodic Drift Detection
-+## Periodic Drift Detection (( role: reference ))
-+
-+When `schema_pack_consistency` warns at >10% untyped, run the EIIRP
-+Phase 3 SCHEMA CHECK flow to surface candidate types via `schema detect`.
-+
-+
-+### Periodic Drift Detection — steps
+ ## Periodic Drift Detection
  
++
++### Periodic Drift Detection — steps (( role: reference ))
++
  ```bash
  # What pages have no type matching the active pack?
-@@ -130,10 +155,7 @@
- gbrain doctor --json | jq '.checks[] | select(.name == "schema_pack_consistency")'
- ```
+ gbrain schema review-orphans --json
+@@ -133,7 +158,7 @@
+ When `schema_pack_consistency` warns at >10% untyped, run the EIIRP
+ Phase 3 SCHEMA CHECK flow to surface candidate types via `schema detect`.
  
--When `schema_pack_consistency` warns at >10% untyped, run the EIIRP
--Phase 3 SCHEMA CHECK flow to surface candidate types via `schema detect`.
--
 -## Output Format
 +## Output Format (( role: template ))
  
  Advisory: a single recommendation block plus a one-line reasoning trail.
  
-@@ -158,39 +180,51 @@
+@@ -158,39 +183,48 @@
  `gbrain schema review-candidates`.
  ```
  
@@ -249,21 +243,21 @@ These sections were made non-executable in the port and should be reviewed as mi
  - **Per-source flag is first-class.** Pass `--source <id>` to every CLI
    call when working with a non-default source.
 -- **Confidence-floor honor.** EIIRP's Phase 3 produces suggestions with
-+
-+### Hard Rules — steps (( role: reference ))
-+
-+- Every decision goes
-+  through `gbrain schema show --json`. The active pack is canonical.
-+
-+### Hard Rules — steps 2 (( role: reference ))
-+
-+- EIIRP's Phase 3 produces suggestions with
-   confidence < 0.6 that brain-taxonomist must surface to the user rather
-   than auto-apply. Don't silently promote a low-confidence schema delta.
- 
+-  confidence < 0.6 that brain-taxonomist must surface to the user rather
+-  than auto-apply. Don't silently promote a low-confidence schema delta.
+-
 -## Changelog
 -
 -### v1.0.0 — gbrain v0.39.0.0
++
++### Hard Rules — steps (( role: reference ))
++
++- Never hardcode a directory table in this skill. Every decision goes through `gbrain schema show --json`. The active pack is canonical.
++
++### Hard Rules — steps 2 (( role: reference ))
++
++- EIIRP's Phase 3 produces suggestions with confidence < 0.6 that brain-taxonomist must surface to the user rather than auto-apply. Don't silently promote a low-confidence schema delta.
++
 +## Changelog (( role: reference ))
 +
 +### v1.0.0 — gbrain v0.39.0.0 (( role: reference ))

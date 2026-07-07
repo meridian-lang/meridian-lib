@@ -4,7 +4,7 @@
 - Ported: `setup.meri`
 - Tier: 2 (light edits)
 - Similarity: 65%
-- Lines: 580 -> 693 (+280 / -167)
+- Lines: 580 -> 693 (+278 / -165)
 
 ## Frontmatter
 - Added: (none)
@@ -352,7 +352,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
     ```bash
     gbrain extract links --source db --dry-run | head -20    # preview
-@@ -249,14 +295,10 @@
+@@ -249,12 +295,8 @@
     well-connected entities higher. Idempotent — safe to re-run anytime.
     Supports `--since YYYY-MM-DD` for incremental runs on huge brains.
  
@@ -362,15 +362,11 @@ These sections were made non-executable in the port and should be reviewed as mi
 -   images, PDFs, audio):
 -   > "You have N binary files (X GB) in your brain repo. Want to move them to cloud
 -   > storage? Your git repo will drop from X GB to Y MB. All links keep working."
--
--   If the user agrees, configure storage and run migration:
 +
 +### Phase C: First Import — steps 3
-+
-+> If the user agrees, configure storage and run migration:
+ 
+    If the user agrees, configure storage and run migration:
     ```bash
-    # Configure storage backend (Supabase Storage recommended)
-    gbrain config set storage.backend supabase
 @@ -274,33 +316,13 @@
     small text/PDFs stay in git, large/media files go to cloud with `.redirect.yaml`
     pointers. Files >= 100 MB use TUS resumable upload for reliability.
@@ -608,15 +604,14 @@ These sections were made non-executable in the port and should be reviewed as mi
  > new version worth upgrading to — including new skills and schema recommendations.
  > You'll always be asked before anything is installed."
  
--If they agree:
 +2. Register daily cron (see GBRAIN_SKILLPACK.md Section 17)
 +
 +If already configured or user declines, skip.
 +
 +
-+### Phase G: Auto-Update Check (if not already configured) — steps
++### Phase G: Auto-Update Check (if not already configured) — steps (( role: reference ))
 +
-+> If they agree:
+ If they agree:
  1. Test: `gbrain check-update --json`
 -2. Register daily cron (see GBRAIN_SKILLPACK.md Section 17)
 -
@@ -715,19 +710,12 @@ These sections were made non-executable in the port and should be reviewed as mi
  >
  > **Ready to populate your brain?**"
  
--If the user says yes (or anything affirmative):
--→ **Load and execute `skills/cold-start/SKILL.md`** immediately. Do not
--just print a reference — actually run the cold-start skill.
--
--If the user says no or wants to stop:
--→ Record in `~/.gbrain/cold-start-state.json`:
- ```json
- {"deferred": true, "deferred_at": "ISO-timestamp", "phases_completed": []}
- ```
- → Tell them: "You can run cold-start anytime by asking me to 'fill my brain'
- or 'cold start'."
- 
--## Schema State Tracking
++```json
++{"deferred": true, "deferred_at": "ISO-timestamp", "phases_completed": []}
++```
++→ Tell them: "You can run cold-start anytime by asking me to 'fill my brain'
++or 'cold start'."
++
 +
 +### Phase J: Cold Start — Populate Your Brain (AUTOMATIC) — steps (( role: reference ))
 +
@@ -738,12 +726,20 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
 +### Phase J: Cold Start — Populate Your Brain (AUTOMATIC) — steps 2 (( role: reference ))
 +
-+> If the user says yes (or anything affirmative):
+ If the user says yes (or anything affirmative):
+-→ **Load and execute `skills/cold-start/SKILL.md`** immediately. Do not
 +→ Load and execute `skills/cold-start/SKILL.md` immediately. Do not
-+just print a reference — actually run the cold-start skill.
-+
-+> If the user says no or wants to stop:
-+→ Record in `~/.gbrain/cold-start-state.json`:
+ just print a reference — actually run the cold-start skill.
+ 
+ If the user says no or wants to stop:
+ → Record in `~/.gbrain/cold-start-state.json`:
+-```json
+-{"deferred": true, "deferred_at": "ISO-timestamp", "phases_completed": []}
+-```
+-→ Tell them: "You can run cold-start anytime by asking me to 'fill my brain'
+-or 'cold start'."
+-
+-## Schema State Tracking
 +## Schema State Tracking (( role: reference ))
 +
 +- `schema_version_applied`: current gbrain version

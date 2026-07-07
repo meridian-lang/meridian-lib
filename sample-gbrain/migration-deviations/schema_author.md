@@ -4,7 +4,7 @@
 - Ported: `schema_author.meri`
 - Tier: 2 (light edits)
 - Similarity: 83%
-- Lines: 306 -> 330 (+66 / -42)
+- Lines: 306 -> 330 (+65 / -41)
 
 ## Frontmatter
 - Added: (none)
@@ -18,7 +18,6 @@
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
 - L23 `Convention`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L29 `When to invoke`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L42 `Tutorial + vision`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L82 `Phase 3 — Propose (what types should the pack add?)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L98 `Phase 4 — Apply (mutate the pack)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
@@ -29,17 +28,16 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L261 `Failure modes`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
-- Sections inert total: 16/16 (100% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 15/16 (94% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
-- Inert categories: reference-documentation=15, template=1
+- Inert categories: reference-documentation=14, template=1
 - Judgment: 0 blocks, 0 lines
 
 ### Inert section details
 - L4 `Non-goals (use these other skills instead)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L23 `Convention`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L29 `When to invoke`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L42 `Tutorial + vision`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L49 `Phase 1 — Brain (know which pack is active)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L62 `Phase 2 — Assess (what does the current pack cover?)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
@@ -59,7 +57,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 ```diff
 --- original-skills/schema-author/SKILL.md
 +++ skills/schema_author.meri
-@@ -57,29 +57,32 @@
+@@ -57,23 +57,26 @@
  
  # schema-author — evolve your schema pack
  
@@ -97,13 +95,6 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  > **Convention:** see [conventions/brain-first.md](../conventions/brain-first.md) for the lookup chain (search → query → get_page → external).
  
- > **Convention:** see [conventions/schema-evolution.md](../conventions/schema-evolution.md) for "when to add a type vs alias vs prefix" — the heuristic.
- 
--## When to invoke
-+## When to invoke (( role: reference ))
- 
- Invoke when the user (or a sibling skill) says any of:
- - "Add a `researcher` type to my schema"
 @@ -92,24 +95,27 @@
  DON'T invoke for "where does THIS note go" (use brain-taxonomist) or
  "who knows about X" (use expert-routing / `gbrain whoknows`).

@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum GbrainUpgrade {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct GbrainUpgradeInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -598,19 +598,8 @@ public struct GbrainUpgradeInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "GbrainUpgradeInput", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L57:C0") {
-            // L57
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain config get self_upgrade.mode   # auto | notify | off  (default: notify)"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.0:L57:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.1:L88:C0") {
-            // L88
+        if __meridianShouldRun("progress:0.0:L84:C0") {
+            // L84
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
@@ -618,16 +607,16 @@ public struct GbrainUpgradeInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.1:L88:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.0:L84:C0", state: state.snapshot())
         }
-        // L95
-        let __meridianProseResults_L95 = try await runtime.executeProsePlan(
+        // L91
+        let __meridianProseResults_L91 = try await runtime.executeProsePlan(
             prose: "follow the mode = notify (default) — steps 2 guidance",
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
-            guidance: "If `changelog_diff` is empty (network blip / no notes), ask without the bullets\nrather than blocking — the version numbers alone are enough to decide\nYes → `gbrain self-upgrade`\nAlways → `gbrain config set self_upgrade.mode auto` then `gbrain self-upgrade`\nNever → `gbrain config set self_upgrade.mode off`"
+            guidance: "If `update_available` is `true`, tell the operator WHAT they'll get before\nasking. The JSON includes `changelog_diff` (CHANGELOG entries between their\nversion and the new one) and `release_url`. Summarize it into 3-5 plain bullets\nof what's new — do NOT paste the raw diff. Then present the 4-option question:\nIf `changelog_diff` is empty (network blip / no notes), ask without the bullets\nrather than blocking — the version numbers alone are enough to decide\nYes → `gbrain self-upgrade`\nAlways → `gbrain config set self_upgrade.mode auto` then `gbrain self-upgrade`\nNever → `gbrain config set self_upgrade.mode off`"
         )
-        for (__key, __value) in __meridianProseResults_L95 {
+        for (__key, __value) in __meridianProseResults_L91 {
             state.bind(__key, __value)
         }
 

@@ -1,0 +1,449 @@
+{
+  "constants" : {
+    "dose limit" : 2,
+    "observation window" : 14400,
+    "vitals threshold" : 100
+  },
+  "instances_required" : [
+    {
+      "kind" : "protocol",
+      "name" : "sepsis protocol"
+    },
+    {
+      "kind" : "protocol",
+      "name" : "anticoagulation protocol"
+    }
+  ],
+  "kinds_used" : [
+    "Clinician",
+    "Patient"
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "granted",
+      "function" : "meridianDef_Consent_granted",
+      "kind" : "consent",
+      "line" : 32
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_MedicationOrder_cleared",
+      "kind" : "medication order",
+      "line" : 29
+    },
+    {
+      "adjective" : "contraindicated",
+      "function" : "meridianDef_MedicationOrder_contraindicated",
+      "kind" : "medication order",
+      "line" : 28
+    },
+    {
+      "adjective" : "high risk",
+      "function" : "meridianDef_Medication_highRisk",
+      "kind" : "medication",
+      "line" : 27
+    },
+    {
+      "adjective" : "active",
+      "function" : "meridianDef_Patient_active",
+      "kind" : "patient",
+      "line" : 33
+    },
+    {
+      "adjective" : "held",
+      "function" : "meridianDef_Patient_held",
+      "kind" : "patient",
+      "line" : 34
+    },
+    {
+      "adjective" : "monitored",
+      "function" : "meridianDef_Patient_monitored",
+      "kind" : "patient",
+      "line" : 30
+    },
+    {
+      "adjective" : "unmonitored",
+      "function" : "meridianDef_Patient_unmonitored",
+      "kind" : "patient",
+      "line" : 31
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_VitalSign_critical",
+      "kind" : "vital sign",
+      "line" : 25
+    },
+    {
+      "adjective" : "stable",
+      "function" : "meridianDef_VitalSign_stable",
+      "kind" : "vital sign",
+      "line" : 26
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a nurse",
+      "line" : 38,
+      "name" : "administration",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "medication.administer"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a protocol",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication",
+      "via" : "protocol.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a clinician",
+      "line" : 36,
+      "name" : "prescription",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "order.list"
+    }
+  ],
+  "meridian_rules" : [
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "invariant",
+      "source" : {
+        "file" : "dischargereview.meri",
+        "line" : 35
+      },
+      "text" : "A patient with status \"held\" must not be discharged"
+    },
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "permission",
+      "source" : {
+        "file" : "dischargereview.meri",
+        "line" : 36
+      },
+      "text" : "A clinician with role \"attending\" may discharge a patient with an active hold"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Block a discharge while a hold is active, but let an attending override that hold when their own judgment says the patient is genuinely ready. Use this at the actual discharge decision, not earlier in the stay when a hold first gets placed.",
+    "name" : "discharge review",
+    "outline" : [
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 19,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 27,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 31,
+        "text" : "Rules"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 33,
+        "text" : "Rules — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 38,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 46,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 54,
+        "text" : "When NOT to use this skill"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 56,
+        "text" : "When NOT to use this skill — steps"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 62,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 20,
+        "text" : "Input"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 22,
+        "text" : "Output"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 24,
+        "text" : "Side effect"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 41,
+        "text" : "Note"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 43,
+        "text" : "Note"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 44,
+        "text" : "Emit"
+      }
+    ],
+    "parameters" : "patient, clinician",
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 19,
+        "lines" : [
+          "Input: a patient being considered for discharge and the clinician",
+          "reviewing it",
+          "Output: either a completed discharge, a block on an active hold, or an",
+          "attending-overridden discharge",
+          "Side effect: an override is logged against the attending who made it,",
+          "distinct from an ordinary discharge with no hold in play"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 27,
+        "lines" : [
+          "\"review discharge\"",
+          "\"discharge patient\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Rules",
+        "line" : 31,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Rules — steps",
+        "line" : 33,
+        "lines" : [
+          "A patient with status \"held\" must not be discharged",
+          "A clinician with role \"attending\" may discharge a patient with an active hold"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 38,
+        "lines" : [
+          "if the patient's status is \"held\",",
+          "override a hold on a medication order",
+          "Note: \"hold overridden by attending, discharge may proceed\"",
+          "if not the patient's status is \"held\",",
+          "Note: \"no active hold, discharge proceeds normally\"",
+          "Emit: \"discharge review pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 46,
+        "lines" : [
+          "Don't let a nurse or resident override a hold — the override path exists",
+          "for an attending's own sign-off, not for whoever happens to be at the",
+          "bedside",
+          "Don't treat an override as blanket permission to skip future holds on",
+          "the same patient. Each hold gets its own review; overriding one doesn't",
+          "pre-clear the next"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill",
+        "line" : 54,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "When NOT to use this skill — steps",
+        "line" : 56,
+        "lines" : [
+          "Use `triage patient` earlier in the stay when the question is severity,",
+          "not discharge readiness — a hold decision and a triage decision answer",
+          "different questions at different points in the stay"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 62,
+        "lines" : [
+          "The receipt states whether the discharge went through cleanly, was",
+          "blocked by an active hold, or proceeded only after an attending's",
+          "override"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"review discharge\"\n\"discharge patient\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "administer",
+      "line" : 44,
+      "past_participle" : "administered",
+      "relation" : "administration",
+      "third_person" : "administers"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "prescribe",
+      "line" : 43,
+      "past_participle" : "prescribed",
+      "relation" : "prescription",
+      "third_person" : "prescribes"
+    }
+  ],
+  "source_files" : [
+    "dischargereview.meri",
+    "clinical.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 35,
+      "swift_line" : 421
+    },
+    {
+      "meridian_line" : 39,
+      "swift_line" : 425
+    },
+    {
+      "meridian_line" : 72,
+      "swift_line" : 428
+    },
+    {
+      "meridian_line" : 41,
+      "swift_line" : 440
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 451
+    },
+    {
+      "meridian_line" : 43,
+      "swift_line" : 454
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 466
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 505
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 510
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 550
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 555
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Patient",
+          "name" : "patient"
+        },
+        {
+          "kind" : "Clinician",
+          "name" : "clinician"
+        }
+      ],
+      "source_name" : "discharge review a patient a clinician",
+      "swift_struct" : "DischargeReviewPatientClinician"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when reviewDischarge fires",
+      "swift_struct" : "WhenReviewdischargeFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when dischargePatient fires",
+      "swift_struct" : "WhenDischargepatientFires"
+    }
+  ]
+}

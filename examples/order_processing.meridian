@@ -13,7 +13,7 @@ A customer must not place an order whose total amount is more than their credit 
 
 An order with total amount more than the high value threshold must be approved by an account manager before fulfillment.
 
-When an order has been on hold for more than 7 days, escalate the order to the account manager of the customer who placed the order.
+When an order is flagged as stale, escalate the order to the account manager of the customer who placed the order.
 
 # Workflows
 
@@ -28,7 +28,7 @@ To leniently sync analytics for an order placed by a customer:
   record analytics for the order placed by the customer.
 
 # Trigger action workflow — referenced by the rule
-# "When an order has been on hold for more than 7 days, escalate the order …"
+# "When an order is flagged as stale, escalate the order …"
 
 To escalate an order to an account manager of a customer:
   emit `order.escalated` { order_id: the order's id, customer_id: the customer's id }.

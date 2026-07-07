@@ -45,36 +45,6 @@ private func meridianRegexMatches(_ v: Value?, _ pattern: String) -> Bool {
     return re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
 }
 
-private func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
-}
-
-private func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
-}
-
-private func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
-}
-
-private func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
-}
-
-private func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.isEmpty(__subject.member("body"))
-}
-
-private func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
-    let __subject = __subjectValue ?? .null
-    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
-}
-
 public enum Setup {
 
 // MARK: - Domain types
@@ -565,6 +535,36 @@ public struct Constants: Sendable {
 
 private static let constants = Constants()
 
+private static func meridianDef_Job_broken(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("failed"))
+}
+
+private static func meridianDef_Job_finished(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("state"), .string("succeeded"))
+}
+
+private static func meridianDef_Page_orphan(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("inboundLinks"))
+}
+
+private static func meridianDef_Page_stale(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("compiledTruth"))
+}
+
+private static func meridianDef_Page_unwritten(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.isEmpty(__subject.member("body"))
+}
+
+private static func meridianDef_Page_urgent(_ __subjectValue: Value?) -> Bool {
+    let __subject = __subjectValue ?? .null
+    return MeridianComparison.eq(__subject.member("priority"), .string("p0"))
+}
+
 public struct SetupInput: MeridianWorkflow {
     public let runtime: Runtime
     public let input: Input
@@ -958,19 +958,7 @@ public struct SetupInput: MeridianWorkflow {
 
             try await runtime.checkpoint(label: "progress:0.31:L483:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.32:L518:C0") {
-            // L518
-            // Test
-            _ = try await runtime.invoke(
-                tool: "shell.run",
-                args: [
-                    "command": .string("gbrain check-update --json"),
-                ]
-            )
-
-            try await runtime.checkpoint(label: "progress:0.32:L518:C0", state: state.snapshot())
-        }
-        if __meridianShouldRun("progress:0.33:L546:C0") {
+        if __meridianShouldRun("progress:0.32:L546:C0") {
             // L546
             // Read  Section 18 for the full reference. Key points
             _ = try await runtime.invoke(
@@ -980,9 +968,9 @@ public struct SetupInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.33:L546:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.32:L546:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.34:L588:C0") {
+        if __meridianShouldRun("progress:0.33:L588:C0") {
             // L588
             // Read
             _ = try await runtime.invoke(
@@ -992,9 +980,9 @@ public struct SetupInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.34:L588:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.33:L588:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.35:L642:C0") {
+        if __meridianShouldRun("progress:0.34:L642:C0") {
             // L642
             // : directories the user created
             _ = try await runtime.invoke(
@@ -1004,9 +992,9 @@ public struct SetupInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.35:L642:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.34:L642:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.36:L643:C0") {
+        if __meridianShouldRun("progress:0.35:L643:C0") {
             // L643
             // : directories the user explicitly skipped
             _ = try await runtime.invoke(
@@ -1016,9 +1004,9 @@ public struct SetupInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.36:L643:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.35:L643:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.37:L644:C0") {
+        if __meridianShouldRun("progress:0.36:L644:C0") {
             // L644
             // : directories the user added that aren't in the recommended schema
             _ = try await runtime.invoke(
@@ -1028,7 +1016,7 @@ public struct SetupInput: MeridianWorkflow {
                 ]
             )
 
-            try await runtime.checkpoint(label: "progress:0.37:L644:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.36:L644:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

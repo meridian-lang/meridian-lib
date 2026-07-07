@@ -544,16 +544,8 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
           "guidance" : "An LLM-judge brain-quality eval fails on quotability or actionability for\nan article page\ncodeblock:bash:IyAxLiBGaW5kIGNhbmRpZGF0ZSBwYWdlcwpnYnJhaW4gcXVlcnkgIm5lZWRzX2VucmljaG1lbnQ6IHRydWUgdHlwZTphcnRpY2xlIiAtLWxpbWl0IDUwCgojIDIuIEZvciBlYWNoIGNhbmRpZGF0ZSwgcmVhZCB0aGUgcGFnZQpnYnJhaW4gZ2V0IG1lZGlhL2FydGljbGVzLzxzbHVnPgoKIyAzLiBFbnJpY2ggdmlhIHRoZSBhZ2VudCdzIExMTSAoU29ubmV0IGJ5IGRlZmF1bHQ7IE9wdXMgZm9yIGhpZ2gtdmFsdWUpCiMgICAgVGhlIGFnZW50IHJlYWRzIHRoZSByYXcgY29udGVudCArIGJyYWluIGNvbnRleHQgKyB3cml0ZXMgdGhlIHN0cnVjdHVyZWQgcGFnZS4KCiMgNC4gV3JpdGUgdGhlIGVucmljaGVkIHBhZ2UKIyAgICBVc2UgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbiB3aXRoIHRoZSBuZXcgc3RydWN0dXJlZCBtYXJrZG93biBib2R5LgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzCiMgICAgRm9yIGV2ZXJ5IHBlcnNvbi9jb21wYW55IG1lbnRpb25lZCwgYWRkIGEgdGltZWxpbmUgYmFjay1saW5rLg==\n✅ `## Executive Summary` (2-3 sentences)\n✅ `## Quotable Lines` with ≥3 verbatim quotes (literal quotes, not paraphrase)\n✅ `## Key Insights` with ≥3 bullets (insights, not topic labels)\ntable:decision:fCBNb2RlbCB8IFVzZSB3aGVuIHwgUXVvdGUgYWNjdXJhY3kgfAp8LS0tLS0tLXwtLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgU29ubmV0IChkZWZhdWx0KSB8IEJ1bGsgZW5yaWNobWVudCwgbW9zdCBhcnRpY2xlcyB8IEdvb2Qg4oCUIG9jY2FzaW9uYWxseSBwYXJhcGhyYXNlcyB8CnwgT3B1cyB8IEhpZ2gtdmFsdWUgY29udGVudCwgb3JpZ2luYWwtdGhpbmtpbmcgcGllY2VzLCBsb25ncmVhZHMgfCBFeGNlbGxlbnQg4oCUIHJlc3BlY3RzICJ2ZXJiYXRpbSIgaW5zdHJ1Y3Rpb24gfA==\nuse judgment to follow the Model selection — steps 2 guidance:\nRule: for bulk enrichment, do a Sonnet draft pass and spot-check 5 with\nthe LLM-judge brain-quality eval. If quotes are paraphrased, switch to\nOpus for that batch\nNEVER use `[[wiki-links]]` — they don't render on GitHub\n`skills\/media-ingest\/SKILL.md` — creates the raw article pages this skill enriches\n`skills\/idea-ingest\/SKILL.md` — link\/article ingestion with author people-page enforcement\n`skills\/conventions\/quality.md` — citation + back-link rules",
           "line" : 57,
           "scoped_tools" : [
@@ -578,6 +570,13 @@
             "verify"
           ],
           "text" : "follow the When to invoke — steps guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "article-enrichment a input",

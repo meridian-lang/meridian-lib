@@ -15,6 +15,8 @@ triggers:
 ## Close sequence
 fetch unpaid invoices.
 Check: no invoices whose balance is more than 0.
+fetch open orders.
+Check: no orders whose lifecycle is "blocked".
 close the accounting period.
 Publish: "accounting period closed".
 

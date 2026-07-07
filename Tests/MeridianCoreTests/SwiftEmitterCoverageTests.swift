@@ -29,6 +29,39 @@ struct SwiftEmitterExprCoverageTests {
         #expect(e.emitExpr(.comparison(lhs, .oneOf, rhs)).contains("contains"))
     }
 
+    /// Regression for the "1D output invariant" shape (`every emitted <noun>
+    /// contains "<substring>".`), which lowers to a `.comparison` whose LHS is
+    /// a bound state identifier (`Value?`), not a literal. `emitExpr` must
+    /// route `.contains`/`.startsWith`/`.endsWith` through `?.description ??
+    /// ""` on any operand that reads from state — calling `.contains`/
+    /// `.hasPrefix`/`.hasSuffix` directly on `state.get(...)` (`Value?`) does
+    /// not type-check (shipped broken in `incident/postmortem_render`,
+    /// `etl/quality_gate`, `governance/access_matrix`/`policy_audit` — see
+    /// IMPLEMENTATION_LOG.md). `.oneOf` needs the analogous `?? .null` on its
+    /// needle when the needle reads from state.
+    @Test("string prefix / suffix / membership comparisons against a bound state identifier")
+    func stringOpsAgainstStateIdentifier() {
+        let lhs = IRExpression.identifierRef(name: "report")
+        let rhs = IRExpression.literal(.string("summary"))
+
+        let contains = e.emitExpr(.comparison(lhs, .contains, rhs))
+        #expect(contains.contains("?.description ?? \"\""))
+        #expect(!contains.contains("(state.get(\"report\")).contains"))
+
+        let starts = e.emitExpr(.comparison(lhs, .startsWith, rhs))
+        #expect(starts.contains("?.description ?? \"\""))
+        #expect(!starts.contains("(state.get(\"report\")).hasPrefix"))
+
+        let ends = e.emitExpr(.comparison(lhs, .endsWith, rhs))
+        #expect(ends.contains("?.description ?? \"\""))
+        #expect(!ends.contains("(state.get(\"report\")).hasSuffix"))
+
+        // `.oneOf`'s needle (lhs here) reads from state too — needs `?? .null`
+        // rather than being passed straight into `Array<Value>.contains`.
+        let oneOf = e.emitExpr(.comparison(lhs, .oneOf, rhs))
+        #expect(oneOf.contains("?? .null"))
+    }
+
     @Test("env var and now in plain context")
     func envAndNow() {
         #expect(e.emitExpr(.envVar(name: "HOME")).contains("ProcessInfo.processInfo.environment"))
@@ -190,6 +223,53 @@ struct SwiftEmitterExprCoverageTests {
         let out = SwiftEmitter(options: .init(emitSourceLineComments: false))
             .emitFile(workflows: [callee, caller], domainDecl: domain)
         #expect(out.contains("coerce(to: Order.self)"))
+    }
+
+    @Test("declared multi-word parameter kinds preserve Swift-cased IR names")
+    func declaredMultiWordParameterKindPreservesCasing() {
+        let domain = SwiftEmitter.DomainDecl(
+            kinds: [.init(name: "pull request", parent: "thing", ownProperties: [], inheritedProperties: [])],
+            enumerations: []
+        )
+        let callee = IRWorkflow(
+            name: "plan for a pull request",
+            parameters: [IRParameter(name: "pullRequest", kind: KindRef("PullRequest"))],
+            body: IRBlock(statements: [.complete(CompleteIR(reason: nil))]),
+            explicitStructName: "PlanPullRequest"
+        )
+        let caller = IRWorkflow(
+            name: "triage a pull request",
+            parameters: [IRParameter(name: "pullRequest", kind: KindRef("PullRequest"))],
+            body: IRBlock(statements: [
+                .invoke(InvokeIR(
+                    toolID: "workflow:PlanPullRequest",
+                    arguments: [InvokeArg("pullRequest", .identifierRef(name: "pullRequest"))]
+                )),
+            ]),
+            explicitStructName: "TriagePullRequest"
+        )
+        let out = SwiftEmitter(options: .init(emitSourceLineComments: false))
+            .emitFile(workflows: [callee, caller], domainDecl: domain)
+
+        #expect(out.contains("public let pullRequest: PullRequest"), Comment(rawValue: out))
+        #expect(out.contains("public init(runtime: Runtime, pullRequest: PullRequest)"), Comment(rawValue: out))
+        #expect(out.contains("PlanPullRequest(runtime: runtime, pullRequest: pullRequest).run()"), Comment(rawValue: out))
+        #expect(!out.contains("pullRequest: Value"), Comment(rawValue: out))
+        #expect(!out.contains("Pullrequest"), Comment(rawValue: out))
+    }
+
+    @Test("parameter kind resolver accepts natural and Swift-cased names")
+    func parameterKindResolverForms() {
+        let emitter = SwiftEmitter()
+        let declared: Set<String> = ["PullRequest"]
+
+        #expect(emitter.resolveParameterKind("PullRequest", declaredKinds: declared) == "PullRequest")
+        #expect(emitter.resolveParameterKind("pull request", declaredKinds: declared) == "PullRequest")
+        #expect(emitter.resolveParameterKind("ci repair", declaredKinds: declared) == "Value")
+        #expect(emitter.resolveParameterKind("PullRequest", declaredKinds: []) == "PullRequest")
+        #expect(emitter.resolveParameterKind("pull request", declaredKinds: []) == "PullRequest")
+        #expect(emitter.resolveParameterKind("_Synthetic", declaredKinds: []) == "_Synthetic")
+        #expect(emitter.resolveParameterKind("", declaredKinds: []) == "")
     }
 
     @Test("workflow invoke coerces bare identifier arguments to typed kinds")

@@ -46,9 +46,7 @@ This skill guarantees:
 
 ### Contract — steps (( role: reference ))
 
-Every mention of a person or company with a brain page MUST create a back-link
-FROM that entity's page TO the page mentioning them. An unlinked mention is a
-broken brain. See `skills/_brain-filing-rules.md` for format.
+Every mention of a person or company with a brain page MUST create a back-link FROM that entity's page TO the page mentioning them. An unlinked mention is a broken brain. See `skills/_brain-filing-rules.md` for format.
 
 ## Philosophy (( role: reference ))
 
@@ -56,9 +54,12 @@ A brain page should read like an intelligence dossier, not a LinkedIn scrape.
 Facts are table stakes. Texture is the value -- what do they believe, what are
 they building, what makes them tick, where are they headed.
 
-## Citation Requirements (MANDATORY) (( role: reference ))
+## Citation Requirements (MANDATORY)
 
 > **Convention:** see `skills/conventions/quality.md` for citation formats and source precedence.
+
+
+### Citation Requirements (MANDATORY) — steps
 
 When sources conflict, note the contradiction with both citations.
 

@@ -1,0 +1,316 @@
+{
+  "constants" : {
+    "batch size threshold" : 100000,
+    "freshness sla" : 86400,
+    "retry budget" : 3
+  },
+  "instances_required" : [
+    {
+      "kind" : "sink",
+      "name" : "warehouse sink"
+    },
+    {
+      "kind" : "source",
+      "name" : "object store source"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Dataset_critical",
+      "kind" : "dataset",
+      "line" : 28
+    },
+    {
+      "adjective" : "high volume",
+      "function" : "meridianDef_Dataset_highVolume",
+      "kind" : "dataset",
+      "line" : 27
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Dataset_stale",
+      "kind" : "dataset",
+      "line" : 21
+    },
+    {
+      "adjective" : "backfilled",
+      "function" : "meridianDef_Partition_backfilled",
+      "kind" : "partition",
+      "line" : 23
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_PipelineRun_failed",
+      "kind" : "pipeline run",
+      "line" : 22
+    },
+    {
+      "adjective" : "passing",
+      "function" : "meridianDef_QualityCheck_passing",
+      "kind" : "quality check",
+      "line" : 24
+    },
+    {
+      "adjective" : "compatible",
+      "function" : "meridianDef_Schema_compatible",
+      "kind" : "schema",
+      "line" : 26
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Watermark_fresh",
+      "kind" : "watermark",
+      "line" : 25
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a pipeline run",
+      "line" : 34,
+      "name" : "derivation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "transform"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a source",
+      "line" : 30,
+      "name" : "extraction",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "extract"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a dataset",
+      "line" : 32,
+      "name" : "loading",
+      "right_cardinality" : "one",
+      "right_kind" : "a sink",
+      "via" : "load"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Hold a downstream dataset until its upstream dependency actually signals completion, then run the extraction and the quality checks side by side instead of one after the other. This is the DAG-awareness layer that keeps a downstream stage from starting on data its upstream hasn't finished producing.",
+    "name" : "dag orchestrate",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 21,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 26,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 36,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 44,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 34,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 21,
+        "lines" : [
+          "\"orchestrate pipeline dag\"",
+          "\"run dag orchestration\"",
+          "\"run the dag orchestration pass\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 26,
+        "lines" : [
+          "fetch datasets",
+          "for each dataset:",
+          "wait for event upstream.done matching the event's dataset name equals the dataset's name",
+          "wait for signal \"pipeline.ready\"",
+          "simultaneously:",
+          "extract a dataset from the object store source",
+          "run quality checks on the dataset",
+          "Emit: \"dag orchestration pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 36,
+        "lines" : [
+          "Don't remove the `pipeline.ready` wait to shave latency. The upstream",
+          "completion event only proves the upstream is done; it doesn't prove the",
+          "orchestrator has cleared this stage to start",
+          "Don't run the extraction and the quality check sequentially \"to be safe.\"",
+          "They're independent once both gates clear — running them one after the",
+          "other only adds latency without adding safety"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 44,
+        "lines" : [
+          "The receipt confirms each dataset's upstream signal and downstream",
+          "extraction, so a pipeline engineer can see exactly where a stage was",
+          "waiting versus where it was actually running"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"orchestrate pipeline dag\"\n\"run dag orchestration\"\n\"run the dag orchestration pass\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "derive",
+      "line" : 39,
+      "past_participle" : "derived",
+      "relation" : "derivation",
+      "third_person" : "derives"
+    },
+    {
+      "base" : "extract",
+      "line" : 37,
+      "past_participle" : "extracted",
+      "relation" : "extraction",
+      "third_person" : "extracts"
+    },
+    {
+      "base" : "load",
+      "line" : 38,
+      "past_participle" : "loaded",
+      "relation" : "loading",
+      "third_person" : "loads"
+    }
+  ],
+  "source_files" : [
+    "dagorchestrate.meri",
+    "etl.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 42,
+      "swift_line" : 362
+    },
+    {
+      "meridian_line" : 28,
+      "swift_line" : 368
+    },
+    {
+      "meridian_line" : 29,
+      "swift_line" : 374
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 379
+    },
+    {
+      "meridian_line" : 31,
+      "swift_line" : 383
+    },
+    {
+      "meridian_line" : 54,
+      "swift_line" : 388
+    },
+    {
+      "meridian_line" : 72,
+      "swift_line" : 403
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 423
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 462
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 467
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 507
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 512
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 552
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 557
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "dag orchestrate",
+      "swift_struct" : "DagOrchestrate"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when orchestratePipelineDag fires",
+      "swift_struct" : "WhenOrchestratepipelinedagFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runDagOrchestration fires",
+      "swift_struct" : "WhenRundagorchestrationFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runDagOrchestrationPass fires",
+      "swift_struct" : "WhenRundagorchestrationpassFires"
+    }
+  ]
+}

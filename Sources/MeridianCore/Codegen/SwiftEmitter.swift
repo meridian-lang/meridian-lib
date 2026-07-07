@@ -83,8 +83,7 @@ public struct SwiftEmitter {
         var paramTypes: [String: [(name: String, kind: String)]] = [:]
         for wf in workflows {
             paramTypes[wf.structName] = wf.parameters.map { p in
-                let swiftKind = naturalToPascal(p.kind.name)
-                let resolved = declaredKinds.contains(swiftKind) ? swiftKind : "Value"
+                let resolved = resolveParameterKind(p.kind.name, declaredKinds: declaredKinds)
                 return (IdentifierNaming.camelPreservingCase(p.name), resolved)
             }
         }
@@ -105,11 +104,18 @@ public struct SwiftEmitter {
         return StringTemplate {
             fileHeader()
             ""
-            // 2B: checkable-adjective helpers live at file scope (private), so
-            // they resolve from every workflow `run()` regardless of namespacing.
-            for def in definitions {
-                emitDefinitionFunction(def)
-                ""
+            if namespace == nil {
+                // 2B: checkable-adjective helpers live at file scope (private),
+                // so they resolve from every workflow `run()`. A `Definition:`
+                // body can reference a declared constant/instance
+                // (`constants.highValueThreshold`) — when namespaced, those
+                // live inside the `public enum` wrapper below, so the helper
+                // functions must move inside it too (see the `namespace`
+                // branch) or the reference would be out of scope.
+                for def in definitions {
+                    emitDefinitionFunction(def)
+                    ""
+                }
             }
             if let namespace {
                 "public enum \(namespace) {"
@@ -126,6 +132,12 @@ public struct SwiftEmitter {
             if let i = instancesDecl {
                 emitInstances(i)
                 ""
+            }
+            if namespace != nil {
+                for def in definitions {
+                    emitDefinitionFunction(def)
+                    ""
+                }
             }
             for (idx, workflow) in workflows.enumerated() {
                 // B1: Emit skillMetadata on the first workflow struct only.
@@ -165,7 +177,7 @@ public struct SwiftEmitter {
         // back to `Value` and aren't considered typed.
         let typedParams = Set(
             workflow.parameters
-                .filter { declaredKinds.isEmpty || declaredKinds.contains(naturalToPascal($0.kind.name)) }
+                .filter { resolveParameterKind($0.kind.name, declaredKinds: declaredKinds) != "Value" }
                 .map { IdentifierNaming.camelPreservingCase($0.name) }
         )
         let ctx = Ctx(
@@ -175,8 +187,7 @@ public struct SwiftEmitter {
             typedIdentifiers: typedParams
         )
         func resolveKind(_ k: String) -> String {
-            let swiftKind = naturalToPascal(k)
-            return declaredKinds.isEmpty || declaredKinds.contains(swiftKind) ? swiftKind : "Value"
+            resolveParameterKind(k, declaredKinds: declaredKinds)
         }
         let paramDecls = workflow.parameters.map {
             "    public let \(IdentifierNaming.camelPreservingCase($0.name)): \(resolveKind($0.kind.name))"
@@ -277,8 +288,10 @@ public struct SwiftEmitter {
         case .wait(let ir):     return emitWait(ir, ctx: ctx)
         case .simultaneously(let ir):
             return emitSimultaneously(ir, ctx: ctx, workflow: workflow, path: path)
-        case .proseStep(let ir):
-            return emitProseStep(ir, ctx: ctx)
+        case .aiJudgment(let ir):
+            return emitAIJudgment(ir, ctx: ctx)
+        case .aiAutonomy(let ir):
+            return emitAIAutonomy(ir, ctx: ctx)
         }
     }
 
@@ -334,7 +347,8 @@ public struct SwiftEmitter {
         case .commit(let ir): return ir.sourceRange
         case .recover(let ir): return ir.sourceRange
         case .simultaneously(let ir): return ir.sourceRange
-        case .proseStep(let ir): return ir.sourceRange
+        case .aiJudgment(let ir): return ir.sourceRange
+        case .aiAutonomy(let ir): return ir.sourceRange
         case .complete(let ir): return ir.sourceRange
         }
     }
@@ -352,7 +366,8 @@ public struct SwiftEmitter {
         case .recover: return "recover"
         case .wait: return "wait"
         case .simultaneously: return "simultaneously"
-        case .proseStep: return "proseStep"
+        case .aiJudgment: return "aiJudgment"
+        case .aiAutonomy: return "aiAutonomy"
         }
     }
 
@@ -370,7 +385,7 @@ public struct SwiftEmitter {
         if ir.toolID.hasPrefix("workflow:") {
             return emitWorkflowCall(ir, ctx: ctx)
         }
-        let binding = ir.resultBinding.map { "let \($0) = " } ?? "_ = "
+        let binding = ir.resultBinding.map { "let \(IdentifierNaming.escapeIfReservedIdentifier($0)) = " } ?? "_ = "
         let argLines = ir.arguments.map { a in
             "\(ctx.in(1).s)    \"\(a.key)\": \(emitValueExpr(a.value)),"
         }
@@ -390,7 +405,7 @@ public struct SwiftEmitter {
                 "\(ctx.s))"
             }
             if let b = ir.resultBinding {
-                "\(ctx.s)state.bind(\"\(b)\", \(b))"
+                "\(ctx.s)state.bind(\"\(b)\", \(IdentifierNaming.escapeIfReservedIdentifier(b)))"
             }
             ""
         }
@@ -404,7 +419,7 @@ public struct SwiftEmitter {
     /// `runtime, ` form even when the init has no other parameters.
     func emitWorkflowCall(_ ir: InvokeIR, ctx: Ctx) -> StringTemplate {
         let structName = String(ir.toolID.dropFirst("workflow:".count))
-        let binding = ir.resultBinding.map { "let \($0) = " } ?? "_ = "
+        let binding = ir.resultBinding.map { "let \(IdentifierNaming.escapeIfReservedIdentifier($0)) = " } ?? "_ = "
         let targetParams = ctx.workflowParamTypes[structName] ?? []
         let argParts = ir.arguments.map { a in
             let key = IdentifierNaming.camelPreservingCase(a.key)
@@ -463,33 +478,48 @@ public struct SwiftEmitter {
         }
     }
 
-    func emitProseStep(_ ir: ProseStepIR, ctx: Ctx) -> StringTemplate {
+    func emitAIJudgment(_ ir: AIJudgmentIR, ctx: Ctx) -> StringTemplate {
         let resultName = "__meridianProseResults_L\(max(ir.sourceRange.startLine, 0))"
         let tools = ir.scopedTools.map { "\"\(escapeSwiftString($0))\"" }.joined(separator: ", ")
-        let call = ir.dispatchMode == .autonomousLoop ? "executeAutonomousLoop" : "executeProsePlan"
-        let config = ir.autonomy ?? AutonomyConfigIR()
         let hasGuidance = ir.guidance != nil
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
-            "\(ctx.s)let \(resultName) = try await runtime.\(call)("
+            "\(ctx.s)let \(resultName) = try await runtime.executeProsePlan("
             "\(ctx.s)    prose: \"\(escapeSwiftString(ir.text))\","
             "\(ctx.s)    snapshot: state.snapshot(),"
-            if ir.dispatchMode == .planThenExecute {
-                "\(ctx.s)    scopedTools: [\(tools)]\(hasGuidance ? "," : "")"
-            } else {
-                "\(ctx.s)    scopedTools: [\(tools)],"
-                "\(ctx.s)    maxSteps: \(config.maxSteps),"
-                let noUntilUnless = config.until == nil && config.unless == nil
-                "\(ctx.s)    replanAfterFailures: \(config.replanAfterFailures)\((!noUntilUnless || hasGuidance) ? "," : "")"
-                if let until = config.until {
-                    for line in emitAutonomyPredicate(name: "until", expr: until, ctx: ctx, includeComma: config.unless != nil || hasGuidance) {
-                        line
-                    }
+            "\(ctx.s)    scopedTools: [\(tools)]\(hasGuidance ? "," : "")"
+            if let guidance = ir.guidance {
+                "\(ctx.s)    guidance: \"\(escapeSwiftString(guidance))\""
+            }
+            "\(ctx.s))"
+            "\(ctx.s)for (__key, __value) in \(resultName) {"
+            "\(ctx.in(1).s)state.bind(__key, __value)"
+            "\(ctx.s)}"
+        }
+    }
+
+    func emitAIAutonomy(_ ir: AIAutonomyIR, ctx: Ctx) -> StringTemplate {
+        let resultName = "__meridianProseResults_L\(max(ir.sourceRange.startLine, 0))"
+        let tools = ir.scopedTools.map { "\"\(escapeSwiftString($0))\"" }.joined(separator: ", ")
+        let config = ir.autonomy
+        let hasGuidance = ir.guidance != nil
+        return StringTemplate {
+            sourceLineComment(ir.sourceRange, ctx: ctx)
+            "\(ctx.s)let \(resultName) = try await runtime.executeAutonomousLoop("
+            "\(ctx.s)    prose: \"\(escapeSwiftString(ir.text))\","
+            "\(ctx.s)    snapshot: state.snapshot(),"
+            "\(ctx.s)    scopedTools: [\(tools)],"
+            "\(ctx.s)    maxSteps: \(config.maxSteps),"
+            let noUntilUnless = config.until == nil && config.unless == nil
+            "\(ctx.s)    replanAfterFailures: \(config.replanAfterFailures)\((!noUntilUnless || hasGuidance) ? "," : "")"
+            if let until = config.until {
+                for line in emitAutonomyPredicate(name: "until", expr: until, ctx: ctx, includeComma: config.unless != nil || hasGuidance) {
+                    line
                 }
-                if let unless = config.unless {
-                    for line in emitAutonomyPredicate(name: "unless", expr: unless, ctx: ctx, includeComma: hasGuidance) {
-                        line
-                    }
+            }
+            if let unless = config.unless {
+                for line in emitAutonomyPredicate(name: "unless", expr: unless, ctx: ctx, includeComma: hasGuidance) {
+                    line
                 }
             }
             if let guidance = ir.guidance {
@@ -863,7 +893,7 @@ public struct SwiftEmitter {
             case .duration(let d):
                 "\(ctx.s)try await runtime.wait(.duration(.seconds(\(d.components.seconds))))"
             case .signal(let id):
-                "\(ctx.s)try await runtime.wait(.signal(\"\(id)\"))"
+                "\(ctx.s)try await runtime.wait(.signal(\"\(escapeSwiftString(id))\"))"
             case .approval(let subj, let role):
                 // `by:` takes `RoleRef` — convert the role string to a RoleRef initialiser.
                 // `of:` is the subject (Value); empty-string literal signals implicit subject.
@@ -920,13 +950,14 @@ public struct SwiftEmitter {
             case .isNotEmpty:
                 return "MeridianComparison.isNotEmpty(\(emitComparisonOperand(lhs)))"
             case .contains:
-                return "(\(emitExpr(lhs))).contains(\(emitExpr(rhs)))"
+                return "(\(emitStringOperand(lhs))).contains(\(emitStringOperand(rhs)))"
             case .startsWith:
-                return "(\(emitExpr(lhs))).hasPrefix(\(emitExpr(rhs)))"
+                return "(\(emitStringOperand(lhs))).hasPrefix(\(emitStringOperand(rhs)))"
             case .endsWith:
-                return "(\(emitExpr(lhs))).hasSuffix(\(emitExpr(rhs)))"
+                return "(\(emitStringOperand(lhs))).hasSuffix(\(emitStringOperand(rhs)))"
             case .oneOf:
-                return "(\(emitExpr(rhs))).contains(\(emitExpr(lhs)))"
+                let needle = needsValueComparison(lhs) ? "(\(emitExpr(lhs)) ?? .null)" : "(\(emitExpr(lhs)))"
+                return "(\(emitExpr(rhs))).contains(\(needle))"
             case .identifies:
                 return "MeridianComparison.identifies(\(emitComparisonOperand(lhs)), \(emitComparisonOperand(rhs)))"
             case .equal, .notEqual, .lessThan, .lessOrEqual, .greaterThan, .greaterOrEqual:
@@ -1044,8 +1075,14 @@ public struct SwiftEmitter {
     /// `__subject.member("prop")` and bare emptiness/comparisons resolve too.
     func emitDefinitionFunction(_ def: LoweredDefinition) -> StringTemplate {
         let cond = emitElementExpr(def.body, loopVar: def.subjectVar, closureParam: "__subject")
+        // Nested inside a namespace `enum`, a bare `func` is an instance
+        // method and unreachable without an instance — the enum is used
+        // purely as a namespace, so it must be `static` there. At true file
+        // scope (no namespace) `static` would be redundant/invalid, so this
+        // must match `emitConstants`'s namespace check.
+        let keyword = options.namespaceEnum == nil ? "private func" : "private static func"
         return StringTemplate {
-            "private func \(def.functionName)(_ __subjectValue: Value?) -> Bool {"
+            "\(keyword) \(def.functionName)(_ __subjectValue: Value?) -> Bool {"
             "    let __subject = __subjectValue ?? .null"
             "    return \(cond)"
             "}"
@@ -1096,6 +1133,25 @@ public struct SwiftEmitter {
         default:
             return emitValueExpr(expr)
         }
+    }
+
+    /// Render an operand as a plain Swift `String` for `.contains`/
+    /// `.startsWith`/`.endsWith` — the one comparison family that always
+    /// wants a native `String`, never a `Value`/`Value?`, on *both* sides
+    /// (`"foo" contains "f"` and `the report contains "f"` should emit the
+    /// same shape either way). A `Value?`-producing operand
+    /// (`needsValueComparison`) is stringified via `?.description ?? ""`;
+    /// anything else (a string literal, an interpolated string, …) already
+    /// renders as a raw Swift `String` via `emitExpr` and passes through
+    /// unchanged. Mirrors `emitElementExpr`'s already-correct whose-clause
+    /// version of the same three ops — this was the missing top-level
+    /// counterpart (see IMPLEMENTATION_LOG.md: shipped as
+    /// `(state.get("x")).contains(...)`, `Value?` has no member `contains`).
+    private func emitStringOperand(_ expr: IRExpression) -> String {
+        if needsValueComparison(expr) {
+            return "((\(emitExpr(expr)))?.description ?? \"\")"
+        }
+        return "(\(emitExpr(expr)))"
     }
 
     /// Like `emitExpr` but wraps the result so it satisfies `Value` in places
@@ -1544,6 +1600,29 @@ public struct SwiftEmitter {
     /// against the declared domain kinds when deciding whether to emit a typed
     /// init param or fall back to `Value`.
     func naturalToPascal(_ s: String) -> String { IdentifierNaming.pascalCase(s) }
+
+    /// Resolve an IR parameter kind to the Swift type emitted for that kind.
+    ///
+    /// Lowering stores phrase-pattern kind names as Swift type names
+    /// (`"pull request"` becomes `"PullRequest"`), while hand-written IR tests
+    /// and some older paths may still pass natural-language names. Accept both
+    /// forms before falling back to `Value` for undeclared kinds.
+    func resolveParameterKind(_ name: String, declaredKinds: Set<String>) -> String {
+        let candidates = [name, naturalToPascal(name)]
+        if declaredKinds.isEmpty {
+            return swiftKindCandidate(name)
+        }
+        return candidates.first { declaredKinds.contains($0) } ?? "Value"
+    }
+
+    private func swiftKindCandidate(_ name: String) -> String {
+        guard let first = name.first else { return naturalToPascal(name) }
+        let isIdentifier = name.allSatisfy { $0.isLetter || $0.isNumber || $0 == "_" }
+        if isIdentifier && (first.isUppercase || first == "_") {
+            return name
+        }
+        return naturalToPascal(name)
+    }
 
 }
 

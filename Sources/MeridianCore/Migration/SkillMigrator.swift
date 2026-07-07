@@ -159,7 +159,8 @@ public struct SkillMigrator {
                 let diag = describe(error)
                 diagnostics.append(diag)
                 trace.log(.skill, "migrate \"\(file)\": attempt \(attempts) failed — \(diag)")
-                if let revised = markEnclosingSectionReference(forDiagnostic: diag, in: candidate) {
+                if Self.isFuzzyRoutableCode(diagnosticCode(error)),
+                   let revised = markEnclosingSectionReference(forDiagnostic: diag, in: candidate) {
                     trace.log(.skill, "migrate \"\(file)\": marking failed section (( role: reference )) and retrying strict compile")
                     candidate = revised
                     continue
@@ -284,5 +285,45 @@ public struct SkillMigrator {
             return "L\(first.primaryRange.startLine): \(first.message)"
         }
         return String(describing: error)
+    }
+
+    private func diagnosticCode(_ error: any Error) -> DiagnosticCode? {
+        guard let compilerError = error as? CompilerError else { return nil }
+        return compilerError.diagnostics.first?.code
+    }
+
+    /// The `--route-fuzzy` rescue (`markEnclosingSectionReference`) exists for
+    /// the P1 category-4 case: a line's *shape* is genuinely ambiguous between
+    /// prose and code (`uncheckablePredicate`/`sectionStructuralError`'s
+    /// multi-line-item sibling, `unresolvedPhrase` when nothing recognized the
+    /// line at all, `ambiguousAnaphora`, …) — those diagnostics are safe to
+    /// downgrade to "keep this as documentation" because the compiler never
+    /// recognized the line as a specific executable construct in the first
+    /// place.
+    ///
+    /// It must NEVER fire for a diagnostic raised *after* a line was already
+    /// recognized as a specific, well-formed construct (a quantifier, a tool
+    /// invocation, a rule) whose only problem is an undeclared name — an
+    /// unknown adjective/tool/kind/property/verb, an out-of-scope template
+    /// hole, a rule that can't attach, or a duplicate declaration. There the
+    /// shape is unambiguous and the fix is a `.merconfig`/rulebook edit, not
+    /// documentation; blanket-demoting the enclosing section (often the whole
+    /// `Workflow`) to `(( role: reference ))` would silently drop the rest of
+    /// its already-recognized executable content with no signal beyond a
+    /// report line — exactly the "unknown adjective" bug that dropped
+    /// `review_requests`' entire fetch/check/loop/emit body while still
+    /// reporting `compiles: true` (see IMPLEMENTATION_LOG.md). Nil (a
+    /// non-`CompilerError` failure) is never fuzzy-routable either.
+    private static let neverFuzzyRoutableCodes: Set<DiagnosticCode> = [
+        .unknownTool, .unknownProperty, .unknownAdjective, .unknownVerb, .unknownKind,
+        .unknownVocabulary, .unknownRulebook, .unknownFallbackKind,
+        .commandHoleOutOfScope, .missingPhraseArgument, .unknownTemplateFormatter,
+        .unattachedRule, .unresolvedTriggerAction, .unlowerableRulePredicate,
+        .duplicateDeclaration, .duplicateName,
+    ]
+
+    private static func isFuzzyRoutableCode(_ code: DiagnosticCode?) -> Bool {
+        guard let code else { return false }
+        return !neverFuzzyRoutableCodes.contains(code)
     }
 }

@@ -71,6 +71,12 @@ struct SkillSectionBuilder {
         var sections: [SkillSectionRecord]
         /// Tool IDs mined from a `## Tools Used` section (1D), in source order.
         var toolsUsed: [String]
+        /// Phase-8 rule-shaped lines extracted from executable sections (see
+        /// "Phase-8 rules fire in sectioned documents" below). Merged by
+        /// `MeridianParser` into `MeridianFile.rules` alongside any top-level
+        /// flat rules, so both paths feed the same `RuleAnalyzer`/`RuleInjector`
+        /// pipeline.
+        var rules: [RuleAST]
     }
 
     /// Build the canonical implicit-workflow body from the raw region lines
@@ -83,6 +89,8 @@ struct SkillSectionBuilder {
         var negativeDispatch: [String] = []
         var records: [SkillSectionRecord] = []
         var toolsUsed: [String] = []
+        var rules: [RuleAST] = []
+        let ruleAnalyzer = RuleAnalyzer(lexicon: lexicon, trace: trace, symbols: symbols)
 
         for sec in sections {
             // Content before the first heading is never executable and must not
@@ -123,6 +131,22 @@ struct SkillSectionBuilder {
                 continue
             }
 
+            // `use judgment to follow the <heading> guidance:` (the exact wrap
+            // `SkillMigrator` generates for an AI-inference segment) collects
+            // EVERY following line verbatim as guidance text —
+            // `StatementParser.parseJudgmentMarker`'s `collectUntilNextHeading`
+            // reads past group/indentation boundaries entirely, all the way to
+            // the next heading. `foldGroups` only sees indentation, so a
+            // same-indent guidance bullet after this header looks like its own
+            // independent top-level group. Once a section opens with this
+            // marker, every one of its groups is guidance prose for that
+            // single judgment step — never independently rule- or
+            // role-classified — so the whole section is excluded from rule
+            // pre-classification up front.
+            let isJudgmentWrappedSection = sec.groups.first
+                .map { $0.head.statement.lowercased().hasPrefix(lexicon.grammar.judgmentFollowCollectPrefix) }
+                ?? false
+
             for group in sec.groups {
                 // A verbatim shell-command block is an explicit, deterministic
                 // `shell.run` invoke. Within an executable section it stays
@@ -130,6 +154,37 @@ struct SkillSectionBuilder {
                 // here, so the marker overrides shell-block routing.
                 if group.lines.allSatisfy(isShellCodeBlock) {
                     procedure.append(contentsOf: group.lines)
+                    continue
+                }
+                // Phase-8 rule sugar (`must not`, `may` [+ bounded `up to N`],
+                // `must be approved by … before …`, `When …, …`) fires in
+                // executable sections too — prose is opt-in via
+                // `(( role: reference ))`/`(( inert ))` or `#`/`>` comments,
+                // never inferred from "looks like a rule". A one-line,
+                // non-sentinel statement group is trialed against the same
+                // `RuleAnalyzer.classify` the flat top-level path uses; a real
+                // Phase-8 shape is extracted to `rules` (and NOT also folded
+                // into procedure/prelude), so it attaches once via
+                // `RuleInjector` instead of firing twice. `RuleAnalyzer` only
+                // recognizes real rule shapes (a leading marker plus `must
+                // not`/`may`/`must be … by … before`/`When …,`), so ordinary
+                // narrative like "An audit note about the page." is never
+                // hijacked — it falls through to the unchanged role switch.
+                //
+                // Scoped to `procedure`/`invariants`/`prohibitions`: those are
+                // the three roles whose groups are full natural-language
+                // statement/predicate sentences. `applicability`/
+                // `negativeApplicability` bullets are dispatch-phrase
+                // *fragments* ("When the user says X, Y, Z" — no action
+                // clause at all), not rule sentences; trialing them against
+                // `RuleAnalyzer` produces false-positive trigger matches that
+                // hijack legitimate dispatch-phrase mining (confirmed by the
+                // gbrain blast-radius measurement — see IMPLEMENTATION_LOG.md).
+                // `tables` groups are sentinel-encoded data, never prose.
+                let ruleEligibleRole = role == .procedure || role == .invariants || role == .prohibitions
+                if ruleEligibleRole, !isJudgmentWrappedSection, isEligibleForRuleClassification(group),
+                   let rule = classifyAsRule(group, using: ruleAnalyzer) {
+                    rules.append(rule)
                     continue
                 }
                 switch role {
@@ -155,7 +210,38 @@ struct SkillSectionBuilder {
                       dispatchPhrases: dispatch,
                       negativeDispatchPhrases: negativeDispatch,
                       sections: records,
-                      toolsUsed: toolsUsed)
+                      toolsUsed: toolsUsed,
+                      rules: rules)
+    }
+
+    /// True when `group` is a candidate for Phase-8 rule classification: a
+    /// single top-level line (no deeper-indented continuation lines) that
+    /// isn't a table/checklist/code-block sentinel. Multi-line groups and
+    /// sentinel-encoded blocks are never rule-shaped English sentences, so
+    /// they skip straight to the existing role-specific handling.
+    private func isEligibleForRuleClassification(_ group: StatementGroup) -> Bool {
+        guard !group.isMultiline else { return false }
+        let text = group.head.text
+        if decodeTableSentinel(text) != nil { return false }
+        if decodeChecklistSentinel(text) != nil { return false }
+        if decodeCodeBlockSentinel(text) != nil { return false }
+        return true
+    }
+
+    /// Trial an eligible group's statement text against `RuleAnalyzer`. Two
+    /// gates, both required: the sentence must have the shape a genuine
+    /// top-level rule always starts with (`RuleAnalyzer.looksLikeRuleShapedSentence`
+    /// — a leading parameter article or `when `; `classify`'s own marker
+    /// matching is unanchored and unsafe to trial on arbitrary prose, see its
+    /// doc comment), AND `classify` itself must return non-nil. Together these
+    /// are the precision guard that keeps ordinary narrative sentences ("An
+    /// audit note about the page.") from being hijacked as rules.
+    private func classifyAsRule(_ group: StatementGroup, using analyzer: RuleAnalyzer) -> RuleAST? {
+        let statement = group.head.statement
+        guard analyzer.looksLikeRuleShapedSentence(statement) else { return nil }
+        let candidate = RuleAST(text: statement, sourceLine: group.head.number)
+        guard analyzer.classify(candidate) != nil else { return nil }
+        return candidate
     }
 
     /// Extract a tool id from a `## Tools Used` bullet. Two equally-valid forms

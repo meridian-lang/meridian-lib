@@ -19,6 +19,24 @@ not marketing terms.
 > and `IMPLEMENTATION_LOG.md` for the re-migration numbers under the new one
 > (all three corpora: zero `(( inert ))`, zero operational/unclassified
 > inert).
+>
+> **Further update (2026-07-06, "sectioned rule firing"):** Phase-8 rule sugar
+> (`must not` / `may` [+ bounded] / `must be … before` / `When …, …`) now fires
+> identically in flat and sectioned (`##`/`###`-heading) documents — the prior
+> `!hasHeadings` gate that made every SKILL.md-style document rule-inert is
+> gone (see `docs/15_DECISIONS.md` D-DX-6). This *lowers* the achievable inert
+> ratio further: normative sentences that previously had no path but
+> `(( role: reference ))`/hard-error now lower deterministically to `AssertIR`/
+> `WaitIR`/permission structs instead. Two new synthetic corpora,
+> `corpora/governance/` and `corpora/clinical/`, were authored specifically to
+> exercise this — each expresses obligations as natural in-section rule sugar
+> directly in a skill's body rather than a flat `rules/*.meridian` workaround.
+> `corpora/incident/` and `corpora/etl/` extend the two-corpus scope this report
+> was originally written against with wait/recover/parallel/judgment and
+> data/table/temporal-window surface respectively. All four are outside this
+> report's original Wave-6 Tier/similarity measurement scope (below); see
+> `corpora/README.md` for their per-corpus metrics and
+> `IMPLEMENTATION_LOG.md` for the full expansion writeup.
 
 ## Corpus Status
 

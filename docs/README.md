@@ -39,6 +39,7 @@ runs against a small deterministic runtime.
 | 15 | [15_DECISIONS.md](15_DECISIONS.md) | The readable design-decision log (generated from `DecisionCatalog`) |
 | 15b | [15_PROBLEM_MESSAGES.md](15_PROBLEM_MESSAGES.md) | Inform-style problem-message template and active diagnostic-code reference |
 | 16 | [16_EXPRESSIVENESS_REPORT.md](16_EXPRESSIVENESS_REPORT.md) | Wave 6 corpus metrics, mechanism coverage, and caveats |
+| 17 | [17_MERIDIAN_PATTERNS.md](17_MERIDIAN_PATTERNS.md) | **Anyone about to "fix" a restriction** — recurring architectural patterns and why they're intentional, not gaps |
 | — | [coverage/README.md](coverage/README.md) | **Anyone touching tests** — how & why coverage is measured, the enforced per-file gate, and how to raise it |
 | — | [../Tests/README.md](../Tests/README.md) | All contributors — test suites, forcing functions, adding tests |
 | — | [status.md](status.md) | Implementers — what's done, what's next, decision references |
@@ -89,7 +90,11 @@ meridian/
 │   └── README.md               # Test suite guide + how to add tests
 ├── corpora/
 │   ├── erp/                    # Wave 6 synthetic ERP/OFBiz proxy corpus
-│   └── procedures/             # Wave 6 synthetic stored-procedure proxy corpus
+│   ├── procedures/             # Wave 6 synthetic stored-procedure proxy corpus
+│   ├── incident/                # synthetic SRE/on-call proxy corpus
+│   ├── etl/                     # synthetic data-pipeline/ETL proxy corpus
+│   ├── governance/              # synthetic access/security-compliance proxy corpus
+│   └── clinical/                # synthetic clinical-safety proxy corpus
 ├── examples/
 │   ├── ecommerce.merconfig     # Vocabulary, phrases, tools, instances, constants
 │   ├── order_processing.meridian # Workflows that use the vocabulary

@@ -14,6 +14,7 @@ triggers:
 
 ## Workflow
 Step: `ofbiz warehouse receive --today --json` to snapshot inbound manifests.
+wait for signal "manifest_confirmed".
 Publish: "warehouse receiving manifest captured".
 
 ## Human notes

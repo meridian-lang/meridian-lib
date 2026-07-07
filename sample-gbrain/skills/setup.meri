@@ -298,7 +298,7 @@ echo "=== Discovery Complete ==="
 
 ### Phase C: First Import — steps 3
 
-> If the user agrees, configure storage and run migration:
+   If the user agrees, configure storage and run migration:
    ```bash
    # Configure storage backend (Supabase Storage recommended)
    gbrain config set storage.backend supabase
@@ -512,9 +512,9 @@ used the manual install path or an older version of the OpenClaw/Hermes paste), 
 If already configured or user declines, skip.
 
 
-### Phase G: Auto-Update Check (if not already configured) — steps
+### Phase G: Auto-Update Check (if not already configured) — steps (( role: reference ))
 
-> If they agree:
+If they agree:
 1. Test: `gbrain check-update --json`
 ## Phase H: Live Sync Setup (MUST ADD) (( role: reference ))
 
@@ -618,11 +618,11 @@ data. Stopping here is like installing a phone and never adding contacts.
 
 ### Phase J: Cold Start — Populate Your Brain (AUTOMATIC) — steps 2 (( role: reference ))
 
-> If the user says yes (or anything affirmative):
+If the user says yes (or anything affirmative):
 → Load and execute `skills/cold-start/SKILL.md` immediately. Do not
 just print a reference — actually run the cold-start skill.
 
-> If the user says no or wants to stop:
+If the user says no or wants to stop:
 → Record in `~/.gbrain/cold-start-state.json`:
 ## Schema State Tracking (( role: reference ))
 

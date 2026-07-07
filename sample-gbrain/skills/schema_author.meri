@@ -82,7 +82,7 @@ writes_pages: []
 
 > **Convention:** see [conventions/schema-evolution.md](../conventions/schema-evolution.md) for "when to add a type vs alias vs prefix" — the heuristic.
 
-## When to invoke (( role: reference ))
+## When to invoke
 
 Invoke when the user (or a sibling skill) says any of:
 - "Add a `researcher` type to my schema"

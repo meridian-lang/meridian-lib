@@ -137,6 +137,17 @@ struct ProductionGrammarBranchCoverageTests {
         #expect(grammar.parse("updated within the last 1 day")?.traceDescription(detail: .verbose).contains("updatedAt") == true)
         #expect(grammar.parse("deadline within the last 1") == nil)
         #expect(grammar.parse("deadline within the last many days") == nil)
+
+        // "<subject> is not within the last N <unit>" negates the whole
+        // window comparison instead of misparsing "<subject> is not" as a
+        // literal property name (the pre-fix behavior).
+        guard case .logical(.not, let negated) = grammar.parse("rotated at is not within the last 90 days") else {
+            Issue.record("expected a negated temporal-window comparison"); return
+        }
+        guard case .comparison(let lhs, .withinPast, _) = negated.first else {
+            Issue.record("expected the negated clause to wrap a withinPast comparison"); return
+        }
+        #expect(lhs.traceDescription(detail: .verbose).contains("rotated at") == true)
     }
 
     @Test("quantifier malformed determiner and body branches")

@@ -167,6 +167,9 @@ public struct ManifestEmitter {
         /// true when the rule was classified and injected into one or more
         /// workflow bodies (or synthesised as a trigger workflow).
         public let executes: Bool
+        /// true only for a `kind == "permission"` rule whose allowance is
+        /// capped (e.g. "may … up to N"). Always false for other kinds.
+        public let bounded: Bool
         public let source: SourceInfo
 
         public struct SourceInfo: Encodable {
@@ -174,9 +177,9 @@ public struct ManifestEmitter {
             public let line: Int
         }
 
-        public init(text: String, kind: String, executes: Bool, source: SourceInfo) {
+        public init(text: String, kind: String, executes: Bool, bounded: Bool = false, source: SourceInfo) {
             self.text = text; self.kind = kind
-            self.executes = executes; self.source = source
+            self.executes = executes; self.bounded = bounded; self.source = source
         }
     }
 
@@ -268,6 +271,7 @@ public struct ManifestEmitter {
                     "text": r.text,
                     "kind": r.kind,
                     "executes": r.executes,
+                    "bounded": r.bounded,
                     "source": ["file": r.source.file, "line": r.source.line]
                 ]
             }
@@ -279,28 +283,53 @@ public struct ManifestEmitter {
                 "mode": wf.mode == .strict ? "strict" : "lenient"
             ]
             d["parameters"] = wf.parameters.map { ["name": $0.name, "kind": $0.kind.name] }
-            let proseSteps = IRWalker.flatPrimitives(wf.body).compactMap { prim -> [String: Any]? in
-                guard case .proseStep(let ir) = prim else { return nil }
-                return proseStepEntry(ir)
+            let judgmentSteps = IRWalker.flatPrimitives(wf.body).compactMap { prim -> [String: Any]? in
+                guard case .aiJudgment(let ir) = prim else { return nil }
+                return judgmentStepEntry(ir)
             }
-            if !proseSteps.isEmpty {
-                d["prose_steps"] = proseSteps
+            if !judgmentSteps.isEmpty {
+                d["judgment_steps"] = judgmentSteps
+            }
+            let autonomySteps = IRWalker.flatPrimitives(wf.body).compactMap { prim -> [String: Any]? in
+                guard case .aiAutonomy(let ir) = prim else { return nil }
+                return autonomyStepEntry(ir)
+            }
+            if !autonomySteps.isEmpty {
+                d["autonomy_steps"] = autonomySteps
             }
             return d
         }
         return dict
     }
 
-    /// Records a judgment/discretion/autonomy step so a `.meridian.manifest.json`
+    /// Records a judgment/discretion step so a `.meridian.manifest.json`
     /// reader can audit exactly what is AI-routed and why — including
     /// `guidance`, the section narrative a migrated judgment step carries as
-    /// extra planner context (see `ProseStepIR.guidance`).
-    private func proseStepEntry(_ ir: ProseStepIR) -> [String: Any] {
+    /// extra planner context (see `AIJudgmentIR.guidance`). Judgment and
+    /// autonomy are separately auditable arrays (`judgment_steps` /
+    /// `autonomy_steps`), not a single ambiguous `prose_steps`/`ai_steps` list.
+    private func judgmentStepEntry(_ ir: AIJudgmentIR) -> [String: Any] {
         var d: [String: Any] = [
             "text": ir.text,
-            "dispatch_mode": ir.dispatchMode == .autonomousLoop ? "autonomous_loop" : "plan_then_execute",
             "scoped_tools": ir.scopedTools,
             "line": ir.sourceRange.startLine
+        ]
+        if let guidance = ir.guidance {
+            d["guidance"] = guidance
+        }
+        return d
+    }
+
+    /// Records an autonomy step, including the bounded-loop configuration
+    /// (`max_steps`/`replan_after_failures`) so the manifest fully audits the
+    /// retry envelope, not just the routed prose text.
+    private func autonomyStepEntry(_ ir: AIAutonomyIR) -> [String: Any] {
+        var d: [String: Any] = [
+            "text": ir.text,
+            "scoped_tools": ir.scopedTools,
+            "line": ir.sourceRange.startLine,
+            "max_steps": ir.autonomy.maxSteps,
+            "replan_after_failures": ir.autonomy.replanAfterFailures
         ]
         if let guidance = ir.guidance {
             d["guidance"] = guidance

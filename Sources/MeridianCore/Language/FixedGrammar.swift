@@ -482,6 +482,11 @@ public final class FixedGrammar: Sendable {
     /// Rule-subject filter-clause introducers (`a customer with status …`).
     public let subjectFilterIntroducers: Set<String>
 
+    /// Rule-subject filter-clause introducers whose clause negates
+    /// (`a user without clearance …` → `not (user.clearance)`), as opposed to
+    /// `subjectFilterIntroducers` which assert the clause directly.
+    public let negatedSubjectFilterIntroducers: Set<String>
+
     /// Markers bounding a permission's action clause (`approve any order whose
     /// total is up to …`).
     public let permissionBoundMarkers: [String]
@@ -558,6 +563,15 @@ public final class FixedGrammar: Sendable {
 
     /// `wait for approval from <role>` introducer.
     public let waitApprovalIntroducer: String
+
+    /// `wait for approval of <subject> from <role>` introducer — the subject
+    /// clause is optional sugar over `waitApprovalIntroducer`; when present it
+    /// binds a real approval subject instead of the implicit empty subject.
+    public let waitApprovalOfIntroducer: String
+
+    /// The ` from ` marker separating the subject and role clauses inside a
+    /// `wait for approval of <subject> from <role>` statement.
+    public let waitApprovalFromMarker: String
 
     /// `wait for event <id>` introducer.
     public let waitEventIntroducer: String
@@ -672,6 +686,7 @@ public final class FixedGrammar: Sendable {
         ],
         quantifierPartitiveMarkers: [String] = ["of the ", "of "],
         subjectFilterIntroducers: Set<String> = ["with", "whose", "that", "which", "having"],
+        negatedSubjectFilterIntroducers: Set<String> = ["without"],
         permissionBoundMarkers: [String] = ["whose ", "up to ", "if "],
         nounPhraseDeterminers: Set<String> = ["a", "an", "the", "any", "some", "all"],
         phraseParamConnectors: Set<String> = ["and", "that", "whose", "which"],
@@ -697,6 +712,8 @@ public final class FixedGrammar: Sendable {
         passiveModalityMarkers: [String] = [" should be ", " must be ", " needs to be "],
         waitSignalIntroducer: String = "for signal ",
         waitApprovalIntroducer: String = "for approval from ",
+        waitApprovalOfIntroducer: String = "for approval of ",
+        waitApprovalFromMarker: String = " from ",
         waitEventIntroducer: String = "for event ",
         waitMatchingMarker: String = " matching ",
         afterIdiomIntroducer: String = "after ",
@@ -757,6 +774,7 @@ public final class FixedGrammar: Sendable {
         self.quantifierBodyNormalization = quantifierBodyNormalization
         self.quantifierPartitiveMarkers = quantifierPartitiveMarkers
         self.subjectFilterIntroducers = subjectFilterIntroducers
+        self.negatedSubjectFilterIntroducers = negatedSubjectFilterIntroducers
         self.permissionBoundMarkers = permissionBoundMarkers
         self.nounPhraseDeterminers = nounPhraseDeterminers
         self.phraseParamConnectors = phraseParamConnectors
@@ -777,6 +795,8 @@ public final class FixedGrammar: Sendable {
         self.passiveModalityMarkers = passiveModalityMarkers
         self.waitSignalIntroducer = waitSignalIntroducer
         self.waitApprovalIntroducer = waitApprovalIntroducer
+        self.waitApprovalOfIntroducer = waitApprovalOfIntroducer
+        self.waitApprovalFromMarker = waitApprovalFromMarker
         self.waitEventIntroducer = waitEventIntroducer
         self.waitMatchingMarker = waitMatchingMarker
         self.afterIdiomIntroducer = afterIdiomIntroducer

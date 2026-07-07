@@ -96,8 +96,9 @@ extension SkillMigrator {
     ///   procedure/contract/applicability gate" heading is itself the
     ///   operational-error signal, not a free pass to documentation.
     func splitPlanApplyingThreshold(_ body: ArraySlice<String>, knowledge: Compiler.KnowledgeContext,
-                                            roleAlreadyAsserted: Bool = false, checkableOnly: Bool = false) -> SplitPlan {
-        var plan = splitPlan(for: body, knowledge: knowledge, checkableOnly: checkableOnly)
+                                            roleAlreadyAsserted: Bool = false, checkableOnly: Bool = false,
+                                            ruleAware: Bool = true) -> SplitPlan {
+        var plan = splitPlan(for: body, knowledge: knowledge, checkableOnly: checkableOnly, ruleAware: ruleAware)
         guard !plan.executableSegments.isEmpty else {
             if roleAlreadyAsserted || !plan.unminedContracts.isEmpty {
                 plan.operationalErrorWorthy = true
@@ -188,12 +189,95 @@ extension SkillMigrator {
         /// A contiguous run of `<question>? -> <rhs>` list items (Phase 2's
         /// question-arrow decision protocol).
         var isQuestionArrowList: Bool = false
+        /// An `if <cond>,` header plus its indented body, and (if present) a
+        /// same-column `otherwise[,]` sibling plus its own indented body — one
+        /// atomic block, captured by relative indentation rather than by
+        /// single-line trial-lowering. `TrialLowering.lowersAsStatement`
+        /// probes a bare single line with `IndentTokenizer`, so an `if …,`
+        /// header alone (correctly, structurally) never lowers — it has no
+        /// body — and a line-by-line scan previously classified the header,
+        /// `otherwise,`, and every body line as independent `.documentation`,
+        /// silently dropping real branch logic (`replay the pipeline run.` /
+        /// `use judgment to …`) into inert narrative prose. See
+        /// `docs/13_SKILL_MD_PORTING.md` §"Common porting fixes" and
+        /// `IMPLEMENTATION_LOG.md` (2026-07-06T19:25:56Z, "Gotcha #2 fixed").
+        var isIfChain: Bool = false
         /// When set, an `.exec`/`.aiInference`-classified block renders these
         /// lines instead of `rawLines` — used by the question-arrow
         /// protocol's case 1/2 desugar, whose output (`<rhs> only when
         /// <cond>.` / `let the <name> be "<rhs>" only when <cond>.`) is not
         /// the original Markdown text, and by its case-3 judgment wrap.
         var execRenderOverride: [String]? = nil
+    }
+
+    /// Leading-whitespace width matching `IndentTokenizer.leadingSpaces`
+    /// (tabs count as 2) — the same measure `StatementParser.parseConditional`
+    /// uses to delimit an `if`/`otherwise` body, so the migrator's block scan
+    /// groups exactly the lines the real parser would.
+    private func leadingWhitespaceWidth(_ s: String) -> Int {
+        var n = 0
+        for c in s {
+            if c == " " { n += 1 } else if c == "\t" { n += 2 } else { break }
+        }
+        return n
+    }
+
+    /// Scan a structural `if <cond>,` header starting at `start`, if present:
+    /// the header itself, every subsequent line strictly more indented than
+    /// it (the "then" body — blank lines mid-body are absorbed only when a
+    /// qualifying line follows), and, if a same-or-lesser-indented bare
+    /// `otherwise`/`otherwise,` line immediately follows the body, that line
+    /// plus its own indented body. Returns `nil` when `start` isn't an `if
+    /// …,` header, or the header has no body at all (a malformed single
+    /// dangling header — left to fall through to the old per-line path,
+    /// which already surfaces this as a documentation/error line exactly as
+    /// before; this function's only job is to stop a well-formed multi-line
+    /// conditional from being shredded into independent lines).
+    private func scanIfChain(_ body: ArraySlice<String>, from start: ArraySlice<String>.Index,
+                              lexicon: EnglishLexicon) -> (lines: [String], next: ArraySlice<String>.Index)? {
+        let statement = lexicon.grammar.statement
+        let headerRaw = body[start]
+        let headerTrimmed = headerRaw.trimmingCharacters(in: .whitespaces)
+        guard headerTrimmed.lowercased().hasPrefix(statement.ifPrefix), headerTrimmed.hasSuffix(",") else { return nil }
+
+        let headerIndent = leadingWhitespaceWidth(headerRaw)
+        var lines = [headerRaw]
+        var j = body.index(after: start)
+
+        func consumeBody(minIndentExclusive: Int) {
+            while j < body.endIndex {
+                let raw = body[j]
+                let trimmed = raw.trimmingCharacters(in: .whitespaces)
+                if trimmed.isEmpty {
+                    var k = body.index(after: j)
+                    while k < body.endIndex, body[k].trimmingCharacters(in: .whitespaces).isEmpty {
+                        k = body.index(after: k)
+                    }
+                    guard k < body.endIndex, leadingWhitespaceWidth(body[k]) > minIndentExclusive else { return }
+                    while j < k { lines.append(body[j]); j = body.index(after: j) }
+                    continue
+                }
+                guard leadingWhitespaceWidth(raw) > minIndentExclusive else { return }
+                lines.append(raw)
+                j = body.index(after: j)
+            }
+        }
+
+        consumeBody(minIndentExclusive: headerIndent)
+
+        if j < body.endIndex {
+            let otherwiseRaw = body[j]
+            let otherwiseTrimmed = otherwiseRaw.trimmingCharacters(in: .whitespaces).lowercased()
+            if otherwiseTrimmed == statement.otherwiseKeyword || otherwiseTrimmed == statement.otherwiseCommaKeyword {
+                let otherwiseIndent = leadingWhitespaceWidth(otherwiseRaw)
+                lines.append(otherwiseRaw)
+                j = body.index(after: j)
+                consumeBody(minIndentExclusive: otherwiseIndent)
+            }
+        }
+
+        guard lines.count > 1 else { return nil }
+        return (lines, j)
     }
 
     enum SplitKind: Equatable {
@@ -230,8 +314,35 @@ extension SkillMigrator {
     /// executable/AI-inference block) attaches to the run it introduces, per
     /// the deterministic split precedence.
     func splitPlan(for body: ArraySlice<String>, knowledge: Compiler.KnowledgeContext,
-                           checkableOnly: Bool = false) -> SplitPlan {
+                           checkableOnly: Bool = false, ruleAware: Bool = true) -> SplitPlan {
         let trial = TrialLowering(knowledge: knowledge)
+        // Phase 0B rule-aware classifier hook: a line the compiler's own
+        // `RuleAnalyzer` recognizes as a Phase-8 rule shape (`must not …` /
+        // `may …` [+ bounded `up to N`] / `must be … by … before …` /
+        // `When …, …`) is lowerable (P1 category 1), never routed to
+        // `reference` documentation or left for a hard-error fallback just
+        // because it lacks a `normativeCueWords` hit (e.g. bare `may …`) or
+        // carries no other executable shape `TrialLowering` recognizes.
+        // Scoped out for applicability/negativeApplicability callers
+        // (`ruleAware: false`) — those bodies are dispatch-phrase fragments
+        // ("When the user says X, Y, Z" has no action clause), and trialing
+        // them against `RuleAnalyzer` produces the same false-positive
+        // trigger match the compiler-side fix (`SkillSectionBuilder`) guards
+        // against; see IMPLEMENTATION_LOG.md for the gbrain measurement that
+        // surfaced this.
+        let ruleAnalyzer = ruleAware ? RuleAnalyzer(lexicon: knowledge.lexicon, trace: trace, symbols: knowledge.symbols) : nil
+        func isRuleShaped(_ text: String) -> Bool {
+            guard let ruleAnalyzer else { return false }
+            // Shape-gate first: `classify`'s marker matching is unanchored
+            // substring matching (safe only because the flat top-level path
+            // and `SkillSectionBuilder` both gate on this same shape first —
+            // see `RuleAnalyzer.looksLikeRuleShapedSentence`'s doc comment).
+            // Without this gate, ordinary narrative merely mentioning "may"
+            // ("the file may exist outside the indexed brain") spuriously
+            // satisfies `classifyPermission`.
+            guard ruleAnalyzer.looksLikeRuleShapedSentence(text) else { return false }
+            return ruleAnalyzer.classify(RuleAST(text: text, sourceLine: 0)) != nil
+        }
 
         // Step 1: atomic-block scan (fences are one block).
         var blocks: [SplitBlock] = []
@@ -309,6 +420,24 @@ extension SkillMigrator {
                     i = j
                     continue
                 }
+            }
+            // Structural `if <cond>,` header: captured by relative
+            // indentation (matching `IndentTokenizer.leadingSpaces` and
+            // `StatementParser.parseConditional`'s own then/otherwise
+            // grouping), not by paragraph-joining or single-line trial-
+            // lowering. An `if …,` header alone never trial-lowers — it
+            // structurally has no body when probed in isolation — so
+            // without this the header, an `otherwise,` sibling, and every
+            // body line were each independently misclassified as
+            // `.documentation`, silently dropping the whole branch (see
+            // `SplitBlock.isIfChain`'s doc comment and `IMPLEMENTATION_LOG.md`
+            // 2026-07-06T19:25:56Z, "Gotcha #2 fixed").
+            if let chain = scanIfChain(body, from: i, lexicon: knowledge.lexicon) {
+                let joined = chain.lines.joined(separator: "\n")
+                blocks.append(SplitBlock(rawLines: chain.lines, normalizedText: joined,
+                                         isFence: false, isShellFence: false, isIfChain: true))
+                i = chain.next
+                continue
             }
             // Hard-wrapped paragraph continuation: `SKILL.md` bodies wrap a
             // single sentence or numbered-list item across multiple raw
@@ -408,6 +537,25 @@ extension SkillMigrator {
                 blocks[idx].execRenderOverride = override
                 continue
             }
+            if block.isIfChain {
+                // An `if …,` header requires an indented body to lower at
+                // all — under `checkableOnly` (invariants/prohibitions/…),
+                // like a backticked command, it is action-shaped, so it must
+                // not auto-qualify as `.exec` there either.
+                let joined = block.normalizedText
+                if !checkableOnly, trial.lowersAsStatement(joined) {
+                    kinds[idx] = .exec
+                } else if isRuleShaped(joined) {
+                    kinds[idx] = .exec
+                } else if trial.hasInferenceCue(joined) {
+                    kinds[idx] = .aiInference
+                } else if trial.isNormativeNarrative(joined) {
+                    kinds[idx] = .errorOperational
+                } else {
+                    kinds[idx] = .documentation
+                }
+                continue
+            }
 
             let t = block.normalizedText
             if t.isEmpty { kinds[idx] = .blank; continue }
@@ -426,6 +574,13 @@ extension SkillMigrator {
             if !checkableOnly, isWholeLineBacktickedCommand(stripped) || isChoiceGateLine(stripped) { kinds[idx] = .exec; continue }
             if trial.isCheckableCondition(stripped) { kinds[idx] = .exec; continue }
             if !checkableOnly, trial.lowersAsStatement(stripped) { kinds[idx] = .exec; continue }
+            // Phase 0B: a real Phase-8 rule shape is lowerable regardless of
+            // `TrialLowering`'s narrower statement/condition trial — it lowers
+            // through `RuleAnalyzer`/`RuleInjector`, not `StatementParser`.
+            // Gated by `ruleAware` (not `checkableOnly`): invariants/
+            // prohibitions bodies (checkableOnly: true) are exactly where
+            // `must not …`/`may …` rule prose is most likely to appear.
+            if isRuleShaped(stripped) { kinds[idx] = .exec; continue }
             // P1: the ONLY gate that may route non-lowerable content to an AI
             // marker is an inference cue. A normative cue with no inference
             // cue is an operational reword error, never silent documentation.
@@ -458,6 +613,20 @@ extension SkillMigrator {
         func joinsRun(_ kind: SplitKind) -> Bool {
             isExecLike(kind) || kind == .aiInference
         }
+        // A trailing-colon line that is ITSELF a recognized multi-line
+        // statement introducer (`recover from …:`, `for each …:`, `while
+        // …:`, `until …:`, …) is not a free-standing narrative label — it is
+        // real syntax that structurally cannot trial-lower alone (e.g.
+        // `recover from X:` has no preceding statement to attach to when
+        // probed in isolation) but MUST reach the parser verbatim so it can
+        // join the block it introduces. Blockquoting it (the label
+        // treatment below) would silently drop the construct — the exact
+        // "no silent drops via `>`" failure mode AGENTS.md §6 pitfall #14
+        // warns about, except migrator-authored instead of hand-authored.
+        func isStatementIntroducer(_ text: String) -> Bool {
+            let lower = text.lowercased()
+            return knowledge.lexicon.grammar.statement.primitivePrefixes.contains { lower.hasPrefix($0) }
+        }
         for idx in blocks.indices {
             guard kinds[idx] == .documentation else { continue }
             // Check the markdown-normalized form (bold/emphasis/list-marker
@@ -469,6 +638,10 @@ extension SkillMigrator {
             guard let nextIdx = ((idx + 1)..<blocks.count).first(where: { kinds[$0] != .blank && kinds[$0] != .comment }) else { continue }
             guard joinsRun(kinds[nextIdx]) else { continue }
             kinds[idx] = kinds[nextIdx] == .aiInference ? .aiInference : .exec
+            if isStatementIntroducer(normalized) {
+                // Real syntax — join the run verbatim, unmarked.
+                continue
+            }
             // Render as a comment, not a raw statement line — the label is
             // free-standing narrative on its OWN line, not itself an
             // enforceable requirement.
@@ -548,7 +721,19 @@ extension SkillMigrator {
                 // syntax — never silently dropped into a plain exec run.
                 if kind == .fuzzyTable { pendingSegment.append("!!! table (( ai-discretion ))") }
                 else if kind == .fuzzyChecklist { pendingSegment.append("!!! checklist (( ai-autonomy ))") }
-                pendingSegment.append(contentsOf: block.execRenderOverride ?? block.rawLines)
+                if checkableOnly, block.execRenderOverride == nil, block.rawLines.count > 1 {
+                    // A checkable-role body (invariants/prohibitions/…) requires
+                    // one physical line per predicate — the real compiler
+                    // rejects a hard-wrapped bullet split across raw source
+                    // lines as "not a single predicate". This block was a
+                    // multi-line paragraph joined only for classification
+                    // (`normalizedText`); collapse it to that single joined
+                    // line so the checkable-section parser sees one item, not
+                    // a wrapped fragment plus an orphaned continuation line.
+                    pendingSegment.append(block.normalizedText)
+                } else {
+                    pendingSegment.append(contentsOf: block.execRenderOverride ?? block.rawLines)
+                }
             } else if target == .aiInference {
                 pendingSegment.append(contentsOf: block.execRenderOverride ?? block.rawLines)
             } else {

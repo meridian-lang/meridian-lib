@@ -1,0 +1,340 @@
+{
+  "constants" : {
+    "dunning window" : 604800,
+    "high value threshold" : {
+      "amount" : 5000,
+      "currency" : "USD"
+    },
+    "maximum retry count" : 3
+  },
+  "instances_required" : [
+    {
+      "kind" : "mailer server",
+      "name" : "billing mailer"
+    },
+    {
+      "kind" : "payment processor",
+      "name" : "erp gateway"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "in good standing",
+      "function" : "meridianDef_Customer_inGoodStanding",
+      "kind" : "customer",
+      "line" : 46
+    },
+    {
+      "adjective" : "overdue",
+      "function" : "meridianDef_Invoice_overdue",
+      "kind" : "invoice",
+      "line" : 42
+    },
+    {
+      "adjective" : "severely overdue",
+      "function" : "meridianDef_Invoice_severelyOverdue",
+      "kind" : "invoice",
+      "line" : 47
+    },
+    {
+      "adjective" : "unpaid",
+      "function" : "meridianDef_Invoice_unpaid",
+      "kind" : "invoice",
+      "line" : 41
+    },
+    {
+      "adjective" : "blocked",
+      "function" : "meridianDef_Order_blocked",
+      "kind" : "order",
+      "line" : 38
+    },
+    {
+      "adjective" : "fulfilled",
+      "function" : "meridianDef_Order_fulfilled",
+      "kind" : "order",
+      "line" : 39
+    },
+    {
+      "adjective" : "high value",
+      "function" : "meridianDef_Order_highValue",
+      "kind" : "order",
+      "line" : 45
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Order_open",
+      "kind" : "order",
+      "line" : 37
+    },
+    {
+      "adjective" : "released",
+      "function" : "meridianDef_Order_released",
+      "kind" : "order",
+      "line" : 40
+    },
+    {
+      "adjective" : "short",
+      "function" : "meridianDef_Product_short",
+      "kind" : "product",
+      "line" : 43
+    },
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_PurchaseOrder_pending",
+      "kind" : "purchase order",
+      "line" : 44
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 53,
+      "name" : "collection",
+      "right_cardinality" : "one",
+      "right_kind" : "a payment",
+      "via" : "payment.collect"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 57,
+      "name" : "escalation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dunning notice",
+      "via" : "dunning.notify"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 49,
+      "name" : "fulfillment",
+      "right_cardinality" : "one",
+      "right_kind" : "a shipment",
+      "via" : "shipment.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 51,
+      "name" : "invoicing",
+      "right_cardinality" : "one",
+      "right_kind" : "an invoice",
+      "via" : "invoice.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a product",
+      "line" : 55,
+      "name" : "replenishment",
+      "right_cardinality" : "one",
+      "right_kind" : "a purchase order",
+      "via" : "purchase_order.create"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Route returned orders by lifecycle stage and flag invoices returned within the dunning window.",
+    "name" : "returns processing",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 11,
+        "text" : "When this applies"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 15,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 29,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 18,
+        "text" : "Check"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 27,
+        "text" : "Publish"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When this applies",
+        "line" : 11,
+        "lines" : [
+          "\"process returns\"",
+          "\"route returned orders\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 15,
+        "lines" : [
+          "fetch open orders",
+          "fetch unpaid invoices",
+          "Check: any invoices whose due date is within the last 7 days",
+          "table:decision:fCBsaWZlY3ljbGUgfCBhY3Rpb24gICAgICAgIHwKfCAtLS0tLS0tLS0gfCAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tIHwKfCBjYW5jZWxsZWQgfCBlc2NhbGF0ZSB0aGUgaW52b2ljZSAgfAp8IGJsb2NrZWQgIHwgZXNjYWxhdGUgdGhlIGludm9pY2UgIHwKfCAqICAgICB8IHNoaXAgdGhlIG9yZGVyICAgICB8",
+          "Publish: \"returns processing pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 29,
+        "lines" : [
+          "The receipt separates cancelled and blocked returns (escalated to dunning)",
+          "from orders cleared to ship"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"process returns\"\n\"route returned orders\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "collect",
+      "line" : 62,
+      "past_participle" : "collected",
+      "relation" : "collection",
+      "third_person" : "collects"
+    },
+    {
+      "base" : "escalate",
+      "line" : 64,
+      "past_participle" : "escalated",
+      "relation" : "escalation",
+      "third_person" : "escalates"
+    },
+    {
+      "base" : "fulfill",
+      "line" : 60,
+      "past_participle" : "fulfilled",
+      "relation" : "fulfillment",
+      "third_person" : "fulfills"
+    },
+    {
+      "base" : "invoice",
+      "line" : 61,
+      "past_participle" : "invoiced",
+      "relation" : "invoicing",
+      "third_person" : "invoices"
+    },
+    {
+      "base" : "replenish",
+      "line" : 63,
+      "past_participle" : "replenished",
+      "relation" : "replenishment",
+      "third_person" : "replenishes"
+    }
+  ],
+  "source_files" : [
+    "returnsprocessing.meri",
+    "erp.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 67,
+      "swift_line" : 555
+    },
+    {
+      "meridian_line" : 70,
+      "swift_line" : 567
+    },
+    {
+      "meridian_line" : 18,
+      "swift_line" : 579
+    },
+    {
+      "meridian_line" : 21,
+      "swift_line" : 583
+    },
+    {
+      "meridian_line" : 97,
+      "swift_line" : 586
+    },
+    {
+      "meridian_line" : 21,
+      "swift_line" : 599
+    },
+    {
+      "meridian_line" : 97,
+      "swift_line" : 602
+    },
+    {
+      "meridian_line" : 85,
+      "swift_line" : 616
+    },
+    {
+      "meridian_line" : 27,
+      "swift_line" : 628
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 667
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 672
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 712
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 717
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "returns processing",
+      "swift_struct" : "ReturnsProcessing"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when processReturns fires",
+      "swift_struct" : "WhenProcessreturnsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when routeReturnedOrders fires",
+      "swift_struct" : "WhenRoutereturnedordersFires"
+    }
+  ]
+}

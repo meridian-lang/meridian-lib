@@ -63,6 +63,29 @@ public enum IRWalker {
         return ids
     }
 
+    /// All distinct domain kind names referenced anywhere in `workflows`:
+    /// parameter types, `for each`/`until` iteration subjects
+    /// (`IterateMode.overCollection`), and typed `recover where` patterns
+    /// (`ErrorPattern.typed`). Used for the manifest's `kinds_used` (C5-adjacent
+    /// audit data) — see `Compiler.compileWithManifest`.
+    public static func allKindNames(in workflows: [IRWorkflow]) -> Set<String> {
+        var names: Set<String> = []
+        for wf in workflows {
+            for param in wf.parameters { names.insert(param.kind.name) }
+        }
+        for prim in flatPrimitives(workflows: workflows) {
+            switch prim {
+            case .iterate(let i):
+                if case .overCollection(_, let kind, _) = i.mode { names.insert(kind.name) }
+            case .recover(let r):
+                if case .typed(let kind) = r.pattern { names.insert(kind.name) }
+            default:
+                break
+            }
+        }
+        return names
+    }
+
     // MARK: - Private
 
     private static func childBlocks(of prim: IRPrimitive) -> [IRBlock] {
@@ -73,7 +96,8 @@ public enum IRWalker {
         case .emit:                                 return []
         case .wait:                                 return []
         case .commit:                               return []
-        case .proseStep:                            return []
+        case .aiJudgment:                           return []
+        case .aiAutonomy:                           return []
         case .branch(let b):
             var blocks: [IRBlock] = [b.thenBlock]
             if let el = b.elseBlock { blocks.append(el) }
@@ -99,7 +123,8 @@ public enum IRWalker {
         case (.commit,   .commit):   return true
         case (.recover,  .recover):  return true
         case (.simultaneously, .simultaneously): return true
-        case (.proseStep, .proseStep): return true
+        case (.aiJudgment, .aiJudgment): return true
+        case (.aiAutonomy, .aiAutonomy): return true
         default:                     return false
         }
     }

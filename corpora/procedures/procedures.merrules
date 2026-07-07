@@ -17,15 +17,18 @@ rule "procedure-emit":
   lowers to: emit procedure.report with message = {message}.
 
 === sections ===
+section "Batch body — steps" -> procedure
+section "Batch body — steps 2" -> procedure
 section "DBA notes — steps" -> procedure
 section "Procedure — steps" -> procedure
 section "Procedure — steps 2" -> procedure
+section "Procedure — steps 3" -> procedure
 section "Transaction body — steps" -> procedure
 section "Transaction body — steps 2" -> procedure
 section "Assertions — steps" -> procedure
 section "Dispatch table — steps" -> procedure
 
 section "Procedure", "Transaction body", "Batch body" -> procedure
-section "Invocation", "Use this when" -> applicability
-section "Assertions", "Postconditions", "Constraints" -> invariants
-section "Trace shape" -> template
+section "Invocation", "Use this when", "When this applies" -> applicability
+section "Assertions", "Postconditions", "Constraints", "Controls", "Guarantees" -> invariants
+section "Trace shape", "Report shape", "Output" -> template

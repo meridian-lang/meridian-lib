@@ -1,0 +1,60 @@
+---
+name: pipeline triage
+description: Triage failed pipeline runs by replaying the ones whose failure looks transient and routing the rest to judgment for a real remediation call, instead of replaying everything and hoping, or escalating everything and burning an on-call engineer's morning.
+triggers:
+  - "triage failed pipelines"
+  - "triage pipeline failures"
+  - "run the pipeline triage pass"
+---
+
+# Pipeline Triage
+
+> Not every pipeline failure deserves the same response. A run that failed
+> because a downstream API had a five-second blip is a different problem than
+> a run that failed because an upstream schema changed underneath it, and
+> treating them the same — replay everything, or escalate everything — wastes
+> either compute or attention. This skill fetches the failed runs, applies a
+> fast discretion table for the clear-cut cases, and for the ones that aren't
+> clear-cut, splits the remaining runs into a replay lane and a judgment lane
+> based on whether the failure looks transient.
+
+## When to invoke
+- "triage failed pipelines"
+- "triage pipeline failures"
+- "run the pipeline triage pass"
+
+## Workflow
+fetch failed pipeline runs.
+
+!!! table (( ai-discretion ))
+| Condition               | Action             |
+| ----------------------------------------- | ---------------------------------- |
+| the pipeline run's status is "failed"   | escalate to the platform team  |
+| *                     | monitor the pipeline run     |
+
+## Replay Routing
+
+### Replay Routing — steps
+
+for each pipeline run:
+  bind should replay = decide whether the pipeline run's failure looks transient.
+  if the should replay is true,
+    replay the pipeline run.
+  otherwise,
+    use judgment to classify the pipeline run and recommend a remediation, preferring a replay over a full backfill when the failure looks transient.
+
+## Completion
+Emit: "pipeline triage pass complete".
+
+## Anti-Patterns (( role: reference ))
+- Don't replay a run just because replaying is cheap. A failure that isn't
+  transient will fail the same way again, and now it's failed twice
+  instead of once with a clear signal.
+- Don't route every non-obvious failure straight to a full backfill. The
+  judgment call is there to weigh a targeted replay against a backfill,
+  not to default to the expensive option.
+
+## Report shape (( role: template ))
+The receipt separates replayed pipeline runs from ones routed to judgment,
+so a platform engineer can see the split at a glance instead of reading
+every run's individual outcome.

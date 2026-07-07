@@ -28,6 +28,30 @@ let corpora = [
         vocab: "corpora/procedures/procedures.merconfig",
         rulebook: "corpora/procedures/procedures.merrules"
     ),
+    Corpus(
+        id: "incident",
+        root: "corpora/incident",
+        vocab: "corpora/incident/incident.merconfig",
+        rulebook: "corpora/incident/incident.merrules"
+    ),
+    Corpus(
+        id: "etl",
+        root: "corpora/etl",
+        vocab: "corpora/etl/etl.merconfig",
+        rulebook: "corpora/etl/etl.merrules"
+    ),
+    Corpus(
+        id: "governance",
+        root: "corpora/governance",
+        vocab: "corpora/governance/governance.merconfig",
+        rulebook: "corpora/governance/governance.merrules"
+    ),
+    Corpus(
+        id: "clinical",
+        root: "corpora/clinical",
+        vocab: "corpora/clinical/clinical.merconfig",
+        rulebook: "corpora/clinical/clinical.merrules"
+    ),
 ]
 
 struct Options {
@@ -36,10 +60,11 @@ struct Options {
 
 func usage() -> String {
     """
-    usage: swift scripts/generate-compile-outputs.swift [--corpus gbrain|erp|procedures|all]
+    usage: swift scripts/generate-compile-outputs.swift [--corpus gbrain|erp|procedures|incident|etl|governance|clinical|all]
 
-    Cleans and regenerates <root>/compile-outputs from <root>/skills/*.meri plus
-    <root>/RESOLVER.meri using:
+    Cleans and regenerates <root>/compile-outputs from <root>/skills/*.meri,
+    <root>/RESOLVER.meri, and any hand-authored flat <root>/rules/*.meridian
+    fixtures (flat-path regression coverage), using:
       swift run meridian compile <file> --merconfig <vocab> --rulebook <rulebook> --no-format --namespace auto --output <root>/compile-outputs
 
     Defaults to all corpora.
@@ -94,10 +119,24 @@ func meriFiles(root: String) -> [String] {
         .map(\.path)
         .sorted()
     let resolver = rootURL.appendingPathComponent("RESOLVER.meri").path
+    var files = skillFiles
     if fileManager.fileExists(atPath: resolver) {
-        return skillFiles + [resolver]
+        files += [resolver]
     }
-    return skillFiles
+    // Flat rules/*.meridian fixtures (hand-authored, not migrated) are
+    // flat-path regression coverage for the top-of-file Phase-8 rule desugar
+    // — compile them alongside the migrated skills so they land in
+    // compile-outputs/ too.
+    let rulesDir = rootURL.appendingPathComponent("rules")
+    let rulesFiles = ((try? fileManager.contentsOfDirectory(
+        at: rulesDir,
+        includingPropertiesForKeys: nil
+    )) ?? [])
+        .filter { $0.pathExtension == "meridian" }
+        .map(\.path)
+        .sorted()
+    files += rulesFiles
+    return files
 }
 
 func cleanOutput(_ path: String) throws {

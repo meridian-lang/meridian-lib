@@ -1,0 +1,370 @@
+{
+  "constants" : {
+    "escalation cooldown" : 600,
+    "maximum page attempts" : 3,
+    "slo error budget threshold" : 0.10000000000000001
+  },
+  "instances_required" : [
+    {
+      "kind" : "service",
+      "name" : "pagerduty service"
+    },
+    {
+      "kind" : "service",
+      "name" : "statuspage service"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "actionable",
+      "function" : "meridianDef_Alert_actionable",
+      "kind" : "alert",
+      "line" : 30
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Alert_critical",
+      "kind" : "alert",
+      "line" : 23
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Alert_stale",
+      "kind" : "alert",
+      "line" : 24
+    },
+    {
+      "adjective" : "unhealthy",
+      "function" : "meridianDef_Deploy_unhealthy",
+      "kind" : "deploy",
+      "line" : 26
+    },
+    {
+      "adjective" : "high severity",
+      "function" : "meridianDef_Incident_highSeverity",
+      "kind" : "incident",
+      "line" : 27
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Incident_open",
+      "kind" : "incident",
+      "line" : 28
+    },
+    {
+      "adjective" : "degraded",
+      "function" : "meridianDef_Service_degraded",
+      "kind" : "service",
+      "line" : 25
+    },
+    {
+      "adjective" : "breached",
+      "function" : "meridianDef_Slo_breached",
+      "kind" : "slo",
+      "line" : 29
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a runbook",
+      "line" : 36,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "runbook.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a service",
+      "line" : 32,
+      "name" : "firing",
+      "right_cardinality" : "one",
+      "right_kind" : "an alert",
+      "via" : "alert.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an oncall engineer",
+      "line" : 34,
+      "name" : "ownership",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "oncall.roster"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Triage every firing alert by paging the on-call engineer immediately for anything critical, and routing the rest to judgment so a borderline alert gets a real severity-and-service assessment instead of either a reflexive page or a shrug. This is the first thing that touches a new alert before anyone decides what to do about it.",
+    "name" : "triage alert",
+    "outline" : [
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 20,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 25,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 27,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 38,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 46,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 49,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 36,
+        "text" : "Post"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 20,
+        "lines" : [
+          "\"triage firing alerts\"",
+          "\"triage alerts\"",
+          "\"run alert triage\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 25,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 27,
+        "lines" : [
+          "fetch firing alerts",
+          "for each alert:",
+          "if the alert is critical,",
+          "page the oncall engineer for the alert",
+          "wait for signal \"alert.acknowledged\",",
+          "otherwise,",
+          "use judgment to classify the alert and recommend a response, weighing its severity and service name before escalating",
+          "Post: \"alert triage pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 38,
+        "lines" : [
+          "Don't page on-call for every firing alert regardless of severity. Paging",
+          "fatigue from noisy non-critical alerts is exactly what erodes trust in",
+          "the next genuinely critical page",
+          "Don't let a non-critical alert sit unclassified because judgment \"will",
+          "get to it eventually.\" The judgment call is the response for that alert,",
+          "not a deferral of one"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 46,
+        "lines" : [
+          "make sure any alerts whose status is \"firing\""
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 49,
+        "lines" : [
+          "The receipt separates paged critical alerts from alerts routed to judgment,",
+          "so an on-call engineer reviewing the pass can see which alerts got an",
+          "automatic page versus a reasoned call"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"triage firing alerts\"\n\"triage alerts\"\n\"run alert triage\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "cover",
+      "line" : 41,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "own",
+      "line" : 40,
+      "past_participle" : "owned",
+      "relation" : "ownership",
+      "third_person" : "owns"
+    },
+    {
+      "base" : "page",
+      "line" : 39,
+      "past_participle" : "paged",
+      "relation" : "ownership",
+      "third_person" : "pages"
+    }
+  ],
+  "source_files" : [
+    "triagealert.meri",
+    "incident.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 47,
+      "swift_line" : 393
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 398
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 409
+    },
+    {
+      "meridian_line" : 31,
+      "swift_line" : 414
+    },
+    {
+      "meridian_line" : 59,
+      "swift_line" : 417
+    },
+    {
+      "meridian_line" : 33,
+      "swift_line" : 429
+    },
+    {
+      "meridian_line" : 35,
+      "swift_line" : 434
+    },
+    {
+      "meridian_line" : 36,
+      "swift_line" : 450
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 489
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 494
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 534
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 539
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 579
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 584
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "judgment_steps" : [
+        {
+          "line" : 35,
+          "scoped_tools" : [
+            "alert.list",
+            "deploy.list",
+            "deploy.rollback",
+            "incident.close",
+            "incident.escalate",
+            "incident.list",
+            "incident.open",
+            "oncall.roster",
+            "page.ack",
+            "page.send",
+            "postmortem.publish",
+            "runbook.list",
+            "runbook.lookup",
+            "service.healthcheck",
+            "service.list",
+            "status.post"
+          ],
+          "text" : "classify the alert and recommend a response, weighing its severity and service name before escalating"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "triage alert",
+      "swift_struct" : "TriageAlert"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when triageFiringAlerts fires",
+      "swift_struct" : "WhenTriagefiringalertsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when triageAlerts fires",
+      "swift_struct" : "WhenTriagealertsFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when runAlertTriage fires",
+      "swift_struct" : "WhenRunalerttriageFires"
+    }
+  ]
+}

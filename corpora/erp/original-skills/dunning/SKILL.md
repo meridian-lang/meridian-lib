@@ -1,6 +1,6 @@
 ---
 name: dunning
-description: Collect overdue unpaid invoices with deterministic payment attempts.
+description: Collect overdue unpaid invoices with deterministic payment attempts and escalation.
 triggers:
   - "run dunning"
   - "collect overdue invoices"
@@ -16,8 +16,10 @@ triggers:
 Step: `ofbiz accounting dunning --dry-run --json` to snapshot overdue accounts.
 fetch unpaid invoices.
 Check: any unpaid invoices.
-for each invoice:
+for each invoice whose due date is within the last 1 days:
   collect payment for the invoice.
+  recover from payment.declined:
+    escalate the invoice.
 Publish: "dunning collection pass complete".
 
 ## Controls

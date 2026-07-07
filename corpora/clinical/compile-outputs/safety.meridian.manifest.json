@@ -1,0 +1,284 @@
+{
+  "constants" : {
+    "dose limit" : 2,
+    "observation window" : 14400,
+    "vitals threshold" : 100
+  },
+  "instances_required" : [
+    {
+      "kind" : "protocol",
+      "name" : "sepsis protocol"
+    },
+    {
+      "kind" : "protocol",
+      "name" : "anticoagulation protocol"
+    }
+  ],
+  "kinds_used" : [
+    "MedicationOrder"
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "granted",
+      "function" : "meridianDef_Consent_granted",
+      "kind" : "consent",
+      "line" : 32
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_MedicationOrder_cleared",
+      "kind" : "medication order",
+      "line" : 29
+    },
+    {
+      "adjective" : "contraindicated",
+      "function" : "meridianDef_MedicationOrder_contraindicated",
+      "kind" : "medication order",
+      "line" : 28
+    },
+    {
+      "adjective" : "high risk",
+      "function" : "meridianDef_Medication_highRisk",
+      "kind" : "medication",
+      "line" : 27
+    },
+    {
+      "adjective" : "active",
+      "function" : "meridianDef_Patient_active",
+      "kind" : "patient",
+      "line" : 33
+    },
+    {
+      "adjective" : "held",
+      "function" : "meridianDef_Patient_held",
+      "kind" : "patient",
+      "line" : 34
+    },
+    {
+      "adjective" : "monitored",
+      "function" : "meridianDef_Patient_monitored",
+      "kind" : "patient",
+      "line" : 30
+    },
+    {
+      "adjective" : "unmonitored",
+      "function" : "meridianDef_Patient_unmonitored",
+      "kind" : "patient",
+      "line" : 31
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_VitalSign_critical",
+      "kind" : "vital sign",
+      "line" : 25
+    },
+    {
+      "adjective" : "stable",
+      "function" : "meridianDef_VitalSign_stable",
+      "kind" : "vital sign",
+      "line" : 26
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a nurse",
+      "line" : 38,
+      "name" : "administration",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "medication.administer"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a protocol",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication",
+      "via" : "protocol.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a clinician",
+      "line" : 36,
+      "name" : "prescription",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "order.list"
+    }
+  ],
+  "meridian_rules" : [
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "invariant",
+      "source" : {
+        "file" : "safety.meridian",
+        "line" : 16
+      },
+      "text" : "A medication order with allergy check \"conflict\" must not be administered"
+    },
+    {
+      "bounded" : true,
+      "executes" : true,
+      "kind" : "permission",
+      "source" : {
+        "file" : "safety.meridian",
+        "line" : 18
+      },
+      "text" : "A nurse may administer medication orders whose dose count is at most 2"
+    },
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "precondition",
+      "source" : {
+        "file" : "safety.meridian",
+        "line" : 20
+      },
+      "text" : "A high risk medication order must be approved by an attending before administration"
+    },
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "trigger",
+      "source" : {
+        "file" : "safety.meridian",
+        "line" : 22
+      },
+      "text" : "When a patient has been unmonitored for more than 4 hours, escalate the patient"
+    }
+  ],
+  "meridian_skill" : {
+    "rulebook" : "clinical.merrules",
+    "vocabulary" : "clinical.merconfig"
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "administer",
+      "line" : 44,
+      "past_participle" : "administered",
+      "relation" : "administration",
+      "third_person" : "administers"
+    },
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "prescribe",
+      "line" : 43,
+      "past_participle" : "prescribed",
+      "relation" : "prescription",
+      "third_person" : "prescribes"
+    }
+  ],
+  "source_files" : [
+    "safety.meridian",
+    "clinical.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 20,
+      "swift_line" : 419
+    },
+    {
+      "meridian_line" : 18,
+      "swift_line" : 424
+    },
+    {
+      "meridian_line" : 16,
+      "swift_line" : 429
+    },
+    {
+      "meridian_line" : 27,
+      "swift_line" : 434
+    },
+    {
+      "meridian_line" : 20,
+      "swift_line" : 480
+    },
+    {
+      "meridian_line" : 18,
+      "swift_line" : 485
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 490
+    },
+    {
+      "meridian_line" : 33,
+      "swift_line" : 533
+    },
+    {
+      "meridian_line" : 22,
+      "swift_line" : 573
+    },
+    {
+      "meridian_line" : 22,
+      "swift_line" : 578
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "NurseAdminister",
+          "name" : "nurseAdminister"
+        },
+        {
+          "kind" : "MedicationOrder",
+          "name" : "medicationOrder"
+        }
+      ],
+      "source_name" : "let a nurse administer a medication order",
+      "swift_struct" : "LetNurseAdministerMedicationOrder"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "AttendingApprove",
+          "name" : "attendingApprove"
+        },
+        {
+          "kind" : "MedicationOrder",
+          "name" : "medicationOrder"
+        }
+      ],
+      "source_name" : "have a attending approve the administration of a medication order",
+      "swift_struct" : "HaveAttendingApproveAdministration"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "UnmonitoredPatient",
+          "name" : "unmonitoredPatient"
+        }
+      ],
+      "source_name" : "escalate a unmonitored patient",
+      "swift_struct" : "EscalateUnmonitoredPatient"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "when a patient has been unmonitored for more than 4 hours",
+      "swift_struct" : "WhenPatientHasBeenUnmonitored"
+    }
+  ]
+}

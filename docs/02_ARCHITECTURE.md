@@ -83,9 +83,10 @@ Sources/MeridianCore/
 │   └── RewriteEngine.swift         ← Applies desugar rewrites (bounded fixpoint)
 │
 ├── IR/
-│   └── IRTypes.swift               ← IRWorkflow, IRPrimitive (12 cases: 11
-│                                      deterministic primitives + proseStep for the
-│                                      discretion/autonomy prose path), IRExpression
+│   └── IRTypes.swift               ← IRWorkflow, IRPrimitive (13 cases: 11
+│                                      deterministic primitives + aiJudgment/
+│                                      aiAutonomy for the discretion/autonomy
+│                                      prose path), IRExpression
 │
 ├── Codegen/
 │   ├── SwiftEmitter.swift          ← IR → Swift source (StringTemplate)

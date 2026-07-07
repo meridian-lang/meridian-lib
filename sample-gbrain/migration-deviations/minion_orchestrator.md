@@ -3,8 +3,8 @@
 - Original: `minion-orchestrator/SKILL.md`
 - Ported: `minion_orchestrator.meri`
 - Tier: 2 (light edits)
-- Similarity: 83%
-- Lines: 303 -> 342 (+73 / -34)
+- Similarity: 84%
+- Lines: 303 -> 338 (+69 / -34)
 
 ## Frontmatter
 - Added: (none)
@@ -17,11 +17,11 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L87 `Submit (CLI, operator or autopilot)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L129 `Control (MCP-callable)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L249 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L279 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L287 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L83 `Submit (CLI, operator or autopilot)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L125 `Control (MCP-callable)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L245 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L275 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L283 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections inert total: 11/14 (79% total inert; includes intentional docs/templates/tools metadata)
@@ -33,16 +33,16 @@ These sections were made non-executable in the port and should be reviewed as mi
 
 ### Inert section details
 - L4 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L27 `Route the Request: Shell Job vs Subagent`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L55 `Preconditions (read before submitting your first shell job)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L87 `Submit (CLI, operator or autopilot)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L112 `Monitor (agents or operator)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L129 `Control (MCP-callable)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L158 `Phase 1: Submit`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L237 `Phase 5: Review Results`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L249 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L279 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L287 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L23 `Route the Request: Shell Job vs Subagent`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L51 `Preconditions (read before submitting your first shell job)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L83 `Submit (CLI, operator or autopilot)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L108 `Monitor (agents or operator)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L125 `Control (MCP-callable)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L154 `Phase 1: Submit`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L233 `Phase 5: Review Results`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L245 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L275 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L283 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
@@ -69,7 +69,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Guarantees:
  - Jobs survive gateway restart (Postgres-backed)
-@@ -64,8 +58,24 @@
+@@ -64,8 +58,20 @@
  - Jobs can be paused, resumed, or cancelled at any time
  - Parent-child DAGs with configurable failure policies
  
@@ -78,11 +78,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 +
 +### Contract — steps (( role: reference ))
 +
-+When to route to Minions: durable, observable work that must survive restarts,
-+fan out across many parallel tasks, or persist across sessions. Routing policy
-+is defined in `skills/conventions/subagent-routing.md` — the project default is
-+`pain_triggered` (native subagents first, Minions after specific pain signals
-+fire); Mode A (all-through-Minions) is opt-in.
++When to route to Minions: durable, observable work that must survive restarts, fan out across many parallel tasks, or persist across sessions. Routing policy is defined in `skills/conventions/subagent-routing.md` — the project default is `pain_triggered` (native subagents first, Minions after specific pain signals fire); Mode A (all-through-Minions) is opt-in.
 +
 +## Route the Request: Shell Job vs Subagent (( role: reference ))
 +
@@ -96,7 +92,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  | Condition | Action |
  |---|---|
  | User asks for deterministic command/script run | Shell job (CLI: `gbrain jobs submit shell ...`) |
-@@ -76,38 +86,48 @@
+@@ -76,38 +82,48 @@
  | Needs restart durability/observability | Submit as Minion job |
  | Parallel work (2+ streams) | `gbrain agent run --fanout-manifest` or parent + child subagents |
  
@@ -161,7 +157,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Shell jobs take their command via `--params` as a JSON object with `cmd` (string)
  or `argv` (array), plus `cwd` and optional `env`.
-@@ -132,7 +152,7 @@
+@@ -132,7 +148,7 @@
  `--backoff-delay`, `--backoff-jitter`, `--timeout-ms`, `--idempotency-key`,
  `--dry-run`.
  
@@ -170,7 +166,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  These operations are MCP-callable and safe for agent use:
  
-@@ -142,11 +162,14 @@
+@@ -142,11 +158,14 @@
  get_job_progress ID
  ```
  
@@ -186,7 +182,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```
  cancel_job id=ID
-@@ -160,15 +183,22 @@
+@@ -160,15 +179,22 @@
  
  ## Subagent Jobs (LLM Orchestration)
  
@@ -211,7 +207,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```
  gbrain agent run "Research Acme Corp revenue" --tools "search,query"
-@@ -190,6 +220,10 @@
+@@ -190,6 +216,10 @@
  and claims AFTER every child terminates. See
  `src/core/minions/handlers/subagent.ts` and
  `src/core/minions/handlers/subagent-aggregator.ts`.
@@ -222,7 +218,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Flags (from `src/commands/agent.ts`):
  - `--subagent-def <name>` — named subagent definition
-@@ -198,7 +232,9 @@
+@@ -198,7 +228,9 @@
  - `--tools <csv>` — allow-listed brain tools (see above)
  - `--timeout-ms <N>` — hard timeout per job
  - `--fanout-manifest <file>` — N children + 1 aggregator
@@ -233,7 +229,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  - `--detach` — submit and return immediately
  
  Queue/priority/retry tuning is not exposed by `gbrain agent run`; submit the
-@@ -241,16 +277,19 @@
+@@ -241,16 +273,19 @@
  
  All lifecycle ops are MCP-callable.
  
@@ -255,7 +251,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  When reporting job status to the user:
  
-@@ -280,7 +319,7 @@
+@@ -280,7 +315,7 @@
  Total tokens so far: 4.3k
  ```
  
@@ -264,7 +260,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - Don't spawn a Minion for a single search query (use search tool directly)
  - Don't fire-and-forget without checking results
-@@ -288,7 +327,7 @@
+@@ -288,7 +323,7 @@
  - For subagent work, don't use `sessions_spawn` with `runtime: "subagent"` when Minions is available (use `gbrain agent run` instead)
  - Don't poll `get_job` in a tight loop (use `get_job_progress` for lightweight checks)
  

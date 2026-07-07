@@ -1,0 +1,198 @@
+{
+  "constants" : {
+    "batch size threshold" : 100000,
+    "freshness sla" : 86400,
+    "retry budget" : 3
+  },
+  "instances_required" : [
+    {
+      "kind" : "sink",
+      "name" : "warehouse sink"
+    },
+    {
+      "kind" : "source",
+      "name" : "object store source"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Dataset_critical",
+      "kind" : "dataset",
+      "line" : 28
+    },
+    {
+      "adjective" : "high volume",
+      "function" : "meridianDef_Dataset_highVolume",
+      "kind" : "dataset",
+      "line" : 27
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Dataset_stale",
+      "kind" : "dataset",
+      "line" : 21
+    },
+    {
+      "adjective" : "backfilled",
+      "function" : "meridianDef_Partition_backfilled",
+      "kind" : "partition",
+      "line" : 23
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_PipelineRun_failed",
+      "kind" : "pipeline run",
+      "line" : 22
+    },
+    {
+      "adjective" : "passing",
+      "function" : "meridianDef_QualityCheck_passing",
+      "kind" : "quality check",
+      "line" : 24
+    },
+    {
+      "adjective" : "compatible",
+      "function" : "meridianDef_Schema_compatible",
+      "kind" : "schema",
+      "line" : 26
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Watermark_fresh",
+      "kind" : "watermark",
+      "line" : 25
+    }
+  ],
+  "meridian_ir_version" : "1.0",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a pipeline run",
+      "line" : 34,
+      "name" : "derivation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "transform"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a source",
+      "line" : 30,
+      "name" : "extraction",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "extract"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a dataset",
+      "line" : 32,
+      "name" : "loading",
+      "right_cardinality" : "one",
+      "right_kind" : "a sink",
+      "via" : "load"
+    }
+  ],
+  "meridian_skill" : {
+    "outline" : [
+      {
+        "kind" : "inert",
+        "level" : 2,
+        "line" : 5,
+        "text" : "Dispatch table"
+      },
+      {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 8,
+        "text" : "Dispatch table — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 21,
+        "text" : "Workflow"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Dispatch table",
+        "line" : 5,
+        "lines" : [
+
+        ],
+        "role" : "inert"
+      },
+      {
+        "executes" : false,
+        "heading" : "Dispatch table — steps",
+        "line" : 8,
+        "lines" : [
+          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHJ1biBleHRyYWN0IGxvYWQgfCBleHRyYWN0bG9hZCB8CnwgcnVuIGluY3JlbWVudGFsIHN5bmMgfCBpbmNyZW1lbnRhbHN5bmMgfAp8IGNoZWNrIHNjaGVtYSBldm9sdXRpb24gfCBzY2hlbWFldm9sdXRpb24gfAp8IGJhY2tmaWxsIGRhdGFzZXQgcGFydGl0aW9ucyB8IGJhY2tmaWxscGFydGl0aW9ucyB8CnwgZGVkdXBlIGRhdGFzZXRzIHwgZGVkdXBldXBzZXJ0IHwKfCBydW4gcXVhbGl0eSBnYXRlIHwgcXVhbGl0eWdhdGUgfAp8IG9yY2hlc3RyYXRlIHBpcGVsaW5lIGRhZyB8IGRhZ29yY2hlc3RyYXRlIHwKfCB0cmlhZ2UgZmFpbGVkIHBpcGVsaW5lcyB8IHBpcGVsaW5ldHJpYWdlIHw="
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow",
+        "line" : 21,
+        "lines" : [
+          "Look up the skill corresponding to the trigger phrase and emit the selected",
+          "skill id"
+        ],
+        "role" : "reference"
+      }
+    ]
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "derive",
+      "line" : 39,
+      "past_participle" : "derived",
+      "relation" : "derivation",
+      "third_person" : "derives"
+    },
+    {
+      "base" : "extract",
+      "line" : 37,
+      "past_participle" : "extracted",
+      "relation" : "extraction",
+      "third_person" : "extracts"
+    },
+    {
+      "base" : "load",
+      "line" : 38,
+      "past_participle" : "loaded",
+      "relation" : "loading",
+      "third_person" : "loads"
+    }
+  ],
+  "source_files" : [
+    "RESOLVER.meri",
+    "etl.merconfig"
+  ],
+  "source_map" : [
+
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "source_name" : "entry",
+      "swift_struct" : "Entry"
+    }
+  ]
+}

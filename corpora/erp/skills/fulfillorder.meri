@@ -18,13 +18,20 @@ fulfillment workflow." This skill keeps that vocabulary while compiling to
 declared tool calls.
 
 ## Workflow
+
+### Workflow — steps
+
 Step: `ofbiz shipment --pending --json` to capture pending warehouse work.
 fetch open orders.
 Check: all orders have a number.
 for each order:
   reserve inventory for the order.
+  if the order is high value,
+    wait for approval of the order from an account manager,
+  otherwise,
+    make sure the order's total amount is more than 0.
   ship the order.
 Publish: "shipment release queue drained".
 
-## Checks (( role: reference ))
-Every released order should already have inventory reserved.
+## Checks
+Every released order has inventory reserved.

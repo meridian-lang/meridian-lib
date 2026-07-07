@@ -3,8 +3,8 @@
 - Original: `ingest/SKILL.md`
 - Ported: `ingest.meri`
 - Tier: 2 (light edits)
-- Similarity: 70%
-- Lines: 312 -> 382 (+139 / -69)
+- Similarity: 68%
+- Lines: 312 -> 383 (+147 / -76)
 
 ## Frontmatter
 - Added: (none)
@@ -18,13 +18,12 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L29 `Citation Requirements (MANDATORY)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L57 `Entity Detection on Every Message`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L84 `What counts as notable`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L168 `PDFs & Documents`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L284 `Test Before Bulk`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L331 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L349 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
+- L27 `Citation Requirements (MANDATORY)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L55 `Entity Detection on Every Message`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L82 `What counts as notable`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L166 `PDFs & Documents`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L332 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L350 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
 - Sections inert total: 19/19 (100% total inert; includes intentional docs/templates/tools metadata)
@@ -36,31 +35,31 @@ These sections were made non-executable in the port and should be reviewed as mi
 
 ### Inert section details
 - L8 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L29 `Citation Requirements (MANDATORY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L40 `Phases`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L57 `Entity Detection on Every Message`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L62 `Protocol`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L84 `What counts as notable`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L92 `What to capture from the user's own thinking`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L118 `Articles & Web Content`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L138 `Videos & Podcasts`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L168 `PDFs & Documents`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L181 `Screenshots & Images`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L197 `Meeting Transcripts`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L226 `Social Media Content`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L243 `Raw Source Preservation`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L284 `Test Before Bulk`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L298 `Quality Rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L316 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L331 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L349 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
+- L27 `Citation Requirements (MANDATORY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L38 `Phases`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L55 `Entity Detection on Every Message`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L60 `Protocol`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L82 `What counts as notable`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L90 `What to capture from the user's own thinking`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L116 `Articles & Web Content`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L136 `Videos & Podcasts`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L166 `PDFs & Documents`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L179 `Screenshots & Images`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L195 `Meeting Transcripts`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L224 `Social Media Content`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L241 `Raw Source Preservation`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L282 `Test Before Bulk`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L299 `Quality Rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L317 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L332 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L350 `Tools Used`: tools-metadata — Tools sections are metadata-mining, not workflow execution.
 
 ## Unified diff
 
 ```diff
 --- original-skills/ingest/SKILL.md
 +++ skills/ingest.meri
-@@ -24,25 +24,32 @@
+@@ -24,25 +24,30 @@
  
  # Ingest Skill
  
@@ -87,19 +86,22 @@ These sections were made non-executable in the port and should be reviewed as mi
 -- Entity detection fires on every inbound message; notable entities get pages or updates.
 -
 -> **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
+-
+-Every mention of a person or company with a brain page MUST create a back-link
+-FROM that entity's page TO the page mentioning them. An unlinked mention is a
+-broken brain. See `skills/_brain-filing-rules.md` for format.
+-
+-## Citation Requirements (MANDATORY)
 +
 +### Contract — steps 2 (( role: reference ))
- 
- Every mention of a person or company with a brain page MUST create a back-link
- FROM that entity's page TO the page mentioning them. An unlinked mention is a
- broken brain. See `skills/_brain-filing-rules.md` for format.
- 
--## Citation Requirements (MANDATORY)
++
++Every mention of a person or company with a brain page MUST create a back-link FROM that entity's page TO the page mentioning them. An unlinked mention is a broken brain. See `skills/_brain-filing-rules.md` for format.
++
 +## Citation Requirements (MANDATORY) (( role: reference ))
  
  Every fact written to a brain page must carry an inline `[Source: ...]` citation.
  
-@@ -53,12 +60,11 @@
+@@ -53,12 +58,11 @@
  - **Social media:** `[Source: X/@handle, YYYY-MM-DD](URL)` (include link)
  - **Synthesis:** `[Source: compiled from {sources}]`
  
@@ -113,7 +115,7 @@ These sections were made non-executable in the port and should be reviewed as mi
     - Read the entity's page from gbrain to check if it exists
     - If exists: update compiled_truth (rewrite State section with new info, don't append)
     - If new: check notability gate, then store the page in gbrain with the appropriate type and slug
-@@ -67,31 +73,38 @@
+@@ -67,31 +71,38 @@
  5. **Back-link all entities.** Update EVERY mentioned entity's page with a back-link to this page (Iron Law).
  6. **Timeline merge.** The same event appears on ALL mentioned entities' timelines. If Alice met Bob at Acme Corp, the event goes on Alice's page, Bob's page, and Acme Corp's page.
  
@@ -163,7 +165,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - People the user interacts with or discusses (not random mentions)
  - Companies relevant to the user's work or interests
-@@ -99,23 +112,33 @@
+@@ -99,23 +110,33 @@
  - The user's own original thinking (ideas, theses, observations) -- highest value
  - See `skills/_brain-filing-rules.md` for the full notability gate
  
@@ -204,7 +206,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  **Input:** URL shared by user, or article mentioned in conversation.
  
-@@ -125,13 +148,17 @@
+@@ -125,13 +146,17 @@
  3. Summarize: executive summary + key arguments (not a rehash)
  4. Extract entities: people, companies, concepts mentioned
  5. **Save raw source** for provenance (see Raw Source Preservation below)
@@ -226,7 +228,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  **Input:** URL (YouTube, podcast, etc.) or local audio/video file.
  
-@@ -139,12 +166,7 @@
+@@ -139,12 +164,7 @@
  1. Get transcript -- speaker-diarized if possible (services like Diarize.io provide
     speaker-labeled, word-level timing)
  2. **Save raw transcript** (both JSON and human-readable TXT)
@@ -239,7 +241,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  **Write to:** `media/videos/` or `media/podcasts/` with back-links to all entities.
  
  **Quality bar:**
-@@ -154,7 +176,19 @@
+@@ -154,7 +174,19 @@
  - Verbatim quotes with real speaker names (not "speaker_0")
  - All entities extracted with context and back-linked
  
@@ -260,7 +262,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  **Input:** File path or URL.
  
-@@ -167,19 +201,23 @@
+@@ -167,19 +199,23 @@
  
  **Write to:** per filing rules (file by primary subject, not format).
  
@@ -288,7 +290,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  **Input:** Transcript from meeting recording service, or manual notes.
  
-@@ -187,13 +225,10 @@
+@@ -187,13 +223,10 @@
  1. Pull full transcript (source of truth -- AI summaries are medium-low trust)
  2. **Save raw transcript** for provenance
  3. Write meeting page with YOUR analysis above the line, raw transcript below
@@ -302,7 +304,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  **What makes a good meeting page:**
  - Reveals the real crux, not a bullet dump
-@@ -202,7 +237,16 @@
+@@ -202,7 +235,16 @@
  - Names tension or what was left unsaid
  - Captures actual dynamic, not performative summary
  
@@ -320,7 +322,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  **Input:** Tweet, thread, or social media post.
  
-@@ -211,25 +255,19 @@
+@@ -211,25 +253,19 @@
  2. If images present: OCR via vision model for full text extraction
  3. Summarize: what's being said, why it matters, who's involved
  4. Extract entities and update brain pages
@@ -352,7 +354,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  ```yaml
  target: supabase://brain-files/page-slug/filename.mp4
  bucket: brain-files
-@@ -242,13 +280,31 @@
+@@ -242,15 +278,31 @@
  type: transcript
  ```
  
@@ -384,11 +386,13 @@ These sections were made non-executable in the port and should be reviewed as mi
 -Use `put_raw_data` in gbrain to store raw API responses and metadata (JSON, not binary).
 -
 -## Test Before Bulk
+-
+-When processing multiple items (batch video ingestion, bulk meeting processing, etc.):
 +## Test Before Bulk (( role: reference ))
  
- When processing multiple items (batch video ingestion, bulk meeting processing, etc.):
- 
-@@ -262,10 +318,8 @@
+ 1. **Test on 3-5 items first.** Run in test mode if available.
+ 2. **Read the actual output.** Is the quality good? Are titles compelling (not
+@@ -262,10 +314,13 @@
  The marginal cost of testing 3 items first is near zero. The cost of cleaning
  up 100 bad pages is enormous.
  
@@ -396,12 +400,17 @@ These sections were made non-executable in the port and should be reviewed as mi
 -
 -- Executive summary in compiled_truth must be updated, not just timeline appended
 -- State section is REWRITTEN, not appended to. Current best understanding only.
++
++### Test Before Bulk — steps (( role: reference ))
++
++When processing multiple items (batch video ingestion, bulk meeting processing, etc.):
++
 +## Quality Rules (( role: reference ))
 +
  - Timeline entries are reverse-chronological (newest first)
  - Every person/company mentioned gets a page if notable (see filing rules)
  - Link types: knows, works_at, invested_in, founded, met_at, discussed
-@@ -273,14 +327,30 @@
+@@ -273,14 +328,30 @@
  - Back-links: every entity mention creates a back-link (Iron Law)
  - Filing: file by primary subject, not format or source (see filing rules)
  

@@ -509,16 +509,8 @@
   ],
   "workflows" : [
     {
-      "mode" : "strict",
-      "parameters" : [
+      "judgment_steps" : [
         {
-          "kind" : "Input",
-          "name" : "input"
-        }
-      ],
-      "prose_steps" : [
-        {
-          "dispatch_mode" : "plan_then_execute",
           "guidance" : "**Retracted \/ disputed** — paper has been retracted, has a major\nexpression-of-concern, or has well-documented critique that\ncontradicts the headline finding\nNever claim a problem without evidence. The verification document\nitself is the artifact — if the claim holds up, say so plainly. If it\ndoesn't, the trace speaks for itself\n`skills\/perplexity-research\/SKILL.md` — the actual web-search engine\nthis skill routes through (D7\/α: pure routing, no new infrastructure)\n`skills\/citation-fixer\/SKILL.md` — fixes citation FORMATTING; this\nskill checks whether the cited claim is true\n`skills\/conventions\/quality.md` — citation + back-link rules",
           "line" : 192,
           "scoped_tools" : [
@@ -543,6 +535,13 @@
             "verify"
           ],
           "text" : "follow the Standards (the rigor bar) — steps guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Input",
+          "name" : "input"
         }
       ],
       "source_name" : "academic-verify a input",

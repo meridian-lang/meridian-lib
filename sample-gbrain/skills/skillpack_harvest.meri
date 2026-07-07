@@ -53,10 +53,9 @@ A harvest is "properly done" when:
    the commit.
 
 
-### Contract — steps (( role: reference ))
+### Contract — steps
 
-If any of these is incomplete, the skill is NOT yet harvested — the
-files may sit in gbrain's working tree, but they're not landed.
+If any of these is incomplete, the skill is NOT yet harvested — the files may sit in gbrain's working tree, but they're not landed.
 
 ## Output Format (( role: template ))
 
@@ -85,11 +84,9 @@ a list of files written. JSON mode (`--json`) returns the full
 - **Moving files instead of copying.** Harvest is a copy. The host
   retains its skill. Don't `rm -rf` the source after harvesting.
 
-### Anti-Patterns — steps (( role: reference ))
+### Anti-Patterns — steps
 
-- Always preview first. Files land in
-  gbrain's working tree; cleanup is a `git checkout` away, but you
-  shouldn't need to.
+- Skipping the dry-run. Always preview first. Files land in gbrain's working tree; cleanup is a `git checkout` away, but you shouldn't need to.
 
 ### Anti-Patterns — steps 2 (( role: reference ))
 
@@ -125,12 +122,11 @@ Do NOT invoke when:
    into a checkout the user doesn't intend to commit from.
 
 
-### Preconditions — steps (( role: reference ))
+### Preconditions — steps
 
 > Before running this skill, confirm:
 
-1. The skill is mature. Recent `routing-eval.jsonl` cases pass; the
-   skill has been used in production at least a few times.
+1. The skill is mature. Recent `routing-eval.jsonl` cases pass; the skill has been used in production at least a few times.
 
 ## Workflow
 

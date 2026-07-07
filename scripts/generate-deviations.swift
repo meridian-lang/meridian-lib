@@ -28,6 +28,30 @@ let corpora = [
         portedRoot: "corpora/procedures",
         output: "corpora/procedures/migration-deviations"
     ),
+    Corpus(
+        id: "incident",
+        originals: "corpora/incident/original-skills",
+        portedRoot: "corpora/incident",
+        output: "corpora/incident/migration-deviations"
+    ),
+    Corpus(
+        id: "etl",
+        originals: "corpora/etl/original-skills",
+        portedRoot: "corpora/etl",
+        output: "corpora/etl/migration-deviations"
+    ),
+    Corpus(
+        id: "governance",
+        originals: "corpora/governance/original-skills",
+        portedRoot: "corpora/governance",
+        output: "corpora/governance/migration-deviations"
+    ),
+    Corpus(
+        id: "clinical",
+        originals: "corpora/clinical/original-skills",
+        portedRoot: "corpora/clinical",
+        output: "corpora/clinical/migration-deviations"
+    ),
 ]
 
 struct Options {
@@ -36,7 +60,7 @@ struct Options {
 
 func usage() -> String {
     """
-    usage: swift scripts/generate-deviations.swift [--corpus gbrain|erp|procedures|all]
+    usage: swift scripts/generate-deviations.swift [--corpus gbrain|erp|procedures|incident|etl|governance|clinical|all]
 
     Regenerates migration deviation reports with:
       swift run meridian skill-deviation <original-skills> <ported-root> --batch --index --out <migration-deviations>

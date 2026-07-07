@@ -99,7 +99,8 @@ public indirect enum IRPrimitive: Sendable {
     case commit(CommitIR)
     case recover(RecoverIR)
     case simultaneously(SimultaneouslyIR)
-    case proseStep(ProseStepIR)
+    case aiJudgment(AIJudgmentIR)
+    case aiAutonomy(AIAutonomyIR)
     case complete(CompleteIR)
 }
 
@@ -367,39 +368,72 @@ public struct CompleteIR: Sendable {
     }
 }
 
-// MARK: - 11. prose step
+// MARK: - 11. AI-routed primitives (judgment / autonomy)
 
+/// Distinguishes the two AI-routed dispatch shapes at the AST/lowering
+/// boundary (a workflow inherits one of these from `with discretion` /
+/// `with autonomy`, or a local marker sets it explicitly). Once lowered, the
+/// distinction is structural — `IRPrimitive.aiJudgment` vs `.aiAutonomy` —
+/// not carried as a field on a single generic primitive.
 public enum ProseDispatchMode: Sendable, Equatable {
     case planThenExecute
     case autonomousLoop
 }
 
-public struct ProseStepIR: Sendable {
+/// AI-routed step under judgment/discretion (`use judgment to …:`, `with
+/// discretion`, `ai-discretion` table/checklist routing). Codegen calls
+/// `runtime.executeProsePlan(...)` — a single plan-then-execute pass with no
+/// autonomous retry loop, so this primitive carries no `AutonomyConfigIR`.
+public struct AIJudgmentIR: Sendable {
     public let text: String
     public let scopedTools: [String]
     public let snapshotKeys: [String]
-    public let dispatchMode: ProseDispatchMode
-    public let autonomy: AutonomyConfigIR?
     public let sourceRange: SourceRange
     /// Optional planner context distinct from `text`'s dispatch goal — e.g. a
     /// migrated section's inert narrative, carried verbatim so the planner
-    /// sees the original documentation behind a judgment step. Same
-    /// primitive, richer payload: no new IR was added for this.
+    /// sees the original documentation behind a judgment step.
     public let guidance: String?
 
     public init(
         text: String,
         scopedTools: [String] = [],
         snapshotKeys: [String] = [],
-        dispatchMode: ProseDispatchMode,
-        autonomy: AutonomyConfigIR? = nil,
         sourceRange: SourceRange = .unknown,
         guidance: String? = nil
     ) {
         self.text = text
         self.scopedTools = scopedTools
         self.snapshotKeys = snapshotKeys
-        self.dispatchMode = dispatchMode
+        self.sourceRange = sourceRange
+        self.guidance = guidance
+    }
+}
+
+/// AI-routed step under autonomy (`with autonomy …:`, inherited autonomy
+/// prose, `ai-autonomy` table/checklist routing). Codegen calls
+/// `runtime.executeAutonomousLoop(...)`, re-planning within
+/// `AutonomyConfigIR`'s bounds until `until`/`unless` resolves.
+public struct AIAutonomyIR: Sendable {
+    public let text: String
+    public let scopedTools: [String]
+    public let snapshotKeys: [String]
+    public let autonomy: AutonomyConfigIR
+    public let sourceRange: SourceRange
+    /// See `AIJudgmentIR.guidance` — same purpose, carried on the autonomy
+    /// primitive too since a migrated section can lower to either mode.
+    public let guidance: String?
+
+    public init(
+        text: String,
+        scopedTools: [String] = [],
+        snapshotKeys: [String] = [],
+        autonomy: AutonomyConfigIR = AutonomyConfigIR(),
+        sourceRange: SourceRange = .unknown,
+        guidance: String? = nil
+    ) {
+        self.text = text
+        self.scopedTools = scopedTools
+        self.snapshotKeys = snapshotKeys
         self.autonomy = autonomy
         self.sourceRange = sourceRange
         self.guidance = guidance

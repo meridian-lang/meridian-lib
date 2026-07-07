@@ -2,9 +2,9 @@
 
 - Original: `meeting-ingestion/SKILL.md`
 - Ported: `meeting_ingestion.meri`
-- Tier: 1 (near-verbatim)
-- Similarity: 85%
-- Lines: 125 -> 137 (+25 / -13)
+- Tier: 2 (light edits)
+- Similarity: 84%
+- Lines: 125 -> 136 (+26 / -15)
 
 ## Frontmatter
 - Added: (none)
@@ -17,12 +17,12 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L26 `Phase 1: Parse the transcript`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L36 `Phase 2: Create meeting page`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L82 `Phase 4: Entity propagation (MANDATORY)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L90 `Phase 5: Timeline merge`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L99 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L104 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L25 `Phase 1: Parse the transcript`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L35 `Phase 2: Create meeting page`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L81 `Phase 4: Entity propagation (MANDATORY)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L89 `Phase 5: Timeline merge`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L98 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L103 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
 - Sections inert total: 8/9 (89% total inert; includes intentional docs/templates/tools metadata)
@@ -34,13 +34,13 @@ These sections were made non-executable in the port and should be reviewed as mi
 
 ### Inert section details
 - L6 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L26 `Phase 1: Parse the transcript`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L36 `Phase 2: Create meeting page`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L58 `Phase 3: Attendee enrichment (MANDATORY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L82 `Phase 4: Entity propagation (MANDATORY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L90 `Phase 5: Timeline merge`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L99 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L104 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L25 `Phase 1: Parse the transcript`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L35 `Phase 2: Create meeting page`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L57 `Phase 3: Attendee enrichment (MANDATORY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L81 `Phase 4: Entity propagation (MANDATORY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L89 `Phase 5: Timeline merge`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L98 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L103 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
@@ -56,15 +56,16 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  This skill guarantees:
  - Meeting page created with attendees, summary, key decisions, action items
-@@ -41,12 +41,15 @@
+@@ -41,12 +41,14 @@
  
  > **Convention:** See `skills/conventions/quality.md` for Iron Law back-linking.
  
+-Every attendee and company mentioned MUST get a back-link from their page to
+-the meeting page. An unlinked mention is a broken brain.
 +
 +### Contract — steps (( role: reference ))
 +
- Every attendee and company mentioned MUST get a back-link from their page to
- the meeting page. An unlinked mention is a broken brain.
++Every attendee and company mentioned MUST get a back-link from their page to the meeting page. An unlinked mention is a broken brain.
  
  ## Phases
  
@@ -73,7 +74,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Extract from the transcript:
  - Attendees (names, roles if available)
-@@ -56,7 +59,7 @@
+@@ -56,7 +58,7 @@
  - Action items with owners
  - Companies and projects mentioned
  
@@ -82,7 +83,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```markdown
  # {Meeting Title} — {Date}
-@@ -78,22 +81,31 @@
+@@ -78,22 +80,31 @@
  {Structured notes by topic}
  ```
  
@@ -121,7 +122,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  For each company, project, or concept discussed:
  1. Check brain for existing page
-@@ -101,7 +113,7 @@
+@@ -101,7 +112,7 @@
  3. Add timeline entry referencing the meeting
  4. Back-link from entity page to meeting page
  
@@ -130,7 +131,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  The same event appears on ALL mentioned entities' timelines. If Alice met Bob at
  Acme Corp, the event goes on Alice's page, Bob's page, AND Acme Corp's page.
-@@ -110,12 +122,12 @@
+@@ -110,12 +121,12 @@
  
  `gbrain sync` to update the index.
  

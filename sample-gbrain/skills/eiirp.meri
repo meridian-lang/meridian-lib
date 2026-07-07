@@ -200,7 +200,7 @@ gbrain schema review-candidates --apply <prefix-or-type-name>
 
 ### Phase 3: SCHEMA CHECK — Does the active pack cover this content? — steps 2
 
-> If schema needs change:
+If schema needs change:
 - Propose the addition to the user before running `review-candidates --apply`.
 ## Phase 4: FILE — Create enriched brain pages
 
@@ -394,13 +394,8 @@ reads it; doctor cross-references the pack version).
 
 ### Anti-Patterns — steps (( role: reference ))
 
-- Every filing decision
-  reads `gbrain schema show --json`. Users on `gbrain-recommended` AND
-  custom packs MUST get the right behavior automatically. Pinned by D9
-  from /plan-eng-review.
-- Confidence < 0.6
-  from `gbrain schema suggest` is "manual review required" per codex
-  finding #9. EIIRP surfaces it; the user accepts.
+- Hardcoding directory tables in EIIRP's logic. Every filing decision reads `gbrain schema show --json`. Users on `gbrain-recommended` AND custom packs MUST get the right behavior automatically. Pinned by D9 from /plan-eng-review.
+- Auto-applying low-confidence schema suggestions. Confidence < 0.6 from `gbrain schema suggest` is "manual review required" per codex finding #9. EIIRP surfaces it; the user accepts.
 ## Hard Rules
 
 ### Knowledge domain (( role: reference ))

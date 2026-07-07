@@ -3,8 +3,8 @@
 - Original: `citation-fixer/SKILL.md`
 - Ported: `citation_fixer.meri`
 - Tier: 2 (light edits)
-- Similarity: 85%
-- Lines: 209 -> 227 (+42 / -24)
+- Similarity: 84%
+- Lines: 209 -> 226 (+44 / -27)
 
 ## Frontmatter
 - Added: (none)
@@ -26,8 +26,8 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L134 `Priority order`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L141 `Rate limiting`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L149 `Output format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L174 `Integration`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L203 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L173 `Integration`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L202 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
 - Sections inert total: 15/16 (94% total inert; includes intentional docs/templates/tools metadata)
@@ -50,9 +50,9 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L141 `Rate limiting`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L149 `Output format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 - L161 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L174 `Integration`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L183 `Metrics`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L203 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L173 `Integration`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L182 `Metrics`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L202 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Unified diff
 
@@ -187,7 +187,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  - X API: respect the host's tier limits; don't hammer.
  - Target ~50 pages per batch run.
-@@ -167,17 +179,20 @@
+@@ -167,17 +179,19 @@
  Remaining gaps:       N (pages with uncitable facts)
  ```
  
@@ -199,18 +199,20 @@ These sections were made non-executable in the port and should be reviewed as mi
  - ❌ Fixing citations without reading the full page context.
  - ❌ Batch-fixing without checking quality on a sample first
    (see `conventions/test-before-bulk.md`).
+-- ❌ Composing tweet URLs by guessing the tweet id. Always go through
+-  the X API; deterministic links only.
+-
+-## Integration
 +
 +### Anti-Patterns — steps (( role: reference ))
 +
- - ❌ Composing tweet URLs by guessing the tweet id. Always go through
-   the X API; deterministic links only.
- 
--## Integration
++- ❌ Composing tweet URLs by guessing the tweet id. Always go through the X API; deterministic links only.
++
 +## Integration (( role: reference ))
  
  This skill can be called:
  
-@@ -186,10 +201,7 @@
+@@ -186,10 +200,7 @@
  - **By other skills** — `enrich` or `media-ingest` can call citation-fixer
    before commit to validate output
  
@@ -222,7 +224,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  ```json
  {
-@@ -203,7 +215,13 @@
+@@ -203,7 +214,13 @@
  ```
  
  
