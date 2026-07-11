@@ -89,7 +89,9 @@ public enum DecisionCatalog {
                 .diag(.unparseableStatement), .diag(.unparseableRule),
                 .diag(.missingPhraseArgument), .diag(.unattachedRule),
                 .diag(.unresolvedTriggerAction), .diag(.unlowerableRulePredicate),
-                .diag(.unsupportedTriggerCondition),
+                .diag(.unsupportedTriggerCondition), .diag(.matchBranchSyntax),
+                .diag(.matchBranchSemantic), .diag(.invalidIR),
+                .diag(.diagnosticRecoverySummary),
             ]),
 
         DecisionRecord(
@@ -153,6 +155,37 @@ public enum DecisionCatalog {
                 .diag(.unattachedRule), .diag(.uncheckablePredicate),
                 .diag(.sectionStructuralError), .diag(.unlowerableRulePredicate),
             ]),
+
+        DecisionRecord(
+            id: "D-DX-7",
+            title: "Lint and migration-report findings are DiagnosticCode-native, not ad hoc strings",
+            rationale: "`MeridianLinter` and `SkillMigrator.Report` used to return free-form warning strings, so authors saw a different vocabulary and no `explain-diag` path depending on which tool caught the issue. `MeridianLinter` now returns `[Diagnostic]` (polite-command and uncertainty-wording lints), and `SkillMigrator`'s `--route-fuzzy` downgrade is a `Diagnostic` too, so every finding from every DX tool shares one rendering, one JSON schema, and one `meridian explain-diag <code>` lookup path.",
+            alternatives: [
+                "Keep lint/migration findings as tool-specific string types — cheap short-term, but forks the diagnostics UX and blocks a shared `--json`/IDE-integration surface.",
+                "Fold lint findings into the compiler's own diagnostic stream unconditionally — conflates optional style advice with hard compile errors.",
+            ],
+            consequences: [
+                "Lint findings are warnings, not hard errors, but travel through the exact same `Diagnostic` type as MER1xxx–MER4xxx.",
+                "A batch `migrate-skill --route-fuzzy` run is auditable via the same diagnostic list as a normal compile, instead of a separate log format.",
+            ],
+            seeAlso: [
+                .diag(.lintPoliteCommand), .diag(.lintUncertainty),
+                .diag(.migrationRouteFuzzyDowngrade),
+            ]),
+
+        DecisionRecord(
+            id: "D-DX-8",
+            title: "Trace-file and lexicon-marker failures degrade visibly, never silently",
+            rationale: "Two failure modes used to fail quietly: a bad `--trace-file` path would drop trace output with no indication, and an empty required lexicon marker collection would produce blank/malformed canonical output with no diagnostic. Both are now coded: an unwritable trace file falls back to stderr with a visible MER5011 notice instead of losing the trace, and an empty marker collection raises MER5012 instead of emitting degenerate output.",
+            alternatives: [
+                "Drop trace output silently on an unwritable path — defeats the purpose of asking for a trace file in the first place.",
+                "Crash outright on an empty lexicon marker collection — loses the batch-report/coarse-recovery behavior the rest of the pipeline relies on (D-DX-2).",
+            ],
+            consequences: [
+                "`--trace-file` failures are recoverable: the run still completes, with the trace redirected to stderr and a MER5011 notice explaining why.",
+                "A domain that overrides `EnglishLexicon` markers without providing at least one entry per required category gets a compile-time MER5012 instead of a silently broken canonical form.",
+            ],
+            seeAlso: [.diag(.unwritableTraceFile), .diag(.emptyLexiconMarkers)]),
     ]
 
     public static func lookup(_ id: String) -> DecisionRecord? {

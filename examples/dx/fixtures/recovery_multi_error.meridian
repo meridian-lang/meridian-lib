@@ -1,0 +1,11 @@
+---
+vocabulary: dx.merconfig
+---
+
+# recovery_multi_error.meridian
+# Regression: MER2001 unresolved phrase plus MER6004 recovery summary when the
+# workflow body is skipped so the compiler can keep collecting errors.
+
+To process an order placed by a customer:
+  please validate the order.
+  complete with reason "done".

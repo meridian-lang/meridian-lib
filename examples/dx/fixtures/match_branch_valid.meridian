@@ -1,0 +1,15 @@
+---
+vocabulary: dx.merconfig
+---
+
+# match_branch_valid.meridian
+# Compiles cleanly — branch-on / match-arm surface for explain, drift, and trace.
+
+To process an order placed by a customer:
+  branch on the order's status:
+    "approved":
+      complete with reason "approved".
+    "pending":
+      complete with reason "pending".
+    anything:
+      complete with reason "unhandled status".

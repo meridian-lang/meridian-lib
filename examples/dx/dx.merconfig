@@ -1,0 +1,10 @@
+=== vocabulary ===
+
+An order is a kind of thing.
+A customer is a kind of person.
+
+An order has an id, a status, and a total.
+
+=== tools ===
+
+chargePayment(orderId: text, amount: number) -> text

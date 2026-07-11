@@ -4622,3 +4622,93 @@ Residual risk:
 
 - Full `swift test`, generated Swift typecheck env run, and coverage gate not run
   in this focused closeout slice.
+
+## 2026-07-11T01:51:32Z — Decision-catalog coverage gap for DX closeout codes
+
+Audit of "is docs updated comprehensively" found that `DecisionCatalog` (the
+source for `docs/15_DECISIONS.md` and `meridian explain-diag <decision-id>`)
+never gained entries for the DX closeout's new codes: `MER1012`/`MER3018`/
+`MER4002` were linked to `D-DX-2` in `DiagnosticCode.swift` but `D-DX-2`'s own
+`seeAlso` list wasn't updated to list them back, and `MER5011`/`MER5012`/
+`MER6001`/`MER6002`/`MER6003`/`MER6004` had no `decision` ref at all — so
+`meridian explain-diag` on those six codes surfaced only the one-line
+`explanation`, with no "why" rationale, alternatives, or consequences.
+
+Fix:
+
+- Linked `MER6004` (`diagnosticRecoverySummary`) to `D-DX-2` and added it plus
+  `MER1012`/`MER3018`/`MER4002` to `D-DX-2`'s `seeAlso`.
+- Added `D-DX-7` — "Lint and migration-report findings are DiagnosticCode-native,
+  not ad hoc strings" — covering `MER6001`/`MER6002`/`MER6003`.
+- Added `D-DX-8` — "Trace-file and lexicon-marker failures degrade visibly,
+  never silently" — covering `MER5011`/`MER5012`.
+- Regenerated `docs/15_DECISIONS.md` via `meridian decisions --render` (now 8
+  decisions) and fixed the `docs/14_DEVELOPER_EXPERIENCE.md` §3 code catalog
+  tables, which were missing/blank Decision columns for MER1xxx/MER4xxx/MER6xxx
+  and showed `—` for MER5011/MER5012/MER6001–6004 even though those codes now
+  carry rationale.
+
+Validation:
+
+- `swift test --filter DecisionCatalogTests` — PASS (5/5, incl. no-drift check
+  against the regenerated `docs/15_DECISIONS.md`).
+- `swift test --filter DiagnosticTests` — PASS (22/22).
+- `meridian decisions --id D-DX-7` / `--id D-DX-8` / `explain-diag MER6004` —
+  manually verified correct rendering.
+- Full `swift test` — PASS (2054/2054).
+
+No residual risk: this was a pure documentation/catalog completeness fix, no
+compiler behavior changed.
+
+## 2026-07-11T02:08:03Z — Ad-hoc end-to-end CLI testing surfaces two real bugs
+
+Ran genuine hands-on CLI sessions against real `.merconfig`/`.meridian`
+fixtures (not just unit tests) to confirm the DX tracing/diagnostics work is
+reachable through real authoring mistakes, not only synthetic test harnesses:
+
+- `compile` on a fixture with a match-branch arm missing `:` plus an
+  unresolved phrase → real `MER1012` + `MER2001` + `MER6004` recovery summary,
+  all three firing together in one compile as designed.
+- A fixture with two `anything:` wildcard arms → real `MER3018` (both
+  "repeats pattern" and "multiple wildcard/default arms" sub-cases fired).
+- Clean compile with `--trace statement --trace-file` → real trace file
+  content confirmed.
+- `explain --trace verbalizer --trace-file` and `drift --trace drift
+  --trace-file` on the same source → verbalizer round-trip text and a real
+  drift report ("an order" → "a order") both rendered, with `[verbalizer]` /
+  `[drift]` lines landing in the trace file.
+- `--trace bogus-category` → real `MER2010`. `--trace-file
+  /no/such/dir/trace.log` → real `MER5011` with stderr fallback framing.
+- `lint` on the polite/uncertainty fixture → real `MER6001`/`MER6002`
+  warnings with `= why:` decision context.
+- `explain-diag` on all 9 new MER codes plus `D-DX-7`/`D-DX-8` → every worked
+  example and decision cross-reference rendered correctly.
+
+**Two real bugs found and fixed** (neither caught by the existing unit/CLI
+test suite, because none of those tests asserted on the exact rendered
+strings this ad-hoc run happened to hit):
+
+1. `Diagnostic.unresolved`'s candidate-list note pluralized `noun` with a bare
+   `+ "s"` (`Sources/MeridianCore/Diagnostics/Diagnostic.swift`), so multi-word
+   nouns ending in a consonant + `y` rendered wrong — `"closest trace
+   categorys:"` instead of `"closest trace categories:"`. Fixed by routing
+   through `EnglishLexicon.default.pluralize(what)` instead of a literal `s`
+   suffix.
+2. `DiagnosticRenderer.firstSentence` (the `= why:` one-liner) split on the
+   first bare `.` in a rationale, with no awareness of backtick-quoted code
+   spans. The new `D-DX-7` rationale opens with `` `SkillMigrator.Report` ``,
+   so the `.` between `SkillMigrator` and `Report` was misread as a sentence
+   end, truncating every `MER6001`/`MER6002`/`MER6003`/`D-DX-7` `= why:` line
+   mid-sentence. Fixed by making `firstSentence` backtick-aware (periods
+   inside an open backtick pair no longer count as sentence boundaries) —
+   this generalizes to any future decision rationale with a dotted
+   identifier, not just this one.
+
+Validation:
+
+- Full `swift test` — PASS (2054/2054) after each fix.
+- Manual re-run of the `MER2010` and `lint` CLI sessions above confirms both
+  corrected renderings.
+
+No residual risk: both fixes are message-rendering-only; no diagnostic
+codes, decision links, or compiler semantics changed.

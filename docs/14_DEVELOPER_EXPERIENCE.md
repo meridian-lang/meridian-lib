@@ -115,20 +115,20 @@ long-form entry (and the linked decision). This table mirrors
 
 ### MER1xxx — lex / parse (structural)
 
-| Code | Title | Kind |
-|---|---|---|
-| MER1001 | malformed workflow header | structural |
-| MER1002 | orphaned code block | structural |
-| MER1003 | malformed statement | structural |
-| MER1004 | unparseable rule | structural |
-| MER1005 | malformed condition | structural |
-| MER1006 | misplaced frontmatter | structural |
-| MER1007 | unknown test-spec key | nameResolution |
-| MER1008 | removed import form | structural |
-| MER1009 | sectioned document structural error | structural |
-| MER1010 | uncheckable predicate | structural |
-| MER1011 | invalid table cell | structural |
-| MER1012 | match branch missing colon | structural |
+| Code | Title | Kind | Decision |
+|---|---|---|---|
+| MER1001 | malformed workflow header | structural | — |
+| MER1002 | orphaned code block | structural | — |
+| MER1003 | malformed statement | structural | — |
+| MER1004 | unparseable rule | structural | — |
+| MER1005 | malformed condition | structural | — |
+| MER1006 | misplaced frontmatter | structural | — |
+| MER1007 | unknown test-spec key | nameResolution | — |
+| MER1008 | removed import form | structural | — |
+| MER1009 | sectioned document structural error | structural | D-DX-2 |
+| MER1010 | uncheckable predicate | structural | D-DX-2 |
+| MER1011 | invalid table cell | structural | — |
+| MER1012 | match branch missing colon | structural | D-DX-2 |
 
 ### MER2xxx — name resolution (always suggest)
 
@@ -170,10 +170,10 @@ long-form entry (and the linked decision). This table mirrors
 
 ### MER4xxx — codegen
 
-| Code | Title |
-|---|---|
-| MER4001 | codegen error |
-| MER4002 | invalid IR |
+| Code | Title | Decision |
+|---|---|---|
+| MER4001 | codegen error | — |
+| MER4002 | invalid IR | D-DX-2 |
 
 ### MER5xxx — configuration / vocabulary
 
@@ -185,17 +185,17 @@ long-form entry (and the linked decision). This table mirrors
 | MER5004 | malformed rulebook entry | — |
 | MER5005 | unrecognized block property | — |
 | MER5010 | unknown merconfig section | — |
-| MER5011 | unwritable trace file | — |
-| MER5012 | empty lexicon marker collection | — |
+| MER5011 | unwritable trace file | D-DX-8 |
+| MER5012 | empty lexicon marker collection | D-DX-8 |
 
 ### MER6xxx — lint / authoring warnings
 
-| Code | Title |
-|---|---|
-| MER6001 | polite command lint |
-| MER6002 | uncertainty lint |
-| MER6003 | migration fuzzy-route downgrade |
-| MER6004 | diagnostic recovery summary |
+| Code | Title | Decision |
+|---|---|---|
+| MER6001 | polite command lint | D-DX-7 |
+| MER6002 | uncertainty lint | D-DX-7 |
+| MER6003 | migration fuzzy-route downgrade | D-DX-7 |
+| MER6004 | diagnostic recovery summary | D-DX-2 |
 
 ---
 

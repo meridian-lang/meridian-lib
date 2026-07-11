@@ -336,34 +336,34 @@ extension DiagnosticCode {
     public static let unwritableTraceFile = DiagnosticCode(
         id: "MER5011", title: "unwritable trace file",
         explanation: "The CLI could not create or write the requested `--trace-file` path.",
-        kind: .other)
+        kind: .other, decision: DecisionRef("D-DX-8"))
 
     public static let emptyLexiconMarkers = DiagnosticCode(
         id: "MER5012", title: "empty lexicon marker collection",
         explanation: "A lexicon marker collection required for canonical output is empty.",
-        kind: .other)
+        kind: .other, decision: DecisionRef("D-DX-8"))
 
     // MARK: MER6xxx — lint / authoring warnings
 
     public static let lintPoliteCommand = DiagnosticCode(
         id: "MER6001", title: "polite command lint",
         explanation: "A workflow step uses polite command wording that Meridian treats as noise; commands should be written directly.",
-        kind: .other)
+        kind: .other, decision: DecisionRef("D-DX-7"))
 
     public static let lintUncertainty = DiagnosticCode(
         id: "MER6002", title: "uncertainty lint",
         explanation: "A workflow step uses uncertainty wording; use discretion/autonomy for planner judgment or spell out a deterministic condition.",
-        kind: .other)
+        kind: .other, decision: DecisionRef("D-DX-7"))
 
     public static let migrationRouteFuzzyDowngrade = DiagnosticCode(
         id: "MER6003", title: "migration fuzzy-route downgrade",
         explanation: "`migrate-skill --route-fuzzy` marked a non-lowerable generated section as reference documentation so exploratory batch migration could continue. Review the named section and reword operational content before treating the port as complete.",
-        kind: .other)
+        kind: .other, decision: DecisionRef("D-DX-7"))
 
     public static let diagnosticRecoverySummary = DiagnosticCode(
         id: "MER6004", title: "diagnostic recovery summary",
         explanation: "The compiler skipped one or more constructs after collecting their diagnostics so it could continue reporting additional errors in the same file.",
-        kind: .other)
+        kind: .other, decision: DecisionRef("D-DX-2"))
 
     /// Every catalog code, for `meridian explain-diag`, the staleness/guard tests,
     /// and uniqueness checks. Keep this list complete — a guard test asserts

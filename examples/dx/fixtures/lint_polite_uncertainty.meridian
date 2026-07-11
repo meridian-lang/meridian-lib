@@ -1,0 +1,11 @@
+---
+vocabulary: dx.merconfig
+---
+
+# lint_polite_uncertainty.meridian
+# Regression: MER6001 (polite command) and MER6002 (uncertainty wording) via lint.
+
+To process an order placed by a customer:
+  please validate the order.
+  maybe check the credit of the customer for the order's total amount.
+  complete with reason "done".

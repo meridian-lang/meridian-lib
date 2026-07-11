@@ -130,10 +130,18 @@ public struct DiagnosticRenderer {
         ]
     }
 
-    /// The first sentence of a rationale (for the one-line `why:` hint).
+    /// The first sentence of a rationale (for the one-line `why:` hint). A `.`
+    /// inside a backtick-quoted code span (e.g. `` `SkillMigrator.Report` ``)
+    /// is not a sentence boundary, so periods are only considered while not
+    /// inside an open pair of backticks.
     private func firstSentence(_ s: String) -> String {
-        if let dot = s.firstIndex(of: ".") {
-            return String(s[..<dot]) + "."
+        var inCode = false
+        for i in s.indices {
+            switch s[i] {
+            case "`": inCode.toggle()
+            case ".": if !inCode { return String(s[..<i]) + "." }
+            default: break
+            }
         }
         return s
     }

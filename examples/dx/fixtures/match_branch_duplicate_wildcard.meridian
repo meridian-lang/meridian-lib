@@ -1,0 +1,15 @@
+---
+vocabulary: dx.merconfig
+---
+
+# match_branch_duplicate_wildcard.meridian
+# Regression: MER3018 — duplicate wildcard/default match arms.
+
+To process an order placed by a customer:
+  branch on the order's status:
+    "approved":
+      complete with reason "approved".
+    anything:
+      complete with reason "unhandled status".
+    anything:
+      complete with reason "duplicate wildcard".

@@ -82,7 +82,8 @@ let out = try Compiler(options: opts).compile(
   helpers. `Sources/SampleDemoFlows/` — hand-written reference flows.
 - `Tests/MeridianCoreTests/`, `Tests/MeridianRuntimeTests/`,
   `sample-gbrain/Tests/` — test targets.
-- `examples/` — `.merconfig` / `.meridian` samples + `golden/`.
+- `examples/` — `.merconfig` / `.meridian` samples + `golden/`; `examples/dx/`
+  holds DX diagnostics regression fixtures (MER1012, MER3018, lint, recovery).
 - `corpora/` — Wave 6 validation corpora: `erp/`, `procedures/`, `incident/`,
   `etl/`, `governance/`, and `clinical/` synthetic proxy corpora (originals,
   strict ports, compile outputs, deviation indexes). `governance/` and

@@ -111,14 +111,18 @@ extension Diagnostic {
         }
 
         // Nothing close enough — never a bare "unknown X". Enumerate the set.
+        // Pluralize via `EnglishLexicon` (not a bare `+ "s"`) so multi-word nouns
+        // ending in a consonant + `y` (e.g. "trace category") read naturally
+        // ("trace categories", not "trace categorys").
+        let whatPlural = EnglishLexicon.default.pluralize(what)
         let note: DiagnosticNote
         if uniqueCandidates.isEmpty {
-            note = DiagnosticNote("no \(what)s are available in this scope")
+            note = DiagnosticNote("no \(whatPlural) are available in this scope")
         } else if uniqueCandidates.count <= 12 {
-            note = DiagnosticNote("available \(what)s: \(uniqueCandidates.joined(separator: ", "))")
+            note = DiagnosticNote("available \(whatPlural): \(uniqueCandidates.joined(separator: ", "))")
         } else {
             let top = suggester.ranked(target, among: uniqueCandidates, limit: 8)
-            note = DiagnosticNote("closest \(what)s: \(top.joined(separator: ", ")) (\(uniqueCandidates.count) total)")
+            note = DiagnosticNote("closest \(whatPlural): \(top.joined(separator: ", ")) (\(uniqueCandidates.count) total)")
         }
         return Diagnostic(
             code: code, severity: .error,

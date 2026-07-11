@@ -1,0 +1,13 @@
+---
+vocabulary: dx.merconfig
+---
+
+# match_branch_missing_colon.meridian
+# Regression: MER1012 — match-branch arm missing trailing ':'.
+
+To process an order placed by a customer:
+  branch on the order's status:
+    "approved":
+      complete with reason "approved".
+    pending
+      complete with reason "pending".
