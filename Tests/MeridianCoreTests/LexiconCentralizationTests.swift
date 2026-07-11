@@ -34,6 +34,70 @@ struct FixedGrammarDefaultsTests {
         #expect(g.judgmentFollowCollectPrefix == "use judgment to follow the ")
         #expect(g.lintMarkers.politenessPrefixes == ["please "])
         #expect(g.lintMarkers.uncertaintyMarkers == [" maybe ", "maybe "])
+        #expect(g.statement.branchOnPrefix == "branch on ")
+        #expect(g.statement.matchBranchWildcardLabels == ["anything", "_"])
+        #expect(g.statement.matchBranchCanonicalWildcard == "anything")
+        #expect(g.statement.matchOtherwiseLabel == "otherwise:")
+        #expect(g.statement.possessionPrefixes == ["has ", "have "])
+        #expect(g.templateDirectives.ifPrefix == "[if ")
+        #expect(g.templateDirectives.otherwiseTerminator == "[otherwise]")
+        #expect(g.verbalizer.assertPrefix == "assert ")
+        #expect(g.verbalizer.workflowHeaderPrefix == "To ")
+        #expect(g.verbalizer.aggregateCountPrefix == "the number of ")
+        #expect(g.verbalizer.templateHoleOpen == "{{ ")
+        #expect(g.statement.forEachPrefix == "for each ")
+        #expect(EnglishLexicon.default.emptyMarkers.contains(" have no "))
+        #expect(EnglishLexicon.default.filledMarkers.contains(" have a "))
+    }
+
+    @Test("Verbalizer match-branch and possession markers track FixedGrammar defaults")
+    func verbalizerReadsFixedGrammarMarkers() {
+        let g = EnglishLexicon.default.grammar
+        let done = IRBlock(statements: [.complete(CompleteIR())])
+        let match = BranchIR(
+            condition: .match(.identifierRef(name: "choice"), [
+                BranchCase(pattern: .wildcard, block: done),
+            ]),
+            thenBlock: done
+        )
+        let model = VerbalizerModel(
+            workflows: [
+                IRWorkflow(name: "audit choice", parameters: [], body: IRBlock(statements: [.branch(match)]))
+            ],
+            loweredDefinitions: [],
+            inlineDefinitions: [],
+            symbols: SymbolTable(trace: .silent()),
+            lexicon: .default,
+            sourceFileName: "guard.meri",
+            authoredSource: ""
+        )
+        let verbalizer = Verbalizer(model: model)
+        let surface = verbalizer.verbalize(.branch(match))
+        #expect(surface.hasPrefix(g.statement.branchOnPrefix), Comment(rawValue: surface))
+        #expect(surface.contains(g.statement.matchBranchCanonicalWildcard + ":"), Comment(rawValue: surface))
+        #expect(surface.contains(g.statement.matchOtherwiseLabel), Comment(rawValue: surface))
+        #expect(g.statement.possessionPrefixes.allSatisfy { $0.hasSuffix(" ") })
+
+        let assertSurface = verbalizer.verbalize(.assert(AssertIR(
+            condition: .literal(.boolean(true)),
+            otherwiseAction: done
+        )))
+        #expect(assertSurface.contains("assert "), Comment(rawValue: assertSurface))
+        #expect(assertSurface.contains(g.statement.matchOtherwiseLabel), Comment(rawValue: assertSurface))
+
+        let emptyBody = verbalizer.verbalize(.quantified(QuantifierIR(
+            kind: .all,
+            description: DescriptionIR(
+                collection: .identifierRef(name: "pages"),
+                elementVar: "page"
+            ),
+            body: .comparison(
+                .propertyAccess(.identifierRef(name: "page"), propertyName: "tags"),
+                .isEmpty,
+                .literal(.boolean(true))
+            )
+        )))
+        #expect(emptyBody.contains("have no"), Comment(rawValue: emptyBody))
     }
 
     @Test("merging preserves the grammar passthrough unchanged")
@@ -282,7 +346,7 @@ struct FenceToolMappingLexiconTests {
         // Emitted Swift wraps the whole multi-line body as one escaped
         // string argument to the configured tool — a plain invoke, no
         // per-line splitting and no shell-style {…} hole interpolation.
-        let out = SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: workflows)
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: workflows)
         #expect(out.contains("tool: \"interpreter.run\""))
         #expect(out.contains("\"code\": .string(\"print(\\\"hi\\\")\\nx = 1 + 1\")"))
     }

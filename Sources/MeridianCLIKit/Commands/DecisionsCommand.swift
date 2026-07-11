@@ -43,7 +43,7 @@ public struct DecisionsCommand: ParsableCommand {
                 FileHandle.standardError.write(Data("unknown decision '\(id)'.\(hint)\n".utf8))
                 throw ExitCode(1)
             }
-            ExplainCommand.printDecision(decision)
+            ExplainDiagCommand.printDecision(decision)
             return
         }
 
@@ -67,11 +67,11 @@ public struct DecisionsCommand: ParsableCommand {
                 print("    see also: \(d.seeAlso.map(\.id).joined(separator: ", "))")
             }
         }
-        print("\nRun `meridian explain <id>` for the full rationale + alternatives.")
+        print("\nRun `meridian explain-diag <id>` for the full rationale + alternatives.")
     }
 }
 
-extension ExplainCommand {
+extension ExplainDiagCommand {
     /// Shared full-decision printer reused by `meridian decisions --id`.
     static func printDecision(_ decision: DecisionRecord) {
         print("\(decision.id) — \(decision.title)  [\(decision.status.rawValue)]\n")

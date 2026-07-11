@@ -8,8 +8,9 @@
 │  Sources/MeridianCLI/CLI.swift (thin @main)                  │
 │  Sources/MeridianCLIKit/Commands/                           │
 │  compile · check · verify · run · resume · format · docs ·  │
-│  test · lint · trace · explain · decisions · preview-skill ·│
-│  migrate-skill · skill-deviation                            │
+│  test · lint · trace · explain · explain-diag · drift ·     │
+│  grammar-doc · decisions · preview-skill · migrate-skill ·  │
+│  skill-deviation                                             │
 │  ArgumentParser + SwiftFormat integration                   │
 └──────────────────────┬──────────────────────────────────────┘
                        │ depends on
@@ -26,8 +27,9 @@
 │  Codegen     │         │
 │  Testing/    │ ┌──────────────────────────────────┐
 │  Formatter/  │ │  Generated Swift (output)        │
-│  Diagnostics │ │  ProcessOrder.swift              │
-│  Docs/       │ │  imports MeridianRuntime         │
+│  Verbalizer/ │ │  ProcessOrder.swift              │
+│  Diagnostics │ │  imports MeridianRuntime         │
+│  Docs/       │ │                                  │
 └──────────────┘ └──────────────────────────────────┘
 ```
 
@@ -98,6 +100,11 @@ Sources/MeridianCore/
 ├── Formatter/
 │   └── MeridianFormatter.swift     ← Conservative whitespace-only formatter
 │
+├── Verbalizer/
+│   ├── Verbalizer.swift            ← Lowered model → Canonical English
+│   ├── VerbalizerModel.swift       ← Public semantic model from compileToModel
+│   └── DriftEngine.swift           ← Authored vs canonical line audit
+│
 ├── Docs/
 │   └── MerconfigDocsRenderer.swift ← .merconfig → self-contained HTML
 │
@@ -132,7 +139,7 @@ Sources/MeridianCore/
 
 The diagnostics subsystem is the backbone of the debugging experience — see
 [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) for how these pieces fit
-together (codes, did-you-mean, batch reporting, tracing, `explain`/`decisions`/
+together (codes, did-you-mean, batch reporting, tracing, `explain-diag`/`decisions`/
 `--fix`).
 
 ## Compilation pipeline
@@ -161,6 +168,9 @@ MeridianFile
   - instanceRef / constantRef lifted out of identifierRef
   - Progress labels assigned to side-effecting primitives for replay safety
         │
+        ├──► VerbalizerModel → Verbalizer → Canonical English
+        │                     → DriftEngine → authored/canonical drift report
+        │
         ├──► ManifestEmitter → {stem}.meridian.manifest.json
         │
         ▼  SwiftEmitter.emitFile(workflows:constantsDecl:instancesDecl:domainDecl:)
@@ -181,6 +191,9 @@ Formatted Swift String
 | Symbol build | `MerConfigFile` | `SymbolTable` |
 | Meridian parse | `[SourceLine]` + `SymbolTable` | `MeridianFile` |
 | Lowering | `MeridianFile` + `SymbolTable` | `[IRWorkflow]` |
+| Verbalization model | `[IRWorkflow]` + symbols/lexicon/metadata | `VerbalizerModel` |
+| Canonical English | `VerbalizerModel` | `String` (`meridian explain`) |
+| Drift audit | authored source + canonical source | `DriftReport` |
 | Emission | `[IRWorkflow]` | `String` (Swift) |
 | Manifest | `[IRWorkflow]` | `String` (JSON) |
 
@@ -194,8 +207,11 @@ Formatted Swift String
 | `SymbolTable` | `Symbols/` | Keyed index; drives `matchPhrase` + `extractArgs` |
 | `ExpressionAST` | `MeridianAST` | Parsed expression tree (pre-IR) |
 | `IRExpression` | `IRTypes` | Lowered expression (post-IR) |
-| `IRPrimitive` | `IR/IRTypes` | One of 12 lowered statement kinds |
+| `IRPrimitive` | `IR/IRTypes` | One of 13 lowered statement cases |
 | `IRWorkflow` | `IR/IRTypes` | Struct name, parameters, body block, execution mode |
+| `VerbalizerModel` | `Verbalizer/` | Lowered workflows plus symbols, lexicon, metadata, definitions, sections, and authored source |
+| `Verbalizer` | `Verbalizer/` | Renders Canonical English from `VerbalizerModel`, `IRExpression`, or `IRPrimitive` |
+| `DriftEngine` | `Verbalizer/` | Classifies authored-vs-canonical line hunks for drift reports |
 | `StringTemplate` | `modelhike` | Result-builder code builder used by `SwiftEmitter` |
 | `Diagnostic` | `Diagnostics/` | Coded error/warning: code + range + suggestions/notes/help + decision |
 | `DiagnosticCode` | `Diagnostics/` | Stable `MERxxxx` identity + kind + linked `DecisionRef` |

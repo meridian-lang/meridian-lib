@@ -2,14 +2,14 @@ import Foundation
 
 /// A reference to a design decision in the `DecisionCatalog` (Pillar 11).
 /// Kept as a thin id wrapper so `DiagnosticCode` (this file) does not depend on
-/// the catalog's data; `meridian explain` / `meridian decisions` resolve it.
+/// the catalog's data; `meridian explain-diag` / `meridian decisions` resolve it.
 public struct DecisionRef: Sendable, Hashable {
     public let id: String
     public init(_ id: String) { self.id = id }
 }
 
 /// A stable, documented diagnostic code. Codes never change once shipped — they
-/// are the durable contract that `meridian explain <code>`, editor integrations,
+/// are the durable contract that `meridian explain-diag <code>`, editor integrations,
 /// CI matchers, and tests rely on (messages may evolve, codes may not).
 ///
 /// Ranges:
@@ -19,6 +19,7 @@ public struct DecisionRef: Sendable, Hashable {
 ///   - `MER3xxx` — semantics
 ///   - `MER4xxx` — codegen
 ///   - `MER5xxx` — configuration / vocabulary
+///   - `MER6xxx` — lint / authoring warnings
 public struct DiagnosticCode: Sendable, Hashable {
 
     /// How a code is fixed — drives the always-on remediation guarantee
@@ -59,12 +60,12 @@ extension DiagnosticCode {
 
     public static let legacySemantic = DiagnosticCode(
         id: "MER0001", title: "semantic error",
-        explanation: "A semantic error not yet migrated to a specific code. See the message for details.",
+        explanation: "Compatibility projection for legacy CompilerError.semanticError values. Production Sources must emit a specific DiagnosticCode through CompilerError.diagnostics instead.",
         kind: .other)
 
     public static let legacySyntax = DiagnosticCode(
         id: "MER0002", title: "syntax error",
-        explanation: "A syntax error not yet migrated to a specific code. See the message for details.",
+        explanation: "Compatibility projection for legacy CompilerError.syntaxError values. Production Sources must emit a specific DiagnosticCode through CompilerError.diagnostics instead.",
         kind: .other)
 
     public static let notImplemented = DiagnosticCode(
@@ -133,6 +134,11 @@ extension DiagnosticCode {
         id: "MER1011", title: "invalid table cell",
         explanation: "A data-table cell value does not match the column's declared scalar type.",
         kind: .structural)
+
+    public static let matchBranchSyntax = DiagnosticCode(
+        id: "MER1012", title: "match branch missing colon",
+        explanation: "A match branch arm must be written as `case <pattern>:` (or a wildcard/default such as `anything:` / `otherwise:`) so the parser can attach the arm body.",
+        kind: .structural, decision: DecisionRef("D-DX-2"))
 
     // MARK: MER2xxx — name resolution
 
@@ -278,12 +284,22 @@ extension DiagnosticCode {
         explanation: "A `when … , do X` trigger's condition named a recognized, checkable predicate (a comparison, emptiness/temporal-window check, duration mention, quantifier, relation traversal, description, aggregate, superlative, table lookup, or declared-verb predicate) rather than opaque externally-raised-event prose. Meridian's `when` trigger compiles to an external-event stub with no scheduler/poller to re-evaluate such a predicate, so it would never actually fire. Delete the rule line and either (1) move the check into the skill's own `## Workflow`/`## Rules` body as a real `if …`/`assert …`/`wait until …` statement, or (2) reword the condition itself as an opaque event/signal a host raises and keep it as a `When …, …` trigger. Example (fix 2): `When an order has been on hold for more than 7 days, escalate the order.` → `When an order is flagged as stale, escalate the order.`",
         kind: .other, decision: DecisionRef("D-DX-2"))
 
+    public static let matchBranchSemantic = DiagnosticCode(
+        id: "MER3018", title: "match branch semantic error",
+        explanation: "A match branch is semantically invalid: it is empty, repeats a pattern, or declares more than one wildcard/default arm.",
+        kind: .other, decision: DecisionRef("D-DX-2"))
+
     // MARK: MER4xxx — codegen
 
     public static let codegenError = DiagnosticCode(
         id: "MER4001", title: "codegen error",
         explanation: "Code generation failed to produce valid Swift for a construct.",
         kind: .other)
+
+    public static let invalidIR = DiagnosticCode(
+        id: "MER4002", title: "invalid IR",
+        explanation: "Malformed IR was rejected before Swift emission or canonical verbalization. Fix the authored source so lowering cannot produce empty logicals, empty match arms, missing invoke ids, or inline invokes in expression position.",
+        kind: .other, decision: DecisionRef("D-DX-2"))
 
     // MARK: MER5xxx — configuration / vocabulary
 
@@ -317,7 +333,39 @@ extension DiagnosticCode {
         explanation: "A line inside a `has properties:` block did not match any known property declaration form.",
         kind: .structural)
 
-    /// Every catalog code, for `meridian explain`, the staleness/guard tests,
+    public static let unwritableTraceFile = DiagnosticCode(
+        id: "MER5011", title: "unwritable trace file",
+        explanation: "The CLI could not create or write the requested `--trace-file` path.",
+        kind: .other)
+
+    public static let emptyLexiconMarkers = DiagnosticCode(
+        id: "MER5012", title: "empty lexicon marker collection",
+        explanation: "A lexicon marker collection required for canonical output is empty.",
+        kind: .other)
+
+    // MARK: MER6xxx — lint / authoring warnings
+
+    public static let lintPoliteCommand = DiagnosticCode(
+        id: "MER6001", title: "polite command lint",
+        explanation: "A workflow step uses polite command wording that Meridian treats as noise; commands should be written directly.",
+        kind: .other)
+
+    public static let lintUncertainty = DiagnosticCode(
+        id: "MER6002", title: "uncertainty lint",
+        explanation: "A workflow step uses uncertainty wording; use discretion/autonomy for planner judgment or spell out a deterministic condition.",
+        kind: .other)
+
+    public static let migrationRouteFuzzyDowngrade = DiagnosticCode(
+        id: "MER6003", title: "migration fuzzy-route downgrade",
+        explanation: "`migrate-skill --route-fuzzy` marked a non-lowerable generated section as reference documentation so exploratory batch migration could continue. Review the named section and reword operational content before treating the port as complete.",
+        kind: .other)
+
+    public static let diagnosticRecoverySummary = DiagnosticCode(
+        id: "MER6004", title: "diagnostic recovery summary",
+        explanation: "The compiler skipped one or more constructs after collecting their diagnostics so it could continue reporting additional errors in the same file.",
+        kind: .other)
+
+    /// Every catalog code, for `meridian explain-diag`, the staleness/guard tests,
     /// and uniqueness checks. Keep this list complete — a guard test asserts
     /// there are no duplicate ids and every code has a non-empty explanation.
     public static let all: [DiagnosticCode] = [
@@ -326,6 +374,7 @@ extension DiagnosticCode {
         .unparseableRule, .malformedCondition, .frontmatterPlacement,
         .invalidTestSpecKey, .removedImportForm,
         .sectionStructuralError, .uncheckablePredicate, .invalidTableCell,
+        .matchBranchSyntax,
         .unresolvedPhrase, .unknownTool, .unknownKind, .unknownProperty,
         .unknownVocabulary, .unknownRulebook, .unknownAdjective, .unknownVerb,
         .unknownFallbackKind, .unknownTraceCategory, .missingPhraseArgument,
@@ -336,9 +385,13 @@ extension DiagnosticCode {
         .ambiguousEntryWorkflow, .proseDisallowed, .commandHoleOutOfScope,
         .quantifierSemantic, .ambiguousAnaphora, .invalidEnumDefault,
         .unlowerableRulePredicate, .unsupportedTriggerCondition,
-        .codegenError,
+        .matchBranchSemantic,
+        .codegenError, .invalidIR,
         .swiftFormatFailed, .vocabularyDeclarationUnrecognized, .rulebookSectionUnknown,
         .unknownMerconfigSection, .malformedRulebookEntry, .unrecognizedBlockProperty,
+        .unwritableTraceFile, .emptyLexiconMarkers,
+        .lintPoliteCommand, .lintUncertainty, .migrationRouteFuzzyDowngrade,
+        .diagnosticRecoverySummary,
     ]
 
     /// Look up a code by its stable id (`"MER2001"`), case-insensitively.

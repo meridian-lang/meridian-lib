@@ -21,6 +21,8 @@ struct NoSilentFallbackTests {
             return []
         } catch let e as CompilerError {
             return Set(e.diagnostics.map(\.code))
+        } catch IRValidationError.diagnostics(let diagnostics) {
+            return Set(diagnostics.map(\.code))
         } catch {
             Issue.record("unexpected non-CompilerError: \(error)")
             return []
@@ -34,16 +36,65 @@ struct NoSilentFallbackTests {
             return []
         } catch let e as CompilerError {
             return Set(e.diagnostics.map(\.code))
+        } catch IRValidationError.diagnostics(let diagnostics) {
+            return Set(diagnostics.map(\.code))
         } catch {
             Issue.record("unexpected non-CompilerError: \(error)")
             return []
         }
     }
 
+    private func diagnostics(_ mer: String, _ cfg: String,
+                             fallbacks: FallbackPolicy = .strict) -> [Diagnostic] {
+        do {
+            _ = try Compiler(options: .init(fallbackPolicy: fallbacks)).compile(
+                meridianSource: mer, meridianFile: "t.meridian",
+                merconfigSource: cfg, merconfigFile: "t.merconfig")
+            return []
+        } catch let e as CompilerError {
+            return e.diagnostics
+        } catch IRValidationError.diagnostics(let diagnostics) {
+            return diagnostics
+        } catch {
+            Issue.record("unexpected non-CompilerError: \(error)")
+            return []
+        }
+    }
+
+    private func diagnosticTrace(_ mer: String, _ cfg: String,
+                                 fallbacks: FallbackPolicy = .strict) -> [String] {
+        let cap = ParserTrace.capturing(categories: [.diagnostics, .lowering])
+        do {
+            _ = try Compiler(options: .init(trace: cap.trace, fallbackPolicy: fallbacks)).compile(
+                meridianSource: mer, meridianFile: "t.meridian",
+                merconfigSource: cfg, merconfigFile: "t.merconfig")
+        } catch {
+            Issue.record("unexpected compile failure while collecting diagnostic trace: \(error)")
+        }
+        return cap.lines()
+    }
+
+    private func assertAllowedFallbackWarning(
+        _ mer: String,
+        _ cfg: String,
+        code: DiagnosticCode,
+        messageFragment: String,
+        sourceLocation: SourceLocation = #_sourceLocation
+    ) {
+        #expect(!codes(mer, cfg).contains(code), sourceLocation: sourceLocation)
+        let lines = diagnosticTrace(mer, cfg)
+        #expect(lines.contains {
+            $0.contains("warning \(code.id)")
+                && $0.contains(messageFragment)
+                && ($0.contains("fallback") || $0.contains("allow-fallbacks"))
+        }, Comment(rawValue: lines.joined(separator: "\n")), sourceLocation: sourceLocation)
+    }
+
     private let cfg = """
     === vocabulary ===
 
     An order is a kind of thing.
+    A widget is a kind of thing.
 
     === tools ===
 
@@ -74,7 +125,12 @@ struct NoSilentFallbackTests {
         To process an order:
           invoke chargePaymnt with order = the order.
         """
-        #expect(!codes(mer, cfg).contains(.unknownTool))
+        assertAllowedFallbackWarning(
+            mer,
+            cfg,
+            code: .unknownTool,
+            messageFragment: "unknown tool allowed by fallback"
+        )
     }
 
     @Test("a declared tool with the right spelling compiles clean")
@@ -113,7 +169,72 @@ struct NoSilentFallbackTests {
         To process an order:
           frobnicate the gizmo using the order.
         """
-        #expect(!codes(mer, cfg).contains(.unresolvedPhrase))
+        assertAllowedFallbackWarning(
+            mer,
+            cfg,
+            code: .unresolvedPhrase,
+            messageFragment: "unresolved phrase placeholder"
+        )
+    }
+
+    @Test("unparseable rule downgraded by allow-fallbacks: unparseable-rules")
+    func unparseableRuleFallbackWarning() {
+        let mer = """
+        ---
+        vocabulary: t.merconfig
+        allow-fallbacks: unparseable-rules
+        ---
+        When payment clears do nothing.
+
+        To process an order:
+          complete.
+        """
+        assertAllowedFallbackWarning(
+            mer,
+            cfg,
+            code: .unparseableRule,
+            messageFragment: "unparseable rule dropped by allow-fallbacks"
+        )
+    }
+
+    @Test("unattached rule downgraded by allow-fallbacks: unattached-rules")
+    func unattachedRuleFallbackWarning() {
+        let mer = """
+        ---
+        vocabulary: t.merconfig
+        allow-fallbacks: unattached-rules
+        ---
+        A widget must not be tampered.
+
+        To process an order:
+          complete.
+        """
+        assertAllowedFallbackWarning(
+            mer,
+            cfg,
+            code: .unattachedRule,
+            messageFragment: "unattached rule dropped by allow-fallbacks"
+        )
+    }
+
+    @Test("trigger action downgraded by allow-fallbacks: unresolved-trigger-actions")
+    func unresolvedTriggerActionFallbackWarning() {
+        let mer = """
+        ---
+        vocabulary: t.merconfig
+        allow-fallbacks: unresolved-trigger-actions
+        ---
+        When a refund is requested, do something completely unknown.
+
+        To process an order:
+          complete.
+        """
+        assertAllowedFallbackWarning(
+            mer,
+            cfg,
+            code: .unresolvedTriggerAction,
+            messageFragment: "trigger action unresolved but allowed by fallback"
+        )
     }
 
     @Test("orphaned fenced code block is a structural error")
@@ -347,6 +468,62 @@ struct NoSilentFallbackTests {
             merconfigFile: "t.merconfig")
         #expect(out.contains(".contains("))
         #expect(!out.contains("MeridianComparison.eq(__e.member(\"tags\")"))
+    }
+
+    @Test("match branch arm missing colon is MER1012")
+    func matchBranchMissingColon() {
+        let mer = """
+        To route:
+          branch on choice:
+            "ready"
+              complete.
+        """
+        #expect(codesMerOnly(mer).contains(.matchBranchSyntax))
+    }
+
+    @Test("empty match branch is a match-branch semantic error")
+    func emptyMatchBranchSemantic() {
+        let mer = """
+        To route:
+          branch on choice:
+          complete.
+        """
+        #expect(codesMerOnly(mer).contains(.matchBranchSemantic))
+    }
+
+    @Test("SwiftEmitter rejects invalid expression IR instead of falling back")
+    func swiftEmitterRejectsInvalidExpressionIR() throws {
+        let emitter = SwiftEmitter()
+        let emptyLogical = #expect(throws: CompilerError.self) {
+            _ = try emitter.emitExpr(.logical(.and, []))
+        }
+        #expect(try #require(emptyLogical).diagnostics.contains { $0.code == .invalidIR })
+
+        let inlineInvoke = #expect(throws: CompilerError.self) {
+            _ = try emitter.emitValueExpr(.invocation(InvokeIR(toolID: "demo.tool")))
+        }
+        #expect(try #require(inlineInvoke).diagnostics.contains { $0.code == .invalidIR })
+    }
+
+    @Test("recovery summary appears when multiple workflows fail")
+    func recoverySummaryForMultipleWorkflowFailures() {
+        let mer = """
+        ---
+        vocabulary: t.merconfig
+        ---
+        To process an order:
+          frobnicate the order.
+
+        To audit an order:
+          transmogrify the order.
+        """
+        let ds = diagnostics(mer, cfg)
+        #expect(ds.filter { $0.code == .unresolvedPhrase }.count == 2,
+                Comment(rawValue: ds.map { "\($0.code.id): \($0.message)" }.joined(separator: "\n")))
+        #expect(ds.contains { $0.code == .diagnosticRecoverySummary })
+        #expect(ds.contains { diagnostic in
+            diagnostic.notes.contains { $0.message.contains("skipped workflow") }
+        })
     }
 
     @Test("warnings-only DiagnosticEngine does not throw")

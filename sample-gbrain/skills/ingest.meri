@@ -51,12 +51,12 @@ Every mention of a person or company with a brain page MUST create a back-link F
 
 Every fact written to a brain page must carry an inline `[Source: ...]` citation.
 
-- **User's statements:** `[Source: User, {context}, YYYY-MM-DD]`
-- **Meeting data:** `[Source: Meeting "{title}", YYYY-MM-DD]`
-- **Email/message:** `[Source: email from {name} re: {subject}, YYYY-MM-DD]`
-- **Web content:** `[Source: {publication}, {URL}, YYYY-MM-DD]`
+- **User's statements:** `[Source: User, {{context}}, YYYY-MM-DD]`
+- **Meeting data:** `[Source: Meeting "{{title}}", YYYY-MM-DD]`
+- **Email/message:** `[Source: email from {{name}} re: {{subject}}, YYYY-MM-DD]`
+- **Web content:** `[Source: {{publication}}, {{URL}}, YYYY-MM-DD]`
 - **Social media:** `[Source: X/@handle, YYYY-MM-DD](URL)` (include link)
-- **Synthesis:** `[Source: compiled from {sources}]`
+- **Synthesis:** `[Source: compiled from {{sources}}]`
 
 ## Phases (( role: reference ))
 
@@ -89,7 +89,7 @@ the signal detection loop that makes the brain compound over time.
    to get an answer.
 
 
-### Protocol — steps
+### Protocol — steps (( role: reference ))
 
 2. For each entity detected:
    - `gbrain search "name"` -- does a page already exist?
@@ -102,7 +102,7 @@ the signal detection loop that makes the brain compound over time.
    ```bash
    gbrain sync --no-pull --no-embed
    ```
-### What counts as notable
+### What counts as notable (( role: reference ))
 
 - People the user interacts with or discusses (not random mentions)
 - Companies relevant to the user's work or interests
@@ -118,7 +118,7 @@ the signal detection loop that makes the brain compound over time.
 - Strong reactions to external stimuli (what triggered it and why)
 
 
-### What to capture from the user's own thinking — steps
+### What to capture from the user's own thinking — steps (( role: reference ))
 
 Original thinking is the most valuable signal. Capture exact phrasing -- the user's
 language IS the insight. Don't paraphrase.
@@ -315,7 +315,7 @@ The marginal cost of testing 3 items first is near zero. The cost of cleaning
 up 100 bad pages is enormous.
 
 
-### Test Before Bulk — steps
+### Test Before Bulk — steps (( role: reference ))
 
 When processing multiple items (batch video ingestion, bulk meeting processing, etc.):
 

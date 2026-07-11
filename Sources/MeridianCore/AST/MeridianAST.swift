@@ -593,6 +593,10 @@ public indirect enum StatementAST: Sendable {
     case commit(CommitStatementAST)
     case complete(CompleteStatementAST)
     case conditional(ConditionalStatementAST)
+    /// `branch on <expr>:` match form (Wave 7 verbalizer surface / IR round-trip).
+    /// Ordinary authored skills still lower only `.conditional` → `.predicate`;
+    /// this AST exists so verbalized `.match` IR can reparse.
+    case matchBranch(MatchBranchStatementAST)
     case iteration(IterationStatementAST)
     case simultaneously(SimultaneouslyStatementAST)
     case recover(RecoverStatementAST)
@@ -611,6 +615,7 @@ public indirect enum StatementAST: Sendable {
         case .commit(let s):            return s.sourceLine
         case .complete(let s):          return s.sourceLine
         case .conditional(let s):       return s.sourceLine
+        case .matchBranch(let s):       return s.sourceLine
         case .iteration(let s):         return s.sourceLine
         case .simultaneously(let s):    return s.sourceLine
         case .recover(let s):           return s.sourceLine
@@ -724,6 +729,38 @@ public struct ConditionalStatementAST: Sendable {
                 elseBlock: ASTBlock? = nil, sourceLine: Int = 0) {
         self.condition = condition; self.thenBlock = thenBlock
         self.elseBlock = elseBlock; self.sourceLine = sourceLine
+    }
+}
+
+/// One arm of a `branch on …:` match statement.
+public struct MatchBranchCaseAST: Sendable {
+    public let pattern: MatchPatternAST
+    public let block: ASTBlock
+    public init(pattern: MatchPatternAST, block: ASTBlock) {
+        self.pattern = pattern
+        self.block = block
+    }
+}
+
+/// Pattern surface for `branch on` cases (`"yes":` / `approved:` / `anything:`).
+public enum MatchPatternAST: Sendable {
+    case literal(ExpressionAST)
+    case enumValue(String)
+    case wildcard
+}
+
+/// `branch on <subject>:` with indented `pattern:` cases and optional `otherwise:`.
+public struct MatchBranchStatementAST: Sendable {
+    public let subject: ExpressionAST
+    public let cases: [MatchBranchCaseAST]
+    public let otherwiseBlock: ASTBlock?
+    public let sourceLine: Int
+    public init(subject: ExpressionAST, cases: [MatchBranchCaseAST],
+                otherwiseBlock: ASTBlock? = nil, sourceLine: Int = 0) {
+        self.subject = subject
+        self.cases = cases
+        self.otherwiseBlock = otherwiseBlock
+        self.sourceLine = sourceLine
     }
 }
 

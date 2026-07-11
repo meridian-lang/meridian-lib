@@ -272,13 +272,13 @@ struct InterpolatedStringEmissionTests {
     private let emitter = SwiftEmitter(options: .init(emitSourceLineComments: false))
 
     @Test("interpolatedString in emitExpr concatenates parts")
-    func emitExprInterpolated() {
+    func emitExprInterpolated() throws {
         let segs: [IRInterpolationSegment] = [
             .literal("Order "),
             .expression(.propertyAccess(.identifierRef(name: "order"), propertyName: "id")),
             .literal(" placed.")
         ]
-        let out = emitter.emitExpr(.interpolatedString(segs))
+        let out = try emitter.emitExpr(.interpolatedString(segs))
         #expect(out.contains("\"Order \""),
                 Comment(rawValue: "Expected literal 'Order ' in: \(out)"))
         #expect(out.contains("meridianStringify("),
@@ -288,12 +288,12 @@ struct InterpolatedStringEmissionTests {
     }
 
     @Test("interpolatedString in emitValueExpr wraps in .string()")
-    func emitValueExprInterpolated() {
+    func emitValueExprInterpolated() throws {
         let segs: [IRInterpolationSegment] = [
             .literal("Hello "),
             .expression(.identifierRef(name: "name"))
         ]
-        let out = emitter.emitValueExpr(.interpolatedString(segs))
+        let out = try emitter.emitValueExpr(.interpolatedString(segs))
         #expect(out.hasPrefix(".string("),
                 Comment(rawValue: "Expected .string(...) wrapper, got: \(out)"))
         #expect(out.contains("meridianStringify("),
@@ -301,13 +301,13 @@ struct InterpolatedStringEmissionTests {
     }
 
     @Test("empty interpolatedString emits empty string")
-    func emitEmptyInterpolated() {
-        #expect(emitter.emitExpr(.interpolatedString([])) == "\"\"")
-        #expect(emitter.emitValueExpr(.interpolatedString([])) == ".string(\"\")")
+    func emitEmptyInterpolated() throws {
+        #expect(try emitter.emitExpr(.interpolatedString([])) == "\"\"")
+        #expect(try emitter.emitValueExpr(.interpolatedString([])) == ".string(\"\")")
     }
 
     @Test("fileHeader includes meridianStringify helper")
-    func fileHeaderIncludesHelper() {
+    func fileHeaderIncludesHelper() throws {
         let wf = IRWorkflow(
             name: "test workflow",
             parameters: [],
@@ -315,7 +315,7 @@ struct InterpolatedStringEmissionTests {
             mode: .strict,
             sourceFile: "test.meridian"
         )
-        let out = emitter.emitFile(workflows: [wf])
+        let out = try emitter.emitFile(workflows: [wf])
         #expect(out.contains("private func meridianStringify("),
                 Comment(rawValue: "meridianStringify not found in:\n\(out)"))
         #expect(out.contains("v.scalarDescription"),
@@ -323,11 +323,11 @@ struct InterpolatedStringEmissionTests {
     }
 
     @Test("strings with special chars are escaped in interpolation")
-    func specialCharsEscaped() {
+    func specialCharsEscaped() throws {
         let segs: [IRInterpolationSegment] = [
             .literal("Say \"hello\"\nand \\goodbye.")
         ]
-        let out = emitter.emitExpr(.interpolatedString(segs))
+        let out = try emitter.emitExpr(.interpolatedString(segs))
         // Embedded quotes and backslashes must be Swift-escaped
         #expect(out.contains("\\\""),
                 Comment(rawValue: "Expected escaped quotes in: \(out)"))

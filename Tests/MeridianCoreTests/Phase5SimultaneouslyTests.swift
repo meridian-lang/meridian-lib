@@ -42,7 +42,7 @@ struct Phase5SimultaneouslyTests {
     }
 
     @Test("simultaneously emits a throwing task group")
-    func emitSimultaneously() {
+    func emitSimultaneously() throws {
         let sim = IRPrimitive.simultaneously(SimultaneouslyIR(branches: [
             IRBlock(statements: [.emit(EmitIR(eventID: "customer.loaded"))]),
             IRBlock(statements: [.emit(EmitIR(eventID: "credit.loaded"))])
@@ -55,7 +55,7 @@ struct Phase5SimultaneouslyTests {
             sourceFile: "sim.meridian"
         )
 
-        let out = SwiftEmitter(options: .init(emitSourceLineComments: false))
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
             .emitFile(workflows: [wf])
 
         #expect(out.contains("withThrowingTaskGroup(of: Void.self)"))

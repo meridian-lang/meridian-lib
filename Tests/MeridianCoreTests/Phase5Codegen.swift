@@ -20,7 +20,7 @@ struct Phase5Codegen {
     // MARK: - iterate
 
     @Test("iterate emits a checkpointed enumerated loop")
-    func iterateOverList() {
+    func iterateOverList() throws {
         let body = IRBlock(statements: [
             .emit(EmitIR(eventID: "item.seen", payload: [
                 EmitField("item", .identifierRef(name: "item"))
@@ -39,7 +39,7 @@ struct Phase5Codegen {
             mode: .strict,
             sourceFile: "iterate_demo.meridian"
         )
-        let out = emitter().emitFile(workflows: [wf])
+        let out = try emitter().emitFile(workflows: [wf])
 
         // The optional-chained accessor — no force casts, no
         // `Value.opaque(AnyHashableSendable(...))` wrapping (`Value` is already
@@ -54,7 +54,7 @@ struct Phase5Codegen {
     // MARK: - assert
 
     @Test("bare assert lowers to `try await runtime.assert(cond, message:)`")
-    func bareAssertCallsRuntime() {
+    func bareAssertCallsRuntime() throws {
         let assertIR = IRPrimitive.assert(AssertIR(
             condition: .identifierRef(name: "verdictIsValid"),
             message: "verdict must be valid",
@@ -67,7 +67,7 @@ struct Phase5Codegen {
             mode: .strict,
             sourceFile: "assert_demo.meridian"
         )
-        let out = emitter().emitFile(workflows: [wf])
+        let out = try emitter().emitFile(workflows: [wf])
 
         // Must funnel through runtime.assert so the `assert.passed` / `assert.failed`
         // event still fires for observers; no raw `guard … else { throw }` form.
@@ -76,7 +76,7 @@ struct Phase5Codegen {
     }
 
     @Test("assert with otherwise block emits both branches and still fires events")
-    func assertWithOtherwise() {
+    func assertWithOtherwise() throws {
         let recoveryEmit = IRBlock(statements: [
             .emit(EmitIR(eventID: "validation.failed", payload: [], strict: true))
         ])
@@ -92,7 +92,7 @@ struct Phase5Codegen {
             mode: .strict,
             sourceFile: "assert_otherwise.meridian"
         )
-        let out = emitter().emitFile(workflows: [wf])
+        let out = try emitter().emitFile(workflows: [wf])
 
         // Failure path — recovery block runs after the failed-event fires.
         #expect(out.contains("if !(state.get(\"verdictIsValid\")) {"))

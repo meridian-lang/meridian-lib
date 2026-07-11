@@ -14,7 +14,9 @@ import Foundation
 public final class DiagnosticEngine {
 
     public private(set) var diagnostics: [Diagnostic] = []
+    public private(set) var skippedConstructs: [String] = []
     private let trace: ParserTrace
+    private var skipSummaryAppended = false
 
     public init(trace: ParserTrace = .shared) {
         self.trace = trace
@@ -48,8 +50,25 @@ public final class DiagnosticEngine {
     /// payload for rendering). Warnings alone never throw.
     public func throwIfErrors() throws {
         if hasErrors {
+            if !skipSummaryAppended, let summary = skipSummaryNote() {
+                report(summary)
+                skipSummaryAppended = true
+            }
             throw CompilerError.diagnostics(diagnostics)
         }
+    }
+
+    public func skipSummaryNote() -> Diagnostic? {
+        guard !skippedConstructs.isEmpty else { return nil }
+        let unique = Array(Set(skippedConstructs)).sorted()
+        let noun = skippedConstructs.count == 1 ? "construct" : "constructs"
+        let contexts = unique.joined(separator: ", ")
+        return Diagnostic.warning(
+            .diagnosticRecoverySummary,
+            message: "\(skippedConstructs.count) \(noun) skipped while collecting errors",
+            range: .unknown,
+            notes: [DiagnosticNote("skipped contexts: \(contexts)")],
+            help: "Fix the primary diagnostics first; skipped constructs are not emitted in this compile result.")
     }
 
     /// Run `body`, catching a thrown `CompilerError`, collecting its diagnostics,
@@ -57,11 +76,37 @@ public final class DiagnosticEngine {
     /// continue. Non-`CompilerError` throws are re-thrown (true bugs).
     @discardableResult
     public func recovering<T>(_ body: () throws -> T) throws -> T? {
+        try recovering(context: "construct", body)
+    }
+
+    /// Run `body`, collecting a thrown `CompilerError` and recording the skipped
+    /// construct context so the final diagnostic payload explains recovery.
+    @discardableResult
+    public func recovering<T>(context: String, _ body: () throws -> T) throws -> T? {
         do {
             return try body()
         } catch let error as CompilerError {
+            let start = diagnostics.count
             collect(error)
+            skippedConstructs.append(context)
+            attachRecoveryNote(context: context, diagnosticsStart: start)
             return nil
         }
+    }
+
+    private func attachRecoveryNote(context: String, diagnosticsStart: Int) {
+        guard diagnostics.count > diagnosticsStart else { return }
+        let idx = diagnostics.index(before: diagnostics.endIndex)
+        let existing = diagnostics[idx]
+        let note = DiagnosticNote("skipped \(context) after this diagnostic so compilation could continue collecting errors")
+        diagnostics[idx] = Diagnostic(
+            code: existing.code,
+            severity: existing.severity,
+            message: existing.message,
+            primaryRange: existing.primaryRange,
+            suggestions: existing.suggestions,
+            notes: existing.notes + [note],
+            help: existing.help)
+        trace.log(.diagnostics, "  note: \(note.message)")
     }
 }

@@ -86,7 +86,7 @@ struct AutonomyModeTests {
             ])
         )
 
-        let out = SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
         #expect(out.contains("runtime.executeAutonomousLoop"))
         #expect(out.contains("replanAfterFailures: 2"))
         #expect(out.contains("maxSteps: 5"))

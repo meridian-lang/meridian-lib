@@ -12,6 +12,9 @@ struct MeridianCLI: AsyncParsableCommand {
         version: "0.1.0-alpha",
         subcommands: [
             CompileCommand.self,
+            ExplainCommand.self,
+            DriftCommand.self,
+            GrammarDocCommand.self,
             LintCommand.self,
             PreviewSkillCommand.self,
             MigrateSkillCommand.self,
@@ -25,7 +28,7 @@ struct MeridianCLI: AsyncParsableCommand {
             RunCommand.self,
             VerifyCommand.self,
             ResumeCommand.self,
-            ExplainCommand.self,
+            ExplainDiagCommand.self,
             DecisionsCommand.self,
             BenchParseCommand.self
         ]

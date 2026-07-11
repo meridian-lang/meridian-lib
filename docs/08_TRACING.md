@@ -1,9 +1,18 @@
 # Meridian — Parser Tracing
 
 `ParserTrace` (in `Sources/MeridianCore/Diagnostics/ParserTrace.swift`) is an
-opt-in, category-scoped diagnostic logger for the compiler frontend.
-It is lightweight enough to ship in production builds; it does nothing unless
-at least one category is enabled.
+opt-in, category-scoped diagnostic logger for compile-time compiler/tooling
+work: tokenization, parsing, lowering, validation, codegen, verbalization, and
+drift analysis. It is lightweight enough to ship in production builds; it does
+nothing unless at least one category is enabled.
+
+This is separate from runtime execution telemetry. `ParserTrace` answers "what
+did the compiler do while understanding and emitting this file?" Runtime JSONL
+events answer "what happened while the generated workflow ran?" The bridge is
+the generated source map: `compileWithManifest` records source anchors, runtime
+observers write JSONL events with those anchors, and `meridian trace render`
+turns that runtime event stream into an execution tree. `trace render` does not
+render `ParserTrace` logs, and `--trace` does not enable runtime JSONL capture.
 
 ---
 
@@ -47,6 +56,8 @@ enables all leaves under it. The list below mirrors `ParserTrace.Category`;
 | `.rulebook` | `rulebook` | Rulebook (.merrules) parsing + rewrite |
 | `.skill` | `skill` | Skill/section-role classification + scoped tools |
 | `.codegen` | `codegen` | Swift/manifest/domain emission (SwiftEmitter) |
+| `.verbalizer` | `verbalizer` | Canonical English verbalization (IR → source) |
+| `.drift` | `drift` | Authored-vs-canonical drift hunk classification |
 | `.diagnostics` | `diagnostics` | Every emitted diagnostic (errors/warnings/notes) |
 | `.timing` | `timing` | Per-phase wall-clock timing + end-of-compile profile (**off by default**) |
 
@@ -81,6 +92,22 @@ lines) and counted in the timing profile. A full trace therefore shows exactly
 where each error/warning fired. See
 [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) for the diagnostics
 surface itself.
+
+### Trace acceptance matrix
+
+The closeout acceptance target is that a developer can follow the whole
+compile-time pipeline with `--trace` and no silent gaps:
+
+| Stage | Category | Accepted evidence |
+|---|---|---|
+| Tokenize | `tokenize` | Line/fence/table/checklist/heading decisions are visible. |
+| Parse | `parse`, `statement`, `expression`, `phrase.parse` | Top-level parse spans, statement dispatch, expression production decisions, and phrase-pattern tokenization are visible. |
+| Phrase resolution | `phrase.match`, `phrase.args`, `phrase.inline` | Candidate scoring, argument extraction, and phrase body expansion are visible. |
+| Lower | `lowering`, `rulebook`, `skill` | AST-to-IR decisions, rule classification, section-role routing, and fallback warnings are visible. |
+| Validate | `diagnostics` | Structured diagnostics, including recovery summaries, are mirrored with codes. |
+| Emit | `codegen` | Swift, manifest, and domain emission decisions are visible. Trace text is redacted before it is written. |
+| Verbalize | `verbalizer` | `meridian explain` and any API caller using `Verbalizer.verbalize()` can trace canonical source generation. |
+| Drift | `drift` | `meridian drift` and `skill-deviation` can trace authored-vs-canonical hunk classification. |
 
 ---
 
@@ -170,7 +197,12 @@ into the compiler, then call `cap.lines()` afterwards.
 let trace = ParserTrace.silent()   // never logs, sink goes to /dev/null
 ```
 
-Pass this to compiler stages in unit tests where trace output is noise.
+Pass this to compiler stages in unit tests where trace output is noise. Production
+compiler and CLI paths must not hardcode `.silent()` because that drops a
+caller's `--trace`/`--trace-file` request. The only approved production-source
+exceptions are probe/benchmark paths listed in
+[`coverage/SILENT_FALLBACK_ALLOWLIST.md`](coverage/SILENT_FALLBACK_ALLOWLIST.md):
+`TrialLowering`, `InertYieldAnalyzer`, and `ParserBenchmark`.
 
 ---
 
@@ -190,6 +222,17 @@ trace.sink = .file(URL(fileURLWithPath: "/tmp/meridian.log"))
 trace.sink = .custom { line in myLogger.debug(line) }
 ```
 
+CLI sink setup is validated up front. An unknown category token is a hard
+`MER2010` diagnostic with did-you-mean guidance and exit 1. An unwritable
+`--trace-file` path is a hard `MER5011` diagnostic and exit 1. If a file sink is
+created successfully but later becomes unwritable mid-stream, `ParserTrace`
+emits a visible `MER5011` warning line to stderr, writes the current trace line
+there, and switches the sink to stderr for the rest of the command.
+
+Trace emission redacts obvious secret-bearing strings before writing to any
+sink: `Authorization` headers, bearer tokens, `password=...`, `api_key=...`,
+`apiKey=...`, and `secret=...` style fields are replaced with `<redacted>`.
+
 ---
 
 ## CLI integration
@@ -197,9 +240,10 @@ trace.sink = .custom { line in myLogger.debug(line) }
 Every subcommand that runs the compiler or migration pipeline creates a fresh
 `ParserTrace()` per invocation (via the shared `makeCLITrace(spec:file:)`
 bootstrap in `CLISupport.swift`), configures it, then passes it down.
-`compile`, `check`, `verify`, `run`, `migrate-skill`, and `preview-skill` ALL
-accept both `--trace` and `--trace-file` (full parity — none of them are
-`--trace`-only). `meridian trace categories` lists the valid category tokens:
+`compile`, `check`, `verify`, `run`, `migrate-skill`, `preview-skill`,
+`explain`, `drift`, `inert-yield`, and `skill-deviation` ALL accept both
+`--trace` and `--trace-file` (full parity — none of them are `--trace`-only).
+`meridian trace categories` lists the valid category tokens:
 
 ```swift
 let traceInstance = ParserTrace()
@@ -216,12 +260,16 @@ This does NOT touch `ParserTrace.shared` — each CLI invocation gets its own
 isolated instance.
 
 ```bash
-# Trace available on compile, check, verify, run, migrate-skill, preview-skill
+# Trace available on compile/check/verify/run and analysis/migration commands
 meridian check examples/order_processing.meridian --trace phrase.match
 meridian verify examples/order_processing.meridian --trace lowering
 meridian run examples/order_processing.meridian --trace all
 meridian migrate-skill SKILL.md --trace skill --trace-file /tmp/migrate.log
 meridian preview-skill SKILL.md --trace skill
+meridian explain skill.meri --trace verbalizer
+meridian drift skill.meri --trace verbalizer,drift
+meridian inert-yield sample-gbrain/skills --batch --trace skill,lowering
+meridian skill-deviation original/SKILL.md ported.meri --trace drift
 
 # --trace-file redirects to a file instead of stderr, on every one of the above
 meridian check examples/order_processing.meridian --trace all --trace-file /tmp/check.log
@@ -239,11 +287,13 @@ MerConfigParser(trace: trace).parse(source, file: "ecommerce.merconfig")
 MeridianParser(symbols: st, trace: trace).parse(source, file: "order.meridian")
 StatementParser(symbols: st, trace: trace).parseBlock(lines)
 ExpressionParser(symbols: st, trace: trace).parse(text)
-ASTToIR(symbols: st, sourceFile: "order.meridian", trace: trace).lower(file)
-SwiftEmitter(options: emitterOpts, trace: trace).emitFile(workflows: workflows, …)
-ManifestEmitter(trace: trace).emit(…)
-SkillMigrator(compiler: compiler, vocabularies: vocabs, trace: trace).migrate(markdown, file: "skill.meri")
+try ASTToIR(symbols: st, sourceFile: "order.meridian", trace: trace).lower(file)
+try SwiftEmitter(options: emitterOpts, trace: trace).emitFile(workflows: workflows, …)
+try ManifestEmitter(trace: trace).emit(…)
+try SkillMigrator(compiler: compiler, vocabularies: vocabs, trace: trace).migrate(markdown, file: "skill.meri")
 SkillMarkdownImporter(trace: trace).preview(markdown, name: "…")
+try Verbalizer(model: model, trace: trace).verbalize()
+DriftEngine.diff(authored: authored, canonical: canonical, trace: trace)
 ```
 
 `SkillMigrator` and `SkillMarkdownImporter` default `trace` to the owning

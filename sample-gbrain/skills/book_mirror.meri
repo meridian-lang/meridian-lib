@@ -128,18 +128,18 @@ python3 - <<'PY'
 from bs4 import BeautifulSoup
 import os, sys
 work = os.environ['WORK']
-files = open(f'{work}/files.txt').read().splitlines()
+files = open(f'{{work}}/files.txt').read().splitlines()
 for i, path in enumerate(files, 1):
     html = open(path, encoding='utf-8', errors='replace').read()
     text = BeautifulSoup(html, 'html.parser').get_text('\n')
     text = '\n'.join(line.strip() for line in text.splitlines() if line.strip())
-    with open(f'{work}/chapters/{i:02d}.txt', 'w') as f:
+    with open(f'{{work}}/chapters/{{i:02d}}.txt', 'w') as f:
         f.write(text)
 PY
 ```
 
 
-### EPUB — steps 2
+### EPUB — steps 2 (( role: reference ))
 
 Inspect the chapter files to identify which are real chapters vs front
 matter (TOC, copyright, acknowledgments). Often the EPUB ships one file
@@ -167,12 +167,12 @@ pdftotext -layout path/to/book.pdf "$WORK/full.txt"
 - Paragraphs preserved with `\n\n`.
 
 
-### Quality check — steps
+### Quality check — steps (( role: reference ))
 
 For each chapter file:
 
 
-### Quality check — steps 2
+### Quality check — steps 2 (( role: reference ))
 
 Save a `chapters/INDEX.md` mapping chapter number → title → file → word
 count for reference.
@@ -197,12 +197,12 @@ context fed to each chapter subagent.
    originals that's been recurring.
 
 
-### What to pull — steps
+### What to pull — steps (( role: reference ))
 
 2. Recent daily memory — last 14 days of brain pages under
    `wiki/personal/reflections/` or wherever the user files daily notes.
 
-### What to pull — steps 2
+### What to pull — steps 2 (( role: reference ))
 
 4. Brain pages for relevant entities — `gbrain query "<name>"` for
    people who will likely come up.

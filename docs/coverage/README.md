@@ -187,6 +187,12 @@ Both live in this folder, `docs/coverage/`. The script reads
 `docs/coverage/coverage-exclusions.md` by path; the baseline is written wherever
 `--baseline` points (use `docs/coverage/coverage-baseline.md`).
 
+Wave 7 also keeps a targeted verbalizer evidence matrix in
+[`VERBALIZER_EVIDENCE.md`](VERBALIZER_EVIDENCE.md). That file is not an
+`llvm-cov` baseline; it maps every in-scope IR primitive, expression family,
+GrammarTable production, and cookbook/gallery row to the tests that prove
+Canonical English round-trip coverage.
+
 ### `coverage-baseline.md` — generated report
 
 Written by `--baseline`. It's the full per-file table plus the `TOTAL` line.
@@ -389,5 +395,6 @@ reachable branches only `MeridianSlowIntegrationTests` exercises.
 See also: [`../../Tests/README.md`](../../Tests/README.md) (test suites and the
 condensed coverage section), [`coverage-exclusions.md`](coverage-exclusions.md)
 (the live floor list), [`coverage-baseline.md`](coverage-baseline.md) (the
-generated report), and `../../IMPLEMENTATION_LOG.md` (the lock decision and
+generated report), [`VERBALIZER_EVIDENCE.md`](VERBALIZER_EVIDENCE.md) (Wave 7
+semantic evidence), and `../../IMPLEMENTATION_LOG.md` (the lock decision and
 rationale).

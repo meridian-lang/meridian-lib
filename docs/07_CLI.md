@@ -69,6 +69,11 @@ On success, prints `✓ <output-path>` and exits with code 0.
 | 0 | Success |
 | 1 | Parse, compile, or I/O error |
 
+Trace setup errors use the same exit path. An unknown `--trace` token is a
+coded `MER2010` hard error with did-you-mean guidance; an unwritable
+`--trace-file` path is `MER5011`. Both render before the command does its main
+work and exit 1.
+
 ---
 
 ## Quick examples
@@ -323,13 +328,21 @@ Report Meridian authoring diagnostics without compiling or lowering the file.
 This is a lightweight preflight for editor integrations and quick local checks.
 
 ```bash
-meridian lint <input>
+meridian lint <input> [--format human|json]
 ```
 
-Output is one diagnostic per line:
+| Flag | Default | Description |
+|---|---|---|
+| `--format <human\|json>` / `--diagnostics-format <human\|json>` | `human` | Render through the shared `DiagnosticRenderer`; `json` is the stable editor/CI schema. |
+
+Human output uses the same snippet + caret renderer as compiler diagnostics:
 
 ```text
-path/to/file.meri:12: warning: message hint: optional hint
+warning[MER6001]: polite command wording
+  --> path/to/file.meri:12:3
+     |
+  12 |   please fetch orders.
+     |   ^^^^^^
 ```
 
 The command exits non-zero when any diagnostic has severity `error`.
@@ -438,12 +451,104 @@ meridian trace categories
 
 ## `meridian explain`
 
+Compile a `.meridian` / `.meri` file to a `VerbalizerModel` and print the
+Canonical English form of the lowered IR. This is Wave 7's "what did the
+compiler understand?" command; diagnostic explanations live under
+`explain-diag`.
+
+```bash
+meridian explain <source> [options]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--merconfig <path>` | auto-detected | Path to a `.merconfig` file. Repeatable; same auto-detection as `compile`. |
+| `--rulebook <path>` | auto-detected | Path to a `.merrules` rulebook. Repeatable; same auto-detection as `compile`. |
+| `--trace <categories>` | (none) | Enable `ParserTrace`; canonical emission logs under `verbalizer`. |
+| `--trace-file <path>` | stderr | Write trace output to a file instead of stderr. |
+
+Example:
+
+```bash
+meridian explain corpora/erp/skills/placeorder.meri \
+    --merconfig corpora/erp/erp.merconfig \
+    --rulebook corpora/erp/erp.merrules
+```
+
+The output is intended for audit and review. It normalizes accepted synonyms and
+rulebook sugar to one stable spelling, and it omits documentation/reference
+sections that do not lower to IR. The SEM-8-03 gate recompiles this output and
+checks IR structural equality. See [18_VERBALIZER.md](18_VERBALIZER.md).
+
+---
+
+## `meridian drift`
+
+Compare authored source against its Canonical English form. The command compiles
+the input, verbalizes the lowered model, then reports line-level drift hunks.
+
+```bash
+meridian drift <source> [options]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--merconfig <path>` | auto-detected | Path to a `.merconfig` file. Repeatable. |
+| `--rulebook <path>` | auto-detected | Path to a `.merrules` rulebook. Repeatable. |
+| `--json` | false | Emit stable JSON instead of Markdown. |
+| `--trace <categories>` | (none) | Enable `ParserTrace`; useful categories include `verbalizer` and `drift`. |
+| `--trace-file <path>` | stderr | Write trace output to a file instead of stderr. |
+
+Markdown output groups hunks by category:
+
+| Category | Meaning |
+|---|---|
+| `Synonym canonicalized` | Accepted wording changed to the canonical marker. |
+| `Structure normalized` | Whitespace or structural layout changed. |
+| `Desugar expanded` | A compact idiom/rulebook form expanded to explicit statements. |
+| `Meaning-bearing` | Conservative catch-all for differences worth review. |
+
+Example:
+
+```bash
+meridian drift corpora/incident/skills/triagealert.meri \
+    --merconfig corpora/incident/incident.merconfig \
+    --rulebook corpora/incident/incident.merrules
+```
+
+`Meaning-bearing` is an audit signal, not an automatic semantic-failure label:
+documentation-heavy SKILL files often show many such hunks because reference
+sections are retained in manifests but omitted from canonical IR source.
+
+On already-canonical input (for example after `meridian explain` writes the
+verbalized source), `meridian drift --json` should report `"total": 0`. The
+CLI E2E locks for capture/triagealert assert this zero-drift property.
+
+---
+
+## `meridian grammar-doc`
+
+Emit a Markdown reference for the canonical surface grammar registered in
+`GrammarTable` / `PegexSurfaceGrammar`. The output is generated from the live
+grammar table, so it is useful for reviewing the current canonical examples and
+anchors.
+
+```bash
+meridian grammar-doc
+```
+
+This command takes no options and writes Markdown to stdout.
+
+---
+
+## `meridian explain-diag`
+
 Print the long-form explanation for a diagnostic code — its cause and fix — plus
 the rationale and alternatives of the governing design decision. So "why is this
 an error?" is one command away from the error itself.
 
 ```bash
-meridian explain <code|decision-id>
+meridian explain-diag <code|decision-id>
 ```
 
 | Argument | Description |
@@ -452,10 +557,10 @@ meridian explain <code|decision-id>
 
 ```bash
 # Explain a diagnostic code (cause + fix + linked decision)
-meridian explain MER2002
+meridian explain-diag MER2002
 
 # Explain a design decision directly
-meridian explain D-DX-5
+meridian explain-diag D-DX-5
 ```
 
 An unknown id is itself a guided error: it suggests the closest code/decision id.
@@ -538,6 +643,8 @@ during development:
 | `rulebook` | `.merrules` parsing + rewrite |
 | `skill` | Section-role classification + scoped tools |
 | `codegen` | Swift/manifest/domain emission |
+| `verbalizer` | Canonical English emission from validated IR |
+| `drift` | Authored-vs-canonical hunk classification |
 | `diagnostics` | Every emitted diagnostic |
 | `timing` | Per-phase wall-clock + compile profile (off by default) |
 | `all` | Everything (verbose) |
@@ -552,9 +659,16 @@ MERIDIAN_TRACE=phrase.match meridian compile examples/order_processing.meridian
 
 The `--trace` flag (and its `--trace-file` companion, to redirect output to a
 file instead of stderr) is available on `compile`, `check`, `verify`, `run`,
-`migrate-skill`, and `preview-skill` — every subcommand that runs the compiler
-or the skill-migration pipeline. `migrate-skill` and `preview-skill` log under
-the `.skill` category (`meridian migrate-skill SKILL.md --trace skill`).
+`migrate-skill`, `preview-skill`, `explain`, `drift`, `inert-yield`, and
+`skill-deviation` — every subcommand that runs the compiler, verbalizer, drift,
+or skill-migration analysis pipeline. `migrate-skill` and `preview-skill` log
+under the `.skill` category (`meridian migrate-skill SKILL.md --trace skill`);
+`explain` logs canonical emission under `.verbalizer`; `drift` and
+`skill-deviation` can log hunk classification under `.drift`.
+
+Unknown trace categories are `MER2010` hard errors. Unwritable trace files are
+`MER5011` hard errors at startup; if an already-opened file sink fails
+mid-stream, the trace visibly falls back to stderr.
 
 ---
 
@@ -731,6 +845,28 @@ playbook and the per-tier edit budget.
 
 ---
 
+## `meridian inert-yield`
+
+Measure how many currently inert sections would lower with the real vocabulary
+and rulebook knowledge. This is a read-only migration-analysis command; it never
+rewrites the input.
+
+```bash
+meridian inert-yield <input> [options]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--vocab <path>` | auto-detected | Path to a `.merconfig` file. Repeatable. |
+| `--rulebook <path>` | auto-detected | Path to a `.merrules` file. Repeatable. |
+| `--batch` | false | Treat `<input>` as a directory and analyze every `.meri` file. |
+| `-o, --out <path>` | stdout | Write the full Markdown report to a file. |
+| `--summary-only` | false | Print only the corpus summary and ranked worklist. |
+| `--trace <categories>` | (none) | Enable `ParserTrace`; useful categories include `skill` and `lowering`. |
+| `--trace-file <path>` | stderr | Write trace output to a file instead of stderr. |
+
+---
+
 ## `meridian skill-deviation`
 
 Report how a ported `.meri` deviates from the original `SKILL.md` it was derived
@@ -757,6 +893,8 @@ meridian skill-deviation <original> <ported> [options]
 | `--batch` | false | Treat both inputs as directories. Pairs every `<name>/SKILL.md` (and top-level `*.md` like `RESOLVER.md`) with `<ported>/<slug>.meri` (recursive). |
 | `--index` | false | With `--batch`, also write a `README.md` index summarizing tiers, similarity, and any unpaired files. |
 | `--no-diff` | false | Omit the raw unified diff; emit summary-only reports. |
+| `--trace <categories>` | (none) | Enable `ParserTrace`; useful categories include `verbalizer` and `drift`. |
+| `--trace-file <path>` | stderr | Write trace output to a file instead of stderr. |
 
 ### Report contents
 

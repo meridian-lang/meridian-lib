@@ -58,4 +58,23 @@ struct AnaphoraTests {
             )
         }
     }
+
+    @Test("empty referent list is ambiguous")
+    func emptyReferentsThrow() throws {
+        #expect(throws: CompilerError.self) {
+            _ = try AnaphoraResolver().resolve(
+                "summarize it",
+                referents: []
+            )
+        }
+    }
+
+    @Test("resolver replaces every anaphora marker in the text")
+    func replacesAllMarkers() throws {
+        let resolved = try AnaphoraResolver().resolve(
+            "connect it to them",
+            referents: ["the content"]
+        )
+        #expect(resolved == "connect the content to the content")
+    }
 }

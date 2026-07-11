@@ -26,6 +26,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=1
 - Judgment: 0 blocks, 0 lines
+- canonical_drift: synonym=4, structure=0, desugar=0, meaning=25
 
 ### Inert section details
 - L8 `DBA notes`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.

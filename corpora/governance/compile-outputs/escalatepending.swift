@@ -464,7 +464,7 @@ public struct EscalatePending: MeridianWorkflow {
     }
 }
 
-public struct WhenAccessRequestHasBeenPending: MeridianWorkflow {
+public struct WhenAccessRequestIs: MeridianWorkflow {
     public let runtime: Runtime
 
     public init(runtime: Runtime) {
@@ -485,20 +485,20 @@ public struct WhenAccessRequestHasBeenPending: MeridianWorkflow {
         }
         let constants = Constants()
         let instances = Instances()
-        await runtime.workflowStarted(workflowName: "WhenAccessRequestHasBeenPending", parameters: [:])
+        await runtime.workflowStarted(workflowName: "WhenAccessRequestIs", parameters: [:])
 
         if __meridianShouldRun("progress:0.0:L26:C0") {
             // L26
-            try await runtime.wait(.event("accessRequestHasBeenPending", matching: nil))
+            try await runtime.wait(.event("accessRequestIsFlaggedAs", matching: nil))
             try await runtime.checkpoint(label: "progress:0.0:L26:C0", state: state.snapshot())
         }
         if __meridianShouldRun("progress:0.1:L26:C0") {
             // L26
             try await runtime.emit(
-                event: "trigger.accessRequestHasBeenPending.fired",
+                event: "trigger.accessRequestIsFlaggedAs.fired",
                 payload: [
                     "action": .string("escalate the access request"),
-                    "condition": .string("an access request has been pending for more than 7 days"),
+                    "condition": .string("an access request is flagged as overdue"),
                 ]
             )
             try await runtime.checkpoint(label: "progress:0.1:L26:C0", state: state.snapshot())

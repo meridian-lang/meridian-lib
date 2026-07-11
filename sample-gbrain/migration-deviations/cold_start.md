@@ -38,6 +38,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=21, template=1, tools-metadata=1
 - Judgment: 2 blocks, 0 lines
+- canonical_drift: synonym=0, structure=0, desugar=0, meaning=412
 
 ### Inert section details
 - L11 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.

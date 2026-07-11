@@ -42,6 +42,8 @@ public final class ParserTrace: @unchecked Sendable {
         case rulebook           = "rulebook"
         case skill              = "skill"
         case codegen            = "codegen"
+        case verbalizer         = "verbalizer"
+        case drift              = "drift"
         case diagnostics        = "diagnostics"
         case timing             = "timing"
 
@@ -62,6 +64,8 @@ public final class ParserTrace: @unchecked Sendable {
             case .rulebook:          return "Rulebook (.merrules) parsing + rewrite."
             case .skill:             return "Skill/section role classification + scoped tools."
             case .codegen:           return "Swift/manifest/domain emission."
+            case .verbalizer:        return "Canonical English verbalization (IR → source)."
+            case .drift:             return "Authored-vs-canonical drift hunk classification."
             case .diagnostics:       return "Every emitted diagnostic (errors/warnings/notes)."
             case .timing:            return "Per-phase wall-clock timing + end-of-compile profile (off by default)."
             }
@@ -274,7 +278,7 @@ public final class ParserTrace: @unchecked Sendable {
     private func emit(_ cat: Category, _ raw: String) {
         lock.lock()
         let pad = String(repeating: "  ", count: indentLevel)
-        let line = "[\(cat.rawValue)] \(pad)\(raw)\n"
+        let line = "[\(cat.rawValue)] \(pad)\(Self.redactSecrets(raw))\n"
         let s = _sink
         lock.unlock()
 
@@ -288,12 +292,34 @@ public final class ParserTrace: @unchecked Sendable {
                 h.seekToEndOfFile()
                 h.write(Data(line.utf8))
                 try? h.close()
+            } else if (try? line.data(using: .utf8)?.write(to: url, options: .atomic)) != nil {
+                // wrote atomically
             } else {
-                try? line.data(using: .utf8)?.write(to: url, options: .atomic)
+                // Mid-stream sink failure: fall back to stderr once visibly.
+                let notice = "[diagnostics] warning MER5011 @trace-file: cannot write trace file \(url.path); falling back to stderr\n"
+                FileHandle.standardError.write(Data(notice.utf8))
+                FileHandle.standardError.write(Data(line.utf8))
+                lock.lock(); _sink = .stderr; lock.unlock()
             }
         case .custom(let fn):
             fn(line)
         }
+    }
+
+    private static func redactSecrets(_ raw: String) -> String {
+        var text = raw
+        let replacements: [(String, String)] = [
+            (#"(?i)\b(Authorization\s*:\s*Bearer\s+)[^\s,;]+"#, "$1<redacted>"),
+            (#"(?i)\b(Authorization\s*:\s*)(?!Bearer\s)[^\s,;]+"#, "$1<redacted>"),
+            (#"(?i)\b(Bearer\s+)[A-Za-z0-9._~+/=-]+"#, "$1<redacted>"),
+            (#"(?i)\b((?:password|api[_-]?key|apiKey|secret|[A-Za-z0-9_-]*secret)\s*[=:]\s*)[^\s,;]+"#, "$1<redacted>")
+        ]
+        for (pattern, template) in replacements {
+            guard let regex = try? NSRegularExpression(pattern: pattern) else { continue }
+            let range = NSRange(text.startIndex..<text.endIndex, in: text)
+            text = regex.stringByReplacingMatches(in: text, options: [], range: range, withTemplate: template)
+        }
+        return text
     }
 }
 

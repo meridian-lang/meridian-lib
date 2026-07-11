@@ -244,7 +244,7 @@ Generated when `MerConfigFile.instances` is non-empty.
 |---|---|
 | `invoke` | `let x = try await runtime.invoke(tool: "id", args: […])` + `state.bind("x", x)` |
 | `bind` / `rebind` | Both use `BindIR` (`isRebind: Bool`). Emit `state.bind(…)` or `state.rebind(…)`. |
-| `branch` | `BranchIR.condition` is `BranchCondition`: `.predicate(expr)` → `if/else`; `.match(expr, cases)` → `switch/case` |
+| `branch` | `BranchIR.condition` is `BranchCondition`: `.predicate(expr)` → `if/else`; `.match(expr, cases)` → `switch`/`case`, plus `default:` when `BranchIR.thenBlock` is non-empty (Verbalizer `otherwise:` ↔ IR `thenBlock` ↔ codegen `default:`) |
 | `iterate` | `IterateIR.mode` is `IterateMode`: `.overCollection` → `for x in (state.get("items")?.asList ?? []) { … }`; `.whileCondition` → `while`; `.untilCondition` → `while !(…)`. Loop iterations checkpoint at each boundary with a unique `__meridianLoopLabel_N` identifier. |
 | `assert` | `AssertIR.otherwiseAction: IRBlock?`. If nil: `try await runtime.assert(condition, message: "…")`. If set: `if !condition { try await runtime.assert(false, …); <block> } else { try await runtime.assert(true, …) }`. Both shapes route through `Runtime.assert` so `assert.passed` / `assert.failed` events fire. |
 | `emit` | `EmitIR.payload: [EmitField]` (not a dict). `EmitIR.strict: Bool` × `IRWorkflow.mode` decides `try await runtime.emit` vs `await runtime.emitLenient` |

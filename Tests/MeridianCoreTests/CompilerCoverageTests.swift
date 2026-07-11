@@ -11,13 +11,13 @@ import MeridianRuntime
 struct CompilerCoverageTests {
 
     @Test("emit(workflows:) lowers IR to Swift without parsing")
-    func emitFromIR() {
+    func emitFromIR() throws {
         let wf = IRWorkflow(
             name: "run",
             parameters: [],
             body: IRBlock(statements: [.complete(CompleteIR(reason: "ok"))])
         )
-        let swift = Compiler(options: .init(
+        let swift = try Compiler(options: .init(
             emitterOptions: .init(includeTimestamp: false, emitSourceLineComments: false)
         )).emit(workflows: [wf])
         #expect(swift.contains("struct Run"))

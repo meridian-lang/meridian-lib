@@ -34,6 +34,12 @@ public struct InertYieldCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Print only the corpus-wide summary and the ranked needs-phrase worklist.")
     var summaryOnly: Bool = false
 
+    @Option(name: .long, help: "Comma-separated ParserTrace categories (or `all`). Also reads MERIDIAN_TRACE.")
+    var trace: String?
+
+    @Option(name: .long, help: "Write ParserTrace output to this file instead of stderr.")
+    var traceFile: String?
+
     public func run() async throws {
         let inputURL = URL(fileURLWithPath: input).standardized
         let fm = FileManager.default
@@ -43,8 +49,9 @@ public struct InertYieldCommand: AsyncParsableCommand {
 
         let depsDir = batch ? inputURL : inputURL.deletingLastPathComponent()
         let (vocabularies, rulebooks) = try loadDependencies(beside: depsDir)
+        let traceInstance = try makeCLITrace(spec: trace, file: traceFile)
         let analyzer = InertYieldAnalyzer(
-            compiler: Compiler(options: .init(trace: .silent())),
+            compiler: Compiler(options: .init(trace: traceInstance)),
             vocabularies: vocabularies, rulebooks: rulebooks)
 
         let files = batch ? try discoverMeriFiles(in: inputURL) : [inputURL]

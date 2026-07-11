@@ -369,6 +369,12 @@ deterministic thresholds don't fit a specific section.
    it can sit under a reference `##` parent; for sections already at `###`, add
    a sibling `###`.)
 
+   The same split applies to **executable template binds** that use `[if]` /
+   `{{ }}` holes: keep narrative under `(( role: reference ))`, and put the
+   `bind … = ```…``` ` statement in a procedure / `— steps` sibling. Template
+   binds left in a reference section never lower (accessmatrix/policyaudit
+   lesson).
+
    Note how the procedure preserves the narrative's **load-bearing qualifier**:
    the prose says "a mention *without* a back-link is a broken brain; fix the
    *missing* one" — so the loop is guarded (`if the entity does not link …`), not

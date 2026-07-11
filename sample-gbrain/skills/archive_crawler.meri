@@ -184,7 +184,7 @@ tags: ["tag-1", "tag-2"]
 ```
 
 
-### Phase 3: Ingest — steps
+### Phase 3: Ingest — steps (( role: reference ))
 
 When an item is worth keeping, file it by primary subject per
 `_brain-filing-rules.md`:

@@ -43,12 +43,10 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
           help: "Downgrade a non-lowerable, no-inference-cue operational section (P1 category 4) from a hard migration error to a reported-but-nonfatal skip, marking it (( role: reference )) and retrying. Off by default, matching the policy that cue-less operational content is a reword error; pass --route-fuzzy for exploratory batch runs where some residual is expected.")
     var routeFuzzy: Bool = false
 
-    @Option(name: .long,
-            help: "Activate parser/lowering trace categories (comma-separated). Examples: skill, lowering, all. Silent by default.")
+    @Option(name: .long, help: "Comma-separated ParserTrace categories (or `all`). Also reads MERIDIAN_TRACE.")
     var trace: String?
 
-    @Option(name: .long,
-            help: "Write trace output to a file instead of stderr.")
+    @Option(name: .long, help: "Write ParserTrace output to this file instead of stderr.")
     var traceFile: String?
 
     public func run() async throws {
@@ -63,7 +61,7 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
 
         // Silent unless --trace is given (migration is noisy over a whole
         // corpus, so opt-in tracing under `.skill` mirrors `compile`/`check`).
-        let traceInstance = makeCLITrace(spec: trace, file: traceFile)
+        let traceInstance = try makeCLITrace(spec: trace, file: traceFile)
         let migrator = SkillMigrator(
             compiler: Compiler(options: .init(trace: traceInstance)),
             vocabularies: vocabularies,
@@ -88,7 +86,8 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
     private func runSingle(inputURL: URL, migrator: SkillMigrator, rulebookTarget: URL?) async throws {
         let markdown = try String(contentsOf: inputURL, encoding: .utf8)
         let stem = inputURL.deletingPathExtension().lastPathComponent
-        let result = try await migrator.migrate(markdown, file: "\(SkillDeviation.meriStem(forSkillAt: inputURL)).meri")
+        let meriFile = "\(SkillDeviation.meriStem(forSkillAt: inputURL)).meri"
+        let result = try await migrator.migrate(markdown, file: meriFile)
 
         if let out {
             let outURL = URL(fileURLWithPath: out).standardized
@@ -102,13 +101,15 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
             print("⚠ \(result.report.unminedContracts.count) unmined-contract line(s) — see report for detail.")
         }
         if !result.compiledOK, let diag = result.report.diagnostics.last {
-            print("  \(diag)")
+            let rendered = DiagnosticRenderer(sources: [meriFile: result.meriSource],
+                                              options: .init(color: stderrIsTTY())).render(diag)
+            FileHandle.standardError.write(Data((rendered + "\n").utf8))
         }
 
         try persistSectionAliases(result.sectionAliases, to: rulebookTarget)
 
         if let report {
-            let text = singleReport(stem: stem, result: result)
+            let text = singleReport(stem: stem, meriFile: meriFile, result: result)
             try text.write(to: URL(fileURLWithPath: report).standardized, atomically: true, encoding: .utf8)
         }
 
@@ -316,7 +317,7 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
 
     // MARK: - Reports
 
-    private func singleReport(stem: String, result: SkillMigrator.Result) -> String {
+    private func singleReport(stem: String, meriFile: String, result: SkillMigrator.Result) -> String {
         let r = result.report
         var lines = [
             "skill: \(stem)",
@@ -329,7 +330,8 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
         ]
         if !r.diagnostics.isEmpty {
             lines.append("diagnostics:")
-            lines.append(contentsOf: r.diagnostics.map { "  - \($0)" })
+            let rendered = DiagnosticRenderer(sources: [meriFile: result.meriSource]).render(r.diagnostics)
+            lines.append(contentsOf: rendered.components(separatedBy: "\n").map { "  \($0)" })
         }
         if !r.unminedContracts.isEmpty {
             lines.append("unmined-contract lines:")

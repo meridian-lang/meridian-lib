@@ -182,6 +182,7 @@ public struct SkillDeviation {
             out.append("- Inert categories: \(categoryText)")
         }
         out.append("- Judgment: \(m.judgmentBlocks) blocks, \(m.judgmentLines) lines")
+        out.append("- canonical_drift: synonym=\(m.canonicalDriftSynonym), structure=\(m.canonicalDriftStructure), desugar=\(m.canonicalDriftDesugar), meaning=\(m.canonicalDriftMeaning)")
         if !m.inertDetails.isEmpty {
             out.append("")
             out.append("### Inert section details")

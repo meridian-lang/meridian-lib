@@ -4,7 +4,7 @@ A **controlled natural language compiler** for agent workflows and business rule
 Meridian reads English-shaped specifications and compiles them to readable,
 type-checked, async/await Swift plus a small deterministic runtime.
 
-**Current status: All phases (0–6, 6.5, 8, G) complete. 530+ tests passing. Generated Swift compiles, links, and runs.**
+**Current status: Phases 0–6, 6.5, 8, G, Inform-7 Waves 1–7 complete. Generated Swift compiles, links, and runs; Wave 7 canonical English round-trips across the committed corpora.**
 
 ---
 
@@ -89,8 +89,9 @@ swift run meridian skill-deviation original-skills/ . \
 | [docs/10_BUILTIN_TOOLS.md](docs/10_BUILTIN_TOOLS.md) | Blueprint built-in tool catalog, arguments, registration |
 | [docs/11_RULEBOOKS.md](docs/11_RULEBOOKS.md) | `.merrules` desugars, section roles, conventions |
 | [docs/13_SKILL_MD_PORTING.md](docs/13_SKILL_MD_PORTING.md) | Porting gbrain `SKILL.md` → `.meri` (playbook, tiers, migrator) |
-| [docs/14_DEVELOPER_EXPERIENCE.md](docs/14_DEVELOPER_EXPERIENCE.md) | **Debugging** — diagnostics, `MERxxxx` codes, did-you-mean, batch reporting, tracing, `explain`/`decisions`/`--fix` |
+| [docs/14_DEVELOPER_EXPERIENCE.md](docs/14_DEVELOPER_EXPERIENCE.md) | **Debugging** — diagnostics, `MERxxxx` codes, did-you-mean, batch reporting, tracing, `explain-diag`/`decisions`/`--fix` |
 | [docs/15_DECISIONS.md](docs/15_DECISIONS.md) | The readable design-decision log (generated from `DecisionCatalog`) |
+| [docs/18_VERBALIZER.md](docs/18_VERBALIZER.md) | Wave 7 canonical English, `meridian explain`, drift audit, and verbalizer API |
 | [Tests/README.md](Tests/README.md) | Test suites, forcing functions, adding new tests |
 | [docs/status.md](docs/status.md) | Phase progress, what's done, decision references |
 
@@ -103,9 +104,9 @@ Original spec docs (read-only reference): [`meridian-handoff/docs/`](meridian-ha
 ```
 Sources/
 ├── MeridianRuntime/          # Runtime library (generated code imports this)
-├── MeridianCore/             # Compiler: parser, AST, IR, codegen, formatter, docs, testing
+├── MeridianCore/             # Compiler: parser, AST, IR, codegen, verbalizer, formatter, docs, testing
 ├── MeridianCLI/              # thin @main executable
-├── MeridianCLIKit/           # command implementations (compile, run, check, test, format, docs, trace, migrate-skill, skill-deviation…)
+├── MeridianCLIKit/           # command implementations (compile, run, check, test, format, docs, trace, explain, drift, grammar-doc, migrate-skill, skill-deviation...)
 ├── MeridianTools/            # Blueprint built-in tool implementations
 ├── MeridianTestKit/          # Test helpers: WorkflowTestHarness, MockRuntime, etc.
 └── SampleDemoFlows/          # Hand-written reference workflows (Phase 1)
@@ -150,6 +151,9 @@ IMPLEMENTATION_LOG.md         # Append-only decision log
   `with autonomy` asks an `ActPlanner` one step at a time. Runtime validation,
   host policy, and scoped tool execution remain deterministic.
 - **Deterministic compilation** — same source always produces the same Swift.
+- **Canonical English verbalizer** — `meridian explain` prints the compiled IR
+  back as Canonical English; `meridian drift` compares authored source against
+  that canonical form. See [docs/18_VERBALIZER.md](docs/18_VERBALIZER.md).
 - **13 IR primitives** — invoke, bind, rebind, branch, emit, complete, iterate, assert, wait, commit, recover, simultaneously, aiJudgment, aiAutonomy.
 - **Phrase inlining** — vocabulary phrases expand at compile time.
 - **Workflow recursion** — workflows can call themselves or other workflows.
@@ -211,6 +215,7 @@ IMPLEMENTATION_LOG.md         # Append-only decision log
 | 6.5 | EnglishLexicon + SKILL-shaped extensions | ✅ Done |
 | 8 | Executable rules | ✅ Done |
 | G | Expressive SKILL.md surface + gbrain corpus | ✅ Done |
+| W7 | Canonical verbalizer + drift audit | ✅ Done |
 
 Full detail: [`docs/status.md`](docs/status.md)
 Implementation decisions: [`IMPLEMENTATION_LOG.md`](IMPLEMENTATION_LOG.md)
@@ -278,7 +283,7 @@ placeholder:
 
 The full diagnostics, tracing, and decision-log surface is documented in
 [docs/14_DEVELOPER_EXPERIENCE.md](docs/14_DEVELOPER_EXPERIENCE.md). Every
-compile error is queryable: `meridian explain MER2002`.
+compile error is queryable: `meridian explain-diag MER2002`.
 
 **Opting back into a fallback is per-file**, via the `.meridian` frontmatter
 key `allow-fallbacks:` (comma-separated list, or `all`/`*` for everything):

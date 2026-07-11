@@ -43,6 +43,22 @@ struct ParserTraceCoverageTests {
         #expect(lines.contains { $0.contains("◀ done") })
     }
 
+    @Test("trace output redacts obvious secrets")
+    func redactsSecrets() {
+        let cap = ParserTrace.capturing(categories: [.diagnostics])
+        cap.trace.log(.diagnostics, "password=hunter2 Authorization: Bearer abc.def api_key=key123 client-secret: shh Bearer token456")
+        let line = cap.lines().joined(separator: "\n")
+        #expect(line.contains("password=<redacted>"))
+        #expect(line.contains("Authorization: Bearer <redacted>"))
+        #expect(line.contains("api_key=<redacted>"))
+        #expect(line.contains("client-secret: <redacted>"))
+        #expect(line.contains("Bearer <redacted>"))
+        #expect(!line.contains("hunter2"))
+        #expect(!line.contains("abc.def"))
+        #expect(!line.contains("key123"))
+        #expect(!line.contains("token456"))
+    }
+
     @Test("disabled category logs nothing")
     func disabledNoOutput() {
         let cap = ParserTrace.capturing(categories: [.lowering])

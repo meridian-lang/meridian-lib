@@ -24,11 +24,11 @@ public struct DiagnosticCodeEntry: Sendable {
 
 extension DiagnosticCode {
 
-    /// Single source of truth for catalog accountability tests and `meridian explain`.
+    /// Single source of truth for catalog accountability tests and `meridian explain-diag`.
     public static let catalog: [DiagnosticCodeEntry] = [
         // MER0xxx — legacy shims (still emitted via CompilerError projection)
-        .init(.legacySemantic, status: .active, emitters: ["Compiler.swift:semanticError projection"]),
-        .init(.legacySyntax, status: .active, emitters: ["Compiler.swift:syntaxError projection"]),
+        .init(.legacySemantic, status: .deprecated),
+        .init(.legacySyntax, status: .deprecated),
         .init(.notImplemented, status: .active, emitters: ["Compiler.swift:notImplemented projection"]),
         .init(.internalError, status: .active, emitters: ["ASTToIR.swift"]),
 
@@ -45,6 +45,7 @@ extension DiagnosticCode {
         .init(.uncheckablePredicate, status: .active,
               emitters: ["SkillSectionBuilder.swift", "StatementParser.swift"]),
         .init(.invalidTableCell, status: .active, emitters: ["StatementParser.swift"]),
+        .init(.matchBranchSyntax, status: .active, emitters: ["StatementParser.swift:parseMatchBranch"]),
 
         // MER2xxx — name resolution
         .init(.unresolvedPhrase, status: .active, emitters: ["ASTToIR.swift"]),
@@ -78,9 +79,11 @@ extension DiagnosticCode {
         .init(.invalidEnumDefault, status: .active, emitters: ["Compiler.swift:mergeEnumDefaults"]),
         .init(.unlowerableRulePredicate, status: .active, emitters: ["RuleInjector.swift:lowerExprSimple"]),
         .init(.unsupportedTriggerCondition, status: .active, emitters: ["RuleInjector.swift:synthesizeTriggers"]),
+        .init(.matchBranchSemantic, status: .active, emitters: ["ASTToIR.swift", "IRValidator.swift"]),
 
         // MER4xxx — codegen
         .init(.codegenError, status: .active, emitters: ["Compiler.swift:codegenError projection"]),
+        .init(.invalidIR, status: .active, emitters: ["IRValidator.swift"]),
 
         // MER5xxx — configuration
         .init(.swiftFormatFailed, status: .active, emitters: ["CompileCommand.swift"]),
@@ -90,6 +93,16 @@ extension DiagnosticCode {
         .init(.unknownMerconfigSection, status: .active, emitters: ["MerConfigParser.swift"]),
         .init(.malformedRulebookEntry, status: .active, emitters: ["RulebookParser.swift"]),
         .init(.unrecognizedBlockProperty, status: .active, emitters: ["MerConfigParser.swift:parseBlockProperty"]),
+        .init(.unwritableTraceFile, status: .active, emitters: ["CLISupport.swift:makeCLITrace"]),
+        .init(.emptyLexiconMarkers, status: .active, emitters: ["Verbalizer.swift"]),
+
+        // MER6xxx — lint / authoring warnings
+        .init(.lintPoliteCommand, status: .active, emitters: ["MeridianLinter.swift:paraphraseHint"]),
+        .init(.lintUncertainty, status: .active, emitters: ["MeridianLinter.swift:paraphraseHint"]),
+        .init(.migrationRouteFuzzyDowngrade, status: .active,
+              emitters: ["SkillMigrator.swift:routeFuzzy"]),
+        .init(.diagnosticRecoverySummary, status: .active,
+              emitters: ["DiagnosticEngine.swift:throwIfErrors"]),
     ]
 
     public static var catalogByID: [String: DiagnosticCodeEntry] {

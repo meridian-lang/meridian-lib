@@ -137,7 +137,7 @@ struct CompileCommandTests {
         #expect(FileManager.default.fileExists(atPath: t.path("order_processing.swift")))
     }
 
-    @Test("invalid --trace category emits a warning but compile still succeeds")
+    @Test("invalid --trace category exits with a coded diagnostic")
     func traceWarning() async throws {
         let t = TempDir()
         let cmd = try CompileCommand.parse([
@@ -148,7 +148,9 @@ struct CompileCommandTests {
             "--trace", "not-a-real-category",
             "--diagnostics-format", "json"
         ])
-        try await cmd.run()
+        await #expect(throws: (any Error).self) {
+            try await cmd.run()
+        }
     }
 
     @Test("namespace off and false both emit flat declarations")
@@ -290,6 +292,11 @@ struct LintCommandTests {
         do { try cmd.run() } catch { /* ExitCode.failure when an error-level diag exists */ }
     }
 
+    @Test("lint accepts json diagnostics format")
+    func lintAcceptsJSONFormat() throws {
+        _ = try LintCommand.parse(["--format", "json", ex("examples/order_processing.meridian")])
+    }
+
     @Test("lint prints hints and exits non-zero on error-level diagnostics")
     func lintErrorsAndHints() throws {
         let t = TempDir()
@@ -407,6 +414,243 @@ struct DocsCommandTests {
     }
 }
 
+// MARK: - explain / drift / grammar-doc
+
+@Suite("CLI command — explain")
+struct ExplainCommandTests {
+    @Test("verbalizes a temp .meri using autodiscovered merconfig")
+    func happy() async throws {
+        let fixture = auditFixture()
+        let cmd = try ExplainCommand.parse([fixture.meri.path])
+
+        try await cmd.run()
+    }
+
+    @Test("library path matches explain surface for order_processing")
+    func orderProcessingSurface() throws {
+        let mer = try String(contentsOfFile: ex("examples/order_processing.meridian"), encoding: .utf8)
+        let cfg = try String(contentsOfFile: ex("examples/ecommerce.merconfig"), encoding: .utf8)
+        let model = try Compiler(options: .init(trace: .silent())).compileToModel(
+            meridianSource: mer,
+            meridianFile: "order_processing.meridian",
+            vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]
+        )
+        let canonical = try Verbalizer(model: model).verbalize()
+        #expect(canonical.contains("To process a order placed by a customer:"))
+        #expect(canonical.contains("invoke validateOrder"))
+        #expect(canonical.contains("assert not the order's total amount is more than"))
+    }
+
+    @Test("missing input throws")
+    func missingInput() async throws {
+        let cmd = try ExplainCommand.parse(["/definitely/missing.meri"])
+
+        await #expect(throws: (any Error).self) { try await cmd.run() }
+    }
+
+    @Test("broken input reports compiler diagnostics")
+    func brokenInput() async throws {
+        let t = TempDir()
+        t.write("bad.merconfig", "An order is a kind of thing.\n")
+        let bad = t.write("bad.meri", """
+        ---
+        vocabulary: bad.merconfig
+        ---
+        To audit an order:
+          frobnicate the wibble.
+        """)
+        let cmd = try ExplainCommand.parse([bad.path])
+
+        await #expect(throws: (any Error).self) { try await cmd.run() }
+    }
+}
+
+@Suite("CLI command — drift")
+struct DriftCommandTests {
+    @Test("reports drift for a temp .meri using autodiscovered merconfig")
+    func happy() async throws {
+        let fixture = auditFixture()
+        let cmd = try DriftCommand.parse([fixture.meri.path])
+
+        try await cmd.run()
+    }
+
+    @Test("reports no drift for an already canonical temp .meri")
+    func noDrift() async throws {
+        let fixture = auditFixture()
+        let source = try String(contentsOf: fixture.meri, encoding: .utf8)
+        let model = try Compiler(options: .init(trace: .silent())).compileToModel(
+            meridianSource: source,
+            meridianFile: fixture.meri.lastPathComponent,
+            vocabularies: [.init(name: "audit", file: fixture.merconfig.lastPathComponent, source: try String(contentsOf: fixture.merconfig, encoding: .utf8))]
+        )
+        try Verbalizer(model: model).verbalize().write(to: fixture.meri, atomically: true, encoding: .utf8)
+        let cmd = try DriftCommand.parse([fixture.meri.path])
+
+        try await cmd.run()
+    }
+
+    @Test("order_processing reports non-empty synonym cosmetic drift")
+    func orderProcessingSynonymDrift() throws {
+        let mer = try String(contentsOfFile: ex("examples/order_processing.meridian"), encoding: .utf8)
+        let cfg = try String(contentsOfFile: ex("examples/ecommerce.merconfig"), encoding: .utf8)
+        let model = try Compiler(options: .init(trace: .silent())).compileToModel(
+            meridianSource: mer,
+            meridianFile: "order_processing.meridian",
+            vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]
+        )
+        let canonical = try Verbalizer(model: model).verbalize()
+        let report = DriftEngine.diff(authored: mer, canonical: canonical)
+        #expect((report.counts[.synonymCanonicalized] ?? 0) > 0)
+        #expect(report.hunks.count > 0)
+        #expect(DriftEngine.diff(authored: canonical, canonical: canonical).hunks.isEmpty)
+    }
+
+    @Test("emits JSON when requested")
+    func json() async throws {
+        let fixture = auditFixture()
+        let cmd = try DriftCommand.parse([fixture.meri.path, "--json"])
+
+        try await cmd.run()
+    }
+
+    @Test("drift JSON schema is stable for order_processing")
+    func jsonSchemaOrderProcessing() throws {
+        let mer = try String(contentsOfFile: ex("examples/order_processing.meridian"), encoding: .utf8)
+        let cfg = try String(contentsOfFile: ex("examples/ecommerce.merconfig"), encoding: .utf8)
+        let model = try Compiler(options: .init(trace: .silent())).compileToModel(
+            meridianSource: mer,
+            meridianFile: "order_processing.meridian",
+            vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]
+        )
+        let canonical = try Verbalizer(model: model).verbalize()
+        let report = DriftEngine.diff(authored: mer, canonical: canonical)
+        #expect((report.counts[.synonymCanonicalized] ?? 0) > 0)
+        #expect((report.counts[.meaningBearing] ?? 0) >= 0)
+        #expect(report.hunks.count == report.counts.values.reduce(0, +))
+    }
+
+    @Test("doc-heavy placeorder reports meaning-bearing drift")
+    func placeorderMeaningBearing() throws {
+        let mer = try String(contentsOfFile: ex("corpora/erp/skills/placeorder.meri"), encoding: .utf8)
+        let cfg = try String(contentsOfFile: ex("corpora/erp/erp.merconfig"), encoding: .utf8)
+        let rb = try String(contentsOfFile: ex("corpora/erp/erp.merrules"), encoding: .utf8)
+        let model = try Compiler(options: .init(trace: .silent())).compileToModel(
+            meridianSource: mer,
+            meridianFile: "placeorder.meri",
+            vocabularies: [.init(name: "erp", file: "erp.merconfig", source: cfg)],
+            rulebooks: [.init(name: "erp", file: "erp.merrules", source: rb)]
+        )
+        let canonical = try Verbalizer(model: model).verbalize()
+        let report = DriftEngine.diff(authored: mer, canonical: canonical)
+        #expect((report.counts[.meaningBearing] ?? 0) > 0)
+    }
+
+    @Test("missing merconfig path throws validation error")
+    func missingMerconfigPath() async throws {
+        let fixture = auditFixture()
+        let cmd = try ExplainCommand.parse([
+            fixture.meri.path, "--merconfig", "/definitely/missing.merconfig"
+        ])
+        await #expect(throws: (any Error).self) { try await cmd.run() }
+    }
+
+    @Test("missing rulebook path throws validation error")
+    func missingRulebookPath() async throws {
+        let fixture = auditFixture()
+        let cmd = try DriftCommand.parse([
+            fixture.meri.path, "--rulebook", "/definitely/missing.merrules"
+        ])
+        await #expect(throws: (any Error).self) { try await cmd.run() }
+    }
+
+    @Test("dual merconfig merge order is preserved for explain")
+    func dualMerconfigMerge() async throws {
+        let t = TempDir()
+        t.write("a.merconfig", """
+        === vocabulary ===
+        An order is a kind of thing.
+        An order has a score, which is Number.
+        """)
+        t.write("b.merconfig", """
+        === vocabulary ===
+        A page is a kind of thing.
+        A page has a status, which is String.
+        """)
+        let meri = t.write("dual.meri", """
+        ---
+        vocabulary: a.merconfig
+        ---
+        To audit an order:
+          assert score is more than 1.
+          complete.
+        """)
+        let cmd = try ExplainCommand.parse([
+            meri.path,
+            "--merconfig", t.path("a.merconfig"),
+            "--merconfig", t.path("b.merconfig"),
+        ])
+        try await cmd.run()
+    }
+
+    @Test("missing input throws")
+    func missingInput() async throws {
+        let cmd = try DriftCommand.parse(["/definitely/missing.meri"])
+
+        await #expect(throws: (any Error).self) { try await cmd.run() }
+    }
+
+    @Test("broken input reports compiler diagnostics")
+    func brokenInput() async throws {
+        let t = TempDir()
+        t.write("bad.merconfig", "An order is a kind of thing.\n")
+        let bad = t.write("bad.meri", """
+        ---
+        vocabulary: bad.merconfig
+        ---
+        To audit an order:
+          frobnicate the wibble.
+        """)
+        let cmd = try DriftCommand.parse([bad.path, "--json"])
+
+        await #expect(throws: (any Error).self) { try await cmd.run() }
+    }
+}
+
+@Suite("CLI command — grammar-doc")
+struct GrammarDocCommandTests {
+    @Test("emits the public grammar markdown")
+    func happy() throws {
+        let cmd = try GrammarDocCommand.parse([])
+
+        try cmd.run()
+        let markdown = GrammarDocCommand.markdown()
+        #expect(markdown.contains("# Meridian Grammar Reference"))
+        #expect(markdown.contains("| `comparison` |"))
+        #expect(markdown.contains("| `quantifier` |"))
+        #expect(markdown.contains("| `after-idiom` |"))
+    }
+}
+
+private func auditFixture() -> (dir: TempDir, meri: URL, merconfig: URL) {
+    let t = TempDir()
+    let cfg = t.write("audit.merconfig", """
+    === vocabulary ===
+
+    An order is a kind of thing.
+    An order has a score, which is Number.
+    """)
+    let meri = t.write("audit.meri", """
+    ---
+    vocabulary: audit.merconfig
+    ---
+    To validate an order:
+      assert score is greater than 1.
+      complete.
+    """)
+    return (t, meri, cfg)
+}
+
 // MARK: - preview-skill
 
 @Suite("CLI command — preview-skill")
@@ -433,39 +677,39 @@ struct PreviewSkillCommandTests {
     }
 }
 
-// MARK: - explain
+// MARK: - explain-diag
 
-@Suite("CLI command — explain")
-struct ExplainCommandTests {
+@Suite("CLI command — explain-diag")
+struct ExplainDiagCommandTests {
     @Test("explains a known diagnostic code")
     func knownCode() throws {
         let code = try #require(DiagnosticCode.all.first)
-        let cmd = try ExplainCommand.parse([code.id])
+        let cmd = try ExplainDiagCommand.parse([code.id])
         try cmd.run()
     }
 
     @Test("explains a diagnostic code with its governing decision")
     func knownCodeWithDecision() throws {
-        let cmd = try ExplainCommand.parse(["  mer2001  "])
+        let cmd = try ExplainDiagCommand.parse(["  mer2001  "])
         try cmd.run()
     }
 
     @Test("explains a known decision id")
     func knownDecision() throws {
         let decision = try #require(DecisionCatalog.all.first)
-        let cmd = try ExplainCommand.parse([decision.id])
+        let cmd = try ExplainDiagCommand.parse([decision.id])
         try cmd.run()
     }
 
     @Test("unknown id throws with a suggestion")
     func unknown() throws {
-        let cmd = try ExplainCommand.parse(["MER200l"])
+        let cmd = try ExplainDiagCommand.parse(["MER200l"])
         #expect(throws: (any Error).self) { try cmd.run() }
     }
 
     @Test("unknown id without a close suggestion throws")
     func unknownWithoutSuggestion() throws {
-        let cmd = try ExplainCommand.parse(["zzzzzzzzzzzz"])
+        let cmd = try ExplainDiagCommand.parse(["zzzzzzzzzzzz"])
         #expect(throws: (any Error).self) { try cmd.run() }
     }
 }
@@ -582,6 +826,7 @@ struct SkillDeviationCommandTests {
         let readme = try String(contentsOf: reports.appendingPathComponent("README.md"), encoding: .utf8)
         #expect(readme.contains("Inert deviations:"), Comment(rawValue: readme))
         #expect(readme.contains("Operational inert:"), Comment(rawValue: readme))
+        #expect(readme.contains("canonical_drift:"), Comment(rawValue: readme))
         #expect(readme.contains("doc-section-marked"), Comment(rawValue: readme))
         #expect(readme.contains("operational inert"), Comment(rawValue: readme))
     }
@@ -644,7 +889,10 @@ struct SkillDeviationCommandTests {
     func singleWithRulebook() async throws {
         let t = TempDir()
         let orig = t.write("SKILL.md", "# X\n## Overview\nDo it.\n")
-        t.write("local.merrules", "=== sections ===\n")
+        t.write("local.merrules", """
+        === sections ===
+        section "Overview" -> reference
+        """)
         let port = t.write("x.meri", "## Overview\nDo it.\n")
         let cmd = try SkillDeviationCommand.parse([orig.path, port.path])
         try await cmd.run()

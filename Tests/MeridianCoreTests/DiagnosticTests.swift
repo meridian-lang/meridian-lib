@@ -10,6 +10,30 @@ struct DiagnosticTests {
         SourceRange(file: file, startLine: line, startColumn: col, endLine: line, endColumn: endCol)
     }
 
+    private func validationDiagnostics(_ expression: IRExpression) -> [Diagnostic] {
+        do {
+            try IRValidator.validate(expression, sourceFile: "invalid.ir")
+            return []
+        } catch IRValidationError.diagnostics(let diagnostics) {
+            return diagnostics
+        } catch {
+            Issue.record("unexpected validation error: \(error)")
+            return []
+        }
+    }
+
+    private func validationDiagnostics(_ workflows: [IRWorkflow]) -> [Diagnostic] {
+        do {
+            try IRValidator.validate(workflows, sourceFile: "invalid.ir")
+            return []
+        } catch IRValidationError.diagnostics(let diagnostics) {
+            return diagnostics
+        } catch {
+            Issue.record("unexpected validation error: \(error)")
+            return []
+        }
+    }
+
     // MARK: Always-on guarantee
 
     @Test("unresolved within budget attaches a did-you-mean suggestion")
@@ -114,7 +138,7 @@ struct DiagnosticTests {
         #expect(out.contains("[\(DiagnosticCode.unknownTool.id)]"))
         #expect(out.contains("^"))
         #expect(out.contains("did you mean \"chargePayment\"?"))
-        #expect(out.contains("meridian explain \(DiagnosticCode.unknownTool.id)"))
+        #expect(out.contains("meridian explain-diag \(DiagnosticCode.unknownTool.id)"))
         // D-DX-5 rationale surfaced inline.
         #expect(out.contains("D-DX-5"))
     }
@@ -153,10 +177,10 @@ struct DiagnosticTests {
                 continue
             }
             switch entry.status {
-            case .reserved:
-                #expect(entry.emitters.isEmpty, Comment(rawValue: "\(code.id) reserved but has emitters"))
-            case .active, .deprecated:
+            case .active:
                 #expect(!entry.emitters.isEmpty, Comment(rawValue: "\(code.id) has no production emitter listed"))
+            case .reserved, .deprecated:
+                #expect(entry.emitters.isEmpty, Comment(rawValue: "\(code.id) \(entry.status.rawValue) but has emitters"))
             }
         }
     }
@@ -219,6 +243,282 @@ struct DiagnosticTests {
             #expect(e.diagnostics.first?.code == .invalidTestSpecKey)
         } catch {
             Issue.record("unexpected error: \(error)")
+        }
+    }
+
+    @Test("IRValidator reports invalidIR for malformed expressions")
+    func invalidIRValidation() {
+        do {
+            try IRValidator.validate(IRExpression.logical(.and, []), sourceFile: "invalid.ir")
+            Issue.record("expected invalidIR")
+        } catch IRValidationError.diagnostics(let diagnostics) {
+            #expect(diagnostics.contains { $0.code == .invalidIR })
+        } catch {
+            Issue.record("unexpected error: \(error)")
+        }
+    }
+
+    @Test("IRValidator reports matchBranchSemantic for malformed matches")
+    func matchSemanticValidation() {
+        let done = IRBlock(statements: [.complete(CompleteIR())])
+        let branch = IRPrimitive.branch(BranchIR(
+            condition: .match(.identifierRef(name: "choice"), [
+                BranchCase(pattern: .wildcard, block: done),
+                BranchCase(pattern: .wildcard, block: done),
+            ]),
+            thenBlock: done
+        ))
+        let workflow = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [branch]))
+
+        do {
+            try IRValidator.validate(workflow, sourceFile: "invalid.ir")
+            Issue.record("expected matchBranchSemantic")
+        } catch IRValidationError.diagnostics(let diagnostics) {
+            #expect(diagnostics.contains { $0.code == .matchBranchSemantic })
+        } catch {
+            Issue.record("unexpected error: \(error)")
+        }
+    }
+
+    @Test("IRValidator rejects malformed expression shapes")
+    func irValidatorExpressionRejections() {
+        let malformed: [(IRExpression, String)] = [
+            (.propertyAccess(.identifierRef(name: "order"), propertyName: " "), "empty property name"),
+            (.relationTraversal(.identifierRef(name: "order"), relationName: " ", target: .identifierRef(name: "customer")), "empty relation name"),
+            (.logical(.and, []), "logical and expression has no operands"),
+            (.logical(.or, []), "logical or expression has no operands"),
+            (.logical(.not, []), "logical not expression has no operands"),
+            (.logical(.not, [.literal(.boolean(true)), .literal(.boolean(false))]), "logical not expression has more than one operand"),
+            (.invocation(InvokeIR(toolID: "demo.tool")), "inline invocation demo.tool cannot be emitted in expression position"),
+            (.recordList(fields: [], rows: []), "record list has no fields"),
+            (.recordList(fields: ["name", " "], rows: []), "record list contains an empty field name"),
+            (.recordList(fields: ["name"], rows: [[.literal(.string("Ada")), .literal(.string("Lovelace"))]]), "record list row has 2 cells for 1 fields"),
+            (.tableLookup(table: "", keyColumn: "id", key: .literal(.string("o-1")), valueColumn: "status"), "table lookup contains an empty table or column name"),
+            (.definitionPredicate(functionName: " ", subject: .identifierRef(name: "order")), "definition predicate has an empty function name"),
+            (.description(DescriptionIR(collection: .identifierRef(name: "orders"), elementVar: " ")), "description has an empty element variable"),
+            (.description(DescriptionIR(collection: .identifierRef(name: "orders"), elementVar: "order", sort: (path: "", ascending: true))), "description has an empty sort path"),
+            (.superlative(SuperlativeIR(description: DescriptionIR(collection: .identifierRef(name: "orders"), elementVar: "order"), sortPath: " ", ascending: true)), "superlative has an empty sort path"),
+            (.interpolatedString([.forEach(variable: " ", collection: .identifierRef(name: "items"), body: [.literal("x")])]), "interpolated string loop has an empty variable"),
+            (.interpolatedString([.formatted(.identifierRef(name: "score"), formatter: " ")]), "interpolated string formatter is empty"),
+        ]
+
+        for (expression, expected) in malformed {
+            let diagnostics = validationDiagnostics(expression)
+            #expect(diagnostics.contains { $0.code == .invalidIR && $0.message.contains(expected) },
+                    Comment(rawValue: "missing \(expected) in \(diagnostics.map(\.message))"))
+        }
+
+        let discretion = validationDiagnostics(.invocation(InvokeIR(
+            toolID: "runtime.discretion.decide",
+            arguments: [InvokeArg("question", .literal(.string("continue?")))]
+        )))
+        #expect(discretion.isEmpty)
+
+        do {
+            try IRValidator.validate(IRWorkflow(
+                name: "valid",
+                parameters: [],
+                body: IRBlock(statements: [.complete(CompleteIR())]),
+                sourceFile: "workflow-source.meri"
+            ))
+        } catch {
+            Issue.record("expected valid workflow to pass validation: \(error)")
+        }
+    }
+
+    @Test("IRValidator rejects malformed statement IR")
+    func irValidatorStatementRejections() {
+        let done = IRBlock(statements: [.complete(CompleteIR())])
+        let target = IRWorkflow(
+            name: "target",
+            parameters: [IRParameter(name: "order", kind: KindRef("Order"))],
+            body: done,
+            explicitStructName: "Target"
+        )
+        let multiParamTarget = IRWorkflow(
+            name: "multi target",
+            parameters: [
+                IRParameter(name: "order", kind: KindRef("Order")),
+                IRParameter(name: "customer", kind: KindRef("Customer")),
+            ],
+            body: done,
+            explicitStructName: "MultiTarget"
+        )
+        let invalids: [IRPrimitive] = [
+            .invoke(InvokeIR(toolID: " ", arguments: [
+                InvokeArg(" ", .literal(.string("x"))),
+                InvokeArg("dup", .literal(.string("one"))),
+                InvokeArg("dup", .literal(.string("two"))),
+            ])),
+            .invoke(InvokeIR(toolID: "demo.tool", arguments: [
+                InvokeArg(" ", .literal(.string("x"))),
+            ])),
+            .invoke(InvokeIR(toolID: "workflow:Target", arguments: [])),
+            .invoke(InvokeIR(toolID: "workflow:MultiTarget", arguments: [])),
+            .emit(EmitIR(eventID: "audit", payload: [EmitField(" ", .literal(.string("x")))])),
+            .iterate(IterateIR(
+                mode: .overCollection(parameter: " ", kind: KindRef("Order"), collection: .identifierRef(name: "orders")),
+                body: done,
+                source: IRIterationRefinement(sort: (path: " ", ascending: true))
+            )),
+            .wait(WaitIR(condition: .signal(" "))),
+            .wait(WaitIR(condition: .approval(of: .identifierRef(name: "order"), by: " "))),
+            .wait(WaitIR(condition: .event(" ", matching: nil))),
+            .wait(WaitIR(condition: .choice(prompt: " ", options: ["approve"]))),
+            .wait(WaitIR(condition: .choice(prompt: "choose", options: []))),
+            .wait(WaitIR(condition: .choice(prompt: "choose", options: ["approve", " "]))),
+            .recover(RecoverIR(pattern: .named(" "), handler: done, attachedTo: done)),
+            .recover(RecoverIR(pattern: .typed(KindRef(" ")), handler: done, attachedTo: done)),
+            .recover(RecoverIR(pattern: .predicate(.logical(.and, [])), handler: done, attachedTo: done)),
+            .assert(AssertIR(condition: .literal(.boolean(false)), otherwiseAction: IRBlock(statements: [
+                .bind(BindIR(name: "bad", expression: .logical(.and, [])))
+            ]))),
+        ]
+        let workflow = IRWorkflow(name: "caller", parameters: [], body: IRBlock(statements: invalids))
+        let diagnostics = validationDiagnostics([target, multiParamTarget, workflow])
+        let expected = [
+            "invoke has an empty tool id",
+            "invoke <empty> has an empty argument key",
+            "invoke demo.tool has an empty argument key",
+            "invoke  repeats argument dup",
+            "workflow invoke workflow:Target is missing argument order",
+            "workflow invoke workflow:MultiTarget is missing arguments order, customer",
+            "emit payload contains an empty field key",
+            "iteration has an empty parameter name",
+            "iteration refinement has an empty sort path",
+            "wait signal is empty",
+            "wait approval approver is empty",
+            "wait event is empty",
+            "choice prompt is empty",
+            "choice options must be non-empty strings",
+            "recover pattern name is empty",
+            "recover pattern kind is empty",
+            "logical and expression has no operands",
+        ]
+        for message in expected {
+            #expect(diagnostics.contains { $0.code == .invalidIR && $0.message.contains(message) },
+                    Comment(rawValue: "missing \(message) in \(diagnostics.map(\.message).joined(separator: "\n"))"))
+        }
+    }
+
+    @Test("IRValidator rejects malformed match-branch semantics")
+    func irValidatorMatchBranchSemanticRejections() {
+        let done = IRBlock(statements: [.complete(CompleteIR())])
+        let empty = IRBlock(statements: [])
+        let date = Date(timeIntervalSince1970: 42)
+        let branches: [IRPrimitive] = [
+            .branch(BranchIR(condition: .match(.identifierRef(name: "choice"), []), thenBlock: empty)),
+            .branch(BranchIR(condition: .match(.identifierRef(name: "choice"), []), thenBlock: done)),
+            .branch(BranchIR(condition: .match(.identifierRef(name: "choice"), [
+                BranchCase(pattern: .literal(.string("ready")), block: done),
+                BranchCase(pattern: .literal(.string("ready")), block: done),
+            ]), thenBlock: empty)),
+            .branch(BranchIR(condition: .match(.identifierRef(name: "choice"), [
+                BranchCase(pattern: .wildcard, block: done),
+                BranchCase(pattern: .wildcard, block: done),
+            ]), thenBlock: done)),
+            .branch(BranchIR(condition: .match(.identifierRef(name: "choice"), [
+                BranchCase(pattern: .enumValue("approved", kind: "Status"), block: empty),
+            ]), thenBlock: empty)),
+            .branch(BranchIR(condition: .match(.identifierRef(name: "choice"), [
+                BranchCase(pattern: .literal(.number(Decimal(7))), block: done),
+                BranchCase(pattern: .literal(.number(Decimal(7))), block: done),
+            ]), thenBlock: empty)),
+            .branch(BranchIR(condition: .match(.identifierRef(name: "choice"), [
+                BranchCase(pattern: .literal(.boolean(true)), block: done),
+                BranchCase(pattern: .literal(.boolean(true)), block: done),
+            ]), thenBlock: empty)),
+            .branch(BranchIR(condition: .match(.identifierRef(name: "choice"), [
+                BranchCase(pattern: .literal(.money(Decimal(10), currency: "USD")), block: done),
+                BranchCase(pattern: .literal(.money(Decimal(10), currency: "USD")), block: done),
+            ]), thenBlock: empty)),
+            .branch(BranchIR(condition: .match(.identifierRef(name: "choice"), [
+                BranchCase(pattern: .literal(.duration(.seconds(5))), block: done),
+                BranchCase(pattern: .literal(.duration(.seconds(5))), block: done),
+            ]), thenBlock: empty)),
+            .branch(BranchIR(condition: .match(.identifierRef(name: "choice"), [
+                BranchCase(pattern: .literal(.date(date)), block: done),
+                BranchCase(pattern: .literal(.dateTime(date)), block: done),
+            ]), thenBlock: empty)),
+            .branch(BranchIR(condition: .match(.identifierRef(name: "choice"), [
+                BranchCase(pattern: .literal(.enumValue("approved", kind: "Status")), block: done),
+                BranchCase(pattern: .literal(.enumValue("approved", kind: "Status")), block: done),
+            ]), thenBlock: empty)),
+        ]
+
+        let diagnostics = validationDiagnostics([
+            IRWorkflow(name: "match coverage", parameters: [], body: IRBlock(statements: branches), sourceFile: "source.meri")
+        ])
+        let expected = [
+            "match branch has no case arms",
+            "match branch has an otherwise arm but no case arms",
+            "match branch repeats pattern ready",
+            "match branch declares multiple wildcard/default arms",
+            "match branch approved has no statements",
+        ]
+        for message in expected {
+            #expect(diagnostics.contains { $0.code == .matchBranchSemantic && $0.message.contains(message) },
+                    Comment(rawValue: "missing \(message) in \(diagnostics.map(\.message).joined(separator: "\n"))"))
+        }
+    }
+
+    @Test("DiagnosticEngine recovery attaches skip notes and one MER6004 summary")
+    func diagnosticEngineRecoverySummaryAndNotes() throws {
+        let cap = ParserTrace.capturing(categories: [.diagnostics])
+        let engine = DiagnosticEngine(trace: cap.trace)
+        let r = range("broken.meridian", line: 2, col: 3, endCol: 14)
+
+        let recovered: Int? = try engine.recovering(context: "workflow process order") {
+            throw CompilerError.diagnostics([
+                Diagnostic.error(.unresolvedPhrase, message: "unknown phrase", range: r)
+            ])
+        }
+        #expect(recovered == nil)
+        #expect(engine.diagnostics.last?.notes.contains {
+            $0.message.contains("skipped workflow process order")
+        } == true)
+
+        let recoveredEmpty: Int? = try engine.recovering(context: "empty diagnostic probe") {
+            throw CompilerError.diagnostics([])
+        }
+        #expect(recoveredEmpty == nil)
+        let recoveredDefault: Int? = try engine.recovering {
+            throw CompilerError.diagnostics([])
+        }
+        #expect(recoveredDefault == nil)
+        #expect(engine.skippedConstructs == ["workflow process order", "empty diagnostic probe", "construct"])
+
+        do {
+            try engine.throwIfErrors()
+            Issue.record("expected aggregated diagnostics")
+        } catch let error as CompilerError {
+            let diagnostics = error.diagnostics
+            #expect(diagnostics.contains { $0.code == .diagnosticRecoverySummary && $0.message.contains("3 constructs skipped") })
+            #expect(diagnostics.contains { diagnostic in
+                diagnostic.code == .diagnosticRecoverySummary
+                    && diagnostic.notes.contains { $0.message.contains("empty diagnostic probe") && $0.message.contains("workflow process order") }
+            })
+        }
+        do {
+            try engine.throwIfErrors()
+            Issue.record("expected aggregated diagnostics on second throw")
+        } catch let error as CompilerError {
+            #expect(error.diagnostics.filter { $0.code == .diagnosticRecoverySummary }.count == 1)
+        }
+        #expect(cap.lines().contains { $0.contains("skipped workflow process order") })
+    }
+
+    @Test("explain-diag worked examples cover the DX closeout codes")
+    func explainDiagExamplesForDXCodes() throws {
+        let required = [
+            "MER1012", "MER3016", "MER3017", "MER3018", "MER4002",
+            "MER5011", "MER6001", "MER6002", "MER6003", "MER6004",
+        ]
+        for id in required {
+            let code = try #require(DiagnosticCode.lookup(id))
+            let examples = ExplainDiagExamples.examples(for: code)
+            #expect(!examples.isEmpty, Comment(rawValue: "\(id) missing worked examples"))
+            #expect(examples.allSatisfy { !$0.before.isEmpty && !$0.after.isEmpty })
         }
     }
 }

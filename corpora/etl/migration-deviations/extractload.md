@@ -27,6 +27,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=1, template=1
 - Judgment: 1 blocks, 0 lines
+- canonical_drift: synonym=2, structure=0, desugar=0, meaning=36
 
 ### Inert section details
 - L29 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.

@@ -32,15 +32,17 @@ triggers:
 | user  | public          | allow   |
 
 ## Workflow (( role: reference ))
+The matrix report template is the signed-off audit artifact shape; the
+executable steps below bind and emit it.
+
+### Workflow — steps
+
 bind matrix report =
   ```
   access-matrix:
   [if classified count is more than 0]status: reviewed[otherwise]status: empty[end if]
   pending requests: {{ classified count }}
   ```
-
-### Workflow — steps
-
 fetch pending access requests.
 let classified count be the number of access requests whose status is "pending".
 

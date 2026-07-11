@@ -125,37 +125,37 @@
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 42,
+        "line" : 38,
         "text" : "Workflow — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 47,
+        "line" : 49,
         "text" : "Workflow — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 53,
+        "line" : 55,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "invariants",
         "level" : 2,
-        "line" : 61,
+        "line" : 63,
         "text" : "Guarantees"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 64,
+        "line" : 66,
         "text" : "Report shape"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 51,
+        "line" : 53,
         "text" : "Emit"
       }
     ],
@@ -185,16 +185,18 @@
         "heading" : "Workflow",
         "line" : 34,
         "lines" : [
-          "bind matrix report =",
-          "codeblock:plain:YWNjZXNzLW1hdHJpeDoKW2lmIGNsYXNzaWZpZWQgY291bnQgaXMgbW9yZSB0aGFuIDBdc3RhdHVzOiByZXZpZXdlZFtvdGhlcndpc2Vdc3RhdHVzOiBlbXB0eVtlbmQgaWZdCnBlbmRpbmcgcmVxdWVzdHM6IHt7IGNsYXNzaWZpZWQgY291bnQgfX0="
+          "The matrix report template is the signed-off audit artifact shape; the",
+          "executable steps below bind and emit it"
         ],
         "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Workflow — steps",
-        "line" : 42,
+        "line" : 38,
         "lines" : [
+          "bind matrix report =",
+          "codeblock:plain:YWNjZXNzLW1hdHJpeDoKW2lmIGNsYXNzaWZpZWQgY291bnQgaXMgbW9yZSB0aGFuIDBdc3RhdHVzOiByZXZpZXdlZFtvdGhlcndpc2Vdc3RhdHVzOiBlbXB0eVtlbmQgaWZdCnBlbmRpbmcgcmVxdWVzdHM6IHt7IGNsYXNzaWZpZWQgY291bnQgfX0=",
           "fetch pending access requests",
           "let classified count be the number of access requests whose status is \"pending\""
         ],
@@ -203,7 +205,7 @@
       {
         "executes" : true,
         "heading" : "Workflow — steps 2",
-        "line" : 47,
+        "line" : 49,
         "lines" : [
           "emit governance.audit with body = matrix report",
           "the classified count is at least 0",
@@ -214,7 +216,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 53,
+        "line" : 55,
         "lines" : [
           "Don't hand-edit the rendered matrix to \"fix\" a row that looks wrong",
           "If the outcome column disagrees with what policy actually grants, the fix",
@@ -228,7 +230,7 @@
       {
         "executes" : true,
         "heading" : "Guarantees",
-        "line" : 61,
+        "line" : 63,
         "lines" : [
           "every emitted matrix report contains \"access-matrix\""
         ],
@@ -237,7 +239,7 @@
       {
         "executes" : false,
         "heading" : "Report shape",
-        "line" : 64,
+        "line" : 66,
         "lines" : [
           "The audit artifact opens with `access-matrix:`, states whether the pending",
           "queue has been reviewed or is empty, and reports the pending-request count",
@@ -277,7 +279,7 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 62,
+      "meridian_line" : 64,
       "swift_line" : 435
     },
     {
@@ -285,48 +287,52 @@
       "swift_line" : 439
     },
     {
+      "meridian_line" : 40,
+      "swift_line" : 441
+    },
+    {
       "meridian_line" : 48,
-      "swift_line" : 442
+      "swift_line" : 444
     },
     {
-      "meridian_line" : 45,
-      "swift_line" : 453
-    },
-    {
-      "meridian_line" : 49,
-      "swift_line" : 456
-    },
-    {
-      "meridian_line" : 50,
-      "swift_line" : 466
+      "meridian_line" : 47,
+      "swift_line" : 455
     },
     {
       "meridian_line" : 51,
-      "swift_line" : 471
+      "swift_line" : 458
+    },
+    {
+      "meridian_line" : 52,
+      "swift_line" : 468
+    },
+    {
+      "meridian_line" : 53,
+      "swift_line" : 473
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 510
+      "swift_line" : 512
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 515
+      "swift_line" : 517
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 555
+      "swift_line" : 557
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 560
+      "swift_line" : 562
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 600
+      "swift_line" : 602
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 605
+      "swift_line" : 607
     }
   ],
   "tools_used" : [

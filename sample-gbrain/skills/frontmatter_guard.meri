@@ -146,7 +146,7 @@ gbrain frontmatter install-hook [--source <id>]
 - "brain lint"
 
 
-### Trigger words — steps
+### Trigger words — steps (( role: reference ))
 
 When the user says any of these, route here:
 ## Output rules (( role: reference ))

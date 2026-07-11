@@ -2,7 +2,7 @@ import Foundation
 import MeridianRuntime
 
 /// Renders `Diagnostic`s for humans (source snippet + caret + suggestions +
-/// notes + help + `see: meridian explain`) and for machines (stable JSON).
+/// notes + help + `see: meridian explain-diag`) and for machines (stable JSON).
 public struct DiagnosticRenderer {
 
     public struct Options: Sendable {
@@ -50,9 +50,9 @@ public struct DiagnosticRenderer {
         if let decision = d.decision, let record = DecisionCatalog.lookup(decision.id) {
             out.append("  \(dim("=")) \(yellow("why")): \(firstSentence(record.rationale)) (\(decision.id))")
         }
-        var see = "see: meridian explain \(d.code.id)"
+        var see = "see: meridian explain-diag \(d.code.id)"
         if let decision = d.decision {
-            see += " · meridian explain \(decision.id)"
+            see += " · meridian explain-diag \(decision.id)"
         }
         out.append("  \(dim("=")) \(dim(see))")
         return out.joined(separator: "\n")

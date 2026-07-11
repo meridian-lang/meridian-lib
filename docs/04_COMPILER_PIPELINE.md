@@ -427,6 +427,35 @@ The `attachedTo` block is the protected statement(s); `handler` is the catch blo
 - `.event` → `WaitConditionIR.event(String, matching: IRExpression?)`
 - `.choice` → `WaitConditionIR.choice(prompt: String, options: [String])`
 
+### Wave 7 verbalization model seam
+
+`Compiler.compileToModel(...)` stops after the same bootstrap, parse,
+validation, trigger synthesis, and lowering path used by `compileWithManifest`,
+returning a `VerbalizerModel` instead of emitted Swift. The model carries the
+lowered workflows plus the vocabulary context required to print them back as
+Canonical English:
+
+```swift
+public func compileToModel(
+    meridianSource: String,
+    meridianFile: String = "workflow.meridian",
+    vocabularies: [Compiler.VocabularyInput],
+    rulebooks: [RulebookInput] = []
+) throws -> VerbalizerModel
+```
+
+`VerbalizerModel` contains `workflows`, lowered and inline definitions,
+`SymbolTable`, `EnglishLexicon`, the source file name, authored source,
+frontmatter metadata, outline, recorded skill sections, and `toolsUsed`.
+`Verbalizer(model:).verbalize()` validates the workflows with `IRValidator` and
+then renders the model as Canonical English; malformed hand-built IR throws
+structured `MER4002` diagnostics before any placeholder canonical text can be
+printed. The SEM-8-03 gate recompiles that canonical source and checks IR
+structural equality. `DriftEngine` compares the authored source with the
+canonical output for audit reports. Match-branch (`branch on`) lowers through
+`MatchBranchStatementAST` and round-trips via the Verbalizer (`otherwise:` ↔
+`BranchIR.thenBlock`). See [18_VERBALIZER.md](18_VERBALIZER.md).
+
 ### `lowerExpr`
 
 Maps `ExpressionAST` to `IRExpression`:
@@ -441,10 +470,11 @@ Maps `ExpressionAST` to `IRExpression`:
 
 ## Stage 6 — Emission (`SwiftEmitter`)
 
-`SwiftEmitter.emitFile(workflows:constantsDecl:instancesDecl:domainDecl:)` produces a
-Swift source `String`. Uses `StringTemplate` from `modelhike`; each `emit*`
-method returns a `StringTemplate` that is flattened via
-`toString(separator: "\n")`.
+`SwiftEmitter.emitFile(workflows:constantsDecl:instancesDecl:domainDecl:)`
+validates the workflows with `IRValidator`, then produces a Swift source
+`String`. It throws `MER4002` diagnostics for invalid IR before emission. It
+uses `StringTemplate` from `modelhike`; each `emit*` method returns a
+`StringTemplate` that is flattened via `toString(separator: "\n")`.
 
 See [05_CODEGEN.md](05_CODEGEN.md) for the full emission spec.
 
@@ -515,7 +545,7 @@ silently discarded.
 
 ```swift
 // Emit Swift from pre-built IR (no parsing)
-public func emit(workflows: [IRWorkflow], constantsDecl: SwiftEmitter.ConstantsDecl?) -> String
+public func emit(workflows: [IRWorkflow], constantsDecl: SwiftEmitter.ConstantsDecl?) throws -> String
 
 // Emit companion JSON manifest
 public func emitManifest(_ input: ManifestEmitter.Input) throws -> String
@@ -570,7 +600,7 @@ decision **D-DX-2** (no silent fallbacks; batch-report with coarse recovery).
 | Config parse | `CompilerError` | Unrecognized vocabulary declarations → `MER5002`; bad rulebook sections → `MER5003` |
 | Meridian parse | `CompilerError` | Malformed headers → `MER1001`, orphaned code blocks → `MER1002`, unparseable statements/rules → `MER1003`/`MER1004`, misplaced frontmatter → `MER1006`, removed `import` form → `MER1008` |
 | Lowering | `CompilerError.diagnostics` | **Strict-by-default, batch-collected.** Unresolved phrase → `MER2001`; unknown tool → `MER2002`; unknown kind/property/adjective/verb → `MER2003`/`MER2004`/`MER2007`/`MER2008`; a matched workflow/phrase call missing a declared parameter's argument (hardening guard; see `ASTToIR.lowerPhraseInvocation`) → `MER2011`; unattached rule → `MER3006`; unresolved trigger action → `MER3007`; a rule predicate that can't lower to a rule-body expression (quantifier/description/aggregate/superlative/relation-traversal/verb-predicate/table-lookup/parse-error inside a `must`/`must not` predicate) → `MER3016`. Per-file `allow-fallbacks:` (or `Compiler.Options.fallbackPolicy = .lenient`) downgrades the matching kind back to a `_unresolved`/stub placeholder |
-| Emission | none | Always succeeds |
+| Emission | `IRValidationError` / `CompilerError` | `IRValidator` rejects malformed IR before `Verbalizer` or `SwiftEmitter` output with `MER4002`; codegen failures surface as `MER4001` |
 | Formatting | warning (`MER5001`) | **Non-fatal** (D-DX-3): the unformatted Swift is kept and written; a warning is reported to stderr |
 
 The CLI renders all of the above through a single `DiagnosticRenderer`

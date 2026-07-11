@@ -247,6 +247,13 @@ are worked examples of general architectural patterns cataloged in
 `docs/17_MERIDIAN_PATTERNS.md` — check there before assuming a "gotcha"
 marked intentional/permanent-by-design below is actually a gap to fix.
 
+### 0. Executable template binds belong in procedure / `— steps`, not reference
+
+Fenced templates with `[if]` / `{{ }}` that are bound into workflow state must
+live under an executable role (procedure or a migrator-generated `— steps`
+sibling). Leaving them under `(( role: reference ))` drops them from IR — the
+governance accessmatrix/policyaudit ports are the worked example.
+
 ### 1. `EnglishLexicon.normativeCueWords` matching is word-level and context-blind (investigated — working as intended, do not loosen)
 
 When writing rich, natural-sounding narrative (`## Contract`, `##

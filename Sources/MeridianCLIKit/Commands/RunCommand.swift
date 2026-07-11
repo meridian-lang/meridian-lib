@@ -40,12 +40,10 @@ public struct RunCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Keep the temporary SwiftPM package and print its path.")
     var keepTemp: Bool = false
 
-    @Option(name: .long,
-            help: "Activate parser/lowering trace categories (comma-separated). Examples: phrase, lowering, all.")
+    @Option(name: .long, help: "Comma-separated ParserTrace categories (or `all`). Also reads MERIDIAN_TRACE.")
     var trace: String?
 
-    @Option(name: .long,
-            help: "Write trace output to a file instead of stderr.")
+    @Option(name: .long, help: "Write ParserTrace output to this file instead of stderr.")
     var traceFile: String?
 
     @Option(name: .long,
@@ -75,7 +73,7 @@ public struct RunCommand: AsyncParsableCommand {
         // Compile ONCE through the canonical path (engine + fallback policy +
         // rulebooks). Reuse the manifest's lowered workflows for target
         // selection — no second `.silent()` re-lower that dropped rulebooks.
-        let traceInstance = makeCLITrace(spec: trace, file: traceFile)
+        let traceInstance = try makeCLITrace(spec: trace, file: traceFile)
         let compiler = Compiler(options: .init(trace: traceInstance))
         let compiled: (swift: String, manifest: ManifestEmitter.Input)
         do {

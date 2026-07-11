@@ -114,18 +114,56 @@ struct DependencyDiscoveryTests {
 @Suite("CLI support — trace bootstrap")
 struct TraceBootstrapTests {
     @Test("nil spec yields a trace with no categories enabled")
-    func noSpec() {
-        let trace = makeCLITrace(spec: nil)
+    func noSpec() throws {
+        let trace = try makeCLITrace(spec: nil)
         #expect(!trace.isEnabled(.lowering))
     }
 
     @Test("spec enables categories and a file sink is created")
-    func specAndFile() {
+    func specAndFile() throws {
         let t = TempDir()
         let file = t.path("trace.log")
-        let trace = makeCLITrace(spec: "all", file: file)
+        let trace = try makeCLITrace(spec: "all", file: file)
         #expect(trace.isEnabled(.lowering))
+        trace.log(.lowering, "hello from cli trace")
         #expect(FileManager.default.fileExists(atPath: file))
+        let contents = try String(contentsOfFile: file, encoding: .utf8)
+        #expect(contents.contains("[lowering] hello from cli trace"), Comment(rawValue: contents))
+    }
+
+    @Test("unknown trace category exits with code 1")
+    func unknownTraceCategoryExits() {
+        do {
+            _ = try makeCLITrace(spec: "not-a-real-category")
+            Issue.record("expected ExitCode(1)")
+        } catch let code as ExitCode {
+            #expect(code == ExitCode(1))
+        } catch {
+            Issue.record("unexpected error: \(error)")
+        }
+    }
+
+    @Test("unwritable trace file exits with code 1")
+    func unwritableTraceFileExits() {
+        let t = TempDir()
+        _ = t.write("not-a-directory", "plain file")
+        do {
+            _ = try makeCLITrace(spec: "lowering", file: t.path("not-a-directory/trace.log"))
+            Issue.record("expected ExitCode(1)")
+        } catch let code as ExitCode {
+            #expect(code == ExitCode(1))
+        } catch {
+            Issue.record("unexpected error: \(error)")
+        }
+
+        do {
+            _ = try makeCLITrace(spec: "lowering", file: t.path("not-a-directory/nested/trace.log"))
+            Issue.record("expected ExitCode(1)")
+        } catch let code as ExitCode {
+            #expect(code == ExitCode(1))
+        } catch {
+            Issue.record("unexpected error: \(error)")
+        }
     }
 }
 
@@ -169,6 +207,21 @@ struct ReportCompilerErrorTests {
             #expect(human == ExitCode(1))
             #expect(json == ExitCode(1))
         }
+    }
+
+    @Test("an IRValidationError renders diagnostics and exits 1")
+    func irValidationError() {
+        let diagnostics = [
+            Diagnostic.error(
+                .invalidIR,
+                message: "invalid hand-built IR",
+                range: SourceRange(file: "invalid.ir", line: 1, column: 1)
+            )
+        ]
+        let human = reportCompilerError(IRValidationError.diagnostics(diagnostics), format: .human)
+        let json = reportCompilerError(IRValidationError.diagnostics(diagnostics), format: .json)
+        #expect(human == ExitCode(1))
+        #expect(json == ExitCode(1))
     }
 }
 

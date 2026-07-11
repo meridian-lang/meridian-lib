@@ -50,8 +50,8 @@ public struct Compiler {
     public func emit(
         workflows: [IRWorkflow],
         constantsDecl: SwiftEmitter.ConstantsDecl? = nil
-    ) -> String {
-        SwiftEmitter(options: options.emitterOptions)
+    ) throws -> String {
+        try SwiftEmitter(options: options.emitterOptions)
             .emitFile(workflows: workflows, constantsDecl: constantsDecl)
     }
 
@@ -160,6 +160,98 @@ public struct Compiler {
             preRegistered: false, engine: engine
         )
     }
+
+    public func compileToModel(
+        meridianSource: String,
+        meridianFile: String = "workflow.meridian",
+        vocabularies: [VocabularyInput],
+        rulebooks: [RulebookInput] = []
+    ) throws -> VerbalizerModel {
+        let trace = options.trace
+        trace.resetProfile()
+        let compileSpan = trace.push(.timing, "compileToModel \(meridianFile)")
+        defer { trace.pop(compileSpan); trace.profileSummary() }
+
+        let engine = DiagnosticEngine(trace: trace)
+        let bootstrap = try bootstrap(
+            meridianSources: [(meridianSource, meridianFile)],
+            vocabularies: vocabularies,
+            rulebooks: rulebooks,
+            trace: trace,
+            engine: engine,
+            duplicateRulebookHelp: "Each `--rulebook` / frontmatter `rulebook:` entry must have a unique name.",
+            duplicateVocabularyHelp: "Each `--vocabulary` / frontmatter `vocabulary:` entry must have a unique name."
+        )
+
+        let ast = try trace.phase("parse") {
+            try MeridianParser(symbols: bootstrap.symbols, trace: trace, lexicon: bootstrap.lexicon,
+                               rewriteEngine: bootstrap.rewriteEngine, diagnostics: engine)
+                .parse(meridianSource, file: meridianFile)
+        }
+        try validateImports(ast.imports, against: vocabularies, file: meridianFile)
+        try validateRulebookReferences(ast.metadata, against: rulebooks, file: meridianFile)
+
+        var effectivePolicy = options.fallbackPolicy
+        if let raw = ast.metadata?["allow-fallbacks"] {
+            let (frontPolicy, unknown) = FallbackPolicy.parse(raw)
+            effectivePolicy = effectivePolicy.merging(frontPolicy)
+            let fbLine = ast.metadata?.sourceLine ?? 1
+            for token in unknown {
+                engine.report(Diagnostic.unresolved(
+                    .unknownFallbackKind,
+                    target: token,
+                    among: FallbackKind.allCases.map(\.rawValue),
+                    range: SourceRange(file: meridianFile, line: fbLine, column: 1),
+                    noun: "allow-fallbacks kind",
+                    help: "Use one of the recognized fallback kinds, or remove the token."))
+            }
+        }
+
+        let frontmatter = SkillFrontmatter(ast.metadata)
+        let scopedTools = mergedScopedTools(
+            frontmatterTools: frontmatter.tools,
+            toolsUsed: ast.toolsUsed,
+            symbols: bootstrap.symbols,
+            trace: trace
+        )
+
+        let lowerer = ASTToIR(symbols: bootstrap.symbols, sourceFile: meridianFile, trace: trace,
+                              lexicon: bootstrap.lexicon, fallbackPolicy: effectivePolicy,
+                              rulebook: bootstrap.rulebook, scopedTools: scopedTools,
+                              frontmatterTools: frontmatter.tools + ast.toolsUsed,
+                              engine: engine)
+        var workflows = try trace.phase("lower") { try lowerer.lower(ast, preRegistered: false) }
+        let loweredDefinitions = try lowerer.lowerRegisteredDefinitions()
+        try engine.throwIfErrors()
+
+        if !frontmatter.triggers.isEmpty {
+            let classifier = TriggerClassifier(lexicon: bootstrap.lexicon, rulebook: bootstrap.rulebook, trace: trace)
+            let triggers = frontmatter.triggers.map {
+                classifier.classify($0, sourceLine: ast.metadata?.sourceLine ?? 0)
+            }
+            workflows += TriggerSynthesizer(lexicon: bootstrap.lexicon, trace: trace)
+                .synthesize(triggers, sourceFile: meridianFile)
+        }
+
+        return VerbalizerModel(
+            workflows: workflows,
+            loweredDefinitions: definitionInfos(
+                symbols: bootstrap.symbols,
+                loweredDefinitions: loweredDefinitions,
+                inlineDefinitions: ast.definitions
+            ),
+            inlineDefinitions: ast.definitions,
+            symbols: bootstrap.symbols,
+            lexicon: bootstrap.lexicon,
+            sourceFileName: meridianFile,
+            authoredSource: meridianSource,
+            metadata: ast.metadata,
+            outline: ast.outline,
+            skillSections: ast.skillSections,
+            toolsUsed: ast.toolsUsed
+        )
+    }
+
     public struct SkillpackInput: Sendable {
         public let source: String
         public let file: String
@@ -441,17 +533,16 @@ public struct Compiler {
         // frontmatter (if any). Unresolved tokens fall back to the full set so a
         // typo can never silently empty the planner's capability surface.
         let frontmatter = SkillFrontmatter(ast.metadata)
-        var scopedTools = resolveScopedTools(frontmatter.tools, symbols: symbols, trace: trace)
-        // A `## Tools Used` section (1D) declares the skill's tool surface with
-        // authoritative tool ids — merge them into the scope. When no
-        // frontmatter `tools:` were declared, the section narrows scope to its
-        // ids (plus the shell fallback); otherwise it unions in.
-        if !ast.toolsUsed.isEmpty {
-            var set = Set(scopedTools ?? [])
-            set.formUnion(ast.toolsUsed)
-            set.insert("shell.run")
-            scopedTools = set.sorted()
-        }
+        // Frontmatter `tools:` and `## Tools Used` share one resolve+union path
+        // so aliases discovered only in the section (e.g. `get_health`) expand
+        // to the same method names as when the verbalizer later folds them into
+        // canonical frontmatter.
+        let scopedTools = mergedScopedTools(
+            frontmatterTools: frontmatter.tools,
+            toolsUsed: ast.toolsUsed,
+            symbols: symbols,
+            trace: trace
+        )
 
         // Batch diagnostics collector — per-file, single-threaded (passed in so
         // it also holds any parse-phase diagnostics). The lowerer recovers
@@ -488,8 +579,8 @@ public struct Compiler {
             emitSourceLineComments: options.emitterOptions.emitSourceLineComments,
             namespaceEnum: options.emitterOptions.namespaceEnum
         )
-        let swift = trace.phase("codegen") {
-            SwiftEmitter(options: emitterOpts, trace: trace)
+        let swift = try trace.phase("codegen") {
+            try SwiftEmitter(options: emitterOpts, trace: trace)
                 .emitFile(workflows: workflows,
                           constantsDecl: constantsDecl,
                           instancesDecl: instancesDecl,
@@ -603,6 +694,30 @@ public struct Compiler {
         }
     }
 
+    private func definitionInfos(
+        symbols: SymbolTable,
+        loweredDefinitions: [LoweredDefinition],
+        inlineDefinitions: [DefinitionDeclaration]
+    ) -> [LoweredDefinitionInfo] {
+        let loweredByFunction = Dictionary(uniqueKeysWithValues: loweredDefinitions.map { ($0.functionName, $0) })
+        let inlineKeys = Set(inlineDefinitions.map { "\($0.kind.lowercased())|\($0.adjective.lowercased())" })
+        return symbols.definitions.values
+            .sorted { $0.functionName < $1.functionName }
+            .compactMap { record in
+                guard let lowered = loweredByFunction[record.functionName] else { return nil }
+                let key = "\(record.kind.lowercased())|\(record.adjective.lowercased())"
+                return LoweredDefinitionInfo(
+                    adjective: record.adjective,
+                    kind: record.kind,
+                    subjectVar: lowered.subjectVar,
+                    functionName: record.functionName,
+                    body: lowered.body,
+                    sourceLine: record.sourceLine,
+                    isInline: inlineKeys.contains(key)
+                )
+            }
+    }
+
     private func relationManifestEntries(_ symbols: SymbolTable) -> [ManifestEmitter.RelationManifestEntry] {
         func card(_ c: CardinalityAST) -> String { c == .one ? "one" : "various" }
         return symbols.relations
@@ -631,6 +746,26 @@ public struct Compiler {
     /// lookup, and finally fuzzy word-overlap. `shell.run` is always included so
     /// literal shell commands keep working. If nothing resolves we fall back to
     /// the full set rather than risk an over-narrow scope.
+    /// Resolve frontmatter + section tool tokens together, then keep both the
+    /// resolved method names and the authored aliases. One path for
+    /// `compileToModel` / `compileWithManifest` so verbalizer round-trips that
+    /// fold `toolsUsed` into `tools:` cannot invent a different allow-list.
+    private func mergedScopedTools(
+        frontmatterTools: [String],
+        toolsUsed: [String],
+        symbols: SymbolTable,
+        trace: ParserTrace
+    ) -> [String]? {
+        let tokens = frontmatterTools + toolsUsed
+        guard let resolved = resolveScopedTools(tokens, symbols: symbols, trace: trace) else {
+            return nil
+        }
+        var set = Set(resolved)
+        set.formUnion(tokens.map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty })
+        set.insert("shell.run")
+        return set.sorted()
+    }
+
     private func resolveScopedTools(_ tokens: [String], symbols: SymbolTable, trace: ParserTrace) -> [String]? {
         guard !tokens.isEmpty else { return nil }
         let methodNames = Set(symbols.tools.keys)
@@ -646,7 +781,10 @@ public struct Compiler {
             } else if let decl = symbols.tool(named: token) ?? symbols.tool(fromWords: token) {
                 resolved.insert(decl.methodName)
             } else {
-                trace.log(.skill, "scoped tool `\(token)` did not resolve to a declared tool; relying on shell/fallback")
+                // Keep unresolved aliases so section-discovered tool ids still
+                // narrow the planner surface (and round-trip through frontmatter).
+                resolved.insert(token)
+                trace.log(.skill, "scoped tool `\(token)` did not resolve to a declared tool; keeping alias + shell/fallback")
             }
         }
         // Always allow the shell built-in for literal command surfaces.

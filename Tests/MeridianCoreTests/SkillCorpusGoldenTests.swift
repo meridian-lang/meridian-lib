@@ -109,10 +109,13 @@ struct SkillCorpusGoldenTests {
             }
         }
         guard let path = vocabPath else {
-            throw CompilerError.semanticError(
-                message: "no vocabulary declared in frontmatter for \(sampleBasename)",
-                range: SourceRange(file: sampleBasename, line: 1, column: 1)
-            )
+            throw CompilerError.diagnostics([
+                Diagnostic.error(
+                    .internalError,
+                    message: "no vocabulary declared in frontmatter for \(sampleBasename)",
+                    range: SourceRange(file: sampleBasename, line: 1, column: 1)
+                )
+            ])
         }
         let vocab = try loadVocab(path, relativeTo: sampleURL)
 
@@ -298,10 +301,13 @@ struct SkillCorpusGoldenTests {
         for sample in Self.samples {
             let g = goldenURL(for: sample)
             if !FileManager.default.fileExists(atPath: g.path) {
-                throw CompilerError.semanticError(
-                    message: "golden missing for \(sample); run with MERIDIAN_REGEN_GOLDENS=1",
-                    range: SourceRange(file: sample, line: 1, column: 1)
-                )
+                throw CompilerError.diagnostics([
+                    Diagnostic.error(
+                        .internalError,
+                        message: "golden missing for \(sample); run with MERIDIAN_REGEN_GOLDENS=1",
+                        range: SourceRange(file: sample, line: 1, column: 1)
+                    )
+                ])
             }
         }
     }

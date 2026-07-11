@@ -71,15 +71,27 @@ public struct SkillMetrics: Sendable, Equatable {
     public var judgmentBlocks: Int
     public var judgmentLines: Int
     public var inertDetails: [InertSection]
+    public var canonicalDriftSynonym: Int
+    public var canonicalDriftStructure: Int
+    public var canonicalDriftDesugar: Int
+    public var canonicalDriftMeaning: Int
 
     public init(totalSections: Int = 0, inertSections: Int = 0,
                 judgmentBlocks: Int = 0, judgmentLines: Int = 0,
-                inertDetails: [InertSection] = []) {
+                inertDetails: [InertSection] = [],
+                canonicalDriftSynonym: Int = 0,
+                canonicalDriftStructure: Int = 0,
+                canonicalDriftDesugar: Int = 0,
+                canonicalDriftMeaning: Int = 0) {
         self.totalSections = totalSections
         self.inertSections = inertSections
         self.judgmentBlocks = judgmentBlocks
         self.judgmentLines = judgmentLines
         self.inertDetails = inertDetails
+        self.canonicalDriftSynonym = canonicalDriftSynonym
+        self.canonicalDriftStructure = canonicalDriftStructure
+        self.canonicalDriftDesugar = canonicalDriftDesugar
+        self.canonicalDriftMeaning = canonicalDriftMeaning
     }
 
     /// Non-executable sections as a fraction of all sections. `0` when a file
@@ -110,6 +122,17 @@ public struct SkillMetrics: Sendable, Equatable {
     /// stale marker a corpus should not carry.
     public var inertMarkerCount: Int {
         inertDetails.filter { $0.role == SkillSectionRole.inert.rawValue }.count
+    }
+
+    public var canonicalDriftTotal: Int {
+        canonicalDriftSynonym + canonicalDriftStructure + canonicalDriftDesugar + canonicalDriftMeaning
+    }
+
+    public mutating func recordCanonicalDrift(_ report: DriftReport) {
+        canonicalDriftSynonym = report.counts[.synonymCanonicalized] ?? 0
+        canonicalDriftStructure = report.counts[.structureNormalized] ?? 0
+        canonicalDriftDesugar = report.counts[.desugarExpanded] ?? 0
+        canonicalDriftMeaning = report.counts[.meaningBearing] ?? 0
     }
 
     public static func analyze(_ source: String, rulebook: Rulebook = .empty,

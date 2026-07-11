@@ -13,20 +13,20 @@ struct SwiftEmitterExprCoverageTests {
     private let e = SwiftEmitter()
 
     @Test("temporal window comparisons")
-    func temporalWindows() {
+    func temporalWindows() throws {
         let lhs = IRExpression.identifierRef(name: "ts")
         let rhs = IRExpression.literal(.duration(.seconds(3600)))
-        #expect(e.emitExpr(.comparison(lhs, .withinPast, rhs)).contains("isWithinPast"))
-        #expect(e.emitExpr(.comparison(lhs, .withinFuture, rhs)).contains("isWithinFuture"))
+        #expect(try e.emitExpr(.comparison(lhs, .withinPast, rhs)).contains("isWithinPast"))
+        #expect(try e.emitExpr(.comparison(lhs, .withinFuture, rhs)).contains("isWithinFuture"))
     }
 
     @Test("string prefix / suffix / membership comparisons")
-    func stringOps() {
+    func stringOps() throws {
         let lhs = IRExpression.literal(.string("hello world"))
         let rhs = IRExpression.literal(.string("hello"))
-        #expect(e.emitExpr(.comparison(lhs, .startsWith, rhs)).contains("hasPrefix"))
-        #expect(e.emitExpr(.comparison(lhs, .endsWith, rhs)).contains("hasSuffix"))
-        #expect(e.emitExpr(.comparison(lhs, .oneOf, rhs)).contains("contains"))
+        #expect(try e.emitExpr(.comparison(lhs, .startsWith, rhs)).contains("hasPrefix"))
+        #expect(try e.emitExpr(.comparison(lhs, .endsWith, rhs)).contains("hasSuffix"))
+        #expect(try e.emitExpr(.comparison(lhs, .oneOf, rhs)).contains("contains"))
     }
 
     /// Regression for the "1D output invariant" shape (`every emitted <noun>
@@ -40,57 +40,60 @@ struct SwiftEmitterExprCoverageTests {
     /// IMPLEMENTATION_LOG.md). `.oneOf` needs the analogous `?? .null` on its
     /// needle when the needle reads from state.
     @Test("string prefix / suffix / membership comparisons against a bound state identifier")
-    func stringOpsAgainstStateIdentifier() {
+    func stringOpsAgainstStateIdentifier() throws {
         let lhs = IRExpression.identifierRef(name: "report")
         let rhs = IRExpression.literal(.string("summary"))
 
-        let contains = e.emitExpr(.comparison(lhs, .contains, rhs))
+        let contains = try e.emitExpr(.comparison(lhs, .contains, rhs))
         #expect(contains.contains("?.description ?? \"\""))
         #expect(!contains.contains("(state.get(\"report\")).contains"))
 
-        let starts = e.emitExpr(.comparison(lhs, .startsWith, rhs))
+        let starts = try e.emitExpr(.comparison(lhs, .startsWith, rhs))
         #expect(starts.contains("?.description ?? \"\""))
         #expect(!starts.contains("(state.get(\"report\")).hasPrefix"))
 
-        let ends = e.emitExpr(.comparison(lhs, .endsWith, rhs))
+        let ends = try e.emitExpr(.comparison(lhs, .endsWith, rhs))
         #expect(ends.contains("?.description ?? \"\""))
         #expect(!ends.contains("(state.get(\"report\")).hasSuffix"))
 
         // `.oneOf`'s needle (lhs here) reads from state too — needs `?? .null`
         // rather than being passed straight into `Array<Value>.contains`.
-        let oneOf = e.emitExpr(.comparison(lhs, .oneOf, rhs))
+        let oneOf = try e.emitExpr(.comparison(lhs, .oneOf, rhs))
         #expect(oneOf.contains("?? .null"))
     }
 
     @Test("env var and now in plain context")
-    func envAndNow() {
-        #expect(e.emitExpr(.envVar(name: "HOME")).contains("ProcessInfo.processInfo.environment"))
-        #expect(e.emitExpr(.nowExpression) == "Date()")
+    func envAndNow() throws {
+        #expect(try e.emitExpr(.envVar(name: "HOME")).contains("ProcessInfo.processInfo.environment"))
+        #expect(try e.emitExpr(.nowExpression) == "Date()")
     }
 
-    @Test("inline invocation comment and relation traversal")
-    func inlineInvokeAndTraversal() {
+    @Test("inline invocation throws and relation traversal emits")
+    func inlineInvokeAndTraversal() throws {
         let inv = InvokeIR(toolID: "some.tool")
-        #expect(e.emitExpr(.invocation(inv)).contains("inline invoke: some.tool"))
+        let error = #expect(throws: CompilerError.self) {
+            _ = try e.emitExpr(.invocation(inv))
+        }
+        #expect(try #require(error).diagnostics.contains { $0.code == .invalidIR })
         let trav = IRExpression.relationTraversal(.identifierRef(name: "task"), relationName: "assigned_to", target: nil)
-        #expect(e.emitExpr(trav).contains("assignedTo"))
+        #expect(try e.emitExpr(trav).contains("assignedTo"))
     }
 
     @Test("discretion question: missing, interpolated, and default forms")
-    func discretionQuestion() {
+    func discretionQuestion() throws {
         // No `question` argument → empty string literal.
         let noQ = InvokeIR(toolID: "runtime.discretion.decide")
-        #expect(e.emitExpr(.invocation(noQ)).contains("question: \"\""))
+        #expect(try e.emitExpr(.invocation(noQ)).contains("question: \"\""))
 
         // Interpolated question → emitted via emitExpr(interpolatedString).
         let interp = InvokeIR(toolID: "runtime.discretion.decide",
                               arguments: [InvokeArg("question", .interpolatedString([.literal("ask "), .expression(.identifierRef(name: "x"))]))])
-        #expect(e.emitExpr(.invocation(interp)).contains("meridianStringify"))
+        #expect(try e.emitExpr(.invocation(interp)).contains("meridianStringify"))
 
         // Non-literal, non-interpolated question → meridianStringify(value).
         let other = InvokeIR(toolID: "runtime.discretion.decide",
                              arguments: [InvokeArg("question", .identifierRef(name: "topic"))])
-        #expect(e.emitExpr(.invocation(other)).contains("meridianStringify"))
+        #expect(try e.emitExpr(.invocation(other)).contains("meridianStringify"))
     }
 
     private func desc() -> DescriptionIR {
@@ -98,51 +101,55 @@ struct SwiftEmitterExprCoverageTests {
     }
 
     @Test("value-context description / aggregate / superlative / recordList / derived")
-    func valueContextCollections() {
-        #expect(e.emitValueExpr(.description(desc())).hasPrefix("Value.list("))
-        #expect(e.emitValueExpr(.aggregate(.count, desc())).contains(".number(Decimal("))
-        #expect(e.emitValueExpr(.aggregate(.list, desc())).hasPrefix("Value.list("))
+    func valueContextCollections() throws {
+        #expect(try e.emitValueExpr(.description(desc())).hasPrefix("Value.list("))
+        #expect(try e.emitValueExpr(.aggregate(.count, desc())).contains(".number(Decimal("))
+        #expect(try e.emitValueExpr(.aggregate(.list, desc())).hasPrefix("Value.list("))
         let sup = SuperlativeIR(description: desc(), sortPath: "createdAt", ascending: false)
-        #expect(e.emitValueExpr(.superlative(sup)).contains(".first"))
+        #expect(try e.emitValueExpr(.superlative(sup)).contains(".first"))
         let rl = IRExpression.recordList(fields: ["a", "b"], rows: [[.literal(.number(1)), .literal(.string("x"))]])
-        #expect(e.emitValueExpr(rl).hasPrefix("Value.list(["))
+        #expect(try e.emitValueExpr(rl).hasPrefix("Value.list(["))
         // A comparison lowers to a bare `Bool`, not a `Value` — bridged via
         // `Value.from(_:)` rather than the generic `.init(...)` fallback
         // (which requires the wrapped expression to already be `Value`-typed).
         let derived = IRExpression.comparison(.literal(.number(1)), .lessThan, .literal(.number(2)))
-        #expect(e.emitValueExpr(derived).hasPrefix("Value.from("))
+        #expect(try e.emitValueExpr(derived).hasPrefix("Value.from("))
+        let traversal = IRExpression.relationTraversal(.identifierRef(name: "page"), relationName: "mentions", target: nil)
+        #expect(try e.emitValueExpr(traversal).hasPrefix(".init("))
     }
 
     @Test("plain-context description / aggregate / superlative / recordList")
-    func plainContextCollections() {
-        #expect(e.emitExpr(.description(desc())).hasPrefix("Value.list("))
-        #expect(e.emitExpr(.aggregate(.count, desc())).hasPrefix("Decimal("))
-        #expect(e.emitExpr(.aggregate(.list, desc())).hasPrefix("Value.list("))
+    func plainContextCollections() throws {
+        #expect(try e.emitExpr(.description(desc())).hasPrefix("Value.list("))
+        #expect(try e.emitExpr(.aggregate(.count, desc())).hasPrefix("Decimal("))
+        #expect(try e.emitExpr(.aggregate(.list, desc())).hasPrefix("Value.list("))
         let sup = SuperlativeIR(description: desc(), sortPath: "createdAt", ascending: true)
-        #expect(e.emitExpr(.superlative(sup)).contains(".first"))
+        #expect(try e.emitExpr(.superlative(sup)).contains(".first"))
     }
 
     @Test("quantifier element-context: logical and / or / not, nested, default")
-    func quantifierElementContext() {
-        func q(_ body: IRExpression) -> String {
-            e.emitExpr(.quantified(QuantifierIR(kind: .all, description: desc(), body: body)))
+    func quantifierElementContext() throws {
+        func q(_ body: IRExpression) throws -> String {
+            try e.emitExpr(.quantified(QuantifierIR(kind: .all, description: desc(), body: body)))
         }
         let p1 = IRExpression.comparison(.propertyAccess(.identifierRef(name: "item"), propertyName: "done"), .equal, .literal(.boolean(true)))
         let p2 = IRExpression.comparison(.propertyAccess(.identifierRef(name: "item"), propertyName: "open"), .equal, .literal(.boolean(false)))
-        #expect(q(.logical(.and, [p1, p2])).contains("&&"))
-        #expect(q(.logical(.or, [p1, p2])).contains("||"))
-        #expect(q(.logical(.not, [p1])).hasPrefix("("))
-        // Empty logical operands → the constant fallbacks.
-        #expect(q(.logical(.and, [])).contains("true") || q(.logical(.and, [])).count > 0)
+        #expect(try q(.logical(.and, [p1, p2])).contains("&&"))
+        #expect(try q(.logical(.or, [p1, p2])).contains("||"))
+        #expect(try q(.logical(.not, [p1])).hasPrefix("("))
+        let emptyLogicalError = #expect(throws: CompilerError.self) {
+            _ = try q(.logical(.and, []))
+        }
+        #expect(try #require(emptyLogicalError).diagnostics.contains { $0.code == .invalidIR })
         // Default element branch (a non-comparison, non-logical leaf) → `!= nil`.
-        #expect(q(.propertyAccess(.identifierRef(name: "item"), propertyName: "tag")).contains("!= nil"))
+        #expect(try q(.propertyAccess(.identifierRef(name: "item"), propertyName: "tag")).contains("!= nil"))
         // Nested quantifier in element context.
         let inner = QuantifierIR(kind: .any, description: DescriptionIR(collection: .propertyAccess(.identifierRef(name: "item"), propertyName: "tags"), elementVar: "t"))
-        #expect(q(.quantified(inner)).count > 0)
+        #expect(try q(.quantified(inner)).count > 0)
     }
 
     @Test("quantifier `all` with filters but no body emits non-empty check")
-    func quantifierAllWithoutBody() {
+    func quantifierAllWithoutBody() throws {
         let desc = DescriptionIR(
             collection: .identifierRef(name: "pages"),
             elementVar: "page",
@@ -153,32 +160,32 @@ struct SwiftEmitterExprCoverageTests {
             )]
         )
         let q = QuantifierIR(kind: .all, description: desc, body: nil)
-        #expect(e.emitExpr(.quantified(q)).contains("isEmpty"))
+        #expect(try e.emitExpr(.quantified(q)).contains("isEmpty"))
     }
 
     @Test("value-context tableLookup and env-var use the Value bridges")
-    func valueContextTableLookupAndEnv() {
+    func valueContextTableLookupAndEnv() throws {
         let lookup = IRExpression.tableLookup(
             table: "prices",
             keyColumn: "sku",
             key: .literal(.string("A1")),
             valueColumn: "price"
         )
-        #expect(e.emitValueExpr(lookup).contains("?? .null"))
-        #expect(e.emitValueExpr(.envVar(name: "HOME")).contains("ProcessInfo"))
+        #expect(try e.emitValueExpr(lookup).contains("?? .null"))
+        #expect(try e.emitValueExpr(.envVar(name: "HOME")).contains("ProcessInfo"))
     }
 
     @Test("interpolation with shell-escaped holes uses meridianShellQuote")
-    func shellEscapedInterpolation() {
+    func shellEscapedInterpolation() throws {
         let segs: [IRInterpolationSegment] = [
             .literal("curl "),
             .shellEscapedExpression(.identifierRef(name: "host")),
         ]
-        #expect(e.emitValueExpr(.interpolatedString(segs)).contains("meridianShellQuote"))
+        #expect(try e.emitValueExpr(.interpolatedString(segs)).contains("meridianShellQuote"))
     }
 
     @Test("definition helper reads the loop variable from the closure parameter")
-    func elementValueExprLoopVar() {
+    func elementValueExprLoopVar() throws {
         let def = LoweredDefinition(
             functionName: "meridianDef_Page_stale",
             subjectVar: "page",
@@ -188,13 +195,13 @@ struct SwiftEmitterExprCoverageTests {
                 .literal(.string("open"))
             )
         )
-        let out = e.emitFile(workflows: [], definitions: [def])
+        let out = try e.emitFile(workflows: [], definitions: [def])
         #expect(out.contains("__subject"))
         #expect(out.contains("meridianDef_Page_stale"))
     }
 
     @Test("workflow invoke coerces Value-typed property arguments to the target kind")
-    func workflowCallArgCoercion() {
+    func workflowCallArgCoercion() throws {
         let domain = SwiftEmitter.DomainDecl(
             kinds: [
                 .init(name: "order", parent: "thing", ownProperties: [], inheritedProperties: []),
@@ -220,13 +227,13 @@ struct SwiftEmitterExprCoverageTests {
                 )),
             ])
         )
-        let out = SwiftEmitter(options: .init(emitSourceLineComments: false))
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
             .emitFile(workflows: [callee, caller], domainDecl: domain)
         #expect(out.contains("coerce(to: Order.self)"))
     }
 
     @Test("declared multi-word parameter kinds preserve Swift-cased IR names")
-    func declaredMultiWordParameterKindPreservesCasing() {
+    func declaredMultiWordParameterKindPreservesCasing() throws {
         let domain = SwiftEmitter.DomainDecl(
             kinds: [.init(name: "pull request", parent: "thing", ownProperties: [], inheritedProperties: [])],
             enumerations: []
@@ -248,7 +255,7 @@ struct SwiftEmitterExprCoverageTests {
             ]),
             explicitStructName: "TriagePullRequest"
         )
-        let out = SwiftEmitter(options: .init(emitSourceLineComments: false))
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
             .emitFile(workflows: [callee, caller], domainDecl: domain)
 
         #expect(out.contains("public let pullRequest: PullRequest"), Comment(rawValue: out))
@@ -273,7 +280,7 @@ struct SwiftEmitterExprCoverageTests {
     }
 
     @Test("workflow invoke coerces bare identifier arguments to typed kinds")
-    func workflowCallIdentifierCoercion() {
+    func workflowCallIdentifierCoercion() throws {
         let domain = SwiftEmitter.DomainDecl(
             kinds: [.init(name: "order", parent: "thing", ownProperties: [], inheritedProperties: [])],
             enumerations: []
@@ -295,19 +302,71 @@ struct SwiftEmitterExprCoverageTests {
                 )),
             ])
         )
-        let out = SwiftEmitter(options: .init(emitSourceLineComments: false))
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
             .emitFile(workflows: [callee, caller], domainDecl: domain)
         #expect(out.contains("Value.from(scratch).coerce(to: Order.self)"))
     }
 
-    @Test("value-context invocation uses the Value.init fallback")
-    func valueContextInvocationFallback() {
+    @Test("workflow invoke passes non-identifier arguments through direct emission")
+    func workflowCallLiteralArgumentEmission() throws {
+        let callee = IRWorkflow(
+            name: "target",
+            parameters: [IRParameter(name: "order", kind: KindRef("Order"))],
+            body: IRBlock(statements: [.complete(CompleteIR())]),
+            explicitStructName: "Target"
+        )
+        let caller = IRWorkflow(
+            name: "caller",
+            parameters: [],
+            body: IRBlock(statements: [
+                .invoke(InvokeIR(
+                    toolID: "workflow:Target",
+                    arguments: [InvokeArg("order", .literal(.string("manual")))]
+                )),
+            ])
+        )
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
+            .emitFile(workflows: [callee, caller])
+        #expect(out.contains("order: \"manual\""), Comment(rawValue: out))
+    }
+
+    @Test("value-context invocation throws instead of using Value.init fallback")
+    func valueContextInvocationFallback() throws {
         let inv = InvokeIR(toolID: "demo.tool", arguments: [])
-        #expect(SwiftEmitter().emitValueExpr(.invocation(inv)).hasPrefix(".init("))
+        let exprError = #expect(throws: CompilerError.self) {
+            _ = try SwiftEmitter().emitExpr(.invocation(inv))
+        }
+        #expect(try #require(exprError).diagnostics.contains { $0.code == .invalidIR })
+
+        let error = #expect(throws: CompilerError.self) {
+            _ = try SwiftEmitter().emitValueExpr(.invocation(inv))
+        }
+        #expect(try #require(error).diagnostics.contains { $0.code == .invalidIR })
+    }
+
+    @Test("unchecked internal emitters still render inline invocation syntax")
+    func uncheckedInlineInvocationEmission() {
+        let inline = InvokeIR(
+            toolID: "demo.tool",
+            arguments: [InvokeArg("value", .literal(.string("x")))]
+        )
+        let ctx = Ctx(depth: 0, options: .init())
+
+        let bind = e.emitBind(
+            BindIR(name: "result", expression: .invocation(inline)),
+            ctx: ctx
+        ).toString(separator: "\n")
+        #expect(bind.contains("runtime.invoke(tool: \"demo.tool\""), Comment(rawValue: bind))
+
+        let invoke = e.emitInvoke(
+            InvokeIR(toolID: "outer.tool", arguments: [InvokeArg("payload", .invocation(inline))]),
+            ctx: ctx
+        ).toString(separator: "\n")
+        #expect(invoke.contains("\"payload\": try await runtime.invoke"), Comment(rawValue: invoke))
     }
 
     @Test("definition helpers read the loop variable as a Value operand")
-    func elementValueExprUsesLoopVariableOperand() {
+    func elementValueExprUsesLoopVariableOperand() throws {
         let def = LoweredDefinition(
             functionName: "meridianDef_Page_open",
             subjectVar: "page",
@@ -317,13 +376,13 @@ struct SwiftEmitterExprCoverageTests {
                 .identifierRef(name: "page")
             )
         )
-        let out = SwiftEmitter().emitFile(workflows: [], definitions: [def])
+        let out = try SwiftEmitter().emitFile(workflows: [], definitions: [def])
         #expect(out.contains("__subject"))
         #expect(out.contains("meridianDef_Page_open"))
     }
 
     @Test("nested for-each interpolation segments inside a loop body are dropped")
-    func nestedForEachInterpolationInLoopBody() {
+    func nestedForEachInterpolationInLoopBody() throws {
         let segs: [IRInterpolationSegment] = [
             .forEach(
                 variable: "item",
@@ -337,11 +396,27 @@ struct SwiftEmitterExprCoverageTests {
                 ]
             ),
         ]
-        #expect(SwiftEmitter().emitValueExpr(.interpolatedString(segs)).contains("for __item in"))
+        #expect(try SwiftEmitter().emitValueExpr(.interpolatedString(segs)).contains("for __item in"))
+    }
+
+    @Test("loop interpolation shell-escaped holes use loop-relative value emission")
+    func loopInterpolationShellEscapedExpression() throws {
+        let segs: [IRInterpolationSegment] = [
+            .forEach(
+                variable: "item",
+                collection: .identifierRef(name: "items"),
+                body: [
+                    .shellEscapedExpression(.propertyAccess(.identifierRef(name: "item"), propertyName: "path")),
+                ]
+            ),
+        ]
+        let out = try SwiftEmitter().emitValueExpr(.interpolatedString(segs))
+        #expect(out.contains("meridianShellQuote"))
+        #expect(out.contains("__item.member(\"path\")"), Comment(rawValue: out))
     }
 
     @Test("loop interpolation conditionals lower non-comparison predicates via emitExpr")
-    func loopInterpolationConditionalLogical() {
+    func loopInterpolationConditionalLogical() throws {
         let segs: [IRInterpolationSegment] = [
             .forEach(
                 variable: "item",
@@ -355,7 +430,7 @@ struct SwiftEmitterExprCoverageTests {
                 ]
             ),
         ]
-        let out = SwiftEmitter().emitValueExpr(.interpolatedString(segs))
+        let out = try SwiftEmitter().emitValueExpr(.interpolatedString(segs))
         #expect(out.contains("if "))
         #expect(out.contains("else"))
     }
@@ -376,7 +451,8 @@ struct SwiftEmitterCtxCoverageTests {
 struct SwiftEmitterBlockCoverageTests {
 
     @Test("while loop and match branch with literal/enum/wildcard patterns")
-    func whileAndMatch() {
+    func whileAndMatch() throws {
+        let cap = ParserTrace.capturing(categories: [.codegen])
         let cond = IRExpression.comparison(.identifierRef(name: "n"), .lessThan, .literal(.number(10)))
         let whileLoop = IRPrimitive.iterate(IterateIR(
             mode: .whileCondition(cond),
@@ -394,23 +470,27 @@ struct SwiftEmitterBlockCoverageTests {
             thenBlock: IRBlock(statements: [])
         ))
         let wf = IRWorkflow(name: "run the loop", parameters: [], body: IRBlock(statements: [whileLoop, match]))
-        let out = SwiftEmitter().emitFile(workflows: [wf])
+        let out = try SwiftEmitter(trace: cap.trace).emitFile(workflows: [wf])
         #expect(out.contains("while "))
         #expect(out.contains("switch "))
         #expect(out.contains("case \"open\""))
         #expect(out.contains("case .approved"))
         #expect(out.contains("default:"))
+        let trace = cap.lines().joined(separator: "\n")
+        #expect(trace.contains("literal("), Comment(rawValue: trace))
+        #expect(trace.contains("enum(Verdict.approved)"), Comment(rawValue: trace))
+        #expect(trace.contains("wildcard"), Comment(rawValue: trace))
     }
 
     @Test("until loop emits a negated while")
-    func untilLoop() {
+    func untilLoop() throws {
         let cond = IRExpression.comparison(.identifierRef(name: "done"), .equal, .literal(.boolean(true)))
         let loop = IRPrimitive.iterate(IterateIR(
             mode: .untilCondition(cond),
             body: IRBlock(statements: [.complete(CompleteIR(reason: nil))])
         ))
         let wf = IRWorkflow(name: "spin until done", parameters: [], body: IRBlock(statements: [loop]))
-        let out = SwiftEmitter().emitFile(workflows: [wf])
+        let out = try SwiftEmitter().emitFile(workflows: [wf])
         #expect(out.contains("while "))
     }
 }

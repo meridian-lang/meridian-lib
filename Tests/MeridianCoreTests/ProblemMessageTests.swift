@@ -1,9 +1,17 @@
+import Foundation
 import Testing
 @testable import MeridianCore
 import MeridianRuntime
 
 @Suite("Wave 5 problem messages")
 struct ProblemMessageTests {
+
+    private var repoRoot: URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+    }
 
     private func range() -> SourceRange {
         SourceRange(file: "test.meridian", startLine: 1, startColumn: 1, endLine: 1, endColumn: 12)
@@ -40,6 +48,33 @@ struct ProblemMessageTests {
         #expect(diagnostic.code == .unparseableStatement)
     }
 
+    @Test("MER1012 uses the problem-message shape")
+    func matchBranchSyntaxProblemMessage() {
+        let mer = """
+        To route:
+          branch on choice:
+            anythng
+              complete.
+        """
+
+        do {
+            _ = try Compiler(options: .init(trace: .silent())).compile(
+                meridianSource: mer,
+                meridianFile: "test.meridian",
+                vocabularies: []
+            )
+            Issue.record("expected MER1012")
+        } catch let error as CompilerError {
+            let diagnostic = error.diagnostics.first { $0.code == .matchBranchSyntax }
+            #expect(diagnostic?.message.hasPrefix("I read 'anythng' as a match-branch arm, but it is missing a trailing ':'") == true,
+                    Comment(rawValue: error.diagnostics.map(\.message).joined(separator: "\n")))
+            #expect(diagnostic?.help == "Rewrite as: anythng:")
+            #expect(diagnostic?.suggestions.contains { $0.replacement == "anything:" } == true)
+        } catch {
+            Issue.record("expected CompilerError, got \(error)")
+        }
+    }
+
     @Test("template has a default expectation sentence")
     func defaultExpectation() {
         let message = ProblemMessage(
@@ -61,6 +96,14 @@ struct ProblemMessageTests {
         #expect(markdown.contains("`MER1003`"))
         #expect(markdown.contains("malformed statement"))
         #expect(markdown.contains("Help Required"))
+    }
+
+    @Test("docs/15_PROBLEM_MESSAGES.md matches the rendered catalog (no drift)")
+    func catalogDocIsInSync() throws {
+        let docURL = repoRoot.appendingPathComponent("docs/15_PROBLEM_MESSAGES.md")
+        let onDisk = try String(contentsOf: docURL, encoding: .utf8)
+        #expect(onDisk == ProblemMessageCatalog.renderMarkdown(),
+                Comment(rawValue: "docs/15_PROBLEM_MESSAGES.md is stale — regenerate it from ProblemMessageCatalog.renderMarkdown()"))
     }
 
     @Test("structural diagnostics can all use the problem-message shape")

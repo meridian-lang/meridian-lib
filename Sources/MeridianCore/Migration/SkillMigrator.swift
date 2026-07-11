@@ -1,4 +1,5 @@
 import Foundation
+import MeridianRuntime
 
 // MARK: - SkillMigrator
 //
@@ -79,7 +80,7 @@ public struct SkillMigrator {
     public struct Report: Sendable {
         public var compiledOK: Bool
         public var repairAttempts: Int
-        public var diagnostics: [String]
+        public var diagnostics: [Diagnostic]
         public var addedFrontmatterKeys: [String]
         public var originalLineCount: Int
         public var resultLineCount: Int
@@ -141,7 +142,7 @@ public struct SkillMigrator {
         let effectiveRulebooks = rulebookInputs + Self.aliasRulebook(aliases)
 
         var candidate = transformed
-        var diagnostics: [String] = []
+        var diagnostics: [Diagnostic] = []
         var attempts = 0
 
         while true {
@@ -156,13 +157,14 @@ public struct SkillMigrator {
                               attempts: attempts, originalLineCount: originalLineCount,
                               compiledOK: true, aliases: aliases, unminedContracts: unminedContracts)
             } catch {
-                let diag = describe(error)
+                let diag = describe(error, file: file)
                 diagnostics.append(diag)
-                trace.log(.skill, "migrate \"\(file)\": attempt \(attempts) failed — \(diag)")
+                trace.log(.skill, "migrate \"\(file)\": attempt \(attempts) failed — \(diagnosticSummary(diag))")
                 if Self.isFuzzyRoutableCode(diagnosticCode(error)),
-                   let revised = markEnclosingSectionReference(forDiagnostic: diag, in: candidate) {
-                    trace.log(.skill, "migrate \"\(file)\": marking failed section (( role: reference )) and retrying strict compile")
-                    candidate = revised
+                   let routed = markEnclosingSectionReference(forDiagnostic: diag, in: candidate) {
+                    diagnostics.append(routed.warning)
+                    trace.log(.skill, "migrate \"\(file)\": \(diagnosticSummary(routed.warning))")
+                    candidate = routed.source
                     continue
                 }
                 guard let repair, attempts < options.maxRepair else {
@@ -173,7 +175,7 @@ public struct SkillMigrator {
                 }
                 attempts += 1
                 candidate = try await repair(RepairRequest(
-                    candidate: candidate, diagnostic: diag, attempt: attempts))
+                    candidate: candidate, diagnostic: diagnosticSummary(diag), attempt: attempts))
             }
         }
     }
@@ -261,7 +263,7 @@ public struct SkillMigrator {
     }
     // MARK: - Helpers
 
-    private func result(_ source: String, addedKeys: [String], diagnostics: [String],
+    private func result(_ source: String, addedKeys: [String], diagnostics: [Diagnostic],
                         attempts: Int, originalLineCount: Int, compiledOK: Bool,
                         aliases: [SectionAlias], unminedContracts: [String]) -> Result {
         let resultLineCount = source.components(separatedBy: "\n").count
@@ -279,12 +281,21 @@ public struct SkillMigrator {
                       sectionAliases: aliases)
     }
 
-    private func describe(_ error: any Error) -> String {
+    private func describe(_ error: any Error, file: String) -> Diagnostic {
         if let compilerError = error as? CompilerError,
            let first = compilerError.diagnostics.first {
-            return "L\(first.primaryRange.startLine): \(first.message)"
+            return first
         }
-        return String(describing: error)
+        return Diagnostic.error(
+            .internalError,
+            message: "migration failed: \(String(describing: error))",
+            range: SourceRange(file: file, line: 1, column: 1),
+            help: "Inspect the underlying error and retry the migration after resolving it."
+        )
+    }
+
+    private func diagnosticSummary(_ diagnostic: Diagnostic) -> String {
+        "\(diagnostic.code.id) \(diagnostic.primaryRange): \(diagnostic.message)"
     }
 
     private func diagnosticCode(_ error: any Error) -> DiagnosticCode? {

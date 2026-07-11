@@ -593,6 +593,40 @@ phrasings that silently don't attach, unsupported negative temporal
 definitions) — read `corpora/GENERATING_A_CORPUS.md` before starting one
 rather than rediscovering these corpus-by-corpus.
 
+### 19. `meridian explain` is the verbalizer; diagnostics are `explain-diag`
+
+Wave 7 reserves `meridian explain <source>` for Canonical English verbalization
+of compiled IR. Long-form diagnostic/decision explanations are
+`meridian explain-diag <code|decision>`. Do not reintroduce docs or CLI examples
+that use `explain` with `MERxxxx` diagnostic codes.
+
+The verbalizer is also a totality surface: every in-scope `IRPrimitive` /
+`IRExpression` case must print concrete canonical text that reparses to
+structurally equal IR. Never add placeholder/TODO text, `_unresolved`, or
+"malformed" fallback strings to make a new case compile; wire the real canonical
+form and update `docs/coverage/VERBALIZER_EVIDENCE.md` plus the Wave 7 tests.
+
+### 20. Verbalizer canonical surface lives in `FixedGrammar`
+
+`Verbalizer.swift` must not hardcode structural or canonical-emit markers.
+Read them from `model.lexicon.grammar`: `statement`, `verbalizer`,
+`waitSignalIntroducer` / `choiceGateIntroducers` / `judgmentIntroducers`, etc.
+Add new emit tokens to `FixedVerbalizerSurface` or an existing `FixedGrammar`
+field first, then thread through the Verbalizer. Extensible synonym tables
+(`emptyMarkers`, `sortByMarkers`, `assertionMarkers`) stay in `EnglishLexicon`.
+
+### 21. `Verbalizer` / `SwiftEmitter` validate IR and throw
+
+`Verbalizer.verbalize()` and `SwiftEmitter.emitFile()` run `IRValidator` before
+printing Canonical English or Swift. Malformed hand-built IR must surface as
+structured `MER4002` diagnostics, not placeholder text, fallback comments, or
+best-effort output. Thread the throwing API through callers.
+
+Production CLI/compiler paths must also preserve the caller's trace instance.
+Do not add `.silent()` in `Sources/` except the allowlisted probe/benchmark
+sites (`TrialLowering`, `InertYieldAnalyzer`, `ParserBenchmark`) documented in
+`docs/coverage/SILENT_FALLBACK_ALLOWLIST.md`.
+
 ---
 
 ## 7. Decision history
@@ -606,7 +640,7 @@ Useful pointers:
 - Architectural decision numbering (`D1`–`D30`):
   `meridian-handoff/docs/11_DECISIONS.md`.
 - Generated decision catalog (`D-DX-*`) + diagnostic codes:
-  `docs/15_DECISIONS.md`, or `meridian explain <code|decision>`.
+  `docs/15_DECISIONS.md`, or `meridian explain-diag <code|decision>`.
 - SKILL.md expressiveness tags (`SkillMD-D1`…`SkillMD-D28`):
   `.ai/brainstorm-done/skill_md_expressiveness_d1_d28.md`. Any bare `D<N>`
   outside `meridian-handoff/docs/11_DECISIONS.md` means `SkillMD-D<N>`.

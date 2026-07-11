@@ -424,6 +424,13 @@ public struct StatementParser {
             return (.emit(emitStmt), 1 + extra)
         }
 
+        // "branch on {subject}:" — match-form IR surface (Wave 7 verbalizer).
+        if lower.hasPrefix(statement.branchOnPrefix) && t.hasSuffix(":") {
+            let (match, consumed) = try parseMatchBranch(lines, at: i, file: file)
+            trace.log(.statement, "L\(line.number) -> matchBranch")
+            return (.matchBranch(match), consumed)
+        }
+
         // "if {condition},"  (conditional, possibly followed by "otherwise,")
         if lower.hasPrefix(statement.ifPrefix) && t.hasSuffix(",") {
             let (cond, consumed) = try parseConditional(lines, at: i, file: file)
@@ -1748,6 +1755,106 @@ public struct StatementParser {
             eventID = rest
             return (EmitStatementAST(eventID: eventID, payload: [], sourceLine: line.number), extra)
         }
+    }
+
+    // MARK: - Match branch (`branch on …:`)
+
+    /// Parse `branch on <subject>:` followed by indented `pattern:` case arms
+    /// and an optional sibling `otherwise:` default. Patterns are string
+    /// literals, bare enum identifiers, or the verbalizer wildcard `anything`.
+    private func parseMatchBranch(_ lines: [SourceLine], at i: Int, file: String) throws -> (MatchBranchStatementAST, Int) {
+        let line = lines[i]
+        let t = line.statement
+        let prefix = lexicon.grammar.statement.branchOnPrefix
+        var subjectText = t
+        if subjectText.lowercased().hasPrefix(prefix) {
+            subjectText = String(subjectText.dropFirst(prefix.count))
+        }
+        if subjectText.hasSuffix(":") { subjectText = String(subjectText.dropLast()) }
+        subjectText = subjectText.trimmingCharacters(in: .whitespaces)
+        let subject = exprParser.parse(subjectText)
+
+        let parentIndent = line.indent
+        var cases: [MatchBranchCaseAST] = []
+        var otherwiseBlock: ASTBlock? = nil
+        var j = i + 1
+        while j < lines.count {
+            let l = lines[j]
+            if l.isEmpty || l.isComment { j += 1; continue }
+            if l.indent <= parentIndent { break }
+            let header = l.statement
+            guard header.hasSuffix(":") else {
+                let label = header.trimmingCharacters(in: .whitespaces)
+                let keywords = lexicon.grammar.statement
+                let wildcardLabels = Array(keywords.matchBranchWildcardLabels)
+                let wildcardRewrite = "\(keywords.matchBranchCanonicalWildcard):"
+                let rewrite = label.isEmpty ? wildcardRewrite : "\(label):"
+                let suggestion = Suggester().closest(label, among: wildcardLabels).map {
+                    Suggestion(
+                        replacement: "\($0):",
+                        range: l.statementRange(file: file),
+                        rationale: "did you mean \"\($0):\"?"
+                    )
+                }
+                throw CompilerError.diagnostics([
+                    Diagnostic.problem(
+                        .matchBranchSyntax,
+                        range: l.statementRange(file: file),
+                        read: header,
+                        as: "a match-branch arm",
+                        but: "it is missing a trailing ':'",
+                        expected: [
+                            "`\"ready\":`",
+                            "`\(wildcardRewrite)`",
+                            "`\(keywords.matchOtherwiseLabel)`",
+                        ],
+                        rewrite: rewrite,
+                        suggestions: suggestion.map { [$0] } ?? []
+                    )
+                ])
+            }
+            let label = String(header.dropLast()).trimmingCharacters(in: .whitespaces)
+            let caseIndent = l.indent
+            var bodyLines: [SourceLine] = []
+            var k = j + 1
+            while k < lines.count {
+                let body = lines[k]
+                if body.isEmpty || body.isComment { k += 1; continue }
+                if body.indent > caseIndent { bodyLines.append(body); k += 1 }
+                else { break }
+            }
+            let block = try parseBlock(bodyLines, file: file)
+            let lowerLabel = label.lowercased()
+            let keywords = lexicon.grammar.statement
+            if lowerLabel == keywords.otherwiseKeyword {
+                otherwiseBlock = block
+            } else {
+                cases.append(MatchBranchCaseAST(pattern: parseMatchPattern(label), block: block))
+            }
+            j = k
+        }
+        trace.log(.statement, "match branch @L\(line.number): \(cases.count) case arm(s), otherwise \(otherwiseBlock == nil ? "absent" : "present")")
+        return (
+            MatchBranchStatementAST(
+                subject: subject,
+                cases: cases,
+                otherwiseBlock: otherwiseBlock,
+                sourceLine: line.number
+            ),
+            j - i
+        )
+    }
+
+    private func parseMatchPattern(_ label: String) -> MatchPatternAST {
+        let trimmed = label.trimmingCharacters(in: .whitespaces)
+        let wildcards = lexicon.grammar.statement.matchBranchWildcardLabels
+        if wildcards.contains(trimmed.lowercased()) || wildcards.contains(trimmed) {
+            return .wildcard
+        }
+        if trimmed.hasPrefix("\""), trimmed.hasSuffix("\""), trimmed.count >= 2 {
+            return .literal(exprParser.parse(trimmed))
+        }
+        return .enumValue(trimmed)
     }
 
     // MARK: - Conditional

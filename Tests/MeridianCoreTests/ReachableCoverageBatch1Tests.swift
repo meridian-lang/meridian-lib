@@ -136,10 +136,10 @@ struct ReachableCoverageBatch1Tests {
     func linterHints() {
         let lint = MeridianLinter()
         let please = lint.lint(source: "please do the thing.")
-        #expect(please.contains { $0.hint?.contains("please") == true })
+        #expect(please.contains { $0.help?.contains("please") == true && $0.code == .lintPoliteCommand })
 
         let maybe = lint.lint(source: "maybe do the thing.")
-        #expect(maybe.contains { $0.hint?.contains("discretion") == true })
+        #expect(maybe.contains { $0.help?.contains("discretion") == true && $0.code == .lintUncertainty })
 
         // >4 bind referents exercises the referent-window trim branch.
         let manyBinds = lint.lint(source: """

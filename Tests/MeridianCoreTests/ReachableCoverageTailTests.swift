@@ -60,6 +60,11 @@ struct ReachableCoverageTailTests {
         #expect(StatementAST.assertStmt(AssertStatementAST(condition: e, sourceLine: 12)).sourceLine == 12)
         #expect(StatementAST.wait(WaitStatementAST(condition: .signal("s"), sourceLine: 13)).sourceLine == 13)
         #expect(StatementAST.commit(CommitStatementAST(sourceLine: 14)).sourceLine == 14)
+        #expect(StatementAST.matchBranch(MatchBranchStatementAST(
+            subject: e,
+            cases: [MatchBranchCaseAST(pattern: .wildcard, block: ASTBlock(statements: []))],
+            sourceLine: 19
+        )).sourceLine == 19)
         #expect(StatementAST.iteration(IterationStatementAST(
             mode: .whileCondition(e), body: ASTBlock(statements: []), sourceLine: 15)).sourceLine == 15)
         #expect(StatementAST.simultaneously(SimultaneouslyStatementAST(

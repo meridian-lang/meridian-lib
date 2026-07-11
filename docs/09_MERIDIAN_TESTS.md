@@ -381,6 +381,45 @@ Prefer IR assertions for phrase matching, lowering, mode selection, and
 primitive-level behavior. Prefer Swift assertions for codegen-specific details
 such as replay guards, emitted imports, or function signatures.
 
+## Wave 7 Verbalizer Gates
+
+Wave 7's primary semantic gate is `SEM-8-03`: compile authored source to a
+`VerbalizerModel`, print Canonical English, compile that canonical source, and
+assert IR structural equality. This is implemented in
+`VerbalizerRoundTripTests` over sample-gbrain plus the committed corpora; the
+fixture count is expected to stay above 100.
+
+Additional gates cover the rest of the verbalizer contract:
+
+- **Fixpoint:** representative canonical output must be byte-identical after a
+  second compile/verbalize pass.
+- **Totality:** every `IRPrimitive` case and every `IRExpression` variant must
+  verbalize to non-empty text; `CanonicalForms.swift` must not contain `TODO`,
+  `FIXME`, or placeholder markers.
+- **Generative:** seeded expression and primitive generation (`0x5EED_7007`)
+  verbalizes and reparses structurally; generated coverage strings hit every
+  `GrammarTable` production marker.
+- **Cookbook:** `COOK-*` tests pin the published canonical forms for comparison,
+  boolean, definition, quantifier, wait, recover, branch, bind, description, and
+  template examples.
+- **Named complex E2E:** `VerbalizerEndToEndTests` locks structure-normalized
+  round-trips on complex corpus skills (including accessmatrix/policyaudit
+  template binds).
+- **CLI zero-drift:** explain → save → `drift --json` expects `total == 0` on
+  canonical input (`VerbalizerCLIE2ETests` / capture + triagealert).
+- **Match-branch:** `matchBranchIRRoundTrip` covers `branch on` / `anything` /
+  `otherwise:` IR ↔ Canonical English.
+- **Ambiguity/no-placeholder:** representative examples and corpus canonical
+  output must compile without malformed text or `_unresolved` IR.
+- **Equality:** `IREquality` ignores source-location carriers but compares every
+  semantic field that would change runtime behavior.
+
+The coverage inventory is documented in
+[`docs/coverage/VERBALIZER_EVIDENCE.md`](coverage/VERBALIZER_EVIDENCE.md), and
+`VerbalizerEvidenceTests` fails if an IR primitive or grammar-table production
+is missing from that matrix. See [18_VERBALIZER.md](18_VERBALIZER.md) for the
+public API and CLI workflow.
+
 ## Example: Formatter Idempotence
 
 Formatter specs assert that source is already in canonical format and that

@@ -3,8 +3,8 @@
 - Original: `ingest/SKILL.md`
 - Ported: `ingest.meri`
 - Tier: 2 (light edits)
-- Similarity: 68%
-- Lines: 312 -> 383 (+147 / -76)
+- Similarity: 67%
+- Lines: 312 -> 383 (+151 / -80)
 
 ## Frontmatter
 - Added: (none)
@@ -18,7 +18,6 @@
 ## Inert deviations
 
 These sections were made non-executable in the port and should be reviewed as migration deviations:
-- L27 `Citation Requirements (MANDATORY)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L55 `Entity Detection on Every Message`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L82 `What counts as notable`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L166 `PDFs & Documents`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
@@ -26,16 +25,16 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L350 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
-- Sections inert total: 19/19 (100% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 18/19 (95% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
-- Inert categories: reference-documentation=17, template=1, tools-metadata=1
+- Inert categories: reference-documentation=16, template=1, tools-metadata=1
 - Judgment: 7 blocks, 0 lines
+- canonical_drift: synonym=0, structure=0, desugar=0, meaning=274
 
 ### Inert section details
 - L8 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L27 `Citation Requirements (MANDATORY)`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L38 `Phases`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L55 `Entity Detection on Every Message`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L60 `Protocol`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
@@ -59,7 +58,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 ```diff
 --- original-skills/ingest/SKILL.md
 +++ skills/ingest.meri
-@@ -24,25 +24,30 @@
+@@ -24,41 +24,45 @@
  
  # Ingest Skill
  
@@ -90,22 +89,29 @@ These sections were made non-executable in the port and should be reviewed as mi
 -Every mention of a person or company with a brain page MUST create a back-link
 -FROM that entity's page TO the page mentioning them. An unlinked mention is a
 -broken brain. See `skills/_brain-filing-rules.md` for format.
--
--## Citation Requirements (MANDATORY)
 +
 +### Contract — steps 2 (( role: reference ))
 +
 +Every mention of a person or company with a brain page MUST create a back-link FROM that entity's page TO the page mentioning them. An unlinked mention is a broken brain. See `skills/_brain-filing-rules.md` for format.
-+
-+## Citation Requirements (MANDATORY) (( role: reference ))
+ 
+ ## Citation Requirements (MANDATORY)
  
  Every fact written to a brain page must carry an inline `[Source: ...]` citation.
  
-@@ -53,12 +58,11 @@
+-- **User's statements:** `[Source: User, {context}, YYYY-MM-DD]`
+-- **Meeting data:** `[Source: Meeting "{title}", YYYY-MM-DD]`
+-- **Email/message:** `[Source: email from {name} re: {subject}, YYYY-MM-DD]`
+-- **Web content:** `[Source: {publication}, {URL}, YYYY-MM-DD]`
++- **User's statements:** `[Source: User, {{context}}, YYYY-MM-DD]`
++- **Meeting data:** `[Source: Meeting "{{title}}", YYYY-MM-DD]`
++- **Email/message:** `[Source: email from {{name}} re: {{subject}}, YYYY-MM-DD]`
++- **Web content:** `[Source: {{publication}}, {{URL}}, YYYY-MM-DD]`
  - **Social media:** `[Source: X/@handle, YYYY-MM-DD](URL)` (include link)
- - **Synthesis:** `[Source: compiled from {sources}]`
- 
+-- **Synthesis:** `[Source: compiled from {sources}]`
+-
 -## Phases
++- **Synthesis:** `[Source: compiled from {{sources}}]`
++
 +## Phases (( role: reference ))
  
  > **Router note:** This skill is a router. For specialized ingestion, see: idea-ingest, media-ingest, meeting-ingestion.

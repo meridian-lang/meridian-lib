@@ -39,12 +39,10 @@ public struct CompileCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Skip swift-format formatting of generated code.")
     var noFormat: Bool = false
 
-    @Option(name: .long,
-            help: "Activate parser/lowering trace categories (comma-separated). Examples: phrase, phrase.match, lowering, all.")
+    @Option(name: .long, help: "Comma-separated ParserTrace categories (or `all`). Also reads MERIDIAN_TRACE.")
     var trace: String?
 
-    @Option(name: .long,
-            help: "Write trace output to a file instead of stderr.")
+    @Option(name: .long, help: "Write ParserTrace output to this file instead of stderr.")
     var traceFile: String?
 
     @Option(name: .long,
@@ -88,7 +86,7 @@ public struct CompileCommand: AsyncParsableCommand {
                                    file: url.lastPathComponent, source: src))
         }
 
-        let traceInstance = makeCLITrace(spec: trace, file: traceFile)
+        let traceInstance = try makeCLITrace(spec: trace, file: traceFile)
 
         let resolvedNamespace: String?
         switch namespace.lowercased() {
@@ -121,17 +119,6 @@ public struct CompileCommand: AsyncParsableCommand {
         for (i, url) in rulebookURLs.enumerated() {
             diagSources[url.lastPathComponent] = rulebooks[i].source
             diagPaths[url.lastPathComponent] = url
-        }
-
-        if let trace {
-            let traceWarnings = ParserTrace.validateTraceSpec(trace)
-            if !traceWarnings.isEmpty {
-                let renderer = DiagnosticRenderer(sources: diagSources, options: .init(color: stderrIsTTY()))
-                let rendered = diagnosticsFormat == .json
-                    ? renderer.renderJSON(traceWarnings)
-                    : renderer.render(traceWarnings)
-                FileHandle.standardError.write(Data((rendered + "\n").utf8))
-            }
         }
 
         let compiled: (swift: String, manifest: ManifestEmitter.Input)

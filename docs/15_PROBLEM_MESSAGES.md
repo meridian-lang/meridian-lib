@@ -17,16 +17,20 @@ template directly.
 
 | Code | Title | Kind | Help Required |
 |---|---|---|---|
+| `MER0003` | not implemented | other | recommended |
+| `MER0004` | internal compiler error | other | recommended |
 | `MER1001` | malformed workflow header | structural | yes |
 | `MER1002` | orphaned code block | structural | yes |
 | `MER1003` | malformed statement | structural | yes |
 | `MER1004` | unparseable rule | structural | yes |
 | `MER1005` | malformed condition | structural | yes |
 | `MER1006` | misplaced frontmatter | structural | yes |
+| `MER1007` | unknown test-spec key | nameResolution | guided |
 | `MER1008` | removed import form | structural | yes |
 | `MER1009` | sectioned document structural error | structural | yes |
 | `MER1010` | uncheckable predicate | structural | yes |
 | `MER1011` | invalid table cell | structural | yes |
+| `MER1012` | match branch missing colon | structural | yes |
 | `MER2001` | unresolved phrase | nameResolution | guided |
 | `MER2002` | unknown tool | nameResolution | guided |
 | `MER2003` | unknown kind | nameResolution | guided |
@@ -39,8 +43,34 @@ template directly.
 | `MER2010` | unknown trace category | nameResolution | guided |
 | `MER2011` | missing phrase argument | nameResolution | guided |
 | `MER2012` | unknown template formatter | nameResolution | guided |
+| `MER3001` | phrase inlining too deep | other | recommended |
+| `MER3002` | recursive definition | other | recommended |
+| `MER3003` | duplicate declaration | other | recommended |
+| `MER3004` | duplicate name | other | recommended |
 | `MER3005` | invalid relation backing | other | recommended |
+| `MER3006` | unattached rule | other | recommended |
+| `MER3007` | unresolved trigger action | other | recommended |
+| `MER3008` | tool-backed expression must be a statement | other | recommended |
+| `MER3010` | ambiguous entry workflow | other | recommended |
+| `MER3011` | prose not allowed | other | recommended |
+| `MER3012` | operand out of scope | nameResolution | guided |
+| `MER3013` | quantifier semantic error | other | recommended |
+| `MER3014` | ambiguous anaphora | other | recommended |
+| `MER3015` | invalid enum default | other | recommended |
 | `MER3016` | unlowerable rule predicate | other | recommended |
-
-`MeridianLinter` advisory strings remain outside Wave 5D because lint does not
-block compilation; bringing lint advice under `MERxxxx` is a separate decision.
+| `MER3017` | unsupported trigger condition | other | recommended |
+| `MER3018` | match branch semantic error | other | recommended |
+| `MER4001` | codegen error | other | recommended |
+| `MER4002` | invalid IR | other | recommended |
+| `MER5001` | swift-format failed | other | recommended |
+| `MER5002` | unrecognized vocabulary declaration | structural | yes |
+| `MER5003` | unknown rulebook section | nameResolution | guided |
+| `MER5010` | unknown merconfig section | structural | yes |
+| `MER5004` | malformed rulebook entry | structural | yes |
+| `MER5005` | unrecognized block property | structural | yes |
+| `MER5011` | unwritable trace file | other | recommended |
+| `MER5012` | empty lexicon marker collection | other | recommended |
+| `MER6001` | polite command lint | other | recommended |
+| `MER6002` | uncertainty lint | other | recommended |
+| `MER6003` | migration fuzzy-route downgrade | other | recommended |
+| `MER6004` | diagnostic recovery summary | other | recommended |

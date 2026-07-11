@@ -42,7 +42,11 @@ Three principles drive the whole surface:
 - **Every fixable error is guided.** A name-resolution failure always carries a
   `did you mean "X"?` suggestion or an enumerated candidate list — never a bare
   "unknown X". Structural errors always carry a concrete `help` string. And the
-  *rationale* for a rule is one command away (`meridian explain`).
+  *rationale* for a rule is one command away (`meridian explain-diag`).
+- **Compiled meaning is explainable.** `meridian explain` is reserved for Wave
+  7 Canonical English: compile a source, verbalize the lowered model, and review
+  what the compiler understood. Pair it with `meridian drift` for authored-vs-
+  canonical audits; diagnostic explanations remain `meridian explain-diag`.
 
 The implementation lives in `Sources/MeridianCore/Diagnostics/`:
 
@@ -71,7 +75,7 @@ error[MER2002]: unknown tool "chargepaymnt"
   = suggestion: did you mean "chargePayment"?
   = help: Declare it in a `=== tools ===` block or frontmatter `tools:`, or set frontmatter `allow-fallbacks: unknown-tools` if it is a host-provided tool registered at runtime.
   = why: A misspelled or undeclared tool id silently compiled to an invoke that failed only at runtime. (D-DX-5)
-  = see: meridian explain MER2002 · meridian explain D-DX-5
+  = see: meridian explain-diag MER2002 · meridian explain-diag D-DX-5
 ```
 
 Each piece maps to a field on the `Diagnostic` value type:
@@ -87,7 +91,7 @@ Each piece maps to a field on the `Diagnostic` value type:
 | `note:` | `notes[]` | Secondary related info (e.g. an enumerated candidate list) |
 | `help:` | `help` | The concrete remediation (mandatory on structural codes) |
 | `why:` | `decision` (via `code.decision`) | One-line rationale from the linked design decision |
-| `see:` | derived | Pointers to `meridian explain <code>` / `<decision>` |
+| `see:` | derived | Pointers to `meridian explain-diag <code>` / `<decision>` |
 
 ANSI color is emitted only when stderr is an interactive terminal and `NO_COLOR`
 is unset; piping to a file or CI is automatically plain text.
@@ -96,7 +100,7 @@ is unset; piping to a file or CI is automatically plain text.
 
 ## 3. Diagnostic code catalog
 
-Codes are stable and grouped by phase. `meridian explain <code>` prints the
+Codes are stable and grouped by phase. `meridian explain-diag <code>` prints the
 long-form entry (and the linked decision). This table mirrors
 `DiagnosticCode.all`; a guard test asserts they stay in sync.
 
@@ -124,6 +128,7 @@ long-form entry (and the linked decision). This table mirrors
 | MER1009 | sectioned document structural error | structural |
 | MER1010 | uncheckable predicate | structural |
 | MER1011 | invalid table cell | structural |
+| MER1012 | match branch missing colon | structural |
 
 ### MER2xxx — name resolution (always suggest)
 
@@ -160,12 +165,15 @@ long-form entry (and the linked decision). This table mirrors
 | MER3014 | ambiguous anaphora | — |
 | MER3015 | invalid enum default | — |
 | MER3016 | unlowerable rule predicate | D-DX-2 |
+| MER3017 | unsupported trigger condition | D-DX-2 |
+| MER3018 | match branch semantic error | D-DX-2 |
 
 ### MER4xxx — codegen
 
 | Code | Title |
 |---|---|
 | MER4001 | codegen error |
+| MER4002 | invalid IR |
 
 ### MER5xxx — configuration / vocabulary
 
@@ -177,6 +185,17 @@ long-form entry (and the linked decision). This table mirrors
 | MER5004 | malformed rulebook entry | — |
 | MER5005 | unrecognized block property | — |
 | MER5010 | unknown merconfig section | — |
+| MER5011 | unwritable trace file | — |
+| MER5012 | empty lexicon marker collection | — |
+
+### MER6xxx — lint / authoring warnings
+
+| Code | Title |
+|---|---|
+| MER6001 | polite command lint |
+| MER6002 | uncertainty lint |
+| MER6003 | migration fuzzy-route downgrade |
+| MER6004 | diagnostic recovery summary |
 
 ---
 
@@ -219,7 +238,8 @@ code asserts non-empty `help`. This is what makes "always" load-bearing.
 Sites funneled through the guarantee today: unresolved phrase (MER2001), unknown
 tool (MER2002), unknown kind/property (MER2003/4), unknown vocabulary/rulebook
 (MER2005/6), unknown adjective/verb (MER2007/8), unknown `allow-fallbacks` token
-(MER2009), unknown rulebook section (MER5003), and unknown test-spec key
+(MER2009), unknown trace category (MER2010), unknown template formatter
+(MER2012), unknown rulebook section (MER5003), and unknown test-spec key
 (MER1007).
 
 ---
@@ -245,6 +265,9 @@ old one-at-a-time loop.
 
 Every emitted diagnostic is also mirrored into the `.diagnostics` trace stream
 and counted in the end-of-compile timing profile (see [§7](#7-tracing)).
+When recovery skips one or more constructs to keep collecting errors, the engine
+also emits a `MER6004` warning summary with notes naming the skipped construct
+ranges. That makes recovery visible without losing the multi-error report.
 
 ---
 
@@ -267,8 +290,15 @@ Former silent recoveries are now coded diagnostics. The audited table:
 | Unknown merconfig `=== section ===` | MER5010 (error) |
 | Unknown `.meridian.test` key | MER1007 (error) |
 | Unknown `allow-fallbacks:` token | MER2009 (error) |
+| Unknown `--trace` category | MER2010 (error, rendered before command work starts) |
 | Unknown tool id | MER2002 (error) |
+| Match branch missing `:` | MER1012 (error) |
+| Invalid/duplicate/empty match branch arms | MER3018 (error) |
+| Malformed hand-built IR before verbalization or Swift emission | MER4002 (error) |
+| Unwritable `--trace-file` at CLI startup | MER5011 (error) |
 | `swift-format` failure | MER5001 (**warning** — keep valid output) |
+| Recovery skip after reporting an error | MER6004 (**warning** summary) |
+| `migrate-skill --route-fuzzy` downgrades an operational section | MER6003 (**warning** in migration report) |
 | Internal `try? NSRegularExpression` on constant patterns | `preconditionFailure` (compiler bug) |
 
 **Intentionally retained** runtime fallbacks (safe, documented): value-level
@@ -281,7 +311,26 @@ strict checks.
 `unresolved-trigger-actions`, `unknown-tools`), or process-wide via
 `Compiler.Options.fallbackPolicy = .lenient` for hosts/tests.
 
-### 6.1 Intentional silent consumes (compile-time)
+Applying an `allow-fallbacks:` kind is visible: the compiler emits a warning
+diagnostic at the fallback site and a `.lowering` trace line when tracing is
+enabled. The escape hatch remains available for staged authoring, but it is no
+longer silent.
+
+### 6.1 IR validation and throwing tooling APIs
+
+`IRValidator` guards manually constructed or transformed IR before the two public
+rendering surfaces that could otherwise hide malformed structure:
+`Verbalizer.verbalize()` and `SwiftEmitter.emitFile()` both call it and throw
+`MER4002` diagnostics on invalid IR. This covers empty identifiers/field names,
+bad inline invocation positions, invalid match branches, empty wait/event/choice
+payloads, and record/table shape mismatches.
+
+The API consequence is intentional: `Verbalizer.verbalize()` and
+`SwiftEmitter.emitFile()` are throwing APIs. CLI commands (`explain`, `drift`,
+`compile`, `run`) render those failures through the same `DiagnosticRenderer`
+path as parser/lowering errors.
+
+### 6.2 Intentional silent consumes (compile-time)
 
 These are **not** errors — source that is explicitly non-executable by syntax or
 role:
@@ -324,6 +373,8 @@ is the coverage + timing summary.
 | `rulebook` | `RulebookParser` / rewrite | `.merrules` parsing + rewrites |
 | `skill` | section builder | section-role classification + scoped tools |
 | `codegen` | `SwiftEmitter` | per-file / per-workflow emission |
+| `verbalizer` | `Verbalizer` | Canonical English emission from validated IR |
+| `drift` | `DriftEngine` | authored-vs-canonical hunk classification |
 | `diagnostics` | `DiagnosticEngine` | every emitted error/warning/note |
 | `timing` | `Compiler` phases | per-phase wall-clock + profile (off by default) |
 
@@ -386,22 +437,34 @@ share the same "what happened, in order, with source anchors" philosophy:
 
 | Command | Purpose |
 |---|---|
-| `meridian explain <code\|decision>` | Long-form cause + fix for a `MERxxxx` code, plus the linked decision rationale + alternatives. Also accepts a `D-DX-n` id directly. |
+| `meridian explain <source>` | Print the Canonical English form of the compiled IR. Use this to audit lowered meaning, not to explain diagnostics. |
+| `meridian drift <source>` | Compare authored source with Canonical English; reports synonym, structure, desugar, and meaning-bearing hunks. |
+| `meridian grammar-doc` | Print the live canonical grammar reference generated from `GrammarTable`. |
+| `meridian explain-diag <code\|decision>` | Long-form cause + fix for a `MERxxxx` code, plus the linked decision rationale + alternatives. Also accepts a `D-DX-n` id directly. |
 | `meridian decisions [query]` | List/search the design-decision catalog. |
 | `meridian decisions --id D-DX-5` | Print one decision in full. |
 | `meridian decisions --render docs/15_DECISIONS.md` | Regenerate the readable decision log from the catalog (kept in sync by a test). |
 | `meridian trace categories` | List every trace category with a description. |
 
-### Diagnostics flags (on `compile`, `check`, `verify`, `run`)
+### Diagnostics and trace flags
 
 - `--diagnostics-format human|json` — `human` is the snippet+caret form; `json`
-  is the stable schema for editors / CI (includes the `decision` id).
+  is the stable schema for editors / CI (includes the `decision` id). Available
+  on `compile`, `check`, `verify`, and `run`.
+- `meridian lint --format human|json` (also `--diagnostics-format`) uses the
+  same `DiagnosticRenderer` and shared `Diagnostic` values for authoring
+  warnings such as MER3014, MER6001, and MER6002.
 - `--fix` — preview unambiguous quick-fixes (single ranged suggestion per
   diagnostic). **Dry-run by default**; the fixer narrows a construct-level range
   to the single misspelled token and only applies an *unambiguous* best match
   within the edit-distance budget, so it can never corrupt a line.
 - `--write` — with `--fix`, apply the previewed fixes in place.
 - `--trace <categories>` / `--trace-file <path>` — activate tracing per command.
+  Available on `compile`, `check`, `verify`, `run`, `migrate-skill`,
+  `preview-skill`, `explain`, `drift`, `inert-yield`, and `skill-deviation`.
+  Unknown categories are `MER2010` hard errors; unwritable trace files are
+  `MER5011` hard errors, while mid-stream file sink failures visibly fall back
+  to stderr.
 
 JSON shape (one element per diagnostic):
 
@@ -425,11 +488,13 @@ JSON shape (one element per diagnostic):
 | Symptom | Run this |
 |---|---|
 | "My phrase won't resolve" (MER2001) | `meridian check f.meridian --trace phrase.match,phrase.args` — see candidate scores; the error already lists the closest phrase. |
-| "My tool is unknown" (MER2002) | `meridian explain MER2002`; check the `=== tools ===` decl and frontmatter `tools:`. Try `--fix` for a typo. |
+| "My tool is unknown" (MER2002) | `meridian explain-diag MER2002`; check the `=== tools ===` decl and frontmatter `tools:`. Try `--fix` for a typo. |
 | "My property is rejected" (MER2004) | `meridian check --trace symbols,lowering` — confirm the property is declared on that kind. |
 | "Where did my statement go?" | `meridian check --trace statement,tokenize` — see per-line dispatch and any fence/heading collapse. |
 | "Why is codegen wrong?" | `meridian compile --trace codegen` and inspect the `// L` comments + manifest source map. |
-| "Why is this even an error?" | `meridian explain <code>` — shows the rationale + alternatives from the governing decision. |
+| "Why is this even an error?" | `meridian explain-diag <code>` — shows the rationale + alternatives from the governing decision. |
+| "What did the compiler understand?" | `meridian explain f.meri --trace verbalizer --merconfig ... --rulebook ...` — prints Canonical English from the lowered IR. |
+| "How far is my authored surface from canonical?" | `meridian drift f.meri --json --trace drift` — use the category counts in reviews or migration audits. |
 | "How slow is each phase?" | `meridian compile --trace timing`. |
 | "I want all of it in a file" | `--trace all --trace-file /tmp/c.log`. |
 

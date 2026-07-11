@@ -27,6 +27,8 @@ lives in `docs/08_TRACING.md`; `meridian trace categories` prints it live.
 | `.rulebook` | `rulebook` |
 | `.skill` | `skill` |
 | `.codegen` | `codegen` |
+| `.verbalizer` | `verbalizer` |
+| `.drift` | `drift` |
 | `.diagnostics` | `diagnostics` |
 | `.timing` | `timing` (off by default; excluded from `capturing()`'s default set) |
 
@@ -70,10 +72,12 @@ Every compiler component that can produce trace output takes
 - Unit tests pass a fresh `ParserTrace()` (via `ParserTrace.capturing(categories:)`)
   or `ParserTrace.silent()`.
 - The CLI never mutates `.shared`: `compile`, `check`, `verify`, `run`,
-  `migrate-skill`, and `preview-skill` each build a fresh, isolated instance
-  via `makeCLITrace(spec:file:)` (`Sources/MeridianCLIKit/CLISupport.swift`)
-  from their own `--trace`/`--trace-file` options and thread it down into
-  `Compiler`, `SkillMigrator`, `SkillMarkdownImporter`, and `ManifestEmitter`.
+  `migrate-skill`, `preview-skill`, `explain`, `drift`, `inert-yield`, and
+  `skill-deviation` each build a fresh, isolated instance via
+  `makeCLITrace(spec:file:)` (`Sources/MeridianCLIKit/CLISupport.swift`) from
+  their own `--trace`/`--trace-file` options and thread it down into `Compiler`,
+  `SkillMigrator`, `SkillMarkdownImporter`, `ManifestEmitter`, `Verbalizer`,
+  `DriftEngine`, and analysis helpers.
 
 ### No silent-trace components
 
@@ -82,3 +86,13 @@ Nothing in the compile pipeline is allowed to hardcode `.silent()` for a
 request. `SkillMigrator` and `SkillMarkdownImporter` both default their `trace`
 parameter to `.shared`/the owning `Compiler`'s trace, never to `.silent()`;
 only test call sites should pass `.silent()` explicitly.
+
+Production-source exceptions must stay on the machine-checked allowlist in
+`docs/coverage/SILENT_FALLBACK_ALLOWLIST.md`: `TrialLowering` and
+`InertYieldAnalyzer` probe paths, plus `ParserBenchmark` benchmark noise
+control. Do not add another `.silent()` in `Sources/` without adding an
+allowlist entry and a reason.
+
+Trace emission redacts obvious secrets before writing to any sink:
+authorization headers, bearer tokens, password/API-key fields, and `secret=...`
+style fields become `<redacted>`.

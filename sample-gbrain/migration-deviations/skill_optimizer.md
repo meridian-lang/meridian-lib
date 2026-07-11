@@ -30,6 +30,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=6, template=1
 - Judgment: 4 blocks, 5 lines
+- canonical_drift: synonym=0, structure=0, desugar=0, meaning=171
 
 ### Inert section details
 - L9 `When to invoke this skill`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.

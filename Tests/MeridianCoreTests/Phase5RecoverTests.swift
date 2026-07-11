@@ -234,7 +234,7 @@ struct RecoverCodegenTests {
     }
 
     @Test("recover from any emits do { } catch let _recoveredError {}")
-    func emitAny() {
+    func emitAny() throws {
         let ir = IRPrimitive.recover(RecoverIR(
             pattern: .anyError,
             handler: IRBlock(statements: [.complete(CompleteIR(reason: "err"))]),
@@ -242,13 +242,13 @@ struct RecoverCodegenTests {
         ))
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
                             mode: .strict, sourceFile: "test.meridian")
-        let out = emitter().emitFile(workflows: [wf])
+        let out = try emitter().emitFile(workflows: [wf])
         #expect(out.contains("do {"))
         #expect(out.contains("} catch let _recoveredError {"))
     }
 
     @Test("recover from named emits meridianMatches(_:named:) where clause")
-    func emitNamed() {
+    func emitNamed() throws {
         let ir = IRPrimitive.recover(RecoverIR(
             pattern: .named("payment.declined"),
             handler: IRBlock(statements: [.complete(CompleteIR(reason: "declined"))]),
@@ -256,7 +256,7 @@ struct RecoverCodegenTests {
         ))
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
                             mode: .strict, sourceFile: "test.meridian")
-        let out = emitter().emitFile(workflows: [wf])
+        let out = try emitter().emitFile(workflows: [wf])
         #expect(out.contains("meridianMatches(_recoveredError, named: \"payment.declined\")"),
                 Comment(rawValue: "Expected meridianMatches in:\n\(out)"))
         // Must not use the old non-existent isNamed call.
@@ -264,7 +264,7 @@ struct RecoverCodegenTests {
     }
 
     @Test("recover from typed emits `catch let _recoveredError as TypeName`")
-    func emitTyped() {
+    func emitTyped() throws {
         let ir = IRPrimitive.recover(RecoverIR(
             pattern: .typed(KindRef("TimeoutError")),
             handler: IRBlock(statements: [.complete(CompleteIR(reason: "timeout"))]),
@@ -272,12 +272,12 @@ struct RecoverCodegenTests {
         ))
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
                             mode: .strict, sourceFile: "test.meridian")
-        let out = emitter().emitFile(workflows: [wf])
+        let out = try emitter().emitFile(workflows: [wf])
         #expect(out.contains("catch let _recoveredError as TimeoutError"))
     }
 
     @Test("recover from predicate emits where clause with emitted expression")
-    func emitPredicate() {
+    func emitPredicate() throws {
         let ir = IRPrimitive.recover(RecoverIR(
             pattern: .predicate(.identifierRef(name: "isRetryable")),
             handler: IRBlock(statements: [.complete(CompleteIR(reason: "retry"))]),
@@ -285,7 +285,7 @@ struct RecoverCodegenTests {
         ))
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
                             mode: .strict, sourceFile: "test.meridian")
-        let out = emitter().emitFile(workflows: [wf])
+        let out = try emitter().emitFile(workflows: [wf])
         #expect(out.contains("let _recoveredError where"))
         #expect(out.contains("isRetryable"))
     }

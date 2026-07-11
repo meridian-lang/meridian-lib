@@ -122,7 +122,8 @@ public struct ASTToIR {
         if let engine {
             workflows = []
             for wf in file.workflows {
-                if let lowered = try engine.recovering({ try lowerWorkflow(wf) }) {
+                let context = "workflow \(wf.pattern.displayText)"
+                if let lowered = try engine.recovering(context: context, { try lowerWorkflow(wf) }) {
                     workflows.append(lowered)
                 }
             }
@@ -140,7 +141,8 @@ public struct ASTToIR {
             var injector = RuleInjector(
                 symbols: symbols, lexicon: lexicon, trace: trace,
                 lowerAction: lowerActionClosure,
-                fallbackPolicy: fallbackPolicy, sourceFile: sourceFile
+                fallbackPolicy: fallbackPolicy, sourceFile: sourceFile,
+                reportFallback: { [self] diagnostic in reportFallbackWarning(diagnostic) }
             )
 
             // Classify every rule. Each Nil result is either a hard error
@@ -151,7 +153,11 @@ public struct ASTToIR {
                     parsedRules.append(parsed)
                 } else {
                     if fallbackPolicy.allows(.unparseableRules) {
-                        trace.log(.lowering, "rule unparseable @L\(raw.sourceLine) (allow-fallbacks: unparseable-rules): \(raw.text)")
+                        reportFallbackWarning(
+                            .unparseableRule,
+                            message: "unparseable rule dropped by allow-fallbacks: \"\(raw.text)\"",
+                            range: sourceRange(raw.sourceLine),
+                            help: "Remove `allow-fallbacks: unparseable-rules` to make this a hard error, or rewrite the rule into a supported rule shape.")
                     } else {
                         let diag = Diagnostic.structural(
                             .unparseableRule,
@@ -164,7 +170,7 @@ public struct ASTToIR {
             }
 
             if let engine {
-                workflows = (try engine.recovering({ try injector.inject(rules: parsedRules, into: workflows, sourceFile: sourceFile) })) ?? workflows
+                workflows = (try engine.recovering(context: "rule injection", { try injector.inject(rules: parsedRules, into: workflows, sourceFile: sourceFile) })) ?? workflows
             } else {
                 workflows = try injector.inject(rules: parsedRules, into: workflows, sourceFile: sourceFile)
             }
@@ -174,7 +180,11 @@ public struct ASTToIR {
             // (typo in the action verb, missing target workflow, etc.).
             for u in injector.unattachedRules {
                 if fallbackPolicy.allows(.unattachedRules) {
-                    trace.log(.lowering, "rule did not attach (allow-fallbacks: unattached-rules): \(describeRule(u.rule)) — \(u.reason)")
+                    reportFallbackWarning(
+                        .unattachedRule,
+                        message: "unattached rule dropped by allow-fallbacks: \(describeRule(u.rule))",
+                        range: sourceRange(ruleLine(u.rule)),
+                        help: "Remove `allow-fallbacks: unattached-rules` to make this a hard error, or align the rule's action with a workflow.")
                 } else {
                     let diag = Diagnostic.error(
                         .unattachedRule,
@@ -188,7 +198,7 @@ public struct ASTToIR {
             // synthesizeTriggers may throw if a trigger's action doesn't lower
             // and the policy doesn't allow `unresolved-trigger-actions`.
             if let engine {
-                if let triggers = try engine.recovering({ try injector.synthesizeTriggers(parsedRules, sourceFile: sourceFile) }) {
+                if let triggers = try engine.recovering(context: "triggers", { try injector.synthesizeTriggers(parsedRules, sourceFile: sourceFile) }) {
                     workflows += triggers
                 }
             } else {
@@ -221,6 +231,20 @@ public struct ASTToIR {
     }
 
     // MARK: - Tool-ID validation (Pillar 6)
+
+    private func reportFallbackWarning(
+        _ code: DiagnosticCode,
+        message: String,
+        range: SourceRange,
+        help: String? = nil
+    ) {
+        reportFallbackWarning(Diagnostic.warning(code, message: message, range: range, help: help))
+    }
+
+    private func reportFallbackWarning(_ diagnostic: Diagnostic) {
+        trace.log(.lowering, "fallback warning \(diagnostic.code.id): \(diagnostic.message)")
+        engine?.report(diagnostic)
+    }
 
     /// Methodize a raw tool token the same way the invoke path does
     /// (`get_health` → `getHealth`), so frontmatter `tools:` tokens line up
@@ -258,7 +282,6 @@ public struct ASTToIR {
             // skip to avoid a redundant first-error throw on a non-canonical path.
             return
         }
-        if fallbackPolicy.allows(.unknownTools) { return }
         let recognized = recognizedToolForms()
         let candidates = Array(Set(BuiltinToolCatalog.ids + symbols.tools.values.map { $0.methodName })).sorted()
         var seen: Set<String> = []
@@ -271,6 +294,14 @@ public struct ASTToIR {
             // is reported elsewhere; don't double-flag its synthetic invoke.
             if id.isEmpty || id == "_unresolved" { continue }
             guard seen.insert(id).inserted else { continue }
+            if fallbackPolicy.allows(.unknownTools) {
+                reportFallbackWarning(
+                    .unknownTool,
+                    message: "unknown tool allowed by fallback: \(id)",
+                    range: inv.sourceRange,
+                    help: "Declare the tool when possible; keep `allow-fallbacks: unknown-tools` only for host-provided runtime tools.")
+                continue
+            }
             engine?.report(Diagnostic.unresolved(
                 .unknownTool,
                 target: id,
@@ -477,6 +508,11 @@ public struct ASTToIR {
         case .emit(let s):        for (_, v) in s.payload { try check(v) }
         case .assertStmt(let s):  try check(s.condition)
         case .conditional(let s): try check(s.condition)
+        case .matchBranch(let s):
+            try check(s.subject)
+            for branchCase in s.cases {
+                if case .literal(let expr) = branchCase.pattern { try check(expr) }
+            }
         case .wait(let s):
             switch s.condition {
             case .approval(let subject, _): try check(subject)
@@ -635,6 +671,32 @@ public struct ASTToIR {
                 sourceRange: sourceRange(s.sourceLine)
             ))]
 
+        case .matchBranch(let s):
+            let subject = try lowerExpr(s.subject, scope: scope, line: s.sourceLine)
+            let cases = try s.cases.map { branchCase -> BranchCase in
+                let pattern = try lowerMatchPattern(branchCase.pattern, scope: scope, line: s.sourceLine)
+                let block = try lowerBlock(
+                    branchCase.block, mode: mode, depth: depth,
+                    defaultParam: defaultParam, proseDispatchMode: proseDispatchMode,
+                    autonomyConfig: autonomyConfig, scope: scope
+                )
+                return BranchCase(pattern: pattern, block: block)
+            }
+            trace.log(.lowering, "match branch L\(s.sourceLine): \(cases.count) case(s) \(cases.map { matchPatternTraceName($0.pattern) }.joined(separator: ", ")), otherwise \(s.otherwiseBlock == nil ? "absent" : "present")")
+            let otherwise = try s.otherwiseBlock.map {
+                try lowerBlock(
+                    $0, mode: mode, depth: depth,
+                    defaultParam: defaultParam, proseDispatchMode: proseDispatchMode,
+                    autonomyConfig: autonomyConfig, scope: scope
+                )
+            } ?? IRBlock(statements: [])
+            return [.branch(BranchIR(
+                condition: .match(subject, cases),
+                thenBlock: otherwise,
+                elseBlock: nil,
+                sourceRange: sourceRange(s.sourceLine)
+            ))]
+
         case .iteration(let s):
             // A for-each loop variable is in scope inside the body (so a command
             // hole like `{the attendee's name}` resolves under `for every
@@ -713,6 +775,38 @@ public struct ASTToIR {
 
         case .modal:
             return []  // handled at block level
+        }
+    }
+
+    private func lowerMatchPattern(
+        _ pattern: MatchPatternAST,
+        scope: Set<String>,
+        line: Int
+    ) throws -> IRPattern {
+        switch pattern {
+        case .literal(let expr):
+            let lowered = try lowerExpr(expr, scope: scope, line: line)
+            guard case .literal(let literal) = lowered else {
+                let wildcard = lexicon.grammar.statement.matchBranchCanonicalWildcard
+                throw semanticError(
+                    "match-branch case pattern must be a literal, enum value, or \(wildcard)",
+                    line, code: .matchBranchSemantic,
+                    help: "Use a quoted literal (for example `\"ready\":`), an enum case, or the canonical wildcard `\(wildcard):`."
+                )
+            }
+            return .literal(literal)
+        case .enumValue(let value):
+            return .enumValue(value, kind: "")
+        case .wildcard:
+            return .wildcard
+        }
+    }
+
+    private func matchPatternTraceName(_ pattern: IRPattern) -> String {
+        switch pattern {
+        case .literal(let literal): return "literal(\(literal))"
+        case .enumValue(let value, let kind): return kind.isEmpty ? "enum(\(value))" : "enum(\(kind).\(value))"
+        case .wildcard: return "wildcard"
         }
     }
 
@@ -1062,7 +1156,11 @@ public struct ASTToIR {
             excludingStructName: defaultParam?.owningStructName
         ) else {
             if fallbackPolicy.allows(.unresolvedPhrases) {
-                trace.log(.phraseInline, "  UNRESOLVED — emitting placeholder (allow-fallbacks: unresolved-phrases)")
+                reportFallbackWarning(
+                    .unresolvedPhrase,
+                    message: "unresolved phrase placeholder emitted by allow-fallbacks: \"\(s.words)\"",
+                    range: sourceRange(s.sourceLine),
+                    help: "Add a matching phrase or workflow; remove `allow-fallbacks: unresolved-phrases` to make this a hard error.")
                 return [.bind(BindIR(
                     name: "_unresolved",
                     expression: .literal(.string("/* unresolved: \(s.words) */")),
@@ -1225,6 +1323,28 @@ public struct ASTToIR {
             return .conditional(ConditionalStatementAST(
                 condition: subExpr(s.condition, args: args),
                 thenBlock: thenBlock, elseBlock: elseBlock, sourceLine: s.sourceLine))
+        case .matchBranch(let s):
+            let cases = s.cases.map { branchCase in
+                let pattern: MatchPatternAST
+                switch branchCase.pattern {
+                case .literal(let expr):
+                    pattern = .literal(subExpr(expr, args: args))
+                case .enumValue(let value):
+                    pattern = .enumValue(value)
+                case .wildcard:
+                    pattern = .wildcard
+                }
+                return MatchBranchCaseAST(
+                    pattern: pattern,
+                    block: substituteArgs(branchCase.block, args: args)
+                )
+            }
+            return .matchBranch(MatchBranchStatementAST(
+                subject: subExpr(s.subject, args: args),
+                cases: cases,
+                otherwiseBlock: s.otherwiseBlock.map { substituteArgs($0, args: args) },
+                sourceLine: s.sourceLine
+            ))
         case .simultaneously(let s):
             return .simultaneously(SimultaneouslyStatementAST(
                 branches: s.branches.map { substituteArgs($0, args: args) },
@@ -1620,7 +1740,7 @@ public struct ASTToIR {
 
     /// Lower every registered adjective definition to a `LoweredDefinition`,
     /// sorted by function name for deterministic emission.
-    func lowerRegisteredDefinitions() throws -> [LoweredDefinition] {
+    public func lowerRegisteredDefinitions() throws -> [LoweredDefinition] {
         try symbols.definitions.values
             .sorted { $0.functionName < $1.functionName }
             .map { rec in
@@ -1735,7 +1855,10 @@ public struct ASTToIR {
             throw semanticError("quantifier is missing a collection noun.", line, code: .quantifierSemantic,
                                 help: "Write `every/all/no … <plural>` with a collection noun.")
         }
-        let elementVar = lexicon.singularize(noun.lowercased())
+        // Camel-case the singular element so it matches `lowerExpr` identifier
+        // keys (`vital signs` → `vitalSign`), not a spaced surface form that
+        // later `qualifyToLoopVar` would mis-read as a distinct property.
+        let elementVar = camelCase(lexicon.singularize(noun.lowercased()))
 
         // Source: a bound collection identifier, fetched once. Invocations are
         // rejected so the collection isn't re-evaluated per reducer.
@@ -1841,7 +1964,10 @@ public struct ASTToIR {
         switch e {
         case .identifierRef(let name):
             // The loop variable itself is the element, not a property of it.
-            if name == loopVar { return e }
+            // Compare after camel/space normalization so a spaced elementVar
+            // from `singularize("vital signs")` ("vital sign") still matches
+            // the camelCased identifier produced by `lowerExpr` ("vitalSign").
+            if name == loopVar || scopeKey(name) == scopeKey(loopVar) { return e }
             return .propertyAccess(.identifierRef(name: loopVar), propertyName: name)
         default:
             return e
@@ -2204,6 +2330,7 @@ public struct ASTToIR {
         case .wait: return "wait"
         case .assertStmt: return "assert"
         case .conditional: return "branch"
+        case .matchBranch: return "matchBranch"
         case .iteration: return "iterate"
         case .recover: return "recover"
         case .simultaneously: return "simultaneously"

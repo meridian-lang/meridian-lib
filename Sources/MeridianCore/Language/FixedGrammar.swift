@@ -13,6 +13,18 @@ public struct FixedStatementKeywords: Sendable {
     public let waitPrefix: String
     public let emitPrefix: String
     public let ifPrefix: String
+    /// Fixed control-flow introducer for `BranchCondition.match` surfaces
+    /// (`branch on <expr>:`). Kept in FixedGrammar (not the lexicon) because it
+    /// is structural syntax, not domain-synonymisable vocabulary.
+    public let branchOnPrefix: String
+    /// Match-branch wildcard case labels (`anything:` / `_:`) accepted by the
+    /// parser. Canonical verbalizer emit uses `matchBranchCanonicalWildcard`.
+    public let matchBranchWildcardLabels: Set<String>
+    /// Canonical wildcard label the Verbalizer emits for `.wildcard` patterns.
+    public let matchBranchCanonicalWildcard: String
+    /// Leading possession verbs stripped when verbalizing opaque boolean
+    /// properties (`hasInventory` → `have inventory`). Shared by Verbalizer only.
+    public let possessionPrefixes: [String]
     public let letPrefix: String
     public let letBeMarker: String
     public let bindPrefix: String
@@ -39,6 +51,10 @@ public struct FixedStatementKeywords: Sendable {
         waitPrefix: String = "wait ",
         emitPrefix: String = "emit ",
         ifPrefix: String = "if ",
+        branchOnPrefix: String = "branch on ",
+        matchBranchWildcardLabels: Set<String> = ["anything", "_"],
+        matchBranchCanonicalWildcard: String = "anything",
+        possessionPrefixes: [String] = ["has ", "have "],
         letPrefix: String = "let ",
         letBeMarker: String = " be ",
         bindPrefix: String = "bind ",
@@ -64,6 +80,10 @@ public struct FixedStatementKeywords: Sendable {
         self.waitPrefix = waitPrefix
         self.emitPrefix = emitPrefix
         self.ifPrefix = ifPrefix
+        self.branchOnPrefix = branchOnPrefix
+        self.matchBranchWildcardLabels = matchBranchWildcardLabels
+        self.matchBranchCanonicalWildcard = matchBranchCanonicalWildcard
+        self.possessionPrefixes = possessionPrefixes
         self.letPrefix = letPrefix
         self.letBeMarker = letBeMarker
         self.bindPrefix = bindPrefix
@@ -80,7 +100,7 @@ public struct FixedStatementKeywords: Sendable {
 
     public var primitivePrefixes: [String] {
         [
-            emitPrefix, bindPrefix, rebindPrefix, invokePrefix, ifPrefix,
+            emitPrefix, bindPrefix, rebindPrefix, invokePrefix, ifPrefix, branchOnPrefix,
             whilePrefix, untilPrefix, waitPrefix, recoverPrefix, complete,
             commit, letPrefix, forEachPrefix, forEveryPrefix, simultaneouslyHeader,
         ]
@@ -96,6 +116,12 @@ public struct FixedStatementKeywords: Sendable {
 
     public var inlineOtherwiseMarker: String {
         ", " + otherwisePrefix
+    }
+
+    /// Match-branch default arm label (`otherwise:`). Verbalizer `otherwise:`
+    /// ↔ IR `BranchIR.thenBlock` ↔ codegen `default:`.
+    public var matchOtherwiseLabel: String {
+        otherwiseKeyword + ":"
     }
 }
 
@@ -409,6 +435,154 @@ public struct FixedLintMarkers: Sendable {
     }
 }
 
+/// Canonical English emit surface for `Verbalizer`. Every structural token the
+/// verbalizer prints must come from here or another `FixedGrammar` field —
+/// never inline literals in `Verbalizer.swift`.
+public struct FixedVerbalizerSurface: Sendable {
+    public let workflowHeaderPrefix: String
+    public let workflowParamArticle: String
+    public let workflowParamJoiner: String
+    public let workflowWithJoiner: String
+    public let definitionHeaderPrefix: String
+    public let definitionCopulaMarker: String
+    public let definitionPredicateCopula: String
+    public let dataTableDirectivePrefix: String
+    public let dataTableDirectiveSuffix: String
+    public let definiteArticle: String
+    public let nowKeyword: String
+    public let envVarPrefix: String
+    public let possessiveSuffix: String
+    public let quantifierBodyHaveMarker: String
+    public let aggregateCountPrefix: String
+    public let aggregateListPrefix: String
+    public let superlativeSmallestLabel: String
+    public let superlativeLargestLabel: String
+    public let sortByMarker: String
+    public let sortByCompactPrefix: String
+    public let sortAscendingLabel: String
+    public let sortDescendingLabel: String
+    public let sortDirectionComma: String
+    public let takeTheFirstPrefix: String
+    public let descriptionElementInMarker: String
+    public let recoverAnyPattern: String
+    public let emitWithMarker: String
+    public let shellCommentSeparator: String
+    public let syntheticTriggerFiresSuffix: String
+    public let assertPrefix: String
+    public let assertOpacityExpectedPrefix: String
+    public let autonomyFailuresSuffix: String
+    public let autonomyStepsSuffix: String
+    public let backgroundDetachedSimultaneouslyHeader: String
+    public let bindEqualsMarker: String
+    public let recordListSeparator: String
+    public let tableCellSeparator: String
+    public let tableRowPrefix: String
+    public let tableRowSuffix: String
+    public let choicePromptTerminator: String
+    public let templateHoleOpen: String
+    public let templateHoleClose: String
+    public let shellHoleOpen: String
+    public let shellHoleClose: String
+    public let falsyLiteral: String
+    public let truthyLiteral: String
+
+    public init(
+        workflowHeaderPrefix: String = "To ",
+        workflowParamArticle: String = "a ",
+        workflowParamJoiner: String = " and ",
+        workflowWithJoiner: String = " with ",
+        definitionHeaderPrefix: String = "Definition: a ",
+        definitionCopulaMarker: String = " is ",
+        definitionPredicateCopula: String = " is ",
+        dataTableDirectivePrefix: String = "!!! table (( data: ",
+        dataTableDirectiveSuffix: String = " ))",
+        definiteArticle: String = "the ",
+        nowKeyword: String = "now",
+        envVarPrefix: String = "$",
+        possessiveSuffix: String = "'s ",
+        quantifierBodyHaveMarker: String = "have ",
+        aggregateCountPrefix: String = "the number of ",
+        aggregateListPrefix: String = "the list of ",
+        superlativeSmallestLabel: String = "smallest",
+        superlativeLargestLabel: String = "largest",
+        sortByMarker: String = " sorted by ",
+        sortByCompactPrefix: String = "sorted by ",
+        sortAscendingLabel: String = "ascending",
+        sortDescendingLabel: String = "descending",
+        sortDirectionComma: String = ", ",
+        takeTheFirstPrefix: String = "the first ",
+        descriptionElementInMarker: String = " in ",
+        recoverAnyPattern: String = "any",
+        emitWithMarker: String = " with ",
+        shellCommentSeparator: String = " -- ",
+        syntheticTriggerFiresSuffix: String = " fires",
+        assertPrefix: String = "assert ",
+        assertOpacityExpectedPrefix: String = "expected",
+        autonomyFailuresSuffix: String = " failures",
+        autonomyStepsSuffix: String = " steps",
+        backgroundDetachedSimultaneouslyHeader: String = "in the background, simultaneously:",
+        bindEqualsMarker: String = " = ",
+        recordListSeparator: String = "; ",
+        tableCellSeparator: String = " | ",
+        tableRowPrefix: String = "| ",
+        tableRowSuffix: String = " |",
+        choicePromptTerminator: String = ".",
+        templateHoleOpen: String = "{{ ",
+        templateHoleClose: String = " }}",
+        shellHoleOpen: String = "{",
+        shellHoleClose: String = "}",
+        falsyLiteral: String = "false",
+        truthyLiteral: String = "true"
+    ) {
+        self.workflowHeaderPrefix = workflowHeaderPrefix
+        self.workflowParamArticle = workflowParamArticle
+        self.workflowParamJoiner = workflowParamJoiner
+        self.workflowWithJoiner = workflowWithJoiner
+        self.definitionHeaderPrefix = definitionHeaderPrefix
+        self.definitionCopulaMarker = definitionCopulaMarker
+        self.definitionPredicateCopula = definitionPredicateCopula
+        self.dataTableDirectivePrefix = dataTableDirectivePrefix
+        self.dataTableDirectiveSuffix = dataTableDirectiveSuffix
+        self.definiteArticle = definiteArticle
+        self.nowKeyword = nowKeyword
+        self.envVarPrefix = envVarPrefix
+        self.possessiveSuffix = possessiveSuffix
+        self.quantifierBodyHaveMarker = quantifierBodyHaveMarker
+        self.aggregateCountPrefix = aggregateCountPrefix
+        self.aggregateListPrefix = aggregateListPrefix
+        self.superlativeSmallestLabel = superlativeSmallestLabel
+        self.superlativeLargestLabel = superlativeLargestLabel
+        self.sortByMarker = sortByMarker
+        self.sortByCompactPrefix = sortByCompactPrefix
+        self.sortAscendingLabel = sortAscendingLabel
+        self.sortDescendingLabel = sortDescendingLabel
+        self.sortDirectionComma = sortDirectionComma
+        self.takeTheFirstPrefix = takeTheFirstPrefix
+        self.descriptionElementInMarker = descriptionElementInMarker
+        self.recoverAnyPattern = recoverAnyPattern
+        self.emitWithMarker = emitWithMarker
+        self.shellCommentSeparator = shellCommentSeparator
+        self.syntheticTriggerFiresSuffix = syntheticTriggerFiresSuffix
+        self.assertPrefix = assertPrefix
+        self.assertOpacityExpectedPrefix = assertOpacityExpectedPrefix
+        self.autonomyFailuresSuffix = autonomyFailuresSuffix
+        self.autonomyStepsSuffix = autonomyStepsSuffix
+        self.backgroundDetachedSimultaneouslyHeader = backgroundDetachedSimultaneouslyHeader
+        self.bindEqualsMarker = bindEqualsMarker
+        self.recordListSeparator = recordListSeparator
+        self.tableCellSeparator = tableCellSeparator
+        self.tableRowPrefix = tableRowPrefix
+        self.tableRowSuffix = tableRowSuffix
+        self.choicePromptTerminator = choicePromptTerminator
+        self.templateHoleOpen = templateHoleOpen
+        self.templateHoleClose = templateHoleClose
+        self.shellHoleOpen = shellHoleOpen
+        self.shellHoleClose = shellHoleClose
+        self.falsyLiteral = falsyLiteral
+        self.truthyLiteral = truthyLiteral
+    }
+}
+
 /// The closed grammar skeleton of Meridian's controlled English: the surface
 /// tokens that define *what the language is*, as opposed to *what a domain
 /// calls things*. Unlike `EnglishLexicon`'s domain-synonymisable tables, these
@@ -436,6 +610,7 @@ public final class FixedGrammar: Sendable {
     public let iterationMarkers: FixedIterationMarkers
     public let autonomyMarkers: FixedAutonomyMarkers
     public let lintMarkers: FixedLintMarkers
+    public let verbalizer: FixedVerbalizerSurface
     public let implicitParamFillConnector: String
     public let negationWrapperPrefix: String
     public let negationWrapperSuffix: String
@@ -656,6 +831,7 @@ public final class FixedGrammar: Sendable {
         iterationMarkers: FixedIterationMarkers = .init(),
         autonomyMarkers: FixedAutonomyMarkers = .init(),
         lintMarkers: FixedLintMarkers = .init(),
+        verbalizer: FixedVerbalizerSurface = .init(),
         implicitParamFillConnector: String = " for the ",
         negationWrapperPrefix: String = "not (",
         negationWrapperSuffix: String = ")",
@@ -752,6 +928,7 @@ public final class FixedGrammar: Sendable {
         self.iterationMarkers = iterationMarkers
         self.autonomyMarkers = autonomyMarkers
         self.lintMarkers = lintMarkers
+        self.verbalizer = verbalizer
         self.implicitParamFillConnector = implicitParamFillConnector
         self.negationWrapperPrefix = negationWrapperPrefix
         self.negationWrapperSuffix = negationWrapperSuffix

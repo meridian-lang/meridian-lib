@@ -431,14 +431,16 @@ public struct AccessMatrix: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "AccessMatrix", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L62:C0") {
-            // L62
+        if __meridianShouldRun("progress:0.0:L64:C0") {
+            // L64
             try await runtime.assert((((state.get("matrixReport"))?.description ?? "")).contains(("access-matrix")), message: "Expected the matrix report contains \"access-matrix\"")
-            try await runtime.checkpoint(label: "progress:0.0:L62:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.0:L64:C0", state: state.snapshot())
         }
         // L27
         state.bind("accessMatrix", Value.list([.record(["role": .string("admin"), "classification": .string("classified"), "outcome": .string("allow")]), .record(["role": .string("admin"), "classification": .string("public"), "outcome": .string("allow")]), .record(["role": .string("user"), "classification": .string("classified"), "outcome": .string("deny")]), .record(["role": .string("user"), "classification": .string("public"), "outcome": .string("allow")])]))
-        if __meridianShouldRun("progress:0.2:L48:C0") {
+        // L40
+        state.bind("matrixReport", ("access-matrix:\n" + ({ () -> String in if MeridianComparison.gt(state.get("classifiedCount"), .number(Decimal(0))) { return "status: reviewed" } else { return "status: empty" } })() + "\npending requests: " + meridianStringify(state.get("classifiedCount") ?? .null)))
+        if __meridianShouldRun("progress:0.3:L48:C0") {
             // L48
             let accessRequests = try await runtime.invoke(
                 tool: "request.list",
@@ -448,34 +450,34 @@ public struct AccessMatrix: MeridianWorkflow {
             )
             state.bind("accessRequests", accessRequests)
 
-            try await runtime.checkpoint(label: "progress:0.2:L48:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.3:L48:C0", state: state.snapshot())
         }
-        // L45
+        // L47
         state.bind("classifiedCount", Decimal(((state.get("accessRequests"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("pending"))) }.count))
-        if __meridianShouldRun("progress:0.4:L49:C0") {
-            // L49
+        if __meridianShouldRun("progress:0.5:L51:C0") {
+            // L51
             try await runtime.emit(
                 event: "governance.audit",
                 payload: [
                     "body": state.get("matrixReport") ?? .null,
                 ]
             )
-            try await runtime.checkpoint(label: "progress:0.4:L49:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.5:L51:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.5:L50:C0") {
-            // L50
+        if __meridianShouldRun("progress:0.6:L52:C0") {
+            // L52
             try await runtime.assert(MeridianComparison.ge(state.get("classifiedCount"), .number(Decimal(0))), message: "Expected the classified count is at least 0")
-            try await runtime.checkpoint(label: "progress:0.5:L50:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.6:L52:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.6:L51:C0") {
-            // L51
+        if __meridianShouldRun("progress:0.7:L53:C0") {
+            // L53
             try await runtime.emit(
                 event: "governance.report",
                 payload: [
                     "message": .string("access matrix pass complete"),
                 ]
             )
-            try await runtime.checkpoint(label: "progress:0.6:L51:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.7:L53:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

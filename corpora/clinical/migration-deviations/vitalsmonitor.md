@@ -3,8 +3,8 @@
 - Original: `vitals_monitor/SKILL.md`
 - Ported: `vitalsmonitor.meri`
 - Tier: 2 (light edits)
-- Similarity: 81%
-- Lines: 59 -> 65 (+15 / -9)
+- Similarity: 79%
+- Lines: 59 -> 65 (+16 / -10)
 
 ## Frontmatter
 - Added: (none)
@@ -29,6 +29,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=2, template=1
 - Judgment: 0 blocks, 0 lines
+- canonical_drift: synonym=1, structure=0, desugar=0, meaning=43
 
 ### Inert section details
 - L11 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
@@ -62,16 +63,18 @@ These sections were made non-executable in the port and should be reviewed as mi
  - Input: a patient.
  - Output: either a confirmed fresh reading or an escalation for a patient
    who has gone stale.
-@@ -28,6 +28,9 @@
+@@ -28,7 +28,10 @@
  - "run vitals watch"
  
  ## Rules
+-When a patient has been unmonitored for more than 4 hours, escalate the patient.
 +
 +### Rules — steps
 +
- When a patient has been unmonitored for more than 4 hours, escalate the patient.
++When a patient is flagged as unmonitored, escalate the patient.
  
  ## Workflow
+ until the patient is monitored,
 @@ -40,7 +43,7 @@
  ## Guarantees
  make sure the patient's last observed at is within the last 4 hours.

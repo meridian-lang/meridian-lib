@@ -92,6 +92,84 @@ struct ASTToIRDeepCoverageTests {
         #expect(!workflows.isEmpty)
     }
 
+    @Test("non-literal match branch pattern is a semantic lowering error")
+    func nonLiteralMatchBranchPatternSemanticError() {
+        let ast = MeridianFile(workflows: [
+            WorkflowAST(
+                pattern: PhrasePattern(segments: [.literal("route")]),
+                body: ASTBlock(statements: [
+                    .matchBranch(MatchBranchStatementAST(
+                        subject: .identifierRef("choice"),
+                        cases: [
+                            MatchBranchCaseAST(
+                                pattern: .literal(.identifierRef("choice")),
+                                block: ASTBlock(statements: [.complete(CompleteStatementAST())])
+                            )
+                        ],
+                        sourceLine: 3
+                    ))
+                ])
+            )
+        ])
+
+        do {
+            _ = try ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", trace: .silent()).lower(ast)
+            Issue.record("expected matchBranchSemantic")
+        } catch let error as CompilerError {
+            #expect(error.diagnostics.contains { diagnostic in
+                diagnostic.code == .matchBranchSemantic
+                    && diagnostic.message.contains("match-branch case pattern must be a literal")
+            })
+        } catch {
+            Issue.record("unexpected error: \(error)")
+        }
+    }
+
+    @Test("match branch lowering trace renders every pattern kind")
+    func matchBranchTracePatternNames() throws {
+        let cap = ParserTrace.capturing(categories: [.lowering])
+        let ast = MeridianFile(workflows: [
+            WorkflowAST(
+                pattern: PhrasePattern(segments: [.literal("route")]),
+                body: ASTBlock(statements: [
+                    .matchBranch(MatchBranchStatementAST(
+                        subject: .identifierRef("choice"),
+                        cases: [
+                            MatchBranchCaseAST(
+                                pattern: .literal(.literal(.string("ready"))),
+                                block: ASTBlock(statements: [.complete(CompleteStatementAST())])
+                            ),
+                            MatchBranchCaseAST(
+                                pattern: .enumValue("approved"),
+                                block: ASTBlock(statements: [.complete(CompleteStatementAST())])
+                            ),
+                            MatchBranchCaseAST(
+                                pattern: .wildcard,
+                                block: ASTBlock(statements: [.complete(CompleteStatementAST())])
+                            ),
+                        ],
+                        otherwiseBlock: ASTBlock(statements: [.complete(CompleteStatementAST())]),
+                        sourceLine: 3
+                    ))
+                ])
+            )
+        ])
+
+        let workflows = try ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", trace: cap.trace).lower(ast)
+        #expect(workflows.first?.body.statements.count == 1)
+        let trace = cap.lines().joined(separator: "\n")
+        #expect(trace.contains("literal("), Comment(rawValue: trace))
+        #expect(trace.contains("enum(approved)"), Comment(rawValue: trace))
+        #expect(trace.contains("wildcard"), Comment(rawValue: trace))
+    }
+
+    @Test("direct modal statement lowering returns no primitives")
+    func directModalStatementLowering() throws {
+        let lowered = try ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", trace: .silent())
+            .lowerStatement(.modal(.lenient), mode: .strict, depth: 0)
+        #expect(lowered.isEmpty)
+    }
+
     // MARK: - `.modal` block marker + rebind-to-invoke
 
     @Test("`in lenient mode.` as a direct statement lowers to no primitive")
@@ -252,6 +330,23 @@ struct ASTToIRDeepCoverageTests {
         ])
         let block = ASTBlock(statements: [
             .bind(BindStatementAST(name: "x", value: value, sourceLine: 1)),
+            .matchBranch(MatchBranchStatementAST(
+                subject: .identifierRef("the user"),
+                cases: [
+                    MatchBranchCaseAST(
+                        pattern: .literal(.identifierRef("the user")),
+                        block: ASTBlock(statements: [
+                            .bind(BindStatementAST(name: "caseValue", value: .identifierRef("the user")))
+                        ])
+                    ),
+                    MatchBranchCaseAST(pattern: .enumValue("approved"), block: ASTBlock(statements: [])),
+                    MatchBranchCaseAST(pattern: .wildcard, block: ASTBlock(statements: [])),
+                ],
+                otherwiseBlock: ASTBlock(statements: [
+                    .bind(BindStatementAST(name: "otherwiseValue", value: .identifierRef("the user")))
+                ]),
+                sourceLine: 3
+            )),
             .proseStep(ProseStepAST(text: "the user", sourceLine: 2)),
         ], sourceLine: 1)
 
@@ -276,7 +371,47 @@ struct ASTToIRDeepCoverageTests {
         } else {
             Issue.record("expected verbPredicate after substitution")
         }
-        guard case .proseStep(let prose) = out.statements[1] else {
+        guard case .matchBranch(let match) = out.statements[1] else {
+            Issue.record("expected substituted matchBranch")
+            return
+        }
+        if case .identifierRef(let subjectName) = match.subject {
+            #expect(subjectName == "the substituted user")
+        } else {
+            Issue.record("expected substituted match subject")
+        }
+        if case .literal(.identifierRef(let patternName)) = match.cases[0].pattern {
+            #expect(patternName == "the substituted user")
+        } else {
+            Issue.record("expected substituted literal match pattern")
+        }
+        guard case .bind(let caseBind) = match.cases[0].block.statements.first else {
+            Issue.record("expected substituted match case bind")
+            return
+        }
+        if case .identifierRef(let caseValueName) = caseBind.value {
+            #expect(caseValueName == "the substituted user")
+        } else {
+            Issue.record("expected substituted match case bind value")
+        }
+        guard case .enumValue("approved") = match.cases[1].pattern else {
+            Issue.record("expected enum match pattern to survive")
+            return
+        }
+        guard case .wildcard = match.cases[2].pattern else {
+            Issue.record("expected wildcard match pattern to survive")
+            return
+        }
+        guard case .bind(let otherwiseBind) = match.otherwiseBlock?.statements.first else {
+            Issue.record("expected substituted otherwise bind")
+            return
+        }
+        if case .identifierRef(let otherwiseName) = otherwiseBind.value {
+            #expect(otherwiseName == "the substituted user")
+        } else {
+            Issue.record("expected substituted otherwise bind value")
+        }
+        guard case .proseStep(let prose) = out.statements[2] else {
             Issue.record("expected proseStep passthrough")
             return
         }

@@ -37,72 +37,72 @@ struct IRExpressionEmissionTests {
     private let emitter = SwiftEmitter()
 
     @Test("literal string")
-    func literalString() {
+    func literalString() throws {
         let expr = IRExpression.literal(.string("USD"))
-        #expect(emitter.emitExpr(expr) == "\"USD\"")
+        #expect(try emitter.emitExpr(expr) == "\"USD\"")
     }
 
     @Test("literal number")
-    func literalNumber() {
+    func literalNumber() throws {
         let expr = IRExpression.literal(.number(42))
-        #expect(emitter.emitExpr(expr) == "Decimal(42)")
+        #expect(try emitter.emitExpr(expr) == "Decimal(42)")
     }
 
     @Test("literal bool")
-    func literalBool() {
-        #expect(emitter.emitExpr(.literal(.boolean(true))) == "true")
-        #expect(emitter.emitExpr(.literal(.boolean(false))) == "false")
+    func literalBool() throws {
+        #expect(try emitter.emitExpr(.literal(.boolean(true))) == "true")
+        #expect(try emitter.emitExpr(.literal(.boolean(false))) == "false")
     }
 
     @Test("literal money")
-    func literalMoney() {
+    func literalMoney() throws {
         let expr = IRExpression.literal(.money(5000, currency: "USD"))
-        #expect(emitter.emitExpr(expr) == "Money(amount: Decimal(5000), currency: \"USD\")")
+        #expect(try emitter.emitExpr(expr) == "Money(amount: Decimal(5000), currency: \"USD\")")
     }
 
     @Test("literal enum value")
-    func literalEnum() {
+    func literalEnum() throws {
         let expr = IRExpression.literal(.enumValue("approved", kind: "ApprovalVerdict"))
-        #expect(emitter.emitExpr(expr) == "ApprovalVerdict.approved")
+        #expect(try emitter.emitExpr(expr) == "ApprovalVerdict.approved")
     }
 
     @Test("identifierRef")
-    func identifierRef() {
+    func identifierRef() throws {
         let expr = IRExpression.identifierRef(name: "customer")
-        #expect(emitter.emitExpr(expr) == "state.get(\"customer\")")
+        #expect(try emitter.emitExpr(expr) == "state.get(\"customer\")")
     }
 
     @Test("propertyAccess one level")
-    func propertyAccessOneLevel() {
+    func propertyAccessOneLevel() throws {
         let expr = IRExpression.propertyAccess(.identifierRef(name: "order"), propertyName: "id")
-        #expect(emitter.emitExpr(expr) == "state.get(\"order.id\")")
+        #expect(try emitter.emitExpr(expr) == "state.get(\"order.id\")")
     }
 
     @Test("propertyAccess nested path")
-    func propertyAccessNested() {
+    func propertyAccessNested() throws {
         let expr = IRExpression.propertyAccess(
             .propertyAccess(.identifierRef(name: "customer"), propertyName: "account manager"),
             propertyName: "email"
         )
         // Property paths are camelCase end-to-end (matches Codable's default
         // key encoding for opaque domain values traversed by State.get).
-        #expect(emitter.emitExpr(expr) == "state.get(\"customer.accountManager.email\")")
+        #expect(try emitter.emitExpr(expr) == "state.get(\"customer.accountManager.email\")")
     }
 
     @Test("constantRef camelCase")
-    func constantRef() {
+    func constantRef() throws {
         let expr = IRExpression.constantRef(name: "high value threshold")
-        #expect(emitter.emitExpr(expr) == "constants.highValueThreshold")
+        #expect(try emitter.emitExpr(expr) == "constants.highValueThreshold")
     }
 
     @Test("comparison greaterThan emits Value-aware helper when LHS reads state")
-    func comparison() {
+    func comparison() throws {
         let expr = IRExpression.comparison(
             .identifierRef(name: "score"),
             .greaterThan,
             .literal(.number(0.5))
         )
-        let emitted = emitter.emitExpr(expr)
+        let emitted = try emitter.emitExpr(expr)
         // state.get(...) returns Value? — Swift can't compare it directly, so
         // codegen routes through the runtime helper.
         #expect(emitted.contains("MeridianComparison.gt"))
@@ -110,12 +110,12 @@ struct IRExpressionEmissionTests {
     }
 
     @Test("logical and")
-    func logicalAnd() {
+    func logicalAnd() throws {
         let expr = IRExpression.logical(.and, [
             .literal(.boolean(true)),
             .literal(.boolean(false))
         ])
-        #expect(emitter.emitExpr(expr).contains("&&"))
+        #expect(try emitter.emitExpr(expr).contains("&&"))
     }
 }
 
@@ -133,7 +133,7 @@ struct Wave3QueryPlanGoldenTests {
     // shape — element-context rewriting, filter conjunction, sort key, or the
     // `Array(...prefix(n))` wrap — is caught here.
     @Test("source + adjective + verb clause + sort + first N → a single golden pipeline")
-    func fullQueryPlanGolden() {
+    func fullQueryPlanGolden() throws {
         let plan = DescriptionIR(
             collection: .identifierRef(name: "pages"),
             elementVar: "page",
@@ -149,23 +149,23 @@ struct Wave3QueryPlanGoldenTests {
         let expected = #"""
         Value.list(Array(((state.get("pages"))?.asList ?? []).filter { __e in (meridianDef_Page_popular(__e)) && (MeridianComparison.identifies(__e.member("owner"), state.get("user") ?? .null)) }.sorted { __a, __b in MeridianComparison.orderedBefore(__a.member("updatedAt"), __b.member("updatedAt"), ascending: false) }.prefix(3)))
         """#
-        let out = emitter.emitExpr(.description(plan))
+        let out = try emitter.emitExpr(.description(plan))
         #expect(out == expected, Comment(rawValue: out))
     }
 
     @Test("the same plan as a count aggregate wraps the pipeline in Decimal(...).count")
-    func countAggregateGolden() {
+    func countAggregateGolden() throws {
         let plan = DescriptionIR(collection: .identifierRef(name: "pages"), elementVar: "page")
-        #expect(emitter.emitExpr(.aggregate(.count, plan))
+        #expect(try emitter.emitExpr(.aggregate(.count, plan))
                 == #"Decimal(((state.get("pages"))?.asList ?? []).count)"#)
     }
 
     @Test("a superlative forces its own sort and takes .first")
-    func superlativeGolden() {
+    func superlativeGolden() throws {
         let plan = SuperlativeIR(
             description: DescriptionIR(collection: .identifierRef(name: "deals"), elementVar: "deal"),
             sortPath: "amount", ascending: false)
-        #expect(emitter.emitExpr(.superlative(plan))
+        #expect(try emitter.emitExpr(.superlative(plan))
                 == #"(((state.get("deals"))?.asList ?? []).sorted { __a, __b in MeridianComparison.orderedBefore(__a.member("amount"), __b.member("amount"), ascending: false) }.first)"#)
     }
 }
@@ -251,6 +251,23 @@ struct SwiftEmitterPrimitiveTests {
         #expect(out.contains("await runtime.emitLenient("))
     }
 
+    @Test("branch match emits switch cases and default from thenBlock")
+    func branchMatchWithDefault() {
+        let done = IRBlock(statements: [.complete(CompleteIR(reason: "matched"))])
+        let fallback = IRBlock(statements: [.complete(CompleteIR(reason: "fallback"))])
+        let ir = BranchIR(
+            condition: .match(.identifierRef(name: "choice"), [
+                BranchCase(pattern: .literal(.string("yes")), block: done),
+                BranchCase(pattern: .wildcard, block: done),
+            ]),
+            thenBlock: fallback
+        )
+        let out = emitter.emitBranch(ir, ctx: ctx, workflow: workflow()).toString()
+        #expect(out.contains("switch state.get(\"choice\")"), Comment(rawValue: out))
+        #expect(out.contains("default:"), Comment(rawValue: out))
+        #expect(out.contains("\"fallback\""), Comment(rawValue: out))
+    }
+
     @Test("branch with else emits if/else")
     func branchWithElse() {
         let thenBlock = IRBlock(statements: [.complete(CompleteIR(reason: "ok"))])
@@ -313,14 +330,14 @@ struct SwiftEmitterWorkflowTests {
     }
 
     @Test("emitted file contains required header")
-    func fileHeader() {
+    func fileHeader() throws {
         let emitter = SwiftEmitter(options: options)
         let wf = IRWorkflow(
             name: "test workflow",
             parameters: [],
             body: IRBlock(statements: [.complete(CompleteIR(reason: nil))])
         )
-        let out = emitter.emitFile(workflows: [wf])
+        let out = try emitter.emitFile(workflows: [wf])
         #expect(out.contains("THIS FILE IS GENERATED BY MERIDIAN"))
         #expect(out.contains("import Foundation"))
         #expect(out.contains("import MeridianRuntime"))
@@ -393,7 +410,7 @@ struct SwiftEmitterWorkflowTests {
     }
 
     @Test("constants decl emits Constants struct")
-    func constantsDecl() {
+    func constantsDecl() throws {
         let emitter = SwiftEmitter(options: options)
         let decl = SwiftEmitter.ConstantsDecl(entries: [
             .init("high value threshold", .money(5000, currency: "USD")),
@@ -401,7 +418,7 @@ struct SwiftEmitterWorkflowTests {
             .init("maximum retry count", .number(3))
         ])
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: []))
-        let out = emitter.emitFile(workflows: [wf], constantsDecl: decl)
+        let out = try emitter.emitFile(workflows: [wf], constantsDecl: decl)
         #expect(out.contains("public struct Constants: Sendable {"))
         #expect(out.contains("public let highValueThreshold: Money"))
         #expect(out.contains("public let fraudRiskThreshold: Decimal"))
@@ -539,9 +556,9 @@ struct SwiftEmitterFormattingTests {
     // MARK: Line structure
 
     @Test("emitFile produces multi-line output")
-    func multiLine() {
+    func multiLine() throws {
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: []))
-        let out = emitter().emitFile(workflows: [wf])
+        let out = try emitter().emitFile(workflows: [wf])
         let lines = out.split(separator: "\n", omittingEmptySubsequences: false)
         #expect(lines.count > 5)
         #expect(out.contains("let __meridianResumeContext = await runtime.consumeResumeContext()"))
@@ -570,13 +587,13 @@ struct SwiftEmitterFormattingTests {
     }
 
     @Test("every emitFile line is a separate line (no embedded newlines in items)")
-    func noEmbeddedNewlines() {
+    func noEmbeddedNewlines() throws {
         let wf = IRWorkflow(
             name: "process an order placed by a customer",
             parameters: [IRParameter(name: "order", kind: KindRef("Order"))],
             body: IRBlock(statements: [.complete(CompleteIR(reason: nil))])
         )
-        let out = emitter().emitFile(workflows: [wf])
+        let out = try emitter().emitFile(workflows: [wf])
         // Each line from split should itself be a single line
         let lines = out.components(separatedBy: "\n")
         for line in lines {
@@ -585,9 +602,9 @@ struct SwiftEmitterFormattingTests {
     }
 
     @Test("header lines appear on separate lines")
-    func headerLinesAreSeparate() {
+    func headerLinesAreSeparate() throws {
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: []))
-        let out = emitter().emitFile(workflows: [wf])
+        let out = try emitter().emitFile(workflows: [wf])
         let lines = out.components(separatedBy: "\n")
         #expect(lines.contains("// THIS FILE IS GENERATED BY MERIDIAN. DO NOT EDIT."))
         #expect(lines.contains("// Source: test.meridian"))
@@ -597,7 +614,7 @@ struct SwiftEmitterFormattingTests {
     }
 
     @Test("workflow struct lines appear on separate lines")
-    func workflowLinesAreSeparate() {
+    func workflowLinesAreSeparate() throws {
         let wf = IRWorkflow(
             name: "process an order placed by a customer",
             parameters: [
@@ -606,7 +623,7 @@ struct SwiftEmitterFormattingTests {
             ],
             body: IRBlock(statements: [.complete(CompleteIR(reason: nil))])
         )
-        let lines = emitter().emitFile(workflows: [wf]).components(separatedBy: "\n")
+        let lines = try emitter().emitFile(workflows: [wf]).components(separatedBy: "\n")
         #expect(lines.contains("public struct ProcessOrder: MeridianWorkflow {"))
         #expect(lines.contains("    public let runtime: Runtime"))
         #expect(lines.contains("    public let order: Order"))
@@ -619,13 +636,13 @@ struct SwiftEmitterFormattingTests {
     }
 
     @Test("blank lines separate major sections")
-    func blankLinesBetweenSections() {
+    func blankLinesBetweenSections() throws {
         let wf = IRWorkflow(
             name: "test",
             parameters: [IRParameter(name: "x", kind: KindRef("X"))],
             body: IRBlock(statements: [])
         )
-        let lines = emitter().emitFile(workflows: [wf]).components(separatedBy: "\n")
+        let lines = try emitter().emitFile(workflows: [wf]).components(separatedBy: "\n")
         // There should be at least one blank line in the output
         #expect(lines.contains(""))
     }
@@ -633,19 +650,19 @@ struct SwiftEmitterFormattingTests {
     // MARK: Constants guard
 
     @Test("let constants = Constants() NOT emitted without constantsDecl")
-    func noConstantsWithoutDecl() {
+    func noConstantsWithoutDecl() throws {
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: []))
-        let out = emitter().emitFile(workflows: [wf])
+        let out = try emitter().emitFile(workflows: [wf])
         #expect(!out.contains("let constants = Constants()"))
     }
 
     @Test("let constants = Constants() IS emitted with constantsDecl")
-    func constantsWithDecl() {
+    func constantsWithDecl() throws {
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: []))
         let decl = SwiftEmitter.ConstantsDecl(entries: [
             .init("max retries", .number(3))
         ])
-        let out = emitter().emitFile(workflows: [wf], constantsDecl: decl)
+        let out = try emitter().emitFile(workflows: [wf], constantsDecl: decl)
         let lines = out.components(separatedBy: "\n")
         #expect(lines.contains("        let constants = Constants()"))
         #expect(lines.contains("public struct Constants: Sendable {"))
@@ -655,7 +672,7 @@ struct SwiftEmitterFormattingTests {
     // MARK: Source line comments
 
     @Test("source line comments appear on own line when enabled")
-    func sourceLineCommentOnOwnLine() {
+    func sourceLineCommentOnOwnLine() throws {
         let ir = IRWorkflow(
             name: "test",
             parameters: [],
@@ -665,12 +682,12 @@ struct SwiftEmitterFormattingTests {
             ])
         )
         let e = SwiftEmitter(options: .init(emitSourceLineComments: true))
-        let lines = e.emitFile(workflows: [ir]).components(separatedBy: "\n")
+        let lines = try e.emitFile(workflows: [ir]).components(separatedBy: "\n")
         #expect(lines.contains("        // L7"))
     }
 
     @Test("no source line comments when disabled")
-    func noSourceLineComments() {
+    func noSourceLineComments() throws {
         let ir = IRWorkflow(
             name: "test",
             parameters: [],
@@ -680,7 +697,7 @@ struct SwiftEmitterFormattingTests {
             ])
         )
         let e = SwiftEmitter(options: .init(emitSourceLineComments: false))
-        let out = e.emitFile(workflows: [ir])
+        let out = try e.emitFile(workflows: [ir])
         #expect(!out.contains("// L7"))
     }
 
@@ -689,7 +706,7 @@ struct SwiftEmitterFormattingTests {
     /// Verifies the complete line-by-line structure of the simplest workflow.
     /// This is the Phase 2 forcing function golden check.
     @Test("LenientlySyncAnalytics golden line structure")
-    func lenientlySyncAnalyticsGolden() {
+    func lenientlySyncAnalyticsGolden() throws {
         // Property names use spaces (as the real parser produces from "the
         // order's total amount"). Codegen camelCases them so paths line up
         // with Swift property names and Codable's default keying:
@@ -718,7 +735,7 @@ struct SwiftEmitterFormattingTests {
             sourceFileName: "ecommerce.meridian",
             emitSourceLineComments: false
         ))
-        let lines = e.emitFile(workflows: [wf]).components(separatedBy: "\n")
+        let lines = try e.emitFile(workflows: [wf]).components(separatedBy: "\n")
 
         // File header
         #expect(lines.contains("// THIS FILE IS GENERATED BY MERIDIAN. DO NOT EDIT."))

@@ -114,6 +114,12 @@ public extension SwiftEmitter {
                 return kindNames.contains(parent) ? parent : nil
             }
         )
+        for e in d.enumerations {
+            trace.log(.codegen, "emit domain enum \(e.typeName): \(e.cases.count) case(s)")
+        }
+        for k in d.kinds {
+            trace.log(.codegen, "emit domain kind \(k.name) -> \(typeName(k.name))")
+        }
         return StringTemplate {
             "// MARK: - Domain types"
             ""

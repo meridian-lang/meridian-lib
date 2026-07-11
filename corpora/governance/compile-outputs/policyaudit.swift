@@ -431,14 +431,16 @@ public struct PolicyAudit: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "PolicyAudit", parameters: [:])
 
-        if __meridianShouldRun("progress:0.0:L60:C0") {
-            // L60
+        if __meridianShouldRun("progress:0.0:L62:C0") {
+            // L62
             try await runtime.assert((((state.get("auditReport"))?.description ?? "")).contains(("policy-audit")), message: "Expected the audit report contains \"policy-audit\"")
-            try await runtime.checkpoint(label: "progress:0.0:L60:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.0:L62:C0", state: state.snapshot())
         }
         // L27
         state.bind("coverageThresholds", Value.list([.record(["environment": .string("production"), "minimumPolicies": .number(Decimal(3))]), .record(["environment": .string("staging"), "minimumPolicies": .number(Decimal(1))])]))
-        if __meridianShouldRun("progress:0.2:L69:C0") {
+        // L38
+        state.bind("auditReport", ("policy-audit:\n" + ({ () -> String in if MeridianComparison.gt(state.get("evaluatedCount"), .number(Decimal(0))) { return "status: covered" } else { return "status: uncovered" } })() + "\nenvironments evaluated: " + meridianStringify(state.get("evaluatedCount") ?? .null)))
+        if __meridianShouldRun("progress:0.3:L69:C0") {
             // L69
             let verdict = try await runtime.invoke(
                 tool: "policy.evaluate",
@@ -448,9 +450,9 @@ public struct PolicyAudit: MeridianWorkflow {
             )
             state.bind("verdict", verdict)
 
-            try await runtime.checkpoint(label: "progress:0.2:L69:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.3:L69:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.3:L69:C0") {
+        if __meridianShouldRun("progress:0.4:L69:C0") {
             // L69
             let verdict = try await runtime.invoke(
                 tool: "policy.evaluate",
@@ -460,29 +462,29 @@ public struct PolicyAudit: MeridianWorkflow {
             )
             state.bind("verdict", verdict)
 
-            try await runtime.checkpoint(label: "progress:0.3:L69:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.4:L69:C0", state: state.snapshot())
         }
-        // L44
+        // L46
         state.bind("evaluatedCount", Decimal(((state.get("environments"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("active"))) }.count))
-        if __meridianShouldRun("progress:0.5:L48:C0") {
-            // L48
+        if __meridianShouldRun("progress:0.6:L50:C0") {
+            // L50
             try await runtime.emit(
                 event: "governance.report",
                 payload: [
                     "body": state.get("auditReport") ?? .null,
                 ]
             )
-            try await runtime.checkpoint(label: "progress:0.5:L48:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.6:L50:C0", state: state.snapshot())
         }
-        if __meridianShouldRun("progress:0.6:L49:C0") {
-            // L49
+        if __meridianShouldRun("progress:0.7:L51:C0") {
+            // L51
             try await runtime.emit(
                 event: "governance.report",
                 payload: [
                     "message": .string("policy audit pass complete"),
                 ]
             )
-            try await runtime.checkpoint(label: "progress:0.6:L49:C0", state: state.snapshot())
+            try await runtime.checkpoint(label: "progress:0.7:L51:C0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil)

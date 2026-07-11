@@ -1,6 +1,7 @@
 import ArgumentParser
 import Foundation
 import MeridianCore
+import MeridianRuntime
 
 // MARK: - Dependency discovery
 
@@ -48,6 +49,54 @@ enum DependencyDiscovery {
                   source: try String(contentsOf: url, encoding: .utf8))
         }
     }
+
+    /// Load resolved rulebook URLs into `RulebookInput`s (name = file stem).
+    static func loadRulebooks(_ urls: [URL]) throws -> [RulebookInput] {
+        try urls.map { url in
+            .init(name: url.deletingPathExtension().lastPathComponent,
+                  file: url.lastPathComponent,
+                  source: try String(contentsOf: url, encoding: .utf8))
+        }
+    }
+}
+
+// MARK: - Model command input loading
+
+struct CLIModelInput {
+    var meridianURL: URL
+    var meridianSource: String
+    var vocabularies: [Compiler.VocabularyInput]
+    var rulebooks: [RulebookInput]
+    var diagnosticSources: [String: String]
+}
+
+func loadCLIModelInput(input: String, merconfig: [String], rulebook: [String]) throws -> CLIModelInput {
+    let meridianURL = URL(fileURLWithPath: input).standardized
+    guard FileManager.default.fileExists(atPath: meridianURL.path) else {
+        throw ValidationError("File not found: \(input)")
+    }
+
+    let meridianSource = try String(contentsOf: meridianURL, encoding: .utf8)
+    let merconfigURLs = try DependencyDiscovery.resolveMerconfigs(explicit: merconfig, beside: meridianURL)
+    let vocabularies = try DependencyDiscovery.loadVocabularies(merconfigURLs)
+    let rulebookURLs = try DependencyDiscovery.resolveRulebooks(explicit: rulebook, beside: meridianURL)
+    let rulebooks = try DependencyDiscovery.loadRulebooks(rulebookURLs)
+
+    var diagnosticSources: [String: String] = [meridianURL.lastPathComponent: meridianSource]
+    for vocabulary in vocabularies {
+        diagnosticSources[vocabulary.file] = vocabulary.source
+    }
+    for rulebook in rulebooks {
+        diagnosticSources[rulebook.file] = rulebook.source
+    }
+
+    return CLIModelInput(
+        meridianURL: meridianURL,
+        meridianSource: meridianSource,
+        vocabularies: vocabularies,
+        rulebooks: rulebooks,
+        diagnosticSources: diagnosticSources
+    )
 }
 
 // MARK: - Trace bootstrap
@@ -55,15 +104,55 @@ enum DependencyDiscovery {
 /// Build a `ParserTrace` from the CLI's `--trace` spec and optional
 /// `--trace-file` sink. Single source for the bootstrap every diagnostic command
 /// repeated inline.
-func makeCLITrace(spec: String?, file: String? = nil) -> ParserTrace {
+///
+/// Unknown categories and unwritable sink paths throw `ExitCode(1)` after
+/// rendering a coded diagnostic (MER2010 / MER5011).
+func makeCLITrace(spec: String?, file: String? = nil) throws -> ParserTrace {
+    if let spec {
+        let unknown = ParserTrace.validateTraceSpec(spec)
+        if !unknown.isEmpty {
+            let rendered = DiagnosticRenderer(sources: [:], options: .init(color: stderrIsTTY())).render(unknown)
+            FileHandle.standardError.write(Data((rendered + "\n").utf8))
+            throw ExitCode(1)
+        }
+    }
     let trace = ParserTrace()
     if let spec { trace.enable(parsing: spec) }
     if let file {
         let url = URL(fileURLWithPath: file).standardized
-        FileManager.default.createFile(atPath: url.path, contents: nil)
+        let dir = url.deletingLastPathComponent()
+        if !FileManager.default.fileExists(atPath: dir.path) {
+            do {
+                try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+            } catch {
+                throw reportTraceFileError(url, underlying: error)
+            }
+        }
+        guard FileManager.default.createFile(atPath: url.path, contents: nil) else {
+            throw reportTraceFileError(url, underlying: nil)
+        }
+        do {
+            let handle = try FileHandle(forWritingTo: url)
+            try handle.close()
+        } catch {
+            throw reportTraceFileError(url, underlying: error)
+        }
         trace.sink = .file(url)
     }
     return trace
+}
+
+private func reportTraceFileError(_ url: URL, underlying: Error?) -> ExitCode {
+    let detail = underlying.map { ": \($0.localizedDescription)" } ?? ""
+    let d = Diagnostic.error(
+        .unwritableTraceFile,
+        message: "cannot write trace file \(url.path)\(detail)",
+        range: SourceRange(file: "<cli>", line: 1, column: 1),
+        help: "Choose a writable --trace-file path, or omit --trace-file to use stderr."
+    )
+    let rendered = DiagnosticRenderer(sources: [:], options: .init(color: stderrIsTTY())).render([d])
+    FileHandle.standardError.write(Data((rendered + "\n").utf8))
+    return ExitCode(1)
 }
 
 // MARK: - Diagnostics
@@ -85,6 +174,14 @@ func reportCompilerError(_ error: Error, sources: [String: String] = [:],
         let rendered = format == .json
             ? renderer.renderJSON(compilerError.diagnostics)
             : renderer.render(compilerError.diagnostics)
+        FileHandle.standardError.write(Data((rendered + "\n").utf8))
+        return ExitCode(1)
+    }
+    if case IRValidationError.diagnostics(let diagnostics) = error {
+        let renderer = DiagnosticRenderer(sources: sources, options: .init(color: stderrIsTTY()))
+        let rendered = format == .json
+            ? renderer.renderJSON(diagnostics)
+            : renderer.render(diagnostics)
         FileHandle.standardError.write(Data((rendered + "\n").utf8))
         return ExitCode(1)
     }
@@ -224,7 +321,7 @@ func runDiagnosticsCheck(input: String, merconfig: [String], trace: String?,
         diagPaths[url.lastPathComponent] = url
     }
 
-    let compiler = Compiler(options: .init(trace: makeCLITrace(spec: trace, file: traceFile)))
+    let compiler = Compiler(options: .init(trace: try makeCLITrace(spec: trace, file: traceFile)))
     do {
         _ = try compiler.compileWithManifest(
             meridianSource: meridianSource,

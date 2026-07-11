@@ -63,7 +63,8 @@ public struct SwiftEmitter {
         domainDecl: DomainDecl? = nil,
         fileMetadata: FileMetadataAST? = nil,
         definitions: [LoweredDefinition] = []
-    ) -> String {
+    ) throws -> String {
+        try IRValidator.validate(workflows, sourceFile: options.sourceFileName)
         let hasConstants = constantsDecl != nil
         let hasInstances = instancesDecl != nil
         // Set of Swift type names produced by the Domain section. The grammar
@@ -387,7 +388,7 @@ public struct SwiftEmitter {
         }
         let binding = ir.resultBinding.map { "let \(IdentifierNaming.escapeIfReservedIdentifier($0)) = " } ?? "_ = "
         let argLines = ir.arguments.map { a in
-            "\(ctx.in(1).s)    \"\(a.key)\": \(emitValueExpr(a.value)),"
+            "\(ctx.in(1).s)    \"\(a.key)\": \(emitValueExprUnchecked(a.value)),"
         }
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
@@ -458,13 +459,14 @@ public struct SwiftEmitter {
             if ctx.typedIdentifiers.contains(name) || targetKind == nil {
                 return name
             }
-            return "(try Value.from(\(name)).coerce(to: \(targetKind!).self))"
+            guard let kind = targetKind else { return name }
+            return "(try Value.from(\(name)).coerce(to: \(kind).self))"
         case .propertyAccess:
-            let inner = emitExpr(expr) + " ?? .null"
+            let inner = emitExprUnchecked(expr) + " ?? .null"
             guard let kind = targetKind else { return inner }
             return "(try (\(inner)).coerce(to: \(kind).self))"
         default:
-            return emitExpr(expr)
+            return emitExprUnchecked(expr)
         }
     }
 
@@ -474,7 +476,7 @@ public struct SwiftEmitter {
         let method = ir.isRebind ? "rebind" : "bind"
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
-            "\(ctx.s)state.\(method)(\"\(ir.name)\", \(emitExpr(ir.expression)))"
+            "\(ctx.s)state.\(method)(\"\(ir.name)\", \(emitExprUnchecked(ir.expression)))"
         }
     }
 
@@ -538,7 +540,7 @@ public struct SwiftEmitter {
             "\(ctx.s)    \(name): { __meridianAutonomySnapshot in",
             "\(ctx.s)        var state = State()",
             "\(ctx.s)        state.restore(from: __meridianAutonomySnapshot)",
-            "\(ctx.s)        return \(emitExpr(expr))",
+            "\(ctx.s)        return \(emitExprUnchecked(expr))",
             "\(ctx.s)\(close)"
         ]
     }
@@ -549,7 +551,7 @@ public struct SwiftEmitter {
         let isStrict = ir.strict && mode == .strict
         let call = isStrict ? "try await runtime.emit" : "await runtime.emitLenient"
         let payloadLines = ir.payload.map { f in
-            "\(ctx.in(1).s)    \"\(f.key)\": \(emitValueExpr(f.value)),"
+            "\(ctx.in(1).s)    \"\(f.key)\": \(emitValueExprUnchecked(f.value)),"
         }
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
@@ -570,11 +572,23 @@ public struct SwiftEmitter {
 
     func emitBranch(_ ir: BranchIR, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
         let inner = ctx.in(1)
+        switch ir.condition {
+        case .predicate:
+            trace.log(.codegen, "emit branch \(path): predicate arm")
+        case .match(_, let cases):
+            trace.log(.codegen, "emit branch \(path): match with \(cases.count) case arm(s), default \(ir.thenBlock.statements.isEmpty ? "absent" : "present")")
+            for (idx, c) in cases.enumerated() {
+                trace.log(.codegen, "emit branch \(path).case\(idx): match \(patternTraceName(c.pattern))")
+            }
+            if !ir.thenBlock.statements.isEmpty {
+                trace.log(.codegen, "emit branch \(path).default: match otherwise")
+            }
+        }
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
             switch ir.condition {
             case .predicate(let expr):
-                "\(ctx.s)if \(emitExpr(expr)) {"
+                "\(ctx.s)if \(emitExprUnchecked(expr)) {"
                 emitBlock(ir.thenBlock, ctx: inner, workflow: workflow, path: "\(path).then")
                 if let elseBlock = ir.elseBlock {
                     "\(ctx.s)} else {"
@@ -582,10 +596,15 @@ public struct SwiftEmitter {
                 }
                 "\(ctx.s)}"
             case .match(let expr, let cases):
-                "\(ctx.s)switch \(emitExpr(expr)) {"
+                // Verbalizer `otherwise:` ↔ IR `thenBlock` ↔ codegen `default:`.
+                "\(ctx.s)switch \(emitExprUnchecked(expr)) {"
                 for (idx, c) in cases.enumerated() {
                     "\(ctx.s)case \(emitPattern(c.pattern)):"
                     emitBlock(c.block, ctx: inner, workflow: workflow, path: "\(path).case\(idx)")
+                }
+                if !ir.thenBlock.statements.isEmpty {
+                    "\(ctx.s)default:"
+                    emitBlock(ir.thenBlock, ctx: inner, workflow: workflow, path: "\(path).default")
                 }
                 "\(ctx.s)}"
             }
@@ -636,7 +655,7 @@ public struct SwiftEmitter {
                 // a `Value.asList` accessor that returns `[Value]?` so the
                 // generated code stays free of force-casts.
                 let var_ = IdentifierNaming.camelPreservingCase(param)
-                "\(ctx.s)for (\(loopIndex), \(var_)) in (\(emitExpr(collection))?.asList ?? []).enumerated() {"
+                "\(ctx.s)for (\(loopIndex), \(var_)) in (\(emitExprUnchecked(collection))?.asList ?? []).enumerated() {"
                 "\(inner.s)let \(loopLabel) = \"progress:\(path):iteration:\\(\(loopIndex))\""
                 "\(inner.s)if __meridianShouldRun(\(loopLabel)) {"
                 "\(inner.s)state.bind(\"\(var_)\", \(var_))"
@@ -646,7 +665,7 @@ public struct SwiftEmitter {
                 "\(ctx.s)}"
             case .whileCondition(let cond):
                 "\(ctx.s)var \(loopIndex) = 0"
-                "\(ctx.s)while \(emitExpr(cond)) {"
+                "\(ctx.s)while \(emitExprUnchecked(cond)) {"
                 "\(inner.s)let \(loopLabel) = \"progress:\(path):iteration:\\(\(loopIndex))\""
                 "\(inner.s)\(loopIndex) += 1"
                 "\(inner.s)if __meridianShouldRun(\(loopLabel)) {"
@@ -656,7 +675,7 @@ public struct SwiftEmitter {
                 "\(ctx.s)}"
             case .untilCondition(let cond):
                 "\(ctx.s)var \(loopIndex) = 0"
-                "\(ctx.s)while !(\(emitExpr(cond))) {"
+                "\(ctx.s)while !(\(emitExprUnchecked(cond))) {"
                 "\(inner.s)let \(loopLabel) = \"progress:\(path):iteration:\\(\(loopIndex))\""
                 "\(inner.s)\(loopIndex) += 1"
                 "\(inner.s)if __meridianShouldRun(\(loopLabel)) {"
@@ -682,7 +701,7 @@ public struct SwiftEmitter {
         let suffix = swiftIdentifierSuffix(path)
         let srcVar = "__meridianSrc_\(suffix)"
 
-        var pipeline = "(\(emitExpr(collection))?.asList ?? [])"
+        var pipeline = "(\(emitExprUnchecked(collection))?.asList ?? [])"
         if !refinement.filters.isEmpty {
             let cond = refinement.filters
                 .map { "(\(emitElementExpr($0, loopVar: param, closureParam: "__e")))" }
@@ -722,10 +741,10 @@ public struct SwiftEmitter {
             let l = emitElementOperand(lhs, loopVar: loopVar, closureParam: closureParam)
             let r = emitElementValueExpr(rhs, loopVar: loopVar, closureParam: closureParam)
             switch op {
-            case .withinPast:     return "MeridianComparison.isWithinPast(\(l), \(emitExpr(rhs)))"
-            case .withinFuture:   return "MeridianComparison.isWithinFuture(\(l), \(emitExpr(rhs)))"
-            case .withinDuration: return "MeridianComparison.isWithin(\(l), \(emitExpr(rhs)))"
-            case .matchesPattern: return "meridianRegexMatches(\(l), \(emitExpr(rhs)))"
+            case .withinPast:     return "MeridianComparison.isWithinPast(\(l), \(emitExprUnchecked(rhs)))"
+            case .withinFuture:   return "MeridianComparison.isWithinFuture(\(l), \(emitExprUnchecked(rhs)))"
+            case .withinDuration: return "MeridianComparison.isWithin(\(l), \(emitExprUnchecked(rhs)))"
+            case .matchesPattern: return "meridianRegexMatches(\(l), \(emitExprUnchecked(rhs)))"
             case .isEmpty:        return "MeridianComparison.isEmpty(\(l))"
             case .isNotEmpty:     return "MeridianComparison.isNotEmpty(\(l))"
             case .identifies:     return "MeridianComparison.identifies(\(l), \(r))"
@@ -735,10 +754,10 @@ public struct SwiftEmitter {
             case .lessOrEqual:    return "MeridianComparison.le(\(l), \(r))"
             case .greaterThan:    return "MeridianComparison.gt(\(l), \(r))"
             case .greaterOrEqual: return "MeridianComparison.ge(\(l), \(r))"
-            case .contains:       return "((\(l))?.description ?? \"\").contains(\(emitExpr(rhs)))"
-            case .startsWith:     return "((\(l))?.description ?? \"\").hasPrefix(\(emitExpr(rhs)))"
-            case .endsWith:       return "((\(l))?.description ?? \"\").hasSuffix(\(emitExpr(rhs)))"
-            case .oneOf:          return "(\(emitExpr(rhs))).contains(\(l) ?? .null)"
+            case .contains:       return "((\(l))?.description ?? \"\").contains(\(emitExprUnchecked(rhs)))"
+            case .startsWith:     return "((\(l))?.description ?? \"\").hasPrefix(\(emitExprUnchecked(rhs)))"
+            case .endsWith:       return "((\(l))?.description ?? \"\").hasSuffix(\(emitExprUnchecked(rhs)))"
+            case .oneOf:          return "(\(emitExprUnchecked(rhs))).contains(\(l) ?? .null)"
             }
         case .logical(let op, let parts):
             let ps = parts.map { "(\(emitElementExpr($0, loopVar: loopVar, closureParam: closureParam)))" }
@@ -772,7 +791,7 @@ public struct SwiftEmitter {
             }
             return "\(emitElementOperand(base, loopVar: loopVar, closureParam: closureParam))?.member(\"\(key)\")"
         default:
-            return emitExpr(e)
+            return emitExprUnchecked(e)
         }
     }
 
@@ -787,7 +806,7 @@ public struct SwiftEmitter {
         case .identifierRef, .propertyAccess:
             return "\(emitElementOperand(e, loopVar: loopVar, closureParam: closureParam)) ?? .null"
         default:
-            return emitValueExpr(e)
+            return emitValueExprUnchecked(e)
         }
     }
 
@@ -837,7 +856,7 @@ public struct SwiftEmitter {
                 // `assert X otherwise: …` form — run the otherwise block but
                 // still surface the failure as an `assert.failed` event so
                 // observers see it. The block decides whether to throw.
-                "\(ctx.s)if !(\(emitExpr(ir.condition))) {"
+                "\(ctx.s)if !(\(emitExprUnchecked(ir.condition))) {"
                 "\(ctx.in(1).s)try await runtime.assert(false, message: \"\(msg)\")"
                 emitBlock(action, ctx: ctx.in(1), workflow: workflow, path: "\(path).otherwise")
                 "\(ctx.s)} else {"
@@ -846,7 +865,7 @@ public struct SwiftEmitter {
             } else {
                 // Bare `assert X.` — let the runtime emit the event and
                 // throw `MeridianRuntimeError.assertion` on failure.
-                "\(ctx.s)try await runtime.assert(\(emitExpr(ir.condition)), message: \"\(msg)\")"
+                "\(ctx.s)try await runtime.assert(\(emitExprUnchecked(ir.condition)), message: \"\(msg)\")"
             }
         }
     }
@@ -880,7 +899,7 @@ public struct SwiftEmitter {
         case .typed(let k):
             return ("let _recoveredError as \(k.name) ", true)
         case .predicate(let expr):
-            return ("let _recoveredError where \(emitExpr(expr)) ", true)
+            return ("let _recoveredError where \(emitExprUnchecked(expr)) ", true)
         }
     }
 
@@ -897,12 +916,12 @@ public struct SwiftEmitter {
             case .approval(let subj, let role):
                 // `by:` takes `RoleRef` — convert the role string to a RoleRef initialiser.
                 // `of:` is the subject (Value); empty-string literal signals implicit subject.
-                let subjExpr = emitValueExpr(subj)
+                let subjExpr = emitValueExprUnchecked(subj)
                 "\(ctx.s)try await runtime.wait(.approval(of: \(subjExpr), by: RoleRef(identifier: \"\(role)\")))"
             case .event(let id, let matching):
                 if let m = matching {
                     // Emit a closure `{ event in … }` so the predicate gets access to the event.
-                    "\(ctx.s)try await runtime.wait(.event(\"\(id)\", matching: { _event in \(emitExpr(m)) }))"
+                    "\(ctx.s)try await runtime.wait(.event(\"\(id)\", matching: { _event in \(emitExprUnchecked(m)) }))"
                 } else {
                     "\(ctx.s)try await runtime.wait(.event(\"\(id)\", matching: nil))"
                 }
@@ -918,7 +937,12 @@ public struct SwiftEmitter {
 
     // MARK: - Expression emission
 
-    func emitExpr(_ expr: IRExpression) -> String {
+    func emitExpr(_ expr: IRExpression) throws -> String {
+        try validateExpressionForDirectEmission(expr)
+        return emitExprUnchecked(expr)
+    }
+
+    private func emitExprUnchecked(_ expr: IRExpression) -> String {
         switch expr {
         case .literal(let lit):
             return emitLiteral(lit)
@@ -938,13 +962,13 @@ public struct SwiftEmitter {
         case .comparison(let lhs, let op, let rhs):
             switch op {
             case .withinDuration:
-                return "MeridianComparison.isWithin(\(emitExpr(lhs)), \(emitExpr(rhs)))"
+                return "MeridianComparison.isWithin(\(emitExprUnchecked(lhs)), \(emitExprUnchecked(rhs)))"
             case .withinPast:
-                return "MeridianComparison.isWithinPast(\(emitExpr(lhs)), \(emitExpr(rhs)))"
+                return "MeridianComparison.isWithinPast(\(emitExprUnchecked(lhs)), \(emitExprUnchecked(rhs)))"
             case .withinFuture:
-                return "MeridianComparison.isWithinFuture(\(emitExpr(lhs)), \(emitExpr(rhs)))"
+                return "MeridianComparison.isWithinFuture(\(emitExprUnchecked(lhs)), \(emitExprUnchecked(rhs)))"
             case .matchesPattern:
-                return "meridianRegexMatches(\(emitExpr(lhs)), \(emitExpr(rhs)))"
+                return "meridianRegexMatches(\(emitExprUnchecked(lhs)), \(emitExprUnchecked(rhs)))"
             case .isEmpty:
                 return "MeridianComparison.isEmpty(\(emitComparisonOperand(lhs)))"
             case .isNotEmpty:
@@ -956,8 +980,8 @@ public struct SwiftEmitter {
             case .endsWith:
                 return "(\(emitStringOperand(lhs))).hasSuffix(\(emitStringOperand(rhs)))"
             case .oneOf:
-                let needle = needsValueComparison(lhs) ? "(\(emitExpr(lhs)) ?? .null)" : "(\(emitExpr(lhs)))"
-                return "(\(emitExpr(rhs))).contains(\(needle))"
+                let needle = needsValueComparison(lhs) ? "(\(emitExprUnchecked(lhs)) ?? .null)" : "(\(emitExprUnchecked(lhs)))"
+                return "(\(emitExprUnchecked(rhs))).contains(\(needle))"
             case .identifies:
                 return "MeridianComparison.identifies(\(emitComparisonOperand(lhs)), \(emitComparisonOperand(rhs)))"
             case .equal, .notEqual, .lessThan, .lessOrEqual, .greaterThan, .greaterOrEqual:
@@ -967,13 +991,13 @@ public struct SwiftEmitter {
                     let helper = compHelper(op)
                     return "MeridianComparison.\(helper)(\(emitComparisonOperand(lhs)), \(emitComparisonOperand(rhs)))"
                 }
-                return "(\(emitExpr(lhs))) \(compOp(op)) (\(emitExpr(rhs)))"
+                return "(\(emitExprUnchecked(lhs))) \(compOp(op)) (\(emitExprUnchecked(rhs)))"
             }
         case .logical(let op, let operands):
             switch op {
-            case .and: return operands.map { "(\(emitExpr($0)))" }.joined(separator: " && ")
-            case .or:  return operands.map { "(\(emitExpr($0)))" }.joined(separator: " || ")
-            case .not: return "!(\(operands.first.map { emitExpr($0) } ?? "true"))"
+            case .and: return operands.map { "(\(emitExprUnchecked($0)))" }.joined(separator: " && ")
+            case .or:  return operands.map { "(\(emitExprUnchecked($0)))" }.joined(separator: " || ")
+            case .not: return "!(\(operands.first.map { emitExprUnchecked($0) } ?? "true"))"
             }
         case .envVar(let name):
             return "ProcessInfo.processInfo.environment[\"\(name)\"] ?? \"\""
@@ -983,9 +1007,9 @@ public struct SwiftEmitter {
             if ir.toolID == "runtime.discretion.decide" {
                 return "try await runtime.discretion.decide(DiscretionContext(question: \(discretionQuestionExpr(ir)), snapshot: state.snapshot()))"
             }
-            return "/* inline invoke: \(ir.toolID) */"
+            return emitInlineInvocationExpr(ir)
         case .relationTraversal(let base, let rel, _):
-            return "\(emitExpr(base)).\(IdentifierNaming.camelPreservingCase(rel))"
+            return "\(emitExprUnchecked(base)).\(IdentifierNaming.camelPreservingCase(rel))"
         case .interpolatedString(let segs):
             // B7: Build a Swift string by concatenating literal parts and
             // stringified expression parts via `meridianStringify`.
@@ -1020,7 +1044,7 @@ public struct SwiftEmitter {
     private func emitRecordList(fields: [String], rows: [[IRExpression]]) -> String {
         let records = rows.map { row -> String in
             let pairs = zip(fields, row).map { field, cell in
-                "\"\(escapeSwiftString(IdentifierNaming.camelPreservingCase(field)))\": \(emitValueExpr(cell))"
+                "\"\(escapeSwiftString(IdentifierNaming.camelPreservingCase(field)))\": \(emitValueExprUnchecked(cell))"
             }.joined(separator: ", ")
             return ".record([\(pairs)])"
         }.joined(separator: ", ")
@@ -1129,9 +1153,9 @@ public struct SwiftEmitter {
     func emitComparisonOperand(_ expr: IRExpression) -> String {
         switch expr {
         case .identifierRef, .propertyAccess:
-            return emitExpr(expr)
+            return emitExprUnchecked(expr)
         default:
-            return emitValueExpr(expr)
+            return emitValueExprUnchecked(expr)
         }
     }
 
@@ -1149,26 +1173,31 @@ public struct SwiftEmitter {
     /// `(state.get("x")).contains(...)`, `Value?` has no member `contains`).
     private func emitStringOperand(_ expr: IRExpression) -> String {
         if needsValueComparison(expr) {
-            return "((\(emitExpr(expr)))?.description ?? \"\")"
+            return "((\(emitExprUnchecked(expr)))?.description ?? \"\")"
         }
-        return "(\(emitExpr(expr)))"
+        return "(\(emitExprUnchecked(expr)))"
     }
 
     /// Like `emitExpr` but wraps the result so it satisfies `Value` in places
     /// the runtime expects a `[String: Value]` dictionary (invoke args, emit
     /// payloads). Strings, numbers, etc. become `.string(...)`/`.number(...)`;
     /// `state.get(...)` (which returns `Value?`) becomes `... ?? .null`.
-    func emitValueExpr(_ expr: IRExpression) -> String {
+    func emitValueExpr(_ expr: IRExpression) throws -> String {
+        try validateExpressionForDirectEmission(expr)
+        return emitValueExprUnchecked(expr)
+    }
+
+    private func emitValueExprUnchecked(_ expr: IRExpression) -> String {
         switch expr {
         case .literal(let lit):
             return emitValueLiteral(lit)
         case .nowExpression:
             return ".date(Date())"
         case .identifierRef, .propertyAccess:
-            return "\(emitExpr(expr)) ?? .null"
+            return "\(emitExprUnchecked(expr)) ?? .null"
         case .constantRef, .instanceRef:
             // Typed constants & instances bridge into Value via Value.from(_:).
-            return "Value.from(\(emitExpr(expr)))"
+            return "Value.from(\(emitExprUnchecked(expr)))"
         case .envVar(let name):
             return ".string(ProcessInfo.processInfo.environment[\"\(escapeSwiftString(name))\"] ?? \"\")"
         case .interpolatedString(let segs):
@@ -1183,7 +1212,7 @@ public struct SwiftEmitter {
             case .list:  return "Value.list(\(emitDescriptionList(d)))"
             }
         case .superlative(let s):
-            return "(\(emitExpr(.superlative(s))) ?? .null)"
+            return "(\(emitExprUnchecked(.superlative(s))) ?? .null)"
         case .recordList(let fields, let rows):
             return emitRecordList(fields: fields, rows: rows)
         case .tableLookup(let table, let keyColumn, let key, let valueColumn):
@@ -1193,12 +1222,21 @@ public struct SwiftEmitter {
             // through the same `Value.from(_:)` used for constants/instances
             // rather than the generic `.init(...)` fallback (which requires
             // the wrapped expression to already be `Value`-typed).
-            return "Value.from(\(emitExpr(expr)))"
+            return "Value.from(\(emitExprUnchecked(expr)))"
+        case .invocation:
+            return emitExprUnchecked(expr)
         default:
             // For derived expressions we rely on the runtime `Value(...)` init,
             // wrapping the bare emission so it survives Swift type-checking.
-            return ".init(\(emitExpr(expr)))"
+            return ".init(\(emitExprUnchecked(expr)))"
         }
+    }
+
+    private func emitInlineInvocationExpr(_ ir: InvokeIR) -> String {
+        let args = ir.arguments
+            .map { "\"\(escapeSwiftString($0.key))\": \(emitValueExprUnchecked($0.value))" }
+            .joined(separator: ", ")
+        return "try await runtime.invoke(tool: \"\(escapeSwiftString(ir.toolID))\", args: [\(args)])"
     }
 
     /// The ` + `-joined Swift fragments of an interpolated string's segments.
@@ -1211,16 +1249,16 @@ public struct SwiftEmitter {
             case .literal(let s):
                 return "\"\(escapeSwiftString(s))\""
             case .expression(let e):
-                return "meridianStringify(\(emitValueExpr(e)))"
+                return "meridianStringify(\(emitValueExprUnchecked(e)))"
             case .formatted(let e, let f):
-                return "meridianFormat(\(emitValueExpr(e)), as: \"\(escapeSwiftString(f))\")"
+                return "meridianFormat(\(emitValueExprUnchecked(e)), as: \"\(escapeSwiftString(f))\")"
             case .conditional(let condition, let thenSegs, let elseSegs):
-                return "({ () -> String in if \(emitExpr(condition)) { return \(interpolationParts(thenSegs)) } else { return \(interpolationParts(elseSegs)) } })()"
+                return "({ () -> String in if \(emitExprUnchecked(condition)) { return \(interpolationParts(thenSegs)) } else { return \(interpolationParts(elseSegs)) } })()"
             case .forEach(let variable, let collection, let body):
                 let coll = emitComparisonOperand(collection)
                 return "({ () -> String in var __out = \"\"; for __item in ((\(coll))?.asList ?? []) { __out += \(interpolationParts(body, loopVariable: variable, elementName: "__item")) }; return __out })()"
             case .shellEscapedExpression(let e):
-                return "meridianShellQuote(\(emitValueExpr(e)))"
+                return "meridianShellQuote(\(emitValueExprUnchecked(e)))"
             }
         }.joined(separator: " + ")
     }
@@ -1254,7 +1292,7 @@ public struct SwiftEmitter {
         case .propertyAccess(.identifierRef(let name), let prop) where name == loopVariable:
             return "\(elementName).member(\"\(escapeSwiftString(IdentifierNaming.camelPreservingCase(prop)))\") ?? .null"
         default:
-            return emitValueExpr(e)
+            return emitValueExprUnchecked(e)
         }
     }
 
@@ -1263,7 +1301,7 @@ public struct SwiftEmitter {
         case .comparison(let l, let op, let r):
             return emitLoopComparison(l, op, r, loopVariable: loopVariable, elementName: elementName)
         default:
-            return emitExpr(e)
+            return emitExprUnchecked(e)
         }
     }
 
@@ -1284,19 +1322,19 @@ public struct SwiftEmitter {
         func lv(_ e: IRExpression) -> String { emitLoopValueExpr(e, loopVariable: loopVariable, elementName: elementName) }
         let lhs = lv(l)
         switch op {
-        case .withinDuration: return "MeridianComparison.isWithin(\(lhs), \(emitExpr(r)))"
-        case .withinPast:     return "MeridianComparison.isWithinPast(\(lhs), \(emitExpr(r)))"
-        case .withinFuture:   return "MeridianComparison.isWithinFuture(\(lhs), \(emitExpr(r)))"
-        case .matchesPattern: return "meridianRegexMatches(\(lhs), \(emitExpr(r)))"
+        case .withinDuration: return "MeridianComparison.isWithin(\(lhs), \(emitExprUnchecked(r)))"
+        case .withinPast:     return "MeridianComparison.isWithinPast(\(lhs), \(emitExprUnchecked(r)))"
+        case .withinFuture:   return "MeridianComparison.isWithinFuture(\(lhs), \(emitExprUnchecked(r)))"
+        case .matchesPattern: return "meridianRegexMatches(\(lhs), \(emitExprUnchecked(r)))"
         case .isEmpty:        return "MeridianComparison.isEmpty(\(lhs))"
         case .isNotEmpty:     return "MeridianComparison.isNotEmpty(\(lhs))"
         case .identifies:     return "MeridianComparison.identifies(\(lhs), \(lv(r)))"
         case .equal, .notEqual, .lessThan, .lessOrEqual, .greaterThan, .greaterOrEqual:
             return "MeridianComparison.\(compHelper(op))(\(lhs), \(lv(r)))"
-        case .contains:       return "(\(lhs).description).contains(\(emitExpr(r)))"
-        case .startsWith:     return "(\(lhs).description).hasPrefix(\(emitExpr(r)))"
-        case .endsWith:       return "(\(lhs).description).hasSuffix(\(emitExpr(r)))"
-        case .oneOf:          return "(\(emitExpr(r))).contains(\(lhs))"
+        case .contains:       return "(\(lhs).description).contains(\(emitExprUnchecked(r)))"
+        case .startsWith:     return "(\(lhs).description).hasPrefix(\(emitExprUnchecked(r)))"
+        case .endsWith:       return "(\(lhs).description).hasSuffix(\(emitExprUnchecked(r)))"
+        case .oneOf:          return "(\(emitExprUnchecked(r))).contains(\(lhs))"
         }
     }
 
@@ -1322,9 +1360,9 @@ public struct SwiftEmitter {
         case .literal(.string(let s)):
             return "\"\(escapeSwiftString(s))\""
         case .interpolatedString:
-            return emitExpr(question)
+            return emitExprUnchecked(question)
         default:
-            return "meridianStringify(\(emitValueExpr(question)))"
+            return "meridianStringify(\(emitValueExprUnchecked(question)))"
         }
     }
 
@@ -1350,7 +1388,15 @@ public struct SwiftEmitter {
         switch expr {
         case .identifierRef(let name):      return name
         case .propertyAccess(let b, let p): return propertyPath(b) + "." + IdentifierNaming.camelPreservingCase(p)
-        default:                            return emitExpr(expr)
+        default:                            return emitExprUnchecked(expr)
+        }
+    }
+
+    private func validateExpressionForDirectEmission(_ expr: IRExpression) throws {
+        do {
+            try IRValidator.validate(expr, sourceFile: options.sourceFileName)
+        } catch IRValidationError.diagnostics(let diagnostics) {
+            throw CompilerError.diagnostics(diagnostics)
         }
     }
 
@@ -1406,6 +1452,14 @@ public struct SwiftEmitter {
         case .literal(let lit):         return emitLiteral(lit)
         case .enumValue(let v, _):      return ".\(v)"
         case .wildcard:                 return "default"
+        }
+    }
+
+    private func patternTraceName(_ p: IRPattern) -> String {
+        switch p {
+        case .literal(let lit): return "literal(\(lit))"
+        case .enumValue(let value, let kind): return kind.isEmpty ? "enum(\(value))" : "enum(\(kind).\(value))"
+        case .wildcard: return "wildcard"
         }
     }
 

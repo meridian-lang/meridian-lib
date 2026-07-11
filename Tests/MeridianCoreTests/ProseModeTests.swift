@@ -46,7 +46,7 @@ struct ProseModeTests {
             ])
         )
 
-        let out = SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
         #expect(out.contains("runtime.executeProsePlan"))
         #expect(out.contains("github.comment"))
     }
@@ -65,7 +65,7 @@ struct ProseModeTests {
             ])
         )
 
-        let out = SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
         #expect(out.contains("runtime.executeProsePlan"))
         #expect(out.contains("scopedTools: [\"shell.run\"],"))
         #expect(out.contains("guidance: \"Run \\\"gbrain doctor\\\" first.\""))
@@ -85,7 +85,7 @@ struct ProseModeTests {
             ])
         )
 
-        let out = SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
         #expect(out.contains("runtime.executeAutonomousLoop"))
         #expect(out.contains("replanAfterFailures: 3,"))
         #expect(out.contains("guidance: \"Repair every missing back-link.\""))
@@ -110,7 +110,7 @@ struct ProseModeTests {
         #expect(step.text == "follow the Diagnostics guidance")
         #expect(step.guidance == "Check the golden path first\nThen check the fallback path")
 
-        let out = SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: workflows)
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: workflows)
         #expect(out.contains("guidance: \"Check the golden path first\\nThen check the fallback path\""))
     }
 }

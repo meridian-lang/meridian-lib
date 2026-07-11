@@ -1,4 +1,5 @@
 import Testing
+import MeridianRuntime
 @testable import MeridianCore
 
 @Suite("SkillMigrator command rewrite — coverage")
@@ -6,6 +7,13 @@ struct SkillMigratorCommandRewriteCoverageTests {
 
     private func migrator() -> SkillMigrator {
         SkillMigrator(compiler: Compiler(options: .init(fallbackPolicy: .lenient)), vocabularies: [])
+    }
+
+    private func diagnostic(line: Int, message: String = "unparseable") -> Diagnostic {
+        Diagnostic.error(
+            .unparseableStatement,
+            message: message,
+            range: SourceRange(file: "t.meri", line: line, column: 1))
     }
 
     @Test("diagnosticLine parses L<n> and file:line:column prefixes")
@@ -25,12 +33,12 @@ struct SkillMigratorCommandRewriteCoverageTests {
         for heading in ["Invariants", "Protocol", "Anti-Patterns", "When to use",
                         "When not to use", "Output Format", "Tools", "Random Notes"] {
             let src = "## \(heading)\ndo something that does not lower."
-            let out = m.markEnclosingSectionReference(forDiagnostic: "L2: unparseable", in: src)
+            let out = m.markEnclosingSectionReference(forDiagnostic: diagnostic(line: 2), in: src)
             guard let marked = out else {
                 Issue.record("expected reference marking for \(heading)"); continue
             }
-            #expect(marked.contains("(( role: reference ))"))
-            #expect(!marked.contains("(( inert"))
+            #expect(marked.source.contains("(( role: reference ))"))
+            #expect(!marked.source.contains("(( inert"))
         }
     }
 
@@ -73,26 +81,25 @@ struct SkillMigratorCommandRewriteCoverageTests {
         """
         // Default migrator() has routeFuzzy off (P1 policy: category-4 is a
         // hard error unless the caller opts into the escape hatch).
-        #expect(migrator().markEnclosingSectionReference(forDiagnostic: "L2: unparseable", in: src) == nil)
+        #expect(migrator().markEnclosingSectionReference(forDiagnostic: diagnostic(line: 2), in: src) == nil)
 
         let routed = SkillMigrator(compiler: Compiler(options: .init(fallbackPolicy: .lenient)),
                                    vocabularies: [], options: .init(routeFuzzy: true))
-        let out = routed.markEnclosingSectionReference(forDiagnostic: "L2: unparseable", in: src)
+        let out = routed.markEnclosingSectionReference(forDiagnostic: diagnostic(line: 2), in: src)
         guard let marked = out else {
             Issue.record("expected reference marking"); return
         }
-        #expect(marked.contains("(( role: reference ))"))
+        #expect(marked.source.contains("(( role: reference ))"))
     }
 
-    @Test("markEnclosingSectionReference returns nil when the diagnostic carries no parseable line number, even with routeFuzzy on")
-    func markSectionReferenceNilWithoutParseableLine() {
+    @Test("markEnclosingSectionReference returns nil when no enclosing heading exists")
+    func markSectionReferenceNilWithoutHeading() {
         let routed = SkillMigrator(compiler: Compiler(options: .init(fallbackPolicy: .lenient)),
                                    vocabularies: [], options: .init(routeFuzzy: true))
         let src = """
-        ## Protocol
         do something that does not lower.
         """
-        #expect(routed.markEnclosingSectionReference(forDiagnostic: "no line number here", in: src) == nil)
+        #expect(routed.markEnclosingSectionReference(forDiagnostic: diagnostic(line: 1), in: src) == nil)
     }
 
     @Test("diagnosticLine falls through to the colon scan when an L-prefix has no digits")

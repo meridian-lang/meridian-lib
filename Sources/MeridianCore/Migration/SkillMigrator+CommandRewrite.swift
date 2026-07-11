@@ -1,4 +1,5 @@
 import Foundation
+import MeridianRuntime
 
 extension SkillMigrator {
     // MARK: - Command hole rewrite (1B)
@@ -46,9 +47,9 @@ extension SkillMigrator {
     /// diagnostic surfaces as a hard migration failure per P1 category 4.
     /// Original `SKILL.md` stays untouched; this only edits the generated
     /// `.meri` candidate.
-    func markEnclosingSectionReference(forDiagnostic diagnostic: String, in source: String) -> String? {
+    func markEnclosingSectionReference(forDiagnostic diagnostic: Diagnostic, in source: String) -> (source: String, warning: Diagnostic)? {
         guard options.routeFuzzy else { return nil }
-        guard let line = diagnosticLine(diagnostic) else { return nil }
+        let line = diagnostic.primaryRange.startLine
         var lines = source.components(separatedBy: "\n")
         let target = max(0, min(line - 1, lines.count - 1))
         var headingIndex: Int?
@@ -66,7 +67,16 @@ extension SkillMigrator {
         }
 
         lines[idx] = "\(heading.hashes) \(heading.text) (( role: reference ))"
-        return lines.joined(separator: "\n")
+        let warning = Diagnostic.warning(
+            .migrationRouteFuzzyDowngrade,
+            message: "route-fuzzy marked section \"\(heading.text)\" as reference after \(diagnostic.code.id) at line \(line)",
+            range: SourceRange(file: diagnostic.primaryRange.file, line: idx + 1, column: 1),
+            notes: [
+                DiagnosticNote("original diagnostic: \(diagnostic.message)", range: diagnostic.primaryRange)
+            ],
+            help: "Review this section and reword any operational content into deterministic Meridian before relying on the migrated skill."
+        )
+        return (lines.joined(separator: "\n"), warning)
     }
 
     func diagnosticLine(_ diagnostic: String) -> Int? {

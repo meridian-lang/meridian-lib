@@ -4,7 +4,7 @@
 - Ported: `brain_taxonomist.meri`
 - Tier: 2 (light edits)
 - Similarity: 67%
-- Lines: 196 -> 230 (+87 / -53)
+- Lines: 196 -> 232 (+89 / -53)
 
 ## Frontmatter
 - Added: (none)
@@ -19,16 +19,18 @@
 These sections were made non-executable in the port and should be reviewed as migration deviations:
 - L47 `When to Consult (MANDATORY)`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L90 `Step 3: For books — determine sub-category`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L141 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
-- L166 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L138 `Periodic Drift Detection — notes`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L143 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
+- L168 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
-- Sections inert total: 12/14 (86% total inert; includes intentional docs/templates/tools metadata)
+- Sections inert total: 13/15 (87% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
-- Inert categories: reference-documentation=11, template=1
+- Inert categories: reference-documentation=12, template=1
 - Judgment: 1 blocks, 0 lines
+- canonical_drift: synonym=0, structure=0, desugar=0, meaning=157
 
 ### Inert section details
 - L4 `Purpose`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
@@ -39,10 +41,11 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L76 `Step 2: Look up the directory for that type in the active pack`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L90 `Step 3: For books — determine sub-category`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 - L104 `Step 5: Validate before writing`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L141 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
-- L166 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L181 `Hard Rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
-- L196 `v1.0.0 — gbrain v0.39.0.0`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L138 `Periodic Drift Detection — notes`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L143 `Output Format`: template — Template/output shape is metadata unless explicit output assertions are authored.
+- L168 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L183 `Hard Rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
+- L198 `v1.0.0 — gbrain v0.39.0.0`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Unified diff
 
@@ -195,12 +198,17 @@ These sections were made non-executable in the port and should be reviewed as mi
  ## Periodic Drift Detection
  
 +
-+### Periodic Drift Detection — steps (( role: reference ))
++### Periodic Drift Detection — steps
 +
  ```bash
  # What pages have no type matching the active pack?
  gbrain schema review-orphans --json
-@@ -133,7 +158,7 @@
+@@ -130,10 +155,12 @@
+ gbrain doctor --json | jq '.checks[] | select(.name == "schema_pack_consistency")'
+ ```
+ 
++### Periodic Drift Detection — notes (( role: reference ))
++
  When `schema_pack_consistency` warns at >10% untyped, run the EIIRP
  Phase 3 SCHEMA CHECK flow to surface candidate types via `schema detect`.
  
@@ -209,7 +217,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  
  Advisory: a single recommendation block plus a one-line reasoning trail.
  
-@@ -158,39 +183,48 @@
+@@ -158,39 +185,48 @@
  `gbrain schema review-candidates`.
  ```
  

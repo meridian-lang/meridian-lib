@@ -44,7 +44,7 @@ This is NOT a traditional async/await. In an LLM agent, "gating" means:
 3. The user's response triggers the next turn
 4. Read the response and branch accordingly
 
-## When To Use
+## When To Use (( role: reference ))
 
 - Ambiguous requests with multiple valid interpretations
 - Destructive operations (bulk deletes, overwrites)
@@ -117,7 +117,7 @@ clarify(
 - **Labels must be self-explanatory.** The user shouldn't need to re-read context.
 - **Always include an escape hatch.** At minimum: "Skip" or "Cancel" as the last option.
 
-### Constraints — steps
+### Constraints — steps (( role: reference ))
 
 - Never stack multiple choice gates.
 
@@ -132,7 +132,7 @@ Instead:
 - ✅ Stop. Full stop. No more tool calls.
 
 
-### How To Gate (CRITICAL) — steps
+### How To Gate (CRITICAL) — steps (( role: reference ))
 
 After presenting choices, you MUST stop your turn. Do not:
 

@@ -26,6 +26,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: template=1
 - Judgment: 0 blocks, 0 lines
+- canonical_drift: synonym=1, structure=0, desugar=0, meaning=16
 
 ### Inert section details
 - L17 `Report shape`: template — Template/output shape is metadata unless explicit output assertions are authored.

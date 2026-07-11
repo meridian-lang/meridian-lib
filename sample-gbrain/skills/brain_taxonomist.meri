@@ -37,12 +37,12 @@ use judgment to follow the Purpose — steps guidance:
 - Ambiguous cases surface to the user via `skills/ask-user/` rather than silently picking a default.
 - Per-source overrides via `--source <id>` are honored — multi-brain users (Persona B) get a different recommendation per source if their packs diverge.
 
-### Contract — steps
+### Contract — steps (( role: reference ))
 
 > This skill guarantees:
 - Every new page is filed at the path determined by the ACTIVE schema pack — never against a hardcoded directory table baked into this skill.
 
-### Contract — steps 2
+### Contract — steps 2 (( role: reference ))
 
 - When no matching `page_types[]` entry exists in the active pack, the skill signals to EIIRP Phase 3 (SCHEMA CHECK) rather than picking the closest-fitting fallback.
 
@@ -154,6 +154,8 @@ gbrain schema review-orphans --json
 # What's the overall health?
 gbrain doctor --json | jq '.checks[] | select(.name == "schema_pack_consistency")'
 ```
+
+### Periodic Drift Detection — notes (( role: reference ))
 
 When `schema_pack_consistency` warns at >10% untyped, run the EIIRP
 Phase 3 SCHEMA CHECK flow to surface candidate types via `schema detect`.

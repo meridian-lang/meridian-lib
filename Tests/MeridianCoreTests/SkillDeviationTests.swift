@@ -406,6 +406,7 @@ struct SkillDeviationTests {
         #expect(md.contains("## Metrics"))
         #expect(md.contains("Sections inert total: 1/2"))
         #expect(md.contains("Operational inert:"))
+        #expect(md.contains("canonical_drift: synonym=0, structure=0, desugar=0, meaning=0"))
     }
 }
 
@@ -473,6 +474,21 @@ struct SkillMetricsTests {
         #expect(m.judgmentBlocks == 2)
         // 3 lines under the first block + 2 under the second = 5.
         #expect(m.judgmentLines == 5)
+    }
+
+    @Test("canonical drift counters default to zero and can be recorded from a drift report")
+    func canonicalDriftCounters() {
+        var m = SkillMetrics.analyze("To run:\n  complete.\n")
+        #expect(m.canonicalDriftTotal == 0)
+
+        let report = DriftEngine.diff(
+            authored: "assert score is greater than 1.\ncomplete.",
+            canonical: "assert score is more than 1.\ncomplete."
+        )
+        m.recordCanonicalDrift(report)
+
+        #expect(m.canonicalDriftSynonym == 1)
+        #expect(m.canonicalDriftTotal == 1)
     }
 
     @Test("a heading-less flat procedure has no sections and a 0 inert ratio")

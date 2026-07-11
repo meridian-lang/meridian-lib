@@ -90,6 +90,11 @@ public struct ProcessOrder: MeridianWorkflow {
 It is a **compiler**. The control flow is yours. The tool outputs may be
 non-deterministic. The *compilation* is deterministic.
 
+Wave 7 also makes the compiled meaning explainable in the other direction:
+`meridian explain` prints the lowered IR back as Canonical English, and
+`meridian drift` compares authored source with that canonical form. See
+[18_VERBALIZER.md](18_VERBALIZER.md).
+
 ## What it replaces
 
 | Before Meridian | With Meridian |
@@ -140,13 +145,18 @@ non-deterministic. The *compilation* is deterministic.
   `did you mean "X"?` suggestion (or a candidate list); there are no silent
   fallbacks (strict-by-default, opt out per-file with `allow-fallbacks:`).
   Errors are batch-reported, link to the design decision that governs them, and
-  are queryable via `meridian explain <code>` / `meridian decisions`. `--fix`
+  are queryable via `meridian explain-diag <code>` / `meridian decisions`. `--fix`
   applies the unambiguous suggestions; `--diagnostics-format json` feeds editors
   and CI. See [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md).
 - **Gap-free tracing** — `ParserTrace` exposes category-scoped, timed spans over
   every compile phase (tokenize → parse → lower → codegen), a compile profile,
   and diagnostics mirrored into the stream. Enable with `--trace <categories>`.
   See [08_TRACING.md](08_TRACING.md).
+- **Canonical English verbalizer** — `Compiler.compileToModel` returns a
+  `VerbalizerModel`; `Verbalizer` renders Canonical English that must compile
+  back to structurally equal IR (`SEM-8-03`). `DriftEngine` classifies authored
+  vs. canonical differences for corpus audits. See
+  [18_VERBALIZER.md](18_VERBALIZER.md).
 
 ## End-to-end flow
 
@@ -156,7 +166,9 @@ non-deterministic. The *compilation* is deterministic.
 .meridian   ──► MeridianParser ──► MeridianFile ──┤
                                                   ▼
                             ASTToIR ──► [IRWorkflow]
-                                                  │
+                                │                 │
+                                │                 ├──► Verbalizer ──► Canonical English
+                                ▼                 │
                          SwiftEmitter ──► Swift source
                                                   │
                       swift-format (optional) ──► formatted Swift

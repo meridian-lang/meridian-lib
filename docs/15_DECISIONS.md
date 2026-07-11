@@ -5,8 +5,8 @@
 > and re-render. A test fails if this file drifts from the catalog.
 
 Each decision is reachable from the errors it governs: run
-`meridian explain <code>` (e.g. `meridian explain MER2002`) or
-`meridian explain <decision-id>` (e.g. `meridian explain D-DX-5`).
+`meridian explain-diag <code>` (e.g. `meridian explain-diag MER2002`) or
+`meridian explain-diag <decision-id>` (e.g. `meridian explain-diag D-DX-5`).
 
 ## D-DX-1 — Unresolved phrases are hard errors by default
 

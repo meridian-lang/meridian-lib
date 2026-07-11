@@ -29,6 +29,12 @@ struct SkillMigratorMarkingTests {
         try migrator(vocabularies: vocabularies).markSections(source).aliases
     }
 
+    static func diagnosticsSummary(_ diagnostics: [Diagnostic]) -> String {
+        diagnostics
+            .map { "\($0.code.id) \($0.primaryRange): \($0.message)" }
+            .joined(separator: "\n")
+    }
+
     @Test("a Contract heading with zero checkable/normative/inference signal is left unmarked for the real compiler to reject (P1 category 4)")
     func contractOperationalErrorLeftUnmarked() throws {
         let source = """
@@ -176,6 +182,25 @@ struct SkillMigratorMarkingTests {
         #expect(out.contains("Run the cleanup commands below."), Comment(rawValue: out))
         #expect(out.contains("### Post import\(separator)"), Comment(rawValue: out))
         #expect(out.contains("gbrain extract links --source db"), Comment(rawValue: out))
+    }
+
+    @Test("structural if/otherwise chains stay together as an executable split block")
+    func structuralIfChainSplitsAsExecutableBlock() throws {
+        let out = try Self.mark("""
+        ## Conditional flow
+
+        Keep the branch as authored.
+        if the page count is at least 1,
+          complete.
+
+        otherwise,
+          complete.
+        """)
+        let separator = SkillMigrator.splitHeadingSeparator
+        #expect(out.contains("## Conditional flow (( role: reference ))"), Comment(rawValue: out))
+        #expect(out.contains("### Conditional flow\(separator)"), Comment(rawValue: out))
+        #expect(out.contains("if the page count is at least 1,"), Comment(rawValue: out))
+        #expect(out.contains("otherwise,"), Comment(rawValue: out))
     }
 
     @Test("choice-only unknown heading is routed to procedure")
@@ -858,7 +883,7 @@ struct SkillMigratorMarkingTests {
 
         Validate the order.
         """)
-        #expect(result.compiledOK, Comment(rawValue: result.meriSource + "\n\n" + result.report.diagnostics.joined(separator: "\n")))
+        #expect(result.compiledOK, Comment(rawValue: result.meriSource + "\n\n" + Self.diagnosticsSummary(result.report.diagnostics)))
     }
 
     @Test("multiple contiguous executable runs generate numbered sibling headings in order")
@@ -913,7 +938,7 @@ struct SkillMigratorMarkingTests {
 
         Validate the order.
         """)
-        #expect(result.compiledOK, Comment(rawValue: result.meriSource + "\n\n" + result.report.diagnostics.joined(separator: "\n")))
+        #expect(result.compiledOK, Comment(rawValue: result.meriSource + "\n\n" + Self.diagnosticsSummary(result.report.diagnostics)))
         #expect(result.meriSource.contains("> The order desk automatically removes all private/internal data:"),
                 Comment(rawValue: result.meriSource))
     }
@@ -1191,7 +1216,7 @@ struct SkillMigratorMarkingTests {
         1. the health status is "down"? -> restart the service
         2. the queue depth is greater than 100? -> page the on call engineer
         """)
-        #expect(case1.compiledOK, Comment(rawValue: case1.meriSource + "\n\n" + case1.report.diagnostics.joined(separator: "\n")))
+        #expect(case1.compiledOK, Comment(rawValue: case1.meriSource + "\n\n" + Self.diagnosticsSummary(case1.report.diagnostics)))
 
         let case2 = try await Self.migrator().migrate("""
         ### Response
@@ -1200,7 +1225,7 @@ struct SkillMigratorMarkingTests {
         1. the subject type is "person"? -> person-typed directory
         2. the subject type is "organization"? -> company-typed directory
         """)
-        #expect(case2.compiledOK, Comment(rawValue: case2.meriSource + "\n\n" + case2.report.diagnostics.joined(separator: "\n")))
+        #expect(case2.compiledOK, Comment(rawValue: case2.meriSource + "\n\n" + Self.diagnosticsSummary(case2.report.diagnostics)))
 
         let case3 = try await Self.migrator().migrate("""
         ### Step 1: Identify primary subject type
@@ -1210,7 +1235,7 @@ struct SkillMigratorMarkingTests {
         2. Is the primary subject a NAMED ORGANIZATION? → company-typed directory
         3. Is it about a TIME-BOUNDED EVENT (meeting, deal, trip)? → temporal-typed directory
         """)
-        #expect(case3.compiledOK, Comment(rawValue: case3.meriSource + "\n\n" + case3.report.diagnostics.joined(separator: "\n")))
+        #expect(case3.compiledOK, Comment(rawValue: case3.meriSource + "\n\n" + Self.diagnosticsSummary(case3.report.diagnostics)))
     }
 
     static let decisionVocab = Compiler.VocabularyInput(

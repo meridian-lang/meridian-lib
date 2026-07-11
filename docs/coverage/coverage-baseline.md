@@ -82,7 +82,7 @@ MeridianRuntime/Comparison/Comparison.swift                  99.24%   99.30%    
 MeridianCore/Migration/SkillMetrics.swift                    99.45%   99.71%        1
 MeridianCLIKit/Commands/BenchParseCommand.swift             100.00%  100.00%        0
 MeridianCLIKit/Commands/CheckCommand.swift                  100.00%  100.00%        0
-MeridianCLIKit/Commands/ExplainCommand.swift                100.00%  100.00%        0
+MeridianCLIKit/Commands/ExplainDiagCommand.swift            100.00%  100.00%        0
 MeridianCLIKit/Commands/PreviewSkillCommand.swift           100.00%  100.00%        0
 MeridianCLIKit/Commands/ResumeCommand.swift                 100.00%  100.00%        0
 MeridianCLIKit/Commands/VerifyCommand.swift                 100.00%  100.00%        0

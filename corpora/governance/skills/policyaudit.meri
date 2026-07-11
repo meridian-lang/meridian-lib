@@ -30,15 +30,17 @@ triggers:
 | staging     | 1                  |
 
 ## Workflow (( role: reference ))
+The audit report template is the coverage receipt shape; the executable
+steps below bind and emit it.
+
+### Workflow — steps
+
 bind audit report =
   ```
   policy-audit:
   [if evaluated count is more than 0]status: covered[otherwise]status: uncovered[end if]
   environments evaluated: {{ evaluated count }}
   ```
-
-### Workflow — steps
-
 evaluate the policy for the identity provider.
 evaluate the policy for the audit sink.
 let evaluated count be the number of environments whose status is "active".

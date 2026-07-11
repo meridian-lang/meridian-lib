@@ -160,11 +160,15 @@ struct ToolRegistryTests {
 
     @Test("subprocess timeout terminates and throws a named timeout")
     func subprocessTimeoutThrows() async throws {
+        // Use a long sleep: ProcessRunner's timeout is a DispatchQueue timer, and
+        // under heavy parallel/coverage load that queue can be starved for tens
+        // of seconds. A short `sleep 30` then finishes first and the test sees
+        // success instead of `subprocess.timeout`.
         let registry = ToolRegistry()
         await registry.register(tool: "slow", .subprocess(SubprocessSpec(
             binary: "/bin/sh",
-            argTemplate: ["-c", "sleep 30"],
-            timeout: .milliseconds(100)
+            argTemplate: ["-c", "sleep 600"],
+            timeout: .milliseconds(250)
         )))
 
         do {

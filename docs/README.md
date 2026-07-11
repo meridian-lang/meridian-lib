@@ -9,9 +9,10 @@ runs against a small deterministic runtime.
 > program (executable Markdown tables/task-lists + AI-routing), the
 > world-class diagnostics/tracing/decision-log layer (Phase DX), Wave 5 parser
 > infrastructure (grammar table, screening, sentence breaker, problem messages),
-> and Wave 6 validation/reporting across three corpus families are all complete.
+> Wave 6 validation/reporting across six corpus families, and the Wave 7
+> canonical verbalizer/drift audit surface are all complete.
 > Generated Swift compiles, links, and runs against `MeridianRuntime`.
-> Replay-safe resume, all 12 IR primitives, Blueprint built-ins, full CLI,
+> Replay-safe resume, all 13 IR primitives, Blueprint built-ins, full CLI,
 > MeridianTestKit, and DocC bundles are shipped. Every error is a stable
 > `MERxxxx` code with always-on did-you-mean and a linked design decision. See
 > [status.md](status.md) and [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md).
@@ -35,11 +36,12 @@ runs against a small deterministic runtime.
 | 11 | [11_RULEBOOKS.md](11_RULEBOOKS.md) | Authors extending the surface — `.merrules` desugars, section roles, conventions |
 | 12 | [12_PROSE_AND_AUTONOMY.md](12_PROSE_AND_AUTONOMY.md) | Authors using plan/autonomy prose modes |
 | 13 | [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) | Authors porting gbrain `SKILL.md` → `.meri` (playbook + tiers + migrator) |
-| 14 | [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) | **Everyone debugging** — diagnostics, codes, did-you-mean, batch reporting, tracing, `explain`/`decisions`/`--fix` |
+| 14 | [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) | **Everyone debugging** — diagnostics, codes, did-you-mean, batch reporting, tracing, `explain-diag`/`decisions`/`--fix` |
 | 15 | [15_DECISIONS.md](15_DECISIONS.md) | The readable design-decision log (generated from `DecisionCatalog`) |
 | 15b | [15_PROBLEM_MESSAGES.md](15_PROBLEM_MESSAGES.md) | Inform-style problem-message template and active diagnostic-code reference |
 | 16 | [16_EXPRESSIVENESS_REPORT.md](16_EXPRESSIVENESS_REPORT.md) | Wave 6 corpus metrics, mechanism coverage, and caveats |
 | 17 | [17_MERIDIAN_PATTERNS.md](17_MERIDIAN_PATTERNS.md) | **Anyone about to "fix" a restriction** — recurring architectural patterns and why they're intentional, not gaps |
+| 18 | [18_VERBALIZER.md](18_VERBALIZER.md) | Wave 7 canonical English, round-trip law, drift audit, and verbalizer API |
 | — | [coverage/README.md](coverage/README.md) | **Anyone touching tests** — how & why coverage is measured, the enforced per-file gate, and how to raise it |
 | — | [../Tests/README.md](../Tests/README.md) | All contributors — test suites, forcing functions, adding tests |
 | — | [status.md](status.md) | Implementers — what's done, what's next, decision references |
@@ -64,9 +66,10 @@ meridian/
 │   │   ├── AST/                # AST node types (post-parse, pre-IR)
 │   │   ├── Symbols/            # SymbolTable + phrase matching
 │   │   ├── Lowering/           # AST → IR (ASTToIR.swift)
-│   │   ├── IR/                 # IRTypes.swift — 12 IR primitives
+│   │   ├── IR/                 # IRTypes.swift — 13 IR primitives
 │   │   ├── Codegen/            # SwiftEmitter.swift + ManifestEmitter.swift
 │   │   ├── Formatter/          # MeridianFormatter.swift
+│   │   ├── Verbalizer/         # Verbalizer, DriftEngine, VerbalizerModel
 │   │   ├── Docs/               # MerconfigDocsRenderer.swift
 │   │   ├── Testing/            # MeridianTestRunner + SpecParser + Assertions
 │   │   ├── Grammar/            # Wave 5 GrammarTable (per-production registry),
@@ -77,7 +80,8 @@ meridian/
 │   ├── MeridianCLI/            # thin meridian @main executable
 │   ├── MeridianCLIKit/         # ArgumentParser command implementations:
 │   │                           #   compile, check, verify, run, resume, format,
-│   │                           #   docs, test, lint, trace, explain, decisions,
+│   │                           #   docs, test, lint, trace, explain,
+│   │                           #   explain-diag, drift, grammar-doc, decisions,
 │   │                           #   preview-skill, migrate-skill, skill-deviation
 │   ├── MeridianTools/          # Blueprint built-in tool implementations
 │   ├── MeridianTestKit/        # Test helpers: WorkflowTestHarness, MockRuntime, etc.

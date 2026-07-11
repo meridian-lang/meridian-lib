@@ -67,7 +67,7 @@ This skill guarantees:
 - If it's a **product or business idea** → create/update `ideas/{slug}`
 
 
-### Phase 1: Idea/Observation Detection (PRIMARY) — steps
+### Phase 1: Idea/Observation Detection (PRIMARY) — steps (( role: reference ))
 
 When the user expresses a novel thought, observation, thesis, or framework:
 

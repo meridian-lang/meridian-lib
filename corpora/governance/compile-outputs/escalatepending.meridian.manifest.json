@@ -109,7 +109,7 @@
         "file" : "escalatepending.meri",
         "line" : 26
       },
-      "text" : "When an access request has been pending for more than 7 days, escalate the access request"
+      "text" : "When an access request is flagged as overdue, escalate the access request"
     }
   ],
   "meridian_skill" : {
@@ -184,7 +184,7 @@
         "heading" : "Rules — steps",
         "line" : 24,
         "lines" : [
-          "When an access request has been pending for more than 7 days, escalate the access request"
+          "When an access request is flagged as overdue, escalate the access request"
         ],
         "role" : "procedure"
       },
@@ -307,8 +307,8 @@
       "parameters" : [
 
       ],
-      "source_name" : "when an access request has been pending for more than 7 days",
-      "swift_struct" : "WhenAccessRequestHasBeenPending"
+      "source_name" : "when an access request is flagged as overdue",
+      "swift_struct" : "WhenAccessRequestIs"
     },
     {
       "mode" : "strict",

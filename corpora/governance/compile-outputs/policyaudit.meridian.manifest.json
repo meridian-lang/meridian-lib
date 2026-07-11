@@ -125,37 +125,37 @@
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 40,
+        "line" : 36,
         "text" : "Workflow — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 46,
+        "line" : 48,
         "text" : "Workflow — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 51,
+        "line" : 53,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "invariants",
         "level" : 2,
-        "line" : 59,
+        "line" : 61,
         "text" : "Guarantees"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 62,
+        "line" : 64,
         "text" : "Report shape"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 49,
+        "line" : 51,
         "text" : "Emit"
       }
     ],
@@ -185,16 +185,18 @@
         "heading" : "Workflow",
         "line" : 32,
         "lines" : [
-          "bind audit report =",
-          "codeblock:plain:cG9saWN5LWF1ZGl0OgpbaWYgZXZhbHVhdGVkIGNvdW50IGlzIG1vcmUgdGhhbiAwXXN0YXR1czogY292ZXJlZFtvdGhlcndpc2Vdc3RhdHVzOiB1bmNvdmVyZWRbZW5kIGlmXQplbnZpcm9ubWVudHMgZXZhbHVhdGVkOiB7eyBldmFsdWF0ZWQgY291bnQgfX0="
+          "The audit report template is the coverage receipt shape; the executable",
+          "steps below bind and emit it"
         ],
         "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Workflow — steps",
-        "line" : 40,
+        "line" : 36,
         "lines" : [
+          "bind audit report =",
+          "codeblock:plain:cG9saWN5LWF1ZGl0OgpbaWYgZXZhbHVhdGVkIGNvdW50IGlzIG1vcmUgdGhhbiAwXXN0YXR1czogY292ZXJlZFtvdGhlcndpc2Vdc3RhdHVzOiB1bmNvdmVyZWRbZW5kIGlmXQplbnZpcm9ubWVudHMgZXZhbHVhdGVkOiB7eyBldmFsdWF0ZWQgY291bnQgfX0=",
           "evaluate the policy for the identity provider",
           "evaluate the policy for the audit sink",
           "let evaluated count be the number of environments whose status is \"active\""
@@ -204,7 +206,7 @@
       {
         "executes" : true,
         "heading" : "Workflow — steps 2",
-        "line" : 46,
+        "line" : 48,
         "lines" : [
           "emit governance.report with body = audit report",
           "Emit: \"policy audit pass complete\""
@@ -214,7 +216,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 51,
+        "line" : 53,
         "lines" : [
           "Don't apply the production threshold to a staging environment just",
           "because it's \"close enough\" — the coverage thresholds table exists so",
@@ -228,7 +230,7 @@
       {
         "executes" : true,
         "heading" : "Guarantees",
-        "line" : 59,
+        "line" : 61,
         "lines" : [
           "every emitted audit report contains \"policy-audit\""
         ],
@@ -237,7 +239,7 @@
       {
         "executes" : false,
         "heading" : "Report shape",
-        "line" : 62,
+        "line" : 64,
         "lines" : [
           "The receipt opens with `policy-audit:`, reports whether coverage is",
           "`covered` or `uncovered`, and states how many environments were evaluated in",
@@ -277,7 +279,7 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 60,
+      "meridian_line" : 62,
       "swift_line" : 435
     },
     {
@@ -285,48 +287,52 @@
       "swift_line" : 439
     },
     {
-      "meridian_line" : 69,
-      "swift_line" : 442
+      "meridian_line" : 38,
+      "swift_line" : 441
     },
     {
       "meridian_line" : 69,
-      "swift_line" : 454
+      "swift_line" : 444
     },
     {
-      "meridian_line" : 44,
-      "swift_line" : 465
+      "meridian_line" : 69,
+      "swift_line" : 456
     },
     {
-      "meridian_line" : 48,
-      "swift_line" : 468
+      "meridian_line" : 46,
+      "swift_line" : 467
     },
     {
-      "meridian_line" : 49,
-      "swift_line" : 478
+      "meridian_line" : 50,
+      "swift_line" : 470
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 517
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 522
+      "meridian_line" : 51,
+      "swift_line" : 480
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 562
+      "swift_line" : 519
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 567
+      "swift_line" : 524
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 607
+      "swift_line" : 564
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 612
+      "swift_line" : 569
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 609
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 614
     }
   ],
   "tools_used" : [

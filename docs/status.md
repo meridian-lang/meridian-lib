@@ -22,6 +22,7 @@ Tracks the six-phase build plan from `meridian-handoff/docs/10_BUILD_PLAN.md`.
 | I7-W4 | Inform-7-tier Wave 4: declarative domain, tables, templates | ✅ Done | 100% |
 | I7-W5 | Inform-7-tier Wave 5: parser infrastructure for scale | ✅ Done | 100% |
 | I7-W6 | Inform-7-tier Wave 6: validation, corpus diversification, report | ✅ Done | 100% |
+| I7-W7 | Inform-7-tier Wave 7: canonical verbalizer and drift audit | ✅ Done | 100% pending sign-off |
 | IR | Inert-reduction: executable tables/checklists + AI-routing | ✅ Done | 100% |
 | DX | World-class diagnostics, tracing & decision logs | ✅ Done | static-verified (gates pending a working shell) |
 
@@ -473,6 +474,35 @@ writeup in `IMPLEMENTATION_LOG.md`.
 
 ---
 
+## Phase I7-W7 — canonical verbalizer and drift audit
+
+**Completed; sign-off requested.** Wave 7 adds the compiler-to-Canonical-English
+path:
+
+- `Compiler.compileToModel(...)` returns a `VerbalizerModel` containing lowered
+  workflows, definitions, symbols, lexicon, metadata, skill sections, tools, and
+  authored source.
+- `Verbalizer` renders whole models, expressions, and primitives back to
+  Canonical English.
+- `DriftEngine` and `meridian drift` compare authored source against canonical
+  output, including `canonical_drift` counters in skill-deviation indexes.
+- `meridian explain` now prints Canonical English; diagnostic explanations use
+  `meridian explain-diag`.
+- `meridian grammar-doc` emits the live canonical grammar reference from the
+  grammar table.
+- `SEM-8-03` tests compile -> verbalize -> compile across sample-gbrain and all
+  corpora fixtures, then assert IR structural equality. Additional gates cover
+  totality, seeded generative round trips, cookbook `COOK-*` examples,
+  ambiguity/no-placeholder checks, and canonical fixpoints.
+- Complex gap closeout: template holes emit `{{ }}` (B7); minimal `branch on`
+  parse/lower; named E2E + CLI zero-drift locks; match `otherwise:` ↔
+  `thenBlock` ↔ Swift `default:`; FixedGrammar shared by parser and Verbalizer.
+
+Primary docs: [18_VERBALIZER.md](18_VERBALIZER.md) and
+[coverage/VERBALIZER_EVIDENCE.md](coverage/VERBALIZER_EVIDENCE.md).
+
+---
+
 ## Phase IR — Inert-reduction: executable Markdown + AI-routing
 
 **Completed.** Markdown structures that previously had to be `(( inert ))`
@@ -533,7 +563,7 @@ debugging experience. See [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.m
    `timing` categories, per-phase timed spans, an end-of-compile profile
    summary, and diagnostics mirrored into the stream. Compile + runtime tracing
    are unified.
-8. **CLI** — `meridian explain <code|decision-id>`, `meridian decisions`
+8. **CLI** — `meridian explain-diag <code|decision-id>`, `meridian decisions`
    (`--id` / `--render`), `meridian trace categories`, plus
    `--diagnostics-format json` and `--fix` (token-aware, safe) across `compile`
    / `check` / `verify` / `run`.

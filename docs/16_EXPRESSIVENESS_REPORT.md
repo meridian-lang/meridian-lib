@@ -37,6 +37,15 @@ not marketing terms.
 > report's original Wave-6 Tier/similarity measurement scope (below); see
 > `corpora/README.md` for their per-corpus metrics and
 > `IMPLEMENTATION_LOG.md` for the full expansion writeup.
+>
+> **Wave 7 addendum (canonical drift):** the Wave 6 similarity/inert metrics
+> below remain a historical measurement of the authored-to-ported migration
+> surface. Wave 7 adds a second audit axis: `canonical_drift`, computed by
+> compiling each port, verbalizing the lowered IR to Canonical English, and
+> comparing authored vs canonical lines. Deviation indexes now include
+> synonym/structure/desugar/meaning counts when regenerated with
+> `skill-deviation --batch --index`; see [18_VERBALIZER.md](18_VERBALIZER.md)
+> and [coverage/VERBALIZER_EVIDENCE.md](coverage/VERBALIZER_EVIDENCE.md).
 
 ## Corpus Status
 

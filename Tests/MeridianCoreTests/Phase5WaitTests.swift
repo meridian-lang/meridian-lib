@@ -100,28 +100,28 @@ struct WaitCodegenTests {
         SwiftEmitter(options: .init(emitSourceLineComments: false))
     }
 
-    private func emitWait(_ cond: WaitConditionIR) -> String {
+    private func emitWait(_ cond: WaitConditionIR) throws -> String {
         let ir = IRPrimitive.wait(WaitIR(condition: cond))
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
                             mode: .strict, sourceFile: "t.meridian")
-        return emitter().emitFile(workflows: [wf])
+        return try emitter().emitFile(workflows: [wf])
     }
 
     @Test("wait duration emits runtime.wait(.duration(...))")
-    func waitDurationCodegen() {
-        let out = emitWait(.duration(.seconds(3600)))
+    func waitDurationCodegen() throws {
+        let out = try emitWait(.duration(.seconds(3600)))
         #expect(out.contains("try await runtime.wait(.duration(.seconds(3600)))"))
     }
 
     @Test("wait signal emits runtime.wait(.signal(...))")
-    func waitSignalCodegen() {
-        let out = emitWait(.signal("manual_review_complete"))
+    func waitSignalCodegen() throws {
+        let out = try emitWait(.signal("manual_review_complete"))
         #expect(out.contains(#"try await runtime.wait(.signal("manual_review_complete"))"#))
     }
 
     @Test("wait approval emits RoleRef(identifier:) not bare string")
-    func waitApprovalCodegen() {
-        let out = emitWait(.approval(of: .literal(.string("")), by: "account_manager"))
+    func waitApprovalCodegen() throws {
+        let out = try emitWait(.approval(of: .literal(.string("")), by: "account_manager"))
         #expect(out.contains("RoleRef(identifier: \"account_manager\")"),
                 Comment(rawValue: "Expected RoleRef in:\n\(out)"))
         // Must NOT emit a bare string for the role — that would not compile.
@@ -129,14 +129,14 @@ struct WaitCodegenTests {
     }
 
     @Test("wait event with no matching emits matching: nil")
-    func waitEventNilMatching() {
-        let out = emitWait(.event("order.shipped", matching: nil))
+    func waitEventNilMatching() throws {
+        let out = try emitWait(.event("order.shipped", matching: nil))
         #expect(out.contains(#"try await runtime.wait(.event("order.shipped", matching: nil))"#))
     }
 
     @Test("wait event with matching emits closure { _event in … }")
-    func waitEventWithMatching() {
-        let out = emitWait(.event("payment.confirmed", matching: .identifierRef(name: "isVerified")))
+    func waitEventWithMatching() throws {
+        let out = try emitWait(.event("payment.confirmed", matching: .identifierRef(name: "isVerified")))
         #expect(out.contains("{ _event in"))
         #expect(out.contains("isVerified"))
     }

@@ -4,7 +4,7 @@
 - Ported: `book_mirror.meri`
 - Tier: 2 (light edits)
 - Similarity: 73%
-- Lines: 351 -> 419 (+137 / -69)
+- Lines: 351 -> 419 (+139 / -71)
 
 ## Frontmatter
 - Added: (none)
@@ -31,6 +31,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=16, template=1
 - Judgment: 2 blocks, 0 lines
+- canonical_drift: synonym=0, structure=0, desugar=0, meaning=304
 
 ### Inert section details
 - L14 `What this does`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
@@ -159,11 +160,23 @@ These sections were made non-executable in the port and should be reviewed as mi
 +If `bs4` is missing: `pip3 install beautifulsoup4 lxml`.
 +
 +
-+### EPUB — steps (( role: reference ))
++### EPUB — steps
  
  ```bash
  SLUG="this-book"                                # kebab-case
-@@ -118,61 +138,82 @@
+@@ -108,71 +128,92 @@
+ from bs4 import BeautifulSoup
+ import os, sys
+ work = os.environ['WORK']
+-files = open(f'{work}/files.txt').read().splitlines()
++files = open(f'{{work}}/files.txt').read().splitlines()
+ for i, path in enumerate(files, 1):
+     html = open(path, encoding='utf-8', errors='replace').read()
+     text = BeautifulSoup(html, 'html.parser').get_text('\n')
+     text = '\n'.join(line.strip() for line in text.splitlines() if line.strip())
+-    with open(f'{work}/chapters/{i:02d}.txt', 'w') as f:
++    with open(f'{{work}}/chapters/{{i:02d}}.txt', 'w') as f:
+         f.write(text)
  PY
  ```
  
@@ -205,7 +218,7 @@ These sections were made non-executable in the port and should be reviewed as mi
  - Paragraphs preserved with `\n\n`.
  
 +
-+### Quality check — steps
++### Quality check — steps (( role: reference ))
 +
 +For each chapter file:
 +

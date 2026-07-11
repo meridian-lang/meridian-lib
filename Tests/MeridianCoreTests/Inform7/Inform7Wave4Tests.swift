@@ -224,7 +224,7 @@ struct Inform7Wave4TemplateTests {
     }
 
     @Test("template codegen emits conditional loop and formatter helpers")
-    func templateCodegen() {
+    func templateCodegen() throws {
         let expr = IRExpression.interpolatedString([
             .literal("Rows:\n"),
             .forEach(
@@ -251,7 +251,7 @@ struct Inform7Wave4TemplateTests {
                 .bind(BindIR(name: "report", expression: expr, isRebind: false))
             ])
         )
-        let out = SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [wf])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [wf])
 
         #expect(out.contains("private func meridianFormat"), Comment(rawValue: out))
         #expect(out.contains("for __item in"), Comment(rawValue: out))

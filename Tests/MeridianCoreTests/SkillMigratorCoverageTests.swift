@@ -88,7 +88,8 @@ struct SkillMigratorCoverageTests {
         2. Compile prep briefing.
         """)
         #expect(result.compiledOK)
-        #expect(result.report.diagnostics.allSatisfy { $0.hasPrefix("L") })
+        #expect(result.report.diagnostics.allSatisfy { $0.primaryRange.startLine > 0 })
+        #expect(result.report.diagnostics.contains { $0.code == .migrationRouteFuzzyDowngrade })
         #expect(!result.report.diagnostics.isEmpty)
     }
 
@@ -107,7 +108,7 @@ struct SkillMigratorCoverageTests {
         Complete the task.
         """)
         #expect(!result.compiledOK)
-        #expect(result.report.diagnostics.contains { $0.hasPrefix("L") })
+        #expect(result.report.diagnostics.contains { $0.primaryRange.startLine > 0 })
     }
 
     @Test("migrate threads procedure section aliases through strict compile")

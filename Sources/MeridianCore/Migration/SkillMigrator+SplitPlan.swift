@@ -485,6 +485,18 @@ extension SkillMigrator {
         // question-arrow protocol's output must be stashed on the block itself
         // (`execRenderOverride`) for Step 4 to render.
         var kinds: [SplitKind] = Array(repeating: .documentation, count: blocks.count)
+        func traceSplitKind(_ kind: SplitKind) -> String {
+            switch kind {
+            case .blank: return "blank"
+            case .comment: return "comment"
+            case .exec: return "lowerable"
+            case .documentation: return "reference"
+            case .aiInference: return "judgment"
+            case .errorOperational: return "reword-error"
+            case .fuzzyTable: return "fuzzy-table-judgment"
+            case .fuzzyChecklist: return "fuzzy-checklist-judgment"
+            }
+        }
         for idx in blocks.indices {
             let block = blocks[idx]
             if block.isFence {
@@ -587,6 +599,14 @@ extension SkillMigrator {
             if trial.hasInferenceCue(stripped) { kinds[idx] = .aiInference; continue }
             if trial.isNormativeNarrative(stripped) { kinds[idx] = .errorOperational; continue }
             kinds[idx] = .documentation
+        }
+        if trace.isEnabled(.skill) {
+            for idx in blocks.indices {
+                let raw = blocks[idx].normalizedText.isEmpty
+                    ? blocks[idx].rawLines.joined(separator: " ")
+                    : blocks[idx].normalizedText
+                trace.log(.skill, "split-plan block \(idx): \(traceSplitKind(kinds[idx])) — \(ParserTrace.short(raw, max: 100))")
+            }
         }
 
         // A colon lead-in immediately before a guidance-only executable fence

@@ -18,6 +18,7 @@ struct RuleInjector {
     let fallbackPolicy: FallbackPolicy
     /// Source file used when constructing SourceRanges for diagnostics.
     let sourceFile: String
+    let reportFallback: ((Diagnostic) -> Void)?
     /// Rules that parsed but did not attach to any workflow. Surfaced by
     /// the lowerer as a hard error (or warning, if the policy allows
     /// `unattached-rules`).
@@ -29,7 +30,8 @@ struct RuleInjector {
         trace: ParserTrace = .shared,
         lowerAction: ((String, SourceRange) throws -> [IRPrimitive])? = nil,
         fallbackPolicy: FallbackPolicy = .strict,
-        sourceFile: String = ""
+        sourceFile: String = "",
+        reportFallback: ((Diagnostic) -> Void)? = nil
     ) {
         self.symbols = symbols
         self.lexicon = lexicon
@@ -37,6 +39,7 @@ struct RuleInjector {
         self.lowerAction = lowerAction
         self.fallbackPolicy = fallbackPolicy
         self.sourceFile = sourceFile
+        self.reportFallback = reportFallback
     }
 
     // MARK: - Injection
@@ -465,6 +468,11 @@ struct RuleInjector {
                 let r = first?.primaryRange ?? sr
                 if fallbackPolicy.allows(.unresolvedTriggerActions) {
                     trace.log(.lowering, "trigger action unresolved (allow-fallbacks: unresolved-trigger-actions): \(actionText) — \(m)")
+                    reportFallback?(Diagnostic.warning(
+                        .unresolvedTriggerAction,
+                        message: "trigger action unresolved but allowed by fallback: \"\(actionText)\". \(m)",
+                        range: r,
+                        help: "Add a matching workflow/phrase when possible; keep `allow-fallbacks: unresolved-trigger-actions` only while authoring."))
                 } else {
                     throw CompilerError.diagnostics([
                         Diagnostic.error(

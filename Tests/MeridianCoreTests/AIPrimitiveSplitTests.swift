@@ -111,23 +111,23 @@ struct AIPrimitiveSplitTests {
     // MARK: - Codegen: each primitive calls the matching runtime API only
 
     @Test("aiJudgment codegen calls executeProsePlan, never executeAutonomousLoop")
-    func judgmentCodegenCallsExecuteProsePlan() {
+    func judgmentCodegenCallsExecuteProsePlan() throws {
         let workflow = IRWorkflow(
             name: "Demo", parameters: [],
             body: IRBlock(statements: [.aiJudgment(AIJudgmentIR(text: "decide"))])
         )
-        let out = SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
         #expect(out.contains("runtime.executeProsePlan"))
         #expect(!out.contains("runtime.executeAutonomousLoop"))
     }
 
     @Test("aiAutonomy codegen calls executeAutonomousLoop, never executeProsePlan")
-    func autonomyCodegenCallsExecuteAutonomousLoop() {
+    func autonomyCodegenCallsExecuteAutonomousLoop() throws {
         let workflow = IRWorkflow(
             name: "Demo", parameters: [],
             body: IRBlock(statements: [.aiAutonomy(AIAutonomyIR(text: "keep fixing"))])
         )
-        let out = SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
         #expect(out.contains("runtime.executeAutonomousLoop"))
         #expect(!out.contains("runtime.executeProsePlan"))
     }

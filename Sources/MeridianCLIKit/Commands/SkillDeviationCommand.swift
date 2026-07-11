@@ -28,33 +28,45 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Omit the raw unified diff; emit summary-only reports.")
     var noDiff: Bool = false
 
+    @Option(name: .long, help: "Comma-separated ParserTrace categories (or `all`). Also reads MERIDIAN_TRACE.")
+    var trace: String?
+
+    @Option(name: .long, help: "Write ParserTrace output to this file instead of stderr.")
+    var traceFile: String?
+
     public func run() async throws {
+        let traceInstance = try makeCLITrace(spec: trace, file: traceFile)
         if batch {
-            try runBatch()
+            try runBatch(trace: traceInstance)
         } else {
-            try runSingle()
+            try runSingle(trace: traceInstance)
         }
     }
 
     // MARK: - Single
 
-    private func runSingle() throws {
+    private func runSingle(trace: ParserTrace) throws {
         let origURL = URL(fileURLWithPath: original).standardized
         let portURL = URL(fileURLWithPath: ported).standardized
         let fm = FileManager.default
         guard fm.fileExists(atPath: origURL.path) else { throw ValidationError("Original not found: \(original)") }
         guard fm.fileExists(atPath: portURL.path) else { throw ValidationError("Ported file not found: \(ported)") }
-        let rulebook = try loadRulebook(beside: portURL)
-        let lexicon = try loadLexicon(beside: portURL)
+        let rulebook = try loadRulebook(beside: portURL, trace: trace)
+        let lexicon = try loadLexicon(beside: portURL, trace: trace)
+        let dependencies = try loadCompilerInputs(beside: portURL)
+        let originalSource = try String(contentsOf: origURL, encoding: .utf8)
+        let portedSource = try String(contentsOf: portURL, encoding: .utf8)
 
-        let report = SkillDeviation.analyze(
-            originalMarkdown: try String(contentsOf: origURL, encoding: .utf8),
-            portedMeri: try String(contentsOf: portURL, encoding: .utf8),
+        var report = SkillDeviation.analyze(
+            originalMarkdown: originalSource,
+            portedMeri: portedSource,
             originalName: origURL.lastPathComponent,
             portedName: portURL.lastPathComponent,
             rulebook: rulebook,
             lexicon: lexicon
         )
+        try recordCanonicalDrift(into: &report, portedMeri: portedSource, portedFile: portURL.lastPathComponent,
+                                  dependencies: dependencies, trace: trace)
         let markdown = SkillDeviation.renderMarkdown(report, includeDiff: !noDiff)
 
         if let out {
@@ -71,7 +83,7 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
 
     // MARK: - Batch
 
-    private func runBatch() throws {
+    private func runBatch(trace: ParserTrace) throws {
         let fm = FileManager.default
         let origDir = URL(fileURLWithPath: original).standardized
         let portDir = URL(fileURLWithPath: ported).standardized
@@ -103,8 +115,9 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         let outDir = out.map { URL(fileURLWithPath: $0).standardized }
         if let outDir { try fm.createDirectory(at: outDir, withIntermediateDirectories: true) }
         let placeholder = portDir.appendingPathComponent("placeholder.meri")
-        let rulebook = try loadRulebook(beside: placeholder)
-        let lexicon = try loadLexicon(beside: placeholder)
+        let rulebook = try loadRulebook(beside: placeholder, trace: trace)
+        let lexicon = try loadLexicon(beside: placeholder, trace: trace)
+        let dependencies = try loadCompilerInputs(beside: placeholder)
 
         var rows: [SkillDeviation.DeviationReport] = []
         var unpairedOriginals: [String] = []
@@ -120,9 +133,11 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
             // on the original side and the ported file's path relative to the
             // ported root (e.g. `skills/foo.meri`, or `RESOLVER.meri` at root).
             let origRel = displayName(src, base: origDir)
-            let report = SkillDeviation.analyze(
-                originalMarkdown: try String(contentsOf: src, encoding: .utf8),
-                portedMeri: try String(contentsOf: meriURL, encoding: .utf8),
+            let originalSource = try String(contentsOf: src, encoding: .utf8)
+            let portedSource = try String(contentsOf: meriURL, encoding: .utf8)
+            var report = SkillDeviation.analyze(
+                originalMarkdown: originalSource,
+                portedMeri: portedSource,
                 originalName: origRel,
                 portedName: meriURL.lastPathComponent,
                 originalDiffPath: "\(origDir.lastPathComponent)/\(origRel)",
@@ -130,6 +145,8 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
                 rulebook: rulebook,
                 lexicon: lexicon
             )
+            try recordCanonicalDrift(into: &report, portedMeri: portedSource, portedFile: meriURL.lastPathComponent,
+                                      dependencies: dependencies, trace: trace)
             rows.append(report)
             let reportStem = meriURL.deletingPathExtension().lastPathComponent
             if let outDir {
@@ -195,10 +212,10 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         return url.lastPathComponent
     }
 
-    private func loadRulebook(beside inputURL: URL) throws -> Rulebook {
+    private func loadRulebook(beside inputURL: URL, trace: ParserTrace) throws -> Rulebook {
         let urls = try DependencyDiscovery.resolveRulebooks(explicit: [], beside: inputURL)
         var merged = Rulebook.empty
-        let parser = RulebookParser(trace: .silent())
+        let parser = RulebookParser(trace: trace)
         for url in urls {
             let source = try String(contentsOf: url, encoding: .utf8)
             merged = merged.merging(try parser.parse(source, file: url.lastPathComponent))
@@ -206,15 +223,48 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         return merged
     }
 
+    private func loadCompilerInputs(beside inputURL: URL) throws
+        -> (vocabularies: [Compiler.VocabularyInput], rulebooks: [RulebookInput]) {
+        let vocabURLs = try DependencyDiscovery.resolveMerconfigs(explicit: [], beside: inputURL)
+        let rulebookURLs = try DependencyDiscovery.resolveRulebooks(explicit: [], beside: inputURL)
+        return (
+            try DependencyDiscovery.loadVocabularies(vocabURLs),
+            try DependencyDiscovery.loadRulebooks(rulebookURLs)
+        )
+    }
+
+    private func recordCanonicalDrift(
+        into report: inout SkillDeviation.DeviationReport,
+        portedMeri: String,
+        portedFile: String,
+        dependencies: (vocabularies: [Compiler.VocabularyInput], rulebooks: [RulebookInput]),
+        trace: ParserTrace
+    ) throws {
+        guard !dependencies.vocabularies.isEmpty || !dependencies.rulebooks.isEmpty else { return }
+        let model = try Compiler(options: .init(trace: trace)).compileToModel(
+            meridianSource: portedMeri,
+            meridianFile: portedFile,
+            vocabularies: dependencies.vocabularies,
+            rulebooks: dependencies.rulebooks
+        )
+        let canonical = try trace.phase("verbalize") {
+            try Verbalizer(model: model, trace: trace).verbalize()
+        }
+        let drift = trace.phase("drift") {
+            DriftEngine.diff(authored: model.authoredSource, canonical: canonical, trace: trace)
+        }
+        report.metrics.recordCanonicalDrift(drift)
+    }
+
     /// Real `EnglishLexicon` merged with every discovered `.merconfig`'s
     /// `=== language ===` synonyms (`normativeCueWords`/`inferenceCueWords`/
     /// `referenceHeadingWords`, per P2) — the same corpus-tuned vocabulary
     /// `SkillMetrics.analyze`'s reference/operational discrimination (§5)
     /// needs, rather than the conservative built-in default.
-    private func loadLexicon(beside inputURL: URL) throws -> EnglishLexicon {
+    private func loadLexicon(beside inputURL: URL, trace: ParserTrace) throws -> EnglishLexicon {
         let urls = try DependencyDiscovery.resolveMerconfigs(explicit: [], beside: inputURL)
         guard !urls.isEmpty else { return .default }
-        let parser = MerConfigParser()
+        let parser = MerConfigParser(trace: trace)
         var merged = MerConfigFile()
         for url in urls {
             let source = try String(contentsOf: url, encoding: .utf8)
@@ -256,6 +306,10 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         let inertDeviations = rows.reduce(0) { $0 + $1.inertSectionDeviations.count }
         let totalJudgmentBlocks = rows.reduce(0) { $0 + $1.metrics.judgmentBlocks }
         let totalJudgmentLines = rows.reduce(0) { $0 + $1.metrics.judgmentLines }
+        let driftSynonym = rows.reduce(0) { $0 + $1.metrics.canonicalDriftSynonym }
+        let driftStructure = rows.reduce(0) { $0 + $1.metrics.canonicalDriftStructure }
+        let driftDesugar = rows.reduce(0) { $0 + $1.metrics.canonicalDriftDesugar }
+        let driftMeaning = rows.reduce(0) { $0 + $1.metrics.canonicalDriftMeaning }
         let avgInertRatio = rows.isEmpty ? 0 : rows.map(\.metrics.inertRatio).reduce(0, +) / Double(rows.count)
         let categoryCounts = inertCategorySummary(rows)
         out.append("## Summary")
@@ -274,18 +328,20 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
             out.append("- Inert categories: " + categoryCounts.map { "\($0.category.rawValue)=\($0.count)" }.joined(separator: ", "))
         }
         out.append("- Judgment: \(totalJudgmentBlocks) blocks, \(totalJudgmentLines) lines")
+        out.append("- canonical_drift: synonym=\(driftSynonym), structure=\(driftStructure), desugar=\(driftDesugar), meaning=\(driftMeaning)")
         out.append("- Non-skill directories skipped (no SKILL.md, e.g. `conventions/`, `migrations/`): \(skippedNonSkillDirs)")
         out.append("")
         out.append("## Per-skill")
         out.append("")
-        out.append("| skill | tier | similarity | lines | inert deviations | inert | operational inert | judgment | frontmatter added | categories |")
-        out.append("|---|---|---|---|---|---|---|---|---|---|")
+        out.append("| skill | tier | similarity | lines | inert deviations | inert | operational inert | judgment | canonical_drift | frontmatter added | categories |")
+        out.append("|---|---|---|---|---|---|---|---|---|---|---|")
         for r in rows {
             let stem = (r.portedName as NSString).deletingPathExtension
             let fmAdded = r.frontmatterAdded.isEmpty ? "(none)" : r.frontmatterAdded.joined(separator: " ")
             let cats = r.categories.isEmpty ? "(none)" : r.categories.joined(separator: " ")
             let m = r.metrics
-            out.append("| [\(stem)](\(stem).md) | \(r.tier) | \(percent(r.similarity)) | \(r.originalLineCount)→\(r.portedLineCount) | \(r.inertSectionDeviations.count) | \(m.inertSections)/\(m.totalSections) | \(m.operationalInertSections) | \(m.judgmentBlocks)/\(m.judgmentLines) | \(fmAdded) | \(cats) |")
+            let drift = "\(m.canonicalDriftSynonym)/\(m.canonicalDriftStructure)/\(m.canonicalDriftDesugar)/\(m.canonicalDriftMeaning)"
+            out.append("| [\(stem)](\(stem).md) | \(r.tier) | \(percent(r.similarity)) | \(r.originalLineCount)→\(r.portedLineCount) | \(r.inertSectionDeviations.count) | \(m.inertSections)/\(m.totalSections) | \(m.operationalInertSections) | \(m.judgmentBlocks)/\(m.judgmentLines) | \(drift) | \(fmAdded) | \(cats) |")
         }
         if !unpairedOriginals.isEmpty {
             out.append("")

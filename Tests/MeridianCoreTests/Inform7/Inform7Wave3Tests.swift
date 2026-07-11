@@ -502,9 +502,12 @@ struct DescriptionTests3C {
         }
         let err = try #require(caught)
         let diags = err.diagnostics
-        #expect(diags.count == 1)
-        let diag = try #require(diags.first)
-        #expect(diag.code == .commandHoleOutOfScope, Comment(rawValue: "\(diag.code)"))
+        let primary = diags.filter { $0.code == .commandHoleOutOfScope }
+        #expect(primary.count == 1, Comment(rawValue: "\(diags.map(\.code))"))
+        // Recovery may append MER6004 skip-summary after the primary error.
+        #expect(diags.allSatisfy { $0.code == .commandHoleOutOfScope || $0.code == .diagnosticRecoverySummary },
+                Comment(rawValue: "\(diags.map(\.code))"))
+        let diag = try #require(primary.first)
         #expect(diag.message.contains("owner"), Comment(rawValue: diag.message))
         // The scope's only in-bounds name is the workflow parameter `page` —
         // never bare, always a suggestion or a candidate-list note (Pillar 3).

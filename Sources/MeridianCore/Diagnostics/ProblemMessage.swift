@@ -44,6 +44,7 @@ public extension Diagnostic {
         but problem: String,
         expected expectations: [String],
         rewrite: String,
+        suggestions: [Suggestion] = [],
         notes: [DiagnosticNote] = []
     ) -> Diagnostic {
         let template = ProblemMessage(
@@ -58,6 +59,7 @@ public extension Diagnostic {
             severity: .error,
             message: template.message,
             primaryRange: range,
+            suggestions: suggestions,
             notes: notes,
             help: template.help
         )
@@ -72,11 +74,32 @@ public enum ProblemMessageCatalog {
             "",
             "Generated from `DiagnosticCode.catalog`.",
             "",
+            "Wave 5 introduces an Inform-style message template for new diagnostics:",
+            "",
+            "```text",
+            "I read '<source span>' as <reading>, but <problem>. I expected <closed list>.",
+            "= help: Rewrite as: <concrete rewrite>",
+            "```",
+            "",
+            "The canonical builder is `Diagnostic.problem(...)` in",
+            "`Sources/MeridianCore/Diagnostics/ProblemMessage.swift`. Name-resolution",
+            "diagnostics still use `Diagnostic.unresolved(...)` so they keep the",
+            "always-on did-you-mean guarantee; structural diagnostics can use the problem",
+            "template directly.",
+            "",
             "| Code | Title | Kind | Help Required |",
             "|---|---|---|---|",
         ]
         for entry in DiagnosticCode.catalog where entry.status == .active {
-            let help = entry.code.kind == .structural ? "yes" : "recommended"
+            let help: String
+            switch entry.code.kind {
+            case .structural:
+                help = "yes"
+            case .nameResolution:
+                help = "guided"
+            case .other:
+                help = "recommended"
+            }
             lines.append("| `\(entry.code.id)` | \(entry.code.title) | \(entry.code.kind.rawValue) | \(help) |")
         }
         return lines.joined(separator: "\n") + "\n"

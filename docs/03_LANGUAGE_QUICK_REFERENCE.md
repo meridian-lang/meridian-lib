@@ -129,7 +129,9 @@ Fenced string templates support expression holes plus closed directives:
 ```
 
 Only `[if ...]`, `[otherwise]`, `[end if]`, `[for each ...]`, and `[end for]`
-are directives; other bracketed text such as `[date]` stays literal.
+are directives; other bracketed text such as `[date]` stays literal. Template
+holes use double braces `{{ expr }}` (B7); shell-command holes stay single
+`{…}`. `meridian explain` re-emits the B7 `{{ }}` form for fenced templates.
 
 **Empty-protocol elision**: a leaf kind with no own properties and no
 descendants gets a struct only — no `<KindName>Kind` protocol is emitted,
@@ -291,6 +293,26 @@ To {phrase pattern}:
   complete.
 ```
 
+### Canonical English and verbalization
+
+Wave 7 defines a canonical print form for the compiled IR. `meridian explain`
+compiles a `.meridian` / `.meri` file, then prints the lowered model back as
+Canonical English:
+
+```bash
+meridian explain sample-gbrain/skills/capture.meri \
+  --merconfig sample-gbrain/brain.merconfig \
+  --rulebook sample-gbrain/brain.merrules
+```
+
+Canonical English is not a formatter and not a source-preserving Markdown
+round-trip. It normalizes accepted synonyms and rulebook sugar to one stable
+surface (`exceeds` -> `is more than`, `Check:` -> `assert`, `let ... be` ->
+`bind ... = ...`) and omits documentation that does not lower to IR. The law is
+semantic: compiling the canonical output must produce structurally equal IR
+(`SEM-8-03`). Use `meridian drift` to audit authored-vs-canonical differences.
+See [18_VERBALIZER.md](18_VERBALIZER.md).
+
 ### Execution modes
 
 ```
@@ -331,9 +353,9 @@ To leniently sync analytics for an order placed by a customer:
 
 ---
 
-### Conditionals — two modalities
+### Conditionals — three modalities
 
-A branch may be written **multi-line** (comma-terminated header + an indented
+A predicate branch may be written **multi-line** (comma-terminated header + an indented
 body) or **single-line** (the action follows the comma on the same line). The
 comma after the condition is the delimiter in both, so the single-line form
 reads as plain English:
@@ -355,6 +377,11 @@ The condition/action split is the first top-level comma outside quotes that is
 not an Oxford `, and`/`, or` joiner, so multi-argument actions
 (`emit e with a = 1, b = 2`) and grouped conditions still parse. (Per-line guard
 forms `<action> only when <cond>` / `<action> unless <cond>` remain available.)
+
+The third modality is **match-branch** (`branch on <expr>:`), with indented
+`pattern:` arms and an optional `otherwise:` default (IR `thenBlock` → Swift
+`default:`). Patterns are string literals, bare enum identifiers, or
+`anything`/`_`. See [18_VERBALIZER.md](18_VERBALIZER.md) §Match-branch.
 
 ### `wait` forms
 
