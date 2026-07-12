@@ -167,5 +167,6 @@ Before signing off a phase:
    `RuntimeExecutor`, `SwiftPMPackageRunner`, or the CLI `run`/`test`
    commands).
 4. Record decisions, blockers, confidence %, and residual risk in
-   `IMPLEMENTATION_LOG.md`.
+   `IMPLEMENTATION_LOG.md`. When looking up prior phase work, also search
+   `.ai/implementation-log-archive/` (see its `README.md`).
 5. Pause for user sign-off before moving to the next phase.

@@ -218,9 +218,12 @@ IMPLEMENTATION_LOG.md         # Append-only decision log (recent entries)
 | 8 | Executable rules | ✅ Done |
 | G | Expressive SKILL.md surface + gbrain corpus | ✅ Done |
 | W7 | Canonical verbalizer + drift audit | ✅ Done |
+| W8 | Traces, time, and oracle gate | ✅ Done |
 
 Full detail: [`docs/status.md`](docs/status.md)
 Implementation decisions: [`IMPLEMENTATION_LOG.md`](IMPLEMENTATION_LOG.md)
+(recent) and [`.ai/implementation-log-archive/`](.ai/implementation-log-archive/)
+(older entries)
 
 ---
 

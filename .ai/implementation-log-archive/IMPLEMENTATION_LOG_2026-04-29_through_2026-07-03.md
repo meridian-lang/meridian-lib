@@ -3,7 +3,8 @@
 Older entries moved from `IMPLEMENTATION_LOG.md` on 2026-07-04.
 Contains the first 104 log entries (2026-04-29 through 2026-07-03T12:38:40Z).
 
-**Append only.** This file is frozen as an archive; new entries go in the root `IMPLEMENTATION_LOG.md`.
+**Frozen.** New entries go in the root `IMPLEMENTATION_LOG.md`.
+See [README.md](README.md) for the full archive index.
 
 ---
 

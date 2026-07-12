@@ -60,6 +60,7 @@ meridian/
 │   │   ├── Value/              # Value enum + ValueCoercion
 │   │   ├── State/              # State struct + StateSnapshot
 │   │   ├── Comparison/         # MeridianComparison + NumericConvertible
+│   │   ├── Trace/              # TraceRecord, TraceStore, TraceEvaluator (Wave 8)
 │   │   └── Protocol/           # MeridianWorkflow, ToolRegistry, Checkpointer
 │   ├── MeridianCore/           # Compiler: parser, IR, codegen
 │   │   ├── Parser/             # Lexical + grammar + statement + expression parsers
@@ -106,7 +107,8 @@ meridian/
 │   ├── order_processing.meridian # Workflows that use the vocabulary
 │   └── golden/                 # Expected compiler output (Phase 4 golden diff)
 ├── AGENTS.md                   # AI contributor handbook (self-updating)
-├── IMPLEMENTATION_LOG.md       # Append-only design decision log
+├── IMPLEMENTATION_LOG.md       # Append-only design decision log (recent)
+├── .ai/implementation-log-archive/  # Frozen older log snapshots
 └── docs/                       # ← you are here
 ```
 

@@ -9,6 +9,9 @@ it grow into a changelog. Two homes for change history exist instead:
 
 - **`IMPLEMENTATION_LOG.md`** — the append-only decision log (UTC-timestamped).
   Every assumption, decision, fix, or blocker goes here. Never delete entries.
+  Older entries are rotated into **`.ai/implementation-log-archive/`**; when
+  looking up task history or prior decisions, search the active log **and**
+  that archive folder (see its `README.md`).
 - **`.cursor/rules/*.mdc`** — area-scoped reference (codegen, runtime, compiler
   internals, tracing, testing). These auto-attach only when you edit matching
   files, so deep detail stays out of the always-on budget.
@@ -93,7 +96,9 @@ let out = try Compiler(options: opts).compile(
 - `docs/` — numbered docs (`01_OVERVIEW` … `15_DECISIONS`, `coverage/`).
 - `meridian-handoff/docs/` — **read-only** original spec (blueprint, language,
   IR, codegen, runtime API, build plan, decisions).
-- `IMPLEMENTATION_LOG.md` — append-only decision log.
+- `IMPLEMENTATION_LOG.md` — append-only decision log (recent entries only).
+- `.ai/implementation-log-archive/` — frozen older log snapshots + index
+  (`README.md`). Search here when the active log does not cover the date/topic.
 
 ### CLI commands
 
@@ -628,13 +633,41 @@ Do not add `.silent()` in `Sources/` except the allowlisted probe/benchmark
 sites (`TrialLowering`, `InertYieldAnalyzer`, `ParserBenchmark`) documented in
 `docs/coverage/SILENT_FALLBACK_ALLOWLIST.md`.
 
+### 22. `since the last` holds must reduce to an event pattern — never crash the emitter
+
+`TraceTemporalKind.sinceLast` stores the authored `holds: IRExpression` (for the
+verbalizer) **and** a resolved `holdsPattern: EventPatternIR` (for the emitter /
+`TraceEvaluator`). `holds` is only supportable when it lowers to an event pattern
+— directly, or via an adjective whose body is a `has ever`/event query, which is
+inlined. A **pure state predicate** holds (e.g. `the service is healthy`, where
+`healthy` compares a property) has no trace backing in v1 (no state-history
+retention, INFORM7 §5.5/§12). That case is a **compile-time `MER-TMP-019`
+(`traceStateHistorySince`)** — do NOT let it reach a `preconditionFailure` in
+`SwiftEmitter`. Fix authored skills by backing the predicate with a `has ever`
+adjective or dropping `since` for an ordinary `otherwise` guard (see
+`docs/19_TRACES_AND_TIME.md` §9.1). This is the Wave 8 instance of pitfall #21
+("emitters validate and throw, never best-effort output").
+
+The compound note form (`proceed, and note "<text>" in the <binding>`, INFORM7
+§2.9) is the companion no-new-primitive rule: it **desugars to an existing
+`rebind`** (`bind(isRebind:true)` with an `interpolatedString([identifierRef,
+literal])`). The target must already exist (`MER-REF-004`) and be text-typed
+(`MER-TYP-001`), enforced by `ASTToIR.validateNoteTargets`. Never add an IR
+primitive for it.
+
 ---
 
 ## 7. Decision history
 
-The full, chronological decision log lives in **`IMPLEMENTATION_LOG.md`**
-(append-only, UTC-timestamped). Read it on demand when you need the rationale or
-history behind a pattern — do **not** mirror it back into this file.
+The decision log is split for context budget:
+
+- **`IMPLEMENTATION_LOG.md`** — active/recent entries (append new work here).
+- **`.ai/implementation-log-archive/`** — frozen older snapshots (see
+  `README.md` for date ranges).
+
+Read **both** on demand when you need rationale or history behind a pattern —
+start with the active log, then grep the archive if the topic predates it. Do
+**not** mirror log content back into this file.
 
 Useful pointers:
 
