@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -759,75 +759,75 @@
   "source_map" : [
     {
       "meridian_line" : 214,
-      "swift_line" : 603
+      "swift_line" : 626
     },
     {
       "meridian_line" : 214,
-      "swift_line" : 614
+      "swift_line" : 639
     },
     {
       "meridian_line" : 259,
-      "swift_line" : 625
+      "swift_line" : 652
     },
     {
       "meridian_line" : 259,
-      "swift_line" : 636
+      "swift_line" : 665
     },
     {
       "meridian_line" : 259,
-      "swift_line" : 647
+      "swift_line" : 678
     },
     {
       "meridian_line" : 259,
-      "swift_line" : 658
+      "swift_line" : 691
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 697
+      "swift_line" : 760
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 702
+      "swift_line" : 765
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 741
+      "swift_line" : 833
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 746
+      "swift_line" : 838
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 785
+      "swift_line" : 906
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 790
+      "swift_line" : 911
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 829
+      "swift_line" : 979
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 834
+      "swift_line" : 984
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 873
+      "swift_line" : 1052
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 878
+      "swift_line" : 1057
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 917
+      "swift_line" : 1125
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 922
+      "swift_line" : 1130
     }
   ],
   "tools_used" : [
@@ -842,7 +842,17 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "skillify",
+      "skill_version_hash" : "141c44898d90bbc76183d71ab2811aece57d9a0e566ebf45ac969a680429411c",
       "source_name" : "skillify a input",
+      "step_paths" : [
+        "\/SkillifyInput\/phase-7-verify\/procedure\/2ae0aaff3206e8d3d66ae937bb794df6aca7ce006b10fb5d611f8e24dec29020",
+        "\/SkillifyInput\/phase-7-verify\/procedure\/3523710f6eefd058626762600c262819846e98cb5908880f8db03963be66150a",
+        "\/SkillifyInput\/phase-7-verify\/procedure\/aa9299d03537e3fb84b1096984b2993b4c387605212b7979049bd58dc2dc1b34",
+        "\/SkillifyInput\/phase-7-verify\/procedure\/c088e940aeea91ea48cbea5f211c7f0ca5518ea78fae8dbbc57263fff13e2c77",
+        "\/SkillifyInput\/provider-configuration-steps\/procedure\/282253db6186a675fa62e950ea86321a7b0dcbecb4a8d347be8a38df7435aea4",
+        "\/SkillifyInput\/provider-configuration-steps\/procedure\/7df67723a3ff4efd8d826d7c3a4c1bea3dae8bb7fa2c74c1b78fe0d7859f6df3"
+      ],
       "swift_struct" : "SkillifyInput"
     },
     {
@@ -850,7 +860,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "skillify",
+      "skill_version_hash" : "141c44898d90bbc76183d71ab2811aece57d9a0e566ebf45ac969a680429411c",
       "source_name" : "when skillifyThis fires",
+      "step_paths" : [
+        "\/WhenSkillifythisFires\/root\/procedure\/5e8c11621a3c731a67660915bf0cff245c3a2ae6d668a203f6e12bccd534ff39",
+        "\/WhenSkillifythisFires\/root\/procedure\/ad4f6df960dacd829d0162e9398e3e06155ea61fd851500048d2abab4ab9515e"
+      ],
       "swift_struct" : "WhenSkillifythisFires"
     },
     {
@@ -858,7 +874,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "skillify",
+      "skill_version_hash" : "141c44898d90bbc76183d71ab2811aece57d9a0e566ebf45ac969a680429411c",
       "source_name" : "when skillify fires",
+      "step_paths" : [
+        "\/WhenSkillifyFires\/root\/procedure\/90915da24941c1ea4aa944a7c1c32bcce1a2c2f21624e674d51210b4dec9f5b1",
+        "\/WhenSkillifyFires\/root\/procedure\/de00f4ea281d04a83d1b2cf41883b5cd3ce3a2cf429fef815ae9ab9805e78aa3"
+      ],
       "swift_struct" : "WhenSkillifyFires"
     },
     {
@@ -866,7 +888,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "skillify",
+      "skill_version_hash" : "141c44898d90bbc76183d71ab2811aece57d9a0e566ebf45ac969a680429411c",
       "source_name" : "when isThisSkill fires",
+      "step_paths" : [
+        "\/WhenIsthisskillFires\/root\/procedure\/c8af8cdb14eac8031476a2794b29a4e4e545cdec33cd453433638d3da1af86a3",
+        "\/WhenIsthisskillFires\/root\/procedure\/c9257bd820809c9ac7d0e66b8a7f3e301745151f93b39f818f8d44fafe662095"
+      ],
       "swift_struct" : "WhenIsthisskillFires"
     },
     {
@@ -874,7 +902,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "skillify",
+      "skill_version_hash" : "141c44898d90bbc76183d71ab2811aece57d9a0e566ebf45ac969a680429411c",
       "source_name" : "when makeThisProper fires",
+      "step_paths" : [
+        "\/WhenMakethisproperFires\/root\/procedure\/38f8bf73ced2815408d8cbcb8b231d8fa0aabf3d08e3859a57ab912ffbdc15ff",
+        "\/WhenMakethisproperFires\/root\/procedure\/ac749c5245b4a9c1d7287723ece41ec243b5549994533eed0a7b8ac3f4056ebf"
+      ],
       "swift_struct" : "WhenMakethisproperFires"
     },
     {
@@ -882,7 +916,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "skillify",
+      "skill_version_hash" : "141c44898d90bbc76183d71ab2811aece57d9a0e566ebf45ac969a680429411c",
       "source_name" : "when addTestsAndEvalsThis fires",
+      "step_paths" : [
+        "\/WhenAddtestsandevalsthisFires\/root\/procedure\/8709c0a4b52861b25898af339bdc2c6a0b621be232e388424be06fa44e550737",
+        "\/WhenAddtestsandevalsthisFires\/root\/procedure\/ed2d2c4e07f6554daf0177d2952c3980c74162546ef7124eacd2d48ddcd88928"
+      ],
       "swift_struct" : "WhenAddtestsandevalsthisFires"
     },
     {
@@ -890,7 +930,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "skillify",
+      "skill_version_hash" : "141c44898d90bbc76183d71ab2811aece57d9a0e566ebf45ac969a680429411c",
       "source_name" : "when checkSkillCompleteness fires",
+      "step_paths" : [
+        "\/WhenCheckskillcompletenessFires\/root\/procedure\/532da96f148d46d081865e11c3eb323e99fe74d6e5e31c23d9c11b0b7003f419",
+        "\/WhenCheckskillcompletenessFires\/root\/procedure\/f68128ef96b05c317be5a1de4ae12bcda55050d12c43a2e88f08ef48f43a0eb2"
+      ],
       "swift_struct" : "WhenCheckskillcompletenessFires"
     }
   ]

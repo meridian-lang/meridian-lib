@@ -66,6 +66,7 @@ let package = Package(
         .target(
             name: "MeridianCore",
             dependencies: [
+                "MeridianRuntime",
                 .product(name: "Parsing", package: "swift-parsing"),
                 .product(name: "PegexBuilder", package: "pegex"),
                 .product(name: "Collections", package: "swift-collections"),

@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -443,47 +443,47 @@
   "source_map" : [
     {
       "meridian_line" : 51,
-      "swift_line" : 604
+      "swift_line" : 627
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 643
+      "swift_line" : 696
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 648
+      "swift_line" : 701
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 687
+      "swift_line" : 769
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 692
+      "swift_line" : 774
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 731
+      "swift_line" : 842
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 736
+      "swift_line" : 847
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 775
+      "swift_line" : 915
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 780
+      "swift_line" : 920
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 819
+      "swift_line" : 988
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 824
+      "swift_line" : 993
     }
   ],
   "tools_used" : [
@@ -526,7 +526,12 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "strategic-reading",
+      "skill_version_hash" : "1787903338bc514b9c53afa632d320b2108f479fc20617ed2e70af5698354db1",
       "source_name" : "strategic-reading a input",
+      "step_paths" : [
+        "\/StrategicReadingInput\/what-this-is-steps-2\/procedure\/98fa345d2ca5bd9d08c6825abd3945d2f2cb367154129a808d7e41c552bde757"
+      ],
       "swift_struct" : "StrategicReadingInput"
     },
     {
@@ -534,7 +539,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "strategic-reading",
+      "skill_version_hash" : "1787903338bc514b9c53afa632d320b2108f479fc20617ed2e70af5698354db1",
       "source_name" : "when strategicReading fires",
+      "step_paths" : [
+        "\/WhenStrategicreadingFires\/root\/procedure\/1956fc56b65791d9a269b84487682cc652472ecb63ef9fff8914528c752862ab",
+        "\/WhenStrategicreadingFires\/root\/procedure\/848932458d26e662a889816cf7026dc6a88e97f648ebd128ab220e60c9dd7acc"
+      ],
       "swift_struct" : "WhenStrategicreadingFires"
     },
     {
@@ -542,7 +553,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "strategic-reading",
+      "skill_version_hash" : "1787903338bc514b9c53afa632d320b2108f479fc20617ed2e70af5698354db1",
       "source_name" : "when readThisLens fires",
+      "step_paths" : [
+        "\/WhenReadthislensFires\/root\/procedure\/5c00578cc2da21f445bbe5de33f65f3db3730122e10271a5866bb3e037615f53",
+        "\/WhenReadthislensFires\/root\/procedure\/6860f5f204cb64c0d673fd661ea2b545694bd3b596d33535bbeef23775c973c7"
+      ],
       "swift_struct" : "WhenReadthislensFires"
     },
     {
@@ -550,7 +567,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "strategic-reading",
+      "skill_version_hash" : "1787903338bc514b9c53afa632d320b2108f479fc20617ed2e70af5698354db1",
       "source_name" : "when applyThisMyProblem fires",
+      "step_paths" : [
+        "\/WhenApplythismyproblemFires\/root\/procedure\/2c11a1761a149d76c97ea4139a26018bce3fc367c898bdb112e44011db8130fa",
+        "\/WhenApplythismyproblemFires\/root\/procedure\/e3578a017179e0b2b50dbf64b6d4548af5f91f5a21117c25bceea9f1236827d9"
+      ],
       "swift_struct" : "WhenApplythismyproblemFires"
     },
     {
@@ -558,7 +581,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "strategic-reading",
+      "skill_version_hash" : "1787903338bc514b9c53afa632d320b2108f479fc20617ed2e70af5698354db1",
       "source_name" : "when whatCanILearnThis fires",
+      "step_paths" : [
+        "\/WhenWhatcanilearnthisFires\/root\/procedure\/9c67e6e1df2ee85c980b2777d3aa55a3665b2d11eb0f2324aac6808250716f1f",
+        "\/WhenWhatcanilearnthisFires\/root\/procedure\/b522815097d5d33b52d515dac33c8199fddc3959cc01db26c733a402c540c336"
+      ],
       "swift_struct" : "WhenWhatcanilearnthisFires"
     },
     {
@@ -566,7 +595,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "strategic-reading",
+      "skill_version_hash" : "1787903338bc514b9c53afa632d320b2108f479fc20617ed2e70af5698354db1",
       "source_name" : "when extractPlaybook fires",
+      "step_paths" : [
+        "\/WhenExtractplaybookFires\/root\/procedure\/234103ecd7219ebf95c2b0c5cd491f3599c983280032c7ef97b126ab846b267d",
+        "\/WhenExtractplaybookFires\/root\/procedure\/3c147d47173ea2c57e53463146b181ea77a3dca7b016a4bded017302bee93b5f"
+      ],
       "swift_struct" : "WhenExtractplaybookFires"
     }
   ]

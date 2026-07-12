@@ -30,23 +30,38 @@ public struct Suggester: Sendable {
     /// Comparison is case-insensitive; the original candidate spelling is
     /// returned.
     public func closest(_ target: String, among candidates: [String], budget: Int? = nil) -> String? {
+        closestAmbiguous(target, among: candidates, budget: budget)?.primary
+    }
+
+    /// When the best match is unambiguous, `alternates` is empty. When two or
+    /// more candidates within `budget` tie on distance (or are within one edit
+    /// of the leader), returns the leader plus the tied alternates so callers
+    /// can surface a candidate list instead of a single auto-fix.
+    public func closestAmbiguous(_ target: String,
+                                 among candidates: [String],
+                                 budget: Int? = nil) -> (primary: String, alternates: [String])? {
         let t = normalize(target)
         guard !t.isEmpty else { return nil }
         let limit = budget ?? Self.defaultBudget(for: t)
-        var best: (cand: String, dist: Int, overlap: Int)?
-        for cand in candidates {
+        let scored = candidates.compactMap { cand -> (cand: String, dist: Int, overlap: Int)? in
             let c = normalize(cand)
-            if c.isEmpty { continue }
+            if c.isEmpty { return nil }
             let d = Self.levenshtein(t, c)
-            let o = tokenOverlap(t, c)
-            if best == nil
-                || d < best!.dist
-                || (d == best!.dist && o > best!.overlap) {
-                best = (cand, d, o)
-            }
+            guard d <= limit else { return nil }
+            return (cand, d, tokenOverlap(t, c))
         }
-        guard let b = best, b.dist <= limit else { return nil }
-        return b.cand
+        guard !scored.isEmpty else { return nil }
+        let ordered = scored.sorted { lhs, rhs in
+            if lhs.dist != rhs.dist { return lhs.dist < rhs.dist }
+            if lhs.overlap != rhs.overlap { return lhs.overlap > rhs.overlap }
+            return lhs.cand < rhs.cand
+        }
+        let primary = ordered[0].cand
+        let bestDist = ordered[0].dist
+        let alternates = ordered.dropFirst()
+            .filter { $0.dist <= bestDist + 1 }
+            .map(\.cand)
+        return (primary, alternates)
     }
 
     /// The top `limit` candidates ordered by closeness (closest first).

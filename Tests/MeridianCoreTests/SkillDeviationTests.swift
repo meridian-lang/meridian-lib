@@ -263,6 +263,24 @@ struct SkillDeviationTests {
         #expect(r.inertSectionDeviations.isEmpty)
     }
 
+    @Test("inert invariant that documents an already-enforced guard is reference documentation")
+    func alreadyEnforcedInvariantIsDocumentation() {
+        let source = """
+        ## Workflow
+
+        cancel the order unless the order is fulfilled.
+
+        ## Controls (( inert, role: invariants ))
+
+        An already fulfilled order must not be cancelled by this runbook — already
+        enforced above by the workflow's own `unless the order is fulfilled` guard.
+        """
+        let metrics = SkillMetrics.analyze(source)
+        #expect(metrics.operationalInertSections == 0, Comment(rawValue: "\(metrics.inertDetails)"))
+        #expect(metrics.inertCategoryCounts.contains { $0.category == .referenceDocumentation && $0.count == 1 },
+                Comment(rawValue: "\(metrics.inertCategoryCounts)"))
+    }
+
     @Test("preamble-blockquoted detected when the port blockquotes pre-heading prose")
     func preambleBlockquoteCategory() {
         let original = """
@@ -402,8 +420,10 @@ struct SkillDeviationTests {
         )
         #expect(r.metrics.totalSections == 2)
         #expect(r.metrics.inertSections == 1)
+        #expect(r.metrics.generatedLOC > 0)
         let md = SkillDeviation.renderMarkdown(r, includeDiff: false)
         #expect(md.contains("## Metrics"))
+        #expect(md.contains("generated_loc:"))
         #expect(md.contains("Sections inert total: 1/2"))
         #expect(md.contains("Operational inert:"))
         #expect(md.contains("canonical_drift: synonym=0, structure=0, desugar=0, meaning=0"))

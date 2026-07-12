@@ -160,6 +160,30 @@ struct MerConfigLanguageSectionTests {
         #expect(syn.aggregateSynonyms.contains { $0.0 == "tally" })
         #expect(!syn.aggregateSynonyms.contains { $0.0 == "bogus" })
     }
+
+    @Test("trace-auxiliary synonyms are captured as bare phrases, like assertion synonyms")
+    func traceAuxiliarySynonymsCaptured() throws {
+        let src = """
+        === language ===
+        Trace-auxiliary synonym:
+          shall
+        """
+        let syn = try parse(src).languageSynonyms
+        #expect(syn.traceAuxiliarySynonyms.contains("shall"))
+    }
+
+    @Test("trace outcome synonyms are captured keyed by their mapped value")
+    func traceOutcomeSynonymsCaptured() throws {
+        let src = """
+        === language ===
+        Trace outcome synonym:
+          crashed = failed
+          finished = succeeded
+        """
+        let syn = try parse(src).languageSynonyms
+        #expect(syn.traceOutcomeSynonyms["crashed"] == "failed")
+        #expect(syn.traceOutcomeSynonyms["finished"] == "succeeded")
+    }
 }
 
 @Suite("MerConfigParser — sections + instances")
@@ -248,6 +272,50 @@ struct MerConfigSectionsTests {
 struct MerConfigParserDeclarationCoverageTests {
     private func parse(_ src: String, diagnostics: DiagnosticEngine? = nil) throws -> MerConfigFile {
         try MerConfigParser(trace: .silent(), diagnostics: diagnostics).parse(src, file: "t.merconfig")
+    }
+
+    @Test("a key declaration accepts the `an` article, not just `a`")
+    func keyDeclarationAcceptsAnArticle() throws {
+        let cfg = try parse("""
+        === vocabulary ===
+        order is a kind of thing.
+        an order is keyed by id.
+        """)
+        let keys = cfg.vocabulary.compactMap { stmt -> KeyDeclaration? in
+            if case .key(let k) = stmt { return k }
+            return nil
+        }
+        guard let key = keys.first else {
+            Issue.record("expected a key declaration"); return
+        }
+        #expect(key.kind == "order")
+        #expect(key.property == "id")
+    }
+
+    @Test("a key declaration with a valid kind but an empty property (after trimming) is rejected")
+    func keyDeclarationEmptyPropertyRejected() {
+        #expect(throws: (any Error).self) {
+            try parse("""
+            === vocabulary ===
+            widget is a kind of thing.
+            a widget is keyed by .
+            """)
+        }
+    }
+
+    @Test("the alternate ` has:` block header suffix (without `properties`) is also recognized")
+    func propertyBlockHeaderHasSuffixAlternate() throws {
+        let cfg = try parse("""
+        === vocabulary ===
+        order is a kind of thing.
+        order has:
+          legacy_id.
+        """)
+        let props = cfg.vocabulary.compactMap { stmt -> PropertyDeclaration? in
+            if case .property(let p) = stmt { return p }
+            return nil
+        }
+        #expect(props.first?.properties.map(\.name) == ["legacy_id"])
     }
 
     @Test("block property entries without an explicit type clause default the type")
@@ -891,6 +959,20 @@ struct MerConfigPhrasePatternCoverageTests {
 
 @Suite("MerConfigParser — trace")
 struct MerConfigTraceTests {
+    private func parse(_ src: String, file: String = "trace.merconfig") throws -> MerConfigFile {
+        try MerConfigParser(trace: ParserTrace.silent()).parse(src, file: file)
+    }
+
+    private func bootstrap(
+        _ vocabularies: [Compiler.VocabularyInput]
+    ) throws -> Compiler.KnowledgeContext {
+        try Compiler(options: .init(trace: .silent())).knowledge(
+            forSource: "",
+            sourceFile: "empty.meri",
+            vocabularies: vocabularies
+        )
+    }
+
     @Test("merconfig trace category emits section + summary lines")
     func traceEmitsSections() throws {
         let cap = ParserTrace.capturing(categories: [.merconfig])
@@ -904,5 +986,282 @@ struct MerConfigTraceTests {
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("section === vocabulary ===") })
         #expect(lines.contains { $0.contains("parsed 1 vocab") })
+    }
+
+    @Test("trace section and tool capture policies parse")
+    func traceSectionParses() throws {
+        let cfg = try parse("""
+        === trace ===
+        store: file
+        retention: 30 days
+        hash chaining: enabled
+        payload limit: 8192
+        usually at least: 90%
+        rarely at most: 10%
+        sample floor: 20
+        default monitor cadence: 1 days
+        profile: production
+        store failure policy: auto
+        deployment zone: UTC
+
+        === tools ===
+        Validate Order
+        ==============
+        ~ validateOrder(order: Order) : Order
+          capture: redacted (token, secret)
+        """)
+        #expect(cfg.traceConfiguration.store?.value == .file)
+        #expect(cfg.traceConfiguration.payloadLimit?.value == 8192)
+        #expect(cfg.traceConfiguration.profile?.value == .production)
+        #expect(cfg.tools.first?.capturePolicy == .redacted(["token", "secret"]))
+    }
+
+    @Test("RISK-W8-07 production trace capture requires every tool to declare capture")
+    func productionProfileMissingCaptureFails() {
+        let config = Compiler.VocabularyInput(
+            name: "trace",
+            file: "trace.merconfig",
+            source: """
+            === trace ===
+            profile: production
+
+            === tools ===
+            Validate Order
+            ==============
+            ~ validateOrder(order: Order) : Order
+
+            Audit Order
+            ===========
+            ~ auditOrder(order: Order) : Order
+              capture: hash-only
+            """
+        )
+
+        do {
+            _ = try bootstrap([config])
+            Issue.record("expected MER-TMP-020 for the uncaptured production tool")
+        } catch let error as CompilerError {
+            let diagnostic = error.diagnostics.first { $0.code == .traceMissingProductionCapturePolicy }
+            #expect(diagnostic?.message.contains("Validate Order") == true)
+            #expect(diagnostic?.help?.contains("capture: full") == true)
+            #expect(diagnostic?.notes.contains { $0.message.contains("trace profile `production` declared here") } == true)
+        } catch {
+            Issue.record("expected CompilerError, got \(error)")
+        }
+    }
+
+    @Test("production trace capture succeeds when every tool is explicit")
+    func productionProfileAllToolsCapturedSucceeds() throws {
+        let config = Compiler.VocabularyInput(
+            name: "trace",
+            file: "trace.merconfig",
+            source: """
+            === trace ===
+            profile: production
+
+            === tools ===
+            Validate Order
+            ==============
+            ~ validateOrder(order: Order) : Order
+              capture: full
+
+            Audit Order
+            ===========
+            ~ auditOrder(order: Order) : Order
+              capture: redacted (token, secret)
+            """
+        )
+
+        let knowledge = try bootstrap([config])
+        #expect(knowledge.symbols.traceConfiguration.profile?.value == .production)
+        #expect(knowledge.symbols.tools["validateOrder"]?.capturePolicy == .full)
+        #expect(knowledge.symbols.tools["auditOrder"]?.capturePolicy == .redacted(["token", "secret"]))
+    }
+
+    @Test("development trace capture still allows omitted tool capture")
+    func developmentProfileWithoutCaptureSucceeds() throws {
+        let config = Compiler.VocabularyInput(
+            name: "trace",
+            file: "trace.merconfig",
+            source: """
+            === trace ===
+            profile: development
+
+            === tools ===
+            Validate Order
+            ==============
+            ~ validateOrder(order: Order) : Order
+            """
+        )
+
+        let knowledge = try bootstrap([config])
+        #expect(knowledge.symbols.traceConfiguration.profile?.value == .development)
+        #expect(knowledge.symbols.tools["validateOrder"]?.capturePolicy == nil)
+    }
+
+    @Test("merged production trace capture checks tools declared in another merconfig")
+    func productionProfileMergedAcrossConfigsFailsWithoutCapture() {
+        let tools = Compiler.VocabularyInput(
+            name: "tools",
+            file: "tools.merconfig",
+            source: """
+            === tools ===
+            Validate Order
+            ==============
+            ~ validateOrder(order: Order) : Order
+            """
+        )
+        let trace = Compiler.VocabularyInput(
+            name: "trace",
+            file: "trace.merconfig",
+            source: """
+            === trace ===
+            profile: production
+            """
+        )
+
+        do {
+            _ = try bootstrap([tools, trace])
+            Issue.record("expected merged production profile to reject missing tool capture")
+        } catch let error as CompilerError {
+            let diagnostic = error.diagnostics.first { $0.code == .traceMissingProductionCapturePolicy }
+            #expect(diagnostic?.primaryRange.file == "tools.merconfig")
+            #expect(diagnostic?.message.contains("Validate Order") == true)
+            #expect(diagnostic?.notes.contains { $0.range?.file == "trace.merconfig" } == true)
+        } catch {
+            Issue.record("expected CompilerError, got \(error)")
+        }
+    }
+
+    @Test("SEM_2_12 trace durations stay physical and deployment zones stay explicit")
+    func sem212PhysicalDurationsAndZone() throws {
+        let cfg = try parse("""
+        === trace ===
+        retention: 7 days
+        deployment zone: Asia/Kolkata
+        """)
+        #expect(cfg.traceConfiguration.retention?.value == .seconds(604_800))
+        #expect(cfg.traceConfiguration.deploymentZone?.value == "Asia/Kolkata")
+    }
+
+    @Test("conflicting trace settings across merconfigs throw a sourced merge error")
+    func traceSectionMergeConflict() throws {
+        let lhs = try parse("=== trace ===\nstore: memory\n", file: "a.merconfig")
+        let rhs = try parse("=== trace ===\nstore: file\n", file: "b.merconfig")
+        #expect(throws: MerConfigMergeError.self) {
+            _ = try lhs.merging(rhs)
+        }
+    }
+
+    @Test("every malformed trace setting value reports its own diagnostic and is skipped, not crashed on")
+    func everyMalformedTraceSettingValueIsReportedAndSkipped() throws {
+        let engine = DiagnosticEngine(trace: .silent())
+        let cfg = try MerConfigParser(trace: .silent(), diagnostics: engine).parse("""
+        === trace ===
+        this line has no colon
+        store: carrier-pigeon
+        retention: banana days
+        hash chaining: maybe
+        payload limit: not-a-number
+        sample floor: not-a-number
+        default monitor cadence: banana days
+        profile: staging
+        store failure policy: shrug
+        some unknown key: whatever
+        """, file: "trace.merconfig")
+
+        // Every malformed setting is skipped (left nil), not defaulted or crashed on.
+        #expect(cfg.traceConfiguration.store == nil)
+        #expect(cfg.traceConfiguration.retention == nil)
+        #expect(cfg.traceConfiguration.hashChaining == nil)
+        #expect(cfg.traceConfiguration.payloadLimit == nil)
+        #expect(cfg.traceConfiguration.sampleFloor == nil)
+        #expect(cfg.traceConfiguration.defaultMonitorCadence == nil)
+        #expect(cfg.traceConfiguration.profile == nil)
+        #expect(cfg.traceConfiguration.storeFailurePolicy == nil)
+
+        #expect(engine.errors.contains { $0.message.contains("malformed trace setting") })
+        #expect(engine.errors.contains { $0.message.contains("unknown trace store") })
+        #expect(engine.errors.contains { $0.message.contains("invalid trace retention") })
+        #expect(engine.errors.contains { $0.message.contains("invalid hash chaining setting") })
+        #expect(engine.errors.contains { $0.message.contains("invalid payload limit") })
+        #expect(engine.errors.contains { $0.message.contains("invalid sample floor") })
+        #expect(engine.errors.contains { $0.message.contains("invalid monitor cadence") })
+        #expect(engine.errors.contains { $0.message.contains("unknown trace profile") })
+        #expect(engine.errors.contains { $0.message.contains("unknown trace store failure policy") })
+        #expect(engine.errors.contains { $0.message.contains("unknown trace setting") })
+    }
+
+    @Test("a malformed trace setting throws when no batch diagnostics engine is supplied")
+    func malformedTraceSettingThrowsWithoutEngine() {
+        #expect(throws: (any Error).self) {
+            try MerConfigParser(trace: .silent()).parse("""
+            === trace ===
+            store: carrier-pigeon
+            """, file: "trace.merconfig")
+        }
+    }
+
+    @Test("an invalid usually/rarely percentage reports through the batch engine and defaults to zero")
+    func invalidTracePercentageDefaultsToZero() throws {
+        let engine = DiagnosticEngine(trace: .silent())
+        let cfg = try MerConfigParser(trace: .silent(), diagnostics: engine).parse("""
+        === trace ===
+        usually at least: not-a-percent
+        """, file: "trace.merconfig")
+        #expect(cfg.traceConfiguration.usuallyThreshold?.value == 0)
+        #expect(engine.errors.contains { $0.message.contains("invalid percentage") })
+    }
+
+    @Test("a fractional percentage without a % sign is used as-is, not divided by 100")
+    func fractionalPercentageWithoutSignUsedAsIs() throws {
+        let cfg = try parse("""
+        === trace ===
+        rarely at most: 0.1
+        """)
+        #expect(cfg.traceConfiguration.rarelyThreshold?.value == 0.1)
+    }
+
+    @Test("an unknown tool capture policy reports through the batch engine and defaults to full")
+    func unknownToolCapturePolicyDefaultsToFull() throws {
+        let engine = DiagnosticEngine(trace: .silent())
+        let cfg = try MerConfigParser(trace: .silent(), diagnostics: engine).parse("""
+        === tools ===
+        Validate Order
+        ==============
+        ~ validateOrder(order: Order) : Order
+          capture: sideways
+        """, file: "trace.merconfig")
+        #expect(cfg.tools.first?.capturePolicy == .full)
+        #expect(engine.errors.contains { $0.message.contains("unknown capture policy") })
+    }
+
+    @Test("store failure policy accepts fail-open and fail-closed, not just auto")
+    func storeFailurePolicyAcceptsFailOpenAndFailClosed() throws {
+        let failOpen = try parse("""
+        === trace ===
+        store failure policy: fail-open
+        """)
+        #expect(failOpen.traceConfiguration.storeFailurePolicy?.value == .failOpen)
+
+        let failClosed = try parse("""
+        === trace ===
+        store failure policy: fail-closed
+        """)
+        #expect(failClosed.traceConfiguration.storeFailurePolicy?.value == .failClosed)
+    }
+
+    @Test("a redacted capture policy without a parenthesized field list reports through the batch engine")
+    func redactedCapturePolicyWithoutFieldsReported() throws {
+        let engine = DiagnosticEngine(trace: .silent())
+        let cfg = try MerConfigParser(trace: .silent(), diagnostics: engine).parse("""
+        === tools ===
+        Validate Order
+        ==============
+        ~ validateOrder(order: Order) : Order
+          capture: redacted
+        """, file: "trace.merconfig")
+        #expect(cfg.tools.first?.capturePolicy == .redacted([]))
+        #expect(engine.errors.contains { $0.message.contains("must list fields") })
     }
 }

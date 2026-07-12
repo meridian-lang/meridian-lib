@@ -106,6 +106,7 @@ struct EnglishLexiconTests {
         #expect(lex.pluralize("box") == "boxes")
         #expect(lex.pluralize("page") == "pages")
         #expect(lex.pluralize("pages") == "pages")
+        #expect(lex.pluralize("journal entry") == "journal entries")
     }
 
     @Test("verb morphology: third person and past participle")

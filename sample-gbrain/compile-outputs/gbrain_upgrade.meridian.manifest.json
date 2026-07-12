@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -425,75 +425,75 @@
   "source_map" : [
     {
       "meridian_line" : 84,
-      "swift_line" : 602
+      "swift_line" : 625
     },
     {
       "meridian_line" : 91,
-      "swift_line" : 612
+      "swift_line" : 637
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 651
+      "swift_line" : 706
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 656
+      "swift_line" : 711
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 695
+      "swift_line" : 779
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 700
+      "swift_line" : 784
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 739
+      "swift_line" : 852
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 744
+      "swift_line" : 857
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 783
+      "swift_line" : 925
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 788
+      "swift_line" : 930
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 827
+      "swift_line" : 998
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 832
+      "swift_line" : 1003
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 871
+      "swift_line" : 1071
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 876
+      "swift_line" : 1076
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 915
+      "swift_line" : 1144
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 920
+      "swift_line" : 1149
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 959
+      "swift_line" : 1217
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 964
+      "swift_line" : 1222
     }
   ],
   "tools_used" : [
@@ -506,25 +506,8 @@
           "guidance" : "If `update_available` is `true`, tell the operator WHAT they'll get before\nasking. The JSON includes `changelog_diff` (CHANGELOG entries between their\nversion and the new one) and `release_url`. Summarize it into 3-5 plain bullets\nof what's new — do NOT paste the raw diff. Then present the 4-option question:\nIf `changelog_diff` is empty (network blip \/ no notes), ask without the bullets\nrather than blocking — the version numbers alone are enough to decide\nYes → `gbrain self-upgrade`\nAlways → `gbrain config set self_upgrade.mode auto` then `gbrain self-upgrade`\nNever → `gbrain config set self_upgrade.mode off`",
           "line" : 91,
           "scoped_tools" : [
-            "assess.notability",
-            "capture",
-            "enrich",
-            "health.get",
-            "jobs.status",
-            "jobs.submit",
-            "link.add",
-            "link.backlinks",
-            "makePDF",
-            "page.create",
-            "page.get",
-            "page.list",
-            "page.search",
-            "page.update",
-            "publish",
-            "recall",
-            "research",
-            "timeline.add",
-            "verify"
+            "exec",
+            "shell.run"
           ],
           "text" : "follow the mode = notify (default) — steps 2 guidance"
         }
@@ -536,7 +519,13 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "gbrain-upgrade",
+      "skill_version_hash" : "b21badbd5edda7f5973918c2d51ba17fe92281ec2d631d61992fde77406a8dc7",
       "source_name" : "gbrain-upgrade a input",
+      "step_paths" : [
+        "\/GbrainUpgradeInput\/mode-notify-default-steps-2\/procedure\/0674f942c7943ade6a2f54fb865fbea03cadec1ef0d76f43db43d0d46316c526",
+        "\/GbrainUpgradeInput\/mode-notify-default-steps\/procedure\/f31a7b25ed20a4c5058bc4393663b233afb8b1c660985ad512444f2b333346ac"
+      ],
       "swift_struct" : "GbrainUpgradeInput"
     },
     {
@@ -544,7 +533,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "gbrain-upgrade",
+      "skill_version_hash" : "b21badbd5edda7f5973918c2d51ba17fe92281ec2d631d61992fde77406a8dc7",
       "source_name" : "when gbrainUpdateAvailable fires",
+      "step_paths" : [
+        "\/WhenGbrainupdateavailableFires\/root\/procedure\/c4cf5dcab52085c36810d03191143232819e3fa14a9efa698afbf245cfe5b474",
+        "\/WhenGbrainupdateavailableFires\/root\/procedure\/e1d394c71fe971c7516bf53ae01409adfad44995a2f6c99be74ed30b78cc1519"
+      ],
       "swift_struct" : "WhenGbrainupdateavailableFires"
     },
     {
@@ -552,7 +547,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "gbrain-upgrade",
+      "skill_version_hash" : "b21badbd5edda7f5973918c2d51ba17fe92281ec2d631d61992fde77406a8dc7",
       "source_name" : "when upgradeAvailable fires",
+      "step_paths" : [
+        "\/WhenUpgradeavailableFires\/root\/procedure\/3d3d24867cf050093764f63f9851a72e5785bf31738c528464bfdba1e22988fa",
+        "\/WhenUpgradeavailableFires\/root\/procedure\/a489297c56561daa9519ba50872d1decd7ad8ca7f16a2621549dfba19377fb15"
+      ],
       "swift_struct" : "WhenUpgradeavailableFires"
     },
     {
@@ -560,7 +561,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "gbrain-upgrade",
+      "skill_version_hash" : "b21badbd5edda7f5973918c2d51ba17fe92281ec2d631d61992fde77406a8dc7",
       "source_name" : "when upgradeGbrain fires",
+      "step_paths" : [
+        "\/WhenUpgradegbrainFires\/root\/procedure\/49b6af454b315b5a5604bf7c5a2e4a9a0f7150c833937b18fbe944c71b9daaef",
+        "\/WhenUpgradegbrainFires\/root\/procedure\/77833aef214e815dd4b441417e5285530a53a8040f0d45d9a61acb714b6e95f5"
+      ],
       "swift_struct" : "WhenUpgradegbrainFires"
     },
     {
@@ -568,7 +575,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "gbrain-upgrade",
+      "skill_version_hash" : "b21badbd5edda7f5973918c2d51ba17fe92281ec2d631d61992fde77406a8dc7",
       "source_name" : "when updateGbrain fires",
+      "step_paths" : [
+        "\/WhenUpdategbrainFires\/root\/procedure\/4ec51a59c1a0026cd637cfbf55f0b407ea4ac45923c42b7136b666121c181d28",
+        "\/WhenUpdategbrainFires\/root\/procedure\/e729d262ca2c5dca5b6b9bb0cdcf9f793b13b42a663917afcf0f279a4b6c7b08"
+      ],
       "swift_struct" : "WhenUpdategbrainFires"
     },
     {
@@ -576,7 +589,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "gbrain-upgrade",
+      "skill_version_hash" : "b21badbd5edda7f5973918c2d51ba17fe92281ec2d631d61992fde77406a8dc7",
       "source_name" : "when gbrainIsOutDate fires",
+      "step_paths" : [
+        "\/WhenGbrainisoutdateFires\/root\/procedure\/8315034318ed87cfcfa62fed918bf515c4b25b55e7c266e0f2f034a7e113b3f2",
+        "\/WhenGbrainisoutdateFires\/root\/procedure\/a322627838f61ddf3a5ded5bf9b9775a35971c63e763bdf1e598153f3a387852"
+      ],
       "swift_struct" : "WhenGbrainisoutdateFires"
     },
     {
@@ -584,7 +603,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "gbrain-upgrade",
+      "skill_version_hash" : "b21badbd5edda7f5973918c2d51ba17fe92281ec2d631d61992fde77406a8dc7",
       "source_name" : "when gbrainSelfUpgrade fires",
+      "step_paths" : [
+        "\/WhenGbrainselfupgradeFires\/root\/procedure\/5e7689443bcf843331d03032a56e6fbc8b6ffddc221de94d824e8c0a74a12f9f",
+        "\/WhenGbrainselfupgradeFires\/root\/procedure\/e43e218da36ebab5dd693408441cc4a61202834c94dfe086410fd38dd4709f7d"
+      ],
       "swift_struct" : "WhenGbrainselfupgradeFires"
     },
     {
@@ -592,7 +617,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "gbrain-upgrade",
+      "skill_version_hash" : "b21badbd5edda7f5973918c2d51ba17fe92281ec2d631d61992fde77406a8dc7",
       "source_name" : "when isGbrainUpDate fires",
+      "step_paths" : [
+        "\/WhenIsgbrainupdateFires\/root\/procedure\/6f3622aa92e1981294a99e752cf75ec3b6ec3aa325e2c577ebe7be210f18ea87",
+        "\/WhenIsgbrainupdateFires\/root\/procedure\/e60c8d324e15c6e94b775f105833df8ba3f2f026f2a3f1ccebb2b40a8654acbd"
+      ],
       "swift_struct" : "WhenIsgbrainupdateFires"
     },
     {
@@ -600,7 +631,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "gbrain-upgrade",
+      "skill_version_hash" : "b21badbd5edda7f5973918c2d51ba17fe92281ec2d631d61992fde77406a8dc7",
       "source_name" : "when keepGbrainCurrent fires",
+      "step_paths" : [
+        "\/WhenKeepgbraincurrentFires\/root\/procedure\/5f52773f2a9aa3974e607dfd477e2fbf1aca92209ca0f6aa7ac96622a2a85cf3",
+        "\/WhenKeepgbraincurrentFires\/root\/procedure\/d913f668103e42f12a6c10e7acd448fe6905fdf9ff3c201cd85d82d37ee66959"
+      ],
       "swift_struct" : "WhenKeepgbraincurrentFires"
     }
   ]

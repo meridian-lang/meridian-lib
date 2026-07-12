@@ -14,6 +14,7 @@ Routes a governance/compliance operator request to the synthetic governance skil
 | audit policy coverage | policyaudit |
 | escalate pending requests | escalatepending |
 | classify resources | classifyresource |
+| check access review freshness | accessreviewfreshness |
 
 ## Workflow
 

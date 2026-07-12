@@ -15,7 +15,7 @@ struct PlanningFailureCodeTests {
     @Test("oversized prose has a distinct recoverable code")
     func oversizedProseCode() async throws {
         let observer = InMemoryObserver()
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setObserver(observer)
             .setPlanningLimits(PlanningResourceLimits(maxProseBytes: 4))
             .build()
@@ -39,7 +39,7 @@ struct PlanningFailureCodeTests {
     @Test("too many proposed actions has a distinct recoverable code")
     func tooManyActionsCode() async throws {
         let observer = InMemoryObserver()
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setObserver(observer)
             .setPlanningLimits(PlanningResourceLimits(maxActions: 1))
             .setPlanner(MockPlanner(actions: [
@@ -69,7 +69,7 @@ struct PlanningFailureCodeTests {
         let registry = ToolRegistry()
         let observer = InMemoryObserver()
         await registry.register(tool: "demo.tool", .closure { _ in .string("should not run") })
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setToolRegistry(registry)
             .setObserver(observer)
             .setPlanningLimits(PlanningResourceLimits(maxToolArgumentBytes: 4))
@@ -99,7 +99,7 @@ struct PlanningFailureCodeTests {
         let registry = ToolRegistry()
         let observer = InMemoryObserver()
         await registry.register(tool: "danger.tool", .closure { _ in .string("should not run") })
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setToolRegistry(registry)
             .setObserver(observer)
             .setPlanPolicy(DenyListPlanPolicy(deniedToolIDs: ["danger.tool"]))
@@ -125,7 +125,7 @@ struct PlanningFailureCodeTests {
     @Test("out-of-scope planner tool has a distinct recoverable code")
     func toolOutOfScopeCode() async throws {
         let observer = InMemoryObserver()
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setObserver(observer)
             .setPlanner(MockPlanner(actions: [ProposedAction(toolID: "attacker.tool")]))
             .build()
@@ -149,7 +149,7 @@ struct PlanningFailureCodeTests {
     @Test("unregistered in-scope planner tool has a distinct recoverable code")
     func toolNotRegisteredCode() async throws {
         let observer = InMemoryObserver()
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setObserver(observer)
             .setPlanner(MockPlanner(actions: [ProposedAction(toolID: "missing.tool")]))
             .build()
@@ -172,7 +172,7 @@ struct PlanningFailureCodeTests {
 
     @Test("autonomy max steps has a distinct recoverable code")
     func autonomyMaxStepsCode() async throws {
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setObserver(InMemoryObserver())
             .build()
 
@@ -194,7 +194,7 @@ struct PlanningFailureCodeTests {
         await registry.register(tool: "fail.tool", .closure { _ in
             throw ToolError.implementation(code: "demo.failure", message: "boom", cause: nil)
         })
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setToolRegistry(registry)
             .setObserver(InMemoryObserver())
             .setActPlanner(MockActPlanner([.action(ProposedAction(toolID: "fail.tool"))]))
@@ -222,7 +222,7 @@ struct PlanningFailureCodeTests {
         var state = State()
         state.bind("large", Value.string("too large"))
         let observer = InMemoryObserver()
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setObserver(observer)
             .setPlanningLimits(PlanningResourceLimits(maxSnapshotBytes: 4))
             .build()
@@ -245,7 +245,7 @@ struct PlanningFailureCodeTests {
 
     @Test("oversized planner proposal has a distinct recoverable code")
     func oversizedProposalCode() async throws {
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setObserver(InMemoryObserver())
             .setPlanningLimits(PlanningResourceLimits(maxProposalBytes: 8))
             .setPlanner(MockPlanner([PlanProposal(actions: [], rationale: "this proposal is too large")]))
@@ -268,7 +268,7 @@ struct PlanningFailureCodeTests {
         await registry.register(tool: "fail.tool", .closure { _ in
             throw ToolError.implementation(code: "demo.failure", message: "a long failure message", cause: nil)
         })
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setToolRegistry(registry)
             .setObserver(InMemoryObserver())
             .setPlanningLimits(PlanningResourceLimits(maxHistoryBytes: 4))

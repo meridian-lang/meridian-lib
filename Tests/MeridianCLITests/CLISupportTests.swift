@@ -57,12 +57,17 @@ struct DependencyDiscoveryTests {
         #expect(urls[0].lastPathComponent == "vocab.merconfig")
     }
 
-    @Test("explicit not-found throws a ValidationError")
+    @Test("explicit not-found throws a coded exit")
     func explicitMissing() {
-        #expect(throws: (any Error).self) {
+        do {
             _ = try DependencyDiscovery.resolveMerconfigs(
                 explicit: ["/nope/missing.merconfig"],
                 beside: URL(fileURLWithPath: "/tmp/x.meridian"))
+            Issue.record("expected ExitCode(1)")
+        } catch let code as ExitCode {
+            #expect(code == ExitCode(1))
+        } catch {
+            Issue.record("unexpected error: \(error)")
         }
     }
 
@@ -88,12 +93,17 @@ struct DependencyDiscoveryTests {
         #expect(urls.map(\.lastPathComponent) == ["parent.merrules"])
     }
 
-    @Test("explicit rulebook not-found throws a ValidationError")
+    @Test("explicit rulebook not-found exits with code 1")
     func explicitRulebookMissing() {
-        #expect(throws: (any Error).self) {
+        do {
             _ = try DependencyDiscovery.resolveRulebooks(
                 explicit: ["/nope/missing.merrules"],
                 beside: URL(fileURLWithPath: "/tmp/x.meridian"))
+            Issue.record("expected ExitCode(1)")
+        } catch let code as ExitCode {
+            #expect(code == ExitCode(1))
+        } catch {
+            Issue.record("unexpected error: \(error)")
         }
     }
 
@@ -117,6 +127,24 @@ struct TraceBootstrapTests {
     func noSpec() throws {
         let trace = try makeCLITrace(spec: nil)
         #expect(!trace.isEnabled(.lowering))
+    }
+
+    @Test("jsonl format emits structured records with corr field")
+    func jsonlFormat() throws {
+        let t = TempDir()
+        let file = t.path("trace.jsonl")
+        let trace = try makeCLITrace(spec: "lowering", file: file, format: .jsonl)
+        #expect(trace.outputFormat == .jsonl)
+        trace.log(.lowering, "jsonl probe")
+        let contents = try String(contentsOfFile: file, encoding: .utf8)
+        #expect(contents.contains("\"corr\":\"\(trace.correlationID)\""))
+        #expect(contents.contains("\"cat\":\"lowering\""))
+    }
+
+    @Test("active trace announces correlation id on stderr bootstrap")
+    func announcesCorrelationID() throws {
+        let trace = try makeCLITrace(spec: "lowering")
+        #expect(!trace.correlationID.isEmpty)
     }
 
     @Test("spec enables categories and a file sink is created")

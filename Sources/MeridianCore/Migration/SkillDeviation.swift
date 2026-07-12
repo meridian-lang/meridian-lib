@@ -171,6 +171,7 @@ public struct SkillDeviation {
         out.append("")
         out.append("## Metrics")
         let m = r.metrics
+        out.append("- generated_loc: \(m.generatedLOC) non-blank ported lines")
         out.append("- Sections inert total: \(m.inertSections)/\(m.totalSections) (\(percent(m.inertRatio)) total inert; includes intentional docs/templates/tools metadata)")
         out.append("- Operational inert: \(m.operationalInertSections)")
         out.append("- Unclassified inert: \(m.unclassifiedInertSections)")

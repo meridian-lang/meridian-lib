@@ -22,58 +22,58 @@
       "adjective" : "critical",
       "function" : "meridianDef_Dataset_critical",
       "kind" : "dataset",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "high volume",
       "function" : "meridianDef_Dataset_highVolume",
       "kind" : "dataset",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Dataset_stale",
       "kind" : "dataset",
-      "line" : 21
+      "line" : 23
     },
     {
       "adjective" : "backfilled",
       "function" : "meridianDef_Partition_backfilled",
       "kind" : "partition",
-      "line" : 23
+      "line" : 25
     },
     {
       "adjective" : "failed",
       "function" : "meridianDef_PipelineRun_failed",
       "kind" : "pipeline run",
-      "line" : 22
+      "line" : 24
     },
     {
       "adjective" : "passing",
       "function" : "meridianDef_QualityCheck_passing",
       "kind" : "quality check",
-      "line" : 24
+      "line" : 26
     },
     {
       "adjective" : "compatible",
       "function" : "meridianDef_Schema_compatible",
       "kind" : "schema",
-      "line" : 26
+      "line" : 28
     },
     {
       "adjective" : "fresh",
       "function" : "meridianDef_Watermark_fresh",
       "kind" : "watermark",
-      "line" : 25
+      "line" : 27
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a pipeline run",
-      "line" : 34,
+      "line" : 36,
       "name" : "derivation",
       "right_cardinality" : "one",
       "right_kind" : "a dataset",
@@ -83,7 +83,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a source",
-      "line" : 30,
+      "line" : 32,
       "name" : "extraction",
       "right_cardinality" : "one",
       "right_kind" : "a dataset",
@@ -93,7 +93,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a dataset",
-      "line" : 32,
+      "line" : 34,
       "name" : "loading",
       "right_cardinality" : "one",
       "right_kind" : "a sink",
@@ -242,21 +242,21 @@
   "meridian_verbs" : [
     {
       "base" : "derive",
-      "line" : 39,
+      "line" : 41,
       "past_participle" : "derived",
       "relation" : "derivation",
       "third_person" : "derives"
     },
     {
       "base" : "extract",
-      "line" : 37,
+      "line" : 39,
       "past_participle" : "extracted",
       "relation" : "extraction",
       "third_person" : "extracts"
     },
     {
       "base" : "load",
-      "line" : 38,
+      "line" : 40,
       "past_participle" : "loaded",
       "relation" : "loading",
       "third_person" : "loads"
@@ -269,67 +269,67 @@
   "source_map" : [
     {
       "meridian_line" : 48,
-      "swift_line" : 362
+      "swift_line" : 385
     },
     {
-      "meridian_line" : 42,
-      "swift_line" : 367
+      "meridian_line" : 29,
+      "swift_line" : 390
     },
     {
       "meridian_line" : 30,
-      "swift_line" : 374
+      "swift_line" : 397
     },
     {
       "meridian_line" : 31,
-      "swift_line" : 379
+      "swift_line" : 402
     },
     {
       "meridian_line" : 32,
-      "swift_line" : 384
+      "swift_line" : 407
     },
     {
       "meridian_line" : 33,
-      "swift_line" : 388
+      "swift_line" : 411
     },
     {
       "meridian_line" : 34,
-      "swift_line" : 393
+      "swift_line" : 419
     },
     {
-      "meridian_line" : 66,
-      "swift_line" : 396
+      "meridian_line" : 35,
+      "swift_line" : 423
     },
     {
       "meridian_line" : 37,
-      "swift_line" : 409
+      "swift_line" : 439
     },
     {
       "meridian_line" : 38,
-      "swift_line" : 420
+      "swift_line" : 451
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 459
+      "swift_line" : 519
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 464
+      "swift_line" : 524
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 504
+      "swift_line" : 593
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 509
+      "swift_line" : 598
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 549
+      "swift_line" : 667
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 554
+      "swift_line" : 672
     }
   ],
   "tools_used" : [
@@ -341,7 +341,21 @@
       "parameters" : [
 
       ],
+      "skill_name" : "dedupe upsert",
+      "skill_version_hash" : "2666ddd6515259048ab56aa68776273c44481f66d3b7a92b8350bf467b70233a",
       "source_name" : "dedupe upsert",
+      "step_paths" : [
+        "\/DedupeUpsert\/assertions\/invariants\/f00e7e6dd5bc2dfface110d8213895e20821826d843af856c0274c7916893547",
+        "\/DedupeUpsert\/workflow-steps\/procedure\/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270",
+        "\/DedupeUpsert\/workflow-steps\/procedure\/b3c62bc2077c7ef880887237078befdadd3724e6d1819637d32ddcd43dd69b9c",
+        "\/DedupeUpsert\/workflow-steps\/procedure\/bc812a60faef22f7ebff65124d02aa6e4142c8f91bb95b6d77532f211d474e4e",
+        "\/DedupeUpsert\/workflow-steps\/procedure\/branch.else\/7e9dbb5429eafd2bfa587a0c490c8db33a9df2a67b2da6bf74b1e64463d44509",
+        "\/DedupeUpsert\/workflow-steps\/procedure\/branch.then\/fd075b40343c4b03a603b2f32b33f4f59068e3923ab82ac29ac48ed74a6b86d9",
+        "\/DedupeUpsert\/workflow-steps\/procedure\/d70548218835de3faeb203c7cb9053766f540e4cb3cbe8a48864cc6b25c1a857",
+        "\/DedupeUpsert\/workflow-steps\/procedure\/e0b94431076ae76606a926f60c571d34811e0f04c9cc3b3b2049917b544489c6",
+        "\/DedupeUpsert\/workflow-steps\/procedure\/f00e7e6dd5bc2dfface110d8213895e20821826d843af856c0274c7916893547",
+        "\/DedupeUpsert\/workflow-steps\/procedure\/iterate.body\/5f6817c537cb28256e86c4ed6e1b549f3f7424208cc4b7f8dfcbc3baec55dd03"
+      ],
       "swift_struct" : "DedupeUpsert"
     },
     {
@@ -349,7 +363,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "dedupe upsert",
+      "skill_version_hash" : "2666ddd6515259048ab56aa68776273c44481f66d3b7a92b8350bf467b70233a",
       "source_name" : "when dedupeDatasets fires",
+      "step_paths" : [
+        "\/WhenDedupedatasetsFires\/root\/procedure\/64349ec79c1b0a7c9ab93df712662e2af2df480ea7e692b6a9f1c093148976d1",
+        "\/WhenDedupedatasetsFires\/root\/procedure\/f54160f92d9f24d73f18f40b944a3e93bc27a9109a63d26ad7ae53502109d936"
+      ],
       "swift_struct" : "WhenDedupedatasetsFires"
     },
     {
@@ -357,7 +377,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "dedupe upsert",
+      "skill_version_hash" : "2666ddd6515259048ab56aa68776273c44481f66d3b7a92b8350bf467b70233a",
       "source_name" : "when runDedupeUpsert fires",
+      "step_paths" : [
+        "\/WhenRundedupeupsertFires\/root\/procedure\/8ad899ad51b18275a3d5aacad3459425f57a1adedf89727f7b46ae83916821dd",
+        "\/WhenRundedupeupsertFires\/root\/procedure\/c6c96610de47b472fc5e87b1a4201cd7773a0b1098fdab3fd087383cfe7f7e32"
+      ],
       "swift_struct" : "WhenRundedupeupsertFires"
     },
     {
@@ -365,7 +391,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "dedupe upsert",
+      "skill_version_hash" : "2666ddd6515259048ab56aa68776273c44481f66d3b7a92b8350bf467b70233a",
       "source_name" : "when collapseDuplicateDatasets fires",
+      "step_paths" : [
+        "\/WhenCollapseduplicatedatasetsFires\/root\/procedure\/70351fd132ec3f72039992c37b2e444baadb027cac2db7775e1ff7510cdaacfe",
+        "\/WhenCollapseduplicatedatasetsFires\/root\/procedure\/f989a57d1e974bd3ba990ad96270115528506da7585ad3842bd4e110a2710c4b"
+      ],
       "swift_struct" : "WhenCollapseduplicatedatasetsFires"
     }
   ]

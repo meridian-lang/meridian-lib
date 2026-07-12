@@ -299,6 +299,18 @@ struct VerbalizerGenerativeTests {
             "complete except when score equals 1",
             "try complete; if it fails recover",
             "complete only when score equals 1",
+            // Wave 8 trace / statistical / compound-note surfaces. These mirror
+            // the canonical examples on the matching `GrammarProduction`s; the
+            // coverage checklist only substring-scans them (it does not parse).
+            "the deploy step failed",
+            "the deploy step has ever failed",
+            "the deploy step failed within the last 7 days",
+            "the deploy step failed at least 3 times within the last 7 days",
+            "the deploy step failed 3 times in a row",
+            "the service is healthy since the last deploy step succeeded",
+            "across all runs, the deploy step has ever failed",
+            "the fetch step succeeds in at least 95% of runs, checked every 1 days",
+            "proceed, and note \"thin history\" in the receipt trailer",
         ]
     }
 
@@ -325,6 +337,16 @@ struct VerbalizerGenerativeTests {
             if surface.contains(" except when ") { hits.insert("except-when-idiom") }
             if surface.hasPrefix("try ") && surface.contains("if it fails") { hits.insert("try-recover-idiom") }
             if surface.contains(" only when ") { hits.insert("suffix-conditional") }
+            // Wave 8 trace / statistical / compound-note markers.
+            if surface.contains(" step failed") || surface.contains(" step succeeded") { hits.insert("trace-event-pattern") }
+            if surface.contains("across all runs") { hits.insert("trace-scope-marker") }
+            if surface.contains("has ever ") { hits.insert("trace-temporal-ever") }
+            if surface.contains("times within the last") { hits.insert("trace-temporal-count") }
+            if surface.contains("within the last") && surface.contains(" step ") && !surface.contains("times within") { hits.insert("trace-temporal-window") }
+            if surface.contains(" in a row") { hits.insert("trace-temporal-in-a-row") }
+            if surface.contains("since the last") { hits.insert("trace-temporal-since") }
+            if surface.contains("% of runs") || surface.contains("% of occurrences") || surface.contains("checked every") { hits.insert("trace-statistical-frequency") }
+            if surface.contains("proceed, and note") { hits.insert("compound-note") }
         }
         return hits
     }

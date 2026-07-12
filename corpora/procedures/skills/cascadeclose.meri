@@ -19,9 +19,6 @@ Check: any orphaned audit rows.
 Check: at most 200 orphaned audit rows.
 Emit: "orphaned audit rows recorded for deterministic close".
 
-## DBA notes
-
-### DBA notes — steps (( role: reference ))
-
+## DBA notes (( role: reference ))
 The source system owns physical cascade delete; Meridian records the deterministic
 audit close and refuses to invent a hidden datastore.

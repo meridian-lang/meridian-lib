@@ -956,6 +956,19 @@ struct SkillMigratorMarkingTests {
                 Comment(rawValue: "\(result.report.unminedContracts)"))
     }
 
+    @Test("reference-like notes may contain refusal rationale without becoming unmined contracts")
+    func referenceNotesWithRefusalRationaleStayDocumentary() async throws {
+        let result = try await Self.migrator(vocabularies: [Self.orderVocab]).migrate("""
+        ## DBA notes
+
+        The source system owns physical cascade delete; Meridian records the deterministic
+        audit close and refuses to invent a hidden datastore.
+        """)
+        #expect(result.report.unminedContracts.isEmpty, Comment(rawValue: "\(result.report.unminedContracts)"))
+        #expect(result.meriSource.contains("## DBA notes (( role: reference ))"),
+                Comment(rawValue: result.meriSource))
+    }
+
     @Test("re-running the marking pass on an already-split file is a no-op (idempotent)")
     func splitIsIdempotent() throws {
         let source = """
@@ -1139,6 +1152,38 @@ struct SkillMigratorMarkingTests {
         2. the subject type is "organization"? -> company-typed directory
         """)
         #expect(out.contains(#"let the category be "person-typed directory" only when the subject type is "person"."#), Comment(rawValue: out))
+    }
+
+    @Test("question-arrow case 2 uses fallback article when the lexicon has no definite article")
+    func questionArrowCase2FallbackArticle() throws {
+        let base = EnglishLexicon.default
+        let noArticleLexicon = EnglishLexicon(
+            articles: [],
+            prepositions: base.prepositions,
+            copulas: base.copulas,
+            participles: base.participles,
+            participleSuffixes: base.participleSuffixes,
+            comparisonMarkers: base.comparisonMarkers,
+            durationUnits: base.durationUnits,
+            toolStopwords: base.toolStopwords
+        )
+        let compiler = Compiler(options: .init(trace: .silent(), lexicon: noArticleLexicon))
+        let knowledge = try compiler.knowledge(forSource: "", sourceFile: "<test>", vocabularies: [])
+        let trial = TrialLowering(knowledge: knowledge)
+        let migrator = Self.migrator()
+        let block = SkillMigrator.SplitBlock(
+            rawLines: ["1. total is greater than 0? -> high"],
+            normalizedText: "total is greater than 0? -> high",
+            isFence: false,
+            isShellFence: false,
+            isQuestionArrowList: true
+        )
+
+        let result = migrator.classifyQuestionArrowList(block, precedingBlock: nil, trial: trial)
+        #expect(result.kind == SkillMigrator.SplitKind.exec)
+        #expect(result.renderOverride == [
+            #"let the category be "high" only when total is greater than 0."#,
+        ])
     }
 
     @Test("question-arrow case 3: a non-checkable question with a genuine inference cue wraps the whole list in judgment, not a decision-table binding")
@@ -1661,7 +1706,8 @@ struct SkillMigratorMarkingTests {
         ][...]
         let plan = m.splitPlan(for: body, knowledge: knowledge)
         #expect(plan.executableSegments.contains { $0.kind == .aiInference })
-        let rendered = m.renderSplitPlan(plan, headingHashes: "##", headingText: "Guidance")
+        let rendered = m.renderSplitPlan(plan, headingHashes: "##", headingText: "Guidance",
+                                         lexicon: knowledge.lexicon)
         #expect(rendered.contains("use judgment to follow the Guidance — steps guidance:"))
     }
 

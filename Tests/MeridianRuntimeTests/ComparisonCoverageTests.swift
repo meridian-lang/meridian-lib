@@ -64,6 +64,16 @@ struct ComparisonCoverageTests {
         #expect(MeridianComparison.identifies(.number(7), .number(7)))
     }
 
+    @Test("identifies matches a plain owner-string link against an opaque domain-typed entity by its id")
+    func identifiesAgainstOpaqueEntity() {
+        struct User: Hashable, Codable, Sendable {
+            var id: String = "alice"
+        }
+        let user = Value.opaque(AnyHashableSendable(User()))
+        #expect(MeridianComparison.identifies(.string("alice"), user))
+        #expect(!MeridianComparison.identifies(.string("bob"), user))
+    }
+
     @Test("isWithin / isWithinPast / isWithinFuture time windows")
     func windows() {
         let now = Date(timeIntervalSince1970: 1000)

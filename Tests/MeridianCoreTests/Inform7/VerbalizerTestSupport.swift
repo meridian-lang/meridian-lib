@@ -27,6 +27,10 @@ enum VerbalizerTestSupport {
     A deal is a kind of thing.
     A deal has an amount, which is Number.
     A row is a kind of thing.
+    A service is a kind of thing.
+    A service has a text called the name.
+    A service has a text called the status.
+    A service is keyed by the name.
     Ownership relates one user to various pages.
     Ownership is read from the page's owner.
     The verb to own (it owns, it is owned) means the ownership relation.

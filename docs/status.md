@@ -22,9 +22,10 @@ Tracks the six-phase build plan from `meridian-handoff/docs/10_BUILD_PLAN.md`.
 | I7-W4 | Inform-7-tier Wave 4: declarative domain, tables, templates | ✅ Done | 100% |
 | I7-W5 | Inform-7-tier Wave 5: parser infrastructure for scale | ✅ Done | 100% |
 | I7-W6 | Inform-7-tier Wave 6: validation, corpus diversification, report | ✅ Done | 100% |
-| I7-W7 | Inform-7-tier Wave 7: canonical verbalizer and drift audit | ✅ Done | 100% pending sign-off |
+| I7-W7 | Inform-7-tier Wave 7: canonical verbalizer and drift audit | ✅ Done | 100% signed-off |
+| I7-W8 | Inform-7-tier Wave 8: traces, time, and oracle gate | ✅ Done | 100% signed-off |
 | IR | Inert-reduction: executable tables/checklists + AI-routing | ✅ Done | 100% |
-| DX | World-class diagnostics, tracing & decision logs | ✅ Done | static-verified (gates pending a working shell) |
+| DX | World-class diagnostics, tracing & decision logs | ✅ Done | 100% |
 
 ---
 
@@ -67,7 +68,7 @@ for Phases 2–3.
 
 ## Phase 3 — IR + Codegen
 
-**Completed (~99% at gate; superseded by later work that extended the IR to 12 primitives).**
+**Completed (~99% at gate; superseded by later work that extended the IR to 13 primitives).**
 
 - `ASTToIR` lowers `MeridianFile` to `[IRWorkflow]`.
   - Phrase inlining with substitution (length-descending, whole-word replacement).
@@ -476,7 +477,7 @@ writeup in `IMPLEMENTATION_LOG.md`.
 
 ## Phase I7-W7 — canonical verbalizer and drift audit
 
-**Completed; sign-off requested.** Wave 7 adds the compiler-to-Canonical-English
+**Completed; signed off at 100%.** Wave 7 adds the compiler-to-Canonical-English
 path:
 
 - `Compiler.compileToModel(...)` returns a `VerbalizerModel` containing lowered
@@ -500,6 +501,99 @@ path:
 
 Primary docs: [18_VERBALIZER.md](18_VERBALIZER.md) and
 [coverage/VERBALIZER_EVIDENCE.md](coverage/VERBALIZER_EVIDENCE.md).
+
+---
+
+## Phase I7-W8 — traces, time, and oracle gate
+
+**Completed; signed off at 100%.** Wave 8 is the trace-backed
+semantics pass: trace schema/runtime, temporal operators, statistical
+operators, replay determinism, capture policy, and the documentation/testing
+gate that ties the implementation to the v0.2 oracle. A post-signoff audit
+(2026-07-11, "Wave 8 Gap Closure") found and closed several cross-cutting
+holes the original 8A–8E passes missed; all are now implemented, tested, and
+documented.
+
+### Delivered (8A–8E + gap-close)
+
+- Trace schema/store (in-memory + JSONL), append-only within retention, hash
+  chaining, deterministic within-run + at-ingest global ordering, D8
+  fail-open/fail-closed store-failure policy (including `.auto` resolved to
+  `failClosed`/`failOpen` at compile time) and a `TraceStoreCapabilities.
+  payloadRetention` flag.
+- Temporal operators: `ever`, `within the last <D>`, count-in-window,
+  `<N> times in a row`, `since the last <E>` (event-backed holds; pure
+  state-predicate holds now rejected with **MER-TMP-019** rather than crashing
+  codegen). `across all runs` scoping by skill name + stable step path (D10).
+  Gap-closure surface additions: the `occurred` outcome verb, `ever` aliases,
+  anchor-first `since`, has-been-failing/bare-causal-since rejection, event
+  negation (`no <event pattern>`), `whose <field> is <value>` payload
+  predicates (event + statistical, also live end-to-end through
+  `meridian trace eval`), skill-scoped step subjects, and a perfect-auxiliary
+  subject mis-parse fix.
+- **`MER-TMP-014`/`MER-TMP-015`** now have real, sound emitters: a near-miss
+  check of an event-pattern step name / `whose` payload field against the
+  subject's declared tool vocabulary and parameter names — not a closed
+  instrumentation registry (an undeclared-but-self-consistent name still
+  compiles).
+- Statistical operators: `usually`/`rarely` → numeric thresholds (with
+  configurable `usuallyThreshold`/`rarelyThreshold` via `=== trace ===`),
+  percentage bounds, `occurrences`/`runs` denominators (including a same-trace
+  contrast test showing the two denominators can diverge), sample-floor
+  indeterminacy (including at the runtime-monitor level), monitored
+  assertions, reserved `with N% confidence`, and **MER-STA-003** for vague
+  frequency wording ("most of the time").
+- K3 three-valued logic + decision-point totality (**MER-STA-001**), including
+  the D7a blocking-assert/obligation-site variant for anchorless
+  `since the last`.
+- Compound note form `proceed, and note "<text>" in the <binding>` — desugars to
+  a text-appending `rebind`, no new IR primitive; undeclared → **MER-REF-004**,
+  non-text → **MER-TYP-001**; verbalizer round-trips (COOK-14 / NS-B-COMPOUND).
+- Window > retention compile error naming both durations (**MER-TMP-011** / D1).
+- Per-tool capture policy `full`/`hash-only`/`redacted(fields)` + mandatory hash.
+- Branched/iterated/recovered runtime instrumentation events, and judged
+  events now carry input/output payload hashes + output kind.
+- Six corpora carry Wave 8 surfaces; `Wave8CorpusTraceE2ETests` +
+  `CorporaConformanceTests` (typecheck opt-in) pin generated Swift.
+- CLI replay/audit commands: `meridian trace eval`, top-level `trace-eval`
+  alias, `meridian trace verify`, `meridian trace drift`, and
+  `meridian bench-trace`.
+- **Composition Gallery acceptance suite** (gap-closure): parse + verbalize
+  round-trip for every gallery line, plus real runtime evaluation (compile →
+  `swift run` → assert on final event/branch/binding) for gallery lines
+  1/2/3/7/8 and the north-star flagship — the first cross-cutting proof that
+  the full grammar (quantifiers, definitions, templates, trace queries,
+  branches) composes correctly end-to-end, not just per-feature.
+- Documentation/evidence closeout: `docs/19_TRACES_AND_TIME.md`,
+  `docs/coverage/WAVE8_COMPLETION_EVIDENCE.md`, and
+  `docs/coverage/VERBALIZER_EVIDENCE.md` reflect tested behavior with zero
+  open residuals.
+
+### Requirements matrix
+
+`docs/coverage/WAVE8_REQUIREMENTS.md`: **55 done, 0 pending, 0 deferred.** The
+STEP 1 A–D readiness report (Waves 0–7 evidence, D0–D12 decision matrix,
+architecture seams, next-wave rationale) is in `IMPLEMENTATION_LOG.md`
+(2026-07-11 baseline-gate entry). Wave 7 is signed off; no foundation gaps.
+
+### Residuals
+
+None. No Wave 8 requirement remains open, and the gap-closure pass above
+closed every previously-tracked residual, including the D7a assert-site
+totality gap, the D9 production capture gate, the SEM-5-11 advisory lint,
+corpus residuals, SEM-4-04 scoped-tool payload shape, and — as of the
+2026-07-11 gap-closure pass — the `MER-TMP-014`/`MER-TMP-015` "reserved,
+unemitted" classification (superseded by real near-miss emitters; see above).
+Full test suite (2228 tests), the `MERIDIAN_GOLDEN_TYPECHECK=1
+MERIDIAN_GBRAIN_TYPECHECK=1 MERIDIAN_CORPORA_TYPECHECK=1` typecheck gate, the
+fast and `--full` per-file coverage gates, and `scripts/strict-compile-report.swift`
+across all seven corpora are all green as of this pass.
+
+Primary docs: `docs/19_TRACES_AND_TIME.md`,
+`docs/coverage/WAVE8_REQUIREMENTS.md`, `docs/coverage/WAVE8_COMPLETION_EVIDENCE.md`,
+and the oracle `inform v7 - wave 7 and 8/MERIDIAN_SEMANTICS.md`.
+
+**Wave 9 (deontic/obligation surface) not started.**
 
 ---
 
@@ -578,7 +672,7 @@ debugging experience. See [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.m
 
 ### Gate status
 
-> The full `swift test` + `MERIDIAN_GOLDEN_TYPECHECK=1` /
-> `MERIDIAN_GBRAIN_TYPECHECK=1` gates are **pending a working build shell** — the
-> execution environment was unresponsive during the final pass. All new code was
-> verified statically against the live APIs. Re-run the gates before sign-off.
+Full gate green as of the Wave 8 gap-closure pass: `swift test`,
+`MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1
+MERIDIAN_CORPORA_TYPECHECK=1 swift test`, `scripts/coverage.swift --gate`, and
+`scripts/strict-compile-report.swift` across all corpora.

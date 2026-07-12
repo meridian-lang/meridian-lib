@@ -1,0 +1,517 @@
+{
+  "constants" : {
+    "maximum batch size" : 500,
+    "maximum retry count" : 5,
+    "staleness window" : 2592000,
+    "vacuum row threshold" : 1000000
+  },
+  "instances_required" : [
+    {
+      "kind" : "sql endpoint",
+      "name" : "reporting warehouse"
+    }
+  ],
+  "kinds_used" : [
+    "Ledger"
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "orphaned",
+      "function" : "meridianDef_AuditRow_orphaned",
+      "kind" : "audit row",
+      "line" : 35
+    },
+    {
+      "adjective" : "finalized",
+      "function" : "meridianDef_Batch_finalized",
+      "kind" : "batch",
+      "line" : 30
+    },
+    {
+      "adjective" : "ready",
+      "function" : "meridianDef_Batch_ready",
+      "kind" : "batch",
+      "line" : 28
+    },
+    {
+      "adjective" : "settled",
+      "function" : "meridianDef_Batch_settled",
+      "kind" : "batch",
+      "line" : 29
+    },
+    {
+      "adjective" : "violated",
+      "function" : "meridianDef_Constraint_violated",
+      "kind" : "constraint",
+      "line" : 34
+    },
+    {
+      "adjective" : "bloated",
+      "function" : "meridianDef_DatabaseTable_bloated",
+      "kind" : "database table",
+      "line" : 39
+    },
+    {
+      "adjective" : "lagging",
+      "function" : "meridianDef_IndexJob_lagging",
+      "kind" : "index job",
+      "line" : 36
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Ledger_open",
+      "kind" : "ledger",
+      "line" : 27
+    },
+    {
+      "adjective" : "applied",
+      "function" : "meridianDef_Migration_applied",
+      "kind" : "migration",
+      "line" : 37
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_Migration_failed",
+      "kind" : "migration",
+      "line" : 38
+    },
+    {
+      "adjective" : "drifted",
+      "function" : "meridianDef_Record_drifted",
+      "kind" : "record",
+      "line" : 33
+    },
+    {
+      "adjective" : "duplicate",
+      "function" : "meridianDef_Record_duplicate",
+      "kind" : "record",
+      "line" : 32
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Record_stale",
+      "kind" : "record",
+      "line" : 31
+    }
+  ],
+  "meridian_ir_version" : "1.1",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a migration",
+      "line" : 49,
+      "name" : "application",
+      "right_cardinality" : "one",
+      "right_kind" : "a database table",
+      "via" : "migration.apply"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a ledger",
+      "line" : 47,
+      "name" : "auditing",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "audit_row.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a record",
+      "line" : 45,
+      "name" : "canonicalization",
+      "right_cardinality" : "one",
+      "right_kind" : "an audit row",
+      "via" : "record.mark_canonical"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a batch",
+      "line" : 43,
+      "name" : "retrying",
+      "right_cardinality" : "one",
+      "right_kind" : "a ledger",
+      "via" : "batch.retry"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a batch",
+      "line" : 41,
+      "name" : "settlement",
+      "right_cardinality" : "one",
+      "right_kind" : "a ledger",
+      "via" : "batch.settle"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Watch reconciliation parity as a standing DBA control instead of waiting for an end-of-day surprise, and keep a text receipt that explains which branch fired using the compound note form. Use this when ledger drift needs to be visible continuously, not only after a failed settle pass already made the discrepancy expensive.",
+    "name" : "ledger parity watch",
+    "outline" : [
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 20,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 27,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 32,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 34,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 48,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 56,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 61,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 21,
+        "text" : "Input"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 22,
+        "text" : "Output"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 24,
+        "text" : "Side effect"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 38,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 40,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 43,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 44,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 46,
+        "text" : "Emit"
+      }
+    ],
+    "parameters" : "ledger",
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 20,
+        "lines" : [
+          "Input: a ledger",
+          "Output: a parity receipt describing whether the ledger stayed within the",
+          "configured occurrence threshold",
+          "Side effect: a blocking parity assert can recover and leave a deferred note",
+          "instead of disappearing into a failed run"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 27,
+        "lines" : [
+          "\"run ledger parity watch\"",
+          "\"check ledger parity\"",
+          "\"monitor reconciliation parity\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 32,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 34,
+        "lines" : [
+          "let the parity receipt be \"parity watch opened\"",
+          "if the parity step succeeds in at least 99% of occurrences within the last 30 days,",
+          "Emit: \"ledger parity stayed within threshold\"",
+          "otherwise,",
+          "Emit: \"ledger parity is below threshold or the retained sample is still indeterminate\"",
+          "assert the parity step succeeds in at least 99% of occurrences within the last 30 days",
+          "recover from any:",
+          "Emit: \"blocking ledger parity assertion failed\"",
+          "Emit: \"ledger parity check deferred after the blocking assertion failure\"",
+          "proceed, and note \"; parity watch pass complete\" in the parity receipt",
+          "Emit: \"ledger parity watch pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 48,
+        "lines" : [
+          "Don't reduce a parity watch to the last settle result. A ledger can clear one",
+          "pass and still be drifting over the retained occurrence history",
+          "Don't treat the fallback branch as equivalent to \"false\". The otherwise path",
+          "deliberately absorbs both a real threshold breach and a still-thin sample",
+          "Don't rebuild the text receipt by hand in downstream tooling. The receipt",
+          "binding is part of the workflow so the result stays auditable"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Guarantees",
+        "line" : 56,
+        "lines" : [
+          "This skill leaves an explicit emitted record for the healthy branch, the K3",
+          "fallback branch, the blocking assertion failure, and the recovery-driven",
+          "deferral so the parity outcome stays inspectable after the run"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 61,
+        "lines" : [
+          "The emitted record states whether parity stayed within threshold, whether the",
+          "watch fell back because the retained sample stayed indeterminate or breached the",
+          "threshold, and whether the blocking parity assertion had to recover"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"run ledger parity watch\"\n\"check ledger parity\"\n\"monitor reconciliation parity\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "apply",
+      "line" : 56,
+      "past_participle" : "applied",
+      "relation" : "application",
+      "third_person" : "applies"
+    },
+    {
+      "base" : "audit",
+      "line" : 55,
+      "past_participle" : "audited",
+      "relation" : "auditing",
+      "third_person" : "audits"
+    },
+    {
+      "base" : "canonicalize",
+      "line" : 54,
+      "past_participle" : "canonicalized",
+      "relation" : "canonicalization",
+      "third_person" : "canonicalizes"
+    },
+    {
+      "base" : "retry",
+      "line" : 53,
+      "past_participle" : "retried",
+      "relation" : "retrying",
+      "third_person" : "retries"
+    },
+    {
+      "base" : "settle",
+      "line" : 52,
+      "past_participle" : "settled",
+      "relation" : "settlement",
+      "third_person" : "settles"
+    }
+  ],
+  "source_files" : [
+    "ledgerparitywatch.meri",
+    "procedures.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 36,
+      "swift_line" : 459
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 461
+    },
+    {
+      "meridian_line" : 38,
+      "swift_line" : 472
+    },
+    {
+      "meridian_line" : 40,
+      "swift_line" : 485
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 497
+    },
+    {
+      "meridian_line" : 41,
+      "swift_line" : 500
+    },
+    {
+      "meridian_line" : 43,
+      "swift_line" : 520
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 531
+    },
+    {
+      "meridian_line" : 45,
+      "swift_line" : 542
+    },
+    {
+      "meridian_line" : 46,
+      "swift_line" : 545
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 613
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 618
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 687
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 692
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 761
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 766
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Ledger",
+          "name" : "ledger"
+        }
+      ],
+      "skill_name" : "ledger parity watch",
+      "skill_version_hash" : "6e205a1571d53487da06aaa268dce6737dbd8da3a1d8b5a24542e699c3ac1c31",
+      "source_name" : "ledger parity watch a ledger",
+      "step_paths" : [
+        "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/0d13a2f931bdb75d2b5195dbe241d6d191f4a21893b56255e38a5558a8936d9d",
+        "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/a64fb9ffe5ca8c08fb9be66bc8d6543f8ec995585c038b0b9e2b2d0632a58a67",
+        "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/branch.else\/f8dcc2f82f1eeca0d06f10a2ddcf7b4232adae9153f03112276659d221bdb9f5",
+        "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/branch.then\/128a719eacc47b8e5e5f8f65d2a4d72e7041c0bb261bb04f984d401a4cd1f2d0",
+        "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/cbe20f4a0972fda8dbd75f96774016cb7cf4caaf85263f64174c5ed442cbf884",
+        "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/f533d0998c8593a25016bbe5f07cb3d66f366db3c9fa3b26d0701edb54db402a",
+        "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/f59189eea466169b36d6635604f093edeb03bd9d985924dc6a27476dc1b77488",
+        "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/recover.body\/9f7dc976b91bd972a3bbf7b2f3e0e974827c983fa685b6488344c25140e5fd15",
+        "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/recover.handler\/0ce844682dd010c4b3c0e32cb3b6260be347e0d228a4687ee7f65fd786604370",
+        "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/recover.handler\/947781d024ebfedbf7e1d77b55bb38c03bb456fd7f5db7ed86830f7d7151c27d"
+      ],
+      "swift_struct" : "LedgerParityWatchLedger"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "ledger parity watch",
+      "skill_version_hash" : "6e205a1571d53487da06aaa268dce6737dbd8da3a1d8b5a24542e699c3ac1c31",
+      "source_name" : "when runLedgerParityWatch fires",
+      "step_paths" : [
+        "\/WhenRunledgerparitywatchFires\/root\/procedure\/65005b15da791f0082f343b312a35902567df258825ebc4f2fc2d8a930246fb7",
+        "\/WhenRunledgerparitywatchFires\/root\/procedure\/ae5376e3a28bfa0a914d64c23d3f35361dfa6302ed62fe1a52c7f514efea06a1"
+      ],
+      "swift_struct" : "WhenRunledgerparitywatchFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "ledger parity watch",
+      "skill_version_hash" : "6e205a1571d53487da06aaa268dce6737dbd8da3a1d8b5a24542e699c3ac1c31",
+      "source_name" : "when checkLedgerParity fires",
+      "step_paths" : [
+        "\/WhenCheckledgerparityFires\/root\/procedure\/54bf58e717f7452fc462ce1b78e6891e8ba171bcfa0127a8e67469baa7cc00e1",
+        "\/WhenCheckledgerparityFires\/root\/procedure\/c51c83076009dd1084c5f6309ab120208f9363c7a86f39f69b826bdf89d9409e"
+      ],
+      "swift_struct" : "WhenCheckledgerparityFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "ledger parity watch",
+      "skill_version_hash" : "6e205a1571d53487da06aaa268dce6737dbd8da3a1d8b5a24542e699c3ac1c31",
+      "source_name" : "when monitorReconciliationParity fires",
+      "step_paths" : [
+        "\/WhenMonitorreconciliationparityFires\/root\/procedure\/01d946bc8c5e71cf2df8da761ff54196ca4301e848a840c750ce83dd5d41e6b4",
+        "\/WhenMonitorreconciliationparityFires\/root\/procedure\/aa08a44d1759c60f71eef4dbc810dee0c8ef73845595e058b84ca339e5b20a46"
+      ],
+      "swift_struct" : "WhenMonitorreconciliationparityFires"
+    }
+  ]
+}

@@ -44,10 +44,16 @@ struct Phase5Codegen {
         // The optional-chained accessor — no force casts, no
         // `Value.opaque(AnyHashableSendable(...))` wrapping (`Value` is already
         // Sendable so we just bind the loop variable straight).
-        #expect(out.contains("for (__meridianLoopIndex_0_0, item) in (state.get(\"items\")?.asList ?? []).enumerated() {"))
+        #expect(out.contains("let __meridianColl_0_0 = (state.get(\"items\")?.asList ?? [])"))
+        #expect(out.contains("for (__meridianLoopIndex_0_0, item) in __meridianColl_0_0.enumerated() {"))
         #expect(out.contains("let __meridianLoopLabel_0_0 = \"progress:0.0:iteration:\\(__meridianLoopIndex_0_0)\""))
         #expect(out.contains("state.bind(\"item\", item)"))
         #expect(out.contains("try await runtime.checkpoint(label: __meridianLoopLabel_0_0, state: state.snapshot())"))
+        // 8B/E instrumentation: iterate.start/iteration/end (branched/iterated/recovered
+        // now actually emitted, not just renderable — see Wave 8 gap closure plan §E).
+        #expect(out.contains("try await runtime.recordIterateStart(over: \"state.get(\\\"items\\\")\", step: \"iterate\")"))
+        #expect(out.contains("try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_0, step: \"iterate\")"))
+        #expect(out.contains("try await runtime.recordIterateEnd(over: \"state.get(\\\"items\\\")\", count: __meridianColl_0_0.count, step: \"iterate\")"))
         #expect(!out.contains("as! [Any]"))
     }
 

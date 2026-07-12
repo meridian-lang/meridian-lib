@@ -1,0 +1,551 @@
+{
+  "constants" : {
+    "escalation cooldown" : 600,
+    "maximum page attempts" : 3,
+    "slo error budget threshold" : 0.10000000000000001
+  },
+  "instances_required" : [
+    {
+      "kind" : "service",
+      "name" : "pagerduty service"
+    },
+    {
+      "kind" : "service",
+      "name" : "statuspage service"
+    }
+  ],
+  "kinds_used" : [
+    "Service"
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "actionable",
+      "function" : "meridianDef_Alert_actionable",
+      "kind" : "alert",
+      "line" : 32
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Alert_critical",
+      "kind" : "alert",
+      "line" : 25
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Alert_stale",
+      "kind" : "alert",
+      "line" : 26
+    },
+    {
+      "adjective" : "unhealthy",
+      "function" : "meridianDef_Deploy_unhealthy",
+      "kind" : "deploy",
+      "line" : 28
+    },
+    {
+      "adjective" : "high severity",
+      "function" : "meridianDef_Incident_highSeverity",
+      "kind" : "incident",
+      "line" : 29
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Incident_open",
+      "kind" : "incident",
+      "line" : 30
+    },
+    {
+      "adjective" : "degraded",
+      "function" : "meridianDef_Service_degraded",
+      "kind" : "service",
+      "line" : 27
+    },
+    {
+      "adjective" : "healthy",
+      "function" : "meridianDef_Service_healthy",
+      "kind" : "service",
+      "line" : 33
+    },
+    {
+      "adjective" : "recovered",
+      "function" : "meridianDef_Service_recovered",
+      "kind" : "service",
+      "line" : 34
+    },
+    {
+      "adjective" : "breached",
+      "function" : "meridianDef_Slo_breached",
+      "kind" : "slo",
+      "line" : 31
+    }
+  ],
+  "meridian_ir_version" : "1.1",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a runbook",
+      "line" : 40,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "runbook.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a service",
+      "line" : 36,
+      "name" : "firing",
+      "right_cardinality" : "one",
+      "right_kind" : "an alert",
+      "via" : "alert.list"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an oncall engineer",
+      "line" : 38,
+      "name" : "ownership",
+      "right_cardinality" : "one",
+      "right_kind" : "a service",
+      "via" : "oncall.roster"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Read the release trail the way an incident commander would: distinguish one old failure from a recent cluster, distinguish a streak from a count, and treat an anchorless since-the-last check as a first-class unknown instead of guessing. Use this before declaring a service healthy enough for another deploy, not after the rollback has already started.",
+    "name" : "release health sentinel",
+    "outline" : [
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 20,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 27,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 32,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 38,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 51,
+        "text" : "Workflow — steps 2"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 56,
+        "text" : "Workflow — steps 3"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 62,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 72,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 77,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 21,
+        "text" : "Input"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 22,
+        "text" : "Output"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 24,
+        "text" : "Side effect"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 34,
+        "text" : "Post"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 36,
+        "text" : "Post"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 41,
+        "text" : "Post"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 43,
+        "text" : "Post"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 45,
+        "text" : "Post"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 47,
+        "text" : "Post"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 49,
+        "text" : "Post"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 54,
+        "text" : "Post"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 59,
+        "text" : "Post"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 60,
+        "text" : "Post"
+      }
+    ],
+    "parameters" : "service",
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 20,
+        "lines" : [
+          "Input: a service",
+          "Output: a release-health verdict that preserves historical, recent, streak,",
+          "and anchorless-since distinctions",
+          "Side effect: a blocking health guard records its fallback policy instead of",
+          "silently guessing on an anchorless history"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 27,
+        "lines" : [
+          "\"run release health sentinel\"",
+          "\"check release health\"",
+          "\"inspect deploy failure history\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow",
+        "line" : 32,
+        "lines" : [
+          "if the service is recovered since the last deploy step succeeded,",
+          "Post: \"release health is healthy since the last successful deploy\"",
+          "otherwise,",
+          "Post: \"release health is not healthy since the last successful deploy\""
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 38,
+        "lines" : [
+          "if the deploy step has ever failed,",
+          "Post: \"release health saw a prior deploy failure\"",
+          "if the deploy step has failed within the last 7 days,",
+          "Post: \"release health saw a recent deploy failure\"",
+          "if the deploy step has failed at least 2 times within the last 7 days,",
+          "Post: \"release health saw repeated recent deploy failures\"",
+          "if the deploy step has failed 2 times in a row,",
+          "Post: \"release health saw an active deploy failure streak\"",
+          "if across all runs, the deploy step has ever failed,",
+          "Post: \"release health saw a cross-run deploy failure\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 51,
+        "lines" : [
+          "if it is unknown whether:",
+          "Post: \"release health has no successful deploy anchor yet\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 3",
+        "line" : 56,
+        "lines" : [
+          "assert the service is recovered since the last deploy step succeeded otherwise:",
+          "Post: \"release health blocking guard fell back because the service is unhealthy or the deploy history has no successful anchor\"",
+          "Post: \"release health sentinel pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 62,
+        "lines" : [
+          "Don't treat \"ever failed\" as interchangeable with \"failed within the last 7",
+          "days\". Those are different release stories, and this skill keeps both on",
+          "purpose",
+          "Don't collapse a failure count into a streak. Two failures in a seven-day",
+          "window and two failures in a row can both be true, but they mean different",
+          "things about what is happening right now",
+          "Don't treat an anchorless `since the last` check as if it were false. If no",
+          "successful deploy exists yet, the answer is unknown and the workflow says so"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Guarantees",
+        "line" : 72,
+        "lines" : [
+          "This skill records each temporal contrast explicitly and preserves the",
+          "anchorless `since the last` case as its own witnessed fallback, rather than",
+          "silently flattening it into a healthy or unhealthy result"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 77,
+        "lines" : [
+          "The receipt distinguishes five release-health signals in plain language:",
+          "historical failure, recent-window failure, repeated recent failure, live",
+          "failure streak, and since-the-last health with an explicit unknown\/default",
+          "policy when there is no successful anchor"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"run release health sentinel\"\n\"check release health\"\n\"inspect deploy failure history\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "cover",
+      "line" : 45,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "own",
+      "line" : 44,
+      "past_participle" : "owned",
+      "relation" : "ownership",
+      "third_person" : "owns"
+    },
+    {
+      "base" : "page",
+      "line" : 43,
+      "past_participle" : "paged",
+      "relation" : "ownership",
+      "third_person" : "pages"
+    }
+  ],
+  "source_files" : [
+    "releasehealthsentinel.meri",
+    "incident.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 40,
+      "swift_line" : 424
+    },
+    {
+      "meridian_line" : 41,
+      "swift_line" : 428
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 440
+    },
+    {
+      "meridian_line" : 43,
+      "swift_line" : 444
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 456
+    },
+    {
+      "meridian_line" : 45,
+      "swift_line" : 460
+    },
+    {
+      "meridian_line" : 46,
+      "swift_line" : 472
+    },
+    {
+      "meridian_line" : 47,
+      "swift_line" : 476
+    },
+    {
+      "meridian_line" : 48,
+      "swift_line" : 488
+    },
+    {
+      "meridian_line" : 49,
+      "swift_line" : 492
+    },
+    {
+      "meridian_line" : 58,
+      "swift_line" : 505
+    },
+    {
+      "meridian_line" : 59,
+      "swift_line" : 510
+    },
+    {
+      "meridian_line" : 60,
+      "swift_line" : 526
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 594
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 599
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 668
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 673
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 742
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 747
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Service",
+          "name" : "service"
+        }
+      ],
+      "skill_name" : "release health sentinel",
+      "skill_version_hash" : "9d143ca7d6edcc26b43acd0656287fd742d887879669e14971205dc0d9672f11",
+      "source_name" : "release health sentinel a service",
+      "step_paths" : [
+        "\/ReleaseHealthSentinelService\/workflow-steps-3\/procedure\/9e4d22fe7e2266e8282f44581757778791d5ab65789c12950d76d9968f95e20f",
+        "\/ReleaseHealthSentinelService\/workflow-steps-3\/procedure\/assert.otherwise\/23a502cf4f4aff4dd1f8dc50d768d8d63c4b66f4d124e92deb2aa93e752bc053",
+        "\/ReleaseHealthSentinelService\/workflow-steps-3\/procedure\/e166d2e7c47034bc2d2d49c4e30fd667d5cec3e1e82c83e94a68e7fd209ca856",
+        "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/2e1c111d4704853da710bb171aa81bf8f071a97dd79e09a7febb681eacff6ccc",
+        "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/77f4be022cf08f6ac6e8418cb1f824b0cb23d8cee1bd20dffd4fe1056ea8bd69",
+        "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/99d73e2cd39f5c5a36f91b6379dcb31d0f8e7d713318463e9c46273be2ba2718",
+        "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/a66cad2a4664a07342fe722cc64e7161e47ca0e2b66b7e49b5303bc279c4d043",
+        "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/branch.then\/0c070a42ab112288055e58d62bfd2cf48839b81a1aa8bd3a2aad43f88b475e0f",
+        "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/branch.then\/49746a92b99116c089fff2ec8571f1ef100a79ac6c583b3d5131b987ef554d8f",
+        "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/branch.then\/8725cae94698ebd7d8fed2aaa8773c00a0af30adc8ff3b3ddee8d1f3a4989a80",
+        "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/branch.then\/a621626a7d2c26180092613b88530eeb8914f144ecf19640c3e04fa97f40c912",
+        "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/branch.then\/af20d61858db2c49c4e96690d2c2f5ef3b58a383ca657c346dec5c4ffbc473aa",
+        "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/d5dcaab4a203848fd7cb6a76bd2563acc6805bc9f9c9908157fc12949dc00332"
+      ],
+      "swift_struct" : "ReleaseHealthSentinelService"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "release health sentinel",
+      "skill_version_hash" : "9d143ca7d6edcc26b43acd0656287fd742d887879669e14971205dc0d9672f11",
+      "source_name" : "when runReleaseHealthSentinel fires",
+      "step_paths" : [
+        "\/WhenRunreleasehealthsentinelFires\/root\/procedure\/77e2c8fa5a836c4e875842a662b30b051897265150238dc401b3501d2661956d",
+        "\/WhenRunreleasehealthsentinelFires\/root\/procedure\/e3fd67141b9f1f803997f6cf681458cd11fe114898837e8ee8dbc547cbb94df5"
+      ],
+      "swift_struct" : "WhenRunreleasehealthsentinelFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "release health sentinel",
+      "skill_version_hash" : "9d143ca7d6edcc26b43acd0656287fd742d887879669e14971205dc0d9672f11",
+      "source_name" : "when checkReleaseHealth fires",
+      "step_paths" : [
+        "\/WhenCheckreleasehealthFires\/root\/procedure\/1f386bd5eef9c8396f042d5e951e30dad139d87c75f66e141c57da99cff1b15a",
+        "\/WhenCheckreleasehealthFires\/root\/procedure\/bf644aaeab63e8667ef54aab02d1cec770a0250d23bab529b8a14d663c10a0ae"
+      ],
+      "swift_struct" : "WhenCheckreleasehealthFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "release health sentinel",
+      "skill_version_hash" : "9d143ca7d6edcc26b43acd0656287fd742d887879669e14971205dc0d9672f11",
+      "source_name" : "when inspectDeployFailureHistory fires",
+      "step_paths" : [
+        "\/WhenInspectdeployfailurehistoryFires\/root\/procedure\/7ad7541f745402ff5fe13cd45701d638c4c66159c4acd87d2c9dfd0d47a93e3f",
+        "\/WhenInspectdeployfailurehistoryFires\/root\/procedure\/f33a96a5a88095984b98f6843aba4a8f0a8259ba5b796fa7a0217f451c4ecf86"
+      ],
+      "swift_struct" : "WhenInspectdeployfailurehistoryFires"
+    }
+  ]
+}

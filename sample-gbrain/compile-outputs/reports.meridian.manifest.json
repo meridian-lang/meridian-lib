@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -247,35 +247,35 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 631
+      "swift_line" : 682
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 687
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 755
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 760
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 828
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 833
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 901
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 906
     }
   ],
   "tools_used" : [
@@ -290,6 +290,8 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "reports",
+      "skill_version_hash" : "44e701eca876e3d81cfa5570aece4f310bcfb17f38ad2dc6cb49001c06249532",
       "source_name" : "reports a input",
       "swift_struct" : "ReportsInput"
     },
@@ -298,7 +300,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "reports",
+      "skill_version_hash" : "44e701eca876e3d81cfa5570aece4f310bcfb17f38ad2dc6cb49001c06249532",
       "source_name" : "when saveReport fires",
+      "step_paths" : [
+        "\/WhenSavereportFires\/root\/procedure\/148903e5c30ee6af202a0597ee83a7c382f2836981fa4fca0467f207145496f5",
+        "\/WhenSavereportFires\/root\/procedure\/8f5dd98146a521147376cd1517f01eb0f9a39a78174375da1e21d46022cf1bff"
+      ],
       "swift_struct" : "WhenSavereportFires"
     },
     {
@@ -306,7 +314,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "reports",
+      "skill_version_hash" : "44e701eca876e3d81cfa5570aece4f310bcfb17f38ad2dc6cb49001c06249532",
       "source_name" : "when loadLatestReport fires",
+      "step_paths" : [
+        "\/WhenLoadlatestreportFires\/root\/procedure\/4567f2e33665c9b1a84e36202f99e7811d408640c30d832d9b955b728e42597d",
+        "\/WhenLoadlatestreportFires\/root\/procedure\/ffdaec1e33d5ffec3f67eeaf75e408a5f706af7a5b064a69eb543236b15978fe"
+      ],
       "swift_struct" : "WhenLoadlatestreportFires"
     },
     {
@@ -314,7 +328,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "reports",
+      "skill_version_hash" : "44e701eca876e3d81cfa5570aece4f310bcfb17f38ad2dc6cb49001c06249532",
       "source_name" : "when whatSLatestBriefing fires",
+      "step_paths" : [
+        "\/WhenWhatslatestbriefingFires\/root\/procedure\/2184fe1471b156799c97676f0b104bf89db9607ea1eaa921ea1635b00714f10e",
+        "\/WhenWhatslatestbriefingFires\/root\/procedure\/d4ccc0483dcc37bee295c2c7b3761f6e9fad8c185b57fbb53fae57cf64d15054"
+      ],
       "swift_struct" : "WhenWhatslatestbriefingFires"
     },
     {
@@ -322,7 +342,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "reports",
+      "skill_version_hash" : "44e701eca876e3d81cfa5570aece4f310bcfb17f38ad2dc6cb49001c06249532",
       "source_name" : "when showMePulse fires",
+      "step_paths" : [
+        "\/WhenShowmepulseFires\/root\/procedure\/2016725b2d6acdb61e144e5a4930590615307d8a6110ace20500b05a829dfe88",
+        "\/WhenShowmepulseFires\/root\/procedure\/85a4be877064a81a59ea012e212ec36a8159a8f028b90a8912f905bc20402af0"
+      ],
       "swift_struct" : "WhenShowmepulseFires"
     }
   ]

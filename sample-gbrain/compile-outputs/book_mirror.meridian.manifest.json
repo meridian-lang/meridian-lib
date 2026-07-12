@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -164,7 +164,7 @@
         "text" : "EPUB"
       },
       {
-        "kind" : "reference",
+        "kind" : "procedure",
         "level" : 3,
         "line" : 115,
         "text" : "EPUB — steps"
@@ -194,7 +194,7 @@
         "text" : "Quality check"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
         "line" : 170,
         "text" : "Quality check — steps"
@@ -523,13 +523,13 @@
         "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "EPUB — steps",
         "line" : 115,
         "lines" : [
-          "codeblock:bash:U0xVRz0idGhpcy1ib29rIiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBrZWJhYi1jYXNlCldPUks9IiQobWt0ZW1wIC1kKS8kU0xVRyIKbWtkaXIgLXAgIiRXT1JLL2NoYXB0ZXJzIgp1bnppcCAtbyBwYXRoL3RvL2Jvb2suZXB1YiAtZCAiJFdPUksvdW5wYWNrZWQiCgojIEZpbmQgY29udGVudCBmaWxlcyAoWEhUTUwvSFRNTCksIHNvcnRlZCAoY2hhcHRlciBvcmRlciA9IHNvcnQgb3JkZXIpCmZpbmQgIiRXT1JLL3VucGFja2VkIiAtbmFtZSAiKi54aHRtbCIgLW8gLW5hbWUgIiouaHRtbCIgfCBzb3J0ID4gIiRXT1JLL2ZpbGVzLnR4dCIKCiMgU3RyaXAgSFRNTCB0byB0ZXh0IHBlciBjaGFwdGVyCnB5dGhvbjMgLSA8PCdQWScKZnJvbSBiczQgaW1wb3J0IEJlYXV0aWZ1bFNvdXAKaW1wb3J0IG9zLCBzeXMKd29yayA9IG9zLmVudmlyb25bJ1dPUksnXQpmaWxlcyA9IG9wZW4oZid7d29ya30vZmlsZXMudHh0JykucmVhZCgpLnNwbGl0bGluZXMoKQpmb3IgaSwgcGF0aCBpbiBlbnVtZXJhdGUoZmlsZXMsIDEpOgogICAgaHRtbCA9IG9wZW4ocGF0aCwgZW5jb2Rpbmc9J3V0Zi04JywgZXJyb3JzPSdyZXBsYWNlJykucmVhZCgpCiAgICB0ZXh0ID0gQmVhdXRpZnVsU291cChodG1sLCAnaHRtbC5wYXJzZXInKS5nZXRfdGV4dCgnXG4nKQogICAgdGV4dCA9ICdcbicuam9pbihsaW5lLnN0cmlwKCkgZm9yIGxpbmUgaW4gdGV4dC5zcGxpdGxpbmVzKCkgaWYgbGluZS5zdHJpcCgpKQogICAgd2l0aCBvcGVuKGYne3dvcmt9L2NoYXB0ZXJzL3tpOjAyZH0udHh0JywgJ3cnKSBhcyBmOgogICAgICAgIGYud3JpdGUodGV4dCkKUFk="
+          "codeblock:bash:U0xVRz0idGhpcy1ib29rIiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBrZWJhYi1jYXNlCldPUks9IiQobWt0ZW1wIC1kKS8kU0xVRyIKbWtkaXIgLXAgIiRXT1JLL2NoYXB0ZXJzIgp1bnppcCAtbyBwYXRoL3RvL2Jvb2suZXB1YiAtZCAiJFdPUksvdW5wYWNrZWQiCgojIEZpbmQgY29udGVudCBmaWxlcyAoWEhUTUwvSFRNTCksIHNvcnRlZCAoY2hhcHRlciBvcmRlciA9IHNvcnQgb3JkZXIpCmZpbmQgIiRXT1JLL3VucGFja2VkIiAtbmFtZSAiKi54aHRtbCIgLW8gLW5hbWUgIiouaHRtbCIgfCBzb3J0ID4gIiRXT1JLL2ZpbGVzLnR4dCIKCiMgU3RyaXAgSFRNTCB0byB0ZXh0IHBlciBjaGFwdGVyCnB5dGhvbjMgLSA8PCdQWScKZnJvbSBiczQgaW1wb3J0IEJlYXV0aWZ1bFNvdXAKaW1wb3J0IG9zLCBzeXMKd29yayA9IG9zLmVudmlyb25bJ1dPUksnXQpmaWxlcyA9IG9wZW4oZid7e3dvcmt9fS9maWxlcy50eHQnKS5yZWFkKCkuc3BsaXRsaW5lcygpCmZvciBpLCBwYXRoIGluIGVudW1lcmF0ZShmaWxlcywgMSk6CiAgICBodG1sID0gb3BlbihwYXRoLCBlbmNvZGluZz0ndXRmLTgnLCBlcnJvcnM9J3JlcGxhY2UnKS5yZWFkKCkKICAgIHRleHQgPSBCZWF1dGlmdWxTb3VwKGh0bWwsICdodG1sLnBhcnNlcicpLmdldF90ZXh0KCdcbicpCiAgICB0ZXh0ID0gJ1xuJy5qb2luKGxpbmUuc3RyaXAoKSBmb3IgbGluZSBpbiB0ZXh0LnNwbGl0bGluZXMoKSBpZiBsaW5lLnN0cmlwKCkpCiAgICB3aXRoIG9wZW4oZid7e3dvcmt9fS9jaGFwdGVycy97e2k6MDJkfX0udHh0JywgJ3cnKSBhcyBmOgogICAgICAgIGYud3JpdGUodGV4dCkKUFk="
         ],
-        "role" : "reference"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -576,13 +576,13 @@
         "role" : "reference"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Quality check — steps",
         "line" : 170,
         "lines" : [
           "For each chapter file:"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
@@ -960,131 +960,195 @@
   "source_map" : [
     {
       "meridian_line" : 92,
-      "swift_line" : 604
+      "swift_line" : 627
     },
     {
       "meridian_line" : 92,
-      "swift_line" : 615
+      "swift_line" : 640
     },
     {
       "meridian_line" : 92,
-      "swift_line" : 626
+      "swift_line" : 653
     },
     {
-      "meridian_line" : 159,
-      "swift_line" : 637
+      "meridian_line" : 117,
+      "swift_line" : 666
     },
     {
-      "meridian_line" : 172,
-      "swift_line" : 647
-    },
-    {
-      "meridian_line" : 218,
-      "swift_line" : 657
-    },
-    {
-      "meridian_line" : 218,
-      "swift_line" : 668
-    },
-    {
-      "meridian_line" : 218,
+      "meridian_line" : 117,
       "swift_line" : 679
     },
     {
-      "meridian_line" : 218,
-      "swift_line" : 690
+      "meridian_line" : 117,
+      "swift_line" : 692
     },
     {
-      "meridian_line" : 218,
-      "swift_line" : 701
+      "meridian_line" : 117,
+      "swift_line" : 705
     },
     {
-      "meridian_line" : 218,
-      "swift_line" : 712
+      "meridian_line" : 117,
+      "swift_line" : 718
     },
     {
-      "meridian_line" : 218,
-      "swift_line" : 723
+      "meridian_line" : 117,
+      "swift_line" : 731
     },
     {
-      "meridian_line" : 218,
-      "swift_line" : 734
+      "meridian_line" : 117,
+      "swift_line" : 744
     },
     {
-      "meridian_line" : 218,
-      "swift_line" : 745
+      "meridian_line" : 117,
+      "swift_line" : 757
     },
     {
-      "meridian_line" : 218,
-      "swift_line" : 756
+      "meridian_line" : 117,
+      "swift_line" : 770
     },
     {
-      "meridian_line" : 218,
-      "swift_line" : 767
+      "meridian_line" : 117,
+      "swift_line" : 783
     },
     {
-      "meridian_line" : 218,
-      "swift_line" : 778
+      "meridian_line" : 117,
+      "swift_line" : 796
     },
     {
-      "meridian_line" : 218,
-      "swift_line" : 789
+      "meridian_line" : 117,
+      "swift_line" : 809
     },
     {
-      "meridian_line" : 218,
-      "swift_line" : 800
-    },
-    {
-      "meridian_line" : 261,
-      "swift_line" : 811
-    },
-    {
-      "meridian_line" : 274,
+      "meridian_line" : 117,
       "swift_line" : 822
     },
     {
-      "meridian_line" : 286,
-      "swift_line" : 833
+      "meridian_line" : 117,
+      "swift_line" : 835
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 872
+      "meridian_line" : 117,
+      "swift_line" : 848
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 877
+      "meridian_line" : 117,
+      "swift_line" : 861
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 916
+      "meridian_line" : 117,
+      "swift_line" : 874
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 921
+      "meridian_line" : 159,
+      "swift_line" : 887
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 960
+      "meridian_line" : 218,
+      "swift_line" : 900
     },
     {
-      "meridian_line" : 1,
+      "meridian_line" : 218,
+      "swift_line" : 913
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 926
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 939
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 952
+    },
+    {
+      "meridian_line" : 218,
       "swift_line" : 965
     },
     {
-      "meridian_line" : 1,
+      "meridian_line" : 218,
+      "swift_line" : 978
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 991
+    },
+    {
+      "meridian_line" : 218,
       "swift_line" : 1004
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 1009
+      "meridian_line" : 218,
+      "swift_line" : 1017
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 1030
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 1043
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 1056
+    },
+    {
+      "meridian_line" : 218,
+      "swift_line" : 1069
+    },
+    {
+      "meridian_line" : 261,
+      "swift_line" : 1082
+    },
+    {
+      "meridian_line" : 274,
+      "swift_line" : 1095
+    },
+    {
+      "meridian_line" : 286,
+      "swift_line" : 1108
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1048
+      "swift_line" : 1177
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1053
+      "swift_line" : 1182
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1250
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1255
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1323
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1328
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1396
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1401
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1469
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1474
     }
   ],
   "tools_used" : [
@@ -1127,7 +1191,49 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "book-mirror",
+      "skill_version_hash" : "b0b60c6307c122bc6f18cde5eddd74120b7078cb2db962ee4f347d1c65b9c781",
       "source_name" : "book-mirror a input",
+      "step_paths" : [
+        "\/BookMirrorInput\/1-acquiring-the-book-steps\/procedure\/a0d45bf20cd2a535a4b16bf108d7d947faab8e79322e0928231e3ecae299d036",
+        "\/BookMirrorInput\/1-acquiring-the-book-steps\/procedure\/a26b0c741409e04c7af9eade712e44cd7908e47b3bb44b3bc06a90394e1d8318",
+        "\/BookMirrorInput\/1-acquiring-the-book-steps\/procedure\/eb0d80bba57088e83331a3c2fbcd782c632f2729f826615092e4017c5955b31f",
+        "\/BookMirrorInput\/4-analysis-invoke-gbrain-book-mirror-steps-2\/procedure\/6a45ec4fadd2b3c075b179a7418c47859bb32d8d627c403620dff6179c72bc50",
+        "\/BookMirrorInput\/4-analysis-invoke-gbrain-book-mirror-steps\/procedure\/2c03fcb11fbcfbf6b7c2266edadb0bcd54da025d6f7b9108e4b023ab4c3bd9e3",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/438386eff6af26c25a20022217ddbb02d8a20c7d4a794f4f7ddec4b2b9d611dd",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/6f37f10abd811150e00fe722ec0cabcb2eb8fd47bca476731db178749bc5d334",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/708c900d382cd83935ea85d620d1085744ad27891a355d4bed432764170e155e",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/7d201be1939cc1cc2f7d873633ca5404876098d911b31aa1d2047d24ab86fdfd",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/8bb5042bda3c8c062b8eb4f223231fc19addcfd0b7f3e1ae59ac5e9bcd8a6619",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/908b34d37dc3a549f90977cfa72eb4194acbb5e5ba53af317c98629c48b1fb09",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/a7fbcd49982d8bc7d5e1b29a2aa9d9a64456db34e84706e54388332795704bb4",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/c99702f06870bf34ac11b6016e650c38db7933ed8a6862f2dc38193243fc495f",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/d237b230627e87e49530a0fb434ba43ea4f83555fea01fd0dfac76442dd07339",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5~2",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5~3",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5~4",
+        "\/BookMirrorInput\/assemble-a-context-pack-steps\/procedure\/eb2cbd0af784519dd7eb0deeb97e0e40a15c04671b4e388c525182016213965b",
+        "\/BookMirrorInput\/epub-steps\/procedure\/4215e70479736d41c577a30cca7c70a1f570fe725f451e5d458f756bf1e849fd",
+        "\/BookMirrorInput\/epub-steps\/procedure\/5076302a611c4fc9e220c133d55394512c5ee0c8b90a5619baa0531653adcc3c",
+        "\/BookMirrorInput\/epub-steps\/procedure\/511321f422e02bfc3cf56825ccdda3948269545aa6d38867e8943a098b1196ad",
+        "\/BookMirrorInput\/epub-steps\/procedure\/56faa5daa1d00e60e29c19dfe93d4d11e9525d78354c28f488b0fc684837956f",
+        "\/BookMirrorInput\/epub-steps\/procedure\/5bd74489922cbc13654a709415a2fb1586188c9bb6284cacce5927e62462fbef",
+        "\/BookMirrorInput\/epub-steps\/procedure\/751f7d0a023632f74475de9ac40b423c018c4921948c01f6831085964dcd84ef",
+        "\/BookMirrorInput\/epub-steps\/procedure\/7dc6b1505c5f6cd148f5559509fe682be388d1530cb052d343ee732b91ab44ba",
+        "\/BookMirrorInput\/epub-steps\/procedure\/912c0cc750a69d6e2f438ac9cd88819b5fcb1dfd8fa59e17a536cd9a940cf81c",
+        "\/BookMirrorInput\/epub-steps\/procedure\/9ae84d5edc74a2826bdf89685280df7570e071102d1be814b3456bdc70ac0015",
+        "\/BookMirrorInput\/epub-steps\/procedure\/9c3722d97af0ab96a80b233f933acd8594d6fa010837898fa0e1c2d20781e2d7",
+        "\/BookMirrorInput\/epub-steps\/procedure\/a9c0253c3b72d08fda5134036ad540f9e430be9e78727e9bc0ad09bfa5aa4b75",
+        "\/BookMirrorInput\/epub-steps\/procedure\/a9d2659241e945c7805781bef8db3118800d3eab9ca57d15f9b885a265abb89a",
+        "\/BookMirrorInput\/epub-steps\/procedure\/be706fd8b7c5c56abe3160f8331637229271238e0c7f76daf987cdf255cc8c7f",
+        "\/BookMirrorInput\/epub-steps\/procedure\/c37ffc0ca02453b5ebc28e0809da72a1cb0affbc5093c01a27828aa4b0650a60",
+        "\/BookMirrorInput\/epub-steps\/procedure\/d604204e4ef79efb9ffaee7499660d044e46de11a61b317fa8db3c853fa0e001",
+        "\/BookMirrorInput\/epub-steps\/procedure\/dca6572d30107e417bfd9d55fbf764637fba6280b7d75fdedba71cf84209dc53",
+        "\/BookMirrorInput\/epub-steps\/procedure\/fd7fb1797fd9452792c301eacc5fb4f80b33bfd5d7aa5a597786fa5ceee36ab3",
+        "\/BookMirrorInput\/model-opus-by-default-steps\/procedure\/0d9b49bfa5c1e9a1fc80117e24a9d8145dc2bc67553fc7d545260922f3e83593",
+        "\/BookMirrorInput\/pdf-steps\/procedure\/12234325865414c311ac785f6ae90d8c204b660cb64f80e11176479ef110c694"
+      ],
       "swift_struct" : "BookMirrorInput"
     },
     {
@@ -1135,7 +1241,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "book-mirror",
+      "skill_version_hash" : "b0b60c6307c122bc6f18cde5eddd74120b7078cb2db962ee4f347d1c65b9c781",
       "source_name" : "when personalizedVersionThisBook fires",
+      "step_paths" : [
+        "\/WhenPersonalizedversionthisbookFires\/root\/procedure\/0423cbf2424f49184ddf1bf9d4427da23ed7fe173275f29bcaa3ba60e5c37cbf",
+        "\/WhenPersonalizedversionthisbookFires\/root\/procedure\/bd66ee5a73f96c8283fc37ac742de0087afe4c1b1c0286c9aded4ee88679c06f"
+      ],
       "swift_struct" : "WhenPersonalizedversionthisbookFires"
     },
     {
@@ -1143,7 +1255,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "book-mirror",
+      "skill_version_hash" : "b0b60c6307c122bc6f18cde5eddd74120b7078cb2db962ee4f347d1c65b9c781",
       "source_name" : "when mirrorThisBook fires",
+      "step_paths" : [
+        "\/WhenMirrorthisbookFires\/root\/procedure\/c4c824113d3cbeba77421598a4a06aa93327d2fa7a74f33164656a1af68c4f31",
+        "\/WhenMirrorthisbookFires\/root\/procedure\/f2810d9604f5d610bb42444fb535fec6324b332c38480e9bedcdcaacee1f6c1e"
+      ],
       "swift_struct" : "WhenMirrorthisbookFires"
     },
     {
@@ -1151,7 +1269,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "book-mirror",
+      "skill_version_hash" : "b0b60c6307c122bc6f18cde5eddd74120b7078cb2db962ee4f347d1c65b9c781",
       "source_name" : "when twoColumnBookAnalysis fires",
+      "step_paths" : [
+        "\/WhenTwocolumnbookanalysisFires\/root\/procedure\/64f5e28ddf3aaef85cc3834109ea787026168bed44c9cd4a09ec3d82f7e6ddcc",
+        "\/WhenTwocolumnbookanalysisFires\/root\/procedure\/f715d83b423feb1ede8d3c68af22f0c08d6a804e53c4d4d42c168492efba496a"
+      ],
       "swift_struct" : "WhenTwocolumnbookanalysisFires"
     },
     {
@@ -1159,7 +1283,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "book-mirror",
+      "skill_version_hash" : "b0b60c6307c122bc6f18cde5eddd74120b7078cb2db962ee4f347d1c65b9c781",
       "source_name" : "when applyThisBookMyLife fires",
+      "step_paths" : [
+        "\/WhenApplythisbookmylifeFires\/root\/procedure\/1ef457558c489bfc3cf13b333f16c6ea1f4f52df9b028c26446000c5dc3e5e70",
+        "\/WhenApplythisbookmylifeFires\/root\/procedure\/28130284de8fd2a716105361351024d06c0122a1a247c1b58a4270c4347adbf5"
+      ],
       "swift_struct" : "WhenApplythisbookmylifeFires"
     },
     {
@@ -1167,7 +1297,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "book-mirror",
+      "skill_version_hash" : "b0b60c6307c122bc6f18cde5eddd74120b7078cb2db962ee4f347d1c65b9c781",
       "source_name" : "when howDoesThisBookApply fires",
+      "step_paths" : [
+        "\/WhenHowdoesthisbookapplyFires\/root\/procedure\/3df757dea7f3abfdef2871b51926e6c1ad46d951a4ca5b317eb756e44a007b31",
+        "\/WhenHowdoesthisbookapplyFires\/root\/procedure\/b50bc53ad88d35b00098affc3b94a11a5b68d02b7b5ab406ca3ebe093ca61820"
+      ],
       "swift_struct" : "WhenHowdoesthisbookapplyFires"
     }
   ]

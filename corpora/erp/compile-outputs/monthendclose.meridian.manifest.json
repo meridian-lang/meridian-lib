@@ -25,76 +25,76 @@
       "adjective" : "in good standing",
       "function" : "meridianDef_Customer_inGoodStanding",
       "kind" : "customer",
-      "line" : 46
+      "line" : 49
     },
     {
       "adjective" : "overdue",
       "function" : "meridianDef_Invoice_overdue",
       "kind" : "invoice",
-      "line" : 42
+      "line" : 45
     },
     {
       "adjective" : "severely overdue",
       "function" : "meridianDef_Invoice_severelyOverdue",
       "kind" : "invoice",
-      "line" : 47
+      "line" : 50
     },
     {
       "adjective" : "unpaid",
       "function" : "meridianDef_Invoice_unpaid",
       "kind" : "invoice",
-      "line" : 41
+      "line" : 44
     },
     {
       "adjective" : "blocked",
       "function" : "meridianDef_Order_blocked",
       "kind" : "order",
-      "line" : 38
+      "line" : 41
     },
     {
       "adjective" : "fulfilled",
       "function" : "meridianDef_Order_fulfilled",
       "kind" : "order",
-      "line" : 39
+      "line" : 42
     },
     {
       "adjective" : "high value",
       "function" : "meridianDef_Order_highValue",
       "kind" : "order",
-      "line" : 45
+      "line" : 48
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Order_open",
       "kind" : "order",
-      "line" : 37
+      "line" : 40
     },
     {
       "adjective" : "released",
       "function" : "meridianDef_Order_released",
       "kind" : "order",
-      "line" : 40
+      "line" : 43
     },
     {
       "adjective" : "short",
       "function" : "meridianDef_Product_short",
       "kind" : "product",
-      "line" : 43
+      "line" : 46
     },
     {
       "adjective" : "pending",
       "function" : "meridianDef_PurchaseOrder_pending",
       "kind" : "purchase order",
-      "line" : 44
+      "line" : 47
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 53,
+      "line" : 56,
       "name" : "collection",
       "right_cardinality" : "one",
       "right_kind" : "a payment",
@@ -104,7 +104,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 57,
+      "line" : 60,
       "name" : "escalation",
       "right_cardinality" : "one",
       "right_kind" : "a dunning notice",
@@ -114,7 +114,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 49,
+      "line" : 52,
       "name" : "fulfillment",
       "right_cardinality" : "one",
       "right_kind" : "a shipment",
@@ -124,7 +124,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 51,
+      "line" : 54,
       "name" : "invoicing",
       "right_cardinality" : "one",
       "right_kind" : "an invoice",
@@ -134,7 +134,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a product",
-      "line" : 55,
+      "line" : 58,
       "name" : "replenishment",
       "right_cardinality" : "one",
       "right_kind" : "a purchase order",
@@ -223,35 +223,35 @@
   "meridian_verbs" : [
     {
       "base" : "collect",
-      "line" : 62,
+      "line" : 65,
       "past_participle" : "collected",
       "relation" : "collection",
       "third_person" : "collects"
     },
     {
       "base" : "escalate",
-      "line" : 64,
+      "line" : 67,
       "past_participle" : "escalated",
       "relation" : "escalation",
       "third_person" : "escalates"
     },
     {
       "base" : "fulfill",
-      "line" : 60,
+      "line" : 63,
       "past_participle" : "fulfilled",
       "relation" : "fulfillment",
       "third_person" : "fulfills"
     },
     {
       "base" : "invoice",
-      "line" : 61,
+      "line" : 64,
       "past_participle" : "invoiced",
       "relation" : "invoicing",
       "third_person" : "invoices"
     },
     {
       "base" : "replenish",
-      "line" : 63,
+      "line" : 66,
       "past_participle" : "replenished",
       "relation" : "replenishment",
       "third_person" : "replenishes"
@@ -263,44 +263,44 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 70,
-      "swift_line" : 555
+      "meridian_line" : 16,
+      "swift_line" : 578
     },
     {
       "meridian_line" : 17,
-      "swift_line" : 567
+      "swift_line" : 592
     },
     {
-      "meridian_line" : 67,
-      "swift_line" : 572
+      "meridian_line" : 18,
+      "swift_line" : 597
     },
     {
       "meridian_line" : 19,
-      "swift_line" : 584
+      "swift_line" : 611
     },
     {
-      "meridian_line" : 94,
-      "swift_line" : 589
+      "meridian_line" : 20,
+      "swift_line" : 616
     },
     {
       "meridian_line" : 21,
-      "swift_line" : 596
+      "swift_line" : 623
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 635
+      "swift_line" : 691
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 640
+      "swift_line" : 696
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 765
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 685
+      "swift_line" : 770
     }
   ],
   "tools_used" : [
@@ -312,7 +312,17 @@
       "parameters" : [
 
       ],
+      "skill_name" : "month end close",
+      "skill_version_hash" : "eff6237ed1641ed77719e3eb1dbbfe749e7be22508037f0d82baaa7020876aec",
       "source_name" : "month end close",
+      "step_paths" : [
+        "\/MonthEndClose\/close-sequence\/procedure\/0ae359e86883905f0947f38251ae5c2f10c9eb702568153975b9420cc874104e",
+        "\/MonthEndClose\/close-sequence\/procedure\/1c5d5bc825d7ebf3c6f0b9d4629c5f4f3f0c2d4b88379885b31b68845a284d4a",
+        "\/MonthEndClose\/close-sequence\/procedure\/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
+        "\/MonthEndClose\/close-sequence\/procedure\/c6bd182d5fe75d3fa72023223bd4d5bb6b133e477f2f5dfc8766994aa453cd9a",
+        "\/MonthEndClose\/close-sequence\/procedure\/dd211369bd76fa9ea53272eda7c78c31499cc78a52ad9c2f2ef7f7332410af7b",
+        "\/MonthEndClose\/close-sequence\/procedure\/fcf060af720d98266a2900779404a0f843459d2aacdf4d9ade160e4d78afd0f5"
+      ],
       "swift_struct" : "MonthEndClose"
     },
     {
@@ -320,7 +330,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "month end close",
+      "skill_version_hash" : "eff6237ed1641ed77719e3eb1dbbfe749e7be22508037f0d82baaa7020876aec",
       "source_name" : "when monthEndClose fires",
+      "step_paths" : [
+        "\/WhenMonthendcloseFires\/root\/procedure\/14dffd3a16266a22025f8bf832265ed56b03b6ce20f130568afad360cecaea96",
+        "\/WhenMonthendcloseFires\/root\/procedure\/cb56831ec37992582c074db4c5cda34c8d31ec5aadd6edf03f0cea9078709ec9"
+      ],
       "swift_struct" : "WhenMonthendcloseFires"
     },
     {
@@ -328,7 +344,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "month end close",
+      "skill_version_hash" : "eff6237ed1641ed77719e3eb1dbbfe749e7be22508037f0d82baaa7020876aec",
       "source_name" : "when closeAccountingPeriod fires",
+      "step_paths" : [
+        "\/WhenCloseaccountingperiodFires\/root\/procedure\/744f483020ebe9e43a69e5f2d26f7dd899acd9ff51f0cc345e9ae7468ed6b2b4",
+        "\/WhenCloseaccountingperiodFires\/root\/procedure\/d3f6a760e9b7579b2728fe827ffa2c4f23513cf5e7aa33ca1ff5abb5da544a82"
+      ],
       "swift_struct" : "WhenCloseaccountingperiodFires"
     }
   ]

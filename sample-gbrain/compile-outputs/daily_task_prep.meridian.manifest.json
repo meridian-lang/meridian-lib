@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -216,35 +216,35 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 631
+      "swift_line" : 682
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 687
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 755
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 760
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 828
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 833
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 901
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 906
     }
   ],
   "tools_used" : [
@@ -259,6 +259,8 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "daily-task-prep",
+      "skill_version_hash" : "88a5e83f1de8773856981e33dd23d0c1baa958074c51908c372b63e30917e759",
       "source_name" : "daily-task-prep a input",
       "swift_struct" : "DailyTaskPrepInput"
     },
@@ -267,7 +269,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "daily-task-prep",
+      "skill_version_hash" : "88a5e83f1de8773856981e33dd23d0c1baa958074c51908c372b63e30917e759",
       "source_name" : "when morningPrep fires",
+      "step_paths" : [
+        "\/WhenMorningprepFires\/root\/procedure\/904379e3eaeb5f79e70b305be58f5f93650c41d1617710bb8dca5eb932436003",
+        "\/WhenMorningprepFires\/root\/procedure\/96559b0bad72d476618a0a1900b0b4727f29f98a8e2e0e281837f8b927b001cd"
+      ],
       "swift_struct" : "WhenMorningprepFires"
     },
     {
@@ -275,7 +283,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "daily-task-prep",
+      "skill_version_hash" : "88a5e83f1de8773856981e33dd23d0c1baa958074c51908c372b63e30917e759",
       "source_name" : "when prepareToday fires",
+      "step_paths" : [
+        "\/WhenPreparetodayFires\/root\/procedure\/01bcaf23fa9092efc343dce05f39e0631f681cb15f45f37a9cf20cea2fa43c92",
+        "\/WhenPreparetodayFires\/root\/procedure\/c964efb2f32c62fb1bc874a8d4e306963fbffba8378b6ba6952d733de0471bfa"
+      ],
       "swift_struct" : "WhenPreparetodayFires"
     },
     {
@@ -283,7 +297,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "daily-task-prep",
+      "skill_version_hash" : "88a5e83f1de8773856981e33dd23d0c1baa958074c51908c372b63e30917e759",
       "source_name" : "when whatSMyPlate fires",
+      "step_paths" : [
+        "\/WhenWhatsmyplateFires\/root\/procedure\/5babb21adbbfd8a38815ad86d5cca2a93cbcd3d50b442109b30828a9a3f62997",
+        "\/WhenWhatsmyplateFires\/root\/procedure\/82d0d328a9590e7b262f32f99448a322999449f261787da4aad16e87a749b22f"
+      ],
       "swift_struct" : "WhenWhatsmyplateFires"
     },
     {
@@ -291,7 +311,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "daily-task-prep",
+      "skill_version_hash" : "88a5e83f1de8773856981e33dd23d0c1baa958074c51908c372b63e30917e759",
       "source_name" : "when dayPrep fires",
+      "step_paths" : [
+        "\/WhenDayprepFires\/root\/procedure\/430d264deefc6a29af404fbac2f1eee312cd55b28b2654ea9bd63a226c3ca6af",
+        "\/WhenDayprepFires\/root\/procedure\/d083a64679ffc350427fd00a77fb7346f646b2087b6d535585a7bc79b0b1eb8b"
+      ],
       "swift_struct" : "WhenDayprepFires"
     }
   ]

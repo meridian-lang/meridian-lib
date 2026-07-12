@@ -17,6 +17,7 @@
 | audit policy coverage | policyaudit |
 | escalate pending requests | escalatepending |
 | classify resources | classifyresource |
+| check access review freshness | accessreviewfreshness |
 
 ## Workflow (( role: reference ))
 

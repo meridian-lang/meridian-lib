@@ -456,6 +456,23 @@ canonical output for audit reports. Match-branch (`branch on`) lowers through
 `MatchBranchStatementAST` and round-trips via the Verbalizer (`otherwise:` ↔
 `BranchIR.thenBlock`). See [18_VERBALIZER.md](18_VERBALIZER.md).
 
+### Wave 8 trace-expression lowering
+
+Trace-backed conditions are `IRExpression` cases — no new IR primitive:
+
+- `.traceTemporal(TraceTemporalIR)` — `ever`, count-in-window, consecutive
+  streak, `since the last` (resolved `holdsPattern: EventPatternIR` for codegen;
+  pure state-predicate holds → **MER-TMP-019**).
+- `.traceStatistical(TraceStatisticalIR)` — `usually`/`rarely`, percentage
+  bounds, `occurrences`/`runs` denominators.
+- `.eventPattern(EventPatternIR)` — step/event subjects with optional `whose`
+  payload predicates.
+
+`ASTToIR` validates window-vs-retention (**MER-TMP-011**), anchorless
+`since the last` at obligation sites (**MER-STA-001**), and near-miss step/
+field names (**MER-TMP-014**/**MER-TMP-015**). Monitored statistical asserts
+carry `cadence` on `AssertIR`. See [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).
+
 ### `lowerExpr`
 
 Maps `ExpressionAST` to `IRExpression`:
@@ -555,7 +572,6 @@ public func emitManifest(_ input: ManifestEmitter.Input) throws -> String
 
 ```swift
 public enum CompilerError: Error, Sendable {
-    case notImplemented(String)
     case syntaxError(message: String, range: SourceRange)
     case semanticError(message: String, range: SourceRange)
     case codegenError(message: String)

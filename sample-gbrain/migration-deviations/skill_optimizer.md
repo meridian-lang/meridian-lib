@@ -24,13 +24,14 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L188 `Contract`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
+- generated_loc: 161 non-blank ported lines
 - Sections inert total: 7/8 (88% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=6, template=1
 - Judgment: 4 blocks, 5 lines
-- canonical_drift: synonym=0, structure=0, desugar=0, meaning=171
+- canonical_drift: synonym=4, structure=0, desugar=0, meaning=167
 
 ### Inert section details
 - L9 `When to invoke this skill`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.

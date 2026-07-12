@@ -194,6 +194,39 @@ struct CompileCommandTests {
         let fixed = try String(contentsOf: mer, encoding: .utf8)
         #expect(fixed.contains("chargePayment"))
     }
+
+    @Test("swift-format failure is cosmetic and can render json diagnostics")
+    func swiftFormatFailureWarningJSON() async throws {
+        setenv("MERIDIAN_TEST_SWIFT_FORMAT_FAIL", "1", 1)
+        defer { unsetenv("MERIDIAN_TEST_SWIFT_FORMAT_FAIL") }
+
+        let t = TempDir()
+        let cmd = try CompileCommand.parse([
+            ex("examples/order_processing.meridian"),
+            "--merconfig", ex("examples/ecommerce.merconfig"),
+            "--output", t.url.path,
+            "--namespace", "none",
+            "--diagnostics-format", "json",
+        ])
+        try await cmd.run()
+        #expect(FileManager.default.fileExists(atPath: t.path("order_processing.swift")))
+    }
+
+    @Test("swift-format failure renders human diagnostics by default")
+    func swiftFormatFailureWarningHuman() async throws {
+        setenv("MERIDIAN_TEST_SWIFT_FORMAT_FAIL", "1", 1)
+        defer { unsetenv("MERIDIAN_TEST_SWIFT_FORMAT_FAIL") }
+
+        let t = TempDir()
+        let cmd = try CompileCommand.parse([
+            ex("examples/order_processing.meridian"),
+            "--merconfig", ex("examples/ecommerce.merconfig"),
+            "--output", t.url.path,
+            "--namespace", "none",
+        ])
+        try await cmd.run()
+        #expect(FileManager.default.fileExists(atPath: t.path("order_processing.swift")))
+    }
 }
 
 @Suite("CLI command — bench-parse")
@@ -292,9 +325,25 @@ struct LintCommandTests {
         do { try cmd.run() } catch { /* ExitCode.failure when an error-level diag exists */ }
     }
 
+    @Test("lint json format renders diagnostics to stderr")
+    func lintJSONFormat() throws {
+        let t = TempDir()
+        let f = t.write(
+            "bad.meridian",
+            """
+            To run:
+              please complete.
+              invoke it.
+            """
+        )
+        let cmd = try LintCommand.parse(["--format", "json", f.path])
+        #expect(throws: (any Error).self) { try cmd.run() }
+    }
+
     @Test("lint accepts json diagnostics format")
     func lintAcceptsJSONFormat() throws {
-        _ = try LintCommand.parse(["--format", "json", ex("examples/order_processing.meridian")])
+        let cmd = try LintCommand.parse(["--format", "json", ex("examples/order_processing.meridian")])
+        do { try cmd.run() } catch { /* ExitCode.failure when an error-level diag exists */ }
     }
 
     @Test("lint prints hints and exits non-zero on error-level diagnostics")
@@ -655,6 +704,12 @@ private func auditFixture() -> (dir: TempDir, meri: URL, merconfig: URL) {
 
 @Suite("CLI command — preview-skill")
 struct PreviewSkillCommandTests {
+    @Test("missing input throws")
+    func missingInput() throws {
+        let cmd = try PreviewSkillCommand.parse(["/definitely/missing/SKILL.md"])
+        #expect(throws: (any Error).self) { try cmd.run() }
+    }
+
     @Test("previews a SKILL.md")
     func preview() throws {
         let t = TempDir()
@@ -786,6 +841,68 @@ struct TraceRenderCommandTests {
         var cmd = try TraceRenderCommand.parseAsRoot(["render", "/definitely/missing.jsonl"])
         #expect(throws: (any Error).self) { try cmd.run() }
     }
+
+    @Test("trace drift detects step-path and version-hash differences")
+    func traceDrift() throws {
+        let t = TempDir()
+        let baseline = t.write("baseline.manifest.json", """
+        {"skill_version_hash":"v1","workflows":[{"step_paths":["/A/root/procedure/x"]}]}
+        """)
+        let candidate = t.write("candidate.manifest.json", """
+        {"skill_version_hash":"v2","workflows":[{"step_paths":["/A/root/procedure/y"]}]}
+        """)
+        var cmd = try TraceRenderCommand.parseAsRoot(["drift", baseline.path, candidate.path])
+        #expect(throws: (any Error).self) { try cmd.run() }
+    }
+}
+
+@Suite("CLI command — trace verify")
+struct TraceVerifyCommandTests {
+    @Test("trace verify succeeds on a valid semantic chain")
+    func success() async throws {
+        let fixture = try await makeTraceVerifyFixture()
+        let bin = try locateMeridianBinary()
+        let verify = try runMeridian(bin, ["trace", "verify", fixture.fileURL.path, "--run", fixture.runID])
+        #expect(verify.exitCode == 0, Comment(rawValue: verify.stderr + verify.stdout))
+        #expect(verify.stdout.contains("Trace verification passed"), Comment(rawValue: verify.stdout))
+        #expect(verify.stdout.contains("chain hashes: ok"), Comment(rawValue: verify.stdout))
+        #expect(verify.stdout.contains("content: ok"), Comment(rawValue: verify.stdout))
+    }
+
+    @Test("trace-verify reports tampering and exits non-zero")
+    func tamperFailure() async throws {
+        let fixture = try await makeTraceVerifyFixture()
+        try tamperTraceRecordHash(in: fixture.fileURL, targetLine: 2)
+
+        let bin = try locateMeridianBinary()
+        let verify = try runMeridian(bin, ["trace-verify", fixture.fileURL.path, "--run", fixture.runID])
+        #expect(verify.exitCode == 1, Comment(rawValue: verify.stderr + verify.stdout))
+        #expect(verify.stdout.contains("Trace verification failed"), Comment(rawValue: verify.stdout))
+        #expect(verify.stdout.contains("line_checksum_mismatch") || verify.stdout.contains("record_hash_mismatch"),
+                Comment(rawValue: verify.stdout))
+    }
+
+    @Test("trace verify --json emits the stable schema fields")
+    func jsonSchema() async throws {
+        let fixture = try await makeTraceVerifyFixture()
+        let bin = try locateMeridianBinary()
+        let verify = try runMeridian(bin, ["trace", "verify", fixture.fileURL.path, "--run", fixture.runID, "--json"])
+        #expect(verify.exitCode == 0, Comment(rawValue: verify.stderr + verify.stdout))
+
+        let report = try decodeTraceVerifyJSON(verify.stdout)
+        #expect(report.file.hasSuffix("events.jsonl"))
+        #expect(report.runID == fixture.runID)
+        #expect(report.ok)
+        #expect(report.lineCount >= 3)
+        #expect(report.matchedRunRecords == 3)
+        #expect(report.schemaVersions.contains(TraceRecord.currentSchemaVersion))
+        #expect(report.checks.schema)
+        #expect(report.checks.checksums)
+        #expect(report.checks.order)
+        #expect(report.checks.content)
+        #expect(report.checks.chainHashes)
+        #expect(!report.quarantine.present)
+    }
 }
 
 // MARK: - skill-deviation
@@ -827,6 +944,7 @@ struct SkillDeviationCommandTests {
         #expect(readme.contains("Inert deviations:"), Comment(rawValue: readme))
         #expect(readme.contains("Operational inert:"), Comment(rawValue: readme))
         #expect(readme.contains("canonical_drift:"), Comment(rawValue: readme))
+        #expect(readme.contains("generated_loc"), Comment(rawValue: readme))
         #expect(readme.contains("doc-section-marked"), Comment(rawValue: readme))
         #expect(readme.contains("operational inert"), Comment(rawValue: readme))
     }
@@ -1217,6 +1335,66 @@ struct MigrateSkillCommandTests {
             #expect(text.contains("section \"How to use\""))
         }
     }
+
+    @Test("explicit missing --vocab and --rulebook throw coded input errors")
+    func explicitMissingDependencies() async throws {
+        let t = TempDir()
+        t.write("v.merconfig", Self.orderVocab)
+        let md = t.write("SKILL.md", Self.shellSkillMarkdown)
+        let missingVocab = try MigrateSkillCommand.parse([
+            md.path, "--vocab", "/definitely/missing.merconfig", "--out", t.path("demo.meri"), "--force"
+        ])
+        await #expect(throws: (any Error).self) { try await missingVocab.run() }
+
+        let missingRules = try MigrateSkillCommand.parse([
+            md.path, "--rulebook", "/definitely/missing.merrules", "--out", t.path("demo.meri"), "--force"
+        ])
+        await #expect(throws: (any Error).self) { try await missingRules.run() }
+    }
+
+    @Test("primary rulebook target rejects a missing explicit --rulebook path")
+    func missingPrimaryRulebookTarget() async throws {
+        let t = TempDir()
+        t.write("v.merconfig", Self.orderVocab)
+        let md = t.write("SKILL.md", Self.shellSkillMarkdown)
+        let cmd = try MigrateSkillCommand.parse([
+            md.path, "--rulebook", "/definitely/missing.merrules",
+            "--out", t.path("demo.meri"), "--force"
+        ])
+        await #expect(throws: (any Error).self) { try await cmd.run() }
+    }
+
+    @Test("batch directory enumeration failure surfaces a coded exit")
+    func batchDirectoryEnumerationFailure() async throws {
+        let t = TempDir()
+        let locked = t.url.appendingPathComponent("locked")
+        try FileManager.default.createDirectory(at: locked, withIntermediateDirectories: true)
+        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: locked.path)
+        defer { try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: locked.path) }
+        let cfg = t.write("v.merconfig", Self.orderVocab)
+        let rules = t.write("rules.merrules", "=== sections ===\n")
+
+        let cmd = try MigrateSkillCommand.parse([
+            locked.path, "--batch", "--out", t.path("out"), "--force",
+            "--vocab", cfg.path, "--rulebook", rules.path
+        ])
+        await #expect(throws: (any Error).self) { try await cmd.run() }
+    }
+
+    @Test("batch on a file throws before dependency loading")
+    func batchRequiresDirectoryBeforeDeps() async throws {
+        let t = TempDir()
+        let md = t.write("SKILL.md", Self.shellSkillMarkdown)
+        let cmd = try MigrateSkillCommand.parse([md.path, "--batch"])
+        do {
+            try await cmd.run()
+            Issue.record("expected ValidationError")
+        } catch let error as ValidationError {
+            #expect(String(describing: error).contains("--batch requires a directory"))
+        } catch {
+            Issue.record("unexpected error: \(error)")
+        }
+    }
 }
 
 // MARK: - resume
@@ -1257,3 +1435,238 @@ struct ResumeCommandTests {
 // Tests/MeridianSlowIntegrationTests/CLIRunAndTestCommandSlowTests.swift — it
 // compiles then spawns a real `swift build`/`swift run` through a temporary
 // SwiftPM package. See the target comment in Package.swift.
+
+private struct ProcessResult {
+    var exitCode: Int32
+    var stdout: String
+    var stderr: String
+}
+
+private struct TraceVerifyJSONChecks: Decodable {
+    var schema: Bool
+    var checksums: Bool
+    var order: Bool
+    var content: Bool
+    var chainHashes: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case schema
+        case checksums
+        case order
+        case content
+        case chainHashes = "chain_hashes"
+    }
+}
+
+private struct TraceVerifyJSONQuarantine: Decodable {
+    var present: Bool
+    var files: [String]
+}
+
+private struct TraceVerifyJSONReport: Decodable {
+    var file: String
+    var runID: String
+    var ok: Bool
+    var lineCount: Int
+    var matchedRunRecords: Int
+    var schemaVersions: [Int]
+    var checks: TraceVerifyJSONChecks
+    var quarantine: TraceVerifyJSONQuarantine
+    var issues: [TraceVerifyJSONIssue]
+
+    enum CodingKeys: String, CodingKey {
+        case file
+        case runID = "run_id"
+        case ok
+        case lineCount = "line_count"
+        case matchedRunRecords = "matched_run_records"
+        case schemaVersions = "schema_versions"
+        case checks
+        case quarantine
+        case issues
+    }
+}
+
+private struct TraceVerifyJSONIssue: Decodable {
+    var kind: String
+    var message: String
+    var line: Int?
+    var recordID: String?
+
+    enum CodingKeys: String, CodingKey {
+        case kind
+        case message
+        case line
+        case recordID = "record_id"
+    }
+}
+
+private struct TraceVerifyFixture {
+    var dir: TempDir
+    var fileURL: URL
+    var runID: String
+}
+
+private struct TestTraceLineEnvelope: Codable {
+    var record: TraceRecord
+    var checksum: String
+}
+
+private func locateMeridianBinary() throws -> URL {
+    let proc = Process()
+    proc.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+    proc.arguments = ["swift", "build", "--product", "meridian", "--show-bin-path"]
+    proc.currentDirectoryURL = URL(fileURLWithPath: repoRoot)
+    let pipe = Pipe()
+    proc.standardOutput = pipe
+    proc.standardError = pipe
+    try proc.run()
+    proc.waitUntilExit()
+    let data = pipe.fileHandleForReading.readDataToEndOfFile()
+    let binPath = String(data: data, encoding: .utf8)?
+        .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    #expect(proc.terminationStatus == 0, Comment(rawValue: "swift build --show-bin-path failed: \(binPath)"))
+    let url = URL(fileURLWithPath: binPath).appendingPathComponent("meridian")
+    #expect(FileManager.default.isExecutableFile(atPath: url.path),
+            Comment(rawValue: "missing meridian binary at \(url.path)"))
+    return url
+}
+
+private func runMeridian(_ bin: URL, _ args: [String]) throws -> ProcessResult {
+    let proc = Process()
+    proc.executableURL = bin
+    proc.arguments = args
+    proc.currentDirectoryURL = URL(fileURLWithPath: repoRoot)
+    let out = Pipe()
+    let err = Pipe()
+    proc.standardOutput = out
+    proc.standardError = err
+    try proc.run()
+    proc.waitUntilExit()
+    let stdout = String(data: out.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+    let stderr = String(data: err.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+    return ProcessResult(exitCode: proc.terminationStatus, stdout: stdout, stderr: stderr)
+}
+
+private func decodeTraceVerifyJSON(_ text: String) throws -> TraceVerifyJSONReport {
+    try JSONDecoder().decode(TraceVerifyJSONReport.self, from: Data(text.utf8))
+}
+
+private func makeTraceVerifyFixture() async throws -> TraceVerifyFixture {
+    let t = TempDir()
+    let fileURL = t.url.appendingPathComponent("events.jsonl")
+    let store = try JSONLTraceStore(fileURL: fileURL)
+    let runID = "trace-verify-run"
+    let base = Date(timeIntervalSince1970: 1_720_656_000)
+
+    let validatePayload: [String: Value] = [
+        "tool": .string("validateOrder")
+    ]
+    try await store.append(TraceRecord(
+        id: "rec-1",
+        at: base,
+        ingestOrder: 0,
+        run: runID,
+        step: "root/validate",
+        skillName: "TraceVerifyFlow",
+        skillVersionHash: "v1",
+        tag: .invoked,
+        subject: "validateOrder",
+        payload: validatePayload,
+        payloadHash: try CanonicalJSON.sha256Hex(for: validatePayload),
+        outcome: .success,
+        witness: nil,
+        previousHash: nil,
+        recordHash: nil,
+        operationalDetail: nil,
+        legacyKind: "invoke.start"
+    ))
+
+    let riskPayload: [String: Value] = [
+        "decision": .string("approve"),
+        "score": .number(Decimal(string: "0.9")!)
+    ]
+    try await store.append(TraceRecord(
+        id: "rec-2",
+        at: base.addingTimeInterval(1),
+        ingestOrder: 0,
+        run: runID,
+        step: "root/risk",
+        skillName: "TraceVerifyFlow",
+        skillVersionHash: "v1",
+        tag: .judged,
+        subject: "risk-check",
+        payload: riskPayload,
+        payloadHash: try CanonicalJSON.sha256Hex(for: riskPayload),
+        outcome: .success,
+        witness: "approve",
+        previousHash: nil,
+        recordHash: nil,
+        operationalDetail: nil,
+        legacyKind: "plan.end"
+    ))
+
+    let completePayload: [String: Value] = [
+        "duration_ms": .number(Decimal(12))
+    ]
+    try await store.append(TraceRecord(
+        id: "rec-3",
+        at: base.addingTimeInterval(2),
+        ingestOrder: 0,
+        run: runID,
+        step: "root",
+        skillName: "TraceVerifyFlow",
+        skillVersionHash: "v1",
+        tag: .completed,
+        subject: "workflow",
+        payload: completePayload,
+        payloadHash: try CanonicalJSON.sha256Hex(for: completePayload),
+        outcome: .success,
+        witness: nil,
+        previousHash: nil,
+        recordHash: nil,
+        operationalDetail: nil,
+        legacyKind: "workflow.completed"
+    ))
+
+    return TraceVerifyFixture(dir: t, fileURL: fileURL, runID: runID)
+}
+
+private func tamperTraceRecordHash(in fileURL: URL, targetLine: Int) throws {
+    var lines = try String(contentsOf: fileURL, encoding: .utf8)
+        .split(separator: "\n", omittingEmptySubsequences: false)
+        .map(String.init)
+    guard targetLine >= 1, targetLine <= lines.count else { return }
+
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
+    encoder.outputFormatting = [.sortedKeys]
+
+    var envelope = try decoder.decode(TestTraceLineEnvelope.self, from: Data(lines[targetLine - 1].utf8))
+    envelope.record = TraceRecord(
+        schemaVersion: envelope.record.schemaVersion,
+        id: envelope.record.id,
+        at: envelope.record.at,
+        ingestOrder: envelope.record.ingestOrder,
+        run: envelope.record.run,
+        step: envelope.record.step,
+        skillName: envelope.record.skillName,
+        skillVersionHash: envelope.record.skillVersionHash,
+        tag: envelope.record.tag,
+        subject: envelope.record.subject,
+        subjectKey: envelope.record.subjectKey,
+        payload: envelope.record.payload,
+        payloadHash: envelope.record.payloadHash,
+        outcome: envelope.record.outcome,
+        witness: envelope.record.witness,
+        previousHash: envelope.record.previousHash,
+        recordHash: String(repeating: "f", count: 64),
+        operationalDetail: envelope.record.operationalDetail,
+        legacyKind: envelope.record.legacyKind
+    )
+    let tampered = try encoder.encode(envelope)
+    lines[targetLine - 1] = String(decoding: tampered, as: UTF8.self)
+    try (lines.joined(separator: "\n") + "\n").write(to: fileURL, atomically: true, encoding: .utf8)
+}

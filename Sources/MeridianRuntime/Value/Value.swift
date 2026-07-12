@@ -64,16 +64,54 @@ extension Value {
     /// which read element properties without a surrounding `State`. `"a.b.c"`
     /// walks nested `.record` values; an empty path returns `self`. Returns
     /// `nil` when any segment is missing or a non-record is traversed into.
+    ///
+    /// A domain-typed value bound via `State.bind<T: Encodable>` (a workflow
+    /// parameter, or any other Codable-boxed struct) reaches this as
+    /// `.opaque`, not `.record` — e.g. `Definition:`/quantifier-filter bodies
+    /// rendered in *element context* (`emitElementOperand`) call `.member(...)`
+    /// directly on the subject/loop-variable value rather than going through
+    /// `State.get`'s dotted-path lookup (which already round-trips `.opaque`
+    /// via `traverse`). Without this case, `its <property>` on a typed
+    /// parameter silently resolved to `nil` for every property — a checkable
+    /// adjective on a workflow parameter (as opposed to a JSON-decoded tool
+    /// result element) always evaluated false. Mirrors `State`'s own
+    /// Codable-round-trip traversal so both paths agree.
     public func member(_ path: String) -> Value? {
         let segments = path.split(separator: ".").map(String.init)
         var current: Value = self
         for segment in segments {
-            guard case .record(let fields) = current, let next = fields[segment] else {
+            switch current {
+            case .record(let fields):
+                guard let next = fields[segment] else { return nil }
+                current = next
+            case .opaque(let box):
+                guard let fields = Value.decodeOpaqueRecord(box), let next = fields[segment] else {
+                    return nil
+                }
+                current = next
+            default:
                 return nil
             }
-            current = next
         }
         return current
+    }
+
+    /// Codable round-trip an `.opaque` box's wrapped value into a
+    /// `[String: Value]` record, mirroring `State`'s private `encodeOpaque`/
+    /// `traverse`. Returns `nil` when the box wasn't constructed with a
+    /// captured `Encodable` conformance (`AnyHashableSendable.init<T: Hashable
+    /// & Sendable>`, no encoder), or the round-trip otherwise fails.
+    private static func decodeOpaqueRecord(_ box: AnyHashableSendable) -> [String: Value]? {
+        struct Probe: Encodable {
+            let box: AnyHashableSendable
+            func encode(to encoder: Encoder) throws {
+                _ = try box.encodeIfEncodable(to: encoder)
+            }
+        }
+        guard let encoded = try? JSONEncoder().encode(Probe(box: box)),
+              let dict = try? JSONDecoder().decode([String: AnyCodable].self, from: encoded)
+        else { return nil }
+        return dict.mapValues(\.value)
     }
 }
 

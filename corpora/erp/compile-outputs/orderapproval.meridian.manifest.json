@@ -25,76 +25,76 @@
       "adjective" : "in good standing",
       "function" : "meridianDef_Customer_inGoodStanding",
       "kind" : "customer",
-      "line" : 46
+      "line" : 49
     },
     {
       "adjective" : "overdue",
       "function" : "meridianDef_Invoice_overdue",
       "kind" : "invoice",
-      "line" : 42
+      "line" : 45
     },
     {
       "adjective" : "severely overdue",
       "function" : "meridianDef_Invoice_severelyOverdue",
       "kind" : "invoice",
-      "line" : 47
+      "line" : 50
     },
     {
       "adjective" : "unpaid",
       "function" : "meridianDef_Invoice_unpaid",
       "kind" : "invoice",
-      "line" : 41
+      "line" : 44
     },
     {
       "adjective" : "blocked",
       "function" : "meridianDef_Order_blocked",
       "kind" : "order",
-      "line" : 38
+      "line" : 41
     },
     {
       "adjective" : "fulfilled",
       "function" : "meridianDef_Order_fulfilled",
       "kind" : "order",
-      "line" : 39
+      "line" : 42
     },
     {
       "adjective" : "high value",
       "function" : "meridianDef_Order_highValue",
       "kind" : "order",
-      "line" : 45
+      "line" : 48
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Order_open",
       "kind" : "order",
-      "line" : 37
+      "line" : 40
     },
     {
       "adjective" : "released",
       "function" : "meridianDef_Order_released",
       "kind" : "order",
-      "line" : 40
+      "line" : 43
     },
     {
       "adjective" : "short",
       "function" : "meridianDef_Product_short",
       "kind" : "product",
-      "line" : 43
+      "line" : 46
     },
     {
       "adjective" : "pending",
       "function" : "meridianDef_PurchaseOrder_pending",
       "kind" : "purchase order",
-      "line" : 44
+      "line" : 47
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 53,
+      "line" : 56,
       "name" : "collection",
       "right_cardinality" : "one",
       "right_kind" : "a payment",
@@ -104,7 +104,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 57,
+      "line" : 60,
       "name" : "escalation",
       "right_cardinality" : "one",
       "right_kind" : "a dunning notice",
@@ -114,7 +114,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 49,
+      "line" : 52,
       "name" : "fulfillment",
       "right_cardinality" : "one",
       "right_kind" : "a shipment",
@@ -124,7 +124,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 51,
+      "line" : 54,
       "name" : "invoicing",
       "right_cardinality" : "one",
       "right_kind" : "an invoice",
@@ -134,7 +134,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a product",
-      "line" : 55,
+      "line" : 58,
       "name" : "replenishment",
       "right_cardinality" : "one",
       "right_kind" : "a purchase order",
@@ -235,35 +235,35 @@
   "meridian_verbs" : [
     {
       "base" : "collect",
-      "line" : 62,
+      "line" : 65,
       "past_participle" : "collected",
       "relation" : "collection",
       "third_person" : "collects"
     },
     {
       "base" : "escalate",
-      "line" : 64,
+      "line" : 67,
       "past_participle" : "escalated",
       "relation" : "escalation",
       "third_person" : "escalates"
     },
     {
       "base" : "fulfill",
-      "line" : 60,
+      "line" : 63,
       "past_participle" : "fulfilled",
       "relation" : "fulfillment",
       "third_person" : "fulfills"
     },
     {
       "base" : "invoice",
-      "line" : 61,
+      "line" : 64,
       "past_participle" : "invoiced",
       "relation" : "invoicing",
       "third_person" : "invoices"
     },
     {
       "base" : "replenish",
-      "line" : 63,
+      "line" : 66,
       "past_participle" : "replenished",
       "relation" : "replenishment",
       "third_person" : "replenishes"
@@ -275,56 +275,56 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 67,
-      "swift_line" : 555
-    },
-    {
-      "meridian_line" : 20,
-      "swift_line" : 566
-    },
-    {
-      "meridian_line" : 21,
-      "swift_line" : 573
-    },
-    {
-      "meridian_line" : 22,
+      "meridian_line" : 19,
       "swift_line" : 578
     },
     {
+      "meridian_line" : 20,
+      "swift_line" : 591
+    },
+    {
+      "meridian_line" : 21,
+      "swift_line" : 600
+    },
+    {
       "meridian_line" : 22,
-      "swift_line" : 589
+      "swift_line" : 605
+    },
+    {
+      "meridian_line" : 22,
+      "swift_line" : 617
     },
     {
       "meridian_line" : 23,
-      "swift_line" : 594
+      "swift_line" : 622
     },
     {
-      "meridian_line" : 85,
-      "swift_line" : 597
-    },
-    {
-      "meridian_line" : 26,
-      "swift_line" : 610
-    },
-    {
-      "meridian_line" : 27,
+      "meridian_line" : 24,
       "swift_line" : 626
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 665
+      "meridian_line" : 26,
+      "swift_line" : 642
+    },
+    {
+      "meridian_line" : 27,
+      "swift_line" : 660
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 670
+      "swift_line" : 728
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 710
+      "swift_line" : 733
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 715
+      "swift_line" : 802
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 807
     }
   ],
   "tools_used" : [
@@ -336,7 +336,20 @@
       "parameters" : [
 
       ],
+      "skill_name" : "order approval",
+      "skill_version_hash" : "551c031d71eefea61a18ffecdd25e0585e1995eeddc0b828cab50c1df21a61fe",
       "source_name" : "order approval",
+      "step_paths" : [
+        "\/OrderApproval\/workflow-steps\/procedure\/046e6eb88bffc6850393b1986e510b09ebfeb93fa4dc4196bde68c9884e6dcc9",
+        "\/OrderApproval\/workflow-steps\/procedure\/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
+        "\/OrderApproval\/workflow-steps\/procedure\/b11300be7ab0bdf302422de349648df57ddbc39e11aa4fafba0d3415ded0e74b",
+        "\/OrderApproval\/workflow-steps\/procedure\/branch.else\/17a5d7fb4f04455aa17af8e1c8c9a7c3c04a81890279a1ce101f0d1f0305a642",
+        "\/OrderApproval\/workflow-steps\/procedure\/branch.then\/f5fd9e6e25a83f24a88de2b7985087cfdec2c937b9813fb6af8dfc6f608d2ba1",
+        "\/OrderApproval\/workflow-steps\/procedure\/iterate.body\/3ca13de3a6b0257f1e26f050c347cc214f13f434d94e455ab1857c54f9972ba7",
+        "\/OrderApproval\/workflow-steps\/procedure\/iterate.body\/79ec3ea0526d1de4b3f3bd1c60b2a4c231bfab6542afdee27ed477079342b18a",
+        "\/OrderApproval\/workflow-steps\/procedure\/iterate.body\/87456516db8fd3d7789700b88ffb6f5f15c9ff945b64a482c642bf2682c7c780",
+        "\/OrderApproval\/workflow-steps\/procedure\/iterate.body\/d8a4a4f7452981460b0771c4f60ae04169a91fa6a6b33df612ec5514b69aaddd"
+      ],
       "swift_struct" : "OrderApproval"
     },
     {
@@ -344,7 +357,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "order approval",
+      "skill_version_hash" : "551c031d71eefea61a18ffecdd25e0585e1995eeddc0b828cab50c1df21a61fe",
       "source_name" : "when approveHighValueOrders fires",
+      "step_paths" : [
+        "\/WhenApprovehighvalueordersFires\/root\/procedure\/c328c142b18cd8ae0ae0cac3e8d6a7f41b6d68e1274996d64debabd32f78b182",
+        "\/WhenApprovehighvalueordersFires\/root\/procedure\/cd260f83ef63cd414d7feab7dfefc4183f116b95aaa60445f3682702e8e32f1a"
+      ],
       "swift_struct" : "WhenApprovehighvalueordersFires"
     },
     {
@@ -352,7 +371,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "order approval",
+      "skill_version_hash" : "551c031d71eefea61a18ffecdd25e0585e1995eeddc0b828cab50c1df21a61fe",
       "source_name" : "when routeOrdersApproval fires",
+      "step_paths" : [
+        "\/WhenRouteordersapprovalFires\/root\/procedure\/7f2c0d0354a0f08f20e838020eaf7a6faea7c5b77bc2a6b8c2192f1b986a6b88",
+        "\/WhenRouteordersapprovalFires\/root\/procedure\/82338257584e1c6d7a1e45272f46e3220d8544f392d6609f4805c6c8e38e0475"
+      ],
       "swift_struct" : "WhenRouteordersapprovalFires"
     }
   ]

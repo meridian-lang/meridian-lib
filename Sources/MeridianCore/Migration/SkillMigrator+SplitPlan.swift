@@ -97,8 +97,10 @@ extension SkillMigrator {
     ///   operational-error signal, not a free pass to documentation.
     func splitPlanApplyingThreshold(_ body: ArraySlice<String>, knowledge: Compiler.KnowledgeContext,
                                             roleAlreadyAsserted: Bool = false, checkableOnly: Bool = false,
-                                            ruleAware: Bool = true) -> SplitPlan {
-        var plan = splitPlan(for: body, knowledge: knowledge, checkableOnly: checkableOnly, ruleAware: ruleAware)
+                                            ruleAware: Bool = true,
+                                            referenceHeadingContext: Bool = false) -> SplitPlan {
+        var plan = splitPlan(for: body, knowledge: knowledge, checkableOnly: checkableOnly,
+                             ruleAware: ruleAware, referenceHeadingContext: referenceHeadingContext)
         guard !plan.executableSegments.isEmpty else {
             if roleAlreadyAsserted || !plan.unminedContracts.isEmpty {
                 plan.operationalErrorWorthy = true
@@ -314,8 +316,9 @@ extension SkillMigrator {
     /// executable/AI-inference block) attaches to the run it introduces, per
     /// the deterministic split precedence.
     func splitPlan(for body: ArraySlice<String>, knowledge: Compiler.KnowledgeContext,
-                           checkableOnly: Bool = false, ruleAware: Bool = true) -> SplitPlan {
-        let trial = TrialLowering(knowledge: knowledge)
+                   checkableOnly: Bool = false, ruleAware: Bool = true,
+                   referenceHeadingContext: Bool = false) -> SplitPlan {
+        let trial = TrialLowering(knowledge: knowledge, probeTally: probeSession.tally)
         // Phase 0B rule-aware classifier hook: a line the compiler's own
         // `RuleAnalyzer` recognizes as a Phase-8 rule shape (`must not …` /
         // `may …` [+ bounded `up to N`] / `must be … by … before …` /
@@ -456,7 +459,7 @@ extension SkillMigrator {
             var paragraphLines = [raw]
             var lastTrimmed = t
             var j = body.index(after: i)
-            while j < body.endIndex, !endsSentenceForSplitting(lastTrimmed) {
+            while j < body.endIndex, !endsSentenceForSplitting(lastTrimmed, lexicon: knowledge.lexicon) {
                 let nextRaw = body[j]
                 let nextTrimmed = nextRaw.trimmingCharacters(in: .whitespaces)
                 guard !nextTrimmed.isEmpty,
@@ -583,7 +586,7 @@ extension SkillMigrator {
             // auto-qualify as `.exec` here. Likewise `lowersAsStatement`'s
             // broader "any statement" fallback (actions included) is skipped:
             // only `isCheckableCondition` may produce `.exec`.
-            if !checkableOnly, isWholeLineBacktickedCommand(stripped) || isChoiceGateLine(stripped) { kinds[idx] = .exec; continue }
+            if !checkableOnly, isWholeLineBacktickedCommand(stripped) || isChoiceGateLine(stripped, lexicon: knowledge.lexicon) { kinds[idx] = .exec; continue }
             if trial.isCheckableCondition(stripped) { kinds[idx] = .exec; continue }
             if !checkableOnly, trial.lowersAsStatement(stripped) { kinds[idx] = .exec; continue }
             // Phase 0B: a real Phase-8 rule shape is lowerable regardless of
@@ -597,7 +600,10 @@ extension SkillMigrator {
             // marker is an inference cue. A normative cue with no inference
             // cue is an operational reword error, never silent documentation.
             if trial.hasInferenceCue(stripped) { kinds[idx] = .aiInference; continue }
-            if trial.isNormativeNarrative(stripped) { kinds[idx] = .errorOperational; continue }
+            if trial.isNormativeNarrative(stripped) {
+                kinds[idx] = referenceHeadingContext ? .documentation : .errorOperational
+                continue
+            }
             kinds[idx] = .documentation
         }
         if trace.isEnabled(.skill) {
@@ -778,7 +784,8 @@ extension SkillMigrator {
     /// `idx..<end` range: the original heading followed by its leftover
     /// narrative, then one generated child heading per executable/AI-inference
     /// segment (`<heading> — steps`, `— steps 2`, …).
-    func renderSplitPlan(_ plan: SplitPlan, headingHashes: String, headingText: String) -> [String] {
+    func renderSplitPlan(_ plan: SplitPlan, headingHashes: String, headingText: String,
+                         lexicon: EnglishLexicon) -> [String] {
         var out: [String] = []
         if hasSubstantiveContent(plan.narrativeLines) {
             out.append("\(headingHashes) \(headingText) (( role: reference ))")
@@ -803,7 +810,7 @@ extension SkillMigrator {
             out.append("\(childHashes) \(childHeadingText)")
             out.append("")
             if segment.kind == .aiInference {
-                out.append("use judgment to follow the \(childHeadingText) guidance:")
+                out.append(lexicon.grammar.judgmentFollowCollectLine(heading: childHeadingText))
                 out.append(contentsOf: segment.lines)
             } else {
                 var segLines = segment.lines

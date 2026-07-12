@@ -43,6 +43,8 @@ public enum MeridianRuntimeError: Error, Sendable {
     case toolNotFound(id: String)
     case nestingLimitExceeded(maxDepth: Int)
     case cancelled
+    case traceStoreFailure(String)
+    case observerFailure(String)
     /// Thrown when `wait(.approval(...))` receives a `.denied` verdict.
     /// Can be caught by `recover from approval.denied:` in generated code.
     case approvalDenied(role: String, sourceRange: SourceRange?)

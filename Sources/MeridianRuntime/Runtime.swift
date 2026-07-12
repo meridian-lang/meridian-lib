@@ -21,8 +21,11 @@ public actor Runtime {
     private let toolRegistry: ToolRegistry
     private let instanceRegistry: InstanceRegistry
     private let observer: any Observer
+    private let traceStore: (any TraceStore)?
     private let checkpointer: any Checkpointer
     private let maxNestingDepth: Int
+    private let traceConfiguration: TraceConfiguration
+    private let traceIDGenerator: TraceIDGenerator
 
     /// Permission registry used by generated bounded-permission gates.
     /// The default `PermissionRegistry.empty` allows all actions.
@@ -37,6 +40,13 @@ public actor Runtime {
     private var _isCancelled: Bool = false
     private var _nestingDepth: Int = 0
     private var _activeResumeContext: ResumeContext?
+    private var _traceSkillIdentity: TraceSkillIdentity
+    private var _traceStoreFailure: (any Error)?
+    private var _observerFailure: (any Error)?
+    private var _degradedTraceMarkerPending = false
+    private var _lastTraceStoreFailureDescription: String?
+    private var _operationalDiagnostics: [RuntimeOperationalDiagnostic] = []
+    private var _activeWorkflowName: String?
 
     // MARK: - Wait queues
 
@@ -66,18 +76,25 @@ public actor Runtime {
     /// Event waiters: checked against every `emit` and every `deliverEvent` call.
     private var _eventWaiters: [EventWaiterEntry] = []
 
+    /// Background statistical monitors registered by monitored assertions.
+    private var _monitorTasks: [UUID: Task<Void, Never>] = [:]
+
     // MARK: - Init
 
     public init(
         toolRegistry: ToolRegistry,
         instanceRegistry: InstanceRegistry = .empty,
         observer: any Observer = JSONLObserver.stdout,
+        traceStore: (any TraceStore)? = nil,
         checkpointer: any Checkpointer = InMemoryCheckpointer(),
         clock: any Clock = SystemClock(),
         runID: String = UUID().uuidString,
         parentRunID: String? = nil,
         parentSequence: Int? = nil,
         maxNestingDepth: Int = 32,
+        traceConfiguration: TraceConfiguration = .default,
+        traceSkillIdentity: TraceSkillIdentity = .unknown,
+        traceIDGenerator: TraceIDGenerator = TraceIDGenerator(),
         permissionRegistry: PermissionRegistry = .empty,
         planner: any Planner = NoopPlanner(),
         actPlanner: any ActPlanner = NoopActPlanner(),
@@ -89,6 +106,7 @@ public actor Runtime {
         self.toolRegistry = toolRegistry
         self.instanceRegistry = instanceRegistry
         self.observer = observer
+        self.traceStore = traceStore
         self.checkpointer = checkpointer
         self.clock = clock
         self.runID = runID
@@ -96,6 +114,9 @@ public actor Runtime {
         self.parentSequence = parentSequence
         self.maxNestingDepth = maxNestingDepth
         self._startDate = clock.now()
+        self.traceConfiguration = traceConfiguration
+        self.traceIDGenerator = traceIDGenerator
+        self._traceSkillIdentity = traceSkillIdentity
         self.permissionRegistry = permissionRegistry
         self.planner = planner
         self.actPlanner = actPlanner
@@ -111,6 +132,8 @@ public actor Runtime {
     public func invoke(
         tool toolID: String,
         args: [String: Value],
+        step traceStep: String? = nil,
+        capturePolicy: TraceCapturePolicy? = nil,
         sourceRange: SourceRange? = nil
     ) async throws -> Value {
         let seq = nextSeq()
@@ -118,26 +141,33 @@ public actor Runtime {
 
         var argsPayload: [String: Value] = ["args": .record(args)]
         let hasTool = await toolRegistry.has(tool: toolID)
-        if hasTool {
+        if let capturePolicy {
+            argsPayload = capture(payload: argsPayload, policy: capturePolicy)
+        } else if hasTool {
             let policy = await toolRegistry.redactionPolicy(for: toolID)
             argsPayload = redact(payload: argsPayload, policy: policy)
         }
 
-        await emit(event: Event(
-            timestamp: startDate,
-            runID: runID,
-            sequence: seq,
-            kind: .invokeStart,
-            payload: mergeDicts(["tool": .string(toolID)], argsPayload),
-            sourceRange: sourceRange
-        ))
+        let fullArgsPayload = mergeDicts(["tool": .string(toolID)], ["args": .record(args)])
+        let stepPayload: [String: Value] = traceStep.map { ["step": Value.string($0)] } ?? [:]
+        try await emitOrThrow(
+            event: Event(
+                timestamp: startDate,
+                runID: runID,
+                sequence: seq,
+                kind: .invokeStart,
+                payload: mergeDicts(mergeDicts(["tool": .string(toolID)], argsPayload), stepPayload),
+                sourceRange: sourceRange
+            ),
+            hashedPayload: mergeDicts(fullArgsPayload, stepPayload)
+        )
 
         do {
             let result = try await toolRegistry.dispatch(tool: toolID, args: args)
             let endDate = clock.now()
             let durationMS = (endDate.timeIntervalSince(startDate)) * 1000
 
-            await emit(event: Event(
+            try await emitOrThrow(event: Event(
                 timestamp: endDate,
                 runID: runID,
                 sequence: nextSeq(),
@@ -145,21 +175,23 @@ public actor Runtime {
                 payload: [
                     "tool": .string(toolID),
                     "duration_ms": .number(Decimal(durationMS)),
-                    "output_summary": .string(summaryOf(result))
+                    "output_summary": .string(summaryOf(result)),
+                    "step": traceStep.map(Value.string) ?? .null
                 ],
                 sourceRange: sourceRange
             ))
             return result
         } catch {
             let endDate = clock.now()
-            await emit(event: Event(
+            try await emitOrThrow(event: Event(
                 timestamp: endDate,
                 runID: runID,
                 sequence: nextSeq(),
                 kind: .invokeError,
                 payload: [
                     "tool": .string(toolID),
-                    "error": .string(String(describing: error))
+                    "error": .string(String(describing: error)),
+                    "step": traceStep.map(Value.string) ?? .null
                 ],
                 sourceRange: sourceRange
             ))
@@ -174,6 +206,8 @@ public actor Runtime {
         snapshot: StateSnapshot,
         scopedTools: [String],
         maxActions: Int = 32,
+        outputKind: String = "record",
+        step traceStep: String? = nil,
         guidance: String? = nil,
         sourceRange: SourceRange? = nil
     ) async throws -> [String: Value] {
@@ -181,6 +215,7 @@ public actor Runtime {
         try await enforceSnapshotLimit(snapshot, sourceRange: sourceRange)
         let scope = Set(scopedTools)
         let schemas = await toolRegistry.schemas(scope)
+        let scopePayload = scopedToolPayload(scope)
         let actionLimit = min(maxActions, planningLimits.maxActions)
         let context = PlanContext(
             prose: prose,
@@ -190,14 +225,25 @@ public actor Runtime {
             guidance: guidance
         )
 
-        await emit(event: Event(
+        // SEM-4-04: every judgment invocation witnesses an input payload hash,
+        // an output payload hash, and its declared output kind, alongside tool
+        // scope (already present as `scoped_tools`). The input hash covers
+        // exactly what the planner sees — prose, guidance, and the state
+        // snapshot — so replaying the same judgment call is detectable.
+        let inputHash = judgmentPayloadHash(judgmentInputPayload(prose: prose, guidance: guidance, snapshot: snapshot))
+
+        try await emitOrThrow(event: Event(
             timestamp: clock.now(),
             runID: runID,
             sequence: nextSeq(),
             kind: .planStart,
             payload: [
                 "mode": .string("plan_then_execute"),
-                "tool_count": .number(Decimal(schemas.count))
+                "tool_count": .number(Decimal(schemas.count)),
+                "scoped_tools": scopePayload,
+                "input_payload_hash": inputHash,
+                "output_kind": .string(outputKind),
+                "step": traceStep.map(Value.string) ?? .null
             ],
             sourceRange: sourceRange
         ))
@@ -220,25 +266,35 @@ public actor Runtime {
                 if let binding = action.resultBinding {
                     bindings[binding] = result
                 }
-                try await checkpoint(label: "prose.plan.action.\(action.toolID)", state: snapshot, sourceRange: sourceRange)
+                try await checkpoint(label: "prose.plan.action.\(action.toolID)", state: snapshot, step: traceStep, sourceRange: sourceRange)
             }
 
-            await emit(event: Event(
+            try await emitOrThrow(event: Event(
                 timestamp: clock.now(),
                 runID: runID,
                 sequence: nextSeq(),
                 kind: .planEnd,
-                payload: ["action_count": .number(Decimal(proposal.actions.count))],
+                payload: [
+                    "action_count": .number(Decimal(proposal.actions.count)),
+                    "scoped_tools": scopePayload,
+                    "input_payload_hash": inputHash,
+                    "output_payload_hash": judgmentPayloadHash(bindings),
+                    "output_kind": .string(outputKind),
+                    "step": traceStep.map(Value.string) ?? .null
+                ],
                 sourceRange: sourceRange
             ))
             return bindings
         } catch {
-            await emit(event: Event(
+            try await emitOrThrow(event: Event(
                 timestamp: clock.now(),
                 runID: runID,
                 sequence: nextSeq(),
                 kind: .planError,
-                payload: errorPayload(error),
+                payload: mergeDicts(
+                    mergeDicts(errorPayload(error), ["scoped_tools": scopePayload]),
+                    traceStep.map { ["step": Value.string($0)] } ?? [:]
+                ),
                 sourceRange: sourceRange
             ))
             throw error
@@ -251,6 +307,8 @@ public actor Runtime {
         scopedTools: [String],
         maxSteps: Int = 32,
         replanAfterFailures: Int = 3,
+        outputKind: String = "record",
+        step traceStep: String? = nil,
         until: (@Sendable (StateSnapshot) -> Bool)? = nil,
         unless: (@Sendable (StateSnapshot) -> Bool)? = nil,
         guidance: String? = nil,
@@ -260,31 +318,43 @@ public actor Runtime {
         try await enforceSnapshotLimit(snapshot, sourceRange: sourceRange)
         let scope = Set(scopedTools)
         let schemas = await toolRegistry.schemas(scope)
+        let scopePayload = scopedToolPayload(scope)
         let executor = PlanExecutor(toolRegistry: toolRegistry)
         var observations: [ObservationTurn] = []
         var bindings: [String: Value] = [:]
         var loopValues = snapshot.asValues
         var consecutiveFailures = 0
 
-        await emit(event: Event(
+        // SEM-4-04 — see `executeProsePlan`'s matching comment: same witness
+        // shape (input hash / output hash / declared output kind) for the
+        // autonomy dispatch path.
+        let inputHash = judgmentPayloadHash(judgmentInputPayload(prose: prose, guidance: guidance, snapshot: snapshot))
+
+        try await emitOrThrow(event: Event(
             timestamp: clock.now(),
             runID: runID,
             sequence: nextSeq(),
             kind: .autonomyStart,
-            payload: ["tool_count": .number(Decimal(schemas.count))],
+            payload: [
+                "tool_count": .number(Decimal(schemas.count)),
+                "scoped_tools": scopePayload,
+                "input_payload_hash": inputHash,
+                "output_kind": .string(outputKind),
+                "step": traceStep.map(Value.string) ?? .null
+            ],
             sourceRange: sourceRange
         ))
 
         let initialSnapshot = makeSnapshot(from: loopValues)
         if let reason = checkAutonomyPredicates(snapshot: initialSnapshot, until: until, unless: unless) {
-            await emitAutonomyEnd(reason: reason, sourceRange: sourceRange)
+            await emitAutonomyEnd(reason: reason, scopedTools: scopePayload, inputHash: inputHash, outputKind: outputKind, bindings: bindings, step: traceStep, sourceRange: sourceRange)
             return bindings
         }
 
         for step in 0..<maxSteps {
             let currentSnapshot = makeSnapshot(from: loopValues)
             if let reason = checkAutonomyPredicates(snapshot: currentSnapshot, until: until, unless: unless) {
-                await emitAutonomyEnd(reason: reason, sourceRange: sourceRange)
+                await emitAutonomyEnd(reason: reason, scopedTools: scopePayload, inputHash: inputHash, outputKind: outputKind, bindings: bindings, step: traceStep, sourceRange: sourceRange)
                 return bindings
             }
             try await enforceHistoryLimits(observations, sourceRange: sourceRange)
@@ -300,7 +370,7 @@ public actor Runtime {
 
             switch proposal {
             case .done(let reason):
-                await emitAutonomyEnd(reason: reason ?? "done", sourceRange: sourceRange)
+                await emitAutonomyEnd(reason: reason ?? "done", scopedTools: scopePayload, inputHash: inputHash, outputKind: outputKind, bindings: bindings, step: traceStep, sourceRange: sourceRange)
                 return bindings
 
             case .action(let action):
@@ -310,26 +380,26 @@ public actor Runtime {
                         bindings[binding] = result
                         loopValues[binding] = result
                     }
-                    try await checkpoint(label: "autonomy.action.\(action.toolID)", state: makeSnapshot(from: loopValues), sourceRange: sourceRange)
+                    try await checkpoint(label: "autonomy.action.\(action.toolID)", state: makeSnapshot(from: loopValues), step: traceStep, sourceRange: sourceRange)
                     observations.append(ObservationTurn(action: action, outcome: .success(result)))
                     consecutiveFailures = 0
-                    await emit(event: Event(
+                    try await emitOrThrow(event: Event(
                         timestamp: clock.now(),
                         runID: runID,
                         sequence: nextSeq(),
                         kind: .autonomyStep,
-                        payload: ["tool": .string(action.toolID), "status": .string("success")],
+                        payload: ["tool": .string(action.toolID), "status": .string("success"), "step": traceStep.map(Value.string) ?? .null],
                         sourceRange: sourceRange
                     ))
                 } catch {
                     observations.append(ObservationTurn(action: action, outcome: .failure(String(describing: error))))
                     consecutiveFailures += 1
-                    await emit(event: Event(
+                    try await emitOrThrow(event: Event(
                         timestamp: clock.now(),
                         runID: runID,
                         sequence: nextSeq(),
                         kind: .autonomyStep,
-                        payload: autonomyFailurePayload(toolID: action.toolID, error: error),
+                        payload: mergeDicts(autonomyFailurePayload(toolID: action.toolID, error: error), traceStep.map { ["step": Value.string($0)] } ?? [:]),
                         sourceRange: sourceRange
                     ))
 
@@ -440,7 +510,7 @@ public actor Runtime {
     /// `bytes` exceeds `max`. Each caller keeps its own bespoke byte computation.
     private func enforceLimit(bytes: Int, max: Int, code: PlanningFailureCode, kind: String, message: String, sourceRange: SourceRange?) async throws {
         guard bytes <= max else {
-            await emitPlanRejection(code: code, kind: kind, maxBytes: max, sourceRange: sourceRange)
+            try await emitPlanRejection(code: code, kind: kind, maxBytes: max, sourceRange: sourceRange)
             throw MeridianRuntimeError.planningFailure(code, message: message, sourceRange: sourceRange)
         }
     }
@@ -481,7 +551,7 @@ public actor Runtime {
 
     private func enforcePlanPolicy(_ action: ProposedAction, sourceRange: SourceRange?) async throws {
         guard await planPolicy.permits(action) else {
-            await emitPlanRejection(
+            try await emitPlanRejection(
                 code: .hostPolicyDenied,
                 kind: "policy",
                 maxBytes: 0,
@@ -500,8 +570,8 @@ public actor Runtime {
         kind: String,
         maxBytes: Int,
         sourceRange: SourceRange?
-    ) async {
-        await emit(event: Event(
+    ) async throws {
+        try await emitOrThrow(event: Event(
             timestamp: clock.now(),
             runID: runID,
             sequence: nextSeq(),
@@ -515,15 +585,50 @@ public actor Runtime {
         ))
     }
 
-    private func emitAutonomyEnd(reason: String, sourceRange: SourceRange?) async {
+    private func emitAutonomyEnd(reason: String, scopedTools: Value, inputHash: Value, outputKind: String, bindings: [String: Value], step: String?, sourceRange: SourceRange?) async {
         await emit(event: Event(
             timestamp: clock.now(),
             runID: runID,
             sequence: nextSeq(),
             kind: .autonomyEnd,
-            payload: ["reason": .string(reason)],
+            payload: [
+                "reason": .string(reason),
+                "scoped_tools": scopedTools,
+                "input_payload_hash": inputHash,
+                "output_payload_hash": judgmentPayloadHash(bindings),
+                "output_kind": .string(outputKind),
+                "step": step.map(Value.string) ?? .null
+            ],
             sourceRange: sourceRange
         ))
+    }
+
+    private func scopedToolPayload(_ scope: Set<String>) -> Value {
+        .list(scope.sorted().map(Value.string))
+    }
+
+    // MARK: - SEM-4-04 judgment witnessing
+
+    /// Exactly what the planner/actor sees for one judgment call: the prose
+    /// goal, its optional guidance, and the state snapshot. Hashing this (not
+    /// the whole `PlanContext`, which also carries the tool schema list
+    /// already witnessed separately as `scoped_tools`) gives a stable input
+    /// fingerprint that changes iff the judgment's actual inputs change.
+    private func judgmentInputPayload(prose: String, guidance: String?, snapshot: StateSnapshot) -> [String: Value] {
+        [
+            "prose": .string(prose),
+            "guidance": guidance.map(Value.string) ?? .null,
+            "snapshot": .record(snapshot.asValues)
+        ]
+    }
+
+    /// `CanonicalJSON.sha256Hex(for:)` only declares `throws` for signature
+    /// symmetry with the `TraceRecord` overload; encoding a `[String: Value]`
+    /// cannot actually fail. `try?` keeps this witness from ever aborting a
+    /// judgment call over a hashing concern.
+    private func judgmentPayloadHash(_ payload: [String: Value]) -> Value {
+        guard let hash = try? CanonicalJSON.sha256Hex(for: payload) else { return .null }
+        return .string(hash)
     }
 
     private func errorPayload(_ error: any Error) -> [String: Value] {
@@ -561,14 +666,16 @@ public actor Runtime {
     public func emit(
         event eventID: String,
         payload: [String: Value],
+        step: String? = nil,
         sourceRange: SourceRange? = nil
     ) async throws {
-        await emit(event: Event(
+        let fullPayload = mergeDicts(mergeDicts(["event": .string(eventID)], payload), step.map { ["step": Value.string($0)] } ?? [:])
+        try await emitOrThrow(event: Event(
             timestamp: clock.now(),
             runID: runID,
             sequence: nextSeq(),
             kind: .emit,
-            payload: mergeDicts(["event": .string(eventID)], payload),
+            payload: fullPayload,
             sourceRange: sourceRange
         ))
     }
@@ -577,6 +684,7 @@ public actor Runtime {
     public func emitLenient(
         event eventID: String,
         payload: [String: Value],
+        step: String? = nil,
         sourceRange: SourceRange? = nil
     ) async {
         await emit(event: Event(
@@ -584,7 +692,7 @@ public actor Runtime {
             runID: runID,
             sequence: nextSeq(),
             kind: .emit,
-            payload: mergeDicts(["event": .string(eventID)], payload),
+            payload: mergeDicts(mergeDicts(["event": .string(eventID)], payload), step.map { ["step": Value.string($0)] } ?? [:]),
             sourceRange: sourceRange
         ))
     }
@@ -599,28 +707,248 @@ public actor Runtime {
     public func assert(
         _ condition: Bool,
         message: String,
+        step: String? = nil,
         sourceRange: SourceRange? = nil
     ) async throws {
-        if condition {
-            await emit(event: Event(
+        try await assert(TruthValue.from(condition), message: message, step: step, sourceRange: sourceRange)
+    }
+
+    public func assert(
+        _ condition: TruthValue,
+        message: String,
+        step: String? = nil,
+        sourceRange: SourceRange? = nil
+    ) async throws {
+        try await recordAssertionOutcome(
+            condition,
+            message: message,
+            step: step,
+            sourceRange: sourceRange,
+            throwOnFailure: true
+        )
+    }
+
+    public func registerMonitor(
+        query: TraceStatisticalQuery,
+        cadence: Duration,
+        message: String,
+        blocking: Bool = false,
+        step: String? = nil,
+        sourceRange: SourceRange? = nil
+    ) {
+        let id = UUID()
+        let task = Task { [clock] in
+            while !Task.isCancelled {
+                do {
+                    try await clock.sleep(for: cadence)
+                } catch {
+                    return
+                }
+                if Task.isCancelled {
+                    return
+                }
+                await self.runMonitorTick(
+                    query: query,
+                    message: message,
+                    blocking: blocking,
+                    step: step,
+                    sourceRange: sourceRange
+                )
+            }
+        }
+        _monitorTasks[id] = task
+    }
+
+    private func runMonitorTick(
+        query: TraceStatisticalQuery,
+        message: String,
+        blocking: Bool,
+        step: String?,
+        sourceRange: SourceRange?
+    ) async {
+        let outcome: TruthValue
+        do {
+            outcome = try await evaluateTrace(query, evaluationInstant: currentDate())
+        } catch {
+            if error is CancellationError { return }
+            recordOperationalDiagnostic(code: "monitor.evaluate", message: String(describing: error))
+            _traceStoreFailure = error
+            if isFailClosedPolicy {
+                _isCancelled = true
+            }
+            return
+        }
+        do {
+            if blocking, outcome == .false {
+                try await emitMonitorViolation(
+                    message: message,
+                    step: step,
+                    subjectKey: query.pattern.subjectKey,
+                    sourceRange: sourceRange
+                )
+            }
+            try await recordAssertionOutcome(
+                outcome,
+                message: message,
+                step: step,
+                sourceRange: sourceRange,
+                throwOnFailure: blocking,
+                subjectKey: query.pattern.subjectKey
+            )
+        } catch is CancellationError {
+            return
+        } catch {
+            recordOperationalDiagnostic(code: "monitor.assertion", message: String(describing: error))
+            _isCancelled = true
+        }
+    }
+
+    private func recordAssertionOutcome(
+        _ condition: TruthValue,
+        message: String,
+        step: String?,
+        sourceRange: SourceRange?,
+        throwOnFailure: Bool,
+        subjectKey: String? = nil
+    ) async throws {
+        let subjectKeyPayload = subjectKey.map { ["subject_key": Value.string($0)] } ?? [:]
+        switch condition {
+        case .true:
+            try await emitOrThrow(event: Event(
                 timestamp: clock.now(),
                 runID: runID,
                 sequence: nextSeq(),
                 kind: .assertPassed,
-                payload: ["message": .string(message)],
+                payload: mergeDicts([
+                    "message": .string(message),
+                    "outcome": .string(TruthValue.true.rawValue),
+                    "step": step.map(Value.string) ?? .null
+                ], subjectKeyPayload),
                 sourceRange: sourceRange
             ))
-            return
+        case .indeterminate:
+            try await emitOrThrow(event: Event(
+                timestamp: clock.now(),
+                runID: runID,
+                sequence: nextSeq(),
+                kind: .assertPassed,
+                payload: mergeDicts([
+                    "message": .string(message),
+                    "outcome": .string(TruthValue.indeterminate.rawValue),
+                    "step": step.map(Value.string) ?? .null
+                ], subjectKeyPayload),
+                sourceRange: sourceRange
+            ))
+        case .false:
+            try await emitOrThrow(event: Event(
+                timestamp: clock.now(),
+                runID: runID,
+                sequence: nextSeq(),
+                kind: .assertFailed,
+                payload: mergeDicts([
+                    "message": .string(message),
+                    "step": step.map(Value.string) ?? .null
+                ], subjectKeyPayload),
+                sourceRange: sourceRange
+            ))
+            if throwOnFailure {
+                throw MeridianRuntimeError.assertion(message: message, sourceRange: sourceRange)
+            }
         }
-        await emit(event: Event(
+    }
+
+    // MARK: - Primitive-boundary instrumentation (8B: branch / iterate / recover)
+    //
+    // `EventKind.branchTaken`/`iterateStart`/`iterateIteration`/`iterateEnd`/
+    // `recoverEngaged` and their `TraceTag.branched`/`iterated`/`recovered`
+    // projections (`EventMigration.swift`) already existed; nothing in
+    // generated code called them. `SwiftEmitter.emitBranch`/`emitIterate`/
+    // `emitRecover` call these helpers at each primitive's boundary.
+
+    /// A branch/match statement entered a specific arm.
+    public func recordBranchTaken(
+        condition: String,
+        into: String,
+        step: String? = nil,
+        sourceRange: SourceRange? = nil
+    ) async throws {
+        try await emitOrThrow(event: Event(
             timestamp: clock.now(),
             runID: runID,
             sequence: nextSeq(),
-            kind: .assertFailed,
-            payload: ["message": .string(message)],
+            kind: .branchTaken,
+            payload: [
+                "condition": .string(condition),
+                "into": .string(into),
+                "step": step.map(Value.string) ?? .null
+            ],
             sourceRange: sourceRange
         ))
-        throw MeridianRuntimeError.assertion(message: message, sourceRange: sourceRange)
+    }
+
+    /// A loop began iterating over `over` (a collection description or loop kind).
+    public func recordIterateStart(
+        over: String,
+        step: String? = nil,
+        sourceRange: SourceRange? = nil
+    ) async throws {
+        try await emitOrThrow(event: Event(
+            timestamp: clock.now(),
+            runID: runID,
+            sequence: nextSeq(),
+            kind: .iterateStart,
+            payload: ["over": .string(over), "step": step.map(Value.string) ?? .null],
+            sourceRange: sourceRange
+        ))
+    }
+
+    /// One loop body execution, keyed by its zero-based `index`.
+    public func recordIterateIteration(
+        index: Int,
+        step: String? = nil,
+        sourceRange: SourceRange? = nil
+    ) async throws {
+        try await emitOrThrow(event: Event(
+            timestamp: clock.now(),
+            runID: runID,
+            sequence: nextSeq(),
+            kind: .iterateIteration,
+            payload: ["index": .number(Decimal(index)), "step": step.map(Value.string) ?? .null],
+            sourceRange: sourceRange
+        ))
+    }
+
+    /// A loop finished; `count` is the total number of iterations run.
+    public func recordIterateEnd(
+        over: String,
+        count: Int,
+        step: String? = nil,
+        sourceRange: SourceRange? = nil
+    ) async throws {
+        try await emitOrThrow(event: Event(
+            timestamp: clock.now(),
+            runID: runID,
+            sequence: nextSeq(),
+            kind: .iterateEnd,
+            payload: ["over": .string(over), "count": .number(Decimal(count)), "step": step.map(Value.string) ?? .null],
+            sourceRange: sourceRange
+        ))
+    }
+
+    /// A `recover`'s catch handler engaged for the given error `pattern` description.
+    public func recordRecoverEngaged(
+        pattern: String,
+        step: String? = nil,
+        sourceRange: SourceRange? = nil
+    ) async throws {
+        try await emitOrThrow(event: Event(
+            timestamp: clock.now(),
+            runID: runID,
+            sequence: nextSeq(),
+            kind: .recoverEngaged,
+            payload: ["pattern": .string(pattern), "step": step.map(Value.string) ?? .null],
+            sourceRange: sourceRange
+        ))
     }
 
     // MARK: - Wait
@@ -644,7 +972,7 @@ public actor Runtime {
         timeout: Duration? = nil,
         sourceRange: SourceRange? = nil
     ) async throws {
-        await emit(event: Event(
+        try await emitOrThrow(event: Event(
             timestamp: clock.now(),
             runID: runID,
             sequence: nextSeq(),
@@ -691,7 +1019,7 @@ public actor Runtime {
             }
         }
 
-        await emit(event: Event(
+        try await emitOrThrow(event: Event(
             timestamp: clock.now(),
             runID: runID,
             sequence: nextSeq(),
@@ -791,6 +1119,7 @@ public actor Runtime {
     public func checkpoint(
         label: String? = nil,
         state: StateSnapshot,
+        step: String? = nil,
         sourceRange: SourceRange? = nil
     ) async throws {
         let seq = nextSeq()
@@ -803,12 +1132,12 @@ public actor Runtime {
             sourceRange: sourceRange
         )
         try await checkpointer.write(cp)
-        await emit(event: Event(
+        try await emitOrThrow(event: Event(
             timestamp: clock.now(),
             runID: runID,
             sequence: seq,
             kind: .commit,
-            payload: label.map { ["label": .string($0)] } ?? [:],
+            payload: mergeDicts(label.map { ["label": Value.string($0)] } ?? [:], step.map { ["step": Value.string($0)] } ?? [:]),
             sourceRange: sourceRange
         ))
     }
@@ -851,7 +1180,7 @@ public actor Runtime {
     public func prepareResume(runID: String) async throws -> ResumeContext {
         let context = try await resume(runID: runID)
         _activeResumeContext = context
-        await emit(event: Event(
+        try await emitOrThrow(event: Event(
             timestamp: clock.now(),
             runID: self.runID,
             sequence: nextSeq(),
@@ -885,11 +1214,13 @@ public actor Runtime {
     // MARK: - Completion
 
     /// Mark the workflow as gracefully completed. Call immediately before `return`.
-    public func complete(reason: String?, sourceRange: SourceRange? = nil) async {
+    public func complete(reason: String?, step: String? = nil, sourceRange: SourceRange? = nil) async {
+        cancelMonitors()
         let payload: [String: Value] = [
             "reason": reason.map { .string($0) } ?? .null,
             "duration_ms": .number(Decimal(elapsedMS())),
-            "event_count": .number(Decimal(_eventCount + 1))
+            "event_count": .number(Decimal(_eventCount + 1)),
+            "step": step.map(Value.string) ?? .null
         ]
         await emit(event: Event(
             timestamp: clock.now(),
@@ -905,6 +1236,7 @@ public actor Runtime {
 
     public func cancel(runID: String) async {
         _isCancelled = true
+        cancelMonitors()
     }
 
     public nonisolated func isCancelled() -> Bool { false }
@@ -941,6 +1273,50 @@ public actor Runtime {
 
     public func eventCount() -> Int { _eventCount }
 
+    public func operationalDiagnostics() -> [RuntimeOperationalDiagnostic] {
+        _operationalDiagnostics
+    }
+
+    public func currentDate() -> Date { clock.now() }
+
+    public func evaluateTrace(
+        _ temporal: TraceTemporalQuery,
+        evaluationInstant: Date
+    ) async throws -> TruthValue {
+        guard let traceStore else {
+            return .indeterminate
+        }
+        return try await TraceEvaluator.evaluate(
+            temporal: temporal,
+            store: traceStore,
+            context: TraceEvaluationContext(
+                runID: runID,
+                skillName: _traceSkillIdentity.name,
+                evaluationInstant: evaluationInstant,
+                sampleFloor: traceConfiguration.sampleFloor
+            )
+        )
+    }
+
+    public func evaluateTrace(
+        _ statistical: TraceStatisticalQuery,
+        evaluationInstant: Date
+    ) async throws -> TruthValue {
+        guard let traceStore else {
+            return .indeterminate
+        }
+        return try await TraceEvaluator.evaluate(
+            statistical: statistical,
+            store: traceStore,
+            context: TraceEvaluationContext(
+                runID: runID,
+                skillName: _traceSkillIdentity.name,
+                evaluationInstant: evaluationInstant,
+                sampleFloor: traceConfiguration.sampleFloor
+            )
+        )
+    }
+
     // MARK: - Internal helpers
 
     private func nextSeq() -> Int {
@@ -949,8 +1325,75 @@ public actor Runtime {
         return sequenceCounter
     }
 
-    private func emit(event: Event) async {
-        await observer.record(event)
+    private func cancelMonitors() {
+        for task in _monitorTasks.values {
+            task.cancel()
+        }
+        _monitorTasks.removeAll()
+    }
+
+    private func emitOrThrow(event: Event, hashedPayload: [String: Value]? = nil) async throws {
+        await emit(event: event, hashedPayload: hashedPayload)
+        try rethrowOperationalFailureIfNeeded()
+    }
+
+    private var isFailClosedPolicy: Bool {
+        switch traceConfiguration.storeFailurePolicy {
+        case .failClosed, .auto:
+            return true
+        case .failOpen:
+            return false
+        }
+    }
+
+    private func recordOperationalDiagnostic(code: String, message: String) {
+        let diagnostic = RuntimeOperationalDiagnostic(
+            code: code,
+            message: message,
+            timestamp: clock.now()
+        )
+        _operationalDiagnostics.append(diagnostic)
+        fputs("meridian-runtime[\(code)]: \(message)\n", stderr)
+    }
+
+    private func emit(event: Event, hashedPayload: [String: Value]? = nil) async {
+        if let traceStore {
+            do {
+                let record = try await semanticTraceRecord(for: event, hashedPayload: hashedPayload)
+                try await traceStore.append(record)
+                if _degradedTraceMarkerPending {
+                    let degradedRecord = try await degradedTraceRecoveryRecord()
+                    try await traceStore.append(degradedRecord)
+                    _degradedTraceMarkerPending = false
+                    _lastTraceStoreFailureDescription = nil
+                }
+                _traceStoreFailure = nil
+            } catch is CancellationError {
+                return
+            } catch {
+                _traceStoreFailure = error
+                recordOperationalDiagnostic(code: "trace-store.append", message: String(describing: error))
+                if isFailClosedPolicy {
+                    _isCancelled = true
+                } else {
+                    _degradedTraceMarkerPending = true
+                    _lastTraceStoreFailureDescription = String(describing: error)
+                }
+            }
+        }
+
+        do {
+            try await observer.record(event)
+            _observerFailure = nil
+        } catch is CancellationError {
+            return
+        } catch {
+            _observerFailure = error
+            recordOperationalDiagnostic(code: "observer.record", message: String(describing: error))
+            if isFailClosedPolicy {
+                _isCancelled = true
+            }
+        }
         // Wake any event waiters that match this newly emitted event.
         if !_eventWaiters.isEmpty {
             var remaining: [EventWaiterEntry] = []
@@ -965,6 +1408,96 @@ public actor Runtime {
             }
             _eventWaiters = remaining
         }
+    }
+
+    private func rethrowOperationalFailureIfNeeded() throws {
+        guard isFailClosedPolicy else { return }
+        if let error = _traceStoreFailure {
+            throw MeridianRuntimeError.traceStoreFailure(String(describing: error))
+        }
+        if let error = _observerFailure {
+            throw MeridianRuntimeError.observerFailure(String(describing: error))
+        }
+    }
+
+    private func emitMonitorViolation(
+        message: String,
+        step: String?,
+        subjectKey: String?,
+        sourceRange: SourceRange?
+    ) async throws {
+        guard let traceStore else { return }
+        let payload: [String: Value] = [
+            "message": .string(message),
+            "step": step.map(Value.string) ?? .null,
+            "subject_key": subjectKey.map(Value.string) ?? .null
+        ]
+        let record = TraceRecord(
+            id: await traceIDGenerator.nextID(at: clock.now()),
+            at: clock.now(),
+            ingestOrder: 0,
+            run: runID,
+            step: step ?? "monitor.violation",
+            skillName: _traceSkillIdentity.name,
+            skillVersionHash: _traceSkillIdentity.versionHash,
+            tag: .violated,
+            subject: step ?? "monitor",
+            subjectKey: subjectKey,
+            payload: payload,
+            payloadHash: try CanonicalJSON.sha256Hex(for: payload),
+            outcome: .failure,
+            witness: nil,
+            previousHash: nil,
+            recordHash: nil,
+            operationalDetail: "prevented",
+            legacyKind: nil
+        )
+        try await traceStore.append(record)
+    }
+
+    private func semanticTraceRecord(for event: Event, hashedPayload: [String: Value]?) async throws -> TraceRecord {
+        let workflowName = event.payload["workflow"]?.scalarDescription
+        let skillIdentity = workflowName.map { TraceSkillIdentity(name: $0, versionHash: _traceSkillIdentity.versionHash) } ?? _traceSkillIdentity
+        let step = event.payload["step"]?.scalarDescription ?? event.kind.rawValue
+        let subjectKey = event.payload["subject_key"]?.scalarDescription
+        return try TraceRecord(
+            legacy: event,
+            step: step,
+            skillName: skillIdentity.name,
+            skillVersionHash: skillIdentity.versionHash,
+            id: await traceIDGenerator.nextID(at: event.timestamp),
+            ingestOrder: event.sequence,
+            subjectKey: subjectKey,
+            payload: event.payload,
+            hashedPayload: hashedPayload
+        )
+    }
+
+    private func degradedTraceRecoveryRecord() async throws -> TraceRecord {
+        let payload: [String: Value] = [
+            "message": .string("trace store append recovered after degraded witnessing"),
+            "last_error": .string(_lastTraceStoreFailureDescription ?? "unknown")
+        ]
+        return TraceRecord(
+            id: await traceIDGenerator.nextID(at: clock.now()),
+            at: clock.now(),
+            ingestOrder: 0,
+            run: runID,
+            step: "trace-store.recovery",
+            skillName: _traceSkillIdentity.name,
+            skillVersionHash: _traceSkillIdentity.versionHash,
+            tag: .failed,
+            subject: "trace-store",
+            subjectKey: nil,
+            payload: payload,
+            payloadHash: try CanonicalJSON.sha256Hex(for: payload),
+            outcome: .failure,
+            witness: nil,
+            previousHash: nil,
+            recordHash: nil,
+            operationalDetail: "degraded-witnessing-marker",
+            legacyKind: nil
+        )
     }
 
     private func summaryOf(_ value: Value) -> String {
@@ -983,6 +1516,17 @@ public actor Runtime {
         case .redactKeys(let keys):
             let keySet = Set(keys)
             return redactRecord(payload, keys: keySet)
+        }
+    }
+
+    private func capture(payload: [String: Value], policy: TraceCapturePolicy) -> [String: Value] {
+        switch policy {
+        case .full:
+            return payload
+        case .hashOnly:
+            return [:]
+        case .redacted(let keys):
+            return redactRecord(payload, keys: Set(keys))
         }
     }
 
@@ -1013,6 +1557,7 @@ public actor Runtime {
         parameters: [String: Value],
         sourceRange: SourceRange? = nil
     ) async {
+        _activeWorkflowName = workflowName
         var payload: [String: Value] = ["workflow": .string(workflowName)]
         for (k, v) in parameters { payload[k] = v }
         let event = Event(
@@ -1026,6 +1571,39 @@ public actor Runtime {
             parentSequence: parentSequence
         )
         await emit(event: event)
+    }
+
+    /// Emit a terminal workflow.failed event before rethrowing a run() error.
+    /// Cancellation is not recorded — callers should rethrow `CancellationError` unchanged.
+    public func workflowFailed(
+        workflowName: String,
+        error: any Error,
+        step: String? = nil,
+        sourceRange: SourceRange? = nil
+    ) async throws {
+        if error is CancellationError { return }
+        cancelMonitors()
+        var payload: [String: Value] = [
+            "workflow": .string(workflowName),
+            "error": .string(String(describing: error)),
+            "duration_ms": .number(Decimal(elapsedMS())),
+            "event_count": .number(Decimal(_eventCount + 1)),
+            "step": step.map(Value.string) ?? .null,
+            "cancelled": .boolean(false)
+        ]
+        if let code = implementationErrorCode(error) {
+            payload["error_code"] = .string(code)
+        }
+        try await emitOrThrow(event: Event(
+            timestamp: clock.now(),
+            runID: runID,
+            sequence: nextSeq(),
+            kind: .workflowFailed,
+            payload: payload,
+            sourceRange: sourceRange,
+            parentRunID: parentRunID,
+            parentSequence: parentSequence
+        ))
     }
 
     /// Emit a structural event (branch.taken, bind, assert.passed, etc.) from generated code.

@@ -35,7 +35,9 @@
 //
 // The exclusions file (docs/coverage/coverage-exclusions.md) is the single,
 // reviewed source of truth for what is allowed to be uncovered. See that file
-// (and docs/coverage/README.md) for the format.
+// (and docs/coverage/README.md) for the format. `full-only-files` entries are
+// enforced only when --full is set; fast runs intentionally skip those floors
+// because their coverage comes from MeridianSlowIntegrationTests.
 
 import Foundation
 
@@ -106,19 +108,21 @@ let repoRoot = fm.currentDirectoryPath
 struct Exclusions {
     var excludedFileSubstrings: [String] = []   // removed from the denominator entirely
     var fileThresholds: [(substr: String, minPercent: Double)] = []  // per-file override
+    var fullOnlyFileSubstrings: [String] = []   // enforced only when --full is set
 }
 
 func loadExclusions() -> Exclusions {
     var ex = Exclusions()
     let path = repoRoot + "/docs/coverage/coverage-exclusions.md"
     guard let text = try? String(contentsOfFile: path, encoding: .utf8) else { return ex }
-    // Parse fenced blocks: ```exclude-files ... ``` and ```file-thresholds ... ```
+    // Parse fenced blocks: ```exclude-files ... ```, ```file-thresholds ... ```,
+    // and ```full-only-files ... ```.
     var mode = ""   // "", "exclude-files", "file-thresholds"
     for raw in text.components(separatedBy: "\n") {
         let line = raw.trimmingCharacters(in: .whitespaces)
         if line.hasPrefix("```") {
             let tag = line.dropFirst(3).trimmingCharacters(in: .whitespaces)
-            mode = (mode.isEmpty && (tag == "exclude-files" || tag == "file-thresholds")) ? tag : ""
+            mode = (mode.isEmpty && (tag == "exclude-files" || tag == "file-thresholds" || tag == "full-only-files")) ? tag : ""
             continue
         }
         if mode.isEmpty { continue }
@@ -130,6 +134,8 @@ func loadExclusions() -> Exclusions {
         switch mode {
         case "exclude-files":
             ex.excludedFileSubstrings.append(content)
+        case "full-only-files":
+            ex.fullOnlyFileSubstrings.append(content)
         case "file-thresholds":
             let parts = content.components(separatedBy: "=").map { $0.trimmingCharacters(in: .whitespaces) }
             if parts.count == 2, let pct = Double(parts[1]) {
@@ -277,8 +283,13 @@ func requiredThreshold(for file: String) -> Double {
     return globalThreshold
 }
 
+func isFullOnly(_ file: String) -> Bool {
+    exclusions.fullOnlyFileSubstrings.contains { file.contains($0) }
+}
+
 var failures: [(FileCov, Double)] = []
 for r in rows {
+    if !full, isFullOnly(r.file) { continue }
     let req = requiredThreshold(for: r.file)
     if r.regionPct + 1e-9 < req {
         failures.append((r, req))

@@ -114,4 +114,47 @@ struct TraceTreeRendererTests {
         let out = TraceTreeRenderer().render(jsonl: "")
         #expect(out == "(empty trace)\n")
     }
+
+    // 8B/E: `iterate.start`/`iterate.iteration`/`iterate.end` and
+    // `recover.engaged` are now actually emitted by generated code (not just
+    // renderable) — this fixture exercises the full primitive-boundary event
+    // set the renderer already supported, including the loop-body nesting.
+    @Test("iterate.start/iteration/end nest the loop body and recover.engaged renders after a caught error")
+    func iterateAndRecoverPrimitiveBoundaries() {
+        let trace = """
+        {"ts":"2025-01-01T00:00:00Z","run_id":"r-3","seq":1,"kind":"workflow.started","payload":{"workflowName":"Sweep"}}
+        {"ts":"2025-01-01T00:00:00Z","run_id":"r-3","seq":2,"kind":"iterate.start","payload":{"over":"the items"}}
+        {"ts":"2025-01-01T00:00:00Z","run_id":"r-3","seq":3,"kind":"iterate.iteration","payload":{"index":0}}
+        {"ts":"2025-01-01T00:00:00Z","run_id":"r-3","seq":4,"kind":"invoke.start","tool":"process","payload":{}}
+        {"ts":"2025-01-01T00:00:00Z","run_id":"r-3","seq":5,"kind":"invoke.end","tool":"process","payload":{"duration_ms":3}}
+        {"ts":"2025-01-01T00:00:00Z","run_id":"r-3","seq":6,"kind":"iterate.iteration","payload":{"index":1}}
+        {"ts":"2025-01-01T00:00:00Z","run_id":"r-3","seq":7,"kind":"iterate.end","payload":{"over":"the items","count":2}}
+        {"ts":"2025-01-01T00:00:00Z","run_id":"r-3","seq":8,"kind":"recover.engaged","payload":{"pattern":"any"}}
+        {"ts":"2025-01-01T00:00:00Z","run_id":"r-3","seq":9,"kind":"workflow.completed","payload":{}}
+        """
+        let out = TraceTreeRenderer().render(jsonl: trace)
+        let lines = out.split(separator: "\n").map(String.init)
+        #expect(lines.contains { $0.contains("iterate     the items") })
+        #expect(lines.contains { $0.contains("· #0") })
+        #expect(lines.contains { $0.contains("· #1") })
+        #expect(lines.contains { $0.contains("↳ done") })
+        #expect(lines.contains { $0.contains("recover     any") })
+
+        // The two iterations and the invoke inside iteration #0 render as the
+        // loop's indented children — nested strictly deeper than the sibling
+        // `iterate`/`recover` rows around them.
+        func depth(of substring: String) -> Int? {
+            lines.first { $0.contains(substring) }?.prefix { $0 == " " || $0 == "│" || $0 == "|" }.count
+        }
+        let iterateDepth = depth(of: "iterate     the items")
+        let iterationDepth = depth(of: "· #0")
+        let invokeDepth = depth(of: "invoke      process")
+        let recoverDepth = depth(of: "recover     any")
+        #expect(iterateDepth != nil && iterationDepth != nil && invokeDepth != nil && recoverDepth != nil)
+        if let iterateDepth, let iterationDepth, let invokeDepth, let recoverDepth {
+            #expect(iterationDepth > iterateDepth)
+            #expect(invokeDepth > iterateDepth)
+            #expect(recoverDepth <= iterateDepth)
+        }
+    }
 }

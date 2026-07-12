@@ -98,17 +98,21 @@ public struct EnglishLexicon: Sendable {
     /// code-block wraps that block's `shell.run` invokes in a `branch` — no
     /// new IR, just a structural production over two adjacent lines (SKILL.md
     /// bodies are flat, so the fence is never indented under the header).
-    /// Ordered longest-first. Not yet threaded through `=== language ===`
-    /// (promote alongside `normativeCueWords` if a domain needs to rename
-    /// these).
+    /// Ordered longest-first. Extend via `=== language ===`
+    /// `Guarded-fence synonyms:`.
     public let guardedFenceIntroducers: [String]
 
     /// Lead-in lines that introduce a **fallback chain**: an ordered list of
     /// steps where each step recovers into the next on failure, lowering to a
     /// nested `recover` chain (no new IR — the existing `attached`/`handler`
-    /// shape, just built N-deep instead of 1-deep). Not yet threaded through
-    /// `=== language ===` (promote alongside `normativeCueWords` if needed).
+    /// shape, just built N-deep instead of 1-deep). Extend via
+    /// `=== language ===` `Fallback-chain synonyms:`.
     public let fallbackChainIntroducers: [String]
+
+    /// Substrings matched against tool/workflow IDs when detecting an existing
+    /// approval step (so precondition injection does not double-wait). Extend
+    /// via `=== language ===` `Approval-tool synonyms:`.
+    public let approvalToolIDSubstrings: Set<String>
 
     /// The element property a temporal iteration clause (`within the last`/`in
     /// the next`) resolves `updated`/`created`-style references to. Default
@@ -167,6 +171,20 @@ public struct EnglishLexicon: Sendable {
     /// `Anaphora synonyms:`.
     public let anaphoraMarkers: [String]
 
+    /// Trace event outcome verbs and their canonical meanings.
+    public let traceOutcomeVerbs: [String: EventPatternAST.OutcomeVerb]
+
+    /// Perfect/passive auxiliary tokens (`has`/`have`/`had`/`was`/`were`/`been`)
+    /// that a trace event-pattern subject may carry ahead of its outcome verb
+    /// (`the deploy step has failed`, `slack.send was invoked`). Every operator
+    /// except `has ever` (which splits on the ` has ever ` marker before the
+    /// event pattern is ever parsed) hands the subject text — auxiliary still
+    /// attached — straight to `TraceEventPatternGrammar`, so the auxiliary must
+    /// be stripped there too, or it gets glued onto the subject (`.named("deploy
+    /// step has")` instead of `.step("deploy")`), which silently never matches a
+    /// real trace record. Extend via `=== language ===` `Trace-auxiliary synonyms:`.
+    public let tracePerfectAuxiliaries: Set<String>
+
     // MARK: - 3D table/checklist surface vocabulary
 
     /// Decision-table condition-column headers that carry no information of
@@ -205,6 +223,11 @@ public struct EnglishLexicon: Sendable {
     /// `isShellFence(_:)` is false — shell dialects keep their `shell.run` +
     /// command-hole-interpolation treatment regardless of any mapping entry.
     public let fenceToolMapping: [String: String]
+
+    /// Explicit singular→plural overrides for irregular nouns (`person` →
+    /// `people`). Multi-word heads consult both the full phrase and the final
+    /// word. Regular morphology still covers `entry` → `entries`.
+    public let irregularPlurals: [String: String]
 
     /// The configured tool ID for a fence language tag, or `nil` when no
     /// `Fence tool mapping:` entry matches. Lower-cases the tag before lookup.
@@ -259,6 +282,7 @@ public struct EnglishLexicon: Sendable {
             "try the following in order until one succeeds:",
             "try each of the following until one works:",
         ],
+        approvalToolIDSubstrings: Set<String> = ["approval", "approve"],
         timestampProperty: String = "updatedAt",
         grammar: FixedGrammar = .default,
         emptyMarkers: [String] = [" has no ", " have no "],
@@ -282,13 +306,28 @@ public struct EnglishLexicon: Sendable {
         descendingMarkers: [String] = ["descending", "newest", "descend"],
         possessivePronouns: [String] = ["their ", "his ", "her ", "its "],
         anaphoraMarkers: [String] = ["that result", "the same", "it", "them"],
+        traceOutcomeVerbs: [String: EventPatternAST.OutcomeVerb] = [
+            "failed": .failed,
+            "succeeded": .succeeded,
+            "invoked": .invoked,
+            "emitted": .emitted,
+            "prevented": .prevented,
+            "violated": .violated,
+            "occurred": .occurred,
+        ],
+        tracePerfectAuxiliaries: Set<String> = ["has", "have", "had", "was", "were", "been"],
         tableConditionHeaders: Set<String> = [
             "condition", "situation", "case", "scenario", "when", "if", "trigger", "context", "state",
         ],
         tableActionHeaders: Set<String> = ["action", "then", "do", "result"],
         tableWildcardTokens: Set<String> = ["*", "-", "\u{2014}", "\u{2013}", "any"],
         shellFenceLanguages: Set<String> = MeridianCore.shellFenceLanguages,
-        fenceToolMapping: [String: String] = [:]
+        fenceToolMapping: [String: String] = [:],
+        irregularPlurals: [String: String] = [
+            "person": "people", "child": "children", "man": "men", "woman": "women",
+            "mouse": "mice", "goose": "geese", "tooth": "teeth", "foot": "feet",
+            "ox": "oxen", "index": "indices", "matrix": "matrices",
+        ]
     ) {
         self.articles = articles
         self.parameterArticles = parameterArticles
@@ -305,6 +344,7 @@ public struct EnglishLexicon: Sendable {
         self.referenceHeadingWords = referenceHeadingWords
         self.guardedFenceIntroducers = guardedFenceIntroducers
         self.fallbackChainIntroducers = fallbackChainIntroducers
+        self.approvalToolIDSubstrings = approvalToolIDSubstrings
         self.timestampProperty = timestampProperty
         self.grammar = grammar
         self.emptyMarkers = emptyMarkers
@@ -318,11 +358,14 @@ public struct EnglishLexicon: Sendable {
         self.descendingMarkers = descendingMarkers
         self.possessivePronouns = possessivePronouns
         self.anaphoraMarkers = anaphoraMarkers
+        self.traceOutcomeVerbs = traceOutcomeVerbs
+        self.tracePerfectAuxiliaries = tracePerfectAuxiliaries
         self.tableConditionHeaders = tableConditionHeaders
         self.tableActionHeaders = tableActionHeaders
         self.tableWildcardTokens = tableWildcardTokens
         self.shellFenceLanguages = shellFenceLanguages
         self.fenceToolMapping = fenceToolMapping
+        self.irregularPlurals = irregularPlurals
     }
 
     /// Default English surface used when no custom lexicon is supplied.
@@ -505,10 +548,24 @@ public struct EnglishLexicon: Sendable {
 
     /// Regular pluralization, the inverse of `singularize`: `y→ies` after a
     /// consonant, `+es` after a sibilant, else `+s`. Already-plural inputs are
-    /// returned unchanged.
+    /// returned unchanged. Multi-word heads pluralize the final word only
+    /// (`journal entry` → `journal entries`). Explicit irregular overrides in
+    /// `irregularPlurals` win when present.
     public func pluralize(_ raw: String) -> String {
         let s = raw.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         guard !s.isEmpty else { return s }
+        if let override = irregularPlurals[s] { return override }
+        let parts = s.split(separator: " ", omittingEmptySubsequences: true).map(String.init)
+        guard let last = parts.last else { return s }
+        if let override = irregularPlurals[last] {
+            return (parts.dropLast() + [override]).joined(separator: " ")
+        }
+        let pluralLast = pluralizeWord(last)
+        if parts.count == 1 { return pluralLast }
+        return (parts.dropLast() + [pluralLast]).joined(separator: " ")
+    }
+
+    private func pluralizeWord(_ s: String) -> String {
         if s.hasSuffix("s") || s.hasSuffix("x") || s.hasSuffix("z")
             || s.hasSuffix("ch") || s.hasSuffix("sh") { return s.hasSuffix("s") ? s : s + "es" }
         if s.hasSuffix("y"), let prev = s.dropLast().last, !"aeiou".contains(prev) {
@@ -607,8 +664,13 @@ public struct EnglishLexicon: Sendable {
         conditionHeaderSynonyms: [String] = [],
         actionHeaderSynonyms: [String] = [],
         wildcardSynonyms: [String] = [],
+        traceOutcomeSynonyms: [String: String] = [:],
+        traceAuxiliarySynonyms: [String] = [],
         shellFenceSynonyms: [String] = [],
-        fenceToolSynonyms: [String: String] = [:]
+        fenceToolSynonyms: [String: String] = [:],
+        guardedFenceIntroducerSynonyms: [String] = [],
+        fallbackChainIntroducerSynonyms: [String] = [],
+        approvalToolSynonyms: [String] = []
     ) -> EnglishLexicon {
         let mergedComparisons = comparisonSynonyms + comparisonMarkers
         var mergedDuration = durationUnits
@@ -620,6 +682,20 @@ public struct EnglishLexicon: Sendable {
             .filter { seen.insert($0).inserted }
             .sorted { $0.count > $1.count }
 
+        seen = Set<String>()
+        let mergedGuardedFence = (
+            guardedFenceIntroducerSynonyms.map { $0.lowercased() }.sorted { $0.count > $1.count }
+            + guardedFenceIntroducers.sorted { $0.count > $1.count }
+        )
+            .filter { seen.insert($0).inserted }
+
+        seen = Set<String>()
+        let mergedFallbackChain = (
+            fallbackChainIntroducerSynonyms.map { $0.lowercased() }.sorted { $0.count > $1.count }
+            + fallbackChainIntroducers.sorted { $0.count > $1.count }
+        )
+            .filter { seen.insert($0).inserted }
+
         // Temporal-window synonyms become spaced markers (` <phrase> `) so they
         // match mid-string exactly like the defaults.
         let pastWindow = pastWindowSynonyms.map { (" \($0.lowercased()) ", ComparisonOpAST.withinPast) }
@@ -630,6 +706,12 @@ public struct EnglishLexicon: Sendable {
 
         var mergedFenceTools = fenceToolMapping
         for (k, v) in fenceToolSynonyms { mergedFenceTools[k.lowercased()] = v }
+
+        var mergedTraceOutcomes = traceOutcomeVerbs
+        for (key, value) in traceOutcomeSynonyms {
+            guard let outcome = EventPatternAST.OutcomeVerb(rawValue: value.lowercased()) else { continue }
+            mergedTraceOutcomes[key.lowercased()] = outcome
+        }
 
         return EnglishLexicon(
             articles: articles,
@@ -645,8 +727,9 @@ public struct EnglishLexicon: Sendable {
             normativeCueWords: normativeCueWords.union(normativeCueSynonyms.map { $0.lowercased() }),
             inferenceCueWords: inferenceCueWords.union(inferenceCueSynonyms.map { $0.lowercased() }),
             referenceHeadingWords: referenceHeadingWords.union(referenceHeadingSynonyms.map { $0.lowercased() }),
-            guardedFenceIntroducers: guardedFenceIntroducers,
-            fallbackChainIntroducers: fallbackChainIntroducers,
+            guardedFenceIntroducers: mergedGuardedFence,
+            fallbackChainIntroducers: mergedFallbackChain,
+            approvalToolIDSubstrings: approvalToolIDSubstrings.union(approvalToolSynonyms.map { $0.lowercased() }),
             timestampProperty: timestampProperty ?? self.timestampProperty,
             grammar: grammar,
             emptyMarkers: emptySynonyms.map { " \($0.lowercased()) " } + emptyMarkers,
@@ -660,11 +743,14 @@ public struct EnglishLexicon: Sendable {
             descendingMarkers: descendingSynonyms.map { $0.lowercased() } + descendingMarkers,
             possessivePronouns: possessiveSynonyms.map { "\($0.lowercased()) " } + possessivePronouns,
             anaphoraMarkers: anaphoraSynonyms.map { $0.lowercased() } + anaphoraMarkers,
+            traceOutcomeVerbs: mergedTraceOutcomes,
+            tracePerfectAuxiliaries: tracePerfectAuxiliaries.union(traceAuxiliarySynonyms.map { $0.lowercased() }),
             tableConditionHeaders: tableConditionHeaders.union(conditionHeaderSynonyms.map { $0.lowercased() }),
             tableActionHeaders: tableActionHeaders.union(actionHeaderSynonyms.map { $0.lowercased() }),
             tableWildcardTokens: tableWildcardTokens.union(wildcardSynonyms.map { $0.lowercased() }),
             shellFenceLanguages: shellFenceLanguages.union(shellFenceSynonyms.map { $0.lowercased() }),
-            fenceToolMapping: mergedFenceTools
+            fenceToolMapping: mergedFenceTools,
+            irregularPlurals: irregularPlurals
         )
     }
 }

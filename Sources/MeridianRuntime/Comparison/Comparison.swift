@@ -139,7 +139,9 @@ public enum MeridianComparison {
     }
 
     /// The identity string of a Value for relation matching: a `.string`/
-    /// `.reference` directly, the `id` member of a record, or `nil`.
+    /// `.reference` directly, the `id` member of a record (or an opaque
+    /// domain-typed value — a workflow's typed parameter, e.g. `the user` —
+    /// decoded the same way `Value.member` does), or `nil`.
     private static func identityString(_ v: Value?) -> String? {
         switch v {
         case .string(let s)?:           return s
@@ -148,6 +150,8 @@ public enum MeridianComparison {
             if case .string(let s)? = d["id"] { return s }
             if case .reference(let r)? = d["id"] { return r }
             return nil
+        case .opaque(let box)?:
+            return identityString(Value.opaque(box).member("id"))
         default:                        return nil
         }
     }

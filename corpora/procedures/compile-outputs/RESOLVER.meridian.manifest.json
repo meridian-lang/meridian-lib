@@ -19,88 +19,88 @@
       "adjective" : "orphaned",
       "function" : "meridianDef_AuditRow_orphaned",
       "kind" : "audit row",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "finalized",
       "function" : "meridianDef_Batch_finalized",
       "kind" : "batch",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "ready",
       "function" : "meridianDef_Batch_ready",
       "kind" : "batch",
-      "line" : 26
+      "line" : 28
     },
     {
       "adjective" : "settled",
       "function" : "meridianDef_Batch_settled",
       "kind" : "batch",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "violated",
       "function" : "meridianDef_Constraint_violated",
       "kind" : "constraint",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "bloated",
       "function" : "meridianDef_DatabaseTable_bloated",
       "kind" : "database table",
-      "line" : 37
+      "line" : 39
     },
     {
       "adjective" : "lagging",
       "function" : "meridianDef_IndexJob_lagging",
       "kind" : "index job",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Ledger_open",
       "kind" : "ledger",
-      "line" : 25
+      "line" : 27
     },
     {
       "adjective" : "applied",
       "function" : "meridianDef_Migration_applied",
       "kind" : "migration",
-      "line" : 35
+      "line" : 37
     },
     {
       "adjective" : "failed",
       "function" : "meridianDef_Migration_failed",
       "kind" : "migration",
-      "line" : 36
+      "line" : 38
     },
     {
       "adjective" : "drifted",
       "function" : "meridianDef_Record_drifted",
       "kind" : "record",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "duplicate",
       "function" : "meridianDef_Record_duplicate",
       "kind" : "record",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Record_stale",
       "kind" : "record",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a migration",
-      "line" : 47,
+      "line" : 49,
       "name" : "application",
       "right_cardinality" : "one",
       "right_kind" : "a database table",
@@ -110,7 +110,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a ledger",
-      "line" : 45,
+      "line" : 47,
       "name" : "auditing",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -120,7 +120,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a record",
-      "line" : 43,
+      "line" : 45,
       "name" : "canonicalization",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -130,7 +130,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a batch",
-      "line" : 41,
+      "line" : 43,
       "name" : "retrying",
       "right_cardinality" : "one",
       "right_kind" : "a ledger",
@@ -140,7 +140,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a batch",
-      "line" : 39,
+      "line" : 41,
       "name" : "settlement",
       "right_cardinality" : "one",
       "right_kind" : "a ledger",
@@ -164,7 +164,7 @@
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 25,
+        "line" : 26,
         "text" : "Workflow"
       }
     ],
@@ -183,14 +183,14 @@
         "heading" : "Dispatch table — steps",
         "line" : 8,
         "lines" : [
-          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHJlY29uY2lsZSBsZWRnZXIgfCByZWNvbmNpbGVsZWRnZXIgfAp8IGFnaW5nIHJlcG9ydCB8IGFnaW5ncmVwb3J0IHwKfCBkZWR1cGUgcmVjb3JkcyB8IGRlZHVwZXJlY29yZHMgfAp8IGNhc2NhZGUgY2xvc2UgfCBjYXNjYWRlY2xvc2UgfAp8IHJlYnVpbGQgbGFnZ2luZyBpbmRleGVzIHwgcmVidWlsZGluZGV4IHwKfCB2YWxpZGF0ZSBjb25zdHJhaW50cyB8IHZhbGlkYXRlY29uc3RyYWludHMgfAp8IHB1cmdlIGV4cGlyZWQgcmVjb3JkcyB8IHB1cmdlZXhwaXJlZCB8Cnwgc2V0dGxlIHJlYWR5IGJhdGNoZXMgfCBzZXR0bGViYXRjaCB8CnwgYXBwbHkgcGVuZGluZyBtaWdyYXRpb25zIHwgbWlncmF0aW9uYXBwbHkgfAp8IHZhY3V1bSBibG9hdGVkIHRhYmxlcyB8IHZhY3V1bXRhYmxlcyB8CnwgcmV0cnkgZmFpbGVkIGJhdGNoZXMgfCByZXRyeWZhaWxlZGJhdGNoIHwKfCBjaGVja3N1bSBhdWRpdCB8IGNoZWNrc3VtYXVkaXQgfA=="
+          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHJlY29uY2lsZSBsZWRnZXIgfCByZWNvbmNpbGVsZWRnZXIgfAp8IGFnaW5nIHJlcG9ydCB8IGFnaW5ncmVwb3J0IHwKfCBkZWR1cGUgcmVjb3JkcyB8IGRlZHVwZXJlY29yZHMgfAp8IGNhc2NhZGUgY2xvc2UgfCBjYXNjYWRlY2xvc2UgfAp8IHJlYnVpbGQgbGFnZ2luZyBpbmRleGVzIHwgcmVidWlsZGluZGV4IHwKfCB2YWxpZGF0ZSBjb25zdHJhaW50cyB8IHZhbGlkYXRlY29uc3RyYWludHMgfAp8IHB1cmdlIGV4cGlyZWQgcmVjb3JkcyB8IHB1cmdlZXhwaXJlZCB8Cnwgc2V0dGxlIHJlYWR5IGJhdGNoZXMgfCBzZXR0bGViYXRjaCB8CnwgYXBwbHkgcGVuZGluZyBtaWdyYXRpb25zIHwgbWlncmF0aW9uYXBwbHkgfAp8IHZhY3V1bSBibG9hdGVkIHRhYmxlcyB8IHZhY3V1bXRhYmxlcyB8CnwgcmV0cnkgZmFpbGVkIGJhdGNoZXMgfCByZXRyeWZhaWxlZGJhdGNoIHwKfCBjaGVja3N1bSBhdWRpdCB8IGNoZWNrc3VtYXVkaXQgfAp8IGNoZWNrIGxlZGdlciBwYXJpdHkgfCBsZWRnZXJwYXJpdHl3YXRjaCB8"
         ],
         "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Workflow",
-        "line" : 25,
+        "line" : 26,
         "lines" : [
           "Look up the skill corresponding to the trigger phrase and emit the selected",
           "skill id"
@@ -202,35 +202,35 @@
   "meridian_verbs" : [
     {
       "base" : "apply",
-      "line" : 54,
+      "line" : 56,
       "past_participle" : "applied",
       "relation" : "application",
       "third_person" : "applies"
     },
     {
       "base" : "audit",
-      "line" : 53,
+      "line" : 55,
       "past_participle" : "audited",
       "relation" : "auditing",
       "third_person" : "audits"
     },
     {
       "base" : "canonicalize",
-      "line" : 52,
+      "line" : 54,
       "past_participle" : "canonicalized",
       "relation" : "canonicalization",
       "third_person" : "canonicalizes"
     },
     {
       "base" : "retry",
-      "line" : 51,
+      "line" : 53,
       "past_participle" : "retried",
       "relation" : "retrying",
       "third_person" : "retries"
     },
     {
       "base" : "settle",
-      "line" : 50,
+      "line" : 52,
       "past_participle" : "settled",
       "relation" : "settlement",
       "third_person" : "settles"
@@ -252,6 +252,8 @@
       "parameters" : [
 
       ],
+      "skill_name" : "RESOLVER",
+      "skill_version_hash" : "aa99aa8841610188c2df10e8f1a73d6dec82d53b477d254b7e6b317e500404a0",
       "source_name" : "entry",
       "swift_struct" : "Entry"
     }

@@ -18,6 +18,7 @@ Routes an ERP operator request to the synthetic ERP skill that owns it.
 | approve high value orders | orderapproval |
 | replenish backorders | backorderreplenish |
 | process returns | returnsprocessing |
+| monitor payment failures | paymentfailuremonitor |
 
 ## Workflow
 

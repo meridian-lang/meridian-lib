@@ -28,14 +28,10 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Omit the raw unified diff; emit summary-only reports.")
     var noDiff: Bool = false
 
-    @Option(name: .long, help: "Comma-separated ParserTrace categories (or `all`). Also reads MERIDIAN_TRACE.")
-    var trace: String?
-
-    @Option(name: .long, help: "Write ParserTrace output to this file instead of stderr.")
-    var traceFile: String?
+    @OptionGroup var cliTrace: CLITraceOptions
 
     public func run() async throws {
-        let traceInstance = try makeCLITrace(spec: trace, file: traceFile)
+        let traceInstance = try cliTrace.makeTrace()
         if batch {
             try runBatch(trace: traceInstance)
         } else {
@@ -110,7 +106,7 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
 
         // Discover original sources: <name>/SKILL.md and top-level *.md.
         let originalSources = try discoverOriginals(in: origDir)
-        let skippedNonSkillDirs = countDirsWithoutSkill(in: origDir)
+        let skippedNonSkillDirs = try countDirsWithoutSkill(in: origDir)
 
         let outDir = out.map { URL(fileURLWithPath: $0).standardized }
         if let outDir { try fm.createDirectory(at: outDir, withIntermediateDirectories: true) }
@@ -180,22 +176,22 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
     private func discoverOriginals(in dir: URL) throws -> [URL] {
         let fm = FileManager.default
         var result: [URL] = []
-        // <name>/SKILL.md
-        guard let enumerator = fm.enumerator(at: dir, includingPropertiesForKeys: nil) else { return [] }
+        guard let enumerator = fm.enumerator(at: dir, includingPropertiesForKeys: nil) else {
+            throw cliDirectoryEnumerationFailed(dir.path)
+        }
         for case let url as URL in enumerator where url.lastPathComponent.uppercased() == "SKILL.MD" {
             result.append(url)
         }
-        // Top-level *.md (e.g. RESOLVER.md), excluding leading-underscore support docs.
-        let topLevel = (try? fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)) ?? []
+        let topLevel = try listDirectoryContents(at: dir, label: "originals directory")
         for url in topLevel where url.pathExtension.lowercased() == "md" && !url.lastPathComponent.hasPrefix("_") {
             result.append(url)
         }
         return result
     }
 
-    private func countDirsWithoutSkill(in dir: URL) -> Int {
+    private func countDirsWithoutSkill(in dir: URL) throws -> Int {
         let fm = FileManager.default
-        let entries = (try? fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: [.isDirectoryKey])) ?? []
+        let entries = try listDirectoryContents(at: dir, label: "batch originals directory")
         var count = 0
         for url in entries {
             var isDir: ObjCBool = false
@@ -268,7 +264,7 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         var merged = MerConfigFile()
         for url in urls {
             let source = try String(contentsOf: url, encoding: .utf8)
-            merged = merged.merging(try parser.parse(source, file: url.lastPathComponent))
+            merged = try merged.merging(try parser.parse(source, file: url.lastPathComponent))
         }
         return EnglishLexicon.default.merging(
             comparisonSynonyms: merged.languageSynonyms.comparisonSynonyms,
@@ -319,6 +315,8 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         out.append("- Tier 2 (light edits): \(tier2)")
         out.append("- Tier 3 (structural rewrite): \(tier3)")
         out.append("- Average similarity: \(percent(avg))")
+        let totalGeneratedLOC = rows.reduce(0) { $0 + $1.metrics.generatedLOC }
+        out.append("- generated_loc total: \(totalGeneratedLOC) non-blank ported lines")
         out.append("- Sections inert total: \(inertSections)/\(totalSections) (avg total-inert ratio \(percent(avgInertRatio)); includes intentional docs/templates/tools metadata)")
         out.append("- Inert deviations: \(inertDeviations)")
         out.append("- Operational inert: \(operationalInertSections)")
@@ -333,15 +331,15 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         out.append("")
         out.append("## Per-skill")
         out.append("")
-        out.append("| skill | tier | similarity | lines | inert deviations | inert | operational inert | judgment | canonical_drift | frontmatter added | categories |")
-        out.append("|---|---|---|---|---|---|---|---|---|---|---|")
+        out.append("| skill | tier | similarity | lines | generated_loc | inert deviations | inert | operational inert | judgment | canonical_drift | frontmatter added | categories |")
+        out.append("|---|---|---|---|---|---|---|---|---|---|---|---|")
         for r in rows {
             let stem = (r.portedName as NSString).deletingPathExtension
             let fmAdded = r.frontmatterAdded.isEmpty ? "(none)" : r.frontmatterAdded.joined(separator: " ")
             let cats = r.categories.isEmpty ? "(none)" : r.categories.joined(separator: " ")
             let m = r.metrics
             let drift = "\(m.canonicalDriftSynonym)/\(m.canonicalDriftStructure)/\(m.canonicalDriftDesugar)/\(m.canonicalDriftMeaning)"
-            out.append("| [\(stem)](\(stem).md) | \(r.tier) | \(percent(r.similarity)) | \(r.originalLineCount)→\(r.portedLineCount) | \(r.inertSectionDeviations.count) | \(m.inertSections)/\(m.totalSections) | \(m.operationalInertSections) | \(m.judgmentBlocks)/\(m.judgmentLines) | \(drift) | \(fmAdded) | \(cats) |")
+            out.append("| [\(stem)](\(stem).md) | \(r.tier) | \(percent(r.similarity)) | \(r.originalLineCount)→\(r.portedLineCount) | \(m.generatedLOC) | \(r.inertSectionDeviations.count) | \(m.inertSections)/\(m.totalSections) | \(m.operationalInertSections) | \(m.judgmentBlocks)/\(m.judgmentLines) | \(drift) | \(fmAdded) | \(cats) |")
         }
         if !unpairedOriginals.isEmpty {
             out.append("")

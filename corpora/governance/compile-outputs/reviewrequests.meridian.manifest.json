@@ -23,58 +23,58 @@
       "adjective" : "pending",
       "function" : "meridianDef_AccessRequest_pending",
       "kind" : "access request",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_AccessRequest_stale",
       "kind" : "access request",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "fresh",
       "function" : "meridianDef_Credential_fresh",
       "kind" : "credential",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "overused",
       "function" : "meridianDef_Credential_overused",
       "kind" : "credential",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "classified",
       "function" : "meridianDef_Resource_classified",
       "kind" : "resource",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "authorized",
       "function" : "meridianDef_User_authorized",
       "kind" : "user",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_User_cleared",
       "kind" : "user",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "privileged",
       "function" : "meridianDef_User_privileged",
       "kind" : "user",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 36,
+      "line" : 38,
       "name" : "assignment",
       "right_cardinality" : "one",
       "right_kind" : "a role",
@@ -84,7 +84,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a policy",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "an environment",
@@ -94,7 +94,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 38,
+      "line" : 40,
       "name" : "grant",
       "right_cardinality" : "one",
       "right_kind" : "a resource",
@@ -266,21 +266,21 @@
   "meridian_verbs" : [
     {
       "base" : "authorize",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "authorized",
       "relation" : "assignment",
       "third_person" : "authorizes"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "grant",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "granted",
       "relation" : "grant",
       "third_person" : "grants"
@@ -293,59 +293,59 @@
   "source_map" : [
     {
       "meridian_line" : 33,
-      "swift_line" : 442
+      "swift_line" : 465
     },
     {
       "meridian_line" : 52,
-      "swift_line" : 447
+      "swift_line" : 470
     },
     {
-      "meridian_line" : 48,
-      "swift_line" : 452
+      "meridian_line" : 36,
+      "swift_line" : 475
     },
     {
       "meridian_line" : 37,
-      "swift_line" : 464
+      "swift_line" : 489
     },
     {
       "meridian_line" : 38,
-      "swift_line" : 469
+      "swift_line" : 494
     },
     {
       "meridian_line" : 39,
-      "swift_line" : 473
+      "swift_line" : 498
     },
     {
-      "meridian_line" : 66,
-      "swift_line" : 480
+      "meridian_line" : 40,
+      "swift_line" : 507
     },
     {
       "meridian_line" : 41,
-      "swift_line" : 496
+      "swift_line" : 526
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 535
+      "swift_line" : 594
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 540
+      "swift_line" : 599
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 580
+      "swift_line" : 668
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 585
+      "swift_line" : 673
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 625
+      "swift_line" : 742
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 630
+      "swift_line" : 747
     }
   ],
   "tools_used" : [
@@ -364,7 +364,19 @@
           "name" : "accessRequest"
         }
       ],
+      "skill_name" : "review requests",
+      "skill_version_hash" : "c4785a59891ce19e5fcd2bcdbe7e710621008fc2811ba500111755873b7d8e7e",
       "source_name" : "review requests a reviewer a access request",
+      "step_paths" : [
+        "\/ReviewRequestsReviewerAccessRequest\/guarantees\/invariants\/8bd1dc391be67a2f49d97f8a2cada8630c84f0750decec99a5ca20fee503694a",
+        "\/ReviewRequestsReviewerAccessRequest\/rules-steps\/procedure\/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353",
+        "\/ReviewRequestsReviewerAccessRequest\/workflow\/procedure\/01101df8202c9f4b795badf284e523f0462e81ead3c52906cca474eb717819ca",
+        "\/ReviewRequestsReviewerAccessRequest\/workflow\/procedure\/0f65d1b125dd2c8d1600e57224b388504cb279e140fe2745ecd03ec1a0af02ab",
+        "\/ReviewRequestsReviewerAccessRequest\/workflow\/procedure\/2121dc77d3d6c9689c362acbd5fb3de2d6556fcb8df732c685f819ac3aa3d6ce",
+        "\/ReviewRequestsReviewerAccessRequest\/workflow\/procedure\/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1",
+        "\/ReviewRequestsReviewerAccessRequest\/workflow\/procedure\/fd9bc1850e3919f213b4375c42cee9f8f7a1c026c314a86de402d9e070850b91",
+        "\/ReviewRequestsReviewerAccessRequest\/workflow\/procedure\/iterate.body\/537550b9a642af34ef3df913e5939230d9d90aff3994665ede6a8aee442bece6"
+      ],
       "swift_struct" : "ReviewRequestsReviewerAccessRequest"
     },
     {
@@ -372,7 +384,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "review requests",
+      "skill_version_hash" : "c4785a59891ce19e5fcd2bcdbe7e710621008fc2811ba500111755873b7d8e7e",
       "source_name" : "when reviewAccessRequests fires",
+      "step_paths" : [
+        "\/WhenReviewaccessrequestsFires\/root\/procedure\/4b6634052bd78371e8a9b3aed1a0a91277924d2660f6d6671db55e0950163661",
+        "\/WhenReviewaccessrequestsFires\/root\/procedure\/7f1576d68c45c3942ffb5fec4ec74dd6ba5b24a8b317a56a520be610b40fd554"
+      ],
       "swift_struct" : "WhenReviewaccessrequestsFires"
     },
     {
@@ -380,7 +398,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "review requests",
+      "skill_version_hash" : "c4785a59891ce19e5fcd2bcdbe7e710621008fc2811ba500111755873b7d8e7e",
       "source_name" : "when reviewPendingRequests fires",
+      "step_paths" : [
+        "\/WhenReviewpendingrequestsFires\/root\/procedure\/fd02cd28a30781615a91e809968b39cc9ccad3b3ac156b123fe7e9a5ffec9394",
+        "\/WhenReviewpendingrequestsFires\/root\/procedure\/fe99e43bba10e568318db038dd2a9fe8e613dab714d1fda34a5be9f55928e408"
+      ],
       "swift_struct" : "WhenReviewpendingrequestsFires"
     },
     {
@@ -388,7 +412,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "review requests",
+      "skill_version_hash" : "c4785a59891ce19e5fcd2bcdbe7e710621008fc2811ba500111755873b7d8e7e",
       "source_name" : "when workRequestQueue fires",
+      "step_paths" : [
+        "\/WhenWorkrequestqueueFires\/root\/procedure\/b1c131bbc41bb2a01d3d9f22af2538b4ad1d5f2686cc7aed96e8a2d9884ac95f",
+        "\/WhenWorkrequestqueueFires\/root\/procedure\/f3cb1b80504d4012a851ee973c8ba9b401d8dfcfeb93d3d0cb08a165fa73ee05"
+      ],
       "swift_struct" : "WhenWorkrequestqueueFires"
     }
   ]

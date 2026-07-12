@@ -13,7 +13,7 @@ extension SkillMigrator {
         var pendingTableMarker = false
         var pendingChecklistMarker = false
         let classifier = ConditionClassifier(symbols: knowledge.symbols, lexicon: knowledge.lexicon, trace: trace)
-        let trial = TrialLowering(knowledge: knowledge)
+        let trial = TrialLowering(knowledge: knowledge, probeTally: probeSession.tally)
 
         var i = body.startIndex
         while i < body.endIndex {
@@ -68,7 +68,7 @@ extension SkillMigrator {
             }
 
             if isWholeLineBacktickedCommand(t) { continue }
-            if isChoiceGateLine(t) { continue }
+            if isChoiceGateLine(t, lexicon: knowledge.lexicon) { continue }
             if isTaskListLine(t) {
                 let item = normalizeMarkdownLineForLowering(stripTaskListBox(t))
                 if trial.isCheckableCondition(item) { continue }

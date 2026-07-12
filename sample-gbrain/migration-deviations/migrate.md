@@ -24,6 +24,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L131 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
+- generated_loc: 98 non-blank ported lines
 - Sections inert total: 9/9 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0

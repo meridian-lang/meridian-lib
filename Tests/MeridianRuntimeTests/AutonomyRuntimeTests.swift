@@ -140,4 +140,63 @@ struct AutonomyRuntimeTests {
 
         #expect(results["recovered"] == .string("recovered-value"))
     }
+
+    // MARK: - SEM-4-04 judgment witnessing (autonomy dispatch path)
+
+    @Test("autonomyStart/autonomyEnd carry a matching input_payload_hash and the declared output_kind")
+    func autonomyEventsCarryInputHashAndOutputKind() async throws {
+        let registry = ToolRegistry()
+        await registry.register(tool: "demo.tool", .closure { args in args["x"] ?? .null })
+        let observer = InMemoryObserver()
+        let runtime = Runtime(toolRegistry: registry, observer: observer, actPlanner: OneActionActPlanner())
+
+        _ = try await runtime.executeAutonomousLoop(
+            prose: "fix it",
+            snapshot: State().snapshot(),
+            scopedTools: ["demo.tool"],
+            maxSteps: 4,
+            outputKind: "text"
+        )
+
+        let events = await observer.events
+        let start = try #require(events.first { $0.kind == .autonomyStart })
+        let end = try #require(events.first { $0.kind == .autonomyEnd })
+
+        let startHash = try #require(start.payload["input_payload_hash"])
+        guard case .string(let startHashValue) = startHash, !startHashValue.isEmpty else {
+            Issue.record("expected a non-empty string input_payload_hash, got \(startHash)")
+            return
+        }
+        #expect(end.payload["input_payload_hash"] == startHash)
+        #expect(start.payload["output_kind"] == .string("text"))
+        #expect(end.payload["output_kind"] == .string("text"))
+
+        let outputHash = try #require(end.payload["output_payload_hash"])
+        guard case .string(let outputHashValue) = outputHash, !outputHashValue.isEmpty else {
+            Issue.record("expected a non-empty string output_payload_hash, got \(outputHash)")
+            return
+        }
+    }
+
+    @Test("autonomyEnd's output_payload_hash reflects the empty bindings when the loop stops before acting")
+    func autonomyEndHashesEmptyBindingsWhenStoppedEarly() async throws {
+        var state = State()
+        state.bind("blocked", Value.boolean(true))
+        let planner = CountingActPlanner()
+        let observer = InMemoryObserver()
+        let runtime = Runtime(toolRegistry: ToolRegistry(), observer: observer, actPlanner: planner)
+
+        _ = try await runtime.executeAutonomousLoop(
+            prose: "fix it",
+            snapshot: state.snapshot(),
+            scopedTools: [],
+            maxSteps: 4,
+            unless: { $0.asValues["blocked"] == .boolean(true) }
+        )
+
+        let end = try #require(await observer.events.first { $0.kind == .autonomyEnd })
+        #expect(end.payload["output_kind"] == .string("record"))
+        #expect(end.payload["output_payload_hash"] != nil)
+        #expect(await planner.calls == 0)
+    }
 }

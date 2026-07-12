@@ -100,7 +100,8 @@ of the normal test workflow.
 4. **Parse** the per-file table (region%, line%, missed regions) for rows in the
    in-scope `Meridian*` modules.
 5. **Apply `coverage-exclusions.md`** — per-file floors override the global
-   threshold.
+   threshold. Files listed in `full-only-files` are enforced only for `--full`
+   runs, because their meaningful coverage comes from `MeridianSlowIntegrationTests`.
 6. **Report**, and with `--gate`, **exit non-zero** if any non-excluded file is
    below its required region coverage.
 
@@ -150,6 +151,9 @@ not seconds.
 
 ```bash
 scripts/coverage.swift --full --gate
+
+# Reuse a known full-profile and enforce full-only files too
+scripts/coverage.swift --full --no-test --gate
 ```
 
 ### 3. Baseline/exclusion regeneration (maintenance-only, always full)
@@ -213,8 +217,8 @@ blocks; trailing `# comments` and blank lines are ignored:
 
 ```file-thresholds
 # path-substring                                  = min-region-percent
-MeridianCore/Lowering/RuleInjector.swift          = 75
-MeridianRuntime/Planning/PlanExecutor.swift       = 42
+MeridianCore/Lowering/RuleInjector.swift          = 92.65
+MeridianRuntime/Planning/PlanExecutor.swift       = 97.90
 …
 ```
 ````
@@ -285,9 +289,11 @@ permanent sub-100 floor for reachable code.
 
 ## Current state
 
-At the lock point (see `IMPLEMENTATION_LOG.md` → "2026-06-14 — Coverage lock"):
+At the lock point (see `IMPLEMENTATION_LOG.md` or
+`.ai/implementation-log-archive/` → "2026-06-14 — Coverage lock";
+refreshed through the Wave 8 gap-closure pass):
 
-- **TOTAL ≈ 82% region / 84% function / 90% line** across the in-scope modules.
+- **TOTAL ≈ 93% region / 97% function / 96% line** across the in-scope modules.
 - **~33 files at literal 100%** region coverage (the gate requires it of them).
 - The remainder carry documented floors in the two buckets above.
 - The gate is **green**.
@@ -396,5 +402,5 @@ See also: [`../../Tests/README.md`](../../Tests/README.md) (test suites and the
 condensed coverage section), [`coverage-exclusions.md`](coverage-exclusions.md)
 (the live floor list), [`coverage-baseline.md`](coverage-baseline.md) (the
 generated report), [`VERBALIZER_EVIDENCE.md`](VERBALIZER_EVIDENCE.md) (Wave 7
-semantic evidence), and `../../IMPLEMENTATION_LOG.md` (the lock decision and
-rationale).
+semantic evidence), and `../../IMPLEMENTATION_LOG.md` plus
+`../../.ai/implementation-log-archive/` (the lock decision and rationale).

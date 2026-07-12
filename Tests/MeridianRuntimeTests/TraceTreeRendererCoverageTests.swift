@@ -97,6 +97,21 @@ struct TraceTreeRendererCoverageTests {
         #expect(out.contains("@a.meridian:3"))
     }
 
+    @Test("semantic trace envelopes render TraceTag labels while legacy JSONL still works")
+    func semanticEnvelopeParsing() {
+        let jsonl = """
+        {"record":{"schemaVersion":1,"id":"01HX1","at":"2026-07-11T00:00:00.000Z","ingestOrder":1,"run":"run-1","step":"root","skillName":"SemanticFlow","skillVersionHash":"abc123","tag":"invoked","subject":"workflow","payloadHash":"ph1","outcome":"success"},"checksum":"ignored-by-renderer"}
+        {"record":{"schemaVersion":1,"id":"01HX2","at":"2026-07-11T00:00:01.000Z","ingestOrder":2,"run":"run-1","step":"root/tool","skillName":"SemanticFlow","skillVersionHash":"abc123","tag":"judged","subject":"risk-check","payloadHash":"ph2","outcome":"failure"},"checksum":"ignored-by-renderer"}
+        {"record":{"schemaVersion":1,"id":"01HX3","at":"2026-07-11T00:00:02.000Z","ingestOrder":3,"run":"run-1","step":"root","skillName":"SemanticFlow","skillVersionHash":"abc123","tag":"completed","subject":"workflow","payloadHash":"ph3","outcome":"success"},"checksum":"ignored-by-renderer"}
+        {"run_id":"run-2","seq":1,"kind":"workflow.started","payload":{"workflowName":"LegacyFlow"}}
+        {"run_id":"run-2","seq":2,"kind":"workflow.completed","payload":{"reason":"ok","duration_ms":5}}
+        """
+        let out = TraceTreeRenderer().render(jsonl: jsonl)
+        for needle in ["SemanticFlow", "invoked     workflow", "judged      risk-check (failure)", "completed   workflow (success)", "LegacyFlow"] {
+            #expect(out.contains(needle), Comment(rawValue: "missing \(needle) in:\n\(out)"))
+        }
+    }
+
     @Test("numeric and boolean payload values stringify in labels")
     func numericPayloadLabels() {
         let events: [RE] = [

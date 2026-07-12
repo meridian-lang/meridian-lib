@@ -43,6 +43,7 @@ meridian compile <source> [options]
 | `--no-format` | false | Skip `swift-format` post-processing. |
 | `--trace <categories>` | (none) | Enable `ParserTrace` output. Comma or space-separated. Examples: `phrase`, `phrase.match`, `lowering`, `timing`, `all`. Also read from `MERIDIAN_TRACE` env var. |
 | `--trace-file <path>` | stderr | Write trace output to a file instead of stderr. |
+| `--trace-format <text\|jsonl>` | `text` | Trace record shape: `text` (human `[category]` lines) or `jsonl` (one JSON object per line; each record includes `corr` matching the correlation id printed when tracing starts). |
 | `--diagnostics-format <human\|json>` | `human` | `human` is the snippet + caret form; `json` is the stable machine schema for editors/CI (includes the `decision` id). |
 | `--fix` | false | Preview unambiguous quick-fixes (a diagnostic with one ranged suggestion). **Dry-run** unless `--write`. The fixer narrows to the single misspelled token and only applies an unambiguous best match, so it can't corrupt a line. |
 | `--write` | false | With `--fix`, apply the previewed fixes to the source files in place. |
@@ -72,7 +73,9 @@ On success, prints `✓ <output-path>` and exits with code 0.
 Trace setup errors use the same exit path. An unknown `--trace` token is a
 coded `MER2010` hard error with did-you-mean guidance; an unwritable
 `--trace-file` path is `MER5011`. Both render before the command does its main
-work and exit 1.
+work and exit 1. When `--trace` is set, the CLI prints one stderr line with the
+trace correlation id (`trace correlation id: …`); JSONL records carry the same
+value in their `corr` field.
 
 ---
 
@@ -171,6 +174,38 @@ sentences: 42
 unscreened: 0.002345 s
 screened:   0.002100 s
 screened candidates: 57
+```
+
+---
+
+## `meridian bench-trace`
+
+Benchmark replay-query latency over synthetic semantic trace stores. This is the
+Wave 8 replay/performance companion to `bench-parse`.
+
+```bash
+meridian bench-trace [--format text|json]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--format <text\|json>` | `text` | Human-readable summary or stable JSON report. |
+
+Behavior:
+
+- measures `10_000`- and `100_000`-event synthetic datasets
+- covers both store kinds (`in_memory`, `jsonl`)
+- records `cold` and `warm` labels
+- benchmarks operator families `ever`, `window`, `count`, `streak`, `since`, and `statistical_frequency`
+
+Committed baseline: [`coverage/bench-trace-wave8.json`](coverage/bench-trace-wave8.json).
+
+```bash
+# Human-readable summary
+meridian bench-trace
+
+# Stable JSON report
+meridian bench-trace --format json
 ```
 
 ---
@@ -669,6 +704,151 @@ under the `.skill` category (`meridian migrate-skill SKILL.md --trace skill`);
 Unknown trace categories are `MER2010` hard errors. Unwritable trace files are
 `MER5011` hard errors at startup; if an already-opened file sink fails
 mid-stream, the trace visibly falls back to stderr.
+
+---
+
+## `meridian trace verify`
+
+Verify a semantic trace-store JSONL file for tampering, checksum mismatches,
+run-local ordering drift, payload-hash mismatches, quarantine sidecars, and
+hash-chain integrity.
+
+```bash
+meridian trace verify <trace.jsonl> --run <run-id> [--json]
+```
+
+Top-level alias:
+
+```bash
+meridian trace-verify <trace.jsonl> --run <run-id> [--json]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--run <run-id>` | required | Run whose per-run chain should be verified. |
+| `--json` | false | Emit the stable machine-readable verification report. |
+
+Checks include:
+
+- supported schema version
+- envelope checksum vs canonical decoded-record checksum
+- run-local file order (`ingestOrder`, then `at`, then `id`)
+- `payloadHash` vs persisted payload
+- `previousHash` / `recordHash` chain integrity
+- presence of quarantined torn-line sidecars beside the store
+
+The command exits non-zero when verification fails.
+
+```bash
+# Human summary
+meridian trace verify build/trace.jsonl --run run-42
+
+# Stable JSON report for CI
+meridian trace verify build/trace.jsonl --run run-42 --json
+```
+
+---
+
+## `meridian trace eval`
+
+Replay-evaluate one temporal or statistical expression against a semantic
+trace-store JSONL file at an explicit instant.
+
+```bash
+meridian trace eval <trace.jsonl> "<expression>" --at <iso8601> [options]
+```
+
+Top-level alias:
+
+```bash
+meridian trace-eval <trace.jsonl> "<expression>" --at <iso8601> [options]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--at <iso8601>` | required | Evaluation instant. Replay never reads wall clock. |
+| `--merconfig <path>` / `--vocab <path>` | none | Optional vocabulary inputs used when parsing the expression. Repeatable. |
+| `--format <text\|json>` | `text` | Human-readable summary or stable JSON report. |
+| `--trace <categories>` | none | ParserTrace categories for expression parsing/lowering/verbalization. |
+| `--trace-file <path>` | stderr | Write ParserTrace output to a file instead of stderr. |
+
+The expression must lower to a trace-temporal or trace-statistical query.
+Examples:
+
+```bash
+# Current-run temporal replay
+meridian trace eval build/trace.jsonl \
+  "the deploy step has ever failed" \
+  --at 2026-07-11T06:00:00Z
+
+# Cross-run statistical replay with vocabulary help
+meridian trace-eval build/trace.jsonl \
+  "the deploy step succeeds in at least 90% of runs within the last 30 days" \
+  --at 2026-07-11T06:00:00Z \
+  --merconfig corpora/etl/etl.merconfig \
+  --format json
+```
+
+Current limitations:
+
+- current-run replay requires the store to contain exactly one run
+- replay inference currently requires exactly one `skillName` in the store
+
+`whose <field> is <value>` payload predicates on the event pattern (temporal)
+or the statistical pattern are supported and interpreted directly against the
+runtime store's `payloadContains` matching, without going through codegen.
+
+The stable JSON report includes:
+
+- canonicalized expression text
+- replay instant
+- query type (`temporal` or `statistical`)
+- scope (`currentRun` or `acrossAllRuns`)
+- truth value
+- witness event ids
+
+---
+
+## `meridian trace drift`
+
+Compare the stable step-path identities recorded in two `.meridian.manifest.json`
+files. Use it to confirm that a source edit did not silently shift other steps'
+trace identities (step paths are meant to be stable across unrelated edits —
+see [08_TRACING.md](08_TRACING.md)) or to flag a skill-version-hash change
+between a baseline and a candidate build.
+
+```bash
+meridian trace drift <baseline.manifest.json> <candidate.manifest.json>
+```
+
+| Argument | Description |
+|---|---|
+| `<baseline>` | Path to the baseline `.meridian.manifest.json`. |
+| `<candidate>` | Path to the candidate `.meridian.manifest.json`. |
+
+The report lists:
+
+- whether the skill version hash changed (`skill_version_hash` old -> new)
+- step paths present in the baseline but missing from the candidate (`removed`)
+- step paths present in the candidate but missing from the baseline (`added`)
+
+The command exits non-zero when it detects removed paths, added paths, or a
+version-hash change, so it composes cleanly as a CI gate:
+
+```bash
+meridian compile release-sentinel.meridian --merconfig sentinel.merconfig \
+  --output build/baseline/
+# ... edit source ...
+meridian compile release-sentinel.meridian --merconfig sentinel.merconfig \
+  --output build/candidate/
+meridian trace drift build/baseline/release-sentinel.meridian.manifest.json \
+  build/candidate/release-sentinel.meridian.manifest.json
+```
+
+Not to be confused with the top-level `meridian drift`, which diffs *authored
+source* against its canonical verbalization (see
+[18_VERBALIZER.md](18_VERBALIZER.md)) — `meridian trace drift` instead diffs
+*manifest step-path sets* between two compiled builds.
 
 ---
 

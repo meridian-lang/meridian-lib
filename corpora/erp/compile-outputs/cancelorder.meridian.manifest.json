@@ -25,76 +25,76 @@
       "adjective" : "in good standing",
       "function" : "meridianDef_Customer_inGoodStanding",
       "kind" : "customer",
-      "line" : 46
+      "line" : 49
     },
     {
       "adjective" : "overdue",
       "function" : "meridianDef_Invoice_overdue",
       "kind" : "invoice",
-      "line" : 42
+      "line" : 45
     },
     {
       "adjective" : "severely overdue",
       "function" : "meridianDef_Invoice_severelyOverdue",
       "kind" : "invoice",
-      "line" : 47
+      "line" : 50
     },
     {
       "adjective" : "unpaid",
       "function" : "meridianDef_Invoice_unpaid",
       "kind" : "invoice",
-      "line" : 41
+      "line" : 44
     },
     {
       "adjective" : "blocked",
       "function" : "meridianDef_Order_blocked",
       "kind" : "order",
-      "line" : 38
+      "line" : 41
     },
     {
       "adjective" : "fulfilled",
       "function" : "meridianDef_Order_fulfilled",
       "kind" : "order",
-      "line" : 39
+      "line" : 42
     },
     {
       "adjective" : "high value",
       "function" : "meridianDef_Order_highValue",
       "kind" : "order",
-      "line" : 45
+      "line" : 48
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Order_open",
       "kind" : "order",
-      "line" : 37
+      "line" : 40
     },
     {
       "adjective" : "released",
       "function" : "meridianDef_Order_released",
       "kind" : "order",
-      "line" : 40
+      "line" : 43
     },
     {
       "adjective" : "short",
       "function" : "meridianDef_Product_short",
       "kind" : "product",
-      "line" : 43
+      "line" : 46
     },
     {
       "adjective" : "pending",
       "function" : "meridianDef_PurchaseOrder_pending",
       "kind" : "purchase order",
-      "line" : 44
+      "line" : 47
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 53,
+      "line" : 56,
       "name" : "collection",
       "right_cardinality" : "one",
       "right_kind" : "a payment",
@@ -104,7 +104,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 57,
+      "line" : 60,
       "name" : "escalation",
       "right_cardinality" : "one",
       "right_kind" : "a dunning notice",
@@ -114,7 +114,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 49,
+      "line" : 52,
       "name" : "fulfillment",
       "right_cardinality" : "one",
       "right_kind" : "a shipment",
@@ -124,7 +124,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 51,
+      "line" : 54,
       "name" : "invoicing",
       "right_cardinality" : "one",
       "right_kind" : "an invoice",
@@ -134,7 +134,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a product",
-      "line" : 55,
+      "line" : 58,
       "name" : "replenishment",
       "right_cardinality" : "one",
       "right_kind" : "a purchase order",
@@ -218,35 +218,35 @@
   "meridian_verbs" : [
     {
       "base" : "collect",
-      "line" : 62,
+      "line" : 65,
       "past_participle" : "collected",
       "relation" : "collection",
       "third_person" : "collects"
     },
     {
       "base" : "escalate",
-      "line" : 64,
+      "line" : 67,
       "past_participle" : "escalated",
       "relation" : "escalation",
       "third_person" : "escalates"
     },
     {
       "base" : "fulfill",
-      "line" : 60,
+      "line" : 63,
       "past_participle" : "fulfilled",
       "relation" : "fulfillment",
       "third_person" : "fulfills"
     },
     {
       "base" : "invoice",
-      "line" : 61,
+      "line" : 64,
       "past_participle" : "invoiced",
       "relation" : "invoicing",
       "third_person" : "invoices"
     },
     {
       "base" : "replenish",
-      "line" : 63,
+      "line" : 66,
       "past_participle" : "replenished",
       "relation" : "replenishment",
       "third_person" : "replenishes"
@@ -258,44 +258,44 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 67,
-      "swift_line" : 555
+      "meridian_line" : 16,
+      "swift_line" : 578
     },
     {
       "meridian_line" : 17,
-      "swift_line" : 567
+      "swift_line" : 592
     },
     {
       "meridian_line" : 18,
-      "swift_line" : 571
+      "swift_line" : 596
     },
     {
       "meridian_line" : 19,
-      "swift_line" : 577
+      "swift_line" : 604
     },
     {
       "meridian_line" : 19,
-      "swift_line" : 580
+      "swift_line" : 608
     },
     {
       "meridian_line" : 20,
-      "swift_line" : 591
+      "swift_line" : 620
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 630
+      "swift_line" : 688
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 635
+      "swift_line" : 693
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 762
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 767
     }
   ],
   "tools_used" : [
@@ -307,7 +307,17 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cancel order",
+      "skill_version_hash" : "9b8cf146db6e7672c8010cb5d6a13d5afea933c8bab45de013f693867fb79ed8",
       "source_name" : "cancel order",
+      "step_paths" : [
+        "\/CancelOrder\/workflow\/procedure\/1457777b2eb2e5aa855444a0a6397b8b79c577bc3937a766b70ef5e47c6a90cf",
+        "\/CancelOrder\/workflow\/procedure\/3f2374f851aedafb79249e16714950880d27179d82679e26d9dcd9863eef1982",
+        "\/CancelOrder\/workflow\/procedure\/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
+        "\/CancelOrder\/workflow\/procedure\/855b7dcf6fe0d3332a40f552f72875baf4a9e5242ecec82f6c9941e668accfee",
+        "\/CancelOrder\/workflow\/procedure\/branch.then\/1027eb6ca41ff4e59032a179e1a66bac52cefbf73f91884908bc9084b6d467c5",
+        "\/CancelOrder\/workflow\/procedure\/iterate.body\/a96c6b385a5f5d99daee95aeba636d2e9c4d3e883db949194fc6bbad29b777c6"
+      ],
       "swift_struct" : "CancelOrder"
     },
     {
@@ -315,7 +325,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cancel order",
+      "skill_version_hash" : "9b8cf146db6e7672c8010cb5d6a13d5afea933c8bab45de013f693867fb79ed8",
       "source_name" : "when cancelBlockedOrders fires",
+      "step_paths" : [
+        "\/WhenCancelblockedordersFires\/root\/procedure\/1708751e6a25a6784851aeb5afd24d32a4bd8eaf39efced4d79ea83a5beb54ce",
+        "\/WhenCancelblockedordersFires\/root\/procedure\/4126aec9230c55523bb7a3f70ca7a8f31869a1c5a2a208e45aa604266f0e0ba6"
+      ],
       "swift_struct" : "WhenCancelblockedordersFires"
     },
     {
@@ -323,7 +339,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cancel order",
+      "skill_version_hash" : "9b8cf146db6e7672c8010cb5d6a13d5afea933c8bab45de013f693867fb79ed8",
       "source_name" : "when voidErpOrders fires",
+      "step_paths" : [
+        "\/WhenVoiderpordersFires\/root\/procedure\/08c910881c91ce6e666daa7dcfefe995e4c71421911defd911c35e5787a2a53a",
+        "\/WhenVoiderpordersFires\/root\/procedure\/e86f94d4bea7e31f3b986a6f7cdde577c1a48773b17a9bc9b453cc4e9b8c63e9"
+      ],
       "swift_struct" : "WhenVoiderpordersFires"
     }
   ]

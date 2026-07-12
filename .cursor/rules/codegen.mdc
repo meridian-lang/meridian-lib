@@ -93,3 +93,19 @@ _ = try await StructName(runtime: runtime, arg1: val1, …).run()
 ```
 `emitWorkflowCallArg` uses bare Swift names (not `state.get`) for parameters
 because the init signature expects typed domain types.
+
+### Wave 8 trace and monitor codegen
+
+- `runtimeTraceConfiguration` — when present on `IRWorkflow`, emit
+  `public static let runtimeTraceConfiguration = …` on the workflow struct
+  (`emitRuntimeTraceConfiguration`).
+- Trace conditions use `emitTruthValueExpr` → three-valued `TruthValue` when
+  `expressionMayBeIndeterminate` (temporal/statistical), not raw `Bool`.
+- `.traceTemporal` / `.traceStatistical` → `await runtime.evaluateTemporal` /
+  `evaluateStatistical` (or inlined helpers for async definition predicates).
+- Monitored asserts: `AssertIR.monitored` + `.traceStatistical` + `cadence` →
+  `await runtime.registerMonitor(query:cadence:message:blocking:step:…)`.
+- Never emit a crash path for unsupported `since the last` holds — lowering must
+  reject with **MER-TMP-019** first (pitfall #22).
+- `trace.log(.codegen, …)` at file/workflow/primitive emission sites; keep
+  parity with other emitter paths.

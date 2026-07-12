@@ -734,3 +734,25 @@ Interpolated strings can contain conditionals, loops, and formatted holes.
 `SwiftEmitter` builds those strings with local string buffers and includes the
 private `meridianFormat(_:as:)` helper in the generated header for `integer`,
 `decimal(N)`, `short date`, and `long date`.
+
+## Wave 8 trace and monitor codegen
+
+When a workflow carries `runtimeTraceConfiguration` (from `=== trace ===`),
+`SwiftEmitter` emits `public static let runtimeTraceConfiguration = …` on the
+workflow struct and threads store-failure policy into generated `Runtime` init.
+
+Trace-backed conditions route through `emitTruthValueExpr` (three-valued
+`TruthValue` for indeterminate statistical/temporal results) rather than bare
+`Bool` comparisons:
+
+| IR shape | Emits |
+|---|---|
+| `.traceTemporal` | `await runtime.evaluateTemporal(...)` / inlined event-pattern helper |
+| `.traceStatistical` | `await runtime.evaluateStatistical(...)` |
+| `AssertIR` + `monitored` + `.traceStatistical` | `await runtime.registerMonitor(query:cadence:message:blocking:step:…)` |
+
+Async definition predicates whose bodies contain trace queries emit as
+`private func` helpers that take `Runtime` and are awaited at call sites.
+`since the last` with a non-event holds must never reach the emitter — lowering
+rejects it with **MER-TMP-019**. See [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md)
+and [06_RUNTIME.md](06_RUNTIME.md) §"Semantic traces".

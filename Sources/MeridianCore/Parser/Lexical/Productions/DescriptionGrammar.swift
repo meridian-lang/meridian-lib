@@ -21,7 +21,13 @@ struct DescriptionGrammar {
     /// Recurses the full grammar for `whose`/`sorted by` sub-expressions.
     let recurse: (String) -> ExpressionAST
 
-    func parse(_ raw: String) -> DescriptionAST? {
+    /// - Parameter allowSingularHead: when `true`, accept a singular head noun
+    ///   (`service`) as well as the default plural (`services`). Used by the
+    ///   `for each <adjectives> <singular kind> <verb clause>:` bare iteration
+    ///   header (`StatementParser.parseIteration`), which — unlike quantifiers/
+    ///   `whose`-restricted collections — is always written with the singular
+    ///   per-element noun, never the plural.
+    func parse(_ raw: String, allowSingularHead: Bool = false) -> DescriptionAST? {
         guard let sym = symbols else { return nil }
         var s = lexicon.stripLeadingArticle(raw)
 
@@ -65,7 +71,7 @@ struct DescriptionGrammar {
         let (adjectives, noun) = splitAdjectivesAndNoun(descPart)
         guard !noun.isEmpty else { return nil }
         let singular = lexicon.singularize(noun.lowercased())
-        guard sym.kinds[singular] != nil, noun.lowercased() != singular else { return nil }
+        guard sym.kinds[singular] != nil, allowSingularHead || noun.lowercased() != singular else { return nil }
         if wherePred == nil, verbClauses.isEmpty, adjectives.isEmpty, sort == nil, take == nil {
             return nil
         }

@@ -23,58 +23,58 @@
       "adjective" : "pending",
       "function" : "meridianDef_AccessRequest_pending",
       "kind" : "access request",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_AccessRequest_stale",
       "kind" : "access request",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "fresh",
       "function" : "meridianDef_Credential_fresh",
       "kind" : "credential",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "overused",
       "function" : "meridianDef_Credential_overused",
       "kind" : "credential",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "classified",
       "function" : "meridianDef_Resource_classified",
       "kind" : "resource",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "authorized",
       "function" : "meridianDef_User_authorized",
       "kind" : "user",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_User_cleared",
       "kind" : "user",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "privileged",
       "function" : "meridianDef_User_privileged",
       "kind" : "user",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 36,
+      "line" : 38,
       "name" : "assignment",
       "right_cardinality" : "one",
       "right_kind" : "a role",
@@ -84,7 +84,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a policy",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "an environment",
@@ -94,7 +94,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 38,
+      "line" : 40,
       "name" : "grant",
       "right_cardinality" : "one",
       "right_kind" : "a resource",
@@ -359,21 +359,21 @@
   "meridian_verbs" : [
     {
       "base" : "authorize",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "authorized",
       "relation" : "assignment",
       "third_person" : "authorizes"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "grant",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "granted",
       "relation" : "grant",
       "third_person" : "grants"
@@ -386,59 +386,59 @@
   "source_map" : [
     {
       "meridian_line" : 43,
-      "swift_line" : 442
+      "swift_line" : 465
     },
     {
       "meridian_line" : 41,
-      "swift_line" : 447
-    },
-    {
-      "meridian_line" : 49,
-      "swift_line" : 451
-    },
-    {
-      "meridian_line" : 51,
-      "swift_line" : 453
-    },
-    {
-      "meridian_line" : 54,
-      "swift_line" : 456
-    },
-    {
-      "meridian_line" : 52,
       "swift_line" : 470
     },
     {
+      "meridian_line" : 49,
+      "swift_line" : 474
+    },
+    {
+      "meridian_line" : 51,
+      "swift_line" : 477
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 480
+    },
+    {
+      "meridian_line" : 52,
+      "swift_line" : 497
+    },
+    {
       "meridian_line" : 54,
-      "swift_line" : 482
+      "swift_line" : 511
     },
     {
       "meridian_line" : 55,
-      "swift_line" : 494
+      "swift_line" : 524
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 533
+      "swift_line" : 592
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 538
+      "swift_line" : 597
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 578
+      "swift_line" : 666
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 583
+      "swift_line" : 671
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 623
+      "swift_line" : 740
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 628
+      "swift_line" : 745
     }
   ],
   "tools_used" : [
@@ -457,7 +457,19 @@
           "name" : "resource"
         }
       ],
+      "skill_name" : "grant access",
+      "skill_version_hash" : "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac",
       "source_name" : "grant access a user a resource",
+      "step_paths" : [
+        "\/GrantAccessUserResource\/rules-steps\/procedure\/435eba4dd884e4a36d74eac65bc4b262dd9c5f7372904d0f6e550131ca35b076",
+        "\/GrantAccessUserResource\/rules-steps\/procedure\/b42750b436d783bf1662c5570df1a553bb6090b700c7d4cce711d8453be1825c",
+        "\/GrantAccessUserResource\/workflow-steps\/procedure\/04c2732d34f8491de523ba46110f72401b13cf24b233d3d89d02a3f949e87007",
+        "\/GrantAccessUserResource\/workflow-steps\/procedure\/b05108cbee2843c900de6a9b89fdf2f29c3e8ef32d162b41e480eed3543605a1",
+        "\/GrantAccessUserResource\/workflow-steps\/procedure\/branch.else\/edb6ffbe9972173d68f431e40094807a9d199ae0f7130bac2f0a1f174f746e35",
+        "\/GrantAccessUserResource\/workflow-steps\/procedure\/branch.then\/cde085f366546cf5dadbf16682f938f6a45103dbd34639c63f0e067a2a7209c3",
+        "\/GrantAccessUserResource\/workflow-steps\/procedure\/recover.body\/f3fd1e43e9ecf268a3db28fa99ce5b8ddd3968598e58a7964d27604b7b195c96",
+        "\/GrantAccessUserResource\/workflow-steps\/procedure\/recover.handler\/e5c5464976076d1621459abb02bf58ec2e57fd0c4b520a1cc55c77c55367dd52"
+      ],
       "swift_struct" : "GrantAccessUserResource"
     },
     {
@@ -465,7 +477,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "grant access",
+      "skill_version_hash" : "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac",
       "source_name" : "when grantAccess fires",
+      "step_paths" : [
+        "\/WhenGrantaccessFires\/root\/procedure\/32b4f376124392cb3322e16d4c32943b1a5be71b888466533bf5d41c4d0a9e61",
+        "\/WhenGrantaccessFires\/root\/procedure\/72f6c82d026ff8f15a52b5aec40ba7ab6c7c002517c45c4ddf9cd301937ac848"
+      ],
       "swift_struct" : "WhenGrantaccessFires"
     },
     {
@@ -473,7 +491,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "grant access",
+      "skill_version_hash" : "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac",
       "source_name" : "when grantResourceAccess fires",
+      "step_paths" : [
+        "\/WhenGrantresourceaccessFires\/root\/procedure\/647acfb1d4a4d5c0a15e2cab188aa3c1991c9b327fc8d48c4125d16484e29791",
+        "\/WhenGrantresourceaccessFires\/root\/procedure\/e407b65796bf01753c4787c3a0cbe2daa1a24d50e9acb606a0d4599b828dfce8"
+      ],
       "swift_struct" : "WhenGrantresourceaccessFires"
     },
     {
@@ -481,7 +505,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "grant access",
+      "skill_version_hash" : "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac",
       "source_name" : "when authorizeResourceAccess fires",
+      "step_paths" : [
+        "\/WhenAuthorizeresourceaccessFires\/root\/procedure\/81e4d2685ab97a0d92c076bbda8757577df6095618bed16ef49421a8294936df",
+        "\/WhenAuthorizeresourceaccessFires\/root\/procedure\/b38ccd91ad43e21933f42f1b7d0d416c548fdc83d88368b606f218d1dd2e57f1"
+      ],
       "swift_struct" : "WhenAuthorizeresourceaccessFires"
     }
   ]

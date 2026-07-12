@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -708,67 +708,67 @@
   "source_map" : [
     {
       "meridian_line" : 44,
-      "swift_line" : 603
+      "swift_line" : 626
     },
     {
       "meridian_line" : 48,
-      "swift_line" : 615
+      "swift_line" : 640
     },
     {
       "meridian_line" : 50,
-      "swift_line" : 627
+      "swift_line" : 654
     },
     {
       "meridian_line" : 80,
-      "swift_line" : 639
+      "swift_line" : 668
     },
     {
       "meridian_line" : 82,
-      "swift_line" : 651
+      "swift_line" : 682
     },
     {
       "meridian_line" : 93,
-      "swift_line" : 661
+      "swift_line" : 694
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 700
+      "swift_line" : 763
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 705
+      "swift_line" : 768
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 744
+      "swift_line" : 836
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 749
+      "swift_line" : 841
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 788
+      "swift_line" : 909
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 793
+      "swift_line" : 914
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 832
+      "swift_line" : 982
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 837
+      "swift_line" : 987
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 876
+      "swift_line" : 1055
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 881
+      "swift_line" : 1060
     }
   ],
   "tools_used" : [
@@ -781,25 +781,8 @@
           "guidance" : "Output is JSON; agents parse `errors_by_code` and `per_source` to decide next steps\nValidate a single file or directory (does not require source registration):\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWpzb24=\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWZpeA==\n`--dry-run` previews without writing. Use this before applying fixes in batch\ncodeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIGluc3RhbGwtaG9vayBbLS1zb3VyY2UgPGlkPl0=\nAlways run `gbrain frontmatter audit --json` first; never assume a brain is clean\nFor `--fix` operations: state how many files will be modified BEFORE running, then confirm\nNever auto-fix `MISSING_OPEN` or `EMPTY_FRONTMATTER` without explicit user input — these usually mean a human author started a page and didn't finish\n`skills\/maintain\/SKILL.md` — broader brain health audit; chain after this skill if other classes of issue are suspected\nQuote when the value contains `: \" ' # [ ] { } | > & * ! ? ,` or starts with `@`\nDouble quotes only when the value itself contains apostrophes",
           "line" : 93,
           "scoped_tools" : [
-            "assess.notability",
-            "capture",
-            "enrich",
-            "health.get",
-            "jobs.status",
-            "jobs.submit",
-            "link.add",
-            "link.backlinks",
-            "makePDF",
-            "page.create",
-            "page.get",
-            "page.list",
-            "page.search",
-            "page.update",
-            "publish",
-            "recall",
-            "research",
-            "timeline.add",
-            "verify"
+            "exec",
+            "shell.run"
           ],
           "text" : "follow the Phase 1: Audit — steps 3 guidance"
         }
@@ -811,7 +794,17 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "frontmatter-guard",
+      "skill_version_hash" : "5ffdfc1c6d43ccfb207c1dfb91bfdf3a8f4647da6f3732a7dff9bc34fed3d313",
       "source_name" : "frontmatter-guard a input",
+      "step_paths" : [
+        "\/FrontmatterGuardInput\/phase-1-audit-steps-3\/procedure\/c0c16b2d8decd0983336e98c308208c56364c7fbc2ce321423aacf70f9d2df6e",
+        "\/FrontmatterGuardInput\/phase-1-audit-steps\/procedure\/db590058d3b4858a7b28f4c63c1a38f79ab4e09d40c156199fca222caab3ee4c",
+        "\/FrontmatterGuardInput\/phase-1-audit-steps\/procedure\/f766bb281f210f8b85911fc8647cfd71dbaf4293d73c0f402f69e16b69a6a802",
+        "\/FrontmatterGuardInput\/why-this-exists-steps-2\/procedure\/348fbaec8c046f667084c2ec1916bceee86d0867e8427cec1f6861b0ff7a3954",
+        "\/FrontmatterGuardInput\/why-this-exists-steps-2\/procedure\/3715923f3f225ad39c8cf0d1339dc7a9240e8823224c746211eb0d0114862447",
+        "\/FrontmatterGuardInput\/why-this-exists-steps\/procedure\/e7a97cdb067d2576df179d62859a7911a31c5ea37d8dd61ab4a853498b4b8586"
+      ],
       "swift_struct" : "FrontmatterGuardInput"
     },
     {
@@ -819,7 +812,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "frontmatter-guard",
+      "skill_version_hash" : "5ffdfc1c6d43ccfb207c1dfb91bfdf3a8f4647da6f3732a7dff9bc34fed3d313",
       "source_name" : "when validateFrontmatter fires",
+      "step_paths" : [
+        "\/WhenValidatefrontmatterFires\/root\/procedure\/1b37016da4fdfa4f9bcbedfbfa461505e07655cf02de2dc3b9830066f466c8d2",
+        "\/WhenValidatefrontmatterFires\/root\/procedure\/b994b4ec6cb808f622d7da02e60bd0efa5e06fb43966146b8c9f4c3d95c2985c"
+      ],
       "swift_struct" : "WhenValidatefrontmatterFires"
     },
     {
@@ -827,7 +826,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "frontmatter-guard",
+      "skill_version_hash" : "5ffdfc1c6d43ccfb207c1dfb91bfdf3a8f4647da6f3732a7dff9bc34fed3d313",
       "source_name" : "when checkFrontmatter fires",
+      "step_paths" : [
+        "\/WhenCheckfrontmatterFires\/root\/procedure\/2c708a147a3817d19502daaab736a6b3b9553090b015b96d3afdd51cff05ec89",
+        "\/WhenCheckfrontmatterFires\/root\/procedure\/c249e022dc37acfb3797fcffe8cb8a223db9cde21cbfa9502c43e2aee03ef1f4"
+      ],
       "swift_struct" : "WhenCheckfrontmatterFires"
     },
     {
@@ -835,7 +840,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "frontmatter-guard",
+      "skill_version_hash" : "5ffdfc1c6d43ccfb207c1dfb91bfdf3a8f4647da6f3732a7dff9bc34fed3d313",
       "source_name" : "when fixFrontmatter fires",
+      "step_paths" : [
+        "\/WhenFixfrontmatterFires\/root\/procedure\/437e5d24817cd61de2636175f7e0562d9ae2fe096b469dc31f7e73a1df11735e",
+        "\/WhenFixfrontmatterFires\/root\/procedure\/5aae9fa6dd0ab071d4c7bf31fc23fc4f84cd726cb6b4792c42f06f260c53c493"
+      ],
       "swift_struct" : "WhenFixfrontmatterFires"
     },
     {
@@ -843,7 +854,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "frontmatter-guard",
+      "skill_version_hash" : "5ffdfc1c6d43ccfb207c1dfb91bfdf3a8f4647da6f3732a7dff9bc34fed3d313",
       "source_name" : "when frontmatterAudit fires",
+      "step_paths" : [
+        "\/WhenFrontmatterauditFires\/root\/procedure\/91f7d254f14e2c03d4b65d99624ae8dd6be9fcfca1730708dc2d5deb9366e2a2",
+        "\/WhenFrontmatterauditFires\/root\/procedure\/c2c13fa9dd8eb20779ddf71d3e8c67a3dfd0570d8d104e196fcd984634f027d0"
+      ],
       "swift_struct" : "WhenFrontmatterauditFires"
     },
     {
@@ -851,7 +868,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "frontmatter-guard",
+      "skill_version_hash" : "5ffdfc1c6d43ccfb207c1dfb91bfdf3a8f4647da6f3732a7dff9bc34fed3d313",
       "source_name" : "when brainLint fires",
+      "step_paths" : [
+        "\/WhenBrainlintFires\/root\/procedure\/7721a9cc74a7ed6aede33e46cc35cf4a945333992ef542b7bf159896e32934c6",
+        "\/WhenBrainlintFires\/root\/procedure\/ed84822edf3689e52b059fd180b53995e7d4cd338616f06ee528d49ec8809269"
+      ],
       "swift_struct" : "WhenBrainlintFires"
     }
   ]

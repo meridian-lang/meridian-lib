@@ -106,7 +106,9 @@ public final class DiagnosticEngine {
             primaryRange: existing.primaryRange,
             suggestions: existing.suggestions,
             notes: existing.notes + [note],
-            help: existing.help)
+            help: existing.help,
+            phase: existing.phase,
+            relatedRanges: existing.relatedRanges)
         trace.log(.diagnostics, "  note: \(note.message)")
     }
 }

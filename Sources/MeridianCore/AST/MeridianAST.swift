@@ -1,4 +1,5 @@
 import Foundation
+import MeridianRuntime
 
 // MARK: - MerConfig AST
 
@@ -40,6 +41,12 @@ public struct LanguageSynonyms: Sendable {
     public let conditionHeaderSynonyms: [String]
     public let actionHeaderSynonyms: [String]
     public let wildcardSynonyms: [String]
+    /// Outcome verb synonyms for trace event patterns (`foo = failed`).
+    public let traceOutcomeSynonyms: [String: String]
+    /// Extra perfect/passive auxiliary tokens a trace event-pattern subject may
+    /// carry ahead of its outcome verb (`=== language ===` `Trace-auxiliary
+    /// synonyms:`) — see `EnglishLexicon.tracePerfectAuxiliaries`.
+    public let traceAuxiliarySynonyms: [String]
     /// Extra fence info-string tags treated as shell-command blocks
     /// (`=== language ===` `Shell fence synonyms:` — e.g. `fish`, `pwsh`, `nu`).
     public let shellFenceSynonyms: [String]
@@ -49,6 +56,15 @@ public struct LanguageSynonyms: Sendable {
     /// tool instead of falling to inert or AI dispatch. See
     /// `EnglishLexicon.fenceToolMapping`.
     public let fenceToolMapping: [String: String]
+    /// Extra guarded-fence trailing markers (`=== language ===`
+    /// `Guarded-fence synonyms:`).
+    public let guardedFenceIntroducerSynonyms: [String]
+    /// Extra fallback-chain lead-ins (`=== language ===`
+    /// `Fallback-chain synonyms:`).
+    public let fallbackChainIntroducerSynonyms: [String]
+    /// Extra approval-tool ID substrings (`=== language ===`
+    /// `Approval-tool synonyms:`).
+    public let approvalToolSynonyms: [String]
     public init(comparisonSynonyms: [(String, ComparisonOpAST)] = [],
                 durationSynonyms: [String: TimeUnitAST] = [:],
                 assertionSynonyms: [String] = [],
@@ -71,8 +87,13 @@ public struct LanguageSynonyms: Sendable {
                 conditionHeaderSynonyms: [String] = [],
                 actionHeaderSynonyms: [String] = [],
                 wildcardSynonyms: [String] = [],
+                traceOutcomeSynonyms: [String: String] = [:],
+                traceAuxiliarySynonyms: [String] = [],
                 shellFenceSynonyms: [String] = [],
-                fenceToolMapping: [String: String] = [:]) {
+                fenceToolMapping: [String: String] = [:],
+                guardedFenceIntroducerSynonyms: [String] = [],
+                fallbackChainIntroducerSynonyms: [String] = [],
+                approvalToolSynonyms: [String] = []) {
         self.comparisonSynonyms = comparisonSynonyms
         self.durationSynonyms = durationSynonyms
         self.assertionSynonyms = assertionSynonyms
@@ -95,8 +116,68 @@ public struct LanguageSynonyms: Sendable {
         self.conditionHeaderSynonyms = conditionHeaderSynonyms
         self.actionHeaderSynonyms = actionHeaderSynonyms
         self.wildcardSynonyms = wildcardSynonyms
+        self.traceOutcomeSynonyms = traceOutcomeSynonyms
+        self.traceAuxiliarySynonyms = traceAuxiliarySynonyms
         self.shellFenceSynonyms = shellFenceSynonyms
         self.fenceToolMapping = fenceToolMapping
+        self.guardedFenceIntroducerSynonyms = guardedFenceIntroducerSynonyms
+        self.fallbackChainIntroducerSynonyms = fallbackChainIntroducerSynonyms
+        self.approvalToolSynonyms = approvalToolSynonyms
+    }
+}
+
+public struct TraceConfigValue<T: Sendable & Equatable>: Sendable, Equatable {
+    public let value: T
+    public let file: String
+    public let line: Int
+
+    public init(_ value: T, file: String, line: Int) {
+        self.value = value
+        self.file = file
+        self.line = line
+    }
+}
+
+public struct TraceConfigurationAST: Sendable, Equatable {
+    public let store: TraceConfigValue<TraceStoreKind>?
+    public let retention: TraceConfigValue<Duration>?
+    public let hashChaining: TraceConfigValue<Bool>?
+    public let payloadLimit: TraceConfigValue<Int>?
+    public let usuallyThreshold: TraceConfigValue<Double>?
+    public let rarelyThreshold: TraceConfigValue<Double>?
+    public let sampleFloor: TraceConfigValue<Int>?
+    public let defaultMonitorCadence: TraceConfigValue<Duration>?
+    public let profile: TraceConfigValue<TraceProfile>?
+    public let storeFailurePolicy: TraceConfigValue<TraceStoreFailurePolicy>?
+    public let deploymentZone: TraceConfigValue<String>?
+    public let toolCapturePolicies: [String: TraceConfigValue<TraceCapturePolicy>]
+
+    public init(
+        store: TraceConfigValue<TraceStoreKind>? = nil,
+        retention: TraceConfigValue<Duration>? = nil,
+        hashChaining: TraceConfigValue<Bool>? = nil,
+        payloadLimit: TraceConfigValue<Int>? = nil,
+        usuallyThreshold: TraceConfigValue<Double>? = nil,
+        rarelyThreshold: TraceConfigValue<Double>? = nil,
+        sampleFloor: TraceConfigValue<Int>? = nil,
+        defaultMonitorCadence: TraceConfigValue<Duration>? = nil,
+        profile: TraceConfigValue<TraceProfile>? = nil,
+        storeFailurePolicy: TraceConfigValue<TraceStoreFailurePolicy>? = nil,
+        deploymentZone: TraceConfigValue<String>? = nil,
+        toolCapturePolicies: [String: TraceConfigValue<TraceCapturePolicy>] = [:]
+    ) {
+        self.store = store
+        self.retention = retention
+        self.hashChaining = hashChaining
+        self.payloadLimit = payloadLimit
+        self.usuallyThreshold = usuallyThreshold
+        self.rarelyThreshold = rarelyThreshold
+        self.sampleFloor = sampleFloor
+        self.defaultMonitorCadence = defaultMonitorCadence
+        self.profile = profile
+        self.storeFailurePolicy = storeFailurePolicy
+        self.deploymentZone = deploymentZone
+        self.toolCapturePolicies = toolCapturePolicies
     }
 }
 
@@ -106,26 +187,29 @@ public struct MerConfigFile: Sendable {
     public let instances: [InstanceDeclaration]
     public let tools: [ToolDeclaration]
     public let languageSynonyms: LanguageSynonyms
+    public let traceConfiguration: TraceConfigurationAST
 
     public init(
         vocabulary: [VocabularyStatement] = [],
         constants: [ConstantDeclaration] = [],
         instances: [InstanceDeclaration] = [],
         tools: [ToolDeclaration] = [],
-        languageSynonyms: LanguageSynonyms = LanguageSynonyms()
+        languageSynonyms: LanguageSynonyms = LanguageSynonyms(),
+        traceConfiguration: TraceConfigurationAST = TraceConfigurationAST()
     ) {
         self.vocabulary = vocabulary
         self.constants = constants
         self.instances = instances
         self.tools = tools
         self.languageSynonyms = languageSynonyms
+        self.traceConfiguration = traceConfiguration
     }
 
     /// Concatenate two parsed merconfig files, preserving declaration order
     /// (left-hand sections first). Duplicate-name detection is the caller's
     /// job — `Compiler.merge` walks the merged symbol table and rejects
     /// colliding kind / phrase / tool names with a sourced error.
-    public func merging(_ other: MerConfigFile) -> MerConfigFile {
+    public func merging(_ other: MerConfigFile) throws -> MerConfigFile {
         let mergedSynonyms = LanguageSynonyms(
             comparisonSynonyms: languageSynonyms.comparisonSynonyms + other.languageSynonyms.comparisonSynonyms,
             durationSynonyms: languageSynonyms.durationSynonyms.merging(other.languageSynonyms.durationSynonyms) { _, new in new },
@@ -149,22 +233,127 @@ public struct MerConfigFile: Sendable {
             conditionHeaderSynonyms: languageSynonyms.conditionHeaderSynonyms + other.languageSynonyms.conditionHeaderSynonyms,
             actionHeaderSynonyms: languageSynonyms.actionHeaderSynonyms + other.languageSynonyms.actionHeaderSynonyms,
             wildcardSynonyms: languageSynonyms.wildcardSynonyms + other.languageSynonyms.wildcardSynonyms,
+            traceOutcomeSynonyms: languageSynonyms.traceOutcomeSynonyms.merging(other.languageSynonyms.traceOutcomeSynonyms) { _, new in new },
+            traceAuxiliarySynonyms: languageSynonyms.traceAuxiliarySynonyms + other.languageSynonyms.traceAuxiliarySynonyms,
             shellFenceSynonyms: languageSynonyms.shellFenceSynonyms + other.languageSynonyms.shellFenceSynonyms,
-            fenceToolMapping: languageSynonyms.fenceToolMapping.merging(other.languageSynonyms.fenceToolMapping) { _, new in new }
+            fenceToolMapping: languageSynonyms.fenceToolMapping.merging(other.languageSynonyms.fenceToolMapping) { _, new in new },
+            guardedFenceIntroducerSynonyms: languageSynonyms.guardedFenceIntroducerSynonyms + other.languageSynonyms.guardedFenceIntroducerSynonyms,
+            fallbackChainIntroducerSynonyms: languageSynonyms.fallbackChainIntroducerSynonyms + other.languageSynonyms.fallbackChainIntroducerSynonyms,
+            approvalToolSynonyms: languageSynonyms.approvalToolSynonyms + other.languageSynonyms.approvalToolSynonyms
         )
         return MerConfigFile(
             vocabulary: vocabulary + other.vocabulary,
             constants:  constants  + other.constants,
             instances:  instances  + other.instances,
-            tools:      tools      + other.tools,
-            languageSynonyms: mergedSynonyms
+            tools: try mergeTools(with: other.tools),
+            languageSynonyms: mergedSynonyms,
+            traceConfiguration: try traceConfiguration.merging(other.traceConfiguration)
         )
+    }
+
+    private func mergeTools(with otherTools: [ToolDeclaration]) throws -> [ToolDeclaration] {
+        var merged = tools
+        var indexByID = Dictionary(uniqueKeysWithValues: merged.enumerated().map { ($0.element.methodName, $0.offset) })
+        for tool in otherTools {
+            guard let existingIndex = indexByID[tool.methodName] else {
+                indexByID[tool.methodName] = merged.count
+                merged.append(tool)
+                continue
+            }
+            let existing = merged[existingIndex]
+            guard existing.isEquivalent(to: tool) else {
+                throw MerConfigMergeError.conflictingToolDeclaration(
+                    toolID: tool.methodName,
+                    leftFile: existing.sourceFile,
+                    rightFile: tool.sourceFile
+                )
+            }
+            merged[existingIndex] = existing.mergingCapture(from: tool)
+        }
+        return merged
+    }
+}
+
+public enum MerConfigMergeError: Error, Sendable, Equatable, CustomStringConvertible {
+    case conflictingTraceSetting(key: String, leftFile: String, rightFile: String)
+    case conflictingToolCapture(toolID: String, leftFile: String, rightFile: String)
+    case conflictingToolDeclaration(toolID: String, leftFile: String, rightFile: String)
+
+    public var description: String {
+        switch self {
+        case .conflictingTraceSetting(let key, let leftFile, let rightFile):
+            return "conflicting trace setting `\(key)` in \(leftFile) and \(rightFile)"
+        case .conflictingToolCapture(let toolID, let leftFile, let rightFile):
+            return "conflicting trace capture policy for tool `\(toolID)` in \(leftFile) and \(rightFile)"
+        case .conflictingToolDeclaration(let toolID, let leftFile, let rightFile):
+            return "conflicting tool declaration `\(toolID)` in \(leftFile) and \(rightFile)"
+        }
+    }
+}
+
+public extension TraceConfigurationAST {
+    func merging(_ other: TraceConfigurationAST) throws -> TraceConfigurationAST {
+        try TraceConfigurationAST(
+            store: mergeValue(store, other.store, key: "store"),
+            retention: mergeValue(retention, other.retention, key: "retention"),
+            hashChaining: mergeValue(hashChaining, other.hashChaining, key: "hash chaining"),
+            payloadLimit: mergeValue(payloadLimit, other.payloadLimit, key: "payload limit"),
+            usuallyThreshold: mergeValue(usuallyThreshold, other.usuallyThreshold, key: "usually at least"),
+            rarelyThreshold: mergeValue(rarelyThreshold, other.rarelyThreshold, key: "rarely at most"),
+            sampleFloor: mergeValue(sampleFloor, other.sampleFloor, key: "sample floor"),
+            defaultMonitorCadence: mergeValue(defaultMonitorCadence, other.defaultMonitorCadence, key: "default monitor cadence"),
+            profile: mergeValue(profile, other.profile, key: "profile"),
+            storeFailurePolicy: mergeValue(storeFailurePolicy, other.storeFailurePolicy, key: "store failure policy"),
+            deploymentZone: mergeValue(deploymentZone, other.deploymentZone, key: "deployment zone"),
+            toolCapturePolicies: try mergeToolCapturePolicies(other.toolCapturePolicies)
+        )
+    }
+
+    private func mergeToolCapturePolicies(
+        _ other: [String: TraceConfigValue<TraceCapturePolicy>]
+    ) throws -> [String: TraceConfigValue<TraceCapturePolicy>] {
+        var merged = toolCapturePolicies
+        for (toolID, rhs) in other {
+            guard let lhs = merged[toolID] else {
+                merged[toolID] = rhs
+                continue
+            }
+            if lhs.value != rhs.value {
+                throw MerConfigMergeError.conflictingToolCapture(
+                    toolID: toolID,
+                    leftFile: lhs.file,
+                    rightFile: rhs.file
+                )
+            }
+        }
+        return merged
+    }
+
+    private func mergeValue<T: Sendable & Equatable>(
+        _ lhs: TraceConfigValue<T>?,
+        _ rhs: TraceConfigValue<T>?,
+        key: String
+    ) throws -> TraceConfigValue<T>? {
+        switch (lhs, rhs) {
+        case (.none, .none): return nil
+        case (.some(let value), .none), (.none, .some(let value)): return value
+        case (.some(let left), .some(let right)):
+            guard left.value == right.value else {
+                throw MerConfigMergeError.conflictingTraceSetting(
+                    key: key,
+                    leftFile: left.file,
+                    rightFile: right.file
+                )
+            }
+            return left
+        }
     }
 }
 
 public enum VocabularyStatement: Sendable {
     case kind(KindDeclaration)
     case property(PropertyDeclaration)
+    case key(KeyDeclaration)
     case relation(RelationDeclaration)
     case inverse(InverseDeclaration)
     case phrase(PhraseDefinition)
@@ -207,6 +396,17 @@ public struct KindDeclaration: Sendable {
     public let sourceLine: Int
     public init(name: String, parent: String, sourceLine: Int = 0) {
         self.name = name; self.parent = parent; self.sourceLine = sourceLine
+    }
+}
+
+public struct KeyDeclaration: Sendable {
+    public let kind: String
+    public let property: String
+    public let sourceLine: Int
+    public init(kind: String, property: String, sourceLine: Int = 0) {
+        self.kind = kind
+        self.property = property
+        self.sourceLine = sourceLine
     }
 }
 
@@ -376,21 +576,45 @@ public enum PropertyValueAST: Sendable {
     case envVar(String)
 }
 
-public struct ToolDeclaration: Sendable {
+public struct ToolDeclaration: Sendable, Equatable {
     public let displayName: String
     public let methodName: String
     public let parameters: [ToolParameterAST]
     public let returnType: String
     public let sourceLine: Int
+    public let sourceFile: String
+    public let capturePolicy: TraceCapturePolicy?
     public init(displayName: String, methodName: String,
-                parameters: [ToolParameterAST], returnType: String, sourceLine: Int = 0) {
+                parameters: [ToolParameterAST], returnType: String, sourceLine: Int = 0,
+                sourceFile: String = "", capturePolicy: TraceCapturePolicy? = nil) {
         self.displayName = displayName; self.methodName = methodName
         self.parameters = parameters; self.returnType = returnType
         self.sourceLine = sourceLine
+        self.sourceFile = sourceFile
+        self.capturePolicy = capturePolicy
+    }
+
+    func isEquivalent(to other: ToolDeclaration) -> Bool {
+        displayName == other.displayName &&
+        methodName == other.methodName &&
+        parameters == other.parameters &&
+        returnType == other.returnType
+    }
+
+    func mergingCapture(from other: ToolDeclaration) -> ToolDeclaration {
+        ToolDeclaration(
+            displayName: displayName,
+            methodName: methodName,
+            parameters: parameters,
+            returnType: returnType,
+            sourceLine: sourceLine,
+            sourceFile: sourceFile,
+            capturePolicy: capturePolicy ?? other.capturePolicy
+        )
     }
 }
 
-public struct ToolParameterAST: Sendable {
+public struct ToolParameterAST: Sendable, Equatable {
     public let name: String
     public let type: String
     public init(name: String, type: String) { self.name = name; self.type = type }
@@ -587,6 +811,11 @@ public struct ASTBlock: Sendable {
 public indirect enum StatementAST: Sendable {
     case bind(BindStatementAST)
     case rebind(RebindStatementAST)
+    /// `proceed, and note "<text>" in the <binding>` (INFORM7 §2.9). Lowers to a
+    /// `rebind` that appends `text` to an already-declared `text` binding; it is
+    /// carried as its own AST node so lowering can enforce the "declared + text"
+    /// contract and reject undeclared/non-text targets before desugaring.
+    case note(NoteStatementAST)
     case emit(EmitStatementAST)
     case assertStmt(AssertStatementAST)
     case wait(WaitStatementAST)
@@ -609,6 +838,7 @@ public indirect enum StatementAST: Sendable {
         switch self {
         case .bind(let s):              return s.sourceLine
         case .rebind(let s):            return s.sourceLine
+        case .note(let s):              return s.sourceLine
         case .emit(let s):              return s.sourceLine
         case .assertStmt(let s):        return s.sourceLine
         case .wait(let s):              return s.sourceLine
@@ -635,6 +865,15 @@ public struct BindStatementAST: Sendable {
     public let sourceLine: Int
     public init(name: String, value: ExpressionAST, sourceLine: Int = 0) {
         self.name = name; self.value = value; self.sourceLine = sourceLine
+    }
+}
+
+public struct NoteStatementAST: Sendable {
+    public let binding: String
+    public let text: String
+    public let sourceLine: Int
+    public init(binding: String, text: String, sourceLine: Int = 0) {
+        self.binding = binding; self.text = text; self.sourceLine = sourceLine
     }
 }
 
@@ -723,11 +962,14 @@ public struct CompleteStatementAST: Sendable {
 public struct ConditionalStatementAST: Sendable {
     public let condition: ExpressionAST
     public let thenBlock: ASTBlock
+    public let unknownBlock: ASTBlock?
     public let elseBlock: ASTBlock?
     public let sourceLine: Int
     public init(condition: ExpressionAST, thenBlock: ASTBlock,
+                unknownBlock: ASTBlock? = nil,
                 elseBlock: ASTBlock? = nil, sourceLine: Int = 0) {
         self.condition = condition; self.thenBlock = thenBlock
+        self.unknownBlock = unknownBlock
         self.elseBlock = elseBlock; self.sourceLine = sourceLine
     }
 }
@@ -970,6 +1212,9 @@ public indirect enum ExpressionAST: Sendable {
     /// 3C: A superlative over a description (`the oldest stale page`,
     /// `the largest deal by amount`).
     case superlative(SuperlativeAST)
+    case eventPattern(EventPatternAST)
+    case traceTemporal(TraceTemporalAST)
+    case traceStatistical(TraceStatisticalAST)
     /// 2A/2B/2C carrier: a surface-level violation (mixed bare and/or, an
     /// invalid quantifier/description shape, an unidentifiable kind) recorded
     /// at parse time with a fully-formed diagnostic. `ExpressionParser.parse`
@@ -977,7 +1222,138 @@ public indirect enum ExpressionAST: Sendable {
     /// The optional `suggestion` carries a structured "did you mean" (e.g. the
     /// closest declared verb form) so it survives as a real `Suggestion` on
     /// the emitted `Diagnostic`, not just text baked into the message.
-    case malformed(String, suggestion: Suggestion? = nil)
+    case malformed(String, code: DiagnosticCode = .malformedCondition,
+                   help: String? = nil, suggestion: Suggestion? = nil)
+}
+
+public struct EventPatternAST: Sendable {
+    public enum Subject: Sendable {
+        case step(String)
+        case named(String)
+        /// `the fetch step of the briefing skill` (cookbook 17). Parsed so the
+        /// compiler can raise a precise, named diagnostic — cross-skill trace
+        /// scope is out of v1 by [DECISION D4] — rather than silently falling
+        /// through to `.named("fetch step of the briefing skill")`.
+        case stepOfSkill(step: String, skill: String)
+    }
+
+    public enum OutcomeVerb: String, Sendable {
+        case failed
+        case succeeded
+        case invoked
+        case emitted
+        case prevented
+        case violated
+        /// Generic completion of the subject, regardless of success/failure —
+        /// the reading `E has ever occurred` (SEM-5-1) and outcome-less
+        /// kind-flavored anchors (`since the last production deploy`) need.
+        case occurred
+    }
+
+    public let subject: Subject
+    public let outcome: OutcomeVerb
+    public let payloadPredicate: ExpressionAST?
+    /// True for the event-negation reading `no <event pattern>`
+    /// (`since the last production deploy, no critical alert has occurred`,
+    /// cookbook 17/18.5, north-star flagship). Distinct from the `no`
+    /// quantifier and the `has no <noun>` emptiness marker (cookbook 2.7 "no
+    /// is triple-booked") — this flag only ever appears on the pattern that
+    /// lives in `since`-holds / condition position.
+    public let negated: Bool
+
+    public init(subject: Subject, outcome: OutcomeVerb, payloadPredicate: ExpressionAST? = nil, negated: Bool = false) {
+        self.subject = subject
+        self.outcome = outcome
+        self.payloadPredicate = payloadPredicate
+        self.negated = negated
+    }
+}
+
+public struct TraceStatisticalPatternAST: Sendable {
+    public let subject: EventPatternAST.Subject
+    public let payloadPredicate: ExpressionAST?
+
+    public init(subject: EventPatternAST.Subject, payloadPredicate: ExpressionAST? = nil) {
+        self.subject = subject
+        self.payloadPredicate = payloadPredicate
+    }
+}
+
+public enum TraceScopeAST: Sendable {
+    case currentRun
+    case acrossAllRuns
+}
+
+public enum TraceCountComparatorAST: Sendable {
+    case atLeast(Int)
+    case atMost(Int)
+    case exactly(Int)
+}
+
+public indirect enum TraceTemporalKindAST: Sendable {
+    case ever(EventPatternAST)
+    case withinWindow(EventPatternAST, duration: (Double, TimeUnitAST))
+    case countInWindow(EventPatternAST, comparator: TraceCountComparatorAST, duration: (Double, TimeUnitAST))
+    case inARow(EventPatternAST, count: Int)
+    case sinceLast(anchor: EventPatternAST, holds: ExpressionAST)
+}
+
+public struct TraceTemporalAST: Sendable {
+    public let scope: TraceScopeAST
+    public let kind: TraceTemporalKindAST
+
+    public init(scope: TraceScopeAST = .currentRun, kind: TraceTemporalKindAST) {
+        self.scope = scope
+        self.kind = kind
+    }
+}
+
+public enum TraceStatisticalOutcomeAST: Sendable {
+    case succeeds
+    case fails
+}
+
+public enum TraceStatisticalBoundAST: Sendable {
+    case atLeast(Double)
+    case atMost(Double)
+    case usually
+    case rarely
+}
+
+public enum TraceStatisticalDenominatorAST: Sendable {
+    case runs
+    case occurrences
+}
+
+public struct TraceStatisticalAST: Sendable {
+    public let scope: TraceScopeAST
+    public let pattern: TraceStatisticalPatternAST
+    public let outcome: TraceStatisticalOutcomeAST
+    public let bound: TraceStatisticalBoundAST
+    public let denominator: TraceStatisticalDenominatorAST
+    public let window: (Double, TimeUnitAST)?
+    public let monitorCadence: (Double, TimeUnitAST)?
+    public let blocking: Bool
+
+    public init(
+        scope: TraceScopeAST = .currentRun,
+        pattern: TraceStatisticalPatternAST,
+        outcome: TraceStatisticalOutcomeAST,
+        bound: TraceStatisticalBoundAST,
+        denominator: TraceStatisticalDenominatorAST,
+        window: (Double, TimeUnitAST)? = nil,
+        monitorCadence: (Double, TimeUnitAST)? = nil,
+        blocking: Bool = false
+    ) {
+        self.scope = scope
+        self.pattern = pattern
+        self.outcome = outcome
+        self.bound = bound
+        self.denominator = denominator
+        self.window = window
+        self.monitorCadence = monitorCadence
+        self.blocking = blocking
+    }
 }
 
 // MARK: - 2C. Quantifiers over descriptions

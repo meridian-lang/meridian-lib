@@ -22,70 +22,70 @@
       "adjective" : "granted",
       "function" : "meridianDef_Consent_granted",
       "kind" : "consent",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_MedicationOrder_cleared",
       "kind" : "medication order",
-      "line" : 29
+      "line" : 31
     },
     {
       "adjective" : "contraindicated",
       "function" : "meridianDef_MedicationOrder_contraindicated",
       "kind" : "medication order",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "high risk",
       "function" : "meridianDef_Medication_highRisk",
       "kind" : "medication",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "active",
       "function" : "meridianDef_Patient_active",
       "kind" : "patient",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "held",
       "function" : "meridianDef_Patient_held",
       "kind" : "patient",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "monitored",
       "function" : "meridianDef_Patient_monitored",
       "kind" : "patient",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "unmonitored",
       "function" : "meridianDef_Patient_unmonitored",
       "kind" : "patient",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "critical",
       "function" : "meridianDef_VitalSign_critical",
       "kind" : "vital sign",
-      "line" : 25
+      "line" : 27
     },
     {
       "adjective" : "stable",
       "function" : "meridianDef_VitalSign_stable",
       "kind" : "vital sign",
-      "line" : 26
+      "line" : 28
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a nurse",
-      "line" : 38,
+      "line" : 40,
       "name" : "administration",
       "right_cardinality" : "one",
       "right_kind" : "a medication order",
@@ -95,7 +95,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a protocol",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "a medication",
@@ -105,23 +105,11 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a clinician",
-      "line" : 36,
+      "line" : 38,
       "name" : "prescription",
       "right_cardinality" : "one",
       "right_kind" : "a medication order",
       "via" : "order.list"
-    }
-  ],
-  "meridian_rules" : [
-    {
-      "bounded" : false,
-      "executes" : true,
-      "kind" : "trigger",
-      "source" : {
-        "file" : "vitalsmonitor.meri",
-        "line" : 34
-      },
-      "text" : "When a patient has been unmonitored for more than 4 hours, escalate the patient"
     }
   ],
   "meridian_skill" : {
@@ -147,7 +135,7 @@
         "text" : "Rules"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
         "line" : 32,
         "text" : "Rules — steps"
@@ -254,13 +242,13 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Rules — steps",
         "line" : 32,
         "lines" : [
           "When a patient has been unmonitored for more than 4 hours, escalate the patient"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
@@ -334,21 +322,21 @@
   "meridian_verbs" : [
     {
       "base" : "administer",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "administered",
       "relation" : "administration",
       "third_person" : "administers"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "prescribe",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "prescribed",
       "relation" : "prescription",
       "third_person" : "prescribes"
@@ -361,51 +349,43 @@
   "source_map" : [
     {
       "meridian_line" : 44,
-      "swift_line" : 418
+      "swift_line" : 441
     },
     {
       "meridian_line" : 37,
-      "swift_line" : 422
+      "swift_line" : 445
     },
     {
       "meridian_line" : 38,
-      "swift_line" : 429
+      "swift_line" : 454
     },
     {
-      "meridian_line" : 60,
-      "swift_line" : 434
+      "meridian_line" : 39,
+      "swift_line" : 459
     },
     {
       "meridian_line" : 40,
-      "swift_line" : 450
+      "swift_line" : 478
     },
     {
       "meridian_line" : 41,
-      "swift_line" : 460
-    },
-    {
-      "meridian_line" : 34,
-      "swift_line" : 499
-    },
-    {
-      "meridian_line" : 34,
-      "swift_line" : 504
+      "swift_line" : 489
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 544
+      "swift_line" : 557
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 549
+      "swift_line" : 562
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 589
+      "swift_line" : 631
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 594
+      "swift_line" : 636
     }
   ],
   "tools_used" : [
@@ -420,7 +400,17 @@
           "name" : "patient"
         }
       ],
+      "skill_name" : "vitals monitor",
+      "skill_version_hash" : "73948e69078495537d1cbda8ce63451112688601b44aa34c207a180e91278889",
       "source_name" : "vitals monitor a patient",
+      "step_paths" : [
+        "\/VitalsMonitorPatient\/guarantees\/invariants\/726fdf8c8503e31fe37ab32d0724601f9a897bf85fa419937388662120c64364",
+        "\/VitalsMonitorPatient\/workflow\/procedure\/919dbffa31074245b7d3f2595470ccb9413d8b8a9a1da0a8de065664917dab00",
+        "\/VitalsMonitorPatient\/workflow\/procedure\/af2f178d6ac045d7bdd16773ea7cf7c316dce4ee8235723b2407b946fb63f0ec",
+        "\/VitalsMonitorPatient\/workflow\/procedure\/e64b2433f3af3f2fb44d3571946cd9b8d9d73a2be6259ffec186b029a9098ec5",
+        "\/VitalsMonitorPatient\/workflow\/procedure\/iterate.body\/79bd1e807272d6b7cdd4e0a15eb5eff4fa0c1d73daf3f931a67f8d151b99af94",
+        "\/VitalsMonitorPatient\/workflow\/procedure\/iterate.body\/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3"
+      ],
       "swift_struct" : "VitalsMonitorPatient"
     },
     {
@@ -428,15 +418,13 @@
       "parameters" : [
 
       ],
-      "source_name" : "when a patient has been unmonitored for more than 4 hours",
-      "swift_struct" : "WhenPatientHasBeenUnmonitored"
-    },
-    {
-      "mode" : "strict",
-      "parameters" : [
-
-      ],
+      "skill_name" : "vitals monitor",
+      "skill_version_hash" : "73948e69078495537d1cbda8ce63451112688601b44aa34c207a180e91278889",
       "source_name" : "when monitorPatientVitals fires",
+      "step_paths" : [
+        "\/WhenMonitorpatientvitalsFires\/root\/procedure\/0dbba96f030214794a15189dd0c081c556cc94172fb0e3bdb209ef04e713b715",
+        "\/WhenMonitorpatientvitalsFires\/root\/procedure\/cd949352ebdbd95151c5a0216d528a02293074d130f7351ff2ba14a0aec502fe"
+      ],
       "swift_struct" : "WhenMonitorpatientvitalsFires"
     },
     {
@@ -444,7 +432,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "vitals monitor",
+      "skill_version_hash" : "73948e69078495537d1cbda8ce63451112688601b44aa34c207a180e91278889",
       "source_name" : "when runVitalsWatch fires",
+      "step_paths" : [
+        "\/WhenRunvitalswatchFires\/root\/procedure\/c6136976b8d249d932bf166becc74bff31033dfa8bc35432f6a5d6d9cda84aa7",
+        "\/WhenRunvitalswatchFires\/root\/procedure\/ebbda943625174eca70f05f81b7931bb7b0465f36f1fa6e0c741aad10934ecf9"
+      ],
       "swift_struct" : "WhenRunvitalswatchFires"
     }
   ]

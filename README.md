@@ -4,7 +4,7 @@ A **controlled natural language compiler** for agent workflows and business rule
 Meridian reads English-shaped specifications and compiles them to readable,
 type-checked, async/await Swift plus a small deterministic runtime.
 
-**Current status: Phases 0–6, 6.5, 8, G, Inform-7 Waves 1–7 complete. Generated Swift compiles, links, and runs; Wave 7 canonical English round-trips across the committed corpora.**
+**Current status: Phases 0–6, 6.5, 8, G, Inform-7 Waves 1–8 complete. Generated Swift compiles, links, and runs; Wave 7 canonical English and Wave 8 trace-backed time/statistics round-trip across the committed corpora.**
 
 ---
 
@@ -92,6 +92,7 @@ swift run meridian skill-deviation original-skills/ . \
 | [docs/14_DEVELOPER_EXPERIENCE.md](docs/14_DEVELOPER_EXPERIENCE.md) | **Debugging** — diagnostics, `MERxxxx` codes, did-you-mean, batch reporting, tracing, `explain-diag`/`decisions`/`--fix` |
 | [docs/15_DECISIONS.md](docs/15_DECISIONS.md) | The readable design-decision log (generated from `DecisionCatalog`) |
 | [docs/18_VERBALIZER.md](docs/18_VERBALIZER.md) | Wave 7 canonical English, `meridian explain`, drift audit, and verbalizer API |
+| [docs/19_TRACES_AND_TIME.md](docs/19_TRACES_AND_TIME.md) | Wave 8 trace schema, temporal/statistical operators, monitors, and replay |
 | [Tests/README.md](Tests/README.md) | Test suites, forcing functions, adding new tests |
 | [docs/status.md](docs/status.md) | Phase progress, what's done, decision references |
 
@@ -136,7 +137,8 @@ sample-gbrain/                # Ported gbrain corpus (Phase G) — see its READM
 
 docs/                         # This documentation set
 AGENTS.md                     # AI contributor handbook (self-updating)
-IMPLEMENTATION_LOG.md         # Append-only decision log
+IMPLEMENTATION_LOG.md         # Append-only decision log (recent entries)
+.ai/implementation-log-archive/  # Frozen older log snapshots
 ```
 
 ---
@@ -179,11 +181,11 @@ IMPLEMENTATION_LOG.md         # Append-only decision log
   pre-heading content are hard errors (no silent drops).
 - **`meridian migrate-skill`** — convert a `SKILL.md` to a strict-compiling
   `.meri`. Runs a deterministic marking pass (blockquote pre-heading preamble;
-  append `(( inert, role: invariants/prohibitions ))` to prose
-  Contract/Anti-Patterns, `(( role: procedure ))` to pure-shell unknown
-  headings, `(( inert ))` to other unknowns; recognized roles left unmarked),
-  then strict-compiles; optional bounded LLM-assisted repair, always
-  compiler-gated. See [docs/13_SKILL_MD_PORTING.md](docs/13_SKILL_MD_PORTING.md).
+  route documentary sections to `(( role: reference ))`, recognized procedure
+  headings unmarked, normative-but-unlowerable lines left unmarked for precise
+  compiler errors, inference-cue lines to judgment markers — the migrator never
+  emits `(( inert ))`), then strict-compiles; optional bounded LLM-assisted
+  repair, always compiler-gated. See [docs/13_SKILL_MD_PORTING.md](docs/13_SKILL_MD_PORTING.md).
 - **`meridian skill-deviation`** — audit how a ported `.meri` deviates from its
   original `SKILL.md`: frontmatter delta, tier, similarity, structural
   categories, and a unified diff. The diff engine is a faithful Swift port of

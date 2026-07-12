@@ -77,9 +77,7 @@ struct BooleanGrammar {
             let rest = stripTrailingConnector(prefixTrimmed, orWord)
             return combineOr(parseOrLevel(rest, whole: whole), eitherNode)
         }
-        // No recognized connector between the prefix and `either` — not a
-        // documented/tested source shape; best-effort and-join.
-        return combineAnd(parseOrLevel(prefixTrimmed, whole: whole), eitherNode)
+        return .malformed(missingEitherConnectorMessage(whole))
     }
 
     /// Parse a previously-located `either … or …` body (`A or B or C`) into
@@ -147,6 +145,13 @@ struct BooleanGrammar {
         "ambiguous boolean expression \"\(s)\" mixes `and` and `or` without grouping. "
         + "Group the intended sub-clause with `either … or …` — e.g. write "
         + "`A and either B or C` (A ∧ (B ∨ C)) or `either A and B or C` ((A ∧ B) ∨ C)."
+    }
+
+    /// The diagnostic carried by `.malformed` when a clause precedes `either …`
+    /// without an explicit `and`/`or` connector.
+    private func missingEitherConnectorMessage(_ s: String) -> String {
+        "boolean expression \"\(s)\" joins a clause and `either … or …` without an explicit "
+        + "`and` or `or` connector. Write `A and either B or C` or `either A and B or C`."
     }
 
     // MARK: - Prefix keywords

@@ -22,58 +22,58 @@
       "adjective" : "pending",
       "function" : "meridianDef_AccessRequest_pending",
       "kind" : "access request",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_AccessRequest_stale",
       "kind" : "access request",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "fresh",
       "function" : "meridianDef_Credential_fresh",
       "kind" : "credential",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "overused",
       "function" : "meridianDef_Credential_overused",
       "kind" : "credential",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "classified",
       "function" : "meridianDef_Resource_classified",
       "kind" : "resource",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "authorized",
       "function" : "meridianDef_User_authorized",
       "kind" : "user",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_User_cleared",
       "kind" : "user",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "privileged",
       "function" : "meridianDef_User_privileged",
       "kind" : "user",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 36,
+      "line" : 38,
       "name" : "assignment",
       "right_cardinality" : "one",
       "right_kind" : "a role",
@@ -83,7 +83,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a policy",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "an environment",
@@ -93,7 +93,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 38,
+      "line" : 40,
       "name" : "grant",
       "right_cardinality" : "one",
       "right_kind" : "a resource",
@@ -125,37 +125,37 @@
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 38,
+        "line" : 42,
         "text" : "Workflow — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 49,
+        "line" : 47,
         "text" : "Workflow — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 55,
+        "line" : 53,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "invariants",
         "level" : 2,
-        "line" : 63,
+        "line" : 61,
         "text" : "Guarantees"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 66,
+        "line" : 64,
         "text" : "Report shape"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 53,
+        "line" : 51,
         "text" : "Emit"
       }
     ],
@@ -185,18 +185,16 @@
         "heading" : "Workflow",
         "line" : 34,
         "lines" : [
-          "The matrix report template is the signed-off audit artifact shape; the",
-          "executable steps below bind and emit it"
+          "bind matrix report =",
+          "codeblock:plain:YWNjZXNzLW1hdHJpeDoKW2lmIGNsYXNzaWZpZWQgY291bnQgaXMgbW9yZSB0aGFuIDBdc3RhdHVzOiByZXZpZXdlZFtvdGhlcndpc2Vdc3RhdHVzOiBlbXB0eVtlbmQgaWZdCnBlbmRpbmcgcmVxdWVzdHM6IHt7IGNsYXNzaWZpZWQgY291bnQgfX0="
         ],
         "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Workflow — steps",
-        "line" : 38,
+        "line" : 42,
         "lines" : [
-          "bind matrix report =",
-          "codeblock:plain:YWNjZXNzLW1hdHJpeDoKW2lmIGNsYXNzaWZpZWQgY291bnQgaXMgbW9yZSB0aGFuIDBdc3RhdHVzOiByZXZpZXdlZFtvdGhlcndpc2Vdc3RhdHVzOiBlbXB0eVtlbmQgaWZdCnBlbmRpbmcgcmVxdWVzdHM6IHt7IGNsYXNzaWZpZWQgY291bnQgfX0=",
           "fetch pending access requests",
           "let classified count be the number of access requests whose status is \"pending\""
         ],
@@ -205,7 +203,7 @@
       {
         "executes" : true,
         "heading" : "Workflow — steps 2",
-        "line" : 49,
+        "line" : 47,
         "lines" : [
           "emit governance.audit with body = matrix report",
           "the classified count is at least 0",
@@ -216,7 +214,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 55,
+        "line" : 53,
         "lines" : [
           "Don't hand-edit the rendered matrix to \"fix\" a row that looks wrong",
           "If the outcome column disagrees with what policy actually grants, the fix",
@@ -230,7 +228,7 @@
       {
         "executes" : true,
         "heading" : "Guarantees",
-        "line" : 63,
+        "line" : 61,
         "lines" : [
           "every emitted matrix report contains \"access-matrix\""
         ],
@@ -239,7 +237,7 @@
       {
         "executes" : false,
         "heading" : "Report shape",
-        "line" : 66,
+        "line" : 64,
         "lines" : [
           "The audit artifact opens with `access-matrix:`, states whether the pending",
           "queue has been reviewed or is empty, and reports the pending-request count",
@@ -253,21 +251,21 @@
   "meridian_verbs" : [
     {
       "base" : "authorize",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "authorized",
       "relation" : "assignment",
       "third_person" : "authorizes"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "grant",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "granted",
       "relation" : "grant",
       "third_person" : "grants"
@@ -279,60 +277,56 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 64,
-      "swift_line" : 435
-    },
-    {
-      "meridian_line" : 27,
-      "swift_line" : 439
-    },
-    {
-      "meridian_line" : 40,
-      "swift_line" : 441
-    },
-    {
-      "meridian_line" : 48,
-      "swift_line" : 444
-    },
-    {
-      "meridian_line" : 47,
-      "swift_line" : 455
-    },
-    {
-      "meridian_line" : 51,
+      "meridian_line" : 62,
       "swift_line" : 458
     },
     {
-      "meridian_line" : 52,
-      "swift_line" : 468
+      "meridian_line" : 27,
+      "swift_line" : 462
     },
     {
-      "meridian_line" : 53,
-      "swift_line" : 473
+      "meridian_line" : 44,
+      "swift_line" : 465
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 512
+      "meridian_line" : 45,
+      "swift_line" : 478
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 517
+      "meridian_line" : 49,
+      "swift_line" : 481
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 557
+      "meridian_line" : 50,
+      "swift_line" : 492
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 562
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 602
+      "meridian_line" : 51,
+      "swift_line" : 497
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 607
+      "swift_line" : 565
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 570
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 639
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 644
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 713
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 718
     }
   ],
   "tools_used" : [
@@ -344,7 +338,18 @@
       "parameters" : [
 
       ],
+      "skill_name" : "access matrix",
+      "skill_version_hash" : "931844ec87fa88b2b230f221f989d996e54addc8e5262ab38ab995f489160400",
       "source_name" : "access matrix",
+      "step_paths" : [
+        "\/AccessMatrix\/guarantees\/invariants\/7c16c55cb20a9ef392b15c52d68dd0abaea4f0740e40062006769f0e162027f2",
+        "\/AccessMatrix\/tables\/tables\/62c0d7918e461b03fd680b87c920dd42f826bc6713e4fac6d10ee4cda15da8dc",
+        "\/AccessMatrix\/workflow-steps-2\/procedure\/617ad80eae23573b0559732aa396008fab1538a9370c4fc6ea7dfea718327cb4",
+        "\/AccessMatrix\/workflow-steps-2\/procedure\/78a42a0c9c678f7540c16de51f753700072ee8ee488926a5698684ad9b1746cb",
+        "\/AccessMatrix\/workflow-steps-2\/procedure\/c77dd477bc654227d34a9947a5c6ae7b33a6a79a00bd54689cb40f7a33b04152",
+        "\/AccessMatrix\/workflow-steps\/procedure\/4e72b9da1da2fd4ccbb1a293cf3e515dcfc2e7cdb6138fe8db34a40ae80775f4",
+        "\/AccessMatrix\/workflow-steps\/procedure\/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1"
+      ],
       "swift_struct" : "AccessMatrix"
     },
     {
@@ -352,7 +357,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "access matrix",
+      "skill_version_hash" : "931844ec87fa88b2b230f221f989d996e54addc8e5262ab38ab995f489160400",
       "source_name" : "when renderAccessMatrix fires",
+      "step_paths" : [
+        "\/WhenRenderaccessmatrixFires\/root\/procedure\/100df55f09a0aa4bef45a75a6a9cdc3848bea5e3f125505735f91bc808e60a03",
+        "\/WhenRenderaccessmatrixFires\/root\/procedure\/a7d1ec003747ff1fec775cb828ad9adadc7a4aa3d8123f0bf94c437192213ffe"
+      ],
       "swift_struct" : "WhenRenderaccessmatrixFires"
     },
     {
@@ -360,7 +371,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "access matrix",
+      "skill_version_hash" : "931844ec87fa88b2b230f221f989d996e54addc8e5262ab38ab995f489160400",
       "source_name" : "when publishAccessMatrix fires",
+      "step_paths" : [
+        "\/WhenPublishaccessmatrixFires\/root\/procedure\/10b9a619cedadb16982ce9f34e7a31a6f861e932888aa47a97729b0849c83882",
+        "\/WhenPublishaccessmatrixFires\/root\/procedure\/4f7b9a6c2b056b2291c0ceb4bb7783c6b6e54821488e7c0cb4fd86ac932023ab"
+      ],
       "swift_struct" : "WhenPublishaccessmatrixFires"
     },
     {
@@ -368,7 +385,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "access matrix",
+      "skill_version_hash" : "931844ec87fa88b2b230f221f989d996e54addc8e5262ab38ab995f489160400",
       "source_name" : "when generateAuditMatrix fires",
+      "step_paths" : [
+        "\/WhenGenerateauditmatrixFires\/root\/procedure\/1dd2a9b8d51b72c8a002c9ba51aef5b01dfca174138f66edc89d6718fcf4674a",
+        "\/WhenGenerateauditmatrixFires\/root\/procedure\/71ab98f506445040a8766c4e83f35d60b4ddd3fd6a81463cc43c771f8b216232"
+      ],
       "swift_struct" : "WhenGenerateauditmatrixFires"
     }
   ]

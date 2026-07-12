@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -908,75 +908,47 @@
   "source_map" : [
     {
       "meridian_line" : 152,
-      "swift_line" : 611
+      "swift_line" : 634
     },
     {
       "meridian_line" : 159,
-      "swift_line" : 621
+      "swift_line" : 646
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 660
+      "swift_line" : 715
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 665
+      "swift_line" : 720
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 704
+      "swift_line" : 788
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 709
+      "swift_line" : 793
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 748
+      "swift_line" : 861
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 753
+      "swift_line" : 866
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 792
+      "swift_line" : 934
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 797
+      "swift_line" : 939
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 836
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 841
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 880
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 885
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 924
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 929
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 968
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 973
+      "swift_line" : 1007
     },
     {
       "meridian_line" : 1,
@@ -984,63 +956,91 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1017
+      "swift_line" : 1080
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1056
+      "swift_line" : 1085
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1061
+      "swift_line" : 1153
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1100
+      "swift_line" : 1158
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1105
+      "swift_line" : 1226
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1144
+      "swift_line" : 1231
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1149
+      "swift_line" : 1299
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1188
+      "swift_line" : 1304
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1193
+      "swift_line" : 1372
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1232
+      "swift_line" : 1377
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1237
+      "swift_line" : 1445
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1276
+      "swift_line" : 1450
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1281
+      "swift_line" : 1518
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1320
+      "swift_line" : 1523
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1325
+      "swift_line" : 1591
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1596
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1664
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1669
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1737
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1742
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1810
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1815
     }
   ],
   "tools_used" : [
@@ -1053,10 +1053,16 @@
           "guidance" : "If `brain-taxonomist` is installed, INVOKE IT for ambiguous cases. It runs\nthe same decision protocol against the active pack and gives you a single\nrecommended filing path with reasoning\nOutput: a filing plan table:\ncodeblock:bash:IyBXaGF0J3MgZW1lcmdpbmcgaW4gdGhlIGJyYWluIHRoYXQgdGhlIGFjdGl2ZSBwYWNrIGRvZXNuJ3QgY292ZXI\/CmdicmFpbiBzY2hlbWEgZGV0ZWN0IC0tanNvbgoKIyBMTE0tcmVmaW5lZCBzdWdnZXN0aW9ucyAoaGV1cmlzdGljIHdoZW4gbm8gQVBJIGtleSBzZXQpLgpnYnJhaW4gc2NoZW1hIHN1Z2dlc3QgLS1qc29uCgojIFJldmlldyB3aGF0J3MgcGVuZGluZzsgcHJvbW90ZSBvciBpZ25vcmUgZWFjaCBjYW5kaWRhdGUuCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1qc29uCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1hcHBseSA8cHJlZml4LW9yLXR5cGUtbmFtZT4=\nIf schema needs change:\nPropose the addition to the user before running `review-candidates --apply`\nFor each item in the filing plan:\nUse the brain page template. MUST include:\nFor each entity mentioned:\nCheck if a brain page exists (`gbrain search \"<name>\"` or `gbrain get_page people\/<slug>`)\nIf exists: update State, append Timeline entry citing this research\nIf not: create with enrichment\nAfter ALL pages are written, run `gbrain sync` (or commit + push in the\nbrain repo). Verify every link resolves\nThis phase operates on the SKILL graph, not just the research\nFor each identified pattern:\nShared logic → `lib\/` (not copy-pasted into skills)\nIs shared code copy-pasted between skills? (extract to `lib\/`)\nOn approval: invoke `\/skillify` for each new\/modified skill\ncodeblock:bash:Z2JyYWluIGNoZWNrLXJlc29sdmFibGUgICAgICAgICAgICAgICAgICAgICAgICAgIyByb3V0aW5nLXRhYmxlIHJlYWNoYWJpbGl0eQpnYnJhaW4gZG9jdG9yIC0tanNvbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIGhlYWx0aCBzdXJmYWNlCmdicmFpbiBzZWFyY2ggIjx0b3BpYyBrZXl3b3Jkcz4iICAgICAgICAgICAgICAgICMgYnJhaW4gcGFnZXMgZmluZGFibGUKZ2JyYWluIG9ycGhhbnMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBhbnkgcGFnZXMgd2l0aG91dCBpbmJvdW5kIGxpbmtzPw==\nAll brain pages have proper frontmatter against active schema pack\nAll entity pages are cross-linked\nAny new skills have routing entries in `skills\/RESOLVER.md`\nNo DRY violations (no duplicated logic across skills)\nNo MECE violations (no ambiguous routing between skills)\nActive schema pack updated if new content types emerged\n`gbrain doctor` reports `schema_pack_consistency: ok`\ncodeblock:markdown:IyMgRUlJUlAgQ29tcGxldGU6IFtUb3BpY10KCiMjIyBCcmFpbiBwYWdlcyBjcmVhdGVkL3VwZGF0ZWQKLSBbcGF0aF0g4oCUIFtkZXNjcmlwdGlvbl0KLSAuLi4KCiMjIyBFbnRpdHkgcGFnZXMKLSBbcGF0aF0g4oCUIFtjcmVhdGVkL3VwZGF0ZWRdCi0gLi4uCgojIyMgU2NoZW1hIGNoYW5nZXMKLSBbbm9uZSAvIGRlc2NyaXB0aW9uIG9mIGNoYW5nZXMgKyB3aGljaCBwYWNrIGRlbHRhIGZpbGVdCgojIyMgU2tpbGxzIGlkZW50aWZpZWQKLSBbc2tpbGwtbmFtZV0g4oCUIFtzdGF0dXM6IGNyZWF0ZWQgLyBtZXJnZWQgLyBkZWZlcnJlZF0KLSAuLi4KCiMjIyBSZXNvbHZlciBzdGF0dXMKLSBEUlkgY2hlY2s6IFtjbGVhbl0KLSBNRUNFIGF1ZGl0OiBbY2xlYW5dCi0gQWN0aXZlIHBhY2s6IFtuYW1lXSB2W3ZlcnNpb25dCi0gc2NoZW1hX3BhY2tfY29uc2lzdGVuY3k6IFtvayAvIHdhcm4g4oCUIHBjdCB1bnR5cGVkXQ==\nNever treat non-English sources as secondary\n**EIIRP is idempotent.** Running it twice on the same work should produce no changes the second time\n**EIIRP consumes the active schema pack as data.** Never hard-code directory tables in EIIRP's logic — read from `gbrain schema show --json` so users who picked `gbrain-recommended` OR custom packs get the right behavior automatically\nPhase 6 verification uses `gbrain doctor`'s schema_pack_consistency\ncheck (T7) for the persistent surface",
           "line" : 159,
           "scoped_tools" : [
+            "add_link",
+            "add_timeline_entry",
+            "get_page",
             "link.add",
             "page.get",
             "page.search",
             "publish",
+            "put_page",
+            "query",
+            "search",
             "shell.run",
             "timeline.add"
           ],
@@ -1070,7 +1076,13 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "eiirp a input",
+      "step_paths" : [
+        "\/EiirpInput\/phase-2-taxonomy-where-does-each-piece-go-steps-2\/procedure\/2e2b1ea88326a9b4d9dc8b461970da8576acdd13c23897c05af48fda9292129f",
+        "\/EiirpInput\/phase-2-taxonomy-where-does-each-piece-go-steps\/procedure\/263ad4215a012f5abea812b3577b332a89926f6039f3096a381faad32eaf3252"
+      ],
       "swift_struct" : "EiirpInput"
     },
     {
@@ -1078,7 +1090,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when everythingInItsRightPlace fires",
+      "step_paths" : [
+        "\/WhenEverythinginitsrightplaceFires\/root\/procedure\/210e1c0eeab13e73ffaced60bc55655fc58d9916825a6f19482a3581eef107f2",
+        "\/WhenEverythinginitsrightplaceFires\/root\/procedure\/c990cf608d0a25d7d8790f568dca617e5dbc62d80bc6964647eefb81e3e663a4"
+      ],
       "swift_struct" : "WhenEverythinginitsrightplaceFires"
     },
     {
@@ -1086,7 +1104,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when eiirp fires",
+      "step_paths" : [
+        "\/WhenEiirpFires\/root\/procedure\/7649d0131a1ad42bd9ba3424f75889b2fd458986ad0f4194d1f6322b115cd7f5",
+        "\/WhenEiirpFires\/root\/procedure\/c8ea04c3c4d5cd822e1b74de75d7b44992947252a39aba97a22243fb782dee6e"
+      ],
       "swift_struct" : "WhenEiirpFires"
     },
     {
@@ -1094,7 +1118,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when storeThisResearch fires",
+      "step_paths" : [
+        "\/WhenStorethisresearchFires\/root\/procedure\/0d3c0a5d88ba740191d1e993cad1024d29c122adee017084e6843ff0203e0a75",
+        "\/WhenStorethisresearchFires\/root\/procedure\/132d253b14f9b07885c89eae94d1e6f97e67c05fdb251182900ce3e225e581c3"
+      ],
       "swift_struct" : "WhenStorethisresearchFires"
     },
     {
@@ -1102,7 +1132,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when putThisInBrain fires",
+      "step_paths" : [
+        "\/WhenPutthisinbrainFires\/root\/procedure\/843c0df5afa1ac0ca69a4aecd934b923074f7821644298cf8a7fc3496ac62d41",
+        "\/WhenPutthisinbrainFires\/root\/procedure\/c5fc61bbcdb53d865bbdf9ab10e81df6b0e99afc0e2603cba791bdcf29eea900"
+      ],
       "swift_struct" : "WhenPutthisinbrainFires"
     },
     {
@@ -1110,7 +1146,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when fileThisProperly fires",
+      "step_paths" : [
+        "\/WhenFilethisproperlyFires\/root\/procedure\/320611207b9dfa5fa2cc416e6ec84f31d07160c602050e0bfce5214da0b7386a",
+        "\/WhenFilethisproperlyFires\/root\/procedure\/a244cf3ddd736e500a5ee25e7e16873a640a8ca3f595c67390e2ceeef049adce"
+      ],
       "swift_struct" : "WhenFilethisproperlyFires"
     },
     {
@@ -1118,7 +1160,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when whereDoesThisResearchGo fires",
+      "step_paths" : [
+        "\/WhenWheredoesthisresearchgoFires\/root\/procedure\/841373ca658c481a99ebdc76c91605fa62338d4a5ce10aa876202f1f39a0b86d",
+        "\/WhenWheredoesthisresearchgoFires\/root\/procedure\/910a21d30141a9c33d8306abf86b732b19f0e1fccef0c1a767ffeeda07083a4c"
+      ],
       "swift_struct" : "WhenWheredoesthisresearchgoFires"
     },
     {
@@ -1126,7 +1174,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when makeThisPermanent fires",
+      "step_paths" : [
+        "\/WhenMakethispermanentFires\/root\/procedure\/8d8c82c2f74ddc06f2bd35c1083ea3a28ee52cfd7943eaf3018d04b3b90fbaf7",
+        "\/WhenMakethispermanentFires\/root\/procedure\/f8ef415766b3539705b26ed65b34e389f62538099c0fe2337d60ab6caf605bf7"
+      ],
       "swift_struct" : "WhenMakethispermanentFires"
     },
     {
@@ -1134,7 +1188,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when archiveThisResearch fires",
+      "step_paths" : [
+        "\/WhenArchivethisresearchFires\/root\/procedure\/8c377b538a1fd727180ef669022565ade870bea9e7f0834eb4d94cc19ed6d01a",
+        "\/WhenArchivethisresearchFires\/root\/procedure\/b21ceef28d014850004752d1b4f9aaea92a88753d3690143954dbcd13399c5d8"
+      ],
       "swift_struct" : "WhenArchivethisresearchFires"
     },
     {
@@ -1142,7 +1202,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when archiveThisResearchThread fires",
+      "step_paths" : [
+        "\/WhenArchivethisresearchthreadFires\/root\/procedure\/20a0707ae90e43ec98c9c5eef26345ac5ca2244e1c2c6549f50d423d5b48d40e",
+        "\/WhenArchivethisresearchthreadFires\/root\/procedure\/5a72ffa83d3e28b99df9bd028653064b738bc4346e0d3ee1ac7d986c7708e3f6"
+      ],
       "swift_struct" : "WhenArchivethisresearchthreadFires"
     },
     {
@@ -1150,7 +1216,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when brainThis fires",
+      "step_paths" : [
+        "\/WhenBrainthisFires\/root\/procedure\/9538961c776e188cea723019b9d31ad4a0a9db3a98861eb19f1c6aef0d467d71",
+        "\/WhenBrainthisFires\/root\/procedure\/c7249f0464c8f84d668554cfe7a0a69c12001a5018d26879301e14b0e1dcb133"
+      ],
       "swift_struct" : "WhenBrainthisFires"
     },
     {
@@ -1158,7 +1230,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when fileAllThis fires",
+      "step_paths" : [
+        "\/WhenFileallthisFires\/root\/procedure\/2c9c207cfb77877087a766eb3f648abb1398408cb64b41deca7ee8e6f1f6e3aa",
+        "\/WhenFileallthisFires\/root\/procedure\/7dad71293bf57f6f55d5388a8c3feba37d643f90695f9f0968b0763ce1af9e5b"
+      ],
       "swift_struct" : "WhenFileallthisFires"
     },
     {
@@ -1166,7 +1244,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when organizeAllThis fires",
+      "step_paths" : [
+        "\/WhenOrganizeallthisFires\/root\/procedure\/0cf5943f119086e2a5d6bd5d733a07c277b3fbd61574ed2b85d533686a93304f",
+        "\/WhenOrganizeallthisFires\/root\/procedure\/46eef54f1d6101e437269c4def4b4d6025e83743b75834b717f39cf3ec042649"
+      ],
       "swift_struct" : "WhenOrganizeallthisFires"
     },
     {
@@ -1174,7 +1258,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when organizeAllThisWork fires",
+      "step_paths" : [
+        "\/WhenOrganizeallthisworkFires\/root\/procedure\/644a94d266ed47090c7b99e51e01680f5c09dde0fac22cd2f13eecf7fac61d00",
+        "\/WhenOrganizeallthisworkFires\/root\/procedure\/6bf1c8ee5b328cc5de442d3ccb4937c65825660ae252ddd1d60cee3402ea7e20"
+      ],
       "swift_struct" : "WhenOrganizeallthisworkFires"
     },
     {
@@ -1182,7 +1272,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when makeThisReDoable fires",
+      "step_paths" : [
+        "\/WhenMakethisredoableFires\/root\/procedure\/69de49fce60e47424daadb1450643f0e854c8692ff39c67fa7726470e38ea39b",
+        "\/WhenMakethisredoableFires\/root\/procedure\/abb919f9095ff8aaf3a63eee59fd5ee96277ba85108b3c7af74086f10f8fcd6f"
+      ],
       "swift_struct" : "WhenMakethisredoableFires"
     },
     {
@@ -1190,7 +1286,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when dryThisUp fires",
+      "step_paths" : [
+        "\/WhenDrythisupFires\/root\/procedure\/53f8e63b76beada90b25fc0d733a6298f973cf39ec3499f3cef6803067d91765",
+        "\/WhenDrythisupFires\/root\/procedure\/8113b281f92c2bfdbfa875427cc2e365f1f44abb5ee001c2233e3f3cc4a6c6c7"
+      ],
       "swift_struct" : "WhenDrythisupFires"
     },
     {
@@ -1198,7 +1300,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "eiirp",
+      "skill_version_hash" : "8827c89d30cc69860906620e73820b234dda15908fd82b2e2ab937537f34f551",
       "source_name" : "when checkEverythingIsInRight fires",
+      "step_paths" : [
+        "\/WhenCheckeverythingisinrightFires\/root\/procedure\/1aea0afcafec28ce8a841a822b20de9a62e3ad970c526864fd3963b36cd30a3e",
+        "\/WhenCheckeverythingisinrightFires\/root\/procedure\/cea70d70890511ad4f1f1352a5cd60a41a797dfec497f6a26f91e8b289094c34"
+      ],
       "swift_struct" : "WhenCheckeverythingisinrightFires"
     }
   ]

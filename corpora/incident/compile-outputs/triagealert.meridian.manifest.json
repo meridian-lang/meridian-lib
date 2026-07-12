@@ -22,58 +22,70 @@
       "adjective" : "actionable",
       "function" : "meridianDef_Alert_actionable",
       "kind" : "alert",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "critical",
       "function" : "meridianDef_Alert_critical",
       "kind" : "alert",
-      "line" : 23
+      "line" : 25
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Alert_stale",
       "kind" : "alert",
-      "line" : 24
+      "line" : 26
     },
     {
       "adjective" : "unhealthy",
       "function" : "meridianDef_Deploy_unhealthy",
       "kind" : "deploy",
-      "line" : 26
+      "line" : 28
     },
     {
       "adjective" : "high severity",
       "function" : "meridianDef_Incident_highSeverity",
       "kind" : "incident",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Incident_open",
       "kind" : "incident",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "degraded",
       "function" : "meridianDef_Service_degraded",
       "kind" : "service",
-      "line" : 25
+      "line" : 27
+    },
+    {
+      "adjective" : "healthy",
+      "function" : "meridianDef_Service_healthy",
+      "kind" : "service",
+      "line" : 33
+    },
+    {
+      "adjective" : "recovered",
+      "function" : "meridianDef_Service_recovered",
+      "kind" : "service",
+      "line" : 34
     },
     {
       "adjective" : "breached",
       "function" : "meridianDef_Slo_breached",
       "kind" : "slo",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a runbook",
-      "line" : 36,
+      "line" : 40,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "a service",
@@ -83,7 +95,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a service",
-      "line" : 32,
+      "line" : 36,
       "name" : "firing",
       "right_cardinality" : "one",
       "right_kind" : "an alert",
@@ -93,7 +105,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an oncall engineer",
-      "line" : 34,
+      "line" : 38,
       "name" : "ownership",
       "right_cardinality" : "one",
       "right_kind" : "a service",
@@ -224,21 +236,21 @@
   "meridian_verbs" : [
     {
       "base" : "cover",
-      "line" : 41,
+      "line" : 45,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "own",
-      "line" : 40,
+      "line" : 44,
       "past_participle" : "owned",
       "relation" : "ownership",
       "third_person" : "owns"
     },
     {
       "base" : "page",
-      "line" : 39,
+      "line" : 43,
       "past_participle" : "paged",
       "relation" : "ownership",
       "third_person" : "pages"
@@ -251,59 +263,59 @@
   "source_map" : [
     {
       "meridian_line" : 47,
-      "swift_line" : 393
+      "swift_line" : 421
     },
     {
-      "meridian_line" : 44,
-      "swift_line" : 398
+      "meridian_line" : 29,
+      "swift_line" : 426
     },
     {
       "meridian_line" : 30,
-      "swift_line" : 409
+      "swift_line" : 439
     },
     {
       "meridian_line" : 31,
-      "swift_line" : 414
+      "swift_line" : 447
     },
     {
-      "meridian_line" : 59,
-      "swift_line" : 417
+      "meridian_line" : 32,
+      "swift_line" : 451
     },
     {
       "meridian_line" : 33,
-      "swift_line" : 429
+      "swift_line" : 465
     },
     {
       "meridian_line" : 35,
-      "swift_line" : 434
+      "swift_line" : 471
     },
     {
       "meridian_line" : 36,
-      "swift_line" : 450
+      "swift_line" : 490
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 489
+      "swift_line" : 558
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 494
+      "swift_line" : 563
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 534
+      "swift_line" : 632
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 539
+      "swift_line" : 637
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 579
+      "swift_line" : 706
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 584
+      "swift_line" : 711
     }
   ],
   "tools_used" : [
@@ -339,7 +351,19 @@
       "parameters" : [
 
       ],
+      "skill_name" : "triage alert",
+      "skill_version_hash" : "22cba280daa216a02d74e969d5d4bcf1ca5f6f4206472aba04629a3e76c3b7cd",
       "source_name" : "triage alert",
+      "step_paths" : [
+        "\/TriageAlert\/guarantees\/invariants\/8c301383abb114a3bb589d9a043e5b6cebaa0ad7f5f426574f0892b3e6537219",
+        "\/TriageAlert\/workflow-steps\/procedure\/6b357e7f5fbcb16490243317c9839efae95b09ad9ec481778d5367f0fe596c69",
+        "\/TriageAlert\/workflow-steps\/procedure\/9914653ceda26a29cad825320097e8b2d0b36c7c4e302cae514ab6a830c6fea5",
+        "\/TriageAlert\/workflow-steps\/procedure\/b86e27aa978ceff912e4a2145c70e28af72a8af73fdd609930996f1ec3b1f7c7",
+        "\/TriageAlert\/workflow-steps\/procedure\/branch.else\/83c9cdad620ff07386f288f7b1a4421f8420b949cb5349ae3ee87845abdd0f8d",
+        "\/TriageAlert\/workflow-steps\/procedure\/branch.then\/00abbcc0000a2b9b57e660816430d5470b33d763c6482f3305b81e339b3dc219",
+        "\/TriageAlert\/workflow-steps\/procedure\/branch.then\/24ddf3af73626f6585d6f943afe6e60c516dac09e16e87239f70fd1792a7bbd2",
+        "\/TriageAlert\/workflow-steps\/procedure\/iterate.body\/94825c4e272083347442cca72929ebf7b5aba72dc6ec4f57886bb452e7723563"
+      ],
       "swift_struct" : "TriageAlert"
     },
     {
@@ -347,7 +371,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "triage alert",
+      "skill_version_hash" : "22cba280daa216a02d74e969d5d4bcf1ca5f6f4206472aba04629a3e76c3b7cd",
       "source_name" : "when triageFiringAlerts fires",
+      "step_paths" : [
+        "\/WhenTriagefiringalertsFires\/root\/procedure\/850f7c88cfebf44bdfd4579fcbb2b1f71220d0421816dc45ea15c35bb5492bf0",
+        "\/WhenTriagefiringalertsFires\/root\/procedure\/e023b2777c265364b0f21f0489ce2c2e11d4e2f0e4a529ffdf1bd07e7ccbc9d2"
+      ],
       "swift_struct" : "WhenTriagefiringalertsFires"
     },
     {
@@ -355,7 +385,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "triage alert",
+      "skill_version_hash" : "22cba280daa216a02d74e969d5d4bcf1ca5f6f4206472aba04629a3e76c3b7cd",
       "source_name" : "when triageAlerts fires",
+      "step_paths" : [
+        "\/WhenTriagealertsFires\/root\/procedure\/4c14b71b7c77bb52ff3aeed2b9384b2d51c7acde14e8ad2d78be28111c111599",
+        "\/WhenTriagealertsFires\/root\/procedure\/b1f22409aebcf9dec49357aadc1882d2da1a49af6d0929b4b59bc97332807c73"
+      ],
       "swift_struct" : "WhenTriagealertsFires"
     },
     {
@@ -363,7 +399,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "triage alert",
+      "skill_version_hash" : "22cba280daa216a02d74e969d5d4bcf1ca5f6f4206472aba04629a3e76c3b7cd",
       "source_name" : "when runAlertTriage fires",
+      "step_paths" : [
+        "\/WhenRunalerttriageFires\/root\/procedure\/15049bdc8992835ae973850811a9427fd77c6b7232743e53bdef36857aa1e26b",
+        "\/WhenRunalerttriageFires\/root\/procedure\/54d39bc3fe1db37cbd54f59defcabccd297b7cfaef386d180b0cfe8b1a8c68ec"
+      ],
       "swift_struct" : "WhenRunalerttriageFires"
     }
   ]

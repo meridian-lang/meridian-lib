@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -679,135 +679,135 @@
   "source_map" : [
     {
       "meridian_line" : 255,
-      "swift_line" : 603
+      "swift_line" : 626
     },
     {
       "meridian_line" : 256,
-      "swift_line" : 615
+      "swift_line" : 640
     },
     {
-      "meridian_line" : 157,
-      "swift_line" : 627
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 667
+      "meridian_line" : 257,
+      "swift_line" : 654
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 672
+      "swift_line" : 724
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 711
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 716
+      "swift_line" : 797
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 755
+      "swift_line" : 802
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 760
+      "swift_line" : 870
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 799
+      "swift_line" : 875
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 804
+      "swift_line" : 943
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 843
+      "swift_line" : 948
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 848
+      "swift_line" : 1016
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 887
+      "swift_line" : 1021
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 892
+      "swift_line" : 1089
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 931
+      "swift_line" : 1094
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 936
+      "swift_line" : 1162
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 975
+      "swift_line" : 1167
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 980
+      "swift_line" : 1235
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1019
+      "swift_line" : 1240
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1024
+      "swift_line" : 1308
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1063
+      "swift_line" : 1313
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1068
+      "swift_line" : 1381
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1107
+      "swift_line" : 1386
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1112
+      "swift_line" : 1454
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1151
+      "swift_line" : 1459
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1156
+      "swift_line" : 1527
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1195
+      "swift_line" : 1532
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1200
+      "swift_line" : 1600
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1239
+      "swift_line" : 1605
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1244
+      "swift_line" : 1673
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1283
+      "swift_line" : 1678
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1288
+      "swift_line" : 1746
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1751
     }
   ],
   "tools_used" : [
@@ -822,7 +822,14 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "schema-author a input",
+      "step_paths" : [
+        "\/SchemaAuthorInput\/outputs-steps\/procedure\/3b97be90df033de3be78df936fc205f9b3735c5039f1d3c8b8add4c33826cb19",
+        "\/SchemaAuthorInput\/outputs-steps\/procedure\/c24ae087b8f96cfc47292b624e7892522decce73891210099b6bbc57670a17cc",
+        "\/SchemaAuthorInput\/outputs-steps\/procedure\/d90e0d3cfeba89cdc1019c46ddc6c57b8c8c647b9de8440488aec790c643c463"
+      ],
       "swift_struct" : "SchemaAuthorInput"
     },
     {
@@ -830,7 +837,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when addPageType fires",
+      "step_paths" : [
+        "\/WhenAddpagetypeFires\/root\/procedure\/0777e961c6c9d620880d583bf7a8835d1abe57f58c59a54349b8745c35b09403",
+        "\/WhenAddpagetypeFires\/root\/procedure\/546f371cefa3b3a3ed22fc4796b6c5edc9a393c965a20145acee32f06d667eeb"
+      ],
       "swift_struct" : "WhenAddpagetypeFires"
     },
     {
@@ -838,7 +851,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when addTypeMySchema fires",
+      "step_paths" : [
+        "\/WhenAddtypemyschemaFires\/root\/procedure\/68bcb874dc768cdebf3f3f893ce4b9fe3370a458aa3f046e7dd163cd5a44bac7",
+        "\/WhenAddtypemyschemaFires\/root\/procedure\/ce3de1cdcd8275686407010238cc093e5b0fd21ffdf3ec1ed52463b0fb0646d8"
+      ],
       "swift_struct" : "WhenAddtypemyschemaFires"
     },
     {
@@ -846,7 +865,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when myBrainHasUntypedPages fires",
+      "step_paths" : [
+        "\/WhenMybrainhasuntypedpagesFires\/root\/procedure\/23b417bc8277320cab75bd2da6ad0cd21107a9955dbe68272c75f0f81d72de11",
+        "\/WhenMybrainhasuntypedpagesFires\/root\/procedure\/77e2e0f900633a42474ea9e201b404c6f582fc54b89c9eaf5afc05d326ea0637"
+      ],
       "swift_struct" : "WhenMybrainhasuntypedpagesFires"
     },
     {
@@ -854,7 +879,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when schemaIsnTMatchingMy fires",
+      "step_paths" : [
+        "\/WhenSchemaisntmatchingmyFires\/root\/procedure\/3564b9f57448f7c2daf3e78d5af995dc217de61b852400922dd00dd616c078b6",
+        "\/WhenSchemaisntmatchingmyFires\/root\/procedure\/c76c5118a681a0d0c4855440073df602b458fc3516dc8c7a98ca352095fd6113"
+      ],
       "swift_struct" : "WhenSchemaisntmatchingmyFires"
     },
     {
@@ -862,7 +893,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when proposeNewTypesMyCorpus fires",
+      "step_paths" : [
+        "\/WhenProposenewtypesmycorpusFires\/root\/procedure\/4bb498fad4881114e8b83e3286dcf81fce6ca6d1a73fbbae92f794885306887a",
+        "\/WhenProposenewtypesmycorpusFires\/root\/procedure\/95db2aff307faae816f069039e5fe86ae584ae09010aa714bd656c7473caf85a"
+      ],
       "swift_struct" : "WhenProposenewtypesmycorpusFires"
     },
     {
@@ -870,7 +907,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when backfillPageTypes fires",
+      "step_paths" : [
+        "\/WhenBackfillpagetypesFires\/root\/procedure\/cf02a02e6ca1aa8104f56e6dc820284153879625f1426f0b37816b1413f3048b",
+        "\/WhenBackfillpagetypesFires\/root\/procedure\/f933bc4b9acaa51188be7694ce86129fe8f3a8f643cfd4ea874d456ed4923937"
+      ],
       "swift_struct" : "WhenBackfillpagetypesFires"
     },
     {
@@ -878,7 +921,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when evolveMySchema fires",
+      "step_paths" : [
+        "\/WhenEvolvemyschemaFires\/root\/procedure\/e388a796bed9fa0b29f62e1193261b1d78bb7a124a4e71a98851d4cf88e81e42",
+        "\/WhenEvolvemyschemaFires\/root\/procedure\/f87bf9c168ec4ff9100f87c0d94312bf51627c1e5c4ea354f39ebdbccb0a2460"
+      ],
       "swift_struct" : "WhenEvolvemyschemaFires"
     },
     {
@@ -886,7 +935,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when extendSchemaPack fires",
+      "step_paths" : [
+        "\/WhenExtendschemapackFires\/root\/procedure\/224f71bfb081fb6bb37309ee5e9947a1f28d9dd4f460894a893cf2fc76eb489b",
+        "\/WhenExtendschemapackFires\/root\/procedure\/7f4fc2f4aa722cfc422b9b1b7d1705cd54253e154157d4448e3155fc3f55d3ba"
+      ],
       "swift_struct" : "WhenExtendschemapackFires"
     },
     {
@@ -894,7 +949,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when createCustomType fires",
+      "step_paths" : [
+        "\/WhenCreatecustomtypeFires\/root\/procedure\/b67e22706244b62d2413a4d7dfa94b4325169d71e8f044984dff8e44ced4239d",
+        "\/WhenCreatecustomtypeFires\/root\/procedure\/f335fbd7e31b10c9abf7e3c2b2cfb7e6e56d305ec110ca522172af2ca562e6f5"
+      ],
       "swift_struct" : "WhenCreatecustomtypeFires"
     },
     {
@@ -902,7 +963,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when researcherType fires",
+      "step_paths" : [
+        "\/WhenResearchertypeFires\/root\/procedure\/3fece2ff74872f16c23ac23a8732821b89b950fec72c7f387714e63ad6964917",
+        "\/WhenResearchertypeFires\/root\/procedure\/c8b5d0c2d88eeba5609bf10d399f44695dadc6f4be9f663ee7b8c7e577147135"
+      ],
       "swift_struct" : "WhenResearchertypeFires"
     },
     {
@@ -910,7 +977,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when makeXExpertType fires",
+      "step_paths" : [
+        "\/WhenMakexexperttypeFires\/root\/procedure\/15881eef3458abb2718fc449813ae36ccc5562cba36065f21ab7606f71bdb008",
+        "\/WhenMakexexperttypeFires\/root\/procedure\/bba03018c06399f03218d2129d1eb31156d4ee4a7226f4b4ec6475cd6173346e"
+      ],
       "swift_struct" : "WhenMakexexperttypeFires"
     },
     {
@@ -918,7 +991,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when schemaPackAdd fires",
+      "step_paths" : [
+        "\/WhenSchemapackaddFires\/root\/procedure\/682db467fb4066b8f84536b570cfea4698641f2a1e8f79e1d27331e27b3b6347",
+        "\/WhenSchemapackaddFires\/root\/procedure\/c1071f6c2e583df75711cf91c615cb84a85a1767c513f42edc0ca49cf7f2a7b1"
+      ],
       "swift_struct" : "WhenSchemapackaddFires"
     },
     {
@@ -926,7 +1005,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when schemaMutate fires",
+      "step_paths" : [
+        "\/WhenSchemamutateFires\/root\/procedure\/015528e7f4dd9a93a7d22d122d49375b6be95568b6d1b522ee4d04e706700890",
+        "\/WhenSchemamutateFires\/root\/procedure\/7bde963aa48998f57ee27c7ec05a89ec30afef8281883a4a462139d34a58b02b"
+      ],
       "swift_struct" : "WhenSchemamutateFires"
     },
     {
@@ -934,7 +1019,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when schemaSync fires",
+      "step_paths" : [
+        "\/WhenSchemasyncFires\/root\/procedure\/20ce9dc81071772cfa286e4431ce02ab1ce9e5ee953b08a2773f466cc7513062",
+        "\/WhenSchemasyncFires\/root\/procedure\/6c0cd11b8927a368456982a9f49efba2db8e2f660af329b6bb8441c1ac49a90a"
+      ],
       "swift_struct" : "WhenSchemasyncFires"
     },
     {
@@ -942,7 +1033,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "schema-author",
+      "skill_version_hash" : "0b825643923a9a8a7582a53d5e62ebf9b99e78828cd91c9a1226d07bfda165c0",
       "source_name" : "when schemaAuthor fires",
+      "step_paths" : [
+        "\/WhenSchemaauthorFires\/root\/procedure\/625af7a075a5e68937f3d61a6044e91ded3477d67c974f229f5f8666f9670798",
+        "\/WhenSchemaauthorFires\/root\/procedure\/7e0da19bc9c55390e566a81a6645e79ecb9b33809803d12e156822f901cfff97"
+      ],
       "swift_struct" : "WhenSchemaauthorFires"
     }
   ]

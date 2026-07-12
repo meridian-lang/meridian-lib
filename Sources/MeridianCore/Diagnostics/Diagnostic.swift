@@ -51,6 +51,10 @@ public struct Diagnostic: Sendable, Hashable {
     public let suggestions: [Suggestion]
     public let notes: [DiagnosticNote]
     public let help: String?
+    /// Optional compile-phase label (e.g. `parse`, `lower`, `codegen`) for DX tooling.
+    public let phase: String?
+    /// Secondary source spans related to the primary fault (declarations, profile sites, …).
+    public let relatedRanges: [SourceRange]
 
     /// The governing decision (if any) is carried by the code so it can never
     /// drift from the code's documentation.
@@ -62,7 +66,9 @@ public struct Diagnostic: Sendable, Hashable {
                 primaryRange: SourceRange,
                 suggestions: [Suggestion] = [],
                 notes: [DiagnosticNote] = [],
-                help: String? = nil) {
+                help: String? = nil,
+                phase: String? = nil,
+                relatedRanges: [SourceRange] = []) {
         self.code = code
         self.severity = severity
         self.message = message
@@ -70,6 +76,8 @@ public struct Diagnostic: Sendable, Hashable {
         self.suggestions = suggestions
         self.notes = notes
         self.help = help
+        self.phase = phase
+        self.relatedRanges = relatedRanges
     }
 }
 
@@ -99,14 +107,25 @@ extension Diagnostic {
         let suggester = Suggester()
         let uniqueCandidates = Array(Set(candidates.filter { !$0.isEmpty })).sorted()
 
-        if let closest = suggester.closest(target, among: uniqueCandidates) {
+        if let match = suggester.closestAmbiguous(target, among: uniqueCandidates) {
+            if match.alternates.isEmpty {
+                return Diagnostic(
+                    code: code, severity: .error,
+                    message: "unknown \(what) \"\(target)\"",
+                    primaryRange: range,
+                    suggestions: [Suggestion(replacement: match.primary, range: range,
+                                             rationale: "did you mean \"\(match.primary)\"?")],
+                    notes: [],
+                    help: help)
+            }
+            let whatPlural = EnglishLexicon.default.pluralize(what)
+            let candidates = ([match.primary] + match.alternates).joined(separator: ", ")
             return Diagnostic(
                 code: code, severity: .error,
                 message: "unknown \(what) \"\(target)\"",
                 primaryRange: range,
-                suggestions: [Suggestion(replacement: closest, range: range,
-                                         rationale: "did you mean \"\(closest)\"?")],
-                notes: [],
+                suggestions: [],
+                notes: [DiagnosticNote("similar \(whatPlural): \(candidates)")],
                 help: help)
         }
 
@@ -150,13 +169,23 @@ extension Diagnostic {
     }
 
     /// Build a general (`.other`) diagnostic.
+    ///
+    /// Production errors must surface remediation: when `help` is omitted and
+    /// there are no suggestions/notes, the catalog `explanation` is attached as
+    /// `help` when non-empty.
     public static func error(_ code: DiagnosticCode,
                              message: String,
                              range: SourceRange,
+                             suggestions: [Suggestion] = [],
                              notes: [DiagnosticNote] = [],
-                             help: String? = nil) -> Diagnostic {
-        Diagnostic(code: code, severity: .error, message: message,
-                   primaryRange: range, suggestions: [], notes: notes, help: help)
+                             help: String? = nil,
+                             phase: String? = nil,
+                             relatedRanges: [SourceRange] = []) -> Diagnostic {
+        Diagnostic(
+            code: code, severity: .error, message: message,
+            primaryRange: range, suggestions: suggestions, notes: notes,
+            help: remediatedHelp(code: code, help: help, suggestions: suggestions, notes: notes),
+            phase: phase, relatedRanges: relatedRanges)
     }
 
     /// Build a warning (advisory; does not by itself fail a compile).
@@ -164,8 +193,22 @@ extension Diagnostic {
                                message: String,
                                range: SourceRange,
                                notes: [DiagnosticNote] = [],
-                               help: String? = nil) -> Diagnostic {
+                               help: String? = nil,
+                               phase: String? = nil,
+                               relatedRanges: [SourceRange] = []) -> Diagnostic {
         Diagnostic(code: code, severity: .warning, message: message,
-                   primaryRange: range, suggestions: [], notes: notes, help: help)
+                   primaryRange: range, suggestions: [], notes: notes, help: help,
+                   phase: phase, relatedRanges: relatedRanges)
+    }
+
+    /// Attach catalog remediation when a production error would otherwise ship bare.
+    private static func remediatedHelp(code: DiagnosticCode,
+                                       help: String?,
+                                       suggestions: [Suggestion],
+                                       notes: [DiagnosticNote]) -> String? {
+        if let help, !help.isEmpty { return help }
+        guard suggestions.isEmpty, notes.isEmpty else { return help }
+        let explanation = code.explanation
+        return explanation.isEmpty ? nil : explanation
     }
 }

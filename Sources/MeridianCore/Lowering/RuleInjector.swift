@@ -361,10 +361,10 @@ struct RuleInjector {
     }
 
     /// True when a workflow body already contains an approval step — either
-    /// a `WaitIR(.approval)` directly or a tool/workflow call whose name
-    /// includes "approval" / "approve". Used by precondition injection to
-    /// avoid deadlocking on a duplicate runtime approval the host never
-    /// delivers.
+    /// a `WaitIR(.approval)` directly or a tool/workflow call whose ID
+    /// contains a lexicon `approvalToolIDSubstrings` cue. Used by
+    /// precondition injection to avoid deadlocking on a duplicate runtime
+    /// approval the host never delivers.
     private func workflowAlreadyHandlesApproval(_ block: IRBlock) -> Bool {
         for stmt in block.statements {
             switch stmt {
@@ -372,7 +372,7 @@ struct RuleInjector {
                 if case .approval = w.condition { return true }
             case .invoke(let inv):
                 let id = inv.toolID.lowercased()
-                if id.contains("approval") || id.contains("approve") { return true }
+                if lexicon.approvalToolIDSubstrings.contains(where: { id.contains($0) }) { return true }
             case .branch(let b):
                 if workflowAlreadyHandlesApproval(b.thenBlock) { return true }
                 if let e = b.elseBlock, workflowAlreadyHandlesApproval(e) { return true }
@@ -588,6 +588,7 @@ struct RuleInjector {
                 arguments: [InvokeArg("question", .literal(.string(q)))]
             ))
         case .quantified, .malformed, .recordList, .tableLookup,
+             .eventPattern, .traceTemporal, .traceStatistical,
              .verbPredicate, .relationTraversal, .description, .aggregate, .superlative:
             throw CompilerError.diagnostics([
                 Diagnostic.error(

@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -599,63 +599,63 @@
   "source_map" : [
     {
       "meridian_line" : 47,
-      "swift_line" : 603
+      "swift_line" : 626
     },
     {
-      "meridian_line" : 118,
-      "swift_line" : 608
+      "meridian_line" : 77,
+      "swift_line" : 631
     },
     {
       "meridian_line" : 93,
-      "swift_line" : 619
+      "swift_line" : 644
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 658
+      "swift_line" : 713
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 663
+      "swift_line" : 718
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 702
+      "swift_line" : 786
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 707
+      "swift_line" : 791
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 746
+      "swift_line" : 859
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 751
+      "swift_line" : 864
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 790
+      "swift_line" : 932
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 795
+      "swift_line" : 937
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 834
+      "swift_line" : 1005
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 839
+      "swift_line" : 1010
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 878
+      "swift_line" : 1078
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 883
+      "swift_line" : 1083
     }
   ],
   "tools_used" : [
@@ -668,8 +668,11 @@
           "guidance" : "**Grade.** Model evaluates: did the output follow the Contract?\nPresent agreement \/ disagreement to the user. Never\nauto-apply the reviewer's suggestions\nFor diff review specifically, gstack ships a `\/codex` skill that wraps\nthe OpenAI Codex CLI. Two modes:\nWhen to recommend `\/codex review`:\nuse judgment to follow the Codex Review — steps 2 guidance:\nUser decides what to act on. Cross-model agreement is signal, not\npermission\nIf the primary review model refuses:\nSwitch silently to the next model in the chain (see\n`conventions\/cross-modal.yaml`)\nIf ALL models in the chain refuse, escalate to the user\ngstack `\/codex` — the actual Codex CLI wrapper this skill hands off\nto for diff-review mode. Cross-modal-review knows WHEN to invoke;\n\/codex knows HOW\n`skills\/testing\/SKILL.md` — runs the project test suite; complementary\nsignal for \"is this commit safe to land\"\n`skills\/conventions\/cross-modal.yaml` — review pairs + refusal routing",
           "line" : 93,
           "scoped_tools" : [
+            "get_page",
             "page.get",
             "page.search",
+            "query",
+            "search",
             "shell.run"
           ],
           "text" : "follow the Phases — steps guidance"
@@ -682,7 +685,14 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "cross-modal-review",
+      "skill_version_hash" : "092809a644c501829ed6ad9586791c669fb8c297ab7dc58b3ca8514c0afe2bbe",
       "source_name" : "cross-modal-review a input",
+      "step_paths" : [
+        "\/CrossModalReviewInput\/contract-steps\/invariants\/eeb9bc7894100c33d995435f15c54c15f14f6eed25b91bb5964b4922f96cfcdc",
+        "\/CrossModalReviewInput\/phases-steps\/procedure\/718bd5ef4dc0fc623315f10ac82bc5fd91b941e28d2980924b0622fbc87dacac",
+        "\/CrossModalReviewInput\/when-to-invoke-v0-25-1-gating-steps\/procedure\/533b6c8ae2652bf7456eda76c1d096d7055ff89b419891fba7e7d2be11ca3d24"
+      ],
       "swift_struct" : "CrossModalReviewInput"
     },
     {
@@ -690,7 +700,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cross-modal-review",
+      "skill_version_hash" : "092809a644c501829ed6ad9586791c669fb8c297ab7dc58b3ca8514c0afe2bbe",
       "source_name" : "when secondOpinion fires",
+      "step_paths" : [
+        "\/WhenSecondopinionFires\/root\/procedure\/5259ce58c90f46e1026cd2760610dae8fa9021d432c10401c677c1dad4141bb2",
+        "\/WhenSecondopinionFires\/root\/procedure\/7899395a1edb7c67db53ac479ff05f09fa295e5b9f5a6e5f0fa0cb13ce8c5f71"
+      ],
       "swift_struct" : "WhenSecondopinionFires"
     },
     {
@@ -698,7 +714,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cross-modal-review",
+      "skill_version_hash" : "092809a644c501829ed6ad9586791c669fb8c297ab7dc58b3ca8514c0afe2bbe",
       "source_name" : "when crossModalReview fires",
+      "step_paths" : [
+        "\/WhenCrossmodalreviewFires\/root\/procedure\/b805175c5cdaf20422941dec181d546341b14ba100cea779fd0478155868692a",
+        "\/WhenCrossmodalreviewFires\/root\/procedure\/ba8d55c57602691a4a624d7d4587c728eff24975e16c9568feba2e323c927080"
+      ],
       "swift_struct" : "WhenCrossmodalreviewFires"
     },
     {
@@ -706,7 +728,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cross-modal-review",
+      "skill_version_hash" : "092809a644c501829ed6ad9586791c669fb8c297ab7dc58b3ca8514c0afe2bbe",
       "source_name" : "when doubleCheckThis fires",
+      "step_paths" : [
+        "\/WhenDoublecheckthisFires\/root\/procedure\/6ba67fff14e3365c7793d7abe06d8956a573a1e2fdbed00a651781882e9d0064",
+        "\/WhenDoublecheckthisFires\/root\/procedure\/a52d5f608a37c8f5976c6c46c03de526d1d68ce7d7a35d93cee8b5f283721faf"
+      ],
       "swift_struct" : "WhenDoublecheckthisFires"
     },
     {
@@ -714,7 +742,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cross-modal-review",
+      "skill_version_hash" : "092809a644c501829ed6ad9586791c669fb8c297ab7dc58b3ca8514c0afe2bbe",
       "source_name" : "when getAnotherPerspective fires",
+      "step_paths" : [
+        "\/WhenGetanotherperspectiveFires\/root\/procedure\/13f5e4a75518537a0da1d1a43721949296a443f3b983986877a379393ef9b9a3",
+        "\/WhenGetanotherperspectiveFires\/root\/procedure\/14390e25d6c7e2e458f140f7e52beb3e5bda14f7fc4323de9fa356cea1017b04"
+      ],
       "swift_struct" : "WhenGetanotherperspectiveFires"
     },
     {
@@ -722,7 +756,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cross-modal-review",
+      "skill_version_hash" : "092809a644c501829ed6ad9586791c669fb8c297ab7dc58b3ca8514c0afe2bbe",
       "source_name" : "when challengeThisCode fires",
+      "step_paths" : [
+        "\/WhenChallengethiscodeFires\/root\/procedure\/7413d29703355f24b3886e75120007b61474eb36552252a38aff8146d9b86dcd",
+        "\/WhenChallengethiscodeFires\/root\/procedure\/9473d05641a1d4bb1ccac3376977864ff503daf1c63ff3c905b101dff0be3873"
+      ],
       "swift_struct" : "WhenChallengethiscodeFires"
     },
     {
@@ -730,7 +770,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cross-modal-review",
+      "skill_version_hash" : "092809a644c501829ed6ad9586791c669fb8c297ab7dc58b3ca8514c0afe2bbe",
       "source_name" : "when adversarialReview fires",
+      "step_paths" : [
+        "\/WhenAdversarialreviewFires\/root\/procedure\/5801b79a305a819a2113cbd157d1cb1dc6d8108e6ade736a104117c22408c5b3",
+        "\/WhenAdversarialreviewFires\/root\/procedure\/f538aee96f5e049a622e73ac9853dac21f5e312ea2cce77cb8d9ab2124b07f06"
+      ],
       "swift_struct" : "WhenAdversarialreviewFires"
     }
   ]

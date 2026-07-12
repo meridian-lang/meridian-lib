@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -116,7 +116,7 @@
         "text" : "Contract — steps 2"
       },
       {
-        "kind" : "reference",
+        "kind" : "procedure",
         "level" : 2,
         "line" : 50,
         "text" : "Citation Requirements (MANDATORY)"
@@ -521,19 +521,19 @@
         "role" : "reference"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Citation Requirements (MANDATORY)",
         "line" : 50,
         "lines" : [
           "Every fact written to a brain page must carry an inline `[Source: ...]` citation",
-          "**User's statements:** `[Source: User, {context}, YYYY-MM-DD]`",
-          "**Meeting data:** `[Source: Meeting \"{title}\", YYYY-MM-DD]`",
-          "**Email\/message:** `[Source: email from {name} re: {subject}, YYYY-MM-DD]`",
-          "**Web content:** `[Source: {publication}, {URL}, YYYY-MM-DD]`",
+          "**User's statements:** `[Source: User, {{context}}, YYYY-MM-DD]`",
+          "**Meeting data:** `[Source: Meeting \"{{title}}\", YYYY-MM-DD]`",
+          "**Email\/message:** `[Source: email from {{name}} re: {{subject}}, YYYY-MM-DD]`",
+          "**Web content:** `[Source: {{publication}}, {{URL}}, YYYY-MM-DD]`",
           "**Social media:** `[Source: X\/@handle, YYYY-MM-DD](URL)` (include link)",
-          "**Synthesis:** `[Source: compiled from {sources}]`"
+          "**Synthesis:** `[Source: compiled from {{sources}}]`"
         ],
-        "role" : "reference"
+        "role" : "procedure"
       },
       {
         "executes" : false,
@@ -1036,36 +1036,64 @@
   ],
   "source_map" : [
     {
+      "meridian_line" : 52,
+      "swift_line" : 627
+    },
+    {
+      "meridian_line" : 54,
+      "swift_line" : 641
+    },
+    {
+      "meridian_line" : 55,
+      "swift_line" : 655
+    },
+    {
+      "meridian_line" : 56,
+      "swift_line" : 669
+    },
+    {
+      "meridian_line" : 57,
+      "swift_line" : 683
+    },
+    {
+      "meridian_line" : 58,
+      "swift_line" : 697
+    },
+    {
+      "meridian_line" : 59,
+      "swift_line" : 711
+    },
+    {
       "meridian_line" : 77,
-      "swift_line" : 603
+      "swift_line" : 724
     },
     {
       "meridian_line" : 129,
-      "swift_line" : 612
+      "swift_line" : 737
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 651
+      "swift_line" : 806
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 656
+      "swift_line" : 811
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 695
+      "swift_line" : 879
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 700
+      "swift_line" : 884
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 739
+      "swift_line" : 952
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 744
+      "swift_line" : 957
     }
   ],
   "tools_used" : [
@@ -1092,12 +1120,15 @@
             "get_page",
             "get_tags",
             "link.add",
+            "link.backlinks",
             "page.get",
             "page.search",
             "publish",
             "put_page",
             "put_raw_data",
+            "search",
             "shell.run",
+            "sync_brain",
             "timeline.add"
           ],
           "text" : "follow the What to capture from the user's own thinking — steps 2 guidance"
@@ -1110,7 +1141,20 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "ingest",
+      "skill_version_hash" : "d253c0baba5dc1d200a1a3538c5e9523de5699c5519eff466d2662583126547c",
       "source_name" : "ingest a input",
+      "step_paths" : [
+        "\/IngestInput\/citation-requirements-mandatory\/procedure\/1d319425079c5ba09bcfec5c3c04bc4fa3028e2ecabd3508264afdeeaf78d838",
+        "\/IngestInput\/citation-requirements-mandatory\/procedure\/4365c47aed2bf3603182782ae125f7b4e007426853bef5f51be45870b4440fb8",
+        "\/IngestInput\/citation-requirements-mandatory\/procedure\/4e05de5dd92fcb5dd15dd29165a7df25e59a2a6c5aa75a882107c23bcd7428bf",
+        "\/IngestInput\/citation-requirements-mandatory\/procedure\/d7e990aa3752109f30872d8fe690945028f392b9702ec8d3efbc57242a5f26ef",
+        "\/IngestInput\/citation-requirements-mandatory\/procedure\/dc5a15ea4a57dc5aecb3a39fbb7ed92ef2ff0dfa7275bfc0c0cdef11a11a1f91",
+        "\/IngestInput\/citation-requirements-mandatory\/procedure\/f2d625143c8b17db3936aa3fee2ecc6d5008998c077fa59fc632a61a26a83eac",
+        "\/IngestInput\/citation-requirements-mandatory\/procedure\/fe1b3e89f76894363d8675d9be2eeaf59efbc0bb8bdd40afa8f82ba15e2e5796",
+        "\/IngestInput\/phases-steps\/procedure\/72314c404d110929c5c573ab8c3e59cd4dc8cfabbca495a6062ea2c04aa3d9a0",
+        "\/IngestInput\/what-to-capture-from-the-user-s-own-thinking-steps-2\/procedure\/c74fcef89e4cd49bca679e07a2843e9afb8dd3e51c8869b617d7cdcbf6fabc5e"
+      ],
       "swift_struct" : "IngestInput"
     },
     {
@@ -1118,7 +1162,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "ingest",
+      "skill_version_hash" : "d253c0baba5dc1d200a1a3538c5e9523de5699c5519eff466d2662583126547c",
       "source_name" : "when ingestThis fires",
+      "step_paths" : [
+        "\/WhenIngestthisFires\/root\/procedure\/a7b53e5bfd4b7b7785fbd2a0c644db486a23aa37700d6905bb97c2d44132f99e",
+        "\/WhenIngestthisFires\/root\/procedure\/cf788e98c219f22c187e3006dd53774364ad6ac0f2518cb74e05d2b5946ecbb3"
+      ],
       "swift_struct" : "WhenIngestthisFires"
     },
     {
@@ -1126,7 +1176,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "ingest",
+      "skill_version_hash" : "d253c0baba5dc1d200a1a3538c5e9523de5699c5519eff466d2662583126547c",
       "source_name" : "when saveThisBrain fires",
+      "step_paths" : [
+        "\/WhenSavethisbrainFires\/root\/procedure\/b48833ee364874b98ba6e94899b93407ec6e88776bc98c88fef2e2665e76aff0",
+        "\/WhenSavethisbrainFires\/root\/procedure\/d651e9fd4121e377c713820c5e51dc4e1b1a8956c864f1197d2a38f762cc7330"
+      ],
       "swift_struct" : "WhenSavethisbrainFires"
     },
     {
@@ -1134,7 +1190,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "ingest",
+      "skill_version_hash" : "d253c0baba5dc1d200a1a3538c5e9523de5699c5519eff466d2662583126547c",
       "source_name" : "when processThisMeeting fires",
+      "step_paths" : [
+        "\/WhenProcessthismeetingFires\/root\/procedure\/5041c6928964481d0af25a635396a6741ad642b4babeac56315e0e9968177c3a",
+        "\/WhenProcessthismeetingFires\/root\/procedure\/e483ecd4e3b85d83c94b15caf2a90bc911484ced741034cb163428f6c1a94953"
+      ],
       "swift_struct" : "WhenProcessthismeetingFires"
     }
   ]

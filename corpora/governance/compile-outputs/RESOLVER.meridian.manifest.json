@@ -22,58 +22,58 @@
       "adjective" : "pending",
       "function" : "meridianDef_AccessRequest_pending",
       "kind" : "access request",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_AccessRequest_stale",
       "kind" : "access request",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "fresh",
       "function" : "meridianDef_Credential_fresh",
       "kind" : "credential",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "overused",
       "function" : "meridianDef_Credential_overused",
       "kind" : "credential",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "classified",
       "function" : "meridianDef_Resource_classified",
       "kind" : "resource",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "authorized",
       "function" : "meridianDef_User_authorized",
       "kind" : "user",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_User_cleared",
       "kind" : "user",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "privileged",
       "function" : "meridianDef_User_privileged",
       "kind" : "user",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 36,
+      "line" : 38,
       "name" : "assignment",
       "right_cardinality" : "one",
       "right_kind" : "a role",
@@ -83,7 +83,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a policy",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "an environment",
@@ -93,7 +93,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 38,
+      "line" : 40,
       "name" : "grant",
       "right_cardinality" : "one",
       "right_kind" : "a resource",
@@ -117,7 +117,7 @@
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 21,
+        "line" : 22,
         "text" : "Workflow"
       }
     ],
@@ -136,14 +136,14 @@
         "heading" : "Dispatch table — steps",
         "line" : 8,
         "lines" : [
-          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IGdyYW50IGFjY2VzcyB8IGdyYW50YWNjZXNzIHwKfCByZXZpZXcgYWNjZXNzIHJlcXVlc3RzIHwgcmV2aWV3cmVxdWVzdHMgfAp8IHJvdGF0ZSBjcmVkZW50aWFscyB8IHJvdGF0ZWNyZWRlbnRpYWxzIHwKfCByZXZva2Ugc3RhbGUgYWNjZXNzIHwgcmV2b2tlc3RhbGVhY2Nlc3MgfAp8IHJlbmRlciBhY2Nlc3MgbWF0cml4IHwgYWNjZXNzbWF0cml4IHwKfCBhdWRpdCBwb2xpY3kgY292ZXJhZ2UgfCBwb2xpY3lhdWRpdCB8CnwgZXNjYWxhdGUgcGVuZGluZyByZXF1ZXN0cyB8IGVzY2FsYXRlcGVuZGluZyB8CnwgY2xhc3NpZnkgcmVzb3VyY2VzIHwgY2xhc3NpZnlyZXNvdXJjZSB8"
+          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IGdyYW50IGFjY2VzcyB8IGdyYW50YWNjZXNzIHwKfCByZXZpZXcgYWNjZXNzIHJlcXVlc3RzIHwgcmV2aWV3cmVxdWVzdHMgfAp8IHJvdGF0ZSBjcmVkZW50aWFscyB8IHJvdGF0ZWNyZWRlbnRpYWxzIHwKfCByZXZva2Ugc3RhbGUgYWNjZXNzIHwgcmV2b2tlc3RhbGVhY2Nlc3MgfAp8IHJlbmRlciBhY2Nlc3MgbWF0cml4IHwgYWNjZXNzbWF0cml4IHwKfCBhdWRpdCBwb2xpY3kgY292ZXJhZ2UgfCBwb2xpY3lhdWRpdCB8CnwgZXNjYWxhdGUgcGVuZGluZyByZXF1ZXN0cyB8IGVzY2FsYXRlcGVuZGluZyB8CnwgY2xhc3NpZnkgcmVzb3VyY2VzIHwgY2xhc3NpZnlyZXNvdXJjZSB8CnwgY2hlY2sgYWNjZXNzIHJldmlldyBmcmVzaG5lc3MgfCBhY2Nlc3NyZXZpZXdmcmVzaG5lc3MgfA=="
         ],
         "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Workflow",
-        "line" : 21,
+        "line" : 22,
         "lines" : [
           "Look up the skill corresponding to the trigger phrase and emit the selected",
           "skill id"
@@ -155,21 +155,21 @@
   "meridian_verbs" : [
     {
       "base" : "authorize",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "authorized",
       "relation" : "assignment",
       "third_person" : "authorizes"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "grant",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "granted",
       "relation" : "grant",
       "third_person" : "grants"
@@ -191,6 +191,8 @@
       "parameters" : [
 
       ],
+      "skill_name" : "RESOLVER",
+      "skill_version_hash" : "980154099d86da5143524bbcff3061eaa4fc8cc76b35a6d14670034523edb3a2",
       "source_name" : "entry",
       "swift_struct" : "Entry"
     }

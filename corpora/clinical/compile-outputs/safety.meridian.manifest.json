@@ -22,70 +22,70 @@
       "adjective" : "granted",
       "function" : "meridianDef_Consent_granted",
       "kind" : "consent",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_MedicationOrder_cleared",
       "kind" : "medication order",
-      "line" : 29
+      "line" : 31
     },
     {
       "adjective" : "contraindicated",
       "function" : "meridianDef_MedicationOrder_contraindicated",
       "kind" : "medication order",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "high risk",
       "function" : "meridianDef_Medication_highRisk",
       "kind" : "medication",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "active",
       "function" : "meridianDef_Patient_active",
       "kind" : "patient",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "held",
       "function" : "meridianDef_Patient_held",
       "kind" : "patient",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "monitored",
       "function" : "meridianDef_Patient_monitored",
       "kind" : "patient",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "unmonitored",
       "function" : "meridianDef_Patient_unmonitored",
       "kind" : "patient",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "critical",
       "function" : "meridianDef_VitalSign_critical",
       "kind" : "vital sign",
-      "line" : 25
+      "line" : 27
     },
     {
       "adjective" : "stable",
       "function" : "meridianDef_VitalSign_stable",
       "kind" : "vital sign",
-      "line" : 26
+      "line" : 28
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a nurse",
-      "line" : 38,
+      "line" : 40,
       "name" : "administration",
       "right_cardinality" : "one",
       "right_kind" : "a medication order",
@@ -95,7 +95,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a protocol",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "a medication",
@@ -105,7 +105,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a clinician",
-      "line" : 36,
+      "line" : 38,
       "name" : "prescription",
       "right_cardinality" : "one",
       "right_kind" : "a medication order",
@@ -151,7 +151,7 @@
         "file" : "safety.meridian",
         "line" : 22
       },
-      "text" : "When a patient has been unmonitored for more than 4 hours, escalate the patient"
+      "text" : "When a patient is flagged as unmonitored, escalate the patient"
     }
   ],
   "meridian_skill" : {
@@ -161,21 +161,21 @@
   "meridian_verbs" : [
     {
       "base" : "administer",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "administered",
       "relation" : "administration",
       "third_person" : "administers"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "prescribe",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "prescribed",
       "relation" : "prescription",
       "third_person" : "prescribes"
@@ -188,43 +188,43 @@
   "source_map" : [
     {
       "meridian_line" : 20,
-      "swift_line" : 419
+      "swift_line" : 442
     },
     {
       "meridian_line" : 18,
-      "swift_line" : 424
+      "swift_line" : 447
     },
     {
       "meridian_line" : 16,
-      "swift_line" : 429
+      "swift_line" : 452
     },
     {
       "meridian_line" : 27,
-      "swift_line" : 434
+      "swift_line" : 457
     },
     {
       "meridian_line" : 20,
-      "swift_line" : 480
-    },
-    {
-      "meridian_line" : 18,
-      "swift_line" : 485
-    },
-    {
-      "meridian_line" : 30,
-      "swift_line" : 490
-    },
-    {
-      "meridian_line" : 33,
       "swift_line" : 533
     },
     {
-      "meridian_line" : 22,
-      "swift_line" : 573
+      "meridian_line" : 18,
+      "swift_line" : 538
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 543
+    },
+    {
+      "meridian_line" : 33,
+      "swift_line" : 616
     },
     {
       "meridian_line" : 22,
-      "swift_line" : 578
+      "swift_line" : 686
+    },
+    {
+      "meridian_line" : 22,
+      "swift_line" : 691
     }
   ],
   "tools_used" : [
@@ -243,7 +243,15 @@
           "name" : "medicationOrder"
         }
       ],
+      "skill_name" : "safety",
+      "skill_version_hash" : "c34cb7c1fbd5160c2de6e86a5b4b48940f65e9a0fc97c943b85bb4667f6339d1",
       "source_name" : "let a nurse administer a medication order",
+      "step_paths" : [
+        "\/LetNurseAdministerMedicationOrder\/root\/procedure\/4b59dacf8b2f70dcd9b7efdee9d59908c871d454ab5158ec0c575a42013ad1c4",
+        "\/LetNurseAdministerMedicationOrder\/root\/procedure\/6ada11df40e29d982668f2d70854a9ded5d0e1696bd29d436464040a00a583aa",
+        "\/LetNurseAdministerMedicationOrder\/root\/procedure\/a33027f751586c3ffa21a30c2bf832e68ae53d7aa92078ab88409ce515d5d09f",
+        "\/LetNurseAdministerMedicationOrder\/root\/procedure\/e1975c1661aa20a7fe48c1d7092ba11a2e725cba45cf1364965b445645538d5a"
+      ],
       "swift_struct" : "LetNurseAdministerMedicationOrder"
     },
     {
@@ -258,7 +266,14 @@
           "name" : "medicationOrder"
         }
       ],
+      "skill_name" : "safety",
+      "skill_version_hash" : "c34cb7c1fbd5160c2de6e86a5b4b48940f65e9a0fc97c943b85bb4667f6339d1",
       "source_name" : "have a attending approve the administration of a medication order",
+      "step_paths" : [
+        "\/HaveAttendingApproveAdministration\/root\/procedure\/4b59dacf8b2f70dcd9b7efdee9d59908c871d454ab5158ec0c575a42013ad1c4",
+        "\/HaveAttendingApproveAdministration\/root\/procedure\/bd97e454cbde92c38d41052871bc6fdf7ac1b1107024553aa1f2ee9d4f4ddd30",
+        "\/HaveAttendingApproveAdministration\/root\/procedure\/f5e68a8a4ae16e8e898828c7568e9e311da97a0631d9874cf2102b374563482f"
+      ],
       "swift_struct" : "HaveAttendingApproveAdministration"
     },
     {
@@ -269,7 +284,12 @@
           "name" : "unmonitoredPatient"
         }
       ],
+      "skill_name" : "safety",
+      "skill_version_hash" : "c34cb7c1fbd5160c2de6e86a5b4b48940f65e9a0fc97c943b85bb4667f6339d1",
       "source_name" : "escalate a unmonitored patient",
+      "step_paths" : [
+        "\/EscalateUnmonitoredPatient\/root\/procedure\/71b4d558b61285c93dd0168c5bc5bcbe2f808ee109f93a0ed3b3f2514ad6acae"
+      ],
       "swift_struct" : "EscalateUnmonitoredPatient"
     },
     {
@@ -277,8 +297,14 @@
       "parameters" : [
 
       ],
-      "source_name" : "when a patient has been unmonitored for more than 4 hours",
-      "swift_struct" : "WhenPatientHasBeenUnmonitored"
+      "skill_name" : "safety",
+      "skill_version_hash" : "c34cb7c1fbd5160c2de6e86a5b4b48940f65e9a0fc97c943b85bb4667f6339d1",
+      "source_name" : "when a patient is flagged as unmonitored",
+      "step_paths" : [
+        "\/WhenPatientIs\/root\/procedure\/253c5050ee8bded3201066d03b065e4684b5cd3305851809cd1a4198c277430f",
+        "\/WhenPatientIs\/root\/procedure\/a8e86a99b5998adf00d6691e1660b325d76056bad8625e87caa3a27f99f21506"
+      ],
+      "swift_struct" : "WhenPatientIs"
     }
   ]
 }

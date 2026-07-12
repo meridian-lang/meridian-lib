@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -574,31 +574,19 @@
   "source_map" : [
     {
       "meridian_line" : 57,
-      "swift_line" : 602
+      "swift_line" : 625
     },
     {
-      "meridian_line" : 157,
-      "swift_line" : 608
+      "meridian_line" : 57,
+      "swift_line" : 634
     },
     {
       "meridian_line" : 58,
-      "swift_line" : 624
+      "swift_line" : 653
     },
     {
       "meridian_line" : 119,
-      "swift_line" : 636
-    },
-    {
-      "meridian_line" : 144,
-      "swift_line" : 648
-    },
-    {
-      "meridian_line" : 144,
-      "swift_line" : 659
-    },
-    {
-      "meridian_line" : 144,
-      "swift_line" : 670
+      "swift_line" : 667
     },
     {
       "meridian_line" : 144,
@@ -606,55 +594,67 @@
     },
     {
       "meridian_line" : 144,
-      "swift_line" : 692
+      "swift_line" : 694
     },
     {
       "meridian_line" : 144,
-      "swift_line" : 703
+      "swift_line" : 707
     },
     {
       "meridian_line" : 144,
-      "swift_line" : 714
+      "swift_line" : 720
+    },
+    {
+      "meridian_line" : 144,
+      "swift_line" : 733
+    },
+    {
+      "meridian_line" : 144,
+      "swift_line" : 746
+    },
+    {
+      "meridian_line" : 144,
+      "swift_line" : 759
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 753
+      "swift_line" : 828
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 758
+      "swift_line" : 833
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 797
+      "swift_line" : 901
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 802
+      "swift_line" : 906
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 841
+      "swift_line" : 974
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 846
+      "swift_line" : 979
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 885
+      "swift_line" : 1047
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 890
+      "swift_line" : 1052
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 929
+      "swift_line" : 1120
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 934
+      "swift_line" : 1125
     }
   ],
   "tools_used" : [
@@ -669,7 +669,22 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "citation-fixer",
+      "skill_version_hash" : "9625b2f0b7a5d8b392d2d15cdbf6abcb1754e7fcccc5d9e937110dc3435e0ad9",
       "source_name" : "citation-fixer a input",
+      "step_paths" : [
+        "\/CitationFixerInput\/find-candidate-pages\/procedure\/74a938d4a95d16076ab4f0e4cbd1a0f93e32a28ae71ab7f71e559dc3c093c987",
+        "\/CitationFixerInput\/find-candidate-pages\/procedure\/8b47abb4c6c4a0e65f403fe77453e5f3de98d2256a6e07b9a5446ab69332093a",
+        "\/CitationFixerInput\/find-candidate-pages\/procedure\/93adc6a3d212c3ccd00aed8cb20b8088ef6447478651be33b29e4f0599287493",
+        "\/CitationFixerInput\/find-candidate-pages\/procedure\/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f",
+        "\/CitationFixerInput\/find-candidate-pages\/procedure\/d59c98f9a8b33138a04f620c3c873ec6d67220f8ac6bd27b28ca98e705ca3c64",
+        "\/CitationFixerInput\/find-candidate-pages\/procedure\/df29fde1c09b3f50778511c97562b352c8329f263bce39a9398efc601555af50",
+        "\/CitationFixerInput\/find-candidate-pages\/procedure\/febbeabf328cf0917eb2f87b753fa32cc74c26cf3a18c9a3e237817543066c06",
+        "\/CitationFixerInput\/phases-steps\/procedure\/230b65cf4ad1ad52c8759e2cc152f776c46259d8f25f5644c87e3edb14d8428a",
+        "\/CitationFixerInput\/phases-steps\/procedure\/4e05de5dd92fcb5dd15dd29165a7df25e59a2a6c5aa75a882107c23bcd7428bf",
+        "\/CitationFixerInput\/phases-steps\/procedure\/iterate.body\/3c00fa3b45f9a23e8a3e27f8a5d2317adcb40d776f18b78f124a48c9286cb445",
+        "\/CitationFixerInput\/step-4-verify-and-extract-metadata-steps\/procedure\/0cd0e6fc08c332b69b9d28b49fec9fbd28e6b8cda68e57620092cc7221881556"
+      ],
       "swift_struct" : "CitationFixerInput"
     },
     {
@@ -677,7 +692,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "citation-fixer",
+      "skill_version_hash" : "9625b2f0b7a5d8b392d2d15cdbf6abcb1754e7fcccc5d9e937110dc3435e0ad9",
       "source_name" : "when fixCitations fires",
+      "step_paths" : [
+        "\/WhenFixcitationsFires\/root\/procedure\/38ca3bc049df8e707accaff30d5e1b218bee6655e889f7aa6f8f99af3a8bbd9f",
+        "\/WhenFixcitationsFires\/root\/procedure\/def44a4bf6a095dcf373591d4ce974b49b39af54e804d78f81ca837e36562a80"
+      ],
       "swift_struct" : "WhenFixcitationsFires"
     },
     {
@@ -685,7 +706,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "citation-fixer",
+      "skill_version_hash" : "9625b2f0b7a5d8b392d2d15cdbf6abcb1754e7fcccc5d9e937110dc3435e0ad9",
       "source_name" : "when fixBrokenCitations fires",
+      "step_paths" : [
+        "\/WhenFixbrokencitationsFires\/root\/procedure\/17c0f5c62c80e1d9f426aa146d190b28b0c313079282be470869a52f5d2ea47f",
+        "\/WhenFixbrokencitationsFires\/root\/procedure\/db48d49a463e541ed1ce645caa9e8d5f0c488e9a6568ed81da5caf83381ed2b6"
+      ],
       "swift_struct" : "WhenFixbrokencitationsFires"
     },
     {
@@ -693,7 +720,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "citation-fixer",
+      "skill_version_hash" : "9625b2f0b7a5d8b392d2d15cdbf6abcb1754e7fcccc5d9e937110dc3435e0ad9",
       "source_name" : "when citationAudit fires",
+      "step_paths" : [
+        "\/WhenCitationauditFires\/root\/procedure\/4594f5491431404a7f4eeadacb85dc2d58dc3834cacf597baae6e02e324a8412",
+        "\/WhenCitationauditFires\/root\/procedure\/e88c96b3d4eaa11bd4a7f9c238cafe3ec971298d0887458caf77abc13d87d1e0"
+      ],
       "swift_struct" : "WhenCitationauditFires"
     },
     {
@@ -701,7 +734,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "citation-fixer",
+      "skill_version_hash" : "9625b2f0b7a5d8b392d2d15cdbf6abcb1754e7fcccc5d9e937110dc3435e0ad9",
       "source_name" : "when checkCitations fires",
+      "step_paths" : [
+        "\/WhenCheckcitationsFires\/root\/procedure\/06d357ca5391fd85c2e55f2bd7a3ffc5fbd9f6d8579bdc113bdf72851ddeeb21",
+        "\/WhenCheckcitationsFires\/root\/procedure\/3e0f024a8c7b0cc1fb07a1e572aff47c0c8c0f5bcef1fe32eff001488aacdd16"
+      ],
       "swift_struct" : "WhenCheckcitationsFires"
     },
     {
@@ -709,7 +748,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "citation-fixer",
+      "skill_version_hash" : "9625b2f0b7a5d8b392d2d15cdbf6abcb1754e7fcccc5d9e937110dc3435e0ad9",
       "source_name" : "when citationFixer fires",
+      "step_paths" : [
+        "\/WhenCitationfixerFires\/root\/procedure\/023e04533552095dd434946fc87737ec1fcb0c6e124f25e281b5eb271e10b91d",
+        "\/WhenCitationfixerFires\/root\/procedure\/7bc4a469560562996532be88d612d4fb73a6bc29aa23b2b10061650b54bc4a0b"
+      ],
       "swift_struct" : "WhenCitationfixerFires"
     }
   ]

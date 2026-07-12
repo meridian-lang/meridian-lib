@@ -43,25 +43,26 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
           help: "Downgrade a non-lowerable, no-inference-cue operational section (P1 category 4) from a hard migration error to a reported-but-nonfatal skip, marking it (( role: reference )) and retrying. Off by default, matching the policy that cue-less operational content is a reword error; pass --route-fuzzy for exploratory batch runs where some residual is expected.")
     var routeFuzzy: Bool = false
 
-    @Option(name: .long, help: "Comma-separated ParserTrace categories (or `all`). Also reads MERIDIAN_TRACE.")
-    var trace: String?
-
-    @Option(name: .long, help: "Write ParserTrace output to this file instead of stderr.")
-    var traceFile: String?
+    @OptionGroup var cliTrace: CLITraceOptions
 
     public func run() async throws {
         let inputURL = URL(fileURLWithPath: input).standardized
         let fm = FileManager.default
         guard fm.fileExists(atPath: inputURL.path) else {
-            throw ValidationError("Input not found: \(input)")
+            throw cliInputNotFound(input)
+        }
+
+        if batch {
+            var isDir: ObjCBool = false
+            guard fm.fileExists(atPath: inputURL.path, isDirectory: &isDir), isDir.boolValue else {
+                throw ValidationError("--batch requires a directory: \(input)")
+            }
         }
 
         let (vocabularies, rulebooks) =
             try loadDependencies(beside: batch ? inputURL : inputURL.deletingLastPathComponent())
 
-        // Silent unless --trace is given (migration is noisy over a whole
-        // corpus, so opt-in tracing under `.skill` mirrors `compile`/`check`).
-        let traceInstance = try makeCLITrace(spec: trace, file: traceFile)
+        let traceInstance = try cliTrace.makeTrace()
         let migrator = SkillMigrator(
             compiler: Compiler(options: .init(trace: traceInstance)),
             vocabularies: vocabularies,
@@ -72,7 +73,7 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
         )
 
         let depsDir = batch ? inputURL : inputURL.deletingLastPathComponent()
-        let rulebookTarget = out == nil ? nil : primaryRulebookTarget(beside: depsDir)
+        let rulebookTarget = out == nil ? nil : try primaryRulebookTarget(beside: depsDir)
 
         if batch {
             try await runBatch(inputURL: inputURL, migrator: migrator, rulebookTarget: rulebookTarget)
@@ -120,10 +121,6 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
 
     private func runBatch(inputURL: URL, migrator: SkillMigrator, rulebookTarget: URL?) async throws {
         let fm = FileManager.default
-        var isDir: ObjCBool = false
-        guard fm.fileExists(atPath: inputURL.path, isDirectory: &isDir), isDir.boolValue else {
-            throw ValidationError("--batch requires a directory: \(input)")
-        }
         let skillFiles = try discoverSkillFiles(in: inputURL).sorted { $0.path < $1.path }
         guard !skillFiles.isEmpty else {
             throw ValidationError("No SKILL.md files found under \(inputURL.path)")
@@ -178,11 +175,23 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
     private func loadDependencies(beside dir: URL) throws
         -> (vocab: [Compiler.VocabularyInput], rulebooks: [RulebookInput]) {
         let vocabURLs = vocab.isEmpty
-            ? autodiscover(extension: "merconfig", from: dir)
-            : vocab.map { URL(fileURLWithPath: $0).standardized }
+            ? try autodiscover(extension: "merconfig", from: dir)
+            : try vocab.map { path in
+                let url = URL(fileURLWithPath: path).standardized
+                guard FileManager.default.fileExists(atPath: url.path) else {
+                    throw cliInputNotFound(path, label: "merconfig")
+                }
+                return url
+            }
         let rulebookURLs = rulebook.isEmpty
-            ? autodiscover(extension: "merrules", from: dir)
-            : rulebook.map { URL(fileURLWithPath: $0).standardized }
+            ? try autodiscover(extension: "merrules", from: dir)
+            : try rulebook.map { path in
+                let url = URL(fileURLWithPath: path).standardized
+                guard FileManager.default.fileExists(atPath: url.path) else {
+                    throw cliInputNotFound(path, label: "rulebook")
+                }
+                return url
+            }
 
         var vocabularies: [Compiler.VocabularyInput] = []
         for url in vocabURLs {
@@ -203,9 +212,11 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
     /// if given, else the first autodiscovered `.merrules`, else a new
     /// `migrated-sections.merrules` beside the output (single: output's parent;
     /// batch: the output directory).
-    private func primaryRulebookTarget(beside dir: URL) -> URL? {
-        if let first = rulebook.first { return URL(fileURLWithPath: first).standardized }
-        if let discovered = autodiscover(extension: "merrules", from: dir).first { return discovered }
+    private func primaryRulebookTarget(beside dir: URL) throws -> URL? {
+        if let first = rulebook.first {
+            return URL(fileURLWithPath: first).standardized
+        }
+        if let discovered = try autodiscover(extension: "merrules", from: dir).first { return discovered }
         guard let out else { return nil }
         let outURL = URL(fileURLWithPath: out).standardized
         let base = batch ? outURL : outURL.deletingLastPathComponent()
@@ -284,19 +295,15 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
         return text
     }
 
-    private func autodiscover(extension ext: String, from dir: URL) -> [URL] {
-        let fm = FileManager.default
-        for candidate in [dir, dir.deletingLastPathComponent(), dir.deletingLastPathComponent().deletingLastPathComponent()] {
-            let files = (try? fm.contentsOfDirectory(at: candidate, includingPropertiesForKeys: nil)) ?? []
-            let matches = files.filter { $0.pathExtension == ext }.sorted { $0.lastPathComponent < $1.lastPathComponent }
-            if !matches.isEmpty { return matches }
-        }
-        return []
+    private func autodiscover(extension ext: String, from dir: URL) throws -> [URL] {
+        try autodiscoverFiles(extension: ext, from: dir, parentLevels: 2)
     }
 
     private func discoverSkillFiles(in dir: URL) throws -> [URL] {
         let fm = FileManager.default
-        guard let enumerator = fm.enumerator(at: dir, includingPropertiesForKeys: nil) else { return [] }
+        guard let enumerator = fm.enumerator(at: dir, includingPropertiesForKeys: nil) else {
+            throw cliDirectoryEnumerationFailed(dir.path)
+        }
         var result: [URL] = []
         for case let url as URL in enumerator where url.lastPathComponent.uppercased() == "SKILL.MD" {
             result.append(url)

@@ -25,76 +25,76 @@
       "adjective" : "in good standing",
       "function" : "meridianDef_Customer_inGoodStanding",
       "kind" : "customer",
-      "line" : 46
+      "line" : 49
     },
     {
       "adjective" : "overdue",
       "function" : "meridianDef_Invoice_overdue",
       "kind" : "invoice",
-      "line" : 42
+      "line" : 45
     },
     {
       "adjective" : "severely overdue",
       "function" : "meridianDef_Invoice_severelyOverdue",
       "kind" : "invoice",
-      "line" : 47
+      "line" : 50
     },
     {
       "adjective" : "unpaid",
       "function" : "meridianDef_Invoice_unpaid",
       "kind" : "invoice",
-      "line" : 41
+      "line" : 44
     },
     {
       "adjective" : "blocked",
       "function" : "meridianDef_Order_blocked",
       "kind" : "order",
-      "line" : 38
+      "line" : 41
     },
     {
       "adjective" : "fulfilled",
       "function" : "meridianDef_Order_fulfilled",
       "kind" : "order",
-      "line" : 39
+      "line" : 42
     },
     {
       "adjective" : "high value",
       "function" : "meridianDef_Order_highValue",
       "kind" : "order",
-      "line" : 45
+      "line" : 48
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Order_open",
       "kind" : "order",
-      "line" : 37
+      "line" : 40
     },
     {
       "adjective" : "released",
       "function" : "meridianDef_Order_released",
       "kind" : "order",
-      "line" : 40
+      "line" : 43
     },
     {
       "adjective" : "short",
       "function" : "meridianDef_Product_short",
       "kind" : "product",
-      "line" : 43
+      "line" : 46
     },
     {
       "adjective" : "pending",
       "function" : "meridianDef_PurchaseOrder_pending",
       "kind" : "purchase order",
-      "line" : 44
+      "line" : 47
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 53,
+      "line" : 56,
       "name" : "collection",
       "right_cardinality" : "one",
       "right_kind" : "a payment",
@@ -104,7 +104,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 57,
+      "line" : 60,
       "name" : "escalation",
       "right_cardinality" : "one",
       "right_kind" : "a dunning notice",
@@ -114,7 +114,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 49,
+      "line" : 52,
       "name" : "fulfillment",
       "right_cardinality" : "one",
       "right_kind" : "a shipment",
@@ -124,7 +124,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 51,
+      "line" : 54,
       "name" : "invoicing",
       "right_cardinality" : "one",
       "right_kind" : "an invoice",
@@ -134,7 +134,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a product",
-      "line" : 55,
+      "line" : 58,
       "name" : "replenishment",
       "right_cardinality" : "one",
       "right_kind" : "a purchase order",
@@ -259,35 +259,35 @@
   "meridian_verbs" : [
     {
       "base" : "collect",
-      "line" : 62,
+      "line" : 65,
       "past_participle" : "collected",
       "relation" : "collection",
       "third_person" : "collects"
     },
     {
       "base" : "escalate",
-      "line" : 64,
+      "line" : 67,
       "past_participle" : "escalated",
       "relation" : "escalation",
       "third_person" : "escalates"
     },
     {
       "base" : "fulfill",
-      "line" : 60,
+      "line" : 63,
       "past_participle" : "fulfilled",
       "relation" : "fulfillment",
       "third_person" : "fulfills"
     },
     {
       "base" : "invoice",
-      "line" : 61,
+      "line" : 64,
       "past_participle" : "invoiced",
       "relation" : "invoicing",
       "third_person" : "invoices"
     },
     {
       "base" : "replenish",
-      "line" : 63,
+      "line" : 66,
       "past_participle" : "replenished",
       "relation" : "replenishment",
       "third_person" : "replenishes"
@@ -300,63 +300,63 @@
   "source_map" : [
     {
       "meridian_line" : 37,
-      "swift_line" : 555
+      "swift_line" : 578
     },
     {
       "meridian_line" : 24,
-      "swift_line" : 560
+      "swift_line" : 583
     },
     {
-      "meridian_line" : 67,
-      "swift_line" : 572
+      "meridian_line" : 25,
+      "swift_line" : 597
     },
     {
       "meridian_line" : 26,
-      "swift_line" : 584
+      "swift_line" : 611
     },
     {
       "meridian_line" : 27,
-      "swift_line" : 588
+      "swift_line" : 615
     },
     {
-      "meridian_line" : 76,
-      "swift_line" : 594
+      "meridian_line" : 28,
+      "swift_line" : 624
     },
     {
       "meridian_line" : 29,
-      "swift_line" : 605
-    },
-    {
-      "meridian_line" : 30,
-      "swift_line" : 608
-    },
-    {
-      "meridian_line" : 32,
-      "swift_line" : 614
-    },
-    {
-      "meridian_line" : 85,
-      "swift_line" : 621
-    },
-    {
-      "meridian_line" : 34,
       "swift_line" : 637
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 676
+      "meridian_line" : 30,
+      "swift_line" : 641
+    },
+    {
+      "meridian_line" : 32,
+      "swift_line" : 648
+    },
+    {
+      "meridian_line" : 33,
+      "swift_line" : 655
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 674
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 681
+      "swift_line" : 742
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 721
+      "swift_line" : 747
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 726
+      "swift_line" : 816
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 821
     }
   ],
   "tools_used" : [
@@ -368,7 +368,22 @@
       "parameters" : [
 
       ],
+      "skill_name" : "fulfill order",
+      "skill_version_hash" : "bb491b931ee96005c6f2357a568659861820a78fd62bdfd31ff53e262cdb017d",
       "source_name" : "fulfill order",
+      "step_paths" : [
+        "\/FulfillOrder\/checks\/invariants\/e71a240890b2dbb476748330ea3000da5b350497d36f5f96693504131b43b754",
+        "\/FulfillOrder\/workflow-steps\/procedure\/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
+        "\/FulfillOrder\/workflow-steps\/procedure\/7a9db8cbb8a8e8fe7e4d0600d8e3ffa8ad6efb4573d843fd2e2c7831491c9722",
+        "\/FulfillOrder\/workflow-steps\/procedure\/branch.else\/2f3d741ca52f76c0c808d51aed98967a0820fb2d82f246ce4d54d0ac7497a100",
+        "\/FulfillOrder\/workflow-steps\/procedure\/branch.then\/d8a4a4f7452981460b0771c4f60ae04169a91fa6a6b33df612ec5514b69aaddd",
+        "\/FulfillOrder\/workflow-steps\/procedure\/c889557acbc1a08740b3003c99da1d92e626e1765341dd35321e7fd18d34fb5a",
+        "\/FulfillOrder\/workflow-steps\/procedure\/ecbf8103415e374bc23699f771908225bef29bcf764b4f6b14453a7dfafdcecb",
+        "\/FulfillOrder\/workflow-steps\/procedure\/ef690b1d6c253dd5d0b1612df7704438369ee89167dcf8f5a72550795ab36104",
+        "\/FulfillOrder\/workflow-steps\/procedure\/iterate.body\/1680adb79bc9e4ee837f4b97376c396edb5bece099b1320ac60aff895bac9523",
+        "\/FulfillOrder\/workflow-steps\/procedure\/iterate.body\/1d8a1706a446a542185dc1cca6fe83925933c32e0705de9e71720c83a0a91c63",
+        "\/FulfillOrder\/workflow-steps\/procedure\/iterate.body\/f5fd9e6e25a83f24a88de2b7985087cfdec2c937b9813fb6af8dfc6f608d2ba1"
+      ],
       "swift_struct" : "FulfillOrder"
     },
     {
@@ -376,7 +391,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "fulfill order",
+      "skill_version_hash" : "bb491b931ee96005c6f2357a568659861820a78fd62bdfd31ff53e262cdb017d",
       "source_name" : "when fulfillErpOrders fires",
+      "step_paths" : [
+        "\/WhenFulfillerpordersFires\/root\/procedure\/371bdff9c74de1360acbde6d6b9b5df97527e509ac63812c0a991bacaa016e07",
+        "\/WhenFulfillerpordersFires\/root\/procedure\/b4585dfb4b9f998e0137e8df388c10acc0fd0d628256f1746c2823d0947e66a8"
+      ],
       "swift_struct" : "WhenFulfillerpordersFires"
     },
     {
@@ -384,7 +405,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "fulfill order",
+      "skill_version_hash" : "bb491b931ee96005c6f2357a568659861820a78fd62bdfd31ff53e262cdb017d",
       "source_name" : "when releaseShipments fires",
+      "step_paths" : [
+        "\/WhenReleaseshipmentsFires\/root\/procedure\/65572f28d45b31aecdd7a446a749e0a13f7a364d402ebb844331902fd7430e43",
+        "\/WhenReleaseshipmentsFires\/root\/procedure\/b5a41039d3a54a01ec41175e1147c7ff3a61f35c2255e2a3982382bb4fc76984"
+      ],
       "swift_struct" : "WhenReleaseshipmentsFires"
     }
   ]

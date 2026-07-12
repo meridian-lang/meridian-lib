@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -398,43 +398,43 @@
   "source_map" : [
     {
       "meridian_line" : 96,
-      "swift_line" : 604
+      "swift_line" : 627
     },
     {
       "meridian_line" : 122,
-      "swift_line" : 614
+      "swift_line" : 641
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 654
+      "swift_line" : 711
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 659
+      "swift_line" : 716
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 698
+      "swift_line" : 784
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 703
+      "swift_line" : 789
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 742
+      "swift_line" : 857
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 747
+      "swift_line" : 862
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 786
+      "swift_line" : 930
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 791
+      "swift_line" : 935
     }
   ],
   "tools_used" : [
@@ -449,7 +449,13 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "meeting-ingestion",
+      "skill_version_hash" : "b26520c938896971ffb8d02bdb2fff792c4802a1fa657dc293df7ee8e0d7ba87",
       "source_name" : "meeting-ingestion a input",
+      "step_paths" : [
+        "\/MeetingIngestionInput\/phase-3-attendee-enrichment-mandatory-steps\/procedure\/e2894396b7a7957da4702c21f2c93777678347df696d504fb5c4934287792a16",
+        "\/MeetingIngestionInput\/phase-6-sync\/procedure\/348fbaec8c046f667084c2ec1916bceee86d0867e8427cec1f6861b0ff7a3954"
+      ],
       "swift_struct" : "MeetingIngestionInput"
     },
     {
@@ -457,7 +463,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "meeting-ingestion",
+      "skill_version_hash" : "b26520c938896971ffb8d02bdb2fff792c4802a1fa657dc293df7ee8e0d7ba87",
       "source_name" : "when meetingTranscript fires",
+      "step_paths" : [
+        "\/WhenMeetingtranscriptFires\/root\/procedure\/30e2b856ace05da5f3259f6848fc638c087707fcdac084100380ad32e09fc9a1",
+        "\/WhenMeetingtranscriptFires\/root\/procedure\/f6008236b4f26b90f8395255c255607abea92075dd79f19fa76665c0a723c0b9"
+      ],
       "swift_struct" : "WhenMeetingtranscriptFires"
     },
     {
@@ -465,7 +477,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "meeting-ingestion",
+      "skill_version_hash" : "b26520c938896971ffb8d02bdb2fff792c4802a1fa657dc293df7ee8e0d7ba87",
       "source_name" : "when processThisMeeting fires",
+      "step_paths" : [
+        "\/WhenProcessthismeetingFires\/root\/procedure\/5041c6928964481d0af25a635396a6741ad642b4babeac56315e0e9968177c3a",
+        "\/WhenProcessthismeetingFires\/root\/procedure\/e483ecd4e3b85d83c94b15caf2a90bc911484ced741034cb163428f6c1a94953"
+      ],
       "swift_struct" : "WhenProcessthismeetingFires"
     },
     {
@@ -473,7 +491,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "meeting-ingestion",
+      "skill_version_hash" : "b26520c938896971ffb8d02bdb2fff792c4802a1fa657dc293df7ee8e0d7ba87",
       "source_name" : "when meetingNotes fires",
+      "step_paths" : [
+        "\/WhenMeetingnotesFires\/root\/procedure\/1a72febd7f872cde796ecfa5a4caebdbba508635f889a9b683876dac3fd08b7f",
+        "\/WhenMeetingnotesFires\/root\/procedure\/da0c9ad0650361793bd2860d9bbd3843356df508ce0e54c07af84df7040b4a9f"
+      ],
       "swift_struct" : "WhenMeetingnotesFires"
     },
     {
@@ -481,7 +505,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "meeting-ingestion",
+      "skill_version_hash" : "b26520c938896971ffb8d02bdb2fff792c4802a1fa657dc293df7ee8e0d7ba87",
       "source_name" : "when meetingTranscriptReceived fires",
+      "step_paths" : [
+        "\/WhenMeetingtranscriptreceivedFires\/root\/procedure\/09215d1b1851d9653bd165b7b54bc0ae5a90a30665bcc2e5ee5d7072e76475aa",
+        "\/WhenMeetingtranscriptreceivedFires\/root\/procedure\/a947d1b3c6494ea934dadc405f29f21ff6bd2ba18b7000c3050d04e3f3072910"
+      ],
       "swift_struct" : "WhenMeetingtranscriptreceivedFires"
     }
   ]

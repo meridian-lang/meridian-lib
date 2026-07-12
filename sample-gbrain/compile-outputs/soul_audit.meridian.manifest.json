@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -455,43 +455,43 @@
   "source_map" : [
     {
       "meridian_line" : 1,
-      "swift_line" : 631
+      "swift_line" : 682
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 687
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 675
+      "swift_line" : 755
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 760
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 719
+      "swift_line" : 828
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 724
+      "swift_line" : 833
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 763
+      "swift_line" : 901
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 768
+      "swift_line" : 906
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 807
+      "swift_line" : 974
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 812
+      "swift_line" : 979
     }
   ],
   "tools_used" : [
@@ -506,6 +506,8 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "soul-audit",
+      "skill_version_hash" : "e413db14da804f29c64a4aac36a6a5aef6ba9e97d038699dd1b8f00dfa5c2461",
       "source_name" : "soul-audit a input",
       "swift_struct" : "SoulAuditInput"
     },
@@ -514,7 +516,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "soul-audit",
+      "skill_version_hash" : "e413db14da804f29c64a4aac36a6a5aef6ba9e97d038699dd1b8f00dfa5c2461",
       "source_name" : "when soulAudit fires",
+      "step_paths" : [
+        "\/WhenSoulauditFires\/root\/procedure\/4345b33e774478f3827a56c40263b45063c1f510fb377b614cfdc4337edcb8f7",
+        "\/WhenSoulauditFires\/root\/procedure\/ad9f264e3c9f27519c5f939172ed3ec9fba3ae4d4f7b8a5332d5730e0939ad4a"
+      ],
       "swift_struct" : "WhenSoulauditFires"
     },
     {
@@ -522,7 +530,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "soul-audit",
+      "skill_version_hash" : "e413db14da804f29c64a4aac36a6a5aef6ba9e97d038699dd1b8f00dfa5c2461",
       "source_name" : "when customizeAgent fires",
+      "step_paths" : [
+        "\/WhenCustomizeagentFires\/root\/procedure\/6086a61801f4a544b05e1690520d906dde19d308d7b6b5115ba416858bd8e3f0",
+        "\/WhenCustomizeagentFires\/root\/procedure\/772fc19d9960aeee9c4be7e56ba33529f53d5d4c7527824969a229176c9f256c"
+      ],
       "swift_struct" : "WhenCustomizeagentFires"
     },
     {
@@ -530,7 +544,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "soul-audit",
+      "skill_version_hash" : "e413db14da804f29c64a4aac36a6a5aef6ba9e97d038699dd1b8f00dfa5c2461",
       "source_name" : "when whoAmI fires",
+      "step_paths" : [
+        "\/WhenWhoamiFires\/root\/procedure\/1dab983e308d3ab6aac807d24b25bdf8027c06b4c0dc10c0c94e3f945e2ec6be",
+        "\/WhenWhoamiFires\/root\/procedure\/4708994f14b1598db68dc3585b5127b2cf175e2587e89d5aa92e02debf1519cd"
+      ],
       "swift_struct" : "WhenWhoamiFires"
     },
     {
@@ -538,7 +558,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "soul-audit",
+      "skill_version_hash" : "e413db14da804f29c64a4aac36a6a5aef6ba9e97d038699dd1b8f00dfa5c2461",
       "source_name" : "when setUpIdentity fires",
+      "step_paths" : [
+        "\/WhenSetupidentityFires\/root\/procedure\/a54e5337b4099a5c184b9ebb0f54f5e59f94c378ce895a0d6e8ab46de7fcd9fe",
+        "\/WhenSetupidentityFires\/root\/procedure\/c5a311d2820de7bf3455b5f4f34e945e6765e57aa9b0c4e2081aceafbe5cd1ac"
+      ],
       "swift_struct" : "WhenSetupidentityFires"
     },
     {
@@ -546,7 +572,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "soul-audit",
+      "skill_version_hash" : "e413db14da804f29c64a4aac36a6a5aef6ba9e97d038699dd1b8f00dfa5c2461",
       "source_name" : "when changeMyAgentSPersonality fires",
+      "step_paths" : [
+        "\/WhenChangemyagentspersonalityFires\/root\/procedure\/1935350058064d2788c1b090af9bff5e650b050385189b7d63df86bc68781ce2",
+        "\/WhenChangemyagentspersonalityFires\/root\/procedure\/b450ff17df9b54b19b8d3437bd364fa68a1484a070ecb5d1796e056a1d07f2ab"
+      ],
       "swift_struct" : "WhenChangemyagentspersonalityFires"
     }
   ]

@@ -1,0 +1,50 @@
+---
+name: release sentinel wave8
+description: Trimmed Wave 8 reference fixture. Mirrors the incident `release health sentinel` skill's temporal contrast surface (ever, within-window, count-in-window, in-a-row, across-all-runs, and an event-backed since-the-last with an explicit unknown arm) with no deontic/obligation content, which is deferred to Wave 9.
+triggers:
+  - "run release sentinel wave8"
+parameters: service
+---
+
+# Release Sentinel (Wave 8)
+
+> A single old failure, a fresh cluster, and a live streak are three different
+> release stories. This fixture keeps the Wave 8 temporal contrasts explicit and
+> anchors the `since the last` check on an event-backed adjective so an
+> anchorless history surfaces as `unknown` rather than being flattened.
+
+## Contract (( role: reference ))
+- Input: a service.
+- Output: a release-health verdict preserving historical, recent, streak, and
+  anchorless-since distinctions.
+
+## Workflow — steps
+
+if the deploy step has ever failed,
+  Post: "release sentinel saw a prior deploy failure".
+if the deploy step has failed within the last 7 days,
+  Post: "release sentinel saw a recent deploy failure".
+if the deploy step has failed at least 2 times within the last 7 days,
+  Post: "release sentinel saw repeated recent deploy failures".
+if the deploy step has failed 2 times in a row,
+  Post: "release sentinel saw an active deploy failure streak".
+if across all runs, the deploy step has ever failed,
+  Post: "release sentinel saw a cross-run deploy failure".
+
+## Workflow — steps 2
+
+if the service is recovered since the last deploy step succeeded,
+  Post: "release sentinel is healthy since the last successful deploy".
+if it is unknown whether:
+  Post: "release sentinel has no successful deploy anchor yet".
+otherwise,
+  Post: "release sentinel is not healthy since the last successful deploy".
+
+## Workflow — steps 3
+
+Post: "release sentinel wave8 pass complete".
+
+## Report shape (( role: template ))
+The receipt distinguishes historical failure, recent-window failure, repeated
+recent failure, a live failure streak, and since-the-last health with an
+explicit unknown/default policy when there is no successful anchor.

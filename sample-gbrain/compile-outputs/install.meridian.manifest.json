@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -173,6 +173,8 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "install",
+      "skill_version_hash" : "47f10481887192d152686f0beea4ca53ab4367bbbfe78667d652fdfa5d33c4bc",
       "source_name" : "entry a input",
       "swift_struct" : "EntryInput"
     }

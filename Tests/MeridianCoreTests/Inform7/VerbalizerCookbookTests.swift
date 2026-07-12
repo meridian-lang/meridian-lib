@@ -12,7 +12,7 @@ struct VerbalizerCookbookTests {
         """)
     }
 
-    @Test("COOK-boolean canonical form round trips")
+    @Test("COOK-04 boolean canonical form round trips")
     func cookBoolean() throws {
         try assertCookbook("""
         To check a score:
@@ -61,7 +61,7 @@ struct VerbalizerCookbookTests {
         """)
     }
 
-    @Test("COOK-branch canonical form round trips")
+    @Test("COOK-13 branch canonical form round trips")
     func cookBranch() throws {
         try assertCookbook("""
         To branch:
@@ -73,12 +73,37 @@ struct VerbalizerCookbookTests {
         """)
     }
 
+    @Test("COOK-13 unknown-arm canonical form round trips")
+    func cookBranchUnknownArm() throws {
+        try assertCookbook("""
+        Definition: a service is stale if the deploy step has ever failed.
+
+        To inspect a service:
+          if the service is stale since the last deploy step succeeded,
+            complete with reason "true".
+          if it is unknown whether:
+            complete with reason "unknown".
+          otherwise,
+            complete with reason "false".
+        """)
+    }
+
     @Test("COOK-let-bind canonical form round trips")
     func cookLetBind() throws {
         try assertCookbook("""
         To bind values:
           let the posture be "halt".
           rebind posture = "watch".
+          complete.
+        """)
+    }
+
+    @Test("COOK-14 compound note canonical form round trips")
+    func cookCompoundNote() throws {
+        try assertCookbook("""
+        To reconcile a batch:
+          let the receipt trailer be "".
+          proceed, and note "thin history" in the receipt trailer.
           complete.
         """)
     }
@@ -150,6 +175,129 @@ struct VerbalizerCookbookTests {
         """)
     }
 
+    @Test("COOK-18 ever canonical form round trips")
+    func cookTemporalEver() throws {
+        try assertCookbook("""
+        To inspect traces:
+          if the deploy step has ever failed,
+            complete with reason "ever".
+        """)
+    }
+
+    @Test("COOK-18 within-window canonical form round trips")
+    func cookTemporalWithin() throws {
+        try assertCookbook("""
+        To inspect traces:
+          if the deploy step has failed within the last 7 days,
+            complete with reason "window".
+        """)
+    }
+
+    @Test("COOK-18 count-in-window canonical form round trips")
+    func cookTemporalCount() throws {
+        try assertCookbook("""
+        To inspect traces:
+          if the deploy step has failed at least 2 times within the last 7 days,
+            complete with reason "count".
+        """)
+    }
+
+    @Test("COOK-18 in-a-row canonical form round trips")
+    func cookTemporalInARow() throws {
+        try assertCookbook("""
+        To inspect traces:
+          if the deploy step has failed 2 times in a row,
+            complete with reason "row".
+        """)
+    }
+
+    @Test("COOK-18 since-the-last canonical form round trips")
+    func cookTemporalSince() throws {
+        try assertCookbook("""
+        Definition: a service is stale if the deploy step has ever failed.
+
+        To inspect a service:
+          if the service is stale since the last deploy step succeeded,
+            complete with reason "stable".
+          otherwise,
+            complete with reason "fallback".
+        """)
+    }
+
+    @Test("COOK-19 keyed temporal adjective canonical form round trips")
+    func cookTemporalKeyedAdjective() throws {
+        try assertCookbook("""
+        Definition: a service is flaky if the deploy step has failed at least 2 times within the last 7 days.
+
+        To inspect a service:
+          if the service is flaky,
+            complete with reason "watch".
+          if it is unknown whether:
+            complete with reason "unknown".
+          otherwise,
+            complete with reason "ok".
+        """)
+    }
+
+    @Test("COOK-STAT statistical canonical form round trips")
+    func cookStatistical() throws {
+        let source = """
+        ---
+        vocabulary: trace.merconfig
+        ---
+        To inspect traces:
+          if the deploy step succeeds in at least 90% of runs within the last 7 days,
+            complete with reason "stable".
+          otherwise,
+            complete with reason "fallback".
+        """
+        let vocab = Compiler.VocabularyInput(
+            name: "trace",
+            file: "trace.merconfig",
+            source: """
+            === trace ===
+            usually at least: 90%
+            """
+        )
+        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(source, vocabularies: [vocab])
+        VerbalizerTestSupport.assertNoUnresolved(first, context: "cookbook source")
+        VerbalizerTestSupport.assertNoUnresolved(second, context: "cookbook canonical")
+        #expect(canonical.contains("at least 90% of runs within the last 604800 seconds"),
+                Comment(rawValue: canonical))
+        #expect(IREquality.structurallyEqual(first.workflows, second.workflows),
+                Comment(rawValue: "Cookbook round trip failed:\n\(VerbalizerTestSupport.snippet(canonical))"))
+    }
+
+    @Test("SEM_6_01 usually and rarely verbalize numerically")
+    func sem601UsuallyRarelyVerbalizeNumerically() throws {
+        let vocab = Compiler.VocabularyInput(
+            name: "trace",
+            file: "trace.merconfig",
+            source: """
+            === trace ===
+            usually at least: 85%
+            rarely at most: 15%
+            """
+        )
+        let source = """
+        ---
+        vocabulary: trace.merconfig
+        ---
+        To inspect traces:
+          if the deploy step usually succeeds,
+            complete with reason "steady".
+          otherwise,
+            complete with reason "not-steady".
+          if the deploy step rarely fails,
+            complete with reason "rare".
+          otherwise,
+            complete with reason "not-rare".
+        """
+        let (_, canonical, _) = try VerbalizerTestSupport.canonicalRoundTrip(source, vocabularies: [vocab])
+        #expect(canonical.contains("at least 85% of runs"), Comment(rawValue: canonical))
+        #expect(canonical.contains("at most 15% of runs"), Comment(rawValue: canonical))
+    }
+
     @Test("COOK-northstar-definition-and-judgment gallery lines round trip")
     func cookNorthstarGallery() throws {
         // Gallery lines adapted from MERIDIAN_NORTHSTAR_EXAMPLE.md (design doc
@@ -182,5 +330,37 @@ struct VerbalizerCookbookTests {
                 Comment(rawValue: "Cookbook round trip failed:\n\(VerbalizerTestSupport.snippet(canonical))"))
         #expect(VerbalizerTestSupport.definitionInfosEqual(first.loweredDefinitions, second.loweredDefinitions),
                 Comment(rawValue: "Cookbook definitions changed:\n\(VerbalizerTestSupport.snippet(canonical))"))
+    }
+}
+
+@Suite("COOK statistical")
+struct StatisticalCookbookTests {
+    @Test("COOK-STAT statistical canonical form round trips")
+    func cookStatistical() throws {
+        let source = """
+        ---
+        vocabulary: trace.merconfig
+        ---
+        To inspect traces:
+          if the deploy step succeeds in at least 90% of runs within the last 7 days,
+            complete with reason "stable".
+          otherwise,
+            complete with reason "fallback".
+        """
+        let vocab = Compiler.VocabularyInput(
+            name: "trace",
+            file: "trace.merconfig",
+            source: """
+            === trace ===
+            usually at least: 90%
+            """
+        )
+        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(source, vocabularies: [vocab])
+        VerbalizerTestSupport.assertNoUnresolved(first, context: "cookbook source")
+        VerbalizerTestSupport.assertNoUnresolved(second, context: "cookbook canonical")
+        #expect(canonical.contains("at least 90% of runs within the last 604800 seconds"),
+                Comment(rawValue: canonical))
+        #expect(IREquality.structurallyEqual(first.workflows, second.workflows),
+                Comment(rawValue: "Cookbook round trip failed:\n\(VerbalizerTestSupport.snippet(canonical))"))
     }
 }

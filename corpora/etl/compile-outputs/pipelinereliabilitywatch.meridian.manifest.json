@@ -1,0 +1,515 @@
+{
+  "constants" : {
+    "batch size threshold" : 100000,
+    "freshness sla" : 86400,
+    "retry budget" : 3
+  },
+  "instances_required" : [
+    {
+      "kind" : "sink",
+      "name" : "warehouse sink"
+    },
+    {
+      "kind" : "source",
+      "name" : "object store source"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_Dataset_critical",
+      "kind" : "dataset",
+      "line" : 30
+    },
+    {
+      "adjective" : "high volume",
+      "function" : "meridianDef_Dataset_highVolume",
+      "kind" : "dataset",
+      "line" : 29
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_Dataset_stale",
+      "kind" : "dataset",
+      "line" : 23
+    },
+    {
+      "adjective" : "backfilled",
+      "function" : "meridianDef_Partition_backfilled",
+      "kind" : "partition",
+      "line" : 25
+    },
+    {
+      "adjective" : "failed",
+      "function" : "meridianDef_PipelineRun_failed",
+      "kind" : "pipeline run",
+      "line" : 24
+    },
+    {
+      "adjective" : "passing",
+      "function" : "meridianDef_QualityCheck_passing",
+      "kind" : "quality check",
+      "line" : 26
+    },
+    {
+      "adjective" : "compatible",
+      "function" : "meridianDef_Schema_compatible",
+      "kind" : "schema",
+      "line" : 28
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Watermark_fresh",
+      "kind" : "watermark",
+      "line" : 27
+    }
+  ],
+  "meridian_ir_version" : "1.1",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a pipeline run",
+      "line" : 36,
+      "name" : "derivation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "transform"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a source",
+      "line" : 32,
+      "name" : "extraction",
+      "right_cardinality" : "one",
+      "right_kind" : "a dataset",
+      "via" : "extract"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a dataset",
+      "line" : 34,
+      "name" : "loading",
+      "right_cardinality" : "one",
+      "right_kind" : "a sink",
+      "via" : "load"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Watch the reliability trend of the pipeline the way an ETL operator actually needs it watched: by run-level success, by occurrence-level failure, and by an explicit sample-floor unknown when the history is still too thin to trust. Use this to keep reliability drift visible between incidents, not only after a broken load already pages someone.",
+    "name" : "pipeline reliability watch",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 19,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 23,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 28,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 34,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 41,
+        "text" : "Workflow — steps 2"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 48,
+        "text" : "Workflow — steps 3"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 52,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 60,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 3,
+        "line" : 65,
+        "text" : "Guarantees — steps"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 3,
+        "line" : 69,
+        "text" : "Guarantees — steps 2"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 72,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 30,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 32,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 37,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 39,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 44,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 46,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 50,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 61,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 62,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "Contract",
+        "line" : 19,
+        "lines" : [
+          "the extract step usually succeeds, checked every 1 days",
+          "the load step rarely fails, checked every 1 days"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 23,
+        "lines" : [
+          "\"run pipeline reliability watch\"",
+          "\"check pipeline reliability\"",
+          "\"monitor extract load reliability\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow",
+        "line" : 28,
+        "lines" : [
+          "otherwise,",
+          "Emit: \"pipeline reliability saw unhealthy run frequency\"",
+          "otherwise,",
+          "Emit: \"pipeline reliability saw unhealthy occurrence frequency\""
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 34,
+        "lines" : [
+          "if the extract step succeeds in at least 90% of runs within the last 30 days,",
+          "Emit: \"pipeline reliability saw healthy run frequency\"",
+          "if it is unknown whether:",
+          "Emit: \"pipeline reliability run frequency is indeterminate below the sample floor\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 41,
+        "lines" : [
+          "if the load step fails in at most 5% of occurrences within the last 30 days,",
+          "Emit: \"pipeline reliability saw healthy occurrence frequency\"",
+          "if it is unknown whether:",
+          "Emit: \"pipeline reliability occurrence frequency is indeterminate below the sample floor\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 3",
+        "line" : 48,
+        "lines" : [
+          "Emit: \"pipeline reliability watch pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 52,
+        "lines" : [
+          "Don't use the run-frequency branch to answer an occurrence-frequency",
+          "question. A clean run can still hide too many noisy failures inside it",
+          "Don't treat an indeterminate sample-floor result as a green result. Thin",
+          "history is uncertainty, not evidence of health",
+          "Don't move the cadence out of the Contract lines. The monitored claim needs",
+          "to say when it is checked, not leave that to a side note"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Guarantees",
+        "line" : 60,
+        "lines" : [
+
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees — steps",
+        "line" : 65,
+        "lines" : [
+          "make sure the extract step succeeds in at least 90% of runs within the last 30 days otherwise:"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees — steps 2",
+        "line" : 69,
+        "lines" : [
+          "make sure the load step fails in at most 5% of occurrences within the last 30 days otherwise:"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 72,
+        "lines" : [
+          "The receipt records one verdict for run frequency and one for occurrence",
+          "frequency, with a separate indeterminate path when the retained sample is still",
+          "too small to support the claim"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"run pipeline reliability watch\"\n\"check pipeline reliability\"\n\"monitor extract load reliability\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "derive",
+      "line" : 41,
+      "past_participle" : "derived",
+      "relation" : "derivation",
+      "third_person" : "derives"
+    },
+    {
+      "base" : "extract",
+      "line" : 39,
+      "past_participle" : "extracted",
+      "relation" : "extraction",
+      "third_person" : "extracts"
+    },
+    {
+      "base" : "load",
+      "line" : 40,
+      "past_participle" : "loaded",
+      "relation" : "loading",
+      "third_person" : "loads"
+    }
+  ],
+  "source_files" : [
+    "pipelinereliabilitywatch.meri",
+    "etl.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 20,
+      "swift_line" : 385
+    },
+    {
+      "meridian_line" : 21,
+      "swift_line" : 403
+    },
+    {
+      "meridian_line" : 67,
+      "swift_line" : 421
+    },
+    {
+      "meridian_line" : 71,
+      "swift_line" : 439
+    },
+    {
+      "meridian_line" : 36,
+      "swift_line" : 456
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 467
+    },
+    {
+      "meridian_line" : 39,
+      "swift_line" : 480
+    },
+    {
+      "meridian_line" : 43,
+      "swift_line" : 492
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 503
+    },
+    {
+      "meridian_line" : 46,
+      "swift_line" : 516
+    },
+    {
+      "meridian_line" : 50,
+      "swift_line" : 529
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 597
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 602
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 671
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 676
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 745
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 750
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "pipeline reliability watch",
+      "skill_version_hash" : "24c8bbeb0f069967d24026a0c26a37862c21ced7fc844865571ebbe687d8be0c",
+      "source_name" : "pipeline reliability watch",
+      "step_paths" : [
+        "\/PipelineReliabilityWatch\/contract\/invariants\/9199922282fa65f0a88780facb36c3e97104316572e87ef8d8e52c5c3052afbc",
+        "\/PipelineReliabilityWatch\/contract\/invariants\/b5eb9b467faf192e404bc18d8b7049c0ebd3d9b50fbc209b1387ca7efd75f0fc",
+        "\/PipelineReliabilityWatch\/guarantees-steps-2\/invariants\/793dd0e3f38ab87493f5484c63d24a9bcfbdb61a04666247409ab611fe003061",
+        "\/PipelineReliabilityWatch\/guarantees-steps\/invariants\/1f02cefe3742b29c9c1269cd4dc4ab5e953f8643f4ce8e14900e14607f9e728e",
+        "\/PipelineReliabilityWatch\/workflow-steps-2\/procedure\/4b3ca47fcec42903200858b4cfe0a140a99d09b182ea653cfa976c9307d05195",
+        "\/PipelineReliabilityWatch\/workflow-steps-2\/procedure\/branch.then\/31b7063368fb6760dc3b0ad35d752562b5fde14e909025db24e2110607fa594c",
+        "\/PipelineReliabilityWatch\/workflow-steps-3\/procedure\/57d436791e4233eccc6c92e120ed7f636357ca861092528e0a5f4fe65bbc5d8f",
+        "\/PipelineReliabilityWatch\/workflow-steps\/procedure\/5af2860da83bbbb9b1c8de544cd14a71d83ecbf8dd6fb0c991a349b83bbeb78e",
+        "\/PipelineReliabilityWatch\/workflow-steps\/procedure\/branch.then\/1d359d9dbb8061460c7f85126f6265962289045e38238c38768d7e02e2843868"
+      ],
+      "swift_struct" : "PipelineReliabilityWatch"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "pipeline reliability watch",
+      "skill_version_hash" : "24c8bbeb0f069967d24026a0c26a37862c21ced7fc844865571ebbe687d8be0c",
+      "source_name" : "when runPipelineReliabilityWatch fires",
+      "step_paths" : [
+        "\/WhenRunpipelinereliabilitywatchFires\/root\/procedure\/8492b5adc05b2301f238e724ee0500432ec616dd72a3e3f0c7c975916cae34f6",
+        "\/WhenRunpipelinereliabilitywatchFires\/root\/procedure\/dea4bc3d83e623e12ddd914d871ef308c3d2a1938ae9002410e1f0f6d3f86086"
+      ],
+      "swift_struct" : "WhenRunpipelinereliabilitywatchFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "pipeline reliability watch",
+      "skill_version_hash" : "24c8bbeb0f069967d24026a0c26a37862c21ced7fc844865571ebbe687d8be0c",
+      "source_name" : "when checkPipelineReliability fires",
+      "step_paths" : [
+        "\/WhenCheckpipelinereliabilityFires\/root\/procedure\/23826838d041224389668447b72a651091c0990a943774793439d88a40e955ee",
+        "\/WhenCheckpipelinereliabilityFires\/root\/procedure\/d3cd4f52dc9bd0661687f0d669549803b0f065f785305f896fa962012e3570e0"
+      ],
+      "swift_struct" : "WhenCheckpipelinereliabilityFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "pipeline reliability watch",
+      "skill_version_hash" : "24c8bbeb0f069967d24026a0c26a37862c21ced7fc844865571ebbe687d8be0c",
+      "source_name" : "when monitorExtractLoadReliability fires",
+      "step_paths" : [
+        "\/WhenMonitorextractloadreliabilityFires\/root\/procedure\/4bd0523b0b913b2a002cac193a7e3e19f5f7b8688bbd1839d08abeefcd10ffd1",
+        "\/WhenMonitorextractloadreliabilityFires\/root\/procedure\/ee5dab199a1b25881869856cc0932e76ed1f4def758389d5fe390f4888c6cecc"
+      ],
+      "swift_struct" : "WhenMonitorextractloadreliabilityFires"
+    }
+  ]
+}

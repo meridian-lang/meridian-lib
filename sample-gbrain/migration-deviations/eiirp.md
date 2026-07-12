@@ -25,13 +25,14 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L346 `Capability domain`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
+- generated_loc: 264 non-blank ported lines
 - Sections inert total: 15/21 (71% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=14, template=1
 - Judgment: 1 blocks, 0 lines
-- canonical_drift: synonym=0, structure=0, desugar=0, meaning=305
+- canonical_drift: synonym=15, structure=0, desugar=0, meaning=290
 
 ### Inert section details
 - L6 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.

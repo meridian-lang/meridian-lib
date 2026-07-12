@@ -6,22 +6,63 @@ public enum IRValidationError: Error, Sendable {
 }
 
 public enum IRValidator {
-    public static func validate(_ workflows: [IRWorkflow], sourceFile: String = "<ir>") throws {
+    public static func validate(
+        _ workflows: [IRWorkflow],
+        sourceFile: String = "<ir>",
+        trace: ParserTrace = .shared
+    ) throws {
+        let token = trace.openSpan(.validation, "validate \(workflows.count) workflow(s)")
         var validator = Validator(sourceFile: sourceFile, workflows: workflows)
         for workflow in workflows {
             validator.validate(workflow)
         }
-        try validator.throwIfNeeded()
+        do {
+            try validator.throwIfNeeded()
+            trace.closeSpan(token, outcome: .success)
+        } catch {
+            if case IRValidationError.diagnostics(let diags) = error {
+                let summary = diags.map { "\($0.severity.rawValue) \($0.code.id): \($0.message)" }
+                    .joined(separator: "; ")
+                trace.closeSpan(token, outcome: .failure, result: summary)
+            } else {
+                trace.closeSpan(token, outcome: .failure)
+            }
+            throw error
+        }
     }
 
-    public static func validate(_ workflow: IRWorkflow, sourceFile: String = "<ir>") throws {
-        try validate([workflow], sourceFile: workflow.sourceFile.isEmpty ? sourceFile : workflow.sourceFile)
+    public static func validate(
+        _ workflow: IRWorkflow,
+        sourceFile: String = "<ir>",
+        trace: ParserTrace = .shared
+    ) throws {
+        try validate(
+            [workflow],
+            sourceFile: workflow.sourceFile.isEmpty ? sourceFile : workflow.sourceFile,
+            trace: trace)
     }
 
-    public static func validate(_ expression: IRExpression, sourceFile: String = "<ir>") throws {
+    public static func validate(
+        _ expression: IRExpression,
+        sourceFile: String = "<ir>",
+        trace: ParserTrace = .shared
+    ) throws {
+        let token = trace.openSpan(.validation, "validate expression")
         var validator = Validator(sourceFile: sourceFile, workflows: [])
         validator.validate(expression, range: SourceRange(file: sourceFile, line: 0, column: 1), context: .standaloneExpression)
-        try validator.throwIfNeeded()
+        do {
+            try validator.throwIfNeeded()
+            trace.closeSpan(token, outcome: .success)
+        } catch {
+            if case IRValidationError.diagnostics(let diags) = error {
+                let summary = diags.map { "\($0.severity.rawValue) \($0.code.id): \($0.message)" }
+                    .joined(separator: "; ")
+                trace.closeSpan(token, outcome: .failure, result: summary)
+            } else {
+                trace.closeSpan(token, outcome: .failure)
+            }
+            throw error
+        }
     }
 }
 
@@ -107,6 +148,9 @@ private struct Validator {
         case .predicate(let expression):
             validate(expression, range: range, context: .valueExpression)
             validate(branch.thenBlock, fallbackRange: range)
+            if let unknownBlock = branch.unknownBlock {
+                validate(unknownBlock, fallbackRange: range)
+            }
             if let elseBlock = branch.elseBlock {
                 validate(elseBlock, fallbackRange: range)
             }
@@ -298,6 +342,49 @@ private struct Validator {
             if superlative.sortPath.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 invalidIR("superlative has an empty sort path", range: range)
             }
+        case .eventPattern(let pattern):
+            if case .step(let name) = pattern.subject,
+               name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                invalidIR("event pattern step subject is empty", range: range)
+            }
+            if case .named(let name) = pattern.subject,
+               name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                invalidIR("event pattern subject is empty", range: range)
+            }
+            if let predicate = pattern.payloadPredicate {
+                validate(predicate, range: range, context: .valueExpression)
+            }
+        case .traceTemporal(let temporal):
+            if let subjectKey = temporal.subjectKeyExpr {
+                validate(subjectKey, range: range, context: .valueExpression)
+            }
+            switch temporal.kind {
+            case .ever(let pattern):
+                validate(.eventPattern(pattern), range: range, context: .valueExpression)
+            case .withinWindow(let pattern, _):
+                validate(.eventPattern(pattern), range: range, context: .valueExpression)
+            case .countInWindow(let pattern, _, _):
+                validate(.eventPattern(pattern), range: range, context: .valueExpression)
+            case .inARow(let pattern, _):
+                validate(.eventPattern(pattern), range: range, context: .valueExpression)
+            case .sinceLast(let anchor, let holds, let holdsPattern):
+                validate(.eventPattern(anchor), range: range, context: .valueExpression)
+                validate(holds, range: range, context: .valueExpression)
+                validate(.eventPattern(holdsPattern), range: range, context: .valueExpression)
+            }
+        case .traceStatistical(let statistical):
+            if let subjectKey = statistical.subjectKeyExpr {
+                validate(subjectKey, range: range, context: .valueExpression)
+            }
+            switch statistical.pattern.subject {
+            case .step(let name), .named(let name):
+                if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    invalidIR("statistical pattern subject is empty", range: range)
+                }
+            }
+            if let predicate = statistical.pattern.payloadPredicate {
+                validate(predicate, range: range, context: .valueExpression)
+            }
         }
     }
 
@@ -371,11 +458,21 @@ private struct Validator {
     }
 
     mutating func invalidIR(_ message: String, range: SourceRange) {
-        diagnostics.append(Diagnostic.error(.invalidIR, message: message, range: range))
+        diagnostics.append(Diagnostic.error(
+            .invalidIR,
+            message: message,
+            range: range,
+            help: "Rewrite the authored source so lowering cannot produce malformed IR (\(message)).",
+            phase: "validation"))
     }
 
     mutating func matchSemantic(_ message: String, range: SourceRange) {
-        diagnostics.append(Diagnostic.error(.matchBranchSemantic, message: message, range: range))
+        diagnostics.append(Diagnostic.error(
+            .matchBranchSemantic,
+            message: message,
+            range: range,
+            help: "Fix the match branch (\(message)) — add case arms, remove duplicate patterns, or keep a single wildcard/default arm.",
+            phase: "validation"))
     }
 
     func concreteRange(_ range: SourceRange, fallback: SourceRange) -> SourceRange {

@@ -477,10 +477,7 @@ struct SkillSectionBuilder {
             // When-NOT-To-Use: skip (complete) when the condition holds.
             // `complete` is a fixed primitive; the suffix-conditional marker is
             // sourced from grammar so this stays in lockstep with the parser.
-            let positiveMarker = lexicon.grammar.suffixConditionalMarkers
-                .first { $0 != lexicon.grammar.suffixConditionalNegated }
-                ?? EnglishLexicon.default.grammar.suffixConditionalMarkers.first { $0 != EnglishLexicon.default.grammar.suffixConditionalNegated }
-                ?? ""
+            let positiveMarker = lexicon.grammar.affirmativeSuffixConditionalMarker
             let marker = negated ? positiveMarker : lexicon.grammar.suffixConditionalNegated
             let canonicalText = lexicon.grammar.statement.complete + marker + text
             prelude.append(canonical(canonicalText, from: group.head))

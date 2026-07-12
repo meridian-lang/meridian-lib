@@ -27,6 +27,7 @@ public actor WorkflowTestHarness {
     public nonisolated let instanceRegistry: InstanceRegistry
     public nonisolated let observer: InMemoryObserver
     public nonisolated let clock: FixedClock
+    public nonisolated let traceStore: InMemoryTraceStore
 
     private let runtime: Runtime
 
@@ -35,21 +36,26 @@ public actor WorkflowTestHarness {
     public init(
         instances: InstanceRegistry = .empty,
         clockStart: Date = Date(timeIntervalSince1970: 0),
-        runID: String = "test-run"
+        runID: String = "test-run",
+        traceConfiguration: TraceConfiguration = .default
     ) async {
         let registry = ToolRegistry()
         let observer = InMemoryObserver()
         let clock = FixedClock(now: clockStart)
+        let traceStore = InMemoryTraceStore(configuration: traceConfiguration)
         self.toolRegistry = registry
         self.instanceRegistry = instances
         self.observer = observer
         self.clock = clock
+        self.traceStore = traceStore
         self.runtime = Runtime(
             toolRegistry: registry,
             instanceRegistry: instances,
             observer: observer,
+            traceStore: traceStore,
             clock: clock,
-            runID: runID
+            runID: runID,
+            traceConfiguration: traceConfiguration
         )
     }
 

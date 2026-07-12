@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -308,51 +308,51 @@
   "source_map" : [
     {
       "meridian_line" : 46,
-      "swift_line" : 603
+      "swift_line" : 626
     },
     {
       "meridian_line" : 50,
-      "swift_line" : 614
+      "swift_line" : 639
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 653
+      "swift_line" : 708
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 658
+      "swift_line" : 713
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 697
+      "swift_line" : 781
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 702
+      "swift_line" : 786
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 741
+      "swift_line" : 854
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 746
+      "swift_line" : 859
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 785
+      "swift_line" : 927
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 790
+      "swift_line" : 932
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 829
+      "swift_line" : 1000
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 834
+      "swift_line" : 1005
     }
   ],
   "tools_used" : [
@@ -365,9 +365,13 @@
           "guidance" : "**Defer:** Move to next day\/week with reason\nSave. `gbrain put ops\/tasks` — write updated task list",
           "line" : 50,
           "scoped_tools" : [
+            "add_timeline_entry",
+            "get_page",
             "page.get",
             "page.search",
             "publish",
+            "put_page",
+            "search",
             "shell.run",
             "timeline.add"
           ],
@@ -381,7 +385,13 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "daily-task-manager",
+      "skill_version_hash" : "e5e8ecec5856de8f2f409e6720029dbae45424d936450dbdffefd8d52818b9c6",
       "source_name" : "daily-task-manager a input",
+      "step_paths" : [
+        "\/DailyTaskManagerInput\/phases-steps-2\/procedure\/0bc7c098fdab7980218df525d54cbbae6dce7ef487835b5774d2d57ee10d1701",
+        "\/DailyTaskManagerInput\/phases-steps\/procedure\/bbfda99fa524c1365c726185a80ecc5502dde26c46a54a9308acaea6ccf67fe2"
+      ],
       "swift_struct" : "DailyTaskManagerInput"
     },
     {
@@ -389,7 +399,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "daily-task-manager",
+      "skill_version_hash" : "e5e8ecec5856de8f2f409e6720029dbae45424d936450dbdffefd8d52818b9c6",
       "source_name" : "when addTask fires",
+      "step_paths" : [
+        "\/WhenAddtaskFires\/root\/procedure\/766785ae567a0bb95b7b515105e7f7a97f82b83481380837fedd36f8d3601738",
+        "\/WhenAddtaskFires\/root\/procedure\/7c7e753a03e6cd26c53e059067d207198ea2af7bb2b3c8b1c0a8bca12ea0aa3c"
+      ],
       "swift_struct" : "WhenAddtaskFires"
     },
     {
@@ -397,7 +413,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "daily-task-manager",
+      "skill_version_hash" : "e5e8ecec5856de8f2f409e6720029dbae45424d936450dbdffefd8d52818b9c6",
       "source_name" : "when completeTask fires",
+      "step_paths" : [
+        "\/WhenCompletetaskFires\/root\/procedure\/2f84fa3bb2852767d995168fa8294ba9a888c129e8a5d4539a6ee520467e02c2",
+        "\/WhenCompletetaskFires\/root\/procedure\/d8558973a838008789951c01ca81aafeddff5b52e22ce7752f994df79257f1b5"
+      ],
       "swift_struct" : "WhenCompletetaskFires"
     },
     {
@@ -405,7 +427,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "daily-task-manager",
+      "skill_version_hash" : "e5e8ecec5856de8f2f409e6720029dbae45424d936450dbdffefd8d52818b9c6",
       "source_name" : "when whatAreMyTasks fires",
+      "step_paths" : [
+        "\/WhenWhataremytasksFires\/root\/procedure\/2d3f6eff013ba634724f960815ad6334e7ca71f6edb98eef2c6c8ed8c6da5e3a",
+        "\/WhenWhataremytasksFires\/root\/procedure\/e2413e80d712e5beee7309cb40d83c7beed96abc18cb8dd61a2a926f6652f319"
+      ],
       "swift_struct" : "WhenWhataremytasksFires"
     },
     {
@@ -413,7 +441,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "daily-task-manager",
+      "skill_version_hash" : "e5e8ecec5856de8f2f409e6720029dbae45424d936450dbdffefd8d52818b9c6",
       "source_name" : "when taskList fires",
+      "step_paths" : [
+        "\/WhenTasklistFires\/root\/procedure\/69d0ae6fa8485abc789ea3c7efae697c1c3cc48adbbac838e0fba42980caffd4",
+        "\/WhenTasklistFires\/root\/procedure\/bf4b96558979b4d615112abf4b5350c7d0fb58b316beb4b5117c9f542c5f12b2"
+      ],
       "swift_struct" : "WhenTasklistFires"
     },
     {
@@ -421,7 +455,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "daily-task-manager",
+      "skill_version_hash" : "e5e8ecec5856de8f2f409e6720029dbae45424d936450dbdffefd8d52818b9c6",
       "source_name" : "when deferTask fires",
+      "step_paths" : [
+        "\/WhenDefertaskFires\/root\/procedure\/21186dac9f011b007f5f86ccb12770a46c717b73e9bf9670b5e8d832778f8d71",
+        "\/WhenDefertaskFires\/root\/procedure\/6d12e24dfb0bd694834efb0d58f05a8669646029e453f08af2bc45fd3e787d29"
+      ],
       "swift_struct" : "WhenDefertaskFires"
     }
   ]

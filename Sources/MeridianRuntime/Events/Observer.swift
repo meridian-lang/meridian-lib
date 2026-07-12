@@ -3,47 +3,60 @@ import Foundation
 // MARK: - Observer protocol
 
 public protocol Observer: Sendable {
-    func record(_ event: Event) async
+    func record(_ event: Event) async throws
 }
 
 // MARK: - JSONLObserver
 
 /// Writes events as JSONL to stdout or a file.
 public struct JSONLObserver: Observer {
+    public enum Format: Sendable {
+        case legacy
+    }
+
     public enum Destination: Sendable {
         case standardOutput
         case file(URL)
     }
 
     private let destination: Destination
+    private let format: Format
     private let encoder: JSONEncoder
 
-    public init(destination: Destination = .standardOutput) {
+    public init(destination: Destination = .standardOutput, format: Format = .legacy) {
         self.destination = destination
+        self.format = format
         let enc = JSONEncoder()
         enc.dateEncodingStrategy = .iso8601
         enc.outputFormatting = []
         self.encoder = enc
     }
 
-    public func record(_ event: Event) async {
-        let line = formatEvent(event)
+    public func record(_ event: Event) async throws {
+        let line: String
+        switch format {
+        case .legacy:
+            line = try formatEvent(event)
+        }
         switch destination {
         case .standardOutput:
             print(line)
         case .file(let url):
-            let data = (line + "\n").data(using: .utf8) ?? Data()
-            if let handle = try? FileHandle(forWritingTo: url) {
-                handle.seekToEndOfFile()
-                handle.write(data)
-                try? handle.close()
+            guard let data = (line + "\n").data(using: .utf8) else {
+                throw ObserverError.writeFailed(path: url.path, underlying: "utf8 encoding failed")
+            }
+            if FileManager.default.fileExists(atPath: url.path) {
+                let handle = try FileHandle(forWritingTo: url)
+                try handle.seekToEnd()
+                try handle.write(contentsOf: data)
+                try handle.close()
             } else {
-                try? data.write(to: url, options: .atomic)
+                try data.write(to: url, options: .atomic)
             }
         }
     }
 
-    private func formatEvent(_ event: Event) -> String {
+    private func formatEvent(_ event: Event) throws -> String {
         var dict: [String: Any] = [
             "ts": ISO8601DateFormatter.meridianFormatter.string(from: event.timestamp),
             "run_id": event.runID,
@@ -51,13 +64,11 @@ public struct JSONLObserver: Observer {
             "kind": event.kind.rawValue
         ]
 
-        // Flatten well-known payload fields to top-level (matching golden JSONL shape)
         var payloadDict: [String: Any] = [:]
         for (k, v) in event.payload {
             payloadDict[k] = v.jsonEncodableObject
         }
 
-        // Per-kind top-level promotions matching the golden event format
         switch event.kind {
         case .invokeStart, .invokeEnd, .invokeError:
             if let tool = payloadDict["tool"] as? String {
@@ -90,9 +101,9 @@ public struct JSONLObserver: Observer {
             dict["source"] = ["file": source.file, "line": source.startLine, "col": source.startColumn]
         }
 
-        guard let data = try? JSONSerialization.data(withJSONObject: dict),
-              let str = String(data: data, encoding: .utf8) else {
-            return "{\"kind\":\"\(event.kind.rawValue)\",\"error\":\"serialization_failed\"}"
+        let data = try JSONSerialization.data(withJSONObject: dict)
+        guard let str = String(data: data, encoding: .utf8) else {
+            throw ObserverError.serializationFailed(event)
         }
         return str
     }
@@ -107,7 +118,7 @@ public actor InMemoryObserver: Observer {
 
     public var events: [Event] { _events }
 
-    public func record(_ event: Event) async {
+    public func record(_ event: Event) async throws {
         _events.append(event)
     }
 
@@ -125,9 +136,9 @@ public struct CompositeObserver: Observer {
         self.observers = observers
     }
 
-    public func record(_ event: Event) async {
+    public func record(_ event: Event) async throws {
         for observer in observers {
-            await observer.record(event)
+            try await observer.record(event)
         }
     }
 }
@@ -151,4 +162,3 @@ public extension ISO8601DateFormatter {
         return f
     }()
 }
-

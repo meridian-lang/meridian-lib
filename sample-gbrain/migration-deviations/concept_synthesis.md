@@ -29,13 +29,14 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L248 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
+- generated_loc: 180 non-blank ported lines
 - Sections inert total: 12/13 (92% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=11, template=1
 - Judgment: 1 blocks, 0 lines
-- canonical_drift: synonym=0, structure=0, desugar=0, meaning=185
+- canonical_drift: synonym=1, structure=0, desugar=0, meaning=184
 
 ### Inert section details
 - L10 `What this solves`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.

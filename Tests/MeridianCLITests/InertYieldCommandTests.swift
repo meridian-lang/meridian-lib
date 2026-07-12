@@ -91,4 +91,47 @@ struct InertYieldCommandTests {
         let empty = try InertYieldCommand.parse([t.url.path, "--batch"])
         await #expect(throws: (any Error).self) { try await empty.run() }
     }
+
+    @Test("stdout mode prints the full report when --out is omitted")
+    func stdoutReport() async throws {
+        let t = TempDir()
+        t.write("vocab.merconfig", "=== vocabulary ===\n")
+        let source = t.write("skill.meri", inertProcedure)
+        let cmd = try InertYieldCommand.parse([source.path])
+        try await cmd.run()
+    }
+
+    @Test("explicit missing --vocab and --rulebook throw coded input errors")
+    func explicitMissingDependencies() async throws {
+        let t = TempDir()
+        let source = t.write("skill.meri", inertProcedure)
+        let missingVocab = try InertYieldCommand.parse([
+            source.path, "--vocab", "/definitely/missing.merconfig"
+        ])
+        await #expect(throws: (any Error).self) { try await missingVocab.run() }
+
+        let missingRules = try InertYieldCommand.parse([
+            source.path, "--rulebook", "/definitely/missing.merrules"
+        ])
+        await #expect(throws: (any Error).self) { try await missingRules.run() }
+    }
+
+    @Test("renderReport includes unresolved phrase notes in line detail")
+    func renderReportLineDetail() {
+        let fileYield = InertYieldAnalyzer.FileYield(
+            file: "demo",
+            sections: [
+                InertYieldAnalyzer.SectionYield(
+                    heading: "Steps",
+                    line: 1,
+                    overall: .needsPhrase,
+                    category: .operationalProcedure,
+                    lines: [
+                        .init(line: 2, text: "frobnicate the page", yield: .needsPhrase,
+                              unresolvedPhrase: "frobnicate the page", p1Bucket: .error),
+                    ]),
+            ])
+        let report = InertYieldCommand.renderReport([fileYield], includeLineDetail: true)
+        #expect(report.contains("unresolved phrase: \"frobnicate the page\""), Comment(rawValue: report))
+    }
 }

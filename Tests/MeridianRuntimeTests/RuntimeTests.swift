@@ -226,6 +226,49 @@ struct RuntimeTests {
         #expect(failed?.payload["message"] == .string("x is non-nil"))
     }
 
+    // MARK: - Primitive-boundary instrumentation (8B/E)
+
+    @Test("recordBranchTaken emits branchTaken with condition/into/step payload")
+    func recordBranchTakenEmits() async throws {
+        let observer = InMemoryObserver()
+        let runtime = await makeRuntime(observer: observer)
+        try await runtime.recordBranchTaken(condition: "x > 0", into: "then", step: "branch.step")
+        let events = await observer.events
+        let event = events.first { $0.kind == .branchTaken }
+        #expect(event != nil)
+        #expect(event?.payload["condition"] == .string("x > 0"))
+        #expect(event?.payload["into"] == .string("then"))
+        #expect(event?.payload["step"] == .string("branch.step"))
+    }
+
+    @Test("recordIterateStart/Iteration/End emit the paired iterate events")
+    func recordIterateEmitsPairedEvents() async throws {
+        let observer = InMemoryObserver()
+        let runtime = await makeRuntime(observer: observer)
+        try await runtime.recordIterateStart(over: "the items", step: "iterate.step")
+        try await runtime.recordIterateIteration(index: 0, step: "iterate.step")
+        try await runtime.recordIterateIteration(index: 1, step: "iterate.step")
+        try await runtime.recordIterateEnd(over: "the items", count: 2, step: "iterate.step")
+        let events = await observer.events
+        let kinds = events.map(\.kind)
+        #expect(kinds.filter { $0 == .iterateIteration }.count == 2)
+        let start = events.first { $0.kind == .iterateStart }
+        #expect(start?.payload["over"] == .string("the items"))
+        let end = events.first { $0.kind == .iterateEnd }
+        #expect(end?.payload["count"] == .number(2))
+    }
+
+    @Test("recordRecoverEngaged emits recoverEngaged with the pattern payload")
+    func recordRecoverEngagedEmits() async throws {
+        let observer = InMemoryObserver()
+        let runtime = await makeRuntime(observer: observer)
+        try await runtime.recordRecoverEngaged(pattern: "any", step: "recover.step")
+        let events = await observer.events
+        let event = events.first { $0.kind == .recoverEngaged }
+        #expect(event?.payload["pattern"] == .string("any"))
+        #expect(event?.payload["step"] == .string("recover.step"))
+    }
+
     // MARK: - Resume (Phase 5)
 
     @Test("resume returns ResumeContext from latest checkpoint")

@@ -363,6 +363,99 @@ struct LanguageSynonymTests {
     }
 }
 
+@Suite("EnglishLexicon — article helpers, morphology, and merging edge cases")
+struct EnglishLexiconEdgeCaseCoverageTests {
+
+    @Test("definiteArticle falls back to the sorted first article when \"the\" is absent from a custom lexicon")
+    func definiteArticleFallsBackWhenTheIsAbsent() {
+        let base = EnglishLexicon.default
+        let custom = EnglishLexicon(
+            articles: ["a", "an"],
+            prepositions: base.prepositions,
+            copulas: base.copulas,
+            participles: base.participles,
+            participleSuffixes: base.participleSuffixes,
+            comparisonMarkers: base.comparisonMarkers,
+            durationUnits: base.durationUnits,
+            toolStopwords: base.toolStopwords
+        )
+        #expect(custom.definiteArticle == "a")
+    }
+
+    @Test("findEarliestArticle breaks a tied lowerBound in favor of the longer marker")
+    func findEarliestArticleTieBreaksOnLongerMarker() {
+        let base = EnglishLexicon.default
+        // "a certain" is a prefix-compatible superstring of "a " — both markers
+        // (" a certain " and " a ") start matching at the exact same position
+        // in "for a certain widget", forcing the tie-break clause to evaluate.
+        let custom = EnglishLexicon(
+            articles: base.articles,
+            parameterArticles: ["a", "a certain"],
+            prepositions: base.prepositions,
+            copulas: base.copulas,
+            participles: base.participles,
+            participleSuffixes: base.participleSuffixes,
+            comparisonMarkers: base.comparisonMarkers,
+            durationUnits: base.durationUnits,
+            toolStopwords: base.toolStopwords
+        )
+        guard let (intro, rest) = custom.findEarliestArticle("for a certain widget") else {
+            Issue.record("expected an article match")
+            return
+        }
+        #expect(intro == "for")
+        // The longer marker (" a certain ") wins the tie, consuming "certain" too.
+        #expect(rest == "widget")
+    }
+
+    @Test("singularize leaves an \"ies\"-ending word unchanged in shape when preceded by a vowel")
+    func singularizeSkipsIesToYWhenPrecededByVowel() {
+        // Synthetic input (not real English) isolates the vowel-guard branch:
+        // dropping "ies" from "zoies" leaves "zo", whose last letter is the
+        // vowel "o", so the y-substitution must NOT fire.
+        let lex = EnglishLexicon.default
+        #expect(lex.singularize("zoies") == "zoie")
+    }
+
+    @Test("pluralize resolves a single-word irregular override before any splitting")
+    func pluralizeSingleWordIrregularOverride() {
+        let lex = EnglishLexicon.default
+        #expect(lex.pluralize("person") == "people")
+        #expect(lex.pluralize("child") == "children")
+    }
+
+    @Test("pluralize applies an irregular override to only the last word of a multi-word phrase")
+    func pluralizeMultiWordIrregularLastWord() {
+        let lex = EnglishLexicon.default
+        #expect(lex.pluralize("field mouse") == "field mice")
+        #expect(lex.pluralize("point of contact person") == "point of contact people")
+    }
+
+    @Test("merging maps a recognized trace outcome synonym and silently skips an unrecognized one")
+    func mergingTraceOutcomeSynonyms() {
+        let merged = EnglishLexicon.default.merging(
+            comparisonSynonyms: [],
+            durationSynonyms: [:],
+            traceOutcomeSynonyms: ["crashed": "failed", "bogus": "not-a-real-outcome"]
+        )
+        #expect(merged.traceOutcomeVerbs["crashed"] == .failed)
+        #expect(merged.traceOutcomeVerbs["bogus"] == nil)
+        // Defaults are preserved alongside the merged synonym.
+        #expect(merged.traceOutcomeVerbs["failed"] == .failed)
+    }
+
+    @Test("merging lowercases and unions trace-auxiliary synonyms")
+    func mergingTraceAuxiliarySynonyms() {
+        let merged = EnglishLexicon.default.merging(
+            comparisonSynonyms: [],
+            durationSynonyms: [:],
+            traceAuxiliarySynonyms: ["Shall"]
+        )
+        #expect(merged.tracePerfectAuxiliaries.contains("shall"))
+        #expect(merged.tracePerfectAuxiliaries.isSuperset(of: EnglishLexicon.default.tracePerfectAuxiliaries))
+    }
+}
+
 @Suite("Tool resolution — token-overlap scoring (A4)")
 struct ToolResolutionTests {
 

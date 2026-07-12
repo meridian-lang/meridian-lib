@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -1528,155 +1528,155 @@
   "source_map" : [
     {
       "meridian_line" : 53,
-      "swift_line" : 603
+      "swift_line" : 626
     },
     {
       "meridian_line" : 78,
-      "swift_line" : 607
+      "swift_line" : 630
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 646
+      "swift_line" : 699
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 651
+      "swift_line" : 704
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 772
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 695
+      "swift_line" : 777
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 845
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 739
+      "swift_line" : 850
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 918
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 783
+      "swift_line" : 923
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 822
+      "swift_line" : 991
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 827
+      "swift_line" : 996
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 866
+      "swift_line" : 1064
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 871
+      "swift_line" : 1069
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 910
+      "swift_line" : 1137
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 915
+      "swift_line" : 1142
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 954
+      "swift_line" : 1210
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 959
+      "swift_line" : 1215
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 998
+      "swift_line" : 1283
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1003
+      "swift_line" : 1288
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1042
+      "swift_line" : 1356
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1047
+      "swift_line" : 1361
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1086
+      "swift_line" : 1429
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1091
+      "swift_line" : 1434
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1130
+      "swift_line" : 1502
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1135
+      "swift_line" : 1507
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1174
+      "swift_line" : 1575
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1179
+      "swift_line" : 1580
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1218
+      "swift_line" : 1648
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1223
+      "swift_line" : 1653
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1262
+      "swift_line" : 1721
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1267
+      "swift_line" : 1726
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1306
+      "swift_line" : 1794
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1311
+      "swift_line" : 1799
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1350
+      "swift_line" : 1867
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1355
+      "swift_line" : 1872
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1394
+      "swift_line" : 1940
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1399
+      "swift_line" : 1945
     }
   ],
   "tools_used" : [
@@ -1711,8 +1711,10 @@
             "page.list",
             "page.search",
             "publish",
+            "put_page",
             "remove_link",
             "remove_tag",
+            "search",
             "shell.run"
           ],
           "text" : "follow the Autonomous path (v0.36.4.0) — when you want to reach a target score — steps 2 guidance"
@@ -1725,7 +1727,13 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "maintain a input",
+      "step_paths" : [
+        "\/MaintainInput\/autonomous-path-v0-36-4-0-when-you-want-to-reach-a-target-score-steps-2\/procedure\/e67ce75dd2135e37844f4bd2a6c22987291290e32f6cc75d05e75184c33d733d",
+        "\/MaintainInput\/contract-steps\/invariants\/d0084ca4810504e9cf09f1e57093a6e8e139111b8c7ea6c52af9bdf745bca9e0"
+      ],
       "swift_struct" : "MaintainInput"
     },
     {
@@ -1733,7 +1741,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when brainHealth fires",
+      "step_paths" : [
+        "\/WhenBrainhealthFires\/root\/procedure\/b2349f6f12029bdc093afb4a3150cbb021ab72f6a54e09d9e6a8c60aebf3799b",
+        "\/WhenBrainhealthFires\/root\/procedure\/edcedaa49c8a77c7e9276b81c525d537e861beff96d5b0cb143f4bf9fc7b5fea"
+      ],
       "swift_struct" : "WhenBrainhealthFires"
     },
     {
@@ -1741,7 +1755,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when checkBacklinks fires",
+      "step_paths" : [
+        "\/WhenCheckbacklinksFires\/root\/procedure\/addd8c3af9b29fa5301de444c29de21a924d2e83cabeed52605207b72f5bdb46",
+        "\/WhenCheckbacklinksFires\/root\/procedure\/edc1fc2da4f33de9e34a03239f08c4820ebe1b209e51e04c27374c538015a87d"
+      ],
       "swift_struct" : "WhenCheckbacklinksFires"
     },
     {
@@ -1749,7 +1769,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when maintenance fires",
+      "step_paths" : [
+        "\/WhenMaintenanceFires\/root\/procedure\/1cc9e00dd17f9c5d806ca226a308d7049ce0f780d3923a56a900f2d5a19759b0",
+        "\/WhenMaintenanceFires\/root\/procedure\/bba8cd6564e8a6124f35e9fdc8de88c77844ead93143af2aacc03d02b379da86"
+      ],
       "swift_struct" : "WhenMaintenanceFires"
     },
     {
@@ -1757,7 +1783,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when orphanPages fires",
+      "step_paths" : [
+        "\/WhenOrphanpagesFires\/root\/procedure\/8f879978dba1826f8bcbc0a495f2199d534ae6f89ce71fa34d1df103ff9af2de",
+        "\/WhenOrphanpagesFires\/root\/procedure\/94903e564e98d744e29b936acb2fc4161a4ea901d26c9ff4f70c307b42962fb2"
+      ],
       "swift_struct" : "WhenOrphanpagesFires"
     },
     {
@@ -1765,7 +1797,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when stalePages fires",
+      "step_paths" : [
+        "\/WhenStalepagesFires\/root\/procedure\/9688a43fa49ad24e65a8f527808ef05619d3c41995110efcbb0735f9befb03b2",
+        "\/WhenStalepagesFires\/root\/procedure\/a31f537be06c54f6a9ed9c995bcd574c9c905092e49e156f2d4a67ac68f43370"
+      ],
       "swift_struct" : "WhenStalepagesFires"
     },
     {
@@ -1773,7 +1811,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when extractLinks fires",
+      "step_paths" : [
+        "\/WhenExtractlinksFires\/root\/procedure\/078c09c3f18af3fda9a9eb327dedda567c13f66ff9516a59142afb67a69d12cc",
+        "\/WhenExtractlinksFires\/root\/procedure\/c84b7557d2a684602881ec55aa9f3b070cd3a67ae8387fea36e0d89a48d1de3a"
+      ],
       "swift_struct" : "WhenExtractlinksFires"
     },
     {
@@ -1781,7 +1825,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when buildLinkGraph fires",
+      "step_paths" : [
+        "\/WhenBuildlinkgraphFires\/root\/procedure\/0bac41c09081719dad943ac9dc50b77ebbc9e028388895599d2c943e4ca9997a",
+        "\/WhenBuildlinkgraphFires\/root\/procedure\/f704f3af1e5b63ee4042a6a6d2f40b833213fc025f0d7a02193ea91e053418f5"
+      ],
       "swift_struct" : "WhenBuildlinkgraphFires"
     },
     {
@@ -1789,7 +1839,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when populateTimeline fires",
+      "step_paths" : [
+        "\/WhenPopulatetimelineFires\/root\/procedure\/1ad5a85005a3f66e08806498e95101121dd06b29f03bc0a3bd70129b76a85f5c",
+        "\/WhenPopulatetimelineFires\/root\/procedure\/d84b2472b917250e76a8ba6538ae662e5af02c91b6c099544ebbd9159f8cb0b3"
+      ],
       "swift_struct" : "WhenPopulatetimelineFires"
     },
     {
@@ -1797,7 +1853,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when populateLinks fires",
+      "step_paths" : [
+        "\/WhenPopulatelinksFires\/root\/procedure\/68add7826c1fcda2ed27e4500235a455e6b2d8c03363c3b15ab24176760e0226",
+        "\/WhenPopulatelinksFires\/root\/procedure\/bc3c5b73b8ad06944511f6906e733985ff84a10f62c2ecb41182e51cfb4426d2"
+      ],
       "swift_struct" : "WhenPopulatelinksFires"
     },
     {
@@ -1805,7 +1867,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when backfillGraph fires",
+      "step_paths" : [
+        "\/WhenBackfillgraphFires\/root\/procedure\/aba1cdcde0d589db308b2a69f877d576d834f522f0e1e9644cd3d77626c893b7",
+        "\/WhenBackfillgraphFires\/root\/procedure\/b83239a472d5229608224025d2a8198976ceedff5e6a12efef3c36bf46bd123c"
+      ],
       "swift_struct" : "WhenBackfillgraphFires"
     },
     {
@@ -1813,7 +1881,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when extractTimelineEntries fires",
+      "step_paths" : [
+        "\/WhenExtracttimelineentriesFires\/root\/procedure\/187f193b47052d54b68c87434fbe84a4a6f5cca446e77768f3b7de57b47a1f71",
+        "\/WhenExtracttimelineentriesFires\/root\/procedure\/795da7f33f19017d68d7cb53883d564f6ad21220fa7c9257b769cd380e5736a1"
+      ],
       "swift_struct" : "WhenExtracttimelineentriesFires"
     },
     {
@@ -1821,7 +1895,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when runDream fires",
+      "step_paths" : [
+        "\/WhenRundreamFires\/root\/procedure\/6857d06c23017aa8b1076ef6af086faf19d22096fad70032a5992c7ed83b367d",
+        "\/WhenRundreamFires\/root\/procedure\/974b9c72dd48aa49e4d00252f587b6ff1786dbbef046d4ed021dd18a20d69426"
+      ],
       "swift_struct" : "WhenRundreamFires"
     },
     {
@@ -1829,7 +1909,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when processTodaySSession fires",
+      "step_paths" : [
+        "\/WhenProcesstodayssessionFires\/root\/procedure\/37a977e2ce76e92c81046936f6bdba4e6c680129aaa309b617c0b6d34634a2f1",
+        "\/WhenProcesstodayssessionFires\/root\/procedure\/b190c96eec340ad692a5a06a0ad693cd6094988ea1bc0da8e06d24bd9ceee030"
+      ],
       "swift_struct" : "WhenProcesstodayssessionFires"
     },
     {
@@ -1837,7 +1923,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when processYesterdaySTranscripts fires",
+      "step_paths" : [
+        "\/WhenProcessyesterdaystranscriptsFires\/root\/procedure\/574414a0617f368d763726c636a2714b7b2e5d50a20ca31fe91e49729c15cadb",
+        "\/WhenProcessyesterdaystranscriptsFires\/root\/procedure\/8b605e5fd0afa6ca752ec68f0e3d46f84171dafa1fe77a6e779e0092bc80d021"
+      ],
       "swift_struct" : "WhenProcessyesterdaystranscriptsFires"
     },
     {
@@ -1845,7 +1937,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when synthesizeMyConversations fires",
+      "step_paths" : [
+        "\/WhenSynthesizemyconversationsFires\/root\/procedure\/623b9ad924cfdca9e136f78462c72cef12e2ce6a3bb542d882fe1ed65037fdc2",
+        "\/WhenSynthesizemyconversationsFires\/root\/procedure\/8b96bca0ed1b52193c69197a2d678dcbdbec05f21b05f4ed3c797ff35ac32a7f"
+      ],
       "swift_struct" : "WhenSynthesizemyconversationsFires"
     },
     {
@@ -1853,7 +1951,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when whatPatternsDidYouSee fires",
+      "step_paths" : [
+        "\/WhenWhatpatternsdidyouseeFires\/root\/procedure\/f4f71440dcb8190bcb1673005bb2af6413264ee592df4ecdaaff78607a7bcdff",
+        "\/WhenWhatpatternsdidyouseeFires\/root\/procedure\/f8741c0461c1051fa3bb079db2d8ef08b433fcae7baec9021d62bfd1e6068ddf"
+      ],
       "swift_struct" : "WhenWhatpatternsdidyouseeFires"
     },
     {
@@ -1861,7 +1965,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when didDreamCycleRun fires",
+      "step_paths" : [
+        "\/WhenDiddreamcyclerunFires\/root\/procedure\/939898eea095d1f6625b47e7e3066e7f4405e07a6674c6acfca8a2606c1b3a03",
+        "\/WhenDiddreamcyclerunFires\/root\/procedure\/ecb19cc8f6541a261fd427c1c09cfd88d8245eccb5f22a06e6a0fb3253e6ea8e"
+      ],
       "swift_struct" : "WhenDiddreamcyclerunFires"
     },
     {
@@ -1869,7 +1979,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "maintain",
+      "skill_version_hash" : "c921508212837087afa4798d619f53068357d321c9565a717480e1bc8581f964",
       "source_name" : "when consolidateYesterdaySConversations fires",
+      "step_paths" : [
+        "\/WhenConsolidateyesterdaysconversationsFires\/root\/procedure\/7f8f6c48a7a3a18fc8fb1404cec6f8bb512d6d3c8561e6e93073cce031801258",
+        "\/WhenConsolidateyesterdaysconversationsFires\/root\/procedure\/8c2a6b85921d4139724b724cc582c17cc3247231a629753d4e4c9d5467a913e0"
+      ],
       "swift_struct" : "WhenConsolidateyesterdaysconversationsFires"
     }
   ]

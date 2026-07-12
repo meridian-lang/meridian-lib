@@ -22,58 +22,70 @@
       "adjective" : "actionable",
       "function" : "meridianDef_Alert_actionable",
       "kind" : "alert",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "critical",
       "function" : "meridianDef_Alert_critical",
       "kind" : "alert",
-      "line" : 23
+      "line" : 25
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Alert_stale",
       "kind" : "alert",
-      "line" : 24
+      "line" : 26
     },
     {
       "adjective" : "unhealthy",
       "function" : "meridianDef_Deploy_unhealthy",
       "kind" : "deploy",
-      "line" : 26
+      "line" : 28
     },
     {
       "adjective" : "high severity",
       "function" : "meridianDef_Incident_highSeverity",
       "kind" : "incident",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Incident_open",
       "kind" : "incident",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "degraded",
       "function" : "meridianDef_Service_degraded",
       "kind" : "service",
-      "line" : 25
+      "line" : 27
+    },
+    {
+      "adjective" : "healthy",
+      "function" : "meridianDef_Service_healthy",
+      "kind" : "service",
+      "line" : 33
+    },
+    {
+      "adjective" : "recovered",
+      "function" : "meridianDef_Service_recovered",
+      "kind" : "service",
+      "line" : 34
     },
     {
       "adjective" : "breached",
       "function" : "meridianDef_Slo_breached",
       "kind" : "slo",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a runbook",
-      "line" : 36,
+      "line" : 40,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "a service",
@@ -83,7 +95,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a service",
-      "line" : 32,
+      "line" : 36,
       "name" : "firing",
       "right_cardinality" : "one",
       "right_kind" : "an alert",
@@ -93,7 +105,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an oncall engineer",
-      "line" : 34,
+      "line" : 38,
       "name" : "ownership",
       "right_cardinality" : "one",
       "right_kind" : "a service",
@@ -246,21 +258,21 @@
   "meridian_verbs" : [
     {
       "base" : "cover",
-      "line" : 41,
+      "line" : 45,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "own",
-      "line" : 40,
+      "line" : 44,
       "past_participle" : "owned",
       "relation" : "ownership",
       "third_person" : "owns"
     },
     {
       "base" : "page",
-      "line" : 39,
+      "line" : 43,
       "past_participle" : "paged",
       "relation" : "ownership",
       "third_person" : "pages"
@@ -273,51 +285,51 @@
   "source_map" : [
     {
       "meridian_line" : 51,
-      "swift_line" : 393
+      "swift_line" : 421
     },
     {
-      "meridian_line" : 56,
-      "swift_line" : 398
+      "meridian_line" : 31,
+      "swift_line" : 426
     },
     {
       "meridian_line" : 32,
-      "swift_line" : 410
+      "swift_line" : 440
     },
     {
       "meridian_line" : 33,
-      "swift_line" : 414
+      "swift_line" : 444
     },
     {
       "meridian_line" : 34,
-      "swift_line" : 420
+      "swift_line" : 453
     },
     {
       "meridian_line" : 40,
-      "swift_line" : 429
+      "swift_line" : 463
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 468
+      "swift_line" : 531
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 473
+      "swift_line" : 536
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 513
+      "swift_line" : 605
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 518
+      "swift_line" : 610
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 558
+      "swift_line" : 679
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 563
+      "swift_line" : 684
     }
   ],
   "tools_used" : [
@@ -329,7 +341,17 @@
       "parameters" : [
 
       ],
+      "skill_name" : "rollback deploy",
+      "skill_version_hash" : "6d1c4a9e5f3358a210c247dc5110224439f6383d8e41139f9e27f858e9647b4c",
       "source_name" : "rollback deploy",
+      "step_paths" : [
+        "\/RollbackDeploy\/guarantees\/invariants\/1ecabfae0b4ee79fba416d72fb503b8a76e6eeeca73577efa9c747e1701fa5e9",
+        "\/RollbackDeploy\/workflow-steps-2\/procedure\/932cc610d4a861a1044047e721bc8719818096efaf1c09e86bee02b6d467f4d1",
+        "\/RollbackDeploy\/workflow-steps\/procedure\/787cb9662b3b02d753baedc00291e3ceb3b52b80799d646ad3a0a9fe9805deb1",
+        "\/RollbackDeploy\/workflow-steps\/procedure\/bff37b2ce7b3ca3ea3144f5e87f592e52ee5d791464900021666a6e3b664eead",
+        "\/RollbackDeploy\/workflow-steps\/procedure\/fded44bcc90b31a83bd96f50c338b9435ec927b83512767500af77f4703e0ae6",
+        "\/RollbackDeploy\/workflow-steps\/procedure\/iterate.body\/354ff3b043c93366481158a390f829745a8bd1f332a7de559128a167c1e80c60"
+      ],
       "swift_struct" : "RollbackDeploy"
     },
     {
@@ -337,7 +359,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "rollback deploy",
+      "skill_version_hash" : "6d1c4a9e5f3358a210c247dc5110224439f6383d8e41139f9e27f858e9647b4c",
       "source_name" : "when rollBackUnhealthyDeploys fires",
+      "step_paths" : [
+        "\/WhenRollbackunhealthydeploysFires\/root\/procedure\/5d81519a5bbfbe4ca4cf4d5d9ff1faae9779f029e197f386c804f94a21adeea8",
+        "\/WhenRollbackunhealthydeploysFires\/root\/procedure\/d25c2441bbeaaa3e3f31b6a9979e78e2204e7280a6dbd5d025fde1f8e6ea3b31"
+      ],
       "swift_struct" : "WhenRollbackunhealthydeploysFires"
     },
     {
@@ -345,7 +373,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "rollback deploy",
+      "skill_version_hash" : "6d1c4a9e5f3358a210c247dc5110224439f6383d8e41139f9e27f858e9647b4c",
       "source_name" : "when revertFailedDeploy fires",
+      "step_paths" : [
+        "\/WhenRevertfaileddeployFires\/root\/procedure\/2f0a7f548b6c077c2c50dc6156c5fceece25d0187d87908c1473a18998aaf11b",
+        "\/WhenRevertfaileddeployFires\/root\/procedure\/af676eb1b7324f44618693ba9b391351e307411b8de497cf5f640cf1374c4642"
+      ],
       "swift_struct" : "WhenRevertfaileddeployFires"
     },
     {
@@ -353,7 +387,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "rollback deploy",
+      "skill_version_hash" : "6d1c4a9e5f3358a210c247dc5110224439f6383d8e41139f9e27f858e9647b4c",
       "source_name" : "when runDeployRollbackPass fires",
+      "step_paths" : [
+        "\/WhenRundeployrollbackpassFires\/root\/procedure\/0cc6099d7896166c5a260f9d2abaf63a168676eddf13768c6bad7bde798b6987",
+        "\/WhenRundeployrollbackpassFires\/root\/procedure\/9f1324bcdfae2f60e4f1316ea62e410034f9c23b9d8ef8d016cffc79fd23bdf7"
+      ],
       "swift_struct" : "WhenRundeployrollbackpassFires"
     }
   ]

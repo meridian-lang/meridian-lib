@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -570,55 +570,55 @@
   "source_map" : [
     {
       "meridian_line" : 43,
-      "swift_line" : 603
+      "swift_line" : 626
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 642
+      "swift_line" : 695
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 647
+      "swift_line" : 700
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 686
+      "swift_line" : 768
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 691
+      "swift_line" : 773
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 730
+      "swift_line" : 841
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 735
+      "swift_line" : 846
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 774
+      "swift_line" : 914
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 779
+      "swift_line" : 919
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 818
+      "swift_line" : 987
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 823
+      "swift_line" : 992
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 862
+      "swift_line" : 1060
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 867
+      "swift_line" : 1065
     }
   ],
   "tools_used" : [
@@ -661,7 +661,12 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "voice-note-ingest",
+      "skill_version_hash" : "0329d2235d37bca3d96b5b76a731d5479370b31a7229c1911692e2054ea783db",
       "source_name" : "voice-note-ingest a input",
+      "step_paths" : [
+        "\/VoiceNoteIngestInput\/iron-law-steps-2\/procedure\/b4f3809564d562495d51b712d6fbc8afb2692a99e804e40f9df122a832f51b16"
+      ],
       "swift_struct" : "VoiceNoteIngestInput"
     },
     {
@@ -669,7 +674,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "voice-note-ingest",
+      "skill_version_hash" : "0329d2235d37bca3d96b5b76a731d5479370b31a7229c1911692e2054ea783db",
       "source_name" : "when voiceNote fires",
+      "step_paths" : [
+        "\/WhenVoicenoteFires\/root\/procedure\/79d521402844c0ab0d138c9e5a694b710c46e722cb215d36f0546bcd465d8cef",
+        "\/WhenVoicenoteFires\/root\/procedure\/dd7f5ecd950f3d5e6397f87f80f7f07bc3cc58a8e4cea3f52ceab6d951c9e4d7"
+      ],
       "swift_struct" : "WhenVoicenoteFires"
     },
     {
@@ -677,7 +688,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "voice-note-ingest",
+      "skill_version_hash" : "0329d2235d37bca3d96b5b76a731d5479370b31a7229c1911692e2054ea783db",
       "source_name" : "when ingestThisVoiceMemo fires",
+      "step_paths" : [
+        "\/WhenIngestthisvoicememoFires\/root\/procedure\/39f7f5b975578b53bfb32dc17ce5ae8381d38e707aa38d9d0968eca0f14a7c77",
+        "\/WhenIngestthisvoicememoFires\/root\/procedure\/d9702b10b1fdcbcc9dcd0cf83448805ed69dc3f59309459e39011ed827fd8de3"
+      ],
       "swift_struct" : "WhenIngestthisvoicememoFires"
     },
     {
@@ -685,7 +702,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "voice-note-ingest",
+      "skill_version_hash" : "0329d2235d37bca3d96b5b76a731d5479370b31a7229c1911692e2054ea783db",
       "source_name" : "when transcribeAndFile fires",
+      "step_paths" : [
+        "\/WhenTranscribeandfileFires\/root\/procedure\/8f568d893d8077512fe347e110c0d2c558821f512cf504b04383905be2735903",
+        "\/WhenTranscribeandfileFires\/root\/procedure\/c02411c85fce1198a2a4c5ee74b07a019d07baae165bab6c35f157ad136e2e22"
+      ],
       "swift_struct" : "WhenTranscribeandfileFires"
     },
     {
@@ -693,7 +716,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "voice-note-ingest",
+      "skill_version_hash" : "0329d2235d37bca3d96b5b76a731d5479370b31a7229c1911692e2054ea783db",
       "source_name" : "when voiceNoteIngest fires",
+      "step_paths" : [
+        "\/WhenVoicenoteingestFires\/root\/procedure\/a93947e8f2cace6de651d5874da954bd9202b05552fa9caaad1af9d0d81fe2fc",
+        "\/WhenVoicenoteingestFires\/root\/procedure\/e37b84b284a4ca96d95f3196ff3cefa49e54c31a901d774ff124ea591aa9b289"
+      ],
       "swift_struct" : "WhenVoicenoteingestFires"
     },
     {
@@ -701,7 +730,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "voice-note-ingest",
+      "skill_version_hash" : "0329d2235d37bca3d96b5b76a731d5479370b31a7229c1911692e2054ea783db",
       "source_name" : "when saveThisAudioNote fires",
+      "step_paths" : [
+        "\/WhenSavethisaudionoteFires\/root\/procedure\/0c35120059690d75eb505b7a29da24384619982aec6e73902287fe5b54852279",
+        "\/WhenSavethisaudionoteFires\/root\/procedure\/67c9282aec02130c092de466e4a4cbe70767cf58758eeffec426a9b395e617c2"
+      ],
       "swift_struct" : "WhenSavethisaudionoteFires"
     },
     {
@@ -709,7 +744,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "voice-note-ingest",
+      "skill_version_hash" : "0329d2235d37bca3d96b5b76a731d5479370b31a7229c1911692e2054ea783db",
       "source_name" : "when audioMessage fires",
+      "step_paths" : [
+        "\/WhenAudiomessageFires\/root\/procedure\/2688c5cff537808bbdc6491d3bcf34b5a2c09e39e2c2918e20d8d79b030bacdb",
+        "\/WhenAudiomessageFires\/root\/procedure\/2a775861f7fe8e92b0ceeb42d83b50beede47fe14128b1f282bffbab8f78cda6"
+      ],
       "swift_struct" : "WhenAudiomessageFires"
     }
   ]

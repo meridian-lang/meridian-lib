@@ -10,12 +10,13 @@ Swift code imports and depends on at runtime. It provides:
 5. `MeridianComparison` — comparison helpers for `Value?` types
 6. `WorkflowResult` — what `run()` returns
 7. `Event` + `EventKind` — structured events emitted during a run
-8. `Observer` protocol + implementations — event sinks
+8. `Observer` protocol + implementations — event sinks (`record` is `async throws`; failures abort under fail-closed policy)
 9. `ToolRegistry` — tool dispatch (closure, subprocess, HTTP, MCP)
 10. `InstanceRegistry` — named instance lookup
 11. `Checkpointer` — checkpoint persistence (in-memory + filesystem-backed)
 12. `WaitCondition` — wait semantics (duration, signal, approval, event, choice)
-13. `MeridianRuntimeError` — typed error envelope
+13. `MeridianRuntimeError` — typed error envelope (includes `observerFailure` / `traceStoreFailure`)
+14. `TraceStore` + `TraceRecord` — semantic witnessing; `TraceConfiguration.default.storeFailurePolicy` is `.failClosed`
 
 ---
 
@@ -59,15 +60,34 @@ public actor Runtime {
         toolRegistry: ToolRegistry,
         instanceRegistry: InstanceRegistry = .empty,
         observer: any Observer = JSONLObserver.stdout,
+        traceStore: (any TraceStore)? = nil,
         checkpointer: any Checkpointer = InMemoryCheckpointer(),
         clock: any Clock = SystemClock(),
         runID: String = UUID().uuidString,
         parentRunID: String? = nil,
         parentSequence: Int? = nil,
-        maxNestingDepth: Int = 32
+        maxNestingDepth: Int = 32,
+        traceConfiguration: TraceConfiguration = .default,
+        traceSkillIdentity: TraceSkillIdentity = .unknown
     )
 }
+
+public protocol Observer: Sendable {
+    func record(_ event: Event) async throws
+}
 ```
+
+CLI/test drivers wire an `InMemoryTraceStore` or `JSONLTraceStore` whenever a
+workflow exposes `runtimeTraceConfiguration`. `Observer.record` failures and
+trace-store append failures abort the run under `.failClosed` (the default);
+explicit `.failOpen` emits operational diagnostics and a degradation marker.
+
+`Runtime.Builder` is the fluent alternative to `Runtime.init`. `build()` is
+`throws` (e.g. when auto-wiring a `.file` `JSONLTraceStore` fails). Calling
+`setRuntimeTraceConfiguration` arms auto-wiring: on `build()`, the builder
+creates an `InMemoryTraceStore` for `.memory` or a temp-directory
+`JSONLTraceStore` for `.file` when no explicit store was set via
+`setTraceStore`. An explicit non-nil `setTraceStore` disables auto-wiring.
 
 ### Methods called by generated code
 
@@ -920,6 +940,34 @@ Fenced ` ```bash ` blocks and inline backticked `gbrain …` commands lower to
 `.subprocess` built-in (`/bin/sh -c {command}`), returning
 `{ stdout, stderr, exitCode }`. No new tool or merconfig declaration is needed.
 See [10_BUILTIN_TOOLS.md](10_BUILTIN_TOOLS.md) for its argument/return shape.
+
+---
+
+## Semantic traces (Wave 8)
+
+Wave 8 adds an optional semantic trace layer on top of the legacy `Event` /
+`EventKind` stream:
+
+| Type | Role |
+|---|---|
+| `TraceRecord` | Persisted semantic row (`TraceTag`, subject, payload hash, outcome, …) |
+| `TraceStore` | `append`, scoped `query`, `compact`, `verifyChain` |
+| `InMemoryTraceStore` | Tests and in-process replay |
+| `JSONLTraceStore` | Append-only local audit trail (checksum envelope per line) |
+| `TraceEvaluator` | Evaluates `traceTemporal` / `traceStatistical` / `eventPattern` queries |
+
+Pass a store into `Runtime(traceStore:)` (or rely on generated wiring when
+`=== trace ===` configures one). `Runtime.evaluateTemporal` /
+`evaluateStatistical` delegate to `TraceEvaluator`. Store failures follow the
+configured `storeFailurePolicy` (`fail-open` / `fail-closed` / `auto` resolved
+at compile time).
+
+Monitored assertions call `registerMonitor` to re-check a statistical query on a
+cadence. Legacy `EventKind` values still emit for observers; semantic projection
+maps them to `TraceTag` for temporal/statistical operators.
+
+Full schema, ordering, capture policy, and CLI replay commands:
+[19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).
 
 ---
 

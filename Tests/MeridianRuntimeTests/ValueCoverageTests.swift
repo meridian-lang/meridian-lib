@@ -68,6 +68,39 @@ struct ValueCoverageTests {
         #expect(Value.string("x").member("a") == nil)
     }
 
+    /// A workflow parameter (or any other domain-typed struct) bound via
+    /// `State.bind<T: Encodable>` reaches generated `Definition:`/quantifier
+    /// element-context code (`emitElementOperand`) as `.opaque`, never
+    /// `.record` — `member(_:)` must round-trip it through the captured
+    /// `Encodable` conformance the same way `State`'s own dotted-path
+    /// traversal does (see `Value.decodeOpaqueRecord`). Regression coverage
+    /// for the Composition-Gallery-3 bug where `its <property>` on a typed
+    /// subject always resolved to `nil`.
+    @Test("member traverses an .opaque Encodable-boxed struct like a record")
+    func opaqueMemberTraversal() throws {
+        struct Service: Hashable, Codable, Sendable {
+            var id: String = "svc1"
+            var name: String = "svc1"
+            var status: String = "flaky"
+        }
+        let boxed = Value.opaque(AnyHashableSendable(Service()))
+        #expect(boxed.member("status") == .string("flaky"))
+        #expect(boxed.member("name") == .string("svc1"))
+        #expect(boxed.member("missing") == nil)
+
+        // Nested dotted path through an opaque value whose property is itself
+        // a plain (non-Codable-conformance-carrying) opaque box: the first hop
+        // decodes fine, but the second hop's value isn't `.record`/`.opaque`
+        // with a captured encoder, so it stops there rather than crashing.
+        #expect(boxed.member("status.nope") == nil)
+
+        // A box constructed via the non-Encodable overload has no captured
+        // encoder, so the JSON round-trip can't happen and member() must fail
+        // closed rather than trap.
+        struct NotEncodable: Hashable, Sendable { let x = 1 }
+        #expect(Value.opaque(AnyHashableSendable(NotEncodable())).member("x") == nil)
+    }
+
     @Test("Money compares and describes")
     func money() {
         #expect(Money(amount: 1, currency: "USD") < Money(amount: 2, currency: "USD"))

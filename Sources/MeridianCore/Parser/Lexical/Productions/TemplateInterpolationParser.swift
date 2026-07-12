@@ -24,7 +24,26 @@ struct TemplateInterpolationParser {
         parseTemplateSegments(body).segments
     }
 
-    private func parseTemplateSegments(_ body: String, terminators: Set<String> = []) -> (segments: [InterpolationSegment], terminator: String?, rest: String) {
+    /// Rewrite a bare `it`/`its` pronoun inside a `{{ … }}` hole, `[if …]`
+    /// condition, or nested `[for each … in …]` collection expression to the
+    /// enclosing `[for each <var> in …]` loop's own variable — the same
+    /// whole-word text substitution `DefinitionParser.rewriteSubjectPronouns`
+    /// applies to a `Definition:` body's implicit subject, reused here so
+    /// `{{ its name }}` inside a template loop resolves to `<var>'s name`
+    /// (a possessive property access on the loop element) instead of
+    /// silently parsing as the unrelated bare identifier `its name`. The
+    /// nearest (innermost) enclosing `[for each]` wins, matching natural-
+    /// language nearest-binding pronoun resolution.
+    private func rewritePronoun(_ text: String, subject: String?) -> String {
+        guard let subject else { return text }
+        var out = WholeWordRegex.replace(text, of: lexicon.grammar.definitionPossessivePronoun, with: subject + "'s")
+        out = WholeWordRegex.replace(out, of: lexicon.grammar.definitionSubjectPronoun, with: subject)
+        return out
+    }
+
+    private func parseTemplateSegments(
+        _ body: String, terminators: Set<String> = [], pronounSubject: String? = nil
+    ) -> (segments: [InterpolationSegment], terminator: String?, rest: String) {
         var segments: [InterpolationSegment] = []
         var remaining = body
 
@@ -70,8 +89,11 @@ struct TemplateInterpolationParser {
                 guard let close = remaining.range(of: "}}") else {
                     segments.append(.literal(remaining)); return (segments, nil, "")
                 }
-                let exprText = String(remaining[remaining.index(remaining.startIndex, offsetBy: 2)..<close.lowerBound])
-                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                let exprText = rewritePronoun(
+                    String(remaining[remaining.index(remaining.startIndex, offsetBy: 2)..<close.lowerBound])
+                        .trimmingCharacters(in: .whitespacesAndNewlines),
+                    subject: pronounSubject
+                )
                 if !exprText.isEmpty {
                     if let formatted = parseFormattedInterpolation(exprText) {
                         segments.append(.formatted(formatted.expr, formatter: formatted.formatter))
@@ -87,13 +109,18 @@ struct TemplateInterpolationParser {
                 guard let close = remaining.firstIndex(of: "]") else {
                     segments.append(.literal(remaining)); return (segments, nil, "")
                 }
-                let condText = String(remaining[remaining.index(remaining.startIndex, offsetBy: template.ifPrefix.count)..<close])
-                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                let condText = rewritePronoun(
+                    String(remaining[remaining.index(remaining.startIndex, offsetBy: template.ifPrefix.count)..<close])
+                        .trimmingCharacters(in: .whitespacesAndNewlines),
+                    subject: pronounSubject
+                )
                 let tail = String(remaining[remaining.index(after: close)...])
-                let thenParsed = parseTemplateSegments(tail, terminators: [template.otherwiseTerminator, template.endIfTerminator])
+                let thenParsed = parseTemplateSegments(
+                    tail, terminators: [template.otherwiseTerminator, template.endIfTerminator], pronounSubject: pronounSubject
+                )
                 let elseParsed: (segments: [InterpolationSegment], terminator: String?, rest: String)
                 if thenParsed.terminator == template.otherwiseTerminator {
-                    elseParsed = parseTemplateSegments(thenParsed.rest, terminators: [template.endIfTerminator])
+                    elseParsed = parseTemplateSegments(thenParsed.rest, terminators: [template.endIfTerminator], pronounSubject: pronounSubject)
                 } else {
                     elseParsed = ([], nil, thenParsed.rest)
                 }
@@ -109,9 +136,10 @@ struct TemplateInterpolationParser {
                 let header = String(remaining[remaining.index(remaining.startIndex, offsetBy: template.forEachPrefix.count)..<close])
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                 let parts = splitForEachHeader(header)
+                let collectionText = rewritePronoun(parts.collection, subject: pronounSubject)
                 let tail = String(remaining[remaining.index(after: close)...])
-                let bodyParsed = parseTemplateSegments(tail, terminators: [template.endForTerminator])
-                segments.append(.forEach(variable: parts.variable, collection: recurse(parts.collection), body: bodyParsed.segments))
+                let bodyParsed = parseTemplateSegments(tail, terminators: [template.endForTerminator], pronounSubject: parts.variable)
+                segments.append(.forEach(variable: parts.variable, collection: recurse(collectionText), body: bodyParsed.segments))
                 remaining = bodyParsed.rest
                 continue
             }

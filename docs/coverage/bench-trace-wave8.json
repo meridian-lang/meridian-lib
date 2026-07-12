@@ -1,0 +1,389 @@
+{
+  "measurements" : [
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 1.555459,
+      "operator_family" : "ever",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 1.048333,
+      "operator_family" : "window",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 1.041667,
+      "operator_family" : "count",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 1.423583,
+      "operator_family" : "streak",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 2.603,
+      "operator_family" : "since",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 10.036917,
+      "operator_family" : "statistical_frequency",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 1.01575,
+      "operator_family" : "ever",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 1.025584,
+      "operator_family" : "window",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 1.112792,
+      "operator_family" : "count",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 1.051083,
+      "operator_family" : "streak",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 2.05075,
+      "operator_family" : "since",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 9.643292,
+      "operator_family" : "statistical_frequency",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 718.445959,
+      "operator_family" : "ever",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 0.009125,
+      "operator_family" : "window",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 0.006833,
+      "operator_family" : "count",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 0.008334,
+      "operator_family" : "streak",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 0.023125,
+      "operator_family" : "since",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 7.27125,
+      "operator_family" : "statistical_frequency",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 0.006625,
+      "operator_family" : "ever",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 0.006291,
+      "operator_family" : "window",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 0.006375,
+      "operator_family" : "count",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 0.006833,
+      "operator_family" : "streak",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 0.012792,
+      "operator_family" : "since",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 10000,
+      "iterations" : 1,
+      "median_ms" : 6.86925,
+      "operator_family" : "statistical_frequency",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 12.441292,
+      "operator_family" : "ever",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 12.683792,
+      "operator_family" : "window",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 13.656416,
+      "operator_family" : "count",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 12.523166,
+      "operator_family" : "streak",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 26.083542,
+      "operator_family" : "since",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 134.421083,
+      "operator_family" : "statistical_frequency",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 12.988958,
+      "operator_family" : "ever",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 12.402042,
+      "operator_family" : "window",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 12.351708,
+      "operator_family" : "count",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 12.406375,
+      "operator_family" : "streak",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 26.219709,
+      "operator_family" : "since",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 130.926625,
+      "operator_family" : "statistical_frequency",
+      "store" : "in_memory"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 7319.734791,
+      "operator_family" : "ever",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 0.009584,
+      "operator_family" : "window",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 0.006958,
+      "operator_family" : "count",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 0.009,
+      "operator_family" : "streak",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 0.013542,
+      "operator_family" : "since",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "cold",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 112.205708,
+      "operator_family" : "statistical_frequency",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 0.00675,
+      "operator_family" : "ever",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 0.006791,
+      "operator_family" : "window",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 0.006625,
+      "operator_family" : "count",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 0.00725,
+      "operator_family" : "streak",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 0.013416,
+      "operator_family" : "since",
+      "store" : "jsonl"
+    },
+    {
+      "cache_state" : "warm",
+      "dataset_size" : 100000,
+      "iterations" : 1,
+      "median_ms" : 107.341458,
+      "operator_family" : "statistical_frequency",
+      "store" : "jsonl"
+    }
+  ],
+  "schema_version" : 1
+}

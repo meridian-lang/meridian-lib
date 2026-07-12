@@ -5,10 +5,17 @@ public extension Runtime {
         private var toolRegistry: ToolRegistry = ToolRegistry()
         private var instanceRegistry: InstanceRegistry = .empty
         private var observer: any Observer = JSONLObserver.stdout
+        private var traceStore: (any TraceStore)?
         private var checkpointer: any Checkpointer = InMemoryCheckpointer()
         private var clock: any Clock = SystemClock()
         private var runID: String = UUID().uuidString
         private var maxNestingDepth: Int = 32
+        private var traceConfiguration: TraceConfiguration = .default
+        private var traceSkillIdentity: TraceSkillIdentity = .unknown
+        private var traceStoreKind: TraceStoreKind = .memory
+        /// When true, `build()` instantiates a store from `traceStoreKind` if none was set.
+        private var shouldAutoWireTraceStore = false
+        private var traceIDGenerator: TraceIDGenerator = TraceIDGenerator()
         private var permissionRegistry: PermissionRegistry = .empty
         private var planner: any Planner = NoopPlanner()
         private var actPlanner: any ActPlanner = NoopActPlanner()
@@ -38,6 +45,19 @@ public extension Runtime {
         }
 
         @discardableResult
+        public func setTraceStore(_ traceStore: (any TraceStore)?) -> Builder {
+            self.traceStore = traceStore
+            // An explicit non-nil store owns wiring. Explicit `nil` clears the
+            // store but leaves auto-wire armed if `setRuntimeTraceConfiguration`
+            // was called earlier — callers who want no store after config must
+            // not call `setRuntimeTraceConfiguration`.
+            if traceStore != nil {
+                shouldAutoWireTraceStore = false
+            }
+            return self
+        }
+
+        @discardableResult
         public func setCheckpointer(_ checkpointer: any Checkpointer) -> Builder {
             self.checkpointer = checkpointer
             return self
@@ -58,6 +78,35 @@ public extension Runtime {
         @discardableResult
         public func setMaxNestingDepth(_ maxNestingDepth: Int) -> Builder {
             self.maxNestingDepth = maxNestingDepth
+            return self
+        }
+
+        @discardableResult
+        public func setTraceConfiguration(_ traceConfiguration: TraceConfiguration) -> Builder {
+            self.traceConfiguration = traceConfiguration
+            return self
+        }
+
+        @discardableResult
+        public func setTraceSkillIdentity(_ traceSkillIdentity: TraceSkillIdentity) -> Builder {
+            self.traceSkillIdentity = traceSkillIdentity
+            return self
+        }
+
+        /// Applies compile-time trace identity and marks the builder to auto-create
+        /// a matching `TraceStore` on `build()` when none was set via `setTraceStore`.
+        @discardableResult
+        public func setRuntimeTraceConfiguration(_ runtimeTraceConfiguration: RuntimeTraceConfiguration) -> Builder {
+            self.traceStoreKind = runtimeTraceConfiguration.store
+            self.traceConfiguration = runtimeTraceConfiguration.trace
+            self.traceSkillIdentity = runtimeTraceConfiguration.skillIdentity
+            self.shouldAutoWireTraceStore = traceStore == nil
+            return self
+        }
+
+        @discardableResult
+        public func setTraceIDGenerator(_ traceIDGenerator: TraceIDGenerator) -> Builder {
+            self.traceIDGenerator = traceIDGenerator
             return self
         }
 
@@ -103,15 +152,20 @@ public extension Runtime {
             return self
         }
 
-        public func build() -> Runtime {
+        /// Builds a `Runtime`. Throws when auto-wiring a `.file` `JSONLTraceStore` fails.
+        public func build() throws -> Runtime {
             Runtime(
                 toolRegistry: toolRegistry,
                 instanceRegistry: instanceRegistry,
                 observer: observer,
+                traceStore: try resolveTraceStore(),
                 checkpointer: checkpointer,
                 clock: clock,
                 runID: runID,
                 maxNestingDepth: maxNestingDepth,
+                traceConfiguration: traceConfiguration,
+                traceSkillIdentity: traceSkillIdentity,
+                traceIDGenerator: traceIDGenerator,
                 permissionRegistry: permissionRegistry,
                 planner: planner,
                 actPlanner: actPlanner,
@@ -120,6 +174,19 @@ public extension Runtime {
                 planningLimits: planningLimits,
                 planPolicy: planPolicy
             )
+        }
+
+        private func resolveTraceStore() throws -> (any TraceStore)? {
+            if let traceStore { return traceStore }
+            guard shouldAutoWireTraceStore else { return nil }
+            switch traceStoreKind {
+            case .memory:
+                return InMemoryTraceStore(configuration: traceConfiguration)
+            case .file:
+                let url = FileManager.default.temporaryDirectory
+                    .appendingPathComponent("meridian-builder-trace-\(runID).jsonl")
+                return try JSONLTraceStore(fileURL: url, configuration: traceConfiguration)
+            }
         }
     }
 }

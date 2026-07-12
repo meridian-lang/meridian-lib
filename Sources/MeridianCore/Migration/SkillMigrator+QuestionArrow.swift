@@ -31,13 +31,15 @@ extension SkillMigrator {
 
     /// Result-name lead-in for question-arrow case 2 (`deciding the <name>:`
     /// on the line immediately before the list). Falls back to a generic
-    /// "category" when absent — the section's exact subject isn't threaded
+    /// name when absent — the section's exact subject isn't threaded
     /// into `splitPlan` today, so this is the honest default rather than a
     /// guessed noun phrase.
-    func questionArrowResultName(precedingBlock: SplitBlock?) -> String {
+    func questionArrowResultName(precedingBlock: SplitBlock?, lexicon: EnglishLexicon) -> String {
+        let grammar = lexicon.grammar
+        let leadIn = grammar.decidingTheIntroducer
         guard let text = precedingBlock?.normalizedText.lowercased(), text.hasSuffix(":"),
-              text.hasPrefix("deciding the ") else { return "category" }
-        return String(text.dropFirst("deciding the ".count).dropLast())
+              text.hasPrefix(leadIn) else { return grammar.questionArrowFallbackResultName }
+        return String(text.dropFirst(leadIn.count).dropLast())
             .trimmingCharacters(in: .whitespaces)
     }
 
@@ -67,6 +69,12 @@ extension SkillMigrator {
         let items = block.rawLines.compactMap { parseQuestionArrowLine($0) }
         guard items.count == block.rawLines.count, !items.isEmpty else { return (.documentation, nil) }
 
+        let lexicon = trial.knowledge.lexicon
+        let grammar = lexicon.grammar
+        let statement = grammar.statement
+        let onlyWhen = grammar.affirmativeSuffixConditionalMarker
+        let article = (lexicon.definiteArticle ?? "the") + " "
+
         func predicateText(_ question: String) -> String {
             String(question.dropLast()).trimmingCharacters(in: .whitespaces)
         }
@@ -82,20 +90,20 @@ extension SkillMigrator {
             // collection (not the heading-following variant) scopes to just
             // this block, leaving any sibling exec content in the same run
             // alone.
-            let goal = "use judgment to weigh each question below:"
+            let goal = grammar.questionArrowJudgmentGoal
             let indented = block.rawLines.map { "  " + $0.trimmingCharacters(in: .whitespaces) }
             return (.aiInference, [goal] + indented)
         }
 
         let allRhsAreStatements = items.allSatisfy { trial.lowersAsStatement($0.rhs) }
         if allRhsAreStatements {
-            let lines = items.map { "\($0.rhs) only when \(predicateText($0.question))." }
+            let lines = items.map { "\($0.rhs)\(onlyWhen)\(predicateText($0.question))." }
             return (.exec, lines)
         }
 
-        let name = questionArrowResultName(precedingBlock: precedingBlock)
+        let name = questionArrowResultName(precedingBlock: precedingBlock, lexicon: lexicon)
         let lines = items.map {
-            "let the \(name) be \"\($0.rhs)\" only when \(predicateText($0.question))."
+            "\(statement.letPrefix)\(article)\(name)\(statement.letBeMarker)\"\($0.rhs)\"\(onlyWhen)\(predicateText($0.question))."
         }
         return (.exec, lines)
     }

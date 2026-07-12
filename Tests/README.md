@@ -48,7 +48,8 @@ registry behavior, and workflow harness support.
 `Tests/MeridianToolsTests/` covers built-in tool implementations and schema or
 dispatch helpers that can run deterministically in-process.
 
-`Tests/CorporaTests/` validates the ERP and procedure corpora for completeness,
+`Tests/CorporaTests/` validates all six corpora under `corpora/` (`erp`,
+`procedures`, `incident`, `etl`, `governance`, `clinical`) for completeness,
 strict compile, generated Swift sanity, and optional generated-Swift typechecks
 when `MERIDIAN_CORPORA_TYPECHECK=1` is set.
 

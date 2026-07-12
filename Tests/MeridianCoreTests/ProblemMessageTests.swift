@@ -101,9 +101,15 @@ struct ProblemMessageTests {
     @Test("docs/15_PROBLEM_MESSAGES.md matches the rendered catalog (no drift)")
     func catalogDocIsInSync() throws {
         let docURL = repoRoot.appendingPathComponent("docs/15_PROBLEM_MESSAGES.md")
+        // Re-baseline by setting `MERIDIAN_REGEN_GOLDENS=1` (same convention as
+        // the Swift golden tests); CI must not set that variable.
+        if ProcessInfo.processInfo.environment["MERIDIAN_REGEN_GOLDENS"] != nil {
+            try ProblemMessageCatalog.renderMarkdown().write(to: docURL, atomically: true, encoding: .utf8)
+            return
+        }
         let onDisk = try String(contentsOf: docURL, encoding: .utf8)
         #expect(onDisk == ProblemMessageCatalog.renderMarkdown(),
-                Comment(rawValue: "docs/15_PROBLEM_MESSAGES.md is stale — regenerate it from ProblemMessageCatalog.renderMarkdown()"))
+                Comment(rawValue: "docs/15_PROBLEM_MESSAGES.md is stale — regenerate it from ProblemMessageCatalog.renderMarkdown() (MERIDIAN_REGEN_GOLDENS=1)"))
     }
 
     @Test("structural diagnostics can all use the problem-message shape")

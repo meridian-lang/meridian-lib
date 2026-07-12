@@ -22,58 +22,70 @@
       "adjective" : "actionable",
       "function" : "meridianDef_Alert_actionable",
       "kind" : "alert",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "critical",
       "function" : "meridianDef_Alert_critical",
       "kind" : "alert",
-      "line" : 23
+      "line" : 25
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Alert_stale",
       "kind" : "alert",
-      "line" : 24
+      "line" : 26
     },
     {
       "adjective" : "unhealthy",
       "function" : "meridianDef_Deploy_unhealthy",
       "kind" : "deploy",
-      "line" : 26
+      "line" : 28
     },
     {
       "adjective" : "high severity",
       "function" : "meridianDef_Incident_highSeverity",
       "kind" : "incident",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Incident_open",
       "kind" : "incident",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "degraded",
       "function" : "meridianDef_Service_degraded",
       "kind" : "service",
-      "line" : 25
+      "line" : 27
+    },
+    {
+      "adjective" : "healthy",
+      "function" : "meridianDef_Service_healthy",
+      "kind" : "service",
+      "line" : 33
+    },
+    {
+      "adjective" : "recovered",
+      "function" : "meridianDef_Service_recovered",
+      "kind" : "service",
+      "line" : 34
     },
     {
       "adjective" : "breached",
       "function" : "meridianDef_Slo_breached",
       "kind" : "slo",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a runbook",
-      "line" : 36,
+      "line" : 40,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "a service",
@@ -83,7 +95,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a service",
-      "line" : 32,
+      "line" : 36,
       "name" : "firing",
       "right_cardinality" : "one",
       "right_kind" : "an alert",
@@ -93,7 +105,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an oncall engineer",
-      "line" : 34,
+      "line" : 38,
       "name" : "ownership",
       "right_cardinality" : "one",
       "right_kind" : "a service",
@@ -228,21 +240,21 @@
   "meridian_verbs" : [
     {
       "base" : "cover",
-      "line" : 41,
+      "line" : 45,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "own",
-      "line" : 40,
+      "line" : 44,
       "past_participle" : "owned",
       "relation" : "ownership",
       "third_person" : "owns"
     },
     {
       "base" : "page",
-      "line" : 39,
+      "line" : 43,
       "past_participle" : "paged",
       "relation" : "ownership",
       "third_person" : "pages"
@@ -255,67 +267,67 @@
   "source_map" : [
     {
       "meridian_line" : 47,
-      "swift_line" : 393
+      "swift_line" : 421
     },
     {
-      "meridian_line" : 44,
-      "swift_line" : 398
-    },
-    {
-      "meridian_line" : 27,
-      "swift_line" : 410
-    },
-    {
-      "meridian_line" : 28,
-      "swift_line" : 414
-    },
-    {
-      "meridian_line" : 29,
-      "swift_line" : 420
-    },
-    {
-      "meridian_line" : 30,
+      "meridian_line" : 26,
       "swift_line" : 426
     },
     {
-      "meridian_line" : 62,
-      "swift_line" : 429
+      "meridian_line" : 27,
+      "swift_line" : 440
+    },
+    {
+      "meridian_line" : 28,
+      "swift_line" : 444
+    },
+    {
+      "meridian_line" : 29,
+      "swift_line" : 452
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 460
+    },
+    {
+      "meridian_line" : 30,
+      "swift_line" : 464
     },
     {
       "meridian_line" : 31,
-      "swift_line" : 451
+      "swift_line" : 490
     },
     {
       "meridian_line" : 32,
-      "swift_line" : 456
+      "swift_line" : 495
     },
     {
       "meridian_line" : 41,
-      "swift_line" : 465
-    },
-    {
-      "meridian_line" : 1,
       "swift_line" : 505
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 510
+      "swift_line" : 575
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 550
+      "swift_line" : 580
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 555
+      "swift_line" : 649
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 595
+      "swift_line" : 654
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 600
+      "swift_line" : 723
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 728
     }
   ],
   "tools_used" : [
@@ -352,7 +364,21 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cooldown watch",
+      "skill_version_hash" : "b6512bb20af96930beb16972ca489916b9b8753ca3eaa21737485214b1dd5b25",
       "source_name" : "cooldown watch",
+      "step_paths" : [
+        "\/CooldownWatch\/anti-patterns-steps\/procedure\/4b29b5274e2f7293e655a44ebdc40d01b61fe8ed6f662b77aced8511fc3ccb96",
+        "\/CooldownWatch\/guarantees\/invariants\/315361ba5f62af9d96b21b09cb10dda660fc18dbce3e1ea5605812870b653a3c",
+        "\/CooldownWatch\/workflow\/procedure\/6a13d0df3e51c143e8a6f73d6ae4269b7185a531f2e338235a92aed189c57e3f",
+        "\/CooldownWatch\/workflow\/procedure\/85cf9916af318fc79d2f528b02e57b4dced42b66d7c1ae6cc5c00277ae791ce6",
+        "\/CooldownWatch\/workflow\/procedure\/8c301383abb114a3bb589d9a043e5b6cebaa0ad7f5f426574f0892b3e6537219",
+        "\/CooldownWatch\/workflow\/procedure\/9914653ceda26a29cad825320097e8b2d0b36c7c4e302cae514ab6a830c6fea5",
+        "\/CooldownWatch\/workflow\/procedure\/9b9699d0d6c60e9e68c437fbb852cf3c89af48835f7f58491667b9b385ed3249",
+        "\/CooldownWatch\/workflow\/procedure\/branch.then\/8f2641c78dec38ade624641e13fccff52e98a2d68772e40c3f4c3cbad639cb76",
+        "\/CooldownWatch\/workflow\/procedure\/iterate.body\/4dde0f68731671d8bffba1a63822fac1b936da7d7541766f3ce80f1b4be9ffbf",
+        "\/CooldownWatch\/workflow\/procedure\/iterate.body\/a536212f5ea2261fe5289492946513046ad7a4d73ce6a9d04dc512bbc25b2f73"
+      ],
       "swift_struct" : "CooldownWatch"
     },
     {
@@ -360,7 +386,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cooldown watch",
+      "skill_version_hash" : "b6512bb20af96930beb16972ca489916b9b8753ca3eaa21737485214b1dd5b25",
       "source_name" : "when watchAlertCooldown fires",
+      "step_paths" : [
+        "\/WhenWatchalertcooldownFires\/root\/procedure\/14a2b4ae54ce976daddff06ebbcea728cb7b4db12082cda32f22f24e6c12bd90",
+        "\/WhenWatchalertcooldownFires\/root\/procedure\/2096fbd7090e95c683591d889c21022d428359bcf282af359f4989a43719ea98"
+      ],
       "swift_struct" : "WhenWatchalertcooldownFires"
     },
     {
@@ -368,7 +400,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cooldown watch",
+      "skill_version_hash" : "b6512bb20af96930beb16972ca489916b9b8753ca3eaa21737485214b1dd5b25",
       "source_name" : "when runCooldownWatch fires",
+      "step_paths" : [
+        "\/WhenRuncooldownwatchFires\/root\/procedure\/3f721204cff11d9d613eef060698e54e4ce006d07e0ebf1f6676cb98f4684297",
+        "\/WhenRuncooldownwatchFires\/root\/procedure\/727a5f9bcc975158024b7c5837c3ccfe3d065706b414f066eab44a54038e6da3"
+      ],
       "swift_struct" : "WhenRuncooldownwatchFires"
     },
     {
@@ -376,7 +414,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cooldown watch",
+      "skill_version_hash" : "b6512bb20af96930beb16972ca489916b9b8753ca3eaa21737485214b1dd5b25",
       "source_name" : "when runAlertCooldownPass fires",
+      "step_paths" : [
+        "\/WhenRunalertcooldownpassFires\/root\/procedure\/5617945d14825e53b75f39ffea4dc71fe415b3b2c2fea2df384da387f7339cfa",
+        "\/WhenRunalertcooldownpassFires\/root\/procedure\/b7038b0f43bacc0b78a511f265f915efaf06dae182c45f2e8056b98b5fe43487"
+      ],
       "swift_struct" : "WhenRunalertcooldownpassFires"
     }
   ]

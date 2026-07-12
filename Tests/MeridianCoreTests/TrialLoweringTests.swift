@@ -1,5 +1,6 @@
 import Testing
 @testable import MeridianCore
+import MeridianRuntime
 
 // Unit tests for the shared `TrialLowering` primitive (AGENTS.md Phase 1 item
 // 1/2: real symbols + per-line trial-lowering as the oracle). These pin the
@@ -119,5 +120,39 @@ struct TrialLoweringTests {
         let trial = TrialLowering(knowledge: knowledge)
         #expect(trial.isCheckableCondition("any short products"))
         #expect(trial.lowersAsStatement("make sure any short products."))
+    }
+
+    @Test("custom Assertion synonyms: drive the checkable probe introducer")
+    func customAssertionSynonymProbe() throws {
+        let vocab = Compiler.VocabularyInput(name: "assert", file: "assert.merconfig", source: """
+        === vocabulary ===
+        A product is a kind of thing.
+        A product has a quantity on hand, and a reorder point.
+        Definition: a product is short if its quantity on hand is less than its reorder point.
+
+        === language ===
+        Assertion synonyms:
+          verify that
+        """)
+        let knowledge = try Compiler(options: .init(trace: .silent())).knowledge(
+            forSource: "", sourceFile: "<test>", vocabularies: [vocab]
+        )
+        #expect(knowledge.lexicon.assertionMarkers.first == "verify that")
+        let trial = TrialLowering(knowledge: knowledge)
+        #expect(trial.isCheckableCondition("any short products"))
+    }
+
+    @Test("failureOutcome maps compiler and non-compiler errors")
+    func failureOutcomeCoverage() {
+        struct ProbeError: Error {}
+        let diagnostic = Diagnostic(
+            code: .internalError,
+            severity: .error,
+            message: "boom",
+            primaryRange: SourceRange(file: "<test>", line: 1, column: 1)
+        )
+
+        #expect(TrialLowering.failureOutcome(for: ProbeError()) == .failure([]))
+        #expect(TrialLowering.failureOutcome(for: CompilerError.diagnostics([diagnostic])) == .failure([diagnostic]))
     }
 }

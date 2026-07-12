@@ -3,8 +3,8 @@
 - Original: `escalate_pending/SKILL.md`
 - Ported: `escalatepending.meri`
 - Tier: 2 (light edits)
-- Similarity: 75%
-- Lines: 40 -> 43 (+12 / -9)
+- Similarity: 77%
+- Lines: 40 -> 43 (+11 / -8)
 
 ## Frontmatter
 - Added: (none)
@@ -22,13 +22,14 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L33 `Report shape`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
+- generated_loc: 26 non-blank ported lines
 - Sections inert total: 2/4 (50% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=1, template=1
 - Judgment: 0 blocks, 0 lines
-- canonical_drift: synonym=1, structure=0, desugar=0, meaning=26
+- canonical_drift: synonym=2, structure=0, desugar=0, meaning=25
 
 ### Inert section details
 - L26 `Anti-Patterns`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
@@ -39,7 +40,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 ```diff
 --- original-skills/escalate_pending/SKILL.md
 +++ skills/escalatepending.meri
-@@ -8,33 +8,36 @@
+@@ -8,18 +8,21 @@
  
  # Escalate Pending
  
@@ -61,14 +62,13 @@ These sections were made non-executable in the port and should be reviewed as mi
  - "escalate overdue requests"
  
  ## Rules
--When an access request has been pending for more than 7 days, escalate the access request.
 +
-+### Rules — steps
++### Rules — steps (( role: reference ))
 +
-+When an access request is flagged as overdue, escalate the access request.
+ When an access request has been pending for more than 7 days, escalate the access request.
  
  ## Workflow
- fetch pending access requests.
+@@ -27,14 +30,14 @@
  wait for event access.reviewed matching status is "granted".
  Emit: "escalate pending pass complete".
  

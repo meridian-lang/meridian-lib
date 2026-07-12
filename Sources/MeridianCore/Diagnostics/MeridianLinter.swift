@@ -1,31 +1,6 @@
 import Foundation
 import MeridianRuntime
 
-@available(*, deprecated, message: "Use Diagnostic from MeridianLinter.lint(source:file:) instead.")
-public struct LintDiagnostic: Sendable, Equatable {
-    public let line: Int
-    public let severity: String
-    public let code: DiagnosticCode?
-    public let message: String
-    public let hint: String?
-
-    public init(line: Int, severity: String, code: DiagnosticCode? = nil, message: String, hint: String? = nil) {
-        self.line = line
-        self.severity = severity
-        self.code = code
-        self.message = message
-        self.hint = hint
-    }
-
-    public init(_ diagnostic: Diagnostic) {
-        self.line = diagnostic.primaryRange.startLine
-        self.severity = diagnostic.severity.rawValue
-        self.code = diagnostic.code
-        self.message = diagnostic.message
-        self.hint = diagnostic.help
-    }
-}
-
 public struct MeridianLinter {
     private let lexicon: EnglishLexicon
 
@@ -58,6 +33,22 @@ public struct MeridianLinter {
                     help: hint.message
                 ))
             }
+            if let hint = crossRunInARowHint(for: statement) {
+                diagnostics.append(Diagnostic.warning(
+                    hint.code,
+                    message: hint.title,
+                    range: line.range(file: file, of: hint.marker),
+                    help: hint.message
+                ))
+            }
+            if let hint = superlativeEventAnchorHint(for: statement) {
+                diagnostics.append(Diagnostic.warning(
+                    hint.code,
+                    message: hint.title,
+                    range: line.range(file: file, of: hint.marker),
+                    help: hint.message
+                ))
+            }
             let bindPrefix = lexicon.grammar.statement.bindPrefix
             if statement.lowercased().hasPrefix(bindPrefix) {
                 let rest = String(statement.dropFirst(bindPrefix.count))
@@ -68,11 +59,6 @@ public struct MeridianLinter {
             }
         }
         return diagnostics
-    }
-
-    @available(*, deprecated, message: "Use lint(source:file:) returning [Diagnostic].")
-    public func lintLegacy(source: String, file: String = "") -> [LintDiagnostic] {
-        lint(source: source, file: file).map(LintDiagnostic.init)
     }
 
     private func containsAnaphora(_ text: String) -> Bool {
@@ -88,6 +74,42 @@ public struct MeridianLinter {
             return (.lintUncertainty, "uncertainty wording", marker.trimmingCharacters(in: .whitespaces), "Use `with discretion` for planner judgment, or spell a deterministic condition with `only when` / `unless`.")
         }
         return nil
+    }
+
+    private func crossRunInARowHint(for statement: String) -> (code: DiagnosticCode, title: String, marker: String, message: String)? {
+        let lower = statement.lowercased()
+        let scopeMarker = lexicon.grammar.traceAcrossAllRunsMarker.trimmingCharacters(in: .whitespaces)
+        let streakMarker = lexicon.grammar.traceInARowSuffix.trimmingCharacters(in: .whitespaces)
+        guard lower.contains(scopeMarker), lower.contains(streakMarker) else { return nil }
+        return (
+            .lintCrossRunInARow,
+            "cross-run `in a row` may surprise",
+            scopeMarker,
+            "`in a row` uses deterministic trace ordering; across all runs that order can include interleaved runs. If you meant a single run's streak, keep the current-run scope. If you meant aggregate recency, use `times within the last <duration>`."
+        )
+    }
+
+    /// Composition Gallery line 4 (`since the last deploy of the most recent
+    /// troubled service, …`): a superlative naming the anchor's subject is
+    /// legal (it parses) but nests a collection-ranking computation inside an
+    /// event pattern's anchor position, which is harder to read/debug from a
+    /// trace than resolving the superlative to a named value first. Flag it
+    /// as a two-step candidate rather than silently accepting it as idiomatic.
+    private func superlativeEventAnchorHint(for statement: String) -> (code: DiagnosticCode, title: String, marker: String, message: String)? {
+        let lower = statement.lowercased()
+        let anchorMarker = lexicon.grammar.traceSinceLastAnchorFirstMarker.trimmingCharacters(in: .whitespaces)
+        guard let anchorRange = lower.range(of: anchorMarker) else { return nil }
+        let anchorSpan = lower[anchorRange.upperBound...]
+        let anchorText = String(anchorSpan.prefix(while: { $0 != "," }))
+        guard let gradable = lexicon.superlativeGradables.keys
+            .sorted(by: { $0.count > $1.count })
+            .first(where: { anchorText.contains($0) }) else { return nil }
+        return (
+            .lintSuperlativeEventAnchor,
+            "superlative event-anchor wording",
+            gradable,
+            "The anchor names its subject with a superlative (`\(gradable) …`), ranking a collection inline inside the event pattern's anchor. Consider splitting into two steps: bind the superlative result first (`let the target be the \(gradable) …`), then anchor `since the last` on the bound name."
+        )
     }
 
     private func camelize(_ raw: String) -> String { IdentifierNaming.lowerCamel(raw) }

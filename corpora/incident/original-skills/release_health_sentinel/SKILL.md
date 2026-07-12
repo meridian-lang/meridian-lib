@@ -1,0 +1,72 @@
+---
+name: release health sentinel
+description: Read the release trail the way an incident commander would: distinguish one old failure from a recent cluster, distinguish a streak from a count, and treat an anchorless since-the-last check as a first-class unknown instead of guessing. Use this before declaring a service healthy enough for another deploy, not after the rollback has already started.
+triggers:
+  - "run release health sentinel"
+  - "check release health"
+  - "inspect deploy failure history"
+parameters: service
+---
+
+# Release Health Sentinel
+
+Release health is where a raw event list stops being useful on its own. A
+single old failure does not mean the service is unsafe today, but a fresh
+cluster, a live streak, or a missing successful anchor can each mean very
+different things operationally. This skill exists to keep those cases
+separate, surface them explicitly, and refuse to flatten "unknown" into
+"healthy enough" when the history has no last successful deploy to anchor on.
+
+## Contract
+- Input: a service.
+- Output: a release-health verdict that preserves historical, recent, streak,
+  and anchorless-since distinctions.
+- Side effect: a blocking health guard records its fallback policy instead of
+  silently guessing on an anchorless history.
+
+## When to invoke
+- "run release health sentinel"
+- "check release health"
+- "inspect deploy failure history"
+
+## Workflow
+if the deploy step has ever failed,
+  Post: "release health saw a prior deploy failure".
+if the deploy step has failed within the last 7 days,
+  Post: "release health saw a recent deploy failure".
+if the deploy step has failed at least 2 times within the last 7 days,
+  Post: "release health saw repeated recent deploy failures".
+if the deploy step has failed 2 times in a row,
+  Post: "release health saw an active deploy failure streak".
+if across all runs, the deploy step has ever failed,
+  Post: "release health saw a cross-run deploy failure".
+if the service is healthy since the last deploy step succeeded,
+  Post: "release health is healthy since the last successful deploy".
+if it is unknown whether:
+  Post: "release health has no successful deploy anchor yet".
+otherwise,
+  Post: "release health is not healthy since the last successful deploy".
+assert the service is healthy since the last deploy step succeeded otherwise:
+  Post: "release health blocking guard fell back because the service is unhealthy or the deploy history has no successful anchor".
+Post: "release health sentinel pass complete".
+
+## Anti-Patterns
+- Don't treat "ever failed" as interchangeable with "failed within the last 7
+  days". Those are different release stories, and this skill keeps both on
+  purpose.
+- Don't collapse a failure count into a streak. Two failures in a seven-day
+  window and two failures in a row can both be true, but they mean different
+  things about what is happening right now.
+- Don't treat an anchorless `since the last` check as if it were false. If no
+  successful deploy exists yet, the answer is unknown and the workflow says so.
+
+## Guarantees
+This skill records each temporal contrast explicitly and preserves the
+anchorless `since the last` case as its own witnessed fallback, rather than
+silently flattening it into a healthy or unhealthy result.
+
+## Report shape
+The receipt distinguishes five release-health signals in plain language:
+historical failure, recent-window failure, repeated recent failure, live
+failure streak, and since-the-last health with an explicit unknown/default
+policy when there is no successful anchor.

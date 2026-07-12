@@ -1,8 +1,10 @@
-# Wave 7 Verbalizer Evidence Matrix
+# Wave 7-8 Verbalizer Evidence Matrix
 
 Status key: `covered` | `blocked` | `out-of-scope`.
 
-Wave 7 exit requires every in-scope row `covered`, with zero `blocked` / `xfail` rows.
+Wave 7 established the canonical verbalizer gate; Wave 8 extends the same matrix
+to temporal/statistical/compound-note surfaces. Every in-scope row must remain
+`covered`, with zero `blocked` rows.
 
 ## IR primitives
 
@@ -74,6 +76,25 @@ complex corpus round-trips and CLI zero-drift:
 | try-recover-idiom | GrammarTable + Verbalizer | VerbalizerAmbiguityTests | covered |
 | suffix-conditional | GrammarTable + Verbalizer | VerbalizerAmbiguityTests | covered |
 
+### Wave 8 trace / statistical / compound-note productions
+
+Column-0 codes match the exact `GrammarTable` production names so
+`VerbalizerEvidenceTests` and `VerbalizerGenerativeTests` both key on them. See
+the "Wave 8 additions" section below for the canonical templates and round-trip
+tests.
+
+| Production | Canonical example owner | Tests | Status |
+|---|---|---|---|
+| `trace-event-pattern` | GrammarTable + Verbalizer | VerbalizerGenerativeTests, COOK-18 | covered |
+| `trace-scope-marker` | GrammarTable + Verbalizer | VerbalizerGenerativeTests, COOK-18 | covered |
+| `trace-temporal-ever` | GrammarTable + Verbalizer | VerbalizerGenerativeTests, COOK-18 | covered |
+| `trace-temporal-window` | GrammarTable + Verbalizer | VerbalizerGenerativeTests, COOK-18 | covered |
+| `trace-temporal-count` | GrammarTable + Verbalizer | VerbalizerGenerativeTests, COOK-18 | covered |
+| `trace-temporal-in-a-row` | GrammarTable + Verbalizer | VerbalizerGenerativeTests, COOK-18 | covered |
+| `trace-temporal-since` | GrammarTable + Verbalizer | VerbalizerGenerativeTests, COOK-18 | covered |
+| `trace-statistical-frequency` | GrammarTable + Verbalizer | VerbalizerGenerativeTests, COOK-STAT | covered |
+| `compound-note` | GrammarTable + Verbalizer | VerbalizerGenerativeTests, COOK-14 | covered |
+
 ## Legacy statement forms (`docs/03`)
 
 | Form | Canonical | Tests | Status |
@@ -91,11 +112,40 @@ complex corpus round-trips and CLI zero-drift:
 | `MERIDIAN_SYNTAX_COOKBOOK.md` CANONICAL lines | `COOK-*` in VerbalizerCookbookTests | covered |
 | `MERIDIAN_NORTHSTAR_EXAMPLE.md` gallery samples | VerbalizerCookbookTests | covered |
 
-## Out of scope (Wave 7)
+## Wave 8 additions (temporal / statistical / compound note)
+
+These surfaces were `out-of-scope` in Wave 7 and are now verbalized and
+round-tripped. Each row compiles -> verbalizes -> recompiles to structural IR
+equality through `VerbalizerCookbookTests` unless noted otherwise.
+
+| Construct | Canonical template | Tests | Status |
+|---|---|---|---|
+| `ever` | `<subject> has ever <outcome>` | `COOK-18 ever canonical form round trips` | covered |
+| within-window | `<subject> has <outcome> within the last <D>` | `COOK-18 within-window canonical form round trips` | covered |
+| count-in-window | `<subject> has <outcome> <cmp> N times within the last <D>` | `COOK-18 count-in-window canonical form round trips` | covered |
+| in-a-row | `<subject> has <outcome> N times in a row` | `COOK-18 in-a-row canonical form round trips` | covered |
+| since-the-last | `<pred> since the last <E>` (authored `holds` preserved via `TraceTemporalKind.sinceLast.holds`) | `COOK-18 since-the-last canonical form round trips` | covered |
+| keyed temporal adjective | `Definition: a <kind> is <adj> if …` (keyed) | `COOK-19 keyed temporal adjective canonical form round trips` | covered |
+| statistical (`usually`/`rarely`/`N%`) | `<subject> <succeeds/fails> in at least N% of runs/occurrences [within the last <D>]` | `COOK-STAT statistical canonical form round trips`, `SEM_6_01 usually and rarely verbalize numerically` | covered |
+| monitored statistical assert | `assert <subject> succeeds in at least N% of runs/occurrences [within the last <D>]` | `COOK-STAT statistical canonical form round trips`, `SEM_2_11 decision-point totality is not enforced on monitored statistical assertions` | covered |
+| compound note | `proceed, and note "<text>" in the <binding>` (recognizes the desugared text-appending `rebind`) | `COOK-14 compound note canonical form round trips` | covered |
+| unknown arm | `if it is unknown whether:` | `COOK-13 unknown-arm canonical form round trips` | covered |
+
+Verbalizer note: the `since the last` and `unknown whether` canonical markers are
+read from `FixedGrammar` (per pitfall #20); the compound-note surface uses
+`FixedGrammar.compoundNoteIntroducer` / `compoundNoteInMarker`. The verbalizer
+runs `IRValidator` before printing (pitfall #21) and reproduces the authored
+`since` `holds` wording from the retained `IRExpression`, not the resolved
+`holdsPattern`. Statistical sugar such as `usually` / `rarely` canonicalizes to
+numeric thresholds, and compound-note diagnostics (`MER-REF-004`,
+`MER-TYP-001`) are covered by `CompoundNoteTests` even though they are error
+paths rather than verbalized output.
+
+## Out of scope (Wave 8)
 
 | Item | Status |
 |---|---|
-| Temporal / statistical / deontic operators (Waves 8–9) | out-of-scope |
+| Deontic / obligation operators (Wave 9) | out-of-scope |
 | LLM canonicalize propose tool | out-of-scope |
 | Verbalizing generated Swift | out-of-scope |
 | Localization | out-of-scope |

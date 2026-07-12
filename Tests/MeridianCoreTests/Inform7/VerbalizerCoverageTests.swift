@@ -824,6 +824,89 @@ struct VerbalizerCoverageTests {
         #expect(cap.lines().contains { $0.contains("verbalizing 1 workflow") })
     }
 
+    @Test("trace-temporal countInWindow verbalizes all three comparator kinds, not just atLeast")
+    func traceTemporalCountInWindowComparators() {
+        let v = Verbalizer(model: emptyModel())
+        let pattern = EventPatternIR(subject: .step("deploy"), outcome: .failed)
+        let atMost = v.verbalize(.traceTemporal(TraceTemporalIR(
+            scope: .currentRun,
+            kind: .countInWindow(pattern, comparator: .atMost(3), duration: .seconds(60))
+        )))
+        #expect(atMost.contains("at most 3 times"), Comment(rawValue: atMost))
+        let exactly = v.verbalize(.traceTemporal(TraceTemporalIR(
+            scope: .currentRun,
+            kind: .countInWindow(pattern, comparator: .exactly(2), duration: .seconds(60))
+        )))
+        #expect(exactly.contains("exactly 2 times"), Comment(rawValue: exactly))
+    }
+
+    @Test("trace-statistical verbalizes a .named subject, a payload predicate, and non-integer percentages")
+    func traceStatisticalNamedSubjectAndFractionalPercent() {
+        let v = Verbalizer(model: emptyModel())
+        let named = v.verbalize(.traceStatistical(TraceStatisticalIR(
+            pattern: TraceStatisticalPatternIR(
+                subject: .named("checkout"),
+                payloadPredicate: .comparison(.identifierRef(name: "amount"), .greaterThan, .literal(.number(10)))
+            ),
+            outcome: .fails,
+            bound: .atMost(0.3335),
+            denominator: .occurrences
+        )))
+        #expect(named.contains("checkout"), Comment(rawValue: named))
+        #expect(named.contains("33.35"), Comment(rawValue: named))
+    }
+
+    @Test("verbClauseFilterText falls back to nil when no relation backing matches the filtered property")
+    func verbClauseFilterTextNoMatchingRelation() {
+        // Every relation is tool-backed, so `first(where:)` exhausts the whole
+        // dictionary via the `.property` pattern-match failure arm (`return
+        // false`) before the outer guard falls through to `nil` — the
+        // generic `whose` filter text is used instead.
+        let config = MerConfigFile(vocabulary: [
+            .relationBacking(RelationBackingDeclaration(relation: "curation", backing: .tool(toolID: "assign.tool"))),
+            .relationBacking(RelationBackingDeclaration(relation: "mentioning", backing: .tool(toolID: "link.tool"))),
+        ])
+        let symbols = SymbolTable.build(from: config, trace: .silent())
+        let v = Verbalizer(model: emptyModel(symbols: symbols))
+        let text = v.verbalize(.quantified(QuantifierIR(
+            kind: .all,
+            description: DescriptionIR(
+                collection: .identifierRef(name: "pages"),
+                elementVar: "page",
+                filters: [.comparison(
+                    .propertyAccess(.identifierRef(name: "page"), propertyName: "owner"),
+                    .identifies,
+                    .identifierRef(name: "user")
+                )]
+            ),
+            body: .literal(.boolean(true))
+        )))
+        #expect(text.contains("whose"), Comment(rawValue: text))
+    }
+
+    @Test("verbClauseFilterText falls back to nil when a matching relation has no declared verb")
+    func verbClauseFilterTextNoVerbForRelation() {
+        let config = MerConfigFile(vocabulary: [
+            .relationBacking(RelationBackingDeclaration(relation: "ownership", backing: .property(kind: "page", path: "owner"))),
+        ])
+        let symbols = SymbolTable.build(from: config, trace: .silent())
+        let v = Verbalizer(model: emptyModel(symbols: symbols))
+        let text = v.verbalize(.quantified(QuantifierIR(
+            kind: .all,
+            description: DescriptionIR(
+                collection: .identifierRef(name: "pages"),
+                elementVar: "page",
+                filters: [.comparison(
+                    .propertyAccess(.identifierRef(name: "page"), propertyName: "owner"),
+                    .identifies,
+                    .identifierRef(name: "user")
+                )]
+            ),
+            body: .literal(.boolean(true))
+        )))
+        #expect(text.contains("whose"), Comment(rawValue: text))
+    }
+
     private func renderExpression(_ expression: IRExpression) -> String {
         Verbalizer(model: emptyModel()).verbalize(expression)
     }

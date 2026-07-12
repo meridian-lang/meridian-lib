@@ -144,7 +144,7 @@ struct Phase4MultiVocab {
     }
 
     @Test("merging LanguageSynonyms dictionaries prefers the other side on key collision")
-    func languageSynonymDictMergeConflictsPreferOther() {
+    func languageSynonymDictMergeConflictsPreferOther() throws {
         let base = MerConfigFile(languageSynonyms: LanguageSynonyms(
             durationSynonyms: ["tick": .second],
             superlativeSynonyms: ["biggest": .largest],
@@ -156,7 +156,7 @@ struct Phase4MultiVocab {
             fenceToolMapping: ["python": "interpreter.run"]
         ))
 
-        let merged = base.merging(overlay)
+        let merged = try base.merging(overlay)
 
         #expect(merged.languageSynonyms.durationSynonyms["tick"] == .minute)
         #expect(merged.languageSynonyms.superlativeSynonyms["biggest"] == .smallest)

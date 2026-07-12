@@ -28,6 +28,7 @@ lives in `docs/08_TRACING.md`; `meridian trace categories` prints it live.
 | `.skill` | `skill` |
 | `.codegen` | `codegen` |
 | `.verbalizer` | `verbalizer` |
+| `.validation` | `validation` |
 | `.drift` | `drift` |
 | `.diagnostics` | `diagnostics` |
 | `.timing` | `timing` (off by default; excluded from `capturing()`'s default set) |
@@ -54,9 +55,29 @@ read this env var. This means:
 ### Thread safety
 
 `ParserTrace` is `@unchecked Sendable` with internal `NSLock` for all mutable
-state. It is safe to call `log/push/pop` from concurrent contexts. In unit
-tests, prefer a fresh `ParserTrace.capturing(…).trace` per test to avoid
-cross-test output mixing.
+state. Span stacks and indent levels are keyed by `ObjectIdentifier(Thread.current)`
+so concurrent compiles on one trace instance stay balanced. It is safe to call
+`log/push/pop/openSpan/closeSpan` from concurrent contexts. In unit tests,
+prefer a fresh `ParserTrace.capturing(…).trace` per test to avoid cross-test
+output mixing.
+
+### Structured spans
+
+`openSpan`/`closeSpan` are the canonical scope API; `push`/`pop` delegate to
+them. Each `ParserTrace` instance gets a stable `correlationID` (UUID) and
+assigns monotonic `sequence` numbers to emitted records. `Token` carries
+`spanID`, `parentSpanID`, `active`, `cat`, and optional `sequence`.
+`outputFormat = .jsonl` emits one JSON object per line (`seq`, `corr`, `span`,
+`parent`, `cat`, `op`, `kind`, `outcome?`, `msg`, `range?`); default `.text`
+preserves `[category] …` lines with `▶`/`◀` markers.
+
+- **Zero-cost when disabled:** `openSpan`/`closeSpan`/`log`/`detail` return
+  immediately when the category is off (no string work, no I/O).
+- **Per-thread nesting:** span stacks keyed by `ObjectIdentifier(Thread.current)`.
+- **CLI:** `--trace-format text|jsonl` via `CLITraceOptions`; active `--trace`
+  prints `trace correlation id: …` once on stderr (`announceCLITrace`).
+- **`.validation`:** `IRValidator` uses `openSpan(.validation, …)` /
+  `closeSpan(…, outcome:)` — enable for pre-emission IR checks.
 
 ### Adding a trace point
 

@@ -25,6 +25,15 @@ public struct StatementParser {
         ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon)
     }
 
+    /// Shared with the `for each <adjectives> <singular kind> <verb clause>:`
+    /// bare iteration header (`parseIteration`), which must decompose a
+    /// restricted head the same way quantifiers/explicit collections do
+    /// rather than swallowing it into one opaque state-key identifier.
+    private var descriptionGrammar: DescriptionGrammar {
+        let parser = exprParser
+        return DescriptionGrammar(lexicon: lexicon, symbols: symbols, atom: parser.parseAtom, recurse: parser.parse)
+    }
+
     public init(symbols: SymbolTable?, trace: ParserTrace = .shared,
                 lexicon: EnglishLexicon = .default,
                 rewriteEngine: RewriteEngine? = nil,
@@ -202,6 +211,8 @@ public struct StatementParser {
             referents.append(camelize(s.name))
         case .rebind(let s):
             referents.append(camelize(s.name))
+        case .note(let s):
+            referents.append(camelize(s.binding))
         case .iteration(let s):
             if case .forEach(let variable, _) = s.mode { referents.append(variable) }
         case .labelled(let s):
@@ -214,12 +225,21 @@ public struct StatementParser {
         }
     }
 
+    private static let recoverPlaceholderWords = "__recover_placeholder__"
+
+    private func recoverPlaceholder(sourceLine: Int) -> StatementAST {
+        .phraseInvocation(PhraseInvocationAST(
+            words: Self.recoverPlaceholderWords,
+            sourceLine: sourceLine
+        ))
+    }
+
     private func appendStatement(_ statement: StatementAST, to stmts: inout [StatementAST]) {
         // `recover from …:` attaches to the immediately preceding statement.
         // When we see one, pop the predecessor from `stmts` and embed it.
         if case .recover(var rec) = statement,
            case .phraseInvocation(let placeholder) = rec.attached,
-           (placeholder.words.isEmpty || placeholder.words == "__recover_placeholder__"),
+           (placeholder.words.isEmpty || placeholder.words == Self.recoverPlaceholderWords),
            let preceding = stmts.last {
             stmts.removeLast()
             rec = RecoverStatementAST(
@@ -332,6 +352,19 @@ public struct StatementParser {
             }
             trace.log(.statement, "L\(line.number) -> labelled")
             return (.labelled(LabelledStatementAST(label: label, statement: stmt, sourceLine: line.number)), consumed)
+        }
+
+        // `assert <condition> otherwise:` — a colon-terminated block header
+        // (like `if it is unknown whether:` / guarded-fence headers), not the
+        // sibling-line `otherwise,`/`otherwise:` a `conditional` attaches.
+        // Checked before the generic idiom fallback so the whole header,
+        // otherwise-colon included, isn't swallowed as the assert's condition
+        // text (see AssertStatementAST.otherwise / D-DX pitfall: this field
+        // was declared and threaded through IR/codegen/verbalizer but never
+        // actually populated by any parser production).
+        if let (assertion, consumed) = try parseAssertWithOtherwise(lines, at: i, file: file) {
+            trace.log(.statement, "L\(line.number) -> assert otherwise:")
+            return (.assertStmt(assertion), consumed)
         }
 
         if let idiom = try parseEnglishIdiom(line, file: file) {
@@ -511,6 +544,21 @@ public struct StatementParser {
                 message: "malformed `\(isRebind ? "rebind" : "bind")` assignment (expected `=`)",
                 range: SourceRange(file: file, line: line.number, column: 1),
                 help: "Use `bind <name> = <value>.` or `rebind <name> = <value>.`; an empty RHS may be followed by an indented fenced code block.")
+        }
+
+        // Compound note form: `proceed, and note "<text>" in the <binding>`
+        // (INFORM7 §2.9). A single-line statement that lowers to a `rebind`
+        // appending the note text to an already-declared text binding.
+        if lower.hasPrefix(lexicon.grammar.compoundNoteIntroducer.lowercased()) {
+            if let note = parseCompoundNote(t, line: line) {
+                trace.log(.statement, "L\(line.number) -> note")
+                return (.note(note), 1)
+            }
+            try raiseStructural(
+                .unparseableStatement,
+                message: "malformed compound note statement",
+                range: SourceRange(file: file, line: line.number, column: 1),
+                help: "Use `proceed, and note \"<text>\" in the <binding>.` with a quoted note and a target binding.")
         }
 
         // B2: "while {condition},"
@@ -1552,6 +1600,27 @@ public struct StatementParser {
         QuoteAwareScanner.rangeOfMarker(marker, in: text, caseInsensitive: true)
     }
 
+    /// INFORM7 §2.9 compound note: `proceed, and note "<text>" in the <binding>`.
+    /// Returns nil when the fixed shape (a quoted note followed by the ` in `
+    /// marker and a binding) is absent, so the caller can raise a precise
+    /// malformed-statement diagnostic.
+    private func parseCompoundNote(_ t: String, line: SourceLine) -> NoteStatementAST? {
+        let introducer = lexicon.grammar.compoundNoteIntroducer
+        guard t.count >= introducer.count else { return nil }
+        var rest = String(t.dropFirst(introducer.count)).trimmingCharacters(in: .whitespaces)
+        if rest.hasSuffix(".") { rest = String(rest.dropLast()) }
+        guard let firstQuote = rest.firstIndex(of: "\"") else { return nil }
+        let afterFirst = rest.index(after: firstQuote)
+        guard let secondQuote = rest[afterFirst...].firstIndex(of: "\"") else { return nil }
+        let text = String(rest[afterFirst..<secondQuote])
+        let tail = String(rest[rest.index(after: secondQuote)...])
+        guard let inRange = tail.range(of: lexicon.grammar.compoundNoteInMarker) else { return nil }
+        let bindingPart = String(tail[inRange.upperBound...]).trimmingCharacters(in: .whitespaces)
+        let binding = lexicon.stripLeadingArticle(bindingPart).trimmingCharacters(in: .whitespaces)
+        guard !binding.isEmpty, !text.isEmpty else { return nil }
+        return NoteStatementAST(binding: binding, text: text, sourceLine: line.number)
+    }
+
     // MARK: - Bind value (invoke expression or literal)
 
     private func parseBindValue(_ s: String, lines: [SourceLine], at i: Int) throws -> (ExpressionAST, Int) {
@@ -1857,6 +1926,48 @@ public struct StatementParser {
         return .enumValue(trimmed)
     }
 
+    // MARK: - Assert with otherwise:
+
+    /// `assert <condition> otherwise:` header, followed by an indented
+    /// fallback block — `AssertStatementAST.otherwise` / `AssertIR.otherwiseAction`
+    /// (cookbook: a blocking guard that records its fallback policy instead
+    /// of throwing). Only fires when the line both starts with a declared
+    /// assertion marker AND ends with the fixed `otherwise:` block-header
+    /// suffix (`FixedGrammar.matchOtherwiseLabel`) — a bare `assert X.` or a
+    /// suffix-conditional `... otherwise, ...` on the same line are handled
+    /// by their own productions and must not be shadowed here.
+    private func parseAssertWithOtherwise(_ lines: [SourceLine], at i: Int, file: String) throws -> (AssertStatementAST, Int)? {
+        let line = lines[i]
+        let t = line.statement
+        let lower = t.lowercased()
+        guard let marker = lexicon.assertionMarkers.first(where: { lower.hasPrefix($0 + " ") }) else { return nil }
+        let otherwiseLabel = lexicon.grammar.statement.matchOtherwiseLabel
+        guard lower.hasSuffix(otherwiseLabel) else { return nil }
+
+        let afterMarker = String(t.dropFirst(marker.count + 1))
+        let condition = String(afterMarker.dropLast(otherwiseLabel.count)).trimmingCharacters(in: .whitespaces)
+        guard !condition.isEmpty else { return nil }
+
+        let parentIndent = line.indent
+        var otherwiseLines: [SourceLine] = []
+        var j = i + 1
+        while j < lines.count {
+            let l = lines[j]
+            if l.isEmpty || l.isComment { j += 1; continue }
+            if l.indent > parentIndent { otherwiseLines.append(l); j += 1 }
+            else { break }
+        }
+        guard !otherwiseLines.isEmpty else { return nil }
+        let otherwiseBlock = try parseBlock(otherwiseLines, file: file)
+
+        return (AssertStatementAST(
+            condition: exprParser.parse(condition),
+            message: "Expected \(condition)",
+            otherwise: otherwiseBlock,
+            sourceLine: line.number
+        ), j - i)
+    }
+
     // MARK: - Conditional
 
     private func parseConditional(_ lines: [SourceLine], at i: Int, file: String) throws -> (ConditionalStatementAST, Int) {
@@ -1883,16 +1994,36 @@ public struct StatementParser {
             else { break }
         }
 
-        // Check for the grammar's `otherwise` branch marker.
+        // Check for the grammar's `unknown whether` and `otherwise` branch markers.
+        var unknownBlock: ASTBlock? = nil
         var elseBlock: ASTBlock? = nil
         var elseConsumed = j
         if j < lines.count && lines[j].isContent {
             let nextText = lines[j].statement.lowercased()
             let keywords = lexicon.grammar.statement
-            if nextText == keywords.otherwiseKeyword || nextText == keywords.otherwiseCommaKeyword {
-                let otherwiseIndent = lines[j].indent
-                var elseLines: [SourceLine] = []
+            if nextText == keywords.unknownWhetherPrefix.trimmingCharacters(in: .whitespaces)
+                || nextText == keywords.unknownWhetherPrefix.trimmingCharacters(in: .whitespaces) + ","
+                || nextText == keywords.unknownWhetherPrefix.trimmingCharacters(in: .whitespaces) + ":" {
+                let unknownIndent = lines[j].indent
+                var unknownLines: [SourceLine] = []
                 var k = j + 1
+                while k < lines.count {
+                    let l = lines[k]
+                    if l.isEmpty || l.isComment { k += 1; continue }
+                    if l.indent > unknownIndent { unknownLines.append(l); k += 1 }
+                    else { break }
+                }
+                unknownBlock = try parseBlock(unknownLines, file: file)
+                elseConsumed = k
+            }
+        }
+        if elseConsumed < lines.count && lines[elseConsumed].isContent {
+            let nextText = lines[elseConsumed].statement.lowercased()
+            let keywords = lexicon.grammar.statement
+            if nextText == keywords.otherwiseKeyword || nextText == keywords.otherwiseCommaKeyword {
+                let otherwiseIndent = lines[elseConsumed].indent
+                var elseLines: [SourceLine] = []
+                var k = elseConsumed + 1
                 while k < lines.count {
                     let l = lines[k]
                     if l.isEmpty || l.isComment { k += 1; continue }
@@ -1910,6 +2041,7 @@ public struct StatementParser {
         return (ConditionalStatementAST(
             condition: condition,
             thenBlock: thenBlock,
+            unknownBlock: unknownBlock,
             elseBlock: elseBlock,
             sourceLine: line.number
         ), consumed)
@@ -2024,6 +2156,16 @@ public struct StatementParser {
             // Explicit collection: `for each {var} in {collection}`.
             variable   = String(headPhrase[headPhrase.startIndex ..< inRange.lowerBound]).trimmingCharacters(in: .whitespaces)
             collection = exprParser.parse(String(headPhrase[inRange.upperBound...]))
+        } else if let desc = descriptionGrammar.parse(headPhrase, allowSingularHead: true) {
+            // Bare restricted block header: `for each <adjectives> <singular
+            // kind> <verb clause>:` (`for each flaky service owned by the
+            // user:`). Decompose it through the same `description` production
+            // quantifiers/explicit collections use — a bare noun phrase like
+            // this must not be swallowed whole into one opaque state-key
+            // identifier, which would silently drop the adjective/verb-clause
+            // restriction and iterate the *unfiltered* collection instead.
+            variable   = camelize(lexicon.singularize(desc.noun.lowercased()))
+            collection = .description(desc)
         } else {
             // Bare block header: `for each {kind}:` binds the singular kind and
             // iterates over its plural collection (`for each page:` → iterate
@@ -2128,17 +2270,16 @@ public struct StatementParser {
     /// The header must end with `:` (after stripping trailing whitespace). The
     /// handler body is all lines at a deeper indent than the `recover` line.
     ///
-    /// Returns a `RecoverStatementAST` whose `attached` field is a placeholder
-    /// `phraseInvocation("__recover_placeholder__")`; `parseBlock` replaces it
-    /// with the actual preceding statement after this function returns.
+    /// Returns a `RecoverStatementAST` whose `attached` field is a placeholder;
+    /// `parseBlock` replaces it with the actual preceding statement after this
+    /// function returns.
     private func parseRecover(_ lines: [SourceLine], at i: Int, file: String) throws -> (RecoverStatementAST, Int) {
         let line = lines[i]
         // The header is just this single line; recover headers are always one line.
         let t = line.statement
 
         guard t.hasSuffix(":") else {
-            let placeholder = StatementAST.phraseInvocation(
-                PhraseInvocationAST(words: "__recover_placeholder__", sourceLine: line.number))
+            let placeholder = recoverPlaceholder(sourceLine: line.number)
             return (RecoverStatementAST(pattern: .any, handler: ASTBlock(statements: []), attached: placeholder, sourceLine: line.number), 1)
         }
         let headerText = String(t.dropLast()).trimmingCharacters(in: .whitespaces)
@@ -2186,8 +2327,7 @@ public struct StatementParser {
         let handlerBlock = try parseBlock(bodyLines, file: file)
         let consumed = j - i
 
-        let placeholder = StatementAST.phraseInvocation(
-            PhraseInvocationAST(words: "__recover_placeholder__", sourceLine: line.number))
+        let placeholder = recoverPlaceholder(sourceLine: line.number)
         return (RecoverStatementAST(pattern: pattern, handler: handlerBlock, attached: placeholder, sourceLine: line.number), consumed)
     }
 

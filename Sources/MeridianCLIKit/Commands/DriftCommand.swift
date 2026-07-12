@@ -24,15 +24,11 @@ public struct DriftCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Emit a stable JSON report instead of human-readable markdown.")
     var json: Bool = false
 
-    @Option(name: .long, help: "Comma-separated ParserTrace categories (or `all`). Also reads MERIDIAN_TRACE.")
-    var trace: String?
-
-    @Option(name: .long, help: "Write ParserTrace output to this file instead of stderr.")
-    var traceFile: String?
+    @OptionGroup var cliTrace: CLITraceOptions
 
     public func run() async throws {
         let loaded = try loadCLIModelInput(input: input, merconfig: merconfig, rulebook: rulebook)
-        let traceInstance = try makeCLITrace(spec: trace, file: traceFile)
+        let traceInstance = try cliTrace.makeTrace()
         let compiler = Compiler(options: .init(trace: traceInstance))
         do {
             let model = try compiler.compileToModel(

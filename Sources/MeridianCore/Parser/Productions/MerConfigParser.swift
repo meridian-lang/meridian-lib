@@ -29,6 +29,7 @@ public struct MerConfigParser {
         var instances:   [InstanceDeclaration] = []
         var tools:       [ToolDeclaration]     = []
         var languageSynonyms = LanguageSynonyms()
+        var traceConfiguration = TraceConfigurationAST()
 
         // Split the file into sections by === ... === headers.
         // Section content is everything between one header and the next.
@@ -86,13 +87,15 @@ public struct MerConfigParser {
                 break  // pre-parsed above (`toolsBootstrap`), before vocabulary
             case "language":
                 languageSynonyms = parseLanguageSection(body)
+            case "trace":
+                traceConfiguration = try traceConfiguration.merging(parseTraceSection(body, file: file))
             default:
                 let range = SourceRange(file: file, line: body.first?.number ?? 1, column: 1)
                 let diag = Diagnostic.structural(
                     .unknownMerconfigSection,
                     message: "unknown merconfig section `=== \(section) ===`",
                     range: range,
-                    help: "Use one of: `=== vocabulary ===`, `=== constants ===`, `=== instances ===`, `=== tools ===`, `=== language ===`.")
+                    help: "Use one of: `=== vocabulary ===`, `=== constants ===`, `=== instances ===`, `=== tools ===`, `=== language ===`, `=== trace ===`.")
                 if let diagnostics {
                     diagnostics.report(diag)
                 } else {
@@ -107,7 +110,8 @@ public struct MerConfigParser {
             constants: constants,
             instances: instances,
             tools: tools,
-            languageSynonyms: languageSynonyms
+            languageSynonyms: languageSynonyms,
+            traceConfiguration: traceConfiguration
         )
     }
 
@@ -245,6 +249,10 @@ public struct MerConfigParser {
             // "A {name} is a kind of {parent}."
             if let kind = parseKindDecl(t, line: line.number) {
                 results.append(.kind(kind)); i += 1; continue
+            }
+
+            if let key = parseKeyDecl(t, line: line.number) {
+                results.append(.key(key)); i += 1; continue
             }
 
             // "A {kind} can be {case} or {case}[, called the {property}]."
@@ -389,6 +397,21 @@ public struct MerConfigParser {
         let name = String(rest[rest.startIndex ..< range.lowerBound]).trimmingCharacters(in: .whitespaces)
         let parent = String(rest[range.upperBound...]).trimmingCharacters(in: .whitespaces)
         return KindDeclaration(name: name, parent: parent, sourceLine: line)
+    }
+
+    private func parseKeyDecl(_ t: String, line: Int) -> KeyDeclaration? {
+        let lower = t.lowercased().trimmingCharacters(in: .whitespaces)
+        let articles = lexicon.parameterArticles.sorted(by: { $0.count > $1.count })
+        guard let article = articles.first(where: { lower.hasPrefix($0 + " ") }) else { return nil }
+        let remainder = String(t.dropFirst(article.count + 1))
+        let keyedBy = lexicon.grammar.merconfig.isKeyedByMarker
+        guard let range = remainder.lowercased().range(of: keyedBy) else { return nil }
+        let kind = String(remainder[..<range.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
+        var property = String(remainder[range.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
+        property = property.trimmingCharacters(in: CharacterSet(charactersIn: "."))
+        property = lexicon.stripLeadingArticle(property)
+        guard !kind.isEmpty, !property.isEmpty else { return nil }
+        return KeyDeclaration(kind: kind, property: property, sourceLine: line)
     }
 
     // MARK: - Property declaration
@@ -764,6 +787,215 @@ public struct MerConfigParser {
         return (key, .literal(.string(val)))
     }
 
+    // MARK: - Trace section
+
+    private func parseTraceSection(_ lines: [SourceLine], file: String) throws -> TraceConfigurationAST {
+        var store: TraceConfigValue<TraceStoreKind>?
+        var retention: TraceConfigValue<Duration>?
+        var hashChaining: TraceConfigValue<Bool>?
+        var payloadLimit: TraceConfigValue<Int>?
+        var usuallyThreshold: TraceConfigValue<Double>?
+        var rarelyThreshold: TraceConfigValue<Double>?
+        var sampleFloor: TraceConfigValue<Int>?
+        var defaultMonitorCadence: TraceConfigValue<Duration>?
+        var profile: TraceConfigValue<TraceProfile>?
+        var storeFailurePolicy: TraceConfigValue<TraceStoreFailurePolicy>?
+        var deploymentZone: TraceConfigValue<String>?
+
+        for line in lines where line.isContent {
+            let statement = line.statement.trimmingCharacters(in: .whitespaces)
+            guard let colon = statement.firstIndex(of: ":") else {
+                try reportToolDiagnostic(
+                    message: "malformed trace setting: \"\(statement)\"",
+                    range: SourceRange(file: file, line: line.number, column: 1),
+                    help: "Use `key: value` entries inside `=== trace ===`."
+                )
+                continue
+            }
+            let key = statement[..<colon].trimmingCharacters(in: .whitespaces).lowercased()
+            let value = statement[statement.index(after: colon)...].trimmingCharacters(in: .whitespaces)
+            switch key {
+            case "store":
+                guard let parsed = TraceStoreKind(rawValue: value.lowercased()) else {
+                    try reportToolDiagnostic(
+                        message: "unknown trace store `\(value)`",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Use `memory` or `file`."
+                    )
+                    continue
+                }
+                store = .init(parsed, file: file, line: line.number)
+            case "retention":
+                guard let parsed = parseTraceDuration(String(value)) else {
+                    try reportToolDiagnostic(
+                        message: "invalid trace retention `\(value)`",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Use a duration such as `30 days`."
+                    )
+                    continue
+                }
+                retention = .init(parsed, file: file, line: line.number)
+            case "hash chaining":
+                let lower = value.lowercased()
+                guard lower == "enabled" || lower == "disabled" else {
+                    try reportToolDiagnostic(
+                        message: "invalid hash chaining setting `\(value)`",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Use `enabled` or `disabled`."
+                    )
+                    continue
+                }
+                hashChaining = .init(lower == "enabled", file: file, line: line.number)
+            case "payload limit":
+                guard let parsed = Int(value) else {
+                    try reportToolDiagnostic(
+                        message: "invalid payload limit `\(value)`",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Use an integer byte limit such as `8192`."
+                    )
+                    continue
+                }
+                payloadLimit = .init(parsed, file: file, line: line.number)
+            case "usually at least":
+                usuallyThreshold = .init(try parsePercent(value, file: file, line: line.number, key: String(key)), file: file, line: line.number)
+            case "rarely at most":
+                rarelyThreshold = .init(try parsePercent(value, file: file, line: line.number, key: String(key)), file: file, line: line.number)
+            case "sample floor":
+                guard let parsed = Int(value) else {
+                    try reportToolDiagnostic(
+                        message: "invalid sample floor `\(value)`",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Use an integer sample count."
+                    )
+                    continue
+                }
+                sampleFloor = .init(parsed, file: file, line: line.number)
+            case "default monitor cadence":
+                guard let parsed = parseTraceDuration(String(value)) else {
+                    try reportToolDiagnostic(
+                        message: "invalid monitor cadence `\(value)`",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Use a duration such as `1 days`."
+                    )
+                    continue
+                }
+                defaultMonitorCadence = .init(parsed, file: file, line: line.number)
+            case "profile":
+                guard let parsed = TraceProfile(rawValue: value.lowercased()) else {
+                    try reportToolDiagnostic(
+                        message: "unknown trace profile `\(value)`",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Use `development` or `production`."
+                    )
+                    continue
+                }
+                profile = .init(parsed, file: file, line: line.number)
+            case "store failure policy":
+                let normalized = value.lowercased().replacingOccurrences(of: "-", with: "")
+                let parsed: TraceStoreFailurePolicy?
+                switch normalized {
+                case "auto": parsed = .auto
+                case "failopen": parsed = .failOpen
+                case "failclosed": parsed = .failClosed
+                default: parsed = nil
+                }
+                guard let parsed else {
+                    try reportToolDiagnostic(
+                        message: "unknown trace store failure policy `\(value)`",
+                        range: SourceRange(file: file, line: line.number, column: 1),
+                        help: "Use `fail-open`, `fail-closed`, or `auto`."
+                    )
+                    continue
+                }
+                storeFailurePolicy = .init(parsed, file: file, line: line.number)
+            case "deployment zone":
+                deploymentZone = .init(String(value), file: file, line: line.number)
+            default:
+                try reportToolDiagnostic(
+                    message: "unknown trace setting `\(key)`",
+                    range: SourceRange(file: file, line: line.number, column: 1),
+                    help: "Use documented keys such as `store`, `retention`, `hash chaining`, or `profile`."
+                )
+            }
+        }
+
+        return TraceConfigurationAST(
+            store: store,
+            retention: retention,
+            hashChaining: hashChaining,
+            payloadLimit: payloadLimit,
+            usuallyThreshold: usuallyThreshold,
+            rarelyThreshold: rarelyThreshold,
+            sampleFloor: sampleFloor,
+            defaultMonitorCadence: defaultMonitorCadence,
+            profile: profile,
+            storeFailurePolicy: storeFailurePolicy,
+            deploymentZone: deploymentZone
+        )
+    }
+
+    private func parsePercent(_ value: String, file: String, line: Int, key: String) throws -> Double {
+        let text = value.trimmingCharacters(in: .whitespaces)
+        let stripped = text.hasSuffix("%") ? String(text.dropLast()) : text
+        guard let percent = Double(stripped) else {
+            try reportToolDiagnostic(
+                message: "invalid percentage for `\(key)`: \"\(text)\"",
+                range: SourceRange(file: file, line: line, column: 1),
+                help: "Use a percentage such as `90%` or `10`."
+            )
+            return 0
+        }
+        return percent > 1 ? percent / 100.0 : percent
+    }
+
+    private func parseToolCapturePolicy(
+        _ raw: String,
+        file: String,
+        line: Int,
+        toolID: String
+    ) throws -> TraceCapturePolicy {
+        let text = raw.trimmingCharacters(in: .whitespaces)
+        let lower = text.lowercased()
+        switch lower {
+        case "full":
+            return .full
+        case "hash-only":
+            return .hashOnly
+        default:
+            break
+        }
+        let prefix = "redacted"
+        guard lower.hasPrefix(prefix) else {
+            try reportToolDiagnostic(
+                message: "unknown capture policy `\(text)` for tool \"\(toolID)\"",
+                range: SourceRange(file: file, line: line, column: 1),
+                help: "Use `full`, `hash-only`, or `redacted (field1, field2)`."
+            )
+            return .full
+        }
+        let remainder = text.dropFirst(prefix.count).trimmingCharacters(in: .whitespaces)
+        guard remainder.hasPrefix("("), remainder.hasSuffix(")") else {
+            try reportToolDiagnostic(
+                message: "redacted capture policy for tool \"\(toolID)\" must list fields",
+                range: SourceRange(file: file, line: line, column: 1),
+                help: "Use `redacted (field1, field2)`."
+            )
+            return .redacted([])
+        }
+        let fields = remainder.dropFirst().dropLast()
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        return .redacted(fields)
+    }
+
+    private func parseTraceDuration(_ raw: String) -> Duration? {
+        guard let (amount, unit) = lexicon.parseDuration(raw) else {
+            return nil
+        }
+        return .seconds(Int64(amount * Double(unit.inSeconds)))
+    }
+
     // MARK: - Tools section
 
     private func parseToolsSection(_ lines: [SourceLine], file: String) throws -> [ToolDeclaration] {
@@ -791,8 +1023,24 @@ public struct MerConfigParser {
                 i += 1
                 continue
             }
-            let sig = content[i].text.dropFirst().trimmingCharacters(in: .whitespaces)
-            if let tool = parseToolSignature(sig, displayName: displayName, sourceLine: line.number) {
+            let signatureLine = content[i]
+            let sig = signatureLine.text.dropFirst().trimmingCharacters(in: .whitespaces)
+            var capturePolicy: TraceCapturePolicy?
+            var k = i + 1
+            while k < content.count, content[k].indent > signatureLine.indent {
+                let optionLine = content[k].statement.trimmingCharacters(in: .whitespaces)
+                if optionLine.lowercased().hasPrefix("capture:") {
+                    let raw = optionLine.dropFirst("capture:".count).trimmingCharacters(in: .whitespaces)
+                    capturePolicy = try parseToolCapturePolicy(
+                        raw,
+                        file: file,
+                        line: content[k].number,
+                        toolID: displayName
+                    )
+                }
+                k += 1
+            }
+            if let tool = parseToolSignature(sig, displayName: displayName, sourceLine: line.number, sourceFile: file, capturePolicy: capturePolicy) {
                 results.append(tool)
             } else {
                 try reportToolDiagnostic(
@@ -800,7 +1048,7 @@ public struct MerConfigParser {
                     range: SourceRange(file: file, line: content[i].number, column: 1),
                     help: "Use `~ methodName(param: Type, …) : ReturnType` with balanced parentheses.")
             }
-            i += 1
+            i = max(k, i + 1)
         }
         return results
     }
@@ -849,7 +1097,13 @@ public struct MerConfigParser {
         }
     }
 
-    private func parseToolSignature(_ sig: String, displayName: String, sourceLine: Int) -> ToolDeclaration? {
+    private func parseToolSignature(
+        _ sig: String,
+        displayName: String,
+        sourceLine: Int,
+        sourceFile: String,
+        capturePolicy: TraceCapturePolicy?
+    ) -> ToolDeclaration? {
         // "methodName(param: Type, ...) : ReturnType"
         guard let parenOpen = sig.firstIndex(of: "("),
               let parenClose = sig.lastIndex(of: ")") else { return nil }
@@ -869,7 +1123,8 @@ public struct MerConfigParser {
             )
         }
         return ToolDeclaration(displayName: displayName, methodName: methodName,
-                               parameters: params, returnType: returnType, sourceLine: sourceLine)
+                               parameters: params, returnType: returnType, sourceLine: sourceLine,
+                               sourceFile: sourceFile, capturePolicy: capturePolicy)
     }
 
     // MARK: - Literal parsing
@@ -928,8 +1183,13 @@ public struct MerConfigParser {
         var conditionHeaderSynonyms: [String] = []
         var actionHeaderSynonyms: [String] = []
         var wildcardSynonyms: [String] = []
+        var traceOutcomeSynonyms: [String: String] = [:]
+        var traceAuxiliarySynonyms: [String] = []
         var shellFenceSynonyms: [String] = []
         var fenceToolMapping: [String: String] = [:]
+        var guardedFenceIntroducerSynonyms: [String] = []
+        var fallbackChainIntroducerSynonyms: [String] = []
+        var approvalToolSynonyms: [String] = []
 
         enum Mode {
             case none, comparison, duration, assertion
@@ -937,7 +1197,8 @@ public struct MerConfigParser {
             case empty, filled, pastWindow, futureWindow, timestampAlias
             case aggregate, superlative, sortBy, ascending, descending
             case possessive, anaphora
-            case conditionHeader, actionHeader, wildcard, shellFence, fenceTool
+            case conditionHeader, actionHeader, wildcard, traceOutcome, traceAuxiliary, shellFence, fenceTool
+            case guardedFence, fallbackChain, approvalTool
         }
         var mode: Mode = .none
 
@@ -973,9 +1234,18 @@ public struct MerConfigParser {
             ("action-header synonym", .actionHeader),
             ("action header synonym", .actionHeader),
             ("wildcard synonym", .wildcard),
+            ("trace outcome synonym", .traceOutcome),
+            ("trace-auxiliary synonym", .traceAuxiliary),
+            ("trace auxiliary synonym", .traceAuxiliary),
             ("shell-fence synonym", .shellFence),
             ("shell fence synonym", .shellFence),
             ("fence tool mapping", .fenceTool),
+            ("guarded-fence synonym", .guardedFence),
+            ("guarded fence synonym", .guardedFence),
+            ("fallback-chain synonym", .fallbackChain),
+            ("fallback chain synonym", .fallbackChain),
+            ("approval-tool synonym", .approvalTool),
+            ("approval tool synonym", .approvalTool),
         ]
 
         for line in content {
@@ -1016,7 +1286,11 @@ public struct MerConfigParser {
             case .actionHeader:  if !marker.isEmpty { actionHeaderSynonyms.append(marker) };   continue
             case .wildcard:      if !t.isEmpty { wildcardSynonyms.append(t) };                 continue
             case .shellFence:    if !marker.isEmpty { shellFenceSynonyms.append(marker) };     continue
-            case .comparison, .duration, .aggregate, .superlative, .fenceTool, .none:
+            case .traceAuxiliary: if !marker.isEmpty { traceAuxiliarySynonyms.append(marker) }; continue
+            case .guardedFence:  if !marker.isEmpty { guardedFenceIntroducerSynonyms.append(marker) }; continue
+            case .fallbackChain: if !marker.isEmpty { fallbackChainIntroducerSynonyms.append(marker) }; continue
+            case .approvalTool:  if !marker.isEmpty { approvalToolSynonyms.append(marker) }; continue
+            case .comparison, .duration, .aggregate, .superlative, .traceOutcome, .fenceTool, .none:
                 break  // keyed `key = value` blocks handled below
             }
 
@@ -1044,6 +1318,8 @@ public struct MerConfigParser {
                 if let dir = SuperlativeDirection(rawValue: value) {
                     superlativeSynonyms[key] = dir
                 }
+            case .traceOutcome:
+                traceOutcomeSynonyms[key] = value
             case .fenceTool:
                 // "python = interpreter.run" — value keeps its original case
                 // (a tool ID), unlike the lower-cased comparison/aggregate/
@@ -1077,8 +1353,13 @@ public struct MerConfigParser {
                                 conditionHeaderSynonyms: conditionHeaderSynonyms,
                                 actionHeaderSynonyms: actionHeaderSynonyms,
                                 wildcardSynonyms: wildcardSynonyms,
+                                traceOutcomeSynonyms: traceOutcomeSynonyms,
+                                traceAuxiliarySynonyms: traceAuxiliarySynonyms,
                                 shellFenceSynonyms: shellFenceSynonyms,
-                                fenceToolMapping: fenceToolMapping)
+                                fenceToolMapping: fenceToolMapping,
+                                guardedFenceIntroducerSynonyms: guardedFenceIntroducerSynonyms,
+                                fallbackChainIntroducerSynonyms: fallbackChainIntroducerSynonyms,
+                                approvalToolSynonyms: approvalToolSynonyms)
     }
 
     /// Resolve a human-readable operator description to a `ComparisonOpAST`.

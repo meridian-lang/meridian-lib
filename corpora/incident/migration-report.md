@@ -6,7 +6,8 @@
 | mitigateincident | ✓ | 0 | 0 | 0 |  |
 | oncallhandoff | ✓ | 0 | 0 | 0 |  |
 | postmortemrender | ✓ | 0 | 0 | 0 |  |
+| releasehealthsentinel | ✓ | 0 | 0 | 0 |  |
 | rollbackdeploy | ✓ | 0 | 0 | 0 |  |
 | triagealert | ✓ | 0 | 0 | 0 |  |
 
-Total: 8, compiling: 8, failing: 0, unmined-contract lines: 0
+Total: 9, compiling: 9, failing: 0, unmined-contract lines: 0

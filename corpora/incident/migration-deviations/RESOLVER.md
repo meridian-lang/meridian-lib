@@ -3,8 +3,8 @@
 - Original: `RESOLVER.md`
 - Ported: `RESOLVER.meri`
 - Tier: 2 (light edits)
-- Similarity: 84%
-- Lines: 22 -> 28 (+7 / -1)
+- Similarity: 85%
+- Lines: 23 -> 29 (+7 / -1)
 
 ## Frontmatter
 - Added: (none)
@@ -15,12 +15,13 @@
 - preamble-blockquoted
 
 ## Metrics
+- generated_loc: 19 non-blank ported lines
 - Sections inert total: 0/0 (0% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Judgment: 0 blocks, 0 lines
-- canonical_drift: synonym=0, structure=0, desugar=0, meaning=18
+- canonical_drift: synonym=0, structure=0, desugar=0, meaning=19
 
 ## Unified diff
 
@@ -40,7 +41,7 @@
  
  | trigger phrase | skill |
  | --- | --- |
-@@ -17,6 +20,9 @@
+@@ -18,6 +21,9 @@
  
  ## Workflow
  

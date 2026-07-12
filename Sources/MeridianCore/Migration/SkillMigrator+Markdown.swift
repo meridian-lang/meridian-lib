@@ -97,13 +97,13 @@ extension SkillMigrator {
         return out
     }
 
-    func isProcedureCandidateLine(_ text: String) -> Bool {
+    func isProcedureCandidateLine(_ text: String, lexicon: EnglishLexicon) -> Bool {
         let lower = text.lowercased()
-        let statementGrammar = EnglishLexicon.default.grammar.statement
+        let statementGrammar = lexicon.grammar.statement
         return lower.hasPrefix(statementGrammar.doPrefix)
             || statementGrammar.primitivePrefixes.contains { lower.hasPrefix($0) }
             || isWholeLineBacktickedCommand(text)
-            || isChoiceGateLine(text)
+            || isChoiceGateLine(text, lexicon: lexicon)
     }
 
     /// AGENTS.md Phase 1 item 5: tolerates exactly one leading label line
@@ -220,19 +220,19 @@ extension SkillMigrator {
     /// complete choice-gate line. Markdown hard-wraps a paragraph by breaking
     /// *without* terminal punctuation on the intermediate lines, so this is a
     /// cheap, reliable signal that the line break was cosmetic, not semantic.
-    func endsSentenceForSplitting(_ trimmed: String) -> Bool {
+    func endsSentenceForSplitting(_ trimmed: String, lexicon: EnglishLexicon) -> Bool {
         if let last = trimmed.last, ".:?!".contains(last) { return true }
         let stripped = normalizeMarkdownLineForLowering(stripMarkdownListMarker(trimmed))
-        return isWholeLineBacktickedCommand(stripped) || isChoiceGateLine(stripped)
+        return isWholeLineBacktickedCommand(stripped) || isChoiceGateLine(stripped, lexicon: lexicon)
     }
 
     func isWholeLineBacktickedCommand(_ s: String) -> Bool {
         SkillMarkdownShape.wholeLineBacktickedCommand(s)
     }
 
-    func isChoiceGateLine(_ s: String) -> Bool {
+    func isChoiceGateLine(_ s: String, lexicon: EnglishLexicon) -> Bool {
         let lower = s.lowercased()
-        return EnglishLexicon.default.grammar.choiceGateIntroducers.contains { lower.hasPrefix($0) }
+        return lexicon.grammar.choiceGateIntroducers.contains { lower.hasPrefix($0) }
             && s.filter { $0 == "\"" }.count >= 4
     }
 

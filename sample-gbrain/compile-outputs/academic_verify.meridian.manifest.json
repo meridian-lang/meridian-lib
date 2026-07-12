@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -453,55 +453,55 @@
   "source_map" : [
     {
       "meridian_line" : 192,
-      "swift_line" : 603
+      "swift_line" : 626
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 642
+      "swift_line" : 695
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 647
+      "swift_line" : 700
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 686
+      "swift_line" : 768
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 691
+      "swift_line" : 773
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 730
+      "swift_line" : 841
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 735
+      "swift_line" : 846
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 774
+      "swift_line" : 914
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 779
+      "swift_line" : 919
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 818
+      "swift_line" : 987
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 823
+      "swift_line" : 992
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 862
+      "swift_line" : 1060
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 867
+      "swift_line" : 1065
     }
   ],
   "tools_used" : [
@@ -544,7 +544,12 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "academic-verify",
+      "skill_version_hash" : "714930788c254d3c4362b97911b1b1efbf2c36dee52b29f8c08ebdc3b31ad63c",
       "source_name" : "academic-verify a input",
+      "step_paths" : [
+        "\/AcademicVerifyInput\/standards-the-rigor-bar-steps\/procedure\/e0224f47e2a4b5854a49a32adc78ff5270deca1d26ee7ad80e5a74305c4b50bf"
+      ],
       "swift_struct" : "AcademicVerifyInput"
     },
     {
@@ -552,7 +557,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "academic-verify",
+      "skill_version_hash" : "714930788c254d3c4362b97911b1b1efbf2c36dee52b29f8c08ebdc3b31ad63c",
       "source_name" : "when verifyThisAcademicClaim fires",
+      "step_paths" : [
+        "\/WhenVerifythisacademicclaimFires\/root\/procedure\/3a2c27693ea5ed50b289749f99090352faac007de60dc860892550bcffade442",
+        "\/WhenVerifythisacademicclaimFires\/root\/procedure\/3afbf8da7e2992e3c8e962fe414f06b09e6f4768a5b80c1a03c1a489b4ce85e5"
+      ],
       "swift_struct" : "WhenVerifythisacademicclaimFires"
     },
     {
@@ -560,7 +571,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "academic-verify",
+      "skill_version_hash" : "714930788c254d3c4362b97911b1b1efbf2c36dee52b29f8c08ebdc3b31ad63c",
       "source_name" : "when checkThisStudy fires",
+      "step_paths" : [
+        "\/WhenCheckthisstudyFires\/root\/procedure\/cdf914fe45aabc75bf6ff01bdcef1772171448db875ffa007aad27853b05c1dc",
+        "\/WhenCheckthisstudyFires\/root\/procedure\/d352b3ae267bfd3d7019764e9cc28755edc32484fa36bb2535b4c1878735bbd3"
+      ],
       "swift_struct" : "WhenCheckthisstudyFires"
     },
     {
@@ -568,7 +585,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "academic-verify",
+      "skill_version_hash" : "714930788c254d3c4362b97911b1b1efbf2c36dee52b29f8c08ebdc3b31ad63c",
       "source_name" : "when academicVerify fires",
+      "step_paths" : [
+        "\/WhenAcademicverifyFires\/root\/procedure\/06dfb4d1987c781139548783a59d703b9ef82a87138f4d22dcde80ad4de94e1a",
+        "\/WhenAcademicverifyFires\/root\/procedure\/49df541b0ce1a9518295d68c23394018e7ab88f41c436c70b1b215f74c5119af"
+      ],
       "swift_struct" : "WhenAcademicverifyFires"
     },
     {
@@ -576,7 +599,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "academic-verify",
+      "skill_version_hash" : "714930788c254d3c4362b97911b1b1efbf2c36dee52b29f8c08ebdc3b31ad63c",
       "source_name" : "when validateCitation fires",
+      "step_paths" : [
+        "\/WhenValidatecitationFires\/root\/procedure\/356413618b7fda70b00316d281f5a116dce897c3a60d7cf9993746e5262f00d5",
+        "\/WhenValidatecitationFires\/root\/procedure\/f9c1787ecd1b0cfafc28ac61b143642893c4090b5fe9db67c4c6b4fa2fac9fe4"
+      ],
       "swift_struct" : "WhenValidatecitationFires"
     },
     {
@@ -584,7 +613,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "academic-verify",
+      "skill_version_hash" : "714930788c254d3c4362b97911b1b1efbf2c36dee52b29f8c08ebdc3b31ad63c",
       "source_name" : "when isThisStudyReal fires",
+      "step_paths" : [
+        "\/WhenIsthisstudyrealFires\/root\/procedure\/04dd15078bf3189eeb44d6dd11ff001b67c05bbf4839ef10c68b5f6916951e55",
+        "\/WhenIsthisstudyrealFires\/root\/procedure\/4668c1bdddcde98b781be608c3abca0e5dc124d036521991550f16638f65be55"
+      ],
       "swift_struct" : "WhenIsthisstudyrealFires"
     },
     {
@@ -592,7 +627,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "academic-verify",
+      "skill_version_hash" : "714930788c254d3c4362b97911b1b1efbf2c36dee52b29f8c08ebdc3b31ad63c",
       "source_name" : "when retractionWatch fires",
+      "step_paths" : [
+        "\/WhenRetractionwatchFires\/root\/procedure\/7a1e9b829006f14543096ef7cf12b6bfc846aae440a94f4dd49cfd7c33bbdbc4",
+        "\/WhenRetractionwatchFires\/root\/procedure\/ced5a07a41b7e7b0d003ae633b178d2a015c152d2992fd5503eeda6f3103538f"
+      ],
       "swift_struct" : "WhenRetractionwatchFires"
     }
   ]

@@ -155,22 +155,22 @@ struct ReachableCoverageRuntimeTests {
         let obs = try JSONLObserver.file(file)
         let ts = Date(timeIntervalSince1970: 0)
 
-        await obs.record(Event(timestamp: ts, runID: "r", sequence: 1, kind: .invokeEnd,
+        try await obs.record(Event(timestamp: ts, runID: "r", sequence: 1, kind: .invokeEnd,
             payload: ["tool": .string("http.get"), "duration_ms": .number(12),
                       "output_summary": .string("ok"), "extra": .string("x")]))
-        await obs.record(Event(timestamp: ts, runID: "r", sequence: 2, kind: .workflowStarted,
+        try await obs.record(Event(timestamp: ts, runID: "r", sequence: 2, kind: .workflowStarted,
             payload: ["foo": .string("bar")], sourceRange: SourceRange(file: "f", line: 1, column: 1),
             parentRunID: "parent", parentSequence: 7))
         // Second write: the file now exists, so the FileHandle(forWritingTo:)
         // append path (not the create fallback) is taken.
-        await obs.record(Event(timestamp: ts, runID: "r", sequence: 3, kind: .workflowCompleted,
+        try await obs.record(Event(timestamp: ts, runID: "r", sequence: 3, kind: .workflowCompleted,
             payload: [:]))
         #expect(FileManager.default.fileExists(atPath: file.path))
 
         // Composite + InMemory observers
         let mem = InMemoryObserver()
         let comp = CompositeObserver([mem])
-        await comp.record(Event(timestamp: ts, runID: "r", sequence: 3, kind: .invokeEnd,
+        try await comp.record(Event(timestamp: ts, runID: "r", sequence: 3, kind: .invokeEnd,
             payload: ["tool": .string("t")]))
         let count = await mem.events.count
         #expect(count == 1)
@@ -200,8 +200,8 @@ struct ReachableCoverageRuntimeTests {
     }
 
     @Test("Runtime.Builder fluent setters")
-    func builderSetters() {
-        let rt = Runtime.Builder()
+    func builderSetters() throws {
+        let rt = try Runtime.Builder()
             .setInstanceRegistry(.empty)
             .setClock(SystemClock())
             .setMaxNestingDepth(8)

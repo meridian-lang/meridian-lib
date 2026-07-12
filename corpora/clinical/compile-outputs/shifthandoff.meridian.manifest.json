@@ -22,70 +22,70 @@
       "adjective" : "granted",
       "function" : "meridianDef_Consent_granted",
       "kind" : "consent",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_MedicationOrder_cleared",
       "kind" : "medication order",
-      "line" : 29
+      "line" : 31
     },
     {
       "adjective" : "contraindicated",
       "function" : "meridianDef_MedicationOrder_contraindicated",
       "kind" : "medication order",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "high risk",
       "function" : "meridianDef_Medication_highRisk",
       "kind" : "medication",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "active",
       "function" : "meridianDef_Patient_active",
       "kind" : "patient",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "held",
       "function" : "meridianDef_Patient_held",
       "kind" : "patient",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "monitored",
       "function" : "meridianDef_Patient_monitored",
       "kind" : "patient",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "unmonitored",
       "function" : "meridianDef_Patient_unmonitored",
       "kind" : "patient",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "critical",
       "function" : "meridianDef_VitalSign_critical",
       "kind" : "vital sign",
-      "line" : 25
+      "line" : 27
     },
     {
       "adjective" : "stable",
       "function" : "meridianDef_VitalSign_stable",
       "kind" : "vital sign",
-      "line" : 26
+      "line" : 28
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a nurse",
-      "line" : 38,
+      "line" : 40,
       "name" : "administration",
       "right_cardinality" : "one",
       "right_kind" : "a medication order",
@@ -95,7 +95,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a protocol",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "a medication",
@@ -105,7 +105,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a clinician",
-      "line" : 36,
+      "line" : 38,
       "name" : "prescription",
       "right_cardinality" : "one",
       "right_kind" : "a medication order",
@@ -334,21 +334,21 @@
   "meridian_verbs" : [
     {
       "base" : "administer",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "administered",
       "relation" : "administration",
       "third_person" : "administers"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "prescribe",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "prescribed",
       "relation" : "prescription",
       "third_person" : "prescribes"
@@ -361,47 +361,47 @@
   "source_map" : [
     {
       "meridian_line" : 66,
-      "swift_line" : 414
+      "swift_line" : 437
     },
     {
-      "meridian_line" : 51,
-      "swift_line" : 419
-    },
-    {
-      "meridian_line" : 42,
-      "swift_line" : 431
-    },
-    {
-      "meridian_line" : 43,
-      "swift_line" : 436
-    },
-    {
-      "meridian_line" : 44,
-      "swift_line" : 440
-    },
-    {
-      "meridian_line" : 45,
+      "meridian_line" : 41,
       "swift_line" : 442
     },
     {
+      "meridian_line" : 42,
+      "swift_line" : 456
+    },
+    {
+      "meridian_line" : 43,
+      "swift_line" : 461
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 465
+    },
+    {
+      "meridian_line" : 45,
+      "swift_line" : 467
+    },
+    {
       "meridian_line" : 49,
-      "swift_line" : 445
+      "swift_line" : 470
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 484
+      "swift_line" : 538
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 489
+      "swift_line" : 543
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 529
+      "swift_line" : 612
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 534
+      "swift_line" : 617
     }
   ],
   "tools_used" : [
@@ -413,7 +413,18 @@
       "parameters" : [
 
       ],
+      "skill_name" : "shift handoff",
+      "skill_version_hash" : "9662aef0f8b0628b26ae0daa174c1f27003f5425fdadf882266c7a0a12b6348f",
       "source_name" : "shift handoff",
+      "step_paths" : [
+        "\/ShiftHandoff\/guarantees\/invariants\/c99c862c0c449cd9d82a4f389a3298d5b6a8d434e3984f901c824acfbe634f05",
+        "\/ShiftHandoff\/workflow-steps-2\/procedure\/8cd5180ee1dedf228d7d8ce5046b19072514df73b6ba151cd4efc18c91e4a043",
+        "\/ShiftHandoff\/workflow-steps\/procedure\/52f49b51e1146ff1cdf64ceff15cfceaf0535c46ca0ff99e8ebf17d7d2bdd2c1",
+        "\/ShiftHandoff\/workflow-steps\/procedure\/6872bd53b4783ae0264b70e90c0aa9927ea0110dab615df7fc515765beebc54a",
+        "\/ShiftHandoff\/workflow-steps\/procedure\/766280fdae8a49fcc8908e0efb9cc8101edc8d52704474c84d1fbfc074a7b812",
+        "\/ShiftHandoff\/workflow-steps\/procedure\/7fd3bdcbdb4b62e10f81cfd735373ea6d28ad6b7876f1db57827b58eb9ff2bad",
+        "\/ShiftHandoff\/workflow-steps\/procedure\/ee9ed4201d2ba58ac39ef1309ba72397abf964e2c75dc4bbc0530f5371b3258e"
+      ],
       "swift_struct" : "ShiftHandoff"
     },
     {
@@ -421,7 +432,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "shift handoff",
+      "skill_version_hash" : "9662aef0f8b0628b26ae0daa174c1f27003f5425fdadf882266c7a0a12b6348f",
       "source_name" : "when runShiftHandoff fires",
+      "step_paths" : [
+        "\/WhenRunshifthandoffFires\/root\/procedure\/50e1533b84681226573568422f14c9089fdc897b6aad00c7ad92f15e0847d637",
+        "\/WhenRunshifthandoffFires\/root\/procedure\/99bc2ca22cc48a16d31abc7fcea7e1aab5733fac36a654c86fa7346913cd59a7"
+      ],
       "swift_struct" : "WhenRunshifthandoffFires"
     },
     {
@@ -429,7 +446,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "shift handoff",
+      "skill_version_hash" : "9662aef0f8b0628b26ae0daa174c1f27003f5425fdadf882266c7a0a12b6348f",
       "source_name" : "when renderShiftHandoffReport fires",
+      "step_paths" : [
+        "\/WhenRendershifthandoffreportFires\/root\/procedure\/411abbdcf1835eb201ca5d7e2f64b932112e8418a575654b44c45cda797771ae",
+        "\/WhenRendershifthandoffreportFires\/root\/procedure\/bca5ddd90e1610fcdf61810ba169dfb7d5c8c203237b4e22061e50529fe8e2b1"
+      ],
       "swift_struct" : "WhenRendershifthandoffreportFires"
     }
   ]

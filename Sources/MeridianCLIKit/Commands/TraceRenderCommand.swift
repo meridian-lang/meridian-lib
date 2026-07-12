@@ -16,7 +16,7 @@ public struct TraceRenderCommand: ParsableCommand {
     public static let configuration = CommandConfiguration(
         commandName: "trace",
         abstract: "Pretty-print a Meridian JSONL event stream as a tree.",
-        subcommands: [Render.self, Categories.self],
+        subcommands: [Render.self, Categories.self, Verify.self, Eval.self, TraceDriftCommand.self],
         defaultSubcommand: Render.self
     )
 
@@ -75,6 +75,61 @@ public struct TraceRenderCommand: ParsableCommand {
                 unicodeGlyphs:    !ascii
             ))
             print(renderer.render(jsonl: jsonl), terminator: "")
+        }
+    }
+
+    struct Verify: ParsableCommand {
+        static let configuration = CommandConfiguration(
+            commandName: "verify",
+            abstract: "Verify a semantic trace store JSONL file for tampering and chain integrity."
+        )
+
+        @Argument(help: "Path to a semantic trace-store .jsonl file.")
+        var input: String
+
+        @Option(name: .customLong("run"), help: "Run ID whose semantic chain should be verified.")
+        var runID: String
+
+        @Flag(name: .long, help: "Emit a stable JSON report instead of human-readable text.")
+        var json: Bool = false
+
+        func run() throws {
+            try TraceVerifyRunner.run(input: input, runID: runID, json: json)
+        }
+    }
+
+    struct Eval: AsyncParsableCommand {
+        static let configuration = CommandConfiguration(
+            commandName: "eval",
+            abstract: "Replay-evaluate a trace-temporal or trace-statistical expression."
+        )
+
+        @Argument(help: "Path to a semantic trace-store .jsonl file.")
+        var input: String
+
+        @Argument(help: "Expression to evaluate against the stored trace.")
+        var expression: String
+
+        @Option(name: .customLong("at"), help: "Replay instant as an ISO8601 timestamp.")
+        var instant: String
+
+        @Option(name: [.customLong("merconfig"), .customLong("vocab")], help: "Optional merconfig file(s) used when parsing the expression.")
+        var merconfig: [String] = []
+
+        @Option(name: .customLong("format"), help: "Output format: json or text.")
+        var format: TraceEvalOutputFormat = .text
+
+        @OptionGroup var cliTrace: CLITraceOptions
+
+        func run() async throws {
+            try await TraceEvalRunner.run(
+                input: input,
+                expression: expression,
+                instant: instant,
+                merconfig: merconfig,
+                format: format,
+                trace: try cliTrace.makeTrace()
+            )
         }
     }
 }

@@ -29,9 +29,9 @@ parameters: patient
 
 ## Rules
 
-### Rules — steps
+### Rules — steps (( role: reference ))
 
-When a patient is flagged as unmonitored, escalate the patient.
+When a patient has been unmonitored for more than 4 hours, escalate the patient.
 
 ## Workflow
 until the patient is monitored,

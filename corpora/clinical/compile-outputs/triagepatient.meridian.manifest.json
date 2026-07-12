@@ -22,70 +22,70 @@
       "adjective" : "granted",
       "function" : "meridianDef_Consent_granted",
       "kind" : "consent",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_MedicationOrder_cleared",
       "kind" : "medication order",
-      "line" : 29
+      "line" : 31
     },
     {
       "adjective" : "contraindicated",
       "function" : "meridianDef_MedicationOrder_contraindicated",
       "kind" : "medication order",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "high risk",
       "function" : "meridianDef_Medication_highRisk",
       "kind" : "medication",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "active",
       "function" : "meridianDef_Patient_active",
       "kind" : "patient",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "held",
       "function" : "meridianDef_Patient_held",
       "kind" : "patient",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "monitored",
       "function" : "meridianDef_Patient_monitored",
       "kind" : "patient",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "unmonitored",
       "function" : "meridianDef_Patient_unmonitored",
       "kind" : "patient",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "critical",
       "function" : "meridianDef_VitalSign_critical",
       "kind" : "vital sign",
-      "line" : 25
+      "line" : 27
     },
     {
       "adjective" : "stable",
       "function" : "meridianDef_VitalSign_stable",
       "kind" : "vital sign",
-      "line" : 26
+      "line" : 28
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a nurse",
-      "line" : 38,
+      "line" : 40,
       "name" : "administration",
       "right_cardinality" : "one",
       "right_kind" : "a medication order",
@@ -95,7 +95,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a protocol",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "a medication",
@@ -105,7 +105,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a clinician",
-      "line" : 36,
+      "line" : 38,
       "name" : "prescription",
       "right_cardinality" : "one",
       "right_kind" : "a medication order",
@@ -267,21 +267,21 @@
   "meridian_verbs" : [
     {
       "base" : "administer",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "administered",
       "relation" : "administration",
       "third_person" : "administers"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "prescribe",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "prescribed",
       "relation" : "prescription",
       "third_person" : "prescribes"
@@ -293,56 +293,56 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 60,
-      "swift_line" : 418
+      "meridian_line" : 31,
+      "swift_line" : 441
     },
     {
       "meridian_line" : 32,
-      "swift_line" : 429
+      "swift_line" : 454
     },
     {
-      "meridian_line" : 69,
-      "swift_line" : 432
+      "meridian_line" : 33,
+      "swift_line" : 458
     },
     {
       "meridian_line" : 34,
-      "swift_line" : 444
+      "swift_line" : 472
     },
     {
       "meridian_line" : 35,
-      "swift_line" : 455
+      "swift_line" : 484
     },
     {
       "meridian_line" : 36,
-      "swift_line" : 457
+      "swift_line" : 487
     },
     {
       "meridian_line" : 37,
-      "swift_line" : 467
+      "swift_line" : 499
     },
     {
       "meridian_line" : 37,
-      "swift_line" : 478
+      "swift_line" : 511
     },
     {
       "meridian_line" : 38,
-      "swift_line" : 486
+      "swift_line" : 519
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 525
+      "swift_line" : 587
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 530
+      "swift_line" : 592
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 570
+      "swift_line" : 661
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 575
+      "swift_line" : 666
     }
   ],
   "tools_used" : [
@@ -375,7 +375,20 @@
           "name" : "patient"
         }
       ],
+      "skill_name" : "triage patient",
+      "skill_version_hash" : "731dddf11c144b4f884750ec6acf31300e3954c9b813d17883926cb4cca69337",
       "source_name" : "triage patient a patient",
+      "step_paths" : [
+        "\/TriagePatientPatient\/workflow\/procedure\/3338ed164c43cdfbe0ddfd6f77a704b8604992bc2cc8eaa7ebf0838d11b8c298",
+        "\/TriagePatientPatient\/workflow\/procedure\/59e53558c7ea84daf93361c86a19bdd003c114d7ce06601adb40e47e2dcf9478",
+        "\/TriagePatientPatient\/workflow\/procedure\/733769206e596a91d2d08089174a169b6b0fd592f23a142f64574c340a80f122",
+        "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/162c19a881b2cdd73d08f0daab1a2df2fb3f5a87eb27732b43d6b782a8c0e394",
+        "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/2bf559024fafda20366f0240d625a5845314922e147d7f6da806d6a7c62dfb19",
+        "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/4d875d50cd7bfd5f789ab9a60512dbfcd08315de4a3fcaf9f08cb1df7d2fd45b",
+        "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/cc0471927009f4ae44a6fbc9bb853d84c62b04969caae6fbbac7110a1661ed5d",
+        "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/f756c4e13ffaa3990759ead03ce69a95f37035fd294ebadb4145217fd17102de",
+        "\/TriagePatientPatient\/workflow\/procedure\/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3"
+      ],
       "swift_struct" : "TriagePatientPatient"
     },
     {
@@ -383,7 +396,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "triage patient",
+      "skill_version_hash" : "731dddf11c144b4f884750ec6acf31300e3954c9b813d17883926cb4cca69337",
       "source_name" : "when triagePatient fires",
+      "step_paths" : [
+        "\/WhenTriagepatientFires\/root\/procedure\/10f18ed4ec39f1b46c5fc19c2cf4b331bea66eaea30f060624f7d41113d9263b",
+        "\/WhenTriagepatientFires\/root\/procedure\/d72a0df11aafcbd95a4d19eca1cf10379cd759f824564abbb391b5781cbbf87e"
+      ],
       "swift_struct" : "WhenTriagepatientFires"
     },
     {
@@ -391,7 +410,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "triage patient",
+      "skill_version_hash" : "731dddf11c144b4f884750ec6acf31300e3954c9b813d17883926cb4cca69337",
       "source_name" : "when runPatientTriage fires",
+      "step_paths" : [
+        "\/WhenRunpatienttriageFires\/root\/procedure\/2cfc3f6d0b0250d539c4bc53acab02dc5a86cc530c978da5ffd7ddcb56595e9b",
+        "\/WhenRunpatienttriageFires\/root\/procedure\/ee641cd90abce10f02e69f093a6e3d146ce2cb4dd9c0e574be85570f481a3ca1"
+      ],
       "swift_struct" : "WhenRunpatienttriageFires"
     }
   ]

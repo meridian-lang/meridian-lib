@@ -39,11 +39,7 @@ public struct CompileCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Skip swift-format formatting of generated code.")
     var noFormat: Bool = false
 
-    @Option(name: .long, help: "Comma-separated ParserTrace categories (or `all`). Also reads MERIDIAN_TRACE.")
-    var trace: String?
-
-    @Option(name: .long, help: "Write ParserTrace output to this file instead of stderr.")
-    var traceFile: String?
+    @OptionGroup var cliTrace: CLITraceOptions
 
     @Option(name: .long,
             help: "Diagnostics output format: human (snippet + caret) or json (stable schema for editors/CI).")
@@ -60,7 +56,7 @@ public struct CompileCommand: AsyncParsableCommand {
         let outputURL    = URL(fileURLWithPath: output).standardized
 
         guard FileManager.default.fileExists(atPath: meridianURL.path) else {
-            throw ValidationError("File not found: \(input)")
+            throw cliInputNotFound(input)
         }
 
         let meridianSource = try String(contentsOf: meridianURL, encoding: .utf8)
@@ -86,7 +82,7 @@ public struct CompileCommand: AsyncParsableCommand {
                                    file: url.lastPathComponent, source: src))
         }
 
-        let traceInstance = try makeCLITrace(spec: trace, file: traceFile)
+        let traceInstance = try cliTrace.makeTrace()
 
         let resolvedNamespace: String?
         switch namespace.lowercased() {
@@ -148,9 +144,12 @@ public struct CompileCommand: AsyncParsableCommand {
                     range: SourceRange(file: outName, line: 1, column: 1),
                     help: "Install swift-format or pass `--no-format`; the emitted Swift is still valid.")
                 let renderer = DiagnosticRenderer(sources: diagSources, options: .init(color: stderrIsTTY()))
-                let rendered = diagnosticsFormat == .json
-                    ? renderer.renderJSON([warn])
-                    : renderer.render([warn])
+                let rendered: String
+                if diagnosticsFormat == .json {
+                    rendered = try renderer.renderJSON([warn])
+                } else {
+                    rendered = renderer.render([warn])
+                }
                 FileHandle.standardError.write(Data((rendered + "\n").utf8))
             }
         }
@@ -203,6 +202,11 @@ public struct CompileCommand: AsyncParsableCommand {
     }
 
     private func format(_ source: String) throws -> String {
+        if ProcessInfo.processInfo.environment["MERIDIAN_TEST_SWIFT_FORMAT_FAIL"] == "1" {
+            throw NSError(domain: "MeridianTest", code: 1, userInfo: [
+                NSLocalizedDescriptionKey: "simulated swift-format failure",
+            ])
+        }
         var config = Configuration()
         config.indentation = .spaces(4)
         config.lineLength = 120

@@ -79,6 +79,8 @@ struct ConditionClassifier {
             }
         case .quantified:
             return true
+        case .traceTemporal, .traceStatistical:
+            return true
         default:
             return false
         }

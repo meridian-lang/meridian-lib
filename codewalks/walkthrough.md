@@ -1277,7 +1277,7 @@ public enum ToolKind: Sendable {
     case subprocess(SubprocessSpec)
     /// HTTP tool — implemented in Phase 5.
     case http(HTTPSpec)
-    /// MCP tool — deferred to v1.1.
+    /// MCP tool — HTTP-JSONRPC or stdio transport via `MCPClient`.
     case mcp(MCPSpec)
 }
 ```

@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -541,71 +541,71 @@
   "source_map" : [
     {
       "meridian_line" : 51,
-      "swift_line" : 601
-    },
-    {
-      "meridian_line" : 119,
-      "swift_line" : 613
-    },
-    {
-      "meridian_line" : 119,
       "swift_line" : 624
     },
     {
       "meridian_line" : 119,
-      "swift_line" : 635
+      "swift_line" : 638
     },
     {
       "meridian_line" : 119,
-      "swift_line" : 646
+      "swift_line" : 651
+    },
+    {
+      "meridian_line" : 119,
+      "swift_line" : 664
+    },
+    {
+      "meridian_line" : 119,
+      "swift_line" : 677
     },
     {
       "meridian_line" : 154,
-      "swift_line" : 657
+      "swift_line" : 690
     },
     {
       "meridian_line" : 155,
-      "swift_line" : 669
+      "swift_line" : 704
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 709
+      "swift_line" : 774
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 714
+      "swift_line" : 779
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 753
+      "swift_line" : 847
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 758
+      "swift_line" : 852
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 797
+      "swift_line" : 920
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 802
+      "swift_line" : 925
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 841
+      "swift_line" : 993
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 846
+      "swift_line" : 998
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 885
+      "swift_line" : 1066
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 890
+      "swift_line" : 1071
     }
   ],
   "tools_used" : [
@@ -620,7 +620,18 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "brain-pdf",
+      "skill_version_hash" : "e4dcb4a838a4d43f75404d4ea3a83f1ce8f7e5aa40768756a5f6cf26e0f5e1bd",
       "source_name" : "brain-pdf a input",
+      "step_paths" : [
+        "\/BrainPdfInput\/common-patterns\/procedure\/266570eed26a44500beba25c1ee0675eee3bbb4fa2702560747991f4b6caa61a",
+        "\/BrainPdfInput\/common-patterns\/procedure\/37eb13bd55f949b336633fdf0e46c6c95d435ab87840fafca9a8356de89d4056",
+        "\/BrainPdfInput\/common-patterns\/procedure\/66a7186cc043d7932bc1ed6ae44cb873c3fd0fe87781a68c9d521322dbc6b0ca",
+        "\/BrainPdfInput\/common-patterns\/procedure\/ad6413d1f255e3641f1f1b16fd4626ec0ba20dab6f092037e091aa87b80dd92b",
+        "\/BrainPdfInput\/font-requirements-steps\/procedure\/7358ebcc8797585fb354b8cd8100b5483c5da2de2c814ee7f3f0e5505ab2e6cd",
+        "\/BrainPdfInput\/font-requirements-steps\/procedure\/f58f801a3dc4230fc06a0db7c8ee75dc6fa622e7cf5de5f5a3c414fce3b84b2b",
+        "\/BrainPdfInput\/prerequisite-gstack-make-pdf-steps\/procedure\/bf8cbfb440ba667fa5b73c0ab5ffe453f0b542fa13ece1c9a16f70bcb8b12626"
+      ],
       "swift_struct" : "BrainPdfInput"
     },
     {
@@ -628,7 +639,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "brain-pdf",
+      "skill_version_hash" : "e4dcb4a838a4d43f75404d4ea3a83f1ce8f7e5aa40768756a5f6cf26e0f5e1bd",
       "source_name" : "when makePdfBrain fires",
+      "step_paths" : [
+        "\/WhenMakepdfbrainFires\/root\/procedure\/5fba8ce1a21f2cef3bf5bbcf7d381a2c7f4ef9c2865babd9b12470a5ad28a9c9",
+        "\/WhenMakepdfbrainFires\/root\/procedure\/ea3a2c85729168d7bcd76a50f339f3771551940994ef99b6dc26b72afc60d83d"
+      ],
       "swift_struct" : "WhenMakepdfbrainFires"
     },
     {
@@ -636,7 +653,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "brain-pdf",
+      "skill_version_hash" : "e4dcb4a838a4d43f75404d4ea3a83f1ce8f7e5aa40768756a5f6cf26e0f5e1bd",
       "source_name" : "when brainPdf fires",
+      "step_paths" : [
+        "\/WhenBrainpdfFires\/root\/procedure\/00c6b5a2485f4cb47ba452556cdf6655ef59f556e6209c24c7c61ca242e629cc",
+        "\/WhenBrainpdfFires\/root\/procedure\/e6c725821f55af86030c0e60316d483863e3ef49ab50da5ba1cbfed9c7882175"
+      ],
       "swift_struct" : "WhenBrainpdfFires"
     },
     {
@@ -644,7 +667,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "brain-pdf",
+      "skill_version_hash" : "e4dcb4a838a4d43f75404d4ea3a83f1ce8f7e5aa40768756a5f6cf26e0f5e1bd",
       "source_name" : "when convertBrainPagePdf fires",
+      "step_paths" : [
+        "\/WhenConvertbrainpagepdfFires\/root\/procedure\/50b66e01f46b5133ee9adf234954aac42ba9046379ca5c6e375cff554917d393",
+        "\/WhenConvertbrainpagepdfFires\/root\/procedure\/65ca10ad1555060760b7f41acfd3f53523153b445680a4b05b03672df55cab30"
+      ],
       "swift_struct" : "WhenConvertbrainpagepdfFires"
     },
     {
@@ -652,7 +681,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "brain-pdf",
+      "skill_version_hash" : "e4dcb4a838a4d43f75404d4ea3a83f1ce8f7e5aa40768756a5f6cf26e0f5e1bd",
       "source_name" : "when publishThisPageAsPdf fires",
+      "step_paths" : [
+        "\/WhenPublishthispageaspdfFires\/root\/procedure\/51d5439f34f1c94e3d3bc3e59534193ef9af20f8410375eedc24031a73736f06",
+        "\/WhenPublishthispageaspdfFires\/root\/procedure\/726337e9cb249f5e2b76b4725835a350677123e53da404fc4a014383c912b49b"
+      ],
       "swift_struct" : "WhenPublishthispageaspdfFires"
     },
     {
@@ -660,7 +695,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "brain-pdf",
+      "skill_version_hash" : "e4dcb4a838a4d43f75404d4ea3a83f1ce8f7e5aa40768756a5f6cf26e0f5e1bd",
       "source_name" : "when exportBrainPage fires",
+      "step_paths" : [
+        "\/WhenExportbrainpageFires\/root\/procedure\/5e630ee2fd9dbde7a40862435e35ffc48958ee63e274a974845045192cdebdc8",
+        "\/WhenExportbrainpageFires\/root\/procedure\/8c4cf6b13869f7b29a32e31140c10a6266c2791ab971302b4ec2f10583734115"
+      ],
       "swift_struct" : "WhenExportbrainpageFires"
     }
   ]

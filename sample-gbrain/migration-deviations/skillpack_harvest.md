@@ -24,13 +24,14 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L267 `What harvest does NOT do`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
+- generated_loc: 201 non-blank ported lines
 - Sections inert total: 14/14 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=13, template=1
 - Judgment: 2 blocks, 0 lines
-- canonical_drift: synonym=2, structure=0, desugar=0, meaning=203
+- canonical_drift: synonym=3, structure=0, desugar=0, meaning=202
 
 ### Inert section details
 - L13 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.

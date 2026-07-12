@@ -23,58 +23,58 @@
       "adjective" : "pending",
       "function" : "meridianDef_AccessRequest_pending",
       "kind" : "access request",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_AccessRequest_stale",
       "kind" : "access request",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "fresh",
       "function" : "meridianDef_Credential_fresh",
       "kind" : "credential",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "overused",
       "function" : "meridianDef_Credential_overused",
       "kind" : "credential",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "classified",
       "function" : "meridianDef_Resource_classified",
       "kind" : "resource",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "authorized",
       "function" : "meridianDef_User_authorized",
       "kind" : "user",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_User_cleared",
       "kind" : "user",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "privileged",
       "function" : "meridianDef_User_privileged",
       "kind" : "user",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 36,
+      "line" : 38,
       "name" : "assignment",
       "right_cardinality" : "one",
       "right_kind" : "a role",
@@ -84,7 +84,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a policy",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "an environment",
@@ -94,7 +94,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 38,
+      "line" : 40,
       "name" : "grant",
       "right_cardinality" : "one",
       "right_kind" : "a resource",
@@ -160,21 +160,21 @@
   "meridian_verbs" : [
     {
       "base" : "authorize",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "authorized",
       "relation" : "assignment",
       "third_person" : "authorizes"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "grant",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "granted",
       "relation" : "grant",
       "third_person" : "grants"
@@ -187,59 +187,59 @@
   "source_map" : [
     {
       "meridian_line" : 21,
-      "swift_line" : 440
+      "swift_line" : 463
     },
     {
       "meridian_line" : 15,
-      "swift_line" : 445
+      "swift_line" : 468
     },
     {
       "meridian_line" : 28,
-      "swift_line" : 450
+      "swift_line" : 473
     },
     {
       "meridian_line" : 21,
-      "swift_line" : 497
+      "swift_line" : 550
     },
     {
       "meridian_line" : 19,
-      "swift_line" : 502
+      "swift_line" : 555
     },
     {
       "meridian_line" : 31,
-      "swift_line" : 507
+      "swift_line" : 560
     },
     {
       "meridian_line" : 21,
-      "swift_line" : 553
+      "swift_line" : 636
     },
     {
       "meridian_line" : 19,
-      "swift_line" : 558
+      "swift_line" : 641
     },
     {
       "meridian_line" : 34,
-      "swift_line" : 563
+      "swift_line" : 646
     },
     {
       "meridian_line" : 21,
-      "swift_line" : 607
+      "swift_line" : 720
     },
     {
       "meridian_line" : 19,
-      "swift_line" : 612
+      "swift_line" : 725
     },
     {
       "meridian_line" : 37,
-      "swift_line" : 617
+      "swift_line" : 730
     },
     {
       "meridian_line" : 23,
-      "swift_line" : 657
+      "swift_line" : 800
     },
     {
       "meridian_line" : 23,
-      "swift_line" : 662
+      "swift_line" : 805
     }
   ],
   "tools_used" : [
@@ -258,7 +258,14 @@
           "name" : "resource"
         }
       ],
+      "skill_name" : "permissions",
+      "skill_version_hash" : "1332a4dd0da85a1cfefbd964cce78fd0f3278e2a90ec2b52389babce977ebb02",
       "source_name" : "let a user access a resource",
+      "step_paths" : [
+        "\/LetUserAccessResource\/root\/procedure\/257419b4bacc9d2b54cc29ce90ed57f803b3dd924f54617992a50c43aa527b9c",
+        "\/LetUserAccessResource\/root\/procedure\/2b031dcb54499fa7d96f42b8b5dbcc552166bd484d960265724b728618cd9a59",
+        "\/LetUserAccessResource\/root\/procedure\/435eba4dd884e4a36d74eac65bc4b262dd9c5f7372904d0f6e550131ca35b076"
+      ],
       "swift_struct" : "LetUserAccessResource"
     },
     {
@@ -273,7 +280,14 @@
           "name" : "accessRequest"
         }
       ],
+      "skill_name" : "permissions",
+      "skill_version_hash" : "1332a4dd0da85a1cfefbd964cce78fd0f3278e2a90ec2b52389babce977ebb02",
       "source_name" : "have a reviewer approve a access request",
+      "step_paths" : [
+        "\/HaveReviewerApproveAccessRequest\/root\/procedure\/75e2ed92237afbb931b5dd2e2d495cfabe13f7630cb1cea6cb81f0f15569655c",
+        "\/HaveReviewerApproveAccessRequest\/root\/procedure\/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353",
+        "\/HaveReviewerApproveAccessRequest\/root\/procedure\/d6bb58f0aeac03bf9f84a4785d72ae2abddd4ec6d77f402cc10df4be32cd9711"
+      ],
       "swift_struct" : "HaveReviewerApproveAccessRequest"
     },
     {
@@ -288,7 +302,14 @@
           "name" : "resource"
         }
       ],
+      "skill_name" : "permissions",
+      "skill_version_hash" : "1332a4dd0da85a1cfefbd964cce78fd0f3278e2a90ec2b52389babce977ebb02",
       "source_name" : "grant a access request for a resource",
+      "step_paths" : [
+        "\/GrantAccessRequest\/root\/procedure\/3b233f93b6659d7e5ecf82b38168972f75aaeab9943ec3a13449dcc0bd4e906e",
+        "\/GrantAccessRequest\/root\/procedure\/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353",
+        "\/GrantAccessRequest\/root\/procedure\/f3de08021097474026cc3f69e0af9bf6700376421a8142c9fc5177c59c3707d6"
+      ],
       "swift_struct" : "GrantAccessRequest"
     },
     {
@@ -299,7 +320,14 @@
           "name" : "overdueAccessRequest"
         }
       ],
+      "skill_name" : "permissions",
+      "skill_version_hash" : "1332a4dd0da85a1cfefbd964cce78fd0f3278e2a90ec2b52389babce977ebb02",
       "source_name" : "escalate a overdue access request",
+      "step_paths" : [
+        "\/EscalateOverdueAccessRequest\/root\/procedure\/be4d5da2b1a96fbddd7d74e312fa48c0259d897c40c225172f76b4bdb4be7f16",
+        "\/EscalateOverdueAccessRequest\/root\/procedure\/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353",
+        "\/EscalateOverdueAccessRequest\/root\/procedure\/d6bb58f0aeac03bf9f84a4785d72ae2abddd4ec6d77f402cc10df4be32cd9711"
+      ],
       "swift_struct" : "EscalateOverdueAccessRequest"
     },
     {
@@ -307,7 +335,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "permissions",
+      "skill_version_hash" : "1332a4dd0da85a1cfefbd964cce78fd0f3278e2a90ec2b52389babce977ebb02",
       "source_name" : "when an access request is flagged as overdue",
+      "step_paths" : [
+        "\/WhenAccessRequestIs\/root\/procedure\/4c329036885f4005af854bef5d58bca2d2d6fa4493f61f5b3eb77360fad7d18b",
+        "\/WhenAccessRequestIs\/root\/procedure\/a048dbcdea622e8668f786b404454497963d7f5e9338a754a5a33de997aef243"
+      ],
       "swift_struct" : "WhenAccessRequestIs"
     }
   ]

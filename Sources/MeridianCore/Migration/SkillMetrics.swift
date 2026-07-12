@@ -9,7 +9,10 @@ import Foundation
 //     non-executable documentation vs lowered procedure;
 //   • judgment block / line counts — how much of a skill still routes through
 //     the LLM (`use judgment to …:`, `with discretion`, `with autonomy`) rather
-//     than deterministic IR.
+//     than deterministic IR;
+//   • generated LOC — a simple per-skill size signal for the ported `.meri`,
+//     counted as non-blank body lines after frontmatter and before any
+//     downstream compile-output expansion.
 //
 // The scan is dependency-free and deterministic (no parser, no IR): section
 // executability reuses the same pure role functions as `SkillSectionBuilder`
@@ -70,6 +73,7 @@ public struct SkillMetrics: Sendable, Equatable {
     public var inertSections: Int
     public var judgmentBlocks: Int
     public var judgmentLines: Int
+    public var generatedLOC: Int
     public var inertDetails: [InertSection]
     public var canonicalDriftSynonym: Int
     public var canonicalDriftStructure: Int
@@ -78,6 +82,7 @@ public struct SkillMetrics: Sendable, Equatable {
 
     public init(totalSections: Int = 0, inertSections: Int = 0,
                 judgmentBlocks: Int = 0, judgmentLines: Int = 0,
+                generatedLOC: Int = 0,
                 inertDetails: [InertSection] = [],
                 canonicalDriftSynonym: Int = 0,
                 canonicalDriftStructure: Int = 0,
@@ -87,6 +92,7 @@ public struct SkillMetrics: Sendable, Equatable {
         self.inertSections = inertSections
         self.judgmentBlocks = judgmentBlocks
         self.judgmentLines = judgmentLines
+        self.generatedLOC = generatedLOC
         self.inertDetails = inertDetails
         self.canonicalDriftSynonym = canonicalDriftSynonym
         self.canonicalDriftStructure = canonicalDriftStructure
@@ -142,6 +148,9 @@ public struct SkillMetrics: Sendable, Equatable {
         var inert = 0
         var blocks = 0
         var jLines = 0
+        let generatedLOC = lines.filter {
+            !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }.count
         var inFence = false
         var sections: [(heading: String, line: Int, body: [String])] = []
 
@@ -179,7 +188,7 @@ public struct SkillMetrics: Sendable, Equatable {
                     total += 1
                     let clean = SkillSectionRole.parseMarker(from: heading).cleanHeading
                     if !sectionExecutes(heading, rulebook: rulebook),
-                       !bodyIsJudgmentWrapped(body, heading: clean) {
+                       !bodyIsJudgmentWrapped(body, heading: clean, lexicon: lexicon) {
                         inert += 1
                     }
                     // Only a non-generated heading gets an `inertDetails`
@@ -195,7 +204,7 @@ public struct SkillMetrics: Sendable, Equatable {
                     sections.append((heading, idx + 1, body))
                 }
             }
-            if isJudgmentHeader(trimmed) {
+            if isJudgmentHeader(trimmed, lexicon: lexicon) {
                 blocks += 1
                 jLines += bodyLineCount(in: lines, headerIndex: idx)
             }
@@ -206,6 +215,7 @@ public struct SkillMetrics: Sendable, Equatable {
         }
         return SkillMetrics(totalSections: total, inertSections: inert,
                             judgmentBlocks: blocks, judgmentLines: jLines,
+                            generatedLOC: generatedLOC,
                             inertDetails: details)
     }
 
@@ -241,7 +251,7 @@ public struct SkillMetrics: Sendable, Equatable {
         // A `use judgment to follow the <heading> guidance:` opener means the
         // migrator already routed this section to the planner — not silent
         // inert residue. Count it under `judgmentBlocks`, not operational inert.
-        guard !bodyIsJudgmentWrapped(body, heading: clean) else { return nil }
+        guard !bodyIsJudgmentWrapped(body, heading: clean, lexicon: lexicon) else { return nil }
 
         let category: InertCategory
         let reason: String
@@ -262,12 +272,15 @@ public struct SkillMetrics: Sendable, Equatable {
         } else if looksReferenceLike(clean, body: body, lexicon: lexicon) {
             category = .referenceDocumentation
             reason = "Reference documentation, rationale, examples, or changelog."
+        } else if inertContractDocumentsExistingGuard(body) {
+            category = .referenceDocumentation
+            reason = "Documentary contract note: the executable workflow already carries the referenced guard."
         } else if decision.recordedRole == SkillSectionRole.procedure.rawValue
                     || decision.recordedRole == SkillSectionRole.applicability.rawValue
                     || decision.recordedRole == SkillSectionRole.negativeApplicability.rawValue {
             category = .operationalProcedure
             reason = "Marked or derived as \(decision.recordedRole), but inert suppresses execution."
-        } else if bodyHasExecutableShape(body) {
+        } else if bodyHasExecutableShape(body, lexicon: lexicon) {
             category = .operationalContent
             reason = "Body contains command, table, checklist, or explicit AI-routing surface."
         } else if decision.recordedRole == SkillSectionRole.invariants.rawValue
@@ -289,6 +302,18 @@ public struct SkillMetrics: Sendable, Equatable {
                             category: category, reason: reason, body: body)
     }
 
+    private static func inertContractDocumentsExistingGuard(_ body: [String]) -> Bool {
+        let joined = body
+            .map { $0.trimmingCharacters(in: .whitespaces).lowercased() }
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+        guard !joined.isEmpty else { return false }
+        return joined.contains("already enforced")
+            || joined.contains("enforced above")
+            || joined.contains("workflow's own")
+            || joined.contains("workflow’s own")
+    }
+
     private static func nextHeadingIndex(after idx: Int, in lines: [String]) -> Int {
         var j = idx + 1
         var inFence = false
@@ -305,7 +330,7 @@ public struct SkillMetrics: Sendable, Equatable {
         return lines.count
     }
 
-    private static func bodyHasExecutableShape(_ body: [String]) -> Bool {
+    private static func bodyHasExecutableShape(_ body: [String], lexicon: EnglishLexicon) -> Bool {
         var inFence = false
         for raw in body {
             let trimmed = raw.trimmingCharacters(in: .whitespaces)
@@ -325,7 +350,7 @@ public struct SkillMetrics: Sendable, Equatable {
             let lower = trimmed.lowercased()
             if lower.contains(TableMode.aiAutonomy.sentinelToken)
                 || lower.contains(TableMode.aiDiscretion.sentinelToken)
-                || EnglishLexicon.default.grammar.judgmentIntroducers.contains(where: { lower.contains($0) }) {
+                || lexicon.grammar.judgmentIntroducers.contains(where: { lower.contains($0) }) {
                 return true
             }
         }
@@ -396,19 +421,19 @@ public struct SkillMetrics: Sendable, Equatable {
 
     /// True when the section body's first content line is the exact judgment
     /// wrap the migrator emits for `heading` (mirrors `SkillMigrator.bodyIsJudgmentWrapped`).
-    private static func bodyIsJudgmentWrapped(_ body: [String], heading: String) -> Bool {
+    private static func bodyIsJudgmentWrapped(_ body: [String], heading: String, lexicon: EnglishLexicon) -> Bool {
         guard let first = body.first(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) else {
             return false
         }
         return first.trimmingCharacters(in: .whitespaces)
-            == "use judgment to follow the \(heading) guidance:"
+            == lexicon.grammar.judgmentFollowCollectLine(heading: heading)
     }
 
     // MARK: - Judgment
 
-    private static func isJudgmentHeader(_ trimmed: String) -> Bool {
+    private static func isJudgmentHeader(_ trimmed: String, lexicon: EnglishLexicon) -> Bool {
         let lower = trimmed.lowercased()
-        let grammar = EnglishLexicon.default.grammar
+        let grammar = lexicon.grammar
         return grammar.judgmentIntroducers.contains { lower.contains($0) }
             || lower.contains(grammar.discretionMarker)
             || lower.contains(grammar.autonomyMarker)

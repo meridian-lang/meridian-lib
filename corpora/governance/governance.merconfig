@@ -24,6 +24,8 @@ A user has a user id, a name, a role, a clearance, and a status.
 A reviewer has a user id and a name.
 A security officer has a user id and a name.
 
+A resource is keyed by the name.
+
 Definition: a resource is classified if its classification is "classified".
 Definition: a user is cleared if its clearance is "granted".
 Definition: a user is privileged if its role is "admin".
@@ -98,33 +100,46 @@ Assertion synonyms:
   confirm
   ensure
 
+=== trace ===
+retention: 30 days
+hash chaining: enabled
+sample floor: 5
+default monitor cadence: 7 days
+profile: production
+
 === tools ===
 List Access Requests
 =====================
 -- List access requests by status.
 ~ request.list(status: String) : List
+  capture: hash-only
 
 Grant Access
 ============
 -- Grant access to a resource for a user.
 ~ access.grant(user: User, resource: Resource) : Boolean
+  capture: hash-only
 
 Revoke Access
 =============
 -- Revoke access to a resource for a user.
 ~ access.revoke(user: User, resource: Resource) : Boolean
+  capture: hash-only
 
 Rotate Credential
 =================
 -- Rotate a credential.
 ~ credential.rotate(credential: Credential) : Boolean
+  capture: hash-only
 
 Log Audit Entry
 ===============
 -- Log an audit entry for an access request.
 ~ audit.log(request: AccessRequest) : Boolean
+  capture: hash-only
 
 Evaluate Policy
 ===============
 -- Evaluate the policy for an environment.
 ~ policy.evaluate(environment: Environment) : Verdict
+  capture: hash-only

@@ -32,10 +32,24 @@ public struct SkillFrontmatter: Sendable {
 
     // MARK: Lists
 
+    /// Canonical tool-key aliases accepted in SKILL.md frontmatter.
+    public static let toolKeyAliases: Set<String> = [
+        "tools", "tools_required", "tools-required",
+    ]
+
+    /// Frontmatter keys verbalized / packed as YAML lists.
+    public static let listFormattedKeys: Set<String> = [
+        "parameters", "vocabulary", "rulebook", "rulebooks",
+        "tools", "tools_required", "tools-required",
+        "triggers", "writes_to", "writes-to", "when_to_use", "when-to-use",
+    ]
+
     public var parameters: [String] { list("parameters") }
     public var vocabulary: [String] { list("vocabulary") }
     public var rulebooks:  [String] { list("rulebook") + list("rulebooks") }
-    public var tools:      [String] { list("tools") + list("tools_required") + list("tools-required") }
+    public var tools:      [String] {
+        ["tools", "tools_required", "tools-required"].flatMap { list($0) }
+    }
     public var triggers:   [String] { list("triggers") }
     public var writesTo:   [String] { list("writes_to") + list("writes-to") }
     public var whenToUse:  [String] { list("when_to_use") + list("when-to-use") }
@@ -43,12 +57,11 @@ public struct SkillFrontmatter: Sendable {
     /// Keys to surface under `meridian_skill` in the manifest. Order-preserving,
     /// de-duplicated by key. Values keep their packed (newline-joined) form.
     public var manifestEntries: [(key: String, value: String)] {
-        let interesting: Set<String> = [
+        let interesting: Set<String> = Set([
             "name", "description", "goal", "version", "prompt_version", "prompt-version",
             "priority", "brain_first", "brain-first", "writes_pages", "writes-pages",
-            "writes_to", "writes-to", "triggers", "tools", "tools_required", "tools-required",
-            "when_to_use", "when-to-use",
-        ]
+            "writes_to", "writes-to", "triggers", "when_to_use", "when-to-use",
+        ]).union(Self.toolKeyAliases)
         var seen: Set<String> = []
         var out: [(key: String, value: String)] = []
         for entry in raw.entries {

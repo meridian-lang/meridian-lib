@@ -66,7 +66,7 @@ struct SectionRoleRulebookBehaviorTests {
             """)]
         )
 
-        #expect(swift.contains("complete(reason: nil)"), Comment(rawValue: swift))
+        #expect(swift.contains("complete(reason: nil, step:"), Comment(rawValue: swift))
         #expect(!swift.contains("_unresolved"), Comment(rawValue: swift))
     }
 

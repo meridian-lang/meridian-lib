@@ -43,6 +43,7 @@ public enum IREquality {
             guard case .branch(let rhs) = b else { return false }
             return structurallyEqual(lhs.condition, rhs.condition)
                 && structurallyEqual(lhs.thenBlock, rhs.thenBlock)
+                && structurallyEqual(lhs.unknownBlock, rhs.unknownBlock)
                 && structurallyEqual(lhs.elseBlock, rhs.elseBlock)
         case .iterate(let lhs):
             guard case .iterate(let rhs) = b else { return false }
@@ -53,6 +54,9 @@ public enum IREquality {
             guard case .assert(let rhs) = b else { return false }
             return structurallyEqual(lhs.condition, rhs.condition)
                 && structurallyEqual(lhs.otherwiseAction, rhs.otherwiseAction)
+                && lhs.monitored == rhs.monitored
+                && lhs.cadence == rhs.cadence
+                && lhs.blocking == rhs.blocking
         case .emit(let lhs):
             guard case .emit(let rhs) = b else { return false }
             return lhs.eventID == rhs.eventID
@@ -163,6 +167,15 @@ public enum IREquality {
         case .superlative(let lhs):
             guard case .superlative(let rhs) = b else { return false }
             return structurallyEqual(lhs, rhs)
+        case .eventPattern(let lhs):
+            guard case .eventPattern(let rhs) = b else { return false }
+            return structurallyEqual(lhs, rhs)
+        case .traceTemporal(let lhs):
+            guard case .traceTemporal(let rhs) = b else { return false }
+            return structurallyEqual(lhs, rhs)
+        case .traceStatistical(let lhs):
+            guard case .traceStatistical(let rhs) = b else { return false }
+            return structurallyEqual(lhs, rhs)
         }
     }
 
@@ -188,6 +201,100 @@ public enum IREquality {
             return structurallyEqual(lhsExpr, rhsExpr)
                 && equalArrays(lhsCases, rhsCases, by: structurallyEqual)
         case (.predicate, _), (.match, _):
+            return false
+        }
+    }
+
+    public static func structurallyEqual(_ a: EventPatternIR, _ b: EventPatternIR) -> Bool {
+        structurallyEqual(a.subject, b.subject)
+            && a.outcome == b.outcome
+            && structurallyEqual(a.payloadPredicate, b.payloadPredicate)
+    }
+
+    public static func structurallyEqual(_ a: EventPatternIR.Subject, _ b: EventPatternIR.Subject) -> Bool {
+        switch (a, b) {
+        case (.step(let lhs), .step(let rhs)),
+             (.named(let lhs), .named(let rhs)):
+            return identifierEqual(lhs, rhs)
+        case (.step, _), (.named, _):
+            return false
+        }
+    }
+
+    public static func structurallyEqual(_ a: TraceTemporalIR, _ b: TraceTemporalIR) -> Bool {
+        a.scope == b.scope
+            && structurallyEqual(a.kind, b.kind)
+            && structurallyEqual(a.subjectKeyExpr, b.subjectKeyExpr)
+    }
+
+    public static func structurallyEqual(_ a: TraceStatisticalPatternIR, _ b: TraceStatisticalPatternIR) -> Bool {
+        structurallyEqual(a.subject, b.subject)
+            && structurallyEqual(a.payloadPredicate, b.payloadPredicate)
+    }
+
+    public static func structurallyEqual(_ a: TraceStatisticalIR, _ b: TraceStatisticalIR) -> Bool {
+        a.scope == b.scope
+            && structurallyEqual(a.pattern, b.pattern)
+            && structurallyEqual(a.outcome, b.outcome)
+            && structurallyEqual(a.bound, b.bound)
+            && a.denominator == b.denominator
+            && a.window == b.window
+            && a.monitorCadence == b.monitorCadence
+            && a.blocking == b.blocking
+            && structurallyEqual(a.subjectKeyExpr, b.subjectKeyExpr)
+    }
+
+    public static func structurallyEqual(_ a: TraceTemporalKind, _ b: TraceTemporalKind) -> Bool {
+        switch (a, b) {
+        case (.ever(let lhs), .ever(let rhs)):
+            return structurallyEqual(lhs, rhs)
+        case (.withinWindow(let lhsPattern, let lhsDuration),
+              .withinWindow(let rhsPattern, let rhsDuration)):
+            return structurallyEqual(lhsPattern, rhsPattern) && lhsDuration == rhsDuration
+        case (.countInWindow(let lhsPattern, let lhsComparator, let lhsDuration),
+              .countInWindow(let rhsPattern, let rhsComparator, let rhsDuration)):
+            return structurallyEqual(lhsPattern, rhsPattern)
+                && structurallyEqual(lhsComparator, rhsComparator)
+                && lhsDuration == rhsDuration
+        case (.inARow(let lhsPattern, let lhsCount),
+              .inARow(let rhsPattern, let rhsCount)):
+            return structurallyEqual(lhsPattern, rhsPattern) && lhsCount == rhsCount
+        case (.sinceLast(let lhsAnchor, let lhsHolds, let lhsHoldsPattern),
+              .sinceLast(let rhsAnchor, let rhsHolds, let rhsHoldsPattern)):
+            return structurallyEqual(lhsAnchor, rhsAnchor)
+                && structurallyEqual(lhsHolds, rhsHolds)
+                && structurallyEqual(lhsHoldsPattern, rhsHoldsPattern)
+        case (.ever, _), (.withinWindow, _), (.countInWindow, _), (.inARow, _), (.sinceLast, _):
+            return false
+        }
+    }
+
+    public static func structurallyEqual(_ a: TraceStatisticalOutcomeIR, _ b: TraceStatisticalOutcomeIR) -> Bool {
+        switch (a, b) {
+        case (.succeeds, .succeeds), (.fails, .fails):
+            return true
+        default:
+            return false
+        }
+    }
+
+    public static func structurallyEqual(_ a: TraceStatisticalBoundIR, _ b: TraceStatisticalBoundIR) -> Bool {
+        switch (a, b) {
+        case (.atLeast(let lhs), .atLeast(let rhs)),
+             (.atMost(let lhs), .atMost(let rhs)):
+            return lhs == rhs
+        default:
+            return false
+        }
+    }
+
+    public static func structurallyEqual(_ a: TraceCountComparatorIR, _ b: TraceCountComparatorIR) -> Bool {
+        switch (a, b) {
+        case (.atLeast(let lhs), .atLeast(let rhs)),
+             (.atMost(let lhs), .atMost(let rhs)),
+             (.exactly(let lhs), .exactly(let rhs)):
+            return lhs == rhs
+        case (.atLeast, _), (.atMost, _), (.exactly, _):
             return false
         }
     }
@@ -483,10 +590,13 @@ public enum IREquality {
     }
 
     private static func normalizeIdentifier(_ value: String) -> String {
+        // IR structural equality is lexicon-agnostic; use the default English
+        // article set rather than re-listing surface vocabulary inline.
+        let articles = EnglishLexicon.default.articles
         let words = value
             .lowercased()
             .components(separatedBy: CharacterSet.alphanumerics.inverted)
-            .filter { !$0.isEmpty && !["a", "an", "the"].contains($0) }
+            .filter { !$0.isEmpty && !articles.contains($0) }
         return words.joined()
     }
 

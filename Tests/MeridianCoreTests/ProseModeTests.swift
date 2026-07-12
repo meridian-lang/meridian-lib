@@ -51,6 +51,49 @@ struct ProseModeTests {
         #expect(out.contains("github.comment"))
     }
 
+    // SEM-4-04: no surface syntax declares a judgment's output kind yet, so
+    // `ASTToIR.makeAIPrimitive` always lowers to the honest structural
+    // default `"record"` — asserted here so a future single-value output
+    // syntax has a pinned baseline to change.
+    @Test("unmatched line in discretion workflow lowers to AIJudgmentIR with the record output-kind default")
+    func discretionProseStepDefaultsToRecordOutputKind() throws {
+        let symbols = SymbolTable()
+        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        To babysit, with discretion:
+          inspect the diff and leave only useful comments.
+        """)
+
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+        guard case .aiJudgment(let step) = workflows[0].body.statements.first else {
+            Issue.record("Expected AIJudgmentIR"); return
+        }
+        #expect(step.outputKind == "record")
+    }
+
+    @Test("AIJudgmentIR.outputKind emits an outputKind: argument before step:")
+    func proseStepOutputKindCodegen() throws {
+        let workflow = IRWorkflow(
+            name: "Demo",
+            parameters: [],
+            body: IRBlock(statements: [
+                .aiJudgment(AIJudgmentIR(
+                    text: "inspect the diff",
+                    scopedTools: ["github.comment"],
+                    outputKind: "text"
+                ))
+            ])
+        )
+
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        #expect(out.contains("outputKind: \"text\","))
+        guard let outputKindRange = out.range(of: "outputKind: \"text\","),
+              let stepRange = out.range(of: "step:", range: outputKindRange.upperBound..<out.endIndex) else {
+            Issue.record("expected outputKind: before step: in:\n\(out)")
+            return
+        }
+        #expect(outputKindRange.lowerBound < stepRange.lowerBound)
+    }
+
     @Test("AIJudgmentIR.guidance emits an escaped guidance: argument (plan-then-execute)")
     func proseStepGuidanceCodegenPlanThenExecute() throws {
         let workflow = IRWorkflow(
@@ -89,6 +132,31 @@ struct ProseModeTests {
         #expect(out.contains("runtime.executeAutonomousLoop"))
         #expect(out.contains("replanAfterFailures: 3,"))
         #expect(out.contains("guidance: \"Repair every missing back-link.\""))
+    }
+
+    @Test("AIAutonomyIR.outputKind emits an outputKind: argument between replanAfterFailures: and step:")
+    func autonomyStepOutputKindCodegen() throws {
+        let workflow = IRWorkflow(
+            name: "Demo",
+            parameters: [],
+            body: IRBlock(statements: [
+                .aiAutonomy(AIAutonomyIR(
+                    text: "keep fixing",
+                    autonomy: AutonomyConfigIR(),
+                    outputKind: "text"
+                ))
+            ])
+        )
+
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        guard let replanRange = out.range(of: "replanAfterFailures: 3,"),
+              let outputKindRange = out.range(of: "outputKind: \"text\",", range: replanRange.upperBound..<out.endIndex),
+              let stepRange = out.range(of: "step:", range: outputKindRange.upperBound..<out.endIndex) else {
+            Issue.record("expected replanAfterFailures: then outputKind: then step: in:\n\(out)")
+            return
+        }
+        #expect(replanRange.lowerBound < outputKindRange.lowerBound)
+        #expect(outputKindRange.lowerBound < stepRange.lowerBound)
     }
 
     @Test("use judgment to follow the <heading> guidance: threads AST guidance through IR and codegen")

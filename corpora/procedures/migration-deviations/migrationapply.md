@@ -14,12 +14,13 @@
 - (none)
 
 ## Metrics
+- generated_loc: 16 non-blank ported lines
 - Sections inert total: 0/2 (0% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Judgment: 0 blocks, 0 lines
-- canonical_drift: synonym=1, structure=0, desugar=0, meaning=19
+- canonical_drift: synonym=3, structure=0, desugar=0, meaning=17
 
 ## Unified diff
 

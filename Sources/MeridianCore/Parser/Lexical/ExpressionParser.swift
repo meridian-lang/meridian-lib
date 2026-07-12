@@ -18,7 +18,7 @@ import Foundation
 // `boolean` production (not/either/and/or, `it is not the case that …`).
 // `boolean`'s fundamental atom, tried at *every* leaf position it recurses to
 // (the top of the expression, an `either`'s body, each and/or operand), is
-// `parseClause`: quantifier → emptiness/temporal-window → active-verb →
+// `parseClause`: quantifier → trace-statistical → trace-temporal → emptiness/temporal-window → active-verb →
 // comparison → atom, in that order. `parseClause`'s final fallback,
 // `parseAtom`, tries literal → table-lookup → (with symbols) aggregate →
 // superlative → scalar-navigation → description → undeclared-passive-verb
@@ -60,7 +60,7 @@ public struct ExpressionParser {
 
     // MARK: - Clause (boolean's leaf atom)
 
-    /// quantifier → emptiness/temporal-window → active-verb → comparison →
+    /// quantifier → trace-statistical → trace-temporal → emptiness/temporal-window → active-verb → comparison →
     /// atom, in that order (mirrors the pre-rewrite `parseComparison` order).
     ///
     /// `quantifier` and `comparison` are gated by `NonterminalScreen` as a
@@ -82,6 +82,19 @@ public struct ExpressionParser {
            let q = QuantifierGrammar(lexicon: lexicon, description: descriptionGrammar, recurse: parse).parse(t) {
             trace.log(.expression, "clause(\"\(t)\") → quantifier")
             return q
+        }
+        if let statistical = TraceStatisticalGrammar(lexicon: lexicon, atom: parseAtom).parse(t) {
+            trace.log(.expression, "clause(\"\(t)\") → trace-statistical")
+            return statistical
+        }
+        if let temporal = TraceTemporalGrammar(
+            lexicon: lexicon,
+            recurse: parse,
+            eventPattern: { TraceEventPatternGrammar(lexicon: lexicon, atom: parseAtom).parse($0) },
+            anchorPattern: { TraceEventPatternGrammar(lexicon: lexicon, atom: parseAtom).parseAnchor($0) }
+        ).parse(t) {
+            trace.log(.expression, "clause(\"\(t)\") → trace-temporal")
+            return temporal
         }
         if let e = EmptinessTemporalGrammar(lexicon: lexicon, atom: parseAtom).parse(t) {
             trace.log(.expression, "clause(\"\(t)\") → emptiness/temporal-window")

@@ -46,6 +46,15 @@ not marketing terms.
 > synonym/structure/desugar/meaning counts when regenerated with
 > `skill-deviation --batch --index`; see [18_VERBALIZER.md](18_VERBALIZER.md)
 > and [coverage/VERBALIZER_EVIDENCE.md](coverage/VERBALIZER_EVIDENCE.md).
+>
+> **Wave 8 addendum (trace-backed time/statistics):** this report predates the
+> Wave 8 semantics pass. Retained-trace temporal/statistical conditions are now
+> implemented (`has ever`, `within the last`, `in a row`, `since the last`,
+> percentage frequency, monitored assertions), with coverage and residuals
+> tracked in [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md) and
+> [coverage/WAVE8_COMPLETION_EVIDENCE.md](coverage/WAVE8_COMPLETION_EVIDENCE.md).
+> The old Wave 6 statement that historical conditions were out of scope is
+> therefore historical context, not current language status.
 
 ## Corpus Status
 
@@ -150,8 +159,10 @@ No planner or fuzzy parsing is involved.
   maintainer-supplied corpora remain the stronger validation path.
 - No runtime natural-language understanding is added. Dispatch remains compiled
   trigger/table logic plus explicit `RESOLVER` workflows.
-- Past-tense/historical conditions remain out of scope; they require runtime
-  state history and replay design.
+- This Wave 6 report predates Wave 8. Retained-trace historical conditions are
+  now supported, but **pure state-history predicates** remain out of scope
+  (`MER-TMP-019` rejects `since the last` holds that require state history
+  rather than event history).
 - General morphology remains out of scope. Verb forms still come from declared
   relation verbs and regular defaults.
 - The proxy corpora intentionally prefer closed rulebook syntax over fuzzy prose.

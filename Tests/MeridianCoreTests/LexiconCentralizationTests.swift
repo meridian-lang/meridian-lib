@@ -32,6 +32,13 @@ struct FixedGrammarDefaultsTests {
         #expect(g.autonomyMarkers.maxSteps == ["max", "up to"])
         #expect(g.autonomyMarkers.boundaryMarkers.contains(" until "))
         #expect(g.judgmentFollowCollectPrefix == "use judgment to follow the ")
+        #expect(g.judgmentFollowCollectSuffix == " guidance:")
+        #expect(g.judgmentFollowCollectLine(heading: "Phases") == "use judgment to follow the Phases guidance:")
+        #expect(g.decidingTheIntroducer == "deciding the ")
+        #expect(g.questionArrowJudgmentGoal == "use judgment to weigh each question below:")
+        #expect(g.merconfig.isKeyedByMarker == " is keyed by ")
+        #expect(g.merconfig.voidReturnTypeNames.contains("void"))
+        #expect(EnglishLexicon.default.approvalToolIDSubstrings.contains("approve"))
         #expect(g.lintMarkers.politenessPrefixes == ["please "])
         #expect(g.lintMarkers.uncertaintyMarkers == [" maybe ", "maybe "])
         #expect(g.statement.branchOnPrefix == "branch on ")
@@ -121,6 +128,15 @@ struct FixedGrammarDefaultsTests {
         #expect(g.comparisonOpSpellings["not equals"] == .notEqual)
         #expect(g.comparisonOpSpellings["within"] == .within)
         #expect(g.comparisonOpSpellings["nonsense"] == nil)
+    }
+
+    @Test("affirmative suffix conditional falls back when only negated marker is configured")
+    func affirmativeSuffixFallback() {
+        let grammar = FixedGrammar(
+            suffixConditionalMarkers: [" unless "],
+            suffixConditionalNegated: " unless "
+        )
+        #expect(grammar.affirmativeSuffixConditionalMarker == " only when ")
     }
 }
 

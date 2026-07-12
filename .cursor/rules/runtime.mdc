@@ -67,6 +67,12 @@ Runtime(
 )
 ```
 
+Prefer `Runtime.Builder` for tests and drivers. `build()` is `throws` (e.g.
+when auto-wiring a `.file` `JSONLTraceStore` fails). `setRuntimeTraceConfiguration`
+auto-wires a `TraceStore` on `build()` — `InMemoryTraceStore` for `.memory`,
+temp-directory `JSONLTraceStore` for `.file` — unless `setTraceStore` already
+set an explicit store.
+
 Do NOT use `tools: [String: any MeridianTool]` — that API does not exist.
 Tools are registered via `ToolRegistry.Builder`.
 
@@ -92,13 +98,51 @@ domain type generated from vocabulary. They are distinct.
 The event sink protocol is `Observer` (not `EventSink`):
 ```swift
 public protocol Observer: Sendable {
-    func record(_ event: Event) async
+    func record(_ event: Event) async throws
 }
 ```
 Implementations: `JSONLObserver`, `InMemoryObserver`, `CompositeObserver`.
+`JSONLObserver` throws on serialization/write failure (`ObserverError`) instead
+of dropping events. Under `.failClosed` trace policy, `Runtime` surfaces observer
+and trace-store failures on the next strict emit (`MeridianRuntimeError`).
+
 Use `InMemoryObserver` in tests.
+
+### Trace store failure policy default
+
+- `TraceConfiguration.default.storeFailurePolicy == .failClosed`.
+- Compile-time `TraceIdentityPlanner` resolves `.auto` → `.failClosed` always
+  (explicit `.failOpen` / `.failClosed` preserved). `Runtime` must not receive
+  unresolved `.auto` (runtime treats `.auto` like fail-closed, but planner
+  removes ambiguity).
 
 ### `Event` not `MeridianEvent`
 
 The event type is `Event`, not `MeridianEvent`. It has 29 `EventKind` cases.
 See `docs/06_RUNTIME.md` for the full list.
+
+### Trace subsystem (Wave 8) — `Sources/MeridianRuntime/Trace/`
+
+- **`TraceRecord` is the persisted semantic record**, distinct from `Event`. Its
+  `tag` is the closed `TraceTag` set (`invoked` `completed` `failed` `emitted`
+  `asserted` `assert-failed` `branched` `iterated` `judged` `committed`
+  `recovered` `violated`), and temporal/statistical operators query the tag
+  layer — never raw `EventKind`.
+- **`payloadHash` is always present** (non-optional `String`). `TraceRecord(legacy:
+  event, …)` computes it via `CanonicalJSON.sha256Hex` (key-order-independent).
+  Capture policy (`full`/`hash-only`/`redacted`) may drop `payload` but never the
+  hash.
+- **`EventKind` → `TraceTag` mapping lives in `EventMigration.swift`** and must
+  stay bijective enough that `Event(fromSemantic:)` round-trips (`legacyKind`
+  carries the original raw value). `planStart/End/Error/Rejected` and
+  `autonomyStart/Step/End` all map to `judged` (that is the judgment-boundary
+  witness — SEM-4-04).
+- **`skillVersionHash` is audit metadata only (D10).** `TraceEvaluator`
+  `.acrossAllRuns` scopes by `skillName` + step path and must NOT partition on
+  the version hash.
+- **`TraceEvaluator.evaluate` is pure over `(store, TraceEvaluationContext)`;
+  `evaluationInstant` is an explicit input** — never read wall-clock inside
+  evaluation (replay determinism, SEM-5-08).
+- Diagnostics for ill-formed temporal/statistical surface live compiler-side
+  (`MER-TMP-*`, `MER-STA-*`); the runtime never emits a `preconditionFailure`
+  for an unsupported `since` holds — that is a compile-time `MER-TMP-019`.

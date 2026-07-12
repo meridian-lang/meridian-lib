@@ -17,6 +17,8 @@ rule "etl-emit":
   lowers to: emit etl.report with message = {message}.
 
 === sections ===
+section "Guarantees — steps" -> invariants
+section "Guarantees — steps 2" -> invariants
 section "Dispatch table — steps" -> procedure
 section "Anti-Patterns — steps" -> procedure
 section "Replay Routing — steps" -> procedure

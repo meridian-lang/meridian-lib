@@ -13,6 +13,14 @@ struct PegexSurfaceGrammar {
             possessiveChain,
             comparison,
             boolean,
+            traceEventPattern,
+            traceStatisticalFrequency,
+            traceTemporalEver,
+            traceTemporalWindow,
+            traceTemporalCount,
+            traceTemporalInARow,
+            traceTemporalSince,
+            traceScopeMarker,
             temporalWindow,
             emptiness,
             quantifier,
@@ -29,6 +37,7 @@ struct PegexSurfaceGrammar {
             exceptWhenIdiom,
             tryRecoverIdiom,
             suffixConditionalIdiom,
+            compoundNote,
         ])
     }
 
@@ -83,6 +92,106 @@ struct PegexSurfaceGrammar {
                 connectors.orMarker,
                 connectors.eitherPrefix,
             ]
+        )
+    }
+
+    private var traceEventPattern: GrammarProduction {
+        GrammarProduction(
+            name: "trace-event-pattern",
+            category: .expression,
+            implementation: .handWritten,
+            canonicalExample: "`the deploy step failed`",
+            summary: "Trace event subject plus outcome verb.",
+            anchors: Array(lexicon.traceOutcomeVerbs.keys)
+        )
+    }
+
+    private var traceStatisticalFrequency: GrammarProduction {
+        GrammarProduction(
+            name: "trace-statistical-frequency",
+            category: .expression,
+            implementation: .handWritten,
+            canonicalExample: "`the fetch step succeeds in at least 95% of runs, checked every 1 days`",
+            summary: "Statistical frequency over runs or occurrences.",
+            anchors: [
+                lexicon.grammar.traceStatisticalAtLeastMarker,
+                lexicon.grammar.traceStatisticalAtMostMarker,
+                lexicon.grammar.traceStatisticalUsuallyMarker,
+                lexicon.grammar.traceStatisticalRarelyMarker,
+                lexicon.grammar.traceStatisticalCheckedEveryMarker,
+            ]
+        )
+    }
+
+    private var traceTemporalEver: GrammarProduction {
+        GrammarProduction(
+            name: "trace-temporal-ever",
+            category: .expression,
+            implementation: .handWritten,
+            canonicalExample: "`the deploy step has ever failed`",
+            summary: "Whether an event has ever occurred.",
+            anchors: [lexicon.grammar.traceHasEverMarker]
+        )
+    }
+
+    private var traceTemporalWindow: GrammarProduction {
+        GrammarProduction(
+            name: "trace-temporal-window",
+            category: .expression,
+            implementation: .handWritten,
+            canonicalExample: "`the deploy step failed within the last 7 days`",
+            summary: "Whether an event occurred within a trailing window.",
+            anchors: [lexicon.grammar.traceWithinLastMarker]
+        )
+    }
+
+    private var traceTemporalCount: GrammarProduction {
+        GrammarProduction(
+            name: "trace-temporal-count",
+            category: .expression,
+            implementation: .handWritten,
+            canonicalExample: "`the deploy step failed at least 3 times within the last 7 days`",
+            summary: "Windowed counts of matching trace events.",
+            anchors: [
+                lexicon.grammar.traceWithinLastMarker,
+                lexicon.grammar.traceInARowSuffix,
+                lexicon.grammar.quantifierDeterminers.atLeastPrefix,
+                lexicon.grammar.quantifierDeterminers.atMostPrefix,
+                lexicon.grammar.quantifierDeterminers.exactlyPrefix,
+            ]
+        )
+    }
+
+    private var traceTemporalInARow: GrammarProduction {
+        GrammarProduction(
+            name: "trace-temporal-in-a-row",
+            category: .expression,
+            implementation: .handWritten,
+            canonicalExample: "`the deploy step failed 3 times in a row`",
+            summary: "Consecutive matching trace events.",
+            anchors: [lexicon.grammar.traceInARowSuffix]
+        )
+    }
+
+    private var traceTemporalSince: GrammarProduction {
+        GrammarProduction(
+            name: "trace-temporal-since",
+            category: .expression,
+            implementation: .handWritten,
+            canonicalExample: "`the service is healthy since the last deploy step succeeded`",
+            summary: "Predicate holding strictly after the last anchor event.",
+            anchors: [lexicon.grammar.traceSinceLastMarker]
+        )
+    }
+
+    private var traceScopeMarker: GrammarProduction {
+        GrammarProduction(
+            name: "trace-scope-marker",
+            category: .expression,
+            implementation: .handWritten,
+            canonicalExample: "`across all runs, the deploy step has ever failed`",
+            summary: "Trace-temporal scope extension across runs.",
+            anchors: [lexicon.grammar.traceAcrossAllRunsMarker]
         )
     }
 
@@ -301,6 +410,23 @@ struct PegexSurfaceGrammar {
             canonicalExample: "`publish only when build is green`",
             summary: "Single-statement suffix guard.",
             anchors: lexicon.grammar.suffixConditionalMarkers
+        )
+    }
+
+    /// `proceed, and note "thin history" in the receipt trailer` — the compound
+    /// note idiom (INFORM7 §2.9). Unlike the four idioms above, this one is
+    /// fully wired: hand-written statement parsing produces a `NoteStatementAST`
+    /// that lowers to a `rebind` appending the note text to an already-declared
+    /// text binding (MER-REF-004 / MER-TYP-001 guard the target), and the
+    /// Verbalizer reprints this canonical surface.
+    private var compoundNote: GrammarProduction {
+        GrammarProduction(
+            name: "compound-note",
+            category: .statementIdiom,
+            implementation: .handWritten,
+            canonicalExample: "`proceed, and note \"thin history\" in the receipt trailer`",
+            summary: "Append a note to a declared text binding; desugars to rebind.",
+            anchors: [lexicon.grammar.compoundNoteIntroducer]
         )
     }
 }

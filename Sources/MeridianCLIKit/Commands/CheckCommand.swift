@@ -27,13 +27,7 @@ public struct CheckCommand: AsyncParsableCommand {
             help: "Path to a .merconfig file. Repeatable; auto-discovers when omitted.")
     var merconfig: [String] = []
 
-    @Option(name: .long,
-            help: "Activate parser/lowering trace categories (comma-separated). Examples: phrase, phrase.match, lowering, all.")
-    var trace: String?
-
-    @Option(name: .long,
-            help: "Write trace output to a file instead of stderr.")
-    var traceFile: String?
+    @OptionGroup var cliTrace: CLITraceOptions
 
     @Option(name: .long,
             help: "Diagnostics output format: human (snippet + caret) or json (stable schema for editors/CI).")
@@ -46,7 +40,9 @@ public struct CheckCommand: AsyncParsableCommand {
     var write: Bool = false
 
     public func run() async throws {
-        try await runDiagnosticsCheck(input: input, merconfig: merconfig, trace: trace, traceFile: traceFile,
+        try await runDiagnosticsCheck(input: input, merconfig: merconfig,
+                                      trace: cliTrace.trace, traceFile: cliTrace.traceFile,
+                                      traceFormat: cliTrace.traceFormat,
                                       format: diagnosticsFormat, fix: fix, write: write)
     }
 }

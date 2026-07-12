@@ -22,58 +22,70 @@
       "adjective" : "actionable",
       "function" : "meridianDef_Alert_actionable",
       "kind" : "alert",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "critical",
       "function" : "meridianDef_Alert_critical",
       "kind" : "alert",
-      "line" : 23
+      "line" : 25
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Alert_stale",
       "kind" : "alert",
-      "line" : 24
+      "line" : 26
     },
     {
       "adjective" : "unhealthy",
       "function" : "meridianDef_Deploy_unhealthy",
       "kind" : "deploy",
-      "line" : 26
+      "line" : 28
     },
     {
       "adjective" : "high severity",
       "function" : "meridianDef_Incident_highSeverity",
       "kind" : "incident",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Incident_open",
       "kind" : "incident",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "degraded",
       "function" : "meridianDef_Service_degraded",
       "kind" : "service",
-      "line" : 25
+      "line" : 27
+    },
+    {
+      "adjective" : "healthy",
+      "function" : "meridianDef_Service_healthy",
+      "kind" : "service",
+      "line" : 33
+    },
+    {
+      "adjective" : "recovered",
+      "function" : "meridianDef_Service_recovered",
+      "kind" : "service",
+      "line" : 34
     },
     {
       "adjective" : "breached",
       "function" : "meridianDef_Slo_breached",
       "kind" : "slo",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a runbook",
-      "line" : 36,
+      "line" : 40,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "a service",
@@ -83,7 +95,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a service",
-      "line" : 32,
+      "line" : 36,
       "name" : "firing",
       "right_cardinality" : "one",
       "right_kind" : "an alert",
@@ -93,7 +105,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an oncall engineer",
-      "line" : 34,
+      "line" : 38,
       "name" : "ownership",
       "right_cardinality" : "one",
       "right_kind" : "a service",
@@ -117,13 +129,13 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 21,
+        "line" : 22,
         "text" : "Workflow"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 24,
+        "line" : 25,
         "text" : "Workflow — steps"
       }
     ],
@@ -142,14 +154,14 @@
         "heading" : "Dispatch table — steps",
         "line" : 8,
         "lines" : [
-          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHRyaWFnZSBmaXJpbmcgYWxlcnRzIHwgdHJpYWdlYWxlcnQgfAp8IHJvbGwgYmFjayB1bmhlYWx0aHkgZGVwbG95cyB8IHJvbGxiYWNrZGVwbG95IHwKfCBzd2VlcCBzZXJ2aWNlIGhlYWx0aCB8IGhlYWx0aGNoZWNrc3dlZXAgfAp8IGVzY2FsYXRlIG9wZW4gaW5jaWRlbnRzIHwgZXNjYWxhdGVpbmNpZGVudCB8CnwgbWl0aWdhdGUgb3BlbiBpbmNpZGVudHMgfCBtaXRpZ2F0ZWluY2lkZW50IHwKfCByZW5kZXIgcG9zdG1vcnRlbSB8IHBvc3Rtb3J0ZW1yZW5kZXIgfAp8IHJ1biBvbmNhbGwgaGFuZG9mZiB8IG9uY2FsbGhhbmRvZmYgfAp8IHdhdGNoIGFsZXJ0IGNvb2xkb3duIHwgY29vbGRvd253YXRjaCB8"
+          "table:decision:fCB0cmlnZ2VyIHBocmFzZSB8IHNraWxsIHwKfCAtLS0gfCAtLS0gfAp8IHRyaWFnZSBmaXJpbmcgYWxlcnRzIHwgdHJpYWdlYWxlcnQgfAp8IHJvbGwgYmFjayB1bmhlYWx0aHkgZGVwbG95cyB8IHJvbGxiYWNrZGVwbG95IHwKfCBzd2VlcCBzZXJ2aWNlIGhlYWx0aCB8IGhlYWx0aGNoZWNrc3dlZXAgfAp8IGVzY2FsYXRlIG9wZW4gaW5jaWRlbnRzIHwgZXNjYWxhdGVpbmNpZGVudCB8CnwgbWl0aWdhdGUgb3BlbiBpbmNpZGVudHMgfCBtaXRpZ2F0ZWluY2lkZW50IHwKfCByZW5kZXIgcG9zdG1vcnRlbSB8IHBvc3Rtb3J0ZW1yZW5kZXIgfAp8IHJ1biBvbmNhbGwgaGFuZG9mZiB8IG9uY2FsbGhhbmRvZmYgfAp8IHdhdGNoIGFsZXJ0IGNvb2xkb3duIHwgY29vbGRvd253YXRjaCB8CnwgY2hlY2sgcmVsZWFzZSBoZWFsdGggfCByZWxlYXNlaGVhbHRoc2VudGluZWwgfA=="
         ],
         "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Workflow",
-        "line" : 21,
+        "line" : 22,
         "lines" : [
 
         ],
@@ -158,7 +170,7 @@
       {
         "executes" : false,
         "heading" : "Workflow — steps",
-        "line" : 24,
+        "line" : 25,
         "lines" : [
           "Look up the skill corresponding to the trigger phrase and emit the selected",
           "skill id"
@@ -170,21 +182,21 @@
   "meridian_verbs" : [
     {
       "base" : "cover",
-      "line" : 41,
+      "line" : 45,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "own",
-      "line" : 40,
+      "line" : 44,
       "past_participle" : "owned",
       "relation" : "ownership",
       "third_person" : "owns"
     },
     {
       "base" : "page",
-      "line" : 39,
+      "line" : 43,
       "past_participle" : "paged",
       "relation" : "ownership",
       "third_person" : "pages"
@@ -206,6 +218,8 @@
       "parameters" : [
 
       ],
+      "skill_name" : "RESOLVER",
+      "skill_version_hash" : "6ac22aa37fc734c7dbf893a79024994355481631b43dcca86d40dbab934e4622",
       "source_name" : "entry",
       "swift_struct" : "Entry"
     }

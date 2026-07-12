@@ -149,8 +149,9 @@ func printSummary(of readmePath: String) {
 }
 
 /// One row of the generated `## Per-skill` table, keyed to the columns:
-/// `skill | tier | similarity | lines | inert deviations | inert |
-/// operational inert | judgment | frontmatter added | categories`.
+/// `skill | tier | similarity | lines | generated_loc | inert deviations |
+/// inert | operational inert | judgment | canonical_drift | frontmatter added |
+/// categories`.
 struct SkillRow {
     let name: String
     let operationalInert: Int
@@ -167,15 +168,15 @@ func parsePerSkillTable(of readmePath: String) -> [SkillRow] {
         let cells = line.split(separator: "|", omittingEmptySubsequences: false)
             .map { $0.trimmingCharacters(in: .whitespaces) }
         // `| skill | tier | ... |` splits into [<empty>, skill, tier, ..., <empty>].
-        guard cells.count >= 11 else { continue }
+        guard cells.count >= 13 else { continue }
         guard cells[2].allSatisfy(\.isNumber) else { continue }  // skip the `---|---|...` separator row
         // `[skill](skill.md)` -> `skill`.
         var name = cells[1]
         if let close = name.firstIndex(of: "]"), name.hasPrefix("[") {
             name = String(name[name.index(after: name.startIndex)..<close])
         }
-        guard let operationalInert = Int(cells[7]) else { continue }
-        rows.append(SkillRow(name: name, operationalInert: operationalInert, categories: cells[10]))
+        guard let operationalInert = Int(cells[8]) else { continue }
+        rows.append(SkillRow(name: name, operationalInert: operationalInert, categories: cells[12]))
     }
     return rows
 }

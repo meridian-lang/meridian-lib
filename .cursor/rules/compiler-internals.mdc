@@ -218,6 +218,31 @@ Key associated enums:
 - `.aggregate(AggregateKind, DescriptionIR)` — Wave 3C `.count` (emits `Decimal(…count)`) / `.list`
 - `.superlative(SuperlativeIR)` — Wave 3C sort-then-`.first`
 - `.invocation(InvokeIR)` — inline tool call (rare)
+- `.traceTemporal(TraceTemporalIR)` — Wave 8: `ever`, windowed counts,
+  consecutive streak, `since the last` (`holds` + resolved `holdsPattern`)
+- `.traceStatistical(TraceStatisticalIR)` — Wave 8: `usually`/`rarely`,
+  percentage bounds, occurrence/run denominators
+- `.eventPattern(EventPatternIR)` — Wave 8: step/event subject + optional
+  `whose` payload predicates (shared by temporal/statistical queries)
+
+**Trace lowering invariants (Wave 8):**
+
+- Pure state-predicate `since the last` holds (no event-pattern backing) →
+  compile-time **MER-TMP-019** (`traceStateHistorySince`); never let it reach
+  `SwiftEmitter` (pitfall #22).
+- Temporal window wider than `=== trace ===` retention → **MER-TMP-011**.
+- Anchorless `since the last` at blocking assert/obligation sites →
+  **MER-STA-001**.
+- Near-miss step names / `whose` fields → **MER-TMP-014** / **MER-TMP-015**
+  (sound emitters against declared tool vocabulary, not a closed registry).
+- Monitored statistical asserts set `AssertIR.monitored`, `cadence`, and
+  `.traceStatistical` on `condition` — codegen emits `registerMonitor`, not a
+  one-shot `runtime.assert`.
+
+Surface vocabulary for guarded fences, fallback chains, and approval-tool
+detection lives in `EnglishLexicon` (`guardedFenceIntroducers`,
+`fallbackChainIntroducers`, `approvalToolIDSubstrings`) — extend via
+`=== language ===`, never inline literals in `Parser/`/`Lowering/`.
 
 **Workflow invocations** use `InvokeIR` with `toolID: "workflow:{StructName}"`.
 `SwiftEmitter` detects the prefix and emits a struct-init call instead of

@@ -1,0 +1,8 @@
+---
+description: Subagent model selection convention
+alwaysApply: true
+---
+
+# Subagent Model
+
+- Use Composer 2.5 (non-fast) for all subagents unless the user explicitly requests a different available model.

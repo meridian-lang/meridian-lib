@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -263,39 +263,39 @@
   "source_map" : [
     {
       "meridian_line" : 77,
-      "swift_line" : 603
+      "swift_line" : 626
     },
     {
       "meridian_line" : 78,
-      "swift_line" : 615
+      "swift_line" : 640
     },
     {
       "meridian_line" : 79,
-      "swift_line" : 627
+      "swift_line" : 654
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 667
+      "swift_line" : 724
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 672
+      "swift_line" : 729
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 711
+      "swift_line" : 797
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 716
+      "swift_line" : 802
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 755
+      "swift_line" : 870
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 760
+      "swift_line" : 875
     }
   ],
   "tools_used" : [
@@ -310,7 +310,14 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "skill-creator",
+      "skill_version_hash" : "aa01f70d77066d96acb09b183a2884886b41cb312407cc07fe0a383267d415a1",
       "source_name" : "skill-creator a input",
+      "step_paths" : [
+        "\/SkillCreatorInput\/phases-steps-2\/procedure\/6f9a0cc10c26267d08ed2ebacf70a1b5494b22663db5f29ab672545dab3cd121",
+        "\/SkillCreatorInput\/phases-steps-2\/procedure\/e39e8c3ca1484b153f332c59459bc2a751ee0b93679d098b18e9c3f614917218",
+        "\/SkillCreatorInput\/phases-steps-2\/procedure\/f9757fd87b7ade8b8af9aa58e1f887f9788a08c0d127243f62db785d3813cf36"
+      ],
       "swift_struct" : "SkillCreatorInput"
     },
     {
@@ -318,7 +325,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "skill-creator",
+      "skill_version_hash" : "aa01f70d77066d96acb09b183a2884886b41cb312407cc07fe0a383267d415a1",
       "source_name" : "when createSkill fires",
+      "step_paths" : [
+        "\/WhenCreateskillFires\/root\/procedure\/61db1e2cdbdbafffc37015f7d0930b49fb88f1de46bbd547aa2e7d78fa606069",
+        "\/WhenCreateskillFires\/root\/procedure\/a6bf8c2c16a1031da22212c75041857268af75a9de033126b28ae3bfef9776cc"
+      ],
       "swift_struct" : "WhenCreateskillFires"
     },
     {
@@ -326,7 +339,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "skill-creator",
+      "skill_version_hash" : "aa01f70d77066d96acb09b183a2884886b41cb312407cc07fe0a383267d415a1",
       "source_name" : "when newSkill fires",
+      "step_paths" : [
+        "\/WhenNewskillFires\/root\/procedure\/95201127d9d4a41164593c7e79bb387d34729a0d026bd5f2a90d74f25c763adb",
+        "\/WhenNewskillFires\/root\/procedure\/ff59e08d89c10f2067ccbd3890a94db9ab28c2b03c32b4aec6cfd34531ca62bc"
+      ],
       "swift_struct" : "WhenNewskillFires"
     },
     {
@@ -334,7 +353,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "skill-creator",
+      "skill_version_hash" : "aa01f70d77066d96acb09b183a2884886b41cb312407cc07fe0a383267d415a1",
       "source_name" : "when improveThisSkill fires",
+      "step_paths" : [
+        "\/WhenImprovethisskillFires\/root\/procedure\/80d1585c3cac04aad59776929e93c78738c2a7c2531caf34d5fbf567c89f6403",
+        "\/WhenImprovethisskillFires\/root\/procedure\/cb3fce9d48509ec2254e437ac6d8324240cb3ab2afb41d3c1fd4e79dbe598001"
+      ],
       "swift_struct" : "WhenImprovethisskillFires"
     }
   ]

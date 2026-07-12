@@ -22,58 +22,58 @@
       "adjective" : "pending",
       "function" : "meridianDef_AccessRequest_pending",
       "kind" : "access request",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_AccessRequest_stale",
       "kind" : "access request",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "fresh",
       "function" : "meridianDef_Credential_fresh",
       "kind" : "credential",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "overused",
       "function" : "meridianDef_Credential_overused",
       "kind" : "credential",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "classified",
       "function" : "meridianDef_Resource_classified",
       "kind" : "resource",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "authorized",
       "function" : "meridianDef_User_authorized",
       "kind" : "user",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_User_cleared",
       "kind" : "user",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "privileged",
       "function" : "meridianDef_User_privileged",
       "kind" : "user",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 36,
+      "line" : 38,
       "name" : "assignment",
       "right_cardinality" : "one",
       "right_kind" : "a role",
@@ -83,7 +83,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a policy",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "an environment",
@@ -93,7 +93,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 38,
+      "line" : 40,
       "name" : "grant",
       "right_cardinality" : "one",
       "right_kind" : "a resource",
@@ -237,21 +237,21 @@
   "meridian_verbs" : [
     {
       "base" : "authorize",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "authorized",
       "relation" : "assignment",
       "third_person" : "authorizes"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "grant",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "granted",
       "relation" : "grant",
       "third_person" : "grants"
@@ -263,60 +263,60 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 48,
-      "swift_line" : 435
+      "meridian_line" : 26,
+      "swift_line" : 458
     },
     {
       "meridian_line" : 29,
-      "swift_line" : 446
+      "swift_line" : 471
     },
     {
       "meridian_line" : 38,
-      "swift_line" : 455
+      "swift_line" : 482
     },
     {
       "meridian_line" : 39,
-      "swift_line" : 460
+      "swift_line" : 490
     },
     {
       "meridian_line" : 40,
-      "swift_line" : 462
+      "swift_line" : 492
     },
     {
-      "meridian_line" : 66,
-      "swift_line" : 465
+      "meridian_line" : 41,
+      "swift_line" : 496
     },
     {
       "meridian_line" : 43,
-      "swift_line" : 477
+      "swift_line" : 511
     },
     {
       "meridian_line" : 46,
-      "swift_line" : 493
+      "swift_line" : 530
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 532
+      "swift_line" : 598
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 537
+      "swift_line" : 603
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 577
+      "swift_line" : 672
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 582
+      "swift_line" : 677
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 622
+      "swift_line" : 746
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 627
+      "swift_line" : 751
     }
   ],
   "tools_used" : [
@@ -354,7 +354,19 @@
       "parameters" : [
 
       ],
+      "skill_name" : "classify resource",
+      "skill_version_hash" : "f1972f16456a301cabe6566c3843eafc4d2798444e14be96d4e02adab112274b",
       "source_name" : "classify resource",
+      "step_paths" : [
+        "\/ClassifyResource\/classification-routing-steps\/procedure\/b2bc0292f924bfaa28487cc5f0016a3f8aa49d3de1f037f3492a08eadce578c9",
+        "\/ClassifyResource\/classification-routing-steps\/procedure\/branch.else\/70b51ec4674f69691dbb197588a5b53f0b794bd44ac62b815eebc6da680bf2f2",
+        "\/ClassifyResource\/classification-routing-steps\/procedure\/branch.then\/537550b9a642af34ef3df913e5939230d9d90aff3994665ede6a8aee442bece6",
+        "\/ClassifyResource\/classification-routing-steps\/procedure\/iterate.body\/9efe00f620810583460737d4c7a1aef01529a7771c5471677637543585908098",
+        "\/ClassifyResource\/classification-routing-steps\/procedure\/iterate.body\/ba52be60943ef5ec471f2334f32a53e704df2f4fa66156250afc80ba7e64610a",
+        "\/ClassifyResource\/completion\/procedure\/7f3ab3607c8d33dbacbc002970b5f9f778a089129cb7bc8619bc6c9e25a3c01c",
+        "\/ClassifyResource\/workflow\/procedure\/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1",
+        "\/ClassifyResource\/workflow\/procedure\/bd0e2ee52b8e17b4ba11b38b2605b907055de74789ad06d96acd04d9033c5335"
+      ],
       "swift_struct" : "ClassifyResource"
     },
     {
@@ -362,7 +374,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "classify resource",
+      "skill_version_hash" : "f1972f16456a301cabe6566c3843eafc4d2798444e14be96d4e02adab112274b",
       "source_name" : "when classifyResources fires",
+      "step_paths" : [
+        "\/WhenClassifyresourcesFires\/root\/procedure\/30e100296879f39d99b6c501873efd94d4b0d85b9bb56abb0873110169db3845",
+        "\/WhenClassifyresourcesFires\/root\/procedure\/5953e0ed21931444200a93bb09fff52abe1ba6ec7ef1908ecdaae30c2b866517"
+      ],
       "swift_struct" : "WhenClassifyresourcesFires"
     },
     {
@@ -370,7 +388,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "classify resource",
+      "skill_version_hash" : "f1972f16456a301cabe6566c3843eafc4d2798444e14be96d4e02adab112274b",
       "source_name" : "when classifyUnclassifiedResources fires",
+      "step_paths" : [
+        "\/WhenClassifyunclassifiedresourcesFires\/root\/procedure\/aa0c89bf3ebb86f869e95c01ff0f83833e39e4815d0606532cdfcd6505ebf99a",
+        "\/WhenClassifyunclassifiedresourcesFires\/root\/procedure\/c8a200ba62e851ae1ae0ffa7da537630f32e7df15839d46822f49c3ede016df1"
+      ],
       "swift_struct" : "WhenClassifyunclassifiedresourcesFires"
     },
     {
@@ -378,7 +402,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "classify resource",
+      "skill_version_hash" : "f1972f16456a301cabe6566c3843eafc4d2798444e14be96d4e02adab112274b",
       "source_name" : "when runClassificationSweep fires",
+      "step_paths" : [
+        "\/WhenRunclassificationsweepFires\/root\/procedure\/7c95fdc5b279c8e390f816892d3b4928aef1fd34d7af8f9fa0b8931bf671b0ca",
+        "\/WhenRunclassificationsweepFires\/root\/procedure\/e6b7a89684b7b80778b74873dbcb11b60aff4361da5d51d64a5dd49e823271f3"
+      ],
       "swift_struct" : "WhenRunclassificationsweepFires"
     }
   ]

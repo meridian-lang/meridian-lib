@@ -1082,10 +1082,18 @@ struct ASTToIRDeepCoverageTests {
         === vocabulary ===
         A page is a kind of thing.
         """, engine: engine)
-        #expect(throws: (any Error).self) {
-            try lowering.lowerExpr(.malformed("mixed and/or"))
+        var thrown: [Diagnostic] = []
+        do {
+            _ = try lowering.lowerExpr(.malformed("mixed and/or"))
+        } catch let CompilerError.diagnostics(diags) {
+            thrown = diags
+        } catch {
+            Issue.record("expected CompilerError.diagnostics, got \(error)")
         }
-        #expect(engine.errors.contains { $0.code == .malformedCondition })
+        #expect(thrown.contains { $0.code == .malformedCondition || $0.message.contains("mixed and/or") })
+        // Direct lowerExpr throws without pre-reporting into the engine; batch
+        // recovery (`DiagnosticEngine.recovering`) is what collects into engine.errors.
+        #expect(engine.errors.isEmpty)
     }
 
     @Test("lowerExpr lowers a bare invoke expression to IR invocation")

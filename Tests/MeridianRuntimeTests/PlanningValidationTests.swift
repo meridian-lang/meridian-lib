@@ -25,7 +25,7 @@ struct PlanningValidationTests {
             .closure { _ in .string("should not run") },
             schema: ToolSchema(id: "demo.tool", arguments: [ToolArgSpec(name: "input", type: "String")])
         )
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setToolRegistry(registry)
             .setPlanner(MockPlanner(actions: [ProposedAction(toolID: "demo.tool")]))
             .build()
@@ -45,7 +45,7 @@ struct PlanningValidationTests {
             .closure { _ in .string("should not run") },
             schema: ToolSchema(id: "demo.tool", arguments: [ToolArgSpec(name: "input", type: "String")])
         )
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setToolRegistry(registry)
             .setPlanner(MockPlanner(actions: [
                 ProposedAction(toolID: "demo.tool", arguments: ["input": .string("ok"), "extra": .string("no")])
@@ -67,7 +67,7 @@ struct PlanningValidationTests {
             .closure { _ in .string("should not run") },
             schema: ToolSchema(id: "demo.tool", arguments: [ToolArgSpec(name: "input", type: "String")])
         )
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setToolRegistry(registry)
             .setPlanner(MockPlanner(actions: [
                 ProposedAction(toolID: "demo.tool", arguments: ["input": .number(1)])
@@ -89,7 +89,7 @@ struct PlanningValidationTests {
             .closure { args in args["input"] ?? .null },
             schema: ToolSchema(id: "demo.tool", arguments: [ToolArgSpec(name: "input", type: "String")])
         )
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setToolRegistry(registry)
             .setPlanner(MockPlanner(actions: [
                 ProposedAction(toolID: "demo.tool", arguments: ["input": .string("ok")], resultBinding: "value")

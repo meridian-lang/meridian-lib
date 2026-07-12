@@ -19,88 +19,88 @@
       "adjective" : "orphaned",
       "function" : "meridianDef_AuditRow_orphaned",
       "kind" : "audit row",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "finalized",
       "function" : "meridianDef_Batch_finalized",
       "kind" : "batch",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "ready",
       "function" : "meridianDef_Batch_ready",
       "kind" : "batch",
-      "line" : 26
+      "line" : 28
     },
     {
       "adjective" : "settled",
       "function" : "meridianDef_Batch_settled",
       "kind" : "batch",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "violated",
       "function" : "meridianDef_Constraint_violated",
       "kind" : "constraint",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "bloated",
       "function" : "meridianDef_DatabaseTable_bloated",
       "kind" : "database table",
-      "line" : 37
+      "line" : 39
     },
     {
       "adjective" : "lagging",
       "function" : "meridianDef_IndexJob_lagging",
       "kind" : "index job",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Ledger_open",
       "kind" : "ledger",
-      "line" : 25
+      "line" : 27
     },
     {
       "adjective" : "applied",
       "function" : "meridianDef_Migration_applied",
       "kind" : "migration",
-      "line" : 35
+      "line" : 37
     },
     {
       "adjective" : "failed",
       "function" : "meridianDef_Migration_failed",
       "kind" : "migration",
-      "line" : 36
+      "line" : 38
     },
     {
       "adjective" : "drifted",
       "function" : "meridianDef_Record_drifted",
       "kind" : "record",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "duplicate",
       "function" : "meridianDef_Record_duplicate",
       "kind" : "record",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Record_stale",
       "kind" : "record",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a migration",
-      "line" : 47,
+      "line" : 49,
       "name" : "application",
       "right_cardinality" : "one",
       "right_kind" : "a database table",
@@ -110,7 +110,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a ledger",
-      "line" : 45,
+      "line" : 47,
       "name" : "auditing",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -120,7 +120,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a record",
-      "line" : 43,
+      "line" : 45,
       "name" : "canonicalization",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -130,7 +130,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a batch",
-      "line" : 41,
+      "line" : 43,
       "name" : "retrying",
       "right_cardinality" : "one",
       "right_kind" : "a ledger",
@@ -140,7 +140,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a batch",
-      "line" : 39,
+      "line" : 41,
       "name" : "settlement",
       "right_cardinality" : "one",
       "right_kind" : "a ledger",
@@ -164,16 +164,10 @@
         "text" : "Transaction body"
       },
       {
-        "kind" : "inert",
+        "kind" : "reference",
         "level" : 2,
         "line" : 22,
         "text" : "DBA notes"
-      },
-      {
-        "kind" : "reference",
-        "level" : 3,
-        "line" : 24,
-        "text" : "DBA notes — steps"
       },
       {
         "kind" : "topic",
@@ -229,15 +223,6 @@
         "heading" : "DBA notes",
         "line" : 22,
         "lines" : [
-
-        ],
-        "role" : "inert"
-      },
-      {
-        "executes" : false,
-        "heading" : "DBA notes — steps",
-        "line" : 24,
-        "lines" : [
           "The source system owns physical cascade delete; Meridian records the deterministic",
           "audit close and refuses to invent a hidden datastore"
         ],
@@ -249,35 +234,35 @@
   "meridian_verbs" : [
     {
       "base" : "apply",
-      "line" : 54,
+      "line" : 56,
       "past_participle" : "applied",
       "relation" : "application",
       "third_person" : "applies"
     },
     {
       "base" : "audit",
-      "line" : 53,
+      "line" : 55,
       "past_participle" : "audited",
       "relation" : "auditing",
       "third_person" : "audits"
     },
     {
       "base" : "canonicalize",
-      "line" : 52,
+      "line" : 54,
       "past_participle" : "canonicalized",
       "relation" : "canonicalization",
       "third_person" : "canonicalizes"
     },
     {
       "base" : "retry",
-      "line" : 51,
+      "line" : 53,
       "past_participle" : "retried",
       "relation" : "retrying",
       "third_person" : "retries"
     },
     {
       "base" : "settle",
-      "line" : 50,
+      "line" : 52,
       "past_participle" : "settled",
       "relation" : "settlement",
       "third_person" : "settles"
@@ -290,39 +275,39 @@
   "source_map" : [
     {
       "meridian_line" : 16,
-      "swift_line" : 433
+      "swift_line" : 456
     },
     {
-      "meridian_line" : 72,
-      "swift_line" : 445
+      "meridian_line" : 17,
+      "swift_line" : 470
     },
     {
       "meridian_line" : 18,
-      "swift_line" : 457
+      "swift_line" : 484
     },
     {
       "meridian_line" : 19,
-      "swift_line" : 462
+      "swift_line" : 489
     },
     {
       "meridian_line" : 20,
-      "swift_line" : 467
+      "swift_line" : 494
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 506
+      "swift_line" : 562
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 511
+      "swift_line" : 567
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 551
+      "swift_line" : 636
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 556
+      "swift_line" : 641
     }
   ],
   "tools_used" : [
@@ -334,7 +319,16 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cascade close",
+      "skill_version_hash" : "c9568d2e83278cc8cc4fbd0312f4b1ac886877c73676b133ac54a91bc8c97d67",
       "source_name" : "cascade close",
+      "step_paths" : [
+        "\/CascadeClose\/transaction-body\/procedure\/46446aa2fccadd087d9d58d123062cde195b38a84bc459302f62a4b7e67ce480",
+        "\/CascadeClose\/transaction-body\/procedure\/5d6e0e462ba2cf726c0afce208a95cdff1ddf88013f184a053b82c7665ada75e",
+        "\/CascadeClose\/transaction-body\/procedure\/a4f9e4029cebe0ad3c948026d76f6b0aa104386d899db4b7a10022043747a05c",
+        "\/CascadeClose\/transaction-body\/procedure\/baa143e9b9beb2018f7f8b44003a07c6a50aa6df2403a206725de5f1963db949",
+        "\/CascadeClose\/transaction-body\/procedure\/ec2289974229065919e891c39d1f0ce0f89fe732af798834d2ee8307b4c42e59"
+      ],
       "swift_struct" : "CascadeClose"
     },
     {
@@ -342,7 +336,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cascade close",
+      "skill_version_hash" : "c9568d2e83278cc8cc4fbd0312f4b1ac886877c73676b133ac54a91bc8c97d67",
       "source_name" : "when cascadeClose fires",
+      "step_paths" : [
+        "\/WhenCascadecloseFires\/root\/procedure\/1f2e77993f006825a6bbe6988042c354bd2eb4053bf6c4b90adfa927e1ef5111",
+        "\/WhenCascadecloseFires\/root\/procedure\/cf519df1445dfc0eabfee79ff037b6de7566eb66a59bb1bcc2530ad582bd75d0"
+      ],
       "swift_struct" : "WhenCascadecloseFires"
     },
     {
@@ -350,7 +350,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cascade close",
+      "skill_version_hash" : "c9568d2e83278cc8cc4fbd0312f4b1ac886877c73676b133ac54a91bc8c97d67",
       "source_name" : "when orphanedAuditRows fires",
+      "step_paths" : [
+        "\/WhenOrphanedauditrowsFires\/root\/procedure\/02045fc5cd3c9258042b7d69b9c7ac0f1f9528ddb9fe2f129b7a7d5c1e3ea8a3",
+        "\/WhenOrphanedauditrowsFires\/root\/procedure\/d216b981bcb42789599c935f0ecfa99acc6584f6e89319df340c991576dfbe3f"
+      ],
       "swift_struct" : "WhenOrphanedauditrowsFires"
     }
   ]

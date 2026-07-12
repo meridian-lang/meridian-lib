@@ -22,58 +22,70 @@
       "adjective" : "actionable",
       "function" : "meridianDef_Alert_actionable",
       "kind" : "alert",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "critical",
       "function" : "meridianDef_Alert_critical",
       "kind" : "alert",
-      "line" : 23
+      "line" : 25
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Alert_stale",
       "kind" : "alert",
-      "line" : 24
+      "line" : 26
     },
     {
       "adjective" : "unhealthy",
       "function" : "meridianDef_Deploy_unhealthy",
       "kind" : "deploy",
-      "line" : 26
+      "line" : 28
     },
     {
       "adjective" : "high severity",
       "function" : "meridianDef_Incident_highSeverity",
       "kind" : "incident",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Incident_open",
       "kind" : "incident",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "degraded",
       "function" : "meridianDef_Service_degraded",
       "kind" : "service",
-      "line" : 25
+      "line" : 27
+    },
+    {
+      "adjective" : "healthy",
+      "function" : "meridianDef_Service_healthy",
+      "kind" : "service",
+      "line" : 33
+    },
+    {
+      "adjective" : "recovered",
+      "function" : "meridianDef_Service_recovered",
+      "kind" : "service",
+      "line" : 34
     },
     {
       "adjective" : "breached",
       "function" : "meridianDef_Slo_breached",
       "kind" : "slo",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a runbook",
-      "line" : 36,
+      "line" : 40,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "a service",
@@ -83,7 +95,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a service",
-      "line" : 32,
+      "line" : 36,
       "name" : "firing",
       "right_cardinality" : "one",
       "right_kind" : "an alert",
@@ -93,7 +105,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an oncall engineer",
-      "line" : 34,
+      "line" : 38,
       "name" : "ownership",
       "right_cardinality" : "one",
       "right_kind" : "a service",
@@ -204,21 +216,21 @@
   "meridian_verbs" : [
     {
       "base" : "cover",
-      "line" : 41,
+      "line" : 45,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "own",
-      "line" : 40,
+      "line" : 44,
       "past_participle" : "owned",
       "relation" : "ownership",
       "third_person" : "owns"
     },
     {
       "base" : "page",
-      "line" : 39,
+      "line" : 43,
       "past_participle" : "paged",
       "relation" : "ownership",
       "third_person" : "pages"
@@ -230,52 +242,52 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 47,
-      "swift_line" : 393
+      "meridian_line" : 27,
+      "swift_line" : 421
     },
     {
       "meridian_line" : 30,
-      "swift_line" : 404
+      "swift_line" : 434
     },
     {
       "meridian_line" : 36,
-      "swift_line" : 413
+      "swift_line" : 445
     },
     {
       "meridian_line" : 37,
-      "swift_line" : 418
+      "swift_line" : 453
     },
     {
-      "meridian_line" : 80,
-      "swift_line" : 422
+      "meridian_line" : 37,
+      "swift_line" : 457
     },
     {
       "meridian_line" : 38,
-      "swift_line" : 440
+      "swift_line" : 478
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 479
+      "swift_line" : 546
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 484
+      "swift_line" : 551
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 524
+      "swift_line" : 620
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 529
+      "swift_line" : 625
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 569
+      "swift_line" : 694
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 574
+      "swift_line" : 699
     }
   ],
   "tools_used" : [
@@ -311,7 +323,17 @@
       "parameters" : [
 
       ],
+      "skill_name" : "mitigate incident",
+      "skill_version_hash" : "aeaafeb508c6a2634e20ecc4f2ac63cc9f22e61556a7c649454c778d2dc82fdb",
       "source_name" : "mitigate incident",
+      "step_paths" : [
+        "\/MitigateIncident\/workflow\/procedure\/15ab40d7bdc259bf6347830f0161203ac409fcc13467180b69527a42ea05bc49",
+        "\/MitigateIncident\/workflow\/procedure\/9ca609c0718748190808e9cb1261e8f81e3469b2e5f57c339468036593cb538d",
+        "\/MitigateIncident\/workflow\/procedure\/bed1202ba0802616a689165ac6e4df7aefbec2f3065177ddc4e2bc984f18d7a2",
+        "\/MitigateIncident\/workflow\/procedure\/d33e9b58d47292b3f0945c55a253bd524fb540475dc70580806fc833f1d4a5dc",
+        "\/MitigateIncident\/workflow\/procedure\/iterate.body\/a62b4b2cf74e36b4fe50cc83ad4e9f32ad48257f6357fdcab055e10126433a19",
+        "\/MitigateIncident\/workflow\/procedure\/simultaneously.branch\/258edf46671c52b83617542f4d16df45bbbabaeeb78f71e00aac81e26579342c"
+      ],
       "swift_struct" : "MitigateIncident"
     },
     {
@@ -319,7 +341,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "mitigate incident",
+      "skill_version_hash" : "aeaafeb508c6a2634e20ecc4f2ac63cc9f22e61556a7c649454c778d2dc82fdb",
       "source_name" : "when mitigateOpenIncidents fires",
+      "step_paths" : [
+        "\/WhenMitigateopenincidentsFires\/root\/procedure\/3f939c26d60ca29a0af50663a7ac4faf31180769ea417278a8a40039c30e98e2",
+        "\/WhenMitigateopenincidentsFires\/root\/procedure\/ebdfb410b52f93dbda42a67bdd8fcf80508ea13fa4e9fc339fef6c7dfbbc3b15"
+      ],
       "swift_struct" : "WhenMitigateopenincidentsFires"
     },
     {
@@ -327,7 +355,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "mitigate incident",
+      "skill_version_hash" : "aeaafeb508c6a2634e20ecc4f2ac63cc9f22e61556a7c649454c778d2dc82fdb",
       "source_name" : "when applyIncidentMitigation fires",
+      "step_paths" : [
+        "\/WhenApplyincidentmitigationFires\/root\/procedure\/3529c6670e2907986d3a079851cdd62dd142b73be07adb1b6fa0de4dd50874c8",
+        "\/WhenApplyincidentmitigationFires\/root\/procedure\/5b58ba359debc76a38ae894713af2ade020174b2849530a18ace9746e21cb57b"
+      ],
       "swift_struct" : "WhenApplyincidentmitigationFires"
     },
     {
@@ -335,7 +369,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "mitigate incident",
+      "skill_version_hash" : "aeaafeb508c6a2634e20ecc4f2ac63cc9f22e61556a7c649454c778d2dc82fdb",
       "source_name" : "when runIncidentMitigationPass fires",
+      "step_paths" : [
+        "\/WhenRunincidentmitigationpassFires\/root\/procedure\/4367ead00665c048048953efb9efbdbf3468694960f3997c1de9bbcace81b88b",
+        "\/WhenRunincidentmitigationpassFires\/root\/procedure\/9b6c036612468dfb59d474a3dab9bbc8802be04033d7712bbe1f2dc58d7c3a32"
+      ],
       "swift_struct" : "WhenRunincidentmitigationpassFires"
     }
   ]

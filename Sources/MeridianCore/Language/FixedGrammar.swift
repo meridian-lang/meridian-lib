@@ -13,6 +13,7 @@ public struct FixedStatementKeywords: Sendable {
     public let waitPrefix: String
     public let emitPrefix: String
     public let ifPrefix: String
+    public let unknownWhetherPrefix: String
     /// Fixed control-flow introducer for `BranchCondition.match` surfaces
     /// (`branch on <expr>:`). Kept in FixedGrammar (not the lexicon) because it
     /// is structural syntax, not domain-synonymisable vocabulary.
@@ -51,6 +52,7 @@ public struct FixedStatementKeywords: Sendable {
         waitPrefix: String = "wait ",
         emitPrefix: String = "emit ",
         ifPrefix: String = "if ",
+        unknownWhetherPrefix: String = "if it is unknown whether ",
         branchOnPrefix: String = "branch on ",
         matchBranchWildcardLabels: Set<String> = ["anything", "_"],
         matchBranchCanonicalWildcard: String = "anything",
@@ -80,6 +82,7 @@ public struct FixedStatementKeywords: Sendable {
         self.waitPrefix = waitPrefix
         self.emitPrefix = emitPrefix
         self.ifPrefix = ifPrefix
+        self.unknownWhetherPrefix = unknownWhetherPrefix
         self.branchOnPrefix = branchOnPrefix
         self.matchBranchWildcardLabels = matchBranchWildcardLabels
         self.matchBranchCanonicalWildcard = matchBranchCanonicalWildcard
@@ -238,6 +241,10 @@ public struct FixedMerConfigSkeleton: Sendable {
     public let thereIsPrefix: String
     public let calledMarker: String
     public let withMarker: String
+    /// `A <kind> is keyed by the <property>.` merconfig skeleton marker.
+    public let isKeyedByMarker: String
+    /// Return-type spellings that mean "no value" for implicit-bind decisions.
+    public let voidReturnTypeNames: Set<String>
 
     public init(
         workflowHeaderPrefix: String = "to ",
@@ -267,7 +274,9 @@ public struct FixedMerConfigSkeleton: Sendable {
         relationSuffix: String = " relation",
         thereIsPrefix: String = "there is ",
         calledMarker: String = " called ",
-        withMarker: String = " with "
+        withMarker: String = " with ",
+        isKeyedByMarker: String = " is keyed by ",
+        voidReturnTypeNames: Set<String> = ["void", "unit", "none"]
     ) {
         self.workflowHeaderPrefix = workflowHeaderPrefix
         self.verbDeclPrefix = verbDeclPrefix
@@ -297,6 +306,8 @@ public struct FixedMerConfigSkeleton: Sendable {
         self.thereIsPrefix = thereIsPrefix
         self.calledMarker = calledMarker
         self.withMarker = withMarker
+        self.isKeyedByMarker = isKeyedByMarker
+        self.voidReturnTypeNames = voidReturnTypeNames
     }
 
     public var cardinalityPrefixes: [String] { [onePrefix, manyPrefix, variousPrefix] }
@@ -703,6 +714,10 @@ public final class FixedGrammar: Sendable {
     /// Markdown-like indentation.
     public let judgmentFollowCollectPrefix: String
 
+    /// Trailing marker for the migrator's judgment-follow wrap
+    /// (`… follow the <heading> guidance:`).
+    public let judgmentFollowCollectSuffix: String
+
     /// The discretion block/header marker (`with discretion`). The workflow
     /// header form is `", " + discretionMarker`; the body form is the bare
     /// marker (optionally `:`-terminated).
@@ -713,6 +728,15 @@ public final class FixedGrammar: Sendable {
 
     /// `decide whether <question>` boolean-discretion introducer.
     public let decideWhetherIntroducer: String
+
+    /// Question-arrow case-2 lead-in (`deciding the <name>:`).
+    public let decidingTheIntroducer: String
+
+    /// Fallback result name when a question-arrow list has no `deciding the …:` lead-in.
+    public let questionArrowFallbackResultName: String
+
+    /// Judgment goal line for a non-checkable question-arrow list.
+    public let questionArrowJudgmentGoal: String
 
     /// `decide using:` code-block discretion introducer (exact match).
     public let decideUsingMarker: String
@@ -754,6 +778,41 @@ public final class FixedGrammar: Sendable {
     /// The `matching` clause marker inside a `for event … matching …` wait.
     public let waitMatchingMarker: String
 
+    public let traceAcrossAllRunsMarker: String
+    public let traceHasEverMarker: String
+    /// Ever aliases (cookbook 18.1): `has previously failed` / `has failed
+    /// before`. `traceHasEverAliasMarkers` splits subject/outcome the same way
+    /// `traceHasEverMarker` does (mid-string, both sides space-padded);
+    /// `traceEverBeforeSuffix` is a trailing marker consumed after the outcome
+    /// verb instead (`has failed before`).
+    public let traceHasEverAliasMarkers: [String]
+    public let traceEverBeforeSuffix: String
+    public let traceWithinLastMarker: String
+    public let traceInARowSuffix: String
+    public let traceSinceLastMarker: String
+    /// Anchor-first `since the last E, C` (leading marker, no preceding
+    /// space): `Since the last production deploy, no critical alert has
+    /// occurred` (SEM-5-06, north-star flagship, cookbook 18.5/gallery line 4).
+    public let traceSinceLastAnchorFirstMarker: String
+    /// `no <event pattern>` event negation (cookbook 2.7/18.5): a fixed
+    /// structural shape distinct from the `no`-quantifier and the `has no
+    /// <noun>` emptiness marker (see `EventPatternAST.negated`'s doc comment).
+    public let traceEventNegationPrefix: String
+    public let traceUnknownWhetherPrefix: String
+    public let traceStatisticalSuccessKeyword: String
+    public let traceStatisticalFailureKeyword: String
+    public let traceStatisticalAtLeastMarker: String
+    public let traceStatisticalAtMostMarker: String
+    public let traceStatisticalPercentOfMarker: String
+    public let traceStatisticalRunsWord: String
+    public let traceStatisticalOccurrencesWord: String
+    public let traceStatisticalUsuallyMarker: String
+    public let traceStatisticalRarelyMarker: String
+    public let traceStatisticalCheckedEveryMarker: String
+    public let traceStatisticalBlockingSuffix: String
+    public let traceStatisticalConfidenceSuffix: String
+    public let traceStatisticalMostOfTimePhrase: String
+
     // MARK: - 3E statement idiom rewrites
     //
     // Surface idioms that desugar to a core control-flow shape. The trigger
@@ -776,6 +835,14 @@ public final class FixedGrammar: Sendable {
     /// it is also the rewrite target of `except when`.
     public let suffixConditionalMarkers: [String]
     public let suffixConditionalNegated: String
+
+    /// `proceed, and note "<text>" in the <binding>` compound note idiom
+    /// (INFORM7 §2.9 / cookbook 14). Desugars to a `rebind` that appends the
+    /// quoted note text to an already-declared `text` binding — no new IR
+    /// primitive. `compoundNoteIntroducer` opens the sentence and
+    /// `compoundNoteInMarker` separates the note text from the target binding.
+    public let compoundNoteIntroducer: String
+    public let compoundNoteInMarker: String
 
     // MARK: - Relational / condition-layer markers (Wave 3)
     //
@@ -872,9 +939,13 @@ public final class FixedGrammar: Sendable {
         emittedInvariantPrefixes: [String] = ["every emitted ", "each emitted "],
         judgmentIntroducers: [String] = ["use judgment to ", "use judgement to ", "use your judgment to "],
         judgmentFollowCollectPrefix: String = "use judgment to follow the ",
+        judgmentFollowCollectSuffix: String = " guidance:",
         discretionMarker: String = "with discretion",
         autonomyMarker: String = "with autonomy",
         decideWhetherIntroducer: String = "decide whether ",
+        decidingTheIntroducer: String = "deciding the ",
+        questionArrowFallbackResultName: String = "category",
+        questionArrowJudgmentGoal: String = "use judgment to weigh each question below:",
         decideUsingMarker: String = "decide using:",
         youDecideIntroducer: String = "you decide that ",
         unlessYouDecideIntroducer: String = "unless you decide that ",
@@ -892,12 +963,37 @@ public final class FixedGrammar: Sendable {
         waitApprovalFromMarker: String = " from ",
         waitEventIntroducer: String = "for event ",
         waitMatchingMarker: String = " matching ",
+        traceAcrossAllRunsMarker: String = "across all runs, ",
+        traceHasEverMarker: String = " has ever ",
+        traceHasEverAliasMarkers: [String] = [" has previously "],
+        traceEverBeforeSuffix: String = " before",
+        traceWithinLastMarker: String = " within the last ",
+        traceInARowSuffix: String = " times in a row",
+        traceSinceLastMarker: String = " since the last ",
+        traceSinceLastAnchorFirstMarker: String = "since the last ",
+        traceEventNegationPrefix: String = "no ",
+        traceUnknownWhetherPrefix: String = "it is unknown whether ",
+        traceStatisticalSuccessKeyword: String = "succeeds",
+        traceStatisticalFailureKeyword: String = "fails",
+        traceStatisticalAtLeastMarker: String = " in at least ",
+        traceStatisticalAtMostMarker: String = " in at most ",
+        traceStatisticalPercentOfMarker: String = "% of ",
+        traceStatisticalRunsWord: String = "runs",
+        traceStatisticalOccurrencesWord: String = "occurrences",
+        traceStatisticalUsuallyMarker: String = " usually ",
+        traceStatisticalRarelyMarker: String = " rarely ",
+        traceStatisticalCheckedEveryMarker: String = ", checked every ",
+        traceStatisticalBlockingSuffix: String = ", blocking",
+        traceStatisticalConfidenceSuffix: String = " confidence",
+        traceStatisticalMostOfTimePhrase: String = "most of the time",
         afterIdiomIntroducer: String = "after ",
         exceptWhenMarker: String = " except when ",
         tryIdiomIntroducer: String = "try ",
         tryIdiomFailureSeparator: String = "; if it fails ",
         suffixConditionalMarkers: [String] = [" only when ", " unless "],
         suffixConditionalNegated: String = " unless ",
+        compoundNoteIntroducer: String = "proceed, and note ",
+        compoundNoteInMarker: String = " in ",
         emptyPredicateSuffix: String = " is empty",
         notEmptyPredicateSuffix: String = " is not empty",
         relativeClauseMarkers: [String] = [" that "],
@@ -961,9 +1057,13 @@ public final class FixedGrammar: Sendable {
         self.emittedInvariantPrefixes = emittedInvariantPrefixes
         self.judgmentIntroducers = judgmentIntroducers
         self.judgmentFollowCollectPrefix = judgmentFollowCollectPrefix
+        self.judgmentFollowCollectSuffix = judgmentFollowCollectSuffix
         self.discretionMarker = discretionMarker
         self.autonomyMarker = autonomyMarker
         self.decideWhetherIntroducer = decideWhetherIntroducer
+        self.decidingTheIntroducer = decidingTheIntroducer
+        self.questionArrowFallbackResultName = questionArrowFallbackResultName
+        self.questionArrowJudgmentGoal = questionArrowJudgmentGoal
         self.decideUsingMarker = decideUsingMarker
         self.youDecideIntroducer = youDecideIntroducer
         self.unlessYouDecideIntroducer = unlessYouDecideIntroducer
@@ -976,12 +1076,37 @@ public final class FixedGrammar: Sendable {
         self.waitApprovalFromMarker = waitApprovalFromMarker
         self.waitEventIntroducer = waitEventIntroducer
         self.waitMatchingMarker = waitMatchingMarker
+        self.traceAcrossAllRunsMarker = traceAcrossAllRunsMarker
+        self.traceHasEverMarker = traceHasEverMarker
+        self.traceHasEverAliasMarkers = traceHasEverAliasMarkers
+        self.traceEverBeforeSuffix = traceEverBeforeSuffix
+        self.traceWithinLastMarker = traceWithinLastMarker
+        self.traceInARowSuffix = traceInARowSuffix
+        self.traceSinceLastAnchorFirstMarker = traceSinceLastAnchorFirstMarker
+        self.traceEventNegationPrefix = traceEventNegationPrefix
+        self.traceSinceLastMarker = traceSinceLastMarker
+        self.traceUnknownWhetherPrefix = traceUnknownWhetherPrefix
+        self.traceStatisticalSuccessKeyword = traceStatisticalSuccessKeyword
+        self.traceStatisticalFailureKeyword = traceStatisticalFailureKeyword
+        self.traceStatisticalAtLeastMarker = traceStatisticalAtLeastMarker
+        self.traceStatisticalAtMostMarker = traceStatisticalAtMostMarker
+        self.traceStatisticalPercentOfMarker = traceStatisticalPercentOfMarker
+        self.traceStatisticalRunsWord = traceStatisticalRunsWord
+        self.traceStatisticalOccurrencesWord = traceStatisticalOccurrencesWord
+        self.traceStatisticalUsuallyMarker = traceStatisticalUsuallyMarker
+        self.traceStatisticalRarelyMarker = traceStatisticalRarelyMarker
+        self.traceStatisticalCheckedEveryMarker = traceStatisticalCheckedEveryMarker
+        self.traceStatisticalBlockingSuffix = traceStatisticalBlockingSuffix
+        self.traceStatisticalConfidenceSuffix = traceStatisticalConfidenceSuffix
+        self.traceStatisticalMostOfTimePhrase = traceStatisticalMostOfTimePhrase
         self.afterIdiomIntroducer = afterIdiomIntroducer
         self.exceptWhenMarker = exceptWhenMarker
         self.tryIdiomIntroducer = tryIdiomIntroducer
         self.tryIdiomFailureSeparator = tryIdiomFailureSeparator
         self.suffixConditionalMarkers = suffixConditionalMarkers
         self.suffixConditionalNegated = suffixConditionalNegated
+        self.compoundNoteIntroducer = compoundNoteIntroducer
+        self.compoundNoteInMarker = compoundNoteInMarker
         self.emptyPredicateSuffix = emptyPredicateSuffix
         self.notEmptyPredicateSuffix = notEmptyPredicateSuffix
         self.relativeClauseMarkers = relativeClauseMarkers
@@ -990,6 +1115,16 @@ public final class FixedGrammar: Sendable {
         self.pastParticipleSuffixes = pastParticipleSuffixes
         self.conditionCueWords = conditionCueWords
         self.comparisonOpSpellings = comparisonOpSpellings
+    }
+
+    /// Migrator judgment wrap for a section heading (`use judgment to follow the <heading> guidance:`).
+    public func judgmentFollowCollectLine(heading: String) -> String {
+        judgmentFollowCollectPrefix + heading + judgmentFollowCollectSuffix
+    }
+
+    /// Affirmative suffix-conditional marker (` only when `), excluding the negated form.
+    public var affirmativeSuffixConditionalMarker: String {
+        suffixConditionalMarkers.first { $0 != suffixConditionalNegated } ?? " only when "
     }
 
     public static let `default` = FixedGrammar()

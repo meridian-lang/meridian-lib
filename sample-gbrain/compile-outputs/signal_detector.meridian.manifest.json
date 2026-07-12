@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -425,27 +425,27 @@
   "source_map" : [
     {
       "meridian_line" : 60,
-      "swift_line" : 605
+      "swift_line" : 628
     },
     {
       "meridian_line" : 95,
-      "swift_line" : 609
+      "swift_line" : 632
     },
     {
       "meridian_line" : 96,
-      "swift_line" : 615
+      "swift_line" : 641
     },
     {
       "meridian_line" : 100,
-      "swift_line" : 631
+      "swift_line" : 660
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 671
+      "swift_line" : 730
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 676
+      "swift_line" : 735
     }
   ],
   "tools_used" : [
@@ -465,7 +465,15 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "signal-detector",
+      "skill_version_hash" : "1c697c7257e2ef6d93513844798549a2a82138bec16b1babf4b328011be8f399",
       "source_name" : "signal-detector a input",
+      "step_paths" : [
+        "\/SignalDetectorInput\/contract-steps-2\/invariants\/26009cb681507f0580e611d4ad287b6f2a5dd9584751be6317fe72e48fdce999",
+        "\/SignalDetectorInput\/phase-2-entity-detection-secondary-steps-2\/procedure\/2927959b03fb6d1e861b8fb9f86d559bd565de707b2ea6023c66a51c5501d3f5",
+        "\/SignalDetectorInput\/phase-2-entity-detection-secondary-steps\/procedure\/c9daf8d4ced40b8ec2f6a2781a9b3801006c04cb65c44a11f5e143fda0a669e2",
+        "\/SignalDetectorInput\/phase-2-entity-detection-secondary-steps\/procedure\/iterate.body\/73a4ca26799d21f8bc1cefb0729294a6e35087870fa24f411e0939516223dc2d"
+      ],
       "swift_struct" : "SignalDetectorInput"
     },
     {
@@ -473,7 +481,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "signal-detector",
+      "skill_version_hash" : "1c697c7257e2ef6d93513844798549a2a82138bec16b1babf4b328011be8f399",
       "source_name" : "when everyInboundMessageAlways fires",
+      "step_paths" : [
+        "\/WhenEveryinboundmessagealwaysFires\/root\/procedure\/b41c1a149acde013b7b86d5edd88c78fc6a62383e43a741e0db0f5699c7cdc9f",
+        "\/WhenEveryinboundmessagealwaysFires\/root\/procedure\/d5fcf05dec6c41df35243b277fdd32c7aa01ce86ce0824d5fb552f95ad8304ab"
+      ],
       "swift_struct" : "WhenEveryinboundmessagealwaysFires"
     }
   ]

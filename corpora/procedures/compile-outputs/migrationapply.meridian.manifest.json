@@ -19,88 +19,88 @@
       "adjective" : "orphaned",
       "function" : "meridianDef_AuditRow_orphaned",
       "kind" : "audit row",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "finalized",
       "function" : "meridianDef_Batch_finalized",
       "kind" : "batch",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "ready",
       "function" : "meridianDef_Batch_ready",
       "kind" : "batch",
-      "line" : 26
+      "line" : 28
     },
     {
       "adjective" : "settled",
       "function" : "meridianDef_Batch_settled",
       "kind" : "batch",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "violated",
       "function" : "meridianDef_Constraint_violated",
       "kind" : "constraint",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "bloated",
       "function" : "meridianDef_DatabaseTable_bloated",
       "kind" : "database table",
-      "line" : 37
+      "line" : 39
     },
     {
       "adjective" : "lagging",
       "function" : "meridianDef_IndexJob_lagging",
       "kind" : "index job",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Ledger_open",
       "kind" : "ledger",
-      "line" : 25
+      "line" : 27
     },
     {
       "adjective" : "applied",
       "function" : "meridianDef_Migration_applied",
       "kind" : "migration",
-      "line" : 35
+      "line" : 37
     },
     {
       "adjective" : "failed",
       "function" : "meridianDef_Migration_failed",
       "kind" : "migration",
-      "line" : 36
+      "line" : 38
     },
     {
       "adjective" : "drifted",
       "function" : "meridianDef_Record_drifted",
       "kind" : "record",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "duplicate",
       "function" : "meridianDef_Record_duplicate",
       "kind" : "record",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Record_stale",
       "kind" : "record",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a migration",
-      "line" : 47,
+      "line" : 49,
       "name" : "application",
       "right_cardinality" : "one",
       "right_kind" : "a database table",
@@ -110,7 +110,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a ledger",
-      "line" : 45,
+      "line" : 47,
       "name" : "auditing",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -120,7 +120,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a record",
-      "line" : 43,
+      "line" : 45,
       "name" : "canonicalization",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -130,7 +130,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a batch",
-      "line" : 41,
+      "line" : 43,
       "name" : "retrying",
       "right_cardinality" : "one",
       "right_kind" : "a ledger",
@@ -140,7 +140,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a batch",
-      "line" : 39,
+      "line" : 41,
       "name" : "settlement",
       "right_cardinality" : "one",
       "right_kind" : "a ledger",
@@ -239,35 +239,35 @@
   "meridian_verbs" : [
     {
       "base" : "apply",
-      "line" : 54,
+      "line" : 56,
       "past_participle" : "applied",
       "relation" : "application",
       "third_person" : "applies"
     },
     {
       "base" : "audit",
-      "line" : 53,
+      "line" : 55,
       "past_participle" : "audited",
       "relation" : "auditing",
       "third_person" : "audits"
     },
     {
       "base" : "canonicalize",
-      "line" : 52,
+      "line" : 54,
       "past_participle" : "canonicalized",
       "relation" : "canonicalization",
       "third_person" : "canonicalizes"
     },
     {
       "base" : "retry",
-      "line" : 51,
+      "line" : 53,
       "past_participle" : "retried",
       "relation" : "retrying",
       "third_person" : "retries"
     },
     {
       "base" : "settle",
-      "line" : 50,
+      "line" : 52,
       "past_participle" : "settled",
       "relation" : "settlement",
       "third_person" : "settles"
@@ -280,55 +280,55 @@
   "source_map" : [
     {
       "meridian_line" : 29,
-      "swift_line" : 433
+      "swift_line" : 456
     },
     {
-      "meridian_line" : 78,
-      "swift_line" : 438
+      "meridian_line" : 19,
+      "swift_line" : 461
     },
     {
       "meridian_line" : 20,
-      "swift_line" : 449
+      "swift_line" : 474
     },
     {
       "meridian_line" : 21,
-      "swift_line" : 455
+      "swift_line" : 483
     },
     {
       "meridian_line" : 23,
-      "swift_line" : 459
+      "swift_line" : 487
     },
     {
       "meridian_line" : 22,
-      "swift_line" : 462
+      "swift_line" : 490
     },
     {
-      "meridian_line" : 102,
-      "swift_line" : 468
+      "meridian_line" : 24,
+      "swift_line" : 497
     },
     {
       "meridian_line" : 25,
-      "swift_line" : 480
+      "swift_line" : 511
     },
     {
       "meridian_line" : 26,
-      "swift_line" : 495
+      "swift_line" : 528
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 534
+      "swift_line" : 596
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 539
+      "swift_line" : 601
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 579
+      "swift_line" : 670
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 584
+      "swift_line" : 675
     }
   ],
   "tools_used" : [
@@ -340,7 +340,20 @@
       "parameters" : [
 
       ],
+      "skill_name" : "migration apply",
+      "skill_version_hash" : "684dd50ab0c293208aec2fa55cbd0cb2b61003446f88893ce620fdc46b12e3a7",
       "source_name" : "migration apply",
+      "step_paths" : [
+        "\/MigrationApply\/postconditions\/invariants\/969765dfb36cb81887c09123862bd8a00a9facbc3a93948e30c3f0bddbbb1fae",
+        "\/MigrationApply\/procedure-steps\/procedure\/06bdc2bdc9d18e1851d38a143b98a60b9371b14004a4501b55a973ef58c9416b",
+        "\/MigrationApply\/procedure-steps\/procedure\/14d1efb90ffb80dc85fe0e1db6b4c8ae57ae0da3cb86414f8d0d97fcc0d3d092",
+        "\/MigrationApply\/procedure-steps\/procedure\/a6abd6b136a70d82e01b0419e219c45371682ed75b3d91d747c99ee3cc29d612",
+        "\/MigrationApply\/procedure-steps\/procedure\/iterate.body\/03c69d8a9a6b312981f5cfe3e9e43b3c691e04bd28ecf54c31fa24dcc17e57c4",
+        "\/MigrationApply\/procedure-steps\/procedure\/iterate.body\/8bdce4486074d9f47ed03d80bc1c91948c8d7640f910639b58d93b220dc7f045",
+        "\/MigrationApply\/procedure-steps\/procedure\/recover.body\/093081924ea07368476b391816e3f035f807bd198a44ae4f5b8b9d095edd4fbd",
+        "\/MigrationApply\/procedure-steps\/procedure\/recover.handler\/62c6d0b04d72c20ed9e27776bd4754ad266cb7662c7605832bd214287dee38c6",
+        "\/MigrationApply\/procedure-steps\/procedure\/recover.handler\/e6da909bf2e224aadb4b5a8e9c3427d895f1a844c218bfce0254f690d0cf7f88"
+      ],
       "swift_struct" : "MigrationApply"
     },
     {
@@ -348,7 +361,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "migration apply",
+      "skill_version_hash" : "684dd50ab0c293208aec2fa55cbd0cb2b61003446f88893ce620fdc46b12e3a7",
       "source_name" : "when applyPendingMigrations fires",
+      "step_paths" : [
+        "\/WhenApplypendingmigrationsFires\/root\/procedure\/8ace2ebea62d02c378d2e0b0dd7359f0c31f77a2da60e04a0d187a51f4a0f81b",
+        "\/WhenApplypendingmigrationsFires\/root\/procedure\/a3eb9f25aeeee83dfee390cfd24c8e71eb6dc52df64893b6e0793cc8d840aa6c"
+      ],
       "swift_struct" : "WhenApplypendingmigrationsFires"
     },
     {
@@ -356,7 +375,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "migration apply",
+      "skill_version_hash" : "684dd50ab0c293208aec2fa55cbd0cb2b61003446f88893ce620fdc46b12e3a7",
       "source_name" : "when runSchemaMigration fires",
+      "step_paths" : [
+        "\/WhenRunschemamigrationFires\/root\/procedure\/7b01919af2729b0cba554e111fca51627a32376544e414aabf9d1463911a9d8f",
+        "\/WhenRunschemamigrationFires\/root\/procedure\/bb3adac04255081f5056cacb1b1facdb73dbca97093a9f1b538a9e515a43f25d"
+      ],
       "swift_struct" : "WhenRunschemamigrationFires"
     }
   ]

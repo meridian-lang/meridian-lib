@@ -3,7 +3,7 @@ import MeridianRuntime
 
 // MARK: - IR version
 
-public let MERIDIAN_IR_VERSION = "1.0"
+public let MERIDIAN_IR_VERSION = "1.1"
 
 // MARK: - Execution mode
 
@@ -47,6 +47,9 @@ public struct IRWorkflow: Sendable {
     public let sourceRange: SourceRange
     /// Reserved for Phase B3 — workflows that allow agent discretion.
     public let allowsDiscretion: Bool
+    public let skillName: String
+    public let skillVersionHash: String
+    public let runtimeTraceConfiguration: RuntimeTraceConfiguration?
 
     public init(
         name: String,
@@ -56,7 +59,10 @@ public struct IRWorkflow: Sendable {
         sourceFile: String = "",
         sourceRange: SourceRange = .unknown,
         explicitStructName: String? = nil,
-        allowsDiscretion: Bool = false
+        allowsDiscretion: Bool = false,
+        skillName: String? = nil,
+        skillVersionHash: String = "unknown",
+        runtimeTraceConfiguration: RuntimeTraceConfiguration? = nil
     ) {
         self.name = name
         self.explicitStructName = explicitStructName
@@ -67,6 +73,9 @@ public struct IRWorkflow: Sendable {
         self.sourceFile = sourceFile
         self.sourceRange = sourceRange
         self.allowsDiscretion = allowsDiscretion
+        self.skillName = skillName ?? name
+        self.skillVersionHash = skillVersionHash
+        self.runtimeTraceConfiguration = runtimeTraceConfiguration
     }
 
     /// Derive UpperCamelCase struct name from natural-language workflow name.
@@ -114,19 +123,22 @@ public struct InvokeIR: Sendable {
     /// above the call. Payload extension only — does not affect execution.
     public let comment: String?
     public let sourceRange: SourceRange
+    public let stableStepPath: String?
 
     public init(
         toolID: String,
         arguments: [InvokeArg] = [],
         resultBinding: String? = nil,
         comment: String? = nil,
-        sourceRange: SourceRange = .unknown
+        sourceRange: SourceRange = .unknown,
+        stableStepPath: String? = nil
     ) {
         self.toolID = toolID
         self.arguments = arguments
         self.resultBinding = resultBinding
         self.comment = comment
         self.sourceRange = sourceRange
+        self.stableStepPath = stableStepPath
     }
 }
 
@@ -147,12 +159,14 @@ public struct BindIR: Sendable {
     public let expression: IRExpression
     public let isRebind: Bool
     public let sourceRange: SourceRange
+    public let stableStepPath: String?
 
-    public init(name: String, expression: IRExpression, isRebind: Bool = false, sourceRange: SourceRange = .unknown) {
+    public init(name: String, expression: IRExpression, isRebind: Bool = false, sourceRange: SourceRange = .unknown, stableStepPath: String? = nil) {
         self.name = name
         self.expression = expression
         self.isRebind = isRebind
         self.sourceRange = sourceRange
+        self.stableStepPath = stableStepPath
     }
 }
 
@@ -161,14 +175,18 @@ public struct BindIR: Sendable {
 public struct BranchIR: Sendable {
     public let condition: BranchCondition
     public let thenBlock: IRBlock
+    public let unknownBlock: IRBlock?
     public let elseBlock: IRBlock?
     public let sourceRange: SourceRange
+    public let stableStepPath: String?
 
-    public init(condition: BranchCondition, thenBlock: IRBlock, elseBlock: IRBlock? = nil, sourceRange: SourceRange = .unknown) {
+    public init(condition: BranchCondition, thenBlock: IRBlock, unknownBlock: IRBlock? = nil, elseBlock: IRBlock? = nil, sourceRange: SourceRange = .unknown, stableStepPath: String? = nil) {
         self.condition = condition
         self.thenBlock = thenBlock
+        self.unknownBlock = unknownBlock
         self.elseBlock = elseBlock
         self.sourceRange = sourceRange
+        self.stableStepPath = stableStepPath
     }
 }
 
@@ -203,14 +221,17 @@ public struct IterateIR: Sendable {
     /// `first N` prefix. `nil` preserves today's plain-iteration behavior.
     public let source: IRIterationRefinement?
     public let sourceRange: SourceRange
+    public let stableStepPath: String?
 
     public init(mode: IterateMode, body: IRBlock,
                 source: IRIterationRefinement? = nil,
-                sourceRange: SourceRange = .unknown) {
+                sourceRange: SourceRange = .unknown,
+                stableStepPath: String? = nil) {
         self.mode = mode
         self.body = body
         self.source = source
         self.sourceRange = sourceRange
+        self.stableStepPath = stableStepPath
     }
 }
 
@@ -240,11 +261,13 @@ public struct SimultaneouslyIR: Sendable {
     /// the `in the background, <stmt>.` surface. Defaults to false (join semantics).
     public let detached: Bool
     public let sourceRange: SourceRange
+    public let stableStepPath: String?
 
-    public init(branches: [IRBlock], detached: Bool = false, sourceRange: SourceRange = .unknown) {
+    public init(branches: [IRBlock], detached: Bool = false, sourceRange: SourceRange = .unknown, stableStepPath: String? = nil) {
         self.branches = branches
         self.detached = detached
         self.sourceRange = sourceRange
+        self.stableStepPath = stableStepPath
     }
 }
 
@@ -260,13 +283,30 @@ public struct AssertIR: Sendable {
     public let condition: IRExpression
     public let message: String?
     public let otherwiseAction: IRBlock?
+    public let monitored: Bool
+    public let cadence: Duration?
+    public let blocking: Bool
     public let sourceRange: SourceRange
+    public let stableStepPath: String?
 
-    public init(condition: IRExpression, message: String? = nil, otherwiseAction: IRBlock? = nil, sourceRange: SourceRange = .unknown) {
+    public init(
+        condition: IRExpression,
+        message: String? = nil,
+        otherwiseAction: IRBlock? = nil,
+        monitored: Bool = false,
+        cadence: Duration? = nil,
+        blocking: Bool = false,
+        sourceRange: SourceRange = .unknown,
+        stableStepPath: String? = nil
+    ) {
         self.condition = condition
         self.message = message
         self.otherwiseAction = otherwiseAction
+        self.monitored = monitored
+        self.cadence = cadence
+        self.blocking = blocking
         self.sourceRange = sourceRange
+        self.stableStepPath = stableStepPath
     }
 }
 
@@ -277,12 +317,14 @@ public struct EmitIR: Sendable {
     public let payload: [EmitField]
     public let strict: Bool
     public let sourceRange: SourceRange
+    public let stableStepPath: String?
 
-    public init(eventID: String, payload: [EmitField] = [], strict: Bool = true, sourceRange: SourceRange = .unknown) {
+    public init(eventID: String, payload: [EmitField] = [], strict: Bool = true, sourceRange: SourceRange = .unknown, stableStepPath: String? = nil) {
         self.eventID = eventID
         self.payload = payload
         self.strict = strict
         self.sourceRange = sourceRange
+        self.stableStepPath = stableStepPath
     }
 }
 
@@ -302,11 +344,13 @@ public struct WaitIR: Sendable {
     public let condition: WaitConditionIR
     public let timeout: Duration?
     public let sourceRange: SourceRange
+    public let stableStepPath: String?
 
-    public init(condition: WaitConditionIR, timeout: Duration? = nil, sourceRange: SourceRange = .unknown) {
+    public init(condition: WaitConditionIR, timeout: Duration? = nil, sourceRange: SourceRange = .unknown, stableStepPath: String? = nil) {
         self.condition = condition
         self.timeout = timeout
         self.sourceRange = sourceRange
+        self.stableStepPath = stableStepPath
     }
 }
 
@@ -326,10 +370,12 @@ public enum WaitConditionIR: Sendable {
 public struct CommitIR: Sendable {
     public let label: String?
     public let sourceRange: SourceRange
+    public let stableStepPath: String?
 
-    public init(label: String? = nil, sourceRange: SourceRange = .unknown) {
+    public init(label: String? = nil, sourceRange: SourceRange = .unknown, stableStepPath: String? = nil) {
         self.label = label
         self.sourceRange = sourceRange
+        self.stableStepPath = stableStepPath
     }
 }
 
@@ -340,12 +386,14 @@ public struct RecoverIR: Sendable {
     public let handler: IRBlock
     public let attachedTo: IRBlock
     public let sourceRange: SourceRange
+    public let stableStepPath: String?
 
-    public init(pattern: ErrorPattern, handler: IRBlock, attachedTo: IRBlock, sourceRange: SourceRange = .unknown) {
+    public init(pattern: ErrorPattern, handler: IRBlock, attachedTo: IRBlock, sourceRange: SourceRange = .unknown, stableStepPath: String? = nil) {
         self.pattern = pattern
         self.handler = handler
         self.attachedTo = attachedTo
         self.sourceRange = sourceRange
+        self.stableStepPath = stableStepPath
     }
 }
 
@@ -361,10 +409,12 @@ public enum ErrorPattern: Sendable {
 public struct CompleteIR: Sendable {
     public let reason: String?
     public let sourceRange: SourceRange
+    public let stableStepPath: String?
 
-    public init(reason: String? = nil, sourceRange: SourceRange = .unknown) {
+    public init(reason: String? = nil, sourceRange: SourceRange = .unknown, stableStepPath: String? = nil) {
         self.reason = reason
         self.sourceRange = sourceRange
+        self.stableStepPath = stableStepPath
     }
 }
 
@@ -393,19 +443,32 @@ public struct AIJudgmentIR: Sendable {
     /// migrated section's inert narrative, carried verbatim so the planner
     /// sees the original documentation behind a judgment step.
     public let guidance: String?
+    public let stableStepPath: String?
+    /// SEM-4-04's "declared output kind" witness. The language has no surface
+    /// syntax yet to declare a single-value judgment output kind (the
+    /// northstar `producing a <kind> called <name>` clause is not implemented),
+    /// so this is the true structural contract of every judgment primitive
+    /// today: `executeProsePlan` always returns a `[String: Value]` of named
+    /// action bindings, i.e. a record. Kept as a real (not `nil`/placeholder)
+    /// field so a future single-value output syntax has somewhere to land.
+    public let outputKind: String
 
     public init(
         text: String,
         scopedTools: [String] = [],
         snapshotKeys: [String] = [],
         sourceRange: SourceRange = .unknown,
-        guidance: String? = nil
+        guidance: String? = nil,
+        stableStepPath: String? = nil,
+        outputKind: String = "record"
     ) {
         self.text = text
         self.scopedTools = scopedTools
         self.snapshotKeys = snapshotKeys
         self.sourceRange = sourceRange
         self.guidance = guidance
+        self.stableStepPath = stableStepPath
+        self.outputKind = outputKind
     }
 }
 
@@ -422,6 +485,10 @@ public struct AIAutonomyIR: Sendable {
     /// See `AIJudgmentIR.guidance` — same purpose, carried on the autonomy
     /// primitive too since a migrated section can lower to either mode.
     public let guidance: String?
+    public let stableStepPath: String?
+    /// See `AIJudgmentIR.outputKind` — same SEM-4-04 witness, same structural
+    /// default (`executeAutonomousLoop` also returns a `[String: Value]`).
+    public let outputKind: String
 
     public init(
         text: String,
@@ -429,7 +496,9 @@ public struct AIAutonomyIR: Sendable {
         snapshotKeys: [String] = [],
         autonomy: AutonomyConfigIR = AutonomyConfigIR(),
         sourceRange: SourceRange = .unknown,
-        guidance: String? = nil
+        guidance: String? = nil,
+        stableStepPath: String? = nil,
+        outputKind: String = "record"
     ) {
         self.text = text
         self.scopedTools = scopedTools
@@ -437,6 +506,8 @@ public struct AIAutonomyIR: Sendable {
         self.autonomy = autonomy
         self.sourceRange = sourceRange
         self.guidance = guidance
+        self.stableStepPath = stableStepPath
+        self.outputKind = outputKind
     }
 }
 
@@ -513,6 +584,135 @@ public indirect enum IRExpression: Sendable {
     /// 3C: A superlative — a description reduced to a single element by a sort
     /// key, emitted as `(…).sorted{…}.first` (a `Value?`).
     case superlative(SuperlativeIR)
+    case eventPattern(EventPatternIR)
+    case traceTemporal(TraceTemporalIR)
+    case traceStatistical(TraceStatisticalIR)
+}
+
+public struct EventPatternIR: Sendable {
+    public enum Subject: Sendable {
+        case step(String)
+        case named(String)
+    }
+
+    public enum OutcomeVerb: String, Sendable {
+        case failed
+        case succeeded
+        case invoked
+        case emitted
+        case prevented
+        case violated
+        case occurred
+    }
+
+    public let subject: Subject
+    public let outcome: OutcomeVerb
+    public let payloadPredicate: IRExpression?
+    /// `no <event pattern>` event-negation reading (see `EventPatternAST.negated`).
+    public let negated: Bool
+
+    public init(subject: Subject, outcome: OutcomeVerb, payloadPredicate: IRExpression? = nil, negated: Bool = false) {
+        self.subject = subject
+        self.outcome = outcome
+        self.payloadPredicate = payloadPredicate
+        self.negated = negated
+    }
+}
+
+public enum TraceScope: Sendable {
+    case currentRun
+    case acrossAllRuns
+}
+
+public enum TraceCountComparatorIR: Sendable {
+    case atLeast(Int)
+    case atMost(Int)
+    case exactly(Int)
+}
+
+public indirect enum TraceTemporalKind: Sendable {
+    case ever(EventPatternIR)
+    case withinWindow(EventPatternIR, duration: Duration)
+    case countInWindow(EventPatternIR, comparator: TraceCountComparatorIR, duration: Duration)
+    case inARow(EventPatternIR, count: Int)
+    /// `since the last <anchor>, <holds>`. `holds` keeps the authored predicate
+    /// (an event pattern, or an adjective whose body is a `has ever` event
+    /// query) so the verbalizer can round-trip the surface form; `holdsPattern`
+    /// is the event pattern that predicate resolves to, which is what the
+    /// runtime/emitter evaluate. Lowering guarantees the two agree and rejects a
+    /// pure state predicate with MER-TMP-019 (Meridian v1 has no state history).
+    case sinceLast(anchor: EventPatternIR, holds: IRExpression, holdsPattern: EventPatternIR)
+}
+
+public struct TraceTemporalIR: Sendable {
+    public let scope: TraceScope
+    public let kind: TraceTemporalKind
+    public let subjectKeyExpr: IRExpression?
+
+    public init(scope: TraceScope = .currentRun, kind: TraceTemporalKind, subjectKeyExpr: IRExpression? = nil) {
+        self.scope = scope
+        self.kind = kind
+        self.subjectKeyExpr = subjectKeyExpr
+    }
+}
+
+public struct TraceStatisticalPatternIR: Sendable {
+    public let subject: EventPatternIR.Subject
+    public let payloadPredicate: IRExpression?
+
+    public init(subject: EventPatternIR.Subject, payloadPredicate: IRExpression? = nil) {
+        self.subject = subject
+        self.payloadPredicate = payloadPredicate
+    }
+}
+
+public enum TraceStatisticalOutcomeIR: Sendable, Equatable {
+    case succeeds
+    case fails
+}
+
+public enum TraceStatisticalBoundIR: Sendable, Equatable {
+    case atLeast(Double)
+    case atMost(Double)
+}
+
+public enum TraceStatisticalDenominatorIR: Sendable, Equatable {
+    case runs
+    case occurrences
+}
+
+public struct TraceStatisticalIR: Sendable {
+    public let scope: TraceScope
+    public let pattern: TraceStatisticalPatternIR
+    public let outcome: TraceStatisticalOutcomeIR
+    public let bound: TraceStatisticalBoundIR
+    public let denominator: TraceStatisticalDenominatorIR
+    public let window: Duration?
+    public let monitorCadence: Duration?
+    public let blocking: Bool
+    public let subjectKeyExpr: IRExpression?
+
+    public init(
+        scope: TraceScope = .currentRun,
+        pattern: TraceStatisticalPatternIR,
+        outcome: TraceStatisticalOutcomeIR,
+        bound: TraceStatisticalBoundIR,
+        denominator: TraceStatisticalDenominatorIR,
+        window: Duration? = nil,
+        monitorCadence: Duration? = nil,
+        blocking: Bool = false,
+        subjectKeyExpr: IRExpression? = nil
+    ) {
+        self.scope = scope
+        self.pattern = pattern
+        self.outcome = outcome
+        self.bound = bound
+        self.denominator = denominator
+        self.window = window
+        self.monitorCadence = monitorCadence
+        self.blocking = blocking
+        self.subjectKeyExpr = subjectKeyExpr
+    }
 }
 
 public enum AggregateKind: Sendable, Equatable { case count, list }

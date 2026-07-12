@@ -17,7 +17,6 @@ template directly.
 
 | Code | Title | Kind | Help Required |
 |---|---|---|---|
-| `MER0003` | not implemented | other | recommended |
 | `MER0004` | internal compiler error | other | recommended |
 | `MER1001` | malformed workflow header | structural | yes |
 | `MER1002` | orphaned code block | structural | yes |
@@ -60,6 +59,23 @@ template directly.
 | `MER3016` | unlowerable rule predicate | other | recommended |
 | `MER3017` | unsupported trigger condition | other | recommended |
 | `MER3018` | match branch semantic error | other | recommended |
+| `MER-TMP-010` | bare perfect trace predicate | structural | yes |
+| `MER-TMP-011` | trace window exceeds retention | other | recommended |
+| `MER-TMP-012` | causal since form | structural | yes |
+| `MER-TMP-013` | future trace predicate | structural | yes |
+| `MER-TMP-014` | unknown trace step | nameResolution | guided |
+| `MER-TMP-015` | unknown trace payload field | nameResolution | guided |
+| `MER-TMP-016` | unkeyed temporal definition | other | recommended |
+| `MER-TMP-017` | ambiguous recently | structural | yes |
+| `MER-TMP-018` | progressive trace predicate | structural | yes |
+| `MER-TMP-019` | unsupported since-the-last state predicate | structural | yes |
+| `MER-TMP-020` | missing production trace capture policy | structural | yes |
+| `MER-TMP-021` | cross-skill trace scope not supported | structural | yes |
+| `MER-STA-001` | missing unknown arm | other | recommended |
+| `MER-STA-002` | statistical confidence reserved | structural | yes |
+| `MER-STA-003` | vague statistical frequency | structural | yes |
+| `MER-REF-004` | note target binding undeclared | structural | yes |
+| `MER-TYP-001` | note target binding is not text | structural | yes |
 | `MER4001` | codegen error | other | recommended |
 | `MER4002` | invalid IR | other | recommended |
 | `MER5001` | swift-format failed | other | recommended |
@@ -70,7 +86,11 @@ template directly.
 | `MER5005` | unrecognized block property | structural | yes |
 | `MER5011` | unwritable trace file | other | recommended |
 | `MER5012` | empty lexicon marker collection | other | recommended |
+| `MER5013` | input file not found | other | recommended |
+| `MER5014` | directory read failed | other | recommended |
 | `MER6001` | polite command lint | other | recommended |
 | `MER6002` | uncertainty lint | other | recommended |
 | `MER6003` | migration fuzzy-route downgrade | other | recommended |
 | `MER6004` | diagnostic recovery summary | other | recommended |
+| `MER6005` | cross-run in-a-row lint | other | recommended |
+| `MER6006` | superlative event-anchor lint | other | recommended |

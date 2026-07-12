@@ -15,13 +15,14 @@
 - preamble-blockquoted
 
 ## Metrics
+- generated_loc: 125 non-blank ported lines
 - Sections inert total: 2/2 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=2
 - Judgment: 0 blocks, 0 lines
-- canonical_drift: synonym=34, structure=0, desugar=0, meaning=115
+- canonical_drift: synonym=51, structure=0, desugar=0, meaning=98
 
 ### Inert section details
 - L121 `Disambiguation rules`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.

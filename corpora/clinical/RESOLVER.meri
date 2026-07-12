@@ -17,6 +17,7 @@
 | run shift handoff | shifthandoff |
 | triage patient | triagepatient |
 | monitor patient vitals | vitalsmonitor |
+| check handoff reliability | handoffreliabilitymonitor |
 
 ## Workflow
 

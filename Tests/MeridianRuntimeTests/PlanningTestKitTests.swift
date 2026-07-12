@@ -9,7 +9,7 @@ struct PlanningTestKitTests {
     func builderInstallsMocks() async throws {
         let registry = ToolRegistry()
         await registry.register(tool: "demo.tool", .closure { _ in .string("ok") })
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setToolRegistry(registry)
             .setObserver(InMemoryObserver())
             .setPlanner(MockPlanner(actions: [

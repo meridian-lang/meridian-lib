@@ -24,70 +24,70 @@
       "adjective" : "granted",
       "function" : "meridianDef_Consent_granted",
       "kind" : "consent",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_MedicationOrder_cleared",
       "kind" : "medication order",
-      "line" : 29
+      "line" : 31
     },
     {
       "adjective" : "contraindicated",
       "function" : "meridianDef_MedicationOrder_contraindicated",
       "kind" : "medication order",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "high risk",
       "function" : "meridianDef_Medication_highRisk",
       "kind" : "medication",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "active",
       "function" : "meridianDef_Patient_active",
       "kind" : "patient",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "held",
       "function" : "meridianDef_Patient_held",
       "kind" : "patient",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "monitored",
       "function" : "meridianDef_Patient_monitored",
       "kind" : "patient",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "unmonitored",
       "function" : "meridianDef_Patient_unmonitored",
       "kind" : "patient",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "critical",
       "function" : "meridianDef_VitalSign_critical",
       "kind" : "vital sign",
-      "line" : 25
+      "line" : 27
     },
     {
       "adjective" : "stable",
       "function" : "meridianDef_VitalSign_stable",
       "kind" : "vital sign",
-      "line" : 26
+      "line" : 28
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a nurse",
-      "line" : 38,
+      "line" : 40,
       "name" : "administration",
       "right_cardinality" : "one",
       "right_kind" : "a medication order",
@@ -97,7 +97,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a protocol",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "a medication",
@@ -107,7 +107,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a clinician",
-      "line" : 36,
+      "line" : 38,
       "name" : "prescription",
       "right_cardinality" : "one",
       "right_kind" : "a medication order",
@@ -360,21 +360,21 @@
   "meridian_verbs" : [
     {
       "base" : "administer",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "administered",
       "relation" : "administration",
       "third_person" : "administers"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "prescribe",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "prescribed",
       "relation" : "prescription",
       "third_person" : "prescribes"
@@ -387,59 +387,59 @@
   "source_map" : [
     {
       "meridian_line" : 36,
-      "swift_line" : 424
-    },
-    {
-      "meridian_line" : 35,
-      "swift_line" : 429
-    },
-    {
-      "meridian_line" : 57,
-      "swift_line" : 434
-    },
-    {
-      "meridian_line" : 43,
-      "swift_line" : 445
-    },
-    {
-      "meridian_line" : 45,
       "swift_line" : 447
     },
     {
-      "meridian_line" : 54,
-      "swift_line" : 450
+      "meridian_line" : 35,
+      "swift_line" : 452
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 457
+    },
+    {
+      "meridian_line" : 43,
+      "swift_line" : 470
+    },
+    {
+      "meridian_line" : 45,
+      "swift_line" : 473
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 476
     },
     {
       "meridian_line" : 46,
-      "swift_line" : 463
+      "swift_line" : 492
     },
     {
       "meridian_line" : 48,
-      "swift_line" : 475
+      "swift_line" : 506
     },
     {
-      "meridian_line" : 75,
-      "swift_line" : 487
+      "meridian_line" : 49,
+      "swift_line" : 519
     },
     {
       "meridian_line" : 50,
-      "swift_line" : 499
+      "swift_line" : 533
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 538
+      "swift_line" : 601
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 543
+      "swift_line" : 606
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 583
+      "swift_line" : 675
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 588
+      "swift_line" : 680
     }
   ],
   "tools_used" : [
@@ -462,7 +462,21 @@
           "name" : "nurse"
         }
       ],
+      "skill_name" : "medication administer",
+      "skill_version_hash" : "efd95adb5361ea36b60f9fd31ba4abf4825e1dadaf7b6d10ff5d94f0c686bd5c",
       "source_name" : "medication administer a medication order a patient a nurse",
+      "step_paths" : [
+        "\/MedicationAdministerMedicationOrderPatientNurse\/rules-steps\/procedure\/4e5644abb84636bc6bf76718b590ecf3596b9ffd184c9880e931cf2968caaea3",
+        "\/MedicationAdministerMedicationOrderPatientNurse\/rules-steps\/procedure\/5390e4a450c6e2506d1980859e2826229c558ab5af215ef92366cd588031a881",
+        "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/28aeba503255c85c52d38d2a56d846f271e60093843710da0da336e8549dc083",
+        "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/4b859995613c22d948b2f7e2e7daf74c74433b4e93ae3de2a4a14525ca4d9b09",
+        "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/5d5d2411193980b7fe43f6f5f444e98709dd921fa592968bbd2bf237e96b4e14",
+        "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/7ab472005f4648bdca7a07d618deaafb31060244c0169af082ee0ccce2984bfd",
+        "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/branch.else\/8b4c269d04258fa1d2f3d38d3afb2cfeac5a9799cda3650778473e3b710f119b",
+        "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/branch.then\/19923e8858e5fcf8495e0d7819da0daa81bbd354bcd755fee1850d88a355a663",
+        "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/recover.body\/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5",
+        "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/recover.handler\/3b300e086cd7ce0dc4ab7b83e64eb56025379badba6ff8834599bcad2c2d34dd"
+      ],
       "swift_struct" : "MedicationAdministerMedicationOrderPatientNurse"
     },
     {
@@ -470,7 +484,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "medication administer",
+      "skill_version_hash" : "efd95adb5361ea36b60f9fd31ba4abf4825e1dadaf7b6d10ff5d94f0c686bd5c",
       "source_name" : "when administerMedication fires",
+      "step_paths" : [
+        "\/WhenAdministermedicationFires\/root\/procedure\/9fafa82f8751e61175bdb30371a7747485c8382212264ad9e1624a56a4fcb5f5",
+        "\/WhenAdministermedicationFires\/root\/procedure\/db73e4e7438ff675c3984043bcfc7bf5c6d71d3f37ac24a9a170032085da4163"
+      ],
       "swift_struct" : "WhenAdministermedicationFires"
     },
     {
@@ -478,7 +498,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "medication administer",
+      "skill_version_hash" : "efd95adb5361ea36b60f9fd31ba4abf4825e1dadaf7b6d10ff5d94f0c686bd5c",
       "source_name" : "when giveMedicationOrder fires",
+      "step_paths" : [
+        "\/WhenGivemedicationorderFires\/root\/procedure\/1bdb0edf07222a8f8faee1e5f9fe3a8c4731e5ffa2de427cc430d547ddf15d38",
+        "\/WhenGivemedicationorderFires\/root\/procedure\/c20a5db577f9fc064b443d9973985482fbf1f8206a300a9c2115c2be6e42975c"
+      ],
       "swift_struct" : "WhenGivemedicationorderFires"
     }
   ]

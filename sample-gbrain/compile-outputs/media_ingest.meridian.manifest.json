@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -390,107 +390,107 @@
   "source_map" : [
     {
       "meridian_line" : 137,
-      "swift_line" : 605
+      "swift_line" : 628
     },
     {
       "meridian_line" : 76,
-      "swift_line" : 610
+      "swift_line" : 633
     },
     {
       "meridian_line" : 112,
-      "swift_line" : 621
+      "swift_line" : 646
     },
     {
-      "meridian_line" : 154,
-      "swift_line" : 631
+      "meridian_line" : 113,
+      "swift_line" : 660
     },
     {
-      "meridian_line" : 133,
-      "swift_line" : 638
+      "meridian_line" : 117,
+      "swift_line" : 667
     },
     {
       "meridian_line" : 120,
-      "swift_line" : 651
+      "swift_line" : 682
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 691
+      "swift_line" : 752
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 696
+      "swift_line" : 757
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 735
+      "swift_line" : 825
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 740
+      "swift_line" : 830
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 779
+      "swift_line" : 898
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 784
+      "swift_line" : 903
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 823
+      "swift_line" : 971
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 828
+      "swift_line" : 976
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 867
+      "swift_line" : 1044
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 872
+      "swift_line" : 1049
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 911
+      "swift_line" : 1117
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 916
+      "swift_line" : 1122
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 955
+      "swift_line" : 1190
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 960
+      "swift_line" : 1195
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 999
+      "swift_line" : 1263
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1004
+      "swift_line" : 1268
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1043
+      "swift_line" : 1336
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1048
+      "swift_line" : 1341
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1087
+      "swift_line" : 1409
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1092
+      "swift_line" : 1414
     }
   ],
   "tools_used" : [
@@ -505,7 +505,17 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "media-ingest",
+      "skill_version_hash" : "dce34c43424e5139cae7a51484381b2ddc3b782b709217b05d9b67dcfb17ed8c",
       "source_name" : "media-ingest a input",
+      "step_paths" : [
+        "\/MediaIngestInput\/anti-patterns-steps\/prohibitions\/7d0be570ff1caa0c99bf1ec20405f4f149e74a528429d7870829cd6b2343e90b",
+        "\/MediaIngestInput\/phase-2-upload-raw-source\/procedure\/166cc109ba073b6a412390c4b6ba7c836b00abe70c7c3387b981f69e4eaadf23",
+        "\/MediaIngestInput\/phase-4-entity-extraction-and-propagation-steps-2\/procedure\/40270ecb1065196a7336fbfba1f9706029c69a2857f833d075ce4f651f61cb86",
+        "\/MediaIngestInput\/phase-4-entity-extraction-and-propagation-steps\/procedure\/bc00407b0c3c781417867bc5710ee759fc4391879b0994996299ae8cf9a05af4",
+        "\/MediaIngestInput\/phase-4-entity-extraction-and-propagation-steps\/procedure\/d0da2a7635725918530130023cd4ab9337bf84e68ad0d7eb20fcfd46b58a40a0",
+        "\/MediaIngestInput\/phase-5-sync\/procedure\/348fbaec8c046f667084c2ec1916bceee86d0867e8427cec1f6861b0ff7a3954"
+      ],
       "swift_struct" : "MediaIngestInput"
     },
     {
@@ -513,7 +523,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "media-ingest",
+      "skill_version_hash" : "dce34c43424e5139cae7a51484381b2ddc3b782b709217b05d9b67dcfb17ed8c",
       "source_name" : "when watchThisVideo fires",
+      "step_paths" : [
+        "\/WhenWatchthisvideoFires\/root\/procedure\/20e6334fb4deb45d52f5ececf370741a63fca60b8772e8f5582cd772f02ea7d6",
+        "\/WhenWatchthisvideoFires\/root\/procedure\/50da80bfd8bf9fba3fd79b9305acc7016f79da3855ddf45baabf46aceed266c5"
+      ],
       "swift_struct" : "WhenWatchthisvideoFires"
     },
     {
@@ -521,7 +537,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "media-ingest",
+      "skill_version_hash" : "dce34c43424e5139cae7a51484381b2ddc3b782b709217b05d9b67dcfb17ed8c",
       "source_name" : "when processThisYoutubeLink fires",
+      "step_paths" : [
+        "\/WhenProcessthisyoutubelinkFires\/root\/procedure\/4c10e6c89ae096965cdb2db751a76f564713d2617a82188a7f101322f2ec927d",
+        "\/WhenProcessthisyoutubelinkFires\/root\/procedure\/f5cf2d3d226dc2a7b9835a1700e591dee0288101ac65504206a8c8635e1fb5ff"
+      ],
       "swift_struct" : "WhenProcessthisyoutubelinkFires"
     },
     {
@@ -529,7 +551,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "media-ingest",
+      "skill_version_hash" : "dce34c43424e5139cae7a51484381b2ddc3b782b709217b05d9b67dcfb17ed8c",
       "source_name" : "when ingestThisPdf fires",
+      "step_paths" : [
+        "\/WhenIngestthispdfFires\/root\/procedure\/2ab5eff7bbaa78ef4415d027274ab5c69eb152b3106e1f08dd1f6bd72c5f2198",
+        "\/WhenIngestthispdfFires\/root\/procedure\/b66b4d0f3761e36e4ada86ef556cf7c7c6c2c1ff31e8db97652d47632ab5859c"
+      ],
       "swift_struct" : "WhenIngestthispdfFires"
     },
     {
@@ -537,7 +565,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "media-ingest",
+      "skill_version_hash" : "dce34c43424e5139cae7a51484381b2ddc3b782b709217b05d9b67dcfb17ed8c",
       "source_name" : "when saveThisPodcast fires",
+      "step_paths" : [
+        "\/WhenSavethispodcastFires\/root\/procedure\/41c3bf64d206c5bd709035e830e9facb08fc45d872690f67080d5ba6c3b75a7e",
+        "\/WhenSavethispodcastFires\/root\/procedure\/f84bb7cf23d94dd2287850a88f39db2d12d01151c34d0ca30fb681a0e281ecc1"
+      ],
       "swift_struct" : "WhenSavethispodcastFires"
     },
     {
@@ -545,7 +579,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "media-ingest",
+      "skill_version_hash" : "dce34c43424e5139cae7a51484381b2ddc3b782b709217b05d9b67dcfb17ed8c",
       "source_name" : "when processThisBook fires",
+      "step_paths" : [
+        "\/WhenProcessthisbookFires\/root\/procedure\/7311bba0f1aa0410c7d47dccbef915fde5e0b9d89ad27a05ed4ba67fed0d8820",
+        "\/WhenProcessthisbookFires\/root\/procedure\/ea123c79f542240c485b45ef23eb6422bac24309e6ec35eb68f4157f481fcab7"
+      ],
       "swift_struct" : "WhenProcessthisbookFires"
     },
     {
@@ -553,7 +593,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "media-ingest",
+      "skill_version_hash" : "dce34c43424e5139cae7a51484381b2ddc3b782b709217b05d9b67dcfb17ed8c",
       "source_name" : "when pdfBook fires",
+      "step_paths" : [
+        "\/WhenPdfbookFires\/root\/procedure\/78c50365424f4880d5e35fd90b5c93596db23426b0261d039f0cd508743e50f5",
+        "\/WhenPdfbookFires\/root\/procedure\/c40618b8beed63fef116702df5d7d1e22fec91f0ca1ea57317d8529975173181"
+      ],
       "swift_struct" : "WhenPdfbookFires"
     },
     {
@@ -561,7 +607,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "media-ingest",
+      "skill_version_hash" : "dce34c43424e5139cae7a51484381b2ddc3b782b709217b05d9b67dcfb17ed8c",
       "source_name" : "when summarizeThisBook fires",
+      "step_paths" : [
+        "\/WhenSummarizethisbookFires\/root\/procedure\/776d0203960709e3752f8be7a422adbac8a7acb57679c1387688ac2dc9432d67",
+        "\/WhenSummarizethisbookFires\/root\/procedure\/e3a51d4275ace56ccb2da41f61ae66c99e9c1a504eb6ed1b33e5263c4003ff8e"
+      ],
       "swift_struct" : "WhenSummarizethisbookFires"
     },
     {
@@ -569,7 +621,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "media-ingest",
+      "skill_version_hash" : "dce34c43424e5139cae7a51484381b2ddc3b782b709217b05d9b67dcfb17ed8c",
       "source_name" : "when ingestItMyBrain fires",
+      "step_paths" : [
+        "\/WhenIngestitmybrainFires\/root\/procedure\/56d0686c08291e704cfaedc9ce32ec56626920d0a6de0b3d978ad5d0f6a9427b",
+        "\/WhenIngestitmybrainFires\/root\/procedure\/580dd5c9cbc00ae6789e34046383e7bea1b2520f52dce357808d2e629747afb7"
+      ],
       "swift_struct" : "WhenIngestitmybrainFires"
     },
     {
@@ -577,7 +635,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "media-ingest",
+      "skill_version_hash" : "dce34c43424e5139cae7a51484381b2ddc3b782b709217b05d9b67dcfb17ed8c",
       "source_name" : "when whatSInThisScreenshot fires",
+      "step_paths" : [
+        "\/WhenWhatsinthisscreenshotFires\/root\/procedure\/7f396967d80290526e5056a37f6aaa69e6f44042df9bb1cde1328b3b890bd7d4",
+        "\/WhenWhatsinthisscreenshotFires\/root\/procedure\/c4be3bb0070b80e176a1f1629c8cd0e1aa005e5361f26f57f51188d57b430189"
+      ],
       "swift_struct" : "WhenWhatsinthisscreenshotFires"
     },
     {
@@ -585,7 +649,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "media-ingest",
+      "skill_version_hash" : "dce34c43424e5139cae7a51484381b2ddc3b782b709217b05d9b67dcfb17ed8c",
       "source_name" : "when checkOutThisRepo fires",
+      "step_paths" : [
+        "\/WhenCheckoutthisrepoFires\/root\/procedure\/1e42c470882bd783c28a3a37e60db2da7a32dd0ffe920653aac9e59af14603df",
+        "\/WhenCheckoutthisrepoFires\/root\/procedure\/e4e423ceb4ffd552ba54480afe1741f442cf181c558720e46fd5f0759b375f8f"
+      ],
       "swift_struct" : "WhenCheckoutthisrepoFires"
     }
   ]

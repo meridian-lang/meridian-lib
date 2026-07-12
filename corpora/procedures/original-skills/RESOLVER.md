@@ -18,6 +18,7 @@ Routes a DBA request to the deterministic stored-procedure skill that owns it.
 | vacuum bloated tables | vacuumtables |
 | retry failed batches | retryfailedbatch |
 | checksum audit | checksumaudit |
+| check ledger parity | ledgerparitywatch |
 
 ## Workflow
 

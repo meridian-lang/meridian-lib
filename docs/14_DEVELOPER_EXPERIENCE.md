@@ -92,9 +92,16 @@ Each piece maps to a field on the `Diagnostic` value type:
 | `help:` | `help` | The concrete remediation (mandatory on structural codes) |
 | `why:` | `decision` (via `code.decision`) | One-line rationale from the linked design decision |
 | `see:` | derived | Pointers to `meridian explain-diag <code>` / `<decision>` |
+| `phase:` | `phase` | Optional compile-phase label (`parse`, `lower`, `codegen`, `validation`, …) for tooling filters |
+| `related:` | `relatedRanges[]` | Secondary source spans (e.g. the declaration site for a duplicate-name error) |
 
 ANSI color is emitted only when stderr is an interactive terminal and `NO_COLOR`
 is unset; piping to a file or CI is automatically plain text.
+
+JSON diagnostics mirror the same remediation surface: `phase`, `related` (array
+of ranges), `help`, `suggestions`, `notes`, and `decision`. `DiagnosticRenderer.renderJSON`
+is a **throwing** API (`DiagnosticRenderer.Error.jsonSerializationFailed`) so
+CLI paths fail closed instead of emitting partial JSON.
 
 ---
 
@@ -218,9 +225,13 @@ Diagnostic.unresolved(_ code: DiagnosticCode,
 
 It runs the `Suggester` over `candidates`:
 
-- **within edit-distance budget** (`max(2, target.count / 3)`) → attaches a
+- **within edit-distance budget and unambiguous** → attaches a
   `did you mean "<closest>"?` `Suggestion` carrying `replacement` + `range` (so
   `--fix` and editors can apply it).
+- **within budget but tied** (two or more candidates at the same Levenshtein
+  distance) → **no** auto-suggestion; instead a `note` listing the tied
+  alternates (`Suggester.closestAmbiguous`). This prevents `--fix` from picking
+  an arbitrary winner when distances are equal.
 - **nothing within budget** → never a bare "unknown X"; instead a `note`
   enumerating the available set: the full list when small (≤12), else the top-8
   by closeness plus a total count.
@@ -411,25 +422,69 @@ meridian compile order.meridian --trace all --trace-file /tmp/compile.log
 
 ## 8. Unified compile + runtime debugging
 
-Compile-time source positions flow all the way into runtime telemetry, so a
-runtime failure maps back to a Meridian source line:
+Three observability layers connect Meridian source to run-time behavior:
 
+1. **Compile-time `ParserTrace`** — `--trace` on `compile`/`check`/… shows
+   parser, lowering, and codegen decisions ([§7](#7-tracing)).
+2. **Legacy runtime events** — generated code emits `Event`s; observers write
+   JSONL; `meridian trace render` shows an execution tree with source anchors.
+3. **Semantic traces (Wave 8)** — `TraceStore` retains `TraceRecord` rows;
+   temporal/statistical conditions and monitors query them via
+   `TraceEvaluator`; audit with `meridian trace eval` / `verify` / `drift`.
+
+### End-to-end recipe (correlation id → manifest → run → traces)
+
+Use this chain when debugging a single workflow from source through execution:
+
+```bash
+# 1. Compile with structured compile-time trace + manifest
+meridian compile order.meridian --trace all --trace-format jsonl \
+  --diagnostics-format json 2>compile-trace.log
+# stderr banner: trace correlation id: <uuid>  (every JSONL line has "corr":"<uuid>")
+
+# 2. Inspect manifest source map (meridian line ↔ Swift line)
+jq '.sourceMap' order.meridian.manifest.json
+
+# 3. Run and capture runtime Event JSONL
+meridian run order.meridian --events /tmp/events.jsonl
+# Events carry "run_id", optional "source": {file,line,col}, and payload "step"
+
+# 4. When === trace === is configured, semantic TraceRecord JSONL is separate
+meridian trace eval /tmp/semantic-trace.jsonl "…" --at 2026-01-01T00:00:00Z
+meridian trace render /tmp/events.jsonl   # legacy event tree (not semantic JSONL)
 ```
-Meridian source line
-  → codegen emits `// L{n}` provenance comments above each primitive
-  → Compiler.sourceMap(fromGeneratedSwift:) builds meridian-line → swift-line
-  → ManifestEmitter writes it into `meridian_skill`/source map of the manifest
-  → runtime JSONL Observer events carry the source range
-  → `meridian trace render events.jsonl` shows an indented execution tree
-```
+
+| Link | Field / artifact | Role |
+|---|---|---|
+| Compile invocation | `ParserTrace.correlationID` / JSONL `"corr"` | Groups one command's compile-time trace records |
+| Source positions | Manifest `sourceMap` + `// L{n}` in generated Swift | Maps runtime `source` back to `.meridian` lines |
+| Run identity | `Runtime.runID` → Event `"run_id"`, TraceRecord `"run"` | Scopes one execution |
+| Step continuity | TraceRecord `"step"`, Event payload `"step"` | Stable path for history / monitors |
+| Execution telemetry | `JSONLObserver` Event JSONL | `meridian trace render` |
+| Semantic history | `TraceStore` TraceRecord JSONL | `trace eval` / `verify` / temporal replay |
 
 `Compiler.sourceMap(fromGeneratedSwift:)` is the single source of truth for the
 `// L` parsing and is invoked in `compileWithManifest`, so **every** emitted
-manifest carries the map (the CLI no longer rebuilds it by hand). The runtime's
-`TraceTreeRenderer` (`meridian trace render`) and the compiler's `ParserTrace`
-share the same "what happened, in order, with source anchors" philosophy:
-`ParserTrace` answers *what happened at compile*, the JSONL event stream +
-`trace render` answer *what happened at run*.
+manifest carries the map. Do not confuse `ParserTrace` stderr/JSONL with semantic
+trace JSONL — they answer different questions. See [08_TRACING.md](08_TRACING.md)
+and [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).
+
+### Fail-closed defaults
+
+Several observability paths default to **fail closed** (surface the error, do not
+silently continue):
+
+- Unknown `--trace` categories → `MER2010` before work starts; unwritable
+  `--trace-file` → `MER5011`.
+- `DiagnosticRenderer.renderJSON` throws on serialization failure (CLI exits 1).
+- Missing CLI input paths / directory enumeration failures → `MER5013` /
+  `MER5014` (see `CLISupport.swift`).
+- Wave 8 `store failure policy: auto` resolves at **compile time** to
+  `.failClosed` (`TraceIdentityPlanner`); `TraceConfiguration.default` is also
+  `.failClosed` for hosts that skip the planner.
+- `Observer.record` is `async throws`; `JSONLObserver` propagates write failures
+  instead of dropping events. Under `.failClosed` trace policy, observer/trace-store
+  failures surface as `MeridianRuntimeError` on the next strict emit.
 
 ---
 
@@ -444,7 +499,12 @@ share the same "what happened, in order, with source anchors" philosophy:
 | `meridian decisions [query]` | List/search the design-decision catalog. |
 | `meridian decisions --id D-DX-5` | Print one decision in full. |
 | `meridian decisions --render docs/15_DECISIONS.md` | Regenerate the readable decision log from the catalog (kept in sync by a test). |
-| `meridian trace categories` | List every trace category with a description. |
+| `meridian trace categories` | List every compile-time `ParserTrace` category with a description. |
+| `meridian trace render <events.jsonl>` | Pretty-print legacy runtime **event** JSONL (execution tree). |
+| `meridian trace eval <trace.jsonl> "<expr>" --at …` | Evaluate a Wave 8 semantic trace expression offline. |
+| `meridian trace verify <trace.jsonl> --run <id>` | Verify semantic trace hash chain / checksums. |
+| `meridian trace drift …` | Audit semantic trace outcome drift. |
+| `meridian bench-trace` | Trace-evaluation performance baseline. |
 
 ### Diagnostics and trace flags
 
@@ -459,12 +519,13 @@ share the same "what happened, in order, with source anchors" philosophy:
   to the single misspelled token and only applies an *unambiguous* best match
   within the edit-distance budget, so it can never corrupt a line.
 - `--write` — with `--fix`, apply the previewed fixes in place.
-- `--trace <categories>` / `--trace-file <path>` — activate tracing per command.
-  Available on `compile`, `check`, `verify`, `run`, `migrate-skill`,
-  `preview-skill`, `explain`, `drift`, `inert-yield`, and `skill-deviation`.
-  Unknown categories are `MER2010` hard errors; unwritable trace files are
-  `MER5011` hard errors, while mid-stream file sink failures visibly fall back
-  to stderr.
+- `--trace <categories>` / `--trace-file <path>` / `--trace-format text|jsonl` —
+  activate tracing per command. Available on `compile`, `check`, `verify`, `run`,
+  `migrate-skill`, `preview-skill`, `explain`, `drift`, `inert-yield`, and
+  `skill-deviation`. When `--trace` is set, stderr prints one **correlation id**
+  line; JSONL records include matching `"corr"`. Unknown categories are `MER2010`
+  hard errors; unwritable trace files are `MER5011` hard errors, while
+  mid-stream file sink failures visibly fall back to stderr.
 
 JSON shape (one element per diagnostic):
 

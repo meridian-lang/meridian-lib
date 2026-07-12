@@ -99,10 +99,11 @@ struct VerbalizerEndToEndTests {
                 Comment(rawValue: VerbalizerTestSupport.snippet(escalateCanonical)))
         #expect(!escalateCanonical.contains("emit trigger.escalate"),
                 Comment(rawValue: VerbalizerTestSupport.snippet(escalateCanonical)))
-        // Rule-injected event trigger (not a frontmatter synthesizer) still verbalizes.
-        #expect(escalateCanonical.contains("To when access request is flagged as overdue:"),
+        // The overdue escalation line lives in a `(( role: reference ))` section,
+        // so it stays documentary and must not verbalize as an executable trigger.
+        #expect(!escalateCanonical.contains("To when access request is flagged as overdue:"),
                 Comment(rawValue: VerbalizerTestSupport.snippet(escalateCanonical)))
-        #expect(escalateCanonical.contains("emit trigger.accessRequestIsFlaggedAs.fired"),
+        #expect(!escalateCanonical.contains("emit trigger.accessRequestIsFlaggedAs.fired"),
                 Comment(rawValue: VerbalizerTestSupport.snippet(escalateCanonical)))
     }
 
@@ -358,31 +359,39 @@ struct VerbalizerEndToEndTests {
         )
     }
 
-    @Test("governance accessmatrix: data table + template [if]/{{")
+    @Test("governance accessmatrix: data table survives; reference template stays omitted")
     func accessmatrixDataTableAndTemplate() throws {
         try assertNamedFixture(
             lastPathComponent: "accessmatrix.meri",
             from: try VerbalizerTestSupport.corpusFixtures(),
             contains: [
                 "!!! table (( data: accessMatrix ))",
+                "emit governance.audit with body = matrix report.",
+                "assert matrix report contains \"access-matrix\".",
+            ],
+            requireMeaningBearing: false,
+            mustNotContain: [
                 "[if classified count is more than 0]",
                 "{{ classified count }}",
-            ],
-            requireMeaningBearing: false
+            ]
         )
     }
 
-    @Test("governance policyaudit: named data table + template interpolation")
+    @Test("governance policyaudit: named data table survives; reference template stays omitted")
     func policyauditDataTableAndTemplate() throws {
         try assertNamedFixture(
             lastPathComponent: "policyaudit.meri",
             from: try VerbalizerTestSupport.corpusFixtures(),
             contains: [
                 "!!! table (( data: coverageThresholds ))",
+                "emit governance.report with body = audit report.",
+                "assert audit report contains \"policy-audit\".",
+            ],
+            requireMeaningBearing: false,
+            mustNotContain: [
                 "[if evaluated count is more than 0]",
                 "{{ evaluated count }}",
-            ],
-            requireMeaningBearing: false
+            ]
         )
     }
 

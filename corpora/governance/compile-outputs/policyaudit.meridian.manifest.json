@@ -22,58 +22,58 @@
       "adjective" : "pending",
       "function" : "meridianDef_AccessRequest_pending",
       "kind" : "access request",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_AccessRequest_stale",
       "kind" : "access request",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "fresh",
       "function" : "meridianDef_Credential_fresh",
       "kind" : "credential",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "overused",
       "function" : "meridianDef_Credential_overused",
       "kind" : "credential",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "classified",
       "function" : "meridianDef_Resource_classified",
       "kind" : "resource",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "authorized",
       "function" : "meridianDef_User_authorized",
       "kind" : "user",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_User_cleared",
       "kind" : "user",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "privileged",
       "function" : "meridianDef_User_privileged",
       "kind" : "user",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 36,
+      "line" : 38,
       "name" : "assignment",
       "right_cardinality" : "one",
       "right_kind" : "a role",
@@ -83,7 +83,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a policy",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "an environment",
@@ -93,7 +93,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 38,
+      "line" : 40,
       "name" : "grant",
       "right_cardinality" : "one",
       "right_kind" : "a resource",
@@ -125,37 +125,37 @@
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 36,
+        "line" : 40,
         "text" : "Workflow — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 48,
+        "line" : 46,
         "text" : "Workflow — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 53,
+        "line" : 51,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "invariants",
         "level" : 2,
-        "line" : 61,
+        "line" : 59,
         "text" : "Guarantees"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 64,
+        "line" : 62,
         "text" : "Report shape"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 51,
+        "line" : 49,
         "text" : "Emit"
       }
     ],
@@ -185,18 +185,16 @@
         "heading" : "Workflow",
         "line" : 32,
         "lines" : [
-          "The audit report template is the coverage receipt shape; the executable",
-          "steps below bind and emit it"
+          "bind audit report =",
+          "codeblock:plain:cG9saWN5LWF1ZGl0OgpbaWYgZXZhbHVhdGVkIGNvdW50IGlzIG1vcmUgdGhhbiAwXXN0YXR1czogY292ZXJlZFtvdGhlcndpc2Vdc3RhdHVzOiB1bmNvdmVyZWRbZW5kIGlmXQplbnZpcm9ubWVudHMgZXZhbHVhdGVkOiB7eyBldmFsdWF0ZWQgY291bnQgfX0="
         ],
         "role" : "reference"
       },
       {
         "executes" : true,
         "heading" : "Workflow — steps",
-        "line" : 36,
+        "line" : 40,
         "lines" : [
-          "bind audit report =",
-          "codeblock:plain:cG9saWN5LWF1ZGl0OgpbaWYgZXZhbHVhdGVkIGNvdW50IGlzIG1vcmUgdGhhbiAwXXN0YXR1czogY292ZXJlZFtvdGhlcndpc2Vdc3RhdHVzOiB1bmNvdmVyZWRbZW5kIGlmXQplbnZpcm9ubWVudHMgZXZhbHVhdGVkOiB7eyBldmFsdWF0ZWQgY291bnQgfX0=",
           "evaluate the policy for the identity provider",
           "evaluate the policy for the audit sink",
           "let evaluated count be the number of environments whose status is \"active\""
@@ -206,7 +204,7 @@
       {
         "executes" : true,
         "heading" : "Workflow — steps 2",
-        "line" : 48,
+        "line" : 46,
         "lines" : [
           "emit governance.report with body = audit report",
           "Emit: \"policy audit pass complete\""
@@ -216,7 +214,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 53,
+        "line" : 51,
         "lines" : [
           "Don't apply the production threshold to a staging environment just",
           "because it's \"close enough\" — the coverage thresholds table exists so",
@@ -230,7 +228,7 @@
       {
         "executes" : true,
         "heading" : "Guarantees",
-        "line" : 61,
+        "line" : 59,
         "lines" : [
           "every emitted audit report contains \"policy-audit\""
         ],
@@ -239,7 +237,7 @@
       {
         "executes" : false,
         "heading" : "Report shape",
-        "line" : 64,
+        "line" : 62,
         "lines" : [
           "The receipt opens with `policy-audit:`, reports whether coverage is",
           "`covered` or `uncovered`, and states how many environments were evaluated in",
@@ -253,21 +251,21 @@
   "meridian_verbs" : [
     {
       "base" : "authorize",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "authorized",
       "relation" : "assignment",
       "third_person" : "authorizes"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "grant",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "granted",
       "relation" : "grant",
       "third_person" : "grants"
@@ -279,60 +277,56 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 62,
-      "swift_line" : 435
+      "meridian_line" : 60,
+      "swift_line" : 458
     },
     {
       "meridian_line" : 27,
-      "swift_line" : 439
+      "swift_line" : 462
     },
     {
-      "meridian_line" : 38,
-      "swift_line" : 441
+      "meridian_line" : 42,
+      "swift_line" : 465
     },
     {
-      "meridian_line" : 69,
-      "swift_line" : 444
+      "meridian_line" : 43,
+      "swift_line" : 479
     },
     {
-      "meridian_line" : 69,
-      "swift_line" : 456
+      "meridian_line" : 44,
+      "swift_line" : 492
     },
     {
-      "meridian_line" : 46,
-      "swift_line" : 467
+      "meridian_line" : 48,
+      "swift_line" : 495
     },
     {
-      "meridian_line" : 50,
-      "swift_line" : 470
-    },
-    {
-      "meridian_line" : 51,
-      "swift_line" : 480
+      "meridian_line" : 49,
+      "swift_line" : 506
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 519
+      "swift_line" : 574
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 524
+      "swift_line" : 579
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 564
+      "swift_line" : 648
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 569
+      "swift_line" : 653
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 609
+      "swift_line" : 722
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 614
+      "swift_line" : 727
     }
   ],
   "tools_used" : [
@@ -344,7 +338,18 @@
       "parameters" : [
 
       ],
+      "skill_name" : "policy audit",
+      "skill_version_hash" : "e180bcb97ffbe56bfaf28633fe47afbd9b9d5049904970ebc499d301936b31c1",
       "source_name" : "policy audit",
+      "step_paths" : [
+        "\/PolicyAudit\/guarantees\/invariants\/9e85c76bbbe232dcdb704838b0f2e9530cf19a96d1a39bf343649328a5148e5f",
+        "\/PolicyAudit\/tables\/tables\/9b2373aba8cd7f38e9edff8e176e5309cd55ba907e6997936dcb92317e0bc85b",
+        "\/PolicyAudit\/workflow-steps-2\/procedure\/65b4ec046ebc12c2b1303ebae19297f9ce19d6e40ff8b5267bb45b4bead0f815",
+        "\/PolicyAudit\/workflow-steps-2\/procedure\/b2b5061cbdd82ba38cefba5e3f20536466f4e7a36b9548cf3d34ec6f2ef78ccd",
+        "\/PolicyAudit\/workflow-steps\/procedure\/1056bd68d501ae8a6eb5f7140826671cee6bf7ec45f0c8eb48fb9b916f1f4827",
+        "\/PolicyAudit\/workflow-steps\/procedure\/9d45de9e5e1931383b39193fe3a8c646012fb51e5c91b5dee53c5dfe8c0b25de",
+        "\/PolicyAudit\/workflow-steps\/procedure\/d61e2c86a111a229adf70313ab908bf2353a49f7b3a0c433fdca1d94a564a960"
+      ],
       "swift_struct" : "PolicyAudit"
     },
     {
@@ -352,7 +357,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "policy audit",
+      "skill_version_hash" : "e180bcb97ffbe56bfaf28633fe47afbd9b9d5049904970ebc499d301936b31c1",
       "source_name" : "when auditPolicyCoverage fires",
+      "step_paths" : [
+        "\/WhenAuditpolicycoverageFires\/root\/procedure\/4784e24b507bb23c0af149489110dac0172e2a1a1f1b97fbcf86c2f4362e5031",
+        "\/WhenAuditpolicycoverageFires\/root\/procedure\/4c428e630c91869be02ce1a18a350c89bc60d6f6853e40ef7ca416201f0f3d1a"
+      ],
       "swift_struct" : "WhenAuditpolicycoverageFires"
     },
     {
@@ -360,7 +371,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "policy audit",
+      "skill_version_hash" : "e180bcb97ffbe56bfaf28633fe47afbd9b9d5049904970ebc499d301936b31c1",
       "source_name" : "when runPolicyAudit fires",
+      "step_paths" : [
+        "\/WhenRunpolicyauditFires\/root\/procedure\/0be6de8b618d922e252875d3469dd9f0c49338da8a9d1f16235bd1da7c2e2067",
+        "\/WhenRunpolicyauditFires\/root\/procedure\/c6fa88cdc8bbbbb47b0b87fc7526bc03ba52bd922c1691f1b200b1c083df78b1"
+      ],
       "swift_struct" : "WhenRunpolicyauditFires"
     },
     {
@@ -368,7 +385,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "policy audit",
+      "skill_version_hash" : "e180bcb97ffbe56bfaf28633fe47afbd9b9d5049904970ebc499d301936b31c1",
       "source_name" : "when checkPolicyCoverage fires",
+      "step_paths" : [
+        "\/WhenCheckpolicycoverageFires\/root\/procedure\/89776851d882484eeb5adee9ee6afa6584a92b2ceb7ceca8ec78170916fc78fa",
+        "\/WhenCheckpolicycoverageFires\/root\/procedure\/99acc5b34c0f0d06081e1ae1fbf87a715d71c285ea9cc9a55fb2775b15ace665"
+      ],
       "swift_struct" : "WhenCheckpolicycoverageFires"
     }
   ]

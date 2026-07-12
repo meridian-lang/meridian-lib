@@ -25,76 +25,76 @@
       "adjective" : "in good standing",
       "function" : "meridianDef_Customer_inGoodStanding",
       "kind" : "customer",
-      "line" : 46
+      "line" : 49
     },
     {
       "adjective" : "overdue",
       "function" : "meridianDef_Invoice_overdue",
       "kind" : "invoice",
-      "line" : 42
+      "line" : 45
     },
     {
       "adjective" : "severely overdue",
       "function" : "meridianDef_Invoice_severelyOverdue",
       "kind" : "invoice",
-      "line" : 47
+      "line" : 50
     },
     {
       "adjective" : "unpaid",
       "function" : "meridianDef_Invoice_unpaid",
       "kind" : "invoice",
-      "line" : 41
+      "line" : 44
     },
     {
       "adjective" : "blocked",
       "function" : "meridianDef_Order_blocked",
       "kind" : "order",
-      "line" : 38
+      "line" : 41
     },
     {
       "adjective" : "fulfilled",
       "function" : "meridianDef_Order_fulfilled",
       "kind" : "order",
-      "line" : 39
+      "line" : 42
     },
     {
       "adjective" : "high value",
       "function" : "meridianDef_Order_highValue",
       "kind" : "order",
-      "line" : 45
+      "line" : 48
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Order_open",
       "kind" : "order",
-      "line" : 37
+      "line" : 40
     },
     {
       "adjective" : "released",
       "function" : "meridianDef_Order_released",
       "kind" : "order",
-      "line" : 40
+      "line" : 43
     },
     {
       "adjective" : "short",
       "function" : "meridianDef_Product_short",
       "kind" : "product",
-      "line" : 43
+      "line" : 46
     },
     {
       "adjective" : "pending",
       "function" : "meridianDef_PurchaseOrder_pending",
       "kind" : "purchase order",
-      "line" : 44
+      "line" : 47
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 53,
+      "line" : 56,
       "name" : "collection",
       "right_cardinality" : "one",
       "right_kind" : "a payment",
@@ -104,7 +104,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 57,
+      "line" : 60,
       "name" : "escalation",
       "right_cardinality" : "one",
       "right_kind" : "a dunning notice",
@@ -114,7 +114,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 49,
+      "line" : 52,
       "name" : "fulfillment",
       "right_cardinality" : "one",
       "right_kind" : "a shipment",
@@ -124,7 +124,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 51,
+      "line" : 54,
       "name" : "invoicing",
       "right_cardinality" : "one",
       "right_kind" : "an invoice",
@@ -134,7 +134,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a product",
-      "line" : 55,
+      "line" : 58,
       "name" : "replenishment",
       "right_cardinality" : "one",
       "right_kind" : "a purchase order",
@@ -249,35 +249,35 @@
   "meridian_verbs" : [
     {
       "base" : "collect",
-      "line" : 62,
+      "line" : 65,
       "past_participle" : "collected",
       "relation" : "collection",
       "third_person" : "collects"
     },
     {
       "base" : "escalate",
-      "line" : 64,
+      "line" : 67,
       "past_participle" : "escalated",
       "relation" : "escalation",
       "third_person" : "escalates"
     },
     {
       "base" : "fulfill",
-      "line" : 60,
+      "line" : 63,
       "past_participle" : "fulfilled",
       "relation" : "fulfillment",
       "third_person" : "fulfills"
     },
     {
       "base" : "invoice",
-      "line" : 61,
+      "line" : 64,
       "past_participle" : "invoiced",
       "relation" : "invoicing",
       "third_person" : "invoices"
     },
     {
       "base" : "replenish",
-      "line" : 63,
+      "line" : 66,
       "past_participle" : "replenished",
       "relation" : "replenishment",
       "third_person" : "replenishes"
@@ -290,43 +290,43 @@
   "source_map" : [
     {
       "meridian_line" : 16,
-      "swift_line" : 554
+      "swift_line" : 577
     },
     {
-      "meridian_line" : 67,
-      "swift_line" : 557
+      "meridian_line" : 34,
+      "swift_line" : 580
     },
     {
       "meridian_line" : 35,
-      "swift_line" : 568
+      "swift_line" : 593
     },
     {
-      "meridian_line" : 79,
-      "swift_line" : 574
+      "meridian_line" : 36,
+      "swift_line" : 602
     },
     {
       "meridian_line" : 37,
-      "swift_line" : 589
+      "swift_line" : 620
     },
     {
       "meridian_line" : 41,
-      "swift_line" : 592
+      "swift_line" : 623
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 631
+      "swift_line" : 691
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 636
+      "swift_line" : 696
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 676
+      "swift_line" : 765
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 681
+      "swift_line" : 770
     }
   ],
   "tools_used" : [
@@ -338,7 +338,17 @@
       "parameters" : [
 
       ],
+      "skill_name" : "invoice run",
+      "skill_version_hash" : "c14748299d4515b5bc269695ffb4abc58f61ed8abc65fc931d4127ea27748ac1",
       "source_name" : "invoice run",
+      "step_paths" : [
+        "\/InvoiceRun\/tables\/tables\/9163e718693bc1229cb756fc9391f05147dd6cd96552cbb4f9dcc39f57ce3df7",
+        "\/InvoiceRun\/workflow-steps-2\/procedure\/bca2d422078e7f99a6a411e8797160a0418026d0f419384451b3e94ce4c45625",
+        "\/InvoiceRun\/workflow-steps\/procedure\/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
+        "\/InvoiceRun\/workflow-steps\/procedure\/75b299aef50710d1ea74359def637cc34ba2e4f3e887a229c169ee838a32cb07",
+        "\/InvoiceRun\/workflow-steps\/procedure\/b533ff19213ec12a69f3067685e4b11977e7122b3f1c79740073d21a6b4729cc",
+        "\/InvoiceRun\/workflow-steps\/procedure\/iterate.body\/19d6a9f3ce6c07cd11b6761da4fb8aa91a7ee64ff104faf5d68265d32ab9eeb2"
+      ],
       "swift_struct" : "InvoiceRun"
     },
     {
@@ -346,7 +356,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "invoice run",
+      "skill_version_hash" : "c14748299d4515b5bc269695ffb4abc58f61ed8abc65fc931d4127ea27748ac1",
       "source_name" : "when runInvoices fires",
+      "step_paths" : [
+        "\/WhenRuninvoicesFires\/root\/procedure\/c262d025300a1b3981996e9dcc99cb70938d45813ee6abadaf3744af92bcfa33",
+        "\/WhenRuninvoicesFires\/root\/procedure\/edbd7e1703f783eaf87dc04bdfbe441797d14eb61cbb40d77852279c908a9a3a"
+      ],
       "swift_struct" : "WhenRuninvoicesFires"
     },
     {
@@ -354,7 +370,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "invoice run",
+      "skill_version_hash" : "c14748299d4515b5bc269695ffb4abc58f61ed8abc65fc931d4127ea27748ac1",
       "source_name" : "when billingBatch fires",
+      "step_paths" : [
+        "\/WhenBillingbatchFires\/root\/procedure\/63cd5ab3498d25654e3bf00dc0d6cfd59839797caa5d48bee01b4b134345fdfa",
+        "\/WhenBillingbatchFires\/root\/procedure\/d5051e5b12a4b80abb3d8a326d14eb09c41ec2e8bb13f16f18efffbd7bfa7fe7"
+      ],
       "swift_struct" : "WhenBillingbatchFires"
     }
   ]

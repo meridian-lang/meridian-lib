@@ -25,6 +25,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L70 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
+- generated_loc: 53 non-blank ported lines
 - Sections inert total: 7/7 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0

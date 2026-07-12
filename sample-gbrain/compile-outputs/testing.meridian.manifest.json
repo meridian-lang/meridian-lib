@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -170,7 +170,7 @@
         "text" : "Test tiers — steps"
       },
       {
-        "kind" : "reference",
+        "kind" : "inert",
         "level" : 3,
         "line" : 124,
         "text" : "Daily run protocol"
@@ -178,157 +178,85 @@
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 129,
-        "text" : "1. Run unit tests"
-      },
-      {
-        "kind" : "procedure",
-        "level" : 3,
-        "line" : 134,
-        "text" : "1. Run unit tests — steps"
+        "line" : 127,
+        "text" : "Daily run protocol — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 140,
-        "text" : "2. Run evals (if the project has an evals config)"
-      },
-      {
-        "kind" : "procedure",
-        "level" : 3,
-        "line" : 146,
-        "text" : "2. Run evals (if the project has an evals config) — steps"
-      },
-      {
-        "kind" : "reference",
-        "level" : 3,
-        "line" : 153,
-        "text" : "3. Run system health checks"
-      },
-      {
-        "kind" : "reference",
-        "level" : 3,
-        "line" : 160,
-        "text" : "4. Git diff analysis (CRITICAL — regression intelligence)"
-      },
-      {
-        "kind" : "procedure",
-        "level" : 3,
-        "line" : 170,
-        "text" : "4. Git diff analysis (CRITICAL — regression intelligence) — steps"
-      },
-      {
-        "kind" : "reference",
-        "level" : 3,
-        "line" : 179,
-        "text" : "5. Classify each failure"
-      },
-      {
-        "kind" : "reference",
-        "level" : 3,
-        "line" : 182,
-        "text" : "5. Classify each failure — steps"
-      },
-      {
-        "kind" : "template",
-        "level" : 3,
-        "line" : 192,
-        "text" : "6. Report format"
-      },
-      {
-        "kind" : "reference",
-        "level" : 3,
-        "line" : 213,
-        "text" : "7. Auto-fix protocol"
-      },
-      {
-        "kind" : "reference",
-        "level" : 3,
-        "line" : 227,
-        "text" : "7. Auto-fix protocol — steps"
-      },
-      {
-        "kind" : "procedure",
-        "level" : 3,
-        "line" : 231,
-        "text" : "7. Auto-fix protocol — steps 2"
-      },
-      {
-        "kind" : "procedure",
-        "level" : 3,
-        "line" : 237,
-        "text" : "7. Auto-fix protocol — steps 3"
-      },
-      {
-        "kind" : "reference",
-        "level" : 3,
-        "line" : 242,
+        "line" : 244,
         "text" : "State (regression history)"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 263,
+        "line" : 265,
         "text" : "State (regression history) — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 267,
+        "line" : 269,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 278,
+        "line" : 280,
         "text" : "Anti-Patterns — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 282,
+        "line" : 284,
         "text" : "Contract"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 293,
+        "line" : 295,
         "text" : "Output Format"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 131,
+        "line" : 133,
         "text" : "Parse"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 142,
+        "line" : 144,
         "text" : "Parse"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 177,
+        "line" : 179,
         "text" : "For each failing test"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 256,
+        "line" : 241,
+        "text" : "When uncertain"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 258,
         "text" : "This enables"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 284,
+        "line" : 286,
         "text" : "This skill guarantees"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 289,
+        "line" : 291,
         "text" : "Privacy contract preserved"
       }
     ],
@@ -470,116 +398,35 @@
         "heading" : "Daily run protocol",
         "line" : 124,
         "lines" : [
-          "During each daily run (cron fire or user request), do ALL of the",
-          "following steps, in order"
+
         ],
-        "role" : "reference"
+        "role" : "inert"
       },
       {
         "executes" : false,
-        "heading" : "1. Run unit tests",
-        "line" : 129,
+        "heading" : "Daily run protocol — steps",
+        "line" : 127,
         "lines" : [
-          "Parse: total passed, total failed, total skipped, file-level results"
-        ],
-        "role" : "reference"
-      },
-      {
-        "executes" : true,
-        "heading" : "1. Run unit tests — steps",
-        "line" : 134,
-        "lines" : [
-          "codeblock:bash:YnVuIHRlc3QgMj4mMQ=="
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : false,
-        "heading" : "2. Run evals (if the project has an evals config)",
-        "line" : 140,
-        "lines" : [
+          "When the cron fires (or the user asks), do ALL of this:",
+          "Parse: total passed, total failed, total skipped, file-level results",
+          "codeblock:bash:YnVuIHRlc3QgMj4mMQ==",
           "Parse: same format. Note any flakes (tests that fail due to API",
-          "timeouts, not code bugs)"
-        ],
-        "role" : "reference"
-      },
-      {
-        "executes" : true,
-        "heading" : "2. Run evals (if the project has an evals config) — steps",
-        "line" : 146,
-        "lines" : [
-          "codeblock:bash:IyBBZGFwdCB0byB0aGUgcHJvamVjdCdzIGV2YWwgY29uZmlnCmJ1biB0ZXN0IC0tZmlsdGVyIGV2YWwgMj4mMQ=="
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : false,
-        "heading" : "3. Run system health checks",
-        "line" : 153,
-        "lines" : [
+          "timeouts, not code bugs)",
+          "codeblock:bash:IyBBZGFwdCB0byB0aGUgcHJvamVjdCdzIGV2YWwgY29uZmlnCmJ1biB0ZXN0IC0tZmlsdGVyIGV2YWwgMj4mMQ==",
           "Disk \/ memory \/ CPU",
           "gbrain: `gbrain doctor --fast --json`",
           "Database connection (if applicable)",
-          "Critical files exist (CLAUDE.md, AGENTS.md, etc.)"
-        ],
-        "role" : "reference"
-      },
-      {
-        "executes" : false,
-        "heading" : "4. Git diff analysis (CRITICAL — regression intelligence)",
-        "line" : 160,
-        "lines" : [
+          "Critical files exist (CLAUDE.md, AGENTS.md, etc.)",
           "Check if the test itself was modified recently (test change, not",
           "regression)",
-          "Check if the code under test was modified recently (possible",
+          "Check if the code it tests was modified recently (possible",
           "regression)",
-          "Check if the failure is a known flake (API timeout, service down)",
-          "Check if a dependency was updated (gbrain, bun, etc.)"
-        ],
-        "role" : "reference"
-      },
-      {
-        "executes" : true,
-        "heading" : "4. Git diff analysis (CRITICAL — regression intelligence) — steps",
-        "line" : 170,
-        "lines" : [
+          "Check if it's a known flake (API timeout, service down)",
+          "Check if a dependency was updated (gbrain, bun, etc.)",
           "codeblock:bash:IyBXaGF0IGNoYW5nZWQgc2luY2UgbGFzdCB0ZXN0IHJ1bj8KZ2l0IGxvZyAtLW9uZWxpbmUgLS1zaW5jZT0iMjQgaG91cnMgYWdvIg==",
-          "For each failing test:"
-        ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : false,
-        "heading" : "5. Classify each failure",
-        "line" : 179,
-        "lines" : [
-
-        ],
-        "role" : "reference"
-      },
-      {
-        "executes" : false,
-        "heading" : "5. Classify each failure — steps",
-        "line" : 182,
-        "lines" : [
-          "table:decision:fCBDbGFzc2lmaWNhdGlvbiB8IE1hcmtlciB8IEFjdGlvbiB8CnwtLS0tLS0tLS0tLS0tLS18LS0tLS0tLS18LS0tLS0tLS18CnwgUkVHUkVTU0lPTiDigJQgY29kZSBjaGFuZ2VkLCB0ZXN0IGJyb2tlIHwg8J+UtCB8IEZsYWcgd2l0aCB0aGUgY29tbWl0IHRoYXQgYnJva2UgdGhlIHRlc3QgfAp8IFNUQUxFIOKAlCB0ZXN0IGV4cGVjdHMgb2xkIGJlaGF2aW9yOyBjb2RlIGlzIGNvcnJlY3QgfCDwn5+hIHwgRml4IHRoZSB0ZXN0LCBub3QgdGhlIGNvZGUgfAp8IEZMQUtFIOKAlCBBUEkgdGltZW91dCwgc2VydmljZSBkb3duLCBMTE0gdmFyaWFuY2UgfCDimqDvuI8gfCBOb3RlLCBkb24ndCBhbGFybTsgcmV0cnkgb25jZSB8CnwgTkVXIOKAlCB0ZXN0IHdhcyBqdXN0IGFkZGVkIGFuZCBpc24ndCBwYXNzaW5nIHlldCB8IPCfn6IgfCBDaGVjayBpZiBpbnRlbnRpb25hbCB8CnwgSU5GUkEg4oCUIGNvbnRhaW5lciByZXN0YXJ0IHdpcGVkIHN0YXRlIHwg8J+boCB8IFJ1biBib290c3RyYXAsIHJldGVzdCB8"
-        ],
-        "role" : "reference"
-      },
-      {
-        "executes" : false,
-        "heading" : "6. Report format",
-        "line" : 192,
-        "lines" : [
-          "codeblock:plain:8J+nqiBEYWlseSBUZXN0cyDigJQgWVlZWS1NTS1ERAoKVW5pdDogICBYL1kgcGFzc2VkIChaIHNraXBwZWQpCkV2YWxzOiAgWC9ZIHBhc3NlZApTeXN0ZW06IFtoZWFsdGggc3VtbWFyeV0KClJFR1JFU1NJT05TOgogIPCflLQgPHRlc3QtbmFtZT46IGJyb2tlIGJ5IGNvbW1pdCA8c2hhPiAiPGNvbW1pdCBtZXNzYWdlPiIKClNUQUxFIFRFU1RTOgogIPCfn6EgPHRlc3QtbmFtZT46IGV4cGVjdHMgWCBidXQgY29kZSBub3cgZG9lcyBZIChjb21taXQgPHNoYT4pCgpGTEFLRVM6CiAg4pqg77iPIDx0ZXN0LW5hbWU+OiB0aW1lb3V0IChyZXRyeSBwYXNzZWQpCgrinIUgQUxMIENMRUFSICAod2hlbiBhcHBsaWNhYmxlKQ=="
-        ],
-        "role" : "template"
-      },
-      {
-        "executes" : false,
-        "heading" : "7. Auto-fix protocol",
-        "line" : 213,
-        "lines" : [
+          "For each failing test:",
+          "table:decision:fCBDbGFzc2lmaWNhdGlvbiB8IE1hcmtlciB8IEFjdGlvbiB8CnwtLS0tLS0tLS0tLS0tLS18LS0tLS0tLS18LS0tLS0tLS18CnwgUkVHUkVTU0lPTiDigJQgY29kZSBjaGFuZ2VkLCB0ZXN0IGJyb2tlIHwg8J+UtCB8IEZsYWcgd2l0aCB0aGUgY29tbWl0IHRoYXQgYnJva2UgaXQgfAp8IFNUQUxFIOKAlCB0ZXN0IGV4cGVjdHMgb2xkIGJlaGF2aW9yOyBjb2RlIGlzIGNvcnJlY3QgfCDwn5+hIHwgRml4IHRoZSB0ZXN0LCBub3QgdGhlIGNvZGUgfAp8IEZMQUtFIOKAlCBBUEkgdGltZW91dCwgc2VydmljZSBkb3duLCBMTE0gdmFyaWFuY2UgfCDimqDvuI8gfCBOb3RlLCBkb24ndCBhbGFybTsgcmV0cnkgb25jZSB8CnwgTkVXIOKAlCB0ZXN0IHdhcyBqdXN0IGFkZGVkIGFuZCBpc24ndCBwYXNzaW5nIHlldCB8IPCfn6IgfCBDaGVjayBpZiBpbnRlbnRpb25hbCB8CnwgSU5GUkEg4oCUIGNvbnRhaW5lciByZXN0YXJ0IHdpcGVkIHN0YXRlIHwg8J+boCB8IFJ1biBib290c3RyYXAsIHJldGVzdCB8",
+          "codeblock:plain:8J+nqiBEYWlseSBUZXN0cyDigJQgWVlZWS1NTS1ERAoKVW5pdDogICBYL1kgcGFzc2VkIChaIHNraXBwZWQpCkV2YWxzOiAgWC9ZIHBhc3NlZApTeXN0ZW06IFtoZWFsdGggc3VtbWFyeV0KClJFR1JFU1NJT05TOgogIPCflLQgPHRlc3QtbmFtZT46IGJyb2tlIGJ5IGNvbW1pdCA8c2hhPiAiPGNvbW1pdCBtZXNzYWdlPiIKClNUQUxFIFRFU1RTOgogIPCfn6EgPHRlc3QtbmFtZT46IGV4cGVjdHMgWCBidXQgY29kZSBub3cgZG9lcyBZIChjb21taXQgPHNoYT4pCgpGTEFLRVM6CiAg4pqg77iPIDx0ZXN0LW5hbWU+OiB0aW1lb3V0IChyZXRyeSBwYXNzZWQpCgrinIUgQUxMIENMRUFSICAod2hlbiBhcHBsaWNhYmxlKQ==",
           "**DO auto-fix:**",
           "Test expects an old file path after a rename → update the test",
           "Test expects an old version string → update",
@@ -587,43 +434,19 @@
           "Import path broke because file moved → fix the import",
           "**DO NOT auto-fix:**",
           "Test expects behavior A but code now does B → ASK first. Maybe the",
-          "test is right and the code has a bug"
-        ],
-        "role" : "reference"
-      },
-      {
-        "executes" : false,
-        "heading" : "7. Auto-fix protocol — steps",
-        "line" : 227,
-        "lines" : [
-          "Security test failing → ALWAYS escalate, never auto-fix"
-        ],
-        "role" : "reference"
-      },
-      {
-        "executes" : true,
-        "heading" : "7. Auto-fix protocol — steps 2",
-        "line" : 231,
-        "lines" : [
+          "test is right and the code has a bug",
+          "Security test failing → ALWAYS escalate, never auto-fix",
           "use judgment to follow the 7. Auto-fix protocol — steps 2 guidance:",
-          "Test was skipped with a TODO → don't un-skip without understanding why"
+          "Test was skipped with a TODO → don't un-skip without understanding why",
+          "When uncertain: check the commit message that changed the code, check",
+          "if there's a related PR or conversation, ask the user if still unclear"
         ],
-        "role" : "procedure"
-      },
-      {
-        "executes" : true,
-        "heading" : "7. Auto-fix protocol — steps 3",
-        "line" : 237,
-        "lines" : [
-          "If uncertain, check the commit message that changed the code, check",
-          "if there's a related PR or conversation, and ask the user if still unclear"
-        ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "State (regression history)",
-        "line" : 242,
+        "line" : 244,
         "lines" : [
           "codeblock:json:ewogICJsYXN0UnVuIjogIjIwMjYtMDQtMTZUMTM6Mzc6MDBaIiwKICAidW5pdCI6IHsgInBhc3NlZCI6IDEyNjIsICJmYWlsZWQiOiAzMSwgInNraXBwZWQiOiA4IH0sCiAgImV2YWxzIjogeyAicGFzc2VkIjogMTcsICJmYWlsZWQiOiAwIH0sCiAgInN5c3RlbSI6IHsgImRvY3RvciI6ICJvayIsICJnYnJhaW4iOiAiMC4yNS4xIiB9LAogICJmYWlsdXJlSGlzdG9yeSI6IFsKICAgIHsgInRlc3QiOiAiPG5hbWU+IiwgInNpbmNlIjogIjIwMjYtMDQtMTQiLCAiY2xhc3NpZmljYXRpb24iOiAic3RhbGUiIH0KICBdCn0=",
           "This enables:",
@@ -636,7 +459,7 @@
       {
         "executes" : true,
         "heading" : "State (regression history) — steps",
-        "line" : 263,
+        "line" : 265,
         "lines" : [
           "Track results in `~\/.gbrain\/test-state.json` for trend tracking:"
         ],
@@ -645,7 +468,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 267,
+        "line" : 269,
         "lines" : [
           "❌ Skipping conformance validation after adding a new skill",
           "❌ Adding skills to `manifest.json` without adding to RESOLVER.md",
@@ -659,7 +482,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns — steps",
-        "line" : 278,
+        "line" : 280,
         "lines" : [
           "use judgment to follow the Anti-Patterns — steps guidance:",
           "❌ Auto-un-skipping a test without understanding why it was skipped"
@@ -669,7 +492,7 @@
       {
         "executes" : false,
         "heading" : "Contract",
-        "line" : 282,
+        "line" : 284,
         "lines" : [
           "This skill guarantees:",
           "Routing matches the canonical triggers in the frontmatter",
@@ -683,7 +506,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 293,
+        "line" : 295,
         "lines" : [
           "The skill's output shape is documented inline in the body sections above (see \"Output\", \"Brain page format\", or equivalent). The literal section header here exists for the conformance test (`test\/skills-conformance.test.ts`)"
         ],
@@ -731,107 +554,91 @@
   "source_map" : [
     {
       "meridian_line" : 61,
-      "swift_line" : 603
+      "swift_line" : 626
     },
     {
       "meridian_line" : 62,
-      "swift_line" : 615
+      "swift_line" : 640
     },
     {
       "meridian_line" : 63,
-      "swift_line" : 620
-    },
-    {
-      "meridian_line" : 81,
-      "swift_line" : 625
-    },
-    {
-      "meridian_line" : 117,
-      "swift_line" : 635
-    },
-    {
-      "meridian_line" : 136,
       "swift_line" : 645
     },
     {
-      "meridian_line" : 148,
-      "swift_line" : 656
+      "meridian_line" : 81,
+      "swift_line" : 650
     },
     {
-      "meridian_line" : 172,
-      "swift_line" : 667
+      "meridian_line" : 117,
+      "swift_line" : 662
     },
     {
-      "meridian_line" : 177,
-      "swift_line" : 677
-    },
-    {
-      "meridian_line" : 233,
-      "swift_line" : 686
+      "meridian_line" : 267,
+      "swift_line" : 674
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 725
+      "swift_line" : 744
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 730
+      "swift_line" : 749
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 769
+      "swift_line" : 817
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 774
+      "swift_line" : 822
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 813
+      "swift_line" : 890
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 818
+      "swift_line" : 895
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 857
+      "swift_line" : 963
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 862
+      "swift_line" : 968
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 901
+      "swift_line" : 1036
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 906
+      "swift_line" : 1041
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 945
+      "swift_line" : 1109
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 950
+      "swift_line" : 1114
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 989
+      "swift_line" : 1182
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 994
+      "swift_line" : 1187
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1033
+      "swift_line" : 1255
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1038
+      "swift_line" : 1260
     }
   ],
   "tools_used" : [
@@ -843,21 +650,13 @@
         {
           "line" : 117,
           "scoped_tools" : [
+            "list_pages",
             "page.list",
             "page.search",
+            "search",
             "shell.run"
           ],
           "text" : "Decide which case below applies and carry out its action:\n- when Tier is Unit, What it runs is `bun test` (deterministic, zero external calls), Wall time is <2s, Every commit\n- when Tier is Evals, What it runs is LLM-judge or quality evals, Wall time is ~60s, Daily\n- when Tier is Integration, What it runs is E2E tests against real Postgres, Wall time is ~5m, Pre-ship + nightly\n- when Tier is System health, What it runs is Disk \/ memory \/ CPU \/ service liveness, Wall time is <10s, Daily"
-        },
-        {
-          "guidance" : "Test was skipped with a TODO → don't un-skip without understanding why\nIf uncertain, check the commit message that changed the code, check\nif there's a related PR or conversation, and ask the user if still unclear\nTrack results in `~\/.gbrain\/test-state.json` for trend tracking:",
-          "line" : 233,
-          "scoped_tools" : [
-            "page.list",
-            "page.search",
-            "shell.run"
-          ],
-          "text" : "follow the 7. Auto-fix protocol — steps 2 guidance"
         }
       ],
       "mode" : "strict",
@@ -867,7 +666,17 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "testing",
+      "skill_version_hash" : "b3a07f3c9473f048548d94c897cff6dc8f657d20c79f3b31dfb2723249ac3732",
       "source_name" : "testing a input",
+      "step_paths" : [
+        "\/TestingInput\/automation-steps\/procedure\/fee08828b067304a45b1d2658d6bd715c68cf9bcd3fe887e4e9d98eddfd16997",
+        "\/TestingInput\/contract-steps\/invariants\/25441a3f65dc19c4ce7e4cfa3bcbef6dfe8e610a125809fd0eb4b8a1a17f4249",
+        "\/TestingInput\/contract-steps\/invariants\/a2c66770f50a9381f327809623d72fe0cf92580d1916e8daf0d410276b1173df",
+        "\/TestingInput\/contract-steps\/invariants\/b6d9e357ce0bebab4874b920bb0731be0f5f77f70c491cbe3d328a0ee5693c91",
+        "\/TestingInput\/state-regression-history-steps\/procedure\/bfa253aefe7dc5d11ef6a578d2f199b8c0bc269e88999af231cc6e34576b12f1",
+        "\/TestingInput\/test-tiers-steps\/procedure\/6529a6df3a7396e2a0019ab4e6d5c4a0c26c1fcec748b83b19d0daa7992d9615"
+      ],
       "swift_struct" : "TestingInput"
     },
     {
@@ -875,7 +684,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "testing",
+      "skill_version_hash" : "b3a07f3c9473f048548d94c897cff6dc8f657d20c79f3b31dfb2723249ac3732",
       "source_name" : "when validateSkills fires",
+      "step_paths" : [
+        "\/WhenValidateskillsFires\/root\/procedure\/74203b239a2f019577b671621f10406e8f38f81fa2b4823d57536bd32acb02cf",
+        "\/WhenValidateskillsFires\/root\/procedure\/b311761ce446c37f11b973688baa48d438ee77039a4be0f4782973de47f7c492"
+      ],
       "swift_struct" : "WhenValidateskillsFires"
     },
     {
@@ -883,7 +698,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "testing",
+      "skill_version_hash" : "b3a07f3c9473f048548d94c897cff6dc8f657d20c79f3b31dfb2723249ac3732",
       "source_name" : "when testSkills fires",
+      "step_paths" : [
+        "\/WhenTestskillsFires\/root\/procedure\/21727e06251df4ecfd50fd6b2cc29006f5e056f536836b56acb92e8c1f9f0832",
+        "\/WhenTestskillsFires\/root\/procedure\/e03c9389ed4beae96c62b6e9d3b11e9b6e9dec6050a916711c51ced0b3d0a9a8"
+      ],
       "swift_struct" : "WhenTestskillsFires"
     },
     {
@@ -891,7 +712,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "testing",
+      "skill_version_hash" : "b3a07f3c9473f048548d94c897cff6dc8f657d20c79f3b31dfb2723249ac3732",
       "source_name" : "when skillHealthCheck fires",
+      "step_paths" : [
+        "\/WhenSkillhealthcheckFires\/root\/procedure\/6521e749fd091c0496ff917c18052bd6d20b665c709f2fd051aa2be4e8c14a7c",
+        "\/WhenSkillhealthcheckFires\/root\/procedure\/8aa67916a6a3b9582ddae4747bf549f33654740e5825b19f516c18751265237b"
+      ],
       "swift_struct" : "WhenSkillhealthcheckFires"
     },
     {
@@ -899,7 +726,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "testing",
+      "skill_version_hash" : "b3a07f3c9473f048548d94c897cff6dc8f657d20c79f3b31dfb2723249ac3732",
       "source_name" : "when runConformanceTests fires",
+      "step_paths" : [
+        "\/WhenRunconformancetestsFires\/root\/procedure\/7f1bd330379b9b29208a2eac48ce307e266a8f4983636542e638ee6fd10697b0",
+        "\/WhenRunconformancetestsFires\/root\/procedure\/a6f078eee7329ca1a83d89f07904b93d0141359fcbf62ac75595ee8ebdde01ef"
+      ],
       "swift_struct" : "WhenRunconformancetestsFires"
     },
     {
@@ -907,7 +740,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "testing",
+      "skill_version_hash" : "b3a07f3c9473f048548d94c897cff6dc8f657d20c79f3b31dfb2723249ac3732",
       "source_name" : "when runTests fires",
+      "step_paths" : [
+        "\/WhenRuntestsFires\/root\/procedure\/14ed55a9d0f786ea41095cb70f6612e78819420593f03e485264969b14977c3b",
+        "\/WhenRuntestsFires\/root\/procedure\/e5c645fe97b05dd98ddd69fdc5000abd393feb9cb10f680b4ab67a505de9c734"
+      ],
       "swift_struct" : "WhenRuntestsFires"
     },
     {
@@ -915,7 +754,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "testing",
+      "skill_version_hash" : "b3a07f3c9473f048548d94c897cff6dc8f657d20c79f3b31dfb2723249ac3732",
       "source_name" : "when howAreTests fires",
+      "step_paths" : [
+        "\/WhenHowaretestsFires\/root\/procedure\/39730edef1447dd99c56cc7fc0229914a169d3bd9a8d9204253941648bdae5cd",
+        "\/WhenHowaretestsFires\/root\/procedure\/79fa3b5767c1ef3fd60563b3fb4b417030aab0d69b7ae786c116ebb59059964b"
+      ],
       "swift_struct" : "WhenHowaretestsFires"
     },
     {
@@ -923,7 +768,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "testing",
+      "skill_version_hash" : "b3a07f3c9473f048548d94c897cff6dc8f657d20c79f3b31dfb2723249ac3732",
       "source_name" : "when whatSBroken fires",
+      "step_paths" : [
+        "\/WhenWhatsbrokenFires\/root\/procedure\/050921fee3d092c5d190d7af35cba9f2366204e997f38a14fc0375ddb2a0f644",
+        "\/WhenWhatsbrokenFires\/root\/procedure\/399caaa96932b6c9e90e06282146016dff798bf475b6daacb6e76e5445d04c76"
+      ],
       "swift_struct" : "WhenWhatsbrokenFires"
     },
     {
@@ -931,7 +782,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "testing",
+      "skill_version_hash" : "b3a07f3c9473f048548d94c897cff6dc8f657d20c79f3b31dfb2723249ac3732",
       "source_name" : "when dailyTestRun fires",
+      "step_paths" : [
+        "\/WhenDailytestrunFires\/root\/procedure\/182c2458b48e0dd147c0ee34bfc39852d8f122eca4737e91f160eef5bf3f3027",
+        "\/WhenDailytestrunFires\/root\/procedure\/5be331499c81f5eec0bb33e8ad813e2b2c9104522361864424ef4b8b53f9c68f"
+      ],
       "swift_struct" : "WhenDailytestrunFires"
     }
   ]

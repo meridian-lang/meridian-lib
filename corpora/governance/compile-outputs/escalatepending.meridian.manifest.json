@@ -22,58 +22,58 @@
       "adjective" : "pending",
       "function" : "meridianDef_AccessRequest_pending",
       "kind" : "access request",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_AccessRequest_stale",
       "kind" : "access request",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "fresh",
       "function" : "meridianDef_Credential_fresh",
       "kind" : "credential",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "overused",
       "function" : "meridianDef_Credential_overused",
       "kind" : "credential",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "classified",
       "function" : "meridianDef_Resource_classified",
       "kind" : "resource",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "authorized",
       "function" : "meridianDef_User_authorized",
       "kind" : "user",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_User_cleared",
       "kind" : "user",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "privileged",
       "function" : "meridianDef_User_privileged",
       "kind" : "user",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 36,
+      "line" : 38,
       "name" : "assignment",
       "right_cardinality" : "one",
       "right_kind" : "a role",
@@ -83,7 +83,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a policy",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "an environment",
@@ -93,23 +93,11 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a user",
-      "line" : 38,
+      "line" : 40,
       "name" : "grant",
       "right_cardinality" : "one",
       "right_kind" : "a resource",
       "via" : "access.grant"
-    }
-  ],
-  "meridian_rules" : [
-    {
-      "bounded" : false,
-      "executes" : true,
-      "kind" : "trigger",
-      "source" : {
-        "file" : "escalatepending.meri",
-        "line" : 26
-      },
-      "text" : "When an access request is flagged as overdue, escalate the access request"
     }
   ],
   "meridian_skill" : {
@@ -129,7 +117,7 @@
         "text" : "Rules"
       },
       {
-        "kind" : "procedure",
+        "kind" : "reference",
         "level" : 3,
         "line" : 24,
         "text" : "Rules — steps"
@@ -180,13 +168,13 @@
         "role" : "procedure"
       },
       {
-        "executes" : true,
+        "executes" : false,
         "heading" : "Rules — steps",
         "line" : 24,
         "lines" : [
-          "When an access request is flagged as overdue, escalate the access request"
+          "When an access request has been pending for more than 7 days, escalate the access request"
         ],
-        "role" : "procedure"
+        "role" : "reference"
       },
       {
         "executes" : true,
@@ -228,21 +216,21 @@
   "meridian_verbs" : [
     {
       "base" : "authorize",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "authorized",
       "relation" : "assignment",
       "third_person" : "authorizes"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "grant",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "granted",
       "relation" : "grant",
       "third_person" : "grants"
@@ -254,40 +242,32 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 48,
-      "swift_line" : 435
+      "meridian_line" : 29,
+      "swift_line" : 458
     },
     {
       "meridian_line" : 30,
-      "swift_line" : 447
+      "swift_line" : 472
     },
     {
       "meridian_line" : 31,
-      "swift_line" : 452
-    },
-    {
-      "meridian_line" : 26,
-      "swift_line" : 491
-    },
-    {
-      "meridian_line" : 26,
-      "swift_line" : 496
+      "swift_line" : 477
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 536
+      "swift_line" : 545
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 541
+      "swift_line" : 550
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 581
+      "swift_line" : 619
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 586
+      "swift_line" : 624
     }
   ],
   "tools_used" : [
@@ -299,7 +279,14 @@
       "parameters" : [
 
       ],
+      "skill_name" : "escalate pending",
+      "skill_version_hash" : "7d2856db473422736eec473b5f66a7c224a806378e020b9a3a13e6e361da92c2",
       "source_name" : "escalate pending",
+      "step_paths" : [
+        "\/EscalatePending\/workflow\/procedure\/222cfae249eeb01da4045549b241b15289de97856c0ad0c489ebec6fb9f04831",
+        "\/EscalatePending\/workflow\/procedure\/69f541afc255cf4ca58c1da1ec60db21f27769f9d222b3843d91ddda0205cf29",
+        "\/EscalatePending\/workflow\/procedure\/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1"
+      ],
       "swift_struct" : "EscalatePending"
     },
     {
@@ -307,15 +294,13 @@
       "parameters" : [
 
       ],
-      "source_name" : "when an access request is flagged as overdue",
-      "swift_struct" : "WhenAccessRequestIs"
-    },
-    {
-      "mode" : "strict",
-      "parameters" : [
-
-      ],
+      "skill_name" : "escalate pending",
+      "skill_version_hash" : "7d2856db473422736eec473b5f66a7c224a806378e020b9a3a13e6e361da92c2",
       "source_name" : "when escalatePendingRequests fires",
+      "step_paths" : [
+        "\/WhenEscalatependingrequestsFires\/root\/procedure\/42c3adeffdbd249c7452b071503d9afa255965584fdf9123ce965384f7dda345",
+        "\/WhenEscalatependingrequestsFires\/root\/procedure\/d6acca7d02eaaf8acfd97eba516409ebc2122401c004b7e40ab782d2c45dac57"
+      ],
       "swift_struct" : "WhenEscalatependingrequestsFires"
     },
     {
@@ -323,7 +308,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "escalate pending",
+      "skill_version_hash" : "7d2856db473422736eec473b5f66a7c224a806378e020b9a3a13e6e361da92c2",
       "source_name" : "when escalateOverdueRequests fires",
+      "step_paths" : [
+        "\/WhenEscalateoverduerequestsFires\/root\/procedure\/a989008b49c6510b730b4bf8ae14f0fe66c0279e89f41dbe299bd54250bdab66",
+        "\/WhenEscalateoverduerequestsFires\/root\/procedure\/ad2c2064148e28341f75f4dbf079bd21f5668a602f9c8822349883a878f70b95"
+      ],
       "swift_struct" : "WhenEscalateoverduerequestsFires"
     }
   ]

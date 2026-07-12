@@ -46,6 +46,90 @@ struct RuntimeExecutorExtendedCoverageTests {
         }
     }
 
+    @Test("Replay forcing function compiles runs persists and evaluates")
+    func replayForcingFunction() async throws {
+        let compiled = try compileMinimalRunWorkflow()
+        let runner = try SwiftPMPackageRunner.temporary(prefix: "meridian-trace-replay")
+        defer { try? runner.remove() }
+
+        try runner.writeMeridianRunDriverPackage(
+            repoRoot: meridianRepoRoot(),
+            generatedSource: compiled.swift,
+            workflow: compiled.workflow
+        )
+
+        let traceURL = runner.packageURL.appendingPathComponent("events.jsonl")
+        try runner.writeFile(
+            "Sources/Driver/Driver.swift",
+            contents: """
+            import Foundation
+            import MeridianRuntime
+            import MeridianTools
+            import GeneratedWorkflow
+
+            @main
+            struct Driver {
+                static func main() async throws {
+                    let registry = ToolRegistry()
+                    await registry.registerBuiltins()
+                    let store = try JSONLTraceStore(fileURL: URL(fileURLWithPath: "\(traceURL.path)"))
+                    let runtime = try Runtime.Builder()
+                        .setToolRegistry(registry)
+                        .setObserver(InMemoryObserver())
+                        .setTraceStore(store)
+                        .setTraceSkillIdentity(TraceSkillIdentity(name: "ReplayForcing", versionHash: "v1"))
+                        .setRunID("replay-forcing-run")
+                        .build()
+                    _ = try await \(compiled.workflow.structName)(runtime: runtime).run()
+                }
+            }
+            """
+        )
+
+        _ = try runner.build()
+        _ = try runner.run(executable: "Driver")
+
+        let text = try String(contentsOf: traceURL, encoding: .utf8)
+        #expect(!text.isEmpty)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let envelopes = try text
+            .split(separator: "\n", omittingEmptySubsequences: true)
+            .map { try decoder.decode(PersistedLineEnvelope.self, from: Data($0.utf8)) }
+        let records = envelopes.map(\.record)
+        #expect(!records.isEmpty)
+        #expect(Set(records.map(\.run)) == ["replay-forcing-run"])
+        #expect(Set(records.map(\.skillName)).contains("Run"))
+        guard let completedRecord = records.first(where: { $0.tag == .completed || $0.outcome == .success }) else {
+            Issue.record("expected at least one successful persisted record")
+            return
+        }
+        guard let completedSubject = completedRecord.subject else {
+            Issue.record("expected a persisted subject on the successful record")
+            return
+        }
+
+        let store = InMemoryTraceStore()
+        for record in records {
+            try await store.append(record)
+        }
+
+        let result = try await TraceEvaluator.replay(
+            temporal: TraceTemporalQuery(
+                scope: .currentRun,
+                kind: .ever(TraceEventPatternQuery(subject: .named(completedSubject), outcome: .succeeded))
+            ),
+            store: store,
+            context: TraceEvaluationContext(
+                runID: "replay-forcing-run",
+                skillName: completedRecord.skillName,
+                evaluationInstant: records.last?.at ?? Date()
+            )
+        )
+        #expect(result.truthValue == .true)
+        #expect(!result.witnessEventIDs.isEmpty)
+    }
+
     private func compileMinimalRunWorkflow() throws -> (swift: String, workflow: IRWorkflow) {
         let mer = "To run:\n  complete.\n"
         let compiler = Compiler(options: .init(
@@ -68,6 +152,11 @@ struct RuntimeExecutorExtendedCoverageTests {
             throw NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "no workflow"])
         }
         return (swift, wf)
+    }
+
+    private struct PersistedLineEnvelope: Decodable {
+        let record: TraceRecord
+        let checksum: String
     }
 
     private func compileParameterizedWorkflow() throws -> (swift: String, workflow: IRWorkflow) {

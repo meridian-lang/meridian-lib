@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -577,35 +577,35 @@
   "source_map" : [
     {
       "meridian_line" : 34,
-      "swift_line" : 602
+      "swift_line" : 625
     },
     {
       "meridian_line" : 75,
-      "swift_line" : 613
+      "swift_line" : 638
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 652
+      "swift_line" : 707
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 657
+      "swift_line" : 712
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 696
+      "swift_line" : 780
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 701
+      "swift_line" : 785
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 740
+      "swift_line" : 853
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 745
+      "swift_line" : 858
     }
   ],
   "tools_used" : [
@@ -625,11 +625,13 @@
             "get_health",
             "get_page",
             "get_timeline",
+            "health.get",
             "list_pages",
             "page.get",
             "page.list",
             "page.search",
             "query",
+            "search",
             "shell.run"
           ],
           "text" : "follow the Phases — steps 2 guidance"
@@ -642,7 +644,13 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "briefing",
+      "skill_version_hash" : "5f7d1ca6b98820e68726f71e39062b60a666bc8e796212f892c1591c30dc7c4f",
       "source_name" : "briefing a input",
+      "step_paths" : [
+        "\/BriefingInput\/contract-steps\/invariants\/6f59a1c46659827e912c5184face56cf0482853f826d9849cf6175511b913f22",
+        "\/BriefingInput\/phases-steps-2\/procedure\/76cdc64261e598f9b7c9cb18f89bfd8c58ebef9aa9c8bfb977434d0d1c9e924a"
+      ],
       "swift_struct" : "BriefingInput"
     },
     {
@@ -650,7 +658,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "briefing",
+      "skill_version_hash" : "5f7d1ca6b98820e68726f71e39062b60a666bc8e796212f892c1591c30dc7c4f",
       "source_name" : "when dailyBriefing fires",
+      "step_paths" : [
+        "\/WhenDailybriefingFires\/root\/procedure\/3bbf40fb76103f773c917df074ea6e93f03f031afa8d547104ff6e04144ea547",
+        "\/WhenDailybriefingFires\/root\/procedure\/6e838accaaaa92cdcf852df57f22fa14101b97a87defad93f43528afaaa7bab1"
+      ],
       "swift_struct" : "WhenDailybriefingFires"
     },
     {
@@ -658,7 +672,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "briefing",
+      "skill_version_hash" : "5f7d1ca6b98820e68726f71e39062b60a666bc8e796212f892c1591c30dc7c4f",
       "source_name" : "when morningBriefing fires",
+      "step_paths" : [
+        "\/WhenMorningbriefingFires\/root\/procedure\/46409c88bcb1d500de60fd5fe0ee1f021ebbc02b19784d1a4dcec777bd8472fb",
+        "\/WhenMorningbriefingFires\/root\/procedure\/f8744cd472ca28b48326f6e485f7fbfe8b03d0cb681e9288c582aa179ee60f51"
+      ],
       "swift_struct" : "WhenMorningbriefingFires"
     },
     {
@@ -666,7 +686,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "briefing",
+      "skill_version_hash" : "5f7d1ca6b98820e68726f71e39062b60a666bc8e796212f892c1591c30dc7c4f",
       "source_name" : "when whatSHappeningToday fires",
+      "step_paths" : [
+        "\/WhenWhatshappeningtodayFires\/root\/procedure\/0db8c9fb09d7e78c7c43f87414f3c899d5bf93bcfb1e64f7354d1686210e9cb8",
+        "\/WhenWhatshappeningtodayFires\/root\/procedure\/7fe925aad4f9b913541694f568003c7c30fd4b04eeeb00b4c78ce59937b16cb0"
+      ],
       "swift_struct" : "WhenWhatshappeningtodayFires"
     }
   ]

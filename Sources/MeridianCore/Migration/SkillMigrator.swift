@@ -112,6 +112,13 @@ public struct SkillMigrator {
     /// the compiler's own trace so `--trace skill` on the CLI covers migration
     /// without a second flag; pass an explicit trace to decouple them.
     let trace: ParserTrace
+    let probeSession = ProbeSession()
+
+    /// Holds optional trial-lowering probe tallies during the marking pass without
+    /// requiring `SkillMigrator` mutation.
+    final class ProbeSession: @unchecked Sendable {
+        var tally: TrialLowering.ProbeTally?
+    }
 
     public init(compiler: Compiler,
                 vocabularies: [Compiler.VocabularyInput],

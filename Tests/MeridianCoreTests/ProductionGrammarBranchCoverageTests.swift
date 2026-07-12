@@ -59,7 +59,7 @@ struct ProductionGrammarBranchCoverageTests {
         #expect(p.parse("it is not the case that a is 1").traceDescription(detail: .verbose).contains("logical(not"))
         #expect(p.parse("a is 1 or either b is 2 or c is 3").traceDescription(detail: .verbose).contains("logical(or"))
         #expect(p.parse("a is 1 or d is 4 or either b is 2 or c is 3").traceDescription(detail: .verbose).contains("logical(or"))
-        #expect(p.parse("a is 1 either b is 2 or c is 3").traceDescription(detail: .verbose).contains("logical(and"))
+        #expect(p.parse("a is 1 either b is 2 or c is 3").traceDescription(detail: .verbose).contains("malformed("))
         #expect(p.parse("either a is 1").traceDescription(detail: .verbose) == "(id(a) equal 1)")
         #expect(p.parse("a is 1 and b is 2 or either c is 3 or d is 4").traceDescription(detail: .verbose).contains("malformed("))
         #expect(!p.parse("neither either a is 1 or b is 2").traceDescription(detail: .verbose).isEmpty)

@@ -12,6 +12,37 @@ import Foundation
 //   - `InertYieldAnalyzer` (a read-only measurement, Phase 0).
 struct TrialLowering {
     let knowledge: Compiler.KnowledgeContext
+    let probeTally: ProbeTally?
+
+    init(knowledge: Compiler.KnowledgeContext, probeTally: ProbeTally? = nil) {
+        self.knowledge = knowledge
+        self.probeTally = probeTally
+    }
+
+    /// Aggregates silent probe outcomes for optional migration trace summaries.
+    final class ProbeTally: @unchecked Sendable {
+        private let lock = NSLock()
+        private var attempts = 0
+        private var successes = 0
+        private var failures = 0
+
+        func record(_ outcome: Outcome) {
+            lock.lock()
+            defer { lock.unlock() }
+            attempts += 1
+            switch outcome {
+            case .success: successes += 1
+            case .failure: failures += 1
+            }
+        }
+
+        var summaryLine: String? {
+            lock.lock()
+            defer { lock.unlock() }
+            guard attempts > 0 else { return nil }
+            return "trial-lowering probe summary: \(attempts) probe(s), \(successes) lowered, \(failures) rejected (probe diagnostics are internal-only)"
+        }
+    }
 
     /// Per-line classification (AGENTS.md Phase 1 item 2): the marking pass's
     /// deterministic split precedence, in order of precedence.
@@ -71,7 +102,8 @@ struct TrialLowering {
         guard case .checkable = ConditionClassifier(symbols: knowledge.symbols, lexicon: knowledge.lexicon, trace: .silent()).classify(text) else {
             return false
         }
-        return lowersAsStatement("make sure \(text).")
+        let marker = knowledge.lexicon.assertionMarkers.first ?? "make sure"
+        return lowersAsStatement("\(marker) \(text).")
     }
 
     /// Whole-word (case-insensitive) match against `EnglishLexicon.normativeCueWords`.
@@ -126,11 +158,20 @@ struct TrialLowering {
             // re-register as benign.
             try lowerer.registerDefinitions([])
             _ = try lowerer.lowerBlock(block, mode: .strict, depth: 0)
-            return .success
-        } catch let error as CompilerError {
-            return .failure(error.diagnostics)
+            let outcome: Outcome = .success
+            probeTally?.record(outcome)
+            return outcome
         } catch {
+            let outcome = Self.failureOutcome(for: error)
+            probeTally?.record(outcome)
+            return outcome
+        }
+    }
+
+    static func failureOutcome(for error: Error) -> Outcome {
+        guard let compilerError = error as? CompilerError else {
             return .failure([])
         }
+        return .failure(compilerError.diagnostics)
     }
 }

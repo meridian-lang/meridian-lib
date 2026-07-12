@@ -77,6 +77,7 @@ Sources/MeridianCore/
 │
 ├── Lowering/
 │   └── ASTToIR.swift               ← AST → IR primitives + phrase inlining
+│                                      (+ trace temporal/statistical lowering)
 │
 ├── Rulebook/
 │   ├── Rulebook.swift              ← 4 families: desugar / sections / conventions
@@ -174,6 +175,7 @@ MeridianFile
         ├──► ManifestEmitter → {stem}.meridian.manifest.json
         │
         ▼  SwiftEmitter.emitFile(workflows:constantsDecl:instancesDecl:domainDecl:)
+           (+ runtimeTraceConfiguration, trace query/monitor codegen when configured)
 Swift source String  ← toString(separator: "\n") from StringTemplate
         │
         ▼  swift-format (optional, --no-format to skip)
@@ -216,6 +218,16 @@ Formatted Swift String
 | `Diagnostic` | `Diagnostics/` | Coded error/warning: code + range + suggestions/notes/help + decision |
 | `DiagnosticCode` | `Diagnostics/` | Stable `MERxxxx` identity + kind + linked `DecisionRef` |
 | `DiagnosticEngine` | `Diagnostics/` | Per-file collector; batch-reports many errors with coarse recovery |
+| `TraceRecord` / `TraceStore` | `MeridianRuntime/Trace/` | Semantic trace schema, append-only store, `TraceEvaluator` replay |
+
+## Runtime trace seam (Wave 8)
+
+Generated workflows may carry `runtimeTraceConfiguration` (from `=== trace ===`).
+At run time, `Runtime` appends semantic `TraceRecord` rows to an optional
+`TraceStore` (`InMemoryTraceStore` or `JSONLTraceStore`). Temporal/statistical
+conditions in generated code call `TraceEvaluator.evaluate(...)` against that
+store. This is separate from compile-time `ParserTrace` — see
+[08_TRACING.md](08_TRACING.md) and [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).
 
 ## External dependencies
 

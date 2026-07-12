@@ -22,58 +22,70 @@
       "adjective" : "actionable",
       "function" : "meridianDef_Alert_actionable",
       "kind" : "alert",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "critical",
       "function" : "meridianDef_Alert_critical",
       "kind" : "alert",
-      "line" : 23
+      "line" : 25
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Alert_stale",
       "kind" : "alert",
-      "line" : 24
+      "line" : 26
     },
     {
       "adjective" : "unhealthy",
       "function" : "meridianDef_Deploy_unhealthy",
       "kind" : "deploy",
-      "line" : 26
+      "line" : 28
     },
     {
       "adjective" : "high severity",
       "function" : "meridianDef_Incident_highSeverity",
       "kind" : "incident",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Incident_open",
       "kind" : "incident",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "degraded",
       "function" : "meridianDef_Service_degraded",
       "kind" : "service",
-      "line" : 25
+      "line" : 27
+    },
+    {
+      "adjective" : "healthy",
+      "function" : "meridianDef_Service_healthy",
+      "kind" : "service",
+      "line" : 33
+    },
+    {
+      "adjective" : "recovered",
+      "function" : "meridianDef_Service_recovered",
+      "kind" : "service",
+      "line" : 34
     },
     {
       "adjective" : "breached",
       "function" : "meridianDef_Slo_breached",
       "kind" : "slo",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a runbook",
-      "line" : 36,
+      "line" : 40,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "a service",
@@ -83,7 +95,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a service",
-      "line" : 32,
+      "line" : 36,
       "name" : "firing",
       "right_cardinality" : "one",
       "right_kind" : "an alert",
@@ -93,7 +105,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an oncall engineer",
-      "line" : 34,
+      "line" : 38,
       "name" : "ownership",
       "right_cardinality" : "one",
       "right_kind" : "a service",
@@ -212,21 +224,21 @@
   "meridian_verbs" : [
     {
       "base" : "cover",
-      "line" : 41,
+      "line" : 45,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "own",
-      "line" : 40,
+      "line" : 44,
       "past_participle" : "owned",
       "relation" : "ownership",
       "third_person" : "owns"
     },
     {
       "base" : "page",
-      "line" : 39,
+      "line" : 43,
       "past_participle" : "paged",
       "relation" : "ownership",
       "third_person" : "pages"
@@ -239,55 +251,55 @@
   "source_map" : [
     {
       "meridian_line" : 41,
-      "swift_line" : 393
+      "swift_line" : 421
     },
     {
-      "meridian_line" : 47,
-      "swift_line" : 398
+      "meridian_line" : 25,
+      "swift_line" : 426
     },
     {
       "meridian_line" : 26,
-      "swift_line" : 410
+      "swift_line" : 440
     },
     {
       "meridian_line" : 27,
-      "swift_line" : 414
+      "swift_line" : 444
     },
     {
       "meridian_line" : 28,
-      "swift_line" : 420
+      "swift_line" : 453
     },
     {
       "meridian_line" : 29,
-      "swift_line" : 425
+      "swift_line" : 458
     },
     {
       "meridian_line" : 30,
-      "swift_line" : 434
+      "swift_line" : 468
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 473
+      "swift_line" : 536
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 478
+      "swift_line" : 541
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 518
+      "swift_line" : 610
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 523
+      "swift_line" : 615
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 563
+      "swift_line" : 684
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 568
+      "swift_line" : 689
     }
   ],
   "tools_used" : [
@@ -299,7 +311,18 @@
       "parameters" : [
 
       ],
+      "skill_name" : "escalate incident",
+      "skill_version_hash" : "e63636359017be1e7684bc200f86ece7131d9747caf1f3ffa3bd98c249973a91",
       "source_name" : "escalate incident",
+      "step_paths" : [
+        "\/EscalateIncident\/guarantees\/invariants\/00a8b6d3ce6721fb6a2d2ffc272a9cf5d23f1b4eb126beec7f42ce8447e8cd16",
+        "\/EscalateIncident\/workflow\/procedure\/0ccf2d780c7ad1138b42795af12258571781717307047ba1325d98c421665a6b",
+        "\/EscalateIncident\/workflow\/procedure\/15ab40d7bdc259bf6347830f0161203ac409fcc13467180b69527a42ea05bc49",
+        "\/EscalateIncident\/workflow\/procedure\/55c095c7fc24cf3d5e492128af938c0f9869c2ad58aff3f7033a432a9ef49cbd",
+        "\/EscalateIncident\/workflow\/procedure\/d9a4fb70f684903dd059932fa257df864de951129da69e04671ef4e96f1ea378",
+        "\/EscalateIncident\/workflow\/procedure\/iterate.body\/ced4b5fb1045a12209ebf5f0417c07cd6ae3f0ce1defb74895caf0bccc3d530f",
+        "\/EscalateIncident\/workflow\/procedure\/iterate.body\/f95f981f873a7217ad6072b67917938387cae9de56865623731c84126c273f5c"
+      ],
       "swift_struct" : "EscalateIncident"
     },
     {
@@ -307,7 +330,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "escalate incident",
+      "skill_version_hash" : "e63636359017be1e7684bc200f86ece7131d9747caf1f3ffa3bd98c249973a91",
       "source_name" : "when escalateOpenIncidents fires",
+      "step_paths" : [
+        "\/WhenEscalateopenincidentsFires\/root\/procedure\/05c96d8782f29d2ac4b93c7822feca61b274b86c8308520a9ba8ae7a6881a2db",
+        "\/WhenEscalateopenincidentsFires\/root\/procedure\/ce3bb21b3cedcc07e382b30c727726742c211365bfa2842271b9a69be56d9293"
+      ],
       "swift_struct" : "WhenEscalateopenincidentsFires"
     },
     {
@@ -315,7 +344,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "escalate incident",
+      "skill_version_hash" : "e63636359017be1e7684bc200f86ece7131d9747caf1f3ffa3bd98c249973a91",
       "source_name" : "when escalateStalledIncidents fires",
+      "step_paths" : [
+        "\/WhenEscalatestalledincidentsFires\/root\/procedure\/37b5b7d2d929165975f96542f0e3f8031d276d25cddad6b9bb6b0c3e0c389cb5",
+        "\/WhenEscalatestalledincidentsFires\/root\/procedure\/70e528b31f1550e9e16d4ed502f33fcffe83bccdf88433b91a41ba83af1de781"
+      ],
       "swift_struct" : "WhenEscalatestalledincidentsFires"
     },
     {
@@ -323,7 +358,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "escalate incident",
+      "skill_version_hash" : "e63636359017be1e7684bc200f86ece7131d9747caf1f3ffa3bd98c249973a91",
       "source_name" : "when runIncidentEscalation fires",
+      "step_paths" : [
+        "\/WhenRunincidentescalationFires\/root\/procedure\/c903d5d08cbcce8388b6d2d3a7fbf7bdff9afb428e90c828cbf91f43b6327faa",
+        "\/WhenRunincidentescalationFires\/root\/procedure\/e972b12c9673545060b4aecb0922e11d4a95371b9f2d584aae05270e92f5f8c0"
+      ],
       "swift_struct" : "WhenRunincidentescalationFires"
     }
   ]

@@ -51,7 +51,7 @@ public struct Compiler {
         workflows: [IRWorkflow],
         constantsDecl: SwiftEmitter.ConstantsDecl? = nil
     ) throws -> String {
-        try SwiftEmitter(options: options.emitterOptions)
+        try SwiftEmitter(options: options.emitterOptions, trace: options.trace)
             .emitFile(workflows: workflows, constantsDecl: constantsDecl)
     }
 
@@ -144,8 +144,7 @@ public struct Compiler {
             rulebooks: rulebooks,
             trace: trace,
             engine: engine,
-            duplicateRulebookHelp: "Each `--rulebook` / frontmatter `rulebook:` entry must have a unique name.",
-            duplicateVocabularyHelp: "Each `--vocabulary` / frontmatter `vocabulary:` entry must have a unique name."
+            inputMode: .compile
         )
 
         let ast = try trace.phase("parse") {
@@ -157,6 +156,7 @@ public struct Compiler {
             ast: ast, meridianFile: meridianFile,
             symbols: bootstrap.symbols, config: bootstrap.config, lexicon: bootstrap.lexicon, trace: trace,
             rulebook: bootstrap.rulebook, vocabularies: vocabularies, rulebooks: rulebooks,
+            authoredSource: meridianSource,
             preRegistered: false, engine: engine
         )
     }
@@ -179,8 +179,7 @@ public struct Compiler {
             rulebooks: rulebooks,
             trace: trace,
             engine: engine,
-            duplicateRulebookHelp: "Each `--rulebook` / frontmatter `rulebook:` entry must have a unique name.",
-            duplicateVocabularyHelp: "Each `--vocabulary` / frontmatter `vocabulary:` entry must have a unique name."
+            inputMode: .compile
         )
 
         let ast = try trace.phase("parse") {
@@ -191,47 +190,36 @@ public struct Compiler {
         try validateImports(ast.imports, against: vocabularies, file: meridianFile)
         try validateRulebookReferences(ast.metadata, against: rulebooks, file: meridianFile)
 
-        var effectivePolicy = options.fallbackPolicy
-        if let raw = ast.metadata?["allow-fallbacks"] {
-            let (frontPolicy, unknown) = FallbackPolicy.parse(raw)
-            effectivePolicy = effectivePolicy.merging(frontPolicy)
-            let fbLine = ast.metadata?.sourceLine ?? 1
-            for token in unknown {
-                engine.report(Diagnostic.unresolved(
-                    .unknownFallbackKind,
-                    target: token,
-                    among: FallbackKind.allCases.map(\.rawValue),
-                    range: SourceRange(file: meridianFile, line: fbLine, column: 1),
-                    noun: "allow-fallbacks kind",
-                    help: "Use one of the recognized fallback kinds, or remove the token."))
-            }
-        }
-
-        let frontmatter = SkillFrontmatter(ast.metadata)
-        let scopedTools = mergedScopedTools(
-            frontmatterTools: frontmatter.tools,
-            toolsUsed: ast.toolsUsed,
-            symbols: bootstrap.symbols,
-            trace: trace
+        let effectivePolicy = effectiveFallbackPolicy(
+            metadata: ast.metadata,
+            sourceFile: meridianFile,
+            engine: engine
         )
-
-        let lowerer = ASTToIR(symbols: bootstrap.symbols, sourceFile: meridianFile, trace: trace,
-                              lexicon: bootstrap.lexicon, fallbackPolicy: effectivePolicy,
-                              rulebook: bootstrap.rulebook, scopedTools: scopedTools,
-                              frontmatterTools: frontmatter.tools + ast.toolsUsed,
-                              engine: engine)
+        let lowering = makeLoweringContext(
+            ast: ast,
+            sourceFile: meridianFile,
+            symbols: bootstrap.symbols,
+            lexicon: bootstrap.lexicon,
+            rulebook: bootstrap.rulebook,
+            trace: trace,
+            fallbackPolicy: effectivePolicy,
+            engine: engine
+        )
+        let frontmatter = lowering.frontmatter
+        let lowerer = lowering.lowerer
         var workflows = try trace.phase("lower") { try lowerer.lower(ast, preRegistered: false) }
         let loweredDefinitions = try lowerer.lowerRegisteredDefinitions()
         try engine.throwIfErrors()
 
-        if !frontmatter.triggers.isEmpty {
-            let classifier = TriggerClassifier(lexicon: bootstrap.lexicon, rulebook: bootstrap.rulebook, trace: trace)
-            let triggers = frontmatter.triggers.map {
-                classifier.classify($0, sourceLine: ast.metadata?.sourceLine ?? 0)
-            }
-            workflows += TriggerSynthesizer(lexicon: bootstrap.lexicon, trace: trace)
-                .synthesize(triggers, sourceFile: meridianFile)
-        }
+        workflows = addingSynthesizedTriggers(
+            to: workflows,
+            frontmatter: frontmatter,
+            metadata: ast.metadata,
+            sourceFile: meridianFile,
+            lexicon: bootstrap.lexicon,
+            rulebook: bootstrap.rulebook,
+            trace: trace
+        )
 
         return VerbalizerModel(
             workflows: workflows,
@@ -293,8 +281,7 @@ public struct Compiler {
             rulebooks: rulebooks,
             trace: trace,
             engine: engine,
-            duplicateRulebookHelp: "Each `--rulebook` / frontmatter `rulebook:` entry must have a unique name.",
-            duplicateVocabularyHelp: "Each `--vocabulary` / frontmatter `vocabulary:` entry must have a unique name."
+            inputMode: .compile
         )
         return KnowledgeContext(symbols: ctx.symbols, lexicon: ctx.lexicon,
                                 rulebook: ctx.rulebook, rewriteEngine: ctx.rewriteEngine)
@@ -309,15 +296,25 @@ public struct Compiler {
         let engine: DiagnosticEngine
     }
 
+    private enum BootstrapInputMode {
+        case compile
+        case skillpack
+    }
+
+    private struct DuplicateInputHelp {
+        let rulebook: String
+        let vocabulary: String
+    }
+
     private func bootstrap(
         meridianSources: [(source: String, file: String)],
         vocabularies: [VocabularyInput],
         rulebooks: [RulebookInput],
         trace: ParserTrace,
         engine: DiagnosticEngine,
-        duplicateRulebookHelp: String,
-        duplicateVocabularyHelp: String
+        inputMode: BootstrapInputMode
     ) throws -> BootstrapContext {
+        let duplicateHelp = duplicateInputHelp(for: inputMode)
         var lexicon = options.lexicon
         var rulebook = Rulebook.empty
         var seenRulebooks: Set<String> = []
@@ -328,7 +325,7 @@ public struct Compiler {
                         .duplicateName,
                         message: "duplicate rulebook name: \(input.name)",
                         range: SourceRange(file: input.file, line: 1, column: 1),
-                        help: duplicateRulebookHelp)
+                        help: duplicateHelp.rulebook)
                 ])
             }
             let parsed = try trace.phase("bootstrap.rulebook") {
@@ -347,14 +344,14 @@ public struct Compiler {
                         .duplicateName,
                         message: "duplicate vocabulary name: \(input.name)",
                         range: SourceRange(file: input.file, line: 1, column: 1),
-                        help: duplicateVocabularyHelp)
+                        help: duplicateHelp.vocabulary)
                 ])
             }
             let parsed = try trace.phase("bootstrap.merconfig") {
                 try MerConfigParser(trace: trace, lexicon: lexicon, diagnostics: engine)
                     .parse(input.source, file: input.file)
             }
-            config = config.merging(parsed)
+            config = try config.merging(parsed)
         }
         for meridian in meridianSources {
             let inlineDomain = try trace.phase("bootstrap.inlineDomain") {
@@ -366,9 +363,10 @@ public struct Compiler {
                     lexicon: lexicon
                 )
             }
-            config = config.merging(inlineDomain)
+            config = try config.merging(inlineDomain)
         }
         try requireUniqueDeclarations(in: config, engine: engine)
+        validateProductionTraceCapturePolicies(in: config, engine: engine)
         try engine.throwIfErrors()
 
         lexicon = trace.phase("bootstrap.lexiconMerge") { lexicon.merging(
@@ -394,8 +392,13 @@ public struct Compiler {
             conditionHeaderSynonyms: config.languageSynonyms.conditionHeaderSynonyms,
             actionHeaderSynonyms: config.languageSynonyms.actionHeaderSynonyms,
             wildcardSynonyms: config.languageSynonyms.wildcardSynonyms,
+            traceOutcomeSynonyms: config.languageSynonyms.traceOutcomeSynonyms,
+            traceAuxiliarySynonyms: config.languageSynonyms.traceAuxiliarySynonyms,
             shellFenceSynonyms: config.languageSynonyms.shellFenceSynonyms,
-            fenceToolSynonyms: config.languageSynonyms.fenceToolMapping
+            fenceToolSynonyms: config.languageSynonyms.fenceToolMapping,
+            guardedFenceIntroducerSynonyms: config.languageSynonyms.guardedFenceIntroducerSynonyms,
+            fallbackChainIntroducerSynonyms: config.languageSynonyms.fallbackChainIntroducerSynonyms,
+            approvalToolSynonyms: config.languageSynonyms.approvalToolSynonyms
         ) }
 
         let symbolsFile = vocabularies.first?.file ?? "config.merconfig"
@@ -431,8 +434,7 @@ public struct Compiler {
             rulebooks: rulebooks,
             trace: trace,
             engine: engine,
-            duplicateRulebookHelp: "Supply each rulebook only once or rename the duplicate.",
-            duplicateVocabularyHelp: "Supply each vocabulary only once or rename the duplicate."
+            inputMode: .skillpack
         )
 
         // Parse every skill against the SHARED symbol table. Each file gets its
@@ -467,6 +469,7 @@ public struct Compiler {
                 ast: entry.ast, meridianFile: entry.file,
                 symbols: bootstrap.symbols, config: bootstrap.config, lexicon: bootstrap.lexicon, trace: trace,
                 rulebook: bootstrap.rulebook, vocabularies: vocabularies, rulebooks: rulebooks,
+                authoredSource: skills.first(where: { $0.file == entry.file })?.source ?? "",
                 preRegistered: true, engine: entry.engine
             ).swift
         }
@@ -485,31 +488,18 @@ public struct Compiler {
         rulebook: Rulebook,
         vocabularies: [VocabularyInput],
         rulebooks: [RulebookInput],
+        authoredSource: String,
         preRegistered: Bool,
         engine: DiagnosticEngine
     ) throws -> (swift: String, manifest: ManifestEmitter.Input) {
         try validateImports(ast.imports, against: vocabularies, file: meridianFile)
         try validateRulebookReferences(ast.metadata, against: rulebooks, file: meridianFile)
 
-        // Merge the frontmatter `allow-fallbacks:` policy (if any) with the
-        // option-level escape hatch. The resulting policy is the union.
-        var effectivePolicy = options.fallbackPolicy
-        if let raw = ast.metadata?["allow-fallbacks"] {
-            let (frontPolicy, unknown) = FallbackPolicy.parse(raw)
-            effectivePolicy = effectivePolicy.merging(frontPolicy)
-            let fbLine = ast.metadata?.sourceLine ?? 1
-            for token in unknown {
-                // A typo'd allow-fallbacks token would otherwise silently fail to
-                // take effect — surface it through the always-on funnel.
-                engine.report(Diagnostic.unresolved(
-                    .unknownFallbackKind,
-                    target: token,
-                    among: FallbackKind.allCases.map(\.rawValue),
-                    range: SourceRange(file: meridianFile, line: fbLine, column: 1),
-                    noun: "allow-fallbacks kind",
-                    help: "Use one of the recognized fallback kinds, or remove the token."))
-            }
-        }
+        let effectivePolicy = effectiveFallbackPolicy(
+            metadata: ast.metadata,
+            sourceFile: meridianFile,
+            engine: engine
+        )
 
         let constantsDecl: SwiftEmitter.ConstantsDecl? = config.constants.isEmpty ? nil :
             SwiftEmitter.ConstantsDecl(entries: config.constants.map { c in
@@ -529,47 +519,58 @@ public struct Compiler {
 
         let domainDecl = try buildDomainDecl(from: config)
 
-        // Narrow the plan-step tool allow-list to the skill's declared `tools:`
-        // frontmatter (if any). Unresolved tokens fall back to the full set so a
-        // typo can never silently empty the planner's capability surface.
-        let frontmatter = SkillFrontmatter(ast.metadata)
-        // Frontmatter `tools:` and `## Tools Used` share one resolve+union path
-        // so aliases discovered only in the section (e.g. `get_health`) expand
-        // to the same method names as when the verbalizer later folds them into
-        // canonical frontmatter.
-        let scopedTools = mergedScopedTools(
-            frontmatterTools: frontmatter.tools,
-            toolsUsed: ast.toolsUsed,
+        let lowering = makeLoweringContext(
+            ast: ast,
+            sourceFile: meridianFile,
             symbols: symbols,
-            trace: trace
+            lexicon: lexicon,
+            rulebook: rulebook,
+            trace: trace,
+            fallbackPolicy: effectivePolicy,
+            engine: engine
         )
+        let frontmatter = lowering.frontmatter
 
         // Batch diagnostics collector — per-file, single-threaded (passed in so
         // it also holds any parse-phase diagnostics). The lowerer recovers
         // per-workflow/per-rule into this engine so one compile reports many
         // errors; we throw the aggregate before codegen.
-        let lowerer = ASTToIR(symbols: symbols, sourceFile: meridianFile, trace: trace,
-                              lexicon: lexicon, fallbackPolicy: effectivePolicy,
-                              rulebook: rulebook, scopedTools: scopedTools,
-                              frontmatterTools: frontmatter.tools + ast.toolsUsed,
-                              engine: engine)
+        let lowerer = lowering.lowerer
         var workflows = try trace.phase("lower") { try lowerer.lower(ast, preRegistered: preRegistered) }
         // 2B: lower the registered checkable adjectives to file-scope helpers.
         let loweredDefinitions = try lowerer.lowerRegisteredDefinitions()
         // Surface all collected lowering diagnostics at once, before codegen.
         try engine.throwIfErrors()
 
-        // E: Frontmatter `triggers:` → typed triggers → one synthetic trigger
-        // workflow each (wait for the trigger + fan out `trigger.<name>.fired`).
-        // The host owns actual firing; routing is the resolver's job.
-        if !frontmatter.triggers.isEmpty {
-            let classifier = TriggerClassifier(lexicon: lexicon, rulebook: rulebook, trace: trace)
-            let triggers = frontmatter.triggers.map {
-                classifier.classify($0, sourceLine: ast.metadata?.sourceLine ?? 0)
-            }
-            workflows += TriggerSynthesizer(lexicon: lexicon, trace: trace)
-                .synthesize(triggers, sourceFile: meridianFile)
-        }
+        workflows = addingSynthesizedTriggers(
+            to: workflows,
+            frontmatter: frontmatter,
+            metadata: ast.metadata,
+            sourceFile: meridianFile,
+            lexicon: lexicon,
+            rulebook: rulebook,
+            trace: trace
+        )
+
+        let skillName = frontmatter.name
+            ?? meridianFile.replacingOccurrences(of: ".meridian", with: "")
+                .replacingOccurrences(of: ".meri", with: "")
+        let skillVersionHash = try TraceIdentityPlanner.skillVersionHash(
+            meridianSource: authoredSource,
+            vocabularies: vocabularies,
+            rulebooks: rulebooks
+        )
+        let runtimeTraceConfiguration = TraceIdentityPlanner.runtimeTraceConfiguration(
+            from: config,
+            skillName: skillName,
+            skillVersionHash: skillVersionHash,
+            workflows: workflows
+        )
+        workflows = try TraceIdentityPlanner.annotate(
+            workflows: workflows,
+            skillSections: ast.skillSections,
+            runtimeTraceConfiguration: runtimeTraceConfiguration
+        )
 
         // Emit Swift
         let emitterOpts = SwiftEmitter.Options(
@@ -658,9 +659,107 @@ public struct Compiler {
                     ManifestEmitter.VerbManifestEntry(
                         base: $0.base, thirdPerson: $0.thirdPerson,
                         pastParticiple: $0.pastParticiple, relation: $0.relation, line: $0.sourceLine)
-                }
+                },
+            skillVersionHash: skillVersionHash
         )
         return (swift, manifestInput)
+    }
+
+    private func duplicateInputHelp(for mode: BootstrapInputMode) -> DuplicateInputHelp {
+        switch mode {
+        case .compile:
+            return DuplicateInputHelp(
+                rulebook: "Each `--rulebook` / frontmatter `rulebook:` entry must have a unique name.",
+                vocabulary: "Each `--vocabulary` / frontmatter `vocabulary:` entry must have a unique name."
+            )
+        case .skillpack:
+            return DuplicateInputHelp(
+                rulebook: "Supply each rulebook only once or rename the duplicate.",
+                vocabulary: "Supply each vocabulary only once or rename the duplicate."
+            )
+        }
+    }
+
+    private func effectiveFallbackPolicy(
+        metadata: FileMetadataAST?,
+        sourceFile: String,
+        engine: DiagnosticEngine
+    ) -> FallbackPolicy {
+        var effectivePolicy = options.fallbackPolicy
+        guard let raw = metadata?["allow-fallbacks"] else {
+            return effectivePolicy
+        }
+
+        let (frontPolicy, unknown) = FallbackPolicy.parse(raw)
+        effectivePolicy = effectivePolicy.merging(frontPolicy)
+        let fallbackLine = metadata?.sourceLine ?? 1
+        for token in unknown {
+            engine.report(Diagnostic.unresolved(
+                .unknownFallbackKind,
+                target: token,
+                among: FallbackKind.allCases.map(\.rawValue),
+                range: SourceRange(file: sourceFile, line: fallbackLine, column: 1),
+                noun: "allow-fallbacks kind",
+                help: "Use one of the recognized fallback kinds, or remove the token."))
+        }
+        return effectivePolicy
+    }
+
+    private struct LoweringContext {
+        let lowerer: ASTToIR
+        let frontmatter: SkillFrontmatter
+    }
+
+    private func makeLoweringContext(
+        ast: MeridianFile,
+        sourceFile: String,
+        symbols: SymbolTable,
+        lexicon: EnglishLexicon,
+        rulebook: Rulebook,
+        trace: ParserTrace,
+        fallbackPolicy: FallbackPolicy,
+        engine: DiagnosticEngine
+    ) -> LoweringContext {
+        let frontmatter = SkillFrontmatter(ast.metadata)
+        let scopedTools = mergedScopedTools(
+            frontmatterTools: frontmatter.tools,
+            toolsUsed: ast.toolsUsed,
+            symbols: symbols,
+            trace: trace
+        )
+        let lowerer = ASTToIR(
+            symbols: symbols,
+            sourceFile: sourceFile,
+            trace: trace,
+            lexicon: lexicon,
+            fallbackPolicy: fallbackPolicy,
+            rulebook: rulebook,
+            scopedTools: scopedTools,
+            frontmatterTools: frontmatter.tools + ast.toolsUsed,
+            engine: engine
+        )
+        return LoweringContext(lowerer: lowerer, frontmatter: frontmatter)
+    }
+
+    private func addingSynthesizedTriggers(
+        to workflows: [IRWorkflow],
+        frontmatter: SkillFrontmatter,
+        metadata: FileMetadataAST?,
+        sourceFile: String,
+        lexicon: EnglishLexicon,
+        rulebook: Rulebook,
+        trace: ParserTrace
+    ) -> [IRWorkflow] {
+        guard !frontmatter.triggers.isEmpty else {
+            return workflows
+        }
+
+        let classifier = TriggerClassifier(lexicon: lexicon, rulebook: rulebook, trace: trace)
+        let triggers = frontmatter.triggers.map {
+            classifier.classify($0, sourceLine: metadata?.sourceLine ?? 0)
+        }
+        return workflows + TriggerSynthesizer(lexicon: lexicon, trace: trace)
+            .synthesize(triggers, sourceFile: sourceFile)
     }
 
     /// Build the meridian-line → swift-line source map from the generated Swift
@@ -837,6 +936,36 @@ public struct Compiler {
         try ensureUnique(config.tools,     "tool",     name: { $0.displayName }, line: { $0.sourceLine })
         try ensureUnique(config.constants, "constant", name: { $0.name }, line: { $0.sourceLine })
         try ensureUnique(config.instances, "instance", name: { $0.name }, line: { $0.sourceLine })
+    }
+
+    /// D9 / SEM-4-08: in a production trace profile, every declared tool must
+    /// opt into an explicit capture policy instead of inheriting the runtime's
+    /// development-oriented default.
+    private func validateProductionTraceCapturePolicies(
+        in config: MerConfigFile,
+        engine: DiagnosticEngine
+    ) {
+        guard let profile = config.traceConfiguration.profile, profile.value == .production else {
+            return
+        }
+        for tool in config.tools where tool.capturePolicy == nil {
+            let toolRange = SourceRange(
+                file: tool.sourceFile.isEmpty ? profile.file : tool.sourceFile,
+                line: tool.sourceLine > 0 ? tool.sourceLine : profile.line,
+                column: 1
+            )
+            let profileNote = DiagnosticNote(
+                "trace profile `production` declared here",
+                range: SourceRange(file: profile.file, line: profile.line, column: 1)
+            )
+            engine.report(Diagnostic.structural(
+                .traceMissingProductionCapturePolicy,
+                message: "tool \"\(tool.displayName)\" must declare `capture:` because the trace profile is `production`",
+                range: toolRange,
+                help: "Add `capture: full`, `capture: hash-only`, or `capture: redacted (field1, field2)` under this tool declaration.",
+                notes: [profileNote]
+            ))
+        }
     }
 
     /// Wave 4A: `## Domain` sections in a `.meri` file are assembly-time
@@ -1162,7 +1291,6 @@ public struct Compiler {
 // MARK: - CompilerError
 
 public enum CompilerError: Error, Sendable {
-    case notImplemented(String)
     case syntaxError(message: String, range: SourceRange)
     case semanticError(message: String, range: SourceRange)
     case codegenError(message: String)
@@ -1185,9 +1313,6 @@ public enum CompilerError: Error, Sendable {
         case .codegenError(let m):
             return [Diagnostic(code: .codegenError, severity: .error, message: m,
                                primaryRange: SourceRange(file: "<generated>", line: 0, column: 1))]
-        case .notImplemented(let m):
-            return [Diagnostic(code: .notImplemented, severity: .error, message: m,
-                               primaryRange: SourceRange(file: "<unknown>", line: 0, column: 1))]
         }
     }
 

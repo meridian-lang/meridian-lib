@@ -18,6 +18,17 @@ struct RuntimeExecutor {
 
     let verbose: Bool
 
+    /// Prefix for the sentinel stdout line carrying the final `reason`
+    /// payload string (never a real event-kind line, so it can be filtered
+    /// out of `eventKinds` unambiguously). Only printed when the run's final
+    /// completion/failure event actually carries a non-nil string reason.
+    private static let finalReasonSentinel = "__MERIDIAN_FINAL_REASON__:"
+    /// Prefix for the sentinel stdout line carrying a specific final binding's
+    /// `Value.scalarDescription`, printed only when `spec.expectFinalBindingContains`
+    /// names a key. Same "won't collide with a real event-kind line" reasoning
+    /// as `finalReasonSentinel`.
+    private static let finalBindingSentinel = "__MERIDIAN_FINAL_BINDING__:"
+
     func run(
         spec: MeridianTestRunner.RuntimeSpec,
         swiftSource: String,
@@ -78,13 +89,28 @@ struct RuntimeExecutor {
             return ["swift run failed:\n\(msg)"]
         }
 
-        // Parse event kinds from JSONL output (one kind per line)
+        // Parse event kinds from JSONL output (one kind per line). The final
+        // completion/failure reason (if any) rides on a separate sentinel-
+        // prefixed line so it can't be confused with a real event kind.
+        var finalReason: String?
+        var finalBinding: String?
         let eventKinds = output
             .components(separatedBy: "\n")
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
+            .compactMap { line -> String? in
+                if line.hasPrefix(Self.finalReasonSentinel) {
+                    finalReason = String(line.dropFirst(Self.finalReasonSentinel.count))
+                    return nil
+                }
+                if line.hasPrefix(Self.finalBindingSentinel) {
+                    finalBinding = String(line.dropFirst(Self.finalBindingSentinel.count))
+                    return nil
+                }
+                return line
+            }
 
-        return evaluateRuntimeAssertions(spec: spec, eventKinds: eventKinds)
+        return evaluateRuntimeAssertions(spec: spec, eventKinds: eventKinds, finalReason: finalReason, finalBinding: finalBinding)
     }
 
     // MARK: - Package scaffolding
@@ -135,6 +161,7 @@ struct RuntimeExecutor {
         lines.append("")
         lines.append("// Entry point")
         lines.append("let _task = Task {")
+        lines.append("    do {")
         lines.append("    let registry = ToolRegistry()")
 
         // Register tool stubs
@@ -143,7 +170,14 @@ struct RuntimeExecutor {
         }
 
         lines.append("    let observer = InMemoryObserver()")
-        lines.append("    let runtime = Runtime(toolRegistry: registry, observer: observer, runID: \"test-run\")")
+        lines.append(contentsOf: DriverSourceBuilder.runtimeBootstrap(
+            workflowStructName: workflow.structName,
+            hasTraceConfiguration: workflow.runtimeTraceConfiguration != nil,
+            runID: "test-run",
+            observerExpr: "observer",
+            checkpointRootExpr: "InMemoryCheckpointer()",
+            indent: "    "
+        ))
         lines.append("")
 
         // Decode inputs
@@ -156,14 +190,27 @@ struct RuntimeExecutor {
         }
 
         lines.append("")
+        lines.append("    var __meridianResult: WorkflowResult?")
         lines.append("    do {")
         let params = (["runtime: runtime"] + workflow.parameters.map { "\($0.name): \($0.name)" }).joined(separator: ", ")
-        lines.append("        _ = try await \(workflow.structName)(\(params)).run()")
+        lines.append("        __meridianResult = try await \(workflow.structName)(\(params)).run()")
         lines.append("    } catch {}")
         lines.append("")
         lines.append("    let events = await observer.events")
         lines.append("    for event in events {")
         lines.append("        print(event.kind.rawValue)")
+        lines.append("    }")
+        lines.append("    if let final = events.last(where: { $0.kind == .workflowCompleted || $0.kind == .workflowFailed }),")
+        lines.append("       case .string(let reason)? = final.payload[\"reason\"] {")
+        lines.append("        print(\"\(Self.finalReasonSentinel)\\(reason)\")")
+        lines.append("    }")
+        if let expectBinding = spec.expectFinalBindingContains {
+            lines.append("    if let v = __meridianResult?.bindings?[\"\(expectBinding.key)\"] {")
+            lines.append("        print(\"\(Self.finalBindingSentinel)\\(v.scalarDescription)\")")
+            lines.append("    }")
+        }
+        lines.append("    } catch {")
+        lines.append("        fputs(\"driver: \\(error)\\n\", stderr)")
         lines.append("    }")
         lines.append("}")
         lines.append("await _task.value")
@@ -180,9 +227,22 @@ struct RuntimeExecutor {
 
     private func evaluateRuntimeAssertions(
         spec: MeridianTestRunner.RuntimeSpec,
-        eventKinds: [String]
+        eventKinds: [String],
+        finalReason: String? = nil,
+        finalBinding: String? = nil
     ) -> [String] {
         var failures: [String] = []
+
+        if let expectedReason = spec.expectFinalReason, expectedReason != finalReason {
+            failures.append("expected final reason '\(expectedReason)', got '\(finalReason ?? "(none)")'")
+        }
+
+        if let expectBinding = spec.expectFinalBindingContains {
+            let actual = finalBinding ?? ""
+            if !actual.contains(expectBinding.substring) {
+                failures.append("expected binding '\(expectBinding.key)' to contain '\(expectBinding.substring)', got '\(actual)'")
+            }
+        }
 
         if let expected = spec.expectEventKinds {
             if eventKinds != expected {

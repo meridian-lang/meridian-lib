@@ -145,17 +145,70 @@ struct DiagnosticTests {
 
     @Test("JSON renderer emits a stable schema incl. decision id")
     func jsonRender() throws {
+        let related = SourceRange(file: "t.merconfig", line: 2, column: 1)
         let d = Diagnostic.unresolved(.unknownTool, target: "chargePaymnt",
                                       among: ["chargePayment"], range: range(), noun: "tool")
-        let json = DiagnosticRenderer().renderJSON([d])
+        let enriched = Diagnostic(
+            code: d.code, severity: d.severity, message: d.message,
+            primaryRange: d.primaryRange, suggestions: d.suggestions, notes: d.notes,
+            help: d.help, phase: "parse", relatedRanges: [related])
+        let json = try DiagnosticRenderer().renderJSON([enriched])
         let data = json.data(using: .utf8)!
         let arr = try JSONSerialization.jsonObject(with: data) as! [[String: Any]]
         #expect(arr.count == 1)
         #expect(arr[0]["code"] as? String == DiagnosticCode.unknownTool.id)
         #expect(arr[0]["severity"] as? String == "error")
         #expect(arr[0]["decision"] as? String == "D-DX-5")
+        #expect(arr[0]["phase"] as? String == "parse")
+        let relatedArr = arr[0]["related"] as! [[String: Any]]
+        #expect(relatedArr.first?["file"] as? String == "t.merconfig")
         let suggestions = arr[0]["suggestions"] as! [[String: Any]]
         #expect(suggestions.first?["replacement"] as? String == "chargePayment")
+    }
+
+    @Test("human renderer shows phase and related ranges when present")
+    func humanRenderPhaseAndRelated() {
+        let related = SourceRange(file: "cfg.merconfig", line: 4, column: 1)
+        let d = Diagnostic.error(
+            .duplicateDeclaration,
+            message: "duplicate kind `order`",
+            range: range(),
+            help: "rename one declaration",
+            phase: "bootstrap",
+            relatedRanges: [related])
+        let out = DiagnosticRenderer(sources: ["t.meridian": "x"]).render(d)
+        #expect(out.contains("phase"))
+        #expect(out.contains("bootstrap"))
+        #expect(out.contains("related"))
+        #expect(out.contains("cfg.merconfig:4:1"))
+    }
+
+    @Test("Diagnostic.error auto-fills help from catalog explanation")
+    func errorAutoFillsHelp() {
+        let d = Diagnostic.error(.invalidIR, message: "bad ir", range: range())
+        #expect(d.help == DiagnosticCode.invalidIR.explanation)
+    }
+
+    @Test("unresolved ambiguous near-misses list alternates instead of auto-suggesting")
+    func unresolvedAmbiguousNearMisses() {
+        let d = Diagnostic.unresolved(.unknownTool, target: "paymnt",
+                                      among: ["payment", "paymet"],
+                                      range: range(), noun: "tool")
+        #expect(d.suggestions.isEmpty)
+        #expect(d.notes.first?.message.contains("payment") == true)
+        #expect(d.notes.first?.message.contains("paymet") == true)
+    }
+
+    @Test("recovering collects thrown lowering errors once without duplicate pre-report")
+    func recoveringDoesNotDuplicateLoweringDiagnostics() throws {
+        let engine = DiagnosticEngine()
+        let r = range()
+        let diag = Diagnostic.error(.unresolvedPhrase, message: "unknown phrase", range: r, help: "fix it")
+        _ = try engine.recovering(context: "workflow test") {
+            throw CompilerError.diagnostics([diag])
+        }
+        let matches = engine.diagnostics.filter { $0.code == .unresolvedPhrase && $0.message == "unknown phrase" }
+        #expect(matches.count == 1)
     }
 
     // MARK: CompilerError projection
@@ -182,6 +235,88 @@ struct DiagnosticTests {
             case .reserved, .deprecated:
                 #expect(entry.emitters.isEmpty, Comment(rawValue: "\(code.id) \(entry.status.rawValue) but has emitters"))
             }
+        }
+    }
+
+    private var repoRoot: URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+    }
+
+    /// Maps every `public static let <name> = DiagnosticCode(id: "MER-...")`
+    /// declaration in `DiagnosticCode.swift` to its Swift case name, so the
+    /// catalog's `emitters` list can be checked against the *actual* source
+    /// rather than trusted at face value.
+    private func diagnosticCaseNames() throws -> [String: String] {
+        let url = repoRoot.appendingPathComponent("Sources/MeridianCore/Diagnostics/DiagnosticCode.swift")
+        let source = try String(contentsOf: url, encoding: .utf8)
+        let regex = try NSRegularExpression(
+            pattern: #"public static let (\w+) = DiagnosticCode\(\s*id: "([^"]+)""#
+        )
+        let range = NSRange(source.startIndex..., in: source)
+        var result: [String: String] = [:]
+        regex.enumerateMatches(in: source, range: range) { match, _, _ in
+            guard let match, match.numberOfRanges == 3,
+                  let nameRange = Range(match.range(at: 1), in: source),
+                  let idRange = Range(match.range(at: 2), in: source) else { return }
+            result[String(source[idRange])] = String(source[nameRange])
+        }
+        return result
+    }
+
+    /// Every `.swift` file under `Sources/`, keyed by filename (unique in this
+    /// repo), so an `emitters` entry like `"ASTToIR.swift:lowerEventSubject"`
+    /// can be resolved back to a real file on disk.
+    private func sourceFilesByName() -> [String: URL] {
+        let sourcesRoot = repoRoot.appendingPathComponent("Sources")
+        guard let enumerator = FileManager.default.enumerator(at: sourcesRoot, includingPropertiesForKeys: nil) else {
+            return [:]
+        }
+        var byName: [String: URL] = [:]
+        for entry in enumerator {
+            guard let url = entry as? URL, url.pathExtension == "swift" else { continue }
+            byName[url.lastPathComponent] = url
+        }
+        return byName
+    }
+
+    /// D-DX-4/AGENTS.md pitfall #11 (MER-TMP-014/015): a catalog entry listing
+    /// a file as an emitter is a *claim*, not proof — this test loads each
+    /// listed file's real source and requires the diagnostic's own case name
+    /// (`.traceUnknownStep`, etc.) to actually appear in it, so a phantom
+    /// emitter (declared in the catalog, never wired in `Sources/`) fails the
+    /// build instead of silently shipping as documented-but-unimplemented.
+    @Test("every active code's listed emitter file actually references it")
+    func activeEmittersAreReal() throws {
+        let caseNames = try diagnosticCaseNames()
+        let filesByName = sourceFilesByName()
+        var fileCache: [URL: String] = [:]
+        for code in DiagnosticCode.all {
+            guard let entry = DiagnosticCode.catalogByID[code.id], entry.status == .active else { continue }
+            guard let caseName = caseNames[code.id] else {
+                Issue.record("no DiagnosticCode.swift case found for \(code.id)")
+                continue
+            }
+            let needle = ".\(caseName)"
+            var found = false
+            for emitter in entry.emitters {
+                let filename = String(emitter.split(separator: ":", maxSplits: 1).first ?? Substring(emitter))
+                guard let fileURL = filesByName[filename] else { continue }
+                let source: String
+                if let cached = fileCache[fileURL] {
+                    source = cached
+                } else {
+                    source = (try? String(contentsOf: fileURL, encoding: .utf8)) ?? ""
+                    fileCache[fileURL] = source
+                }
+                if source.contains(needle) {
+                    found = true
+                    break
+                }
+            }
+            #expect(found, Comment(rawValue: "\(code.id) (.\(caseName)) lists emitter(s) \(entry.emitters) but none reference `\(needle)`"))
         }
     }
 
@@ -252,7 +387,10 @@ struct DiagnosticTests {
             try IRValidator.validate(IRExpression.logical(.and, []), sourceFile: "invalid.ir")
             Issue.record("expected invalidIR")
         } catch IRValidationError.diagnostics(let diagnostics) {
-            #expect(diagnostics.contains { $0.code == .invalidIR })
+            let invalid = diagnostics.first { $0.code == .invalidIR }
+            #expect(invalid != nil)
+            #expect(invalid?.help?.isEmpty == false)
+            #expect(invalid?.phase == "validation")
         } catch {
             Issue.record("unexpected error: \(error)")
         }

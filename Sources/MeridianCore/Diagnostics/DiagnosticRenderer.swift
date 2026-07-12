@@ -5,6 +5,10 @@ import MeridianRuntime
 /// notes + help + `see: meridian explain-diag`) and for machines (stable JSON).
 public struct DiagnosticRenderer {
 
+    public enum Error: Swift.Error, Sendable {
+        case jsonSerializationFailed
+    }
+
     public struct Options: Sendable {
         /// Emit ANSI color. The CLI passes `true` only when stderr is a TTY and
         /// `NO_COLOR` is unset.
@@ -32,10 +36,17 @@ public struct DiagnosticRenderer {
         var out: [String] = []
         let label = severityLabel(d.severity)
         out.append("\(label)[\(d.code.id)]: \(bold(d.message))")
+        if let phase = d.phase, !phase.isEmpty {
+            out.append("  \(dim("=")) \(cyan("phase")): \(phase)")
+        }
         out.append("  \(dim("-->")) \(d.primaryRange.file):\(d.primaryRange.startLine):\(d.primaryRange.startColumn)")
 
         if let snippet = snippet(for: d) {
             out.append(contentsOf: snippet)
+        }
+
+        for related in d.relatedRanges {
+            out.append("  \(dim("=")) \(cyan("related")): \(related.file):\(related.startLine):\(related.startColumn)")
         }
 
         for s in d.suggestions {
@@ -91,7 +102,7 @@ public struct DiagnosticRenderer {
     // MARK: - JSON
 
     /// Stable JSON array for editors / CI. Keys are sorted for determinism.
-    public func renderJSON(_ diagnostics: [Diagnostic]) -> String {
+    public func renderJSON(_ diagnostics: [Diagnostic]) throws -> String {
         let array: [[String: Any]] = diagnostics.map { d in
             var obj: [String: Any] = [
                 "code": d.code.id,
@@ -111,13 +122,17 @@ public struct DiagnosticRenderer {
             ]
             if let help = d.help { obj["help"] = help }
             if let decision = d.decision { obj["decision"] = decision.id }
+            if let phase = d.phase { obj["phase"] = phase }
+            if !d.relatedRanges.isEmpty {
+                obj["related"] = d.relatedRanges.map(rangeDict)
+            }
             return obj
         }
         guard let data = try? JSONSerialization.data(
             withJSONObject: array,
             options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
         ), let str = String(data: data, encoding: .utf8) else {
-            return "[]"
+            throw Error.jsonSerializationFailed
         }
         return str
     }

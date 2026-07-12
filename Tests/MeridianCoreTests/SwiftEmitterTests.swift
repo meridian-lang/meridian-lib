@@ -296,11 +296,48 @@ struct SwiftEmitterPrimitiveTests {
         #expect(!out.contains("} else {"))
     }
 
+    // 8B/E: `branch.taken` instrumentation — every arm records which one ran
+    // (`TraceTreeRenderer` already renders the `branched` kind; this call
+    // site was the only missing link).
+    @Test("branch with else emits branch.taken in both the then and else arms")
+    func branchTakenInstrumentation() {
+        let thenBlock = IRBlock(statements: [.complete(CompleteIR(reason: "ok"))])
+        let elseBlock = IRBlock(statements: [.complete(CompleteIR(reason: "nok"))])
+        let ir = BranchIR(
+            condition: .predicate(.literal(.boolean(true))),
+            thenBlock: thenBlock,
+            elseBlock: elseBlock,
+            stableStepPath: "/Test/root/branch"
+        )
+        let out = emitter.emitBranch(ir, ctx: ctx, workflow: workflow()).toString()
+        #expect(out.contains("try await runtime.recordBranchTaken(condition: \"true\", into: \"then\", step: \"/Test/root/branch\")"),
+                Comment(rawValue: out))
+        #expect(out.contains("try await runtime.recordBranchTaken(condition: \"true\", into: \"otherwise\", step: \"/Test/root/branch\")"),
+                Comment(rawValue: out))
+    }
+
+    @Test("match branch emits branch.taken per case, using the pattern as `into`")
+    func branchTakenInstrumentationMatch() {
+        let done = IRBlock(statements: [.complete(CompleteIR(reason: "matched"))])
+        let fallback = IRBlock(statements: [.complete(CompleteIR(reason: "fallback"))])
+        let ir = BranchIR(
+            condition: .match(.identifierRef(name: "choice"), [
+                BranchCase(pattern: .literal(.string("yes")), block: done),
+            ]),
+            thenBlock: fallback
+        )
+        let out = emitter.emitBranch(ir, ctx: ctx, workflow: workflow()).toString()
+        #expect(out.contains("try await runtime.recordBranchTaken(condition: \"state.get(\\\"choice\\\")\", into: \"literal(string(\\\"yes\\\"))\", step: \"branch\")"),
+                Comment(rawValue: out))
+        #expect(out.contains("try await runtime.recordBranchTaken(condition: \"state.get(\\\"choice\\\")\", into: \"otherwise\", step: \"branch\")"),
+                Comment(rawValue: out))
+    }
+
     @Test("complete with reason emits reason string and return")
     func completeWithReason() {
         let ir = CompleteIR(reason: "fraud_review_required")
         let out = emitter.emitComplete(ir, ctx: ctx).toString()
-        #expect(out.contains("await runtime.complete(reason: \"fraud_review_required\")"))
+        #expect(out.contains("await runtime.complete(reason: \"fraud_review_required\", step:"))
         #expect(out.contains("return WorkflowResult("))
         #expect(out.contains("\"fraud_review_required\""))
     }
@@ -317,6 +354,14 @@ struct SwiftEmitterPrimitiveTests {
         let ir = CommitIR(label: "after_validation")
         let out = emitter.emitCommit(ir, ctx: ctx).toString()
         #expect(out.contains("runtime.checkpoint(label: \"after_validation\""))
+    }
+
+    @Test("invoke emits stable step path and capture policy lookup")
+    func invokeEmitsTraceMetadata() {
+        let ir = InvokeIR(toolID: "validateOrder", arguments: [], stableStepPath: "/Process/root/procedure/hash")
+        let out = emitter.emitInvoke(ir, ctx: ctx).toString()
+        #expect(out.contains("step: \"/Process/root/procedure/hash\""))
+        #expect(out.contains("capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy"))
     }
 }
 
@@ -363,6 +408,28 @@ struct SwiftEmitterWorkflowTests {
         #expect(out.contains("state.bind(\"customer\", customer)"))
     }
 
+    @Test("workflow emits generated runtime trace configuration and skill hash")
+    func workflowEmitsRuntimeTraceConfiguration() {
+        let emitter = SwiftEmitter(options: options)
+        let wf = IRWorkflow(
+            name: "trace me",
+            parameters: [],
+            body: IRBlock(statements: [.complete(CompleteIR(reason: nil))]),
+            skillName: "trace me",
+            skillVersionHash: "abc123",
+            runtimeTraceConfiguration: RuntimeTraceConfiguration(
+                store: .memory,
+                trace: TraceConfiguration(payloadLimit: 8192, profile: .production, storeFailurePolicy: .auto),
+                skillIdentity: TraceSkillIdentity(name: "trace me", versionHash: "abc123"),
+                toolCapturePolicies: ["validateOrder": .hashOnly]
+            )
+        )
+        let out = emitter.emitWorkflow(wf).toString()
+        #expect(out.contains("public static let skillVersionHash = \"abc123\""))
+        #expect(out.contains("public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration("))
+        #expect(out.contains("\"validateOrder\": .hashOnly"))
+    }
+
     @Test("invoke + branch + complete emits correct structure")
     func invokeBranchComplete() {
         let emitter = SwiftEmitter(options: options)
@@ -404,9 +471,9 @@ struct SwiftEmitterWorkflowTests {
         // and wraps the enum literal as a Value so the helper signature matches.
         // (The runtime stores enum-typed properties as `.string(rawValue)`.)
         #expect(out.contains("MeridianComparison.eq(state.get(\"validationResult.verdict\"), .string(\"invalid\"))"))
-        #expect(out.contains("await runtime.complete(reason: \"validation_failed\")"))
+        #expect(out.contains("await runtime.complete(reason: \"validation_failed\", step:"))
         #expect(out.contains("return WorkflowResult(reason: \"validation_failed\""))
-        #expect(out.contains("await runtime.complete(reason: nil)"))
+        #expect(out.contains("await runtime.complete(reason: nil, step:"))
     }
 
     @Test("constants decl emits Constants struct")
@@ -453,7 +520,7 @@ struct ManifestEmitterTests {
         let data = Data(json.utf8)
         let parsed = try JSONSerialization.jsonObject(with: data) as? [String: Any]
         #expect(parsed != nil)
-        #expect(parsed?["meridian_ir_version"] as? String == "1.0")
+        #expect(parsed?["meridian_ir_version"] as? String == "1.1")
         let workflows = parsed?["workflows"] as? [[String: Any]]
         #expect(workflows?.first?["swift_struct"] as? String == "ProcessOrder")
         #expect(workflows?.first?["source_name"] as? String == "process an order placed by a customer")
@@ -583,7 +650,7 @@ struct SwiftEmitterFormattingTests {
         #expect(out.contains("if __meridianShouldRun(\"progress:0.1:L3:C1\")"))
         #expect(out.contains("if __meridianShouldRun(\"progress:0.2:L4:C1\")"))
         #expect(out.contains("if __meridianShouldRun(\"user_label\")"))
-        #expect(out.contains("try await runtime.checkpoint(label: \"user_label\", state: state.snapshot())"))
+        #expect(out.contains("try await runtime.checkpoint(label: \"user_label\", state: state.snapshot(), step: \"user_label\")"))
     }
 
     @Test("every emitFile line is a separate line (no embedded newlines in items)")
@@ -608,7 +675,7 @@ struct SwiftEmitterFormattingTests {
         let lines = out.components(separatedBy: "\n")
         #expect(lines.contains("// THIS FILE IS GENERATED BY MERIDIAN. DO NOT EDIT."))
         #expect(lines.contains("// Source: test.meridian"))
-        #expect(lines.contains("// Meridian IR version: 1.0"))
+        #expect(lines.contains("// Meridian IR version: 1.1"))
         #expect(lines.contains("import Foundation"))
         #expect(lines.contains("import MeridianRuntime"))
     }
@@ -773,12 +840,15 @@ struct SwiftEmitterFormattingTests {
         #expect(lines.contains("                    \"customer_id\": state.get(\"customer.id\") ?? .null,"))
         #expect(lines.contains("                    \"amount\": state.get(\"order.totalAmount\") ?? .null,"))
         #expect(lines.contains("                    \"timestamp\": .date(Date()),"))
-        #expect(lines.contains("                ]"))
+        // Wave 8: the emit carries a trace step-path argument, so the payload
+        // literal now closes with a trailing comma before `step:`.
+        #expect(lines.contains("                ],"))
+        #expect(lines.contains("                step: \"analytics.order_processed\""))
         #expect(lines.contains("            )"))
         #expect(lines.contains("            try await runtime.checkpoint(label: \"progress:0.0:L0:C0\", state: state.snapshot())"))
 
-        // Implicit complete
-        #expect(lines.contains("        await runtime.complete(reason: nil)"))
+        // Implicit complete (Wave 8: carries a trace step path)
+        #expect(lines.contains("        await runtime.complete(reason: nil, step: \"LenientlySyncAnalytics.complete\")"))
         #expect(lines.contains("        return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)"))
         #expect(lines.contains("    }"))
         #expect(lines.contains("}"))

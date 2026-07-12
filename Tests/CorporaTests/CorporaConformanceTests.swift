@@ -65,12 +65,12 @@ struct CorporaConformanceTests {
     /// `incident`/`etl`/`governance` are still at the original 8 + RESOLVER
     /// (9) — bump this when any of them grows further.
     static let expectedFileCount: [String: Int] = [
-        "erp": 13,
-        "procedures": 13,
-        "incident": 9,
-        "etl": 9,
-        "governance": 9,
-        "clinical": 9,
+        "erp": 14,
+        "procedures": 14,
+        "incident": 10,
+        "etl": 10,
+        "governance": 10,
+        "clinical": 10,
     ]
 
     @Test("every synthetic corpus is present and complete")

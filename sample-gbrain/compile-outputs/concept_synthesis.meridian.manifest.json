@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -486,44 +486,28 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 160,
-      "swift_line" : 604
+      "meridian_line" : 219,
+      "swift_line" : 627
     },
     {
       "meridian_line" : 248,
-      "swift_line" : 616
+      "swift_line" : 641
     },
     {
       "meridian_line" : 249,
-      "swift_line" : 628
+      "swift_line" : 655
     },
     {
       "meridian_line" : 250,
-      "swift_line" : 640
+      "swift_line" : 669
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 680
+      "swift_line" : 739
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 685
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 724
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 729
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 768
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 773
+      "swift_line" : 744
     },
     {
       "meridian_line" : 1,
@@ -535,19 +519,35 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 856
+      "swift_line" : 885
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 861
+      "swift_line" : 890
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 900
+      "swift_line" : 958
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 905
+      "swift_line" : 963
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1031
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1036
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1104
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1109
     }
   ],
   "tools_used" : [
@@ -562,7 +562,15 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "concept-synthesis",
+      "skill_version_hash" : "cfc4471fa78c40a67a3512871044b8071384aeac6a90ffc9be0dcf4c611d785a",
       "source_name" : "concept-synthesis a input",
+      "step_paths" : [
+        "\/ConceptSynthesisInput\/related-skills\/procedure\/342ef698f8e27728894fea857c50546b0ba259194b55a2933e180ea94a0b8be4",
+        "\/ConceptSynthesisInput\/related-skills\/procedure\/60dd6244958273bd65d1062885dfbbb45d2119194905fb911aebe979b6b7f0aa",
+        "\/ConceptSynthesisInput\/related-skills\/procedure\/9610b9b2f6e27f4f48f2b0eecd165be9043a6a62398edd246df0b4b6cfb4d3fa",
+        "\/ConceptSynthesisInput\/synthesis-quality-steps\/procedure\/b2de1a1231fb42295b081a2f0eee31d7f146af2f5e07a5dc462d20b07125fc03"
+      ],
       "swift_struct" : "ConceptSynthesisInput"
     },
     {
@@ -570,7 +578,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "concept-synthesis",
+      "skill_version_hash" : "cfc4471fa78c40a67a3512871044b8071384aeac6a90ffc9be0dcf4c611d785a",
       "source_name" : "when conceptSynthesis fires",
+      "step_paths" : [
+        "\/WhenConceptsynthesisFires\/root\/procedure\/d0ab66bc5eca0bcf719bfab67195278223875f9b3c8a849d5ccbec719f27a9da",
+        "\/WhenConceptsynthesisFires\/root\/procedure\/ed13b86144c3107a1de9be7a54e3aeb26bd7fc923d2dc3e92dba500891161784"
+      ],
       "swift_struct" : "WhenConceptsynthesisFires"
     },
     {
@@ -578,7 +592,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "concept-synthesis",
+      "skill_version_hash" : "cfc4471fa78c40a67a3512871044b8071384aeac6a90ffc9be0dcf4c611d785a",
       "source_name" : "when synthesizeMyConcepts fires",
+      "step_paths" : [
+        "\/WhenSynthesizemyconceptsFires\/root\/procedure\/6b33e624b23f20491232f3b054c85a0763bb3467f4996d071ba22778f11a187a",
+        "\/WhenSynthesizemyconceptsFires\/root\/procedure\/f58583cec5ba8bb4a8d3b28158bf9c7179e2dc9606c737d8b2c275f51062339e"
+      ],
       "swift_struct" : "WhenSynthesizemyconceptsFires"
     },
     {
@@ -586,7 +606,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "concept-synthesis",
+      "skill_version_hash" : "cfc4471fa78c40a67a3512871044b8071384aeac6a90ffc9be0dcf4c611d785a",
       "source_name" : "when findPatternsAcrossMyNotes fires",
+      "step_paths" : [
+        "\/WhenFindpatternsacrossmynotesFires\/root\/procedure\/82754de2e2240f027dfe50b380668d86968051671bd9a5c7d3102487eaa407e1",
+        "\/WhenFindpatternsacrossmynotesFires\/root\/procedure\/ad7182e50a0b13a7d5f00756749586d0776ff7d5e04f65f65d4fd6920d8a8491"
+      ],
       "swift_struct" : "WhenFindpatternsacrossmynotesFires"
     },
     {
@@ -594,7 +620,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "concept-synthesis",
+      "skill_version_hash" : "cfc4471fa78c40a67a3512871044b8071384aeac6a90ffc9be0dcf4c611d785a",
       "source_name" : "when buildMyIntellectualMap fires",
+      "step_paths" : [
+        "\/WhenBuildmyintellectualmapFires\/root\/procedure\/176a9e721a386ec6cfb502c1c570d73916fe5695bf22822ec90509267ab7eb0b",
+        "\/WhenBuildmyintellectualmapFires\/root\/procedure\/dc647d02dd5eaa62ec74023900db076c7452d390e5e2c17d000d165d29e49d06"
+      ],
       "swift_struct" : "WhenBuildmyintellectualmapFires"
     },
     {
@@ -602,7 +634,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "concept-synthesis",
+      "skill_version_hash" : "cfc4471fa78c40a67a3512871044b8071384aeac6a90ffc9be0dcf4c611d785a",
       "source_name" : "when traceIdeaEvolution fires",
+      "step_paths" : [
+        "\/WhenTraceideaevolutionFires\/root\/procedure\/4a38ac615ae49a3780424a1d65eead98357217072a1ef1d53131f4c9273d1b17",
+        "\/WhenTraceideaevolutionFires\/root\/procedure\/c3cdeb89578efd06931bcf971f69ab51440a7855965a3d83082ca1b8fd3440b8"
+      ],
       "swift_struct" : "WhenTraceideaevolutionFires"
     },
     {
@@ -610,7 +648,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "concept-synthesis",
+      "skill_version_hash" : "cfc4471fa78c40a67a3512871044b8071384aeac6a90ffc9be0dcf4c611d785a",
       "source_name" : "when canonVsRiff fires",
+      "step_paths" : [
+        "\/WhenCanonvsriffFires\/root\/procedure\/3453cb99f697a8ac56c910cb97cf76ae3c689a4e2d9904bf4fd861a023c1403f",
+        "\/WhenCanonvsriffFires\/root\/procedure\/3dc22e7208956149c504ea83612386c266ef37934b81ed5c4aa339eaf06e5f29"
+      ],
       "swift_struct" : "WhenCanonvsriffFires"
     }
   ]

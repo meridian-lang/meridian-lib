@@ -34,22 +34,18 @@ public struct InertYieldCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Print only the corpus-wide summary and the ranked needs-phrase worklist.")
     var summaryOnly: Bool = false
 
-    @Option(name: .long, help: "Comma-separated ParserTrace categories (or `all`). Also reads MERIDIAN_TRACE.")
-    var trace: String?
-
-    @Option(name: .long, help: "Write ParserTrace output to this file instead of stderr.")
-    var traceFile: String?
+    @OptionGroup var cliTrace: CLITraceOptions
 
     public func run() async throws {
         let inputURL = URL(fileURLWithPath: input).standardized
         let fm = FileManager.default
         guard fm.fileExists(atPath: inputURL.path) else {
-            throw ValidationError("Input not found: \(input)")
+            throw cliInputNotFound(input)
         }
 
         let depsDir = batch ? inputURL : inputURL.deletingLastPathComponent()
         let (vocabularies, rulebooks) = try loadDependencies(beside: depsDir)
-        let traceInstance = try makeCLITrace(spec: trace, file: traceFile)
+        let traceInstance = try cliTrace.makeTrace()
         let analyzer = InertYieldAnalyzer(
             compiler: Compiler(options: .init(trace: traceInstance)),
             vocabularies: vocabularies, rulebooks: rulebooks)
@@ -91,11 +87,23 @@ public struct InertYieldCommand: AsyncParsableCommand {
     private func loadDependencies(beside dir: URL) throws
         -> (vocab: [Compiler.VocabularyInput], rulebooks: [RulebookInput]) {
         let vocabURLs = vocab.isEmpty
-            ? autodiscover(extension: "merconfig", from: dir)
-            : vocab.map { URL(fileURLWithPath: $0).standardized }
+            ? try autodiscover(extension: "merconfig", from: dir)
+            : try vocab.map { path in
+                let url = URL(fileURLWithPath: path).standardized
+                guard FileManager.default.fileExists(atPath: url.path) else {
+                    throw cliInputNotFound(path, label: "merconfig")
+                }
+                return url
+            }
         let rulebookURLs = rulebook.isEmpty
-            ? autodiscover(extension: "merrules", from: dir)
-            : rulebook.map { URL(fileURLWithPath: $0).standardized }
+            ? try autodiscover(extension: "merrules", from: dir)
+            : try rulebook.map { path in
+                let url = URL(fileURLWithPath: path).standardized
+                guard FileManager.default.fileExists(atPath: url.path) else {
+                    throw cliInputNotFound(path, label: "rulebook")
+                }
+                return url
+            }
 
         var vocabularies: [Compiler.VocabularyInput] = []
         for url in vocabURLs {
@@ -112,14 +120,8 @@ public struct InertYieldCommand: AsyncParsableCommand {
         return (vocabularies, rulebooks)
     }
 
-    private func autodiscover(extension ext: String, from dir: URL) -> [URL] {
-        let fm = FileManager.default
-        for candidate in [dir, dir.deletingLastPathComponent(), dir.deletingLastPathComponent().deletingLastPathComponent()] {
-            let files = (try? fm.contentsOfDirectory(at: candidate, includingPropertiesForKeys: nil)) ?? []
-            let matches = files.filter { $0.pathExtension == ext }.sorted { $0.lastPathComponent < $1.lastPathComponent }
-            if !matches.isEmpty { return matches }
-        }
-        return []
+    private func autodiscover(extension ext: String, from dir: URL) throws -> [URL] {
+        try autodiscoverFiles(extension: ext, from: dir, parentLevels: 2)
     }
 
     // MARK: - Rendering

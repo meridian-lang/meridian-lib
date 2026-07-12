@@ -132,6 +132,16 @@ struct ReachableCoverageTailTests {
         #expect(merged.isShellFence("fish"))
         #expect(merged.durationUnits["fortnight"] == .week)
         #expect(merged.parseDuration("2 fortnight")?.1 == .week)
+        let withFence = EnglishLexicon.default.merging(
+            comparisonSynonyms: [],
+            durationSynonyms: [:],
+            guardedFenceIntroducerSynonyms: [", proceed:"],
+            fallbackChainIntroducerSynonyms: ["try these in order:"],
+            approvalToolSynonyms: ["signoff"]
+        )
+        #expect(withFence.guardedFenceIntroducers.first == ", proceed:")
+        #expect(withFence.fallbackChainIntroducers.first == "try these in order:")
+        #expect(withFence.approvalToolIDSubstrings.contains("signoff"))
     }
 
     // MARK: Difflib — autojunk, match extension, empty ratio, grouped split
@@ -222,14 +232,14 @@ struct ReachableCoverageTailTests {
     }
 
     @Test("DiagnosticRenderer JSON includes suggestion/note ranges and help")
-    func diagnosticRenderJSON() {
+    func diagnosticRenderJSON() throws {
         let r = SourceRange(file: "f.meridian", line: 1, column: 1)
         let d = Diagnostic(
             code: .legacySemantic, severity: .error, message: "m", primaryRange: r,
             suggestions: [Suggestion(replacement: "fix", range: r, rationale: "try fix")],
             notes: [DiagnosticNote("a note", range: r)],
             help: "do the thing")
-        let json = DiagnosticRenderer().renderJSON([d])
+        let json = try DiagnosticRenderer().renderJSON([d])
         #expect(json.contains("\"replacement\""))
         #expect(json.contains("\"help\""))
         #expect(json.contains("\"range\""))

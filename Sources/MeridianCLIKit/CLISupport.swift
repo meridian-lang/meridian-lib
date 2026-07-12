@@ -17,20 +17,20 @@ enum DependencyDiscovery {
             return try explicit.map { path in
                 let url = URL(fileURLWithPath: path).standardized
                 guard FileManager.default.fileExists(atPath: url.path) else {
-                    throw ValidationError("\(label) not found: \(path)")
+                    throw cliInputNotFound(path, label: label)
                 }
                 return url
             }
         }
-        func matches(in dir: URL) -> [URL] {
-            ((try? FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)) ?? [])
+        func matches(in dir: URL) throws -> [URL] {
+            try listDirectoryContents(at: dir, label: "dependency discovery directory")
                 .filter { $0.pathExtension == ext }
                 .sorted { $0.lastPathComponent < $1.lastPathComponent }
         }
         let dir = inputURL.deletingLastPathComponent()
-        let here = matches(in: dir)
+        let here = try matches(in: dir)
         if !here.isEmpty { return here }
-        return matches(in: dir.deletingLastPathComponent())
+        return try matches(in: dir.deletingLastPathComponent())
     }
 
     static func resolveMerconfigs(explicit: [String], beside inputURL: URL) throws -> [URL] {
@@ -73,7 +73,7 @@ struct CLIModelInput {
 func loadCLIModelInput(input: String, merconfig: [String], rulebook: [String]) throws -> CLIModelInput {
     let meridianURL = URL(fileURLWithPath: input).standardized
     guard FileManager.default.fileExists(atPath: meridianURL.path) else {
-        throw ValidationError("File not found: \(input)")
+        throw cliInputNotFound(input)
     }
 
     let meridianSource = try String(contentsOf: meridianURL, encoding: .utf8)
@@ -101,13 +101,40 @@ func loadCLIModelInput(input: String, merconfig: [String], rulebook: [String]) t
 
 // MARK: - Trace bootstrap
 
+/// Output format for `ParserTrace` records on the CLI.
+enum TraceFormat: String, ExpressibleByArgument, CaseIterable {
+    case text
+    case jsonl
+}
+
+/// Shared `--trace` / `--trace-file` / `--trace-format` options for commands
+/// that bootstrap a fresh `ParserTrace` per invocation.
+struct CLITraceOptions: ParsableArguments {
+    init() {}
+
+    @Option(name: .long,
+            help: "Comma-separated ParserTrace categories (or `all`). Also reads MERIDIAN_TRACE.")
+    var trace: String?
+
+    @Option(name: .long, help: "Write ParserTrace output to this file instead of stderr.")
+    var traceFile: String?
+
+    @Option(name: .long,
+            help: "Trace output format: text (human lines) or jsonl (one JSON object per record; each includes `corr`).")
+    var traceFormat: TraceFormat = .text
+
+    func makeTrace() throws -> ParserTrace {
+        try makeCLITrace(spec: trace, file: traceFile, format: traceFormat)
+    }
+}
+
 /// Build a `ParserTrace` from the CLI's `--trace` spec and optional
 /// `--trace-file` sink. Single source for the bootstrap every diagnostic command
 /// repeated inline.
 ///
 /// Unknown categories and unwritable sink paths throw `ExitCode(1)` after
 /// rendering a coded diagnostic (MER2010 / MER5011).
-func makeCLITrace(spec: String?, file: String? = nil) throws -> ParserTrace {
+func makeCLITrace(spec: String?, file: String? = nil, format: TraceFormat = .text) throws -> ParserTrace {
     if let spec {
         let unknown = ParserTrace.validateTraceSpec(spec)
         if !unknown.isEmpty {
@@ -117,7 +144,11 @@ func makeCLITrace(spec: String?, file: String? = nil) throws -> ParserTrace {
         }
     }
     let trace = ParserTrace()
+    trace.outputFormat = format == .jsonl ? .jsonl : .text
     if let spec { trace.enable(parsing: spec) }
+    if let spec {
+        announceCLITrace(trace)
+    }
     if let file {
         let url = URL(fileURLWithPath: file).standardized
         let dir = url.deletingLastPathComponent()
@@ -142,6 +173,13 @@ func makeCLITrace(spec: String?, file: String? = nil) throws -> ParserTrace {
     return trace
 }
 
+/// Print the trace correlation id once when tracing is active. JSONL records
+/// also carry the same value in their `corr` field.
+func announceCLITrace(_ trace: ParserTrace) {
+    FileHandle.standardError.write(
+        Data("trace correlation id: \(trace.correlationID) (JSONL records include \"corr\")\n".utf8))
+}
+
 private func reportTraceFileError(_ url: URL, underlying: Error?) -> ExitCode {
     let detail = underlying.map { ": \($0.localizedDescription)" } ?? ""
     let d = Diagnostic.error(
@@ -153,6 +191,72 @@ private func reportTraceFileError(_ url: URL, underlying: Error?) -> ExitCode {
     let rendered = DiagnosticRenderer(sources: [:], options: .init(color: stderrIsTTY())).render([d])
     FileHandle.standardError.write(Data((rendered + "\n").utf8))
     return ExitCode(1)
+}
+
+// MARK: - CLI I/O helpers
+
+/// List a directory's contents, failing closed with MER5014 on unexpected I/O.
+func listDirectoryContents(at dir: URL, label: String = "directory") throws -> [URL] {
+    do {
+        return try FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)
+    } catch {
+        throw reportDirectoryReadFailed(dir, label: label, underlying: error)
+    }
+}
+
+/// Autodiscover files with the given extension beside `dir`, searching up to
+/// `parentLevels` ancestor directories (inclusive of `dir`).
+func autodiscoverFiles(extension ext: String, from dir: URL, parentLevels: Int = 2) throws -> [URL] {
+    var candidates: [URL] = []
+    var candidate = dir
+    for _ in 0...parentLevels {
+        candidates.append(candidate)
+        candidate = candidate.deletingLastPathComponent()
+    }
+    for url in candidates {
+        let files = try listDirectoryContents(at: url, label: "autodiscovery directory")
+        let matches = files
+            .filter { $0.pathExtension == ext }
+            .sorted { $0.lastPathComponent < $1.lastPathComponent }
+        if !matches.isEmpty { return matches }
+    }
+    return []
+}
+
+/// MER5014 — a directory enumerator could not be created.
+func cliDirectoryEnumerationFailed(_ path: String) -> ExitCode {
+    reportCLIError(Diagnostic.error(
+        .directoryReadFailed,
+        message: "cannot enumerate directory at \(path)",
+        range: SourceRange(file: "<cli>", line: 1, column: 1),
+        help: "Check directory permissions and path correctness."
+    ))
+}
+
+/// Render a coded CLI diagnostic to stderr and return exit code 1.
+func reportCLIError(_ diagnostic: Diagnostic) -> ExitCode {
+    let rendered = DiagnosticRenderer(sources: [:], options: .init(color: stderrIsTTY())).render([diagnostic])
+    FileHandle.standardError.write(Data((rendered + "\n").utf8))
+    return ExitCode(1)
+}
+
+/// MER5013 — a CLI input or explicit dependency path does not exist.
+func cliInputNotFound(_ path: String, label: String = "file") -> ExitCode {
+    reportCLIError(Diagnostic.error(
+        .inputFileNotFound,
+        message: "\(label) not found: \(path)",
+        range: SourceRange(file: "<cli>", line: 1, column: 1),
+        help: "Check the path and try again."
+    ))
+}
+
+private func reportDirectoryReadFailed(_ dir: URL, label: String, underlying: Error) -> ExitCode {
+    reportCLIError(Diagnostic.error(
+        .directoryReadFailed,
+        message: "cannot read \(label) at \(dir.path): \(underlying.localizedDescription)",
+        range: SourceRange(file: "<cli>", line: 1, column: 1),
+        help: "Check directory permissions and path correctness."
+    ))
 }
 
 // MARK: - Diagnostics
@@ -171,17 +275,33 @@ func reportCompilerError(_ error: Error, sources: [String: String] = [:],
                          format: DiagnosticsFormat = .human) -> ExitCode {
     if let compilerError = error as? CompilerError {
         let renderer = DiagnosticRenderer(sources: sources, options: .init(color: stderrIsTTY()))
-        let rendered = format == .json
-            ? renderer.renderJSON(compilerError.diagnostics)
-            : renderer.render(compilerError.diagnostics)
+        let rendered: String
+        if format == .json {
+            do {
+                rendered = try renderer.renderJSON(compilerError.diagnostics)
+            } catch {
+                FileHandle.standardError.write(Data("{\"error\":\"failed to serialize diagnostics\"}\n".utf8))
+                return ExitCode(1)
+            }
+        } else {
+            rendered = renderer.render(compilerError.diagnostics)
+        }
         FileHandle.standardError.write(Data((rendered + "\n").utf8))
         return ExitCode(1)
     }
     if case IRValidationError.diagnostics(let diagnostics) = error {
         let renderer = DiagnosticRenderer(sources: sources, options: .init(color: stderrIsTTY()))
-        let rendered = format == .json
-            ? renderer.renderJSON(diagnostics)
-            : renderer.render(diagnostics)
+        let rendered: String
+        if format == .json {
+            do {
+                rendered = try renderer.renderJSON(diagnostics)
+            } catch {
+                FileHandle.standardError.write(Data("{\"error\":\"failed to serialize diagnostics\"}\n".utf8))
+                return ExitCode(1)
+            }
+        } else {
+            rendered = renderer.render(diagnostics)
+        }
         FileHandle.standardError.write(Data((rendered + "\n").utf8))
         return ExitCode(1)
     }
@@ -272,7 +392,12 @@ func applyQuickFixes(_ error: Error, sources: [String: String],
         if write {
             source = lines.joined(separator: "\n")
             let dest = paths[file] ?? URL(fileURLWithPath: file)
-            try? source.write(to: dest, atomically: true, encoding: .utf8)
+            do {
+                try source.write(to: dest, atomically: true, encoding: .utf8)
+            } catch {
+                FileHandle.standardError.write(Data(
+                    "failed to write fix to \(dest.path): \(error)\n".utf8))
+            }
         }
     }
     if applied == 0 {
@@ -295,11 +420,12 @@ func stderrIsTTY() -> Bool {
 /// report with source snippets. Throws `ExitCode(1)` on a compiler error.
 func runDiagnosticsCheck(input: String, merconfig: [String], trace: String?,
                          traceFile: String? = nil,
+                         traceFormat: TraceFormat = .text,
                          format: DiagnosticsFormat = .human,
                          fix: Bool = false, write: Bool = false) async throws {
     let meridianURL = URL(fileURLWithPath: input).standardized
     guard FileManager.default.fileExists(atPath: meridianURL.path) else {
-        throw ValidationError("File not found: \(input)")
+        throw cliInputNotFound(input)
     }
     let meridianSource = try String(contentsOf: meridianURL, encoding: .utf8)
     let merconfigURLs = try DependencyDiscovery.resolveMerconfigs(explicit: merconfig, beside: meridianURL)
@@ -321,7 +447,7 @@ func runDiagnosticsCheck(input: String, merconfig: [String], trace: String?,
         diagPaths[url.lastPathComponent] = url
     }
 
-    let compiler = Compiler(options: .init(trace: try makeCLITrace(spec: trace, file: traceFile)))
+    let compiler = Compiler(options: .init(trace: try makeCLITrace(spec: trace, file: traceFile, format: traceFormat)))
     do {
         _ = try compiler.compileWithManifest(
             meridianSource: meridianSource,

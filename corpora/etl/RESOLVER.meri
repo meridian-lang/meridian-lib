@@ -17,6 +17,7 @@
 | run quality gate | qualitygate |
 | orchestrate pipeline dag | dagorchestrate |
 | triage failed pipelines | pipelinetriage |
+| check pipeline reliability | pipelinereliabilitywatch |
 
 ## Workflow (( role: reference ))
 

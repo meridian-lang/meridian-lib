@@ -9,8 +9,9 @@ runs against a small deterministic runtime.
 > program (executable Markdown tables/task-lists + AI-routing), the
 > world-class diagnostics/tracing/decision-log layer (Phase DX), Wave 5 parser
 > infrastructure (grammar table, screening, sentence breaker, problem messages),
-> Wave 6 validation/reporting across six corpus families, and the Wave 7
-> canonical verbalizer/drift audit surface are all complete.
+> Wave 6 validation/reporting across six corpus families, the Wave 7 canonical
+> verbalizer/drift audit surface, and the Wave 8 trace-backed time/statistics
+> gate are all complete.
 > Generated Swift compiles, links, and runs against `MeridianRuntime`.
 > Replay-safe resume, all 13 IR primitives, Blueprint built-ins, full CLI,
 > MeridianTestKit, and DocC bundles are shipped. Every error is a stable
@@ -42,6 +43,7 @@ runs against a small deterministic runtime.
 | 16 | [16_EXPRESSIVENESS_REPORT.md](16_EXPRESSIVENESS_REPORT.md) | Wave 6 corpus metrics, mechanism coverage, and caveats |
 | 17 | [17_MERIDIAN_PATTERNS.md](17_MERIDIAN_PATTERNS.md) | **Anyone about to "fix" a restriction** — recurring architectural patterns and why they're intentional, not gaps |
 | 18 | [18_VERBALIZER.md](18_VERBALIZER.md) | Wave 7 canonical English, round-trip law, drift audit, and verbalizer API |
+| 19 | [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md) | Wave 8 trace schema, temporal/statistical operators, monitors, capture policy, and replay |
 | — | [coverage/README.md](coverage/README.md) | **Anyone touching tests** — how & why coverage is measured, the enforced per-file gate, and how to raise it |
 | — | [../Tests/README.md](../Tests/README.md) | All contributors — test suites, forcing functions, adding tests |
 | — | [status.md](status.md) | Implementers — what's done, what's next, decision references |

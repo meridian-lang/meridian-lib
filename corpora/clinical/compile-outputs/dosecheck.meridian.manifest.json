@@ -23,70 +23,70 @@
       "adjective" : "granted",
       "function" : "meridianDef_Consent_granted",
       "kind" : "consent",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "cleared",
       "function" : "meridianDef_MedicationOrder_cleared",
       "kind" : "medication order",
-      "line" : 29
+      "line" : 31
     },
     {
       "adjective" : "contraindicated",
       "function" : "meridianDef_MedicationOrder_contraindicated",
       "kind" : "medication order",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "high risk",
       "function" : "meridianDef_Medication_highRisk",
       "kind" : "medication",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "active",
       "function" : "meridianDef_Patient_active",
       "kind" : "patient",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "held",
       "function" : "meridianDef_Patient_held",
       "kind" : "patient",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "monitored",
       "function" : "meridianDef_Patient_monitored",
       "kind" : "patient",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "unmonitored",
       "function" : "meridianDef_Patient_unmonitored",
       "kind" : "patient",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "critical",
       "function" : "meridianDef_VitalSign_critical",
       "kind" : "vital sign",
-      "line" : 25
+      "line" : 27
     },
     {
       "adjective" : "stable",
       "function" : "meridianDef_VitalSign_stable",
       "kind" : "vital sign",
-      "line" : 26
+      "line" : 28
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a nurse",
-      "line" : 38,
+      "line" : 40,
       "name" : "administration",
       "right_cardinality" : "one",
       "right_kind" : "a medication order",
@@ -96,7 +96,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a protocol",
-      "line" : 40,
+      "line" : 42,
       "name" : "coverage",
       "right_cardinality" : "one",
       "right_kind" : "a medication",
@@ -106,7 +106,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a clinician",
-      "line" : 36,
+      "line" : 38,
       "name" : "prescription",
       "right_cardinality" : "one",
       "right_kind" : "a medication order",
@@ -327,21 +327,21 @@
   "meridian_verbs" : [
     {
       "base" : "administer",
-      "line" : 44,
+      "line" : 46,
       "past_participle" : "administered",
       "relation" : "administration",
       "third_person" : "administers"
     },
     {
       "base" : "cover",
-      "line" : 45,
+      "line" : 47,
       "past_participle" : "covered",
       "relation" : "coverage",
       "third_person" : "covers"
     },
     {
       "base" : "prescribe",
-      "line" : 43,
+      "line" : 45,
       "past_participle" : "prescribed",
       "relation" : "prescription",
       "third_person" : "prescribes"
@@ -354,47 +354,47 @@
   "source_map" : [
     {
       "meridian_line" : 35,
-      "swift_line" : 421
+      "swift_line" : 444
     },
     {
       "meridian_line" : 38,
-      "swift_line" : 425
+      "swift_line" : 448
     },
     {
-      "meridian_line" : 54,
-      "swift_line" : 428
+      "meridian_line" : 39,
+      "swift_line" : 452
     },
     {
       "meridian_line" : 40,
-      "swift_line" : 440
-    },
-    {
-      "meridian_line" : 41,
-      "swift_line" : 451
-    },
-    {
-      "meridian_line" : 42,
-      "swift_line" : 454
-    },
-    {
-      "meridian_line" : 43,
       "swift_line" : 466
     },
     {
-      "meridian_line" : 1,
-      "swift_line" : 505
+      "meridian_line" : 41,
+      "swift_line" : 478
+    },
+    {
+      "meridian_line" : 42,
+      "swift_line" : 482
+    },
+    {
+      "meridian_line" : 43,
+      "swift_line" : 495
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 510
+      "swift_line" : 563
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 550
+      "swift_line" : 568
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 555
+      "swift_line" : 637
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 642
     }
   ],
   "tools_used" : [
@@ -413,7 +413,18 @@
           "name" : "medicationOrder"
         }
       ],
+      "skill_name" : "dose check",
+      "skill_version_hash" : "bed73eafb424165a3329691011c1a2b6be399ac68f499aeb7145159f37ea592c",
       "source_name" : "dose check a nurse a medication order",
+      "step_paths" : [
+        "\/DoseCheckNurseMedicationOrder\/rules-steps\/procedure\/4b59dacf8b2f70dcd9b7efdee9d59908c871d454ab5158ec0c575a42013ad1c4",
+        "\/DoseCheckNurseMedicationOrder\/workflow\/procedure\/1d67bdcbfbcaa4af82e0c57e5a4944bf02e815d8028e6279fe6366ff09d03fde",
+        "\/DoseCheckNurseMedicationOrder\/workflow\/procedure\/472b6c03401fa2fe42432f12b1fcc88242f61516336171ddf6186f9e1f47c204",
+        "\/DoseCheckNurseMedicationOrder\/workflow\/procedure\/57d7f5e33dfb7d8bdae574f80893b024fa5f547b78fd0a690d1d0c1fd165d038",
+        "\/DoseCheckNurseMedicationOrder\/workflow\/procedure\/branch.then\/82e45db80738529e88cc03429632375dbf046c31491411839156d01083ec0d1c",
+        "\/DoseCheckNurseMedicationOrder\/workflow\/procedure\/branch.then\/ef64b71fca0bdb3cf3c1cb737fb966631cb5e825d991ece043aa08e7e46b71f9",
+        "\/DoseCheckNurseMedicationOrder\/workflow\/procedure\/branch.then\/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5"
+      ],
       "swift_struct" : "DoseCheckNurseMedicationOrder"
     },
     {
@@ -421,7 +432,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "dose check",
+      "skill_version_hash" : "bed73eafb424165a3329691011c1a2b6be399ac68f499aeb7145159f37ea592c",
       "source_name" : "when checkDoseCount fires",
+      "step_paths" : [
+        "\/WhenCheckdosecountFires\/root\/procedure\/2cf88f88079f65aa66ac8d7715f784ad8aaae883b1650679292f12d6a2fbb498",
+        "\/WhenCheckdosecountFires\/root\/procedure\/eab385d1166a9836bf52e68655a7b7566c64479d033a1be17bb038d701aff1bf"
+      ],
       "swift_struct" : "WhenCheckdosecountFires"
     },
     {
@@ -429,7 +446,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "dose check",
+      "skill_version_hash" : "bed73eafb424165a3329691011c1a2b6be399ac68f499aeb7145159f37ea592c",
       "source_name" : "when runDoseLimitCheck fires",
+      "step_paths" : [
+        "\/WhenRundoselimitcheckFires\/root\/procedure\/622d84986a25912535eb3292dd29a81f91b80ea4a309134c2c172cb1608db6f6",
+        "\/WhenRundoselimitcheckFires\/root\/procedure\/ef004ab10090a6112ce1bec81b5689fa670572c3783bdbafc2fcd0b4fef45aec"
+      ],
       "swift_struct" : "WhenRundoselimitcheckFires"
     }
   ]

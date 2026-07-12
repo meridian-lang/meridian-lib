@@ -17,6 +17,7 @@
 | render postmortem | postmortemrender |
 | run oncall handoff | oncallhandoff |
 | watch alert cooldown | cooldownwatch |
+| check release health | releasehealthsentinel |
 
 ## Workflow
 

@@ -1,4 +1,11 @@
-# Meridian — Parser Tracing
+# Meridian — Tracing
+
+Meridian has **two trace layers**:
+
+| Layer | Mechanism | Question |
+|---|---|---|
+| **Compile-time** | `ParserTrace` (`--trace`, `MERIDIAN_TRACE`) | What did the compiler do? |
+| **Run-time semantic** | `TraceStore` + `TraceRecord` (Wave 8) | What history do temporal/statistical conditions query? |
 
 `ParserTrace` (in `Sources/MeridianCore/Diagnostics/ParserTrace.swift`) is an
 opt-in, category-scoped diagnostic logger for compile-time compiler/tooling
@@ -7,12 +14,21 @@ drift analysis. It is lightweight enough to ship in production builds; it does
 nothing unless at least one category is enabled.
 
 This is separate from runtime execution telemetry. `ParserTrace` answers "what
-did the compiler do while understanding and emitting this file?" Runtime JSONL
-events answer "what happened while the generated workflow ran?" The bridge is
-the generated source map: `compileWithManifest` records source anchors, runtime
-observers write JSONL events with those anchors, and `meridian trace render`
-turns that runtime event stream into an execution tree. `trace render` does not
-render `ParserTrace` logs, and `--trace` does not enable runtime JSONL capture.
+did the compiler do while understanding and emitting this file?" Legacy runtime
+JSONL `Event` streams (via `Observer`) answer "what happened while the workflow
+ran?" — `meridian trace render` pretty-prints those events.
+
+**Wave 8 semantic traces** are a third, persisted layer: `Runtime` appends
+`TraceRecord` rows to a `TraceStore` when `=== trace ===` configures one.
+`TraceEvaluator` replays those records for `has ever`, windowed counts,
+`usually`/`rarely`, and monitored assertions. CLI commands `meridian trace eval`,
+`trace verify`, `trace drift`, and `bench-trace` operate on semantic trace
+JSONL — not on `ParserTrace` logs. `--trace` does not enable semantic capture;
+see [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).
+
+The bridge from compile to run for all three layers is the generated source map:
+`compileWithManifest` records source anchors; runtime observers and trace stores
+carry them forward.
 
 ---
 
@@ -57,6 +73,7 @@ enables all leaves under it. The list below mirrors `ParserTrace.Category`;
 | `.skill` | `skill` | Skill/section-role classification + scoped tools |
 | `.codegen` | `codegen` | Swift/manifest/domain emission (SwiftEmitter) |
 | `.verbalizer` | `verbalizer` | Canonical English verbalization (IR → source) |
+| `.validation` | `validation` | IR structural validation before emission |
 | `.drift` | `drift` | Authored-vs-canonical drift hunk classification |
 | `.diagnostics` | `diagnostics` | Every emitted diagnostic (errors/warnings/notes) |
 | `.timing` | `timing` | Per-phase wall-clock timing + end-of-compile profile (**off by default**) |
@@ -158,9 +175,13 @@ trace.log(.phraseMatch, "no candidates found for \"\(invocation)\"")
 // Key/value detail line (indented under current scope)
 trace.detail(.phraseMatch, "score", "\(score)")
 
-// Scoped span (push/pop)
+// Scoped span (push/pop — delegates to openSpan/closeSpan)
 let token = trace.push(.phraseInline, "inlining: \"\(phrase.signature)\"")
 defer { trace.pop(token) }
+
+// Structured spans (same nesting as push/pop; optional JSONL via outputFormat)
+let span = trace.openSpan(.validation, "validate workflows", range: workflow.sourceRange)
+defer { trace.closeSpan(span, outcome: .success) }
 // ... everything logged here is indented one level deeper
 
 // Pop with a result message
@@ -273,7 +294,12 @@ meridian skill-deviation original/SKILL.md ported.meri --trace drift
 
 # --trace-file redirects to a file instead of stderr, on every one of the above
 meridian check examples/order_processing.meridian --trace all --trace-file /tmp/check.log
+meridian compile order.meridian --trace validation --trace-format jsonl
 ```
+
+`--trace-format` accepts `text` (default) or `jsonl`. When tracing is active,
+the CLI prints one stderr line with the trace **correlation id**; JSONL records
+carry the same value in `"corr"`.
 
 ---
 
@@ -318,6 +344,8 @@ In unit tests you can pass an explicit `ParserTrace()` per test, or
 
 ## Output format
 
+### Text (default)
+
 Each line is prefixed with the category name:
 
 ```
@@ -331,3 +359,96 @@ Each line is prefixed with the category name:
 
 `▶` opens a scope, `◀` closes it (with optional result). Indent is two
 spaces per nesting level.
+
+### Structured spans (`openSpan` / `closeSpan`)
+
+`push`/`pop` delegate to `openSpan`/`closeSpan`. Prefer the structured API
+when you need correlation metadata or optional source ranges:
+
+```swift
+let span = trace.openSpan(.validation, "validate workflows", range: workflow.sourceRange)
+defer { trace.closeSpan(span, outcome: .success) }
+```
+
+- **Zero-cost when disabled.** `openSpan`, `closeSpan`, `log`, and `detail`
+  return immediately when the category is off — no string allocation, no sink
+  I/O.
+- **Per-thread nesting.** Span stacks and indent levels are keyed by
+  `ObjectIdentifier(Thread.current)`; concurrent compiles on one trace instance
+  stay balanced (`ParserTraceSpanConcurrencyTests`).
+- **`.validation` category.** `IRValidator` opens/closes validation spans before
+  `Verbalizer` / `SwiftEmitter` run; enable `--trace validation` to see
+  per-workflow validation scopes and failure summaries.
+
+Each `ParserTrace` instance gets a stable **`correlationID`** (UUID) for the
+whole command. CLI commands print it once to stderr when `--trace` is active:
+
+```
+trace correlation id: 6F2E4A1B-… (JSONL records include "corr")
+```
+
+### JSONL (`--trace-format jsonl`)
+
+`--trace-format jsonl` (or `trace.outputFormat = .jsonl`) emits one JSON object
+per record. Keys (sorted in output):
+
+| Key | Meaning |
+|---|---|
+| `seq` | Monotonic sequence number within the trace instance |
+| `corr` | Correlation id (matches `ParserTrace.correlationID` / stderr banner) |
+| `span` | Span id (uint64) |
+| `parent` | Parent span id, when nested |
+| `cat` | Category raw value (e.g. `validation`, `lowering`) |
+| `kind` | `open`, `event`, or `close` |
+| `op` | Operation label on `open` records |
+| `outcome` | `success` or `failure` on `close` records |
+| `msg` | Human message (redacted; text format uses `▶`/`◀` prefixes here) |
+| `range` | Optional `SourceRange` object (`file`, `startLine`, …) |
+
+```bash
+meridian check order.meridian --trace validation,lowering --trace-format jsonl
+```
+
+---
+
+## End-to-end observability chain
+
+Compile-time traces, manifest source maps, runtime events, and semantic trace
+records connect as follows (see also [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) §8):
+
+```
+meridian compile --trace … --trace-format jsonl
+  → ParserTrace.correlationID (stderr banner + JSONL "corr")
+  → compileWithManifest source map (meridian line ↔ generated Swift line)
+meridian run …
+  → Runtime.runID (Event "run_id", TraceRecord "run")
+  → stable step paths (TraceRecord "step", Event payload "step")
+  → JSONLObserver Event JSONL (execution tree; meridian trace render)
+  → TraceStore TraceRecord JSONL (semantic history; trace eval / verify)
+```
+
+`--trace` does **not** enable semantic `TraceStore` capture — that requires
+`=== trace ===` in `.merconfig` and host wiring. The correlation id ties one
+compile invocation's `ParserTrace` stream together; the manifest source map
+bridges compile positions to runtime `source` fields on events and trace rows.
+
+---
+
+## Semantic trace replay (Wave 8)
+
+When a `.merconfig` declares `=== trace ===`, generated workflows emit
+`runtimeTraceConfiguration` and the host wires a `TraceStore` into `Runtime`.
+Temporal/statistical conditions in generated Swift call
+`runtime.evaluateTemporal` / `evaluateStatistical` (delegating to
+`TraceEvaluator`).
+
+| CLI command | Purpose |
+|---|---|
+| `meridian trace eval <jsonl> "<expr>" --at <iso8601>` | Evaluate a trace expression against a retained JSONL file |
+| `meridian trace verify <jsonl> --run <id>` | Verify hash chain / checksum integrity for a run |
+| `meridian trace drift <jsonl> …` | Compare expected vs actual trace outcomes |
+| `meridian bench-trace` | Performance baseline for trace evaluation |
+| `meridian trace render <events.jsonl>` | Pretty-print legacy **event** JSONL (not semantic trace JSONL) |
+
+Author-facing surface and store semantics: [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).
+Codegen conventions: [05_CODEGEN.md](05_CODEGEN.md) §"Wave 8 trace and monitor codegen".

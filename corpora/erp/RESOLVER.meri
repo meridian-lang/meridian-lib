@@ -21,6 +21,7 @@
 | approve high value orders | orderapproval |
 | replenish backorders | backorderreplenish |
 | process returns | returnsprocessing |
+| monitor payment failures | paymentfailuremonitor |
 
 ## Workflow (( role: reference ))
 

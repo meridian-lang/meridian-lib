@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -712,75 +712,47 @@
   "source_map" : [
     {
       "meridian_line" : 75,
-      "swift_line" : 602
+      "swift_line" : 625
     },
     {
       "meridian_line" : 90,
-      "swift_line" : 611
+      "swift_line" : 636
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 650
+      "swift_line" : 705
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 655
+      "swift_line" : 710
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 694
+      "swift_line" : 778
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 699
+      "swift_line" : 783
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 738
+      "swift_line" : 851
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 743
+      "swift_line" : 856
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 782
+      "swift_line" : 924
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 787
+      "swift_line" : 929
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 826
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 831
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 870
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 875
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 914
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 919
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 958
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 963
+      "swift_line" : 997
     },
     {
       "meridian_line" : 1,
@@ -788,103 +760,131 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1007
+      "swift_line" : 1070
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1046
+      "swift_line" : 1075
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1051
+      "swift_line" : 1143
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1090
+      "swift_line" : 1148
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1095
+      "swift_line" : 1216
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1134
+      "swift_line" : 1221
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1139
+      "swift_line" : 1289
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1178
+      "swift_line" : 1294
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1183
+      "swift_line" : 1362
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1222
+      "swift_line" : 1367
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1227
+      "swift_line" : 1435
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1266
+      "swift_line" : 1440
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1271
+      "swift_line" : 1508
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1310
+      "swift_line" : 1513
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1315
+      "swift_line" : 1581
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1354
+      "swift_line" : 1586
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1359
+      "swift_line" : 1654
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1398
+      "swift_line" : 1659
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1403
+      "swift_line" : 1727
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1442
+      "swift_line" : 1732
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1447
+      "swift_line" : 1800
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1486
+      "swift_line" : 1805
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1491
+      "swift_line" : 1873
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1530
+      "swift_line" : 1878
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1535
+      "swift_line" : 1946
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 1951
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 2019
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 2024
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 2092
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 2097
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 2165
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 2170
     }
   ],
   "tools_used" : [
@@ -896,10 +896,19 @@
         {
           "line" : 75,
           "scoped_tools" : [
+            "cancel_job",
+            "get_job",
+            "get_job_progress",
             "jobs.status",
             "jobs.submit",
+            "list_jobs",
             "page.list",
-            "shell.run"
+            "pause_job",
+            "replay_job",
+            "resume_job",
+            "send_job_message",
+            "shell.run",
+            "submit_job"
           ],
           "text" : "Decide which case below applies and carry out its action:\n- when User asks for deterministic command\/script run, Shell job (CLI: `gbrain jobs submit shell ...`)\n- when User asks to \"run in minions\" + explicit command\/argv, Shell job (CLI, `--params` with `cmd` or `argv`)\n- when User asks for research\/reasoning\/iterative agent, Subagent job (CLI: `gbrain agent run`)\n- when User asks to steer\/pause\/resume an agent, Subagent job lifecycle tools (MCP-callable)\n- when Single simple operation under ~30s, Consider inline execution first\n- when Needs restart durability\/observability, Submit as Minion job\n- when Parallel work (2+ streams), `gbrain agent run --fanout-manifest` or parent + child subagents"
         },
@@ -907,10 +916,19 @@
           "guidance" : "Use for reproducible command execution, ETL steps, cron work, and scriptable\ntasks where no LLM reasoning loop is needed\n`GBRAIN_ALLOW_SHELL_JOBS=1` must be set on the worker environment\nWithout it, the shell handler refuses to register and submissions sit in\n`waiting` silently. Gate lives in `src\/core\/minions\/handlers\/shell.ts`\nVerify setup: after configuration, run `gbrain jobs stats` (CLI) to\nconfirm the worker is registered and consuming the queue\nCheck structured result fields (exit code, stdout\/stderr tails, attempts,\ntimings) from `get_job`. Use `gbrain jobs stats` (CLI) for worker\/queue\nhealth dashboard\nuse judgment to follow the Subagent Jobs (LLM Orchestration) — steps guidance:\nUse for open-ended reasoning, tool-using research, and fan-out synthesis\nUser-facing entrypoint: `gbrain agent run <prompt>` is the canonical way\nand `subagent_aggregator` are both in `PROTECTED_JOB_NAMES`, so direct MCP\nsubmission requires `{allowProtectedSubmit: true}`, which `gbrain agent run`\nsupplies\nFlags (from `src\/commands\/agent.ts`):\n`--subagent-def <name>` — named subagent definition\n`--model <id>` — override model\n`--max-turns <N>` — cap the LLM loop\n`--tools <csv>` — allow-listed brain tools (see above)\n`--timeout-ms <N>` — hard timeout per job\n`--fanout-manifest <file>` — N children + 1 aggregator\n`--detach` — submit and return immediately\nQueue\/priority\/retry tuning is not exposed by `gbrain agent run`; submit the\nraw `subagent` handler via `gbrain jobs submit` (requires CLI trust) if you\nneed those knobs\ncodeblock:plain:bGlzdF9qb2JzIC0tc3RhdHVzIGFjdGl2ZSAgICAgICAgICAjIE1DUCDigJQgd2hhdCdzIHJ1bm5pbmc\/CmdldF9qb2IgSUQgICAgICAgICAgICAgICAgICAgICAgICAgIyBNQ1Ag4oCUIGZ1bGwgZGV0YWlscyArIGxvZ3MgKyB0b2tlbnMKZ2V0X2pvYl9wcm9ncmVzcyBJRCAgICAgICAgICAgICAgICAjIE1DUCDigJQgc3RydWN0dXJlZCBwcm9ncmVzcyBzbmFwc2hvdApnYnJhaW4gam9icyBzdGF0cyAgICAgICAgICAgICAgICAgICMgQ0xJIOKAlCBxdWV1ZSBoZWFsdGggZGFzaGJvYXJkCmdicmFpbiBhZ2VudCBsb2dzIElEIC0tZm9sbG93ICAgICAgIyBDTEkg4oCUIHN0cmVhbWluZyB0cmFuc2NyaXB0ICsgaGVhcnRiZWF0\nProgress includes: step count, total steps, message, token usage, last tool called\nSend a message to redirect a running agent:\ncodeblock:plain:c2VuZF9qb2JfbWVzc2FnZSBpZD1JRCBwYXlsb2FkPXsiZGlyZWN0aXZlIjoiZm9jdXMgb24gcmV2ZW51ZSwgc2tpcCBoZWFkY291bnQifQ==\nThe agent handler reads inbox messages on each iteration and injects them as\ncontext. Messages are acknowledged (read receipts tracked)\nOnly the parent job or admin can send messages (sender validation)\ncodeblock:plain:cGF1c2Vfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICAjIGZyZWV6ZSB3aXRob3V0IGxvc2luZyBzdGF0ZQpyZXN1bWVfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgcGljayB1cCB3aGVyZSBpdCBsZWZ0IG9mZgpjYW5jZWxfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgaGFyZCBzdG9wCnJlcGxheV9qb2IgaWQ9SUQgICAgICAgICAgICAgICAgICAgIyByZS1ydW4gd2l0aCBzYW1lIG9yIG1vZGlmaWVkIHBhcmFtcwpyZXBsYXlfam9iIGlkPUlEIGRhdGFfb3ZlcnJpZGVzPXsiZGVwdGgiOiJkZWVwIn0gICMgcmVwbGF5IHdpdGggY2hhbmdlcw==\nAll lifecycle ops are MCP-callable\nChild tokens roll up to parent automatically on completion",
           "line" : 90,
           "scoped_tools" : [
+            "cancel_job",
+            "get_job",
+            "get_job_progress",
             "jobs.status",
             "jobs.submit",
+            "list_jobs",
             "page.list",
-            "shell.run"
+            "pause_job",
+            "replay_job",
+            "resume_job",
+            "send_job_message",
+            "shell.run",
+            "submit_job"
           ],
           "text" : "follow the Shell Jobs (Deterministic Scripts) — steps guidance"
         }
@@ -922,7 +940,13 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "minion-orchestrator a input",
+      "step_paths" : [
+        "\/MinionOrchestratorInput\/route-the-request-shell-job-vs-subagent-steps\/procedure\/a9bdb95c38fa78e7d4539345c2f01c8acbd97969515f436d01f7104ed677b80f",
+        "\/MinionOrchestratorInput\/shell-jobs-deterministic-scripts-steps\/procedure\/5bd8387a5814b44e311fd909779e7863b89268df16c770c914d193c0fd7d0062"
+      ],
       "swift_struct" : "MinionOrchestratorInput"
     },
     {
@@ -930,7 +954,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when gbrainJobsSubmit fires",
+      "step_paths" : [
+        "\/WhenGbrainjobssubmitFires\/root\/procedure\/2741f46626192c41928957d1f5ebabc4855fd4043a72274f51796f5966b2df3c",
+        "\/WhenGbrainjobssubmitFires\/root\/procedure\/d149fcd2a513983fdaf648192890657846dfbaa54e97c846887a09dd812f2a65"
+      ],
       "swift_struct" : "WhenGbrainjobssubmitFires"
     },
     {
@@ -938,7 +968,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when submitGbrainJob fires",
+      "step_paths" : [
+        "\/WhenSubmitgbrainjobFires\/root\/procedure\/783545aad02ce848f3cb46f6d6657361f75bf29c0dbf368d32a6a6b54cf0e86d",
+        "\/WhenSubmitgbrainjobFires\/root\/procedure\/96aaf26191fa7c247635162d970972ab77f633c21fdbcf230bb089b8e40a5483"
+      ],
       "swift_struct" : "WhenSubmitgbrainjobFires"
     },
     {
@@ -946,7 +982,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when submitShellJob fires",
+      "step_paths" : [
+        "\/WhenSubmitshelljobFires\/root\/procedure\/28b136c34b00db27288bf92480900182b8dcf3487fefd05e680487e927031e3c",
+        "\/WhenSubmitshelljobFires\/root\/procedure\/9973b9510097f258c4198558ac2e552070c255c7e5bdf952ea75c6eec77de92e"
+      ],
       "swift_struct" : "WhenSubmitshelljobFires"
     },
     {
@@ -954,7 +996,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when shellJob fires",
+      "step_paths" : [
+        "\/WhenShelljobFires\/root\/procedure\/8f17929ee28eb35551efb4ff5ca7eb54c31690a8070e9597ac73a8c07d2fd28e",
+        "\/WhenShelljobFires\/root\/procedure\/9270d505d04f125a4f07d64a6fce38275b871889a08b48e36bf898e96da0f36e"
+      ],
       "swift_struct" : "WhenShelljobFires"
     },
     {
@@ -962,7 +1010,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when runShellCommandInBackground fires",
+      "step_paths" : [
+        "\/WhenRunshellcommandinbackgroundFires\/root\/procedure\/50682c4bcfddcc46b3a131044cb5a6cd827dca75b685f0a9b76d32714717bcb8",
+        "\/WhenRunshellcommandinbackgroundFires\/root\/procedure\/58e13601545c6e1cfd540c01dc7a073427d4ae689cfdb89d726e60b3cc40bca6"
+      ],
       "swift_struct" : "WhenRunshellcommandinbackgroundFires"
     },
     {
@@ -970,7 +1024,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when deterministicBackgroundTask fires",
+      "step_paths" : [
+        "\/WhenDeterministicbackgroundtaskFires\/root\/procedure\/4aa65c81a7b9041e3639320b8bb0fd53903bcc6f5e3a7144b7d207c1cff20251",
+        "\/WhenDeterministicbackgroundtaskFires\/root\/procedure\/57522fb7c9ced55e95ece77014cfba8c8fc7e71fbf23d74983e6c69a640c2c5e"
+      ],
       "swift_struct" : "WhenDeterministicbackgroundtaskFires"
     },
     {
@@ -978,7 +1038,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when spawnAgent fires",
+      "step_paths" : [
+        "\/WhenSpawnagentFires\/root\/procedure\/e8fa1dd205ed88cdad7655223ee27af59a0d99dedb836ca70759bba39b4c2020",
+        "\/WhenSpawnagentFires\/root\/procedure\/f7454a1842175a8825b3ded978919adeb9a6b31d958524ed4060f8f3e51d6288"
+      ],
       "swift_struct" : "WhenSpawnagentFires"
     },
     {
@@ -986,7 +1052,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when backgroundTask fires",
+      "step_paths" : [
+        "\/WhenBackgroundtaskFires\/root\/procedure\/2653a4bcf6ccebcf5cb9f0db5cc673bab097eb1bcc74894c4bb612ede6830ddf",
+        "\/WhenBackgroundtaskFires\/root\/procedure\/bc030d51576c9713bb7f6f8555ccabcb7f606a9b549f742b1507e1430a058b3b"
+      ],
       "swift_struct" : "WhenBackgroundtaskFires"
     },
     {
@@ -994,7 +1066,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when runInBackground fires",
+      "step_paths" : [
+        "\/WhenRuninbackgroundFires\/root\/procedure\/8e7dcdcb2bb7e817d6ac67f0ba9e845dc3fe88c3c28d7c33f5ad41609aacf0c8",
+        "\/WhenRuninbackgroundFires\/root\/procedure\/9a83f29d4f0063ad2631210cd1f6407c63c4067920f8cc92b1bd271eb0ed8ee9"
+      ],
       "swift_struct" : "WhenRuninbackgroundFires"
     },
     {
@@ -1002,7 +1080,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when checkAgent fires",
+      "step_paths" : [
+        "\/WhenCheckagentFires\/root\/procedure\/1d1b68e09ec721a5b89dc51d1da8d1c12296845d1937827cc0f91776adf42041",
+        "\/WhenCheckagentFires\/root\/procedure\/4346cf9b287a791028e21e1c42fda00a06a6fb5f1f14063aa20293a5278edae7"
+      ],
       "swift_struct" : "WhenCheckagentFires"
     },
     {
@@ -1010,7 +1094,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when agentProgress fires",
+      "step_paths" : [
+        "\/WhenAgentprogressFires\/root\/procedure\/2efddc99b42b700a730d322f72e6cb30483da62b2230c6d2cdf95f2882830186",
+        "\/WhenAgentprogressFires\/root\/procedure\/61280381285bdda0215e74f3989ce9ac8aaa11925007db4f1338e252d80bb166"
+      ],
       "swift_struct" : "WhenAgentprogressFires"
     },
     {
@@ -1018,7 +1108,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when whatSRunning fires",
+      "step_paths" : [
+        "\/WhenWhatsrunningFires\/root\/procedure\/1c3c5982b7bbf87b65a30126f8e6cffd09aa6f7633491f74a1d2858608de0bc2",
+        "\/WhenWhatsrunningFires\/root\/procedure\/960872616c06d2668e5c62c2257ce0b131f10843a0e018b71b01b43c2e5b37ee"
+      ],
       "swift_struct" : "WhenWhatsrunningFires"
     },
     {
@@ -1026,7 +1122,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when steerAgent fires",
+      "step_paths" : [
+        "\/WhenSteeragentFires\/root\/procedure\/03657004a3c9b95157efb1d6fcd166746ea5021eb07870447e9370938dd88b03",
+        "\/WhenSteeragentFires\/root\/procedure\/3a3c421cb549fb22970c41dfacfcec123cd01c42bee04679f07ad4045dd0afec"
+      ],
       "swift_struct" : "WhenSteeragentFires"
     },
     {
@@ -1034,7 +1136,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when changeDirection fires",
+      "step_paths" : [
+        "\/WhenChangedirectionFires\/root\/procedure\/45a80f6fea50a23c3bbfc93f7088a3fb1ab259024a47e03dd20d57531ca12c8a",
+        "\/WhenChangedirectionFires\/root\/procedure\/97260ba28ee3dccb9e1de0a72a1066417ee433ce8930b2629ac70efc34522d3b"
+      ],
       "swift_struct" : "WhenChangedirectionFires"
     },
     {
@@ -1042,7 +1150,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when tellAgent fires",
+      "step_paths" : [
+        "\/WhenTellagentFires\/root\/procedure\/316bfeb0a23cf7f64d9d7305348462bacbed1d254b458dcd17a7533b9c21b36a",
+        "\/WhenTellagentFires\/root\/procedure\/35f588a2b9c1f59a1c1711ae8a18fb456838a00748b4c58dd5a6659b7a8cbddd"
+      ],
       "swift_struct" : "WhenTellagentFires"
     },
     {
@@ -1050,7 +1164,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when pauseAgent fires",
+      "step_paths" : [
+        "\/WhenPauseagentFires\/root\/procedure\/327932bb16a4f4d7780364c453776297249bab57e1f0f1ead113bb551ebbdafc",
+        "\/WhenPauseagentFires\/root\/procedure\/830dc6f3e1dd0e5c27a304009adaa13da8bc4bfcc13a51465d08896add10a6b6"
+      ],
       "swift_struct" : "WhenPauseagentFires"
     },
     {
@@ -1058,7 +1178,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when stopAgent fires",
+      "step_paths" : [
+        "\/WhenStopagentFires\/root\/procedure\/19093ff0134c8169ab01d24058a11eba6d3f87e19d2b1d9586cf165632bc5293",
+        "\/WhenStopagentFires\/root\/procedure\/332d15e06c158af24271f3e5bbcebaf558a1d0b054206331cce81ab0554091c2"
+      ],
       "swift_struct" : "WhenStopagentFires"
     },
     {
@@ -1066,7 +1192,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when resumeAgent fires",
+      "step_paths" : [
+        "\/WhenResumeagentFires\/root\/procedure\/85dfa47492406bced785e2ef58843ead716928958002260bc777276cb8a09f9d",
+        "\/WhenResumeagentFires\/root\/procedure\/da25b1004c81ed47692d73a09b33fe96513d5ee97f00aeefaed3a62ca4908070"
+      ],
       "swift_struct" : "WhenResumeagentFires"
     },
     {
@@ -1074,7 +1206,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when parallelTasks fires",
+      "step_paths" : [
+        "\/WhenParalleltasksFires\/root\/procedure\/da21d628d22566826db6094100c402556d97de7a51d0c5b4e73d5ae39d49f11a",
+        "\/WhenParalleltasksFires\/root\/procedure\/de93c3546fd5f64410b7ec0850f4ff8e370844d8a9362ae008e486581a3afff0"
+      ],
       "swift_struct" : "WhenParalleltasksFires"
     },
     {
@@ -1082,7 +1220,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when fanOut fires",
+      "step_paths" : [
+        "\/WhenFanoutFires\/root\/procedure\/082c90d7a2121fc8d66058d76578d496d8732ccf4bc419d5ec1d6e569a92968c",
+        "\/WhenFanoutFires\/root\/procedure\/df6bc9329124d15fa50047c4ef3ab55dcfd190d5aa7002c66a71ca2d70c153a9"
+      ],
       "swift_struct" : "WhenFanoutFires"
     },
     {
@@ -1090,7 +1234,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "minion-orchestrator",
+      "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when doTheseInParallel fires",
+      "step_paths" : [
+        "\/WhenDotheseinparallelFires\/root\/procedure\/1c8e947b98153e94f092584995c0b282bab4dfe68722bec2e80a7d72eda7b397",
+        "\/WhenDotheseinparallelFires\/root\/procedure\/ebf97b2e0bf92585fc9a5b94d176b2e485eb786377db5e0c7ffdb43083ad25da"
+      ],
       "swift_struct" : "WhenDotheseinparallelFires"
     }
   ]

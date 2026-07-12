@@ -123,7 +123,8 @@ struct LenientlySyncAnalyticsForcingFunction {
     @Test("emits implicit complete with nil reason")
     func implicitComplete() throws {
         let src = try emittedSource()
-        #expect(src.contains("await runtime.complete(reason: nil)"))
+        // Wave 8: `complete` carries a trace step-path argument.
+        #expect(src.contains("await runtime.complete(reason: nil, step:"))
         #expect(src.contains("return WorkflowResult(reason: nil"))
     }
 
@@ -331,7 +332,7 @@ struct ManifestEmitterForcingFunction {
         let obj   = try JSONSerialization.jsonObject(with: data) as! [String: Any]
 
         // Version
-        #expect(obj["meridian_ir_version"] as? String == "1.0")
+        #expect(obj["meridian_ir_version"] as? String == "1.1")
 
         // Source files
         let srcFiles = obj["source_files"] as? [String]

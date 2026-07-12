@@ -231,8 +231,15 @@ public final class SwiftPMPackageRunner {
 
         lines.append(contentsOf: [
             "        let observer = JSONLObserver.stdout",
-            "        let runtime = Runtime(toolRegistry: registry, observer: observer, checkpointer: \(checkpointRootExpr), runID: \"\(escapeSwiftStringLiteral(options.runID))\")"
         ])
+        lines.append(contentsOf: DriverSourceBuilder.runtimeBootstrap(
+            workflowStructName: workflow.structName,
+            hasTraceConfiguration: workflow.runtimeTraceConfiguration != nil,
+            runID: options.runID,
+            observerExpr: "observer",
+            checkpointRootExpr: checkpointRootExpr,
+            indent: "        "
+        ))
 
         let inputs = try parseAssignments(options.inputJSON, option: "--input-json")
         let inputsByName = Dictionary(inputs.map { ($0.name, $0.json) }, uniquingKeysWith: { _, new in new })

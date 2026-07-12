@@ -138,7 +138,7 @@ struct UniversalSectionMarkerTests {
         )
 
         #expect(out.contains(".isEmpty"), Comment(rawValue: out))
-        #expect(out.contains("complete(reason: nil)"), Comment(rawValue: out))
+        #expect(out.contains("complete(reason: nil, step:"), Comment(rawValue: out))
     }
 }
 

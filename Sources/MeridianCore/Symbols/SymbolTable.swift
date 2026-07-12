@@ -12,6 +12,7 @@ public final class SymbolTable: @unchecked Sendable {
 
     public private(set) var kinds:     [String: KindDeclaration]     = [:]
     public private(set) var properties:[String: [PropertyEntry]]     = [:]   // keyed by kind name
+    public private(set) var keyProperties: [String: String]          = [:]
     public private(set) var relations: [String: RelationDeclaration] = [:]   // keyed by verb
     /// 3A: relation evaluation backings, keyed by relation name (lowercased). A
     /// relation declared without a backing sentence is a compile error
@@ -120,6 +121,10 @@ public final class SymbolTable: @unchecked Sendable {
         Set((properties[kind.lowercased()] ?? []).map { $0.name.lowercased() })
     }
 
+    public func keyProperty(of kind: String) -> String? {
+        keyProperties[kind.lowercased()]
+    }
+
     /// Lower-cased enum cases discovered across all `which is one of (…)`
     /// property declarations. Used during lowering so that bare identifiers
     /// like `invalid`, `denied`, `succeeded` resolve to a string literal
@@ -133,6 +138,10 @@ public final class SymbolTable: @unchecked Sendable {
     /// English lexicon used for stop-word filtering and article stripping.
     public var lexicon: EnglishLexicon = .default
 
+    /// Merged `=== trace ===` settings, threaded through lowering for
+    /// statistical thresholds and monitor cadence defaults.
+    public var traceConfiguration: TraceConfigurationAST = .init()
+
     public init(trace: ParserTrace = .shared) { self.trace = trace }
 
     // MARK: - Populate from MerConfigFile
@@ -143,6 +152,7 @@ public final class SymbolTable: @unchecked Sendable {
                              lexicon: EnglishLexicon = .default) -> SymbolTable {
         let table = SymbolTable(trace: trace)
         table.lexicon = lexicon
+        table.traceConfiguration = config.traceConfiguration
         for stmt in config.vocabulary {
             switch stmt {
             case .kind(let k):
@@ -158,6 +168,9 @@ public final class SymbolTable: @unchecked Sendable {
                         }
                     }
                 }
+            case .key(let key):
+                table.keyProperties[key.kind.lowercased()] = key.property
+                trace.log(.symbols, "key \(key.kind).\(key.property)")
             case .relation(let r):
                 table.relations[r.verb.lowercased()] = r
                 trace.log(.symbols, "relation \(r.verb)")

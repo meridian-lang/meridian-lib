@@ -19,88 +19,88 @@
       "adjective" : "orphaned",
       "function" : "meridianDef_AuditRow_orphaned",
       "kind" : "audit row",
-      "line" : 33
+      "line" : 35
     },
     {
       "adjective" : "finalized",
       "function" : "meridianDef_Batch_finalized",
       "kind" : "batch",
-      "line" : 28
+      "line" : 30
     },
     {
       "adjective" : "ready",
       "function" : "meridianDef_Batch_ready",
       "kind" : "batch",
-      "line" : 26
+      "line" : 28
     },
     {
       "adjective" : "settled",
       "function" : "meridianDef_Batch_settled",
       "kind" : "batch",
-      "line" : 27
+      "line" : 29
     },
     {
       "adjective" : "violated",
       "function" : "meridianDef_Constraint_violated",
       "kind" : "constraint",
-      "line" : 32
+      "line" : 34
     },
     {
       "adjective" : "bloated",
       "function" : "meridianDef_DatabaseTable_bloated",
       "kind" : "database table",
-      "line" : 37
+      "line" : 39
     },
     {
       "adjective" : "lagging",
       "function" : "meridianDef_IndexJob_lagging",
       "kind" : "index job",
-      "line" : 34
+      "line" : 36
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Ledger_open",
       "kind" : "ledger",
-      "line" : 25
+      "line" : 27
     },
     {
       "adjective" : "applied",
       "function" : "meridianDef_Migration_applied",
       "kind" : "migration",
-      "line" : 35
+      "line" : 37
     },
     {
       "adjective" : "failed",
       "function" : "meridianDef_Migration_failed",
       "kind" : "migration",
-      "line" : 36
+      "line" : 38
     },
     {
       "adjective" : "drifted",
       "function" : "meridianDef_Record_drifted",
       "kind" : "record",
-      "line" : 31
+      "line" : 33
     },
     {
       "adjective" : "duplicate",
       "function" : "meridianDef_Record_duplicate",
       "kind" : "record",
-      "line" : 30
+      "line" : 32
     },
     {
       "adjective" : "stale",
       "function" : "meridianDef_Record_stale",
       "kind" : "record",
-      "line" : 29
+      "line" : 31
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a migration",
-      "line" : 47,
+      "line" : 49,
       "name" : "application",
       "right_cardinality" : "one",
       "right_kind" : "a database table",
@@ -110,7 +110,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a ledger",
-      "line" : 45,
+      "line" : 47,
       "name" : "auditing",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -120,7 +120,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a record",
-      "line" : 43,
+      "line" : 45,
       "name" : "canonicalization",
       "right_cardinality" : "one",
       "right_kind" : "an audit row",
@@ -130,7 +130,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a batch",
-      "line" : 41,
+      "line" : 43,
       "name" : "retrying",
       "right_cardinality" : "one",
       "right_kind" : "a ledger",
@@ -140,7 +140,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a batch",
-      "line" : 39,
+      "line" : 41,
       "name" : "settlement",
       "right_cardinality" : "one",
       "right_kind" : "a ledger",
@@ -245,35 +245,35 @@
   "meridian_verbs" : [
     {
       "base" : "apply",
-      "line" : 54,
+      "line" : 56,
       "past_participle" : "applied",
       "relation" : "application",
       "third_person" : "applies"
     },
     {
       "base" : "audit",
-      "line" : 53,
+      "line" : 55,
       "past_participle" : "audited",
       "relation" : "auditing",
       "third_person" : "audits"
     },
     {
       "base" : "canonicalize",
-      "line" : 52,
+      "line" : 54,
       "past_participle" : "canonicalized",
       "relation" : "canonicalization",
       "third_person" : "canonicalizes"
     },
     {
       "base" : "retry",
-      "line" : 51,
+      "line" : 53,
       "past_participle" : "retried",
       "relation" : "retrying",
       "third_person" : "retries"
     },
     {
       "base" : "settle",
-      "line" : 50,
+      "line" : 52,
       "past_participle" : "settled",
       "relation" : "settlement",
       "third_person" : "settles"
@@ -285,48 +285,48 @@
   ],
   "source_map" : [
     {
-      "meridian_line" : 69,
-      "swift_line" : 433
-    },
-    {
-      "meridian_line" : 20,
-      "swift_line" : 445
-    },
-    {
-      "meridian_line" : 21,
-      "swift_line" : 449
-    },
-    {
-      "meridian_line" : 22,
-      "swift_line" : 454
-    },
-    {
-      "meridian_line" : 23,
+      "meridian_line" : 19,
       "swift_line" : 456
     },
     {
+      "meridian_line" : 20,
+      "swift_line" : 470
+    },
+    {
+      "meridian_line" : 21,
+      "swift_line" : 474
+    },
+    {
+      "meridian_line" : 22,
+      "swift_line" : 482
+    },
+    {
+      "meridian_line" : 23,
+      "swift_line" : 485
+    },
+    {
       "meridian_line" : 25,
-      "swift_line" : 467
+      "swift_line" : 499
     },
     {
       "meridian_line" : 26,
-      "swift_line" : 483
+      "swift_line" : 517
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 522
+      "swift_line" : 585
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 527
+      "swift_line" : 590
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 567
+      "swift_line" : 659
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 572
+      "swift_line" : 664
     }
   ],
   "tools_used" : [
@@ -363,7 +363,18 @@
       "parameters" : [
 
       ],
+      "skill_name" : "validate constraints",
+      "skill_version_hash" : "ffa2e0b7f5bb0fd9b502616e157a3b1720c97e0d07c06c63579f2367687f58e4",
       "source_name" : "validate constraints",
+      "step_paths" : [
+        "\/ValidateConstraints\/procedure-steps\/procedure\/1bcbc6230f4d9e46605ea45e918b7ff1b5e9648648d5f945e541de0b28da9084",
+        "\/ValidateConstraints\/procedure-steps\/procedure\/89865a354070af2f0959d7588735cb4702ae4df52a98be1061542d1bde63d99d",
+        "\/ValidateConstraints\/procedure-steps\/procedure\/9c232834ca776789d597f036259be5023b58e95ddb17391e17ac2074b3386eb9",
+        "\/ValidateConstraints\/procedure-steps\/procedure\/branch.else\/3940c3a87bbb4ff1c1a08760378fe76aa66c9f1420372211fa8629153063dedf",
+        "\/ValidateConstraints\/procedure-steps\/procedure\/branch.then\/e570e895185382d8c34533bb8bf1ca0f462b29b8121304169a4859bf2faf3dd1",
+        "\/ValidateConstraints\/procedure-steps\/procedure\/e425833796c978a30d32f128e8652d058dd00c3a2aa0564f21ca2d78700be72d",
+        "\/ValidateConstraints\/procedure-steps\/procedure\/iterate.body\/aeef16a2d0cc722f88d36d1137994aaec6a31b70a8164a3b6bb8351aa30e8a39"
+      ],
       "swift_struct" : "ValidateConstraints"
     },
     {
@@ -371,7 +382,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "validate constraints",
+      "skill_version_hash" : "ffa2e0b7f5bb0fd9b502616e157a3b1720c97e0d07c06c63579f2367687f58e4",
       "source_name" : "when validateConstraints fires",
+      "step_paths" : [
+        "\/WhenValidateconstraintsFires\/root\/procedure\/1db25daf09e32798b35aced8266ccab3446a8fba78233210b8b5ff1a6ff8e7e3",
+        "\/WhenValidateconstraintsFires\/root\/procedure\/a1153d9692b933e4e76aaf6aa56027e7db22e2e0cb34d95696fbdb82a42a6c31"
+      ],
       "swift_struct" : "WhenValidateconstraintsFires"
     },
     {
@@ -379,7 +396,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "validate constraints",
+      "skill_version_hash" : "ffa2e0b7f5bb0fd9b502616e157a3b1720c97e0d07c06c63579f2367687f58e4",
       "source_name" : "when constraintViolated fires",
+      "step_paths" : [
+        "\/WhenConstraintviolatedFires\/root\/procedure\/4c917ffa6338f2be46076f467c67973ee5839a523bf91f3917553e853a6ef61a",
+        "\/WhenConstraintviolatedFires\/root\/procedure\/896a43f0d1df31f9a01441d1d76b9e3aa49da94a3cedc0c729433382090a7694"
+      ],
       "swift_struct" : "WhenConstraintviolatedFires"
     }
   ]

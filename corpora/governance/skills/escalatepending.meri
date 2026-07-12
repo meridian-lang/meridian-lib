@@ -21,9 +21,9 @@ triggers:
 
 ## Rules
 
-### Rules — steps
+### Rules — steps (( role: reference ))
 
-When an access request is flagged as overdue, escalate the access request.
+When an access request has been pending for more than 7 days, escalate the access request.
 
 ## Workflow
 fetch pending access requests.

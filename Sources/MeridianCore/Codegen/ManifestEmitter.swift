@@ -33,6 +33,7 @@ public struct ManifestEmitter {
         public let relations: [RelationManifestEntry]
         /// 3B: Verbs + conjugation + bound relation. `meridian_verbs`.
         public let verbs: [VerbManifestEntry]
+        public let skillVersionHash: String?
 
         public init(
             sourceFiles: [String] = [],
@@ -48,7 +49,8 @@ public struct ManifestEmitter {
             skillSections: [SkillSectionEntry] = [],
             definitions: [DefinitionManifestEntry] = [],
             relations: [RelationManifestEntry] = [],
-            verbs: [VerbManifestEntry] = []
+            verbs: [VerbManifestEntry] = [],
+            skillVersionHash: String? = nil
         ) {
             self.sourceFiles = sourceFiles
             self.workflows = workflows
@@ -64,6 +66,7 @@ public struct ManifestEmitter {
             self.definitions = definitions
             self.relations = relations
             self.verbs = verbs
+            self.skillVersionHash = skillVersionHash
         }
     }
 
@@ -276,13 +279,22 @@ public struct ManifestEmitter {
                 ]
             }
         }
+        if let skillVersionHash = input.skillVersionHash {
+            dict["skill_version_hash"] = skillVersionHash
+        }
         dict["workflows"] = input.workflows.map { wf -> [String: Any] in
             var d: [String: Any] = [
                 "swift_struct": wf.structName,
                 "source_name": wf.name,
                 "mode": wf.mode == .strict ? "strict" : "lenient"
             ]
+            d["skill_name"] = wf.skillName
+            d["skill_version_hash"] = wf.skillVersionHash
             d["parameters"] = wf.parameters.map { ["name": $0.name, "kind": $0.kind.name] }
+            let stepPaths = Array(Set(IRWalker.flatPrimitives(wf.body).map { $0.stableStepPath ?? "" })).sorted()
+            if !stepPaths.isEmpty {
+                d["step_paths"] = stepPaths
+            }
             let judgmentSteps = IRWalker.flatPrimitives(wf.body).compactMap { prim -> [String: Any]? in
                 guard case .aiJudgment(let ir) = prim else { return nil }
                 return judgmentStepEntry(ir)

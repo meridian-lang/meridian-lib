@@ -30,6 +30,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L98 `Output Format`: template - Template/output shape is metadata unless explicit output assertions are authored.
 
 ## Metrics
+- generated_loc: 77 non-blank ported lines
 - Sections inert total: 11/13 (85% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0

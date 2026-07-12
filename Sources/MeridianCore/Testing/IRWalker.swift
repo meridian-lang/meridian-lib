@@ -43,6 +43,21 @@ public enum IRWalker {
         }
     }
 
+    /// D8 (SEM-4-07): true when any `AssertIR` anywhere is a "blocking site" —
+    /// an ordinary (non-monitored) assert, which is inherently blocking
+    /// because its failure always throws, OR a monitored statistical assert
+    /// that carries the explicit `, blocking` suffix. Mirrors
+    /// `ASTToIR`'s own `let blockingSite = !monitored || blocking` used for
+    /// the MER-TMP unknown-arm-policy check, since both answer the same
+    /// underlying question: does this skill have an assertion whose failure
+    /// (or missed witnessing of that failure) must halt execution.
+    public static func hasBlockingAssert(in workflows: [IRWorkflow]) -> Bool {
+        flatPrimitives(workflows: workflows).contains { prim in
+            guard case .assert(let a) = prim else { return false }
+            return !a.monitored || a.blocking
+        }
+    }
+
     // MARK: - Specific searches
 
     /// All distinct tool IDs appearing in any InvokeIR.

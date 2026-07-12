@@ -14,6 +14,7 @@ Routes a clinical-safety operator request to the synthetic clinical skill that o
 | run shift handoff | shifthandoff |
 | triage patient | triagepatient |
 | monitor patient vitals | vitalsmonitor |
+| check handoff reliability | handoffreliabilitymonitor |
 
 ## Workflow
 

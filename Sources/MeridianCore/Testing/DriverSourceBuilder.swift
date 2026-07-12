@@ -76,4 +76,41 @@ enum DriverSourceBuilder {
             decode,
         ]
     }
+
+    /// Runtime construction with optional trace-store wiring from compiled trace config.
+    static func runtimeBootstrap(
+        workflowStructName: String,
+        hasTraceConfiguration: Bool,
+        runID: String,
+        observerExpr: String,
+        checkpointRootExpr: String,
+        indent: String
+    ) -> [String] {
+        if hasTraceConfiguration {
+            return [
+                "\(indent)let __meridianTraceConfig = \(workflowStructName).runtimeTraceConfiguration!",
+                "\(indent)let __meridianTraceStore: any TraceStore",
+                "\(indent)switch __meridianTraceConfig.store {",
+                "\(indent)case .memory:",
+                "\(indent)    __meridianTraceStore = InMemoryTraceStore(configuration: __meridianTraceConfig.trace)",
+                "\(indent)case .file:",
+                "\(indent)    let url = FileManager.default.temporaryDirectory",
+                "\(indent)        .appendingPathComponent(\"meridian-trace-\(escapeSwiftStringLiteral(runID)).jsonl\")",
+                "\(indent)    __meridianTraceStore = try JSONLTraceStore(fileURL: url, configuration: __meridianTraceConfig.trace)",
+                "\(indent)}",
+                "\(indent)let runtime = Runtime(",
+                "\(indent)    toolRegistry: registry,",
+                "\(indent)    observer: \(observerExpr),",
+                "\(indent)    traceStore: __meridianTraceStore,",
+                "\(indent)    checkpointer: \(checkpointRootExpr),",
+                "\(indent)    runID: \"\(escapeSwiftStringLiteral(runID))\",",
+                "\(indent)    traceConfiguration: __meridianTraceConfig.trace,",
+                "\(indent)    traceSkillIdentity: __meridianTraceConfig.skillIdentity",
+                "\(indent))",
+            ]
+        }
+        return [
+            "\(indent)let runtime = Runtime(toolRegistry: registry, observer: \(observerExpr), checkpointer: \(checkpointRootExpr), runID: \"\(escapeSwiftStringLiteral(runID))\")",
+        ]
+    }
 }

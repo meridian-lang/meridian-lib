@@ -7,6 +7,9 @@ that the printed form can be compiled back to the same structure.
 
 Evidence and coverage live in
 [`coverage/VERBALIZER_EVIDENCE.md`](coverage/VERBALIZER_EVIDENCE.md).
+Wave 8 extends that same verbalizer surface to temporal/statistical conditions
+and the compound-note form; the operational runtime semantics for those forms
+live in [`19_TRACES_AND_TIME.md`](19_TRACES_AND_TIME.md).
 
 ---
 
@@ -46,7 +49,9 @@ proof of what the compiled model is.
 
 Use `meridian explain` when you want the canonical compiled meaning. Use
 `meridian drift` when you want a line-oriented audit of how far the authoring
-surface is from that canonical form.
+surface is from that canonical form. For trace-backed replay or runtime
+semantics, use `meridian trace eval` / `trace-eval` and the Wave 8 trace docs,
+not the verbalizer alone.
 
 ---
 
@@ -444,9 +449,10 @@ covered.
 
 ## Out Of Scope
 
-Wave 7 deliberately does not include:
+Wave 7 deliberately did not include temporal/statistical operators; Wave 8 now
+does. Still out of scope:
 
-- temporal/statistical/deontic operators planned for later waves;
+- deontic / obligation operators planned for later waves;
 - obligation id annotation beyond the reserved `meridian explain` hook;
 - an LLM canonicalization/proposal tool;
 - source-preserving Markdown/documentation round-trips;

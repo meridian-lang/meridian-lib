@@ -23,13 +23,14 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L159 `Tools Used`: tools-metadata - Tools sections are metadata-mining, not workflow execution.
 
 ## Metrics
+- generated_loc: 111 non-blank ported lines
 - Sections inert total: 11/11 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=9, template=1, tools-metadata=1
 - Judgment: 3 blocks, 0 lines
-- canonical_drift: synonym=2, structure=0, desugar=0, meaning=123
+- canonical_drift: synonym=6, structure=0, desugar=0, meaning=119
 
 ### Inert section details
 - L6 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.

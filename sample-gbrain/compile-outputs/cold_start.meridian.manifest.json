@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -1265,79 +1265,79 @@
   "source_map" : [
     {
       "meridian_line" : 139,
-      "swift_line" : 604
+      "swift_line" : 627
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 643
+      "swift_line" : 696
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 648
+      "swift_line" : 701
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 687
+      "swift_line" : 769
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 692
+      "swift_line" : 774
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 731
+      "swift_line" : 842
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 736
+      "swift_line" : 847
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 775
+      "swift_line" : 915
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 780
+      "swift_line" : 920
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 819
+      "swift_line" : 988
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 824
+      "swift_line" : 993
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 863
+      "swift_line" : 1061
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 868
+      "swift_line" : 1066
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 907
+      "swift_line" : 1134
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 912
+      "swift_line" : 1139
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 951
+      "swift_line" : 1207
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 956
+      "swift_line" : 1212
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 995
+      "swift_line" : 1280
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 1000
+      "swift_line" : 1285
     }
   ],
   "tools_used" : [
@@ -1380,7 +1380,12 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "cold-start",
+      "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "cold-start a input",
+      "step_paths" : [
+        "\/ColdStartInput\/phase-0-clawvisor-setup-required-for-api-access-steps-5\/procedure\/53279ecf0ba92fe1c35cb83ba4cd16056cc9a79c481e7a09e9a72a53c4a1dc89"
+      ],
       "swift_struct" : "ColdStartInput"
     },
     {
@@ -1388,7 +1393,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cold-start",
+      "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when coldStart fires",
+      "step_paths" : [
+        "\/WhenColdstartFires\/root\/procedure\/a25d9bb063dfa2232602038a8a53152bcb7d5a1e24a1b4fda440a6a22811b542",
+        "\/WhenColdstartFires\/root\/procedure\/c65ecc8c6661bbb51cc4f8213c02162d4c5e496995cb3f2dd38c152a3f4a69a1"
+      ],
       "swift_struct" : "WhenColdstartFires"
     },
     {
@@ -1396,7 +1407,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cold-start",
+      "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when fillMyBrain fires",
+      "step_paths" : [
+        "\/WhenFillmybrainFires\/root\/procedure\/9524d8bfa25f5378d749889f6af33106ee7139e0388783837634f10d66832632",
+        "\/WhenFillmybrainFires\/root\/procedure\/f8de529f6e36a5832c9ef7d31e3d2244b96e8d702c41e0c388ef327d875451f2"
+      ],
       "swift_struct" : "WhenFillmybrainFires"
     },
     {
@@ -1404,7 +1421,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cold-start",
+      "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when bootstrapBrain fires",
+      "step_paths" : [
+        "\/WhenBootstrapbrainFires\/root\/procedure\/743aa91791a7a43a7c31268774ddfdd0c8089cfac05cd778f72ac89bde8ec3e6",
+        "\/WhenBootstrapbrainFires\/root\/procedure\/baab8a9218376f40cb35cb66f4f96a9f7f05bfc4613a0895e13e7b5c22d33c99"
+      ],
       "swift_struct" : "WhenBootstrapbrainFires"
     },
     {
@@ -1412,7 +1435,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cold-start",
+      "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when importMyData fires",
+      "step_paths" : [
+        "\/WhenImportmydataFires\/root\/procedure\/087dda6124e14e59bcea2f377ff43a18e9457a3219a902286fa8853edc79dca0",
+        "\/WhenImportmydataFires\/root\/procedure\/4a371bdbcf4c803af5d9c38549492aeddfb04aff9b8e5dc98024016bacbd9225"
+      ],
       "swift_struct" : "WhenImportmydataFires"
     },
     {
@@ -1420,7 +1449,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cold-start",
+      "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when dayOne fires",
+      "step_paths" : [
+        "\/WhenDayoneFires\/root\/procedure\/50d972170701f338676c01a3a82261cb40bbf9855a546864e1e2227f7f992b41",
+        "\/WhenDayoneFires\/root\/procedure\/ca32ed6661059d47282bf8d0e6d1983080aecc6df87dce5f6e6685ad3039453c"
+      ],
       "swift_struct" : "WhenDayoneFires"
     },
     {
@@ -1428,7 +1463,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cold-start",
+      "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when getStarted fires",
+      "step_paths" : [
+        "\/WhenGetstartedFires\/root\/procedure\/b379a9b61dd1a5e215084593794ecfa168f641799a34339a05f6ff1ab170a561",
+        "\/WhenGetstartedFires\/root\/procedure\/bd28b8c6eabd11f30995ba212d8ea38a3b01a632b6b99292f0124aa4f0bac7f2"
+      ],
       "swift_struct" : "WhenGetstartedFires"
     },
     {
@@ -1436,7 +1477,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cold-start",
+      "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when whatShouldIImportFirst fires",
+      "step_paths" : [
+        "\/WhenWhatshouldiimportfirstFires\/root\/procedure\/617be1ca2aac2db5f448510bc7920344bc4488b040b25b92cd13ad3a5eee411a",
+        "\/WhenWhatshouldiimportfirstFires\/root\/procedure\/ddd77ae311666737d5bd2679bf6fbb71f8820b93e80dc4d67dcb696d347f9a90"
+      ],
       "swift_struct" : "WhenWhatshouldiimportfirstFires"
     },
     {
@@ -1444,7 +1491,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cold-start",
+      "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when populateBrain fires",
+      "step_paths" : [
+        "\/WhenPopulatebrainFires\/root\/procedure\/9fb0a0368a9021dd5da92c903cc9e6ffde2aae401fb08a0b20287694c5776aa1",
+        "\/WhenPopulatebrainFires\/root\/procedure\/b5d7e5240c2c730c313253b0b36e171de9b659fb083f1ca7d3de475bbf48bc4f"
+      ],
       "swift_struct" : "WhenPopulatebrainFires"
     },
     {
@@ -1452,7 +1505,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "cold-start",
+      "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when nowWhat fires",
+      "step_paths" : [
+        "\/WhenNowwhatFires\/root\/procedure\/321fd8b22a5282e6c387b7c48f3de341e43a5343d00cab7fd2f2beb9e7e615e9",
+        "\/WhenNowwhatFires\/root\/procedure\/b28e38b5e2627a33e66ba6cc4233a6468707720b89b486a9f6fb9c917d7fb836"
+      ],
       "swift_struct" : "WhenNowwhatFires"
     }
   ]

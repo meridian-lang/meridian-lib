@@ -1,0 +1,281 @@
+[
+  {
+    "id": "proxy-001",
+    "corpus": "incident",
+    "source_file": "original-skills/cooldown_watch/SKILL.md",
+    "sentence": "Keep a recently-fired alert in a watch loop through its escalation cooldown window before letting it re-page, so a flapping alert doesn't page the same engineer three times in fifteen minutes for what's really one ongoing incident.",
+    "kind": "ambiguous",
+    "expected": "narrative",
+    "notes": "Narrative prose with repeated-event timing language."
+  },
+  {
+    "id": "proxy-002",
+    "corpus": "incident",
+    "source_file": "original-skills/cooldown_watch/SKILL.md",
+    "sentence": "A stale alert usually means the underlying signal is unreliable, not resolved — acknowledging it hides that distinction.",
+    "kind": "negative",
+    "expected": "narrative",
+    "notes": "Statistical adverb; should stay prose."
+  },
+  {
+    "id": "proxy-003",
+    "corpus": "incident",
+    "source_file": "original-skills/cooldown_watch/SKILL.md",
+    "sentence": "wait 10 minutes.",
+    "kind": "positive",
+    "expected": "unique-parse",
+    "notes": "Direct future wait duration."
+  },
+  {
+    "id": "proxy-004",
+    "corpus": "incident",
+    "source_file": "original-skills/cooldown_watch/SKILL.md",
+    "sentence": "make sure no alerts whose fired at is within the last 15 minutes and whose status is \"firing\".",
+    "kind": "positive",
+    "expected": "value-temporal",
+    "notes": "Property date-window predicate on `fired at`."
+  },
+  {
+    "id": "proxy-005",
+    "corpus": "etl",
+    "source_file": "original-skills/pipeline_triage/SKILL.md",
+    "sentence": "A run that failed because a downstream API had a five-second blip is a different problem than a run that failed because an upstream schema changed underneath it, and treating them the same — replay everything, or escalate everything — wastes either compute or attention.",
+    "kind": "ambiguous",
+    "expected": "narrative",
+    "notes": "Causal prose with duration mention, not a temporal operator."
+  },
+  {
+    "id": "proxy-006",
+    "corpus": "etl",
+    "source_file": "original-skills/pipeline_triage/SKILL.md",
+    "sentence": "A failure that isn't transient will fail the same way again, and now it's failed twice instead of once with a clear signal.",
+    "kind": "negative",
+    "expected": "narrative",
+    "notes": "Repeated-count wording; not a temporal trace form."
+  },
+  {
+    "id": "proxy-007",
+    "corpus": "etl",
+    "source_file": "original-skills/incremental_sync/SKILL.md",
+    "sentence": "The retry loop exists because one extraction call rarely closes the whole gap between the last watermark and the current one.",
+    "kind": "negative",
+    "expected": "narrative",
+    "notes": "Rarely plus last/current comparison should remain narrative."
+  },
+  {
+    "id": "proxy-008",
+    "corpus": "etl",
+    "source_file": "original-skills/dag_orchestrate/SKILL.md",
+    "sentence": "Once both gates clear, the extraction and the quality check run simultaneously rather than sequentially, since neither one depends on the other's result.",
+    "kind": "causal-since",
+    "expected": "diagnostic:MER-TMP-012",
+    "notes": "Only exact causal `since` hit found in the requested corpora."
+  },
+  {
+    "id": "proxy-009",
+    "corpus": "etl",
+    "source_file": "original-skills/schema_evolution/SKILL.md",
+    "sentence": "An upstream producer renaming or retyping a column is invisible until it breaks a downstream query — usually the query, not the load, because a naive extract-load path will happily load an incompatible schema and let the incompatibility surface three steps later.",
+    "kind": "negative",
+    "expected": "narrative",
+    "notes": "Usually/three-steps-later phrasing should stay prose."
+  },
+  {
+    "id": "proxy-010",
+    "corpus": "etl",
+    "source_file": "original-skills/extract_load/SKILL.md",
+    "sentence": "Don't load a dataset before its schema has been validated, even when the source is \"usually fine.\"",
+    "kind": "negative",
+    "expected": "narrative",
+    "notes": "Quoted `usually` is prose, not frequency syntax."
+  },
+  {
+    "id": "proxy-011",
+    "corpus": "etl",
+    "source_file": "original-skills/backfill_partitions/SKILL.md",
+    "sentence": "It picks the oldest five partitions per dataset, backfills them in parallel, and kicks off the dataset's quality checks in the background at the same time, so a long backfill and an unrelated quality pass aren't competing for the same window.",
+    "kind": "ambiguous",
+    "expected": "narrative",
+    "notes": "Contains age ordering and time-window prose only."
+  },
+  {
+    "id": "proxy-012",
+    "corpus": "governance",
+    "source_file": "original-skills/escalate_pending/SKILL.md",
+    "sentence": "Seven days without a reviewer decision is long enough that the requester's manager should know, not just the reviewer.",
+    "kind": "ambiguous",
+    "expected": "narrative",
+    "notes": "Narrative elapsed-time threshold."
+  },
+  {
+    "id": "proxy-013",
+    "corpus": "governance",
+    "source_file": "original-skills/escalate_pending/SKILL.md",
+    "sentence": "When an access request has been pending for more than 7 days, escalate the access request.",
+    "kind": "positive",
+    "expected": "unique-parse",
+    "notes": "Explicit elapsed-time rule."
+  },
+  {
+    "id": "proxy-014",
+    "corpus": "governance",
+    "source_file": "original-skills/review_requests/SKILL.md",
+    "sentence": "Run this on a recurring cadence (daily is typical) rather than only when someone complains that a request is stuck.",
+    "kind": "ambiguous",
+    "expected": "narrative",
+    "notes": "Cadence advice, not parser-target temporal syntax."
+  },
+  {
+    "id": "proxy-015",
+    "corpus": "governance",
+    "source_file": "original-skills/revoke_stale_access/SKILL.md",
+    "sentence": "Access that's still granted long after the reason for it has expired is one of the most common findings in any real access audit, and it's rarely malicious — it's just leftover.",
+    "kind": "negative",
+    "expected": "narrative",
+    "notes": "Statistical `rarely` in explanatory prose."
+  },
+  {
+    "id": "proxy-016",
+    "corpus": "governance",
+    "source_file": "original-skills/rotate_credentials/SKILL.md",
+    "sentence": "Rotate any active credential that has aged past its 90-day freshness window, retrying the rotation call until the provider confirms the credential is fresh again.",
+    "kind": "positive",
+    "expected": "value-temporal",
+    "notes": "Property-age window mixed with future retry language."
+  },
+  {
+    "id": "proxy-017",
+    "corpus": "governance",
+    "source_file": "original-skills/rotate_credentials/SKILL.md",
+    "sentence": "wait 5 minutes.",
+    "kind": "positive",
+    "expected": "unique-parse",
+    "notes": "Direct future wait duration."
+  },
+  {
+    "id": "proxy-018",
+    "corpus": "clinical",
+    "source_file": "original-skills/vitals_monitor/SKILL.md",
+    "sentence": "A vital sign reading is only as good as how recently it was taken — a patient who looked stable four hours ago is not the same as a patient who looks stable right now.",
+    "kind": "ambiguous",
+    "expected": "narrative",
+    "notes": "Freshness prose with relative-time wording."
+  },
+  {
+    "id": "proxy-019",
+    "corpus": "clinical",
+    "source_file": "original-skills/vitals_monitor/SKILL.md",
+    "sentence": "When a patient has been unmonitored for more than 4 hours, escalate the patient.",
+    "kind": "positive",
+    "expected": "unique-parse",
+    "notes": "Explicit elapsed-time rule."
+  },
+  {
+    "id": "proxy-020",
+    "corpus": "clinical",
+    "source_file": "original-skills/vitals_monitor/SKILL.md",
+    "sentence": "wait 15 minutes.",
+    "kind": "positive",
+    "expected": "unique-parse",
+    "notes": "Direct future wait duration."
+  },
+  {
+    "id": "proxy-021",
+    "corpus": "clinical",
+    "source_file": "original-skills/vitals_monitor/SKILL.md",
+    "sentence": "make sure the patient's last observed at is within the last 4 hours.",
+    "kind": "positive",
+    "expected": "value-temporal",
+    "notes": "Property date-window predicate on `last observed at`."
+  },
+  {
+    "id": "proxy-022",
+    "corpus": "clinical",
+    "source_file": "original-skills/vitals_monitor/SKILL.md",
+    "sentence": "The receipt records how many recheck cycles ran before the patient was confirmed current, or that the patient was escalated for going stale.",
+    "kind": "ambiguous",
+    "expected": "narrative",
+    "notes": "Count-over-time report prose."
+  },
+  {
+    "id": "proxy-023",
+    "corpus": "clinical",
+    "source_file": "original-skills/triage_patient/SKILL.md",
+    "sentence": "Triage is the one place in a ward where being slow is its own kind of mistake — a patient who is quietly deteriorating rarely announces it, and the vitals are usually the first place it shows.",
+    "kind": "negative",
+    "expected": "narrative",
+    "notes": "Rarely/usually prose should not parse temporally."
+  },
+  {
+    "id": "proxy-024",
+    "corpus": "clinical",
+    "source_file": "original-skills/medication_administer/SKILL.md",
+    "sentence": "A wrong medication reaching a patient is rarely a single mistake — it is usually a chain of small skips: the allergy list wasn't re-checked, the order's risk tier wasn't looked at, or a high-risk order went in without a second set of eyes.",
+    "kind": "negative",
+    "expected": "narrative",
+    "notes": "Statistical adverbs plus causal prose."
+  },
+  {
+    "id": "proxy-025",
+    "corpus": "clinical",
+    "source_file": "original-skills/dose_check/SKILL.md",
+    "sentence": "Check a nurse's running dose count for the shift against the daily limit before letting another administration go through, so a busy shift never quietly drifts past the safe number of doses one nurse should be giving.",
+    "kind": "ambiguous",
+    "expected": "narrative",
+    "notes": "Temporal drift language around a daily aggregate."
+  },
+  {
+    "id": "proxy-026",
+    "corpus": "erp",
+    "source_file": "original-skills/returns_processing/SKILL.md",
+    "sentence": "Check: any invoices whose due date is within the last 7 days.",
+    "kind": "positive",
+    "expected": "value-temporal",
+    "notes": "Property date-window predicate on invoice due date."
+  },
+  {
+    "id": "proxy-027",
+    "corpus": "erp",
+    "source_file": "original-skills/dunning/SKILL.md",
+    "sentence": "for each invoice whose due date is within the last 1 days:",
+    "kind": "positive",
+    "expected": "value-temporal",
+    "notes": "Loop header over a due-date window."
+  },
+  {
+    "id": "proxy-028",
+    "corpus": "erp",
+    "source_file": "original-skills/returns_processing/SKILL.md",
+    "sentence": "Route returned orders by lifecycle stage and flag invoices returned within the dunning window.",
+    "kind": "ambiguous",
+    "expected": "narrative",
+    "notes": "Named window in description prose."
+  },
+  {
+    "id": "proxy-029",
+    "corpus": "procedures",
+    "source_file": "original-skills/purge_expired/SKILL.md",
+    "sentence": "for each the first 100 records whose status is \"stale\" sorted by updated at, oldest first:",
+    "kind": "ambiguous",
+    "expected": "narrative",
+    "notes": "Ordering by `updated at`; temporal-ish but not a trace event."
+  },
+  {
+    "id": "proxy-030",
+    "corpus": "procedures",
+    "source_file": "original-skills/aging_report/SKILL.md",
+    "sentence": "Render a deterministic report over stale records, including the oldest offender.",
+    "kind": "ambiguous",
+    "expected": "narrative",
+    "notes": "Age-ranking prose only."
+  },
+  {
+    "id": "proxy-031",
+    "corpus": "procedures",
+    "source_file": "original-skills/rebuild_index/SKILL.md",
+    "sentence": "Rebuild lagging indexes after a deterministic age check, requiring a minimum backlog before running.",
+    "kind": "ambiguous",
+    "expected": "narrative",
+    "notes": "Temporal trigger language in description prose."
+  }
+]

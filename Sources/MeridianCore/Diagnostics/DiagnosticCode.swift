@@ -70,7 +70,7 @@ extension DiagnosticCode {
 
     public static let notImplemented = DiagnosticCode(
         id: "MER0003", title: "not implemented",
-        explanation: "A language or compiler feature referenced here is not implemented yet.",
+        explanation: "Retired compatibility code formerly emitted by the compiler's unimplemented-feature error bridge. No production path emits MER0003.",
         kind: .other)
 
     public static let internalError = DiagnosticCode(
@@ -289,6 +289,93 @@ extension DiagnosticCode {
         explanation: "A match branch is semantically invalid: it is empty, repeats a pattern, or declares more than one wildcard/default arm.",
         kind: .other, decision: DecisionRef("D-DX-2"))
 
+    public static let traceBarePerfect = DiagnosticCode(
+        id: "MER-TMP-010", title: "bare perfect trace predicate",
+        explanation: "A trace event predicate used a bare perfect form (`has failed`) without an explicit temporal operator such as `has ever`, `within the last`, `times in a row`, or `since the last`.",
+        kind: .structural)
+
+    public static let traceWindowExceedsRetention = DiagnosticCode(
+        id: "MER-TMP-011", title: "trace window exceeds retention",
+        explanation: "A trace-temporal trailing window is longer than the configured trace retention period, so the compiler cannot promise complete answers for that query.",
+        kind: .other)
+
+    public static let traceCausalSince = DiagnosticCode(
+        id: "MER-TMP-012", title: "causal since form",
+        explanation: "The `since the last` temporal form relates a state/predicate to an anchor event. It cannot be used as a causal chain between two event predicates.",
+        kind: .structural)
+
+    public static let traceFuture = DiagnosticCode(
+        id: "MER-TMP-013", title: "future trace predicate",
+        explanation: "Trace-temporal predicates may only query recorded past events, not future or predicted ones.",
+        kind: .structural)
+
+    public static let traceUnknownStep = DiagnosticCode(
+        id: "MER-TMP-014", title: "unknown trace step",
+        explanation: "A trace event pattern named a step that does not exist in the current workflow or known instrumentation surface.",
+        kind: .nameResolution)
+
+    public static let traceUnknownPayloadField = DiagnosticCode(
+        id: "MER-TMP-015", title: "unknown trace payload field",
+        explanation: "A trace event payload predicate referenced a field the compiler cannot resolve for that event shape.",
+        kind: .nameResolution)
+
+    public static let traceUnkeyedDefinition = DiagnosticCode(
+        id: "MER-TMP-016", title: "unkeyed temporal definition",
+        explanation: "A temporal or statistical definition over a kind requires that kind to declare a key property so trace predicates can be restricted to the current instance.",
+        kind: .other)
+
+    public static let traceRecently = DiagnosticCode(
+        id: "MER-TMP-017", title: "ambiguous recently",
+        explanation: "The word `recently` is intentionally unsupported in trace-temporal predicates because it has no stable duration semantics.",
+        kind: .structural)
+
+    public static let traceProgressive = DiagnosticCode(
+        id: "MER-TMP-018", title: "progressive trace predicate",
+        explanation: "Progressive event wording such as `is failing` is not a recorded trace event. Use a completed event form like `failed` or `succeeded`.",
+        kind: .structural)
+
+    public static let traceStateHistorySince = DiagnosticCode(
+        id: "MER-TMP-019", title: "unsupported since-the-last state predicate",
+        explanation: "A `since the last` predicate must reduce to a trace event pattern (or an adjective whose body is a `has ever` event query). Meridian v1 has no state-history retention, so a pure state predicate such as `the service is healthy since the last …` (where `healthy` compares a property) cannot be evaluated over the trace (INFORM7 §5.5 / §12, deferred). Back the predicate with an adjective whose body is a `has ever` event query — `Definition: a service is deploy-clean if the deploy step has ever succeeded.` then `if the service is deploy-clean since the last deploy step succeeded, …` — or drop the `since` form and guard the branch with an ordinary `otherwise`.",
+        kind: .structural)
+
+    public static let traceMissingProductionCapturePolicy = DiagnosticCode(
+        id: "MER-TMP-020", title: "missing production trace capture policy",
+        explanation: "A merconfig trace profile set to `production` requires every declared tool to spell out its `capture:` policy explicitly as `full`, `hash-only`, or `redacted(fields)`. Development may default to full, but production may not rely on that default.",
+        kind: .structural)
+
+    public static let traceCrossSkillScope = DiagnosticCode(
+        id: "MER-TMP-021", title: "cross-skill trace scope not supported",
+        explanation: "An event pattern named a step scoped to another skill (`the fetch step of the briefing skill`). Meridian v1 trace queries can only reference the current skill's own trace ([DECISION D4], SEM-4-03) — cross-skill trace scope is deferred.",
+        kind: .structural)
+
+    public static let traceMissingUnknownArm = DiagnosticCode(
+        id: "MER-STA-001", title: "missing unknown arm",
+        explanation: "A decision point whose predicate may evaluate to indeterminate needs either an explicit `if it is unknown whether` arm or an `otherwise` arm that accepts both false and indeterminate.",
+        kind: .other)
+
+    public static let statisticalConfidenceReserved = DiagnosticCode(
+        id: "MER-STA-002", title: "statistical confidence reserved",
+        explanation: "The statistical surface reserves `with <n>% confidence` for a future confidence-interval semantics; raw-ratio evaluation does not accept it today.",
+        kind: .structural)
+
+    public static let statisticalVagueFrequency = DiagnosticCode(
+        id: "MER-STA-003", title: "vague statistical frequency",
+        explanation: "A statistical claim used vague frequency wording such as `most of the time`. Use an explicit percentage or the fixed `usually` / `rarely` forms instead.",
+        kind: .structural)
+
+    // MARK: MER-REF / MER-TYP — binding reference & type
+
+    public static let noteBindingUndeclared = DiagnosticCode(
+        id: "MER-REF-004", title: "note target binding undeclared",
+        explanation: "`proceed, and note \"<text>\" in the <binding>` (INFORM7 §2.9) requires the named binding to already exist in scope. The target was never introduced by an earlier `let … be …` / `bind`, so there is nothing to append to. Declare the binding first (`let the receipt trailer be \"\".`) before noting into it.",
+        kind: .structural)
+
+    public static let noteBindingNonText = DiagnosticCode(
+        id: "MER-TYP-001", title: "note target binding is not text",
+        explanation: "`proceed, and note \"<text>\" in the <binding>` (INFORM7 §2.9) appends to a `text` binding, but the named binding holds a non-text value (e.g. a number or list). Note only into a binding first declared with a text value.",
+        kind: .structural)
+
     // MARK: MER4xxx — codegen
 
     public static let codegenError = DiagnosticCode(
@@ -343,6 +430,16 @@ extension DiagnosticCode {
         explanation: "A lexicon marker collection required for canonical output is empty.",
         kind: .other, decision: DecisionRef("D-DX-8"))
 
+    public static let inputFileNotFound = DiagnosticCode(
+        id: "MER5013", title: "input file not found",
+        explanation: "A CLI command was given a path that does not exist on disk.",
+        kind: .other, decision: DecisionRef("D-DX-8"))
+
+    public static let directoryReadFailed = DiagnosticCode(
+        id: "MER5014", title: "directory read failed",
+        explanation: "The CLI could not list a directory while discovering inputs or dependencies.",
+        kind: .other, decision: DecisionRef("D-DX-8"))
+
     // MARK: MER6xxx — lint / authoring warnings
 
     public static let lintPoliteCommand = DiagnosticCode(
@@ -365,6 +462,16 @@ extension DiagnosticCode {
         explanation: "The compiler skipped one or more constructs after collecting their diagnostics so it could continue reporting additional errors in the same file.",
         kind: .other, decision: DecisionRef("D-DX-2"))
 
+    public static let lintCrossRunInARow = DiagnosticCode(
+        id: "MER6005", title: "cross-run in-a-row lint",
+        explanation: "An `in a row` trace-temporal claim spans `across all runs`, so the streak is evaluated over deterministic global trace order and may be affected by interleaved runs.",
+        kind: .other, decision: DecisionRef("D-DX-7"))
+
+    public static let lintSuperlativeEventAnchor = DiagnosticCode(
+        id: "MER6006", title: "superlative event-anchor lint",
+        explanation: "A `since the last …` anchor names its subject with a superlative (e.g. `the most recent troubled service`), which is legal but nests a collection-ranking computation inside the anchor position of an event pattern. This is harder to read and to debug from a trace than resolving the superlative to a named value first.",
+        kind: .other, decision: DecisionRef("D-DX-7"))
+
     /// Every catalog code, for `meridian explain-diag`, the staleness/guard tests,
     /// and uniqueness checks. Keep this list complete — a guard test asserts
     /// there are no duplicate ids and every code has a non-empty explanation.
@@ -385,13 +492,19 @@ extension DiagnosticCode {
         .ambiguousEntryWorkflow, .proseDisallowed, .commandHoleOutOfScope,
         .quantifierSemantic, .ambiguousAnaphora, .invalidEnumDefault,
         .unlowerableRulePredicate, .unsupportedTriggerCondition,
-        .matchBranchSemantic,
+        .matchBranchSemantic, .traceBarePerfect, .traceWindowExceedsRetention,
+        .traceCausalSince, .traceFuture, .traceUnknownStep,
+        .traceUnknownPayloadField, .traceUnkeyedDefinition, .traceRecently,
+        .traceProgressive, .traceStateHistorySince, .traceMissingProductionCapturePolicy,
+        .traceCrossSkillScope, .traceMissingUnknownArm,
+        .statisticalConfidenceReserved, .statisticalVagueFrequency,
+        .noteBindingUndeclared, .noteBindingNonText,
         .codegenError, .invalidIR,
         .swiftFormatFailed, .vocabularyDeclarationUnrecognized, .rulebookSectionUnknown,
         .unknownMerconfigSection, .malformedRulebookEntry, .unrecognizedBlockProperty,
-        .unwritableTraceFile, .emptyLexiconMarkers,
+        .unwritableTraceFile, .emptyLexiconMarkers, .inputFileNotFound, .directoryReadFailed,
         .lintPoliteCommand, .lintUncertainty, .migrationRouteFuzzyDowngrade,
-        .diagnosticRecoverySummary,
+        .diagnosticRecoverySummary, .lintCrossRunInARow, .lintSuperlativeEventAnchor,
     ]
 
     /// Look up a code by its stable id (`"MER2001"`), case-insensitively.

@@ -1,0 +1,461 @@
+{
+  "constants" : {
+    "dose limit" : 2,
+    "observation window" : 14400,
+    "vitals threshold" : 100
+  },
+  "instances_required" : [
+    {
+      "kind" : "protocol",
+      "name" : "sepsis protocol"
+    },
+    {
+      "kind" : "protocol",
+      "name" : "anticoagulation protocol"
+    }
+  ],
+  "kinds_used" : [
+
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "granted",
+      "function" : "meridianDef_Consent_granted",
+      "kind" : "consent",
+      "line" : 34
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_MedicationOrder_cleared",
+      "kind" : "medication order",
+      "line" : 31
+    },
+    {
+      "adjective" : "contraindicated",
+      "function" : "meridianDef_MedicationOrder_contraindicated",
+      "kind" : "medication order",
+      "line" : 30
+    },
+    {
+      "adjective" : "high risk",
+      "function" : "meridianDef_Medication_highRisk",
+      "kind" : "medication",
+      "line" : 29
+    },
+    {
+      "adjective" : "active",
+      "function" : "meridianDef_Patient_active",
+      "kind" : "patient",
+      "line" : 35
+    },
+    {
+      "adjective" : "held",
+      "function" : "meridianDef_Patient_held",
+      "kind" : "patient",
+      "line" : 36
+    },
+    {
+      "adjective" : "monitored",
+      "function" : "meridianDef_Patient_monitored",
+      "kind" : "patient",
+      "line" : 32
+    },
+    {
+      "adjective" : "unmonitored",
+      "function" : "meridianDef_Patient_unmonitored",
+      "kind" : "patient",
+      "line" : 33
+    },
+    {
+      "adjective" : "critical",
+      "function" : "meridianDef_VitalSign_critical",
+      "kind" : "vital sign",
+      "line" : 27
+    },
+    {
+      "adjective" : "stable",
+      "function" : "meridianDef_VitalSign_stable",
+      "kind" : "vital sign",
+      "line" : 28
+    }
+  ],
+  "meridian_ir_version" : "1.1",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a nurse",
+      "line" : 40,
+      "name" : "administration",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "medication.administer"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a protocol",
+      "line" : 42,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication",
+      "via" : "protocol.lookup"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a clinician",
+      "line" : 38,
+      "name" : "prescription",
+      "right_cardinality" : "one",
+      "right_kind" : "a medication order",
+      "via" : "order.list"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Monitor whether shift handoffs are landing reliably enough to trust, while keeping patient-sensitive trace payloads hashed or redacted and routing the ambiguous cases through a tightly scoped judgment boundary. Use this between shift summaries, not only after an omitted handoff detail has already become a safety event.",
+    "name" : "handoff reliability monitor",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 20,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 23,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "tools",
+        "level" : 2,
+        "line" : 28,
+        "text" : "Tools Used"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 32,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 34,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 42,
+        "text" : "Workflow — steps 2"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 48,
+        "text" : "Workflow — steps 3"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 52,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 60,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 63,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 50,
+        "text" : "Emit"
+      }
+    ],
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "Contract",
+        "line" : 20,
+        "lines" : [
+          "the handoff step succeeds in at least 90% of runs within the last 30 days, checked every 4 hours"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 23,
+        "lines" : [
+          "\"run handoff reliability monitor\"",
+          "\"check handoff reliability\"",
+          "\"monitor shift handoff quality\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "Tools Used",
+        "line" : 28,
+        "lines" : [
+          "list the active census (`patient.list`)",
+          "read current vital trends (`vitals.read`)"
+        ],
+        "role" : "tools"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 32,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 34,
+        "lines" : [
+          "fetch active patients",
+          "for each patient:",
+          "read the vital signs for the patient",
+          "if the patient is unmonitored,",
+          "escalate the patient"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 42,
+        "lines" : [
+          "use judgment to follow the Workflow — steps 2 guidance:",
+          "otherwise,",
+          "use judgment to decide whether the patient needs an extra handoff follow-up based on the latest vital trend and hold status"
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 3",
+        "line" : 48,
+        "lines" : [
+          "Emit: \"handoff reliability monitor pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 52,
+        "lines" : [
+          "Don't treat the monitor as a substitute for the deterministic unmonitored",
+          "escalation. The judgment step is only for the ambiguous follow-up cases",
+          "Don't widen the judgment tool scope just because more context would be",
+          "convenient. This monitor keeps the witnessing boundary narrow on purpose",
+          "Don't store full patient payloads when the trace only needs hashes or",
+          "redacted fields to witness the handoff path"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Guarantees",
+        "line" : 60,
+        "lines" : [
+          "make sure at most 50 patients"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 63,
+        "lines" : [
+          "The receipt records the monitor outcome, every deterministic escalation for an",
+          "unmonitored patient, and any privacy-scoped judgment follow-up decision needed",
+          "for a borderline handoff"
+        ],
+        "role" : "template"
+      }
+    ],
+    "tools" : "patient.list, vitals.read",
+    "triggers" : "\"run handoff reliability monitor\"\n\"check handoff reliability\"\n\"monitor shift handoff quality\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "administer",
+      "line" : 46,
+      "past_participle" : "administered",
+      "relation" : "administration",
+      "third_person" : "administers"
+    },
+    {
+      "base" : "cover",
+      "line" : 47,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "prescribe",
+      "line" : 45,
+      "past_participle" : "prescribed",
+      "relation" : "prescription",
+      "third_person" : "prescribes"
+    }
+  ],
+  "source_files" : [
+    "handoffreliabilitymonitor.meri",
+    "clinical.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 21,
+      "swift_line" : 438
+    },
+    {
+      "meridian_line" : 61,
+      "swift_line" : 456
+    },
+    {
+      "meridian_line" : 36,
+      "swift_line" : 461
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 474
+    },
+    {
+      "meridian_line" : 38,
+      "swift_line" : 483
+    },
+    {
+      "meridian_line" : 39,
+      "swift_line" : 496
+    },
+    {
+      "meridian_line" : 40,
+      "swift_line" : 500
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 520
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 590
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 595
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 664
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 669
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 738
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 743
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "judgment_steps" : [
+        {
+          "guidance" : "otherwise,\nuse judgment to decide whether the patient needs an extra handoff follow-up based on the latest vital trend and hold status\nEmit: \"handoff reliability monitor pass complete\"",
+          "line" : 44,
+          "scoped_tools" : [
+            "patient.list",
+            "shell.run",
+            "vitals.read"
+          ],
+          "text" : "follow the Workflow — steps 2 guidance"
+        }
+      ],
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "handoff reliability monitor",
+      "skill_version_hash" : "5bb4034473d7d9a8f83412154df593bfe9d035e1219c1d9e8cfe577695dc1571",
+      "source_name" : "handoff reliability monitor",
+      "step_paths" : [
+        "\/HandoffReliabilityMonitor\/contract\/invariants\/3da12cb7988d276b46daa531fb4167e744a545c7cf217db815c34381f647f396",
+        "\/HandoffReliabilityMonitor\/guarantees\/invariants\/ee9ed4201d2ba58ac39ef1309ba72397abf964e2c75dc4bbc0530f5371b3258e",
+        "\/HandoffReliabilityMonitor\/workflow-steps-2\/procedure\/e3f9747de8e533221bd6eec100421c956f6dcb27c0d3834f496d24704a5fb3ae",
+        "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/52f49b51e1146ff1cdf64ceff15cfceaf0535c46ca0ff99e8ebf17d7d2bdd2c1",
+        "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/branch.then\/cc0471927009f4ae44a6fbc9bb853d84c62b04969caae6fbbac7110a1661ed5d",
+        "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/d04c2143c515275f1dcf5fdbcfb0d1305c572b83e126064b8e8fde4fdc2de890",
+        "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/iterate.body\/b22ed69c60d558a751217ec5c5e94a338f19e0a314ad6462ab3ba2a12c499b8d",
+        "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/iterate.body\/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3"
+      ],
+      "swift_struct" : "HandoffReliabilityMonitor"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "handoff reliability monitor",
+      "skill_version_hash" : "5bb4034473d7d9a8f83412154df593bfe9d035e1219c1d9e8cfe577695dc1571",
+      "source_name" : "when runHandoffReliabilityMonitor fires",
+      "step_paths" : [
+        "\/WhenRunhandoffreliabilitymonitorFires\/root\/procedure\/1fc8a4bbc9242dedc931d3b08c4c220f241269f2ba0240291a8cd21ee2ced7be",
+        "\/WhenRunhandoffreliabilitymonitorFires\/root\/procedure\/c79f0248c400b5834299c6fc075e91e4046098869f3c1a8b54254be7d02779f2"
+      ],
+      "swift_struct" : "WhenRunhandoffreliabilitymonitorFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "handoff reliability monitor",
+      "skill_version_hash" : "5bb4034473d7d9a8f83412154df593bfe9d035e1219c1d9e8cfe577695dc1571",
+      "source_name" : "when checkHandoffReliability fires",
+      "step_paths" : [
+        "\/WhenCheckhandoffreliabilityFires\/root\/procedure\/1f743ef30090a15790e635e3c7ea4a55c712f9003839f870506fb99a51b428ee",
+        "\/WhenCheckhandoffreliabilityFires\/root\/procedure\/a4e72ff574dabf266a27e47011985f5553e3990e63a9af25fe18e0e727772735"
+      ],
+      "swift_struct" : "WhenCheckhandoffreliabilityFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "handoff reliability monitor",
+      "skill_version_hash" : "5bb4034473d7d9a8f83412154df593bfe9d035e1219c1d9e8cfe577695dc1571",
+      "source_name" : "when monitorShiftHandoffQuality fires",
+      "step_paths" : [
+        "\/WhenMonitorshifthandoffqualityFires\/root\/procedure\/45a579e47841db07e686ae86a89b6f095005f5fdf2915ea56cf63d8216487230",
+        "\/WhenMonitorshifthandoffqualityFires\/root\/procedure\/c9b21655af33f6b7d2378664427dcb8ed1ee96a6e7286e307f9aa2e7e56f13fb"
+      ],
+      "swift_struct" : "WhenMonitorshifthandoffqualityFires"
+    }
+  ]
+}

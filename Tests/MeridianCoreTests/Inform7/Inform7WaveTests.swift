@@ -651,6 +651,22 @@ struct IterationRefinementTests {
         #expect(ir?.source?.sort == nil)
     }
 
+    @Test("SEM_2_08 `the first N` preserves source order when no explicit sort is present")
+    func sem208SourceOrderWithoutSort() throws {
+        let out = try Compiler(options: .init(fallbackPolicy: .lenient)).compile(
+            meridianSource: """
+            To process:
+              for each the first 5 orders:
+                `echo hi`.
+            """,
+            meridianFile: "test.meridian",
+            merconfigSource: "",
+            merconfigFile: "test.merconfig"
+        )
+        #expect(out.contains(".prefix(5)"))
+        #expect(!out.contains(".sorted { __a, __b in"), Comment(rawValue: out))
+    }
+
     @Test("a refinement on an explicit `for each X in Y` collection still parses")
     func explicitCollectionWithRefinement() throws {
         let ir = try iterate("""

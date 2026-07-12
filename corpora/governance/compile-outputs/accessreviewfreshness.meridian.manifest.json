@@ -1,0 +1,431 @@
+{
+  "constants" : {
+    "credential ttl" : 7776000,
+    "max concurrent grants" : 3,
+    "review window" : 604800
+  },
+  "instances_required" : [
+    {
+      "kind" : "environment",
+      "name" : "identity provider"
+    },
+    {
+      "kind" : "environment",
+      "name" : "audit sink"
+    }
+  ],
+  "kinds_used" : [
+    "Resource"
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_AccessRequest_pending",
+      "kind" : "access request",
+      "line" : 36
+    },
+    {
+      "adjective" : "stale",
+      "function" : "meridianDef_AccessRequest_stale",
+      "kind" : "access request",
+      "line" : 35
+    },
+    {
+      "adjective" : "fresh",
+      "function" : "meridianDef_Credential_fresh",
+      "kind" : "credential",
+      "line" : 34
+    },
+    {
+      "adjective" : "overused",
+      "function" : "meridianDef_Credential_overused",
+      "kind" : "credential",
+      "line" : 33
+    },
+    {
+      "adjective" : "classified",
+      "function" : "meridianDef_Resource_classified",
+      "kind" : "resource",
+      "line" : 29
+    },
+    {
+      "adjective" : "authorized",
+      "function" : "meridianDef_User_authorized",
+      "kind" : "user",
+      "line" : 32
+    },
+    {
+      "adjective" : "cleared",
+      "function" : "meridianDef_User_cleared",
+      "kind" : "user",
+      "line" : 30
+    },
+    {
+      "adjective" : "privileged",
+      "function" : "meridianDef_User_privileged",
+      "kind" : "user",
+      "line" : 31
+    }
+  ],
+  "meridian_ir_version" : "1.1",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 38,
+      "name" : "assignment",
+      "right_cardinality" : "one",
+      "right_kind" : "a role",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a policy",
+      "line" : 42,
+      "name" : "coverage",
+      "right_cardinality" : "one",
+      "right_kind" : "an environment",
+      "via" : "policy.evaluate"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a user",
+      "line" : 40,
+      "name" : "grant",
+      "right_cardinality" : "one",
+      "right_kind" : "a resource",
+      "via" : "access.grant"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Treat review freshness as a real governance control instead of a spreadsheet afterthought by checking the retained review history at the exact retention boundary the trace policy promises. Use this before granting that a resource's review posture is current, not after an auditor has already asked why the evidence went stale.",
+    "name" : "access review freshness",
+    "outline" : [
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 19,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 24,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 2,
+        "line" : 29,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 31,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 42,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 51,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 56,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 20,
+        "text" : "Input"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 21,
+        "text" : "Output"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 22,
+        "text" : "Side effect"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 34,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 37,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 39,
+        "text" : "Emit"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 40,
+        "text" : "Emit"
+      }
+    ],
+    "parameters" : "resource",
+    "sections" : [
+      {
+        "executes" : false,
+        "heading" : "Contract",
+        "line" : 19,
+        "lines" : [
+          "Input: a resource",
+          "Output: a review-freshness verdict at the retention boundary",
+          "Side effect: none beyond the emitted review status"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 24,
+        "lines" : [
+          "\"check access review freshness\"",
+          "\"run access review freshness\"",
+          "\"verify resource review currency\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow",
+        "line" : 29,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 31,
+        "lines" : [
+          "if across all runs, the access review step has ever succeeded,",
+          "Emit: \"access review freshness found historical review evidence\"",
+          "if the resource's status is \"active\",",
+          "if the access review step has succeeded within the last 30 days,",
+          "Emit: \"access review freshness found retained review evidence inside the boundary\"",
+          "otherwise,",
+          "Emit: \"access review freshness found no retained review evidence inside the boundary\"",
+          "Emit: \"access review freshness pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 42,
+        "lines" : [
+          "Don't stretch a review window past the trace retention and still call the",
+          "answer fresh. Once the evidence is outside retention, this skill no longer",
+          "gets to claim it",
+          "Don't depend on payload details that the capture policy deliberately omits",
+          "The review-freshness check is written against retained history only",
+          "Don't use a cross-run \"ever\" hit as proof of freshness. Historical evidence",
+          "and still-fresh evidence are separate branches here"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Guarantees",
+        "line" : 51,
+        "lines" : [
+          "This skill treats the exact 30-day retained boundary as the freshness edge and",
+          "records both the historical-evidence branch and the still-fresh branch",
+          "separately"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 56,
+        "lines" : [
+          "The receipt distinguishes historical review evidence from still-fresh review",
+          "evidence and records whether the resource stayed inside the exact retained",
+          "30-day review boundary"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"check access review freshness\"\n\"run access review freshness\"\n\"verify resource review currency\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "authorize",
+      "line" : 45,
+      "past_participle" : "authorized",
+      "relation" : "assignment",
+      "third_person" : "authorizes"
+    },
+    {
+      "base" : "cover",
+      "line" : 47,
+      "past_participle" : "covered",
+      "relation" : "coverage",
+      "third_person" : "covers"
+    },
+    {
+      "base" : "grant",
+      "line" : 46,
+      "past_participle" : "granted",
+      "relation" : "grant",
+      "third_person" : "grants"
+    }
+  ],
+  "source_files" : [
+    "accessreviewfreshness.meri",
+    "governance.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 33,
+      "swift_line" : 461
+    },
+    {
+      "meridian_line" : 34,
+      "swift_line" : 465
+    },
+    {
+      "meridian_line" : 35,
+      "swift_line" : 477
+    },
+    {
+      "meridian_line" : 36,
+      "swift_line" : 480
+    },
+    {
+      "meridian_line" : 37,
+      "swift_line" : 484
+    },
+    {
+      "meridian_line" : 39,
+      "swift_line" : 497
+    },
+    {
+      "meridian_line" : 40,
+      "swift_line" : 512
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 580
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 585
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 654
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 659
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 728
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 733
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Resource",
+          "name" : "resource"
+        }
+      ],
+      "skill_name" : "access review freshness",
+      "skill_version_hash" : "64f8e2ba84374de33b67069ca1d0470023a2af6a19b725095d2fdb6660135ea3",
+      "source_name" : "access review freshness a resource",
+      "step_paths" : [
+        "\/AccessReviewFreshnessResource\/workflow-steps\/procedure\/2e6d63943fb0f5a4d055422654d15812f524e7382aaa27b1ef3cd6f288ce156a",
+        "\/AccessReviewFreshnessResource\/workflow-steps\/procedure\/48a2589d48e26f8021d4dbd1b07453d6158189b72ec65e2d03a40664ff1caef4",
+        "\/AccessReviewFreshnessResource\/workflow-steps\/procedure\/ba2c3acb0e2774e6b8375cf865a677f809d9693da24514ff92888a71fa25bd0f",
+        "\/AccessReviewFreshnessResource\/workflow-steps\/procedure\/branch.else\/3d90cfaa52e235b2afcf5d48a20a17a7e92a3e599d2704d112f87eb6071979f0",
+        "\/AccessReviewFreshnessResource\/workflow-steps\/procedure\/branch.then\/307447073c1d0b7208de2410f539fd5011d51d81bb411c552fcdf43ca32688d9",
+        "\/AccessReviewFreshnessResource\/workflow-steps\/procedure\/branch.then\/3a36420739eaba8e4625c3d5118decd95af76ffdbd8c2cd18c7beed1baa6dbc3",
+        "\/AccessReviewFreshnessResource\/workflow-steps\/procedure\/branch.then\/7cb05d6c8beb5f22f43a325de3c3e4aae55434998311155e3a31159ca625f6d6"
+      ],
+      "swift_struct" : "AccessReviewFreshnessResource"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "access review freshness",
+      "skill_version_hash" : "64f8e2ba84374de33b67069ca1d0470023a2af6a19b725095d2fdb6660135ea3",
+      "source_name" : "when checkAccessReviewFreshness fires",
+      "step_paths" : [
+        "\/WhenCheckaccessreviewfreshnessFires\/root\/procedure\/c3490e80fd8c08bfc0e72bad6c9febebac30c3d9123a1ec8eae625995159076d",
+        "\/WhenCheckaccessreviewfreshnessFires\/root\/procedure\/d37ea4c7661a40debb22745f437a6b83415e71af88785737a8187fe0978469f4"
+      ],
+      "swift_struct" : "WhenCheckaccessreviewfreshnessFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "access review freshness",
+      "skill_version_hash" : "64f8e2ba84374de33b67069ca1d0470023a2af6a19b725095d2fdb6660135ea3",
+      "source_name" : "when runAccessReviewFreshness fires",
+      "step_paths" : [
+        "\/WhenRunaccessreviewfreshnessFires\/root\/procedure\/385a8a8c566c9525328bd7f400ac647ec675e4c2709ba4502e2e0a172e088054",
+        "\/WhenRunaccessreviewfreshnessFires\/root\/procedure\/ad2d84db0d3ce7221d6bc6e07db745db6df1b512ad254ddf87f3595d9008dbe1"
+      ],
+      "swift_struct" : "WhenRunaccessreviewfreshnessFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "access review freshness",
+      "skill_version_hash" : "64f8e2ba84374de33b67069ca1d0470023a2af6a19b725095d2fdb6660135ea3",
+      "source_name" : "when verifyResourceReviewCurrency fires",
+      "step_paths" : [
+        "\/WhenVerifyresourcereviewcurrencyFires\/root\/procedure\/6cde062bf046bf536150402d2b978695ff15420abeebf9b33fb6e3c44d43fce7",
+        "\/WhenVerifyresourcereviewcurrencyFires\/root\/procedure\/f5337c586d6d3ded70d8a113a59bc1e96a6d07f6a43bcba68a017de965c0eb4d"
+      ],
+      "swift_struct" : "WhenVerifyresourcereviewcurrencyFires"
+    }
+  ]
+}

@@ -13,6 +13,14 @@ struct GrammarTableTests {
             "possessive-chain",
             "comparison",
             "boolean",
+            "trace-event-pattern",
+            "trace-statistical-frequency",
+            "trace-temporal-ever",
+            "trace-temporal-window",
+            "trace-temporal-count",
+            "trace-temporal-in-a-row",
+            "trace-temporal-since",
+            "trace-scope-marker",
             "temporal-window",
             "emptiness",
             "quantifier",
@@ -29,6 +37,7 @@ struct GrammarTableTests {
             "except-when-idiom",
             "try-recover-idiom",
             "suffix-conditional",
+            "compound-note",
         ])
     }
 
@@ -93,8 +102,11 @@ struct GrammarTableTests {
             "quantifier", "aggregate", "superlative", "description", "table-lookup",
         ]
         let handWritten: Set<String> = [
-            "possessive-chain", "active-verb", "scalar-navigation",
+            "possessive-chain", "trace-event-pattern", "trace-temporal-ever",
+            "trace-statistical-frequency", "trace-temporal-window", "trace-temporal-count", "trace-temporal-in-a-row",
+            "trace-temporal-since", "trace-scope-marker", "active-verb", "scalar-navigation",
             "template-conditional", "template-loop", "template-formatter",
+            "compound-note",
         ]
         for name in pegex {
             #expect(table.production(named: name)?.implementation == .pegex, "\(name) should be pegex")

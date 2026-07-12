@@ -14,6 +14,7 @@ Routes a data-pipeline operator request to the synthetic ETL skill that owns it.
 | run quality gate | qualitygate |
 | orchestrate pipeline dag | dagorchestrate |
 | triage failed pipelines | pipelinetriage |
+| check pipeline reliability | pipelinereliabilitywatch |
 
 ## Workflow
 

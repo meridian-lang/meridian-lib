@@ -15,6 +15,27 @@ import MeridianRuntime
 
 @Suite("Trace-enabled end-to-end compile")
 struct TraceEnabledCompileTests {
+    private func stepPaths(in workflows: [IRWorkflow]) -> [String] {
+        workflows.flatMap { workflow in
+            IRWalker.flatPrimitives(workflow.body).compactMap { primitive in
+                switch primitive {
+                case .invoke(let ir): return ir.stableStepPath
+                case .bind(let ir): return ir.stableStepPath
+                case .branch(let ir): return ir.stableStepPath
+                case .iterate(let ir): return ir.stableStepPath
+                case .assert(let ir): return ir.stableStepPath
+                case .emit(let ir): return ir.stableStepPath
+                case .wait(let ir): return ir.stableStepPath
+                case .commit(let ir): return ir.stableStepPath
+                case .recover(let ir): return ir.stableStepPath
+                case .simultaneously(let ir): return ir.stableStepPath
+                case .aiJudgment(let ir): return ir.stableStepPath
+                case .aiAutonomy(let ir): return ir.stableStepPath
+                case .complete(let ir): return ir.stableStepPath
+                }
+            }
+        }
+    }
 
     private func examplesURL() -> URL {
         var url = URL(fileURLWithPath: #file)
@@ -164,5 +185,63 @@ struct TraceEnabledCompileTests {
 
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("migrate \"demo.meri\"") })
+    }
+
+    @Test("stable step paths survive unrelated edits")
+    func stableStepPathsIgnoreUnrelatedInsertions() throws {
+        let cfg = """
+        === vocabulary ===
+        An order is a kind of thing.
+        """
+        let original = """
+        To audit an order:
+          let score be 1.
+          emit "done".
+          complete.
+        """
+        let edited = """
+        To audit an order:
+          let scratch be 0.
+          let score be 1.
+          emit "done".
+          complete.
+        """
+        let compiler = Compiler(options: .init(trace: .silent()))
+        let lhs = try compiler.compileWithManifest(
+            meridianSource: original,
+            meridianFile: "audit.meridian",
+            vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]
+        ).manifest.workflows
+        let rhs = try compiler.compileWithManifest(
+            meridianSource: edited,
+            meridianFile: "audit.meridian",
+            vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]
+        ).manifest.workflows
+        let lhsPaths = Set(stepPaths(in: lhs))
+        let rhsPaths = Set(stepPaths(in: rhs))
+        #expect(lhsPaths.isSubset(of: rhsPaths))
+    }
+
+    @Test("skill fingerprint ignores whitespace-only edits but changes on meaning edits")
+    func skillFingerprintStability() throws {
+        let cfg = "=== vocabulary ===\nAn order is a kind of thing.\n"
+        let compiler = Compiler(options: .init(trace: .silent()))
+        let base = try compiler.compileWithManifest(
+            meridianSource: "To audit an order:\n  complete.\n",
+            meridianFile: "audit.meridian",
+            vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]
+        ).manifest.skillVersionHash
+        let whitespace = try compiler.compileWithManifest(
+            meridianSource: "To   audit   an order:\n\n  complete.\n",
+            meridianFile: "audit.meridian",
+            vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]
+        ).manifest.skillVersionHash
+        let meaning = try compiler.compileWithManifest(
+            meridianSource: "To audit an order:\n  emit \"changed\".\n  complete.\n",
+            meridianFile: "audit.meridian",
+            vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]
+        ).manifest.skillVersionHash
+        #expect(base == whitespace)
+        #expect(base != meaning)
     }
 }

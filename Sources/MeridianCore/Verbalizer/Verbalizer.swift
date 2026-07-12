@@ -18,7 +18,7 @@ public struct Verbalizer: Sendable {
 
     public func verbalize() throws -> String {
         try validateCanonicalLexiconMarkers()
-        try IRValidator.validate(model.workflows, sourceFile: model.sourceFileName)
+        try IRValidator.validate(model.workflows, sourceFile: model.sourceFileName, trace: trace)
         trace.log(.verbalizer, "verbalizing \(model.workflows.count) workflow(s)")
         var chunks: [String] = []
         if let frontmatter = verbalizeFrontmatter() {
@@ -117,6 +117,12 @@ public struct Verbalizer: Sendable {
                 + " \(verbalizeDescription(superlative.description))"
                 + grammar.passiveByMarker
                 + CanonicalForms.words(fromIdentifier: superlative.sortPath)
+        case .eventPattern(let pattern):
+            return verbalizeEventPattern(pattern)
+        case .traceTemporal(let temporal):
+            return verbalizeTraceTemporal(temporal)
+        case .traceStatistical(let statistical):
+            return verbalizeTraceStatistical(statistical)
         }
     }
 
@@ -125,6 +131,9 @@ public struct Verbalizer: Sendable {
         case .invoke(let invoke):
             return verbalizeInvoke(invoke)
         case .bind(let bind):
+            if let note = verbalizeCompoundNote(bind) {
+                return note
+            }
             let keyword = bind.isRebind
                 ? statement.rebindPrefix.trimmingCharacters(in: .whitespaces)
                 : statement.bindPrefix.trimmingCharacters(in: .whitespaces)
@@ -170,6 +179,27 @@ public struct Verbalizer: Sendable {
         }
     }
 
+    /// Reprint the INFORM7 §2.9 compound note surface for its desugared IR.
+    /// Lowering desugars `proceed, and note "<text>" in the <binding>` to a
+    /// `rebind <binding> = {{ binding }}<text>`; when a rebind's value is exactly
+    /// that shape (an interpolated string appending a literal to the same
+    /// binding), print the canonical note form so it round-trips instead of
+    /// leaking the fenced-template rebind surface.
+    private func verbalizeCompoundNote(_ bind: BindIR) -> String? {
+        guard bind.isRebind,
+              case .interpolatedString(let segments) = bind.expression,
+              segments.count == 2,
+              case .expression(.identifierRef(let name)) = segments[0],
+              case .literal(let text) = segments[1],
+              name == bind.name else { return nil }
+        return CanonicalForms.sentence(
+            grammar.compoundNoteIntroducer
+                + CanonicalForms.quoted(text)
+                + grammar.compoundNoteInMarker
+                + surface.definiteArticle
+                + CanonicalForms.words(fromIdentifier: bind.name))
+    }
+
     private func verbalizeWorkflow(_ workflow: IRWorkflow) -> String {
         let header: String
         let whenPrefix = grammar.ruleMarkers.whenPrefix
@@ -204,7 +234,7 @@ public struct Verbalizer: Sendable {
         for entry in metadata.entries {
             let value = entry.value.trimmingCharacters(in: .whitespacesAndNewlines)
             let normalizedKey = normalizeFrontmatterKey(entry.key)
-            if ["tools", "tools_required", "tools-required"].contains(normalizedKey) {
+            if SkillFrontmatter.toolKeyAliases.contains(normalizedKey) {
                 emittedTools = true
                 let tools = mergedFrontmatterList(value, adding: model.toolsUsed)
                 lines.append("\(entry.key):")
@@ -214,7 +244,7 @@ public struct Verbalizer: Sendable {
                 continue
             }
             if value.contains("\n") {
-                if frontmatterListKeys.contains(normalizedKey) {
+                if SkillFrontmatter.listFormattedKeys.contains(normalizedKey) {
                     lines.append("\(entry.key):")
                     for item in value.components(separatedBy: "\n").filter({ !$0.trimmingCharacters(in: .whitespaces).isEmpty }) {
                         lines.append("  - \(frontmatterListItem(item))")
@@ -247,13 +277,6 @@ public struct Verbalizer: Sendable {
             merged.append(trimmed)
         }
         return merged
-    }
-
-    private var frontmatterListKeys: Set<String> {
-        [
-            "parameters", "vocabulary", "rulebook", "rulebooks", "tools", "tools_required",
-            "tools-required", "triggers", "writes_to", "writes-to", "when_to_use", "when-to-use",
-        ]
     }
 
     private func normalizeFrontmatterKey(_ key: String) -> String {
@@ -363,6 +386,10 @@ public struct Verbalizer: Sendable {
         case .predicate(let condition):
             var lines = ["\(statement.ifPrefix)\(verbalize(condition)),"]
             lines += CanonicalForms.indented(blockLines(branch.thenBlock))
+            if let unknownBlock = branch.unknownBlock {
+                lines.append(statement.unknownWhetherPrefix.trimmingCharacters(in: .whitespaces) + ":")
+                lines += CanonicalForms.indented(blockLines(unknownBlock))
+            }
             if let elseBlock = branch.elseBlock {
                 lines.append(statement.otherwiseCommaKeyword)
                 lines += CanonicalForms.indented(blockLines(elseBlock))
@@ -471,6 +498,18 @@ public struct Verbalizer: Sendable {
         } else {
             assertSurface = condition
         }
+        if assertion.monitored {
+            // A monitored assert is always a statistical predicate (the only
+            // condition `monitoredAssertConfig` marks monitored) and, per
+            // lowering, can never carry an `otherwise` block. The cadence /
+            // blocking markers ride inside the verbalized statistical condition
+            // itself. Emit the assertion prefix so the line reparses as a
+            // monitored assert: a *bare* statistical predicate is only a valid
+            // statement inside a checklist/monitor section, not in the flat
+            // procedure the verbalizer emits, so a prefix-less form would fall
+            // through to phrase resolution (MER2001) and break the round trip.
+            return CanonicalForms.sentence(surface.assertPrefix + assertSurface)
+        }
         if let otherwise = assertion.otherwiseAction {
             // Authored/parser surface is `assert X otherwise:` (colon), not the
             // branch form `otherwise,`. Same FixedGrammar label as match default.
@@ -514,7 +553,7 @@ public struct Verbalizer: Sendable {
         case .definitionPredicate, .literal, .constantRef, .instanceRef,
              .relationTraversal, .envVar, .nowExpression, .invocation,
              .interpolatedString, .recordList, .tableLookup, .description,
-             .aggregate, .superlative:
+             .aggregate, .superlative, .eventPattern, .traceTemporal, .traceStatistical:
             return false
         }
     }
@@ -536,7 +575,7 @@ public struct Verbalizer: Sendable {
         case .definitionPredicate, .logical, .literal, .constantRef, .identifierRef,
              .instanceRef, .relationTraversal, .envVar, .nowExpression, .invocation,
              .interpolatedString, .recordList, .tableLookup, .quantified,
-             .description, .aggregate, .superlative:
+             .description, .aggregate, .superlative, .eventPattern, .traceTemporal, .traceStatistical:
             return false
         }
     }
@@ -688,6 +727,131 @@ public struct Verbalizer: Sendable {
         }
     }
 
+    private func verbalizeEventPattern(_ pattern: EventPatternIR) -> String {
+        // `TraceEventPatternGrammar.parse`'s outcome-marker scan only accepts
+        // the outcome verb as the very last token of the clause (a `whose …`
+        // payload predicate, if any, must precede it — `subject whose … is …
+        // outcome`); an outcome verb followed by a trailing `whose` clause
+        // does not match either the infix or suffix marker form and silently
+        // falls through to the quantifier `no …` ambiguity on reparse. So the
+        // predicate must be verbalized before the outcome verb, not after.
+        let negation = pattern.negated ? grammar.traceEventNegationPrefix : ""
+        var text = negation + verbalizeEventPatternSubject(pattern)
+        if let payloadPredicate = pattern.payloadPredicate {
+            text += " " + grammar.iterationMarkers.whoseMarker.trimmingCharacters(in: .whitespaces) + " " + verbalize(payloadPredicate)
+        }
+        text += " " + pattern.outcome.rawValue
+        return text
+    }
+
+    private func verbalizeEventPatternSubject(_ pattern: EventPatternIR) -> String {
+        let subject: String
+        switch pattern.subject {
+        case .step(let name):
+            subject = surface.definiteArticle + name + " step"
+        case .named(let name):
+            subject = surface.definiteArticle + name
+        }
+        return subject
+    }
+
+    private func verbalizeTraceTemporal(_ temporal: TraceTemporalIR) -> String {
+        let scoped: (String) -> String = { body in
+            switch temporal.scope {
+            case .acrossAllRuns:
+                return grammar.traceAcrossAllRunsMarker + body
+            case .currentRun:
+                return body
+            }
+        }
+        switch temporal.kind {
+        case .ever(let pattern):
+            var subjectSide = verbalizeEventPatternSubject(pattern)
+            if let payloadPredicate = pattern.payloadPredicate {
+                subjectSide += " " + grammar.iterationMarkers.whoseMarker.trimmingCharacters(in: .whitespaces) + " " + verbalize(payloadPredicate)
+            }
+            return scoped(subjectSide + grammar.traceHasEverMarker + pattern.outcome.rawValue)
+        case .withinWindow(let pattern, let duration):
+            return scoped(verbalizeEventPattern(pattern) + grammar.traceWithinLastMarker + CanonicalForms.duration(duration))
+        case .countInWindow(let pattern, let comparator, let duration):
+            let comparatorText: String
+            switch comparator {
+            case .atLeast(let value): comparatorText = "at least \(value) times"
+            case .atMost(let value): comparatorText = "at most \(value) times"
+            case .exactly(let value): comparatorText = "exactly \(value) times"
+            }
+            return scoped(verbalizeEventPattern(pattern) + " " + comparatorText + grammar.traceWithinLastMarker + CanonicalForms.duration(duration))
+        case .inARow(let pattern, let count):
+            return scoped(verbalizeEventPattern(pattern) + " \(count)" + grammar.traceInARowSuffix)
+        case .sinceLast(let anchor, let holds, _):
+            // A negated event-pattern hold (`no <event> …`) must be verbalized
+            // in the anchor-first surface form (`since the last <anchor>, no
+            // <event> …`), not the default anchor-last form (`no <event> …
+            // since the last <anchor>`): a condition starting with `no` is
+            // ambiguous with the `no`-quantifier at the top of `parseClause`
+            // (cookbook 2.7), so `no …` only parses correctly here when
+            // `since the last` already claimed the clause first.
+            if case .eventPattern(let pattern) = holds, pattern.negated {
+                return scoped(grammar.traceSinceLastAnchorFirstMarker
+                    + verbalizeEventPattern(anchor) + ", " + verbalize(holds))
+            }
+            return scoped(verbalize(holds) + grammar.traceSinceLastMarker + verbalizeEventPattern(anchor))
+        }
+    }
+
+    private func verbalizeTraceStatistical(_ statistical: TraceStatisticalIR) -> String {
+        let scoped: (String) -> String = { body in
+            switch statistical.scope {
+            case .acrossAllRuns:
+                return grammar.traceAcrossAllRunsMarker + body
+            case .currentRun:
+                return body
+            }
+        }
+        var subject: String
+        switch statistical.pattern.subject {
+        case .step(let name):
+            subject = surface.definiteArticle + name + " step"
+        case .named(let name):
+            subject = surface.definiteArticle + name
+        }
+        if let payloadPredicate = statistical.pattern.payloadPredicate {
+            subject += " " + grammar.iterationMarkers.whoseMarker.trimmingCharacters(in: .whitespaces) + " " + verbalize(payloadPredicate)
+        }
+        let outcome = statistical.outcome == .succeeds
+            ? grammar.traceStatisticalSuccessKeyword
+            : grammar.traceStatisticalFailureKeyword
+        let bound: String
+        switch statistical.bound {
+        case .atLeast(let ratio):
+            bound = grammar.traceStatisticalAtLeastMarker + percentText(ratio) + grammar.traceStatisticalPercentOfMarker
+        case .atMost(let ratio):
+            bound = grammar.traceStatisticalAtMostMarker + percentText(ratio) + grammar.traceStatisticalPercentOfMarker
+        }
+        let denominator = statistical.denominator == .runs
+            ? grammar.traceStatisticalRunsWord
+            : grammar.traceStatisticalOccurrencesWord
+        var body = subject + " " + outcome + bound + denominator
+        if let window = statistical.window {
+            body += grammar.traceWithinLastMarker + CanonicalForms.duration(window)
+        }
+        if let cadence = statistical.monitorCadence {
+            body += grammar.traceStatisticalCheckedEveryMarker + CanonicalForms.duration(cadence)
+        }
+        if statistical.blocking {
+            body += grammar.traceStatisticalBlockingSuffix
+        }
+        return scoped(body)
+    }
+
+    private func percentText(_ ratio: Double) -> String {
+        let percent = ratio * 100
+        if percent.rounded() == percent {
+            return "\(Int(percent))"
+        }
+        return "\(percent)"
+    }
+
     private func verbalizeLogical(_ op: LogicalOp, _ operands: [IRExpression]) -> String {
         let connectors = grammar.booleanConnectors
         switch op {
@@ -758,12 +922,26 @@ public struct Verbalizer: Sendable {
         let adjectiveFilters = description.filters.compactMap {
             definitionAdjectiveFilter($0, elementVar: description.elementVar)
         }
+        // A relation-backed `.identifies` filter (`services owned by the
+        // user`) must round trip through the same `<participle> by
+        // <operand>` verb-clause surface `QuantifierGrammar`/
+        // `DescriptionGrammar` parse it from — never through the generic
+        // `whose <property> identifies <operand>` filter rendering below,
+        // since "identifies" is a pure IR comparison tag with no parser-side
+        // surface form (it can't be reparsed back into a comparison at all).
+        let verbClauseFilters = description.filters.compactMap {
+            verbClauseFilterText($0, elementVar: description.elementVar)
+        }
         let residualFilters = description.filters.filter {
             definitionAdjectiveFilter($0, elementVar: description.elementVar) == nil
+                && verbClauseFilterText($0, elementVar: description.elementVar) == nil
         }
         var text = ([adjectiveFilters.joined(separator: " "), descriptionHead(description)]
             .filter { !$0.isEmpty })
             .joined(separator: " ")
+        if !verbClauseFilters.isEmpty {
+            text += " " + verbClauseFilters.joined(separator: " " + grammar.booleanConnectors.andMarker.trimmingCharacters(in: .whitespaces) + " ")
+        }
         if !residualFilters.isEmpty {
             let whose = grammar.iterationMarkers.whoseMarker
             let andMarker = grammar.booleanConnectors.andMarker
@@ -824,7 +1002,8 @@ public struct Verbalizer: Sendable {
             return verbalize(expression)
         case .literal, .constantRef, .identifierRef, .instanceRef, .propertyAccess,
              .relationTraversal, .envVar, .nowExpression, .invocation, .interpolatedString,
-             .recordList, .tableLookup, .quantified, .description, .aggregate, .superlative:
+             .recordList, .tableLookup, .quantified, .description, .aggregate, .superlative,
+             .eventPattern, .traceTemporal, .traceStatistical:
             return verbalizeLoopRelative(expression, elementVar: elementVar)
         }
     }
@@ -841,7 +1020,8 @@ public struct Verbalizer: Sendable {
             return verbalizeDescriptionFilter(expression, elementVar: elementVar)
         case .literal, .constantRef, .identifierRef, .instanceRef, .propertyAccess,
              .relationTraversal, .envVar, .nowExpression, .invocation, .interpolatedString,
-             .recordList, .tableLookup, .quantified, .description, .aggregate, .superlative:
+             .recordList, .tableLookup, .quantified, .description, .aggregate, .superlative,
+             .eventPattern, .traceTemporal, .traceStatistical:
             return verbalize(expression)
         }
     }
@@ -889,6 +1069,24 @@ public struct Verbalizer: Sendable {
             return nil
         }
         return record.adjective
+    }
+
+    /// Reverse a property-backed `.identifies` filter (`comparison(<loop
+    /// var>.<property>, .identifies, <operand>)`) back into the declared
+    /// verb's passive surface (`<pastParticiple> by <operand>`) that
+    /// `DescriptionGrammar.parsePassiveClauseSuffix` parses it from. Returns
+    /// `nil` when the filter isn't this shape or no declared verb covers the
+    /// backing relation (falls back to the generic `whose` filter text).
+    private func verbClauseFilterText(_ expression: IRExpression, elementVar: String) -> String? {
+        guard case .comparison(let lhs, .identifies, let rhs) = expression,
+              case .propertyAccess(let base, let propertyName) = lhs,
+              isLoopSubject(base, elementVar: elementVar) else { return nil }
+        guard let relationName = model.symbols.relationBackings.first(where: { _, backing in
+            if case .property(_, let path) = backing { return path.lowercased() == propertyName.lowercased() }
+            return false
+        })?.key else { return nil }
+        guard let verb = model.symbols.verbs.values.first(where: { $0.relation == relationName }) else { return nil }
+        return verb.pastParticiple + grammar.passiveByMarker + verbalizeLoopRelative(rhs, elementVar: elementVar)
     }
 
     private func identifierMatches(_ lhs: String, _ rhs: String) -> Bool {
@@ -964,7 +1162,7 @@ public struct Verbalizer: Sendable {
         case .propertyAccess, .literal, .constantRef, .instanceRef, .relationTraversal,
              .comparison, .logical, .envVar, .nowExpression, .invocation,
              .interpolatedString, .recordList, .tableLookup, .definitionPredicate,
-             .quantified, .description, .aggregate, .superlative:
+             .quantified, .description, .aggregate, .superlative, .eventPattern, .traceTemporal, .traceStatistical:
             return verbalize(base) + surface.possessiveSuffix + prop
         }
     }
@@ -982,7 +1180,7 @@ public struct Verbalizer: Sendable {
         case .literal, .constantRef, .identifierRef, .instanceRef, .propertyAccess,
              .relationTraversal, .comparison, .logical, .envVar, .nowExpression,
              .invocation, .recordList, .tableLookup, .definitionPredicate,
-             .quantified, .description, .aggregate, .superlative:
+             .quantified, .description, .aggregate, .superlative, .eventPattern, .traceTemporal, .traceStatistical:
             return surface.shellHoleOpen + verbalize(expr) + surface.shellHoleClose
         }
     }

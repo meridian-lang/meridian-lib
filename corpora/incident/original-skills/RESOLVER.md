@@ -14,6 +14,7 @@ Routes an SRE on-call request to the synthetic incident skill that owns it.
 | render postmortem | postmortemrender |
 | run oncall handoff | oncallhandoff |
 | watch alert cooldown | cooldownwatch |
+| check release health | releasehealthsentinel |
 
 ## Workflow
 

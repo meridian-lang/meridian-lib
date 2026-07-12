@@ -20,6 +20,7 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L13 `Human notes`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
+- generated_loc: 11 non-blank ported lines
 - Sections inert total: 1/3 (33% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0

@@ -109,6 +109,7 @@ public struct TraceTreeRenderer {
         public let payload: [String: Any]
         public let sourceFile: String?
         public let sourceLine: Int?
+        public let semanticTag: String?
 
         public init(
             runID: String,
@@ -117,7 +118,8 @@ public struct TraceTreeRenderer {
             kind: String,
             payload: [String: Any] = [:],
             sourceFile: String? = nil,
-            sourceLine: Int? = nil
+            sourceLine: Int? = nil,
+            semanticTag: String? = nil
         ) {
             self.runID = runID
             self.parentRunID = parentRunID
@@ -126,6 +128,7 @@ public struct TraceTreeRenderer {
             self.payload = payload
             self.sourceFile = sourceFile
             self.sourceLine = sourceLine
+            self.semanticTag = semanticTag
         }
 
         public static func == (lhs: RawEvent, rhs: RawEvent) -> Bool {
@@ -206,7 +209,48 @@ public struct TraceTreeRenderer {
     }
 
     private func labelFor(_ ev: RawEvent) -> String {
-        switch ev.kind {
+        switch ev.semanticTag ?? ev.kind {
+        case "invoked":
+            let subject = stringValue(ev.payload["subject"]) ?? stringValue(ev.payload["tool"]) ?? "?"
+            return "invoked     \(subject)"
+        case "completed":
+            let subject = stringValue(ev.payload["subject"]) ?? "workflow"
+            let outcome = stringValue(ev.payload["outcome"]).map { " (\($0))" } ?? ""
+            return "completed   \(subject)\(outcome)"
+        case "failed":
+            let subject = stringValue(ev.payload["subject"]) ?? "workflow"
+            return "failed      \(subject)"
+        case "emitted":
+            let subject = stringValue(ev.payload["subject"]) ?? stringValue(ev.payload["event"]) ?? ""
+            return "emitted     \(subject)"
+        case "asserted":
+            let subject = stringValue(ev.payload["subject"]) ?? stringValue(ev.payload["message"]) ?? ""
+            return "asserted ✓  \(subject)"
+        case "assert-failed":
+            let subject = stringValue(ev.payload["subject"]) ?? stringValue(ev.payload["message"]) ?? ""
+            return "asserted ✗  \(subject)"
+        case "branched":
+            let subject = stringValue(ev.payload["subject"]) ?? stringValue(ev.payload["condition"]) ?? ""
+            return "branched    \(subject)"
+        case "iterated":
+            if let index = stringValue(ev.payload["index"]) {
+                return "iterated    #\(index)"
+            }
+            let subject = stringValue(ev.payload["subject"]) ?? stringValue(ev.payload["over"]) ?? ""
+            return "iterated    \(subject)"
+        case "judged":
+            let subject = stringValue(ev.payload["subject"]) ?? "judgment"
+            let outcome = stringValue(ev.payload["outcome"]).map { " (\($0))" } ?? ""
+            return "judged      \(subject)\(outcome)"
+        case "committed":
+            let subject = stringValue(ev.payload["subject"]) ?? stringValue(ev.payload["label"]) ?? ""
+            return "committed   \(subject)"
+        case "recovered":
+            let subject = stringValue(ev.payload["subject"]) ?? stringValue(ev.payload["pattern"]) ?? ""
+            return "recovered   \(subject)"
+        case "violated":
+            let subject = stringValue(ev.payload["subject"]) ?? ""
+            return "violated    \(subject)"
         case "invoke.start":      return "invoke      \(stringValue(ev.payload["tool"]) ?? "?")"
         case "invoke.end":        return "  ↳ ok"
         case "invoke.error":      return "  ↳ error \(stringValue(ev.payload["error_code"]) ?? "")"
@@ -245,11 +289,18 @@ public struct TraceTreeRenderer {
                let n = stringValue(started.payload["workflowName"]) {
                 return n
             }
+            if let semanticName = events.first(where: { $0.semanticTag != nil }).flatMap({ event in
+                stringValue(event.payload["workflowName"])
+                    ?? stringValue(event.payload["skillName"])
+                    ?? stringValue(event.payload["subject"])
+            }) {
+                return semanticName
+            }
             return "?"
         }()
         let total = events.count
         let durationMS = events.reversed()
-            .first(where: { $0.kind == "workflow.completed" })
+            .first(where: { $0.kind == "workflow.completed" || $0.semanticTag == "completed" })
             .flatMap { stringValue($0.payload["duration_ms"]) } ?? "—"
         let glyph = options.unicodeGlyphs ? "▶" : "*"
         return "\(glyph) \(workflowName)  (run_id=\(runID) \(total) events \(durationMS)ms)"
@@ -281,6 +332,9 @@ public struct TraceTreeRenderer {
                 guard let data = String(line).data(using: .utf8),
                       let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
                 else { return nil }
+                if let semantic = parseSemanticEnvelope(obj) {
+                    return semantic
+                }
                 let runID  = obj["run_id"]      as? String ?? "?"
                 let parent = obj["parent_run_id"] as? String
                 let seq    = obj["seq"]         as? Int    ?? 0
@@ -302,9 +356,39 @@ public struct TraceTreeRenderer {
                     kind:         kind,
                     payload:      merged,
                     sourceFile:   source?["file"] as? String,
-                    sourceLine:   source?["line"] as? Int
+                    sourceLine:   source?["line"] as? Int,
+                    semanticTag:  nil
                 )
             }
+    }
+
+    private func parseSemanticEnvelope(_ obj: [String: Any]) -> RawEvent? {
+        guard let record = obj["record"] as? [String: Any],
+              let runID = record["run"] as? String,
+              let sequence = intValue(record["ingestOrder"]),
+              let tag = record["tag"] as? String
+        else { return nil }
+
+        var payload = record["payload"] as? [String: Any] ?? [:]
+        for key in ["subject", "skillName", "skillVersionHash", "outcome", "witness", "operationalDetail", "legacyKind"] {
+            if let value = record[key], payload[key] == nil {
+                payload[key] = value
+            }
+        }
+        if payload["workflowName"] == nil, let skillName = record["skillName"] {
+            payload["workflowName"] = skillName
+        }
+
+        return RawEvent(
+            runID: runID,
+            parentRunID: nil,
+            sequence: sequence,
+            kind: tag,
+            payload: payload,
+            sourceFile: nil,
+            sourceLine: nil,
+            semanticTag: tag
+        )
     }
 
     private func groupByRun(_ events: [RawEvent]) -> [[RawEvent]] {
@@ -330,6 +414,19 @@ public struct TraceTreeRenderer {
         case let b as Bool:          return b ? "true" : "false"
         case is NSNull, .none:       return nil
         default:                     return String(describing: raw!)
+        }
+    }
+
+    private func intValue(_ raw: Any?) -> Int? {
+        switch raw {
+        case let i as Int:
+            return i
+        case let n as NSNumber:
+            return n.intValue
+        case let s as String:
+            return Int(s)
+        default:
+            return nil
         }
     }
 }

@@ -1,0 +1,472 @@
+{
+  "constants" : {
+    "dunning window" : 604800,
+    "high value threshold" : {
+      "amount" : 5000,
+      "currency" : "USD"
+    },
+    "maximum retry count" : 3
+  },
+  "instances_required" : [
+    {
+      "kind" : "mailer server",
+      "name" : "billing mailer"
+    },
+    {
+      "kind" : "payment processor",
+      "name" : "erp gateway"
+    }
+  ],
+  "kinds_used" : [
+    "Invoice"
+  ],
+  "meridian_definitions" : [
+    {
+      "adjective" : "in good standing",
+      "function" : "meridianDef_Customer_inGoodStanding",
+      "kind" : "customer",
+      "line" : 49
+    },
+    {
+      "adjective" : "overdue",
+      "function" : "meridianDef_Invoice_overdue",
+      "kind" : "invoice",
+      "line" : 45
+    },
+    {
+      "adjective" : "severely overdue",
+      "function" : "meridianDef_Invoice_severelyOverdue",
+      "kind" : "invoice",
+      "line" : 50
+    },
+    {
+      "adjective" : "unpaid",
+      "function" : "meridianDef_Invoice_unpaid",
+      "kind" : "invoice",
+      "line" : 44
+    },
+    {
+      "adjective" : "blocked",
+      "function" : "meridianDef_Order_blocked",
+      "kind" : "order",
+      "line" : 41
+    },
+    {
+      "adjective" : "fulfilled",
+      "function" : "meridianDef_Order_fulfilled",
+      "kind" : "order",
+      "line" : 42
+    },
+    {
+      "adjective" : "high value",
+      "function" : "meridianDef_Order_highValue",
+      "kind" : "order",
+      "line" : 48
+    },
+    {
+      "adjective" : "open",
+      "function" : "meridianDef_Order_open",
+      "kind" : "order",
+      "line" : 40
+    },
+    {
+      "adjective" : "released",
+      "function" : "meridianDef_Order_released",
+      "kind" : "order",
+      "line" : 43
+    },
+    {
+      "adjective" : "short",
+      "function" : "meridianDef_Product_short",
+      "kind" : "product",
+      "line" : 46
+    },
+    {
+      "adjective" : "pending",
+      "function" : "meridianDef_PurchaseOrder_pending",
+      "kind" : "purchase order",
+      "line" : 47
+    }
+  ],
+  "meridian_ir_version" : "1.1",
+  "meridian_relations" : [
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 56,
+      "name" : "collection",
+      "right_cardinality" : "one",
+      "right_kind" : "a payment",
+      "via" : "payment.collect"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an invoice",
+      "line" : 60,
+      "name" : "escalation",
+      "right_cardinality" : "one",
+      "right_kind" : "a dunning notice",
+      "via" : "dunning.notify"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 52,
+      "name" : "fulfillment",
+      "right_cardinality" : "one",
+      "right_kind" : "a shipment",
+      "via" : "shipment.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "an order",
+      "line" : 54,
+      "name" : "invoicing",
+      "right_cardinality" : "one",
+      "right_kind" : "an invoice",
+      "via" : "invoice.create"
+    },
+    {
+      "backing" : "tool",
+      "left_cardinality" : "one",
+      "left_kind" : "a product",
+      "line" : 58,
+      "name" : "replenishment",
+      "right_cardinality" : "one",
+      "right_kind" : "a purchase order",
+      "via" : "purchase_order.create"
+    }
+  ],
+  "meridian_skill" : {
+    "description" : "Keep payment instability visible before it turns into a full dunning wave by combining streak detection, statistical health, and an explicit unknown arm when the retained history is still too thin to trust. Use this for live payment reliability monitoring, not only after a collector has already noticed invoices piling up unpaid.",
+    "name" : "payment failure monitor",
+    "outline" : [
+      {
+        "kind" : "invariants",
+        "level" : 2,
+        "line" : 20,
+        "text" : "Contract"
+      },
+      {
+        "kind" : "applicability",
+        "level" : 2,
+        "line" : 23,
+        "text" : "When to invoke"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 28,
+        "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 37,
+        "text" : "Workflow — steps"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 42,
+        "text" : "Workflow — steps 2"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 46,
+        "text" : "Anti-Patterns"
+      },
+      {
+        "kind" : "reference",
+        "level" : 2,
+        "line" : 55,
+        "text" : "Guarantees"
+      },
+      {
+        "kind" : "template",
+        "level" : 2,
+        "line" : 60,
+        "text" : "Report shape"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 31,
+        "text" : "Publish"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 33,
+        "text" : "Publish"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 35,
+        "text" : "Publish"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 40,
+        "text" : "Publish"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 44,
+        "text" : "Publish"
+      }
+    ],
+    "parameters" : "invoice",
+    "sections" : [
+      {
+        "executes" : true,
+        "heading" : "Contract",
+        "line" : 20,
+        "lines" : [
+          "the payment step succeeds in at least 90% of runs within the last 30 days"
+        ],
+        "role" : "invariants"
+      },
+      {
+        "executes" : true,
+        "heading" : "When to invoke",
+        "line" : 23,
+        "lines" : [
+          "\"run payment failure monitor\"",
+          "\"monitor payment failures\"",
+          "\"check payment retry health\""
+        ],
+        "role" : "applicability"
+      },
+      {
+        "executes" : false,
+        "heading" : "Workflow",
+        "line" : 28,
+        "lines" : [
+          "if the invoice is unpaid,",
+          "if the payment step succeeds in at least 90% of runs within the last 30 days,",
+          "Publish: \"payment failure monitor saw healthy invoice history\"",
+          "if it is unknown whether:",
+          "Publish: \"payment failure monitor lacks enough retained history for the invoice\"",
+          "otherwise,",
+          "Publish: \"payment failure monitor saw unhealthy invoice history\""
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 37,
+        "lines" : [
+          "if the payment step has failed 3 times in a row,",
+          "Publish: \"payment failure monitor saw a live payment failure streak\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps 2",
+        "line" : 42,
+        "lines" : [
+          "Publish: \"payment failure monitor pass complete\""
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Anti-Patterns",
+        "line" : 46,
+        "lines" : [
+          "Don't use the payment-success monitor to explain away a live streak. A good",
+          "long-run percentage can still coexist with an active short-run failure chain",
+          "Don't treat the unknown branch as noise. The derived invoice adjective is",
+          "transitively indeterminate on purpose when the payment history is still too",
+          "thin",
+          "Don't move the monitored assertion's cadence into the skill text. This skill",
+          "relies on the default monitor cadence from the trace configuration"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Guarantees",
+        "line" : 55,
+        "lines" : [
+          "This skill preserves the live failure streak as its own signal and keeps the",
+          "thin-history case explicit instead of letting the statistical branch quietly",
+          "default to a healthy answer"
+        ],
+        "role" : "reference"
+      },
+      {
+        "executes" : false,
+        "heading" : "Report shape",
+        "line" : 60,
+        "lines" : [
+          "The receipt separately records a live payment streak, a healthy derived invoice",
+          "state, an explicit unknown state from thin retained history, and the default",
+          "fallback branch when the invoice history is unhealthy"
+        ],
+        "role" : "template"
+      }
+    ],
+    "triggers" : "\"run payment failure monitor\"\n\"monitor payment failures\"\n\"check payment retry health\""
+  },
+  "meridian_verbs" : [
+    {
+      "base" : "collect",
+      "line" : 65,
+      "past_participle" : "collected",
+      "relation" : "collection",
+      "third_person" : "collects"
+    },
+    {
+      "base" : "escalate",
+      "line" : 67,
+      "past_participle" : "escalated",
+      "relation" : "escalation",
+      "third_person" : "escalates"
+    },
+    {
+      "base" : "fulfill",
+      "line" : 63,
+      "past_participle" : "fulfilled",
+      "relation" : "fulfillment",
+      "third_person" : "fulfills"
+    },
+    {
+      "base" : "invoice",
+      "line" : 64,
+      "past_participle" : "invoiced",
+      "relation" : "invoicing",
+      "third_person" : "invoices"
+    },
+    {
+      "base" : "replenish",
+      "line" : 66,
+      "past_participle" : "replenished",
+      "relation" : "replenishment",
+      "third_person" : "replenishes"
+    }
+  ],
+  "source_files" : [
+    "paymentfailuremonitor.meri",
+    "erp.merconfig"
+  ],
+  "source_map" : [
+    {
+      "meridian_line" : 21,
+      "swift_line" : 582
+    },
+    {
+      "meridian_line" : 39,
+      "swift_line" : 599
+    },
+    {
+      "meridian_line" : 40,
+      "swift_line" : 603
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 616
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 684
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 689
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 758
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 763
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 832
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 837
+    }
+  ],
+  "tools_used" : [
+
+  ],
+  "workflows" : [
+    {
+      "mode" : "strict",
+      "parameters" : [
+        {
+          "kind" : "Invoice",
+          "name" : "invoice"
+        }
+      ],
+      "skill_name" : "payment failure monitor",
+      "skill_version_hash" : "0707fd7abb5bf44e68bcf2f706a40c41bb47ad1d5e4317bb01ccf0e14a667754",
+      "source_name" : "payment failure monitor a invoice",
+      "step_paths" : [
+        "\/PaymentFailureMonitorInvoice\/contract\/invariants\/19147fda65daf042098ca2895daf75708c381d7d98190b1cfe6eba329e0713c4",
+        "\/PaymentFailureMonitorInvoice\/workflow-steps-2\/procedure\/18111ab9e476a9af58fbefcee7f4b70ff5c339ac60156930af3790bcf0740d3a",
+        "\/PaymentFailureMonitorInvoice\/workflow-steps\/procedure\/32cc63001a4f201cb285aaf0bc4f7834d6b36442962a843e41e70a1bbe56f0dc",
+        "\/PaymentFailureMonitorInvoice\/workflow-steps\/procedure\/branch.then\/10d2bbc2516e2f8026a84416bbc068e4ad52131fb0085754e03e39e8c3132fd5"
+      ],
+      "swift_struct" : "PaymentFailureMonitorInvoice"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "payment failure monitor",
+      "skill_version_hash" : "0707fd7abb5bf44e68bcf2f706a40c41bb47ad1d5e4317bb01ccf0e14a667754",
+      "source_name" : "when runPaymentFailureMonitor fires",
+      "step_paths" : [
+        "\/WhenRunpaymentfailuremonitorFires\/root\/procedure\/8f312cc7036289d2bebbefc0fae6d71302ae6d5c180f035d8cf5a19e7c9d5484",
+        "\/WhenRunpaymentfailuremonitorFires\/root\/procedure\/decfbaa41c2d6acb5f904c3231943a80d2f24f7a2848c50279cec61a7ff0138f"
+      ],
+      "swift_struct" : "WhenRunpaymentfailuremonitorFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "payment failure monitor",
+      "skill_version_hash" : "0707fd7abb5bf44e68bcf2f706a40c41bb47ad1d5e4317bb01ccf0e14a667754",
+      "source_name" : "when monitorPaymentFailures fires",
+      "step_paths" : [
+        "\/WhenMonitorpaymentfailuresFires\/root\/procedure\/75d177d480c40d8f99126176ca8a7eef3a86797a3349a9d64b2772e9aba9f65f",
+        "\/WhenMonitorpaymentfailuresFires\/root\/procedure\/7aaa8b3288aa3ed0d1c3f227af6161f03bba38bab8c71e5003a2928bd951a988"
+      ],
+      "swift_struct" : "WhenMonitorpaymentfailuresFires"
+    },
+    {
+      "mode" : "strict",
+      "parameters" : [
+
+      ],
+      "skill_name" : "payment failure monitor",
+      "skill_version_hash" : "0707fd7abb5bf44e68bcf2f706a40c41bb47ad1d5e4317bb01ccf0e14a667754",
+      "source_name" : "when checkPaymentRetryHealth fires",
+      "step_paths" : [
+        "\/WhenCheckpaymentretryhealthFires\/root\/procedure\/5042409e920ce154e4a556087f63ac765ac38f9c06354d94599421aa59854d9f",
+        "\/WhenCheckpaymentretryhealthFires\/root\/procedure\/71170ab67bfdccc1cf98a0d066f8329320239aa9823bfa0dd1247fdc49576fdb"
+      ],
+      "swift_struct" : "WhenCheckpaymentretryhealthFires"
+    }
+  ]
+}

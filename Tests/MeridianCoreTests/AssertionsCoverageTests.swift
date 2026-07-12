@@ -143,13 +143,11 @@ struct AssertionsEvaluateCoverageTests {
         let syntax = CompilerError.syntaxError(message: "bad token", range: r)
         let semantic = CompilerError.semanticError(message: "unknown phrase", range: r)
         let codegen = CompilerError.codegenError(message: "emit failed")
-        let notImpl = CompilerError.notImplemented("todo")
 
         #expect(evaluate(.errorKind(.syntax), in: ctx(compileError: syntax)) == nil)
         #expect(evaluate(.errorKind(.semantic), in: ctx(compileError: syntax)) != nil)
         #expect(evaluate(.errorKind(.semantic), in: ctx(compileError: semantic)) == nil)
         #expect(evaluate(.errorKind(.codegen), in: ctx(compileError: codegen)) == nil)
-        #expect(evaluate(.errorKind(.codegen), in: ctx(compileError: notImpl)) == nil)
         #expect(evaluate(.errorKind(.syntax), in: ctx(compileError: nil)) != nil)
 
         #expect(evaluate(.errorContains("bad token"), in: ctx(compileError: syntax)) == nil)

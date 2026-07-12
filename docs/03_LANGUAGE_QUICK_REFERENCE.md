@@ -732,9 +732,38 @@ way): `Emptiness synonyms:` / `Filled synonyms:`, `Past window synonyms:` /
 `Superlative synonyms:`, `Sort-by synonyms:` / `Ascending synonyms:` /
 `Descending synonyms:`, `Possessive synonyms:`, `Anaphora synonyms:`, the
 table-header sets (`Condition header synonyms:` / `Action header synonyms:` /
-`Wildcard synonyms:`), and `Shell fence synonyms:` (extra fenced-code info-string
+`Wildcard synonyms:`), `Shell fence synonyms:` (extra fenced-code info-string
 tags treated as deterministic `shell.run` blocks — e.g. `fish`, `pwsh`, `nu` —
-on top of the default `bash`/`sh`/`shell`/`console`/`zsh`).
+on top of the default `bash`/`sh`/`shell`/`console`/`zsh`), `Fence tool
+mapping:` (`<fence-tag> = <tool-id>` pairs for non-shell fenced blocks), and
+`Trace-auxiliary synonyms:` (extra outcome verbs after a trace subject, e.g.
+`occurred`).
+
+Three cleanup synonym blocks tune structural sugar introduced in the quality
+closeout (same merge recipe as every other `=== language ===` category):
+
+```
+=== language ===
+Guarded-fence synonyms:
+  , then run:
+Fallback-chain synonyms:
+  attempt the following in order:
+Approval-tool synonyms:
+  sign-off
+```
+
+- **`Guarded-fence synonyms:`** extends `EnglishLexicon.guardedFenceIntroducers`
+  (default: `, run:`, `, execute:`). An `if <cond><marker>:` line immediately
+  followed by a fenced shell block lowers the block's `shell.run` invokes inside
+  a `branch` — no new IR primitive.
+- **`Fallback-chain synonyms:`** extends `EnglishLexicon.fallbackChainIntroducers`
+  (default: `try the following in order until one succeeds:`, `try each of the
+  following until one works:`). The following ordered list lowers to a nested
+  `recover` chain.
+- **`Approval-tool synonyms:`** extends `EnglishLexicon.approvalToolIDSubstrings`
+  (default: `approval`, `approve`). Matched against tool/workflow IDs so
+  `RuleInjector` does not inject a duplicate `wait for approval` when an
+  approval step already exists.
 
 ### `SkillMigrator` classification synonyms (P1 four-way policy)
 
@@ -1467,3 +1496,55 @@ on the bound result `<noun>` — generalized beyond `matches pattern "<regex>"` 
 - every emitted report contains "Sources".
 - each emitted summary is not empty.
 ```
+
+---
+
+## Inform-7 Wave 8 — traces, time, and statistics
+
+Wave 8 adds **trace-backed** conditions and monitors on top of the Wave 2–3
+condition grammar. Temporal and statistical expressions lower to
+`IRExpression.traceTemporal` / `.traceStatistical` and evaluate at runtime
+against a `TraceStore` (in-memory in tests; JSONL when configured). Full
+semantics: [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).
+
+### Author-facing surface (at a glance)
+
+| Form | Meaning |
+|---|---|
+| `<step> has ever failed` | `.ever` — at least one retained `failed` record for the step |
+| `within the last <D>, <event pattern>` | count-in-window temporal query |
+| `<N> times in a row, <event pattern>` | consecutive occurrence streak |
+| `since the last <event>, <holds>` | strict-after-anchor window; `holds` must lower to an event pattern (**MER-TMP-019** for pure state predicates) |
+| `usually` / `rarely` | statistical thresholds (numeric at codegen; configurable via `=== trace ===`) |
+| `assert <statistical query>, checked every <D>` | monitored assertion → `runtime.registerMonitor(...)` |
+| `proceed, and note "<text>" in the <binding>` | text-appending `rebind` (no new IR primitive) |
+
+Scoped history uses stable step paths and skill names; `across all runs` scopes
+by skill identity. Vague frequency wording (`most of the time`) is rejected at
+compile time (**MER-STA-003**).
+
+### `=== trace ===` configuration
+
+Optional `.merconfig` block merged into generated `runtimeTraceConfiguration`:
+
+```
+=== trace ===
+store: file
+retention: 30 days
+hash chaining: enabled
+usually at least: 90%
+rarely at most: 10%
+sample floor: 5
+default monitor cadence: 1 days
+profile: production
+store failure policy: fail-closed
+```
+
+Per-tool capture policy (`full` / `hash-only` / `redacted(fields)`) is declared
+on tool entries in `=== tools ===`. A temporal window wider than configured
+retention is a compile error naming both durations (**MER-TMP-011**).
+
+CLI replay/audit: `meridian trace eval`, `meridian trace verify`,
+`meridian trace drift`, `meridian bench-trace` — see [07_CLI.md](07_CLI.md) and
+[08_TRACING.md](08_TRACING.md) for the compile-time `ParserTrace` vs semantic
+trace distinction.

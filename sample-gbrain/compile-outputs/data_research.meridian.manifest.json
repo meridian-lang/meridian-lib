@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -459,63 +459,63 @@
   "source_map" : [
     {
       "meridian_line" : 141,
-      "swift_line" : 603
+      "swift_line" : 626
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 643
+      "swift_line" : 696
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 648
+      "swift_line" : 701
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 687
+      "swift_line" : 769
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 692
+      "swift_line" : 774
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 731
+      "swift_line" : 842
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 736
+      "swift_line" : 847
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 775
+      "swift_line" : 915
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 780
+      "swift_line" : 920
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 819
+      "swift_line" : 988
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 824
+      "swift_line" : 993
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 863
+      "swift_line" : 1061
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 868
+      "swift_line" : 1066
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 907
+      "swift_line" : 1134
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 912
+      "swift_line" : 1139
     }
   ],
   "tools_used" : [
@@ -530,7 +530,12 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "data-research",
+      "skill_version_hash" : "ea741eeacee788324d29d37ca2d367dc80b5882d6f557bc0ade1f23ad33b5449",
       "source_name" : "data-research a input",
+      "step_paths" : [
+        "\/DataResearchInput\/conventions\/procedure\/e5180d82d951c867080d94d5723ad8887084a4fbe0f4408985183b6472fa2d18"
+      ],
       "swift_struct" : "DataResearchInput"
     },
     {
@@ -538,7 +543,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "data-research",
+      "skill_version_hash" : "ea741eeacee788324d29d37ca2d367dc80b5882d6f557bc0ade1f23ad33b5449",
       "source_name" : "when research fires",
+      "step_paths" : [
+        "\/WhenResearchFires\/root\/procedure\/0cd2dc9904cd2754d8e87204bfe133e17c93f3e14857b980f408e9b701812a6e",
+        "\/WhenResearchFires\/root\/procedure\/ec0fdcdaee65b0dfb6245492c97ca9aa10d54c3d5db901965b22593c72bcd731"
+      ],
       "swift_struct" : "WhenResearchFires"
     },
     {
@@ -546,7 +557,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "data-research",
+      "skill_version_hash" : "ea741eeacee788324d29d37ca2d367dc80b5882d6f557bc0ade1f23ad33b5449",
       "source_name" : "when track fires",
+      "step_paths" : [
+        "\/WhenTrackFires\/root\/procedure\/252d35f3f58df0432eed656afca89e586ad98f1d3072f38b6f817c63bd063fca",
+        "\/WhenTrackFires\/root\/procedure\/4d403cde7d905bc042718b345a702a4895b247a726299c1790af4d4fac706cde"
+      ],
       "swift_struct" : "WhenTrackFires"
     },
     {
@@ -554,7 +571,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "data-research",
+      "skill_version_hash" : "ea741eeacee788324d29d37ca2d367dc80b5882d6f557bc0ade1f23ad33b5449",
       "source_name" : "when extractEmail fires",
+      "step_paths" : [
+        "\/WhenExtractemailFires\/root\/procedure\/389baf6c9a37deb96753434f6224a1bb90de6bb44c2a3504da93e658cdbd7366",
+        "\/WhenExtractemailFires\/root\/procedure\/f6daec9b55903c1002ecffb81cadbe5ea8fa6ada6686ec30fca653a526167bb8"
+      ],
       "swift_struct" : "WhenExtractemailFires"
     },
     {
@@ -562,7 +585,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "data-research",
+      "skill_version_hash" : "ea741eeacee788324d29d37ca2d367dc80b5882d6f557bc0ade1f23ad33b5449",
       "source_name" : "when investorUpdates fires",
+      "step_paths" : [
+        "\/WhenInvestorupdatesFires\/root\/procedure\/329e97e85378db32ba5a1369d39ed24f405d41eea3ba2ef8bf3cbbe816b7550b",
+        "\/WhenInvestorupdatesFires\/root\/procedure\/b7056dff484ff0dd934ddc455caf9e3908c2a3affc2abdbee60461e9b031ea31"
+      ],
       "swift_struct" : "WhenInvestorupdatesFires"
     },
     {
@@ -570,7 +599,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "data-research",
+      "skill_version_hash" : "ea741eeacee788324d29d37ca2d367dc80b5882d6f557bc0ade1f23ad33b5449",
       "source_name" : "when donations fires",
+      "step_paths" : [
+        "\/WhenDonationsFires\/root\/procedure\/03413607094ebee3949c9f3ac79cad3c90236248ee09e48be49561e02cd266f6",
+        "\/WhenDonationsFires\/root\/procedure\/8a2d8dae6ca978256f9264119cef1b282afa5f5b8773340a40779f3877c3e075"
+      ],
       "swift_struct" : "WhenDonationsFires"
     },
     {
@@ -578,7 +613,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "data-research",
+      "skill_version_hash" : "ea741eeacee788324d29d37ca2d367dc80b5882d6f557bc0ade1f23ad33b5449",
       "source_name" : "when buildTracker fires",
+      "step_paths" : [
+        "\/WhenBuildtrackerFires\/root\/procedure\/2742ba077d5d4621485f2b83e4c510a4784363e844fe07f359a17b3cbd3928c2",
+        "\/WhenBuildtrackerFires\/root\/procedure\/681f060c2bf4d80cf30f0ee7fb0b81302d075df876ae411dd339ddd04ea9328a"
+      ],
       "swift_struct" : "WhenBuildtrackerFires"
     },
     {
@@ -586,7 +627,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "data-research",
+      "skill_version_hash" : "ea741eeacee788324d29d37ca2d367dc80b5882d6f557bc0ade1f23ad33b5449",
       "source_name" : "when dataDig fires",
+      "step_paths" : [
+        "\/WhenDatadigFires\/root\/procedure\/898b1d07a5f388dc10dfabfd64e1928ca107da02d720da64e6537b1a5c24d2a6",
+        "\/WhenDatadigFires\/root\/procedure\/a47ea33faf46909ff6ca828127cf925dded9a1e97c5f0bb5f27fd25619a6fab8"
+      ],
       "swift_struct" : "WhenDatadigFires"
     }
   ]

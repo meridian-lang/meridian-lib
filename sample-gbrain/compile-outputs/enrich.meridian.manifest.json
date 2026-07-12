@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -705,47 +705,47 @@
   "source_map" : [
     {
       "meridian_line" : 301,
-      "swift_line" : 605
+      "swift_line" : 628
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 645
+      "swift_line" : 698
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 650
+      "swift_line" : 703
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 689
+      "swift_line" : 771
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 694
+      "swift_line" : 776
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 733
+      "swift_line" : 844
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 738
+      "swift_line" : 849
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 777
+      "swift_line" : 917
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 782
+      "swift_line" : 922
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 821
+      "swift_line" : 990
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 826
+      "swift_line" : 995
     }
   ],
   "tools_used" : [
@@ -767,7 +767,12 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "enrich",
+      "skill_version_hash" : "99559b01c5991ca65ba8d980b0165cf1907b97c9f9c9e63e61bec2f116c79058",
       "source_name" : "enrich a input",
+      "step_paths" : [
+        "\/EnrichInput\/step-7-cross-reference-steps\/procedure\/9794811e41cd4b9af7b15628517945b572b43347ef95c2f867cc04ee74b06237"
+      ],
       "swift_struct" : "EnrichInput"
     },
     {
@@ -775,7 +780,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "enrich",
+      "skill_version_hash" : "99559b01c5991ca65ba8d980b0165cf1907b97c9f9c9e63e61bec2f116c79058",
       "source_name" : "when enrich fires",
+      "step_paths" : [
+        "\/WhenEnrichFires\/root\/procedure\/42267099cb417a2a1a4d39998be7116b0818530bf6b7d328881c36eeb2d8aeb9",
+        "\/WhenEnrichFires\/root\/procedure\/6a4de4aad76aff43238a716faa69d62c8d1126af9466d232bfff9e3b1fd085da"
+      ],
       "swift_struct" : "WhenEnrichFires"
     },
     {
@@ -783,7 +794,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "enrich",
+      "skill_version_hash" : "99559b01c5991ca65ba8d980b0165cf1907b97c9f9c9e63e61bec2f116c79058",
       "source_name" : "when createPersonPage fires",
+      "step_paths" : [
+        "\/WhenCreatepersonpageFires\/root\/procedure\/8455eb5a1927a64afc991a452b20f409531c7da74aad160d490ec1d636e6aab1",
+        "\/WhenCreatepersonpageFires\/root\/procedure\/96165fecb34fd54f3fe270c27003d67f10f51004a3e845a161b1c0fdad0be77b"
+      ],
       "swift_struct" : "WhenCreatepersonpageFires"
     },
     {
@@ -791,7 +808,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "enrich",
+      "skill_version_hash" : "99559b01c5991ca65ba8d980b0165cf1907b97c9f9c9e63e61bec2f116c79058",
       "source_name" : "when updateCompanyPage fires",
+      "step_paths" : [
+        "\/WhenUpdatecompanypageFires\/root\/procedure\/29daeb99c945a202552473b945a2c7e119e8bd49b47dd14504a20dda9d5ab074",
+        "\/WhenUpdatecompanypageFires\/root\/procedure\/e20bcc4233ae220e56fe317d5c35dc4a4407f922aa144b20b6bbca9d0b95410a"
+      ],
       "swift_struct" : "WhenUpdatecompanypageFires"
     },
     {
@@ -799,7 +822,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "enrich",
+      "skill_version_hash" : "99559b01c5991ca65ba8d980b0165cf1907b97c9f9c9e63e61bec2f116c79058",
       "source_name" : "when whoIsThisPerson fires",
+      "step_paths" : [
+        "\/WhenWhoisthispersonFires\/root\/procedure\/0094a3872a3a700d6119c2cd87c9c0b9338ff68ec6a5e3333f3dfb3e8d02d8ad",
+        "\/WhenWhoisthispersonFires\/root\/procedure\/37439e33f54b7e1f24361cdfa62ddb4a02858c5aa539b9052329a9972d0ff30e"
+      ],
       "swift_struct" : "WhenWhoisthispersonFires"
     },
     {
@@ -807,7 +836,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "enrich",
+      "skill_version_hash" : "99559b01c5991ca65ba8d980b0165cf1907b97c9f9c9e63e61bec2f116c79058",
       "source_name" : "when lookUpThisCompany fires",
+      "step_paths" : [
+        "\/WhenLookupthiscompanyFires\/root\/procedure\/36b459e85dc9b36d6bb2dca06d036a58efd199a30d291ce8cb7eb105593804a9",
+        "\/WhenLookupthiscompanyFires\/root\/procedure\/cdaa1a10d08fe7a0b52e956120d6f79e951793785e274c863aa3b2bfd0e38cb0"
+      ],
       "swift_struct" : "WhenLookupthiscompanyFires"
     }
   ]

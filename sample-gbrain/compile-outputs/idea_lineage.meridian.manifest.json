@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -572,71 +572,71 @@
   "source_map" : [
     {
       "meridian_line" : 53,
-      "swift_line" : 602
+      "swift_line" : 625
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 641
+      "swift_line" : 694
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 646
+      "swift_line" : 699
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 685
+      "swift_line" : 767
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 772
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 840
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 845
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 773
+      "swift_line" : 913
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 918
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 817
+      "swift_line" : 986
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 822
+      "swift_line" : 991
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 861
+      "swift_line" : 1059
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 866
+      "swift_line" : 1064
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 905
+      "swift_line" : 1132
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 910
+      "swift_line" : 1137
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 949
+      "swift_line" : 1205
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 954
+      "swift_line" : 1210
     }
   ],
   "tools_used" : [
@@ -649,10 +649,17 @@
           "guidance" : "Users often want to understand how one idea changed across time: when it first\nappeared, when it became sharp, what it displaced, what it contradicted, and\nwhat version is alive now. That is different from building a whole concept map\nand different from charting an entity's metric trajectory\nSearch for exact phrase variants with `search`\nuse judgment to follow the Phase 1: Resolve the idea target — steps 2 guidance:\nIf multiple distinct ideas share the same phrase, ask the user to choose the\nintended one before synthesizing\n`find_trajectory` only when the evidence is entity\/attribute-shaped, such as\na role\/status\/metric evolution that is relevant to the idea's story\nWrite the answer in the output format below. Keep the synthesis proportional to\nthe evidence. Do not overfit a smooth evolution if the evidence is sparse,\nmessy, or contradictory\nRun broad `concept-synthesis` if the user actually wants the whole concept\nmap refreshed\n`skills\/concept-synthesis\/SKILL.md` - broad mutating concept-map synthesis\n`skills\/query\/SKILL.md` - general brain search and cited answers\n`skills\/brain-ops\/SKILL.md` - source attribution and brain-first behavior\n`find_trajectory` - structured typed-fact and event timelines for entities\n`find_contradictions` - cached suspected contradiction findings",
           "line" : 53,
           "scoped_tools" : [
+            "find_contradictions",
+            "find_trajectory",
+            "get_page",
+            "list_pages",
             "page.get",
             "page.list",
             "page.search",
-            "shell.run"
+            "query",
+            "search",
+            "shell.run",
+            "takes_search"
           ],
           "text" : "follow the What this solves — steps guidance"
         }
@@ -664,7 +671,12 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "idea-lineage",
+      "skill_version_hash" : "c8cc6b31a54651d0235c48997645095e56c0ab3192053e1a6d6249dcdf43f08f",
       "source_name" : "idea-lineage a input",
+      "step_paths" : [
+        "\/IdeaLineageInput\/what-this-solves-steps\/procedure\/32de5731e2da5b62a0cf831250e0a5f469ca9d16a46b467f6af668d995d2c918"
+      ],
       "swift_struct" : "IdeaLineageInput"
     },
     {
@@ -672,7 +684,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "idea-lineage",
+      "skill_version_hash" : "c8cc6b31a54651d0235c48997645095e56c0ab3192053e1a6d6249dcdf43f08f",
       "source_name" : "when ideaLineage fires",
+      "step_paths" : [
+        "\/WhenIdealineageFires\/root\/procedure\/0a18e614631e49a88ee5dbdc2157b8cbd416ae7e4b93a749cdef5d0ada12e0f5",
+        "\/WhenIdealineageFires\/root\/procedure\/980ac9cb62642f5ef738bd5213c28e07ca93733e7a7ca5e15f8eb11fa98c8757"
+      ],
       "swift_struct" : "WhenIdealineageFires"
     },
     {
@@ -680,7 +698,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "idea-lineage",
+      "skill_version_hash" : "c8cc6b31a54651d0235c48997645095e56c0ab3192053e1a6d6249dcdf43f08f",
       "source_name" : "when traceLineageThisIdea fires",
+      "step_paths" : [
+        "\/WhenTracelineagethisideaFires\/root\/procedure\/673a75270ef2ed2dfc12be34dbf9df96ae125f0119d9808a0ada1a644be87000",
+        "\/WhenTracelineagethisideaFires\/root\/procedure\/b3d5cfe50a31eec14a64c45dda6b677bf15d17fc35676b6955844f72082bb1e3"
+      ],
       "swift_struct" : "WhenTracelineagethisideaFires"
     },
     {
@@ -688,7 +712,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "idea-lineage",
+      "skill_version_hash" : "c8cc6b31a54651d0235c48997645095e56c0ab3192053e1a6d6249dcdf43f08f",
       "source_name" : "when howMyThinking fires",
+      "step_paths" : [
+        "\/WhenHowmythinkingFires\/root\/procedure\/3c62a8fc6cefaa579f35dd1403c5a80333ffdb5435349582d2d570ee3b980b8d",
+        "\/WhenHowmythinkingFires\/root\/procedure\/b9c70f2a4163e8f4a2c2800fa8bc1241a51ad9a566d3a8e08c5bdb701746d99e"
+      ],
       "swift_struct" : "WhenHowmythinkingFires"
     },
     {
@@ -696,7 +726,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "idea-lineage",
+      "skill_version_hash" : "c8cc6b31a54651d0235c48997645095e56c0ab3192053e1a6d6249dcdf43f08f",
       "source_name" : "when howHasMyThinking fires",
+      "step_paths" : [
+        "\/WhenHowhasmythinkingFires\/root\/procedure\/69fb47cefea199d04f4b3e1aba83d19be96ee8593ccc2539d5e33735ce21f3f9",
+        "\/WhenHowhasmythinkingFires\/root\/procedure\/81ec876e96d09bf38fbee0b2b73f24c81f3745566218b40620ddd38730e944ed"
+      ],
       "swift_struct" : "WhenHowhasmythinkingFires"
     },
     {
@@ -704,7 +740,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "idea-lineage",
+      "skill_version_hash" : "c8cc6b31a54651d0235c48997645095e56c0ab3192053e1a6d6249dcdf43f08f",
       "source_name" : "when currentVersionThisIdea fires",
+      "step_paths" : [
+        "\/WhenCurrentversionthisideaFires\/root\/procedure\/999c1e3e6d0cf7f81029d24f25be8ee7e56d5bb3eb4d7b06294e2c7ed2190e01",
+        "\/WhenCurrentversionthisideaFires\/root\/procedure\/fc6132a8751451c5f61b0cd086d0bdc0955d3a24c339163b296b6fca88a43e4f"
+      ],
       "swift_struct" : "WhenCurrentversionthisideaFires"
     },
     {
@@ -712,7 +754,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "idea-lineage",
+      "skill_version_hash" : "c8cc6b31a54651d0235c48997645095e56c0ab3192053e1a6d6249dcdf43f08f",
       "source_name" : "when whatIsMyCurrentVersion fires",
+      "step_paths" : [
+        "\/WhenWhatismycurrentversionFires\/root\/procedure\/2e300cba6a593a7be5dc2548eba67099c444df83994d190e8072e3221b15696d",
+        "\/WhenWhatismycurrentversionFires\/root\/procedure\/b77d00fbb53a4ea0d97fd24c318b227fe2303b1d62b17e73433f2d744d3e2c71"
+      ],
       "swift_struct" : "WhenWhatismycurrentversionFires"
     },
     {
@@ -720,7 +768,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "idea-lineage",
+      "skill_version_hash" : "c8cc6b31a54651d0235c48997645095e56c0ab3192053e1a6d6249dcdf43f08f",
       "source_name" : "when showReversalsInMyThinking fires",
+      "step_paths" : [
+        "\/WhenShowreversalsinmythinkingFires\/root\/procedure\/490b0f2db6e81611612b3fb70b9d9c74488dd683753a24ea69091c30dffec6d1",
+        "\/WhenShowreversalsinmythinkingFires\/root\/procedure\/737248147f45ebca28b4311ae104ffe293d4a0373b10436b000e2c4886fa63ce"
+      ],
       "swift_struct" : "WhenShowreversalsinmythinkingFires"
     },
     {
@@ -728,7 +782,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "idea-lineage",
+      "skill_version_hash" : "c8cc6b31a54651d0235c48997645095e56c0ab3192053e1a6d6249dcdf43f08f",
       "source_name" : "when whereDidThisIdeaCome fires",
+      "step_paths" : [
+        "\/WhenWheredidthisideacomeFires\/root\/procedure\/7138d60a4274fa38e7588cafb9ae1e189aaeb2670735b94a3219ccba8be4dade",
+        "\/WhenWheredidthisideacomeFires\/root\/procedure\/fdefb25805edab707ee119a6ba070221c6124660d87761a36701f9bd44238096"
+      ],
       "swift_struct" : "WhenWheredidthisideacomeFires"
     }
   ]

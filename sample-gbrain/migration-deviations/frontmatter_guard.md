@@ -24,13 +24,14 @@ These sections were made non-executable in the port and should be reviewed as mi
 - L259 `Anti-Patterns`: reference-documentation - Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.
 
 ## Metrics
+- generated_loc: 168 non-blank ported lines
 - Sections inert total: 15/15 (100% total inert; includes intentional docs/templates/tools metadata)
 - Operational inert: 0
 - Unclassified inert: 0
 - Inert markers (`(( inert ))`, target 0 — the migrator never emits these): 0
 - Inert categories: reference-documentation=14, template=1
 - Judgment: 1 blocks, 0 lines
-- canonical_drift: synonym=0, structure=0, desugar=0, meaning=176
+- canonical_drift: synonym=11, structure=0, desugar=0, meaning=165
 
 ### Inert section details
 - L6 `Contract`: reference-documentation — Marked `(( role: reference ))`: documentary content with no lowerable or AI-inference-cued signal.

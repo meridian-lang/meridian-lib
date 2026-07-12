@@ -95,6 +95,11 @@ Wave 7 also makes the compiled meaning explainable in the other direction:
 `meridian drift` compares authored source with that canonical form. See
 [18_VERBALIZER.md](18_VERBALIZER.md).
 
+Wave 8 extends that audit path into runtime history: temporal/statistical
+conditions compile to semantic trace queries, and the CLI can replay or verify
+those traces via `meridian trace eval`, `meridian trace verify`, and
+`meridian bench-trace`. See [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).
+
 ## What it replaces
 
 | Before Meridian | With Meridian |
@@ -157,6 +162,11 @@ Wave 7 also makes the compiled meaning explainable in the other direction:
   back to structurally equal IR (`SEM-8-03`). `DriftEngine` classifies authored
   vs. canonical differences for corpus audits. See
   [18_VERBALIZER.md](18_VERBALIZER.md).
+- **Trace-backed time and statistics** — retained semantic traces power
+  `has ever`, `within the last`, `in a row`, `since the last`, and percentage
+  frequency claims. The same trace layer supports replay evaluation, chain
+  verification, and benchmarked store behavior. See
+  [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).
 
 ## End-to-end flow
 

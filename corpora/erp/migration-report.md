@@ -7,10 +7,11 @@
 | invoicerun | ✓ | 0 | 0 | 0 |  |
 | monthendclose | ✓ | 0 | 0 | 0 |  |
 | orderapproval | ✓ | 0 | 0 | 0 |  |
+| paymentfailuremonitor | ✓ | 0 | 0 | 0 |  |
 | paymentretry | ✓ | 0 | 0 | 0 |  |
 | placeorder | ✓ | 0 | 0 | 0 |  |
 | receiveshipment | ✓ | 0 | 0 | 0 |  |
 | restock | ✓ | 0 | 0 | 0 |  |
 | returnsprocessing | ✓ | 0 | 0 | 0 |  |
 
-Total: 12, compiling: 12, failing: 0, unmined-contract lines: 0
+Total: 13, compiling: 13, failing: 0, unmined-contract lines: 0

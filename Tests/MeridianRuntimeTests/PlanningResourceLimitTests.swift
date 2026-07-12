@@ -8,7 +8,7 @@ struct PlanningResourceLimitTests {
     @Test("oversized prose is rejected with telemetry")
     func rejectsOversizedProse() async throws {
         let observer = InMemoryObserver()
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setObserver(observer)
             .setPlanningLimits(PlanningResourceLimits(maxProseBytes: 4))
             .build()
@@ -28,7 +28,7 @@ struct PlanningResourceLimitTests {
     func rejectsOversizedToolArguments() async throws {
         let registry = ToolRegistry()
         await registry.register(tool: "demo.tool", .closure { _ in .string("should not run") })
-        let runtime = Runtime.Builder()
+        let runtime = try Runtime.Builder()
             .setToolRegistry(registry)
             .setObserver(InMemoryObserver())
             .setPlanningLimits(PlanningResourceLimits(maxToolArgumentBytes: 4))

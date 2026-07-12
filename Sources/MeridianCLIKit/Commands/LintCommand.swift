@@ -25,9 +25,12 @@ public struct LintCommand: ParsableCommand {
                 sources: [input: source],
                 options: .init(color: stderrIsTTY())
             )
-            let rendered = diagnosticsFormat == .json
-                ? renderer.renderJSON(diagnostics)
-                : renderer.render(diagnostics)
+            let rendered: String
+            if diagnosticsFormat == .json {
+                rendered = try renderer.renderJSON(diagnostics)
+            } else {
+                rendered = renderer.render(diagnostics)
+            }
             FileHandle.standardError.write(Data((rendered + "\n").utf8))
         }
         if diagnostics.contains(where: { $0.severity == .error }) {

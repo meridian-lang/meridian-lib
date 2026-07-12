@@ -21,6 +21,7 @@
 | vacuum bloated tables | vacuumtables |
 | retry failed batches | retryfailedbatch |
 | checksum audit | checksumaudit |
+| check ledger parity | ledgerparitywatch |
 
 ## Workflow (( role: reference ))
 

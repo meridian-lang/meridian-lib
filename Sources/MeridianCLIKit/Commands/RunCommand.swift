@@ -40,11 +40,7 @@ public struct RunCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Keep the temporary SwiftPM package and print its path.")
     var keepTemp: Bool = false
 
-    @Option(name: .long, help: "Comma-separated ParserTrace categories (or `all`). Also reads MERIDIAN_TRACE.")
-    var trace: String?
-
-    @Option(name: .long, help: "Write ParserTrace output to this file instead of stderr.")
-    var traceFile: String?
+    @OptionGroup var cliTrace: CLITraceOptions
 
     @Option(name: .long,
             help: "Diagnostics output format: human (snippet + caret) or json (stable schema for editors/CI).")
@@ -53,7 +49,7 @@ public struct RunCommand: AsyncParsableCommand {
     public func run() async throws {
         let meridianURL = URL(fileURLWithPath: input).standardized
         guard FileManager.default.fileExists(atPath: meridianURL.path) else {
-            throw ValidationError("File not found: \(input)")
+            throw cliInputNotFound(input)
         }
         let outputURL = URL(fileURLWithPath: output ?? FileManager.default.currentDirectoryPath).standardizedFileURL
         try FileManager.default.createDirectory(at: outputURL, withIntermediateDirectories: true)
@@ -73,7 +69,7 @@ public struct RunCommand: AsyncParsableCommand {
         // Compile ONCE through the canonical path (engine + fallback policy +
         // rulebooks). Reuse the manifest's lowered workflows for target
         // selection — no second `.silent()` re-lower that dropped rulebooks.
-        let traceInstance = try makeCLITrace(spec: trace, file: traceFile)
+        let traceInstance = try cliTrace.makeTrace()
         let compiler = Compiler(options: .init(trace: traceInstance))
         let compiled: (swift: String, manifest: ManifestEmitter.Input)
         do {

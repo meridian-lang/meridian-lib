@@ -519,7 +519,7 @@ private enum ProcessRunner {
                 try process.run()
                 if let stdin, let input = process.standardInput as? Pipe {
                     input.fileHandleForWriting.write(Data(stdin.utf8))
-                    try? input.fileHandleForWriting.close()
+                    try input.fileHandleForWriting.close()
                 }
             } catch {
                 if box.finish() {

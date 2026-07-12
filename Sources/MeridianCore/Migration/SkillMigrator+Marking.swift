@@ -3,6 +3,17 @@ import Foundation
 extension SkillMigrator {
     func markSections(_ markdown: String) throws
         -> (markdown: String, aliases: [SectionAlias], unminedContracts: [String]) {
+        if trace.isEnabled(.skill) {
+            probeSession.tally = TrialLowering.ProbeTally()
+        } else {
+            probeSession.tally = nil
+        }
+        defer {
+            if let summary = probeSession.tally?.summaryLine {
+                trace.log(.skill, summary)
+            }
+            probeSession.tally = nil
+        }
         let knowledge = try knowledgeContext()
         var lines = markdown.components(separatedBy: "\n")
         let bodyStart = frontmatterEnd(lines)
@@ -51,7 +62,8 @@ extension SkillMigrator {
                 }
                 aliases.append(SectionAlias(heading: m.text, role: role))
             case .split(let plan):
-                let replacement = renderSplitPlan(plan, headingHashes: m.hashes, headingText: m.text)
+                let replacement = renderSplitPlan(plan, headingHashes: m.hashes, headingText: m.text,
+                                                  lexicon: knowledge.lexicon)
                 splitEdits.append(SplitEdit(range: idx..<end, replacement: replacement))
                 for (i, segment) in plan.executableSegments.enumerated() {
                     let suffix = i == 0 ? "" : " \(i + 1)"
@@ -147,7 +159,7 @@ extension SkillMigrator {
             }
 
             if case .fuzzy = classifier.classify(text) { return true }
-            if !isMarkdownListLine(trimmed), !isProcedureCandidateLine(text) { return true }
+            if !isMarkdownListLine(trimmed), !isProcedureCandidateLine(text, lexicon: knowledge.lexicon) { return true }
         }
         return false
     }
@@ -230,7 +242,7 @@ extension SkillMigrator {
             return checkableRoleDecision(heading: heading, body: body, knowledge: knowledge, role: .negativeApplicability)
         case .procedure:
             if sectionIsExecutableOnly(body, knowledge: knowledge) { return .leaveUnmarked }
-            if bodyIsJudgmentWrapped(heading: heading, body: body) { return .leaveUnmarked }
+            if bodyIsJudgmentWrapped(heading: heading, body: body, lexicon: knowledge.lexicon) { return .leaveUnmarked }
             if heading.contains(Self.splitHeadingSeparator) { return .leaveUnmarked }
             let plan = splitPlanApplyingThreshold(body, knowledge: knowledge, roleAlreadyAsserted: true)
             if plan.executableSegments.isEmpty {
@@ -259,9 +271,13 @@ extension SkillMigrator {
             // `procedure` via a rulebook alias — preferred over an inline marker
             // (see docs/13). Other unknowns are classified per P1.
             if sectionIsExecutableOnly(body, knowledge: knowledge) { return .alias(.procedure) }
-            if bodyIsJudgmentWrapped(heading: heading, body: body) { return .alias(.procedure) }
+            if bodyIsJudgmentWrapped(heading: heading, body: body, lexicon: knowledge.lexicon) { return .alias(.procedure) }
             if heading.contains(Self.splitHeadingSeparator) { return .leaveUnmarked }
-            let plan = splitPlanApplyingThreshold(body, knowledge: knowledge)
+            let plan = splitPlanApplyingThreshold(
+                body,
+                knowledge: knowledge,
+                referenceHeadingContext: headingReadsAsReference(heading, lexicon: knowledge.lexicon)
+            )
             if plan.executableSegments.isEmpty {
                 if plan.operationalErrorWorthy {
                     // No cue at all, but real operational/normative signal:
@@ -290,7 +306,7 @@ extension SkillMigrator {
     func checkableRoleDecision(heading: String, body: ArraySlice<String>,
                                        knowledge: Compiler.KnowledgeContext, role: SkillSectionRole) -> MarkDecision {
         if sectionIsCheckableRoleBody(body, knowledge: knowledge) { return .leaveUnmarked }
-        if bodyIsJudgmentWrapped(heading: heading, body: body) { return .leaveUnmarked }
+        if bodyIsJudgmentWrapped(heading: heading, body: body, lexicon: knowledge.lexicon) { return .leaveUnmarked }
         if heading.contains(Self.splitHeadingSeparator) { return .leaveUnmarked }
         // `checkableOnly: true` restricts the split's own `.exec` classification
         // to `isCheckableCondition` — no `lowersAsStatement`/backtick-command/
@@ -324,9 +340,15 @@ extension SkillMigrator {
     /// wrap this migrator generates for an AI-inference section. Re-running
     /// the marking pass on an already-wrapped section must be a no-op, not a
     /// second, nested `use judgment to …:` line.
-    func bodyIsJudgmentWrapped(heading: String, body: ArraySlice<String>) -> Bool {
+    func bodyIsJudgmentWrapped(heading: String, body: ArraySlice<String>, lexicon: EnglishLexicon) -> Bool {
         guard let first = body.first(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) else { return false }
-        return first.trimmingCharacters(in: .whitespaces) == "use judgment to follow the \(heading) guidance:"
+        return first.trimmingCharacters(in: .whitespaces)
+            == lexicon.grammar.judgmentFollowCollectLine(heading: heading)
+    }
+
+    private func headingReadsAsReference(_ heading: String, lexicon: EnglishLexicon) -> Bool {
+        let lower = heading.lowercased()
+        return lexicon.referenceHeadingWords.contains { lower.contains($0) }
     }
     /// Parsed, normalized rulebook convention strings (each rule's `action`
     /// and `body`) used for convention-restatement detection. A rulebook
@@ -380,7 +402,7 @@ extension SkillMigrator {
     /// author can split prose from executable assertions.
     func sectionIsCheckableRoleBody(_ body: ArraySlice<String>,
                                             knowledge: Compiler.KnowledgeContext) -> Bool {
-        let trial = TrialLowering(knowledge: knowledge)
+        let trial = TrialLowering(knowledge: knowledge, probeTally: probeSession.tally)
         var sawContent = false
         for raw in body {
             let t = normalizeMarkdownLineForLowering(stripMarkdownListMarker(raw.trimmingCharacters(in: .whitespaces)))

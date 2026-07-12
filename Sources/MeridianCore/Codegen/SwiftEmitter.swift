@@ -46,6 +46,12 @@ public struct SwiftEmitter {
     public let options: Options
     public let trace: ParserTrace
 
+    /// Populated at the top of `emitFile` so `.definitionPredicate` call sites
+    /// throughout emission can look up a referenced definition's body/subject
+    /// without threading it through every `emit*` signature — see
+    /// `definitionRequiresState`.
+    private var definitionsByName: [String: LoweredDefinition] = [:]
+
     public init(options: Options = Options(), trace: ParserTrace = .shared) {
         self.options = options
         self.trace = trace
@@ -55,7 +61,10 @@ public struct SwiftEmitter {
 
     /// Emit a complete Swift source file for the given workflows.
     /// Uses `toString(separator: "\n")` so nested StringTemplates are
-    /// flattened and every leaf string becomes its own line.
+    /// flattened and every leaf string becomes its own line. Non-mutating on
+    /// the caller's value (many call sites hold a `let SwiftEmitter`): builds
+    /// a local mutable copy with `definitionsByName` populated and delegates
+    /// to `emitFileImpl` on that copy.
     public func emitFile(
         workflows: [IRWorkflow],
         constantsDecl: ConstantsDecl? = nil,
@@ -64,7 +73,27 @@ public struct SwiftEmitter {
         fileMetadata: FileMetadataAST? = nil,
         definitions: [LoweredDefinition] = []
     ) throws -> String {
-        try IRValidator.validate(workflows, sourceFile: options.sourceFileName)
+        var copy = self
+        copy.definitionsByName = Dictionary(uniqueKeysWithValues: definitions.map { ($0.functionName, $0) })
+        return try copy.emitFileImpl(
+            workflows: workflows,
+            constantsDecl: constantsDecl,
+            instancesDecl: instancesDecl,
+            domainDecl: domainDecl,
+            fileMetadata: fileMetadata,
+            definitions: definitions
+        )
+    }
+
+    private func emitFileImpl(
+        workflows: [IRWorkflow],
+        constantsDecl: ConstantsDecl? = nil,
+        instancesDecl: InstancesDecl? = nil,
+        domainDecl: DomainDecl? = nil,
+        fileMetadata: FileMetadataAST? = nil,
+        definitions: [LoweredDefinition] = []
+    ) throws -> String {
+        try IRValidator.validate(workflows, sourceFile: options.sourceFileName, trace: trace)
         let hasConstants = constantsDecl != nil
         let hasInstances = instancesDecl != nil
         // Set of Swift type names produced by the Domain section. The grammar
@@ -114,8 +143,10 @@ public struct SwiftEmitter {
                 // functions must move inside it too (see the `namespace`
                 // branch) or the reference would be out of scope.
                 for def in definitions {
-                    emitDefinitionFunction(def)
-                    ""
+                    if !definitionRequiresAsyncTrace(def.body) && !definitionRequiresState(def.body, bound: [def.subjectVar]) {
+                        emitDefinitionFunction(def)
+                        ""
+                    }
                 }
             }
             if let namespace {
@@ -136,8 +167,10 @@ public struct SwiftEmitter {
             }
             if namespace != nil {
                 for def in definitions {
-                    emitDefinitionFunction(def)
-                    ""
+                    if !definitionRequiresAsyncTrace(def.body) && !definitionRequiresState(def.body, bound: [def.subjectVar]) {
+                        emitDefinitionFunction(def)
+                        ""
+                    }
                 }
             }
             for (idx, workflow) in workflows.enumerated() {
@@ -218,6 +251,13 @@ public struct SwiftEmitter {
                 }
                 "    ]"
             }
+            if let traceConfig = workflow.runtimeTraceConfiguration {
+                ""
+                "    public static let skillVersionHash = \"\(escapeSwiftString(workflow.skillVersionHash))\""
+                // Must be typed as Optional to witness `MeridianWorkflow.runtimeTraceConfiguration`
+                // (a non-optional `let` does not replace the protocol-extension default of `nil`).
+                "    public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = \(emitRuntimeTraceConfiguration(traceConfig))"
+            }
             ""
             "    public init(\(initParams)) {"
             "        self.runtime = runtime"
@@ -225,6 +265,7 @@ public struct SwiftEmitter {
             "    }"
             ""
             "    public func run() async throws -> WorkflowResult {"
+            "        do {"
             "        var state = State()"
             for bind in stateBinds { bind }
             "        let __meridianResumeContext = await runtime.consumeResumeContext()"
@@ -248,9 +289,14 @@ public struct SwiftEmitter {
             emitBlock(workflow.body, ctx: ctx.in(2), workflow: workflow, path: "0")
             if !blockEndsWithComplete(workflow.body) {
                 ""
-                "        await runtime.complete(reason: nil)"
+                "        await runtime.complete(reason: nil, step: \"\(workflow.structName).complete\")"
                 "        return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)"
             }
+            "        } catch {"
+            "            if error is CancellationError { throw error }"
+            "            try await runtime.workflowFailed(workflowName: \"\(workflow.structName)\", error: error)"
+            "            throw error"
+            "        }"
             "    }"
             "}"
         }
@@ -274,7 +320,7 @@ public struct SwiftEmitter {
     // MARK: - Primitive dispatch
 
     func emitPrimitive(_ p: IRPrimitive, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
-        let range = sourceRange(of: p)
+        let range = p.sourceRange
         trace.log(.codegen, "emit \(primitiveTraceName(p)) L\(range.startLine)")
         switch p {
         case .invoke(let ir):   return emitInvoke(ir, ctx: ctx)
@@ -323,7 +369,7 @@ public struct SwiftEmitter {
         if case .commit(let ir) = p, let label = ir.label {
             return label
         }
-        return progressLabel(for: p, path: path)
+        return stableStepPath(for: p, fallbackPath: path)
     }
 
     func isCommit(_ p: IRPrimitive) -> Bool {
@@ -332,26 +378,51 @@ public struct SwiftEmitter {
     }
 
     func progressLabel(for p: IRPrimitive, path: String) -> String {
-        let range = sourceRange(of: p)
+        let range = p.sourceRange
         return "progress:\(path):L\(range.startLine):C\(range.startColumn)"
     }
 
-    func sourceRange(of p: IRPrimitive) -> SourceRange {
-        switch p {
-        case .invoke(let ir): return ir.sourceRange
-        case .bind(let ir): return ir.sourceRange
-        case .branch(let ir): return ir.sourceRange
-        case .iterate(let ir): return ir.sourceRange
-        case .assert(let ir): return ir.sourceRange
-        case .emit(let ir): return ir.sourceRange
-        case .wait(let ir): return ir.sourceRange
-        case .commit(let ir): return ir.sourceRange
-        case .recover(let ir): return ir.sourceRange
-        case .simultaneously(let ir): return ir.sourceRange
-        case .aiJudgment(let ir): return ir.sourceRange
-        case .aiAutonomy(let ir): return ir.sourceRange
-        case .complete(let ir): return ir.sourceRange
-        }
+    func stableStepPath(for p: IRPrimitive, fallbackPath: String) -> String {
+        p.stableStepPath ?? progressLabel(for: p, path: fallbackPath)
+    }
+
+    func emitRuntimeTraceConfiguration(_ config: RuntimeTraceConfiguration) -> String {
+        let toolPolicies = config.toolCapturePolicies.sorted { $0.key < $1.key }.map { key, value in
+            let rendered: String
+            switch value {
+            case .full:
+                rendered = ".full"
+            case .hashOnly:
+                rendered = ".hashOnly"
+            case .redacted(let fields):
+                let joined = fields.map { "\"\(escapeSwiftString($0))\"" }.joined(separator: ", ")
+                rendered = ".redacted([\(joined)])"
+            }
+            return "\"\(escapeSwiftString(key))\": \(rendered)"
+        }.joined(separator: ", ")
+        let toolPoliciesLiteral = toolPolicies.isEmpty ? "[:]" : "[\(toolPolicies)]"
+        return """
+RuntimeTraceConfiguration(
+        store: .\(config.store.rawValue),
+        trace: TraceConfiguration(
+            retention: .seconds(\(config.trace.retention.components.seconds)),
+            hashChaining: \(config.trace.hashChaining),
+            payloadLimit: \(config.trace.payloadLimit.map(String.init) ?? "nil"),
+            usuallyThreshold: \(config.trace.usuallyThreshold),
+            rarelyThreshold: \(config.trace.rarelyThreshold),
+            sampleFloor: \(config.trace.sampleFloor),
+            defaultMonitorCadence: .seconds(\(config.trace.defaultMonitorCadence.components.seconds)),
+            profile: .\(config.trace.profile.rawValue),
+            storeFailurePolicy: .\(config.trace.storeFailurePolicy.rawValue),
+            deploymentZone: "\(escapeSwiftString(config.trace.deploymentZone))"
+        ),
+        skillIdentity: TraceSkillIdentity(
+            name: "\(escapeSwiftString(config.skillIdentity.name))",
+            versionHash: "\(escapeSwiftString(config.skillIdentity.versionHash))"
+        ),
+        toolCapturePolicies: \(toolPoliciesLiteral)
+    )
+"""
     }
 
     private func primitiveTraceName(_ p: IRPrimitive) -> String {
@@ -390,19 +461,22 @@ public struct SwiftEmitter {
         let argLines = ir.arguments.map { a in
             "\(ctx.in(1).s)    \"\(a.key)\": \(emitValueExprUnchecked(a.value)),"
         }
+        let capture = "Self.runtimeTraceConfiguration!.capturePolicy(for: \"\(escapeSwiftString(ir.toolID))\")"
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
             if let note = ir.comment, !note.isEmpty {
                 "\(ctx.s)// \(note.replacingOccurrences(of: "\n", with: " "))"
             }
             if ir.arguments.isEmpty {
-                "\(ctx.s)\(binding)try await runtime.invoke(tool: \"\(ir.toolID)\", args: [:])"
+                "\(ctx.s)\(binding)try await runtime.invoke(tool: \"\(ir.toolID)\", args: [:], step: \"\(escapeSwiftString(ir.stableStepPath ?? ir.toolID))\", capturePolicy: \(capture))"
             } else {
                 "\(ctx.s)\(binding)try await runtime.invoke("
                 "\(ctx.s)    tool: \"\(ir.toolID)\","
                 "\(ctx.s)    args: ["
                 for line in argLines { line }
-                "\(ctx.s)    ]"
+                "\(ctx.s)    ],"
+                "\(ctx.s)    step: \"\(escapeSwiftString(ir.stableStepPath ?? ir.toolID))\","
+                "\(ctx.s)    capturePolicy: \(capture)"
                 "\(ctx.s))"
             }
             if let b = ir.resultBinding {
@@ -456,7 +530,7 @@ public struct SwiftEmitter {
     ) -> String {
         switch expr {
         case .identifierRef(let name):
-            if ctx.typedIdentifiers.contains(name) || targetKind == nil {
+            if ctx.typedIdentifiers.contains(name) {
                 return name
             }
             guard let kind = targetKind else { return name }
@@ -476,7 +550,28 @@ public struct SwiftEmitter {
         let method = ir.isRebind ? "rebind" : "bind"
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
-            "\(ctx.s)state.\(method)(\"\(ir.name)\", \(emitExprUnchecked(ir.expression)))"
+            "\(ctx.s)state.\(method)(\"\(ir.name)\", \(emitBindValue(ir.expression)))"
+        }
+    }
+
+    /// Emit the value operand of a `state.bind`/`state.rebind` call.
+    ///
+    /// Text-producing expressions (`.string` literals and interpolated template
+    /// bodies — including the compound-note `proceed, and note … in …` rebind,
+    /// INFORM7 §2.9) otherwise emit a bare Swift `String` from
+    /// `emitExprUnchecked`, which is wrong twice over: it only type-checks
+    /// against `bind`'s generic `T` overload (so `rebind`, which has none, fails
+    /// to compile), and it stores the text as `.opaque`, so `meridianStringify`
+    /// renders it as a `<opaque …>` debug string instead of the clean receipt
+    /// text. Emit those as a first-class `Value.string(...)` instead. All other
+    /// expression kinds keep their established emission (they already yield a
+    /// `Value`, or bridge through `bind`'s generic overload unchanged).
+    private func emitBindValue(_ expr: IRExpression) -> String {
+        switch expr {
+        case .literal(.string), .interpolatedString:
+            return emitValueExprUnchecked(expr)
+        default:
+            return emitExprUnchecked(expr)
         }
     }
 
@@ -489,7 +584,9 @@ public struct SwiftEmitter {
             "\(ctx.s)let \(resultName) = try await runtime.executeProsePlan("
             "\(ctx.s)    prose: \"\(escapeSwiftString(ir.text))\","
             "\(ctx.s)    snapshot: state.snapshot(),"
-            "\(ctx.s)    scopedTools: [\(tools)]\(hasGuidance ? "," : "")"
+            "\(ctx.s)    scopedTools: [\(tools)],"
+            "\(ctx.s)    outputKind: \"\(escapeSwiftString(ir.outputKind))\","
+            "\(ctx.s)    step: \"\(escapeSwiftString(ir.stableStepPath ?? "aiJudgment"))\"\(hasGuidance ? "," : "")"
             if let guidance = ir.guidance {
                 "\(ctx.s)    guidance: \"\(escapeSwiftString(guidance))\""
             }
@@ -513,7 +610,9 @@ public struct SwiftEmitter {
             "\(ctx.s)    scopedTools: [\(tools)],"
             "\(ctx.s)    maxSteps: \(config.maxSteps),"
             let noUntilUnless = config.until == nil && config.unless == nil
-            "\(ctx.s)    replanAfterFailures: \(config.replanAfterFailures)\((!noUntilUnless || hasGuidance) ? "," : "")"
+            "\(ctx.s)    replanAfterFailures: \(config.replanAfterFailures),"
+            "\(ctx.s)    outputKind: \"\(escapeSwiftString(ir.outputKind))\","
+            "\(ctx.s)    step: \"\(escapeSwiftString(ir.stableStepPath ?? "aiAutonomy"))\"\((!noUntilUnless || hasGuidance) ? "," : "")"
             if let until = config.until {
                 for line in emitAutonomyPredicate(name: "until", expr: until, ctx: ctx, includeComma: config.unless != nil || hasGuidance) {
                     line
@@ -556,13 +655,14 @@ public struct SwiftEmitter {
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
             if ir.payload.isEmpty {
-                "\(ctx.s)\(call)(event: \"\(escapeSwiftString(ir.eventID))\", payload: [:])"
+                "\(ctx.s)\(call)(event: \"\(escapeSwiftString(ir.eventID))\", payload: [:], step: \"\(escapeSwiftString(ir.stableStepPath ?? ir.eventID))\")"
             } else {
                 "\(ctx.s)\(call)("
                 "\(ctx.s)    event: \"\(escapeSwiftString(ir.eventID))\","
                 "\(ctx.s)    payload: ["
                 for line in payloadLines { line }
-                "\(ctx.s)    ]"
+                "\(ctx.s)    ],"
+                "\(ctx.s)    step: \"\(escapeSwiftString(ir.stableStepPath ?? ir.eventID))\""
                 "\(ctx.s))"
             }
         }
@@ -588,22 +688,50 @@ public struct SwiftEmitter {
             sourceLineComment(ir.sourceRange, ctx: ctx)
             switch ir.condition {
             case .predicate(let expr):
-                "\(ctx.s)if \(emitExprUnchecked(expr)) {"
-                emitBlock(ir.thenBlock, ctx: inner, workflow: workflow, path: "\(path).then")
-                if let elseBlock = ir.elseBlock {
-                    "\(ctx.s)} else {"
-                    emitBlock(elseBlock, ctx: inner, workflow: workflow, path: "\(path).else")
+                let conditionText = emitExprUnchecked(expr)
+                if expressionMayBeIndeterminate(expr) {
+                    let truthVar = "__meridianTruth_\(swiftIdentifierSuffix(path))"
+                    "\(ctx.s)let \(truthVar) = \(emitTruthValueExpr(expr))"
+                    "\(ctx.s)if \(truthVar) == .true {"
+                    emitBranchTakenCall(ctx: inner, condition: conditionText, into: "then", stableStepPath: ir.stableStepPath)
+                    emitBlock(ir.thenBlock, ctx: inner, workflow: workflow, path: "\(path).then")
+                    if let unknownBlock = ir.unknownBlock {
+                        "\(ctx.s)} else if \(truthVar) == .indeterminate {"
+                        emitBranchTakenCall(ctx: inner, condition: conditionText, into: "unknown", stableStepPath: ir.stableStepPath)
+                        emitBlock(unknownBlock, ctx: inner, workflow: workflow, path: "\(path).unknown")
+                        if let elseBlock = ir.elseBlock {
+                            "\(ctx.s)} else {"
+                            emitBranchTakenCall(ctx: inner, condition: conditionText, into: "otherwise", stableStepPath: ir.stableStepPath)
+                            emitBlock(elseBlock, ctx: inner, workflow: workflow, path: "\(path).else")
+                        }
+                    } else if let elseBlock = ir.elseBlock {
+                        "\(ctx.s)} else {"
+                        emitBranchTakenCall(ctx: inner, condition: conditionText, into: "otherwise", stableStepPath: ir.stableStepPath)
+                        emitBlock(elseBlock, ctx: inner, workflow: workflow, path: "\(path).else")
+                    }
+                } else {
+                    "\(ctx.s)if \(conditionText) {"
+                    emitBranchTakenCall(ctx: inner, condition: conditionText, into: "then", stableStepPath: ir.stableStepPath)
+                    emitBlock(ir.thenBlock, ctx: inner, workflow: workflow, path: "\(path).then")
+                    if let elseBlock = ir.elseBlock {
+                        "\(ctx.s)} else {"
+                        emitBranchTakenCall(ctx: inner, condition: conditionText, into: "otherwise", stableStepPath: ir.stableStepPath)
+                        emitBlock(elseBlock, ctx: inner, workflow: workflow, path: "\(path).else")
+                    }
                 }
                 "\(ctx.s)}"
             case .match(let expr, let cases):
                 // Verbalizer `otherwise:` ↔ IR `thenBlock` ↔ codegen `default:`.
-                "\(ctx.s)switch \(emitExprUnchecked(expr)) {"
+                let discriminant = emitExprUnchecked(expr)
+                "\(ctx.s)switch \(discriminant) {"
                 for (idx, c) in cases.enumerated() {
                     "\(ctx.s)case \(emitPattern(c.pattern)):"
+                    emitBranchTakenCall(ctx: inner, condition: discriminant, into: patternTraceName(c.pattern), stableStepPath: ir.stableStepPath)
                     emitBlock(c.block, ctx: inner, workflow: workflow, path: "\(path).case\(idx)")
                 }
                 if !ir.thenBlock.statements.isEmpty {
                     "\(ctx.s)default:"
+                    emitBranchTakenCall(ctx: inner, condition: discriminant, into: "otherwise", stableStepPath: ir.stableStepPath)
                     emitBlock(ir.thenBlock, ctx: inner, workflow: workflow, path: "\(path).default")
                 }
                 "\(ctx.s)}"
@@ -612,13 +740,22 @@ public struct SwiftEmitter {
         }
     }
 
+    /// `branch.taken` instrumentation (8B/E): emitted as the first statement of
+    /// whichever arm is entered, so the trace records *which* arm ran, not just
+    /// that a branch existed. `TraceTreeRenderer` already renders this kind
+    /// (semantic tag `branched`) — this call site was the only missing link.
+    private func emitBranchTakenCall(ctx: Ctx, condition: String, into: String, stableStepPath: String?) -> String {
+        let step = "\"\(escapeSwiftString(stableStepPath ?? "branch"))\""
+        return "\(ctx.s)try await runtime.recordBranchTaken(condition: \"\(escapeSwiftString(condition))\", into: \"\(escapeSwiftString(into))\", step: \(step))"
+    }
+
     // MARK: - 10. complete
 
     func emitComplete(_ ir: CompleteIR, ctx: Ctx) -> StringTemplate {
         let reasonStr = ir.reason.map { "\"\(escapeSwiftString($0))\"" } ?? "nil"
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
-            "\(ctx.s)await runtime.complete(reason: \(reasonStr))"
+            "\(ctx.s)await runtime.complete(reason: \(reasonStr), step: \"\(escapeSwiftString(ir.stableStepPath ?? "complete"))\")"
             "\(ctx.s)return WorkflowResult(reason: \(reasonStr), durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)"
         }
     }
@@ -626,10 +763,10 @@ public struct SwiftEmitter {
     // MARK: - 8. commit
 
     func emitCommit(_ ir: CommitIR, ctx: Ctx) -> StringTemplate {
-        let labelStr = ir.label.map { "label: \"\($0)\"" } ?? "label: nil"
+        let labelStr = "\"\(escapeSwiftString(ir.label ?? ir.stableStepPath ?? "commit"))\""
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
-            "\(ctx.s)try await runtime.checkpoint(\(labelStr), state: state.snapshot())"
+            "\(ctx.s)try await runtime.checkpoint(label: \(labelStr), state: state.snapshot(), step: \"\(escapeSwiftString(ir.stableStepPath ?? ir.label ?? "commit"))\")"
         }
     }
 
@@ -647,6 +784,7 @@ public struct SwiftEmitter {
                                       workflow: workflow, path: path,
                                       loopIndex: loopIndex, loopLabel: loopLabel)
         }
+        let collVar = "__meridianColl_\(swiftIdentifierSuffix(path))"
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
             switch ir.mode {
@@ -655,37 +793,68 @@ public struct SwiftEmitter {
                 // a `Value.asList` accessor that returns `[Value]?` so the
                 // generated code stays free of force-casts.
                 let var_ = IdentifierNaming.camelPreservingCase(param)
-                "\(ctx.s)for (\(loopIndex), \(var_)) in (\(emitExprUnchecked(collection))?.asList ?? []).enumerated() {"
+                let over = emitExprUnchecked(collection)
+                "\(ctx.s)let \(collVar) = (\(over)?.asList ?? [])"
+                emitIterateStartCall(ctx: ctx, over: over, stableStepPath: ir.stableStepPath)
+                "\(ctx.s)for (\(loopIndex), \(var_)) in \(collVar).enumerated() {"
                 "\(inner.s)let \(loopLabel) = \"progress:\(path):iteration:\\(\(loopIndex))\""
                 "\(inner.s)if __meridianShouldRun(\(loopLabel)) {"
+                emitIterateIterationCall(ctx: inner.in(1), index: loopIndex, stableStepPath: ir.stableStepPath)
                 "\(inner.s)state.bind(\"\(var_)\", \(var_))"
                 emitBlock(ir.body, ctx: inner.in(1), workflow: workflow, path: "\(path).body")
                 "\(inner.in(1).s)try await runtime.checkpoint(label: \(loopLabel), state: state.snapshot())"
                 "\(inner.s)}"
                 "\(ctx.s)}"
+                emitIterateEndCall(ctx: ctx, over: over, count: "\(collVar).count", stableStepPath: ir.stableStepPath)
             case .whileCondition(let cond):
+                let over = "while " + emitExprUnchecked(cond)
                 "\(ctx.s)var \(loopIndex) = 0"
+                emitIterateStartCall(ctx: ctx, over: over, stableStepPath: ir.stableStepPath)
                 "\(ctx.s)while \(emitExprUnchecked(cond)) {"
                 "\(inner.s)let \(loopLabel) = \"progress:\(path):iteration:\\(\(loopIndex))\""
                 "\(inner.s)\(loopIndex) += 1"
                 "\(inner.s)if __meridianShouldRun(\(loopLabel)) {"
+                emitIterateIterationCall(ctx: inner.in(1), index: "\(loopIndex) - 1", stableStepPath: ir.stableStepPath)
                 emitBlock(ir.body, ctx: inner.in(1), workflow: workflow, path: "\(path).body")
                 "\(inner.in(1).s)try await runtime.checkpoint(label: \(loopLabel), state: state.snapshot())"
                 "\(inner.s)}"
                 "\(ctx.s)}"
+                emitIterateEndCall(ctx: ctx, over: over, count: loopIndex, stableStepPath: ir.stableStepPath)
             case .untilCondition(let cond):
+                let over = "until " + emitExprUnchecked(cond)
                 "\(ctx.s)var \(loopIndex) = 0"
+                emitIterateStartCall(ctx: ctx, over: over, stableStepPath: ir.stableStepPath)
                 "\(ctx.s)while !(\(emitExprUnchecked(cond))) {"
                 "\(inner.s)let \(loopLabel) = \"progress:\(path):iteration:\\(\(loopIndex))\""
                 "\(inner.s)\(loopIndex) += 1"
                 "\(inner.s)if __meridianShouldRun(\(loopLabel)) {"
+                emitIterateIterationCall(ctx: inner.in(1), index: "\(loopIndex) - 1", stableStepPath: ir.stableStepPath)
                 emitBlock(ir.body, ctx: inner.in(1), workflow: workflow, path: "\(path).body")
                 "\(inner.in(1).s)try await runtime.checkpoint(label: \(loopLabel), state: state.snapshot())"
                 "\(inner.s)}"
                 "\(ctx.s)}"
+                emitIterateEndCall(ctx: ctx, over: over, count: loopIndex, stableStepPath: ir.stableStepPath)
             }
             ""
         }
+    }
+
+    /// `iterate.start`/`iterate.iteration`/`iterate.end` instrumentation (8B/E).
+    /// `TraceTreeRenderer` already paired-nests on these kinds (semantic tag
+    /// `iterated`) — these call sites were the only missing link.
+    private func emitIterateStartCall(ctx: Ctx, over: String, stableStepPath: String?) -> String {
+        let step = "\"\(escapeSwiftString(stableStepPath ?? "iterate"))\""
+        return "\(ctx.s)try await runtime.recordIterateStart(over: \"\(escapeSwiftString(over))\", step: \(step))"
+    }
+
+    private func emitIterateIterationCall(ctx: Ctx, index: String, stableStepPath: String?) -> String {
+        let step = "\"\(escapeSwiftString(stableStepPath ?? "iterate"))\""
+        return "\(ctx.s)try await runtime.recordIterateIteration(index: \(index), step: \(step))"
+    }
+
+    private func emitIterateEndCall(ctx: Ctx, over: String, count: String, stableStepPath: String?) -> String {
+        let step = "\"\(escapeSwiftString(stableStepPath ?? "iterate"))\""
+        return "\(ctx.s)try await runtime.recordIterateEnd(over: \"\(escapeSwiftString(over))\", count: \(count), step: \(step))"
     }
 
     /// Emit a refined `for each … whose/within/sorted by/first N` loop. The
@@ -701,12 +870,13 @@ public struct SwiftEmitter {
         let suffix = swiftIdentifierSuffix(path)
         let srcVar = "__meridianSrc_\(suffix)"
 
-        var pipeline = "(\(emitExprUnchecked(collection))?.asList ?? [])"
+        var pipeline = emitCollectionArray(collection)
         if !refinement.filters.isEmpty {
+            let elementParam = freshElementParam([:])
             let cond = refinement.filters
-                .map { "(\(emitElementExpr($0, loopVar: param, closureParam: "__e")))" }
+                .map { "(\(emitElementExpr($0, env: [param: elementParam])))" }
                 .joined(separator: " && ")
-            pipeline += ".filter { __e in \(cond) }"
+            pipeline += ".filter { \(elementParam) in \(cond) }"
         }
         if let sort = refinement.sort {
             let key = escapeSwiftString(sort.path)
@@ -714,32 +884,66 @@ public struct SwiftEmitter {
         }
 
         let iterSource: String = refinement.take != nil ? "\(srcVar)Refined" : srcVar
+        let over = emitExprUnchecked(collection)
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
             "\(ctx.s)let \(srcVar) = \(pipeline)"
             if let take = refinement.take {
                 "\(ctx.s)let \(srcVar)Refined = Array(\(srcVar).prefix(\(take)))"
             }
+            emitIterateStartCall(ctx: ctx, over: over, stableStepPath: ir.stableStepPath)
             "\(ctx.s)for (\(loopIndex), \(var_)) in \(iterSource).enumerated() {"
             "\(inner.s)let \(loopLabel) = \"progress:\(path):iteration:\\(\(loopIndex))\""
             "\(inner.s)if __meridianShouldRun(\(loopLabel)) {"
+            emitIterateIterationCall(ctx: inner.in(1), index: loopIndex, stableStepPath: ir.stableStepPath)
             "\(inner.s)state.bind(\"\(var_)\", \(var_))"
             emitBlock(ir.body, ctx: inner.in(1), workflow: workflow, path: "\(path).body")
             "\(inner.in(1).s)try await runtime.checkpoint(label: \(loopLabel), state: state.snapshot())"
             "\(inner.s)}"
             "\(ctx.s)}"
+            emitIterateEndCall(ctx: ctx, over: over, count: "\(iterSource).count", stableStepPath: ir.stableStepPath)
             ""
         }
     }
 
-    /// Emit a filter/sort predicate in *element context*: references to the loop
-    /// variable resolve to the closure parameter (`__e`), property accesses to
-    /// `__e.member("prop")`. Used only inside `emitRefinedIterate` closures.
-    private func emitElementExpr(_ e: IRExpression, loopVar: String, closureParam: String) -> String {
+    /// A fresh, nesting-depth-unique closure-parameter name for the next
+    /// `.filter { … }` / `.allSatisfy { … }` element scope introduced below
+    /// `env`. Reusing the same literal parameter name (`__e`) at two nesting
+    /// depths is a real bug, not just a style issue: Swift's *own* (correct)
+    /// lexical shadowing means an inner closure's `__e` always wins over an
+    /// outer one once both closures share that literal name — so an `env`
+    /// entry recorded as `"__e"` at the outer level (e.g. a `Definition:`
+    /// subject var keyed by `its`) silently starts referring to the *inner*
+    /// element instead once that text is spliced into a nested quantifier's
+    /// filter closure. `env.count` grows by exactly one new entry per nesting
+    /// level (each level's `element` closure merges exactly one new key), so
+    /// it doubles as a collision-free depth counter.
+    private func freshElementParam(_ env: [String: String]) -> String {
+        // The overwhelmingly common case is a single, non-nested filter/sort
+        // closure with no outer element variable in scope: keep emitting the
+        // plain `__e` golden-stable spelling there. Only fall back to the
+        // nesting-depth-numbered `__e<n>` form once an outer scope is
+        // actually present, so a nested filter/quantifier or an inlined
+        // stateful definition body can never shadow its enclosing element
+        // parameter (see the Gallery-8 shadowing bug this exists to fix).
+        env.isEmpty ? "__e" : "__e\(env.count)"
+    }
+
+    /// Emit a filter/sort predicate in *element context*: references to a
+    /// bound loop/subject variable resolve to its closure-parameter text
+    /// (`__e0`, `__subject`, …), property accesses to `<param>.member("prop")`.
+    /// `env` maps every identifier resolvable without `state` at this point in
+    /// the tree to the Swift expression text that stands in for it — a single
+    /// entry for `emitRefinedIterate`'s element closures, but multiple entries
+    /// once nested inside a `Definition:` body (the subject var) that itself
+    /// quantifies over a nested collection (the quantifier's own elementVar):
+    /// both must stay resolvable, so a nested scope *adds* to `env` rather
+    /// than replacing it (see `definitionRequiresState`'s doc comment).
+    private func emitElementExpr(_ e: IRExpression, env: [String: String]) -> String {
         switch e {
         case .comparison(let lhs, let op, let rhs):
-            let l = emitElementOperand(lhs, loopVar: loopVar, closureParam: closureParam)
-            let r = emitElementValueExpr(rhs, loopVar: loopVar, closureParam: closureParam)
+            let l = emitElementOperand(lhs, env: env)
+            let r = emitElementValueExpr(rhs, env: env)
             switch op {
             case .withinPast:     return "MeridianComparison.isWithinPast(\(l), \(emitExprUnchecked(rhs)))"
             case .withinFuture:   return "MeridianComparison.isWithinFuture(\(l), \(emitExprUnchecked(rhs)))"
@@ -760,38 +964,66 @@ public struct SwiftEmitter {
             case .oneOf:          return "(\(emitExprUnchecked(rhs))).contains(\(l) ?? .null)"
             }
         case .logical(let op, let parts):
-            let ps = parts.map { "(\(emitElementExpr($0, loopVar: loopVar, closureParam: closureParam)))" }
+            let ps = parts.map { "(\(emitElementExpr($0, env: env)))" }
             switch op {
             case .and: return ps.isEmpty ? "true" : ps.joined(separator: " && ")
             case .or:  return ps.isEmpty ? "false" : ps.joined(separator: " || ")
             case .not: return "!(\(ps.first ?? "true"))"
             }
         case .definitionPredicate(let fn, let subject):
-            return "\(fn)(\(emitElementOperand(subject, loopVar: loopVar, closureParam: closureParam)))"
+            return emitDefinitionPredicate(fn, subject: subject,
+                subjectText: emitElementOperand(subject, env: env),
+                nonOptionalSubjectText: emitNonOptionalElementOperand(subject, env: env))
         case .quantified(let q):
             // A nested quantifier evaluates against its own source; references to
-            // the enclosing element are resolved through the element operand.
-            return emitQuantifier(q,
-                operand: { self.emitElementOperand($0, loopVar: loopVar, closureParam: closureParam) },
-                element: { ee, ev in self.emitElementExpr(ee, loopVar: ev, closureParam: "__e") })
+            // any enclosing element/subject remain resolvable via `env`, merged
+            // with the quantifier's own freshly-introduced elementVar. The
+            // closure parameter itself must be depth-unique (see
+            // `freshElementParam`) — reusing the enclosing scope's literal
+            // name here is what let a `Definition:` subject var's `its`
+            // keying silently rebind to *this* quantifier's own element once
+            // nested two (or more) levels deep.
+            let param = freshElementParam(env)
+            return emitQuantifier(q, elementParam: param,
+                operand: { self.emitElementOperand($0, env: env) },
+                element: { ee, ev in self.emitElementExpr(ee, env: env.merging([ev: param]) { _, new in new }) })
         default:
-            return "(\(emitElementOperand(e, loopVar: loopVar, closureParam: closureParam)) != nil)"
+            return "(\(emitElementOperand(e, env: env)) != nil)"
         }
     }
 
     /// Emit an operand in element context, producing a `Value?` expression.
-    private func emitElementOperand(_ e: IRExpression, loopVar: String, closureParam: String) -> String {
+    private func emitElementOperand(_ e: IRExpression, env: [String: String]) -> String {
         switch e {
-        case .identifierRef(let name) where name == loopVar:
-            return closureParam
+        case .identifierRef(let name) where env[name] != nil:
+            return env[name]!
         case .propertyAccess(let base, let prop):
             let key = escapeSwiftString(IdentifierNaming.camelPreservingCase(prop))
-            if case .identifierRef(let n) = base, n == loopVar {
-                return "\(closureParam).member(\"\(key)\")"
+            if case .identifierRef(let n) = base, let param = env[n] {
+                return "\(param).member(\"\(key)\")"
             }
-            return "\(emitElementOperand(base, loopVar: loopVar, closureParam: closureParam))?.member(\"\(key)\")"
+            return "\(emitElementOperand(base, env: env))?.member(\"\(key)\")"
         default:
             return emitExprUnchecked(e)
+        }
+    }
+
+    /// Like `emitElementOperand`, but guarantees the result is a non-optional
+    /// `Value` (never `Value?`) — needed when the result becomes an `env`
+    /// entry for an *inlined* definition body (`emitDefinitionPredicate`),
+    /// since `env` entries are always dereferenced with `.member(...)`
+    /// (never `?.member(...)`).
+    private func emitNonOptionalElementOperand(_ e: IRExpression, env: [String: String]) -> String {
+        switch e {
+        case .identifierRef(let name) where env[name] != nil:
+            return env[name]!
+        case .identifierRef, .propertyAccess:
+            // Not bound in `env`: falls through to `emitExprUnchecked`
+            // (`state.get(...)`) inside `emitElementOperand`, which is
+            // `Value?`. Every other case there already yields a bare `Value`.
+            return "(\(emitElementOperand(e, env: env)) ?? .null)"
+        default:
+            return emitElementOperand(e, env: env)
         }
     }
 
@@ -799,15 +1031,41 @@ public struct SwiftEmitter {
     /// property on either side of a definition/filter comparison must read from
     /// the closure/subject value, not from workflow `state` (which is absent in
     /// generated definition helpers).
-    private func emitElementValueExpr(_ e: IRExpression, loopVar: String, closureParam: String) -> String {
+    private func emitElementValueExpr(_ e: IRExpression, env: [String: String]) -> String {
         switch e {
-        case .identifierRef(let name) where name == loopVar:
-            return closureParam
+        case .identifierRef(let name) where env[name] != nil:
+            return env[name]!
         case .identifierRef, .propertyAccess:
-            return "\(emitElementOperand(e, loopVar: loopVar, closureParam: closureParam)) ?? .null"
+            return "\(emitElementOperand(e, env: env)) ?? .null"
+        case .description(let d):
+            return "Value.list(\(emitDescriptionList(d, env: env)))"
+        case .aggregate(let kind, let d):
+            switch kind {
+            case .count: return ".number(Decimal(\(emitDescriptionList(d, env: env)).count))"
+            case .list:  return "Value.list(\(emitDescriptionList(d, env: env)))"
+            }
+        case .comparison, .logical, .definitionPredicate, .quantified:
+            return "Value.from(\(emitElementExpr(e, env: env)))"
         default:
             return emitValueExprUnchecked(e)
         }
+    }
+
+    /// Shared `.definitionPredicate` rendering for both the plain/state
+    /// (`emitExprUnchecked`) and element (`emitElementExpr`) contexts: calls
+    /// the standalone helper when one was emitted, or inlines the referenced
+    /// definition's body (rebased onto `nonOptionalSubjectText`) when it
+    /// required `state` and so has no standalone helper to call — see
+    /// `definitionRequiresState`. `subjectText` (used for the ordinary
+    /// function-call form) may be `Value?`; `nonOptionalSubjectText` never is,
+    /// since it becomes an `env` entry dereferenced with `.member(...)`.
+    private func emitDefinitionPredicate(
+        _ fn: String, subject: IRExpression, subjectText: String, nonOptionalSubjectText: String
+    ) -> String {
+        if let def = definitionsByName[fn], definitionRequiresState(def.body, bound: [def.subjectVar]) {
+            return emitElementExpr(def.body, env: [def.subjectVar: nonOptionalSubjectText])
+        }
+        return "\(fn)(\(subjectText))"
     }
 
     // MARK: - 4b. simultaneously
@@ -852,20 +1110,44 @@ public struct SwiftEmitter {
         let msg = escapeSwiftString(ir.message ?? "assertion failed")
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
-            if let action = ir.otherwiseAction {
+            if ir.monitored, case .traceStatistical(let statistical) = ir.condition, let cadence = ir.cadence {
+                "\(ctx.s)await runtime.registerMonitor("
+                "\(ctx.s)    query: \(emitTraceStatisticalQuery(statistical)),"
+                "\(ctx.s)    cadence: .seconds(\(cadence.components.seconds)),"
+                "\(ctx.s)    message: \"\(msg)\","
+                "\(ctx.s)    blocking: \(ir.blocking),"
+                "\(ctx.s)    step: \"\(escapeSwiftString(ir.stableStepPath ?? "assert.monitor"))\","
+                "\(ctx.s)    sourceRange: nil"
+                "\(ctx.s))"
+            } else if let action = ir.otherwiseAction {
                 // `assert X otherwise: …` form — run the otherwise block but
                 // still surface the failure as an `assert.failed` event so
                 // observers see it. The block decides whether to throw.
-                "\(ctx.s)if !(\(emitExprUnchecked(ir.condition))) {"
-                "\(ctx.in(1).s)try await runtime.assert(false, message: \"\(msg)\")"
+                if expressionMayBeIndeterminate(ir.condition) {
+                    let truthVar = "__meridianAssertTruth_\(swiftIdentifierSuffix(path))"
+                    "\(ctx.s)let \(truthVar) = \(emitTruthValueExpr(ir.condition))"
+                    "\(ctx.s)if \(truthVar) != .true {"
+                    "\(ctx.in(1).s)try await runtime.assert(\(truthVar), message: \"\(msg)\")"
+                } else {
+                    "\(ctx.s)if !(\(emitExprUnchecked(ir.condition))) {"
+                    "\(ctx.in(1).s)try await runtime.assert(false, message: \"\(msg)\")"
+                }
                 emitBlock(action, ctx: ctx.in(1), workflow: workflow, path: "\(path).otherwise")
                 "\(ctx.s)} else {"
-                "\(ctx.in(1).s)try await runtime.assert(true, message: \"\(msg)\")"
+                if expressionMayBeIndeterminate(ir.condition) {
+                    "\(ctx.in(1).s)try await runtime.assert(TruthValue.true, message: \"\(msg)\")"
+                } else {
+                    "\(ctx.in(1).s)try await runtime.assert(true, message: \"\(msg)\")"
+                }
                 "\(ctx.s)}"
             } else {
                 // Bare `assert X.` — let the runtime emit the event and
                 // throw `MeridianRuntimeError.assertion` on failure.
-                "\(ctx.s)try await runtime.assert(\(emitExprUnchecked(ir.condition)), message: \"\(msg)\")"
+                if expressionMayBeIndeterminate(ir.condition) {
+                    "\(ctx.s)try await runtime.assert(\(emitTruthValueExpr(ir.condition)), message: \"\(msg)\")"
+                } else {
+                    "\(ctx.s)try await runtime.assert(\(emitExprUnchecked(ir.condition)), message: \"\(msg)\")"
+                }
             }
         }
     }
@@ -874,13 +1156,29 @@ public struct SwiftEmitter {
 
     func emitRecover(_ ir: RecoverIR, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
         let (catchClause, _) = errorPatternClause(ir.pattern)
+        let step = "\"\(escapeSwiftString(ir.stableStepPath ?? "recover"))\""
         return StringTemplate {
             sourceLineComment(ir.sourceRange, ctx: ctx)
             "\(ctx.s)do {"
             emitBlock(ir.attachedTo, ctx: ctx.in(1), workflow: workflow, path: "\(path).do")
             "\(ctx.s)} catch \(catchClause){"
+            // `recover.engaged` instrumentation (8B/E) — `TraceTreeRenderer`
+            // already renders this kind (semantic tag `recovered`); this call
+            // site was the only missing link.
+            "\(ctx.in(1).s)try await runtime.recordRecoverEngaged(pattern: \"\(escapeSwiftString(errorPatternTraceName(ir.pattern)))\", step: \(step))"
             emitBlock(ir.handler, ctx: ctx.in(1), workflow: workflow, path: "\(path).catch")
             "\(ctx.s)}"
+        }
+    }
+
+    /// Human-readable description of an `ErrorPattern` for `recover.engaged`'s
+    /// `pattern` payload field. Mirrors `patternTraceName`'s style for `IRPattern`.
+    private func errorPatternTraceName(_ p: ErrorPattern) -> String {
+        switch p {
+        case .anyError: return "any"
+        case .named(let n): return n
+        case .typed(let k): return k.name
+        case .predicate(let expr): return emitExprUnchecked(expr)
         }
     }
 
@@ -1016,10 +1314,13 @@ public struct SwiftEmitter {
             if segs.isEmpty { return "\"\"" }
             return "(\(interpolationParts(segs)))"
         case .definitionPredicate(let fn, let subject):
-            return "\(fn)(\(emitComparisonOperand(subject)))"
+            return emitDefinitionPredicate(fn, subject: subject,
+                subjectText: emitComparisonOperand(subject),
+                nonOptionalSubjectText: emitNonOptionalComparisonOperand(subject))
         case .quantified(let q):
-            return emitQuantifier(q, operand: { self.emitComparisonOperand($0) },
-                                  element: { e, ev in self.emitElementExpr(e, loopVar: ev, closureParam: "__e") })
+            let param = freshElementParam([:])
+            return emitQuantifier(q, elementParam: param, operand: { self.emitComparisonOperand($0) },
+                                  element: { e, ev in self.emitElementExpr(e, env: [ev: param]) })
         case .description(let d):
             return "Value.list(\(emitDescriptionList(d)))"
         case .aggregate(let kind, let d):
@@ -1035,6 +1336,12 @@ public struct SwiftEmitter {
             return emitRecordList(fields: fields, rows: rows)
         case .tableLookup(let table, let keyColumn, let key, let valueColumn):
             return emitTableLookup(table: table, keyColumn: keyColumn, key: key, valueColumn: valueColumn)
+        case .eventPattern:
+            return "false"
+        case .traceTemporal(let temporal):
+            return "(\(emitTruthValueExpr(.traceTemporal(temporal))) == .true)"
+        case .traceStatistical(let statistical):
+            return "(\(emitTruthValueExpr(.traceStatistical(statistical))) == .true)"
         }
     }
 
@@ -1059,18 +1366,65 @@ public struct SwiftEmitter {
         return "try ({ () throws -> Value? in guard let __rows = state.get(\"\(tableKey)\")?.asList else { throw ToolError.implementation(code: \"table.lookup_miss\", message: \"table \(tableKey) is not bound\", cause: nil) }; for __row in __rows { if MeridianComparison.eq(__row.member(\"\(keyField)\"), \(keyExpr)) { return __row.member(\"\(valueField)\") } }; throw ToolError.implementation(code: \"table.lookup_miss\", message: \"no row in \(tableKey) where \(keyField) matches\", cause: nil) })()"
     }
 
+    /// Render `expr` as a bare Swift `[Value]` array — the form a `for each`
+    /// loop source or a quantifier's base collection needs. Most collection
+    /// expressions (`state.get(...)` via `.identifierRef`/`.propertyAccess`)
+    /// emit as `Value?`, so the general case unwraps with `?.asList ?? []`.
+    /// But a noun-phrase collection that already carries its own filter/sort
+    /// (`the flaky services owned by the user`) lowers to a *non-optional*
+    /// `.description`/`.aggregate(.list, …)` `IRExpression` — `emitExprUnchecked`
+    /// renders those as `Value.list(emitDescriptionList(d))` for the general
+    /// value-expression position, but re-wrapping/re-unwrapping that here
+    /// (`Value.list(...)?.asList ?? []`) is invalid Swift (optional chaining
+    /// on a non-optional `Value`). Route those two cases straight to the
+    /// already-`[Value]` `emitDescriptionList` pipeline instead of through
+    /// the generic `Value`-returning emission.
+    /// `env` (default empty) resolves an *outer* element/loop variable that
+    /// the collection expression itself references — e.g. the template-loop
+    /// or nested-quantifier variable a `description`'s own source noun
+    /// phrase is keyed against. Threaded through so a description nested
+    /// inside another element context (a template `[for each]` body, or a
+    /// nested quantifier) can still see its enclosing variable; the
+    /// description's *own* `elementVar` is merged in separately, in
+    /// `emitDescriptionList`, only for its filter/sort clauses.
+    private func emitCollectionArray(_ expr: IRExpression, env: [String: String] = [:]) -> String {
+        switch expr {
+        case .description(let d):
+            return emitDescriptionList(d, env: env)
+        case .aggregate(.list, let d):
+            return emitDescriptionList(d, env: env)
+        case .identifierRef(let name) where env[name] != nil:
+            // Bound to an outer element/loop variable: that Swift text is
+            // already a non-optional `Value` (a closure parameter), so
+            // `.asList` applies directly — optional-chaining it would be
+            // invalid Swift.
+            return "((\(emitNonOptionalElementOperand(expr, env: env))).asList ?? [])"
+        case .propertyAccess(.identifierRef(let name), _) where env[name] != nil:
+            return "((\(emitNonOptionalElementOperand(expr, env: env))).asList ?? [])"
+        default:
+            // Not resolvable through `env` (e.g. a bare `state.get(...)`
+            // top-level binding): keep the original optional-chaining form
+            // so unrelated golden/emitter tests don't drift in spelling.
+            return "((\(emitComparisonOperand(expr)))?.asList ?? [])"
+        }
+    }
+
     /// 3C: render a description as a `[Value]` pipeline — `(coll.asList ?? [])`
     /// filtered (element context), sorted, then `prefix`-taken. Shared by the
-    /// description / aggregate / superlative emitters.
-    func emitDescriptionList(_ d: DescriptionIR) -> String {
+    /// description / aggregate / superlative emitters. See `emitCollectionArray`
+    /// for what `env` carries; it is merged with this description's own
+    /// `elementVar` (→ `__e`) for the filter clauses only — sort/take never
+    /// reference the outer variable.
+    func emitDescriptionList(_ d: DescriptionIR, env: [String: String] = [:]) -> String {
         let ev = d.elementVar
-        let coll = emitComparisonOperand(d.collection)
-        var pipeline = "((\(coll))?.asList ?? [])"
+        var pipeline = emitCollectionArray(d.collection, env: env)
         if !d.filters.isEmpty {
+            let param = freshElementParam(env)
+            let filterEnv = env.merging([ev: param]) { _, new in new }
             let parts = d.filters
-                .map { "(\(emitElementExpr($0, loopVar: ev, closureParam: "__e")))" }
+                .map { "(\(emitElementExpr($0, env: filterEnv)))" }
                 .joined(separator: " && ")
-            pipeline += ".filter { __e in \(parts) }"
+            pipeline += ".filter { \(param) in \(parts) }"
         }
         if let sort = d.sort {
             let key = escapeSwiftString(sort.path)
@@ -1084,21 +1438,103 @@ public struct SwiftEmitter {
 
     /// 3C: a superlative reuses the description pipeline but forces its own sort
     /// key/direction so `.first` is the min (ascending) or max element.
-    private func emitSuperlativeList(_ s: SuperlativeIR) -> String {
+    private func emitSuperlativeList(_ s: SuperlativeIR, env: [String: String] = [:]) -> String {
         let forced = DescriptionIR(collection: s.description.collection,
                                    elementVar: s.description.elementVar,
                                    filters: s.description.filters,
                                    sort: (path: s.sortPath, ascending: s.ascending),
                                    take: nil)
-        return emitDescriptionList(forced)
+        return emitDescriptionList(forced, env: env)
     }
 
     /// Emit a checkable-adjective helper. The body is rendered in element
     /// context with the subject variable bound to the `__subject` parameter, so
     /// `it`/`its <prop>` (preprocessed to `<subject>.<prop>`) becomes
     /// `__subject.member("prop")` and bare emptiness/comparisons resolve too.
+    /// A `Definition:` whose lowered body requires async trace evaluation
+    /// (`has ever …` / windowed / statistical trace queries, or a raw event
+    /// pattern) cannot be emitted as the synchronous `private static func …
+    /// -> Bool` helper `emitDefinitionFunction` produces — its body is
+    /// `try await runtime.evaluateTrace(…)`, which needs `runtime`/`state` and
+    /// `await`, neither available in a static, non-async helper. Wave 8
+    /// event-backed adjectives (e.g. `a service is recovered if the deploy
+    /// step has ever succeeded`, INFORM7 §9/§12) are only valid *inline* in a
+    /// since-clause / trace context, where the emitter inlines the query into
+    /// the async workflow body directly and never calls the helper. Emitting
+    /// the standalone helper would ship dead, malformed Swift (see pitfall
+    /// #22), so it is skipped. A bare static-predicate use of such an
+    /// adjective then surfaces as a missing-symbol compile error rather than
+    /// an async body smuggled into a sync function.
+    func definitionRequiresAsyncTrace(_ expr: IRExpression) -> Bool {
+        switch expr {
+        case .traceTemporal, .traceStatistical, .eventPattern:
+            return true
+        case .propertyAccess(let inner, _):
+            return definitionRequiresAsyncTrace(inner)
+        case .relationTraversal(let inner, _, let target):
+            return definitionRequiresAsyncTrace(inner) || (target.map(definitionRequiresAsyncTrace) ?? false)
+        case .comparison(let lhs, _, let rhs):
+            return definitionRequiresAsyncTrace(lhs) || definitionRequiresAsyncTrace(rhs)
+        case .logical(_, let operands):
+            return operands.contains(where: definitionRequiresAsyncTrace)
+        default:
+            return false
+        }
+    }
+
+    /// A `Definition:` body may quantify/aggregate over a collection that is
+    /// *not* the subject's own property (Gallery-3: "at least 1 critical alert
+    /// whose service name is its name is fresh" — `alerts` is a separate
+    /// `bind`-produced workflow variable, not `service.alerts`). Such a body,
+    /// rendered by `emitElementExpr`, falls through to `emitExprUnchecked` for
+    /// that bare identifier, which reads `state.get(...)` — but `state` does
+    /// not exist inside `emitDefinitionFunction`'s free `private func …
+    /// (_ __subjectValue: Value?) -> Bool`. `bound` tracks every identifier
+    /// resolvable without `state` at this point in the tree: the definition's
+    /// own subject var, plus every elementVar introduced by a quantifier/
+    /// description/superlative nested inside it. Any other bare identifier
+    /// (or anything inherently dynamic — an invocation, `now`, an env var, a
+    /// trace query) means the body can only be emitted *inlined* at a real
+    /// call site where `state` is in scope — see the `.definitionPredicate`
+    /// cases in `emitExprUnchecked`/`emitElementExpr`.
+    func definitionRequiresState(_ expr: IRExpression, bound: Set<String>) -> Bool {
+        switch expr {
+        case .identifierRef(let name):
+            return !bound.contains(name)
+        case .literal, .constantRef, .instanceRef:
+            return false
+        case .propertyAccess(let inner, _):
+            return definitionRequiresState(inner, bound: bound)
+        case .relationTraversal(let inner, _, let target):
+            return definitionRequiresState(inner, bound: bound)
+                || (target.map { definitionRequiresState($0, bound: bound) } ?? false)
+        case .comparison(let lhs, _, let rhs):
+            return definitionRequiresState(lhs, bound: bound) || definitionRequiresState(rhs, bound: bound)
+        case .logical(_, let operands):
+            return operands.contains { definitionRequiresState($0, bound: bound) }
+        case .definitionPredicate(_, let subject):
+            return definitionRequiresState(subject, bound: bound)
+        case .quantified(let q):
+            if definitionRequiresState(q.description.collection, bound: bound) { return true }
+            let inner = bound.union([q.description.elementVar])
+            if q.description.filters.contains(where: { definitionRequiresState($0, bound: inner) }) { return true }
+            return q.body.map { definitionRequiresState($0, bound: inner) } ?? false
+        case .aggregate(_, let d), .description(let d):
+            if definitionRequiresState(d.collection, bound: bound) { return true }
+            let inner = bound.union([d.elementVar])
+            return d.filters.contains { definitionRequiresState($0, bound: inner) }
+        case .superlative(let s):
+            if definitionRequiresState(s.description.collection, bound: bound) { return true }
+            let inner = bound.union([s.description.elementVar])
+            return s.description.filters.contains { definitionRequiresState($0, bound: inner) }
+        case .envVar, .nowExpression, .invocation, .interpolatedString, .recordList, .tableLookup,
+             .eventPattern, .traceTemporal, .traceStatistical:
+            return true
+        }
+    }
+
     func emitDefinitionFunction(_ def: LoweredDefinition) -> StringTemplate {
-        let cond = emitElementExpr(def.body, loopVar: def.subjectVar, closureParam: "__subject")
+        let cond = emitElementExpr(def.body, env: [def.subjectVar: "__subject"])
         // Nested inside a namespace `enum`, a bare `func` is an instance
         // method and unreachable without an instance — the enum is used
         // purely as a namespace, so it must be `static` there. At true file
@@ -1116,19 +1552,35 @@ public struct SwiftEmitter {
     /// Emit a quantified description as a self-contained `Bool` IIFE.
     /// `operand` renders the source collection expression in the current
     /// context (plain → `state.get`, element → closure member access).
-    func emitQuantifier(_ q: QuantifierIR,
+    func emitQuantifier(_ q: QuantifierIR, elementParam: String = "__e",
                         operand: (IRExpression) -> String,
                         element: (IRExpression, String) -> String) -> String {
         let ev = q.description.elementVar
-        let coll = operand(q.description.collection)
         let filterParts = q.description.filters.map { "(\(element($0, ev)))" }
-        let filterClause = filterParts.isEmpty ? "" : ".filter { __e in \(filterParts.joined(separator: " && ")) }"
-        let bodyClause = q.body.map { ".filter { __e in \(element($0, ev)) }" } ?? ""
-        let base = "((\(coll))?.asList ?? [])\(filterClause)"
+        let filterClause = filterParts.isEmpty ? "" : ".filter { \(elementParam) in \(filterParts.joined(separator: " && ")) }"
+        let bodyClause = q.body.map { ".filter { \(elementParam) in \(element($0, ev)) }" } ?? ""
+        // `q.description.collection` is almost always a plain `state.get(...)`-
+        // shaped reference resolved via the context-appropriate `operand`
+        // closure (element context threads the caller's `env`, e.g. an outer
+        // subject var — see the two call sites below). The one exception is a
+        // *nested* noun-phrase-as-collection (`the flaky services owned by the
+        // user` used as a quantifier subject) — that already lowers to a
+        // non-optional `.description`/`.aggregate(.list, …)` `IRExpression`
+        // (see `emitCollectionArray`), which `operand` (built on
+        // `emitComparisonOperand`/`emitElementOperand`, both `Value?`-shaped)
+        // would wrap in an invalid extra `Value.list(...)?.asList`.
+        let coll: String
+        switch q.description.collection {
+        case .description, .aggregate(.list, _):
+            coll = emitCollectionArray(q.description.collection)
+        default:
+            coll = "(\(operand(q.description.collection))?.asList ?? [])"
+        }
+        let base = "\(coll)\(filterClause)"
         switch q.kind {
         case .all:
             if let body = q.body {
-                return "(\(base).allSatisfy { __e in \(element(body, ev)) })"
+                return "(\(base).allSatisfy { \(elementParam) in \(element(body, ev)) })"
             }
             return "(!\(base).isEmpty)"
         case .any:
@@ -1154,6 +1606,22 @@ public struct SwiftEmitter {
         switch expr {
         case .identifierRef, .propertyAccess:
             return emitExprUnchecked(expr)
+        default:
+            return emitValueExprUnchecked(expr)
+        }
+    }
+
+    /// Like `emitComparisonOperand`, but guarantees a non-optional `Value` —
+    /// needed when the result becomes an inlined-definition `env` entry (see
+    /// `emitDefinitionPredicate`), since those are dereferenced with
+    /// `.member(...)`, never `?.member(...)`. `emitValueExprUnchecked`
+    /// (the `default` case below) already coerces every one of its cases to a
+    /// bare `Value`; only the `identifierRef`/`propertyAccess` `state.get(...)`
+    /// reads need the extra `?? .null`.
+    private func emitNonOptionalComparisonOperand(_ expr: IRExpression) -> String {
+        switch expr {
+        case .identifierRef, .propertyAccess:
+            return "(\(emitExprUnchecked(expr)) ?? .null)"
         default:
             return emitValueExprUnchecked(expr)
         }
@@ -1223,6 +1691,8 @@ public struct SwiftEmitter {
             // rather than the generic `.init(...)` fallback (which requires
             // the wrapped expression to already be `Value`-typed).
             return "Value.from(\(emitExprUnchecked(expr)))"
+        case .traceTemporal, .traceStatistical:
+            return "Value.from(\(emitTruthValueExpr(expr)) == .true)"
         case .invocation:
             return emitExprUnchecked(expr)
         default:
@@ -1255,12 +1725,158 @@ public struct SwiftEmitter {
             case .conditional(let condition, let thenSegs, let elseSegs):
                 return "({ () -> String in if \(emitExprUnchecked(condition)) { return \(interpolationParts(thenSegs)) } else { return \(interpolationParts(elseSegs)) } })()"
             case .forEach(let variable, let collection, let body):
-                let coll = emitComparisonOperand(collection)
-                return "({ () -> String in var __out = \"\"; for __item in ((\(coll))?.asList ?? []) { __out += \(interpolationParts(body, loopVariable: variable, elementName: "__item")) }; return __out })()"
+                let coll = emitCollectionArray(collection)
+                return "({ () -> String in var __out = \"\"; for __item in \(coll) { __out += \(interpolationParts(body, loopVariable: variable, elementName: "__item")) }; return __out })()"
             case .shellEscapedExpression(let e):
                 return "meridianShellQuote(\(emitValueExprUnchecked(e)))"
             }
         }.joined(separator: " + ")
+    }
+
+    private func expressionMayBeIndeterminate(_ expr: IRExpression) -> Bool {
+        switch expr {
+        case .traceTemporal(let temporal):
+            if case .sinceLast = temporal.kind {
+                return true
+            }
+            return false
+        case .traceStatistical:
+            return true
+        case .logical(_, let operands):
+            return operands.contains(where: expressionMayBeIndeterminate)
+        case .comparison(let lhs, _, let rhs):
+            return expressionMayBeIndeterminate(lhs) || expressionMayBeIndeterminate(rhs)
+        case .propertyAccess(let base, _):
+            return expressionMayBeIndeterminate(base)
+        default:
+            return false
+        }
+    }
+
+    private func emitTruthValueExpr(_ expr: IRExpression) -> String {
+        switch expr {
+        case .traceTemporal(let temporal):
+            return "try await runtime.evaluateTrace(\(emitTraceTemporalQuery(temporal)), evaluationInstant: await runtime.currentDate())"
+        case .traceStatistical(let statistical):
+            return "try await runtime.evaluateTrace(\(emitTraceStatisticalQuery(statistical)), evaluationInstant: await runtime.currentDate())"
+        case .logical(let op, let operands):
+            switch op {
+            case .and:
+                let items = operands.map(emitTruthValueExpr)
+                guard let first = items.first else { return ".true" }
+                return items.dropFirst().reduce(first) { partial, next in "(\(partial)).and(\(next))" }
+            case .or:
+                let items = operands.map(emitTruthValueExpr)
+                guard let first = items.first else { return ".false" }
+                return items.dropFirst().reduce(first) { partial, next in "(\(partial)).or(\(next))" }
+            case .not:
+                return "(\(operands.first.map(emitTruthValueExpr) ?? ".true")).not()"
+            }
+        default:
+            return "TruthValue.from(\(emitExprUnchecked(expr)))"
+        }
+    }
+
+    private func emitTraceTemporalQuery(_ temporal: TraceTemporalIR) -> String {
+        let scope: String
+        switch temporal.scope {
+        case .currentRun:
+            scope = ".currentRun"
+        case .acrossAllRuns:
+            scope = ".acrossAllRuns"
+        }
+        let kind: String
+        switch temporal.kind {
+        case .ever(let pattern):
+            kind = ".ever(\(emitTraceEventPattern(pattern, subjectKeyExpr: temporal.subjectKeyExpr)))"
+        case .withinWindow(let pattern, let duration):
+            kind = ".withinWindow(\(emitTraceEventPattern(pattern, subjectKeyExpr: temporal.subjectKeyExpr)), duration: .seconds(\(duration.components.seconds)))"
+        case .countInWindow(let pattern, let comparator, let duration):
+            let comparatorExpr: String
+            switch comparator {
+            case .atLeast(let value):
+                comparatorExpr = ".atLeast(\(value))"
+            case .atMost(let value):
+                comparatorExpr = ".atMost(\(value))"
+            case .exactly(let value):
+                comparatorExpr = ".exactly(\(value))"
+            }
+            kind = ".countInWindow(\(emitTraceEventPattern(pattern, subjectKeyExpr: temporal.subjectKeyExpr)), comparator: \(comparatorExpr), duration: .seconds(\(duration.components.seconds)))"
+        case .inARow(let pattern, let count):
+            kind = ".inARow(\(emitTraceEventPattern(pattern, subjectKeyExpr: temporal.subjectKeyExpr)), count: \(count))"
+        case .sinceLast(let anchor, _, let holdsPattern):
+            kind = ".sinceLast(anchor: \(emitTraceEventPattern(anchor, subjectKeyExpr: temporal.subjectKeyExpr)), holds: \(emitTraceEventPattern(holdsPattern, subjectKeyExpr: temporal.subjectKeyExpr)))"
+        }
+        return "TraceTemporalQuery(scope: \(scope), kind: \(kind))"
+    }
+
+    private func emitTraceStatisticalQuery(_ statistical: TraceStatisticalIR) -> String {
+        let scope: String
+        switch statistical.scope {
+        case .currentRun:
+            scope = ".currentRun"
+        case .acrossAllRuns:
+            scope = ".acrossAllRuns"
+        }
+        let subject: String
+        switch statistical.pattern.subject {
+        case .step(let name):
+            subject = ".step(\"\(escapeSwiftString(name))\")"
+        case .named(let name):
+            subject = ".named(\"\(escapeSwiftString(name))\")"
+        }
+        let outcome: String = statistical.outcome == .succeeds ? ".succeeded" : ".failed"
+        let bound: String
+        switch statistical.bound {
+        case .atLeast(let ratio):
+            bound = ".atLeast(\(ratio))"
+        case .atMost(let ratio):
+            bound = ".atMost(\(ratio))"
+        }
+        let denominator = statistical.denominator == .runs ? ".runs" : ".occurrences"
+        let window = statistical.window.map { ".seconds(\($0.components.seconds))" } ?? "nil"
+        return """
+TraceStatisticalQuery(
+    scope: \(scope),
+    pattern: TraceEventPatternQuery(subject: \(subject), outcome: \(outcome), subjectKey: \(statistical.subjectKeyExpr.map { "meridianStringify(\(emitValueExprUnchecked($0)))" } ?? "nil"), payloadContains: \(emitPayloadContains(statistical.pattern.payloadPredicate))),
+    bound: \(bound),
+    denominator: \(denominator),
+    window: \(window)
+)
+"""
+    }
+
+    private func emitTraceEventPattern(_ pattern: EventPatternIR, subjectKeyExpr: IRExpression?) -> String {
+        let subject: String
+        switch pattern.subject {
+        case .step(let name):
+            subject = ".step(\"\(escapeSwiftString(name))\")"
+        case .named(let name):
+            subject = ".named(\"\(escapeSwiftString(name))\")"
+        }
+        let outcome = "." + pattern.outcome.rawValue
+        let subjectKey: String
+        if let subjectKeyExpr {
+            subjectKey = "meridianStringify(\(emitValueExprUnchecked(subjectKeyExpr)))"
+        } else {
+            subjectKey = "nil"
+        }
+        return "TraceEventPatternQuery(subject: \(subject), outcome: \(outcome), subjectKey: \(subjectKey), payloadContains: \(emitPayloadContains(pattern.payloadPredicate)), negated: \(pattern.negated))"
+    }
+
+    /// `whose <field> is <value>` (cookbook 17) lowers to a single-key
+    /// `[String: Value]` dictionary literal matching
+    /// `TraceEventPatternQuery.payloadContains`'s runtime shape. `ASTToIR`
+    /// already restricts the predicate to `<identifier> is <literal>`
+    /// (`payloadFieldName`/`validatePayloadField`), so this only needs to
+    /// recognize that one shape, not a general comparison.
+    private func emitPayloadContains(_ predicate: IRExpression?) -> String {
+        guard let predicate,
+              case .comparison(let lhs, .equal, let rhs) = predicate,
+              case .identifierRef(let field) = lhs else {
+            return "nil"
+        }
+        return "[\"\(escapeSwiftString(field))\": \(emitValueExprUnchecked(rhs))]"
     }
 
     private func interpolationParts(_ segs: [IRInterpolationSegment], loopVariable: String, elementName: String) -> String {
@@ -1292,7 +1908,15 @@ public struct SwiftEmitter {
         case .propertyAccess(.identifierRef(let name), let prop) where name == loopVariable:
             return "\(elementName).member(\"\(escapeSwiftString(IdentifierNaming.camelPreservingCase(prop)))\") ?? .null"
         default:
-            return emitValueExprUnchecked(e)
+            // Anything more than a direct reference/property read on the loop
+            // variable (an aggregate/description/quantifier that itself
+            // *references* the loop variable somewhere inside — e.g. `the
+            // number of alerts whose service name is its name` inside a
+            // `[for each service in …]` body) needs the loop variable
+            // resolvable throughout its own nested filters/elements too, not
+            // just at this top level — route through the env-threaded element
+            // emitter instead of the env-blind `emitValueExprUnchecked`.
+            return emitElementValueExpr(e, env: [loopVariable: elementName])
         }
     }
 
@@ -1301,7 +1925,7 @@ public struct SwiftEmitter {
         case .comparison(let l, let op, let r):
             return emitLoopComparison(l, op, r, loopVariable: loopVariable, elementName: elementName)
         default:
-            return emitExprUnchecked(e)
+            return emitElementExpr(e, env: [loopVariable: elementName])
         }
     }
 
@@ -1394,7 +2018,7 @@ public struct SwiftEmitter {
 
     private func validateExpressionForDirectEmission(_ expr: IRExpression) throws {
         do {
-            try IRValidator.validate(expr, sourceFile: options.sourceFileName)
+            try IRValidator.validate(expr, sourceFile: options.sourceFileName, trace: trace)
         } catch IRValidationError.diagnostics(let diagnostics) {
             throw CompilerError.diagnostics(diagnostics)
         }

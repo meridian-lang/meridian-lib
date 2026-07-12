@@ -90,6 +90,16 @@ public struct MeridianTestRunner: Sendable {
         public let expectEventKindsPrefix: [String]?
         public let expectFinalEventKind: String?
         public let expectRunSucceeded: Bool?
+        /// The `reason` payload string on the run's final `workflow.completed`/
+        /// `workflow.failed` event (e.g. `complete with reason "all-flaky"`).
+        /// Lets an eval test distinguish *which* branch a workflow took when
+        /// every branch ends in the same event-kind sequence.
+        public let expectFinalReason: String?
+        /// A substring the final `state.snapshot()` binding named `.key` must
+        /// contain (via `Value.scalarDescription`). Lets an eval test assert
+        /// on a computed `bind` value — e.g. a templated report string —
+        /// rather than only on the event stream/completion reason.
+        public let expectFinalBindingContains: (key: String, substring: String)?
 
         public init(
             workflowName:         String?        = nil,
@@ -98,7 +108,9 @@ public struct MeridianTestRunner: Sendable {
             expectEventKinds:     [String]?      = nil,
             expectEventKindsPrefix: [String]?    = nil,
             expectFinalEventKind: String?        = nil,
-            expectRunSucceeded:   Bool?          = nil
+            expectRunSucceeded:   Bool?          = nil,
+            expectFinalReason:    String?        = nil,
+            expectFinalBindingContains: (key: String, substring: String)? = nil
         ) {
             self.workflowName         = workflowName
             self.inputs               = inputs
@@ -107,6 +119,8 @@ public struct MeridianTestRunner: Sendable {
             self.expectEventKindsPrefix = expectEventKindsPrefix
             self.expectFinalEventKind = expectFinalEventKind
             self.expectRunSucceeded   = expectRunSucceeded
+            self.expectFinalReason    = expectFinalReason
+            self.expectFinalBindingContains = expectFinalBindingContains
         }
     }
 
@@ -536,7 +550,7 @@ public struct MeridianTestRunner: Sendable {
             var config = MerConfigFile()
             for v in vocabs {
                 let parsed = try MerConfigParser(trace: trace).parse(v.source, file: v.file)
-                config = config.merging(parsed)
+                config = try config.merging(parsed)
             }
             let symbolsFile = vocabs.first?.file ?? "config.merconfig"
             let symbols = SymbolTable.build(from: config, sourceFile: symbolsFile, trace: trace)
@@ -575,7 +589,6 @@ public struct MeridianTestRunner: Sendable {
         case .syntaxError(let m, let r):  return "syntax error at \(r): \(m)"
         case .semanticError(let m, let r): return "semantic error at \(r): \(m)"
         case .codegenError(let m):        return "codegen error: \(m)"
-        case .notImplemented(let m):      return "not implemented: \(m)"
         case .diagnostics(let ds):
             return ds.map { d in
                 let notes = d.notes.map { " note: \($0.message)" }.joined()

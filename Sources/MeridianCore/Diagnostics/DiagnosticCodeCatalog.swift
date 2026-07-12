@@ -29,7 +29,7 @@ extension DiagnosticCode {
         // MER0xxx — legacy shims (still emitted via CompilerError projection)
         .init(.legacySemantic, status: .deprecated),
         .init(.legacySyntax, status: .deprecated),
-        .init(.notImplemented, status: .active, emitters: ["Compiler.swift:notImplemented projection"]),
+        .init(.notImplemented, status: .deprecated),
         .init(.internalError, status: .active, emitters: ["ASTToIR.swift"]),
 
         // MER1xxx — parse / structural
@@ -80,6 +80,25 @@ extension DiagnosticCode {
         .init(.unlowerableRulePredicate, status: .active, emitters: ["RuleInjector.swift:lowerExprSimple"]),
         .init(.unsupportedTriggerCondition, status: .active, emitters: ["RuleInjector.swift:synthesizeTriggers"]),
         .init(.matchBranchSemantic, status: .active, emitters: ["ASTToIR.swift", "IRValidator.swift"]),
+        .init(.traceBarePerfect, status: .active, emitters: ["TraceTemporalGrammar.swift"]),
+        .init(.traceWindowExceedsRetention, status: .active, emitters: ["ASTToIR.swift"]),
+        .init(.traceCausalSince, status: .active, emitters: ["TraceTemporalGrammar.swift"]),
+        .init(.traceFuture, status: .active, emitters: ["TraceTemporalGrammar.swift"]),
+        .init(.traceUnknownStep, status: .active, emitters: ["ASTToIR.swift"]),
+        .init(.traceUnknownPayloadField, status: .active, emitters: ["ASTToIR.swift"]),
+        .init(.traceUnkeyedDefinition, status: .active, emitters: ["ASTToIR.swift"]),
+        .init(.traceRecently, status: .active, emitters: ["TraceTemporalGrammar.swift"]),
+        .init(.traceProgressive, status: .active, emitters: ["TraceTemporalGrammar.swift"]),
+        .init(.traceStateHistorySince, status: .active, emitters: ["ASTToIR.swift"]),
+        .init(.traceMissingProductionCapturePolicy, status: .active, emitters: ["Compiler.swift:validateProductionTraceCapturePolicies"]),
+        .init(.traceCrossSkillScope, status: .active, emitters: ["ASTToIR.swift:lowerEventSubject"]),
+        .init(.traceMissingUnknownArm, status: .active, emitters: ["ASTToIR.swift"]),
+        .init(.statisticalConfidenceReserved, status: .active, emitters: ["TraceStatisticalGrammar.swift"]),
+        .init(.statisticalVagueFrequency, status: .active, emitters: ["TraceStatisticalGrammar.swift"]),
+
+        // MER-REF / MER-TYP — binding reference & type (compound note form)
+        .init(.noteBindingUndeclared, status: .active, emitters: ["ASTToIR.swift"]),
+        .init(.noteBindingNonText, status: .active, emitters: ["ASTToIR.swift"]),
 
         // MER4xxx — codegen
         .init(.codegenError, status: .active, emitters: ["Compiler.swift:codegenError projection"]),
@@ -95,14 +114,20 @@ extension DiagnosticCode {
         .init(.unrecognizedBlockProperty, status: .active, emitters: ["MerConfigParser.swift:parseBlockProperty"]),
         .init(.unwritableTraceFile, status: .active, emitters: ["CLISupport.swift:makeCLITrace"]),
         .init(.emptyLexiconMarkers, status: .active, emitters: ["Verbalizer.swift"]),
+        .init(.inputFileNotFound, status: .active, emitters: ["CLISupport.swift"]),
+        .init(.directoryReadFailed, status: .active, emitters: ["CLISupport.swift"]),
 
         // MER6xxx — lint / authoring warnings
         .init(.lintPoliteCommand, status: .active, emitters: ["MeridianLinter.swift:paraphraseHint"]),
         .init(.lintUncertainty, status: .active, emitters: ["MeridianLinter.swift:paraphraseHint"]),
         .init(.migrationRouteFuzzyDowngrade, status: .active,
-              emitters: ["SkillMigrator.swift:routeFuzzy"]),
+              emitters: ["SkillMigrator+CommandRewrite.swift"]),
         .init(.diagnosticRecoverySummary, status: .active,
               emitters: ["DiagnosticEngine.swift:throwIfErrors"]),
+        .init(.lintCrossRunInARow, status: .active,
+              emitters: ["MeridianLinter.swift:crossRunInARowHint"]),
+        .init(.lintSuperlativeEventAnchor, status: .active,
+              emitters: ["MeridianLinter.swift:superlativeEventAnchorHint"]),
     ]
 
     public static var catalogByID: [String: DiagnosticCodeEntry] {

@@ -25,76 +25,76 @@
       "adjective" : "in good standing",
       "function" : "meridianDef_Customer_inGoodStanding",
       "kind" : "customer",
-      "line" : 46
+      "line" : 49
     },
     {
       "adjective" : "overdue",
       "function" : "meridianDef_Invoice_overdue",
       "kind" : "invoice",
-      "line" : 42
+      "line" : 45
     },
     {
       "adjective" : "severely overdue",
       "function" : "meridianDef_Invoice_severelyOverdue",
       "kind" : "invoice",
-      "line" : 47
+      "line" : 50
     },
     {
       "adjective" : "unpaid",
       "function" : "meridianDef_Invoice_unpaid",
       "kind" : "invoice",
-      "line" : 41
+      "line" : 44
     },
     {
       "adjective" : "blocked",
       "function" : "meridianDef_Order_blocked",
       "kind" : "order",
-      "line" : 38
+      "line" : 41
     },
     {
       "adjective" : "fulfilled",
       "function" : "meridianDef_Order_fulfilled",
       "kind" : "order",
-      "line" : 39
+      "line" : 42
     },
     {
       "adjective" : "high value",
       "function" : "meridianDef_Order_highValue",
       "kind" : "order",
-      "line" : 45
+      "line" : 48
     },
     {
       "adjective" : "open",
       "function" : "meridianDef_Order_open",
       "kind" : "order",
-      "line" : 37
+      "line" : 40
     },
     {
       "adjective" : "released",
       "function" : "meridianDef_Order_released",
       "kind" : "order",
-      "line" : 40
+      "line" : 43
     },
     {
       "adjective" : "short",
       "function" : "meridianDef_Product_short",
       "kind" : "product",
-      "line" : 43
+      "line" : 46
     },
     {
       "adjective" : "pending",
       "function" : "meridianDef_PurchaseOrder_pending",
       "kind" : "purchase order",
-      "line" : 44
+      "line" : 47
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 53,
+      "line" : 56,
       "name" : "collection",
       "right_cardinality" : "one",
       "right_kind" : "a payment",
@@ -104,7 +104,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an invoice",
-      "line" : 57,
+      "line" : 60,
       "name" : "escalation",
       "right_cardinality" : "one",
       "right_kind" : "a dunning notice",
@@ -114,7 +114,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 49,
+      "line" : 52,
       "name" : "fulfillment",
       "right_cardinality" : "one",
       "right_kind" : "a shipment",
@@ -124,7 +124,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "an order",
-      "line" : 51,
+      "line" : 54,
       "name" : "invoicing",
       "right_cardinality" : "one",
       "right_kind" : "an invoice",
@@ -134,7 +134,7 @@
       "backing" : "tool",
       "left_cardinality" : "one",
       "left_kind" : "a product",
-      "line" : 55,
+      "line" : 58,
       "name" : "replenishment",
       "right_cardinality" : "one",
       "right_kind" : "a purchase order",
@@ -214,35 +214,35 @@
   "meridian_verbs" : [
     {
       "base" : "collect",
-      "line" : 62,
+      "line" : 65,
       "past_participle" : "collected",
       "relation" : "collection",
       "third_person" : "collects"
     },
     {
       "base" : "escalate",
-      "line" : 64,
+      "line" : 67,
       "past_participle" : "escalated",
       "relation" : "escalation",
       "third_person" : "escalates"
     },
     {
       "base" : "fulfill",
-      "line" : 60,
+      "line" : 63,
       "past_participle" : "fulfilled",
       "relation" : "fulfillment",
       "third_person" : "fulfills"
     },
     {
       "base" : "invoice",
-      "line" : 61,
+      "line" : 64,
       "past_participle" : "invoiced",
       "relation" : "invoicing",
       "third_person" : "invoices"
     },
     {
       "base" : "replenish",
-      "line" : 63,
+      "line" : 66,
       "past_participle" : "replenished",
       "relation" : "replenishment",
       "third_person" : "replenishes"
@@ -255,31 +255,31 @@
   "source_map" : [
     {
       "meridian_line" : 16,
-      "swift_line" : 555
+      "swift_line" : 578
     },
     {
       "meridian_line" : 17,
-      "swift_line" : 567
+      "swift_line" : 592
     },
     {
       "meridian_line" : 18,
-      "swift_line" : 572
+      "swift_line" : 597
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 611
+      "swift_line" : 665
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 616
+      "swift_line" : 670
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 656
+      "swift_line" : 739
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 661
+      "swift_line" : 744
     }
   ],
   "tools_used" : [
@@ -291,7 +291,14 @@
       "parameters" : [
 
       ],
+      "skill_name" : "receive shipment",
+      "skill_version_hash" : "cb9b07a8b1b66426371e9734b1aa807131ce68f6d60427c5673f2fedbe6dc799",
       "source_name" : "receive shipment",
+      "step_paths" : [
+        "\/ReceiveShipment\/workflow\/procedure\/8600e4b2a6c7ab3066aa8db7faba8faede862fff9dee1ec354cf2c6b6db68de9",
+        "\/ReceiveShipment\/workflow\/procedure\/a6136c730bee3a679d4bd8594ff1ff5c2261f77f7bfc9a2e5cf842a1e5dba028",
+        "\/ReceiveShipment\/workflow\/procedure\/f5cd686af0fe56a7747965147b7194f3e696d9b1554edab6bb0318a0188a68bd"
+      ],
       "swift_struct" : "ReceiveShipment"
     },
     {
@@ -299,7 +306,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "receive shipment",
+      "skill_version_hash" : "cb9b07a8b1b66426371e9734b1aa807131ce68f6d60427c5673f2fedbe6dc799",
       "source_name" : "when receiveInboundShipment fires",
+      "step_paths" : [
+        "\/WhenReceiveinboundshipmentFires\/root\/procedure\/493233c1b51a17bf581620693e8e87edaf9cb3ed306154149e576478530e7438",
+        "\/WhenReceiveinboundshipmentFires\/root\/procedure\/a62f0d51c05000a49eabacfd7ecaa6bca3b9ffdaa85c67cb893d7818fe3801df"
+      ],
       "swift_struct" : "WhenReceiveinboundshipmentFires"
     },
     {
@@ -307,7 +320,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "receive shipment",
+      "skill_version_hash" : "cb9b07a8b1b66426371e9734b1aa807131ce68f6d60427c5673f2fedbe6dc799",
       "source_name" : "when shipmentReceived fires",
+      "step_paths" : [
+        "\/WhenShipmentreceivedFires\/root\/procedure\/71b0508a621e89ff6284efe19c6765b8316d5889abddc7664286e6b0451e7225",
+        "\/WhenShipmentreceivedFires\/root\/procedure\/9482fee283205773ba1629e0d4ac0de61267179457df67e37b957b336544aa43"
+      ],
       "swift_struct" : "WhenShipmentreceivedFires"
     }
   ]

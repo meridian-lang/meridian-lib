@@ -36,6 +36,12 @@ public struct ASTToIR {
     public let engine: DiagnosticEngine?
     private let maxInlineDepth = 8
 
+    /// Throw a lowering error for `DiagnosticEngine.recovering` to collect — do
+    /// not pre-report: `recovering` calls `collect` on the thrown payload.
+    private func throwLoweringError(_ diagnostic: Diagnostic) throws -> Never {
+        throw CompilerError.diagnostics([diagnostic])
+    }
+
     public init(symbols: SymbolTable, sourceFile: String = "", trace: ParserTrace = .shared,
                 lexicon: EnglishLexicon = .default,
                 fallbackPolicy: FallbackPolicy = .strict,
@@ -61,13 +67,18 @@ public struct ASTToIR {
     /// source-range plumbing; only `text`, `dispatchMode`, and `autonomy` vary
     /// — `dispatchMode` selects which of the two split IR primitives is built.
     private func makeAIPrimitive(text: String, dispatchMode: ProseDispatchMode, autonomy: AutonomyConfigIR?, line: Int, guidance: String? = nil) -> IRPrimitive {
+        // `outputKind` is the SEM-4-04 declared-output-kind witness. No
+        // surface syntax declares a single-value judgment output yet, so
+        // every judgment/autonomy primitive lowers to the honest structural
+        // default: `"record"` (a `[String: Value]` of named action bindings).
         switch dispatchMode {
         case .planThenExecute:
             return .aiJudgment(AIJudgmentIR(
                 text: text,
                 scopedTools: effectiveScopedTools,
                 sourceRange: sourceRange(line),
-                guidance: guidance
+                guidance: guidance,
+                outputKind: "record"
             ))
         case .autonomousLoop:
             return .aiAutonomy(AIAutonomyIR(
@@ -75,7 +86,8 @@ public struct ASTToIR {
                 scopedTools: effectiveScopedTools,
                 autonomy: autonomy ?? AutonomyConfigIR(),
                 sourceRange: sourceRange(line),
-                guidance: guidance
+                guidance: guidance,
+                outputKind: "record"
             ))
         }
     }
@@ -230,6 +242,13 @@ public struct ASTToIR {
         return workflows
     }
 
+    /// Lower a standalone expression through the compiler's normal AST -> IR
+    /// path. This is for authoring/debugging tools that need the real lowered
+    /// semantics for one condition without inventing a second lowering path.
+    public func lowerExpression(_ expression: ExpressionAST, scope: Set<String>? = nil, line: Int = 1) throws -> IRExpression {
+        try lowerExpr(expression, scope: scope, line: line)
+    }
+
     // MARK: - Tool-ID validation (Pillar 6)
 
     private func reportFallbackWarning(
@@ -375,6 +394,9 @@ public struct ASTToIR {
         // names. Names are normalized via `scopeKey` so camelCase / spacing
         // differences between params, binds, and lowered hole identifiers match.
         let initialScope = Set(parameters.map { scopeKey($0.name) })
+        // Enforce the compound note form's declared/text contract before lowering
+        // (INFORM7 §2.9): undeclared → MER-REF-004, non-text → MER-TYP-001.
+        try validateNoteTargets(in: ast.body, declared: initialScope, textDeclared: [])
         let body = try lowerBlock(
             ast.body,
             mode: mode,
@@ -494,20 +516,20 @@ public struct ASTToIR {
         func check(_ e: ExpressionAST?) throws {
             guard let e, let found = firstMalformed(e) else { return }
             let diag = Diagnostic.structural(
-                .malformedCondition,
+                found.code,
                 message: found.message,
                 range: sourceRange(stmt.sourceLine),
-                help: "Rewrite the condition using explicit grouping (`either … or …`, parentheses via sub-clauses) or fix the quantifier/description shape.",
+                help: found.help ?? "Rewrite the condition using explicit grouping (`either … or …`, parentheses via sub-clauses) or fix the quantifier/description shape.",
                 suggestions: found.suggestion.map { [$0] } ?? [])
-            if let engine { engine.report(diag) }
-            throw CompilerError.diagnostics([diag])
+            try throwLoweringError(diag)
         }
         switch stmt {
         case .bind(let s):        try check(s.value)
         case .rebind(let s):      try check(s.value)
         case .emit(let s):        for (_, v) in s.payload { try check(v) }
         case .assertStmt(let s):  try check(s.condition)
-        case .conditional(let s): try check(s.condition)
+        case .conditional(let s):
+            try check(s.condition)
         case .matchBranch(let s):
             try check(s.subject)
             for branchCase in s.cases {
@@ -539,10 +561,10 @@ public struct ASTToIR {
     /// Depth-first search for the first `.malformed` carrier anywhere inside an
     /// expression tree. Returns its diagnostic message plus any structured
     /// "did you mean" suggestion it carries, or `nil` when clean.
-    private func firstMalformed(_ e: ExpressionAST) -> (message: String, suggestion: Suggestion?)? {
+    private func firstMalformed(_ e: ExpressionAST) -> (message: String, code: DiagnosticCode, help: String?, suggestion: Suggestion?)? {
         switch e {
-        case .malformed(let m, let suggestion):
-            return (m, suggestion)
+        case .malformed(let m, let code, let help, let suggestion):
+            return (m, code, help, suggestion)
         case .propertyAccess(let base, _):
             return firstMalformed(base)
         case .comparison(let l, _, let r):
@@ -587,12 +609,26 @@ public struct ASTToIR {
             return firstMalformedInDescription(d)
         case .superlative(let s):
             return firstMalformedInDescription(s.description)
+        case .eventPattern(let pattern):
+            return pattern.payloadPredicate.flatMap(firstMalformed)
+        case .traceTemporal(let temporal):
+            switch temporal.kind {
+            case .ever(let pattern),
+                 .withinWindow(let pattern, _),
+                 .countInWindow(let pattern, _, _),
+                 .inARow(let pattern, _):
+                return pattern.payloadPredicate.flatMap(firstMalformed)
+            case .sinceLast(let anchor, let holds):
+                return anchor.payloadPredicate.flatMap(firstMalformed) ?? firstMalformed(holds)
+            }
+        case .traceStatistical(let statistical):
+            return statistical.pattern.payloadPredicate.flatMap(firstMalformed)
         default:
             return nil
         }
     }
 
-    private func firstMalformedInDescription(_ d: DescriptionAST) -> (message: String, suggestion: Suggestion?)? {
+    private func firstMalformedInDescription(_ d: DescriptionAST) -> (message: String, code: DiagnosticCode, help: String?, suggestion: Suggestion?)? {
         if let wp = d.wherePredicate, let m = firstMalformed(wp) { return m }
         for c in d.verbClauses { if let m = firstMalformed(c.operand) { return m } }
         return nil
@@ -616,6 +652,9 @@ public struct ASTToIR {
 
         case .rebind(let s):
             return try lowerRebind(s, mode: mode, depth: depth, scope: scope)
+
+        case .note(let s):
+            return try lowerNote(s, scope: scope)
 
         case .emit(let s):
             let ir = EmitIR(
@@ -653,20 +692,61 @@ public struct ASTToIR {
 
         case .assertStmt(let s):
             let otherwise = try s.otherwise.map { try lowerBlock($0, mode: mode, depth: depth, scope: scope) }
+            let condition = try lowerExpr(s.condition, scope: scope, line: s.sourceLine)
+            if case .traceStatistical = condition, otherwise != nil {
+                let diag = Diagnostic.error(
+                    .malformedCondition,
+                    message: "statistical assertions cannot use an `otherwise` block",
+                    range: sourceRange(s.sourceLine),
+                    help: "Use a non-monitored statistical branch for point-in-time fallback logic, or remove the `otherwise` block from the monitored assertion."
+                )
+                try throwLoweringError(diag)
+            }
+            let monitor = try monitoredAssertConfig(for: condition, line: s.sourceLine)
+            if assertNeedsExplicitDefaultPolicy(
+                condition: condition,
+                otherwise: otherwise,
+                monitored: monitor.monitored,
+                blocking: monitor.blocking
+            ) {
+                let diag = Diagnostic.error(
+                    .traceMissingUnknownArm,
+                    message: "blocking assert over a possibly-indeterminate `since the last` condition needs an explicit unknown/default policy",
+                    range: sourceRange(s.sourceLine),
+                    help: "Add an `otherwise:` block at this assert site so the missing-anchor / indeterminate case has an explicit default policy."
+                )
+                try throwLoweringError(diag)
+            }
             return [.assert(AssertIR(
-                condition: try lowerExpr(s.condition, scope: scope, line: s.sourceLine),
+                condition: condition,
                 message: s.message,
                 otherwiseAction: otherwise,
+                monitored: monitor.monitored,
+                cadence: monitor.cadence,
+                blocking: monitor.blocking,
                 sourceRange: sourceRange(s.sourceLine)
             ))]
 
         case .conditional(let s):
             let thenBlock = try lowerBlock(s.thenBlock, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: scope)
+            let unknownBlock = try s.unknownBlock.map { try lowerBlock($0, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: scope) }
             let elseBlock = try s.elseBlock.map { try lowerBlock($0, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig, scope: scope) }
             let condExpr  = try lowerExpr(s.condition, scope: scope, line: s.sourceLine)
+            if unknownBlock == nil,
+               elseBlock == nil,
+               IndeterminateAnalysis(symbols: symbols).possiblyIndeterminate(condExpr) {
+                let diag = Diagnostic.error(
+                    .traceMissingUnknownArm,
+                    message: "possibly-indeterminate decision needs an `if it is unknown whether` or `otherwise` arm",
+                    range: sourceRange(s.sourceLine),
+                    help: "Add an explicit unknown arm for indeterminate results, or add an `otherwise` arm that should handle both false and indeterminate."
+                )
+                try throwLoweringError(diag)
+            }
             return [.branch(BranchIR(
                 condition: .predicate(condExpr),
                 thenBlock: thenBlock,
+                unknownBlock: unknownBlock,
                 elseBlock: elseBlock,
                 sourceRange: sourceRange(s.sourceLine)
             ))]
@@ -876,6 +956,134 @@ public struct ASTToIR {
         }
         let (prelude, value) = try lowerBindValue(s.value, scope: scope, line: s.sourceLine)
         return prelude + [.bind(BindIR(name: bindName, expression: value, isRebind: true, sourceRange: sourceRange(s.sourceLine)))]
+    }
+
+    /// INFORM7 §2.9 compound note form. `proceed, and note "<text>" in the
+    /// <binding>` desugars to a `rebind` that appends the note text to the
+    /// (already-declared, text-typed) binding via an interpolated string — no
+    /// new IR primitive. The declared/text contract is enforced ahead of
+    /// lowering by `validateNoteTargets` (MER-REF-004 / MER-TYP-001), so this
+    /// only performs the deterministic append. The appended expression shape
+    /// (`{{ binding }}<text>` where the interpolation references the same
+    /// binding) is exactly what the Verbalizer recognizes to reprint the
+    /// canonical note surface.
+    private func lowerNote(_ s: NoteStatementAST, scope: Set<String>? = nil) throws -> [IRPrimitive] {
+        let bindName = camelCase(s.binding)
+        let appended: IRExpression = .interpolatedString([
+            .expression(.identifierRef(name: bindName)),
+            .literal(s.text),
+        ])
+        return [.bind(BindIR(name: bindName, expression: appended, isRebind: true, sourceRange: sourceRange(s.sourceLine)))]
+    }
+
+    /// Enforce the compound note form's "already declared + text-typed" contract
+    /// over a workflow body before lowering. Walks the AST in statement order
+    /// tracking which bindings are declared and which of those are text-typed;
+    /// block-bearing statements recurse with a scoped copy so sibling branches
+    /// do not leak. Undeclared targets raise MER-REF-004; non-text targets raise
+    /// MER-TYP-001.
+    func validateNoteTargets(in block: ASTBlock, declared: Set<String>, textDeclared: Set<String>) throws {
+        var declared = declared
+        var textDeclared = textDeclared
+        for stmt in block.statements {
+            try validateNoteStmt(stmt, declared: &declared, textDeclared: &textDeclared)
+        }
+    }
+
+    private func validateNoteStmt(_ stmt: StatementAST, declared: inout Set<String>, textDeclared: inout Set<String>) throws {
+        switch stmt {
+        case .note(let s):
+            try checkNoteTarget(s, declared: declared, textDeclared: textDeclared)
+        case .bind(let s):
+            recordNoteBinding(s.name, value: s.value, declared: &declared, textDeclared: &textDeclared)
+        case .rebind(let s):
+            recordNoteBinding(s.name, value: s.value, declared: &declared, textDeclared: &textDeclared)
+        case .conditional(let s):
+            try validateNoteTargets(in: s.thenBlock, declared: declared, textDeclared: textDeclared)
+            if let unknown = s.unknownBlock {
+                try validateNoteTargets(in: unknown, declared: declared, textDeclared: textDeclared)
+            }
+            if let elseBlock = s.elseBlock {
+                try validateNoteTargets(in: elseBlock, declared: declared, textDeclared: textDeclared)
+            }
+        case .matchBranch(let s):
+            for branchCase in s.cases {
+                try validateNoteTargets(in: branchCase.block, declared: declared, textDeclared: textDeclared)
+            }
+            if let otherwise = s.otherwiseBlock {
+                try validateNoteTargets(in: otherwise, declared: declared, textDeclared: textDeclared)
+            }
+        case .iteration(let s):
+            var bodyDeclared = declared
+            if case .forEach(let variable, _) = s.mode {
+                bodyDeclared.insert(scopeKey(variable))
+            }
+            try validateNoteTargets(in: s.body, declared: bodyDeclared, textDeclared: textDeclared)
+        case .simultaneously(let s):
+            for branch in s.branches {
+                try validateNoteTargets(in: branch, declared: declared, textDeclared: textDeclared)
+            }
+        case .recover(let s):
+            try validateNoteStmt(s.attached, declared: &declared, textDeclared: &textDeclared)
+            try validateNoteTargets(in: s.handler, declared: declared, textDeclared: textDeclared)
+        case .labelled(let s):
+            try validateNoteStmt(s.statement, declared: &declared, textDeclared: &textDeclared)
+        default:
+            break
+        }
+    }
+
+    private func recordNoteBinding(_ name: String, value: ExpressionAST,
+                                   declared: inout Set<String>, textDeclared: inout Set<String>) {
+        let key = scopeKey(name)
+        declared.insert(key)
+        if isTextValue(value) {
+            textDeclared.insert(key)
+        } else {
+            textDeclared.remove(key)
+        }
+    }
+
+    private func checkNoteTarget(_ s: NoteStatementAST, declared: Set<String>, textDeclared: Set<String>) throws {
+        let key = scopeKey(s.binding)
+        if !declared.contains(key) {
+            let diag = Diagnostic.structural(
+                .noteBindingUndeclared,
+                message: "note target binding `\(s.binding)` is not declared in scope",
+                range: sourceRange(s.sourceLine),
+                help: "Declare it first with a text bind — e.g. `let the \(s.binding) be \"\".` — before `proceed, and note \"…\" in the \(s.binding)`."
+            )
+            try throwLoweringError(diag)
+        }
+        if !textDeclared.contains(key) {
+            let diag = Diagnostic.structural(
+                .noteBindingNonText,
+                message: "note target binding `\(s.binding)` is not a text binding",
+                range: sourceRange(s.sourceLine),
+                help: "`proceed, and note \"…\"` appends text; note only into a binding first declared with a text value."
+            )
+            try throwLoweringError(diag)
+        }
+    }
+
+    /// Conservative text classifier for the compound note form's target check.
+    /// String / interpolated-string / template values are text; numeric,
+    /// boolean, money, list, record, aggregate, and quantified values are
+    /// unambiguously non-text. Everything else (tool results, property access,
+    /// relation navigation, descriptions) is treated permissively as text so the
+    /// note form never false-rejects a legitimately textual binding whose type
+    /// Meridian does not statically track.
+    private func isTextValue(_ expr: ExpressionAST) -> Bool {
+        switch expr {
+        case .literal(.string), .interpolatedString:
+            return true
+        case .literal(.integer), .literal(.double), .literal(.boolean), .literal(.money):
+            return false
+        case .recordList, .quantified, .aggregate:
+            return false
+        default:
+            return true
+        }
     }
 
     /// 3C: lower a bind right-hand side, hoisting a tool-backed relation fetch
@@ -1224,6 +1432,7 @@ public struct ASTToIR {
         let inlined = try inlinePhrase(
             phrase,
             args: args,
+            invocationLine: s.sourceLine,
             mode: mode,
             depth: depth + 1,
             defaultParam: defaultParam,
@@ -1258,7 +1467,7 @@ public struct ASTToIR {
             $0.methodName.caseInsensitiveCompare(toolID) == .orderedSame
         }) else { return false }
         let ret = tool.returnType.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        return !ret.isEmpty && !["void", "unit", "none"].contains(ret)
+        return !ret.isEmpty && !lexicon.grammar.merconfig.voidReturnTypeNames.contains(ret)
     }
 
     private func implicitBindName(from invocationWords: String) -> String? {
@@ -1288,6 +1497,7 @@ public struct ASTToIR {
     private func inlinePhrase(
         _ phrase: PhraseDefinition,
         args: [String: ExpressionAST],
+        invocationLine: Int,
         mode: ExecutionMode,
         depth: Int,
         defaultParam: (parameter: PhraseParameterAST, owningStructName: String)? = nil,
@@ -1296,8 +1506,110 @@ public struct ASTToIR {
     ) throws -> [IRPrimitive] {
         let token = trace.push(.phraseInline, "inline phrase @L\(phrase.sourceLine)")
         defer { trace.pop(token) }
-        let inlinedBlock = substituteArgs(phrase.body, args: args)
+        // Expanded primitives belong to the invocation site. Retaining the
+        // merconfig phrase-definition lines here makes source maps point at a
+        // different file and can assign stable step paths to an unrelated
+        // markdown section that happens to share the same line number.
+        let inlinedBlock = retargetSourceLines(
+            in: substituteArgs(phrase.body, args: args),
+            to: invocationLine
+        )
         return try lowerBlock(inlinedBlock, mode: mode, depth: depth, defaultParam: defaultParam, proseDispatchMode: proseDispatchMode, autonomyConfig: autonomyConfig).statements
+    }
+
+    private func retargetSourceLines(in block: ASTBlock, to line: Int) -> ASTBlock {
+        ASTBlock(
+            statements: block.statements.map { retargetSourceLines(in: $0, to: line) },
+            sourceLine: line
+        )
+    }
+
+    private func retargetSourceLines(in statement: StatementAST, to line: Int) -> StatementAST {
+        switch statement {
+        case .bind(let ast):
+            return .bind(BindStatementAST(name: ast.name, value: ast.value, sourceLine: line))
+        case .rebind(let ast):
+            return .rebind(RebindStatementAST(name: ast.name, value: ast.value, sourceLine: line))
+        case .note(let ast):
+            return .note(NoteStatementAST(binding: ast.binding, text: ast.text, sourceLine: line))
+        case .emit(let ast):
+            return .emit(EmitStatementAST(eventID: ast.eventID, payload: ast.payload, sourceLine: line))
+        case .assertStmt(let ast):
+            return .assertStmt(AssertStatementAST(
+                condition: ast.condition,
+                message: ast.message,
+                otherwise: ast.otherwise.map { retargetSourceLines(in: $0, to: line) },
+                sourceLine: line
+            ))
+        case .wait(let ast):
+            return .wait(WaitStatementAST(condition: ast.condition, sourceLine: line))
+        case .commit(let ast):
+            return .commit(CommitStatementAST(label: ast.label, sourceLine: line))
+        case .complete(let ast):
+            return .complete(CompleteStatementAST(reason: ast.reason, sourceLine: line))
+        case .conditional(let ast):
+            return .conditional(ConditionalStatementAST(
+                condition: ast.condition,
+                thenBlock: retargetSourceLines(in: ast.thenBlock, to: line),
+                unknownBlock: ast.unknownBlock.map { retargetSourceLines(in: $0, to: line) },
+                elseBlock: ast.elseBlock.map { retargetSourceLines(in: $0, to: line) },
+                sourceLine: line
+            ))
+        case .matchBranch(let ast):
+            return .matchBranch(MatchBranchStatementAST(
+                subject: ast.subject,
+                cases: ast.cases.map {
+                    MatchBranchCaseAST(
+                        pattern: $0.pattern,
+                        block: retargetSourceLines(in: $0.block, to: line)
+                    )
+                },
+                otherwiseBlock: ast.otherwiseBlock.map { retargetSourceLines(in: $0, to: line) },
+                sourceLine: line
+            ))
+        case .iteration(let ast):
+            return .iteration(IterationStatementAST(
+                mode: ast.mode,
+                body: retargetSourceLines(in: ast.body, to: line),
+                sourceLine: line,
+                refinement: ast.refinement
+            ))
+        case .simultaneously(let ast):
+            return .simultaneously(SimultaneouslyStatementAST(
+                branches: ast.branches.map { retargetSourceLines(in: $0, to: line) },
+                detached: ast.detached,
+                sourceLine: line
+            ))
+        case .recover(let ast):
+            return .recover(RecoverStatementAST(
+                pattern: ast.pattern,
+                handler: retargetSourceLines(in: ast.handler, to: line),
+                attached: retargetSourceLines(in: ast.attached, to: line),
+                sourceLine: line
+            ))
+        case .labelled(let ast):
+            return .labelled(LabelledStatementAST(
+                label: ast.label,
+                statement: retargetSourceLines(in: ast.statement, to: line),
+                sourceLine: line
+            ))
+        case .proseStep(let ast):
+            return .proseStep(ProseStepAST(
+                text: ast.text,
+                sourceLine: line,
+                dispatch: ast.dispatch,
+                autonomy: ast.autonomy,
+                guidance: ast.guidance
+            ))
+        case .modal:
+            return statement
+        case .phraseInvocation(let ast):
+            return .phraseInvocation(PhraseInvocationAST(
+                words: ast.words,
+                annotation: ast.annotation,
+                sourceLine: line
+            ))
+        }
     }
 
     /// Substitute phrase parameter names in an AST block with caller arguments.
@@ -1453,7 +1765,47 @@ public struct ASTToIR {
             return .recordList(fields: fields, rows: rows.map { $0.map { subExpr($0, args: args) } })
         case .tableLookup(let table, let keyColumn, let key, let valueColumn):
             return .tableLookup(table: table, keyColumn: keyColumn, key: subExpr(key, args: args), valueColumn: valueColumn)
+        case .eventPattern(let pattern):
+            return .eventPattern(subEventPattern(pattern, args: args))
+        case .traceTemporal(let temporal):
+            let kind: TraceTemporalKindAST
+            switch temporal.kind {
+            case .ever(let pattern):
+                kind = .ever(subEventPattern(pattern, args: args))
+            case .withinWindow(let pattern, let duration):
+                kind = .withinWindow(subEventPattern(pattern, args: args), duration: duration)
+            case .countInWindow(let pattern, let comparator, let duration):
+                kind = .countInWindow(subEventPattern(pattern, args: args), comparator: comparator, duration: duration)
+            case .inARow(let pattern, let count):
+                kind = .inARow(subEventPattern(pattern, args: args), count: count)
+            case .sinceLast(let anchor, let holds):
+                kind = .sinceLast(anchor: subEventPattern(anchor, args: args), holds: subExpr(holds, args: args))
+            }
+            return .traceTemporal(TraceTemporalAST(scope: temporal.scope, kind: kind))
+        case .traceStatistical(let statistical):
+            return .traceStatistical(TraceStatisticalAST(
+                scope: statistical.scope,
+                pattern: TraceStatisticalPatternAST(
+                    subject: statistical.pattern.subject,
+                    payloadPredicate: statistical.pattern.payloadPredicate.map { subExpr($0, args: args) }
+                ),
+                outcome: statistical.outcome,
+                bound: statistical.bound,
+                denominator: statistical.denominator,
+                window: statistical.window,
+                monitorCadence: statistical.monitorCadence,
+                blocking: statistical.blocking
+            ))
         }
+    }
+
+    private func subEventPattern(_ pattern: EventPatternAST, args: [String: ExpressionAST]) -> EventPatternAST {
+        EventPatternAST(
+            subject: pattern.subject,
+            outcome: pattern.outcome,
+            payloadPredicate: pattern.payloadPredicate.map { subExpr($0, args: args) },
+            negated: pattern.negated
+        )
     }
 
     private func subInterpolationSegment(_ seg: InterpolationSegment, args: [String: ExpressionAST]) -> InterpolationSegment {
@@ -1518,15 +1870,14 @@ public struct ASTToIR {
     /// point at the right place.
     func lowerExpr(_ expr: ExpressionAST, scope: Set<String>? = nil, line: Int = 0) throws -> IRExpression {
         switch expr {
-        case .malformed(let message, let suggestion):
+        case .malformed(let message, let code, let help, let suggestion):
             let diag = Diagnostic.structural(
-                .malformedCondition,
+                code,
                 message: message,
                 range: sourceRange(line),
-                help: "Rewrite the condition using explicit grouping or fix the quantifier/description shape.",
+                help: help ?? "Rewrite the condition using explicit grouping or fix the quantifier/description shape.",
                 suggestions: suggestion.map { [$0] } ?? [])
-            if let engine { engine.report(diag) }
-            throw CompilerError.diagnostics([diag])
+            try throwLoweringError(diag)
         case .quantified(let q):
             return try lowerQuantifier(q, line: line)
         case .literal(let lit):
@@ -1610,6 +1961,12 @@ public struct ASTToIR {
             )
         case .verbPredicate(let subject, let verb, let object):
             return try lowerVerbPredicate(subject: subject, verbForm: verb, object: object, scope: scope, line: line)
+        case .eventPattern(let pattern):
+            return .eventPattern(try lowerEventPattern(pattern, scope: scope, line: line))
+        case .traceTemporal(let temporal):
+            return .traceTemporal(try lowerTraceTemporal(temporal, scope: scope, line: line))
+        case .traceStatistical(let statistical):
+            return .traceStatistical(try lowerTraceStatistical(statistical, scope: scope, line: line))
         case .relationTraversal, .description, .aggregate, .superlative:
             // Value position cannot host an `await` fetch, so a tool-backed
             // source is rejected inside the plan builders (bind it first);
@@ -1624,6 +1981,314 @@ public struct ASTToIR {
             }
             return rel.expr
         }
+    }
+
+    private func lowerEventPattern(_ pattern: EventPatternAST, scope: Set<String>?, line: Int) throws -> EventPatternIR {
+        let subject = try lowerEventSubject(pattern.subject, line: line)
+        let payloadPredicate = try pattern.payloadPredicate.map { try lowerExpr($0, scope: scope, line: line) }
+        if let payloadPredicate, let fieldName = payloadFieldName(payloadPredicate) {
+            try validatePayloadField(fieldName, subjectName: eventSubjectRawName(pattern.subject), line: line)
+        }
+        return EventPatternIR(
+            subject: subject,
+            outcome: EventPatternIR.OutcomeVerb(rawValue: pattern.outcome.rawValue) ?? .failed,
+            payloadPredicate: payloadPredicate,
+            negated: pattern.negated
+        )
+    }
+
+    /// MER-TMP-014/021: resolve an event-pattern subject, rejecting a
+    /// cross-skill-scoped step ([DECISION D4], SEM-4-03 — not yet supported)
+    /// and a step name that closely misspells a declared kind/tool name.
+    /// `.step`/`.named` names have no formal declaration surface today (a
+    /// step is free-form English, e.g. `the deploy step` with no `Step:
+    /// deploy` declaration anywhere) — this deliberately only rejects a
+    /// near-miss of something that IS declared (a real typo), never a
+    /// wholly novel, self-consistent step vocabulary, so existing skills that
+    /// never declare their step nouns as kinds/tools keep compiling.
+    private func lowerEventSubject(_ subject: EventPatternAST.Subject, line: Int) throws -> EventPatternIR.Subject {
+        switch subject {
+        case .step(let name):
+            let known = knownStepNames()
+            // A tight, fixed budget (not `Suggester.defaultBudget`'s
+            // length-scaled one): a real typo is usually a 1-2 character slip
+            // (`deply` -> `deploy`), while two *legitimately distinct* domain
+            // nouns sharing a stem (`access review` vs. the declared `access
+            // request`) can still land within the scaled default budget for
+            // longer strings. This check exists to catch typos of declared
+            // vocabulary, not to force every step noun to resemble one.
+            if !known.contains(name.lowercased()), let closest = Suggester().closest(name, among: known, budget: 2) {
+                let diag = Diagnostic.unresolved(
+                    .traceUnknownStep,
+                    target: name,
+                    among: known,
+                    range: sourceRange(line),
+                    noun: "trace step",
+                    help: "Declared step names in scope: \(known.sorted().joined(separator: ", ")). Did you mean `\(closest)`?"
+                )
+                try throwLoweringError(diag)
+            }
+            return .step(name)
+        case .named(let name):
+            return .named(name)
+        case .stepOfSkill(let step, let skill):
+            let diag = Diagnostic.structural(
+                .traceCrossSkillScope,
+                message: "the step `\(step)` is scoped to another skill (`\(skill)`); Meridian v1 trace queries can only reference the current skill's own trace",
+                range: sourceRange(line),
+                help: "Reference a step within the current skill instead — cross-skill trace scope is deferred ([DECISION D4])."
+            )
+            try throwLoweringError(diag)
+        }
+    }
+
+    private func eventSubjectRawName(_ subject: EventPatternAST.Subject) -> String {
+        switch subject {
+        case .step(let name): return name
+        case .named(let name): return name
+        case .stepOfSkill(let step, _): return step
+        }
+    }
+
+    /// The declared vocabulary a `.step` subject may name: every declared
+    /// kind, every declared tool ID, and every declared tool's dotted prefix
+    /// (`deploy.rollback` -> `deploy`).
+    private func knownStepNames() -> [String] {
+        var names = Set(symbols.kinds.keys.map { $0.lowercased() })
+        for toolID in symbols.tools.keys {
+            names.insert(toolID.lowercased())
+            if let dot = toolID.firstIndex(of: ".") {
+                names.insert(String(toolID[toolID.startIndex..<dot]).lowercased())
+            }
+        }
+        return names.sorted()
+    }
+
+    /// The declared payload schema for an event-pattern subject: a tool's
+    /// declared parameters (matched by full tool ID or dotted prefix) unioned
+    /// with a matching kind's declared properties. `nil` when the subject
+    /// resolves to neither (an undeclared step/named subject) — payload
+    /// fields on those are never checked, matching the leniency
+    /// `lowerEventSubject` already extends to the subject name itself.
+    private func knownPayloadFields(forSubjectNamed name: String) -> Set<String>? {
+        let lower = name.lowercased()
+        var fields: Set<String> = []
+        var matched = false
+        for (toolID, decl) in symbols.tools {
+            let prefix = toolID.firstIndex(of: ".").map { String(toolID[toolID.startIndex..<$0]) } ?? toolID
+            guard toolID.lowercased() == lower || prefix.lowercased() == lower else { continue }
+            fields.formUnion(decl.parameters.map { $0.name.lowercased() })
+            matched = true
+        }
+        if symbols.kinds[lower] != nil, let props = symbols.properties[lower] {
+            fields.formUnion(props.map { $0.name.lowercased() })
+            matched = true
+        }
+        return matched ? fields : nil
+    }
+
+    private func payloadFieldName(_ expr: IRExpression) -> String? {
+        switch expr {
+        case .comparison(let lhs, _, _):
+            return payloadFieldName(lhs)
+        case .identifierRef(let name):
+            return name
+        default:
+            return nil
+        }
+    }
+
+    private func validatePayloadField(_ field: String, subjectName: String, line: Int) throws {
+        guard let known = knownPayloadFields(forSubjectNamed: subjectName), !known.contains(field.lowercased()) else { return }
+        let diag = Diagnostic.unresolved(
+            .traceUnknownPayloadField,
+            target: field,
+            among: Array(known),
+            range: sourceRange(line),
+            noun: "trace payload field"
+        )
+        try throwLoweringError(diag)
+    }
+
+    private func lowerTraceTemporal(_ temporal: TraceTemporalAST, scope: Set<String>?, line: Int) throws -> TraceTemporalIR {
+        let scopeIR: TraceScope
+        switch temporal.scope {
+        case .currentRun:
+            scopeIR = .currentRun
+        case .acrossAllRuns:
+            scopeIR = .acrossAllRuns
+        }
+        let kind: TraceTemporalKind
+        switch temporal.kind {
+        case .ever(let pattern):
+            kind = .ever(try lowerEventPattern(pattern, scope: scope, line: line))
+        case .withinWindow(let pattern, let duration):
+            try checkWindowAgainstRetention(duration, line: line)
+            kind = .withinWindow(try lowerEventPattern(pattern, scope: scope, line: line), duration: durationSeconds(duration))
+        case .countInWindow(let pattern, let comparator, let duration):
+            try checkWindowAgainstRetention(duration, line: line)
+            let loweredComparator: TraceCountComparatorIR
+            switch comparator {
+            case .atLeast(let value): loweredComparator = .atLeast(value)
+            case .atMost(let value): loweredComparator = .atMost(value)
+            case .exactly(let value): loweredComparator = .exactly(value)
+            }
+            kind = .countInWindow(
+                try lowerEventPattern(pattern, scope: scope, line: line),
+                comparator: loweredComparator,
+                duration: durationSeconds(duration)
+            )
+        case .inARow(let pattern, let count):
+            kind = .inARow(try lowerEventPattern(pattern, scope: scope, line: line), count: count)
+        case .sinceLast(let anchor, let holds):
+            let loweredHolds = try lowerExpr(holds, scope: scope, line: line)
+            kind = .sinceLast(
+                anchor: try lowerEventPattern(anchor, scope: scope, line: line),
+                holds: loweredHolds,
+                holdsPattern: try resolveSinceHoldsPattern(loweredHolds, line: line)
+            )
+        }
+        return TraceTemporalIR(scope: scopeIR, kind: kind)
+    }
+
+    private func durationSeconds(_ duration: (Double, TimeUnitAST)) -> Duration {
+        Duration.seconds(Int64(duration.0 * Double(duration.1.inSeconds)))
+    }
+
+    /// SEM-4-06 / MER-TMP-011 (D1): a trace-temporal trailing window that exceeds
+    /// configured retention `ρ` is a compile error, never a silently narrower
+    /// query. Both durations are named. Retention defaults to 30 days when the
+    /// merconfig declares no `=== trace ===` retention (matching
+    /// `TraceIdentityPlanner`).
+    private func checkWindowAgainstRetention(_ window: (Double, TimeUnitAST), line: Int) throws {
+        let windowSeconds = window.0 * Double(window.1.inSeconds)
+        let retention = symbols.traceConfiguration.retention?.value ?? Duration.seconds(60 * 60 * 24 * 30)
+        let retentionSeconds = Double(retention.components.seconds)
+        guard windowSeconds > retentionSeconds else { return }
+        let diag = Diagnostic.error(
+            .traceWindowExceedsRetention,
+            message: "trace window `\(TraceDurationText.window(window))` exceeds configured trace retention `\(TraceDurationText.seconds(retentionSeconds))`",
+            range: sourceRange(line),
+            help: "Raise the `=== trace ===` retention to at least `\(TraceDurationText.window(window))`, or narrow the window to `\(TraceDurationText.seconds(retentionSeconds))` or less."
+        )
+        try throwLoweringError(diag)
+    }
+
+    /// Resolve a `since the last` held predicate to the event pattern the
+    /// runtime evaluates (`TraceTemporalKind.sinceLast.holdsPattern`):
+    ///   - an event pattern resolves to itself (the direct, runtime-evaluable form);
+    ///   - an adjective whose lowered body is itself an event pattern — or a
+    ///     `has ever` event query — resolves to that pattern;
+    ///   - anything else (a pure state predicate — a comparison, a `definitionPredicate`
+    ///     over a non-event body, etc.) is a compile error (MER-TMP-019). Meridian
+    ///     v1 has no state-history retention, so only event-pattern holds are
+    ///     evaluable over the trace. The authored `holds` expression is retained
+    ///     separately on the IR so the verbalizer can round-trip the surface.
+    private func resolveSinceHoldsPattern(_ holds: IRExpression, line: Int) throws -> EventPatternIR {
+        if case .eventPattern(let pattern) = holds { return pattern }
+        if case .definitionPredicate(let functionName, _) = holds,
+           let record = symbols.definitions.values.first(where: { $0.functionName == functionName }) {
+            let body = try lowerExpr(record.body)
+            if case .eventPattern(let pattern) = body { return pattern }
+            if case .traceTemporal(let temporal) = body, case .ever(let pattern) = temporal.kind {
+                return pattern
+            }
+        }
+        let diag = Diagnostic.structural(
+            .traceStateHistorySince,
+            message: "the predicate held after a `since the last` anchor is not an event pattern, so it cannot be checked over the trace",
+            range: sourceRange(line),
+            help: "The held predicate must reduce to a trace event pattern. Back it with an adjective whose body is a `has ever` event query — e.g. `Definition: a service is deploy-clean if the deploy step has ever succeeded.` then `if the service is deploy-clean since the last deploy step succeeded, …` — or drop the `since` form and guard the branch with an ordinary `otherwise`. Meridian v1 does not retain state history (INFORM7 §5.5 / §12, deferred), so a pure state predicate such as `the service is healthy since …` cannot be evaluated over the trace."
+        )
+        try throwLoweringError(diag)
+    }
+
+    private func lowerTraceStatistical(_ statistical: TraceStatisticalAST, scope: Set<String>?, line: Int) throws -> TraceStatisticalIR {
+        let scopeIR: TraceScope
+        switch statistical.scope {
+        case .currentRun:
+            scopeIR = .currentRun
+        case .acrossAllRuns:
+            scopeIR = .acrossAllRuns
+        }
+
+        let outcome: TraceStatisticalOutcomeIR
+        switch statistical.outcome {
+        case .succeeds:
+            outcome = .succeeds
+        case .fails:
+            outcome = .fails
+        }
+
+        let bound: TraceStatisticalBoundIR
+        switch statistical.bound {
+        case .atLeast(let ratio):
+            bound = .atLeast(ratio)
+        case .atMost(let ratio):
+            bound = .atMost(ratio)
+        case .usually:
+            bound = .atLeast(symbols.traceConfiguration.usuallyThreshold?.value ?? 0.9)
+        case .rarely:
+            bound = .atMost(symbols.traceConfiguration.rarelyThreshold?.value ?? 0.1)
+        }
+
+        let denominator: TraceStatisticalDenominatorIR
+        switch statistical.denominator {
+        case .runs:
+            denominator = .runs
+        case .occurrences:
+            denominator = .occurrences
+        }
+
+        let statisticalSubject = try lowerEventSubject(statistical.pattern.subject, line: line)
+        let statisticalPayloadPredicate = try statistical.pattern.payloadPredicate.map { try lowerExpr($0, scope: scope, line: line) }
+        if let statisticalPayloadPredicate, let fieldName = payloadFieldName(statisticalPayloadPredicate) {
+            try validatePayloadField(fieldName, subjectName: eventSubjectRawName(statistical.pattern.subject), line: line)
+        }
+        let pattern = TraceStatisticalPatternIR(
+            subject: statisticalSubject,
+            payloadPredicate: statisticalPayloadPredicate
+        )
+
+        let window = statistical.window.map {
+            Duration.seconds(Int64($0.0 * Double($0.1.inSeconds)))
+        }
+        let monitorCadence = statistical.monitorCadence.map {
+            Duration.seconds(Int64($0.0 * Double($0.1.inSeconds)))
+        }
+
+        return TraceStatisticalIR(
+            scope: scopeIR,
+            pattern: pattern,
+            outcome: outcome,
+            bound: bound,
+            denominator: denominator,
+            window: window,
+            monitorCadence: monitorCadence,
+            blocking: statistical.blocking
+        )
+    }
+
+    private func monitoredAssertConfig(
+        for condition: IRExpression,
+        line: Int
+    ) throws -> (monitored: Bool, cadence: Duration?, blocking: Bool) {
+        guard case .traceStatistical(let statistical) = condition else {
+            return (false, nil, false)
+        }
+        if let cadence = statistical.monitorCadence {
+            return (true, cadence, statistical.blocking)
+        }
+        if let defaultCadence = symbols.traceConfiguration.defaultMonitorCadence?.value {
+            return (true, defaultCadence, statistical.blocking)
+        }
+        let diag = Diagnostic.error(
+            .malformedCondition,
+            message: "statistical assertions need `checked every <duration>` or a `default monitor cadence` trace setting",
+            range: sourceRange(line),
+            help: "Add `, checked every 1 days` to the assertion or configure `default monitor cadence:` inside `=== trace ===`."
+        )
+        try throwLoweringError(diag)
     }
 
     private func lowerInterpolationSegments(_ segments: [InterpolationSegment], scope: Set<String>?, line: Int) throws -> [IRInterpolationSegment] {
@@ -1748,11 +2413,285 @@ public struct ASTToIR {
                 // Rewrite the body so bare property references resolve against
                 // the subject (the function parameter), mirroring loop-var
                 // qualification.
-                let qualified = qualifyToLoopVar(try lowerExpr(rec.body), loopVar: camelCase(rec.subjectVar))
+                let lowered = try lowerExpr(rec.body)
+                let qualified = qualifyToLoopVar(lowered, loopVar: camelCase(rec.subjectVar))
+                let finalBody: IRExpression
+                if containsTraceTemporal(qualified) {
+                    guard let keyProperty = symbols.keyProperty(of: rec.kind) else {
+                        let diag = Diagnostic.error(
+                            .traceUnkeyedDefinition,
+                            message: "trace-backed definition `\(rec.adjective)` on kind `\(rec.kind)` requires `\(rec.kind)` to declare a key property",
+                            range: sourceRange(rec.sourceLine),
+                            help: "Add `A \(rec.kind) is keyed by the <property>.` to the vocabulary before defining temporal or statistical adjectives on that kind."
+                        )
+                        try throwLoweringError(diag)
+                    }
+                    finalBody = attachSubjectKey(
+                        qualified,
+                        subjectVar: camelCase(rec.subjectVar),
+                        keyProperty: keyProperty
+                    )
+                } else {
+                    finalBody = qualified
+                }
                 return LoweredDefinition(functionName: rec.functionName,
                                          subjectVar: camelCase(rec.subjectVar),
-                                         body: qualified)
+                                         body: finalBody)
             }
+    }
+
+    private func containsTraceTemporal(_ expression: IRExpression) -> Bool {
+        switch expression {
+        case .traceTemporal, .traceStatistical:
+            return true
+        case .comparison(let lhs, _, let rhs):
+            return containsTraceTemporal(lhs) || containsTraceTemporal(rhs)
+        case .logical(_, let items):
+            return items.contains(where: containsTraceTemporal)
+        case .propertyAccess(let base, _):
+            return containsTraceTemporal(base)
+        case .relationTraversal(let base, _, let target):
+            return containsTraceTemporal(base) || target.map(containsTraceTemporal) == true
+        case .invocation(let invoke):
+            return invoke.arguments.contains { containsTraceTemporal($0.value) }
+        case .definitionPredicate(_, let subject):
+            return containsTraceTemporal(subject)
+        case .quantified(let quantifier):
+            return containsTraceTemporalInDescription(quantifier.description)
+                || quantifier.body.map(containsTraceTemporal) == true
+        case .description(let description):
+            return containsTraceTemporalInDescription(description)
+        case .aggregate(_, let description):
+            return containsTraceTemporalInDescription(description)
+        case .superlative(let superlative):
+            return containsTraceTemporalInDescription(superlative.description)
+        case .interpolatedString(let segments):
+            return segments.contains { segment in
+                switch segment {
+                case .literal:
+                    return false
+                case .expression(let expression),
+                     .shellEscapedExpression(let expression),
+                     .formatted(let expression, _):
+                    return containsTraceTemporal(expression)
+                case .conditional(let condition, let thenSegs, let elseSegs):
+                    return containsTraceTemporal(condition)
+                        || thenSegs.contains { _containsTraceTemporal($0) }
+                        || elseSegs.contains { _containsTraceTemporal($0) }
+                case .forEach(_, let collection, let body):
+                    return containsTraceTemporal(collection) || body.contains { _containsTraceTemporal($0) }
+                }
+            }
+        case .recordList(_, let rows):
+            return rows.flatMap { $0 }.contains(where: containsTraceTemporal)
+        case .tableLookup(_, _, let key, _):
+            return containsTraceTemporal(key)
+        case .eventPattern(let pattern):
+            return pattern.payloadPredicate.map(containsTraceTemporal) == true
+        default:
+            return false
+        }
+    }
+
+    private func assertNeedsExplicitDefaultPolicy(
+        condition: IRExpression,
+        otherwise: IRBlock?,
+        monitored: Bool,
+        blocking: Bool
+    ) -> Bool {
+        guard otherwise == nil else { return false }
+        let blockingSite = !monitored || blocking
+        guard blockingSite else { return false }
+        return containsDirectSinceLast(condition)
+    }
+
+    private func containsDirectSinceLast(_ expression: IRExpression) -> Bool {
+        switch expression {
+        case .traceTemporal(let temporal):
+            if case .sinceLast = temporal.kind {
+                return true
+            }
+            return false
+        case .comparison(let lhs, _, let rhs):
+            return containsDirectSinceLast(lhs) || containsDirectSinceLast(rhs)
+        case .logical(_, let items):
+            return items.contains(where: containsDirectSinceLast)
+        case .propertyAccess(let base, _):
+            return containsDirectSinceLast(base)
+        case .relationTraversal(let base, _, let target):
+            return containsDirectSinceLast(base) || target.map(containsDirectSinceLast) == true
+        case .invocation(let invoke):
+            return invoke.arguments.contains { containsDirectSinceLast($0.value) }
+        case .definitionPredicate(_, let subject):
+            return containsDirectSinceLast(subject)
+        case .quantified(let quantifier):
+            return containsDirectSinceLastInDescription(quantifier.description)
+                || quantifier.body.map(containsDirectSinceLast) == true
+        case .description(let description):
+            return containsDirectSinceLastInDescription(description)
+        case .aggregate(_, let description):
+            return containsDirectSinceLastInDescription(description)
+        case .superlative(let superlative):
+            return containsDirectSinceLastInDescription(superlative.description)
+        case .interpolatedString(let segments):
+            return segments.contains { containsDirectSinceLast($0) }
+        case .recordList(_, let rows):
+            return rows.flatMap { $0 }.contains(where: containsDirectSinceLast)
+        case .tableLookup(_, _, let key, _):
+            return containsDirectSinceLast(key)
+        case .eventPattern(let pattern):
+            return pattern.payloadPredicate.map(containsDirectSinceLast) == true
+        default:
+            return false
+        }
+    }
+
+    private func containsDirectSinceLast(_ segment: IRInterpolationSegment) -> Bool {
+        switch segment {
+        case .literal:
+            return false
+        case .expression(let expression),
+             .shellEscapedExpression(let expression),
+             .formatted(let expression, _):
+            return containsDirectSinceLast(expression)
+        case .conditional(let condition, let thenSegs, let elseSegs):
+            return containsDirectSinceLast(condition)
+                || thenSegs.contains { containsDirectSinceLast($0) }
+                || elseSegs.contains { containsDirectSinceLast($0) }
+        case .forEach(_, let collection, let body):
+            return containsDirectSinceLast(collection) || body.contains { containsDirectSinceLast($0) }
+        }
+    }
+
+    private func containsDirectSinceLastInDescription(_ description: DescriptionIR) -> Bool {
+        containsDirectSinceLast(description.collection)
+            || description.filters.contains(where: containsDirectSinceLast)
+    }
+
+    private func _containsTraceTemporal(_ segment: IRInterpolationSegment) -> Bool {
+        switch segment {
+        case .literal:
+            return false
+        case .expression(let expression),
+             .shellEscapedExpression(let expression),
+             .formatted(let expression, _):
+            return containsTraceTemporal(expression)
+        case .conditional(let condition, let thenSegs, let elseSegs):
+            return containsTraceTemporal(condition)
+                || thenSegs.contains { _containsTraceTemporal($0) }
+                || elseSegs.contains { _containsTraceTemporal($0) }
+        case .forEach(_, let collection, let body):
+            return containsTraceTemporal(collection) || body.contains { _containsTraceTemporal($0) }
+        }
+    }
+
+    private func containsTraceTemporalInDescription(_ description: DescriptionIR) -> Bool {
+        containsTraceTemporal(description.collection)
+            || description.filters.contains(where: containsTraceTemporal)
+    }
+
+    private func attachSubjectKey(_ expression: IRExpression, subjectVar: String, keyProperty: String) -> IRExpression {
+        let subjectKeyExpr = IRExpression.propertyAccess(.identifierRef(name: subjectVar), propertyName: keyProperty)
+        switch expression {
+        case .traceTemporal(let temporal):
+            return .traceTemporal(TraceTemporalIR(
+                scope: temporal.scope,
+                kind: temporal.kind,
+                subjectKeyExpr: temporal.subjectKeyExpr ?? subjectKeyExpr
+            ))
+        case .traceStatistical(let statistical):
+            return .traceStatistical(TraceStatisticalIR(
+                scope: statistical.scope,
+                pattern: TraceStatisticalPatternIR(
+                    subject: statistical.pattern.subject,
+                    payloadPredicate: statistical.pattern.payloadPredicate.map {
+                        attachSubjectKey($0, subjectVar: subjectVar, keyProperty: keyProperty)
+                    }
+                ),
+                outcome: statistical.outcome,
+                bound: statistical.bound,
+                denominator: statistical.denominator,
+                window: statistical.window,
+                monitorCadence: statistical.monitorCadence,
+                blocking: statistical.blocking,
+                subjectKeyExpr: statistical.subjectKeyExpr ?? subjectKeyExpr
+            ))
+        case .comparison(let lhs, let op, let rhs):
+            return .comparison(
+                attachSubjectKey(lhs, subjectVar: subjectVar, keyProperty: keyProperty),
+                op,
+                attachSubjectKey(rhs, subjectVar: subjectVar, keyProperty: keyProperty)
+            )
+        case .logical(let op, let items):
+            return .logical(op, items.map { attachSubjectKey($0, subjectVar: subjectVar, keyProperty: keyProperty) })
+        case .propertyAccess(let base, let property):
+            return .propertyAccess(attachSubjectKey(base, subjectVar: subjectVar, keyProperty: keyProperty), propertyName: property)
+        case .relationTraversal(let base, let relation, let target):
+            return .relationTraversal(
+                attachSubjectKey(base, subjectVar: subjectVar, keyProperty: keyProperty),
+                relationName: relation,
+                target: target.map { attachSubjectKey($0, subjectVar: subjectVar, keyProperty: keyProperty) }
+            )
+        case .invocation(let invoke):
+            return .invocation(InvokeIR(
+                toolID: invoke.toolID,
+                arguments: invoke.arguments.map {
+                    InvokeArg($0.key, attachSubjectKey($0.value, subjectVar: subjectVar, keyProperty: keyProperty))
+                },
+                resultBinding: invoke.resultBinding,
+                comment: invoke.comment,
+                sourceRange: invoke.sourceRange,
+                stableStepPath: invoke.stableStepPath
+            ))
+        case .definitionPredicate(let functionName, let subject):
+            return .definitionPredicate(
+                functionName: functionName,
+                subject: attachSubjectKey(subject, subjectVar: subjectVar, keyProperty: keyProperty)
+            )
+        case .quantified(let quantifier):
+            return .quantified(QuantifierIR(
+                kind: quantifier.kind,
+                description: DescriptionIR(
+                    collection: attachSubjectKey(quantifier.description.collection, subjectVar: subjectVar, keyProperty: keyProperty),
+                    elementVar: quantifier.description.elementVar,
+                    filters: quantifier.description.filters.map { attachSubjectKey($0, subjectVar: subjectVar, keyProperty: keyProperty) },
+                    sort: quantifier.description.sort,
+                    take: quantifier.description.take
+                ),
+                body: quantifier.body.map { attachSubjectKey($0, subjectVar: subjectVar, keyProperty: keyProperty) }
+            ))
+        case .description(let description):
+            return .description(DescriptionIR(
+                collection: attachSubjectKey(description.collection, subjectVar: subjectVar, keyProperty: keyProperty),
+                elementVar: description.elementVar,
+                filters: description.filters.map { attachSubjectKey($0, subjectVar: subjectVar, keyProperty: keyProperty) },
+                sort: description.sort,
+                take: description.take
+            ))
+        case .aggregate(let kind, let description):
+            return .aggregate(kind, DescriptionIR(
+                collection: attachSubjectKey(description.collection, subjectVar: subjectVar, keyProperty: keyProperty),
+                elementVar: description.elementVar,
+                filters: description.filters.map { attachSubjectKey($0, subjectVar: subjectVar, keyProperty: keyProperty) },
+                sort: description.sort,
+                take: description.take
+            ))
+        case .superlative(let superlative):
+            return .superlative(SuperlativeIR(
+                description: DescriptionIR(
+                    collection: attachSubjectKey(superlative.description.collection, subjectVar: subjectVar, keyProperty: keyProperty),
+                    elementVar: superlative.description.elementVar,
+                    filters: superlative.description.filters.map { attachSubjectKey($0, subjectVar: subjectVar, keyProperty: keyProperty) },
+                    sort: superlative.description.sort,
+                    take: superlative.description.take
+                ),
+                sortPath: superlative.sortPath,
+                ascending: superlative.ascending
+            ))
+        case .interpolatedString, .recordList, .tableLookup, .literal, .constantRef, .identifierRef,
+             .instanceRef, .envVar, .nowExpression, .eventPattern:
+            return expression
+        }
     }
 
     /// Type-check a definition body: any property access on the subject must name
@@ -1858,11 +2797,23 @@ public struct ASTToIR {
         // Camel-case the singular element so it matches `lowerExpr` identifier
         // keys (`vital signs` → `vitalSign`), not a spaced surface form that
         // later `qualifyToLoopVar` would mis-read as a distinct property.
-        let elementVar = camelCase(lexicon.singularize(noun.lowercased()))
+        let singularNoun = lexicon.singularize(noun.lowercased())
+        let elementVar = camelCase(singularNoun)
 
         // Source: a bound collection identifier, fetched once. Invocations are
         // rejected so the collection isn't re-evaluated per reducer.
-        let collection = try lowerExpr(.identifierRef(noun), line: line)
+        // Normalize to the plural collection name the author binds in scope —
+        // count quantifiers conventionally use a singular noun after the
+        // number (`at least 1 alert`, not `at least 1 alerts`), unlike
+        // `all`/`any`/`no`, which are already plural on the surface. Mirrors
+        // the same normalization `lowerDescriptionPlan` already applies.
+        // Pluralize the still-spaced singular noun (not the already-camelCased
+        // `elementVar`) and leave it spaced — `lowerExpr(.identifierRef)`
+        // camelCases identifier text itself by splitting on spaces, so
+        // pre-camelCasing here first would glue the words into one lowercase
+        // run (`vitalSign` → pluralize → `vitalsigns`, no space left to split
+        // on) that no longer matches the `vitalSigns` bind key.
+        let collection = try lowerExpr(.identifierRef(lexicon.pluralize(singularNoun)), line: line)
         if case .invocation = collection {
             throw semanticError(
                 "quantifier source must be a bound collection name (a parameter or earlier bind), not a tool call.",
@@ -2324,6 +3275,7 @@ public struct ASTToIR {
         switch stmt {
         case .bind: return "bind"
         case .rebind: return "rebind"
+        case .note: return "note"
         case .emit: return "emit"
         case .complete: return "complete"
         case .commit: return "commit"

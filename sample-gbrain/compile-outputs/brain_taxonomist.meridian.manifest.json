@@ -9,7 +9,7 @@
 
   ],
   "kinds_used" : [
-
+    "Input"
   ],
   "meridian_definitions" : [
     {
@@ -49,7 +49,7 @@
       "line" : 79
     }
   ],
-  "meridian_ir_version" : "1.0",
+  "meridian_ir_version" : "1.1",
   "meridian_relations" : [
     {
       "backing" : "property",
@@ -212,63 +212,69 @@
         "text" : "Periodic Drift Detection"
       },
       {
-        "kind" : "reference",
+        "kind" : "procedure",
         "level" : 3,
         "line" : 148,
         "text" : "Periodic Drift Detection — steps"
       },
       {
+        "kind" : "reference",
+        "level" : 3,
+        "line" : 158,
+        "text" : "Periodic Drift Detection — notes"
+      },
+      {
         "kind" : "template",
         "level" : 2,
-        "line" : 161,
+        "line" : 163,
         "text" : "Output Format"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 186,
+        "line" : 188,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 201,
+        "line" : 203,
         "text" : "Hard Rules"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 206,
+        "line" : 208,
         "text" : "Hard Rules — steps"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 210,
+        "line" : 212,
         "text" : "Hard Rules — steps 2"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 214,
+        "line" : 216,
         "text" : "Changelog"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 216,
+        "line" : 218,
         "text" : "v1.0.0 — gbrain v0.39.0.0"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 222,
+        "line" : 224,
         "text" : "v1.0.0 — gbrain v0.39.0.0 — steps"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 227,
+        "line" : 229,
         "text" : "v1.0.0 — gbrain v0.39.0.0 — steps 2"
       },
       {
@@ -286,7 +292,7 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 163,
+        "line" : 165,
         "text" : "Advisory"
       }
     ],
@@ -503,11 +509,19 @@
         "role" : "inert"
       },
       {
-        "executes" : false,
+        "executes" : true,
         "heading" : "Periodic Drift Detection — steps",
         "line" : 148,
         "lines" : [
-          "codeblock:bash:IyBXaGF0IHBhZ2VzIGhhdmUgbm8gdHlwZSBtYXRjaGluZyB0aGUgYWN0aXZlIHBhY2s\/CmdicmFpbiBzY2hlbWEgcmV2aWV3LW9ycGhhbnMgLS1qc29uCgojIFdoYXQncyB0aGUgb3ZlcmFsbCBoZWFsdGg\/CmdicmFpbiBkb2N0b3IgLS1qc29uIHwganEgJy5jaGVja3NbXSB8IHNlbGVjdCgubmFtZSA9PSAic2NoZW1hX3BhY2tfY29uc2lzdGVuY3kiKSc=",
+          "codeblock:bash:IyBXaGF0IHBhZ2VzIGhhdmUgbm8gdHlwZSBtYXRjaGluZyB0aGUgYWN0aXZlIHBhY2s\/CmdicmFpbiBzY2hlbWEgcmV2aWV3LW9ycGhhbnMgLS1qc29uCgojIFdoYXQncyB0aGUgb3ZlcmFsbCBoZWFsdGg\/CmdicmFpbiBkb2N0b3IgLS1qc29uIHwganEgJy5jaGVja3NbXSB8IHNlbGVjdCgubmFtZSA9PSAic2NoZW1hX3BhY2tfY29uc2lzdGVuY3kiKSc="
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : false,
+        "heading" : "Periodic Drift Detection — notes",
+        "line" : 158,
+        "lines" : [
           "When `schema_pack_consistency` warns at >10% untyped, run the EIIRP",
           "Phase 3 SCHEMA CHECK flow to surface candidate types via `schema detect`"
         ],
@@ -516,7 +530,7 @@
       {
         "executes" : false,
         "heading" : "Output Format",
-        "line" : 161,
+        "line" : 163,
         "lines" : [
           "Advisory: a single recommendation block plus a one-line reasoning trail",
           "codeblock:markdown:KipGaWxlIGF0OioqIGA8ZGlyZWN0b3J5Pi88c2x1Zz4ubWRgCioqUmVhc29uaW5nOioqCi0gUHJpbWFyeSBzdWJqZWN0OiA8cGVyc29ufGNvbXBhbnl8Y29uY2VwdHwuLi4+Ci0gTWF0Y2hlZCBwYWdlX3R5cGU6IDxuYW1lPiAocHJpbWl0aXZlOiA8ZW50aXR5fHRlbXBvcmFsfGNvbmNlcHR8bWVkaWF8YW5ub3RhdGlvbj4pCi0gQWN0aXZlIHBhY2s6IDxwYWNrLW5hbWU+IHY8dmVyc2lvbj4KLSBTb3VyY2U6IDxzb3VyY2VfaWQ+",
@@ -531,7 +545,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 186,
+        "line" : 188,
         "lines" : [
           "Every decision goes through",
           "`gbrain schema show --json`. v0.39+ broke the old hardcoded table on",
@@ -551,7 +565,7 @@
       {
         "executes" : false,
         "heading" : "Hard Rules",
-        "line" : 201,
+        "line" : 203,
         "lines" : [
           "**Per-source flag is first-class.** Pass `--source <id>` to every CLI",
           "call when working with a non-default source"
@@ -561,7 +575,7 @@
       {
         "executes" : false,
         "heading" : "Hard Rules — steps",
-        "line" : 206,
+        "line" : 208,
         "lines" : [
           "Never hardcode a directory table in this skill. Every decision goes through `gbrain schema show --json`. The active pack is canonical"
         ],
@@ -570,7 +584,7 @@
       {
         "executes" : false,
         "heading" : "Hard Rules — steps 2",
-        "line" : 210,
+        "line" : 212,
         "lines" : [
           "EIIRP's Phase 3 produces suggestions with confidence < 0.6 that brain-taxonomist must surface to the user rather than auto-apply. Don't silently promote a low-confidence schema delta"
         ],
@@ -579,7 +593,7 @@
       {
         "executes" : false,
         "heading" : "Changelog",
-        "line" : 214,
+        "line" : 216,
         "lines" : [
 
         ],
@@ -588,7 +602,7 @@
       {
         "executes" : false,
         "heading" : "v1.0.0 — gbrain v0.39.0.0",
-        "line" : 216,
+        "line" : 218,
         "lines" : [
           "Initial port from upstream OpenClaw. Genericized — no references to",
           "private fork names per CLAUDE.md privacy rules",
@@ -600,7 +614,7 @@
       {
         "executes" : true,
         "heading" : "v1.0.0 — gbrain v0.39.0.0 — steps",
-        "line" : 222,
+        "line" : 224,
         "lines" : [
           "Hardcoded directory table REMOVED. Every decision now reads the active",
           "schema pack via `gbrain schema show --json`. Single source of truth"
@@ -610,7 +624,7 @@
       {
         "executes" : true,
         "heading" : "v1.0.0 — gbrain v0.39.0.0 — steps 2",
-        "line" : 227,
+        "line" : 229,
         "lines" : [
           "`--source <id>` propagation documented for multi-brain users (Persona B)"
         ],
@@ -657,71 +671,71 @@
   "source_map" : [
     {
       "meridian_line" : 31,
-      "swift_line" : 602
+      "swift_line" : 625
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 641
+      "swift_line" : 694
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 646
+      "swift_line" : 699
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 685
+      "swift_line" : 767
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 690
+      "swift_line" : 772
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 729
+      "swift_line" : 840
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 734
+      "swift_line" : 845
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 773
+      "swift_line" : 913
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 918
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 817
+      "swift_line" : 986
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 822
+      "swift_line" : 991
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 861
+      "swift_line" : 1059
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 866
+      "swift_line" : 1064
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 905
+      "swift_line" : 1132
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 910
+      "swift_line" : 1137
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 949
+      "swift_line" : 1205
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 954
+      "swift_line" : 1210
     }
   ],
   "tools_used" : [
@@ -731,7 +745,7 @@
     {
       "judgment_steps" : [
         {
-          "guidance" : "**Gate function:** Before creating ANY new brain page, consult this skill to determine the correct filing path. This prevents misfiling at write time rather than cleaning up drift after the fact\nA user who runs `gbrain schema use gbrain-recommended` gets the full\nrecommended directory set (deal, meeting, concept, project, source,\ndaily, personal, civic, original, place, trip, conversation, writing,\nplus all gbrain-base types)\nA user who authored a custom pack via `gbrain schema init` + edit gets\nfiling recommendations based on THEIR taxonomy, not gbrain's defaults\nPer-source overrides (tier 3 in the 7-tier resolution chain) are honored\nwhen `--source <id>` is passed to brain-taxonomist\nIs the primary subject a NAMED PERSON? → person-typed directory\nIs the primary subject a NAMED ORGANIZATION? → company-typed directory\nIs it about a TIME-BOUNDED EVENT (meeting, deal, trip)? → temporal-typed directory\nIs it a REUSABLE MENTAL MODEL? → concept-typed directory\nIs it RAW MEDIA (article, video, book, PDF)? → media-typed directory\nIs it BULK SOURCE DATA? → source-typed directory\ncodeblock:bash:Z2JyYWluIHNjaGVtYSBzaG93IC0tanNvbiB8IGpxICcucGFnZV90eXBlc1tdIHwgc2VsZWN0KC5wcmltaXRpdmUgPT0gImVudGl0eSIpJw==\nkebab-case, descriptive\nno author name unless disambiguation is needed\nmatch the canonical path prefix exactly (no leading slash)\nPath follows the active pack's `page_types[].path_prefixes`\nSlug is kebab-case, descriptive\nFrontmatter includes `type:` matching one of the pack's `page_types[].name`\nCross-links to related pages are included\n`eiirp` — calls this skill as Phase 2 TAXONOMY for every output in its inventory\n`ingest` — article\/media ingestion consults brain-taxonomist for filing\n`repo-architecture` — delegates the filing decision to this skill\n`book-mirror` — after generating a mirror, files it via brain-taxonomist\nHardcoded directory table REMOVED. Every decision now reads the active\nschema pack via `gbrain schema show --json`. Single source of truth\n`--source <id>` propagation documented for multi-brain users (Persona B)",
+          "guidance" : "**Gate function:** Before creating ANY new brain page, consult this skill to determine the correct filing path. This prevents misfiling at write time rather than cleaning up drift after the fact\nA user who runs `gbrain schema use gbrain-recommended` gets the full\nrecommended directory set (deal, meeting, concept, project, source,\ndaily, personal, civic, original, place, trip, conversation, writing,\nplus all gbrain-base types)\nA user who authored a custom pack via `gbrain schema init` + edit gets\nfiling recommendations based on THEIR taxonomy, not gbrain's defaults\nPer-source overrides (tier 3 in the 7-tier resolution chain) are honored\nwhen `--source <id>` is passed to brain-taxonomist\nIs the primary subject a NAMED PERSON? → person-typed directory\nIs the primary subject a NAMED ORGANIZATION? → company-typed directory\nIs it about a TIME-BOUNDED EVENT (meeting, deal, trip)? → temporal-typed directory\nIs it a REUSABLE MENTAL MODEL? → concept-typed directory\nIs it RAW MEDIA (article, video, book, PDF)? → media-typed directory\nIs it BULK SOURCE DATA? → source-typed directory\ncodeblock:bash:Z2JyYWluIHNjaGVtYSBzaG93IC0tanNvbiB8IGpxICcucGFnZV90eXBlc1tdIHwgc2VsZWN0KC5wcmltaXRpdmUgPT0gImVudGl0eSIpJw==\nkebab-case, descriptive\nno author name unless disambiguation is needed\nmatch the canonical path prefix exactly (no leading slash)\nPath follows the active pack's `page_types[].path_prefixes`\nSlug is kebab-case, descriptive\nFrontmatter includes `type:` matching one of the pack's `page_types[].name`\nCross-links to related pages are included\n`eiirp` — calls this skill as Phase 2 TAXONOMY for every output in its inventory\n`ingest` — article\/media ingestion consults brain-taxonomist for filing\n`repo-architecture` — delegates the filing decision to this skill\n`book-mirror` — after generating a mirror, files it via brain-taxonomist\ncodeblock:bash:IyBXaGF0IHBhZ2VzIGhhdmUgbm8gdHlwZSBtYXRjaGluZyB0aGUgYWN0aXZlIHBhY2s\/CmdicmFpbiBzY2hlbWEgcmV2aWV3LW9ycGhhbnMgLS1qc29uCgojIFdoYXQncyB0aGUgb3ZlcmFsbCBoZWFsdGg\/CmdicmFpbiBkb2N0b3IgLS1qc29uIHwganEgJy5jaGVja3NbXSB8IHNlbGVjdCgubmFtZSA9PSAic2NoZW1hX3BhY2tfY29uc2lzdGVuY3kiKSc=\nHardcoded directory table REMOVED. Every decision now reads the active\nschema pack via `gbrain schema show --json`. Single source of truth\n`--source <id>` propagation documented for multi-brain users (Persona B)",
           "line" : 31,
           "scoped_tools" : [
             "assess.notability",
@@ -764,7 +778,12 @@
           "name" : "input"
         }
       ],
+      "skill_name" : "brain-taxonomist",
+      "skill_version_hash" : "4f65e22ae6afeb0fdf84ba462cb4314a7fce99abba7c21db5bc31d3588705ed1",
       "source_name" : "brain-taxonomist a input",
+      "step_paths" : [
+        "\/BrainTaxonomistInput\/purpose-steps\/procedure\/45ffc00b4ccc9b19d93f512a314e1b218299363e8c9a9a18b513c5d26c8b292f"
+      ],
       "swift_struct" : "BrainTaxonomistInput"
     },
     {
@@ -772,7 +791,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "brain-taxonomist",
+      "skill_version_hash" : "4f65e22ae6afeb0fdf84ba462cb4314a7fce99abba7c21db5bc31d3588705ed1",
       "source_name" : "when whereDoesThisBrainPage fires",
+      "step_paths" : [
+        "\/WhenWheredoesthisbrainpageFires\/root\/procedure\/c227bba716bad1b4f6fba9a3948ff2e6c050315a9ca6b00a0fae0000ee87a076",
+        "\/WhenWheredoesthisbrainpageFires\/root\/procedure\/efa20302bdab705be063b0bca63bae48f817e7910077fd514882018f4ee899b5"
+      ],
       "swift_struct" : "WhenWheredoesthisbrainpageFires"
     },
     {
@@ -780,7 +805,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "brain-taxonomist",
+      "skill_version_hash" : "4f65e22ae6afeb0fdf84ba462cb4314a7fce99abba7c21db5bc31d3588705ed1",
       "source_name" : "when fileThisInBrain fires",
+      "step_paths" : [
+        "\/WhenFilethisinbrainFires\/root\/procedure\/0825d5db9685e5fe0bed72978c64230e380f7bb6a6bc24f881633e9a2e210e40",
+        "\/WhenFilethisinbrainFires\/root\/procedure\/badbffd7d21f468898410aa73a6351ad216b6dddc4ecd4ecec1018c8f860567c"
+      ],
       "swift_struct" : "WhenFilethisinbrainFires"
     },
     {
@@ -788,7 +819,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "brain-taxonomist",
+      "skill_version_hash" : "4f65e22ae6afeb0fdf84ba462cb4314a7fce99abba7c21db5bc31d3588705ed1",
       "source_name" : "when brainTaxonomist fires",
+      "step_paths" : [
+        "\/WhenBraintaxonomistFires\/root\/procedure\/b66439ba007418252cf80626114463b2db12d1882078eb78772e96ef7bfe1aa2",
+        "\/WhenBraintaxonomistFires\/root\/procedure\/ebbabcc12d2aee9b20bb1b0e00c11070ff774304fe03f9f027404cdd916db183"
+      ],
       "swift_struct" : "WhenBraintaxonomistFires"
     },
     {
@@ -796,7 +833,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "brain-taxonomist",
+      "skill_version_hash" : "4f65e22ae6afeb0fdf84ba462cb4314a7fce99abba7c21db5bc31d3588705ed1",
       "source_name" : "when taxonomyCheck fires",
+      "step_paths" : [
+        "\/WhenTaxonomycheckFires\/root\/procedure\/1e28fcfef96931d96864a8fdae7997fd3d04a1cabe98b1dae38ebe90020ef3c3",
+        "\/WhenTaxonomycheckFires\/root\/procedure\/6355adca9ac7f6235fcb966aa63eed2d7ffdf02afd732a7b699c91d24d3cb8e6"
+      ],
       "swift_struct" : "WhenTaxonomycheckFires"
     },
     {
@@ -804,7 +847,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "brain-taxonomist",
+      "skill_version_hash" : "4f65e22ae6afeb0fdf84ba462cb4314a7fce99abba7c21db5bc31d3588705ed1",
       "source_name" : "when refileBrainPage fires",
+      "step_paths" : [
+        "\/WhenRefilebrainpageFires\/root\/procedure\/64c8744a91327848083f2c673aa0b96d68f05967597b183d2ea2e8c393e3d1b0",
+        "\/WhenRefilebrainpageFires\/root\/procedure\/fcdc36781abaf03d31ea1839baaca291b1487de55ca81d6630d8c3ece993864e"
+      ],
       "swift_struct" : "WhenRefilebrainpageFires"
     },
     {
@@ -812,7 +861,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "brain-taxonomist",
+      "skill_version_hash" : "4f65e22ae6afeb0fdf84ba462cb4314a7fce99abba7c21db5bc31d3588705ed1",
       "source_name" : "when createBrainPage fires",
+      "step_paths" : [
+        "\/WhenCreatebrainpageFires\/root\/procedure\/7c233242e724076e0f994d07ea6bbb133402cf951885980d6338dea899ced013",
+        "\/WhenCreatebrainpageFires\/root\/procedure\/806ddf45fd861570844cf815f5b727ff9b4526ab8b4ddf46e7c071fa07af85ad"
+      ],
       "swift_struct" : "WhenCreatebrainpageFires"
     },
     {
@@ -820,7 +875,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "brain-taxonomist",
+      "skill_version_hash" : "4f65e22ae6afeb0fdf84ba462cb4314a7fce99abba7c21db5bc31d3588705ed1",
       "source_name" : "when whichDirectoryDoesThisGo fires",
+      "step_paths" : [
+        "\/WhenWhichdirectorydoesthisgoFires\/root\/procedure\/007be87d6a0f814fa20da91126421f9fda726a1ee3a38abd227633e6383b780a",
+        "\/WhenWhichdirectorydoesthisgoFires\/root\/procedure\/de558aa14e1c30f5e38ba9ed8256412249553a250fa2a2b09ef82d479ada7dbf"
+      ],
       "swift_struct" : "WhenWhichdirectorydoesthisgoFires"
     },
     {
@@ -828,7 +889,13 @@
       "parameters" : [
 
       ],
+      "skill_name" : "brain-taxonomist",
+      "skill_version_hash" : "4f65e22ae6afeb0fdf84ba462cb4314a7fce99abba7c21db5bc31d3588705ed1",
       "source_name" : "when whichDirectoryDoesThisPage fires",
+      "step_paths" : [
+        "\/WhenWhichdirectorydoesthispageFires\/root\/procedure\/98c755a2d9a135aa1bf063e236f8b534280a28aa0b78affbc4b5b524b2aaee19",
+        "\/WhenWhichdirectorydoesthispageFires\/root\/procedure\/d87462e39c834ba1ef62c0ac2d6ec54f9e03bc4272616c23ca6234385fa68329"
+      ],
       "swift_struct" : "WhenWhichdirectorydoesthispageFires"
     }
   ]

@@ -36,7 +36,7 @@ public enum EventKind: String, Codable, Sendable {
 
 // MARK: - Event
 
-public struct Event: Sendable {
+public struct Event: Sendable, Codable {
     public let timestamp: Date
     public let runID: String
     public let sequence: Int
@@ -66,5 +66,42 @@ public struct Event: Sendable {
         self.sourceRange = sourceRange
         self.parentRunID = parentRunID
         self.parentSequence = parentSequence
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case timestamp
+        case runID
+        case sequence
+        case kind
+        case payload
+        case sourceRange
+        case parentRunID
+        case parentSequence
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(
+            timestamp: try container.decode(Date.self, forKey: .timestamp),
+            runID: try container.decode(String.self, forKey: .runID),
+            sequence: try container.decode(Int.self, forKey: .sequence),
+            kind: try container.decode(EventKind.self, forKey: .kind),
+            payload: try container.decode([String: AnyCodable].self, forKey: .payload).mapValues(\.value),
+            sourceRange: try container.decodeIfPresent(SourceRange.self, forKey: .sourceRange),
+            parentRunID: try container.decodeIfPresent(String.self, forKey: .parentRunID),
+            parentSequence: try container.decodeIfPresent(Int.self, forKey: .parentSequence)
+        )
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(timestamp, forKey: .timestamp)
+        try container.encode(runID, forKey: .runID)
+        try container.encode(sequence, forKey: .sequence)
+        try container.encode(kind, forKey: .kind)
+        try container.encode(payload.mapValues(AnyCodable.init), forKey: .payload)
+        try container.encodeIfPresent(sourceRange, forKey: .sourceRange)
+        try container.encodeIfPresent(parentRunID, forKey: .parentRunID)
+        try container.encodeIfPresent(parentSequence, forKey: .parentSequence)
     }
 }

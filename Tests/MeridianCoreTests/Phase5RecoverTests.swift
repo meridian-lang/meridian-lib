@@ -289,6 +289,45 @@ struct RecoverCodegenTests {
         #expect(out.contains("let _recoveredError where"))
         #expect(out.contains("isRetryable"))
     }
+
+    // 8B/E: `recover.engaged` instrumentation — the catch handler must emit
+    // the event before running the handler body, using the pattern's
+    // description and the recover's own stable step path.
+    @Test("recover.engaged is emitted at the top of the catch block")
+    func emitsRecoverEngaged() throws {
+        let ir = IRPrimitive.recover(RecoverIR(
+            pattern: .named("payment.declined"),
+            handler: IRBlock(statements: [.complete(CompleteIR(reason: "declined"))]),
+            attachedTo: IRBlock(statements: [.complete(CompleteIR(reason: "charged"))]),
+            stableStepPath: "/Test/root/recover"
+        ))
+        let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
+                            mode: .strict, sourceFile: "test.meridian")
+        let out = try emitter().emitFile(workflows: [wf])
+        #expect(out.contains("try await runtime.recordRecoverEngaged(pattern: \"payment.declined\", step: \"/Test/root/recover\")"),
+                Comment(rawValue: out))
+        // Must be inside the catch block, before the handler's own statements.
+        guard let catchRange = out.range(of: "} catch let _recoveredError"),
+              let engagedRange = out.range(of: "recordRecoverEngaged", range: catchRange.upperBound..<out.endIndex),
+              let handlerRange = out.range(of: "reason: \"declined\"", range: catchRange.upperBound..<out.endIndex) else {
+            Issue.record("expected catch/recordRecoverEngaged/handler in:\n\(out)")
+            return
+        }
+        #expect(engagedRange.lowerBound < handlerRange.lowerBound)
+    }
+
+    @Test("recover without an explicit stableStepPath falls back to a fixed step label")
+    func emitsRecoverEngagedFallbackStep() throws {
+        let ir = IRPrimitive.recover(RecoverIR(
+            pattern: .anyError,
+            handler: IRBlock(statements: [.complete(CompleteIR(reason: "err"))]),
+            attachedTo: IRBlock(statements: [.complete(CompleteIR(reason: "ok"))])
+        ))
+        let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
+                            mode: .strict, sourceFile: "test.meridian")
+        let out = try emitter().emitFile(workflows: [wf])
+        #expect(out.contains("try await runtime.recordRecoverEngaged(pattern: \"any\", step: \"recover\")"))
+    }
 }
 
 // MARK: - meridianMatches helper tests

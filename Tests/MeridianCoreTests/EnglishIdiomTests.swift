@@ -59,6 +59,36 @@ struct EnglishIdiomTests {
         }
     }
 
+    @Test("assert X otherwise: attaches the indented block as AssertStatementAST.otherwise")
+    func assertOtherwiseBlockHeader() throws {
+        let block = try parse("""
+        assert ci is passed otherwise:
+          complete with reason "fell back".
+        """)
+        guard case .assertStmt(let stmt) = block.statements.first else {
+            Issue.record("Expected assert"); return
+        }
+        if case .comparison = stmt.condition {} else {
+            Issue.record("Expected parsed condition, got \(stmt.condition)")
+        }
+        guard let otherwise = stmt.otherwise else {
+            Issue.record("Expected an attached otherwise block"); return
+        }
+        #expect(otherwise.statements.count == 1)
+        if case .complete = otherwise.statements.first {} else {
+            Issue.record("Expected complete in otherwise block")
+        }
+    }
+
+    @Test("bare `assert X.` (no otherwise:) still parses with no otherwise block")
+    func assertBareHasNoOtherwise() throws {
+        let block = try parse("assert ci is passed.")
+        guard case .assertStmt(let stmt) = block.statements.first else {
+            Issue.record("Expected assert"); return
+        }
+        #expect(stmt.otherwise == nil)
+    }
+
     @Test("try-if-it-fails becomes recover")
     func tryIfItFails() throws {
         let block = try parse("try complete; if it fails complete with reason \"failed\".")
