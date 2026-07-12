@@ -1,30 +1,45 @@
 # Meridian — Testing Guide
 
-Run the default suite from the repository root:
+Canonical reference for the three test workflows (also summarized in
+`AGENTS.md` §4).
 
-```bash
-swift test
-```
+## Three test workflows
 
-For a fast inner loop while iterating, skip the slow, real-external-process
-suites (see `MeridianSlowIntegrationTests` below):
+| Workflow | When | Command | Typical wall-clock |
+|---|---|---|---|
+| **Fast inner loop** | Iterating on in-process compiler/runtime/CLI parsing | `swift test --skip MeridianSlowIntegrationTests` | ~2 min |
+| **Full test gate** | Phase sign-off, codegen/corpus/migration, before merge | `swift test` | ~8–10 min |
+| **Coverage gate** | Substantive production changes | `scripts/coverage.swift --gate` | ~3 min on top of fast tests |
+
+Coverage has three separate flows of its own (fast `--gate`, rare
+`--full --gate`, occasional baseline regen) — see
+[`docs/coverage/README.md`](../docs/coverage/README.md) § Commands.
+
+### Fast inner loop
 
 ```bash
 swift test --skip MeridianSlowIntegrationTests
 ```
 
-The high-signal local gate for substantive production changes is:
+### Full test gate
 
 ```bash
 swift test
-MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1 MERIDIAN_CORPORA_TYPECHECK=1 swift test
 scripts/coverage.swift --gate
 ```
 
-Use `scripts/coverage.swift --full --gate` instead when the change touched a
-file whose reachable branches only `MeridianSlowIntegrationTests` exercises
-(`RuntimeExecutor`, `SwiftPMPackageRunner`, the CLI `run`/`test` commands) —
+Use `scripts/coverage.swift --full --gate` when the change touched a file whose
+reachable branches only `MeridianSlowIntegrationTests` exercises
+(`RuntimeExecutor`, `SwiftPMPackageRunner`, the CLI `run`/`test` commands,
+generated-Swift `swiftc -typecheck`, or process-level `meridian` E2E checks) —
 see [Code Coverage](#code-coverage) below.
+
+### Focused slow runs
+
+```bash
+swift test --filter GeneratedSwiftTypecheckSlowTests   # swiftc -typecheck only
+swift test --filter MeridianSlowIntegrationTests       # all slow suites
+```
 
 For `.meridian.test` spec files and the `meridian test` runner, see
 [`docs/09_MERIDIAN_TESTS.md`](../docs/09_MERIDIAN_TESTS.md).
@@ -50,20 +65,22 @@ dispatch helpers that can run deterministically in-process.
 
 `Tests/CorporaTests/` validates all six corpora under `corpora/` (`erp`,
 `procedures`, `incident`, `etl`, `governance`, `clinical`) for completeness,
-strict compile, generated Swift sanity, and optional generated-Swift typechecks
-when `MERIDIAN_CORPORA_TYPECHECK=1` is set.
+strict compile, and generated Swift sanity. The `swiftc -typecheck` gate lives
+in `MeridianSlowIntegrationTests`.
 
 `sample-gbrain/Tests/` is a separate SwiftPM test target for the gbrain corpus.
 It validates the shared vocabulary/rulebook, strict compile for every ported
-skill, migration behavior, generated Swift syntax guards, committed
-`compile-outputs/` freshness, and optional `swiftc -typecheck` via
-`MERIDIAN_GBRAIN_TYPECHECK=1`.
+skill, migration behavior, generated Swift syntax guards, and committed
+`compile-outputs/` freshness. The `swiftc -typecheck` gate lives in
+`MeridianSlowIntegrationTests`.
 
 `Tests/MeridianSlowIntegrationTests/` holds every suite that spawns a *live
 external process* — `RuntimeExecutor` and `SwiftPMPackageRunner` driving a real
-`swift build`/`swift run` through a temporary SwiftPM package, and the CLI
-`run`/`test` subcommands. These dominate wall-clock time (minutes, not
-seconds) versus the rest of the suite; kept separate so
+`swift build`/`swift run` through a temporary SwiftPM package, the CLI
+`run`/`test` subcommands, per-file `swiftc -typecheck` over generated Swift for
+goldens/corpora/gbrain, and process-level `meridian` binary E2E checks (DX
+fixtures, verbalizer pipelines, trace eval/verify). These dominate wall-clock
+time (minutes, not seconds) versus the rest of the suite; kept separate so
 `swift test --skip MeridianSlowIntegrationTests` gives a fast inner loop while
 plain `swift test` (used by the full gate and CI) still exercises them.
 
@@ -77,7 +94,7 @@ swift test --filter InertYieldCommandTests
 swift test --filter SectionRoleRulebookBehaviorTests
 swift test --filter ManifestEmitterCoverageTests
 swift test --filter SampleGbrainCodegenTests
-MERIDIAN_CORPORA_TYPECHECK=1 swift test --filter CorporaConformanceTests
+swift test --filter GeneratedSwiftTypecheckSlowTests
 ```
 
 Some tests intentionally shell out, mutate process environment, or build
@@ -98,8 +115,10 @@ Prefer behavioral tests with the narrowest surface that proves the invariant:
   branch clearly; use `Compiler` only when end-to-end wiring is the invariant.
 - For codegen, assert stable structural snippets, not whole generated files,
   unless the test is explicitly a freshness or golden-output check.
-- For generated Swift validity, use the opt-in typecheck gates rather than
-  treating `Compiler.compile` success as proof that Swift syntax is valid.
+- For generated Swift validity, add or extend
+  `Tests/MeridianSlowIntegrationTests/GeneratedSwiftTypecheckSlowTests.swift`
+  (or run `swift test --filter GeneratedSwiftTypecheckSlowTests`) — do not
+  treat `Compiler.compile` success as proof that Swift syntax is valid.
 - For trace behavior, use `ParserTrace.capturing(categories:)` and pass the
   captured trace explicitly; use `.silent()` when a test must ignore ambient
   `MERIDIAN_TRACE`.
@@ -135,7 +154,8 @@ By default `scripts/coverage.swift` runs `swift test --skip MeridianSlowIntegrat
 checks and would otherwise dominate the script's wall-clock time. Pass
 `--full` when you specifically need an accurate coverage reading that depends
 on that target, e.g. after editing `RuntimeExecutor`, `SwiftPMPackageRunner`,
-or the CLI `run`/`test` commands:
+the CLI `run`/`test` commands, generated-Swift `swiftc -typecheck`, or
+process-level `meridian` E2E checks:
 
 ```bash
 scripts/coverage.swift --full --gate
@@ -160,13 +180,12 @@ baseline and tighten or remove the matching floor. The detailed policy lives in
 
 Before signing off a phase:
 
-1. Run `swift test`.
-2. Run the generated-Swift typecheck gate relevant to the change, or the full
-   trio for broad work.
-3. Run `scripts/coverage.swift --gate` (add `--full` only if the phase touched
-   `RuntimeExecutor`, `SwiftPMPackageRunner`, or the CLI `run`/`test`
-   commands).
-4. Record decisions, blockers, confidence %, and residual risk in
+1. Run `swift test` (includes `MeridianSlowIntegrationTests` — typecheck,
+   SwiftPM run, and CLI E2E).
+2. Run `scripts/coverage.swift --gate` (add `--full` only if the phase touched
+   a file whose reachable branches only `MeridianSlowIntegrationTests`
+   exercises — see [Code Coverage](#code-coverage)).
+3. Record decisions, blockers, confidence %, and residual risk in
    `IMPLEMENTATION_LOG.md`. When looking up prior phase work, also search
    `.ai/implementation-log-archive/` (see its `README.md`).
-5. Pause for user sign-off before moving to the next phase.
+4. Pause for user sign-off before moving to the next phase.

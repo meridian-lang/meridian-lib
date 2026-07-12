@@ -2,7 +2,7 @@ import Testing
 @testable import MeridianCore
 import MeridianRuntime
 
-// MARK: - PART VII Composition Gallery (cookbook, MERIDIAN_SYNTAX_COOKBOOK.md)
+// MARK: - PART VII Composition Gallery (docs/cookbook/MERIDIAN_SYNTAX_COOKBOOK.md)
 //
 // "Every gallery line gets: a parse test, a verbalization round-trip test,
 // and (1, 2, 3, 7, 8) an evaluation test over a fixture trace." Line 6 is a

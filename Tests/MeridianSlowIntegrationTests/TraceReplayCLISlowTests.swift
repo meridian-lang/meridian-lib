@@ -2,14 +2,15 @@ import Foundation
 import Testing
 @testable import MeridianCLIKit
 @testable import MeridianRuntime
+import MeridianTestKit
 
-@Suite("CLI command — trace eval")
-struct TraceReplayCommandTests {
+@Suite("CLI command — trace eval (process)")
+struct TraceReplayCLISlowTests {
     @Test("trace eval JSON schema is stable")
     func jsonSchemaGolden() async throws {
         let fixture = try await makeTraceEvalFixture(singleRun: true)
-        let bin = try locateTraceReplayBinary()
-        let result = try runTraceReplayCLI(bin, [
+        let bin = try slowLocateMeridianBinary()
+        let result = try slowRunMeridian(bin, [
             "trace", "eval",
             fixture.fileURL.path,
             "the deploy step has ever failed",
@@ -37,7 +38,7 @@ struct TraceReplayCommandTests {
     @Test("trace-eval alias is byte-identical across repeated replays")
     func aliasDeterministic() async throws {
         let fixture = try await makeTraceEvalFixture(singleRun: true)
-        let bin = try locateTraceReplayBinary()
+        let bin = try slowLocateMeridianBinary()
         let args = [
             "trace-eval",
             fixture.fileURL.path,
@@ -46,8 +47,8 @@ struct TraceReplayCommandTests {
             "--format", "json"
         ]
 
-        let first = try runTraceReplayCLI(bin, args)
-        let second = try runTraceReplayCLI(bin, args)
+        let first = try slowRunMeridian(bin, args)
+        let second = try slowRunMeridian(bin, args)
 
         #expect(first.exitCode == 0, Comment(rawValue: first.stderr + first.stdout))
         #expect(second.exitCode == 0, Comment(rawValue: second.stderr + second.stdout))
@@ -57,8 +58,8 @@ struct TraceReplayCommandTests {
     @Test("trace eval rejects ambiguous current-run replay")
     func ambiguousRunFails() async throws {
         let fixture = try await makeTraceEvalFixture(singleRun: false)
-        let bin = try locateTraceReplayBinary()
-        let result = try runTraceReplayCLI(bin, [
+        let bin = try slowLocateMeridianBinary()
+        let result = try slowRunMeridian(bin, [
             "trace", "eval",
             fixture.fileURL.path,
             "the deploy step has ever failed",
@@ -71,8 +72,7 @@ struct TraceReplayCommandTests {
 
     @Test("8D trace eval replays a statistical expression across all runs")
     func statisticalExpressionReplay() async throws {
-        // Three runs of the deploy step: 2 succeed, 1 fails -- 2/3 = 0.667.
-        let dir = TempDir()
+        let dir = SlowTempDir(prefix: "meridian-trace-eval-stats")
         let fileURL = dir.url.appendingPathComponent("stats-trace.jsonl")
         let store = try JSONLTraceStore(fileURL: fileURL)
         let base = Date(timeIntervalSince1970: 1_719_792_000)
@@ -96,8 +96,8 @@ struct TraceReplayCommandTests {
         let merconfigURL = dir.url.appendingPathComponent("stats.merconfig")
         try "=== trace ===\nsample floor: 2\n".write(to: merconfigURL, atomically: true, encoding: .utf8)
 
-        let bin = try locateTraceReplayBinary()
-        let result = try runTraceReplayCLI(bin, [
+        let bin = try slowLocateMeridianBinary()
+        let result = try slowRunMeridian(bin, [
             "trace-eval",
             fileURL.path,
             "across all runs, the deploy step succeeds in at least 50% of runs",
@@ -112,16 +112,12 @@ struct TraceReplayCommandTests {
         #expect(result.stdout.contains("\"truth_value\" : \"true\""), Comment(rawValue: result.stdout))
     }
 
-    /// `runtimePayloadContains` translates a lowered `whose <field> is
-    /// <value>` payload predicate directly into the store's `payloadContains`
-    /// filter for both event and statistical replay patterns — confirms this
-    /// is live end-to-end through the CLI, not just reachable in principle.
     @Test("trace eval replays a whose-qualified event payload predicate")
     func payloadPredicateReplay() async throws {
         let fixture = try await makeTraceEvalFixture(singleRun: true)
-        let bin = try locateTraceReplayBinary()
+        let bin = try slowLocateMeridianBinary()
 
-        let matching = try runTraceReplayCLI(bin, [
+        let matching = try slowRunMeridian(bin, [
             "trace", "eval",
             fixture.fileURL.path,
             "the deploy step whose tool is \"deploy\" has ever failed",
@@ -132,7 +128,7 @@ struct TraceReplayCommandTests {
         #expect(matching.stdout.contains("\"truth_value\" : \"true\""), Comment(rawValue: matching.stdout))
         #expect(matching.stdout.contains("\"rec-1\""), Comment(rawValue: matching.stdout))
 
-        let nonMatching = try runTraceReplayCLI(bin, [
+        let nonMatching = try slowRunMeridian(bin, [
             "trace", "eval",
             fixture.fileURL.path,
             "the deploy step whose tool is \"rollback\" has ever failed",
@@ -144,71 +140,14 @@ struct TraceReplayCommandTests {
     }
 }
 
-@Suite("CLI command — bench-trace")
-struct BenchTraceCommandTests {
-    @Test("bench-trace JSON schema covers all measurement combinations")
-    func jsonSchema() async throws {
-        let report = try await BenchTraceRunner.run(sizes: [100, 1_000])
-        #expect(report.schemaVersion == 1)
-        #expect(report.measurements.count == 48)
-        #expect(report.measurements.contains {
-            $0.datasetSize == 100
-                && $0.store == "jsonl"
-                && $0.cacheState == "warm"
-                && $0.operatorFamily == "statistical_frequency"
-        })
-    }
-}
-
-private struct TraceReplayCLIProcessResult {
-    let exitCode: Int32
-    let stdout: String
-    let stderr: String
-}
-
 private struct TraceEvalFixture {
-    let dir: TempDir
+    let dir: SlowTempDir
     let fileURL: URL
     let instant: String
 }
 
-private func locateTraceReplayBinary() throws -> URL {
-    let proc = Process()
-    proc.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-    proc.arguments = ["swift", "build", "--product", "meridian", "--show-bin-path"]
-    proc.currentDirectoryURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let pipe = Pipe()
-    proc.standardOutput = pipe
-    proc.standardError = pipe
-    try proc.run()
-    proc.waitUntilExit()
-    let data = pipe.fileHandleForReading.readDataToEndOfFile()
-    let binPath = String(data: data, encoding: .utf8)?
-        .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-    #expect(proc.terminationStatus == 0, Comment(rawValue: "swift build --show-bin-path failed: \(binPath)"))
-    return URL(fileURLWithPath: binPath).appendingPathComponent("meridian")
-}
-
-private func runTraceReplayCLI(_ bin: URL, _ args: [String]) throws -> TraceReplayCLIProcessResult {
-    let proc = Process()
-    proc.executableURL = bin
-    proc.arguments = args
-    proc.currentDirectoryURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    let out = Pipe()
-    let err = Pipe()
-    proc.standardOutput = out
-    proc.standardError = err
-    try proc.run()
-    proc.waitUntilExit()
-    return TraceReplayCLIProcessResult(
-        exitCode: proc.terminationStatus,
-        stdout: String(data: out.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "",
-        stderr: String(data: err.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-    )
-}
-
 private func makeTraceEvalFixture(singleRun: Bool) async throws -> TraceEvalFixture {
-    let dir = TempDir()
+    let dir = SlowTempDir(prefix: "meridian-trace-eval")
     let fileURL = dir.url.appendingPathComponent("events.jsonl")
     let store = try JSONLTraceStore(fileURL: fileURL)
     let base = Date(timeIntervalSince1970: 1_719_792_000)

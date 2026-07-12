@@ -13,13 +13,10 @@ import MeridianRuntime
 // not have that variable set, so silent drift is impossible.
 //
 // Each sample is also fed to `swiftc -typecheck` (linking against the built
-// `MeridianRuntime` module) so a structural emitter regression that produces
-// uncompilable Swift fails loudly even when the byte diff alone might match.
-// The type-check pass is gated on `MERIDIAN_GOLDEN_TYPECHECK=1` because it
-// requires a working Swift toolchain and is significantly slower than the
-// compile-only path.
+// `MeridianRuntime` module) in `Tests/MeridianSlowIntegrationTests/
+// GeneratedSwiftTypecheckSlowTests.swift` so uncompilable Swift fails loudly.
 
-@Suite("SKILL corpus — golden Swift + type-check")
+@Suite("SKILL corpus — golden Swift")
 struct SkillCorpusGoldenTests {
 
     // MARK: - Repo navigation
@@ -211,104 +208,5 @@ struct SkillCorpusGoldenTests {
         let expected = try String(contentsOf: golden, encoding: .utf8)
         if actual == expected { return }
         Issue.record(.init(rawValue: reportFirstDiff(actual: actual, expected: expected)))
-    }
-
-    // MARK: - Type-check pass (opt-in via env var)
-
-    @Test("each golden type-checks against MeridianRuntime",
-          .enabled(if: ProcessInfo.processInfo.environment["MERIDIAN_GOLDEN_TYPECHECK"] != nil))
-    func typecheckAllGoldens() throws {
-        try ensureGoldensExist()
-
-        let runtimeArtifacts = try locateRuntimeArtifacts()
-        var failures: [String] = []
-        for sample in Self.samples {
-            let golden = goldenURL(for: sample)
-            guard FileManager.default.fileExists(atPath: golden.path) else { continue }
-            let result = runSwiftTypecheck(
-                file: golden,
-                artifacts: runtimeArtifacts
-            )
-            if !result.ok {
-                failures.append("\(sample): \(result.message)")
-            }
-        }
-        if !failures.isEmpty {
-            Issue.record(.init(rawValue: "type-check failures:\n" + failures.joined(separator: "\n\n")))
-        }
-    }
-
-    // MARK: - Type-check helpers
-
-    private struct RuntimeArtifacts {
-        let modulesDir: URL
-        let buildPath: URL
-    }
-
-    private func locateRuntimeArtifacts() throws -> RuntimeArtifacts {
-        // Use SwiftPM's `swift build --show-bin-path` to find the debug build
-        // directory; the runtime module's `.swiftmodule` lives under
-        // `<bin>/Modules` (or as part of the main artifacts).
-        let proc = Process()
-        proc.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        proc.arguments = ["swift", "build", "--show-bin-path"]
-        proc.currentDirectoryURL = packageRoot()
-        let pipe = Pipe()
-        proc.standardOutput = pipe
-        proc.standardError = pipe
-        try proc.run()
-        proc.waitUntilExit()
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let bin = String(data: data, encoding: .utf8)?
-            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        let buildPath = URL(fileURLWithPath: bin)
-        // SwiftPM lays out `.swiftmodule` files under `<bin>/Modules/`. Pass
-        // both that directory and the bin root to `-I` so the search picks up
-        // either the per-module subdirectory or any flat artefacts.
-        return RuntimeArtifacts(
-            modulesDir: buildPath.appendingPathComponent("Modules"),
-            buildPath: buildPath
-        )
-    }
-
-    private func runSwiftTypecheck(file: URL, artifacts: RuntimeArtifacts) -> (ok: Bool, message: String) {
-        let proc = Process()
-        proc.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        proc.arguments = [
-            "swiftc", "-typecheck",
-            "-I", artifacts.modulesDir.path,
-            "-I", artifacts.buildPath.path,
-            "-L", artifacts.buildPath.path,
-            "-lMeridianRuntime",
-            file.path,
-        ]
-        let pipe = Pipe()
-        proc.standardOutput = pipe
-        proc.standardError = pipe
-        do {
-            try proc.run()
-        } catch {
-            return (false, "failed to spawn swift: \(error)")
-        }
-        proc.waitUntilExit()
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: data, encoding: .utf8) ?? ""
-        if proc.terminationStatus == 0 { return (true, output) }
-        return (false, output)
-    }
-
-    private func ensureGoldensExist() throws {
-        for sample in Self.samples {
-            let g = goldenURL(for: sample)
-            if !FileManager.default.fileExists(atPath: g.path) {
-                throw CompilerError.diagnostics([
-                    Diagnostic.error(
-                        .internalError,
-                        message: "golden missing for \(sample); run with MERIDIAN_REGEN_GOLDENS=1",
-                        range: SourceRange(file: sample, line: 1, column: 1)
-                    )
-                ])
-            }
-        }
     }
 }

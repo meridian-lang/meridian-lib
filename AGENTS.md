@@ -93,9 +93,11 @@ let out = try Compiler(options: opts).compile(
   `clinical/` also carry a flat `rules/*.meridian` fixture (top-of-file
   Phase-8 rule sugar, retained as flat-path regression coverage alongside the
   in-section rule firing both corpora otherwise use).
-- `docs/` — numbered docs (`01_OVERVIEW` … `15_DECISIONS`, `coverage/`).
-- `meridian-handoff/docs/` — **read-only** original spec (blueprint, language,
-  IR, codegen, runtime API, build plan, decisions).
+- `docs/` — numbered docs (`01_OVERVIEW` … `19_TRACES_AND_TIME`, `coverage/`).
+- `docs/cookbook/` — **normative oracle** for Waves 7–8 (semantics, syntax
+  cookbook, north-star example, design risks, Inform-7 architecture notes).
+- `.ai/` — agent implementation prompts (`meridian-wave*.md`,
+  `meridian-cursor-master-prompt.md`, brainstorm archives).
 - `IMPLEMENTATION_LOG.md` — append-only decision log (recent entries only).
 - `.ai/implementation-log-archive/` — frozen older log snapshots + index
   (`README.md`). Search here when the active log does not cover the date/topic.
@@ -229,8 +231,9 @@ terminators.
 
 ### Spec documents
 
-`meridian-handoff/docs/` is read-only. The formal grammar, IR spec, and
-codegen spec live there. When the implementation diverges from the spec,
+Normative oracle docs for Waves 7–8 live in `docs/cookbook/` (semantics,
+syntax cookbook, north-star example, design risks). Agent implementation prompts
+live in `.ai/meridian-*.md`. When the implementation diverges from the oracle,
 document the divergence in `IMPLEMENTATION_LOG.md`.
 
 ---
@@ -247,31 +250,54 @@ After completing a phase:
 4. Record it in `IMPLEMENTATION_LOG.md` under `### Phase N confidence audit`.
 5. Ask the user to sign off before proceeding.
 
+### Three test workflows
+
+Pick the first row that applies; only run slower tiers when the change needs
+them. Full detail: [`Tests/README.md`](Tests/README.md).
+
+| Workflow | When | Command |
+|---|---|---|
+| **Fast inner loop** | Iterating on parser/lowering/codegen/runtime in-process | `swift test --skip MeridianSlowIntegrationTests` |
+| **Full test gate** | Phase sign-off, codegen/corpus/migration changes, before merge | `swift test` |
+| **Coverage gate** | Substantive production changes (per-file floors) | `scripts/coverage.swift --gate` |
+
+`MeridianSlowIntegrationTests` holds every live-external-process suite:
+`swift build`/`swift run` via temp SwiftPM packages, CLI `run`/`test`,
+per-file `swiftc -typecheck` over generated Swift (`GeneratedSwiftTypecheckSlowTests`),
+and process-level `meridian` binary E2E (DX fixtures, verbalizer, trace
+eval/verify). Plain `swift test` runs it; the fast inner loop skips it.
+
+Focused slow runs: `swift test --filter GeneratedSwiftTypecheckSlowTests` or
+`swift test --filter MeridianSlowIntegrationTests`. Coverage has its own three
+flows (fast `--gate`, rare `--full --gate`, occasional baseline regen) —
+[`docs/coverage/README.md`](docs/coverage/README.md) § Commands.
+
 After any major implementation session (even outside a formal phase), run the
 full local gate unless the user explicitly narrows validation:
 
 ```bash
 swift test
-MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1 MERIDIAN_CORPORA_TYPECHECK=1 swift test
 scripts/coverage.swift --gate
 ```
 
 `scripts/coverage.swift` skips the slow, real-external-process
 `MeridianSlowIntegrationTests` target by default (its coverage lands on files
 that already carry permanent bucket-A floors), so prefer the plain, faster
-`--gate` above. Use `scripts/coverage.swift --full --gate` instead only when
-the session touched `RunCommand`, `TestCommand`, `RuntimeExecutor`,
-`SwiftPMPackageRunner`, or another file whose reachable branches only that
+`--gate` above. Use `scripts/coverage.swift --full --gate` instead when the
+session touched `RunCommand`, `TestCommand`, `RuntimeExecutor`,
+`SwiftPMPackageRunner`, generated-Swift `swiftc -typecheck`, process-level
+`meridian` E2E checks, or another file whose reachable branches only that
 target exercises — plain `--gate` cannot accurately enforce those specific
 floors.
 
 If the change affects generated Swift, codegen, domain emission, migration, or
-the gbrain corpus, do not skip the typecheck env vars; they are the only gates
-that feed generated output to `swiftc`. Changes that affect corpus migration,
-rulebooks, or generated Swift for `corpora/erp` / `corpora/procedures` /
-`corpora/incident` / `corpora/etl` / `corpora/governance` / `corpora/clinical`
-must also run `MERIDIAN_CORPORA_TYPECHECK=1 swift test --filter
-CorporaConformanceTests`.
+any committed corpus, do not skip plain `swift test` — the
+`swiftc -typecheck` gates now live in `MeridianSlowIntegrationTests`
+(`GeneratedSwiftTypecheckSlowTests`). For a focused typecheck-only run:
+
+```bash
+swift test --filter GeneratedSwiftTypecheckSlowTests
+```
 When diagnosing strict-compile failures across any corpus ports, use the
 readable reporter instead of an inline shell loop:
 
@@ -469,9 +495,10 @@ produced Swift text without throwing; the result is **never** fed to a Swift
 parser there. So invalid Swift (unescaped strings, hyphenated identifiers,
 duplicate decls) can pass every compile/conformance test and only blow up later
 in swift-format or `swiftc`. When emitting anything new, assume the output will
-be type-checked. The `swiftc -typecheck` gates (`MERIDIAN_GOLDEN_TYPECHECK=1`
-for the corpus goldens; `MERIDIAN_GBRAIN_TYPECHECK=1` for `SampleGbrainTests`)
-are the only real Swift validators — run them after emitter changes.
+be type-checked. The `swiftc -typecheck` gates in
+`Tests/MeridianSlowIntegrationTests/GeneratedSwiftTypecheckSlowTests.swift`
+(goldens, gbrain, corpora) are the real Swift validators — run them via plain
+`swift test` or the focused filter after emitter changes.
 
 ### 13. Generated identifiers must be sanitized
 
@@ -672,12 +699,13 @@ start with the active log, then grep the archive if the topic predates it. Do
 Useful pointers:
 
 - Architectural decision numbering (`D1`–`D30`):
-  `meridian-handoff/docs/11_DECISIONS.md`.
+  `docs/15_DECISIONS.md` (and the implementation log archive for historical
+  handoff-era entries).
 - Generated decision catalog (`D-DX-*`) + diagnostic codes:
   `docs/15_DECISIONS.md`, or `meridian explain-diag <code|decision>`.
 - SKILL.md expressiveness tags (`SkillMD-D1`…`SkillMD-D28`):
   `.ai/brainstorm-done/skill_md_expressiveness_d1_d28.md`. Any bare `D<N>`
-  outside `meridian-handoff/docs/11_DECISIONS.md` means `SkillMD-D<N>`.
+  outside `docs/15_DECISIONS.md` means `SkillMD-D<N>`.
 
 When you record a new decision in `IMPLEMENTATION_LOG.md` and it changes an
 ongoing norm or pitfall, reflect *only* that norm/pitfall here (§3/§6) or in the

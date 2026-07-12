@@ -16,10 +16,9 @@ import MeridianRuntime
 //      emitted into a one-line Swift string literal — invalid Swift that
 //      sailed through `compile()` and only blew up later inside swift-format.
 //
-//   2. `everySkillTypechecks` (opt-in via MERIDIAN_GBRAIN_TYPECHECK=1): shells
-//      out to `swiftc -typecheck` against the built MeridianRuntime module, the
-//      same mechanism SkillCorpusGoldenTests uses. Gated because it needs a
-//      working toolchain and is much slower than the in-process check.
+//   2. `everySkillTypechecks` lives in
+//      `Tests/MeridianSlowIntegrationTests/GeneratedSwiftTypecheckSlowTests.swift`
+//      and shells out to `swiftc -typecheck` against the built MeridianRuntime module.
 
 @Suite("sample-gbrain codegen validity")
 struct SampleGbrainCodegenTests {
@@ -153,70 +152,5 @@ struct SampleGbrainCodegenTests {
             }
         }
         return flagged
-    }
-
-    // MARK: - Opt-in toolchain type-check
-
-    @Test("every emitted Swift file type-checks against MeridianRuntime",
-          .enabled(if: ProcessInfo.processInfo.environment["MERIDIAN_GBRAIN_TYPECHECK"] != nil))
-    func everySkillTypechecks() throws {
-        let artifacts = try locateRuntimeArtifacts()
-        let tmp = FileManager.default.temporaryDirectory
-            .appendingPathComponent("meridian-gbrain-typecheck-\(UUID().uuidString)")
-        try FileManager.default.createDirectory(at: tmp, withIntermediateDirectories: true)
-        defer { try? FileManager.default.removeItem(at: tmp) }
-
-        var failures: [String] = []
-        for (name, swift) in try compileAll() {
-            let file = tmp.appendingPathComponent((name as NSString).deletingPathExtension + ".swift")
-            try swift.write(to: file, atomically: true, encoding: .utf8)
-            let result = runSwiftTypecheck(file: file, artifacts: artifacts)
-            if !result.ok { failures.append("\(name):\n\(result.message)") }
-        }
-        #expect(failures.isEmpty,
-                Comment(rawValue: "type-check failures:\n" + failures.joined(separator: "\n\n")))
-    }
-
-    private struct RuntimeArtifacts { let modulesDir: URL; let buildPath: URL }
-
-    private func locateRuntimeArtifacts() throws -> RuntimeArtifacts {
-        let proc = Process()
-        proc.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        proc.arguments = ["swift", "build", "--show-bin-path"]
-        proc.currentDirectoryURL = SampleGbrainConformanceTests.sampleRoot().deletingLastPathComponent()
-        let pipe = Pipe()
-        proc.standardOutput = pipe
-        proc.standardError = pipe
-        try proc.run()
-        proc.waitUntilExit()
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let bin = String(data: data, encoding: .utf8)?
-            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        let buildPath = URL(fileURLWithPath: bin)
-        return RuntimeArtifacts(
-            modulesDir: buildPath.appendingPathComponent("Modules"),
-            buildPath: buildPath
-        )
-    }
-
-    private func runSwiftTypecheck(file: URL, artifacts: RuntimeArtifacts) -> (ok: Bool, message: String) {
-        let proc = Process()
-        proc.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        proc.arguments = [
-            "swiftc", "-typecheck",
-            "-I", artifacts.modulesDir.path,
-            "-I", artifacts.buildPath.path,
-            "-L", artifacts.buildPath.path,
-            "-lMeridianRuntime",
-            file.path,
-        ]
-        let pipe = Pipe()
-        proc.standardOutput = pipe
-        proc.standardError = pipe
-        do { try proc.run() } catch { return (false, "failed to spawn swift: \(error)") }
-        proc.waitUntilExit()
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: data, encoding: .utf8) ?? ""
-        return (proc.terminationStatus == 0, output)
     }
 }

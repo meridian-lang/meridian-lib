@@ -6,6 +6,17 @@ alwaysApply: false
 
 # Testing conventions
 
+### Three test workflows
+
+| Workflow | When | Command |
+|---|---|---|
+| **Fast inner loop** | Iterating in-process | `swift test --skip MeridianSlowIntegrationTests` |
+| **Full test gate** | Sign-off, codegen/corpus, merge | `swift test` |
+| **Coverage gate** | Substantive production changes | `scripts/coverage.swift --gate` |
+
+Detail: [`Tests/README.md`](../../Tests/README.md). Coverage's three flows:
+[`docs/coverage/README.md`](../../docs/coverage/README.md) § Commands.
+
 ### Run all tests
 
 ```bash
@@ -19,24 +30,20 @@ full local gate unless the user explicitly narrows validation:
 
 ```bash
 swift test
-MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1 MERIDIAN_CORPORA_TYPECHECK=1 swift test
 scripts/coverage.swift --gate
 ```
 
 Use `scripts/coverage.swift --full --gate` instead when the session touched a
 file whose reachable branches only `MeridianSlowIntegrationTests` exercises
-(`RuntimeExecutor`, `SwiftPMPackageRunner`, the CLI `run`/`test` commands) —
+(`RuntimeExecutor`, `SwiftPMPackageRunner`, the CLI `run`/`test` commands,
+generated-Swift `swiftc -typecheck`, or process-level `meridian` E2E checks) —
 otherwise the plain, faster `--gate` is sufficient and correctly enforces
 every other floor. See "Fast inner loop vs. the full gate" below.
 
-The typecheck env vars are required for changes that affect generated Swift,
-codegen, domain emission, migration, or any committed corpus. They are the only
-gates that feed generated output to `swiftc`. For changes scoped to the Wave 6
-synthetic corpora, run the focused gate:
-
-```bash
-MERIDIAN_CORPORA_TYPECHECK=1 swift test --filter CorporaConformanceTests
-```
+Generated-Swift `swiftc -typecheck` for goldens, corpora, and gbrain now lives
+in `MeridianSlowIntegrationTests` (`GeneratedSwiftTypecheckSlowTests`). Run it
+via plain `swift test` or `swift test --filter GeneratedSwiftTypecheckSlowTests`;
+the old `MERIDIAN_*_TYPECHECK=1` env vars are no longer required.
 Do not skip the coverage gate for substantive production changes; it enforces
 the per-file coverage floors documented under `docs/coverage/`.
 
@@ -53,8 +60,9 @@ swift test --filter ParserTraceTests
 `Tests/MeridianSlowIntegrationTests` holds every suite that spawns a *live
 external process* — a real `swift build`/`swift run` through a temporary
 SwiftPM package (`RuntimeExecutor`, `SwiftPMPackageRunner`, the CLI `run`/`test`
-subcommands) — because these dominate wall-clock time (minutes, not seconds)
-versus everything else, which is in-process and fast. For a quick inner loop
+subcommands), per-file `swiftc -typecheck` over generated Swift, and process-level
+`meridian` binary E2E checks — because these dominate wall-clock time (minutes,
+not seconds) versus everything else, which is in-process and fast. For a quick inner loop
 while iterating, skip that target:
 
 ```bash
@@ -63,8 +71,9 @@ swift test --skip MeridianSlowIntegrationTests
 
 Plain `swift test` (no `--skip`) still runs everything and is what the major
 implementation gate and CI use — never skip this target when running the full
-gate below, since it's the only place `RuntimeExecutor`/`SwiftPMPackageRunner`/
-CLI `run`+`test` get exercised end-to-end.
+gate below. It is the only place slow-integration suites run: SwiftPM
+build/run, CLI `run`+`test`, `swiftc -typecheck` over generated Swift, and
+process-level `meridian` binary E2E.
 
 ### Wave 5 parser tests
 
@@ -115,8 +124,9 @@ passes `swift test --skip MeridianSlowIntegrationTests` internally) since that
 target's live-external-process suites dominate the script's runtime and their
 coverage lands on files that already carry permanent bucket-A floors. Pass
 `--full` when you need an accurate reading that depends on that target — e.g.
-after editing `RuntimeExecutor`, `SwiftPMPackageRunner`, or the CLI
-`run`/`test` commands.
+after editing `RuntimeExecutor`, `SwiftPMPackageRunner`, the CLI `run`/`test`
+commands, generated-Swift `swiftc -typecheck`, or process-level `meridian` E2E
+checks.
 
 Regenerating `docs/coverage/coverage-baseline.md` / adjusting
 `coverage-exclusions.md` floors is a **third, separate flow** — occasional

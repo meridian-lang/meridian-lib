@@ -27,9 +27,9 @@ struct CorporaConformanceTests {
     /// migrated `.meri` output. Add a new corpus here (and to
     /// `expectedFileCount` below) as soon as `generate-migration.swift` has
     /// produced its `skills/*.meri` — do not leave it out until "later"; a
-    /// corpus outside this list is also outside `everySkillTypechecks`, and a
-    /// `swiftc`-invalid emission can ship silently for as long as it stays
-    /// unlisted (see IMPLEMENTATION_LOG.md's `ComparisonGrammar`/`whose`-clause
+    /// corpus outside this list is also outside the slow-integration typecheck
+    /// gate in `GeneratedSwiftTypecheckSlowTests`; a `swiftc`-invalid emission
+    /// can ship silently for as long as it stays unlisted (see IMPLEMENTATION_LOG.md's
     /// entry — that exact bug shipped in `incident/postmortem_render` while
     /// this list only covered `erp`/`procedures`).
     static func corpora() throws -> [Corpus] {
@@ -200,27 +200,6 @@ struct CorporaConformanceTests {
                 Comment(rawValue: "Malformed generated Swift:\n" + failures.joined(separator: "\n")))
     }
 
-    @Test("every emitted synthetic corpus file type-checks against MeridianRuntime",
-          .enabled(if: ProcessInfo.processInfo.environment["MERIDIAN_CORPORA_TYPECHECK"] != nil
-                   || ProcessInfo.processInfo.environment["MERIDIAN_GBRAIN_TYPECHECK"] != nil))
-    func everySkillTypechecks() throws {
-        let artifacts = try locateRuntimeArtifacts()
-        let tmp = FileManager.default.temporaryDirectory
-            .appendingPathComponent("meridian-corpora-typecheck-\(UUID().uuidString)")
-        try FileManager.default.createDirectory(at: tmp, withIntermediateDirectories: true)
-        defer { try? FileManager.default.removeItem(at: tmp) }
-
-        var failures: [String] = []
-        for (name, swift) in try compileAll() {
-            let file = tmp.appendingPathComponent(name.replacingOccurrences(of: "/", with: "_") + ".swift")
-            try swift.write(to: file, atomically: true, encoding: .utf8)
-            let result = runSwiftTypecheck(file: file, artifacts: artifacts)
-            if !result.ok { failures.append("\(name):\n\(result.message)") }
-        }
-        #expect(failures.isEmpty,
-                Comment(rawValue: "Synthetic corpus type-check failures:\n" + failures.joined(separator: "\n\n")))
-    }
-
     private static func quantifierHits(in source: String) -> Int {
         let lower = source.lowercased()
         return ["all ", "any ", "no ", "at least ", "at most ", "exactly "]
@@ -245,44 +224,6 @@ struct CorporaConformanceTests {
                 return ("\(corpus.name)/\(file.lastPathComponent)", swift)
             }
         }
-    }
-
-    private struct RuntimeArtifacts { let modulesDir: URL; let buildPath: URL }
-
-    private func locateRuntimeArtifacts() throws -> RuntimeArtifacts {
-        let proc = Process()
-        proc.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        proc.arguments = ["swift", "build", "--show-bin-path"]
-        proc.currentDirectoryURL = Self.repoRoot()
-        let pipe = Pipe()
-        proc.standardOutput = pipe
-        proc.standardError = pipe
-        try proc.run()
-        proc.waitUntilExit()
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let buildPath = URL(fileURLWithPath: String(data: data, encoding: .utf8)?
-            .trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
-        return RuntimeArtifacts(modulesDir: buildPath.appendingPathComponent("Modules"), buildPath: buildPath)
-    }
-
-    private func runSwiftTypecheck(file: URL, artifacts: RuntimeArtifacts) -> (ok: Bool, message: String) {
-        let proc = Process()
-        proc.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        proc.arguments = [
-            "swiftc", "-typecheck",
-            "-I", artifacts.modulesDir.path,
-            "-I", artifacts.buildPath.path,
-            "-L", artifacts.buildPath.path,
-            "-lMeridianRuntime",
-            file.path,
-        ]
-        let pipe = Pipe()
-        proc.standardOutput = pipe
-        proc.standardError = pipe
-        do { try proc.run() } catch { return (false, "failed to spawn swift: \(error)") }
-        proc.waitUntilExit()
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        return (proc.terminationStatus == 0, String(data: data, encoding: .utf8) ?? "")
     }
 
     private func unterminatedStringLiteralLines(in source: String) -> [Int] {
