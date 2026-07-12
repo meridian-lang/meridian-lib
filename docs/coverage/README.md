@@ -87,8 +87,9 @@ of the normal test workflow.
    MeridianSlowIntegrationTests`) since its coverage lands almost entirely on
    files already carrying permanent bucket-A floors; pass `--full` to also run
    it when you need an accurate reading for those files (e.g. after editing
-   `RuntimeExecutor`, `SwiftPMPackageRunner`, or the CLI `run`/`test`
-   commands), or before regenerating the committed baseline/exclusions. Skip
+   `RuntimeExecutor`, `SwiftPMPackageRunner`, the CLI `run`/`test` commands,
+   generated-Swift `swiftc -typecheck`, or process-level `meridian` E2E checks),
+   or before regenerating the committed baseline/exclusions. Skip
    the whole test run with `--no-test` to reuse the previous run's profile
    data (fast, when you only changed the exclusions file).
 2. **Locate artifacts** under `.build/`: the merged
@@ -144,10 +145,11 @@ scripts/coverage.swift --html .coverage-html
 
 Only reach for `--full` when the session touched a file whose reachable
 branches only `MeridianSlowIntegrationTests` exercises (`RunCommand`,
-`TestCommand`, `RuntimeExecutor`, `SwiftPMPackageRunner`, …) and you need an
+`TestCommand`, `RuntimeExecutor`, `SwiftPMPackageRunner`, generated-Swift
+`swiftc -typecheck`, process-level `meridian` E2E checks, …) and you need an
 accurate gate reading for *that specific file*. This reruns the whole slow
-suite (real `swift build`/`swift run` subprocesses) — expect several minutes,
-not seconds.
+suite (real subprocesses: `swift build`/`swift run`, `swiftc -typecheck`,
+`meridian` binary invocations) — expect several minutes, not seconds.
 
 ```bash
 scripts/coverage.swift --full --gate

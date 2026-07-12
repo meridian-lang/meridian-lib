@@ -1,6 +1,6 @@
 # Meridian — Phase Status
 
-Tracks the six-phase build plan from `meridian-handoff/docs/10_BUILD_PLAN.md`.
+Tracks the six-phase build plan (Phases 0–6) and subsequent waves documented in this file.
 
 ---
 
@@ -591,7 +591,7 @@ across all seven corpora are all green as of this pass.
 
 Primary docs: `docs/19_TRACES_AND_TIME.md`,
 `docs/coverage/WAVE8_REQUIREMENTS.md`, `docs/coverage/WAVE8_COMPLETION_EVIDENCE.md`,
-and the oracle `inform v7 - wave 7 and 8/MERIDIAN_SEMANTICS.md`.
+and the oracle [`docs/cookbook/MERIDIAN_SEMANTICS.md`](cookbook/MERIDIAN_SEMANTICS.md).
 
 **Wave 9 (deontic/obligation surface) not started.**
 

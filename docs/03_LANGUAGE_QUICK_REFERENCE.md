@@ -2,6 +2,11 @@
 
 Two file types: `.merconfig` (vocabulary) and `.meridian` (workflows).
 
+For normative semantics and canonical surface forms (Waves 7–8 oracle), see
+[`docs/cookbook/`](cookbook/) — especially `MERIDIAN_SYNTAX_COOKBOOK.md` and
+`MERIDIAN_SEMANTICS.md`. This quick reference is the practical author guide;
+the cookbook is the test-backed oracle.
+
 ---
 
 ## `.merconfig` file

@@ -378,3 +378,55 @@ config, explicit store wins). Docs: `docs/06_RUNTIME.md`, `.cursor/rules/runtime
 
 Confidence: **100%** for Observability DX Hardening plan scope — the last residual
 Builder TraceStore gap is closed.
+
+### 2026-07-12T08:30:00Z — Relocate oracle docs and wave agent prompts
+
+**DECISION:** Moved the Wave 7–8 normative oracle from `inform v7 - wave 7 and 8/`
+into `docs/cookbook/` (`MERIDIAN_SEMANTICS.md`, `MERIDIAN_SYNTAX_COOKBOOK.md`,
+`MERIDIAN_NORTHSTAR_EXAMPLE.md`, `MERIDIAN_DESIGN_RISKS_AND_REVIEW.md`) and
+`INFORM7_DESIGN_NOTES.md` from `inform v7/` into the same folder. Moved agent
+implementation prompts to `.ai/` (`meridian-wave7-verbalizer-prompt.md`,
+`meridian-wave8-9-trace-deontic-prompt.md`, `meridian-cursor-master-prompt.md`,
+`meridian-inform7-cursor-prompt.md`). Added `docs/cookbook/README.md` and
+`.ai/README.md`. Updated references across `AGENTS.md`, `README.md`, `docs/README.md`,
+`docs/status.md`, `docs/19_TRACES_AND_TIME.md`, `docs/18_VERBALIZER.md`,
+`docs/03_LANGUAGE_QUICK_REFERENCE.md`, Wave 8 coverage docs, and brainstorm
+archives. Stale `meridian-handoff/docs/` pointers in active docs now target
+`docs/15_DECISIONS.md` and `docs/cookbook/`. The empty `inform v7*/` folders
+remain for the maintainer to delete.
+
+**STATUS:** RESOLVED — user may remove `inform v7/` and `inform v7 - wave 7 and 8/` when ready.
+
+### 2026-07-12T09:15:00Z — Move slow external-process tests to MeridianSlowIntegrationTests
+
+**DECISION:** Consolidated all wall-clock-heavy external-process suites into
+`Tests/MeridianSlowIntegrationTests/` so `swift test --skip MeridianSlowIntegrationTests`
+gives a ~100s inner loop (2336 tests) while plain `swift test` still runs the full
+gate (~8–9 min including typecheck + SwiftPM run + CLI E2E).
+
+Moved:
+- `swiftc -typecheck` gates (goldens, corpora, gbrain) →
+  `GeneratedSwiftTypecheckSlowTests.swift` (no more `MERIDIAN_*_TYPECHECK=1` env vars)
+- CLI process E2E: DX fixtures, verbalizer pipelines, trace eval/verify
+- Shared helpers: `MeridianTestKit/SwiftTypecheckSupport.swift`,
+  `MeridianTestKit/MeridianCLIProcessSupport.swift`
+
+Updated `AGENTS.md`, `Tests/README.md`, `.cursor/rules/testing.mdc`, `Package.swift`
+target comment.
+
+**GATE:** `swift test --skip MeridianSlowIntegrationTests` → 2336/2336 pass (~101s);
+`swift test --filter MeridianSlowIntegrationTests` → 64/64 pass (~385s).
+
+**STATUS:** RESOLVED
+
+### 2026-07-12T09:30:00Z — Document three test workflows consistently
+
+**DECISION:** Added a canonical three-workflow table to `AGENTS.md` §4 (fast
+inner loop / full test gate / coverage gate) with a pointer to
+`Tests/README.md`. Restructured `Tests/README.md` as the detailed hub (table,
+focused slow-run filters, fixed stale typecheck/phase-checklist text). Aligned
+`.cursor/rules/testing.mdc`, `docs/coverage/README.md` § pipeline/flow 2, and
+`.ai/meridian-*-prompt.md` gate wording (dropped obsolete
+`MERIDIAN_*_TYPECHECK=1` references).
+
+**STATUS:** RESOLVED

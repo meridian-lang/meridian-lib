@@ -7,6 +7,8 @@ that the printed form can be compiled back to the same structure.
 
 Evidence and coverage live in
 [`coverage/VERBALIZER_EVIDENCE.md`](coverage/VERBALIZER_EVIDENCE.md).
+The normative canonical surface oracle is
+[`cookbook/MERIDIAN_SYNTAX_COOKBOOK.md`](cookbook/MERIDIAN_SYNTAX_COOKBOOK.md).
 Wave 8 extends that same verbalizer surface to temporal/statistical conditions
 and the compound-note form; the operational runtime semantics for those forms
 live in [`19_TRACES_AND_TIME.md`](19_TRACES_AND_TIME.md).

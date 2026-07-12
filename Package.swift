@@ -12,7 +12,7 @@
 // A future MeridianMCP executable target will sit alongside MeridianCLI,
 // sharing MeridianCore + MeridianRuntime + MeridianTools unchanged.
 //
-// See meridian-handoff/docs/09_PROJECT_STRUCTURE.md for the full layout.
+// See docs/02_ARCHITECTURE.md and AGENTS.md for the full layout.
 
 import PackageDescription
 
@@ -210,8 +210,9 @@ let package = Package(
         ),
 
         // MARK: - MeridianSlowIntegrationTests — tests that spawn a *live external
-        // process* (a real `swift build`/`swift run` through a temporary SwiftPM
-        // package, or a subprocess-executing test spec). These dominate wall-clock
+        // process*: `swift build`/`swift run` through a temporary SwiftPM package,
+        // subprocess-executing CLI specs, `swiftc -typecheck` over generated Swift,
+        // and process-level `meridian` binary E2E checks. These dominate wall-clock
         // time (minutes, not seconds) versus every other in-process test target.
         // Kept as a separate target so `swift test --skip MeridianSlowIntegrationTests`
         // gives a fast inner loop; the full local gate (and CI) still runs it via

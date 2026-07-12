@@ -10,12 +10,12 @@ comments, log entries, and `AGENTS.md` use stable identifiers like
 **from this plan**, not from the original architectural decision log. The
 `SkillMD-` prefix exists specifically to distinguish them from the bare `D1`–`D30`
 architectural decisions in
-[`meridian-handoff/docs/11_DECISIONS.md`](../../meridian-handoff/docs/11_DECISIONS.md).
+[`docs/15_DECISIONS.md`](../../docs/15_DECISIONS.md).
 This file preserves their meaning even after the planning chat is discarded.
 
 > **Backward-compatibility note.** A small number of older log/comment entries
 > (and possibly external mirrors) still use the bare form (`D17`, `D22`, …).
-> Outside `meridian-handoff/docs/11_DECISIONS.md`, treat any bare `D<N>` as
+> Outside `docs/15_DECISIONS.md`, treat any bare `D<N>` as
 > shorthand for `SkillMD-D<N>`. New code, tests, and log entries must use the
 > prefixed form.
 
@@ -44,7 +44,7 @@ Two **independent** D-numbering schemes exist in this repository:
 
 | Scheme | Defined in | Shape |
 |---|---|---|
-| **Architectural decisions D1–D30** *(bare `D<N>`)* | `meridian-handoff/docs/11_DECISIONS.md` (read-only) | "D17 = tool declarations use ModelHike syntax", "D22 = `simultaneously` is a primitive", etc. |
+| **Architectural decisions D1–D30** *(bare `D<N>`)* | `docs/15_DECISIONS.md` (read-only) | "D17 = tool declarations use ModelHike syntax", "D22 = `simultaneously` is a primitive", etc. |
 | **SKILL.md expressiveness `SkillMD-D1`–`SkillMD-D28`** *(this document)* | This file | "SkillMD-D17 = autonomy header parsing", "SkillMD-D22 = `MeridianTestKit` planning mocks", etc. |
 
 When you see `SkillMD-D17`, `SkillMD-D22`, `SkillMD-D23`, `SkillMD-D27`,
@@ -59,13 +59,13 @@ When you see `SkillMD-D17`, `SkillMD-D22`, `SkillMD-D23`, `SkillMD-D27`,
 - `Sources/MeridianCore/Parser/Productions/MeridianParser.swift`
   (`// B3 / SkillMD-D17: Detect prose-mode annotations before the colon.`)
 
-…they refer to **this plan**, not to `meridian-handoff/docs/11_DECISIONS.md`.
+…they refer to **this plan**, not to `docs/15_DECISIONS.md`.
 
 The architectural decision log uses a separate numbering inherited from the
 spec; do not cross-reference. New code, tests, and log entries must use the
 `SkillMD-D<N>` form. A small number of older entries still use the bare form
 (`D17`, etc.); treat any bare `D<N>` outside
-`meridian-handoff/docs/11_DECISIONS.md` as shorthand for `SkillMD-D<N>`.
+`docs/15_DECISIONS.md` as shorthand for `SkillMD-D<N>`.
 
 ---
 
@@ -280,7 +280,7 @@ If you find a reference to a `SkillMD-D` or `B` tag not listed here, add it
 during the next implementation session and document it in
 `IMPLEMENTATION_LOG.md`. Bare `D<N>` references that predate this rename
 should be treated as `SkillMD-D<N>` unless they appear in
-`meridian-handoff/docs/11_DECISIONS.md`.
+`docs/15_DECISIONS.md`.
 
 ---
 

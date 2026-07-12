@@ -10,7 +10,7 @@ discarded.
 > their D-tags are prefixed with the plan's slug (e.g. `SkillMD-D17` for the
 > SKILL.md expressiveness plan). The bare `D1`–`D30` numbering is reserved for
 > the architectural decision log in
-> [`meridian-handoff/docs/11_DECISIONS.md`](../../meridian-handoff/docs/11_DECISIONS.md).
+> [`docs/15_DECISIONS.md`](../../docs/15_DECISIONS.md).
 > When introducing a new plan in this folder, pick a unique prefix and use it
 > consistently in code, tests, and log entries.
 
@@ -27,7 +27,7 @@ discarded.
   (e.g. `skill_md_expressiveness_d1_d28.md`).
 - D-tags from a plan archived here MUST be prefixed in code, tests, and log
   entries to avoid collision with the architectural decision log
-  (`meridian-handoff/docs/11_DECISIONS.md`). The SKILL.md plan uses the
+  (`docs/15_DECISIONS.md`). The SKILL.md plan uses the
   `SkillMD-` prefix; future plans should adopt similar plan-specific prefixes.
 - Entries are append-only. Revisions add a new section at the bottom rather
   than editing existing content, so future readers can trust the historical

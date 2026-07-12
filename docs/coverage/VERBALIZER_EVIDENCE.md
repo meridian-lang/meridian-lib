@@ -109,8 +109,8 @@ tests.
 
 | Source | Tests | Status |
 |---|---|---|
-| `MERIDIAN_SYNTAX_COOKBOOK.md` CANONICAL lines | `COOK-*` in VerbalizerCookbookTests | covered |
-| `MERIDIAN_NORTHSTAR_EXAMPLE.md` gallery samples | VerbalizerCookbookTests | covered |
+| `docs/cookbook/MERIDIAN_SYNTAX_COOKBOOK.md` CANONICAL lines | `COOK-*` in VerbalizerCookbookTests | covered |
+| `docs/cookbook/MERIDIAN_NORTHSTAR_EXAMPLE.md` gallery samples | VerbalizerCookbookTests | covered |
 
 ## Wave 8 additions (temporal / statistical / compound note)
 

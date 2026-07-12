@@ -93,10 +93,11 @@ swift run meridian skill-deviation original-skills/ . \
 | [docs/15_DECISIONS.md](docs/15_DECISIONS.md) | The readable design-decision log (generated from `DecisionCatalog`) |
 | [docs/18_VERBALIZER.md](docs/18_VERBALIZER.md) | Wave 7 canonical English, `meridian explain`, drift audit, and verbalizer API |
 | [docs/19_TRACES_AND_TIME.md](docs/19_TRACES_AND_TIME.md) | Wave 8 trace schema, temporal/statistical operators, monitors, and replay |
+| [docs/cookbook/](docs/cookbook/) | **Normative oracle** — semantics, syntax cookbook, north-star examples, design risks (Waves 7–8) |
 | [Tests/README.md](Tests/README.md) | Test suites, forcing functions, adding new tests |
 | [docs/status.md](docs/status.md) | Phase progress, what's done, decision references |
 
-Original spec docs (read-only reference): [`meridian-handoff/docs/`](meridian-handoff/docs/)
+Normative oracle and agent prompts: [`docs/cookbook/`](docs/cookbook/) (semantics/surface oracle) and [`.ai/`](.ai/) (wave implementation prompts).
 
 ---
 

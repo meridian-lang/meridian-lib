@@ -2,7 +2,7 @@
 
 Status: Wave 8 landed and the documentation now reflects **implemented,
 named-test-backed behavior**. Cross-reference
-`inform v7 - wave 7 and 8/MERIDIAN_SEMANTICS.md`,
+`docs/cookbook/MERIDIAN_SEMANTICS.md`,
 `docs/coverage/WAVE8_REQUIREMENTS.md`, and
 `docs/coverage/WAVE8_COMPLETION_EVIDENCE.md`.
 

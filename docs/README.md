@@ -44,6 +44,7 @@ runs against a small deterministic runtime.
 | 17 | [17_MERIDIAN_PATTERNS.md](17_MERIDIAN_PATTERNS.md) | **Anyone about to "fix" a restriction** — recurring architectural patterns and why they're intentional, not gaps |
 | 18 | [18_VERBALIZER.md](18_VERBALIZER.md) | Wave 7 canonical English, round-trip law, drift audit, and verbalizer API |
 | 19 | [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md) | Wave 8 trace schema, temporal/statistical operators, monitors, capture policy, and replay |
+| — | [cookbook/README.md](cookbook/README.md) | **Semantics oracle** — normative meaning/surface docs for Waves 7–8 (`MERIDIAN_*.md`) |
 | — | [coverage/README.md](coverage/README.md) | **Anyone touching tests** — how & why coverage is measured, the enforced per-file gate, and how to raise it |
 | — | [../Tests/README.md](../Tests/README.md) | All contributors — test suites, forcing functions, adding tests |
 | — | [status.md](status.md) | Implementers — what's done, what's next, decision references |
@@ -114,20 +115,23 @@ meridian/
 
 ---
 
-## Original spec docs
+## Normative oracle (`docs/cookbook/`)
 
-The handoff package (`meridian-handoff/docs/`) contains the locked specification
-documents. These are read-only reference — do not modify them.
+The Wave 7–8 oracle documents live under [`cookbook/`](cookbook/). They define
+normative semantics, canonical surface forms, integration examples, and hazard
+review — enforced by `COOK-*`, `SEM_*`, and Composition Gallery tests.
 
-| Spec doc | Covers |
+| Oracle doc | Covers |
 |---|---|
-| `00_BLUEPRINT.md` | Master architecture |
-| `02_LANGUAGE_REFERENCE.md` | Full grammar formal spec |
-| `04_IR_SPEC.md` | IR primitive formal spec |
-| `05_CODEGEN_SPEC.md` | Codegen target spec |
-| `07_RUNTIME_API.md` | Runtime API contract |
-| `10_BUILD_PLAN.md` | Six-phase build plan |
-| `11_DECISIONS.md` | Locked design decisions |
+| `MERIDIAN_SEMANTICS.md` | Typed core, trace model, temporal/statistical/deontic operators |
+| `MERIDIAN_SYNTAX_COOKBOOK.md` | Canonical forms, synonyms, ill-formed catalog, composition gallery |
+| `MERIDIAN_NORTHSTAR_EXAMPLE.md` | Worked skills, lowering maps, Broken Twin acceptance fixtures |
+| `MERIDIAN_DESIGN_RISKS_AND_REVIEW.md` | Amendments, collisions, per-wave exit checklists |
+| `INFORM7_DESIGN_NOTES.md` | Inform 7 architecture context mapped onto Meridian |
+
+Wave implementation agent prompts are archived in [`.ai/`](../.ai/)
+(`meridian-wave7-verbalizer-prompt.md`, `meridian-wave8-9-trace-deontic-prompt.md`,
+`meridian-cursor-master-prompt.md`).
 
 ---
 

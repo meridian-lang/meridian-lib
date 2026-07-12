@@ -13,10 +13,10 @@ Counts match the requirements matrix:
 
 Oracle sources:
 
-- `inform v7 - wave 7 and 8/MERIDIAN_SEMANTICS.md`
-- `inform v7 - wave 7 and 8/MERIDIAN_SYNTAX_COOKBOOK.md`
-- `inform v7 - wave 7 and 8/MERIDIAN_NORTHSTAR_EXAMPLE.md`
-- `inform v7 - wave 7 and 8/MERIDIAN_DESIGN_RISKS_AND_REVIEW.md`
+- `docs/cookbook/MERIDIAN_SEMANTICS.md`
+- `docs/cookbook/MERIDIAN_SYNTAX_COOKBOOK.md`
+- `docs/cookbook/MERIDIAN_NORTHSTAR_EXAMPLE.md`
+- `docs/cookbook/MERIDIAN_DESIGN_RISKS_AND_REVIEW.md`
 
 ## 1. Shared evidence surfaces
 
