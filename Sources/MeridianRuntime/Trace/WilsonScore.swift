@@ -1,8 +1,44 @@
 import Foundation
 
+/// Wilson score confidence interval for a binomial proportion.
+///
+/// Meridian uses this for statistical trace claims that carry
+/// `with <p>% confidence` (SEM-6-04). Given `successes` successes out of
+/// `sampleSize` observations, the true success rate is unknown; the raw
+/// ratio `successes / sampleSize` is only a point estimate. A Wilson interval
+/// is a confidence interval around that rate: with the stated confidence, the
+/// true rate is expected to lie between `lower` and `upper`.
+///
+/// Why Wilson (not a plain normal / Wald interval)?
+/// - It stays inside `[0, 1]` and remains well-behaved for small `n` and for
+///   rates near 0 or 1, where the Wald interval often overshoots or collapses.
+/// - That matters for trace replay: skills often have modest sample sizes, and
+///   gates like "at least 90% with 95% confidence" must not pass on a lucky
+///   streak that a wider interval would reject.
+///
+/// How `TraceEvaluator` consumes the interval:
+/// - `at least T` → true only if `interval.lower >= T` (conservative: even the
+///   pessimistic end of the interval clears the floor).
+/// - `at most T` → true only if `interval.upper <= T` (conservative: even the
+///   optimistic end stays under the ceiling).
+/// - Below the configured sample floor, evaluation is indeterminate and this
+///   helper is not consulted.
+///
+/// Formula (center ± margin, then scaled by the shared denominator):
+/// ```
+/// p̂ = successes / n
+/// z  = Φ⁻¹(1 − α/2)   where α = 1 − confidence
+/// center = p̂ + z²/(2n)
+/// margin = z · √(p̂(1−p̂)/n + z²/(4n²))
+/// denom  = 1 + z²/n
+/// [lower, upper] = [(center − margin)/denom, (center + margin)/denom]
+/// ```
 public enum WilsonScore {
+  /// Closed confidence interval for an unknown success rate in `[0, 1]`.
   public struct Interval: Sendable, Equatable {
+    /// Lower Wilson bound (pessimistic estimate of the true rate).
     public let lower: Double
+    /// Upper Wilson bound (optimistic estimate of the true rate).
     public let upper: Double
 
     public init(lower: Double, upper: Double) {
@@ -11,6 +47,11 @@ public enum WilsonScore {
     }
   }
 
+  /// Standard-normal critical value `z` for a two-sided confidence level.
+  ///
+  /// `percent` is the confidence in percentage points (e.g. `95` → 95%).
+  /// Common levels use exact table values; anything else falls back to
+  /// Acklam's inverse-CDF approximation of `Φ⁻¹(1 − α/2)`.
   public static func zScore(forConfidencePercent percent: Double) -> Double {
     if percent == 90 { return 1.645 }
     if percent == 95 { return 1.96 }
@@ -19,6 +60,11 @@ public enum WilsonScore {
     return approximateInverseNormalCDF(1.0 - alpha)
   }
 
+  /// Wilson score interval for `successes` successes in `sampleSize` trials.
+  ///
+  /// Returns `nil` when inputs are invalid (`sampleSize <= 0`, negative
+  /// successes, or more successes than trials). Callers treat `nil` as
+  /// indeterminate rather than inventing a bound.
   public static func interval(successes: Int, sampleSize: Int, confidencePercent: Double) -> Interval? {
     guard sampleSize > 0, successes >= 0, successes <= sampleSize else { return nil }
     let n = Double(sampleSize)
@@ -31,6 +77,11 @@ public enum WilsonScore {
     return Interval(lower: (center - margin) / denominator, upper: (center + margin) / denominator)
   }
 
+  /// Approximate inverse of the standard normal CDF, `Φ⁻¹(p)`.
+  ///
+  /// Used only for non-table confidence levels. Acklam's rational
+  /// approximation is accurate enough for z-lookup in confidence intervals
+  /// (far tighter than the sampling noise of typical trace sample sizes).
   private static func approximateInverseNormalCDF(_ p: Double) -> Double {
     // Acklam's approximation — sufficient for confidence-interval z lookup.
     let a1 = -39.6968302866538
@@ -57,14 +108,17 @@ public enum WilsonScore {
     let phigh = 1.0 - plow
     let x: Double
     if p < plow {
+      // Lower tail: asymptotic expansion in √(−2 ln p).
       let q = sqrt(-2.0 * log(p))
       x = (((((c1 * q + c2) * q + c3) * q + c4) * q + c5) * q + c6)
         / ((((d1 * q + d2) * q + d3) * q + 1.0))
     } else if p > phigh {
+      // Upper tail: mirror of the lower-tail expansion.
       let q = sqrt(-2.0 * log(1.0 - p))
       x = -(((((c1 * q + c2) * q + c3) * q + c4) * q + c5) * q + c6)
         / ((((d1 * q + d2) * q + d3) * q + 1.0))
     } else {
+      // Central region: rational approximation in (p − 0.5)².
       let q = p - 0.5
       let r = q * q
       x = (((((a1 * r + a2) * r + a3) * r + a4) * r + a5) * r + a6) * q
